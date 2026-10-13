@@ -1,0 +1,4 @@
+8afbee59a60df378817bb9d551bade487eec63230f8b2fd66e1d9741cff62b18  docs/dev/harness-gap-closure/v01-acceptance.json
+67caba40046cebf245c9fc090ba260b266fae17c21a36276afc0cd89ea9e0c21  docs/dev/harness-gap-closure/v01-cross-layer-closed-loop.md
+e9da779c96881b6ab21420801ebad22f96fa83e45d61d4e695c4b9c18babcb64  harness/specs/tasks/harness-gap-cross-layer-closed-loop.md
+05e114bbf8d9948be007072520c2762a65dab4b9f43a15d97045a4eeecded3a1  tests/unit/cross-layer-closed-loop.v01.test.ts

@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-v01-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0292",
+    "packet": "V01",
+    "title": "Cross-layer closed loop + multi-component controlled ablation",
+    "source": "deterministic local fixtures over shipped modules (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "One deterministic integration test chains the shipped components end to end (breaker -> reliability -> recovery action -> eval sample -> verifier refusal -> single write owner -> recovery) and re-runs the E02 paired ablation with the verdict unchanged. No safety boundary is weakened."
+  },
+  "candidate": {
+    "commit": "87d405ef191c8477863a6887f409275f611fcf57",
+    "tree": "f62cc0adf9efd4e324ede78c2234833066a01f1b",
+    "dirty": false,
+    "branch": "codex/harness-gap-v01-closed-loop-20261013",
+    "base": "0d97800058b3c6977e057a21eb23aedf5b46e4f7",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T14:50:00.000Z",
+    "finishedAt": "2026-10-13T15:00:00.000Z"
+  },
+  "closedLoop": {
+    "module": "tests/unit/cross-layer-closed-loop.v01.test.ts",
+    "steps": [
+      "L05 breaker open + cooldown refuses",
+      "E01 pass^k<1",
+      "G01 bounded retry action",
+      "G03 eval sample before-fix fail/after-fix pass",
+      "S07 insufficient-evidence no transition",
+      "L06 single verified owner + release",
+      "L05 half-open probe -> closed"
+    ],
+    "ablation": "E02 paired ablation (20x3x2) verdict component-helps, meanDiff 1, falseBlocks 0, safetyViolations 0",
+    "safety": "no SSRF/loop-guard/approval change; verifier refuses completion on insufficient evidence"
+  },
+  "gates": {
+    "v01Tests": {
+      "command": "vitest run tests/unit/cross-layer-closed-loop.v01.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 2,
+      "failed": 0
+    },
+    "typecheckTest": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "eslint tests/unit/cross-layer-closed-loop.v01.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-cross-layer-closed-loop.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-cross-layer-closed-loop.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    }
+  },
+  "residual": {
+    "fixtureOnly": "Deterministic local fixtures; not a real-provider or real-human run and not a GA claim.",
+    "assembly": "Production assembly of each kernel into the real call chain is integration-layer work.",
+    "scope": "No new product code path; no default/lock/approval change."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "integration assertions over shipped modules",
+    "detail": "The test drives the real L05/E01/G01/G03/S07/L06/E02 modules in one loop and asserts each layer's contract plus the unchanged ablation verdict and safety counters. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "loop-composes",
+      "status": "pass",
+      "note": "Failure storm -> breaker open -> pass^k<1 -> bounded retry action -> re-runnable sample -> verifier refusal -> single owner -> recovery, all in one deterministic run."
+    },
+    {
+      "id": "safety-holds",
+      "status": "pass",
+      "note": "0 false blocks / 0 safety violations in the ablation; verifier refuses completion without evidence; no SSRF/loop-guard/approval change."
+    },
+    {
+      "id": "ablation-no-regression",
+      "status": "pass",
+      "note": "The controlled paired ablation verdict stays component-helps with mean diff 1."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "2 integration tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 2,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Real-provider/renderer production assembly.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
