@@ -230,6 +230,8 @@
     "copiedCode": "コピー済み"
   },
   "messageActions": {
+    "summarizeUpToHere": "ここまでを要約",
+    "summarizeFromHere": "ここから要約",
     "forkFromHere": "ここから分岐",
     "copy": "メッセージをコピー",
     "copied": "コピーしました",
@@ -1785,6 +1787,11 @@
       "toastCreated": "Fork 会話を作成しました",
       "toastFailed": "会話の Fork に失敗しました",
       "boundaryNote": "ここまでの会話と、プロバイダー/モデル/思考の設定、ワークスペースの UI 状態をコピーします。タスク台帳・メモリ・ナレッジの内容はコピーされません。"
+    },
+    "compactRange": {
+      "toastCompacted": "選択した範囲を要約しました",
+      "toastFailed": "選択した範囲の要約に失敗しました",
+      "toastFailedDescription": "範囲を要約できませんでした。変更はありません。"
     },
     "handoff": {
       "action": "新しい会話へ Handoff",

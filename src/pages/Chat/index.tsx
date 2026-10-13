@@ -2327,6 +2327,36 @@ export function Chat() {
     t,
   ]);
 
+  /**
+   * #178: summarize a located stretch of the transcript. 'from' keeps this
+   * message (and everything after) verbatim; 'to' folds the head through this
+   * message into the summary. The gateway fails closed on a bad boundary.
+   */
+  const handleCompactRange = useCallback(async (messageId: string, boundary: 'from' | 'to') => {
+    if (!isCurrentControlScope()) return;
+    const sessionKey = currentSessionKey;
+    try {
+      const result = await hostApi.sessions.compactRange({
+        sessionKey,
+        ...(currentAgentId ? { agentId: currentAgentId } : {}),
+        ...(boundary === 'from' ? { fromLeafId: messageId } : { toLeafId: messageId }),
+      });
+      if (!result.success || result.compacted !== true) {
+        toast.error(t('composer.compactRange.toastFailed'), {
+          description: result.reason || t('composer.compactRange.toastFailedDescription'),
+        });
+        return;
+      }
+      await loadSessions();
+      await loadHistory();
+      toast.success(t('composer.compactRange.toastCompacted'));
+    } catch (error) {
+      toast.error(t('composer.compactRange.toastFailed'), {
+        description: getContinuityErrorMessage(error, t('composer.compactRange.toastFailedDescription')),
+      });
+    }
+  }, [currentAgentId, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, t]);
+
   const handlePrepareHandoff = useCallback(async () => {
     if (handoffDisabled || handoffBusy || !isCurrentControlScope()) return;
     setHandoffBusy(true);
@@ -3433,6 +3463,9 @@ export function Chat() {
                         onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
                         onForkFromMessage={(messageId) =>
                           void handleForkSession({ fromLeafId: messageId })
+                        }
+                        onCompactRange={(messageId, boundary) =>
+                          void handleCompactRange(messageId, boundary)
                         }
                       />
                       {row.runCards.map((card) => {

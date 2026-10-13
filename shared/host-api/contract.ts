@@ -2946,6 +2946,15 @@ export type SessionManualCompactPayload = SessionCompactionPayload & {
   customInstructions?: string;
   force?: boolean;
 };
+/**
+ * #178: summarize a located stretch of a session transcript, keeping the
+ * untouched side verbatim. Exactly one of fromLeafId / toLeafId is required.
+ */
+export type SessionCompactRangePayload = SessionCompactionPayload & {
+  customInstructions?: string;
+  fromLeafId?: string;
+  toLeafId?: string;
+};
 export type SessionCompactionHistoryEntry = {
   id: string;
   timestamp: number;
@@ -5557,6 +5566,7 @@ export type HostApiContract = {
     queueDrain: (payload: SessionQueueDrainPayload) => SessionQueueDrainResult;
     stop: (payload: SessionStopPayload) => SessionStopResult;
     compact: (payload: SessionManualCompactPayload) => SessionCompactionResult;
+    compactRange: (payload: SessionCompactRangePayload) => SessionCompactionResult;
     prepareHandoff: (payload: SessionHandoffPayload) => SessionHandoffResult;
     fork: (payload: SessionForkPayload) => SessionForkResult;
     truncate: (payload: SessionTruncatePayload) => SessionTruncateResult;

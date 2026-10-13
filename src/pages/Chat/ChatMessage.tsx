@@ -6,7 +6,7 @@
  * surfaced via ExecutionGraphCard, not inside message bubbles.
  */
 import { useState, useCallback, useEffect, memo, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
-import { Copy, Check, Wrench, X, FolderOpen, ZoomIn, AlertCircle, Pencil, Send, GitFork } from 'lucide-react';
+import { Copy, Check, Wrench, X, FolderOpen, ZoomIn, AlertCircle, Pencil, Send, GitFork, ArrowUpToLine, ArrowDownToLine } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ActionBarPrimitive, MessageProvider, TextMessagePartProvider, type ThreadMessage } from '@assistant-ui/react';
 import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
@@ -95,6 +95,13 @@ interface ChatMessageProps {
    * when the message carries an entry id (the `fromLeafId` the fork RPC needs).
    */
   onForkFromMessage?: (messageId: string) => void;
+  /**
+   * #178: summarize a located stretch around this message's transcript entry.
+   * 'from' keeps the message (and everything after) verbatim and summarizes the
+   * older entries; 'to' folds the head (through the message) into the summary
+   * and keeps the newer entries verbatim. Only offered when an entry id exists.
+   */
+  onCompactRange?: (messageId: string, boundary: 'from' | 'to') => void;
   streamStatus?: {
     active: boolean;
     startedAt?: number | null;
@@ -229,6 +236,7 @@ export const ChatMessage = memo(function ChatMessage({
   onResendUserMessage,
   canResendUserMessage = true,
   onForkFromMessage,
+  onCompactRange,
   streamStatus,
   liveUsage,
 }: ChatMessageProps) {
@@ -620,6 +628,13 @@ export const ChatMessage = memo(function ChatMessage({
             onFork={() => {
               if (message.id) onForkFromMessage?.(message.id);
             }}
+            canCompact={Boolean(message.id) && Boolean(onCompactRange)}
+            onCompactFrom={() => {
+              if (message.id) onCompactRange?.(message.id, 'from');
+            }}
+            onCompactTo={() => {
+              if (message.id) onCompactRange?.(message.id, 'to');
+            }}
           />
         )}
 
@@ -941,6 +956,9 @@ function UserMessageActions({
   onEdit,
   canFork,
   onFork,
+  canCompact,
+  onCompactFrom,
+  onCompactTo,
 }: {
   text: string;
   timestamp?: number;
@@ -948,6 +966,9 @@ function UserMessageActions({
   onEdit: () => void;
   canFork: boolean;
   onFork: () => void;
+  canCompact: boolean;
+  onCompactFrom: () => void;
+  onCompactTo: () => void;
 }) {
   const { t } = useTranslation('chat');
   const [copied, setCopied] = useState(false);
@@ -1029,6 +1050,46 @@ function UserMessageActions({
           </TooltipTrigger>
           <TooltipContent side="top">{t('messageActions.forkFromHere')}</TooltipContent>
         </Tooltip>
+      )}
+      {canCompact && (
+        <>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="inline-flex">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
+                  onClick={onCompactTo}
+                  aria-label={t('messageActions.summarizeUpToHere')}
+                  data-testid="chat-user-message-summarize-to"
+                >
+                  <ArrowUpToLine className="h-3.5 w-3.5" />
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="top">{t('messageActions.summarizeUpToHere')}</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="inline-flex">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
+                  onClick={onCompactFrom}
+                  aria-label={t('messageActions.summarizeFromHere')}
+                  data-testid="chat-user-message-summarize-from"
+                >
+                  <ArrowDownToLine className="h-3.5 w-3.5" />
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="top">{t('messageActions.summarizeFromHere')}</TooltipContent>
+          </Tooltip>
+        </>
       )}
     </AssistantUiGhostActionBar>
   );

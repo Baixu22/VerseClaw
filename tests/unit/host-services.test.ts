@@ -1199,6 +1199,39 @@ describe('host services', () => {
     }), 120_000);
   });
 
+  it('proxies located (range) compaction with the chosen boundary (#178)', async () => {
+    const rpc = vi.fn().mockResolvedValue({
+      ok: true,
+      key: 'agent:main:main',
+      compacted: true,
+      result: {
+        summary: 'Range summary',
+        firstKeptEntryId: 'entry-5',
+        tokensBefore: 1200,
+        tokensAfter: 400,
+      },
+    });
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const sessionsApi = createSessionsApi({ gatewayManager: { rpc } as never });
+
+    await expect(sessionsApi.compactRange({
+      sessionKey: 'agent:main:main',
+      fromLeafId: 'entry-5',
+      customInstructions: 'Preserve decision D1.',
+    })).resolves.toMatchObject({
+      success: true,
+      compacted: true,
+      firstKeptEntryId: 'entry-5',
+      tokensBefore: 1200,
+      tokensAfter: 400,
+    });
+    expect(rpc).toHaveBeenCalledWith('sessions.compactRange', expect.objectContaining({
+      key: 'agent:main:main',
+      fromLeafId: 'entry-5',
+      customInstructions: expect.stringContaining('Preserve decision D1.'),
+    }), 120_000);
+  });
+
   it('proxies read-only context recall through Gateway without local archive reads', async () => {
     const archiveHandle = {
       uri: 'context-archive://session-1/tool.context-archive.json',

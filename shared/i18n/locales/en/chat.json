@@ -230,6 +230,8 @@
     "copiedCode": "Copied"
   },
   "messageActions": {
+    "summarizeUpToHere": "Summarize up to here",
+    "summarizeFromHere": "Summarize from here",
     "forkFromHere": "Fork from here",
     "copy": "Copy message",
     "copied": "Copied",
@@ -1797,6 +1799,11 @@
       "toastCreated": "Forked conversation created",
       "toastFailed": "Failed to fork conversation",
       "boundaryNote": "Copies the conversation up to this point plus provider/model/thinking settings and workspace UI state. Task Ledger, memory, and knowledge contents are not copied."
+    },
+    "compactRange": {
+      "toastCompacted": "Summarized the selected range",
+      "toastFailed": "Failed to summarize the selected range",
+      "toastFailedDescription": "The range could not be summarized; nothing was changed."
     },
     "handoff": {
       "action": "Handoff to new conversation",

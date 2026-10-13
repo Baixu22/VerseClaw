@@ -1543,7 +1543,10 @@ async function compactEmbeddedAgentSessionDirectOnce(
           const result = await compactWithSafetyTimeout(
             () => {
               setCompactionSafeguardCancelReason(compactionSessionManager, undefined);
-              return activeSession.compact(params.customInstructions);
+              return activeSession.compact(
+                params.customInstructions,
+                params.keepFromEntryId ? { keepFromEntryId: params.keepFromEntryId } : undefined,
+              );
             },
             compactionTimeoutMs,
             {
@@ -1565,7 +1568,10 @@ async function compactEmbeddedAgentSessionDirectOnce(
             try {
               const hardenedBoundary = await hardenManualCompactionBoundary({
                 sessionFile: params.sessionFile,
+                // #178: a located compaction already pinned firstKeptEntryId to
+                // the requested tail; the manual harden must not override it.
                 preserveRecentTail:
+                  params.keepFromEntryId !== undefined ||
                   typeof params.config?.agents?.defaults?.compaction?.keepRecentTokens === "number",
               });
               if (hardenedBoundary.applied) {

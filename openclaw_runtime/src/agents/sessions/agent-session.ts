@@ -1921,14 +1921,18 @@ export class AgentSession {
    * Aborts current agent operation first.
    * @param customInstructions Optional instructions for the compaction summary
    */
-  async compact(customInstructions?: string): Promise<CompactionResult> {
+  async compact(
+    customInstructions?: string,
+    options?: { keepFromEntryId?: string },
+  ): Promise<CompactionResult> {
     return await this.runWithSessionWriteLock(
-      async () => await this.compactWithSessionWriteLock(customInstructions),
+      async () => await this.compactWithSessionWriteLock(customInstructions, options),
     );
   }
 
   private async compactWithSessionWriteLock(
     customInstructions?: string,
+    options?: { keepFromEntryId?: string },
   ): Promise<CompactionResult> {
     this.disconnectFromAgent();
     await this.abort();
@@ -1936,7 +1940,12 @@ export class AgentSession {
     this.emit({ type: "compaction_start", reason: "manual" });
 
     try {
-      const settings = this.settingsManager.getCompactionSettings();
+      const settings = {
+        ...this.settingsManager.getCompactionSettings(),
+        // #178: a located ("summarize up to / from here") compaction pins the
+        // retained tail; the cut-point selection honors it below.
+        ...(options?.keepFromEntryId ? { keepFromEntryId: options.keepFromEntryId } : {}),
+      };
       const outcome = await this.runCompactionWork({
         customInstructions,
         mode: "manual",

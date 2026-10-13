@@ -27,6 +27,7 @@ import type {
   CompressionArtifact,
   CompressionArtifactQuality,
   CompressionSemanticAtom,
+  SessionCompactionResult,
   SessionDeleteResult,
   SessionExpandSelectorResult,
   SessionHandoffSource,
@@ -93,6 +94,8 @@ type SessionPayload = {
   messageId?: unknown;
   /** #180: optional in-transcript fork point forwarded to sessions.fork. */
   fromLeafId?: unknown;
+  /** #178: optional in-transcript boundary forwarded to sessions.compactRange. */
+  toLeafId?: unknown;
 };
 
 const MANUAL_COMPACTION_DEFAULT_INSTRUCTIONS = [
@@ -699,6 +702,36 @@ function getManualCompactionInstructions(payload: unknown): string {
     : MANUAL_COMPACTION_DEFAULT_INSTRUCTIONS;
 }
 
+/** Maps a gateway manual/located compaction RPC outcome onto the host-api result. */
+function mapCompactionRpcOutcome(result: Record<string, unknown>, sessionKey: string): SessionCompactionResult {
+  const compactResult = isRecord(result.result) ? result.result : {};
+  const compactDetails = isRecord(compactResult.details) ? compactResult.details : {};
+  const compressionDetails = isRecord(compactDetails.compression) ? compactDetails.compression : {};
+  const detailWarnings = [
+    ...(Array.isArray(compactDetails.warnings)
+      ? compactDetails.warnings.filter((item): item is string => typeof item === 'string')
+      : []),
+    ...(Array.isArray(compressionDetails.warnings)
+      ? compressionDetails.warnings.filter((item): item is string => typeof item === 'string')
+      : []),
+  ];
+  const compacted = result.compacted === true;
+  const nextSessionKey = typeof result.key === 'string' ? result.key : sessionKey;
+  return {
+    success: true,
+    status: compacted ? 'compacted' : 'skipped',
+    compacted,
+    ...(typeof compactResult.summary === 'string' ? { summary: compactResult.summary } : {}),
+    ...(typeof result.reason === 'string' ? { reason: result.reason } : {}),
+    ...(toNumber(compactResult.tokensBefore) !== undefined ? { tokensBefore: toNumber(compactResult.tokensBefore) } : {}),
+    ...(toNumber(compactResult.tokensAfter) !== undefined ? { tokensAfter: toNumber(compactResult.tokensAfter) } : {}),
+    ...(typeof compactResult.firstKeptEntryId === 'string' ? { firstKeptEntryId: compactResult.firstKeptEntryId } : {}),
+    sessionKey: nextSessionKey,
+    ...(typeof compactResult.sessionId === 'string' ? { sessionId: compactResult.sessionId } : {}),
+    ...(nextSessionKey !== sessionKey ? { rotatedSessionKey: nextSessionKey } : {}),
+    warnings: [...new Set(detailWarnings)],
+  };
+}
 function toNumber(value: unknown): number | undefined {
   return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
 }
@@ -2205,33 +2238,31 @@ export function createSessionsApi(ctx: {
         customInstructions: getManualCompactionInstructions(payload),
         force: true,
       }, 120_000);
-      const compactResult = isRecord(result.result) ? result.result : {};
-      const compactDetails = isRecord(compactResult.details) ? compactResult.details : {};
-      const compressionDetails = isRecord(compactDetails.compression) ? compactDetails.compression : {};
-      const detailWarnings = [
-        ...(Array.isArray(compactDetails.warnings)
-          ? compactDetails.warnings.filter((item): item is string => typeof item === 'string')
-          : []),
-        ...(Array.isArray(compressionDetails.warnings)
-          ? compressionDetails.warnings.filter((item): item is string => typeof item === 'string')
-          : []),
-      ];
-      const compacted = result.compacted === true;
-      const nextSessionKey = typeof result.key === 'string' ? result.key : sessionKey;
-      return {
-        success: true,
-        status: compacted ? 'compacted' : 'skipped',
-        compacted,
-        ...(typeof compactResult.summary === 'string' ? { summary: compactResult.summary } : {}),
-        ...(typeof result.reason === 'string' ? { reason: result.reason } : {}),
-        ...(toNumber(compactResult.tokensBefore) !== undefined ? { tokensBefore: toNumber(compactResult.tokensBefore) } : {}),
-        ...(toNumber(compactResult.tokensAfter) !== undefined ? { tokensAfter: toNumber(compactResult.tokensAfter) } : {}),
-        ...(typeof compactResult.firstKeptEntryId === 'string' ? { firstKeptEntryId: compactResult.firstKeptEntryId } : {}),
-        sessionKey: nextSessionKey,
-        ...(typeof compactResult.sessionId === 'string' ? { sessionId: compactResult.sessionId } : {}),
-        ...(nextSessionKey !== sessionKey ? { rotatedSessionKey: nextSessionKey } : {}),
-        warnings: [...new Set(detailWarnings)],
-      };
+      return mapCompactionRpcOutcome(result, sessionKey);
+    },
+    /**
+     * #178: summarize a located stretch of the transcript, keeping the untouched
+     * side verbatim. Exactly one of fromLeafId / toLeafId is supplied; the
+     * gateway resolves the cut point and fails closed when it is absent,
+     * off-branch, or not a valid cut point.
+     */
+    compactRange: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const agentId = getOptionalAgentId(payload);
+      const body = isRecord(payload) ? payload as SessionPayload : {};
+      const fromLeafId = typeof body.fromLeafId === 'string' ? body.fromLeafId.trim() : '';
+      const toLeafId = typeof body.toLeafId === 'string' ? body.toLeafId.trim() : '';
+      if (!ctx.gatewayManager) {
+        return { success: false, error: 'Gateway manager unavailable', compacted: false, status: 'failed' };
+      }
+      const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.compactRange', {
+        key: sessionKey,
+        ...(agentId ? { agentId } : {}),
+        ...(fromLeafId ? { fromLeafId } : {}),
+        ...(toLeafId ? { toLeafId } : {}),
+        customInstructions: getManualCompactionInstructions(payload),
+      }, 120_000);
+      return mapCompactionRpcOutcome(result, sessionKey);
     },
     prepareHandoff: async (payload) => {
       const sessionKey = getSessionKey(payload);

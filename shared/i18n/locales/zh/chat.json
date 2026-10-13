@@ -230,6 +230,8 @@
     "copiedCode": "已复制"
   },
   "messageActions": {
+    "summarizeUpToHere": "摘要到此为止",
+    "summarizeFromHere": "从这里开始摘要",
     "forkFromHere": "从此处分叉",
     "copy": "复制消息",
     "copied": "已复制",
@@ -1785,6 +1787,11 @@
       "toastCreated": "已创建 Fork 对话",
       "toastFailed": "Fork 对话失败",
       "boundaryNote": "复制截至此处之前的对话,以及提供方/模型/思考设置与工作区界面状态;任务台账、记忆与知识内容不会被复制。"
+    },
+    "compactRange": {
+      "toastCompacted": "已摘要选定的范围",
+      "toastFailed": "摘要所选范围失败",
+      "toastFailedDescription": "无法摘要该范围，未做任何更改。"
     },
     "handoff": {
       "action": "接力到新对话",

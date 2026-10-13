@@ -7,9 +7,32 @@ taskType: runtime-bridge
 intent: Compaction is all-or-nothing — manual `sessions.compact` and the automatic safeguard both replace the whole transcript with a summary — so a user who goes wrong at turn 40 of 60 can only summarize everything (losing all original text) or start a new session (losing all context). Claude Code exposes two located variants ("summarize from here" / "summarize up to here") that keep the untouched side verbatim. This spec records the capability gap, the required gateway surface, and the constraints a range compaction must satisfy so it cannot become a second, unvalidated summary path.
 touchedAreas:
   - harness/specs/tasks/ranged-session-compaction.md
-  - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts
-  - openclaw_runtime/src/gateway/session-compaction-checkpoints.ts
-  - openclaw_runtime/src/agents/agent-hooks/compaction-damage-rules.test.ts
+  - openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts
+  - openclaw_runtime/packages/agent-core/src/harness/compaction/prepare-compaction.test.ts
+  - openclaw_runtime/packages/gateway-protocol/src/index.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/protocol-schemas.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/types.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/compact.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/compact.types.ts
+  - openclaw_runtime/src/agents/sessions/agent-session.ts
+  - openclaw_runtime/src/gateway/methods/core-descriptors.ts
+  - openclaw_runtime/src/gateway/server-methods.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.test.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction.ts
+  - shared/host-api/contract.ts
+  - shared/i18n/locales/en/chat.json
+  - shared/i18n/locales/ja/chat.json
+  - shared/i18n/locales/ru/chat.json
+  - shared/i18n/locales/zh/chat.json
+  - src/pages/Chat/ChatMessage.tsx
+  - src/pages/Chat/index.tsx
+  - tests/e2e/chat-session-compact-range.spec.ts
+  - tests/e2e/chat-user-message-actions.spec.ts-snapshots/user-message-actions-hover-dark-win32.png
+  - tests/unit/host-services.test.ts
+  - electron/services/sessions-api.ts
+  - src/lib/host-api.ts
 expectedUserBehavior:
   - A user can summarize only a chosen stretch of the conversation and keep the rest verbatim.
   - The untouched side is byte-identical after the operation; nothing outside the chosen range is rewritten.
@@ -95,11 +118,32 @@ follow-up implementation is not blocked (the agent is the mainline developer per
 
 ## Implementation status (2026-10-13)
 
-Deferred, not blocked on input. The gateway surface above is **not** implemented yet; a
-prefix-only implementation that reuses `hardenManualCompactionBoundary` (custom
-`firstKeptEntryId` plus the "keep boundary newer than the pipeline boundary" guard from
-decision 3) is the recommended next step. This spec and these decisions are the durable
-record so the work can resume without re-deriving the model.
+Implemented (agent-driven). The gateway surface, the pipeline cut-point override, the
+host-api / main bridge, and the per-message UI entry points are in place:
+
+- `CompactionSettings.keepFromEntryId` pins the retained tail; `prepareCompaction` validates
+  it against the active branch (absent / off-branch / not a valid cut point fail closed) and
+  summarizes only the prefix. `agent-session.compact(custom, { keepFromEntryId })` threads it,
+  and the manual hardening step is skipped when a located boundary is set.
+- `sessions.compactRange` accepts `key` plus exactly one of `fromLeafId` / `toLeafId`,
+  resolves the keep boundary against the active branch (`resolveRangeCompactionKeepEntry`),
+  and delegates to the single `sessions.compact` path so the validated pipeline, the
+  pre-operation checkpoint, and the admission rules are shared. A boundary that is absent,
+  off-branch, or that leaves an empty retained tail fails closed.
+- `sessions.compactRange` is exposed through `shared/host-api/contract.ts`,
+  `electron/services/sessions-api.ts`, and `src/lib/host-api.ts`; the user-message hover bar
+  offers "Summarize up to here" / "Summarize from here" (i18n in en/zh/ja/ru).
+
+Verified locally: `prepare-compaction.test.ts` (cut-point pin + fail-closed),
+`sessions.compaction-range.test.ts` (boundary resolution), `host-services.test.ts` (host
+proxy), and `tests/e2e/chat-session-compact-range.spec.ts` (hover action -> host call).
+`tsgo` node/web/test + core, `i18n:lint`, and eslint are clean.
+
+Residual gap (still open): the acceptance item "the untouched side is proven byte-identical
+by a test" is **not** covered. This change never edits a retained entry (only the compaction
+entry is appended and the file is re-serialized by the existing pipeline writer), but no
+test asserts byte-equality of the untouched entries, and driving the real pipeline needs a
+stubbed model beyond this change's scope.
 
 ## Non-goals
 
