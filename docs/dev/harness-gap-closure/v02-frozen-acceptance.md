@@ -1,49 +1,55 @@
-# V02：冻结候选与独立全链回归验收
+# V02: frozen-candidate and independent full-chain acceptance
 
-日期：2026-10-14（Asia/Shanghai）。包码：V02（TF-0299）。actor: codex-v02-executor；
-driven_by: agent。真实 provider/付费调用：无。
+Date: 2026-10-14 (Asia/Shanghai). Packet V02 (TF-0299). actor: codex-v02-executor; driven_by: agent.
+Real provider / paid calls: none.
 
-## 冻结候选
+## Frozen candidate
 
-- candidate branch: `codex/harness-gap-v02-frozen-acceptance-20261014`，base `origin/main`（PR #216 合并后）。
-- 候选不含新增产品行为；本包只新增 V02/V03 验收 spec、证据与守卫测试。
-- 产品锁：`live_ready=false`、`product_approved=false`、`default_on=false`，**未改变**。
+- candidate branch: `codex/v02-completion-20261014`, base `origin/main` after PR #220 (256841ba1).
+- The candidate adds no product behaviour; this packet only refreshes acceptance evidence and digests.
+- Product locks: `live_ready=false`, `product_approved=false`, `default_on=false`, **unchanged**.
 
-## 正式全门结果（design.md §3）
+## Formal full gate (design.md section 3)
 
-| 门 | 命令 | exit | 计数/结果 | 判定 |
+| Gate | Command | exit | Counts / result | Verdict |
 |---|---|---|---|---|
-| 全量单元 | `pnpm test` | 1 | 948 files: 937 passed / 7 failed / 4 skipped；8379 tests: 8316 passed / 11 failed / 52 skipped | **NO-GO** |
-| 未缓存类型 | `pnpm run typecheck` | 0 | node+web+test 三项目 0 error | PASS |
-| Lint | `pnpm run lint` | 1 | 4 errors / 115 warnings | **NO-GO** |
-| Comms 回放 | `pnpm run comms:replay` + `comms:compare` | 0 | Result PASS，0.00% delta | PASS |
+| Full unit | `pnpm test` | 0 | 949 files (945 pass / 0 fail / 4 skip); 8386 tests (8335 pass / 0 fail / 51 skip) | PASS |
+| Uncached typecheck | `pnpm run typecheck` | 0 | node + web + test, 0 errors | PASS |
+| Lint | `pnpm run lint` | 0 | 0 errors / 115 warnings | PASS |
+| Comms replay | `pnpm run comms:replay` + `comms:compare` | 0 | PASS, 0.00% delta | PASS |
 | Host contract | `pnpm run contract:check` | 0 | Contract check passed | PASS |
 | i18n | `pnpm run i18n:lint` | 0 | i18n lint passed | PASS |
-| Build | `pnpm run build:vite` | 0 | 前端 + Electron main/preload 构建成功 | PASS |
-| Electron E2E（全量） | `pnpm run test:e2e` | — | **未执行**（约 150 条串行 Electron spec，超出本会话包络） | NOT-RUN |
-| Electron E2E（代表） | `pnpm exec playwright test tests/e2e/telemetry-consent.spec.ts` | 0 | 1 passed / 44.8s（Node 24.19.0 + Electron 40.8.4） | PASS |
-| Harness CI | `pnpm run harness:ci` | 1 | spec-lifecycle 等 58 tests pass；`agent-dev:audit` 因 Agent Dev 证据 124h 过期而 fail | **NO-GO** |
+| Build | `pnpm run build:vite` | 0 | frontend + Electron main/preload built | PASS |
+| Harness CI | `pnpm run harness:ci` | 0 | all stages pass | PASS |
+| Agent Dev audit | `pnpm agent-dev:audit` | 0 | grade A, 94/100, 0 disqualifiers | PASS |
+| Full Electron E2E | `pnpm exec playwright test --workers=1` | 1 | 349 passed / 3 failed / 4 skipped (57.7m) | **NO-GO** |
 
-## 独立核验（Verifier 角色，agent 驱动）
+The E2E run must be preceded by `pnpm --dir openclaw_runtime run build` (the same step the
+Electron E2E workflow uses). Without it the gateway child exits with code 4294967295 and 28
+specs fail; with it, 25 of those 28 pass.
 
-从磁盘原始产物独立重算，不引用实现者结论：
+## Independent verification (Verifier role, agent-driven)
 
-1. 全量单元的 11 处失败在 **clean `origin/main` worktree**（`D:/ClawX-candidates/issue-213-writeset-scheduler-20261013`，5cc931fb4）上逐一复现，证明是 main 既有基线红，与本 change set 无关：
-   - `tests/unit/verseshell-manifest.test.ts`（7）与 `tests/unit/uas-05-verseshell-process-lifecycle.test.ts`（1）：缺少未随仓库分发的 `resources/bin/win32-x64/ae.exe` 二进制制品。
-   - `tests/unit/p0-production-acceptance.test.ts`（1）：`prebuild:vite` 断言过期（实际已含 `sync-lobe-icons.mjs`）。
-   - `tests/unit/rc01-authority-inventory-baseline.test.ts` / `rc01r-prerequisite-provenance.test.ts`（各 1）：`acceptedBaseSha` 不是当前候选祖先。
-   - `tests/unit/dcs-prod-flags-memory-semantics.test.tsx` / `vtoken-bridge-panel.test.tsx`（各 1）：`react-i18next` mock 缺 `initReactI18next` 导出。
-2. `harness:ci` 的 `agent-dev:audit` 失败来源于 `artifacts/agent-dev-*` 证据 124h 过期，属证据新鲜度，与 harness-gap 变更集无关。
+Recomputed from on-disk artifacts, not from the implementer's narrative:
 
-## 结论
+1. Unit / lint / harness:ci / agent-dev:audit all pass on the frozen candidate; the earlier
+   11 unit failures (7 files) and 4 lint errors were cleared in PRs #219/#220.
+2. The 3 residual E2E failures are on source identical to `origin/main` (this branch differs
+   only in `artifacts/`):
+   - `tests/e2e/chat-file-changes.spec.ts`: the preview inline script is blocked because the
+     hardened renderer CSP is inherited by the `srcdoc` frame.
+   - `tests/e2e/runtime-lifecycle-governance.spec.ts:181`: asserts the spawned CLI stderr is
+     empty; this pruned worktree emits pnpm install warnings.
+   - `tests/e2e/workspace-git-panel.spec.ts:857`: passes in isolation; order-flake in the serial suite.
 
-V02 正式全门 **NO-GO**：`pnpm test` 与 `pnpm run lint` 未全绿，且全量 Electron E2E 未执行。
-所有失败均为 `origin/main` 既有基线红（已在独立 clean worktree 复现），不属于 harness-gap-closure 30 包引入的回归；
-但按 design.md §3「缺跑不 PASS」，V02 不能裁为 PASS，产品锁与发布保持未变更。
+## Verdict
 
-## 未执行 / 缺测
+V02 is **NO-GO** only because the full Electron E2E is not green (3 residual failures, all on
+unchanged main behaviour). Every other formal gate now passes. Product locks and release state
+are unchanged.
 
-- 全量 Electron E2E 未执行（仅执行代表 spec）。
-- 外部 GitHub Actions CI 未执行。
-- 真实 provider / 付费调用未执行（不在本包范围）。
-- 独立第二 agent verifier 角色未启用；Verifier 由同一 agent 的独立重算步骤实现。
+## Not executed / not measured
+
+- External GitHub Actions CI.
+- Real provider / paid calls (out of scope for this packet).
+- A separate second-agent verifier role (verifier is the same agent's independent recomputation).

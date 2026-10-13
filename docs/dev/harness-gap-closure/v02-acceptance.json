@@ -11,27 +11,26 @@
     "liveProvider": false
   },
   "candidate": {
-    "branch": "codex/harness-gap-v02-frozen-acceptance-20261014",
-    "base": "6a394b0047908e6bc3b5b9bc12feb41871e9d8c8",
-    "note": "base is origin/main after PR #216"
+    "branch": "codex/v02-completion-20261014",
+    "base": "256841ba1",
+    "note": "base is origin/main after PR #220"
   },
   "decision": {
     "status": "NO-GO",
-    "reason": "Formal full gate is not green: pnpm test 11 failed/8316 passed/52 skipped; pnpm run lint 4 errors/115 warnings; full Electron E2E not executed. All unit failures reproduce on a clean origin/main worktree, so they are pre-existing baseline red rather than harness-gap regressions."
+    "reason": "Formal full gate is now much closer: pnpm test, lint, uncached typecheck, comms, contract, i18n, build, harness:ci and agent-dev:audit are all green. The full serial Electron E2E was executed after building openclaw_runtime/dist (the same step CI uses): 349 passed / 3 failed / 4 skipped. The 3 residual failures are on unchanged main behaviour, so V02 cannot honestly be marked PASS yet."
   },
   "gates": {
     "fullUnit": {
       "command": "pnpm test",
-      "exitCode": 1,
-      "files": 948,
-      "filesFailed": 7,
-      "filesPassed": 937,
+      "exitCode": 0,
+      "files": 949,
+      "filesFailed": 0,
+      "filesPassed": 945,
       "filesSkipped": 4,
-      "tests": 8379,
-      "testsFailed": 11,
-      "testsPassed": 8316,
-      "testsSkipped": 52,
-      "durationMs": 1371370
+      "tests": 8386,
+      "testsFailed": 0,
+      "testsPassed": 8335,
+      "testsSkipped": 51
     },
     "typecheckUncached": {
       "command": "pnpm run typecheck",
@@ -40,8 +39,8 @@
     },
     "lintFull": {
       "command": "pnpm run lint",
-      "exitCode": 1,
-      "errors": 4,
+      "exitCode": 0,
+      "errors": 0,
       "warnings": 115
     },
     "commsReplay": {
@@ -66,9 +65,13 @@
       "exitCode": 0
     },
     "fullElectronE2E": {
-      "command": "pnpm run test:e2e",
-      "exitCode": null,
-      "result": "NOT-RUN (approx 150 serial Electron specs exceed the session envelope)"
+      "command": "pnpm exec playwright test --workers=1 (after pnpm --dir openclaw_runtime run build)",
+      "exitCode": 1,
+      "passed": 349,
+      "failed": 3,
+      "skipped": 4,
+      "durationMs": 3462000,
+      "note": "First run without the runtime build had 28 failures caused by gateway child exit code 4294967295; building openclaw_runtime/dist/entry.js fixed 25 of them."
     },
     "representativeElectronE2E": {
       "command": "pnpm exec playwright test tests/e2e/telemetry-consent.spec.ts",
@@ -79,21 +82,25 @@
     },
     "harnessCi": {
       "command": "pnpm run harness:ci",
-      "exitCode": 1,
-      "note": "spec-lifecycle 58 tests pass; agent-dev:audit fails on 124h-stale Agent Dev evidence"
+      "exitCode": 0,
+      "note": "agent-dev:audit A/94 with no disqualifiers after refreshing workbench/deep-test/quality evidence"
+    },
+    "agentDevAudit": {
+      "command": "pnpm agent-dev:audit",
+      "exitCode": 0,
+      "grade": "A",
+      "totalScore": 94,
+      "maxScore": 100,
+      "disqualifiers": 0
     }
   },
   "residual": {
     "baselineFailures": [
-      "tests/unit/verseshell-manifest.test.ts (7) missing resources/bin/win32-x64/ae.exe",
-      "tests/unit/uas-05-verseshell-process-lifecycle.test.ts (1) missing resources/bin/win32-x64/ae.exe",
-      "tests/unit/p0-production-acceptance.test.ts (1) stale prebuild:vite assertion",
-      "tests/unit/rc01-authority-inventory-baseline.test.ts (1) acceptedBaseSha not an ancestor",
-      "tests/unit/rc01r-prerequisite-provenance.test.ts (1) acceptedBaseSha not an ancestor",
-      "tests/unit/dcs-prod-flags-memory-semantics.test.tsx (1) react-i18next mock missing initReactI18next",
-      "tests/unit/vtoken-bridge-panel.test.tsx (1) react-i18next mock missing initReactI18next"
+      "tests/e2e/chat-file-changes.spec.ts (html preview inline script blocked by inherited renderer CSP)",
+      "tests/e2e/runtime-lifecycle-governance.spec.ts:181 (CLI stderr coupling to this pruned worktree)",
+      "tests/e2e/workspace-git-panel.spec.ts:857 (passes in isolation; order-flake in the full serial run)"
     ],
-    "reproduction": "All 11 failures reproduced in clean origin/main worktree D:/ClawX-candidates/issue-213-writeset-scheduler-20261013 (5cc931fb4).",
+    "reproduction": "The remaining E2E failures are on source identical to origin/main (this branch differs only in artifacts/).",
     "notRun": [
       "full Electron E2E",
       "external GitHub Actions CI",
