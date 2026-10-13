@@ -1,0 +1,5 @@
+e1bf507b61cd5df38514ff797f23b4bffe2c77f9370404a9fa7230c5c9d857fb  docs/dev/harness-gap-closure/s07-acceptance.json
+9ccdcf6386deb551840e1c445a428bef66c6df418c67ae2ae5329484277c19b3  docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md
+3d74933529111be8cfa41ce24db15be0aa28311bd0dd409cca9a85ebddb3039e  harness/specs/tasks/harness-gap-verifier-completion-verdict.md
+06e2c96e12dc1506761a6366fdaf3bcca432ce390a4e843cae538e9c8b40e5fa  openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts
+5e70e5bcfc1c54e709233c4d191d7480b94edadbf33200b83e149923371b7434  openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts

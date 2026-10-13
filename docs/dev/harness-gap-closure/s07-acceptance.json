@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-s07-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0282",
+    "packet": "S07",
+    "title": "Bounded, revocable verifier completion-verdict entry",
+    "source": "deterministic evidence-verifier fixtures (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "A bounded, revocable completion-verdict entry reuses the existing evidence verifier: approved only on completed evidence, out-of-scope tasks get no verdict, only approved produces one node->done transition, revocation restores the prior status, and the record carries no publish/product-lock authority. Six verdict tests + five verifier tests pass."
+  },
+  "candidate": {
+    "commit": "38170e1a369a13c4b4c793dc5ab48defa06bb940",
+    "tree": "b880e2d16bbc736c5ac900398e40c2897914fab5",
+    "dirty": false,
+    "branch": "codex/harness-gap-s07-verifier-completion-verdict-20261013",
+    "base": "5da98d1ab1563e924cc97bd43ff206072b1d4dd4",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T13:20:00.000Z",
+    "finishedAt": "2026-10-13T13:28:00.000Z"
+  },
+  "verdictEntry": {
+    "module": "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts",
+    "authority": "reuses evaluateEvidenceVerifier (evidence-verifier.ts); no second permission layer",
+    "bounded": "verdict only for taskIds in scope; otherwise out-of-scope with no transition",
+    "mapping": {
+      "completed": "approved",
+      "insufficient_evidence": "insufficient-evidence",
+      "failed/blocked/cancelled": "rejected",
+      "out-of-scope": "out-of-scope"
+    },
+    "transition": "only approved -> { nodeId: taskId, from: priorStatus, to: 'done' } via the existing task-ledger status_changed source",
+    "recovable": "revokeVerifierCompletionVerdict -> { from: 'done', to: priorStatus }",
+    "record": [
+      "taskId",
+      "verdict",
+      "evidenceDigest",
+      "findingCodes",
+      "priorStatus",
+      "grantsPublish=false",
+      "grantsProductLock=false"
+    ],
+    "digestOnly": true
+  },
+  "gates": {
+    "verdictTests": {
+      "command": "openclaw_runtime: run-vitest src/runtime-core/verifier-completion-verdict.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 6,
+      "failed": 0
+    },
+    "verifierRegression": {
+      "command": "openclaw_runtime: run-vitest evidence-verifier.test.ts verifier-completion-verdict.test.ts",
+      "exitCode": 0,
+      "files": 2,
+      "tests": 11,
+      "failed": 0
+    },
+    "typecheckCore": {
+      "command": "openclaw_runtime: pnpm run tsgo:core",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "openclaw_runtime: run-oxlint verifier-completion-verdict.ts verifier-completion-verdict.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-verifier-completion-verdict.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "assembly": "The entry returns the verdict + transition/revocation description; wiring it into the Electron main task-ledger service call site is integration-layer work (not in this packet's ownedPaths).",
+    "scope": "Bounded to scope.taskIds; no publish/product-lock/release capability; product defaults/locks/approval unchanged."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "matrix + determinism assertions",
+    "detail": "Tests cover approved/insufficient/out-of-scope/revoke, digest-only record shape (no content/publish/lock fields), and determinism (same evidence -> same digest). No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "reuse-authority",
+      "status": "pass",
+      "note": "Reuses evaluateEvidenceVerifier; no second verifier authority layer."
+    },
+    {
+      "id": "bounded",
+      "status": "pass",
+      "note": "Only scope.taskIds receive a verdict; out-of-scope tasks get out-of-scope and no transition."
+    },
+    {
+      "id": "single-transition",
+      "status": "pass",
+      "note": "Only approved yields { nodeId, from: priorStatus, to: 'done' }; other verdicts never transition."
+    },
+    {
+      "id": "digest-only",
+      "status": "pass",
+      "note": "Record carries taskId/verdict/evidenceDigest/findingCodes/priorStatus only; no raw evidence content."
+    },
+    {
+      "id": "revocable",
+      "status": "pass",
+      "note": "Revocation restores the recorded priorStatus; non-approved verdicts have nothing to revoke."
+    },
+    {
+      "id": "no-publish-lock",
+      "status": "pass",
+      "note": "Record explicitly grantsPublish=false and grantsProductLock=false; no release capability."
+    },
+    {
+      "id": "deterministic",
+      "status": "pass",
+      "note": "Same evidence -> same evidenceDigest and identical record (replay-safe)."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "6 new + 5 regression tests pass, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 3,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Electron main assembly of the verdict entry.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
