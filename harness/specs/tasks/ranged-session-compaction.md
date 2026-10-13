@@ -21,6 +21,7 @@ touchedAreas:
   - openclaw_runtime/src/gateway/server-methods.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.test.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.handler.test.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.compaction.ts
   - shared/host-api/contract.ts
   - shared/i18n/locales/en/chat.json
