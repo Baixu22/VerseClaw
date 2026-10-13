@@ -1,0 +1,5 @@
+2df9f728a9c7867659b2ce03135e1754a26b7a57fe7f51be80d4ae64c6d18e0c  docs/dev/harness-gap-closure/a04-acceptance.json
+70523dba803de52a819f3650602818aaede0d4d5c5780fb7a847e8cd45a07139  docs/dev/harness-gap-closure/a04-decision-quality-gate.md
+58e2d7238365eb551e3b02869deb94a67939e5175ec0d79fef913d5e8323af08  harness/specs/tasks/a4-decision-quality-pilot.md
+7a676a292bee11846f60481b9239fdbd41cd994058d6cc10a122b755f60e1d02  harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md
+30720dbdef4c277bd3e6bf03e07c658392087483e5e2746f3090fdce6e3af234  tests/unit/a04-a4-gate-coverage.test.ts

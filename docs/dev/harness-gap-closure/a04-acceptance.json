@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-a04-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0296",
+    "packet": "A04",
+    "title": "Re-verify A4 decision-quality controlled pilot gate",
+    "source": "current-candidate unit tests (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "NO-GO",
+    "evidenceTier": "clean-candidate-local-automated-reverification",
+    "reason": "A4 module-level scoring/counters and the documented A4-first degradation order pass at the original thresholds, but the Active Pilot production gate remains NO-GO: the development manual requires A4 to be offline/dev-tool-only, there is no production audit caller, and A4 is not part of the measured per-turn cumulative latency smoke. The archived pilot spec was not treated as current production promotion."
+  },
+  "candidate": {
+    "commit": "0f6d21f673ba491527fc3161dafc8430edb655d8",
+    "tree": "485791b4570118f920a0c26923f28fed1096d99f",
+    "dirty": false,
+    "branch": "codex/harness-gap-a04-decision-quality-reverify-20261013",
+    "base": "65ecf51657e25297b48bf002ac0af5344362487e",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T15:17:00.000Z",
+    "finishedAt": "2026-10-13T15:25:00.000Z"
+  },
+  "criteria": {
+    "criterion1_lowQualityRate": {
+      "threshold": "lowQualityDecisions / auditedDecisions <= 0.10; >0.10 -> violated",
+      "evidence": "tests/unit/decision-quality-auditor.test.ts; tests/unit/deprecation-counters.test.ts; tests/unit/deep/a4-deep.test.ts",
+      "verdict": "PASS"
+    },
+    "criterion2_auditCoverage": {
+      "threshold": "every shadow decision audited (sampling rate 1.0)",
+      "evidence": "module-level auditBatch increments auditedDecisions by records.length; no production caller in openclaw_runtime/src; development manual requires A4 offline/dev-tool-only",
+      "verdict": "NO-GO",
+      "moduleLevel": "PASS"
+    },
+    "criterion3_budgetAction": {
+      "threshold": "rate > 0.10 -> degrade_to_audit_only",
+      "evidence": "tests/unit/deprecation-counters.test.ts; tests/unit/deep/a4-deep.test.ts",
+      "verdict": "PASS"
+    },
+    "criterion4_degradationOrder": {
+      "threshold": "A4 is first in degradation order A4->A3->A5->A1 and cumulative latency budget is respected",
+      "evidence": "tests/unit/trace-truncation.test.ts proves a4/a3/a5 drop before a1; tests/unit/performance-budgets.test.ts does not include A4",
+      "verdict": "PARTIAL",
+      "order": "PASS",
+      "cumulativeLatency": "NOT-MEASURED"
+    }
+  },
+  "specDriftFixed": {
+    "issue": "The archived A4 pilot spec's requiredTests listed only deprecation-counters and performance-budgets, omitting the real decision-quality auditor, A4 deep, and trace degradation-order tests.",
+    "fix": "Added tests/unit/decision-quality-auditor.test.ts, tests/unit/deep/a4-deep.test.ts, tests/unit/trace-truncation.test.ts, and tests/unit/a04-a4-gate-coverage.test.ts; thresholds unchanged."
+  },
+  "gates": {
+    "a4Evidence": {
+      "command": "pnpm exec vitest run tests/unit/decision-quality-auditor.test.ts tests/unit/deprecation-counters.test.ts tests/unit/performance-budgets.test.ts tests/unit/deep/a4-deep.test.ts tests/unit/trace-truncation.test.ts tests/unit/a04-a4-gate-coverage.test.ts",
+      "exitCode": 0,
+      "files": 6,
+      "tests": 67,
+      "failed": 0
+    },
+    "typecheckTest": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "pnpm exec eslint tests/unit/a04-a4-gate-coverage.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "productionCaller": "No production A4 audit caller exists; the development manual explicitly says A4 is offline/dev-tool-only and must not run on any production turn path, so the Active Pilot production criterion remains NO-GO rather than being fabricated.",
+    "cumulativeLatency": "A4 is not included in the A5+A1+A3 cumulative latency smoke; that numeric production latency criterion is NOT-MEASURED.",
+    "pilotOnly": "A4 remains offline/controlled pilot; no default-on/GA, no product lock change.",
+    "scope": "Deterministic unit evidence; no live provider/real-human."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "criterion-to-assertion mapping + coverage guard",
+    "detail": "Each A4 criterion was mapped to a current assertion or explicitly recorded NO-GO/NOT-MEASURED; the guard pins requiredTests, the degrade action, A4-first drop order, and the offline-only production boundary. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "criterion1",
+      "status": "pass",
+      "note": "low-quality rate <=10% and >10% violation asserted at original threshold."
+    },
+    {
+      "id": "criterion2",
+      "status": "no-go",
+      "note": "module-level 1:1 audit counting exists, but no production caller and the manual prohibits production A4 wiring."
+    },
+    {
+      "id": "criterion3",
+      "status": "pass",
+      "note": "degrade_to_audit_only asserted on >10%."
+    },
+    {
+      "id": "criterion4",
+      "status": "partial",
+      "note": "degradation order A4->A3->A5->A1 proven via trace truncation; A4 cumulative latency not measured."
+    },
+    {
+      "id": "spec-drift-fixed",
+      "status": "pass",
+      "note": "missing requiredTests wired and coverage guard added; thresholds unchanged."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "6 files / 67 tests pass; typecheck:test, scoped lint, harness validate/dry-run and comms replay/compare pass; credential scan 0 hits; SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 4,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Production A4 audit coverage (no production caller by documented offline-only boundary).",
+    "A4 per-turn cumulative latency smoke (A4 absent from the performance budget test).",
+    "Live provider calls.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
