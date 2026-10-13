@@ -24,6 +24,9 @@ expectedUserBehavior:
   - Documentation/runtime drift is handled by keeping the existing Mission flow runnable and recording the mismatch, not by broad code reshaping in this gate.
 requiredTests:
   - tests/unit/performance-budgets.test.ts
+  - tests/unit/anomaly-classifier.test.ts
+  - tests/unit/deprecation-counters.test.ts
+  - openclaw_runtime/src/observability/deprecation-counters.test.ts
 acceptance:
   - A3 deprecation counter `anomalyNonNullCount` rate ≤ 20% over 100 Mission ticks
   - A3 p99 ≤ 15ms (criterion 4.7)
