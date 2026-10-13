@@ -136,6 +136,17 @@ function compactRangeMocks() {
         reason: 'manual',
         result: { summary: 'Summarized the earlier turn.', tokensBefore: 12000, tokensAfter: 4000, firstKeptEntryId: USER_MESSAGE_ID },
       },
+      [stableStringify(['sessions', 'compactRange', {
+        sessionKey: SESSION_KEY,
+        agentId: 'main',
+        toLeafId: USER_MESSAGE_ID,
+      }])]: {
+        success: true,
+        key: SESSION_KEY,
+        compacted: true,
+        reason: 'manual',
+        result: { summary: 'Summarized through this turn.', tokensBefore: 12000, tokensAfter: 5000, firstKeptEntryId: USER_MESSAGE_ID },
+      },
     },
   };
 }
@@ -177,6 +188,37 @@ test.describe('Verse Claw located (range) compaction', () => {
           if (call?.module !== 'sessions' || call?.action !== 'compactRange') return false;
           const payload = (call.payload ?? {}) as Record<string, unknown>;
           return payload.sessionKey === target.sessionKey && payload.fromLeafId === target.messageId;
+        });
+      }, { sessionKey: SESSION_KEY, messageId: USER_MESSAGE_ID }), { timeout: 30_000 }).toBe(true);
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
+  test('summarizes up to a chosen message, folding it into the summary', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, compactRangeMocks());
+      const page = await getStableWindow(app);
+      await page.reload();
+      await page.waitForLoadState('domcontentloaded');
+
+      const messageRow = page.getByTestId('chat-message-0');
+      const messageText = messageRow.locator('p').filter({ hasText: USER_MESSAGE_TEXT });
+      await expect(messageText).toBeVisible({ timeout: 30_000 });
+
+      await messageText.hover();
+      await page.getByTestId('chat-user-message-summarize-to').click();
+
+      await expect.poll(async () => app.evaluate((_electron, target) => {
+        const calls = (globalThis as typeof globalThis & {
+          __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: Record<string, unknown> }>;
+        }).__verseClawE2eHostCalls ?? [];
+        return calls.some((call) => {
+          if (call?.module !== 'sessions' || call?.action !== 'compactRange') return false;
+          const payload = (call.payload ?? {}) as Record<string, unknown>;
+          return payload.sessionKey === target.sessionKey && payload.toLeafId === target.messageId;
         });
       }, { sessionKey: SESSION_KEY, messageId: USER_MESSAGE_ID }), { timeout: 30_000 }).toBe(true);
     } finally {
