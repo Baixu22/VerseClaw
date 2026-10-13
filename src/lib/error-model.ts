@@ -35,12 +35,62 @@ export const APP_ERROR_CODES = [
   'UNKNOWN',
 ] as const satisfies readonly AppErrorCode[];
 
+/**
+ * A bounded, permission-scoped recovery action an agent may take after an error.
+ * It is never a shell command or raw script — only one of these fixed verbs with
+ * bounded string arguments. Absent = no automatic repair is possible, so the
+ * caller must surface the original error to the user.
+ */
+export type ErrorRecoveryAction = {
+  kind: "retry" | "reauthenticate" | "reconfigure" | "open-settings" | "contact-support";
+  /** Bounded, display-safe argument (for example a setting key or channel id). */
+  target?: string;
+};
+
+/** How the recovery action is scoped, so an agent cannot exceed its authority. */
+export type ErrorRecoveryScope = "self-retry" | "user-action-required";
+
+/**
+ * Pre-registered recovery table: the only bounded recovery action each error
+ * class permits, plus whether an agent may take it. Errors absent from the table
+ * carry no recovery action (no automatic repair).
+ */
+export const ERROR_RECOVERY_TABLE: Record<AppErrorCode, { retryable: boolean; scope: ErrorRecoveryScope; action?: ErrorRecoveryAction }> = {
+  AUTH_INVALID: { retryable: false, scope: "user-action-required", action: { kind: "reauthenticate" } },
+  AUTH_PERMANENT: { retryable: false, scope: "user-action-required", action: { kind: "contact-support" } },
+  TIMEOUT: { retryable: true, scope: "self-retry", action: { kind: "retry" } },
+  RATE_LIMIT: { retryable: true, scope: "self-retry", action: { kind: "retry" } },
+  PERMISSION: { retryable: false, scope: "user-action-required", action: { kind: "open-settings", target: "permissions" } },
+  CHANNEL_UNAVAILABLE: { retryable: true, scope: "self-retry", action: { kind: "retry" } },
+  CONVERSATION_STATE: { retryable: false, scope: "user-action-required", action: { kind: "open-settings", target: "conversation" } },
+  NETWORK: { retryable: true, scope: "self-retry", action: { kind: "retry" } },
+  CONFIG: { retryable: false, scope: "user-action-required", action: { kind: "reconfigure" } },
+  GATEWAY: { retryable: true, scope: "self-retry", action: { kind: "retry" } },
+  BILLING: { retryable: false, scope: "user-action-required", action: { kind: "open-settings", target: "billing" } },
+  OVERLOADED: { retryable: true, scope: "self-retry", action: { kind: "retry" } },
+  MODEL_NOT_FOUND: { retryable: false, scope: "user-action-required", action: { kind: "reconfigure", target: "model" } },
+  UNKNOWN: { retryable: false, scope: "user-action-required" },
+};
+
+/** Whether the error class is safe for an agent to retry automatically. */
+export function isRetryableAppErrorCode(code: AppErrorCode): boolean {
+  return ERROR_RECOVERY_TABLE[code]?.retryable === true;
+}
+
+export function recoveryActionForAppErrorCode(code: AppErrorCode): ErrorRecoveryAction | undefined {
+  return ERROR_RECOVERY_TABLE[code]?.action;
+}
+
 export class AppError extends Error {
   code: AppErrorCode;
   cause?: unknown;
   details?: Record<string, unknown>;
   /** Renderer-side correlation id echoed by the Main host dispatcher. */
   requestId?: string;
+  /** True only for classes an agent may retry automatically. */
+  retryable: boolean;
+  /** Bounded, permission-scoped recovery action; absent means surface the error to the user. */
+  nextAction?: ErrorRecoveryAction;
 
   constructor(
     code: AppErrorCode,
@@ -55,6 +105,8 @@ export class AppError extends Error {
     this.cause = cause;
     this.details = details;
     this.requestId = requestId;
+    this.retryable = isRetryableAppErrorCode(code);
+    this.nextAction = recoveryActionForAppErrorCode(code);
   }
 }
 

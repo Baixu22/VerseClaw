@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-g01-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0289",
+    "packet": "G01",
+    "title": "Errors return an executable, permission-scoped repair action",
+    "source": "deterministic AppError fixtures (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Every AppErrorCode now carries a stable code + retryable + a bounded, permission-scoped nextAction limited to fixed verbs; no shell/raw-script fields are possible; UNKNOWN carries no action so the original error is surfaced to the user. The existing error-governance single-envelope check still passes."
+  },
+  "candidate": {
+    "commit": "8972c4a76e7d4eca6e7cf62da1e2d37c80267b99",
+    "tree": "81bdefa45a6a88fbf45c04422b1696c789bcb772",
+    "dirty": false,
+    "branch": "codex/harness-gap-g01-error-recovery-20261013",
+    "base": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T14:20:00.000Z",
+    "finishedAt": "2026-10-13T14:28:00.000Z"
+  },
+  "recovery": {
+    "module": "src/lib/error-model.ts",
+    "table": "ERROR_RECOVERY_TABLE[AppErrorCode] = { retryable, scope, action? }",
+    "verbs": [
+      "retry",
+      "reauthenticate",
+      "reconfigure",
+      "open-settings",
+      "contact-support"
+    ],
+    "selfRetry": [
+      "TIMEOUT",
+      "RATE_LIMIT",
+      "NETWORK",
+      "GATEWAY",
+      "OVERLOADED",
+      "CHANNEL_UNAVAILABLE"
+    ],
+    "userActionRequired": [
+      "AUTH_INVALID",
+      "AUTH_PERMANENT",
+      "PERMISSION",
+      "CONVERSATION_STATE",
+      "CONFIG",
+      "BILLING",
+      "MODEL_NOT_FOUND",
+      "UNKNOWN"
+    ],
+    "noExecutableFields": true,
+    "unknownHasNoAction": true,
+    "envelope": "reuses HostResponse + AppError; no second envelope/error type"
+  },
+  "gates": {
+    "g01Tests": {
+      "command": "vitest run tests/unit/error-recovery-next-action.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 5,
+      "failed": 0
+    },
+    "errorGovernanceRegression": {
+      "command": "vitest run tests/unit/error-governance-boundary.test.ts tests/unit/error-recovery-next-action.test.ts",
+      "exitCode": 0,
+      "files": 2,
+      "tests": 44,
+      "failed": 0
+    },
+    "errorGovernanceCheck": {
+      "command": "node scripts/check-error-governance.mjs",
+      "exitCode": 0,
+      "result": "PASS: 16 checks"
+    },
+    "typecheckWeb": {
+      "command": "pnpm run typecheck:web",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "eslint src/lib/error-model.ts tests/unit/error-recovery-next-action.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-error-recovery-next-action.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-error-recovery-next-action.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "ui": "The error->recovery mapping is provided; rendering the 'next step' control in the UI is renderer integration work.",
+    "scope": "No default/lock/approval change; no second envelope/error type."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "total-coverage + non-executable assertions + governance check",
+    "detail": "Tests assert total coverage over APP_ERROR_CODES, that only self-retry classes are retryable with action retry, that nextAction has no executable keys, and that UNKNOWN has no action; the existing error-governance check re-validates the single envelope. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "total-table",
+      "status": "pass",
+      "note": "Every AppErrorCode has a recovery entry (retryable + scope + optional action)."
+    },
+    {
+      "id": "retryable-scope",
+      "status": "pass",
+      "note": "Only self-retry classes are retryable and their action is exactly { kind: 'retry' }; others are user-action-required and never 'retry'."
+    },
+    {
+      "id": "bounded-action",
+      "status": "pass",
+      "note": "nextAction.kind is one of five fixed verbs; keys are only kind(+target); no command/script/shell/exec/argv fields."
+    },
+    {
+      "id": "unknown-surfaced",
+      "status": "pass",
+      "note": "UNKNOWN carries no action, so the original error must be surfaced to the user (no fabricated repair)."
+    },
+    {
+      "id": "single-envelope",
+      "status": "pass",
+      "note": "Reuses HostResponse + AppError; the error-governance check still PASSes (16 checks)."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "5 new + 39 governance tests pass, typecheck:web 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 3,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Renderer 'next step' control integration.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
