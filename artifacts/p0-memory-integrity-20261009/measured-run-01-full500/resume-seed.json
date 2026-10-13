@@ -1,0 +1,29 @@
+{
+  "driven_by": "agent",
+  "actor": "dsh-lead",
+  "seededAt": "2026-10-13T10:12:40.776Z",
+  "source": "D:\\ClawX-work\\locomo-final-20261013-1545",
+  "sourceRevision": "b2bc0e40c2548189b350f3ba22b599915f58f35a",
+  "copied": [
+    {
+      "file": "extracted-facts-cache-v6-additive-p0.json",
+      "sha256": "57c1f70f3d69d7279d285d480347b8cf15b77e193d61536bba663ce4542bff2a"
+    },
+    {
+      "file": "observations-cache.json",
+      "sha256": "a62c204640741e21b39fdb539cc56366dd78b05b3f8441768b10c3505f4d071d"
+    },
+    {
+      "file": "session-summary-cache.json",
+      "sha256": "2a2b0848c8af713dda8660123a87d1b1766e28ed427ca6adc6be723340a655b9"
+    },
+    {
+      "file": "question-journal.jsonl",
+      "sha256": "e3de9ddee009b26649b9428db4e5732fefe19b274ed74de5f5757a1968ed740e"
+    },
+    {
+      "file": "embedding-cache.json",
+      "sha256": "e54358792d53cd96a7672e2affec0ba9909d575a73431afc9f3c6fe431e3174c"
+    }
+  ]
+}

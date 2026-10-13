@@ -1,0 +1,14 @@
+{"driven_by":"agent","at":"2026-10-13T10:13:08.130Z","phase":"judging-start","answered":480,"pending":20,"pid":30084,"rssMb":1222,"heapUsedMb":726,"heapTotalMb":836,"externalMb":311,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:13:51.158Z","phase":"judging","answered":483,"pending":17,"pid":30084,"rssMb":1046,"heapUsedMb":664,"heapTotalMb":699,"externalMb":310,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:14:08.164Z","phase":"judging","answered":483,"pending":17,"pid":30084,"rssMb":1041,"heapUsedMb":666,"heapTotalMb":700,"externalMb":310,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:14:23.139Z","phase":"judging","answered":486,"pending":14,"pid":30084,"rssMb":813,"heapUsedMb":666,"heapTotalMb":700,"externalMb":310,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:14:59.415Z","phase":"judging","answered":489,"pending":11,"pid":30084,"rssMb":462,"heapUsedMb":668,"heapTotalMb":700,"externalMb":311,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:15:08.167Z","phase":"judging","answered":489,"pending":11,"pid":30084,"rssMb":447,"heapUsedMb":669,"heapTotalMb":700,"externalMb":311,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:15:51.516Z","phase":"judging","answered":492,"pending":8,"pid":30084,"rssMb":281,"heapUsedMb":671,"heapTotalMb":701,"externalMb":311,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:16:08.179Z","phase":"judging","answered":492,"pending":8,"pid":30084,"rssMb":295,"heapUsedMb":672,"heapTotalMb":701,"externalMb":311,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:16:34.402Z","phase":"judging","answered":495,"pending":5,"pid":30084,"rssMb":297,"heapUsedMb":671,"heapTotalMb":699,"externalMb":311,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:17:08.191Z","phase":"judging","answered":495,"pending":5,"pid":30084,"rssMb":245,"heapUsedMb":672,"heapTotalMb":699,"externalMb":311,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:17:42.622Z","phase":"judging","answered":498,"pending":2,"pid":30084,"rssMb":279,"heapUsedMb":674,"heapTotalMb":701,"externalMb":311,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:18:08.205Z","phase":"judging","answered":498,"pending":2,"pid":30084,"rssMb":267,"heapUsedMb":673,"heapTotalMb":702,"externalMb":311,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:18:50.528Z","phase":"judging","answered":500,"pending":0,"pid":30084,"rssMb":247,"heapUsedMb":675,"heapTotalMb":703,"externalMb":311,"heapLimitMb":3264}
+{"driven_by":"agent","at":"2026-10-13T10:18:51.038Z","phase":"judging-complete","answered":500,"pending":0,"pid":30084,"rssMb":247,"heapUsedMb":675,"heapTotalMb":703,"externalMb":311,"heapLimitMb":3264}

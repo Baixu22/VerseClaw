@@ -1,6 +1,6 @@
 # P0 记忆评测完整性修复
 
-启动：2026-10-09；本次更新：2026-10-10。driven_by: agent；actor: codex-p0-remediation。
+启动：2026-10-09；本次更新：2026-10-13。driven_by: agent；actor: codex-p0-remediation（2026-10-13 实测段 actor: codex-locomo-evaluator）。
 
 ## 范围与证据边界
 
@@ -11,11 +11,28 @@
 - **#134**：LoCoMo 的 evidence 是轮次 ID。评测的 cached/fresh 两条路径均用该会话的真实 turn-text map 解析，再计算词级上下文覆盖；合并 ID、零填充和数据集中的 D:11:26 形态均规范化。空 evidence 计 0；无法解析的 ID 留在分母中作未命中，不再获得满分。缺少解析表却传入 ID 时直接报错。这个字段是**最终上下文的词级覆盖诊断**，不是主检索指标，更不能混同 L2 之前的检索效果。
 - **#137**：保持 frozen-v2-generous-2026-07-04 judge 的冻结规则原样；显式披露部分正确、列表覆盖 50%、日期相差 14 天、子串/超串、同实体别名都可以判 CORRECT。外部论文值放入 references，整体 judgeComparable=false / rankingAllowed=false；控制台也不把 ours 混排。不同 judge、数据或管线下的分数不可直接比较。
 
+## 2026-10-13 完整 500 题实测（#135、#136、#138 收口）
+
+真实运行完成并通过校验：`scripts/check-locomo-evidence.mjs` 对入库 fixture 返回 `verified: true`（500 题、4881 份模型收据、52 个来源哈希、judgeCacheHits=0 / judgeCacheMisses=500）。命令为 `scripts/run-locomo-full-evaluation.mjs`，本地 llama.cpp 部署（judge `qwen2.5-7b-instruct`，嵌入 `qwen3-embedding-8b-q4_k_m` Q4_K_M，均为 loopback）。`driven_by: agent`，未主张任何真人参与。
+
+| 范围 | n | J Score | Recall@5 | Context recall |
+|---|---|---|---|---|
+| OVERALL | 500 | 0.5580 | 0.3820 | 0.7369 |
+| temporal | 150 | 0.6333 | 0.4374 | 0.8178 |
+| multi_hop | 96 | 0.4583 | 0.2034 | 0.6362 |
+| single_hop | 127 | 0.4961 | 0.3062 | 0.6493 |
+| open_domain | 127 | 0.6063 | 0.5275 | 0.8051 |
+
+- **#135**：报告已落盘 L0 487（0.974）/ L1 11（0.022）/ L2 2（0.004），`capped=0`；`memory_only`（仅 L0+L1，n=498）J=0.5602 且带 `selectionBias` 说明；`scoreAttribution` 明示整体 J 含 L2 的非检索贡献。全量 J 与纯记忆分不再混淆，比例已披露。
+- **#136**：`retrieval-diagnostic.json` 与报告同批产出。`absent_from_memory` 0/500、`in_memory_but_not_top5` 445/500、`retrieved_in_top5` 51/500、记忆覆盖 0.9007 对 top-5 覆盖 0.4122 → 瓶颈在**排序**而非抽取。temporal 对非 temporal 的 top-5 覆盖 **+0.0333**（0.4356 vs 0.4022，comparable=true），即历史"temporal 退化"的读数在本题本管线**未复现**；检索回归仍由比较器独立置失败，不被 J 上涨掩盖。
+- **#138**：`tests/fixtures/runtime-memory-eval/locomo-full-500-measured-report.json` + `.sha256` 入库，`pnpm eval:runtime-memory:locomo:verify`（默认路径）现在 exit 0。历史三份聚合 fixture 未改标签、未重写字节，仍不作为基线。
+
+本次运行的两个真实缺陷已修复并留证（详见 `artifacts/p0-memory-integrity-20261009/measured-run-01-full500/README.md`）：judge 服务需**统一 KV 池**才能承载 L2 整段对话请求（按 slot 分区会给 400）；`journalStartedAt()` 原先只用保留题目的时间放宽逻辑运行窗口，导致保留的抽取期收据被判为 "Receipt outside this run"（commit `6391f7af4`，含回归测试）。
+
+边界：这是**新的本地部署参考**，不是 0.752 / 0.452 的复现或验证，也不是 memory-on/off 对比或产品就绪声明；`recall_at_5` 仍是词面重叠代理，judge 仍是刻意宽松的冻结版本。
+
 ## 仍须完成的验收
 
-- #135：代码已输出 L0/L1/L2 分数与占比、L0+L1 子集和选择偏差；空子集为 null，不给满分。schema 校验各层计数、全量/子集加权分数及 full_conversation_rate，拒绝把全量 J 冒充纯记忆分。**原管线真实运行仍待完成**。
-- #136：已修复比较器的漏报：整体/类别检索 proxy 回归独立置失败，J 上升不能抵消；新增不同/未知 judge 的不可比警告，context_recall 仅在定义相同的版本间比较。直接读取仓库历史文件得到 temporal -0.1195185185，而 J +0.4533333333；这仍是未经验证历史聚合值的算术，不是可重复的实测退化或已恢复检索质量的证据。真实配对复验随 #138 的资源齐备后运行。
-- #138：完整逐题产物、来源指纹与失效门。现有历史 fixture 不得改标签冒充新运行。StepFun 生成/判分资源已通过真实探针，原混合检索管线另需 SiliconFlow 嵌入资源。
 - #62：fsck exit 2，all-history 遍历 exit 128，仍缺 29 个对象；精确哈希 fetch exit 128，13 个相关本地镜像均不含这些对象。保留三个 rescue 引用，未 prune / gc / 删除历史，未改 main 或主工作区内容。
 
 ## 2026-10-10 逐题 judge 绑定补修

@@ -1,0 +1,15 @@
+{
+  "driven_by": "agent",
+  "actor": "dsh-lead",
+  "recordedAt": "2026-10-13T10:12:40.787Z",
+  "timeoutMinutes": 2400,
+  "testTimeoutMinutes": 2340,
+  "heapMb": 3072,
+  "nodeFlags": [
+    "--max-old-space-size=3072",
+    "--report-on-fatalerror"
+  ],
+  "nodeOptions": "--max-old-space-size=3072",
+  "resumeFrom": "D:\\ClawX-work\\locomo-final-20261013-1545",
+  "resumeSourceRevision": "b2bc0e40c2548189b350f3ba22b599915f58f35a"
+}
