@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-s05-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0280",
+    "packet": "S05",
+    "title": "Provider credential-use boundary ledger (image override)",
+    "source": "policy unit verification + call-site pin (no live provider/credential)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Existing credential-use tests (15) pass; new ledger guard verifies the policy matrix and pins the single call site. Explicit provider override under external/unknown provenance is confined to the host-bound provider scope; no credential value is a policy input. Other credential users recorded as residual."
+  },
+  "candidate": {
+    "commit": "eda64ac3defe18e9c42de31d60e39722f40407e5",
+    "tree": "21be6728f3879681c8c1215ebc99336ed12df0f8",
+    "dirty": false,
+    "branch": "codex/harness-gap-s05-credential-use-20261013",
+    "base": "ae9ea9162c105f734566f5a696d55b5eae5071df",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T13:00:00.000Z",
+    "finishedAt": "2026-10-13T13:05:00.000Z"
+  },
+  "credentialUseLedger": {
+    "policy": "openclaw_runtime/src/agents/tools/provider-credential-use-policy.ts#resolveProviderCredentialUsePolicy",
+    "callSite": "openclaw_runtime/src/agents/tools/image-generate-tool.ts (explicit model-override path)",
+    "policyInputs": [
+      "provenanceContext",
+      "hasExplicitModelOverride",
+      "requestedProvider",
+      "boundProviderIds"
+    ],
+    "credentialValueInInput": false,
+    "matrix": {
+      "trusted": "allowed (any override)",
+      "no-explicit-override": "allowed (default/fallback path skips the gate)",
+      "external+override+in-scope": "allowed",
+      "external+override+out-of-scope": "denied",
+      "external+override+missing-or-invalid-provider": "denied"
+    }
+  },
+  "gates": {
+    "existingCredentialUse": {
+      "command": "openclaw_runtime: run-vitest provider-credential-use-policy.test.ts image-generate-tool.credential-use-provenance.test.ts",
+      "exitCode": 0,
+      "files": 2,
+      "tests": 15,
+      "failed": 0
+    },
+    "ledgerGuard": {
+      "command": "vitest run tests/unit/provider-credential-use-boundary-ledger.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 4,
+      "failed": 0
+    },
+    "typecheckTest": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "eslint tests/unit/provider-credential-use-boundary-ledger.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-credential-use-boundary.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-credential-use-boundary.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "singleCallSite": "The gate is consulted only by image-generate-tool.ts's explicit model-override path; other credential users (chat/model override, other provider-credential consumers) are NOT covered by this policy.",
+    "hardcodedFlag": "The call site passes hasExplicitModelOverride: true (the branch is itself the override path), so the policy's no-override allow branch is only exercised by unit tests, not by that production call site.",
+    "scope": "Image-generation provider override only; does not cover key storage, rotation, or leakage surfaces."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "policy matrix unit + call-site pin",
+    "detail": "The guard resolves the policy across provenance x override x provider-scope, asserts no credential-value field in the input type, and pins the single call site. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "trusted-and-default-unchanged",
+      "status": "pass",
+      "note": "trusted/operator override and the no-override default/fallback path are unchanged."
+    },
+    {
+      "id": "external-override-scope",
+      "status": "pass",
+      "note": "external/derived-untrusted/missing/invalid provenance with an explicit override may only use a host-bound image provider; otherwise denied."
+    },
+    {
+      "id": "no-credential-input",
+      "status": "pass",
+      "note": "The policy input type carries provenance + provider scope only; no credential value is an input, and denial happens before any credential read."
+    },
+    {
+      "id": "residual-recorded",
+      "status": "pass",
+      "note": "Single call site and the hardcoded override flag are recorded as residual; other credential users are out of scope."
+    },
+    {
+      "id": "no-new-policy",
+      "status": "pass",
+      "note": "No second credential strategy; default provider, fallback and credential storage unchanged."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "15 existing + 4 new tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 2,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider / real credential use.",
+    "Other credential-consumer paths (out of scope).",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
