@@ -17,6 +17,7 @@ import { BatchLogRecordProcessor, LoggerProvider } from "@opentelemetry/sdk-logs
 import { PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics";
 import { NodeSDK } from "@opentelemetry/sdk-node";
 import {
+  AlwaysOnSampler,
   BatchSpanProcessor,
   ParentBasedSampler,
   TraceIdRatioBasedSampler,
@@ -28,7 +29,11 @@ import {
   ATTR_GEN_AI_SYSTEM_INSTRUCTIONS,
   ATTR_GEN_AI_TOOL_DEFINITIONS,
 } from "@opentelemetry/semantic-conventions/incubating";
-import { waitForDiagnosticEventsDrained } from "openclaw/plugin-sdk/diagnostic-runtime";
+import {
+  isDiagnosticFlagEnabled,
+  waitForDiagnosticEventsDrained,
+} from "openclaw/plugin-sdk/diagnostic-runtime";
+import { CostSamplingSpanProcessor, costSamplingAttributes } from "./cost-sampling.js";
 import { registerUnhandledRejectionHandler } from "openclaw/plugin-sdk/runtime-env";
 import type {
   DiagnosticEventMetadata,
@@ -1141,8 +1146,32 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
       const serviceName =
         otel.serviceName?.trim() || process.env.OTEL_SERVICE_NAME || DEFAULT_SERVICE_NAME;
       const sampleRate = resolveSampleRate(otel.sampleRate);
-      const contentCapturePolicy = resolveContentCapturePolicy(otel.captureContent);
+      const costSamplingEnabled = isDiagnosticFlagEnabled("trace.cost-sampling", ctx.config);
+      const contentCapturePolicy = costSamplingEnabled
+        ? NO_CONTENT_CAPTURE
+        : resolveContentCapturePolicy(otel.captureContent);
       const sdkPreloaded = hasPreloadedOtelSdk();
+      if (costSamplingEnabled && sdkPreloaded) {
+        emitForSignals(enabledSignals, {
+          exporter: "diagnostics-otel",
+          status: "failure",
+          reason: "start_failed",
+          errorCategory: "o02_preloaded_sdk_unsupported",
+        });
+        ctx.logger.warn(
+          "diagnostics-otel: trace.cost-sampling requires the plugin-owned SDK; preloaded SDK cannot enforce its retention policy",
+        );
+        return;
+      }
+      let costSampling: CostSamplingSpanProcessor | undefined;
+      let expireModelSpan: ((spanId: string) => void) | undefined;
+      let recordCostSamplingMetrics:
+        | ((report: ReturnType<CostSamplingSpanProcessor["snapshot"]>) => void)
+        | undefined;
+      const reportCostSampling = (report: ReturnType<CostSamplingSpanProcessor["snapshot"]>) => {
+        recordCostSamplingMetrics?.(report);
+        ctx.logger.info("diagnostics-otel O02 " + JSON.stringify(report));
+      };
 
       const resource = resourceFromAttributes({
         [ATTR_SERVICE_NAME]: serviceName,
@@ -1173,8 +1202,17 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
               ...(headers ? { headers } : {}),
             })
           : undefined;
-        const spanProcessors =
-          traceExporter && typeof otel.flushIntervalMs === "number"
+        if (traceExporter && costSamplingEnabled) {
+          costSampling = new CostSamplingSpanProcessor(traceExporter, {
+            sampleRate,
+            flushIntervalMs: otel.flushIntervalMs,
+            onReport: reportCostSampling,
+            onMissingTerminal: (spanId) => expireModelSpan?.(spanId),
+          });
+        }
+        const spanProcessors = costSampling
+          ? [costSampling]
+          : traceExporter && typeof otel.flushIntervalMs === "number"
             ? [
                 new BatchSpanProcessor(traceExporter, {
                   scheduledDelayMillis: Math.max(1000, otel.flushIntervalMs),
@@ -1202,13 +1240,15 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
           resource,
           ...(spanProcessors ? { spanProcessors } : traceExporter ? { traceExporter } : {}),
           ...(metricReader ? { metricReader } : {}),
-          ...(sampleRate !== undefined
-            ? {
-                sampler: new ParentBasedSampler({
-                  root: new TraceIdRatioBasedSampler(sampleRate),
-                }),
-              }
-            : {}),
+          ...(costSampling
+            ? { sampler: new AlwaysOnSampler() }
+            : sampleRate !== undefined
+              ? {
+                  sampler: new ParentBasedSampler({
+                    root: new TraceIdRatioBasedSampler(sampleRate),
+                  }),
+                }
+              : {}),
         });
 
         try {
@@ -1245,6 +1285,26 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
 
       const meter = metrics.getMeter("openclaw");
       const tracer = trace.getTracer("openclaw");
+      if (costSampling) {
+        const observations = meter.createCounter("openclaw.o02.observations", {
+          unit: "1",
+          description: "Pre-sampling population and explicit missing/duplicate/retention outcomes",
+        });
+        const estimatedCost = meter.createCounter("openclaw.o02.estimated_cost.usd", {
+          unit: "USD",
+          description: "Known runtime-catalog estimates before sampling; not billing",
+        });
+        const previous = new Map<string, number>();
+        recordCostSamplingMetrics = (report) => {
+          for (const [name, value] of Object.entries(report.counters)) {
+            const delta = value - (previous.get(name) ?? 0);
+            previous.set(name, value);
+            if (!(delta > 0)) continue;
+            if (name === "knownCostUsd") estimatedCost.add(delta);
+            else observations.add(delta, { "openclaw.o02.measure": name });
+          }
+        };
+      }
       const activeTrustedSpans = new Map<string, ReturnType<typeof tracer.startSpan>>();
       const activeTrustedSpanAliases = new Map<
         string,
@@ -1255,7 +1315,20 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
         { spanContext: SpanContext; token: symbol; owner?: TrustedSpanAliasOwner }
       >();
       const retainedTrustedSpanContextCleanupTimers = new Set<ReturnType<typeof setTimeout>>();
+      expireModelSpan = (spanId) => {
+        const span = activeTrustedSpans.get(spanId);
+        if (!span) return;
+        activeTrustedSpans.delete(spanId);
+        span.setAttributes({
+          "openclaw.o02.terminal": "incomplete",
+          "openclaw.o02.usage_state": "missing",
+          "openclaw.o02.cost_state": "unknown",
+        });
+        span.setStatus({ code: SpanStatusCode.ERROR });
+        span.end();
+      };
       stopActiveTrustedSpans = () => {
+        costSampling?.finalizeOpenRequests();
         const stopAt = Date.now();
         for (const handle of retainedTrustedSpanContextCleanupTimers) {
           clearTimeout(handle);
@@ -1832,6 +1905,7 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
         span: ReturnType<typeof tracer.startSpan>,
       ) => {
         const spanId = trustedTraceContext(evt, metadata)?.spanId;
+        if (costSampling && metadata.trusted) span.setAttributes(costSamplingAttributes(evt));
         if (spanId) {
           activeTrustedSpans.set(spanId, span);
         }
@@ -1858,6 +1932,7 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
         }
         const span = activeTrustedSpans.get(spanId);
         if (span) {
+          if (costSampling && metadata.trusted) span.setAttributes(costSamplingAttributes(evt));
           activeTrustedSpans.delete(spanId);
         }
         return span;
@@ -2418,6 +2493,15 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
         evt: Extract<DiagnosticEventPayload, { type: "session.recovery.requested" }>,
       ) => {
         const attrs = sessionRecoveryAttrs(evt);
+        if (costSampling) {
+          const span = spanWithDuration(
+            "openclaw.session.recovery",
+            costSamplingAttributes(evt),
+            0,
+            { endTimeMs: evt.ts },
+          );
+          span.end(evt.ts);
+        }
         attrs["openclaw.action"] = evt.allowActiveAbort ? "abort" : "recover";
         sessionRecoveryRequestedCounter.add(1, attrs);
         sessionRecoveryAgeHistogram.record(evt.ageMs, attrs);
@@ -2427,6 +2511,15 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
         evt: Extract<DiagnosticEventPayload, { type: "session.recovery.completed" }>,
       ) => {
         const attrs = sessionRecoveryAttrs(evt);
+        if (costSampling) {
+          const span = spanWithDuration(
+            "openclaw.session.recovery",
+            costSamplingAttributes(evt),
+            0,
+            { endTimeMs: evt.ts },
+          );
+          span.end(evt.ts);
+        }
         attrs["openclaw.status"] = evt.status;
         attrs["openclaw.action"] = lowCardinalityAttr(evt.action, "unknown");
         if (evt.outcomeReason) {
@@ -2905,6 +2998,7 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
           spanAttrs["openclaw.transport"] = evt.transport;
         }
         assignModelCallSizeTimingAttrs(spanAttrs, evt);
+        if (costSampling && metadata.trusted) Object.assign(spanAttrs, costSamplingAttributes(evt));
         assignOtelModelContentAttributes(spanAttrs, modelContent, contentCapturePolicy);
         const span =
           takeTrackedTrustedSpan(evt, metadata) ??
@@ -3055,6 +3149,7 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
           ...toolExecutionBaseAttrs(evt),
         };
         addRunAttrs(spanAttrs, evt);
+        if (costSampling && metadata.trusted) Object.assign(spanAttrs, costSamplingAttributes(evt));
         assignOtelToolContentAttributes(
           spanAttrs,
           evt as unknown as Record<string, unknown>,
@@ -3087,6 +3182,7 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
           "openclaw.errorCategory": lowCardinalityAttr(evt.errorCategory, "other"),
         };
         addRunAttrs(spanAttrs, evt);
+        if (costSampling && metadata.trusted) Object.assign(spanAttrs, costSamplingAttributes(evt));
         if (evt.errorCode) {
           spanAttrs["openclaw.errorCode"] = lowCardinalityAttr(evt.errorCode, "other");
         }
@@ -3126,6 +3222,7 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
           "openclaw.deniedReason": lowCardinalityAttr(evt.deniedReason, "other"),
         };
         addRunAttrs(spanAttrs, evt);
+        if (costSampling && metadata.trusted) Object.assign(spanAttrs, costSamplingAttributes(evt));
         const span = spanWithDuration("openclaw.tool.execution", spanAttrs, 0, {
           parentContext: activeTrustedParentContext(evt, metadata),
           endTimeMs: evt.ts,
@@ -3435,12 +3532,15 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
               recordContextAssembled(evt, metadata);
               return;
             case "model.call.started":
+              if (costSampling && metadata.trusted && !costSampling.accept(evt)) return;
               recordModelCallStarted(evt, metadata);
               return;
             case "model.call.completed":
+              if (costSampling && metadata.trusted && !costSampling.accept(evt)) return;
               recordModelCallCompleted(evt, metadata, privateData.modelContent);
               return;
             case "model.call.error":
+              if (costSampling && metadata.trusted && !costSampling.accept(evt)) return;
               recordModelCallError(evt, metadata, privateData.modelContent);
               return;
             case "tool.execution.started":

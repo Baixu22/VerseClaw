@@ -290,4 +290,6 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw)，并继承 V
 
 运行时 `diagnostics.enabled` 显式设为 `true` 时，已有诊断日志会报告持续偏高的“需审批分类率”及恢复。这是工具破坏层分类，不是实际弹窗或真人审批次数；不足或过期窗口记为缺测。省略或关闭该配置时不启用监测，告警不改变审批或工具执行策略。
 
+当运行时 `diagnostics.otel.enabled` 与 `trace.cost-sampling` 诊断旗标同时显式开启时，既有的唯一 OpenTelemetry 出口还会按版本化价格快照输出每次模型调用的美元估价，并做有界脱敏轨迹采样；未知价格保持 `null`，默认或关闭路径行为不变。
+
 会话接力在 Main 中核验并持久化 Task Ledger 血缘后才激活新会话；环路或无法读取的历史会被拒绝。可在 `openclaw.json` 设置 `runtime.handoff.enabled=true` 启用接力深度限制（`maxDepth` 为 1–64，省略时为 3）。限制默认关闭，分叉保留接力血缘。

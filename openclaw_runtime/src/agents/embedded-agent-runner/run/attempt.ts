@@ -1,6 +1,7 @@
 /**
  * Orchestrates one embedded-agent attempt from prompt setup through stream result.
  */
+import { isDiagnosticFlagEnabled } from "../../../infra/diagnostic-flags.js";
 import fs from "node:fs/promises";
 import os from "node:os";
 import { MAX_IMAGE_BYTES } from "@openclaw/media-core/constants";
@@ -3307,6 +3308,9 @@ export async function runEmbeddedAttempt(
             : {}),
           trace: runTrace,
           contentCapture: resolveDiagnosticModelContentCapturePolicy(params.config),
+          costDiagnosticsEnabled:
+            params.config?.diagnostics?.otel?.enabled === true &&
+            isDiagnosticFlagEnabled("trace.cost-sampling", params.config),
           nextCallId: () => `${params.runId}:model:${(diagnosticModelCallSeq += 1)}`,
           onStarted: ({ callId }) => {
             const trajectoryStepId = `${params.runId}:attempt:${params.attemptIndex ?? 0}:step:${callId}`;

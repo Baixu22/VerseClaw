@@ -1,6 +1,7 @@
 /**
  * Emits diagnostic model-call events around embedded-agent stream functions.
  */
+import { createModelCallUsageObserver } from "./attempt.model-call-usage.js";
 import { fireAndForgetBoundedHook } from "../../../hooks/fire-and-forget.js";
 import {
   diagnosticErrorCategory,
@@ -48,6 +49,7 @@ type ModelCallDiagnosticContext = {
   trace: DiagnosticTraceContext;
   contentCapture?: DiagnosticModelContentCapturePolicy;
   nextCallId: () => string;
+  costDiagnosticsEnabled?: boolean;
   onStarted?: (info: { callId: string }) => void;
   onFinished?: (info: {
     callId: string;
@@ -81,6 +83,8 @@ type ModelCallSizeTimingFields = Pick<
   "requestPayloadBytes" | "responseStreamBytes" | "timeToFirstByteMs"
 >;
 type ModelCallObservationState = {
+  usageObserver?: ReturnType<typeof createModelCallUsageObserver>;
+  signal?: AbortSignal;
   requestPayloadBytes?: number;
   responseStreamBytes: number;
   timeToFirstByteMs?: number;
@@ -208,6 +212,7 @@ function observeResponseChunk(
 ): void {
   state.timeToFirstByteMs ??= Math.max(0, Date.now() - startedAt);
   observeOutputMessageContent(state, chunk);
+  state.usageObserver?.observe(chunk);
   const bytes = responseStreamChunkByteLength(chunk);
   if (bytes !== undefined) {
     state.responseStreamBytes += bytes;
@@ -442,6 +447,9 @@ function emitModelCallCompleted(
     {
       type: "model.call.completed",
       ...eventBase,
+      ...(state.usageObserver
+        ? { usageSnapshot: state.usageObserver.finish(state.signal?.aborted) }
+        : {}),
       durationMs,
       ...sizeTimingFields,
     },
@@ -471,6 +479,13 @@ function emitModelCallError(
     {
       type: "model.call.error",
       ...eventBase,
+      ...(state.usageObserver
+        ? {
+            usageSnapshot: state.usageObserver.finish(
+              fields.failureKind === "aborted" || state.signal?.aborted,
+            ),
+          }
+        : {}),
       durationMs,
       ...sizeTimingFields,
       ...fields,
@@ -668,12 +683,20 @@ export function wrapStreamFnWithDiagnosticModelCallEvents(
     const callId = ctx.nextCallId();
     const trace = freezeDiagnosticTraceContext(createChildDiagnosticTraceContext(ctx.trace));
     const eventBase = baseModelCallEvent(ctx, callId, trace);
+    if (ctx.costDiagnosticsEnabled === true) {
+      eventBase.requestId = `model-${trace.spanId}`;
+      eventBase.requestStartedAtMs = Date.now();
+      eventBase.attemptId = ctx.trace.spanId;
+    }
     const modelContent = streamContextModelContentFields(ctx.contentCapture, streamContext);
     emitModelCallStarted(eventBase, modelContent);
     ctx.onStarted?.({ callId });
     const startedAt = Date.now();
     const state: ModelCallObservationState = {
       responseStreamBytes: 0,
+      ...(ctx.costDiagnosticsEnabled === true
+        ? { usageObserver: createModelCallUsageObserver(model), signal: options?.signal }
+        : {}),
       modelContent,
       contentCapture: ctx.contentCapture,
       onFinished: ctx.onFinished,

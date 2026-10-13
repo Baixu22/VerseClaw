@@ -19,3 +19,6 @@ export type {
   OpenClawPluginServiceContext,
 } from "openclaw/plugin-sdk/plugin-entry";
 export { redactSensitiveText } from "openclaw/plugin-sdk/security-runtime";
+
+/** Public service factory for host composition and contract tests. */
+export { createDiagnosticsOtelService } from "./src/service.js";

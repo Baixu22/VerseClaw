@@ -383,12 +383,17 @@ export type DiagnosticCodingOperation = "read" | "search" | "modify" | "test" | 
 export function resolveDiagnosticCodingOperation(
   toolName: string,
 ): DiagnosticCodingOperation | undefined {
-  const normalized = toolName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_");
+  const normalized = toolName
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_");
   if (["read", "read_file", "ls", "file_view"].includes(normalized)) return "read";
   if (["search", "search_content", "grep", "repo_search"].includes(normalized)) return "search";
-  if (["write", "write_file", "edit", "apply_patch", "file_write"].includes(normalized)) return "modify";
+  if (["write", "write_file", "edit", "apply_patch", "file_write"].includes(normalized))
+    return "modify";
   if (["exec", "process", "run_command", "test", "run_tests"].includes(normalized)) return "test";
-  if (["result_query", "verseshell_result", "result_query_tool"].includes(normalized)) return "result_query";
+  if (["result_query", "verseshell_result", "result_query_tool"].includes(normalized))
+    return "result_query";
   return undefined;
 }
 
@@ -536,10 +541,38 @@ export type DiagnosticHarnessRunErrorEvent = DiagnosticHarnessRunBaseEvent & {
   cleanupFailed?: boolean;
 };
 
+/** Opt-in per-call estimate, separate from the session billing accumulator. */
+export type DiagnosticModelCallUsageSnapshot = {
+  terminal: "done" | "error" | "aborted" | "incomplete" | "conflicting";
+  usage: {
+    input: number;
+    output: number;
+    cacheRead: number;
+    cacheWrite: number;
+    total: number;
+  } | null;
+  costUsd: number | null;
+  price: {
+    state: "known" | "unknown";
+    currency: "USD";
+    unit: "per-million-tokens";
+    source: "runtime-model-catalog";
+    version: string | null;
+    rates: { input: number; output: number; cacheRead: number; cacheWrite: number } | null;
+  };
+  toolCallIdHashes: string[];
+  toolCallIdsDropped: number;
+};
+
 type DiagnosticModelCallBaseEvent = DiagnosticBaseEvent & {
   type: "model.call.started" | "model.call.completed" | "model.call.error";
   runId: string;
   callId: string;
+  /** O02 host identity; the legacy callId may repeat between attempts. */
+  requestId?: string;
+  requestStartedAtMs?: number;
+  attemptId?: string;
+  usageSnapshot?: DiagnosticModelCallUsageSnapshot;
   sessionKey?: string;
   sessionId?: string;
   provider: string;
