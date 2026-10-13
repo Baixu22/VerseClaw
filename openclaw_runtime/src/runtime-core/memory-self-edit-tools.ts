@@ -28,6 +28,7 @@ import {
 } from "./memory-context.js";
 import type { RuntimeMemoryStore } from "./memory-store.js";
 import type { RuntimeMemoryRuntimeIntegrationPort } from "./memory-runtime-integration.js";
+import { recordMemoryEffect, type MemoryEffectReceiptSink } from "./memory-effect-receipt.js";
 import type { RuntimeCoreJsonObject } from "./types.js";
 
 export type MemorySelfEditToolName =
@@ -55,6 +56,19 @@ export type MemorySelfEditToolContext = {
    * operations (recall / find_related) continue to use `store`.
    */
   persistence?: RuntimeMemoryRuntimeIntegrationPort;
+  /**
+   * S06: optional RC-04 EffectReceipt sink. When present, each write records a
+   * digest-only effect receipt (fail-open). When absent, no receipt is written.
+   */
+  effectReceiptStore?: MemoryEffectReceiptSink;
+  /** Correlation identity carried into the effect receipt (session/run/tool call). */
+  effectIdentity?: {
+    sessionKey?: string;
+    runId?: string;
+    toolCallId?: string;
+    attemptIndex?: number;
+    modelCallIndex?: number;
+  };
 };
 
 export type MemorySelfEditToolHandler = (
@@ -355,6 +369,7 @@ export const memoryUpdateTool: MemorySelfEditTool = {
 
     const appendResult = persistFact(context, newFact);
     if (!appendResult.ok) {
+      recordMemoryEffect(context, { action: "memory_update", factId, outcome: "not_applied", identity: context.effectIdentity ?? {} });
       return {
         ok: false,
         tool: "memory_update",
@@ -387,6 +402,9 @@ export const memoryUpdateTool: MemorySelfEditTool = {
 
     const invalidationResult = persistInvalidation(context, sanitizedInvalidation.value);
     if (!invalidationResult.ok) {
+      // The new fact was already appended; the update is partially applied and
+      // must be reconciled rather than reported as a clean failure.
+      recordMemoryEffect(context, { action: "memory_update", factId, newFactId, outcome: "unknown", identity: context.effectIdentity ?? {} });
       return {
         ok: false,
         tool: "memory_update",
@@ -396,6 +414,7 @@ export const memoryUpdateTool: MemorySelfEditTool = {
 
     const relationResult = persistSupersedesRelation(context, newFactId, factId);
     if (!relationResult.ok) {
+      recordMemoryEffect(context, { action: "memory_update", factId, newFactId, outcome: "unknown", identity: context.effectIdentity ?? {} });
       return {
         ok: false,
         tool: "memory_update",
@@ -403,6 +422,7 @@ export const memoryUpdateTool: MemorySelfEditTool = {
       };
     }
 
+    recordMemoryEffect(context, { action: "memory_update", factId, newFactId, outcome: "applied", identity: context.effectIdentity ?? {} });
     return {
       ok: true,
       tool: "memory_update",
@@ -500,6 +520,7 @@ export const memoryForgetTool: MemorySelfEditTool = {
 
     const invalidationResult = persistInvalidation(context, sanitizedInvalidation.value);
     if (!invalidationResult.ok) {
+      recordMemoryEffect(context, { action: "memory_forget", factId, outcome: "not_applied", identity: context.effectIdentity ?? {} });
       return {
         ok: false,
         tool: "memory_forget",
@@ -507,6 +528,7 @@ export const memoryForgetTool: MemorySelfEditTool = {
       };
     }
 
+    recordMemoryEffect(context, { action: "memory_forget", factId, outcome: "applied", identity: context.effectIdentity ?? {} });
     return {
       ok: true,
       tool: "memory_forget",
@@ -556,6 +578,7 @@ export const memoryStrengthenTool: MemorySelfEditTool = {
         const message = accessResult.status === "rejected"
           ? accessResult.message
           : `persistence skipped (${accessResult.reason})`;
+        recordMemoryEffect(context, { action: "memory_strengthen", factId, outcome: "not_applied", identity: context.effectIdentity ?? {} });
         return {
           ok: false,
           tool: "memory_strengthen",
@@ -563,6 +586,7 @@ export const memoryStrengthenTool: MemorySelfEditTool = {
         };
       }
       context.store.recordFactAccess(factId);
+      recordMemoryEffect(context, { action: "memory_strengthen", factId, outcome: "applied", identity: context.effectIdentity ?? {} });
       return {
         ok: true,
         tool: "memory_strengthen",
@@ -573,6 +597,7 @@ export const memoryStrengthenTool: MemorySelfEditTool = {
 
     context.store.recordFactAccess(factId);
 
+    recordMemoryEffect(context, { action: "memory_strengthen", factId, outcome: "applied", identity: context.effectIdentity ?? {} });
     const usageStats = context.store.getUsageStats();
     const stat = usageStats.find((s) => s.factId === factId);
     const newCount = stat?.count ?? 0;
