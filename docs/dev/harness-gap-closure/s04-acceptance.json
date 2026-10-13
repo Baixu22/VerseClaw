@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-s04-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0279",
+    "packet": "S04",
+    "title": "Browser source / session-ownership / side-effect boundary ledger",
+    "source": "policy unit verification + source wiring pin (no live browser/account)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Existing browser provenance tests (42) pass; new ledger guard pins the coverage: external-access applies to every action, session-ownership gate only to click/type. evaluate/command/close are recorded as residual. No SSRF/private-network/kill-switch change."
+  },
+  "candidate": {
+    "commit": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4",
+    "tree": "4d038424920bc057be14bf93a774888aacf3966a",
+    "dirty": false,
+    "branch": "codex/harness-gap-s04-browser-effect-20261013",
+    "base": "ca413cdc436c00f7eddb06584783fd98996939c9",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T12:54:00.000Z",
+    "finishedAt": "2026-10-13T12:59:00.000Z"
+  },
+  "browserLedger": {
+    "allActionsGate": {
+      "policy": "resolveAgentBrowserExternalAccessPolicy",
+      "callSite": "agent-browser-tool.ts",
+      "deniedConnectionModesForExternal": [
+        "auto-connect",
+        "cdp",
+        "external-profile"
+      ],
+      "allowedConnectionModeForExternal": "managed"
+    },
+    "sessionOwnershipGate": {
+      "policy": "resolveAgentBrowserSessionEffectPolicy",
+      "callSite": "agent-browser-tool.ts (assertSessionEffectAllowed)",
+      "actions": [
+        "click",
+        "type"
+      ],
+      "requires": "Main-owned managed session under external/unknown provenance"
+    },
+    "actions": [
+      "status",
+      "navigate",
+      "waitForSelector",
+      "click",
+      "type",
+      "evaluate",
+      "screenshot",
+      "command",
+      "close",
+      "getConsoleMessages"
+    ],
+    "residualNoSessionGate": [
+      "evaluate",
+      "command",
+      "close"
+    ]
+  },
+  "gates": {
+    "existingBrowserProvenance": {
+      "command": "openclaw_runtime: run-vitest agent-browser-external-access-policy.test.ts agent-browser-tool.provenance.test.ts agent-browser-provenance-wiring.test.ts",
+      "exitCode": 0,
+      "files": 3,
+      "tests": 42,
+      "failed": 0
+    },
+    "ledgerGuard": {
+      "command": "vitest run tests/unit/browser-effect-boundary-ledger.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 5,
+      "failed": 0
+    },
+    "typecheckTest": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "eslint tests/unit/browser-effect-boundary-ledger.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-browser-effect-boundary.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-browser-effect-boundary.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "evaluateCommandClose": "Side-effecting actions evaluate / command / close are not covered by the click/type session-ownership gate; they only pass the connection-mode gate. Recorded as residual, not claimed covered.",
+    "scope": "agent_browser tool egress only; renderer/other browser entry points are out of scope.",
+    "noNetworkRuleChange": "SSRF / private-network / kill switch rules are independent and unchanged."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "policy unit + source wiring pin",
+    "detail": "The guard resolves both policies across provenance x connection-mode matrices and pins the tool wiring (external-access before invoke; session gate only on click/type). No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "source-gate",
+      "status": "pass",
+      "note": "external/derived-untrusted/missing/invalid provenance is denied auto-connect/cdp/external-profile; managed allowed; trusted system/operator unrestricted."
+    },
+    {
+      "id": "session-ownership",
+      "status": "pass",
+      "note": "click/type under external/unknown provenance require a Main-owned managed session; otherwise denied."
+    },
+    {
+      "id": "per-action-ledger",
+      "status": "pass",
+      "note": "Every action recorded; only click/type carry the extra session-ownership gate."
+    },
+    {
+      "id": "residual-recorded",
+      "status": "pass",
+      "note": "evaluate/command/close recorded as residual (side-effecting but not session-gated); no over-claim."
+    },
+    {
+      "id": "no-weakening",
+      "status": "pass",
+      "note": "SSRF/private-network/kill switch untouched; no third policy introduced."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "42 existing + 5 new tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 2,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live browser / real account sessions.",
+    "Renderer-side browser entry points.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
