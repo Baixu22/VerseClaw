@@ -6,7 +6,6 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Promote the A5 context budget planner from shadow to active pilot, gated by plan adoption rate and budget compliance.
 touchedAreas:
-  - openclaw_runtime/src/agents/cross-area/cross-area-facades.ts
   - openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts
   - openclaw_runtime/src/agents/task-loop-controller.ts
   - openclaw_runtime/src/observability/deprecation-counters.ts
@@ -106,11 +105,15 @@ requiredRules:
   - backend-communication-boundary
   - comms-regression
 requiredTests:
-  - tests/unit/cross-area-composition.test.ts
   - tests/unit/resource-aware-wave-scheduler.test.ts
   - tests/unit/performance-budgets.test.ts
-  - pnpm --dir openclaw_runtime exec vitest run packages/agent-core/src/harness/compaction/compression-planner.test.ts src/context-engine/context-orchestrator.test.ts --reporter=dot
-  - pnpm exec vitest run tests/unit/deprecation-counters.test.ts tests/unit/performance-budgets.test.ts --reporter=dot
+  - tests/unit/deprecation-counters.test.ts
+  - openclaw_runtime/src/observability/deprecation-counters.test.ts
+  - openclaw_runtime/src/agents/agent-hooks/compaction-budget-shadow.test.ts
+  - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.test.ts
+  - openclaw_runtime/src/context-engine/context-orchestrator.test.ts
+  - openclaw_runtime/src/agents/agent-hooks/compaction-promotion.test.ts
+  - tests/unit/a05-a5-gate-coverage.test.ts
 acceptance:
   - A5 deprecation counter `planIgnoredCount` rate ≤ 20% over 100-turn session
   - A5 p99 ≤ 30ms (criterion 4.8)
