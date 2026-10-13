@@ -1,0 +1,6 @@
+b2936554a04cf2500ca099bb643a6345aadf451b0c77bcbe76428271c7452949  docs/dev/harness-gap-closure/g03-acceptance.json
+0fe5f1fe54dbf41bf6a83c65d366cb55f7872d8f10f5ccfb3ce967399f30d757  docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md
+f0d8e2b9991d932ce267a9e88671357687f22f6b34d26f73366271185879aab7  harness/specs/tasks/harness-gap-trace-to-eval-sample.md
+f67ed77b6202878d75bd5eb18661e8bf49fa791907edd1ed4889529b469ecc28  scripts/lib/trace-to-eval-sample.mjs
+a74711233bbd97060d9a8e16723c3b37b45f263e9b2b8987b82f63b53f4865f8  scripts/lib/trace-to-eval-sample.d.mts
+9895c0c9296985a31e8c1beceac7d3a1d3c4918899f1d84a3ea3441ba38c4d70  tests/unit/trace-to-eval-sample.test.ts
