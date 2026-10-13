@@ -1882,3 +1882,8 @@ openclaw_runtime/_tmp_*
 !/docs/dev/harness-gap-closure/SHA256SUMS
 !/docs/dev/harness-gap-closure/baseline-acceptance.json
 !/docs/dev/harness-gap-closure/ACCEPTANCE-SHA256SUMS
+
+# #179 session handoff depth evidence (agent-driven acceptance + digests).
+!/docs/dev/session-handoff-depth-20261013/
+!/docs/dev/session-handoff-depth-20261013/acceptance.json
+!/docs/dev/session-handoff-depth-20261013/SHA256SUMS
