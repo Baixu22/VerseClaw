@@ -20,8 +20,12 @@ expectedUserBehavior:
   - A4 degrades first in the documented order (A4→A3→A5→A1), so the per-turn cumulative latency budget is respected.
   - With the pilot flag off, decision outcomes and the audit surface are unchanged.
 requiredTests:
+  - tests/unit/decision-quality-auditor.test.ts
   - tests/unit/deprecation-counters.test.ts
   - tests/unit/performance-budgets.test.ts
+  - tests/unit/deep/a4-deep.test.ts
+  - tests/unit/trace-truncation.test.ts
+  - tests/unit/a04-a4-gate-coverage.test.ts
 acceptance:
   - A4 deprecation counter `lowQualityDecisions` rate ≤ 10% over audited decisions
   - A4 budget violation response `degrade_to_audit_only` triggers when low-quality rate > 10%
