@@ -1,5 +1,6 @@
 ---
 id: p1-telemetry-opt-out
+lifecycleStatus: completed
 title: Stop telemetry immediately when runtime consent is revoked
 scenario: gateway-backend-communication
 taskType: runtime-bridge
