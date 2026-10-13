@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-l04-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0286",
+    "packet": "L04",
+    "title": "Persisted attachment constrained to a recoverable minimal checkpoint",
+    "source": "pure-function fixtures (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "A bounded attachment binding (five reference kinds) validates sha256 hash, owner and TTL; recovery is a pure function that flags missing/invalid/expired/conflicting bindings into explicit states, de-duplicates identical refs and never re-runs a side effect."
+  },
+  "candidate": {
+    "commit": "7faef1e3d394cd761b3827ecde070b3dfcba0c27",
+    "tree": "d0ce2ca6fbcd2433f3385895770bec27a9e914d0",
+    "dirty": false,
+    "branch": "codex/harness-gap-l04-checkpoint-binding-20261013",
+    "base": "2813bfcfc95d913c9a914bb082a709988480722e",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T13:56:00.000Z",
+    "finishedAt": "2026-10-13T14:04:00.000Z"
+  },
+  "attachmentBinding": {
+    "module": "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.ts",
+    "kinds": [
+      "task-attachment",
+      "recovery-instruction",
+      "context",
+      "external-artifact-ref",
+      "ledger-checkpoint"
+    ],
+    "binding": [
+      "attachmentRef",
+      "kind",
+      "hash(sha256 hex)",
+      "owner",
+      "expiresAt"
+    ],
+    "states": [
+      "ok",
+      "missing-hash",
+      "invalid-hash",
+      "missing-owner",
+      "expired",
+      "conflict"
+    ],
+    "recovery": "pure: no input mutation, identical digest on repeat, no side-effect replay, deterministic order",
+    "repair": "missing/invalid/expired excluded from recovered; same-ref different-hash -> conflict (first kept); identical ref deduped"
+  },
+  "gates": {
+    "l04Tests": {
+      "command": "openclaw_runtime: run-vitest src/runtime-core/checkpoint-attachment-binding.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 4,
+      "failed": 0
+    },
+    "typecheckCore": {
+      "command": "openclaw_runtime: pnpm run tsgo:core",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "openclaw_runtime: run-oxlint checkpoint-attachment-binding.ts checkpoint-attachment-binding.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "assembly": "The binding validator/recovery is provided; wiring it into a concrete persisted-attachment write path is integration-layer work.",
+    "scope": "No new store, no daemon, no auto-writeback; no default/lock/approval change."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "pure-function state assertions",
+    "detail": "Tests assert deterministic recovery/dedup, per-input state classification (missing/invalid hash, missing owner, expired, conflict) and purity (input unchanged, identical digest on repeat). No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "bounded-kinds",
+      "status": "pass",
+      "note": "Only five reference kinds are allowed; no arbitrary cursor or blob."
+    },
+    {
+      "id": "hash-owner-ttl",
+      "status": "pass",
+      "note": "Missing/invalid sha256 hash, missing owner and expired TTL each map to an explicit state and are excluded from recovery."
+    },
+    {
+      "id": "conflict-repair",
+      "status": "pass",
+      "note": "Same attachmentRef with a different hash becomes an explicit conflict state (first binding kept); identical refs are de-duplicated."
+    },
+    {
+      "id": "pure-recovery",
+      "status": "pass",
+      "note": "Recovery does not mutate input, returns an identical digest on repeat, and re-runs no side effect."
+    },
+    {
+      "id": "deterministic",
+      "status": "pass",
+      "note": "Recovered bindings are sorted by attachmentRef and the result carries a digest."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "4 tests pass, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 3,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Integration into a concrete persisted-attachment write path.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}

@@ -1,0 +1,5 @@
+e3e32b5f69a9d210cc57ccaa34b61e76c4f1dfb94984db776bdc8d5d4eb3f953  docs/dev/harness-gap-closure/l04-acceptance.json
+95680e57bcd89803fc2585155a4f06f801bda3dd53c93fa528753f3588f513cb  docs/dev/harness-gap-closure/l04-checkpoint-attachment-binding.md
+a3ac5a59693ad1064ddb65b2811de1ab16363d7334cb0fe4f7c516a59e710d65  harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md
+b295b2813967bdaa2d6c52631b668c7087f102203505244186784780ce4972b4  openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.ts
+58d3b40b2c44652c0029884133184a2d87532a9ddbc4d4e8d1beb78e76f4033b  openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts
