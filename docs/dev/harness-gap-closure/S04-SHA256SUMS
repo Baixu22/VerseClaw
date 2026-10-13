@@ -1,0 +1,4 @@
+b35b8861b4e37a7f9117c40451783debd7e57d71c5298b95be18d0471208510e  docs/dev/harness-gap-closure/s04-acceptance.json
+634b0d96bcd581ff8e4df39c4210b20771497ebbfd9b057217beed69f75b5c96  docs/dev/harness-gap-closure/s04-browser-effect-boundary.md
+e5643434df4ef084c760063b92896acb69fe2484cc6cc8cf5fb0756801d50a16  harness/specs/tasks/harness-gap-browser-effect-boundary.md
+42d481e78e431e7c9d05e52ab6e4779dc1d882b2419c22a2f95ce13a13119b1e  tests/unit/browser-effect-boundary-ledger.test.ts
