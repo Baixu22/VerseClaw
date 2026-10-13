@@ -2592,6 +2592,12 @@ export type ReadTextFileResult = {
   readOnly?: boolean;
   error?: FilePreviewError;
 };
+export type HtmlPreviewDocumentPayload = { html: string };
+export type HtmlPreviewDocumentResult = {
+  ok: boolean;
+  url?: string;
+  error?: FilePreviewError;
+};
 export type ReadBinaryFileResult = {
   ok: boolean;
   data?: Uint8Array;
@@ -5555,6 +5561,7 @@ export type HostApiContract = {
     stat: (payload: FilePathPayload) => StatFileResult;
     listDir: (payload: FilePathPayload) => FileListDirResult;
     listTree: (payload: FileListTreePayload) => FileListTreeResult;
+    registerHtmlPreview: (payload: HtmlPreviewDocumentPayload) => HtmlPreviewDocumentResult;
   };
   media: {
     thumbnails: (payload: MediaThumbnailsPayload) => MediaThumbnailResult;

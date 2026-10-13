@@ -1,14 +1,21 @@
 /**
  * Sandboxed rendered HTML preview.
  *
- * HTML emitted by an agent is untrusted, so it is rendered inside an
- * iframe with a sandbox instead of being injected into the React tree.
- * Scripts remain allowed for simple demos, but popup escape, downloads,
- * and same-origin access are denied. A document CSP is injected as well.
+ * HTML emitted by an agent is untrusted, so it is rendered inside an iframe
+ * with a sandbox instead of being injected into the React tree. Scripts remain
+ * allowed for simple demos, but popup escape, downloads, and same-origin access
+ * are denied. A document CSP is injected as well.
+ *
+ * The prepared document is handed to the Main process, which serves it from the
+ * dedicated `clawx-preview:` scheme. Rendering it through `srcdoc` would make
+ * the frame inherit the renderer CSP (`script-src 'self'`); CSP policies are
+ * intersected, so that inherited policy silently blocked every inline preview
+ * script no matter what `HTML_PREVIEW_CSP` allowed (#132).
  */
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
+import { registerHtmlPreviewDocument } from '@/lib/file-preview-client';
 import { HTML_PREVIEW_CSP, HTML_PREVIEW_SANDBOX } from '@shared/security/url-policy';
 
 export interface HtmlPreviewProps {
@@ -60,13 +67,34 @@ function injectPreviewGuards(source: string, filePath: string): string {
 export default function HtmlPreview({ source, filePath, fileName, className }: HtmlPreviewProps) {
   const { t } = useTranslation('chat');
   const srcDoc = useMemo(() => injectPreviewGuards(source, filePath), [source, filePath]);
+  // The served URL is only trusted while it still matches the current source;
+  // when the input changes the frame falls back to the sandboxed `srcdoc`.
+  const documentKey = useMemo(() => `${filePath}\u0000${source}`, [filePath, source]);
+  const [registered, setRegistered] = useState<{ key: string; url: string } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void registerHtmlPreviewDocument(srcDoc)
+      .then((result) => {
+        if (cancelled || !result.ok || !result.url) return;
+        setRegistered({ key: documentKey, url: result.url });
+      })
+      .catch(() => {
+        // Fall back to the sandboxed `srcdoc` render; scripts stay CSP-blocked.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [documentKey, srcDoc]);
+
+  const previewUrl = registered?.key === documentKey ? registered.url : null;
 
   return (
     <div className={cn('h-full min-h-0 bg-white', className)}>
       <iframe
         data-testid="html-preview-frame"
         title={fileName ?? t('filePreview.html.title', 'HTML preview')}
-        srcDoc={srcDoc}
+        {...(previewUrl ? { src: previewUrl } : { srcDoc })}
         sandbox={HTML_PREVIEW_SANDBOX}
         referrerPolicy="no-referrer"
         className="h-full w-full border-0 bg-white"

@@ -15,6 +15,7 @@ import { createTray, syncTrayIconWithSystemTheme } from './tray';
 import { createMenu } from './menu';
 import { registerZoomShortcuts } from './zoom-shortcuts';
 import { applySystemThemeIcons, getWindowIcon } from './theme-icons';
+import { installHtmlPreviewProtocol, registerHtmlPreviewScheme } from './html-preview-protocol';
 
 import { logger } from '../utils/logger';
 import { warmupNetworkOptimization } from '../utils/uv-env';
@@ -110,6 +111,10 @@ if (requestedUserDataDir) {
 // schema, i18n, E2E coverage, a measured before/after artifact and a rollback
 // path. Decision record and machine check: docs/dev/hardware-acceleration-policy.md
 // and `pnpm docs:policy:validate`.
+// Privileged custom scheme for sandboxed HTML Preview documents.
+// Must be registered before app.whenReady().
+registerHtmlPreviewScheme();
+
 app.disableHardwareAcceleration();
 
 // On Linux, set CHROME_DESKTOP so Chromium can find the correct .desktop file.
@@ -1432,6 +1437,7 @@ if (gotTheLock) {
 
   // Application lifecycle
   app.whenReady().then(() => {
+    installHtmlPreviewProtocol();
     // Runtime efficiency sampling (P2 #161); cheap unref'd timer, local only.
     // Honour the persisted opt-out: start only when enabled (default true).
     void getSetting('efficiencySamplingEnabled')

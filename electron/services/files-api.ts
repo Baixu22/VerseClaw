@@ -9,6 +9,7 @@ import type {
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { expandPath, getOpenClawConfigDir } from '../utils/paths';
 import { isRecord } from './payload-utils';
+import { isValidHtmlPreviewDocument, registerHtmlPreviewDocument } from '../main/html-preview-protocol';
 import {
   consumeApprovedPermissionApproval,
   createPermissionApproval,
@@ -621,6 +622,12 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
         if (message.includes('ENOENT')) return { ok: false, error: 'notFound' };
         return { ok: false, error: message };
       }
+    },
+    registerHtmlPreview: async (payload) => {
+      const html = isRecord(payload) ? (payload as { html?: unknown }).html : undefined;
+      if (typeof html !== 'string' || html.length === 0) return { ok: false, error: 'invalidContent' };
+      if (!isValidHtmlPreviewDocument(html)) return { ok: false, error: 'tooLarge' };
+      return { ok: true, url: registerHtmlPreviewDocument(html) };
     },
   };
 }

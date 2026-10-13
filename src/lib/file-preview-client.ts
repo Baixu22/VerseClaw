@@ -28,6 +28,9 @@ export const writeTextFile = (path: string, content: string, approvalId?: string
 );
 export const statFile = (path: string) => hostApi.files.stat(path);
 export const listDir = (path: string) => hostApi.files.listDir(path);
+export const registerHtmlPreviewDocument = (html: string) => (
+  hostApi.files.registerHtmlPreview(html)
+);
 export const listTree = (
   path: string,
   opts?: FilePreviewTreeOptions,

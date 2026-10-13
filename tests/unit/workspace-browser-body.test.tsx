@@ -21,6 +21,7 @@ const syncOfficeSkills = vi.fn();
 vi.mock('@/lib/file-preview-client', () => ({
   readTextFile: (...args: unknown[]) => readTextFile(...args),
   statFile: (...args: unknown[]) => statFile(...args),
+  registerHtmlPreviewDocument: async () => ({ ok: true, url: 'clawx-preview://document/test-token' }),
 }));
 
 vi.mock('@/lib/host-api', () => ({

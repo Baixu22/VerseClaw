@@ -191,6 +191,11 @@ test.describe('runtime lifecycle governance', () => {
         // The E2E gate must run without ELECTRON_RUN_AS_NODE shadowing the
         // spawned Node runtime.
         delete env.ELECTRON_RUN_AS_NODE;
+        // Playwright exports FORCE_COLOR while NO_COLOR may also be present; the
+        // spawned Node then prints "NO_COLOR ... is ignored" warnings on stderr.
+        // Drop both so the stderr assertion below only reflects real failures.
+        delete env.FORCE_COLOR;
+        delete env.NO_COLOR;
         const command =
           process.platform === "win32"
             ? "pnpm --dir openclaw_runtime exec tsx scripts/goal-wake-e2e-trace.ts"
