@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-g03-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0291",
+    "packet": "G03",
+    "title": "Turn redacted failure traces into re-runnable eval samples",
+    "source": "deterministic trace fixtures (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "A pure converter turns one selected redacted failure trace into one re-runnable eval sample (before-fix fail / after-fix pass) with a bounded reproducer + selector + digest; non-redacted traces are refused whole, so a promoted sample cannot leak. Explicit-trigger batch only; no scheduler/daemon."
+  },
+  "candidate": {
+    "commit": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+    "tree": "35c7825dac3dc5baf4a084d5776983315378b74f",
+    "dirty": false,
+    "branch": "codex/harness-gap-g03-trace-to-eval-20261013",
+    "base": "6df7bd8cbdd9456612b5524dae18ec618343152e",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T14:40:00.000Z",
+    "finishedAt": "2026-10-13T14:50:00.000Z"
+  },
+  "traceToEval": {
+    "module": "scripts/lib/trace-to-eval-sample.mjs",
+    "schema": "clawx.trace-to-eval.v1",
+    "expected": {
+      "failure": "before-fix=fail, after-fix=pass",
+      "success/refusal/cancelled": "pass"
+    },
+    "reproducerKinds": [
+      "scenario",
+      "route",
+      "command-id"
+    ],
+    "selector": "runId + attempt",
+    "digest": "deterministic 16-hex replay digest",
+    "redactionGate": "refuses whole trace on raw prompt/messages/body/authorization/apiKey/headers or sk-/phc_/ghp_/AKIA/private-key",
+    "trigger": "explicit-trigger batch (selected traces only); no scheduler/daemon"
+  },
+  "gates": {
+    "g03Tests": {
+      "command": "vitest run tests/unit/trace-to-eval-sample.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 6,
+      "failed": 0
+    },
+    "typecheckTest": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "eslint scripts/lib/trace-to-eval-sample.mjs tests/unit/trace-to-eval-sample.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-trace-to-eval-sample.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-trace-to-eval-sample.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    }
+  },
+  "residual": {
+    "assembly": "The converter is provided; wiring it to a concrete trace store / runner is integration-layer work.",
+    "scope": "No new scenario registry, daemon, or scheduled automation; original evidence is never deleted; no default/lock/approval change."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "pure-function matrix assertions",
+    "detail": "Tests cover failure/success/refusal/cancelled expected outcomes, the redaction gate (raw prompt and secret-like value), bounded reproducer rejection, explicit-trigger batch rejections, and missing-field rejection. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "reproducible-sample",
+      "status": "pass",
+      "note": "A failure trace becomes a sample expected to fail before the fix and pass after; success/refusal/cancelled stay pass."
+    },
+    {
+      "id": "bounded",
+      "status": "pass",
+      "note": "Reproducer kind is scenario|route|command-id (never shell); selector is runId+attempt; digest is deterministic."
+    },
+    {
+      "id": "redaction-gate",
+      "status": "pass",
+      "note": "A trace with a raw content field or a secret-like value is refused whole (trace-not-redacted); no sample is written."
+    },
+    {
+      "id": "explicit-trigger",
+      "status": "pass",
+      "note": "traceToEvalSamples converts only selected traces and records per-trace rejections; no scheduler/daemon added."
+    },
+    {
+      "id": "no-regression-of-others",
+      "status": "pass",
+      "note": "No product default/lock/approval change; original evidence is not deleted; no new scenario registry."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "6 tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 4,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Wiring the converter to a concrete trace store/runner.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
