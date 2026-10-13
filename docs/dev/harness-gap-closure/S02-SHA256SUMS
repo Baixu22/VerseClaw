@@ -1,0 +1,5 @@
+2d02761a45c25e9c96b3ba0cd9d8016355e1ced5fb9f69fd9b43f30467cb9e64  docs/dev/harness-gap-closure/s02-acceptance.json
+093f6b6fef93bc52cec39446ba3b205e92eec7e0e6a9d669c87d92daebaeb1dd  docs/dev/harness-gap-closure/s02-sink-ledger.md
+6c70fb6edf44eff4785bfb2167f7fc50594d8043349424cbd5240ccb2be2088e  harness/specs/tasks/harness-gap-sink-ledger.md
+b18d9adec77575f675a98ebfb7e71bf89b239ae0ce6016442c1545fa728b614e  harness/specs/rules/sensitive-sink-ledger-boundary.md
+cef2ba5edbdd68de89533e8ca061d803fe843a6869454167f8f202c9c9f00905  tests/unit/sensitive-sink-residual-ledger.test.ts
