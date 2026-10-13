@@ -1,0 +1,25 @@
+{
+  "version": "openclaw.agent-dev.paired-ablation.v1",
+  "component": {
+    "id": "runtime-memory.eviction.type-aware",
+    "control": "evictionPolicy=fifo (leave-one-out)",
+    "treatment": "evictionPolicy=importance (type-aware)",
+    "reversible": true,
+    "safety": false,
+    "productionConsumer": "openclaw_runtime/src/runtime-core/memory-store.ts RuntimeMemoryStore"
+  },
+  "preRegistered": {
+    "primaryMetric": "proceduralRetention",
+    "k": 3,
+    "minCases": 20,
+    "degradationBudget": 0,
+    "safetyMustHold": false
+  },
+  "corpus": {
+    "kind": "deterministic-local-fixture",
+    "cases": 20,
+    "perConditionFacts": 15,
+    "maxFacts": 10
+  },
+  "note": "Synthetic local fixture over the real RuntimeMemoryStore. No live provider. Zero/negative effect is a valid result and is never turned into a fabricated win."
+}

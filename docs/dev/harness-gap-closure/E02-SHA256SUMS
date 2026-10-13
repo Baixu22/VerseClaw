@@ -1,0 +1,9 @@
+67cda0e5a5ccd28e5386d9f64d02039ca0122bb753a536deb48167e143ac73fd  docs/dev/harness-gap-closure/e02-acceptance.json
+124f083d69c541f2a6e8b4d47eab487fb9465f28e3c1e07f7fde98286e403fb3  docs/dev/harness-gap-closure/e02-paired-ablation.md
+1c4ba2fcb78d7a42efdb1d365ea98d80788bef3e87e92de7b9a1a91307425be2  harness/specs/tasks/harness-gap-paired-ablation.md
+0d9677ef4278a38d34cc710afe759a8e903db1300088358275fa93eab97faf03  harness/specs/rules/paired-ablation-boundary.md
+e977332c0a7979322fb47280cc3aff98b078954dbed2e9d83781e761acdaa352  scripts/lib/paired-ablation.mjs
+dd264ae7a5879d040abc611b43a10ed82e6f30468bca0ace422cf765db210978  scripts/lib/paired-ablation.d.mts
+f106dac8e5ff30d30a3c24abd834d863a225d751bc77b78c884988adeeee8006  shared/agent-dev/paired-ablation-fixture.json
+87258d935488ce17f9ddae33177d3c292f15f837eb49f8eb2bf4dca771e03bfd  tests/unit/agent-dev-paired-ablation.test.ts
+e0967022871cabd12b9aed6aa3e8fe46b49f27d90e3f0f530c619917bb4cbaa4  tests/unit/runtime-memory-paired-ablation.test.ts
