@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-browser-effect-boundary
 title: 浏览器来源、会话归属与副作用边界台账（S04）
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-envelope-reject
 title: Provider 内容守卫接到可拒绝的窄执行边界（S01）
 scenario: gateway-backend-communication

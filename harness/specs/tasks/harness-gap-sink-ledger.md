@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-sink-ledger
 title: 敏感 sink 覆盖台账与残余出口钉板（S02）
 scenario: gateway-backend-communication

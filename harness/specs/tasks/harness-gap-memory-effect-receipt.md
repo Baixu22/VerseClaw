@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-memory-effect-receipt
 title: 记忆写入与 EffectReceipt 的恢复闭环（S06）
 scenario: gateway-backend-communication

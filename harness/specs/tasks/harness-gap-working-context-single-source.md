@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-working-context-single-source
 title: Working Context 账本作为唯一活任务读写源（L01）
 scenario: gateway-backend-communication

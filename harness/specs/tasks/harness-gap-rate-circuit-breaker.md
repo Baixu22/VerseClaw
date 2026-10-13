@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-rate-circuit-breaker
 title: 异常调用速率的有限状态断路器（L05）
 scenario: gateway-backend-communication

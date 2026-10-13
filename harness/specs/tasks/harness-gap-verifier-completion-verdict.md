@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-verifier-completion-verdict
 title: 受限且可撤销的 verifier 完成裁决入口（S07）
 scenario: gateway-backend-communication

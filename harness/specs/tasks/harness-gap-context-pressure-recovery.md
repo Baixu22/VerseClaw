@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-context-pressure-recovery
 title: 上下文压力下的目标/未完成/依赖/证据可恢复（L02）
 scenario: gateway-backend-communication

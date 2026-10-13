@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-external-write-boundary
 title: 工作区外写入的来源与路径边界核验（S03）
 scenario: gateway-backend-communication
