@@ -10,7 +10,7 @@ export const PREREQUISITE_COMMIT = 'c860c12f4ab88bca9bd46742facbc97e98bb9d60';
 export const PREREQUISITE_DIFF_BASE = '3b08a46667e9b961ff9eafda12da0a18848832c5';
 export const PREREQUISITE_SPEC_PATH = 'harness/specs/tasks/rc01r-green-baseline.md';
 export const PREREQUISITE_SPEC_BLOB = '4bfc17d73c304fdea62c2debb4e213605a2ca227';
-export const APPROVED_ACCEPTED_BASE = '73bdddbb1dcf250783afb5da1174a43cf8d90535';
+export const APPROVED_ACCEPTED_BASE = '086dc6b17ed51813e9114fdeceaa898d195e0579';
 export const INTEGRATED_COMPARISON_BASE = '5dabc7ca5e86d2c08e5236e175323ebe4b4db804';
 export const FROZEN_ROOT_UNIT_EXPECTED_SKIPS = 53;
 
