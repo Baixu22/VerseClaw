@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-l02-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0284",
+    "packet": "L02",
+    "title": "Context-pressure recovery of objective/unfinished/dependencies/recent evidence",
+    "source": "deterministic Working Context snapshot fixtures (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Completed the remaining context-pressure half: a bounded, deterministic recovery projection over the Working Context snapshot with per-section drop counters (no silent drop), an explicit depth guard (no silent recursion) and complete:false always (no fake completion). The handoff-depth half was already landed by #179."
+  },
+  "candidate": {
+    "commit": "e355beea81075df4ca53b0434689adcdc508f5e6",
+    "tree": "01128def4ceba513f9c07960ea893a0f1c184b30",
+    "dirty": false,
+    "branch": "codex/harness-gap-l02-context-pressure-20261013",
+    "base": "4845b94bf1a466013d12093f8f9a341d0b43c4f2",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T13:36:00.000Z",
+    "finishedAt": "2026-10-13T13:44:00.000Z"
+  },
+  "recovery": {
+    "module": "openclaw_runtime/src/runtime-core/context-pressure-recovery.ts",
+    "sections": [
+      "objective",
+      "unfinished",
+      "dependencies",
+      "recentEvidence"
+    ],
+    "fieldMapping": {
+      "objective": [
+        "Objective"
+      ],
+      "unfinished": [
+        "NextAction",
+        "OpenRisks",
+        "Decisions"
+      ],
+      "dependencies": [
+        "Constraints",
+        "ActiveFiles"
+      ],
+      "recentEvidence": [
+        "Evidence",
+        "ConfirmedFacts"
+      ]
+    },
+    "noSilentDrop": "over-budget entries increment dropped[section] and set truncated=true; kept+dropped = total",
+    "noSilentRecursion": "depth > maxDepth -> status 'depth-exceeded', no sections",
+    "noFakeCompletion": "complete is always false; empty/absent snapshot -> status 'unknown'",
+    "deterministic": "same input -> same digest"
+  },
+  "handoffHalf": {
+    "landedBy": "#179 (f4d7700ec + ca83e8983), merged via PR #186",
+    "notes": "sessions.createHandoff persists lineage before activation; cycles/truncated walks/corrupt JSONL/malformed config fail closed; depth bound opt-in runtime.handoff.enabled (default off, maxDepth 1-64, implicit 3); subagent maxSpawnDepth unchanged."
+  },
+  "gates": {
+    "l02Tests": {
+      "command": "openclaw_runtime: run-vitest src/runtime-core/context-pressure-recovery.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 4,
+      "failed": 0
+    },
+    "typecheckCore": {
+      "command": "openclaw_runtime: pnpm run tsgo:core",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "openclaw_runtime: run-oxlint context-pressure-recovery.ts context-pressure-recovery.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-context-pressure-recovery.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-context-pressure-recovery.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "assembly": "The projection is provided; wiring it into a specific compaction injection point is integration-layer work.",
+    "scope": "No new ledger/store; no Stage 3 contract change; no product default/lock/approval change."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "deterministic fixture assertions",
+    "detail": "Tests assert section recovery, drop-count conservation under a tiny budget, complete:false + unknown-on-empty, depth refusal, and digest determinism. Handoff-depth regression is covered by the #179 suite already on main. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "recoverable",
+      "status": "pass",
+      "note": "objective / unfinished / dependencies / recent evidence all recovered from the Working Context snapshot, deterministically."
+    },
+    {
+      "id": "no-silent-drop",
+      "status": "pass",
+      "note": "Over-budget entries are counted in dropped[section] and truncated=true; kept+dropped equals the total candidate count."
+    },
+    {
+      "id": "no-silent-recursion",
+      "status": "pass",
+      "note": "depth beyond maxDepth returns status 'depth-exceeded' with no sections."
+    },
+    {
+      "id": "no-fake-completion",
+      "status": "pass",
+      "note": "complete is always false; an empty snapshot is 'unknown', never 'recovered'."
+    },
+    {
+      "id": "handoff-half",
+      "status": "pass",
+      "note": "Handoff chain depth/bounded recursion landed by #179 on main; subagent maxSpawnDepth and frozen values unchanged."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "4 tests pass, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 3,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Compaction injection-point assembly.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}

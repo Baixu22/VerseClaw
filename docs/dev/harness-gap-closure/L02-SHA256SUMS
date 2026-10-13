@@ -1,0 +1,5 @@
+27ba5b7c62e490e116af31e380292647c3c1ce177962dbe78515e6d19ff9bca1  docs/dev/harness-gap-closure/l02-acceptance.json
+6dfbb30f9a1333ffb05276ed3efc404e9a317eefcf7839ac06a569cdc249635c  docs/dev/harness-gap-closure/l02-context-pressure-recovery.md
+e998a275efa22a1ceaa09836ec57ad786f734021b586f5fadbd7a6a793cf3b74  harness/specs/tasks/harness-gap-context-pressure-recovery.md
+854f7dbae1d06488fe2236566d6867ebd3dabc0b5b92a722f6b938efc471687b  openclaw_runtime/src/runtime-core/context-pressure-recovery.ts
+679f1c407490e2a1160480d5c95fd76dec1e835c9e51d2754d643b0fb3f58475  openclaw_runtime/src/runtime-core/context-pressure-recovery.test.ts
