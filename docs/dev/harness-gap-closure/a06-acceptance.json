@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-a06-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0298",
+    "packet": "A06",
+    "title": "Re-verify A6 long-running-persistence controlled pilot gate",
+    "source": "current-candidate unit tests (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "NO-GO",
+    "evidenceTier": "clean-candidate-local-automated-reverification",
+    "reason": "A6 counters and the degrade_to_full_reverification response are present and pass, but the Active Pilot gate is not graduated: the current tree has no ResumeContractVerifier, no FingerprintLeaseCoordinator/lease-before-checkpoint proof, no requiresReverification production result, and no A6 pause/resume p99 test."
+  },
+  "candidate": {
+    "commit": "bd8dca0a342f75f19e021509e42c16f016f0d891",
+    "tree": "be9449506d1916626faac625f5ad9dbc47f91bf2",
+    "dirty": false,
+    "branch": "codex/harness-gap-a06-long-running-persistence-reverify-20261013",
+    "base": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T15:36:00.000Z",
+    "finishedAt": "2026-10-13T15:43:00.000Z"
+  },
+  "criteria": {
+    "criterion1_volatileMislabel": {
+      "threshold": "volatileMislabelCount MUST remain 0; any non-zero -> critical violation",
+      "evidence": "tests/unit/deprecation-counters.test.ts critical counter/gate; tests/unit/a06-a6-gate-coverage.test.ts",
+      "verdict": "PARTIAL",
+      "moduleLevel": "PASS",
+      "productionDetection": "NO-GO"
+    },
+    "criterion2_verifierPassRate": {
+      "threshold": "verifierFailCount/(pass+fail) <= 0.05",
+      "evidence": "deprecation-counters root/runtime tests",
+      "verdict": "PARTIAL",
+      "moduleLevel": "PASS",
+      "productionVerifier": "NO-GO"
+    },
+    "criterion3_p99": {
+      "threshold": "p99 <= 300ms over 10 pause/resume cycles",
+      "evidence": "no A6 pause/resume performance test; tests/unit/performance-budgets.test.ts covers A5+A1+A3 only",
+      "verdict": "NOT-MEASURED"
+    },
+    "criterion4_rollbackReverification": {
+      "threshold": "ResumeContractVerifier marks requiresReverification=true after rollback",
+      "evidence": "ResumeContractVerifier/requiresReverification absent from source",
+      "verdict": "NO-GO"
+    },
+    "criterion5_leaseOrdering": {
+      "threshold": "FingerprintLeaseCoordinator commits lease before checkpoint",
+      "evidence": "FingerprintLeaseCoordinator absent; file-fingerprint primitives only",
+      "verdict": "NO-GO"
+    },
+    "criterion6_budgetAction": {
+      "threshold": "volatile mislabel OR fail rate >5% -> degrade_to_full_reverification",
+      "evidence": "tests/unit/deprecation-counters.test.ts; openclaw_runtime/src/observability/deprecation-counters.test.ts",
+      "verdict": "PASS"
+    }
+  },
+  "specDriftFixed": {
+    "removed": [
+      "tests/unit/cross-area-composition.test.ts (absent in tree)",
+      "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts (absent in tree)"
+    ],
+    "added": [
+      "tests/unit/deprecation-counters.test.ts",
+      "openclaw_runtime/src/observability/deprecation-counters.test.ts",
+      "tests/unit/file-fingerprint.test.ts",
+      "tests/unit/runtime-resume-shadow.test.ts",
+      "tests/unit/long-task-checkpoint-builder.test.ts",
+      "tests/unit/long-task-control.test.ts",
+      "tests/unit/a06-a6-gate-coverage.test.ts"
+    ],
+    "guard": "tests/unit/a06-a6-gate-coverage.test.ts pins requiredTests, critical counter/action, and the missing verifier/lease/reverification boundary"
+  },
+  "gates": {
+    "rootEvidence": {
+      "command": "pnpm exec vitest run tests/unit/deprecation-counters.test.ts tests/unit/performance-budgets.test.ts tests/unit/file-fingerprint.test.ts tests/unit/runtime-resume-shadow.test.ts tests/unit/long-task-checkpoint-builder.test.ts tests/unit/long-task-control.test.ts tests/unit/a06-a6-gate-coverage.test.ts",
+      "exitCode": 0,
+      "files": 7,
+      "tests": 71,
+      "failed": 0
+    },
+    "runtimeEvidence": {
+      "command": "pnpm --dir openclaw_runtime exec vitest run src/observability/deprecation-counters.test.ts --reporter=dot",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 3,
+      "failed": 0
+    },
+    "typecheckTest": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "pnpm exec eslint tests/unit/a06-a6-gate-coverage.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "verifier": "ResumeContractVerifier and requiresReverification are absent; no production rollback->reverification path can be claimed.",
+    "lease": "FingerprintLeaseCoordinator and lease-before-checkpoint ordering are absent; file fingerprint hashes alone do not prove Blocker 4.",
+    "latency": "No A6 10-cycle pause/resume p99 test; performance is NOT-MEASURED.",
+    "pilotOnly": "A6 remains a controlled pilot; no default-on/GA, no product lock change.",
+    "scope": "Deterministic unit/primitive evidence; no live provider/real-human."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "criterion-to-assertion mapping + coverage guard",
+    "detail": "Counter and degradation-response criteria are mapped to current tests; missing verifier/lease/latency criteria are pinned as NO-GO/NOT-MEASURED. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "criterion1",
+      "status": "partial",
+      "note": "counter critical gate pass; production volatile-mislabel detection caller absent."
+    },
+    {
+      "id": "criterion2",
+      "status": "partial",
+      "note": "counter fail-rate gate pass; production verifier caller absent."
+    },
+    {
+      "id": "criterion3",
+      "status": "not-measured",
+      "note": "no A6 pause/resume p99 test."
+    },
+    {
+      "id": "criterion4",
+      "status": "no-go",
+      "note": "ResumeContractVerifier/requiresReverification absent."
+    },
+    {
+      "id": "criterion5",
+      "status": "no-go",
+      "note": "FingerprintLeaseCoordinator/lease ordering absent."
+    },
+    {
+      "id": "criterion6",
+      "status": "pass",
+      "note": "degrade_to_full_reverification asserted on volatile/high fail rate."
+    },
+    {
+      "id": "spec-drift-fixed",
+      "status": "pass",
+      "note": "stale legacy paths removed; existing counter/fingerprint/resume tests and guard wired; thresholds unchanged."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "8 files / 74 tests pass; typecheck:test, scoped lint, harness validate/dry-run and comms replay/compare pass; credential scan 0 hits; SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 4,
+    "hits": 0
+  },
+  "notMeasured": [
+    "A6 production resume-contract verification (class absent).",
+    "A6 fingerprint-lease-before-checkpoint ordering (class absent).",
+    "A6 pause/resume 10-cycle p99.",
+    "Live provider calls.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
