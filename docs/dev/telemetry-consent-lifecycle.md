@@ -38,3 +38,30 @@ traffic is used.
 The negative control proves the real installed SDK still flushes an already queued
 batch after `disable()` alone, so the transport-level revocation in this change is
 load-bearing. No collector request, real machine identifier or user data was used.
+
+
+## Main integration record (2026-10-14, agent-driven)
+
+`codex/p1-telemetry-opt-out-clean` (`3bcea3b08`) was integrated onto `main`
+(`5cc931fb4`) preserving main's environment-variable PostHog key
+(`VERSE_CLAW_POSTHOG_API_KEY`/`VERSE_CLAW_POSTHOG_HOST`) and main's env-var guard,
+which fails closed when no key is configured. Conflicts in `.gitignore`,
+`README*.md`, `electron/services/settings-api.ts`, `electron/utils/telemetry.ts`
+and `scripts/repository-artifacts.json` were resolved to keep both sides.
+
+| Gate | Command | Result |
+|---|---|---|
+| Focused suites | `pnpm exec vitest run tests/unit/telemetry.test.ts tests/unit/telemetry-consent.test.ts tests/unit/host-services.test.ts` | 3 files / 51 passed / 0 failed |
+| Typecheck (node+web+test) | `pnpm run typecheck` | exit 0 |
+| Test typecheck | `pnpm run typecheck:test` | exit 0 |
+| Frontend + Electron build | `pnpm run build:vite` | exit 0 |
+| Electron E2E | `pnpm exec playwright test tests/e2e/telemetry-consent.spec.ts` | 1 passed / 44.8s |
+| Comms replay/compare | `pnpm run comms:replay` && `pnpm run comms:compare` | PASS / 0.00% delta |
+| Harness validate/dry-run | `pnpm harness validate`/`run --dry-run --spec harness/specs/tasks/p1-telemetry-opt-out.md` | exit 0 / pass |
+| Repository artifact retention | `pnpm run repo:artifacts:check` | passed (17539 tracked paths) |
+
+The Electron E2E drives the real settings switch and asserts the persisted
+`telemetryEnabled` host value across opt-out and opt-in. Both the negative control
+(`disable()` alone still flushes a queued batch) and the queue-discard assertions
+run against the real installed SDK with a synthetic no-network sink; no collector
+traffic, real machine identifier or real-human data is used.
