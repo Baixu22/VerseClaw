@@ -58,7 +58,12 @@ export function createLocomoEmbeddingProvider(): RuntimeEmbeddingProvider {
     // No authorization header: provider keys must never leak to a local service.
     const response = await fetch(config.endpoint, {
       method: "POST", redirect: "error", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ model: config.model, input: texts }), signal: AbortSignal.timeout(120_000),
+      // OpenAI-compatible embedding endpoints expect a FLAT list of strings. Passing a
+      // single-element nested array (e.g. `[["q"]]`, which is what a one-item batch
+      // collapses to) is rejected by llama.cpp with HTTP 400 "prompt elements must
+      // be a string". Keep the payload flat so a one-item batch and a one-item
+      // query produce byte-identical requests.
+      body: JSON.stringify({ model: config.model, input: [...texts] }), signal: AbortSignal.timeout(120_000),
     });
     if (!response.ok) { await response.body?.cancel(); throw new Error("Local embedding HTTP " + response.status); }
     const body = await response.json() as { model?: string; data?: Array<{ index: number; embedding: number[] }> };
