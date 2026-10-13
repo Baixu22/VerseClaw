@@ -114,9 +114,13 @@ rendered verbatim by the system prompt** in `# Project Context` and `## Tooling`
 **Option B applied.** Re-packing content the model already has spends budget on a second
 rendering and leaves the model to arbitrate which copy is authoritative, while VToken's own
 text claims both "prefer this packed view" and "source files remain authoritative".
-`attempt.ts` now drops exactly the prompt-present keys before handing inputs to VToken, so
-VToken keeps doing the work the prompt cannot do: memory entries and workspace files
-outside the prompt.
+
+The cut is declared at the existing call site and applied at the packer: `attempt.ts`
+passes `alreadyRenderedSourcePaths` / `alreadyRenderedToolNames` (built from the same
+`vtokenMarkdownSources` / `vtokenToolSchemas` arrays the measurement reads), and
+`createVtokenPackCandidates` drops exactly those candidates before ingest. VToken therefore
+keeps doing the work the prompt cannot do: memory entries and workspace files outside the
+prompt. There is no second filtering path in `attempt.ts`, so the two cannot diverge.
 
 - The measurement is recorded **before** filtering, so the pre-cut reading stays auditable
   and the drop remains measurable.
@@ -124,7 +128,8 @@ outside the prompt.
   measurement uses, so the cut and the metric cannot drift apart.
 - Blast radius is the documented one: on the common path VToken's markdown/tool input
   becomes empty and the feature narrows to memory entries + prompt-external sources.
-- Rollback: revert the two `.filter(...)` calls at the call site; the measurement stays.
+- Rollback: stop passing `alreadyRenderedSourcePaths` / `alreadyRenderedToolNames` at the
+  call site (the packer keeps every candidate again); the measurement stays.
 
 A test pins that re-running the measurement on the filtered input reports
 `overlappingSourceCount === 0` and `overlappingToolSchemaCount === 0` while the
