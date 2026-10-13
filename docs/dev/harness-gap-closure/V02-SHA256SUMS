@@ -1,0 +1,4 @@
+39db228b81c56cf2b8e04d2dc9f4b47237999ff2ea741968d70f9320eb12167b  docs/dev/harness-gap-closure/v02-acceptance.json
+61bf7fe423b08ce4e329b8378c43ac97f77f39295fa6f79f7abfcf579e71fa47  docs/dev/harness-gap-closure/v02-frozen-acceptance.md
+29f72e02f83bd16bb6335281825fd2717eb3526b3b445d442e9d0d0bcde75ede  harness/specs/tasks/harness-gap-v02-frozen-acceptance.md
+05b09b3e9200267434df532f07f315bc9efdc432708d2555814c9cc6ddadb6f7  tests/unit/harness-gap-v02-acceptance.test.ts

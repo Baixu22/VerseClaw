@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-14",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-v02-executor",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0299",
+    "packet": "V02",
+    "realHuman": false,
+    "liveProvider": false
+  },
+  "candidate": {
+    "branch": "codex/harness-gap-v02-frozen-acceptance-20261014",
+    "base": "6a394b0047908e6bc3b5b9bc12feb41871e9d8c8",
+    "note": "base is origin/main after PR #216"
+  },
+  "decision": {
+    "status": "NO-GO",
+    "reason": "Formal full gate is not green: pnpm test 11 failed/8316 passed/52 skipped; pnpm run lint 4 errors/115 warnings; full Electron E2E not executed. All unit failures reproduce on a clean origin/main worktree, so they are pre-existing baseline red rather than harness-gap regressions."
+  },
+  "gates": {
+    "fullUnit": {
+      "command": "pnpm test",
+      "exitCode": 1,
+      "files": 948,
+      "filesFailed": 7,
+      "filesPassed": 937,
+      "filesSkipped": 4,
+      "tests": 8379,
+      "testsFailed": 11,
+      "testsPassed": 8316,
+      "testsSkipped": 52,
+      "durationMs": 1371370
+    },
+    "typecheckUncached": {
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "errorCount": 0
+    },
+    "lintFull": {
+      "command": "pnpm run lint",
+      "exitCode": 1,
+      "errors": 4,
+      "warnings": 115
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "PASS, 0.00% delta"
+    },
+    "contractCheck": {
+      "command": "pnpm run contract:check",
+      "exitCode": 0
+    },
+    "i18nLint": {
+      "command": "pnpm run i18n:lint",
+      "exitCode": 0
+    },
+    "buildVite": {
+      "command": "pnpm run build:vite",
+      "exitCode": 0
+    },
+    "fullElectronE2E": {
+      "command": "pnpm run test:e2e",
+      "exitCode": null,
+      "result": "NOT-RUN (approx 150 serial Electron specs exceed the session envelope)"
+    },
+    "representativeElectronE2E": {
+      "command": "pnpm exec playwright test tests/e2e/telemetry-consent.spec.ts",
+      "exitCode": 0,
+      "passed": 1,
+      "node": "24.19.0",
+      "electron": "40.8.4"
+    },
+    "harnessCi": {
+      "command": "pnpm run harness:ci",
+      "exitCode": 1,
+      "note": "spec-lifecycle 58 tests pass; agent-dev:audit fails on 124h-stale Agent Dev evidence"
+    }
+  },
+  "residual": {
+    "baselineFailures": [
+      "tests/unit/verseshell-manifest.test.ts (7) missing resources/bin/win32-x64/ae.exe",
+      "tests/unit/uas-05-verseshell-process-lifecycle.test.ts (1) missing resources/bin/win32-x64/ae.exe",
+      "tests/unit/p0-production-acceptance.test.ts (1) stale prebuild:vite assertion",
+      "tests/unit/rc01-authority-inventory-baseline.test.ts (1) acceptedBaseSha not an ancestor",
+      "tests/unit/rc01r-prerequisite-provenance.test.ts (1) acceptedBaseSha not an ancestor",
+      "tests/unit/dcs-prod-flags-memory-semantics.test.tsx (1) react-i18next mock missing initReactI18next",
+      "tests/unit/vtoken-bridge-panel.test.tsx (1) react-i18next mock missing initReactI18next"
+    ],
+    "reproduction": "All 11 failures reproduced in clean origin/main worktree D:/ClawX-candidates/issue-213-writeset-scheduler-20261013 (5cc931fb4).",
+    "notRun": [
+      "full Electron E2E",
+      "external GitHub Actions CI",
+      "real provider/paid calls"
+    ],
+    "verifier": "Independent recomputation performed by the same agent as a separate verification step; no second agent role."
+  },
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "hits": 0
+  },
+  "landing": {
+    "pushed": false,
+    "pr": null
+  }
+}

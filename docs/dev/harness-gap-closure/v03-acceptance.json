@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-14",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-v03-verdict",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0300",
+    "packet": "V03",
+    "realHuman": false
+  },
+  "verdict": {
+    "status": "PARTIAL",
+    "gaReady": false,
+    "reason": "Internal controlled closure only: the 30 source slots are owned and the E/S/L/G/V packets are complete or carry an explicit technical NO-GO, but the formal full gate is not green (V02 NO-GO) and no release/GA authority exists."
+  },
+  "slotReconciliation": {
+    "total": 30,
+    "ownerlessUnresolved": 0,
+    "note": "HG22/HG27 remain unrecoverable source slots recorded by B00; not fabricated."
+  },
+  "packetStandings": {
+    "A1": "PASS",
+    "A2": "NO-GO (criterion 4)",
+    "A3": "PASS",
+    "A4": "NO-GO (production caller / cumulative latency)",
+    "A5": "NO-GO (replanOnResume absent)",
+    "A6": "NO-GO (verifier/lease/p99 absent)"
+  },
+  "residual": [
+    "11 pre-existing main unit failures",
+    "pnpm run lint 4 errors / 115 warnings",
+    "agent-dev:audit stale evidence",
+    "full Electron E2E and external CI not executed",
+    "no live provider / paid provider calls"
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "hits": 0
+  },
+  "landing": {
+    "pushed": false,
+    "pr": null
+  }
+}
