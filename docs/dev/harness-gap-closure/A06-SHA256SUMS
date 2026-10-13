@@ -1,0 +1,5 @@
+e2ad855ac57ba12a17e26be163a6ee5c56c20b02d875a458d361270d250f72dc  docs/dev/harness-gap-closure/a06-acceptance.json
+a3f3b51d5ca1f3da0a75de255b430732fb2ebfb54dceaf2dd81e9256abb00595  docs/dev/harness-gap-closure/a06-long-running-persistence-gate.md
+36b101e7789d47e69fa9681d213bcd8e7af8a9155bcad26cb511b9cef9a09d28  harness/specs/tasks/a6-long-running-persistence-pilot.md
+dc97c690fd847571403aca2211283d9bb38a3b57ea2cf50ad21f9a2037721116  harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md
+6d7bc7085f39f0ffba166ee0f57a7fef4b5a149edf865cbd7f9db889f345481c  tests/unit/a06-a6-gate-coverage.test.ts

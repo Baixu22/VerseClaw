@@ -9,7 +9,6 @@ touchedAreas:
   - openclaw_runtime/src/agents/long-task-control/file-fingerprint.ts
   - openclaw_runtime/src/agents/long-task-control/persisted-resume-shadow.ts
   - openclaw_runtime/src/runtime-core/resume-shadow.ts
-  - openclaw_runtime/src/agents/cross-area/cross-area-facades.ts
   - openclaw_runtime/src/observability/deprecation-counters.ts
 requiredProfiles:
   - fast
@@ -24,8 +23,14 @@ expectedUserBehavior:
   - When a volatile mislabel appears or the verifier failure rate exceeds 5%, the pilot responds with `degrade_to_full_reverification`.
   - With the pilot flag off, pause/resume behaviour is unchanged.
 requiredTests:
-  - tests/unit/cross-area-composition.test.ts
+  - tests/unit/deprecation-counters.test.ts
+  - openclaw_runtime/src/observability/deprecation-counters.test.ts
   - tests/unit/performance-budgets.test.ts
+  - tests/unit/file-fingerprint.test.ts
+  - tests/unit/runtime-resume-shadow.test.ts
+  - tests/unit/long-task-checkpoint-builder.test.ts
+  - tests/unit/long-task-control.test.ts
+  - tests/unit/a06-a6-gate-coverage.test.ts
 acceptance:
   - A6 deprecation counter `volatileMislabelCount` MUST be 0 (CRITICAL gate)
   - A6 deprecation counter `verifierFailCount` rate ≤ 5% over resume cycles
