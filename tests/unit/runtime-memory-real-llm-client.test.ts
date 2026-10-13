@@ -89,4 +89,27 @@ describe("real-model evaluation provider binding and receipts", () => {
     const client = await import("./helpers/runtime-memory-real-llm-client");
     expect((await client.callDeepSeek("system", "question")).model).toBe("deepseek-chat");
   });
+  it("retries a rate-limited call using Retry-After instead of failing the question", async () => {
+    mock.get("https://step.example").intercept({ path: "/step_plan/v1/chat/completions", method: "POST" })
+      .reply(429, { error: { message: "rate limited" } }, { headers: { "retry-after": "0" } }).times(1);
+    mock.get("https://step.example").intercept({ path: "/step_plan/v1/chat/completions", method: "POST" })
+      .reply(200, response).times(1);
+    const client = await import("./helpers/runtime-memory-real-llm-client");
+    expect((await client.callDeepSeek("system", "question")).content).toBe("OK");
+    expect(client.getRuntimeMemoryLlmReceipts()).toHaveLength(1);
+  });
+  it("bounds Retry-After and falls back to exponential backoff", async () => {
+    const client = await import("./helpers/runtime-memory-real-llm-client");
+    expect(client.parseRetryAfter("12")).toBe(12_000);
+    expect(client.parseRetryAfter("")).toBeNull();
+    expect(client.parseRetryAfter("not-a-date")).toBeNull();
+    const now = Date.parse("2026-10-12T00:00:00.000Z");
+    expect(client.parseRetryAfter("Mon, 12 Oct 2026 00:00:05 GMT", now)).toBe(5_000);
+    expect(client.parseRetryAfter("Mon, 12 Oct 2026 00:00:05 GMT", now + 60_000)).toBe(0);
+    expect(client.rateLimitDelayMs(null, 1)).toBe(1_000);
+    expect(client.rateLimitDelayMs(null, 3)).toBe(4_000);
+    // A hostile Retry-After cannot stall the run for an hour.
+    expect(client.rateLimitDelayMs(3_600_000, 1)).toBe(client.MAX_RATE_LIMIT_BACKOFF_MS);
+    expect(client.rateLimitDelayMs(-5, 1)).toBe(0);
+  });
 });

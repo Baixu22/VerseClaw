@@ -55,6 +55,13 @@ const NodeHostSchema = z
 
 const RuntimeFeatureSchema = z
   .object({
+    handoff: z
+      .object({
+        enabled: z.boolean().optional(),
+        maxDepth: z.number().int().min(1).max(64).optional(),
+      })
+      .strict()
+      .optional(),
     verseShellFoundation: z
       .object({
         killSwitch: z.boolean().optional(),

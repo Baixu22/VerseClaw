@@ -209,3 +209,52 @@ it("arbitrates oversized COMPASS output instead of forwarding it outside the tur
   expect(ssp?.charsApplied).toBeLessThanOrEqual(6000);
   expect(projection.systemPromptAddition?.length).toBe(ssp?.charsApplied);
 });
+
+
+it("#182 keeps a COMPASS-injected fact out of the memory pilot block", async () => {
+  const compassContext = context("SSP", "FACT");
+  // compassContext.injection.injectedFactIds === ["fact-1"]
+  const memoryProviderFactory = (() => [
+    {
+      manifest: { id: "runtime-memory", kind: "context" },
+      getContext: () => [
+        {
+          id: "runtime-memory:fact-1",
+          kind: "memory",
+          text: "fact-1 body",
+          source: "runtime-memory:fact-1",
+          evidenceRefs: [],
+          metadata: { providerId: "runtime-memory", factId: "fact-1" },
+        },
+        {
+          id: "runtime-memory:fact-9",
+          kind: "memory",
+          text: "fact-9 body",
+          source: "runtime-memory:fact-9",
+          evidenceRefs: [],
+          metadata: { providerId: "runtime-memory", factId: "fact-9" },
+        },
+      ],
+    },
+  ]) as unknown as NonNullable<
+    NonNullable<Parameters<typeof computeContextExtraSystemPrompt>[2]>["memoryProviderFactory"]
+  >;
+  const cfg = {
+    runtime: {
+      memory: {
+        injectPilot: { enabled: true, providers: ["runtime-memory"], sessions: "all" },
+      },
+    },
+  };
+
+  const result = await computeContextExtraSystemPrompt("base", cfg, {
+    turnId: "compass-budget",
+    sessionKey: "agent:main:main",
+    memoryProviderFactory,
+    compassContext,
+  });
+
+  // fact-1 is already in the prompt from COMPASS retrieval; only fact-9 is new.
+  expect(result.extraSystemPrompt).toContain("fact-9 body");
+  expect(result.extraSystemPrompt).not.toContain("fact-1 body");
+});

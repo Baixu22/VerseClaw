@@ -99,6 +99,8 @@ export const RUNTIME_REGISTRY_DIAGNOSTIC_REASONS = [
   "provider_error",
   "timeout",
   "no_result",
+  /** FP-P1-181: the declared memory-injection budget truncated the block. */
+  "memory_injection_budget_truncated",
 ] as const;
 export type RuntimeRegistryDiagnosticReason =
   (typeof RUNTIME_REGISTRY_DIAGNOSTIC_REASONS)[number];
@@ -403,6 +405,8 @@ const DIAGNOSTIC_REASON_PRIORITY: Record<RuntimeRegistryDiagnosticReason, number
   duplicate_provider: 40,
   flag_disabled: 40,
   no_result: 35,
+  // Informational degradation: the injection still happened, just smaller.
+  memory_injection_budget_truncated: 45,
   legacy_authoritative: 10,
   registered: 0,
 };
@@ -455,6 +459,7 @@ const RUNTIME_REGISTRY_CONTROLLED_ACTIONABILITY_BY_REASON = {
   duplicate_provider: "review_required",
   flag_disabled: "review_required",
   no_result: "review_required",
+  memory_injection_budget_truncated: "review_required",
   legacy_authoritative: "noise",
   registered: "noise",
 } as const satisfies Record<

@@ -308,4 +308,38 @@ describe("computeVtokenExtraSystemPrompt", () => {
     );
     expect(result).toBe("keep me");
   });
+
+  // FP-P1-182: the same bootstrap files and tool schemas are rendered in full by the
+  // system prompt builder AND handed to VToken. Re-packing them adds no information and
+  // makes the model arbitrate between two views of the same source.
+  it("does not re-pack sources and tools the system prompt already renders", () => {
+    const candidates = createVtokenPackCandidates({
+      markdownSources: [
+        { sourcePath: "AGENTS.md", text: "agents instructions" },
+        { sourcePath: "notes.md", text: "notes" },
+      ],
+      toolSchemas: [
+        { name: "read", description: "read a file" },
+        { name: "custom_tool", description: "only in vtoken" },
+      ],
+      alreadyRenderedSourcePaths: ["AGENTS.md"],
+      alreadyRenderedToolNames: ["read"],
+    });
+
+    const markdownPaths = candidates
+      .filter((candidate) => candidate.kind === "markdown")
+      .map((candidate) => (candidate as { sourcePath: string }).sourcePath);
+    expect(markdownPaths).toEqual(["notes.md"]);
+    // The tool the prompt does not carry still reaches VToken.
+    expect(candidates.filter((candidate) => candidate.kind === "tool_schema")).toHaveLength(1);
+  });
+
+  it("keeps every candidate when nothing is already rendered", () => {
+    const candidates = createVtokenPackCandidates({
+      markdownSources: [{ sourcePath: "AGENTS.md", text: "agents instructions" }],
+      toolSchemas: [{ name: "read", description: "read a file" }],
+    });
+    expect(candidates).toHaveLength(2);
+  });
+
 });

@@ -16,6 +16,7 @@
  * - `recordOutcome` writes to the mission trace/audit surface via the
  *   injected `recordOutcome` callback (defaults to console when absent).
  */
+import { existsSync } from "node:fs";
 import path from "node:path";
 import {
   getLongTaskCheckpointById,
@@ -23,8 +24,12 @@ import {
 } from "./long-task-control/store.js";
 import {
   getOrCreateWriteJournal,
+  journalDirFor,
   undoLastWrites,
+  type WriteJournalEntry,
 } from "./tools/write-journal.js";
+import { acquirePatchBatchLocks } from "./apply-patch-batch-lock.js";
+import { resolveCheckpointJournalBoundary } from "./checkpoint-diff.js";
 import {
   listWorktreeDirs,
   type WorktreeRecord,
@@ -88,46 +93,115 @@ export async function validateCheckpointRecord(
 export function applyCheckpointToJournal(params: {
   workspaceRoot: string;
   checkpoint: LongTaskCheckpointRecord;
-  /** Journal session id. Defaults to the checkpoint's sessionKey (canonical). */
+  /**
+   * Journal session id — the agent session UUID (`options.sessionId` at
+   * tool-creation time). Required: the canonical session key addresses a
+   * *different* journal directory, so there is no safe fallback (#176).
+   */
   sessionId?: string;
   now?: () => number;
 }): { restored: string[]; errors: string[]; journalDir: string } {
-  const at = Date.parse(params.checkpoint.checkpoint.createdAt);
-  // The write-journal is keyed by the agent session id (options.sessionId at
-  // tool-creation time), NOT the canonical session key. Callers with a
-  // concrete session id MUST pass it; the checkpoint sessionKey is only a
-  // fallback for tests/back-compat.
-  const journal = getOrCreateWriteJournal(
-    params.workspaceRoot,
-    params.sessionId ?? params.checkpoint.sessionKey,
-  );
-  // Seq boundary (monotonic, immune to same-millisecond ambiguity) takes
-  // precedence when the checkpoint was stamped with `metadata.journalSeq`
-  // (mission-control tick-end checkpoints). createdAt-based filtering remains
-  // the fallback for unstamped/legacy checkpoints.
-  const metadata = params.checkpoint.checkpoint.metadata;
-  const rawSeq =
-    metadata && typeof metadata === "object" && "journalSeq" in metadata
-      ? (metadata as Record<string, unknown>).journalSeq
-      : undefined;
-  const seqBoundary =
-    typeof rawSeq === "number" && Number.isFinite(rawSeq) ? rawSeq : undefined;
-  // Entries are seq-ordered; find the cutoff index: all entries after the
-  // checkpoint instant must be undone. Undo newest-first (from the tail).
-  const toUndo =
-    seqBoundary !== undefined
-      ? journal.entries.filter((entry) => entry.seq > seqBoundary)
-      : journal.entries.filter((entry) => entry.createdAtMs >= at);
+  const journalSessionId = params.sessionId?.trim();
+  if (!journalSessionId) {
+    // #176: this used to fall back to `checkpoint.sessionKey` (e.g.
+    // "agent:main:main"), which silently pointed at an empty directory and
+    // reported a successful restore that changed nothing.
+    return {
+      restored: [],
+      errors: [
+        "journal_session_id_missing: pass the agent session id (UUID); the canonical session key addresses a different journal directory (#176)",
+      ],
+      journalDir: "",
+    };
+  }
+  const journalDir = journalDirFor(params.workspaceRoot, journalSessionId);
+  if (!existsSync(journalDir)) {
+    // #176: fail closed. "No journal for this session id" is a key mismatch or
+    // a session that never journaled a write; either way it is not a
+    // successful restore, and it must not report as one.
+    return {
+      restored: [],
+      errors: [`no_journal_for_session: ${journalDir}`],
+      journalDir,
+    };
+  }
+  const journal = getOrCreateWriteJournal(params.workspaceRoot, journalSessionId);
+  const toUndo = selectCheckpointUndoEntries({
+    workspaceRoot: params.workspaceRoot,
+    checkpoint: params.checkpoint,
+    sessionId: journalSessionId,
+  });
   if (toUndo.length === 0) {
     return { restored: [], errors: [], journalDir: journal.rootDir };
   }
   // undoLastWrites pops from the tail. Because journal entries are seq-ordered
   // and the checkpoint is a suffix boundary, undoing `toUndo.length` steps from
   // the tail restores exactly the post-checkpoint writes.
+  return undoCheckpointWrites({
+    workspaceRoot: params.workspaceRoot,
+    sessionId: journalSessionId,
+    entries: toUndo.map((entry) => ({ seq: entry.seq, relPath: entry.relPath })),
+  });
+}
+
+/**
+ * #175: the journal entries a rollback to this checkpoint instant would undo,
+ * oldest first.
+ *
+ * Single implementation of the selection rule: the executor and the lock
+ * acquisition in `createCheckpointRollbackDeps` both call it, so the boundary
+ * the rollback uses and the paths it locks can never drift apart.
+ *
+ * Seq boundary (monotonic, immune to same-millisecond ambiguity) takes
+ * precedence when the checkpoint was stamped with `metadata.journalSeq`
+ * (mission-control tick-end checkpoints); createdAt filtering remains the
+ * fallback for unstamped/legacy checkpoints.
+ */
+export function selectCheckpointUndoEntries(params: {
+  workspaceRoot: string;
+  checkpoint: LongTaskCheckpointRecord;
+  sessionId: string;
+}): WriteJournalEntry[] {
+  const journal = getOrCreateWriteJournal(params.workspaceRoot, params.sessionId);
+  const seqBoundary = resolveCheckpointJournalBoundary(params.checkpoint);
+  if (seqBoundary !== undefined) {
+    return journal.entries.filter((entry) => entry.seq > seqBoundary);
+  }
+  const at = Date.parse(params.checkpoint.checkpoint.createdAt);
+  return journal.entries.filter((entry) => entry.createdAtMs >= at);
+}
+
+/**
+ * #175: apply a *pre-computed* rollback selection.
+ *
+ * `applyCheckpointToJournal` computes the selection and delegates here. Splitting
+ * it out is what makes the issue's interleaving testable without a test-only hook
+ * in the production path: a caller that computed its selection earlier can hand
+ * it over after a concurrent write landed, and the identity check inside
+ * `undoLastWrites` turns that into an explicit abort — `concurrent_write_detected`
+ * — instead of popping the concurrent entry as "the Nth from the tail".
+ *
+ * `entries` is the oldest-first selection; it is reversed here because the undo
+ * pops newest-first. An empty selection is a no-op, never "undo one".
+ */
+export function undoCheckpointWrites(params: {
+  workspaceRoot: string;
+  sessionId: string;
+  entries: readonly { seq: number; relPath: string }[];
+}): { restored: string[]; errors: string[]; journalDir: string } {
+  const newestFirst = [...params.entries].reverse();
+  if (newestFirst.length === 0) {
+    return {
+      restored: [],
+      errors: [],
+      journalDir: journalDirFor(params.workspaceRoot, params.sessionId),
+    };
+  }
   const outcome = undoLastWrites({
     workspaceRoot: params.workspaceRoot,
-    sessionId: params.sessionId ?? params.checkpoint.sessionKey,
-    steps: toUndo.length,
+    sessionId: params.sessionId,
+    steps: newestFirst.length,
+    expectedEntries: newestFirst,
   });
   return {
     restored: outcome.restored,
@@ -201,12 +275,31 @@ export function createCheckpointRollbackDeps(
         options.workspaceRoot,
         worktreeRoots,
       );
-      const outcome = applyCheckpointToJournal({
-        workspaceRoot: journalRoot,
-        checkpoint: record,
-        sessionId: options.sessionId,
-        now,
-      });
+      // #175: hold the same file leases a writer holds, so a write cannot
+      // interleave between the selection and the undo. Writers lock their
+      // resolved target paths (`write-journal.ts`), and `apply_patch` locks in
+      // its preflight, so locking the entries we are about to undo serializes
+      // the rollback against both.
+      const journalSessionIdForLock = options.sessionId?.trim();
+      const lockTargets = journalSessionIdForLock
+        ? selectCheckpointUndoEntries({
+            workspaceRoot: journalRoot,
+            checkpoint: record,
+            sessionId: journalSessionIdForLock,
+          }).map((entry) => entry.absPath)
+        : [];
+      const releaseLocks = await acquirePatchBatchLocks(lockTargets);
+      let outcome: { restored: string[]; errors: string[]; journalDir: string };
+      try {
+        outcome = applyCheckpointToJournal({
+          workspaceRoot: journalRoot,
+          checkpoint: record,
+          sessionId: options.sessionId,
+          now,
+        });
+      } finally {
+        releaseLocks();
+      }
       if (outcome.errors.length > 0) {
         throw new Error(
           `checkpoint rollback stopped at first failure (${outcome.errors.join("; ")}); journal preserved at ${outcome.journalDir}`,

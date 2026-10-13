@@ -304,6 +304,20 @@ export function resolveWorkspaceHeaderSessions({
     .reverse();
 }
 
+/** #180: the lineage line shows the fork point as a short date+time. */
+function formatLineageTimestamp(value: number): string {
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(value));
+  } catch {
+    return new Date(value).toLocaleString();
+  }
+}
+
 function formatNewSessionDisplayName(sessionKey: string): string {
   const rawId = sessionKey.split(':').pop() || sessionKey;
   if (rawId.startsWith('session-')) {
@@ -444,6 +458,16 @@ function ProjectSessionHeader({
   const [branch, setBranch] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const sessionName = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
+  /**
+   * #180: sessions derived from the one on screen. The forked/spawned children are
+   * already in `sessions` (that is why their lineage line renders below), so this
+   * is a pure filter — no new query and no new host-api channel.
+   */
+  const derivedSessions = sessions.filter((session) =>
+    session.key !== currentSessionKey
+    && (session.parentSessionKey === currentSessionKey
+      || sessionLineage?.[session.key]?.sourceSessionKey === currentSessionKey),
+  );
 
   /* The empty state names the checkout under the composer (project · branch).
    * Once a conversation starts that row is gone, and the header was carrying
@@ -736,14 +760,56 @@ function ProjectSessionHeader({
                     </span>
                     <span className="block truncate font-mono text-2xs text-muted-foreground">{session.key}</span>
                     {forkSourceSessionKey && (
-                      <span className="block truncate text-2xs text-muted-foreground">
-                        {t('session.lineage.forkedFrom', { session: forkSourceSessionKey })}
+                      <span
+                        className="block truncate text-2xs text-muted-foreground"
+                        data-testid="chat-session-lineage"
+                      >
+                        {typeof session.forkedFromTimestamp === 'number'
+                          ? t('session.lineage.forkedFromAt', {
+                              session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
+                              time: formatLineageTimestamp(session.forkedFromTimestamp),
+                            })
+                          : t('session.lineage.forkedFrom', {
+                              session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
+                            })}
                       </span>
                     )}
                   </span>
                 </button>
               );
             })}
+            {derivedSessions.length > 0 && (
+              <>
+                <hr className="codex-header-menu__sep" />
+                <div
+                  className="px-2 py-1 text-2xs font-medium text-muted-foreground"
+                  data-testid="chat-derived-sessions-title"
+                >
+                  {t('session.derived.title', { count: derivedSessions.length })}
+                </div>
+                {derivedSessions.map((session) => (
+                  <button
+                    key={`derived-${session.key}`}
+                    type="button"
+                    className="codex-header-menu__item"
+                    data-testid={`chat-session-derived-${session.key}`}
+                    onClick={() => {
+                      setOpen(null);
+                      switchSession(session.key);
+                    }}
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-xs font-medium text-foreground">
+                        {getSessionDisplayName(session.key, sessions, sessionLabels)}
+                      </span>
+                      <span className="block truncate font-mono text-2xs text-muted-foreground">
+                        {session.key}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </>
+            )}
           </div>
         )}
       </div>
@@ -2204,13 +2270,13 @@ export function Chat() {
     toast.error(t(`composer.continuity.failure.${action}.${kind}.title`, { defaultValue: fallbackTitle }), toastOptions);
   }, [t]);
 
-  const handleForkSession = useCallback(async () => {
+  const handleForkSession = useCallback(async (options?: { fromLeafId?: string }) => {
     if (forkDisabled || forkBusy) return;
     const sourceSessionKey = currentSessionKey;
     setForkBusy(true);
     try {
       await persistCurrentContinuitySourceSession();
-      const nextSessionKey = await createWorkspaceScopedForkSession(sourceSessionKey);
+      const nextSessionKey = await createWorkspaceScopedForkSession(sourceSessionKey, options);
       workspaceSessionRestoreTargetRef.current = activeWorkspace?.id
         ? { workspaceId: activeWorkspace.id, sessionKey: nextSessionKey }
         : null;
@@ -2261,6 +2327,36 @@ export function Chat() {
     t,
   ]);
 
+  /**
+   * #178: summarize a located stretch of the transcript. 'from' keeps this
+   * message (and everything after) verbatim; 'to' folds the head through this
+   * message into the summary. The gateway fails closed on a bad boundary.
+   */
+  const handleCompactRange = useCallback(async (messageId: string, boundary: 'from' | 'to') => {
+    if (!isCurrentControlScope()) return;
+    const sessionKey = currentSessionKey;
+    try {
+      const result = await hostApi.sessions.compactRange({
+        sessionKey,
+        ...(currentAgentId ? { agentId: currentAgentId } : {}),
+        ...(boundary === 'from' ? { fromLeafId: messageId } : { toLeafId: messageId }),
+      });
+      if (!result.success || result.compacted !== true) {
+        toast.error(t('composer.compactRange.toastFailed'), {
+          description: result.reason || t('composer.compactRange.toastFailedDescription'),
+        });
+        return;
+      }
+      await loadSessions();
+      await loadHistory();
+      toast.success(t('composer.compactRange.toastCompacted'));
+    } catch (error) {
+      toast.error(t('composer.compactRange.toastFailed'), {
+        description: getContinuityErrorMessage(error, t('composer.compactRange.toastFailedDescription')),
+      });
+    }
+  }, [currentAgentId, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, t]);
+
   const handlePrepareHandoff = useCallback(async () => {
     if (handoffDisabled || handoffBusy || !isCurrentControlScope()) return;
     setHandoffBusy(true);
@@ -2277,7 +2373,7 @@ export function Chat() {
           action: 'handoff',
           kind,
           message: result.error || t('composer.handoff.toastPrepareFailed'),
-          fallback: gatewayAvailable && kind !== 'active_run'
+          fallback: gatewayAvailable && kind !== 'active_run' && !kind.startsWith('handoff_')
             ? {
               kind: 'tryFork',
               onClick: () => handleForkSessionRef.current?.(),
@@ -2296,7 +2392,7 @@ export function Chat() {
         action: 'handoff',
         kind,
         message: getContinuityErrorMessage(error, t('composer.handoff.toastPrepareFailed')),
-        fallback: gatewayAvailable && kind !== 'active_run'
+        fallback: gatewayAvailable && kind !== 'active_run' && !kind.startsWith('handoff_')
           ? {
             kind: 'tryFork',
             onClick: () => handleForkSessionRef.current?.(),
@@ -2345,7 +2441,6 @@ export function Chat() {
     const draft = handoffDraft.trim();
     if (!draft || handoffCreating) return;
     setHandoffCreating(true);
-    const sourceSessionKey = currentSessionKey;
     try {
       await persistCurrentContinuitySourceSession();
       const nextSessionKey = await createWorkspaceScopedHandoffSession(draft);
@@ -2368,31 +2463,17 @@ export function Chat() {
       // enters the real transcript instead of waiting for a manual paste.
       await sendMessage(draft);
       toast.success(t('composer.handoff.toastCreated'));
-      if (activeWorkspace?.id) {
-        void hostApi.taskLedger.linkSession({
-          workspaceId: activeWorkspace.id,
-          sessionKey: nextSessionKey,
-          agentId: currentAgentId,
-          relation: 'handoff_from',
-          sourceSessionKey,
-          summary: t('composer.handoff.ledgerSummary', { source: sourceSessionKey }),
-          idempotencyKey: `handoff:${sourceSessionKey}:${nextSessionKey}`,
-        }).catch((error) => {
-          console.warn('[chat:handoff] failed to link task ledger session', error);
-        });
-      }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('composer.handoff.toastCreateFailed'));
+      const kind = classifySessionContinuityError(error);
+      showContinuityFailureToast({ action: 'handoff', kind, message: getContinuityErrorMessage(error, t('composer.handoff.toastCreateFailed')) });
     } finally {
       setHandoffCreating(false);
     }
   }, [
     activeWorkspace?.id,
-    activeWorkspace?.permissionMode,
-    currentAgentId,
-    currentSessionKey,
     handoffCreating,
     handoffDraft,
+    showContinuityFailureToast,
     persistCurrentContinuitySourceSession,
     resetSessionView,
     sendMessage,
@@ -3365,6 +3446,12 @@ export function Chat() {
                         onDraftInteractionResponse={handleAppendComposerDraft}
                         canResendUserMessage={isGatewayRunning && !inputRunActive}
                         onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
+                        onForkFromMessage={(messageId) =>
+                          void handleForkSession({ fromLeafId: messageId })
+                        }
+                        onCompactRange={(messageId, boundary) =>
+                          void handleCompactRange(messageId, boundary)
+                        }
                       />
                       {row.runCards.map((card) => {
                         const runKey = card.runKey;

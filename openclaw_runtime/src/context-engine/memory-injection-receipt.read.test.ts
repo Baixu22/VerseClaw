@@ -15,6 +15,7 @@ import {
   recordCompassMemoryInjectionReceipt,
 } from "./memory-injection-receipt.js";
 import { closeOpenClawStateDatabase } from "../state/openclaw-state-db.js";
+import { dcsObservability } from "./dcs-observability.js";
 import type { PreReplyInjection } from "../runtime-core/memory-pre-reply-injection.js";
 
 const tempRoots: string[] = [];
@@ -110,3 +111,15 @@ describe("listMemoryInjectionReceipts", () => {
     expect(all.length).toBeGreaterThanOrEqual(2);
   });
 });
+
+  it("counts a receipt read failure while still returning the empty state", () => {
+    // Point the reader at a path SQLite cannot open as a database (an existing
+    // directory) so the fail-open branch runs.
+    const before = dcsObservability.snapshot().memoryReceiptReadFailures;
+    const rows = listMemoryInjectionReceipts({
+      database: { env: process.env, path: tempRoots[0] },
+    });
+
+    expect(rows).toEqual([]);
+    expect(dcsObservability.snapshot().memoryReceiptReadFailures - before).toBe(1);
+  });

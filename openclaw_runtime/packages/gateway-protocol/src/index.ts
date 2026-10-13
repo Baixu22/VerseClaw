@@ -315,6 +315,8 @@ import {
   SessionsStopResultSchema,
   type SessionsCompactParams,
   SessionsCompactParamsSchema,
+  type SessionsCompactRangeParams,
+  SessionsCompactRangeParamsSchema,
   type SessionsCleanupParams,
   SessionsCleanupParamsSchema,
   type SessionsCompactionHistoryParams,
@@ -715,6 +717,9 @@ export const validateSessionsDeleteParams = lazyCompile<SessionsDeleteParams>(
 );
 export const validateSessionsCompactParams = lazyCompile<SessionsCompactParams>(
   SessionsCompactParamsSchema,
+);
+export const validateSessionsCompactRangeParams = lazyCompile<SessionsCompactRangeParams>(
+  SessionsCompactRangeParamsSchema,
 );
 export const validateSessionsCompactionStatusParams =
   lazyCompile<SessionsCompactionStatusParams>(SessionsCompactionStatusParamsSchema);
@@ -1462,6 +1467,7 @@ export type {
   SessionsResetParams,
   SessionsDeleteParams,
   SessionsCompactParams,
+  SessionsCompactRangeParams,
   SessionsUsageParams,
   TaskSummary,
   TasksListParams,

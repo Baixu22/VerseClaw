@@ -8,6 +8,7 @@ import {
   ErrorCodes,
   errorShape,
   validateSessionsCompactParams,
+  validateSessionsCompactRangeParams,
   validateSessionsCompactionHistoryParams,
   validateSessionsCompressionArtifactParams,
   validateSessionsCompactionBranchParams,
@@ -20,6 +21,7 @@ import {
 } from "../../../packages/gateway-protocol/src/index.js";
 import { resolveAgentWorkspaceDir } from "../../agents/agent-scope.js";
 import { compactEmbeddedAgentSession } from "../../agents/embedded-agent.js";
+import { readTranscriptFileState } from "../../agents/embedded-agent-runner/transcript-file-state.js";
 import {
   normalizeReasoningLevel,
   normalizeThinkLevel,
@@ -49,6 +51,7 @@ import {
   recordLongTaskInterventionEvent,
 } from "../../agents/long-task-control/store.js";
 import { assertValidParams } from "./validation.js";
+import { resolveRangeCompactionKeepEntry } from "./sessions.compaction-range.js";
 import {
   requireSessionKey,
   resolveGatewaySessionTargetFromKey,
@@ -699,6 +702,130 @@ export const sessionsCompactionHandlers: GatewayRequestHandlers = {
       reason: "checkpoint-restore",
     });
   },
+  /**
+   * #178: summarize a located stretch of the transcript and keep the untouched
+   * side verbatim. Exactly one boundary is supplied:
+   *   - `fromLeafId` keeps that entry (and everything after it) verbatim and
+   *     summarizes the older entries;
+   *   - `toLeafId` folds the head (through that entry) into the summary and
+   *     keeps the newer entries verbatim.
+   * The id must be on the active branch; an absent/off-branch id - or a
+   * `toLeafId` that is the transcript tail - fails closed. The actual work is
+   * delegated to the single `sessions.compact` path so the validated pipeline,
+   * the pre-operation checkpoint, and the admission rules are shared.
+   */
+  "sessions.compactRange": async (args) => {
+    const { params, respond, context } = args;
+    if (
+      !assertValidParams(params, validateSessionsCompactRangeParams, "sessions.compactRange", respond)
+    ) {
+      return;
+    }
+    const p = params;
+    const key = requireSessionKey(p.key, respond);
+    if (!key) {
+      return;
+    }
+    const fromLeafId = normalizeOptionalString(p.fromLeafId);
+    const toLeafId = normalizeOptionalString(p.toLeafId);
+    if ((fromLeafId && toLeafId) || (!fromLeafId && !toLeafId)) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "sessions.compactRange requires exactly one of fromLeafId or toLeafId.",
+        ),
+      );
+      return;
+    }
+
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
+    const requestedAgentId = requestedAgent.agentId;
+    const { target, storePath } = resolveGatewaySessionTargetFromKey(key, cfg, {
+      agentId: requestedAgentId,
+    });
+    const compactTarget = await updateSessionStore(storePath, (store) => {
+      const { entry, primaryKey } = migrateAndPruneGatewaySessionStoreKey({
+        cfg,
+        key,
+        store,
+        agentId: requestedAgentId,
+      });
+      return { entry, primaryKey };
+    });
+    const sessionId = compactTarget.entry?.sessionId;
+    if (!sessionId) {
+      respond(
+        true,
+        { ok: true, key: target.canonicalKey, compacted: false, reason: "no sessionId" },
+        undefined,
+      );
+      return;
+    }
+    const filePath = resolveSessionTranscriptCandidates(
+      sessionId,
+      storePath,
+      compactTarget.entry?.sessionFile,
+      target.agentId,
+    ).find((candidate) => fs.existsSync(candidate));
+    if (!filePath) {
+      respond(
+        true,
+        { ok: true, key: target.canonicalKey, compacted: false, reason: "no transcript" },
+        undefined,
+      );
+      return;
+    }
+
+    let keepFromEntryId: string;
+    try {
+      const state = await readTranscriptFileState(filePath);
+      const branchIds = state.getBranch().map((entry) => entry.id);
+      const resolution = resolveRangeCompactionKeepEntry({ branchIds, fromLeafId, toLeafId });
+      if (!resolution.ok) {
+        respond(
+          false,
+          undefined,
+          errorShape(
+            ErrorCodes.INVALID_REQUEST,
+            resolution.reason === 'boundary-is-tail'
+              ? `toLeafId "${resolution.boundaryId}" is the transcript tail; use sessions.compact to summarize the whole transcript.`
+              : `${resolution.boundaryParam} "${resolution.boundaryId}" is not on the active transcript branch; no compaction was performed.`,
+            { details: { reason: resolution.reason, [resolution.boundaryParam]: resolution.boundaryId } },
+          ),
+        );
+        return;
+      }
+      keepFromEntryId = resolution.keepFromEntryId;
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `failed to read the session transcript for ranged compaction: ${formatErrorMessage(error)}`,
+        ),
+      );
+      return;
+    }
+    await sessionsCompactionHandlers["sessions.compact"]!({
+      ...args,
+      params: {
+        key,
+        ...(requestedAgentId ? { agentId: requestedAgentId } : {}),
+        ...(normalizeOptionalString(p.customInstructions)
+          ? { customInstructions: normalizeOptionalString(p.customInstructions) }
+          : {}),
+        keepFromEntryId,
+      } as never,
+    });
+  },
   "sessions.compact": async ({ req, params, respond, context, client, isWebchatConnect }) => {
     if (!assertValidParams(params, validateSessionsCompactParams, "sessions.compact", respond)) {
       return;
@@ -850,6 +977,10 @@ export const sessionsCompactionHandlers: GatewayRequestHandlers = {
           customInstructions: normalizeOptionalString(p.customInstructions),
           force: p.force === true,
           trigger: "manual",
+          // #178: located compaction pins the retained tail (see sessions.compactRange).
+          ...(normalizeOptionalString(p.keepFromEntryId)
+            ? { keepFromEntryId: normalizeOptionalString(p.keepFromEntryId) }
+            : {}),
         });
       } catch (err) {
         emitSessionOperation(context, {

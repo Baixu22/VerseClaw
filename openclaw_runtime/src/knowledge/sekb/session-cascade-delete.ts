@@ -82,26 +82,46 @@ function trajectorySessionId(trajectory: Trajectory): string | undefined {
   return undefined;
 }
 
-function memoryMatchesSession(card: MemoryCard, sessionId: string): boolean {
-  if (card.scope === "session" && (card.scopeKey === sessionId || !card.scopeKey)) {
-    return card.scopeKey === sessionId || card.content.includes(sessionId);
+/**
+ * A session is addressable by more than one identifier: the write side stamps
+ * SEKB rows with the transcript session id (`options.sessionId` at tool time,
+ * an opaque uuid), while the host delete cascade historically passed the
+ * canonical session KEY. Matching only one of them silently leaves the other
+ * set of rows behind, so accept every identifier the caller supplies.
+ */
+function memoryMatchesSession(card: MemoryCard, sessionIds: readonly string[]): boolean {
+  for (const sessionId of sessionIds) {
+    if (card.scope === "session" && (card.scopeKey === sessionId || !card.scopeKey)) {
+      if (card.scopeKey === sessionId || card.content.includes(sessionId)) return true;
+      continue;
+    }
+    if (card.scopeKey === sessionId) return true;
+    const labels = card.retentionLabels ?? [];
+    if (labels.includes(`session:${sessionId}`)) return true;
   }
-  if (card.scopeKey === sessionId) return true;
-  const labels = card.retentionLabels ?? [];
-  if (labels.includes(`session:${sessionId}`)) return true;
   return false;
 }
 
 export function collectSessionCascadeTargets(
   sessionId: string,
   stores: SessionCascadeStores,
+  options: { aliasSessionIds?: readonly string[] } = {},
 ): CascadeTarget[] {
+  const sessionIds = [
+    ...new Set(
+      [sessionId, ...(options.aliasSessionIds ?? [])]
+        .map((id) => (typeof id === "string" ? id.trim() : ""))
+        .filter((id) => id.length > 0),
+    ),
+  ];
+  const matchesSessionId = (candidate: string | undefined): boolean =>
+    candidate !== undefined && sessionIds.includes(candidate);
   const targets: CascadeTarget[] = [];
   const principleIds = new Set<string>();
   const trajectoryIds = new Set<string>();
 
   for (const principle of stores.listPrinciples()) {
-    if (principleSessionId(principle) === sessionId) {
+    if (matchesSessionId(principleSessionId(principle))) {
       principleIds.add(principle.principle_id);
       targets.push({
         kind: "sekb_principle",
@@ -119,7 +139,10 @@ export function collectSessionCascadeTargets(
   }
 
   for (const trajectory of stores.listTrajectories()) {
-    if (trajectorySessionId(trajectory) === sessionId || trajectoryIds.has(trajectory.trajectory_id)) {
+    if (
+      matchesSessionId(trajectorySessionId(trajectory)) ||
+      trajectoryIds.has(trajectory.trajectory_id)
+    ) {
       trajectoryIds.add(trajectory.trajectory_id);
       targets.push({
         kind: "sekb_trajectory",
@@ -130,7 +153,7 @@ export function collectSessionCascadeTargets(
   }
 
   for (const card of stores.listMemoryCards()) {
-    if (memoryMatchesSession(card, sessionId)) {
+    if (memoryMatchesSession(card, sessionIds)) {
       targets.push({
         kind: "memory_card",
         id: card.id,
@@ -140,7 +163,11 @@ export function collectSessionCascadeTargets(
   }
 
   for (const journalId of stores.listDcsExperienceJournalIds()) {
-    if (journalId.includes(sessionId) || journalId.includes(sessionId.replace(/[:/\\]/g, "_"))) {
+    if (
+      sessionIds.some(
+        (id) => journalId.includes(id) || journalId.includes(id.replace(/[:/\\]/g, "_")),
+      )
+    ) {
       targets.push({
         kind: "dcs_experience_journal",
         id: journalId,
@@ -151,7 +178,7 @@ export function collectSessionCascadeTargets(
 
   if (stores.listDcsExperienceBlockIds && stores.deleteDcsExperienceBlock) {
     for (const blockId of stores.listDcsExperienceBlockIds()) {
-      if (blockId.includes(sessionId)) {
+      if (sessionIds.some((id) => blockId.includes(id))) {
         targets.push({
           kind: "dcs_experience_block",
           id: blockId,
@@ -167,9 +194,11 @@ export function collectSessionCascadeTargets(
 export function executeSessionCascadeDelete(
   sessionId: string,
   stores: SessionCascadeStores,
-  options: { canary?: string } = {},
+  options: { canary?: string; aliasSessionIds?: readonly string[] } = {},
 ): SessionCascadeReport {
-  const targets = collectSessionCascadeTargets(sessionId, stores);
+  const targets = collectSessionCascadeTargets(sessionId, stores, {
+    ...(options.aliasSessionIds ? { aliasSessionIds: options.aliasSessionIds } : {}),
+  });
   const removed: CascadeTarget[] = [];
   const errors: CascadeError[] = [];
 

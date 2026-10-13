@@ -230,6 +230,9 @@
     "copiedCode": "コピー済み"
   },
   "messageActions": {
+    "summarizeUpToHere": "ここまでを要約",
+    "summarizeFromHere": "ここから要約",
+    "forkFromHere": "ここから分岐",
     "copy": "メッセージをコピー",
     "copied": "コピーしました",
     "edit": "編集",
@@ -1183,11 +1186,15 @@
     "previewUnavailable": "画像プレビューを一時的に表示できません"
   },
   "session": {
+    "derived": {
+      "title": "派生セッション（{{count}}）"
+    },
     "renameHint": "ダブルクリックでセッション名を変更",
     "renameCurrent": "現在のセッション名を変更",
     "renameFailed": "セッション名の変更に失敗しました: {{error}}",
     "lineage": {
-      "forkedFrom": "{{session}} から Fork"
+      "forkedFrom": "{{session}} から Fork",
+      "forkedFromAt": "{{session}} から Fork · {{time}}"
     }
   },
   "composer": {
@@ -1766,7 +1773,19 @@
             "title": "Transcript を利用できません",
             "description": "Handoff 下書きに必要な会話コンテキストを十分に読めませんでした。"
           },
-          "unknown": {
+                    "handoff_ancestry_unavailable": {
+            "title": "Handoff 履歴を確認できません",
+            "description": "保存された Handoff 履歴を確認できません。履歴を修復するまで現在のセッションで続行してください。"
+          },
+          "handoff_depth_exceeded": {
+            "title": "Handoff の深さ上限に達しました",
+            "description": "無制限の Handoff 連鎖を避けるため、このセッションから新しいセッションを派生しません。目標と最近の証拠を保持し、このセッションで収束してください。"
+          },
+          "handoff_cycle_detected": {
+            "title": "Handoff の循環を検出しました",
+            "description": "このセッションは自身の Handoff 祖先にすでに含まれているため、Handoff を拒否しました。"
+          },
+"unknown": {
             "title": "Handoff の準備に失敗しました",
             "description": "継続用の下書きを準備できませんでした。"
           }
@@ -1780,6 +1799,11 @@
       "toastCreated": "Fork 会話を作成しました",
       "toastFailed": "会話の Fork に失敗しました",
       "boundaryNote": "ここまでの会話と、プロバイダー/モデル/思考の設定、ワークスペースの UI 状態をコピーします。タスク台帳・メモリ・ナレッジの内容はコピーされません。"
+    },
+    "compactRange": {
+      "toastCompacted": "選択した範囲を要約しました",
+      "toastFailed": "選択した範囲の要約に失敗しました",
+      "toastFailedDescription": "範囲を要約できませんでした。変更はありません。"
     },
     "handoff": {
       "action": "新しい会話へ Handoff",

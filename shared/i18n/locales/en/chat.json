@@ -230,6 +230,9 @@
     "copiedCode": "Copied"
   },
   "messageActions": {
+    "summarizeUpToHere": "Summarize up to here",
+    "summarizeFromHere": "Summarize from here",
+    "forkFromHere": "Fork from here",
     "copy": "Copy message",
     "copied": "Copied",
     "edit": "Edit",
@@ -1183,11 +1186,15 @@
     "previewUnavailable": "Image preview is temporarily unavailable"
   },
   "session": {
+    "derived": {
+      "title": "Derived sessions ({{count}})"
+    },
     "renameHint": "Double-click to rename session",
     "renameCurrent": "Rename current session",
     "renameFailed": "Failed to rename session: {{error}}",
     "lineage": {
-      "forkedFrom": "Forked from {{session}}"
+      "forkedFrom": "Forked from {{session}}",
+      "forkedFromAt": "Forked from {{session}} · {{time}}"
     }
   },
   "composer": {
@@ -1778,7 +1785,19 @@
             "title": "Transcript is not available",
             "description": "The handoff draft could not read enough conversation context."
           },
-          "unknown": {
+                    "handoff_ancestry_unavailable": {
+            "title": "Handoff history is unavailable",
+            "description": "The persisted handoff history could not be verified. Continue in the current session until the history is repaired."
+          },
+          "handoff_depth_exceeded": {
+            "title": "Handoff depth limit reached",
+            "description": "To prevent an unbounded relay chain, no new session is derived from this one. Continue in this session with the objective and recent evidence."
+          },
+          "handoff_cycle_detected": {
+            "title": "Handoff loop detected",
+            "description": "This session already appears in its own handoff ancestry, so the handoff was refused."
+          },
+"unknown": {
             "title": "Handoff preparation failed",
             "description": "The continuation draft could not be prepared."
           }
@@ -1792,6 +1811,11 @@
       "toastCreated": "Forked conversation created",
       "toastFailed": "Failed to fork conversation",
       "boundaryNote": "Copies the conversation up to this point plus provider/model/thinking settings and workspace UI state. Task Ledger, memory, and knowledge contents are not copied."
+    },
+    "compactRange": {
+      "toastCompacted": "Summarized the selected range",
+      "toastFailed": "Failed to summarize the selected range",
+      "toastFailedDescription": "The range could not be summarized; nothing was changed."
     },
     "handoff": {
       "action": "Handoff to new conversation",

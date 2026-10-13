@@ -9,7 +9,7 @@
  * the source of truth, so this works on non-git workspaces too.
  */
 import { existsSync, readFileSync } from "node:fs";
-import { getOrCreateWriteJournal } from "./tools/write-journal.js";
+import { getOrCreateWriteJournal, journalDirFor } from "./tools/write-journal.js";
 import { generateUnifiedPatch } from "./sessions/tools/edit-diff.js";
 import type { LongTaskCheckpointRecord } from "./long-task-control/store.js";
 
@@ -46,13 +46,29 @@ export function resolveCheckpointJournalBoundary(
 export function checkpointContentDiff(params: {
   workspaceRoot: string;
   checkpoint: LongTaskCheckpointRecord;
-  /** Journal session id. Defaults to the checkpoint's sessionKey (canonical). */
+  /**
+   * Journal session id — the agent session UUID. Required for the same reason
+   * as `applyCheckpointToJournal`: the canonical session key addresses a
+   * *different* journal directory (#176).
+   */
   sessionId?: string;
 }): CheckpointDiffResult {
-  const journal = getOrCreateWriteJournal(
-    params.workspaceRoot,
-    params.sessionId ?? params.checkpoint.sessionKey,
-  );
+  const journalSessionId = params.sessionId?.trim();
+  if (!journalSessionId) {
+    return {
+      files: [],
+      errors: [
+        "journal_session_id_missing: pass the agent session id (UUID); the canonical session key addresses a different journal directory (#176)",
+      ],
+    };
+  }
+  const journalDir = journalDirFor(params.workspaceRoot, journalSessionId);
+  if (!existsSync(journalDir)) {
+    // #176: an empty diff was indistinguishable from "nothing to restore",
+    // which removed the only warning the operator gets before a restore.
+    return { files: [], errors: [`no_journal_for_session: ${journalDir}`] };
+  }
+  const journal = getOrCreateWriteJournal(params.workspaceRoot, journalSessionId);
   const seqBoundary = resolveCheckpointJournalBoundary(params.checkpoint);
   const at = Date.parse(params.checkpoint.checkpoint.createdAt);
   // Same entry selection as the rollback executor: everything the rollback

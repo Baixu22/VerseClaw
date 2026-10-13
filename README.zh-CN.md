@@ -224,7 +224,7 @@ Renderer 请求入口是 `src/lib/host-api.ts` 与 `src/lib/host-api-client.ts`�
 
 根目录 `pnpm test` 不包含 OpenClaw 的所有测试。修改运行时还应按其 [package.json](openclaw_runtime/package.json) 和任务规格选择对应测试与类型门禁。Windows Electron E2E 必须由 Windows Node 执行。
 
-**LoCoMo 开发评测：** `pnpm eval:runtime-memory:locomo:full500` 显式运行 500 题；缺少模型/嵌入凭据或已验证产物时明确失败。它不属于默认单测门，历史聚合夹具不能作为已验收的记忆基线。详见[测量与证据边界](docs/dev/p0-memory-evaluation-integrity.md)。
+**LoCoMo 开发评测：** `pnpm eval:runtime-memory:locomo:full500` 显式运行 500 题；缺少模型/嵌入凭据或已验证产物时明确失败。它不属于默认单测门，历史聚合夹具不能作为已验收的记忆基线。详见[测量与证据边界](docs/dev/p0-memory-evaluation-integrity.md)。 可显式通过 `--local-embedding-url` 和 `--local-embedding-model` 使用摘要固定的本地 Qwen3 嵌入；量化结果属于新配置参考，不能冒充托管分数的复现。
 
 ### 按改动选择验证
 
@@ -289,3 +289,5 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw)，并继承 V
 ### Coding 诊断日志
 
 运行时 `diagnostics.enabled` 显式设为 `true` 时，已有诊断日志会报告持续偏高的“需审批分类率”及恢复。这是工具破坏层分类，不是实际弹窗或真人审批次数；不足或过期窗口记为缺测。省略或关闭该配置时不启用监测，告警不改变审批或工具执行策略。
+
+会话接力在 Main 中核验并持久化 Task Ledger 血缘后才激活新会话；环路或无法读取的历史会被拒绝。可在 `openclaw.json` 设置 `runtime.handoff.enabled=true` 启用接力深度限制（`maxDepth` 为 1–64，省略时为 3）。限制默认关闭，分叉保留接力血缘。

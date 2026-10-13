@@ -25,6 +25,7 @@ import {
   storeMemoryCard,
 } from '../../openclaw_runtime/src/memory/memory-store';
 import type { MemoryCard } from '../../openclaw_runtime/src/memory/types';
+import { dcsObservability } from '../../openclaw_runtime/src/context-engine/dcs-observability';
 
 /** Inline subset of SpawnSubagentParams — avoids chaining through subagent-spawn.ts deps. */
 type FakeSpawnParams = {
@@ -225,6 +226,51 @@ describe('role-driven spawn mapping', () => {
     expect(injections[0]?.cardIds).toContain('mem_arch_1');
   });
 
+  it('#183 counts the role-spawn memory injection it cannot charge to a turn budget', () => {
+    const now = new Date('2026-06-12T00:00:00.000Z').toISOString();
+    storeMemoryCard({
+      id: 'mem_arch_counted',
+      type: 'constraint',
+      scope: 'role',
+      scopeKey: null,
+      roleTags: ['architect'],
+      phaseTags: ['plan'],
+      content: 'Counted role memory.',
+      evidence: ['AGENTS.md'],
+      evidenceRefs: [{ type: 'file', ref: 'AGENTS.md' }],
+      confidence: 0.95,
+      importance: 0.8,
+      lastAccessedAt: now,
+      createdAt: now,
+      updatedAt: now,
+      accessCount: 0,
+      version: 1,
+      status: 'active',
+      sensitivity: 'normal',
+      durability: 'long_term',
+      source: 'user',
+      supersedes: null,
+      supersededBy: null,
+      expiresAt: null,
+    });
+
+    const before = dcsObservability.snapshot();
+    const params = buildRoleSpawnParams(
+      architect,
+      { role: architect, task: 'design module' },
+      { agentSessionKey: 'agent:main:abc' },
+    );
+    const after = dcsObservability.snapshot();
+
+    // The bytes land in the child's system prompt, so they can never be charged
+    // to a turn ledger — the counter is what keeps the bypass visible.
+    expect(after.roleSpawnMemoryInjectionCalls - before.roleSpawnMemoryInjectionCalls).toBe(1);
+    expect(after.roleSpawnMemoryInjectionCards - before.roleSpawnMemoryInjectionCards).toBe(1);
+    const countedChars = after.roleSpawnMemoryInjectionChars - before.roleSpawnMemoryInjectionChars;
+    expect(countedChars).toBeGreaterThan(0);
+    expect(countedChars).toBeLessThanOrEqual((params.roleSystemPrompt ?? '').length);
+  });
+
   it('does not inject or record role memory when Role Memory is disabled', () => {
     process.env.OPENCLAW_ROLE_MEMORY_ENABLED = '0';
     const now = new Date('2026-06-12T00:00:00.000Z').toISOString();
@@ -259,6 +305,95 @@ describe('role-driven spawn mapping', () => {
     expect(params.roleSystemPrompt).not.toContain('## Memory Context');
     expect(params.roleSystemPrompt).not.toContain('Architects must preserve renderer/main API boundaries.');
     expect(explainMemoryInjection({ roleName: 'architect' })).toHaveLength(0);
+  });
+
+  it('#183 skips the role-spawn memory block when the DCS projection owns it', () => {
+    const now = new Date('2026-06-12T00:00:00.000Z').toISOString();
+    storeMemoryCard({
+      id: 'mem_arch_projection',
+      type: 'constraint',
+      scope: 'role',
+      scopeKey: null,
+      roleTags: ['architect'],
+      phaseTags: ['plan'],
+      content: 'Projection owns role memory.',
+      evidence: ['AGENTS.md'],
+      evidenceRefs: [{ type: 'file', ref: 'AGENTS.md' }],
+      confidence: 0.95,
+      importance: 0.8,
+      lastAccessedAt: now,
+      createdAt: now,
+      updatedAt: now,
+      accessCount: 0,
+      version: 1,
+      status: 'active',
+      sensitivity: 'normal',
+      durability: 'long_term',
+      source: 'user',
+      supersedes: null,
+      supersededBy: null,
+      expiresAt: null,
+    });
+
+    const params = buildRoleSpawnParams(
+      architect,
+      {
+        role: architect,
+        task: 'design module',
+        cfg: {
+          runtime: { contextBlock: { 'role-memory': { enabled: true } } },
+        } as unknown as Parameters<typeof buildRoleSpawnParams>[1]['cfg'],
+      },
+      { agentSessionKey: 'agent:main:abc' },
+    );
+
+    expect(params.roleSystemPrompt).toContain('Role contract: architect');
+    expect(params.roleSystemPrompt).not.toContain('## Memory Context');
+    expect(params.roleSystemPrompt).not.toContain('Projection owns role memory.');
+  });
+
+  it('#183 keeps the role-spawn memory block when the projection is off', () => {
+    const now = new Date('2026-06-12T00:00:00.000Z').toISOString();
+    storeMemoryCard({
+      id: 'mem_arch_no_projection',
+      type: 'constraint',
+      scope: 'role',
+      scopeKey: null,
+      roleTags: ['architect'],
+      phaseTags: ['plan'],
+      content: 'Legacy role-spawn injection still applies.',
+      evidence: ['AGENTS.md'],
+      evidenceRefs: [{ type: 'file', ref: 'AGENTS.md' }],
+      confidence: 0.95,
+      importance: 0.8,
+      lastAccessedAt: now,
+      createdAt: now,
+      updatedAt: now,
+      accessCount: 0,
+      version: 1,
+      status: 'active',
+      sensitivity: 'normal',
+      durability: 'long_term',
+      source: 'user',
+      supersedes: null,
+      supersededBy: null,
+      expiresAt: null,
+    });
+
+    const params = buildRoleSpawnParams(
+      architect,
+      {
+        role: architect,
+        task: 'design module',
+        cfg: {
+          runtime: { contextBlock: { 'role-memory': { enabled: false } } },
+        } as unknown as Parameters<typeof buildRoleSpawnParams>[1]['cfg'],
+      },
+      { agentSessionKey: 'agent:main:abc' },
+    );
+
+    expect(params.roleSystemPrompt).toContain('## Memory Context');
+    expect(params.roleSystemPrompt).toContain('Legacy role-spawn injection still applies.');
   });
 
   it('sets a hard tool allowlist from the role tools + permission-derived deny', () => {

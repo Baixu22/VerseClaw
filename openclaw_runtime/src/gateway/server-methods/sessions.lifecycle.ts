@@ -496,12 +496,25 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
       parentEntry: source.entry,
       agentId: sourceAgentId,
       sessionsDir: path.dirname(source.storePath),
+      // #180: optional in-transcript fork point. Absent ⇒ whole-session fork,
+      // exactly as before. Present but unresolvable ⇒ the error below, never a
+      // silent fall back to the transcript tip.
+      ...(normalizeOptionalString(p.fromLeafId)
+        ? { fromEntryId: normalizeOptionalString(p.fromLeafId) }
+        : {}),
     });
     if (!forked) {
+      const requestedForkPoint = normalizeOptionalString(p.fromLeafId);
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.UNAVAILABLE, "failed to fork source transcript"),
+        requestedForkPoint
+          ? errorShape(
+              ErrorCodes.INVALID_REQUEST,
+              `failed to fork at fromLeafId "${requestedForkPoint}": the id must exist on the source transcript and have an assistant turn at or before it. No fork was created.`,
+              { details: { reason: "from-leaf-unresolved", fromLeafId: requestedForkPoint } },
+            )
+          : errorShape(ErrorCodes.UNAVAILABLE, "failed to fork source transcript"),
       );
       return;
     }
@@ -530,6 +543,12 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
         sessionFile: forked.sessionFile,
         parentSessionKey: source.canonicalKey,
         forkedFromParent: true,
+        // #180: persist the fork point so the header lineage can name the
+        // parent message it branched at, not just the parent session.
+        ...(forked.forkedFromLeafId ? { forkedFromLeafId: forked.forkedFromLeafId } : {}),
+        ...(typeof forked.forkedFromTimestamp === "number"
+          ? { forkedFromTimestamp: forked.forkedFromTimestamp }
+          : {}),
         updatedAt: Date.now(),
         systemSent: false,
         abortedLastRun: false,

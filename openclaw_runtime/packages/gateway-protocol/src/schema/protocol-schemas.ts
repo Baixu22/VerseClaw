@@ -257,6 +257,7 @@ import {
   SessionsStopParamsSchema,
   SessionsStopResultSchema,
   SessionsCompactParamsSchema,
+  SessionsCompactRangeParamsSchema,
   SessionsCompactionHistoryEntrySchema,
   SessionsCompactionHistoryParamsSchema,
   SessionsCompactionHistoryResultSchema,
@@ -457,6 +458,7 @@ export const ProtocolSchemas = {
   SessionsResetParams: SessionsResetParamsSchema,
   SessionsDeleteParams: SessionsDeleteParamsSchema,
   SessionsCompactParams: SessionsCompactParamsSchema,
+  SessionsCompactRangeParams: SessionsCompactRangeParamsSchema,
   SessionsUsageParams: SessionsUsageParamsSchema,
 
   // Task ledger and config/wizard setup payloads.

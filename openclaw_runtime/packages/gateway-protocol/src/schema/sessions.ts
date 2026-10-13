@@ -306,12 +306,20 @@ export const SessionsCreateParamsSchema = Type.Object(
   { additionalProperties: false },
 );
 
-/** Forks a new session from the current active transcript branch of a parent. */
+/**
+ * Forks a new session from the current active transcript branch of a parent.
+ *
+ * `fromLeafId` (#180) selects a fork point inside the parent transcript instead
+ * of its tip; omitting it preserves the original whole-session fork. An id that
+ * does not exist on the parent transcript — or that has no assistant turn at or
+ * before it — is rejected (fail closed), never silently retried against the tip.
+ */
 export const SessionsForkParamsSchema = Type.Object(
   {
     key: NonEmptyString,
     agentId: Type.Optional(NonEmptyString),
     label: Type.Optional(SessionLabelString),
+    fromLeafId: Type.Optional(NonEmptyString),
   },
   { additionalProperties: false },
 );
@@ -483,6 +491,31 @@ export const SessionsCompactParamsSchema = Type.Object(
     maxLines: Type.Optional(Type.Integer({ minimum: 1 })),
     customInstructions: Type.Optional(Type.String()),
     force: Type.Optional(Type.Boolean()),
+    /**
+     * #178: keep this transcript entry (and everything after it) verbatim,
+     * summarizing the older entries. Reserved for located compaction; the
+     * public entry point is `sessions.compactRange`. An id that is absent,
+     * off-branch, or not a valid cut point fails closed.
+     */
+    keepFromEntryId: Type.Optional(NonEmptyString),
+  },
+  { additionalProperties: false },
+);
+
+/**
+ * #178: summarizes one located stretch of a session transcript, keeping the
+ * untouched side verbatim. `toLeafId` folds the head (through that entry) into
+ * the summary; `fromLeafId` keeps that entry (and everything after it) verbatim
+ * and summarizes the older entries. Exactly one of the two must be supplied; an
+ * id that is absent, off-branch, or not a valid cut point is rejected.
+ */
+export const SessionsCompactRangeParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    customInstructions: Type.Optional(Type.String()),
+    toLeafId: Type.Optional(NonEmptyString),
+    fromLeafId: Type.Optional(NonEmptyString),
   },
   { additionalProperties: false },
 );

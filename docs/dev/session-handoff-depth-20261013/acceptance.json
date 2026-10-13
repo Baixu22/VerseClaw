@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "issue": 179,
+  "title": "Session handoff relay lineage is persisted and validated",
+  "status": "pass",
+  "drivenBy": "agent",
+  "actor": "codex",
+  "implementation": {
+    "commit": "f4d7700ec0b58a8ab3043eefe2881a3012c6b45d",
+    "tree": "cabcde1e4dcd83b1705fa2910baae295811f8df1",
+    "parent": "1b915402b2901ddce23e7ad48b363d81fa563667"
+  },
+  "acceptance": [
+    "Handoff creation is a Main-owned sessions.createHandoff action that re-reads the authoritative Task Ledger handoff_from chain instead of trusting the renderer preview.",
+    "Cycles (self and multi-hop), conflicting parents and truncated ancestor walks are refused; unreadable Task Ledger history fails closed before any session is activated.",
+    "The lineage event (parent, root, depth, parentHandoffId, rootHandoffId) is persisted BEFORE the new conversation is activated, so a failed write cannot leave an untracked live session.",
+    "The depth limit is opt-in runtime.handoff.enabled with optional maxDepth (1-64, implicit 3) and defaults OFF; subagent maxSpawnDepth and frozen product values are unchanged.",
+    "New denial states are localized in en/zh/ja/ru; the runtime config type/schema/help/labels and the exhaustive parity fixture stay aligned."
+  ],
+  "focusedTests": {
+    "command": "node node_modules/vitest/vitest.mjs run tests/unit/handoff-depth.test.ts tests/unit/host-services.test.ts tests/unit/workspace-session.test.ts tests/unit/chat-session-continuity.test.ts tests/unit/config-schema-parity.test.ts tests/unit/host-api-facade.test.ts tests/unit/task-ledger-service.test.ts --maxWorkers=2",
+    "files": 7,
+    "passed": 252,
+    "failed": 0,
+    "skipped": 0
+  },
+  "electronE2E": {
+    "command": "playwright test tests/e2e/chat-session-handoff.spec.ts --workers=1 --retries=0",
+    "node": "24.21.0",
+    "expected": 5,
+    "unexpected": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "coverage": [
+      "depth refusal toast",
+      "ancestry-unavailable refusal keeps the draft and session",
+      "creation routes through Main",
+      "late-response draft retention",
+      "run-active disabling"
+    ]
+  },
+  "gates": {
+    "typecheckNode": "exit 0",
+    "typecheckWeb": "exit 0",
+    "typecheckTest": "exit 0",
+    "contractCheck": "exit 0",
+    "i18nLint": "exit 0",
+    "scopedEslint": "exit 0",
+    "harnessValidate": "exit 0",
+    "harnessDryRun": "exit 0",
+    "commsReplay": "exit 0",
+    "commsCompare": "PASS (0 deltas)",
+    "buildVite": "exit 0",
+    "gitDiffCheck": "exit 0"
+  },
+  "autoreview": {
+    "command": "autoreview --mode local --engine codex",
+    "firstPass": "4 accepted findings (P1 post-persistence fork ordering hazard, P2 canonical session-key equality, P3 fresh-session key format, plus Main-accepts-unreadable-lineage concern) - all fixed",
+    "secondPass": "blocked: review engine returned HTTP 402 (budget pool quota exhausted) on 2 attempts; NOT a clean result",
+    "note": "The 402 is an external review-engine capacity limit. The runtime rules forbid switching engines and forbid landing on a prior review alone, so this is recorded as an open verification gap rather than claimed as clean."
+  },
+  "boundaries": [
+    "sessions.fork keeps its existing Gateway contract: this change deliberately does NOT add ledger lineage to forks, because writing lineage after the Gateway has already persisted the child leaves an untracked fork on failure. Fork-vs-handoff lineage reconciliation is separate work.",
+    "TF-0284 additionally requires context-pressure recovery and a broader independent full-chain acceptance; this issue closes only the handoff-lineage half and does not mark TF-0284 done.",
+    "No frozen default, product lock, release or publication change."
+  ],
+  "externalEvidence": {
+    "directory": "D:\\ClawX-work\\issue-179-handoff-depth-20261013",
+    "credentialScan": {
+      "scannedFiles": 23,
+      "matches": 0
+    }
+  }
+}

@@ -145,9 +145,19 @@ export type ContextOrchestratorInput = {
   workspaceDir?: string;
   /** Task / user prompt hint for VToken assemble. */
   taskHint?: string;
+  /**
+   * #183: the caller's persona-derived role name for role-memory lookup. Omit
+   * when the agent has no persona role; the provider resolver then applies its
+   * documented "main" fallback (the orchestrator never invents one).
+   */
+  roleName?: string;
   markdownSources?: VtokenMarkdownSource[];
   toolSchemas?: Array<Record<string, unknown>>;
   memoryEntries?: Array<Record<string, unknown>>;
+  /** FP-P1-182: paths the system prompt already renders in full. */
+  alreadyRenderedSourcePaths?: readonly string[];
+  /** FP-P1-182: tool names the system prompt already renders in `## Tooling`. */
+  alreadyRenderedToolNames?: readonly string[];
   /** Lazy VToken memory projection; invoked only after flag and kill-switch gates pass. */
   memoryEntriesFactory?: () => Promise<Array<Record<string, unknown>>>;
   /**
@@ -721,7 +731,16 @@ export async function computeContextExtraSystemPrompt(
           input.sessionKey,
           input.memoryProviderFactory,
           log,
-          { workspace: input.workspaceDir, taskId: input.taskId },
+          {
+            workspace: input.workspaceDir,
+            taskId: input.taskId,
+            ...(input.roleName ? { roleName: input.roleName } : {}),
+            // #182: COMPASS retrieval already selected these fact ids for this
+            // turn and renders them on the `knowledge` channel, which charges
+            // the budget first. Re-injecting the same facts as `memory_pilot`
+            // items would spend bytes on content the model already has.
+            dedupeFactIds: input.compassContext?.injection.injectedFactIds,
+          },
         );
         if (deferProjection) {
           const text = computed?.trim();
@@ -810,6 +829,8 @@ export async function computeContextExtraSystemPrompt(
             markdownSources: input.markdownSources,
             toolSchemas: input.toolSchemas,
             memoryEntries,
+            alreadyRenderedSourcePaths: input.alreadyRenderedSourcePaths,
+            alreadyRenderedToolNames: input.alreadyRenderedToolNames,
           },
           log,
           input.vtokenClient,

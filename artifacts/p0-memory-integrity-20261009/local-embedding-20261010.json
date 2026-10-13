@@ -1,0 +1,153 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-p0-local-embedding",
+  "evidenceClass": "development-and-real-resource-smoke",
+  "full500": false,
+  "issuesRemainingOpen": [
+    62,
+    135,
+    136,
+    138
+  ],
+  "baseRevision": "1f72a0d09f64b44276eabcc0d2c8eaf7c0cf17e1",
+  "recoveredSnapshot": "a477e27afd754efff8a85f06db543c23d720ed39",
+  "unit": {
+    "files": 9,
+    "passed": 216,
+    "failed": 0,
+    "skipped": 0,
+    "reportSha256": "4fea7de07309449fccd1f7b0795d9515245826972d440b26a14c71ad0329a248"
+  },
+  "gates": [
+    {
+      "name": "comms-replay",
+      "exit": 0,
+      "durationMs": 326
+    },
+    {
+      "name": "comms-compare",
+      "exit": 0,
+      "durationMs": 232
+    },
+    {
+      "name": "harness-validate",
+      "exit": 0,
+      "durationMs": 555
+    },
+    {
+      "name": "p0-final",
+      "exit": 0,
+      "durationMs": 10135
+    },
+    {
+      "name": "typecheck-final",
+      "exit": 0,
+      "durationMs": 44451
+    },
+    {
+      "name": "lint-final",
+      "exit": 0,
+      "durationMs": 4045
+    }
+  ],
+  "resourceSmoke": {
+    "driven_by": "agent",
+    "actor": "codex-p0-local-embedding",
+    "evidenceClass": "real-resource-smoke",
+    "full500": false,
+    "embedding": {
+      "id": "llama.cpp-qwen3-embedding-8b-q4_k_m",
+      "model": "qwen3-embedding-8b-q4_k_m",
+      "dimension": 4096,
+      "deployment": "local-llama.cpp",
+      "quantization": "Q4_K_M",
+      "source": "Qwen/Qwen3-Embedding-8B-GGUF",
+      "revision": "69d0e58a13e463cd99a9b83e3f5fee7c10265fab",
+      "weightsSha256": "3fcd3febec8b3fd64435204db75bf0dd73b91e8d0661e0331acfe7e7c3120b85",
+      "endpoint": "http://127.0.0.1:19087/v1/embeddings",
+      "verifiedWeightsSha256": "3fcd3febec8b3fd64435204db75bf0dd73b91e8d0661e0331acfe7e7c3120b85",
+      "serverBuild": "b11429-d81235049"
+    },
+    "embeddingVectors": [
+      {
+        "dimension": 4096,
+        "sha256": "8eb2b477a8ce557639ab6460796443c5caa61694600bfc6a3e61512b186853ec",
+        "norm": 0.9999999657031399
+      },
+      {
+        "dimension": 4096,
+        "sha256": "826c31f4ea221f8ccadf288e5d9ba152030fefccb5dd774d67bd61342100b44d",
+        "norm": 1.0000000404403135
+      },
+      {
+        "dimension": 4096,
+        "sha256": "1c7bcae985e1f63a3532e074424faf0d8cdd1920338fbcbb9bee5e6468686537",
+        "norm": 0.9999999949547513
+      }
+    ],
+    "toyCosines": {
+      "paraphrase": 0.9183335878377763,
+      "unrelated": 0.34083750927792966
+    },
+    "judgeVerdict": 1,
+    "modelReceipts": [
+      {
+        "completedAt": "2026-10-10T03:42:13.418Z",
+        "endpoint": "https://api.stepfun.com/step_plan/v1/chat/completions",
+        "requestedModel": "step-5-preview",
+        "returnedModel": "step-5-preview",
+        "responseId": "7155ba6548f748b65969bffc353dcae7.1d6ca4b7a5ec150e45e04f30bcc69313",
+        "requestSha256": "e0f82493b7026ffa68e2ad6a572d6d880ad9793555ad52b8fb19d9be8b7ae81e",
+        "responseSha256": "b23db3390160f4f0c7679375c658ce6fd921501f72048b511afd971e4a5d54b9",
+        "status": 200,
+        "attempts": 1,
+        "usage": {
+          "prompt_tokens": 257,
+          "completion_tokens": 36,
+          "total_tokens": 293,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "judgeEvidence": {
+          "temperature": 0,
+          "maxTokens": 2048,
+          "content": "CORRECT"
+        }
+      }
+    ],
+    "durationMs": 17606
+  },
+  "rawEvidenceDirectory": "D:/ClawX-work/p0-local-embedding-20261010/acceptance",
+  "gitIntegrity": {
+    "exit": 2,
+    "missingObjects": 29,
+    "historyChanged": false
+  },
+  "omitted": [
+    "Full LoCoMo 500-question run",
+    "Paired temporal retrieval experiment",
+    "Full unit/Electron/build/release acceptance"
+  ],
+  "sourceSha256": {
+    "README.ja-JP.md": "2994a71648fd7e4c4ddf686b2297bfada10cba6f8c7506e2a723b077e0170bef",
+    "README.md": "5a07d1ec289e3acc6a769763f5c6108b348bbaf4150b8a8f2387e238f06fb291",
+    "README.ru-RU.md": "f38c084c779086005fd9c0cc4f7c8444cca90962444efeba6a7ccfb6535eb66f",
+    "README.zh-CN.md": "3476ba06878ee793098b608d3677344cfc89a6e0a30971122fdf02c24fe0228c",
+    "docs/dev/p0-memory-evaluation-integrity.md": "d9a9cbd170740abbf41b198eb8f872a942e71c0494f82937725cea1bae1467c8",
+    "harness/specs/rules/locomo-evaluation-integrity.md": "8e3aaa1a58b97118f74cc2eb6b25a44afed6b46083cea2635a18f84311b36eda",
+    "harness/specs/tasks/p0-memory-evaluation-integrity.md": "b209b26c00d61878fcb4f65f6e47a47b76fe69b3907a72f8aac5b3b510b393e1",
+    "scripts/check-locomo-evidence.d.mts": "f5626dbc58c7b7a5a795b5b075a35471e61888b383475a80bae96fa34cdf8fb6",
+    "scripts/check-locomo-evidence.mjs": "3cdccc140bd95a4576e423e57bf410ac30d5d2d427e7a946990e755c98a57dba",
+    "scripts/run-locomo-full-evaluation.mjs": "6368ff6bb6f54d16a0f8a2f3c5e06ac5f676e729fc5432569403e088f239bbe2",
+    "tests/unit/helpers/locomo-report-comparator.ts": "b4a7567cc55c063dae32657b45276dfbf6647c725b516f85d28c5a9ed5546b2a",
+    "tests/unit/locomo-evidence-integrity.test.ts": "91dd65b4d4b061a287739f14304dd07bdcf4e707187f2251c7645e8d20000b7f",
+    "tests/unit/locomo-report-comparator.test.ts": "d8e02d8f12cdae4e9d89c1056b661d9a11cf4384948254be4ae6760d8cb64a4d",
+    "tests/unit/runtime-memory-locomo-full-500.test.ts": "cfceaa147a4cd7ac1d4bcf850e241c75da5330e80172ec5684640b52a8d8d19b",
+    "tests/unit/helpers/locomo-embedding-provider.ts": "7269639c5abb69b62c579ca72c3e3cb6a9f0b4bf61a569ed124ebdca0a5b809c",
+    "tests/unit/locomo-embedding-provider.test.ts": "84c464cd995a685da2be2c638d526400413a957931de6b80dff4c932ac8ad448"
+  }
+}

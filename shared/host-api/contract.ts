@@ -2946,6 +2946,15 @@ export type SessionManualCompactPayload = SessionCompactionPayload & {
   customInstructions?: string;
   force?: boolean;
 };
+/**
+ * #178: summarize a located stretch of a session transcript, keeping the
+ * untouched side verbatim. Exactly one of fromLeafId / toLeafId is required.
+ */
+export type SessionCompactRangePayload = SessionCompactionPayload & {
+  customInstructions?: string;
+  fromLeafId?: string;
+  toLeafId?: string;
+};
 export type SessionCompactionHistoryEntry = {
   id: string;
   timestamp: number;
@@ -3024,11 +3033,28 @@ export type SessionHandoffSource = {
   summary?: string;
   warning?: string;
 };
+export type SessionCreateHandoffPayload = SessionHandoffPayload & { draftInput: string };
+export type SessionCreateHandoffResult = HostSuccess & {
+  sessionKey?: string;
+  handoffDepth?: number;
+  handoffParentSessionKey?: string;
+  handoffRootSessionKey?: string;
+  parentHandoffId?: string;
+  rootHandoffId?: string;
+};
 export type SessionHandoffResult = HostSuccess & {
   checkpoint?: ResumeCheckpoint;
   draft?: string;
   sources?: SessionHandoffSource[];
   warnings?: string[];
+  /** Depth the derived session WOULD have (1 for the first relay of a root). */
+  handoffDepth?: number;
+  /** Session the draft would be handed off from. */
+  handoffParentSessionKey?: string;
+  /** Root session of the handoff ancestry. */
+  handoffRootSessionKey?: string;
+  /** Configured maximum depth that produced a denial, when applicable. */
+  handoffMaxDepth?: number;
 };
 export type SessionStopPayload = {
   sessionKey: string;
@@ -3043,6 +3069,13 @@ export type SessionForkPayload = {
   agentId?: string;
   workspaceId?: string | null;
   label?: string;
+  /**
+   * #180: fork up to this entry in the parent transcript instead of its tip.
+   * Omit for the original whole-session fork. An id the parent transcript does
+   * not contain — or that has no assistant turn at or before it — is rejected
+   * (fail closed); it is never silently retried against the tip.
+   */
+  fromLeafId?: string;
 };
 export type SessionForkResult = HostSuccess & {
   sourceSessionKey?: string;
@@ -4584,6 +4617,8 @@ export type TaskLedgerLinkSessionPayload = TaskLedgerWorkspacePayload & {
   relation?: TaskLedgerSessionLink['relation'];
   sourceSessionKey?: string | null;
   summary?: string;
+  /** Relay depth of the linked session, so the depth is readable without re-walking the chain. */
+  handoffDepth?: number;
   idempotencyKey?: string | null;
 };
 export type TaskLedgerReviewPayload = TaskLedgerWorkspacePayload & {
@@ -5550,7 +5585,9 @@ export type HostApiContract = {
     queueDrain: (payload: SessionQueueDrainPayload) => SessionQueueDrainResult;
     stop: (payload: SessionStopPayload) => SessionStopResult;
     compact: (payload: SessionManualCompactPayload) => SessionCompactionResult;
+    compactRange: (payload: SessionCompactRangePayload) => SessionCompactionResult;
     prepareHandoff: (payload: SessionHandoffPayload) => SessionHandoffResult;
+    createHandoff: (payload: SessionCreateHandoffPayload) => SessionCreateHandoffResult;
     fork: (payload: SessionForkPayload) => SessionForkResult;
     truncate: (payload: SessionTruncatePayload) => SessionTruncateResult;
     archive: (payload: SessionArchivePayload) => HostSuccess;

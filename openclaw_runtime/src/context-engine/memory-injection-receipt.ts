@@ -8,6 +8,7 @@ import {
   type ReceiptIdentity,
 } from "../agents/receipt-store.js";
 import type { OpenClawStateDatabaseOptions } from "../state/openclaw-state-db.js";
+import { dcsObservability } from "./dcs-observability.js";
 import { createHash } from "node:crypto";
 import {
   buildMemoryInjectionReceiptInput,
@@ -137,6 +138,9 @@ export function listMemoryInjectionReceipts(input: {
         };
       });
   } catch {
+    // Fail-open by contract (the panel shows the empty state), but a read
+    // failure must stay distinguishable from "nothing was injected".
+    dcsObservability.recordMemoryReceiptReadFailure();
     return [];
   }
 }

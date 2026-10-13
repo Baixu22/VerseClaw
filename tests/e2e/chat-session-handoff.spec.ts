@@ -311,7 +311,7 @@ test.describe('Verse Claw chat session handoff', () => {
         const originalHostInvoke = (ipcMain as unknown as {
           _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
         })._invokeHandlers?.get('host:invoke');
-        const calls = { chatSend: 0, taskLedgerLink: [] as unknown[], workspaceUpdate: [] as unknown[], draftInput: '' };
+        const calls = { chatSend: 0, createHandoff: [] as unknown[], taskLedgerLink: [] as unknown[], workspaceUpdate: [] as unknown[], draftInput: '' };
         const respond = (id: unknown, data: unknown) => ({ id: typeof id === 'string' ? id : undefined, ok: true, data });
         const buildWorkspace = (draftInput: string) => {
           const sessionKey = 'agent:main:session-1711111111111-4fzyo8';
@@ -341,6 +341,13 @@ test.describe('Verse Claw chat session handoff', () => {
           action?: string;
           payload?: Record<string, unknown>;
         }) => {
+          if (request.module === 'sessions' && request.action === 'createHandoff') {
+            calls.createHandoff.push(request.payload);
+            calls.draftInput = String(request.payload?.draftInput ?? '');
+            const sessionKey = 'agent:main:session-1711111111111-4fzyo8';
+            calls.workspaceUpdate.push({ id: 'workspace-a', activeSessionKey: sessionKey, sessionKey, state: { activeTopicId: null, draftInput: calls.draftInput } });
+            return respond(request.id, { success: true, sessionKey, handoffDepth: 1 });
+          }
           if (request.module === 'workspaces' && request.action === 'update') {
             calls.workspaceUpdate.push(request.payload);
             const state = request.payload?.state;
@@ -431,14 +438,10 @@ test.describe('Verse Claw chat session handoff', () => {
         sessionKey: 'agent:main:session-1711111111111-4fzyo8',
         state: { activeTopicId: null, draftInput: editedDraft },
       }));
-      const taskLedgerLinks = await app.evaluate(() => (
-        (globalThis as typeof globalThis & { __handoffCalls?: { taskLedgerLink: unknown[] } }).__handoffCalls?.taskLedgerLink ?? []
+      const creations = await app.evaluate(() => (
+        (globalThis as typeof globalThis & { __handoffCalls?: { createHandoff: unknown[] } }).__handoffCalls?.createHandoff ?? []
       ));
-      expect(taskLedgerLinks).toContainEqual(expect.objectContaining({
-        sessionKey: 'agent:main:session-1711111111111-4fzyo8',
-        sourceSessionKey: MAIN_SESSION_KEY,
-        relation: 'handoff_from',
-      }));
+      expect(creations).toEqual([expect.objectContaining({ sessionKey: MAIN_SESSION_KEY, workspaceId: 'workspace-a', draftInput: editedDraft })]);
     } finally {
       await closeElectronApp(app);
     }
@@ -512,4 +515,77 @@ test.describe('Verse Claw chat session handoff', () => {
       await closeElectronApp(app);
     }
   });
+
+  test('refuses a relay once the handoff depth limit is reached (#179)', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
+            success: true,
+            result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+          },
+          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: handoffHistory },
+          },
+        },
+        hostApi: {
+          ...baseHostApiMocks(),
+          [stableStringify(['sessions', 'prepareHandoff', {
+            sessionKey: MAIN_SESSION_KEY,
+            agentId: 'main',
+            workspaceId: 'workspace-a',
+          }])]: {
+            success: false,
+            error: 'Handoff depth 4 exceeds the configured maximum of 3. Converge in the current session instead of relaying again.',
+            handoffDepth: 4,
+            handoffMaxDepth: 3,
+          },
+        },
+      });
+
+      const page = await getStableWindow(app);
+      await page.waitForLoadState('domcontentloaded');
+
+      await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
+      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-session-handoff').click();
+
+      // The refusal is surfaced with an actionable, localized message, and no draft dialog opens.
+      await expect(page.getByText('Handoff depth limit reached')).toBeVisible();
+      await expect(page.getByTestId('chat-handoff-dialog')).toHaveCount(0);
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+  test('keeps the editable draft and session when creation rejects changed ancestry', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+    try {
+      await installIpcMocks(app, { hostApi: baseHostApiMocks(), gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true } });
+      await app.evaluate(() => {
+        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+        const original = (ipcMain as unknown as { _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>> })._invokeHandlers?.get('host:invoke');
+        ipcMain.removeHandler('host:invoke');
+        ipcMain.handle('host:invoke', (event, request) => {
+          if (request.module === 'sessions' && request.action === 'createHandoff') {
+            return { id: request.id, ok: true, data: { success: false, error: 'Handoff ancestry unavailable or inconsistent.' } };
+          }
+          return original?.(event, request);
+        });
+      });
+      const page = await getStableWindow(app);
+      await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
+      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-session-handoff').click();
+      await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
+      await page.getByTestId('chat-handoff-create').click();
+      await expect(page.getByText('Handoff history is unavailable')).toBeVisible();
+      await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
+      await expect(page.getByTestId('chat-handoff-draft')).toHaveValue(HANDOFF_DRAFT);
+    } finally { await closeElectronApp(app); }
+  });
+
 });

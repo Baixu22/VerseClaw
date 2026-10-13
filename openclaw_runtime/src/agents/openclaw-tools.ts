@@ -606,6 +606,10 @@ export function createOpenClawTools(
                 const tail = journal.entries[journal.entries.length - 1];
                 return tail ? tail.seq : 0;
               },
+              // #176: stamp the journal identity too, so restore/diff can find
+              // the journal this checkpoint describes without guessing from the
+              // canonical session key.
+              journalSessionId: options?.sessionId?.trim() || undefined,
             },
           }),
           createTeamOrchestrateTool({

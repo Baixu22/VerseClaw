@@ -8,6 +8,7 @@ import { assertLocomoStageReportShape, assertLocomoQuestionResultShape } from '.
 import { buildStratifiedDevSlice, DEFAULT_SAMPLE_SEED, DEFAULT_SAMPLE_SIZES } from '../tests/unit/helpers/runtime-memory-dev-slice.ts';
 import { computeContextRecall, computeAnswerTokenRecall } from '../tests/unit/helpers/runtime-memory-context-recall.ts';
 import { FROZEN_JUDGE_CONFIG, buildFrozenJudgePrompt, parseFrozenJudgeVerdict } from '../tests/unit/helpers/runtime-memory-judge-freeze.ts';
+import { getLocomoEmbeddingConfig, LOCAL_QWEN_EMBEDDING } from '../tests/unit/helpers/locomo-embedding-provider.ts';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DATASET = 'tests/fixtures/locomo/locomo10_raw.json';
@@ -57,7 +58,7 @@ export function createLocomoProvenance(provider, root = ROOT) {
     sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8', windowsHide: true }).trim(),
     sourceMethod: 'static-relative-import-closure-v1', sources: collectLocomoSources(root),
     dataset: { path: DATASET, sha256: sha256(readFileSync(join(root, DATASET))) },
-    provider: { ...provider },
+    provider: { ...provider }, embedding: getLocomoEmbeddingConfig(),
     // Explicit non-secret controls only; never serialize process.env or credentials.
     evaluationEnvironment: {
       ...Object.fromEntries(['FULL_EVAL', 'SMOKE', 'DISABLE_BUFFERED_EXTRACTION', 'DISABLE_CONSOLIDATION', 'DISABLE_OBSERVATION_CONSOLIDATION', 'DISABLE_ENTITY_STORE', 'DISABLE_CROSS_ENCODER', 'DISABLE_EPISODIC_MEMORY', 'DISABLE_EPISODIC', 'DISABLE_WEIGHTED_GRAPH', 'ENABLE_WEIGHTED_GRAPH', 'DISABLE_CHAINED_RETRIEVAL', 'ENABLE_REFLECT_AGENT', 'ENABLE_AGENT_RETRIEVAL'].map((name) => [name, process.env[name] === '1'])),
@@ -95,6 +96,16 @@ export function assertLocomoReportConsistency(report, { root = ROOT, now = Date.
   const finished = Date.parse(report.generatedAt);
   if (!Number.isFinite(started) || !Number.isFinite(finished) || finished < started || finished > now + 300000 || now - finished > maxAgeMs) throw new Error('Stale or invalid run timestamps');
   same(proof.sources, collectLocomoSources(root), 'source freshness');
+  if (!proof.embedding) throw new Error('Missing embedding provenance');
+  if (proof.embedding.deployment === 'local-llama.cpp') {
+    const endpoint = new URL(proof.embedding.endpoint);
+    if (!endpoint.pathname.endsWith('/embeddings')) throw new Error('Invalid local embedding endpoint');
+    endpoint.pathname = endpoint.pathname.slice(0, -'/embeddings'.length);
+    if (typeof proof.embedding.serverBuild !== "string" || !proof.embedding.serverBuild) throw new Error("Missing verified local embedding server build");
+    same(proof.embedding, { serverBuild: proof.embedding.serverBuild, ...getLocomoEmbeddingConfig({ RUNTIME_MEMORY_LOCAL_EMBEDDING_URL: endpoint.href }), verifiedWeightsSha256: LOCAL_QWEN_EMBEDDING.weightsSha256 }, 'verified local embedding provenance');
+  } else {
+    same(proof.embedding, getLocomoEmbeddingConfig({}), 'embedding provenance');
+  }
   same(proof.dataset, { path: DATASET, sha256: sha256(readFileSync(join(root, DATASET))) }, 'dataset provenance');
   if (!proof.provider?.endpoint || proof.provider.model !== report.judgeConfig.model) throw new Error('Missing or inconsistent model identity');
   const endpoint = new URL(proof.provider.endpoint);

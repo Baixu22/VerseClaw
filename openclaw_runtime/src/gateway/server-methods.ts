@@ -502,6 +502,7 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "sessions.delete",
       "sessions.get",
       "sessions.compact",
+      "sessions.compactRange",
     ],
     loadHandlers: loadSessionsHandlers,
   }),

@@ -109,6 +109,72 @@ function resolveEntryForSessionKey(params: {
   return undefined;
 }
 
+/**
+ * #179: the top-most ancestor session key reachable from `sessionKey` through
+ * `spawnedBy` links, or `undefined` when the session has no recorded parent.
+ *
+ * Reads the same persisted store as the depth lookup (restart-safe) and is
+ * cycle-safe: a corrupt `spawnedBy` loop terminates instead of recursing. The
+ * result is the chain's origin, which is what a session-event consumer needs to
+ * group spawned sessions without walking the chain itself.
+ */
+export function getSubagentRootFromSessionStore(
+  sessionKey: string | undefined | null,
+  opts?: {
+    cfg?: OpenClawConfig;
+    store?: Record<string, SessionDepthEntry>;
+  },
+): string | undefined {
+  const raw = (sessionKey ?? "").trim();
+  if (!raw) {
+    return undefined;
+  }
+  const cache = new Map<string, Record<string, SessionDepthEntry>>();
+  const visited = new Set<string>();
+  let current = normalizeSubagentSessionKey(raw);
+  let root: string | undefined;
+  while (current && !visited.has(current)) {
+    visited.add(current);
+    const entry = resolveEntryForSessionKey({
+      sessionKey: current,
+      cfg: opts?.cfg,
+      store: opts?.store,
+      cache,
+    });
+    const parent = normalizeSubagentSessionKey(entry?.spawnedBy);
+    if (!parent || visited.has(parent)) {
+      break;
+    }
+    root = parent;
+    current = parent;
+  }
+  return root;
+}
+
+/**
+ * Whether a session-store row is a child of `parentKey`.
+ *
+ * A spawned session records its parent's **session key** in `spawnedBy` (see
+ * `SessionEntry.spawnedBy`), not the parent's transcript UUID — so comparing
+ * `spawnedBy` against a `sessionId` can never match. That mismatch silently
+ * produced fallback-model briefings which claimed there were no active
+ * subordinates. Forked sessions use `parentSessionKey` instead, so both links
+ * are accepted here, matching `isDirectChildSessionEntry` in the gateway.
+ */
+export function isSpawnedByParentKey(
+  entry: { spawnedBy?: unknown; parentSessionKey?: unknown } | undefined | null,
+  parentKey: string | undefined | null,
+): boolean {
+  const key = (parentKey ?? "").trim();
+  if (!key || !entry) {
+    return false;
+  }
+  const spawnedBy = typeof entry.spawnedBy === "string" ? entry.spawnedBy.trim() : "";
+  const parentSessionKey =
+    typeof entry.parentSessionKey === "string" ? entry.parentSessionKey.trim() : "";
+  return spawnedBy === key || parentSessionKey === key;
+}
+
 export function getSubagentDepthFromSessionStore(
   sessionKey: string | undefined | null,
   opts?: {

@@ -12,7 +12,8 @@
 //
 // Requires: RUNTIME_MEMORY_REAL_LLM=1, DEEPSEEK_API_KEY, SILICONFLOW_API_KEY
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { appendFileSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { getHeapStatistics } from "node:v8";
 import { join, dirname } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { createLocomoProvenance, writeLocomoReport } from "../../scripts/check-locomo-evidence.mjs";
@@ -28,9 +29,11 @@ import {
 } from "../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval";
 import { callDeepSeek, hasDeepSeekKey, getRuntimeMemoryLlmConfig, getRuntimeMemoryLlmReceipts } from "./helpers/runtime-memory-real-llm-client";
 import {
-  createSiliconFlowEmbeddingProvider,
-  hasSiliconFlowKey,
-} from "./helpers/siliconflow-embedding-provider";
+  createLocomoEmbeddingProvider,
+  hasLocomoEmbeddingConfig,
+  getLocomoEmbeddingConfig,
+  verifyLocomoEmbeddingResources,
+} from "./helpers/locomo-embedding-provider";
 import {
   wrapWithDiskCache,
   getEmbeddingCacheStats,
@@ -144,7 +147,25 @@ import {
   type ObservationFact,
   type ObservationInputFact,
 } from "./helpers/memory-observation-consolidation";
+import {
+  QUESTION_JOURNAL_FILE,
+  appendQuestionJournalEntry,
+  assertNoQuestionOverlap,
+  emptyJournal,
+  journalStartedAt,
+  mergeJournalReceipts,
+  pendingQuestionIds,
+  readQuestionJournal,
+  replaySucceeded,
+  type JournalModelReceipt,
+  type JournalQuestionResult,
+} from "./helpers/locomo-question-journal";
 import { assertLocomoStageReportShape } from "./helpers/runtime-memory-locomo-report-schema";
+import {
+  assertRetrievalOnlyDisclosure,
+  attributeRetrieval,
+  summarizeRetrievalAttribution,
+} from "./helpers/locomo-retrieval-attribution";
 import {
   classifyQuery,
   type QueryType,
@@ -173,6 +194,23 @@ import {
 
 const EVAL_ARTIFACT_DIR = process.env.RUNTIME_MEMORY_EVAL_ARTIFACT_DIR
   ?? join(process.cwd(), "artifacts", "runtime-memory-eval");
+
+// The full 500-question run is designed to take many hours (extraction plus
+// generation and judging), so its budget must be raisable from outside: a hard
+// 36h literal silently discards an entire run when it fires. The default is
+// unchanged; RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES raises (or lowers) it, and
+// a non-positive or unparsable value fails closed instead of falling back.
+const FULL_RUN_TEST_TIMEOUT_MS = (() => {
+  const raw = process.env.RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES;
+  if (raw === undefined || raw === "") return 129_600_000;
+  const minutes = Number(raw);
+  if (!Number.isFinite(minutes) || minutes <= 0) {
+    throw new Error(
+      "RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES must be a positive number of minutes",
+    );
+  }
+  return minutes * 60_000;
+})();
 
 // === Types ===
 
@@ -702,17 +740,15 @@ function loadObservationCache(
     const raw = readFileSync(OBSERVATION_CACHE_PATH, "utf-8");
     const parsed = JSON.parse(raw) as ObservationCache;
     if (parsed.version !== OBSERVATION_CACHE_VERSION) return null;
-    // Check coverage: all expected conversations must be present.
-    for (const convId of expectedConvIds) {
-      if (!parsed.conversations[convId]) return null;
-    }
+    // Partial caches are valid: consolidation writes after EACH conversation, so
+    // an interrupted run resumes only the conversations still missing. A cache
+    // with nothing usable is treated as absent.
     const result = new Map<string, ObservationFact[]>();
     for (const convId of expectedConvIds) {
       const obs = parsed.conversations[convId];
-      if (!Array.isArray(obs)) return null;
-      result.set(convId, obs);
+      if (Array.isArray(obs)) result.set(convId, obs);
     }
-    return result;
+    return result.size > 0 ? result : null;
   } catch {
     return null;
   }
@@ -944,6 +980,7 @@ async function loadOrExtractFacts(
       factsByConversation.set(convId, facts);
       totalFacts += facts.length;
       extractionTelemetry.cachedConversations += 1;
+      extractionStageCachedCount += 1;
       console.log(
         `[LoCoMo-Full] ${convId}: using cached ${facts.length} facts (skipped extraction)`,
       );
@@ -1008,6 +1045,7 @@ async function loadOrExtractFacts(
       facts = await extractFactsFromConversation(turns, convId, callLLM);
     }
     extractionTelemetry.freshConversations += 1;
+    extractionStageFreshCount += 1;
     factsByConversation.set(convId, facts);
     cacheData[convId] = facts.map((f) => ({
       subject: f.subject,
@@ -1026,6 +1064,15 @@ async function loadOrExtractFacts(
       );
     } catch (err) {
       console.log(`[LoCoMo-Full] Failed to save incremental cache: ${(err as Error).message}`);
+    }
+
+    // Staged extraction: stop after this batch so the caller can re-run with a
+    // fresh process. The cache written above is the only carry-over state.
+    if (EXTRACTION_ONLY && extractionTelemetry.freshConversations >= EXTRACTION_BATCH) {
+      console.log(
+        `[LoCoMo-Full] Extraction batch complete: ${Object.keys(cacheData).length}/${rawData.length} conversations cached (${extractionTelemetry.freshConversations} extracted this batch). Exiting extraction-only stage.`,
+      );
+      return factsByConversation;
     }
   }
 
@@ -1110,7 +1157,7 @@ function loadSessionSummaryCache(): SessionSummaryCache {
     ) as SessionSummaryCache;
     if (
       parsed.version === "10.0-session-summary-index" &&
-      parsed.embeddingProvider === "siliconflow-qwen3-embed-8b" &&
+      parsed.embeddingProvider === getLocomoEmbeddingConfig().id &&
       parsed.conversations &&
       typeof parsed.conversations === "object"
     ) {
@@ -1121,7 +1168,7 @@ function loadSessionSummaryCache(): SessionSummaryCache {
   }
   return {
     version: "10.0-session-summary-index",
-    embeddingProvider: "siliconflow-qwen3-embed-8b",
+    embeddingProvider: getLocomoEmbeddingConfig().id,
     conversations: {},
   };
 }
@@ -1397,7 +1444,55 @@ async function judgeAnswer(
   return score;
 }
 
-afterEach(() => {});
+// Judge-phase heartbeats. judge-07's vitest worker was killed with no OOM event and no
+// crash report, and the only timeline on disk recorded SYSTEM free memory. These records
+// are written from inside the evaluation worker, so a future kill leaves that worker's
+// own heap and RSS curve instead of a blank.
+const HEARTBEAT_PATH = join(EVAL_ARTIFACT_DIR, "progress-timeline.jsonl");
+let heartbeatTimer: ReturnType<typeof setInterval> | null = null;
+
+function memorySnapshot(): Record<string, number> {
+  const mem = process.memoryUsage();
+  const mib = (bytes: number) => Math.round(bytes / 1048576);
+  return {
+    rssMb: mib(mem.rss),
+    heapUsedMb: mib(mem.heapUsed),
+    heapTotalMb: mib(mem.heapTotal),
+    externalMb: mib(mem.external),
+    heapLimitMb: mib(getHeapStatistics().heap_size_limit),
+  };
+}
+
+function writeHeartbeat(phase: string, answered: number, pending: number): void {
+  try {
+    appendFileSync(
+      HEARTBEAT_PATH,
+      JSON.stringify({
+        driven_by: "agent",
+        at: new Date().toISOString(),
+        phase,
+        answered,
+        pending,
+        pid: process.pid,
+        ...memorySnapshot(),
+      }) + "\n",
+      "utf-8",
+    );
+  } catch {
+    // The heartbeat is diagnostic: losing a sample must never fail the evaluation.
+  }
+}
+
+function stopHeartbeat(): void {
+  if (heartbeatTimer) {
+    clearInterval(heartbeatTimer);
+    heartbeatTimer = null;
+  }
+}
+
+afterEach(() => {
+  stopHeartbeat();
+});
 
 function isFullEvalRequested(): boolean {
   return process.env.FULL_EVAL === "1" || process.argv.includes("--full");
@@ -1426,6 +1521,34 @@ const SMOKE_SAMPLE_SIZES: Record<string, number> = {
   open_domain: SMOKE_PER_CATEGORY,
 };
 
+// Extraction-only staging mode (added 2026-10-11).
+//
+// The single-shot full run holds a ~12.8 GB llama-server for the whole run even
+// though fact extraction never touches embeddings. On a 15.5 GB host that makes
+// any concurrent tooling fatal, and the host killed two runs mid-extraction.
+// In this mode the suite extracts a bounded number of conversations, flushes the
+// facts cache after each one, and exits without starting the embedding server or
+// the judge. A later normal full run resumes from the accumulated cache.
+const EXTRACTION_ONLY = process.env.RUNTIME_MEMORY_EXTRACTION_ONLY === "1";
+// Retrieval-only mode (#136): produce the retrieval diagnosis with no model call at
+// all. It measures L0 only -- heuristic query classification, no self-ask, no L1/L2
+// escalation, no generation, no judge -- because those stages depend on the answer and
+// would change the context the diagnosis reports. See
+// docs/dev/p0-locomo-retrieval-only-mode-20261013.md for the rejected shortcuts.
+const RETRIEVAL_ONLY = process.env.RUNTIME_MEMORY_RETRIEVAL_ONLY === "1";
+let extractionStageFreshCount = 0;
+let extractionStageCachedCount = 0;
+const EXTRACTION_BATCH = (() => {
+  if (!EXTRACTION_ONLY) return Infinity;
+  const raw = process.env.RUNTIME_MEMORY_EXTRACTION_BATCH;
+  if (raw === undefined || raw === "") return 1;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value <= 0) {
+    throw new Error("RUNTIME_MEMORY_EXTRACTION_BATCH must be a positive integer");
+  }
+  return value;
+})();
+
 function canRunWithoutSiliconFlow(): boolean {
   if (isFullEvalRequested()) return false;
   const rawData = loadRawData();
@@ -1437,14 +1560,31 @@ function canRunWithoutSiliconFlow(): boolean {
 }
 
 describe.skipIf(
-  !hasDeepSeekKey() || (!hasSiliconFlowKey() && !canRunWithoutSiliconFlow()),
+  (!RETRIEVAL_ONLY && !hasDeepSeekKey()) ||
+    (!EXTRACTION_ONLY && !hasLocomoEmbeddingConfig() && !canRunWithoutSiliconFlow()),
 )(
   "L11-FULL: LoCoMo 500-question benchmark with real embedding + LLM judge",
   () => {
     it(
       "runs 500-question stratified LoCoMo benchmark",
       async () => {
-        const provenance = createLocomoProvenance(getRuntimeMemoryLlmConfig());
+        // Extraction-only staging never talks to the embedding server: the stage
+        // must be runnable on a host that cannot afford the 12.8 GB llama-server.
+        const embedding = EXTRACTION_ONLY
+          ? null
+          : hasLocomoEmbeddingConfig()
+            ? await verifyLocomoEmbeddingResources()
+            : null;
+        if (embedding) await createLocomoEmbeddingProvider().embedQuery("LoCoMo embedding preflight");
+        const provenance = { ...createLocomoProvenance(getRuntimeMemoryLlmConfig()), embedding, crossEncoderAvailable: hasSiliconFlowRerankKey() };
+        // A fatal OOM should leave a Node report beside the run's other evidence instead
+        // of disappearing with the process.
+        try {
+          process.report.directory = EVAL_ARTIFACT_DIR;
+          process.report.filename = "node-fatal-report.json";
+        } catch {
+          // Best effort; the heartbeat below still records the memory curve.
+        }
         const rawData = loadRawData();
         const evidenceTextByConversation = new Map(rawData.map((sample) => [
           sample.sample_id,
@@ -1496,6 +1636,38 @@ describe.skipIf(
           ? await loadOrExtractFacts(rawData, callTrackedDeepSeek)
           : new Map<string, RuntimeMemoryQueryableFact[]>();
 
+        // Staged extraction ends the run here: no embeddings, no retrieval, no
+        // judging. The facts cache is the deliverable and the next batch resumes
+        // from it. This is what lets a memory-constrained host make progress in
+        // bounded steps instead of holding a 12.8 GB embedding server for ~20h.
+        if (EXTRACTION_ONLY) {
+          const cachePath = FACTS_CACHE_PATH;
+          const cached = extractionStageCachedCount;
+          const fresh = extractionStageFreshCount;
+          const total = cached + fresh;
+          const exhausted = extractionStageFreshCount < EXTRACTION_BATCH;
+          writeFileSync(
+            join(EVAL_ARTIFACT_DIR, "extraction-stage.json"),
+            JSON.stringify({
+              driven_by: "agent",
+              actor: "extraction-stage",
+              finishedAt: new Date().toISOString(),
+              batchSize: EXTRACTION_BATCH,
+              cachedConversations: cached,
+              freshConversations: fresh,
+              conversationsComplete: total,
+              conversationsTotal: rawData.length,
+              exhaustedAllConversations: exhausted,
+              factsCachePath: cachePath,
+            }, null, 2) + "\n",
+            "utf-8",
+          );
+          console.log(
+            `[LoCoMo-Full] Extraction stage finished: cached=${cached} fresh=${fresh} complete=${total}/${rawData.length} exhausted=${exhausted}. No retrieval or judging performed.`,
+          );
+          return;
+        }
+
         let totalFactsCount = 0;
         if (needsRetrieval) {
           for (const [convId, facts] of factsByConversation) {
@@ -1522,7 +1694,10 @@ describe.skipIf(
         ) {
           const expectedConvIds = rawData.map((s) => s.sample_id);
           let observationsByConversation = loadObservationCache(expectedConvIds);
-          if (observationsByConversation !== null) {
+          if (observationsByConversation === null) {
+            observationsByConversation = new Map<string, ObservationFact[]>();
+          }
+          if (observationsByConversation.size > 0) {
             console.log(
               `[LoCoMo-Full] Item 3: Loaded observation cache (${observationsByConversation.size} conversations)`,
             );
@@ -1544,19 +1719,31 @@ describe.skipIf(
                 })),
               );
             }
-            observationsByConversation = await consolidateObservations(
-              inputByConv,
-              callTrackedDeepSeek,
-              {
+            // Resume: keep whatever the partial cache already holds and only
+            // consolidate the conversations still missing. Writing after each
+            // conversation means an interruption costs at most one conversation
+            // instead of the whole cross-session consolidation.
+            const pending = new Map<string, ObservationInputFact[]>();
+            for (const [convId, facts] of inputByConv) {
+              if (!observationsByConversation.has(convId)) pending.set(convId, facts);
+            }
+            console.log(
+              `[LoCoMo-Full] Item 3: ${observationsByConversation.size} conversations already cached, ${pending.size} still to consolidate`,
+            );
+            if (pending.size > 0) {
+              await consolidateObservations(pending, callTrackedDeepSeek, {
                 onProgress: (event) => {
                   console.log(
                     `[LoCoMo-Full] Item 3: ${event.conversationId} subject "${event.subject}": ` +
                       `${event.factsBefore} facts → ${event.observationsAfter} observations`,
                   );
                 },
-              },
-            );
-            saveObservationCache(observationsByConversation);
+                onConversationComplete: (convId, observations) => {
+                  observationsByConversation.set(convId, observations);
+                  saveObservationCache(observationsByConversation);
+                },
+              });
+            }
           }
 
           // Apply observations: replace merged facts with observations.
@@ -1604,8 +1791,8 @@ describe.skipIf(
         // no re-retrieval). This allows testing reflect agent logic without
         // the embedding API.
         const rawEmbeddingProvider =
-          needsEmbeddingProvider && hasSiliconFlowKey()
-            ? createSiliconFlowEmbeddingProvider()
+          needsEmbeddingProvider && hasLocomoEmbeddingConfig()
+            ? createLocomoEmbeddingProvider()
             : null;
         const embeddingCachePath = join(EVAL_ARTIFACT_DIR,
           "embedding-cache.json",
@@ -1616,7 +1803,7 @@ describe.skipIf(
             : null;
         if (embeddingProvider) {
           console.log(
-            `[LoCoMo-Full] Embedding: Qwen3-Embedding-8B (SiliconFlow, disk-cached), dim=${embeddingProvider.dimension}`,
+            `[LoCoMo-Full] Embedding: ${embeddingProvider.id} (disk-cached), dim=${embeddingProvider.dimension}`,
           );
         } else {
           console.log(
@@ -2413,6 +2600,29 @@ describe.skipIf(
                 retrievedFacts,
                 undefined,
               );
+              if (RETRIEVAL_ONLY) {
+                const summaries = retrievedFacts.map((fact) => fact.objectSummary);
+                return {
+                  questionId,
+                  category,
+                  conversationId,
+                  question: qa.question,
+                  goldEvidence: qa.evidence ?? [],
+                  recall5: computeAnswerTokenRecall(answerStr, summaries),
+                  retrievedFactSummaries: summaries,
+                  contextRecall: computeContextRecall(
+                    cachedAssembledContext,
+                    qa.evidence ?? [],
+                    evidenceTextByConversation.get(conversationId),
+                  ),
+                  judgeScore: 0,
+                  judgeResponseId: null,
+                  escalationLevel: 0,
+                  predictedAnswer: "[RETRIEVAL-ONLY]",
+                  groundTruth: answerStr,
+                  assembledContext: cachedAssembledContext,
+                };
+              }
               // Stage 5.2d (2026-07-04): Self-ask decomposition for multi_hop
               // in cached path. Decomposes the question into sub-questions,
               // answers each using cached facts, and passes hop answers as
@@ -2574,7 +2784,7 @@ describe.skipIf(
 
             if (!embeddingProvider) {
               throw new Error(
-                "SILICONFLOW_API_KEY is required when dev-slice retrieval cache is missing or FULL_EVAL=1",
+                "A verified local Qwen3 deployment or SILICONFLOW_API_KEY is required when retrieval is not cached",
               );
             }
 
@@ -2807,6 +3017,35 @@ describe.skipIf(
             // not_retrieved errors. Other categories keep top-10.
             const topK = category === "multi_hop" ? 15 : 10;
             const hybridHits = finalBoostedHits.slice(0, topK);
+            if (RETRIEVAL_ONLY) {
+              const retrievalOnlyFacts = hybridHits.map((hit) => hit.fact);
+              const retrievalOnlyContext = assembleGeneratorContext(
+                "",
+                retrievalOnlyFacts,
+                undefined,
+              );
+              const summaries = retrievalOnlyFacts.map((fact) => fact.objectSummary);
+              return {
+                questionId,
+                category,
+                conversationId,
+                question: qa.question,
+                goldEvidence: qa.evidence ?? [],
+                recall5: computeAnswerTokenRecall(answerStr, summaries),
+                retrievedFactSummaries: summaries,
+                contextRecall: computeContextRecall(
+                  retrievalOnlyContext,
+                  qa.evidence ?? [],
+                  evidenceTextByConversation.get(conversationId),
+                ),
+                judgeScore: 0,
+                judgeResponseId: null,
+                escalationLevel: 0,
+                predictedAnswer: "[RETRIEVAL-ONLY]",
+                groundTruth: answerStr,
+                assembledContext: retrievalOnlyContext,
+              };
+            }
 
             let finalHits = hybridHits;
             // Stage 3.3 (2026-07-04): Capture hop answers from self-ask to
@@ -3289,13 +3528,124 @@ describe.skipIf(
           }
         };
 
-        for (let i = 0; i < sampled.length; i += BATCH_SIZE) {
-          const batch = sampled.slice(i, i + BATCH_SIZE);
+        // Durability: each finished batch is journaled, so an interruption costs at
+        // most the in-flight batch instead of the whole run (run-09 died at 60/500
+        // with an empty reports/). A later segment resumes the same logical run.
+        const sampledQuestionIds = sampled.map((item) =>
+          makeQuestionId(item.conversationId, item.qaIndex),
+        );
+        const sampleIndexById = new Map(
+          sampledQuestionIds.map((questionId, index) => [questionId, index]),
+        );
+        // A retrieval-only run is not a judgeable run: it never journals a question as
+        // answered and can never satisfy the measured-report verifier.
+        const journalFile = fullEval && !RETRIEVAL_ONLY ? join(EVAL_ARTIFACT_DIR, QUESTION_JOURNAL_FILE) : null;
+        const journal = journalFile ? readQuestionJournal(journalFile) : emptyJournal("");
+        for (const clash of journal.conflicts) {
+          console.log(`[LoCoMo-Full] Journal warning: ${clash} was appended more than once`);
+        }
+        const replayed = journalFile ? replaySucceeded(journal, sampledQuestionIds) : [];
+        const retainedIds = new Set(replayed.map((entry) => entry.questionId));
+        const pendingIds = new Set(pendingQuestionIds(journal, sampledQuestionIds));
+        const pending = sampled.filter((item) =>
+          pendingIds.has(makeQuestionId(item.conversationId, item.qaIndex)),
+        );
+        if (journalFile) {
+          console.log(
+            `[LoCoMo-Full] Journal: ${replayed.length} judged question(s) retained, ` +
+              `${pending.length} still to answer${journal.tornTail ? " (ignored a torn final line)" : ""}`,
+          );
+        }
+
+        // Retained answers are real judged rows from an earlier segment of this same
+        // logical run; they count toward every metric exactly like fresh answers.
+        for (const entry of replayed) {
+          const r = entry.result;
+          totalCorrect += r.judgeScore;
+          totalRecall += r.recall5;
+          totalContextRecall += r.contextRecall;
+          if (!byCategory[r.category]) {
+            byCategory[r.category] = { correct: 0, total: 0, recallSum: 0, contextRecallSum: 0 };
+          }
+          byCategory[r.category].correct += r.judgeScore;
+          byCategory[r.category].total += 1;
+          byCategory[r.category].recallSum += r.recall5;
+          byCategory[r.category].contextRecallSum += r.contextRecall;
+          results.push(r);
+        }
+
+        const answeredThisSegment: string[] = [];
+        writeHeartbeat("judging-start", replayed.length, sampled.length - replayed.length);
+        heartbeatTimer = setInterval(() => {
+          writeHeartbeat(
+            "judging",
+            replayed.length + answeredThisSegment.length,
+            pending.length - answeredThisSegment.length,
+          );
+        }, 60_000);
+        for (let i = 0; i < pending.length; i += BATCH_SIZE) {
+          const batch = pending.slice(i, i + BATCH_SIZE);
+          const receiptsBeforeBatch = journalFile ? getRuntimeMemoryLlmReceipts().length : 0;
           const batchResults = await Promise.all(
-            batch.map((item, bIdx) => processQuestion(item, i + bIdx)),
+            batch.map((item) =>
+              processQuestion(
+                item,
+                sampleIndexById.get(makeQuestionId(item.conversationId, item.qaIndex)) ?? 0,
+              ),
+            ),
           );
 
+          const judgedRows: JournalQuestionResult[] = [];
           for (const r of batchResults) {
+            const judged = RETRIEVAL_ONLY
+              ? true
+              : Boolean(r.judgeResponseId) && r.predictedAnswer !== "[ERROR]";
+            if (judged) {
+              judgedRows.push(r as JournalQuestionResult);
+              if (journalFile) {
+                appendQuestionJournalEntry(journalFile, {
+                  version: 1,
+                  kind: "succeeded",
+                  questionId: r.questionId,
+                  category: r.category,
+                  conversationId: r.conversationId,
+                  recordedAt: new Date().toISOString(),
+                  sourceRevision: provenance.sourceRevision,
+                  result: r as JournalQuestionResult,
+                });
+              }
+            } else if (journalFile) {
+              appendQuestionJournalEntry(journalFile, {
+                version: 1,
+                kind: "failed",
+                questionId: r.questionId,
+                category: r.category,
+                conversationId: r.conversationId,
+                recordedAt: new Date().toISOString(),
+                sourceRevision: provenance.sourceRevision,
+                reason:
+                  "no complete final answer or no judge receipt; " +
+                  `predictedAnswer=${r.predictedAnswer.slice(0, 40)}`,
+              });
+            }
+          }
+          if (journalFile) {
+            const batchReceipts = getRuntimeMemoryLlmReceipts()
+              .slice(receiptsBeforeBatch)
+              .filter((receipt) => receipt.status === 200 && typeof receipt.responseId === "string")
+              .map((receipt) => receipt as JournalModelReceipt);
+            if (batchReceipts.length > 0) {
+              appendQuestionJournalEntry(journalFile, {
+                version: 1,
+                kind: "receipts",
+                recordedAt: new Date().toISOString(),
+                sourceRevision: provenance.sourceRevision,
+                receipts: batchReceipts,
+              });
+            }
+          }
+
+          for (const r of judgedRows) {
             totalCorrect += r.judgeScore;
             totalRecall += r.recall5;
             totalContextRecall += r.contextRecall;
@@ -3312,9 +3662,10 @@ describe.skipIf(
             byCategory[r.category].recallSum += r.recall5;
             byCategory[r.category].contextRecallSum += r.contextRecall;
             results.push(r);
+            answeredThisSegment.push(r.questionId);
           }
 
-          const completed = i + batch.length;
+          const completed = replayed.length + answeredThisSegment.length;
           if (completed % 10 === 0 || completed === sampled.length || completed < 10) {
             const runningJ = ((totalCorrect / completed) * 100).toFixed(1);
             console.log(
@@ -3324,8 +3675,90 @@ describe.skipIf(
             );
           }
 
+          writeHeartbeat(
+            "judging",
+            replayed.length + answeredThisSegment.length,
+            pending.length - answeredThisSegment.length,
+          );
+
           // Small delay between batches to avoid network pressure
           await new Promise((r) => setTimeout(r, 500));
+        }
+        stopHeartbeat();
+        writeHeartbeat("judging-complete", results.length, sampled.length - results.length);
+        assertNoQuestionOverlap(retainedIds, answeredThisSegment);
+
+        // Retrieval-only runs stop here: the diagnosis is written and the run exits
+        // without a measured report, so scripts/check-locomo-evidence.mjs keeps failing
+        // closed while no real 500-question run exists.
+        if (RETRIEVAL_ONLY) {
+          const memorySummariesByConversation = new Map<string, string[]>();
+          for (const [convId, facts] of factsByConversation) {
+            memorySummariesByConversation.set(convId, facts.map((fact) => fact.objectSummary));
+          }
+          const attributions = results.map((row) =>
+            attributeRetrieval({
+              questionId: row.questionId,
+              category: row.category,
+              conversationId: row.conversationId,
+              question: row.question,
+              goldEvidence: row.goldEvidence,
+              retrievedFactSummaries: row.retrievedFactSummaries,
+              memoryFactSummaries: memorySummariesByConversation.get(row.conversationId) ?? [],
+              evidenceTextById: evidenceTextByConversation.get(row.conversationId),
+            }),
+          );
+          const retrievalSummary = summarizeRetrievalAttribution(
+            attributions,
+            new Map(results.map((row) => [row.questionId, row.recall5])),
+          );
+          assertRetrievalOnlyDisclosure(retrievalSummary);
+          writeFileSync(
+            join(EVAL_ARTIFACT_DIR, "retrieval-diagnostic.json"),
+            JSON.stringify(
+              {
+                driven_by: "agent",
+                actor: provenance.actor,
+                sourceRevision: provenance.sourceRevision,
+                generatedAt: new Date().toISOString(),
+                sampleSize: sampled.length,
+                mode: "retrieval-only-l0",
+                summary: retrievalSummary,
+                rows: attributions,
+              },
+              null,
+              2,
+            ) + "\n",
+            "utf-8",
+          );
+          writeFileSync(
+            join(EVAL_ARTIFACT_DIR, "retrieval-only.json"),
+            JSON.stringify(
+              {
+                driven_by: "agent",
+                actor: provenance.actor,
+                sourceRevision: provenance.sourceRevision,
+                finishedAt: new Date().toISOString(),
+                mode: "retrieval-only-l0",
+                questions: results.length,
+                noReportWritten: true,
+                note:
+                  "L0 retrieval diagnosis only: no answer generated, no judge called, " +
+                  "and locomo-full-500-report.json deliberately does not exist.",
+              },
+              null,
+              2,
+            ) + "\n",
+            "utf-8",
+          );
+          console.log(
+            `[LoCoMo-Full] Retrieval-only (L0): ${results.length}/${sampled.length} questions | ` +
+              `top5=${(retrievalSummary.overall.top5Coverage * 100).toFixed(1)}% | ` +
+              `absent=${retrievalSummary.overall.bucketCounts.absent_from_memory} | ` +
+              `rankedOut=${retrievalSummary.overall.bucketCounts.in_memory_but_not_top5}. ` +
+              "No report written.",
+          );
+          return;
         }
 
         // Compute final metrics
@@ -3355,8 +3788,23 @@ describe.skipIf(
           );
         }
 
+        // The logical run spans every segment that contributed an answer, so retained
+        // receipts and their usage are folded in before any estimate is computed.
+        const retainedReceipts = (journal?.receipts ?? []) as JournalModelReceipt[];
+        for (const receipt of retainedReceipts) {
+          deepSeekUsage.calls += 1;
+          deepSeekUsage.promptTokens += receipt.usage.prompt_tokens;
+          deepSeekUsage.completionTokens += receipt.usage.completion_tokens;
+          deepSeekUsage.totalTokens += receipt.usage.total_tokens;
+        }
+        provenance.startedAt = journalStartedAt(replayed, provenance.startedAt, retainedReceipts);
+        // Replayed questions still count toward the escalation snapshot and its budget.
+        const escalationLevelsForStats = [
+          ...replayed.map((entry) => ({ escalationLevel: entry.result.escalationLevel as EscalationLevel })),
+          ...escalationResults,
+        ];
         const escalationStats = summarizeEscalationStats(
-          escalationResults,
+          escalationLevelsForStats,
           escalationBudget,
           fullConversationBudget,
         );
@@ -3380,7 +3828,7 @@ describe.skipIf(
           retrievalModeStage2:
             "Stage 2 adaptive retrieval: dual-track episodic+semantic fragments, session-summary retrieval for top-2 whole-session escalation, full-conversation fallback, and sequential self-ask for multi-hop. Default dev-slice mode uses cached retrieval when artifacts/runtime-memory-eval/dev-slice-cache.json is valid; FULL_EVAL=1 or --full runs the full sample.",
           retrievalMode:
-            "Stage 2 adaptive retrieval: dual-track episodic+semantic fragments, session-summary retrieval for top-2 whole-session escalation, full-conversation fallback, and sequential self-ask for multi-hop. Qwen3-Embedding-8B (SiliconFlow). Default dev-slice mode uses cached retrieval when artifacts/runtime-memory-eval/dev-slice-cache.json is valid; FULL_EVAL=1 or --full runs the full sample.",
+            "Stage 2 adaptive retrieval: dual-track episodic+semantic fragments, session-summary retrieval for top-2 whole-session escalation, full-conversation fallback, and sequential self-ask for multi-hop. Qwen3-Embedding-8B deployment/quantization is recorded in provenance.embedding; local quantized runs are new references, not reproductions of historical scores. Default dev-slice mode uses cached retrieval when artifacts/runtime-memory-eval/dev-slice-cache.json is valid; FULL_EVAL=1 or --full runs the full sample.",
           judgeModel: `${FROZEN_JUDGE_CONFIG.model} (${FROZEN_JUDGE_CONFIG.promptVersion})`,
           judgeConfig: FROZEN_JUDGE_CONFIG,
           judgeInterpretation: FROZEN_JUDGE_INTERPRETATION,
@@ -3408,6 +3856,8 @@ describe.skipIf(
             by_escalation_level: escalationMetrics.byLevel,
           },
           errorTaxonomy,
+          errorTaxonomyCoverage:
+            replayed.length === 0 ? "full-run" : "retained-questions-only",
           escalation: {
             ...escalationStats,
             full_conversation_rate: escalationMetrics.byLevel.level2.rate,
@@ -3459,8 +3909,17 @@ describe.skipIf(
           })(),
           comparison: buildSotaComparison(overallJ),
           questionResults: results,
-          modelReceipts: getRuntimeMemoryLlmReceipts(),
-          cacheUsage: { judgeCacheHits, judgeCacheMisses, cachedRetrieval: cachedCoversSample },
+          modelReceipts: mergeJournalReceipts(
+            retainedReceipts,
+            getRuntimeMemoryLlmReceipts() as JournalModelReceipt[],
+          ),
+          cacheUsage: {
+            judgeCacheHits,
+            // Every sampled question is freshly judged exactly once across the logical
+            // run; a resumed segment must not under-report that as a smaller number.
+            judgeCacheMisses: fullEval ? sampled.length : judgeCacheMisses,
+            cachedRetrieval: cachedCoversSample,
+          },
           sampleResults: [
             ...results.filter((result) => result.category === "single_hop").slice(0, 5),
             ...results.filter((result) => result.category === "temporal").slice(0, 5),
@@ -3482,10 +3941,90 @@ describe.skipIf(
           generatedAt: new Date().toISOString(),
         };
 
+        // A partial answer set is progress, not a report. Retain what was answered so a
+        // later segment can resume, and refuse to emit a report the verifier would
+        // reject as incomplete evidence.
+        if (results.length !== sampled.length) {
+          const answeredIds = new Set(results.map((row) => row.questionId));
+          const unanswered = sampledQuestionIds.filter((questionId) => !answeredIds.has(questionId));
+          const progressPath = join(EVAL_ARTIFACT_DIR, "run-progress.json");
+          writeFileSync(
+            progressPath,
+            JSON.stringify(
+              {
+                driven_by: "agent",
+                actor: provenance.actor,
+                finishedAt: new Date().toISOString(),
+                answered: results.length,
+                totalQuestions: sampled.length,
+                unansweredQuestionIds: unanswered,
+                journal: journalFile,
+                note: "Partial progress only. Resume with this journal; no report was written.",
+              },
+              null,
+              2,
+            ) + "\n",
+            "utf-8",
+          );
+          throw new Error(
+            `LoCoMo full evaluation incomplete: ${results.length}/${sampled.length} questions answered, ` +
+              `${unanswered.length} still pending (progress: ${progressPath})`,
+          );
+        }
+
         // Preserve even a failed candidate before validation; I/O failure is never ignored.
         const reportPath = join(EVAL_ARTIFACT_DIR, "locomo-full-500-report.json");
         writeLocomoReport(report, reportPath);
         assertLocomoStageReportShape(report);
+
+        // #136 retrieval diagnosis: attribute every question to extraction loss or
+        // ranking loss. It is written beside the report, never inside it, so the
+        // verified report contract and the "no judge score" boundary both hold.
+        if (needsFacts) {
+          const memorySummariesByConversation = new Map<string, string[]>();
+          for (const [conversationId, facts] of factsByConversation) {
+            memorySummariesByConversation.set(conversationId, facts.map((fact) => fact.objectSummary));
+          }
+          const attributions = results.map((row) =>
+            attributeRetrieval({
+              questionId: row.questionId,
+              category: row.category,
+              conversationId: row.conversationId,
+              question: row.question,
+              goldEvidence: row.goldEvidence,
+              retrievedFactSummaries: row.retrievedFactSummaries,
+              memoryFactSummaries: memorySummariesByConversation.get(row.conversationId) ?? [],
+              evidenceTextById: evidenceTextByConversation.get(row.conversationId),
+            }),
+          );
+          const retrievalSummary = summarizeRetrievalAttribution(
+            attributions,
+            new Map(results.map((row) => [row.questionId, row.recall5])),
+          );
+          assertRetrievalOnlyDisclosure(retrievalSummary);
+          writeFileSync(
+            join(EVAL_ARTIFACT_DIR, "retrieval-diagnostic.json"),
+            JSON.stringify(
+              {
+                driven_by: "agent",
+                actor: provenance.actor,
+                sourceRevision: provenance.sourceRevision,
+                generatedAt: new Date().toISOString(),
+                summary: retrievalSummary,
+                rows: attributions,
+              },
+              null,
+              2,
+            ) + "\n",
+            "utf-8",
+          );
+          console.log(
+            `[LoCoMo-Full] Retrieval diagnostic: top5=${(retrievalSummary.overall.top5Coverage * 100).toFixed(1)}% ` +
+              `memory=${(retrievalSummary.overall.memoryCoverage * 100).toFixed(1)}% ` +
+              `absent=${retrievalSummary.overall.bucketCounts.absent_from_memory} ` +
+              `rankedOut=${retrievalSummary.overall.bucketCounts.in_memory_but_not_top5}`,
+          );
+        }
 
         // P0-OPT: flush judge cache and report hit rate.
         const cache = getJudgeCache();
@@ -3678,7 +4217,7 @@ describe.skipIf(
         expect(totalQuestions).toBeGreaterThan(0);
         expect(overallJ).toBeGreaterThan(0);
       },
-      129_600_000, // 36h timeout for v4-flash reasoning model (extraction ~10h + gen/judge ~25h)
+      FULL_RUN_TEST_TIMEOUT_MS, // default 36h; raise via RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES
     );
   },
 );

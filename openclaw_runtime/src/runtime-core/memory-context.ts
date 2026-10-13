@@ -384,7 +384,23 @@ export type RuntimeMemorySummaryItem = RuntimeMemoryTemporalFields & {
 
 export type RuntimeMemorySummary = {
   items: RuntimeMemorySummaryItem[];
+  /**
+   * #185: facts the provider *considered* that are not in `items` — retrieval
+   * misses, type-slot/limit drops and token-budget drops combined. Callers used
+   * to read this as "facts omitted by the token budget only", which reported 0
+   * whenever the drops happened earlier. It must equal
+   * `totalFactCount - items.length`; the breakdown fields below say where the
+   * missing facts went.
+   */
   omittedFactCount: number;
+  /** #185: facts read from the store before retrieval/slot/token filtering. */
+  totalFactCount?: number;
+  /** #185: facts that survived retrieval, before slot + token filtering. */
+  matchedFactCount?: number;
+  /** #185: facts dropped by type-aware slots / limit truncation. */
+  slotOmittedFactCount?: number;
+  /** #185: facts dropped by the token budget inside the summarizer. */
+  tokenBudgetOmittedFactCount?: number;
   tokenBudget: number;
   estimatedTokens: number;
   readonly: true;
@@ -1133,9 +1149,16 @@ export function summarizeRuntimeMemoryFacts(
     estimatedTokens += nextTokens;
   }
 
+  // #185: report the honest total. `matched` is post-retrieval, so counting
+  // from it hid every fact filtered out before this function ran; count from
+  // the store facts the caller passed in instead.
   return {
     items,
-    omittedFactCount: Math.max(0, matched.length - items.length),
+    omittedFactCount: Math.max(0, facts.length - items.length),
+    totalFactCount: facts.length,
+    matchedFactCount: matched.length,
+    slotOmittedFactCount: 0,
+    tokenBudgetOmittedFactCount: Math.max(0, matched.length - items.length),
     tokenBudget,
     estimatedTokens,
     readonly: true,

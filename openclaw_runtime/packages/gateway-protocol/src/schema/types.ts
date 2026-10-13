@@ -130,6 +130,7 @@ export type SessionsPluginPatchResult = SchemaType<"SessionsPluginPatchResult">;
 export type SessionsResetParams = SchemaType<"SessionsResetParams">;
 export type SessionsDeleteParams = SchemaType<"SessionsDeleteParams">;
 export type SessionsCompactParams = SchemaType<"SessionsCompactParams">;
+export type SessionsCompactRangeParams = SchemaType<"SessionsCompactRangeParams">;
 export type SessionsUsageParams = SchemaType<"SessionsUsageParams">;
 
 /** Task ledger query and cancellation payloads. */

@@ -1,6 +1,6 @@
 # P0 记忆评测完整性修复
 
-启动：2026-10-09；本次更新：2026-10-10。driven_by: agent；actor: codex-p0-remediation。
+启动：2026-10-09；本次更新：2026-10-13。driven_by: agent；actor: codex-p0-remediation（2026-10-13 实测段 actor: codex-locomo-evaluator）。
 
 ## 范围与证据边界
 
@@ -11,11 +11,28 @@
 - **#134**：LoCoMo 的 evidence 是轮次 ID。评测的 cached/fresh 两条路径均用该会话的真实 turn-text map 解析，再计算词级上下文覆盖；合并 ID、零填充和数据集中的 D:11:26 形态均规范化。空 evidence 计 0；无法解析的 ID 留在分母中作未命中，不再获得满分。缺少解析表却传入 ID 时直接报错。这个字段是**最终上下文的词级覆盖诊断**，不是主检索指标，更不能混同 L2 之前的检索效果。
 - **#137**：保持 frozen-v2-generous-2026-07-04 judge 的冻结规则原样；显式披露部分正确、列表覆盖 50%、日期相差 14 天、子串/超串、同实体别名都可以判 CORRECT。外部论文值放入 references，整体 judgeComparable=false / rankingAllowed=false；控制台也不把 ours 混排。不同 judge、数据或管线下的分数不可直接比较。
 
+## 2026-10-13 完整 500 题实测（#135、#136、#138 收口）
+
+真实运行完成并通过校验：`scripts/check-locomo-evidence.mjs` 对入库 fixture 返回 `verified: true`（500 题、4881 份模型收据、52 个来源哈希、judgeCacheHits=0 / judgeCacheMisses=500）。命令为 `scripts/run-locomo-full-evaluation.mjs`，本地 llama.cpp 部署（judge `qwen2.5-7b-instruct`，嵌入 `qwen3-embedding-8b-q4_k_m` Q4_K_M，均为 loopback）。`driven_by: agent`，未主张任何真人参与。
+
+| 范围 | n | J Score | Recall@5 | Context recall |
+|---|---|---|---|---|
+| OVERALL | 500 | 0.5580 | 0.3820 | 0.7369 |
+| temporal | 150 | 0.6333 | 0.4374 | 0.8178 |
+| multi_hop | 96 | 0.4583 | 0.2034 | 0.6362 |
+| single_hop | 127 | 0.4961 | 0.3062 | 0.6493 |
+| open_domain | 127 | 0.6063 | 0.5275 | 0.8051 |
+
+- **#135**：报告已落盘 L0 487（0.974）/ L1 11（0.022）/ L2 2（0.004），`capped=0`；`memory_only`（仅 L0+L1，n=498）J=0.5602 且带 `selectionBias` 说明；`scoreAttribution` 明示整体 J 含 L2 的非检索贡献。全量 J 与纯记忆分不再混淆，比例已披露。
+- **#136**：`retrieval-diagnostic.json` 与报告同批产出。`absent_from_memory` 0/500、`in_memory_but_not_top5` 445/500、`retrieved_in_top5` 51/500、记忆覆盖 0.9007 对 top-5 覆盖 0.4122 → 瓶颈在**排序**而非抽取。temporal 对非 temporal 的 top-5 覆盖 **+0.0333**（0.4356 vs 0.4022，comparable=true），即历史"temporal 退化"的读数在本题本管线**未复现**；检索回归仍由比较器独立置失败，不被 J 上涨掩盖。
+- **#138**：`tests/fixtures/runtime-memory-eval/locomo-full-500-measured-report.json` + `.sha256` 入库，`pnpm eval:runtime-memory:locomo:verify`（默认路径）现在 exit 0。历史三份聚合 fixture 未改标签、未重写字节，仍不作为基线。
+
+本次运行的两个真实缺陷已修复并留证（详见 `artifacts/p0-memory-integrity-20261009/measured-run-01-full500/README.md`）：judge 服务需**统一 KV 池**才能承载 L2 整段对话请求（按 slot 分区会给 400）；`journalStartedAt()` 原先只用保留题目的时间放宽逻辑运行窗口，导致保留的抽取期收据被判为 "Receipt outside this run"（commit `6391f7af4`，含回归测试）。
+
+边界：这是**新的本地部署参考**，不是 0.752 / 0.452 的复现或验证，也不是 memory-on/off 对比或产品就绪声明；`recall_at_5` 仍是词面重叠代理，judge 仍是刻意宽松的冻结版本。
+
 ## 仍须完成的验收
 
-- #135：代码已输出 L0/L1/L2 分数与占比、L0+L1 子集和选择偏差；空子集为 null，不给满分。schema 校验各层计数、全量/子集加权分数及 full_conversation_rate，拒绝把全量 J 冒充纯记忆分。**原管线真实运行仍待完成**。
-- #136：已修复比较器的漏报：整体/类别检索 proxy 回归独立置失败，J 上升不能抵消；新增不同/未知 judge 的不可比警告，context_recall 仅在定义相同的版本间比较。直接读取仓库历史文件得到 temporal -0.1195185185，而 J +0.4533333333；这仍是未经验证历史聚合值的算术，不是可重复的实测退化或已恢复检索质量的证据。真实配对复验随 #138 的资源齐备后运行。
-- #138：完整逐题产物、来源指纹与失效门。现有历史 fixture 不得改标签冒充新运行。StepFun 生成/判分资源已通过真实探针，原混合检索管线另需 SiliconFlow 嵌入资源。
 - #62：fsck exit 2，all-history 遍历 exit 128，仍缺 29 个对象；精确哈希 fetch exit 128，13 个相关本地镜像均不含这些对象。保留三个 rescue 引用，未 prune / gc / 删除历史，未改 main 或主工作区内容。
 
 ## 2026-10-10 逐题 judge 绑定补修
@@ -59,3 +76,18 @@
 入口：`pnpm eval:runtime-memory:locomo:full500 --credentials-stdin --base-url https://api.stepfun.com/step_plan/v1 --model step-5-preview`。stdin 接收含 key 与 embeddingKey 的 JSON；不要把密钥写入命令、文件、README 或日志。原 Qwen3-Embedding-8B / SiliconFlow 路径保持不变，没有换 BM25、合成向量或 mock 检索凑出 500 题。
 
 成功后对输出目录的 locomo-full-500-report.json 及相邻摘要执行 `pnpm eval:runtime-memory:locomo:verify --report <report.json>`；由 agent 审查并保留真实产物后，才可补完 #135/#136/#138 的对应验收。当前仍无这份真实 500 题产物，不宣称历史 0.752 已复现，不改变 frozen judge、记忆产品默认值或发布状态。
+
+## 本地嵌入资源续接（2026-10-10）
+
+- 恢复归档快照 `a477e27af` 中的六文件未提交候选，在新工作树继续验证；原工作树归档不是本轮执行的清理。依赖独立安装，不再链接已被外部移除的共享 node_modules。
+- 默认 SiliconFlow 入口不变。显式 `--local-embedding-url http://127.0.0.1:19087/v1 --local-embedding-model <absolute-model.gguf>` 可使用官方 Qwen3-Embedding-8B-GGUF 的 Q4_K_M 部署；权重固定 revision `69d0e58a13e463cd99a9b83e3f5fee7c10265fab`，SHA-256 `3fcd3febec8b3fd64435204db75bf0dd73b91e8d0661e0331acfe7e7c3120b85`，维度 4096。
+- 启动自己管理的 llama.cpp 服务，绑定 loopback，指定 `--embedding --pooling last --alias qwen3-embedding-8b-q4_k_m`；服务必须加载上述实际权重；预检对照 `/props` 的模型实际路径和别名，并记录服务 build。离线报告的一致性检查不是提供方签名，也不能凭正确形状的向量证明服务身份，需同时保留本次启动参数、日志和权重摘要。
+- 本地请求不附带云端凭据，禁止 HTTP 重定向，响应必须带正确模型标识、连续唯一索引、4096维有限且非零的向量。缓存 ID 与 SiliconFlow 隔离。报告保留 deployment/quantization/weight digest，以及 reranker 资源可用性。
+- 量化本地配置只能建立新的实测参考；比较器对不同或未知嵌入配置给出明确警告，保留算术退化信号，不能以它声称重现或恢复旧 temporal 分数。冻结 judge、原始题目顺序与产品默认值不变。
+- 本轮聚焦验证和实际模型资源状态见相邻精选证据。确定性测试、向量烟测与完整500题验收分开记录；缺完整产物不关闭 #135/#136/#138。
+
+### full500 CLI 模型初始化补修
+
+启动完整实测前发现：入口静态导入校验器，使冻结 judge 在解析 `--model` 前就捕获默认模型；子进程用 StepFun，父进程却按 DeepSeek 校验，运行结束会误拒绝。已改为解析 CLI 配置后动态导入校验器。真实 Node CLI 的合成编排反例先复现 `Verifier captured stale model`，修复后通过；它不执行模型调用，也不是完整评测证据。
+
+补修验证：两文件 19 passed / 0 failed / 0 skipped；无缓存测试类型检查、定向 lint、差异感知 Harness 均 exit 0。原始报告 `D:/ClawX-work/p0-local-embedding-20261010/acceptance/cli-model-green.json`，SHA-256 `f98ab2efa36c4e8f9e853b4b43b7c1155dea7e7735e0cfd8f2046e034008f026`。早先 `local-embedding-20261010.json` 是提交 `50e3b6c82` 的独立开发快照，不覆盖或伪造为本次 CLI 补修后的全量证明。

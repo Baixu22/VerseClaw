@@ -224,7 +224,7 @@ Renderer の入口は `src/lib/host-api.ts` と `src/lib/host-api-client.ts` で
 
 ルートの `pnpm test` は OpenClaw の全テストを実行しません。ランタイム変更では、その [package.json](openclaw_runtime/package.json) とタスク仕様から該当テスト・型検証を選択してください。Windows Electron E2E は Windows Node から実行する必要があります。
 
-**LoCoMo 開発評価：** `pnpm eval:runtime-memory:locomo:full500` は明示的に 500 問を実行し、モデル・埋め込みの認証情報や検証済み成果物が不足すると失敗します。通常の単体テストとは別の評価であり、過去の集計フィクスチャは検証済みメモリ基準ではありません。[測定と証拠の境界](docs/dev/p0-memory-evaluation-integrity.md)を参照してください。
+**LoCoMo 開発評価：** `pnpm eval:runtime-memory:locomo:full500` は明示的に 500 問を実行し、モデル・埋め込みの認証情報や検証済み成果物が不足すると失敗します。通常の単体テストとは別の評価であり、過去の集計フィクスチャは検証済みメモリ基準ではありません。[測定と証拠の境界](docs/dev/p0-memory-evaluation-integrity.md)を参照してください。 `--local-embedding-url` と `--local-embedding-model` でハッシュ固定のローカル Qwen3 埋め込みを明示的に指定できます。量子化結果は新しい参照であり、ホスト型スコアの再現ではありません。
 
 ### 変更に応じた検証
 
@@ -289,3 +289,5 @@ Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell �
 ### Coding 診断ログ
 
 ランタイムの `diagnostics.enabled` を明示的に `true` にすると、既存の診断ログに承認必要と分類された割合の継続的な上昇と回復を記録します。これはツールの分類であり、実際のダイアログや人による承認回数ではありません。サンプル不足・期限切れは未測定です。設定を省略または無効にした場合は監視せず、承認やツール実行ポリシーを変更しません。
+
+セッションの Handoff は Main で Task Ledger の系譜を検証・保存してから新しい会話を有効化します。循環や読み取れない履歴は拒否します。`openclaw.json` の `runtime.handoff.enabled=true` で深さ制限を有効化できます（`maxDepth`: 1–64、省略時は 3）。制限は既定で無効で、フォークは Handoff の系譜を保持します。

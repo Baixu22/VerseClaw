@@ -230,6 +230,9 @@
     "copiedCode": "已复制"
   },
   "messageActions": {
+    "summarizeUpToHere": "摘要到此为止",
+    "summarizeFromHere": "从这里开始摘要",
+    "forkFromHere": "从此处分叉",
     "copy": "复制消息",
     "copied": "已复制",
     "edit": "编辑",
@@ -1183,11 +1186,15 @@
     "previewUnavailable": "图片预览暂时不可用"
   },
   "session": {
+    "derived": {
+      "title": "派生会话（{{count}}）"
+    },
     "renameHint": "双击重命名会话",
     "renameCurrent": "重命名当前会话",
     "renameFailed": "重命名会话失败：{{error}}",
     "lineage": {
-      "forkedFrom": "Fork 自 {{session}}"
+      "forkedFrom": "Fork 自 {{session}}",
+      "forkedFromAt": "Fork 自 {{session}} · {{time}}"
     }
   },
   "composer": {
@@ -1766,7 +1773,19 @@
             "title": "Transcript 不可用",
             "description": "接力草稿无法读取足够的对话上下文。"
           },
-          "unknown": {
+                    "handoff_ancestry_unavailable": {
+            "title": "接力历史无法核验",
+            "description": "持久化的接力历史无法核验。请继续当前会话，修复历史后再接力。"
+          },
+          "handoff_depth_exceeded": {
+            "title": "接力深度已达上限",
+            "description": "为避免形成无界接力链，本会话不再派生新会话。请在此会话内收敛并保留目标与最近证据。"
+          },
+          "handoff_cycle_detected": {
+            "title": "检测到接力环路",
+            "description": "本会话已出现在自己的接力祖先链中，因此拒绝了本次接力。"
+          },
+"unknown": {
             "title": "接力准备失败",
             "description": "无法准备延续草稿。"
           }
@@ -1780,6 +1799,11 @@
       "toastCreated": "已创建 Fork 对话",
       "toastFailed": "Fork 对话失败",
       "boundaryNote": "复制截至此处之前的对话,以及提供方/模型/思考设置与工作区界面状态;任务台账、记忆与知识内容不会被复制。"
+    },
+    "compactRange": {
+      "toastCompacted": "已摘要选定的范围",
+      "toastFailed": "摘要所选范围失败",
+      "toastFailedDescription": "无法摘要该范围，未做任何更改。"
     },
     "handoff": {
       "action": "接力到新对话",

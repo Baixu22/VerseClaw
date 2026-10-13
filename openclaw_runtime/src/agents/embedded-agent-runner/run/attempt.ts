@@ -265,6 +265,9 @@ import {
   defaultMainSessionRoleResolver,
 } from "../../../context-engine/register-memory-providers.js";
 import { resolveMemoryInjectPilotConfig } from "../../../context-engine/chat-turn-memory-injection.js";
+import { dcsObservability } from "../../../context-engine/dcs-observability.js";
+import { computeVtokenPromptOverlap } from "../../../context-engine/vtoken-prompt-overlap.js";
+import { isSpawnedByParentKey } from "../../subagent-depth.js";
 import { createRuntimeMemoryContextProvider } from "../../../context-engine/memory-context-provider.js";
 import { createRuntimeMemoryRuntimeIntegration } from "../../../runtime-core/memory-runtime-integration.js";
 import type { RuntimeMemoryQueryableFact } from "../../../runtime-core/memory-context.js";
@@ -2048,6 +2051,46 @@ export async function runEmbeddedAttempt(
     const toolRegistryProjectionEnabled =
       params.config?.runtime?.contextBlock?.["tool-registry"]?.enabled === true;
     const memoryPilotConfig = resolveMemoryInjectPilotConfig(params.config);
+    // #182: VToken is fed the same bootstrap files (`markdownSources`) and the
+    // same `effectiveTools` (`toolSchemas`) that the system prompt renders into
+    // `# Project Context` / `## Tooling`, so the two can overlap almost
+    // completely. Measure it here so the "should VToken keep re-packing prompt
+    // content?" decision has a number; nothing is deduplicated on this basis.
+    const vtokenMarkdownSources = hookAdjustedBootstrapFiles
+      .filter((file) => !file.missing && typeof file.content === "string")
+      .map((file) => ({
+        sourcePath: file.path || file.name,
+        text: file.content ?? "",
+      }));
+    const vtokenToolSchemas = toolRegistryProjectionEnabled
+      ? []
+      : toolEntries.map((entry) => ({
+          name: entry.resourceId,
+          description: entry.purpose,
+          ...(entry.inputSchema !== undefined ? { inputSchema: entry.inputSchema } : {}),
+        }));
+    // #182: the measured reading on the real workspace was 7/7 sources (107,557
+    // chars) and 5/5 tool schemas overlapping - everything VToken was handed, the
+    // system prompt already renders verbatim. The cut itself lives at the packer
+    // (`alreadyRenderedSourcePaths` / `alreadyRenderedToolNames` below), so the
+    // measurement and the exclusion stay in one place.
+    const vtokenPromptOverlap = computeVtokenPromptOverlap({
+      markdownSources: vtokenMarkdownSources,
+      toolSchemaNames: vtokenToolSchemas.map((schema) => schema.name),
+      promptSourcePaths: contextFiles.map((file) =>
+        typeof file.path === "string" ? file.path : "",
+      ),
+      promptToolNames: effectiveTools.map((tool) =>
+        typeof tool.name === "string" ? tool.name : "",
+      ),
+    });
+    try {
+      // Recorded before filtering, so the "what did VToken hand us?" reading stays
+      // auditable after the cut and the drop stays measurable.
+      dcsObservability.recordVtokenPromptOverlap(vtokenPromptOverlap);
+    } catch {
+      // Measurement must never break a turn.
+    }
     // TF-0002: single Context Orchestrator entry for memory inject + VToken.
     const contextOrchestration = await computeContextExtraSystemPrompt(
       params.extraSystemPrompt,
@@ -2061,19 +2104,15 @@ export async function runEmbeddedAttempt(
         taskId: params.lineage?.taskLedgerRootId,
         workspaceDir: effectiveWorkspace,
         taskHint: params.prompt,
-        markdownSources: hookAdjustedBootstrapFiles
-          .filter((file) => !file.missing && typeof file.content === "string")
-          .map((file) => ({
-            sourcePath: file.path || file.name,
-            text: file.content ?? "",
-          })),
-        toolSchemas: toolRegistryProjectionEnabled
-          ? []
-          : toolEntries.map((entry) => ({
-              name: entry.resourceId,
-              description: entry.purpose,
-              ...(entry.inputSchema !== undefined ? { inputSchema: entry.inputSchema } : {}),
-            })),
+        markdownSources: vtokenMarkdownSources,
+        toolSchemas: vtokenToolSchemas,
+        // FP-P1-182: the bootstrap files above are rendered in full by the system
+        // prompt builder and the tools above are rendered under `## Tooling`.
+        // Packing them into `## Working Context` again adds no information, so
+        // tell VToken what the prompt already carries (reusing the same arrays
+        // the #182 overlap measurement reads, so the two cannot drift).
+        alreadyRenderedSourcePaths: vtokenMarkdownSources.map((source) => source.sourcePath),
+        alreadyRenderedToolNames: vtokenToolSchemas.map((schema) => schema.name),
         ...(!contextBlockProjectionEnabled
           ? {
               memoryEntriesFactory: () =>
@@ -3352,7 +3391,10 @@ export async function runEmbeddedAttempt(
             const suspension = sessionEntry?.quotaSuspension;
             if (suspension?.state === "resuming") {
               const subagents = Object.values(store)
-                .filter((s) => s.spawnedBy === sessionEntry.sessionId)
+                // `spawnedBy` holds the parent session KEY, not its transcript
+                // UUID; comparing against `sessionEntry.sessionId` never matched
+                // and silently produced an empty subordinate list.
+                .filter((s) => isSpawnedByParentKey(s, params.sessionKey))
                 .map((s) => ({
                   sessionId: s.sessionId,
                   role: s.subagentRole,

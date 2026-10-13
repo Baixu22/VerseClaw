@@ -161,6 +161,14 @@ export interface CompactionSettings {
   contextWindow?: number;
   /** P5 optional task-class schedule; absent keeps the production ladder. */
   tierSchedule?: TierSchedule;
+  /**
+   * #178: force the retained tail to begin at this transcript entry id instead
+   * of the token-budget cut point. Used by located ("summarize up to / from
+   * here") compaction, which summarizes a prefix and keeps the newer side
+   * verbatim. It must be an entry of the compactable branch; callers fail
+   * closed rather than silently falling back to the default cut.
+   */
+  keepFromEntryId?: string;
 }
 
 /** Default compaction settings used by the harness. */
@@ -708,7 +716,42 @@ export function prepareCompaction(
 
   const tokensBefore = estimateContextTokens(buildSessionContext(pathEntries).messages).tokens;
 
-  const cutPoint = findCutPoint(pathEntries, boundaryStart, boundaryEnd, settings.keepRecentTokens);
+  // #178: a located compaction pins the retained tail explicitly. The id must
+  // be a real cut point on the compactable branch - otherwise fail closed
+  // instead of silently summarizing a different range.
+  let cutPoint: CutPointResult;
+  if (settings.keepFromEntryId) {
+    const keepIndex = pathEntries.findIndex(
+      (entry) => entry.id === settings.keepFromEntryId,
+    );
+    if (keepIndex < 0) {
+      return err(
+        new CompactionError(
+          "invalid_session",
+          `keepFromEntryId ${settings.keepFromEntryId} is not on the session branch`,
+        ),
+      );
+    }
+    if (keepIndex < boundaryStart || keepIndex >= boundaryEnd) {
+      return err(
+        new CompactionError(
+          "invalid_session",
+          `keepFromEntryId ${settings.keepFromEntryId} is outside the compactable range`,
+        ),
+      );
+    }
+    if (!findValidCutPoints(pathEntries, boundaryStart, boundaryEnd).includes(keepIndex)) {
+      return err(
+        new CompactionError(
+          "invalid_session",
+          `keepFromEntryId ${settings.keepFromEntryId} is not a valid compaction cut point`,
+        ),
+      );
+    }
+    cutPoint = { firstKeptEntryIndex: keepIndex, turnStartIndex: -1, isSplitTurn: false };
+  } else {
+    cutPoint = findCutPoint(pathEntries, boundaryStart, boundaryEnd, settings.keepRecentTokens);
+  }
   const firstKeptEntry = pathEntries[cutPoint.firstKeptEntryIndex];
   if (!firstKeptEntry?.id) {
     return err(

@@ -1,0 +1,25 @@
+{
+  "driven_by": "agent",
+  "actor": "dsh-lead",
+  "seededAt": "2026-10-12T16:36:42.712Z",
+  "source": "D:\\ClawX-work\\p0-local-embedding-20261010\\judge10-seed",
+  "sourceRevision": "a85dabaa119f1ff1ab521a261d8765bf781e11e8",
+  "copied": [
+    {
+      "file": "extracted-facts-cache-v6-additive-p0.json",
+      "sha256": "57c1f70f3d69d7279d285d480347b8cf15b77e193d61536bba663ce4542bff2a"
+    },
+    {
+      "file": "observations-cache.json",
+      "sha256": "a62c204640741e21b39fdb539cc56366dd78b05b3f8441768b10c3505f4d071d"
+    },
+    {
+      "file": "session-summary-cache.json",
+      "sha256": "2a2b0848c8af713dda8660123a87d1b1766e28ed427ca6adc6be723340a655b9"
+    },
+    {
+      "file": "embedding-cache.json",
+      "sha256": "503b1c53d5d8695d0d8c9454a2f77c63deca524886c5cd9918cdd5c2d04bafa4"
+    }
+  ]
+}

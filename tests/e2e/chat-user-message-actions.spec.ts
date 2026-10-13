@@ -251,6 +251,11 @@ test.describe('Verse Claw user message hover actions', () => {
       await expect(actions).toHaveCSS('opacity', '1');
       await expect(page.getByTestId('chat-user-message-copy')).toHaveAttribute('aria-label', '复制消息');
       await expect(page.getByTestId('chat-user-message-edit')).toHaveAttribute('aria-label', '编辑');
+      // #180: the hover bar also offers a per-message fork point.
+      await expect(page.getByTestId('chat-user-message-fork')).toHaveAttribute(
+        'aria-label',
+        '从此处分叉',
+      );
       const bubbleBox = await messageBubble.boundingBox();
       const actionsBox = await actions.boundingBox();
       expect(bubbleBox).not.toBeNull();
@@ -348,6 +353,34 @@ test.describe('Verse Claw user message hover actions', () => {
         }),
       }));
 
+      // #180: the hover action forks from *this* message — the host call must
+      // carry the message's transcript entry id as `fromLeafId`.
+      await messageText.hover();
+      await page.getByTestId('chat-user-message-fork').click();
+      await expect.poll(async () => app.evaluate(() => (
+        (globalThis as typeof globalThis & {
+          __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: Record<string, unknown> }>;
+        }).__verseClawE2eHostCalls?.some((call) => call?.module === 'sessions' && call?.action === 'fork') ?? false
+      ))).toBe(true);
+      const forkCall = await app.evaluate(() => (
+        (globalThis as typeof globalThis & {
+          __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: Record<string, unknown> }>;
+        }).__verseClawE2eHostCalls?.findLast((call) => call?.module === 'sessions' && call?.action === 'fork') ?? null
+      ));
+      expect(forkCall).toEqual(expect.objectContaining({
+        module: 'sessions',
+        action: 'fork',
+        payload: expect.objectContaining({
+          sessionKey: SESSION_KEY,
+          // The action must name a concrete transcript entry. Which entry it is
+          // depends on the flow above (the edit/resend rebuilds the message), so
+          // the assertion pins the shape — the exact forwarding is unit-tested
+          // in tests/unit/workspace-session.test.ts.
+          fromLeafId: expect.any(String),
+        }),
+      }));
+      const forkLeafId = (forkCall as { payload?: { fromLeafId?: string } } | null)?.payload?.fromLeafId;
+      expect(forkLeafId?.trim()).not.toBe('');
       await testInfo.attach('user-message-actions-host-calls', {
         body: JSON.stringify(hostCalls, null, 2),
         contentType: 'application/json',

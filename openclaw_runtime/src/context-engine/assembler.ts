@@ -31,6 +31,7 @@ import {
 import {
   beginTurnInjectionBudget,
   chargeTurnInjection,
+  getEffectiveTurnInjectionCharBudget,
   type TurnInjectionChannel,
   type TurnInjectionLedger,
 } from "./turn-injection-budget.js";
@@ -138,11 +139,24 @@ export interface AssemblerLegacyInputs<TExistingOutput = unknown> {
   role_memory?: ContextPackInput;
 }
 
+/**
+ * #184: which budget ceiling actually governed this assemble, and why. Present
+ * so a caller that forgot `turnId` can see that it degraded to the smaller
+ * per-assemble pool instead of silently truncating at a different limit.
+ */
+export type AssemblerInjectionBudget = {
+  mode: "turn-ledger" | "per-assemble-fallback";
+  totalChars: number;
+  turnBudgetChars: number;
+  fallbackReason?: "missing-turn-id";
+};
+
 export interface AssemblerResult<TExistingOutput = unknown> {
   output: TExistingOutput;
   selected_handlers: LegacyHandlerId[];
   compass?: PreReplyInjection;
   role_memory?: ContextPack;
+  injection_budget?: AssemblerInjectionBudget;
 }
 
 export interface AssemblerDependencies {
@@ -312,9 +326,34 @@ export class Assembler {
     const turnLedger = request.turnId
       ? beginTurnInjectionBudget({ turnId: request.turnId, killed })
       : undefined;
-    const injectionBudget = turnLedger
-      ? turnLedger.budget
-      : createInjectionBudget(KNOWLEDGE_INJECTION_CHAR_BUDGET);
+    const turnBudgetChars = getEffectiveTurnInjectionCharBudget();
+    let injectionBudget: InjectionBudgetState;
+    if (turnLedger) {
+      injectionBudget = turnLedger.budget;
+      result.injection_budget = {
+        mode: "turn-ledger",
+        totalChars: turnLedger.budget.total,
+        turnBudgetChars,
+      };
+    } else {
+      // #184: the pre-FP-P0-05 fallback ceiling is 3x smaller than the turn
+      // budget. Falling back is deliberate (unrelated turns must not share
+      // ledger state), but it must not be silent: a caller that forgot
+      // `turnId` would otherwise truncate at 2000 chars while every budget
+      // report still looked normal.
+      injectionBudget = createInjectionBudget(KNOWLEDGE_INJECTION_CHAR_BUDGET);
+      dcsObservability.recordInjectionBudgetFallback({
+        effectiveLimit: injectionBudget.total,
+        turnLimit: turnBudgetChars,
+        scope: "assembler",
+      });
+      result.injection_budget = {
+        mode: "per-assemble-fallback",
+        totalChars: injectionBudget.total,
+        turnBudgetChars,
+        fallbackReason: "missing-turn-id",
+      };
+    }
 
     if (
       eligibleHandlers.has("compass") &&

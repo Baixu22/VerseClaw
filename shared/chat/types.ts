@@ -103,6 +103,10 @@ export interface ChatSession {
   hasActiveRun?: boolean;
   parentSessionKey?: string;
   forkedFromParent?: boolean;
+  /** #180: parent transcript entry id the child was branched at. */
+  forkedFromLeafId?: string;
+  /** #180: epoch ms of the parent message at the fork point. */
+  forkedFromTimestamp?: number;
 }
 
 export interface ToolStatus {

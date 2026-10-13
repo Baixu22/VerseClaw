@@ -16,7 +16,9 @@
 // byte-identical prompts.
 
 import { isRecord } from "../runtime-core/index.js";
+import { isSubagentSessionKey } from "../sessions/session-key-utils.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
+import { applyInjectionBudget, createInjectionBudget } from "./injection-budget.js";
 import type {
   ContextItem,
   RuntimeContextProvider,
@@ -47,8 +49,28 @@ export const DEFAULT_MEMORY_INJECT_PILOT_CONFIG: MemoryInjectPilotConfig = {
   sessions: "main-only",
 };
 
+/**
+ * #181: the pilot budget is declared in tokens, but the rest of the injection
+ * stack measures in characters (see `turn-injection-budget.ts` decision 2). 1
+ * token ≈ 4 characters is the same estimate `memory-context-provider.ts` uses
+ * (`TOKEN_CHAR_WIDTH`), so a provider-level token budget and this aggregate
+ * budget stay comparable. Keep the two constants in step.
+ */
+export const MEMORY_PILOT_TOKEN_CHAR_WIDTH = 4;
+
+/** Convert the pilot's total token budget into the character ceiling to enforce. */
+export function memoryPilotTokenBudgetToChars(totalTokenBudget: number): number {
+  return Math.max(1, Math.floor(totalTokenBudget * MEMORY_PILOT_TOKEN_CHAR_WIDTH));
+}
+
 export type ChatTurnMemoryInjectionQuery = RuntimeContextProviderQuery & {
   sessionKey?: string;
+  /**
+   * #182: fact ids another channel already put into this turn's prompt (today:
+   * COMPASS `injectedFactIds`). Facts with these ids are dropped before render
+   * so the same fact is not injected twice in two different serializations.
+   */
+  dedupeFactIds?: readonly string[];
 };
 
 export type ChatTurnMemoryInjectionResult = {
@@ -111,10 +133,13 @@ export function shouldInjectChatTurnMemory(
   if (config.sessions === "main-only") {
     const sessionKey = query.sessionKey;
     if (!sessionKey) return false;
-    // Main sessions follow the `agent:<id>:main` convention; subagent sessions
-    // use `agent:<id>:<role>` or arbitrary suffixes. We only inject into the
-    // main session during the pilot to avoid double-injecting subagent turns
-    // (which already receive role-memory via `role-spawn.ts`).
+    // #183: the *exclusion* uses the runtime's canonical session taxonomy rather
+    // than a local string-shape guess — a subagent key that happens to end in
+    // `:main` (`agent:<id>:subagent:main`) is still a subagent and used to slip
+    // through. The inclusion test still requires the documented
+    // `agent:<id>:main` (or cron-main) shape, so which sessions qualify is
+    // unchanged for every non-subagent key.
+    if (isSubagentSessionKey(sessionKey)) return false;
     if (!/^(agent|cron):[^:]+:main$/.test(sessionKey)) return false;
   }
   return true;
@@ -192,11 +217,52 @@ export async function assembleChatTurnMemoryInjection(
 
   if (allItems.length === 0) return null;
 
-  const text = renderMemoryContextBlock(allItems);
-  if (!text) return null;
+  // #182: 去重是义务. Drop (a) facts another channel already injected this turn
+  // and (b) the same fact id twice inside this block. Only the ids the caller
+  // declares are treated as duplicates — this never guesses from prose.
+  const excludedFactIds = new Set(query.dedupeFactIds ?? []);
+  const seenFactIds = new Set<string>();
+  const keptItems: ContextItem[] = [];
+  let droppedDuplicateItems = 0;
+  for (const item of allItems) {
+    const key = memoryItemIdentity(item);
+    if (excludedFactIds.has(key) || seenFactIds.has(key)) {
+      droppedDuplicateItems += 1;
+      continue;
+    }
+    seenFactIds.add(key);
+    keptItems.push(item);
+  }
+  if (keptItems.length === 0) return null;
+
+  const rendered = renderMemoryContextBlock(keptItems);
+  if (!rendered) return null;
+
+  // #181: `totalTokenBudget` is the aggregate ceiling across every provider in
+  // this block — it must actually shrink the bytes, not merely ride along in
+  // metadata. The turn ledger (`turn-injection-budget.ts`) is a separate,
+  // turn-wide pool shared with the other injection channels; it cannot stand in
+  // for this per-pilot limit because by the time memory_pilot charges (lowest
+  // precedence) the other channels have already consumed their share.
+  const charBudget = memoryPilotTokenBudgetToChars(config.totalTokenBudget);
+  const budgeted = applyInjectionBudget(
+    createInjectionBudget(charBudget),
+    rendered,
+    "memory_pilot",
+  );
+  const memoryBudget: RuntimeCoreJsonObject = {
+    tokenBudget: config.totalTokenBudget,
+    charBudget,
+    charsRequested: rendered.length,
+    charsApplied: budgeted.charsApplied,
+    charsDropped: Math.max(0, rendered.length - budgeted.charsApplied),
+    truncated: budgeted.truncated,
+    dropped: budgeted.dropped,
+    applied: budgeted.applied,
+  };
 
   return {
-    text,
+    text: budgeted.text ?? "",
     diagnostics,
     metadata: {
       pilot: "runtimeMemory.injectPilot",
@@ -206,8 +272,22 @@ export async function assembleChatTurnMemoryInjection(
       sessions: config.sessions,
       perProvider,
       totalItems: allItems.length,
+      itemsInjected: keptItems.length,
+      droppedDuplicateItems,
+      dedupeFactIds: [...excludedFactIds],
+      memoryBudget,
     },
   };
+}
+
+/**
+ * #182: identity of one injected memory item. Providers that carry a fact id
+ * (runtime-memory) are comparable with the ids COMPASS retrieval reports; the
+ * rest fall back to the ContextItem id.
+ */
+function memoryItemIdentity(item: ContextItem): string {
+  const factId = item.metadata?.factId;
+  return typeof factId === "string" && factId.length > 0 ? factId : item.id;
 }
 
 /**
@@ -229,7 +309,20 @@ export async function computeMemoryExtraSystemPrompt(
   sessionKey: string | undefined,
   providerFactory: () => readonly RuntimeContextProvider[],
   log?: (message: string, context?: Record<string, unknown>) => void,
-  scope?: { workspace?: string; taskId?: string },
+  scope?: {
+    workspace?: string;
+    taskId?: string;
+    /**
+     * #183: the caller's persona-derived role name for role-memory lookup. When
+     * no persona role is resolved, the caller omits it and the provider resolver
+     * (`defaultMainSessionRoleResolver`) applies its documented `"main"`
+     * fallback - the caller must not hardcode `"main"` here, which silently
+     * disabled the resolver's metadata read.
+     */
+    roleName?: string;
+    /** #182: fact ids another channel already injected this turn. */
+    dedupeFactIds?: readonly string[];
+  },
 ): Promise<string | undefined> {
   let result = extraSystemPrompt;
   try {
@@ -241,7 +334,13 @@ export async function computeMemoryExtraSystemPrompt(
           sessionKey,
           workspace: scope?.workspace,
           taskId: scope?.taskId,
-          metadata: { roleName: "main", sessionKey },
+          ...(scope?.dedupeFactIds && scope.dedupeFactIds.length > 0
+            ? { dedupeFactIds: scope.dedupeFactIds }
+            : {}),
+          metadata: {
+            ...(scope?.roleName ? { roleName: scope.roleName } : {}),
+            sessionKey,
+          },
         },
         providers,
         pilotConfig,

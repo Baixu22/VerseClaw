@@ -15,6 +15,30 @@ import {
   type RuntimeVerificationShadowSamplingOptions,
 } from "./verification-shadow-sampling.js";
 
+/**
+ * STATUS (#177): built-but-unwired. All four flags below default to `false` and
+ * no *replay consumption* path is enabled:
+ *   - `sessions.restoreCheckpoint` hard-gates the pilot off and falls back to
+ *     the legacy checkpoint path (`gateway/server-methods/sessions.run-control.ts`).
+ *   - `checkpoint-rollback-executor.ts` answers `replayEventLog` with
+ *     `ok:false, reason:"event_log_replay_not_implemented: …"`.
+ *   - `ReplayRollbackTarget` keeps an `event_log` variant that no producer
+ *     satisfies yet.
+ *
+ * The module is not dead code: `git grep -l "event-log.js"` finds direct
+ * importers `runtime-core/agent-run-event-spine`, `event-log-persistence`,
+ * `event-log-operator-inspection`, `grounding`, `resume-shadow`,
+ * `state-reducer`, the barrel `runtime-core/index.ts`, and
+ * `agents/long-task-control/persisted-resume-shadow.ts`;
+ * `agents/task-loop-controller.ts` consumes the family through
+ * `event-log-persistence.js`. None of that is recoverable replay.
+ *
+ * Do not read this module (or the `*-pilot.ts` family beside it) as evidence
+ * that event-level precise replay is available: turning it on is option C in
+ * #177 and needs real crash/restore correctness evidence, not more shadow runs.
+ * The guard test `tests/unit/runtime-event-log-unwired-asset.test.ts` fails if a
+ * default is flipped without someone deliberately updating this note.
+ */
 export const RUNTIME_TASK_EVENT_LOG_SCHEMA_VERSION = 1 as const;
 export const RUNTIME_TASK_EVENT_LOG_SCHEMA_MARKER = "runtime.task-event-log.v1" as const;
 

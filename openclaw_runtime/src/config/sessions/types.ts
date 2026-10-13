@@ -244,6 +244,13 @@ export type SessionEntry = {
   sessionFile?: string;
   /** Parent session key that spawned this session (used for sandbox session-tool scoping). */
   spawnedBy?: string;
+  /**
+   * #179: the root session key of this session's spawn chain, inherited at spawn
+   * time. Reading it is O(1) and cannot recurse, so a session-event consumer can
+   * group a chain by its origin without walking `spawnedBy` links (which may span
+   * processes or contain a corrupt cycle).
+   */
+  spawnRootSessionKey?: string;
   /** Workspace inherited by spawned sessions and reused on later turns for the same child session. */
   spawnedWorkspaceDir?: string;
   /** Trusted Backend-selected workspace for a normal session. */
@@ -256,6 +263,10 @@ export type SessionEntry = {
   parentSessionKey?: string;
   /** True after a thread/topic session has been forked from its parent transcript once. */
   forkedFromParent?: boolean;
+  /** #180: parent transcript entry id the child was branched at. */
+  forkedFromLeafId?: string;
+  /** #180: epoch ms of the parent message at the fork point. */
+  forkedFromTimestamp?: number;
   /** Subagent spawn depth (0 = main, 1 = sub-agent, 2 = sub-sub-agent). */
   spawnDepth?: number;
   /** Explicit role assigned at spawn time for subagent tool policy/control decisions. */

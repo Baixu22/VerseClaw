@@ -31,6 +31,7 @@ export const SCHEMA_PARITY_INTENTIONAL_GAPS: ReadonlyArray<{ path: string; reaso
 
 /** One sample value per leaf; values must satisfy the zod value constraints. */
 export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
+  handoff: { enabled: true, maxDepth: 3 },
   verseShellFoundation: {
     killSwitch: false,
     verifiedRuntime: true,
@@ -51,7 +52,7 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
   contextBlock: {
     "working-memory": { enabled: true },
     "tool-registry": { enabled: true },
-    "compass": { enabled: true },
+    compass: { enabled: true },
     "role-memory": { enabled: true },
     sekb: {
       enabled: true,

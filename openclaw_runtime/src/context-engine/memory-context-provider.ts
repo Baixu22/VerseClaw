@@ -204,7 +204,10 @@ export function createRuntimeMemoryContextProvider(
       const expandedFacts = options.queryRelations
         ? await expandOneHopRelations(rankedFacts, facts, options.queryRelations)
         : rankedFacts;
-      const summary = buildSummary(expandedFacts, providerQuery);
+      const summary = buildSummary(expandedFacts, providerQuery, {
+        totalFactCount: facts.length,
+        matchedFactCount: matchedFacts.length,
+      });
       const contextItems = summary.items.map(toContextItem);
 
       return withGroundingDiagnostics(providerResult({
@@ -220,6 +223,10 @@ export function createRuntimeMemoryContextProvider(
             metadata: {
               contextItemCount: contextItems.length,
               omittedFactCount: summary.omittedFactCount,
+              totalFactCount: summary.totalFactCount ?? facts.length,
+              matchedFactCount: summary.matchedFactCount ?? matchedFacts.length,
+              slotOmittedFactCount: summary.slotOmittedFactCount ?? 0,
+              tokenBudgetOmittedFactCount: summary.tokenBudgetOmittedFactCount ?? 0,
               tokenBudget: providerQuery.tokenBudget,
               estimatedTokens: summary.estimatedTokens,
               candidateFactsRequested: providerQuery.candidateFactsRequested,
@@ -248,6 +255,10 @@ export function createRuntimeMemoryContextProvider(
           noRuntimeAuthority: true,
           contextItemCount: contextItems.length,
           omittedFactCount: summary.omittedFactCount,
+          totalFactCount: summary.totalFactCount ?? facts.length,
+          matchedFactCount: summary.matchedFactCount ?? matchedFacts.length,
+          slotOmittedFactCount: summary.slotOmittedFactCount ?? 0,
+          tokenBudgetOmittedFactCount: summary.tokenBudgetOmittedFactCount ?? 0,
           tokenBudget: providerQuery.tokenBudget,
           estimatedTokens: summary.estimatedTokens,
           candidateFactsRequested: providerQuery.candidateFactsRequested,
@@ -276,7 +287,10 @@ export async function createRuntimeMemoryProviderResult(
   const expandedFacts = options.queryRelations
     ? await expandOneHopRelations(rankedFacts, facts, options.queryRelations)
     : rankedFacts;
-  const summary = buildSummary(expandedFacts, providerQuery);
+  const summary = buildSummary(expandedFacts, providerQuery, {
+    totalFactCount: facts.length,
+    matchedFactCount: matchedFacts.length,
+  });
   const contextItems = summary.items.map(toContextItem);
   return {
     contextItems,
@@ -533,6 +547,7 @@ async function findFactsWithEmbedding(
 function buildSummary(
   facts: readonly RuntimeMemoryQueryableFact[],
   query: MemoryProviderQuery,
+  counts: { totalFactCount: number; matchedFactCount: number },
 ): RuntimeMemorySummary {
   const items: RuntimeMemorySummaryItem[] = [];
   let estimatedTokens = 0;
@@ -554,9 +569,24 @@ function buildSummary(
     items.push(item);
     estimatedTokens += nextTokens;
   }
+  // #185: `omittedFactCount` used to be `facts.length - items.length`, and
+  // `facts` here is the post-retrieval/post-slot set — so drops that happened
+  // upstream were invisible and the field read as 0. Report the honest total
+  // (store facts the provider considered) and split it out so operators can
+  // tell a too-small `limit` from a type-slot mismatch from retrieval misses.
+  const tokenBudgetOmittedFactCount = Math.max(0, facts.length - items.length);
+  const slotOmittedFactCount = Math.max(
+    0,
+    counts.matchedFactCount - facts.length,
+  );
+  const totalFactCount = Math.max(counts.totalFactCount, items.length);
   return {
     items,
-    omittedFactCount: Math.max(0, facts.length - items.length),
+    omittedFactCount: Math.max(0, totalFactCount - items.length),
+    totalFactCount,
+    matchedFactCount: counts.matchedFactCount,
+    slotOmittedFactCount,
+    tokenBudgetOmittedFactCount,
     tokenBudget: query.tokenBudget,
     estimatedTokens,
     readonly: true,

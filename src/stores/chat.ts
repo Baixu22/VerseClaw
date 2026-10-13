@@ -2884,6 +2884,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
             // descendants beneath their origin session from these two fields.
             parentSessionKey: s.parentSessionKey ? String(s.parentSessionKey) : undefined,
             forkedFromParent: typeof s.forkedFromParent === 'boolean' ? s.forkedFromParent : undefined,
+            forkedFromLeafId: s.forkedFromLeafId ? String(s.forkedFromLeafId) : undefined,
+            forkedFromTimestamp: typeof s.forkedFromTimestamp === 'number' && Number.isFinite(s.forkedFromTimestamp)
+              ? s.forkedFromTimestamp
+              : undefined,
           })).filter((s: ChatSession) => s.key);
 
           const canonicalBySuffix = new Map<string, string>();

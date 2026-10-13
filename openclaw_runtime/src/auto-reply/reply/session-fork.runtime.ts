@@ -26,6 +26,8 @@ type ForkSourceTranscript = {
   cwd: string;
   sessionDir: string;
   leafId: string | null;
+  /** #180: epoch ms of the fork-point entry, or of the session header when empty. */
+  leafTimestampMs: number | null;
   branchEntries: AgentSessionEntry[];
   labelsToWrite: Array<{ targetId: string; label: string; timestamp: string }>;
 };
@@ -108,6 +110,18 @@ export async function resolveParentForkTokenCountRuntime(params: {
   return maxPositiveTokenCount(cachedTokens, byteEstimateTokens);
 }
 
+/** #180: transcript entry timestamps are ISO strings (or epoch numbers). */
+function toEpochMs(value: string | number | undefined | null): number | null {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? Math.floor(value) : null;
+  }
+  if (typeof value === "string") {
+    const parsed = Date.parse(value);
+    return Number.isNaN(parsed) ? null : parsed;
+  }
+  return null;
+}
+
 function isSessionEntry(entry: FileEntry): entry is AgentSessionEntry {
   return (
     entry.type !== "session" &&
@@ -169,8 +183,34 @@ function collectBranchLabels(params: {
   return labelsToWrite;
 }
 
+/**
+ * #180: resolve the branch leaf for an explicit fork point.
+ *
+ * The requested id must exist in the parent transcript. The returned leaf is
+ * the requested entry itself when it is an assistant turn, otherwise the
+ * nearest assistant ancestor — "fork from this message" keeps the context that
+ * preceded it and drops everything after, and `writeBranchedSession` refuses a
+ * branch with no assistant tail. `null` means "no usable assistant turn at or
+ * before the requested id"; the caller must fail closed rather than silently
+ * forking the transcript tip.
+ */
+function resolveForkLeafId(params: {
+  byId: Map<string, AgentSessionEntry>;
+  requestedId: string;
+}): string | null {
+  let current = params.byId.get(params.requestedId);
+  while (current) {
+    if (current.type === "message" && current.message.role === "assistant") {
+      return current.id;
+    }
+    current = current.parentId ? params.byId.get(current.parentId) : undefined;
+  }
+  return null;
+}
+
 async function readForkSourceTranscript(
   parentSessionFile: string,
+  fromEntryId?: string,
 ): Promise<ForkSourceTranscript | null> {
   const raw = (await readRegularFile({ filePath: parentSessionFile })).buffer.toString("utf-8");
   const fileEntries = parseSessionEntries(raw);
@@ -179,15 +219,32 @@ async function readForkSourceTranscript(
     fileEntries.find((entry): entry is SessionHeader => entry.type === "session") ?? null;
   const entries = fileEntries.filter(isSessionEntry);
   const byId = buildEntryIndex(entries);
-  const leafId = entries.at(-1)?.id ?? null;
+  const requestedId = fromEntryId?.trim();
+  let leafId: string | null;
+  if (requestedId) {
+    if (!byId.has(requestedId)) {
+      return null;
+    }
+    leafId = resolveForkLeafId({ byId, requestedId });
+    if (leafId === null) {
+      return null;
+    }
+  } else {
+    leafId = entries.at(-1)?.id ?? null;
+  }
   const branchEntries = readBranch({ byId, leafId });
   const pathEntryIds = new Set(
     branchEntries.filter((entry) => entry.type !== "label").map((entry) => entry.id),
   );
+  // #180: the fork point's own timestamp is what the header lineage shows.
+  // Fall back to the session header only when there is no leaf entry.
+  const leafTimestampMs =
+    toEpochMs(leafId ? byId.get(leafId)?.timestamp : undefined) ?? toEpochMs(header?.timestamp);
   return {
     cwd: header?.cwd ?? process.cwd(),
     sessionDir: path.dirname(parentSessionFile),
     leafId,
+    leafTimestampMs,
     branchEntries,
     labelsToWrite: collectBranchLabels({ allEntries: entries, pathEntryIds }),
   };
@@ -292,7 +349,16 @@ export async function forkSessionFromParentRuntime(params: {
   parentEntry: StoreSessionEntry;
   agentId: string;
   sessionsDir: string;
-}): Promise<{ sessionId: string; sessionFile: string } | null> {
+  /** #180: fork up to this entry id instead of the transcript tip. */
+  fromEntryId?: string;
+}): Promise<{
+  sessionId: string;
+  sessionFile: string;
+  /** #180: the parent entry id the child was branched at (absent for header-only forks). */
+  forkedFromLeafId?: string;
+  /** #180: epoch ms of the parent message at the fork point. */
+  forkedFromTimestamp?: number;
+} | null> {
   const parentSessionFile = resolveSessionFilePath(
     params.parentEntry.sessionId,
     params.parentEntry,
@@ -302,17 +368,25 @@ export async function forkSessionFromParentRuntime(params: {
     return null;
   }
   try {
-    const source = await readForkSourceTranscript(parentSessionFile);
+    const source = await readForkSourceTranscript(parentSessionFile, params.fromEntryId);
     if (!source) {
       return null;
     }
-    return source.leafId
+    const written = source.leafId
       ? await writeBranchedSession({ parentSessionFile, source })
       : await writeForkHeaderOnly({
           parentSessionFile,
           sessionDir: source.sessionDir,
           cwd: source.cwd,
         });
+    if (!written) {
+      return null;
+    }
+    return {
+      ...written,
+      ...(source.leafId ? { forkedFromLeafId: source.leafId } : {}),
+      ...(source.leafTimestampMs !== null ? { forkedFromTimestamp: source.leafTimestampMs } : {}),
+    };
   } catch {
     return null;
   }

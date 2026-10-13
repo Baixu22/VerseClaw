@@ -561,9 +561,10 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       respond(false, undefined, requestedAgent.error);
       return;
     }
-    const { canonicalKey } = loadSessionEntry(key, {
+    const loaded = loadSessionEntry(key, {
       agentId: requestedAgent.agentId,
     });
+    const { canonicalKey } = loaded;
     // Restore requires the checkpoint to exist; replay-rollback authority is
     // invoked with the legacy checkpoint target (event-log replay is not
     // implemented). The journal root is the agent workspace.
@@ -577,9 +578,26 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       return;
     }
     const workspaceRoot = resolveAgentWorkspaceDir(cfg, resolveSessionStoreAgentId(cfg, canonicalKey));
+    // #176: prefer the journal identity stamped on the checkpoint itself; older
+    // checkpoints predate that stamp and fall back to the session store's
+    // transcript UUID. The canonical session key addresses a *different*
+    // journal directory and used to yield a "successful" restore that changed
+    // nothing on disk.
+    const journalSessionId = resolveCheckpointJournalSessionId(checkpoint, loaded.entry?.sessionId);
+    if (!journalSessionId) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          `cannot restore checkpoint "${p.checkpointId}": no session id is recorded for ${canonicalKey}, and the write-journal is keyed by the session UUID. No files were restored.`,
+        ),
+      );
+      return;
+    }
     const rollbackDeps = createCheckpointRollbackDeps({
       workspaceRoot,
-      sessionId: checkpoint.sessionKey,
+      sessionId: journalSessionId,
     });
     const result = await executeReplayRollback(
       {
@@ -636,9 +654,10 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       respond(false, undefined, requestedAgent.error);
       return;
     }
-    const { canonicalKey } = loadSessionEntry(key, {
+    const loaded = loadSessionEntry(key, {
       agentId: requestedAgent.agentId,
     });
+    const { canonicalKey } = loaded;
     const checkpoint = getLongTaskCheckpointById(p.checkpointId);
     if (!checkpoint || checkpoint.sessionKey !== canonicalKey) {
       respond(
@@ -649,10 +668,22 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       return;
     }
     const workspaceRoot = resolveAgentWorkspaceDir(cfg, resolveSessionStoreAgentId(cfg, canonicalKey));
+    const journalSessionId = resolveCheckpointJournalSessionId(checkpoint, loaded.entry?.sessionId);
+    if (!journalSessionId) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          `cannot diff checkpoint "${p.checkpointId}": no session id is recorded for ${canonicalKey}, and the write-journal is keyed by the session UUID.`,
+        ),
+      );
+      return;
+    }
     const diff = checkpointContentDiff({
       workspaceRoot,
       checkpoint,
-      sessionId: checkpoint.sessionKey,
+      sessionId: journalSessionId,
     });
     respond(
       true,
@@ -1152,3 +1183,30 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
     respond(true, { ok: true, key: result.key }, undefined);
   },
 };
+
+/**
+ * #176: resolve which write-journal a checkpoint describes.
+ *
+ * Order matters:
+ *   1. `checkpoint.metadata.journalSessionId` — stamped at creation time, so the
+ *      identity travels with the checkpoint and does not depend on the store.
+ *   2. the session store's transcript UUID, for checkpoints created before the
+ *      stamp existed.
+ *
+ * The canonical session key is deliberately NOT a candidate: it addresses a
+ * different directory, which is how a manual restore could report success while
+ * restoring nothing.
+ */
+export function resolveCheckpointJournalSessionId(
+  checkpoint: { checkpoint: { metadata?: unknown } },
+  storeSessionId: string | undefined,
+): string | undefined {
+  const metadata = checkpoint.checkpoint.metadata;
+  if (metadata && typeof metadata === "object" && !Array.isArray(metadata)) {
+    const stamped = (metadata as Record<string, unknown>).journalSessionId;
+    if (typeof stamped === "string" && stamped.trim()) {
+      return stamped.trim();
+    }
+  }
+  return storeSessionId?.trim() || undefined;
+}

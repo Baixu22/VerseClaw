@@ -402,6 +402,8 @@ import type {
   SessionForkResult,
   SessionStopPayload,
   SessionStopResult,
+  SessionCreateHandoffPayload,
+  SessionCreateHandoffResult,
   SessionHandoffPayload,
   SessionHandoffResult,
   SessionListArchivedPayload,
@@ -413,6 +415,7 @@ import type {
   SessionRestorePayload,
   SessionLongTaskControlStatusResult,
   SessionManualCompactPayload,
+  SessionCompactRangePayload,
   SessionPatchThinkingPayload,
   SessionPatchRuntimeModelPayload,
   SessionQueueDrainResult,
@@ -1477,6 +1480,12 @@ export const hostApi = {
     ),
     compact: (input: SessionManualCompactPayload): Promise<SessionCompactionResult> => (
       invokeHost('sessions', 'compact', input)
+    ),
+    compactRange: (input: SessionCompactRangePayload): Promise<SessionCompactionResult> => (
+      invokeHost('sessions', 'compactRange', input)
+    ),
+    createHandoff: (input: SessionCreateHandoffPayload): Promise<SessionCreateHandoffResult> => (
+      invokeHost('sessions', 'createHandoff', input)
     ),
     prepareHandoff: (input: SessionHandoffPayload): Promise<SessionHandoffResult> => (
       invokeHost('sessions', 'prepareHandoff', input)

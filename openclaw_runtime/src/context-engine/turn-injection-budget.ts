@@ -168,6 +168,15 @@ export type TurnInjectionEntry = {
   disposition: TurnInjectionDisposition;
   charsRequested: number;
   charsApplied: number;
+  /**
+   * #184: set when the bytes this charge applied already appeared in an earlier
+   * channel's charge for the same turn. Per-channel `charsApplied` can only say
+   * how much each source added; this is what makes "how much of it was a
+   * repeat" answerable.
+   */
+  duplicateOfChannel?: TurnInjectionChannel;
+  /** #184: characters of this charge that duplicate an earlier channel. */
+  duplicateChars?: number;
   /** Precedence index at charge time; makes the degradation order replayable. */
   order: number;
   /** B-1: policy priority of the channel at charge time (metadata/audit). */
@@ -198,6 +207,12 @@ export type TurnInjectionLedger = {
    * the three health dimensions with no production input.
    */
   avgNovelty?: number;
+  /**
+   * #184: normalized content fingerprint -> the first channel that applied it
+   * this turn. Cross-injection duplication is invisible in per-channel totals,
+   * so it needs its own identity map instead of being inferred from them.
+   */
+  appliedContent: Map<string, TurnInjectionChannel>;
 };
 
 export type TurnInjectionReservation = {
@@ -222,6 +237,16 @@ export type TurnInjectionAccounting = {
   >;
   /** Channels that degraded, in the order they were charged. */
   degradationOrder: Array<{ channel: TurnInjectionChannel; disposition: "truncate" | "drop" }>;
+  /**
+   * #184: applied characters that repeat content another channel already
+   * injected this turn. Approximate by design: it compares the bytes actually
+   * applied (whitespace-normalized), so a producer that knows two channels
+   * carry the same underlying fact should pass a shared `contentKey` to
+   * `chargeTurnInjection` instead of relying on byte equality.
+   */
+  crossInjectionDuplicateChars: number;
+  /** #184: `crossInjectionDuplicateChars / charsApplied`, 0 when nothing applied. */
+  crossInjectionDuplicationRatio: number;
 };
 
 const ledgers = new Map<string, TurnInjectionLedger>();
@@ -298,6 +323,7 @@ export function beginTurnInjectionBudget(params: {
     entries: [],
     reservations: [],
     killed,
+    appliedContent: new Map<string, TurnInjectionChannel>(),
   };
   ledgers.set(params.turnId, ledger);
   return ledger;
@@ -366,6 +392,7 @@ export function chargeTurnInjection(
   channel: TurnInjectionChannel,
   text: string | undefined,
   allowTruncation = true,
+  contentKey?: string,
 ): ApplyBudgetResult {
   const charsRequested = text?.length ?? 0;
   const order = precedenceIndexOf(channel);
@@ -408,6 +435,9 @@ export function chargeTurnInjection(
   }
   const disposition: TurnInjectionDisposition =
     result.charsApplied === 0 ? "drop" : result.truncated ? "truncate" : "applied";
+  // #184: fingerprint the bytes that actually landed, not the requested text, so
+  // a truncated charge cannot over-claim identity with a full one.
+  const duplicate = recordAppliedContent(ledger, channel, result.text, contentKey);
   ledger.entries.push({
     channel,
     disposition,
@@ -416,8 +446,58 @@ export function chargeTurnInjection(
     order,
     priority,
     decayFactor,
+    ...(duplicate
+      ? { duplicateOfChannel: duplicate.channel, duplicateChars: duplicate.chars }
+      : {}),
   });
   return result;
+}
+
+function normalizeContentForKey(text: string): string {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * #184: cheap fingerprint of injected bytes (FNV-1a over the
+ * whitespace-normalized text plus its length). It is an exact-match detector —
+ * semantically identical content serialized differently will not collide, which
+ * is why producers that know two channels carry the same underlying item should
+ * pass a shared `contentKey` instead.
+ */
+function contentHashOf(text: string): string {
+  const normalized = normalizeContentForKey(text);
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < normalized.length; index += 1) {
+    hash ^= normalized.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return `bytes:${hash.toString(16)}:${normalized.length}`;
+}
+
+/**
+ * #184: remember what this charge applied and report whether a *different*
+ * channel already applied the same content this turn. The same channel charging
+ * twice is not cross-injection duplication and is ignored.
+ */
+function recordAppliedContent(
+  ledger: TurnInjectionLedger,
+  channel: TurnInjectionChannel,
+  appliedText: string | undefined,
+  contentKey: string | undefined,
+): { channel: TurnInjectionChannel; chars: number } | undefined {
+  if (!appliedText || appliedText.length === 0) {
+    return undefined;
+  }
+  const key = contentKey ?? contentHashOf(appliedText);
+  const priorChannel = ledger.appliedContent.get(key);
+  if (priorChannel === undefined) {
+    ledger.appliedContent.set(key, channel);
+    return undefined;
+  }
+  if (priorChannel === channel) {
+    return undefined;
+  }
+  return { channel: priorChannel, chars: appliedText.length };
 }
 
 /** Record a source that never ran (flag off / nothing to inject). */
@@ -451,6 +531,7 @@ export function summarizeTurnInjection(ledger: TurnInjectionLedger): TurnInjecti
   let charsRequested = 0;
   let charsDropped = 0;
   let charsTruncated = 0;
+  let crossInjectionDuplicateChars = 0;
   const byChannel: TurnInjectionAccounting["byChannel"] = {};
   const degradationOrder: TurnInjectionAccounting["degradationOrder"] = [];
 
@@ -462,6 +543,7 @@ export function summarizeTurnInjection(ledger: TurnInjectionLedger): TurnInjecti
     } else if (entry.disposition === "truncate") {
       charsTruncated += entry.charsRequested - entry.charsApplied;
     }
+    crossInjectionDuplicateChars += entry.duplicateChars ?? 0;
     const prev = byChannel[entry.channel];
     byChannel[entry.channel] = {
       requested: (prev?.requested ?? 0) + entry.charsRequested,
@@ -490,6 +572,9 @@ export function summarizeTurnInjection(ledger: TurnInjectionLedger): TurnInjecti
     killed: ledger.killed,
     byChannel,
     degradationOrder,
+    crossInjectionDuplicateChars,
+    crossInjectionDuplicationRatio:
+      charsApplied > 0 ? crossInjectionDuplicateChars / charsApplied : 0,
   };
 }
 

@@ -1,5 +1,6 @@
-import { openSync, closeSync, fstatSync, readSync } from 'node:fs';
+import { existsSync, openSync, closeSync, fstatSync, readFileSync, readSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
+import { randomUUID } from 'node:crypto';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { RawMessage } from '@shared/chat/types';
 import type { AgentReasoningEffort } from '@shared/types/agent';
@@ -27,13 +28,16 @@ import type {
   CompressionArtifact,
   CompressionArtifactQuality,
   CompressionSemanticAtom,
+  SessionCompactionResult,
   SessionDeleteResult,
   SessionExpandSelectorResult,
   SessionHandoffSource,
   SessionRecallDiagnostic,
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
-import { loadTaskLedgerSnapshot } from './task-ledger-service';
+import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
+import { createWorkspacesApi } from './workspaces-api';
+import { evaluateHandoffDerivation } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
 import { getResourceTracker } from './resource-tracker';
 import { getObservabilityTraceBuffer } from './observability-service';
@@ -52,6 +56,28 @@ import {
   writeArchiveIndex,} from '../utils/session-files';
 import { isRecord } from './payload-utils';
 import type { SessionArchiveEntry } from '@shared/types/workspace';
+
+// ponytail: serialize desktop handoff writes; use per-workspace queues if throughput requires it.
+let handoffCreationTail: Promise<unknown> = Promise.resolve();
+
+function resolveConfiguredHandoffPolicy(): { enforceDepth: boolean; maxDepth?: unknown } {
+  const configPath = join(getOpenClawConfigDir(), 'openclaw.json');
+  if (!existsSync(configPath)) return { enforceDepth: false };
+  const parsed: unknown = JSON.parse(readFileSync(configPath, 'utf8'));
+  if (!isRecord(parsed)) throw new Error('Handoff ancestry unavailable: invalid runtime configuration');
+  const runtime = isRecord(parsed.runtime) ? parsed.runtime : undefined;
+  const handoff = runtime && isRecord(runtime.handoff) ? runtime.handoff : undefined;
+  if (runtime?.handoff !== undefined && (!handoff || (handoff.enabled !== undefined && typeof handoff.enabled !== 'boolean'))) {
+    throw new Error('Handoff ancestry unavailable: invalid handoff configuration');
+  }
+  return { enforceDepth: handoff?.enabled === true, maxDepth: handoff?.maxDepth };
+}
+
+async function readHandoffDecision(sessionKey: string, workspaceId: string | null) {
+  const snapshot = await loadTaskLedgerSnapshot(workspaceId);
+  if (snapshot.warnings.length) throw new Error('Handoff ancestry unavailable: Task Ledger contains unreadable events');
+  return evaluateHandoffDerivation({ links: snapshot.sessionLinks, sessionKey, ...resolveConfiguredHandoffPolicy() });
+}
 
 const SAFE_SESSION_SEGMENT = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
 const RECENT_TRANSCRIPT_INITIAL_READ_BYTES = 256 * 1024;
@@ -91,6 +117,10 @@ type SessionPayload = {
   originalWorkspaceId?: unknown;
   originalFolderId?: unknown;
   messageId?: unknown;
+  /** #180: optional in-transcript fork point forwarded to sessions.fork. */
+  fromLeafId?: unknown;
+  /** #178: optional in-transcript boundary forwarded to sessions.compactRange. */
+  toLeafId?: unknown;
 };
 
 const MANUAL_COMPACTION_DEFAULT_INSTRUCTIONS = [
@@ -697,6 +727,36 @@ function getManualCompactionInstructions(payload: unknown): string {
     : MANUAL_COMPACTION_DEFAULT_INSTRUCTIONS;
 }
 
+/** Maps a gateway manual/located compaction RPC outcome onto the host-api result. */
+function mapCompactionRpcOutcome(result: Record<string, unknown>, sessionKey: string): SessionCompactionResult {
+  const compactResult = isRecord(result.result) ? result.result : {};
+  const compactDetails = isRecord(compactResult.details) ? compactResult.details : {};
+  const compressionDetails = isRecord(compactDetails.compression) ? compactDetails.compression : {};
+  const detailWarnings = [
+    ...(Array.isArray(compactDetails.warnings)
+      ? compactDetails.warnings.filter((item): item is string => typeof item === 'string')
+      : []),
+    ...(Array.isArray(compressionDetails.warnings)
+      ? compressionDetails.warnings.filter((item): item is string => typeof item === 'string')
+      : []),
+  ];
+  const compacted = result.compacted === true;
+  const nextSessionKey = typeof result.key === 'string' ? result.key : sessionKey;
+  return {
+    success: true,
+    status: compacted ? 'compacted' : 'skipped',
+    compacted,
+    ...(typeof compactResult.summary === 'string' ? { summary: compactResult.summary } : {}),
+    ...(typeof result.reason === 'string' ? { reason: result.reason } : {}),
+    ...(toNumber(compactResult.tokensBefore) !== undefined ? { tokensBefore: toNumber(compactResult.tokensBefore) } : {}),
+    ...(toNumber(compactResult.tokensAfter) !== undefined ? { tokensAfter: toNumber(compactResult.tokensAfter) } : {}),
+    ...(typeof compactResult.firstKeptEntryId === 'string' ? { firstKeptEntryId: compactResult.firstKeptEntryId } : {}),
+    sessionKey: nextSessionKey,
+    ...(typeof compactResult.sessionId === 'string' ? { sessionId: compactResult.sessionId } : {}),
+    ...(nextSessionKey !== sessionKey ? { rotatedSessionKey: nextSessionKey } : {}),
+    warnings: [...new Set(detailWarnings)],
+  };
+}
 function toNumber(value: unknown): number | undefined {
   return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
 }
@@ -2203,33 +2263,31 @@ export function createSessionsApi(ctx: {
         customInstructions: getManualCompactionInstructions(payload),
         force: true,
       }, 120_000);
-      const compactResult = isRecord(result.result) ? result.result : {};
-      const compactDetails = isRecord(compactResult.details) ? compactResult.details : {};
-      const compressionDetails = isRecord(compactDetails.compression) ? compactDetails.compression : {};
-      const detailWarnings = [
-        ...(Array.isArray(compactDetails.warnings)
-          ? compactDetails.warnings.filter((item): item is string => typeof item === 'string')
-          : []),
-        ...(Array.isArray(compressionDetails.warnings)
-          ? compressionDetails.warnings.filter((item): item is string => typeof item === 'string')
-          : []),
-      ];
-      const compacted = result.compacted === true;
-      const nextSessionKey = typeof result.key === 'string' ? result.key : sessionKey;
-      return {
-        success: true,
-        status: compacted ? 'compacted' : 'skipped',
-        compacted,
-        ...(typeof compactResult.summary === 'string' ? { summary: compactResult.summary } : {}),
-        ...(typeof result.reason === 'string' ? { reason: result.reason } : {}),
-        ...(toNumber(compactResult.tokensBefore) !== undefined ? { tokensBefore: toNumber(compactResult.tokensBefore) } : {}),
-        ...(toNumber(compactResult.tokensAfter) !== undefined ? { tokensAfter: toNumber(compactResult.tokensAfter) } : {}),
-        ...(typeof compactResult.firstKeptEntryId === 'string' ? { firstKeptEntryId: compactResult.firstKeptEntryId } : {}),
-        sessionKey: nextSessionKey,
-        ...(typeof compactResult.sessionId === 'string' ? { sessionId: compactResult.sessionId } : {}),
-        ...(nextSessionKey !== sessionKey ? { rotatedSessionKey: nextSessionKey } : {}),
-        warnings: [...new Set(detailWarnings)],
-      };
+      return mapCompactionRpcOutcome(result, sessionKey);
+    },
+    /**
+     * #178: summarize a located stretch of the transcript, keeping the untouched
+     * side verbatim. Exactly one of fromLeafId / toLeafId is supplied; the
+     * gateway resolves the cut point and fails closed when it is absent,
+     * off-branch, or not a valid cut point.
+     */
+    compactRange: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const agentId = getOptionalAgentId(payload);
+      const body = isRecord(payload) ? payload as SessionPayload : {};
+      const fromLeafId = typeof body.fromLeafId === 'string' ? body.fromLeafId.trim() : '';
+      const toLeafId = typeof body.toLeafId === 'string' ? body.toLeafId.trim() : '';
+      if (!ctx.gatewayManager) {
+        return { success: false, error: 'Gateway manager unavailable', compacted: false, status: 'failed' };
+      }
+      const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.compactRange', {
+        key: sessionKey,
+        ...(agentId ? { agentId } : {}),
+        ...(fromLeafId ? { fromLeafId } : {}),
+        ...(toLeafId ? { toLeafId } : {}),
+        customInstructions: getManualCompactionInstructions(payload),
+      }, 120_000);
+      return mapCompactionRpcOutcome(result, sessionKey);
     },
     prepareHandoff: async (payload) => {
       const sessionKey = getSessionKey(payload);
@@ -2461,6 +2519,17 @@ export function createSessionsApi(ctx: {
         ...(recallArchiveRef ? [{ type: 'other' as const, ref: recallArchiveRef, label: 'Read-only context recall archive' }] : []),
         ...traceEvidence,
       ];
+      const handoffDecision = await readHandoffDecision(sessionKey, workspaceId);
+      if (!handoffDecision.allow) {
+        return {
+          success: false,
+          error: handoffDecision.error,
+          warnings: [...warnings, handoffDecision.reason],
+          handoffDepth: handoffDecision.depth,
+          handoffMaxDepth: handoffDecision.maxDepth,
+        };
+      }
+
       const checkpoint = buildResumeCheckpoint({
         trigger: runtimeCheckpoint?.trigger ?? 'session_rotation',
         id: runtimeCheckpoint?.id,
@@ -2510,7 +2579,49 @@ export function createSessionsApi(ctx: {
         draft: renderHandoffDraft(checkpoint, sources, recoveryContext, recallContext),
         sources,
         warnings,
+        handoffDepth: handoffDecision.depth,
+        handoffParentSessionKey: handoffDecision.parentSessionKey,
+        handoffRootSessionKey: handoffDecision.rootSessionKey,
       };
+    },
+    createHandoff: (payload) => {
+      const creation = handoffCreationTail.then(async () => {
+        const sourceSessionKey = getSessionKey(payload);
+        const workspaceId = getOptionalWorkspaceId(payload);
+        const agentId = getOptionalAgentId(payload) ?? parseSessionKey(sourceSessionKey)?.agentId ?? 'main';
+        if (typeof payload.draftInput !== 'string' || !payload.draftInput.trim()) throw new Error('Handoff draft cannot be empty');
+        const decision = await readHandoffDecision(sourceSessionKey, workspaceId);
+        if (!decision.allow) return { success: false, error: decision.error };
+        // The sidebar detects fresh sessions with /:session-\d/, so keep the
+        // timestamp prefix and use a short UUID only as the collision-resistant suffix.
+        const sessionKey = `agent:${agentId}:session-${Date.now()}-${randomUUID().slice(0, 8)}`;
+        const id = randomUUID();
+        const lineage = {
+          handoffDepth: decision.depth,
+          handoffParentSessionKey: sourceSessionKey,
+          handoffRootSessionKey: decision.rootSessionKey,
+          parentHandoffId: decision.parentHandoffId,
+          rootHandoffId: decision.rootHandoffId ?? id,
+        };
+        // Persist lineage before activating the session. A failed workspace update can leave
+        // an unused lineage record, but cannot activate an untracked session or reset depth.
+        await appendTaskLedgerEvents(workspaceId, [{
+          type: 'session_linked', actor: 'system', sessionId: sessionKey,
+          payload: { sessionLink: {
+            id, sessionKey, agentId, relation: 'handoff_from', sourceSessionKey,
+            ...lineage, createdAt: new Date().toISOString(),
+          } },
+        }], `handoff:${sourceSessionKey}:${sessionKey}`);
+        if (workspaceId) {
+          await createWorkspacesApi(ctx).update({
+            id: workspaceId, agentId, activeSessionKey: sessionKey, sessionKey,
+            state: { activeTopicId: null, draftInput: payload.draftInput },
+          });
+        }
+        return { success: true, sessionKey, ...lineage };
+      });
+      handoffCreationTail = creation.catch(() => undefined);
+      return creation;
     },
     fork: async (payload) => {
       const sessionKey = getSessionKey(payload);
@@ -2519,6 +2630,10 @@ export function createSessionsApi(ctx: {
       const label = isRecord(payload) && typeof (payload as SessionPayload).label === 'string'
         ? String((payload as SessionPayload).label).trim()
         : '';
+      const fromLeafId =
+        isRecord(payload) && typeof (payload as SessionPayload).fromLeafId === 'string'
+          ? String((payload as SessionPayload).fromLeafId).trim()
+          : '';
       if (!ctx.gatewayManager) {
         return {
           success: false,
@@ -2534,6 +2649,9 @@ export function createSessionsApi(ctx: {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
         ...(label ? { label } : {}),
+        // #180: the gateway rejects an unresolvable fromLeafId; do not strip it
+        // here, or the desktop app would silently fork the tip instead.
+        ...(fromLeafId ? { fromLeafId } : {}),
       }, 30_000);
       const nextSessionKey = typeof result.key === 'string' ? result.key : undefined;
       const sourceSessionKey = typeof result.sourceKey === 'string' ? result.sourceKey : sessionKey;

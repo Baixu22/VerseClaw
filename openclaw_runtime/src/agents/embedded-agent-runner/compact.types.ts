@@ -71,6 +71,12 @@ export type CompactEmbeddedAgentSessionParams = {
   execOverrides?: Pick<ExecToolDefaults, "host" | "security" | "ask" | "node">;
   bashElevated?: ExecElevatedDefaults;
   customInstructions?: string;
+  /**
+   * #178: pin the retained tail to this transcript entry id for a located
+   * ("summarize up to / from here") compaction. The cut point is validated by
+   * prepareCompaction; an absent/off-branch/invalid id fails closed.
+   */
+  keepFromEntryId?: string;
   tokenBudget?: number;
   force?: boolean;
   /** Force compaction because the caller already determined this turn must compact before prompt submission. */

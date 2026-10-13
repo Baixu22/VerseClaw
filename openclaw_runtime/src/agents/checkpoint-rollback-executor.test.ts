@@ -1,19 +1,25 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import {
   __resetWriteJournals,
+  getOrCreateWriteJournal,
   snapshotBeforeWrite,
 } from "./tools/write-journal.js";
 import {
   applyCheckpointToJournal,
   createCheckpointRollbackDeps,
   resolveCheckpointJournalRoot,
+  undoCheckpointWrites,
   validateCheckpointRecord,
   type CheckpointRollbackExecutorOptions,
 } from "./checkpoint-rollback-executor.js";
 import { executeReplayRollback } from "./replay-rollback-authority.js";
+import {
+  __resetBatchLocks,
+  acquirePatchBatchLocks,
+} from "./apply-patch-batch-lock.js";
 import { buildRuntimeResumeCheckpoint } from "./long-task-control/store.js";
 import type { LongTaskCheckpointRecord } from "./long-task-control/store.js";
 
@@ -57,11 +63,13 @@ describe("checkpoint-rollback-executor (A3)", () => {
 
   beforeEach(() => {
     __resetWriteJournals();
+    __resetBatchLocks();
     repoRoot = mkdtempSync(path.join(tmpdir(), "rollback-exec-"));
   });
 
   afterEach(() => {
     __resetWriteJournals();
+    __resetBatchLocks();
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
@@ -179,8 +187,19 @@ describe("checkpoint-rollback-executor (A3)", () => {
       expect(readFileSync(existing, "utf8")).toBe("keep\n");
     });
 
-    it("no-op when no journal entries exist after the checkpoint", () => {
+    it("no-op when no journal entries exist after the checkpoint", async () => {
       writeFileSync(path.join(repoRoot, "f.ts"), "v0\n", "utf8");
+      // #176: the journal session id is now required and explicit — the
+      // canonical session key is no longer accepted as a fallback. Record one
+      // entry that belongs to this session and sits *before* the checkpoint, so
+      // the journal genuinely exists while there is nothing to undo.
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        filePath: "f.ts",
+        toolName: "write",
+      });
+      await sleepMs(5);
       const record = makeCheckpointRecord({
         id: "c1",
         sessionKey,
@@ -189,9 +208,112 @@ describe("checkpoint-rollback-executor (A3)", () => {
       const outcome = applyCheckpointToJournal({
         workspaceRoot: repoRoot,
         checkpoint: record,
+        sessionId: journalSessionId,
       });
       expect(outcome.errors).toEqual([]);
       expect(outcome.restored).toEqual([]);
+    });
+
+    it("#176 fails closed when the journal id is the canonical key, not the session UUID", () => {
+      const file = path.join(repoRoot, "f.ts");
+      writeFileSync(file, "v2\n", "utf8");
+      const record = makeCheckpointRecord({
+        id: "c1",
+        sessionKey,
+        createdAt: new Date().toISOString(),
+        filesTouched: ["f.ts"],
+      });
+
+      // `sessionKey` is the canonical key; the journal was actually written
+      // under `journalSessionId`. Before #176 this silently resolved to an
+      // empty directory and returned `errors: []` (a "successful" restore that
+      // restored nothing) — and then created that empty directory, which is
+      // itself the wrong journal.
+      const outcome = applyCheckpointToJournal({
+        workspaceRoot: repoRoot,
+        checkpoint: record,
+        sessionId: sessionKey,
+      });
+
+      expect(outcome.restored).toEqual([]);
+      expect(outcome.errors).toHaveLength(1);
+      expect(outcome.errors[0]).toContain("no_journal_for_session");
+      expect(readFileSync(file, "utf8")).toBe("v2\n");
+    });
+
+    it("#176 refuses to roll back when no journal session id is supplied", () => {
+      const record = makeCheckpointRecord({
+        id: "c1",
+        sessionKey,
+        createdAt: new Date().toISOString(),
+        filesTouched: ["f.ts"],
+      });
+
+      const outcome = applyCheckpointToJournal({
+        workspaceRoot: repoRoot,
+        checkpoint: record,
+      });
+
+      expect(outcome.restored).toEqual([]);
+      expect(outcome.errors).toHaveLength(1);
+      expect(outcome.errors[0]).toContain("journal_session_id_missing");
+    });
+
+    it("#175 aborts instead of deleting a concurrent write that landed after the selection", async () => {
+      const target = path.join(repoRoot, "target.ts");
+      const concurrent = path.join(repoRoot, "fresh-work.ts");
+
+      // seq1 (pre-checkpoint): target.ts v0 -> base
+      writeFileSync(target, "v0\n", "utf8");
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        filePath: "target.ts",
+        toolName: "write",
+      });
+      writeFileSync(target, "base\n", "utf8");
+      await sleepMs(5);
+
+      // seq2 (the only entry a rollback to the checkpoint instant should undo)
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        filePath: "target.ts",
+        toolName: "write",
+      });
+      writeFileSync(target, "changed-by-agent\n", "utf8");
+
+      // The selection a rollback computes at this instant.
+      const journal = getOrCreateWriteJournal(repoRoot, journalSessionId);
+      const selection = journal.entries
+        .filter((entry) => entry.seq > 1)
+        .map((entry) => ({ seq: entry.seq, relPath: entry.relPath }));
+      expect(selection).toHaveLength(1);
+
+      // Interleaving: a concurrent write lands AFTER the selection was computed.
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        filePath: "fresh-work.ts",
+        toolName: "write",
+      });
+      writeFileSync(concurrent, "concurrent-work-that-must-survive\n", "utf8");
+
+      const outcome = undoCheckpointWrites({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        entries: selection,
+      });
+
+      // Before this fix the undo popped "1 entry from the tail" — i.e. the
+      // concurrent one: fresh-work.ts was deleted, target.ts was left at
+      // "changed-by-agent", and errors stayed empty (silent mis-delete).
+      expect(outcome.restored).toEqual([]);
+      expect(outcome.errors).toHaveLength(1);
+      expect(outcome.errors[0]).toContain("concurrent_write_detected");
+      expect(existsSync(concurrent)).toBe(true);
+      expect(readFileSync(concurrent, "utf8")).toBe("concurrent-work-that-must-survive\n");
+      expect(readFileSync(target, "utf8")).toBe("changed-by-agent\n");
     });
 
     it("uses metadata.journalSeq as the boundary when stamped (partial rollback without same-ms ambiguity)", async () => {
@@ -354,6 +476,73 @@ describe("checkpoint-rollback-executor (A3)", () => {
       }
       expect(readFileSync(file, "utf8")).toBe("v1\n");
       expect(outcomes).toEqual(["legacy_checkpoint_fallback"]);
+    });
+
+    it("#175/#176 surface a failed rollback as a thrown failure, never a silent success", async () => {
+      const record = makeCheckpointRecord({
+        id: "c1",
+        sessionKey,
+        createdAt: new Date().toISOString(),
+        filesTouched: ["f.ts"],
+      });
+      // No journal exists for this session id, so the rollback must abort with
+      // an error — and the dep must turn that error into a rejection so
+      // `executeReplayRollback` reports ok:false instead of success.
+      const deps = createCheckpointRollbackDeps({
+        workspaceRoot: repoRoot,
+        sessionId: "sess-not-journalled",
+      });
+      await expect(deps.applyCheckpoint(record)).rejects.toThrow(/no_journal_for_session/);
+    });
+
+    it("#175 serializes the rollback against a writer holding the same file lease", async () => {
+      const file = path.join(repoRoot, "f.ts");
+      writeFileSync(file, "v0\n", "utf8");
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        filePath: "f.ts",
+        toolName: "write",
+      });
+      writeFileSync(file, "v1\n", "utf8");
+      await sleepMs(5);
+      const record = makeCheckpointRecord({
+        id: "c1",
+        sessionKey,
+        createdAt: new Date().toISOString(),
+        filesTouched: ["f.ts"],
+      });
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        filePath: "f.ts",
+        toolName: "write",
+      });
+      writeFileSync(file, "v2\n", "utf8");
+
+      const deps = createCheckpointRollbackDeps({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+      });
+
+      // Stand in for a concurrent writer: hold the lease that the write path
+      // holds for this file.
+      const releaseWriter = await acquirePatchBatchLocks([file]);
+      let settled = false;
+      const applied = deps.applyCheckpoint(record).then(() => {
+        settled = true;
+      });
+
+      await sleepMs(25);
+      expect(
+        settled,
+        "the rollback must wait for the writer's lease instead of racing it",
+      ).toBe(false);
+
+      releaseWriter();
+      await applied;
+      // Once the lease is free the rollback actually completes.
+      expect(readFileSync(file, "utf8")).toBe("v1\n");
     });
 
     it("event_log target fails explicitly when pilot is disabled (no fake success)", async () => {

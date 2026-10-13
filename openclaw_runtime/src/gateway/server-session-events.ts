@@ -77,6 +77,9 @@ function buildGatewaySessionSnapshot(params: {
     spawnedCwd: sessionRow.spawnedCwd,
     forkedFromParent: sessionRow.forkedFromParent,
     spawnDepth: sessionRow.spawnDepth,
+    // #179: depth + origin are both on the row, so a consumer can read the
+    // spawn-chain distribution without walking the store.
+    spawnRootSessionKey: sessionRow.spawnRootSessionKey,
     subagentRole: sessionRow.subagentRole,
     subagentControlScope: sessionRow.subagentControlScope,
     label: params.label ?? sessionRow.label,

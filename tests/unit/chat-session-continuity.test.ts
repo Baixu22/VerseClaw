@@ -162,6 +162,12 @@ describe('chat session continuity helpers', () => {
     expect(classifySessionContinuityError('Parent context is too large to fork')).toBe('parent_too_large');
     expect(classifySessionContinuityError('failed to fork source transcript')).toBe('transcript_unavailable');
     expect(classifySessionContinuityError('cannot fork while the source session has an active run')).toBe('active_run');
+    expect(classifySessionContinuityError(
+      'Handoff depth 4 exceeds the configured maximum of 3. Converge in the current session instead of relaying again.',
+    )).toBe('handoff_depth_exceeded');
+    expect(classifySessionContinuityError(
+      'Handoff cycle detected: this session already appears in its own handoff ancestry (a -> b -> a).',
+    )).toBe('handoff_cycle_detected');
     expect(classifySessionContinuityError('something surprising')).toBe('unknown');
   });
 });

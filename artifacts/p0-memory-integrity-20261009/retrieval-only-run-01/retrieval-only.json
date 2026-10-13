@@ -1,0 +1,10 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-locomo-evaluator",
+  "sourceRevision": "d394368cf3824b418203742acf0d4c8f213f5a34",
+  "finishedAt": "2026-10-12T16:29:45.704Z",
+  "mode": "retrieval-only-l0",
+  "questions": 150,
+  "noReportWritten": true,
+  "note": "L0 retrieval diagnosis only: no answer generated, no judge called, and locomo-full-500-report.json deliberately does not exist."
+}
