@@ -1,0 +1,5 @@
+7f45be3ac002e36b10061dd201d6768763011ff2805c30dec4f9ba122efbe1ef  docs/dev/harness-gap-closure/a01-acceptance.json
+f6947dd0c9e95ee61c5202c610e531d3bfd880419654a12a9848e72a94d8d57f  docs/dev/harness-gap-closure/a01-a1-isolation-gate.md
+fabb4c1356f01a16f1d1af2d2d9bcbdaa931556e8c9fa5626f2ab9c922805133  harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md
+38d39bc1d372e51b8bf3ecec02f41053e8af85df8807bb2daa59daa473420fa0  harness/specs/tasks/a1-layered-isolation-pilot.md
+23b311a2e8e0fa5d81a79a63540ecd8fa4280f18500e10c901f8e6bd6124b6c4  tests/unit/a01-a1-gate-coverage.test.ts
