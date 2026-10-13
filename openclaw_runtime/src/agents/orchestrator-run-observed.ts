@@ -13,6 +13,7 @@ import {
 } from "./orchestrator.js";
 import type { RoleRegistryConfigCarrier } from "./role-registry.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { resolveWorktreeBackend } from "../context-engine/coding-runtime-flags.js";
 import {
   spawnRoleSubagent,
   type RoleSpawnContext,
@@ -72,6 +73,7 @@ import {
   type RuntimeBlackboardFailure,
 } from "./orchestration-runtime-blackboard.js";
 import type { BlackboardSynthesisSummary } from "./orchestration-synthesizer.js";
+import { createWorktreeService } from "./worktree-service.js";
 
 export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
   cfg?: RoleRegistryConfigCarrier;
@@ -394,6 +396,7 @@ export async function runOrchestrationWithRecorder(
       roles: resolvePlanRoles(plan, request),
       options: { maxActiveRoles: request.maxWorkers },
     });
+    plan.executionWaves = schedule.waves;
     const { roleCostSummary, ...numericSchedulerMetrics } = schedule.metrics;
     recorder.endSpan(planSpan.id, {
       output: plan.mode,
@@ -416,6 +419,16 @@ export async function runOrchestrationWithRecorder(
     storeRuntimeTrace(trace);
     throw error;
   }
+
+  const needsWorktreeIsolation = plan.taskGraph.nodes.some(
+    (node) => node.isolation === "worktree",
+  );
+  const worktreeService =
+    needsWorktreeIsolation && ctx.workspaceDir
+      ? createWorktreeService(ctx.workspaceDir, {
+          backend: resolveWorktreeBackend(request.cfg as OpenClawConfig | undefined),
+        })
+      : undefined;
 
   const spawnWorker = async (
     roleName: string,
@@ -518,6 +531,24 @@ export async function runOrchestrationWithRecorder(
       }
       const role = resolvePlanRole(roleName, request);
       const framing = orchestrationFraming(plan, request.task, roleName, isVerifier, role);
+      const worktree =
+        node?.isolation === "worktree"
+          ? (() => {
+              if (!worktreeService) {
+                throw new Error("worktree isolation requires a workspaceDir");
+              }
+              const worktreeId = node.worktreeId ?? `${orchestrationRunId}:${node.taskNodeId}`;
+              const record = worktreeService.create(worktreeId, {
+                writeSet: node.writeSet,
+                seedFiles: node.writeSet,
+              });
+              return {
+                id: record.id,
+                root: record.root,
+                backend: record.backend,
+              };
+            })()
+          : undefined;
       const spawn = await spawnRoleSubagent(
         {
           role: roleName,
@@ -526,6 +557,7 @@ export async function runOrchestrationWithRecorder(
           agentId: request.agentId,
           modelOverride: modelRef ?? undefined,
           runTimeoutSeconds: request.runTimeoutSeconds,
+          ...(worktree ? { cwd: worktree.root } : {}),
           // B-3 v3: carry the worker-plan write-set coordinate into the child
           // session so the embedded handoff entity snapshot knows the files this
           // worker is expected to touch (no-op when the node has none).
@@ -560,6 +592,14 @@ export async function runOrchestrationWithRecorder(
                   executionWave: ledger.executionWave,
                   taskGraph: plan.taskGraph,
                   executionWaves: schedule.waves,
+                  ...(worktree
+                    ? {
+                        isolation: node?.isolation,
+                        worktreeId: worktree.id,
+                        worktreeBackend: worktree.backend,
+                        worktreeWriteSet: [...(node?.writeSet ?? [])],
+                      }
+                    : {}),
                   routeDiagnostics: plan.routeDiagnostics,
                   qualityPolicy: request.qualityPolicy,
                   repairPolicy: request.repairPolicy,

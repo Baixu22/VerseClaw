@@ -1,7 +1,9 @@
-import type {
-  OrchestrationExecutionWave,
-  OrchestrationTaskGraph,
-  OrchestrationTaskNode,
+import {
+  isWriterLikeRole,
+  writeSetsConflict,
+  type OrchestrationExecutionWave,
+  type OrchestrationTaskGraph,
+  type OrchestrationTaskNode,
 } from "./orchestration-protocol.js";
 import type { RoleContract } from "./role-contract.js";
 
@@ -11,8 +13,15 @@ export type ResourceSchedulerOptions = {
   roleCost?: Partial<Record<string, number>>;
 };
 
+export type ResourceScheduleDeferReason =
+  | "write-set-conflict"
+  | "insufficient-writeSet-proof"
+  | "tool-contention"
+  | "concurrency-cap";
+
 export type ScheduledOrchestrationWave = OrchestrationExecutionWave & {
   reason: string;
+  deferredReasons?: ResourceScheduleDeferReason[];
 };
 
 export type SchedulerSkippedNode = {
@@ -112,35 +121,107 @@ function exclusiveToolKeys(
   return keys;
 }
 
+function isWriteCapableNode(
+  node: OrchestrationTaskNode,
+  roles: Map<string, RoleContract>,
+): boolean {
+  if (isWriterLikeRole(node.roleName) || (node.writeSet?.length ?? 0) > 0) {
+    return true;
+  }
+  const role = roles.get(node.roleName);
+  const tools = new Set([...(role?.tools ?? []), ...(role?.toolRequirements ?? [])]);
+  return ["write", "edit", "apply_patch", "bash", "exec"].some((tool) => tools.has(tool));
+}
+
+function writeSetDeferReason(
+  candidate: OrchestrationTaskNode,
+  chunk: readonly OrchestrationTaskNode[],
+  roles: Map<string, RoleContract>,
+): ResourceScheduleDeferReason | undefined {
+  if (!isWriteCapableNode(candidate, roles)) return undefined;
+
+  for (const existing of chunk) {
+    if (!isWriteCapableNode(existing, roles)) continue;
+    if (existing.isolation === "worktree" && candidate.isolation === "worktree") {
+      continue;
+    }
+    if (!existing.writeSet?.length || !candidate.writeSet?.length) {
+      return "insufficient-writeSet-proof";
+    }
+    if (writeSetsConflict(existing.writeSet, candidate.writeSet)) {
+      return "write-set-conflict";
+    }
+  }
+  return undefined;
+}
+
+function formatDeferredReasons(reasons: ReadonlySet<ResourceScheduleDeferReason>): string {
+  const labels: string[] = [];
+  if (reasons.has("write-set-conflict")) labels.push("write-set conflict");
+  if (reasons.has("insufficient-writeSet-proof")) labels.push("insufficient-writeSet-proof");
+  if (reasons.has("tool-contention")) labels.push("tool contention");
+  if (reasons.has("concurrency-cap")) labels.push("concurrency cap");
+  return labels.join(" or ");
+}
+
 function takeContentionSafeChunk(params: {
   ready: readonly OrchestrationTaskNode[];
   concurrencyCap: number;
   roles: Map<string, RoleContract>;
   options?: ResourceSchedulerOptions;
-}): { chunk: OrchestrationTaskNode[]; deferred: number; deferredTaskNodeIds: string[] } {
+}): {
+  chunk: OrchestrationTaskNode[];
+  deferred: number;
+  deferredTaskNodeIds: string[];
+  deferredReasons: Set<ResourceScheduleDeferReason>;
+} {
   const chunk: OrchestrationTaskNode[] = [];
-  const usedExclusiveKeys = new Set<string>();
+  const usedExclusiveKeys = new Map<string, OrchestrationTaskNode[]>();
+  const deferredReasons = new Set<ResourceScheduleDeferReason>();
   let deferred = 0;
   const deferredTaskNodeIds: string[] = [];
   for (const node of params.ready) {
     if (chunk.length >= params.concurrencyCap) {
       deferred += 1;
       deferredTaskNodeIds.push(node.taskNodeId);
+      deferredReasons.add("concurrency-cap");
+      continue;
+    }
+    const writeSetReason = writeSetDeferReason(node, chunk, params.roles);
+    if (writeSetReason) {
+      deferred += 1;
+      deferredTaskNodeIds.push(node.taskNodeId);
+      deferredReasons.add(writeSetReason);
       continue;
     }
     const keys = exclusiveToolKeys(node, params.roles, params.options);
-    const conflicts = [...keys].some((key) => usedExclusiveKeys.has(key));
-    if (conflicts) {
+    const conflictingKeys = [...keys].filter((key) => usedExclusiveKeys.has(key));
+    const canBypassWriteOnlyContention =
+      conflictingKeys.length > 0 &&
+      conflictingKeys.every((key) => key === "write") &&
+      conflictingKeys.every((key) =>
+        (usedExclusiveKeys.get(key) ?? []).every(
+          (existing) =>
+            (existing.isolation === "worktree" && node.isolation === "worktree") ||
+            (Boolean(existing.writeSet?.length) &&
+              Boolean(node.writeSet?.length) &&
+              !writeSetsConflict(existing.writeSet, node.writeSet)),
+        ),
+      );
+    if (conflictingKeys.length > 0 && !canBypassWriteOnlyContention) {
       deferred += 1;
       deferredTaskNodeIds.push(node.taskNodeId);
+      deferredReasons.add("tool-contention");
       continue;
     }
     chunk.push(node);
     for (const key of keys) {
-      usedExclusiveKeys.add(key);
+      const owners = usedExclusiveKeys.get(key) ?? [];
+      owners.push(node);
+      usedExclusiveKeys.set(key, owners);
     }
   }
-  return { chunk, deferred, deferredTaskNodeIds };
+  return { chunk, deferred, deferredTaskNodeIds, deferredReasons };
 }
 
 export function scheduleResourceAwareWaves(params: {
@@ -171,23 +252,25 @@ export function scheduleResourceAwareWaves(params: {
       break;
     }
 
-    const { chunk, deferred, deferredTaskNodeIds } = takeContentionSafeChunk({
+    const { chunk, deferred, deferredTaskNodeIds, deferredReasons } = takeContentionSafeChunk({
       ready,
       concurrencyCap,
       roles,
       options: params.options,
     });
     const includesPreviouslyDeferred = chunk.some((node) => deferredForContention.has(node.taskNodeId));
+    const deferredReasonText = formatDeferredReasons(deferredReasons);
     const wave = waves.length + 1;
     waves.push({
       wave,
       taskNodeIds: chunk.map((node) => node.taskNodeId),
       roles: chunk.map((node) => node.roleName),
       reason: includesPreviouslyDeferred
-        ? `scheduled ${chunk.length} node(s) previously deferred for tool contention`
+        ? `scheduled ${chunk.length} node(s) previously deferred for tool contention or write-set proof`
         : deferred > 0
-        ? `scheduled ${chunk.length} ready node(s); deferred ${deferred} for tool contention or concurrency cap ${concurrencyCap}`
+        ? `scheduled ${chunk.length} ready node(s); deferred ${deferred} for ${deferredReasonText || `concurrency cap ${concurrencyCap}`}`
         : `scheduled ${chunk.length} ready node(s) within concurrency cap ${concurrencyCap}`,
+      ...(deferredReasons.size > 0 ? { deferredReasons: [...deferredReasons] } : {}),
     });
     for (const taskNodeId of deferredTaskNodeIds) {
       deferredForContention.add(taskNodeId);

@@ -62,15 +62,21 @@ export type MergeQueueItem = {
 /** Safe default marks conflict; optional policies return work to worker or escalate lead. */
 export type MergeConflictPolicy = "mark_conflict" | "return_worker" | "escalate_lead";
 
+export type WorktreeChangedFiles = {
+  files: string[];
+  source: "git-status" | "declared-writeSet" | "unavailable";
+};
+
 export type WorktreeService = {
   backend: WorktreeBackend;
   create(id: string, options?: { writeSet?: string[]; seedFiles?: string[]; installStrategy?: WorktreeInstallStrategy }): WorktreeRecord & { install?: WorktreeInstallResult };
   pathFor(id: string): string;
   list(): WorktreeRecord[];
+  listChangedFiles(id: string): WorktreeChangedFiles;
   enqueueMerge(item: Omit<MergeQueueItem, "status"> & { status?: MergeQueueItem["status"] }): MergeQueueItem;
   processMergeQueue(
     factStore?: FactStore,
-    options?: { conflictPolicy?: MergeConflictPolicy },
+    options?: { conflictPolicy?: MergeConflictPolicy; worktreeIds?: readonly string[] },
   ): MergeQueueItem[];
   cleanup(id: string): void;
   getMergeQueue(): MergeQueueItem[];
@@ -128,6 +134,26 @@ function hardenedGitEnv(): NodeJS.ProcessEnv {
     GIT_CONFIG_KEY_1: "core.fsmonitor",
     GIT_CONFIG_VALUE_1: "false",
   };
+}
+
+function listChangedFilesFromGit(root: string): string[] {
+  const out = git(
+    ["-c", "core.quotePath=false", "status", "--porcelain", "--untracked-files=all"],
+    root,
+  );
+  const files = new Set<string>();
+  for (const line of out.split(/\r?\n/)) {
+    if (!line.trim() || line.startsWith("!!")) continue;
+    const raw = line.includes(" -> ") ? line.slice(line.indexOf(" -> ") + 4) : line.slice(3);
+    const candidate = raw.trim();
+    if (!candidate) continue;
+    try {
+      files.add(normalizeWorktreeRelPath(candidate));
+    } catch {
+      // Ignore unsafe or malformed status entries.
+    }
+  }
+  return [...files].sort();
 }
 
 function isGitRepo(root: string): boolean {
@@ -345,6 +371,21 @@ export function createWorktreeService(
       }
       return out;
     },
+    listChangedFiles(id) {
+      const rec = scope(resolved).records.get(id);
+      if (!rec) return { files: [], source: "unavailable" as const };
+      if (rec.backend === "git") {
+        try {
+          return { files: listChangedFilesFromGit(rec.root), source: "git-status" as const };
+        } catch {
+          return { files: [...(rec.writeSet ?? [])], source: "declared-writeSet" as const };
+        }
+      }
+      return {
+        files: [...(rec.writeSet ?? [])],
+        source: rec.writeSet?.length ? "declared-writeSet" as const : "unavailable" as const,
+      };
+    },
     enqueueMerge(item) {
       const s = scope(resolved);
       const entry: MergeQueueItem = {
@@ -360,9 +401,15 @@ export function createWorktreeService(
     processMergeQueue(factStore, processOptions) {
       const s = scope(resolved);
       const policy = processOptions?.conflictPolicy ?? defaultConflictPolicy;
+      const selectedWorktreeIds = processOptions?.worktreeIds
+        ? new Set(processOptions.worktreeIds)
+        : undefined;
       const results: MergeQueueItem[] = [];
       withWorktreeLock(resolved, () => {
         for (const item of s.queue) {
+          if (selectedWorktreeIds && !selectedWorktreeIds.has(item.worktreeId)) {
+            continue;
+          }
           if (item.status !== "pending") {
             results.push(item);
             continue;

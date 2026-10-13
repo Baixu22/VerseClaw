@@ -38,11 +38,16 @@ type FakeSpawnParams = {
   cwd?: string;
   runTimeoutSeconds?: number;
   roleSystemPrompt?: string;
+  writeSet?: string[];
   orchestration?: {
     orchestrationRunId: string;
     roleName: string;
     isVerifier: boolean;
     phase: string;
+    isolation?: "shared" | "worktree";
+    worktreeId?: string;
+    worktreeBackend?: "inprocess" | "git";
+    worktreeWriteSet?: string[];
   };
 };
 
@@ -508,5 +513,89 @@ describe('orchestrator run bridge', () => {
       phase: 'worker',
       isVerifier: false,
     });
+  });
+
+  it('keeps production execution waves aligned with the plan write-set contract', async () => {
+    const spawnedTasks: string[] = [];
+    const fakeSpawn = async (params: FakeSpawnParams): Promise<FakeSpawnResult> => {
+      spawnedTasks.push(params.task);
+      return { status: 'accepted', runId: `run_${spawnedTasks.length}`, childSessionKey: `child_${spawnedTasks.length}` };
+    };
+
+    const disjoint = await runOrchestration(
+      {
+        task: 'edit independent files',
+        orchestrationRunId: 'orch_disjoint',
+        maxWorkers: 2,
+        workers: [
+          { roleName: 'implementer', task: 'edit a', writeSet: ['src/a.ts'] },
+          { roleName: 'docs-writer', task: 'edit docs', writeSet: ['docs/a.md'] },
+        ],
+      },
+      { agentSessionKey: 'agent:main:abc' },
+      { spawn: fakeSpawn as SpawnFn },
+    );
+    expect(disjoint.executionWaves.map((wave) => wave.roles)).toEqual([
+      ['implementer', 'docs-writer'],
+    ]);
+    expect(disjoint.plan.executionWaves.map((wave) => wave.roles)).toEqual(
+      disjoint.executionWaves.map((wave) => wave.roles),
+    );
+
+    const intersecting = await runOrchestration(
+      {
+        task: 'edit one shared file',
+        orchestrationRunId: 'orch_intersecting',
+        maxWorkers: 2,
+        workers: [
+          { roleName: 'implementer', task: 'edit a', writeSet: ['src/shared.ts'] },
+          { roleName: 'docs-writer', task: 'edit docs', writeSet: ['src/shared.ts'] },
+        ],
+      },
+      { agentSessionKey: 'agent:main:abc' },
+      { spawn: fakeSpawn as SpawnFn },
+    );
+    expect(intersecting.executionWaves.map((wave) => wave.roles)).toEqual([
+      ['implementer'],
+      ['docs-writer'],
+    ]);
+    expect(intersecting.plan.executionWaves.map((wave) => wave.roles)).toEqual(
+      intersecting.executionWaves.map((wave) => wave.roles),
+    );
+  });
+
+  it('creates a worktree and passes its cwd to isolated workers', async () => {
+    const spawned: FakeSpawnParams[] = [];
+    const fakeSpawn = async (params: FakeSpawnParams): Promise<FakeSpawnResult> => {
+      spawned.push(params);
+      return { status: 'accepted', runId: 'run_worktree', childSessionKey: 'child_worktree' };
+    };
+    const result = await runOrchestration(
+      {
+        task: 'edit in isolation',
+        orchestrationRunId: 'orch_worktree',
+        maxWorkers: 1,
+        workers: [
+          {
+            roleName: 'implementer',
+            task: 'edit isolated file',
+            writeSet: ['src/isolated.ts'],
+            isolation: 'worktree',
+          },
+        ],
+      },
+      { agentSessionKey: 'agent:main:abc', workspaceDir: tempDir },
+      { spawn: fakeSpawn as SpawnFn },
+    );
+
+    expect(result.failures).toHaveLength(0);
+    expect(spawned).toHaveLength(1);
+    expect(spawned[0]?.cwd?.replace(/\\/g, '/')).toContain('/.openclaw/worktrees/');
+    expect(spawned[0]?.orchestration).toMatchObject({
+      isolation: 'worktree',
+      worktreeBackend: 'inprocess',
+      worktreeWriteSet: ['src/isolated.ts'],
+    });
+    expect(spawned[0]?.orchestration?.worktreeId).toBeTruthy();
   });
 });

@@ -458,7 +458,98 @@ function selectResultTextForOrchestration(entry: SubagentRunRecord): string {
   );
 }
 
-function buildVerifierTask(params: { originalTask: string; workers: SubagentRunRecord[] }): string {
+function applyOrchestrationWorkerPatch(
+  worker: SubagentRunRecord,
+  patch: Partial<NonNullable<SubagentRunRecord["orchestration"]>>,
+): void {
+  if (!worker.orchestration) return;
+  worker.orchestration = { ...worker.orchestration, ...patch };
+  if (worker.delivery?.payload?.orchestration) {
+    worker.delivery.payload = {
+      ...worker.delivery.payload,
+      orchestration: worker.orchestration,
+    };
+  }
+}
+
+async function processCompletedOrchestrationWorktrees(
+  workers: readonly SubagentRunRecord[],
+): Promise<void> {
+  const worktreeWorkers = workers.filter(
+    (worker) =>
+      worker.orchestration?.isolation === "worktree" &&
+      typeof worker.orchestration.worktreeId === "string" &&
+      worker.orchestration.worktreeId.length > 0,
+  );
+  const unprocessed = worktreeWorkers.filter(
+    (worker) => typeof worker.orchestration?.worktreeMergeProcessedAt !== "number",
+  );
+  if (unprocessed.length === 0) return;
+
+  const processedAt = Date.now();
+  const mergeable = unprocessed.filter((worker) => worker.outcome?.status === "ok");
+  const failed = unprocessed.filter((worker) => worker.outcome?.status !== "ok");
+  for (const worker of failed) {
+    applyOrchestrationWorkerPatch(worker, {
+      worktreeMergeStatus: "error",
+      worktreeWriteSetMismatch: [],
+      worktreeMergeReason: `worker_failed:${worker.outcome?.status ?? "unknown"}`,
+      worktreeMergeProcessedAt: processedAt,
+    });
+  }
+  if (mergeable.length === 0) {
+    persistSubagentRuns();
+    return;
+  }
+
+  const baseRoot = mergeable.find((worker) => worker.workspaceDir)?.workspaceDir;
+  if (!baseRoot) {
+    for (const worker of mergeable) {
+      applyOrchestrationWorkerPatch(worker, {
+        worktreeMergeStatus: "error",
+        worktreeWriteSetMismatch: [],
+        worktreeMergeReason: "workspaceDir-unavailable",
+        worktreeMergeProcessedAt: processedAt,
+      });
+    }
+    persistSubagentRuns();
+    return;
+  }
+
+  try {
+    const { mergeOrchestrationWorktrees } = await import("./orchestration-worktree-merge.js");
+    const results = mergeOrchestrationWorktrees({
+      baseRoot,
+      workers: mergeable.map((worker) => ({
+        taskNodeId: worker.orchestration?.taskNodeId ?? worker.runId,
+        worktreeId: worker.orchestration!.worktreeId!,
+        declaredWriteSet: worker.orchestration?.worktreeWriteSet ?? [],
+      })),
+      conflictPolicy: "mark_conflict",
+    });
+    const byWorktreeId = new Map(results.map((result) => [result.worktreeId, result]));
+    for (const worker of mergeable) {
+      const result = byWorktreeId.get(worker.orchestration!.worktreeId!);
+      applyOrchestrationWorkerPatch(worker, {
+        worktreeMergeStatus: result?.status ?? "error",
+        worktreeWriteSetMismatch: result?.writeSetMismatch ?? [],
+        ...(result?.reason ? { worktreeMergeReason: result.reason } : {}),
+        worktreeMergeProcessedAt: processedAt,
+      });
+    }
+  } catch (error) {
+    log.warn("failed to process orchestration worktree merges", { error });
+    for (const worker of mergeable) {
+      applyOrchestrationWorkerPatch(worker, {
+        worktreeMergeStatus: "error",
+        worktreeWriteSetMismatch: [],
+        worktreeMergeReason: error instanceof Error ? error.message : String(error),
+        worktreeMergeProcessedAt: processedAt,
+      });
+    }
+  }
+  persistSubagentRuns();
+}function buildVerifierTask(params: { originalTask: string; workers: SubagentRunRecord[] }): string {
   const sections = params.workers.map((worker, index) => {
     const meta = worker.orchestration;
     const status = worker.outcome?.status ?? "unknown";
@@ -505,6 +596,7 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
   if (expectedWorkers.some((worker) => typeof worker.endedAt !== "number")) {
     return;
   }
+  await processCompletedOrchestrationWorktrees(expectedWorkers);
   const latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
   if (!latestMeta) {
     return;
