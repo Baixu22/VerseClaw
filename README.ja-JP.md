@@ -290,4 +290,6 @@ Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell �
 
 ランタイムの `diagnostics.enabled` を明示的に `true` にすると、既存の診断ログに承認必要と分類された割合の継続的な上昇と回復を記録します。これはツールの分類であり、実際のダイアログや人による承認回数ではありません。サンプル不足・期限切れは未測定です。設定を省略または無効にした場合は監視せず、承認やツール実行ポリシーを変更しません。
 
+ランタイムの `diagnostics.otel.enabled` と `trace.cost-sampling` 診断フラグを両方明示的に有効にすると、既存の単一 OpenTelemetry 出口は、バージョン管理された価格スナップショットからのモデル呼び出し単位の USD 見積もりと、境界付きでマスクされたトレースサンプルも出力します。未知の価格は `null` のまま、既定／無効の経路は変わりません。
+
 セッションの Handoff は Main で Task Ledger の系譜を検証・保存してから新しい会話を有効化します。循環や読み取れない履歴は拒否します。`openclaw.json` の `runtime.handoff.enabled=true` で深さ制限を有効化できます（`maxDepth`: 1–64、省略時は 3）。制限は既定で無効で、フォークは Handoff の系譜を保持します。
