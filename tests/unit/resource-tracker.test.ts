@@ -15,6 +15,7 @@ import { createServer, type Server } from 'node:http';
 import { findFreePort } from '../helpers/find-free-port';
 import type { ResourceTracker } from '../../electron/services/resource-tracker';
 import type { TrackedResource } from '../../shared/types/resource-tracker';
+import { getBackgroundWorkGate, resetBackgroundWorkGateForTest } from '../../openclaw_runtime/src/resources/background-work-gate';
 
 type ResourceTrackerInternals = {
   tcpPing(port: number): Promise<boolean>;
@@ -41,6 +42,7 @@ describe('ResourceTracker', () => {
 
   afterEach(() => {
     tracker.stop();
+    resetBackgroundWorkGateForTest();
   });
 
   // ── Helpers ──────────────────────────────────────────────────────────
@@ -113,6 +115,14 @@ describe('ResourceTracker', () => {
   // ── Heartbeat / TCP ping ─────────────────────────────────────────────
 
   describe('heartbeat', () => {
+    it('routes heartbeat work through the background work gate', async () => {
+      const gate = getBackgroundWorkGate();
+      const gateSpy = vi.spyOn(gate, 'runBackground').mockResolvedValue(undefined);
+      await (tracker as unknown as { runHeartbeat(): Promise<void> }).runHeartbeat();
+      expect(gateSpy).toHaveBeenCalledWith('resource-tracker-heartbeat', expect.any(Function));
+      gateSpy.mockRestore();
+    });
+
     it('TCP-pings a live port and returns true', async () => {
       const { port, server } = await startServer('ping-live');
       try {

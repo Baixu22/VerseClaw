@@ -14,11 +14,15 @@ import { app, powerMonitor, BrowserWindow } from 'electron';
 import { logger } from '../utils/logger';
 import { EfficiencySampler, type EfficiencySummary } from './efficiency-sampler';
 import { EfficiencyPowerPolicy, type EfficiencyShedState } from './efficiency-power-policy';
+import { getBackgroundWorkGate, resetBackgroundWorkGateForTest, type BackgroundWorkGateState } from '../../openclaw_runtime/src/resources/background-work-gate';
+import { getAggregatedResourceEnvelopeSnapshot } from './resource-envelope';
 
 let sampler: EfficiencySampler | null = null;
 let policy: EfficiencyPowerPolicy | null = null;
 let started = false;
 let unsubscribeWindowEvents: (() => void) | null = null;
+let backgroundGateTimer: ReturnType<typeof setInterval> | null = null;
+let backgroundGateInFlight = false;
 
 function getOrCreate(): { sampler: EfficiencySampler; policy: EfficiencyPowerPolicy } {
   if (!sampler) {
@@ -46,12 +50,42 @@ function getOrCreate(): { sampler: EfficiencySampler; policy: EfficiencyPowerPol
  * Sampling is opt-out via settings in the future; today the default is enabled
  * because the cost is a single unref'd 5s timer and one cheap counter read.
  */
+function startBackgroundWorkGate(
+  activeSampler: EfficiencySampler,
+  activePolicy: EfficiencyPowerPolicy,
+): void {
+  if (backgroundGateTimer) return;
+  const update = async (): Promise<void> => {
+    if (backgroundGateInFlight) return;
+    backgroundGateInFlight = true;
+    try {
+      const summary = activeSampler.getSummary();
+      const snapshot = await getAggregatedResourceEnvelopeSnapshot();
+      const latest = summary.latest;
+      getBackgroundWorkGate().update({
+        shedSignal: activePolicy.shedding,
+        queueDepth: snapshot.totals.queuedCount,
+        ...(latest ? { treeRssBytes: snapshot.totals.treeRssBytes, treeCpuPercent: latest.cpuPercent } : {}),
+      });
+    } catch (error) {
+      logger.warn('[efficiency] background work gate update failed', error);
+    } finally {
+      backgroundGateInFlight = false;
+    }
+  };
+  void update();
+  backgroundGateTimer = setInterval(() => {
+    void update();
+  }, 5_000);
+  backgroundGateTimer.unref?.();
+}
 export function startRuntimeEfficiency(): void {
   if (started) return;
   const { sampler: activeSampler, policy: activePolicy } = getOrCreate();
 
   activeSampler.start();
   started = true;
+  startBackgroundWorkGate(activeSampler, activePolicy);
   logger.info('[efficiency] runtime efficiency sampling started', {
     intervalMs: 5000,
     platform: process.platform,
@@ -124,6 +158,10 @@ export function attachWindowVisibility(): () => void {
 /** Stop sampling and detach listeners. Safe to call when not started. */
 export function stopRuntimeEfficiency(): void {
   if (!started) return;
+  if (backgroundGateTimer) {
+    clearInterval(backgroundGateTimer);
+    backgroundGateTimer = null;
+  }
   sampler?.stop();
   unsubscribeWindowEvents?.();
   unsubscribeWindowEvents = null;
@@ -139,6 +177,10 @@ export function getEfficiencyShedState(): EfficiencyShedState | null {
   return policy?.getState() ?? null;
 }
 
+export function getBackgroundWorkGateState(): BackgroundWorkGateState | null {
+  return started ? getBackgroundWorkGate().getState() : null;
+}
+
 export function isRuntimeEfficiencyRunning(): boolean {
   return started;
 }
@@ -149,4 +191,6 @@ export function resetRuntimeEfficiencyForTests(): void {
   sampler = null;
   policy = null;
   started = false;
+  backgroundGateInFlight = false;
+  resetBackgroundWorkGateForTest();
 }

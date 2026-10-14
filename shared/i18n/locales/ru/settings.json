@@ -575,6 +575,8 @@
       "cpu": "CPU {{value}}%",
       "rss": "RSS {{value}}",
       "shedding": "Фоновая нагрузка снижена",
+      "backgroundDeferred": "Фоновая работа отложена: {{reason}}",
+      "backgroundSummary": "Отложено {{deferred}} · возобновлено {{resumed}}",
       "enabledToast": "Сэмплирование эффективности включено",
       "disabledToast": "Сэмплирование эффективности отключено",
       "loadFailed": "Не удалось прочитать состояние эффективности",

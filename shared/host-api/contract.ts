@@ -1,5 +1,6 @@
 import type { RawMessage } from '../chat/types';
 import type { ResourceEnvelopeSnapshot } from '../../openclaw_runtime/src/resources/resource-envelope';
+import type { BackgroundWorkGateState } from '../../openclaw_runtime/src/resources/background-work-gate';
 import type {
   VtokenAssembleHostResult,
   VtokenAssemblePayload,
@@ -435,6 +436,8 @@ export type RuntimeEfficiencyShedState = {
   transitionCount: number;
   lastTransitionAt: number | null;
 };
+export type RuntimeBackgroundWorkState = Pick<BackgroundWorkGateState, 'deferring' | 'reason' | 'deferredCount' | 'resumeCount' | 'lastDeferReason' | 'pendingCount' | 'transitionCount'>;
+
 export type RuntimeEfficiencyState = {
   /** Persisted user preference. */
   enabled: boolean;
@@ -446,6 +449,8 @@ export type RuntimeEfficiencyState = {
   summary: RuntimeEfficiencySummary | null;
   /** Load-shed policy state, or null before the policy has been created. */
   shed: RuntimeEfficiencyShedState | null;
+  /** Background work gate state, or null while runtime efficiency sampling is stopped. */
+  backgroundWork: RuntimeBackgroundWorkState | null;
 };
 export type RuntimeEfficiencySetEnabledPayload = { enabled: boolean };
 

@@ -575,6 +575,8 @@
       "cpu": "CPU {{value}}%",
       "rss": "内存 {{value}}",
       "shedding": "已降载",
+      "backgroundDeferred": "后台任务已延后：{{reason}}",
+      "backgroundSummary": "后台延后 {{deferred}} 次 · 恢复 {{resumed}} 次",
       "enabledToast": "已开启运行时效率采样",
       "disabledToast": "已关闭运行时效率采样",
       "loadFailed": "读取运行时效率状态失败",

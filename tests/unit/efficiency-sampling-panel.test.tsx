@@ -41,7 +41,7 @@ vi.mock('sonner', () => ({
 }));
 
 function unmeasuredState(enabled: boolean): RuntimeEfficiencyState {
-  return { enabled, running: false, measured: false, summary: null, shed: null };
+  return { enabled, running: false, measured: false, summary: null, shed: null, backgroundWork: null };
 }
 
 describe('EfficiencySamplingPanel', () => {
@@ -86,11 +86,13 @@ describe('EfficiencySamplingPanel', () => {
         shedSampleCount: 0,
       },
       shed: { shedding: false, reason: null, activeReasons: [], transitionCount: 0, lastTransitionAt: null },
+      backgroundWork: { deferring: false, reason: null, deferredCount: 2, resumeCount: 1, lastDeferReason: 'tree-rss', pendingCount: 0, transitionCount: 2 },
     });
     render(<EfficiencySamplingPanel />);
 
     await waitFor(() => expect(screen.getByTestId('settings-efficiency-sample-count')).toBeTruthy());
     expect(screen.getByTestId('settings-efficiency-cpu')).toBeTruthy();
+    expect(screen.getByTestId('settings-efficiency-background-work')).toBeTruthy();
     expect(screen.queryByTestId('settings-efficiency-not-sampled')).toBeNull();
   });
 
