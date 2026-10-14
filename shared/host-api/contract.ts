@@ -26,6 +26,7 @@ import type {
   DcsProdFlagsSnapshot,
 } from '../dcs/prod-flags-control';
 import type { PermissionDecisionEvent } from '../product-semantics';
+import type { SandboxDenialDetails } from '../sandbox/errors';
 import type {
   AgentAvatarPreset,
   AgentReasoningEffort,
@@ -527,6 +528,7 @@ export type WorkspaceTerminalRunResult = HostSuccess & {
   timeoutMs?: number;
   blocked?: boolean;
   approvalRequired?: boolean;
+  sandboxDenial?: SandboxDenialDetails;
   approval?: PermissionApprovalEvent;
   timedOut?: boolean;
   reason?: string;

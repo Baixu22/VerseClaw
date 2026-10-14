@@ -136,12 +136,13 @@ describe('gateway permission approval flow', () => {
     const first = await api.rpc({
       method: 'tools.exec',
       params: { command: 'git clean -fd' },
-    }) as { approval?: { id: string }; approvalRequired?: boolean };
+    }) as { approval?: { id: string }; approvalRequired?: boolean; sandboxDenial?: unknown };
     expect(first).toMatchObject({
       success: false,
       blocked: true,
       approvalRequired: true,
     });
+    expect(first.sandboxDenial).toBeUndefined();
     expect(gatewayManager.rpc).not.toHaveBeenCalled();
 
     const approvalId = first.approval?.id;
@@ -299,6 +300,46 @@ describe('gateway permission approval flow', () => {
     }));
     expect(gatewayManager.rpc).toHaveBeenCalledWith('mission.tick', { missionId: 'mission-knowledge-1' }, undefined);
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
+  });
+
+
+  it('returns structured sandbox denial details for a fail-closed gateway action', async () => {
+    activeWorkspace.profile = workspace('fullAccess');
+    const gatewayManager = {
+      getStatus: vi.fn(() => ({ state: 'running', port: 18789 })),
+      rpc: vi.fn(async () => ({ ok: true })),
+    };
+    const backpressure = {
+      run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)),
+    };
+    setSandboxHighRiskPolicyLoader(async () => ({
+      degraded: true,
+      strengthRequired: true,
+      requestedProviderId: 'docker-strong',
+      effectiveProviderId: 'policy-light',
+      runtimeLevel: 'policy',
+      degradeReason: 'Docker strong sandbox is unavailable.',
+    }));
+    const { createGatewayApi } = await import('@electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, backpressure as never);
+
+    await expect(api.rpc({
+      method: 'tools.exec',
+      params: { command: 'git clean -fd' },
+    })).resolves.toMatchObject({
+      success: false,
+      blocked: true,
+      sandboxDenial: {
+        code: 'SANDBOX_DENIED',
+        category: 'sandbox-denial',
+        mechanism: 'sandbox-gate',
+        operation: 'exec',
+        requestedProviderId: 'docker-strong',
+        effectiveProviderId: 'policy-light',
+        runtimeLevel: 'policy',
+      },
+    });
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
   });
 
 });

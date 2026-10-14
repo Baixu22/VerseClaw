@@ -11,6 +11,10 @@ describe('error-model', () => {
     expect(mapBackendErrorCode('UNSUPPORTED')).toBe('CHANNEL_UNAVAILABLE');
   });
 
+  it('maps structured sandbox denials to permission while preserving their backend code', () => {
+    expect(mapBackendErrorCode('SANDBOX_DENIED')).toBe('PERMISSION');
+  });
+
   it('maps the high-frequency provider codes the unified exit answers for', () => {
     expect(mapBackendErrorCode('INSUFFICIENT_BALANCE')).toBe('BILLING');
     expect(mapBackendErrorCode('INVALID_API_KEY')).toBe('AUTH_PERMANENT');

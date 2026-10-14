@@ -162,9 +162,22 @@ export function capToolResultText(
   if (originalLength <= safeMax) {
     return { text: text ?? '', truncated: false, originalLength, maxChars: safeMax };
   }
-  const keep = Math.max(0, safeMax - 48);
+  const markerPrefix = '\n...[tool result truncated ';
+  const markerSuffix = ' chars]...\n';
+  const maxDroppedDigits = String(originalLength).length;
+  const contentBudget = Math.max(
+    0,
+    safeMax - markerPrefix.length - markerSuffix.length - maxDroppedDigits,
+  );
+  const headChars = Math.ceil(contentBudget / 2);
+  const tailChars = Math.floor(contentBudget / 2);
+  const dropped = originalLength - headChars - tailChars;
   return {
-    text: `${text.slice(0, keep)}\n...[tool result truncated ${originalLength - keep} chars]`,
+    text: [
+      text.slice(0, headChars),
+      `${markerPrefix}${dropped}${markerSuffix}`,
+      tailChars > 0 ? text.slice(-tailChars) : '',
+    ].join(''),
     truncated: true,
     originalLength,
     maxChars: safeMax,

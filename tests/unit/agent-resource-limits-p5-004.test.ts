@@ -85,12 +85,23 @@ describe('P5-004 history memory ceiling (A2)', () => {
 describe('P5-004 tool result flood + timeout (A3)', () => {
   it('truncates tool result floods', () => {
     configureAgentResourceLimits({ maxToolResultChars: 200 });
-    const flood = 'X'.repeat(10_000);
+    const flood = 'HEAD:' + 'X'.repeat(9_990) + ':TAIL-STACK-TRACE-ERROR';
     const capped = capToolResultText(flood);
     expect(capped.truncated).toBe(true);
     expect(capped.text.length).toBeLessThanOrEqual(200);
     expect(capped.text).toMatch(/truncated/i);
-    expect(capped.originalLength).toBe(10_000);
+    expect(capped.text.startsWith('HEAD:')).toBe(true);
+    expect(capped.text.endsWith(':TAIL-STACK-TRACE-ERROR')).toBe(true);
+    expect(capped.originalLength).toBe(flood.length);
+  });
+
+  it('keeps both the head and the error tail when truncating large results', () => {
+    const text = 'compile-start:' + 'A'.repeat(500) + ':error TS9999: exact failure tail';
+    const capped = capToolResultText(text, 128);
+    expect(capped.truncated).toBe(true);
+    expect(capped.text.length).toBeLessThanOrEqual(128);
+    expect(capped.text).toContain('compile-start:');
+    expect(capped.text).toContain('error TS9999: exact failure tail');
   });
 
   it('detects turn timeout for abort/release path', () => {

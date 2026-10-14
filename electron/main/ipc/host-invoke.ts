@@ -46,6 +46,7 @@ async function withHostActionTimeout<T>(
 type StructuredHostErrorSignals = {
   code?: string;
   status?: number;
+  details?: Record<string, unknown>;
 };
 
 function readStructuredStatus(value: unknown): number | undefined {
@@ -77,10 +78,30 @@ function collectStructuredHostErrorSignals(
   const status = readStructuredStatus(record.status)
     ?? readStructuredStatus(record.statusCode)
     ?? readStructuredStatus(record.httpStatus);
-  if (code || status) return { code, status };
+  const details: Record<string, unknown> = {};
+  if (code === 'SANDBOX_DENIED' || record.name === 'SandboxDenialError') {
+    for (const key of [
+      'mechanism',
+      'path',
+      'operation',
+      'requestedProviderId',
+      'effectiveProviderId',
+      'runtimeLevel',
+    ]) {
+      const value = readStructuredString(record[key]);
+      if (value) details[key] = value;
+    }
+  }
+  if (code || status || Object.keys(details).length > 0) {
+    return {
+      ...(code ? { code } : {}),
+      ...(status ? { status } : {}),
+      ...(Object.keys(details).length > 0 ? { details } : {}),
+    };
+  }
   for (const nested of [record.error, record.response, record.data, record.cause]) {
     const signals = collectStructuredHostErrorSignals(nested, seen);
-    if (signals.code || signals.status) return signals;
+    if (signals.code || signals.status || signals.details) return signals;
   }
   return {};
 }
@@ -258,7 +279,7 @@ export function createHostInvokeDispatcher(
       }
       const rawMessage = error instanceof Error ? error.message : String(error);
       const signals = collectStructuredHostErrorSignals(error);
-      const details: Record<string, unknown> = {};
+      const details: Record<string, unknown> = { ...(signals.details ?? {}) };
       if (signals.code) details.backendCode = signals.code;
       if (signals.status) details.status = signals.status;
       return {

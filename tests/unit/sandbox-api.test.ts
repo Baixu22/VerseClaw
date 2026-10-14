@@ -189,4 +189,20 @@ describe('sandbox api', () => {
     expect(explained.explain.some((line: string) => /Degraded: yes/i.test(line) || /degraded/i.test(line))).toBe(true);
   });
 
+
+  it('does not advertise the unimplemented restricted-token capability', async () => {
+    const { detectSandboxProviders } = await import('@electron/utils/sandbox-provider-detection');
+    const providers = await detectSandboxProviders({ forceRefresh: true });
+    const windowsLight = providers.find((provider) => provider.id === 'windows-light');
+
+    expect(windowsLight).toBeDefined();
+    expect(windowsLight?.capabilities).not.toContain('restricted-token');
+    if (process.platform === 'win32') {
+      expect(windowsLight).toMatchObject({
+        available: true,
+        capabilities: expect.arrayContaining(['process-limits']),
+      });
+    }
+  });
+
 });
