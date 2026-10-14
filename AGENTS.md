@@ -106,7 +106,7 @@ Current performance limits to watch:
 - **UI change validation**: Any user-visible UI change should include or update an Electron E2E spec in the same PR so the interaction is covered by Playwright.
 - **i18n & styling conventions**: New user-facing features must (1) route all text through `react-i18next` with full locale coverage (`en` / `zh` / `ja` / `ru` under `shared/i18n/locales/<lang>/<ns>.json`) — never hardcode display strings, and (2) use the design tokens and substitution rules documented in `src/styles/globals.css` (surfaces `bg-surface-modal` / `bg-surface-input`, selected state `bg-black/5 dark:bg-white/10`, status colours `text-X-700 dark:text-X-400`, page H1/H2 `font-serif font-normal tracking-tight`, etc.) — see the *Component conventions* block in `globals.css` for the full substitution table.
 - **Renderer/Main API boundary (important)**:
-  - Renderer must use `src/lib/host-api.ts` and `src/lib/api-client.ts` as the single entry for backend calls.
+  - Renderer must use `src/lib/host-api.ts` and `src/lib/host-api-client.ts` as the single entry for backend calls.
   - Do not add new direct `window.electron.ipcRenderer.invoke(...)` calls in pages/components; expose them through host-api/api-client instead.
   - Do not call Gateway HTTP endpoints directly from renderer (`fetch('http://127.0.0.1:18789/...')` etc.). Use Main-process proxy channels (`hostapi:fetch`, `gateway:httpProxy`) to avoid CORS/env drift.
   - Transport policy is Main-owned and fixed as `WS -> HTTP -> IPC fallback`; renderer should not implement protocol switching UI/business logic.
@@ -126,12 +126,45 @@ MCP server 脚本路径：
 
 如需在 Codex 重启后重新注册，运行：
 ```powershell
-& "$env:LOCALAPPDATA\OpenAI\Codex\bin\8e55c2dd143b6354\codex.exe" mcp add bash-shell -- node "C:\Users\27933\Desktop\Verse Claw\verse-claw\.codex-tools\bash-mcp-server\scripts\bash-mcp-server.mjs"
+& "$env:LOCALAPPDATA\OpenAI\Codex\bin\8e55c2dd143b6354\codex.exe" mcp add bash-shell -- node "%USERPROFILE%\Desktop\Verse Claw\verse-claw\.codex-tools\bash-mcp-server\scripts\bash-mcp-server.mjs"
 ```
 或运行安装脚本：
 ```powershell
 .codex-tools\bash-mcp-server\install-mcp.ps1
 ```
+
+## Disk & temp policy（C: 盘资源紧张，临时文件一律走 D:）
+
+本机 `C:` 长期接近满盘（曾出现 0 字节可用），构建/测试在写临时文件时会直接失败。
+这类失败看起来像代码错误，实际是环境问题：`磁盘空间不足` / `ENOSPC` /
+`no space left on device`。**所有大体积临时产物都写到 `D:`。**
+
+在运行任何会产生大量临时输出的命令前 —— `pnpm install`、`pnpm test`、
+`pnpm run test:e2e`、`pnpm run build:*`、`pnpm --dir openclaw_runtime run build`、
+vitest、playwright、tsgo —— 先把进程临时目录指向 `D:`：
+
+- PowerShell（本仓在 Windows 上的默认 shell）：
+
+  ```powershell
+  $env:TEMP = 'D:\tmp'; $env:TMP = 'D:\tmp'
+  New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
+  ```
+
+- Bash / Git Bash：
+
+  ```bash
+  export TMPDIR=/d/tmp && mkdir -p "$TMPDIR"
+  ```
+
+约定：
+
+- 长日志不要 `Tee-Object` 到 `%TEMP%`（在 `C:`）；写到 `D:\tmp\<name>.log`，或直接读命令输出。
+- 临时脚本、fixture、trace、截图放 `D:\tmp` 或仓库内已忽略的目录，不要新建未忽略的临时目录。
+- Playwright 的 `test-results/`、`playwright-report/` 已在 `.gitignore` 中；如要改写输出目录，同样指向 `D:`。
+- 遇到磁盘空间报错时先看 `Get-PSDrive C` 的剩余空间，切到 `D:` 后重跑；**这几乎总是环境失败，不是代码失败**，也不要因此放宽门禁或把该失败写进验收证据。
+- 该策略不授权为腾空间删除用户数据、其他 worktree 或未跟踪文件；只清理 agent 自己产生的大体积临时输出。
+
+规则文件：`harness/specs/rules/disk-temp-policy.md`。
 
 ## Shell Strategy (Git Bash as POSIX shell)
 
