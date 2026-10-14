@@ -208,6 +208,8 @@ def main() -> int:
     if not WITH_ARM.exists():
         print(f"ERROR: missing {WITH_ARM}; merge the with arm first", file=sys.stderr)
         return 2
+    with_payload = json.loads(WITH_ARM.read_text(encoding="utf-8-sig"))
+    collection_seeds = sorted(set((with_payload.get("live_config") or {}).get("seeds") or []))
     if not have_without and any(needs_without for _, _, needs_without in planned):
         if not args.allow_missing_without:
             print(f"ERROR: missing {WITHOUT_ARM}; use --with-only for an explicit subset, "
@@ -222,8 +224,14 @@ def main() -> int:
         if args.with_only and needs_without:
             skipped.append(label)
             continue
+        if label == "run_variance" and collection_seeds and len(collection_seeds) < 2:
+            print(f"skipped {label}: needs >=2 distinct seeds; collection has {collection_seeds}", flush=True)
+            skipped.append(label)
+            continue
         print(f"\n{'=' * 72}\n[{time.strftime('%H:%M:%S')}] {label}\n{'=' * 72}", flush=True)
         child_argv = list(argv)
+        if label == "task_design_audit":
+            child_argv.append("--allow-subset")
         if label == "task_set_audit":
             child_argv.extend(["--task-set", str(args.task_set)])
         if args.no_endpoint and label == "token_proxy_calibration":

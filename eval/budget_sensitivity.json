@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.budget-sensitivity/v1",
-  "generated_at": "2026-10-14T07:36:31.273898+00:00",
+  "generated_at": "2026-10-14T10:20:14.993599+00:00",
   "generator": "tools/budget_sensitivity.py",
   "method": {
     "rule": "docs/acceptance-criteria.md §0.5.2",
@@ -31,7 +31,7 @@
       "bench/aci/results/live_ab_without_read_files.json",
       "tools/budget_sensitivity.py"
     ],
-    "fingerprint": "79b4c70f7a8fede1422bf7a89e873261443a8d1339de23733bcedd93c3c354c8"
+    "fingerprint": "2f898a607481628151a6e827df2f4754d3215c6d789ae5a81e13d3ac4f2f953e"
   },
   "arms": [
     {
@@ -346,11 +346,11 @@
           "rows": 1,
           "completion_truncated_rows": 0,
           "completion_truncated_rate": 0.0,
-          "turn_capped_rows": 0,
-          "turn_capped_rate": 0.0,
+          "turn_capped_rows": 1,
+          "turn_capped_rate": 1.0,
           "budget_sensitive_completion": false,
-          "budget_sensitive_turn": false,
-          "budget_sensitive_any": false,
+          "budget_sensitive_turn": true,
+          "budget_sensitive_any": true,
           "budget_sensitive": false
         },
         {
@@ -383,7 +383,9 @@
         }
       ],
       "sensitive_task_ids": [],
-      "sensitive_task_ids_any": []
+      "sensitive_task_ids_any": [
+        "rust_search_and_edit"
+      ]
     },
     {
       "artifact": "without_read_files",

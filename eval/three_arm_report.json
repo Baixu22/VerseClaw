@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.three_arm_report/v1",
-  "generated_at": "2026-10-14T08:09:02.654416+00:00",
+  "generated_at": "2026-10-14T10:20:31.331430+00:00",
   "generator": "tools/three_arm_report.py",
   "source": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json",
   "source_arm": "latest_live.json",
@@ -39,8 +39,8 @@
       ],
       "harness_crash_tasks": [],
       "avg_tool_calls": 2.875,
-      "avg_observation_tokens": 237.25,
-      "median_observation_tokens": 210.5
+      "avg_observation_tokens": 279.5,
+      "median_observation_tokens": 200.0
     },
     "raw_shell_coached": {
       "condition": "raw_shell_coached",
@@ -69,9 +69,9 @@
         1.0
       ],
       "harness_crash_tasks": [],
-      "avg_tool_calls": 3.125,
-      "avg_observation_tokens": 189.25,
-      "median_observation_tokens": 165.5
+      "avg_tool_calls": 2.625,
+      "avg_observation_tokens": 170.0,
+      "median_observation_tokens": 168.0
     },
     "verseshell_aci": {
       "condition": "verseshell_aci",
@@ -83,13 +83,13 @@
         0.6756,
         1.0
       ],
-      "at_cap": 0,
-      "at_cap_rate": 0.0,
-      "turn_cap_binding": false,
+      "at_cap": 1,
+      "at_cap_rate": 0.125,
+      "turn_cap_binding": true,
       "at_token_cap": 0,
       "at_token_cap_rate": 0.0,
       "token_cap_binding": false,
-      "cap_binding": false,
+      "cap_binding": true,
       "harness_crash": 0,
       "harness_crash_rate": 0.0,
       "n_scored_excluding_harness_crash": 8,
@@ -100,9 +100,9 @@
         1.0
       ],
       "harness_crash_tasks": [],
-      "avg_tool_calls": 4.125,
-      "avg_observation_tokens": 298.25,
-      "median_observation_tokens": 274.0
+      "avg_tool_calls": 4.375,
+      "avg_observation_tokens": 304.25,
+      "median_observation_tokens": 242.5
     }
   },
   "contrasts": [
@@ -121,13 +121,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 1.4348,
+          "point_estimate": 1.5217,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.6938,
+            "point_estimate": 1.5521,
             "bootstrap_ci95": [
-              1.1375,
-              2.2875
+              1.25,
+              1.8438
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -136,19 +136,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            1.0,
-            2.1111
+            1.16,
+            1.9048
           ],
           "bootstrap_ci95_row": [
-            1.0,
-            2.1111
+            1.16,
+            1.9048
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": 0.0,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            1.0,
-            2.1111
+            1.16,
+            1.9048
           ],
           "frozen_target": 0.7
         },
@@ -157,13 +157,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 1.2571,
+          "point_estimate": 1.0886,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.31,
+            "point_estimate": 1.4574,
             "bootstrap_ci95": [
-              1.0744,
-              1.5651
+              1.0412,
+              1.8862
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -172,19 +172,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            1.037,
-            1.5333
+            0.8691,
+            1.6441
           ],
           "bootstrap_ci95_row": [
-            1.037,
-            1.5333
+            0.8691,
+            1.6441
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": 0.0,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            1.037,
-            1.5333
+            0.8691,
+            1.6441
           ],
           "frozen_target": 0.6
         },
@@ -193,13 +193,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 3.1745,
+          "point_estimate": 3.1386,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 3.448,
+            "point_estimate": 3.2315,
             "bootstrap_ci95": [
-              2.6055,
-              4.408
+              2.8224,
+              3.5985
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -208,19 +208,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            2.3467,
-            4.255
+            2.7743,
+            3.5248
           ],
           "bootstrap_ci95_row": [
-            2.3467,
-            4.255
+            2.7743,
+            3.5248
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            2.3467,
-            4.255
+            2.7743,
+            3.5248
           ]
         },
         "prompt_token_ratio_D_over_baseline": {
@@ -228,13 +228,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 3.3384,
+          "point_estimate": 3.33,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 3.6179,
+            "point_estimate": 3.4362,
             "bootstrap_ci95": [
-              2.7359,
-              4.6174
+              2.9622,
+              3.8434
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -243,19 +243,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            2.4803,
-            4.4493
+            2.89,
+            3.7953
           ],
           "bootstrap_ci95_row": [
-            2.4803,
-            4.4493
+            2.89,
+            3.7953
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            2.4803,
-            4.4493
+            2.89,
+            3.7953
           ]
         },
         "completion_token_ratio_D_over_baseline": {
@@ -263,13 +263,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 1.4072,
+          "point_estimate": 1.1947,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.6299,
+            "point_estimate": 1.2028,
             "bootstrap_ci95": [
-              1.0116,
-              2.4109
+              0.9837,
+              1.5037
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -278,19 +278,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            0.7636,
-            2.3777
+            1.0017,
+            1.5055
           ],
           "bootstrap_ci95_row": [
-            0.7636,
-            2.3777
+            1.0017,
+            1.5055
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            0.7636,
-            2.3777
+            1.0017,
+            1.5055
           ]
         },
         "ratio_caliber": {
@@ -319,7 +319,7 @@
       },
       "cap_excluded": {
         "subset": "no_turn_or_completion_cap",
-        "n_pairs": 8,
+        "n_pairs": 7,
         "success_rate_baseline": 1.0,
         "success_rate_D": 1.0,
         "success_delta_D_minus_baseline": 0.0,
@@ -327,179 +327,179 @@
         "only_D_wins": 0,
         "tool_call_ratio_D_over_baseline": {
           "kind": "tool_call_ratio",
-          "candidate_pairs": 8,
+          "candidate_pairs": 7,
           "excluded_nonfinite_pairs": 0,
-          "n_pairs": 8,
-          "point_estimate": 1.4348,
+          "n_pairs": 7,
+          "point_estimate": 1.3684,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.6938,
+            "point_estimate": 1.4524,
             "bootstrap_ci95": [
-              1.1375,
-              2.2875
+              1.1786,
+              1.7024
             ],
             "bootstrap_unit": "task",
-            "n_pairs": 8,
+            "n_pairs": 7,
             "excluded_nonpositive_baseline": 0,
             "weighting": "equal weight per paired cell; seeds retained in task clusters"
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            1.0,
-            2.1111
+            1.0833,
+            1.6875
           ],
           "bootstrap_ci95_row": [
-            1.0,
-            2.1111
+            1.0833,
+            1.6875
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": 0.0,
-          "n_tasks": 8,
+          "n_tasks": 7,
           "bootstrap_ci95_task": [
-            1.0,
-            2.1111
+            1.0833,
+            1.6875
           ],
           "frozen_target": 0.7
         },
         "observation_token_ratio_D_over_baseline": {
           "kind": "observation_token_ratio",
-          "candidate_pairs": 8,
+          "candidate_pairs": 7,
           "excluded_nonfinite_pairs": 0,
-          "n_pairs": 8,
-          "point_estimate": 1.2571,
+          "n_pairs": 7,
+          "point_estimate": 1.3014,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.31,
+            "point_estimate": 1.5588,
             "bootstrap_ci95": [
-              1.0744,
-              1.5651
+              1.1473,
+              1.9816
             ],
             "bootstrap_unit": "task",
-            "n_pairs": 8,
+            "n_pairs": 7,
             "excluded_nonpositive_baseline": 0,
             "weighting": "equal weight per paired cell; seeds retained in task clusters"
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            1.037,
-            1.5333
+            1.0364,
+            1.7904
           ],
           "bootstrap_ci95_row": [
-            1.037,
-            1.5333
+            1.0364,
+            1.7904
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": 0.0,
-          "n_tasks": 8,
+          "n_tasks": 7,
           "bootstrap_ci95_task": [
-            1.037,
-            1.5333
+            1.0364,
+            1.7904
           ],
           "frozen_target": 0.6
         },
         "usage_token_ratio_D_over_baseline": {
           "kind": "usage_token_ratio",
-          "candidate_pairs": 8,
+          "candidate_pairs": 7,
           "excluded_nonfinite_pairs": 0,
-          "n_pairs": 8,
-          "point_estimate": 3.1745,
+          "n_pairs": 7,
+          "point_estimate": 3.1531,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 3.448,
+            "point_estimate": 3.2512,
             "bootstrap_ci95": [
-              2.6055,
-              4.408
+              2.7863,
+              3.6677
             ],
             "bootstrap_unit": "task",
-            "n_pairs": 8,
+            "n_pairs": 7,
             "excluded_nonpositive_baseline": 0,
             "weighting": "equal weight per paired cell; seeds retained in task clusters"
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            2.3467,
-            4.255
+            2.7105,
+            3.6339
           ],
           "bootstrap_ci95_row": [
-            2.3467,
-            4.255
+            2.7105,
+            3.6339
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
-          "n_tasks": 8,
+          "n_tasks": 7,
           "bootstrap_ci95_task": [
-            2.3467,
-            4.255
+            2.7105,
+            3.6339
           ]
         },
         "prompt_token_ratio_D_over_baseline": {
           "kind": "prompt_token_ratio",
-          "candidate_pairs": 8,
+          "candidate_pairs": 7,
           "excluded_nonfinite_pairs": 0,
-          "n_pairs": 8,
-          "point_estimate": 3.3384,
+          "n_pairs": 7,
+          "point_estimate": 3.3442,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 3.6179,
+            "point_estimate": 3.4576,
             "bootstrap_ci95": [
-              2.7359,
-              4.6174
+              2.9207,
+              3.9252
             ],
             "bootstrap_unit": "task",
-            "n_pairs": 8,
+            "n_pairs": 7,
             "excluded_nonpositive_baseline": 0,
             "weighting": "equal weight per paired cell; seeds retained in task clusters"
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            2.4803,
-            4.4493
+            2.8109,
+            3.9153
           ],
           "bootstrap_ci95_row": [
-            2.4803,
-            4.4493
+            2.8109,
+            3.9153
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
-          "n_tasks": 8,
+          "n_tasks": 7,
           "bootstrap_ci95_task": [
-            2.4803,
-            4.4493
+            2.8109,
+            3.9153
           ]
         },
         "completion_token_ratio_D_over_baseline": {
           "kind": "completion_token_ratio",
-          "candidate_pairs": 8,
+          "candidate_pairs": 7,
           "excluded_nonfinite_pairs": 0,
-          "n_pairs": 8,
-          "point_estimate": 1.4072,
+          "n_pairs": 7,
+          "point_estimate": 1.1981,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.6299,
+            "point_estimate": 1.2054,
             "bootstrap_ci95": [
-              1.0116,
-              2.4109
+              0.9548,
+              1.5371
             ],
             "bootstrap_unit": "task",
-            "n_pairs": 8,
+            "n_pairs": 7,
             "excluded_nonpositive_baseline": 0,
             "weighting": "equal weight per paired cell; seeds retained in task clusters"
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            0.7636,
-            2.3777
+            0.9699,
+            1.5856
           ],
           "bootstrap_ci95_row": [
-            0.7636,
-            2.3777
+            0.9699,
+            1.5856
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
-          "n_tasks": 8,
+          "n_tasks": 7,
           "bootstrap_ci95_task": [
-            0.7636,
-            2.3777
+            0.9699,
+            1.5856
           ]
         },
         "ratio_caliber": {
@@ -526,7 +526,7 @@
         },
         "usage_note": "Unknown usage is excluded, never zero-imputed; candidate_pairs, n_pairs and excluded_nonfinite_pairs describe the cost denominator, not the score denominator. caliber: see `ratio_caliber`. `usage_*` ratios use the endpoint's `usage` field accumulated over observed requests in usage-eligible pairs (system prompt + tool schemas + re-sent history + reasoning) — i.e. endpoint-usage caliber, NOT the length of one system prompt or one tool-schema payload, and not a money cost or a reconciled bill. It is the broader endpoint-usage reading the pre-registration requires, so when it disagrees in direction with the observation-token proxy it governs (docs/acceptance-criteria.md §4.2), while `observation_token_ratio_D_over_baseline` stays proxy-caliber and must be quoted as such"
       },
-      "cap_excluded_dropped": 0,
+      "cap_excluded_dropped": 1,
       "excluded_count_unit": "paired_cells",
       "harness_crash_excluded": {
         "subset": "no_harness_crash",
@@ -541,13 +541,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 1.4348,
+          "point_estimate": 1.5217,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.6938,
+            "point_estimate": 1.5521,
             "bootstrap_ci95": [
-              1.1375,
-              2.2875
+              1.25,
+              1.8438
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -556,19 +556,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            1.0,
-            2.1111
+            1.16,
+            1.9048
           ],
           "bootstrap_ci95_row": [
-            1.0,
-            2.1111
+            1.16,
+            1.9048
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": 0.0,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            1.0,
-            2.1111
+            1.16,
+            1.9048
           ],
           "frozen_target": 0.7
         },
@@ -577,13 +577,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 1.2571,
+          "point_estimate": 1.0886,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.31,
+            "point_estimate": 1.4574,
             "bootstrap_ci95": [
-              1.0744,
-              1.5651
+              1.0412,
+              1.8862
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -592,19 +592,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            1.037,
-            1.5333
+            0.8691,
+            1.6441
           ],
           "bootstrap_ci95_row": [
-            1.037,
-            1.5333
+            0.8691,
+            1.6441
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": 0.0,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            1.037,
-            1.5333
+            0.8691,
+            1.6441
           ],
           "frozen_target": 0.6
         },
@@ -613,13 +613,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 3.1745,
+          "point_estimate": 3.1386,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 3.448,
+            "point_estimate": 3.2315,
             "bootstrap_ci95": [
-              2.6055,
-              4.408
+              2.8224,
+              3.5985
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -628,19 +628,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            2.3467,
-            4.255
+            2.7743,
+            3.5248
           ],
           "bootstrap_ci95_row": [
-            2.3467,
-            4.255
+            2.7743,
+            3.5248
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            2.3467,
-            4.255
+            2.7743,
+            3.5248
           ]
         },
         "prompt_token_ratio_D_over_baseline": {
@@ -648,13 +648,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 3.3384,
+          "point_estimate": 3.33,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 3.6179,
+            "point_estimate": 3.4362,
             "bootstrap_ci95": [
-              2.7359,
-              4.6174
+              2.9622,
+              3.8434
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -663,19 +663,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            2.4803,
-            4.4493
+            2.89,
+            3.7953
           ],
           "bootstrap_ci95_row": [
-            2.4803,
-            4.4493
+            2.89,
+            3.7953
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            2.4803,
-            4.4493
+            2.89,
+            3.7953
           ]
         },
         "completion_token_ratio_D_over_baseline": {
@@ -683,13 +683,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 1.4072,
+          "point_estimate": 1.1947,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.6299,
+            "point_estimate": 1.2028,
             "bootstrap_ci95": [
-              1.0116,
-              2.4109
+              0.9837,
+              1.5037
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -698,19 +698,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            0.7636,
-            2.3777
+            1.0017,
+            1.5055
           ],
           "bootstrap_ci95_row": [
-            0.7636,
-            2.3777
+            1.0017,
+            1.5055
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            0.7636,
-            2.3777
+            1.0017,
+            1.5055
           ]
         },
         "ratio_caliber": {
@@ -754,13 +754,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 1.32,
+          "point_estimate": 1.6667,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.3917,
+            "point_estimate": 1.8438,
             "bootstrap_ci95": [
-              1.1125,
-              1.6875
+              1.2188,
+              2.6562
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -769,19 +769,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            1.0345,
-            1.6818
+            1.1818,
+            2.4706
           ],
           "bootstrap_ci95_row": [
-            1.0345,
-            1.6818
+            1.1818,
+            2.4706
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": 0.0,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            1.0345,
-            1.6818
+            1.1818,
+            2.4706
           ],
           "frozen_target": 0.7
         },
@@ -790,13 +790,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 1.576,
+          "point_estimate": 1.7897,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.7155,
+            "point_estimate": 1.8813,
             "bootstrap_ci95": [
-              1.4277,
-              1.9788
+              1.4126,
+              2.3514
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -805,19 +805,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            1.2613,
-            1.8975
+            1.3102,
+            2.3604
           ],
           "bootstrap_ci95_row": [
-            1.2613,
-            1.8975
+            1.3102,
+            2.3604
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": 0.0,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            1.2613,
-            1.8975
+            1.3102,
+            2.3604
           ],
           "frozen_target": 0.6
         },
@@ -826,13 +826,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 2.915,
+          "point_estimate": 3.283,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 3.1411,
+            "point_estimate": 3.7515,
             "bootstrap_ci95": [
-              2.5014,
-              3.7316
+              2.4671,
+              5.225
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -841,19 +841,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            2.1826,
-            3.7309
+            2.1856,
+            4.9625
           ],
           "bootstrap_ci95_row": [
-            2.1826,
-            3.7309
+            2.1856,
+            4.9625
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            2.1826,
-            3.7309
+            2.1856,
+            4.9625
           ]
         },
         "prompt_token_ratio_D_over_baseline": {
@@ -861,13 +861,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 3.0132,
+          "point_estimate": 3.7803,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 3.2449,
+            "point_estimate": 4.0581,
             "bootstrap_ci95": [
-              2.5828,
-              3.8323
+              2.8283,
+              5.4988
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -876,19 +876,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            2.2552,
-            3.8397
+            2.6831,
+            5.3191
           ],
           "bootstrap_ci95_row": [
-            2.2552,
-            3.8397
+            2.6831,
+            5.3191
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            2.2552,
-            3.8397
+            2.6831,
+            5.3191
           ]
         },
         "completion_token_ratio_D_over_baseline": {
@@ -896,13 +896,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 1.59,
+          "point_estimate": 0.6951,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.7907,
+            "point_estimate": 1.5458,
             "bootstrap_ci95": [
-              1.1101,
-              2.7138
+              0.7879,
+              2.4027
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -911,19 +911,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            0.9893,
-            2.5353
+            0.2588,
+            2.1738
           ],
           "bootstrap_ci95_row": [
-            0.9893,
-            2.5353
+            0.2588,
+            2.1738
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            0.9893,
-            2.5353
+            0.2588,
+            2.1738
           ]
         },
         "ratio_caliber": {
@@ -952,7 +952,7 @@
       },
       "cap_excluded": {
         "subset": "no_turn_or_completion_cap",
-        "n_pairs": 8,
+        "n_pairs": 7,
         "success_rate_baseline": 1.0,
         "success_rate_D": 1.0,
         "success_delta_D_minus_baseline": 0.0,
@@ -960,179 +960,179 @@
         "only_D_wins": 0,
         "tool_call_ratio_D_over_baseline": {
           "kind": "tool_call_ratio",
-          "candidate_pairs": 8,
+          "candidate_pairs": 7,
           "excluded_nonfinite_pairs": 0,
-          "n_pairs": 8,
-          "point_estimate": 1.32,
+          "n_pairs": 7,
+          "point_estimate": 1.3684,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.3917,
+            "point_estimate": 1.4643,
             "bootstrap_ci95": [
-              1.1125,
-              1.6875
+              1.1786,
+              1.8571
             ],
             "bootstrap_unit": "task",
-            "n_pairs": 8,
+            "n_pairs": 7,
             "excluded_nonpositive_baseline": 0,
             "weighting": "equal weight per paired cell; seeds retained in task clusters"
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            1.0345,
-            1.6818
+            1.1304,
+            1.7857
           ],
           "bootstrap_ci95_row": [
-            1.0345,
-            1.6818
+            1.1304,
+            1.7857
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": 0.0,
-          "n_tasks": 8,
+          "n_tasks": 7,
           "bootstrap_ci95_task": [
-            1.0345,
-            1.6818
+            1.1304,
+            1.7857
           ],
           "frozen_target": 0.7
         },
         "observation_token_ratio_D_over_baseline": {
           "kind": "observation_token_ratio",
-          "candidate_pairs": 8,
+          "candidate_pairs": 7,
           "excluded_nonfinite_pairs": 0,
-          "n_pairs": 8,
-          "point_estimate": 1.576,
+          "n_pairs": 7,
+          "point_estimate": 1.5719,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.7155,
+            "point_estimate": 1.7332,
             "bootstrap_ci95": [
-              1.4277,
-              1.9788
+              1.3116,
+              2.2058
             ],
             "bootstrap_unit": "task",
-            "n_pairs": 8,
+            "n_pairs": 7,
             "excluded_nonpositive_baseline": 0,
             "weighting": "equal weight per paired cell; seeds retained in task clusters"
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            1.2613,
-            1.8975
+            1.2256,
+            2.0957
           ],
           "bootstrap_ci95_row": [
-            1.2613,
-            1.8975
+            1.2256,
+            2.0957
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": 0.0,
-          "n_tasks": 8,
+          "n_tasks": 7,
           "bootstrap_ci95_task": [
-            1.2613,
-            1.8975
+            1.2256,
+            2.0957
           ],
           "frozen_target": 0.6
         },
         "usage_token_ratio_D_over_baseline": {
           "kind": "usage_token_ratio",
-          "candidate_pairs": 8,
+          "candidate_pairs": 7,
           "excluded_nonfinite_pairs": 0,
-          "n_pairs": 8,
-          "point_estimate": 2.915,
+          "n_pairs": 7,
+          "point_estimate": 2.7627,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 3.1411,
+            "point_estimate": 3.1552,
             "bootstrap_ci95": [
-              2.5014,
-              3.7316
+              2.2405,
+              4.2636
             ],
             "bootstrap_unit": "task",
-            "n_pairs": 8,
+            "n_pairs": 7,
             "excluded_nonpositive_baseline": 0,
             "weighting": "equal weight per paired cell; seeds retained in task clusters"
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            2.1826,
-            3.7309
+            2.0112,
+            4.0082
           ],
           "bootstrap_ci95_row": [
-            2.1826,
-            3.7309
+            2.0112,
+            4.0082
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
-          "n_tasks": 8,
+          "n_tasks": 7,
           "bootstrap_ci95_task": [
-            2.1826,
-            3.7309
+            2.0112,
+            4.0082
           ]
         },
         "prompt_token_ratio_D_over_baseline": {
           "kind": "prompt_token_ratio",
-          "candidate_pairs": 8,
+          "candidate_pairs": 7,
           "excluded_nonfinite_pairs": 0,
-          "n_pairs": 8,
-          "point_estimate": 3.0132,
+          "n_pairs": 7,
+          "point_estimate": 3.2179,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 3.2449,
+            "point_estimate": 3.4528,
             "bootstrap_ci95": [
-              2.5828,
-              3.8323
+              2.6344,
+              4.4803
             ],
             "bootstrap_unit": "task",
-            "n_pairs": 8,
+            "n_pairs": 7,
             "excluded_nonpositive_baseline": 0,
             "weighting": "equal weight per paired cell; seeds retained in task clusters"
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            2.2552,
-            3.8397
+            2.5203,
+            4.285
           ],
           "bootstrap_ci95_row": [
-            2.2552,
-            3.8397
+            2.5203,
+            4.285
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
-          "n_tasks": 8,
+          "n_tasks": 7,
           "bootstrap_ci95_task": [
-            2.2552,
-            3.8397
+            2.5203,
+            4.285
           ]
         },
         "completion_token_ratio_D_over_baseline": {
           "kind": "completion_token_ratio",
-          "candidate_pairs": 8,
+          "candidate_pairs": 7,
           "excluded_nonfinite_pairs": 0,
-          "n_pairs": 8,
-          "point_estimate": 1.59,
+          "n_pairs": 7,
+          "point_estimate": 0.5482,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.7907,
+            "point_estimate": 1.2583,
             "bootstrap_ci95": [
-              1.1101,
-              2.7138
+              0.6573,
+              2.0603
             ],
             "bootstrap_unit": "task",
-            "n_pairs": 8,
+            "n_pairs": 7,
             "excluded_nonpositive_baseline": 0,
             "weighting": "equal weight per paired cell; seeds retained in task clusters"
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            0.9893,
-            2.5353
+            0.2069,
+            1.7887
           ],
           "bootstrap_ci95_row": [
-            0.9893,
-            2.5353
+            0.2069,
+            1.7887
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
-          "n_tasks": 8,
+          "n_tasks": 7,
           "bootstrap_ci95_task": [
-            0.9893,
-            2.5353
+            0.2069,
+            1.7887
           ]
         },
         "ratio_caliber": {
@@ -1159,7 +1159,7 @@
         },
         "usage_note": "Unknown usage is excluded, never zero-imputed; candidate_pairs, n_pairs and excluded_nonfinite_pairs describe the cost denominator, not the score denominator. caliber: see `ratio_caliber`. `usage_*` ratios use the endpoint's `usage` field accumulated over observed requests in usage-eligible pairs (system prompt + tool schemas + re-sent history + reasoning) — i.e. endpoint-usage caliber, NOT the length of one system prompt or one tool-schema payload, and not a money cost or a reconciled bill. It is the broader endpoint-usage reading the pre-registration requires, so when it disagrees in direction with the observation-token proxy it governs (docs/acceptance-criteria.md §4.2), while `observation_token_ratio_D_over_baseline` stays proxy-caliber and must be quoted as such"
       },
-      "cap_excluded_dropped": 0,
+      "cap_excluded_dropped": 1,
       "excluded_count_unit": "paired_cells",
       "harness_crash_excluded": {
         "subset": "no_harness_crash",
@@ -1174,13 +1174,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 1.32,
+          "point_estimate": 1.6667,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.3917,
+            "point_estimate": 1.8438,
             "bootstrap_ci95": [
-              1.1125,
-              1.6875
+              1.2188,
+              2.6562
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -1189,19 +1189,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            1.0345,
-            1.6818
+            1.1818,
+            2.4706
           ],
           "bootstrap_ci95_row": [
-            1.0345,
-            1.6818
+            1.1818,
+            2.4706
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": 0.0,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            1.0345,
-            1.6818
+            1.1818,
+            2.4706
           ],
           "frozen_target": 0.7
         },
@@ -1210,13 +1210,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 1.576,
+          "point_estimate": 1.7897,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.7155,
+            "point_estimate": 1.8813,
             "bootstrap_ci95": [
-              1.4277,
-              1.9788
+              1.4126,
+              2.3514
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -1225,19 +1225,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            1.2613,
-            1.8975
+            1.3102,
+            2.3604
           ],
           "bootstrap_ci95_row": [
-            1.2613,
-            1.8975
+            1.3102,
+            2.3604
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": 0.0,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            1.2613,
-            1.8975
+            1.3102,
+            2.3604
           ],
           "frozen_target": 0.6
         },
@@ -1246,13 +1246,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 2.915,
+          "point_estimate": 3.283,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 3.1411,
+            "point_estimate": 3.7515,
             "bootstrap_ci95": [
-              2.5014,
-              3.7316
+              2.4671,
+              5.225
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -1261,19 +1261,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            2.1826,
-            3.7309
+            2.1856,
+            4.9625
           ],
           "bootstrap_ci95_row": [
-            2.1826,
-            3.7309
+            2.1856,
+            4.9625
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            2.1826,
-            3.7309
+            2.1856,
+            4.9625
           ]
         },
         "prompt_token_ratio_D_over_baseline": {
@@ -1281,13 +1281,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 3.0132,
+          "point_estimate": 3.7803,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 3.2449,
+            "point_estimate": 4.0581,
             "bootstrap_ci95": [
-              2.5828,
-              3.8323
+              2.8283,
+              5.4988
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -1296,19 +1296,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            2.2552,
-            3.8397
+            2.6831,
+            5.3191
           ],
           "bootstrap_ci95_row": [
-            2.2552,
-            3.8397
+            2.6831,
+            5.3191
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            2.2552,
-            3.8397
+            2.6831,
+            5.3191
           ]
         },
         "completion_token_ratio_D_over_baseline": {
@@ -1316,13 +1316,13 @@
           "candidate_pairs": 8,
           "excluded_nonfinite_pairs": 0,
           "n_pairs": 8,
-          "point_estimate": 1.59,
+          "point_estimate": 0.6951,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.7907,
+            "point_estimate": 1.5458,
             "bootstrap_ci95": [
-              1.1101,
-              2.7138
+              0.7879,
+              2.4027
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -1331,19 +1331,19 @@
           },
           "bootstrap_unit": "task",
           "bootstrap_ci95": [
-            0.9893,
-            2.5353
+            0.2588,
+            2.1738
           ],
           "bootstrap_ci95_row": [
-            0.9893,
-            2.5353
+            0.2588,
+            2.1738
           ],
           "bootstrap_iterations": 20000,
           "prob_ratio_below_frozen_target": null,
           "n_tasks": 8,
           "bootstrap_ci95_task": [
-            0.9893,
-            2.5353
+            0.2588,
+            2.1738
           ]
         },
         "ratio_caliber": {
@@ -1373,10 +1373,14 @@
       "harness_crash_excluded_dropped": 0
     }
   ],
-  "cap_binding_arms": [],
-  "cap_binding_arms_by_turn": [],
+  "cap_binding_arms": [
+    "verseshell_aci"
+  ],
+  "cap_binding_arms_by_turn": [
+    "verseshell_aci"
+  ],
   "cap_binding_arms_by_completion_tokens": [],
-  "cap_ok": true,
+  "cap_ok": false,
   "harness_crash_arms": {},
   "harness_crash_total": 0,
   "row_policy": {
@@ -1408,8 +1412,8 @@
         "success_intention_to_treat": 1.0,
         "mean_tool_calls_analysable": 2.875,
         "mean_tool_calls_intention_to_treat": 2.875,
-        "mean_observation_tokens_analysable": 237.25,
-        "mean_observation_tokens_intention_to_treat": 237.25
+        "mean_observation_tokens_analysable": 279.5,
+        "mean_observation_tokens_intention_to_treat": 279.5
       },
       "raw_shell_coached": {
         "n": 8,
@@ -1432,43 +1436,43 @@
         "analysable_rate": 1.0,
         "success_analysable": 1.0,
         "success_intention_to_treat": 1.0,
-        "mean_tool_calls_analysable": 3.125,
-        "mean_tool_calls_intention_to_treat": 3.125,
-        "mean_observation_tokens_analysable": 189.25,
-        "mean_observation_tokens_intention_to_treat": 189.25
+        "mean_tool_calls_analysable": 2.625,
+        "mean_tool_calls_intention_to_treat": 2.625,
+        "mean_observation_tokens_analysable": 170.0,
+        "mean_observation_tokens_intention_to_treat": 170.0
       },
       "verseshell_aci": {
         "n": 8,
         "endpoint_failure": 0,
-        "cap_truncated": 0,
-        "analysable": 8,
+        "cap_truncated": 1,
+        "analysable": 7,
         "api_error": 0,
         "endpoint_rate": 0.0,
-        "cap_truncated_rate": 0.0,
+        "cap_truncated_rate": 0.125,
         "budget_axes": {
           "completion_cap": 0,
-          "turn_cap": 0,
+          "turn_cap": 1,
           "repeat_call_cap": 0,
           "overlap": 0,
-          "union": 0,
+          "union": 1,
           "completion_cap_rate": 0.0,
-          "turn_cap_rate": 0.0,
+          "turn_cap_rate": 0.125,
           "repeat_call_cap_rate": 0.0
         },
-        "analysable_rate": 1.0,
+        "analysable_rate": 0.875,
         "success_analysable": 1.0,
-        "success_intention_to_treat": 1.0,
-        "mean_tool_calls_analysable": 4.125,
-        "mean_tool_calls_intention_to_treat": 4.125,
-        "mean_observation_tokens_analysable": 298.25,
-        "mean_observation_tokens_intention_to_treat": 298.25
+        "success_intention_to_treat": 0.875,
+        "mean_tool_calls_analysable": 3.7143,
+        "mean_tool_calls_intention_to_treat": 4.375,
+        "mean_observation_tokens_analysable": 256.0,
+        "mean_observation_tokens_intention_to_treat": 304.25
       }
     },
     "comparisons": {
       "verseshell_aci_vs_raw_shell": {
         "baseline": "raw_shell",
         "treatment": "verseshell_aci",
-        "rates_ok": true,
+        "rates_ok": false,
         "cap_truncated_axes": {
           "raw_shell": {
             "completion_cap": 0,
@@ -1482,25 +1486,27 @@
           },
           "verseshell_aci": {
             "completion_cap": 0,
-            "turn_cap": 0,
+            "turn_cap": 1,
             "repeat_call_cap": 0,
             "overlap": 0,
-            "union": 0,
+            "union": 1,
             "completion_cap_rate": 0.0,
-            "turn_cap_rate": 0.0,
+            "turn_cap_rate": 0.125,
             "repeat_call_cap_rate": 0.0
           }
         },
         "success_delta_analysable": 0.0,
-        "success_delta_intention_to_treat": 0.0,
+        "success_delta_intention_to_treat": -0.125,
         "sign_agreement": true,
-        "claimable": true,
-        "policy_blocked_reasons": []
+        "claimable": false,
+        "policy_blocked_reasons": [
+          "exclusion_rate_above_10pct"
+        ]
       },
       "verseshell_aci_vs_raw_shell_coached": {
         "baseline": "raw_shell_coached",
         "treatment": "verseshell_aci",
-        "rates_ok": true,
+        "rates_ok": false,
         "cap_truncated_axes": {
           "raw_shell_coached": {
             "completion_cap": 0,
@@ -1514,20 +1520,22 @@
           },
           "verseshell_aci": {
             "completion_cap": 0,
-            "turn_cap": 0,
+            "turn_cap": 1,
             "repeat_call_cap": 0,
             "overlap": 0,
-            "union": 0,
+            "union": 1,
             "completion_cap_rate": 0.0,
-            "turn_cap_rate": 0.0,
+            "turn_cap_rate": 0.125,
             "repeat_call_cap_rate": 0.0
           }
         },
         "success_delta_analysable": 0.0,
-        "success_delta_intention_to_treat": 0.0,
+        "success_delta_intention_to_treat": -0.125,
         "sign_agreement": true,
-        "claimable": true,
-        "policy_blocked_reasons": []
+        "claimable": false,
+        "policy_blocked_reasons": [
+          "exclusion_rate_above_10pct"
+        ]
       }
     }
   },
@@ -1535,9 +1543,10 @@
   "acceptance_scope": "single_collection_diagnostic",
   "acceptance": {
     "verseshell_aci_vs_raw_shell": {
-      "row_policy_eligible": true,
-      "data_eligible": true,
+      "row_policy_eligible": false,
+      "data_eligible": false,
       "policy_blocked_reasons": [
+        "exclusion_rate_above_10pct",
         "complete_repeated_study_not_evaluated",
         "frozen_family_inference_not_evaluated"
       ],
@@ -1572,41 +1581,41 @@
             "success_intention_to_treat": 1.0,
             "mean_tool_calls_analysable": 2.875,
             "mean_tool_calls_intention_to_treat": 2.875,
-            "mean_observation_tokens_analysable": 237.25,
-            "mean_observation_tokens_intention_to_treat": 237.25
+            "mean_observation_tokens_analysable": 279.5,
+            "mean_observation_tokens_intention_to_treat": 279.5
           },
           "verseshell_aci": {
             "n": 8,
             "endpoint_failure": 0,
-            "cap_truncated": 0,
-            "analysable": 8,
+            "cap_truncated": 1,
+            "analysable": 7,
             "api_error": 0,
             "endpoint_rate": 0.0,
-            "cap_truncated_rate": 0.0,
+            "cap_truncated_rate": 0.125,
             "budget_axes": {
               "completion_cap": 0,
-              "turn_cap": 0,
+              "turn_cap": 1,
               "repeat_call_cap": 0,
               "overlap": 0,
-              "union": 0,
+              "union": 1,
               "completion_cap_rate": 0.0,
-              "turn_cap_rate": 0.0,
+              "turn_cap_rate": 0.125,
               "repeat_call_cap_rate": 0.0
             },
-            "analysable_rate": 1.0,
+            "analysable_rate": 0.875,
             "success_analysable": 1.0,
-            "success_intention_to_treat": 1.0,
-            "mean_tool_calls_analysable": 4.125,
-            "mean_tool_calls_intention_to_treat": 4.125,
-            "mean_observation_tokens_analysable": 298.25,
-            "mean_observation_tokens_intention_to_treat": 298.25
+            "success_intention_to_treat": 0.875,
+            "mean_tool_calls_analysable": 3.7143,
+            "mean_tool_calls_intention_to_treat": 4.375,
+            "mean_observation_tokens_analysable": 256.0,
+            "mean_observation_tokens_intention_to_treat": 304.25
           }
         },
         "comparisons": {
           "verseshell_aci_vs_raw_shell": {
             "baseline": "raw_shell",
             "treatment": "verseshell_aci",
-            "rates_ok": true,
+            "rates_ok": false,
             "cap_truncated_axes": {
               "raw_shell": {
                 "completion_cap": 0,
@@ -1620,20 +1629,22 @@
               },
               "verseshell_aci": {
                 "completion_cap": 0,
-                "turn_cap": 0,
+                "turn_cap": 1,
                 "repeat_call_cap": 0,
                 "overlap": 0,
-                "union": 0,
+                "union": 1,
                 "completion_cap_rate": 0.0,
-                "turn_cap_rate": 0.0,
+                "turn_cap_rate": 0.125,
                 "repeat_call_cap_rate": 0.0
               }
             },
             "success_delta_analysable": 0.0,
-            "success_delta_intention_to_treat": 0.0,
+            "success_delta_intention_to_treat": -0.125,
             "sign_agreement": true,
-            "claimable": true,
-            "policy_blocked_reasons": []
+            "claimable": false,
+            "policy_blocked_reasons": [
+              "exclusion_rate_above_10pct"
+            ]
           }
         }
       },
@@ -1642,9 +1653,10 @@
       "meets_acceptance": false
     },
     "verseshell_aci_vs_raw_shell_coached": {
-      "row_policy_eligible": true,
-      "data_eligible": true,
+      "row_policy_eligible": false,
+      "data_eligible": false,
       "policy_blocked_reasons": [
+        "exclusion_rate_above_10pct",
         "complete_repeated_study_not_evaluated",
         "frozen_family_inference_not_evaluated"
       ],
@@ -1677,43 +1689,43 @@
             "analysable_rate": 1.0,
             "success_analysable": 1.0,
             "success_intention_to_treat": 1.0,
-            "mean_tool_calls_analysable": 3.125,
-            "mean_tool_calls_intention_to_treat": 3.125,
-            "mean_observation_tokens_analysable": 189.25,
-            "mean_observation_tokens_intention_to_treat": 189.25
+            "mean_tool_calls_analysable": 2.625,
+            "mean_tool_calls_intention_to_treat": 2.625,
+            "mean_observation_tokens_analysable": 170.0,
+            "mean_observation_tokens_intention_to_treat": 170.0
           },
           "verseshell_aci": {
             "n": 8,
             "endpoint_failure": 0,
-            "cap_truncated": 0,
-            "analysable": 8,
+            "cap_truncated": 1,
+            "analysable": 7,
             "api_error": 0,
             "endpoint_rate": 0.0,
-            "cap_truncated_rate": 0.0,
+            "cap_truncated_rate": 0.125,
             "budget_axes": {
               "completion_cap": 0,
-              "turn_cap": 0,
+              "turn_cap": 1,
               "repeat_call_cap": 0,
               "overlap": 0,
-              "union": 0,
+              "union": 1,
               "completion_cap_rate": 0.0,
-              "turn_cap_rate": 0.0,
+              "turn_cap_rate": 0.125,
               "repeat_call_cap_rate": 0.0
             },
-            "analysable_rate": 1.0,
+            "analysable_rate": 0.875,
             "success_analysable": 1.0,
-            "success_intention_to_treat": 1.0,
-            "mean_tool_calls_analysable": 4.125,
-            "mean_tool_calls_intention_to_treat": 4.125,
-            "mean_observation_tokens_analysable": 298.25,
-            "mean_observation_tokens_intention_to_treat": 298.25
+            "success_intention_to_treat": 0.875,
+            "mean_tool_calls_analysable": 3.7143,
+            "mean_tool_calls_intention_to_treat": 4.375,
+            "mean_observation_tokens_analysable": 256.0,
+            "mean_observation_tokens_intention_to_treat": 304.25
           }
         },
         "comparisons": {
           "verseshell_aci_vs_raw_shell_coached": {
             "baseline": "raw_shell_coached",
             "treatment": "verseshell_aci",
-            "rates_ok": true,
+            "rates_ok": false,
             "cap_truncated_axes": {
               "raw_shell_coached": {
                 "completion_cap": 0,
@@ -1727,20 +1739,22 @@
               },
               "verseshell_aci": {
                 "completion_cap": 0,
-                "turn_cap": 0,
+                "turn_cap": 1,
                 "repeat_call_cap": 0,
                 "overlap": 0,
-                "union": 0,
+                "union": 1,
                 "completion_cap_rate": 0.0,
-                "turn_cap_rate": 0.0,
+                "turn_cap_rate": 0.125,
                 "repeat_call_cap_rate": 0.0
               }
             },
             "success_delta_analysable": 0.0,
-            "success_delta_intention_to_treat": 0.0,
+            "success_delta_intention_to_treat": -0.125,
             "sign_agreement": true,
-            "claimable": true,
-            "policy_blocked_reasons": []
+            "claimable": false,
+            "policy_blocked_reasons": [
+              "exclusion_rate_above_10pct"
+            ]
           }
         }
       },
@@ -1749,13 +1763,13 @@
       "meets_acceptance": false
     }
   },
-  "row_policy_eligible_comparisons": [
+  "row_policy_eligible_comparisons": [],
+  "row_policy_claimable_comparisons": [],
+  "row_policy_blocked_comparisons": [
     "verseshell_aci_vs_raw_shell",
     "verseshell_aci_vs_raw_shell_coached"
   ],
-  "row_policy_claimable_comparisons": [],
-  "row_policy_blocked_comparisons": [],
-  "verdict": "no arm exceeds the cap-binding limit on either budget (max_turns or max_tokens); the comparison is not confounded by the budget",
+  "verdict": "cap is binding on verseshell_aci (max_turns: verseshell_aci; max_tokens: none) — the comparison is confounded by the budget; raise the binding cap and re-run (acceptance criteria §0.5 / brief §3.3, which names BOTH budgets)",
   "harness_note": "no harness faults detected in this artifact",
   "evidence": {
     "globs": [
@@ -1766,9 +1780,9 @@
       "tools/live_uncertainty.py",
       "tools/report_inputs.py"
     ],
-    "fingerprint": "15c2787d2067242f5b9cc4c8d9a4ec1a773e1f9477b1ecefe32c47e1625778d0",
+    "fingerprint": "ec2ec1adfd811d893d7f52b57ffd48dc13c03b9a7c11ce89bcd9b5f686441501",
     "input_sha256": {
-      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38"
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9"
     }
   }
 }

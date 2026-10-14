@@ -1,13 +1,13 @@
 {
   "schema": "verseshell.tf45-envelope-replay/v1",
   "ae_binary": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\target\\debug\\ae.exe",
-  "ae_binary_sha256": "ba89afc9c9df86d774f39084c3d9afb28d987fcc92842a18b5598e74019ebfaa",
+  "ae_binary_sha256": "7f6765f44097adfaa4ede9a868d1ce13f4fd20c5c2584222c966af046f102c83",
   "source_identity": {
     "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json",
-    "sha256": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38",
+    "sha256": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9",
     "task_set_version": "3.1.0",
-    "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6",
-    "collection_id": "light-c12-c35-20261014",
+    "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66",
+    "collection_id": "light-c12-c35-fmt-20261014",
     "tasks": [
       "rust_fix_compile_error",
       "rust_add_unit_test",
@@ -19,7 +19,7 @@
       "ts_package_script_fail"
     ]
   },
-  "generated_at": "2026-10-14T08:19:35.410340+00:00",
+  "generated_at": "2026-10-14T10:16:29.720388+00:00",
   "method": {
     "frozen_call_source": "bench/aci/results/latest_live.json (condition D read ops)",
     "legacy_projection": "format_aci_result on the envelope with the compact `hash` removed (== the pre-TF-0045 client projection)",
@@ -30,7 +30,7 @@
   },
   "evidence": {
     "input_sha256": {
-      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38"
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9"
     },
     "globs": [
       "src/**/*.rs",
@@ -40,7 +40,7 @@
       "bench/aci/results/latest_live.json",
       "tools/tf45_envelope_replay.py"
     ],
-    "fingerprint": "fbf0b20aaea965ef28dc9ce6be303868e44c2d26202524d1dc856ed9ad322c19"
+    "fingerprint": "f98c4094601e6cba2cccc5f4c5e25b6777f78336c99cfa0066510e00b0ffb7e5"
   },
   "totals": {
     "calls": 10,
@@ -51,35 +51,35 @@
       "current": 10
     },
     "excluded": [],
-    "legacy_tokens": 997,
-    "current_tokens": 752,
-    "token_savings": 0.2457,
-    "legacy_chars": 4011,
-    "current_chars": 3021,
+    "legacy_tokens": 925,
+    "current_tokens": 706,
+    "token_savings": 0.2368,
+    "legacy_chars": 3721,
+    "current_chars": 2841,
     "legacy_comparison_exact": true,
     "truncated_usable_calls": 0,
     "untruncated_calls": 10,
-    "untruncated_legacy_tokens": 997,
-    "untruncated_current_tokens": 752,
-    "untruncated_token_savings": 0.2457
+    "untruncated_legacy_tokens": 925,
+    "untruncated_current_tokens": 706,
+    "untruncated_token_savings": 0.2368
   },
   "by_op": {
     "file.read_many": {
-      "calls": 7,
-      "legacy_tokens": 828,
-      "current_tokens": 625,
-      "savings": 0.2452
+      "calls": 5,
+      "legacy_tokens": 609,
+      "current_tokens": 460,
+      "savings": 0.2447
     },
     "file.view": {
-      "calls": 3,
-      "legacy_tokens": 169,
-      "current_tokens": 127,
-      "savings": 0.2485
+      "calls": 5,
+      "legacy_tokens": 316,
+      "current_tokens": 246,
+      "savings": 0.2215
     }
   },
   "stored_calls_by_op": {
-    "file.read_many": 7,
-    "file.view": 3
+    "file.read_many": 5,
+    "file.view": 5
   },
   "budget": {
     "files": 8,
@@ -152,7 +152,24 @@
       "truncated_entries": 0
     },
     {
-      "task_id": "rust_add_unit_test",
+      "task_id": "rust_search_and_edit",
+      "op": "file.view",
+      "args": {
+        "path": "Cargo.toml"
+      },
+      "ok": true,
+      "reproducible": true,
+      "unreproducible_reason": null,
+      "matched_projection": "current",
+      "stored_tokens": 49,
+      "legacy_chars": 253,
+      "current_chars": 198,
+      "legacy_tokens": 63,
+      "current_tokens": 49,
+      "truncated_entries": 0
+    },
+    {
+      "task_id": "rust_search_and_edit",
       "op": "file.view",
       "args": {
         "path": "src/lib.rs"
@@ -161,38 +178,20 @@
       "reproducible": true,
       "unreproducible_reason": null,
       "matched_projection": "current",
-      "stored_tokens": 44,
-      "legacy_chars": 234,
-      "current_chars": 179,
-      "legacy_tokens": 58,
-      "current_tokens": 44,
-      "truncated_entries": 0
-    },
-    {
-      "task_id": "rust_search_and_edit",
-      "op": "file.read_many",
-      "args": {
-        "paths": [
-          "Cargo.toml",
-          "src/lib.rs"
-        ]
-      },
-      "ok": true,
-      "reproducible": true,
-      "unreproducible_reason": null,
-      "matched_projection": "current",
-      "stored_tokens": 77,
-      "legacy_chars": 418,
-      "current_chars": 308,
-      "legacy_tokens": 104,
-      "current_tokens": 77,
+      "stored_tokens": 48,
+      "legacy_chars": 250,
+      "current_chars": 195,
+      "legacy_tokens": 62,
+      "current_tokens": 48,
       "truncated_entries": 0
     },
     {
       "task_id": "rust_search_and_edit",
       "op": "file.view",
       "args": {
-        "path": "src/lib.rs"
+        "cursor": 1,
+        "path": "src/lib.rs",
+        "window": 80
       },
       "ok": true,
       "reproducible": true,
@@ -263,9 +262,27 @@
       "truncated_entries": 0
     },
     {
+      "task_id": "ts_package_script_fail",
+      "op": "file.view",
+      "args": {
+        "path": "package.json"
+      },
+      "ok": true,
+      "reproducible": true,
+      "unreproducible_reason": null,
+      "matched_projection": "current",
+      "stored_tokens": 66,
+      "legacy_chars": 322,
+      "current_chars": 267,
+      "legacy_tokens": 80,
+      "current_tokens": 66,
+      "truncated_entries": 0
+    },
+    {
       "task_id": "ts_fix_type_error",
       "op": "file.read_many",
       "args": {
+        "max_total_lines": 120,
         "paths": [
           "src/index.ts",
           "tsconfig.json",
@@ -281,26 +298,6 @@
       "current_chars": 669,
       "legacy_tokens": 208,
       "current_tokens": 167,
-      "truncated_entries": 0
-    },
-    {
-      "task_id": "ts_package_script_fail",
-      "op": "file.read_many",
-      "args": {
-        "paths": [
-          "package.json",
-          "TASK.md"
-        ]
-      },
-      "ok": true,
-      "reproducible": true,
-      "unreproducible_reason": null,
-      "matched_projection": "current",
-      "stored_tokens": 88,
-      "legacy_chars": 463,
-      "current_chars": 353,
-      "legacy_tokens": 115,
-      "current_tokens": 88,
       "truncated_entries": 0
     }
   ]

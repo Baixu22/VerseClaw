@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.claim-evidence/v1",
-  "generated_at": "2026-10-14T08:20:26.424775+00:00",
+  "generated_at": "2026-10-14T10:21:10.079519+00:00",
   "generator": "tools/claim_gate.py",
   "metrics_source": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\evidence.metrics.json",
   "metrics_regenerated": true,
@@ -8,7 +8,7 @@
     "bench_mode": "mock",
     "task_set_version": "3.0.0",
     "seed": 42,
-    "generated_at": "2026-10-14T07:27:30.466020+00:00",
+    "generated_at": "2026-10-14T10:11:20.391483+00:00",
     "n_rows_per_condition": 35
   },
   "threshold_source": "docs/claims-and-evidence.md",
@@ -147,7 +147,7 @@
       "pass": true,
       "mode": "mock",
       "sample_size": 35,
-      "measured_at": "2026-10-14T07:27:30.466020+00:00",
+      "measured_at": "2026-10-14T10:11:20.391483+00:00",
       "command": "python tools/claim_gate.py",
       "source": [
         "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest.json",
@@ -170,7 +170,7 @@
       "pass": true,
       "mode": "mock",
       "sample_size": 35,
-      "measured_at": "2026-10-14T07:27:30.466020+00:00",
+      "measured_at": "2026-10-14T10:11:20.391483+00:00",
       "command": "python tools/claim_gate.py",
       "source": [
         "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest.json",
@@ -193,7 +193,7 @@
       "pass": true,
       "mode": "deterministic",
       "sample_size": 4,
-      "measured_at": "2026-10-14T08:20:26.424775+00:00",
+      "measured_at": "2026-10-14T10:21:10.079519+00:00",
       "command": "cargo run --example eval_metrics -- --out eval/metrics.json",
       "source": [
         "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\evidence.metrics.json",
@@ -226,7 +226,7 @@
       "pass": true,
       "mode": "deterministic",
       "sample_size": 5,
-      "measured_at": "2026-10-14T08:20:26.424775+00:00",
+      "measured_at": "2026-10-14T10:21:10.079519+00:00",
       "command": "cargo run --example eval_metrics -- --out eval/metrics.json",
       "source": [
         "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\evidence.metrics.json",
@@ -298,7 +298,7 @@
       "pass": true,
       "mode": "deterministic",
       "sample_size": 7,
-      "measured_at": "2026-10-14T08:20:26.424775+00:00",
+      "measured_at": "2026-10-14T10:21:10.079519+00:00",
       "command": "cargo run --example compact_ratio -- --out eval/compact_ratio.json",
       "source": [
         "examples/compact_ratio.rs",
@@ -331,7 +331,7 @@
       "value": 1.0,
       "pass": true,
       "mode": "cargo_test",
-      "measured_at": "2026-10-14T08:20:26.424775+00:00",
+      "measured_at": "2026-10-14T10:21:10.079519+00:00",
       "platform": "win32",
       "command": "cargo test --test aci_1_0_closed_loop_acceptance",
       "source": [
@@ -339,10 +339,10 @@
         "src/ops/trash.rs",
         "src/ops/tx_ops.rs"
       ],
-      "result_tail": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.12s",
+      "result_tail": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.67s",
       "exit_code": 0,
-      "stdout_tail": "\nrunning 4 tests\n....\ntest result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.12s\n\n",
-      "stderr_tail": "warning: unreachable expression\n     --> src\\builtins.rs:14495:5\n      |\n14472 |         return Ok(Value::Null);\n      |         ---------------------- any code following this expression is unreachable\n...\n14495 |     Ok(Value::Null)\n      |     ^^^^^^^^^^^^^^^ unreachable expression\n      |\n      = note: `#[warn(unreachable_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unreachable expression\n     --> src\\builtins.rs:27878:5\n      |\n27876 |         return Ok(Value::Str(\"msvcrt\".to_string()));\n      |         ------------------------------------------- any code following this expression is unreachable\n27877 |     }\n27878 |     Ok(Value::Str(\"unknown\".to_string()))\n      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: unreachable expression\n     --> src\\builtins.rs:27926:5\n      |\n27924 |         return Ok(Value::Str(\"MSVC STL\".to_string()));\n      |         --------------------------------------------- any code following this expression is unreachable\n27925 |     }\n27926 |     Ok(Value::Str(\"unknown\".to_string()))\n      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: variable does not need to be mutable\n   --> src\\operation.rs:379:9\n    |\n379 |     let mut blocked_target: Option<String> = req\n    |         ----^^^^^^^^^^^^^^\n    |         |\n    |         help: remove this `mut`\n    |\n    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unused variable: `steal_poll`\n   --> src\\scheduler.rs:291:9\n    |\n291 |     let steal_poll = Duration::from_millis(5);\n    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_steal_poll`\n    |\n    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default\n\nwarning: method `set_var_unchecked_compat` is never used\n   --> src\\env.rs:174:19\n    |\n 53 | impl Env {\n    | -------- method in this implementation\n...\n174 |     pub(crate) fn set_var_unchecked_compat<S: Into<String>>(&mut self, name: S, value: Value) {\n    |                   ^^^^^^^^^^^^^^^^^^^^^^^^\n    |\n    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: associated function `eval_lambda` is never used\n    --> src\\ir.rs:1408:8\n     |\n 976 | impl IREvaluator {\n     | ---------------- associated function in this implementation\n...\n1408 |     fn eval_lambda(_node: &IRNode, _env: &mut Env) -> Result<(Vec<String>, IRNode)> {\n     |        ^^^^^^^^^^^\n\nwarning: function `re_added` is never used\n --> src\\reducers\\npm.rs:8:4\n  |\n8 | fn re_added() -> &'static Regex {\n  |    ^^^^^^^^\n\nwarning: function `nearest_builtin` is never used\n   --> src\\runtime.rs:876:4\n    |\n876 | fn nearest_builtin(input: &str) -> String {\n    |    ^^^^^^^^^^^^^^^\n\nwarning: function `levenshtein` is never used\n   --> src\\runtime.rs:900:4\n    |\n900 | fn levenshtein(a: &str, b: &str) -> usize {\n    |    ^^^^^^^^^^^\n\nwarning: fields `submitted_at` and `estimated_cost_us` are never read\n  --> src\\scheduler.rs:46:5\n   |\n42 | struct ScheduledJob {\n   |        ------------ fields in this struct\n...\n46 |     submitted_at: Instant,\n   |     ^^^^^^^^^^^^\n47 |     estimated_cost_us: u64,\n   |     ^^^^^^^^^^^^^^^^^\n\nwarning: field `mem_budget` is never read\n  --> src\\scheduler.rs:82:5\n   |\n76 | struct AgentQuota {\n   |        ---------- field in this struct\n...\n82 |     mem_budget: u64,\n   |     ^^^^^^^^^^\n   |\n   = note: `AgentQuota` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis\n\n",
+      "stdout_tail": "\nrunning 4 tests\n....\ntest result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.67s\n\n",
+      "stderr_tail": "warning: unreachable expression\n     --> src\\builtins.rs:14491:5\n      |\n14468 |         return Ok(Value::Null);\n      |         ---------------------- any code following this expression is unreachable\n...\n14491 |     Ok(Value::Null)\n      |     ^^^^^^^^^^^^^^^ unreachable expression\n      |\n      = note: `#[warn(unreachable_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unreachable expression\n     --> src\\builtins.rs:27874:5\n      |\n27872 |         return Ok(Value::Str(\"msvcrt\".to_string()));\n      |         ------------------------------------------- any code following this expression is unreachable\n27873 |     }\n27874 |     Ok(Value::Str(\"unknown\".to_string()))\n      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: unreachable expression\n     --> src\\builtins.rs:27922:5\n      |\n27920 |         return Ok(Value::Str(\"MSVC STL\".to_string()));\n      |         --------------------------------------------- any code following this expression is unreachable\n27921 |     }\n27922 |     Ok(Value::Str(\"unknown\".to_string()))\n      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: variable does not need to be mutable\n   --> src\\operation.rs:379:9\n    |\n379 |     let mut blocked_target: Option<String> = req\n    |         ----^^^^^^^^^^^^^^\n    |         |\n    |         help: remove this `mut`\n    |\n    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unused variable: `steal_poll`\n   --> src\\scheduler.rs:291:9\n    |\n291 |     let steal_poll = Duration::from_millis(5);\n    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_steal_poll`\n    |\n    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default\n\nwarning: method `set_var_unchecked_compat` is never used\n   --> src\\env.rs:174:19\n    |\n 53 | impl Env {\n    | -------- method in this implementation\n...\n174 |     pub(crate) fn set_var_unchecked_compat<S: Into<String>>(&mut self, name: S, value: Value) {\n    |                   ^^^^^^^^^^^^^^^^^^^^^^^^\n    |\n    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: associated function `eval_lambda` is never used\n    --> src\\ir.rs:1408:8\n     |\n 976 | impl IREvaluator {\n     | ---------------- associated function in this implementation\n...\n1408 |     fn eval_lambda(_node: &IRNode, _env: &mut Env) -> Result<(Vec<String>, IRNode)> {\n     |        ^^^^^^^^^^^\n\nwarning: function `re_added` is never used\n --> src\\reducers\\npm.rs:8:4\n  |\n8 | fn re_added() -> &'static Regex {\n  |    ^^^^^^^^\n\nwarning: function `nearest_builtin` is never used\n   --> src\\runtime.rs:876:4\n    |\n876 | fn nearest_builtin(input: &str) -> String {\n    |    ^^^^^^^^^^^^^^^\n\nwarning: function `levenshtein` is never used\n   --> src\\runtime.rs:900:4\n    |\n900 | fn levenshtein(a: &str, b: &str) -> usize {\n    |    ^^^^^^^^^^^\n\nwarning: fields `submitted_at` and `estimated_cost_us` are never read\n  --> src\\scheduler.rs:46:5\n   |\n42 | struct ScheduledJob {\n   |        ------------ fields in this struct\n...\n46 |     submitted_at: Instant,\n   |     ^^^^^^^^^^^^\n47 |     estimated_cost_us: u64,\n   |     ^^^^^^^^^^^^^^^^^\n\nwarning: field `mem_budget` is never read\n  --> src\\scheduler.rs:82:5\n   |\n76 | struct AgentQuota {\n   |        ---------- field in this struct\n...\n82 |     mem_budget: u64,\n   |     ^^^^^^^^^^\n   |\n   = note: `AgentQuota` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis\n\n",
       "test_totals": {
         "suites": 1,
         "passed": 4,
@@ -364,7 +364,7 @@
       "value": 1.0,
       "pass": true,
       "mode": "cargo_test",
-      "measured_at": "2026-10-14T08:20:26.424775+00:00",
+      "measured_at": "2026-10-14T10:21:10.079519+00:00",
       "platform": "win32",
       "command": "cargo test ",
       "source": [
@@ -373,8 +373,8 @@
       ],
       "result_tail": "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
       "exit_code": 0,
-      "stdout_tail": "\nrunning 169 tests\n....................................................................................... 87/169\n..................................................................................\ntest result: ok. 169 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.70s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 4 tests\n....\ntest result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.24s\n\n\nrunning 13 tests\n.............\ntest result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.55s\n\n\nrunning 1 test\nwrote C:\\Users\\27933\\AppData\\Local\\Temp\\verseshell-aci-bench-e6ada0bd-b176-44cf-b050-d0e572464231\\latest.json\nwrote C:\\Users\\27933\\AppData\\Local\\Temp\\verseshell-aci-bench-e6ada0bd-b176-44cf-b050-d0e572464231\\leaderboard.md\nwrote C:\\Users\\27933\\AppData\\Local\\Temp\\verseshell-aci-bench-e6ada0bd-b176-44cf-b050-d0e572464231\\REPORT.md\ncompare[mock]: success delta=1.0 tools D/A=0.5629 tokens D/A=0.1086 accept=True\n{\n  \"comparisons\": [\n    {\n      \"model\": \"mock\",\n      \"success_rate_A\": 0.0,\n      \"success_rate_D\": 1.0,\n      \"success_advantage_D\": 1.0,\n      \"avg_tool_calls_A\": 10.0,\n      \"avg_tool_calls_D\": 5.63,\n      \"tool_call_ratio_D_over_A\": 0.5629,\n      \"avg_observation_tokens_A\": 3820.0,\n      \"avg_observation_tokens_D\": 414.86,\n      \"token_ratio_D_over_A\": 0.1086,\n      \"meets_acceptance\": true\n    }\n  ]\n}\n{\n  \"aggregates\": [\n    {\n      \"model\": \"mock\",\n      \"condition\": \"raw_shell\",\n      \"tasks\": 35,\n      \"success_rate\": 0.0,\n      \"avg_tool_calls\": 10.0,\n      \"avg_observation_tokens\": 3820.0,\n      \"avg_elapsed_ms\": 659.7\n    },\n    {\n      \"model\": \"mock\",\n      \"condition\": \"verseshell_aci\",\n      \"tasks\": 35,\n      \"success_rate\": 1.0,\n      \"avg_tool_calls\": 5.63,\n      \"avg_observation_tokens\": 414.86,\n      \"avg_elapsed_ms\": 625.5\n    }\n  ],\n  \"n_rows\": 70\n}\nPASS: mock regression only; not product or live acceptance\n.\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 45.46s\n\n\nrunning 6 tests\n......\ntest result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.74s\n\n\nrunning 1 test\ni\ntest result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 53 tests\n.....................................................\ntest result: ok. 53 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.79s\n\n\nrunning 5 tests\n.....\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.70s\n\n\nrunning 9 tests\n.........\ntest result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.33s\n\n\nrunning 3 tests\n...\ntest result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.51s\n\n\nrunning 27 tests\n...........................\ntest result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s\n\n\nrunning 7 tests\n.......\ntest result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s\n\n\nrunning 4 tests\n....\ntest result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n",
-      "stderr_tail": "lt\n\nwarning: unreachable expression\n     --> src\\builtins.rs:27878:5\n      |\n27876 |         return Ok(Value::Str(\"msvcrt\".to_string()));\n      |         ------------------------------------------- any code following this expression is unreachable\n27877 |     }\n27878 |     Ok(Value::Str(\"unknown\".to_string()))\n      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: unreachable expression\n     --> src\\builtins.rs:27926:5\n      |\n27924 |         return Ok(Value::Str(\"MSVC STL\".to_string()));\n      |         --------------------------------------------- any code following this expression is unreachable\n27925 |     }\n27926 |     Ok(Value::Str(\"unknown\".to_string()))\n      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: variable does not need to be mutable\n   --> src\\operation.rs:379:9\n    |\n379 |     let mut blocked_target: Option<String> = req\n    |         ----^^^^^^^^^^^^^^\n    |         |\n    |         help: remove this `mut`\n    |\n    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unused variable: `steal_poll`\n   --> src\\scheduler.rs:291:9\n    |\n291 |     let steal_poll = Duration::from_millis(5);\n    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_steal_poll`\n    |\n    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default\n\nwarning: method `set_var_unchecked_compat` is never used\n   --> src\\env.rs:174:19\n    |\n 53 | impl Env {\n    | -------- method in this implementation\n...\n174 |     pub(crate) fn set_var_unchecked_compat<S: Into<String>>(&mut self, name: S, value: Value) {\n    |                   ^^^^^^^^^^^^^^^^^^^^^^^^\n    |\n    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: associated function `eval_lambda` is never used\n    --> src\\ir.rs:1408:8\n     |\n 976 | impl IREvaluator {\n     | ---------------- associated function in this implementation\n...\n1408 |     fn eval_lambda(_node: &IRNode, _env: &mut Env) -> Result<(Vec<String>, IRNode)> {\n     |        ^^^^^^^^^^^\n\nwarning: function `re_added` is never used\n --> src\\reducers\\npm.rs:8:4\n  |\n8 | fn re_added() -> &'static Regex {\n  |    ^^^^^^^^\n\nwarning: function `nearest_builtin` is never used\n   --> src\\runtime.rs:876:4\n    |\n876 | fn nearest_builtin(input: &str) -> String {\n    |    ^^^^^^^^^^^^^^^\n\nwarning: function `levenshtein` is never used\n   --> src\\runtime.rs:900:4\n    |\n900 | fn levenshtein(a: &str, b: &str) -> usize {\n    |    ^^^^^^^^^^^\n\nwarning: fields `submitted_at` and `estimated_cost_us` are never read\n  --> src\\scheduler.rs:46:5\n   |\n42 | struct ScheduledJob {\n   |        ------------ fields in this struct\n...\n46 |     submitted_at: Instant,\n   |     ^^^^^^^^^^^^\n47 |     estimated_cost_us: u64,\n   |     ^^^^^^^^^^^^^^^^^\n\nwarning: field `mem_budget` is never read\n  --> src\\scheduler.rs:82:5\n   |\n76 | struct AgentQuota {\n   |        ---------- field in this struct\n...\n82 |     mem_budget: u64,\n   |     ^^^^^^^^^^\n   |\n   = note: `AgentQuota` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis\n\nwarning: variable does not need to be mutable\n   --> src\\mcp\\registry.rs:298:13\n    |\n298 |         let mut reg = ToolRegistry::new();\n    |             ----^^^\n    |             |\n    |             help: remove this `mut`\n    |\n    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default\n\nwarning: variable does not need to be mutable\n   --> src\\operation.rs:379:9\n    |\n379 |     let mut blocked_target: Option<String> = req\n    |         ----^^^^^^^^^^^^^^\n    |         |\n    |         help: remove this `mut`\n\nwarning: field `prompt` is never read\n  --> tests\\ic_verseshell_benchmark.rs:28:5\n   |\n26 | struct BenchmarkTask {\n   |        ------------- field in this struct\n27 |     id: &'static str,\n28 |     prompt: &'static str,\n   |     ^^^^^^\n   |\n   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default\n\n",
+      "stdout_tail": "\nrunning 169 tests\n....................................................................................... 87/169\n..................................................................................\ntest result: ok. 169 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.92s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 4 tests\n....\ntest result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.74s\n\n\nrunning 13 tests\n.............\ntest result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.71s\n\n\nrunning 1 test\ntest aci_bench_mock_meets_acceptance_gate has been running for over 60 seconds\nwrote C:\\Users\\27933\\AppData\\Local\\Temp\\verseshell-aci-bench-4094337a-70d4-4f74-b261-19a5a4ec7534\\latest.json\nwrote C:\\Users\\27933\\AppData\\Local\\Temp\\verseshell-aci-bench-4094337a-70d4-4f74-b261-19a5a4ec7534\\leaderboard.md\nwrote C:\\Users\\27933\\AppData\\Local\\Temp\\verseshell-aci-bench-4094337a-70d4-4f74-b261-19a5a4ec7534\\REPORT.md\ncompare[mock]: success delta=1.0 tools D/A=0.5629 tokens D/A=0.1086 accept=True\n{\n  \"comparisons\": [\n    {\n      \"model\": \"mock\",\n      \"success_rate_A\": 0.0,\n      \"success_rate_D\": 1.0,\n      \"success_advantage_D\": 1.0,\n      \"avg_tool_calls_A\": 10.0,\n      \"avg_tool_calls_D\": 5.63,\n      \"tool_call_ratio_D_over_A\": 0.5629,\n      \"avg_observation_tokens_A\": 3820.0,\n      \"avg_observation_tokens_D\": 414.86,\n      \"token_ratio_D_over_A\": 0.1086,\n      \"meets_acceptance\": true\n    }\n  ]\n}\n{\n  \"aggregates\": [\n    {\n      \"model\": \"mock\",\n      \"condition\": \"raw_shell\",\n      \"tasks\": 35,\n      \"success_rate\": 0.0,\n      \"avg_tool_calls\": 10.0,\n      \"avg_observation_tokens\": 3820.0,\n      \"avg_elapsed_ms\": 1158.2\n    },\n    {\n      \"model\": \"mock\",\n      \"condition\": \"verseshell_aci\",\n      \"tasks\": 35,\n      \"success_rate\": 1.0,\n      \"avg_tool_calls\": 5.63,\n      \"avg_observation_tokens\": 414.86,\n      \"avg_elapsed_ms\": 1151.5\n    }\n  ],\n  \"n_rows\": 70\n}\nPASS: mock regression only; not product or live acceptance\n.\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 81.71s\n\n\nrunning 6 tests\n......\ntest result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.10s\n\n\nrunning 1 test\ni\ntest result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 53 tests\n.....................................................\ntest result: ok. 53 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.80s\n\n\nrunning 5 tests\n.....\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.86s\n\n\nrunning 9 tests\n.........\ntest result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.68s\n\n\nrunning 3 tests\n...\ntest result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.63s\n\n\nrunning 27 tests\n...........................\ntest result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s\n\n\nrunning 7 tests\n.......\ntest result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s\n\n\nrunning 4 tests\n....\ntest result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n",
+      "stderr_tail": "lt\n\nwarning: unreachable expression\n     --> src\\builtins.rs:27874:5\n      |\n27872 |         return Ok(Value::Str(\"msvcrt\".to_string()));\n      |         ------------------------------------------- any code following this expression is unreachable\n27873 |     }\n27874 |     Ok(Value::Str(\"unknown\".to_string()))\n      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: unreachable expression\n     --> src\\builtins.rs:27922:5\n      |\n27920 |         return Ok(Value::Str(\"MSVC STL\".to_string()));\n      |         --------------------------------------------- any code following this expression is unreachable\n27921 |     }\n27922 |     Ok(Value::Str(\"unknown\".to_string()))\n      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: variable does not need to be mutable\n   --> src\\operation.rs:379:9\n    |\n379 |     let mut blocked_target: Option<String> = req\n    |         ----^^^^^^^^^^^^^^\n    |         |\n    |         help: remove this `mut`\n    |\n    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unused variable: `steal_poll`\n   --> src\\scheduler.rs:291:9\n    |\n291 |     let steal_poll = Duration::from_millis(5);\n    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_steal_poll`\n    |\n    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default\n\nwarning: method `set_var_unchecked_compat` is never used\n   --> src\\env.rs:174:19\n    |\n 53 | impl Env {\n    | -------- method in this implementation\n...\n174 |     pub(crate) fn set_var_unchecked_compat<S: Into<String>>(&mut self, name: S, value: Value) {\n    |                   ^^^^^^^^^^^^^^^^^^^^^^^^\n    |\n    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: associated function `eval_lambda` is never used\n    --> src\\ir.rs:1408:8\n     |\n 976 | impl IREvaluator {\n     | ---------------- associated function in this implementation\n...\n1408 |     fn eval_lambda(_node: &IRNode, _env: &mut Env) -> Result<(Vec<String>, IRNode)> {\n     |        ^^^^^^^^^^^\n\nwarning: function `re_added` is never used\n --> src\\reducers\\npm.rs:8:4\n  |\n8 | fn re_added() -> &'static Regex {\n  |    ^^^^^^^^\n\nwarning: function `nearest_builtin` is never used\n   --> src\\runtime.rs:876:4\n    |\n876 | fn nearest_builtin(input: &str) -> String {\n    |    ^^^^^^^^^^^^^^^\n\nwarning: function `levenshtein` is never used\n   --> src\\runtime.rs:900:4\n    |\n900 | fn levenshtein(a: &str, b: &str) -> usize {\n    |    ^^^^^^^^^^^\n\nwarning: fields `submitted_at` and `estimated_cost_us` are never read\n  --> src\\scheduler.rs:46:5\n   |\n42 | struct ScheduledJob {\n   |        ------------ fields in this struct\n...\n46 |     submitted_at: Instant,\n   |     ^^^^^^^^^^^^\n47 |     estimated_cost_us: u64,\n   |     ^^^^^^^^^^^^^^^^^\n\nwarning: field `mem_budget` is never read\n  --> src\\scheduler.rs:82:5\n   |\n76 | struct AgentQuota {\n   |        ---------- field in this struct\n...\n82 |     mem_budget: u64,\n   |     ^^^^^^^^^^\n   |\n   = note: `AgentQuota` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis\n\nwarning: variable does not need to be mutable\n   --> src\\mcp\\registry.rs:298:13\n    |\n298 |         let mut reg = ToolRegistry::new();\n    |             ----^^^\n    |             |\n    |             help: remove this `mut`\n    |\n    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default\n\nwarning: variable does not need to be mutable\n   --> src\\operation.rs:379:9\n    |\n379 |     let mut blocked_target: Option<String> = req\n    |         ----^^^^^^^^^^^^^^\n    |         |\n    |         help: remove this `mut`\n\nwarning: field `prompt` is never read\n  --> tests\\ic_verseshell_benchmark.rs:28:5\n   |\n26 | struct BenchmarkTask {\n   |        ------------- field in this struct\n27 |     id: &'static str,\n28 |     prompt: &'static str,\n   |     ^^^^^^\n   |\n   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default\n\n",
       "test_totals": {
         "suites": 16,
         "passed": 301,
@@ -395,7 +395,7 @@
       "value": 1.0,
       "pass": true,
       "mode": "cargo_test",
-      "measured_at": "2026-10-14T08:20:26.424775+00:00",
+      "measured_at": "2026-10-14T10:21:10.079519+00:00",
       "platform": "win32",
       "command": "cargo test --test process_lifecycle_tests",
       "source": [
@@ -404,10 +404,10 @@
         "src/process_lifecycle_windows.rs",
         "src/ops/process_ops.rs"
       ],
-      "result_tail": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.85s",
+      "result_tail": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.50s",
       "exit_code": 0,
-      "stdout_tail": "\nrunning 3 tests\n...\ntest result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.85s\n\n",
-      "stderr_tail": "warning: unreachable expression\n     --> src\\builtins.rs:14495:5\n      |\n14472 |         return Ok(Value::Null);\n      |         ---------------------- any code following this expression is unreachable\n...\n14495 |     Ok(Value::Null)\n      |     ^^^^^^^^^^^^^^^ unreachable expression\n      |\n      = note: `#[warn(unreachable_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unreachable expression\n     --> src\\builtins.rs:27878:5\n      |\n27876 |         return Ok(Value::Str(\"msvcrt\".to_string()));\n      |         ------------------------------------------- any code following this expression is unreachable\n27877 |     }\n27878 |     Ok(Value::Str(\"unknown\".to_string()))\n      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: unreachable expression\n     --> src\\builtins.rs:27926:5\n      |\n27924 |         return Ok(Value::Str(\"MSVC STL\".to_string()));\n      |         --------------------------------------------- any code following this expression is unreachable\n27925 |     }\n27926 |     Ok(Value::Str(\"unknown\".to_string()))\n      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: variable does not need to be mutable\n   --> src\\operation.rs:379:9\n    |\n379 |     let mut blocked_target: Option<String> = req\n    |         ----^^^^^^^^^^^^^^\n    |         |\n    |         help: remove this `mut`\n    |\n    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unused variable: `steal_poll`\n   --> src\\scheduler.rs:291:9\n    |\n291 |     let steal_poll = Duration::from_millis(5);\n    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_steal_poll`\n    |\n    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default\n\nwarning: method `set_var_unchecked_compat` is never used\n   --> src\\env.rs:174:19\n    |\n 53 | impl Env {\n    | -------- method in this implementation\n...\n174 |     pub(crate) fn set_var_unchecked_compat<S: Into<String>>(&mut self, name: S, value: Value) {\n    |                   ^^^^^^^^^^^^^^^^^^^^^^^^\n    |\n    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: associated function `eval_lambda` is never used\n    --> src\\ir.rs:1408:8\n     |\n 976 | impl IREvaluator {\n     | ---------------- associated function in this implementation\n...\n1408 |     fn eval_lambda(_node: &IRNode, _env: &mut Env) -> Result<(Vec<String>, IRNode)> {\n     |        ^^^^^^^^^^^\n\nwarning: function `re_added` is never used\n --> src\\reducers\\npm.rs:8:4\n  |\n8 | fn re_added() -> &'static Regex {\n  |    ^^^^^^^^\n\nwarning: function `nearest_builtin` is never used\n   --> src\\runtime.rs:876:4\n    |\n876 | fn nearest_builtin(input: &str) -> String {\n    |    ^^^^^^^^^^^^^^^\n\nwarning: function `levenshtein` is never used\n   --> src\\runtime.rs:900:4\n    |\n900 | fn levenshtein(a: &str, b: &str) -> usize {\n    |    ^^^^^^^^^^^\n\nwarning: fields `submitted_at` and `estimated_cost_us` are never read\n  --> src\\scheduler.rs:46:5\n   |\n42 | struct ScheduledJob {\n   |        ------------ fields in this struct\n...\n46 |     submitted_at: Instant,\n   |     ^^^^^^^^^^^^\n47 |     estimated_cost_us: u64,\n   |     ^^^^^^^^^^^^^^^^^\n\nwarning: field `mem_budget` is never read\n  --> src\\scheduler.rs:82:5\n   |\n76 | struct AgentQuota {\n   |        ---------- field in this struct\n...\n82 |     mem_budget: u64,\n   |     ^^^^^^^^^^\n   |\n   = note: `AgentQuota` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis\n\n",
+      "stdout_tail": "\nrunning 3 tests\n...\ntest result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.50s\n\n",
+      "stderr_tail": "warning: unreachable expression\n     --> src\\builtins.rs:14491:5\n      |\n14468 |         return Ok(Value::Null);\n      |         ---------------------- any code following this expression is unreachable\n...\n14491 |     Ok(Value::Null)\n      |     ^^^^^^^^^^^^^^^ unreachable expression\n      |\n      = note: `#[warn(unreachable_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unreachable expression\n     --> src\\builtins.rs:27874:5\n      |\n27872 |         return Ok(Value::Str(\"msvcrt\".to_string()));\n      |         ------------------------------------------- any code following this expression is unreachable\n27873 |     }\n27874 |     Ok(Value::Str(\"unknown\".to_string()))\n      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: unreachable expression\n     --> src\\builtins.rs:27922:5\n      |\n27920 |         return Ok(Value::Str(\"MSVC STL\".to_string()));\n      |         --------------------------------------------- any code following this expression is unreachable\n27921 |     }\n27922 |     Ok(Value::Str(\"unknown\".to_string()))\n      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: variable does not need to be mutable\n   --> src\\operation.rs:379:9\n    |\n379 |     let mut blocked_target: Option<String> = req\n    |         ----^^^^^^^^^^^^^^\n    |         |\n    |         help: remove this `mut`\n    |\n    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unused variable: `steal_poll`\n   --> src\\scheduler.rs:291:9\n    |\n291 |     let steal_poll = Duration::from_millis(5);\n    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_steal_poll`\n    |\n    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default\n\nwarning: method `set_var_unchecked_compat` is never used\n   --> src\\env.rs:174:19\n    |\n 53 | impl Env {\n    | -------- method in this implementation\n...\n174 |     pub(crate) fn set_var_unchecked_compat<S: Into<String>>(&mut self, name: S, value: Value) {\n    |                   ^^^^^^^^^^^^^^^^^^^^^^^^\n    |\n    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: associated function `eval_lambda` is never used\n    --> src\\ir.rs:1408:8\n     |\n 976 | impl IREvaluator {\n     | ---------------- associated function in this implementation\n...\n1408 |     fn eval_lambda(_node: &IRNode, _env: &mut Env) -> Result<(Vec<String>, IRNode)> {\n     |        ^^^^^^^^^^^\n\nwarning: function `re_added` is never used\n --> src\\reducers\\npm.rs:8:4\n  |\n8 | fn re_added() -> &'static Regex {\n  |    ^^^^^^^^\n\nwarning: function `nearest_builtin` is never used\n   --> src\\runtime.rs:876:4\n    |\n876 | fn nearest_builtin(input: &str) -> String {\n    |    ^^^^^^^^^^^^^^^\n\nwarning: function `levenshtein` is never used\n   --> src\\runtime.rs:900:4\n    |\n900 | fn levenshtein(a: &str, b: &str) -> usize {\n    |    ^^^^^^^^^^^\n\nwarning: fields `submitted_at` and `estimated_cost_us` are never read\n  --> src\\scheduler.rs:46:5\n   |\n42 | struct ScheduledJob {\n   |        ------------ fields in this struct\n...\n46 |     submitted_at: Instant,\n   |     ^^^^^^^^^^^^\n47 |     estimated_cost_us: u64,\n   |     ^^^^^^^^^^^^^^^^^\n\nwarning: field `mem_budget` is never read\n  --> src\\scheduler.rs:82:5\n   |\n76 | struct AgentQuota {\n   |        ---------- field in this struct\n...\n82 |     mem_budget: u64,\n   |     ^^^^^^^^^^\n   |\n   = note: `AgentQuota` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis\n\n",
       "test_totals": {
         "suites": 1,
         "passed": 3,
@@ -431,7 +431,7 @@
       "pass": true,
       "mode": "deterministic",
       "sample_size": 19,
-      "measured_at": "2026-10-14T08:20:26.424775+00:00",
+      "measured_at": "2026-10-14T10:21:10.079519+00:00",
       "platform": "win32",
       "command": "python tools/readme_claims_check.py",
       "source": [
@@ -480,11 +480,11 @@
       "id": "C11",
       "claim": "cross-shell worst VerseShell/PowerShell median ratio",
       "threshold": "<= 0.50",
-      "value": 0.2987,
+      "value": 0.3184,
       "pass": true,
       "mode": "wall_clock",
       "sample_size": 5,
-      "measured_at": "2026-10-14T07:29:42.189775+00:00",
+      "measured_at": "2026-10-14T10:16:08.929131+00:00",
       "platform": "win32",
       "command": "python tools/cross_shell_bench.py",
       "source": [
@@ -494,20 +494,20 @@
       ],
       "detail": {
         "per_operation_ratio_vs_pwsh": {
-          "CPU info": 0.2987,
-          "Disk info": 0.0339,
-          "List dir": 0.0486,
-          "Read file": 0.084,
-          "Pipeline 1K": 0.0746
+          "CPU info": 0.3184,
+          "Disk info": 0.0325,
+          "List dir": 0.0443,
+          "Read file": 0.0772,
+          "Pipeline 1K": 0.0616
         },
         "per_operation_ratio_vs_cmd": {
-          "CPU info": 3.1895,
-          "Disk info": 0.6348,
-          "List dir": 1.2573,
-          "Read file": 0.9657,
+          "CPU info": 3.481,
+          "Disk info": 0.6436,
+          "List dir": 1.387,
+          "Read file": 1.0054,
           "Pipeline 1K": null
         },
-        "worst_ratio_ae_over_cmd": 3.1895,
+        "worst_ratio_ae_over_cmd": 3.481,
         "all_commands_ok": true,
         "failed_commands": [],
         "all_outputs_equivalent": true,
@@ -519,24 +519,24 @@
         "wall_clock_context": {
           "raw_shell": {
             "n": 8,
-            "median_tool_share_of_wall_clock": 0.0566,
-            "mean_tool_share_of_wall_clock": 0.0697,
-            "median_wall_clock_ms": 17353.0,
-            "median_tool_ms": 1270.5
+            "median_tool_share_of_wall_clock": 0.1051,
+            "mean_tool_share_of_wall_clock": 0.1221,
+            "median_wall_clock_ms": 20443.5,
+            "median_tool_ms": 1371.0
           },
           "raw_shell_coached": {
             "n": 8,
-            "median_tool_share_of_wall_clock": 0.0654,
-            "mean_tool_share_of_wall_clock": 0.0633,
-            "median_wall_clock_ms": 24723.5,
-            "median_tool_ms": 1178.5
+            "median_tool_share_of_wall_clock": 0.0754,
+            "mean_tool_share_of_wall_clock": 0.0787,
+            "median_wall_clock_ms": 23136.5,
+            "median_tool_ms": 1242.0
           },
           "verseshell_aci": {
             "n": 8,
-            "median_tool_share_of_wall_clock": 0.1032,
-            "mean_tool_share_of_wall_clock": 0.1146,
-            "median_wall_clock_ms": 36321.0,
-            "median_tool_ms": 3374.5
+            "median_tool_share_of_wall_clock": 0.1084,
+            "mean_tool_share_of_wall_clock": 0.1238,
+            "median_wall_clock_ms": 32895.0,
+            "median_tool_ms": 2873.0
           }
         }
       },
@@ -556,11 +556,11 @@
       "token_caliber": "observation_proxy_estimate_tokens",
       "token_caliber_note": "max(1, len(text)//4) accumulated over the replayed model-visible read observations, legacy projection vs compact projection, and restricted to calls whose stored projection reproduces the recorded token count. The saving is a proxy-caliber ratio over that frozen call set: NOT endpoint usage, NOT the evaluated model's tokenizer, NOT currency and NOT model behaviour. The budget half (max_total_lines, pagination) is structural, not a token measurement",
       "threshold": ">= 0.15",
-      "value": 0.2457,
+      "value": 0.2368,
       "pass": false,
       "mode": "deterministic",
       "sample_size": 10,
-      "measured_at": "2026-10-14T08:19:35.410340+00:00",
+      "measured_at": "2026-10-14T10:16:29.720388+00:00",
       "command": "python tools/tf45_envelope_replay.py --out eval/tf45_envelope_replay.json",
       "source": [
         "tools/tf45_envelope_replay.py",
@@ -574,27 +574,27 @@
         "calls_replayed": 10,
         "calls_excluded": 0,
         "coverage": 1.0,
-        "legacy_tokens": 997,
-        "current_tokens": 752,
+        "legacy_tokens": 925,
+        "current_tokens": 706,
         "legacy_comparison_exact": true,
         "truncated_usable_calls": 0,
         "untruncated_calls": 10,
-        "untruncated_token_savings": 0.2457,
+        "untruncated_token_savings": 0.2368,
         "untruncated_meets_threshold": true,
         "lightweight_subset": true,
         "full_trajectory_claim": false,
         "by_op": {
           "file.read_many": {
-            "calls": 7,
-            "legacy_tokens": 828,
-            "current_tokens": 625,
-            "savings": 0.2452
+            "calls": 5,
+            "legacy_tokens": 609,
+            "current_tokens": 460,
+            "savings": 0.2447
           },
           "file.view": {
-            "calls": 3,
-            "legacy_tokens": 169,
-            "current_tokens": 127,
-            "savings": 0.2485
+            "calls": 5,
+            "legacy_tokens": 316,
+            "current_tokens": 246,
+            "savings": 0.2215
           }
         },
         "budget_default_lines": 240,
@@ -629,11 +629,11 @@
       "token_caliber": "observation_proxy_plain_len_div_4",
       "token_caliber_note": "`len(text)//4` (no max(1, .) floor) over the reference client's projected read text under both projections; the gated saving is a proxy-caliber ratio over the frozen call set. NOT endpoint usage, NOT a real tokenizer, NOT currency and NOT model behaviour: a metadata-only envelope is byte-identical under both projections and contributes exactly zero by construction",
       "threshold": ">= 0.10",
-      "value": 0.2175,
+      "value": 0.195,
       "pass": false,
       "mode": "deterministic",
       "sample_size": 10,
-      "measured_at": "2026-10-14T08:20:00.115732+00:00",
+      "measured_at": "2026-10-14T10:16:36.345143+00:00",
       "command": "python tools/read_path_breakdown.py --out eval/read_path_breakdown.json",
       "source": [
         "tools/read_path_breakdown.py",
@@ -645,10 +645,10 @@
         "calls": 10,
         "calls_rendering_content": 10,
         "calls_metadata_only": 0,
-        "rendered_token_savings": 0.2175,
-        "rendered_legacy_tokens": 961,
-        "rendered_current_tokens": 752,
-        "all_calls_token_savings": 0.2175,
+        "rendered_token_savings": 0.195,
+        "rendered_legacy_tokens": 877,
+        "rendered_current_tokens": 706,
+        "all_calls_token_savings": 0.195,
         "lightweight_subset": true,
         "full_trajectory_claim": false,
         "excluded_calls": 0,
@@ -656,105 +656,105 @@
           "legacy": 0,
           "current": 10
         },
-        "legacy_tokens": 961,
-        "current_tokens": 752,
-        "char_savings": 0.2178,
+        "legacy_tokens": 877,
+        "current_tokens": 706,
+        "char_savings": 0.1943,
         "legacy_parts": {
-          "content": 1224,
-          "residual": 708,
-          "digest": 648,
-          "counts": 631,
-          "path": 351,
-          "line_wrapper": 300
+          "content": 1139,
+          "residual": 702,
+          "digest": 576,
+          "counts": 561,
+          "line_wrapper": 284,
+          "path": 264
         },
         "current_parts": {
-          "content": 1224,
-          "residual": 696,
-          "digest": 612,
-          "path": 321,
-          "counts": 93,
-          "line_wrapper": 75
+          "content": 1139,
+          "residual": 690,
+          "digest": 544,
+          "path": 242,
+          "counts": 155,
+          "line_wrapper": 71
         },
         "by_op": {
           "file.read_many": {
-            "calls": 7,
-            "legacy_chars": 3324,
-            "current_chars": 2504,
-            "char_savings": 0.2467,
-            "legacy_tokens": 828,
-            "current_tokens": 625,
-            "token_savings": 0.2452,
+            "calls": 5,
+            "legacy_chars": 2445,
+            "current_chars": 1843,
+            "char_savings": 0.2462,
+            "legacy_tokens": 609,
+            "current_tokens": 460,
+            "token_savings": 0.2447,
             "legacy_parts": {
-              "content": 1108,
-              "line_wrapper": 268,
-              "digest": 540,
-              "path": 351,
-              "counts": 526,
-              "residual": 531
+              "content": 818,
+              "line_wrapper": 200,
+              "digest": 396,
+              "path": 264,
+              "counts": 386,
+              "residual": 381
             },
             "legacy_part_shares": {
-              "content": 0.3333,
-              "digest": 0.1625,
-              "residual": 0.1597,
-              "counts": 0.1582,
-              "path": 0.1056,
-              "line_wrapper": 0.0806
+              "content": 0.3346,
+              "digest": 0.162,
+              "counts": 0.1579,
+              "residual": 0.1558,
+              "path": 0.108,
+              "line_wrapper": 0.0818
             },
             "current_parts": {
-              "content": 1108,
-              "line_wrapper": 67,
-              "digest": 510,
-              "path": 321,
+              "content": 818,
+              "line_wrapper": 50,
+              "digest": 374,
+              "path": 242,
               "counts": 0,
-              "residual": 498
+              "residual": 359
             },
             "current_part_shares": {
-              "content": 0.4425,
-              "digest": 0.2037,
-              "residual": 0.1989,
-              "path": 0.1282,
-              "line_wrapper": 0.0268,
+              "content": 0.4438,
+              "digest": 0.2029,
+              "residual": 0.1948,
+              "path": 0.1313,
+              "line_wrapper": 0.0271,
               "counts": 0.0
             }
           },
           "file.view": {
-            "calls": 3,
-            "legacy_chars": 538,
-            "current_chars": 517,
-            "char_savings": 0.039,
-            "legacy_tokens": 133,
-            "current_tokens": 127,
-            "token_savings": 0.0451,
+            "calls": 5,
+            "legacy_chars": 1081,
+            "current_chars": 998,
+            "char_savings": 0.0768,
+            "legacy_tokens": 268,
+            "current_tokens": 246,
+            "token_savings": 0.0821,
             "legacy_parts": {
-              "content": 116,
-              "line_wrapper": 32,
-              "digest": 108,
+              "content": 321,
+              "line_wrapper": 84,
+              "digest": 180,
               "path": 0,
-              "counts": 105,
-              "residual": 177
+              "counts": 175,
+              "residual": 321
             },
             "legacy_part_shares": {
-              "residual": 0.329,
-              "content": 0.2156,
-              "digest": 0.2007,
-              "counts": 0.1952,
-              "line_wrapper": 0.0595,
+              "content": 0.2969,
+              "residual": 0.2969,
+              "digest": 0.1665,
+              "counts": 0.1619,
+              "line_wrapper": 0.0777,
               "path": 0.0
             },
             "current_parts": {
-              "content": 116,
-              "line_wrapper": 8,
-              "digest": 102,
+              "content": 321,
+              "line_wrapper": 21,
+              "digest": 170,
               "path": 0,
-              "counts": 93,
-              "residual": 198
+              "counts": 155,
+              "residual": 331
             },
             "current_part_shares": {
-              "residual": 0.383,
-              "content": 0.2244,
-              "digest": 0.1973,
-              "counts": 0.1799,
-              "line_wrapper": 0.0155,
+              "residual": 0.3317,
+              "content": 0.3216,
+              "digest": 0.1703,
+              "counts": 0.1553,
+              "line_wrapper": 0.021,
               "path": 0.0
             }
           }
@@ -779,7 +779,7 @@
       "pass": true,
       "mode": "deterministic",
       "sample_size": 3,
-      "measured_at": "2026-10-14T07:31:17.730144+00:00",
+      "measured_at": "2026-10-14T10:18:44.329050+00:00",
       "command": "python tools/exec_failure_breakdown.py --out eval/exec_failure_breakdown.json",
       "source": [
         "tools/exec_failure_breakdown.py",
@@ -801,7 +801,7 @@
           "cargo check": {
             "ok": true,
             "exit_code": 0,
-            "output_head": "Checking bench_fix v0.1.0 (C:\\Users\\27933\\AppData\\Local\\Temp\\tf45-replay-rust_fix_compile_error-bqb7sieo)\n    Finished `",
+            "output_head": "Checking bench_fix v0.1.0 (C:\\Users\\27933\\AppData\\Local\\Temp\\tf45-replay-rust_fix_compile_error-wmzp6fqx)\n    Finished `",
             "answered_as_rustup": false
           },
           "rustc --version": {
@@ -873,7 +873,7 @@
       "pass": true,
       "mode": "deterministic",
       "sample_size": 5,
-      "measured_at": "2026-10-14T07:31:17.730144+00:00",
+      "measured_at": "2026-10-14T10:18:44.329050+00:00",
       "command": "python tools/exec_failure_breakdown.py --out eval/exec_failure_breakdown.json",
       "source": [
         "tools/exec_failure_breakdown.py",
@@ -941,7 +941,7 @@
       "pass": true,
       "mode": "deterministic",
       "sample_size": 3,
-      "measured_at": "2026-10-14T07:29:55.267316+00:00",
+      "measured_at": "2026-10-14T10:16:36.676110+00:00",
       "command": "python tools/ts_fixture_audit.py --out eval/ts_fixture_audit.json",
       "source": [
         "tools/ts_fixture_audit.py",
@@ -981,7 +981,7 @@
             "pass": 0
           }
         },
-        "runs_where_legacy_rejected_a_passing_fix": 2
+        "runs_where_legacy_rejected_a_passing_fix": 1
       },
       "notes": "the v1.1.0 predicate matched the golden patch as a literal string (`file_contains \"return a + b\"`), so a run that fixed the type error by keeping the intermediate binding was scored as a failure — five of six stored runs. The v1.2.0 predicate runs `tsc --noEmit` through the fixture's pinned TypeScript, and this gate also checks that the pristine fixture still fails it and the GOLDEN patch still passes it, so the task cannot silently become pre-solved or unsolvable",
       "declared_source": [
@@ -1002,7 +1002,7 @@
       "pass": true,
       "mode": "deterministic",
       "sample_size": 35,
-      "measured_at": "2026-10-14T07:31:09.845262+00:00",
+      "measured_at": "2026-10-14T10:18:26.446064+00:00",
       "command": "python tools/task_set_audit.py --out eval/task_set_audit.json",
       "source": [
         "tools/task_set_audit.py",
@@ -1236,9 +1236,9 @@
         "predicate_changes": {
           "ts_fix_type_error": {
             "stored_runs": 3,
-            "reconstructed": 2,
+            "reconstructed": 1,
             "legacy_pass": 0,
-            "declared_pass": 2
+            "declared_pass": 1
           },
           "python_noisy_install_summary": {
             "stored_runs": 3,
@@ -1273,7 +1273,7 @@
       "pass": true,
       "mode": "statistical_audit",
       "sample_size": 48,
-      "measured_at": "2026-10-14T07:33:59.788501+00:00",
+      "measured_at": "2026-10-14T10:20:09.353848+00:00",
       "command": "python tools/live_uncertainty.py --out eval/live_uncertainty.json",
       "source": [
         "tools/live_uncertainty.py",
@@ -1312,35 +1312,35 @@
             ],
             "unpaired_p": null,
             "mcnemar_p": 1.0,
-            "tool_ratio_point": 1.4348,
+            "tool_ratio_point": 1.5217,
             "tool_ratio_ci": [
-              1.0,
-              2.1111
+              1.16,
+              1.9048
             ],
-            "token_ratio_point": 1.2571,
+            "token_ratio_point": 1.0886,
             "token_ratio_ci": [
-              1.037,
-              1.5333
+              0.8691,
+              1.6441
             ],
             "token_ratio_ci_row": [
-              1.037,
-              1.5333
+              0.8691,
+              1.6441
             ],
             "token_ratio_unit": "task",
-            "usage_token_ratio_point": 3.1745,
+            "usage_token_ratio_point": 3.1386,
             "usage_token_ratio_ci": [
-              2.3467,
-              4.255
+              2.7743,
+              3.5248
             ],
-            "prompt_token_ratio_point": 3.3384,
+            "prompt_token_ratio_point": 3.33,
             "prompt_token_ratio_ci": [
-              2.4803,
-              4.4493
+              2.89,
+              3.7953
             ],
-            "completion_token_ratio_point": 1.4072,
+            "completion_token_ratio_point": 1.1947,
             "completion_token_ratio_ci": [
-              0.7636,
-              2.3777
+              1.0017,
+              1.5055
             ],
             "p_token_ratio_below_frozen_target": 0.0,
             "n_for_80pct_power_success": null,
@@ -1352,52 +1352,51 @@
             "artifact": "without_read_files",
             "n_rows": 24,
             "success_rate_A": 1.0,
-            "success_rate_D": 0.875,
+            "success_rate_D": 1.0,
             "success_ci_A": [
               0.6756,
               1.0
             ],
             "success_ci_D": [
-              0.5291,
-              0.9776
+              0.6756,
+              1.0
             ],
-            "unpaired_p": 0.3017,
+            "unpaired_p": null,
             "mcnemar_p": 1.0,
-            "tool_ratio_point": 1.3846,
+            "tool_ratio_point": 1.6364,
             "tool_ratio_ci": [
-              1.069,
-              1.76
+              1.4167,
+              2.0
             ],
-            "token_ratio_point": 0.7674,
+            "token_ratio_point": 0.5301,
             "token_ratio_ci": [
-              0.5669,
-              1.0531
+              0.2366,
+              1.3544
             ],
             "token_ratio_ci_row": [
-              0.5669,
-              1.0531
+              0.2366,
+              1.3544
             ],
             "token_ratio_unit": "task",
-            "usage_token_ratio_point": 2.1934,
+            "usage_token_ratio_point": 1.8357,
             "usage_token_ratio_ci": [
-              1.6257,
-              2.7697
+              1.1734,
+              2.6899
             ],
-            "prompt_token_ratio_point": 2.3295,
+            "prompt_token_ratio_point": 1.9324,
             "prompt_token_ratio_ci": [
-              1.7494,
-              2.8978
+              1.2081,
+              2.9208
             ],
-            "completion_token_ratio_point": 0.9544,
+            "completion_token_ratio_point": 0.7481,
             "completion_token_ratio_ci": [
-              0.4529,
-              1.6234
+              0.5272,
+              1.0138
             ],
-            "p_token_ratio_below_frozen_target": 0.0553,
-            "n_for_80pct_power_success": 63,
+            "p_token_ratio_below_frozen_target": 0.654,
+            "n_for_80pct_power_success": null,
             "significance_notes": [
-              "unpaired success-rate difference is NOT significant at alpha=0.05 (z=-1.0328, p=0.3017)",
-              "paired (McNemar) success difference is NOT significant (discordant 1 A-only vs 0 D-only, p=1.0)"
+              "paired (McNemar) success difference is NOT significant (discordant 0 A-only vs 0 D-only, p=1.0)"
             ]
           }
         ],
@@ -1656,7 +1655,7 @@
       "value": 1.0,
       "pass": true,
       "mode": "row_policy_consistency",
-      "measured_at": "2026-10-14T08:20:26.424775+00:00",
+      "measured_at": "2026-10-14T10:21:10.079519+00:00",
       "command": "python tools/acceptance_power.py --out eval/acceptance_power.json",
       "source": [
         "tools/live_uncertainty.py",
@@ -1669,11 +1668,11 @@
         "exclusion_limit": 0.1,
         "primary": "analysable",
         "must_also_report": "intention_to_treat",
-        "blocked_comparisons": [],
-        "claimable_comparisons": [
+        "blocked_comparisons": [
           "verseshell_aci_vs_raw_shell",
           "verseshell_aci_vs_raw_shell_coached"
         ],
+        "claimable_comparisons": [],
         "per_arm_exclusion": {
           "raw_shell": {
             "endpoint_rate": 0.0,
@@ -1685,7 +1684,7 @@
           },
           "verseshell_aci": {
             "endpoint_rate": 0.0,
-            "cap_truncated_rate": 0.0
+            "cap_truncated_rate": 0.125
           }
         }
       },
@@ -1708,11 +1707,11 @@
       "token_caliber": "char_count_with_proxy_token_context",
       "token_caliber_note": "the gated value is a CHARACTER ratio: named overhead = `line_wrapper + counts` chars from read_path_breakdown.json's per-projection attribution, so it measures the reference client's rendering, not tokens. The `token_savings` reported in `context_not_gated` is the len//4 proxy. Neither is endpoint usage, currency or a total-token claim",
       "threshold": ">= 0.40 and measured on a fresh artifact from a task set newer than 2.0.0",
-      "value": 0.8195,
+      "value": 0.7325,
       "pass": true,
       "mode": "deterministic",
       "sample_size": 10,
-      "measured_at": "2026-10-14T08:20:00.115732+00:00",
+      "measured_at": "2026-10-14T10:16:36.345143+00:00",
       "command": "python tools/read_path_breakdown.py --out eval/read_path_breakdown.json",
       "source": [
         "tools/read_path_breakdown.py",
@@ -1723,8 +1722,8 @@
         "docs/acceptance-criteria.md"
       ],
       "detail": {
-        "legacy_named_overhead_chars": 931.0,
-        "current_named_overhead_chars": 168.0,
+        "legacy_named_overhead_chars": 845.0,
+        "current_named_overhead_chars": 226.0,
         "named_overhead_parts": [
           "line_wrapper",
           "counts"
@@ -1738,10 +1737,10 @@
           "problems": [],
           "source_identity": {
             "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json",
-            "sha256": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38",
+            "sha256": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9",
             "task_set_version": "3.1.0",
-            "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6",
-            "collection_id": "light-c12-c35-20261014",
+            "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66",
+            "collection_id": "light-c12-c35-fmt-20261014",
             "tasks": [
               "rust_fix_compile_error",
               "rust_add_unit_test",
@@ -1757,8 +1756,8 @@
           "scope": "prefix_subset"
         },
         "context_not_gated": {
-          "bucket_share_saving_C16": 0.2175,
-          "content_chars": 1224
+          "bucket_share_saving_C16": 0.195,
+          "content_chars": 1139
         }
       },
       "notes": "mixture-invariant restatement of the read-projection saving. C14/C16 keep their original thresholds and are evaluated separately; this is an ADDITIONAL, separately pre-registered claim, registered before round 14's data existed. These conditions must hold: measured bytes and task IDs must match the selected freeze, the actual version must be newer than 2.0.0, AND the artifact must be fresh against its own globs (otherwise bumping the task set would validate the claim over the old numbers). Scope is the reference client's rendering of the read ops on a frozen call set, NOT model behaviour, and it says nothing about total-token cost",
@@ -1827,7 +1826,7 @@
       "pass": true,
       "mode": "tokenizer_calibration",
       "sample_size": 53,
-      "measured_at": "2026-10-14T07:32:16.648703+00:00",
+      "measured_at": "2026-10-14T10:19:57.608225+00:00",
       "command": "python tools/token_proxy_calibration.py --out eval/token_proxy_calibration.json",
       "source": [
         "tools/token_proxy_calibration.py",
@@ -1849,13 +1848,13 @@
         "tokenizer": "tiktoken:cl100k_base",
         "tokenizer_tier": 1,
         "is_approximation": false,
-        "mean_real_over_proxy": 1.5283,
-        "median_real_over_proxy": 1.4662,
-        "mean_relative_error_proxy_vs_real": -0.33,
-        "chars_per_real_token": 2.7397,
-        "proxy_undercounts_samples": 53,
-        "error_direction": "the proxy UNDER-counts real tokens on this sample: mean real/proxy = 1.5283 (> 1), i.e. the proxy charges about 33.0% fewer tokens than the tokenizer produces",
-        "upper_bound_verdict": "NO: real > proxy on 53/53 samples (100.0%), i.e. len(text)//4 UNDER-counts real tokens on those shapes ({'ascii_only': 49, 'cjk': 4}). The proxy is NOT a bound in either direction: in this same sample it under-counts 53 and over-counts 0 of 53 scored texts, so no single correction factor converts it into a real-token count. Worst: ascii_only text of 741 chars scored 284 real tokens against 185 proxy tokens (-35%).",
+        "mean_real_over_proxy": 1.5155,
+        "median_real_over_proxy": 1.4646,
+        "mean_relative_error_proxy_vs_real": -0.3228,
+        "chars_per_real_token": 2.788,
+        "proxy_undercounts_samples": 52,
+        "error_direction": "the proxy UNDER-counts real tokens on this sample: mean real/proxy = 1.5155 (> 1), i.e. the proxy charges about 32.3% fewer tokens than the tokenizer produces",
+        "upper_bound_verdict": "NO: real > proxy on 52/53 samples (98.1%), i.e. len(text)//4 UNDER-counts real tokens on those shapes ({'ascii_only': 49, 'cjk': 3}). The proxy is NOT a bound in either direction: in this same sample it under-counts 52 and over-counts 1 of 53 scored texts, so no single correction factor converts it into a real-token count. Worst: ascii_only text of 1532 chars scored 525 real tokens against 383 proxy tokens (-27%).",
         "anchor": {
           "statement": "a 400-character English paragraph costs 100 proxy tokens and 89 real tokens (expected [80, 120]); within range: True",
           "within_expected_range": true
@@ -1883,7 +1882,7 @@
       "pass": true,
       "mode": "power_and_precision_audit",
       "sample_size": 8,
-      "measured_at": "2026-10-14T07:34:03.884584+00:00",
+      "measured_at": "2026-10-14T10:20:14.359444+00:00",
       "command": "python tools/acceptance_power.py --out eval/acceptance_power.json",
       "source": [
         "tools/acceptance_power.py",
@@ -1946,58 +1945,58 @@
           },
           "token_ratio_level1_D_cheaper": {
             "claimable": false,
-            "gap_type": "product_gap",
+            "gap_type": "data_gap",
             "unit": "task",
-            "point": 1.2571,
+            "point": 1.0886,
             "ci95": [
-              1.037,
-              1.5333
+              0.8691,
+              1.6441
             ],
-            "reason": "the whole CI95 [1.0370, 1.5333] is above the cap 1.0: more samples cannot rescue this (product gap, not data gap)"
+            "reason": "point estimate 1.0886 is past the threshold 1.0, but CI95 still reaches below it (0.8691 < 1.0): narrowing the interval alone cannot clear the threshold, so this is no evidence, not a product gap"
           },
           "token_ratio_level2_saves_15pct": {
             "claimable": false,
             "gap_type": "product_gap",
             "unit": "task",
-            "point": 1.2571,
+            "point": 1.0886,
             "ci95": [
-              1.037,
-              1.5333
+              0.8691,
+              1.6441
             ],
-            "reason": "the whole CI95 [1.0370, 1.5333] is above the cap 0.85: more samples cannot rescue this (product gap, not data gap)"
+            "reason": "the whole CI95 [0.8691, 1.6441] is above the cap 0.85: more samples cannot rescue this (product gap, not data gap)"
           },
           "token_ratio_frozen_0.60": {
             "claimable": false,
             "gap_type": "product_gap",
             "unit": "task",
-            "point": 1.2571,
+            "point": 1.0886,
             "ci95": [
-              1.037,
-              1.5333
+              0.8691,
+              1.6441
             ],
-            "reason": "the whole CI95 [1.0370, 1.5333] is above the cap 0.6: more samples cannot rescue this (product gap, not data gap)"
+            "reason": "the whole CI95 [0.8691, 1.6441] is above the cap 0.6: more samples cannot rescue this (product gap, not data gap)"
           },
           "tool_ratio_level1_D_fewer_calls": {
             "claimable": false,
-            "gap_type": "data_gap",
+            "gap_type": "product_gap",
             "unit": "task",
-            "point": 1.4348,
+            "point": 1.5217,
             "ci95": [
-              1.0,
-              2.1111
+              1.16,
+              1.9048
             ],
-            "reason": "point estimate 1.4348 is past the threshold 1.0, but CI95 still reaches below it (1.0000 < 1.0): narrowing the interval alone cannot clear the threshold, so this is no evidence, not a product gap"
+            "reason": "the whole CI95 [1.1600, 1.9048] is above the cap 1.0: more samples cannot rescue this (product gap, not data gap)"
           },
           "token_ratio_coached_level1_D_cheaper": {
             "claimable": false,
             "gap_type": "product_gap",
             "unit": "task",
-            "point": 1.576,
+            "point": 1.7897,
             "ci95": [
-              1.2613,
-              1.8975
+              1.3102,
+              2.3604
             ],
-            "reason": "the whole CI95 [1.2613, 1.8975] is above the cap 1.0: more samples cannot rescue this (product gap, not data gap)"
+            "reason": "the whole CI95 [1.3102, 2.3604] is above the cap 1.0: more samples cannot rescue this (product gap, not data gap)"
           },
           "cost_per_success_D_cheaper": {
             "claimable": false,
@@ -2025,10 +2024,10 @@
             "claimable": true,
             "gap_type": "none",
             "unit": null,
-            "point": 0.2987,
+            "point": 0.3184,
             "ci95": [
-              0.2809,
-              0.3349
+              0.2982,
+              0.3426
             ],
             "reason": "headline must be the WORST operation, never the best; and §2 requires output equivalence before timing. `worst_point_vs_cmd` is context only: cmd.exe is the shell the baseline arm actually uses, but the pre-registered claim is against PowerShell"
           },
@@ -2036,10 +2035,10 @@
             "claimable": true,
             "gap_type": "none",
             "unit": null,
-            "point": 0.2987,
+            "point": 0.3184,
             "ci95": [
-              0.2809,
-              0.3349
+              0.2982,
+              0.3426
             ],
             "reason": null
           }
@@ -2049,76 +2048,76 @@
         "real_tokenizer": {
           "raw_shell": {
             "usage_token_ratio": {
-              "point": 3.1745,
+              "point": 3.1386,
               "ci95": [
-                2.3467,
-                4.255
+                2.7743,
+                3.5248
               ],
               "ci95_row": [
-                2.3467,
-                4.255
+                2.7743,
+                3.5248
               ],
               "unit": "task"
             },
             "prompt_token_ratio": {
-              "point": 3.3384,
+              "point": 3.33,
               "ci95": [
-                2.4803,
-                4.4493
+                2.89,
+                3.7953
               ],
               "ci95_row": [
-                2.4803,
-                4.4493
+                2.89,
+                3.7953
               ],
               "unit": "task"
             },
             "completion_token_ratio": {
-              "point": 1.4072,
+              "point": 1.1947,
               "ci95": [
-                0.7636,
-                2.3777
+                1.0017,
+                1.5055
               ],
               "ci95_row": [
-                0.7636,
-                2.3777
+                1.0017,
+                1.5055
               ],
               "unit": "task"
             }
           },
           "raw_shell_coached": {
             "usage_token_ratio": {
-              "point": 2.915,
+              "point": 3.283,
               "ci95": [
-                2.1826,
-                3.7309
+                2.1856,
+                4.9625
               ],
               "ci95_row": [
-                2.1826,
-                3.7309
+                2.1856,
+                4.9625
               ],
               "unit": "task"
             },
             "prompt_token_ratio": {
-              "point": 3.0132,
+              "point": 3.7803,
               "ci95": [
-                2.2552,
-                3.8397
+                2.6831,
+                5.3191
               ],
               "ci95_row": [
-                2.2552,
-                3.8397
+                2.6831,
+                5.3191
               ],
               "unit": "task"
             },
             "completion_token_ratio": {
-              "point": 1.59,
+              "point": 0.6951,
               "ci95": [
-                0.9893,
-                2.5353
+                0.2588,
+                2.1738
               ],
               "ci95_row": [
-                0.9893,
-                2.5353
+                0.2588,
+                2.1738
               ],
               "unit": "task"
             }
@@ -2127,13 +2126,13 @@
         "n_pairs": 8,
         "success_detectable_mde_at_current_n": null,
         "token_ratio": {
-          "point": 1.2571,
+          "point": 1.0886,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.31,
+            "point_estimate": 1.4574,
             "bootstrap_ci95": [
-              1.0744,
-              1.5651
+              1.0412,
+              1.8862
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -2141,12 +2140,12 @@
             "weighting": "equal weight per paired cell; seeds retained in task clusters"
           },
           "ci95": [
-            1.037,
-            1.5333
+            0.8691,
+            1.6441
           ],
           "ci95_row": [
-            1.037,
-            1.5333
+            0.8691,
+            1.6441
           ],
           "unit": "task",
           "n_pairs": 8,
@@ -2157,13 +2156,13 @@
           "caliber_note": "ratio of the live rows' recorded `observation_tokens`, i.e. the live runner's `estimate_tokens(text) = max(1, len(text)//4)` accumulated over delivered observation text: a PROXY, NOT endpoint usage, NOT the evaluated model's own tokenizer and NOT currency"
         },
         "tool_ratio": {
-          "point": 1.4348,
+          "point": 1.5217,
           "estimator": "ratio_of_sums",
           "mean_of_ratios": {
-            "point_estimate": 1.6938,
+            "point_estimate": 1.5521,
             "bootstrap_ci95": [
-              1.1375,
-              2.2875
+              1.25,
+              1.8438
             ],
             "bootstrap_unit": "task",
             "n_pairs": 8,
@@ -2171,12 +2170,12 @@
             "weighting": "equal weight per paired cell; seeds retained in task clusters"
           },
           "ci95": [
-            1.0,
-            2.1111
+            1.16,
+            1.9048
           ],
           "ci95_row": [
-            1.0,
-            2.1111
+            1.16,
+            1.9048
           ],
           "unit": "task",
           "n_pairs": 8,
@@ -2190,10 +2189,10 @@
           "paired_task_intervals": {
             "analysable": {
               "available": true,
-              "point_estimate": 1.2571127502634352,
+              "point_estimate": 1.3013798111837327,
               "ci95": [
-                1.0342465753424657,
-                1.5461413923367513
+                1.042149631190727,
+                1.8094725511302474
               ],
               "success_delta": 0.0,
               "success_delta_ci95": [
@@ -2202,9 +2201,9 @@
               ],
               "undefined_draws": 0,
               "bootstrap_unit": "task",
-              "tasks": 8,
-              "n_pairs": 8,
-              "excluded_pairs": 0,
+              "tasks": 7,
+              "n_pairs": 7,
+              "excluded_pairs": 1,
               "view": "analysable",
               "caliber": "observation_tokens",
               "claimable": false,
@@ -2212,14 +2211,14 @@
             },
             "intention_to_treat": {
               "available": true,
-              "point_estimate": 1.2571127502634352,
+              "point_estimate": 1.2440582673140812,
               "ci95": [
-                1.0342465753424657,
-                1.5461413923367513
+                1.0723443223443223,
+                1.6929347826086956
               ],
-              "success_delta": 0.0,
+              "success_delta": -0.125,
               "success_delta_ci95": [
-                0.0,
+                -0.375,
                 0.0
               ],
               "undefined_draws": 0,
@@ -2233,13 +2232,13 @@
               "inference_status": "diagnostic interval; requires prospective calibration and multiplicity"
             }
           },
-          "point_D_over_A": 1.2571,
-          "tokens_A": 1898.0,
-          "tokens_D": 2386.0,
+          "point_D_over_A": 1.0886,
+          "tokens_A": 2236.0,
+          "tokens_D": 2434.0,
           "successes_A": 8,
           "successes_D": 8,
-          "cpst_A_tokens_per_success": 237.25,
-          "cpst_D_tokens_per_success": 298.25,
+          "cpst_A_tokens_per_success": 279.5,
+          "cpst_D_tokens_per_success": 304.25,
           "success_noninferiority_lower_bound": 0.0,
           "success_mean_diff_D_minus_A": 0.0,
           "caliber": "observation_proxy_tokens_per_success",
@@ -2400,7 +2399,7 @@
       "value": 1.0,
       "pass": true,
       "mode": "paired_arm_composition",
-      "measured_at": "2026-10-14T07:26:12.997192+00:00",
+      "measured_at": "2026-10-14T10:09:54.380557+00:00",
       "command": "python tools/live_round.py --tag <tag> --arms with,without",
       "source": [
         "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json",
@@ -2426,10 +2425,10 @@
             "ts_fix_type_error",
             "ts_package_script_fail"
           ],
-          "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6",
+          "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66",
           "task_set_version": "3.1.0",
           "schema": "verseshell.aci_bench.results/v1",
-          "generated_at": "2026-10-14T07:26:12.997192+00:00",
+          "generated_at": "2026-10-14T10:09:54.380557+00:00",
           "api_error_rows": 0,
           "partial": false,
           "partial_declared": false,
@@ -2454,10 +2453,10 @@
             "ts_fix_type_error",
             "ts_package_script_fail"
           ],
-          "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6",
+          "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66",
           "task_set_version": "3.1.0",
           "schema": "verseshell.aci_bench.results/v1",
-          "generated_at": "2026-10-14T07:26:13.256069+00:00",
+          "generated_at": "2026-10-14T10:09:54.381557+00:00",
           "api_error_rows": 0,
           "partial": false,
           "partial_declared": false,
@@ -2487,7 +2486,7 @@
       "value": 1.0,
       "pass": true,
       "mode": "hypothesis_family_multiplicity",
-      "measured_at": "2026-10-14T08:20:26.424775+00:00",
+      "measured_at": "2026-10-14T10:21:10.079519+00:00",
       "command": "python tools/acceptance_power.py --out eval/acceptance_power.json",
       "source": [
         "tools/acceptance_power.py",
@@ -2533,7 +2532,7 @@
       "value": 1.0,
       "pass": true,
       "mode": "independent_reimplementation",
-      "measured_at": "2026-10-14T08:20:26.424775+00:00",
+      "measured_at": "2026-10-14T10:21:10.079519+00:00",
       "command": "python tools/statistics_crosscheck.py --out eval/statistics_crosscheck.json",
       "source": [
         "tools/statistics_crosscheck.py",
@@ -2572,7 +2571,7 @@
       "pass": true,
       "mode": "content_fingerprint",
       "sample_size": 26,
-      "measured_at": "2026-10-14T08:20:26.424775+00:00",
+      "measured_at": "2026-10-14T10:21:10.079519+00:00",
       "command": "python tools/claim_gate.py",
       "source": [
         "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest.json",
@@ -2608,118 +2607,118 @@
           {
             "artifact": "bench/aci/results/latest.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest.json",
-            "generated_at": "2026-10-14T07:27:30.466020+00:00",
+            "generated_at": "2026-10-14T10:11:20.391483+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "41dd668bf91842ee",
-            "fingerprint_current": "41dd668bf91842ee",
+            "fingerprint_recorded": "eaacef6a86a7199c",
+            "fingerprint_current": "eaacef6a86a7199c",
             "pass": true
           },
           {
             "artifact": "bench/aci/results/latest_live.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json",
-            "generated_at": "2026-10-14T07:26:12.997192+00:00",
+            "generated_at": "2026-10-14T10:09:54.380557+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "2fa8e1fc11c35461",
-            "fingerprint_current": "2fa8e1fc11c35461",
+            "fingerprint_recorded": "43ef73ae31587288",
+            "fingerprint_current": "43ef73ae31587288",
             "pass": true
           },
           {
             "artifact": "bench/aci/results/live_ab_without_read_files.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\live_ab_without_read_files.json",
-            "generated_at": "2026-10-14T07:26:13.256069+00:00",
+            "generated_at": "2026-10-14T10:09:54.381557+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "2fa8e1fc11c35461",
-            "fingerprint_current": "2fa8e1fc11c35461",
+            "fingerprint_recorded": "43ef73ae31587288",
+            "fingerprint_current": "43ef73ae31587288",
             "pass": true
           },
           {
             "artifact": "eval/jev_obs_report.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\jev_obs_report.json",
-            "generated_at": "2026-10-14T07:27:30.724558+00:00",
+            "generated_at": "2026-10-14T10:11:20.665815+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "1dc3da0469bd8be9",
-            "fingerprint_current": "1dc3da0469bd8be9",
+            "fingerprint_recorded": "90cf199debcff014",
+            "fingerprint_current": "90cf199debcff014",
             "pass": true
           },
           {
             "artifact": "eval/cross_shell.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json",
-            "generated_at": "2026-10-14T07:29:42.189775+00:00",
+            "generated_at": "2026-10-14T10:16:08.929131+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "0af0a15a31daadf0",
-            "fingerprint_current": "0af0a15a31daadf0",
+            "fingerprint_recorded": "fe149641386e37ef",
+            "fingerprint_current": "fe149641386e37ef",
             "pass": true
           },
           {
             "artifact": "eval/tf45_envelope_replay.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\tf45_envelope_replay.json",
-            "generated_at": "2026-10-14T08:19:35.410340+00:00",
+            "generated_at": "2026-10-14T10:16:29.720388+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "fbf0b20aaea965ef",
-            "fingerprint_current": "fbf0b20aaea965ef",
+            "fingerprint_recorded": "f98c4094601e6cba",
+            "fingerprint_current": "f98c4094601e6cba",
             "pass": true
           },
           {
             "artifact": "eval/exec_token_breakdown.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\exec_token_breakdown.json",
-            "generated_at": "2026-10-14T07:31:10.092575+00:00",
+            "generated_at": "2026-10-14T10:18:34.342995+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "eb0768f77bd461cb",
-            "fingerprint_current": "eb0768f77bd461cb",
+            "fingerprint_recorded": "13e5ffff7d8b1568",
+            "fingerprint_current": "13e5ffff7d8b1568",
             "pass": true
           },
           {
             "artifact": "eval/read_path_breakdown.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\read_path_breakdown.json",
-            "generated_at": "2026-10-14T08:20:00.115732+00:00",
+            "generated_at": "2026-10-14T10:16:36.345143+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "b189be8940ab0ca8",
-            "fingerprint_current": "b189be8940ab0ca8",
+            "fingerprint_recorded": "f7abf669c44034db",
+            "fingerprint_current": "f7abf669c44034db",
             "pass": true
           },
           {
             "artifact": "eval/read_usage_audit.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\read_usage_audit.json",
-            "generated_at": "2026-10-14T07:31:09.995517+00:00",
+            "generated_at": "2026-10-14T10:18:34.198704+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "c6778ac714af1828",
-            "fingerprint_current": "c6778ac714af1828",
+            "fingerprint_recorded": "53eeb1b2aeba033c",
+            "fingerprint_current": "53eeb1b2aeba033c",
             "pass": true
           },
           {
             "artifact": "eval/exec_failure_breakdown.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\exec_failure_breakdown.json",
-            "generated_at": "2026-10-14T07:31:17.730144+00:00",
+            "generated_at": "2026-10-14T10:18:44.329050+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "2ac43fa1f9ce5cb1",
-            "fingerprint_current": "2ac43fa1f9ce5cb1",
+            "fingerprint_recorded": "2f58f4b095dac48a",
+            "fingerprint_current": "2f58f4b095dac48a",
             "pass": true
           },
           {
             "artifact": "eval/step_composition.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\step_composition.json",
-            "generated_at": "2026-10-14T07:31:17.937817+00:00",
+            "generated_at": "2026-10-14T10:18:44.507611+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "affe65445f5e8e8e",
-            "fingerprint_current": "affe65445f5e8e8e",
+            "fingerprint_recorded": "3fccc1266b8cf49d",
+            "fingerprint_current": "3fccc1266b8cf49d",
             "pass": true
           },
           {
             "artifact": "eval/ts_fixture_audit.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\ts_fixture_audit.json",
-            "generated_at": "2026-10-14T07:29:55.267316+00:00",
+            "generated_at": "2026-10-14T10:16:36.676110+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "0f75f734dd3e1bb2",
-            "fingerprint_current": "0f75f734dd3e1bb2",
+            "fingerprint_recorded": "4202e5d15c5d8aab",
+            "fingerprint_current": "4202e5d15c5d8aab",
             "pass": true
           },
           {
             "artifact": "eval/task_set_audit.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\task_set_audit.json",
-            "generated_at": "2026-10-14T07:31:09.845262+00:00",
+            "generated_at": "2026-10-14T10:18:26.446064+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "05c57af1a4e376ff",
-            "fingerprint_current": "05c57af1a4e376ff",
+            "fingerprint_recorded": "8f6e4bf8ea7201b2",
+            "fingerprint_current": "8f6e4bf8ea7201b2",
             "pass": true
           },
           {
@@ -2734,28 +2733,28 @@
           {
             "artifact": "eval/live_uncertainty.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\live_uncertainty.json",
-            "generated_at": "2026-10-14T07:33:59.788501+00:00",
+            "generated_at": "2026-10-14T10:20:09.353848+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "aa3bb8792aef312d",
-            "fingerprint_current": "aa3bb8792aef312d",
+            "fingerprint_recorded": "439383698bb089eb",
+            "fingerprint_current": "439383698bb089eb",
             "pass": true
           },
           {
             "artifact": "eval/budget_sensitivity.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\budget_sensitivity.json",
-            "generated_at": "2026-10-14T07:36:31.273898+00:00",
+            "generated_at": "2026-10-14T10:20:14.993599+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "79b4c70f7a8fede1",
-            "fingerprint_current": "79b4c70f7a8fede1",
+            "fingerprint_recorded": "2f898a6074816281",
+            "fingerprint_current": "2f898a6074816281",
             "pass": true
           },
           {
             "artifact": "eval/task_design_audit.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\task_design_audit.json",
-            "generated_at": "2026-10-14T08:09:29.079179+00:00",
+            "generated_at": "2026-10-14T10:20:14.869597+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "da88043658467a79",
-            "fingerprint_current": "da88043658467a79",
+            "fingerprint_recorded": "e8d80ed53d08950d",
+            "fingerprint_current": "e8d80ed53d08950d",
             "pass": true
           },
           {
@@ -2770,19 +2769,19 @@
           {
             "artifact": "eval/token_proxy_calibration.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\token_proxy_calibration.json",
-            "generated_at": "2026-10-14T07:32:16.648703+00:00",
+            "generated_at": "2026-10-14T10:19:57.608225+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "fca1c936681ee7ec",
-            "fingerprint_current": "fca1c936681ee7ec",
+            "fingerprint_recorded": "c828c8ca85e1069c",
+            "fingerprint_current": "c828c8ca85e1069c",
             "pass": true
           },
           {
             "artifact": "eval/acceptance_power.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\acceptance_power.json",
-            "generated_at": "2026-10-14T07:34:03.884584+00:00",
+            "generated_at": "2026-10-14T10:20:14.359444+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "1b3686e1fb509843",
-            "fingerprint_current": "1b3686e1fb509843",
+            "fingerprint_recorded": "14e6fb4638966107",
+            "fingerprint_current": "14e6fb4638966107",
             "pass": true
           },
           {
@@ -2806,10 +2805,10 @@
           {
             "artifact": "eval/three_arm_report.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\three_arm_report.json",
-            "generated_at": "2026-10-14T08:09:02.654416+00:00",
+            "generated_at": "2026-10-14T10:20:31.331430+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "15c2787d2067242f",
-            "fingerprint_current": "15c2787d2067242f",
+            "fingerprint_recorded": "ec2ec1adfd811d89",
+            "fingerprint_current": "ec2ec1adfd811d89",
             "pass": true
           },
           {
@@ -2833,10 +2832,10 @@
           {
             "artifact": "eval/statistics_crosscheck.json",
             "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\statistics_crosscheck.json",
-            "generated_at": "2026-10-14T07:34:04.164786+00:00",
+            "generated_at": "2026-10-14T10:20:14.689097+00:00",
             "status": "fresh",
-            "fingerprint_recorded": "03a145958dfd366b",
-            "fingerprint_current": "03a145958dfd366b",
+            "fingerprint_recorded": "6e864c862d999074",
+            "fingerprint_current": "6e864c862d999074",
             "pass": true
           }
         ],
@@ -2915,7 +2914,7 @@
         "value": 0.1086,
         "sample_size": 35,
         "mode": "mock",
-        "evaluated_at": "2026-10-14T07:27:30.466020+00:00",
+        "evaluated_at": "2026-10-14T10:11:20.391483+00:00",
         "platform": null,
         "input_artifacts": [
           "bench/aci/results/latest.json"
@@ -2934,7 +2933,7 @@
         "value": 0.5629,
         "sample_size": 35,
         "mode": "mock",
-        "evaluated_at": "2026-10-14T07:27:30.466020+00:00",
+        "evaluated_at": "2026-10-14T10:11:20.391483+00:00",
         "platform": null,
         "input_artifacts": [
           "bench/aci/results/latest.json"
@@ -2953,7 +2952,7 @@
         "value": 1.0,
         "sample_size": 4,
         "mode": "deterministic",
-        "evaluated_at": "2026-10-14T08:20:26.424775+00:00",
+        "evaluated_at": "2026-10-14T10:21:10.079519+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/metrics.json"
@@ -2972,7 +2971,7 @@
         "value": 1.0,
         "sample_size": 5,
         "mode": "deterministic",
-        "evaluated_at": "2026-10-14T08:20:26.424775+00:00",
+        "evaluated_at": "2026-10-14T10:21:10.079519+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/metrics.json"
@@ -3010,7 +3009,7 @@
         "value": 1.0,
         "sample_size": 4,
         "mode": "cargo_test",
-        "evaluated_at": "2026-10-14T08:20:26.424775+00:00",
+        "evaluated_at": "2026-10-14T10:21:10.079519+00:00",
         "platform": "win32",
         "input_artifacts": [],
         "token_caliber": "no_token_field_published",
@@ -3027,7 +3026,7 @@
         "value": 1.0,
         "sample_size": 301,
         "mode": "cargo_test",
-        "evaluated_at": "2026-10-14T08:20:26.424775+00:00",
+        "evaluated_at": "2026-10-14T10:21:10.079519+00:00",
         "platform": "win32",
         "input_artifacts": [],
         "token_caliber": "no_token_field_published",
@@ -3044,7 +3043,7 @@
         "value": 1.0,
         "sample_size": 3,
         "mode": "cargo_test",
-        "evaluated_at": "2026-10-14T08:20:26.424775+00:00",
+        "evaluated_at": "2026-10-14T10:21:10.079519+00:00",
         "platform": "win32",
         "input_artifacts": [],
         "token_caliber": "no_token_field_published",
@@ -3061,7 +3060,7 @@
         "value": 0.4203,
         "sample_size": 7,
         "mode": "deterministic",
-        "evaluated_at": "2026-10-14T08:20:26.424775+00:00",
+        "evaluated_at": "2026-10-14T10:21:10.079519+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/compact_ratio.json"
@@ -3080,7 +3079,7 @@
         "value": 1.0,
         "sample_size": 19,
         "mode": "deterministic",
-        "evaluated_at": "2026-10-14T08:20:26.424775+00:00",
+        "evaluated_at": "2026-10-14T10:21:10.079519+00:00",
         "platform": "win32",
         "input_artifacts": [
           "@readme_check",
@@ -3098,10 +3097,10 @@
         "status": "verified_selected_measurement",
         "gate_pass": true,
         "threshold": "<= 0.50",
-        "value": 0.2987,
+        "value": 0.3184,
         "sample_size": 5,
         "mode": "wall_clock",
-        "evaluated_at": "2026-10-14T07:29:42.189775+00:00",
+        "evaluated_at": "2026-10-14T10:16:08.929131+00:00",
         "platform": "win32",
         "input_artifacts": [
           "eval/cross_shell.json"
@@ -3120,7 +3119,7 @@
         "value": 1.0,
         "sample_size": 26,
         "mode": "content_fingerprint",
-        "evaluated_at": "2026-10-14T08:20:26.424775+00:00",
+        "evaluated_at": "2026-10-14T10:21:10.079519+00:00",
         "platform": null,
         "input_artifacts": [
           "bench/aci/results/latest.json",
@@ -3181,10 +3180,10 @@
         "status": "not_met",
         "gate_pass": false,
         "threshold": ">= 0.15",
-        "value": 0.2457,
+        "value": 0.2368,
         "sample_size": 10,
         "mode": "deterministic",
-        "evaluated_at": "2026-10-14T08:19:35.410340+00:00",
+        "evaluated_at": "2026-10-14T10:16:29.720388+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/tf45_envelope_replay.json"
@@ -3219,10 +3218,10 @@
         "status": "not_met",
         "gate_pass": false,
         "threshold": ">= 0.10",
-        "value": 0.2175,
+        "value": 0.195,
         "sample_size": 10,
         "mode": "deterministic",
-        "evaluated_at": "2026-10-14T08:20:00.115732+00:00",
+        "evaluated_at": "2026-10-14T10:16:36.345143+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/read_path_breakdown.json"
@@ -3260,7 +3259,7 @@
         "value": 1.0,
         "sample_size": 3,
         "mode": "deterministic",
-        "evaluated_at": "2026-10-14T07:31:17.730144+00:00",
+        "evaluated_at": "2026-10-14T10:18:44.329050+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/exec_failure_breakdown.json"
@@ -3336,7 +3335,7 @@
         "value": 1.0,
         "sample_size": 5,
         "mode": "deterministic",
-        "evaluated_at": "2026-10-14T07:31:17.730144+00:00",
+        "evaluated_at": "2026-10-14T10:18:44.329050+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/exec_failure_breakdown.json"
@@ -3355,7 +3354,7 @@
         "value": 1.0,
         "sample_size": 3,
         "mode": "deterministic",
-        "evaluated_at": "2026-10-14T07:29:55.267316+00:00",
+        "evaluated_at": "2026-10-14T10:16:36.676110+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/ts_fixture_audit.json"
@@ -3374,7 +3373,7 @@
         "value": 1.0,
         "sample_size": 35,
         "mode": "deterministic",
-        "evaluated_at": "2026-10-14T07:31:09.845262+00:00",
+        "evaluated_at": "2026-10-14T10:18:26.446064+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/task_set_audit.json",
@@ -3394,7 +3393,7 @@
         "value": 1.0,
         "sample_size": 48,
         "mode": "statistical_audit",
-        "evaluated_at": "2026-10-14T07:33:59.788501+00:00",
+        "evaluated_at": "2026-10-14T10:20:09.353848+00:00",
         "platform": null,
         "input_artifacts": [
           "bench/aci/results/latest_live.json",
@@ -3434,7 +3433,7 @@
         "value": 1.0,
         "sample_size": 53,
         "mode": "tokenizer_calibration",
-        "evaluated_at": "2026-10-14T07:32:16.648703+00:00",
+        "evaluated_at": "2026-10-14T10:19:57.608225+00:00",
         "platform": null,
         "input_artifacts": [
           "bench/aci/results/latest_live.json",
@@ -3454,7 +3453,7 @@
         "value": 1.0,
         "sample_size": 8,
         "mode": "power_and_precision_audit",
-        "evaluated_at": "2026-10-14T07:34:03.884584+00:00",
+        "evaluated_at": "2026-10-14T10:20:14.359444+00:00",
         "platform": null,
         "input_artifacts": [
           "bench/aci/results/latest_live.json",
@@ -3551,7 +3550,7 @@
         "value": 1.0,
         "sample_size": null,
         "mode": "row_policy_consistency",
-        "evaluated_at": "2026-10-14T08:20:26.424775+00:00",
+        "evaluated_at": "2026-10-14T10:21:10.079519+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/acceptance_power.json",
@@ -3568,10 +3567,10 @@
         "status": "verified_selected_measurement",
         "gate_pass": true,
         "threshold": ">= 0.40 and measured on a fresh artifact from a task set newer than 2.0.0",
-        "value": 0.8195,
+        "value": 0.7325,
         "sample_size": 10,
         "mode": "deterministic",
-        "evaluated_at": "2026-10-14T08:20:00.115732+00:00",
+        "evaluated_at": "2026-10-14T10:16:36.345143+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/read_path_breakdown.json",
@@ -3592,7 +3591,7 @@
         "value": 1.0,
         "sample_size": null,
         "mode": "paired_arm_composition",
-        "evaluated_at": "2026-10-14T07:26:12.997192+00:00",
+        "evaluated_at": "2026-10-14T10:09:54.380557+00:00",
         "platform": null,
         "input_artifacts": [
           "bench/aci/results/latest_live.json",
@@ -3612,7 +3611,7 @@
         "value": 1.0,
         "sample_size": null,
         "mode": "hypothesis_family_multiplicity",
-        "evaluated_at": "2026-10-14T08:20:26.424775+00:00",
+        "evaluated_at": "2026-10-14T10:21:10.079519+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/acceptance_power.json"
@@ -3631,7 +3630,7 @@
         "value": 1.0,
         "sample_size": null,
         "mode": "independent_reimplementation",
-        "evaluated_at": "2026-10-14T08:20:26.424775+00:00",
+        "evaluated_at": "2026-10-14T10:21:10.079519+00:00",
         "platform": null,
         "input_artifacts": [
           "eval/statistics_crosscheck.json",
@@ -3647,12 +3646,12 @@
     "artifacts": {
       "bench/aci/results/latest.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest.json",
-        "sha256": "5d8cb18e27967d1c0f8cd150c929ac33f53693a6774742ddaecd2b318ca8f324",
+        "sha256": "623a3885e8e322eeb3268553c4dc15ad3ac18bc97bef81a297485a04cd14549b",
         "version": {
           "schema": "verseshell.aci_bench.results/v1",
-          "generated_at": "2026-10-14T07:27:30.466020+00:00",
+          "generated_at": "2026-10-14T10:11:20.391483+00:00",
           "task_set_version": "3.0.0",
-          "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6",
+          "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66",
           "mode": "mock"
         },
         "collection": {},
@@ -3664,25 +3663,25 @@
         "freshness": {
           "artifact": "bench/aci/results/latest.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest.json",
-          "generated_at": "2026-10-14T07:27:30.466020+00:00",
+          "generated_at": "2026-10-14T10:11:20.391483+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "41dd668bf91842ee",
-          "fingerprint_current": "41dd668bf91842ee",
+          "fingerprint_recorded": "eaacef6a86a7199c",
+          "fingerprint_current": "eaacef6a86a7199c",
           "pass": true
         }
       },
       "bench/aci/results/latest_live.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json",
-        "sha256": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38",
+        "sha256": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9",
         "version": {
           "schema": "verseshell.aci_bench.results/v1",
-          "generated_at": "2026-10-14T07:26:12.997192+00:00",
+          "generated_at": "2026-10-14T10:09:54.380557+00:00",
           "task_set_version": "3.1.0",
-          "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6",
+          "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66",
           "mode": "live"
         },
         "collection": {
-          "collection_id": "light-c12-c35-20261014",
+          "collection_id": "light-c12-c35-fmt-20261014",
           "model": "sn-glm-5-3-flash",
           "protocol": "chat_completions",
           "prompt_variant": "baseline",
@@ -3693,7 +3692,7 @@
           "max_tokens": 16384
         },
         "binary": {
-          "sha256": "ba89afc9c9df86d774f39084c3d9afb28d987fcc92842a18b5598e74019ebfaa"
+          "sha256": "7f6765f44097adfaa4ede9a868d1ce13f4fd20c5c2584222c966af046f102c83"
         },
         "rows": 24,
         "declared_input_sha256": null,
@@ -3702,25 +3701,25 @@
         "freshness": {
           "artifact": "bench/aci/results/latest_live.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json",
-          "generated_at": "2026-10-14T07:26:12.997192+00:00",
+          "generated_at": "2026-10-14T10:09:54.380557+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "2fa8e1fc11c35461",
-          "fingerprint_current": "2fa8e1fc11c35461",
+          "fingerprint_recorded": "43ef73ae31587288",
+          "fingerprint_current": "43ef73ae31587288",
           "pass": true
         }
       },
       "bench/aci/results/live_ab_without_read_files.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\live_ab_without_read_files.json",
-        "sha256": "7686672e2efce366d5bafc81293ff50a6df3275abb59c32b5133912d051aa576",
+        "sha256": "cf9ff20abd1d473f81ff3fa22f6e9bda8f90f11b6c1996bfd29e1f38f813a6e0",
         "version": {
           "schema": "verseshell.aci_bench.results/v1",
-          "generated_at": "2026-10-14T07:26:13.256069+00:00",
+          "generated_at": "2026-10-14T10:09:54.381557+00:00",
           "task_set_version": "3.1.0",
-          "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6",
+          "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66",
           "mode": "live"
         },
         "collection": {
-          "collection_id": "light-c12-c35-20261014",
+          "collection_id": "light-c12-c35-fmt-20261014",
           "model": "sn-glm-5-3-flash",
           "protocol": "chat_completions",
           "prompt_variant": "baseline",
@@ -3731,7 +3730,7 @@
           "max_tokens": 16384
         },
         "binary": {
-          "sha256": "ba89afc9c9df86d774f39084c3d9afb28d987fcc92842a18b5598e74019ebfaa"
+          "sha256": "7f6765f44097adfaa4ede9a868d1ce13f4fd20c5c2584222c966af046f102c83"
         },
         "rows": 24,
         "declared_input_sha256": null,
@@ -3740,19 +3739,19 @@
         "freshness": {
           "artifact": "bench/aci/results/live_ab_without_read_files.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\live_ab_without_read_files.json",
-          "generated_at": "2026-10-14T07:26:13.256069+00:00",
+          "generated_at": "2026-10-14T10:09:54.381557+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "2fa8e1fc11c35461",
-          "fingerprint_current": "2fa8e1fc11c35461",
+          "fingerprint_recorded": "43ef73ae31587288",
+          "fingerprint_current": "43ef73ae31587288",
           "pass": true
         }
       },
       "eval/acceptance_power.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\acceptance_power.json",
-        "sha256": "6ffd5f17fb355cf9801d8371cb8d9bb85be42553eca9e65bd580e1b244de6adf",
+        "sha256": "802fddd9dcf772fc108e862eae2b6fd1ba40c40f9d75c0c37a12fb3c292a79a8",
         "version": {
           "schema": "verseshell.acceptance_power/v1",
-          "generated_at": "2026-10-14T07:34:03.884584+00:00",
+          "generated_at": "2026-10-14T10:20:14.359444+00:00",
           "task_set_version": "3.1.0",
           "model": "sn-glm-5-3-flash",
           "prompt_variant": "baseline"
@@ -3761,19 +3760,19 @@
         "binary": {},
         "rows": null,
         "declared_input_sha256": {
-          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38",
-          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\live_ab_without_read_files.json": "7686672e2efce366d5bafc81293ff50a6df3275abb59c32b5133912d051aa576",
-          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json": "a4d786a94c469819b4c74c4f471979fd66f47e747efc50a5a71b03ba0e5943d8"
+          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9",
+          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\live_ab_without_read_files.json": "cf9ff20abd1d473f81ff3fa22f6e9bda8f90f11b6c1996bfd29e1f38f813a6e0",
+          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json": "a135360791268f28063c8b3f043ad98f10a8c5ab50bf95ac5e13ceb1b10df1e5"
         },
         "source_identity": null,
         "currency": "fresh",
         "freshness": {
           "artifact": "eval/acceptance_power.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\acceptance_power.json",
-          "generated_at": "2026-10-14T07:34:03.884584+00:00",
+          "generated_at": "2026-10-14T10:20:14.359444+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "1b3686e1fb509843",
-          "fingerprint_current": "1b3686e1fb509843",
+          "fingerprint_recorded": "14e6fb4638966107",
+          "fingerprint_current": "14e6fb4638966107",
           "pass": true
         }
       },
@@ -3804,10 +3803,10 @@
       },
       "eval/budget_sensitivity.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\budget_sensitivity.json",
-        "sha256": "c199f90d2e5b47fd285afcd0000c686a4c1be55b2c14e3d5ce72e523276afbe5",
+        "sha256": "1b4ac52ab4c8b4c73e192fe0126c636f391904da932c944908b31104b4b63987",
         "version": {
           "schema": "verseshell.budget-sensitivity/v1",
-          "generated_at": "2026-10-14T07:36:31.273898+00:00"
+          "generated_at": "2026-10-14T10:20:14.993599+00:00"
         },
         "collection": {},
         "binary": {},
@@ -3818,10 +3817,10 @@
         "freshness": {
           "artifact": "eval/budget_sensitivity.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\budget_sensitivity.json",
-          "generated_at": "2026-10-14T07:36:31.273898+00:00",
+          "generated_at": "2026-10-14T10:20:14.993599+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "79b4c70f7a8fede1",
-          "fingerprint_current": "79b4c70f7a8fede1",
+          "fingerprint_recorded": "2f898a6074816281",
+          "fingerprint_current": "2f898a6074816281",
           "pass": true
         }
       },
@@ -3854,11 +3853,11 @@
       },
       "eval/cross_shell.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json",
-        "sha256": "a4d786a94c469819b4c74c4f471979fd66f47e747efc50a5a71b03ba0e5943d8",
+        "sha256": "a135360791268f28063c8b3f043ad98f10a8c5ab50bf95ac5e13ceb1b10df1e5",
         "version": {
           "schema": "verseshell.cross-shell/v2",
-          "generated_at": "2026-10-14T07:29:42.189775+00:00",
-          "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6"
+          "generated_at": "2026-10-14T10:16:08.929131+00:00",
+          "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66"
         },
         "collection": {},
         "binary": {},
@@ -3869,19 +3868,19 @@
         "freshness": {
           "artifact": "eval/cross_shell.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json",
-          "generated_at": "2026-10-14T07:29:42.189775+00:00",
+          "generated_at": "2026-10-14T10:16:08.929131+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "0af0a15a31daadf0",
-          "fingerprint_current": "0af0a15a31daadf0",
+          "fingerprint_recorded": "fe149641386e37ef",
+          "fingerprint_current": "fe149641386e37ef",
           "pass": true
         }
       },
       "eval/exec_failure_breakdown.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\exec_failure_breakdown.json",
-        "sha256": "a61e073b3e87a3703a9b26b31e228d014db036caadc5bcdd8ab017827c1122ea",
+        "sha256": "bf3cec3c29edba3d483b487b3d73c3440f070d847b31beb200edc830ef566bd1",
         "version": {
           "schema": "verseshell.exec-failure-breakdown/v1",
-          "generated_at": "2026-10-14T07:31:17.730144+00:00"
+          "generated_at": "2026-10-14T10:18:44.329050+00:00"
         },
         "collection": {},
         "binary": {},
@@ -3892,19 +3891,19 @@
         "freshness": {
           "artifact": "eval/exec_failure_breakdown.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\exec_failure_breakdown.json",
-          "generated_at": "2026-10-14T07:31:17.730144+00:00",
+          "generated_at": "2026-10-14T10:18:44.329050+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "2ac43fa1f9ce5cb1",
-          "fingerprint_current": "2ac43fa1f9ce5cb1",
+          "fingerprint_recorded": "2f58f4b095dac48a",
+          "fingerprint_current": "2f58f4b095dac48a",
           "pass": true
         }
       },
       "eval/exec_token_breakdown.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\exec_token_breakdown.json",
-        "sha256": "fd399665de0947356344366d4ab244ba6a3e1170cb3e572d790b83eb9ce1d496",
+        "sha256": "35f9cc5c99a688a30e28730e3d866cca9a28969e9dc38368e0a984d8f79d7469",
         "version": {
           "schema": "verseshell.exec-token-breakdown/v1",
-          "generated_at": "2026-10-14T07:31:10.092575+00:00"
+          "generated_at": "2026-10-14T10:18:34.342995+00:00"
         },
         "collection": {},
         "binary": {},
@@ -3915,10 +3914,10 @@
         "freshness": {
           "artifact": "eval/exec_token_breakdown.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\exec_token_breakdown.json",
-          "generated_at": "2026-10-14T07:31:10.092575+00:00",
+          "generated_at": "2026-10-14T10:18:34.342995+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "eb0768f77bd461cb",
-          "fingerprint_current": "eb0768f77bd461cb",
+          "fingerprint_recorded": "13e5ffff7d8b1568",
+          "fingerprint_current": "13e5ffff7d8b1568",
           "pass": true
         }
       },
@@ -3970,11 +3969,11 @@
       },
       "eval/jev_obs_report.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\jev_obs_report.json",
-        "sha256": "c95b15579d3f014a16e8c7439dd966c4079867657d43967026d02c675b55f072",
+        "sha256": "15f11dbad1333e09e96be41ac7bd8df7205949b18e94e2efb650a91cd0da683d",
         "version": {
           "schema": "verseshell.jev-obs-report/v1",
-          "generated_at": "2026-10-14T07:27:30.724558+00:00",
-          "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6",
+          "generated_at": "2026-10-14T10:11:20.665815+00:00",
+          "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66",
           "mode": "heuristic"
         },
         "collection": {},
@@ -3986,19 +3985,19 @@
         "freshness": {
           "artifact": "eval/jev_obs_report.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\jev_obs_report.json",
-          "generated_at": "2026-10-14T07:27:30.724558+00:00",
+          "generated_at": "2026-10-14T10:11:20.665815+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "1dc3da0469bd8be9",
-          "fingerprint_current": "1dc3da0469bd8be9",
+          "fingerprint_recorded": "90cf199debcff014",
+          "fingerprint_current": "90cf199debcff014",
           "pass": true
         }
       },
       "eval/live_uncertainty.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\live_uncertainty.json",
-        "sha256": "8b993e69822345cd0e2b99a728e7a5ac8e23461d021f3e925cabe39974ff5822",
+        "sha256": "43eb32cfd6914e5b68f8533345d93f4975f0ec3bce72a55f0d39d5f72d17d097",
         "version": {
           "schema": "verseshell.aci_live_uncertainty/v1",
-          "generated_at": "2026-10-14T07:33:59.788501+00:00"
+          "generated_at": "2026-10-14T10:20:09.353848+00:00"
         },
         "collection": {},
         "binary": {},
@@ -4009,10 +4008,10 @@
         "freshness": {
           "artifact": "eval/live_uncertainty.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\live_uncertainty.json",
-          "generated_at": "2026-10-14T07:33:59.788501+00:00",
+          "generated_at": "2026-10-14T10:20:09.353848+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "aa3bb8792aef312d",
-          "fingerprint_current": "aa3bb8792aef312d",
+          "fingerprint_recorded": "439383698bb089eb",
+          "fingerprint_current": "439383698bb089eb",
           "pass": true
         }
       },
@@ -4069,26 +4068,26 @@
       },
       "eval/read_path_breakdown.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\read_path_breakdown.json",
-        "sha256": "41fc416738c1f713379aa71920a9a6133bd160e660d931a93f6d65e9c9a5ff51",
+        "sha256": "646c51df99866cbff7d8b78200bbc5e54ec6936089f222d3eaeb53e6dd31cf2e",
         "version": {
           "schema": "verseshell.read-path-breakdown/v1",
-          "generated_at": "2026-10-14T08:20:00.115732+00:00"
+          "generated_at": "2026-10-14T10:16:36.345143+00:00"
         },
         "collection": {},
         "binary": {
           "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\target\\debug\\ae.exe",
-          "sha256": "ba89afc9c9df86d774f39084c3d9afb28d987fcc92842a18b5598e74019ebfaa"
+          "sha256": "7f6765f44097adfaa4ede9a868d1ce13f4fd20c5c2584222c966af046f102c83"
         },
         "rows": 10,
         "declared_input_sha256": {
-          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38"
+          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9"
         },
         "source_identity": {
           "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json",
-          "sha256": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38",
+          "sha256": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9",
           "task_set_version": "3.1.0",
-          "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6",
-          "collection_id": "light-c12-c35-20261014",
+          "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66",
+          "collection_id": "light-c12-c35-fmt-20261014",
           "tasks": [
             "rust_fix_compile_error",
             "rust_add_unit_test",
@@ -4104,19 +4103,19 @@
         "freshness": {
           "artifact": "eval/read_path_breakdown.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\read_path_breakdown.json",
-          "generated_at": "2026-10-14T08:20:00.115732+00:00",
+          "generated_at": "2026-10-14T10:16:36.345143+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "b189be8940ab0ca8",
-          "fingerprint_current": "b189be8940ab0ca8",
+          "fingerprint_recorded": "f7abf669c44034db",
+          "fingerprint_current": "f7abf669c44034db",
           "pass": true
         }
       },
       "eval/read_usage_audit.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\read_usage_audit.json",
-        "sha256": "118cc6a7002290824a90d34c178fbada7639acb0c071d376aa69b10d996448b3",
+        "sha256": "876b82420967adad841355584b180a92ad2abeff0e11c28a6649f658eb3949cd",
         "version": {
           "schema": "verseshell.read-usage-audit/v1",
-          "generated_at": "2026-10-14T07:31:09.995517+00:00"
+          "generated_at": "2026-10-14T10:18:34.198704+00:00"
         },
         "collection": {},
         "binary": {},
@@ -4127,19 +4126,19 @@
         "freshness": {
           "artifact": "eval/read_usage_audit.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\read_usage_audit.json",
-          "generated_at": "2026-10-14T07:31:09.995517+00:00",
+          "generated_at": "2026-10-14T10:18:34.198704+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "c6778ac714af1828",
-          "fingerprint_current": "c6778ac714af1828",
+          "fingerprint_recorded": "53eeb1b2aeba033c",
+          "fingerprint_current": "53eeb1b2aeba033c",
           "pass": true
         }
       },
       "eval/statistics_crosscheck.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\statistics_crosscheck.json",
-        "sha256": "c7ae194d04015e2a99b6373044827b8c6967784a39933f5d9999d51e182115ee",
+        "sha256": "42128eefb407d354cc8e7c229f4ead3719d0c6aa15f246aef0067301b0d47311",
         "version": {
           "schema": "verseshell.statistics_crosscheck/v1",
-          "generated_at": "2026-10-14T07:34:04.164786+00:00"
+          "generated_at": "2026-10-14T10:20:14.689097+00:00"
         },
         "collection": {},
         "binary": {},
@@ -4150,19 +4149,19 @@
         "freshness": {
           "artifact": "eval/statistics_crosscheck.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\statistics_crosscheck.json",
-          "generated_at": "2026-10-14T07:34:04.164786+00:00",
+          "generated_at": "2026-10-14T10:20:14.689097+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "03a145958dfd366b",
-          "fingerprint_current": "03a145958dfd366b",
+          "fingerprint_recorded": "6e864c862d999074",
+          "fingerprint_current": "6e864c862d999074",
           "pass": true
         }
       },
       "eval/step_composition.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\step_composition.json",
-        "sha256": "ceb9773f38e590fdca8e462e2ff51ab6db1564fdafb8ea991078ec4b25fbb857",
+        "sha256": "5ac2c8778a97c3523c5da1742051642f9a2caaf76a53ea35f31f1143d48a0abf",
         "version": {
           "schema": "verseshell.step-composition/v1",
-          "generated_at": "2026-10-14T07:31:17.937817+00:00"
+          "generated_at": "2026-10-14T10:18:44.507611+00:00"
         },
         "collection": {},
         "binary": {},
@@ -4173,10 +4172,10 @@
         "freshness": {
           "artifact": "eval/step_composition.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\step_composition.json",
-          "generated_at": "2026-10-14T07:31:17.937817+00:00",
+          "generated_at": "2026-10-14T10:18:44.507611+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "affe65445f5e8e8e",
-          "fingerprint_current": "affe65445f5e8e8e",
+          "fingerprint_recorded": "3fccc1266b8cf49d",
+          "fingerprint_current": "3fccc1266b8cf49d",
           "pass": true
         }
       },
@@ -4543,10 +4542,10 @@
       },
       "eval/task_design_audit.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\task_design_audit.json",
-        "sha256": "81c199687c58ade40f8c9a6f8b2c9de117faf478a0b319b7dace66ecfd32140d",
+        "sha256": "1525a1b3e3f29045e0ae5ab8f8a158f273da515ca5c4be6f49055e313455b826",
         "version": {
           "schema": "verseshell.task-design-audit/v1",
-          "generated_at": "2026-10-14T08:09:29.079179+00:00",
+          "generated_at": "2026-10-14T10:20:14.869597+00:00",
           "task_set_version": "3.1.0"
         },
         "collection": {},
@@ -4555,27 +4554,27 @@
         "declared_input_sha256": {
           "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\task_set_freeze.json": "f225fd27d4a398bff2fb0d3b88a4cb50832d2ada0db81bac6b07833bb4926658",
           "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\task_admissibility.json": "c707d02fc6414eb9b0996a887231efefcdec9fcd594cf80110494f0dc3c666d7",
-          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38",
-          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\acceptance_power.json": "6ffd5f17fb355cf9801d8371cb8d9bb85be42553eca9e65bd580e1b244de6adf"
+          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9",
+          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\acceptance_power.json": "802fddd9dcf772fc108e862eae2b6fd1ba40c40f9d75c0c37a12fb3c292a79a8"
         },
         "source_identity": null,
         "currency": "fresh",
         "freshness": {
           "artifact": "eval/task_design_audit.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\task_design_audit.json",
-          "generated_at": "2026-10-14T08:09:29.079179+00:00",
+          "generated_at": "2026-10-14T10:20:14.869597+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "da88043658467a79",
-          "fingerprint_current": "da88043658467a79",
+          "fingerprint_recorded": "e8d80ed53d08950d",
+          "fingerprint_current": "e8d80ed53d08950d",
           "pass": true
         }
       },
       "eval/task_set_audit.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\task_set_audit.json",
-        "sha256": "81f550f0b320b433dd4f9579f17b0645bd4c7df2905fb17bd095f49d962e3357",
+        "sha256": "075fb1439a278d5cba921fe024fc665609d38c86cefd403c9c3f0983a3d0bb6f",
         "version": {
           "schema": "verseshell.task-set-audit/v1",
-          "generated_at": "2026-10-14T07:31:09.845262+00:00",
+          "generated_at": "2026-10-14T10:18:26.446064+00:00",
           "task_set_version": "3.1.0"
         },
         "collection": {},
@@ -4583,17 +4582,17 @@
         "rows": null,
         "declared_input_sha256": {
           "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\task_sets\\3.1.0.json": "11d48acf71c30974381176bea549e68e0db1057b8d33dce108ec2fc1b6108376",
-          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38"
+          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9"
         },
         "source_identity": null,
         "currency": "fresh",
         "freshness": {
           "artifact": "eval/task_set_audit.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\task_set_audit.json",
-          "generated_at": "2026-10-14T07:31:09.845262+00:00",
+          "generated_at": "2026-10-14T10:18:26.446064+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "05c57af1a4e376ff",
-          "fingerprint_current": "05c57af1a4e376ff",
+          "fingerprint_recorded": "8f6e4bf8ea7201b2",
+          "fingerprint_current": "8f6e4bf8ea7201b2",
           "pass": true
         }
       },
@@ -4623,26 +4622,26 @@
       },
       "eval/tf45_envelope_replay.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\tf45_envelope_replay.json",
-        "sha256": "07ce3e986e4ac6c1fccfd58d7320630be8a331510b0b2df41cd91921edb74fd4",
+        "sha256": "d1d460921b1ad2c05f89c6ded5099d8231ed99e480a8206fc64a46a1b417b04e",
         "version": {
           "schema": "verseshell.tf45-envelope-replay/v1",
-          "generated_at": "2026-10-14T08:19:35.410340+00:00"
+          "generated_at": "2026-10-14T10:16:29.720388+00:00"
         },
         "collection": {},
         "binary": {
           "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\target\\debug\\ae.exe",
-          "sha256": "ba89afc9c9df86d774f39084c3d9afb28d987fcc92842a18b5598e74019ebfaa"
+          "sha256": "7f6765f44097adfaa4ede9a868d1ce13f4fd20c5c2584222c966af046f102c83"
         },
         "rows": 10,
         "declared_input_sha256": {
-          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38"
+          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9"
         },
         "source_identity": {
           "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json",
-          "sha256": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38",
+          "sha256": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9",
           "task_set_version": "3.1.0",
-          "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6",
-          "collection_id": "light-c12-c35-20261014",
+          "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66",
+          "collection_id": "light-c12-c35-fmt-20261014",
           "tasks": [
             "rust_fix_compile_error",
             "rust_add_unit_test",
@@ -4658,19 +4657,19 @@
         "freshness": {
           "artifact": "eval/tf45_envelope_replay.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\tf45_envelope_replay.json",
-          "generated_at": "2026-10-14T08:19:35.410340+00:00",
+          "generated_at": "2026-10-14T10:16:29.720388+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "fbf0b20aaea965ef",
-          "fingerprint_current": "fbf0b20aaea965ef",
+          "fingerprint_recorded": "f98c4094601e6cba",
+          "fingerprint_current": "f98c4094601e6cba",
           "pass": true
         }
       },
       "eval/three_arm_report.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\three_arm_report.json",
-        "sha256": "6a9a1d002c57cc04065fdc2f4cb0a225b742fb09567e829752c18103b7d88f2e",
+        "sha256": "d4a3f42155928583d50b75219f7166ea65bb71dad0d51d3260133f80807fea95",
         "version": {
           "schema": "verseshell.three_arm_report/v1",
-          "generated_at": "2026-10-14T08:09:02.654416+00:00",
+          "generated_at": "2026-10-14T10:20:31.331430+00:00",
           "task_set_version": "3.1.0",
           "model": "sn-glm-5-3-flash",
           "prompt_variant": "baseline"
@@ -4679,27 +4678,27 @@
         "binary": {},
         "rows": null,
         "declared_input_sha256": {
-          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38"
+          "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9"
         },
         "source_identity": null,
         "currency": "fresh",
         "freshness": {
           "artifact": "eval/three_arm_report.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\three_arm_report.json",
-          "generated_at": "2026-10-14T08:09:02.654416+00:00",
+          "generated_at": "2026-10-14T10:20:31.331430+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "15c2787d2067242f",
-          "fingerprint_current": "15c2787d2067242f",
+          "fingerprint_recorded": "ec2ec1adfd811d89",
+          "fingerprint_current": "ec2ec1adfd811d89",
           "pass": true
         }
       },
       "eval/token_proxy_calibration.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\token_proxy_calibration.json",
-        "sha256": "2caa6a75a4e0caa7b68ac1c81b33cd2493129251a5f83eaab4bd83c1199019b3",
+        "sha256": "352003c6e244e154aff88784cbdba0166197f114e54250f5c9c55e2dfa05ccbc",
         "version": {
           "schema": "verseshell.token_proxy_calibration/v1",
-          "generated_at": "2026-10-14T07:32:16.648703+00:00",
-          "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6",
+          "generated_at": "2026-10-14T10:19:57.608225+00:00",
+          "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66",
           "model": "sn-glm-5-3-flash"
         },
         "collection": {},
@@ -4711,19 +4710,19 @@
         "freshness": {
           "artifact": "eval/token_proxy_calibration.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\token_proxy_calibration.json",
-          "generated_at": "2026-10-14T07:32:16.648703+00:00",
+          "generated_at": "2026-10-14T10:19:57.608225+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "fca1c936681ee7ec",
-          "fingerprint_current": "fca1c936681ee7ec",
+          "fingerprint_recorded": "c828c8ca85e1069c",
+          "fingerprint_current": "c828c8ca85e1069c",
           "pass": true
         }
       },
       "eval/ts_fixture_audit.json": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\ts_fixture_audit.json",
-        "sha256": "22ef3e7a4180983ac4f8acf15da3b621b3ca511eed60b6fff5a67034ea3261c2",
+        "sha256": "fc49c5477c8e743c119f33dc6cd4a529a862f3daf3b03561b32e50522b387e3d",
         "version": {
           "schema": "verseshell.ts-fixture-audit/v1",
-          "generated_at": "2026-10-14T07:29:55.267316+00:00"
+          "generated_at": "2026-10-14T10:16:36.676110+00:00"
         },
         "collection": {},
         "binary": {},
@@ -4734,10 +4733,10 @@
         "freshness": {
           "artifact": "eval/ts_fixture_audit.json",
           "selected_path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\ts_fixture_audit.json",
-          "generated_at": "2026-10-14T07:29:55.267316+00:00",
+          "generated_at": "2026-10-14T10:16:36.676110+00:00",
           "status": "fresh",
-          "fingerprint_recorded": "0f75f734dd3e1bb2",
-          "fingerprint_current": "0f75f734dd3e1bb2",
+          "fingerprint_recorded": "4202e5d15c5d8aab",
+          "fingerprint_current": "4202e5d15c5d8aab",
           "pass": true
         }
       },
@@ -4756,15 +4755,15 @@
       },
       "@readme_check": {
         "path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\readme_claims.json",
-        "sha256": "a385d8b9b33c04c81e2daeb592621f5d9f362b6b74efe69957765ec897c2de1a",
+        "sha256": "17a300a5be9b5ce13297fa3aaf9070fff66a33e5717212e1fb0219282500b1c6",
         "version": {
           "schema": "verseshell.readme-claims/v1",
-          "generated_at": "2026-10-14T08:21:45.526260+00:00"
+          "generated_at": "2026-10-14T10:23:20.232928+00:00"
         },
         "collection": {},
         "binary": {
           "path": "target\\debug\\ae.exe",
-          "sha256": "ba89afc9c9df86d774f39084c3d9afb28d987fcc92842a18b5598e74019ebfaa"
+          "sha256": "7f6765f44097adfaa4ede9a868d1ce13f4fd20c5c2584222c966af046f102c83"
         },
         "rows": null,
         "declared_input_sha256": null,
@@ -4782,7 +4781,7 @@
             "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\evidence.compact-ratio.json"
           ],
           "exit_code": 0,
-          "sha256": "a385d8b9b33c04c81e2daeb592621f5d9f362b6b74efe69957765ec897c2de1a"
+          "sha256": "17a300a5be9b5ce13297fa3aaf9070fff66a33e5717212e1fb0219282500b1c6"
         }
       }
     },
@@ -4795,11 +4794,11 @@
         "src/ast.rs": "1229dc45810fa3217299f0008a89b8d91e4b3e992dcd23215d5426e8db48b2fe",
         "src/auth.rs": "0fc99e63170191a96aada6e921ca7b061929c2e95e7090c4a37f465c918316f6",
         "src/bin/ae-mcp.rs": "2bf05c475637a022621ba62036851989dcac1bf19317c84676f8eb3a9e7e0f90",
-        "src/builtins.rs": "d96ea4b18ad3e9bdaa2dca4908b8d75ab254febf3214e3ce96486dcb4945040e",
+        "src/builtins.rs": "f268ff927ae092365e982ba97a7e708a355812fbbb38b6564aa10939752bf730",
         "src/cache.rs": "b1f41cf9809e433085373dd614769eef212afee49949f4e9021c202f7acbd138",
         "src/capability.rs": "5cbead001a98d125f3749d8df67b48bfb533b5c39361aec6e55624489ed4fa58",
         "src/compact.rs": "ed98f0243114cefcc1ad9e885f2cfbbe986b2fe3444904e8fd2aecf6d8420cf3",
-        "src/config.rs": "6d0d8b7ac647c42908d0a141ef055fd10178e8f38667a961df1b4f378bbe5233",
+        "src/config.rs": "4d826886ea7adec4d1f0526d0bcf9330e15f28fbc58bddac88686795e498f6c5",
         "src/env.rs": "485125713fb2e7739d2f3af00a6dbeadd51e9ec6e82eb4f952aac7deaf1fa6c9",
         "src/eval.rs": "3e9b7773fd6c0ca217e9f5ae056797f5427526d9706c859fc33bd5c20ca0f583",
         "src/ir.rs": "d598670feea7fe5d249e6e1ae0b892cf9196b52674601b6e16451b099a34a782",
@@ -4814,7 +4813,7 @@
         "src/observation_ledger.rs": "374198ebaaf31d0052510430b297287eea7965139c80d32d289b4e3c10377ef8",
         "src/operation.rs": "3feb652c4863a7cb31d31250f8bea78f04f152aac0785e09374797c2fb300293",
         "src/ops/common.rs": "e5106e6339cc0b88496fc5621e22f3a72998cad643640be44e3bd89caa3a40df",
-        "src/ops/file.rs": "e130846bc86f93aeb83bf3db1b6ccc3e4e45bb69ed26ebd22c23a158735926df",
+        "src/ops/file.rs": "895019ded6846d5bbc66da46c58bab0808b2ac3145a8227e9b30f5c3725dc36c",
         "src/ops/meta.rs": "629ea3fc692c51abd81bba293b3198a52e634f6c80785ff9b78c5d656aa77813",
         "src/ops/mod.rs": "019402f478889aec8f5bd4a9ec0a5e127a4e0a63f553f9e53422133bc7300fbe",
         "src/ops/process_ops.rs": "f2a026a30dd9f01ab0dcb830b53bcf7087d6f51e9c58df9ac888dc24ebc8883b",
@@ -4830,12 +4829,12 @@
         "src/process_command.rs": "de2746e003d7405c06de22823186da6a208015e4fea26417fbf9fb0948969846",
         "src/process_lifecycle.rs": "c3b8ac6d850c865ea55659c343270cff09cf49e651294483c5a68f890d3a9e06",
         "src/process_lifecycle_windows.rs": "d6dbf4fc293fb0f69bc733fe6f9a687c8a14e672f62e41b024daa789ff08fc76",
-        "src/process_runner.rs": "7551f967d587d3ec721523f287a27b9b33597d51dcbe65065d44a3052ed90915",
-        "src/reducers/cargo.rs": "0c12d1ce51eb047f7ab7ee9fe95eaf978943c1cb1f1734bbd5d8317df9727802",
-        "src/reducers/git.rs": "0bf26f343755ea7d9b58fd23298dcfd01eb16b2106f84fec8b384341b1ab2b51",
-        "src/reducers/mod.rs": "0b175c00cf2a2894c661a5c3565959baa1b1f7eeae680530648552b1c80114a6",
+        "src/process_runner.rs": "4059126a659c0ca9ce1447b36da2dd2b533168234048fa73bca4533e4a831fe2",
+        "src/reducers/cargo.rs": "7b1411d4ded3df9805121ca8425af3b8454e0fb933b305d461f273b05578e86f",
+        "src/reducers/git.rs": "9ba8446a4635b4d627b61c66d734cd384105e1e08fd89291e35894f11f1da563",
+        "src/reducers/mod.rs": "305772ecff834f174317a6c4180bec15c7fa4e2ec695c87a2a3b991f39dfcb7b",
         "src/reducers/npm.rs": "197afd7c1297ffec47e7f5b164ceb2f161d1265ac8567ec294a2cec049e35bf4",
-        "src/reducers/pytest.rs": "47164004e5313daad12df66e1750cb1993c7dfc357c783ea14662797a526e31f",
+        "src/reducers/pytest.rs": "88a373c3e62270042ba3c662493a78ab872e9f81568f0ba51bd34774b56503df",
         "src/repl.rs": "17bea1d7e82a3c33865cc9c1a45d48e2d8286f06c289963f93d8d1a7a3e00287",
         "src/rule.rs": "84adc02323e57d5dc25f80d2f4cd45997f335610ef10321deaa9d5f27ac58a5b",
         "src/runtime.rs": "9fdd3f44f899f183b1457de5a1d73ee4c5ec0a7d6bb82952fea1d76c8bc907cc",
@@ -4876,7 +4875,7 @@
         "tools/anomaly_audit.py": "584afa67cacb169ad52d2bcae602bcf0a9b9e7f427518e88050b9d4628cf6a75",
         "tools/budget_sensitivity.py": "37f48dc017268f50cafed959e913644da9f2810ad42f44f992fd104bb869a546",
         "tools/calibrate_repeated_intervals.py": "5e76e7f8a1a57f650559898ea0c2b95c39a895f2f3f7c7286eced7c30ec1d9a4",
-        "tools/claim_gate.py": "c28e26168cfb39eb9af4f9c2ca5208cb529bae2c8a54e9c9f7ef54f89d8b3b29",
+        "tools/claim_gate.py": "19b0fd801d9499843f1f80ca5e29025546906db79dd17b6b1f9d94f265a29f9d",
         "tools/claim_sources.py": "45e05e11393d2ba1d5aa8cb2968f0e86043e1fa9878d4651cd01e18fe3e55005",
         "tools/cost_attribution.py": "36ecb5449f0797e994764459dfa6015e1a03fc6246a2ee8cff9c4280cc0bfd36",
         "tools/cross_shell_bench.py": "59d2421f3b6749cfa939465597e343d29c2162a76d74dec8fed9ed690f024203",
@@ -4912,7 +4911,7 @@
         "tools/read_usage_audit.py": "b0d315ff2e2eb1f79c52442b9c26c10e2b462b9d1f4ab1253dcb4d172ae80955",
         "tools/readme_claims_check.py": "9ac2a43987b5da5656d55a4c5794567558f7492c5b553b6b7784189cb1142262",
         "tools/recovery_loop.py": "76d61dbfb7708c5ae9cfe7a9c32ff267ddf0d58fc0e8f471dc08746fb3fb94f1",
-        "tools/refresh_live_artifacts.py": "9f3dac41fa6e3fadb88d8cd76d7a184fd45d61fa19b2e556ff6693cb8306ae25",
+        "tools/refresh_live_artifacts.py": "a70106ac4097c30a4d80697787cdd6fcc40fb28fe035a43ca19f68c667ad962e",
         "tools/repeated_run_uncertainty.py": "0425ec581f8c424855af155a2c66e7eed4dd7abd252ca3320629e9c5b52af1e0",
         "tools/replay_failure_commands.py": "89214fb20049b26d171e99c4622cd21a1d8c98523ef07bc93abb364dab58a014",
         "tools/replay_observations.py": "8163de5ba61ea43bdf39f914e8c7424411cdb9a3e2d7a7a6013893edf4b63f84",
@@ -4937,7 +4936,7 @@
         "tools/usage_audit.py": "42deaa01e70c913c4a3ab39a52d388d19ba0ffbfc58320df81834a42a07fcf94",
         "tools/validate_manifest.py": "0d3b6ea950c189d9b267f1480573af402379af024974549b1788e8eeee279fe6",
         "tests/aci_1_0_closed_loop_acceptance.rs": "fe8b9f959e363f489431e962094414931a39a0747302391984a0e8fda91780a4",
-        "tests/aci_1_0_ops_tests.rs": "ebcf1b61da64b8831cc0456d53c94246c79a14555ed3ed65135d8b35efe8a6d4",
+        "tests/aci_1_0_ops_tests.rs": "8b5fe7c99e9a6d4db2d1b5529843914005f41e0f04f01d1772218f97f5ea8667",
         "tests/aci_bench_mock_acceptance.rs": "72b6285ec3cc444b8e34ee24f6bd543ddcb01c90aa24cf634030076c01eeba2b",
         "tests/concurrent_performance_tests.rs": "65b69fc66457793c44a83aa44453510a186ac97958dad416bd1c4d07b3c20d13",
         "tests/fixtures/reducers/adversarial/cargo_fail_malformed.txt": "44eb400260560095c8b57c821c8bc6e439c0630b5636d652b0ef7212370a4867",
@@ -4969,7 +4968,7 @@
         "tests/mcp_stdio_tests.rs": "a9eef30127398387c37d1c44e3334297ff7d4b7f64419ecc0e0e362bb9fe6273",
         "tests/operation_protocol_tests.rs": "8da9e8bd1497e02efa76cfb8dc94740df19fa8d353b969d430dd7bc5abbbaab1",
         "tests/process_lifecycle_tests.rs": "368faf315faf4485697b2b0abbcd95afa8b6f69c0e278a541f384f8d80156bad",
-        "tests/semantic_reducer_adversarial_tests.rs": "85cd60fb29a4818dd9e72c8a0e4ff39b06e607d6b9879e690f42e6d5fdda87e4",
+        "tests/semantic_reducer_adversarial_tests.rs": "23f742487bcac65e3abaa45c7a0497642f3236d625232a01c281f28b43ac6c9f",
         "tests/semantic_reducer_tests.rs": "919a08cd5733cedee3b67d2ef14079ab3363ad2640edf3808aa68dde1423e811",
         "tests/test_agent_shell_benefit_contract.py": "9f94a27f5c2f0f3eebedbed700bb0b8aa3059d04ce9b4311a5d825ce85993763",
         "tests/test_anomaly_audit.py": "e4cd325be3564ebb191eae27649e917577c5291d4cacb2f9d751deecbf3f3dea",
@@ -5203,41 +5202,41 @@
         "audit-r12-scratch/r12-inputs/with_seed43.json": "9ab89aaa568800cb23b9b7f88ef72a0f4eef394b1966358703ea2e4d6a44635c",
         "audit-r12-scratch/r12-inputs/with_seed44.json": "77664ccbcc749bb2202899e6e0cfd3fa2156be606887a3f4f320d19282d9ba85",
         "audit-r12-scratch/r12-inputs/without_seed42.json": "9cdc2f5afeddd76b4e19e4e5a4cf86ad29db3b4101d844bb0ee1d8eba0d0712c",
-        "README.md": "bc2371047121627538daa1239c78ad5d8e94bd4390900cf57987b91f287a0bd6",
+        "README.md": "622a76c5d9f7c3286794ce94d56e1c640a21519da00758d1278d2543004f73ec",
         "docs/claims-and-evidence.md": "6cf4e4cb51979a5d5d2f3f9f2d0811ed6191cb51d1e6491a585784759aa92c2e",
         "docs/acceptance-criteria.md": "c2ac8c62ed1b176208e7cd618c0543ce982ec604d7b1dcadbbe20dc9fc4a51f7"
       },
       "selected_input_sha256": {
-        "bench/aci/results/latest.json": "5d8cb18e27967d1c0f8cd150c929ac33f53693a6774742ddaecd2b318ca8f324",
-        "bench/aci/results/latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38",
-        "bench/aci/results/live_ab_without_read_files.json": "7686672e2efce366d5bafc81293ff50a6df3275abb59c32b5133912d051aa576",
-        "eval/acceptance_power.json": "6ffd5f17fb355cf9801d8371cb8d9bb85be42553eca9e65bd580e1b244de6adf",
+        "bench/aci/results/latest.json": "623a3885e8e322eeb3268553c4dc15ad3ac18bc97bef81a297485a04cd14549b",
+        "bench/aci/results/latest_live.json": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9",
+        "bench/aci/results/live_ab_without_read_files.json": "cf9ff20abd1d473f81ff3fa22f6e9bda8f90f11b6c1996bfd29e1f38f813a6e0",
+        "eval/acceptance_power.json": "802fddd9dcf772fc108e862eae2b6fd1ba40c40f9d75c0c37a12fb3c292a79a8",
         "eval/aci_learning_probe.json": "a40b7ed17424414cf858572aec4ef54c61f7a3b979c40b53d9ee32a5cfd38e7b",
-        "eval/budget_sensitivity.json": "c199f90d2e5b47fd285afcd0000c686a4c1be55b2c14e3d5ce72e523276afbe5",
+        "eval/budget_sensitivity.json": "1b4ac52ab4c8b4c73e192fe0126c636f391904da932c944908b31104b4b63987",
         "eval/compact_ratio.json": "d7309a1fcc038cbf2f095e9c2aca6322546ad92a049ba56864cdf22a66ae48f5",
-        "eval/cross_shell.json": "a4d786a94c469819b4c74c4f471979fd66f47e747efc50a5a71b03ba0e5943d8",
-        "eval/exec_failure_breakdown.json": "a61e073b3e87a3703a9b26b31e228d014db036caadc5bcdd8ab017827c1122ea",
-        "eval/exec_token_breakdown.json": "fd399665de0947356344366d4ab244ba6a3e1170cb3e572d790b83eb9ce1d496",
+        "eval/cross_shell.json": "a135360791268f28063c8b3f043ad98f10a8c5ab50bf95ac5e13ceb1b10df1e5",
+        "eval/exec_failure_breakdown.json": "bf3cec3c29edba3d483b487b3d73c3440f070d847b31beb200edc830ef566bd1",
+        "eval/exec_token_breakdown.json": "35f9cc5c99a688a30e28730e3d866cca9a28969e9dc38368e0a984d8f79d7469",
         "eval/harness_encoding_contract.json": "826769d21861b2a582d129b7b5c8b5b92df5590c8e0934c70dab38b07f93e06f",
         "eval/harness_exec_contract.json": "dda9d8e58764888f92077cbd02db032cc016eec12a5ac83bd48811b1dd40a014",
-        "eval/jev_obs_report.json": "c95b15579d3f014a16e8c7439dd966c4079867657d43967026d02c675b55f072",
-        "eval/live_uncertainty.json": "8b993e69822345cd0e2b99a728e7a5ac8e23461d021f3e925cabe39974ff5822",
+        "eval/jev_obs_report.json": "15f11dbad1333e09e96be41ac7bd8df7205949b18e94e2efb650a91cd0da683d",
+        "eval/live_uncertainty.json": "43eb32cfd6914e5b68f8533345d93f4975f0ec3bce72a55f0d39d5f72d17d097",
         "eval/metrics.json": "30b30fff3b09197a3c7bdac7e04232184a439accea3510ea4d76f394a54aa1df",
         "eval/projection_contract.json": "617a82f2897521690b317e6e193092c609f169cc8adb5d6d09c5b47ba73b8208",
-        "eval/read_path_breakdown.json": "41fc416738c1f713379aa71920a9a6133bd160e660d931a93f6d65e9c9a5ff51",
-        "eval/read_usage_audit.json": "118cc6a7002290824a90d34c178fbada7639acb0c071d376aa69b10d996448b3",
-        "eval/statistics_crosscheck.json": "c7ae194d04015e2a99b6373044827b8c6967784a39933f5d9999d51e182115ee",
-        "eval/step_composition.json": "ceb9773f38e590fdca8e462e2ff51ab6db1564fdafb8ea991078ec4b25fbb857",
+        "eval/read_path_breakdown.json": "646c51df99866cbff7d8b78200bbc5e54ec6936089f222d3eaeb53e6dd31cf2e",
+        "eval/read_usage_audit.json": "876b82420967adad841355584b180a92ad2abeff0e11c28a6649f658eb3949cd",
+        "eval/statistics_crosscheck.json": "42128eefb407d354cc8e7c229f4ead3719d0c6aa15f246aef0067301b0d47311",
+        "eval/step_composition.json": "5ac2c8778a97c3523c5da1742051642f9a2caaf76a53ea35f31f1143d48a0abf",
         "eval/task_admissibility.json": "c707d02fc6414eb9b0996a887231efefcdec9fcd594cf80110494f0dc3c666d7",
-        "eval/task_design_audit.json": "81c199687c58ade40f8c9a6f8b2c9de117faf478a0b319b7dace66ecfd32140d",
-        "eval/task_set_audit.json": "81f550f0b320b433dd4f9579f17b0645bd4c7df2905fb17bd095f49d962e3357",
+        "eval/task_design_audit.json": "1525a1b3e3f29045e0ae5ab8f8a158f273da515ca5c4be6f49055e313455b826",
+        "eval/task_set_audit.json": "075fb1439a278d5cba921fe024fc665609d38c86cefd403c9c3f0983a3d0bb6f",
         "eval/task_set_freeze.json": "f225fd27d4a398bff2fb0d3b88a4cb50832d2ada0db81bac6b07833bb4926658",
-        "eval/tf45_envelope_replay.json": "07ce3e986e4ac6c1fccfd58d7320630be8a331510b0b2df41cd91921edb74fd4",
-        "eval/three_arm_report.json": "6a9a1d002c57cc04065fdc2f4cb0a225b742fb09567e829752c18103b7d88f2e",
-        "eval/token_proxy_calibration.json": "2caa6a75a4e0caa7b68ac1c81b33cd2493129251a5f83eaab4bd83c1199019b3",
-        "eval/ts_fixture_audit.json": "22ef3e7a4180983ac4f8acf15da3b621b3ca511eed60b6fff5a67034ea3261c2",
+        "eval/tf45_envelope_replay.json": "d1d460921b1ad2c05f89c6ded5099d8231ed99e480a8206fc64a46a1b417b04e",
+        "eval/three_arm_report.json": "d4a3f42155928583d50b75219f7166ea65bb71dad0d51d3260133f80807fea95",
+        "eval/token_proxy_calibration.json": "352003c6e244e154aff88784cbdba0166197f114e54250f5c9c55e2dfa05ccbc",
+        "eval/ts_fixture_audit.json": "fc49c5477c8e743c119f33dc6cd4a529a862f3daf3b03561b32e50522b387e3d",
         "@task_set": "11d48acf71c30974381176bea549e68e0db1057b8d33dce108ec2fc1b6108376",
-        "@readme_check": "a385d8b9b33c04c81e2daeb592621f5d9f362b6b74efe69957765ec897c2de1a"
+        "@readme_check": "17a300a5be9b5ce13297fa3aaf9070fff66a33e5717212e1fb0219282500b1c6"
       }
     },
     "research_boundary": {

@@ -115,7 +115,8 @@ class RefreshChainTests(unittest.TestCase):
         for argv in REQUIRED.values():
             self.assertIn(argv, calls)
         expected = [argv + (["--task-set", str(refresh.ROOT / "bench/aci/task_sets/3.1.0.json")]
-                            if label == "task_set_audit" else [])
+                            if label == "task_set_audit" else
+                            (["--allow-subset"] if label == "task_design_audit" else []))
                     for label, argv, needs_without in refresh.CHAIN if not needs_without]
         self.assertEqual(calls, expected)
         self.assertIn(f"completed {len(calls)} selected refresh step(s)", stdout)

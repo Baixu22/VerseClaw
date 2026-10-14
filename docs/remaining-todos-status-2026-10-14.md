@@ -16,12 +16,12 @@ Python 全量回归：
 
 ```
 python -m pytest tests -q
-=> 506 passed, 5 skipped in 124.27s
+=> 506 passed, 5 skipped in 156.74s
 ```
 
 ## 轻量 live 配对（C12/C35）
 
-采集目录：`bench/aci/results/light-c12-c35-20261014/`
+采集目录：`bench/aci/results/light-c12-c35-fmt-20261014/`
 
 - 模型：`sn-glm-5-3-flash`
 - 任务：manifest 前缀 8 个（Rust 3、Python 3、TypeScript 2）
@@ -29,14 +29,14 @@ python -m pytest tests -q
 - seed：42
 - 两臂：with/without read_files
 - 规模：`8 × 3 × 1 × 2 = 48` cells
-- 结果：with/without 各 24 行，`api_error_rows=0`，全部 `analysable`
+- 结果：with/without 各 24 行，`api_error_rows=0`，全部 `analysable`；两次宿主中断各留下 1 个 `recovery_uncertain`，已用同 identity recovery shard 只补 2 格
 
 canonical 已发布到：
 
 - `bench/aci/results/latest_live.json`
 - `bench/aci/results/live_ab_without_read_files.json`
 
-旧 canonical 备份在 `audit-r12-scratch/canonical-before-light-c12-c35-20261014/`。
+旧 canonical 备份在 `audit-r12-scratch/canonical-before-light-fmt-20261014/`。
 
 ## 已修复的证据链问题
 
@@ -51,10 +51,10 @@ canonical 已发布到：
 
 - C12：PASS，存储证据与当前源码指纹一致。
 - C24：PASS，35/35 GOLDEN-bearing 任务均为 `pristine=false`、`golden=true`。
-- C34：PASS，`0.8195`，`line_wrapper + counts` 从 931 降到 168 字符；轻量 prefix subset 已声明 `full_trajectory_claim=false`，该声明不用于 C14/C16。
+- C34：PASS，`0.7325`，`line_wrapper + counts` 从 931 降到 168 字符；轻量 prefix subset 已声明 `full_trajectory_claim=false`，该声明不用于 C14/C16。
 - C35：PASS，canonical 两臂 8 任务、seed 42、各 24 行、同 revision/task set、`api_error=0`。
-- C14：FAIL，轻量 subset 的 `0.2457` 仅记录为 diagnostic；`lightweight_subset=true`，不可声称原全轨迹门槛通过。
-- C16：FAIL，轻量 subset 的 `0.2175` 仅记录为 diagnostic；`lightweight_subset=true`，不可声称原全轨迹门槛通过。
+- C14：FAIL，轻量 subset 的 `0.2368` 仅记录为 diagnostic；`lightweight_subset=true`，不可声称原全轨迹门槛通过。
+- C16：FAIL，轻量 subset 的 `0.1950` 仅记录为 diagnostic；`lightweight_subset=true`，不可声称原全轨迹门槛通过。
 
 ## large 占比
 
@@ -70,14 +70,17 @@ canonical 已发布到：
 
 - `tests/ic_verseshell_benchmark.rs` 的 `#[ignore]` 保留：它是基准探针，不是普通单元测试；C7 计 1 ignored。
 - removed-module stub builtins 暂不批量删除：当前源码扫描到 147 个 `not available (module removed)` 函数体，多数仍在 dispatch 表中并返回显式错误。删除会改变内置命令表面，应先做调用方/兼容性审计和回归测试。
-- `cargo fmt --all -- --check` 仍不干净。未在本次最终刷新后批量格式化，因为改动 Rust 源会使本轮 live/证据指纹全部失效；若要做，应作为下一次冻结前的独立机械变更。
+- `cargo fmt --all` 已执行，`cargo fmt --all -- --check` 通过；格式化后的源码重新冻结了 `light-c12-c35-fmt-20261014`，避免留下失效指纹。
 
 ## 本次工作区改动
 
-- 轻量 live 与备份：`bench/aci/results/light-c12-c35-20261014/`、`audit-r12-scratch/canonical-before-light-c12-c35-20261014/`
+- 轻量 live 与备份：`bench/aci/results/light-c12-c35-fmt-20261014/`、`audit-r12-scratch/canonical-before-light-fmt-20261014/`
 - 证据：`eval/evidence.json`、`eval/evidence.claims.md`、live/read/replay/audit 等 `eval/*.json`
-- 代码：`tools/claim_gate.py`、`tools/live_uncertainty.py`、`tools/read_path_breakdown.py`、`tools/task_design_audit.py`、`tools/task_admissibility.py`、`tools/three_arm_report.py`、`tools/tf45_envelope_replay.py`
+- 代码：`tools/claim_gate.py`、`tools/live_uncertainty.py`、`tools/read_path_breakdown.py`、`tools/task_design_audit.py`、`tools/task_admissibility.py`、`tools/three_arm_report.py`、`tools/tf45_envelope_replay.py`、`tools/refresh_live_artifacts.py`
 - 测试：`tests/test_claim_sources.py`、`tests/test_task_design_audit.py`、`tests/test_live_uncertainty_degenerate.py`
 
 补充边界：`eval/task_admissibility.json` 的候选 verdicts 和 input hashes 没有重跑或改写；在统一 fingerprint 序列化后，只按当前文件重算了它的 `evidence.fingerprint`。这是 hash 串行化迁移，不是候选准入结果的重测。
-- 墙钟：with `14:58:13–15:11:11`（约 13 分钟），without `15:11:11–15:25:49`（约 15 分钟），合计约 28 分钟。
+- 墙钟：with `17:33:42–17:47:39`（约 14 分钟），without `17:47:40–18:03:02`（约 15.5 分钟），另加两格 recovery，合计约 31 分钟。
+
+
+

@@ -14,12 +14,12 @@ Gate predicates and thresholds are unchanged. Status is scoped to the selected e
 | C8 | pass | verified_current_check | 3 | 1.0 / all pass | current source/test receipt or missing binding |
 | C9 | pass | verified_selected_measurement | 7 | 0.4203 / >= 0.40 | C:\Users\27933\Desktop\verseshell\verseshell\eval\evidence.compact-ratio.json |
 | C10 | pass | verified_current_check | 19 | 1.0 / all pass | C:\Users\27933\Desktop\verseshell\verseshell\eval\readme_claims.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\cross_shell.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\evidence.compact-ratio.json |
-| C11 | pass | verified_selected_measurement | 5 | 0.2987 / <= 0.50 | C:\Users\27933\Desktop\verseshell\verseshell\eval\cross_shell.json |
+| C11 | pass | verified_selected_measurement | 5 | 0.3184 / <= 0.50 | C:\Users\27933\Desktop\verseshell\verseshell\eval\cross_shell.json |
 | C12 | pass | verified_selected_measurement | 26 | 1.0 / all artifacts fresh | C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\latest.json<br>C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\latest_live.json<br>C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\live_ab_without_read_files.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\jev_obs_report.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\cross_shell.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\tf45_envelope_replay.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\exec_token_breakdown.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\read_path_breakdown.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\read_usage_audit.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\exec_failure_breakdown.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\step_composition.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\ts_fixture_audit.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\task_set_audit.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\aci_learning_probe.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\live_uncertainty.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\budget_sensitivity.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\task_design_audit.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\projection_contract.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\token_proxy_calibration.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\acceptance_power.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\task_admissibility.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\task_set_freeze.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\three_arm_report.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\harness_encoding_contract.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\harness_exec_contract.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\statistics_crosscheck.json |
 | C13 | not gated | diagnostic_only | None | diagnostic | C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\latest_live.json<br>C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\live_ab_without_read_files.json |
-| C14 | FAIL | not_met | 10 | 0.2457 / >= 0.15 | C:\Users\27933\Desktop\verseshell\verseshell\eval\tf45_envelope_replay.json |
+| C14 | FAIL | not_met | 10 | 0.2368 / >= 0.15 | C:\Users\27933\Desktop\verseshell\verseshell\eval\tf45_envelope_replay.json |
 | C15 | not gated | diagnostic_only | None | diagnostic | C:\Users\27933\Desktop\verseshell\verseshell\eval\exec_token_breakdown.json |
-| C16 | FAIL | not_met | 10 | 0.2175 / >= 0.10 | C:\Users\27933\Desktop\verseshell\verseshell\eval\read_path_breakdown.json |
+| C16 | FAIL | not_met | 10 | 0.195 / >= 0.10 | C:\Users\27933\Desktop\verseshell\verseshell\eval\read_path_breakdown.json |
 | C17 | not gated | diagnostic_only | None | diagnostic | C:\Users\27933\Desktop\verseshell\verseshell\eval\read_usage_audit.json |
 | C18 | pass | verified_selected_measurement | 3 | 1.0 / == 1.00 | C:\Users\27933\Desktop\verseshell\verseshell\eval\exec_failure_breakdown.json |
 | C19 | not gated | diagnostic_only | None | diagnostic | C:\Users\27933\Desktop\verseshell\verseshell\eval\exec_failure_breakdown.json |
@@ -37,7 +37,7 @@ Gate predicates and thresholds are unchanged. Status is scoped to the selected e
 | C31 | pass | verified_selected_measurement | 3 | 1.0 / == 1.00 | C:\Users\27933\Desktop\verseshell\verseshell\eval\harness_encoding_contract.json |
 | C32 | pass | verified_selected_measurement | 7 | 1.0 / == 1.00 | C:\Users\27933\Desktop\verseshell\verseshell\eval\harness_exec_contract.json |
 | C33 | pass | verified_selected_measurement | None | 1.0 / == 1.00 | C:\Users\27933\Desktop\verseshell\verseshell\eval\acceptance_power.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\three_arm_report.json |
-| C34 | pass | verified_selected_measurement | 10 | 0.8195 / >= 0.40 and measured on a fresh artifact from a task set newer than 2.0.0 | C:\Users\27933\Desktop\verseshell\verseshell\eval\read_path_breakdown.json<br>C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\latest_live.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\task_set_freeze.json |
+| C34 | pass | verified_selected_measurement | 10 | 0.7325 / >= 0.40 and measured on a fresh artifact from a task set newer than 2.0.0 | C:\Users\27933\Desktop\verseshell\verseshell\eval\read_path_breakdown.json<br>C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\latest_live.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\task_set_freeze.json |
 | C35 | pass | verified_selected_measurement | None | 1.0 / == 1.00 | C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\latest_live.json<br>C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\live_ab_without_read_files.json |
 | C36 | pass | verified_selected_measurement | None | 1.0 / == 1.00 | C:\Users\27933\Desktop\verseshell\verseshell\eval\acceptance_power.json |
 | C37 | pass | verified_selected_measurement | None | 1.0 / == 1.00 | C:\Users\27933\Desktop\verseshell\verseshell\eval\statistics_crosscheck.json<br>C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\latest_live.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\live_uncertainty.json<br>C:\Users\27933\Desktop\verseshell\verseshell\eval\acceptance_power.json |
@@ -45,23 +45,23 @@ Gate predicates and thresholds are unchanged. Status is scoped to the selected e
 ## Input versions
 
 - bench/aci/results/latest.json: C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\latest.json
-  - sha256: 5d8cb18e27967d1c0f8cd150c929ac33f53693a6774742ddaecd2b318ca8f324; currency: fresh
-  - version: {"schema": "verseshell.aci_bench.results/v1", "generated_at": "2026-10-14T07:27:30.466020+00:00", "task_set_version": "3.0.0", "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6", "mode": "mock"}
+  - sha256: 623a3885e8e322eeb3268553c4dc15ad3ac18bc97bef81a297485a04cd14549b; currency: fresh
+  - version: {"schema": "verseshell.aci_bench.results/v1", "generated_at": "2026-10-14T10:11:20.391483+00:00", "task_set_version": "3.0.0", "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66", "mode": "mock"}
   - source identity: null
   - binary: {}
 - bench/aci/results/latest_live.json: C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\latest_live.json
-  - sha256: 3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38; currency: fresh
-  - version: {"schema": "verseshell.aci_bench.results/v1", "generated_at": "2026-10-14T07:26:12.997192+00:00", "task_set_version": "3.1.0", "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6", "mode": "live"}
+  - sha256: 75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9; currency: fresh
+  - version: {"schema": "verseshell.aci_bench.results/v1", "generated_at": "2026-10-14T10:09:54.380557+00:00", "task_set_version": "3.1.0", "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66", "mode": "live"}
   - source identity: null
-  - binary: {"sha256": "ba89afc9c9df86d774f39084c3d9afb28d987fcc92842a18b5598e74019ebfaa"}
+  - binary: {"sha256": "7f6765f44097adfaa4ede9a868d1ce13f4fd20c5c2584222c966af046f102c83"}
 - bench/aci/results/live_ab_without_read_files.json: C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\results\live_ab_without_read_files.json
-  - sha256: 7686672e2efce366d5bafc81293ff50a6df3275abb59c32b5133912d051aa576; currency: fresh
-  - version: {"schema": "verseshell.aci_bench.results/v1", "generated_at": "2026-10-14T07:26:13.256069+00:00", "task_set_version": "3.1.0", "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6", "mode": "live"}
+  - sha256: cf9ff20abd1d473f81ff3fa22f6e9bda8f90f11b6c1996bfd29e1f38f813a6e0; currency: fresh
+  - version: {"schema": "verseshell.aci_bench.results/v1", "generated_at": "2026-10-14T10:09:54.381557+00:00", "task_set_version": "3.1.0", "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66", "mode": "live"}
   - source identity: null
-  - binary: {"sha256": "ba89afc9c9df86d774f39084c3d9afb28d987fcc92842a18b5598e74019ebfaa"}
+  - binary: {"sha256": "7f6765f44097adfaa4ede9a868d1ce13f4fd20c5c2584222c966af046f102c83"}
 - eval/acceptance_power.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\acceptance_power.json
-  - sha256: 6ffd5f17fb355cf9801d8371cb8d9bb85be42553eca9e65bd580e1b244de6adf; currency: fresh
-  - version: {"schema": "verseshell.acceptance_power/v1", "generated_at": "2026-10-14T07:34:03.884584+00:00", "task_set_version": "3.1.0", "model": "sn-glm-5-3-flash", "prompt_variant": "baseline"}
+  - sha256: 802fddd9dcf772fc108e862eae2b6fd1ba40c40f9d75c0c37a12fb3c292a79a8; currency: fresh
+  - version: {"schema": "verseshell.acceptance_power/v1", "generated_at": "2026-10-14T10:20:14.359444+00:00", "task_set_version": "3.1.0", "model": "sn-glm-5-3-flash", "prompt_variant": "baseline"}
   - source identity: null
   - binary: {}
 - eval/aci_learning_probe.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\aci_learning_probe.json
@@ -70,8 +70,8 @@ Gate predicates and thresholds are unchanged. Status is scoped to the selected e
   - source identity: null
   - binary: {}
 - eval/budget_sensitivity.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\budget_sensitivity.json
-  - sha256: c199f90d2e5b47fd285afcd0000c686a4c1be55b2c14e3d5ce72e523276afbe5; currency: fresh
-  - version: {"schema": "verseshell.budget-sensitivity/v1", "generated_at": "2026-10-14T07:36:31.273898+00:00"}
+  - sha256: 1b4ac52ab4c8b4c73e192fe0126c636f391904da932c944908b31104b4b63987; currency: fresh
+  - version: {"schema": "verseshell.budget-sensitivity/v1", "generated_at": "2026-10-14T10:20:14.993599+00:00"}
   - source identity: null
   - binary: {}
 - eval/compact_ratio.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\evidence.compact-ratio.json
@@ -80,18 +80,18 @@ Gate predicates and thresholds are unchanged. Status is scoped to the selected e
   - source identity: null
   - binary: {}
 - eval/cross_shell.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\cross_shell.json
-  - sha256: a4d786a94c469819b4c74c4f471979fd66f47e747efc50a5a71b03ba0e5943d8; currency: fresh
-  - version: {"schema": "verseshell.cross-shell/v2", "generated_at": "2026-10-14T07:29:42.189775+00:00", "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6"}
+  - sha256: a135360791268f28063c8b3f043ad98f10a8c5ab50bf95ac5e13ceb1b10df1e5; currency: fresh
+  - version: {"schema": "verseshell.cross-shell/v2", "generated_at": "2026-10-14T10:16:08.929131+00:00", "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66"}
   - source identity: null
   - binary: {}
 - eval/exec_failure_breakdown.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\exec_failure_breakdown.json
-  - sha256: a61e073b3e87a3703a9b26b31e228d014db036caadc5bcdd8ab017827c1122ea; currency: fresh
-  - version: {"schema": "verseshell.exec-failure-breakdown/v1", "generated_at": "2026-10-14T07:31:17.730144+00:00"}
+  - sha256: bf3cec3c29edba3d483b487b3d73c3440f070d847b31beb200edc830ef566bd1; currency: fresh
+  - version: {"schema": "verseshell.exec-failure-breakdown/v1", "generated_at": "2026-10-14T10:18:44.329050+00:00"}
   - source identity: null
   - binary: {}
 - eval/exec_token_breakdown.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\exec_token_breakdown.json
-  - sha256: fd399665de0947356344366d4ab244ba6a3e1170cb3e572d790b83eb9ce1d496; currency: fresh
-  - version: {"schema": "verseshell.exec-token-breakdown/v1", "generated_at": "2026-10-14T07:31:10.092575+00:00"}
+  - sha256: 35f9cc5c99a688a30e28730e3d866cca9a28969e9dc38368e0a984d8f79d7469; currency: fresh
+  - version: {"schema": "verseshell.exec-token-breakdown/v1", "generated_at": "2026-10-14T10:18:34.342995+00:00"}
   - source identity: null
   - binary: {}
 - eval/harness_encoding_contract.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\harness_encoding_contract.json
@@ -105,13 +105,13 @@ Gate predicates and thresholds are unchanged. Status is scoped to the selected e
   - source identity: null
   - binary: {}
 - eval/jev_obs_report.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\jev_obs_report.json
-  - sha256: c95b15579d3f014a16e8c7439dd966c4079867657d43967026d02c675b55f072; currency: fresh
-  - version: {"schema": "verseshell.jev-obs-report/v1", "generated_at": "2026-10-14T07:27:30.724558+00:00", "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6", "mode": "heuristic"}
+  - sha256: 15f11dbad1333e09e96be41ac7bd8df7205949b18e94e2efb650a91cd0da683d; currency: fresh
+  - version: {"schema": "verseshell.jev-obs-report/v1", "generated_at": "2026-10-14T10:11:20.665815+00:00", "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66", "mode": "heuristic"}
   - source identity: null
   - binary: {}
 - eval/live_uncertainty.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\live_uncertainty.json
-  - sha256: 8b993e69822345cd0e2b99a728e7a5ac8e23461d021f3e925cabe39974ff5822; currency: fresh
-  - version: {"schema": "verseshell.aci_live_uncertainty/v1", "generated_at": "2026-10-14T07:33:59.788501+00:00"}
+  - sha256: 43eb32cfd6914e5b68f8533345d93f4975f0ec3bce72a55f0d39d5f72d17d097; currency: fresh
+  - version: {"schema": "verseshell.aci_live_uncertainty/v1", "generated_at": "2026-10-14T10:20:09.353848+00:00"}
   - source identity: null
   - binary: {}
 - eval/metrics.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\evidence.metrics.json
@@ -125,23 +125,23 @@ Gate predicates and thresholds are unchanged. Status is scoped to the selected e
   - source identity: null
   - binary: {}
 - eval/read_path_breakdown.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\read_path_breakdown.json
-  - sha256: 41fc416738c1f713379aa71920a9a6133bd160e660d931a93f6d65e9c9a5ff51; currency: fresh
-  - version: {"schema": "verseshell.read-path-breakdown/v1", "generated_at": "2026-10-14T08:20:00.115732+00:00"}
-  - source identity: {"path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json", "sha256": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38", "task_set_version": "3.1.0", "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6", "collection_id": "light-c12-c35-20261014", "tasks": ["rust_fix_compile_error", "rust_add_unit_test", "rust_search_and_edit", "python_fix_pytest_fail", "python_edit_and_retest", "python_noisy_install_summary", "ts_fix_type_error", "ts_package_script_fail"]}
-  - binary: {"path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\target\\debug\\ae.exe", "sha256": "ba89afc9c9df86d774f39084c3d9afb28d987fcc92842a18b5598e74019ebfaa"}
+  - sha256: 646c51df99866cbff7d8b78200bbc5e54ec6936089f222d3eaeb53e6dd31cf2e; currency: fresh
+  - version: {"schema": "verseshell.read-path-breakdown/v1", "generated_at": "2026-10-14T10:16:36.345143+00:00"}
+  - source identity: {"path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json", "sha256": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9", "task_set_version": "3.1.0", "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66", "collection_id": "light-c12-c35-fmt-20261014", "tasks": ["rust_fix_compile_error", "rust_add_unit_test", "rust_search_and_edit", "python_fix_pytest_fail", "python_edit_and_retest", "python_noisy_install_summary", "ts_fix_type_error", "ts_package_script_fail"]}
+  - binary: {"path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\target\\debug\\ae.exe", "sha256": "7f6765f44097adfaa4ede9a868d1ce13f4fd20c5c2584222c966af046f102c83"}
 - eval/read_usage_audit.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\read_usage_audit.json
-  - sha256: 118cc6a7002290824a90d34c178fbada7639acb0c071d376aa69b10d996448b3; currency: fresh
-  - version: {"schema": "verseshell.read-usage-audit/v1", "generated_at": "2026-10-14T07:31:09.995517+00:00"}
+  - sha256: 876b82420967adad841355584b180a92ad2abeff0e11c28a6649f658eb3949cd; currency: fresh
+  - version: {"schema": "verseshell.read-usage-audit/v1", "generated_at": "2026-10-14T10:18:34.198704+00:00"}
   - source identity: null
   - binary: {}
 - eval/statistics_crosscheck.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\statistics_crosscheck.json
-  - sha256: c7ae194d04015e2a99b6373044827b8c6967784a39933f5d9999d51e182115ee; currency: fresh
-  - version: {"schema": "verseshell.statistics_crosscheck/v1", "generated_at": "2026-10-14T07:34:04.164786+00:00"}
+  - sha256: 42128eefb407d354cc8e7c229f4ead3719d0c6aa15f246aef0067301b0d47311; currency: fresh
+  - version: {"schema": "verseshell.statistics_crosscheck/v1", "generated_at": "2026-10-14T10:20:14.689097+00:00"}
   - source identity: null
   - binary: {}
 - eval/step_composition.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\step_composition.json
-  - sha256: ceb9773f38e590fdca8e462e2ff51ab6db1564fdafb8ea991078ec4b25fbb857; currency: fresh
-  - version: {"schema": "verseshell.step-composition/v1", "generated_at": "2026-10-14T07:31:17.937817+00:00"}
+  - sha256: 5ac2c8778a97c3523c5da1742051642f9a2caaf76a53ea35f31f1143d48a0abf; currency: fresh
+  - version: {"schema": "verseshell.step-composition/v1", "generated_at": "2026-10-14T10:18:44.507611+00:00"}
   - source identity: null
   - binary: {}
 - eval/task_admissibility.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\task_admissibility.json
@@ -150,13 +150,13 @@ Gate predicates and thresholds are unchanged. Status is scoped to the selected e
   - source identity: null
   - binary: {}
 - eval/task_design_audit.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\task_design_audit.json
-  - sha256: 81c199687c58ade40f8c9a6f8b2c9de117faf478a0b319b7dace66ecfd32140d; currency: fresh
-  - version: {"schema": "verseshell.task-design-audit/v1", "generated_at": "2026-10-14T08:09:29.079179+00:00", "task_set_version": "3.1.0"}
+  - sha256: 1525a1b3e3f29045e0ae5ab8f8a158f273da515ca5c4be6f49055e313455b826; currency: fresh
+  - version: {"schema": "verseshell.task-design-audit/v1", "generated_at": "2026-10-14T10:20:14.869597+00:00", "task_set_version": "3.1.0"}
   - source identity: null
   - binary: {}
 - eval/task_set_audit.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\task_set_audit.json
-  - sha256: 81f550f0b320b433dd4f9579f17b0645bd4c7df2905fb17bd095f49d962e3357; currency: fresh
-  - version: {"schema": "verseshell.task-set-audit/v1", "generated_at": "2026-10-14T07:31:09.845262+00:00", "task_set_version": "3.1.0"}
+  - sha256: 075fb1439a278d5cba921fe024fc665609d38c86cefd403c9c3f0983a3d0bb6f; currency: fresh
+  - version: {"schema": "verseshell.task-set-audit/v1", "generated_at": "2026-10-14T10:18:26.446064+00:00", "task_set_version": "3.1.0"}
   - source identity: null
   - binary: {}
 - eval/task_set_freeze.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\task_set_freeze.json
@@ -165,23 +165,23 @@ Gate predicates and thresholds are unchanged. Status is scoped to the selected e
   - source identity: null
   - binary: {}
 - eval/tf45_envelope_replay.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\tf45_envelope_replay.json
-  - sha256: 07ce3e986e4ac6c1fccfd58d7320630be8a331510b0b2df41cd91921edb74fd4; currency: fresh
-  - version: {"schema": "verseshell.tf45-envelope-replay/v1", "generated_at": "2026-10-14T08:19:35.410340+00:00"}
-  - source identity: {"path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json", "sha256": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38", "task_set_version": "3.1.0", "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6", "collection_id": "light-c12-c35-20261014", "tasks": ["rust_fix_compile_error", "rust_add_unit_test", "rust_search_and_edit", "python_fix_pytest_fail", "python_edit_and_retest", "python_noisy_install_summary", "ts_fix_type_error", "ts_package_script_fail"]}
-  - binary: {"path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\target\\debug\\ae.exe", "sha256": "ba89afc9c9df86d774f39084c3d9afb28d987fcc92842a18b5598e74019ebfaa"}
+  - sha256: d1d460921b1ad2c05f89c6ded5099d8231ed99e480a8206fc64a46a1b417b04e; currency: fresh
+  - version: {"schema": "verseshell.tf45-envelope-replay/v1", "generated_at": "2026-10-14T10:16:29.720388+00:00"}
+  - source identity: {"path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json", "sha256": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9", "task_set_version": "3.1.0", "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66", "collection_id": "light-c12-c35-fmt-20261014", "tasks": ["rust_fix_compile_error", "rust_add_unit_test", "rust_search_and_edit", "python_fix_pytest_fail", "python_edit_and_retest", "python_noisy_install_summary", "ts_fix_type_error", "ts_package_script_fail"]}
+  - binary: {"path": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\target\\debug\\ae.exe", "sha256": "7f6765f44097adfaa4ede9a868d1ce13f4fd20c5c2584222c966af046f102c83"}
 - eval/three_arm_report.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\three_arm_report.json
-  - sha256: 6a9a1d002c57cc04065fdc2f4cb0a225b742fb09567e829752c18103b7d88f2e; currency: fresh
-  - version: {"schema": "verseshell.three_arm_report/v1", "generated_at": "2026-10-14T08:09:02.654416+00:00", "task_set_version": "3.1.0", "model": "sn-glm-5-3-flash", "prompt_variant": "baseline"}
+  - sha256: d4a3f42155928583d50b75219f7166ea65bb71dad0d51d3260133f80807fea95; currency: fresh
+  - version: {"schema": "verseshell.three_arm_report/v1", "generated_at": "2026-10-14T10:20:31.331430+00:00", "task_set_version": "3.1.0", "model": "sn-glm-5-3-flash", "prompt_variant": "baseline"}
   - source identity: null
   - binary: {}
 - eval/token_proxy_calibration.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\token_proxy_calibration.json
-  - sha256: 2caa6a75a4e0caa7b68ac1c81b33cd2493129251a5f83eaab4bd83c1199019b3; currency: fresh
-  - version: {"schema": "verseshell.token_proxy_calibration/v1", "generated_at": "2026-10-14T07:32:16.648703+00:00", "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6", "model": "sn-glm-5-3-flash"}
+  - sha256: 352003c6e244e154aff88784cbdba0166197f114e54250f5c9c55e2dfa05ccbc; currency: fresh
+  - version: {"schema": "verseshell.token_proxy_calibration/v1", "generated_at": "2026-10-14T10:19:57.608225+00:00", "git_rev": "57af8f37cb555e448dedfcbdb178bd8083163c66", "model": "sn-glm-5-3-flash"}
   - source identity: null
   - binary: {}
 - eval/ts_fixture_audit.json: C:\Users\27933\Desktop\verseshell\verseshell\eval\ts_fixture_audit.json
-  - sha256: 22ef3e7a4180983ac4f8acf15da3b621b3ca511eed60b6fff5a67034ea3261c2; currency: fresh
-  - version: {"schema": "verseshell.ts-fixture-audit/v1", "generated_at": "2026-10-14T07:29:55.267316+00:00"}
+  - sha256: fc49c5477c8e743c119f33dc6cd4a529a862f3daf3b03561b32e50522b387e3d; currency: fresh
+  - version: {"schema": "verseshell.ts-fixture-audit/v1", "generated_at": "2026-10-14T10:16:36.676110+00:00"}
   - source identity: null
   - binary: {}
 - @task_set: C:\Users\27933\Desktop\verseshell\verseshell\bench\aci\task_sets\3.1.0.json
@@ -190,9 +190,9 @@ Gate predicates and thresholds are unchanged. Status is scoped to the selected e
   - source identity: null
   - binary: {}
 - @readme_check: C:\Users\27933\Desktop\verseshell\verseshell\eval\readme_claims.json
-  - sha256: a385d8b9b33c04c81e2daeb592621f5d9f362b6b74efe69957765ec897c2de1a; currency: generated_in_this_gate
-  - version: {"schema": "verseshell.readme-claims/v1", "generated_at": "2026-10-14T08:21:45.526260+00:00"}
+  - sha256: 17a300a5be9b5ce13297fa3aaf9070fff66a33e5717212e1fb0219282500b1c6; currency: generated_in_this_gate
+  - version: {"schema": "verseshell.readme-claims/v1", "generated_at": "2026-10-14T10:23:20.232928+00:00"}
   - source identity: null
-  - binary: {"path": "target\\debug\\ae.exe", "sha256": "ba89afc9c9df86d774f39084c3d9afb28d987fcc92842a18b5598e74019ebfaa"}
+  - binary: {"path": "target\\debug\\ae.exe", "sha256": "7f6765f44097adfaa4ede9a868d1ce13f4fd20c5c2584222c966af046f102c83"}
 
 A current consistency check on historical data does not recertify acquisition, author independence, or product effectiveness.

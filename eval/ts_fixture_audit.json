@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.ts-fixture-audit/v1",
-  "generated_at": "2026-10-14T07:29:55.267316+00:00",
+  "generated_at": "2026-10-14T10:16:36.676110+00:00",
   "method": {
     "inputs": [
       "bench\\aci\\results\\latest_live.json",
@@ -23,7 +23,7 @@
       "tools/ts_fixture_audit.py",
       "tools/trajectory_replay.py"
     ],
-    "fingerprint": "0f75f734dd3e1bb256156448ef2dbb8cce281b90676399a4c1c00b4eebe6810c"
+    "fingerprint": "4202e5d15c5d8aabadd3dbfa7fdb336fdb639ff078c196ca82a7c466d15ee2a8"
   },
   "fixture": {
     "ts_fix_type_error": {
@@ -228,7 +228,7 @@
                   "class": "toolchain_verify",
                   "tokens": 50,
                   "ok": true,
-                  "command": "node_modules\\.bin\\tsc.cmd --noEmit"
+                  "command": "node node_modules/typescript/bin/tsc --noEmit"
                 }
               ]
             }
@@ -257,39 +257,39 @@
               "success": true,
               "success_reason": "command_exit_0 ['node', 'node_modules/typescript/bin/tsc', '--noEmit'] -> 0",
               "steps": 2,
-              "tokens": 174,
+              "tokens": 151,
               "boundary_calls": [
                 {
                   "index": 0,
                   "class": "raw_shell_toolchain",
-                  "tokens": 122,
+                  "tokens": 125,
                   "ok": null,
-                  "command": "type src\\index.ts & type tsconfig.json & type package.json"
+                  "command": "type src\\index.ts & echo --- & type tsconfig.json & echo --- & type package.json"
                 },
                 {
                   "index": 1,
                   "class": "raw_shell_toolchain",
-                  "tokens": 44,
+                  "tokens": 18,
                   "ok": null,
-                  "command": "powershell -NoProfile -Command \"(Get-Content src\\index.ts) -replace 'const x: string = a \\+ b;', 'const x: number = a + "
+                  "command": "powershell -NoProfile -Command \"(Get-Content src\\index.ts -Raw) -replace 'const x: string = a \\+ b;','const x: number = "
                 }
               ]
             }
           ],
           "boundary_calls": 2,
           "boundary_calls_per_run": 2.0,
-          "boundary_tokens": 166,
-          "boundary_tokens_per_run": 166.0,
+          "boundary_tokens": 143,
+          "boundary_tokens_per_run": 143.0,
           "by_class": {
             "raw_shell_toolchain": {
               "calls": 2,
-              "tokens": 166,
+              "tokens": 143,
               "calls_per_run": 2.0,
-              "tokens_per_run": 166.0
+              "tokens_per_run": 143.0
             }
           },
           "steps_per_run": 2.0,
-          "tokens_per_run": 174.0,
+          "tokens_per_run": 151.0,
           "note": "raw shell folds read/run/write into one command, so these buckets overlap; treat them as an upper bound on A's toolchain share"
         }
       }
@@ -305,12 +305,12 @@
               "success": true,
               "success_reason": "command_exit_0 ['C:\\\\Program Files\\\\nodejs\\\\npm.CMD', 'test'] -> 0",
               "steps": 4,
-              "tokens": 264,
+              "tokens": 235,
               "boundary_calls": [
                 {
                   "index": 3,
                   "class": "shadowed_bare_name",
-                  "tokens": 98,
+                  "tokens": 99,
                   "ok": true,
                   "command": "npm test"
                 }
@@ -319,18 +319,18 @@
           ],
           "boundary_calls": 1,
           "boundary_calls_per_run": 1.0,
-          "boundary_tokens": 98,
-          "boundary_tokens_per_run": 98.0,
+          "boundary_tokens": 99,
+          "boundary_tokens_per_run": 99.0,
           "by_class": {
             "shadowed_bare_name": {
               "calls": 1,
-              "tokens": 98,
+              "tokens": 99,
               "calls_per_run": 1.0,
-              "tokens_per_run": 98.0
+              "tokens_per_run": 99.0
             }
           },
           "steps_per_run": 4.0,
-          "tokens_per_run": 264.0,
+          "tokens_per_run": 235.0,
           "note": "typed ops do one job each, so the classes are separable"
         },
         "with_read_files:raw_shell": {
@@ -340,8 +340,8 @@
               "seed": 42,
               "success": true,
               "success_reason": "command_exit_0 ['C:\\\\Program Files\\\\nodejs\\\\npm.CMD', 'test'] -> 0",
-              "steps": 4,
-              "tokens": 166,
+              "steps": 2,
+              "tokens": 97,
               "boundary_calls": []
             }
           ],
@@ -350,8 +350,8 @@
           "boundary_tokens": 0,
           "boundary_tokens_per_run": 0.0,
           "by_class": {},
-          "steps_per_run": 4.0,
-          "tokens_per_run": 166.0,
+          "steps_per_run": 2.0,
+          "tokens_per_run": 97.0,
           "note": "raw shell folds read/run/write into one command, so these buckets overlap; treat them as an upper bound on A's toolchain share"
         }
       }
@@ -381,26 +381,26 @@
   },
   "sensitivity": {
     "observed": {
-      "steps_per_run_D": 4.125,
+      "steps_per_run_D": 4.375,
       "steps_per_run_A": 2.875,
-      "step_ratio": 1.4348,
-      "tokens_per_run_D": 298.25,
-      "tokens_per_run_A": 237.25,
-      "token_ratio": 1.2571
+      "step_ratio": 1.5217,
+      "tokens_per_run_D": 304.25,
+      "tokens_per_run_A": 279.5,
+      "token_ratio": 1.0886
     },
     "d_only_counterfactual": {
-      "steps_per_run_D": 4.875,
-      "step_ratio": 1.6957,
-      "tokens_per_run_D": 360.75,
-      "token_ratio": 1.5205
+      "steps_per_run_D": 5.125,
+      "step_ratio": 1.7826,
+      "tokens_per_run_D": 366.75,
+      "token_ratio": 1.3122
     },
     "step_ratio_band": [
-      1.4348,
-      1.6957
+      1.5217,
+      1.7826
     ],
     "token_ratio_band": [
-      1.2571,
-      1.5205
+      1.0886,
+      1.3122
     ],
     "conclusion_flips": false
   },
@@ -492,21 +492,10 @@
         "seed": 42,
         "recorded_success": true,
         "recorded_reason": "command_exit_0 ['node', 'node_modules/typescript/bin/tsc', '--noEmit'] -> 0",
-        "reconstructed": true,
+        "reconstructed": false,
         "reconstruction_scope": "single-file candidate, not complete final workspace",
         "independent_live_rescore": false,
-        "how": "candidate from inline shell write",
-        "final_body": "export function add(a: number, b: number): number {\n  const x: number = a + b;\n  return x;\n}\n",
-        "legacy_predicate_pass": false,
-        "legacy_reason": "file_contains src/index.ts",
-        "removes_type_error": true,
-        "keeps_intermediate_binding": true,
-        "tsc": {
-          "ran": true,
-          "exit_code": 0,
-          "pass": true,
-          "output_head": ""
-        }
+        "how": "no supported inline write found"
       },
       {
         "condition": "verseshell_aci",
@@ -561,7 +550,7 @@
         "pass": 1
       }
     },
-    "runs_where_legacy_rejected_a_passing_fix": 2,
+    "runs_where_legacy_rejected_a_passing_fix": 1,
     "live_runner_optional_verify": {
       "silently_nulled": false,
       "records_not_run": true

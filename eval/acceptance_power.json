@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.acceptance_power/v1",
-  "generated_at": "2026-10-14T07:34:03.884584+00:00",
+  "generated_at": "2026-10-14T10:20:14.359444+00:00",
   "generator": "tools/acceptance_power.py",
   "source": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json",
   "model": "sn-glm-5-3-flash",
@@ -52,13 +52,13 @@
       "headroom_note": "sample-size power for an absolute difference does not establish room for a positive improvement"
     },
     "token_ratio": {
-      "point": 1.2571,
+      "point": 1.0886,
       "estimator": "ratio_of_sums",
       "mean_of_ratios": {
-        "point_estimate": 1.31,
+        "point_estimate": 1.4574,
         "bootstrap_ci95": [
-          1.0744,
-          1.5651
+          1.0412,
+          1.8862
         ],
         "bootstrap_unit": "task",
         "n_pairs": 8,
@@ -66,12 +66,12 @@
         "weighting": "equal weight per paired cell; seeds retained in task clusters"
       },
       "ci95": [
-        1.037,
-        1.5333
+        0.8691,
+        1.6441
       ],
       "ci95_row": [
-        1.037,
-        1.5333
+        0.8691,
+        1.6441
       ],
       "unit": "task",
       "n_pairs": 8,
@@ -82,13 +82,13 @@
       "caliber_note": "ratio of the live rows' recorded `observation_tokens`, i.e. the live runner's `estimate_tokens(text) = max(1, len(text)//4)` accumulated over delivered observation text: a PROXY, NOT endpoint usage, NOT the evaluated model's own tokenizer and NOT currency"
     },
     "tool_ratio": {
-      "point": 1.4348,
+      "point": 1.5217,
       "estimator": "ratio_of_sums",
       "mean_of_ratios": {
-        "point_estimate": 1.6938,
+        "point_estimate": 1.5521,
         "bootstrap_ci95": [
-          1.1375,
-          2.2875
+          1.25,
+          1.8438
         ],
         "bootstrap_unit": "task",
         "n_pairs": 8,
@@ -96,12 +96,12 @@
         "weighting": "equal weight per paired cell; seeds retained in task clusters"
       },
       "ci95": [
-        1.0,
-        2.1111
+        1.16,
+        1.9048
       ],
       "ci95_row": [
-        1.0,
-        2.1111
+        1.16,
+        1.9048
       ],
       "unit": "task",
       "n_pairs": 8,
@@ -112,13 +112,13 @@
       "caliber_note": "ratio of tool-CALL COUNTS: not tokens, not usage, not currency"
     },
     "usage_token_ratio": {
-      "point": 3.1745,
+      "point": 3.1386,
       "estimator": "ratio_of_sums",
       "mean_of_ratios": {
-        "point_estimate": 3.448,
+        "point_estimate": 3.2315,
         "bootstrap_ci95": [
-          2.6055,
-          4.408
+          2.8224,
+          3.5985
         ],
         "bootstrap_unit": "task",
         "n_pairs": 8,
@@ -126,12 +126,12 @@
         "weighting": "equal weight per paired cell; seeds retained in task clusters"
       },
       "ci95": [
-        2.3467,
-        4.255
+        2.7743,
+        3.5248
       ],
       "ci95_row": [
-        2.3467,
-        4.255
+        2.7743,
+        3.5248
       ],
       "unit": "task",
       "n_pairs": 8,
@@ -142,13 +142,13 @@
       "caliber_note": "ratio of endpoint-reported `usage` summed over observed requests in usage-eligible pairs (llm_prompt_tokens + llm_completion_tokens): system prompt + tool schemas + re-sent history + reasoning per turn. It is NOT the length of one system prompt or one tool-schema payload, and without price/cache rules it is NOT a money cost"
     },
     "prompt_token_ratio": {
-      "point": 3.3384,
+      "point": 3.33,
       "estimator": "ratio_of_sums",
       "mean_of_ratios": {
-        "point_estimate": 3.6179,
+        "point_estimate": 3.4362,
         "bootstrap_ci95": [
-          2.7359,
-          4.6174
+          2.9622,
+          3.8434
         ],
         "bootstrap_unit": "task",
         "n_pairs": 8,
@@ -156,12 +156,12 @@
         "weighting": "equal weight per paired cell; seeds retained in task clusters"
       },
       "ci95": [
-        2.4803,
-        4.4493
+        2.89,
+        3.7953
       ],
       "ci95_row": [
-        2.4803,
-        4.4493
+        2.89,
+        3.7953
       ],
       "unit": "task",
       "n_pairs": 8,
@@ -172,13 +172,13 @@
       "caliber_note": "ratio of endpoint-reported `llm_prompt_tokens` (input usage accumulated over observed requests in usage-eligible pairs), NOT one request's system-prompt/schema size and NOT currency"
     },
     "completion_token_ratio": {
-      "point": 1.4072,
+      "point": 1.1947,
       "estimator": "ratio_of_sums",
       "mean_of_ratios": {
-        "point_estimate": 1.6299,
+        "point_estimate": 1.2028,
         "bootstrap_ci95": [
-          1.0116,
-          2.4109
+          0.9837,
+          1.5037
         ],
         "bootstrap_unit": "task",
         "n_pairs": 8,
@@ -186,12 +186,12 @@
         "weighting": "equal weight per paired cell; seeds retained in task clusters"
       },
       "ci95": [
-        0.7636,
-        2.3777
+        1.0017,
+        1.5055
       ],
       "ci95_row": [
-        0.7636,
-        2.3777
+        1.0017,
+        1.5055
       ],
       "unit": "task",
       "n_pairs": 8,
@@ -206,10 +206,10 @@
       "paired_task_intervals": {
         "analysable": {
           "available": true,
-          "point_estimate": 1.2571127502634352,
+          "point_estimate": 1.3013798111837327,
           "ci95": [
-            1.0342465753424657,
-            1.5461413923367513
+            1.042149631190727,
+            1.8094725511302474
           ],
           "success_delta": 0.0,
           "success_delta_ci95": [
@@ -218,9 +218,9 @@
           ],
           "undefined_draws": 0,
           "bootstrap_unit": "task",
-          "tasks": 8,
-          "n_pairs": 8,
-          "excluded_pairs": 0,
+          "tasks": 7,
+          "n_pairs": 7,
+          "excluded_pairs": 1,
           "view": "analysable",
           "caliber": "observation_tokens",
           "claimable": false,
@@ -228,14 +228,14 @@
         },
         "intention_to_treat": {
           "available": true,
-          "point_estimate": 1.2571127502634352,
+          "point_estimate": 1.2440582673140812,
           "ci95": [
-            1.0342465753424657,
-            1.5461413923367513
+            1.0723443223443223,
+            1.6929347826086956
           ],
-          "success_delta": 0.0,
+          "success_delta": -0.125,
           "success_delta_ci95": [
-            0.0,
+            -0.375,
             0.0
           ],
           "undefined_draws": 0,
@@ -249,13 +249,13 @@
           "inference_status": "diagnostic interval; requires prospective calibration and multiplicity"
         }
       },
-      "point_D_over_A": 1.2571,
-      "tokens_A": 1898.0,
-      "tokens_D": 2386.0,
+      "point_D_over_A": 1.0886,
+      "tokens_A": 2236.0,
+      "tokens_D": 2434.0,
       "successes_A": 8,
       "successes_D": 8,
-      "cpst_A_tokens_per_success": 237.25,
-      "cpst_D_tokens_per_success": 298.25,
+      "cpst_A_tokens_per_success": 279.5,
+      "cpst_D_tokens_per_success": 304.25,
       "success_noninferiority_lower_bound": 0.0,
       "success_mean_diff_D_minus_A": 0.0,
       "caliber": "observation_proxy_tokens_per_success",
@@ -263,11 +263,11 @@
     },
     "without_arm": {
       "n_pairs": 8,
-      "discordance_rate_psi": 0.125,
-      "observed_abs_delta": 0.125
+      "discordance_rate_psi": 0.0,
+      "observed_abs_delta": 0.0
     },
     "raw_shell_successes": 24,
-    "cpst_A_absolute": 241.58333333333334
+    "cpst_A_absolute": 251.25
   },
   "live_coached": {
     "baseline_condition": "raw_shell_coached",
@@ -291,13 +291,13 @@
       "headroom_note": "sample-size power for an absolute difference does not establish room for a positive improvement"
     },
     "token_ratio": {
-      "point": 1.576,
+      "point": 1.7897,
       "estimator": "ratio_of_sums",
       "mean_of_ratios": {
-        "point_estimate": 1.7155,
+        "point_estimate": 1.8813,
         "bootstrap_ci95": [
-          1.4277,
-          1.9788
+          1.4126,
+          2.3514
         ],
         "bootstrap_unit": "task",
         "n_pairs": 8,
@@ -305,12 +305,12 @@
         "weighting": "equal weight per paired cell; seeds retained in task clusters"
       },
       "ci95": [
-        1.2613,
-        1.8975
+        1.3102,
+        2.3604
       ],
       "ci95_row": [
-        1.2613,
-        1.8975
+        1.3102,
+        2.3604
       ],
       "unit": "task",
       "n_pairs": 8,
@@ -321,13 +321,13 @@
       "caliber_note": "ratio of the live rows' recorded `observation_tokens`, i.e. the live runner's `estimate_tokens(text) = max(1, len(text)//4)` accumulated over delivered observation text: a PROXY, NOT endpoint usage, NOT the evaluated model's own tokenizer and NOT currency"
     },
     "tool_ratio": {
-      "point": 1.32,
+      "point": 1.6667,
       "estimator": "ratio_of_sums",
       "mean_of_ratios": {
-        "point_estimate": 1.3917,
+        "point_estimate": 1.8438,
         "bootstrap_ci95": [
-          1.1125,
-          1.6875
+          1.2188,
+          2.6562
         ],
         "bootstrap_unit": "task",
         "n_pairs": 8,
@@ -335,12 +335,12 @@
         "weighting": "equal weight per paired cell; seeds retained in task clusters"
       },
       "ci95": [
-        1.0345,
-        1.6818
+        1.1818,
+        2.4706
       ],
       "ci95_row": [
-        1.0345,
-        1.6818
+        1.1818,
+        2.4706
       ],
       "unit": "task",
       "n_pairs": 8,
@@ -351,13 +351,13 @@
       "caliber_note": "ratio of tool-CALL COUNTS: not tokens, not usage, not currency"
     },
     "usage_token_ratio": {
-      "point": 2.915,
+      "point": 3.283,
       "estimator": "ratio_of_sums",
       "mean_of_ratios": {
-        "point_estimate": 3.1411,
+        "point_estimate": 3.7515,
         "bootstrap_ci95": [
-          2.5014,
-          3.7316
+          2.4671,
+          5.225
         ],
         "bootstrap_unit": "task",
         "n_pairs": 8,
@@ -365,12 +365,12 @@
         "weighting": "equal weight per paired cell; seeds retained in task clusters"
       },
       "ci95": [
-        2.1826,
-        3.7309
+        2.1856,
+        4.9625
       ],
       "ci95_row": [
-        2.1826,
-        3.7309
+        2.1856,
+        4.9625
       ],
       "unit": "task",
       "n_pairs": 8,
@@ -381,13 +381,13 @@
       "caliber_note": "ratio of endpoint-reported `usage` summed over observed requests in usage-eligible pairs (llm_prompt_tokens + llm_completion_tokens): system prompt + tool schemas + re-sent history + reasoning per turn. It is NOT the length of one system prompt or one tool-schema payload, and without price/cache rules it is NOT a money cost"
     },
     "prompt_token_ratio": {
-      "point": 3.0132,
+      "point": 3.7803,
       "estimator": "ratio_of_sums",
       "mean_of_ratios": {
-        "point_estimate": 3.2449,
+        "point_estimate": 4.0581,
         "bootstrap_ci95": [
-          2.5828,
-          3.8323
+          2.8283,
+          5.4988
         ],
         "bootstrap_unit": "task",
         "n_pairs": 8,
@@ -395,12 +395,12 @@
         "weighting": "equal weight per paired cell; seeds retained in task clusters"
       },
       "ci95": [
-        2.2552,
-        3.8397
+        2.6831,
+        5.3191
       ],
       "ci95_row": [
-        2.2552,
-        3.8397
+        2.6831,
+        5.3191
       ],
       "unit": "task",
       "n_pairs": 8,
@@ -411,13 +411,13 @@
       "caliber_note": "ratio of endpoint-reported `llm_prompt_tokens` (input usage accumulated over observed requests in usage-eligible pairs), NOT one request's system-prompt/schema size and NOT currency"
     },
     "completion_token_ratio": {
-      "point": 1.59,
+      "point": 0.6951,
       "estimator": "ratio_of_sums",
       "mean_of_ratios": {
-        "point_estimate": 1.7907,
+        "point_estimate": 1.5458,
         "bootstrap_ci95": [
-          1.1101,
-          2.7138
+          0.7879,
+          2.4027
         ],
         "bootstrap_unit": "task",
         "n_pairs": 8,
@@ -425,12 +425,12 @@
         "weighting": "equal weight per paired cell; seeds retained in task clusters"
       },
       "ci95": [
-        0.9893,
-        2.5353
+        0.2588,
+        2.1738
       ],
       "ci95_row": [
-        0.9893,
-        2.5353
+        0.2588,
+        2.1738
       ],
       "unit": "task",
       "n_pairs": 8,
@@ -445,10 +445,10 @@
       "paired_task_intervals": {
         "analysable": {
           "available": true,
-          "point_estimate": 1.5759577278731836,
+          "point_estimate": 1.5719298245614035,
           "ci95": [
-            1.266025641025641,
-            1.8941947565543071
+            1.2393347794649312,
+            2.0926829268292684
           ],
           "success_delta": 0.0,
           "success_delta_ci95": [
@@ -457,9 +457,9 @@
           ],
           "undefined_draws": 0,
           "bootstrap_unit": "task",
-          "tasks": 8,
-          "n_pairs": 8,
-          "excluded_pairs": 0,
+          "tasks": 7,
+          "n_pairs": 7,
+          "excluded_pairs": 1,
           "view": "analysable",
           "caliber": "observation_tokens",
           "claimable": false,
@@ -467,14 +467,14 @@
         },
         "intention_to_treat": {
           "available": true,
-          "point_estimate": 1.5759577278731836,
+          "point_estimate": 2.045378151260504,
           "ci95": [
-            1.266025641025641,
-            1.8941947565543071
+            1.3198653198653199,
+            3.7898561695685085
           ],
-          "success_delta": 0.0,
+          "success_delta": -0.125,
           "success_delta_ci95": [
-            0.0,
+            -0.375,
             0.0
           ],
           "undefined_draws": 0,
@@ -488,13 +488,13 @@
           "inference_status": "diagnostic interval; requires prospective calibration and multiplicity"
         }
       },
-      "point_D_over_A": 1.576,
-      "tokens_A": 1514.0,
-      "tokens_D": 2386.0,
+      "point_D_over_A": 1.7897,
+      "tokens_A": 1360.0,
+      "tokens_D": 2434.0,
       "successes_A": 8,
       "successes_D": 8,
-      "cpst_A_tokens_per_success": 189.25,
-      "cpst_D_tokens_per_success": 298.25,
+      "cpst_A_tokens_per_success": 170.0,
+      "cpst_D_tokens_per_success": 304.25,
       "success_noninferiority_lower_bound": 0.0,
       "success_mean_diff_D_minus_A": 0.0,
       "caliber": "observation_proxy_tokens_per_success",
@@ -502,11 +502,11 @@
     },
     "without_arm": {
       "n_pairs": 8,
-      "discordance_rate_psi": 0.125,
-      "observed_abs_delta": 0.125
+      "discordance_rate_psi": 0.0,
+      "observed_abs_delta": 0.0
     },
     "raw_shell_successes": 24,
-    "cpst_A_absolute": 241.58333333333334
+    "cpst_A_absolute": 251.25
   },
   "has_prompt_matched_arm": true,
   "row_policy": {
@@ -538,8 +538,8 @@
         "success_intention_to_treat": 1.0,
         "mean_tool_calls_analysable": 2.875,
         "mean_tool_calls_intention_to_treat": 2.875,
-        "mean_observation_tokens_analysable": 237.25,
-        "mean_observation_tokens_intention_to_treat": 237.25
+        "mean_observation_tokens_analysable": 279.5,
+        "mean_observation_tokens_intention_to_treat": 279.5
       },
       "raw_shell_coached": {
         "n": 8,
@@ -562,43 +562,43 @@
         "analysable_rate": 1.0,
         "success_analysable": 1.0,
         "success_intention_to_treat": 1.0,
-        "mean_tool_calls_analysable": 3.125,
-        "mean_tool_calls_intention_to_treat": 3.125,
-        "mean_observation_tokens_analysable": 189.25,
-        "mean_observation_tokens_intention_to_treat": 189.25
+        "mean_tool_calls_analysable": 2.625,
+        "mean_tool_calls_intention_to_treat": 2.625,
+        "mean_observation_tokens_analysable": 170.0,
+        "mean_observation_tokens_intention_to_treat": 170.0
       },
       "verseshell_aci": {
         "n": 8,
         "endpoint_failure": 0,
-        "cap_truncated": 0,
-        "analysable": 8,
+        "cap_truncated": 1,
+        "analysable": 7,
         "api_error": 0,
         "endpoint_rate": 0.0,
-        "cap_truncated_rate": 0.0,
+        "cap_truncated_rate": 0.125,
         "budget_axes": {
           "completion_cap": 0,
-          "turn_cap": 0,
+          "turn_cap": 1,
           "repeat_call_cap": 0,
           "overlap": 0,
-          "union": 0,
+          "union": 1,
           "completion_cap_rate": 0.0,
-          "turn_cap_rate": 0.0,
+          "turn_cap_rate": 0.125,
           "repeat_call_cap_rate": 0.0
         },
-        "analysable_rate": 1.0,
+        "analysable_rate": 0.875,
         "success_analysable": 1.0,
-        "success_intention_to_treat": 1.0,
-        "mean_tool_calls_analysable": 4.125,
-        "mean_tool_calls_intention_to_treat": 4.125,
-        "mean_observation_tokens_analysable": 298.25,
-        "mean_observation_tokens_intention_to_treat": 298.25
+        "success_intention_to_treat": 0.875,
+        "mean_tool_calls_analysable": 3.7143,
+        "mean_tool_calls_intention_to_treat": 4.375,
+        "mean_observation_tokens_analysable": 256.0,
+        "mean_observation_tokens_intention_to_treat": 304.25
       }
     },
     "comparisons": {
       "verseshell_aci_vs_raw_shell": {
         "baseline": "raw_shell",
         "treatment": "verseshell_aci",
-        "rates_ok": true,
+        "rates_ok": false,
         "cap_truncated_axes": {
           "raw_shell": {
             "completion_cap": 0,
@@ -612,25 +612,27 @@
           },
           "verseshell_aci": {
             "completion_cap": 0,
-            "turn_cap": 0,
+            "turn_cap": 1,
             "repeat_call_cap": 0,
             "overlap": 0,
-            "union": 0,
+            "union": 1,
             "completion_cap_rate": 0.0,
-            "turn_cap_rate": 0.0,
+            "turn_cap_rate": 0.125,
             "repeat_call_cap_rate": 0.0
           }
         },
         "success_delta_analysable": 0.0,
-        "success_delta_intention_to_treat": 0.0,
+        "success_delta_intention_to_treat": -0.125,
         "sign_agreement": true,
-        "claimable": true,
-        "policy_blocked_reasons": []
+        "claimable": false,
+        "policy_blocked_reasons": [
+          "exclusion_rate_above_10pct"
+        ]
       },
       "verseshell_aci_vs_raw_shell_coached": {
         "baseline": "raw_shell_coached",
         "treatment": "verseshell_aci",
-        "rates_ok": true,
+        "rates_ok": false,
         "cap_truncated_axes": {
           "raw_shell_coached": {
             "completion_cap": 0,
@@ -644,20 +646,22 @@
           },
           "verseshell_aci": {
             "completion_cap": 0,
-            "turn_cap": 0,
+            "turn_cap": 1,
             "repeat_call_cap": 0,
             "overlap": 0,
-            "union": 0,
+            "union": 1,
             "completion_cap_rate": 0.0,
-            "turn_cap_rate": 0.0,
+            "turn_cap_rate": 0.125,
             "repeat_call_cap_rate": 0.0
           }
         },
         "success_delta_analysable": 0.0,
-        "success_delta_intention_to_treat": 0.0,
+        "success_delta_intention_to_treat": -0.125,
         "sign_agreement": true,
-        "claimable": true,
-        "policy_blocked_reasons": []
+        "claimable": false,
+        "policy_blocked_reasons": [
+          "exclusion_rate_above_10pct"
+        ]
       }
     }
   },
@@ -696,11 +700,11 @@
           "tool_ratio_level1_D_fewer_calls"
         ],
         "holm_alpha": {
-          "token_ratio_frozen_0.60": 0.007143,
-          "token_ratio_coached_level1_D_cheaper": 0.008333,
-          "token_ratio_level2_saves_15pct": 0.01,
-          "token_ratio_level1_D_cheaper": 0.0125,
-          "tool_ratio_level1_D_fewer_calls": 0.016667
+          "token_ratio_coached_level1_D_cheaper": 0.007143,
+          "tool_ratio_level1_D_fewer_calls": 0.008333,
+          "token_ratio_frozen_0.60": 0.01,
+          "token_ratio_level2_saves_15pct": 0.0125,
+          "token_ratio_level1_D_cheaper": 0.016667
         },
         "uncorrected_members": [
           "cost_per_success_D_cheaper",
@@ -738,47 +742,47 @@
         "unresolved_shells": [],
         "cold_vs_warm": {
           "ae": {
-            "cold_ms": 386.529,
-            "warm_median_ms": 415.253
+            "cold_ms": 510.206,
+            "warm_median_ms": 424.331
           },
           "pwsh": {
-            "cold_ms": 1306.844,
-            "warm_median_ms": 1388.647
+            "cold_ms": 1334.103,
+            "warm_median_ms": 1366.319
           },
           "cmd": {
-            "cold_ms": 218.38,
-            "warm_median_ms": 133.484
+            "cold_ms": 144.183,
+            "warm_median_ms": 123.111
           },
           "bash": {
-            "cold_ms": 329.744,
-            "warm_median_ms": 415.262
+            "cold_ms": 338.01,
+            "warm_median_ms": 338.788
           }
         },
         "vs_pwsh": {
-          "point": 0.2987,
+          "point": 0.3184,
           "ci95": [
-            0.2809,
-            0.3349
+            0.2982,
+            0.3426
           ],
           "n": 20,
           "iterations": 20000,
           "paired_by_iteration": true
         },
         "vs_cmd": {
-          "point": 3.1895,
+          "point": 3.481,
           "ci95": [
-            2.7251,
-            3.5237
+            3.0215,
+            3.7983
           ],
           "n": 20,
           "iterations": 20000,
           "paired_by_iteration": true
         },
         "vs_bash": {
-          "point": 1.0507,
+          "point": 1.2898,
           "ci95": [
-            0.8702,
-            1.1922
+            1.1018,
+            1.3916
           ],
           "n": 20,
           "iterations": 20000,
@@ -793,16 +797,16 @@
         "unresolved_shells": [],
         "cold_vs_warm": {
           "ae": {
-            "cold_ms": 25.528,
-            "warm_median_ms": 17.046
+            "cold_ms": 14.33,
+            "warm_median_ms": 16.264
           },
           "pwsh": {
-            "cold_ms": 685.915,
-            "warm_median_ms": 504.759
+            "cold_ms": 453.128,
+            "warm_median_ms": 502.489
           },
           "cmd": {
-            "cold_ms": 52.266,
-            "warm_median_ms": 26.784
+            "cold_ms": 29.396,
+            "warm_median_ms": 25.525
           },
           "bash": {
             "cold_ms": null,
@@ -810,20 +814,20 @@
           }
         },
         "vs_pwsh": {
-          "point": 0.0339,
+          "point": 0.0325,
           "ci95": [
             0.0301,
-            0.0409
+            0.0384
           ],
           "n": 20,
           "iterations": 20000,
           "paired_by_iteration": true
         },
         "vs_cmd": {
-          "point": 0.6348,
+          "point": 0.6436,
           "ci95": [
-            0.5359,
-            0.7592
+            0.566,
+            0.7596
           ],
           "n": 20,
           "iterations": 20000,
@@ -839,47 +843,47 @@
         "unresolved_shells": [],
         "cold_vs_warm": {
           "ae": {
-            "cold_ms": 12.429,
-            "warm_median_ms": 13.224
+            "cold_ms": 24.382,
+            "warm_median_ms": 15.586
           },
           "pwsh": {
-            "cold_ms": 268.412,
-            "warm_median_ms": 272.285
+            "cold_ms": 561.452,
+            "warm_median_ms": 351.123
           },
           "cmd": {
-            "cold_ms": 15.965,
-            "warm_median_ms": 10.589
+            "cold_ms": 14.229,
+            "warm_median_ms": 11.19
           },
           "bash": {
-            "cold_ms": 254.75,
-            "warm_median_ms": 281.697
+            "cold_ms": 384.129,
+            "warm_median_ms": 287.142
           }
         },
         "vs_pwsh": {
-          "point": 0.0486,
+          "point": 0.0443,
           "ci95": [
-            0.0466,
-            0.0496
+            0.0391,
+            0.0474
           ],
           "n": 20,
           "iterations": 20000,
           "paired_by_iteration": true
         },
         "vs_cmd": {
-          "point": 1.2574,
+          "point": 1.3869,
           "ci95": [
-            1.1678,
-            1.3238
+            1.2321,
+            1.503
           ],
           "n": 20,
           "iterations": 20000,
           "paired_by_iteration": true
         },
         "vs_bash": {
-          "point": 0.0467,
+          "point": 0.0544,
           "ci95": [
-            0.0414,
-            0.0532
+            0.0487,
+            0.0597
           ],
           "n": 20,
           "iterations": 20000,
@@ -894,47 +898,47 @@
         "unresolved_shells": [],
         "cold_vs_warm": {
           "ae": {
-            "cold_ms": 13.639,
-            "warm_median_ms": 14.167
+            "cold_ms": 13.687,
+            "warm_median_ms": 14.985
           },
           "pwsh": {
-            "cold_ms": 175.235,
-            "warm_median_ms": 167.601
+            "cold_ms": 190.343,
+            "warm_median_ms": 194.288
           },
           "cmd": {
-            "cold_ms": 76.344,
-            "warm_median_ms": 14.723
+            "cold_ms": 15.341,
+            "warm_median_ms": 14.889
           },
           "bash": {
-            "cold_ms": 487.93,
-            "warm_median_ms": 325.63
+            "cold_ms": 292.226,
+            "warm_median_ms": 296.499
           }
         },
         "vs_pwsh": {
-          "point": 0.084,
+          "point": 0.0772,
           "ci95": [
-            0.0786,
-            0.0959
+            0.0731,
+            0.0804
           ],
           "n": 20,
           "iterations": 20000,
           "paired_by_iteration": true
         },
         "vs_cmd": {
-          "point": 0.9657,
+          "point": 1.0055,
           "ci95": [
-            0.8285,
-            1.1125
+            0.9052,
+            1.071
           ],
           "n": 20,
           "iterations": 20000,
           "paired_by_iteration": true
         },
         "vs_bash": {
-          "point": 0.0441,
+          "point": 0.0507,
           "ci95": [
-            0.0382,
-            0.0534
+            0.0486,
+            0.0545
           ],
           "n": 20,
           "iterations": 20000,
@@ -949,27 +953,27 @@
         "unresolved_shells": [],
         "cold_vs_warm": {
           "ae": {
-            "cold_ms": 19.699,
-            "warm_median_ms": 18.449
+            "cold_ms": 16.048,
+            "warm_median_ms": 17.14
           },
           "pwsh": {
-            "cold_ms": 307.234,
-            "warm_median_ms": 256.111
+            "cold_ms": 237.789,
+            "warm_median_ms": 276.482
           },
           "cmd": {
             "cold_ms": null,
             "warm_median_ms": null
           },
           "bash": {
-            "cold_ms": 445.579,
-            "warm_median_ms": 410.306
+            "cold_ms": 305.529,
+            "warm_median_ms": 364.874
           }
         },
         "vs_pwsh": {
-          "point": 0.0746,
+          "point": 0.0616,
           "ci95": [
-            0.0616,
-            0.0913
+            0.0531,
+            0.0682
           ],
           "n": 20,
           "iterations": 20000,
@@ -977,10 +981,10 @@
         },
         "vs_cmd": null,
         "vs_bash": {
-          "point": 0.0461,
+          "point": 0.0468,
           "ci95": [
-            0.0353,
-            0.0543
+            0.0407,
+            0.0518
           ],
           "n": 20,
           "iterations": 20000,
@@ -988,8 +992,8 @@
         }
       }
     ],
-    "worst_point_ratio_vs_pwsh": 0.2987,
-    "worst_point_ratio_vs_cmd": 3.1895,
+    "worst_point_ratio_vs_pwsh": 0.3184,
+    "worst_point_ratio_vs_cmd": 3.481,
     "all_outputs_equivalent": true,
     "interleaved": true,
     "n_iterations": 20,
@@ -1000,24 +1004,24 @@
       "arms": {
         "raw_shell": {
           "n": 8,
-          "median_tool_share_of_wall_clock": 0.0566,
-          "mean_tool_share_of_wall_clock": 0.0697,
-          "median_wall_clock_ms": 17353.0,
-          "median_tool_ms": 1270.5
+          "median_tool_share_of_wall_clock": 0.1051,
+          "mean_tool_share_of_wall_clock": 0.1221,
+          "median_wall_clock_ms": 20443.5,
+          "median_tool_ms": 1371.0
         },
         "raw_shell_coached": {
           "n": 8,
-          "median_tool_share_of_wall_clock": 0.0654,
-          "mean_tool_share_of_wall_clock": 0.0633,
-          "median_wall_clock_ms": 24723.5,
-          "median_tool_ms": 1178.5
+          "median_tool_share_of_wall_clock": 0.0754,
+          "mean_tool_share_of_wall_clock": 0.0787,
+          "median_wall_clock_ms": 23136.5,
+          "median_tool_ms": 1242.0
         },
         "verseshell_aci": {
           "n": 8,
-          "median_tool_share_of_wall_clock": 0.1032,
-          "mean_tool_share_of_wall_clock": 0.1146,
-          "median_wall_clock_ms": 36321.0,
-          "median_tool_ms": 3374.5
+          "median_tool_share_of_wall_clock": 0.1084,
+          "mean_tool_share_of_wall_clock": 0.1238,
+          "median_wall_clock_ms": 32895.0,
+          "median_tool_ms": 2873.0
         }
       },
       "note": "tool share = sum(trajectory elapsed_ms) / row elapsed_ms; the rest is model latency (the endpoint), which no shell choice can remove"
@@ -1033,10 +1037,12 @@
       "observed_mde_at_current_n": null,
       "reason": "no discordant pairs -> undefined",
       "row_policy_comparison": "verseshell_aci_vs_raw_shell",
-      "row_policy_claimable": true,
-      "row_policy_blocked_reasons": [],
+      "row_policy_claimable": false,
+      "row_policy_blocked_reasons": [
+        "exclusion_rate_above_10pct"
+      ],
       "success_delta_analysable": 0.0,
-      "success_delta_intention_to_treat": 0.0,
+      "success_delta_intention_to_treat": -0.125,
       "family": "live_model",
       "multiplicity_corrected": false,
       "claimable_before_multiplicity": false,
@@ -1046,88 +1052,9 @@
     },
     "token_ratio_level1_D_cheaper": {
       "n_pairs": 8,
-      "point": 1.2571,
-      "ci95_lower": 1.037,
-      "ci95_upper": 1.5333,
-      "threshold": 1.0,
-      "unit": "task",
-      "claimable": false,
-      "gap_type": "product_gap",
-      "impossible_by_sample_size": true,
-      "reason": "the whole CI95 [1.0370, 1.5333] is above the cap 1.0: more samples cannot rescue this (product gap, not data gap)",
-      "row_policy_comparison": "verseshell_aci_vs_raw_shell",
-      "row_policy_claimable": true,
-      "row_policy_blocked_reasons": [],
-      "success_delta_analysable": 0.0,
-      "success_delta_intention_to_treat": 0.0,
-      "family": "live_model",
-      "multiplicity_corrected": true,
-      "claimable_before_multiplicity": false,
-      "p_value_approx": 0.04229,
-      "p_value_kind": "approx_from_ci95",
-      "holm_alpha": 0.0125,
-      "passes_holm": false,
-      "claimable_after_multiplicity": false
-    },
-    "token_ratio_level2_saves_15pct": {
-      "n_pairs": 8,
-      "point": 1.2571,
-      "ci95_lower": 1.037,
-      "ci95_upper": 1.5333,
-      "threshold": 0.9,
-      "unit": "task",
-      "point_cap": 0.85,
-      "point_cap_met": false,
-      "claimable": false,
-      "gap_type": "product_gap",
-      "impossible_by_sample_size": true,
-      "reason": "the whole CI95 [1.0370, 1.5333] is above the cap 0.85: more samples cannot rescue this (product gap, not data gap)",
-      "row_policy_comparison": "verseshell_aci_vs_raw_shell",
-      "row_policy_claimable": true,
-      "row_policy_blocked_reasons": [],
-      "success_delta_analysable": 0.0,
-      "success_delta_intention_to_treat": 0.0,
-      "family": "live_model",
-      "multiplicity_corrected": true,
-      "claimable_before_multiplicity": false,
-      "p_value_approx": 0.004795,
-      "p_value_kind": "approx_from_ci95",
-      "holm_alpha": 0.01,
-      "passes_holm": true,
-      "claimable_after_multiplicity": false
-    },
-    "token_ratio_frozen_0.60": {
-      "n_pairs": 8,
-      "point": 1.2571,
-      "ci95_lower": 1.037,
-      "ci95_upper": 1.5333,
-      "threshold": 0.7,
-      "unit": "task",
-      "point_cap": 0.6,
-      "point_cap_met": false,
-      "claimable": false,
-      "gap_type": "product_gap",
-      "impossible_by_sample_size": true,
-      "reason": "the whole CI95 [1.0370, 1.5333] is above the cap 0.6: more samples cannot rescue this (product gap, not data gap)",
-      "row_policy_comparison": "verseshell_aci_vs_raw_shell",
-      "row_policy_claimable": true,
-      "row_policy_blocked_reasons": [],
-      "success_delta_analysable": 0.0,
-      "success_delta_intention_to_treat": 0.0,
-      "family": "live_model",
-      "multiplicity_corrected": true,
-      "claimable_before_multiplicity": false,
-      "p_value_approx": 1.1e-05,
-      "p_value_kind": "approx_from_ci95",
-      "holm_alpha": 0.007143,
-      "passes_holm": true,
-      "claimable_after_multiplicity": false
-    },
-    "tool_ratio_level1_D_fewer_calls": {
-      "n_pairs": 8,
-      "point": 1.4348,
-      "ci95_lower": 1.0,
-      "ci95_upper": 2.1111,
+      "point": 1.0886,
+      "ci95_lower": 0.8691,
+      "ci95_upper": 1.6441,
       "threshold": 1.0,
       "unit": "task",
       "claimable": false,
@@ -1135,51 +1062,140 @@
       "impossible_by_sample_size": false,
       "n_required": null,
       "n_shortfall": null,
-      "reason": "point estimate 1.4348 is past the threshold 1.0, but CI95 still reaches below it (1.0000 < 1.0): narrowing the interval alone cannot clear the threshold, so this is no evidence, not a product gap",
+      "reason": "point estimate 1.0886 is past the threshold 1.0, but CI95 still reaches below it (0.8691 < 1.0): narrowing the interval alone cannot clear the threshold, so this is no evidence, not a product gap",
       "row_policy_comparison": "verseshell_aci_vs_raw_shell",
-      "row_policy_claimable": true,
-      "row_policy_blocked_reasons": [],
+      "row_policy_claimable": false,
+      "row_policy_blocked_reasons": [
+        "exclusion_rate_above_10pct"
+      ],
       "success_delta_analysable": 0.0,
-      "success_delta_intention_to_treat": 0.0,
+      "success_delta_intention_to_treat": -0.125,
       "family": "live_model",
       "multiplicity_corrected": true,
       "claimable_before_multiplicity": false,
-      "p_value_approx": 0.125039,
+      "p_value_approx": 0.654055,
       "p_value_kind": "approx_from_ci95",
       "holm_alpha": 0.016667,
       "passes_holm": false,
       "claimable_after_multiplicity": false
     },
-    "token_ratio_coached_level1_D_cheaper": {
+    "token_ratio_level2_saves_15pct": {
       "n_pairs": 8,
-      "point": 1.576,
-      "ci95_lower": 1.2613,
-      "ci95_upper": 1.8975,
+      "point": 1.0886,
+      "ci95_lower": 0.8691,
+      "ci95_upper": 1.6441,
+      "threshold": 0.9,
+      "unit": "task",
+      "point_cap": 0.85,
+      "point_cap_met": false,
+      "claimable": false,
+      "gap_type": "product_gap",
+      "impossible_by_sample_size": true,
+      "reason": "the whole CI95 [0.8691, 1.6441] is above the cap 0.85: more samples cannot rescue this (product gap, not data gap)",
+      "row_policy_comparison": "verseshell_aci_vs_raw_shell",
+      "row_policy_claimable": false,
+      "row_policy_blocked_reasons": [
+        "exclusion_rate_above_10pct"
+      ],
+      "success_delta_analysable": 0.0,
+      "success_delta_intention_to_treat": -0.125,
+      "family": "live_model",
+      "multiplicity_corrected": true,
+      "claimable_before_multiplicity": false,
+      "p_value_approx": 0.340117,
+      "p_value_kind": "approx_from_ci95",
+      "holm_alpha": 0.0125,
+      "passes_holm": false,
+      "claimable_after_multiplicity": false
+    },
+    "token_ratio_frozen_0.60": {
+      "n_pairs": 8,
+      "point": 1.0886,
+      "ci95_lower": 0.8691,
+      "ci95_upper": 1.6441,
+      "threshold": 0.7,
+      "unit": "task",
+      "point_cap": 0.6,
+      "point_cap_met": false,
+      "claimable": false,
+      "gap_type": "product_gap",
+      "impossible_by_sample_size": true,
+      "reason": "the whole CI95 [0.8691, 1.6441] is above the cap 0.6: more samples cannot rescue this (product gap, not data gap)",
+      "row_policy_comparison": "verseshell_aci_vs_raw_shell",
+      "row_policy_claimable": false,
+      "row_policy_blocked_reasons": [
+        "exclusion_rate_above_10pct"
+      ],
+      "success_delta_analysable": 0.0,
+      "success_delta_intention_to_treat": -0.125,
+      "family": "live_model",
+      "multiplicity_corrected": true,
+      "claimable_before_multiplicity": false,
+      "p_value_approx": 0.049353,
+      "p_value_kind": "approx_from_ci95",
+      "holm_alpha": 0.01,
+      "passes_holm": false,
+      "claimable_after_multiplicity": false
+    },
+    "tool_ratio_level1_D_fewer_calls": {
+      "n_pairs": 8,
+      "point": 1.5217,
+      "ci95_lower": 1.16,
+      "ci95_upper": 1.9048,
       "threshold": 1.0,
       "unit": "task",
       "claimable": false,
       "gap_type": "product_gap",
       "impossible_by_sample_size": true,
-      "reason": "the whole CI95 [1.2613, 1.8975] is above the cap 1.0: more samples cannot rescue this (product gap, not data gap)",
-      "row_policy_comparison": "verseshell_aci_vs_raw_shell_coached",
-      "row_policy_claimable": true,
-      "row_policy_blocked_reasons": [],
+      "reason": "the whole CI95 [1.1600, 1.9048] is above the cap 1.0: more samples cannot rescue this (product gap, not data gap)",
+      "row_policy_comparison": "verseshell_aci_vs_raw_shell",
+      "row_policy_claimable": false,
+      "row_policy_blocked_reasons": [
+        "exclusion_rate_above_10pct"
+      ],
       "success_delta_analysable": 0.0,
-      "success_delta_intention_to_treat": 0.0,
+      "success_delta_intention_to_treat": -0.125,
       "family": "live_model",
       "multiplicity_corrected": true,
       "claimable_before_multiplicity": false,
-      "p_value_approx": 0.000387,
+      "p_value_approx": 0.006037,
       "p_value_kind": "approx_from_ci95",
       "holm_alpha": 0.008333,
       "passes_holm": true,
       "claimable_after_multiplicity": false
     },
+    "token_ratio_coached_level1_D_cheaper": {
+      "n_pairs": 8,
+      "point": 1.7897,
+      "ci95_lower": 1.3102,
+      "ci95_upper": 2.3604,
+      "threshold": 1.0,
+      "unit": "task",
+      "claimable": false,
+      "gap_type": "product_gap",
+      "impossible_by_sample_size": true,
+      "reason": "the whole CI95 [1.3102, 2.3604] is above the cap 1.0: more samples cannot rescue this (product gap, not data gap)",
+      "row_policy_comparison": "verseshell_aci_vs_raw_shell_coached",
+      "row_policy_claimable": false,
+      "row_policy_blocked_reasons": [
+        "exclusion_rate_above_10pct"
+      ],
+      "success_delta_analysable": 0.0,
+      "success_delta_intention_to_treat": -0.125,
+      "family": "live_model",
+      "multiplicity_corrected": true,
+      "claimable_before_multiplicity": false,
+      "p_value_approx": 0.003203,
+      "p_value_kind": "approx_from_ci95",
+      "holm_alpha": 0.007143,
+      "passes_holm": true,
+      "claimable_after_multiplicity": false
+    },
     "cost_per_success_D_cheaper": {
       "claim": "每成功一次任务的花费（观察 token/成功数）D <= 0.80 A，且成功率非劣",
-      "point_D_over_A": 1.2571,
-      "cpst_A_tokens_per_success": 237.25,
-      "cpst_D_tokens_per_success": 298.25,
+      "point_D_over_A": 1.0886,
+      "cpst_A_tokens_per_success": 279.5,
+      "cpst_D_tokens_per_success": 304.25,
       "success_noninferiority_lower_bound": 0.0,
       "noninferiority_margin": 0.1,
       "success_noninferiority_ok": true,
@@ -1187,10 +1203,12 @@
       "claimable": false,
       "reason": "cost ratio must clear the cap AND success must be non-inferior; cheaper-by-failing is not a saving",
       "row_policy_comparison": "verseshell_aci_vs_raw_shell",
-      "row_policy_claimable": true,
-      "row_policy_blocked_reasons": [],
+      "row_policy_claimable": false,
+      "row_policy_blocked_reasons": [
+        "exclusion_rate_above_10pct"
+      ],
       "success_delta_analysable": 0.0,
-      "success_delta_intention_to_treat": 0.0,
+      "success_delta_intention_to_treat": -0.125,
       "family": "live_model",
       "multiplicity_corrected": false,
       "claimable_before_multiplicity": false,
@@ -1210,10 +1228,12 @@
       "observed_abs_delta": 0.0,
       "reason": "no discordant pairs -> undefined",
       "row_policy_comparison": "verseshell_aci_vs_raw_shell_coached",
-      "row_policy_claimable": true,
-      "row_policy_blocked_reasons": [],
+      "row_policy_claimable": false,
+      "row_policy_blocked_reasons": [
+        "exclusion_rate_above_10pct"
+      ],
       "success_delta_analysable": 0.0,
-      "success_delta_intention_to_treat": 0.0,
+      "success_delta_intention_to_treat": -0.125,
       "family": "live_model",
       "multiplicity_corrected": false,
       "claimable_before_multiplicity": false,
@@ -1223,9 +1243,9 @@
     },
     "cost_per_success_coached_D_cheaper": {
       "claim": "每成功一次任务的花费（观察 token/成功数）D <= 0.80 A′，且成功率非劣",
-      "point_D_over_A": 1.576,
-      "cpst_A_tokens_per_success": 189.25,
-      "cpst_D_tokens_per_success": 298.25,
+      "point_D_over_A": 1.7897,
+      "cpst_A_tokens_per_success": 170.0,
+      "cpst_D_tokens_per_success": 304.25,
       "success_noninferiority_lower_bound": 0.0,
       "noninferiority_margin": 0.1,
       "success_noninferiority_ok": true,
@@ -1233,10 +1253,12 @@
       "claimable": false,
       "reason": "same rule as the D-vs-A row, applied to the prompt-matched arm: the cost ratio must clear the cap AND success must be non-inferior",
       "row_policy_comparison": "verseshell_aci_vs_raw_shell_coached",
-      "row_policy_claimable": true,
-      "row_policy_blocked_reasons": [],
+      "row_policy_claimable": false,
+      "row_policy_blocked_reasons": [
+        "exclusion_rate_above_10pct"
+      ],
       "success_delta_analysable": 0.0,
-      "success_delta_intention_to_treat": 0.0,
+      "success_delta_intention_to_treat": -0.125,
       "family": "live_model",
       "multiplicity_corrected": false,
       "claimable_before_multiplicity": false,
@@ -1250,66 +1272,66 @@
         {
           "operation": "CPU info",
           "n": 20,
-          "point": 0.2987,
+          "point": 0.3184,
           "ci95": [
-            0.2809,
-            0.3349
+            0.2982,
+            0.3426
           ],
           "paired_by_iteration": true,
           "outputs_equivalent": true,
           "strictly_faster": true,
           "at_least_2x_faster": true,
-          "vs_cmd_point": 3.1895
+          "vs_cmd_point": 3.481
         },
         {
           "operation": "Disk info",
           "n": 20,
-          "point": 0.0339,
+          "point": 0.0325,
           "ci95": [
             0.0301,
-            0.0409
+            0.0384
           ],
           "paired_by_iteration": true,
           "outputs_equivalent": true,
           "strictly_faster": true,
           "at_least_2x_faster": true,
-          "vs_cmd_point": 0.6348
+          "vs_cmd_point": 0.6436
         },
         {
           "operation": "List dir",
           "n": 20,
-          "point": 0.0486,
+          "point": 0.0443,
           "ci95": [
-            0.0466,
-            0.0496
+            0.0391,
+            0.0474
           ],
           "paired_by_iteration": true,
           "outputs_equivalent": true,
           "strictly_faster": true,
           "at_least_2x_faster": true,
-          "vs_cmd_point": 1.2574
+          "vs_cmd_point": 1.3869
         },
         {
           "operation": "Read file",
           "n": 20,
-          "point": 0.084,
+          "point": 0.0772,
           "ci95": [
-            0.0786,
-            0.0959
+            0.0731,
+            0.0804
           ],
           "paired_by_iteration": true,
           "outputs_equivalent": true,
           "strictly_faster": true,
           "at_least_2x_faster": true,
-          "vs_cmd_point": 0.9657
+          "vs_cmd_point": 1.0055
         },
         {
           "operation": "Pipeline 1K",
           "n": 20,
-          "point": 0.0746,
+          "point": 0.0616,
           "ci95": [
-            0.0616,
-            0.0913
+            0.0531,
+            0.0682
           ],
           "paired_by_iteration": true,
           "outputs_equivalent": true,
@@ -1318,15 +1340,15 @@
           "vs_cmd_point": null
         }
       ],
-      "worst_point": 0.2987,
-      "worst_point_vs_cmd": 3.1895,
+      "worst_point": 0.3184,
+      "worst_point_vs_cmd": 3.481,
       "all_outputs_equivalent": true,
       "interleaved": true,
       "threshold": 1.0,
       "scoring_operation": "CPU info",
-      "point": 0.2987,
-      "ci95_lower": 0.2809,
-      "ci95_upper": 0.3349,
+      "point": 0.3184,
+      "ci95_lower": 0.2982,
+      "ci95_upper": 0.3426,
       "claimable": true,
       "reason": "headline must be the WORST operation, never the best; and §2 requires output equivalence before timing. `worst_point_vs_cmd` is context only: cmd.exe is the shell the baseline arm actually uses, but the pre-registered claim is against PowerShell",
       "gap_type": "none",
@@ -1344,9 +1366,9 @@
       "claim": "每一个操作都快于 PowerShell 2 倍（CI95 上界 < 0.50），且输出等价已先被证明",
       "threshold": 0.5,
       "scoring_operation": "CPU info",
-      "point": 0.2987,
-      "ci95_lower": 0.2809,
-      "ci95_upper": 0.3349,
+      "point": 0.3184,
+      "ci95_lower": 0.2982,
+      "ci95_upper": 0.3426,
       "claimable": true,
       "failing_operations": [],
       "all_outputs_equivalent": true,
@@ -1372,11 +1394,11 @@
       "tools/live_uncertainty.py",
       "tools/report_inputs.py"
     ],
-    "fingerprint": "1b3686e1fb5098436eca28f5ce739c19021047f4340c2517ff48f697e52dc064",
+    "fingerprint": "14e6fb46389661071734b7b7f0fe674e967631a7f7369e6dae782c0bdc5d8524",
     "input_sha256": {
-      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38",
-      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\live_ab_without_read_files.json": "7686672e2efce366d5bafc81293ff50a6df3275abb59c32b5133912d051aa576",
-      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json": "a4d786a94c469819b4c74c4f471979fd66f47e747efc50a5a71b03ba0e5943d8"
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9",
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\live_ab_without_read_files.json": "cf9ff20abd1d473f81ff3fa22f6e9bda8f90f11b6c1996bfd29e1f38f813a6e0",
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json": "a135360791268f28063c8b3f043ad98f10a8c5ab50bf95ac5e13ceb1b10df1e5"
     }
   }
 }

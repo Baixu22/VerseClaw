@@ -994,11 +994,11 @@ performance claim**. A matching README table proves transcription only, not fres
 
 | Operation | VerseShell | PowerShell | Bash | AE vs PWsh |
 |-----------|-----------|------------|------|------------|
-| CPU info | **413.0ms** | 1382.7ms | 393.1ms | **3.3x faster** |
-| Disk info | **17.1ms** | 503.5ms | N/A | **29.5x faster** |
-| List dir | **13.2ms** | 271.8ms | 282.8ms | **20.6x faster** |
-| Read file | **14.0ms** | 167.0ms | 318.1ms | **11.9x faster** |
-| Pipeline 1K | **19.2ms** | 257.5ms | 416.7ms | **13.4x faster** |
+| CPU info | **434.6ms** | 1365.0ms | 337.0ms | **3.1x faster** |
+| Disk info | **16.4ms** | 506.6ms | N/A | **30.8x faster** |
+| List dir | **15.7ms** | 353.7ms | 287.9ms | **22.6x faster** |
+| Read file | **15.0ms** | 194.0ms | 295.4ms | **13.0x faster** |
+| Pipeline 1K | **17.1ms** | 277.7ms | 364.9ms | **16.2x faster** |
 
 Median of 20 **interleaved** iterations after 3 warm-up runs on an AMD Ryzen 7 7745HX;
 each number is a real process spawn with stdout/stderr discarded during timing, so

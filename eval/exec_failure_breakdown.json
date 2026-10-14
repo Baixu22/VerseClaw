@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.exec-failure-breakdown/v1",
-  "generated_at": "2026-10-14T07:31:17.730144+00:00",
+  "generated_at": "2026-10-14T10:18:44.329050+00:00",
   "method": {
     "inputs": [
       "bench\\aci\\results\\latest_live.json",
@@ -23,7 +23,7 @@
       "bench/aci/results/live_ab_without_read_files.json",
       "tools/exec_failure_breakdown.py"
     ],
-    "fingerprint": "2ac43fa1f9ce5cb1fdb6c51600b34051a05938ef7cb883d71e96fe92b3dfab9f"
+    "fingerprint": "2f58f4b095dac48a4874ade46de4065747fcb357efb60619bb858a635c78d0fa"
   },
   "shim_facts": [
     {
@@ -78,7 +78,7 @@
       "cargo check": {
         "ok": true,
         "exit_code": 0,
-        "output_head": "Checking bench_fix v0.1.0 (C:\\Users\\27933\\AppData\\Local\\Temp\\tf45-replay-rust_fix_compile_error-bqb7sieo)\n    Finished `",
+        "output_head": "Checking bench_fix v0.1.0 (C:\\Users\\27933\\AppData\\Local\\Temp\\tf45-replay-rust_fix_compile_error-wmzp6fqx)\n    Finished `",
         "answered_as_rustup": false
       },
       "rustc --version": {
@@ -236,9 +236,9 @@
   },
   "with_read_files": {
     "ok": {
-      "calls": 8,
-      "tokens": 1082,
-      "tokens_per_call": 135.25
+      "calls": 10,
+      "tokens": 1242,
+      "tokens_per_call": 124.2
     },
     "failed": {
       "calls": 0,
@@ -252,9 +252,9 @@
   },
   "without_read_files": {
     "ok": {
-      "calls": 8,
-      "tokens": 975,
-      "tokens_per_call": 121.88
+      "calls": 9,
+      "tokens": 1139,
+      "tokens_per_call": 126.56
     },
     "failed": {
       "calls": 0,

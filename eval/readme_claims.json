@@ -1,12 +1,12 @@
 {
   "schema": "verseshell.readme-claims/v1",
-  "generated_at": "2026-10-14T08:21:45.526260+00:00",
+  "generated_at": "2026-10-14T10:23:20.232928+00:00",
   "generator": "tools/readme_claims_check.py",
   "ae_binary": "target\\debug\\ae.exe",
-  "ae_binary_sha256": "ba89afc9c9df86d774f39084c3d9afb28d987fcc92842a18b5598e74019ebfaa",
+  "ae_binary_sha256": "7f6765f44097adfaa4ede9a868d1ce13f4fd20c5c2584222c966af046f102c83",
   "input_sha256": {
-    "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\README.md": "bc2371047121627538daa1239c78ad5d8e94bd4390900cf57987b91f287a0bd6",
-    "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json": "a4d786a94c469819b4c74c4f471979fd66f47e747efc50a5a71b03ba0e5943d8",
+    "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\README.md": "622a76c5d9f7c3286794ce94d56e1c640a21519da00758d1278d2543004f73ec",
+    "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json": "a135360791268f28063c8b3f043ad98f10a8c5ab50bf95ac5e13ceb1b10df1e5",
     "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\evidence.compact-ratio.json": "d7309a1fcc038cbf2f095e9c2aca6322546ad92a049ba56864cdf22a66ae48f5"
   },
   "all_pass": true,
@@ -134,7 +134,7 @@
       "kind": "cross_shell",
       "name": "CPU info",
       "source": "README.md vs C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json",
-      "expected": "| CPU info | **413.0ms** | 1382.7ms | 393.1ms | **3.3x faster** |",
+      "expected": "| CPU info | **434.6ms** | 1365.0ms | 337.0ms | **3.1x faster** |",
       "actual": "present",
       "pass": true
     },
@@ -142,7 +142,7 @@
       "kind": "cross_shell",
       "name": "Disk info",
       "source": "README.md vs C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json",
-      "expected": "| Disk info | **17.1ms** | 503.5ms | N/A | **29.5x faster** |",
+      "expected": "| Disk info | **16.4ms** | 506.6ms | N/A | **30.8x faster** |",
       "actual": "present",
       "pass": true
     },
@@ -150,7 +150,7 @@
       "kind": "cross_shell",
       "name": "List dir",
       "source": "README.md vs C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json",
-      "expected": "| List dir | **13.2ms** | 271.8ms | 282.8ms | **20.6x faster** |",
+      "expected": "| List dir | **15.7ms** | 353.7ms | 287.9ms | **22.6x faster** |",
       "actual": "present",
       "pass": true
     },
@@ -158,7 +158,7 @@
       "kind": "cross_shell",
       "name": "Read file",
       "source": "README.md vs C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json",
-      "expected": "| Read file | **14.0ms** | 167.0ms | 318.1ms | **11.9x faster** |",
+      "expected": "| Read file | **15.0ms** | 194.0ms | 295.4ms | **13.0x faster** |",
       "actual": "present",
       "pass": true
     },
@@ -166,7 +166,7 @@
       "kind": "cross_shell",
       "name": "Pipeline 1K",
       "source": "README.md vs C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\cross_shell.json",
-      "expected": "| Pipeline 1K | **19.2ms** | 257.5ms | 416.7ms | **13.4x faster** |",
+      "expected": "| Pipeline 1K | **17.1ms** | 277.7ms | 364.9ms | **16.2x faster** |",
       "actual": "present",
       "pass": true
     },

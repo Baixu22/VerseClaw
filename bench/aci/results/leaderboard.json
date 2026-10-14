@@ -7,7 +7,7 @@
       "success_rate": 0.0,
       "avg_tool_calls": 10.0,
       "avg_observation_tokens": 3820.0,
-      "avg_elapsed_ms": 787.3
+      "avg_elapsed_ms": 866.2
     },
     {
       "model": "mock",
@@ -16,7 +16,7 @@
       "success_rate": 1.0,
       "avg_tool_calls": 5.63,
       "avg_observation_tokens": 414.86,
-      "avg_elapsed_ms": 738.9
+      "avg_elapsed_ms": 693.6
     }
   ],
   "n_rows": 70

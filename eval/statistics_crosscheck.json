@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.statistics_crosscheck/v1",
-  "generated_at": "2026-10-14T07:34:04.164786+00:00",
+  "generated_at": "2026-10-14T10:20:14.689097+00:00",
   "generator": "tools/statistics_crosscheck.py",
   "purpose": "recompute the headline statistics along a second code path — the audit's E7/E11/E12 were all analysis-code bugs found by hand, and no test caught them",
   "method": {
@@ -175,8 +175,8 @@
     {
       "item": "observation_token_ratio/point",
       "kind": "closed_form",
-      "recomputed": 1.2571,
-      "published": 1.2571,
+      "recomputed": 1.0886,
+      "published": 1.0886,
       "tolerance": 0.0005,
       "abs_delta": 0.0,
       "agree": true
@@ -202,22 +202,22 @@
       "item": "observation_token_ratio/ci95",
       "kind": "resampled",
       "recomputed": [
-        1.0372731731240805,
-        1.5319720580333154
+        0.8694345807156515,
+        1.628023352793995
       ],
       "published": [
-        1.037,
-        1.5333
+        0.8691,
+        1.6441
       ],
       "tolerance": 0.02,
-      "abs_delta": 0.0013279419666847314,
+      "abs_delta": 0.01607664720600499,
       "agree": true
     },
     {
       "item": "tool_call_ratio/point",
       "kind": "closed_form",
-      "recomputed": 1.4348,
-      "published": 1.4348,
+      "recomputed": 1.5217,
+      "published": 1.5217,
       "tolerance": 0.0005,
       "abs_delta": 0.0,
       "agree": true
@@ -243,22 +243,22 @@
       "item": "tool_call_ratio/ci95",
       "kind": "resampled",
       "recomputed": [
-        1.0,
-        2.125
+        1.16,
+        1.9047619047619047
       ],
       "published": [
-        1.0,
-        2.1111
+        1.16,
+        1.9048
       ],
       "tolerance": 0.02,
-      "abs_delta": 0.013900000000000023,
+      "abs_delta": 3.80952380953925e-05,
       "agree": true
     },
     {
       "item": "cpst/A_tokens",
       "kind": "closed_form",
-      "recomputed": 1898,
-      "published": 1898.0,
+      "recomputed": 2236,
+      "published": 2236.0,
       "tolerance": 1.0,
       "abs_delta": 0.0,
       "agree": true
@@ -266,8 +266,8 @@
     {
       "item": "cpst/D_tokens",
       "kind": "closed_form",
-      "recomputed": 2386,
-      "published": 2386.0,
+      "recomputed": 2434,
+      "published": 2434.0,
       "tolerance": 1.0,
       "abs_delta": 0.0,
       "agree": true
@@ -293,8 +293,8 @@
     {
       "item": "cpst/A_per_success",
       "kind": "closed_form",
-      "recomputed": 237.25,
-      "published": 237.25,
+      "recomputed": 279.5,
+      "published": 279.5,
       "tolerance": 0.01,
       "abs_delta": 0.0,
       "agree": true
@@ -302,8 +302,8 @@
     {
       "item": "cpst/D_per_success",
       "kind": "closed_form",
-      "recomputed": 298.25,
-      "published": 298.25,
+      "recomputed": 304.25,
+      "published": 304.25,
       "tolerance": 0.01,
       "abs_delta": 0.0,
       "agree": true
@@ -311,8 +311,8 @@
     {
       "item": "cpst/D_over_A",
       "kind": "closed_form",
-      "recomputed": 1.2571,
-      "published": 1.2571,
+      "recomputed": 1.0886,
+      "published": 1.0886,
       "tolerance": 0.0005,
       "abs_delta": 0.0,
       "agree": true
@@ -320,8 +320,8 @@
     {
       "item": "usage_token_ratio/point",
       "kind": "closed_form",
-      "recomputed": 3.1745,
-      "published": 3.1745,
+      "recomputed": 3.1386,
+      "published": 3.1386,
       "tolerance": 0.0005,
       "abs_delta": 0.0,
       "agree": true
@@ -330,15 +330,15 @@
       "item": "usage_token_ratio/ci95",
       "kind": "resampled",
       "recomputed": [
-        2.3506365168865897,
-        4.251385809312638
+        2.793626001129906,
+        3.522326145658044
       ],
       "published": [
-        2.3467,
-        4.255
+        2.7743,
+        3.5248
       ],
       "tolerance": 0.02,
-      "abs_delta": 0.003936516886589914,
+      "abs_delta": 0.0193260011299059,
       "agree": true
     },
     {
@@ -352,32 +352,32 @@
   ],
   "recomputed_bootstraps": {
     "observation_token_ratio": {
-      "point": 1.2571127502634352,
+      "point": 1.088550983899821,
       "ci95": [
-        1.0372731731240805,
-        1.5319720580333154
+        0.8694345807156515,
+        1.628023352793995
       ],
       "n_tasks": 8,
-      "prob_below_1": 0.009,
+      "prob_below_1": 0.25215,
       "iterations": 20000,
       "seed": 20260929
     },
     "tool_call_ratio": {
-      "point": 1.434782608695652,
+      "point": 1.5217391304347827,
       "ci95": [
-        1.0,
-        2.125
+        1.16,
+        1.9047619047619047
       ],
       "n_tasks": 8,
-      "prob_below_1": 0.0164,
+      "prob_below_1": 0.0002,
       "iterations": 20000,
       "seed": 20260929
     },
     "usage_token_ratio": {
-      "point": 3.1745111992138524,
+      "point": 3.13855459445907,
       "ci95": [
-        2.3506365168865897,
-        4.251385809312638
+        2.793626001129906,
+        3.522326145658044
       ],
       "n_tasks": 8,
       "prob_below_1": 0.0,
@@ -391,6 +391,6 @@
       "eval/live_uncertainty.json",
       "tools/statistics_crosscheck.py"
     ],
-    "fingerprint": "03a145958dfd366ba7944f88f8523876e327e2ce223d4bfdb9c3c8a0b8050531"
+    "fingerprint": "6e864c862d9990741d6cc0513d0d63129928e373322f75811e87a3efd8fdd519"
   }
 }

@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.task-set-audit/v1",
-  "generated_at": "2026-10-14T07:31:09.845262+00:00",
+  "generated_at": "2026-10-14T10:18:26.446064+00:00",
   "task_set_version": "3.1.0",
   "method": {
     "inputs": [
@@ -27,10 +27,10 @@
       "tools/task_set_audit.py",
       "tools/trajectory_replay.py"
     ],
-    "fingerprint": "05c57af1a4e376ff89f2588645a79078dbedc323bcbf4a574fb3c1270ea5e731",
+    "fingerprint": "8f6e4bf8ea7201b2fe4f0758518356e6641bad274a89b36a6911d26ac61b5688",
     "input_sha256": {
       "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\task_sets\\3.1.0.json": "11d48acf71c30974381176bea549e68e0db1057b8d33dce108ec2fc1b6108376",
-      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38"
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "75f34c44086192e3dca308189b932f0a135b7eb818e586cea952a7c05d1ed3e9"
     }
   },
   "fixture_consistency": {
@@ -1515,11 +1515,11 @@
         "timeout_sec": 120
       },
       "runs_scored": 3,
-      "runs_reconstructed": 2,
+      "runs_reconstructed": 1,
       "independent_live_rescore": false,
       "note": "predicate sensitivity on candidate text over a pristine fixture; not full live re-scoring; legacy runs_scored counts stored rows inspected, runs_reconstructed counts inferred candidates",
       "legacy_pass": 0,
-      "declared_pass": 2,
+      "declared_pass": 1,
       "runs": [
         {
           "condition": "raw_shell",
@@ -1534,20 +1534,10 @@
           "condition": "raw_shell_coached",
           "seed": 42,
           "recorded_success": true,
-          "reconstructed": true,
+          "reconstructed": false,
           "reconstruction_scope": "single-file candidate, not complete final workspace",
           "independent_live_rescore": false,
-          "how": "candidate from inline shell write",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains src/index.ts"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "command_exit_0 ['node', 'node_modules/typescript/bin/tsc', '--noEmit'] -> 0"
-          }
+          "how": "no supported inline write found"
         },
         {
           "condition": "verseshell_aci",
