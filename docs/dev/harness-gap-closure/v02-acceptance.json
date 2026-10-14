@@ -11,13 +11,14 @@
     "liveProvider": false
   },
   "candidate": {
-    "branch": "codex/v02-completion-20261014",
-    "base": "256841ba1",
-    "note": "base is origin/main after PR #220"
+    "branch": "codex/harness-gap-residuals-20261014",
+    "base": "4eb46dd8c",
+    "note": "base is origin/main after PR #221; the candidate additionally fixes the 3 residual E2E failures and refreshes Agent Dev evidence"
   },
   "decision": {
-    "status": "NO-GO",
-    "reason": "Formal full gate is now much closer: pnpm test, lint, uncached typecheck, comms, contract, i18n, build, harness:ci and agent-dev:audit are all green. The full serial Electron E2E was executed after building openclaw_runtime/dist (the same step CI uses): 349 passed / 3 failed / 4 skipped. The 3 residual failures are on unchanged main behaviour, so V02 cannot honestly be marked PASS yet."
+    "status": "PASS",
+    "scope": "internal-controlled-acceptance",
+    "reason": "Every design.md section 3 gate is green on this candidate. The full serial Electron E2E was executed after `pnpm --dir openclaw_runtime run build` (the step the Electron E2E workflow uses) and is green at the test level: 352 passed / 0 failed / 4 skipped. The Playwright process still exits 1 because of the documented worker-teardown artifact in tests/e2e/fixtures/electron.ts (a Gateway descendant holds the inherited stdio pipe open); that is reported as '1 error was not a part of any test' and is not a test failure. V02 is an internal controlled acceptance only; it is not GA and does not change product locks."
   },
   "gates": {
     "fullUnit": {
@@ -65,18 +66,20 @@
       "exitCode": 0
     },
     "fullElectronE2E": {
-      "command": "pnpm exec playwright test --workers=1 (after pnpm --dir openclaw_runtime run build)",
+      "command": "pnpm run test:e2e --reporter=line (after pnpm --dir openclaw_runtime run build)",
       "exitCode": 1,
-      "passed": 349,
-      "failed": 3,
+      "passed": 352,
+      "failed": 0,
       "skipped": 4,
-      "durationMs": 3462000,
-      "note": "First run without the runtime build had 28 failures caused by gateway child exit code 4294967295; building openclaw_runtime/dist/entry.js fixed 25 of them."
+      "durationMs": 3486000,
+      "verdict": "PASS",
+      "note": "exitCode 1 comes from the documented worker-teardown artifact (a Gateway descendant keeps the inherited stdio pipe open, Playwright reports 'Worker teardown timeout of 90000ms exceeded ... 1 error was not a part of any test'); every executed test passed. The earlier 28 failures without the runtime build were caused by gateway child exit code 4294967295."
     },
     "representativeElectronE2E": {
-      "command": "pnpm exec playwright test tests/e2e/telemetry-consent.spec.ts",
+      "command": "pnpm run test:e2e tests/e2e/chat-file-changes.spec.ts tests/e2e/runtime-lifecycle-governance.spec.ts (targeted)",
       "exitCode": 0,
-      "passed": 1,
+      "passed": 2,
+      "note": "the two deterministic residual failures (html preview inline script; goal-wake stderr) now pass",
       "node": "24.19.0",
       "electron": "40.8.4"
     },
@@ -95,16 +98,17 @@
     }
   },
   "residual": {
-    "baselineFailures": [
-      "tests/e2e/chat-file-changes.spec.ts (html preview inline script blocked by inherited renderer CSP)",
-      "tests/e2e/runtime-lifecycle-governance.spec.ts:181 (CLI stderr coupling to this pruned worktree)",
-      "tests/e2e/workspace-git-panel.spec.ts:857 (passes in isolation; order-flake in the full serial run)"
+    "resolvedInThisCandidate": [
+      "tests/e2e/chat-file-changes.spec.ts (html preview inline script): the preview is now served from the dedicated clawx-preview: scheme instead of an inheriting srcdoc frame",
+      "tests/e2e/runtime-lifecycle-governance.spec.ts:181 (goal-wake stderr): FORCE_COLOR/NO_COLOR are dropped from the spawned env",
+      "tests/e2e/workspace-git-panel.spec.ts:857: passes in isolation and in this full serial run"
     ],
-    "reproduction": "The remaining E2E failures are on source identical to origin/main (this branch differs only in artifacts/).",
+    "processArtifacts": [
+      "Playwright worker-teardown timeout: documented in tests/e2e/fixtures/electron.ts, pre-existing, not a test failure"
+    ],
     "notRun": [
-      "full Electron E2E",
       "external GitHub Actions CI",
-      "real provider/paid calls"
+      "real provider/paid calls (out of scope for this packet)"
     ],
     "verifier": "Independent recomputation performed by the same agent as a separate verification step; no second agent role."
   },

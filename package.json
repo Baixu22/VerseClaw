@@ -252,6 +252,7 @@
     "uas:06:real-canary": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts",
     "uas:06:real-canary:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts --check",
     "eval:runtime-memory:locomo:verify": "node --experimental-strip-types scripts/check-locomo-evidence.mjs",
+    "a4:decision-quality-audit": "pnpm --dir openclaw_runtime exec tsx ../scripts/a4-decision-quality-audit.mts",
     "predev:mock": "node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs && node scripts/build-openclaw-runtime.mjs && zx scripts/prepare-preinstalled-skills-dev.mjs",
     "lobe-icons:sync": "node scripts/sync-lobe-icons.mjs",
     "lobe-icons:check": "node scripts/sync-lobe-icons.mjs --check"

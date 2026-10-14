@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-13",
+  "asOf": "2026-10-14",
   "timezone": "Asia/Shanghai",
   "actor": "codex-a02-mainline-developer",
   "driven_by": "agent",
@@ -15,7 +15,7 @@
   "decision": {
     "status": "PASS",
     "evidenceTier": "clean-candidate-local-automated-acceptance",
-    "reason": "Re-verification completed: criteria 1-3 are mapped to current assertions at the original thresholds; criterion 4 (multi-worker resume) has no dedicated test and is recorded NO-GO. Two stale spec path references were fixed. The A2 pilot gate is NOT fully graduated."
+    "reason": "All four A2 graduation criteria are verified. Criterion 4 (multi-worker resume creates new child sessions, no reconnect) is now covered by tests/unit/cross-area-composition.test.ts (Stage 3 / 3.7) with the restored cross-area facades."
   },
   "candidate": {
     "commit": "4359e684b795a4033592da4e7c270ce56f9c3711",
@@ -45,20 +45,17 @@
     },
     "criterion4_resumeNewSession": {
       "threshold": "multi-worker resume creates new child sessions (no reconnect)",
-      "evidence": "none in tree",
-      "verdict": "NO-GO"
+      "evidence": "tests/unit/cross-area-composition.test.ts (Stage 3 / 3.7: mid-checkpoint multi-worker resume)",
+      "verdict": "PASS"
     }
   },
   "specDriftFixed": {
-    "removed": [
-      "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts (absent in tree)",
-      "tests/unit/cross-area-composition.test.ts (absent in tree)"
-    ],
+    "removed": [],
     "added": [
       "tests/unit/deprecation-counters.test.ts",
       "openclaw_runtime/src/observability/deprecation-counters.test.ts"
     ],
-    "guard": "tests/unit/a02-a2-gate-coverage.test.ts asserts every requiredTests entry exists and criterion 4 stays an explicit residual"
+    "guard": "tests/unit/a02-a2-gate-coverage.test.ts pins requiredTests and criterion 4's cross-area resume evidence"
   },
   "gates": {
     "a2Required": {
@@ -118,8 +115,7 @@
     }
   },
   "residual": {
-    "criterion4": "Multi-worker resume -> new sessions has no dedicated test; the A2 gate stays NO-GO on this criterion until one lands. The reality was not papered over with a new synthetic test this turn.",
-    "pilotOnly": "A2 remains a pilot; no default-on/GA, no product lock change.",
+    "pilotOnly": "A2 remains a controlled pilot; no default-on/GA, no product lock change.",
     "scope": "Deterministic unit evidence; no live provider/real-human."
   },
   "independentVerification": {
@@ -146,8 +142,8 @@
     },
     {
       "id": "criterion4",
-      "status": "no-go",
-      "note": "multi-worker resume has no dedicated test; recorded as residual, not claimed."
+      "status": "pass",
+      "note": "Multi-worker resume creates new child sessions (no reconnect); covered by tests/unit/cross-area-composition.test.ts Stage 3 / 3.7."
     },
     {
       "id": "spec-drift-fixed",
@@ -171,7 +167,6 @@
     "hits": 0
   },
   "notMeasured": [
-    "Criterion 4 (multi-worker resume new sessions).",
     "Live provider calls.",
     "A separate second-agent independent verifier role."
   ],

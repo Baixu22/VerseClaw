@@ -26,6 +26,7 @@ requiredTests:
   - tests/unit/deep/a4-deep.test.ts
   - tests/unit/trace-truncation.test.ts
   - tests/unit/a04-a4-gate-coverage.test.ts
+  - tests/unit/a4-decision-quality-dev-tool.test.ts
 acceptance:
   - A4 deprecation counter `lowQualityDecisions` rate ≤ 10% over audited decisions
   - A4 budget violation response `degrade_to_audit_only` triggers when low-quality rate > 10%

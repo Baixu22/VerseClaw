@@ -1,4 +1,4 @@
-583eb819b1515168dfa48b3f8eb6512e0ba0c301e4ebc8d042b913b212a281d1  docs/dev/harness-gap-closure/v02-acceptance.json
-7228e2c417c17701212d8d30b5e43cdf812455dc868e09e8de1061e8b5367dba  docs/dev/harness-gap-closure/v02-frozen-acceptance.md
+5eac2383f3124f3e2d4ec30821544428404ed887c8bdbfa0e0de556efdd74da0  docs/dev/harness-gap-closure/v02-acceptance.json
+8d1aa08ae5f4e83d8dec9c39a57981fd75a4463ea88cbed8f834c957926005a9  docs/dev/harness-gap-closure/v02-frozen-acceptance.md
 29f72e02f83bd16bb6335281825fd2717eb3526b3b445d442e9d0d0bcde75ede  harness/specs/tasks/harness-gap-v02-frozen-acceptance.md
-b3079927a2f358ff2e2b620eecb49887d9a2b882e2d70f2bd00b15f71f36f5c4  tests/unit/harness-gap-v02-acceptance.test.ts
+c15d334d96e2d3bffe9137f8b42ad493347b7a6bd6a9d85de576bc344b6f8e9f  tests/unit/harness-gap-v02-acceptance.test.ts

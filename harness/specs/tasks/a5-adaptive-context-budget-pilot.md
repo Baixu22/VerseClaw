@@ -114,6 +114,8 @@ requiredTests:
   - openclaw_runtime/src/context-engine/context-orchestrator.test.ts
   - openclaw_runtime/src/agents/agent-hooks/compaction-promotion.test.ts
   - tests/unit/a05-a5-gate-coverage.test.ts
+  - tests/unit/cross-area-composition.test.ts
+  - tests/unit/deep/a5-deep.test.ts
 acceptance:
   - A5 deprecation counter `planIgnoredCount` rate ≤ 20% over 100-turn session
   - A5 p99 ≤ 30ms (criterion 4.8)

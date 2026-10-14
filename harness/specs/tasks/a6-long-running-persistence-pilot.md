@@ -31,6 +31,8 @@ requiredTests:
   - tests/unit/long-task-checkpoint-builder.test.ts
   - tests/unit/long-task-control.test.ts
   - tests/unit/a06-a6-gate-coverage.test.ts
+  - tests/unit/cross-area-composition.test.ts
+  - tests/unit/deep/a6-deep.test.ts
 acceptance:
   - A6 deprecation counter `volatileMislabelCount` MUST be 0 (CRITICAL gate)
   - A6 deprecation counter `verifierFailCount` rate ≤ 5% over resume cycles

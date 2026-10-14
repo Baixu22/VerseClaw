@@ -1,5 +1,5 @@
-abbffc83da0dd2b4f162207f2247c32d40dd70efeae12f5d9ed824b958fb80a8  docs/dev/harness-gap-closure/a02-acceptance.json
+99b89c7ab9a53518eaefba20210dd23ca9f624eab0705ca0ad87d572cd6234ed  docs/dev/harness-gap-closure/a02-acceptance.json
 638c3dd0cfd5a72b744f2dba5defef74b8c4363d430025db1610569d7383f670  docs/dev/harness-gap-closure/a02-a2-orchestration-gate.md
+70a831f13f83712f870e6d33faf883507a3dee44b987f1900afaba5c0e4675f1  harness/specs/tasks/a2-multi-agent-orchestration-pilot.md
 5e77f31913eaccffdf18b866a601c73d32183383ab3c7818444aae0df32aefa5  harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md
-8180ad8739fe1b4d69aa45bc8b540e2f3bf4e77767ee1f11430aeb5274d8b6ee  harness/specs/tasks/a2-multi-agent-orchestration-pilot.md
-3d10c6ad0d9d03c5a6b6fd304c58f12ec6ca746ff07d658ae3eb006d0dbc5d93  tests/unit/a02-a2-gate-coverage.test.ts
+8e8852b356c29ce8730f8eeb98016f7fe2b8cf160abfdc50a8a5e8c37665246b  tests/unit/a02-a2-gate-coverage.test.ts

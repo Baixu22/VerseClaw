@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -13,15 +13,9 @@ const REQUIRED_TESTS = [
   "tests/unit/long-task-checkpoint-builder.test.ts",
   "tests/unit/long-task-control.test.ts",
   "tests/unit/a06-a6-gate-coverage.test.ts",
+  "tests/unit/cross-area-composition.test.ts",
+  "tests/unit/deep/a6-deep.test.ts",
 ] as const;
-
-function walk(dir: string): string[] {
-  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) return walk(full);
-    return entry.isFile() && entry.name.endsWith(".ts") ? [full] : [];
-  });
-}
 
 describe("A06 A6 gate coverage", () => {
   it("keeps every A6 required test path present and wired into the archived pilot spec", () => {
@@ -30,8 +24,6 @@ describe("A06 A6 gate coverage", () => {
       expect(spec).toContain(`- ${rel}`);
       expect(existsSync(path.join(ROOT, rel))).toBe(true);
     }
-    expect(spec).not.toContain("tests/unit/cross-area-composition.test.ts");
-    expect(spec).not.toContain("openclaw_runtime/src/agents/cross-area/cross-area-facades.ts");
   });
 
   it("pins A6 critical counter and budget-response evidence", () => {
@@ -44,20 +36,26 @@ describe("A06 A6 gate coverage", () => {
     expect(counters).toContain("verifierFailCount / total > 0.05");
   });
 
-  it("keeps the missing verifier, lease-ordering, and pause/resume latency gates explicit", () => {
-    const sourceFiles = [
-      ...walk(path.join(ROOT, "openclaw_runtime/src")),
-      ...walk(path.join(ROOT, "openclaw_runtime/packages/agent-core/src")),
-    ];
-    const source = sourceFiles.map((file) => readFileSync(file, "utf8")).join("\n");
-    const declarations = source.match(/(?:class|interface|type|function|const)\s+(ResumeContractVerifier|FingerprintLeaseCoordinator)\b/g) ?? [];
-    expect(declarations).toEqual([]);
-    const reverifyUsages = source.match(/\brequiresReverification\b/g) ?? [];
-    expect(reverifyUsages).toEqual([]);
+  it("pins the restored verifier, lease-ordering, and pause/resume latency gates", () => {
+    const facades = readFileSync(
+      path.join(ROOT, "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts"),
+      "utf8",
+    );
+    expect(facades).toContain("class ResumeContractVerifier");
+    expect(facades).toContain("requiresReverification");
+    expect(facades).toContain("class FingerprintLeaseCoordinator");
+    expect(facades).toContain("leaseBeforeCheckpoint");
+
+    const crossArea = readFileSync(path.join(ROOT, "tests/unit/cross-area-composition.test.ts"), "utf8");
+    expect(crossArea).toContain("rollback before resume requires_reverification");
+    expect(crossArea).toContain("mid-turn pause");
+
+    const deep = readFileSync(path.join(ROOT, "tests/unit/deep/a6-deep.test.ts"), "utf8");
+    expect(deep).toContain("FingerprintLeaseCoordinator");
 
     const perf = readFileSync(path.join(ROOT, "tests/unit/performance-budgets.test.ts"), "utf8");
-    expect(perf).not.toContain("A6");
-    expect(perf).not.toContain("10 pause");
+    expect(perf).toContain("A6 performance budgets");
+    expect(perf).toContain("10 pause/resume cycles");
 
     const manual = readFileSync(path.join(ROOT, "docs/runtime-design/development-manual.md"), "utf8");
     expect(manual).toContain("ResumeContractVerifier");
