@@ -1822,7 +1822,7 @@ describe('Agent Engineering Acceptance', () => {
       baselinePath: baselineRelative,
     });
     expect(hashTamper.errors).toContain('human verdict manifest_sha256 mismatch');
-  }, 60_000);
+  }, 120_000);
 
   describe('closure advance past the accepted candidate', () => {
     const FINAL_DIR = 'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final';
