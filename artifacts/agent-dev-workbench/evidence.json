@@ -1,6 +1,6 @@
 {
   "schema": "clawx.agent-dev.workbench-evidence.v1",
-  "generatedAt": "2026-10-14T00:26:23.295Z",
+  "generatedAt": "2026-10-14T05:14:31.826Z",
   "scenarioCount": 15,
   "scenarios": [
     {
@@ -431,16 +431,16 @@
   },
   "performance": {
     "latest": {
-      "generatedAt": "2026-10-14T00:26:22.924Z",
+      "generatedAt": "2026-10-14T05:14:31.406Z",
       "success": true,
-      "totalDurationMs": 20891,
+      "totalDurationMs": 35273,
       "decision": {
         "status": "needs-full-gate",
         "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
         "dailyLoopReady": true,
         "releaseReady": false,
         "fullGateComplete": false,
-        "budgetStatus": "ok",
+        "budgetStatus": "watch",
         "fastPathModes": [
           "reuse-build",
           "cached-typecheck",
@@ -451,7 +451,9 @@
           "pnpm run typecheck",
           "pnpm test:e2e:agent-dev-quality"
         ],
-        "watchSteps": [],
+        "watchSteps": [
+          "playwright-agent-dev"
+        ],
         "limitSteps": []
       },
       "modes": {
@@ -463,31 +465,31 @@
       "bottlenecks": [
         {
           "id": "playwright-agent-dev",
-          "durationMs": 11524,
+          "durationMs": 18163,
           "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
           "skipped": false
         },
         {
           "id": "typecheck",
-          "durationMs": 3139,
+          "durationMs": 7390,
           "commandLine": "pnpm run typecheck:cached",
           "skipped": false
         },
         {
           "id": "vitest-agent-dev",
-          "durationMs": 2662,
+          "durationMs": 5142,
           "commandLine": "pnpm agent-dev:unit",
           "skipped": false
         },
         {
           "id": "harness-agent-dev",
-          "durationMs": 1132,
+          "durationMs": 1517,
           "commandLine": "pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md",
           "skipped": false
         },
         {
           "id": "i18n",
-          "durationMs": 580,
+          "durationMs": 682,
           "commandLine": "pnpm i18n:lint",
           "skipped": false
         }
@@ -496,23 +498,23 @@
         "typecheck": {
           "stepId": "typecheck",
           "commandLine": "pnpm run typecheck:cached",
-          "durationMs": 3139,
+          "durationMs": 7390,
           "kind": "typecheck",
           "mode": "parallel",
           "cache": {
             "enabled": true,
             "status": "hit",
-            "key": "a37fd8c29fc822401f897a9f82e8828e994489b02ac5d585ebadaeb7d3d71c2c",
-            "inputCount": 12180,
+            "key": "3f2bb064c97706f39c9401809423e6ba7ac416f8647f0f905540072617ce2a89",
+            "inputCount": 12184,
             "report": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX\\artifacts\\typecheck-cache\\report.json",
-            "cachedAt": "2026-10-14T00:23:36.286Z"
+            "cachedAt": "2026-10-14T05:12:29.020Z"
           },
-          "totalDurationMs": 2732,
+          "totalDurationMs": 6520,
           "coverageNote": "Reused successful node/web/test checks with unchanged source inputs; run pnpm run typecheck for an uncached full gate.",
           "phases": [
             {
               "commandLine": "node scripts/generate-ext-bridge.mjs",
-              "durationMs": 42,
+              "durationMs": 73,
               "exitCode": 0,
               "ok": true,
               "skipped": false,
@@ -525,8 +527,8 @@
               "ok": true,
               "skipped": true,
               "cacheHit": true,
-              "cachedDurationMs": 17845,
-              "cachedAt": "2026-10-14T00:23:36.286Z"
+              "cachedDurationMs": 31058,
+              "cachedAt": "2026-10-14T05:12:29.020Z"
             },
             {
               "commandLine": "pnpm run typecheck:web",
@@ -535,8 +537,8 @@
               "ok": true,
               "skipped": true,
               "cacheHit": true,
-              "cachedDurationMs": 6512,
-              "cachedAt": "2026-10-14T00:23:36.286Z"
+              "cachedDurationMs": 6582,
+              "cachedAt": "2026-10-14T05:12:29.020Z"
             },
             {
               "commandLine": "pnpm run typecheck:test",
@@ -545,13 +547,13 @@
               "ok": true,
               "skipped": true,
               "cacheHit": true,
-              "cachedDurationMs": 19699,
-              "cachedAt": "2026-10-14T00:23:36.286Z"
+              "cachedDurationMs": 25053,
+              "cachedAt": "2026-10-14T05:12:29.020Z"
             }
           ],
           "slowestPhase": {
             "commandLine": "node scripts/generate-ext-bridge.mjs",
-            "durationMs": 42,
+            "durationMs": 73,
             "exitCode": 0,
             "ok": true,
             "skipped": false,
@@ -571,14 +573,14 @@
         "playwright": {
           "stepId": "playwright-agent-dev",
           "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
-          "durationMs": 11524,
+          "durationMs": 18163,
           "kind": "playwright",
           "passed": 1,
-          "reportedDurationMs": 10600,
+          "reportedDurationMs": 16700,
           "tests": [
             {
               "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-              "durationMs": 9300
+              "durationMs": 14700
             }
           ]
         }
@@ -587,164 +589,14 @@
     "history": {
       "trend": {
         "direction": "regressed",
-        "previousRunDeltaMs": 77452,
-        "sameModeDeltaMs": 77452,
-        "sameModeSampleCount": 3,
-        "previousRunGeneratedAt": "2026-10-14T00:21:52.959Z",
-        "previousSameModeGeneratedAt": "2026-10-14T00:21:52.959Z",
-        "note": "Compared with previous same-mode run 2026-10-14T00:21:52.959Z."
+        "previousRunDeltaMs": 74791,
+        "sameModeDeltaMs": 74791,
+        "sameModeSampleCount": 6,
+        "previousRunGeneratedAt": "2026-10-14T00:26:23.323Z",
+        "previousSameModeGeneratedAt": "2026-10-14T00:26:23.323Z",
+        "note": "Compared with previous same-mode run 2026-10-14T00:26:23.323Z."
       },
       "entries": [
-        {
-          "generatedAt": "2026-10-07T13:46:33.569Z",
-          "success": true,
-          "totalDurationMs": 101022,
-          "decisionStatus": "daily-loop-ok",
-          "releaseReady": true,
-          "modes": {
-            "buildReuse": "fresh",
-            "unit": "full",
-            "typecheck": "full",
-            "e2e": "full"
-          },
-          "stepDurations": {
-            "typecheck": {
-              "durationMs": 26891,
-              "skipped": false,
-              "ok": true
-            },
-            "contract": {
-              "durationMs": 560,
-              "skipped": false,
-              "ok": true
-            },
-            "i18n": {
-              "durationMs": 795,
-              "skipped": false,
-              "ok": true
-            },
-            "workbench": {
-              "durationMs": 404,
-              "skipped": false,
-              "ok": true
-            },
-            "harness-agent-dev": {
-              "durationMs": 1817,
-              "skipped": false,
-              "ok": true
-            },
-            "vitest-agent-dev": {
-              "durationMs": 5088,
-              "skipped": false,
-              "ok": true
-            },
-            "comms-replay": {
-              "durationMs": 693,
-              "skipped": false,
-              "ok": true
-            },
-            "comms-compare": {
-              "durationMs": 501,
-              "skipped": false,
-              "ok": true
-            },
-            "e2e-build": {
-              "durationMs": 42909,
-              "skipped": false,
-              "ok": true
-            },
-            "playwright-agent-dev": {
-              "durationMs": 20931,
-              "skipped": false,
-              "ok": true
-            },
-            "workbench-refresh": {
-              "durationMs": 414,
-              "skipped": false,
-              "ok": true
-            }
-          },
-          "budgetSummary": {
-            "ok": 9,
-            "watch": 2,
-            "limit": 0
-          }
-        },
-        {
-          "generatedAt": "2026-10-08T12:07:25.112Z",
-          "success": true,
-          "totalDurationMs": 74616,
-          "decisionStatus": "daily-loop-ok",
-          "releaseReady": true,
-          "modes": {
-            "buildReuse": "fresh",
-            "unit": "full",
-            "typecheck": "full",
-            "e2e": "full"
-          },
-          "stepDurations": {
-            "typecheck": {
-              "durationMs": 15842,
-              "skipped": false,
-              "ok": true
-            },
-            "contract": {
-              "durationMs": 462,
-              "skipped": false,
-              "ok": true
-            },
-            "i18n": {
-              "durationMs": 607,
-              "skipped": false,
-              "ok": true
-            },
-            "workbench": {
-              "durationMs": 387,
-              "skipped": false,
-              "ok": true
-            },
-            "harness-agent-dev": {
-              "durationMs": 1317,
-              "skipped": false,
-              "ok": true
-            },
-            "vitest-agent-dev": {
-              "durationMs": 3900,
-              "skipped": false,
-              "ok": true
-            },
-            "comms-replay": {
-              "durationMs": 477,
-              "skipped": false,
-              "ok": true
-            },
-            "comms-compare": {
-              "durationMs": 413,
-              "skipped": false,
-              "ok": true
-            },
-            "e2e-build": {
-              "durationMs": 33386,
-              "skipped": false,
-              "ok": true
-            },
-            "playwright-agent-dev": {
-              "durationMs": 17442,
-              "skipped": false,
-              "ok": true
-            },
-            "workbench-refresh": {
-              "durationMs": 371,
-              "skipped": false,
-              "ok": true
-            }
-          },
-          "budgetSummary": {
-            "ok": 10,
-            "watch": 1,
-            "limit": 0
-          }
-        },
         {
           "generatedAt": "2026-10-13T18:44:27.328Z",
           "success": false,
@@ -1094,13 +946,163 @@
             "watch": 1,
             "limit": 0
           }
+        },
+        {
+          "generatedAt": "2026-10-14T00:26:23.323Z",
+          "success": true,
+          "totalDurationMs": 21289,
+          "decisionStatus": "needs-full-gate",
+          "releaseReady": false,
+          "modes": {
+            "buildReuse": "reused",
+            "unit": "full",
+            "typecheck": "cached",
+            "e2e": "smoke"
+          },
+          "stepDurations": {
+            "typecheck": {
+              "durationMs": 3139,
+              "skipped": false,
+              "ok": true
+            },
+            "contract": {
+              "durationMs": 420,
+              "skipped": false,
+              "ok": true
+            },
+            "i18n": {
+              "durationMs": 580,
+              "skipped": false,
+              "ok": true
+            },
+            "workbench": {
+              "durationMs": 407,
+              "skipped": false,
+              "ok": true
+            },
+            "harness-agent-dev": {
+              "durationMs": 1132,
+              "skipped": false,
+              "ok": true
+            },
+            "vitest-agent-dev": {
+              "durationMs": 2662,
+              "skipped": false,
+              "ok": true
+            },
+            "comms-replay": {
+              "durationMs": 517,
+              "skipped": false,
+              "ok": true
+            },
+            "comms-compare": {
+              "durationMs": 454,
+              "skipped": false,
+              "ok": true
+            },
+            "e2e-build": {
+              "durationMs": 1,
+              "skipped": true,
+              "ok": true
+            },
+            "playwright-agent-dev": {
+              "durationMs": 11524,
+              "skipped": false,
+              "ok": true
+            },
+            "workbench-refresh": {
+              "durationMs": 393,
+              "skipped": false,
+              "ok": true
+            }
+          },
+          "budgetSummary": {
+            "ok": 11,
+            "watch": 0,
+            "limit": 0
+          }
+        },
+        {
+          "generatedAt": "2026-10-14T05:13:27.069Z",
+          "success": true,
+          "totalDurationMs": 96080,
+          "decisionStatus": "blocked",
+          "releaseReady": false,
+          "modes": {
+            "buildReuse": "reused",
+            "unit": "full",
+            "typecheck": "cached",
+            "e2e": "smoke"
+          },
+          "stepDurations": {
+            "typecheck": {
+              "durationMs": 38174,
+              "skipped": false,
+              "ok": true
+            },
+            "contract": {
+              "durationMs": 1312,
+              "skipped": false,
+              "ok": true
+            },
+            "i18n": {
+              "durationMs": 1350,
+              "skipped": false,
+              "ok": true
+            },
+            "workbench": {
+              "durationMs": 1080,
+              "skipped": false,
+              "ok": true
+            },
+            "harness-agent-dev": {
+              "durationMs": 5063,
+              "skipped": false,
+              "ok": true
+            },
+            "vitest-agent-dev": {
+              "durationMs": 12168,
+              "skipped": false,
+              "ok": true
+            },
+            "comms-replay": {
+              "durationMs": 1098,
+              "skipped": false,
+              "ok": true
+            },
+            "comms-compare": {
+              "durationMs": 694,
+              "skipped": false,
+              "ok": true
+            },
+            "e2e-build": {
+              "durationMs": 1,
+              "skipped": true,
+              "ok": true
+            },
+            "playwright-agent-dev": {
+              "durationMs": 32481,
+              "skipped": false,
+              "ok": true
+            },
+            "workbench-refresh": {
+              "durationMs": 2531,
+              "skipped": false,
+              "ok": true
+            }
+          },
+          "budgetSummary": {
+            "ok": 4,
+            "watch": 6,
+            "limit": 1
+          }
         }
       ]
     },
     "audit": {
       "status": "fail",
       "grade": "B",
-      "totalScore": 89,
+      "totalScore": 80,
       "maxScore": 100,
       "confidence": {
         "level": "high",
@@ -1143,11 +1145,11 @@
         {
           "id": "performance-discipline",
           "title": "Performance Discipline",
-          "score": 9,
+          "score": 0,
           "maxScore": 20,
-          "deducted": 11,
+          "deducted": 20,
           "status": "fail",
-          "reason": "2 finding(s) deducted 11 point(s).",
+          "reason": "7 finding(s) deducted 20 point(s).",
           "findings": [
             {
               "id": "latest-decision-blocked",
@@ -1156,10 +1158,40 @@
               "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
             },
             {
-              "id": "performance-watch:e2e-build",
+              "id": "performance-limit:playwright-agent-dev",
+              "severity": "fail",
+              "estimatedPenalty": 8,
+              "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+            },
+            {
+              "id": "performance-watch:typecheck",
               "severity": "warn",
               "estimatedPenalty": 3,
-              "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build."
+              "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+            },
+            {
+              "id": "performance-watch:vitest-agent-dev",
+              "severity": "warn",
+              "estimatedPenalty": 3,
+              "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+            },
+            {
+              "id": "performance-watch:harness-agent-dev",
+              "severity": "warn",
+              "estimatedPenalty": 3,
+              "recommendation": "Keep the shared scenario baseline separate from task-specific changed-path ownership checks."
+            },
+            {
+              "id": "performance-watch:workbench-refresh",
+              "severity": "warn",
+              "estimatedPenalty": 3,
+              "recommendation": "Refresh evidence from existing artifacts only."
+            },
+            {
+              "id": "performance-watch:i18n",
+              "severity": "warn",
+              "estimatedPenalty": 3,
+              "recommendation": "Keep literal namespace scans bounded to source and locale directories."
             }
           ]
         },
@@ -1184,7 +1216,7 @@
           "findings": []
         }
       ],
-      "disqualifierCount": 1
+      "disqualifierCount": 2
     },
     "quality": {
       "success": true,
@@ -1198,7 +1230,7 @@
       },
       "playwright": {
         "ok": true,
-        "durationMs": 11524,
+        "durationMs": 18163,
         "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
         "spec": "tests/e2e/agent-dev-quality.spec.ts",
         "mode": "smoke",
@@ -1206,11 +1238,11 @@
         "diagnostics": {
           "kind": "playwright",
           "passed": 1,
-          "reportedDurationMs": 10600,
+          "reportedDurationMs": 16700,
           "tests": [
             {
               "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-              "durationMs": 9300
+              "durationMs": 14700
             }
           ]
         },
