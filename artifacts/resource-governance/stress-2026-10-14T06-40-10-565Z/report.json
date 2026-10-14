@@ -1,0 +1,194 @@
+{
+  "schema": "openclaw.resource-governance-stress/v1",
+  "generatedAt": "2026-10-14T06:40:15.527Z",
+  "runId": "stress-2026-10-14T06-40-10-565Z",
+  "fixtureVersion": "resource-governance-p0d-v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "environment": {
+    "platform": "win32",
+    "arch": "x64",
+    "node": "v24.15.0",
+    "cpuCount": 16,
+    "totalMemoryBytes": 16295432192,
+    "cwd": "D:\\ClawX-candidates\\issue-213-resource-envelope-20261014"
+  },
+  "scenarios": {
+    "shell-snapshot": {
+      "coldMs": 66.9282,
+      "warm": {
+        "sampleCount": 10,
+        "min": 57.8309,
+        "p50": 62.337,
+        "p95": 217.6307,
+        "p99": 217.6307,
+        "max": 217.6307
+      },
+      "tree": {
+        "scenario": "shell-snapshot",
+        "kind": "process-tree",
+        "status": "ok",
+        "processCount": 3,
+        "treeRssBytes": 266444800,
+        "treeCpuTimeMs": 1765.625,
+        "treeCpuPercent": 0,
+        "source": "windows-cim"
+      }
+    },
+    "factstore": {
+      "unchanged": {
+        "sampleCount": 20,
+        "min": 0.1,
+        "p50": 0.1699,
+        "p95": 0.316,
+        "p99": 0.7113,
+        "max": 0.7113
+      },
+      "changed": {
+        "sampleCount": 20,
+        "min": 0.1244,
+        "p50": 0.1433,
+        "p95": 0.2731,
+        "p99": 0.2866,
+        "max": 0.2866
+      },
+      "cacheHits": 19,
+      "tree": {
+        "scenario": "factstore",
+        "kind": "process-tree",
+        "status": "ok",
+        "processCount": 3,
+        "treeRssBytes": 268423168,
+        "treeCpuTimeMs": 1812.5,
+        "treeCpuPercent": 7.16,
+        "source": "windows-cim",
+        "fixture": "resource-governance-p0d-v1"
+      }
+    },
+    "mcp-process-stub": {
+      "synthetic": true,
+      "startup": {
+        "sampleCount": 2,
+        "min": 0.1178,
+        "p50": 0.1178,
+        "p95": 0.2051,
+        "p99": 0.2051,
+        "max": 0.2051
+      },
+      "shutdown": {
+        "sampleCount": 2,
+        "min": 2.1813,
+        "p50": 2.1813,
+        "p95": 2.3581,
+        "p99": 2.3581,
+        "max": 2.3581
+      },
+      "restartVerified": false
+    },
+    "provider-sidecar-stub": {
+      "synthetic": true,
+      "startup": {
+        "sampleCount": 3,
+        "min": 0.0438,
+        "p50": 0.0549,
+        "p95": 0.123,
+        "p99": 0.123,
+        "max": 0.123
+      },
+      "shutdown": {
+        "sampleCount": 3,
+        "min": 2.1097,
+        "p50": 2.9543,
+        "p95": 10.0075,
+        "p99": 10.0075,
+        "max": 10.0075
+      },
+      "restartVerified": true
+    },
+    "multi-agent-pressure": {
+      "concurrency": 4,
+      "durations": {
+        "sampleCount": 20,
+        "min": 0,
+        "p50": 44,
+        "p95": 120,
+        "p99": 127,
+        "max": 127
+      },
+      "queueWait": {
+        "sampleCount": 20,
+        "min": 12,
+        "p50": 103,
+        "p95": 169,
+        "p99": 176,
+        "max": 176
+      },
+      "processCountObserved": 20,
+      "tree": {
+        "scenario": "multi-agent-pressure",
+        "kind": "process-tree",
+        "status": "ok",
+        "processCount": 3,
+        "treeRssBytes": 268918784,
+        "treeCpuTimeMs": 2203.125,
+        "treeCpuPercent": 37.49,
+        "source": "windows-cim"
+      },
+      "cacheHits": 0
+    },
+    "cancel-kill": {
+      "capturedPids": 3,
+      "status": "empty",
+      "residualCount": 0,
+      "recoveryMs": 880.1812
+    }
+  },
+  "decision": {
+    "status": "stress-ok",
+    "zeroSampleFailClosed": true,
+    "coverage": {
+      "shell-snapshot": {
+        "required": 1,
+        "observed": 12,
+        "ok": true
+      },
+      "factstore": {
+        "required": 20,
+        "observed": 41,
+        "ok": true
+      },
+      "mcp-process-stub": {
+        "required": 1,
+        "observed": 4,
+        "ok": true
+      },
+      "provider-sidecar-stub": {
+        "required": 1,
+        "observed": 6,
+        "ok": true
+      },
+      "multi-agent-pressure": {
+        "required": 20,
+        "observed": 41,
+        "ok": true
+      },
+      "cancel-kill": {
+        "required": 1,
+        "observed": 1,
+        "ok": true
+      }
+    },
+    "coverageFailures": [],
+    "warnings": [],
+    "syntheticScenarios": [
+      "mcp-process-stub",
+      "provider-sidecar-stub"
+    ],
+    "realOsScenarios": [
+      "shell-snapshot",
+      "factstore",
+      "multi-agent-pressure",
+      "cancel-kill"
+    ]
+  }
+}
