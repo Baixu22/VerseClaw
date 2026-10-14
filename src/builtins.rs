@@ -4973,11 +4973,7 @@ fn bi_config_get(args: Vec<Value>, _input: Option<Value>) -> Result<Value> {
 /// file instead of `AE_CONFIG`, which parallel tests share. `bi_config_set` used
 /// to load the config, mutate it and then return "Config saved" **without**
 /// calling `ShellConfig::save()`, so it reported success while writing nothing.
-fn apply_config_set(
-    config_path: &std::path::Path,
-    key: &str,
-    value: &Value,
-) -> Result<()> {
+fn apply_config_set(config_path: &std::path::Path, key: &str, value: &Value) -> Result<()> {
     let mut config = ShellConfig::load_from(config_path)?;
     let parts: Vec<&str> = key.split('.').collect();
     match (parts.as_slice(), value) {

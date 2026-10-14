@@ -40,7 +40,12 @@ fn re_location_joined() -> &'static Regex {
 /// line plus the next non-empty lines, and only accept an exact
 /// `path:line[:col]` match so unrelated paths are never mistaken for a site.
 fn recover_wrapped_location(lines: &[&str]) -> Option<(String, Option<u64>, Option<u64>)> {
-    let arrow = lines.first()?.trim_start().strip_prefix("-->")?.trim().to_string();
+    let arrow = lines
+        .first()?
+        .trim_start()
+        .strip_prefix("-->")?
+        .trim()
+        .to_string();
     let mut joined = arrow;
     if !re_location_joined().is_match(&joined) {
         for l in lines.iter().skip(1).take(4) {
@@ -214,9 +219,7 @@ pub fn reduce(input: &ReduceInput<'_>) -> ReduceOutput {
         let detail = text[caps.get(0).map(|m| m.end()).unwrap_or(0)..]
             .lines()
             .map(str::trim)
-            .find(|l| {
-                !l.is_empty() && !l.starts_with("stack backtrace") && !l.starts_with("note:")
-            })
+            .find(|l| !l.is_empty() && !l.starts_with("stack backtrace") && !l.starts_with("note:"))
             .unwrap_or("panic");
         let message = format!("panicked: {detail}");
         if !diagnostics.iter().any(|d| d.message == message) {

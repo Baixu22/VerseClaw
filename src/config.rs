@@ -239,10 +239,8 @@ mod tests {
 
     #[test]
     fn save_to_then_load_from_roundtrips() {
-        let dir = std::env::temp_dir().join(format!(
-            "verseshell-config-test-{}",
-            std::process::id()
-        ));
+        let dir =
+            std::env::temp_dir().join(format!("verseshell-config-test-{}", std::process::id()));
         let dir = dir.join(format!("{}", line!()));
         let path = dir.join("config.toml");
 

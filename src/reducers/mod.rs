@@ -82,9 +82,14 @@ fn re_location_in_message() -> &'static Regex {
 /// `file.view` step would fail immediately and is worse than no playbook.
 fn recover_location(message: &str) -> Option<(String, Option<u64>)> {
     let lower = message.to_ascii_lowercase();
-    if ["enoent", "no such file", "not found", "not a git repository"]
-        .iter()
-        .any(|needle| lower.contains(needle))
+    if [
+        "enoent",
+        "no such file",
+        "not found",
+        "not a git repository",
+    ]
+    .iter()
+    .any(|needle| lower.contains(needle))
     {
         return None;
     }
@@ -213,7 +218,10 @@ pub fn suggested_ops_are_legal(actions: &[crate::operation::SuggestedAction]) ->
 /// Returns `(complete, total, rate)` where complete counts diagnostics that
 /// carry both `expected` and `found`. Used by claim_gate (C3).
 pub fn expected_found_completeness(diagnostics: &[Diagnostic]) -> (usize, usize, f64) {
-    let errors: Vec<&Diagnostic> = diagnostics.iter().filter(|d| d.severity == "error").collect();
+    let errors: Vec<&Diagnostic> = diagnostics
+        .iter()
+        .filter(|d| d.severity == "error")
+        .collect();
     let total = errors.len();
     if total == 0 {
         return (0, 0, 1.0);

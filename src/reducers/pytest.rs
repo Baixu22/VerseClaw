@@ -43,7 +43,10 @@ fn re_passed_only() -> &'static Regex {
 /// Extract expected/found from pytest assert messages and assert bodies.
 /// Handles `assert found == expected`, bare `found == expected`, and
 /// pytest rewrite forms like `assert 2 == 3` / `assert add(1, 1) == 3`.
-fn parse_expected_found(message: &str, assert_line: Option<&str>) -> (Option<String>, Option<String>) {
+fn parse_expected_found(
+    message: &str,
+    assert_line: Option<&str>,
+) -> (Option<String>, Option<String>) {
     static RE_EQ: OnceLock<Regex> = OnceLock::new();
     let re_eq = RE_EQ.get_or_init(|| {
         Regex::new(r"^(?:assert\s+)?(?P<found>.+?)\s*==\s*(?P<expected>.+)$").unwrap()

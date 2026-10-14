@@ -302,7 +302,8 @@ fn decode_windows_code_page(bytes: &[u8], cp: u32) -> Option<(String, String)> {
 }
 
 pub(crate) fn decode_recorded_output(bytes: &[u8], declared: &str) -> (String, String) {
-    if let Some(cp) = declared.strip_prefix("windows-oem-")
+    if let Some(cp) = declared
+        .strip_prefix("windows-oem-")
         .and_then(|s| s.trim_end_matches("-lossy").parse().ok())
     {
         if let Some(decoded) = decode_windows_code_page(bytes, cp) {
@@ -312,7 +313,10 @@ pub(crate) fn decode_recorded_output(bytes: &[u8], declared: &str) -> (String, S
     let bytes = bytes.strip_prefix(&[0xEF, 0xBB, 0xBF]).unwrap_or(bytes);
     match std::str::from_utf8(bytes) {
         Ok(text) => (text.into(), "utf-8".into()),
-        Err(_) => (String::from_utf8_lossy(bytes).into_owned(), "utf-8-lossy".into()),
+        Err(_) => (
+            String::from_utf8_lossy(bytes).into_owned(),
+            "utf-8-lossy".into(),
+        ),
     }
 }
 
@@ -430,13 +434,17 @@ mod tests {
     #[test]
     fn recorded_output_uses_its_code_page_and_marks_loss() {
         let chinese = [0xd6, 0xd0, 0xce, 0xc4];
-        assert_eq!(decode_recorded_output(&chinese, "windows-oem-936"),
-            ("中文".into(), "windows-oem-936".into()));
+        assert_eq!(
+            decode_recorded_output(&chinese, "windows-oem-936"),
+            ("中文".into(), "windows-oem-936".into())
+        );
         let (text, encoding) = decode_recorded_output(&[0xff], "windows-oem-936");
         assert!(text.contains('\u{fffd}'));
         assert_eq!(encoding, "windows-oem-936-lossy");
-        assert_eq!(decode_output_bytes("中文\u{fffd}".as_bytes()),
-            ("中文\u{fffd}".into(), "utf-8".into()));
+        assert_eq!(
+            decode_output_bytes("中文\u{fffd}".as_bytes()),
+            ("中文\u{fffd}".into(), "utf-8".into())
+        );
     }
 
     #[test]

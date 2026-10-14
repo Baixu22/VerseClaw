@@ -85,21 +85,15 @@ pub fn reduce(input: &ReduceInput<'_>) -> ReduceOutput {
                 let fix = if t.contains("not a git repository") {
                     Some("run inside a git work tree, or git init first".to_string())
                 } else if t.contains("CONFLICT") {
-                    Some("resolve conflicted files then git add; do not commit unresolved paths".to_string())
+                    Some(
+                        "resolve conflicted files then git add; do not commit unresolved paths"
+                            .to_string(),
+                    )
                 } else {
                     None
                 };
                 diagnostics.push(super::diag_rich(
-                    "git",
-                    "error",
-                    t,
-                    None,
-                    None,
-                    None,
-                    code,
-                    None,
-                    None,
-                    fix,
+                    "git", "error", t, None, None, None, code, None, None, fix,
                 ));
             }
             if diagnostics.len() >= 10 {

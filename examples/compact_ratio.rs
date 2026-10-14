@@ -35,10 +35,30 @@ struct Fixture {
 
 /// The same corpus `tests/token_compression_tests.rs` uses for large logs.
 const FIXTURES: &[Fixture] = &[
-    Fixture { name: "cargo_large_noise", profile: "cargo", fixture: "cargo_large_noise.txt", success: false },
-    Fixture { name: "npm_large_noise", profile: "npm_install", fixture: "npm_large_noise.txt", success: true },
-    Fixture { name: "git_diff_large", profile: "git", fixture: "git_diff_large.txt", success: true },
-    Fixture { name: "cargo_fail_noisy", profile: "cargo", fixture: "cargo_fail_noisy.txt", success: false },
+    Fixture {
+        name: "cargo_large_noise",
+        profile: "cargo",
+        fixture: "cargo_large_noise.txt",
+        success: false,
+    },
+    Fixture {
+        name: "npm_large_noise",
+        profile: "npm_install",
+        fixture: "npm_large_noise.txt",
+        success: true,
+    },
+    Fixture {
+        name: "git_diff_large",
+        profile: "git",
+        fixture: "git_diff_large.txt",
+        success: true,
+    },
+    Fixture {
+        name: "cargo_fail_noisy",
+        profile: "cargo",
+        fixture: "cargo_fail_noisy.txt",
+        success: false,
+    },
 ];
 
 fn meta(profile: &str) -> ObservationMeta {
@@ -128,7 +148,10 @@ fn json_response(resp: &AgentResponse) -> String {
         map.insert("value".into(), value.clone());
     }
     if let Some(error) = &resp.error {
-        map.insert("error".into(), serde_json::to_value(error).unwrap_or_default());
+        map.insert(
+            "error".into(),
+            serde_json::to_value(error).unwrap_or_default(),
+        );
     }
     map.insert(
         "meta".into(),
@@ -251,7 +274,13 @@ fn main() {
             .is_some_and(|decoded| {
                 decoded == Value::from_json(&serde_json::to_value(observation).unwrap_or_default())
             });
-        observations.push(case_json(name, source, &json_text, &compact, Some(roundtrip_ok)));
+        observations.push(case_json(
+            name,
+            source,
+            &json_text,
+            &compact,
+            Some(roundtrip_ok),
+        ));
     }
 
     // ── response envelope path ──
@@ -262,7 +291,10 @@ fn main() {
         "lines": 1234,
     });
     let big_value = serde_json::to_value(&observation_values[0].2).unwrap_or_default();
-    for (name, value) in [("response_small_hash", small_value), ("response_ops_list", big_value)] {
+    for (name, value) in [
+        ("response_small_hash", small_value),
+        ("response_ops_list", big_value),
+    ] {
         let resp = AgentResponse {
             id: format!("compact-ratio-{name}"),
             ok: true,
@@ -275,12 +307,22 @@ fn main() {
         };
         let json_text = json_response(&resp);
         let compact = verseshell::compact::encode_response(&resp);
-        responses.push(case_json(name, "src/server.rs (StreamDone vs encode_response)", &json_text, &compact, None));
+        responses.push(case_json(
+            name,
+            "src/server.rs (StreamDone vs encode_response)",
+            &json_text,
+            &compact,
+            None,
+        ));
     }
 
     let observation_aggregate = aggregate(&observations);
     let response_aggregate = aggregate(&responses);
-    let all_cases: Vec<Json> = observations.iter().chain(responses.iter()).cloned().collect();
+    let all_cases: Vec<Json> = observations
+        .iter()
+        .chain(responses.iter())
+        .cloned()
+        .collect();
     let overall = aggregate(&all_cases);
 
     let report = json!({

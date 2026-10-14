@@ -470,7 +470,11 @@ fn execute_read_many(req: &OperationRequest) -> Observation {
                     .and_then(|l| l.as_array())
                     .map(|a| a.len())
                     .unwrap_or(0);
-                if entry.get("deferred").and_then(|v| v.as_bool()).unwrap_or(false) {
+                if entry
+                    .get("deferred")
+                    .and_then(|v| v.as_bool())
+                    .unwrap_or(false)
+                {
                     deferred += 1;
                 }
                 files.push(entry);

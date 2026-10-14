@@ -436,7 +436,11 @@ fn expected_found_completeness_is_machine_checkable() {
     let text = adv_fixture("../pytest_fail.txt");
     let out = reduce_for_profile("pytest", &text, false).unwrap();
     let (complete, total, rate) = expected_found_completeness(&out.diagnostics);
-    assert_eq!((complete, total), (total, total), "pytest_fail must be complete");
+    assert_eq!(
+        (complete, total),
+        (total, total),
+        "pytest_fail must be complete"
+    );
     assert!((rate - 1.0).abs() < 1e-9);
 }
 

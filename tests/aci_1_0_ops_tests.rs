@@ -63,8 +63,15 @@ fn centered_file_windows_expose_exact_bounds_and_continuation() {
         (110, 105, 106, None),
         (u64::MAX, 97, 106, None),
     ] {
-        let r = run_server(&op("view", "file.view",
-            json!({"path": "sample.txt", "cursor": cursor, "window": 10})), &workspace).remove(0);
+        let r = run_server(
+            &op(
+                "view",
+                "file.view",
+                json!({"path": "sample.txt", "cursor": cursor, "window": 10}),
+            ),
+            &workspace,
+        )
+        .remove(0);
         assert_eq!(r["ok"], true, "{r}");
         assert_eq!(r["data"]["start_line"], first);
         assert_eq!(r["data"]["end_line"], last);
@@ -74,18 +81,40 @@ fn centered_file_windows_expose_exact_bounds_and_continuation() {
     let mut cursor = 1;
     let mut visited = Vec::new();
     loop {
-        let r = run_server(&op("page", "file.view",
-            json!({"path": "sample.txt", "cursor": cursor, "window": 10})), &workspace).remove(0);
-        visited.extend(r["data"]["lines"].as_array().unwrap().iter()
-            .map(|line| line["line"].as_u64().unwrap()));
+        let r = run_server(
+            &op(
+                "page",
+                "file.view",
+                json!({"path": "sample.txt", "cursor": cursor, "window": 10}),
+            ),
+            &workspace,
+        )
+        .remove(0);
+        visited.extend(
+            r["data"]["lines"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|line| line["line"].as_u64().unwrap()),
+        );
         match r["data"]["next_cursor"].as_u64() {
-            Some(next) => { assert!(next > cursor); cursor = next; }
+            Some(next) => {
+                assert!(next > cursor);
+                cursor = next;
+            }
             None => break,
         }
     }
     assert_eq!(visited, (1..=106).collect::<Vec<_>>());
-    let r = run_server(&op("empty", "file.view",
-        json!({"path": "empty.txt", "cursor": u64::MAX, "window": 10})), &workspace).remove(0);
+    let r = run_server(
+        &op(
+            "empty",
+            "file.view",
+            json!({"path": "empty.txt", "cursor": u64::MAX, "window": 10}),
+        ),
+        &workspace,
+    )
+    .remove(0);
     assert_eq!(r["ok"], true, "{r}");
     assert_eq!(r["data"]["start_line"], 0);
     assert_eq!(r["data"]["end_line"], 0);
@@ -136,14 +165,20 @@ fn file_view_replace_and_stale_hash() {
     );
     // TF-0005: suggested_next carries one-step retry with actual_hash filled in
     let retry_next = r2["suggested_next"].as_array().cloned().unwrap_or_default();
-    assert!(!retry_next.is_empty(), "E_STALE_HASH must expose suggested_next: {r2}");
+    assert!(
+        !retry_next.is_empty(),
+        "E_STALE_HASH must expose suggested_next: {r2}"
+    );
     let first = &retry_next[0];
     assert_eq!(first["op"], "file.replace_exact");
     assert_eq!(first["args"]["expected_hash"], r2["data"]["actual_hash"]);
     // One-step retry using actual_hash from the failure — no file.view required.
     let retry_args = first["args"].clone();
     let r_retry = run_server(&op("2b", "file.replace_exact", retry_args), &workspace).remove(0);
-    assert_eq!(r_retry["ok"], true, "one-step retry with actual_hash must succeed: {r_retry}");
+    assert_eq!(
+        r_retry["ok"], true,
+        "one-step retry with actual_hash must succeed: {r_retry}"
+    );
     assert_eq!(r_retry["data"]["applied"], true);
     let content = std::fs::read_to_string(&file).unwrap();
     assert!(content.contains("BETA"));
@@ -202,7 +237,10 @@ fn file_read_many_reads_several_files_with_hashes() {
     let full = files[0]["content_hash"].as_str().unwrap();
     let short = files[0]["hash"].as_str().unwrap();
     assert_eq!(short.len(), 16, "{short}");
-    assert!(full.starts_with(&format!("sha256:{short}")), "{full} / {short}");
+    assert!(
+        full.starts_with(&format!("sha256:{short}")),
+        "{full} / {short}"
+    );
     assert_eq!(files[0]["truncated"], false);
     assert!(files[0]["next_start_line"].is_null());
     assert_eq!(files[1]["path"], "src/b.txt");
@@ -338,7 +376,10 @@ fn expected_hash_accepts_a_compact_digest_prefix() {
     .remove(0);
     assert_eq!(bad["ok"], false, "{bad}");
     assert_eq!(bad["error"]["code"], "E_STALE_HASH");
-    assert_eq!(std::fs::read_to_string(&file).unwrap(), "alpha\nbeta\ngamma\n");
+    assert_eq!(
+        std::fs::read_to_string(&file).unwrap(),
+        "alpha\nbeta\ngamma\n"
+    );
 
     // A prefix shorter than the documented minimum is rejected, not matched.
     let too_short = run_server(
@@ -401,7 +442,11 @@ fn file_replace_exact_ambiguous_match() {
         assert!(m["snippet"].is_string(), "match.snippet required: {m}");
     }
     assert!(
-        !r["suggested_next"].as_array().cloned().unwrap_or_default().is_empty(),
+        !r["suggested_next"]
+            .as_array()
+            .cloned()
+            .unwrap_or_default()
+            .is_empty(),
         "E_AMBIGUOUS must expose suggested_next: {r}"
     );
     assert_eq!(
@@ -419,7 +464,10 @@ fn file_replace_exact_ambiguous_match() {
         &workspace,
     )
     .remove(0);
-    assert_eq!(retry["ok"], true, "widened old should retry in one step: {retry}");
+    assert_eq!(
+        retry["ok"], true,
+        "widened old should retry in one step: {retry}"
+    );
     assert_eq!(
         std::fs::read_to_string(workspace.join("dup.txt")).unwrap(),
         "x bar y foo z\n"

@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Lightweight C12/C35 closure (2026-10-14)
+- Ran an 8-task × 3-condition × 1-seed with/without pair (48 cells), 24 rows per arm, zero endpoint failures, and published it to the canonical live artifacts. This closes C12 freshness and C35 paired-arm composition without a 630-cell rerun.
+- Kept C14/C16 red: their mix-sensitive values on the lightweight prefix subset are recorded as diagnostics (`lightweight_subset=true`, `full_trajectory_claim=false`), while C34 remains the mixture-invariant substitute (0.8195).
+- Fixed degenerate McNemar output, added explicit prefix-subset binding, gated the control arm in C12, and standardized evidence fingerprint ordering. Final gate: 29/31; remaining red is C14/C16 by decision.
+
 ### Round 14 — task set v3.0.0, live-chain repairs, two new gated claims
 
 - **Frozen task set v3.0.0: 35 tasks (10 hand-written + 25 generated and admitted).**
@@ -686,3 +691,5 @@ Non-breaking polish of the 0.6 Observation Budget contract:
 - Typed exec.run / result.query operations
 - Observation envelope, artifact store, process runner with Windows Job Objects
 - Compiled IR + plan cache, HashMap LRU
+
+

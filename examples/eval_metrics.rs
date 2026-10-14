@@ -13,7 +13,9 @@ use serde_json::{json, Value};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use verseshell::operation::{OperationRegistry, OperationRequest, SuggestedAction};
-use verseshell::reducers::{reduce_for_profile, suggested_from_diagnostics, suggested_ops_are_legal};
+use verseshell::reducers::{
+    reduce_for_profile, suggested_from_diagnostics, suggested_ops_are_legal,
+};
 
 fn req(op: &str, args: Value) -> OperationRequest {
     OperationRequest {
@@ -50,13 +52,20 @@ fn playbook_args_complete(actions: &[SuggestedAction]) -> bool {
             Some(m) if !m.is_empty() => m,
             _ => return false,
         };
-        let non_empty = |k: &str| args.get(k).and_then(|v| v.as_str()).is_some_and(|s| !s.is_empty());
+        let non_empty = |k: &str| {
+            args.get(k)
+                .and_then(|v| v.as_str())
+                .is_some_and(|s| !s.is_empty())
+        };
         match a.op.as_str() {
             "file.view" | "file.read_range" | "file.hash" => non_empty("path"),
             "file.replace_exact" => non_empty("path") && non_empty("old") && non_empty("new"),
             "file.apply_patch" => non_empty("path") && args.contains_key("patch"),
             "file.edit_range" => non_empty("path"),
-            "exec.run" => args.get("argv").and_then(|v| v.as_array()).is_some_and(|a| !a.is_empty()),
+            "exec.run" => args
+                .get("argv")
+                .and_then(|v| v.as_array())
+                .is_some_and(|a| !a.is_empty()),
             "test.run_target" => non_empty("target"),
             _ => true,
         }
@@ -67,7 +76,9 @@ fn playbook_args_complete(actions: &[SuggestedAction]) -> bool {
 fn playbook_probe(profile: &str, out: &verseshell::reducers::ReduceOutput) -> Value {
     let actions = suggested_from_diagnostics(profile, &out.diagnostics);
     let ops: Vec<String> = actions.iter().map(|a| a.op.clone()).collect();
-    let has_rerun = ops.iter().any(|o| o == "test.run_target" || o == "exec.run");
+    let has_rerun = ops
+        .iter()
+        .any(|o| o == "test.run_target" || o == "exec.run");
     json!({
         "suggested_next_ops": ops,
         "suggested_next_count": actions.len(),
@@ -180,9 +191,10 @@ fn main() {
 
     // stale hash: view → replace with wrong hash → structured data + retry
     write_text(&ws.join("probe_stale.txt"), "alpha\nbeta\ngamma\n");
-    let view = registry.execute(
-        req("file.view", json!({"path": "probe_stale.txt", "cursor": 1, "window": 10})),
-    );
+    let view = registry.execute(req(
+        "file.view",
+        json!({"path": "probe_stale.txt", "cursor": 1, "window": 10}),
+    ));
     assert!(view.ok, "file.view must succeed for the stale-hash probe");
     let stale = registry.execute(req(
         "file.replace_exact",
@@ -193,7 +205,11 @@ fn main() {
             "expected_hash": "sha256:deadbeef"
         }),
     ));
-    let stale_code = stale.error.as_ref().map(|e| e.code.clone()).unwrap_or_default();
+    let stale_code = stale
+        .error
+        .as_ref()
+        .map(|e| e.code.clone())
+        .unwrap_or_default();
     let stale_data = stale.data.clone().unwrap_or(json!({}));
     let has_actual = stale_data["actual_hash"].is_string();
     let has_expected = stale_data["expected_hash"].is_string();
@@ -209,18 +225,25 @@ fn main() {
     };
 
     // ambiguous: three identical lines → matches[] with line/offset/snippet
-    write_text(&ws.join("probe_ambiguous.txt"), "beta\nkeep\nbeta\nkeep\nbeta\n");
+    write_text(
+        &ws.join("probe_ambiguous.txt"),
+        "beta\nkeep\nbeta\nkeep\nbeta\n",
+    );
     let amb = registry.execute(req(
         "file.replace_exact",
         json!({"path": "probe_ambiguous.txt", "old": "beta", "new": "BETA"}),
     ));
-    let amb_code = amb.error.as_ref().map(|e| e.code.clone()).unwrap_or_default();
+    let amb_code = amb
+        .error
+        .as_ref()
+        .map(|e| e.code.clone())
+        .unwrap_or_default();
     let amb_data = amb.data.clone().unwrap_or(json!({}));
     let matches = amb_data["matches"].as_array().cloned().unwrap_or_default();
     let matches_structured = !matches.is_empty()
-        && matches.iter().all(|m| {
-            m["line"].is_u64() && m["offset"].is_u64() && m["snippet"].is_string()
-        });
+        && matches
+            .iter()
+            .all(|m| m["line"].is_u64() && m["offset"].is_u64() && m["snippet"].is_string());
     let widen_ok = {
         let widened = registry.execute(req(
             "file.replace_exact",
@@ -269,7 +292,8 @@ fn main() {
         .and_then(|i| std::env::args().nth(i + 1));
     match out_path {
         Some(p) => {
-            std::fs::write(&p, serde_json::to_vec_pretty(&metrics).unwrap()).expect("write metrics");
+            std::fs::write(&p, serde_json::to_vec_pretty(&metrics).unwrap())
+                .expect("write metrics");
             eprintln!("metrics written: {p}");
         }
         None => {
