@@ -1,0 +1,555 @@
+{
+  "schema": "verseshell.reintegration-acceptance-contract/v1",
+  "date": "2026-10-14",
+  "driven_by": "agent",
+  "actor": "codex",
+  "purpose": "Protected requirements, not an editable success ledger",
+  "source_lock": "harness/specs/fixtures/verseshell-reintegration/source-lock.json",
+  "target_commit": "c06f406e83566bb968448222d9c8caf429e580a0",
+  "operation_count": 32,
+  "operations": [
+    {
+      "operation": "exec.run",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX governed exec",
+      "host_route_requirement": "retain host execution owner and adapt observations",
+      "acceptance": "approval deny/retry, output budgets, artifact recovery, timeout, native-fallback refusal",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "file.apply_patch",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX patch preview and write journal; VerseShell primitives remain internal",
+      "host_route_requirement": "preserve runtime functionality without adding an ungoverned model write tool",
+      "acceptance": "hash conflict, preview/commit consistency, rollback/restore, crash recovery, path confinement",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "file.diff",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX patch preview and write journal; VerseShell primitives remain internal",
+      "host_route_requirement": "preserve runtime functionality without adding an ungoverned model write tool",
+      "acceptance": "hash conflict, preview/commit consistency, rollback/restore, crash recovery, path confinement",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "file.edit_range",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX patch preview and write journal; VerseShell primitives remain internal",
+      "host_route_requirement": "preserve runtime functionality without adding an ungoverned model write tool",
+      "acceptance": "hash conflict, preview/commit consistency, rollback/restore, crash recovery, path confinement",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "file.hash",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX readonly facade and patch preview",
+      "host_route_requirement": "preserve existing routes and update read contract",
+      "acceptance": "hash, full text, line bounds, continuation, stale-cache/owner/policy refusal",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "file.read_many",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX readonly facade / agent-tools",
+      "host_route_requirement": "new host adapter required",
+      "acceptance": "bounded batch, partial missing file, per-file window, pagination, workspace/policy denial, model-visible payload",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "file.read_range",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX readonly facade and patch preview",
+      "host_route_requirement": "preserve existing routes and update read contract",
+      "acceptance": "hash, full text, line bounds, continuation, stale-cache/owner/policy refusal",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "file.remove",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX patch preview and write journal; VerseShell primitives remain internal",
+      "host_route_requirement": "preserve runtime functionality without adding an ungoverned model write tool",
+      "acceptance": "hash conflict, preview/commit consistency, rollback/restore, crash recovery, path confinement",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "file.replace_exact",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX patch preview and write journal; VerseShell primitives remain internal",
+      "host_route_requirement": "preserve runtime functionality without adding an ungoverned model write tool",
+      "acceptance": "hash conflict, preview/commit consistency, rollback/restore, crash recovery, path confinement",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "file.view",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX readonly facade and patch preview",
+      "host_route_requirement": "preserve existing routes and update read contract",
+      "acceptance": "hash, full text, line bounds, continuation, stale-cache/owner/policy refusal",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "file.write",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX patch preview and write journal; VerseShell primitives remain internal",
+      "host_route_requirement": "preserve runtime functionality without adding an ungoverned model write tool",
+      "acceptance": "hash conflict, preview/commit consistency, rollback/restore, crash recovery, path confinement",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "ops.list",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX process manager / diagnostics",
+      "host_route_requirement": "host-internal registration and diagnosis",
+      "acceptance": "32-operation catalog, computed digest, runtime identity, request correlation and bounded errors",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "ops.observation_open_errors",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX process manager / diagnostics",
+      "host_route_requirement": "host-internal registration and diagnosis",
+      "acceptance": "32-operation catalog, computed digest, runtime identity, request correlation and bounded errors",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "ops.observation_recent",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX process manager / diagnostics",
+      "host_route_requirement": "host-internal registration and diagnosis",
+      "acceptance": "32-operation catalog, computed digest, runtime identity, request correlation and bounded errors",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "process.kill",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX governed process / resource lifecycle",
+      "host_route_requirement": "retain existing host lifecycle integration",
+      "acceptance": "owner identity, monotonic cursor, EOF ack, cancellation, tree cleanup, restart, ConPTY and Job Object limits",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "process.list",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX governed process / resource lifecycle",
+      "host_route_requirement": "retain existing host lifecycle integration",
+      "acceptance": "owner identity, monotonic cursor, EOF ack, cancellation, tree cleanup, restart, ConPTY and Job Object limits",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "process.poll",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX governed process / resource lifecycle",
+      "host_route_requirement": "retain existing host lifecycle integration",
+      "acceptance": "owner identity, monotonic cursor, EOF ack, cancellation, tree cleanup, restart, ConPTY and Job Object limits",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "process.start",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX governed process / resource lifecycle",
+      "host_route_requirement": "retain existing host lifecycle integration",
+      "acceptance": "owner identity, monotonic cursor, EOF ack, cancellation, tree cleanup, restart, ConPTY and Job Object limits",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "process.write",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX governed process / resource lifecycle",
+      "host_route_requirement": "retain existing host lifecycle integration",
+      "acceptance": "owner identity, monotonic cursor, EOF ack, cancellation, tree cleanup, restart, ConPTY and Job Object limits",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "repo.changed_files",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX readonly facade / command profiles plus internal VerseShell ops",
+      "host_route_requirement": "retain module operations; adapt only through current host policy",
+      "acceptance": "canonical args, profile/policy identity, git/test diagnostics and bounded artifacts",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "repo.search",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX readonly facade / command profiles plus internal VerseShell ops",
+      "host_route_requirement": "retain module operations; adapt only through current host policy",
+      "acceptance": "canonical args, profile/policy identity, git/test diagnostics and bounded artifacts",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "repo.summary",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX readonly facade / command profiles plus internal VerseShell ops",
+      "host_route_requirement": "retain module operations; adapt only through current host policy",
+      "acceptance": "canonical args, profile/policy identity, git/test diagnostics and bounded artifacts",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "result.query",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX governed result query",
+      "host_route_requirement": "retain existing host result tool",
+      "acceptance": "artifact digest, owner, TTL, bounded raw/head/tail/slice/grep and explicit missing/expired errors",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "runtime.handshake",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX process manager / diagnostics",
+      "host_route_requirement": "host-internal registration and diagnosis",
+      "acceptance": "32-operation catalog, computed digest, runtime identity, request correlation and bounded errors",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "test.discover",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX readonly facade / command profiles plus internal VerseShell ops",
+      "host_route_requirement": "retain module operations; adapt only through current host policy",
+      "acceptance": "canonical args, profile/policy identity, git/test diagnostics and bounded artifacts",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "test.run_target",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX readonly facade / command profiles plus internal VerseShell ops",
+      "host_route_requirement": "retain module operations; adapt only through current host policy",
+      "acceptance": "canonical args, profile/policy identity, git/test diagnostics and bounded artifacts",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "test.summarize_last",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX readonly facade / command profiles plus internal VerseShell ops",
+      "host_route_requirement": "retain module operations; adapt only through current host policy",
+      "acceptance": "canonical args, profile/policy identity, git/test diagnostics and bounded artifacts",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "tx.begin",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX patch preview and write journal; VerseShell primitives remain internal",
+      "host_route_requirement": "preserve runtime functionality without adding an ungoverned model write tool",
+      "acceptance": "hash conflict, preview/commit consistency, rollback/restore, crash recovery, path confinement",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "tx.commit",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX patch preview and write journal; VerseShell primitives remain internal",
+      "host_route_requirement": "preserve runtime functionality without adding an ungoverned model write tool",
+      "acceptance": "hash conflict, preview/commit consistency, rollback/restore, crash recovery, path confinement",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "tx.restore",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX patch preview and write journal; VerseShell primitives remain internal",
+      "host_route_requirement": "preserve runtime functionality without adding an ungoverned model write tool",
+      "acceptance": "hash conflict, preview/commit consistency, rollback/restore, crash recovery, path confinement",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "tx.rollback",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX patch preview and write journal; VerseShell primitives remain internal",
+      "host_route_requirement": "preserve runtime functionality without adding an ungoverned model write tool",
+      "acceptance": "hash conflict, preview/commit consistency, rollback/restore, crash recovery, path confinement",
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "operation": "tx.status",
+      "required": true,
+      "upstream_implementation_required": true,
+      "proposed_owner": "ClawX patch preview and write journal; VerseShell primitives remain internal",
+      "host_route_requirement": "preserve runtime functionality without adding an ungoverned model write tool",
+      "acceptance": "hash conflict, preview/commit consistency, rollback/restore, crash recovery, path confinement",
+      "evidence_status": "NOT_RUN"
+    }
+  ],
+  "behavior_count": 18,
+  "behaviors": [
+    {
+      "id": "B01",
+      "area": "approval",
+      "requirement": "拒绝优先；批准只针对匹配动作的一次重试；没有 APPROVE_ALL 旁路。",
+      "owner": "ClawX approval + governed exec",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B02",
+      "area": "process-owner",
+      "requirement": "runtime/agent/session/process 身份错误明确拒绝，不能回退到 native PID。",
+      "owner": "governed-process",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B03",
+      "area": "process-cursor",
+      "requirement": "输出 cursor 单调、有界、可继续；跨重启记录按规范 lost/reconcile。",
+      "owner": "governed-process",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B04",
+      "area": "process-cleanup",
+      "requirement": "取消、超时、宿主退出回收进程树和资源登记；没有孤儿后台任务。",
+      "owner": "host resource lifecycle",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B05",
+      "area": "stdin-pty",
+      "requirement": "stdin write/EOF 以确认结果为准；ConPTY、编码与窗口行为保持。",
+      "owner": "VerseShell lifecycle + host adapter",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B06",
+      "area": "resource-limits",
+      "requirement": "真实子进程和分配行为证明 Job Object 限制；receipt 与可观察结果一致。",
+      "owner": "host resources + VerseShell Windows executor",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B07",
+      "area": "path-and-hash",
+      "requirement": "相对路径、越界和 symlink 检查正确；stale hash 不写入；完整 hash 保持身份权威。",
+      "owner": "readonly facade + patch preview",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B08",
+      "area": "write-recovery",
+      "requirement": "预览与提交一致；ClawX journal/CAS 管理提交、回滚和崩溃恢复；实际磁盘状态正确。",
+      "owner": "ClawX write journal",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B09",
+      "area": "artifact",
+      "requirement": "原文 artifact 可恢复；digest/owner/TTL/缺失/损坏分类与有界查询正确。",
+      "owner": "governed result query",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B10",
+      "area": "information",
+      "requirement": "正文、partial errors、分页和真实省略信息不丢；禁止把未知计数补零或截断伪装为空成功。",
+      "owner": "host observation projection",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B11",
+      "area": "diagnostics",
+      "requirement": "cargo/pytest/git/npm 的关键诊断、位置、expected/found 与恢复动作在对抗日志中仍可获取。",
+      "owner": "upstream reducers + host formatter",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B12",
+      "area": "wire-contract",
+      "requirement": "status/blocked/substitutions、schema bounds 与流精简形状进入宿主；未知身份和格式仍拒绝。",
+      "owner": "shared contract + process manager",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B13",
+      "area": "batch-read",
+      "requirement": "8 路批读上限、每文件窗口、总预算、缺失文件和 continuation 均到达模型实际工具结果。",
+      "owner": "readonly facade + agent-tools",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B14",
+      "area": "state-and-env",
+      "requirement": "控制面变量不进入任务命令；PATH/PATHEXT/系统必要变量保留；状态根与宿主预创建和恢复一致。",
+      "owner": "host environment + upstream state root",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B15",
+      "area": "windows-launch",
+      "requirement": "PATHEXT 与 rustup/shim 启动名称正确；启动路径和审计真实路径各自保留。",
+      "owner": "upstream process_command",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B16",
+      "area": "configuration",
+      "requirement": "config_set 实际持久化并传播失败；ae 独立配置不成为 ClawX 第二配置权威。",
+      "owner": "module configuration / ClawX owner",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B17",
+      "area": "compatibility",
+      "requirement": "JSONL --serve、request correlation、错误与预算保持；MCP 权限不扩张，legacy DSL 不被顺手删除。",
+      "owner": "Typed ACI owner + external MCP adapter",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    },
+    {
+      "id": "B18",
+      "area": "build-and-startup",
+      "requirement": "短 uptime 确定性构造回归仍在；目标源码、lock/toolchain、两个 release 输出及包内二进制可追溯。",
+      "owner": "bundle verifier + packaging",
+      "required": true,
+      "evidence_status": "NOT_RUN"
+    }
+  ],
+  "gates": [
+    {
+      "id": "G0",
+      "stage": "freeze-and-source",
+      "requirements": [
+        "Source lock and trusted control snapshot identified",
+        "154-file source check passes",
+        "Source-check negative controls reject rewrites and removed tests"
+      ],
+      "status": "NOT_RUN",
+      "current_runner": "source checker and its tests implemented; trusted control commit still freezes at execution start"
+    },
+    {
+      "id": "G1",
+      "stage": "module-regression",
+      "requirements": [
+        "Old effective baseline and target effective runtime are distinguished",
+        "All upstream Rust test targets compile and execute under recorded Windows environment",
+        "32-operation source/catalog and all original module regressions retained"
+      ],
+      "status": "NOT_RUN",
+      "current_runner": "planned; dedicated execution/evidence runner not implemented by this planning task"
+    },
+    {
+      "id": "G2",
+      "stage": "host-contract",
+      "requirements": [
+        "New and old explicitly accepted shapes decode",
+        "Real new binary handshake succeeds with computed catalog digest and count",
+        "Identity drift and malformed frames fail with explicit classified results"
+      ],
+      "status": "NOT_RUN",
+      "current_runner": "planned; dedicated execution/evidence runner not implemented by this planning task"
+    },
+    {
+      "id": "G3",
+      "stage": "capability-consumption",
+      "requirements": [
+        "All 32 operations have correct internal/host ownership and executed core checks",
+        "Every host-required capability has actual host invocation evidence",
+        "All 18 cross-cutting requirements have current evidence"
+      ],
+      "status": "NOT_RUN",
+      "current_runner": "planned; dedicated execution/evidence runner not implemented by this planning task"
+    },
+    {
+      "id": "G4",
+      "stage": "differential",
+      "requirements": [
+        "A old / B standalone new / C host-routed new compared on isolated deterministic fixtures",
+        "B-C information and failure behavior match declared mappings",
+        "A-B intentional changes listed; no wildcard ignored mismatches"
+      ],
+      "status": "NOT_RUN",
+      "current_runner": "planned; dedicated execution/evidence runner not implemented by this planning task"
+    },
+    {
+      "id": "G5",
+      "stage": "interventions",
+      "requirements": [
+        "Unavailable/wrong binary prevents host operation",
+        "Catalog/workspace/owner/policy/stale-hash conflicts refuse effects",
+        "Cancellation/EOF/limits/retention and artifact corruption negative cases pass",
+        "No native fallback or effectful shadow double execution"
+      ],
+      "status": "NOT_RUN",
+      "current_runner": "planned; dedicated execution/evidence runner not implemented by this planning task"
+    },
+    {
+      "id": "G6",
+      "stage": "package-and-closeout",
+      "requirements": [
+        "Two independent release builds byte-identical",
+        "Fresh typecheck/comms/Electron E2E/package contents and license/source identity verified",
+        "Final receipts bind final source/binary/host/tests/fixtures/control hashes",
+        "Matching source+binary+host rollback pair exists and docs claims agree"
+      ],
+      "status": "NOT_RUN",
+      "current_runner": "planned; dedicated execution/evidence runner not implemented by this planning task"
+    }
+  ],
+  "oracles": {
+    "A": "c398369 plus original four recorded patches / old verified binary",
+    "B": "c06f406 plus registered startup residual, called directly",
+    "C": "The same B binary called through real ClawX host tools"
+  },
+  "completion": {
+    "computed_by": "trusted frozen acceptance process with current on-disk receipts",
+    "all_gates_required": true,
+    "missing_or_unknown": "incomplete",
+    "manual_passes_fields_authoritative": false,
+    "source_check_is_completion": false
+  },
+  "trust": {
+    "control_inputs": "Use control checkout independent of evaluated candidate",
+    "contract_update": "Separate evidence-backed revision before candidate evaluation; no automatic accept-current mode",
+    "local_limit": "Writable local hashes are not tamper-proof against the same fully privileged agent"
+  },
+  "priority": [
+    "existing integrity/lifecycle/write recovery",
+    "correct contract and actual host routing",
+    "batch and observation improvements",
+    "small measured efficiency gains"
+  ],
+  "research_claims": {
+    "C14": "Upstream not_met; not a functional migration waiver or a new host benefit claim",
+    "C16": "Upstream not_met; keep reported limitations"
+  }
+}
