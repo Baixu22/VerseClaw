@@ -133,6 +133,39 @@ MCP server 脚本路径：
 .codex-tools\bash-mcp-server\install-mcp.ps1
 ```
 
+## Disk & temp policy（C: 盘资源紧张，临时文件一律走 D:）
+
+本机 `C:` 长期接近满盘（曾出现 0 字节可用），构建/测试在写临时文件时会直接失败。
+这类失败看起来像代码错误，实际是环境问题：`磁盘空间不足` / `ENOSPC` /
+`no space left on device`。**所有大体积临时产物都写到 `D:`。**
+
+在运行任何会产生大量临时输出的命令前 —— `pnpm install`、`pnpm test`、
+`pnpm run test:e2e`、`pnpm run build:*`、`pnpm --dir openclaw_runtime run build`、
+vitest、playwright、tsgo —— 先把进程临时目录指向 `D:`：
+
+- PowerShell（本仓在 Windows 上的默认 shell）：
+
+  ```powershell
+  $env:TEMP = 'D:\tmp'; $env:TMP = 'D:\tmp'
+  New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
+  ```
+
+- Bash / Git Bash：
+
+  ```bash
+  export TMPDIR=/d/tmp && mkdir -p "$TMPDIR"
+  ```
+
+约定：
+
+- 长日志不要 `Tee-Object` 到 `%TEMP%`（在 `C:`）；写到 `D:\tmp\<name>.log`，或直接读命令输出。
+- 临时脚本、fixture、trace、截图放 `D:\tmp` 或仓库内已忽略的目录，不要新建未忽略的临时目录。
+- Playwright 的 `test-results/`、`playwright-report/` 已在 `.gitignore` 中；如要改写输出目录，同样指向 `D:`。
+- 遇到磁盘空间报错时先看 `Get-PSDrive C` 的剩余空间，切到 `D:` 后重跑；**这几乎总是环境失败，不是代码失败**，也不要因此放宽门禁或把该失败写进验收证据。
+- 该策略不授权为腾空间删除用户数据、其他 worktree 或未跟踪文件；只清理 agent 自己产生的大体积临时输出。
+
+规则文件：`harness/specs/rules/disk-temp-policy.md`。
+
 ## Shell Strategy (Git Bash as POSIX shell)
 
 ### PATH 配置
