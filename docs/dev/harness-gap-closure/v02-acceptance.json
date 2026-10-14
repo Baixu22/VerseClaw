@@ -13,7 +13,8 @@
   "candidate": {
     "branch": "codex/harness-gap-residuals-20261014",
     "base": "4eb46dd8c",
-    "note": "base is origin/main after PR #221; the candidate additionally fixes the 3 residual E2E failures and refreshes Agent Dev evidence"
+    "note": "base is origin/main after PR #221; the candidate additionally fixes the 3 residual E2E failures and refreshes Agent Dev evidence",
+    "head": "65005caf4"
   },
   "decision": {
     "status": "PASS",
@@ -24,13 +25,13 @@
     "fullUnit": {
       "command": "pnpm test",
       "exitCode": 0,
-      "files": 949,
+      "files": 953,
       "filesFailed": 0,
-      "filesPassed": 945,
+      "filesPassed": 949,
       "filesSkipped": 4,
-      "tests": 8386,
+      "tests": 8453,
       "testsFailed": 0,
-      "testsPassed": 8335,
+      "testsPassed": 8402,
       "testsSkipped": 51
     },
     "typecheckUncached": {
@@ -92,7 +93,7 @@
       "command": "pnpm agent-dev:audit",
       "exitCode": 0,
       "grade": "A",
-      "totalScore": 94,
+      "totalScore": 97,
       "maxScore": 100,
       "disqualifiers": 0
     }

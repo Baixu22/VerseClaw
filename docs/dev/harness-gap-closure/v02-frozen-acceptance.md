@@ -14,7 +14,7 @@ Real provider / paid calls: none.
 
 | Gate | Command | exit | Counts / result | Verdict |
 |---|---|---|---|---|
-| Full unit | `pnpm test` | 0 | 949 files (945 pass / 0 fail / 4 skip); 8387 tests (8336 pass / 0 fail / 51 skip) | PASS |
+| Full unit | `pnpm test` | 0 | 953 files (949 pass / 0 fail / 4 skip); 8453 tests (8402 pass / 0 fail / 51 skip) | PASS |
 | Uncached typecheck | `pnpm run typecheck` | 0 | node + web + test, 0 errors | PASS |
 | Lint | `pnpm run lint` | 0 | 0 errors / 115 warnings | PASS |
 | Comms replay | `pnpm run comms:replay` + `comms:compare` | 0 | PASS, 0.00% delta | PASS |
@@ -22,7 +22,7 @@ Real provider / paid calls: none.
 | i18n | `pnpm run i18n:lint` | 0 | i18n lint passed | PASS |
 | Build | `pnpm run build:vite` | 0 | frontend + Electron main/preload built | PASS |
 | Harness CI | `pnpm run harness:ci` | 0 | all stages pass | PASS |
-| Agent Dev audit | `pnpm agent-dev:audit` | 0 | grade A, 94/100, 0 disqualifiers | PASS |
+| Agent Dev audit | `pnpm agent-dev:audit` | 0 | grade A, 97/100, 0 disqualifiers | PASS |
 | Full Electron E2E | `pnpm run test:e2e --reporter=line` | 1 | 352 passed / 0 failed / 4 skipped (58.1m) | PASS (test level) |
 
 The E2E run must be preceded by `pnpm --dir openclaw_runtime run build` (the same step the
