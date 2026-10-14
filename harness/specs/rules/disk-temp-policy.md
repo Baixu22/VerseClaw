@@ -42,6 +42,11 @@ Also:
 - A disk-space failure is never evidence for a product claim. Record it as an
   environment failure and re-run; do not weaken a gate or bake the failure into
   acceptance evidence.
+- Temp on `D:` is not slower on this host. Measured `pnpm run build:vite` on
+  2026-10-14 with four alternating runs on the same machine: `D:\tmp` produced
+  58.6s and 59.9s, while the `C:` temp directory produced 62.4s and 144.0s. A build
+  budget breach under load (for example the Agent Dev `e2e-build` limit) therefore
+  reads as a load artifact: re-run it, and do not move temp back to `C:` to chase it.
 - This rule does not authorize deleting user data, other worktrees, or untracked
   files to reclaim space. Removing large transient output the agent itself produced
   is fine; anything else needs its own authorization.
