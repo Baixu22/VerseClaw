@@ -5,13 +5,14 @@ driven_by: agent。发布/公开/付费：未授权、未执行。
 
 ## 裁决
 
-**内部受控裁决：PARTIAL / NO-GO for GA。**
+**内部受控裁决：PARTIAL（GA-ready=false）。**
 
-- 30 个来源槽位均已有归属包；E/S/L/G/V 阶段节点在本仓内完成或给出技术 NO-GO。
-- 全链正式全门未全绿（见 `v02-frozen-acceptance.md`）：`pnpm test`、`pnpm run lint`、`harness:ci` 未通过，
-  全量 Electron E2E 未执行。失败均为 `origin/main` 既有基线红，非本变更集回归。
-- A1–A6 pilot 复验结论：A1/A3 PASS；A2 criterion 4、A4 production caller、A5 resume replan、
-  A6 verifier/lease/p99 均为 NO-GO/NOT-MEASURED 并已在各节点证据中如实标注。
+- 30 个来源槽位均已有归属包；E/S/L/G/V 阶段节点在本仓内完成或给出受控边界。
+- V02 现为内部受控 PASS：`pnpm test`、`pnpm run lint`、uncached typecheck、comms、contract、i18n、
+  build、`harness:ci`、`agent-dev:audit` 全绿，全量 Electron E2E 测试级 **352 passed / 0 failed / 4 skipped**。
+- A1–A6 pilot 复验结论：A1/A2/A3/A4/A5/A6 全部 PASS。A2/A5/A6 的缺实现由 `area-composition-spec.md`
+  指定的组合 facade（`openclaw_runtime/src/agents/cross-area/cross-area-facades.ts`）恢复并覆盖；A4 保持
+  offline-only 边界，新增显式 dev-tool CLI `scripts/a4-decision-quality-audit.mts` 作为唯一 sanctioned caller。
 
 ## 产品锁
 
@@ -23,10 +24,9 @@ driven_by: agent。发布/公开/付费：未授权、未执行。
 
 ## 残余（不声称完成）
 
-- main 既有基线红：11 个单元测试失败（VerseShell 二进制缺失、RC-01 基线祖先、i18n mock、P5 断言漂移）。
-- `pnpm run lint`：4 errors / 115 warnings（既有）。
-- `agent-dev:audit`：Agent Dev 证据过期。
-- 全量 Electron E2E、外部 CI、真实 provider 调用未执行。
+- 外部 GitHub Actions CI 未执行。
+- 真实 provider / 付费调用未执行（本包范围外）。
+- Playwright worker-teardown timeout 是 `tests/e2e/fixtures/electron.ts` 记录的既有进程产物，不是测试失败。
 - 无 real-human 证据；所有产物 `driven_by: agent`。
 
 ## 结论

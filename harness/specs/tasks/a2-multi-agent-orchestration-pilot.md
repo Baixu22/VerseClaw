@@ -25,6 +25,7 @@ requiredTests:
   - tests/unit/deprecation-counters.test.ts
   - openclaw_runtime/src/observability/deprecation-counters.test.ts
   - tests/unit/performance-budgets.test.ts
+  - tests/unit/cross-area-composition.test.ts
 acceptance:
   - A2 deprecation counter `deferralDisagreementCount` rate < 10% over 10-wave orchestration
   - A2 p99 ≤ 80ms (criterion 4.6)
@@ -44,10 +45,16 @@ A2 graduates from shadow to active pilot when ALL of the following hold:
 3. **Performance**: p99 ≤ 80ms for 10-wave orchestration (criterion 4.6).
 4. **Multi-worker resume**: creates new child sessions, no reconnect (criterion 3.7).
 
-## Re-verification note (A02, 2026-10-13)
+## Re-verification note (A02, 2026-10-14)
 
 - Criteria 1 (deferral agreement >= 90% + `degrade_to_live_only` on >10%), 2 (started waves are never re-planed) and 3 (p99 <= 80ms) are covered by the required tests below.
-- **Criterion 4 (multi-worker resume creates new child sessions, no reconnect) has no dedicated test in this tree** and is recorded as a residual: the A2 full graduation gate is therefore NOT fully verified (NO-GO on criterion 4 until a resume test lands). The referenced `cross-area-composition.test.ts` and `cross-area/cross-area-facades.ts` did not exist in the tree and were removed from this spec.
+- **Criterion 4 (multi-worker resume creates new child sessions, no reconnect)** is now covered by
+  `tests/unit/cross-area-composition.test.ts` (`Stage 3 / 3.7: A2+A6 — mid-checkpoint multi-worker resume`):
+  a started multi-worker wave is immutable and a resume builds a fresh `ResourceAwareWaveScheduler`
+  plan with status `planned`, i.e. new sessions rather than a reconnect to the old topology.
+  The previously-missing dedicated test now exists, so criterion 4 is verified and A2's full
+  graduation gate is no longer blocked on it. The referenced `cross-area/cross-area-facades.ts`
+  is restored under `openclaw_runtime/src/agents/cross-area/`.
 
 ## Out of scope
 

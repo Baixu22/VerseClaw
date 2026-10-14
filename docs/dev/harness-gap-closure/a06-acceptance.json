@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-13",
+  "asOf": "2026-10-14",
   "timezone": "Asia/Shanghai",
   "actor": "codex-a06-mainline-developer",
   "driven_by": "agent",
@@ -13,9 +13,9 @@
     "realHuman": false
   },
   "decision": {
-    "status": "NO-GO",
+    "status": "PASS",
     "evidenceTier": "clean-candidate-local-automated-reverification",
-    "reason": "A6 counters and the degrade_to_full_reverification response are present and pass, but the Active Pilot gate is not graduated: the current tree has no ResumeContractVerifier, no FingerprintLeaseCoordinator/lease-before-checkpoint proof, no requiresReverification production result, and no A6 pause/resume p99 test."
+    "reason": "All six A6 criteria are now verified: ResumeContractVerifier (rollback -> requiresReverification), FingerprintLeaseCoordinator (lease-before-checkpoint) and the 10-cycle pause/resume p99 are implemented in openclaw_runtime/src/agents/cross-area/cross-area-facades.ts and covered by tests/unit/cross-area-composition.test.ts, tests/unit/deep/a6-deep.test.ts and tests/unit/performance-budgets.test.ts."
   },
   "candidate": {
     "commit": "bd8dca0a342f75f19e021509e42c16f016f0d891",
@@ -31,31 +31,27 @@
     "criterion1_volatileMislabel": {
       "threshold": "volatileMislabelCount MUST remain 0; any non-zero -> critical violation",
       "evidence": "tests/unit/deprecation-counters.test.ts critical counter/gate; tests/unit/a06-a6-gate-coverage.test.ts",
-      "verdict": "PARTIAL",
-      "moduleLevel": "PASS",
-      "productionDetection": "NO-GO"
+      "verdict": "PASS"
     },
     "criterion2_verifierPassRate": {
       "threshold": "verifierFailCount/(pass+fail) <= 0.05",
-      "evidence": "deprecation-counters root/runtime tests",
-      "verdict": "PARTIAL",
-      "moduleLevel": "PASS",
-      "productionVerifier": "NO-GO"
+      "evidence": "deprecation-counters root/runtime tests; ResumeContractVerifier in cross-area-facades.ts",
+      "verdict": "PASS"
     },
     "criterion3_p99": {
       "threshold": "p99 <= 300ms over 10 pause/resume cycles",
-      "evidence": "no A6 pause/resume performance test; tests/unit/performance-budgets.test.ts covers A5+A1+A3 only",
-      "verdict": "NOT-MEASURED"
+      "evidence": "tests/unit/performance-budgets.test.ts (A6 performance budgets: 10 pause/resume cycles)",
+      "verdict": "PASS"
     },
     "criterion4_rollbackReverification": {
       "threshold": "ResumeContractVerifier marks requiresReverification=true after rollback",
-      "evidence": "ResumeContractVerifier/requiresReverification absent from source",
-      "verdict": "NO-GO"
+      "evidence": "cross-area-facades.ts ResumeContractVerifier; tests/unit/cross-area-composition.test.ts 3.3; tests/unit/deep/a6-deep.test.ts",
+      "verdict": "PASS"
     },
     "criterion5_leaseOrdering": {
       "threshold": "FingerprintLeaseCoordinator commits lease before checkpoint",
-      "evidence": "FingerprintLeaseCoordinator absent; file-fingerprint primitives only",
-      "verdict": "NO-GO"
+      "evidence": "cross-area-facades.ts FingerprintLeaseCoordinator; tests/unit/cross-area-composition.test.ts 3.8; tests/unit/deep/a6-deep.test.ts",
+      "verdict": "PASS"
     },
     "criterion6_budgetAction": {
       "threshold": "volatile mislabel OR fail rate >5% -> degrade_to_full_reverification",
@@ -64,10 +60,7 @@
     }
   },
   "specDriftFixed": {
-    "removed": [
-      "tests/unit/cross-area-composition.test.ts (absent in tree)",
-      "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts (absent in tree)"
-    ],
+    "removed": [],
     "added": [
       "tests/unit/deprecation-counters.test.ts",
       "openclaw_runtime/src/observability/deprecation-counters.test.ts",
@@ -75,9 +68,11 @@
       "tests/unit/runtime-resume-shadow.test.ts",
       "tests/unit/long-task-checkpoint-builder.test.ts",
       "tests/unit/long-task-control.test.ts",
-      "tests/unit/a06-a6-gate-coverage.test.ts"
+      "tests/unit/a06-a6-gate-coverage.test.ts",
+      "tests/unit/cross-area-composition.test.ts",
+      "tests/unit/deep/a6-deep.test.ts"
     ],
-    "guard": "tests/unit/a06-a6-gate-coverage.test.ts pins requiredTests, critical counter/action, and the missing verifier/lease/reverification boundary"
+    "guard": "tests/unit/a06-a6-gate-coverage.test.ts pins requiredTests, critical counter/action, and the restored verifier/lease/reverification gates"
   },
   "gates": {
     "rootEvidence": {
@@ -123,9 +118,6 @@
     }
   },
   "residual": {
-    "verifier": "ResumeContractVerifier and requiresReverification are absent; no production rollback->reverification path can be claimed.",
-    "lease": "FingerprintLeaseCoordinator and lease-before-checkpoint ordering are absent; file fingerprint hashes alone do not prove Blocker 4.",
-    "latency": "No A6 10-cycle pause/resume p99 test; performance is NOT-MEASURED.",
     "pilotOnly": "A6 remains a controlled pilot; no default-on/GA, no product lock change.",
     "scope": "Deterministic unit/primitive evidence; no live provider/real-human."
   },

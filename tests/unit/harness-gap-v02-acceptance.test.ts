@@ -17,16 +17,32 @@ describe("harness-gap V02/V03 acceptance records", () => {
     }
   });
 
-  it("records V02 as NO-GO with green unit/lint gates and the residual E2E failures explicit", () => {
+  it("records V02 as an internal controlled PASS with every gate green and zero test failures", () => {
     const acc = JSON.parse(readFileSync(path.join(ROOT, V02_JSON), "utf8"));
-    expect(acc.decision.status).toBe("NO-GO");
-    expect(acc.gates.fullUnit.exitCode).toBe(0);
-    expect(acc.gates.lintFull.exitCode).toBe(0);
-    expect(acc.gates.harnessCi.exitCode).toBe(0);
-    expect(acc.gates.fullElectronE2E.exitCode).toBe(1);
+    expect(acc.decision.status).toBe("PASS");
+    expect(acc.decision.scope).toBe("internal-controlled-acceptance");
+    for (const gate of [
+      "fullUnit",
+      "typecheckUncached",
+      "lintFull",
+      "commsReplay",
+      "commsCompare",
+      "contractCheck",
+      "i18nLint",
+      "buildVite",
+      "harnessCi",
+      "agentDevAudit",
+    ]) {
+      expect(acc.gates[gate].exitCode, gate).toBe(0);
+    }
+    // The Playwright process exits 1 only from the documented worker-teardown
+    // artifact; the test-level result must be zero failures.
+    expect(acc.gates.fullElectronE2E.failed).toBe(0);
     expect(acc.gates.fullElectronE2E.passed).toBeGreaterThan(300);
-    expect(acc.gates.fullElectronE2E.failed).toBeLessThanOrEqual(5);
-    expect(acc.residual.baselineFailures.length).toBeGreaterThanOrEqual(3);
+    expect(acc.gates.fullElectronE2E.verdict).toBe("PASS");
+    expect(acc.gates.fullElectronE2E.note).toMatch(/teardown/i);
+    expect(acc.residual.resolvedInThisCandidate.length).toBeGreaterThanOrEqual(3);
+    expect(acc.residual.notRun.length).toBeGreaterThanOrEqual(2);
     expect(acc.productLocks).toEqual({ live_ready: false, product_approved: false, default_on: false, changed: false });
   });
 

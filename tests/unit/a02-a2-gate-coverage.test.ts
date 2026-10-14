@@ -26,9 +26,6 @@ describe("A02 A2 orchestration pilot gate coverage", () => {
     }
     // The removed stale references must not reappear in the frontmatter lists
     // (the re-verification note may still name them as removed).
-    const frontmatter = spec.slice(0, spec.indexOf("\n---", 4));
-    expect(frontmatter).not.toContain("tests/unit/cross-area-composition.test.ts");
-    expect(frontmatter).not.toContain("cross-area/cross-area-facades.ts");
   });
 
   it("keeps criteria 1-3 mapped to assertions at the original thresholds", () => {
@@ -43,10 +40,12 @@ describe("A02 A2 orchestration pilot gate coverage", () => {
     expect(spec).toContain("p99 ≤ 80ms");
   });
 
-  it("records criterion 4 (multi-worker resume) as an explicit residual, not a pass", () => {
+  it("points criterion 4 (multi-worker resume) at the restored cross-area test", () => {
     const spec = read(SPEC);
-    expect(spec).toContain("Criterion 4");
-    expect(spec).toMatch(/NO-GO|residual/i);
     expect(spec).toMatch(/multi-worker resume/i);
+    const crossArea = read("tests/unit/cross-area-composition.test.ts");
+    expect(crossArea).toContain("mid-checkpoint multi-worker resume");
+    expect(crossArea).toContain("does not reconnect");
+    expect(existsSync(join(ROOT, "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts"))).toBe(true);
   });
 });

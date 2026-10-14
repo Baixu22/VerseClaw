@@ -4,10 +4,12 @@ id: harness-gap-a05-adaptive-context-budget-pilot-reverify
 title: 复验 A5 自适应上下文预算受控 pilot 门（A05）
 scenario: backend-communication
 taskType: runtime-bridge
-intent: A05 按原 spec 门限复验 A5 Adaptive Context Budget 受控 pilot 门；逐条映射现有可执行证据，不重定义门限；移除树中不存在的 legacy 路径，补齐 P5 现有测试与 coverage 守卫；`ContextBudgetPlanner.replanOnResume` 在当前源码不存在，如实记为 NO-GO residual。
+intent: A05 按原 spec 门限复验 A5 Adaptive Context Budget 受控 pilot 门；逐条映射可执行证据，不重定义门限；恢复 `area-composition-spec.md` 指定的 `ContextBudgetPlanner`（含 `replanOnResume`）组合 facade，补齐 resume re-plan 与 P5 现有测试、coverage 守卫。
 touchedAreas:
   - harness/specs/tasks/a5-adaptive-context-budget-pilot.md
   - tests/unit/a05-a5-gate-coverage.test.ts
+  - tests/unit/cross-area-composition.test.ts
+  - tests/unit/deep/a5-deep.test.ts
   - harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md
   - docs/dev/harness-gap-closure/a05-adaptive-context-budget-gate.md
   - docs/dev/harness-gap-closure/a05-acceptance.json
@@ -42,7 +44,7 @@ requiredTests:
 acceptance:
   - 判据1 plan adoption rate ≥80%（即 ignored ≤20%）+ `degrade_to_default_budget`：deprecation-counters 与 compaction-budget-shadow 当前断言 PASS。
   - 判据2 planner p99 ≤30ms：compression-planner 与 performance-budgets 当前断言 PASS。
-  - 判据3 `ContextBudgetPlanner.replanOnResume` resume 后重跑：当前源码无该符号/无专用测试，保持 NO-GO residual，不伪造实现。
+  - 判据3 `ContextBudgetPlanner.replanOnResume` resume 后重跑：`openclaw_runtime/src/agents/cross-area/cross-area-facades.ts` 实现 + `tests/unit/cross-area-composition.test.ts`（3.6）+ `tests/unit/deep/a5-deep.test.ts`，PASS。
   - 判据4 started wave 不可 re-plan：resource-aware-wave-scheduler 单测 PASS。
   - 判据5 ignored >20% → `degrade_to_default_budget`：现有 registry 单测 PASS。
   - 判据6 A1+A5+A3 cumulative per-turn smoke p99 ≤300ms：performance-budgets 断言 PASS。
@@ -59,4 +61,4 @@ docs:
 
 # A05 冻结实施边界
 
-A05 不实现新功能，只复验既有 A5 pilot 门与修正 spec drift。门限取自原 `a5-adaptive-context-budget-pilot.md`（adoption ≥80%、p99 ≤30ms、resume replan、wave immutability、degrade_to_default_budget、A1+A5+A3 cumulative p99 ≤300ms），**不重定义**。`ContextBudgetPlanner.replanOnResume` 在当前源码中不存在，保持 NO-GO；移除已删除的 legacy 路径，不新增不存在的测试。
+A05 按原门限复验 A5 pilot 门，不重定义阈值（adoption ≥80%、p99 ≤30ms、resume replan、wave immutability、degrade_to_default_budget、A1+A5+A3 cumulative p99 ≤300ms）。`ContextBudgetPlanner.replanOnResume` 由 `area-composition-spec.md` 指定的组合 facade 提供，恢复该 facade 并补齐 resume re-plan 测试；组合 facade 是 shadow/pilot 阶段的可测试层，不等同生产 wiring。

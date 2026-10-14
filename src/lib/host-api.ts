@@ -1401,6 +1401,7 @@ export const hostApi = {
     listTree: (path: string, opts?: FilePreviewTreeOptions) => (
       invokeHost('files', 'listTree', { path, opts })
     ),
+    registerHtmlPreview: (html: string) => invokeHost('files', 'registerHtmlPreview', { html }),
   },
   media: {
     thumbnails: (input: { paths: MediaThumbnailEntry[] }) => invokeHost('media', 'thumbnails', input),
