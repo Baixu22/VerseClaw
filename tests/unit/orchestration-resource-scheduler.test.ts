@@ -11,6 +11,8 @@ function node(params: {
   roleName: string;
   dependsOn?: string[];
   isVerifier?: boolean;
+  writeSet?: string[];
+  isolation?: OrchestrationTaskNode['isolation'];
 }): OrchestrationTaskNode {
   return {
     taskNodeId: params.taskNodeId,
@@ -23,6 +25,8 @@ function node(params: {
     attemptPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 1 },
     status: params.dependsOn?.length ? 'planned' : 'ready',
     ...(params.isVerifier ? { isVerifier: true } : {}),
+    ...(params.writeSet ? { writeSet: [...params.writeSet] } : {}),
+    ...(params.isolation ? { isolation: params.isolation } : {}),
   };
 }
 
@@ -204,5 +208,102 @@ describe('resource-aware orchestration scheduler', () => {
       { roleName: 'reviewer', taskNodeIds: ['reviewer-1'], estimatedCost: 2 },
     ]);
     expect(result.metrics.budgetEstimate).toBe(20);
+  });
+
+  it('packs disjoint write sets into the same wave and splits intersecting write sets', () => {
+    const disjoint = scheduleResourceAwareWaves({
+      graph: graph([
+        node({ taskNodeId: 'implementer-1', roleName: 'implementer', writeSet: ['src/a.ts'] }),
+        node({ taskNodeId: 'docs-writer-1', roleName: 'docs-writer', writeSet: ['docs/a.md'] }),
+      ]),
+      roles: [
+        role({ name: 'implementer', tools: ['read', 'write'] }),
+        role({ name: 'docs-writer', tools: ['read', 'write'] }),
+      ],
+      options: { maxActiveRoles: 2 },
+    });
+    expect(disjoint.waves.map((wave) => wave.taskNodeIds)).toEqual([
+      ['implementer-1', 'docs-writer-1'],
+    ]);
+
+    const intersecting = scheduleResourceAwareWaves({
+      graph: graph([
+        node({ taskNodeId: 'implementer-1', roleName: 'implementer', writeSet: ['src/a.ts'] }),
+        node({ taskNodeId: 'docs-writer-1', roleName: 'docs-writer', writeSet: ['src/a.ts'] }),
+      ]),
+      roles: [
+        role({ name: 'implementer', tools: ['read', 'write'] }),
+        role({ name: 'docs-writer', tools: ['read', 'write'] }),
+      ],
+      options: { maxActiveRoles: 2 },
+    });
+    expect(intersecting.waves.map((wave) => wave.taskNodeIds)).toEqual([
+      ['implementer-1'],
+      ['docs-writer-1'],
+    ]);
+    expect(intersecting.waves[0]?.deferredReasons).toContain('write-set-conflict');
+  });
+
+  it('does not let custom roles bypass write-set conflicts without default write tools', () => {
+    const result = scheduleResourceAwareWaves({
+      graph: graph([
+        node({ taskNodeId: 'custom-a', roleName: 'custom-a', writeSet: ['src/shared.ts'] }),
+        node({ taskNodeId: 'custom-b', roleName: 'custom-b', writeSet: ['src/shared.ts'] }),
+      ]),
+      roles: [
+        role({ name: 'custom-a', tools: ['read'] }),
+        role({ name: 'custom-b', tools: ['read'] }),
+      ],
+      options: { maxActiveRoles: 2 },
+    });
+
+    expect(result.waves.map((wave) => wave.taskNodeIds)).toEqual([
+      ['custom-a'],
+      ['custom-b'],
+    ]);
+    expect(result.waves[0]?.deferredReasons).toContain('write-set-conflict');
+  });
+
+  it('keeps shared writers with incomplete write sets in single-writer waves', () => {
+    const result = scheduleResourceAwareWaves({
+      graph: graph([
+        node({ taskNodeId: 'implementer-1', roleName: 'implementer', writeSet: ['src/a.ts'] }),
+        node({ taskNodeId: 'implementer-2', roleName: 'implementer' }),
+      ]),
+      roles: [role({ name: 'implementer', tools: ['read', 'write'] })],
+      options: { maxActiveRoles: 2 },
+    });
+
+    expect(result.waves.map((wave) => wave.taskNodeIds)).toEqual([
+      ['implementer-1'],
+      ['implementer-2'],
+    ]);
+    expect(result.waves[0]?.deferredReasons).toContain('insufficient-writeSet-proof');
+    expect(result.waves[0]?.reason).toContain('insufficient-writeSet-proof');
+  });
+
+  it('allows overlapping writers to share a wave when both are worktree isolated', () => {
+    const result = scheduleResourceAwareWaves({
+      graph: graph([
+        node({
+          taskNodeId: 'implementer-1',
+          roleName: 'implementer',
+          writeSet: ['src/shared.ts'],
+          isolation: 'worktree',
+        }),
+        node({
+          taskNodeId: 'implementer-2',
+          roleName: 'implementer',
+          writeSet: ['src/shared.ts'],
+          isolation: 'worktree',
+        }),
+      ]),
+      roles: [role({ name: 'implementer', tools: ['read', 'write'] })],
+      options: { maxActiveRoles: 2 },
+    });
+
+    expect(result.waves.map((wave) => wave.taskNodeIds)).toEqual([
+      ['implementer-1', 'implementer-2'],
+    ]);
   });
 });

@@ -7,7 +7,9 @@ import type { DeliveryContext } from "../utils/delivery-context.types.js";
 import type { SubagentRunOutcome } from "./subagent-announce-output.js";
 import type { SubagentLifecycleEndedReason } from "./subagent-lifecycle-events.js";
 import type { SpawnSubagentMode } from "./subagent-spawn.types.js";
+import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js";
 import type {
+  CodingIsolationMode,
   OrchestrationQualityPolicy,
   OrchestrationRepairPolicy,
   OrchestrationExecutionWave,
@@ -50,6 +52,14 @@ export type TeamOrchestrationMetadata = {
   ledger?: OrchestrationTaskLedgerEntry;
   taskGraph?: OrchestrationTaskGraph;
   executionWaves?: OrchestrationExecutionWave[];
+  isolation?: CodingIsolationMode;
+  worktreeId?: string;
+  worktreeBackend?: WorktreeBackend;
+  worktreeWriteSet?: string[];
+  worktreeMergeStatus?: "merged" | "conflict" | "rework" | "missing" | "error";
+  worktreeWriteSetMismatch?: string[];
+  worktreeMergeReason?: string;
+  worktreeMergeProcessedAt?: number;
   routeDiagnostics?: RouteDiagnostics;
   qualityPolicy?: OrchestrationQualityPolicy;
   repairPolicy?: OrchestrationRepairPolicy;
