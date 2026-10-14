@@ -19,6 +19,7 @@ import type {
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { getSetting, setSetting } from '../utils/store';
 import {
+  getBackgroundWorkGateState,
   getEfficiencyShedState,
   getEfficiencySummary,
   isRuntimeEfficiencyRunning,
@@ -66,6 +67,7 @@ async function buildState(): Promise<RuntimeEfficiencyState> {
     measured: summary !== null,
     summary,
     shed: toShedState(getEfficiencyShedState()),
+    backgroundWork: getBackgroundWorkGateState(),
   };
 }
 

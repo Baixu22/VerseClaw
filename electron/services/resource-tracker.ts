@@ -16,6 +16,7 @@ import {
   type ResourceTrackerRegisterPayload,
 } from '../../shared/types/resource-tracker';
 import { logger } from '../utils/logger';
+import { getBackgroundWorkGate } from '../../openclaw_runtime/src/resources/background-work-gate';
 
 const execAsync = promisify(exec);
 
@@ -62,6 +63,7 @@ export class ResourceTracker {
   private resources = new Map<string, ResourceRecord>();
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
   private discoveryTimers = new Set<ReturnType<typeof setTimeout>>();
+  private heartbeatInFlight = false;
 
   start(): void {
     if (this.heartbeatTimer) return;
@@ -213,12 +215,20 @@ export class ResourceTracker {
   }
 
   private async runHeartbeat(): Promise<void> {
-    const entries = Array.from(this.resources.values());
-    if (entries.length === 0) return;
+    if (this.heartbeatInFlight) return;
+    this.heartbeatInFlight = true;
+    try {
+      await getBackgroundWorkGate().runBackground('resource-tracker-heartbeat', async () => {
+        const entries = Array.from(this.resources.values());
+        if (entries.length === 0) return;
 
-    const checks = entries.map((resource) => this.probeResource(resource));
-    await Promise.allSettled(checks);
-    await this.autoCleanup();
+        const checks = entries.map((resource) => this.probeResource(resource));
+        await Promise.allSettled(checks);
+        await this.autoCleanup();
+      });
+    } finally {
+      this.heartbeatInFlight = false;
+    }
   }
 
   private async probeResource(record: ResourceRecord): Promise<void> {

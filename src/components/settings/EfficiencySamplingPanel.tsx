@@ -68,6 +68,7 @@ export function EfficiencySamplingPanel() {
   const latest = summary?.latest ?? null;
   const measured = Boolean(state?.measured && latest);
   const shed = state?.shed ?? null;
+  const backgroundWork = state?.backgroundWork ?? null;
 
   return (
     <section className="border-y border-border py-4" data-testid="settings-efficiency-sampling">
@@ -125,6 +126,18 @@ export function EfficiencySamplingPanel() {
               <Badge variant="secondary" data-testid="settings-efficiency-shedding">
                 {t('developer.efficiencySampling.shedding')}
               </Badge>
+            ) : null}
+            {backgroundWork ? (
+              <span data-testid="settings-efficiency-background-work">
+                {backgroundWork.deferring
+                  ? t('developer.efficiencySampling.backgroundDeferred', {
+                      reason: backgroundWork.lastDeferReason ?? 'resource-pressure',
+                    })
+                  : t('developer.efficiencySampling.backgroundSummary', {
+                      deferred: backgroundWork.deferredCount,
+                      resumed: backgroundWork.resumeCount,
+                    })}
+              </span>
             ) : null}
           </div>
         ) : (

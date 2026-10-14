@@ -575,6 +575,8 @@
       "cpu": "CPU {{value}}%",
       "rss": "RSS {{value}}",
       "shedding": "バックグラウンド負荷を抑制中",
+      "backgroundDeferred": "バックグラウンド処理を延期: {{reason}}",
+      "backgroundSummary": "延期 {{deferred}} 回 · 再開 {{resumed}} 回",
       "enabledToast": "ランタイム効率サンプリングを有効にしました",
       "disabledToast": "ランタイム効率サンプリングを無効にしました",
       "loadFailed": "ランタイム効率の状態を読み取れませんでした",

@@ -575,6 +575,8 @@
       "cpu": "CPU {{value}}%",
       "rss": "RSS {{value}}",
       "shedding": "Background load shed",
+      "backgroundDeferred": "Background deferred: {{reason}}",
+      "backgroundSummary": "Background deferrals {{deferred}} · resumes {{resumed}}",
       "enabledToast": "Runtime efficiency sampling enabled",
       "disabledToast": "Runtime efficiency sampling disabled",
       "loadFailed": "Failed to read runtime efficiency state",
