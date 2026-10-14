@@ -300,6 +300,21 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     riskNote:
       'VS-P3-01：只读桥。clawx-patch-preview-v1 profile 只列 file.diff / file.hash / file.read_range，14 个写入与 tx.* operation 在请求发出前被机械拒绝；commit / undo / stale-write guard / recovery 仍只属 runtime.coding.writeJournal（见本表 write-journal 条）。已知登记缺口：同族另外 10 个 verseShellFoundation 旗标（VS-P0/P1/P2 交付物）尚未单独入本目录，故本条的 enable 串是目前唯一记录整条前置链的落盘处。',
   },
+  {
+    id: 'rc03-seal',
+    wave: 'RC-03',
+    kind: 'config',
+    key: 'runtime.rc03.seal',
+    defaultDisplay: 'off (opt-in)',
+    defaultValue: false,
+    risk: 'opt-in',
+    enable:
+      'Set env OPENCLAW_RC03_SEAL=1 (or runtime.rc03.seal = true) and restart gateway/runtime. Enabling turns on RC-03 message-replacement sealing plus the correlated runtime/wire receipts; it does not change returned summaries.',
+    rollback:
+      'Unset OPENCLAW_RC03_SEAL or set runtime.rc03.seal = false and restart. With the flag off no seal, runtime receipt, or wire receipt is written.',
+    riskNote:
+      'Opt-in observation only. Before this entry existed, the "RC-03 is opt-in" intent had no referencable record, so a reviewer could not cite it as proven design intent (deviation TFD-lane2-rc03-seal-default-zero-2026-08-27). Keep default-off; do not flip it inside an implementation task.',
+  },
 ] as const;
 
 export const DCS_PROD_METRIC_EXPORT = {

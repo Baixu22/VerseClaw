@@ -1,7 +1,16 @@
-export type BackgroundWorkPriority = "foreground" | "background";
-export type BackgroundWorkDeferReason = "shed-signal" | "queue-depth" | "tree-rss" | "tree-cpu";
-export type BackgroundWorkGateInput = { shedSignal?: boolean; queueDepth?: number; treeRssBytes?: number; treeCpuPercent?: number };
-export type BackgroundWorkGateState = { deferring: boolean; reason: BackgroundWorkDeferReason | null; activeReasons: BackgroundWorkDeferReason[]; deferredCount: number; resumeCount: number; lastDeferReason: BackgroundWorkDeferReason | null; lastTransitionAt: number | null; transitionCount: number; pendingCount: number; foregroundChecks: number; foregroundDeferredCount: number };
+import {
+  type BackgroundWorkDeferReason,
+  type BackgroundWorkGateInput,
+  type BackgroundWorkGateState,
+  type BackgroundWorkPriority,
+} from "../../../shared/types/resources.js";
+
+export type {
+  BackgroundWorkDeferReason,
+  BackgroundWorkGateInput,
+  BackgroundWorkGateState,
+  BackgroundWorkPriority,
+} from "../../../shared/types/resources.js";
 export const DEFAULT_BACKGROUND_WORK_WATERMARKS = { highQueueDepth: 16, lowQueueDepth: 4, highTreeRssBytes: 3 * 1024 ** 3, lowTreeRssBytes: 2 * 1024 ** 3, highCpuPercent: 300, lowCpuPercent: 120, minDwellMs: 10_000 };
 type Pending = { task: () => Promise<unknown> | unknown; resolve: (value: unknown) => void; reject: (error: unknown) => void };
 function finite(value: number | undefined): number | undefined { return typeof value === "number" && Number.isFinite(value) ? value : undefined; }

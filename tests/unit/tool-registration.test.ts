@@ -81,6 +81,22 @@ describe('assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)', () => {
       expect(() => assertWriteRiskProfileForTool('write', profile)).not.toThrow();
     });
 
+    it('passes with a durable_state profile', () => {
+      const profile: WriteRiskProfile = {
+        kind: 'durable_state',
+        ownerStore: 'task-ledger',
+        requiresApproval: false,
+      };
+      expect(() => assertWriteRiskProfileForTool('write', profile)).not.toThrow();
+    });
+
+    it('throws when durable_state has no ownerStore', () => {
+      const invalid = { kind: 'durable_state', ownerStore: '   ', requiresApproval: false };
+      expect(() => assertWriteRiskProfileForTool('write', invalid)).toThrow(
+        MissingWriteRiskProfileError,
+      );
+    });
+
     it('throws when declared_paths has empty writePaths array', () => {
       const invalid = { kind: 'declared_paths', writePaths: [] };
       try {
@@ -156,6 +172,17 @@ describe('assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)', () => {
       );
     });
 
+    it('throws when profile is durable_state (not dynamic_writes)', () => {
+      const profile: WriteRiskProfile = {
+        kind: 'durable_state',
+        ownerStore: 'runtime-receipts',
+        requiresApproval: true,
+      };
+      expect(() => assertWriteRiskProfileForTool('destructive', profile)).toThrow(
+        MissingWriteRiskProfileError,
+      );
+    });
+
     it('throws when profile is no_writes (not dynamic_writes)', () => {
       const profile: WriteRiskProfile = { kind: 'no_writes' };
       expect(() => assertWriteRiskProfileForTool('destructive', profile)).toThrow(
@@ -191,12 +218,38 @@ describe('assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)', () => {
       expect(requiresFullFsDiff({ kind: 'no_writes' })).toBe(false);
       expect(requiresFullFsDiff({ kind: 'declared_paths', writePaths: ['x'] })).toBe(false);
       expect(requiresFullFsDiff({ kind: 'pattern_writes', writePattern: '*.log' })).toBe(false);
+      expect(
+        requiresFullFsDiff({ kind: 'durable_state', ownerStore: 'task-ledger', requiresApproval: true }),
+      ).toBe(false);
     });
 
-    it('requiresApproval returns true only for dynamic_writes with requiresApproval=true', () => {
+    it('requiresApproval covers dynamic_writes and durable_state', () => {
       expect(requiresApproval({ kind: 'dynamic_writes', requiresApproval: true })).toBe(true);
       expect(requiresApproval({ kind: 'no_writes' })).toBe(false);
       expect(requiresApproval({ kind: 'declared_paths', writePaths: ['x'] })).toBe(false);
+      expect(
+        requiresApproval({ kind: 'durable_state', ownerStore: 'task-ledger', requiresApproval: true }),
+      ).toBe(true);
+      expect(
+        requiresApproval({ kind: 'durable_state', ownerStore: 'task-ledger', requiresApproval: false }),
+      ).toBe(false);
+    });
+
+    it('a readonly risk level still validates a declared durable_state profile', () => {
+      expect(() =>
+        assertWriteRiskProfileForTool('readonly', {
+          kind: 'durable_state',
+          ownerStore: 'approval-ledger',
+          requiresApproval: true,
+        }),
+      ).not.toThrow();
+      expect(() =>
+        assertWriteRiskProfileForTool('readonly', {
+          kind: 'durable_state',
+          ownerStore: '',
+          requiresApproval: true,
+        }),
+      ).toThrow(/ownerStore/);
     });
 
     it('validateWriteRiskProfile returns null for valid profiles', () => {
@@ -207,6 +260,13 @@ describe('assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)', () => {
       expect(validateWriteRiskProfile({ kind: 'pattern_writes', writePattern: '*.log' })).toBeNull();
       expect(
         validateWriteRiskProfile({ kind: 'dynamic_writes', requiresApproval: true }),
+      ).toBeNull();
+      expect(
+        validateWriteRiskProfile({
+          kind: 'durable_state',
+          ownerStore: 'task-ledger',
+          requiresApproval: true,
+        }),
       ).toBeNull();
     });
 
@@ -220,6 +280,12 @@ describe('assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)', () => {
         'writePattern',
       );
       expect(validateWriteRiskProfile({ kind: 'dynamic_writes' })).toContain('requiresApproval');
+      expect(validateWriteRiskProfile({ kind: 'durable_state', ownerStore: 'x' })).toContain(
+        'requiresApproval',
+      );
+      expect(validateWriteRiskProfile({ kind: 'durable_state', requiresApproval: true })).toContain(
+        'ownerStore',
+      );
       expect(validateWriteRiskProfile({ kind: 'unknown' })).toContain('must be one of');
     });
   });

@@ -14,7 +14,16 @@ export type WriteRiskProfile =
   | { kind: 'no_writes' }
   | { kind: 'declared_paths'; writePaths: string[] }
   | { kind: 'pattern_writes'; writePattern: string }
-  | { kind: 'dynamic_writes'; requiresApproval: true };
+  | { kind: 'dynamic_writes'; requiresApproval: true }
+  /**
+   * Non-filesystem durable-state mutation (deviation
+   * TFD-lane2-toolrisklevel-backlog-p1-2026-08-27). The tool mutates an owning
+   * store — Task Ledger, approval ledger, runtime receipts, … — rather than
+   * workspace files, so a filesystem diff cannot observe it and a readonly
+   * ToolRiskLevel must not be read as "no durable mutation". The declaration
+   * names the owning store/API contract that governs the write.
+   */
+  | { kind: 'durable_state'; ownerStore: string; requiresApproval: boolean };
 
 export const DEFAULT_WRITE_RISK_PROFILE: WriteRiskProfile = {
   kind: 'dynamic_writes',
@@ -26,7 +35,9 @@ export function requiresFullFsDiff(profile: WriteRiskProfile): boolean {
 }
 
 export function requiresApproval(profile: WriteRiskProfile): boolean {
-  return profile.kind === 'dynamic_writes' && profile.requiresApproval;
+  if (profile.kind === 'dynamic_writes') return profile.requiresApproval;
+  if (profile.kind === 'durable_state') return profile.requiresApproval;
+  return false;
 }
 
 export function validateWriteRiskProfile(profile: unknown): string | null {
@@ -60,7 +71,16 @@ export function validateWriteRiskProfile(profile: unknown): string | null {
     }
     return null;
   }
-  return `writeRiskProfile.kind must be one of: no_writes, declared_paths, pattern_writes, dynamic_writes (got: ${String(p.kind)})`;
+  if (p.kind === 'durable_state') {
+    if (typeof p.ownerStore !== 'string' || p.ownerStore.trim().length === 0) {
+      return 'writeRiskProfile.kind="durable_state" requires a non-empty ownerStore string naming the owning store/API contract';
+    }
+    if (typeof p.requiresApproval !== 'boolean') {
+      return 'writeRiskProfile.kind="durable_state" requires a boolean requiresApproval';
+    }
+    return null;
+  }
+  return `writeRiskProfile.kind must be one of: no_writes, declared_paths, pattern_writes, dynamic_writes, durable_state (got: ${String(p.kind)})`;
 }
 
 /**
@@ -68,8 +88,9 @@ export function validateWriteRiskProfile(profile: unknown): string | null {
  * a `writeRiskProfile` is required at registration time.
  *
  * This is a filesystem-risk classification. `readonly` does not prove that a
- * tool performs no durable state transition in an existing owner store; those
- * transitions require an owning API contract and focused behavioral tests.
+ * tool performs no durable state transition in an existing owner store; such a
+ * tool must declare a `durable_state` writeRiskProfile naming its owning store
+ * instead of relying on the filesystem classification.
  *
  * - `readonly`: tool does not write to the filesystem; profile optional.
  * - `write`: tool writes to the filesystem; `writeRiskProfile` is REQUIRED.
@@ -113,6 +134,13 @@ export function assertWriteRiskProfileForTool(
   profile: unknown,
 ): void {
   if (riskLevel === 'readonly') {
+    // A filesystem `readonly` classification does not cover durable-store
+    // mutation, so it must not silently swallow a malformed durable-state
+    // declaration.
+    if ((profile as { kind?: unknown } | undefined)?.kind === 'durable_state') {
+      const durableError = validateWriteRiskProfile(profile);
+      if (durableError) throw new MissingWriteRiskProfileError(durableError);
+    }
     return; // profile optional
   }
 
