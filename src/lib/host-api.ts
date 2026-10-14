@@ -385,6 +385,7 @@ import type {
   RoleUpsertConfigRolePayload,
   RoleUpsertConfigRoleResult,
   RuntimeEfficiencyState,
+  RuntimeResourceEnvelopeState,
   SessionArchivePayload,
   SessionCompressionArtifactPayload,
   SessionCompressionArtifactResult,
@@ -806,6 +807,9 @@ export const hostApi = {
     setEnabled: (enabled: boolean): Promise<RuntimeEfficiencyState> => (
       invokeHost('efficiency', 'setEnabled', { enabled })
     ),
+  },
+  resourceEnvelope: {
+    getState: (): Promise<RuntimeResourceEnvelopeState> => invokeHost('resourceEnvelope', 'getState'),
   },
   settings: {
     getAll: () => invokeHost('settings', 'getAll'),

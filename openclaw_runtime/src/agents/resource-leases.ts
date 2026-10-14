@@ -19,6 +19,9 @@
 import { realpathSync } from "node:fs";
 import path from "node:path";
 import { createSubsystemLogger } from "../logging/subsystem.js";
+import { getResourceEnvelopeLedger, type ResourceKind } from "../resources/resource-envelope.js";
+import { readProcessTreeSample } from "../process/process-tree-sampler.js";
+import { resourceEnvelopeSnapshotPath, writeResourceEnvelopeSnapshot } from "../resources/resource-envelope-snapshot-store.js";
 
 export type ResourceLeaseKind =
   | "workspaceExec"
@@ -42,6 +45,62 @@ export type ResourceLeaseOptions = {
 };
 
 const DEFAULT_ACQUIRE_TIMEOUT_MS = 30_000;
+let snapshotWriteTimer: ReturnType<typeof setTimeout> | null = null;
+let lastResourceEnvelopeSnapshotAt = 0;
+
+function resourceKindForLease(kind: ResourceLeaseKind): ResourceKind {
+  switch (kind) {
+    case "workspaceExec":
+      return "runtime-bash";
+    case "workspaceSearch":
+      return "workspace-search";
+    case "workspaceWriter":
+      return "workspace-writer";
+    case "subtreeMutation":
+      return "subtree-mutation";
+    case "fileMutation":
+      return "file-mutation";
+  }
+}
+
+function scheduleResourceEnvelopeSnapshotWrite(): void {
+  if (process.env.OPENCLAW_RESOURCE_ENVELOPE_WRITE !== "1" || snapshotWriteTimer) return;
+  const delayMs = Math.max(0, 5_000 - (Date.now() - lastResourceEnvelopeSnapshotAt));
+  snapshotWriteTimer = setTimeout(() => {
+    snapshotWriteTimer = null;
+    lastResourceEnvelopeSnapshotAt = Date.now();
+    void (async () => {
+      try {
+        const ledger = getResourceEnvelopeLedger();
+        const sample = await readProcessTreeSample({ rootPids: [process.pid] });
+        if (sample.status === "ok") {
+          ledger.update({
+            id: "gateway:process-tree",
+            workspaceKey: process.cwd(),
+            kind: "runtime-bash",
+            priority: "foreground",
+            owner: "gateway",
+            activeSlots: 0,
+            queuedCount: sample.queueDepth,
+            queueWaitMs: sample.queueWaitMs,
+            processCount: sample.processCount ?? 0,
+            treeRssBytes: sample.treeRssBytes ?? 0,
+            treeCpuPercent: sample.treeCpuPercent ?? 0,
+            pids: sample.rootPids,
+            reason: "gateway process tree sample",
+          });
+        }
+        writeResourceEnvelopeSnapshot(
+          ledger.snapshot(),
+          resourceEnvelopeSnapshotPath("gateway"),
+        );
+      } catch {
+        // Shadow snapshots are best-effort and never affect lease admission.
+      }
+    })();
+  }, delayMs);
+  snapshotWriteTimer.unref?.();
+}
 
 const RESOURCE_LEASE_CAPACITY: Record<ResourceLeaseKind, number> = {
   workspaceExec: 2,
@@ -172,6 +231,7 @@ export class ResourceLeaseManager {
         request.timer = setTimeout(() => this.timeout(request), normalizedTimeout);
       }
       this.pending.push(request);
+      this.refreshResourceEnvelope(request.kind, request.key, 0);
       this.drain();
     });
   }
@@ -232,6 +292,7 @@ export class ResourceLeaseManager {
     }
     this.active.set(request.id, { id: request.id, kind: request.kind, key: request.key });
     const queuedMs = Date.now() - request.requestedAt;
+    this.refreshResourceEnvelope(request.kind, request.key, queuedMs);
     this.log.info("[resource-lease] acquired", {
       id: request.id,
       leaseKind: request.kind,
@@ -256,7 +317,36 @@ export class ResourceLeaseManager {
   private release(id: number, kind: ResourceLeaseKind, key: string, queuedMs: number): void {
     this.active.delete(id);
     this.log.info("[resource-lease] released", { id, leaseKind: kind, leaseKey: key, queuedMs });
+    this.refreshResourceEnvelope(kind, key, queuedMs);
     this.drain();
+  }
+
+  private refreshResourceEnvelope(kind: ResourceLeaseKind, key: string, queueWaitMs: number): void {
+    const id = `gateway:${kind}:${key}`;
+    const ledger = getResourceEnvelopeLedger();
+    const activeSlots = [...this.active.values()].filter((lease) => lease.kind === kind && lease.key === key).length;
+    const queuedCount = this.pending.filter((request) => request.kind === kind && request.key === key).length;
+    const previous = ledger.get(id);
+    if (activeSlots === 0 && queuedCount === 0) {
+      ledger.remove(id);
+    } else {
+      ledger.update({
+        id,
+        workspaceKey: key,
+        kind: resourceKindForLease(kind),
+        priority: "foreground",
+        owner: "gateway",
+        activeSlots,
+        queuedCount,
+        queueWaitMs: Math.max(previous?.queueWaitMs ?? 0, Math.max(0, Math.floor(queueWaitMs))),
+        processCount: previous?.processCount ?? 0,
+        treeRssBytes: previous?.treeRssBytes ?? 0,
+        treeCpuPercent: previous?.treeCpuPercent ?? 0,
+        ...(previous?.pids ? { pids: previous.pids } : {}),
+        reason: previous?.reason ?? "runtime workspace lease",
+      });
+    }
+    scheduleResourceEnvelopeSnapshotWrite();
   }
 
   private timeout(request: PendingRequest): void {
@@ -264,6 +354,7 @@ export class ResourceLeaseManager {
       return;
     }
     const queuedMs = Date.now() - request.requestedAt;
+    this.refreshResourceEnvelope(request.kind, request.key, queuedMs);
     this.log.warn("[resource-lease] timeout", {
       id: request.id,
       leaseKind: request.kind,
@@ -305,6 +396,10 @@ export class ResourceLeaseManager {
     }
     this.pending.length = 0;
     this.active.clear();
+    const ledger = getResourceEnvelopeLedger();
+    for (const entry of ledger.list()) {
+      if (entry.owner === "gateway") ledger.remove(entry.id);
+    }
   }
 }
 
