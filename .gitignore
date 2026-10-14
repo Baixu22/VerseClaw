@@ -1433,6 +1433,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/context-control-plane/stage0/authority-matrix.md
 !/docs/dev/context-control-plane/stage0/golden-path-contract.md
 !/docs/dev/context-control-plane/stage0/stage1-task-draft.md
+!/docs/dev/context-ecosystem-decision-audit-2026-10-12.md
 !/docs/dev/context-moat/DEV-PROTOCOL.md
 !/docs/dev/context-moat/GATE-BASELINE.md
 !/docs/dev/context-moat/corpus/.gitkeep
@@ -1728,6 +1729,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/runtime-feature-control-surface.md
 !/docs/dev/runtime-lifecycle-governance/README.zh-CN.md
 !/docs/dev/runtime-research-boundaries.md
+!/docs/dev/runtime-resource-governance-p0a-20261013.md
 !/docs/dev/runtime-test-integrity.md
 !/docs/dev/sandbox-strength-fail-closed-20261011.md
 !/docs/dev/security-reality-audit-20261009.md
