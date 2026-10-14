@@ -2,6 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import { randomUUID } from 'node:crypto';
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { recordResourceEnvelopeEntry, removeResourceEnvelopeEntry } from './resource-envelope';
 import type {
   AgentBrowserArtifactRef,
   AgentBrowserAuthPersistenceMode,
@@ -718,6 +719,7 @@ export class AgentBrowserService {
 
     if (!requestGuard && this.cliRunner?.isAvailable()) {
       this.sessions.set(session.id, { session, engine: 'agent-browser-cli', runtimeMode });
+      recordResourceEnvelopeEntry({ id: `main:browser-session:${session.id}`, workspaceKey: session.workspaceId ?? session.sessionKey ?? session.id, kind: 'browser-session', priority: 'foreground', owner: 'main', activeSlots: 1, queuedCount: 0, queueWaitMs: 0, processCount: 0, treeRssBytes: 0, treeCpuPercent: 0, reason: 'agent browser session' });
       const metadata = await this.cliRunner.open({ session, url, width, height });
       await this.refreshCli(session.id, metadata);
       return {
@@ -743,6 +745,7 @@ export class AgentBrowserService {
       },
     });
     this.sessions.set(session.id, { session, window, engine: 'browser-window', runtimeMode });
+    recordResourceEnvelopeEntry({ id: `main:browser-session:${session.id}`, workspaceKey: session.workspaceId ?? session.sessionKey ?? session.id, kind: 'browser-session', priority: 'foreground', owner: 'main', activeSlots: 1, queuedCount: 0, queueWaitMs: 0, processCount: 0, treeRssBytes: 0, treeCpuPercent: 0, reason: 'agent browser session' });
     // P1-7：初始化多标签页管理器，注册主窗口为首页
     const record = this.sessions.get(session.id)!;
     if (requestGuard) this.installSupervisedRequestGuard(record, requestGuard);
@@ -1099,6 +1102,7 @@ export class AgentBrowserService {
   }
 
   close(sessionId: string): void {
+    removeResourceEnvelopeEntry(`main:browser-session:${sessionId}`);
     const record = this.getRecord(sessionId);
     this.sessions.delete(sessionId);
     const controlState = this.browserControlStates.get(sessionId);

@@ -19,6 +19,7 @@ import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { SystemScanCategoryId } from '@shared/host-api/contract';
 import type { GatewayManager } from '../gateway/manager';
 import { isRecord } from './payload-utils';
+import { listResourceEnvelopeEntries, recordResourceEnvelopeEntry, removeResourceEnvelopeEntry } from './resource-envelope';
 import { readAgentBootstrapTools } from '../utils/agent-config';
 import { readOpenClawConfig, writeOpenClawConfig } from '../utils/channel-config';
 import { withConfigLock } from '../utils/config-mutex';
@@ -1086,6 +1087,29 @@ export async function syncAllMcpServersToOpenClawConfig(): Promise<void> {
           ? (currentServers[server.id] as Record<string, unknown>)
           : undefined,
       );
+    }
+    const activeIds = new Set(servers.filter((server) => server.enabled !== false).map((server) => server.id));
+    for (const server of servers) {
+      const enabled = server.enabled !== false;
+      recordResourceEnvelopeEntry({
+        id: `main:mcp:${server.id}`,
+        workspaceKey: 'global',
+        kind: 'mcp-process',
+        priority: 'background',
+        owner: 'main',
+        activeSlots: enabled ? 1 : 0,
+        queuedCount: 0,
+        queueWaitMs: 0,
+        processCount: enabled && server.transport === 'stdio' ? 1 : 0,
+        treeRssBytes: 0,
+        treeCpuPercent: 0,
+        reason: enabled ? 'configured MCP server' : 'disabled MCP server',
+      });
+    }
+    for (const entry of listResourceEnvelopeEntries()) {
+      if (entry.id.startsWith('main:mcp:') && !activeIds.has(entry.id.slice('main:mcp:'.length))) {
+        removeResourceEnvelopeEntry(entry.id);
+      }
     }
     mcp.servers = nextServers;
     config.mcp = mcp;

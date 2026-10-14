@@ -23,6 +23,7 @@ import {
   type PiAiModelCostRates,
 } from '../../shared/pi-ai-model-cost';
 import { logger } from '../../utils/logger';
+import { recordResourceEnvelopeEntry, removeResourceEnvelopeEntry } from '../resource-envelope';
 import { buildMultiInstanceProviderApiKeySecretRef } from '../../utils/provider-keys';
 import { listAgentsSnapshot } from '../../utils/agent-config';
 
@@ -426,6 +427,20 @@ async function syncProviderToRuntime(
   await syncProviderSecretToRuntime(config, context.runtimeProviderKey, apiKey);
   await syncRuntimeProviderConfig(config, context, apiKey);
   await syncCustomProviderAgentModel(config, context.runtimeProviderKey, apiKey);
+  recordResourceEnvelopeEntry({
+    id: `main:provider:${context.runtimeProviderKey}`,
+    workspaceKey: 'global',
+    kind: 'provider-sidecar',
+    priority: 'background',
+    owner: 'main',
+    activeSlots: 1,
+    queuedCount: 0,
+    queueWaitMs: 0,
+    processCount: 1,
+    treeRssBytes: 0,
+    treeCpuPercent: 0,
+    reason: 'provider runtime sync',
+  });
   return context;
 }
 
@@ -444,6 +459,7 @@ async function removeDeletedProviderFromOpenClaw(
 
   for (const key of keys) {
     await removeProviderFromOpenClaw(key);
+    removeResourceEnvelopeEntry(`main:provider:${key}`);
   }
 }
 
