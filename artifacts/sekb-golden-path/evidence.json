@@ -3,7 +3,7 @@
   "taskId": "TF-0004",
   "ok": true,
   "autoWriteback": false,
-  "writtenAt": "2026-08-19T04:45:10.539Z",
+  "writtenAt": "2026-10-13T23:32:03.139Z",
   "surface": "electron-host-api",
   "stages": [
     {
@@ -11,8 +11,8 @@
       "ok": true,
       "detail": {
         "trajectoryIds": [
-          "577173d9-59e0-4aeb-a7e6-4585efbad130",
-          "c95ec746-08fb-4c89-8aad-f9b698a86dd4"
+          "c096393b-6ad6-45b5-b6aa-6bcf99f37459",
+          "c4d48f7b-dba8-49f4-a2ce-c6fa7c53cc7c"
         ],
         "stepCounts": [
           2,
@@ -50,7 +50,7 @@
       "stage": "confirm",
       "ok": true,
       "detail": {
-        "principleId": "principle-b18fcb84c0c6937a98470ca5",
+        "principleId": "principle-bc1761dc7e440c6481c2d97a",
         "dcsWrite": "persisted",
         "sessionId": "session:tf-0004:e2e-golden"
       }
@@ -59,7 +59,7 @@
       "stage": "persist",
       "ok": true,
       "detail": {
-        "principleId": "principle-b18fcb84c0c6937a98470ca5"
+        "principleId": "principle-bc1761dc7e440c6481c2d97a"
       }
     },
     {
@@ -67,7 +67,7 @@
       "ok": true,
       "detail": {
         "hitIds": [
-          "principle-b18fcb84c0c6937a98470ca5"
+          "principle-bc1761dc7e440c6481c2d97a"
         ],
         "matched": true
       }
@@ -93,21 +93,21 @@
   "lineage": {
     "sessionId": "session:tf-0004:e2e-golden",
     "sourceTrajectoryIds": [
-      "577173d9-59e0-4aeb-a7e6-4585efbad130",
-      "c95ec746-08fb-4c89-8aad-f9b698a86dd4"
+      "c096393b-6ad6-45b5-b6aa-6bcf99f37459",
+      "c4d48f7b-dba8-49f4-a2ce-c6fa7c53cc7c"
     ],
-    "principleId": "principle-b18fcb84c0c6937a98470ca5",
+    "principleId": "principle-bc1761dc7e440c6481c2d97a",
     "provenance": {
       "schema": "sekb-confirm-provenance.v1",
       "sessionId": "session:tf-0004:e2e-golden",
       "sourceSystem": "ui-confirm",
       "sourceTrajectoryIds": [
-        "577173d9-59e0-4aeb-a7e6-4585efbad130",
-        "c95ec746-08fb-4c89-8aad-f9b698a86dd4"
+        "c096393b-6ad6-45b5-b6aa-6bcf99f37459",
+        "c4d48f7b-dba8-49f4-a2ce-c6fa7c53cc7c"
       ],
       "integrity": "confirmed",
-      "confirmedAt": "2026-08-19T04:45:10.518Z",
-      "revokeKey": "revoke:sekb-principle:principle-b18fcb84c0c6937a98470ca5",
+      "confirmedAt": "2026-10-13T23:32:03.118Z",
+      "revokeKey": "revoke:sekb-principle:principle-bc1761dc7e440c6481c2d97a",
       "taskId": "P3-002",
       "findingIds": [
         "F-DATA-002",
