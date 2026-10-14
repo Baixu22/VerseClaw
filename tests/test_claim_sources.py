@@ -135,9 +135,13 @@ class ClaimSourceTests(unittest.TestCase):
 
     def test_replay_version_requires_actual_newer_bound_data_not_a_new_label(self):
         source=self.root/'live.json'
-        def data(version='3.0.0'):
-            source.write_text(json.dumps({'task_set_version':version,'rows':[{'task_id':'one'}]}))
-            return {'source_identity':{'sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'task_set_version':version}}
+        def data(version='3.0.0', *, collection_id='full', tasks=None):
+            tasks=tasks or ['one']
+            source.write_text(json.dumps({'task_set_version':version,
+                                          'live_config':{'collection_id':collection_id,'tasks':tasks},
+                                          'rows':[{'task_id':t} for t in tasks]}))
+            return {'source_identity':{'sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
+                                       'task_set_version':version,'collection_id':collection_id,'tasks':tasks}}
         report=data();freeze={'task_set_version':'3.0.0','tasks':['one']}
         self.assertTrue(gate.replay_source_binding(report,freeze,source)['pass'])
         self.assertFalse(gate.replay_source_binding({},freeze,source)['pass'])
@@ -147,6 +151,22 @@ class ClaimSourceTests(unittest.TestCase):
             self.assertFalse(gate.replay_source_binding(report,{'task_set_version':version,'tasks':['one']},source)['pass'])
         report=data();report['source_identity']['sha256']='0'*64
         self.assertFalse(gate.replay_source_binding(report,freeze,source)['pass'])
+
+    def test_replay_allows_only_opted_in_prefix_subset(self):
+        source=self.root/'live.json'
+        freeze={'task_set_version':'3.0.0','tasks':['one','two','three']}
+        def report_for(tasks, collection_id):
+            source.write_text(json.dumps({'task_set_version':'3.0.0',
+                                          'live_config':{'collection_id':collection_id,'tasks':tasks},
+                                          'rows':[{'task_id':t} for t in tasks]}))
+            return {'source_identity':{'sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
+                                       'task_set_version':'3.0.0',
+                                       'collection_id':collection_id,'tasks':tasks}}
+        light=report_for(['one','two'],'light-fixture')
+        self.assertTrue(gate.replay_source_binding(light,freeze,source)['pass'])
+        self.assertEqual(gate.replay_source_binding(light,freeze,source)['scope'],'prefix_subset')
+        self.assertFalse(gate.replay_source_binding(report_for(['one','two'],'full'),freeze,source)['pass'])
+        self.assertFalse(gate.replay_source_binding(report_for(['two'],'light-fixture'),freeze,source)['pass'])
 
     def test_replay_uses_selected_binary_and_managed_process_contract(self):
         import tf45_envelope_replay as replay

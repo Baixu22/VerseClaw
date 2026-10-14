@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.harness_encoding_contract/v1",
-  "generated_at": "2026-09-29T13:27:41.457767+00:00",
+  "generated_at": "2026-10-14T07:37:33.844223+00:00",
   "generator": "tools/harness_encoding_contract.py",
   "claim": "the raw-shell observation path decodes non-ASCII output losslessly and never lets a decode fault abort the agent loop",
   "value": 1.0,
@@ -13,7 +13,7 @@
         "is_str": true,
         "contains_em_dash": true,
         "contains_exit_marker": true,
-        "head": "# em dash: —\nvalue = 1\n\n[EXIT: 0]"
+        "head": "# em dash: —\nvalue = 1\n\n[ENCODING stdout=utf-8 lossy=false; stderr=utf-8 lossy=false]\n[EXIT: 0]"
       }
     },
     {
@@ -64,6 +64,6 @@
       "bench/aci/runners/live_agent_loop.py",
       "tools/harness_encoding_contract.py"
     ],
-    "fingerprint": "53368e51d76a78ee837d66507b08720055b4c31787ad68153f7bfe693d623655"
+    "fingerprint": "3064e455852a2c675c909687f21c6f60dc8b556b69c398a4b98cbfa2493cfba1"
   }
 }

@@ -3,8 +3,8 @@
   "task_set_version": "3.0.0",
   "seed": 42,
   "mode": "mock",
-  "generated_at": "2026-09-30T01:03:33.363161+00:00",
-  "git_rev": "a8d4c56c45093d0a7d650d96afe3dd561d80e5b0",
+  "generated_at": "2026-10-14T07:27:30.466020+00:00",
+  "git_rev": "7be87bf9c4ac10009d2b82696bb974fcab630bf6",
   "evidence": {
     "globs": [
       "src/**/*.rs",
@@ -15,7 +15,7 @@
       "bench/aci/runners/live_agent_loop.py",
       "bench/aci/scorers/*.py"
     ],
-    "fingerprint": "2c8d7155a824cdd161d944f302bbf4c44689c4f7e82a26da4cabae7c1e0c89da"
+    "fingerprint": "41dd668bf91842eed61a3e3c3551246cd812f3d79e9331749c7aa54e067b4ae7"
   },
   "rows": [
     {
@@ -26,7 +26,7 @@
       "success_reason": "file_contains src/lib.rs",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 3,
+      "elapsed_ms": 13,
       "notes": [],
       "trajectory": [
         {
@@ -121,7 +121,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 6,
+      "elapsed_ms": 21,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -208,7 +208,7 @@
       "success_reason": "file_contains src/lib.rs",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 2,
+      "elapsed_ms": 12,
       "notes": [],
       "trajectory": [
         {
@@ -303,7 +303,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 5,
+      "elapsed_ms": 24,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -390,7 +390,7 @@
       "success_reason": "file_contains src/lib.rs",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 1,
+      "elapsed_ms": 15,
       "notes": [],
       "trajectory": [
         {
@@ -485,7 +485,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 6,
+      "elapsed_ms": 27,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -572,7 +572,7 @@
       "success_reason": "file_contains mathlib.py",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 1,
+      "elapsed_ms": 15,
       "notes": [],
       "trajectory": [
         {
@@ -667,7 +667,7 @@
       "success_reason": "file_contains mathlib.py",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 5,
+      "elapsed_ms": 23,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -724,7 +724,7 @@
       "success_reason": "file_contains greet.py",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 1,
+      "elapsed_ms": 15,
       "notes": [],
       "trajectory": [
         {
@@ -819,7 +819,7 @@
       "success_reason": "file_contains greet.py",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 5,
+      "elapsed_ms": 19,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -876,7 +876,7 @@
       "success_reason": "missing SUMMARY.txt",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 0,
+      "elapsed_ms": 8,
       "notes": [],
       "trajectory": [
         {
@@ -971,7 +971,7 @@
       "success_reason": "file_matches SUMMARY.txt",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 7,
+      "elapsed_ms": 13,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -1028,7 +1028,7 @@
       "success_reason": "command_exit_0 ['node', 'node_modules/typescript/bin/tsc', '--noEmit'] -> 2",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 1554,
+      "elapsed_ms": 2982,
       "notes": [],
       "trajectory": [
         {
@@ -1123,7 +1123,7 @@
       "success_reason": "command_exit_0 ['node', 'node_modules/typescript/bin/tsc', '--noEmit'] -> 0",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 1548,
+      "elapsed_ms": 3168,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -1210,7 +1210,7 @@
       "success_reason": "file_contains package.json",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 1,
+      "elapsed_ms": 9,
       "notes": [],
       "trajectory": [
         {
@@ -1305,7 +1305,7 @@
       "success_reason": "file_contains package.json",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 5,
+      "elapsed_ms": 16,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -1392,7 +1392,7 @@
       "success_reason": "missing out/result.txt",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 2,
+      "elapsed_ms": 8,
       "notes": [],
       "trajectory": [
         {
@@ -1487,7 +1487,7 @@
       "success_reason": "file_equals out/result.txt",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 5,
+      "elapsed_ms": 14,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -1544,7 +1544,7 @@
       "success_reason": "missing ERR.txt",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 1,
+      "elapsed_ms": 6,
       "notes": [],
       "trajectory": [
         {
@@ -1639,7 +1639,7 @@
       "success_reason": "all ok",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 4,
+      "elapsed_ms": 12,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -1696,7 +1696,7 @@
       "success_reason": "command_exit_0 ['python', '-m', 'pytest', '-q'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 544,
+      "elapsed_ms": 1232,
       "notes": [],
       "trajectory": [
         {
@@ -1791,7 +1791,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 497,
+      "elapsed_ms": 1087,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -1878,7 +1878,7 @@
       "success_reason": "command_exit_0 ['python', '-m', 'pytest', '-q'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 528,
+      "elapsed_ms": 1255,
       "notes": [],
       "trajectory": [
         {
@@ -1973,7 +1973,7 @@
       "success_reason": "all ok",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 475,
+      "elapsed_ms": 1189,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -2030,7 +2030,7 @@
       "success_reason": "command_exit_0 ['python', '-m', 'pytest', '-q'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 559,
+      "elapsed_ms": 1186,
       "notes": [],
       "trajectory": [
         {
@@ -2125,7 +2125,7 @@
       "success_reason": "all ok",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 496,
+      "elapsed_ms": 1321,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -2182,7 +2182,7 @@
       "success_reason": "command_exit_0 ['python', '-m', 'pytest', '-q'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 526,
+      "elapsed_ms": 1420,
       "notes": [],
       "trajectory": [
         {
@@ -2277,7 +2277,7 @@
       "success_reason": "all ok",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 484,
+      "elapsed_ms": 1103,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -2334,7 +2334,7 @@
       "success_reason": "command_exit_0 ['python', '-m', 'pytest'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 550,
+      "elapsed_ms": 1387,
       "notes": [],
       "trajectory": [
         {
@@ -2429,7 +2429,7 @@
       "success_reason": "all ok",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 499,
+      "elapsed_ms": 1060,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -2486,7 +2486,7 @@
       "success_reason": "command_exit_0 ['python', '-m', 'pytest', '-q'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 561,
+      "elapsed_ms": 1615,
       "notes": [],
       "trajectory": [
         {
@@ -2581,7 +2581,7 @@
       "success_reason": "all ok",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 507,
+      "elapsed_ms": 1201,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -2638,7 +2638,7 @@
       "success_reason": "command_exit_0 ['python', '-m', 'pytest', '-q'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 532,
+      "elapsed_ms": 1560,
       "notes": [],
       "trajectory": [
         {
@@ -2733,7 +2733,7 @@
       "success_reason": "all ok",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 472,
+      "elapsed_ms": 1232,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -2790,7 +2790,7 @@
       "success_reason": "command_exit_0 ['python', '-m', 'pytest', '-q'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 521,
+      "elapsed_ms": 1573,
       "notes": [],
       "trajectory": [
         {
@@ -2885,7 +2885,7 @@
       "success_reason": "all ok",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 478,
+      "elapsed_ms": 1370,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -2942,7 +2942,7 @@
       "success_reason": "command_exit_0 ['python', '-m', 'pytest', '-q'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 531,
+      "elapsed_ms": 1547,
       "notes": [],
       "trajectory": [
         {
@@ -3037,7 +3037,7 @@
       "success_reason": "all ok",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 484,
+      "elapsed_ms": 1176,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -3094,7 +3094,7 @@
       "success_reason": "command_exit_0 ['python', '-m', 'pytest', '-q'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 534,
+      "elapsed_ms": 1214,
       "notes": [],
       "trajectory": [
         {
@@ -3189,7 +3189,7 @@
       "success_reason": "all ok",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 483,
+      "elapsed_ms": 1075,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -3246,7 +3246,7 @@
       "success_reason": "command_exit_0 ['cargo', 'test', '--quiet'] -> 101",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 121,
+      "elapsed_ms": 430,
       "notes": [],
       "trajectory": [
         {
@@ -3341,7 +3341,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 522,
+      "elapsed_ms": 1026,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -3428,7 +3428,7 @@
       "success_reason": "command_exit_0 ['cargo', 'test', '--quiet'] -> 101",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 493,
+      "elapsed_ms": 1646,
       "notes": [],
       "trajectory": [
         {
@@ -3523,7 +3523,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 552,
+      "elapsed_ms": 1366,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -3610,7 +3610,7 @@
       "success_reason": "command_exit_0 ['cargo', 'test', '--quiet'] -> 101",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 436,
+      "elapsed_ms": 822,
       "notes": [],
       "trajectory": [
         {
@@ -3705,7 +3705,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 432,
+      "elapsed_ms": 935,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -3792,7 +3792,7 @@
       "success_reason": "command_exit_0 ['node', 'check.mjs'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 45,
+      "elapsed_ms": 171,
       "notes": [],
       "trajectory": [
         {
@@ -3887,7 +3887,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 102,
+      "elapsed_ms": 282,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -3974,7 +3974,7 @@
       "success_reason": "command_exit_0 ['node', 'check.mjs'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 45,
+      "elapsed_ms": 159,
       "notes": [],
       "trajectory": [
         {
@@ -4069,7 +4069,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 51,
+      "elapsed_ms": 172,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -4156,7 +4156,7 @@
       "success_reason": "command_exit_0 ['node', 'check.mjs'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 64,
+      "elapsed_ms": 231,
       "notes": [],
       "trajectory": [
         {
@@ -4251,7 +4251,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 62,
+      "elapsed_ms": 181,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -4338,7 +4338,7 @@
       "success_reason": "command_exit_0 ['node', 'check.mjs'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 50,
+      "elapsed_ms": 164,
       "notes": [],
       "trajectory": [
         {
@@ -4433,7 +4433,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 51,
+      "elapsed_ms": 174,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -4520,7 +4520,7 @@
       "success_reason": "command_exit_0 ['node', 'check.mjs'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 48,
+      "elapsed_ms": 228,
       "notes": [],
       "trajectory": [
         {
@@ -4615,7 +4615,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 52,
+      "elapsed_ms": 177,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -4702,7 +4702,7 @@
       "success_reason": "command_exit_0 ['python', '-m', 'pytest'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 551,
+      "elapsed_ms": 1971,
       "notes": [],
       "trajectory": [
         {
@@ -4797,7 +4797,7 @@
       "success_reason": "all ok",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 498,
+      "elapsed_ms": 1564,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -4854,7 +4854,7 @@
       "success_reason": "command_exit_0 ['python', '-m', 'pytest'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 595,
+      "elapsed_ms": 1539,
       "notes": [],
       "trajectory": [
         {
@@ -4949,7 +4949,7 @@
       "success_reason": "all ok",
       "tool_calls": 4,
       "observation_tokens": 290,
-      "elapsed_ms": 506,
+      "elapsed_ms": 1215,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -5006,7 +5006,7 @@
       "success_reason": "command_exit_0 ['cargo', 'test'] -> 101",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 372,
+      "elapsed_ms": 901,
       "notes": [],
       "trajectory": [
         {
@@ -5101,7 +5101,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 428,
+      "elapsed_ms": 1149,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -5188,7 +5188,7 @@
       "success_reason": "command_exit_0 ['cargo', 'test'] -> 101",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 337,
+      "elapsed_ms": 721,
       "notes": [],
       "trajectory": [
         {
@@ -5283,7 +5283,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 407,
+      "elapsed_ms": 909,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -5370,7 +5370,7 @@
       "success_reason": "command_exit_0 ['cargo', 'test'] -> 101",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 393,
+      "elapsed_ms": 1090,
       "notes": [],
       "trajectory": [
         {
@@ -5465,7 +5465,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 467,
+      "elapsed_ms": 1132,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -5552,7 +5552,7 @@
       "success_reason": "command_exit_0 ['node', 'check.mjs'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 45,
+      "elapsed_ms": 201,
       "notes": [],
       "trajectory": [
         {
@@ -5647,7 +5647,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 50,
+      "elapsed_ms": 246,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -5734,7 +5734,7 @@
       "success_reason": "command_exit_0 ['node', 'check.mjs'] -> 1",
       "tool_calls": 10,
       "observation_tokens": 3820,
-      "elapsed_ms": 55,
+      "elapsed_ms": 211,
       "notes": [],
       "trajectory": [
         {
@@ -5829,7 +5829,7 @@
       "success_reason": "all ok",
       "tool_calls": 7,
       "observation_tokens": 520,
-      "elapsed_ms": 58,
+      "elapsed_ms": 181,
       "notes": [
         "golden_applied",
         "ae_available"
@@ -5918,7 +5918,7 @@
         "success_rate": 0.0,
         "avg_tool_calls": 10.0,
         "avg_observation_tokens": 3820.0,
-        "avg_elapsed_ms": 302.9
+        "avg_elapsed_ms": 787.3
       },
       {
         "model": "mock",
@@ -5927,7 +5927,7 @@
         "success_rate": 1.0,
         "avg_tool_calls": 5.63,
         "avg_observation_tokens": 414.86,
-        "avg_elapsed_ms": 306.0
+        "avg_elapsed_ms": 738.9
       }
     ],
     "n_rows": 70

@@ -335,22 +335,23 @@ AFFIRMATIVE_ACCEPTANCE = [
 #
 # `bench/aci/results/latest_live.json` is gated again as of the successful
 # re-measurement on `sn-glm-5-3-flash` (3 runs, seeds 42/43/44). Its A/B partner
-# `live_ab_without_read_files.json` is deliberately NOT gated: it is a paired
+# `live_ab_without_read_files.json` is also gated by C12/C35: it is a paired
 # comparison arm (same code, one tool hidden) that exists to size the effect of
 # `file.read_many`, and re-running it is only needed when the comparison itself
 # is being redone — C13 records when it was taken.
 #
-# ⚠️ KNOWN GAP (tree-farm TF-0119): because it is ungated, SEVEN tools derive
+# ⚠️ KNOWN GAP (tree-farm TF-0119): because it is now gated, the seven derived tools derive
 # metrics from it while the gate reports them "fresh" — acceptance_power,
 # exec_failure_breakdown, exec_token_breakdown, live_uncertainty, read_usage_audit,
 # step_composition and three_arm_report. On 2026-09-27 that arm was still the
 # round-12 file (75 rows, seed 42 only, produced by the runner that had the cp936
 # crash) while the with-arm baseline was the round-13 3-seed file — i.e. the
-# comparison arms were not composition-consistent. Closing this needs an explicit
+# comparison arms were not composition-consistent. C35 checks composition; C12 checks both fingerprints. The old
 # composition check, not a fingerprint: see TF-0119.
 EVIDENCE_ARTIFACTS = [
     "bench/aci/results/latest.json",
     "bench/aci/results/latest_live.json",
+    "bench/aci/results/live_ab_without_read_files.json",
     "eval/jev_obs_report.json",
     "eval/cross_shell.json",
     "eval/tf45_envelope_replay.json",
@@ -514,6 +515,7 @@ def freshness_entries(selected=None) -> list[dict]:
 def replay_source_binding(report, freeze, source_path):
     """A newer freeze label alone cannot promote a replay of older/different rows."""
     problems=[];identity=report.get('source_identity') or {};version=None
+    tasks=[];measured_tasks=set()
     try:
         raw=Path(source_path).read_bytes();data=json.loads(raw)
         version=data.get('task_set_version')
@@ -524,11 +526,25 @@ def replay_source_binding(report, freeze, source_path):
         if version!=identity.get('task_set_version') or version!=freeze.get('task_set_version'):
             problems.append('measured/replay/freeze task-set versions differ')
         tasks=freeze.get('tasks') or []
-        if not tasks or len(set(tasks))!=len(tasks) or set(tasks)!={r.get('task_id') for r in data.get('rows',[])}:
-            problems.append('frozen tasks differ from measured tasks')
+        measured_tasks={r.get('task_id') for r in data.get('rows',[])}
+        if not tasks or len(set(tasks))!=len(tasks):
+            problems.append('frozen task list is missing or duplicated')
+        elif set(tasks)!=measured_tasks:
+            cfg=data.get('live_config') or {}
+            source_tasks=cfg.get('tasks') or identity.get('tasks') or []
+            collection_id=cfg.get('collection_id') or identity.get('collection_id') or ''
+            # A lightweight collection may cover a predeclared prefix of the frozen
+            # task list. This is deliberately narrower than "any subset": it cannot
+            # cherry-pick easy/login tasks, and the collection id must opt in.
+            prefix_subset=(bool(source_tasks) and source_tasks==tasks[:len(source_tasks)]
+                           and set(source_tasks)==measured_tasks and str(collection_id).startswith('light-'))
+            if not prefix_subset:
+                problems.append('frozen tasks differ from measured tasks')
     except (OSError,ValueError,TypeError,AttributeError) as error:
         problems.append('source binding unavailable: '+str(error))
-    return {'pass':not problems,'problems':problems,'source_identity':identity,'measured_task_set_version':version}
+    return {'pass':not problems,'problems':problems,'source_identity':identity,
+            'measured_task_set_version':version,
+            'scope':'prefix_subset' if not problems and len(set(tasks))!=len(measured_tasks) else 'full'}
 
 
 def compact_ratio_claim(report: dict) -> dict:
@@ -564,6 +580,13 @@ def compact_ratio_claim(report: dict) -> dict:
     }
 
 
+def _lightweight_source(report: dict) -> bool:
+    """A lightweight prefix collection may feed C12/C34/C35, but not mix-sensitive
+    whole-trajectory claims such as C14/C16."""
+    ident = report.get("source_identity") or {}
+    return str(ident.get("collection_id") or "").startswith("light-")
+
+
 def batch_envelope_claim(report: dict) -> dict:
     """C14 reads the frozen-trajectory replay of the batch-read envelope.
 
@@ -589,10 +612,11 @@ def batch_envelope_claim(report: dict) -> dict:
     untruncated_calls = int(totals.get("untruncated_calls") or 0)
     untruncated_ok = (untruncated_calls == 0
                       or untruncated_savings >= THRESHOLDS["C14"]["value"])
+    lightweight = _lightweight_source(report)
     return {
         "value": round(savings, 4),
         "pass": (savings >= THRESHOLDS["C14"]["value"] and exact and bounded
-                 and paginable and coverage > 0 and untruncated_ok),
+                 and paginable and coverage > 0 and untruncated_ok and not lightweight),
         "detail": {
             "calls_total": totals.get("calls"),
             "calls_replayed": totals.get("calls_replayed"),
@@ -605,6 +629,8 @@ def batch_envelope_claim(report: dict) -> dict:
             "untruncated_calls": untruncated_calls,
             "untruncated_token_savings": untruncated_savings,
             "untruncated_meets_threshold": untruncated_ok,
+            "lightweight_subset": lightweight,
+            "full_trajectory_claim": not lightweight,
             "by_op": report.get("by_op"),
             "budget_default_lines": (budget.get("default") or {}).get("lines_returned"),
             "budget_default_cap": (budget.get("default") or {}).get("max_total_lines"),
@@ -643,9 +669,11 @@ def compact_read_claim(report: dict) -> dict:
     rendered_calls = int(totals.get("calls_rendering_content") or 0)
     rendered_savings = totals.get("rendered_token_savings")
     all_savings = float(totals.get("token_savings") or 0.0)
+    lightweight = _lightweight_source(report)
     return {
         "value": round(all_savings, 4),
-        "pass": (all_savings >= THRESHOLDS["C16"]["value"] and calls > 0 and bool(matched)),
+        "pass": (all_savings >= THRESHOLDS["C16"]["value"] and calls > 0
+                 and bool(matched) and not lightweight),
         "detail": {
             "calls": calls,
             "calls_rendering_content": rendered_calls,
@@ -654,6 +682,8 @@ def compact_read_claim(report: dict) -> dict:
             "rendered_legacy_tokens": totals.get("rendered_legacy_tokens"),
             "rendered_current_tokens": totals.get("rendered_current_tokens"),
             "all_calls_token_savings": all_savings,
+            "lightweight_subset": lightweight,
+            "full_trajectory_claim": not lightweight,
             "excluded_calls": totals.get("excluded_calls"),
             "matched_projection": matched,
             "legacy_tokens": totals.get("legacy_tokens"),

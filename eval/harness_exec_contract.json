@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.harness_exec_contract/v1",
-  "generated_at": "2026-09-29T13:28:39.173446+00:00",
+  "generated_at": "2026-10-14T07:38:30.774665+00:00",
   "subject": "bench/aci/runners/live_agent_loop.py::run_bounded / execute_shell_cmd",
   "mechanism": "Popen + Job Object (KILL_ON_JOB_CLOSE) + TerminateJobObject, then taskkill /T /F as a second belt",
   "why_not_subprocess_run": "subprocess.run(timeout=) kills only the direct child; communicate() still blocks on a pipe the grandchild holds",
@@ -8,12 +8,12 @@
   "checks": [
     {
       "id": "bounded_console_command",
-      "detail": "hostile CON command under run_bounded(timeout=8) -> {'seconds': 8.331706299999496, 'rc': None, 'timed_out': True, 'out': ''}",
+      "detail": "hostile CON command under run_bounded(timeout=8) -> {'seconds': 8.017247899988433, 'rc': None, 'timed_out': True, 'out': ''}",
       "pass": true
     },
     {
       "id": "bounded_grandchild",
-      "detail": "pipe-holding grandchild under run_bounded -> {'seconds': 8.329865499996231, 'rc': None, 'timed_out': True}",
+      "detail": "pipe-holding grandchild under run_bounded -> {'seconds': 8.007246399996802, 'rc': None, 'timed_out': True}",
       "pass": true
     },
     {
@@ -23,7 +23,7 @@
     },
     {
       "id": "execute_shell_cmd_reports_timeout",
-      "detail": "execute_shell_cmd on the hostile command -> '[TIMEOUT after 8s]'",
+      "detail": "execute_shell_cmd on the hostile command -> '\\n[ENCODING stdout=utf-8 lossy=false; stderr=utf-8 lossy=false]\\n[TIMEOUT after 8s]\\n[EXIT: None]'",
       "pass": true
     },
     {
@@ -38,7 +38,7 @@
     },
     {
       "id": "orphans_reaped_after_negative_control",
-      "detail": "marker=44c89b6338; orphaned process(es) reaped after the negative control: 1 (expected: the control's own grandchild, which the pre-fix mechanism cannot kill)",
+      "detail": "marker=79468e17d4; orphaned process(es) reaped after the negative control: 1 (expected: the control's own grandchild, which the pre-fix mechanism cannot kill)",
       "pass": true
     }
   ],
@@ -50,6 +50,6 @@
       "bench/aci/runners/live_agent_loop.py",
       "tools/harness_exec_contract.py"
     ],
-    "fingerprint": "748ba948668c17011e044747521c670835a5e1d52e550187702cbbd088dd670c"
+    "fingerprint": "8269ae08377f1f1371fab0fde92165a7f607d5f586d113f4eaf351c1e6cc7932"
   }
 }

@@ -1,8 +1,8 @@
 {
   "schema": "verseshell.task_set_freeze/v1",
-  "generated_at": "2026-09-28T04:37:02.706878+00:00",
-  "frozen_at": "2026-09-28T04:37:02.706878+00:00",
-  "task_set_version": "3.0.0",
+  "generated_at": "2026-10-14T07:34:41.909126+00:00",
+  "frozen_at": "2026-10-14T07:34:41.909126+00:00",
+  "task_set_version": "3.1.0",
   "tasks": [
     "rust_fix_compile_error",
     "rust_add_unit_test",
@@ -82,18 +82,7 @@
   ],
   "n_promoted": 25,
   "n_kept_existing": 10,
-  "promoted_in_this_run": [
-    "js_leaderboard_rank_b1603acf",
-    "node_envconfig_validate_dd681123",
-    "node_slugify_771d856c",
-    "python_csvlite_parse_80d158b2",
-    "python_nested_flatten_53db7c0b",
-    "rust_config_parse_port_d6111a63",
-    "rust_grade_threshold_502d9b26",
-    "rust_username_guard_758c1a78",
-    "ts_chunk_batches_233e9e44",
-    "ts_narrow_vs_cast_824b51c8"
-  ],
+  "promoted_in_this_run": [],
   "holdout": {
     "rule": "tasks promoted in this batch: generated after C30 and D1-D7 were fixed on the previous 25-task set, so no live result on them has ever been seen or used for tuning",
     "tasks": [

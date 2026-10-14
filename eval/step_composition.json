@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.step-composition/v1",
-  "generated_at": "2026-09-30T01:07:55.849763+00:00",
+  "generated_at": "2026-10-14T07:31:17.937817+00:00",
   "method": {
     "inputs": [
       "bench\\aci\\results\\latest_live.json",
@@ -19,435 +19,411 @@
       "bench/aci/results/live_ab_without_read_files.json",
       "tools/step_composition.py"
     ],
-    "fingerprint": "dab79c7d4a028fb9394cc8d4a5051cba3d3909137c4528b1f78c5e2862907d4e"
+    "fingerprint": "affe65445f5e8e8ee4a1e65b952ea46d78b3375fc68e1c81791bdfc9a917f60b"
   },
   "with_read_files": {
     "d": {
-      "runs": 105,
-      "steps": 422,
-      "steps_per_run": 4.019,
-      "tokens": 79971,
-      "tokens_per_run": 761.63,
+      "runs": 8,
+      "steps": 33,
+      "steps_per_run": 4.125,
+      "tokens": 2322,
+      "tokens_per_run": 290.25,
       "per_op": {
         "exec.run": {
-          "calls": 131,
-          "tokens": 4303,
-          "per_run": 1.248
-        },
-        "file.replace_exact": {
-          "calls": 111,
-          "tokens": 2853,
-          "per_run": 1.057
+          "calls": 8,
+          "tokens": 1082,
+          "per_run": 1.0
         },
         "file.read_many": {
-          "calls": 81,
-          "tokens": 49462,
-          "per_run": 0.771
+          "calls": 7,
+          "tokens": 625,
+          "per_run": 0.875
         },
-        "file.view": {
-          "calls": 63,
-          "tokens": 22194,
-          "per_run": 0.6
-        },
-        "file.write": {
-          "calls": 20,
-          "tokens": 500,
-          "per_run": 0.19
+        "file.replace_exact": {
+          "calls": 7,
+          "tokens": 179,
+          "per_run": 0.875
         },
         "repo.summary": {
-          "calls": 13,
-          "tokens": 587,
-          "per_run": 0.124
+          "calls": 5,
+          "tokens": 234,
+          "per_run": 0.625
         },
-        "repo.search": {
+        "file.view": {
           "calls": 3,
-          "tokens": 72,
-          "per_run": 0.029
+          "tokens": 127,
+          "per_run": 0.375
+        },
+        "file.write": {
+          "calls": 3,
+          "tokens": 75,
+          "per_run": 0.375
         }
       },
       "per_kind": {
         "read": {
-          "calls": 144,
-          "per_run": 1.371
+          "calls": 10,
+          "per_run": 1.25
         },
         "edit": {
-          "calls": 131,
-          "per_run": 1.248
+          "calls": 10,
+          "per_run": 1.25
         },
         "exec": {
-          "calls": 131,
-          "per_run": 1.248
+          "calls": 8,
+          "per_run": 1.0
         },
         "meta": {
-          "calls": 16,
-          "per_run": 0.152
+          "calls": 5,
+          "per_run": 0.625
         }
       }
     },
     "a": {
-      "runs": 105,
-      "steps": 497,
-      "steps_per_run": 4.733,
-      "tokens": 132191,
-      "tokens_per_run": 1258.96,
+      "runs": 8,
+      "steps": 23,
+      "steps_per_run": 2.875,
+      "tokens": 1834,
+      "tokens_per_run": 229.25,
       "per_op": {
         "run_command": {
-          "calls": 495,
-          "tokens": 132161,
-          "per_run": 4.714
-        },
-        "run_commandrun_command": {
-          "calls": 1,
-          "tokens": 15,
-          "per_run": 0.01
-        },
-        "execute_sandbox_code": {
-          "calls": 1,
-          "tokens": 15,
-          "per_run": 0.01
+          "calls": 23,
+          "tokens": 1834,
+          "per_run": 2.875
         }
       },
       "per_kind": {
         "exec": {
-          "calls": 495,
-          "per_run": 4.714
-        },
-        "other": {
-          "calls": 2,
-          "per_run": 0.019
+          "calls": 23,
+          "per_run": 2.875
         }
       }
     },
     "a_multiplexing": {
-      "commands": 495,
-      "multi_job_commands": 165,
-      "multi_job_share": 0.3333,
+      "commands": 23,
+      "multi_job_commands": 12,
+      "multi_job_share": 0.5217,
       "kinds": {
-        "read": 142,
-        "write": 98,
-        "run": 68,
-        "run+write": 64,
-        "read+write": 46,
-        "read+run": 34,
-        "other": 22,
-        "read+run+write": 21
+        "read": 6,
+        "read+run": 4,
+        "run+write": 3,
+        "read+write": 3,
+        "read+run+write": 2,
+        "run": 2,
+        "other": 2,
+        "write": 1
       },
       "note": "raw shell can read, run and write inside one command; D's typed ops cannot, so this share of A's commands is surface, not waste"
     },
     "d_mergeable": {
-      "runs": 105,
-      "steps": 422,
-      "duplicate_occurrences": 10,
-      "duplicate_share": 0.0237,
-      "duplicate_tokens": 310.0,
-      "duplicate_tokens_per_run": 2.95,
-      "by_task": {
-        "python_fix_pytest_fail": 2,
-        "python_csvlite_parse_80d158b2": 4,
-        "ts_package_script_fail": 2,
-        "rust_window_fold_scanner_3d213f38": 2
-      },
-      "by_op": {
-        "exec.run": 8,
-        "repo.summary": 2
-      }
+      "runs": 8,
+      "steps": 33,
+      "duplicate_occurrences": 0,
+      "duplicate_share": 0.0,
+      "duplicate_tokens": 0.0,
+      "duplicate_tokens_per_run": 0.0,
+      "by_task": {},
+      "by_op": {}
     },
     "a_mergeable": {
-      "runs": 105,
-      "steps": 497,
-      "duplicate_occurrences": 54,
-      "duplicate_share": 0.1087,
-      "duplicate_tokens": 15670.4,
-      "duplicate_tokens_per_run": 149.24,
-      "by_task": {
-        "python_config_reader_686653a1": 14,
-        "python_exception_mislabel_0816896a": 8,
-        "python_ledger_window_bug_9bfcc241": 2,
-        "rust_error_source_propagation_3eca2e86": 4,
-        "rust_window_fold_scanner_3d213f38": 12,
-        "js_leaderboard_rank_b1603acf": 4,
-        "python_parse_orders_708606f4": 2,
-        "python_batch_splitter_05613a34": 2,
-        "typescript_missing_await_result_order_c58cafb6": 2,
-        "typescript_reduce_shared_accumulator_d80f462d": 4
-      },
-      "by_op": {
-        "run_command": 54
-      }
+      "runs": 8,
+      "steps": 23,
+      "duplicate_occurrences": 0,
+      "duplicate_share": 0.0,
+      "duplicate_tokens": 0.0,
+      "duplicate_tokens_per_run": 0.0,
+      "by_task": {},
+      "by_op": {}
     }
   },
   "without_read_files": {
     "d": {
-      "runs": 105,
-      "steps": 512,
-      "steps_per_run": 4.876,
-      "tokens": 75856,
-      "tokens_per_run": 722.44,
+      "runs": 8,
+      "steps": 36,
+      "steps_per_run": 4.5,
+      "tokens": 2089,
+      "tokens_per_run": 261.12,
       "per_op": {
         "file.view": {
-          "calls": 226,
-          "tokens": 64751,
-          "per_run": 2.152
-        },
-        "exec.run": {
-          "calls": 128,
-          "tokens": 4679,
-          "per_run": 1.219
+          "calls": 15,
+          "tokens": 738,
+          "per_run": 1.875
         },
         "file.replace_exact": {
-          "calls": 104,
-          "tokens": 2642,
-          "per_run": 0.99
+          "calls": 8,
+          "tokens": 206,
+          "per_run": 1.0
         },
-        "file.write": {
-          "calls": 22,
-          "tokens": 550,
-          "per_run": 0.21
-        },
-        "ops.list": {
-          "calls": 19,
-          "tokens": 2736,
-          "per_run": 0.181
+        "exec.run": {
+          "calls": 8,
+          "tokens": 975,
+          "per_run": 1.0
         },
         "repo.summary": {
-          "calls": 12,
-          "tokens": 487,
-          "per_run": 0.114
+          "calls": 3,
+          "tokens": 120,
+          "per_run": 0.375
         },
-        "repo.search": {
-          "calls": 1,
-          "tokens": 11,
-          "per_run": 0.01
+        "file.write": {
+          "calls": 2,
+          "tokens": 50,
+          "per_run": 0.25
         }
       },
       "per_kind": {
         "read": {
-          "calls": 226,
-          "per_run": 2.152
-        },
-        "exec": {
-          "calls": 128,
-          "per_run": 1.219
+          "calls": 15,
+          "per_run": 1.875
         },
         "edit": {
-          "calls": 126,
-          "per_run": 1.2
+          "calls": 10,
+          "per_run": 1.25
+        },
+        "exec": {
+          "calls": 8,
+          "per_run": 1.0
         },
         "meta": {
-          "calls": 32,
-          "per_run": 0.305
+          "calls": 3,
+          "per_run": 0.375
         }
       }
     },
     "a": {
-      "runs": 105,
-      "steps": 473,
-      "steps_per_run": 4.505,
-      "tokens": 137854,
-      "tokens_per_run": 1312.9,
+      "runs": 8,
+      "steps": 26,
+      "steps_per_run": 3.25,
+      "tokens": 2731,
+      "tokens_per_run": 341.38,
       "per_op": {
         "run_command": {
-          "calls": 473,
-          "tokens": 137854,
-          "per_run": 4.505
+          "calls": 26,
+          "tokens": 2731,
+          "per_run": 3.25
         }
       },
       "per_kind": {
         "exec": {
-          "calls": 473,
-          "per_run": 4.505
+          "calls": 26,
+          "per_run": 3.25
         }
       }
     },
     "d_mergeable": {
-      "runs": 105,
-      "steps": 512,
-      "duplicate_occurrences": 45,
-      "duplicate_share": 0.0879,
-      "duplicate_tokens": 4293.8,
-      "duplicate_tokens_per_run": 40.89,
-      "by_task": {
-        "python_fix_pytest_fail": 2,
-        "python_csvlite_parse_80d158b2": 7,
-        "rust_error_source_propagation_3eca2e86": 19,
-        "rust_window_fold_scanner_3d213f38": 4,
-        "typescript_reduce_shared_accumulator_d80f462d": 2,
-        "js_leaderboard_rank_b1603acf": 3,
-        "node_envconfig_validate_dd681123": 2,
-        "rust_add_unit_test": 2,
-        "rust_search_and_edit": 4
-      },
-      "by_op": {
-        "file.view": 8,
-        "exec.run": 12,
-        "ops.list": 19,
-        "file.replace_exact": 6
-      }
+      "runs": 8,
+      "steps": 36,
+      "duplicate_occurrences": 0,
+      "duplicate_share": 0.0,
+      "duplicate_tokens": 0.0,
+      "duplicate_tokens_per_run": 0.0,
+      "by_task": {},
+      "by_op": {}
     }
   },
   "failure_envelope": {
     "cases": {
       "python -m pytest -q": {
         "fixture": "python_fix_pytest_fail",
-        "chars": 376,
-        "tokens": 94,
+        "chars": 662,
+        "tokens": 165,
         "keys": [
           "diagnostics",
           "error",
           "exit_code",
           "ok",
           "stats",
-          "stderr_summary"
+          "stderr",
+          "stdout",
+          "timed_out"
         ],
         "leave_one_out": {
           "ok": {
             "chars": 13,
-            "share": 0.0346
-          },
-          "diagnostics": {
-            "chars": 136,
-            "share": 0.3617
-          },
-          "error": {
-            "chars": 99,
-            "share": 0.2633
+            "share": 0.0196
           },
           "exit_code": {
             "chars": 16,
-            "share": 0.0426
+            "share": 0.0242
           },
-          "stderr_summary": {
-            "chars": 48,
-            "share": 0.1277
+          "timed_out": {
+            "chars": 20,
+            "share": 0.0302
           },
           "stats": {
             "chars": 64,
-            "share": 0.1702
+            "share": 0.0967
+          },
+          "stdout": {
+            "chars": 237,
+            "share": 0.358
+          },
+          "stderr": {
+            "chars": 77,
+            "share": 0.1163
+          },
+          "diagnostics": {
+            "chars": 136,
+            "share": 0.2054
+          },
+          "error": {
+            "chars": 99,
+            "share": 0.1495
           }
         }
       },
       "npx tsc --noEmit": {
         "fixture": "ts_fix_type_error",
-        "chars": 656,
-        "tokens": 164,
+        "chars": 898,
+        "tokens": 224,
         "keys": [
           "diagnostics",
           "error",
           "exit_code",
           "ok",
-          "stderr_summary",
-          "stdout_text"
+          "stderr",
+          "stdout",
+          "stdout_text",
+          "timed_out"
         ],
         "leave_one_out": {
           "ok": {
             "chars": 13,
-            "share": 0.0198
-          },
-          "diagnostics": {
-            "chars": 295,
-            "share": 0.4497
-          },
-          "error": {
-            "chars": 99,
-            "share": 0.1509
+            "share": 0.0145
           },
           "exit_code": {
             "chars": 16,
-            "share": 0.0244
+            "share": 0.0178
+          },
+          "timed_out": {
+            "chars": 20,
+            "share": 0.0223
+          },
+          "stdout": {
+            "chars": 193,
+            "share": 0.2149
           },
           "stdout_text": {
             "chars": 185,
-            "share": 0.282
+            "share": 0.206
           },
-          "stderr_summary": {
-            "chars": 48,
-            "share": 0.0732
+          "stderr": {
+            "chars": 77,
+            "share": 0.0857
+          },
+          "diagnostics": {
+            "chars": 295,
+            "share": 0.3285
+          },
+          "error": {
+            "chars": 99,
+            "share": 0.1102
           }
         }
       },
       "npm test": {
         "fixture": "ts_package_script_fail",
-        "chars": 254,
-        "tokens": 63,
+        "chars": 551,
+        "tokens": 137,
         "keys": [
           "error",
           "exit_code",
           "ok",
-          "stderr_summary",
-          "stdout_text"
+          "stderr",
+          "stdout",
+          "stdout_text",
+          "timed_out"
         ],
         "leave_one_out": {
           "ok": {
             "chars": 13,
-            "share": 0.0512
-          },
-          "error": {
-            "chars": 99,
-            "share": 0.3898
+            "share": 0.0236
           },
           "exit_code": {
             "chars": 16,
-            "share": 0.063
+            "share": 0.029
+          },
+          "timed_out": {
+            "chars": 20,
+            "share": 0.0363
+          },
+          "stdout": {
+            "chars": 192,
+            "share": 0.3485
           },
           "stdout_text": {
             "chars": 78,
-            "share": 0.3071
+            "share": 0.1416
           },
-          "stderr_summary": {
-            "chars": 48,
-            "share": 0.189
+          "stderr": {
+            "chars": 77,
+            "share": 0.1397
+          },
+          "error": {
+            "chars": 155,
+            "share": 0.2813
           }
         }
       },
       "cargo check": {
         "fixture": "rust_fix_compile_error",
-        "chars": 408,
-        "tokens": 102,
+        "chars": 694,
+        "tokens": 173,
         "keys": [
           "diagnostics",
           "error",
           "exit_code",
           "ok",
           "stats",
-          "stdout_summary"
+          "stderr",
+          "stdout",
+          "timed_out"
         ],
         "leave_one_out": {
           "ok": {
             "chars": 13,
-            "share": 0.0319
-          },
-          "diagnostics": {
-            "chars": 189,
-            "share": 0.4632
-          },
-          "error": {
-            "chars": 101,
-            "share": 0.2475
+            "share": 0.0187
           },
           "exit_code": {
             "chars": 18,
-            "share": 0.0441
+            "share": 0.0259
           },
-          "stdout_summary": {
-            "chars": 48,
-            "share": 0.1176
+          "timed_out": {
+            "chars": 20,
+            "share": 0.0288
           },
           "stats": {
             "chars": 39,
-            "share": 0.0956
+            "share": 0.0562
+          },
+          "stdout": {
+            "chars": 77,
+            "share": 0.111
+          },
+          "stderr": {
+            "chars": 237,
+            "share": 0.3415
+          },
+          "diagnostics": {
+            "chars": 189,
+            "share": 0.2723
+          },
+          "error": {
+            "chars": 101,
+            "share": 0.1455
           }
         }
       }
     },
     "aggregate_chars": {
+      "stdout": 699,
       "diagnostics": 620,
-      "error": 398,
+      "stderr": 468,
+      "error": 454,
       "stdout_text": 263,
-      "stderr_summary": 144,
       "stats": 103,
+      "timed_out": 80,
       "exit_code": 66,
-      "ok": 52,
-      "stdout_summary": 48
+      "ok": 52
     },
     "note": "leave-one-out over projection keys; `diagnostics` and `error` are the actionable content, `stats` / `stdout_summary` / `stderr_summary` are the only candidates and each still carries a signal"
   }

@@ -2,86 +2,86 @@
   "families": [
     {
       "aggregate": {
-        "byte_savings": -0.0317,
+        "byte_savings": -0.0308,
         "case_count": 5,
-        "compact_bytes": 8491,
-        "compact_tokens": 2124,
-        "headline_savings": -0.0449,
-        "json_bytes": 8230,
-        "json_tokens": 2059,
-        "token_savings": -0.0316,
-        "worst_case_savings": -0.0449
+        "compact_bytes": 8556,
+        "compact_tokens": 2140,
+        "headline_savings": -0.0445,
+        "json_bytes": 8300,
+        "json_tokens": 2077,
+        "token_savings": -0.0303,
+        "worst_case_savings": -0.0445
       },
       "cases": [
         {
-          "byte_savings": -0.0448,
-          "compact_bytes": 6510,
-          "compact_tokens": 1628,
-          "json_bytes": 6231,
-          "json_tokens": 1558,
+          "byte_savings": -0.0445,
+          "compact_bytes": 6523,
+          "compact_tokens": 1631,
+          "json_bytes": 6245,
+          "json_tokens": 1562,
           "name": "ops_list_catalog",
           "roundtrip_ok": true,
           "source": "src/operation.rs (OperationRegistry::ops.list)",
-          "token_savings": -0.0449
+          "token_savings": -0.0442
         },
         {
-          "byte_savings": -0.0132,
-          "compact_bytes": 616,
-          "compact_tokens": 154,
-          "json_bytes": 608,
-          "json_tokens": 152,
+          "byte_savings": -0.0113,
+          "compact_bytes": 629,
+          "compact_tokens": 158,
+          "json_bytes": 622,
+          "json_tokens": 156,
           "name": "cargo_large_noise",
           "roundtrip_ok": true,
           "source": "tests/fixtures/reducers/adversarial/cargo_large_noise.txt",
-          "token_savings": -0.0132
+          "token_savings": -0.0128
         },
         {
-          "byte_savings": 0.0282,
-          "compact_bytes": 379,
-          "compact_tokens": 95,
-          "json_bytes": 390,
-          "json_tokens": 98,
+          "byte_savings": 0.0297,
+          "compact_bytes": 392,
+          "compact_tokens": 98,
+          "json_bytes": 404,
+          "json_tokens": 101,
           "name": "npm_large_noise",
           "roundtrip_ok": true,
           "source": "tests/fixtures/reducers/adversarial/npm_large_noise.txt",
-          "token_savings": 0.0306
+          "token_savings": 0.0297
         },
         {
-          "byte_savings": 0.0578,
-          "compact_bytes": 375,
-          "compact_tokens": 94,
-          "json_bytes": 398,
-          "json_tokens": 100,
+          "byte_savings": 0.0583,
+          "compact_bytes": 388,
+          "compact_tokens": 97,
+          "json_bytes": 412,
+          "json_tokens": 103,
           "name": "git_diff_large",
           "roundtrip_ok": true,
           "source": "tests/fixtures/reducers/adversarial/git_diff_large.txt",
-          "token_savings": 0.06
+          "token_savings": 0.0583
         },
         {
-          "byte_savings": -0.0133,
-          "compact_bytes": 611,
-          "compact_tokens": 153,
-          "json_bytes": 603,
-          "json_tokens": 151,
+          "byte_savings": -0.0113,
+          "compact_bytes": 624,
+          "compact_tokens": 156,
+          "json_bytes": 617,
+          "json_tokens": 155,
           "name": "cargo_fail_noisy",
           "roundtrip_ok": true,
           "source": "tests/fixtures/reducers/adversarial/cargo_fail_noisy.txt",
-          "token_savings": -0.0132
+          "token_savings": -0.0065
         }
       ],
       "kind": "observation"
     },
     {
       "aggregate": {
-        "byte_savings": -0.0066,
+        "byte_savings": -0.0064,
         "case_count": 2,
-        "compact_bytes": 6709,
-        "compact_tokens": 1678,
-        "headline_savings": -0.0252,
-        "json_bytes": 6665,
-        "json_tokens": 1667,
+        "compact_bytes": 6722,
+        "compact_tokens": 1681,
+        "headline_savings": -0.025,
+        "json_bytes": 6679,
+        "json_tokens": 1670,
         "token_savings": -0.0066,
-        "worst_case_savings": -0.0252
+        "worst_case_savings": -0.025
       },
       "cases": [
         {
@@ -96,11 +96,11 @@
           "token_savings": 0.4203
         },
         {
-          "byte_savings": -0.0252,
-          "compact_bytes": 6550,
-          "compact_tokens": 1638,
-          "json_bytes": 6389,
-          "json_tokens": 1598,
+          "byte_savings": -0.025,
+          "compact_bytes": 6563,
+          "compact_tokens": 1641,
+          "json_bytes": 6403,
+          "json_tokens": 1601,
           "name": "response_ops_list",
           "roundtrip_ok": null,
           "source": "src/server.rs (StreamDone vs encode_response)",
@@ -120,15 +120,15 @@
     "token_proxy": "ceil(bytes / 4), same convention as tests/token_compression_tests.rs"
   },
   "overall": {
-    "byte_savings": -0.0205,
+    "byte_savings": -0.02,
     "case_count": 7,
-    "compact_bytes": 15200,
-    "compact_tokens": 3802,
-    "headline_savings": -0.0449,
-    "json_bytes": 14895,
-    "json_tokens": 3726,
-    "token_savings": -0.0204,
-    "worst_case_savings": -0.0449
+    "compact_bytes": 15278,
+    "compact_tokens": 3821,
+    "headline_savings": -0.0445,
+    "json_bytes": 14979,
+    "json_tokens": 3747,
+    "token_savings": -0.0197,
+    "worst_case_savings": -0.0445
   },
   "schema": "verseshell.compact-ratio/v1"
 }

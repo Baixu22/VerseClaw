@@ -1,110 +1,157 @@
 {
   "schema": "verseshell.task-set-audit/v1",
-  "generated_at": "2026-09-30T01:07:49.794937+00:00",
-  "task_set_version": "3.0.0",
+  "generated_at": "2026-10-14T07:31:09.845262+00:00",
+  "task_set_version": "3.1.0",
   "method": {
     "inputs": [
       "bench/aci/tasks/manifest.json",
-      "bench/aci/results/latest_live.json"
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\task_sets\\3.1.0.json",
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json"
     ],
     "evaluator": "live_agent_loop.check_success — the same function the live run uses",
     "fixture_consistency": "pristine must fail, GOLDEN must pass, a registered equivalent variant must pass",
-    "predicate_changes": "reconstruct the artifact each stored run left behind and score it under both the legacy and the declared predicate"
+    "predicate_changes": "score inferred single-file candidates over pristine fixtures; not independent full-workspace live re-scoring"
   },
   "evidence": {
     "globs": [
       "bench/aci/tasks/*.json",
+      "bench/aci/task_sets/*.json",
+      "bench/aci/runners/task_sets.py",
       "bench/aci/fixtures/**/*",
       "bench/aci/runners/live_agent_loop.py",
+      "bench/aci/runners/managed_launch.py",
+      "bench/aci/runners/semantic_checks.py",
+      "bench/aci/runners/grading_contract.py",
+      "bench/aci/runners/fixture_deps.py",
       "bench/aci/results/latest_live.json",
       "tools/task_set_audit.py",
       "tools/trajectory_replay.py"
     ],
-    "fingerprint": "e5f8c08675ece118ad601708d6fd13a381103f61cb5efced82849e8be067a568"
+    "fingerprint": "05c57af1a4e376ff89f2588645a79078dbedc323bcbf4a574fb3c1270ea5e731",
+    "input_sha256": {
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\task_sets\\3.1.0.json": "11d48acf71c30974381176bea549e68e0db1057b8d33dce108ec2fc1b6108376",
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38"
+    }
   },
   "fixture_consistency": {
     "rust_fix_compile_error": {
       "task": "rust_fix_compile_error",
-      "task_version": "1.0.0",
+      "task_version": "1.1.0",
       "predicate": {
-        "type": "all",
-        "of": [
-          {
-            "type": "file_contains",
-            "path": "src/lib.rs",
-            "contains": "-> i32"
-          },
-          {
-            "type": "file_not_contains",
-            "path": "src/lib.rs",
-            "contains": "-> String"
-          }
-        ]
+        "type": "rust_behavior",
+        "function": "add",
+        "require_unit_tests": false,
+        "timeout_sec": 120
+      },
+      "protected_verifiers": {
+        "Cargo.toml": "f3efba87457cd5d336a46ed077aa80c26d8703d7de3e0c724dc1e45ae765fe8c"
       },
       "pristine": {
         "pass": false,
         "ran": true,
-        "reason": "file_contains src/lib.rs"
+        "reason": "student tests/build failed"
       },
       "golden": {
         "pass": true,
         "ran": true,
-        "reason": "all ok"
+        "reason": "behaviour and required unit-test checks passed"
       },
       "pass": true
     },
     "rust_add_unit_test": {
       "task": "rust_add_unit_test",
-      "task_version": "1.0.0",
+      "task_version": "1.1.0",
       "predicate": {
-        "type": "all",
-        "of": [
-          {
-            "type": "file_contains",
-            "path": "src/lib.rs",
-            "contains": "#[test]"
-          },
-          {
-            "type": "file_contains",
-            "path": "src/lib.rs",
-            "contains": "assert_eq!(add(1, 2), 3)"
-          }
-        ]
+        "type": "rust_behavior",
+        "function": "add",
+        "require_unit_tests": true,
+        "timeout_sec": 120
+      },
+      "protected_verifiers": {
+        "Cargo.toml": "0fe8279bc211c175333c130a928883e15964552fe43189b9bbc9b8377bd8e220"
       },
       "pristine": {
         "pass": false,
         "ran": true,
-        "reason": "file_contains src/lib.rs"
+        "reason": "no executed unit tests"
       },
       "golden": {
         "pass": true,
         "ran": true,
-        "reason": "all ok"
+        "reason": "behaviour and required unit-test checks passed"
       },
       "pass": true
     },
     "rust_search_and_edit": {
       "task": "rust_search_and_edit",
-      "task_version": "1.0.0",
+      "task_version": "1.1.0",
       "predicate": {
-        "type": "all",
-        "of": [
-          {
-            "type": "file_contains",
-            "path": "src/lib.rs",
-            "contains": "return a + b"
-          },
-          {
-            "type": "file_not_contains",
-            "path": "src/lib.rs",
-            "contains": "TODO(fix-me)"
-          }
-        ]
+        "type": "rust_behavior",
+        "function": "sum",
+        "require_unit_tests": false,
+        "timeout_sec": 120
+      },
+      "protected_verifiers": {
+        "Cargo.toml": "91fa9b25f585428b0613a9b498ca65aa0cc519cbb67164fdadc336b6bb790ad8"
       },
       "pristine": {
         "pass": false,
         "ran": true,
-        "reason": "file_contains src/lib.rs"
+        "reason": "function behaviour failed"
+      },
+      "golden": {
+        "pass": true,
+        "ran": true,
+        "reason": "behaviour and required unit-test checks passed"
+      },
+      "pass": true
+    },
+    "python_fix_pytest_fail": {
+      "task": "python_fix_pytest_fail",
+      "task_version": "1.1.0",
+      "predicate": {
+        "type": "all",
+        "of": [
+          {
+            "type": "command_exit_0",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "from mathlib import add; assert add(2,3)==5; assert add(-1,1)==0; assert add(0,7)==7"
+            ],
+            "timeout_sec": 120,
+            "timeout_is_unverified": true,
+            "resolve_executable": true
+          },
+          {
+            "type": "command_exit_0",
+            "argv": [
+              "python",
+              "-B",
+              "-m",
+              "pytest",
+              "-q",
+              "-p",
+              "no:cacheprovider"
+            ],
+            "timeout_sec": 120,
+            "timeout_is_unverified": true,
+            "resolve_executable": true,
+            "unverified_output_markers": [
+              "No module named pytest",
+              "No module named 'pytest'"
+            ]
+          }
+        ]
+      },
+      "protected_verifiers": {
+        "tests/test_math.py": "a8a48514048ab1e8543f3d7626fc9f40d322009f679deb1e441b38b0daecfe8f"
+      },
+      "pristine": {
+        "pass": false,
+        "ran": true,
+        "reason": "command_exit_0 ['C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python310\\\\python.EXE', '-B', '-c', 'from mathlib import add; assert add(2,3)==5; assert add(-1,1)==0; assert add(0,7)==7'] -> 1"
       },
       "golden": {
         "pass": true,
@@ -113,54 +160,86 @@
       },
       "pass": true
     },
-    "python_fix_pytest_fail": {
-      "task": "python_fix_pytest_fail",
-      "task_version": "1.0.0",
-      "predicate": {
-        "type": "file_contains",
-        "path": "mathlib.py",
-        "contains": "return a + b"
-      },
-      "pristine": {
-        "pass": false,
-        "ran": true,
-        "reason": "file_contains mathlib.py"
-      },
-      "golden": {
-        "pass": true,
-        "ran": true,
-        "reason": "file_contains mathlib.py"
-      },
-      "pass": true
-    },
     "python_edit_and_retest": {
       "task": "python_edit_and_retest",
-      "task_version": "1.0.0",
+      "task_version": "1.1.0",
       "predicate": {
-        "type": "file_contains",
-        "path": "greet.py",
-        "contains": "Hello, {name}!"
+        "type": "all",
+        "of": [
+          {
+            "type": "command_exit_0",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "from greet import greet; assert greet('Ada')=='Hello, Ada!'; assert greet('')=='Hello, !'; assert greet('Lin')=='Hello, Lin!'"
+            ],
+            "timeout_sec": 120,
+            "timeout_is_unverified": true,
+            "resolve_executable": true
+          },
+          {
+            "type": "command_exit_0",
+            "argv": [
+              "python",
+              "-B",
+              "-m",
+              "pytest",
+              "-q",
+              "-p",
+              "no:cacheprovider"
+            ],
+            "timeout_sec": 120,
+            "timeout_is_unverified": true,
+            "resolve_executable": true,
+            "unverified_output_markers": [
+              "No module named pytest",
+              "No module named 'pytest'"
+            ]
+          }
+        ]
+      },
+      "protected_verifiers": {
+        "tests/test_greet.py": "b1a1f584dd86105d98bc0c55c94853f7b50be059193cb4b973a2fb791de84af3"
       },
       "pristine": {
         "pass": false,
         "ran": true,
-        "reason": "file_contains greet.py"
+        "reason": "command_exit_0 ['C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python310\\\\python.EXE', '-B', '-c', \"from greet import greet; assert greet('Ada')=='Hello, Ada!'; assert greet('')=='Hello, !'; assert greet('Lin')=='Hello, Lin!'\"] -> 1"
       },
       "golden": {
         "pass": true,
         "ran": true,
-        "reason": "file_contains greet.py"
+        "reason": "all ok"
       },
       "pass": true
     },
     "python_noisy_install_summary": {
       "task": "python_noisy_install_summary",
-      "task_version": "1.3.0",
+      "task_version": "1.1.0",
       "predicate": {
-        "type": "file_matches",
-        "path": "SUMMARY.txt",
-        "pattern": "(?i)[^\\r\\n]*\\bsix\\b[^\\r\\n]*"
+        "type": "all",
+        "of": [
+          {
+            "type": "command_exit_0",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "import six; assert six.__version__ == '1.16.0'"
+            ],
+            "timeout_sec": 120,
+            "timeout_is_unverified": true,
+            "resolve_executable": true
+          },
+          {
+            "type": "file_matches",
+            "path": "SUMMARY.txt",
+            "pattern": "(?i)[^\\r\\n]*\\bsix\\b[^\\r\\n]*"
+          }
+        ]
       },
+      "protected_verifiers": {},
       "pristine": {
         "pass": false,
         "ran": true,
@@ -169,7 +248,7 @@
       "golden": {
         "pass": true,
         "ran": true,
-        "reason": "file_matches SUMMARY.txt"
+        "reason": "all ok"
       },
       "equivalent_variant": {
         "why": "same one-line summary, different wording from GOLDEN",
@@ -178,7 +257,7 @@
         "verdict": {
           "pass": true,
           "ran": true,
-          "reason": "file_matches SUMMARY.txt"
+          "reason": "all ok"
         }
       },
       "pass": true
@@ -194,6 +273,129 @@
           "--noEmit"
         ],
         "timeout_sec": 120
+      },
+      "protected_verifiers": {
+        "node_modules/.bin/tsc": "4ab848d349592d25d64aee09bbf3dd2849dedef5dc171b440af1b522d462138c",
+        "node_modules/.bin/tsc.cmd": "5d84ecf86ca6c1a52d23f6c774ea2663f5af20ad8411acba354e46a5271e9242",
+        "node_modules/.bin/tsserver": "fcc1484fc099f16579136f95213f74644d5f21e1fb4b9ad90c8716f34a40b12d",
+        "node_modules/.bin/tsserver.cmd": "597d9eb8f9ea7d5a84a9567830afb2a299bf2eb579c41a25e96b6c8617971040",
+        "node_modules/typescript/LICENSE.txt": "a7d00bfd54525bc694b6e32f64c7ebcf5e6b7ae3657be5cc12767bce74654a47",
+        "node_modules/typescript/README.md": "78f24156726eb0ae8aa59690079941067e7d3f11fb619c310dfbb11aca59b644",
+        "node_modules/typescript/SECURITY.md": "7b6976eec43edfa68b79a459dd089c56b7a395916dbf1a01bd11e6d86e12128f",
+        "node_modules/typescript/ThirdPartyNoticeText.txt": "1af3c68039c57e539422da82a4faada506ce6d0ea6f90e0b699d02dbcdb7a90c",
+        "node_modules/typescript/bin/tsc": "8d5fa5bd883fec0979fc2004f1fe1d99aef40570155d550eadc0b03b55513bf0",
+        "node_modules/typescript/bin/tsserver": "a088f0c3419bcb2f7b860ad42e4c9f25ead067eda70af6a10d0a7d453954aada",
+        "node_modules/typescript/lib/cancellationToken.js": "3cf8d7b756b2652d6ace35cbfaada0ca67493f6fe7d0f31dd15de912d6e9c8e9",
+        "node_modules/typescript/lib/cs/diagnosticMessages.generated.json": "bbf2e06c38161d694a3042655ca0f31af9da0596333f283666b409a78ad2cdee",
+        "node_modules/typescript/lib/de/diagnosticMessages.generated.json": "723d2296371e94ca855b51fd8be9b4e1d0ec828b529a900adb2b1c3e27c2e81d",
+        "node_modules/typescript/lib/es/diagnosticMessages.generated.json": "9ef0f22858e2e92a968a3e28476ca1be6ad4bd0d8ce56f5c8642512748f2ab80",
+        "node_modules/typescript/lib/fr/diagnosticMessages.generated.json": "22fd39d97a8d2f9ef15eb547acd77ce3d5d5ff233e2ab09b392932a60d2a6742",
+        "node_modules/typescript/lib/it/diagnosticMessages.generated.json": "41e5c1843a37a1d90a6896d8cb2dd1f131c384e9f622c1a9ff5fa3ea712015ed",
+        "node_modules/typescript/lib/ja/diagnosticMessages.generated.json": "ccf0ad826f6412d48bc5e46aade9c6036695ff9d517661ddb551fa93d2394624",
+        "node_modules/typescript/lib/ko/diagnosticMessages.generated.json": "b6fda6f78229b6426cdb51b6b8a3803ae7c9598f73e0a9b0bb3edc2f85cff96a",
+        "node_modules/typescript/lib/lib.d.ts": "a7297ff837fcdf174a9524925966429eb8e5feecc2cc55cc06574e6b092c1eaa",
+        "node_modules/typescript/lib/lib.decorators.d.ts": "33358442698bb565130f52ba79bfd3d4d484ac85fe33f3cb1759c54d18201393",
+        "node_modules/typescript/lib/lib.decorators.legacy.d.ts": "782dec38049b92d4e85c1585fbea5474a219c6984a35b004963b00beb1aab538",
+        "node_modules/typescript/lib/lib.dom.asynciterable.d.ts": "73e370058f82add1fdbc78ef3d1aab110108f2d5d9c857cb55d3361982347ace",
+        "node_modules/typescript/lib/lib.dom.d.ts": "87d693a4920d794a73384b3c779cadcb8548ac6945aa7a925832fe2418c9527a",
+        "node_modules/typescript/lib/lib.dom.iterable.d.ts": "76f838d5d49b65de83bc345c04aa54c62a3cfdb72a477dc0c0fce89a30596c30",
+        "node_modules/typescript/lib/lib.es2015.collection.d.ts": "dc2df20b1bcdc8c2d34af4926e2c3ab15ffe1160a63e58b7e09833f616efff44",
+        "node_modules/typescript/lib/lib.es2015.core.d.ts": "138fb588d26538783b78d1e3b2c2cc12d55840b97bf5e08bca7f7a174fbe2f17",
+        "node_modules/typescript/lib/lib.es2015.d.ts": "45b7ab580deca34ae9729e97c13cfd999df04416a79116c3bfb483804f85ded4",
+        "node_modules/typescript/lib/lib.es2015.generator.d.ts": "4443e68b35f3332f753eacc66a04ac1d2053b8b035a0e0ac1d455392b5e243b3",
+        "node_modules/typescript/lib/lib.es2015.iterable.d.ts": "bc47685641087c015972a3f072480889f0d6c65515f12bd85222f49a98952ed7",
+        "node_modules/typescript/lib/lib.es2015.promise.d.ts": "0dc1e7ceda9b8b9b455c3a2d67b0412feab00bd2f66656cd8850e8831b08b537",
+        "node_modules/typescript/lib/lib.es2015.proxy.d.ts": "ce691fb9e5c64efb9547083e4a34091bcbe5bdb41027e310ebba8f7d96a98671",
+        "node_modules/typescript/lib/lib.es2015.reflect.d.ts": "8d697a2a929a5fcb38b7a65594020fcef05ec1630804a33748829c5ff53640d0",
+        "node_modules/typescript/lib/lib.es2015.symbol.d.ts": "4ff2a353abf8a80ee399af572debb8faab2d33ad38c4b4474cff7f26e7653b8d",
+        "node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts": "93495ff27b8746f55d19fcbcdbaccc99fd95f19d057aed1bd2c0cafe1335fbf0",
+        "node_modules/typescript/lib/lib.es2016.array.include.d.ts": "6fc23bb8c3965964be8c597310a2878b53a0306edb71d4b5a4dfe760186bcc01",
+        "node_modules/typescript/lib/lib.es2016.d.ts": "3facaf05f0c5fc569c5649dd359892c98a85557e3e0c847964caeb67076f4d75",
+        "node_modules/typescript/lib/lib.es2016.full.d.ts": "807e0e0bdc67605dd28efe18f20ab5fcd75d944ef95936120702335f9379094b",
+        "node_modules/typescript/lib/lib.es2016.intl.d.ts": "ea011c76963fb15ef1cdd7ce6a6808b46322c527de2077b6cfdf23ae6f5f9ec7",
+        "node_modules/typescript/lib/lib.es2017.d.ts": "9a68c0c07ae2fa71b44384a839b7b8d81662a236d4b9ac30916718f7510b1b2d",
+        "node_modules/typescript/lib/lib.es2017.date.d.ts": "38f0219c9e23c915ef9790ab1d680440d95419ad264816fa15009a8851e79119",
+        "node_modules/typescript/lib/lib.es2017.full.d.ts": "1d242d5c24cf285c88bc4fb93c5ff903de8319064e282986edeb6247ba028d5e",
+        "node_modules/typescript/lib/lib.es2017.intl.d.ts": "4de680d5bb41c17f7f68e0419412ca23c98d5749dcaaea1896172f06435891fc",
+        "node_modules/typescript/lib/lib.es2017.object.d.ts": "bb42a7797d996412ecdc5b2787720de477103a0b2e53058569069a0e2bae6c7e",
+        "node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts": "4738f2420687fd85629c9efb470793bb753709c2379e5f85bc1815d875ceadcd",
+        "node_modules/typescript/lib/lib.es2017.string.d.ts": "2f11ff796926e0832f9ae148008138ad583bd181899ab7dd768a2666700b1893",
+        "node_modules/typescript/lib/lib.es2017.typedarrays.d.ts": "9fc46429fbe091ac5ad2608c657201eb68b6f1b8341bd6d670047d32ed0a88fa",
+        "node_modules/typescript/lib/lib.es2018.asyncgenerator.d.ts": "61c37c1de663cf4171e1192466e52c7a382afa58da01b1dc75058f032ddf0839",
+        "node_modules/typescript/lib/lib.es2018.asynciterable.d.ts": "b541a838a13f9234aba650a825393ffc2292dc0fc87681a5d81ef0c96d281e7a",
+        "node_modules/typescript/lib/lib.es2018.d.ts": "5e1c4c362065a6b95ff952c0eab010f04dcd2c3494e813b493ecfd4fcb9fc0d8",
+        "node_modules/typescript/lib/lib.es2018.full.d.ts": "95f1023b824c2c511c48f1201e2d1188bcb0ca1138a309a870b956d2e92e44ab",
+        "node_modules/typescript/lib/lib.es2018.intl.d.ts": "b20fe0eca9a4e405f1a5ae24a2b3290b37cf7f21eba6cbe4fc3fab979237d4f3",
+        "node_modules/typescript/lib/lib.es2018.promise.d.ts": "811ec78f7fefcabbda4bfa93b3eb67d9ae166ef95f9bff989d964061cbf81a0c",
+        "node_modules/typescript/lib/lib.es2018.regexp.d.ts": "717937616a17072082152a2ef351cb51f98802fb4b2fdabd32399843875974ca",
+        "node_modules/typescript/lib/lib.es2019.array.d.ts": "d7e7d9b7b50e5f22c915b525acc5a49a7a6584cf8f62d0569e557c5cfc4b2ac2",
+        "node_modules/typescript/lib/lib.es2019.d.ts": "68d73b4a11549f9c0b7d352d10e91e5dca8faa3322bfb77b661839c42b1ddec7",
+        "node_modules/typescript/lib/lib.es2019.full.d.ts": "08f6861df84fba9719c14d5adc3ba40be9f0c687639e6c4df3c05b9301b8ff94",
+        "node_modules/typescript/lib/lib.es2019.intl.d.ts": "49ed889be54031e1044af0ad2c603d627b8bda8b50c1a68435fe85583901d072",
+        "node_modules/typescript/lib/lib.es2019.object.d.ts": "71c37f4c9543f31dfced6c7840e068c5a5aacb7b89111a4364b1d5276b852557",
+        "node_modules/typescript/lib/lib.es2019.string.d.ts": "576711e016cf4f1804676043e6a0a5414252560eb57de9faceee34d79798c850",
+        "node_modules/typescript/lib/lib.es2019.symbol.d.ts": "89c1b1281ba7b8a96efc676b11b264de7a8374c5ea1e6617f11880a13fc56dc6",
+        "node_modules/typescript/lib/lib.es2020.bigint.d.ts": "e93d098658ce4f0c8a0779e6cab91d0259efb88a318137f686ad76f8410ca270",
+        "node_modules/typescript/lib/lib.es2020.d.ts": "5efce4fc3c29ea84e8928f97adec086e3dc876365e0982cc8479a07954a3efd4",
+        "node_modules/typescript/lib/lib.es2020.date.d.ts": "063600664504610fe3e99b717a1223f8b1900087fab0b4cad1496a114744f8df",
+        "node_modules/typescript/lib/lib.es2020.full.d.ts": "1305d1e76ca44e30fb8b2b8075fa522b83f60c0bcf5d4326a9d2cf79b53724f8",
+        "node_modules/typescript/lib/lib.es2020.intl.d.ts": "8073890e29d2f46fdbc19b8d6d2eb9ea58db9a2052f8640af20baff9afbc8640",
+        "node_modules/typescript/lib/lib.es2020.number.d.ts": "368af93f74c9c932edd84c58883e736c9e3d53cec1fe24c0b0ff451f529ceab1",
+        "node_modules/typescript/lib/lib.es2020.promise.d.ts": "934019d7e3c81950f9a8426d093458b65d5aff2c7c1511233c0fd5b941e608ab",
+        "node_modules/typescript/lib/lib.es2020.sharedmemory.d.ts": "bf14a426dbbf1022d11bd08d6b8e709a2e9d246f0c6c1032f3b2edb9a902adbe",
+        "node_modules/typescript/lib/lib.es2020.string.d.ts": "5e07ed3809d48205d5b985642a59f2eba47c402374a7cf8006b686f79efadcbd",
+        "node_modules/typescript/lib/lib.es2020.symbol.wellknown.d.ts": "2b72d528b2e2fe3c57889ca7baef5e13a56c957b946906d03767c642f386bbc3",
+        "node_modules/typescript/lib/lib.es2021.d.ts": "feecb1be483ed332fad555aff858affd90a48ab19ba7272ee084704eb7167569",
+        "node_modules/typescript/lib/lib.es2021.full.d.ts": "4a66df3ab5de5cfcda11538cffddd67ff6a174e003788e270914c1e0248483cf",
+        "node_modules/typescript/lib/lib.es2021.intl.d.ts": "956d27abdea9652e8368ce029bb1e0b9174e9678a273529f426df4b3d90abd60",
+        "node_modules/typescript/lib/lib.es2021.promise.d.ts": "af3dd424cf267428f30ccfc376f47a2c0114546b55c44d8c0f1d57d841e28d74",
+        "node_modules/typescript/lib/lib.es2021.string.d.ts": "995c005ab91a498455ea8dfb63aa9f83fa2ea793c3d8aa344be4a1678d06d399",
+        "node_modules/typescript/lib/lib.es2021.weakref.d.ts": "51e547984877a62227042850456de71a5c45e7fe86b7c975c6e68896c86fa23b",
+        "node_modules/typescript/lib/lib.es2022.array.d.ts": "4fa6ed14e98aa80b91f61b9805c653ee82af3502dc21c9da5268d3857772ca05",
+        "node_modules/typescript/lib/lib.es2022.d.ts": "5514e54f17d6d74ecefedc73c504eadffdeda79c7ea205cf9febead32d45c4bc",
+        "node_modules/typescript/lib/lib.es2022.error.d.ts": "e6633e05da3ff36e6da2ec170d0d03ccf33de50ca4dc6f5aeecb572cedd162fb",
+        "node_modules/typescript/lib/lib.es2022.full.d.ts": "3cbad9a1ba4453443026ed38e4b8be018abb26565fa7c944376463ad9df07c41",
+        "node_modules/typescript/lib/lib.es2022.intl.d.ts": "d8670852241d4c6e03f2b89d67497a4bbefe29ecaa5a444e2c11a9b05e6fccc6",
+        "node_modules/typescript/lib/lib.es2022.object.d.ts": "8444af78980e3b20b49324f4a16ba35024fef3ee069a0eb67616ea6ca821c47a",
+        "node_modules/typescript/lib/lib.es2022.regexp.d.ts": "50d53ccd31f6667aff66e3d62adf948879a3a16f05d89882d1188084ee415bbc",
+        "node_modules/typescript/lib/lib.es2022.sharedmemory.d.ts": "caccc56c72713969e1cfe5c3d44e5bab151544d9d2b373d7dbe5a1e4166652be",
+        "node_modules/typescript/lib/lib.es2022.string.d.ts": "3287d9d085fbd618c3971944b65b4be57859f5415f495b33a6adc994edd2f004",
+        "node_modules/typescript/lib/lib.es2023.array.d.ts": "08a58483392df5fcc1db57d782e87734f77ae9eab42516028acbfe46f29a3ef7",
+        "node_modules/typescript/lib/lib.es2023.collection.d.ts": "436aaf437562f276ec2ddbee2f2cdedac7664c1e4c1d2c36839ddd582eeb3d0a",
+        "node_modules/typescript/lib/lib.es2023.d.ts": "1c0cdb8dc619bc549c3e5020643e7cf7ae7940058e8c7e5aefa5871b6d86f44b",
+        "node_modules/typescript/lib/lib.es2023.full.d.ts": "785921608325fa246b450f05b238f4b3ed659f1099af278ce9ebbc9416a13f1d",
+        "node_modules/typescript/lib/lib.es5.d.ts": "824cb491a40f7e8fdeb56f1df5edf91b23f3e3ee6b4cde84d4a99be32338faee",
+        "node_modules/typescript/lib/lib.es6.d.ts": "df039a67536fe2acc3affdcbfb645892f842db36fe599e8e652e2f0c640a90d1",
+        "node_modules/typescript/lib/lib.esnext.collection.d.ts": "b1cb28af0c891c8c96b2d6b7be76bd394fddcfdb4709a20ba05a7c1605eea0f9",
+        "node_modules/typescript/lib/lib.esnext.d.ts": "886e50ef125efb7878f744e86908884c0133e7a6d9d80013f421b0cd8fb2af94",
+        "node_modules/typescript/lib/lib.esnext.decorators.d.ts": "d4b1d2c51d058fc21ec2629fff7a76249dec2e36e12960ea056e3ef89174080f",
+        "node_modules/typescript/lib/lib.esnext.disposable.d.ts": "15b98a533864d324e5f57cd3cfc0579b231df58c1c0f6063ea0fcb13c3c74ff9",
+        "node_modules/typescript/lib/lib.esnext.full.d.ts": "bde31fd423cd93b0eff97197a3f66df7c93e8c0c335cbeb113b7ff1ac35c23f4",
+        "node_modules/typescript/lib/lib.esnext.intl.d.ts": "13f6e6380c78e15e140243dc4be2fa546c287c6d61f4729bc2dd7cf449605471",
+        "node_modules/typescript/lib/lib.esnext.object.d.ts": "2fef54945a13095fdb9b84f705f2b5994597640c46afeb2ce78352fab4cb3279",
+        "node_modules/typescript/lib/lib.esnext.promise.d.ts": "ac77cb3e8c6d3565793eb90a8373ee8033146315a3dbead3bde8db5eaf5e5ec6",
+        "node_modules/typescript/lib/lib.scripthost.d.ts": "cd034f499c6cdca722b60c04b5b1b78e058487a7085a8e0d6fb50809947ee573",
+        "node_modules/typescript/lib/lib.webworker.asynciterable.d.ts": "5dac64f80ed368a81b2098526904505a0c2fd4007acc883570edc0fc41733b82",
+        "node_modules/typescript/lib/lib.webworker.d.ts": "db88e2781075c7bca86634724f38a132de718ddf3a470a3a2cdb182f4364af9e",
+        "node_modules/typescript/lib/lib.webworker.importscripts.d.ts": "80e18897e5884b6723488d4f5652167e7bb5024f946743134ecc4aa4ee731f89",
+        "node_modules/typescript/lib/lib.webworker.iterable.d.ts": "e4613332696bf3ce9d7d145210259a6f78bdcc6c6ae475f6550301d8115e94bd",
+        "node_modules/typescript/lib/pl/diagnosticMessages.generated.json": "d89f96388bc7c102bfefa11fc1067184916d498bb9d6e065b9a338b21588a5a4",
+        "node_modules/typescript/lib/pt-br/diagnosticMessages.generated.json": "2a4a6fb63d21818390c4472612dbb384e40208b690850d4639b0d37deb7310ea",
+        "node_modules/typescript/lib/ru/diagnosticMessages.generated.json": "d508c05462ef602ec95f1091f792b21fb3396408db1b905c0a280930584c49b1",
+        "node_modules/typescript/lib/tr/diagnosticMessages.generated.json": "23f6f75feae84d10c3680d1b7ee7d8a72a09b7f4d59f6ff35b219a9517a8eaa5",
+        "node_modules/typescript/lib/tsc.js": "113d5ce713ec89581ed77a66c88272d8db18c1c38c97729ceb32fc461a49deaa",
+        "node_modules/typescript/lib/tsserver.js": "20b1e91278041e40decc0d8e9e4333b5f5d253e06a85da952e9580bae579c5d1",
+        "node_modules/typescript/lib/tsserverlibrary.d.ts": "73b15a0b7cf5c6df9076b9408c5ce682f11813453bf54c54cb284f075b5224cf",
+        "node_modules/typescript/lib/tsserverlibrary.js": "7ca9b464de80a5382d9ccfed2b224323bc0274c8de61bf0464e89ee824677c76",
+        "node_modules/typescript/lib/typesMap.json": "6f735c9c8d8e2b4d4f8510273b2f969ad95a1080ff2061f0cf264225fe8dd09c",
+        "node_modules/typescript/lib/typescript.d.ts": "e4ba061c5bcfc75ef8a18eaf677e0ea007ca67931a12aab286cc4a851ce49263",
+        "node_modules/typescript/lib/typescript.js": "d4eeb6e18a598a21aa0a5c09a52270856e4b23bd31d9c7c60ab80a22b275b07b",
+        "node_modules/typescript/lib/typingsInstaller.js": "71a52b25698cb32c19bbc1231f98c628522d6b802d6f3c068a36606d711b0bb7",
+        "node_modules/typescript/lib/watchGuard.js": "471200d4bc555ef8d8429358bdca2a68ea7c9bfff6c853b5b048d2512fe4092a",
+        "node_modules/typescript/lib/zh-cn/diagnosticMessages.generated.json": "ab0169a37df3e23f73e5158a796aaae4d532e105535c3e16712c1a4b487c141f",
+        "node_modules/typescript/lib/zh-tw/diagnosticMessages.generated.json": "a9666ed011ab7dcc222b447d3e852059c6b26df8982591b87516c52ce13f6276",
+        "node_modules/typescript/package.json": "16954c7d68c1a4e8a24962e9e25f92620c5416295e4b7ac5b01c93fa282a7ac4",
+        "tsconfig.json": "e13317ff430ade49fcb07561bc4d3a59e47c391170a41e6ad640c4bbd88674cd"
       },
       "pristine": {
         "pass": false,
@@ -219,21 +421,27 @@
     },
     "ts_package_script_fail": {
       "task": "ts_package_script_fail",
-      "task_version": "1.0.0",
+      "task_version": "1.1.0",
       "predicate": {
-        "type": "file_contains",
-        "path": "package.json",
-        "contains": "process.exit(0)"
+        "type": "command_exit_0",
+        "argv": [
+          "npm",
+          "test"
+        ],
+        "timeout_sec": 120,
+        "timeout_is_unverified": true,
+        "resolve_executable": true
       },
+      "protected_verifiers": {},
       "pristine": {
         "pass": false,
         "ran": true,
-        "reason": "file_contains package.json"
+        "reason": "command_exit_0 ['C:\\\\Program Files\\\\nodejs\\\\npm.CMD', 'test'] -> 1"
       },
       "golden": {
         "pass": true,
         "ran": true,
-        "reason": "file_contains package.json"
+        "reason": "command_exit_0 ['C:\\\\Program Files\\\\nodejs\\\\npm.CMD', 'test'] -> 0"
       },
       "pass": true
     },
@@ -245,6 +453,7 @@
         "path": "out/result.txt",
         "equals": "OK"
       },
+      "protected_verifiers": {},
       "pristine": {
         "pass": false,
         "ran": true,
@@ -259,22 +468,13 @@
     },
     "windows_batch_capture_diag": {
       "task": "windows_batch_capture_diag",
-      "task_version": "1.0.0",
+      "task_version": "1.1.0",
       "predicate": {
-        "type": "all",
-        "of": [
-          {
-            "type": "file_contains",
-            "path": "ERR.txt",
-            "contains": ":"
-          },
-          {
-            "type": "file_contains",
-            "path": "ERR.txt",
-            "contains": "12"
-          }
-        ]
+        "type": "file_matches",
+        "path": "ERR.txt",
+        "pattern": "src[/\\\\]main\\.rs:12"
       },
+      "protected_verifiers": {},
       "pristine": {
         "pass": false,
         "ran": true,
@@ -283,7 +483,17 @@
       "golden": {
         "pass": true,
         "ran": true,
-        "reason": "all ok"
+        "reason": "file_matches ERR.txt"
+      },
+      "equivalent_variant": {
+        "why": "cmd echo redirection adds trailing whitespace to the correct location",
+        "path": "ERR.txt",
+        "content": "src/main.rs:12  \r\n",
+        "verdict": {
+          "pass": true,
+          "ran": true,
+          "reason": "file_matches ERR.txt"
+        }
       },
       "pass": true
     },
@@ -309,6 +519,9 @@
             "contains": "def test_simple_tie_keeps_first_seen_seller(self):"
           }
         ]
+      },
+      "protected_verifiers": {
+        "test_salesagg.py": "7bf908f921334597d4d5be585879d0b4d470e7bcf03b337ee0b976214ee71543"
       },
       "pristine": {
         "pass": false,
@@ -345,6 +558,9 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "test_batches.py": "9cd2f7be5cc9bef36fcd3c63ddac76d40741ae5efefa0b447c41867644716f78"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -379,6 +595,9 @@
             "contains": "def test_missing_key_raises_key_error(self):"
           }
         ]
+      },
+      "protected_verifiers": {
+        "test_configreader.py": "d596ac86048fc00b8e0f9ff2a4096f6adf94d02ef27a4112cae9cf73afcfaeeb"
       },
       "pristine": {
         "pass": false,
@@ -420,6 +639,9 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "test_intake.py": "2bbd9edcaac8367c0aeffd5bfb6226f4dc2404be20fe526755d2c4b43c9e860a"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -459,6 +681,9 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "test_ledger.py": "ff685ebd5a05f94affc1c5478c05cd9c89e7b3607f8a89f153d4003e2ebb09c3"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -493,6 +718,9 @@
             "contains": "def test_full_page_keeps_every_item(self):"
           }
         ]
+      },
+      "protected_verifiers": {
+        "test_paginate.py": "7a889387146c054c215a4d3edb9d8e2090b0f4035276f7021d1371e9afb72dee"
       },
       "pristine": {
         "pass": false,
@@ -539,6 +767,9 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "test_orders.py": "6502e5310550ec62647a7025c090cee48a5a9de0fcaf4b5bf7417c15a85fc874"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -573,6 +804,9 @@
             "contains": "def test_cancel_from_running_goes_to_cancelled():"
           }
         ]
+      },
+      "protected_verifiers": {
+        "test_scheduler.py": "5a223801551e7c16ba661cf2d22ccc5e659a4cf33ceda198750d5ff4a1f9dd7a"
       },
       "pristine": {
         "pass": false,
@@ -614,6 +848,9 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "test_shifts.py": "5842b376cd3edaa51467555e805176df39c9fa3bc54f79a3065ad25efd276a75"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -648,6 +885,9 @@
             "contains": "def test_locked_coin_goes_to_unlocked(self):"
           }
         ]
+      },
+      "protected_verifiers": {
+        "test_turnstile.py": "c5cbc3bdb0bd03d6c8530276c763ce196aabc82d4ea8a5e5065edaf4a8f46e3c"
       },
       "pristine": {
         "pass": false,
@@ -687,6 +927,10 @@
             "contains": "assert_eq!(longest_word(\"aa bb\"), \"aa\");"
           }
         ]
+      },
+      "protected_verifiers": {
+        "Cargo.toml": "3d958f4a691e622b30d3f880f439744363d81be51bf13bbcb3adc5db7fa2c81b",
+        "tests/longest.rs": "584a22aeae3fa720c26c52b6704fcbb8118b7472607371260484d2158ea49340"
       },
       "pristine": {
         "pass": false,
@@ -732,6 +976,10 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "Cargo.toml": "36e63c433dafa8e07613373c0855724e7d809c35d27de54ceee111674ada2b4b",
+        "tests/propagate.rs": "1d057761d82ed1d3b2e9db5c688f66ed95bed478963fe1bff46f23122c37343f"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -771,6 +1019,10 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "Cargo.toml": "71ab003c12f5c59410980cae17a6c9704a3cec117ca4e8e818a8e652dfab592d",
+        "tests/scanner.rs": "6c13e5ff96a2a20737d10c3ab556888d6848a3b7f646250143c5b6fa6d4a835d"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -808,6 +1060,9 @@
             "contains": "assert.deepEqual(results, expected);"
           }
         ]
+      },
+      "protected_verifiers": {
+        "check.mjs": "bd1f0248e86f8542e1b754b2acf6430527dd4b215d70a5b408500ad1e29231fd"
       },
       "pristine": {
         "pass": false,
@@ -852,6 +1107,9 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "check.mjs": "cafa6871bc0957a15db38fbc178135fd85e096d3e43c6c6ec4bfa7d39e846420"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -884,6 +1142,9 @@
             "contains": "assert.deepStrictEqual(rank_players(players), ["
           }
         ]
+      },
+      "protected_verifiers": {
+        "check.mjs": "c79d16931183fd7949a3f7621da3b9d7de4854ee7814e6c30db996d7461df11f"
       },
       "pristine": {
         "pass": false,
@@ -918,6 +1179,9 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "check.mjs": "997154dd8ea21a4f63d82fe17e04c29409aef2336f212d41fba8925ccf8940c4"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -950,6 +1214,9 @@
             "contains": "assert.equal(slugify('   *** ### ---   '), '');"
           }
         ]
+      },
+      "protected_verifiers": {
+        "check.mjs": "8cb14b3723a21eeba02aa85fad7d1f28f53433688462ca7e3f96254db7b64ff4"
       },
       "pristine": {
         "pass": false,
@@ -985,6 +1252,9 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "test_csvlite.py": "8d570c5d7cb5fdfb77746a922025bcdad4c580d856ef9e59fbf210a403bd0e9d"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -1019,6 +1289,9 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "test_nested_flatten.py": "0432cb0c6940de4275a7d3ad2a8dc3e53975628e47e5ee1780753e7bd0553f12"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -1051,6 +1324,10 @@
             "contains": "assert_eq!(parse_port(Some(\"3000\")), 3000);"
           }
         ]
+      },
+      "protected_verifiers": {
+        "Cargo.toml": "eceeb43a8e1962ea31e6ed8f57f6500804c7ce18efba17143f58864996363ae2",
+        "tests/config_test.rs": "7e62b1d7b9cf8ea885dc2fdf9aec1545b073811a90914a1039901f564ea02abc"
       },
       "pristine": {
         "pass": false,
@@ -1085,6 +1362,10 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "Cargo.toml": "1ab15efeca57d25073c683a4cbec211fd58dcb406beeee5680d20691121390e5",
+        "tests/grade_test.rs": "23e6130849ca3d203ea85e4c5640615bb49a8ab7714ae2f44d6f994a3ae0505f"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -1117,6 +1398,10 @@
             "contains": "assert!(validate_username(name).is_ok(), \"expected Ok for {:?}\", name);"
           }
         ]
+      },
+      "protected_verifiers": {
+        "Cargo.toml": "4752e67f6a40000bec170307312824f0be7db8c1f109919b1428371c8c552563",
+        "tests/username_test.rs": "bd1b12151668234b742d60c42d26ac4c3c15c1233165f7b23d2d5cc21e4888ae"
       },
       "pristine": {
         "pass": false,
@@ -1151,6 +1436,9 @@
           }
         ]
       },
+      "protected_verifiers": {
+        "check.mjs": "d36c160a1b1bfca292a17a2cbd4270107c349ca2a4c0171eee7f956008b7bd5b"
+      },
       "pristine": {
         "pass": false,
         "ran": true,
@@ -1183,6 +1471,9 @@
             "contains": "assert.equal(firstChar('Sphinx of black quartz, judge my vow!'), 'S');"
           }
         ]
+      },
+      "protected_verifiers": {
+        "check.mjs": "0d8408d427b53c8092484247b47c41b60ea5bb4ae07fa614994590d7b6c777d7"
       },
       "pristine": {
         "pass": false,
@@ -1223,34 +1514,30 @@
         ],
         "timeout_sec": 120
       },
-      "runs_scored": 9,
-      "runs_reconstructed": 9,
-      "legacy_pass": 1,
-      "declared_pass": 9,
+      "runs_scored": 3,
+      "runs_reconstructed": 2,
+      "independent_live_rescore": false,
+      "note": "predicate sensitivity on candidate text over a pristine fixture; not full live re-scoring; legacy runs_scored counts stored rows inspected, runs_reconstructed counts inferred candidates",
+      "legacy_pass": 0,
+      "declared_pass": 2,
       "runs": [
         {
           "condition": "raw_shell",
           "seed": 42,
           "recorded_success": true,
-          "reconstructed": true,
-          "how": "inline shell write",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains src/index.ts"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "command_exit_0 ['node', 'node_modules/typescript/bin/tsc', '--noEmit'] -> 0"
-          }
+          "reconstructed": false,
+          "reconstruction_scope": "single-file candidate, not complete final workspace",
+          "independent_live_rescore": false,
+          "how": "no supported inline write found"
         },
         {
           "condition": "raw_shell_coached",
           "seed": 42,
           "recorded_success": true,
           "reconstructed": true,
-          "how": "inline shell write",
+          "reconstruction_scope": "single-file candidate, not complete final workspace",
+          "independent_live_rescore": false,
+          "how": "candidate from inline shell write",
           "legacy": {
             "pass": false,
             "ran": true,
@@ -1267,109 +1554,9 @@
           "seed": 42,
           "recorded_success": true,
           "reconstructed": true,
-          "how": "typed file ops",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains src/index.ts"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "command_exit_0 ['node', 'node_modules/typescript/bin/tsc', '--noEmit'] -> 0"
-          }
-        },
-        {
-          "condition": "raw_shell",
-          "seed": 43,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "inline shell write",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains src/index.ts"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "command_exit_0 ['node', 'node_modules/typescript/bin/tsc', '--noEmit'] -> 0"
-          }
-        },
-        {
-          "condition": "raw_shell_coached",
-          "seed": 43,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "inline shell write",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains src/index.ts"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "command_exit_0 ['node', 'node_modules/typescript/bin/tsc', '--noEmit'] -> 0"
-          }
-        },
-        {
-          "condition": "verseshell_aci",
-          "seed": 43,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "typed file ops",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains src/index.ts"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "command_exit_0 ['node', 'node_modules/typescript/bin/tsc', '--noEmit'] -> 0"
-          }
-        },
-        {
-          "condition": "raw_shell",
-          "seed": 44,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "inline shell write",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains src/index.ts"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "command_exit_0 ['node', 'node_modules/typescript/bin/tsc', '--noEmit'] -> 0"
-          }
-        },
-        {
-          "condition": "raw_shell_coached",
-          "seed": 44,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "inline shell write",
-          "legacy": {
-            "pass": true,
-            "ran": true,
-            "reason": "all ok"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "command_exit_0 ['node', 'node_modules/typescript/bin/tsc', '--noEmit'] -> 0"
-          }
-        },
-        {
-          "condition": "verseshell_aci",
-          "seed": 44,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "typed file ops",
+          "reconstruction_scope": "single-file candidate, not complete final workspace",
+          "independent_live_rescore": false,
+          "how": "candidate from typed write arguments",
           "legacy": {
             "pass": false,
             "ran": true,
@@ -1390,21 +1577,42 @@
         "contains": "packages"
       },
       "declared_predicate": {
-        "type": "file_matches",
-        "path": "SUMMARY.txt",
-        "pattern": "(?i)[^\\r\\n]*\\bsix\\b[^\\r\\n]*"
+        "type": "all",
+        "of": [
+          {
+            "type": "command_exit_0",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "import six; assert six.__version__ == '1.16.0'"
+            ],
+            "timeout_sec": 120,
+            "timeout_is_unverified": true,
+            "resolve_executable": true
+          },
+          {
+            "type": "file_matches",
+            "path": "SUMMARY.txt",
+            "pattern": "(?i)[^\\r\\n]*\\bsix\\b[^\\r\\n]*"
+          }
+        ]
       },
-      "runs_scored": 9,
-      "runs_reconstructed": 9,
+      "runs_scored": 3,
+      "runs_reconstructed": 3,
+      "independent_live_rescore": false,
+      "note": "predicate sensitivity on candidate text over a pristine fixture; not full live re-scoring; legacy runs_scored counts stored rows inspected, runs_reconstructed counts inferred candidates",
       "legacy_pass": 0,
-      "declared_pass": 9,
+      "declared_pass": 3,
       "runs": [
         {
-          "condition": "raw_shell",
+          "condition": "verseshell_aci",
           "seed": 42,
           "recorded_success": true,
           "reconstructed": true,
-          "how": "inline shell write",
+          "reconstruction_scope": "single-file candidate, not complete final workspace",
+          "independent_live_rescore": false,
+          "how": "candidate from typed write arguments",
           "legacy": {
             "pass": false,
             "ran": true,
@@ -1413,7 +1621,26 @@
           "declared": {
             "pass": true,
             "ran": true,
-            "reason": "file_matches SUMMARY.txt"
+            "reason": "all ok"
+          }
+        },
+        {
+          "condition": "raw_shell",
+          "seed": 42,
+          "recorded_success": true,
+          "reconstructed": true,
+          "reconstruction_scope": "single-file candidate, not complete final workspace",
+          "independent_live_rescore": false,
+          "how": "candidate from inline shell write",
+          "legacy": {
+            "pass": false,
+            "ran": true,
+            "reason": "file_contains SUMMARY.txt"
+          },
+          "declared": {
+            "pass": true,
+            "ran": true,
+            "reason": "all ok"
           }
         },
         {
@@ -1421,7 +1648,9 @@
           "seed": 42,
           "recorded_success": true,
           "reconstructed": true,
-          "how": "inline shell write",
+          "reconstruction_scope": "single-file candidate, not complete final workspace",
+          "independent_live_rescore": false,
+          "how": "candidate from inline shell write",
           "legacy": {
             "pass": false,
             "ran": true,
@@ -1430,126 +1659,7 @@
           "declared": {
             "pass": true,
             "ran": true,
-            "reason": "file_matches SUMMARY.txt"
-          }
-        },
-        {
-          "condition": "verseshell_aci",
-          "seed": 42,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "typed file ops",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains SUMMARY.txt"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "file_matches SUMMARY.txt"
-          }
-        },
-        {
-          "condition": "raw_shell",
-          "seed": 43,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "inline shell write",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains SUMMARY.txt"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "file_matches SUMMARY.txt"
-          }
-        },
-        {
-          "condition": "raw_shell_coached",
-          "seed": 43,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "inline shell write",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains SUMMARY.txt"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "file_matches SUMMARY.txt"
-          }
-        },
-        {
-          "condition": "verseshell_aci",
-          "seed": 43,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "typed file ops",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains SUMMARY.txt"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "file_matches SUMMARY.txt"
-          }
-        },
-        {
-          "condition": "raw_shell",
-          "seed": 44,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "inline shell write",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains SUMMARY.txt"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "file_matches SUMMARY.txt"
-          }
-        },
-        {
-          "condition": "raw_shell_coached",
-          "seed": 44,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "inline shell write",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains SUMMARY.txt"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "file_matches SUMMARY.txt"
-          }
-        },
-        {
-          "condition": "verseshell_aci",
-          "seed": 44,
-          "recorded_success": true,
-          "reconstructed": true,
-          "how": "typed file ops",
-          "legacy": {
-            "pass": false,
-            "ran": true,
-            "reason": "file_contains SUMMARY.txt"
-          },
-          "declared": {
-            "pass": true,
-            "ran": true,
-            "reason": "file_matches SUMMARY.txt"
+            "reason": "all ok"
           }
         }
       ]

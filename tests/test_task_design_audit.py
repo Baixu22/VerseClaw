@@ -39,6 +39,17 @@ class DesignAuditTests(unittest.TestCase):
         with self.assertRaises(ValueError): design.audit(*inputs)
         inputs=list(self.inputs()); inputs[2]['rows'][0]['task_id']='foreign'
         with self.assertRaises(ValueError): design.audit(*inputs)
+    def test_declared_subset_requires_flag_and_records_missing_tasks(self):
+        freeze, admission, live, power = self.inputs()
+        live['rows'] = [r for r in live['rows'] if r['task_id'] == 'a']
+        with self.assertRaises(ValueError):
+            design.audit(freeze, admission, live, power)
+        report = design.audit(freeze, admission, live, power, allow_subset=True)
+        self.assertEqual(report['baseline_scope']['scope'], 'declared_subset')
+        self.assertFalse(report['baseline_scope']['full_coverage'])
+        self.assertEqual(report['baseline_scope']['observed_tasks'], 1)
+        self.assertEqual(report['baseline_scope']['missing_tasks'], ['b', 'c'])
+
     def test_freshness_rejects_changed_source(self):
         self.assertIn('eval/task_design_audit.json',gate.EVIDENCE_ARTIFACTS)
         with tempfile.TemporaryDirectory() as tmp:

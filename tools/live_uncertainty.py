@@ -768,7 +768,7 @@ def analyse(payload: dict, label: str) -> dict:
         p_exact = min(1.0, 2 * sum(math.comb(n_disc, i) for i in range(k + 1)) / (2 ** n_disc))
         mcnemar["p_value_exact"] = round(p_exact, 6)
     else:
-        mcnemar["p_value_exact"] = None
+        mcnemar["p_value_exact"] = 1.0
 
     free_text = []
     if z_test["p_value"] is not None and z_test["p_value"] > 0.05:

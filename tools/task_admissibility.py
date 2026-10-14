@@ -113,11 +113,11 @@ TAMPER_STUB = {
 
 def evidence_fingerprint(globs: list[str]) -> str:
     digest = hashlib.sha256()
-    for pat in globs:
-        for path in sorted(ROOT.glob(pat)):
-            if path.is_file() and "__pycache__" not in path.parts:
-                digest.update(path.relative_to(ROOT).as_posix().encode())
-                digest.update(hashlib.sha256(path.read_bytes()).digest())
+    paths = sorted(p for pat in globs for p in ROOT.glob(pat)
+                   if p.is_file() and "__pycache__" not in p.parts)
+    for path in paths:
+        digest.update(path.relative_to(ROOT).as_posix().encode())
+        digest.update(hashlib.sha256(path.read_bytes()).digest())
     return digest.hexdigest()
 
 

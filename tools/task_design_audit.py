@@ -25,7 +25,7 @@ def additional_large_required(total: int, large: int) -> int:
     return max(0, (total - 3 * large + 1) // 2)
 
 
-def audit(freeze: dict, admission: dict, live: dict, power: dict) -> dict:
+def audit(freeze: dict, admission: dict, live: dict, power: dict, *, allow_subset: bool = False) -> dict:
     tasks = freeze.get('tasks') or []
     if not tasks or len(tasks) != len(set(tasks)) or freeze.get('n_tasks') != len(tasks):
         raise ValueError('frozen task list/count is missing or inconsistent')
@@ -47,8 +47,13 @@ def audit(freeze: dict, admission: dict, live: dict, power: dict) -> dict:
     baseline = [r for r in live.get('rows', []) if r.get('condition') == 'raw_shell']
     if not baseline or len({r.get('model') for r in baseline}) != 1:
         raise ValueError('baseline needs rows from exactly one model')
-    if {r.get('task_id') for r in baseline} != set(tasks):
-        raise ValueError('baseline task coverage differs from the frozen set')
+    baseline_tasks = {r.get('task_id') for r in baseline}
+    frozen_tasks = set(tasks)
+    if baseline_tasks != frozen_tasks:
+        if not allow_subset:
+            raise ValueError('baseline task coverage differs from the frozen set')
+        if not baseline_tasks or not baseline_tasks <= frozen_tasks:
+            raise ValueError('baseline task coverage is not a subset of the frozen set')
     mde = power['preregistered_parameters']['success_mde_absolute']
     n = len(baseline)
     successes = sum(r.get('success') is True for r in baseline)
@@ -56,6 +61,13 @@ def audit(freeze: dict, admission: dict, live: dict, power: dict) -> dict:
     count = len(tasks)
     return {
         'task_set_version': freeze.get('task_set_version'),
+        'baseline_scope': {
+            'scope': 'full_frozen_set' if baseline_tasks == frozen_tasks else 'declared_subset',
+            'observed_tasks': len(baseline_tasks),
+            'frozen_tasks': len(frozen_tasks),
+            'missing_tasks': sorted(frozen_tasks - baseline_tasks),
+            'full_coverage': baseline_tasks == frozen_tasks,
+        },
         'composition': {
             'total_tasks': count, 'measured_tasks': len(observations),
             'confirmed_large_tasks': large, 'unmeasured_tasks': unknown,
@@ -81,6 +93,7 @@ def audit(freeze: dict, admission: dict, live: dict, power: dict) -> dict:
             'Missing observations are unknown, never silently counted as measured-small.',
             'The quota formula assumes each added task actually passes A8; planned labels are not evidence.',
             'Do not feed task-level live results into new difficulty design; a blind author and new frozen evaluation remain required.',
+            'When baseline_scope.full_coverage is false, difficulty is a declared-subset diagnostic; composition and large-quota evidence still come from the frozen task list and admission evidence.',
         ],
     }
 
@@ -92,6 +105,8 @@ def main(argv=None):
     parser.add_argument('--admission', type=Path, default=ROOT/SOURCES[1])
     parser.add_argument('--with-arm', type=Path, default=ROOT/SOURCES[2])
     parser.add_argument('--power', type=Path, default=ROOT/SOURCES[3])
+    parser.add_argument('--allow-subset', action='store_true',
+                        help='allow a declared subset baseline; records full_coverage=false')
     args = parser.parse_args(argv)
     try:
         paths = [args.freeze, args.admission, args.with_arm, args.power]
@@ -100,7 +115,7 @@ def main(argv=None):
             raise ValueError('power and live task-set versions must match')
         if inputs[3].get('source') and Path(inputs[3]['source']).resolve() != args.with_arm.resolve():
             raise ValueError('power report was computed from a different live input')
-        report = audit(*inputs)
+        report = audit(*inputs, allow_subset=args.allow_subset)
     except (OSError, ValueError, KeyError) as error:
         print(f'ERROR: {error}', file=sys.stderr)
         return 2

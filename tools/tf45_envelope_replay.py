@@ -382,7 +382,9 @@ def main(argv: list[str] | None = None) -> int:
         "schema": "verseshell.tf45-envelope-replay/v1",
         "ae_binary": str(AE.resolve()), "ae_binary_sha256": binary_before,
         "source_identity": {"path": str(STORED_LIVE.resolve()), "sha256": hashlib.sha256(source_before).hexdigest(),
-                            "task_set_version": source_data.get("task_set_version"), "git_rev": source_data.get("git_rev")},
+                            "task_set_version": source_data.get("task_set_version"), "git_rev": source_data.get("git_rev"),
+                            "collection_id": (source_data.get("live_config") or {}).get("collection_id"),
+                            "tasks": (source_data.get("live_config") or {}).get("tasks")},
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "method": {
             "frozen_call_source": "bench/aci/results/latest_live.json (condition D read ops)",

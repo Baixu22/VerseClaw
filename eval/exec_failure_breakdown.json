@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.exec-failure-breakdown/v1",
-  "generated_at": "2026-09-30T01:07:55.736520+00:00",
+  "generated_at": "2026-10-14T07:31:17.730144+00:00",
   "method": {
     "inputs": [
       "bench\\aci\\results\\latest_live.json",
@@ -23,7 +23,7 @@
       "bench/aci/results/live_ab_without_read_files.json",
       "tools/exec_failure_breakdown.py"
     ],
-    "fingerprint": "9fa2e820770d36d6dbe73b510cdca2651dbe59a611c7b58bd29db7b3b5ab7874"
+    "fingerprint": "2ac43fa1f9ce5cb1fdb6c51600b34051a05938ef7cb883d71e96fe92b3dfab9f"
   },
   "shim_facts": [
     {
@@ -78,7 +78,7 @@
       "cargo check": {
         "ok": true,
         "exit_code": 0,
-        "output_head": "Checking bench_fix v0.1.0 (C:\\Users\\27933\\AppData\\Local\\Temp\\tf45-replay-rust_fix_compile_error-72de0kdq)\n    Finished `",
+        "output_head": "Checking bench_fix v0.1.0 (C:\\Users\\27933\\AppData\\Local\\Temp\\tf45-replay-rust_fix_compile_error-bqb7sieo)\n    Finished `",
         "answered_as_rustup": false
       },
       "rustc --version": {
@@ -98,16 +98,6 @@
         {
           "dir": "C:\\Program Files\\nodejs",
           "bare_file": "C:\\Program Files\\nodejs\\npm",
-          "bare_is_symlink": false,
-          "siblings": [
-            "npm.cmd",
-            "npm.ps1"
-          ],
-          "shadowed": true
-        },
-        {
-          "dir": "C:\\Users\\27933\\AppData\\Roaming\\npm",
-          "bare_file": "C:\\Users\\27933\\AppData\\Roaming\\npm\\npm",
           "bare_is_symlink": false,
           "siblings": [
             "npm.cmd",
@@ -146,32 +136,9 @@
             "npx.ps1"
           ],
           "shadowed": true
-        },
-        {
-          "dir": "C:\\Users\\27933\\AppData\\Roaming\\npm",
-          "bare_file": "C:\\Users\\27933\\AppData\\Roaming\\npm\\npx",
-          "bare_is_symlink": false,
-          "siblings": [
-            "npx.cmd",
-            "npx.ps1"
-          ],
-          "shadowed": true
         }
       ],
       "yarn": [
-        {
-          "dir": "C:\\Users\\27933\\AppData\\Roaming\\npm",
-          "bare_file": "C:\\Users\\27933\\AppData\\Roaming\\npm\\yarn",
-          "bare_is_symlink": false,
-          "siblings": [
-            "yarn.cmd",
-            "yarn.ps1",
-            "yarnpkg",
-            "yarnpkg.cmd",
-            "yarnpkg.ps1"
-          ],
-          "shadowed": true
-        },
         {
           "dir": "C:\\Users\\27933\\AppData\\Roaming\\npm",
           "bare_file": "C:\\Users\\27933\\AppData\\Roaming\\npm\\yarn",
@@ -205,18 +172,6 @@
           "bare_is_symlink": false,
           "siblings": [
             "pnpm.CMD"
-          ],
-          "shadowed": true
-        },
-        {
-          "dir": "C:\\Users\\27933\\AppData\\Roaming\\npm",
-          "bare_file": "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm",
-          "bare_is_symlink": false,
-          "siblings": [
-            "pnpm.cmd",
-            "pnpm.cmd.codex-bak",
-            "pnpm.ps1",
-            "pnpm.ps1.codex-bak"
           ],
           "shadowed": true
         }
@@ -281,146 +236,34 @@
   },
   "with_read_files": {
     "ok": {
-      "calls": 117,
-      "tokens": 2872,
-      "tokens_per_call": 24.55
+      "calls": 8,
+      "tokens": 1082,
+      "tokens_per_call": 135.25
     },
     "failed": {
-      "calls": 14,
-      "tokens": 1431,
-      "tokens_per_call": 102.21,
-      "share_of_exec_tokens": 0.3326
+      "calls": 0,
+      "tokens": 0,
+      "tokens_per_call": 0.0,
+      "share_of_exec_tokens": 0.0
     },
-    "classes": {
-      "first_diagnostic": {
-        "calls": 14,
-        "tokens": 1431,
-        "share_of_failure_tokens": 1.0
-      }
-    },
-    "per_task_failed": {
-      "python_csvlite_parse_80d158b2": {
-        "calls": 3,
-        "tokens": 535
-      },
-      "python_fix_pytest_fail": {
-        "calls": 4,
-        "tokens": 400
-      },
-      "python_edit_and_retest": {
-        "calls": 3,
-        "tokens": 297
-      },
-      "rust_window_fold_scanner_3d213f38": {
-        "calls": 1,
-        "tokens": 102
-      },
-      "ts_fix_type_error": {
-        "calls": 1,
-        "tokens": 36
-      },
-      "ts_package_script_fail": {
-        "calls": 1,
-        "tokens": 35
-      },
-      "ts_chunk_batches_233e9e44": {
-        "calls": 1,
-        "tokens": 26
-      }
-    },
-    "top_failing_commands": [
-      [
-        "pytest -q",
-        6
-      ],
-      [
-        "python -m pytest",
-        3
-      ],
-      [
-        "pytest -q .",
-        1
-      ],
-      [
-        "",
-        1
-      ],
-      [
-        "tsc --noEmit",
-        1
-      ],
-      [
-        "ls -la .ae",
-        1
-      ],
-      [
-        "cargo test",
-        1
-      ]
-    ]
+    "classes": {},
+    "per_task_failed": {},
+    "top_failing_commands": []
   },
   "without_read_files": {
     "ok": {
-      "calls": 116,
-      "tokens": 3073,
-      "tokens_per_call": 26.49
+      "calls": 8,
+      "tokens": 975,
+      "tokens_per_call": 121.88
     },
     "failed": {
-      "calls": 12,
-      "tokens": 1606,
-      "tokens_per_call": 133.83,
-      "share_of_exec_tokens": 0.3432
+      "calls": 0,
+      "tokens": 0,
+      "tokens_per_call": 0.0,
+      "share_of_exec_tokens": 0.0
     },
-    "classes": {
-      "first_diagnostic": {
-        "calls": 12,
-        "tokens": 1606,
-        "share_of_failure_tokens": 1.0
-      }
-    },
-    "per_task_failed": {
-      "python_csvlite_parse_80d158b2": {
-        "calls": 5,
-        "tokens": 635
-      },
-      "js_leaderboard_rank_b1603acf": {
-        "calls": 2,
-        "tokens": 470
-      },
-      "python_fix_pytest_fail": {
-        "calls": 3,
-        "tokens": 300
-      },
-      "rust_window_fold_scanner_3d213f38": {
-        "calls": 1,
-        "tokens": 102
-      },
-      "python_edit_and_retest": {
-        "calls": 1,
-        "tokens": 99
-      }
-    },
-    "top_failing_commands": [
-      [
-        "pytest -q",
-        4
-      ],
-      [
-        "python -m pytest",
-        4
-      ],
-      [
-        "node check.mjs",
-        2
-      ],
-      [
-        "python -c import test_csvlite as t, traceback\nfor n in dir(t):\n    if n.startswith('test_'):\n        try:\n            getattr(t, n)(); print('PASS', n)\n        except Exception:\n            print('FAIL', n); traceback.print_exc(limit=1)",
-        1
-      ],
-      [
-        "cargo test",
-        1
-      ]
-    ]
+    "classes": {},
+    "per_task_failed": {},
+    "top_failing_commands": []
   }
 }

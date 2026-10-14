@@ -1,5 +1,40 @@
 {
-  "task_set_version": "3.0.0",
+  "task_set_version": "3.1.0",
+  "baseline_scope": {
+    "scope": "declared_subset",
+    "observed_tasks": 8,
+    "frozen_tasks": 35,
+    "missing_tasks": [
+      "js_leaderboard_rank_b1603acf",
+      "node_envconfig_validate_dd681123",
+      "node_slugify_771d856c",
+      "py_region_top_seller_7f713e22",
+      "python_batch_splitter_05613a34",
+      "python_config_reader_686653a1",
+      "python_csvlite_parse_80d158b2",
+      "python_exception_mislabel_0816896a",
+      "python_ledger_window_bug_9bfcc241",
+      "python_nested_flatten_53db7c0b",
+      "python_paginate_60b4dafc",
+      "python_parse_orders_708606f4",
+      "python_scheduler_cancel_transition_4a9b681c",
+      "python_shift_report_tie_order_4a0c45c8",
+      "python_turnstile_6e3358e8",
+      "rust_borrow_fix_longest_word_a4c895ec",
+      "rust_config_parse_port_d6111a63",
+      "rust_error_source_propagation_3eca2e86",
+      "rust_grade_threshold_502d9b26",
+      "rust_username_guard_758c1a78",
+      "rust_window_fold_scanner_3d213f38",
+      "ts_chunk_batches_233e9e44",
+      "ts_narrow_vs_cast_824b51c8",
+      "typescript_missing_await_result_order_c58cafb6",
+      "typescript_reduce_shared_accumulator_d80f462d",
+      "windows_batch_capture_diag",
+      "windows_path_normalize_edit"
+    ],
+    "full_coverage": false
+  },
   "composition": {
     "total_tasks": 35,
     "measured_tasks": 25,
@@ -39,16 +74,16 @@
   },
   "difficulty": {
     "scope": "observed all-row baseline, not a population estimate or task-selection score",
-    "successes": 95,
-    "rows": 105,
-    "observed_success_rate": 0.9047619047619048,
+    "successes": 8,
+    "rows": 8,
+    "observed_success_rate": 1.0,
     "preregistered_target": [
       0.4,
       0.7
     ],
     "inside_target": false,
     "preregistered_mde": 0.15,
-    "observed_positive_headroom": 0.09523809523809523,
+    "observed_positive_headroom": 0.0,
     "headroom_supports_positive_mde": false,
     "does_not_rule_out": "smaller positive effects, negative effects or another baseline in future runs"
   },
@@ -56,11 +91,12 @@
     "Large means measured pristine output >=1000 proxy tokens, not a tier label.",
     "Missing observations are unknown, never silently counted as measured-small.",
     "The quota formula assumes each added task actually passes A8; planned labels are not evidence.",
-    "Do not feed task-level live results into new difficulty design; a blind author and new frozen evaluation remain required."
+    "Do not feed task-level live results into new difficulty design; a blind author and new frozen evaluation remain required.",
+    "When baseline_scope.full_coverage is false, difficulty is a declared-subset diagnostic; composition and large-quota evidence still come from the frozen task list and admission evidence."
   ],
   "schema": "verseshell.task-design-audit/v1",
   "generator": "tools/task_design_audit.py",
-  "generated_at": "2026-09-30T08:05:45.956349+00:00",
+  "generated_at": "2026-10-14T08:09:29.079179+00:00",
   "evidence": {
     "globs": [
       "eval/task_set_freeze.json",
@@ -71,6 +107,12 @@
       "tools/task_admissibility.py",
       "docs/task-generation-protocol.md"
     ],
-    "fingerprint": "2d9144e353292d4d33172c2d69df0f74d305c51dc1576a4712eb2b7765e0efaf"
+    "fingerprint": "da88043658467a79a9a9dd62ac21b6464b7ce1404db061be02e29e4ed4d1f5a9",
+    "input_sha256": {
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\task_set_freeze.json": "f225fd27d4a398bff2fb0d3b88a4cb50832d2ada0db81bac6b07833bb4926658",
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\task_admissibility.json": "c707d02fc6414eb9b0996a887231efefcdec9fcd594cf80110494f0dc3c666d7",
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\bench\\aci\\results\\latest_live.json": "3d823e87f3569165f1e0cc56442ad56c57d3a0f4ffffed585815cc28699aec38",
+      "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\eval\\acceptance_power.json": "6ffd5f17fb355cf9801d8371cb8d9bb85be42553eca9e65bd580e1b244de6adf"
+    }
   }
 }

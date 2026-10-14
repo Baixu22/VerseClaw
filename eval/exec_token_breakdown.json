@@ -1,6 +1,6 @@
 {
   "schema": "verseshell.exec-token-breakdown/v1",
-  "generated_at": "2026-09-30T01:07:50.006656+00:00",
+  "generated_at": "2026-10-14T07:31:10.092575+00:00",
   "method": {
     "inputs": [
       "bench\\aci\\results\\latest_live.json",
@@ -17,574 +17,346 @@
       "bench/aci/results/live_ab_without_read_files.json",
       "tools/exec_token_breakdown.py"
     ],
-    "fingerprint": "8612f61e710921e9127e3da8cacb96509d738d45e9b107bc68e8309d19aae59f"
+    "fingerprint": "eb0768f77bd461cbecdfd746de53e7a656572a058e49e50dc620d3c7b1a519e9"
   },
   "arms": {
     "with_read_files": {
-      "d_runs": 105,
-      "d_total_tokens": 80803,
-      "d_tokens_per_run": 769.55,
+      "d_runs": 8,
+      "d_total_tokens": 2386,
+      "d_tokens_per_run": 298.25,
       "d_ops": {
-        "file.read_many": {
-          "calls": 81,
-          "tokens": 49462,
-          "tokens_per_call": 610.64
-        },
-        "file.view": {
-          "calls": 63,
-          "tokens": 22194,
-          "tokens_per_call": 352.29
-        },
         "exec.run": {
-          "calls": 131,
-          "tokens": 4303,
-          "tokens_per_call": 32.85
+          "calls": 8,
+          "tokens": 1082,
+          "tokens_per_call": 135.25
         },
-        "file.replace_exact": {
-          "calls": 111,
-          "tokens": 2853,
-          "tokens_per_call": 25.7
-        },
-        "task_complete": {
-          "calls": 104,
-          "tokens": 832,
-          "tokens_per_call": 8.0
+        "file.read_many": {
+          "calls": 7,
+          "tokens": 625,
+          "tokens_per_call": 89.29
         },
         "repo.summary": {
-          "calls": 13,
-          "tokens": 587,
-          "tokens_per_call": 45.15
+          "calls": 5,
+          "tokens": 234,
+          "tokens_per_call": 46.8
+        },
+        "file.replace_exact": {
+          "calls": 7,
+          "tokens": 179,
+          "tokens_per_call": 25.57
+        },
+        "file.view": {
+          "calls": 3,
+          "tokens": 127,
+          "tokens_per_call": 42.33
         },
         "file.write": {
-          "calls": 20,
-          "tokens": 500,
+          "calls": 3,
+          "tokens": 75,
           "tokens_per_call": 25.0
         },
-        "repo.search": {
-          "calls": 3,
-          "tokens": 72,
-          "tokens_per_call": 24.0
+        "task_complete": {
+          "calls": 8,
+          "tokens": 64,
+          "tokens_per_call": 8.0
         }
       },
       "exec_run": {
-        "calls": 131,
-        "tokens": 4303,
-        "share_of_d_tokens": 0.0533,
-        "tokens_per_run": 40.98,
-        "tokens_per_call": 32.85,
+        "calls": 8,
+        "tokens": 1082,
+        "share_of_d_tokens": 0.4535,
+        "tokens_per_run": 135.25,
+        "tokens_per_call": 135.25,
         "per_task": {
-          "python_csvlite_parse_80d158b2": {
-            "calls": 5,
-            "tokens": 561
-          },
-          "rust_error_source_propagation_3eca2e86": {
-            "calls": 7,
-            "tokens": 452
-          },
-          "python_fix_pytest_fail": {
-            "calls": 7,
-            "tokens": 439
-          },
-          "python_edit_and_retest": {
-            "calls": 6,
-            "tokens": 336
-          },
-          "ts_narrow_vs_cast_824b51c8": {
-            "calls": 6,
-            "tokens": 327
-          },
-          "rust_borrow_fix_longest_word_a4c895ec": {
-            "calls": 5,
-            "tokens": 299
-          },
-          "rust_window_fold_scanner_3d213f38": {
-            "calls": 5,
-            "tokens": 279
-          },
-          "js_leaderboard_rank_b1603acf": {
-            "calls": 5,
-            "tokens": 278
-          },
-          "typescript_reduce_shared_accumulator_d80f462d": {
-            "calls": 3,
-            "tokens": 252
-          },
-          "ts_package_script_fail": {
-            "calls": 4,
-            "tokens": 91
-          },
-          "rust_config_parse_port_d6111a63": {
-            "calls": 5,
-            "tokens": 85
-          },
-          "rust_fix_compile_error": {
-            "calls": 3,
-            "tokens": 51
+          "python_noisy_install_summary": {
+            "calls": 1,
+            "tokens": 206
           },
           "rust_add_unit_test": {
-            "calls": 3,
-            "tokens": 51
+            "calls": 1,
+            "tokens": 185
           },
           "rust_search_and_edit": {
-            "calls": 3,
-            "tokens": 51
+            "calls": 1,
+            "tokens": 185
           },
-          "rust_grade_threshold_502d9b26": {
-            "calls": 3,
-            "tokens": 51
+          "rust_fix_compile_error": {
+            "calls": 1,
+            "tokens": 125
           },
-          "rust_username_guard_758c1a78": {
-            "calls": 3,
-            "tokens": 51
+          "python_fix_pytest_fail": {
+            "calls": 1,
+            "tokens": 117
           },
-          "python_noisy_install_summary": {
-            "calls": 4,
-            "tokens": 45
+          "python_edit_and_retest": {
+            "calls": 1,
+            "tokens": 116
+          },
+          "ts_package_script_fail": {
+            "calls": 1,
+            "tokens": 98
           },
           "ts_fix_type_error": {
-            "calls": 4,
-            "tokens": 45
-          },
-          "py_region_top_seller_7f713e22": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_batch_splitter_05613a34": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_config_reader_686653a1": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_exception_mislabel_0816896a": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_ledger_window_bug_9bfcc241": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_paginate_60b4dafc": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_parse_orders_708606f4": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_scheduler_cancel_transition_4a9b681c": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_shift_report_tie_order_4a0c45c8": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_turnstile_6e3358e8": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "node_slugify_771d856c": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_nested_flatten_53db7c0b": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "ts_chunk_batches_233e9e44": {
-            "calls": 4,
-            "tokens": 35
-          },
-          "typescript_missing_await_result_order_c58cafb6": {
-            "calls": 3,
-            "tokens": 24
-          },
-          "windows_path_normalize_edit": {
-            "calls": 4,
-            "tokens": 23
-          },
-          "node_envconfig_validate_dd681123": {
-            "calls": 3,
-            "tokens": 9
+            "calls": 1,
+            "tokens": 50
           }
         },
         "ok_vs_failed": {
-          "calls": 131,
-          "tokens": 4303,
+          "calls": 8,
+          "tokens": 1082,
           "ok": {
-            "calls": 117,
-            "tokens": 2872,
-            "tokens_per_call": 24.55
+            "calls": 8,
+            "tokens": 1082,
+            "tokens_per_call": 135.25
           },
           "failed": {
-            "calls": 14,
-            "tokens": 1431,
-            "tokens_per_call": 102.21
+            "calls": 0,
+            "tokens": 0,
+            "tokens_per_call": 0.0
           },
-          "failed_share_of_calls": 0.1069,
-          "failed_share_of_tokens": 0.3326
+          "failed_share_of_calls": 0.0,
+          "failed_share_of_tokens": 0.0
         }
       },
       "read_shape": {
-        "calls": 144,
-        "tokens": 71656,
-        "tokens_per_call": 497.61,
-        "file_refs": 246,
-        "file_refs_per_call": 1.71,
-        "tokens_per_file_ref": 291.28
+        "calls": 10,
+        "tokens": 752,
+        "tokens_per_call": 75.2,
+        "file_refs": 18,
+        "file_refs_per_call": 1.8,
+        "tokens_per_file_ref": 41.78
       },
       "raw_shell": {
-        "runs": 105,
+        "runs": 8,
         "command": {
-          "calls": 495,
-          "tokens": 132161,
-          "tokens_per_call": 266.99
+          "calls": 23,
+          "tokens": 1834,
+          "tokens_per_call": 79.74
         },
         "command_intents": {
-          "read_file": {
-            "calls": 204,
-            "tokens": 72294,
-            "tokens_per_call": 354.38
-          },
           "build_or_test": {
-            "calls": 147,
-            "tokens": 48046,
-            "tokens_per_call": 326.84
+            "calls": 10,
+            "tokens": 1016,
+            "tokens_per_call": 101.6
+          },
+          "read_file": {
+            "calls": 10,
+            "tokens": 728,
+            "tokens_per_call": 72.8
           },
           "other": {
-            "calls": 35,
-            "tokens": 6457,
-            "tokens_per_call": 184.49
-          },
-          "write_or_mkdir": {
-            "calls": 109,
-            "tokens": 5364,
-            "tokens_per_call": 49.21
+            "calls": 3,
+            "tokens": 90,
+            "tokens_per_call": 30.0
           }
         },
         "read_command_shape": {
-          "calls": 204,
-          "tokens": 72294,
-          "tokens_per_call": 354.38,
-          "file_refs": 231,
-          "file_refs_per_call": 1.13,
-          "tokens_per_file_ref": 312.96
+          "calls": 10,
+          "tokens": 728,
+          "tokens_per_call": 72.8,
+          "file_refs": 11,
+          "file_refs_per_call": 1.1,
+          "tokens_per_file_ref": 66.18
         }
       }
     },
     "without_read_files": {
-      "d_runs": 105,
-      "d_total_tokens": 76680,
-      "d_tokens_per_run": 730.29,
+      "d_runs": 8,
+      "d_total_tokens": 2145,
+      "d_tokens_per_run": 268.12,
       "d_ops": {
-        "file.view": {
-          "calls": 226,
-          "tokens": 64751,
-          "tokens_per_call": 286.51
-        },
         "exec.run": {
-          "calls": 128,
-          "tokens": 4679,
-          "tokens_per_call": 36.55
+          "calls": 8,
+          "tokens": 975,
+          "tokens_per_call": 121.88
         },
-        "ops.list": {
-          "calls": 19,
-          "tokens": 2736,
-          "tokens_per_call": 144.0
+        "file.view": {
+          "calls": 15,
+          "tokens": 738,
+          "tokens_per_call": 49.2
         },
         "file.replace_exact": {
-          "calls": 104,
-          "tokens": 2642,
-          "tokens_per_call": 25.4
+          "calls": 8,
+          "tokens": 206,
+          "tokens_per_call": 25.75
+        },
+        "repo.summary": {
+          "calls": 3,
+          "tokens": 120,
+          "tokens_per_call": 40.0
         },
         "task_complete": {
-          "calls": 103,
-          "tokens": 824,
+          "calls": 7,
+          "tokens": 56,
           "tokens_per_call": 8.0
         },
         "file.write": {
-          "calls": 22,
-          "tokens": 550,
+          "calls": 2,
+          "tokens": 50,
           "tokens_per_call": 25.0
-        },
-        "repo.summary": {
-          "calls": 12,
-          "tokens": 487,
-          "tokens_per_call": 40.58
-        },
-        "repo.search": {
-          "calls": 1,
-          "tokens": 11,
-          "tokens_per_call": 11.0
         }
       },
       "exec_run": {
-        "calls": 128,
-        "tokens": 4679,
-        "share_of_d_tokens": 0.061,
-        "tokens_per_run": 44.56,
-        "tokens_per_call": 36.55,
+        "calls": 8,
+        "tokens": 975,
+        "share_of_d_tokens": 0.4545,
+        "tokens_per_run": 121.88,
+        "tokens_per_call": 121.88,
         "per_task": {
-          "python_csvlite_parse_80d158b2": {
-            "calls": 10,
-            "tokens": 826
-          },
-          "js_leaderboard_rank_b1603acf": {
-            "calls": 5,
-            "tokens": 722
-          },
-          "rust_window_fold_scanner_3d213f38": {
-            "calls": 8,
-            "tokens": 441
-          },
-          "python_fix_pytest_fail": {
-            "calls": 6,
-            "tokens": 339
-          },
-          "rust_error_source_propagation_3eca2e86": {
-            "calls": 4,
-            "tokens": 316
-          },
-          "ts_narrow_vs_cast_824b51c8": {
-            "calls": 5,
-            "tokens": 315
-          },
-          "typescript_reduce_shared_accumulator_d80f462d": {
-            "calls": 3,
-            "tokens": 252
-          },
-          "rust_config_parse_port_d6111a63": {
-            "calls": 5,
-            "tokens": 188
-          },
-          "rust_borrow_fix_longest_word_a4c895ec": {
-            "calls": 3,
-            "tokens": 158
-          },
-          "python_edit_and_retest": {
-            "calls": 4,
-            "tokens": 138
+          "rust_add_unit_test": {
+            "calls": 1,
+            "tokens": 185
           },
           "python_noisy_install_summary": {
-            "calls": 5,
-            "tokens": 132
-          },
-          "ts_package_script_fail": {
-            "calls": 3,
-            "tokens": 66
+            "calls": 1,
+            "tokens": 159
           },
           "rust_fix_compile_error": {
-            "calls": 3,
-            "tokens": 51
-          },
-          "rust_add_unit_test": {
-            "calls": 3,
-            "tokens": 51
+            "calls": 1,
+            "tokens": 125
           },
           "rust_search_and_edit": {
-            "calls": 3,
-            "tokens": 51
+            "calls": 1,
+            "tokens": 125
           },
-          "rust_grade_threshold_502d9b26": {
-            "calls": 3,
-            "tokens": 51
+          "python_edit_and_retest": {
+            "calls": 1,
+            "tokens": 117
           },
-          "rust_username_guard_758c1a78": {
-            "calls": 3,
-            "tokens": 51
+          "python_fix_pytest_fail": {
+            "calls": 1,
+            "tokens": 116
           },
-          "py_region_top_seller_7f713e22": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_batch_splitter_05613a34": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_config_reader_686653a1": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_exception_mislabel_0816896a": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_ledger_window_bug_9bfcc241": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_paginate_60b4dafc": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_parse_orders_708606f4": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_scheduler_cancel_transition_4a9b681c": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_shift_report_tie_order_4a0c45c8": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_turnstile_6e3358e8": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "node_slugify_771d856c": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "python_nested_flatten_53db7c0b": {
-            "calls": 3,
-            "tokens": 39
-          },
-          "typescript_missing_await_result_order_c58cafb6": {
-            "calls": 3,
-            "tokens": 24
-          },
-          "node_envconfig_validate_dd681123": {
-            "calls": 4,
-            "tokens": 12
+          "ts_package_script_fail": {
+            "calls": 1,
+            "tokens": 98
           },
           "ts_fix_type_error": {
-            "calls": 3,
-            "tokens": 9
-          },
-          "windows_path_normalize_edit": {
-            "calls": 3,
-            "tokens": 9
-          },
-          "ts_chunk_batches_233e9e44": {
-            "calls": 3,
-            "tokens": 9
+            "calls": 1,
+            "tokens": 50
           }
         },
         "ok_vs_failed": {
-          "calls": 128,
-          "tokens": 4679,
+          "calls": 8,
+          "tokens": 975,
           "ok": {
-            "calls": 116,
-            "tokens": 3073,
-            "tokens_per_call": 26.49
+            "calls": 8,
+            "tokens": 975,
+            "tokens_per_call": 121.88
           },
           "failed": {
-            "calls": 12,
-            "tokens": 1606,
-            "tokens_per_call": 133.83
+            "calls": 0,
+            "tokens": 0,
+            "tokens_per_call": 0.0
           },
-          "failed_share_of_calls": 0.0938,
-          "failed_share_of_tokens": 0.3432
+          "failed_share_of_calls": 0.0,
+          "failed_share_of_tokens": 0.0
         }
       },
       "read_shape": {
-        "calls": 226,
-        "tokens": 64751,
-        "tokens_per_call": 286.51,
-        "file_refs": 226,
+        "calls": 15,
+        "tokens": 738,
+        "tokens_per_call": 49.2,
+        "file_refs": 15,
         "file_refs_per_call": 1.0,
-        "tokens_per_file_ref": 286.51
+        "tokens_per_file_ref": 49.2
       },
       "raw_shell": {
-        "runs": 105,
+        "runs": 8,
         "command": {
-          "calls": 473,
-          "tokens": 137854,
-          "tokens_per_call": 291.45
+          "calls": 26,
+          "tokens": 2731,
+          "tokens_per_call": 105.04
         },
         "command_intents": {
-          "read_file": {
-            "calls": 207,
-            "tokens": 76512,
-            "tokens_per_call": 369.62
-          },
           "build_or_test": {
-            "calls": 150,
-            "tokens": 55313,
-            "tokens_per_call": 368.75
+            "calls": 12,
+            "tokens": 1713,
+            "tokens_per_call": 142.75
           },
-          "write_or_mkdir": {
-            "calls": 83,
-            "tokens": 3202,
-            "tokens_per_call": 38.58
+          "read_file": {
+            "calls": 8,
+            "tokens": 481,
+            "tokens_per_call": 60.12
           },
           "other": {
-            "calls": 33,
-            "tokens": 2827,
-            "tokens_per_call": 85.67
+            "calls": 2,
+            "tokens": 297,
+            "tokens_per_call": 148.5
+          },
+          "write_or_mkdir": {
+            "calls": 4,
+            "tokens": 240,
+            "tokens_per_call": 60.0
           }
         },
         "read_command_shape": {
-          "calls": 207,
-          "tokens": 76512,
-          "tokens_per_call": 369.62,
-          "file_refs": 235,
-          "file_refs_per_call": 1.14,
-          "tokens_per_file_ref": 325.58
+          "calls": 8,
+          "tokens": 481,
+          "tokens_per_call": 60.12,
+          "file_refs": 9,
+          "file_refs_per_call": 1.12,
+          "tokens_per_file_ref": 53.44
         }
       }
     }
   },
   "exec_run_delta_with_minus_without": {
-    "runs": 105,
+    "runs": 8,
     "before": {
-      "calls_per_run": 1.219,
-      "tokens_per_call": 36.55,
-      "tokens_per_run": 44.56
+      "calls_per_run": 1.0,
+      "tokens_per_call": 121.88,
+      "tokens_per_run": 121.88
     },
     "after": {
-      "calls_per_run": 1.248,
-      "tokens_per_call": 32.85,
-      "tokens_per_run": 40.98
+      "calls_per_run": 1.0,
+      "tokens_per_call": 135.25,
+      "tokens_per_run": 135.25
     },
-    "delta_tokens_per_run": -3.58,
-    "count_effect": 1.04,
-    "per_call_effect": -4.63,
-    "interaction": -0.11,
-    "count_share": -0.2917,
-    "per_call_share": 1.2917
+    "delta_tokens_per_run": 13.38,
+    "count_effect": 0.0,
+    "per_call_effect": 13.38,
+    "interaction": 0.0,
+    "count_share": 0.0,
+    "per_call_share": 1.0
   },
   "d_vs_a": {
-    "a_total_tokens": 132161,
-    "a_tokens_per_run": 1258.68,
-    "d_tokens_per_run": 769.55,
-    "gap_tokens_per_run": -489.12,
-    "d_exec_run_tokens_per_run": 40.98,
-    "a_run_command_tokens_per_run": 1258.68,
+    "a_total_tokens": 1834,
+    "a_tokens_per_run": 229.25,
+    "d_tokens_per_run": 298.25,
+    "gap_tokens_per_run": 69.0,
+    "d_exec_run_tokens_per_run": 135.25,
+    "a_run_command_tokens_per_run": 229.25,
     "note": "A's run_command also performs file reading (`type file`), which D splits into file.view / file.read_many, so a smaller D exec.run does not by itself make D cheaper; the raw_shell command_intents table shows how much of A is reading"
   },
   "gap_decomposition": {
-    "runs_d": 105,
-    "runs_a": 105,
-    "total_gap_tokens_per_run": -489.12,
+    "runs_d": 8,
+    "runs_a": 8,
+    "total_gap_tokens_per_run": 69.0,
     "buckets": {
       "read": {
-        "d_tokens_per_run": 682.44,
-        "a_tokens_per_run": 688.51,
-        "delta_tokens_per_run": -6.08,
-        "share_of_gap": 0.0124
+        "d_tokens_per_run": 94.0,
+        "a_tokens_per_run": 91.0,
+        "delta_tokens_per_run": 3.0,
+        "share_of_gap": 0.0435
       },
       "exec": {
-        "d_tokens_per_run": 40.98,
-        "a_tokens_per_run": 519.08,
-        "delta_tokens_per_run": -478.1,
-        "share_of_gap": 0.9775
+        "d_tokens_per_run": 135.25,
+        "a_tokens_per_run": 138.25,
+        "delta_tokens_per_run": -3.0,
+        "share_of_gap": -0.0435
       },
       "edit": {
-        "d_tokens_per_run": 31.93,
-        "a_tokens_per_run": 51.09,
-        "delta_tokens_per_run": -19.15,
-        "share_of_gap": 0.0392
+        "d_tokens_per_run": 31.75,
+        "a_tokens_per_run": 0.0,
+        "delta_tokens_per_run": 31.75,
+        "share_of_gap": 0.4601
       },
       "meta": {
-        "d_tokens_per_run": 14.2,
-        "a_tokens_per_run": 8.13,
-        "delta_tokens_per_run": 6.07,
-        "share_of_gap": -0.0124
+        "d_tokens_per_run": 37.25,
+        "a_tokens_per_run": 8.0,
+        "delta_tokens_per_run": 29.25,
+        "share_of_gap": 0.4239
       }
     },
     "note": "D buckets by typed op; A buckets by heuristic command intent. A's read bucket is `type`-style commands, which is how A reads files at all, so this is the closest available like-for-like split rather than an exact one"
