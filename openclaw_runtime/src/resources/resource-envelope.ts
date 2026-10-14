@@ -1,79 +1,25 @@
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
 
-export const RESOURCE_ENVELOPE_SCHEMA = "openclaw.resource-envelope/v1" as const;
+import {
+  RESOURCE_ENVELOPE_SCHEMA,
+  type ResourceEnvelopeEntry,
+  type ResourceEnvelopeExceeded,
+  type ResourceEnvelopeSnapshot,
+  type ResourceEnvelopeTotals,
+  type ResourceKind,
+  type ResourceLimits,
+} from "../../../shared/types/resources.js";
 
-export type ResourceKind =
-  | "agent-turn"
-  | "terminal-exec"
-  | "runtime-bash"
-  | "workspace-search"
-  | "workspace-writer"
-  | "subtree-mutation"
-  | "file-mutation"
-  | "browser-session"
-  | "pty-session"
-  | "mcp-process"
-  | "provider-sidecar"
-  | "background-index";
-
-export type ResourcePriority = "foreground" | "background";
-
-export type ResourceLimits = {
-  memoryBytes: number;
-  cpuPercent: number;
-  processCount: number;
-  concurrencySlots: number;
-  queueLength: number;
-};
-
-export type ResourceEnvelopeEntry = {
-  id: string;
-  workspaceKey: string;
-  kind: ResourceKind;
-  priority: ResourcePriority;
-  owner: string;
-  activeSlots: number;
-  queuedCount: number;
-  queueWaitMs: number;
-  processCount: number;
-  treeRssBytes: number;
-  treeCpuPercent: number;
-  pids?: number[];
-  limits: ResourceLimits;
-  updatedAt: number;
-  reason?: string;
-};
-
-export type ResourceEnvelopeExceeded = {
-  entryId: string;
-  workspaceKey: string;
-  kind: ResourceKind;
-  priority: ResourcePriority;
-  owner: string;
-  dimension: keyof ResourceLimits;
-  observed: number;
-  limit: number;
-  reason: string;
-};
-
-export type ResourceEnvelopeTotals = {
-  activeSlots: number;
-  queuedCount: number;
-  queueWaitMs: number;
-  processCount: number;
-  treeRssBytes: number;
-  treeCpuPercent: number;
-};
-
-export type ResourceEnvelopeSnapshot = {
-  schema: typeof RESOURCE_ENVELOPE_SCHEMA;
-  generatedAt: number;
-  mode: "shadow";
-  entries: ResourceEnvelopeEntry[];
-  totals: ResourceEnvelopeTotals;
-  exceeded: ResourceEnvelopeExceeded[];
-  warnings: string[];
-};
+export {
+  RESOURCE_ENVELOPE_SCHEMA,
+  type ResourceEnvelopeEntry,
+  type ResourceEnvelopeExceeded,
+  type ResourceEnvelopeSnapshot,
+  type ResourceEnvelopeTotals,
+  type ResourceKind,
+  type ResourceLimits,
+  type ResourcePriority,
+} from "../../../shared/types/resources.js";
 
 export type ResourceEnvelopeCandidate = Omit<ResourceEnvelopeEntry, "updatedAt" | "limits"> & {
   updatedAt?: number;

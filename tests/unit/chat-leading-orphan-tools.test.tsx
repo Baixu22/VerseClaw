@@ -175,5 +175,5 @@ describe('Chat leading orphan tool folding', () => {
 
     fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
     expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
-  }, 10_000);
+  });
 });

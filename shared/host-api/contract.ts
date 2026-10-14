@@ -1,6 +1,5 @@
 import type { RawMessage } from '../chat/types';
-import type { ResourceEnvelopeSnapshot } from '../../openclaw_runtime/src/resources/resource-envelope';
-import type { BackgroundWorkGateState } from '../../openclaw_runtime/src/resources/background-work-gate';
+import type { BackgroundWorkGateState, ResourceEnvelopeSnapshot } from '../types/resources';
 import type {
   VtokenAssembleHostResult,
   VtokenAssemblePayload,

@@ -2,7 +2,7 @@
 
 审计日期：2026-10-12
 审计范围：CVK / DCS / 工具披露 / 提示词注入 / 记忆系统
-工作区：`C:\Users\27933\Desktop\clawx\ClawX`（junction -> `D:\ClawX`）
+工作区：本地 Windows 工作副本（C: 盘 junction -> D: 盘 ClawX 检出）
 分支：`codex/stepfun-basic-evidence-20261008`　HEAD：`2f2b0b849`
 审计性质：只读审计。未修改任何生产代码，未翻转任何默认值，未变更产品锁。
 组件背景与代码锚点见附录引用；详细组件介绍见 `docs/dev/handoffs/CONTEXT-ECOSYSTEM-POSITIONING-AND-MEMORY-EXTRACTION-HANDOFF-2026-10-12.md`。

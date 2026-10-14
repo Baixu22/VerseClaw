@@ -545,6 +545,8 @@ export interface ToolDefinition<
    * - "declared_paths": tool writes only to the listed paths (preferred).
    * - "pattern_writes": tool writes to paths matching a glob pattern.
    * - "dynamic_writes": tool writes to arbitrary paths (full fs-diff required).
+   * - "durable_state": tool mutates a non-filesystem owner store; names that
+   *   store so a `readonly` risk level is never read as "no durable mutation".
    *
    * See: openclaw_runtime/src/shared/tool-registration.ts
    *      docs/runtime-design/development-manual.md §1.1 (A1), Stage 2 Stream 2A
@@ -553,7 +555,8 @@ export interface ToolDefinition<
     | { kind: "no_writes" }
     | { kind: "declared_paths"; writePaths: string[] }
     | { kind: "pattern_writes"; writePattern: string }
-    | { kind: "dynamic_writes"; requiresApproval: true };
+    | { kind: "dynamic_writes"; requiresApproval: true }
+    | { kind: "durable_state"; ownerStore: string; requiresApproval: boolean };
 
   /** Execute the tool. */
   execute(

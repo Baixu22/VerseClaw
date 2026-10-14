@@ -13,6 +13,17 @@ describe('shared dcs prod flags catalog', () => {
     expect(listEnhancementFlagsDefaultOff().length).toBeGreaterThan(0);
   });
 
+  it('records the RC-03 seal opt-in flag as a referencable, default-off catalog entry', () => {
+    const entry = DCS_PROD_FLAGS.find((flag) => flag.id === 'rc03-seal');
+    expect(entry).toBeDefined();
+    expect(entry?.defaultValue).toBe(false);
+    expect(entry?.risk).toBe('opt-in');
+    expect(entry?.kind).toBe('config');
+    expect(entry?.key).toBe('runtime.rc03.seal');
+    expect(entry?.enable).toContain('OPENCLAW_RC03_SEAL');
+    expect(entry?.rollback).toContain('OPENCLAW_RC03_SEAL');
+  });
+
   it('marks silently ineffective leaves as API-only', () => {
     const ids = DCS_PROD_FLAGS.map((flag) => flag.id);
     expect(ids).toContain('worktree-backend');
