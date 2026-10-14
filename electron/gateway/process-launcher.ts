@@ -158,6 +158,7 @@ export function buildGatewayRuntimeEnv(
   // pre-existing value inherited from the user shell cannot re-enable it.
   runtimeEnv.OPENCLAW_DISABLE_BONJOUR = '1';
   runtimeEnv.CLAWX_AGENT_BROWSER_BRIDGE = '1';
+  runtimeEnv.OPENCLAW_RESOURCE_ENVELOPE_WRITE = '1';
   // Model fallback skip cache: default ON for Verse Claw with a 60s TTL.
   //
   // The OpenClaw fallback chain retries every configured candidate on each

@@ -5,9 +5,11 @@ import {
   resetTerminalResourceLeasesForTest,
   withWorkspaceExecLease,
 } from '../../electron/services/resource-leases';
+import { getResourceEnvelopeLedger, resetResourceEnvelopeLedgerForTest } from '../../openclaw_runtime/src/resources/resource-envelope';
 
 afterEach(() => {
   resetTerminalResourceLeasesForTest();
+  resetResourceEnvelopeLedgerForTest();
   vi.useRealTimers();
 });
 
@@ -135,6 +137,18 @@ describe('workspace exec lease', () => {
     await Promise.all([a, b]);
   });
 
+  it('records active and queued slots in the shadow resource envelope', async () => {
+    const gate = deferred();
+    const runs = [1, 2, 3].map((id) => withWorkspaceExecLease('envelope-ws', 5_000, async () => {
+      if (id <= 2) await gate.promise;
+    }));
+    await Promise.resolve();
+    const entry = getResourceEnvelopeLedger().get('main:terminal-exec:envelope-ws');
+    expect(entry).toMatchObject({ activeSlots: 2, queuedCount: 1, kind: 'terminal-exec', owner: 'main' });
+    gate.resolve();
+    await Promise.all(runs);
+    expect(getResourceEnvelopeLedger().get('main:terminal-exec:envelope-ws')).toBeUndefined();
+  });
   it('rejects with a typed timeout error when the slot never frees', async () => {
     const gate = deferred();
     const held = [

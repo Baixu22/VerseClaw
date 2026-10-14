@@ -1,4 +1,5 @@
 import { logger } from '../utils/logger';
+import { getResourceEnvelopeLedger } from '../../openclaw_runtime/src/resources/resource-envelope';
 
 export type TerminalResourceLease = {
   leaseKind: 'workspaceExec';
@@ -58,6 +59,7 @@ class TerminalResourceLeaseManager {
       };
       request.timer = setTimeout(() => this.timeout(request), normalizedTimeout);
       this.pending.push(request);
+      this.refreshResourceEnvelope(request.key, 0);
       this.drain();
     });
   }
@@ -96,6 +98,7 @@ class TerminalResourceLeaseManager {
     }
     this.activeByKey.set(request.key, (this.activeByKey.get(request.key) ?? 0) + 1);
     const queuedMs = Date.now() - request.requestedAt;
+    this.refreshResourceEnvelope(request.key, queuedMs);
     logger.info('[resource-lease] acquired workspaceExec', {
       id: request.id,
       leaseKind: 'workspaceExec',
@@ -130,13 +133,42 @@ class TerminalResourceLeaseManager {
       leaseKey: request.key,
       queuedMs,
     });
+    this.refreshResourceEnvelope(request.key, queuedMs);
     this.drain();
+  }
+
+  private refreshResourceEnvelope(key: string, queueWaitMs: number): void {
+    const id = `main:terminal-exec:${key}`;
+    const ledger = getResourceEnvelopeLedger();
+    const activeSlots = this.activeByKey.get(key) ?? 0;
+    const queuedCount = this.pending.filter((request) => request.key === key).length;
+    const previous = ledger.get(id);
+    if (activeSlots === 0 && queuedCount === 0) {
+      ledger.remove(id);
+    } else {
+      ledger.update({
+        id,
+        workspaceKey: key,
+        kind: 'terminal-exec',
+        priority: 'foreground',
+        owner: 'main',
+        activeSlots,
+        queuedCount,
+        queueWaitMs: Math.max(previous?.queueWaitMs ?? 0, Math.max(0, Math.floor(queueWaitMs))),
+        processCount: previous?.processCount ?? 0,
+        treeRssBytes: previous?.treeRssBytes ?? 0,
+        treeCpuPercent: previous?.treeCpuPercent ?? 0,
+        ...(previous?.pids ? { pids: previous.pids } : {}),
+        reason: previous?.reason ?? 'main terminal workspace lease',
+      });
+    }
   }
 
   private timeout(request: PendingExecLease): void {
     if (!this.removePending(request)) {
       return;
     }
+    this.refreshResourceEnvelope(request.key, Date.now() - request.requestedAt);
     logger.warn('[resource-lease] timeout workspaceExec', {
       id: request.id,
       leaseKind: 'workspaceExec',
@@ -163,6 +195,10 @@ class TerminalResourceLeaseManager {
     }
     this.pending.length = 0;
     this.activeByKey.clear();
+    const ledger = getResourceEnvelopeLedger();
+    for (const entry of ledger.list()) {
+      if (entry.owner === 'main' && entry.kind === 'terminal-exec') ledger.remove(entry.id);
+    }
   }
 
   private removePending(request: PendingExecLease): boolean {

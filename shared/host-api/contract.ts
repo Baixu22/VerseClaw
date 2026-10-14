@@ -1,4 +1,5 @@
 import type { RawMessage } from '../chat/types';
+import type { ResourceEnvelopeSnapshot } from '../../openclaw_runtime/src/resources/resource-envelope';
 import type {
   VtokenAssembleHostResult,
   VtokenAssemblePayload,
@@ -447,6 +448,12 @@ export type RuntimeEfficiencyState = {
   shed: RuntimeEfficiencyShedState | null;
 };
 export type RuntimeEfficiencySetEnabledPayload = { enabled: boolean };
+
+/** P0B #213: shadow workspace resource-envelope snapshot. `measured=false` means no trustworthy snapshot exists. */
+export type RuntimeResourceEnvelopeState = {
+  measured: boolean;
+  snapshot: ResourceEnvelopeSnapshot | null;
+};
 
 export type WorkspaceSnapshotResult = HostSuccess & WorkspaceSnapshot;
 
@@ -5235,6 +5242,10 @@ export type HostApiContract = {
   efficiency: {
     getState: () => RuntimeEfficiencyState;
     setEnabled: (payload: RuntimeEfficiencySetEnabledPayload) => RuntimeEfficiencyState;
+  };
+  /** P0B #213: read the shadow Resource Envelope aggregated across Main and Gateway. */
+  resourceEnvelope: {
+    getState: () => RuntimeResourceEnvelopeState;
   };
   workspaces: {
     list: () => WorkspaceSnapshotResult;

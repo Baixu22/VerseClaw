@@ -14,9 +14,11 @@ import {
   resetResourceLeasesForTest,
   withWorkspaceResourceLease,
 } from "./resource-leases.js";
+import { getResourceEnvelopeLedger, resetResourceEnvelopeLedgerForTest } from "../resources/resource-envelope.js";
 
 afterEach(() => {
   resetResourceLeasesForTest();
+  resetResourceEnvelopeLedgerForTest();
   vi.useRealTimers();
 });
 
@@ -194,6 +196,25 @@ describe("workspace resource leases", () => {
     expect(active).toBe(0);
   });
 
+  it("records gateway leases in the shadow resource envelope", async () => {
+    const gate = deferred();
+    const runs = [1, 2, 3].map((id) =>
+      withWorkspaceResourceLease("workspaceExec", "ws-envelope", async () => {
+        if (id <= 2) await gate.promise;
+      }),
+    );
+    await flush();
+    const entry = getResourceEnvelopeLedger().get("gateway:workspaceExec:ws-envelope");
+    expect(entry).toMatchObject({
+      activeSlots: 2,
+      queuedCount: 1,
+      kind: "runtime-bash",
+      owner: "gateway",
+    });
+    gate.resolve();
+    await Promise.all(runs);
+    expect(getResourceEnvelopeLedger().get("gateway:workspaceExec:ws-envelope")).toBeUndefined();
+  });
   it("rejects with a typed timeout error and reclaims the slot after release", async () => {
     const manager = new ResourceLeaseManager();
     const held = [
