@@ -1,5 +1,7 @@
 # Task Forest 节点调整规划（2026-10-12）
 
+> **2026-10-14 applied**：已从 `D:\VerseShellLive\tf-backup-20261012\task-forest` 恢复并执行规划。当前权威状态为 141 节点、138 done、3 deprecated（TF-0114/0115/0123）、open=0；`validate` 通过，`exports/task-forest.html` 已重新导出。
+
 依据新理念（见 [AGENTS.md](../AGENTS.md)）：VerseShell 是子模块，**每个功能宣称有可复现的正收益即可**，
 不追求对外发表级的重复研究。
 
@@ -55,3 +57,4 @@ Task Forest 变更必须经你确认才能应用。建议流程：
 2. 你 review 后，我执行 proposal-apply --yes。
 
 > 注意：当前已有 **110 个未应用 proposal**。建议先清理/归档旧提案，再保存这一份，以免状态进一步混乱。
+

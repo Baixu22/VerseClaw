@@ -56,6 +56,18 @@ canonical 已发布到：
 - C14：FAIL，轻量 subset 的 `0.2368` 仅记录为 diagnostic；`lightweight_subset=true`，不可声称原全轨迹门槛通过。
 - C16：FAIL，轻量 subset 的 `0.1950` 仅记录为 diagnostic；`lightweight_subset=true`，不可声称原全轨迹门槛通过。
 
+## Task Forest
+
+已从 `D:\VerseShellLive\tf-backup-20261012\task-forest` 恢复到当前工作区，并通过 repo-local CLI 验证：
+
+- 141 节点
+- 138 done
+- 3 deprecated：TF-0114、TF-0115、TF-0123
+- open = 0
+- `validate` 通过
+- `exports/task-forest.html` 已重新导出
+
+历史规划页 `docs/task-forest-node-plan-2026-10-12.md` 已标记为 2026-10-14 applied。
 ## large 占比
 
 生成器机制已在 `9461cb1` 落地并有原始探针：
@@ -81,6 +93,7 @@ canonical 已发布到：
 
 补充边界：`eval/task_admissibility.json` 的候选 verdicts 和 input hashes 没有重跑或改写；在统一 fingerprint 序列化后，只按当前文件重算了它的 `evidence.fingerprint`。这是 hash 串行化迁移，不是候选准入结果的重测。
 - 墙钟：with `17:33:42–17:47:39`（约 14 分钟），without `17:47:40–18:03:02`（约 15.5 分钟），另加两格 recovery，合计约 31 分钟。
+
 
 
 
