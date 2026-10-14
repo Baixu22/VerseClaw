@@ -20,6 +20,19 @@ async function readMainProcessTreeSample(): Promise<ProcessTreeSample> {
   cachedMainTreeSampleAt = now;
   return sample;
 }
+export function recordResourceEnvelopeEntry(
+  entry: Parameters<ReturnType<typeof getResourceEnvelopeLedger>["update"]>[0],
+): void {
+  getResourceEnvelopeLedger().update(entry);
+}
+
+export function listResourceEnvelopeEntries() {
+  return getResourceEnvelopeLedger().list();
+}
+
+export function removeResourceEnvelopeEntry(id: string): void {
+  getResourceEnvelopeLedger().remove(id);
+}
 export async function getMainResourceEnvelopeSnapshot(): Promise<ResourceEnvelopeSnapshot> {
   const ledger = getResourceEnvelopeLedger();
   const warnings: string[] = [];

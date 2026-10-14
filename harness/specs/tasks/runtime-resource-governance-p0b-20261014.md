@@ -14,6 +14,9 @@ touchedAreas:
   - electron/services/resource-leases.ts
   - electron/services/resource-envelope.ts
   - electron/services/resource-envelope-api.ts
+  - electron/services/agent-browser-service.ts
+  - electron/services/mcp-api.ts
+  - electron/services/providers/provider-runtime-sync.ts
   - electron/gateway/process-launcher.ts
   - electron/main/ipc-handlers.ts
   - shared/host-api/contract.ts
@@ -27,6 +30,7 @@ touchedAreas:
 expectedUserBehavior:
   - Main terminal and runtime workspace leases appear in one shadow Resource Envelope with owner, priority, queue depth and queue wait.
   - The same workspace can aggregate Main and Gateway totals, so two independent leases cannot hide their combined slot count.
+  - Browser sessions, configured MCP servers and provider runtime syncs write shadow envelope entries with explicit owner and priority.
   - Process-tree sampling reports tree CPU, tree RSS, process count and source, while empty/unknown discovery fails closed instead of fabricating a healthy zero.
   - Shadow mode records over-limit candidates but always permits work; foreground behavior and all existing lease capacities remain unchanged.
   - Gateway snapshots are written through an unref'd, minimum-5s background cadence and are best-effort; a missing or malformed snapshot is reported as unavailable.
@@ -53,6 +57,7 @@ acceptance:
   - Main and Gateway snapshots merge into one report whose totals sum adjacent leases instead of hiding them.
   - Process-tree sampling returns real Windows CIM or Linux /proc values on supported platforms; empty discovery returns status=empty and discovery failure returns status=unknown with null metrics.
   - Main terminal leases and runtime workspace leases update the shadow envelope on queue, acquire, release and timeout.
+  - Browser session open/close, MCP server sync and provider runtime sync/removal update the same shadow ledger.
   - Existing Main and runtime lease tests remain green and no foreground admission path changes.
 docs:
   required: true

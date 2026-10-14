@@ -24,6 +24,7 @@ Main terminal leases and Gateway runtime leases had independent capacities, whil
   - empty roots return `empty`, not a fake healthy zero;
   - CPU percent is computed from real cumulative CPU-time deltas.
 - Wired Main terminal leases and Gateway runtime workspace leases into the shadow ledger on queue, acquire, release and timeout.
+- Wired Browser session open/close, configured MCP server sync and provider runtime sync/removal as additional Main-process producers.
 - Added a bounded, unref'd, minimum-5s Gateway snapshot write cadence; malformed/missing snapshots fail closed to a warning.
 - Exposed the aggregated snapshot through the `resourceEnvelope.getState` host-api read surface. No UI was added and no admission path changed.
 
