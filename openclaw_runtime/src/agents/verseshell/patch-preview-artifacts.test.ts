@@ -26,6 +26,7 @@ function ok(op: string, data: Record<string, unknown> = {}): Observation {
     id: `${op}-request`,
     op,
     ok: true,
+    status: 'ok',
     data: data as Observation["data"],
     meta: { elapsed_ms: 1, profile: "test", token_estimate: 1 },
   };

@@ -2,6 +2,81 @@
 
 Status: default-off controlled canary foundation. The strict typed ACI route is wired, but no VerseShell capability is enabled by default and this is not GA or release approval.
 
+## VS-RI-01..06 upstream capability reintegration (2026-10-15)
+
+`TF-0322`..`TF-0328` absorbed the frozen upstream `c06f406e83566bb968448222d9c8caf429e580a0`
+into ClawX through the existing typed ACI / governed-exec / read-only-facade owners. **The
+sections below this one record earlier P0-P3 work at the older pin `c398369...` + four patches and
+are retained as history; where they state a bundle identity they describe that earlier pin.**
+
+Current pinned identity (authoritative in `resources/verseshell/manifest.json`):
+
+- source: commit `c06f406e83566bb968448222d9c8caf429e580a0` plus two registered residual patches
+  (`p0-runtime-startup.patch`, `python-current-interpreter.patch`); the retired
+  `uas-05-process-lifecycle.patch` and `aci-bench-source-inputs.patch` are byte-recoverable from
+  git history. `recovered-ignored-inputs` is retired (the upstream tracks all Python inputs).
+- source identity `b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0`,
+  source-inputs `d1d3cd4cd004d6a545a9e2e7a8cf48a3564e8cf467f70882e45fa736d2b388c6`.
+- binary `resources/bin/win32-x64/ae.exe` sha256
+  `3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2`, 15,144,448 bytes.
+- operation catalog: **32** operations, digest
+  `sha256:67f78a723d582bf0809aab1f94752772c8a2818367b2f5e9d931722c06e979e8`.
+- build recipe: `cargo build --locked --release --bin ae` with rustc/cargo 1.94.0.
+
+Evidence summary (agent-driven; all gate results recorded in
+`harness/specs/fixtures/verseshell-reintegration/acceptance-contract.json`):
+
+- **G0/G1**: source checker exit 0 (154 protected files, 32 operations, no issues) with rewrite
+  negative controls; module `cargo test --locked` 16 targets, 302 passed / 0 failed / 1 ignored.
+- **G2**: 15/15 real-frame contract replay (new pinned shapes accepted, old controls unchanged,
+  fail-closed negatives rejected); `contract:check` exit 0; no bare IPC or direct Gateway call.
+- **G3**: 32/32 operations executed against the pinned binary with owner and evidence status
+  written back; `file.read_many` reaches the model through the new `read_files` facade tool
+  (batch cap 8, per-file windows, total budget, per-file failures, continuation); 18/18
+  cross-cutting behaviors mapped to passing suites.
+- **G4**: A/B/C differential. A = the previously shipped `ac6a7a15...` binary (present at
+  `release/win-unpacked/resources/bin/ae.exe`) and, independently, a fresh build of `c398369` +
+  the four recorded patches; B = the pinned candidate; C = the same B binary through real ClawX
+  host tools. 42 field differences, all assigned to eight declared behavioural-change classes,
+  zero undeclared, no wildcard-ignored mismatch. B/C payloads match except the host's canonical
+  path casing, and the host refuses path escapes earlier than the runtime does.
+- **G5**: intervention matrix — unavailable/unverified binary, catalog/workspace/owner/policy/
+  stale-hash conflicts, cancellation/EOF/limits/retention/artifact-corruption negatives, and no
+  native fallback or effectful shadow replay.
+- **G6**: two independent release builds byte-identical; `typecheck` 4/4 exit 0; comms
+  replay/compare exit 0 (all metrics PASS); Electron E2E 4 passed exit 0; `verseshell:package:verify`
+  `verified-package` exit 0; final receipts bind the source/binary/host/tests/fixtures/control
+  hashes; a matching source+binary+host rollback pair is recorded.
+
+Environment findings worth keeping:
+
+- The artifact-store failure previously recorded as nondeterminism was root-caused: this
+  `D:\ClawX` tree carries a Low mandatory integrity label, so a Low-IL `ae.exe` cannot create
+  `<workspace>/.ae/results` under a Medium-IL temp directory. Pointing `TEMP`/`TMP` at a scratch
+  directory inside the workspace (anything under `D:\ClawX` inherits the low label) makes the same
+  tests pass with no code change; delete that scratch directory afterwards so it does not appear as
+  an unrelated changed path. Upstream swallows `ArtifactStore::new` errors via `.ok()`, so the
+  failure is invisible in the observation; that is worth upstream feedback.
+- Electron E2E requires Node >= 24.16.0 on Windows (the repo asserts this); this machine's default
+  is 24.15.0, so the run used a portable Node 24.16.0.
+  Two further prerequisites were verified on 2026-10-15; the earlier "no display server" diagnosis
+  was wrong. First, the launch must be unsandboxed: set `ELECTRON_DISABLE_SANDBOX=1`, without which
+  `electron --version` itself already dies with `0xC0000005`. Second, `CLAWX_E2E_RUN_ROOT` and
+  `TEMP`/`TMP` must point inside this low-integrity checkout, otherwise the app cannot create
+  `<userData>\logs` (`EPERM`), logs "Application initialization failed", never opens a window, and
+  the specs only report an opaque `firstWindow()` timeout. With both set,
+  `tests/e2e/agent-dev-quality.spec.ts` is 4 passed / exit 0.
+- The source checker's derive step now declares `GIT_CEILING_DIRECTORIES` for its scratch tree and
+  fails closed if that tree ever resolves to a repository. Without it, a scratch tree created
+  inside this repository at low integrity could not be entered as a `git` working directory, so
+  `git apply` walked up to the enclosing repository and silently applied the patch as a no-op
+  (reported as a derivation mismatch rather than an error). With the fix the checker exits 0 under
+  both a low-integrity and a medium-integrity `TEMP`, and its unit suite is 12/12.
+
+**This remains an internal, default-off controlled reintegration.** It is not GA, not a release
+authorization, and changes no product default: keep `default-off`, `liveReady=false`,
+`productApproved=false`, and `defaultOn=false`.
+
 ## P0-02 reproducible bundle update (2026-08-14)
 
 `TF-0059` / VS-P0-02 now has a tracked source-input manifest and an ordered four-patch

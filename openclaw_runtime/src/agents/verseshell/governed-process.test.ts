@@ -39,6 +39,7 @@ function observation(
     id: `request-${op}`,
     op,
     ok: true,
+    status: "ok",
     data,
     meta: { elapsed_ms: 1, profile: "generic", token_estimate: 1 },
     ...overrides,

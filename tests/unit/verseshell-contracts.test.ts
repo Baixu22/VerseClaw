@@ -21,6 +21,7 @@ function validObservation(overrides: Partial<Observation> = {}): Observation {
     id: 'request-1',
     op: 'file.view',
     ok: true,
+    status: 'ok',
     data: { path: 'src/main.rs', content_hash: 'sha256:abc', lines: ['one'] },
     diagnostics: [
       {
@@ -67,6 +68,7 @@ describe('VerseShell wire decoding', () => {
 
     const failure = validObservation({
       ok: false,
+      status: 'failed',
       data: { attempted_path: 'missing.ts' },
       error: {
         code: 'E_NOT_FOUND',
@@ -117,6 +119,64 @@ describe('VerseShell wire decoding', () => {
       () => decodeObservation(JSON.stringify(validObservation()), { max_bytes: 10 }),
       'max_bytes_exceeded',
     );
+  });
+
+  it('accepts the pinned runtime schema bounds (maxItems / maximum) and still fails closed beyond them', () => {
+    // Shapes taken verbatim from the pinned runtime's own input_schema text
+    // (src/ops/file.rs): file.read_many paths maxItems 8, file.view window maximum 500.
+    const readMany: JsonSchema = {
+      type: 'object',
+      additionalProperties: false,
+      required: ['paths'],
+      properties: {
+        paths: { type: 'array', items: { type: 'string' }, minItems: 1, maxItems: 8 },
+        window: { type: 'integer', minimum: 1, maximum: 500, default: 80 },
+      },
+    };
+    expect(() => validateOperationArgs(readMany, { paths: ['a.rs', 'b.rs'], window: 500 })).not.toThrow();
+    expect(() => validateOperationArgs(readMany, { paths: Array.from({ length: 9 }, (_, i) => `f${i}.rs`) })).toThrow(
+      /expected at most 8 items/u,
+    );
+    expect(() => validateOperationArgs(readMany, { paths: ['a.rs'], window: 501 })).toThrow(
+      /expected a number <= 500/u,
+    );
+    expect(() => validateOperationArgs(readMany, { paths: [] })).toThrow(/expected at least 1 items/u);
+    expect(() => validateOperationArgs(readMany, { paths: ['a.rs'], window: 0 })).toThrow(
+      /expected a number >= 1/u,
+    );
+  });
+
+  it('accepts the pinned runtime envelope additions (status, substitutions, blocked_*, decoding_lossy)', () => {
+    // Real shapes observed from ae.exe (sha256 3ed2174f…), not invented:
+    // blocked exec carries substitutions/blocked_operation/blocked_target;
+    // success streams carry status full/empty plus decoding_lossy.
+    const blocked: Observation = {
+      ...validObservation({ ok: false, status: 'blocked' }),
+      error: { code: 'E_CAPABILITY_DENY', message: "no capabilities granted", recoverable: true },
+      substitutions: [{ action: 'grant_capability', reason: 'exec requires the shell.exec capability' }],
+      blocked_operation: 'sh',
+      blocked_target: 'cmd',
+    };
+    expect(decodeObservation(blocked)).toMatchObject({
+      status: 'blocked',
+      blocked_operation: 'sh',
+      blocked_target: 'cmd',
+    });
+
+    const withStream: Observation = {
+      ...validObservation(),
+      data: {
+        exit_code: 0,
+        timed_out: false,
+        stdout: { decoding_lossy: false, encoding: 'utf-8', raw_bytes: 4, status: 'full', text: 'hi' },
+        stderr: { decoding_lossy: false, encoding: 'utf-8', status: 'empty' },
+      },
+    };
+    expect(decodeObservation(withStream).status).toBe('ok');
+
+    // status must agree with ok, and unknown statuses stay fail-closed
+    expectContractCode(() => decodeObservation({ ...validObservation(), status: 'failed' }), 'invalid_shape');
+    expectContractCode(() => decodeObservation({ ...validObservation(), status: 'weird' }), 'invalid_shape');
   });
 
   it('decodes requests with the Rust defaults and validates expected identity', () => {

@@ -1,8 +1,8 @@
 import type { JsonSchema, OperationCatalogEntry } from './types.js';
 
 export interface ClawXFacadeOperation {
-  name: 'read_file' | 'search_content' | 'run_command' | 'result_query';
-  canonical_op: 'file.view' | 'repo.search' | 'exec.run' | 'result.query';
+  name: 'read_file' | 'read_files' | 'search_content' | 'run_command' | 'result_query';
+  canonical_op: 'file.view' | 'file.read_many' | 'repo.search' | 'exec.run' | 'result.query';
   when_to_use: string;
   when_not_to_use: string;
   input_schema: JsonSchema;
@@ -29,6 +29,41 @@ export const CLAWX_VERSESHELL_FACADE = [
         window: { type: 'integer', minimum: 1, description: 'Maximum surrounding line window.' },
       },
       ['path'],
+    ),
+  },
+  {
+    name: 'read_files',
+    canonical_op: 'file.read_many',
+    when_to_use: 'Read a bounded line window from several known files in one call.',
+    when_not_to_use: 'Do not use for repository search, or when only one file is needed.',
+    input_schema: objectSchema(
+      {
+        paths: {
+          type: 'array',
+          minItems: 1,
+          maxItems: 8,
+          items: { type: 'string', description: 'Workspace-relative file path.' },
+          description: 'Files to read, aligned by index with the optional per-file windows.',
+        },
+        windows: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              start_line: { type: 'integer', minimum: 1 },
+              window: { type: 'integer', minimum: 1 },
+            },
+          },
+          description: 'Optional per-file overrides, aligned by index with paths.',
+        },
+        window: { type: 'integer', minimum: 1, description: 'Default surrounding line window.' },
+        max_total_lines: {
+          type: 'integer',
+          minimum: 1,
+          description: 'Budget for the whole batch; entries that no longer fit come back empty with truncated=true.',
+        },
+      },
+      ['paths'],
     ),
   },
   {

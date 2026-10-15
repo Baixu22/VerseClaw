@@ -174,6 +174,9 @@ const MAX_READ_ONLY_RETRIES = 1;
 const READ_ONLY_IDEMPOTENT_OPS = new Set([
   "file.view",
   "file.read_range",
+  // Pure read: the catalog declares it under the file.read capability with an
+  // fs.read effect, so it is safe to retry and to serve from the facade cache.
+  "file.read_many",
   "file.hash",
   // Pure read: the catalog declares it under the file.read capability with an
   // fs.read effect, and it is what the patch preview bridge renders diffs with.

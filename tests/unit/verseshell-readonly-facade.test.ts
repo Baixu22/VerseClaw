@@ -16,9 +16,10 @@ const ENABLED_FLAGS = {
 };
 
 describe("VerseShell P2 read-only facade contract", () => {
-  it("preserves the stable four-operation model facade order", () => {
+  it("preserves the stable five-operation model facade order", () => {
     expect(CLAWX_VERSESHELL_FACADE.map((entry) => entry.name)).toEqual([
       "read_file",
+      "read_files",
       "search_content",
       "run_command",
       "result_query",
@@ -30,7 +31,7 @@ describe("VerseShell P2 read-only facade contract", () => {
     expect(createVerseShellReadonlyFacadeTools({
       cwd: process.cwd(),
       config: { runtime: { verseShellFoundation: ENABLED_FLAGS } },
-    })?.map((tool) => tool.name)).toEqual(["read_file", "search_content", "result_query"]);
+    })?.map((tool) => tool.name)).toEqual(["read_file", "read_files", "search_content", "result_query"]);
   });
 
   it("keeps paths and cache identity inside the workspace contract", () => {

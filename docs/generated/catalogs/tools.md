@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: openclaw_runtime/src/agents/tool-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-11T15:38:36.008Z
+Generated at: 2026-10-15T06:52:13.311Z
 -->
 
 Built-in core tool sections with their profiles. This file is generated —
@@ -17,6 +17,7 @@ edit the source of truth instead, then run pnpm catalogs:gen.
 - `edit` — Make precise edits — profiles: `coding`
 - `apply_patch` — Patch files — profiles: `coding`
 - `read_file` — Read a workspace file through the VerseShell read-only facade — profiles: `coding`
+- `read_files` — Read several workspace files in one bounded call through the VerseShell read-only facade — profiles: `coding`
 - `search_content` — Search file contents through the VerseShell read-only facade — profiles: `coding`
 - `result_query` — Query a VerseShell result artifact handle by mode (meta/head/tail/slice/grep) — profiles: `coding`
 - `undo_write` — Restore the previous snapshot of a file from the write journal — profiles: `coding`

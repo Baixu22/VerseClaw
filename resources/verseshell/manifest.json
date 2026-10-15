@@ -4,8 +4,8 @@
   "upstream": {
     "cargo_repository": "https://github.com/nervosys/verseshell",
     "source_repository": "https://github.com/Baixu22/VerseShell.git",
-    "pinned_commit": "c3983694407a9ddb23505e05fad4a9eae653b283",
-    "pinned_commit_epoch": 1785123525,
+    "pinned_commit": "c06f406e83566bb968448222d9c8caf429e580a0",
+    "pinned_commit_epoch": 1791974123,
     "source_model": "pinned-commit-plus-ordered-patches",
     "pinned_commit_status": "qualified_ordered_patch_stack"
   },
@@ -21,8 +21,8 @@
     "mcp_protocol_version": "2024-11-05",
     "expected_server_protocol": "verseshell.jsonl/v1",
     "operation_catalog_schema": "verseshell.operation-catalog/v1",
-    "operation_catalog_digest": "sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7",
-    "operation_catalog_count": 31,
+    "operation_catalog_digest": "sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8",
+    "operation_catalog_count": 32,
     "handshake_operation": "runtime.handshake",
     "server_name": "ae-mcp",
     "server_version": "1.0.0"
@@ -37,12 +37,10 @@
     "source_instructions_path": "resources/verseshell/SOURCE.md",
     "build_instructions_path": "resources/verseshell/BUILD.md",
     "source_inputs_path": "resources/verseshell/source-inputs.json",
-    "corresponding_source_locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/source-inputs.json#sha256:daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8",
+    "corresponding_source_locator": "https://github.com/Baixu22/VerseShell.git@c06f406e83566bb968448222d9c8caf429e580a0+resources/verseshell/source-inputs.json#sha256:b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0",
     "corresponding_source_status": "tracked_ordered_patch_stack",
     "patch_paths": [
-      "resources/verseshell/patches/uas-05-process-lifecycle.patch",
       "resources/verseshell/patches/p0-runtime-startup.patch",
-      "resources/verseshell/patches/aci-bench-source-inputs.patch",
       "resources/verseshell/patches/python-current-interpreter.patch"
     ]
   },
@@ -61,11 +59,11 @@
     },
     "cargo_toml_sha256": "d49679a726c368babae6302b3dbe97bcc99eefc4fdf533aeb5a6f67a22521b6d",
     "cargo_lock_sha256": "2970a2ad51f0f63ed66c51cf6935dbfd57ec0a1b19c78a4312d1eafe8b3a95e2",
-    "source_inputs_sha256": "a2b3fd6c05cae9a664304ab7e0f5ff851ac357071a8415b5bee7c5aee5e876bd",
-    "source_identity_sha256": "daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8",
+    "source_inputs_sha256": "d1d3cd4cd004d6a545a9e2e7a8cf48a3564e8cf467f70882e45fa736d2b388c6",
+    "source_identity_sha256": "b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0",
     "controls": {
       "cargo_incremental": "0",
-      "source_date_epoch": 1785123525,
+      "source_date_epoch": 1791974123,
       "encoded_rustflags": [
         "--remap-path-prefix={source_root}=/verseshell/source",
         "--remap-path-prefix={target_root}=/verseshell/target",
@@ -116,43 +114,43 @@
       "independent_source_roots": 2,
       "independent_target_roots": 2,
       "byte_identical": true,
-      "binary_sha256": "ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786",
-      "bytes": 14879232,
+      "binary_sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+      "bytes": 15144448,
       "builds": [
         {
           "ordinal": 1,
-          "sha256": "ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786",
-          "bytes": 14879232,
+          "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+          "bytes": 15144448,
           "handshake": {
             "runtime_version": "1.0.0",
             "server_protocol": "verseshell.jsonl/v1",
             "operation_catalog_schema": "verseshell.operation-catalog/v1",
-            "operation_catalog_digest": "sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7",
-            "operation_catalog_count": 31
+            "operation_catalog_digest": "sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8",
+            "operation_catalog_count": 32
           }
         },
         {
           "ordinal": 2,
-          "sha256": "ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786",
-          "bytes": 14879232,
+          "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+          "bytes": 15144448,
           "handshake": {
             "runtime_version": "1.0.0",
             "server_protocol": "verseshell.jsonl/v1",
             "operation_catalog_schema": "verseshell.operation-catalog/v1",
-            "operation_catalog_digest": "sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7",
-            "operation_catalog_count": 31
+            "operation_catalog_digest": "sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8",
+            "operation_catalog_count": 32
           }
         }
       ]
     },
-    "synchronized_at": "2026-08-14T04:40:20.574Z"
+    "synchronized_at": "2026-10-14T14:23:35.012Z"
   },
   "artifacts": {
     "win32-x64": {
       "path": "resources/bin/win32-x64/ae.exe",
       "packaged_path": "bin/ae.exe",
-      "sha256": "ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786",
-      "bytes": 14879232,
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+      "bytes": 15144448,
       "version": "1.0.0"
     },
     "darwin-x64": {
@@ -186,23 +184,21 @@
   },
   "provenance": {
     "repository": "https://github.com/Baixu22/VerseShell.git",
-    "commit": "c3983694407a9ddb23505e05fad4a9eae653b283",
-    "commit_epoch": 1785123525,
+    "commit": "c06f406e83566bb968448222d9c8caf429e580a0",
+    "commit_epoch": 1791974123,
     "source_model": "pinned-commit-plus-ordered-patches",
     "unrecorded_changes": false,
     "source_inputs": {
       "path": "resources/verseshell/source-inputs.json",
-      "sha256": "a2b3fd6c05cae9a664304ab7e0f5ff851ac357071a8415b5bee7c5aee5e876bd",
-      "identity_sha256": "daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8",
-      "patch_count": 4,
-      "recovered_input_count": 8
+      "sha256": "d1d3cd4cd004d6a545a9e2e7a8cf48a3564e8cf467f70882e45fa736d2b388c6",
+      "identity_sha256": "b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0",
+      "patch_count": 2,
+      "recovered_input_count": 0
     },
     "corresponding_source": {
-      "locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/source-inputs.json#sha256:daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8",
+      "locator": "https://github.com/Baixu22/VerseShell.git@c06f406e83566bb968448222d9c8caf429e580a0+resources/verseshell/source-inputs.json#sha256:b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0",
       "patch_paths": [
-        "resources/verseshell/patches/uas-05-process-lifecycle.patch",
         "resources/verseshell/patches/p0-runtime-startup.patch",
-        "resources/verseshell/patches/aci-bench-source-inputs.patch",
         "resources/verseshell/patches/python-current-interpreter.patch"
       ],
       "instructions": "Clone the HTTPS repository, checkout the pinned commit, then apply every source-input manifest patch in ascending order with git apply."

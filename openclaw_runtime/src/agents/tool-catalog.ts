@@ -105,6 +105,14 @@ const CORE_TOOL_DEFINITIONS: CoreToolDefinition[] = [
     includeInOpenClawGroup: true,
   },
   {
+    id: "read_files",
+    label: "read_files",
+    description: "Read several workspace files in one bounded call through the VerseShell read-only facade",
+    sectionId: "fs",
+    profiles: ["coding"],
+    includeInOpenClawGroup: true,
+  },
+  {
     id: "search_content",
     label: "search_content",
     description: "Search file contents through the VerseShell read-only facade",

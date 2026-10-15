@@ -1,16 +1,16 @@
 diff --git a/bench/aci/runners/run_suite.py b/bench/aci/runners/run_suite.py
-index 277899d3c42cc0cfd46ea53dae841f792322d86b..42ccffd1ebf7f42d5258b9e362dc7e28318265dc 100644
+index d13cedc..05c2e17 100644
 --- a/bench/aci/runners/run_suite.py
 +++ b/bench/aci/runners/run_suite.py
-@@ -37,6 +37,7 @@ FIXTURES = BENCH / "fixtures"
+@@ -43,6 +43,7 @@ FIXTURES = BENCH / "fixtures"
  RESULTS = BENCH / "results"
  BASELINES = BENCH / "baselines"
  MODELS_CFG = Path(__file__).resolve().parent / "models.json"
 +CURRENT_PYTHON_TOKEN = "{current_python}"
  
- 
- def load_manifest() -> dict:
-@@ -47,6 +48,14 @@ def load_task(task_id: str) -> dict:
+ # The measured surface. Recorded into the artifact so claim_gate (C12) can tell
+ # whether the stored numbers still describe the current code.
+@@ -88,6 +89,14 @@ def load_task(task_id: str) -> dict:
      return json.loads((TASKS / f"{task_id}.json").read_text(encoding="utf-8-sig"))
  
  
@@ -25,19 +25,19 @@ index 277899d3c42cc0cfd46ea53dae841f792322d86b..42ccffd1ebf7f42d5258b9e362dc7e28
  def check_success(pred: dict, workspace: Path) -> tuple[bool, str]:
      t = pred.get("type")
      if t == "all":
-@@ -77,7 +86,9 @@ def check_success(pred: dict, workspace: Path) -> tuple[bool, str]:
-         needle = pred.get("contains", "")
-         return (needle not in body, f"file_not_contains {pred['path']}")
+@@ -128,7 +137,9 @@ def check_success(pred: dict, workspace: Path) -> tuple[bool, str]:
+             return False, f"bad pattern {error!r}"
+         return (matched, f"file_matches {pred['path']}")
      if t == "command_exit_0":
 -        argv = pred.get("argv") or []
 +        argv = resolve_command_argv(pred.get("argv") or [])
 +        if not argv:
 +            return False, "command_exit_0 requires a non-empty argv"
          try:
-             r = subprocess.run(
-                 argv,
+             # Only the exit code is evidence here. Keep arbitrary output as bytes
+             # and use the same process-tree timeout as the live predicate path.
 diff --git a/bench/aci/tasks/python_edit_and_retest.json b/bench/aci/tasks/python_edit_and_retest.json
-index ad69d536329ee2ed842ac59557e6bbfaf73cebed..33b3705cde71e59cf220584ff746bd0d49abb926 100644
+index 671319a..8145449 100644
 --- a/bench/aci/tasks/python_edit_and_retest.json
 +++ b/bench/aci/tasks/python_edit_and_retest.json
 @@ -21,6 +21,8 @@
@@ -50,7 +50,7 @@ index ad69d536329ee2ed842ac59557e6bbfaf73cebed..33b3705cde71e59cf220584ff746bd0d
        "-q"
      ],
 diff --git a/bench/aci/tasks/python_fix_pytest_fail.json b/bench/aci/tasks/python_fix_pytest_fail.json
-index 5b2168229a8a7a686c6ada050faa42f669a1123f..108f5855896afa17b273250a5135bb07130b61b4 100644
+index 488a5cb..15dc928 100644
 --- a/bench/aci/tasks/python_fix_pytest_fail.json
 +++ b/bench/aci/tasks/python_fix_pytest_fail.json
 @@ -21,6 +21,8 @@

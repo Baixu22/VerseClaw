@@ -38,6 +38,7 @@ const CONSTRUCTED_CORE_TOOL_IDS = [
   "verseshell_result",
   // agent-tools.ts -> verseshell/readonly-facade.ts CLAWX_VERSESHELL_FACADE
   "read_file",
+  "read_files",
   "search_content",
   "result_query",
 ] as const;

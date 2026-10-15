@@ -4,11 +4,11 @@ The Windows x64 runtime is reproducible from the exact upstream commit plus the 
 patch stack in `source-inputs.json`. The pinned commit by itself is not the shipped source identity.
 
 - Repository: `https://github.com/Baixu22/VerseShell.git`
-- Commit: `c3983694407a9ddb23505e05fad4a9eae653b283`
-- Commit epoch: `1785123525`
-- Source identity: `sha256:19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650`
-- Patch stack: four entries, applied in manifest order with `git apply`
-- Recovered ignored inputs: eight allowlisted Python files; generated files are excluded
+- Commit: `c06f406e83566bb968448222d9c8caf429e580a0`
+- Commit epoch: `1791974123`
+- Source identity: `sha256:b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0`
+- Patch stack: two entries, applied in manifest order with `git apply`
+- Recovered ignored inputs: none; the pinned commit tracks every referenced Python input
 
 `source-inputs.json` records every patch path, byte count, SHA-256, recovered input, final source
 assertion, test command, toolchain, and reproducibility control. A validator must reject missing,

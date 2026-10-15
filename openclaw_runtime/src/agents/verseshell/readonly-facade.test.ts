@@ -35,6 +35,7 @@ function observation(op: string, data: Record<string, unknown> = {}): Observatio
     id: `${op}-request`,
     op,
     ok: true,
+    status: 'ok',
     data: data as Observation["data"],
     meta: { elapsed_ms: 1, profile: "test", token_estimate: 1 },
   };
@@ -96,6 +97,67 @@ describe("VerseShell read-only facade", () => {
       op: "repo.search",
       args: { query: "needle", glob: "src/**/*.ts", context_lines: 2, max_items: 7 },
     });
+  });
+
+  it("maps a bounded batch read to file.read_many and caches by batch identity", async () => {
+    const cwd = process.cwd();
+    const fake = fakeClient(cwd, {
+      "file.read_many": observation("file.read_many", {
+        entries: [
+          { path: "src/a.ts", text: "a", truncated: false },
+          { path: "src/b.ts", text: "b", truncated: true },
+        ],
+      }),
+    });
+    const adapter = new VerseShellReadonlyFacadeAdapter({ cwd, revision: "rev-a", client: fake.client });
+
+    await adapter.readFiles({
+      paths: ["src/a.ts", "src/b.ts"],
+      windows: [{ window: 5 }, { start_line: 10 }],
+      window: 20,
+      max_total_lines: 40,
+    });
+    // Identical batch is served from cache; a different order is a different identity.
+    await adapter.readFiles({
+      paths: ["src/a.ts", "src/b.ts"],
+      windows: [{ window: 5 }, { start_line: 10 }],
+      window: 20,
+      max_total_lines: 40,
+    });
+    await adapter.readFiles({ paths: ["src/b.ts", "src/a.ts"] });
+
+    expect(fake.calls).toHaveLength(2);
+    expect(fake.calls[0]).toMatchObject({
+      op: "file.read_many",
+      args: {
+        paths: ["src/a.ts", "src/b.ts"],
+        windows: [{ window: 5 }, { start_line: 10 }],
+        window: 20,
+        max_total_lines: 40,
+      },
+    });
+    expect(fake.calls[1]).toMatchObject({ op: "file.read_many", args: { paths: ["src/b.ts", "src/a.ts"] } });
+  });
+
+  it("rejects out-of-contract batch reads before any ACI call", async () => {
+    const cwd = process.cwd();
+    const fake = fakeClient(cwd, {});
+    const adapter = new VerseShellReadonlyFacadeAdapter({ cwd, client: fake.client });
+
+    // 9 paths exceed the pinned maxItems of 8.
+    await expect(adapter.readFiles({ paths: Array.from({ length: 9 }, (_, i) => `src/f${i}.ts`) }))
+      .rejects.toThrow(/between 1 and 8/u);
+    // Empty batch is not a read.
+    await expect(adapter.readFiles({ paths: [] })).rejects.toThrow(/between 1 and 8/u);
+    // Per-file window beyond the file.view cap.
+    await expect(adapter.readFiles({ paths: ["src/a.ts"], windows: [{ window: 501 }] }))
+      .rejects.toThrow(/window/u);
+    // Path escape, absolute path, and NUL are refused by the same confinement as single reads.
+    await expect(adapter.readFiles({ paths: ["../outside.txt"] })).rejects.toThrow(/workspace/u);
+    await expect(adapter.readFiles({ paths: [path.resolve(cwd, "a.ts")] })).rejects.toThrow(/relative/u);
+    await expect(adapter.readFiles({ paths: ["a\0b.ts"] })).rejects.toThrow(/bounded|invalid/u);
+
+    expect(fake.calls).toHaveLength(0);
   });
 
   it("passes one host trace through read, search, and result queries", async () => {
@@ -191,21 +253,21 @@ describe("VerseShell read-only facade", () => {
       config: config(ENABLED_FLAGS, true),
     })).toBeNull();
     const enabled = createVerseShellReadonlyFacadeTools({ cwd: process.cwd(), config: config(ENABLED_FLAGS) });
-    expect(enabled?.map((tool) => tool.name)).toEqual(["read_file", "search_content", "result_query"]);
+    expect(enabled?.map((tool) => tool.name)).toEqual(["read_file", "read_files", "search_content", "result_query"]);
     for (const tool of enabled ?? []) {
       expect((tool.parameters as { additionalProperties?: boolean }).additionalProperties).toBe(false);
     }
   });
 
-  it("adds the three facade tools only to an explicitly enabled shell tool surface", () => {
+  it("adds the four facade tools only to an explicitly enabled shell tool surface", () => {
     const disabled = createOpenClawCodingTools({ cwd: process.cwd(), config: config({}) });
-    expect(disabled.map((tool) => tool.name)).not.toEqual(expect.arrayContaining(["read_file", "search_content", "result_query"]));
+    expect(disabled.map((tool) => tool.name)).not.toEqual(expect.arrayContaining(["read_file", "read_files", "search_content", "result_query"]));
     const enabled = createOpenClawCodingTools({
       cwd: process.cwd(),
       workspaceRevision: "rev-a",
       config: config(ENABLED_FLAGS),
     });
-    expect(enabled.map((tool) => tool.name)).toEqual(expect.arrayContaining(["read_file", "search_content", "result_query"]));
+    expect(enabled.map((tool) => tool.name)).toEqual(expect.arrayContaining(["read_file", "read_files", "search_content", "result_query"]));
   });
 
   it("expires and bounds cache entries", () => {

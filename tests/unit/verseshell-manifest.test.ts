@@ -17,9 +17,7 @@ async function fixtureRoot(): Promise<string> {
     'resources/verseshell/NOTICE.md',
     'resources/verseshell/SOURCE.md',
     'resources/verseshell/BUILD.md',
-    'resources/verseshell/patches/uas-05-process-lifecycle.patch',
     'resources/verseshell/patches/p0-runtime-startup.patch',
-    'resources/verseshell/patches/aci-bench-source-inputs.patch',
     'resources/verseshell/patches/python-current-interpreter.patch',
     'resources/bin/win32-x64/ae.exe',
     'shared/verseshell/facade.ts',
@@ -64,7 +62,7 @@ describe('VerseShell v2 manifest validation', () => {
 
   it('rejects a tampered corresponding-source patch', async () => {
     const fixture = await fixtureRoot();
-    const patchPath = join(fixture, 'resources/verseshell/patches/uas-05-process-lifecycle.patch');
+    const patchPath = join(fixture, 'resources/verseshell/patches/p0-runtime-startup.patch');
     await writeFile(patchPath, `${await readFile(patchPath, 'utf8')}\n# tampered\n`);
     const result = await validateVerseShellManifest({ root: fixture, mode: 'package' });
     expect(result.issues).toEqual(expect.arrayContaining([expect.stringMatching(/Patch .* (?:byte size|checksum) mismatch/u)]));
@@ -80,11 +78,15 @@ describe('VerseShell v2 manifest validation', () => {
     expect(result.issues).toEqual(expect.arrayContaining([expect.stringMatching(/build\/source\/toolchain identity/u)]));
   });
 
-  it('rejects a modified recovered-source inventory before build acceptance', async () => {
+  it('rejects a silently reintroduced recovered-source inventory at the pinned upstream', async () => {
     const fixture = await fixtureRoot();
     const sourceInputsPath = join(fixture, 'resources/verseshell/source-inputs.json');
     const sourceInputs = JSON.parse(await readFile(sourceInputsPath, 'utf8'));
-    sourceInputs.recovered_inputs.files[0].bytes += 1;
+    // The pinned upstream tracks every referenced python input, so the allowlist must stay empty;
+    // adding an entry (even a real upstream path) without re-freezing the identity is rejected.
+    sourceInputs.recovered_inputs.files.push({
+      path: 'bench/aci/fixtures/undeclared.py', bytes: 1, sha256: '0'.repeat(64),
+    });
     await writeFile(sourceInputsPath, `${JSON.stringify(sourceInputs, null, 2)}\n`);
     const result = await validateVerseShellManifest({ root: fixture, mode: 'package' });
     expect(result.issues).toEqual(expect.arrayContaining([expect.stringMatching(/Source-input payload SHA-256 mismatch/u)]));

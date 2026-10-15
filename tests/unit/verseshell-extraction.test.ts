@@ -18,6 +18,7 @@ function observation(overrides: Partial<Observation> = {}): Observation {
     id: 'r1',
     op: 'exec.run',
     ok: false,
+    status: 'failed',
     data: {
       stdout: { artifact: handleA },
       stderr: { artifact: handleB },

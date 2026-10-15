@@ -2,33 +2,11 @@
   "schema_version": 1,
   "component": "verseshell",
   "repository": "https://github.com/Baixu22/VerseShell.git",
-  "commit": "c3983694407a9ddb23505e05fad4a9eae653b283",
-  "commit_epoch": 1785123525,
+  "commit": "c06f406e83566bb968448222d9c8caf429e580a0",
+  "commit_epoch": 1791974123,
   "patches": [
     {
       "order": 1,
-      "role": "process-lifecycle",
-      "path": "resources/verseshell/patches/uas-05-process-lifecycle.patch",
-      "bytes": 106755,
-      "sha256": "cabfb192f6f9688156f5a3ab5a19307fcd1af3fb2ee2c59b2d494a557d417098",
-      "changed_paths": [
-        "Cargo.toml",
-        "src/lib.rs",
-        "src/mcp/tools.rs",
-        "src/ops/mod.rs",
-        "src/ops/runtime_ops.rs",
-        "src/process_runner.rs",
-        "src/server.rs",
-        "tests/operation_protocol_tests.rs",
-        "src/ops/process_ops.rs",
-        "src/process_command.rs",
-        "src/process_lifecycle_windows.rs",
-        "src/process_lifecycle.rs",
-        "tests/process_lifecycle_tests.rs"
-      ]
-    },
-    {
-      "order": 2,
       "role": "runtime-startup",
       "path": "resources/verseshell/patches/p0-runtime-startup.patch",
       "bytes": 1645,
@@ -38,28 +16,11 @@
       ]
     },
     {
-      "order": 3,
-      "role": "recovered-ignored-source-inputs",
-      "path": "resources/verseshell/patches/aci-bench-source-inputs.patch",
-      "bytes": 32135,
-      "sha256": "0eb7c902e4b0b75d3617e2129f66694c01f9c4f657fcb140272ff8abbba5dffe",
-      "changed_paths": [
-        "bench/aci/fixtures/python_edit_and_retest/GOLDEN/greet.py",
-        "bench/aci/fixtures/python_edit_and_retest/greet.py",
-        "bench/aci/fixtures/python_edit_and_retest/tests/test_greet.py",
-        "bench/aci/fixtures/python_fix_pytest_fail/GOLDEN/mathlib.py",
-        "bench/aci/fixtures/python_fix_pytest_fail/mathlib.py",
-        "bench/aci/fixtures/python_fix_pytest_fail/tests/test_math.py",
-        "bench/aci/runners/run_suite.py",
-        "bench/aci/scorers/score.py"
-      ]
-    },
-    {
-      "order": 4,
+      "order": 2,
       "role": "python-current-interpreter",
       "path": "resources/verseshell/patches/python-current-interpreter.patch",
-      "bytes": 2444,
-      "sha256": "ccc4a92220dd3ca47a142ded6c3734749918f3d86b5014f1e5444ffd53bc0922",
+      "bytes": 2477,
+      "sha256": "0c073908e56492bd44d7455d55bee7661842db32c3ec6fe177d0b69093ae7f55",
       "changed_paths": [
         "bench/aci/runners/run_suite.py",
         "bench/aci/tasks/python_edit_and_retest.json",
@@ -68,50 +29,9 @@
     }
   ],
   "recovered_inputs": {
-    "verified_after_patch_order": 3,
+    "verified_after_patch_order": null,
     "upstream_ignore_rule": "*.py",
-    "files": [
-      {
-        "path": "bench/aci/runners/run_suite.py",
-        "bytes": 27489,
-        "sha256": "2cbfab0553f40da8c86202697151a54b5c1e39adfc3120508dbc4343328f11b6"
-      },
-      {
-        "path": "bench/aci/scorers/score.py",
-        "bytes": 1080,
-        "sha256": "ef78658e0b6078217c17b9bd7944e71de7add7f873662cacd6d871c53980bbd4"
-      },
-      {
-        "path": "bench/aci/fixtures/python_edit_and_retest/greet.py",
-        "bytes": 41,
-        "sha256": "3ab4a6cd647afe331b3f14443f8e612f820d5ac9aa50380f608306859defb964"
-      },
-      {
-        "path": "bench/aci/fixtures/python_edit_and_retest/GOLDEN/greet.py",
-        "bytes": 46,
-        "sha256": "a55c14346b5c0e11da873793db175efd28d4840a330a5edba18d03d7d7310626"
-      },
-      {
-        "path": "bench/aci/fixtures/python_edit_and_retest/tests/test_greet.py",
-        "bytes": 84,
-        "sha256": "b1a1f584dd86105d98bc0c55c94853f7b50be059193cb4b973a2fb791de84af3"
-      },
-      {
-        "path": "bench/aci/fixtures/python_fix_pytest_fail/mathlib.py",
-        "bytes": 32,
-        "sha256": "4fb46b3507c096aece05e92b88ce528ab2ee3c2c42657ba218d09dfdf5c02418"
-      },
-      {
-        "path": "bench/aci/fixtures/python_fix_pytest_fail/GOLDEN/mathlib.py",
-        "bytes": 32,
-        "sha256": "ba1a531f581d2e6094e978ed6f7aca7a8d92eeb62c6e7ad73ee692f7f18bc772"
-      },
-      {
-        "path": "bench/aci/fixtures/python_fix_pytest_fail/tests/test_math.py",
-        "bytes": 67,
-        "sha256": "a8a48514048ab1e8543f3d7626fc9f40d322009f679deb1e441b38b0daecfe8f"
-      }
-    ]
+    "files": []
   },
   "ignored_input_policy": {
     "allowlist": "recovered_inputs.files",
@@ -129,8 +49,8 @@
   "final_assertions": [
     {
       "path": ".gitignore",
-      "bytes": 627,
-      "sha256": "c975d8a4a216b88fb8930bd067066e05ec1f9cd9be4ee675b63810a0c6c37ba1"
+      "bytes": 2632,
+      "sha256": "f88b6477d5e4f80ca843efc128e5ecd965fec2db3d2151edeb95ba7fc353eac0"
     },
     {
       "path": "Cargo.toml",
@@ -169,13 +89,13 @@
     },
     {
       "path": "src/process_command.rs",
-      "bytes": 7952,
-      "sha256": "3412637b82e804851cac17953f3db4240e468b78c909eebd064b4b113e13ebe3"
+      "bytes": 19108,
+      "sha256": "de2746e003d7405c06de22823186da6a208015e4fea26417fbf9fb0948969846"
     },
     {
       "path": "src/process_lifecycle.rs",
-      "bytes": 47466,
-      "sha256": "ec54738b29301f71a7b0b611a0f1276369fcd5ced1f10800ee73df2f8e46cb0d"
+      "bytes": 47486,
+      "sha256": "c3b8ac6d850c865ea55659c343270cff09cf49e651294483c5a68f890d3a9e06"
     },
     {
       "path": "src/process_lifecycle_windows.rs",
@@ -184,8 +104,8 @@
     },
     {
       "path": "src/process_runner.rs",
-      "bytes": 14351,
-      "sha256": "66e4bb5183fdafb4f0ba299eae3f1e21c4886b63fbc9580a7303b63630dab9aa"
+      "bytes": 15785,
+      "sha256": "4059126a659c0ca9ce1447b36da2dd2b533168234048fa73bca4533e4a831fe2"
     },
     {
       "path": "src/server.rs",
@@ -194,28 +114,28 @@
     },
     {
       "path": "tests/operation_protocol_tests.rs",
-      "bytes": 14614,
-      "sha256": "7fdb1cd225ef03c657fa9a392223560e37d88ea8c963e3875638d2fac1835a8c"
+      "bytes": 14961,
+      "sha256": "a5f1169e29044d363582b3f34f0b4552ce1f1d1c06ad01c5f46f1887a4e01a50"
     },
     {
       "path": "tests/process_lifecycle_tests.rs",
-      "bytes": 18787,
-      "sha256": "79f424ef63a437790be3590c4799753028c6ed93b40dec7f5b5e376e8db2065e"
+      "bytes": 19612,
+      "sha256": "368faf315faf4485697b2b0abbcd95afa8b6f69c0e278a541f384f8d80156bad"
     },
     {
       "path": "bench/aci/tasks/manifest.json",
-      "bytes": 480,
-      "sha256": "59aeab316577efc881d236dcc2eca1ad5a3c289149ad73b10c2d96eee982d679"
+      "bytes": 1522,
+      "sha256": "2bc7d6e816adefb971c152e386931dc8b2e6c357a1c669a75e47a897ad09180f"
     },
     {
       "path": "bench/aci/runners/run_suite.py",
-      "bytes": 27900,
-      "sha256": "7eb3ad291ebf1f705bf27721388b934e30f98d591b89ec5bc8b4b4ee7ff3b0d0"
+      "bytes": 30442,
+      "sha256": "cd7542e26c0e968f5cce21395c21459aeba4a386f885938ee5a965c22dbb9531"
     },
     {
       "path": "bench/aci/scorers/score.py",
-      "bytes": 1080,
-      "sha256": "ef78658e0b6078217c17b9bd7944e71de7add7f873662cacd6d871c53980bbd4"
+      "bytes": 1812,
+      "sha256": "06d4ae023732c3a33f144eceeb2700a389125cc082d33e148d7118e8e06e6cb5"
     },
     {
       "path": "bench/aci/tasks/python_edit_and_retest.json",
@@ -309,7 +229,7 @@
     "independent_target_roots": 2,
     "environment": {
       "CARGO_INCREMENTAL": "0",
-      "SOURCE_DATE_EPOCH": "1785123525"
+      "SOURCE_DATE_EPOCH": "1791974123"
     },
     "encoded_rustflags": [
       "--remap-path-prefix={source_root}=/verseshell/source",
@@ -324,8 +244,8 @@
   },
   "identity": {
     "algorithm": "sha256(canonical-json-without-identity)",
-    "payload_sha256": "a0fc3d80a3812203460ac826346a061efc6f52c22054ea04946a28f03e04e553",
+    "payload_sha256": "3525026288c64aa0add393f8096df682d862e969154429c9eab3bcc05ce3582f",
     "combined_algorithm": "sha256(verseshell.source-identity/v1\\n + payload_sha256)",
-    "combined_sha256": "daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8"
+    "combined_sha256": "b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0"
   }
 }

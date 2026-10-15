@@ -79,7 +79,7 @@ test("identity is sourced from package and runtime manifest", () => {
   assert.match(MCP_SERVER_VERSION, /^\d+\.\d+\.\d+$/u);
   assert.equal(MCP_PROTOCOL_VERSION, "2024-11-05");
   assert.equal(RUNTIME_VERSION, "1.0.0");
-  assert.equal(OPERATION_CATALOG_COUNT, 31);
+  assert.equal(OPERATION_CATALOG_COUNT, 32);
 });
 
 test("capability names match the pinned runtime grant vocabulary", () => {

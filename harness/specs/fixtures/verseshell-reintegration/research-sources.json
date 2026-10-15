@@ -1,0 +1,82 @@
+{
+  "schema": "verseshell.reintegration-research/v1",
+  "retrieved_on": "2026-10-14",
+  "timezone": "Asia/Shanghai",
+  "tools": [
+    "anysearch search/domain discovery/extract",
+    "web primary-source verification"
+  ],
+  "source_policy": "Primary author or official project sources only; lessons are adapted, not imported as product requirements",
+  "sources": [
+    {
+      "id": "S1",
+      "title": "Small CLs | eng-practices",
+      "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+      "content_sha256": "5f1fc08fa1a65b2afb02ac0a2ff7d0c796d9aaf5174dee295b615cf8fb6ef58b",
+      "lesson": "One coherent change; separate refactoring; include real API consumption and tests.",
+      "project_application": "每批一个行为闭环，迁移与重构/清理分开。"
+    },
+    {
+      "id": "S2",
+      "title": "Software Engineering at Google",
+      "url": "https://abseil.io/resources/swe-book/html/ch22.html",
+      "content_sha256": "14fef32718f345fdf453cf8c8edab9af73f472fe6a5348bbd27b5070b52fcc05",
+      "lesson": "Automated, repeatable, bounded migrations with explicit scope and rollback.",
+      "project_application": "复用 Git 和现有 bundle 流程，以检查点收敛，不建设通用迁移平台。"
+    },
+    {
+      "id": "S3",
+      "title": "Branch By Abstraction",
+      "url": "https://martinfowler.com/bliki/BranchByAbstraction.html",
+      "content_sha256": "de870c5b0f3fb584e295d3b7b5f9c72c045bf8d1bdb32d14539bd5679fc6474e",
+      "lesson": "Move clients through an existing stable seam while implementations change gradually.",
+      "project_application": "复用当前 Typed ACI/facade；不新建第二个抽象层或执行 owner。"
+    },
+    {
+      "id": "S4",
+      "title": "Effective harnesses for long-running agents \\ Anthropic",
+      "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents",
+      "content_sha256": "ba0dc21718dd01a22d2ebe90afa1fdb0e4777377f882ec3395227daee0e82c6f",
+      "lesson": "Feature requirements, incremental progress and end-to-end tests address observed premature completion.",
+      "project_application": "冻结 32 操作与 18 行为要求，状态由执行回执得出；不采用仅由 agent 编辑 passes 字段的弱约束。"
+    },
+    {
+      "id": "S5",
+      "title": "SLSA • Provenance",
+      "url": "https://slsa.dev/spec/v1.2/provenance",
+      "content_sha256": "f13b5c8b75ddec3cc84ee1a2c07a72d9c255bc57b57ba4a28fe7c0f2b77a9393",
+      "lesson": "Artifacts should be traceable to the source and production process.",
+      "project_application": "绑定 commit、残余补丁、构建配方、binary hash 和宿主候选。"
+    },
+    {
+      "id": "S6",
+      "title": "Definitions — reproducible-builds.org",
+      "url": "https://reproducible-builds.org/docs/definition/",
+      "content_sha256": "4bacafa1b4b46c9c3f242e48389a37ef9b5b5df0e5e09f73c5ecaf3aabc46820",
+      "lesson": "Same defined inputs should reproduce byte-identical designated build outputs.",
+      "project_application": "保留两套独立构建，记录 toolchain/env；仅复制 exe 不构成来源证明。"
+    },
+    {
+      "id": "S7",
+      "title": "Git - git-merge-tree Documentation",
+      "url": "https://git-scm.com/docs/git-merge-tree",
+      "content_sha256": "ba8fc4b8378e5edec403090040e3cc893ee1de4befebf032b831a3d335ecca89",
+      "lesson": "Merge-tree supports conflict preflight without modifying the worktree or index.",
+      "project_application": "复用已执行的隔离三方合并；文本无冲突仍需语义验收。"
+    },
+    {
+      "id": "S8",
+      "title": "GitHub - github/scientist: :microscope: A Ruby library for carefully refactoring critical paths. · GitHub",
+      "url": "https://github.com/github/scientist",
+      "content_sha256": "113382b5e0d3d1cb0a933e54106d90656751c2a2c5e664e410623f42d16ea585",
+      "lesson": "Compare control and candidate outputs/errors; data-mutating paths need special care.",
+      "project_application": "采用 A/B/C 隔离 fixture 对照；不对真实写入、process.start 或外部副作用做双跑。"
+    }
+  ],
+  "limitations": [
+    "No claim that every LLM universally prefers rewrites; this plan treats it as a concrete failure mode.",
+    "Anthropic findings concern its demonstrated application harness; applicability to this migration is an engineering inference.",
+    "No new Scientist/SLSA library or service is introduced; the plan adopts comparison and provenance practices.",
+    "Full extracted pages remain in local D:/tmp research, not in source control."
+  ]
+}

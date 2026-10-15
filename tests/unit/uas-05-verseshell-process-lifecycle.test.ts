@@ -13,18 +13,20 @@ function sha256(path: string): string {
 // Source-text checks below pin catalog/routing contracts; they do not execute a process lifecycle.
 describe("UAS-05 VerseShell process lifecycle boundary", () => {
   const manifestPath = "resources/verseshell/manifest.json";
-  const patchPath = "resources/verseshell/patches/uas-05-process-lifecycle.patch";
   const binaryPath = "resources/bin/win32-x64/ae.exe";
   const SOURCE_INPUTS_PATH = "resources/verseshell/source-inputs.json";
+  const SOURCE_LOCK_PATH = "harness/specs/fixtures/verseshell-reintegration/source-lock.json";
   const manifest = JSON.parse(read(manifestPath));
-  const sourcePatch = read(patchPath);
+  // The lifecycle operations and their catalog now ship in the pinned upstream commit; the
+  // frozen source lock is the inventory that proves they were carried over, not a local patch.
+  const sourceLock = JSON.parse(read(SOURCE_LOCK_PATH));
 
-  it("pins the lifecycle binary, source patch, and 31-operation catalog", () => {
-    expect(manifest.upstream.pinned_commit).toBe("c3983694407a9ddb23505e05fad4a9eae653b283");
+  it("pins the lifecycle binary, frozen source commit, and 32-operation catalog", () => {
+    expect(manifest.upstream.pinned_commit).toBe("c06f406e83566bb968448222d9c8caf429e580a0");
     expect(manifest.protocol).toMatchObject({
-      operation_catalog_count: 31,
+      operation_catalog_count: 32,
       operation_catalog_digest:
-        "sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7",
+        "sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8",
     });
     expect(manifest.provenance.unrecorded_changes).toBe(false);
     const sourceInputs = JSON.parse(readFileSync(SOURCE_INPUTS_PATH, "utf8"));
@@ -34,14 +36,14 @@ describe("UAS-05 VerseShell process lifecycle boundary", () => {
     expect(manifest.provenance.source_inputs.identity_sha256).toBe(expectedCombinedSha);
     expect(manifest.compliance).toMatchObject({
       corresponding_source_status: "tracked_ordered_patch_stack",
-      patch_paths: expect.arrayContaining([patchPath]),
+      patch_paths: sourceInputs.patches.map((patch: { path: string }) => patch.path),
     });
     expect(sha256("resources/verseshell/source-inputs.json")).toBe(manifest.provenance.source_inputs.sha256);
     expect(sha256(binaryPath)).toBe(manifest.artifacts["win32-x64"].sha256);
     expect(statSync(binaryPath).size).toBe(manifest.artifacts["win32-x64"].bytes);
   });
 
-  it("records all lifecycle operations while keeping them off the MCP surface", () => {
+  it("carries every lifecycle operation in the frozen upstream inventory", () => {
     for (const operation of [
       "process.start",
       "process.poll",
@@ -49,9 +51,9 @@ describe("UAS-05 VerseShell process lifecycle boundary", () => {
       "process.kill",
       "process.list",
     ]) {
-      expect(sourcePatch).toContain(`name: "${operation}"`);
+      expect(sourceLock.operations).toContain(operation);
     }
-    expect(sourcePatch).toContain('spec.name.starts_with("process.")');
+    expect(sourceLock.files.some((entry: { path: string }) => entry.path === "src/ops/process_ops.rs")).toBe(true);
   });
 
   it("routes governed exec and process control through the lifecycle owner", () => {

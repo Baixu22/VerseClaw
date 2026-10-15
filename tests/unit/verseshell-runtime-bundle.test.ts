@@ -16,15 +16,13 @@ import { isVerseShellRuntimeRequestedByRollout } from '@electron/utils/verseshel
 const roots: string[] = [];
 const LICENSE = 'GNU AFFERO GENERAL PUBLIC LICENSE\nVersion 3, 19 November 2007\n';
 const PROJECT_ROOT = resolve(__dirname, '../..');
-const SOURCE_INPUTS_SHA256 = 'a2b3fd6c05cae9a664304ab7e0f5ff851ac357071a8415b5bee7c5aee5e876bd';
-const SOURCE_IDENTITY_SHA256 = 'daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8';
+const SOURCE_INPUTS_SHA256 = 'd1d3cd4cd004d6a545a9e2e7a8cf48a3564e8cf467f70882e45fa736d2b388c6';
+const SOURCE_IDENTITY_SHA256 = 'b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0';
 const SOURCE_REPOSITORY = 'https://github.com/Baixu22/VerseShell.git';
-const SOURCE_COMMIT = 'c3983694407a9ddb23505e05fad4a9eae653b283';
+const SOURCE_COMMIT = 'c06f406e83566bb968448222d9c8caf429e580a0';
 const SOURCE_LOCATOR = `${SOURCE_REPOSITORY}@${SOURCE_COMMIT}+resources/verseshell/source-inputs.json#sha256:${SOURCE_IDENTITY_SHA256}`;
 const PATCHES = [
-  'resources/verseshell/patches/uas-05-process-lifecycle.patch',
   'resources/verseshell/patches/p0-runtime-startup.patch',
-  'resources/verseshell/patches/aci-bench-source-inputs.patch',
   'resources/verseshell/patches/python-current-interpreter.patch',
 ];
 
@@ -38,8 +36,8 @@ function manifestFor(binary: Buffer, overrides: Record<string, unknown> = {}) {
     runtime_version: '1.0.0',
     server_protocol: 'verseshell.jsonl/v1',
     operation_catalog_schema: 'verseshell.operation-catalog/v1',
-    operation_catalog_digest: 'sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7',
-    operation_catalog_count: 31,
+    operation_catalog_digest: 'sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8',
+    operation_catalog_count: 32,
   };
   return {
     schema_version: 2,
@@ -48,7 +46,7 @@ function manifestFor(binary: Buffer, overrides: Record<string, unknown> = {}) {
       cargo_repository: 'https://github.com/nervosys/verseshell',
       source_repository: 'https://github.com/Baixu22/VerseShell.git',
       pinned_commit: SOURCE_COMMIT,
-      pinned_commit_epoch: 1785123525,
+      pinned_commit_epoch: 1791974123,
       source_model: 'pinned-commit-plus-ordered-patches',
       pinned_commit_status: 'qualified_ordered_patch_stack',
     },
@@ -98,7 +96,7 @@ function manifestFor(binary: Buffer, overrides: Record<string, unknown> = {}) {
       source_identity_sha256: SOURCE_IDENTITY_SHA256,
       controls: {
         cargo_incremental: '0',
-        source_date_epoch: 1785123525,
+        source_date_epoch: 1791974123,
         encoded_rustflags: [
           '--remap-path-prefix={source_root}=/verseshell/source',
           '--remap-path-prefix={target_root}=/verseshell/target',
@@ -129,12 +127,12 @@ function manifestFor(binary: Buffer, overrides: Record<string, unknown> = {}) {
     provenance: {
       repository: SOURCE_REPOSITORY,
       commit: SOURCE_COMMIT,
-      commit_epoch: 1785123525,
+      commit_epoch: 1791974123,
       source_model: 'pinned-commit-plus-ordered-patches',
       unrecorded_changes: false,
       source_inputs: {
         path: 'resources/verseshell/source-inputs.json', sha256: SOURCE_INPUTS_SHA256,
-        identity_sha256: SOURCE_IDENTITY_SHA256, patch_count: 4, recovered_input_count: 8,
+        identity_sha256: SOURCE_IDENTITY_SHA256, patch_count: 2, recovered_input_count: 0,
       },
       corresponding_source: {
         locator: SOURCE_LOCATOR,
@@ -210,9 +208,9 @@ describe('resolveVerseShellRuntimeBundle', () => {
       sha256: digest(bundle.binary),
       version: '1.0.0',
       protocolVersion: 'verseshell.jsonl/v1',
-      operationCatalogDigest: 'sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7',
-      operationCatalogCount: 31,
-      commitEpoch: 1785123525,
+      operationCatalogDigest: 'sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8',
+      operationCatalogCount: 32,
+      commitEpoch: 1791974123,
       sourceIdentitySha256: SOURCE_IDENTITY_SHA256,
       unrecordedChanges: false,
     });
@@ -220,8 +218,8 @@ describe('resolveVerseShellRuntimeBundle', () => {
       VERSESHELL_RUNTIME_PROVENANCE: 'verified',
       VERSESHELL_RUNTIME_VERSION: '1.0.0',
       VERSESHELL_SERVER_PROTOCOL: 'verseshell.jsonl/v1',
-      VERSESHELL_OPERATION_CATALOG_DIGEST: 'sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7',
-      VERSESHELL_OPERATION_CATALOG_COUNT: '31',
+      VERSESHELL_OPERATION_CATALOG_DIGEST: 'sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8',
+      VERSESHELL_OPERATION_CATALOG_COUNT: '32',
     });
   });
 
@@ -252,8 +250,8 @@ describe('resolveVerseShellRuntimeBundle', () => {
       VERSESHELL_AE_SHA256: digest(bundle.binary),
       VERSESHELL_RUNTIME_VERSION: '1.0.0',
       VERSESHELL_SERVER_PROTOCOL: 'verseshell.jsonl/v1',
-      VERSESHELL_OPERATION_CATALOG_DIGEST: 'sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7',
-      VERSESHELL_OPERATION_CATALOG_COUNT: '31',
+      VERSESHELL_OPERATION_CATALOG_DIGEST: 'sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8',
+      VERSESHELL_OPERATION_CATALOG_COUNT: '32',
     });
 
     const resolver = vi.fn(async () => runtime);

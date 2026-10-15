@@ -18,6 +18,7 @@ import {
 } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, relative, resolve } from 'node:path';
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { isAbsolute as pathIsAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -38,32 +39,23 @@ export const COMPLIANCE_FILES = Object.freeze({
 
 const EMPTY_SHA256 = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
 const EXPECTED_REPOSITORY = 'https://github.com/Baixu22/VerseShell.git';
-const EXPECTED_COMMIT = 'c3983694407a9ddb23505e05fad4a9eae653b283';
-const EXPECTED_COMMIT_EPOCH = 1785123525;
+const EXPECTED_COMMIT = 'c06f406e83566bb968448222d9c8caf429e580a0';
+const EXPECTED_COMMIT_EPOCH = 1791974123;
 const EXPECTED_CARGO_VERSION = '1.94.0';
 const EXPECTED_RUSTC_VERSION = '1.94.0';
 const EXPECTED_CARGO_TARGET = 'x86_64-pc-windows-msvc';
 const EXPECTED_PROTOCOL = 'verseshell.jsonl/v1';
 const EXPECTED_CATALOG_SCHEMA = 'verseshell.operation-catalog/v1';
-const EXPECTED_CATALOG_DIGEST = 'sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7';
-const EXPECTED_CATALOG_COUNT = 31;
+const EXPECTED_CATALOG_DIGEST = 'sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8';
+const EXPECTED_CATALOG_COUNT = 32;
 const SOURCE_IDENTITY_PREFIX = 'verseshell.source-identity/v1\n';
 const EXPECTED_PATCHES = Object.freeze([
-  ['process-lifecycle', 'resources/verseshell/patches/uas-05-process-lifecycle.patch'],
   ['runtime-startup', 'resources/verseshell/patches/p0-runtime-startup.patch'],
-  ['recovered-ignored-source-inputs', 'resources/verseshell/patches/aci-bench-source-inputs.patch'],
   ['python-current-interpreter', 'resources/verseshell/patches/python-current-interpreter.patch'],
 ]);
-const EXPECTED_RECOVERED_INPUTS = Object.freeze([
-  'bench/aci/runners/run_suite.py',
-  'bench/aci/scorers/score.py',
-  'bench/aci/fixtures/python_edit_and_retest/greet.py',
-  'bench/aci/fixtures/python_edit_and_retest/GOLDEN/greet.py',
-  'bench/aci/fixtures/python_edit_and_retest/tests/test_greet.py',
-  'bench/aci/fixtures/python_fix_pytest_fail/mathlib.py',
-  'bench/aci/fixtures/python_fix_pytest_fail/GOLDEN/mathlib.py',
-  'bench/aci/fixtures/python_fix_pytest_fail/tests/test_math.py',
-]);
+// The target upstream tracks every ACI-Bench python input, so the recovered-ignored-input
+// mechanism is retired; the allowlist stays empty and the inventory check asserts that.
+const EXPECTED_RECOVERED_INPUTS = Object.freeze([]);
 const EXPECTED_PYTHON_TASKS = Object.freeze([
   'python_edit_and_retest',
   'python_fix_pytest_fail',
@@ -414,16 +406,14 @@ export async function loadAndValidateSourceInputs({ root = PROJECT_ROOT } = {}) 
   const recovered = requireExactKeys(sourceInputs.recovered_inputs, [
     'verified_after_patch_order', 'upstream_ignore_rule', 'files',
   ], 'source inputs.recovered_inputs');
-  if (recovered.verified_after_patch_order !== 3 || recovered.upstream_ignore_rule !== '*.py') {
-    fail('Recovered ignored-source checkpoint/rule drifted.');
-  }
+  // The target upstream tracks every python input, so this mechanism is retired: the
+  // allowlist must be empty and must agree with the EXPECTED_RECOVERED_INPUTS constant.
   const recoveredFiles = array(recovered.files, 'source inputs.recovered_inputs.files');
   recoveredFiles.forEach((entry, index) => validateFileAssertionShape(entry, `recovered input ${index}`));
   assertPathInventory(recoveredFiles.map((entry) => entry.path), EXPECTED_RECOVERED_INPUTS, 'Recovered input allowlist');
-  const recoveredPatch = patches[recovered.verified_after_patch_order - 1];
-  assertPathInventory(recoveredPatch.changed_paths, recoveredFiles.map((entry) => entry.path), 'Recovered-input patch scope', {
-    preserveOrder: false,
-  });
+  if (recoveredFiles.length !== 0) {
+    fail('Recovered ignored-source inputs must be empty: the target upstream tracks them.');
+  }
 
   const ignoredPolicy = requireExactKeys(sourceInputs.ignored_input_policy, [
     'allowlist', 'forbidden_patterns',
@@ -444,6 +434,9 @@ export async function loadAndValidateSourceInputs({ root = PROJECT_ROOT } = {}) 
   }
   for (const recoveredPath of EXPECTED_RECOVERED_INPUTS) {
     if (!assertionPaths.includes(recoveredPath)) fail(`Final source assertions omit recovered input ${recoveredPath}.`);
+  }
+  for (const pythonInput of ['bench/aci/runners/run_suite.py', 'bench/aci/scorers/score.py']) {
+    if (!assertionPaths.includes(pythonInput)) fail(`Final source assertions omit tracked python input ${pythonInput}.`);
   }
 
   const testContract = requireExactKeys(sourceInputs.test_contract, [
@@ -1016,7 +1009,8 @@ export async function reconstructSource({
     const patchPath = resolveWithin(resolve(root), patch.path, `patch ${patch.order}`);
     execute('git', ['apply', '--check', '--whitespace=nowarn', patchPath], { cwd: destinationRoot });
     execute('git', ['apply', '--whitespace=nowarn', patchPath], { cwd: destinationRoot });
-    if (patch.order === sourceInputs.recovered_inputs.verified_after_patch_order) {
+    if (sourceInputs.recovered_inputs.files.length > 0
+      && patch.order === sourceInputs.recovered_inputs.verified_after_patch_order) {
       await verifyFileAssertions(destinationRoot, sourceInputs.recovered_inputs.files, 'Recovered source input');
     }
   }
@@ -1486,7 +1480,7 @@ async function main() {
   fail(`Unknown command: ${args.command}`);
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   main().catch((error) => {
     console.error(`[verseshell-bundle] ${error instanceof Error ? error.message : String(error)}`);
     process.exitCode = 1;

@@ -34,6 +34,14 @@ Also:
   already-ignored repo path rather than a new unignored directory in the checkout.
 - Playwright's `test-results/` and `playwright-report/` are ignored; if their output
   directories are overridden, point them at `D:` too.
+- Low-integrity checkout exception: if the checkout that hosts the executable carries a
+  Low mandatory integrity label (this `D:\ClawX` tree does), processes it spawns cannot
+  write into a Medium-integrity `D:\tmp`. Point `TEMP`/`TMP` — and, for Playwright,
+  `CLAWX_E2E_RUN_ROOT` — at an ignored scratch directory *inside* the checkout instead.
+  Verified 2026-10-15: `governed-exec.real.test.ts` and `tests/e2e/agent-dev-quality.spec.ts`
+  both fail under `D:\tmp` (missing artifact / `EPERM: mkdir <userData>\logs` leading to
+  "Application initialization failed") and both pass under an in-checkout scratch
+  directory, with no code change.
 
 ## Verification and interpretation
 

@@ -75,6 +75,7 @@ class FakeChild extends EventEmitter {
       id: request.id,
       op: request.op,
       ok: true,
+      status: "ok",
       data: { echoed_op: request.op },
       meta: { elapsed_ms: 1, profile: "test", token_estimate: 1 },
       ...overrides,
@@ -205,6 +206,7 @@ describe("typed ACI framing", () => {
       id: "r1",
       op: "file.view",
       ok: true,
+      status: "ok",
       data: { content: "hello" },
       diagnostics: [],
       meta: { elapsed_ms: 2, profile: "minimal", token_estimate: 4 },
@@ -449,6 +451,7 @@ describe("VerseShellProcessManager", () => {
       } else {
         child.respond(request, {
           ok: false,
+          status: "blocked",
           data: undefined,
           error: { code: "E_DENIED", message: "denied", recoverable: false },
         });

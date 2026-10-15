@@ -24,6 +24,7 @@ function observation(overrides: Partial<Observation>): Observation {
     id: "request",
     op: "exec.run",
     ok: true,
+    status: "ok",
     data: {},
     meta: { elapsed_ms: 1, profile: "generic", token_estimate: 10 },
     ...overrides,

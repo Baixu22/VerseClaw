@@ -16,27 +16,16 @@ const COMPLIANCE_FILES = {
   source_inputs_file: 'source-inputs.json',
 } as const;
 
-const EXPECTED_SOURCE_INPUTS_SHA256 = 'a2b3fd6c05cae9a664304ab7e0f5ff851ac357071a8415b5bee7c5aee5e876bd';
-const EXPECTED_SOURCE_IDENTITY_SHA256 = 'daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8';
+const EXPECTED_SOURCE_INPUTS_SHA256 = 'd1d3cd4cd004d6a545a9e2e7a8cf48a3564e8cf467f70882e45fa736d2b388c6';
+const EXPECTED_SOURCE_IDENTITY_SHA256 = 'b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0';
 const EXPECTED_SOURCE_REPOSITORY = 'https://github.com/Baixu22/VerseShell.git';
-const EXPECTED_SOURCE_COMMIT = 'c3983694407a9ddb23505e05fad4a9eae653b283';
-const EXPECTED_SOURCE_COMMIT_EPOCH = 1785123525;
+const EXPECTED_SOURCE_COMMIT = 'c06f406e83566bb968448222d9c8caf429e580a0';
+const EXPECTED_SOURCE_COMMIT_EPOCH = 1791974123;
 const EXPECTED_PATCHES = [
-  ['resources/verseshell/patches/uas-05-process-lifecycle.patch', 106755, 'cabfb192f6f9688156f5a3ab5a19307fcd1af3fb2ee2c59b2d494a557d417098'],
   ['resources/verseshell/patches/p0-runtime-startup.patch', 1645, '17214efd7bf09e009256eb149c84a84e8fe85afcd467968ac2a6e472fbdb5aba'],
-  ['resources/verseshell/patches/aci-bench-source-inputs.patch', 32135, '0eb7c902e4b0b75d3617e2129f66694c01f9c4f657fcb140272ff8abbba5dffe'],
-  ['resources/verseshell/patches/python-current-interpreter.patch', 2444, 'ccc4a92220dd3ca47a142ded6c3734749918f3d86b5014f1e5444ffd53bc0922'],
+  ['resources/verseshell/patches/python-current-interpreter.patch', 2477, '0c073908e56492bd44d7455d55bee7661842db32c3ec6fe177d0b69093ae7f55'],
 ] as const;
-const EXPECTED_RECOVERED_PATHS = [
-  'bench/aci/runners/run_suite.py',
-  'bench/aci/scorers/score.py',
-  'bench/aci/fixtures/python_edit_and_retest/greet.py',
-  'bench/aci/fixtures/python_edit_and_retest/GOLDEN/greet.py',
-  'bench/aci/fixtures/python_edit_and_retest/tests/test_greet.py',
-  'bench/aci/fixtures/python_fix_pytest_fail/mathlib.py',
-  'bench/aci/fixtures/python_fix_pytest_fail/GOLDEN/mathlib.py',
-  'bench/aci/fixtures/python_fix_pytest_fail/tests/test_math.py',
-] as const;
+const EXPECTED_RECOVERED_PATHS = [] as const;
 
 interface VerseShellArtifact {
   path: string;
@@ -63,7 +52,7 @@ interface VerseShellSourceInputs {
   commit_epoch: number;
   patches: VerseShellSourcePatch[];
   recovered_inputs: {
-    verified_after_patch_order: number;
+    verified_after_patch_order: number | null;
     upstream_ignore_rule: string;
     files: Array<{ path: string; bytes: number; sha256: string }>;
   };
@@ -205,6 +194,7 @@ export interface ResolveVerseShellRuntimeOptions {
   readFile?: typeof readFile;
   stat?: typeof stat;
   hashFile?: (filePath: string) => Promise<string>;
+  hashFileNormalized?: (filePath: string) => Promise<string>;
 }
 
 export interface ResolveVerseShellRuntimeForLaunchOptions extends ResolveVerseShellRuntimeOptions {
@@ -232,6 +222,19 @@ function validateTarget(platform: string, arch: string): void {
   if (platform !== 'win32' || arch !== 'x64') {
     throw new Error(`VerseShell bundled runtime supports win32/x64 only; received ${platform}/${arch}.`);
   }
+}
+
+async function defaultHashFileNormalized(filePath: string): Promise<string> {
+  const hash = createHash('sha256');
+  const chunks: Buffer[] = [];
+  await new Promise<void>((resolvePromise, reject) => {
+    const stream = createReadStream(filePath);
+    stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+    stream.on('error', reject);
+    stream.on('end', resolvePromise);
+  });
+  const normalized = Buffer.from(Buffer.concat(chunks).toString('utf8').replace(/\r\n/gu, '\n'), 'utf8');
+  return hash.update(normalized).digest('hex');
 }
 
 async function defaultHashFile(filePath: string): Promise<string> {
@@ -322,8 +325,7 @@ function parseSourceInputs(raw: string, sourceInputsPath: string): VerseShellSou
   }
   const recoveredPaths = sourceInputs.recovered_inputs?.files?.map((entry) => entry.path) ?? [];
   if (
-    sourceInputs.recovered_inputs?.verified_after_patch_order !== 3
-    || sourceInputs.recovered_inputs?.upstream_ignore_rule !== '*.py'
+    sourceInputs.recovered_inputs?.upstream_ignore_rule !== '*.py'
     || JSON.stringify(recoveredPaths) !== JSON.stringify(EXPECTED_RECOVERED_PATHS)
   ) {
     throw new Error('VerseShell recovered ignored-source inventory drifted.');
@@ -335,7 +337,7 @@ async function validateSourceInputs(
   sourceInputsPath: string,
   complianceDir: string,
   raw: string,
-  io: Pick<Required<ResolveVerseShellRuntimeOptions>, 'stat' | 'hashFile'>,
+  io: Pick<Required<ResolveVerseShellRuntimeOptions>, 'stat' | 'hashFileNormalized'>,
 ): Promise<{ sourceInputs: VerseShellSourceInputs; sha256: string }> {
   const sourceInputs = parseSourceInputs(raw, sourceInputsPath);
   const sourceDigest = createHash('sha256').update(raw).digest('hex');
@@ -348,7 +350,7 @@ async function validateSourceInputs(
     if (!info?.isFile() || info.size !== bytes) {
       throw new Error(`VerseShell source patch ${index + 1} is missing or has the wrong size: ${patchPath}`);
     }
-    const actual = await io.hashFile(patchPath);
+    const actual = await io.hashFileNormalized(patchPath);
     if (actual !== sha256) throw new Error(`VerseShell source patch ${index + 1} checksum mismatch: expected ${sha256}, found ${actual}.`);
   }
   return { sourceInputs, sha256: sourceDigest };
@@ -387,8 +389,8 @@ function validateManifest(
     || manifest.protocol.mcp_protocol_version !== '2024-11-05'
     || manifest.protocol.expected_server_protocol !== 'verseshell.jsonl/v1'
     || manifest.protocol.operation_catalog_schema !== 'verseshell.operation-catalog/v1'
-    || manifest.protocol.operation_catalog_digest !== 'sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7'
-    || manifest.protocol.operation_catalog_count !== 31
+    || manifest.protocol.operation_catalog_digest !== 'sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8'
+    || manifest.protocol.operation_catalog_count !== 32
     || manifest.protocol.handshake_operation !== 'runtime.handshake'
     || manifest.protocol.server_version !== manifest.crate.version
   ) {
@@ -467,7 +469,7 @@ async function verifyBundle(
   complianceDir: string,
   platform: string,
   arch: string,
-  io: Pick<Required<ResolveVerseShellRuntimeOptions>, 'readFile' | 'stat' | 'hashFile'>,
+  io: Pick<Required<ResolveVerseShellRuntimeOptions>, 'readFile' | 'stat' | 'hashFile' | 'hashFileNormalized'>,
   source: 'packaged-bundle' | 'development-bundle',
 ): Promise<ResolvedVerseShellRuntime> {
   const manifest = parseManifest(await io.readFile(manifestPath, 'utf8'), manifestPath);
@@ -541,6 +543,7 @@ export async function resolveVerseShellRuntimeBundle(
     readFile: options.readFile ?? readFile,
     stat: options.stat ?? stat,
     hashFile: options.hashFile ?? defaultHashFile,
+    hashFileNormalized: options.hashFileNormalized ?? defaultHashFileNormalized,
   };
 
   validateTarget(platform, arch);

@@ -22,6 +22,7 @@ function observation(): Observation {
     id: 'r',
     op: 'exec.run',
     ok: true,
+    status: 'ok',
     data: {
       stdout: { status: 'truncated', summary: 'tail', raw_bytes: 100, retained_bytes: 60, omitted_bytes: 40, truncated: true, artifact: handle },
       artifacts: [descriptor],

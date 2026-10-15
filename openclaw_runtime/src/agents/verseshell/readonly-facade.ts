@@ -32,6 +32,9 @@ import { resolveVerseShellPolicyProfile, VERSESHELL_READONLY_FACADE_PROFILE_ID }
 import type { VerseShellProcessManager } from "./process-manager.js";
 
 const MAX_FILE_WINDOW = 500;
+const MAX_BATCH_PATHS = 8;
+const MAX_BATCH_TOTAL_LINES = 240;
+const MAX_BATCH_LINES_PER_FILE = 500;
 const MAX_SEARCH_ITEMS = 200;
 const MAX_SEARCH_CONTEXT_LINES = 20;
 const MAX_QUERY_BYTES = 64 * 1024;
@@ -57,6 +60,13 @@ type ReadFileArgs = {
   path: string;
   cursor?: number;
   window?: number;
+};
+
+type ReadFilesArgs = {
+  paths: string[];
+  windows?: Array<{ start_line?: number; window?: number }>;
+  window?: number;
+  max_total_lines?: number;
 };
 
 type SearchContentArgs = {
@@ -141,6 +151,14 @@ export function resolveReadonlyWorkspacePath(cwd: string, input: unknown): strin
     throw new ToolInputError("path escapes the workspace");
   }
   return relative.split(path.sep).join("/");
+}
+
+/** Resolve an ordered batch of workspace-relative paths; bounds and order are part of the contract. */
+function resolveReadonlyWorkspacePaths(cwd: string, input: unknown): string[] {
+  if (!Array.isArray(input) || input.length < 1 || input.length > MAX_BATCH_PATHS) {
+    throw new ToolInputError(`paths must contain between 1 and ${MAX_BATCH_PATHS} entries`);
+  }
+  return input.map((entry) => resolveReadonlyWorkspacePath(cwd, entry));
 }
 
 function resolveReadonlyGlob(value: unknown): string | undefined {
@@ -341,6 +359,58 @@ export class VerseShellReadonlyFacadeAdapter {
     return observation;
   }
 
+  async readFiles(args: ReadFilesArgs, signal?: AbortSignal): Promise<Observation> {
+    const paths = resolveReadonlyWorkspacePaths(this.workspace, args.paths);
+    const windows = args.windows === undefined
+      ? undefined
+      : (() => {
+          if (!Array.isArray(args.windows)) throw new ToolInputError("windows must be an array");
+          return args.windows.map((entry, index) => {
+            const record = entry as Record<string, unknown>;
+            return {
+              ...(record?.start_line === undefined
+                ? {}
+                : { start_line: boundedInteger(record.start_line, `windows[${index}].start_line`, 1, 1_000_000, 1) }),
+              ...(record?.window === undefined
+                ? {}
+                : { window: boundedInteger(record.window, `windows[${index}].window`, 1, MAX_FILE_WINDOW, 40) }),
+            };
+          });
+        })();
+    const requestArgs: JsonObject = {
+      paths,
+      ...(windows === undefined ? {} : { windows }),
+      window: boundedInteger(args.window, "window", 1, MAX_FILE_WINDOW, 40),
+      max_total_lines: boundedInteger(
+        args.max_total_lines,
+        "max_total_lines",
+        1,
+        MAX_BATCH_LINES_PER_FILE,
+        MAX_BATCH_TOTAL_LINES,
+      ),
+    };
+    const key = buildReadonlyFacadeCacheKey({
+      workspace: this.workspace,
+      revision: this.revision,
+      policyDigest: this.policyDigest,
+      op: "file.read_many",
+      args: requestArgs,
+    });
+    const cached = this.cache.get(key);
+    if (cached) return cached;
+    const observation = assertExpectedOperation(
+      await (await this.client()).execute("file.read_many", requestArgs, {
+        signal,
+        retryable: true,
+        effectful: false,
+        traceId: this.traceId(),
+      }),
+      "file.read_many",
+    );
+    this.cache.set(key, observation);
+    return observation;
+  }
+
   async resultQuery(args: ResultQueryArgs, signal?: AbortSignal): Promise<Observation> {
     const requestArgs = validateResultQueryArgs(args);
     const observation = assertExpectedOperation(
@@ -363,6 +433,19 @@ const READ_FILE_SCHEMA = Type.Object({
   path: Type.String({ description: "Workspace-relative file path." }),
   cursor: Type.Optional(Type.Integer({ minimum: 1, maximum: 1_000_000 })),
   window: Type.Optional(Type.Integer({ minimum: 1, maximum: MAX_FILE_WINDOW })),
+}, { additionalProperties: false });
+
+const READ_FILES_SCHEMA = Type.Object({
+  paths: Type.Array(
+    Type.String({ description: "Workspace-relative file path." }),
+    { minItems: 1, maxItems: MAX_BATCH_PATHS },
+  ),
+  windows: Type.Optional(Type.Array(Type.Object({
+    startLine: Type.Optional(Type.Integer({ minimum: 1, maximum: 1_000_000 })),
+    window: Type.Optional(Type.Integer({ minimum: 1, maximum: MAX_FILE_WINDOW })),
+  }))),
+  window: Type.Optional(Type.Integer({ minimum: 1, maximum: MAX_FILE_WINDOW })),
+  maxTotalLines: Type.Optional(Type.Integer({ minimum: 1, maximum: MAX_BATCH_LINES_PER_FILE })),
 }, { additionalProperties: false });
 
 const SEARCH_CONTENT_SCHEMA = Type.Object({
@@ -408,6 +491,7 @@ export function createVerseShellReadonlyFacadeTools(options: {
 
   const adapter = new VerseShellReadonlyFacadeAdapter(options);
   const readMeta = CLAWX_VERSESHELL_FACADE.find((entry) => entry.name === "read_file")!;
+  const readFilesMeta = CLAWX_VERSESHELL_FACADE.find((entry) => entry.name === "read_files")!;
   const searchMeta = CLAWX_VERSESHELL_FACADE.find((entry) => entry.name === "search_content")!;
   const resultMeta = CLAWX_VERSESHELL_FACADE.find((entry) => entry.name === "result_query")!;
   return [
@@ -419,6 +503,31 @@ export function createVerseShellReadonlyFacadeTools(options: {
       parameters: READ_FILE_SCHEMA,
       risk: "readonly",
       execute: async (_toolCallId, raw, signal) => jsonResult(await adapter.readFile(raw as ReadFileArgs, signal)),
+    },
+    {
+      name: "read_files",
+      label: "read_files",
+      displaySummary: readFilesMeta.when_to_use,
+      description: `${readFilesMeta.when_to_use} ${readFilesMeta.when_not_to_use}`,
+      parameters: READ_FILES_SCHEMA,
+      risk: "readonly",
+      execute: async (_toolCallId, raw, signal) => {
+        const input = raw as Record<string, unknown>;
+        const windows = input.windows as Array<Record<string, unknown>> | undefined;
+        return jsonResult(await adapter.readFiles({
+          paths: input.paths as string[],
+          ...(windows === undefined
+            ? {}
+            : {
+                windows: windows.map((entry) => ({
+                  ...(entry.startLine === undefined ? {} : { start_line: entry.startLine as number }),
+                  ...(entry.window === undefined ? {} : { window: entry.window as number }),
+                })),
+              }),
+          window: input.window as number | undefined,
+          max_total_lines: input.maxTotalLines as number | undefined,
+        }, signal));
+      },
     },
     {
       name: "search_content",

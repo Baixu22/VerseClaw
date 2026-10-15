@@ -58,14 +58,14 @@ async function realClient(workspace: string): Promise<VerseShellAciClient> {
     expectedBinaryVersion: "1.0.0",
     expectedProtocolVersion: "verseshell.jsonl/v1",
     expectedCatalogDigest:
-      "sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7",
-    expectedCatalogCount: 31,
+      "sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8",
+    expectedCatalogCount: 32,
     env: {
       VERSESHELL_RUNTIME_VERSION: "1.0.0",
       VERSESHELL_SERVER_PROTOCOL: "verseshell.jsonl/v1",
       VERSESHELL_OPERATION_CATALOG_DIGEST:
-        "sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7",
-      VERSESHELL_OPERATION_CATALOG_COUNT: "31",
+        "sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8",
+      VERSESHELL_OPERATION_CATALOG_COUNT: "32",
       VERSESHELL_AE_SHA256: sha256,
       VERSESHELL_OS_SHELL: "powershell",
     },

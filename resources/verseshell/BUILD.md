@@ -9,7 +9,7 @@ reconstructions described by `SOURCE.md` and `source-inputs.json`.
 - Crate: `verseshell` `1.0.0`; packaged binary: `ae.exe` only
 - Cargo/rustc: `1.94.0`
 - Cargo command: `cargo build --locked --release --bin ae`
-- `CARGO_INCREMENTAL=0`, `SOURCE_DATE_EPOCH=1785123525`
+- `CARGO_INCREMENTAL=0`, `SOURCE_DATE_EPOCH=1791974123`
 - Rust source/target roots are remapped to stable `/verseshell/source` and `/verseshell/target`
 - MSVC linker uses `/Brepro` and the recorded PDB path control
 
@@ -39,7 +39,7 @@ node scripts/verseshell-bundle.mjs validate --platform win32 --arch x64 --mode p
 node scripts/verseshell-bundle.mjs verify-package --resources release\win-unpacked\resources --platform win32 --arch x64
 ```
 
-Package validation requires the binary, v2 manifest, source-input manifest, all four patches,
+Package validation requires the binary, v2 manifest, source-input manifest, both patches,
 official AGPL text, notice, source instructions, and build instructions. It verifies source digest
 and identity, patch order/size/hash, recovered-input inventory, Rust/Python qualification proof,
 reproducibility proof, handshake/catalog identity, exact artifact size, and binary SHA-256.

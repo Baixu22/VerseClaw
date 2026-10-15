@@ -32,7 +32,9 @@ export interface JsonSchema {
   description?: string;
   default?: JsonValue;
   minItems?: number;
+  maxItems?: number;
   minimum?: number;
+  maximum?: number;
 }
 
 /** Mirrors `operation::ObservationBudget`. */
@@ -138,8 +140,10 @@ export interface ArtifactDescriptor {
 }
 
 export interface StreamCapture {
-  status: 'empty' | 'complete' | 'reduced' | 'truncated';
+  status: 'empty' | 'complete' | 'full' | 'reduced' | 'truncated' | 'binary';
   encoding?: string;
+  /** True when the runtime could not decode the raw bytes losslessly. */
+  decoding_lossy?: boolean;
   raw_complete?: boolean;
   retained_complete?: boolean;
   returned_bytes?: number;
@@ -164,12 +168,20 @@ export interface ResultQueryRequest {
   max_tokens?: number;
 }
 
+/** Machine-readable status the pinned runtime reports alongside `ok`. */
+export type ObservationStatus = 'ok' | 'blocked' | 'failed';
+
 /** Mirrors `operation::Observation`; this is the sole semantic result envelope. */
 export interface Observation {
   schema: typeof VERSESHELL_OBSERVATION_SCHEMA;
   id: string;
   op: string;
   ok: boolean;
+  status: ObservationStatus;
+  /** Runtime-proposed policy substitutions when an operation is blocked. */
+  substitutions?: SuggestedFix[];
+  blocked_operation?: string;
+  blocked_target?: string;
   data?: JsonValue;
   error?: OperationError;
   diagnostics?: Diagnostic[];
@@ -213,11 +225,11 @@ export interface RuntimeHandshakeData {
   };
   /** Actual VerseShell enforcement mode, e.g. `agent_strict`. */
   policy_mode: string;
-  /** Host-provided immutable policy-profile identity bound before process start. */
+  /** Host-provided immutable policy-profile identity, or null when none was bound. */
   policy_profile: {
     id: string;
     digest: string;
-  };
+  } | null;
   artifact_defaults: {
     ttl_seconds: number;
     max_total_bytes: number;

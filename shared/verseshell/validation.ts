@@ -23,6 +23,7 @@ import {
   type JsonSchema,
   type JsonValue,
   type Observation,
+  type ObservationStatus,
   type ObservationMeta,
   type OperationCatalogEntry,
   type OperationError,
@@ -65,6 +66,19 @@ export interface DecodeRuntimeHandshakeOptions {
   expected_workspace_id?: string;
   expected_catalog_digest?: string;
 }
+
+// Exactly the values the pinned runtime's classify_status() can emit:
+// ok == true -> "ok"; ok == false -> "blocked" (deny/capability/outside) or "failed".
+const OBSERVATION_STATUSES: readonly ObservationStatus[] = ['ok', 'blocked', 'failed'];
+
+const STREAM_STATUSES: readonly StreamCapture['status'][] = [
+  'empty',
+  'complete',
+  'full',
+  'reduced',
+  'truncated',
+  'binary',
+];
 
 const textEncoder = new TextEncoder();
 
@@ -203,7 +217,9 @@ function decodeJsonSchema(value: unknown, path: string): JsonSchema {
       'description',
       'default',
       'minItems',
+      'maxItems',
       'minimum',
+      'maximum',
     ],
     path,
   );
@@ -266,11 +282,18 @@ function decodeJsonSchema(value: unknown, path: string): JsonSchema {
     result.default = schema.default;
   }
   if (schema.minItems !== undefined) result.minItems = integer(schema.minItems, `${path}.minItems`);
+  if (schema.maxItems !== undefined) result.maxItems = integer(schema.maxItems, `${path}.maxItems`);
   if (schema.minimum !== undefined) {
     if (typeof schema.minimum !== 'number' || !Number.isFinite(schema.minimum)) {
       fail('invalid_shape', `${path}.minimum`, 'expected a finite number');
     }
     result.minimum = schema.minimum;
+  }
+  if (schema.maximum !== undefined) {
+    if (typeof schema.maximum !== 'number' || !Number.isFinite(schema.maximum)) {
+      fail('invalid_shape', `${path}.maximum`, 'expected a finite number');
+    }
+    result.maximum = schema.maximum;
   }
   return result;
 }
@@ -312,6 +335,9 @@ function validateSchemaValue(schema: JsonSchema, value: JsonValue, path: string)
       if (schema.minItems !== undefined && value.length < schema.minItems) {
         fail('argument_schema_mismatch', path, `expected at least ${schema.minItems} items`);
       }
+      if (schema.maxItems !== undefined && value.length > schema.maxItems) {
+        fail('argument_schema_mismatch', path, `expected at most ${schema.maxItems} items`);
+      }
       if (schema.items) {
         value.forEach((entry, index) => validateSchemaValue(schema.items!, entry, `${path}[${index}]`));
       }
@@ -324,6 +350,9 @@ function validateSchemaValue(schema: JsonSchema, value: JsonValue, path: string)
       if (schema.minimum !== undefined && (value as number) < schema.minimum) {
         fail('argument_schema_mismatch', path, `expected a number >= ${schema.minimum}`);
       }
+      if (schema.maximum !== undefined && (value as number) > schema.maximum) {
+        fail('argument_schema_mismatch', path, `expected a number <= ${schema.maximum}`);
+      }
       break;
     case 'number':
       if (typeof value !== 'number' || !Number.isFinite(value)) {
@@ -331,6 +360,9 @@ function validateSchemaValue(schema: JsonSchema, value: JsonValue, path: string)
       }
       if (schema.minimum !== undefined && value < schema.minimum) {
         fail('argument_schema_mismatch', path, `expected a number >= ${schema.minimum}`);
+      }
+      if (schema.maximum !== undefined && value > schema.maximum) {
+        fail('argument_schema_mismatch', path, `expected a number <= ${schema.maximum}`);
       }
       break;
     case 'boolean':
@@ -474,7 +506,7 @@ export function decodeObservation(
   const object = record(value, '$observation');
   exactKeys(
     object,
-    ['schema', 'id', 'op', 'ok', 'data', 'error', 'diagnostics', 'meta', 'suggested_next'],
+    ['schema', 'id', 'op', 'ok', 'status', 'substitutions', 'blocked_operation', 'blocked_target', 'data', 'error', 'diagnostics', 'meta', 'suggested_next'],
     '$observation',
   );
   const schema = string(object.schema, '$observation.schema');
@@ -485,6 +517,15 @@ export function decodeObservation(
   const id = string(object.id, '$observation.id');
   const op = string(object.op, '$observation.op');
   const ok = boolean(object.ok, '$observation.ok');
+  // The pinned runtime always reports a machine-readable status alongside `ok`;
+  // the two must agree or the frame is rejected rather than silently accepted.
+  const status = string(object.status, '$observation.status');
+  if (!OBSERVATION_STATUSES.includes(status as ObservationStatus)) {
+    fail('invalid_shape', '$observation.status', 'unsupported observation status', OBSERVATION_STATUSES.join('|'), status);
+  }
+  if (ok !== (status === 'ok')) {
+    fail('invalid_shape', '$observation.status', 'status does not agree with ok', ok ? 'ok' : 'blocked|failed', status);
+  }
   if (options.expected_id !== undefined && id !== options.expected_id) {
     fail('request_id_mismatch', '$observation.id', 'request id mismatch', options.expected_id, id);
   }
@@ -503,11 +544,29 @@ export function decodeObservation(
     id,
     op,
     ok,
+    status: status as ObservationStatus,
     meta: decodeObservationMeta(object.meta, '$observation.meta'),
   };
   if (object.data !== undefined) {
     assertJsonValue(object.data, '$observation.data');
     result.data = object.data;
+  }
+  if (object.substitutions !== undefined) {
+    if (!Array.isArray(object.substitutions)) fail('invalid_shape', '$observation.substitutions', 'expected an array');
+    result.substitutions = object.substitutions.map((entry, index) =>
+      decodeSuggestedFix(entry, `$observation.substitutions[${index}]`),
+    );
+  }
+  if (object.blocked_operation !== undefined) {
+    // Upstream may send `null` to mean "no operation was blocked".
+    result.blocked_operation = object.blocked_operation === null
+      ? undefined
+      : string(object.blocked_operation, '$observation.blocked_operation');
+  }
+  if (object.blocked_target !== undefined) {
+    result.blocked_target = object.blocked_target === null
+      ? undefined
+      : string(object.blocked_target, '$observation.blocked_target');
   }
   if (object.error !== undefined) result.error = decodeOperationError(object.error, '$observation.error');
   if (object.diagnostics !== undefined) {
@@ -620,8 +679,10 @@ export function decodeRuntimeHandshakeObservation(
   }
   const capabilities = record(data.capabilities, '$observation.data.capabilities');
   exactKeys(capabilities, ['mode', 'granted'], '$observation.data.capabilities');
-  const policyProfile = record(data.policy_profile, '$observation.data.policy_profile');
-  exactKeys(policyProfile, ['id', 'digest'], '$observation.data.policy_profile');
+  const policyProfile = data.policy_profile === null
+    ? null
+    : record(data.policy_profile, '$observation.data.policy_profile');
+  if (policyProfile !== null) exactKeys(policyProfile, ['id', 'digest'], '$observation.data.policy_profile');
   const artifactDefaults = record(data.artifact_defaults, '$observation.data.artifact_defaults');
   exactKeys(artifactDefaults, ['ttl_seconds', 'max_total_bytes'], '$observation.data.artifact_defaults');
   const catalog = record(data.operation_catalog, '$observation.data.operation_catalog');
@@ -676,10 +737,12 @@ export function decodeRuntimeHandshakeObservation(
       granted: stringArray(capabilities.granted, '$observation.data.capabilities.granted'),
     },
     policy_mode: string(data.policy_mode, '$observation.data.policy_mode'),
-    policy_profile: {
-      id: string(policyProfile.id, '$observation.data.policy_profile.id'),
-      digest: string(policyProfile.digest, '$observation.data.policy_profile.digest'),
-    },
+    policy_profile: policyProfile === null
+      ? null
+      : {
+        id: string(policyProfile.id, '$observation.data.policy_profile.id'),
+        digest: string(policyProfile.digest, '$observation.data.policy_profile.digest'),
+      },
     artifact_defaults: {
       ttl_seconds: integer(artifactDefaults.ttl_seconds, '$observation.data.artifact_defaults.ttl_seconds', 1),
       max_total_bytes: integer(artifactDefaults.max_total_bytes, '$observation.data.artifact_defaults.max_total_bytes', 1),
@@ -843,9 +906,9 @@ export function decodeArtifactDescriptor(input: unknown, options: DecodeArtifact
 
 export function decodeStreamCapture(input: unknown, path = '$stream'): StreamCapture {
   const object = record(input, path);
-  exactKeys(object, ['status', 'text', 'summary', 'artifact', 'encoding', 'raw_complete', 'retained_complete', 'returned_bytes', 'raw_bytes', 'retained_bytes', 'omitted_bytes', 'truncated'], path);
+  exactKeys(object, ['status', 'text', 'summary', 'artifact', 'encoding', 'decoding_lossy', 'raw_complete', 'retained_complete', 'returned_bytes', 'raw_bytes', 'retained_bytes', 'omitted_bytes', 'truncated'], path);
   const status = string(object.status, `${path}.status`) as StreamCapture['status'];
-  if (!['empty', 'complete', 'reduced', 'truncated'].includes(status)) fail('artifact_invalid', `${path}.status`, 'stream status is unsupported');
+  if (!STREAM_STATUSES.includes(status)) fail('artifact_invalid', `${path}.status`, 'stream status is unsupported', STREAM_STATUSES.join('|'), status);
   const rawBytes = boundedCount(object.raw_bytes, `${path}.raw_bytes`, Number.MAX_SAFE_INTEGER);
   const omittedBytes = boundedCount(object.omitted_bytes, `${path}.omitted_bytes`, rawBytes);
   const retainedBytes = object.retained_bytes === undefined
@@ -866,6 +929,9 @@ export function decodeStreamCapture(input: unknown, path = '$stream'): StreamCap
   if (result.truncated !== (result.omitted_bytes > 0 || status === 'truncated')) {
     fail('artifact_invalid', `${path}.truncated`, 'truncated flag does not match omitted bytes/status');
   }
+  // `decoding_lossy` and the `binary`/`full` statuses are emitted by the pinned runtime;
+  // retain them so a lossy or binary stream is never presented as a clean text success.
+  if (object.decoding_lossy !== undefined) result.decoding_lossy = boolean(object.decoding_lossy, `${path}.decoding_lossy`);
   if (object.text !== undefined) result.text = string(object.text, `${path}.text`, true);
   if (object.summary !== undefined) result.summary = string(object.summary, `${path}.summary`, true);
   if (object.encoding !== undefined) result.encoding = string(object.encoding, `${path}.encoding`);
