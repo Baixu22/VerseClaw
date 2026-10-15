@@ -1,0 +1,158 @@
+{
+  "schema": "verseshell.g6-gate-receipt/v1",
+  "date": "2026-10-15",
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate_commit": "2398b1910 (branch codex/verseshell-reintegration-20261015)",
+  "candidate": {
+    "source_commit": "c06f406e83566bb968448222d9c8caf429e580a0",
+    "binary_bytes": 15144448,
+    "source_identity": "b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0",
+    "binary_sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2"
+  },
+  "gates": [
+    {
+      "id": "source-checker",
+      "command": "node scripts/verseshell-reintegration-check.mjs --upstream D:/tmp/vsri-clone2 --candidate D:/tmp/vsri-accept-2026-10-15/derived-candidate",
+      "exit_code": 0,
+      "observed": {
+        "issues": 0,
+        "sourcePreserved": true,
+        "operations": 32,
+        "protectedFiles": 154
+      }
+    },
+    {
+      "id": "checker-unit",
+      "command": "node --test scripts/verseshell-reintegration-check.test.mjs",
+      "exit_code": 0,
+      "observed": {
+        "tests": 12,
+        "pass": 12,
+        "fail": 0
+      }
+    },
+    {
+      "id": "bundle-unit",
+      "command": "node --test scripts/verseshell-bundle.test.mjs",
+      "exit_code": 0,
+      "observed": {
+        "tests": 14,
+        "pass": 14,
+        "fail": 0
+      },
+      "note": "includes the regression test guarding the verify-package default resources path"
+    },
+    {
+      "id": "verseshell-test",
+      "command": "pnpm run verseshell:test (TEMP/TMP inside the low-integrity checkout)",
+      "exit_code": 0,
+      "observed": {
+        "mcp": 11,
+        "bundle": 13,
+        "verseshell_vitest": "325 passed / 2 skipped",
+        "all_fail": 0,
+        "runtime_bundle": 11
+      }
+    },
+    {
+      "id": "electron-e2e",
+      "command": "pnpm exec playwright test tests/e2e/agent-dev-quality.spec.ts (Node 24.16.0)",
+      "prerequisites": [
+        "ELECTRON_DISABLE_SANDBOX=1",
+        "CLAWX_E2E_RUN_ROOT inside the low-integrity checkout",
+        "TEMP/TMP inside the low-integrity checkout"
+      ],
+      "exit_code": 0,
+      "observed": {
+        "launched": 4,
+        "duration_seconds": 41.9,
+        "failed": 0,
+        "passed": 4
+      },
+      "prior_failure_mode": "without the prerequisites: electron dies 0xC0000005 at launch, or the app aborts with EPERM mkdir <userData>\\logs and firstWindow() times out"
+    },
+    {
+      "id": "rebuild",
+      "command": "node scripts/verseshell-bundle.mjs rebuild --platform win32 --arch x64 --mode package --source-mirror D:/tmp/vsri-clone2 (RUSTUP_TOOLCHAIN=1.94.0-x86_64-pc-windows-msvc)",
+      "exit_code": 0,
+      "observed": {
+        "sourceIdentity": "b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0",
+        "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+        "action": "rebuilt",
+        "byteIdentical": true
+      }
+    },
+    {
+      "id": "manifest-validate-package",
+      "command": "pnpm run verseshell:manifest:validate:package",
+      "exit_code": 0,
+      "observed": {
+        "sourceIdentity": "b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0",
+        "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+        "action": "validated"
+      }
+    },
+    {
+      "id": "package-verify",
+      "command": "pnpm run verseshell:package:verify",
+      "exit_code": 0,
+      "observed": {
+        "sourceIdentity": "b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0",
+        "resources": "release/win-unpacked/resources",
+        "action": "verified-package",
+        "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2"
+      },
+      "package_refresh": {
+        "build_vite_exit": 0,
+        "electron_builder_dir_exit": 0,
+        "packaged_binary_sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+        "packaged_binary_bytes": 15144448
+      }
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exit_code": 0,
+      "observed": {
+        "errorCount": 0,
+        "test_exit": 0,
+        "node_exit": 0,
+        "web_exit": 0
+      }
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exit_code": 0,
+      "observed": {
+        "wrote_metrics": true
+      }
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exit_code": 0,
+      "observed": {
+        "wrote_report": "artifacts/comms/compare-report.md",
+        "all_checks": "PASS"
+      }
+    }
+  ],
+  "gate_repair": {
+    "symptom": "pnpm run verseshell:package:verify always exited 1 with 'requires --resources' because the npm script never passed the flag",
+    "fix": "verify-package now defaults to release/win-unpacked/resources; --resources remains an explicit override",
+    "test": "scripts/verseshell-bundle.test.mjs guards the default; suite 14/14"
+  },
+  "rollback_binary_preserved": {
+    "sha256": "ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786",
+    "bytes": 14879232,
+    "local_path": ".agent-workbench/rollback-binaries/ae-win32-x64-ac6a7a15.exe",
+    "note": "local-only belt-and-braces copy of the previously shipped ae.exe; the durable rollback path remains c398369 plus the four recorded patches"
+  },
+  "boundaries": [
+    "agent-driven evidence; not real-human",
+    "default-off controlled reintegration; not GA or release authorization",
+    "raw logs remain under D:/tmp and are regenerable from the recorded commands"
+  ]
+}

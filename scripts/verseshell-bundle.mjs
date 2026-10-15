@@ -25,6 +25,9 @@ import { spawnSync } from 'node:child_process';
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 export const PROJECT_ROOT = resolve(SCRIPT_DIR, '..');
+// Default unpacked electron-builder output; pnpm run verseshell:package:verify and
+// BUILD.md rely on this so the documented gate never dies on a missing flag.
+export const DEFAULT_PACKAGED_RESOURCES = join(PROJECT_ROOT, 'release', 'win-unpacked', 'resources');
 export const BUNDLE_SCHEMA_VERSION = 2;
 export const SOURCE_INPUT_SCHEMA_VERSION = 1;
 export const SUPPORTED_TARGET = Object.freeze({ platform: 'win32', arch: 'x64' });
@@ -825,7 +828,7 @@ export async function validateSourceBundle({ root = PROJECT_ROOT, platform = 'wi
 
 export async function validatePackagedBundle({ resourcesPath, platform = 'win32', arch = 'x64', mode = 'package' } = {}) {
   requireSupportedTarget(platform, arch);
-  if (!resourcesPath) fail('verify-package requires --resources <unpacked resources directory>.');
+  if (!resourcesPath) fail('verify-package requires --resources <unpacked resources directory> or a built release/win-unpacked tree.');
   return validateBundleAtPaths(packagedBundlePaths(resourcesPath), { platform, arch, mode });
 }
 
@@ -1421,7 +1424,7 @@ function printUsage() {
   node scripts/verseshell-bundle.mjs sync [same options as rebuild]
   node scripts/verseshell-bundle.mjs capture-patch --source <path> --output <workspace-relative patch> [--ignored-input <path> ...]
   node scripts/verseshell-bundle.mjs validate --platform win32 --arch x64 --mode dev|package
-  node scripts/verseshell-bundle.mjs verify-package --resources <unpacked resources directory> --platform win32 --arch x64`);
+  node scripts/verseshell-bundle.mjs verify-package [--resources <unpacked resources directory>] --platform win32 --arch x64 (defaults to release/win-unpacked/resources)`);
 }
 
 async function main() {
@@ -1464,7 +1467,7 @@ async function main() {
   }
   if (args.command === 'verify-package') {
     const result = await validatePackagedBundle({
-      resourcesPath: args.resources,
+      resourcesPath: args.resources ?? DEFAULT_PACKAGED_RESOURCES,
       platform: args.platform,
       arch: args.arch,
       mode: 'package',

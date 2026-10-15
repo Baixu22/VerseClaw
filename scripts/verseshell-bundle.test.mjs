@@ -9,6 +9,7 @@ import {
   atomicCopy,
   calculateSourceIdentity,
   collectSourceDiff,
+  DEFAULT_PACKAGED_RESOURCES,
   PROJECT_ROOT,
   validatePackagedBundle,
 } from './verseshell-bundle.mjs';
@@ -106,6 +107,22 @@ test('verify-package CLI forwards --resources to the packaged validator', async 
   assert.match(output, /"action": "verified-package"/);
 });
 
+test('verify-package CLI defaults to the built release tree instead of demanding a flag', async () => {
+  // Regression: `pnpm run verseshell:package:verify` passes no --resources, so the
+  // documented gate used to die on a usage error before validating anything.
+  assert.equal(DEFAULT_PACKAGED_RESOURCES, join(PROJECT_ROOT, 'release', 'win-unpacked', 'resources'));
+  let stderr = '';
+  try {
+    execFileSync(
+      process.execPath,
+      ['scripts/verseshell-bundle.mjs', 'verify-package', '--platform', 'win32', '--arch', 'x64'],
+      { cwd: process.cwd(), encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
+    );
+  } catch (error) {
+    stderr = String(error.stderr ?? '');
+  }
+  assert.doesNotMatch(stderr, /requires --resources/u);
+});
 test('packaged validator accepts canonical indented FSF AGPL title lines', async (t) => {
   const bundle = await makeBundle();
   t.after(() => rm(bundle.root, { recursive: true, force: true }));

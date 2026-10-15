@@ -66,6 +66,24 @@ Environment findings worth keeping:
   `<userData>\logs` (`EPERM`), logs "Application initialization failed", never opens a window, and
   the specs only report an opaque `firstWindow()` timeout. With both set,
   `tests/e2e/agent-dev-quality.spec.ts` is 4 passed / exit 0.
+- Packaging gate repair, verified 2026-10-15: `pnpm run verseshell:package:verify` previously
+  *always* exited 1 with `requires --resources` because the npm script never passed the flag, so
+  the documented gate could not run in any state. `verify-package` now defaults to
+  `release/win-unpacked/resources` (explicit `--resources` still overrides it), and the bundle
+  unit suite guards that default. A fresh `pnpm run build:vite` + `node scripts/run-electron-builder.mjs
+  --dir --publish never` repackaged the unpacked tree with `ae.exe` sha256 `3ed2174f…`
+  (15,144,448 bytes), and the gate returned `verified-package` / exit 0. The previously shipped
+  `ac6a7a15…` binary that this repack replaced is preserved locally at
+  `.agent-workbench/rollback-binaries/ae-win32-x64-ac6a7a15.exe`; the durable rollback is still
+  `c398369` plus the four recorded patches.
+- Curated machine-readable evidence for the E2E and packaging gates is tracked at
+  `harness/specs/fixtures/verseshell-reintegration/g6-gate-receipt-2026-10-15.json` (agent-driven).
+  After the reintegration landed as commit `2398b1910`, the full required-test set was re-run
+  on that exact tree (2026-10-15): source checker exit 0 (154 files / 32 operations / no issues),
+  checker unit 12/12, bundle unit 14/14, `verseshell:test` exit 0, Electron E2E 4/4 exit 0,
+  `verseshell:rebuild` byte-identical (`3ed2174f…`), manifest package validation exit 0,
+  `verseshell:package:verify` exit 0, `typecheck` exit 0, and comms replay+compare exit 0
+  (all metrics PASS). All results are recorded in the tracked receipt above.
 - The source checker's derive step now declares `GIT_CEILING_DIRECTORIES` for its scratch tree and
   fails closed if that tree ever resolves to a repository. Without it, a scratch tree created
   inside this repository at low integrity could not be entered as a `git` working directory, so
