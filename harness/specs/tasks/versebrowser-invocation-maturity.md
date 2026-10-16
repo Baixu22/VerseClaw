@@ -184,3 +184,9 @@ N7 优先使用已有合规本地模型/端点，不复制整份用户配置与�
 每份结果保留 `driven_by: agent`、actor、代码/锁/构建/runtime/fixture hash、命令/退出码/计数、业务与采集结论、资源清理、限制。临时 home、auth、日志、trace 留 D: 或已忽略路径；精选最终证据进入任务 fixture 白名单，先过凭据扫描。原收据不改哈希来“续期”。
 
 Task Forest 只保存本地进度与依赖；本规格拥有稳定设计和验收条件。保持旧已完成节点的历史事实，用新主线和 deviation 记录当前缺口。本轮没有完成任何实现/验收节点，不提交或发布代码。重大架构、冻结默认值、产品范围变化和不可逆操作才需要升级；常规开发、自动证据、节点状态和收口由 agent 负责。
+
+## N1 可重复启动基线入口
+
+`node scripts/versebrowser-baseline-probe.mjs --root <isolated-checkout> --electron <frozen-electron.exe> --output <D:/run-output>` 使用隔离 home/userData、空凭据环境和既有 Electron 进程回收器，仅测试启动及只读 `agentBrowser.status`。同一冻结控制器对照两个检出；先正常模式，再用 `--diagnostic-no-sandbox` 做单独诊断，不改变产品默认值。失败启动返回非零，收据区分失败阶段、代码/工具链身份和清理，不把“写出报告”当作启动通过。
+
+N1 允许并必须披露依赖复用：根 workspace 按冻结 pnpm lock 安装，运行时第三方依赖可只读复用，但 runtime workspace 的源码链接必须重绑到对应隔离检出，不能指回原混合工作区。执行用 Node/Electron 可作为固定二进制输入复制；这不等于干净下载或发行安装态验收。
