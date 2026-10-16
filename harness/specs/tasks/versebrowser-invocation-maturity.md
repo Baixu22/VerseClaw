@@ -190,3 +190,5 @@ Task Forest 只保存本地进度与依赖；本规格拥有稳定设计和验�
 `node scripts/versebrowser-baseline-probe.mjs --root <isolated-checkout> --electron <frozen-electron.exe> --output <D:/run-output>` 使用隔离 home/userData、空凭据环境和既有 Electron 进程回收器，仅测试启动及只读 `agentBrowser.status`。同一冻结控制器对照两个检出；先正常模式，再用 `--diagnostic-no-sandbox` 做单独诊断，不改变产品默认值。失败启动返回非零，收据区分失败阶段、代码/工具链身份和清理，不把“写出报告”当作启动通过。
 
 N1 允许并必须披露依赖复用：根 workspace 按冻结 pnpm lock 安装，运行时第三方依赖可只读复用，但 runtime workspace 的源码链接必须重绑到对应隔离检出，不能指回原混合工作区。执行用 Node/Electron 可作为固定二进制输入复制；这不等于干净下载或发行安装态验收。
+
+N1 启动探针必须等待实际 file 页面、DOMContentLoaded 和隔离配置对应的 setup-page 可见，再调用只读 status；仅出现 preload bridge 不算 renderer ready。早期仅检查 bridge 的探针结果只能作诊断，不能作为最终启动验收。

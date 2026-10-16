@@ -63,6 +63,11 @@ try {
   receipt.mainState = await app.evaluate(({ app, BrowserWindow }) => ({ ready: app.isReady(), appPath: app.getAppPath(), userData: app.getPath('userData'), versions: process.versions, windowCount: BrowserWindow.getAllWindows().length }));
   receipt.stage = 'first-window';
   const page = await app.firstWindow({ timeout: 30000 });
+  receipt.stage = 'renderer-ready';
+  await page.waitForURL((url) => url.protocol === 'file:' && decodeURIComponent(url.pathname).replaceAll('\\', '/').endsWith('/dist/index.html'), { timeout: 30000 });
+  await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
+  await page.getByTestId('setup-page').waitFor({ state: 'visible', timeout: 30000 });
+  receipt.rendererReady = { setupPageVisible: true, url: page.url() };
   receipt.stage = 'host-bridge';
   await page.waitForFunction(() => Boolean(window.verseClaw?.hostInvoke), undefined, { timeout: 15000 });
   receipt.hostStatus = await page.evaluate(async () => await window.verseClaw.hostInvoke({ id: 'baseline-status', module: 'agentBrowser', action: 'status' }));
