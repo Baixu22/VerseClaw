@@ -1,6 +1,6 @@
 {
-  "homeDir": "D:\\tmp\\verse-claw-e2e-run-hoSDOZ\\verse-claw-e2e-home-8ipGwB",
-  "userDataDir": "D:\\tmp\\verse-claw-e2e-run-hoSDOZ\\verse-claw-e2e-user-data-Y4mLRV",
+  "homeDir": "D:\\tmp\\verse-claw-e2e-run-wcGbcp\\verse-claw-e2e-home-IflhIq",
+  "userDataDir": "D:\\tmp\\verse-claw-e2e-run-wcGbcp\\verse-claw-e2e-user-data-1jfDhc",
   "createAccount": {
     "success": true,
     "account": {
@@ -13,8 +13,8 @@
       "model": "diag-model",
       "enabled": true,
       "isDefault": true,
-      "createdAt": "2026-10-16T08:22:28.636Z",
-      "updatedAt": "2026-10-16T08:22:28.636Z"
+      "createdAt": "2026-10-16T08:30:48.024Z",
+      "updatedAt": "2026-10-16T08:30:48.024Z"
     }
   },
   "setDefault": {
@@ -59,8 +59,8 @@
       "apiProtocol": "openai-completions",
       "model": "diag-model",
       "enabled": true,
-      "createdAt": "2026-10-16T08:22:28.636Z",
-      "updatedAt": "2026-10-16T08:22:28.636Z",
+      "createdAt": "2026-10-16T08:30:48.024Z",
+      "updatedAt": "2026-10-16T08:30:48.024Z",
       "hasKey": true,
       "keyMasked": "********"
     }
@@ -87,23 +87,23 @@
     ]
   },
   "AppData/Roaming/openclaw/openclaw.json": {
-    "readError": "Error: ENOENT: no such file or directory, open 'D:\\tmp\\verse-claw-e2e-run-hoSDOZ\\verse-claw-e2e-home-8ipGwB\\AppData\\Roaming\\openclaw\\openclaw.json'"
+    "readError": "Error: ENOENT: no such file or directory, open 'D:\\tmp\\verse-claw-e2e-run-wcGbcp\\verse-claw-e2e-home-IflhIq\\AppData\\Roaming\\openclaw\\openclaw.json'"
   },
-  "probeEndpoint": "http://127.0.0.1:56833/v1",
+  "probeEndpoint": "http://127.0.0.1:62544/v1",
   "turnModelRef": "custom-diagturn/diag-model",
   "afterTurn": {
     "history": {
       "sessionKey": "agent:main:main",
-      "sessionId": "836e2870-a7ab-4bea-95f6-c93221ee29ae",
+      "sessionId": "0eebc35b-dd30-48b8-8a73-112d9e20edcd",
       "messages": [
         {
           "role": "user",
           "content": "Say hi.",
-          "timestamp": 1792138966170,
-          "idempotencyKey": "3742a89d-ed0e-46cb-ac37-b5d60f25ab1a:user",
+          "timestamp": 1792139465953,
+          "idempotencyKey": "2d98ff02-f373-41a7-a213-bf2e03ef87c4:user",
           "__openclaw": {
-            "id": "3fea7cd3",
-            "recordTimestampMs": 1792138972026,
+            "id": "cb49329b",
+            "recordTimestampMs": 1792139472273,
             "seq": 1
           }
         },
@@ -124,11 +124,11 @@
             }
           },
           "stopReason": "error",
-          "timestamp": 1792138972043,
+          "timestamp": 1792139472296,
           "errorMessage": "Connection error.",
           "__openclaw": {
-            "id": "a6798f93",
-            "recordTimestampMs": 1792138973567,
+            "id": "e553d7ff",
+            "recordTimestampMs": 1792139473742,
             "seq": 2
           }
         }
@@ -159,8 +159,8 @@
           "surface": "webchat",
           "chatType": "direct"
         },
-        "updatedAt": 1792138972009,
-        "sessionId": "836e2870-a7ab-4bea-95f6-c93221ee29ae",
+        "updatedAt": 1792139472254,
+        "sessionId": "0eebc35b-dd30-48b8-8a73-112d9e20edcd",
         "systemSent": true,
         "abortedLastRun": false,
         "thinkingLevels": [
@@ -175,7 +175,7 @@
         "thinkingDefault": "off",
         "totalTokensFresh": false,
         "status": "running",
-        "startedAt": 1792138971996,
+        "startedAt": 1792139472238,
         "modelProvider": "custom-diagcust",
         "model": "diag-model",
         "agentRuntime": {
@@ -194,8 +194,9 @@
     "bodyText": "Verse\nNew task\nInbox\nScheduled\nKnowledge\nProjects\n默认工作区\nagent:main:main\nNeeds attention\nNew workstream\nSettings\nCtrl+,\n默认工作区\n/\nNeeds attention\nagent:main:main\n\nSay hi.\n\njust now\n\nChat error\n\n⚠️ Agent failed before reply: LLM request failed: network connection error. Logs: openclaw logs --follow\n\nAttach files\nSearch knowledge\nModel\nMore\nRead only\nNo knowledge\ndiag-model"
   },
   "runtimeLog": {
-    "error": "Error: ENOENT: no such file or directory, scandir 'D:\\tmp\\verse-claw-e2e-run-hoSDOZ\\verse-claw-e2e-home-8ipGwB\\.openclaw\\logs'"
+    "error": "Error: ENOENT: no such file or directory, scandir 'D:\\tmp\\verse-claw-e2e-run-wcGbcp\\verse-claw-e2e-home-IflhIq\\.openclaw\\logs'"
   },
+  "appLogs": [],
   "appProviderStore": [
     "diag-custom",
     "diag-turn"

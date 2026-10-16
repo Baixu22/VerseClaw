@@ -80,6 +80,9 @@ test('provider sync diagnostic', async ({ launchElectronApp, homeDir, userDataDi
         res.end('{}');
       });
     });
+    fixture.on('connection', () => {
+      try { appendFileSync('D:/tmp/clawx-vb-n7-20261016/diag-stub-connections.txt', 'CONN ' + new Date().toISOString() + '\n'); } catch { /* best effort */ }
+    });
     await new Promise<void>((r) => fixture.listen(0, '127.0.0.1', () => r()));
     const probePort = (fixture.address() as { port: number }).port;
     out.probeEndpoint = 'http://127.0.0.1:' + probePort + '/v1';
@@ -116,6 +119,26 @@ test('provider sync diagnostic', async ({ launchElectronApp, homeDir, userDataDi
         out.runtimeLog = { path: newest ? newest.n : undefined, tail: newest ? (await readFile(newest.n, 'utf8')).slice(-4_000) : undefined };
       } catch (error) {
         out.runtimeLog = { error: String(error).slice(0, 200) };
+      }
+      try {
+        const roaming = join(homeDir, 'AppData', 'Roaming');
+        const appDirs = await readdir(roaming);
+        const found: Array<{ p: string; tail: string }> = [];
+        for (const appDir of appDirs) {
+          const logsDir = join(roaming, appDir, 'logs');
+          let entries: string[] = [];
+          try { entries = await readdir(logsDir); } catch { continue; }
+          for (const entry of entries) {
+            const full = join(logsDir, entry);
+            const info = await stat(full).catch(() => null);
+            if (!info?.isFile()) continue;
+            const text = await readFile(full, 'utf8').catch(() => '');
+            if (/error|ECONN|network|proxy/i.test(text)) found.push({ p: full, tail: text.slice(-2_500) });
+          }
+        }
+        out.appLogs = found;
+      } catch (error) {
+        out.appLogs = { error: String(error).slice(0, 200) };
       }
     }
 
