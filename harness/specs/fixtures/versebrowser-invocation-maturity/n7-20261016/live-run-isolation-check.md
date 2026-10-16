@@ -1,14 +1,14 @@
-# Live run isolation check (N7)
+# Live run endpoint attribution check (N7)
 
-Observation: the verse-claw-e2e-run-* directories produced by the live chain spec contain only the worker jsonl - no home or user-data children.
-By contrast, the earlier baseline probes (which pass an explicit frozen toolchain and their own isolated home) DO create home and user-data under their run root.
+Observation A: the in-test protocol stub logs every incoming request; it received ZERO requests in two runs (stub-key and a real-looking key).
+Observation B: the verse-claw-e2e-run-* directories contain only the worker jsonl, and no verse-claw-e2e-home-*/user-data-* directories remain under D:/tmp after the runs.
 
-Conclusion: the live chain spec (using the shared launchElectronApp fixture with skipSetup) does NOT isolate the app profile, so the app reads the machine's real
-provider store. That is why the in-test protocol stub received zero requests while a real model still answered and emitted an agent_browser tool call: the call went to
-the machine's own configured provider, not to the injected endpoint.
+Interpretation (corrected): tests/e2e/fixtures/electron.ts DOES isolate the profile - it mkdtemps a separate verse-claw-e2e-home-* and a separate user-data dir, and cleans them up
+after the run. Observation B is therefore expected and does NOT prove that the machine profile was used. The earlier note claiming 'does not isolate' was wrong and is superseded by this file.
 
-Consequences:
-- the earlier empty-arguments observation cannot be attributed to the injected endpoint from the E2E;
-- it DOES mean a real provider-backed model called agent_browser through the runtime and the runtime recorded the call with empty arguments - a signal that needs
-  runtime-side instrumentation (model emitted empty args vs runtime dropped them) before it can be called a ClawX defect;
-- the direct call to 127.0.0.1:3065 remains the only evidence about that endpoint, and there the argument string was malformed (missing its opening brace).
+What remains true: the injected endpoint was not reached by the app in those runs (Observation A). Attribution of the empty tool arguments to either the model or the runtime is
+therefore still open, and this hypothesis (machine profile vs injected endpoint) is NOT confirmed either way.
+
+To settle it, instrument one of:
+- the runtime's provider resolution (which base URL it actually uses for the model call), or
+- the app's provider-sync path (does providers.createAccount reach ~/.openclaw/openclaw.json in the isolated home?).
