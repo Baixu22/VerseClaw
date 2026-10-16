@@ -1,0 +1,54 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "kind": "protocol-simulation",
+  "generatedAt": "2026-10-16T07:31:55.061Z",
+  "model": "custom/stub-agent",
+  "baseUrlConfigured": true,
+  "sessionKey": "agent:main:main",
+  "sawBrowserCall": false,
+  "history": {
+    "sessionKey": "agent:main:main",
+    "messages": [],
+    "defaults": {
+      "modelProvider": "custom-livee2ec",
+      "model": "stub-agent",
+      "contextTokens": 200000,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off"
+    },
+    "sessionInfo": {
+      "key": "agent:main:main",
+      "kind": "direct",
+      "updatedAt": null,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off",
+      "totalTokensFresh": false,
+      "modelProvider": "custom-livee2ec",
+      "model": "stub-agent",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 200000,
+      "hasActiveRun": false
+    },
+    "thinkingLevel": "off"
+  }
+}

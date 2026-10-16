@@ -59,7 +59,7 @@
     "detail": "The model->Gateway->Main->driver correlation leg (requestId/toolCallId/session/owner/event) still needs a runtime-side run: the renderer gateway.rpc surface is intentionally read-only for mutations, so a probe cannot drive agentBrowser.invoke from the renderer.",
     "attempt": "model-chain-attempt-receipt.json",
     "sha256": "7ceb81ec071c3b989d59cdc50ad0312c01fede8f98fa377f8e75416f311df5e2",
-    "nextStep": "either (a) make the stub stream SSE in the provider's expected format so the ClawX-side chain can be asserted end to end, or (b) use a provider/model whose tool arguments are well formed; then the same spec asserts the requestId/session/owner/event correlation.",
+    "nextStep": "1) make the E2E prove which endpoint it calls (the stub receiving a request is the check) - i.e. fix provider isolation so the run uses the injected account; 2) then either repair the arguments path or run the labelled protocol simulation against a stub that the runtime actually reaches; 3) only then can the requestId/session/owner/event correlation be asserted through Main.",
     "notBlockedOnOwner": "the local endpoint is live (127.0.0.1:3065); no owner action is needed for the next step.",
     "liveAttempt": {
       "result": "The live chain now reaches a REAL model tool call: with the real local endpoint the runtime records assistant toolCall entries for agent_browser carrying call ids (call_bb62b56ad73a43768051895c, call_0771c867f9eb4e8e93d58e01). It stops before Main because the endpoint returns malformed tool arguments (the string is missing its opening brace), which the runtime correctly rejects.",
@@ -91,9 +91,13 @@
       "effect": "runtime JSON parse yields {} -> 'action: must have required properties action'"
     },
     "stubAttempt": {
-      "detail": "a labelled in-spec protocol stub returning a well-formed OpenAI Responses function_call was added; the runtime did NOT surface it as a tool call in chat.history, most likely because the provider path streams (SSE) and the stub replies with plain JSON.",
-      "honestyFix": "the E2E assertion originally matched the tool name anywhere in the history, which the PROMPT text satisfied; it now requires an actual toolCall entry, and the stub run correctly FAILS under it.",
-      "artifact": "n7-20261016/live-chain-stub.json"
+      "detail": "a labelled in-spec protocol stub returning a well-formed OpenAI Responses function_call was added, and the stub logs every incoming request. It received ZERO requests in two runs (stub-key and real-looking key), so the E2E run is not actually routed to the injected endpoint - it most likely uses the machine's own configured provider.",
+      "impact": "this means the observed empty tool arguments cannot yet be attributed to the injected endpoint from the E2E; only the DIRECT call to 127.0.0.1:3065 (recorded earlier) proves that endpoint's malformed arguments.",
+      "honestyFix": "the E2E assertion originally matched the tool name anywhere in the history, which the PROMPT text satisfied; it now requires an actual toolCall entry, so the current stub runs correctly FAIL.",
+      "artifacts": [
+        "n7-20261016/live-chain-stub.json",
+        "n7-20261016/live-chain-stub-real-key.json"
+      ]
     }
   },
   "verifiers": {

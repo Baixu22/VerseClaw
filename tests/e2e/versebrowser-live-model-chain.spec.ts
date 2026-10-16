@@ -1,3 +1,4 @@
+import { appendFileSync, mkdirSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { join, resolve } from 'node:path';
@@ -50,6 +51,10 @@ function createStubModelServer(fixtureUrl: string) {
     let body = '';
     req.on('data', (c) => { body += c; });
     req.on('end', () => {
+      try {
+        mkdirSync(EVIDENCE_DIR, { recursive: true });
+        appendFileSync(join(EVIDENCE_DIR, 'stub-model-requests.jsonl'), JSON.stringify({ url: req.url, body: body.slice(0, 4000) }) + '\n');
+      } catch { /* logging is best effort */ }
       const alreadyOpened = /"sessionId"/.test(body);
       const args = alreadyOpened
         ? JSON.stringify({ action: 'takeSnapshot', sessionId: (body.match(/"sessionId"\s*:\s*"([^"]+)"/) || [])[1] })

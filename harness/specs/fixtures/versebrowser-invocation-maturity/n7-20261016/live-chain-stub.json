@@ -2,86 +2,14 @@
   "driven_by": "agent",
   "actor": "codex",
   "kind": "protocol-simulation",
-  "generatedAt": "2026-10-16T07:14:05.851Z",
+  "generatedAt": "2026-10-16T07:27:45.590Z",
   "model": "custom/stub-agent",
   "baseUrlConfigured": true,
   "sessionKey": "agent:main:main",
   "sawBrowserCall": false,
   "history": {
     "sessionKey": "agent:main:main",
-    "sessionId": "70fb0beb-fac7-454d-a66d-c1b53091edd0",
-    "messages": [
-      {
-        "role": "user",
-        "content": "Call the agent_browser tool with exactly this JSON argument object and nothing else: {\"action\":\"open\",\"url\":\"http://127.0.0.1:58563/\"} . Do not use an empty object. After the tool result returns, reply with the sessionId only.",
-        "timestamp": 1792134665864,
-        "idempotencyKey": "b1ffde69-959d-42a1-8672-c4e332bb51ef:user",
-        "__openclaw": {
-          "id": "b1e1bf72",
-          "recordTimestampMs": 1792134684529,
-          "seq": 1
-        }
-      },
-      {
-        "role": "assistant",
-        "content": [],
-        "api": "openai-completions",
-        "provider": "custom-livee2ec",
-        "model": "stub-agent",
-        "usage": {
-          "input": 0,
-          "output": 0,
-          "totalTokens": 0,
-          "cacheRead": 0,
-          "cacheWrite": 0,
-          "cost": {
-            "total": 0
-          }
-        },
-        "stopReason": "stop",
-        "timestamp": 1792134684573,
-        "__openclaw": {
-          "id": "56c696f6",
-          "recordTimestampMs": 1792134684731,
-          "seq": 2
-        }
-      },
-      {
-        "role": "user",
-        "content": "Call the agent_browser tool with exactly this JSON argument object and nothing else: {\"action\":\"open\",\"url\":\"http://127.0.0.1:58563/\"} . Do not use an empty object. After the tool result returns, reply with the sessionId only.",
-        "timestamp": 1792134665864,
-        "idempotencyKey": "b1ffde69-959d-42a1-8672-c4e332bb51ef:user",
-        "__openclaw": {
-          "id": "8868da8e",
-          "recordTimestampMs": 1792134687077,
-          "seq": 3
-        }
-      },
-      {
-        "role": "assistant",
-        "content": [],
-        "api": "openai-completions",
-        "provider": "custom-livee2ec",
-        "model": "stub-agent",
-        "usage": {
-          "input": 0,
-          "output": 0,
-          "totalTokens": 0,
-          "cacheRead": 0,
-          "cacheWrite": 0,
-          "cost": {
-            "total": 0
-          }
-        },
-        "stopReason": "stop",
-        "timestamp": 1792134687094,
-        "__openclaw": {
-          "id": "d300370b",
-          "recordTimestampMs": 1792134687147,
-          "seq": 4
-        }
-      }
-    ],
+    "messages": [],
     "defaults": {
       "modelProvider": "custom-livee2ec",
       "model": "stub-agent",
@@ -100,18 +28,7 @@
     "sessionInfo": {
       "key": "agent:main:main",
       "kind": "direct",
-      "displayName": "Verse Claw",
-      "chatType": "direct",
-      "origin": {
-        "label": "Verse Claw",
-        "provider": "webchat",
-        "surface": "webchat",
-        "chatType": "direct"
-      },
-      "updatedAt": 1792134684749,
-      "sessionId": "70fb0beb-fac7-454d-a66d-c1b53091edd0",
-      "systemSent": true,
-      "abortedLastRun": false,
+      "updatedAt": null,
       "thinkingLevels": [
         {
           "id": "off",
@@ -123,10 +40,6 @@
       ],
       "thinkingDefault": "off",
       "totalTokensFresh": false,
-      "status": "done",
-      "startedAt": 1792134684470,
-      "endedAt": 1792134684741,
-      "runtimeMs": 271,
       "modelProvider": "custom-livee2ec",
       "model": "stub-agent",
       "agentRuntime": {
@@ -134,10 +47,6 @@
         "source": "implicit"
       },
       "contextTokens": 200000,
-      "deliveryContext": {
-        "channel": "webchat"
-      },
-      "lastChannel": "webchat",
       "hasActiveRun": false
     },
     "thinkingLevel": "off"
