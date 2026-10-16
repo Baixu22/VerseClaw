@@ -1,4 +1,5 @@
 import { readFile, writeFile, mkdir, readdir, stat } from 'node:fs/promises';
+import { appendFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { join } from 'node:path';
 import type { Page } from '@playwright/test';
@@ -30,7 +31,7 @@ test('provider sync diagnostic', async ({ launchElectronApp, homeDir, userDataDi
     out.createAccount = await hostInvoke(page, 'providers', 'createAccount', {
       account: {
         id: 'diag-custom', vendorId: 'custom', label: 'Diag custom', authMode: 'api_key',
-        baseUrl: 'http://127.0.0.1:1/v1', apiProtocol: 'openai-responses', model: 'diag-model',
+        baseUrl: 'http://127.0.0.1:1/v1', apiProtocol: 'openai-completions', model: 'diag-model',
         enabled: true, isDefault: true, createdAt: now, updatedAt: now,
       },
       apiKey: 'diag-key',
@@ -43,13 +44,42 @@ test('provider sync diagnostic', async ({ launchElectronApp, homeDir, userDataDi
       const p = join(homeDir, rel);
       try {
         const cfg = JSON.parse(await readFile(p, 'utf8')) as { models?: { providers?: Record<string, unknown> } };
-        out[rel] = { providers: Object.keys(cfg.models?.providers ?? {}) };
+        const providers = (cfg.models?.providers ?? {}) as Record<string, unknown>;
+        out[rel] = { providers: Object.keys(providers) };
+        for (const [key, value] of Object.entries(providers)) {
+          const entry = value as Record<string, unknown>;
+          out[rel + ':' + key] = { keys: Object.keys(entry), api: entry.api, baseUrl: entry.baseUrl, models: entry.models, model: entry.model };
+        }
       } catch (error) {
         out[rel] = { readError: String(error).slice(0, 200) };
       }
     }
     // Send one chat turn against the injected endpoint and capture what the app/runtime say.
-    const fixture = createServer((_req, res) => { res.writeHead(200, { 'content-type': 'application/json' }); res.end('{}'); });
+    const fixture = createServer((req, res) => {
+      let body = '';
+      req.on('data', (c) => { body += c; });
+      req.on('end', () => {
+        try {
+          appendFileSync('D:/tmp/clawx-vb-n7-20261016/diag-stub-requests.jsonl', JSON.stringify({ url: req.url }) + '\n');
+        } catch { /* best effort */ }
+        const alreadyOpened = /sessionId/.test(body);
+        const args = alreadyOpened
+          ? JSON.stringify({ action: 'takeSnapshot', sessionId: (body.match(/"sessionId"\s*:\s*"([^"]+)"/) || [])[1] })
+          : JSON.stringify({ action: 'open', url: 'http://127.0.0.1:1/' });
+        const callId = 'call_diag_' + (alreadyOpened ? 'snapshot' : 'open');
+        if (String(req.url).includes('chat/completions')) {
+          res.writeHead(200, { 'content-type': 'text/event-stream', 'cache-control': 'no-cache', connection: 'keep-alive' });
+          const chunk = (delta: unknown, finish: string | null) => 'data: ' + JSON.stringify({ id: 'chatcmpl_diag', object: 'chat.completion.chunk', created: 1, model: 'diag-model', choices: [{ index: 0, delta, finish_reason: finish }] }) + '\n\n';
+          res.write(chunk({ role: 'assistant', tool_calls: [{ index: 0, id: callId, type: 'function', function: { name: 'agent_browser', arguments: args } }] }, null));
+          res.write(chunk({}, 'tool_calls'));
+          res.write('data: [DONE]\n\n');
+          res.end();
+          return;
+        }
+        res.writeHead(200, { 'content-type': 'application/json' });
+        res.end('{}');
+      });
+    });
     await new Promise<void>((r) => fixture.listen(0, '127.0.0.1', () => r()));
     const probePort = (fixture.address() as { port: number }).port;
     out.probeEndpoint = 'http://127.0.0.1:' + probePort + '/v1';
@@ -57,7 +87,7 @@ test('provider sync diagnostic', async ({ launchElectronApp, homeDir, userDataDi
       await hostInvoke(page, 'providers', 'createAccount', {
         account: {
           id: 'diag-turn', vendorId: 'custom', label: 'Diag turn', authMode: 'api_key',
-          baseUrl: out.probeEndpoint as string, apiProtocol: 'openai-responses', model: 'diag-model',
+          baseUrl: out.probeEndpoint as string, apiProtocol: 'openai-completions', model: 'diag-model',
           enabled: true, isDefault: true, createdAt: now, updatedAt: now,
         },
         apiKey: 'diag-key',

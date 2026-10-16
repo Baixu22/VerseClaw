@@ -53,24 +53,29 @@ function createStubModelServer(fixtureUrl: string) {
     req.on('end', () => {
       try {
         mkdirSync(EVIDENCE_DIR, { recursive: true });
-        appendFileSync(join(EVIDENCE_DIR, 'stub-model-requests.jsonl'), JSON.stringify({ url: req.url, body: body.slice(0, 4000) }) + '\n');
+        appendFileSync(join(EVIDENCE_DIR, 'stub-model-requests.jsonl'), JSON.stringify({ url: req.url, body: body.slice(0, 2000) }) + '\n');
       } catch { /* logging is best effort */ }
-      const alreadyOpened = /"sessionId"/.test(body);
+      const alreadyOpened = /sessionId/.test(body);
       const args = alreadyOpened
         ? JSON.stringify({ action: 'takeSnapshot', sessionId: (body.match(/"sessionId"\s*:\s*"([^"]+)"/) || [])[1] })
         : JSON.stringify({ action: 'open', url: fixtureUrl });
+      const callId = 'call_stub_' + (alreadyOpened ? 'snapshot' : 'open');
+      if (String(req.url).includes('chat/completions')) {
+        res.writeHead(200, { 'content-type': 'text/event-stream', 'cache-control': 'no-cache', connection: 'keep-alive' });
+        const chunk = (delta: unknown, finish: string | null) => 'data: ' + JSON.stringify({
+          id: 'chatcmpl_stub', object: 'chat.completion.chunk', created: Math.floor(Date.now() / 1000), model: 'stub-agent',
+          choices: [{ index: 0, delta, finish_reason: finish }],
+        }) + '\n\n';
+        res.write(chunk({ role: 'assistant', tool_calls: [{ index: 0, id: callId, type: 'function', function: { name: 'agent_browser', arguments: args } }] }, null));
+        res.write(chunk({}, 'tool_calls'));
+        res.write('data: [DONE]\n\n');
+        res.end();
+        return;
+      }
       res.writeHead(200, { 'content-type': 'application/json' });
       res.end(JSON.stringify({
-        id: 'resp_stub_' + (alreadyOpened ? '2' : '1'),
-        object: 'response',
-        status: 'completed',
-        output: [{
-          type: 'function_call',
-          call_id: 'call_stub_' + (alreadyOpened ? 'snapshot' : 'open'),
-          name: 'agent_browser',
-          arguments: args,
-          status: 'completed',
-        }],
+        id: 'resp_stub', object: 'response', status: 'completed',
+        output: [{ type: 'function_call', call_id: callId, name: 'agent_browser', arguments: args, status: 'completed' }],
         output_text: '',
       }));
     });
@@ -97,6 +102,7 @@ function runtimeProviderKey(provider: string, accountId: string): string {
 }
 
 let stubBaseUrl: string | undefined;
+let useStubMode = false;
 function resolveBaseUrl(): string | undefined {
   return stubBaseUrl ?? process.env.CLAWX_LIVE_BASE_URL?.trim();
 }
@@ -112,7 +118,7 @@ async function configureLiveProvider(page: Page): Promise<void> {
   const account: ProviderAccount = {
     id: 'live-e2e-custom', vendorId: provider as ProviderAccount['vendorId'], label: 'Live E2E custom',
     authMode: 'api_key', baseUrl, model: modelId, enabled: true, isDefault: true, createdAt: now, updatedAt: now,
-    ...(apiProtocol ? { apiProtocol } : {}),
+    ...(useStubMode || apiProtocol ? { apiProtocol: apiProtocol ?? 'openai-completions' } : {}),
   };
   expect((await hostInvoke<HostSuccess>(page, 'providers', 'createAccount', { account, apiKey })).success).toBe(true);
   expect((await hostInvoke<HostSuccess>(page, 'providers', 'setDefaultAccount', { accountId: account.id })).success).toBe(true);
@@ -141,7 +147,8 @@ test('a real model issues an agent_browser tool call through the Gateway', async
   });
   await new Promise<void>((r) => fixture.listen(0, '127.0.0.1', () => r()));
   const port = (fixture.address() as { port: number }).port;
-  const useStub = process.env.CLAWX_LIVE_STUB_MODEL === '1';
+  useStubMode = process.env.CLAWX_LIVE_STUB_MODEL === '1';
+  const useStub = useStubMode;
   let stubServer: ReturnType<typeof createStubModelServer> | undefined;
   if (useStub) {
     stubServer = createStubModelServer('http://127.0.0.1:' + port + '/');

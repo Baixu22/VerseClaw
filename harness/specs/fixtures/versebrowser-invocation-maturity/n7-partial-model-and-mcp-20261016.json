@@ -124,6 +124,15 @@
         "conclusion": "provider injection works end to end up to the network call. The remaining blocker for the live chain is the stub's protocol: it replies with plain JSON while the openai-responses client expects a streaming (SSE) response, which surfaces as a network connection error.",
         "nextStep": "make the protocol stub stream SSE in the provider's expected format; then the live chain can reach Main and the correlation can be asserted."
       }
+    },
+    "liveTurnNetworkError": {
+      "detail": "the runtime reaches the outbound call (correct provider entry + resolved model) but fails with a network connection error; a local stub receives zero requests, and NO_PROXY did not change it. The machine has HTTP(S)_PROXY pointing at a local proxy.",
+      "nextAvenues": [
+        "inspect the runtime HTTP client / proxy handling",
+        "run the diagnostic where no local proxy is set"
+      ],
+      "artifact": "n7-20261016/live-turn-network-error.md",
+      "sha256": "5b25d1a6875b8a4270de5bf72816de92c37070c07c4bd0401346f584afc7fcb0"
     }
   },
   "verifiers": {
