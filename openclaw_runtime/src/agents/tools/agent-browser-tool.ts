@@ -50,6 +50,12 @@ const AGENT_BROWSER_ACTIONS = [
   "readForms",
   "readDialogs",
   "respondDialog",
+  // Spec N4: the typed observation/verify loop. Before this the model could only
+  // observe through `command` (the optional CLI), which is unavailable by default.
+  "takeSnapshot",
+  "extractPageText",
+  "pressKey",
+  "verifyFlow",
 ] as const;
 const FAILURE_DIAGNOSTIC_COMMANDS: string[][] = [
   ["snapshot", "-i"],
@@ -126,6 +132,22 @@ const AGENT_BROWSER_SCHEMA_PROPS = (actionSchema: TSchema) => ({
   maxOutput: Type.Optional(Type.Integer({ description: "Maximum CLI output characters for command action." })),
   width: Type.Optional(Type.Integer({ description: "Viewport/window width." })),
   height: Type.Optional(Type.Integer({ description: "Viewport/window height." })),
+  key: Type.Optional(Type.String({ description: "Key for action='pressKey', e.g. Enter, Tab, ArrowDown, 'Control+A'." })),
+  rules: Type.Optional(Type.Array(Type.Record(Type.String(), Type.Unknown()), {
+    description: "Extraction rules for action='extractPageText' (id, alias, urlPattern, selectorsText, sortOrder, createdAt, updatedAt).",
+  })),
+  maxLength: Type.Optional(Type.Integer({ description: "Maximum extracted text length for action='extractPageText'." })),
+  extractMode: Type.Optional(stringEnum(["text", "all"], { description: "Extraction mode for action='extractPageText'." })),
+  selectorType: Type.Optional(stringEnum(["css", "xpath"], { description: "Selector dialect for action='extractPageText'." })),
+  allowFallback: Type.Optional(Type.Boolean({ description: "Allow the built-in fallback text extraction for action='extractPageText'." })),
+  selectors: Type.Optional(Type.Array(Type.String(), { description: "Selectors to probe for action='verifyFlow'." })),
+  expect: Type.Optional(Type.Array(Type.Record(Type.String(), Type.Unknown()), {
+    description: "Business assertions for action='verifyFlow', e.g. [{ type: 'text', selector: '#result', equals: 'Saved' }].",
+  })),
+  baselineConsoleCount: Type.Optional(Type.Integer({ description: "Console baseline for action='verifyFlow'." })),
+  baselineNetworkCount: Type.Optional(Type.Integer({ description: "Network baseline for action='verifyFlow'." })),
+  verifyScreenshot: Type.Optional(Type.Boolean({ description: "Capture a screenshot as evidence for action='verifyFlow'." })),
+  evidenceDirName: Type.Optional(Type.String({ description: "Evidence directory name for action='verifyFlow'." })),
 });
 
 /**
@@ -289,6 +311,27 @@ function buildPayload(action: AgentBrowserAction, params: Record<string, unknown
       return { sessionId: requireSession(params, action), action: params.pointerAction, ...pickPayload(params, ["selector", "deltaX", "deltaY", "timeoutMs"]) };
     case "drag":
       return { sessionId: requireSession(params, action), ...pickPayload(params, ["sourceSelector", "targetSelector", "timeoutMs"]) };
+    case "takeSnapshot":
+      return { sessionId: requireSession(params, action) };
+    case "extractPageText":
+      return {
+        sessionId: requireSession(params, action),
+        ...pickPayload(params, ["rules", "maxLength", "extractMode", "selectorType", "allowFallback"]),
+      };
+    case "pressKey":
+      return { sessionId: requireSession(params, action), ...pickPayload(params, ["key"]) };
+    case "verifyFlow":
+      return {
+        sessionId: requireSession(params, action),
+        ...pickPayload(params, [
+          "selectors",
+          "expect",
+          "baselineConsoleCount",
+          "baselineNetworkCount",
+          "evidenceDirName",
+        ]),
+        ...(params.verifyScreenshot === undefined ? {} : { screenshot: params.verifyScreenshot }),
+      };
     case "selectOption":
       return { sessionId: requireSession(params, action), ...pickPayload(params, ["selector", "label", "timeoutMs"]) };
     case "selectValues":

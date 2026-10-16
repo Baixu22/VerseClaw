@@ -23,7 +23,7 @@ describe('model action capability snapshot', () => {
   it('keeps the canonical vocabulary and ordering', () => {
     const snapshot = modelActionCapabilities(injectedFullProfile, { cliAvailable: true });
     expect(snapshot.actions.map((entry) => entry.action)).toEqual([...MODEL_ACTION_NAMES]);
-    expect(snapshot.actions).toHaveLength(24);
+    expect(snapshot.actions).toHaveLength(28);
   });
 
   it('disables every driver action when no driver is active but keeps facade-local actions', () => {
@@ -63,9 +63,9 @@ describe('model action capability snapshot', () => {
 
   it('reflects the real Electron driver only through the facade driver profile', () => {
     const snapshot = getAgentBrowserCapabilities();
-    expect(snapshot.actions).toHaveLength(24);
+    expect(snapshot.actions).toHaveLength(28);
     const byAction = new Map(snapshot.actions.map((entry) => [entry.action, entry]));
-    for (const action of ['open', 'navigate', 'click', 'type', 'evaluate', 'screenshot', 'close', 'status'] as const) {
+    for (const action of ['open', 'navigate', 'click', 'type', 'evaluate', 'screenshot', 'close', 'status', 'takeSnapshot', 'extractPageText', 'pressKey', 'verifyFlow'] as const) {
       expect(byAction.get(action)!.available, action).toBe(true);
     }
     for (const action of ['downloadFile', 'uploadFiles', 'pointer', 'drag', 'selectOption', 'selectValues', 'appendText', 'setChecked', 'findElement', 'semanticRead', 'readForms', 'readDialogs', 'respondDialog'] as const) {

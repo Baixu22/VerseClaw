@@ -45,6 +45,11 @@ export const MODEL_ACTION_NAMES = [
   'readForms',
   'readDialogs',
   'respondDialog',
+  // Spec N4 observation/verify loop (typed, no optional CLI required).
+  'takeSnapshot',
+  'extractPageText',
+  'pressKey',
+  'verifyFlow',
 ] as const;
 
 export type ModelActionName = (typeof MODEL_ACTION_NAMES)[number];
@@ -63,6 +68,8 @@ export type ModelActionRequirement = {
   readonly requiresCli?: boolean;
   /** True when the handler is facade-local and works with no driver. */
   readonly facadeLocal?: boolean;
+  /** True when the action needs the global browser-control run-state switch. */
+  readonly requiresControl?: boolean;
 };
 
 export const MODEL_ACTION_REQUIREMENTS: Readonly<Record<ModelActionName, ModelActionRequirement>> = Object.freeze({
@@ -90,6 +97,11 @@ export const MODEL_ACTION_REQUIREMENTS: Readonly<Record<ModelActionName, ModelAc
   readForms: { methods: ['readForms'] },
   readDialogs: { methods: ['readDialogs'] },
   respondDialog: { methods: ['respondDialog'] },
+  takeSnapshot: { methods: ['takeSnapshot'], requiresControl: true },
+  extractPageText: { methods: ['extractPageText'] },
+  pressKey: { methods: ['pressKey'], requiresControl: true },
+  // verifyFlow is facade-composed: it needs the driver methods the facade drives.
+  verifyFlow: { methods: ['waitForSelector', 'evaluate', 'getConsoleMessages', 'networkListRequests', 'screenshot'] },
 });
 
 export type ModelActionCapability = {
@@ -155,6 +167,11 @@ export function modelActionCapabilities(
     cliAvailable: env.cliAvailable,
     actions,
   };
+}
+
+export function modelActionRequiresControl(action: string): boolean {
+  const requirement = (MODEL_ACTION_REQUIREMENTS as Record<string, ModelActionRequirement>)[action];
+  return requirement?.requiresControl === true;
 }
 
 export function availableModelActions(snapshot: ModelActionCapabilitySnapshot): ModelActionName[] {

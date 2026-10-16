@@ -85,6 +85,45 @@ describe('agent browser capability gating (spec N3)', () => {
     expect(getPrimedAgentBrowserCapabilities()?.availableActions).toEqual(['open', 'status']);
   });
 
+  it('grants the browser-control run-state for an OWNED session, never from a model argument', async () => {
+    const rpcCalls: Array<unknown[]> = [];
+    const handlers = new Map<string, (payload: unknown) => void>();
+    const manager = {
+      on: (event: string, handler: (payload: unknown) => void) => { handlers.set(event, handler); },
+      off: () => undefined,
+      rpc: async (...args: unknown[]) => { rpcCalls.push(args); },
+    };
+    const setEnabled = vi.fn();
+    const requestModeUpgrade = vi.fn(async () => ({ ok: true }));
+    const service = {
+      isEnabled: () => false,
+      setEnabled,
+      list: () => [{ id: 's1', runtimeMode: 'normal_restricted', sessionKey: 'owner-1' }],
+      requestModeUpgrade,
+      takeSnapshot: vi.fn(async () => ({ success: true, snapshot: 'x' })),
+    };
+    const dispose = registerAgentBrowserGatewayBridge(manager as never, service as never);
+    handlers.get('notification')!({
+      method: 'agentBrowser.invoke.request',
+      params: {
+        requestId: 'r-owned',
+        action: 'takeSnapshot',
+        payload: { sessionId: 's1' },
+        correlation: { sessionKey: 'owner-1' },
+      },
+    });
+    await vi.waitFor(() => {
+      expect(rpcCalls.some((call) => call[0] === 'agentBrowser.invoke.result')).toBe(true);
+    });
+    expect(setEnabled).toHaveBeenCalledWith(true);
+    expect(requestModeUpgrade).toHaveBeenCalledWith(expect.objectContaining({
+      sessionId: 's1',
+      targetMode: 'controlled_enhanced',
+      userApproval: true,
+    }));
+    dispose();
+  });
+
   it('rejects an unavailable action at the Main bridge before any service call', async () => {
     const rpcCalls: Array<unknown[]> = [];
     const handlers = new Map<string, (payload: unknown) => void>();

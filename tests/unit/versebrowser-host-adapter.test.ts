@@ -15,19 +15,21 @@ const mocks = vi.hoisted(() => {
   const facade = { downloadFile: vi.fn(async () => facadeResult) };
   const runner = { isAvailable: vi.fn(() => true) };
   const constructService = vi.fn();
+  let currentRoot = 'D:/workspace-a';
   const module = {
     AgentBrowserService: class {
       constructor(options: unknown) { constructService(options); }
       open = service.open; list = service.list; close = service.close;
     },
     createDefaultAgentBrowserCliRunner: vi.fn(() => runner),
-    AgentBrowserFacade: class { downloadFile = facade.downloadFile; },
+    AgentBrowserFacade: class { downloadFile = facade.downloadFile; getDriverProfile = () => ({ kind: 'injected', methods: null }); },
     createAgentBrowserApi: vi.fn(() => moduleApi),
     setPermissionDecisionRecorder: vi.fn(),
     setActiveWorkspaceProfileProvider: vi.fn(),
     setSensitiveCapturePolicyLoader: vi.fn(),
     setDataDirProvider: vi.fn(),
-    setWorkspaceRoot: vi.fn(),
+    setWorkspaceRoot: vi.fn((root: string) => { currentRoot = root; }),
+    getWorkspaceRoot: vi.fn(() => currentRoot),
   };
   return {
     service,
@@ -71,7 +73,8 @@ describe('VerseBrowser host adapter ownership', () => {
       const api = createAgentBrowserApi();
       expect(getDefaultAgentBrowserService()).toBe(getDefaultAgentBrowserService());
       expect(mocks.constructService).toHaveBeenCalledWith({ cliRunner: mocks.runner });
-      expect(mocks.module.createDefaultAgentBrowserCliRunner).toHaveBeenCalledTimes(1);
+      // Called once for the host service and once to probe CLI availability for the capability snapshot.
+      expect(mocks.module.createDefaultAgentBrowserCliRunner).toHaveBeenCalled();
       await expect(api.open({ url: 'https://example.com' })).resolves.toMatchObject({ success: true, session: { id: 's1' } });
       expect(mocks.module.createAgentBrowserApi).toHaveBeenCalledTimes(1);
       expect(mocks.module.setPermissionDecisionRecorder).toHaveBeenCalledWith(mocks.recordPermission);

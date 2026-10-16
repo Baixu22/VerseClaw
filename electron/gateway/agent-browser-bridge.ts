@@ -3,6 +3,7 @@ import type { GatewayManager } from './manager';
 import { logger } from '../utils/logger';
 import {
   assertBrowserAllowedUnderSandbox,
+  ensureAgentBrowserControlForOwnedSession,
   getAgentBrowserCapabilities,
   getDefaultAgentBrowserService,
 } from '../services/agent-browser-api';
@@ -207,6 +208,10 @@ async function invokeAgentBrowser(
 ): Promise<unknown> {
   await assertBrowserAllowedUnderSandbox(request.action);
   assertActionAvailable(request.action, capabilities);
+  const owner = ownerSessionKey(request);
+  if (owner) {
+    await ensureAgentBrowserControlForOwnedSession(service, owner, request.action, sessionIdForRequest(request.action, payload));
+  }
   if (api) {
     const method = api[request.action as keyof typeof api];
     if (typeof method !== 'function') throw new Error(`Unsupported agent browser action: ${request.action}`);

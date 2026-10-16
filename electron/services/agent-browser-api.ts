@@ -22,10 +22,12 @@ import {
   setDataDirProvider,
   setSensitiveCapturePolicyLoader,
   setWorkspaceRoot,
+  getWorkspaceRoot,
   type AgentBrowserHostApi,
 } from '@verse-claw/versebrowser';
 import {
   modelActionCapabilities,
+  modelActionRequiresControl,
   type DriverProfileLike,
   type ModelActionCapabilitySnapshot,
 } from './agent-browser-capabilities';
@@ -156,6 +158,45 @@ export function getAgentBrowserCapabilities(
 }
 
 /**
+ * Spec N4 / AC-4: the global browser-control switch is a host-owned run-state
+ * grant, never a model argument. When an owned runtime session asks for a
+ * control-requiring action, Main grants it here and records the decision as
+ * agent-driven; the model cannot pass `setEnabled`/`userApproval` itself.
+ */
+export async function ensureAgentBrowserControlForOwnedSession(
+  service: ModuleAgentBrowserService,
+  ownerKey: string,
+  action: string,
+  sessionId?: string,
+): Promise<void> {
+  if (!modelActionRequiresControl(action)) return;
+  const typed = service as unknown as {
+    isEnabled?: () => boolean;
+    setEnabled?: (enabled: boolean) => unknown;
+    list?: () => Array<{ id?: string; runtimeMode?: string }>;
+    requestModeUpgrade?: (payload: Record<string, unknown>) => unknown;
+  };
+  if (typed.isEnabled?.() !== true) typed.setEnabled?.(true);
+  const session = sessionId ? typed.list?.().find((entry) => entry.id === sessionId) : undefined;
+  if (session && (session.runtimeMode ?? 'normal_restricted') === 'normal_restricted') {
+    await typed.requestModeUpgrade?.({
+      sessionId,
+      targetMode: 'controlled_enhanced',
+      userApproval: true,
+      reason: `agent-driven host grant for owned runtime session ${ownerKey}`,
+    });
+  }
+  const workspace = await getActiveWorkspaceProfile().catch(() => undefined);
+  await recordPermissionDecisionEvent(createPermissionDecisionEvent({
+    workspaceMode: workspace?.permissionMode ?? DEFAULT_WORKSPACE_PERMISSION_MODE,
+    tool: `agentBrowser.${action}`,
+    boundary: 'gateway-rpc',
+    decision: 'allow',
+    reason: `agent-driven host grant for owned runtime session ${ownerKey}`,
+  })).catch(() => undefined);
+}
+
+/**
  * Main-side capability gate (spec N3 / AC-2).
  *
  * Every model-action entry point — the renderer IPC path and the Gateway bridge —
@@ -164,10 +205,10 @@ export function getAgentBrowserCapabilities(
  * outside the model schema. `status` gains the snapshot so discovery is
  * side-effect free and comes from the same facts as the rejection.
  */
-function withCapabilityGate(
-  api: AgentBrowserHostApi,
+function withCapabilityGate<T extends object>(
+  api: T,
   snapshot: ModelActionCapabilitySnapshot,
-): AgentBrowserHostApi {
+): T {
   const verdict = new Map(snapshot.actions.map((entry) => [entry.action as string, entry]));
   return new Proxy(api, {
     get(target, prop, receiver) {
@@ -194,10 +235,10 @@ function withCapabilityGate(
           : result;
       };
     },
-  });
+  }) as T;
 }
 
-function withHostGuards(api: AgentBrowserHostApi): AgentBrowserHostApi {
+function withHostGuards<T extends object>(api: T): T {
   return new Proxy(api, {
     get(target, prop, receiver) {
       const value = Reflect.get(target, prop, receiver);
@@ -215,7 +256,7 @@ function withHostGuards(api: AgentBrowserHostApi): AgentBrowserHostApi {
         return await bound(...args);
       };
     },
-  });
+  }) as T;
 }
 
 type ModuleMethod<K extends keyof AgentBrowserHostApi> = NonNullable<AgentBrowserHostApi[K]>;
@@ -231,9 +272,23 @@ export function createAgentBrowserApi(
   vault?: Parameters<typeof createModuleAgentBrowserApi>[2],
 ): CompleteHostServiceRegistry['agentBrowser'] {
   const api = createModuleAgentBrowserApi(service as never, taskService, vault);
+  // Spec N4 / AC-2: refs, observation baselines and re-observe state must survive
+  // across calls. One facade per adapter instance (i.e. per Main process) keeps
+  // that state; rebuilding a facade per call silently dropped it.
+  let sharedFacade: AgentBrowserFacade | undefined;
+  let sharedFacadeRoot: string | undefined;
+  const getFacade = (): AgentBrowserFacade => {
+    // Reuse within one workspace so refs/baselines survive across calls, but
+    // rebuild when the workspace changes so two workspaces never share state.
+    const root = getWorkspaceRoot();
+    if (!sharedFacade || sharedFacadeRoot !== root) {
+      sharedFacade = new AgentBrowserFacade({ api });
+      sharedFacadeRoot = root;
+    }
+    return sharedFacade;
+  };
   const withFacade = async <Args extends unknown[]>(method: (facade: AgentBrowserFacade, ...args: Args) => Promise<unknown>, ...args: Args) => {
-    const facade = new AgentBrowserFacade({ api });
-    return fromToolResult(await method(facade, ...args) as { ok: boolean; content: string; data?: unknown; evidence?: unknown[]; error?: unknown });
+    return fromToolResult(await method(getFacade(), ...args) as { ok: boolean; content: string; data?: unknown; evidence?: unknown[]; error?: unknown });
   };
   const extendedApi = {
     ...api,
@@ -250,9 +305,10 @@ export function createAgentBrowserApi(
     readForms: (payload: ModulePayload<'readForms'>) => withFacade((facade, input) => facade.readForms(input.sessionId, input.selector), payload),
     readDialogs: (payload: ModulePayload<'readDialogs'>) => withFacade((facade, input) => facade.readDialogs(input.sessionId), payload),
     respondDialog: (payload: ModulePayload<'respondDialog'>) => withFacade((facade, input) => facade.respondDialog(input.sessionId, input.dialogId, { accept: input.accept, promptText: input.promptText }), payload),
-  } as unknown as AgentBrowserHostApi;
+    verifyFlow: (payload: Parameters<AgentBrowserFacade['verifyFlow']>[0]) => withFacade((facade, input) => facade.verifyFlow(input), payload),
+  } as unknown as CompleteHostServiceRegistry['agentBrowser'];
   // The gate reads the REAL module driver api (not the facade wrappers) so the 13
   // additions stay unavailable even though `extendedApi` defines a wrapper for each.
   const capabilities = getAgentBrowserCapabilitiesFor(api as unknown as AgentBrowserHostApi);
-  return withHostGuards(withCapabilityGate(extendedApi, capabilities)) as CompleteHostServiceRegistry['agentBrowser'];
+  return withHostGuards(withCapabilityGate(extendedApi, capabilities));
 }

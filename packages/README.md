@@ -31,6 +31,10 @@ No build depends on the independent `D:/versebrowser` checkout; that path is onl
   diagnostic requires the optional CLI executable. Do not treat this as a complete
   snapshot/action/verification model workflow, or bypass the owners with renderer
   IPC, a second MCP session or an SDK fallback.
+- The model vocabulary now includes `takeSnapshot`, `extractPageText`, `pressKey` and `verifyFlow`,
+  so open -> observe -> act -> re-observe -> business verify -> close is reachable without the optional
+  CLI. `verifyFlow` reuses the facade's own judge (not a second one) and returns PASS only when the
+  business assertions hold AND console/network collection is complete; otherwise it returns UNKNOWN.
 - The host contract contains 80 methods, but the Electron driver implements only
   the original 67. The 13 facade-only additions (downloads/uploads, pointer/drag,
   select/append/check, find, semantic reads, forms and dialogs) return explicit

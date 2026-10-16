@@ -5453,6 +5453,15 @@ export type HostApiContract = {
     fullAccessReadStorage: (payload: AgentBrowserFullAccessReadStoragePayload) => AgentBrowserFullAccessReadStorageResult;
     fullAccessRevoke: (payload: AgentBrowserFullAccessRevokePayload) => AgentBrowserFullAccessRevokeResult;
     extractPageText: (payload: AgentBrowserExtractPageTextPayload) => AgentBrowserExtractPageTextResult;
+    verifyFlow: (payload: AgentBrowserSessionPayload & {
+      selectors?: string[];
+      expect?: Array<{ type: 'text' | 'value' | 'enabled' | 'disabled' | 'url'; selector: string; contains?: string; equals?: string; pattern?: string; label?: string }>;
+      baselineConsoleCount?: number;
+      baselineNetworkCount?: number;
+      screenshot?: boolean;
+      evidenceDirName?: string;
+      compactHealthSummary?: boolean;
+    }) => AgentBrowserFacadeResult;
     validateExtractionRule: (payload: AgentBrowserValidateExtractionRulePayload) => AgentBrowserValidateExtractionRuleResult;
     downloadFile: (payload: AgentBrowserSelectorPayload & { path: string }) => AgentBrowserFacadeResult;
     uploadFiles: (payload: AgentBrowserSelectorPayload & { paths: string[] }) => AgentBrowserFacadeResult;

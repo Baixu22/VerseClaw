@@ -1100,6 +1100,16 @@ export const hostApi = {
       invokeHost('agentBrowser', 'fullAccessRevoke', input),
     extractPageText: (input: AgentBrowserExtractPageTextPayload): Promise<AgentBrowserExtractPageTextResult> =>
       invokeHost('agentBrowser', 'extractPageText', input),
+    verifyFlow: (input: AgentBrowserSessionPayload & {
+      selectors?: string[];
+      expect?: Array<{ type: 'text' | 'value' | 'enabled' | 'disabled' | 'url'; selector: string; contains?: string; equals?: string; pattern?: string; label?: string }>;
+      baselineConsoleCount?: number;
+      baselineNetworkCount?: number;
+      screenshot?: boolean;
+      evidenceDirName?: string;
+      compactHealthSummary?: boolean;
+    }): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'verifyFlow', input),
     validateExtractionRule: (input: AgentBrowserValidateExtractionRulePayload): Promise<AgentBrowserValidateExtractionRuleResult> =>
       invokeHost('agentBrowser', 'validateExtractionRule', input),
     downloadFile: (input: AgentBrowserSelectorPayload & { path: string }): Promise<AgentBrowserFacadeResult> =>
