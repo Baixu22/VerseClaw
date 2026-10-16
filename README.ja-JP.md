@@ -198,7 +198,7 @@ Renderer の入口は `src/lib/host-api.ts` と `src/lib/host-api-client.ts` で
 | `docs/` | 製品セマンティクス、設計、開発ガイド、運用手順 |
 | `artifacts/` | 精選した証拠とローカル生成レポート。追跡対象は保管規則で決定 |
 
-VerseBrowser: インストール・開発・ビルド時に組み込みモジュールを自動コンパイルします。80 メソッドの契約は Electron の 80 機能の実装を意味しません。[呼び出し方法とドライバー制限](packages/README.md#versebrowser-integration-and-invocation)を参照してください。
+VerseBrowser: インストール・開発・ビルド時に組み込みモジュールを自動コンパイルします。81 メソッドの契約は Electron の 81 機能の実装を意味しません。[呼び出し方法とドライバー制限](packages/README.md#versebrowser-integration-and-invocation)を参照してください。
 
 <a id="development"></a>
 

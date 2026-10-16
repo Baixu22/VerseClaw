@@ -198,7 +198,7 @@ Renderer 请求入口是 `src/lib/host-api.ts` 与 `src/lib/host-api-client.ts`�
 | `docs/` | 产品语义、设计、开发手册与运行说明 |
 | `artifacts/` | 精选验证证据及本地生成报告；保留规则决定哪些入 Git |
 
-VerseBrowser：安装、开发和构建会自动编译内嵌模块。80 个契约方法不代表 Electron 已实现 80 项能力；参见[调用方式与驱动限制](packages/README.md#versebrowser-integration-and-invocation)。
+VerseBrowser：安装、开发和构建会自动编译内嵌模块。81 个契约方法不代表 Electron 已实现 81 项能力；参见[调用方式与驱动限制](packages/README.md#versebrowser-integration-and-invocation)。
 
 <a id="development"></a>
 

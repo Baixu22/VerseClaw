@@ -40,13 +40,13 @@ No build depends on the independent `D:/versebrowser` checkout; that path is onl
   the model schema defaults to the declared list minus `DRIVER_UNAVAILABLE_ACTIONS`, and every direct
   or forged call is rejected by Main with an `UNSUPPORTED` envelope before any browser effect. They are
   not delivered capabilities; enabling one requires real driver support, not a second engine.
-- The host contract contains 80 methods, but the Electron driver implements only
+- The host contract contains 81 methods, but the Electron driver implements only
   the original 67. The 13 facade-only additions (downloads/uploads, pointer/drag,
   select/append/check, find, semantic reads, forms and dialogs) return explicit
   `E_NOT_IMPLEMENTED`; they are not evidence of usable Electron capabilities.
 - `agentBrowser.status` carries a capability snapshot (24 model actions, each with an
   `available` flag and a reason) derived from the live driver profile and the bundled-CLI
-  presence, not from the 80-method contract or from a wrapper function existing. Actions the
+  presence, not from the 81-method contract or from a wrapper function existing. Actions the
   driver refuses are neither advertised nor executed: Main rejects them with
   `E_CAPABILITY_UNAVAILABLE`/`AgentBrowserCapabilityError` before any browser effect, and the
   snapshot carries a deterministic `version` so a derived schema is only rebuilt when facts change.

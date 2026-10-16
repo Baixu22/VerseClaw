@@ -133,7 +133,7 @@ export function getDefaultAgentBrowserService(): ModuleAgentBrowserService {
  *
  * The profile is derived from the module driver api itself (`profileFromHostApi`), which
  * detects thin-driver refusal stubs by declaration shape and never infers capability from
- * a Proxy's function surface or from the 80-method contract. The facade wrappers in
+ * a Proxy's function surface or from the 81-method contract. The facade wrappers in
  * `createAgentBrowserApi` are deliberately not used as the source: they exist for all 13
  * additions even when the driver refuses them.
  */
@@ -142,7 +142,7 @@ export function getAgentBrowserCapabilitiesFor(
 ): ModelActionCapabilitySnapshot {
   // The facade owns the real DriverProfile: it is built to distinguish thin-driver
   // refusal stubs from genuinely served methods, so this never infers capability
-  // from a Proxy's function surface or from the 80-method contract.
+  // from a Proxy's function surface or from the 81-method contract.
   const facade = new AgentBrowserFacade({ api: driverApi });
   return modelActionCapabilities(facade.getDriverProfile() as DriverProfileLike, {
     cliAvailable: createDefaultAgentBrowserCliRunner() !== undefined,

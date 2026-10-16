@@ -11,7 +11,7 @@
  * by the package exactly to avoid the "`typeof api.method === 'function'`" trap:
  * it detects thin-driver refusal stubs by declaration shape. This module never
  * infers capability from a Proxy's function surface and never counts the
- * 80-method contract as support.
+ * 81-method contract as support.
  *
  * Discovery is pure: it opens no browser, mutates no session and is safe to call
  * on every `status` request. `version` is a deterministic hash of the
