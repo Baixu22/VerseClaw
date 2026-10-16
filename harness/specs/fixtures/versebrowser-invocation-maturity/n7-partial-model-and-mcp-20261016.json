@@ -59,7 +59,7 @@
     "detail": "The model->Gateway->Main->driver correlation leg (requestId/toolCallId/session/owner/event) still needs a runtime-side run: the renderer gateway.rpc surface is intentionally read-only for mutations, so a probe cannot drive agentBrowser.invoke from the renderer.",
     "attempt": "model-chain-attempt-receipt.json",
     "sha256": "7ceb81ec071c3b989d59cdc50ad0312c01fede8f98fa377f8e75416f311df5e2",
-    "nextStep": "instrument the runtime provider resolution / the app to openclaw provider sync so an injected endpoint is provably used; only then can the requestId/session/owner/event correlation and the source of the empty tool arguments be established.",
+    "nextStep": "fix the provider-injection gap (why an account created via providers.createAccount + agents.updateModel does not reach the runtime's provider resolution), then re-run the control spec; once the control passes, N7's live leg can assert the correlation.",
     "notBlockedOnOwner": "the local endpoint is live (127.0.0.1:3065); no owner action is needed for the next step.",
     "liveAttempt": {
       "result": "The live chain now reaches a REAL model tool call: with the real local endpoint the runtime records assistant toolCall entries for agent_browser carrying call ids (call_bb62b56ad73a43768051895c, call_0771c867f9eb4e8e93d58e01). It stops before Main because the endpoint returns malformed tool arguments (the string is missing its opening brace), which the runtime correctly rejects.",
@@ -104,6 +104,12 @@
       "consequence": "every live run so far therefore used the machine's own configured provider. The agent_browser toolCall with a real call id is still real model evidence, but it is NOT evidence about the injected endpoint, and the empty arguments cannot be attributed to that endpoint.",
       "codeChange": "the spec now forwards CLAWX_LIVE_API_PROTOCOL into the provider account (a real gap: custom endpoints need the protocol set).",
       "status": "open - needs the runtime-side provider resolution instrumented"
+    },
+    "controlExperiment": {
+      "detail": "the repository's own live-model spec (chat-cache-live-model.spec.ts) fails identically against the same endpoint: no assistant message within 180s. So provider injection is broken repo-wide in this checkout, not just in the N7 spec.",
+      "implication": "live runs here are not attributable to an injected endpoint; fixing the provider injection is a prerequisite for N7's live leg.",
+      "artifact": "n7-20261016/repo-live-spec-control.md",
+      "sha256": "ecfb1f957dcaa0afcd52644762eb9fc43a1630d8982b510713d117a14fbebecc"
     }
   },
   "verifiers": {
