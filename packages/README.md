@@ -35,6 +35,12 @@ No build depends on the independent `D:/versebrowser` checkout; that path is onl
   the original 67. The 13 facade-only additions (downloads/uploads, pointer/drag,
   select/append/check, find, semantic reads, forms and dialogs) return explicit
   `E_NOT_IMPLEMENTED`; they are not evidence of usable Electron capabilities.
+- `agentBrowser.status` carries a capability snapshot (24 model actions, each with an
+  `available` flag and a reason) derived from the live driver profile and the bundled-CLI
+  presence, not from the 80-method contract or from a wrapper function existing. Actions the
+  driver refuses are neither advertised nor executed: Main rejects them with
+  `E_CAPABILITY_UNAVAILABLE`/`AgentBrowserCapabilityError` before any browser effect, and the
+  snapshot carries a deterministic `version` so a derived schema is only rebuilt when facts change.
 - Host transport `ok: true` only means dispatch succeeded. Also inspect the nested
   `success` / `ok`, `error`, observation completeness and business verdict. Never
   retry a denied or unsupported mutation through another backend.

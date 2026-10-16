@@ -1,6 +1,15 @@
 import { EventEmitter } from 'node:events';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { registerAgentBrowserGatewayBridge } from '@electron/gateway/agent-browser-bridge';
+import { MODEL_ACTION_NAMES } from '@electron/services/agent-browser-capabilities';
+
+/** Capability provider for tests that exercise the available-action path. */
+const allActionsAvailable = () => ({
+  version: 'test-all-available',
+  driverKind: 'host-api' as const,
+  cliAvailable: true,
+  actions: MODEL_ACTION_NAMES.map((action) => ({ action, available: true })),
+});
 import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
 import { agentBrowserHandlers } from '../../openclaw_runtime/src/gateway/server-methods/agent-browser';
 import { createGatewayBroadcaster } from '../../openclaw_runtime/src/gateway/server-broadcast';
@@ -132,7 +141,7 @@ describe('agent browser gateway bridge', () => {
     const api = { navigate: vi.fn(async () => ({ success: true })) };
     setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
     try {
-      const dispose = registerAgentBrowserGatewayBridge(gatewayManager as never, service as never, api as never);
+      const dispose = registerAgentBrowserGatewayBridge(gatewayManager as never, service as never, api as never, allActionsAvailable);
       gatewayManager.emit('notification', {
         method: 'agentBrowser.invoke.request',
         params: {
@@ -241,7 +250,7 @@ describe('agent browser gateway bridge', () => {
     };
     setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
     try {
-      const dispose = registerAgentBrowserGatewayBridge(gatewayManager as never, service as never, api as never);
+      const dispose = registerAgentBrowserGatewayBridge(gatewayManager as never, service as never, api as never, allActionsAvailable);
       gatewayManager.emit('notification', {
         method: 'agentBrowser.invoke.request',
         params: { requestId: 'req-download', action: 'downloadFile', payload: { sessionId: 's1', selector: '#f', path: 'D:/tmp/f.bin' } },
@@ -271,7 +280,9 @@ describe('agent browser gateway bridge', () => {
       })),
     };
 
-    const dispose = registerAgentBrowserGatewayBridge(gatewayManager as never, service as never);
+    // The bundled CLI is absent in this checkout, so inject the available snapshot the
+    // test is simulating (a host that really ships agent-browser).
+    const dispose = registerAgentBrowserGatewayBridge(gatewayManager as never, service as never, undefined, allActionsAvailable);
     gatewayManager.emit('notification', {
       method: 'agentBrowser.invoke.request',
       params: {

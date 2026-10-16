@@ -1,8 +1,13 @@
 import type { JsonRpcNotification } from './protocol';
 import type { GatewayManager } from './manager';
 import { logger } from '../utils/logger';
-import { assertBrowserAllowedUnderSandbox, getDefaultAgentBrowserService } from '../services/agent-browser-api';
+import {
+  assertBrowserAllowedUnderSandbox,
+  getAgentBrowserCapabilities,
+  getDefaultAgentBrowserService,
+} from '../services/agent-browser-api';
 import type { AgentBrowserService } from '@verse-claw/versebrowser';
+import type { ModelActionCapabilitySnapshot } from '../services/agent-browser-capabilities';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 
 type AgentBrowserCorrelation = {
@@ -153,6 +158,36 @@ function attachResultMetadata(
   return record ? { ...record, ...metadata } : { payload: result, ...metadata };
 }
 
+/**
+ * Hand-forged calls must be rejected by Main, not merely by the model schema.
+ * The snapshot is derived from the live driver profile, so an unavailable action
+ * throws before any browser effect is possible (spec N3 / AC-2).
+ */
+function capabilityError(action: string, reason: string): ErrorWithDetails {
+  const error = new Error(
+    `Agent browser action "${action}" is not available in this session: ${reason}`,
+  ) as ErrorWithDetails;
+  error.name = 'AgentBrowserCapabilityError';
+  error.code = 'E_CAPABILITY_UNAVAILABLE';
+  return error;
+}
+
+type CapabilityProvider = () => ModelActionCapabilitySnapshot;
+
+function assertActionAvailable(action: string, capabilities: CapabilityProvider): void {
+  const entry = capabilities().actions.find((candidate) => candidate.action === action);
+  if (!entry) return; // not part of the model action vocabulary: keep existing behaviour
+  if (!entry.available) throw capabilityError(action, entry.reason ?? 'unavailable');
+}
+
+/** `status` is the side-effect-free discovery surface: it carries the capability snapshot. */
+function withCapabilities(result: unknown, request: AgentBrowserBridgeRequest, capabilities: CapabilityProvider): unknown {
+  if (request.action !== 'status') return result;
+  const record = asRecord(result);
+  if (!record) return result;
+  return { ...record, capabilities: capabilities() };
+}
+
 function filterStatusResult(result: unknown, request: AgentBrowserBridgeRequest): unknown {
   const ownerKey = ownerSessionKey(request);
   const record = asRecord(result);
@@ -168,8 +203,10 @@ async function invokeAgentBrowser(
   request: AgentBrowserBridgeRequest,
   payload: Record<string, unknown>,
   api?: CompleteHostServiceRegistry['agentBrowser'],
+  capabilities: CapabilityProvider = getAgentBrowserCapabilities,
 ): Promise<unknown> {
   await assertBrowserAllowedUnderSandbox(request.action);
+  assertActionAvailable(request.action, capabilities);
   if (api) {
     const method = api[request.action as keyof typeof api];
     if (typeof method !== 'function') throw new Error(`Unsupported agent browser action: ${request.action}`);
@@ -220,6 +257,7 @@ export function registerAgentBrowserGatewayBridge(
   gatewayManager: GatewayManager,
   service = getDefaultAgentBrowserService(),
   api?: CompleteHostServiceRegistry['agentBrowser'],
+  capabilities: CapabilityProvider = getAgentBrowserCapabilities,
 ): () => void {
   const onNotification = (notification: JsonRpcNotification) => {
     if (notification.method !== 'agentBrowser.invoke.request') {
@@ -236,9 +274,13 @@ export function registerAgentBrowserGatewayBridge(
         const payload = preparePayloadForOwner(request);
         assertRequestOwnership(service, request, payload);
         logger.debug('[agent-browser-bridge] Dispatching action=' + request.action + ' requestId=' + request.requestId);
-        const result = filterStatusResult(
-          await invokeAgentBrowser(service, request, payload, api),
+        const result = withCapabilities(
+          filterStatusResult(
+            await invokeAgentBrowser(service, request, payload, api, capabilities),
+            request,
+          ),
           request,
+          capabilities,
         );
         logger.debug('[agent-browser-bridge] Action completed requestId=' + request.requestId);
         const sessionKey = sessionKeyFromResult(result) ?? ownerSessionKey(request);

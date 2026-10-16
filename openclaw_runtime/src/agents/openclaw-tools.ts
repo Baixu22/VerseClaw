@@ -218,6 +218,12 @@ export function createOpenClawTools(
     /** Optional Electron-owned internal browser bridge for desktop agent automation. */
     agentBrowserInvoker?: AgentBrowserInvoker;
     /**
+     * Authoritative model-action capability snapshot for this run (spec N3). When
+     * present, the agent browser tool advertises only these actions; Main still
+     * rejects unavailable actions at the bridge for hand-forged calls.
+     */
+    agentBrowserCapabilities?: { version: string; availableActions: readonly string[] };
+    /**
      * Optional automation playbook selector (B2). When provided, registers a
      * `select_automation_playbook` tool the agent can call at the start of a
      * browser-automation task. B1 follow-up (issue #2) will add a
@@ -395,6 +401,12 @@ export function createOpenClawTools(
   const agentBrowserTool = createAgentBrowserTool({
     contentProvenanceContext: options?.contentProvenanceContext,
     ...(Object.keys(agentBrowserCorrelation).length > 0 ? { correlation: agentBrowserCorrelation } : {}),
+    ...(options?.agentBrowserCapabilities
+      ? {
+          availableActions: options.agentBrowserCapabilities.availableActions,
+          capabilityVersion: options.agentBrowserCapabilities.version,
+        }
+      : {}),
     invoke: agentBrowserInvoker,
   });
   options?.recordToolPrepStage?.("openclaw-tools:agent-browser-tool");

@@ -4,7 +4,7 @@
  * The browser itself is Electron Main-owned. Runtime callers inject the bridge
  * so BrowserWindow lifecycle and local profile state never move into Gateway.
  */
-import { Type } from "typebox";
+import { Type, type TSchema } from "typebox";
 import type { ContentProvenanceContext } from "../../../../shared/security/content-provenance.js";
 import { stringEnum } from "../schema/string-enum.js";
 import type { AnyAgentTool } from "./common.js";
@@ -66,10 +66,8 @@ export type AgentBrowserInvoker = (
   correlation?: AgentBrowserCorrelation,
 ) => Promise<unknown>;
 
-const AgentBrowserSchema = Type.Object({
-  action: stringEnum(AGENT_BROWSER_ACTIONS, {
-    description: "Agent browser action to run.",
-  }),
+const AGENT_BROWSER_SCHEMA_PROPS = (actionSchema: TSchema) => ({
+  action: actionSchema,
   sessionId: Type.Optional(Type.String({ description: "Existing agent browser session id." })),
   taskId: Type.Optional(Type.String({ description: "Correlation id for an owning browser task." })),
   pageId: Type.Optional(Type.String({ description: "Correlation id for the target browser page." })),
@@ -129,6 +127,81 @@ const AgentBrowserSchema = Type.Object({
   width: Type.Optional(Type.Integer({ description: "Viewport/window width." })),
   height: Type.Optional(Type.Integer({ description: "Viewport/window height." })),
 });
+
+/**
+ * Capability-driven action enum (spec N3).
+ *
+ * The advertised vocabulary comes from an authoritative snapshot (Main's driver
+ * profile + environment), never from a hard-coded promise. The schema is cached
+ * by the action list so a versioned refresh does not rebuild a TypeBox schema on
+ * every tool construction, and the canonical order is preserved.
+ */
+const agentBrowserSchemaCache = new Map<string, TSchema>();
+
+function agentBrowserSchema(actions: readonly AgentBrowserAction[]): TSchema {
+  const key = actions.join("\u0000");
+  const cached = agentBrowserSchemaCache.get(key);
+  if (cached) return cached;
+  const schema = Type.Object(
+    AGENT_BROWSER_SCHEMA_PROPS(
+      stringEnum(actions, { description: "Agent browser action to run." }),
+    ),
+  );
+  agentBrowserSchemaCache.set(key, schema);
+  return schema;
+}
+
+/**
+ * Restrict a declared vocabulary to the entries the host reports as available.
+ * Unknown names are dropped; an empty/absent input falls back to the full
+ * declared vocabulary so existing callers keep today's behaviour.
+ */
+export function normalizeAvailableActions(
+  available: readonly string[] | undefined,
+): readonly AgentBrowserAction[] {
+  if (!available || available.length === 0) return AGENT_BROWSER_ACTIONS;
+  const allowed = new Set(available);
+  const filtered = AGENT_BROWSER_ACTIONS.filter((action) => allowed.has(action));
+  return filtered.length > 0 ? filtered : AGENT_BROWSER_ACTIONS;
+}
+
+/**
+ * Process-local capability cache (spec N3).
+ *
+ * `createOpenClawTools` is synchronous, so the tool cannot await Main while it
+ * builds its schema. Instead the first execute refreshes the snapshot (a
+ * side-effect-free `status` read) and primes this cache; subsequent tool
+ * constructions advertise exactly the available actions. A stale in-flight tool
+ * can never cause a browser effect, because Main rejects unavailable actions at
+ * the bridge as well.
+ */
+let primedCapability: { version: string; availableActions: readonly AgentBrowserAction[] } | undefined;
+
+export function primeAgentBrowserCapabilities(snapshot: {
+  version: string;
+  availableActions: readonly string[];
+}): void {
+  primedCapability = {
+    version: snapshot.version,
+    availableActions: normalizeAvailableActions(snapshot.availableActions),
+  };
+}
+
+export function getPrimedAgentBrowserCapabilities(): { version: string; availableActions: readonly AgentBrowserAction[] } | undefined {
+  return primedCapability;
+}
+
+function readCapabilitySnapshot(result: unknown): { version: string; availableActions: string[] } | undefined {
+  const record = result && typeof result === "object" ? (result as Record<string, unknown>) : undefined;
+  const capabilities = record?.capabilities && typeof record.capabilities === "object"
+    ? (record.capabilities as Record<string, unknown>)
+    : undefined;
+  if (!capabilities || !Array.isArray(capabilities.actions)) return undefined;
+  const availableActions = capabilities.actions
+    .filter((entry) => entry && typeof entry === "object" && (entry as Record<string, unknown>).available === true)
+    .map((entry) => String((entry as Record<string, unknown>).action));
+  return { version: String(capabilities.version ?? ""), availableActions };
+}
 
 function requireSession(params: Record<string, unknown>, action: AgentBrowserAction): string {
   return readStringParam(params, "sessionId", {
@@ -393,16 +466,27 @@ export function createAgentBrowserTool(options?: {
   invoke?: AgentBrowserInvoker;
   contentProvenanceContext?: ContentProvenanceContext;
   correlation?: AgentBrowserCorrelation;
+  /**
+   * Authoritative available-action list from the capability snapshot. When
+   * present the tool advertises only those actions; unavailable actions are
+   * rejected here before the invoker runs (so no browser effect can happen),
+   * and Main rejects them again at the bridge.
+   */
+  availableActions?: readonly string[];
+  capabilityVersion?: string;
 }): AnyAgentTool | null {
   if (!options?.invoke) {
     return null;
   }
+  const actions = normalizeAvailableActions(options.availableActions ?? primedCapability?.availableActions);
+  const actionSet = new Set<string>(actions);
+  const parameters = agentBrowserSchema(actions);
   return {
     label: "Agent Browser",
     name: "agent_browser",
     description:
       "Drive Verse Claw's internal Agent Browser for web automation. Login state persists by profile by default through authStateName/session-name. Use simple actions for common tasks; action='getConsoleMessages' reads CDP-captured console logs for the current browser-window session. Use action='command' with agent-browser CLI argv to access advanced features such as snapshot, console, errors, network, cookies, storage, trace, record, vitals, tabs, auth, plugins, and MCP. External browser reuse via auto-connect, CDP, or existing Chrome profiles requires allowExternalBrowser=true.",
-    parameters: AgentBrowserSchema,
+    parameters,
     execute: async (_toolCallId, args) => {
       const params = asToolParamsRecord(args);
       const action = readStringParam(params, "action", {
@@ -410,6 +494,12 @@ export function createAgentBrowserTool(options?: {
       }) as AgentBrowserAction;
       if (!AGENT_BROWSER_ACTIONS.includes(action)) {
         throw new Error(`Unsupported agent_browser action: ${action}`);
+      }
+      if (!actionSet.has(action)) {
+        throw new ToolAuthorizationError(
+          `Agent browser action "${action}" is not available in this session` +
+            (options.capabilityVersion ? ` (capability version ${options.capabilityVersion})` : ""),
+        );
       }
       const payload = buildPayload(action, params);
       const correlation: AgentBrowserCorrelation = {
@@ -462,6 +552,10 @@ export function createAgentBrowserTool(options?: {
           }),
           ...(diagnostics.length > 0 ? { browserAutomationEvents: diagnostics } : {}),
         });
+      }
+      if (action === "status") {
+        const snapshot = readCapabilitySnapshot(result);
+        if (snapshot) primeAgentBrowserCapabilities(snapshot);
       }
       correlation.gatewayRequestId = readGatewayRequestId(result) ?? correlation.gatewayRequestId;
       const primaryEvent = buildAgentBrowserAutomationEvent({

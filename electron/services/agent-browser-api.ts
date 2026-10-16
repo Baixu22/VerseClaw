@@ -24,6 +24,11 @@ import {
   setWorkspaceRoot,
   type AgentBrowserHostApi,
 } from '@verse-claw/versebrowser';
+import {
+  modelActionCapabilities,
+  type DriverProfileLike,
+  type ModelActionCapabilitySnapshot,
+} from './agent-browser-capabilities';
 
 export async function assertBrowserAllowedUnderSandbox(action: string): Promise<void> {
   const actionClass = classifyAgentBrowserAction(action);
@@ -121,6 +126,77 @@ export function getDefaultAgentBrowserService(): ModuleAgentBrowserService {
   return defaultAgentBrowserService;
 }
 
+/**
+ * Real, side-effect-free model-action capability snapshot (spec N3).
+ *
+ * The profile is derived from the module driver api itself (`profileFromHostApi`), which
+ * detects thin-driver refusal stubs by declaration shape and never infers capability from
+ * a Proxy's function surface or from the 80-method contract. The facade wrappers in
+ * `createAgentBrowserApi` are deliberately not used as the source: they exist for all 13
+ * additions even when the driver refuses them.
+ */
+export function getAgentBrowserCapabilitiesFor(
+  driverApi: AgentBrowserHostApi,
+): ModelActionCapabilitySnapshot {
+  // The facade owns the real DriverProfile: it is built to distinguish thin-driver
+  // refusal stubs from genuinely served methods, so this never infers capability
+  // from a Proxy's function surface or from the 80-method contract.
+  const facade = new AgentBrowserFacade({ api: driverApi });
+  return modelActionCapabilities(facade.getDriverProfile() as DriverProfileLike, {
+    cliAvailable: createDefaultAgentBrowserCliRunner() !== undefined,
+  });
+}
+
+export function getAgentBrowserCapabilities(
+  service: ModuleAgentBrowserService = getDefaultAgentBrowserService(),
+): ModelActionCapabilitySnapshot {
+  return getAgentBrowserCapabilitiesFor(
+    createModuleAgentBrowserApi(service as never, {} as never, {} as never),
+  );
+}
+
+/**
+ * Main-side capability gate (spec N3 / AC-2).
+ *
+ * Every model-action entry point — the renderer IPC path and the Gateway bridge —
+ * goes through this adapter, so an unavailable action is rejected here before the
+ * service can produce any browser effect, even if a caller forges the call
+ * outside the model schema. `status` gains the snapshot so discovery is
+ * side-effect free and comes from the same facts as the rejection.
+ */
+function withCapabilityGate(
+  api: AgentBrowserHostApi,
+  snapshot: ModelActionCapabilitySnapshot,
+): AgentBrowserHostApi {
+  const verdict = new Map(snapshot.actions.map((entry) => [entry.action as string, entry]));
+  return new Proxy(api, {
+    get(target, prop, receiver) {
+      const value = Reflect.get(target, prop, receiver);
+      if (typeof prop !== 'string' || typeof value !== 'function') return value;
+      const entry = verdict.get(prop);
+      if (!entry) return value.bind(target);
+      const bound = value.bind(target);
+      if (!entry.available) {
+        return async () => {
+          const error = new Error(
+            `Agent browser action "${prop}" is not available: ${entry.reason ?? 'unavailable'}`,
+          ) as Error & { code?: string };
+          error.name = 'AgentBrowserCapabilityError';
+          error.code = 'E_CAPABILITY_UNAVAILABLE';
+          throw error;
+        };
+      }
+      if (prop !== 'status') return bound;
+      return async (...args: unknown[]) => {
+        const result = await bound(...args);
+        return result && typeof result === 'object'
+          ? { ...(result as Record<string, unknown>), capabilities: snapshot }
+          : result;
+      };
+    },
+  });
+}
+
 function withHostGuards(api: AgentBrowserHostApi): AgentBrowserHostApi {
   return new Proxy(api, {
     get(target, prop, receiver) {
@@ -175,5 +251,8 @@ export function createAgentBrowserApi(
     readDialogs: (payload: ModulePayload<'readDialogs'>) => withFacade((facade, input) => facade.readDialogs(input.sessionId), payload),
     respondDialog: (payload: ModulePayload<'respondDialog'>) => withFacade((facade, input) => facade.respondDialog(input.sessionId, input.dialogId, { accept: input.accept, promptText: input.promptText }), payload),
   } as unknown as AgentBrowserHostApi;
-  return withHostGuards(extendedApi) as CompleteHostServiceRegistry['agentBrowser'];
+  // The gate reads the REAL module driver api (not the facade wrappers) so the 13
+  // additions stay unavailable even though `extendedApi` defines a wrapper for each.
+  const capabilities = getAgentBrowserCapabilitiesFor(api as unknown as AgentBrowserHostApi);
+  return withHostGuards(withCapabilityGate(extendedApi, capabilities)) as CompleteHostServiceRegistry['agentBrowser'];
 }
