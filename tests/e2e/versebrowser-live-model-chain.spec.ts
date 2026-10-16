@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { join, resolve } from 'node:path';
 import type { Page } from '@playwright/test';
 import type { HostSuccess, ProviderAccount } from '../../shared/host-api/contract';
-import { expect, test } from './fixtures/electron';
+import { expect, getStableWindow, test } from './fixtures/electron';
 
 /**
  * Spec N7: a REAL model issues an agent_browser tool call and the runtime ->
@@ -65,14 +65,17 @@ async function ensureGatewayReady(page: Page): Promise<void> {
   throw new Error('gateway did not become ready');
 }
 
-test('a real model issues an agent_browser tool call through the Gateway', async ({ page }) => {
+test('a real model issues an agent_browser tool call through the Gateway', async ({ launchElectronApp }) => {
   const fixture = createServer((_req, res) => {
     res.writeHead(200, { 'content-type': 'text/html' });
     res.end('<!doctype html><title>N7 live</title><h1>N7 live fixture</h1>');
   });
   await new Promise<void>((r) => fixture.listen(0, '127.0.0.1', () => r()));
   const port = (fixture.address() as { port: number }).port;
+  const app = await launchElectronApp({ skipSetup: true });
   try {
+    const page = await getStableWindow(app);
+    await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 30_000 });
     await configureLiveProvider(page);
     await ensureGatewayReady(page);
     const input = page.getByTestId('chat-composer-input');
@@ -86,16 +89,25 @@ test('a real model issues an agent_browser tool call through the Gateway', async
     await send.click();
 
     let history: unknown = {};
-    await expect.poll(async () => {
-      history = await hostInvoke(page, 'gateway', 'rpc', { method: 'chat.history', params: { sessionKey: SESSION_KEY, limit: 50, maxChars: 500_000 }, timeoutMs: 30_000 });
-      return JSON.stringify(history).includes('agent_browser');
-    }, { intervals: [3_000, 5_000, 10_000], timeout: 240_000 }).toBe(true);
+    let sawBrowserCall = false;
+    const deadline = Date.now() + 180_000;
+    while (Date.now() < deadline) {
+      try {
+        history = await hostInvoke(page, 'gateway', 'rpc', { method: 'chat.history', params: { sessionKey: SESSION_KEY, limit: 50, maxChars: 500_000 }, timeoutMs: 30_000 });
+      } catch (error) {
+        history = { error: String(error) };
+      }
+      if (JSON.stringify(history).includes('agent_browser')) { sawBrowserCall = true; break; }
+      await new Promise((r) => setTimeout(r, 5_000));
+    }
 
     await mkdir(EVIDENCE_DIR, { recursive: true });
     await writeFile(join(EVIDENCE_DIR, 'versebrowser-live-chain.json'), JSON.stringify({
       driven_by: 'agent', actor: 'codex', generatedAt: new Date().toISOString(),
-      model: process.env.CLAWX_LIVE_MODEL_REF, baseUrlConfigured: true, sessionKey: SESSION_KEY, history,
+      model: process.env.CLAWX_LIVE_MODEL_REF, baseUrlConfigured: true, sessionKey: SESSION_KEY,
+      sawBrowserCall, history,
     }, null, 2) + '\n');
+    expect(sawBrowserCall).toBe(true);
   } finally {
     await new Promise<void>((r) => fixture.close(() => r()));
   }

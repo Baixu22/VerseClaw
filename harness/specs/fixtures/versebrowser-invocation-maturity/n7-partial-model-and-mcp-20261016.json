@@ -59,14 +59,21 @@
     "detail": "The model->Gateway->Main->driver correlation leg (requestId/toolCallId/session/owner/event) still needs a runtime-side run: the renderer gateway.rpc surface is intentionally read-only for mutations, so a probe cannot drive agentBrowser.invoke from the renderer.",
     "attempt": "model-chain-attempt-receipt.json",
     "sha256": "7ceb81ec071c3b989d59cdc50ad0312c01fede8f98fa377f8e75416f311df5e2",
-    "nextStep": "boot the app Gateway in the E2E harness (its own runtime/env prerequisites), then run tests/e2e/versebrowser-live-model-chain.spec.ts with CLAWX_LIVE_MODEL_E2E=1 and the local endpoint; the provider seeding step already succeeds.",
+    "nextStep": "diagnose why the chat turn produces no history entry (provider/model wiring, runtime model ref, or turn dispatch) with the Gateway already running; then the same spec can assert the agent_browser tool call and its correlation fields. No owner input needed.",
     "notBlockedOnOwner": "the local endpoint is live (127.0.0.1:3065); no owner action is needed for the next step.",
     "liveAttempt": {
       "spec": "tests/e2e/versebrowser-live-model-chain.spec.ts",
-      "result": "blocked before the model ran: the app Gateway did not reach running within 120s in the E2E harness",
+      "result": "progress: app boots to main-layout, provider account seeds, the Gateway reaches running, and the prompt is sent; but chat.history for the session stayed at 0 messages for 180s, so the agent turn never produced a history entry and the browser tool was never reached.",
       "log": "live-attempt.log",
-      "sha256": "facf37e690aab3dfeca5e782d762fb357476a114ae78a5dd159577dd6c1ab029",
-      "environmentFix": "the candidate's node_modules/electron had no dist/path.txt; a local (ignored) junction to the frozen Electron 40.8.4 was added so the fixture could resolve the binary"
+      "sha256": "fb12dc52644cbd6b2307f163e471563293177469e74e663f8f6e367d68172292",
+      "environmentFix": "the candidate's node_modules/electron had no dist/path.txt; a local (ignored) junction to the frozen Electron 40.8.4 was added so the fixture could resolve the binary",
+      "harnessFixes": [
+        "built openclaw_runtime/dist/entry.js (the candidate had no runtime bundle, so the Gateway could not start)",
+        "created a local (ignored) node_modules/electron dist + path.txt pointing at the frozen Electron 40.8.4",
+        "spec now uses the launchElectronApp fixture with skipSetup so the app lands on main-layout instead of the setup page"
+      ],
+      "artifact": "live-chain-attempt.json",
+      "logSha256": "2f03f910d1414e0693b2e1d9d0ed66adadf50abad133c403462cd023bfa78cea"
     }
   },
   "verifiers": {

@@ -1,0 +1,73 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "generatedAt": "2026-10-16T06:46:08.722Z",
+  "model": "custom/glm-5.3-flash",
+  "baseUrlConfigured": true,
+  "sessionKey": "agent:main:main",
+  "sawBrowserCall": false,
+  "history": {
+    "sessionKey": "agent:main:main",
+    "messages": [],
+    "defaults": {
+      "modelProvider": "custom-livee2ec",
+      "model": "glm-5.3-flash",
+      "contextTokens": 200000,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off"
+    },
+    "sessionInfo": {
+      "key": "agent:main:main",
+      "kind": "direct",
+      "updatedAt": null,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "off",
+      "totalTokensFresh": false,
+      "modelProvider": "custom",
+      "model": "glm-5.3-flash",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 200000,
+      "hasActiveRun": false
+    },
+    "thinkingLevel": "off"
+  }
+}
