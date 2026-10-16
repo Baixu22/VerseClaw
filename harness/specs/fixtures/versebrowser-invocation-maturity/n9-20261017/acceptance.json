@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-n9-acceptance",
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate_commit": "23c2de13838fec3660eed8b44ba6b5e4cca226d5",
+  "build_binding": {
+    "nsis-installer": {
+      "bytes": 678800538,
+      "sha256": "a999e010464aaa717946338717d18393a3e47ad478cd8e90d6b489713f9cad68"
+    },
+    "packaged-exe": {
+      "bytes": 214315008,
+      "sha256": "339ab98b1dc96e994a74f927ffbf73fdea3678d9b8862366f6f426e63172caa9"
+    },
+    "app-asar": {
+      "bytes": 305714053,
+      "sha256": "ae0bb8d038cc0070c90822b98e9c097474d5b2d0ef31524a6432b718ae34be3c"
+    },
+    "main-runtime-asar": {
+      "bytes": 836527225,
+      "sha256": "b5a22d6fc776af17a83ab6fa36cc8663013866f143b205ce8f48947b6b2ce81c"
+    },
+    "ae-exe": {
+      "bytes": 15144448,
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2"
+    },
+    "build-main-runtime": {
+      "bytes": 836527225,
+      "sha256": "b5a22d6fc776af17a83ab6fa36cc8663013866f143b205ce8f48947b6b2ce81c"
+    }
+  },
+  "exe_under_test": "release/win-unpacked/Verse Claw.exe",
+  "criteria": [
+    {
+      "id": "N9-1",
+      "requirement": "10 cold starts, 30 basic loops, 3 controlled interrupts/recoveries",
+      "evidence": [
+        "stability.json summary.coldStarts = 10/10 passed",
+        "stability.json summary.loops = 30/30 passed, fullLoops 30/30",
+        "stability.json summary.interrupts = 3/3 killed with a live session, 3/3 recovery rounds passed"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "N9-2",
+      "requirement": "per-round business assertion, collection and owner traceable",
+      "evidence": [
+        "each stability.json row carries runId/profile plus snapshotHasFixture (business text), ownedSessionCount and sessionsAfterClose",
+        "30/30 loop rows: snapshotHasFixture=true, ownedSessionCount=1, closed=true"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "N9-3",
+      "requirement": "test process/session residue is zero",
+      "evidence": [
+        "46/46 rows residualProcesses=0 and runDirReclaimed=true",
+        "30/30 loop rows sessionsAfterClose=0; 3/3 recovery rows likewise"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "N9-4",
+      "requirement": "time/memory recorded against an existing budget, no invented baseline",
+      "evidence": [
+        "SUMMARY.md section 3: no pre-existing VerseBrowser perf budget exists; recorded observation only, with the same-candidate N8 packaged-flow runs as the reference point",
+        "loops p50 6693ms / p95 8281ms / max 9441ms; cold p50 7392ms; process-tree RSS max 1356.2MB"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "N9-5",
+      "requirement": "enabled capabilities carry current code + package binding, credential scan and hashes",
+      "evidence": [
+        "stability.json: all 46 rounds report status.capabilities.cliAvailable=false",
+        "n8-20261016/gates-after-fix.json: requiredTests all exit 0 including Playwright 3 passed",
+        "credential scan over n8-20261016 + n9-20261017 fixtures: 0 hits",
+        "SHA256SUMS in this directory; build_binding above"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "N9-6",
+      "requirement": "README / model schema / capability matrix consistent, limits explicit",
+      "evidence": [
+        "packages/README.md updated: desktop host serves managed sessions through the browser-window engine, command is not advertised on the desktop surface, CLI belongs to the standalone/MCP facade",
+        "SUMMARY.md section 6 lists the platform and installer boundaries"
+      ],
+      "verdict": "met"
+    }
+  ],
+  "credential_scan": {
+    "scope": [
+      "harness/specs/fixtures/versebrowser-invocation-maturity/n8-20261016",
+      "harness/specs/fixtures/versebrowser-invocation-maturity/n9-20261017"
+    ],
+    "patterns": [
+      "sk-",
+      "ghp_",
+      "gho_",
+      "AKIA",
+      "PRIVATE KEY",
+      "api_key/password/secret/token assignment"
+    ],
+    "hits": 0
+  },
+  "boundaries": [
+    "Windows x64 only; no other platform claim",
+    "NSIS installer/uninstaller themselves were not executed (interactive elevation); the extracted-payload equivalent was used instead",
+    "command / external browser attachment are not part of the desktop surface (standalone/MCP surface capabilities)",
+    "no publish, no publicness change, no frozen-default change"
+  ],
+  "status": "pass"
+}
