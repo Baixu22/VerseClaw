@@ -72,15 +72,38 @@ describe('VerseBrowser host adapter ownership', () => {
     try {
       const api = createAgentBrowserApi();
       expect(getDefaultAgentBrowserService()).toBe(getDefaultAgentBrowserService());
-      expect(mocks.constructService).toHaveBeenCalledWith({ cliRunner: mocks.runner });
-      // Called once for the host service and once to probe CLI availability for the capability snapshot.
-      expect(mocks.module.createDefaultAgentBrowserCliRunner).toHaveBeenCalled();
+      // The desktop host must not hand the bundled CLI to the session engine (N8 F1):
+      // whenever a CLI runner is injected, the package picks the agent-browser-cli engine
+      // and loses takeSnapshot/clickByUid/fillByUid/pressKey.
+      expect(mocks.constructService).toHaveBeenCalledTimes(1);
+      const [serviceOptions] = mocks.constructService.mock.calls[0] as [ { cliRunner?: unknown } | undefined ];
+      expect(serviceOptions?.cliRunner).toBeUndefined();
+      expect(mocks.module.createDefaultAgentBrowserCliRunner).not.toHaveBeenCalled();
       await expect(api.open({ url: 'https://example.com' })).resolves.toMatchObject({ success: true, session: { id: 's1' } });
       expect(mocks.module.createAgentBrowserApi).toHaveBeenCalledTimes(1);
       expect(mocks.module.setPermissionDecisionRecorder).toHaveBeenCalledWith(mocks.recordPermission);
       expect(mocks.module.setActiveWorkspaceProfileProvider).toHaveBeenCalledWith(mocks.getProfile);
       expect(mocks.module.setDataDirProvider).toHaveBeenCalled();
       expect(mocks.module.setWorkspaceRoot).toHaveBeenCalledWith('D:/workspace-a');
+    } finally {
+      setSandboxHighRiskPolicyLoader(null);
+    }
+  });
+
+  it('keeps the desktop capability snapshot free of CLI-dependent actions (N8 F1)', async () => {
+    setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
+    try {
+      const api = createAgentBrowserApi();
+      const status = await api.status();
+      const snapshot = (status as {
+        capabilities?: { cliAvailable?: boolean; actions?: Array<{ action: string; available: boolean; reason?: string }> };
+      }).capabilities;
+      expect(snapshot?.cliAvailable).toBe(false);
+      const command = snapshot?.actions?.find((entry) => entry.action === 'command');
+      expect(command?.available).toBe(false);
+      expect(command?.reason).toMatch(/agent-browser CLI/);
+      // Everything the browser-window engine serves stays advertised.
+      expect(snapshot?.actions?.find((entry) => entry.action === 'takeSnapshot')?.available).toBe(true);
     } finally {
       setSandboxHighRiskPolicyLoader(null);
     }

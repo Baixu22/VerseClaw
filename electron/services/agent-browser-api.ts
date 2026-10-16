@@ -16,7 +16,6 @@ import {
   AgentBrowserFacade,
   AgentBrowserService as ModuleAgentBrowserService,
   createAgentBrowserApi as createModuleAgentBrowserApi,
-  createDefaultAgentBrowserCliRunner,
   setActiveWorkspaceProfileProvider,
   setPermissionDecisionRecorder,
   setDataDirProvider,
@@ -122,9 +121,15 @@ class HostAgentBrowserService extends ModuleAgentBrowserService {
 let defaultAgentBrowserService: HostAgentBrowserService | undefined;
 
 export function getDefaultAgentBrowserService(): ModuleAgentBrowserService {
-  defaultAgentBrowserService ??= new HostAgentBrowserService({
-    cliRunner: createDefaultAgentBrowserCliRunner(),
-  });
+  // Spec N3/N4 + L120: the desktop host serves managed sessions through the Electron
+  // browser-window engine, and the bundled agent-browser CLI stays a *compat* surface
+  // (the standalone/MCP facade builds its own service and injects the runner there).
+  // Handing a CLI runner to this service flips every managed open() onto the
+  // agent-browser-cli engine whenever the binary is bundled - the CLI engine cannot
+  // serve takeSnapshot/clickByUid/fillByUid/pressKey, so the packaged app silently
+  // lost the observation half of the model loop while status still advertised those
+  // actions (N8 F1). Keep this service CLI-free.
+  defaultAgentBrowserService ??= new HostAgentBrowserService();
   return defaultAgentBrowserService;
 }
 
@@ -144,8 +149,12 @@ export function getAgentBrowserCapabilitiesFor(
   // refusal stubs from genuinely served methods, so this never infers capability
   // from a Proxy's function surface or from the 81-method contract.
   const facade = new AgentBrowserFacade({ api: driverApi });
+  // The desktop surface has no CLI session engine (see getDefaultAgentBrowserService),
+  // so CLI-dependent actions such as `command` are reported unavailable here rather
+  // than advertised and then failing at call time. This matches the verified N3
+  // desktop capability receipt (cliAvailable:false, command unavailable).
   return modelActionCapabilities(facade.getDriverProfile() as DriverProfileLike, {
-    cliAvailable: createDefaultAgentBrowserCliRunner() !== undefined,
+    cliAvailable: false,
   });
 }
 

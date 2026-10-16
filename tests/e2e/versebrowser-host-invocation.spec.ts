@@ -43,9 +43,12 @@ test('real embedded browser preserves actions, denials and unsupported outcomes'
     expect(snapshot.ok, JSON.stringify(snapshot)).toBe(true);
     expect(JSON.stringify(snapshot)).toContain('Saved Agent proof');
 
-    // A declared facade wrapper is NOT a supported driver capability.
+    // A declared facade wrapper is NOT a supported driver capability: Main's capability gate
+    // rejects it before any browser effect (N3), carrying the driver's own refusal as detail.
     const forms = await invoke('readForms', { sessionId });
-    expect(forms).toMatchObject({ ok: true, data: { success: false, ok: false, error: { code: 'E_NOT_IMPLEMENTED' } } });
+    expect(forms.ok, JSON.stringify(forms)).toBe(false);
+    expect(forms).toMatchObject({ error: { code: 'UNSUPPORTED' } });
+    expect(JSON.stringify(forms)).toContain('readForms');
     expect((await invoke('fullAccessRevoke', { sessionId })).ok).toBe(true);
     expect((await invoke('takeSnapshot', { sessionId })).ok).toBe(false);
     expect((await invoke('close', { sessionId })).ok).toBe(true);

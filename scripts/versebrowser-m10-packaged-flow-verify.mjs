@@ -22,7 +22,7 @@ async function waitForCdp(port, deadlineMs) {
   const deadline = Date.now() + deadlineMs;
   while (Date.now() < deadline) {
     try {
-      const res = await fetch(`http://127.0.0.1:${port}/json/version`);
+      const res = await fetch(`http://127.0.0.1:${port}/json/version`, { signal: AbortSignal.timeout(4000) });
       if (res.ok) {
         const body = await res.json();
         if (body.webSocketDebuggerUrl) return body.webSocketDebuggerUrl;
@@ -46,6 +46,9 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
   });
   await new Promise((done) => fixture.listen(0, '127.0.0.1', done));
   const url = `http://127.0.0.1:${fixture.address().port}/`;
+  // A fresh checkout has no .tmp directory, so mkdtemp would fail with ENOENT before
+  // the app is ever launched (N8 F3).
+  await mkdir(join(hostRoot, '.tmp'), { recursive: true });
   const runRoot = await mkdtemp(join(hostRoot, '.tmp', 'm10-packaged-flow-'));
   const userDataDir = join(runRoot, 'ud');
   await mkdir(userDataDir, { recursive: true });
@@ -57,14 +60,23 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
     cwd: hostRoot, windowsHide: true,
     env: { ...process.env, VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir },
   });
+  let childExited = false;
+  child.on('exit', () => { childExited = true; });
   const result = { schemaVersion: 1, artifact: 'versebrowser-m10-packaged-flow', driven_by: 'agent', actor: 'codex', exe, fixtureUrl: url, runId };
   let browser;
   try {
     const wsUrl = await waitForCdp(port, 90_000);
     browser = await chromium.connectOverCDP(wsUrl);
-    const pages = browser.contexts().flatMap((c) => c.pages());
-    if (pages.length === 0) throw new Error('packaged renderer produced no page');
-    const page = pages[0];
+    // The CDP endpoint can be live before the renderer registers its page, so wait for
+    // one instead of failing the run on a race (N8 F3).
+    let page = null;
+    const pageDeadline = Date.now() + 30_000;
+    while (Date.now() < pageDeadline && page === null) {
+      const pages = browser.contexts().flatMap((c) => c.pages());
+      if (pages.length > 0) page = pages[0];
+      else await sleep(500);
+    }
+    if (page === null) throw new Error('packaged renderer produced no page within 30s');
     result.pageTitle = await page.title();
     result.hostBridgePresent = await page.evaluate(() => Boolean(window.verseClaw?.hostInvoke));
     if (!result.hostBridgePresent) throw new Error('hostInvoke bridge missing in packaged renderer');
@@ -94,8 +106,17 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
   } finally {
     if (browser) await browser.close().catch(() => undefined);
     try { child.kill(); } catch { /* best effort */ }
-    await new Promise((done) => fixture.close(() => done()));
-    await rm(runRoot, { recursive: true, force: true }).catch(() => undefined);
+    // Never let a lingering client connection hang the verifier (N8 F3).
+    await new Promise((done) => { const timer = setTimeout(done, 5000); fixture.close(() => { clearTimeout(timer); done(); }); });
+    // The app's own child processes can still be shutting down and hold files under the
+    // run directory, which made a single rm() fail silently and leave the run root behind
+    // (N8 F3). Wait for the renderer process to exit, then retry the cleanup.
+    if (!childExited) {
+      await new Promise((done) => { const timer = setTimeout(done, 10_000); child.once('exit', () => { clearTimeout(timer); done(); }); });
+    }
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      try { await rm(runRoot, { recursive: true, force: true }); break; } catch { await sleep(1000); }
+    }
   }
 
   const f = result.flow ?? {};

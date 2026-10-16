@@ -64,9 +64,17 @@ async function verifyPatchesApply(hostRoot, sourceRoot) {
 async function verifyWiring(hostRoot) {
   const api = await readFile(path.join(hostRoot, 'electron/services/agent-browser-api.ts'), 'utf8');
   const bridge = await readFile(path.join(hostRoot, 'electron/gateway/agent-browser-bridge.ts'), 'utf8');
+  // The bundled CLI belongs to the standalone/MCP surface, which builds its own service.
+  const packageApi = await readFile(path.join(hostRoot, PACKAGE_ROOT, 'src', 'engine', 'api.ts'), 'utf8');
   const required = {
     module_entry: api.includes('createModuleAgentBrowserApi'),
-    bundled_cli_runner: api.includes('cliRunner: createDefaultAgentBrowserCliRunner()'),
+    // N8 F1: the desktop host must keep the bundled CLI out of the session engine. With a
+    // CLI runner injected the package picks agent-browser-cli for every managed open(), and
+    // takeSnapshot/clickByUid/fillByUid/pressKey stop working in the packaged app while the
+    // capability snapshot still advertises them.
+    desktop_service_cli_free: !api.includes('cliRunner:') && api.includes('new HostAgentBrowserService()'),
+    desktop_capabilities_cli_less: api.includes('cliAvailable: false'),
+    standalone_cli_runner: packageApi.includes('cliRunner: createDefaultAgentBrowserCliRunner()'),
     permission_recorder: api.includes('setPermissionDecisionRecorder(recordPermissionDecisionEvent'),
     workspace_provider: api.includes('setActiveWorkspaceProfileProvider(getActiveWorkspaceProfile'),
     sensitive_capture_host_owned: api.includes("assertSensitiveCaptureAllowed('desktopAutomation'"),
