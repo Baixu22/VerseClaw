@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-n8-clean-consumption-package",
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-10-16",
+  "candidate": {
+    "branch": "codex/vb-invocation-n1-20261016",
+    "head": "5fb0005a69942b4c5577f37c49c91a6134693ca3",
+    "worktree": "D:\\ClawX-candidates\\vb-invocation-n1-20261016",
+    "residual_build_outputs_removed_before_build": [
+      "dist",
+      "dist-electron"
+    ],
+    "residual_backup": "D:\\tmp\\n8-residual-20261016-215110"
+  },
+  "toolchain": {
+    "node": "24.16.0",
+    "node_path": "D:\\ClawX-candidates\\node-24.16.0\\node-v24.16.0-win-x64",
+    "pnpm": "11.2.2",
+    "electron": "40.8.4",
+    "electron_builder": "26.8.1",
+    "rust_for_verseshell_required": "1.94.0 + x86_64-pc-windows-msvc linker",
+    "msvc_toolset_present": false
+  },
+  "commands": [
+    {
+      "cmd": "pnpm run prep:win-binaries",
+      "segment_exit": 0,
+      "note": "first combined run failed in agent-browser download; uv/agent-browser/node/ae.exe completed by re-running the segments separately"
+    },
+    {
+      "cmd": "pnpm run package",
+      "exit": 0,
+      "duration_minutes": 17.5
+    },
+    {
+      "cmd": "node scripts/patch-nsis-win.mjs",
+      "exit": 0
+    },
+    {
+      "cmd": "node scripts/run-electron-builder.mjs --win --publish never",
+      "exit": 0,
+      "note": "canonical invocation, no electronDist/signAndEditExecutable overrides"
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "nsis-installer",
+      "bytes": 678434139,
+      "sha256": "8495e70a6262975521b86b4086ef6148a7f40969a27dbc07541d5bf0fefcd926",
+      "path": "release\\Verse Claw-0.4.9-alpha.0-win-x64.exe"
+    },
+    {
+      "name": "packaged-exe",
+      "bytes": 214315008,
+      "sha256": "c68d07a0c840902f8b6c4ddc7a53fbb3c3f4abd4c3358af54609711bfea1360f",
+      "path": "release\\win-unpacked\\Verse Claw.exe"
+    },
+    {
+      "name": "app-asar",
+      "bytes": 304070487,
+      "sha256": "0fd04feb2e5f7c838407118e18f6e6d0d2c877f3dc38e8ed8e356b99946f7547",
+      "path": "release\\win-unpacked\\resources\\app.asar"
+    },
+    {
+      "name": "main-runtime-asar",
+      "bytes": 836527225,
+      "sha256": "b5a22d6fc776af17a83ab6fa36cc8663013866f143b205ce8f48947b6b2ce81c",
+      "path": "release\\win-unpacked\\resources\\main-runtime.asar"
+    },
+    {
+      "name": "ae-exe",
+      "bytes": 15144448,
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+      "path": "release\\win-unpacked\\resources\\bin\\ae.exe"
+    },
+    {
+      "name": "build-main-runtime",
+      "bytes": 836527225,
+      "sha256": "b5a22d6fc776af17a83ab6fa36cc8663013866f143b205ce8f48947b6b2ce81c",
+      "path": "build\\main-runtime-delivery\\main-runtime.asar"
+    }
+  ],
+  "environmentRemediations": [
+    "NODE_USE_ENV_PROXY=1 required: Node fetch ignores HTTPS_PROXY by default; the repo's PowerShell fallback (Invoke-WebRequest -OutFile without -PassThru) cannot report the final URL and raises ERR_RELEASE_TLS_REQUIRED.",
+    "pnpm-hardlinked native tools (app-builder.exe, 7za.exe, and 38 other .exe under node_modules) were denied all file writes on this host; the identical non-hardlinked copy writes fine. De-hardlinked in place (465.5 MB) before the canonical build.",
+    "VerseShell ae.exe was reused from the previously built verified bundle and validated with pnpm run verseshell:manifest:validate:package (exit 0); it was NOT rebuilt this session because no MSVC toolset is installed."
+  ],
+  "verification": {
+    "package_verify": {
+      "cmd": "node scripts/versebrowser-m10-package-verify.mjs --release",
+      "exit": 0,
+      "status": "pass",
+      "report": "package-verify.json"
+    },
+    "packaged_flow": {
+      "cmd": "node scripts/versebrowser-m10-packaged-flow-verify.mjs",
+      "exit": 1,
+      "status": "fail",
+      "report": "packaged-flow-verify.json",
+      "failed_checks": [
+        "sandbox_fails_closed_without_upgrade",
+        "snapshot_returns_fixture_content"
+      ]
+    },
+    "raw_hostinvoke": {
+      "report": "packaged-raw-hostinvoke.json",
+      "take_snapshot_error": "INTERNAL: Agent browser takeSnapshot requires the browser-window engine"
+    },
+    "installed_layout_raw_hostinvoke": {
+      "report": "packaged-raw-hostinvoke-installed.json",
+      "extracted_to": "D:\\tmp\\n8-install-A",
+      "extraction": {
+        "command": "7za x 'release/Verse Claw-0.4.9-alpha.0-win-x64.exe' -oD:\\tmp\\n8-install-A -y",
+        "exit": 0,
+        "folders": 11271,
+        "files": 87905,
+        "bytes": 3177659596
+      },
+      "cwd": "D:\\tmp\\n8-install-A",
+      "result": "open ok; takeSnapshot (before and after mode upgrade) failed with INTERNAL 'requires the browser-window engine'; capability snapshot advertised takeSnapshot/pressKey/verifyFlow available=true; close ok"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "blocking",
+      "title": "capability advertisement contradicts execution for CLI-engine sessions",
+      "ref": "packages/versebrowser/src/engine/service.ts:720 + :1022/:1037/:1064/:1086"
+    },
+    {
+      "id": "F2",
+      "severity": "open",
+      "title": "agent-browser.exe driver process survives packaged app teardown",
+      "ref": "scripts/versebrowser-m10-packaged-flow-verify.mjs cleanup path"
+    },
+    {
+      "id": "F3",
+      "severity": "tooling",
+      "title": "packaged-flow verifier requires <repo>/.tmp and lacks fetch/close timeouts",
+      "ref": "scripts/versebrowser-m10-packaged-flow-verify.mjs:49"
+    }
+  ],
+  "nsis_install_equivalence": {
+    "method": "7za extract installer payload to an out-of-checkout directory, then run the packaged-app hostInvoke flow from that layout with cwd set to it",
+    "executed_this_session": true,
+    "extraction": {
+      "command": "7za x 'release/Verse Claw-0.4.9-alpha.0-win-x64.exe' -oD:\\tmp\\n8-install-A -y",
+      "exit": 0,
+      "folders": 11271,
+      "files": 87905,
+      "bytes": 3177659596
+    },
+    "clean_consumption": "app launched, renderer page present, hostInvoke open/close succeeded with cwd outside the checkout - no dev checkout, node_modules or .local dependency observed",
+    "boundary": "the NSIS installer and uninstaller themselves were not executed (assisted installer requires interactive elevation); NSIS PATH add/remove and uninstaller reclamation remain unverified"
+  },
+  "status": "fail",
+  "created_at_utc": "2026-10-16T15:55:37Z"
+}

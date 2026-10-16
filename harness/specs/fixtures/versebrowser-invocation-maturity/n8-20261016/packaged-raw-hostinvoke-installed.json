@@ -1,0 +1,255 @@
+{
+  "tag": "installed",
+  "exePath": "D:\\tmp\\n8-install-A\\Verse Claw.exe",
+  "cwdDir": "D:\\tmp\\n8-install-A",
+  "exeExists": true,
+  "pwRoot": "D:\\ClawX-candidates\\vb-invocation-n1-20261016",
+  "fixtureUrl": "http://127.0.0.1:62583/",
+  "pid": 35456,
+  "pageCount": 1,
+  "pageTitle": "Verse Claw",
+  "raw": {
+    "setEnabled": {
+      "id": "cdf66b62-338b-4d3b-b81b-123995d20030",
+      "ok": true,
+      "data": {
+        "success": true,
+        "enabled": true
+      }
+    },
+    "open": {
+      "id": "0a6a6cc7-148f-4534-9d10-6446cfe08420",
+      "ok": true,
+      "data": {
+        "success": true,
+        "session": {
+          "id": "a59fe6d6-4c19-4997-ae2c-044214daaa21",
+          "profile": "n8-installed-mvb5ji2o",
+          "mode": "headless",
+          "authPersistence": "session-name",
+          "authStateName": "n8-installed-mvb5ji2o",
+          "connection": {
+            "mode": "managed"
+          },
+          "createdAt": "2026-10-16T15:58:18.569Z",
+          "updatedAt": "2026-10-16T15:59:03.845Z",
+          "runtimeMode": "normal_restricted",
+          "sessionKey": "agent:main:n8-installed-mvb5ji2o",
+          "agentId": "main",
+          "url": "http://127.0.0.1:62583/",
+          "title": "M10 Fixture"
+        },
+        "textSample": "M10 PACKAGED OK\n\nbody marker 42"
+      }
+    },
+    "sessionId": "a59fe6d6-4c19-4997-ae2c-044214daaa21",
+    "snapshotBeforeUpgrade": {
+      "id": "1d5a520d-a58d-494a-920e-9406e6935992",
+      "ok": false,
+      "error": {
+        "code": "INTERNAL",
+        "message": "Agent browser takeSnapshot requires the browser-window engine"
+      }
+    },
+    "upgrade": {
+      "id": "e69bab72-1855-4255-a4e8-8bbc4778a691",
+      "ok": true,
+      "data": {
+        "success": true,
+        "runtimeMode": "full_access",
+        "session": {
+          "id": "a59fe6d6-4c19-4997-ae2c-044214daaa21",
+          "profile": "n8-installed-mvb5ji2o",
+          "mode": "headless",
+          "authPersistence": "session-name",
+          "authStateName": "n8-installed-mvb5ji2o",
+          "connection": {
+            "mode": "managed"
+          },
+          "createdAt": "2026-10-16T15:58:18.569Z",
+          "updatedAt": "2026-10-16T15:59:03.982Z",
+          "runtimeMode": "full_access",
+          "sessionKey": "agent:main:n8-installed-mvb5ji2o",
+          "agentId": "main",
+          "url": "http://127.0.0.1:62583/",
+          "title": "M10 Fixture"
+        }
+      }
+    },
+    "snapshotAfterUpgrade": {
+      "id": "749d7f5e-072d-4229-ba47-e5ac8bc462f0",
+      "ok": false,
+      "error": {
+        "code": "INTERNAL",
+        "message": "Agent browser takeSnapshot requires the browser-window engine"
+      }
+    },
+    "status": {
+      "id": "c96e4352-d459-4b62-9c84-ca228e436a2a",
+      "ok": true,
+      "data": {
+        "success": true,
+        "sessions": [
+          {
+            "id": "a59fe6d6-4c19-4997-ae2c-044214daaa21",
+            "profile": "n8-installed-mvb5ji2o",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "n8-installed-mvb5ji2o",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T15:58:18.569Z",
+            "updatedAt": "2026-10-16T15:59:03.982Z",
+            "runtimeMode": "full_access",
+            "sessionKey": "agent:main:n8-installed-mvb5ji2o",
+            "agentId": "main",
+            "url": "http://127.0.0.1:62583/",
+            "title": "M10 Fixture"
+          }
+        ],
+        "browserControlEnabled": true,
+        "capabilities": {
+          "version": "95f2fcfb1a5016b7a415b8cee85396c763aad8335a32d828df920a784a018282",
+          "driverKind": "injected",
+          "cliAvailable": true,
+          "actions": [
+            {
+              "action": "open",
+              "available": true
+            },
+            {
+              "action": "status",
+              "available": true
+            },
+            {
+              "action": "navigate",
+              "available": true
+            },
+            {
+              "action": "waitForSelector",
+              "available": true
+            },
+            {
+              "action": "click",
+              "available": true
+            },
+            {
+              "action": "type",
+              "available": true
+            },
+            {
+              "action": "evaluate",
+              "available": true
+            },
+            {
+              "action": "screenshot",
+              "available": true
+            },
+            {
+              "action": "command",
+              "available": true
+            },
+            {
+              "action": "close",
+              "available": true
+            },
+            {
+              "action": "getConsoleMessages",
+              "available": true
+            },
+            {
+              "action": "downloadFile",
+              "available": false,
+              "reason": "driver \"injected\" declares downloadFile but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "uploadFiles",
+              "available": false,
+              "reason": "driver \"injected\" declares uploadFiles but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "pointer",
+              "available": false,
+              "reason": "driver \"injected\" declares pointer but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "drag",
+              "available": false,
+              "reason": "driver \"injected\" declares drag but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "selectOption",
+              "available": false,
+              "reason": "driver \"injected\" declares selectOption but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "selectValues",
+              "available": false,
+              "reason": "driver \"injected\" declares selectValues but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "appendText",
+              "available": false,
+              "reason": "driver \"injected\" declares appendText but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "setChecked",
+              "available": false,
+              "reason": "driver \"injected\" declares setChecked but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "findElement",
+              "available": false,
+              "reason": "driver \"injected\" declares findElement but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "semanticRead",
+              "available": false,
+              "reason": "driver \"injected\" declares semanticRead but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "readForms",
+              "available": false,
+              "reason": "driver \"injected\" declares readForms but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "readDialogs",
+              "available": false,
+              "reason": "driver \"injected\" declares readDialogs but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "respondDialog",
+              "available": false,
+              "reason": "driver \"injected\" declares respondDialog but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "takeSnapshot",
+              "available": true
+            },
+            {
+              "action": "extractPageText",
+              "available": true
+            },
+            {
+              "action": "pressKey",
+              "available": true
+            },
+            {
+              "action": "verifyFlow",
+              "available": true
+            }
+          ]
+        }
+      }
+    },
+    "close": {
+      "id": "9898459a-a719-420d-a802-689c9939176e",
+      "ok": true,
+      "data": {
+        "success": true
+      }
+    }
+  },
+  "elapsedMs": 54500
+}

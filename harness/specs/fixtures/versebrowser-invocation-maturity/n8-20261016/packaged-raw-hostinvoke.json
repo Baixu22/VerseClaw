@@ -1,0 +1,255 @@
+{
+  "tag": "candidate2",
+  "root": "D:\\ClawX-candidates\\vb-invocation-n1-20261016",
+  "exe": "release/win-unpacked/Verse Claw.exe",
+  "exeExists": true,
+  "fixtureUrl": "http://127.0.0.1:55070/",
+  "pid": 40688,
+  "pageCount": 1,
+  "pageTitle": "Verse Claw",
+  "raw": {
+    "setEnabled": {
+      "id": "775611bb-a5c0-4761-bc2a-c762a76a0cf7",
+      "ok": true,
+      "data": {
+        "success": true,
+        "enabled": true
+      }
+    },
+    "open": {
+      "id": "c132ed19-0301-4d87-a565-bc8768738545",
+      "ok": true,
+      "data": {
+        "success": true,
+        "session": {
+          "id": "c8d45585-29e3-4bce-b9a5-28b39d53987e",
+          "profile": "n8-candidate2-mvb59ouy",
+          "mode": "headless",
+          "authPersistence": "session-name",
+          "authStateName": "n8-candidate2-mvb59ouy",
+          "connection": {
+            "mode": "managed"
+          },
+          "createdAt": "2026-10-16T15:50:40.803Z",
+          "updatedAt": "2026-10-16T15:51:25.932Z",
+          "runtimeMode": "normal_restricted",
+          "sessionKey": "agent:main:n8-candidate2-mvb59ouy",
+          "agentId": "main",
+          "url": "http://127.0.0.1:55070/",
+          "title": "M10 Fixture"
+        },
+        "textSample": "M10 PACKAGED OK\n\nbody marker 42"
+      }
+    },
+    "sessionId": "c8d45585-29e3-4bce-b9a5-28b39d53987e",
+    "snapshotBeforeUpgrade": {
+      "id": "27cb062b-52ad-4ee8-8c24-57aceca2f0e5",
+      "ok": false,
+      "error": {
+        "code": "INTERNAL",
+        "message": "Agent browser takeSnapshot requires the browser-window engine"
+      }
+    },
+    "upgrade": {
+      "id": "96d85de9-1738-4a88-9aa7-2fa16a7cd137",
+      "ok": true,
+      "data": {
+        "success": true,
+        "runtimeMode": "full_access",
+        "session": {
+          "id": "c8d45585-29e3-4bce-b9a5-28b39d53987e",
+          "profile": "n8-candidate2-mvb59ouy",
+          "mode": "headless",
+          "authPersistence": "session-name",
+          "authStateName": "n8-candidate2-mvb59ouy",
+          "connection": {
+            "mode": "managed"
+          },
+          "createdAt": "2026-10-16T15:50:40.803Z",
+          "updatedAt": "2026-10-16T15:51:26.062Z",
+          "runtimeMode": "full_access",
+          "sessionKey": "agent:main:n8-candidate2-mvb59ouy",
+          "agentId": "main",
+          "url": "http://127.0.0.1:55070/",
+          "title": "M10 Fixture"
+        }
+      }
+    },
+    "snapshotAfterUpgrade": {
+      "id": "642c9bcd-86ef-4487-a61a-7ae54a0bb5c8",
+      "ok": false,
+      "error": {
+        "code": "INTERNAL",
+        "message": "Agent browser takeSnapshot requires the browser-window engine"
+      }
+    },
+    "status": {
+      "id": "6394ed34-f9ef-49b4-b762-04da787db957",
+      "ok": true,
+      "data": {
+        "success": true,
+        "sessions": [
+          {
+            "id": "c8d45585-29e3-4bce-b9a5-28b39d53987e",
+            "profile": "n8-candidate2-mvb59ouy",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "n8-candidate2-mvb59ouy",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T15:50:40.803Z",
+            "updatedAt": "2026-10-16T15:51:26.062Z",
+            "runtimeMode": "full_access",
+            "sessionKey": "agent:main:n8-candidate2-mvb59ouy",
+            "agentId": "main",
+            "url": "http://127.0.0.1:55070/",
+            "title": "M10 Fixture"
+          }
+        ],
+        "browserControlEnabled": true,
+        "capabilities": {
+          "version": "95f2fcfb1a5016b7a415b8cee85396c763aad8335a32d828df920a784a018282",
+          "driverKind": "injected",
+          "cliAvailable": true,
+          "actions": [
+            {
+              "action": "open",
+              "available": true
+            },
+            {
+              "action": "status",
+              "available": true
+            },
+            {
+              "action": "navigate",
+              "available": true
+            },
+            {
+              "action": "waitForSelector",
+              "available": true
+            },
+            {
+              "action": "click",
+              "available": true
+            },
+            {
+              "action": "type",
+              "available": true
+            },
+            {
+              "action": "evaluate",
+              "available": true
+            },
+            {
+              "action": "screenshot",
+              "available": true
+            },
+            {
+              "action": "command",
+              "available": true
+            },
+            {
+              "action": "close",
+              "available": true
+            },
+            {
+              "action": "getConsoleMessages",
+              "available": true
+            },
+            {
+              "action": "downloadFile",
+              "available": false,
+              "reason": "driver \"injected\" declares downloadFile but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "uploadFiles",
+              "available": false,
+              "reason": "driver \"injected\" declares uploadFiles but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "pointer",
+              "available": false,
+              "reason": "driver \"injected\" declares pointer but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "drag",
+              "available": false,
+              "reason": "driver \"injected\" declares drag but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "selectOption",
+              "available": false,
+              "reason": "driver \"injected\" declares selectOption but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "selectValues",
+              "available": false,
+              "reason": "driver \"injected\" declares selectValues but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "appendText",
+              "available": false,
+              "reason": "driver \"injected\" declares appendText but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "setChecked",
+              "available": false,
+              "reason": "driver \"injected\" declares setChecked but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "findElement",
+              "available": false,
+              "reason": "driver \"injected\" declares findElement but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "semanticRead",
+              "available": false,
+              "reason": "driver \"injected\" declares semanticRead but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "readForms",
+              "available": false,
+              "reason": "driver \"injected\" declares readForms but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "readDialogs",
+              "available": false,
+              "reason": "driver \"injected\" declares readDialogs but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "respondDialog",
+              "available": false,
+              "reason": "driver \"injected\" declares respondDialog but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "takeSnapshot",
+              "available": true
+            },
+            {
+              "action": "extractPageText",
+              "available": true
+            },
+            {
+              "action": "pressKey",
+              "available": true
+            },
+            {
+              "action": "verifyFlow",
+              "available": true
+            }
+          ]
+        }
+      }
+    },
+    "close": {
+      "id": "61c50f45-c1c0-4277-9326-788b83e4c6e7",
+      "ok": true,
+      "data": {
+        "success": true
+      }
+    }
+  },
+  "exited": null,
+  "elapsedMs": 54224
+}
