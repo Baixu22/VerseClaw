@@ -1,4 +1,5 @@
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, readdir, stat } from 'node:fs/promises';
+import { createServer } from 'node:http';
 import { join } from 'node:path';
 import type { Page } from '@playwright/test';
 import { getStableWindow, test } from './fixtures/electron';
@@ -35,7 +36,7 @@ test('provider sync diagnostic', async ({ launchElectronApp, homeDir, userDataDi
       apiKey: 'diag-key',
     });
     out.setDefault = await hostInvoke(page, 'providers', 'setDefaultAccount', { accountId: 'diag-custom' });
-    out.updateModel = await hostInvoke(page, 'agents', 'updateModel', { id: 'main', modelRef: 'custom-diagnost/diag-model' });
+    out.updateModel = await hostInvoke(page, 'agents', 'updateModel', { id: 'main', modelRef: 'custom-diagcust/diag-model' });
     out.providersList = await hostInvoke(page, 'providers', 'list').catch((e: unknown) => ({ error: String(e) }));
     await new Promise((r) => setTimeout(r, 5_000));
     for (const rel of ['.openclaw/openclaw.json', 'AppData/Roaming/openclaw/openclaw.json']) {
@@ -47,6 +48,47 @@ test('provider sync diagnostic', async ({ launchElectronApp, homeDir, userDataDi
         out[rel] = { readError: String(error).slice(0, 200) };
       }
     }
+    // Send one chat turn against the injected endpoint and capture what the app/runtime say.
+    const fixture = createServer((_req, res) => { res.writeHead(200, { 'content-type': 'application/json' }); res.end('{}'); });
+    await new Promise<void>((r) => fixture.listen(0, '127.0.0.1', () => r()));
+    const probePort = (fixture.address() as { port: number }).port;
+    out.probeEndpoint = 'http://127.0.0.1:' + probePort + '/v1';
+    try {
+      await hostInvoke(page, 'providers', 'createAccount', {
+        account: {
+          id: 'diag-turn', vendorId: 'custom', label: 'Diag turn', authMode: 'api_key',
+          baseUrl: out.probeEndpoint as string, apiProtocol: 'openai-responses', model: 'diag-model',
+          enabled: true, isDefault: true, createdAt: now, updatedAt: now,
+        },
+        apiKey: 'diag-key',
+      });
+      await hostInvoke(page, 'providers', 'setDefaultAccount', { accountId: 'diag-turn' });
+      await hostInvoke(page, 'agents', 'updateModel', { id: 'main', modelRef: 'custom-diagturn/diag-model' });
+      out.turnModelRef = 'custom-diagturn/diag-model';
+      await hostInvoke(page, 'gateway', 'start').catch(() => undefined);
+      await new Promise((r) => setTimeout(r, 8_000));
+      const input = page.getByTestId('chat-composer-input');
+      const send = page.getByTestId('chat-composer-send');
+      await input.fill('Say hi.').catch(() => undefined);
+      await send.click().catch(() => undefined);
+      await new Promise((r) => setTimeout(r, 45_000));
+      out.afterTurn = {
+        history: await hostInvoke(page, 'gateway', 'rpc', { method: 'chat.history', params: { sessionKey: 'agent:main:main', limit: 20, maxChars: 20_000 }, timeoutMs: 20_000 }).catch((e: unknown) => ({ error: String(e) })),
+        bodyText: (await page.locator('body').innerText().catch(() => '')).slice(0, 3_000),
+      };
+    } finally {
+      await new Promise<void>((r) => fixture.close(() => r()));
+      const logsDir = join(homeDir, '.openclaw', 'logs');
+      try {
+        const names = (await readdir(logsDir)).map((n) => join(logsDir, n));
+        const sized = await Promise.all(names.map(async (n) => ({ n, t: (await stat(n)).mtimeMs })));
+        const newest = sized.sort((a, b) => b.t - a.t)[0];
+        out.runtimeLog = { path: newest ? newest.n : undefined, tail: newest ? (await readFile(newest.n, 'utf8')).slice(-4_000) : undefined };
+      } catch (error) {
+        out.runtimeLog = { error: String(error).slice(0, 200) };
+      }
+    }
+
     const udProviders = join(userDataDir, 'clawx-providers.json');
     try {
       const store = JSON.parse(await readFile(udProviders, 'utf8')) as { providerAccounts?: Record<string, unknown> };

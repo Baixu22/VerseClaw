@@ -1,6 +1,6 @@
 {
-  "homeDir": "D:\\tmp\\verse-claw-e2e-run-O8f2wd\\verse-claw-e2e-home-MYLlUV",
-  "userDataDir": "D:\\tmp\\verse-claw-e2e-run-O8f2wd\\verse-claw-e2e-user-data-PWknDj",
+  "homeDir": "D:\\tmp\\verse-claw-e2e-run-RVo1pd\\verse-claw-e2e-home-ZDm4ZV",
+  "userDataDir": "D:\\tmp\\verse-claw-e2e-run-RVo1pd\\verse-claw-e2e-user-data-tlbpi5",
   "createAccount": {
     "success": true,
     "account": {
@@ -13,8 +13,8 @@
       "model": "diag-model",
       "enabled": true,
       "isDefault": true,
-      "createdAt": "2026-10-16T08:00:39.209Z",
-      "updatedAt": "2026-10-16T08:00:39.209Z"
+      "createdAt": "2026-10-16T08:07:55.458Z",
+      "updatedAt": "2026-10-16T08:07:55.458Z"
     }
   },
   "setDefault": {
@@ -29,8 +29,8 @@
         "name": "Main Agent",
         "isDefault": true,
         "modelDisplay": "diag-model",
-        "modelRef": "custom-diagnost/diag-model",
-        "overrideModelRef": "custom-diagnost/diag-model",
+        "modelRef": "custom-diagcust/diag-model",
+        "overrideModelRef": "custom-diagcust/diag-model",
         "inheritedModel": false,
         "reasoningEffort": "auto",
         "workspace": "~/.openclaw/workspace",
@@ -59,8 +59,8 @@
       "apiProtocol": "openai-responses",
       "model": "diag-model",
       "enabled": true,
-      "createdAt": "2026-10-16T08:00:39.209Z",
-      "updatedAt": "2026-10-16T08:00:39.209Z",
+      "createdAt": "2026-10-16T08:07:55.458Z",
+      "updatedAt": "2026-10-16T08:07:55.458Z",
       "hasKey": true,
       "keyMasked": "********"
     }
@@ -71,9 +71,117 @@
     ]
   },
   "AppData/Roaming/openclaw/openclaw.json": {
-    "readError": "Error: ENOENT: no such file or directory, open 'D:\\tmp\\verse-claw-e2e-run-O8f2wd\\verse-claw-e2e-home-MYLlUV\\AppData\\Roaming\\openclaw\\openclaw.json'"
+    "readError": "Error: ENOENT: no such file or directory, open 'D:\\tmp\\verse-claw-e2e-run-RVo1pd\\verse-claw-e2e-home-ZDm4ZV\\AppData\\Roaming\\openclaw\\openclaw.json'"
+  },
+  "probeEndpoint": "http://127.0.0.1:58199/v1",
+  "turnModelRef": "custom-diagturn/diag-model",
+  "afterTurn": {
+    "history": {
+      "sessionKey": "agent:main:main",
+      "sessionId": "ff458a9b-e9ad-4256-8d61-1073f87f3290",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Say hi.",
+          "timestamp": 1792138095057,
+          "idempotencyKey": "5e627398-9b31-446f-ba8b-f2d21868b8ca:user",
+          "__openclaw": {
+            "id": "fa5e532c",
+            "recordTimestampMs": 1792138101983,
+            "seq": 1
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [],
+          "api": "openai-responses",
+          "provider": "custom-diagcust",
+          "model": "diag-model",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "totalTokens": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "error",
+          "timestamp": 1792138102005,
+          "errorMessage": "Connection error.",
+          "__openclaw": {
+            "id": "a6b6bb79",
+            "recordTimestampMs": 1792138103238,
+            "seq": 2
+          }
+        }
+      ],
+      "defaults": {
+        "modelProvider": "custom-diagcust",
+        "model": "diag-model",
+        "contextTokens": 200000,
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          }
+        ],
+        "thinkingOptions": [
+          "off"
+        ],
+        "thinkingDefault": "off"
+      },
+      "sessionInfo": {
+        "key": "agent:main:main",
+        "kind": "direct",
+        "displayName": "Verse Claw",
+        "chatType": "direct",
+        "origin": {
+          "label": "Verse Claw",
+          "provider": "webchat",
+          "surface": "webchat",
+          "chatType": "direct"
+        },
+        "updatedAt": 1792138101960,
+        "sessionId": "ff458a9b-e9ad-4256-8d61-1073f87f3290",
+        "systemSent": true,
+        "abortedLastRun": false,
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          }
+        ],
+        "thinkingOptions": [
+          "off"
+        ],
+        "thinkingDefault": "off",
+        "totalTokensFresh": false,
+        "status": "running",
+        "startedAt": 1792138101945,
+        "modelProvider": "custom-diagcust",
+        "model": "diag-model",
+        "agentRuntime": {
+          "id": "auto",
+          "source": "implicit"
+        },
+        "contextTokens": 200000,
+        "deliveryContext": {
+          "channel": "webchat"
+        },
+        "lastChannel": "webchat",
+        "hasActiveRun": false
+      },
+      "thinkingLevel": "off"
+    },
+    "bodyText": "Verse\nNew task\nInbox\nScheduled\nKnowledge\nProjects\n默认工作区\nagent:main:main\nNeeds attention\nNew workstream\nSettings\nCtrl+,\n默认工作区\n/\nNeeds attention\nagent:main:main\n\nSay hi.\n\njust now\n\nChat error\n\n⚠️ Agent failed before reply: LLM request failed: network connection error. Logs: openclaw logs --follow\n\nAttach files\nSearch knowledge\nModel\nMore\nRead only\nNo knowledge\ndiag-model"
+  },
+  "runtimeLog": {
+    "error": "Error: ENOENT: no such file or directory, scandir 'D:\\tmp\\verse-claw-e2e-run-RVo1pd\\verse-claw-e2e-home-ZDm4ZV\\.openclaw\\logs'"
   },
   "appProviderStore": [
-    "diag-custom"
+    "diag-custom",
+    "diag-turn"
   ]
 }

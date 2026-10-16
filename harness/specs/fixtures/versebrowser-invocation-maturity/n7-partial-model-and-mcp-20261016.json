@@ -117,7 +117,13 @@
       "correction": "the previous conclusion that provider injection is broken repo-wide was WRONG and is superseded. The sync path (providers.createAccount -> syncSavedProviderToRuntime -> models.providers + scheduleGatewayRefresh) is implemented and demonstrably reaches the isolated runtime config.",
       "stillOpen": "why a live chat turn then produces no assistant message and no HTTP request to the injected endpoint is unexplained; the failure is AFTER a correct provider configuration (e.g. provider entry shape/api mapping, gateway reload timing, or the runtime rejecting the request before dialing out).",
       "artifact": "n7-20261016/provider-sync-diagnostic.json",
-      "sha256": "51014cfafabe9cb4364c0e7dd9e68dbc0db731be8ce83b53eba17d0e11184e1d"
+      "sha256": "51014cfafabe9cb4364c0e7dd9e68dbc0db731be8ce83b53eba17d0e11184e1d",
+      "turnAttempt": {
+        "step1": "with an INCORRECT runtime provider key in the agent model ref the runtime answered 'Agent failed before reply: Unknown model: custom-diagnost/diag-model' - i.e. the key in the model ref must be the derived runtime key.",
+        "step2": "with the CORRECT derived key (custom-diagturn/diag-model the runtime stopped saying 'unknown model' and instead reported 'LLM request failed: network connection error' - so it DID dial the injected endpoint.",
+        "conclusion": "provider injection works end to end up to the network call. The remaining blocker for the live chain is the stub's protocol: it replies with plain JSON while the openai-responses client expects a streaming (SSE) response, which surfaces as a network connection error.",
+        "nextStep": "make the protocol stub stream SSE in the provider's expected format; then the live chain can reach Main and the correlation can be asserted."
+      }
     }
   },
   "verifiers": {
