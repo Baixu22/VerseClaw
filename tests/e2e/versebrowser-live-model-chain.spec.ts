@@ -35,6 +35,43 @@ async function hostInvoke<T>(page: Page, module: string, action: string, payload
   return typed.data as T;
 }
 
+/**
+ * A labelled PROTOCOL STUB model endpoint (spec N7 / AC-4: a script stub only
+ * counts as a protocol test and must be marked as agent-driven simulation).
+ *
+ * The resident local endpoint really does emit an agent_browser tool call, but its
+ * streaming assembly drops the first argument chunk (it returns a string missing
+ * the opening brace), so the runtime correctly rejects the malformed call before
+ * Main. This stub emits WELL-FORMED arguments so the ClawX-side chain can be
+ * exercised and asserted.
+ */
+function createStubModelServer(fixtureUrl: string) {
+  return createServer((req, res) => {
+    let body = '';
+    req.on('data', (c) => { body += c; });
+    req.on('end', () => {
+      const alreadyOpened = /"sessionId"/.test(body);
+      const args = alreadyOpened
+        ? JSON.stringify({ action: 'takeSnapshot', sessionId: (body.match(/"sessionId"\s*:\s*"([^"]+)"/) || [])[1] })
+        : JSON.stringify({ action: 'open', url: fixtureUrl });
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({
+        id: 'resp_stub_' + (alreadyOpened ? '2' : '1'),
+        object: 'response',
+        status: 'completed',
+        output: [{
+          type: 'function_call',
+          call_id: 'call_stub_' + (alreadyOpened ? 'snapshot' : 'open'),
+          name: 'agent_browser',
+          arguments: args,
+          status: 'completed',
+        }],
+        output_text: '',
+      }));
+    });
+  });
+}
+
 const UNREGISTERED_PROVIDER_TYPES = new Set(['custom', 'ollama']);
 
 /**
@@ -54,12 +91,17 @@ function runtimeProviderKey(provider: string, accountId: string): string {
   return provider + '-' + suffix;
 }
 
+let stubBaseUrl: string | undefined;
+function resolveBaseUrl(): string | undefined {
+  return stubBaseUrl ?? process.env.CLAWX_LIVE_BASE_URL?.trim();
+}
+
 async function configureLiveProvider(page: Page): Promise<void> {
   const provider = process.env.CLAWX_LIVE_PROVIDER?.trim() || 'custom';
   const modelId = process.env.CLAWX_LIVE_MODEL_ID?.trim() || 'glm-5.3-flash';
-  const baseUrl = process.env.CLAWX_LIVE_BASE_URL?.trim();
-  const apiKey = process.env.CLAWX_LIVE_API_KEY?.trim();
-  if (!baseUrl || !apiKey) throw new Error('CLAWX_LIVE_BASE_URL and CLAWX_LIVE_API_KEY are required');
+  const baseUrl = resolveBaseUrl();
+  const apiKey = process.env.CLAWX_LIVE_API_KEY?.trim() || 'stub-key';
+  if (!baseUrl) throw new Error('CLAWX_LIVE_BASE_URL (or CLAWX_LIVE_STUB_MODEL=1) is required');
   const now = new Date().toISOString();
   const account: ProviderAccount = {
     id: 'live-e2e-custom', vendorId: provider as ProviderAccount['vendorId'], label: 'Live E2E custom',
@@ -92,6 +134,13 @@ test('a real model issues an agent_browser tool call through the Gateway', async
   });
   await new Promise<void>((r) => fixture.listen(0, '127.0.0.1', () => r()));
   const port = (fixture.address() as { port: number }).port;
+  const useStub = process.env.CLAWX_LIVE_STUB_MODEL === '1';
+  let stubServer: ReturnType<typeof createStubModelServer> | undefined;
+  if (useStub) {
+    stubServer = createStubModelServer('http://127.0.0.1:' + port + '/');
+    await new Promise<void>((r) => stubServer!.listen(0, '127.0.0.1', () => r()));
+    stubBaseUrl = 'http://127.0.0.1:' + (stubServer.address() as { port: number }).port + '/v1';
+  }
   const app = await launchElectronApp({ skipSetup: true });
   try {
     const page = await getStableWindow(app);
@@ -118,18 +167,20 @@ test('a real model issues an agent_browser tool call through the Gateway', async
       } catch (error) {
         history = { error: String(error) };
       }
-      if (JSON.stringify(history).includes('agent_browser')) { sawBrowserCall = true; break; }
+      // Require an ACTUAL tool call, not merely the prompt mentioning the tool name.
+      if (/"type"\s*:\s*"toolCall"/.test(JSON.stringify(history))) { sawBrowserCall = true; break; }
       await new Promise((r) => setTimeout(r, 5_000));
     }
 
     await mkdir(EVIDENCE_DIR, { recursive: true });
     await writeFile(join(EVIDENCE_DIR, 'versebrowser-live-chain.json'), JSON.stringify({
-      driven_by: 'agent', actor: 'codex', generatedAt: new Date().toISOString(),
+      driven_by: 'agent', actor: 'codex', kind: useStub ? 'protocol-simulation' : 'real-model', generatedAt: new Date().toISOString(),
       model: process.env.CLAWX_LIVE_MODEL_REF, baseUrlConfigured: true, sessionKey: SESSION_KEY,
       sawBrowserCall, history,
     }, null, 2) + '\n');
     expect(sawBrowserCall).toBe(true);
   } finally {
     await new Promise<void>((r) => fixture.close(() => r()));
+    if (stubServer) await new Promise<void>((r) => stubServer!.close(() => r()));
   }
 });

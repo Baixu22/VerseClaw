@@ -59,10 +59,10 @@
     "detail": "The model->Gateway->Main->driver correlation leg (requestId/toolCallId/session/owner/event) still needs a runtime-side run: the renderer gateway.rpc surface is intentionally read-only for mutations, so a probe cannot drive agentBrowser.invoke from the renderer.",
     "attempt": "model-chain-attempt-receipt.json",
     "sha256": "7ceb81ec071c3b989d59cdc50ad0312c01fede8f98fa377f8e75416f311df5e2",
-    "nextStep": "find where the tool-call arguments are dropped (runtime provider adapter vs the local endpoint) so the call carries a real action/url and reaches Main; then the same spec can assert the requestId/session/owner/event correlation.",
+    "nextStep": "either (a) make the stub stream SSE in the provider's expected format so the ClawX-side chain can be asserted end to end, or (b) use a provider/model whose tool arguments are well formed; then the same spec asserts the requestId/session/owner/event correlation.",
     "notBlockedOnOwner": "the local endpoint is live (127.0.0.1:3065); no owner action is needed for the next step.",
     "liveAttempt": {
-      "result": "the live chain now runs: app -> main-layout, provider seeded, Gateway running, prompt sent, and the REAL model issued an agent_browser tool call through the runtime. It stops one step short of Main because the local provider returns empty tool arguments, so the runtime rejects the call with a schema validation error.",
+      "result": "The live chain now reaches a REAL model tool call: with the real local endpoint the runtime records assistant toolCall entries for agent_browser carrying call ids (call_bb62b56ad73a43768051895c, call_0771c867f9eb4e8e93d58e01). It stops before Main because the endpoint returns malformed tool arguments (the string is missing its opening brace), which the runtime correctly rejects.",
       "realToolCall": {
         "type": "toolCall",
         "id": "call_bb62b56ad73a43768051895c",
@@ -84,6 +84,16 @@
         "local (ignored) node_modules/electron dist + path.txt pointing at the frozen Electron 40.8.4",
         "spec uses launchElectronApp with skipSetup and the DERIVED runtime provider key (custom-livee2ec), not the bare vendor id"
       ]
+    },
+    "providerRootCause": {
+      "detail": "the resident endpoint's tool-call argument assembly drops the first chunk",
+      "observed": "the arguments string arrives without its leading brace",
+      "effect": "runtime JSON parse yields {} -> 'action: must have required properties action'"
+    },
+    "stubAttempt": {
+      "detail": "a labelled in-spec protocol stub returning a well-formed OpenAI Responses function_call was added; the runtime did NOT surface it as a tool call in chat.history, most likely because the provider path streams (SSE) and the stub replies with plain JSON.",
+      "honestyFix": "the E2E assertion originally matched the tool name anywhere in the history, which the PROMPT text satisfied; it now requires an actual toolCall entry, and the stub run correctly FAILS under it.",
+      "artifact": "n7-20261016/live-chain-stub.json"
     }
   },
   "verifiers": {
