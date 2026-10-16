@@ -59,7 +59,7 @@
     "detail": "The model->Gateway->Main->driver correlation leg (requestId/toolCallId/session/owner/event) still needs a runtime-side run: the renderer gateway.rpc surface is intentionally read-only for mutations, so a probe cannot drive agentBrowser.invoke from the renderer.",
     "attempt": "model-chain-attempt-receipt.json",
     "sha256": "7ceb81ec071c3b989d59cdc50ad0312c01fede8f98fa377f8e75416f311df5e2",
-    "nextStep": "fix the provider-injection gap (why an account created via providers.createAccount + agents.updateModel does not reach the runtime's provider resolution), then re-run the control spec; once the control passes, N7's live leg can assert the correlation.",
+    "nextStep": "capture the app/runtime error for a failing chat turn (chat error surface or runtime logs) now that the provider config is proven correct, and inspect the full provider entry shape (api/baseUrl) in the isolated openclaw.json.",
     "notBlockedOnOwner": "the local endpoint is live (127.0.0.1:3065); no owner action is needed for the next step.",
     "liveAttempt": {
       "result": "The live chain now reaches a REAL model tool call: with the real local endpoint the runtime records assistant toolCall entries for agent_browser carrying call ids (call_bb62b56ad73a43768051895c, call_0771c867f9eb4e8e93d58e01). It stops before Main because the endpoint returns malformed tool arguments (the string is missing its opening brace), which the runtime correctly rejects.",
@@ -109,7 +109,15 @@
       "detail": "the repository's own live-model spec (chat-cache-live-model.spec.ts) fails identically against the same endpoint: no assistant message within 180s. So provider injection is broken repo-wide in this checkout, not just in the N7 spec.",
       "implication": "live runs here are not attributable to an injected endpoint; fixing the provider injection is a prerequisite for N7's live leg.",
       "artifact": "n7-20261016/repo-live-spec-control.md",
-      "sha256": "ecfb1f957dcaa0afcd52644762eb9fc43a1630d8982b510713d117a14fbebecc"
+      "sha256": "ecfb1f957dcaa0afcd52644762eb9fc43a1630d8982b510713d117a14fbebecc",
+      "status": "SUPERSEDED - see providerSyncDiagnostic"
+    },
+    "providerSyncDiagnostic": {
+      "finding": "provider injection WORKS. A dedicated diagnostic (tests/e2e/versebrowser-provider-sync-diagnostic.spec.ts) created a custom account, set it default and updated the agent model, then read the isolated runtime config directly: ~/.openclaw/openclaw.json contains the runtime provider key, the app store contains the account, and agents.updateModel reported runtimeSynced: true.",
+      "correction": "the previous conclusion that provider injection is broken repo-wide was WRONG and is superseded. The sync path (providers.createAccount -> syncSavedProviderToRuntime -> models.providers + scheduleGatewayRefresh) is implemented and demonstrably reaches the isolated runtime config.",
+      "stillOpen": "why a live chat turn then produces no assistant message and no HTTP request to the injected endpoint is unexplained; the failure is AFTER a correct provider configuration (e.g. provider entry shape/api mapping, gateway reload timing, or the runtime rejecting the request before dialing out).",
+      "artifact": "n7-20261016/provider-sync-diagnostic.json",
+      "sha256": "51014cfafabe9cb4364c0e7dd9e68dbc0db731be8ce83b53eba17d0e11184e1d"
     }
   },
   "verifiers": {

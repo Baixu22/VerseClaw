@@ -1,0 +1,79 @@
+{
+  "homeDir": "D:\\tmp\\verse-claw-e2e-run-O8f2wd\\verse-claw-e2e-home-MYLlUV",
+  "userDataDir": "D:\\tmp\\verse-claw-e2e-run-O8f2wd\\verse-claw-e2e-user-data-PWknDj",
+  "createAccount": {
+    "success": true,
+    "account": {
+      "id": "diag-custom",
+      "vendorId": "custom",
+      "label": "Diag custom",
+      "authMode": "api_key",
+      "baseUrl": "http://127.0.0.1:1/v1",
+      "apiProtocol": "openai-responses",
+      "model": "diag-model",
+      "enabled": true,
+      "isDefault": true,
+      "createdAt": "2026-10-16T08:00:39.209Z",
+      "updatedAt": "2026-10-16T08:00:39.209Z"
+    }
+  },
+  "setDefault": {
+    "success": true
+  },
+  "updateModel": {
+    "success": true,
+    "runtimeSynced": true,
+    "agents": [
+      {
+        "id": "main",
+        "name": "Main Agent",
+        "isDefault": true,
+        "modelDisplay": "diag-model",
+        "modelRef": "custom-diagnost/diag-model",
+        "overrideModelRef": "custom-diagnost/diag-model",
+        "inheritedModel": false,
+        "reasoningEffort": "auto",
+        "workspace": "~/.openclaw/workspace",
+        "agentDir": "~/.openclaw/agents/main/agent",
+        "mainSessionKey": "agent:main:main",
+        "channelTypes": [],
+        "avatar": {
+          "kind": "brand",
+          "source": "default",
+          "revision": "verse-brand-v1"
+        }
+      }
+    ],
+    "defaultAgentId": "main",
+    "defaultModelRef": "custom-diagcust/diag-model",
+    "configuredChannelTypes": [],
+    "channelOwners": {},
+    "channelAccountOwners": {}
+  },
+  "providersList": [
+    {
+      "id": "diag-custom",
+      "name": "Diag custom",
+      "type": "custom",
+      "baseUrl": "http://127.0.0.1:1/v1",
+      "apiProtocol": "openai-responses",
+      "model": "diag-model",
+      "enabled": true,
+      "createdAt": "2026-10-16T08:00:39.209Z",
+      "updatedAt": "2026-10-16T08:00:39.209Z",
+      "hasKey": true,
+      "keyMasked": "********"
+    }
+  ],
+  ".openclaw/openclaw.json": {
+    "providers": [
+      "custom-diagcust"
+    ]
+  },
+  "AppData/Roaming/openclaw/openclaw.json": {
+    "readError": "Error: ENOENT: no such file or directory, open 'D:\\tmp\\verse-claw-e2e-run-O8f2wd\\verse-claw-e2e-home-MYLlUV\\AppData\\Roaming\\openclaw\\openclaw.json'"
+  },
+  "appProviderStore": [
+    "diag-custom"
+  ]
+}
