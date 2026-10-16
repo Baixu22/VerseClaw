@@ -1,0 +1,234 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-10-16",
+  "taskForestNode": "TF-0346",
+  "specNode": "N1",
+  "scope": "Isolated candidate/control creation, original-workspace byte protection, frozen toolchain/dependency/build/fixture identity, and same-condition desktop startup reproduction. Not browser business acceptance, not packaged/release acceptance.",
+  "verdict": "pass",
+  "protection": {
+    "sourceRoot": "D:\\ClawX",
+    "sourceHead": "c689f05c2791a653ae55b631aa60d077b4570d82",
+    "sourceDirty": true,
+    "statusEntriesAll": 493,
+    "statusCounts": {
+      "stagedAdded": 3,
+      "stagedDeleted": 47,
+      "worktreeModified": 39,
+      "worktreeDeleted": 4,
+      "untracked": 400
+    },
+    "stashEntries": 0,
+    "capturedPatches": {
+      "index.patch": "f5144d22b0e1c10dfd12053bab5e1f908783c9caa07d9a1fdd8f168dcead30da",
+      "worktree.patch": "a25bda280c10fc4fcc236c37a45483fb62cfa8535612d02c13fd7cc21652f026",
+      "index.raw": "f3c7b469de685eb20cf9f78e061cfaebb151565349991d64afb5b46ff763d537",
+      "index.entries": "6723fdc7360aff5d950a06b05a0c67e7a7ab2707ad653649a09ffafd36521f32",
+      "status.porcelain": "812b332917f5bb03abe1b8af6330219a5411e0035d4ec275fb054b3ad7b52a92"
+    },
+    "byteProtectionRecheck": "index.patch and worktree.patch regenerated on 2026-10-16 after all N1 work are byte-identical (sha256 match) to the captured snapshot; stash list empty; 493 status entries retained. No reset/stash/clean was performed on the original workspace.",
+    "boundAuditHashes": {
+      "source": "harness/specs/fixtures/versebrowser-reintegration/hygiene-20261016/summary.json",
+      "filesChecked": 28,
+      "changed": 0,
+      "missing": 0,
+      "result": "ALL_MATCH"
+    },
+    "candidateSourceProjection": {
+      "sourceRoot": "D:\\ClawX",
+      "candidateRoot": "D:\\ClawX-candidates\\vb-invocation-n1-20261016",
+      "baseCommit": "c689f05c2791a653ae55b631aa60d077b4570d82",
+      "ownershipSpecs": [
+        "harness/specs/tasks/versebrowser-upstream-reintegration.md",
+        "harness/specs/tasks/versebrowser-invocation-maturity.md"
+      ],
+      "selected": 438,
+      "excluded": 55,
+      "protected": 2004,
+      "credentialScan": {
+        "files": 438,
+        "hits": 0
+      }
+    }
+  },
+  "identity": {
+    "host": {
+      "os": "Windows 11 Home (zh-CN)",
+      "version": "10.0.26200",
+      "build": 26200,
+      "arch": "x64"
+    },
+    "frozenToolchain": {
+      "controllerNode": {
+        "version": "v24.16.0",
+        "uv": "1.52.1",
+        "path": "D:\\tmp\\clawx-vb-n1-20261016\\toolchain\\node.exe",
+        "sha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3"
+      },
+      "controllerNodeReason": "Windows Node 24.0-24.15 libuv gap (nodejs/node#63620); system Node v24.15.0/libuv 1.51.0 is rejected by scripts/windows-test-node.mjs before Electron tests.",
+      "electronBinary": {
+        "appVersion": "40.8.4",
+        "path": "D:\\tmp\\clawx-vb-n1-20261016\\toolchain\\electron-40.8.4\\electron.exe",
+        "sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+      },
+      "electronInternalRuntime": {
+        "node": "24.14.0",
+        "uv": "1.51.0",
+        "chrome": "144.0.7559.236",
+        "v8": "14.4.258.32-electron.0"
+      },
+      "reuse": "Existing local Node and Electron distributions copied as frozen execution inputs; no global runtime mutation and no claim of a fresh binary download."
+    },
+    "candidate": {
+      "root": "D:\\ClawX-candidates\\vb-invocation-n1-20261016",
+      "branch": "codex/vb-invocation-n1-20261016",
+      "commit": "21e2069ef38165cfdcb29aa94cee284f7bd9800d",
+      "tree": "6c2281e200264f1b430872939aa702f53e4c568e",
+      "dirty": false,
+      "lockSha256": "b75f6e06d80915c463e9d36d8bbd750324b717339461818c536c8b8adaaf9f42",
+      "runtimeLockSha256": "beea29232a6ff517c224307cff16964a233b842307171b4f6ac219ee75b7cb7f",
+      "buildFiles": 1955,
+      "entrySha256": "85c94749f98bc14bd6468ee2d0542d705492d8e9c617346800bf323c31ecbd5c",
+      "evidenceRevision": "21e2069ef38165cfdcb29aa94cee284f7bd9800d",
+      "recordCommitNote": "Identity is the frozen build/probe tree 21e2069ef; the receipts and this record describe that revision. The baseline record itself is committed as a fixture-only follow-up (no source, lock or build change), so the branch HEAD being newer does not invalidate the matrix."
+    },
+    "control": {
+      "root": "D:\\ClawX-candidates\\vb-invocation-control-20261016",
+      "commit": "c689f05c2791a653ae55b631aa60d077b4570d82",
+      "tree": "b55de5430a16e3bf2fe38eafd9ab6825c368cb93",
+      "dirty": false,
+      "lockSha256": "5dc86e9f6adc9997dc28eee4667c32dac99e13378f0b2716f401c061375e637c",
+      "runtimeLockSha256": "beea29232a6ff517c224307cff16964a233b842307171b4f6ac219ee75b7cb7f",
+      "buildFiles": 1447,
+      "entrySha256": "08c6b7f42daa48efa4cdf018b90f743f6d38a76507be79613fc87bb87d269646"
+    }
+  },
+  "dependencyReuse": {
+    "controlNodeModules": "D:\\ClawX-candidates\\vb-invocation-control-20261016\\node_modules",
+    "method": "Control reuses the candidate's frozen dependency graph; only @verse-claw workspace links are re-bound to the control checkout. Not a fresh control install.",
+    "excludedLinks": [
+      "@verse-claw"
+    ],
+    "rootLockDrift": "candidate pnpm-lock.yaml differs from control (expected: the imported reintegration changes pnpm-lock.yaml); openclaw_runtime lock identical.",
+    "commonDependencyDrift": [
+      {
+        "kind": "devDependencies",
+        "name": "vitest",
+        "specifier": "^4.0.18",
+        "note": "both 4.1.1; differs only by phantom @opentelemetry/api in the peer resolution string, not a version change"
+      }
+    ]
+  },
+  "reproduction": {
+    "controller": "D:\\tmp\\clawx-vb-n1-20261016\\frozen-baseline-probe-v2.mjs",
+    "controllerSha256": "2891468498502c74d672402d080e81a0a02acb7908beb25eb8d509f317063237",
+    "conditions": "Same frozen controller, same frozen Electron binary, same args, isolated HOME/userData, no copied credentials; normal mode without --no-sandbox, plus a separate --diagnostic-no-sandbox cell.",
+    "receivedVia": "Playwright _electron.launch; success requires file dist/index.html + DOMContentLoaded + visible setup-page + live preload hostInvoke before read-only agentBrowser.status.",
+    "rounds": {
+      "round1": "matrix (12:17-12:18)",
+      "round2": "matrix-v2 (12:20-12:21)",
+      "round3": "candidate-normal re-run (12:29) - pass"
+    },
+    "cells": {
+      "control-normal": {
+        "root": "vb-invocation-control-20261016",
+        "commit": "c689f05c2791a653ae55b631aa60d077b4570d82",
+        "exitCode": 0,
+        "stage": "host-bridge",
+        "startupOutcome": "pass",
+        "rendererReady": true,
+        "hostStatusOk": true,
+        "hostStatusData": {
+          "success": true,
+          "sessions": [],
+          "browserControlEnabled": false
+        },
+        "remainingOwnedProcesses": 0,
+        "receiptSha256": "82e59ae033033fa0391feadcbadbf2576d972e5b7e7f671dd68fd13a1664061c"
+      },
+      "candidate-normal": {
+        "root": "vb-invocation-n1-20261016",
+        "commit": "21e2069ef38165cfdcb29aa94cee284f7bd9800d",
+        "exitCode": 0,
+        "stage": "host-bridge",
+        "startupOutcome": "pass",
+        "rendererReady": true,
+        "hostStatusOk": true,
+        "hostStatusData": {
+          "success": true,
+          "sessions": [],
+          "browserControlEnabled": false
+        },
+        "remainingOwnedProcesses": 0,
+        "receiptSha256": "e75a0951ea84196808bbdbb0a0f27f924e1db400f541199bc9fc6838956cf9eb"
+      },
+      "control-diagnostic": {
+        "root": "vb-invocation-control-20261016",
+        "commit": "c689f05c2791a653ae55b631aa60d077b4570d82",
+        "exitCode": 0,
+        "stage": "host-bridge",
+        "startupOutcome": "pass",
+        "rendererReady": true,
+        "hostStatusOk": true,
+        "hostStatusData": {
+          "success": true,
+          "sessions": [],
+          "browserControlEnabled": false
+        },
+        "remainingOwnedProcesses": 0,
+        "receiptSha256": "3ce6550835ff1bb8d3534fdd9c39f22895c827b7fceea283cc189927704d9224"
+      },
+      "candidate-diagnostic": {
+        "root": "vb-invocation-n1-20261016",
+        "commit": "21e2069ef38165cfdcb29aa94cee284f7bd9800d",
+        "exitCode": 0,
+        "stage": "host-bridge",
+        "startupOutcome": "pass",
+        "rendererReady": true,
+        "hostStatusOk": true,
+        "hostStatusData": {
+          "success": true,
+          "sessions": [],
+          "browserControlEnabled": false
+        },
+        "remainingOwnedProcesses": 0,
+        "receiptSha256": "d3440d78449c7b196799a1a62378b9384cf43590ad55beb2df7e56ab8fbe4932"
+      }
+    },
+    "result": "All four cells pass in both rounds (2 rounds x 4 cells). 0x80000003 startup failure from hygiene-20261016 was NOT reproduced under the frozen isolated toolchain.",
+    "attribution": "The earlier ordinary-launch 0x80000003 (and firstWindow timeout under ELECTRON_DISABLE_SANDBOX=1) is therefore not attributable to the VerseBrowser reintegration: control (clean HEAD) and candidate (frozen reintegration) behave identically under the same frozen conditions. Residual variables for N2 are the system Node 24.15 controller, shared userData, and GPU flags - not re-tested here as browser business acceptance.",
+    "notA": "Not browser business acceptance, not packaged/release acceptance, not a claim that the product default launch is fixed."
+  },
+  "harnessAttribution": {
+    "n1ScopedValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/versebrowser-invocation-maturity.md --since d23271215",
+      "exitCode": 0,
+      "note": "validates the N1 write set added after the freeze commit; a narrower window than full-diff, not --no-diff and not an ownership widening"
+    },
+    "fullValidateInvocationSpec": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/versebrowser-invocation-maturity.md",
+      "exitCode": 1,
+      "uncoveredPaths": 75,
+      "note": "the candidate freeze intentionally spans two specs; these 75 changed paths are owned by versebrowser-upstream-reintegration, not by the invocation-maturity touchedAreas"
+    },
+    "fullValidateSiblingSpec": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/versebrowser-upstream-reintegration.md",
+      "exitCode": 1,
+      "uncoveredPaths": 12,
+      "note": "reports the invocation-maturity spec + N1 fixture paths; complementary to the line above and confirms the candidate is the union of the two scopes"
+    },
+    "fullValidateMainWorkspace": {
+      "exitCode": 1,
+      "note": "the original mixed workspace carries pre-existing/unrelated paths beyond the frozen projection; not bypassed and not widened (see planning-20261016.json limitation)"
+    },
+    "conclusion": "No validate call used --no-diff and no touchedAreas/ownership was widened. The single-spec full validations fail only because the frozen candidate is the union of two task scopes; the N1-scoped window passes.",
+    "oldReceipts": "Historical M00-M12 / hygiene receipts preserved with original hashes; not re-signed."
+  },
+  "limitations": [
+    "Startup probe always disables GPU (--disable-gpu/--disable-gpu-compositing/--disable-software-rasterizer/--in-process-gpu); default-GPU launch is not covered and remains N2 scope.",
+    "Frozen controller Node/Electron are reused local binaries, not a fresh download or release install.",
+    "No browser action, model call, MCP protocol, packaged-app or repeated-run evidence in this node."
+  ],
+  "rawEvidenceRoot": "D:\\tmp\\clawx-vb-n1-20261016"
+}
