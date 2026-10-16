@@ -59,21 +59,31 @@
     "detail": "The model->Gateway->Main->driver correlation leg (requestId/toolCallId/session/owner/event) still needs a runtime-side run: the renderer gateway.rpc surface is intentionally read-only for mutations, so a probe cannot drive agentBrowser.invoke from the renderer.",
     "attempt": "model-chain-attempt-receipt.json",
     "sha256": "7ceb81ec071c3b989d59cdc50ad0312c01fede8f98fa377f8e75416f311df5e2",
-    "nextStep": "diagnose why the chat turn produces no history entry (provider/model wiring, runtime model ref, or turn dispatch) with the Gateway already running; then the same spec can assert the agent_browser tool call and its correlation fields. No owner input needed.",
+    "nextStep": "find where the tool-call arguments are dropped (runtime provider adapter vs the local endpoint) so the call carries a real action/url and reaches Main; then the same spec can assert the requestId/session/owner/event correlation.",
     "notBlockedOnOwner": "the local endpoint is live (127.0.0.1:3065); no owner action is needed for the next step.",
     "liveAttempt": {
+      "result": "the live chain now runs: app -> main-layout, provider seeded, Gateway running, prompt sent, and the REAL model issued an agent_browser tool call through the runtime. It stops one step short of Main because the local provider returns empty tool arguments, so the runtime rejects the call with a schema validation error.",
+      "realToolCall": {
+        "type": "toolCall",
+        "id": "call_bb62b56ad73a43768051895c",
+        "name": "agent_browser",
+        "arguments": {}
+      },
+      "providerLimitation": "glm-5.3-flash returns arguments: {} for the tool call regardless of the prompt; hy3 does not call the tool at all",
       "spec": "tests/e2e/versebrowser-live-model-chain.spec.ts",
-      "result": "progress: app boots to main-layout, provider account seeds, the Gateway reaches running, and the prompt is sent; but chat.history for the session stayed at 0 messages for 180s, so the agent turn never produced a history entry and the browser tool was never reached.",
-      "log": "live-attempt.log",
-      "sha256": "fb12dc52644cbd6b2307f163e471563293177469e74e663f8f6e367d68172292",
-      "environmentFix": "the candidate's node_modules/electron had no dist/path.txt; a local (ignored) junction to the frozen Electron 40.8.4 was added so the fixture could resolve the binary",
+      "artifacts": {
+        "glm53flash": "n7-20261016/live-chain-glm53flash.json",
+        "hy3": "n7-20261016/live-chain-hy3.json"
+      },
+      "sha256": {
+        "glm53flash": "3932c78132fd8edeb722d6fe01f6772e782cea76e1e0c88ffe62b609991e5681",
+        "hy3": "6d0795bbe65e8d871e8cf18139fd86984a85faefd4cff40d39b462a612cfcee6"
+      },
       "harnessFixes": [
-        "built openclaw_runtime/dist/entry.js (the candidate had no runtime bundle, so the Gateway could not start)",
-        "created a local (ignored) node_modules/electron dist + path.txt pointing at the frozen Electron 40.8.4",
-        "spec now uses the launchElectronApp fixture with skipSetup so the app lands on main-layout instead of the setup page"
-      ],
-      "artifact": "live-chain-attempt.json",
-      "logSha256": "2f03f910d1414e0693b2e1d9d0ed66adadf50abad133c403462cd023bfa78cea"
+        "built openclaw_runtime/dist/entry.js (was missing)",
+        "local (ignored) node_modules/electron dist + path.txt pointing at the frozen Electron 40.8.4",
+        "spec uses launchElectronApp with skipSetup and the DERIVED runtime provider key (custom-livee2ec), not the bare vendor id"
+      ]
     }
   },
   "verifiers": {

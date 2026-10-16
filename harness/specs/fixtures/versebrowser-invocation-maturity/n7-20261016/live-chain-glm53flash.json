@@ -1,0 +1,136 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "generatedAt": "2026-10-16T06:56:22.428Z",
+  "model": "custom/glm-5.3-flash",
+  "baseUrlConfigured": true,
+  "sessionKey": "agent:main:main",
+  "sawBrowserCall": true,
+  "history": {
+    "sessionKey": "agent:main:main",
+    "sessionId": "33d6b1ce-8e2b-4849-8304-19bcba31ccf3",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Call the agent_browser tool with exactly this JSON argument object and nothing else: {\"action\":\"open\",\"url\":\"http://127.0.0.1:54615/\"} . Do not use an empty object. After the tool result returns, reply with the sessionId only.",
+        "timestamp": 1792133750180,
+        "idempotencyKey": "f7cad4bf-8b4e-47d0-9f78-d685919495b2:user",
+        "__openclaw": {
+          "id": "53a2b73c",
+          "recordTimestampMs": 1792133771091,
+          "seq": 1
+        }
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call_bb62b56ad73a43768051895c",
+            "name": "agent_browser",
+            "arguments": {}
+          }
+        ],
+        "api": "openai-completions",
+        "provider": "custom-livee2ec",
+        "model": "glm-5.3-flash",
+        "usage": {
+          "input": 21291,
+          "output": 31,
+          "totalTokens": 21322,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        },
+        "stopReason": "toolUse",
+        "timestamp": 1792133771126,
+        "__openclaw": {
+          "id": "bda46602",
+          "recordTimestampMs": 1792133778021,
+          "seq": 2
+        }
+      },
+      {
+        "role": "toolResult",
+        "toolCallId": "call_bb62b56ad73a43768051895c",
+        "toolName": "agent_browser",
+        "content": [
+          {
+            "type": "text",
+            "text": "Validation failed for tool \"agent_browser\":\n  - action: must have required properties action\n\nReceived arguments:\n{}"
+          }
+        ],
+        "isError": true,
+        "timestamp": 1792133779687,
+        "__openclaw": {
+          "id": "0b5f54cc",
+          "recordTimestampMs": 1792133779691,
+          "seq": 3
+        }
+      }
+    ],
+    "defaults": {
+      "modelProvider": "custom-livee2ec",
+      "model": "glm-5.3-flash",
+      "contextTokens": 200000,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off"
+    },
+    "sessionInfo": {
+      "key": "agent:main:main",
+      "kind": "direct",
+      "displayName": "Verse Claw",
+      "chatType": "direct",
+      "origin": {
+        "label": "Verse Claw",
+        "provider": "webchat",
+        "surface": "webchat",
+        "chatType": "direct"
+      },
+      "updatedAt": 1792133771074,
+      "sessionId": "33d6b1ce-8e2b-4849-8304-19bcba31ccf3",
+      "systemSent": true,
+      "abortedLastRun": false,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off",
+      "totalTokensFresh": false,
+      "status": "running",
+      "startedAt": 1792133771030,
+      "modelProvider": "custom-livee2ec",
+      "model": "glm-5.3-flash",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 200000,
+      "deliveryContext": {
+        "channel": "webchat"
+      },
+      "lastChannel": "webchat",
+      "hasActiveRun": true
+    },
+    "thinkingLevel": "off",
+    "inFlightRun": {
+      "runId": "f7cad4bf-8b4e-47d0-9f78-d685919495b2",
+      "text": ""
+    }
+  }
+}

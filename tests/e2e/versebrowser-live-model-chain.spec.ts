@@ -35,6 +35,25 @@ async function hostInvoke<T>(page: Page, module: string, action: string, payload
   return typed.data as T;
 }
 
+const UNREGISTERED_PROVIDER_TYPES = new Set(['custom', 'ollama']);
+
+/**
+ * Mirrors the runtime provider key derivation (see chat-cache-live-model.spec.ts):
+ * an unregistered provider account is addressed as provider + 8-char suffix of the
+ * account id, not by the bare vendor id. Using the bare id leaves the runtime unable
+ * to resolve the model, so the turn produces no history.
+ */
+function runtimeProviderKey(provider: string, accountId: string): string {
+  if (!UNREGISTERED_PROVIDER_TYPES.has(provider)) return provider;
+  const prefix = provider + '-';
+  if (accountId.startsWith(prefix)) {
+    const tail = accountId.slice(prefix.length);
+    if (tail.length === 8 && !tail.includes('-')) return accountId;
+  }
+  const suffix = accountId.replace(/-/g, '').slice(0, 8);
+  return provider + '-' + suffix;
+}
+
 async function configureLiveProvider(page: Page): Promise<void> {
   const provider = process.env.CLAWX_LIVE_PROVIDER?.trim() || 'custom';
   const modelId = process.env.CLAWX_LIVE_MODEL_ID?.trim() || 'glm-5.3-flash';
@@ -48,7 +67,8 @@ async function configureLiveProvider(page: Page): Promise<void> {
   };
   expect((await hostInvoke<HostSuccess>(page, 'providers', 'createAccount', { account, apiKey })).success).toBe(true);
   expect((await hostInvoke<HostSuccess>(page, 'providers', 'setDefaultAccount', { accountId: account.id })).success).toBe(true);
-  expect((await hostInvoke<HostSuccess>(page, 'agents', 'updateModel', { id: 'main', modelRef: `${provider}/${modelId}` })).success).toBe(true);
+  const runtimeModelRef = runtimeProviderKey(provider, account.id) + '/' + modelId;
+  expect((await hostInvoke<HostSuccess>(page, 'agents', 'updateModel', { id: 'main', modelRef: runtimeModelRef })).success).toBe(true);
 }
 
 async function ensureGatewayReady(page: Page): Promise<void> {
@@ -82,8 +102,9 @@ test('a real model issues an agent_browser tool call through the Gateway', async
     const send = page.getByTestId('chat-composer-send');
     await expect(input).toBeEnabled({ timeout: 90_000 });
     await input.fill(
-      'Use the agent_browser tool twice and nothing else. First: action=open with url=http://127.0.0.1:' + port + '/ . ' +
-      'Then: action=takeSnapshot with the returned sessionId. Do not explain.',
+      'Call the agent_browser tool with exactly this JSON argument object and nothing else: ' +
+      '{"action":"open","url":"http://127.0.0.1:' + port + '/"} . ' +
+      'Do not use an empty object. After the tool result returns, reply with the sessionId only.',
     );
     await expect(send).toBeEnabled();
     await send.click();
