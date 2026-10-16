@@ -502,9 +502,11 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
         if (tools) {
           params.tools = tools;
         }
-        if (options?.signal) {
-          params.signal = options.signal;
-        }
+        // AbortSignal is transport control, not a payload field. Passing it in the
+        // body makes strict OpenAI-compatible upstreams reject the request
+        // ("Unexpected keyword argument 'signal'"); pass it as the SDK request
+        // option instead so cancellation still works without leaking internals.
+        const requestOptions = options?.signal ? { signal: options.signal } : undefined;
 
         const nextParams = await options?.onPayload?.(params, model);
         if (nextParams !== undefined) {
@@ -518,6 +520,7 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
 
         const responseStream = await client.responses.create(
           sendParams as unknown as Record<string, unknown>,
+          requestOptions,
         );
 
         // Cast to get the async iterable shape
@@ -907,9 +910,11 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
         if (tools) {
           params.tools = tools;
         }
-        if (options?.signal) {
-          params.signal = options.signal;
-        }
+        // AbortSignal is transport control, not a payload field. Passing it in the
+        // body makes strict OpenAI-compatible upstreams reject the request
+        // ("Unexpected keyword argument 'signal'"); pass it as the SDK request
+        // option instead so cancellation still works without leaking internals.
+        const requestOptions = options?.signal ? { signal: options.signal } : undefined;
 
         const nextParams = await options?.onPayload?.(params, model);
         if (nextParams !== undefined) {
@@ -918,7 +923,10 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
         finalizeOpenAIProviderParams(params, model, options);
         recordFinalOpenAIProviderPayload(options, params, "openai-completions-transport");
 
-        const chatStream = await client.chat.completions.create(params as any);
+        const chatStream = await client.chat.completions.create(
+          params as any,
+          requestOptions,
+        );
 
         const blocks = output.content;
         // Track tool call deltas by index
@@ -1299,9 +1307,11 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
         if (tools) {
           params.tools = tools;
         }
-        if (options?.signal) {
-          params.signal = options.signal;
-        }
+        // AbortSignal is transport control, not a payload field. Passing it in the
+        // body makes strict OpenAI-compatible upstreams reject the request
+        // ("Unexpected keyword argument 'signal'"); pass it as the SDK request
+        // option instead so cancellation still works without leaking internals.
+        const requestOptions = options?.signal ? { signal: options.signal } : undefined;
 
         const nextParams = await options?.onPayload?.(params, model);
         if (nextParams !== undefined) {
@@ -1312,6 +1322,7 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
 
         const responseStream = await client.responses.create(
           params as unknown as Record<string, unknown>,
+          requestOptions,
         );
 
         const blocks = output.content;

@@ -157,17 +157,24 @@ test('a real model issues an agent_browser tool call through the Gateway', async
   }
   const app = await launchElectronApp({ skipSetup: true });
   try {
-    const page = await getStableWindow(app);
-    await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 30_000 });
+    let page = await getStableWindow(app);
     await configureLiveProvider(page);
     await ensureGatewayReady(page);
+    // The composer first-send gate reads the renderer provider store. configureLiveProvider
+    // goes through hostInvoke, which does not update that store, so without a reload the send
+    // button stays disabled and nothing reaches the Gateway. Reload after the provider and
+    // Gateway are configured so the store re-reads the account before the first send.
+    await page.reload();
+    page = await getStableWindow(app);
+    await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 30_000 });
+    await page.waitForTimeout(5_000);
     const input = page.getByTestId('chat-composer-input');
     const send = page.getByTestId('chat-composer-send');
     await expect(input).toBeEnabled({ timeout: 90_000 });
     await input.fill(
-      'Call the agent_browser tool with exactly this JSON argument object and nothing else: ' +
-      '{"action":"open","url":"http://127.0.0.1:' + port + '/"} . ' +
-      'Do not use an empty object. After the tool result returns, reply with the sessionId only.',
+      'Use the agent_browser tool now. Call it with action="open" and url="http://127.0.0.1:' + port + '/". ' +
+      'Do not call get_goal or any other tool. Do not use an empty argument object. ' +
+      'After the tool result returns, reply with the session id only.',
     );
     await expect(send).toBeEnabled();
     await send.click();
@@ -181,8 +188,19 @@ test('a real model issues an agent_browser tool call through the Gateway', async
       } catch (error) {
         history = { error: String(error) };
       }
-      // Require an ACTUAL tool call, not merely the prompt mentioning the tool name.
-      if (/"type"\s*:\s*"toolCall"/.test(JSON.stringify(history))) { sawBrowserCall = true; break; }
+      // Require the ACTUAL agent_browser tool call, not merely any tool call: a loose
+      // /toolCall/ match previously let a get_goal call masquerade as a browser call.
+      const calls = (history as { messages?: Array<{ role: string; content?: unknown }> }).messages ?? [];
+      const hasBrowser = calls.some((m) => m.role === 'assistant' && Array.isArray(m.content)
+        && (m.content as Array<{ type?: string; name?: string }>).some((b) => b.type === 'toolCall' && b.name === 'agent_browser'));
+      const browserCallId = calls
+        .filter((m) => m.role === 'assistant' && Array.isArray(m.content))
+        .flatMap((m) => m.content as Array<{ type?: string; name?: string; id?: string }>)
+        .find((b) => b.type === 'toolCall' && b.name === 'agent_browser')?.id;
+      const hasResult = browserCallId !== undefined && calls.some(
+        (m) => m.role === 'toolResult' && (m as { toolCallId?: string }).toolCallId === browserCallId,
+      );
+      if (hasBrowser && hasResult) { sawBrowserCall = true; break; }
       await new Promise((r) => setTimeout(r, 5_000));
     }
 

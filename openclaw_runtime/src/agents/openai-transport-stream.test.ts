@@ -67,3 +67,44 @@ describe('Chat Completions frames containing usage and choices', () => {
     }
   });
 });
+
+describe('OpenAI transport request-body boundary', () => {
+  it('never serializes AbortSignal into the request body and passes it as a request option', async () => {
+    const captured: Array<{ url: string; body: unknown; hasOptions: boolean; optionSignal: unknown }> = [];
+    const events = 'data: ' + JSON.stringify({
+      id: 'fixture', object: 'chat.completion.chunk', model: 'fixture',
+      choices: [{ index: 0, delta: { content: 'ok' }, finish_reason: 'stop' }],
+    }) + '\n\ndata: [DONE]\n\n';
+    vi.stubGlobal('fetch', vi.fn(async (input: unknown, init?: { body?: unknown; signal?: unknown }) => {
+      const raw = typeof init?.body === 'string' ? init.body : undefined;
+      captured.push({
+        url: String(input),
+        body: raw ? JSON.parse(raw) : undefined,
+        hasOptions: init?.signal !== undefined,
+        optionSignal: init?.signal,
+      });
+      return new Response(events, { headers: { 'content-type': 'text/event-stream' } });
+    }));
+    const model = attachModelProviderRequestTransport({
+      id: 'fixture', name: 'fixture', provider: 'custom', api: 'openai-completions',
+      baseUrl: 'http://127.0.0.1:40124/v1', reasoning: false, input: ['text'],
+      cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 }, contextWindow: 4096, maxTokens: 128,
+    } as Model, { allowPrivateNetwork: true });
+    const controller = new AbortController();
+    const stream = await createOpenAICompletionsTransportStreamFn()(model, {
+      messages: [{ role: 'user', content: 'synthetic probe', timestamp: 1 }],
+    }, { apiKey: 'fixture-key', maxTokens: 128, signal: controller.signal });
+    for await (const _event of stream) { /* consume */ }
+    await stream.result();
+    expect(captured.length).toBeGreaterThan(0);
+    for (const request of captured) {
+      expect(Object.keys(request.body as Record<string, unknown>)).not.toContain('signal');
+      expect(request.hasOptions).toBe(true);
+      // The transport wraps the caller signal with a timeout (AbortSignal.any),
+      // so identity is not preserved; the contract is that a live AbortSignal is
+      // still delivered as a request option and not as a body field.
+      expect(request.optionSignal).toBeInstanceOf(AbortSignal);
+      expect((request.optionSignal as AbortSignal).aborted).toBe(false);
+    }
+  });
+});

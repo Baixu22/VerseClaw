@@ -1,0 +1,144 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "kind": "real-model",
+  "generatedAt": "2026-10-16T12:24:59.953Z",
+  "model": "custom/sn-glm-5-3-flash",
+  "baseUrlConfigured": true,
+  "sessionKey": "agent:main:main",
+  "sawBrowserCall": true,
+  "history": {
+    "sessionKey": "agent:main:main",
+    "sessionId": "78f4e631-7756-4b52-a072-f51159070e44",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Use the agent_browser tool now. Call it with action=\"open\" and url=\"http://127.0.0.1:56287/\". Do not call get_goal or any other tool. Do not use an empty argument object. After the tool result returns, reply with the session id only.",
+        "timestamp": 1792153481265,
+        "idempotencyKey": "a224bf8d-dcb6-4969-9382-1baf86457760:user",
+        "__openclaw": {
+          "id": "c9e6ff1a",
+          "recordTimestampMs": 1792153488849,
+          "seq": 1
+        }
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "The user wants me to call the agent_browser tool with action=\"open\" and url=\"http://127.0.0.1:56287/\". They explicitly said not to call get_goal or any other tool, and to reply with the session id only after the tool result returns.\n\nThere's a session state mentioning \"Goals: Use the agent_browser tool now\" - this looks like an e2e test run. The instruction is clear and benign - opening a browser to a local URL. Let me just do it.\n\nI should not use an empty argument object - I'll pass action and url."
+          },
+          {
+            "type": "toolCall",
+            "id": "call_2if23jvndsae9afr4vkcpr4a",
+            "name": "agent_browser",
+            "arguments": {
+              "action": "open",
+              "url": "http://127.0.0.1:56287/"
+            }
+          }
+        ],
+        "api": "openai-completions",
+        "provider": "custom-livee2ec",
+        "model": "sn-glm-5-3-flash",
+        "usage": {
+          "input": 21427,
+          "output": 154,
+          "totalTokens": 21581,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        },
+        "stopReason": "toolUse",
+        "timestamp": 1792153488866,
+        "__openclaw": {
+          "id": "630da37f",
+          "recordTimestampMs": 1792153495045,
+          "seq": 2
+        }
+      },
+      {
+        "role": "toolResult",
+        "toolCallId": "call_2if23jvndsae9afr4vkcpr4a",
+        "toolName": "agent_browser",
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"success\": true,\n  \"session\": {\n    \"id\": \"55f1d231-018b-4c73-8fff-a0ea2e45da25\",\n    \"profile\": \"default\",\n    \"mode\": \"headless\",\n    \"authPersistence\": \"session-name\",\n    \"authStateName\": \"default\",\n    \"connection\": {\n      \"mode\": \"managed\"\n    },\n    \"createdAt\": \"2026-10-16T12:24:55.850Z\",\n    \"updatedAt\": \"2026-10-16T12:24:56.063Z\",\n    \"runtimeMode\": \"normal_restricted\",\n    \"sessionKey\": \"agent:main:main\",\n    \"agentId\": \"main\",\n    \"url\": \"http://127.0.0.1:56287/\",\n    \"title\": \"N7 live\"\n  },\n  \"textSample\": \"N7 live fixture\",\n  \"gatewayRequestId\": \"335f58d3-b382-429a-8a89-7460b0f3c81d\",\n  \"sessionKey\": \"agent:main:main\",\n  \"browserAutomationEvent\": {\n    \"schemaVersion\": 1,\n    \"tool\": \"agent_browser\",\n    \"action\": \"open\",\n    \"ok\": true,\n    \"ts\": 1792153496076,\n    \"sessionId\": \"55f1d231-018b-4c73-8fff-a0ea2e45da25\",\n    \"gatewayRequestId\": \"335f58d3-b382-429a-8a89-7460b0f3c81d\",\n    \"runId\": \"a224bf8d-dcb6-4969-9382-1baf86457760\",\n    \"sessionKey\": \"agent:main:main\",\n    \"agentSessionKey\": \"agent:main:main\",\n    \"agentSessionId\": \"78f4e631-7756-4b52-a072-f51159070e44\",\n    \"toolCallId\": \"call_2if23jvndsae9afr4vkcpr4a\",\n    \"agentId\": \"main\",\n    \"profile\": \"default\",\n    \"authStateName\": \"default\",\n    \"mode\": \"headless\",\n    \"url\": \"http://127.0.0.1:56287/\",\n    \"finalUrl\": \"http://127.0.0.1:56287/\",\n    \"title\": \"N7 live\",\n    \"textSample\": \"N7 live fixture\"\n  }\n}"
+          }
+        ],
+        "isError": false,
+        "timestamp": 1792153496565,
+        "__openclaw": {
+          "id": "574d2d7f",
+          "recordTimestampMs": 1792153496567,
+          "seq": 3
+        }
+      }
+    ],
+    "defaults": {
+      "modelProvider": "custom-livee2ec",
+      "model": "sn-glm-5-3-flash",
+      "contextTokens": 200000,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off"
+    },
+    "sessionInfo": {
+      "key": "agent:main:main",
+      "kind": "direct",
+      "displayName": "Verse Claw",
+      "chatType": "direct",
+      "origin": {
+        "label": "Verse Claw",
+        "provider": "webchat",
+        "surface": "webchat",
+        "chatType": "direct"
+      },
+      "updatedAt": 1792153488838,
+      "sessionId": "78f4e631-7756-4b52-a072-f51159070e44",
+      "systemSent": true,
+      "abortedLastRun": false,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off",
+      "totalTokensFresh": false,
+      "status": "running",
+      "startedAt": 1792153488826,
+      "modelProvider": "custom-livee2ec",
+      "model": "sn-glm-5-3-flash",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 200000,
+      "deliveryContext": {
+        "channel": "webchat"
+      },
+      "lastChannel": "webchat",
+      "hasActiveRun": true
+    },
+    "thinkingLevel": "off",
+    "inFlightRun": {
+      "runId": "a224bf8d-dcb6-4969-9382-1baf86457760",
+      "text": ""
+    }
+  }
+}

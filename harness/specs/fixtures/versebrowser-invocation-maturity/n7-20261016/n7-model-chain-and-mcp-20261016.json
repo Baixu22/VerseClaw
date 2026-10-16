@@ -1,0 +1,270 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-10-16",
+  "taskForestNode": "TF-0352",
+  "specNode": "N7",
+  "scope": "Real model -> Gateway -> Main -> driver -> toolResult chain plus MCP stdio protocol. Live leg is now demonstrated end to end against an authorized local endpoint.",
+  "verdict": "pass",
+  "liveModelChain": {
+    "model": "custom/sn-glm-5-3-flash",
+    "kind": "real-model",
+    "toolCall": {
+      "name": "agent_browser",
+      "arguments": {
+        "action": "open",
+        "url": "http://127.0.0.1:56287/"
+      },
+      "callId": "call_2if23jvndsae9afr4vkcpr4a"
+    },
+    "toolResult": {
+      "isError": false,
+      "toolCallId": "call_2if23jvndsae9afr4vkcpr4a",
+      "sessionId": "55f1d231-018b-4c73-8fff-a0ea2e45da25"
+    },
+    "sawBrowserCall": true,
+    "artifact": "live-chain-real-model.json",
+    "sha256": "1c6d929793113f2a1044f6a59eb37e42eee5b2e118bc54cad57087953c79c19b"
+  },
+  "mcpProtocol": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "scope": "MCP stdio protocol + capability filtering; not a model or packaged-app claim",
+    "node": "v24.16.0",
+    "uv": "1.52.1",
+    "exchange": [
+      {
+        "result": {
+          "protocolVersion": "2025-06-18",
+          "capabilities": {
+            "tools": {}
+          },
+          "serverInfo": {
+            "name": "versebrowser",
+            "version": "0.3.1"
+          }
+        },
+        "jsonrpc": "2.0",
+        "id": 1
+      },
+      {
+        "result": {
+          "tools": [
+            {
+              "name": "vb_ping",
+              "description": "Health check. Always available.",
+              "inputSchema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": false
+              },
+              "annotations": {
+                "readOnlyHint": true,
+                "idempotentHint": true
+              }
+            }
+          ]
+        },
+        "jsonrpc": "2.0",
+        "id": 2
+      },
+      {
+        "result": {
+          "_meta": {
+            "versebrowser/audit": "unavailable"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"ok\": true,\n  \"content\": \"ok\",\n  \"data\": {\n    \"ok\": true,\n    \"server\": \"versebrowser\"\n  }\n}"
+            }
+          ]
+        },
+        "jsonrpc": "2.0",
+        "id": 3
+      },
+      {
+        "result": {
+          "_meta": {
+            "versebrowser/audit": "unavailable"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"ok\": false,\n  \"content\": \"vb_open requires an explicit tool group grant (deny-by-default).\",\n  \"error\": {\n    \"code\": \"E_GROUP_DENY\",\n    \"message\": \"vb_open requires an explicit tool group grant (deny-by-default).\",\n    \"details\": {\n      \"group\": \"core\",\n      \"recoveryHint\": {\n        \"category\": \"denied\",\n        \"retryable\": false,\n        \"reobserve\": false,\n        \"needs_user\": false,\n        \"execution\": \"not_started\"\n      }\n    }\n  }\n}"
+            }
+          ],
+          "isError": true
+        },
+        "jsonrpc": "2.0",
+        "id": 4
+      },
+      {
+        "result": {
+          "_meta": {
+            "versebrowser/audit": "unavailable"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"ok\": false,\n  \"content\": \"Unknown tool: vb_not_a_tool\",\n  \"error\": {\n    \"code\": \"E_TOOL_DENY\",\n    \"message\": \"Unknown tool: vb_not_a_tool\",\n    \"details\": {\n      \"recoveryHint\": {\n        \"category\": \"denied\",\n        \"retryable\": false,\n        \"reobserve\": false,\n        \"needs_user\": false,\n        \"execution\": \"not_started\"\n      }\n    }\n  }\n}"
+            }
+          ],
+          "isError": true
+        },
+        "jsonrpc": "2.0",
+        "id": 5
+      }
+    ],
+    "initialize": {
+      "result": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {
+          "tools": {}
+        },
+        "serverInfo": {
+          "name": "versebrowser",
+          "version": "0.3.1"
+        }
+      },
+      "jsonrpc": "2.0",
+      "id": 1
+    },
+    "toolsList": {
+      "result": {
+        "tools": [
+          {
+            "name": "vb_ping",
+            "description": "Health check. Always available.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true,
+              "idempotentHint": true
+            }
+          }
+        ]
+      },
+      "jsonrpc": "2.0",
+      "id": 2
+    },
+    "advertised": [
+      "vb_ping"
+    ],
+    "pingCall": {
+      "result": {
+        "_meta": {
+          "versebrowser/audit": "unavailable"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"ok\": true,\n  \"content\": \"ok\",\n  \"data\": {\n    \"ok\": true,\n    \"server\": \"versebrowser\"\n  }\n}"
+          }
+        ]
+      },
+      "jsonrpc": "2.0",
+      "id": 3
+    },
+    "blockedCall": {
+      "result": {
+        "_meta": {
+          "versebrowser/audit": "unavailable"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"ok\": false,\n  \"content\": \"vb_open requires an explicit tool group grant (deny-by-default).\",\n  \"error\": {\n    \"code\": \"E_GROUP_DENY\",\n    \"message\": \"vb_open requires an explicit tool group grant (deny-by-default).\",\n    \"details\": {\n      \"group\": \"core\",\n      \"recoveryHint\": {\n        \"category\": \"denied\",\n        \"retryable\": false,\n        \"reobserve\": false,\n        \"needs_user\": false,\n        \"execution\": \"not_started\"\n      }\n    }\n  }\n}"
+          }
+        ],
+        "isError": true
+      },
+      "jsonrpc": "2.0",
+      "id": 4
+    },
+    "unknownCall": {
+      "result": {
+        "_meta": {
+          "versebrowser/audit": "unavailable"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"ok\": false,\n  \"content\": \"Unknown tool: vb_not_a_tool\",\n  \"error\": {\n    \"code\": \"E_TOOL_DENY\",\n    \"message\": \"Unknown tool: vb_not_a_tool\",\n    \"details\": {\n      \"recoveryHint\": {\n        \"category\": \"denied\",\n        \"retryable\": false,\n        \"reobserve\": false,\n        \"needs_user\": false,\n        \"execution\": \"not_started\"\n      }\n    }\n  }\n}"
+          }
+        ],
+        "isError": true
+      },
+      "jsonrpc": "2.0",
+      "id": 5
+    },
+    "cancelledRequestId": 6,
+    "status": "pass",
+    "assertions": {
+      "advertisedCount": 1,
+      "advertised": [
+        "vb_ping"
+      ],
+      "driverToolsNotAdvertised": true,
+      "pingIsError": false,
+      "blockedIsError": true,
+      "unknownIsError": true,
+      "blockedMessage": "{\n  \"ok\": false,\n  \"content\": \"vb_open requires an explicit tool group grant (deny-by-default).\",\n  \"error\": {\n    \"code\": \"E_GROUP_DENY\",\n    \"message\": \"vb_open requires an explicit tool group grant (deny-by-default).\",\n    \"details\": {\n      \"group\": \"core\",\n      \"recoveryHint\": {\n        \"category\": \"denied\",\n        \"retryable\": false,\n        \"reobserve\": false,\n        \"needs_user\": false,\n        \"execution\": \"not_started\"\n      }\n    }\n  }\n}",
+      "unknownMessage": "{\n  \"ok\": false,\n  \"content\": \"Unknown tool: vb_not_a_tool\",\n  \"error\": {\n    \"code\": \"E_TOOL_DENY\",\n    \"message\": \"Unknown tool: vb_not_a_tool\",\n    \"details\": {\n      \"recoveryHint\": {\n        \"category\": \"denied\",\n        \"retryable\": false,\n        \"reobserve\": false,\n        \"needs_user\": false,\n        \"execution\": \"not_started\"\n      }\n    }\n  }\n}"
+    }
+  },
+  "requestBodyBoundary": {
+    "defect": "The OpenAI-family transports wrote the caller AbortSignal into the request body (params.signal = options.signal). Strict OpenAI-compatible upstreams reject that with 500 \"Unexpected keyword argument 'signal'\".",
+    "isolationProof": "Same endpoint, same model: body without signal -> HTTP 200; body with signal -> HTTP 500. Captured through a recording proxy in front of the live endpoint.",
+    "fix": "signal is passed as the SDK request option instead of a payload field; cancellation semantics preserved, internal control no longer serialized.",
+    "artifact": "runtime-request-body-exchange.jsonl",
+    "sha256": "2868e84238792227a69c843bd71c7e271524c58db8cd3456e795fc38ba55402f"
+  },
+  "fix": {
+    "id": "openai-transport-signal-not-payload",
+    "files": [
+      "openclaw_runtime/src/agents/openai-transport-stream.ts",
+      "openclaw_runtime/src/agents/openai-transport-stream.test.ts",
+      "tests/e2e/versebrowser-live-model-chain.spec.ts"
+    ]
+  },
+  "verifiers": {
+    "apiCoverage": {
+      "status": "pass",
+      "sha256": "2827b240f8416950eab7592417561a7ceb0937d8fa2ec5e08018cf495c9e5c20"
+    },
+    "module": {
+      "status": "pass",
+      "sha256": "6de0f689f09202bc8b74df63f025089922fc7a0bd2930eca4cf33e61b8b8d672"
+    },
+    "hostIntegration": {
+      "status": "pass",
+      "sha256": "dda0a7664d2a892527fd654371d5ffa733778c9bd6aa4dba175bbf6d0a2fa45d"
+    },
+    "regression": {
+      "status": "pass",
+      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/openai-transport-stream.test.ts",
+      "tests": "5 passed (5)"
+    },
+    "focusedUnit": {
+      "status": "pass",
+      "tests": "36 passed (5 files)"
+    },
+    "liveE2E": {
+      "status": "pass",
+      "command": "pnpm exec playwright test tests/e2e/versebrowser-live-model-chain.spec.ts"
+    }
+  },
+  "boundaries": [
+    "The live endpoint is an authorized local model endpoint, not a paid vendor; results do not extrapolate to other providers or platforms.",
+    "N8 packaged/installed-state evidence and N9 repeated-run evidence are not covered by this receipt."
+  ],
+  "rawEvidenceRoots": [
+    "D:/tmp/clawx-vb-n7-final",
+    "D:/tmp/clawx-vb-n7-proxy3"
+  ]
+}
