@@ -26,7 +26,7 @@ No build depends on the independent `D:/versebrowser` checkout; that path is onl
 
 - Desktop: renderer `hostApi.agentBrowser` -> Main host adapter -> embedded driver.
 - Model: `agent_browser` -> Gateway `agentBrowser.invoke` -> Main host adapter.
-  The model schema lists 24 actions and is filtered by the live capability snapshot, so an
+  The model schema lists 28 actions and is filtered by the live capability snapshot, so an
   action the active driver cannot serve is neither advertised nor executed. The desktop host
   serves every managed session through the embedded Electron browser-window engine (the
   `agent-browser-cli` engine is only selected for external/CDP attachment), so `takeSnapshot`,
@@ -46,13 +46,15 @@ No build depends on the independent `D:/versebrowser` checkout; that path is onl
   the original 67. The 13 facade-only additions (downloads/uploads, pointer/drag,
   select/append/check, find, semantic reads, forms and dialogs) return explicit
   `E_NOT_IMPLEMENTED`; they are not evidence of usable Electron capabilities.
-- `agentBrowser.status` carries a capability snapshot (24 model actions, each with an
+- `agentBrowser.status` carries a capability snapshot (28 model actions, each with an
   `available` flag and a reason) derived from the live driver profile and, on surfaces that
   actually serve CLI sessions, the bundled-CLI presence - never from the 81-method contract
   or from a wrapper function existing. Actions the
   driver refuses are neither advertised nor executed: Main rejects them with
   `E_CAPABILITY_UNAVAILABLE`/`AgentBrowserCapabilityError` before any browser effect, and the
   snapshot carries a deterministic `version` so a derived schema is only rebuilt when facts change.
+  On the current Windows desktop build the snapshot advertises 14 of the 28 actions: the 13
+  source-only additions and `command` are reported unavailable with a reason.
 - Host transport `ok: true` only means dispatch succeeded. Also inspect the nested
   `success` / `ok`, `error`, observation completeness and business verdict. Never
   retry a denied or unsupported mutation through another backend.
