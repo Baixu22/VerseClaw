@@ -126,10 +126,20 @@
       }
     },
     "liveTurnNetworkError": {
-      "detail": "with a correct provider entry and a resolved model, the runtime reports 'LLM request failed: network connection error' and the stub logs ZERO raw TCP connections (server.on('connection') never fires). So the failure is PRE-DIAL: the runtime's model HTTP client rejects or aborts the request before opening a socket. Ruled out: provider injection, model resolution, and the HTTP(S)_PROXY env (removing it changed nothing).",
-      "nextAvensue": "inspect the runtime's model HTTP client for a pre-dial rejection (URL/host policy, HTTPS requirement, or a client-side guard) - that is a runtime bug hunt rather than N7 verification.",
-      "artifact": "n7-20261016/provider-sync-diagnostic.json",
-      "sha256": "3e3e99ee5d182dc0fa657c7891be9be5a85d0992193b20b0177865c33a321d85"
+      "detail": "the runtime never dials the injected endpoint. Raw TCP logging on the stub (server.on('connection')) records ZERO connections while the app reports 'LLM request failed: network connection error'. The failure is PRE-DIAL.",
+      "ruledOut": [
+        "provider injection (the isolated runtime config carries a well-formed provider entry)",
+        "model resolution (the derived runtime key resolves; a wrong key gives a different error)",
+        "the HTTP(S)_PROXY env vars (removing them changed nothing)",
+        "app proxy settings (setting proxyEnabled=false + proxyBypassRules=<local> and restarting the Gateway changed nothing)",
+        "treating the account as a local endpoint (authMode: local changed nothing)"
+      ],
+      "codePointers": [
+        "openclaw_runtime/src/agents/embedded-agent-helpers/sanitize-user-facing-text.ts:173 maps a generic fetch failure to 'network connection error'",
+        "openclaw_runtime/src/infra/net/proxy-fetch.ts builds an undici ProxyAgent from managed env proxy agent options",
+        "electron/utils/proxy.ts resolves app proxy settings into the child HTTP_PROXY/HTTPS_PROXY env"
+      ],
+      "assessment": "ClawX-side wiring is correct through provider injection and model resolution. The remaining failure is inside the runtime's model HTTP fetch layer and needs either a runtime/product change (e.g. how local endpoints are dialled) or a different environment."
     }
   },
   "verifiers": {

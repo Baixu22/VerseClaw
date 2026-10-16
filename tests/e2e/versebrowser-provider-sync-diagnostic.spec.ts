@@ -89,7 +89,7 @@ test('provider sync diagnostic', async ({ launchElectronApp, homeDir, userDataDi
     try {
       await hostInvoke(page, 'providers', 'createAccount', {
         account: {
-          id: 'diag-turn', vendorId: 'custom', label: 'Diag turn', authMode: 'api_key',
+          id: 'diag-turn', vendorId: 'custom', label: 'Diag turn', authMode: 'local',
           baseUrl: out.probeEndpoint as string, apiProtocol: 'openai-completions', model: 'diag-model',
           enabled: true, isDefault: true, createdAt: now, updatedAt: now,
         },
@@ -98,6 +98,11 @@ test('provider sync diagnostic', async ({ launchElectronApp, homeDir, userDataDi
       await hostInvoke(page, 'providers', 'setDefaultAccount', { accountId: 'diag-turn' });
       await hostInvoke(page, 'agents', 'updateModel', { id: 'main', modelRef: 'custom-diagturn/diag-model' });
       out.turnModelRef = 'custom-diagturn/diag-model';
+      // Force a direct connection for local endpoints: the runtime fetch layer resolves a proxy
+      // agent (undici ProxyAgent) and localhost would otherwise never be dialled.
+      await hostInvoke(page, 'settings', 'set', { key: 'proxyEnabled', value: false }).catch(() => undefined);
+      await hostInvoke(page, 'settings', 'set', { key: 'proxyBypassRules', value: '<local>' }).catch(() => undefined);
+      await hostInvoke(page, 'gateway', 'restart').catch(() => undefined);
       await hostInvoke(page, 'gateway', 'start').catch(() => undefined);
       await new Promise((r) => setTimeout(r, 8_000));
       const input = page.getByTestId('chat-composer-input');

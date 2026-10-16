@@ -1,6 +1,6 @@
 {
-  "homeDir": "D:\\tmp\\verse-claw-e2e-run-wcGbcp\\verse-claw-e2e-home-IflhIq",
-  "userDataDir": "D:\\tmp\\verse-claw-e2e-run-wcGbcp\\verse-claw-e2e-user-data-1jfDhc",
+  "homeDir": "D:\\tmp\\verse-claw-e2e-run-NyeWmf\\verse-claw-e2e-home-gsmdpt",
+  "userDataDir": "D:\\tmp\\verse-claw-e2e-run-NyeWmf\\verse-claw-e2e-user-data-CfG83x",
   "createAccount": {
     "success": true,
     "account": {
@@ -13,8 +13,8 @@
       "model": "diag-model",
       "enabled": true,
       "isDefault": true,
-      "createdAt": "2026-10-16T08:30:48.024Z",
-      "updatedAt": "2026-10-16T08:30:48.024Z"
+      "createdAt": "2026-10-16T08:38:24.075Z",
+      "updatedAt": "2026-10-16T08:38:24.075Z"
     }
   },
   "setDefault": {
@@ -59,8 +59,8 @@
       "apiProtocol": "openai-completions",
       "model": "diag-model",
       "enabled": true,
-      "createdAt": "2026-10-16T08:30:48.024Z",
-      "updatedAt": "2026-10-16T08:30:48.024Z",
+      "createdAt": "2026-10-16T08:38:24.075Z",
+      "updatedAt": "2026-10-16T08:38:24.075Z",
       "hasKey": true,
       "keyMasked": "********"
     }
@@ -87,24 +87,54 @@
     ]
   },
   "AppData/Roaming/openclaw/openclaw.json": {
-    "readError": "Error: ENOENT: no such file or directory, open 'D:\\tmp\\verse-claw-e2e-run-wcGbcp\\verse-claw-e2e-home-IflhIq\\AppData\\Roaming\\openclaw\\openclaw.json'"
+    "readError": "Error: ENOENT: no such file or directory, open 'D:\\tmp\\verse-claw-e2e-run-NyeWmf\\verse-claw-e2e-home-gsmdpt\\AppData\\Roaming\\openclaw\\openclaw.json'"
   },
-  "probeEndpoint": "http://127.0.0.1:62544/v1",
+  "probeEndpoint": "http://127.0.0.1:61838/v1",
   "turnModelRef": "custom-diagturn/diag-model",
   "afterTurn": {
     "history": {
       "sessionKey": "agent:main:main",
-      "sessionId": "0eebc35b-dd30-48b8-8a73-112d9e20edcd",
+      "sessionId": "8e93c87f-5837-43e8-a90d-14d34a00350e",
       "messages": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "[assistant turn failed before producing content]"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-diagcust",
+          "model": "diag-model",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "totalTokens": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "error",
+          "timestamp": 1792139919816,
+          "errorMessage": "Connection error.",
+          "__openclaw": {
+            "id": "e65f3937",
+            "recordTimestampMs": 1792139921160,
+            "seq": 2
+          }
+        },
         {
           "role": "user",
           "content": "Say hi.",
-          "timestamp": 1792139465953,
-          "idempotencyKey": "2d98ff02-f373-41a7-a213-bf2e03ef87c4:user",
+          "timestamp": 1792139921880,
+          "idempotencyKey": "d3744511-2081-4598-b9b1-8cb24055526c:user",
           "__openclaw": {
-            "id": "cb49329b",
-            "recordTimestampMs": 1792139472273,
-            "seq": 1
+            "id": "5b747328",
+            "recordTimestampMs": 1792139924209,
+            "seq": 3
           }
         },
         {
@@ -124,12 +154,12 @@
             }
           },
           "stopReason": "error",
-          "timestamp": 1792139472296,
+          "timestamp": 1792139924214,
           "errorMessage": "Connection error.",
           "__openclaw": {
-            "id": "e553d7ff",
-            "recordTimestampMs": 1792139473742,
-            "seq": 2
+            "id": "bab409b1",
+            "recordTimestampMs": 1792139925520,
+            "seq": 4
           }
         }
       ],
@@ -159,8 +189,8 @@
           "surface": "webchat",
           "chatType": "direct"
         },
-        "updatedAt": 1792139472254,
-        "sessionId": "0eebc35b-dd30-48b8-8a73-112d9e20edcd",
+        "updatedAt": 1792139926233,
+        "sessionId": "8e93c87f-5837-43e8-a90d-14d34a00350e",
         "systemSent": true,
         "abortedLastRun": false,
         "thinkingLevels": [
@@ -175,7 +205,7 @@
         "thinkingDefault": "off",
         "totalTokensFresh": false,
         "status": "running",
-        "startedAt": 1792139472238,
+        "startedAt": 1792139924190,
         "modelProvider": "custom-diagcust",
         "model": "diag-model",
         "agentRuntime": {
@@ -191,10 +221,10 @@
       },
       "thinkingLevel": "off"
     },
-    "bodyText": "Verse\nNew task\nInbox\nScheduled\nKnowledge\nProjects\n默认工作区\nagent:main:main\nNeeds attention\nNew workstream\nSettings\nCtrl+,\n默认工作区\n/\nNeeds attention\nagent:main:main\n\nSay hi.\n\njust now\n\nChat error\n\n⚠️ Agent failed before reply: LLM request failed: network connection error. Logs: openclaw logs --follow\n\nAttach files\nSearch knowledge\nModel\nMore\nRead only\nNo knowledge\ndiag-model"
+    "bodyText": "Verse\nNew task\nInbox\nScheduled\nKnowledge\nProjects\n默认工作区\nagent:main:main\nNeeds attention\nNew workstream\nSettings\nCtrl+,\n默认工作区\n/\nNeeds attention\nagent:main:main\n\n[assistant turn failed before producing content]\n\njust now\n\nSay hi.\n\njust now\n\nChat error\n\n⚠️ Agent failed before reply: LLM request failed: network connection error. Logs: openclaw logs --follow\n\nAttach files\nSearch knowledge\nModel\nMore\nRead only\nNo knowledge\ndiag-model"
   },
   "runtimeLog": {
-    "error": "Error: ENOENT: no such file or directory, scandir 'D:\\tmp\\verse-claw-e2e-run-wcGbcp\\verse-claw-e2e-home-IflhIq\\.openclaw\\logs'"
+    "error": "Error: ENOENT: no such file or directory, scandir 'D:\\tmp\\verse-claw-e2e-run-NyeWmf\\verse-claw-e2e-home-gsmdpt\\.openclaw\\logs'"
   },
   "appLogs": [],
   "appProviderStore": [
