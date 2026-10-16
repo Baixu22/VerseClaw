@@ -18,8 +18,11 @@ through `electron-builder.yml` and must not be treated as a pnpm dependency.
 `pnpm install`, `pnpm dev`, `pnpm dev:mock` and `pnpm run build:vite` compile
 `@verse-claw/versebrowser` before consuming its ignored `dist/` outputs. After
 editing module source, `pnpm run versebrowser:build` also refreshes the public
-types before a standalone typecheck or test run. No build depends on the
-independent `D:/versebrowser` checkout; that path is only used by provenance audits.
+types before a standalone typecheck or test run. The same build applies the required
+hash-pinned `playwright-core` bundle patch (`packages/versebrowser/scripts/patch-upstream.mjs`)
+before `tsc`, so a fresh checkout needs no manual `patch:upstream` step; `patch:upstream:check`
+verifies it and browser `open` fails closed with `E_UPSTREAM_PATCH` if it is missing.
+No build depends on the independent `D:/versebrowser` checkout; that path is only used by provenance audits.
 
 - Desktop: renderer `hostApi.agentBrowser` -> Main host adapter -> embedded driver.
 - Model: `agent_browser` -> Gateway `agentBrowser.invoke` -> Main host adapter.

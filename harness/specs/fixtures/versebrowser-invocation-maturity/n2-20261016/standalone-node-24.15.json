@@ -1,0 +1,11 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "built package standalone upstream driver, NOT ClawX Main/Gateway/model",
+  "workspaceRoot": "D:\\tmp\\versebrowser-hygiene-sdk-T9lN4s",
+  "node": "v24.15.0",
+  "uv": "1.51.0",
+  "calls": [],
+  "status": "fail",
+  "error": "Error: Windows browser operations require libuv >=1.52.1 (Node.js 24.16.0 or later). Node.js 24.15.0 uses libuv 1.51.0, which is outside this supported range; upgrade Node.js before opening or probing a browser to avoid native TCP stack-cookie crashes.\n    at assertBrowserRuntime (file:///D:/ClawX-candidates/vb-invocation-n1-20261016/packages/versebrowser/dist/engine/runtime-compatibility.js:8:25)\n    at createPlaywrightHostApi (file:///D:/ClawX-candidates/vb-invocation-n1-20261016/packages/versebrowser/dist/engine/playwright-host-api.js:167:5)\n    at createStandaloneFacade (file:///D:/ClawX-candidates/vb-invocation-n1-20261016/packages/versebrowser/dist/engine/standalone.js:66:27)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///D:/ClawX-candidates/vb-invocation-n1-20261016/scripts/versebrowser-standalone-smoke.mjs:17:17"
+}

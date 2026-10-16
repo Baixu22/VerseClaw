@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-10-16",
+  "taskForestNode": "TF-0347",
+  "specNode": "N2",
+  "scope": "Supported-runtime compatibility matrix, desktop startup root cause, minimal runtime fix regression. Not packaged-app or browser business acceptance.",
+  "verdict": "pass",
+  "runtimeMatrix": {
+    "guardSurfaces": {
+      "testController": {
+        "file": "scripts/windows-test-node.mjs",
+        "wiredAt": "playwright.config.ts",
+        "unitTest": "tests/unit/windows-delivery-entry.test.ts",
+        "rejects": "Windows Node 24.0-24.15 (nodejs/node#63620)"
+      },
+      "engine": {
+        "file": "packages/versebrowser/src/engine/runtime-compatibility.ts",
+        "code": "E_NODE_RUNTIME",
+        "callers": [
+          "engine/playwright-host-api.ts:375",
+          "engine/persistent-sessions.ts:178/251/300/356"
+        ],
+        "rejects": "win32 libuv < 1.52.1"
+      }
+    },
+    "cells": [
+      {
+        "id": "unsupported-test-controller",
+        "node": "v24.15.0",
+        "uv": "1.51.0",
+        "entry": "test controller guard",
+        "result": "reject",
+        "message": "Windows Electron tests cannot use Node 24.15.0; use Node 24.16.0 or later (nodejs/node#63620)."
+      },
+      {
+        "id": "unsupported-engine",
+        "node": "v24.15.0",
+        "uv": "1.51.0",
+        "entry": "engine standalone facade",
+        "result": "reject",
+        "code": "E_NODE_RUNTIME",
+        "browserCalls": 0,
+        "note": "rejected before any browser action",
+        "artifact": "standalone-node-24.15.json",
+        "sha256": "e75c101ba10f5a8736624dd5e85db1fa71e231fe0e6cc1a310b26e5ef06eea19"
+      },
+      {
+        "id": "supported-engine",
+        "node": "v24.16.0",
+        "uv": "1.52.1",
+        "entry": "engine standalone facade",
+        "result": "accept",
+        "actions": 8,
+        "assertions": "verifyFlow PASS",
+        "artifact": "standalone-node-24.16.json",
+        "sha256": "34b31076c9f6ff1c796286569434e11e1b4eaa99d2fa2a2350a8cdf7868bc0e5"
+      },
+      {
+        "id": "supported-desktop",
+        "node": "v24.16.0 (controller)",
+        "uv": "1.52.1",
+        "entry": "Electron 40.8.4 desktop launch + host bridge",
+        "result": "accept",
+        "detail": "renderer ready + agentBrowser.status ok; default-GPU run also passes",
+        "artifacts": [
+          "desktop-open-http.json",
+          "desktop-default-gpu.json"
+        ]
+      },
+      {
+        "id": "electron-internal-runtime",
+        "node": "24.14.0",
+        "uv": "1.51.0",
+        "entry": "Electron Main process internal runtime",
+        "result": "not-in-scope-for-guard",
+        "note": "Main delegates browser work to the CLI child / managed driver; the in-process engine guard protects the standalone and in-process playwright host paths, not the Electron bundle runtime itself."
+      },
+      {
+        "id": "missing-bundled-cli",
+        "node": "v24.16.0",
+        "entry": "Electron host bridge browser action without bundled agent-browser",
+        "result": "structured rejection",
+        "detail": "agentBrowser.status reports browserControlEnabled=false; an open attempt returns ok:false with a typed backend error and creates no session; no crash, no leftover process",
+        "artifact": "desktop-open-http.json"
+      }
+    ]
+  },
+  "startupRootCause": {
+    "symptom": "Ordinary E2E launch of Electron exited 0x80000003 (2147483651); ELECTRON_DISABLE_SANDBOX=1 progressed but firstWindow timed out at 30s (hygiene-20261016).",
+    "cause": "Playwright-controller-side Windows libuv TCP connect defect (nodejs/node#63620) on Node 24.0-24.15; the controller cannot complete the launch handshake, so Electron is torn down before a window exists.",
+    "evidence": [
+      "control (clean c689f05c2) and candidate (frozen reintegration) behave identically under the same frozen toolchain (N1 matrix 4/4).",
+      "Frozen controller Node 24.16.0: default-GPU launch + host invoke pass (desktop-default-gpu.json).",
+      "System Node 24.15.0 is rejected by scripts/windows-test-node.mjs before Electron starts; the engine guard rejects it with E_NODE_RUNTIME and 0 browser calls."
+    ],
+    "minimalFix": "scripts/windows-test-node.mjs pre-flight guard asserted in playwright.config.ts (already present, unit-tested); no product default changed and no permanent --no-sandbox."
+  },
+  "minimalRuntimeFix": {
+    "id": "wire-required-playwright-core-patch-into-package-build",
+    "problem": "packages/versebrowser depends on a hash-pinned patch to playwright-core/lib/coreBundle.js (patch-upstream.mjs). The patch was applied by hand in the incumbent checkout but was NOT part of any install/build/package step, so a fresh checkout failed at browser open with E_UPSTREAM_PATCH. machine residue, not reproducible wiring.",
+    "change": "packages/versebrowser/package.json build script is now `node scripts/patch-upstream.mjs && tsc -p tsconfig.build.json`, so postinstall/predev/prebuild:vite all apply the required patch; the script is version-guarded, hash-verified and writes via temp+rename (store-safe).",
+    "regression": {
+      "before": {
+        "bundleSha256": "cd6730be1bbcff00771a0fc1390f200306d28428ce68e305420ca623cb39cdeb",
+        "smoke": "fail E_UPSTREAM_PATCH",
+        "artifact": "standalone-unpatched-bundle.json",
+        "sha256": "a8aa053d98270b7cee38cd7fbfc2570b871122f5bd42d3e9845067783ac5a476",
+        "candidateModuleVerify": "fail (upstream_patch_hash_mismatch, recorded at N1 in D:\\tmp\\clawx-vb-n1-20261016\\candidate-module.json)"
+      },
+      "after": {
+        "bundleSha256": "1532f36aa4fcd0dbdd6a0c0cb49fbb7e55b30b649d67eadde69d5eb70be33c13",
+        "smoke": "pass 8/8",
+        "artifact": "standalone-patched-bundle.json",
+        "sha256": "fe42a91a7d3d3624a043824536d39f482d24b843517fdba6f606bf5ee8ec9f48",
+        "candidateModuleVerify": "pass",
+        "moduleArtifact": "module-verify-after-fix.json",
+        "moduleSha256": "97c412d9f3f5d171e09af16e1650e71e3653af9286727fd6af7acc141c397f1a"
+      }
+    },
+    "otherVerifiers": {
+      "hostIntegration": "pass",
+      "apiCoverage": "pass",
+      "artifacts": {
+        "hostIntegrationSha256": "db3b4ca06b81b9c3c3069a81b3372b657dc95bc2339ace679637150605c02699",
+        "apiCoverageSha256": "68f73f7a4f871b1c7e20d3862b140668e2f28f3a7b80fbbf32d49c3d43fdda21"
+      }
+    }
+  },
+  "confirmations": {
+    "noPermanentNoSandbox": "0 occurrences of --no-sandbox in electron/, packages/, src/, scripts/ product code",
+    "noLocalDeliveryDependency": "no runtime reference to D:/versebrowser or .local; only provenance/audit scripts default VERSEBROWSER_SOURCE_ROOT to D:/versebrowser, and scripts/versebrowser-m10-package-verify.mjs forbids dev paths inside the package",
+    "frozenDefaultsUnchanged": "no product default, permission policy or toolchain pin changed; the only product change is adding the already-existing patch step to the package build",
+    "diagnosticVsNormal": "diagnostic cell uses --no-sandbox only via --diagnostic-no-sandbox; normal cells never pass --no-sandbox"
+  },
+  "limitations": [
+    "Not packaged/installed-app acceptance; that is N8.",
+    "Electron internal runtime is Node 24.14.0/uv1.51.0 and is not covered by assertBrowserRuntime; the CLI child and managed driver own browser work.",
+    "No real-model or MCP evidence here."
+  ],
+  "rawEvidenceRoots": [
+    "D:\\tmp\\clawx-vb-n2-20261016",
+    "D:\\tmp\\clawx-vb-n1-20261016"
+  ]
+}

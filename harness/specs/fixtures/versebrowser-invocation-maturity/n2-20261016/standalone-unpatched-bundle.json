@@ -1,0 +1,37 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "built package standalone upstream driver, NOT ClawX Main/Gateway/model",
+  "workspaceRoot": "D:\\tmp\\versebrowser-hygiene-sdk-u4M4q8",
+  "node": "v24.16.0",
+  "uv": "1.52.1",
+  "calls": [
+    {
+      "action": "open",
+      "result": {
+        "ok": false,
+        "content": "E_UPSTREAM_PATCH: focus-preserving tab patch missing; run npm run patch:upstream",
+        "error": {
+          "code": "E_OPEN",
+          "message": "E_UPSTREAM_PATCH: focus-preserving tab patch missing; run npm run patch:upstream",
+          "details": {
+            "recoveryHint": {
+              "category": "unknown",
+              "retryable": false,
+              "reobserve": true,
+              "needs_user": false,
+              "execution": "may_have_side_effects"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "driver": "upstream",
+  "status": "fail",
+  "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"content\":\"E_UPSTREAM_PATCH: focus-preserving tab patch missing; run npm run patch:upstream\",\"error\":{\"code\":\"E_OPEN\",\"message\":\"E_UPSTREAM_PATCH: focus-preserving tab patch missing; run npm run patch:upstream\",\"details\":{\"recoveryHint\":{\"category\":\"unknown\",\"retryable\":false,\"reobserve\":true,\"needs_user\":false,\"execution\":\"may_have_side_effects\"}}}}\n\nfalse !== true\n\n    at check (file:///D:/ClawX-candidates/vb-invocation-n1-20261016/scripts/versebrowser-standalone-smoke.mjs:15:112)\n    at async file:///D:/ClawX-candidates/vb-invocation-n1-20261016/scripts/versebrowser-standalone-smoke.mjs:18:16",
+  "dispose": {
+    "ok": true,
+    "content": "browser toolbox disposed"
+  }
+}
