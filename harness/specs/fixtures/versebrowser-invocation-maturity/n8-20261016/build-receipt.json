@@ -132,8 +132,9 @@
     {
       "id": "F2",
       "severity": "open",
-      "title": "agent-browser.exe driver process survives packaged app teardown",
-      "ref": "scripts/versebrowser-m10-packaged-flow-verify.mjs cleanup path"
+      "title": "driver browser process tree survives packaged app teardown",
+      "ref": "scripts/versebrowser-m10-packaged-flow-verify.mjs cleanup path",
+      "observed": "10 chrome.exe processes from C:\\Users\\27933\\.agent-browser\\browsers\\chrome-149.0.7827.115 with --user-data-dir pointing at the run's .tmp dir survived after the app process tree was killed; deleting that dir failed with 'used by another process' until they were killed manually"
     },
     {
       "id": "F3",
