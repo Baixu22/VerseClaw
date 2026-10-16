@@ -14,7 +14,10 @@ import {
   readStringParam,
   ToolAuthorizationError,
 } from "./common.js";
-import { buildAgentBrowserAutomationEvent } from "./agent-browser-automation-event.js";
+import {
+  buildAgentBrowserAutomationEvent,
+  type AgentBrowserCorrelation,
+} from "./agent-browser-automation-event.js";
 import {
   resolveAgentBrowserExternalAccessPolicy,
   resolveAgentBrowserSessionEffectPolicy,
@@ -34,6 +37,19 @@ const AGENT_BROWSER_ACTIONS = [
   "command",
   "close",
   "getConsoleMessages",
+  "downloadFile",
+  "uploadFiles",
+  "pointer",
+  "drag",
+  "selectOption",
+  "selectValues",
+  "appendText",
+  "setChecked",
+  "findElement",
+  "semanticRead",
+  "readForms",
+  "readDialogs",
+  "respondDialog",
 ] as const;
 const FAILURE_DIAGNOSTIC_COMMANDS: string[][] = [
   ["snapshot", "-i"],
@@ -47,6 +63,7 @@ export type AgentBrowserAction = (typeof AGENT_BROWSER_ACTIONS)[number];
 export type AgentBrowserInvoker = (
   action: AgentBrowserAction,
   payload: Record<string, unknown>,
+  correlation?: AgentBrowserCorrelation,
 ) => Promise<unknown>;
 
 const AgentBrowserSchema = Type.Object({
@@ -54,6 +71,11 @@ const AgentBrowserSchema = Type.Object({
     description: "Agent browser action to run.",
   }),
   sessionId: Type.Optional(Type.String({ description: "Existing agent browser session id." })),
+  taskId: Type.Optional(Type.String({ description: "Correlation id for an owning browser task." })),
+  pageId: Type.Optional(Type.String({ description: "Correlation id for the target browser page." })),
+  workspaceId: Type.Optional(Type.String({ description: "ClawX workspace id for new sessions." })),
+  sessionKey: Type.Optional(Type.String({ description: "ClawX session key for new sessions." })),
+  agentId: Type.Optional(Type.String({ description: "ClawX agent id for new sessions." })),
   url: Type.Optional(Type.String({ description: "HTTP(S) URL for open or navigate." })),
   profile: Type.Optional(Type.String({ description: "Persistent browser profile name." })),
   mode: Type.Optional(stringEnum(["headless", "visible"], { description: "Browser visibility." })),
@@ -77,6 +99,22 @@ const AgentBrowserSchema = Type.Object({
     description: "Explicit safety acknowledgement required to connect to a running browser or an existing external browser profile.",
   })),
   selector: Type.Optional(Type.String({ description: "CSS selector for wait/click/type." })),
+  pointerAction: Type.Optional(stringEnum(["hover", "double-click", "right-click", "scroll", "scroll-into-view"], { description: "Pointer action for action='pointer'." })),
+  sourceSelector: Type.Optional(Type.String({ description: "Source selector for drag." })),
+  targetSelector: Type.Optional(Type.String({ description: "Target selector for drag." })),
+  path: Type.Optional(Type.String({ description: "Authorized download path." })),
+  paths: Type.Optional(Type.Array(Type.String(), { description: "Authorized upload paths." })),
+  label: Type.Optional(Type.String({ description: "Visible option label." })),
+  values: Type.Optional(Type.Array(Type.String(), { description: "Select option values." })),
+  checked: Type.Optional(Type.Boolean({ description: "Desired checkbox/radio state." })),
+  role: Type.Optional(Type.String({ description: "Accessible role for exact find." })),
+  name: Type.Optional(Type.String({ description: "Accessible name for exact find." })),
+  testId: Type.Optional(Type.String({ description: "Test id for exact find." })),
+  instruction: Type.Optional(Type.String({ description: "Semantic observe/extract instruction." })),
+  schema: Type.Optional(Type.Record(Type.String(), Type.Unknown(), { description: "Optional semantic extraction schema." })),
+  dialogId: Type.Optional(Type.String({ description: "Observed dialog id." })),
+  accept: Type.Optional(Type.Boolean({ description: "Accept or dismiss a dialog." })),
+  promptText: Type.Optional(Type.String({ description: "Optional prompt response text." })),
   text: Type.Optional(Type.String({ description: "Text for type action." })),
   expression: Type.Optional(Type.String({ description: "JavaScript expression for evaluate." })),
   args: Type.Optional(Type.Array(Type.String(), {
@@ -125,6 +163,9 @@ function buildPayload(action: AgentBrowserAction, params: Record<string, unknown
         "externalProfile",
         "executablePath",
         "allowExternalBrowser",
+        "workspaceId",
+        "sessionKey",
+        "agentId",
       ]);
     case "status":
       return {};
@@ -167,6 +208,32 @@ function buildPayload(action: AgentBrowserAction, params: Record<string, unknown
         "timeoutMs",
         "maxOutput",
       ]);
+    case "downloadFile":
+      return { sessionId: requireSession(params, action), ...pickPayload(params, ["selector", "path", "timeoutMs"]) };
+    case "uploadFiles":
+      return { sessionId: requireSession(params, action), ...pickPayload(params, ["selector", "paths", "timeoutMs"]) };
+    case "pointer":
+      return { sessionId: requireSession(params, action), action: params.pointerAction, ...pickPayload(params, ["selector", "deltaX", "deltaY", "timeoutMs"]) };
+    case "drag":
+      return { sessionId: requireSession(params, action), ...pickPayload(params, ["sourceSelector", "targetSelector", "timeoutMs"]) };
+    case "selectOption":
+      return { sessionId: requireSession(params, action), ...pickPayload(params, ["selector", "label", "timeoutMs"]) };
+    case "selectValues":
+      return { sessionId: requireSession(params, action), ...pickPayload(params, ["selector", "values", "timeoutMs"]) };
+    case "appendText":
+      return { sessionId: requireSession(params, action), ...pickPayload(params, ["selector", "text", "timeoutMs"]) };
+    case "setChecked":
+      return { sessionId: requireSession(params, action), ...pickPayload(params, ["selector", "checked", "timeoutMs"]) };
+    case "findElement":
+      return { sessionId: requireSession(params, action), ...pickPayload(params, ["role", "name", "label", "testId", "timeoutMs"]) };
+    case "semanticRead":
+      return { sessionId: requireSession(params, action), instruction: params.instruction, schema: params.schema, timeoutMs: params.timeoutMs };
+    case "readForms":
+      return { sessionId: requireSession(params, action), ...pickPayload(params, ["selector"]) };
+    case "readDialogs":
+      return { sessionId: requireSession(params, action) };
+    case "respondDialog":
+      return { sessionId: requireSession(params, action), ...pickPayload(params, ["dialogId", "accept", "promptText"]) };
   }
 }
 
@@ -174,6 +241,25 @@ function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : {};
+}
+
+function applyCorrelationToPayload(
+  action: AgentBrowserAction,
+  payload: Record<string, unknown>,
+  correlation: AgentBrowserCorrelation,
+): void {
+  if (action !== "open") return;
+  if (payload.sessionKey === undefined && correlation.sessionKey) {
+    payload.sessionKey = correlation.sessionKey;
+  }
+  if (payload.agentId === undefined && correlation.agentId) {
+    payload.agentId = correlation.agentId;
+  }
+}
+
+function readGatewayRequestId(result: unknown): string | undefined {
+  const value = asRecord(result).gatewayRequestId;
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
 
 function errorMessage(error: unknown): string {
@@ -260,6 +346,7 @@ async function collectFailureDiagnostics(params: {
   invoke: AgentBrowserInvoker;
   sessionId: string | undefined;
   failedAction: AgentBrowserAction;
+  correlation?: AgentBrowserCorrelation;
 }) {
   if (!shouldCollectFailureDiagnostics(params.failedAction, params.sessionId)) {
     return [];
@@ -268,8 +355,8 @@ async function collectFailureDiagnostics(params: {
   const events = [];
   try {
     const payload = { sessionId };
-    const result = await params.invoke("screenshot", payload);
-    events.push(buildAgentBrowserAutomationEvent({ action: "screenshot", payload, result }));
+    const result = await params.invoke("screenshot", payload, params.correlation);
+    events.push(buildAgentBrowserAutomationEvent({ action: "screenshot", payload, result, correlation: params.correlation }));
   } catch (error) {
     const payload = { sessionId };
     events.push(
@@ -285,8 +372,8 @@ async function collectFailureDiagnostics(params: {
   for (const args of FAILURE_DIAGNOSTIC_COMMANDS) {
     const payload = { sessionId, args, maxOutput: FAILURE_DIAGNOSTIC_MAX_OUTPUT };
     try {
-      const result = await params.invoke("command", payload);
-      events.push(buildAgentBrowserAutomationEvent({ action: "command", payload, result }));
+      const result = await params.invoke("command", payload, params.correlation);
+      events.push(buildAgentBrowserAutomationEvent({ action: "command", payload, result, correlation: params.correlation }));
     } catch (error) {
       events.push(
         buildAgentBrowserAutomationEvent({
@@ -305,6 +392,7 @@ async function collectFailureDiagnostics(params: {
 export function createAgentBrowserTool(options?: {
   invoke?: AgentBrowserInvoker;
   contentProvenanceContext?: ContentProvenanceContext;
+  correlation?: AgentBrowserCorrelation;
 }): AnyAgentTool | null {
   if (!options?.invoke) {
     return null;
@@ -324,6 +412,13 @@ export function createAgentBrowserTool(options?: {
         throw new Error(`Unsupported agent_browser action: ${action}`);
       }
       const payload = buildPayload(action, params);
+      const correlation: AgentBrowserCorrelation = {
+        ...options?.correlation,
+        toolCallId: _toolCallId,
+        ...(readStringParam(params, "taskId") ? { taskId: readStringParam(params, "taskId") } : {}),
+        ...(readStringParam(params, "pageId") ? { pageId: readStringParam(params, "pageId") } : {}),
+      };
+      applyCorrelationToPayload(action, payload, correlation);
       const externalAccessPolicy = resolveAgentBrowserExternalAccessPolicy({
         provenanceContext: options.contentProvenanceContext,
         connectionMode: payload.connectionMode,
@@ -343,13 +438,14 @@ export function createAgentBrowserTool(options?: {
       }
       let result: unknown;
       try {
-        result = await options.invoke!(action, payload);
+        result = await options.invoke!(action, payload, correlation);
       } catch (error) {
         const sessionId = readPayloadSessionId(payload);
         const diagnostics = await collectFailureDiagnostics({
           invoke: options.invoke!,
           sessionId,
           failedAction: action,
+          correlation,
         });
         const message = errorMessage(error);
         return jsonResult({
@@ -362,21 +458,25 @@ export function createAgentBrowserTool(options?: {
             result: { success: false, error: message },
             ok: false,
             error,
+            correlation,
           }),
           ...(diagnostics.length > 0 ? { browserAutomationEvents: diagnostics } : {}),
         });
       }
+      correlation.gatewayRequestId = readGatewayRequestId(result) ?? correlation.gatewayRequestId;
       const primaryEvent = buildAgentBrowserAutomationEvent({
         action,
         payload,
         result,
         ok: !isFailureResult(result),
+        correlation,
       });
       if (isFailureResult(result)) {
         const diagnostics = await collectFailureDiagnostics({
           invoke: options.invoke!,
           sessionId: readPayloadSessionId(payload, result),
           failedAction: action,
+          correlation,
         });
         return jsonResult({
           ...resultPayload(result),

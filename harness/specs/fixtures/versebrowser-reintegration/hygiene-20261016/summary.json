@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "clientDate": "2026-10-16",
+  "status": "partial",
+  "scope": "VerseBrowser hygiene and invocation audit of the current dirty ClawX workspace; not migration closeout or release acceptance",
+  "candidate": {
+    "head": "c689f05c2791a653ae55b631aa60d077b4570d82",
+    "dirtyWorkspace": true,
+    "sourceHashes": {
+      ".gitignore": "9802e63539500a3bd13dd0d7806e4619db36f99a848a6d3726570e4b2930c396",
+      "package.json": "14da7eb1b0aaa71d96a70501971d2d6f312f3fdb9527afb2fedff1ef2873adfe",
+      "pnpm-lock.yaml": "b75f6e06d80915c463e9d36d8bbd750324b717339461818c536c8b8adaaf9f42",
+      "pnpm-workspace.yaml": "1a7fadfbf22ef3baa94e402e70a4e6b367c40ff4ba428e1da5c175dca1e79bd9",
+      "electron/services/agent-browser-api.ts": "498035cc2559b8b7d84e6fe0c5d26c7d26bca3cda11735f263a4bd4be6726689",
+      "electron/gateway/agent-browser-bridge.ts": "0363ac9a8b229fc2fdac6ed0bf86a4957458127bdbd2a24afdec38ccf3ea04fe",
+      "packages/README.md": "5b358d9e0d20c5a0a867a86219c513b2a39615e632e2d329165f0ee0e7045dfc",
+      "packages/versebrowser/package.json": "5d2925a3b0cd321a3b8cebff8532c6c7c344f8e0973a222db4a06f935a5e2506",
+      "packages/versebrowser/src/index.ts": "00c21de9899223a1aa9cfa9825c4d6d539d83aaa3e3b6a6dcdf4ed069694b5b0",
+      "packages/versebrowser/integration-patches.json": "6ab29e2d35505db445b8fc6f00729238b136c1f4d9f5bf21ac40d4c3520e7c16",
+      "packages/versebrowser/patches/src__index.ts.patch": "52e8d4650b6b772e4ae025fed383318e8a95b4126555cf478ee73f5aeded8acc",
+      "packages/versebrowser/import-manifest.json": "ca8ec19363d3241e24d3a50ba3938d6eccb3c4dc9c4031c88439d55da8ba61e8",
+      "scripts/versebrowser-api-coverage-verify.mjs": "bd805ac791d38369d7ac76949655c88158a8ae038b082dcccd9eb987fbd615d8",
+      "scripts/versebrowser-host-integration-verify.mjs": "08412fd80c9eed877f8e679834b6eef7938f41fe29f93dd64e37a5610c79ffe7",
+      "scripts/versebrowser-build-wiring.test.mjs": "9792274f8e4ec206e4e9c5c124ccf2a9a60b711c9ac9c058cd80f28f4798235d",
+      "scripts/versebrowser-standalone-smoke.mjs": "b1ebff32a87b7f1b2077b57bc5aff9b6784be06759a22183e744e220bab9b594",
+      "scripts/versebrowser-m08-runtime-verify.mjs": "ff47823fcaabe0191f21c540197cd1bff100e02a6cfb1da4fda7441f9b0433e1",
+      "tests/unit/versebrowser-host-adapter.test.ts": "a2adfec79d5869b339f33dd1d287c12ffe9469aeaebbed1c51cba11532e16603",
+      "tests/unit/versebrowser-driver-capabilities.test.ts": "f6a21108fff2b6cb82f38711be95bb9c295ff9bbd1632981012c1314034c49ba",
+      "tests/e2e/versebrowser-host-invocation.spec.ts": "4b0ca69386fc1f2c22b5832331acbbfa34d165049d124745f3b39d19f6b77429",
+      "openclaw_runtime/src/agents/tools/agent-browser-tool.ts": "13b0ef94cff66bfe6d7c187c428dadbf65abdb74a06affebf96c763c0beef23a",
+      "shared/host-api/contract.ts": "50c2cf73d8fc84aeca7b7eb88dcbee6c7fdbf3689bf4d7506f1c4ab48a72cb86",
+      "src/lib/host-api.ts": "186d7474d1d4997492745caf4fbb2bce55951b63cd3bb8ce4ad48f23460fdc4f",
+      "harness/specs/tasks/versebrowser-upstream-reintegration.md": "34fc31a6569a075b3b1a714cb47410365301231f1cb5696a2e3c5176a36f2945",
+      "harness/specs/guides/versebrowser-reintegration-playbook.md": "88c49237cd2967e38b44b4a16d31472e9d3409c2a3d9e7e721ade2cc6ea28f16",
+      "README.md": "8b1db224d26a303fdf4f86dfdec7a461331a4cf76deaddc705a5c9a83c9c0dfe",
+      "README.zh-CN.md": "36a86657d0ddd3a7b4df20998819f2b7d3fe3e5dbd8be8ac02c04e80a483f58a",
+      "README.ja-JP.md": "2b2466fde60dbbb5b510d2b885b54d47d16b161c46337529c1c8cad47c0020a2"
+    }
+  },
+  "fixes": [
+    "Compile the embedded package during normal install/dev/build, retaining toolchain validation before postinstall build.",
+    "Inject the existing optional CLI runner into the single host-owned service and declare the public export in the upstream patch manifest.",
+    "Keep credential-bearing M08 probe homes out of addable source paths; ignore prior m08-runtime directories without reading/deleting their contents.",
+    "Inventory actual driver and model action availability separately from 80-method contract coverage; sync usage docs and obsolete planning-only wording."
+  ],
+  "verified": {
+    "sourceDependenciesPatches": {
+      "exitCode": 0,
+      "artifacts": [
+        "module.json",
+        "host-integration.json"
+      ]
+    },
+    "hostContract": {
+      "exitCode": 0,
+      "methods": 80,
+      "electronDriverMethods": 67,
+      "sourceOnlyMethodsUnavailable": 13,
+      "modelDeclaredActions": 24,
+      "modelActionsWithHostDriverEntry": 11,
+      "artifact": "api-coverage.json",
+      "note": "Method inventory, not per-method behavioral acceptance."
+    },
+    "unit": {
+      "exitCode": 0,
+      "files": 7,
+      "passed": 55,
+      "failed": 0,
+      "artifact": "unit-results.json"
+    },
+    "buildAndHygieneRegression": {
+      "exitCode": 0,
+      "tests": 2,
+      "rawLog": "build-wiring.log"
+    },
+    "standaloneUpstream": {
+      "exitCode": 0,
+      "node": "v24.16.0",
+      "libuv": "1.52.1",
+      "actions": 8,
+      "businessAssertionsPassed": 1,
+      "consoleCollection": "ok",
+      "networkCollection": "ok",
+      "newConsoleErrors": 0,
+      "networkFailures": 0,
+      "disposed": true,
+      "artifact": "standalone-smoke.json",
+      "note": "Real localhost browser effects using built public SDK export. Does not prove Main/Gateway/model/MCP stdio or packaged application."
+    },
+    "packageDryRun": {
+      "exitCode": 0,
+      "entries": 515,
+      "forbiddenPaths": 0,
+      "artifact": "package-dry-run.json",
+      "note": "Allowlist inspection only; not an installed or packaged Electron runtime test."
+    },
+    "gates": [
+      {
+        "command": "pnpm run versebrowser:build",
+        "exitCode": 0
+      },
+      {
+        "command": "pnpm run build:vite",
+        "exitCode": 0
+      },
+      {
+        "command": "pnpm run typecheck",
+        "exitCode": 0
+      },
+      {
+        "command": "pnpm contract:check",
+        "exitCode": 0
+      },
+      {
+        "command": "pnpm run comms:replay",
+        "exitCode": 0
+      },
+      {
+        "command": "pnpm run comms:compare",
+        "exitCode": 0
+      },
+      {
+        "command": "scoped eslint",
+        "exitCode": 0
+      },
+      {
+        "command": "git diff --check (touched tracked files)",
+        "exitCode": 0
+      }
+    ]
+  },
+  "gaps": [
+    {
+      "id": "driver-capability-gap",
+      "severity": "P1",
+      "detail": "All 13 source-only facade methods remain unavailable in the Electron driver, yet are declared in the model action schema. They return explicit E_NOT_IMPLEMENTED; do not claim full model capability."
+    },
+    {
+      "id": "model-observation-gap",
+      "severity": "P1",
+      "detail": "The model schema does not expose takeSnapshot and its command snapshot diagnostics require the optional bundled agent-browser executable. That executable is absent in this checkout. Runner wiring is restored, binary-backed execution not validated."
+    },
+    {
+      "id": "default-node-unsupported",
+      "severity": "P1",
+      "exitCode": 1,
+      "detail": "System Node 24.15.0/libuv 1.51.0 is rejected before browser actions. The verified standalone run used existing Node 24.16.0/libuv 1.52.1; no global runtime installation or product guard was changed.",
+      "artifact": "unsupported-node.json"
+    },
+    {
+      "id": "electron-e2e-startup",
+      "severity": "P1",
+      "exitCode": 1,
+      "detail": "Ordinary launch exited 2147483651 (0x80000003). Existing diagnostic ELECTRON_DISABLE_SANDBOX=1 progressed but timed out at firstWindow after 30000ms. Both Workbench and new real-host specs were attempted; no host browser actions executed. Root cause remains undetermined, not attributed to VerseBrowser.",
+      "rawReports": [
+        "e2e.json",
+        "e2e-no-sandbox.json",
+        "e2e-diagnostic.json",
+        "e2e-retained.json"
+      ],
+      "ownedElectronProcessesRemaining": 0
+    },
+    {
+      "id": "full-harness-dirty-scope",
+      "exitCode": 1,
+      "detail": "validate and run --dry-run reject 55 pre-existing unrelated uncovered paths. No --no-diff bypass or ownership widening was used."
+    },
+    {
+      "id": "release-and-model-not-run",
+      "detail": "No fresh packaged Electron build/acceptance or current third-party-model-to-Gateway live acceptance. Historical M08/M12 receipts remain historical and were not rehashed."
+    }
+  ],
+  "rawEvidenceRoot": "D:\\tmp\\clawx-versebrowser-hygiene-20261016",
+  "preservation": "No user data, prior probe homes, task-forest state, staged deletions, unrelated changes or existing artifacts were deleted/reset/stashed. No commit, push, release or global toolchain mutation."
+}

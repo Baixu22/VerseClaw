@@ -13,9 +13,9 @@
 | # | Scenario | Automation |
 |---|----------|------------|
 | 1 | Private network default false | `default-config-matrix.test.ts` |
-| 2 | Mode upgrade needs approval | `agent-browser-runtime-mode.test.ts` |
-| 3 | Task persist / restart recovery | `agent-browser-task-service.test.ts` |
-| 4 | Vault not_configured vs corrupted | `agent-browser-vault.test.ts` |
+| 2 | Mode upgrade needs approval | `packages/versebrowser/tests/agent-browser-runtime-mode.test.ts` |
+| 3 | Task persist / restart recovery | `packages/versebrowser/tests/agent-browser-task-service.test.ts` |
+| 4 | Vault not_configured vs corrupted | `packages/versebrowser/tests/agent-browser-vault.test.ts` |
 | 5 | Host approval workflow + explain | `browser-security-recovery.spec.ts` |
 | 6 | Workbench shows real Host session/task/vault meta | `agent-browser-workbench.spec.ts` |
 | 7–10 | Public-site human supervised runs | **calendar residual** (operator) |

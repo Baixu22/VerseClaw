@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m07-diagnostics-evidence-summary",
+  "scope": "Original diagnostics, source-map, network evidence, redaction and business-verdict regressions inside imported package",
+  "driven_by": "agent",
+  "actor": "codex",
+  "runs": [
+    {
+      "log": "console-network.log",
+      "status": "pass",
+      "files": "7 passed",
+      "tests": "67 passed"
+    },
+    {
+      "log": "source-map.log",
+      "status": "pass",
+      "files": "2 passed",
+      "tests": "20 passed"
+    },
+    {
+      "log": "diagnose-verify.log",
+      "status": "pass",
+      "files": "5 passed",
+      "tests": "45 passed"
+    },
+    {
+      "log": "evidence-redaction.log",
+      "status": "pass",
+      "files": "7 passed",
+      "tests": "36 passed"
+    }
+  ],
+  "commands": [
+    {
+      "command": "node <compatible-node> node_modules/vitest/vitest.mjs run <M07 original suites>",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @verse-claw/versebrowser build",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m07/console-network.log",
+      "sha256": "6493a62eabeca199c836b5288e5b2bb2765fd2ef450043f3a42398a29971a11c",
+      "bytes": 227
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m07/source-map.log",
+      "sha256": "320e2c57c7092693869749e722816ef68592e8ed5399ee90c22cae4010753b08",
+      "bytes": 225
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m07/diagnose-verify.log",
+      "sha256": "c7e578d1d4a1639f752d9c20340675bfe58235ea7dc7b70cd6ceac06ca47e0de",
+      "bytes": 226
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m07/evidence-redaction.log",
+      "sha256": "8c1475b899e7d0b4b81717b40d4f55ff88f5dd96c19ae3b44091a6d44ef14a41",
+      "bytes": 227
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m07/typecheck.log",
+      "sha256": "c961887c3e7c89ab3fb8a67f7b9b6be126aa0ba8714a7741c46699572a483290",
+      "bytes": 1585
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m07/package-build.log",
+      "sha256": "341dbf950da7c23a1afd5a2e8fb0f704a557673bfc3c4ee9948da208e55071cb",
+      "bytes": 30
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-console-recorder.test.ts",
+      "sha256": "ac4a91006c2a9ab4c5d70e51a081397882b7b6782f97a2d34660d8cbd02aba58",
+      "bytes": 9851
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-network-context.test.ts",
+      "sha256": "5b38c807e5cd709ca2a116f932c35f290133bd7691984bb670ab1ab4f92fff7c",
+      "bytes": 9530
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-network-recorder.test.ts",
+      "sha256": "dee455b03f840728553556eedff5f7254607cfe9fe12fe3fc72e3f684a9883e5",
+      "bytes": 12377
+    },
+    {
+      "path": "packages/versebrowser/tests/console-severity-and-href.test.ts",
+      "sha256": "add0342a5bd79ab32ea74317053d2e9807ae285eaf740b11752d0af322dc4333",
+      "bytes": 7696
+    },
+    {
+      "path": "packages/versebrowser/tests/network-detail-body-limit.test.ts",
+      "sha256": "bb4ee55178abc0b08941cf4b7f8376a05747df188eacad5d94df90f471beb5df",
+      "bytes": 1906
+    },
+    {
+      "path": "packages/versebrowser/tests/network-detail.test.ts",
+      "sha256": "5f1ca9d6657ec546ee6a16ee2b333a216571aef6f1ea6657b9bacd5f9588304e",
+      "bytes": 5199
+    },
+    {
+      "path": "packages/versebrowser/tests/network-wait.test.ts",
+      "sha256": "185346e9ef9b624ec42835f388d4970c8b567b0d7c0b1e3bf4ac23e96cd50f1e",
+      "bytes": 9818
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-same-origin-source-map-fetcher.test.ts",
+      "sha256": "67fdf0d6803552ad734447951f86d81122550b9814fae3a88ed24f2116b3faed",
+      "bytes": 9947
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-source-map-tool-executor.test.ts",
+      "sha256": "1bf1c8b09f8ed7660b46f8e5808869c6be0b3b6e82a29d3159a9f5a8e82dabe0",
+      "bytes": 14344
+    },
+    {
+      "path": "packages/versebrowser/tests/diagnose-pack-budget.test.ts",
+      "sha256": "3fcdcb082a5e9732298f289add79e296e5204b7f4a43345f25df86687edd018d",
+      "bytes": 7256
+    },
+    {
+      "path": "packages/versebrowser/tests/diagnose-page.test.ts",
+      "sha256": "c92efa9b24582cfe1914a821b92cfd3f27f4884135de8edb17ec8f191f66da5a",
+      "bytes": 2725
+    },
+    {
+      "path": "packages/versebrowser/tests/oneshot-verify.test.ts",
+      "sha256": "217290301ec7b42ed0ff14152b06f0e0aae2094cbb2b593b1b67e5195da71fde",
+      "bytes": 6739
+    },
+    {
+      "path": "packages/versebrowser/tests/verify-collection-integrity.test.ts",
+      "sha256": "57cc9760613e7093e1f8697032e951c9a01c09e142e8d605349b47a79862f0a2",
+      "bytes": 12950
+    },
+    {
+      "path": "packages/versebrowser/tests/verify-network-baseline.test.ts",
+      "sha256": "a1e8396087b9f100ea7289c6b96c5eb90c2c4b56a4a91e64a2d0a3365c468d96",
+      "bytes": 12821
+    },
+    {
+      "path": "packages/versebrowser/tests/evidence-jail.test.ts",
+      "sha256": "baa9068f24faea08dd567f048d495e4aa0761e908fa0bbfbe162df6236a6847a",
+      "bytes": 10287
+    },
+    {
+      "path": "packages/versebrowser/tests/evidence-output-redaction.test.ts",
+      "sha256": "b2640a7b01b1bd7fa52282c34905886ff58796928a7ad6995e4b515ebce7523a",
+      "bytes": 6204
+    },
+    {
+      "path": "packages/versebrowser/tests/evidence-pack.test.ts",
+      "sha256": "6972c3099d72c481cdd6b41e18d09de8fe7f9c614f5ef6cdecc550d5dc81cee9",
+      "bytes": 3207
+    },
+    {
+      "path": "packages/versebrowser/tests/evidence-sinks-coverage.test.ts",
+      "sha256": "869c566044c2fe4eaf5977e82611f66325d93f07a4c3e2aaad944f9d1a0db636",
+      "bytes": 8229
+    },
+    {
+      "path": "packages/versebrowser/tests/evidence-writer-paths.test.ts",
+      "sha256": "d4ddc1087394730d732c31c378e592eb3c2bb17cd06ef0d5363efafe5daddc0e",
+      "bytes": 3265
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-redact-secrets.test.ts",
+      "sha256": "d05ac19e6d4c2f79ddd30f9076bf283f13852ef8f40c2731bac045d3f63f7ffe",
+      "bytes": 8177
+    },
+    {
+      "path": "packages/versebrowser/tests/snapshot-secret-redaction.test.ts",
+      "sha256": "1e5048eee7c4154e70cde69460df620e247ab512d7fc9d959fefb2f7f678e50e",
+      "bytes": 7460
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/writer.ts",
+      "sha256": "7ecedb62e63dbd1fe80adadd4909a3ec0b49de0b6a49a26d62b43390fe8f4f0f",
+      "bytes": 7321
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/reader.ts",
+      "sha256": "56ff64b0d503ff3db6637f2e33d8a465515b9f865ad6868ab9264ba7a697db44",
+      "bytes": 3580
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/path-guard.ts",
+      "sha256": "47ce434c06805853b8829b391d6e74365c596cf392fa6cc289637325a2d393ac",
+      "bytes": 3240
+    },
+    {
+      "path": "packages/versebrowser/src/engine/diagnose-pack.ts",
+      "sha256": "d210e87f5784ac07061d2c226464f35a90c30c67871dfee344f4e0929517e762",
+      "bytes": 8681
+    },
+    {
+      "path": "packages/versebrowser/src/engine/oneshot-verify.ts",
+      "sha256": "041ab2d08b496f1e51fb18e0a595de59b96caad343b19effd5377a88309e30df",
+      "bytes": 2869
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/source-map-tool-executor.ts",
+      "sha256": "bb7fa9ae1187642e971aeb2f86969288fd1e1a09f3036b3255e13a5c10e4717f",
+      "bytes": 29025
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/console-recorder.ts",
+      "sha256": "bf56f1d43c89289ca7960160f225ae714fc7ef285d8083d1dd31eb64af9c9375",
+      "bytes": 9732
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/network-recorder.ts",
+      "sha256": "98ce7f16d9657d98909c043724323fb497df47ba9703840057e338c288f865b2",
+      "bytes": 15587
+    },
+    {
+      "path": "packages/versebrowser/src/security/redact-secrets.ts",
+      "sha256": "5b9f5fed9f23443f16df9cf36f0de49c28f11d86ac036bfa9b023a104c191842",
+      "bytes": 6897
+    }
+  ],
+  "acceptance": {
+    "source_map_console_network_recorder_diagnose_verify_and_evidence_pack_original_regressions_pass": true,
+    "missing_source_map_remains_unmapped": true,
+    "business_fail_not_overwritten_as_clean": true,
+    "insufficient_collection_remains_unknown_or_not_run": true,
+    "action_or_screenshot_success_does_not_replace_business_pass": true,
+    "redaction_path_containment_evidence_references_and_recording_integrity_verified": true,
+    "body_errors_omissions_and_recovery_hints_not_dropped": true
+  },
+  "excludedOriginalTests": [
+    {
+      "test": "external-source-map-vectors.test.ts",
+      "reason": "imports source-repository research data scripts and external corpus, which are outside the minimum module boundary"
+    },
+    {
+      "test": "trajectory-capture-redaction.test.ts",
+      "reason": "imports source-repository research data scripts, outside the minimum module boundary"
+    }
+  ],
+  "remainingCheckpointWork": [
+    "Actual Runtime/Gateway/model fidelity remains M08",
+    "Full original regression/adversarial matrix remains M09",
+    "Packaged evidence path remains M10"
+  ],
+  "validationBoundary": "Selected original logic/runtime tests prove package-local diagnostics and evidence behavior. External research corpus and two tests outside the module boundary remain in the source repository and are not claimed as package acceptance."
+}

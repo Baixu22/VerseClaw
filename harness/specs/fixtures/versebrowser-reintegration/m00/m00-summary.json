@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m00-summary",
+  "scope": "M00 freeze/review deliverable; migration remains incomplete",
+  "driven_by": "agent",
+  "actor": "codex",
+  "outputs": [
+    {
+      "path": "m00-baseline.json",
+      "sha256": "bb38d80c349ab403147cea2953a1e034fd83a50c1d1c1e6365938b02c83f3713",
+      "bytes": 184319
+    },
+    {
+      "path": "m00-task-conservation.json",
+      "sha256": "6fb8f04ab287e558a576db0d9ddd5c48ac3deaf2a2abb959e77d2f3741981707",
+      "bytes": 215829
+    },
+    {
+      "path": "m00-api-crosswalk.json",
+      "sha256": "d1b61893165bd92a54f1397a81335713477d0ee3baf51637f2539c8bf038a0ed",
+      "bytes": 158708
+    },
+    {
+      "path": "m00-file-delta-review.json",
+      "sha256": "cb76ab17fde5c108df1833498a71174865a2617998570e7aee2c145035e4f2b9",
+      "bytes": 41849
+    },
+    {
+      "path": "m00-state-preservation.json",
+      "sha256": "069a4152f654b3085e96f2a03f577347fe9c1fae30848b2b6ffc112dcfd6a52a",
+      "bytes": 6289
+    },
+    {
+      "path": "m00-next-phase-allowlist.json",
+      "sha256": "ad0310fec4a5d85d3360ddd5dd61d64741c4ceccf6ce7924fbda784c065fea3c",
+      "bytes": 92339
+    }
+  ],
+  "acceptance": {
+    "M00.1_baseline": {
+      "source_head_matches_lock": true,
+      "source_worktree_clean": true,
+      "host_head_matches_lock": true,
+      "package_lock_sha256_matches": true,
+      "protected_inputs_complete_and_hashed": true,
+      "source_task_archive_matches_live": true,
+      "host_dirty_inventory_recorded": true
+    },
+    "M00.2_task_conservation": {
+      "sourceNodeCountIs190": true,
+      "sourceEdgeCountIs338": true,
+      "crosswalkCoversEverySourceNode": true,
+      "sourceIdsUnique": true,
+      "allDispositionsExplicit": true,
+      "hostGraphNotOverwritten": true
+    },
+    "M00.3_api_and_file_delta": {
+      "apiCounts": {
+        "legacy": 67,
+        "sourceOnly": 13,
+        "total": 80,
+        "entries": 80
+      },
+      "apiChecks": {
+        "legacyCountExact": true,
+        "sourceOnlyCountExact": true,
+        "sourceSignaturesCaptured": true,
+        "legacyHostSignaturesCaptured": true,
+        "legacySignatureParityExceptOpenSignal": true,
+        "runtimeExposureExplicit": true
+      },
+      "fileCounts": {
+        "pairs": 42,
+        "verbatim": 7,
+        "importRewriteOnly": 10,
+        "behaviorDeltaReviewRequired": 25,
+        "unmatchedSourcePaths": 85
+      },
+      "fileChecks": {
+        "all42PairsReviewed": true,
+        "classificationPartitionExact": true,
+        "nonEquivalentPairsExplicit": true,
+        "unmatchedPathsExplicit": true
+      }
+    },
+    "M00.4_state_and_allowlist": {
+      "stateChecks": {
+        "taskStoreOwnerExists": true,
+        "profileOwnerExists": true,
+        "vaultOwnerExists": true,
+        "resourceEnvelopeExists": true,
+        "protectedInputCountIs292": true,
+        "allRowsHaveCheckpoints": true
+      },
+      "allowlistChecks": {
+        "productSourceCount127": true,
+        "regressionInputCount160": true,
+        "buildContractCount3": true,
+        "licenseCount1": true,
+        "runtimePatchCount1": true,
+        "groupTotal292": true,
+        "excludedRootsPresent": true
+      }
+    }
+  },
+  "nextCheckpoint": "M01 / TF-0331: implement source/path/API/task coverage checks and prove they reject missing, deleted, out-of-scope and unregistered-patch negatives.",
+  "validationBoundary": "M00 is complete only when every nested check above is true and read back from disk. It does not infer product import, runtime, package or release success."
+}

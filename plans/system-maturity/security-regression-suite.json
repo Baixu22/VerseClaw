@@ -80,8 +80,8 @@
       "priority": "P1",
       "owner": "qa-governance",
       "findings": ["F-SEC-003", "F-SEC-006", "F-REL-004"],
-      "commandIds": ["root-security-unit"],
-      "testFiles": ["tests/unit/agent-browser-p4-002-isolation.test.ts", "tests/unit/gateway-p4-001-auth-binding.test.ts"],
+      "commandIds": ["root-security-unit", "versebrowser-module-security-unit"],
+      "testFiles": ["packages/versebrowser/tests/agent-browser-p4-002-isolation.test.ts", "tests/unit/gateway-p4-001-auth-binding.test.ts"],
       "expected": "tab, origin, grant, sender, and filesystem authority do not cross sessions or windows"
     }
   ],
@@ -90,13 +90,19 @@
       "id": "root-security-unit",
       "modes": ["pr", "full"],
       "kind": "unit",
-      "run": "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts tests/unit/host-invoke-security.test.ts tests/unit/gateway-p4-001-auth-binding.test.ts tests/unit/url-policy.test.ts tests/unit/channels-p4-004-inbound-trust.test.ts tests/unit/path-broker-resolved.test.ts tests/unit/files-permissions-api.test.ts tests/unit/permissions-api.test.ts tests/unit/workspace-permissions.test.ts tests/unit/sekb-trajectory-redaction-p3-001.test.ts tests/unit/session-cascade-delete-p3-004.test.ts tests/unit/windows-update-feed-p6-002.test.ts tests/unit/release-artifact-integrity-p6-004.test.ts tests/unit/agent-browser-p4-002-isolation.test.ts --maxWorkers=1"
+      "run": "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts tests/unit/host-invoke-security.test.ts tests/unit/gateway-p4-001-auth-binding.test.ts tests/unit/url-policy.test.ts tests/unit/channels-p4-004-inbound-trust.test.ts tests/unit/path-broker-resolved.test.ts tests/unit/files-permissions-api.test.ts tests/unit/permissions-api.test.ts tests/unit/workspace-permissions.test.ts tests/unit/sekb-trajectory-redaction-p3-001.test.ts tests/unit/session-cascade-delete-p3-004.test.ts tests/unit/windows-update-feed-p6-002.test.ts tests/unit/release-artifact-integrity-p6-004.test.ts --maxWorkers=1"
     },
     {
       "id": "runtime-security-unit",
       "modes": ["pr", "full"],
       "kind": "unit",
       "run": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.cron.config.ts src/cron/p5-002-lease-authority.test.ts"
+    },
+    {
+      "id": "versebrowser-module-security-unit",
+      "modes": ["pr", "full"],
+      "kind": "unit",
+      "run": "pnpm --dir packages/versebrowser exec vitest run ../../packages/versebrowser/tests/agent-browser-p4-002-isolation.test.ts"
     },
     {
       "id": "comms-replay",

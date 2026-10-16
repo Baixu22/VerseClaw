@@ -7,14 +7,27 @@
 import { randomUUID } from "node:crypto";
 import { ErrorCodes, errorShape } from "../../../packages/gateway-protocol/src/index.js";
 import {
-  GATEWAY_CLIENT_IDS,
-  GATEWAY_CLIENT_MODES,
+  GATEWAY_CLIENT_CAPS,
+  hasGatewayClientCap,
 } from "../../../packages/gateway-protocol/src/client-info.js";
 import type {
   GatewayClient,
   GatewayRequestHandlerOptions,
   GatewayRequestHandlers,
 } from "./types.js";
+
+type AgentBrowserCorrelation = {
+  gatewayRequestId?: string;
+  runId?: string;
+  sessionKey?: string;
+  agentSessionKey?: string;
+  agentSessionId?: string;
+  toolCallId?: string;
+  taskId?: string;
+  pageId?: string;
+  workspaceId?: string;
+  agentId?: string;
+};
 
 type PendingAgentBrowserInvoke = {
   resolve: (payload: unknown) => void;
@@ -61,6 +74,30 @@ function readErrorMessage(value: unknown): string {
   return "agent browser invoke failed";
 }
 
+function readCorrelation(value: unknown): AgentBrowserCorrelation | undefined {
+  const record = value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined;
+  if (!record) return undefined;
+  const correlation: AgentBrowserCorrelation = {};
+  for (const key of [
+    "gatewayRequestId",
+    "runId",
+    "sessionKey",
+    "agentSessionKey",
+    "agentSessionId",
+    "toolCallId",
+    "taskId",
+    "pageId",
+    "workspaceId",
+    "agentId",
+  ] as const) {
+    const entry = record[key];
+    if (typeof entry === "string" && entry.trim()) correlation[key] = entry.trim();
+  }
+  return Object.keys(correlation).length > 0 ? correlation : undefined;
+}
+
 function readSessionKey(payload: Record<string, unknown>): string | undefined {
   for (const key of ["sessionKey", "sessionId"] as const) {
     const value = payload[key];
@@ -79,25 +116,14 @@ function readSessionKey(payload: Record<string, unknown>): string | undefined {
 /** True when a client is a trusted Electron/backend Agent Browser bridge. */
 export function isAgentBrowserBridgeClient(client: GatewayClient | null | undefined): boolean {
   if (!client?.connect?.client) return false;
-  const info = client.connect.client;
-  const mode = typeof info.mode === "string" ? info.mode.trim().toLowerCase() : "";
-  const id = typeof info.id === "string" ? info.id.trim().toLowerCase() : "";
-  if (mode === GATEWAY_CLIENT_MODES.BACKEND) return true;
-  if (id === GATEWAY_CLIENT_IDS.GATEWAY_CLIENT) return true;
-  if (
-    id === GATEWAY_CLIENT_IDS.MACOS_APP ||
-    id === GATEWAY_CLIENT_IDS.IOS_APP ||
-    id === GATEWAY_CLIENT_IDS.ANDROID_APP
-  ) {
-    return true;
-  }
-  return false;
+  return hasGatewayClientCap(client.connect.caps, GATEWAY_CLIENT_CAPS.AGENT_BROWSER_BRIDGE);
 }
 
 /** Resolve bridge connection ids from an approval-client enumerator (or empty). */
 export function resolveAgentBrowserBridgeConnIds(
   getApprovalClientConnIds: GatewayRequestHandlerOptions["context"]["getApprovalClientConnIds"],
   excludeConnId?: string,
+  excludeInstanceId?: string,
 ): Set<string> {
   if (!getApprovalClientConnIds) {
     return new Set();
@@ -105,7 +131,9 @@ export function resolveAgentBrowserBridgeConnIds(
   return new Set(
     getApprovalClientConnIds({
       excludeConnId,
-      filter: (client) => isAgentBrowserBridgeClient(client),
+      filter: (client) =>
+        isAgentBrowserBridgeClient(client)
+        && (!excludeInstanceId || client.connect?.client?.instanceId !== excludeInstanceId),
     }),
   );
 }
@@ -133,7 +161,7 @@ export function claimAgentBrowserResult(params: {
     return { ok: false, reason: "wrong_source" };
   }
 
-  if (pending.sessionKey && params.sessionKey && pending.sessionKey !== params.sessionKey) {
+  if (pending.sessionKey && params.sessionKey !== pending.sessionKey) {
     return { ok: false, reason: "session_mismatch" };
   }
 
@@ -181,14 +209,19 @@ export const agentBrowserHandlers: GatewayRequestHandlers = {
       return;
     }
     const payload = readPayload(params.payload);
+    const correlation = readCorrelation(params.correlation);
     const timeoutMs = normalizeTimeoutMs(params.timeoutMs ?? payload.timeoutMs);
     const requestId = randomUUID();
-    const sessionKey = readSessionKey(payload);
+    const sessionKey = correlation?.sessionKey
+      ?? correlation?.agentSessionKey
+      ?? readSessionKey(payload);
     const originConnId = client?.connId;
+    const originInstanceId = client?.connect?.client?.instanceId;
 
     const allowedConnIds = resolveAgentBrowserBridgeConnIds(
       context.getApprovalClientConnIds,
       originConnId,
+      originInstanceId,
     );
 
     if (allowedConnIds.size === 0) {
@@ -225,6 +258,7 @@ export const agentBrowserHandlers: GatewayRequestHandlers = {
       timeoutMs,
       originConnId,
       sessionKey,
+      ...(correlation ? { correlation } : {}),
       allowedConnIds: [...allowedConnIds],
     };
 

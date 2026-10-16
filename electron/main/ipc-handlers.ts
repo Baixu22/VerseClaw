@@ -194,7 +194,8 @@ function registerTypedHostHandlers(
   });
   terminalManagerRef = terminalManager;
   webPreviewManager = createWebPreviewManager({ mainWindow, terminalManager });
-  registerAgentBrowserGatewayBridge(gatewayManager);
+  const agentBrowserApi = createAgentBrowserApi();
+  registerAgentBrowserGatewayBridge(gatewayManager, undefined, agentBrowserApi);
   const knowledgeApi = createKnowledgeApi({ gatewayManager });
   const remoteForgeApi = createRemoteForgeApi();
   const traceDiagnostics = createHostTraceDiagnosticsService({
@@ -230,7 +231,7 @@ function registerTypedHostHandlers(
     capabilities: createCapabilitiesApi({ gatewayManager }),
     agentDev: createAgentDevApi({ gatewayManager }),
     remoteControl: createRemoteControlApi(),
-    agentBrowser: createAgentBrowserApi(),
+    agentBrowser: agentBrowserApi,
     mcp: createMcpApiWithContext({ gatewayManager, remoteForgeApi }),
     sandbox: createSandboxApi(),
     logs: createLogsApi(),

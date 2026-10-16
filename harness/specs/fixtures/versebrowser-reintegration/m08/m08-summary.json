@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m08-runtime-real-chain-summary",
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "Real Runtime -> Gateway -> Electron Main -> @verse-claw/versebrowser package -> real model tool call and final transcript, plus adversarial owner/audit/revoke/module/result-binding tests.",
+  "commands": [
+    {
+      "command": "D:\\\\versebrowser\\\\.local\\\\runtime\\\\node.exe scripts/versebrowser-m08-runtime-verify.mjs",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec vitest run <agent-browser suites + host adapter + gateway P4-001 + runtime provenance suites>",
+      "exitCode": 0,
+      "tests": 405,
+      "files": 34
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run build:runtime",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/versebrowser-upstream-reintegration.md --no-diff",
+      "exitCode": 0
+    }
+  ],
+  "harnessValidation": {
+    "fullDiffValidation": "fail only on pre-existing unrelated untracked files outside this migration",
+    "structuralNoDiff": true
+  },
+  "acceptance": {
+    "real_model_round_trip": true,
+    "tool_call_observed": true,
+    "tool_result_contains_fixture_heading": true,
+    "gateway_request_correlation_preserved": true,
+    "task_and_page_correlation_preserved": true,
+    "session_owner_metadata_preserved": true,
+    "host_bridge_capability_scoped": true,
+    "agent_browser_event_scope_registered": true,
+    "module_missing_fails_closed": true,
+    "wrong_owner_fails_before_module_call": true,
+    "audit_unavailable_fails_closed": true,
+    "revoke_removes_full_access_without_replay": true,
+    "wrong_source_late_duplicate_and_session_mismatch_results_rejected": true
+  },
+  "runtime": {
+    "runId": "m08-2026-10-15T13-53-36-258Z-6ac5f8ff",
+    "sessionKey": "agent:main:m08-2026-10-15T13-53-36-258Z-6ac5f8ff",
+    "taskId": "m08-2026-10-15T13-53-36-258Z-6ac5f8ff-task",
+    "pageId": "m08-2026-10-15T13-53-36-258Z-6ac5f8ff-page",
+    "fixtureUrl": "http://127.0.0.1:62392/",
+    "preflightOpenMs": 455,
+    "ownedSessions": [
+      {
+        "id": "a330ffaa-8309-4561-be32-67c89d3c078a",
+        "profile": "m08-2026-10-15t13-53-36-258z-6ac5f8ff",
+        "mode": "headless",
+        "authPersistence": "session-name",
+        "authStateName": "m08-2026-10-15t13-53-36-258z-6ac5f8ff",
+        "connection": {
+          "mode": "managed"
+        },
+        "createdAt": "2026-10-15T13:54:47.690Z",
+        "updatedAt": "2026-10-15T13:54:47.879Z",
+        "runtimeMode": "normal_restricted",
+        "sessionKey": "agent:main:m08-2026-10-15t13-53-36-258z-6ac5f8ff",
+        "agentId": "main",
+        "url": "http://127.0.0.1:62392/",
+        "title": "M08 Fixture"
+      }
+    ]
+  },
+  "evidenceFiles": [
+    "m08-real-runtime-result.json",
+    "targeted-tests.log",
+    "typecheck.log",
+    "build-runtime.log",
+    "build-vite.log"
+  ],
+  "artifacts": [
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m08/m08-real-runtime-result.json",
+      "sha256": "194ab55c4a4e0429f92787f346bc27f7b727220b61f7cf0f716daa45f7e3d3d5",
+      "bytes": 28787
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m08/targeted-tests.log",
+      "sha256": "bbbcc53b2731f3da8d7a29ad017f89deabd888f5dfcec69d41c13f0ba6ff71c2",
+      "bytes": 254
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m08/typecheck.log",
+      "sha256": "547485880e5e17c3b68d8672392976e0fe6a75f44e824ab887716a1644437381",
+      "bytes": 1599
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m08/build-runtime.log",
+      "sha256": "e6f2c97936f6f2969ae787f5f5c332b9b725721cb891edb58028fa53b1708397",
+      "bytes": 3070
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m08/build-vite.log",
+      "sha256": "f8a71d76d057276888d88d8ff226a126fd2616489130aa7265fa96cb753c1114",
+      "bytes": 47190
+    }
+  ],
+  "remainingCheckpointWork": [
+    "M09 full original regression/business/security matrix and agent-driven continuation fixtures remain.",
+    "M10 packaged Windows Electron/package-path acceptance remains.",
+    "M11 cutover/rollback remains."
+  ],
+  "validationBoundary": "This is a development-path real Runtime/Gateway/Main/package/model run using the local OpenAI-compatible model endpoint. It does not prove packaged distribution, all original matrices, cross-platform execution, or product cutover.",
+  "status": "pass"
+}

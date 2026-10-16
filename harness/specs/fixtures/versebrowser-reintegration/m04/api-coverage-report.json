@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "counts": {
+    "legacy": 67,
+    "sourceOnly": 13,
+    "hostContract": 80,
+    "hostClient": 80,
+    "runtimeNewActions": 13
+  },
+  "issues": []
+}

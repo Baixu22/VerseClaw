@@ -190,12 +190,15 @@ Renderer 请求入口是 `src/lib/host-api.ts` 与 `src/lib/host-api-client.ts`�
 | `electron/` | 桌面生命周期、Host 服务、Gateway 与进程管理 |
 | `shared/` | 类型契约、四语言翻译、场景注册与能力定义 |
 | `openclaw_runtime/` | 独立依赖工作区中的运行时与插件源码 |
+| `packages/` | 内嵌工作区模块；`packages/versebrowser` 为固定版本的浏览器自动化引擎，经公开 exports 被宿主消费 |
 | `harness/` | 规格 CLI，以及场景、规则、任务和分层规范 |
 | `tests/` | 桌面端单元、集成与 Electron E2E 测试 |
 | `scripts/` | 构建、资源同步、验证与证据生成脚本 |
 | `resources/` | 内置技能、二进制资源和第三方源码声明 |
 | `docs/` | 产品语义、设计、开发手册与运行说明 |
 | `artifacts/` | 精选验证证据及本地生成报告；保留规则决定哪些入 Git |
+
+VerseBrowser：安装、开发和构建会自动编译内嵌模块。80 个契约方法不代表 Electron 已实现 80 项能力；参见[调用方式与驱动限制](packages/README.md#versebrowser-integration-and-invocation)。
 
 <a id="development"></a>
 

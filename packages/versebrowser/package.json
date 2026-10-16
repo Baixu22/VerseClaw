@@ -1,0 +1,144 @@
+{
+  "name": "@verse-claw/versebrowser",
+  "version": "0.3.1",
+  "private": true,
+  "description": "Pinned VerseBrowser engine module embedded in Verse Claw",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js",
+      "require": "./dist/core/index.js"
+    },
+    "./core/*": {
+      "types": "./dist/core/*.d.ts",
+      "import": "./dist/core/*.js",
+      "require": "./dist/core/*.js"
+    },
+    "./engine": {
+      "types": "./dist/engine/api.d.ts",
+      "import": "./dist/engine/api.js",
+      "require": "./dist/engine/api.js"
+    },
+    "./engine/service": {
+      "types": "./dist/engine/service.d.ts",
+      "import": "./dist/engine/service.js",
+      "require": "./dist/engine/service.js"
+    },
+    "./engine/api": {
+      "types": "./dist/engine/api.d.ts",
+      "import": "./dist/engine/api.js",
+      "require": "./dist/engine/api.js"
+    },
+    "./engine/standalone": {
+      "types": "./dist/engine/standalone.d.ts",
+      "import": "./dist/engine/standalone.js",
+      "require": "./dist/engine/standalone.js"
+    },
+    "./engine/playwright-host-api": {
+      "types": "./dist/engine/playwright-host-api.d.ts",
+      "import": "./dist/engine/playwright-host-api.js",
+      "require": "./dist/engine/playwright-host-api.js"
+    },
+    "./gateway": {
+      "types": "./dist/gateway/bridge.d.ts",
+      "import": "./dist/gateway/bridge.js",
+      "require": "./dist/gateway/bridge.js"
+    },
+    "./openclaw/tool": {
+      "types": "./dist/openclaw/tool.d.ts",
+      "import": "./dist/openclaw/tool.js",
+      "require": "./dist/openclaw/tool.js"
+    },
+    "./openclaw/gateway": {
+      "types": "./dist/openclaw/gateway/agent-browser.d.ts",
+      "import": "./dist/openclaw/gateway/agent-browser.js",
+      "require": "./dist/openclaw/gateway/agent-browser.js"
+    },
+    "./types": {
+      "types": "./dist/types/host-api.d.ts",
+      "import": "./dist/types/host-api.js",
+      "require": "./dist/types/host-api.js"
+    },
+    "./host": {
+      "types": "./dist/host/permissions-hooks.d.ts",
+      "import": "./dist/host/permissions-hooks.js",
+      "require": "./dist/host/permissions-hooks.js"
+    },
+    "./host/workspace-paths": {
+      "types": "./dist/host/workspace-paths.d.ts",
+      "import": "./dist/host/workspace-paths.js",
+      "require": "./dist/host/workspace-paths.js"
+    },
+    "./mcp/server": {
+      "types": "./dist/mcp/server.d.ts",
+      "import": "./dist/mcp/server.js",
+      "require": "./dist/mcp/server.js"
+    },
+    "./mcp/capability-policy": {
+      "types": "./dist/mcp/capability-policy.d.ts",
+      "import": "./dist/mcp/capability-policy.js",
+      "require": "./dist/mcp/capability-policy.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "vb": "./dist/cli.js"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "patch:upstream": "node scripts/patch-upstream.mjs",
+    "patch:upstream:check": "node scripts/patch-upstream.mjs --check"
+  },
+  "dependencies": {
+    "@browserbasehq/stagehand": "4.1.0",
+    "@jridgewell/trace-mapping": "0.3.31",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "@playwright/mcp": "0.0.83",
+    "cheerio": "1.2.0",
+    "chrome-har": "1.3.1",
+    "commander": "15.0.0",
+    "diff": "9.0.0",
+    "electron-store": "11.0.2",
+    "ipaddr.js": "2.5.0",
+    "playwright": "1.64.0-alpha-1790635538000",
+    "playwright-core": "1.63.0",
+    "typebox": "1.1.39",
+    "zod": "4.4.3"
+  },
+  "peerDependencies": {
+    "electron": ">=44"
+  },
+  "peerDependenciesMeta": {
+    "electron": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "25.9.8",
+    "esbuild": "0.28.2",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "scripts/patch-upstream.mjs",
+    "patches",
+    "import-manifest.json",
+    "integration-patches.json",
+    "package.json"
+  ]
+}

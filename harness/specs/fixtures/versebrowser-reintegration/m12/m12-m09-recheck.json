@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m09-regression-verify",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "testClosure": {
+    "sourceTestCount": 158,
+    "dispositions": {
+      "module_runtime": 127,
+      "source_research_or_release": 24,
+      "source_guard_or_release": 7
+    },
+    "moduleRuntimeImported": 127,
+    "excludedNotImported": 31
+  },
+  "matrix": {
+    "bPass": 44,
+    "cPass": 44,
+    "total": 48,
+    "parity": true,
+    "notRunPreserved": true,
+    "notRun": [
+      "mig-01-docs-quote/SDK",
+      "mig-22-auth-handoff/SDK",
+      "mig-01-docs-quote/stdio",
+      "mig-22-auth-handoff/stdio"
+    ]
+  },
+  "consumer": {
+    "checkCount": 42,
+    "bPass": true,
+    "cPass": true
+  },
+  "issues": []
+}

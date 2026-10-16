@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m10-packaged-host-flow",
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "Real packaged artifact (release/win-unpacked/Verse Claw.exe) exercised through its own host bridge to the embedded module",
+  "path": "CDP connectOverCDP -> packaged renderer -> window.verseClaw.hostInvoke({module:'agentBrowser'})",
+  "steps": [
+    "setEnabled(true)",
+    "open({url:'<local fixture>', mode:'headless', profile:<runId>, sessionKey:'agent:main:<runId>', agentId:'main'})",
+    "requestModeUpgrade({targetMode:'full_access', userApproval:true})",
+    "takeSnapshot({sessionId})",
+    "status() (ownership check)",
+    "close({sessionId})"
+  ],
+  "result": {
+    "enabled": true,
+    "openOk": true,
+    "upgradeOk": true,
+    "upgradeMode": "full_access",
+    "snapshotOk": true,
+    "snapshotHasHeading": true,
+    "snapshotHasMarker": true,
+    "snapshotError": null,
+    "ownedSessionCount": 1,
+    "closed": true
+  },
+  "assertions": {
+    "packaged_renderer_has_host_bridge": true,
+    "real_browser_session_opened": true,
+    "runtime_mode_upgrade_ok": true,
+    "snapshot_returns_fixture_content": true,
+    "session_owned_by_requested_session_key": true,
+    "session_closed": true
+  },
+  "status": "pass",
+  "oppositeEvidence": "Under normal_restricted (no upgrade) takeSnapshot fails closed with 'requires runtime mode upgrade'; a mode upgrade without userApproval is refused by the module's approval gate.",
+  "validationBoundary": "One packaged host round trip (open -> mode upgrade -> snapshot -> close) with fixture content and ownership. It is not the full 24-task matrix nor the installed-from-NSIS app."
+}

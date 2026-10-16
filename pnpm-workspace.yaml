@@ -3,6 +3,7 @@
 packages:
   - '.'
   - 'harness'
+  - 'packages/versebrowser'
   - 'resources/verseshell-mcp'
 
 overrides:

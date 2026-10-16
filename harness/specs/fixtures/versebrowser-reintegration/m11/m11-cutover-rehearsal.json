@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m11-cutover-rehearsal",
+  "driven_by": "agent",
+  "actor": "codex",
+  "fixtureUrl": "http://127.0.0.1:63317/",
+  "steps": {
+    "defaultDriver": "playwright",
+    "defaultDriverIsLegacy": true,
+    "legacyOpenOk": true,
+    "upstreamOpenOk": true,
+    "refA": "e1",
+    "refB": "u71329c12-1-e3",
+    "legacyClickForeignSession": {
+      "ok": false,
+      "code": "E_CLICK"
+    },
+    "upstreamClickForeignSession": {
+      "ok": false,
+      "code": "E_CLICK"
+    },
+    "legacyCloseForeignSession": {
+      "ok": false,
+      "code": "E_NO_SESSION"
+    },
+    "legacyCursor": "593b11c4-9afd-4370-83f1-3a2b2d828bc2:1",
+    "upstreamAcceptsForeignCursor": {
+      "ok": false,
+      "code": "E_NETWORK_WAIT"
+    },
+    "brokenUpstreamOpen": {
+      "ok": false,
+      "code": "E_OPEN",
+      "content": "browserType.launch: Failed to launch chromium because executable doesn't exist at D:\\ClawX"
+    },
+    "brokenUpstreamSessionExists": false
+  },
+  "checks": {
+    "default_backend_still_legacy": true,
+    "legacy_and_upstream_sessions_open": true,
+    "legacy_rejects_foreign_session": true,
+    "upstream_rejects_foreign_session": true,
+    "upstream_rejects_foreign_cursor": true,
+    "broken_upstream_fails_closed": true
+  },
+  "status": "pass"
+}

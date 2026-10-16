@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m00-state-preservation",
+  "scope": "Preservation contract for host-owned runtime state and source regression inputs",
+  "driven_by": "agent",
+  "actor": "codex",
+  "rows": [
+    {
+      "area": "browser_task_store",
+      "hostOwner": "electron/services/agent-browser-task-service.ts",
+      "hostRuntimePath": "<userData>/agent-browser/tasks.json",
+      "sourceOwner": "src/engine/task-service.ts",
+      "preserve": [
+        "task ids",
+        "status",
+        "steps",
+        "counters",
+        "verification",
+        "approval",
+        "recovery",
+        "workspace/session/agent context"
+      ],
+      "invariants": [
+        "same TaskService owner",
+        "versioned store remains readable after restart",
+        "running becomes interrupted with recovery",
+        "late completion/cancel does not rewrite terminal state"
+      ],
+      "checkpoints": [
+        "M05",
+        "M09",
+        "M10"
+      ]
+    },
+    {
+      "area": "browser_profiles",
+      "hostOwner": "electron/services/agent-browser-service.ts",
+      "hostRuntimePath": "<userData>/agent-browser/profile-metadata.json + <userData>/agent-browser/profiles/<profile>",
+      "sourceOwner": "src/engine/persistent-sessions.ts",
+      "preserve": [
+        "profile name",
+        "authStateName",
+        "session-name cookies/localStorage",
+        "partition/connection provenance"
+      ],
+      "invariants": [
+        "path segments remain sanitized",
+        "no cross-workspace or cross-task profile bleed",
+        "existing profiles remain readable"
+      ],
+      "checkpoints": [
+        "M03",
+        "M05",
+        "M11"
+      ]
+    },
+    {
+      "area": "credentials",
+      "hostOwner": "electron/services/agent-browser-vault.ts",
+      "hostRuntimePath": "<userData>/agent-browser/vault.json",
+      "sourceOwner": "src/engine/vault.ts",
+      "preserve": [
+        "credential metadata",
+        "OS-protected encrypted secret",
+        "profile/origin binding"
+      ],
+      "invariants": [
+        "safeStorage is required",
+        "plaintext secrets never enter logs or evidence",
+        "corruption/encryption-unavailable are explicit failures"
+      ],
+      "checkpoints": [
+        "M03",
+        "M05",
+        "M09"
+      ]
+    },
+    {
+      "area": "evidence_and_artifacts",
+      "hostOwner": "electron/services/agent-browser-service.ts",
+      "hostRuntimePath": "<userData>/agent-browser/run-artifacts/<runId>",
+      "sourceOwner": "src/evidence/writer.ts",
+      "preserve": [
+        "artifact refs",
+        "run correlation",
+        "failure/diagnostic details",
+        "screenshot/file refs",
+        "truncation and omission markers"
+      ],
+      "invariants": [
+        "path stays inside agent-browser root",
+        "failure/unknown is not collapsed to success",
+        "screenshot action success is not business PASS"
+      ],
+      "checkpoints": [
+        "M07",
+        "M09",
+        "M10"
+      ]
+    },
+    {
+      "area": "sessions_pages_refs_cursors",
+      "hostOwner": "electron/services/agent-browser-service.ts",
+      "hostRuntimePath": "in-memory Main-owned records",
+      "sourceOwner": "src/engine/facade.ts + src/engine/service.ts",
+      "preserve": [
+        "session/page ownership",
+        "ref/cursor validity and recovery hints",
+        "cancel and close behavior"
+      ],
+      "invariants": [
+        "do not migrate handles across backends",
+        "do not claim another task browser",
+        "stale handles fail explicitly"
+      ],
+      "checkpoints": [
+        "M04",
+        "M05",
+        "M11"
+      ]
+    },
+    {
+      "area": "resource_envelope",
+      "hostOwner": "electron/services/resource-envelope.ts + electron/services/agent-browser-service.ts",
+      "hostRuntimePath": "Main resource envelope registry",
+      "sourceOwner": "src/engine/service.ts",
+      "preserve": [
+        "session registration",
+        "resource ownership",
+        "release on close/failure/cancel"
+      ],
+      "invariants": [
+        "no second resource owner",
+        "cleanup affects owned resources only",
+        "failure leaves recovery information"
+      ],
+      "checkpoints": [
+        "M03",
+        "M05",
+        "M10"
+      ]
+    },
+    {
+      "area": "workspace_permission_context",
+      "hostOwner": "electron/services/agent-browser-api.ts + workspaces/sandbox services",
+      "hostRuntimePath": "workspace profile and sandbox policy stores",
+      "sourceOwner": "src/host/workspace-runtime-permissions.ts",
+      "preserve": [
+        "active workspace",
+        "permission mode",
+        "sandbox decision provenance",
+        "audit event"
+      ],
+      "invariants": [
+        "host owner remains authoritative",
+        "no second workspace store",
+        "default-deny and revoke/expiry remain explicit"
+      ],
+      "checkpoints": [
+        "M03",
+        "M08",
+        "M09"
+      ]
+    },
+    {
+      "area": "source_regression_inputs",
+      "hostOwner": "harness/specs/fixtures/versebrowser-reintegration/source-lock.json",
+      "hostRuntimePath": "source checkout D:/versebrowser plus frozen hashes",
+      "sourceOwner": "D:/versebrowser tests/fixtures/configs/license/patch",
+      "preserve": [
+        "127 product source files",
+        "160 regression inputs",
+        "3 build/dependency contracts",
+        "LICENSE",
+        "required runtime patch"
+      ],
+      "invariants": [
+        "raw hash is provenance anchor",
+        "CRLF/LF is the only transport normalization",
+        "selected test fixture closure is reviewed before transplant"
+      ],
+      "checkpoints": [
+        "M02",
+        "M09",
+        "M10"
+      ]
+    }
+  ],
+  "checks": {
+    "taskStoreOwnerExists": true,
+    "profileOwnerExists": true,
+    "vaultOwnerExists": true,
+    "resourceEnvelopeExists": true,
+    "protectedInputCountIs292": true,
+    "allRowsHaveCheckpoints": true
+  },
+  "validationBoundary": "These are preservation requirements, not proof that upgrade, cancellation, restart, rollback or package paths already pass."
+}

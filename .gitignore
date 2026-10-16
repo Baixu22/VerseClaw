@@ -117,6 +117,8 @@ openclaw_runtime/.openclaw/
 # Local continuity state; stable fixtures and final evidence stay in source control.
 # See docs/dev/repository-artifact-retention.md before restoring historical inputs.
 /.agent-workbench/task-forest/
+# Historical browser probes can contain copied provider credentials; never stage them.
+/.agent-workbench/m08-runtime-*/
 /docs/dev/handoffs/
 /runtime-research/
 

@@ -26,7 +26,7 @@ touchedAreas:
   - tests/unit/sandbox-api.test.ts
   - tests/unit/sandbox-denial-error.test.ts
   - tests/unit/host-invoke.test.ts
-  - tests/unit/agent-browser-service.test.ts
+  - tests/unit/versebrowser-host-adapter.test.ts
   - tests/unit/cron-api-browser-automation.test.ts
   - tests/unit/terminal-api.test.ts
   - tests/unit/gateway-permissions-api.test.ts
@@ -41,7 +41,7 @@ requiredProfiles:
   - fast
   - comms
 requiredTests:
-  - node node_modules/vitest/vitest.mjs run tests/unit/agent-resource-limits-p5-004.test.ts tests/unit/sandbox-api.test.ts tests/unit/sandbox-denial-error.test.ts tests/unit/host-invoke.test.ts tests/unit/agent-browser-service.test.ts tests/unit/cron-api-browser-automation.test.ts tests/unit/terminal-api.test.ts tests/unit/gateway-permissions-api.test.ts tests/unit/git-api.test.ts tests/unit/error-model.test.ts --maxWorkers=1
+  - node node_modules/vitest/vitest.mjs run tests/unit/agent-resource-limits-p5-004.test.ts tests/unit/sandbox-api.test.ts tests/unit/sandbox-denial-error.test.ts tests/unit/host-invoke.test.ts tests/unit/versebrowser-host-adapter.test.ts tests/unit/cron-api-browser-automation.test.ts tests/unit/terminal-api.test.ts tests/unit/gateway-permissions-api.test.ts tests/unit/git-api.test.ts tests/unit/error-model.test.ts --maxWorkers=1
   - node scripts/check-error-governance.mjs
   - pnpm run typecheck
   - node scripts/comms/replay.mjs

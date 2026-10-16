@@ -77,10 +77,26 @@ export function copyRuntimeDependencies(source, destination, installationRoot = 
       if (inside && JSON.parse(readFileSync(join(existing, 'package.json'), 'utf8')).version === expected.version) continue;
       const target = join(current.destination, 'node_modules', name);
       mkdirSync(dirname(target), { recursive: true });
+      // Private workspace packages ship only what their own manifest allows; every
+      // package drops git-ignored .ae runtime evidence, which is never a package input.
+      const shipped = Array.isArray(expected.files) && expected.private === true ? expected.files : null;
       cpSync(installed, target, {
         recursive: true,
         dereference: true,
-        filter: (file) => !relative(installed, file).split(sep).includes('node_modules'),
+        filter: (file) => {
+          const rel = relative(installed, file);
+          if (rel === '') return true;
+          const parts = rel.split(sep);
+          if (parts.includes('node_modules')) return false;
+          if (parts[parts.length - 1] === '.ae') return false;
+          if (!shipped) return true;
+          if (rel === 'package.json') return true;
+          const top = parts[0];
+          return shipped.some((entry) => {
+            const normalized = String(entry).replace(/^\.\//, '').replace(/\/$/, '');
+            return normalized === top || normalized.startsWith(top + '/');
+          });
+        },
       });
       copied++;
       queue.push({ source: installed, destination: target });

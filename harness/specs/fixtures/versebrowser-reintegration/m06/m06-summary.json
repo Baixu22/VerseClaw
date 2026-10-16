@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m06-upstream-capability-summary",
+  "scope": "Original upstream-controlled operations and complex page capabilities run inside the imported private package",
+  "driven_by": "agent",
+  "actor": "codex",
+  "runtime": {
+    "node": "v24.16.0",
+    "libuv": "1.52.1",
+    "source": "D:/versebrowser/.local/runtime/node.exe",
+    "reason": "Windows browser operations require libuv >=1.52.1; not a product dependency"
+  },
+  "runs": [
+    {
+      "log": "upstream-batch1.log",
+      "status": "pass",
+      "files": "3 passed ",
+      "tests": "13 passed ",
+      "duration": "49.18s (transform 961ms, setup 0ms, import 1.36s, tests 63.21s, environment 0ms)"
+    },
+    {
+      "log": "upstream-batch2.log",
+      "status": "pass",
+      "files": "3 passed ",
+      "tests": "11 passed ",
+      "duration": "24.18s (transform 579ms, setup 0ms, import 2.18s, tests 41.17s, environment 0ms)"
+    },
+    {
+      "log": "upstream-tabs.log",
+      "status": "pass",
+      "files": "1 passed ",
+      "tests": "12 passed ",
+      "duration": "29.30s (transform 399ms, setup 0ms, import 773ms, tests 28.21s, environment 0ms)"
+    },
+    {
+      "log": "upstream-files.log",
+      "status": "pass",
+      "files": "1 passed ",
+      "tests": "22 passed ",
+      "duration": "72.23s (transform 405ms, setup 0ms, import 515ms, tests 71.40s, environment 0ms)"
+    },
+    {
+      "log": "upstream-viewport.log",
+      "status": "pass",
+      "files": "1 passed ",
+      "tests": "13 passed ",
+      "duration": "28.86s (transform 401ms, setup 0ms, import 1.04s, tests 27.50s, environment 0ms)"
+    },
+    {
+      "log": "upstream-control.log",
+      "status": "pass",
+      "files": "1 passed ",
+      "tests": "25 passed ",
+      "duration": "41.49s (transform 426ms, setup 0ms, import 858ms, tests 40.32s, environment 0ms)"
+    },
+    {
+      "log": "semantic-visual.log",
+      "status": "pass",
+      "files": "2 passed ",
+      "tests": "23 passed ",
+      "duration": "34.67s (transform 563ms, setup 0ms, import 1.43s, tests 32.72s, environment 0ms)"
+    }
+  ],
+  "commands": [
+    {
+      "command": "node <compatible-node> node_modules/vitest/vitest.mjs run <original upstream suites>",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @verse-claw/versebrowser build",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @verse-claw/versebrowser patch:upstream:check",
+      "exitCode": 0,
+      "bundleSha256": "1532f36aa4fcd0dbdd6a0c0cb49fbb7e55b30b649d67eadde69d5eb70be33c13"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m06/upstream-batch1.log",
+      "sha256": "6d1bc2559432f3e2439591ebda9d27564e0fd22c28dce71c51da33d95354882f",
+      "bytes": 228
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m06/upstream-batch2.log",
+      "sha256": "def6377f312627ec1d473fa0df3319d48a1ca7bbe7941a693dff9987df8740c8",
+      "bytes": 228
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m06/upstream-tabs.log",
+      "sha256": "15d4c7b0c6097dd318188f8f780880a009e33306591fa6dabbd07a2de7b4dd98",
+      "bytes": 228
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m06/upstream-files.log",
+      "sha256": "5f2d9f3b1f01283d29172da3a2c0f0a10ace89f35fd08f09d345679e4a82c901",
+      "bytes": 228
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m06/upstream-viewport.log",
+      "sha256": "8a5025a4443c44d7fbfddd27e722d35c8a3b4e360f72baddcce86401d0a8b7f1",
+      "bytes": 228
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m06/upstream-control.log",
+      "sha256": "df197becde4eaff33c0a17e2607d32072865c196ab22fe1927859b8c997a2e68",
+      "bytes": 228
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m06/semantic-visual.log",
+      "sha256": "10fd654ee3658eb482791ea9020d2d68bf69c066a00df1627d8882e90f82b938",
+      "bytes": 228
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m06/typecheck.log",
+      "sha256": "8f4fa8efe1fb2a9a80a738f0cc1eb0e0e2e3b40b044920ab34cd7833546bcd3a",
+      "bytes": 1585
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m06/package-build.log",
+      "sha256": "341dbf950da7c23a1afd5a2e8fb0f704a557673bfc3c4ee9948da208e55071cb",
+      "bytes": 30
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m06/patch-check.log",
+      "sha256": "acc7d58a60415c82a2573859be0780cc6f72b978cfbf0df79d599a0a8e049f8d",
+      "bytes": 448
+    },
+    {
+      "path": "packages/versebrowser/vitest.config.ts",
+      "sha256": "004365f2943f37ba43f3fc27a338f3762c5b5c3af54e18163d5c961d1ac17284",
+      "bytes": 1715
+    },
+    {
+      "path": "packages/versebrowser/tests/global-temp-root.ts",
+      "sha256": "8ced9747b63d533472b06e12ed8261684cfc86a1b76db31e9678a5ca86920024",
+      "bytes": 2766
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-control.test.ts",
+      "sha256": "ee55a4b9ea2714fc2e8bad995629f70461324ecd830446b7251e90ba63481cf8",
+      "bytes": 54792
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-input.test.ts",
+      "sha256": "3307dab6ed437a163120626fb6ed36074d14f6978a2ae27a1fa58a1635cd88da",
+      "bytes": 17206
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-form-values.test.ts",
+      "sha256": "bd19c4fd1b26a555e9893381d45ed8e9c0939843024905cae440238c24c9c671",
+      "bytes": 11112
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-tabs.test.ts",
+      "sha256": "8a4bdd4c671f381683aac804c9433c13decc3c575624b0842db97809edf32eb4",
+      "bytes": 33731
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-files.test.ts",
+      "sha256": "6e3178c3053afcbefdb6839d1bf90b4e1bed68827bfef7da0824c4326816c34a",
+      "bytes": 27173
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-viewport.test.ts",
+      "sha256": "7fe4753aaa89467075bbd114f6a8f0979b66cb38aaf1a879eff855cf9c9697a8",
+      "bytes": 23586
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-pointer.test.ts",
+      "sha256": "00776c644346bdbe624eb5e6e1076147e510d89b346f21712ebc4a9631262c83",
+      "bytes": 10980
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-drag-editor.test.ts",
+      "sha256": "3e4137741da6a18f913e8c864fd071af75dcf71ce7f767e076deab3355d0e822",
+      "bytes": 10537
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-ref-lifecycle.test.ts",
+      "sha256": "01dd9c9ec11394fa9d93a384bd6ad9fae56a821113fb3c4a54406ad617031176",
+      "bytes": 4384
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-patch.test.ts",
+      "sha256": "76383ab428aa7fd5e9c20cdb9d16ba1e7fd9af0adf4d525743a0684b90a74027",
+      "bytes": 2595
+    },
+    {
+      "path": "packages/versebrowser/tests/semantic-browser.test.ts",
+      "sha256": "da33df5fd084917ff6318884ac1db9ca8677224e34b1dd6e6ea23990c1a4a6fc",
+      "bytes": 24605
+    },
+    {
+      "path": "packages/versebrowser/tests/visual-browser.test.ts",
+      "sha256": "f7e2b598ee3393a09f65b6d00446ae2dda07779a3f3f4477116a56bee17520f4",
+      "bytes": 5785
+    },
+    {
+      "path": "packages/versebrowser/src/engine/playwright-host-api.ts",
+      "sha256": "5b27c817aca158e98a6244226f2c6f15d828277bd967ab14d626c4a5a97d9509",
+      "bytes": 92248
+    },
+    {
+      "path": "packages/versebrowser/src/engine/upstream-control.ts",
+      "sha256": "b4549086fe388410e8f014cf4af8d4942306154febbd61dd97ba5ad07a56d55c",
+      "bytes": 83473
+    },
+    {
+      "path": "packages/versebrowser/src/engine/semantic-browser.ts",
+      "sha256": "ef4d56bb396c0c5f2201ac5a70a72f4bb73cc8d1ffd30f3dfc24590f2254f040",
+      "bytes": 13459
+    },
+    {
+      "path": "packages/versebrowser/src/engine/visual-browser.ts",
+      "sha256": "6edf44bc97e144ebe26eedb801ecd27573d3ab9efe6269f9032d71fd32fab0a1",
+      "bytes": 7220
+    },
+    {
+      "path": "packages/versebrowser/scripts/patch-upstream.mjs",
+      "sha256": "4a5e5f06f4abd263dc73cd02df102c2d649c2a108ba08507ccb8f90e37a90f4e",
+      "bytes": 4360
+    },
+    {
+      "path": "packages/versebrowser/scripts/with-compatible-node.mjs",
+      "sha256": "f0ca9bd84ef1dda9c9d1f316d9cc1b514b490ff102543988a2ccf9d5b3ca87a0",
+      "bytes": 2908
+    }
+  ],
+  "acceptance": {
+    "form_keyboard_scroll_hover_drag_popup_multipage_frame_dialog_file_and_viewport_original_regressions_pass": true,
+    "independent_peer_receipts_and_reload_or_hash_effects_verified": true,
+    "invalid_refs_dead_frames_bounds_overwrite_and_cancel_negatives_rejected": true,
+    "origin_ip_redirect_upload_download_paths_authorized": true,
+    "attribute_download_original_fix_preserved": true,
+    "semantic_visual_explicit_optional_and_failure_not_success": true,
+    "fixed_upstream_version_and_patch_check": true
+  },
+  "remainingCheckpointWork": [
+    "Source-map, diagnostics and evidence-chain regressions remain M07",
+    "Actual Runtime/Gateway/model chain remains M08",
+    "Full adversarial matrix and all original regressions remain M09"
+  ],
+  "validationBoundary": "These are source-original runtime tests run with the imported package and fixed upstream. They prove the selected upstream capability set in local synthetic peer fixtures, not every original test or packaged Electron integration."
+}

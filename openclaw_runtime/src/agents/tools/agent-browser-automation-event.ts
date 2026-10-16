@@ -1,6 +1,19 @@
 /** Lightweight telemetry fragments emitted by the agent_browser tool. */
 
-export type AgentBrowserAutomationEvent = {
+export type AgentBrowserCorrelation = {
+  gatewayRequestId?: string;
+  runId?: string;
+  sessionKey?: string;
+  agentSessionKey?: string;
+  agentSessionId?: string;
+  toolCallId?: string;
+  taskId?: string;
+  pageId?: string;
+  workspaceId?: string;
+  agentId?: string;
+};
+
+export type AgentBrowserAutomationEvent = AgentBrowserCorrelation & {
   schemaVersion: 1;
   tool: "agent_browser";
   action: string;
@@ -57,9 +70,12 @@ export function buildAgentBrowserAutomationEvent(params: {
   result: unknown;
   ok?: boolean;
   error?: unknown;
+  correlation?: AgentBrowserCorrelation;
 }): AgentBrowserAutomationEvent {
   const result = asRecord(params.result) ?? {};
   const session = asRecord(result.session) ?? {};
+  const correlation = params.correlation ?? {};
+  const resultData = asRecord(result.data) ?? {};
   const event: AgentBrowserAutomationEvent = {
     schemaVersion: 1,
     tool: "agent_browser",
@@ -68,6 +84,12 @@ export function buildAgentBrowserAutomationEvent(params: {
     ts: Date.now(),
   };
   const sessionId = firstString(session.id, params.payload.sessionId);
+  const pageId = firstString(
+    correlation.pageId,
+    result.pageId,
+    resultData.activePageId,
+    params.payload.pageId,
+  );
   const profile = firstString(session.profile, params.payload.profile);
   const authStateName = firstString(session.authStateName, params.payload.authStateName);
   const mode = firstString(session.mode, params.payload.mode);
@@ -80,6 +102,16 @@ export function buildAgentBrowserAutomationEvent(params: {
   const stderr = firstString(result.stderr);
   const error = firstString(params.error, result.error, asRecord(result.error)?.message);
   if (sessionId) event.sessionId = sessionId;
+  if (pageId) event.pageId = pageId;
+  if (correlation.gatewayRequestId) event.gatewayRequestId = correlation.gatewayRequestId;
+  if (correlation.runId) event.runId = correlation.runId;
+  if (correlation.sessionKey) event.sessionKey = correlation.sessionKey;
+  if (correlation.agentSessionKey) event.agentSessionKey = correlation.agentSessionKey;
+  if (correlation.agentSessionId) event.agentSessionId = correlation.agentSessionId;
+  if (correlation.toolCallId) event.toolCallId = correlation.toolCallId;
+  if (correlation.taskId) event.taskId = correlation.taskId;
+  if (correlation.workspaceId) event.workspaceId = correlation.workspaceId;
+  if (correlation.agentId) event.agentId = correlation.agentId;
   if (profile) event.profile = profile;
   if (authStateName) event.authStateName = authStateName;
   if (mode) event.mode = mode;
@@ -119,6 +151,22 @@ export function readAgentBrowserAutomationEvent(value: unknown): AgentBrowserAut
     ok: source.ok,
     ts: typeof source.ts === "number" && Number.isFinite(source.ts) ? source.ts : Date.now(),
     ...(optionalString(source.sessionId) ? { sessionId: optionalString(source.sessionId) } : {}),
+    ...(optionalString(source.pageId) ? { pageId: optionalString(source.pageId) } : {}),
+    ...(optionalString(source.gatewayRequestId)
+      ? { gatewayRequestId: optionalString(source.gatewayRequestId) }
+      : {}),
+    ...(optionalString(source.runId) ? { runId: optionalString(source.runId) } : {}),
+    ...(optionalString(source.sessionKey) ? { sessionKey: optionalString(source.sessionKey) } : {}),
+    ...(optionalString(source.agentSessionKey)
+      ? { agentSessionKey: optionalString(source.agentSessionKey) }
+      : {}),
+    ...(optionalString(source.agentSessionId)
+      ? { agentSessionId: optionalString(source.agentSessionId) }
+      : {}),
+    ...(optionalString(source.toolCallId) ? { toolCallId: optionalString(source.toolCallId) } : {}),
+    ...(optionalString(source.taskId) ? { taskId: optionalString(source.taskId) } : {}),
+    ...(optionalString(source.workspaceId) ? { workspaceId: optionalString(source.workspaceId) } : {}),
+    ...(optionalString(source.agentId) ? { agentId: optionalString(source.agentId) } : {}),
     ...(optionalString(source.profile) ? { profile: optionalString(source.profile) } : {}),
     ...(optionalString(source.authStateName)
       ? { authStateName: optionalString(source.authStateName) }

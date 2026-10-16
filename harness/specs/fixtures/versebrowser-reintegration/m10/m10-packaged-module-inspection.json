@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m10-packaged-module-inspection",
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "Inspect build/main-runtime-delivery/main-runtime.asar after fixing the embedded module's package content",
+  "command": "node scripts/bundle-main-runtime.mjs then @electron/asar listPackage/extractFile",
+  "archive": "build/main-runtime-delivery/main-runtime.asar",
+  "archiveBytes": 836510671,
+  "archiveSha256": "40daad54c3a6f8a47fc4a055ce42aae026f2973b9652c79e09e7ab3d5d338861",
+  "embeddedModule": {
+    "topLevel": [
+      "dist",
+      "patches",
+      "scripts",
+      "package.json",
+      "import-manifest.json",
+      "integration-patches.json",
+      "LICENSE"
+    ],
+    "entryCount": 11196,
+    "dist_index_js_present": true,
+    "package_json_present": true,
+    "license_present": true,
+    "patch_upstream_present": true,
+    "ae_entries": 0,
+    "src_entries": 0,
+    "tests_entries": 0,
+    "dist_js_files_scanned": 127,
+    "dev_path_hits": 0,
+    "devPathNeedles": [
+      "D:/versebrowser",
+      "D:\\versebrowser",
+      ".local/runtime",
+      "D:/tmp",
+      "D:/ClawX",
+      ".agent-workbench"
+    ]
+  },
+  "fix": {
+    "packageManifest": "packages/versebrowser/package.json now declares files: [dist, LICENSE, scripts/patch-upstream.mjs, patches, import-manifest.json, integration-patches.json, package.json]",
+    "runtimeCopy": "scripts/copy-runtime-package.mjs honors a private workspace package's files allowlist, always keeps package.json, and never copies a git-ignored .ae evidence directory.",
+    "regression": "tests/unit/copy-runtime-package.test.ts > ships only a private workspace package allowlist and drops .ae runtime evidence"
+  },
+  "validationBoundary": "ASAR content inspection and the focused copy-runtime unit test. It does not prove a signed installer, first-launch on a clean machine, or uninstall reclamation; those remain in this checkpoint.",
+  "packagedRuntimeDependencies": {
+    "note": "The embedded module's own dependency closure is present inside the ASAR under node_modules/@verse-claw/versebrowser/node_modules.",
+    "nestedPackageEntries": 10659,
+    "nestedTopPackages": [
+      "@browserbasehq/stagehand",
+      "@modelcontextprotocol/sdk",
+      "@playwright/mcp",
+      "cheerio",
+      "chrome-har",
+      "commander",
+      "diff",
+      "electron",
+      "ipaddr.js",
+      "playwright",
+      "playwright-core",
+      "typebox"
+    ]
+  },
+  "packagedModuleLoads": {
+    "method": "@electron/asar extractAll(node_modules/@verse-claw/versebrowser) to a temp dir, then dynamic import of dist/index.js",
+    "result": "pass",
+    "exportsSample": [
+      "AgentBrowserFacade",
+      "AgentBrowserService",
+      "AgentBrowserTaskService",
+      "AgentBrowserVault",
+      "AuditTrail"
+    ],
+    "AgentBrowserFacadeType": "function"
+  },
+  "appAsarDefect": {
+    "summary": "electron-builder's own app.asar also copied the @verse-claw/versebrowser symlink target wholesale, shipping src/ (144), .ae/evidence/*.log (12), tsconfig.json, tsconfig.build.json, vitest.config.ts.",
+    "fix": "electron-builder.yml files exclusions for node_modules/@verse-claw/versebrowser/{src,tests,.ae}/** and the tsconfig/vitest files.",
+    "verifiedIn": "rebuilt release/win-unpacked"
+  },
+  "releasePackage": {
+    "archive": "release/win-unpacked/resources/main-runtime.asar",
+    "mainRuntimeModuleEntries": 11196,
+    "ae": 0,
+    "src": 0,
+    "tests": 0,
+    "dist_index_js": true,
+    "devPathHits": 0
+  }
+}

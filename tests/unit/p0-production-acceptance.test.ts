@@ -24,11 +24,6 @@ import {
   isContextEnhancementKillSwitchEngaged,
 } from '../../openclaw_runtime/src/context-engine/enhancement-kill-switch';
 import { isSekbEnabled } from '../../openclaw_runtime/src/knowledge/sekb/feature-flags';
-import {
-  recoverTasksAfterRestart,
-  type AgentBrowserTask,
-} from '../../electron/services/agent-browser-task-service';
-
 const ROOT = resolve(process.cwd());
 
 describe('P0 production acceptance gate (TF-0001..0005)', () => {
@@ -116,28 +111,6 @@ describe('P0 production acceptance gate (TF-0001..0005)', () => {
       if (prev === undefined) delete process.env[CONTEXT_ENHANCEMENT_KILL_SWITCH_ENV];
       else process.env[CONTEXT_ENHANCEMENT_KILL_SWITCH_ENV] = prev;
     }
-  });
-
-  it('browser task restart recovery is explainable', () => {
-    const tasks: AgentBrowserTask[] = [
-      {
-        id: 't1',
-        name: 'n',
-        url: 'https://example.com',
-        objective: 'o',
-        profile: 'default',
-        mode: 'headless',
-        status: 'running',
-        retryCount: 0,
-        createdAt: '2026-07-19T00:00:00.000Z',
-        updatedAt: '2026-07-19T00:00:00.000Z',
-        sessionId: 's1',
-      } as never,
-    ];
-    const recovered = recoverTasksAfterRestart(tasks, '2026-07-19T01:00:00.000Z');
-    expect(recovered[0].status).toBe('interrupted');
-    expect(recovered[0].statusExplain).toMatch(/restart/i);
-    expect(recovered[0].recovery?.reason).toBe('app-restart-while-running');
   });
 
   it('close-out verdict remains non-GA', () => {

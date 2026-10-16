@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m02-patch-report",
+  "driven_by": "agent",
+  "actor": "codex",
+  "patch": "versebrowser-log-pointer-focus-files-downloads-v1",
+  "owners": [
+    "@playwright/mcp",
+    "playwright"
+  ],
+  "upstreamVersion": "1.64.0-alpha-1790635538000",
+  "virtualBundlePath": "node_modules/.pnpm/playwright-core@1.64.0-alpha-1790635538000/node_modules/playwright-core/lib/coreBundle.js",
+  "storePath": ".pnpm-store/v11/files/bc/7fb28c3eb3cb3c784738fc6670b72e3b1cb2cf286d1bce238cfcdcb76635c27b0bf563426295441b3232b87642278aa89f0c4db01c4d9d9720dbce001b7758",
+  "virtualBeforeSha256": "cd6730be1bbcff00771a0fc1390f200306d28428ce68e305420ca623cb39cdeb",
+  "virtualAfterSha256": "1532f36aa4fcd0dbdd6a0c0cb49fbb7e55b30b649d67eadde69d5eb70be33c13",
+  "storeBeforeSha256": "cd6730be1bbcff00771a0fc1390f200306d28428ce68e305420ca623cb39cdeb",
+  "storeAfterSha256": "cd6730be1bbcff00771a0fc1390f200306d28428ce68e305420ca623cb39cdeb",
+  "storeUnchanged": true,
+  "hardlinkAfter": [
+    "node_modules/.pnpm/playwright-core@1.64.0-alpha-1790635538000/node_modules/playwright-core/lib/coreBundle.js"
+  ],
+  "patchCheckExitCode": 0,
+  "validationBoundary": "Proves the pinned upstream bundle was patched in its pnpm virtual instance without changing the content-addressed store file. It does not prove host runtime compatibility."
+}

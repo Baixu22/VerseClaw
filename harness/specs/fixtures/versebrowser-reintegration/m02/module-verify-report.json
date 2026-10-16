@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "imports": {
+    "status": "pass",
+    "manifestSha256": "ca8ec19363d3241e24d3a50ba3938d6eccb3c4dc9c4031c88439d55da8ba61e8",
+    "productSourceCount": 127,
+    "coveredProductSourceCount": 131,
+    "fileCount": 131,
+    "issues": []
+  },
+  "dependencies": {
+    "status": "pass",
+    "dependencyCount": 14,
+    "dependencies": [
+      {
+        "name": "@browserbasehq/stagehand",
+        "expected": "4.1.0",
+        "installed": "4.1.0",
+        "specMatches": true,
+        "lockIntegrity": "sha512-PJikMBVoaCRh6TFD7GcmeISmsMq4IwUu1BD5FOsGUVDUxrVqZomWa6W6dF+a/zu4xRZu2Z2xX1nXVMDaCuZWsw==",
+        "expectedIntegrity": "sha512-PJikMBVoaCRh6TFD7GcmeISmsMq4IwUu1BD5FOsGUVDUxrVqZomWa6W6dF+a/zu4xRZu2Z2xX1nXVMDaCuZWsw==",
+        "integrityMatches": true
+      },
+      {
+        "name": "@jridgewell/trace-mapping",
+        "expected": "0.3.31",
+        "installed": "0.3.31",
+        "specMatches": true,
+        "lockIntegrity": "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==",
+        "expectedIntegrity": "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==",
+        "integrityMatches": true
+      },
+      {
+        "name": "@modelcontextprotocol/sdk",
+        "expected": "1.32.1",
+        "installed": "1.32.1",
+        "specMatches": true,
+        "lockIntegrity": "sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==",
+        "expectedIntegrity": "sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==",
+        "integrityMatches": true
+      },
+      {
+        "name": "@playwright/mcp",
+        "expected": "0.0.83",
+        "installed": "0.0.83",
+        "specMatches": true,
+        "lockIntegrity": "sha512-oNcl+Ae2/IAjhfPeP46BfIkSakfmprY+aOtkv5MjrQ4lPav4/yNtPhL0iq8SlIM90oApWgBDUxaNKvktazUKOg==",
+        "expectedIntegrity": "sha512-oNcl+Ae2/IAjhfPeP46BfIkSakfmprY+aOtkv5MjrQ4lPav4/yNtPhL0iq8SlIM90oApWgBDUxaNKvktazUKOg==",
+        "integrityMatches": true
+      },
+      {
+        "name": "cheerio",
+        "expected": "1.2.0",
+        "installed": "1.2.0",
+        "specMatches": true,
+        "lockIntegrity": "sha512-WDrybc/gKFpTYQutKIK6UvfcuxijIZfMfXaYm8NMsPQxSYvf+13fXUJ4rztGGbJcBQ/GF55gvrZ0Bc0bj/mqvg==",
+        "expectedIntegrity": "sha512-WDrybc/gKFpTYQutKIK6UvfcuxijIZfMfXaYm8NMsPQxSYvf+13fXUJ4rztGGbJcBQ/GF55gvrZ0Bc0bj/mqvg==",
+        "integrityMatches": true
+      },
+      {
+        "name": "chrome-har",
+        "expected": "1.3.1",
+        "installed": "1.3.1",
+        "specMatches": true,
+        "lockIntegrity": "sha512-U+h+D3Kjfn4m/elHepSJeowNbn6c+CbNVlQorBU564+/C+ZAdxE3o+dwSNOQ1LBYYDjmiBP9kq7NaO/ohq8loQ==",
+        "expectedIntegrity": "sha512-U+h+D3Kjfn4m/elHepSJeowNbn6c+CbNVlQorBU564+/C+ZAdxE3o+dwSNOQ1LBYYDjmiBP9kq7NaO/ohq8loQ==",
+        "integrityMatches": true
+      },
+      {
+        "name": "commander",
+        "expected": "15.0.0",
+        "installed": "15.0.0",
+        "specMatches": true,
+        "lockIntegrity": "sha512-z67u4ZhzCL/Tydu1lJARtEZYWbWaN7oYLHbsuzocr6y4N6WZAagG3RQ4FW61V1/0+jImpj293XfrcYnd1qxtPg==",
+        "expectedIntegrity": "sha512-z67u4ZhzCL/Tydu1lJARtEZYWbWaN7oYLHbsuzocr6y4N6WZAagG3RQ4FW61V1/0+jImpj293XfrcYnd1qxtPg==",
+        "integrityMatches": true
+      },
+      {
+        "name": "diff",
+        "expected": "9.0.0",
+        "installed": "9.0.0",
+        "specMatches": true,
+        "lockIntegrity": "sha512-svtcdpS8CgJyqAjEQIXdb3OjhFVVYjzGAPO8WGCmRbrml64SPw/jJD4GoE98aR7r25A0XcgrK3F02yw9R/vhQw==",
+        "expectedIntegrity": "sha512-svtcdpS8CgJyqAjEQIXdb3OjhFVVYjzGAPO8WGCmRbrml64SPw/jJD4GoE98aR7r25A0XcgrK3F02yw9R/vhQw==",
+        "integrityMatches": true
+      },
+      {
+        "name": "electron-store",
+        "expected": "11.0.2",
+        "installed": "11.0.2",
+        "specMatches": true,
+        "lockIntegrity": "sha512-4VkNRdN+BImL2KcCi41WvAYbh6zLX5AUTi4so68yPqiItjbgTjqpEnGAqasgnG+lB6GuAyUltKwVopp6Uv+gwQ==",
+        "expectedIntegrity": "sha512-4VkNRdN+BImL2KcCi41WvAYbh6zLX5AUTi4so68yPqiItjbgTjqpEnGAqasgnG+lB6GuAyUltKwVopp6Uv+gwQ==",
+        "integrityMatches": true
+      },
+      {
+        "name": "ipaddr.js",
+        "expected": "2.5.0",
+        "installed": "2.5.0",
+        "specMatches": true,
+        "lockIntegrity": "sha512-aq+t5NAc+cS6rZQQVWC2x98CPqGtKKTMDd4Gaodv0wShnItdKg/51djkGJ1hqH+Oy0ivDftCbSLCQob8zso01w==",
+        "expectedIntegrity": "sha512-aq+t5NAc+cS6rZQQVWC2x98CPqGtKKTMDd4Gaodv0wShnItdKg/51djkGJ1hqH+Oy0ivDftCbSLCQob8zso01w==",
+        "integrityMatches": true
+      },
+      {
+        "name": "playwright",
+        "expected": "1.64.0-alpha-1790635538000",
+        "installed": "1.64.0-alpha-1790635538000",
+        "specMatches": true,
+        "lockIntegrity": "sha512-/5XDUMxpOd/9AojJtWDFIRV3EJZNQ0AwvK69wgt3CPzy8wTgiBG9pX45VfxtqtvIRGwfWzMhrvawNKreG69Snw==",
+        "expectedIntegrity": "sha512-/5XDUMxpOd/9AojJtWDFIRV3EJZNQ0AwvK69wgt3CPzy8wTgiBG9pX45VfxtqtvIRGwfWzMhrvawNKreG69Snw==",
+        "integrityMatches": true
+      },
+      {
+        "name": "playwright-core",
+        "expected": "1.63.0",
+        "installed": "1.63.0",
+        "specMatches": true,
+        "lockIntegrity": "sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==",
+        "expectedIntegrity": "sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==",
+        "integrityMatches": true
+      },
+      {
+        "name": "typebox",
+        "expected": "1.1.39",
+        "installed": "1.1.39",
+        "specMatches": true,
+        "lockIntegrity": "sha512-vj0afVtOfLQvv0GR0VxVagYxsXN64btL7Z9XoaG0ZggH3mruMMkOO6hXdgMsjCY3shZgEvooAWVeznQVs5c43w==",
+        "expectedIntegrity": "sha512-vj0afVtOfLQvv0GR0VxVagYxsXN64btL7Z9XoaG0ZggH3mruMMkOO6hXdgMsjCY3shZgEvooAWVeznQVs5c43w==",
+        "integrityMatches": true
+      },
+      {
+        "name": "zod",
+        "expected": "4.4.3",
+        "installed": "4.4.3",
+        "specMatches": true,
+        "lockIntegrity": "sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==",
+        "expectedIntegrity": "sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==",
+        "integrityMatches": true
+      }
+    ],
+    "exportCount": 17,
+    "issues": []
+  },
+  "playwrightAndPatch": {
+    "status": "pass",
+    "families": [
+      {
+        "version": "playwright-core@1.63.0",
+        "present": true
+      },
+      {
+        "version": "playwright-core@1.64.0-alpha-1790635538000",
+        "present": true
+      },
+      {
+        "version": "playwright@1.64.0-alpha-1790635538000",
+        "present": true
+      }
+    ],
+    "bundlePath": "D:\\ClawX\\node_modules\\.pnpm\\playwright-core@1.64.0-alpha-1790635538000\\node_modules\\playwright-core\\lib\\coreBundle.js",
+    "bundleSha256": "1532f36aa4fcd0dbdd6a0c0cb49fbb7e55b30b649d67eadde69d5eb70be33c13",
+    "patchCheck": "pass",
+    "issues": []
+  },
+  "buildAndExports": {
+    "status": "pass",
+    "distFiles": 254,
+    "exportOutput": [
+      "@verse-claw/versebrowser/core 204",
+      "@verse-claw/versebrowser/engine/service 2",
+      "@verse-claw/versebrowser 225",
+      "@verse-claw/versebrowser/mcp/server 5",
+      "@verse-claw/versebrowser/openclaw/tool 1"
+    ],
+    "issues": []
+  },
+  "issues": []
+}

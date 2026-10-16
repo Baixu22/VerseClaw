@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m10-package-verify",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "archive": "build/main-runtime-delivery/main-runtime.asar",
+  "moduleEntryCount": 11196,
+  "topLevel": {
+    "node_modules": 10659,
+    "dist": 526,
+    "patches": 3,
+    "scripts": 3,
+    "(root)": 1,
+    "import-manifest.json": 1,
+    "integration-patches.json": 1,
+    "LICENSE": 1,
+    "package.json": 1
+  },
+  "distJsScanned": 127,
+  "devPathHits": 0,
+  "packagedModuleLoad": {
+    "status": "pass",
+    "exportsIndex": true
+  },
+  "issues": []
+}

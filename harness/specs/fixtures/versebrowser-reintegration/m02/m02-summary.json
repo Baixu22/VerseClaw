@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m02-summary",
+  "scope": "Workspace module import, pinned dependency resolution, standalone build and public-export smoke; not host acceptance",
+  "driven_by": "agent",
+  "actor": "codex",
+  "sourceCommit": "47b076f85d4e37cdaea67c1564d1c4f4dbf2b011",
+  "commands": [
+    {
+      "command": "node scripts/versebrowser-import.mjs --check",
+      "exitCode": 0,
+      "checked": 131
+    },
+    {
+      "command": "pnpm install --lockfile-only --filter @verse-claw/versebrowser...",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm install --frozen-lockfile --filter @verse-claw/versebrowser...",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @verse-claw/versebrowser typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @verse-claw/versebrowser build",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @verse-claw/versebrowser patch:upstream:check",
+      "exitCode": 0
+    },
+    {
+      "command": "node scripts/versebrowser-module-verify.mjs",
+      "exitCode": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m02/module-verify-report.json",
+      "sha256": "fb41eac0acdb0472bd75581afd12512a56e9067d838e500ff6e55c717a49cb95",
+      "bytes": 7454
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m02/import-check.json",
+      "sha256": "ed7e299e5bad44ab281f0f17383badeae9ce059cc178070a7fb1f32869c07a59",
+      "bytes": 57
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m02/patch-report.json",
+      "sha256": "c0e1782ae1d5c0d23d55c326a76b4df856348853ab8aaaf8a01ec18006aaf151",
+      "bytes": 1378
+    },
+    {
+      "path": "packages/versebrowser/import-manifest.json",
+      "sha256": "ca8ec19363d3241e24d3a50ba3938d6eccb3c4dc9c4031c88439d55da8ba61e8",
+      "bytes": 42763
+    },
+    {
+      "path": "packages/versebrowser/package.json",
+      "sha256": "6c657ff5c08fd08d955d25b2cbfd35278c54529457e5f3242b0c37e199b43bd6",
+      "bytes": 3253
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "27e09ccaaa538f268aadfdb2a47d2fcc68eab15d2d7165c0c210dcb4be0fc6e8",
+      "bytes": 721971
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "sha256": "1a7fadfbf22ef3baa94e402e70a4e6b367c40ff4ba428e1da5c175dca1e79bd9",
+      "bytes": 1176
+    },
+    {
+      "path": "packages/README.md",
+      "sha256": "6ac3f33c7deccb69a665f5f4f2d3b1c4e355c18ae63fd11f3a837444559fe74a",
+      "bytes": 804
+    },
+    {
+      "path": "scripts/versebrowser-import.mjs",
+      "sha256": "a74f92adbbdc697e3e0713e52345343dd60bf95876ce31dac8929d0b9c3db376",
+      "bytes": 4477
+    },
+    {
+      "path": "scripts/versebrowser-module-verify.mjs",
+      "sha256": "88dedaa99f5b7b962e9006dc62639b202499bf8d94e4cc5f11e881610699d6d4",
+      "bytes": 9755
+    }
+  ],
+  "acceptance": {
+    "mechanical_source_import_127": true,
+    "support_files_license_config_patch": true,
+    "excluded_project_and_process_roots_absent": true,
+    "standalone_private_workspace_package": true,
+    "standalone_typecheck_and_build": true,
+    "public_exports_consumable": true,
+    "direct_dependency_versions_and_integrity_pinned": true,
+    "legacy_and_upstream_playwright_families_preserved": true,
+    "upstream_patch_applied_to_correct_instance": true,
+    "pnpm_shared_store_unchanged": true
+  },
+  "remainingCheckpointWork": [
+    "Electron 40 host compatibility must be exercised in M03/M08/M10",
+    "Source-only host API methods remain pending in M04",
+    "25 behavior deltas remain open until their owning checkpoints"
+  ],
+  "validationBoundary": "Standalone module build and import smoke do not prove Main/Gateway/Runtime integration, package installation or behavior parity."
+}

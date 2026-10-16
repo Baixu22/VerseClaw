@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m11-cutover-rollback-summary",
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "Rehearse enabling the upstream (new) backend for new sessions in an isolated fixture, prove old sessions stay on the legacy engine with no page/ref/cursor reuse, prove a broken upstream fails closed, and bind the rollback version set. The product default stays legacy.",
+  "acceptance": {
+    "criterion_1_new_session_rehearsal_and_isolation": {
+      "status": "pass",
+      "evidence": "m11-cutover-rehearsal.json",
+      "checks": {
+        "default_backend_still_legacy": true,
+        "legacy_and_upstream_sessions_open": true,
+        "legacy_rejects_foreign_session": true,
+        "upstream_rejects_foreign_session": true,
+        "upstream_rejects_foreign_cursor": true,
+        "broken_upstream_fails_closed": true
+      }
+    },
+    "criterion_2_rollback_version_set_and_user_data": {
+      "status": "pass",
+      "evidence": "m11-rollback-set.json",
+      "boundGroups": [
+        "source",
+        "patch",
+        "lock",
+        "adapter",
+        "contract",
+        "state-reader",
+        "assets"
+      ],
+      "missing": [],
+      "defaultSelector": {
+        "driver": "playwright",
+        "isLegacy": true
+      },
+      "userData": "Empirically: a task written through the module's persisted store is recovered unchanged by a fresh reader on the same file, the store stays version 2, and the reader does not rewrite it (m11-state-readback.json). No migration runs on this cutover because the default selector stays legacy, so existing task-store/vault/evidence files keep the same readers.",
+      "stateReadback": {
+        "status": "pass",
+        "evidence": "m11-state-readback.json",
+        "checks": {
+          "task_store_written": true,
+          "store_is_version_2": true,
+          "task_recovered_on_reopen": true,
+          "store_not_rewritten_by_reader": true
+        }
+      }
+    },
+    "criterion_3_no_silent_switch_or_replay": {
+      "status": "pass",
+      "evidence": "In the rehearsal a broken upstream engine (bad executablePath) fails with E_OPEN and creates no session; there is no fallback to the legacy engine. A foreign session id / ref / cursor is rejected by the other engine rather than being reinterpreted.",
+      "frozenDefault": "The default backend remains legacy; changing it stays a separate product decision (not taken here)."
+    }
+  },
+  "verifiers": [
+    "scripts/versebrowser-m11-cutover-rehearse.mjs",
+    "scripts/versebrowser-m11-rollback-set.mjs",
+    "scripts/versebrowser-m11-state-readback.mjs"
+  ],
+  "validationBoundary": "Isolated-fixture rehearsal plus a hash-bound rollback set. It is not a real cutover of user traffic; the product default is deliberately unchanged."
+}

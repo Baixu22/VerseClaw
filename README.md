@@ -190,12 +190,15 @@ Renderer requests enter through `src/lib/host-api.ts` and `src/lib/host-api-clie
 | `electron/` | Desktop lifecycle, host services, Gateway and process supervision |
 | `shared/` | Typed contracts, four-language locales, scenario registry and capabilities |
 | `openclaw_runtime/` | Runtime and plugin sources in a separate dependency workspace |
+| `packages/` | Embedded workspace modules; `packages/versebrowser` is the pinned browser-automation engine consumed through public exports |
 | `harness/` | Specification CLI, scenarios, rules, tasks and layer conventions |
 | `tests/` | Desktop unit, integration and Electron E2E tests |
 | `scripts/` | Build, resource synchronization, validation and evidence scripts |
 | `resources/` | Bundled skills, binaries and third-party source notices |
 | `docs/` | Product semantics, designs, development guides and runbooks |
 | `artifacts/` | Curated evidence and locally generated reports; retention rules determine what is tracked |
+
+VerseBrowser: install/dev/build compile the embedded module automatically. The 80-method contract is not 80 implemented Electron capabilities; see [invocation and driver limits](packages/README.md#versebrowser-integration-and-invocation).
 
 <a id="development"></a>
 

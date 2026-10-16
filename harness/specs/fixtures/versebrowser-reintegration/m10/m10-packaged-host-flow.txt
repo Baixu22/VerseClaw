@@ -1,0 +1,16 @@
+packaged app host-flow evidence (agent, codex)
+
+exe: release/win-unpacked/Verse Claw.exe (with VERSE_CLAW_E2E=1, in-repo temp user data, --remote-debugging-port)
+path: CDP connectOverCDP -> page -> window.verseClaw.hostInvoke({module:'agentBrowser', ...})
+
+observed:
+1. window.verseClaw.hostInvoke bridge present in the packaged renderer.
+2. agentBrowser.status -> ok:true, keys [success, sessions, browserControlEnabled].
+3. setEnabled(true) -> ok.
+4. agentBrowser.open(headless local fixture) -> ok:true, returns a real session {success, session, textSample}.
+5. agentBrowser.status -> the session is owned by the requested sessionKey (agent:main:<runId>), count 1.
+6. agentBrowser.close(sessionId) -> ok.
+7. takeSnapshot under the default runtime mode fails closed: {code:'INTERNAL', message:'Agent browser action requires runtime mode upgrade (current: normal_restricted). Call requestModeUpgrade first.'}
+8. requestModeUpgrade -> ok:true, but a following takeSnapshot still reports normal_restricted on this probe.
+
+interpretation: the packaged artifact's real host path reaches the embedded module, opens and closes a real browser session with correct ownership, and the sandbox/runtime-mode gate fails closed. Open item: reconcile the requestModeUpgrade -> takeSnapshot sequence used by this probe (the module may require an approval step the probe did not perform).

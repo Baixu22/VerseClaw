@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m11-state-readback",
+  "driven_by": "agent",
+  "actor": "codex",
+  "storagePath": "agent-browser/tasks.json",
+  "steps": {
+    "createdTaskId": "ed61e22e-5fb4-4a65-9862-b547c8626deb",
+    "storeOnDisk": true,
+    "storeVersion": 2,
+    "storeSha256": "19cdb91f75aae7c294e5ad373bf33667690c15ad253a411f1341b5bb0330afca",
+    "recoveredCount": 1,
+    "recoveredTaskId": "ed61e22e-5fb4-4a65-9862-b547c8626deb",
+    "recoveredName": "m11 readback",
+    "recoveredStatus": "waiting-approval",
+    "storeUnchangedAfterRead": true
+  },
+  "checks": {
+    "task_store_written": true,
+    "store_is_version_2": true,
+    "task_recovered_on_reopen": true,
+    "store_not_rewritten_by_reader": true
+  },
+  "status": "pass"
+}

@@ -1,0 +1,429 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m08-real-runtime-result",
+  "driven_by": "agent",
+  "actor": "codex",
+  "runId": "m08-2026-10-16T01-44-12-861Z-8fc6f4d8",
+  "fixtureUrl": "http://127.0.0.1:57442/",
+  "sessionKey": "agent:main:m08-2026-10-16T01-44-12-861Z-8fc6f4d8",
+  "taskId": "m08-2026-10-16T01-44-12-861Z-8fc6f4d8-task",
+  "pageId": "m08-2026-10-16T01-44-12-861Z-8fc6f4d8-page",
+  "launchArgs": [
+    "--no-sandbox",
+    "--user-data-dir=D:\\ClawX\\.agent-workbench\\m08-runtime-PUT0cw\\user-data",
+    "--lang=en-US",
+    "--disable-gpu",
+    "--disable-gpu-compositing",
+    "--disable-software-rasterizer",
+    "--in-process-gpu",
+    "--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization",
+    "D:\\ClawX\\dist-electron\\main\\index.js"
+  ],
+  "preflightOpen": {
+    "success": true,
+    "session": {
+      "id": "67a94fcf-3fbf-400a-98ff-5cd2f2f3979e",
+      "profile": "m08-2026-10-16t01-44-12-861z-8fc6f4d8-preflight",
+      "mode": "headless",
+      "authPersistence": "session-name",
+      "authStateName": "m08-2026-10-16t01-44-12-861z-8fc6f4d8-preflight",
+      "connection": {
+        "mode": "managed"
+      },
+      "createdAt": "2026-10-16T01:44:44.169Z",
+      "updatedAt": "2026-10-16T01:44:44.409Z",
+      "runtimeMode": "normal_restricted",
+      "sessionKey": "agent:main:m08-2026-10-16T01-44-12-861Z-8fc6f4d8",
+      "agentId": "main",
+      "url": "http://127.0.0.1:57442/",
+      "title": "M08 Fixture"
+    },
+    "textSample": "M08 FIXTURE READY"
+  },
+  "preflightOpenMs": 340,
+  "appOutput": [
+    "[2026-10-16T01:44:20.250Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n",
+    "[2026-10-16T01:44:20.250Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-10-16T01:44:20.251Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=27692, ppid=18096\n[2026-10-16T01:44:20.251Z] [INFO] Running in E2E mode: startup side effects minimized\n",
+    "[2026-10-16T01:44:20.276Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\n",
+    "[2026-10-16T01:44:20.278Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-10-16T01:44:20.279Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n",
+    "[2026-10-16T01:44:20.279Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-10-16T01:44:20.279Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n",
+    "[2026-10-16T01:44:20.304Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n",
+    "[2026-10-16T01:44:20.304Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n",
+    "[2026-10-16T01:44:20.304Z] [INFO] Gateway auto-start skipped in E2E mode\n",
+    "[27692:1016/094420.324:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[27692:1016/094420.324:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n",
+    "[2026-10-16T01:44:20.479Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-10-16T01:44:20.479Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-10-16T01:44:20.480Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-10-16T01:44:20.480Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n",
+    "[2026-10-16T01:44:20.510Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n",
+    "[2026-10-16T01:44:20.540Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n",
+    "[2026-10-16T01:44:20.541Z] [INFO] Gateway start requested (port=18789)\n",
+    "[2026-10-16T01:44:20.549Z] [DEBUG] Device identity loaded (deviceId=349c44bc1266ca5f2a00f651d9567dc3f17ee7abcd04e4b7bc2448d61d213f87)\n",
+    "[2026-10-16T01:44:20.549Z] [DEBUG] Gateway state changed: stopped -> starting\n",
+    "[2026-10-16T01:44:20.655Z] [DEBUG] Checking for existing Gateway...\n",
+    "(node:27692) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n",
+    "[2026-10-16T01:44:20.748Z] [DEBUG] No existing Gateway found, starting new process...\n",
+    "[2026-10-16T01:44:20.793Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n",
+    "[2026-10-16T01:44:20.862Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n",
+    "[2026-10-16T01:44:20.865Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":24,\"providerEnvMs\":8,\"channelStartupPolicyMs\":2,\"uvEnvMs\":6,\"mcpEnvMs\":60,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":112,\"maintenance\":{},\"configuredChannelCount\":0}\n",
+    "[2026-10-16T01:44:20.865Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=18789, entry=\"D:\\ClawX\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 18789 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX\\openclaw_runtime\", bundledBin=yes, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n",
+    "[2026-10-16T01:44:20.898Z] [INFO] [provider-sync] Seeded provider account \"deepseek\" from openclaw.json\n",
+    "[2026-10-16T01:44:20.907Z] [INFO] [provider-sync] Seeded provider account \"openrouter\" from openclaw.json\n",
+    "[2026-10-16T01:44:20.916Z] [INFO] [provider-sync] Seeded provider account \"m08-local\" from openclaw.json\n",
+    "[2026-10-16T01:44:20.917Z] [INFO] Gateway process started (pid=4796)\n",
+    "[2026-10-16T01:44:20.917Z] [DEBUG] Gateway manager now owns process pid=4796\n",
+    "[2026-10-16T01:44:20.926Z] [INFO] [provider-sync] Seeded provider account \"m08-local\" from openclaw.json\n",
+    "[2026-10-16T01:44:21.162Z] [INFO] [provider-sync] Seeded provider account \"m08-local\" from openclaw.json\n",
+    "[2026-10-16T01:44:21.167Z] [INFO] [provider-sync] Seeded provider account \"m08-local\" from openclaw.json\n",
+    "[2026-10-16T01:44:23.021Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n",
+    "[2026-10-16T01:44:25.112Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n",
+    "[2026-10-16T01:44:25.930Z] [DEBUG] [Gateway stderr] (node:4796) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n",
+    "[2026-10-16T01:44:25.931Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n[2026-10-16T01:44:25.931Z] [WARN] [Gateway stderr] (Use `electron --trace-deprecation ...` to show where the warning was created)\n",
+    "[2026-10-16T01:44:28.754Z] [DEBUG] Gateway ready after 28 attempt(s)\n",
+    "[2026-10-16T01:44:28.755Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:18789/ws)\n",
+    "[2026-10-16T01:44:28.800Z] [WARN] [Gateway stderr] [ws] closed before connect conn=d81de3e5-0157-4232-b1dd-a3cefa1fa3a4 peer=127.0.0.1:55013->127.0.0.1:18789 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:18789 ua=n/a code=1006 reason=n/a\n",
+    "[2026-10-16T01:44:28.804Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n",
+    "[2026-10-16T01:44:28.805Z] [DEBUG] Received connect.challenge, sending handshake\n",
+    "[2026-10-16T01:44:28.806Z] [DEBUG] Sending connect handshake with challenge nonce\n",
+    "[2026-10-16T01:44:28.808Z] [WARN] [Gateway stderr] [ws] closed before connect conn=7be8b26b-0d6f-4924-a44c-bdc189f000d9 peer=127.0.0.1:55016->127.0.0.1:18789 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:18789 ua=n/a code=1006 reason=n/a\n",
+    "[2026-10-16T01:44:28.884Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:18789/ws)\n",
+    "[2026-10-16T01:44:28.884Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n",
+    "[2026-10-16T01:44:29.212Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n",
+    "[2026-10-16T01:44:38.885Z] [ERROR] Gateway connect.challenge not received within timeout\n",
+    "[2026-10-16T01:44:38.886Z] [ERROR] Gateway WebSocket error: Error: WebSocket was closed before the connection was established\nError: WebSocket was closed before the connection was established\n    at WebSocket.close (D:\\ClawX\\node_modules\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\websocket.js:300:7)\n    at Timeout.<anonymous> (D:\\ClawX\\dist-electron\\main\\index-DjFAoVGB.js:80:8292)\n    at listOnTimeout (node:internal/timers:605:17)\n    at process.processTimers (node:internal/timers:541:7)\n",
+    "[2026-10-16T01:44:38.886Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n",
+    "[2026-10-16T01:44:38.887Z] [WARN] Transient start error: Error: Timed out waiting for connect.challenge from Gateway. Retrying... (1/3)\n",
+    "[2026-10-16T01:44:39.886Z] [DEBUG] Checking for existing Gateway...\n",
+    "[2026-10-16T01:44:41.741Z] [DEBUG] Found existing Gateway on port 18789\n",
+    "[2026-10-16T01:44:41.741Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:18789/ws)\n",
+    "[2026-10-16T01:44:41.742Z] [WARN] [Gateway stderr] [ws] closed before connect conn=bc4f29e9-2463-4561-be93-0da84a14227e peer=127.0.0.1:55022->127.0.0.1:18789 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:18789 ua=n/a code=1006 reason=n/a\n",
+    "[2026-10-16T01:44:42.069Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n",
+    "[2026-10-16T01:44:42.069Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-10-16T01:44:42.069Z] [DEBUG] Sending connect handshake with challenge nonce\n",
+    "[2026-10-16T01:44:42.071Z] [WARN] [Gateway stderr] [ws] closed before connect conn=a1bf5b9a-e5f8-4bd2-9f9b-52b7c30ccf55 peer=127.0.0.1:51790->127.0.0.1:18789 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:18789 ua=n/a code=1006 reason=n/a\n",
+    "[2026-10-16T01:44:42.650Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:18789/ws)\n",
+    "[2026-10-16T01:44:42.651Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n",
+    "[2026-10-16T01:44:43.033Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n",
+    "[2026-10-16T01:44:43.033Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-10-16T01:44:43.034Z] [DEBUG] Sending connect handshake with challenge nonce\n",
+    "[2026-10-16T01:44:43.047Z] [DEBUG] Gateway connect handshake completed\n",
+    "[2026-10-16T01:44:43.047Z] [DEBUG] Gateway state changed: starting -> running\n",
+    "[2026-10-16T01:44:43.048Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n",
+    "[2026-10-16T01:44:44.207Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n",
+    "[2026-10-16T01:44:44.478Z] [INFO] [chat:sendWithMedia] Sending: message=\"This is a controlled runtime verification. Call the agent_browser tool exactly once with action=\"ope\", attachments=0, fileRefs=0\n",
+    "[2026-10-16T01:44:44.479Z] [INFO] [gateway-rpc] chat.send serialized id=cce89b64-7972-49d0-90e5-d18d7e4b4add timeoutMs=120000 bytes=672\n",
+    "[2026-10-16T01:44:44.479Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=cce89b64-7972-49d0-90e5-d18d7e4b4add\n",
+    "[2026-10-16T01:44:44.995Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=d25e0767-cb8b-4e4c-a7eb-0e8ac94282dd id=cce89b64-7972-49d0-90e5-d18d7e4b4add\n",
+    "[2026-10-16T01:44:44.995Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=d25e0767-cb8b-4e4c-a7eb-0e8ac94282dd id=cce89b64-7972-49d0-90e5-d18d7e4b4add\n",
+    "[2026-10-16T01:44:44.996Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered\n",
+    "[2026-10-16T01:44:45.005Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=m08-2026-10-16T01-44-12-861Z-8fc6f4d8 sessionKey=agent:main:m08-2026-10-16t01-44-12-861z-8fc6f4d8 loadSessionMs=1.12\n",
+    "[2026-10-16T01:44:45.009Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=m08-2026-10-16T01-44-12-861Z-8fc6f4d8 sessionKey=agent:main:m08-2026-10-16t01-44-12-861z-8fc6f4d8 attachments=0\n",
+    "[2026-10-16T01:44:45.012Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=m08-2026-10-16T01-44-12-861Z-8fc6f4d8 sessionKey=agent:main:m08-2026-10-16t01-44-12-861z-8fc6f4d8\n",
+    "[2026-10-16T01:44:45.013Z] [INFO] [gateway-rpc] chat.send response id received durationMs=534\n[2026-10-16T01:44:45.013Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"m08-2026-10-16T01-44-12-861Z-8fc6f4d8\",\"status\":\"started\"}\n",
+    "[2026-10-16T01:44:45.023Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=d25e0767-cb8b-4e4c-a7eb-0e8ac94282dd id=cce89b64-7972-49d0-90e5-d18d7e4b4add\n",
+    "[2026-10-16T01:44:48.771Z] [WARN] [Gateway stderr] [\u001b[31mERROR\u001b[0m] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n",
+    "[2026-10-16T01:45:07.177Z] [WARN] [Gateway stderr] [agent/embedded] [trace:embedded-run] core-plugin-tool stages: runId=m08-2026-10-16T01-44-12-861Z-8fc6f4d8 sessionId=f1d5b76d-2863-49f4-a44d-297729234981 phase=core-plugin-tools totalMs=17265 stages=tool-policy:87ms@87ms,workspace-policy:1ms@88ms,base-coding-tools:1ms@89ms,shell-tools:3ms@92ms,openclaw-tools:session-workspace:1ms@93ms,openclaw-tools:image-tool:4ms@97ms,openclaw-tools:image-generate-tool:0ms@97ms,openclaw-tools:video-generate-tool:0ms@97ms,openclaw-tools:music-generate-tool:0ms@97ms,openclaw-tools:pdf-tool:0ms@97ms,openclaw-tools:web-search-tool:0ms@97ms,openclaw-tools:web-fetch-tool:0ms@97ms,openclaw-tools:agent-browser-tool:0ms@97ms,openclaw-tools:automation-playbook-selector-tool:0ms@97ms,openclaw-tools:message-tool:3ms@100ms,openclaw-tools:nodes-tool:0ms@100ms,openclaw-tools:core-tool-list:6ms@106ms,openclaw-tools:plugin-tools:17152ms@17258ms,openclaw-tools:0ms@17258ms,message-provider-policy:0ms@17258ms,model-provider-policy:0ms@17258ms,authorization-policy:1ms@17259ms,schema-normalization:5ms@17264ms,tool-hooks:1ms@17265ms,abort-wrappers:0ms@17265ms,deferred-followup-descriptions:0ms@17265ms,attempt:create-openclaw-coding-tools:0ms@17265ms,attempt:tools-allow:0ms@17265ms\n",
+    "[2026-10-16T01:45:08.463Z] [WARN] [Gateway stderr] [agent/embedded] [trace:embedded-run] prep stages: runId=m08-2026-10-16T01-44-12-861Z-8fc6f4d8 sessionId=f1d5b76d-2863-49f4-a44d-297729234981 phase=stream-ready totalMs=18553 stages=workspace-sandbox:1ms@1ms,skills:1ms@2ms,core-plugin-tools:17265ms@17267ms,bootstrap-context:967ms@18234ms,bundle-tools:206ms@18440ms,system-prompt:45ms@18485ms,session-resource-loader:23ms@18508ms,agent-session:6ms@18514ms,stream-setup:39ms@18553ms\n",
+    "[2026-10-16T01:45:19.367Z] [DEBUG] [agent-browser-bridge] Received invoke request: agentBrowser.invoke.request\n",
+    "[2026-10-16T01:45:19.367Z] [DEBUG] [agent-browser-bridge] Dispatching action=open requestId=283ff141-eaf2-467f-ad36-ad5a44d0abdb\n",
+    "[2026-10-16T01:45:19.596Z] [DEBUG] [agent-browser-bridge] Action completed requestId=283ff141-eaf2-467f-ad36-ad5a44d0abdb\n"
+  ],
+  "gateway": {
+    "state": "running",
+    "port": 18789,
+    "reconnectAttempts": 0,
+    "gatewayReady": true,
+    "pid": 4796,
+    "connectedAt": 1792115083047,
+    "uptime": 1
+  },
+  "send": {
+    "success": true,
+    "result": {
+      "runId": "m08-2026-10-16T01-44-12-861Z-8fc6f4d8"
+    }
+  },
+  "messageCount": 4,
+  "assistantMessages": [
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "toolCall",
+          "id": "call_1a763a5dd2a34c59ab4ddb14",
+          "name": "agent_browser",
+          "arguments": {
+            "action": "open",
+            "mode": "headless",
+            "pageId": "m08-2026-10-16T01-44-12-861Z-8fc6f4d8-page",
+            "profile": "m08-2026-10-16T01-44-12-861Z-8fc6f4d8",
+            "taskId": "m08-2026-10-16T01-44-12-861Z-8fc6f4d8-task",
+            "url": "http://127.0.0.1:57442/"
+          }
+        }
+      ],
+      "api": "openai-responses",
+      "provider": "m08-local",
+      "model": "glm-5.3-flash",
+      "usage": {
+        "input": 26125,
+        "output": 137,
+        "totalTokens": 26262,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "cost": {
+          "total": 0
+        }
+      },
+      "stopReason": "toolUse",
+      "timestamp": 1792115109132,
+      "responseId": "cmb-389c6473c90311f18785da4b68610cbf",
+      "__openclaw": {
+        "id": "f94b589a",
+        "recordTimestampMs": 1792115118772,
+        "seq": 2
+      }
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "M08 FIXTURE READY"
+        }
+      ],
+      "api": "openai-responses",
+      "provider": "m08-local",
+      "model": "glm-5.3-flash",
+      "usage": {
+        "input": 996,
+        "output": 7,
+        "totalTokens": 27115,
+        "cacheRead": 26112,
+        "cacheWrite": 0,
+        "cost": {
+          "total": 0
+        }
+      },
+      "stopReason": "stop",
+      "timestamp": 1792115120502,
+      "responseId": "cmb-3ef103cec90311f1b5f95a4189a63bd7",
+      "__openclaw": {
+        "id": "a9977957",
+        "recordTimestampMs": 1792115126020,
+        "seq": 4
+      }
+    }
+  ],
+  "toolMessages": [],
+  "ownedSessions": [
+    {
+      "id": "fadc779f-797c-4b85-be4c-ec8e20d68fcf",
+      "profile": "m08-2026-10-16t01-44-12-861z-8fc6f4d8",
+      "mode": "headless",
+      "authPersistence": "session-name",
+      "authStateName": "m08-2026-10-16t01-44-12-861z-8fc6f4d8",
+      "connection": {
+        "mode": "managed"
+      },
+      "createdAt": "2026-10-16T01:45:19.444Z",
+      "updatedAt": "2026-10-16T01:45:19.594Z",
+      "runtimeMode": "normal_restricted",
+      "sessionKey": "agent:main:m08-2026-10-16t01-44-12-861z-8fc6f4d8",
+      "agentId": "main",
+      "url": "http://127.0.0.1:57442/",
+      "title": "M08 Fixture"
+    }
+  ],
+  "allSessions": [
+    {
+      "id": "fadc779f-797c-4b85-be4c-ec8e20d68fcf",
+      "profile": "m08-2026-10-16t01-44-12-861z-8fc6f4d8",
+      "mode": "headless",
+      "authPersistence": "session-name",
+      "authStateName": "m08-2026-10-16t01-44-12-861z-8fc6f4d8",
+      "connection": {
+        "mode": "managed"
+      },
+      "createdAt": "2026-10-16T01:45:19.444Z",
+      "updatedAt": "2026-10-16T01:45:19.594Z",
+      "runtimeMode": "normal_restricted",
+      "sessionKey": "agent:main:m08-2026-10-16t01-44-12-861z-8fc6f4d8",
+      "agentId": "main",
+      "url": "http://127.0.0.1:57442/",
+      "title": "M08 Fixture"
+    }
+  ],
+  "checks": {
+    "realModelResultReceived": true,
+    "toolCallObserved": true,
+    "toolResultContainsFixtureHeading": true,
+    "gatewayRequestCorrelationPresent": true,
+    "taskCorrelationPresent": true,
+    "pageCorrelationPresent": true,
+    "sessionOwnershipPresent": true
+  },
+  "history": {
+    "sessionKey": "agent:main:m08-2026-10-16T01-44-12-861Z-8fc6f4d8",
+    "sessionId": "f1d5b76d-2863-49f4-a44d-297729234981",
+    "messages": [
+      {
+        "role": "user",
+        "content": "This is a controlled runtime verification. Call the agent_browser tool exactly once with action=\"open\", url=\"http://127.0.0.1:57442/\", mode=\"headless\", profile=\"m08-2026-10-16T01-44-12-861Z-8fc6f4d8\", taskId=\"m08-2026-10-16T01-44-12-861Z-8fc6f4d8-task\", pageId=\"m08-2026-10-16T01-44-12-861Z-8fc6f4d8-page\". Do not call any other tool. After the tool result arrives, reply with exactly the text visible in the h1 element.",
+        "timestamp": 1792115085006,
+        "idempotencyKey": "m08-2026-10-16T01-44-12-861Z-8fc6f4d8:user",
+        "__openclaw": {
+          "id": "99c1a077",
+          "recordTimestampMs": 1792115108609,
+          "seq": 1
+        }
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call_1a763a5dd2a34c59ab4ddb14",
+            "name": "agent_browser",
+            "arguments": {
+              "action": "open",
+              "mode": "headless",
+              "pageId": "m08-2026-10-16T01-44-12-861Z-8fc6f4d8-page",
+              "profile": "m08-2026-10-16T01-44-12-861Z-8fc6f4d8",
+              "taskId": "m08-2026-10-16T01-44-12-861Z-8fc6f4d8-task",
+              "url": "http://127.0.0.1:57442/"
+            }
+          }
+        ],
+        "api": "openai-responses",
+        "provider": "m08-local",
+        "model": "glm-5.3-flash",
+        "usage": {
+          "input": 26125,
+          "output": 137,
+          "totalTokens": 26262,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        },
+        "stopReason": "toolUse",
+        "timestamp": 1792115109132,
+        "responseId": "cmb-389c6473c90311f18785da4b68610cbf",
+        "__openclaw": {
+          "id": "f94b589a",
+          "recordTimestampMs": 1792115118772,
+          "seq": 2
+        }
+      },
+      {
+        "role": "toolResult",
+        "toolCallId": "call_1a763a5dd2a34c59ab4ddb14",
+        "toolName": "agent_browser",
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"success\": true,\n  \"session\": {\n    \"id\": \"fadc779f-797c-4b85-be4c-ec8e20d68fcf\",\n    \"profile\": \"m08-2026-10-16t01-44-12-861z-8fc6f4d8\",\n    \"mode\": \"headless\",\n    \"authPersistence\": \"session-name\",\n    \"authStateName\": \"m08-2026-10-16t01-44-12-861z-8fc6f4d8\",\n    \"connection\": {\n      \"mode\": \"managed\"\n    },\n    \"createdAt\": \"2026-10-16T01:45:19.444Z\",\n    \"updatedAt\": \"2026-10-16T01:45:19.594Z\",\n    \"runtimeMode\": \"normal_restricted\",\n    \"sessionKey\": \"agent:main:m08-2026-10-16t01-44-12-861z-8fc6f4d8\",\n    \"agentId\": \"main\",\n    \"url\": \"http://127.0.0.1:57442/\",\n    \"title\": \"M08 Fixture\"\n  },\n  \"textSample\": \"M08 FIXTURE READY\",\n  \"gatewayRequestId\": \"283ff141-eaf2-467f-ad36-ad5a44d0abdb\",\n  \"sessionKey\": \"agent:main:m08-2026-10-16t01-44-12-861z-8fc6f4d8\",\n  \"browserAutomationEvent\": {\n    \"schemaVersion\": 1,\n    \"tool\": \"agent_browser\",\n    \"action\": \"open\",\n    \"ok\": true,\n    \"ts\": 1792115119601,\n    \"sessionId\": \"fadc779f-797c-4b85-be4c-ec8e20d68fcf\",\n    \"pageId\": \"m08-2026-10-16T01-44-12-861Z-8fc6f4d8-page\",\n    \"gatewayRequestId\": \"283ff141-eaf2-467f-ad36-ad5a44d0abdb\",\n    \"runId\": \"m08-2026-10-16T01-44-12-861Z-8fc6f4d8\",\n    \"sessionKey\": \"agent:main:m08-2026-10-16t01-44-12-861z-8fc6f4d8\",\n    \"agentSessionKey\": \"agent:main:m08-2026-10-16t01-44-12-861z-8fc6f4d8\",\n    \"agentSessionId\": \"f1d5b76d-2863-49f4-a44d-297729234981\",\n    \"toolCallId\": \"call_1a763a5dd2a34c59ab4ddb14\",\n    \"taskId\": \"m08-2026-10-16T01-44-12-861Z-8fc6f4d8-task\",\n    \"agentId\": \"main\",\n    \"profile\": \"m08-2026-10-16t01-44-12-861z-8fc6f4d8\",\n    \"authStateName\": \"m08-2026-10-16t01-44-12-861z-8fc6f4d8\",\n    \"mode\": \"headless\",\n    \"url\": \"http://127.0.0.1:57442/\",\n    \"finalUrl\": \"http://127.0.0.1:57442/\",\n    \"title\": \"M08 Fixture\",\n    \"textSample\": \"M08 FIXTURE READY\"\n  }\n}"
+          }
+        ],
+        "isError": false,
+        "timestamp": 1792115119965,
+        "__openclaw": {
+          "id": "6f5e05dd",
+          "recordTimestampMs": 1792115119971,
+          "seq": 3
+        }
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "M08 FIXTURE READY"
+          }
+        ],
+        "api": "openai-responses",
+        "provider": "m08-local",
+        "model": "glm-5.3-flash",
+        "usage": {
+          "input": 996,
+          "output": 7,
+          "totalTokens": 27115,
+          "cacheRead": 26112,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        },
+        "stopReason": "stop",
+        "timestamp": 1792115120502,
+        "responseId": "cmb-3ef103cec90311f1b5f95a4189a63bd7",
+        "__openclaw": {
+          "id": "a9977957",
+          "recordTimestampMs": 1792115126020,
+          "seq": 4
+        }
+      }
+    ],
+    "defaults": {
+      "modelProvider": "m08-local",
+      "model": "glm-5.3-flash",
+      "contextTokens": 200000,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off"
+    },
+    "sessionInfo": {
+      "key": "agent:main:m08-2026-10-16t01-44-12-861z-8fc6f4d8",
+      "kind": "direct",
+      "displayName": "Verse Claw",
+      "chatType": "direct",
+      "origin": {
+        "label": "Verse Claw",
+        "provider": "webchat",
+        "surface": "webchat",
+        "chatType": "direct"
+      },
+      "updatedAt": 1792115126113,
+      "sessionId": "f1d5b76d-2863-49f4-a44d-297729234981",
+      "systemSent": true,
+      "abortedLastRun": false,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "medium",
+      "inputTokens": 27121,
+      "outputTokens": 144,
+      "totalTokens": 27108,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "status": "done",
+      "startedAt": 1792115108578,
+      "endedAt": 1792115126026,
+      "runtimeMs": 17448,
+      "modelProvider": "m08-local",
+      "model": "glm-5.3-flash",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 200000,
+      "deliveryContext": {
+        "channel": "webchat"
+      },
+      "lastChannel": "webchat",
+      "hasActiveRun": false
+    },
+    "thinkingLevel": "medium"
+  },
+  "status": "pass"
+}
