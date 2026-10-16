@@ -59,7 +59,7 @@
     "detail": "The model->Gateway->Main->driver correlation leg (requestId/toolCallId/session/owner/event) still needs a runtime-side run: the renderer gateway.rpc surface is intentionally read-only for mutations, so a probe cannot drive agentBrowser.invoke from the renderer.",
     "attempt": "model-chain-attempt-receipt.json",
     "sha256": "7ceb81ec071c3b989d59cdc50ad0312c01fede8f98fa377f8e75416f311df5e2",
-    "nextStep": "1) make the E2E prove which endpoint it calls (the stub receiving a request is the check) - i.e. fix provider isolation so the run uses the injected account; 2) then either repair the arguments path or run the labelled protocol simulation against a stub that the runtime actually reaches; 3) only then can the requestId/session/owner/event correlation be asserted through Main.",
+    "nextStep": "run the live chain with a genuinely isolated app profile (or instrument the runtime's tool-call capture) so the zero-request stub observation becomes a real assertion, then decide whether empty tool arguments come from the model or from the runtime.",
     "notBlockedOnOwner": "the local endpoint is live (127.0.0.1:3065); no owner action is needed for the next step.",
     "liveAttempt": {
       "result": "The live chain now reaches a REAL model tool call: with the real local endpoint the runtime records assistant toolCall entries for agent_browser carrying call ids (call_bb62b56ad73a43768051895c, call_0771c867f9eb4e8e93d58e01). It stops before Main because the endpoint returns malformed tool arguments (the string is missing its opening brace), which the runtime correctly rejects.",
@@ -98,6 +98,12 @@
         "n7-20261016/live-chain-stub.json",
         "n7-20261016/live-chain-stub-real-key.json"
       ]
+    },
+    "isolationFinding": {
+      "detail": "the live chain spec does not isolate the app profile (no home/user-data under its run roots), so it used the machine's own configured provider rather than the injected endpoint - confirmed by the in-test stub receiving zero requests.",
+      "consequence": "a real provider-backed model did call agent_browser through the runtime with empty arguments; attributing that to the model or to the runtime needs runtime-side instrumentation.",
+      "artifact": "n7-20261016/live-run-isolation-check.md",
+      "sha256": "da65649a5dd447a6d27c1f41791598058a532a6e125befe72b23841296d4e18a"
     }
   },
   "verifiers": {
