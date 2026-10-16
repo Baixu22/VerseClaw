@@ -1,0 +1,112 @@
+{
+  "tag": "fixed",
+  "root": "D:\\ClawX-candidates\\vb-invocation-n1-20261016",
+  "exe": "release/win-unpacked/Verse Claw.exe",
+  "exeExists": true,
+  "fixtureUrl": "http://127.0.0.1:52002/",
+  "pid": 36444,
+  "pageCount": 1,
+  "pageTitle": "Verse Claw",
+  "raw": {
+    "setEnabled": {
+      "id": "3890ca87-c83b-4531-b0e2-d43852473565",
+      "ok": true,
+      "data": {
+        "success": true,
+        "enabled": true
+      }
+    },
+    "open": {
+      "id": "9c1cd2dd-607f-4fd8-9486-c98fcf4e1a33",
+      "ok": true,
+      "data": {
+        "success": true,
+        "session": {
+          "id": "8eeecde1-f80b-4c84-9fa9-4d8e873a08ca",
+          "profile": "n8-fixed-mvb7de5m",
+          "mode": "headless",
+          "authPersistence": "session-name",
+          "authStateName": "n8-fixed-mvb7de5m",
+          "connection": {
+            "mode": "managed"
+          },
+          "createdAt": "2026-10-16T16:49:32.739Z",
+          "updatedAt": "2026-10-16T16:49:32.855Z",
+          "runtimeMode": "normal_restricted",
+          "sessionKey": "agent:main:n8-fixed-mvb7de5m",
+          "agentId": "main",
+          "url": "http://127.0.0.1:52002/",
+          "title": "M10 Fixture"
+        },
+        "textSample": "M10 PACKAGED OK\n\nbody marker 42"
+      }
+    },
+    "sessionId": "8eeecde1-f80b-4c84-9fa9-4d8e873a08ca",
+    "snapshotBeforeUpgrade": {
+      "id": "c0356734-bc46-44ca-8f9d-bdc37453968f",
+      "ok": false,
+      "error": {
+        "code": "INTERNAL",
+        "message": "Agent browser action requires runtime mode upgrade (current: normal_restricted). Call requestModeUpgrade first."
+      }
+    },
+    "upgrade": {
+      "id": "c9b29ab3-b19f-49d7-a6c2-0bce6d63f6a6",
+      "ok": true,
+      "data": {
+        "success": true,
+        "runtimeMode": "full_access",
+        "session": {
+          "id": "8eeecde1-f80b-4c84-9fa9-4d8e873a08ca",
+          "profile": "n8-fixed-mvb7de5m",
+          "mode": "headless",
+          "authPersistence": "session-name",
+          "authStateName": "n8-fixed-mvb7de5m",
+          "connection": {
+            "mode": "managed"
+          },
+          "createdAt": "2026-10-16T16:49:32.739Z",
+          "updatedAt": "2026-10-16T16:49:32.887Z",
+          "runtimeMode": "full_access",
+          "sessionKey": "agent:main:n8-fixed-mvb7de5m",
+          "agentId": "main",
+          "url": "http://127.0.0.1:52002/",
+          "title": "M10 Fixture"
+        }
+      }
+    },
+    "snapshotAfterUpgrade": {
+      "id": "e3990aed-af75-4156-8571-54ee0849f9a9",
+      "ok": true,
+      "data": {
+        "success": true,
+        "session": {
+          "id": "8eeecde1-f80b-4c84-9fa9-4d8e873a08ca",
+          "profile": "n8-fixed-mvb7de5m",
+          "mode": "headless",
+          "authPersistence": "session-name",
+          "authStateName": "n8-fixed-mvb7de5m",
+          "connection": {
+            "mode": "managed"
+          },
+          "createdAt": "2026-10-16T16:49:32.739Z",
+          "updatedAt": "2026-10-16T16:49:32.895Z",
+          "runtimeMode": "full_access",
+          "sessionKey": "agent:main:n8-fixed-mvb7de5m",
+          "agentId": "main",
+          "url": "http://127.0.0.1:52002/",
+          "title": "M10 Fixture"
+        },
+        "snapshot": "# 浏览器页面快照\n页面标题：M10 Fixture\n页面 URL：http://127.0.0.1:52002/\n\n- uid=1_1 RootWebArea \"M10 Fixture\" focused=\"true\"\n  - uid=1_2 heading \"M10 PACKAGED OK\"\n    - uid=1_3 StaticText \"M10 PACKAGED OK\"\n  - uid=1_4 paragraph\n    - uid=1_5 StaticText \"body marker 42\""
+      }
+    },
+    "close": {
+      "id": "6a142f15-3307-4425-b73c-89d0b8d21b8e",
+      "ok": true,
+      "data": {
+        "success": true
+      }
+    }
+  },
+  "elapsedMs": 5024
+}

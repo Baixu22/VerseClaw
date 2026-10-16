@@ -1,0 +1,273 @@
+{
+  "tag": "fixedinstalled",
+  "exePath": "D:\\tmp\\n8b-install-A\\Verse Claw.exe",
+  "cwdDir": "D:\\tmp\\n8b-install-A",
+  "exeExists": true,
+  "pwRoot": "D:\\ClawX-candidates\\vb-invocation-n1-20261016",
+  "fixtureUrl": "http://127.0.0.1:62920/",
+  "pid": 25768,
+  "pageCount": 1,
+  "pageTitle": "Verse Claw",
+  "raw": {
+    "setEnabled": {
+      "id": "81a7811b-0ac1-4a08-a277-849c1cce55a6",
+      "ok": true,
+      "data": {
+        "success": true,
+        "enabled": true
+      }
+    },
+    "open": {
+      "id": "92376369-a249-4d2e-ab7a-e247a2e46281",
+      "ok": true,
+      "data": {
+        "success": true,
+        "session": {
+          "id": "745df9a5-4a34-4eb0-ba71-9975220ae7e5",
+          "profile": "n8-fixedinstalled-mvb7f38v",
+          "mode": "headless",
+          "authPersistence": "session-name",
+          "authStateName": "n8-fixedinstalled-mvb7f38v",
+          "connection": {
+            "mode": "managed"
+          },
+          "createdAt": "2026-10-16T16:50:51.938Z",
+          "updatedAt": "2026-10-16T16:50:52.130Z",
+          "runtimeMode": "normal_restricted",
+          "sessionKey": "agent:main:n8-fixedinstalled-mvb7f38v",
+          "agentId": "main",
+          "url": "http://127.0.0.1:62920/",
+          "title": "M10 Fixture"
+        },
+        "textSample": "M10 PACKAGED OK\n\nbody marker 42"
+      }
+    },
+    "sessionId": "745df9a5-4a34-4eb0-ba71-9975220ae7e5",
+    "snapshotBeforeUpgrade": {
+      "id": "674fbc54-a578-47fe-8352-565d0b39fc89",
+      "ok": false,
+      "error": {
+        "code": "INTERNAL",
+        "message": "Agent browser action requires runtime mode upgrade (current: normal_restricted). Call requestModeUpgrade first."
+      }
+    },
+    "upgrade": {
+      "id": "563fd218-6f36-4856-a5fa-c9200938118f",
+      "ok": true,
+      "data": {
+        "success": true,
+        "runtimeMode": "full_access",
+        "session": {
+          "id": "745df9a5-4a34-4eb0-ba71-9975220ae7e5",
+          "profile": "n8-fixedinstalled-mvb7f38v",
+          "mode": "headless",
+          "authPersistence": "session-name",
+          "authStateName": "n8-fixedinstalled-mvb7f38v",
+          "connection": {
+            "mode": "managed"
+          },
+          "createdAt": "2026-10-16T16:50:51.938Z",
+          "updatedAt": "2026-10-16T16:50:52.161Z",
+          "runtimeMode": "full_access",
+          "sessionKey": "agent:main:n8-fixedinstalled-mvb7f38v",
+          "agentId": "main",
+          "url": "http://127.0.0.1:62920/",
+          "title": "M10 Fixture"
+        }
+      }
+    },
+    "snapshotAfterUpgrade": {
+      "id": "4e0bdfd8-9e4a-4e4a-8a91-0ea91439c6c5",
+      "ok": true,
+      "data": {
+        "success": true,
+        "session": {
+          "id": "745df9a5-4a34-4eb0-ba71-9975220ae7e5",
+          "profile": "n8-fixedinstalled-mvb7f38v",
+          "mode": "headless",
+          "authPersistence": "session-name",
+          "authStateName": "n8-fixedinstalled-mvb7f38v",
+          "connection": {
+            "mode": "managed"
+          },
+          "createdAt": "2026-10-16T16:50:51.938Z",
+          "updatedAt": "2026-10-16T16:50:52.171Z",
+          "runtimeMode": "full_access",
+          "sessionKey": "agent:main:n8-fixedinstalled-mvb7f38v",
+          "agentId": "main",
+          "url": "http://127.0.0.1:62920/",
+          "title": "M10 Fixture"
+        },
+        "snapshot": "# 浏览器页面快照\n页面标题：M10 Fixture\n页面 URL：http://127.0.0.1:62920/\n\n- uid=1_1 RootWebArea \"M10 Fixture\" focused=\"true\"\n  - uid=1_2 heading \"M10 PACKAGED OK\"\n    - uid=1_3 StaticText \"M10 PACKAGED OK\"\n  - uid=1_4 paragraph\n    - uid=1_5 StaticText \"body marker 42\""
+      }
+    },
+    "status": {
+      "id": "b69e3d25-47b8-4f3c-9241-9c821e88d908",
+      "ok": true,
+      "data": {
+        "success": true,
+        "sessions": [
+          {
+            "id": "745df9a5-4a34-4eb0-ba71-9975220ae7e5",
+            "profile": "n8-fixedinstalled-mvb7f38v",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "n8-fixedinstalled-mvb7f38v",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T16:50:51.938Z",
+            "updatedAt": "2026-10-16T16:50:52.171Z",
+            "runtimeMode": "full_access",
+            "sessionKey": "agent:main:n8-fixedinstalled-mvb7f38v",
+            "agentId": "main",
+            "url": "http://127.0.0.1:62920/",
+            "title": "M10 Fixture"
+          }
+        ],
+        "browserControlEnabled": true,
+        "capabilities": {
+          "version": "2f51853b751854cdb642ed8034558bbe472ed3e0d34f37730614b181a2c04ff0",
+          "driverKind": "injected",
+          "cliAvailable": false,
+          "actions": [
+            {
+              "action": "open",
+              "available": true
+            },
+            {
+              "action": "status",
+              "available": true
+            },
+            {
+              "action": "navigate",
+              "available": true
+            },
+            {
+              "action": "waitForSelector",
+              "available": true
+            },
+            {
+              "action": "click",
+              "available": true
+            },
+            {
+              "action": "type",
+              "available": true
+            },
+            {
+              "action": "evaluate",
+              "available": true
+            },
+            {
+              "action": "screenshot",
+              "available": true
+            },
+            {
+              "action": "command",
+              "available": false,
+              "reason": "bundled agent-browser CLI is not available"
+            },
+            {
+              "action": "close",
+              "available": true
+            },
+            {
+              "action": "getConsoleMessages",
+              "available": true
+            },
+            {
+              "action": "downloadFile",
+              "available": false,
+              "reason": "driver \"injected\" declares downloadFile but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "uploadFiles",
+              "available": false,
+              "reason": "driver \"injected\" declares uploadFiles but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "pointer",
+              "available": false,
+              "reason": "driver \"injected\" declares pointer but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "drag",
+              "available": false,
+              "reason": "driver \"injected\" declares drag but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "selectOption",
+              "available": false,
+              "reason": "driver \"injected\" declares selectOption but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "selectValues",
+              "available": false,
+              "reason": "driver \"injected\" declares selectValues but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "appendText",
+              "available": false,
+              "reason": "driver \"injected\" declares appendText but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "setChecked",
+              "available": false,
+              "reason": "driver \"injected\" declares setChecked but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "findElement",
+              "available": false,
+              "reason": "driver \"injected\" declares findElement but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "semanticRead",
+              "available": false,
+              "reason": "driver \"injected\" declares semanticRead but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "readForms",
+              "available": false,
+              "reason": "driver \"injected\" declares readForms but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "readDialogs",
+              "available": false,
+              "reason": "driver \"injected\" declares readDialogs but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "respondDialog",
+              "available": false,
+              "reason": "driver \"injected\" declares respondDialog but refuses them (E_NOT_IMPLEMENTED)"
+            },
+            {
+              "action": "takeSnapshot",
+              "available": true
+            },
+            {
+              "action": "extractPageText",
+              "available": true
+            },
+            {
+              "action": "pressKey",
+              "available": true
+            },
+            {
+              "action": "verifyFlow",
+              "available": true
+            }
+          ]
+        }
+      }
+    },
+    "close": {
+      "id": "10b9e23c-3281-4965-a5a8-47a38aeea920",
+      "ok": true,
+      "data": {
+        "success": true
+      }
+    }
+  },
+  "elapsedMs": 6483
+}

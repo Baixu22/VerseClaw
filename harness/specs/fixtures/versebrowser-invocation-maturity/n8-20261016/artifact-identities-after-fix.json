@@ -1,0 +1,38 @@
+[
+  {
+    "name": "nsis-installer",
+    "bytes": 678800538,
+    "sha256": "a999e010464aaa717946338717d18393a3e47ad478cd8e90d6b489713f9cad68",
+    "path": "release\\Verse Claw-0.4.9-alpha.0-win-x64.exe"
+  },
+  {
+    "name": "packaged-exe",
+    "bytes": 214315008,
+    "sha256": "339ab98b1dc96e994a74f927ffbf73fdea3678d9b8862366f6f426e63172caa9",
+    "path": "release\\win-unpacked\\Verse Claw.exe"
+  },
+  {
+    "name": "app-asar",
+    "bytes": 305714053,
+    "sha256": "ae0bb8d038cc0070c90822b98e9c097474d5b2d0ef31524a6432b718ae34be3c",
+    "path": "release\\win-unpacked\\resources\\app.asar"
+  },
+  {
+    "name": "main-runtime-asar",
+    "bytes": 836527225,
+    "sha256": "b5a22d6fc776af17a83ab6fa36cc8663013866f143b205ce8f48947b6b2ce81c",
+    "path": "release\\win-unpacked\\resources\\main-runtime.asar"
+  },
+  {
+    "name": "ae-exe",
+    "bytes": 15144448,
+    "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+    "path": "release\\win-unpacked\\resources\\bin\\ae.exe"
+  },
+  {
+    "name": "build-main-runtime",
+    "bytes": 836527225,
+    "sha256": "b5a22d6fc776af17a83ab6fa36cc8663013866f143b205ce8f48947b6b2ce81c",
+    "path": "build\\main-runtime-delivery\\main-runtime.asar"
+  }
+]

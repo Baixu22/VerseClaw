@@ -1,0 +1,80 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "d4c3f1021a0faf928a36a3299f54eea6bfd29fae",
+  "steps": [
+    {
+      "name": "node --test scripts/versebrowser-build-wiring.test.mjs",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-g-buildwiring.log"
+    },
+    {
+      "name": "vitest spec requiredTests set",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-g-vitest.log",
+      "summary": "Tests  37 passed (37)"
+    },
+    {
+      "name": "pnpm contract:check",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-g-contract.log"
+    },
+    {
+      "name": "pnpm run typecheck",
+      "exit": 0,
+      "log": "D:\\tmp\\n8-typecheck.log"
+    },
+    {
+      "name": "pnpm run build:vite",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-package.log"
+    },
+    {
+      "name": "pnpm run comms:replay",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-g-commsreplay.log"
+    },
+    {
+      "name": "pnpm run comms:compare",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-g-commscompare.log"
+    },
+    {
+      "name": "node scripts/versebrowser-module-verify.mjs",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-g-module.log"
+    },
+    {
+      "name": "node scripts/versebrowser-api-coverage-verify.mjs",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-g-coverage.log"
+    },
+    {
+      "name": "node scripts/versebrowser-host-integration-verify.mjs",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-g-hostint2.log"
+    },
+    {
+      "name": "pnpm harness validate --spec harness/specs/tasks/versebrowser-invocation-maturity.md",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-g-harness2.log"
+    },
+    {
+      "name": "pnpm exec playwright test tests/e2e/versebrowser-host-invocation.spec.ts tests/e2e/agent-browser-workbench.spec.ts tests/e2e/browser-security-recovery.spec.ts",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-g-e2e2.log",
+      "summary": "3 passed (25.0s)"
+    },
+    {
+      "name": "node scripts/versebrowser-m10-package-verify.mjs --release",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-pkgverify.log"
+    },
+    {
+      "name": "node scripts/versebrowser-m10-packaged-flow-verify.mjs",
+      "exit": 0,
+      "log": "D:\\tmp\\n8b-flowverify-1.log",
+      "summary": "idempotent: 2/2 consecutive runs pass"
+    }
+  ]
+}
