@@ -73,7 +73,7 @@
       "id": "N9-5",
       "requirement": "enabled capabilities carry current code + package binding, credential scan and hashes",
       "evidence": [
-        "stability.json: all 46 rounds report status.capabilities.cliAvailable=false",
+        "stability.json: 10/10 cold-start rounds report status.capabilities.cliAvailable=false (loop/interrupt rounds do not sample that field, so no all-46 claim is made)",
         "n8-20261016/gates-after-fix.json: requiredTests all exit 0 including Playwright 3 passed",
         "credential scan over n8-20261016 + n9-20261017 fixtures: 0 hits",
         "SHA256SUMS in this directory; build_binding above"

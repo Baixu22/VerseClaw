@@ -32,7 +32,7 @@
 ## 4. 绑定与卫生
 
 - 产物绑定：`n8-20261016/artifact-identities-after-fix.json` —— NSIS 安装器 678800538 B `a999e010…cad68`；`win-unpacked/Verse Claw.exe` 214315008 B `339ab98b…172caa9`；`resources/app.asar` 305714053 B `ae0bb8d0…34be3c`；包内 `main-runtime.asar` 与 `build/main-runtime-delivery/main-runtime.asar` 逐字节相同（`b5a22d6f…b2ce81c`）。
-- 能力一致性：全部 46 轮 `status.capabilities.cliAvailable === false`（与 N3 桌面收据、以及修复后的 `packages/README.md` 表述一致）。
+- 能力一致性：10/10 冷启动轮实测 `status.capabilities.cliAvailable === false`（闭环/中断轮不读取该字段，故不作全 46 轮的声明）；与 N3 桌面收据、以及修复后的 `packages/README.md` 表述一致。
 - 凭据扫描：对 `n8-20261016/` + `n9-20261017/` 全部 fixture 做正则扫描（sk-/ghp_/gho_/AKIA/PRIVATE KEY/明文 key=value），**0 命中**。
 - 全部收据 SHA256 见同目录 `SHA256SUMS`。
 
