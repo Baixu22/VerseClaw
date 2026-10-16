@@ -59,7 +59,7 @@
     "detail": "The model->Gateway->Main->driver correlation leg (requestId/toolCallId/session/owner/event) still needs a runtime-side run: the renderer gateway.rpc surface is intentionally read-only for mutations, so a probe cannot drive agentBrowser.invoke from the renderer.",
     "attempt": "model-chain-attempt-receipt.json",
     "sha256": "7ceb81ec071c3b989d59cdc50ad0312c01fede8f98fa377f8e75416f311df5e2",
-    "nextStep": "instrument the runtime's provider resolution (which base URL it uses for the model call) or the app's provider-sync path (does providers.createAccount reach the isolated openclaw config?) so the zero-request observation becomes attributable; then decide whether the empty arguments come from the model or from the runtime.",
+    "nextStep": "instrument the runtime provider resolution / the app to openclaw provider sync so an injected endpoint is provably used; only then can the requestId/session/owner/event correlation and the source of the empty tool arguments be established.",
     "notBlockedOnOwner": "the local endpoint is live (127.0.0.1:3065); no owner action is needed for the next step.",
     "liveAttempt": {
       "result": "The live chain now reaches a REAL model tool call: with the real local endpoint the runtime records assistant toolCall entries for agent_browser carrying call ids (call_bb62b56ad73a43768051895c, call_0771c867f9eb4e8e93d58e01). It stops before Main because the endpoint returns malformed tool arguments (the string is missing its opening brace), which the runtime correctly rejects.",
@@ -100,10 +100,10 @@
       ]
     },
     "isolationFinding": {
-      "detail": "the in-test protocol stub received zero requests, so the injected endpoint was not reached in those runs. An initial note blaming missing profile isolation was WRONG: tests/e2e/fixtures/electron.ts does isolate (separate mkdtemp home + user-data, cleaned up afterwards), so observation of no such dirs post-run is expected.",
-      "status": "unresolved - attribution of the empty tool arguments is still open",
-      "artifact": "n7-20261016/live-run-isolation-check.md",
-      "sha256": "3abf9160335cdbf46f209b6e380ffad321c2f59d661c4e75717e7c70a5304b14"
+      "detail": "the in-test protocol stub logged ZERO incoming requests across three runs (stub key, real-looking key, and with apiProtocol=openai-responses on an ephemeral base URL). The provider account IS created with that base URL and the model ref IS updated, yet the runtime never calls it - so the app provider store is not the source the runtime uses for the model call (the runtime resolves providers from its own openclaw config).",
+      "consequence": "every live run so far therefore used the machine's own configured provider. The agent_browser toolCall with a real call id is still real model evidence, but it is NOT evidence about the injected endpoint, and the empty arguments cannot be attributed to that endpoint.",
+      "codeChange": "the spec now forwards CLAWX_LIVE_API_PROTOCOL into the provider account (a real gap: custom endpoints need the protocol set).",
+      "status": "open - needs the runtime-side provider resolution instrumented"
     }
   },
   "verifiers": {

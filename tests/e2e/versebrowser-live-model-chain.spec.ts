@@ -106,11 +106,13 @@ async function configureLiveProvider(page: Page): Promise<void> {
   const modelId = process.env.CLAWX_LIVE_MODEL_ID?.trim() || 'glm-5.3-flash';
   const baseUrl = resolveBaseUrl();
   const apiKey = process.env.CLAWX_LIVE_API_KEY?.trim() || 'stub-key';
+  const apiProtocol = process.env.CLAWX_LIVE_API_PROTOCOL?.trim() as ProviderAccount['apiProtocol'] | undefined;
   if (!baseUrl) throw new Error('CLAWX_LIVE_BASE_URL (or CLAWX_LIVE_STUB_MODEL=1) is required');
   const now = new Date().toISOString();
   const account: ProviderAccount = {
     id: 'live-e2e-custom', vendorId: provider as ProviderAccount['vendorId'], label: 'Live E2E custom',
     authMode: 'api_key', baseUrl, model: modelId, enabled: true, isDefault: true, createdAt: now, updatedAt: now,
+    ...(apiProtocol ? { apiProtocol } : {}),
   };
   expect((await hostInvoke<HostSuccess>(page, 'providers', 'createAccount', { account, apiKey })).success).toBe(true);
   expect((await hostInvoke<HostSuccess>(page, 'providers', 'setDefaultAccount', { accountId: account.id })).success).toBe(true);
