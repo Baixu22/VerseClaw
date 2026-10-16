@@ -1,0 +1,451 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "startup and read-only host status; not browser business acceptance",
+  "root": "D:\\ClawX-candidates\\vb-invocation-n1-20261016",
+  "runRoot": "D:\\tmp\\verse-claw-e2e-run-jJ1iaD",
+  "candidate": {
+    "commit": "f8e807d3d4bcede382a959c268fe33411ffc0d92",
+    "dirty": true,
+    "tree": "784b94690b7f2c53cad3562122b505135dd1386a"
+  },
+  "controllerSha256": "cb432fdb6e23db28d43da763dbc0235e444af9f2dbcac8e79b34a8b407375ac3",
+  "toolchain": {
+    "node": "v24.16.0",
+    "uv": "1.52.1",
+    "nodePath": "D:\\tmp\\clawx-vb-n1-20261016\\toolchain\\node.exe",
+    "electronBinary": "D:\\tmp\\clawx-vb-n1-20261016\\toolchain\\electron-40.8.4\\electron.exe",
+    "electronSha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+  },
+  "conditions": {
+    "diagnosticNoSandbox": false,
+    "firstWindowDeadlineMs": 30000,
+    "launchDeadlineMs": 90000,
+    "isolatedHome": true,
+    "copiedUserCredentials": false,
+    "args": [
+      "--user-data-dir=D:\\tmp\\verse-claw-e2e-run-jJ1iaD\\user-data",
+      "--lang=en-US",
+      "--disable-gpu",
+      "--disable-gpu-compositing",
+      "--disable-software-rasterizer",
+      "--in-process-gpu",
+      "--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization",
+      "D:\\ClawX-candidates\\vb-invocation-n1-20261016\\dist-electron\\main\\index.js"
+    ]
+  },
+  "entrySha256": "fa461d643362530e0667669640e6457fb9059fb7e63dbe4b0b1d9a70167e1758",
+  "startedAt": "2026-10-16T05:51:37.958Z",
+  "stage": "host-bridge",
+  "startupOutcome": "pass",
+  "pid": 40008,
+  "mainState": {
+    "ready": true,
+    "appPath": "D:\\ClawX-candidates\\vb-invocation-n1-20261016\\dist-electron\\main",
+    "userData": "D:\\tmp\\verse-claw-e2e-run-jJ1iaD\\user-data",
+    "versions": {
+      "node": "24.14.0",
+      "acorn": "8.15.0",
+      "ada": "3.4.2",
+      "amaro": "1.1.7",
+      "ares": "1.34.6",
+      "brotli": "1.0.9",
+      "cldr": "47.0",
+      "icu": "77.1",
+      "llhttp": "9.3.0",
+      "merve": "1.0.0",
+      "modules": "143",
+      "napi": "10",
+      "nbytes": "0.1.1",
+      "ncrypto": "0.0.1",
+      "nghttp2": "1.68.0",
+      "openssl": "0.0.0",
+      "simdjson": "4.2.4",
+      "simdutf": "7.7.0",
+      "sqlite": "3.51.2",
+      "tz": "2025b",
+      "undici": "7.21.0",
+      "unicode": "16.0",
+      "uv": "1.51.0",
+      "uvwasi": "0.0.23",
+      "v8": "14.4.258.32-electron.0",
+      "zlib": "1.3.1",
+      "zstd": "1.5.8",
+      "electron": "40.8.4",
+      "chrome": "144.0.7559.236"
+    },
+    "windowCount": 0
+  },
+  "rendererReady": {
+    "setupPageVisible": true,
+    "url": "file:///D:/ClawX-candidates/vb-invocation-n1-20261016/dist/index.html?bootTheme=dark#/setup"
+  },
+  "hostStatus": {
+    "id": "baseline-status",
+    "ok": true,
+    "data": {
+      "success": true,
+      "sessions": [],
+      "browserControlEnabled": false,
+      "capabilities": {
+        "version": "2f51853b751854cdb642ed8034558bbe472ed3e0d34f37730614b181a2c04ff0",
+        "driverKind": "injected",
+        "cliAvailable": false,
+        "actions": [
+          {
+            "action": "open",
+            "available": true
+          },
+          {
+            "action": "status",
+            "available": true
+          },
+          {
+            "action": "navigate",
+            "available": true
+          },
+          {
+            "action": "waitForSelector",
+            "available": true
+          },
+          {
+            "action": "click",
+            "available": true
+          },
+          {
+            "action": "type",
+            "available": true
+          },
+          {
+            "action": "evaluate",
+            "available": true
+          },
+          {
+            "action": "screenshot",
+            "available": true
+          },
+          {
+            "action": "command",
+            "available": false,
+            "reason": "bundled agent-browser CLI is not available"
+          },
+          {
+            "action": "close",
+            "available": true
+          },
+          {
+            "action": "getConsoleMessages",
+            "available": true
+          },
+          {
+            "action": "downloadFile",
+            "available": false,
+            "reason": "driver \"injected\" declares downloadFile but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "uploadFiles",
+            "available": false,
+            "reason": "driver \"injected\" declares uploadFiles but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "pointer",
+            "available": false,
+            "reason": "driver \"injected\" declares pointer but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "drag",
+            "available": false,
+            "reason": "driver \"injected\" declares drag but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "selectOption",
+            "available": false,
+            "reason": "driver \"injected\" declares selectOption but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "selectValues",
+            "available": false,
+            "reason": "driver \"injected\" declares selectValues but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "appendText",
+            "available": false,
+            "reason": "driver \"injected\" declares appendText but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "setChecked",
+            "available": false,
+            "reason": "driver \"injected\" declares setChecked but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "findElement",
+            "available": false,
+            "reason": "driver \"injected\" declares findElement but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "semanticRead",
+            "available": false,
+            "reason": "driver \"injected\" declares semanticRead but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "readForms",
+            "available": false,
+            "reason": "driver \"injected\" declares readForms but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "readDialogs",
+            "available": false,
+            "reason": "driver \"injected\" declares readDialogs but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "respondDialog",
+            "available": false,
+            "reason": "driver \"injected\" declares respondDialog but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "takeSnapshot",
+            "available": true
+          },
+          {
+            "action": "extractPageText",
+            "available": true
+          },
+          {
+            "action": "pressKey",
+            "available": true
+          },
+          {
+            "action": "verifyFlow",
+            "available": true
+          }
+        ]
+      }
+    }
+  },
+  "capabilities": {
+    "version": "2f51853b751854cdb642ed8034558bbe472ed3e0d34f37730614b181a2c04ff0",
+    "driverKind": "injected",
+    "cliAvailable": false,
+    "actions": [
+      {
+        "action": "open",
+        "available": true
+      },
+      {
+        "action": "status",
+        "available": true
+      },
+      {
+        "action": "navigate",
+        "available": true
+      },
+      {
+        "action": "waitForSelector",
+        "available": true
+      },
+      {
+        "action": "click",
+        "available": true
+      },
+      {
+        "action": "type",
+        "available": true
+      },
+      {
+        "action": "evaluate",
+        "available": true
+      },
+      {
+        "action": "screenshot",
+        "available": true
+      },
+      {
+        "action": "command",
+        "available": false,
+        "reason": "bundled agent-browser CLI is not available"
+      },
+      {
+        "action": "close",
+        "available": true
+      },
+      {
+        "action": "getConsoleMessages",
+        "available": true
+      },
+      {
+        "action": "downloadFile",
+        "available": false,
+        "reason": "driver \"injected\" declares downloadFile but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "uploadFiles",
+        "available": false,
+        "reason": "driver \"injected\" declares uploadFiles but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "pointer",
+        "available": false,
+        "reason": "driver \"injected\" declares pointer but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "drag",
+        "available": false,
+        "reason": "driver \"injected\" declares drag but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "selectOption",
+        "available": false,
+        "reason": "driver \"injected\" declares selectOption but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "selectValues",
+        "available": false,
+        "reason": "driver \"injected\" declares selectValues but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "appendText",
+        "available": false,
+        "reason": "driver \"injected\" declares appendText but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "setChecked",
+        "available": false,
+        "reason": "driver \"injected\" declares setChecked but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "findElement",
+        "available": false,
+        "reason": "driver \"injected\" declares findElement but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "semanticRead",
+        "available": false,
+        "reason": "driver \"injected\" declares semanticRead but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "readForms",
+        "available": false,
+        "reason": "driver \"injected\" declares readForms but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "readDialogs",
+        "available": false,
+        "reason": "driver \"injected\" declares readDialogs but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "respondDialog",
+        "available": false,
+        "reason": "driver \"injected\" declares respondDialog but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      {
+        "action": "takeSnapshot",
+        "available": true
+      },
+      {
+        "action": "extractPageText",
+        "available": true
+      },
+      {
+        "action": "pressKey",
+        "available": true
+      },
+      {
+        "action": "verifyFlow",
+        "available": true
+      }
+    ]
+  },
+  "unavailableActionProbe": [
+    {
+      "action": "downloadFile",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"downloadFile\" is not available: driver \"injected\" declares downloadFile but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    {
+      "action": "uploadFiles",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"uploadFiles\" is not available: driver \"injected\" declares uploadFiles but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    {
+      "action": "pointer",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"pointer\" is not available: driver \"injected\" declares pointer but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    {
+      "action": "drag",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"drag\" is not available: driver \"injected\" declares drag but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    {
+      "action": "selectOption",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"selectOption\" is not available: driver \"injected\" declares selectOption but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    {
+      "action": "selectValues",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"selectValues\" is not available: driver \"injected\" declares selectValues but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    {
+      "action": "appendText",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"appendText\" is not available: driver \"injected\" declares appendText but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    {
+      "action": "setChecked",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"setChecked\" is not available: driver \"injected\" declares setChecked but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    {
+      "action": "findElement",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"findElement\" is not available: driver \"injected\" declares findElement but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    {
+      "action": "semanticRead",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"semanticRead\" is not available: driver \"injected\" declares semanticRead but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    {
+      "action": "readForms",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"readForms\" is not available: driver \"injected\" declares readForms but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    {
+      "action": "readDialogs",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"readDialogs\" is not available: driver \"injected\" declares readDialogs but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    {
+      "action": "respondDialog",
+      "ok": false,
+      "errorCode": "UNSUPPORTED",
+      "errorMessage": "Agent browser action \"respondDialog\" is not available: driver \"injected\" declares respondDialog but refuses them (E_NOT_IMPLEMENTED)"
+    }
+  ],
+  "sessionsAfterProbe": [],
+  "url": "file:///D:/ClawX-candidates/vb-invocation-n1-20261016/dist/index.html?bootTheme=dark#/setup",
+  "cleanup": {
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "runRoot": "D:\\tmp\\verse-claw-e2e-run-jJ1iaD\\",
+    "owned": [],
+    "remaining": []
+  },
+  "endedAt": "2026-10-16T05:51:49.479Z",
+  "candidateDirtyAfter": true,
+  "ok": true
+}

@@ -88,7 +88,11 @@ describe('agent_browser tool', () => {
 
   it('maps the 13 source-only facade actions without dropping payload fidelity', async () => {
     const invoke = vi.fn(async (action, payload) => ({ action, payload }));
-    const tool = createAgentBrowserTool({ invoke });
+    const sourceOnly = ['downloadFile', 'uploadFiles', 'pointer', 'drag', 'selectOption', 'selectValues',
+      'appendText', 'setChecked', 'findElement', 'semanticRead', 'readForms', 'readDialogs', 'respondDialog'];
+    // These actions are not advertised by default (no Electron driver support), but the
+    // payload mapping stays intact for a host that does serve them.
+    const tool = createAgentBrowserTool({ invoke, availableActions: sourceOnly });
     const cases = [
       ['downloadFile', { selector: '#f', path: 'D:/tmp/f.bin' }],
       ['uploadFiles', { selector: '#f', paths: ['D:/tmp/a.txt'] }],
@@ -116,7 +120,7 @@ describe('agent_browser tool', () => {
 
   it('preserves driver-unsupported errors instead of advertising a false pass', async () => {
     const invoke = vi.fn(async () => ({ success: false, ok: false, content: 'driver does not support authorized downloads', error: { code: 'E_NOT_IMPLEMENTED', message: 'driver does not support authorized downloads' } }));
-    const tool = createAgentBrowserTool({ invoke });
+    const tool = createAgentBrowserTool({ invoke, availableActions: ['downloadFile'] });
     const result = await tool!.execute('tool-1', { action: 'downloadFile', sessionId: 's1', selector: '#f', path: 'D:/tmp/f.bin' });
     expect(isToolResultError(result)).toBe(true);
     expect(readJsonResult(result)).toMatchObject({ status: 'error', success: false, error: { code: 'E_NOT_IMPLEMENTED' } });

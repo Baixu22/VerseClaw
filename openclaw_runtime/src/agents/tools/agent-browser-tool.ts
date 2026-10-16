@@ -178,6 +178,33 @@ function agentBrowserSchema(actions: readonly AgentBrowserAction[]): TSchema {
  * Unknown names are dropped; an empty/absent input falls back to the full
  * declared vocabulary so existing callers keep today's behaviour.
  */
+/**
+ * Driver-specific disposition (spec N5).
+ *
+ * These 13 host-contract methods exist but the Electron driver does not serve
+ * them (it installs refusal stubs), so they stay in the DECLARED vocabulary — the
+ * reintegration contract and api-coverage require that list to keep all source
+ * methods — but they are never ADVERTISED to the model. Keeping them declared is
+ * what lets the capability snapshot and Main still name and reject them. A test
+ * asserts this set equals the set the capability snapshot reports as unavailable,
+ * so the two cannot drift.
+ */
+export const DRIVER_UNAVAILABLE_ACTIONS: readonly string[] = Object.freeze([
+  "downloadFile",
+  "uploadFiles",
+  "pointer",
+  "drag",
+  "selectOption",
+  "selectValues",
+  "appendText",
+  "setChecked",
+  "findElement",
+  "semanticRead",
+  "readForms",
+  "readDialogs",
+  "respondDialog",
+]);
+
 export function normalizeAvailableActions(
   available: readonly string[] | undefined,
 ): readonly AgentBrowserAction[] {
@@ -521,7 +548,13 @@ export function createAgentBrowserTool(options?: {
   if (!options?.invoke) {
     return null;
   }
-  const actions = normalizeAvailableActions(options.availableActions ?? primedCapability?.availableActions);
+  const actions = normalizeAvailableActions(
+    options.availableActions
+      ?? primedCapability?.availableActions
+      ?? AGENT_BROWSER_ACTIONS.filter(
+        (action) => !DRIVER_UNAVAILABLE_ACTIONS.includes(action),
+      ),
+  );
   const actionSet = new Set<string>(actions);
   const parameters = agentBrowserSchema(actions);
   return {

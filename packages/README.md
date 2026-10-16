@@ -35,6 +35,11 @@ No build depends on the independent `D:/versebrowser` checkout; that path is onl
   so open -> observe -> act -> re-observe -> business verify -> close is reachable without the optional
   CLI. `verifyFlow` reuses the facade's own judge (not a second one) and returns PASS only when the
   business assertions hold AND console/network collection is complete; otherwise it returns UNKNOWN.
+- The 13 source-only additions stay in the DECLARED runtime vocabulary (the reintegration
+  contract and `versebrowser:api-coverage` pin the full source-method list) but are NOT advertised:
+  the model schema defaults to the declared list minus `DRIVER_UNAVAILABLE_ACTIONS`, and every direct
+  or forged call is rejected by Main with an `UNSUPPORTED` envelope before any browser effect. They are
+  not delivered capabilities; enabling one requires real driver support, not a second engine.
 - The host contract contains 80 methods, but the Electron driver implements only
   the original 67. The 13 facade-only additions (downloads/uploads, pointer/drag,
   select/append/check, find, semantic reads, forms and dialogs) return explicit

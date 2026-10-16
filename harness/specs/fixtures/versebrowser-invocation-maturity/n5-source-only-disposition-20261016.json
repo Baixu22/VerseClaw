@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-10-16",
+  "taskForestNode": "TF-0350",
+  "specNode": "N5",
+  "scope": "Per-item admission/disposition for the 13 source-only host methods. No engine duplication; enabled-vs-unavailable is published explicitly.",
+  "verdict": "pass",
+  "decision": "All 13 remain EXPLICITLY UNAVAILABLE in this milestone. They stay in the declared runtime vocabulary because the reintegration contract + api-coverage pin the full source-method list, but they are no longer advertised to the model, and every direct/forged call is rejected by Main before any browser effect.",
+  "advertisement": {
+    "declared": 13,
+    "advertised": 0,
+    "mechanism": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts exports DRIVER_UNAVAILABLE_ACTIONS and defaults the TypeBox action enum to the declared list minus that set; a primed capability snapshot still narrows it further.",
+    "driftGuard": "tests/unit/versebrowser-n5-source-only-disposition.test.ts asserts the set equals the live capability snapshot's unavailable set."
+  },
+  "rejection": {
+    "surface": "Main adapter withCapabilityGate (renderer IPC) and the Gateway bridge assertActionAvailable",
+    "envelope": "host-invoke maps E_CAPABILITY_UNAVAILABLE to the UNSUPPORTED envelope code",
+    "receipt": "source-only-rejection-receipt.json",
+    "sha256": "81d5612ac1a68dd2931b7569286c09f164725fe2e78ff541da1b4119ca908e36",
+    "rows": 13,
+    "okTrue": 0,
+    "codes": [
+      "UNSUPPORTED"
+    ],
+    "sessionsCreatedByForgedCalls": 0
+  },
+  "matrix": [
+    {
+      "action": "downloadFile",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"downloadFile\" is not available: driver \"injected\" declares downloadFile but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "needs a driver-owned manual download path plus browser/file permission wiring; handing it to the model without that check would bypass the file permission boundary (AC-3)."
+    },
+    {
+      "action": "uploadFiles",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"uploadFiles\" is not available: driver \"injected\" declares uploadFiles but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "same file-permission boundary as downloadFile; must resolve paths through the host file policy, not a model string."
+    },
+    {
+      "action": "pointer",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"pointer\" is not available: driver \"injected\" declares pointer but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "needs a real pointer backend (hover/right-click/double-click/scroll) on the session; synthesising DOM events would be a second engine and a false positive."
+    },
+    {
+      "action": "drag",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"drag\" is not available: driver \"injected\" declares drag but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "needs real drag support on the session; synthetic drag events do not reproduce HTML5 drag semantics."
+    },
+    {
+      "action": "selectOption",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"selectOption\" is not available: driver \"injected\" declares selectOption but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "needs a driver-level select-by-label operation."
+    },
+    {
+      "action": "selectValues",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"selectValues\" is not available: driver \"injected\" declares selectValues but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "needs a driver-level multi-select operation."
+    },
+    {
+      "action": "appendText",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"appendText\" is not available: driver \"injected\" declares appendText but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "needs a driver-level append (type without clearing)."
+    },
+    {
+      "action": "setChecked",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"setChecked\" is not available: driver \"injected\" declares setChecked but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "needs a driver-level checked/unchecked setter."
+    },
+    {
+      "action": "findElement",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"findElement\" is not available: driver \"injected\" declares findElement but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "needs an accessible-role/name/test-id resolver on the session."
+    },
+    {
+      "action": "semanticRead",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"semanticRead\" is not available: driver \"injected\" declares semanticRead but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "optional provider/schema-bound semantic read; must keep the existing optional switch and provider boundary."
+    },
+    {
+      "action": "readForms",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"readForms\" is not available: driver \"injected\" declares readForms but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "needs a driver-level form-field inventory."
+    },
+    {
+      "action": "readDialogs",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"readDialogs\" is not available: driver \"injected\" declares readDialogs but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "needs CDP dialog observation bound to dialog/page/session."
+    },
+    {
+      "action": "respondDialog",
+      "owner": "shared/host-api/contract.ts (host contract method)",
+      "driver": "electron driver does not serve it (refusal stub / absent)",
+      "consumer": "model tool declares it for the contract but does not advertise it; Main adapter keeps a facade wrapper that the facade itself refuses",
+      "modelVisible": false,
+      "authorization": "no grant path; the call is rejected before dispatch",
+      "positiveEvidence": null,
+      "negativeEvidence": {
+        "result": false,
+        "code": "UNSUPPORTED",
+        "message": "Agent browser action \"respondDialog\" is not available: driver \"injected\" declares respondDialog but refuses them (E_NOT_IMPLEMENTED)"
+      },
+      "disposition": "explicitly unavailable in this milestone (published, not silently dropped)",
+      "enablingRequires": "needs CDP dialog handling bound to dialog/page/session with replay protection."
+    }
+  ],
+  "boundaries": {
+    "noEngineDuplication": "no second engine was written to pad the count",
+    "deferredScopesNotStarted": [
+      "TF-0343",
+      "TF-0344"
+    ],
+    "fileTransfer": "still goes through the host file/permission boundary or not at all",
+    "dialogs": "still bound to dialog/page/session or not at all",
+    "semantic": "keeps the existing optional provider/schema boundary"
+  },
+  "verifiers": {
+    "apiCoverage": {
+      "status": "pass",
+      "sha256": "ccc92e363fa32d4201b02c041d0abac6748ed4e9278757db6f0cfe87a4a9f657"
+    },
+    "module": {
+      "status": "pass",
+      "sha256": "4534413d728dca4b46f9d2538bc4c69cbae464a72cbfeb984d77ae4cff59595a"
+    },
+    "hostIntegration": {
+      "status": "pass",
+      "sha256": "db3b4ca06b81b9c3c3069a81b3372b657dc95bc2339ace679637150605c02699"
+    },
+    "contractCheck": "pass"
+  },
+  "tests": {
+    "result": "75 passed / 10 files",
+    "typecheck": "pnpm run typecheck exit 0",
+    "newFiles": [
+      "tests/unit/versebrowser-n5-source-only-disposition.test.ts"
+    ]
+  },
+  "publishedLimitation": "These 13 are NOT delivered. Calling them is rejected; they are absent from the model schema. The 'controlled basic usability' milestone exit is claimed for the 15 advertised actions only.",
+  "rawEvidenceRoot": "D:\\tmp\\clawx-vb-n5-20261016"
+}

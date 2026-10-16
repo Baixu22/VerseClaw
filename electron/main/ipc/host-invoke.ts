@@ -109,7 +109,8 @@ function collectStructuredHostErrorSignals(
 function resolveHostErrorCode(signals: StructuredHostErrorSignals): HostErrorCode {
   const code = signals.code?.trim().toUpperCase();
   if (code === 'VALIDATION' || signals.status === 400 || signals.status === 422) return 'VALIDATION';
-  if (code === 'UNSUPPORTED') return 'UNSUPPORTED';
+  // Spec N3/N5: an action the driver does not serve is unsupported, not an internal fault.
+  if (code === 'UNSUPPORTED' || code === 'E_CAPABILITY_UNAVAILABLE') return 'UNSUPPORTED';
   if (code === 'TIMEOUT' || signals.status === 408 || signals.status === 504) return 'TIMEOUT';
   return 'INTERNAL';
 }
