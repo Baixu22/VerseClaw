@@ -101,6 +101,9 @@ export function createCli(): Command {
         ...(opts.caps !== undefined ? { caps: opts.caps } : {}),
       });
       await serverMod.startMcpServer({ policy });
+      // The MCP stdio server is long-lived: keep this process alive instead of
+      // letting the CLI's deliberate post-command flush termination tear it down.
+      await new Promise<never>(() => {});
     });
 
   program

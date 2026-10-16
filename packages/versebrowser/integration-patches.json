@@ -26,6 +26,18 @@
       "patchPath": "packages/versebrowser/patches/src__index.ts.patch",
       "patchSha256": "52e8d4650b6b772e4ae025fed383318e8a95b4126555cf478ee73f5aeded8acc",
       "reason": "Inject ClawX-owned userData path so package code never downloads or discovers a second Electron instance in tests or Main. Export the existing CLI runner factory so the single host service preserves bundled-CLI command and external-browser support."
+    },
+    {
+      "id": "cli-mcp-stdio-lifetime",
+      "sourcePath": "src/cli.ts",
+      "targetPath": "packages/versebrowser/src/cli.ts",
+      "sourceNormalization": "lf",
+      "originalRawSha256": "38bd90f49822fbf7b6f30e7fd39884556c1fb10e5f1de4ead6613c6858ad96c1",
+      "originalLfSha256": "38bd90f49822fbf7b6f30e7fd39884556c1fb10e5f1de4ead6613c6858ad96c1",
+      "patchedSha256": "c45567568079b9c699127a881dce60f40d33d0d9b4252091366e51ba0bbfc9ff",
+      "patchPath": "packages/versebrowser/patches/src__cli.ts.patch",
+      "patchSha256": "3e5660364c5bde0b92810d7c9d0e35e941b5f1c8c7ee9e238925db3c02d6554c",
+      "reason": "The `mcp` command must not inherit the CLI's deliberate post-command process exit: without this the stdio MCP server is torn down immediately after connecting, so initialize/tools-list/tools-call never happen."
     }
   ]
 }

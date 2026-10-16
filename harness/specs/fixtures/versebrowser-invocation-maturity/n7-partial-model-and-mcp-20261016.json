@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-10-16",
+  "taskForestNode": "TF-0352",
+  "specNode": "N7",
+  "scope": "Real model tool call + MCP stdio protocol. The live runtime->Gateway->Main correlation leg is NOT yet demonstrated.",
+  "verdict": "partial",
+  "done": {
+    "mcpProtocol": {
+      "transport": "real stdio against the built CLI (vb mcp)",
+      "initialize": "ok",
+      "toolsList": {
+        "advertised": [
+          "vb_ping"
+        ],
+        "count": 1,
+        "driverToolsNotAdvertised": true
+      },
+      "toolsCall": {
+        "vb_ping_isError": false,
+        "vb_open_isError": true,
+        "vb_open_code": "E_GROUP_DENY",
+        "unknownTool_isError": true,
+        "unknownTool_code": "E_TOOL_DENY"
+      },
+      "cancel": "tools/call + notifications/cancelled sent on the same connection",
+      "conclusion": "failure is never degraded to isError=false; the advertised list is filtered by the active driver",
+      "artifact": "mcp-protocol-receipt.json",
+      "sha256": "011d27303ece4486d1138a0655fbf2d04edd1082e85816f14a6d534247ef6fe1"
+    },
+    "realModelToolCall": {
+      "endpointHost": "127.0.0.1:3065",
+      "model": "glm-5.3-flash",
+      "toolCalls": [
+        {
+          "name": "agent_browser",
+          "arguments": "action\":\"open\",\"url\":\"https://example.com\"}",
+          "callId": "call_1d1a1cc3239840f38486fca8"
+        }
+      ],
+      "artifact": "model-toolcall-receipt.json",
+      "sha256": "725c307727705e3d23df20aafdb1c2f07bb39e5d2a7fc4e90bae95215a253e44"
+    }
+  },
+  "fix": {
+    "id": "vb-mcp-stdio-lifetime",
+    "problem": "vb mcp exited immediately: the CLI deliberate post-command flush termination ran right after startMcpServer connected the stdio transport, so initialize/tools-list/tools-call never happened. The whole MCP surface was dead.",
+    "change": "packages/versebrowser/src/cli.ts keeps the MCP process alive after startMcpServer (await a never-resolving promise), applied through the sanctioned integration patch because src/cli.ts is a hash-pinned import.",
+    "artifacts": [
+      "packages/versebrowser/patches/src__cli.ts.patch",
+      "packages/versebrowser/integration-patches.json"
+    ],
+    "verified": "module/host-integration/api-coverage verify pass (the manifest pins the patched hash); the MCP probe passes after the patch and timed out before it."
+  },
+  "gap": {
+    "id": "live-runtime-gateway-main-chain",
+    "detail": "The model->Gateway->Main->driver correlation leg (requestId/toolCallId/session/owner/event) still needs a runtime-side run: the renderer gateway.rpc surface is intentionally read-only for mutations, so a probe cannot drive agentBrowser.invoke from the renderer.",
+    "attempt": "model-chain-attempt-receipt.json",
+    "sha256": "7ceb81ec071c3b989d59cdc50ad0312c01fede8f98fa377f8e75416f311df5e2",
+    "nextStep": "run the app with the Gateway plus a configured provider and let the real agent runtime issue agentBrowser.invoke, then read the automation events.",
+    "notBlockedOnOwner": "the local endpoint is live (127.0.0.1:3065); no owner action is needed for the next step."
+  },
+  "verifiers": {
+    "apiCoverage": {
+      "status": "pass",
+      "sha256": "ccc92e363fa32d4201b02c041d0abac6748ed4e9278757db6f0cfe87a4a9f657"
+    },
+    "module": {
+      "status": "pass",
+      "sha256": "4534413d728dca4b46f9d2538bc4c69cbae464a72cbfeb984d77ae4cff59595a"
+    },
+    "hostIntegration": {
+      "status": "pass",
+      "sha256": "61a1f269d6f47bf2c07396727c0286f806a4d6f02adbf65e2a85e37627c94f6f"
+    }
+  },
+  "rawEvidenceRoot": "D:\\tmp\\clawx-vb-n7-20261016"
+}
