@@ -66,6 +66,33 @@ touchedAreas:
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
+  - AGENTS.md
+  - docs/dev/repo-hygiene-20261017.md
+  - docs/dev/versegit-validation-layer/**
+  - harness/src/git.mjs
+  - scripts/check-duplicate-assets.mjs
+  - scripts/repository-artifacts.json
+  - tests/unit/runtime-source-policy.test.ts
+  - harness/specs/fixtures/versebrowser-invocation-maturity/**
+  - harness/specs/tasks/versebrowser-invocation-maturity.md
+  - harness/specs/rules/versegit-validation-layer-extension-boundary.md
+  - harness/specs/scenarios/versegit-validation-layer-extension.md
+  - artifacts/versebrowser-acceptance/2026-10-16T000000Z/**
+  - artifacts/system-maturity/P0-004/evidence-index.json
+  - artifacts/system-maturity/P0-004/validate-system-maturity-evidence.json
+  - artifacts/agent-dev-deep-test/report.json
+  - artifacts/first-product-preview/TF-0009/agent-surrogate-report.json
+  - artifacts/agent-dev-workbench/evidence.json
+  - reports/real-runtime-task-validation-2026-07-04.md
+  - reports/report-authenticity-true-false-positive-matrix-2026-07-04.md
+  - plans/system-maturity/BASELINE.json
+  - docs/dev/first-product-controlled-preview/tasks/FP-P4-02.md
+  - harness/specs/tasks/agent-browser-browserwindow-playwright-prototype.md
+  - harness/specs/tasks/browser-supervised-component-graduation.md
+  - harness/specs/tasks/browser-effect-session-click-provenance-boundary.md
+  - harness/specs/tasks/runtime-resource-governance-p0b-20261014.md
+  - openclaw_runtime/scripts/tf0009-agent-surrogate.mts
+  - harness/specs/rules/tf0009-real-canary-authority.md
 requiredRules:
   - versebrowser-upstream-preservation
   - backend-communication-boundary

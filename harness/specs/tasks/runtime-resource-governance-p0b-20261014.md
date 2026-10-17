@@ -14,7 +14,7 @@ touchedAreas:
   - electron/services/resource-leases.ts
   - electron/services/resource-envelope.ts
   - electron/services/resource-envelope-api.ts
-  - electron/services/agent-browser-service.ts
+  - packages/versebrowser/src/engine/service.ts
   - electron/services/mcp-api.ts
   - electron/services/providers/provider-runtime-sync.ts
   - electron/gateway/process-launcher.ts

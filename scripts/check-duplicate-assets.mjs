@@ -18,15 +18,41 @@ function listTrackedFiles() {
   return output.split('\0').filter(Boolean).map(normalize).sort();
 }
 
+function normalizeLineEndings(bytes) {
+  // Text checkouts may differ only by CRLF on Windows. Binary assets keep their
+  // raw bytes so the reviewed hashes still describe the packaged artifact.
+  if (bytes.includes(0)) return bytes;
+  return Buffer.from(bytes.toString('utf8').replaceAll('\r\n', '\n'), 'utf8');
+}
+
 async function sha256(filePath) {
   const bytes = await readFile(path.join(ROOT, filePath));
-  return createHash('sha256').update(bytes).digest('hex');
+  return createHash('sha256').update(normalizeLineEndings(bytes)).digest('hex');
+}
+
+export async function findMissingTrackedFiles() {
+  const missing = [];
+  for (const filePath of listTrackedFiles()) {
+    try {
+      await stat(path.join(ROOT, filePath));
+    } catch (error) {
+      if (error?.code === 'ENOENT') missing.push(filePath);
+      else throw error;
+    }
+  }
+  return missing;
 }
 
 export async function findDuplicateGroups(minBytes = DUPLICATE_MIN_BYTES) {
   const byHash = new Map();
   for (const filePath of listTrackedFiles()) {
-    const info = await stat(path.join(ROOT, filePath));
+    let info;
+    try {
+      info = await stat(path.join(ROOT, filePath));
+    } catch (error) {
+      if (error?.code === 'ENOENT') continue;
+      throw error;
+    }
     if (!info.isFile() || info.size <= minBytes) continue;
     const hash = await sha256(filePath);
     const group = byHash.get(hash) ?? [];
@@ -92,6 +118,13 @@ export async function buildAllowlist(groups) {
 }
 
 async function main() {
+  const missing = await findMissingTrackedFiles();
+  if (missing.length > 0) {
+    console.error('[duplicates] tracked files are missing from the worktree:');
+    for (const filePath of missing) console.error(`  ${filePath}`);
+    process.exitCode = 1;
+    return;
+  }
   const groups = await findDuplicateGroups();
   if (process.argv.includes('--write')) {
     await writeFile(ALLOWLIST_PATH, `${JSON.stringify(await buildAllowlist(groups), null, 2)}\n`, 'utf8');

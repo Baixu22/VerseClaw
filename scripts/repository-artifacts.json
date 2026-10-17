@@ -1,7 +1,6 @@
 {
   "schemaVersion": 2,
   "localOnlyDirectories": [
-    ".agent-workbench/task-forest",
     ".codex-tools/task-forest",
     ".parity-audit",
     "artifacts/runtime-utf8-recovery",
@@ -19,8 +18,21 @@
     "runtime-research",
     ".design-staging",
     ".audit",
-    "evidence",
-    "packages/vtoken/.tiktoken_cache"
+    ".agent-workbench",
+    "artifacts/chain-audit",
+    "artifacts/real-runtime-validation",
+    "artifacts/agent-dev-recording-test-1783053411792",
+    "artifacts/agent-dev-recording-test-1783054282007",
+    "artifacts/agent-dev-recording-test-1783074162762",
+    "artifacts/agent-dev-recording-test-1783269524888",
+    "artifacts/agent-dev-recording-test-1783848292950",
+    "artifacts/agent-dev-recording-test-1783848943409",
+    "artifacts/agent-dev-recording-test-1783849635819",
+    "artifacts/agent-dev-recording-test-1783850042758",
+    "artifacts/agent-dev-recording-test-1788500724245",
+    "artifacts/agent-dev-recording-test-1788520328046",
+    "artifacts/agent-dev-recording-test-1788520843147",
+    "artifacts/repo-hygiene-20261017"
   ],
   "localOnlyFiles": [
     "WORKTREE.md",
@@ -1888,7 +1900,13 @@
     "reports/role-first-runtime-implementation-analysis.md",
     "team/dcs/dcs-v1.6-spec.md",
     "team/dcs/dcs-v1.6.1-addendum.md",
-    "team/role-architecture-design/area-4-role-memory-completion.md"
+    "team/role-architecture-design/area-4-role-memory-completion.md",
+    "artifacts/versebrowser-acceptance/2026-10-16T000000Z/SHA256SUMS",
+    "artifacts/versebrowser-acceptance/2026-10-16T000000Z/evidence-index.json",
+    "artifacts/versebrowser-acceptance/2026-10-16T000000Z/gaps.md",
+    "artifacts/versebrowser-acceptance/2026-10-16T000000Z/verdict.json",
+    "docs/dev/repo-hygiene-20261017.md",
+    "docs/dev/versegit-validation-layer/README.md"
   ],
   "artifactBatches": {}
 }

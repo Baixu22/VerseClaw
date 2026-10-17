@@ -117,18 +117,16 @@ Current performance limits to watch:
 - **Harness CI/local parity**: Run `pnpm run harness:ci` to exercise the same baseline harness checks used by GitHub Actions. Real task specs should be validated without `--no-diff`; `--no-diff` is only for structural checks of checked-in examples.
 ### Bash Shell MCP Server
 
-该项目注册了一个 `bash-shell` MCP server（通过 Git Bash 执行），暴露 `bash_command` 工具。
-当需要运行 shell 命令时，优先使用 `bash_command` 工具而非 `shell_command`（PowerShell），
-因为 `shell_command` 在 Windows 上默认使用 PowerShell。
+本仓库包含一个可选的 `bash-shell` MCP server 脚本（通过 Git Bash 执行），暴露 `bash_command` 工具。
+当前 `.mcp.json` 只注册了 `anysearch`，因此本文件不宣称 `bash-shell` 已在 Codex 中注册。
+需要使用 Git Bash 执行复杂 POSIX 命令版本时，可按当前仓库路径注册，例如：
 
-MCP server 脚本路径：
-`.codex-tools/bash-mcp-server/scripts/bash-mcp-server.mjs`
-
-如需在 Codex 重启后重新注册，运行：
 ```powershell
-& "$env:LOCALAPPDATA\OpenAI\Codex\bin\8e55c2dd143b6354\codex.exe" mcp add bash-shell -- node "%USERPROFILE%\Desktop\Verse Claw\verse-claw\.codex-tools\bash-mcp-server\scripts\bash-mcp-server.mjs"
+codex mcp add bash-shell -- node "$(Resolve-Path '.codex-tools/bash-mcp-server/scripts/bash-mcp-server.mjs')"
 ```
-或运行安装脚本：
+
+也可运行仓库内安装脚本：
+
 ```powershell
 .codex-tools\bash-mcp-server\install-mcp.ps1
 ```

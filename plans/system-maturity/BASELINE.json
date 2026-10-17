@@ -98,7 +98,7 @@
     }
   ],
   "crlfNormalizedMatches": [
-    "electron/services/agent-browser-vault.ts",
+    "packages/versebrowser/src/engine/vault.ts",
     "openclaw_runtime/src/agents/role-permissions-policy.ts",
     "electron/services/sessions-api.ts",
     "electron/services/observability-redaction.ts",

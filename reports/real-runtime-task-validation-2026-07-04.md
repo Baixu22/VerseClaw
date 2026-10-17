@@ -13,6 +13,7 @@ Run ID：`run-20260704-133326`
 - 主结果：`artifacts/real-runtime-validation/run-20260704-133326/real-runtime-validation-result.json`
 - 单轮 smoke：`artifacts/real-runtime-validation/run-20260704-133326/single-turn-smoke-after-fix-result.json`
 - 验证脚本：`artifacts/real-runtime-validation/run-20260704-133326/real-runtime-validation.mjs`
+- 证据边界：本节引用的 `artifacts/real-runtime-validation/**` 是本地保留的原始运行证据，已在 `scripts/repository-artifacts.json` 的 `localOnlyDirectories` 登记；默认克隆不包含这些文件。
 - App/Gateway 日志：`C:\Users\27933\AppData\Roaming\Electron\logs\verse-claw-2026-07-04.log`
 - Runtime transcript：`C:\Users\27933\AppData\Roaming\Electron\openclaw-source-state\agents\main\sessions\9e016988-f6a6-4f83-aea2-43f7e748503f.jsonl`
 - Runtime trajectory：`C:\Users\27933\AppData\Roaming\Electron\openclaw-source-state\agents\main\sessions\9e016988-f6a6-4f83-aea2-43f7e748503f.trajectory.jsonl`

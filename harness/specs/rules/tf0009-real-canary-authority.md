@@ -58,5 +58,5 @@ The v1 validator remains available for frozen July evidence; a v1 report cannot 
 - `pnpm run tf0009:agent-surrogate`
 - `pnpm exec vitest run tests/unit/tf0009-agent-surrogate.test.ts tests/unit/tf0009-engineering-evidence-audit.test.ts tests/unit/dcs-ops-canary-hard-veto.test.ts`
 - `node scripts/dcs-ops-preflight.mjs`
-- `pnpm harness validate --spec harness/specs/tasks/tf0009-engineering-evidence-audit.md --since HEAD`
+- RETIRED (2026-10-17): `pnpm harness validate --spec harness/specs/tasks/tf0009-engineering-evidence-audit.md --since HEAD`。该命令只能在“当前 diff 仅属于 TF-0009”的隔离分支执行；在包含 VerseBrowser 大改动集的分支上会按 ownership 规则拒绝所有未覆盖路径。当前分支改用 `pnpm harness validate --spec harness/specs/tasks/versebrowser-upstream-reintegration.md`；TF-0009 独立复现时仍可在其专项工作树恢复此命令。
 - `git diff --check`

@@ -23,8 +23,8 @@ import { closeOpenClawStateDatabaseForTest } from "../src/state/openclaw-state-d
 import {
   createAgentBrowserSupervisedTaskExecutor,
   type AgentBrowserSupervisedTaskExecutorOptions,
-} from "../../electron/services/agent-browser-supervised-task-executor.ts";
-import { AgentBrowserTaskService } from "../../electron/services/agent-browser-task-service.ts";
+} from "../../packages/versebrowser/src/engine/supervised-task-executor.ts";
+import { AgentBrowserTaskService } from "../../packages/versebrowser/src/engine/task-service.ts";
 import {
   validateTf0009AgentSurrogateCharter,
   validateTf0009AgentSurrogateReport,
@@ -173,7 +173,7 @@ async function runDcsCampaign(tempRoot: string): Promise<AgentRun[]> {
         factService: service,
         viewToolsEnabled: true,
       });
-      if (tools.length !== 7) throw new Error(`DCS tool registration drifted: ${tools.length}`);
+      if (tools.length !== 8) throw new Error(`DCS tool registration drifted: ${tools.length}`);
       detail = { toolCount: tools.length };
       componentEntrypoint = "createDcsContextAgentTools";
     }

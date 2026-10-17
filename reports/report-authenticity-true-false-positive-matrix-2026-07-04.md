@@ -43,7 +43,7 @@
 
 ## 0.2 P0-00 当前架构漂移登记
 
-证据锚点：`artifacts/real-runtime-validation/run-20260704-133326/real-runtime-validation-standard-report.json` 记录 coreExecution 3/3 pass，trace/history/graph 为 observation fail；最新补充 run `artifacts/real-runtime-validation/run-20260705-025439/real-runtime-validation-standard-report.json` 在补齐 `openclaw_runtime/dist/entry.js` 后记录 coreExecution 3/3 pass、trace 3/3 pass(totalTraceItems=9)、graph 3/3 pass、history 3/3 pass，其中 Round 1 history 通过 session transcript artifact recovery 从 `.jsonl.reset.*` 恢复。本报告 P0-14/P0-17 已补自动化或正式入口证据；P0-15/P0-16 的 provider/default/main/transcript/trajectory 模型一致性已经通过最新 collector 证据收口。当前处理分类如下：
+证据锚点：`artifacts/real-runtime-validation/run-20260704-133326/real-runtime-validation-standard-report.json` 记录 coreExecution 3/3 pass，trace/history/graph 为 observation fail；最新补充 run `artifacts/real-runtime-validation/run-20260705-025439/real-runtime-validation-standard-report.json` 在补齐 `openclaw_runtime/dist/entry.js` 后记录 coreExecution 3/3 pass、trace 3/3 pass(totalTraceItems=9)、graph 3/3 pass、history 3/3 pass，其中 Round 1 history 通过 session transcript artifact recovery 从 `.jsonl.reset.*` 恢复。本报告 P0-14/P0-17 已补自动化或正式入口证据；P0-15/P0-16 的 provider/default/main/transcript/trajectory 模型一致性已经通过最新 collector 证据收口。证据边界：上述 `artifacts/real-runtime-validation/**` 是本地保留运行产物，已登记为 local-only；默认克隆不包含它们。当前处理分类如下：
 
 | 分类 | 当前条目 | 处理策略 |
 |---|---|---|

@@ -115,10 +115,8 @@ openclaw_runtime/.artifacts/
 openclaw_runtime/.openclaw/
 
 # Local continuity state; stable fixtures and final evidence stay in source control.
-# See docs/dev/repository-artifact-retention.md before restoring historical inputs.
-/.agent-workbench/task-forest/
-# Historical browser probes can contain copied provider credentials; never stage them.
-/.agent-workbench/m08-runtime-*/
+# Includes Task Forest, session probes and browser probe homes that can contain credentials.
+/.agent-workbench/
 /docs/dev/handoffs/
 /runtime-research/
 
@@ -174,9 +172,6 @@ openclaw_runtime/_tmp_*
 
 # Local workbuddy tool state (per-day notes, not project content)
 .workbuddy/
-
-# Host-generated Windows cache path accidentally materialized by %SystemDrive% expansion
-%SystemDrive%/
 
 # Audited local tools, experiments and generated visual outputs.
 # Exact retention inventory: scripts/repository-artifacts.json.
@@ -1989,6 +1984,12 @@ openclaw_runtime/_tmp_*
 !/team/dcs/dcs-v1.6-spec.md
 !/team/dcs/dcs-v1.6.1-addendum.md
 !/team/role-architecture-design/area-4-role-memory-completion.md
+!/artifacts/versebrowser-acceptance/2026-10-16T000000Z/SHA256SUMS
+!/artifacts/versebrowser-acceptance/2026-10-16T000000Z/evidence-index.json
+!/artifacts/versebrowser-acceptance/2026-10-16T000000Z/gaps.md
+!/artifacts/versebrowser-acceptance/2026-10-16T000000Z/verdict.json
+!/docs/dev/repo-hygiene-20261017.md
+!/docs/dev/versegit-validation-layer/README.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
