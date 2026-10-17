@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m10-progress-summary",
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "TF-0340 / M10 partial progress: two real packaging leaks fixed and verified in a real electron-builder --dir package; the checkpoint is NOT yet complete.",
+  "completed": [
+    "Leak 1 (main-runtime.asar): the module's dev/process artifacts (145 src/, 130 tests/, 12 .ae/evidence/*/console.log, tsconfig.json, tsconfig.build.json, vitest.config.ts) were copied by copy-runtime-package. Fixed with a packages/versebrowser/package.json files allowlist honored by copyRuntimeDependencies (always keeps package.json, never copies a git-ignored .ae dir).",
+    "Leak 2 (app.asar): electron-builder followed the node_modules/@verse-claw/versebrowser symlink into packages/versebrowser and shipped the same dev artifacts. Fixed with electron-builder.yml files exclusions for the module src/tests/.ae and the tsconfig/vitest files.",
+    "Rebuilt the main-runtime ASAR and re-ran electron-builder --win --x64 --dir; both release/win-unpacked/resources/main-runtime.asar and app.asar now carry only dist/, patches/, scripts/patch-upstream.mjs, package.json, LICENSE and the two provenance manifests for the embedded module.",
+    "Scanned 127 packaged module dist .js files for dev absolute paths (D:/versebrowser, .local/runtime, D:/tmp, D:/ClawX, .agent-workbench): 0 hits.",
+    "Extracted the module from the packaged ASAR and imported it: dist/index.js exports AgentBrowserFacade; the module resolves its own dependency closure (playwright, playwright-core, @playwright/mcp, @stagehand, MCP SDK) without a dev-tree fallback.",
+    "The packaged release/win-unpacked/Verse Claw.exe starts and exits 0 (single-instance lock note only) with a fresh user-data-dir.",
+    "Regression test added: tests/unit/copy-runtime-package.test.ts > ships only a private workspace package allowlist and drops .ae runtime evidence.",
+    "Gates green: contract:check, typecheck (0 errors), comms:replay, comms:compare, versebrowser-module-verify, copy-runtime-package + persistent-session module suites.",
+    "Verifier: scripts/versebrowser-m10-package-verify.mjs (--release inspects both packaged containers).",
+    "Windows Electron E2E passes on the real dist-electron main + Host API path when the Playwright temp root is a writable in-repo path (CLAWX_E2E_RUN_ROOT/TEMP under D:\\ClawX\\.tmp\\e2e-root) and ELECTRON_DISABLE_SANDBOX=1: tests/e2e/agent-browser-workbench.spec.ts and tests/e2e/browser-security-recovery.spec.ts both pass (2/2).",
+    "VERSE_CLAW_E2E=1 is required for the app to keep running under automation (otherwise the single-instance lock exits the duplicate); with it, the app produces a real CDP page (title 'Verse Claw'). This corrects the earlier environment_blocked note.",
+    "Full NSIS installer built and signed on this host: release/Verse Claw-0.4.9-alpha.0-win-x64.exe (670,382,324 bytes), blockmap + latest.yml produced; afterPack cleanup ran (5997 files removed, koffi kept win32_x64, 6 non-target native packages removed, VerseShell ae.exe payload verified).",
+    "Post-installer package re-verify (--release) passes for both packaged ASARs: main-runtime.asar 11196 module entries (ae/src/tests 0, 127 dist JS, 0 dev-path hits, module loads) and app.asar 423 module entries (ae/src/tests 0, module loads).",
+    "Packaged app host flow verified through the real packaged path: CDP -> renderer -> window.verseClaw.hostInvoke('agentBrowser', ...). The packaged renderer exposes the bridge; status returns ok; setEnabled(true) ok; open(headless local fixture) returns a real session; status shows the session owned by the requested sessionKey; close ok. The sandbox/runtime-mode gate fails closed for takeSnapshot under normal_restricted.",
+    "Packaged host flow passes end to end: setEnabled -> open(real headless session on a local fixture) -> requestModeUpgrade(targetMode:'full_access', userApproval:true) -> takeSnapshot returned the fixture heading and body marker -> status shows the session owned by the requested sessionKey -> close ok. Under normal_restricted the snapshot fails closed, and an upgrade without userApproval is refused (recorded in m10-packaged-host-flow.json).",
+    "No orphan browser process was observed after the packaged flow closed its session (tasklist new-process diff empty).",
+    "Packaged-path gate is reproducible: scripts/versebrowser-m10-packaged-flow-verify.mjs drives the real packaged exe through its host bridge and evaluates 7 checks (host bridge, real session opened, sandbox fails closed without upgrade, mode upgrade ok, snapshot returns fixture content, session ownership, close). It passes 7/7; evidence in m10-packaged-flow-verify.json.",
+    "Install/uninstall automated equivalent (labelled agent-driven, per the repo automation policy): the signed NSIS payload was extracted into an in-repo install dir (11736 folders / 87840 files / 3.15 GB) and the app run from that installed layout passed the packaged-flow verifier 7/7 (m10-installer-payload-flow.json). The app wrote only to the designated user-data dir; no orphan processes remained; the pre-existing %APPDATA%\\verse-claw* dirs pre-date this session."
+  ],
+  "remaining": [
+    "The NSIS installer's own PATH add/remove and the uninstaller run stay unverified: the installer requests elevation (allowToChangeInstallationDirectory) and this non-elevated, non-interactive session refuses the UAC prompt (ERROR_CANCELLED). The uninstaller's reclamation logic was checked statically instead.",
+    "Packaged-app Playwright electron.launch firstWindow() does not attach on this host; the packaged-path gate uses the CDP-based verifier instead."
+  ],
+  "toolchain": {
+    "systemNode": "v24.15.0/uv1.51.0",
+    "compatibleNode": "v24.16.0/uv1.52.1",
+    "electron": "40.8.4",
+    "hostPlaywright": "1.59.1",
+    "modulePlaywrightCore": "1.63.0"
+  },
+  "releaseArtifacts": [
+    {
+      "path": "release/Verse Claw-0.4.9-alpha.0-win-x64.exe",
+      "bytes": 670382324,
+      "sha256": "1953b07ad5baff7eec1eb2af24ef9383ec2499d1f9e8495b2e892b09b938ddbd",
+      "kind": "nsis-installer"
+    },
+    {
+      "path": "release/win-unpacked/resources/main-runtime.asar",
+      "bytes": 836510671,
+      "sha256": "40daad54c3a6f8a47fc4a055ce42aae026f2973b9652c79e09e7ab3d5d338861",
+      "kind": "packaged-main-runtime"
+    },
+    {
+      "path": "release/win-unpacked/resources/app.asar",
+      "bytes": 350376332,
+      "sha256": "8836ad1c1896f2ebf72782b755a3956f85623e714ce33c10f972ecde8c39f1f3",
+      "kind": "packaged-app"
+    }
+  ],
+  "validationBoundary": "M10 evidence is now strong: both packaging leaks fixed and verified; the embedded module loads from the packaged ASAR; the packaged app renders the real UI, and both the packaged release and the installer payload complete the open -> mode upgrade -> snapshot -> close business loop with fixture content, correct ownership and fail-closed sandbox behaviour; a signed NSIS installer is produced; restart/hard-kill leaves no orphan processes. Only the NSIS installer/uninstaller execution (PATH add/remove + uninstaller reclamation) is unverified, blocked by the need for an interactive elevated session.",
+  "electronE2eDiagnosis": {
+    "status": "environment_blocked (refined)",
+    "evidence": [
+      "tests/e2e/agent-browser-workbench.spec.ts and the unrelated tests/e2e/app-smoke.spec.ts both fail at fixtures/electron.ts firstWindow with a 30s window timeout.",
+      "A direct launch of the same dist-electron/main/index.js with VERSE_CLAW_E2E=1 + a writable user-data dir does create a real window: the Chromium CDP endpoint lists page 'Verse Claw' at file:///.../dist/index.html?bootTheme=dark&e2eSkipSetup=1.",
+      "So the app and the packaged module are not the failure; the failure is between this host and Playwright's Electron attach (electron.launch) path, not a code regression.",
+      "Root-cause candidates to try in an environment with a real desktop session: Playwright Electron attach vs the app's own remote-debugging-port switch, and the OS desktop/session requirement for Electron windows."
+    ]
+  },
+  "e2eEvidence": [
+    {
+      "log": "m10-e2e.log",
+      "result": "fail (superseded)",
+      "note": "earlier run with temp root D:\\tmp; firstWindow 30s timeout (EPERM atomic write)",
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m10/m10-e2e.log",
+      "sha256": "c99b2899dad972088e18efa762a527c14eb94be01a2089c6053bb22d544963bb"
+    },
+    {
+      "log": "m10-e2e2.log",
+      "result": "pass 1/1",
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m10/m10-e2e2.log",
+      "sha256": "89a3e777970b10c5968488c99e482c3706a903c7b0eaf1f02d48949660eccfe1"
+    },
+    {
+      "log": "m10-e2e3.log",
+      "result": "pass 1/1 (repro)",
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m10/m10-e2e3.log",
+      "sha256": "3999eb6f0744d963349091df4cde06608f8b3b40d2a9a98a5232500a81879bcb"
+    },
+    {
+      "log": "m10-e2e-ab.log",
+      "result": "pass 2/2 (workbench + browser-security-recovery)",
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m10/m10-e2e-ab.log",
+      "sha256": "1f442f6521505b2b0d6ce575c2d98f873b705b6482b7b69ba9e551d358566a07"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "release/Verse Claw-0.4.9-alpha.0-win-x64.exe",
+      "bytes": 670382324,
+      "sha256": "1953b07ad5baff7eec1eb2af24ef9383ec2499d1f9e8495b2e892b09b938ddbd",
+      "kind": "nsis-installer"
+    },
+    {
+      "path": "release/win-unpacked/resources/main-runtime.asar",
+      "bytes": 836510671,
+      "sha256": "40daad54c3a6f8a47fc4a055ce42aae026f2973b9652c79e09e7ab3d5d338861",
+      "kind": "packaged-main-runtime"
+    },
+    {
+      "path": "release/win-unpacked/resources/app.asar",
+      "bytes": 350376332,
+      "sha256": "8836ad1c1896f2ebf72782b755a3956f85623e714ce33c10f972ecde8c39f1f3",
+      "kind": "packaged-app"
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m10/m10-release-package-verify.json",
+      "sha256": "c4a6b0ee2429133c111fa3f52e7204ed5586f881b4f4262d4dd905f1e00dab6d",
+      "kind": "verify-report"
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m10/m10-packaged-app-launch.txt",
+      "sha256": "f1cb9f24401d76d9002f61dc95cb9ad838e348f3c8cd515aac59849bad6569af",
+      "kind": "launch-evidence"
+    }
+  ],
+  "packagedAppAttachProbe": {
+    "observation": "Playwright electron.launch({executablePath:'release/win-unpacked/Verse Claw.exe'}) does not resolve firstWindow() on this host (45-50s timeout, 0 windows reported even with VERSE_CLAW_E2E=1 + a writable user-data dir + a free VERSE_CLAW_REMOTE_DEBUGGING_PORT).",
+    "counterEvidence": "The same packaged exe launched directly DOES create a real renderer: with --remote-debugging-port=<p> the CDP /json/list endpoint returns 1 page (title 'Verse Claw', url under resources/app.asar/dist/index.html). The packaged exe also honors --inspect (prints 'Debugger listening' and listens on the requested port).",
+    "conclusion": "The packaged artifact and its module are fine; the gap is Playwright's packaged-Electron attach path on this host. A packaged UI E2E should be run where Playwright's Electron attach is known-good, or the spec/entrypoint adapted for a packaged exe.",
+    "nextSteps": [
+      "Run the packaged exe under Playwright on a known-good desktop session.",
+      "Or add/point an E2E spec at the packaged exe's CDP endpoint instead of electron.launch."
+    ]
+  },
+  "cleanInstallAttempt": {
+    "spec": "pnpm run electron-builder --win --x64 produced a signed NSIS installer (release/Verse Claw-0.4.9-alpha.0-win-x64.exe).",
+    "installAttempts": [
+      "Start-Process /S /D=<dir>",
+      "cmd start /wait /S /D=<dir>",
+      "Start-Process /S /currentuser /D=<dir>"
+    ],
+    "result": "environment_blocked",
+    "evidence": "Each silent-install launch is refused at process start ('This command cannot be run ... operation cancelled'). No files appear in the target dir and no Verse Claw entry lands in HKCU Uninstall or %LOCALAPPDATA%\\Programs. The installer requests an interactive/elevated desktop session this host does not grant to a non-interactive agent shell.",
+    "staticReclamationCheck": "scripts/installer.nsh customUnInstall removes resources\\cli from the user PATH via update-user-path.ps1 -Action remove, kills lingering process trees, and only optionally deletes AppData (deleteAppDataOnUninstall: false).",
+    "note": "Not counted as a pass; the install/uninstall cycle must run on a host with an interactive desktop session."
+  },
+  "verifiers": [
+    "scripts/versebrowser-m10-package-verify.mjs (--release inspects both packaged ASARs)",
+    "scripts/versebrowser-m10-packaged-flow-verify.mjs (drives the packaged app's real host flow; --exe accepts an installed-layout exe)"
+  ]
+}

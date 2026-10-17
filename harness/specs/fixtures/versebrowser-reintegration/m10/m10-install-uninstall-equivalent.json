@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m10-install-uninstall-equivalent",
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "Automated equivalent of the NSIS install/uninstall cycle, per the repository's automation policy (no owner/human action). NOT the NSIS uninstaller itself.",
+  "whyEquivalent": "The signed NSIS installer requests elevation (electron-builder sets the elevated execution level because allowToChangeInstallationDirectory: true), and this non-interactive shell is a non-elevated Medium-integrity session, so the installer launch is refused with ERROR_CANCELLED (1223). Per the owner's automation policy a script/agent equivalent is used and labelled as such.",
+  "installEquivalent": {
+    "method": "7za x 'release/Verse Claw-0.4.9-alpha.0-win-x64.exe' -o<in-repo temp install dir>",
+    "extracted": {
+      "folders": 11736,
+      "files": 87840,
+      "bytes": 3147575480
+    },
+    "payloadModuleCheck": {
+      "moduleEntries": 11196,
+      "ae": 0,
+      "src": 0,
+      "tests": 0,
+      "distIndexJs": true
+    }
+  },
+  "runFromInstalledLayout": {
+    "exe": "<install dir>/Verse Claw.exe",
+    "verifier": "scripts/versebrowser-m10-packaged-flow-verify.mjs --exe <install dir>/Verse Claw.exe",
+    "result": "pass 7/7",
+    "report": "harness/specs/fixtures/versebrowser-reintegration/m10/m10-installer-payload-flow.json"
+  },
+  "uninstallEquivalent": {
+    "externalStateCheck": "After the runs, %APPDATA%\\Verse Claw-nodejs, %APPDATA%\\verse-claw and %LOCALAPPDATA%\\verse-claw-updater all pre-date this session (2026-07-06 / 2026-08-20 / 2026-10-07); the probes wrote only to the designated VERSE_CLAW_USER_DATA_DIR. No HKCU Uninstall 'Verse Claw' entry exists because the NSIS install never ran.",
+    "orphanCheck": "No surviving 'Verse Claw' process after each run or after a hard kill.",
+    "nsisUninstallerStaticCheck": "scripts/installer.nsh customUnInstall removes the resources\\cli PATH entry via resources/cli/win32/update-user-path.ps1 -Action remove, kills lingering process trees, and only deletes AppData when the user opts in (deleteAppDataOnUninstall: false)."
+  },
+  "status": "partial",
+  "gap": "The NSIS installer's own PATH add/remove and uninstaller reclamation remain unverified because the installer requires an interactive elevated session.",
+  "validationBoundary": "This is an agent-driven equivalent of install+run+remove. It proves the installer payload is complete and the app works from an installed layout, but it does not execute the NSIS uninstaller.",
+  "silentInstallProbe": {
+    "attempts": [
+      "cmd start /wait /S /D=<dir>",
+      "spawnSync /S /currentuser /D=<dir>"
+    ],
+    "observed": "The signed NSIS installer returns exit code 2 (NSIS abort) or 0 with no effect and writes nothing to the requested directory, the default per-user location, or HKCU Uninstall, in this non-interactive non-elevated session.",
+    "interpretation": "The assisted installer (oneClick:false, allowToChangeInstallationDirectory:true) needs an interactive desktop session; it cannot be driven headlessly here."
+  }
+}

@@ -1,0 +1,702 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "startup and read-only host status; not browser business acceptance",
+  "root": "D:\\ClawX-candidates\\vb-invocation-n1-20261016",
+  "runRoot": "D:\\tmp\\verse-claw-e2e-run-jYsmGX",
+  "candidate": {
+    "commit": "96a119b042d5d3d72950f0d20d13d1c470c3e1de",
+    "dirty": true,
+    "tree": "39cfc4488f8161264f9a3877ea664c463b21c339"
+  },
+  "controllerSha256": "f6d9bea6dd6b0962471fae4e3b47dd70a060579b674ab10bbfce2133972e027d",
+  "toolchain": {
+    "node": "v24.16.0",
+    "uv": "1.52.1",
+    "nodePath": "D:\\tmp\\clawx-vb-n1-20261016\\toolchain\\node.exe",
+    "electronBinary": "D:\\tmp\\clawx-vb-n1-20261016\\toolchain\\electron-40.8.4\\electron.exe",
+    "electronSha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+  },
+  "conditions": {
+    "diagnosticNoSandbox": false,
+    "firstWindowDeadlineMs": 30000,
+    "launchDeadlineMs": 90000,
+    "isolatedHome": true,
+    "copiedUserCredentials": false,
+    "args": [
+      "--user-data-dir=D:\\tmp\\verse-claw-e2e-run-jYsmGX\\user-data",
+      "--lang=en-US",
+      "--disable-gpu",
+      "--disable-gpu-compositing",
+      "--disable-software-rasterizer",
+      "--in-process-gpu",
+      "--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization",
+      "D:\\ClawX-candidates\\vb-invocation-n1-20261016\\dist-electron\\main\\index.js"
+    ]
+  },
+  "entrySha256": "906f21fd566c1b0821cabb55382495d201fed4252a3a1f4256c6203dfea2a3ab",
+  "startedAt": "2026-10-16T05:39:13.788Z",
+  "stage": "host-bridge",
+  "startupOutcome": "pass",
+  "pid": 34028,
+  "mainState": {
+    "ready": true,
+    "appPath": "D:\\ClawX-candidates\\vb-invocation-n1-20261016\\dist-electron\\main",
+    "userData": "D:\\tmp\\verse-claw-e2e-run-jYsmGX\\user-data",
+    "versions": {
+      "node": "24.14.0",
+      "acorn": "8.15.0",
+      "ada": "3.4.2",
+      "amaro": "1.1.7",
+      "ares": "1.34.6",
+      "brotli": "1.0.9",
+      "cldr": "47.0",
+      "icu": "77.1",
+      "llhttp": "9.3.0",
+      "merve": "1.0.0",
+      "modules": "143",
+      "napi": "10",
+      "nbytes": "0.1.1",
+      "ncrypto": "0.0.1",
+      "nghttp2": "1.68.0",
+      "openssl": "0.0.0",
+      "simdjson": "4.2.4",
+      "simdutf": "7.7.0",
+      "sqlite": "3.51.2",
+      "tz": "2025b",
+      "undici": "7.21.0",
+      "unicode": "16.0",
+      "uv": "1.51.0",
+      "uvwasi": "0.0.23",
+      "v8": "14.4.258.32-electron.0",
+      "zlib": "1.3.1",
+      "zstd": "1.5.8",
+      "electron": "40.8.4",
+      "chrome": "144.0.7559.236"
+    },
+    "windowCount": 0
+  },
+  "rendererReady": {
+    "setupPageVisible": true,
+    "url": "file:///D:/ClawX-candidates/vb-invocation-n1-20261016/dist/index.html?bootTheme=dark#/setup"
+  },
+  "hostStatus": {
+    "id": "baseline-status",
+    "ok": true,
+    "data": {
+      "success": true,
+      "sessions": [],
+      "browserControlEnabled": false,
+      "capabilities": {
+        "version": "2f51853b751854cdb642ed8034558bbe472ed3e0d34f37730614b181a2c04ff0",
+        "driverKind": "injected",
+        "cliAvailable": false,
+        "actions": [
+          {
+            "action": "open",
+            "available": true
+          },
+          {
+            "action": "status",
+            "available": true
+          },
+          {
+            "action": "navigate",
+            "available": true
+          },
+          {
+            "action": "waitForSelector",
+            "available": true
+          },
+          {
+            "action": "click",
+            "available": true
+          },
+          {
+            "action": "type",
+            "available": true
+          },
+          {
+            "action": "evaluate",
+            "available": true
+          },
+          {
+            "action": "screenshot",
+            "available": true
+          },
+          {
+            "action": "command",
+            "available": false,
+            "reason": "bundled agent-browser CLI is not available"
+          },
+          {
+            "action": "close",
+            "available": true
+          },
+          {
+            "action": "getConsoleMessages",
+            "available": true
+          },
+          {
+            "action": "downloadFile",
+            "available": false,
+            "reason": "driver \"injected\" declares downloadFile but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "uploadFiles",
+            "available": false,
+            "reason": "driver \"injected\" declares uploadFiles but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "pointer",
+            "available": false,
+            "reason": "driver \"injected\" declares pointer but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "drag",
+            "available": false,
+            "reason": "driver \"injected\" declares drag but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "selectOption",
+            "available": false,
+            "reason": "driver \"injected\" declares selectOption but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "selectValues",
+            "available": false,
+            "reason": "driver \"injected\" declares selectValues but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "appendText",
+            "available": false,
+            "reason": "driver \"injected\" declares appendText but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "setChecked",
+            "available": false,
+            "reason": "driver \"injected\" declares setChecked but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "findElement",
+            "available": false,
+            "reason": "driver \"injected\" declares findElement but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "semanticRead",
+            "available": false,
+            "reason": "driver \"injected\" declares semanticRead but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "readForms",
+            "available": false,
+            "reason": "driver \"injected\" declares readForms but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "readDialogs",
+            "available": false,
+            "reason": "driver \"injected\" declares readDialogs but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "respondDialog",
+            "available": false,
+            "reason": "driver \"injected\" declares respondDialog but refuses them (E_NOT_IMPLEMENTED)"
+          },
+          {
+            "action": "takeSnapshot",
+            "available": true
+          },
+          {
+            "action": "extractPageText",
+            "available": true
+          },
+          {
+            "action": "pressKey",
+            "available": true
+          },
+          {
+            "action": "verifyFlow",
+            "available": true
+          }
+        ]
+      }
+    }
+  },
+  "observationLoop": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "steps": [
+      {
+        "name": "enable-control",
+        "action": "setEnabled",
+        "ok": true,
+        "data": {
+          "success": true,
+          "enabled": true
+        }
+      },
+      {
+        "name": "open",
+        "action": "open",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "e9011383-1bad-448b-8124-78923e5206e1",
+            "profile": "default",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "default",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T05:39:24.833Z",
+            "updatedAt": "2026-10-16T05:39:25.023Z",
+            "runtimeMode": "normal_restricted",
+            "url": "http://127.0.0.1:53542/",
+            "title": "N4 fixture"
+          },
+          "textSample": "N4 fixture\nSave\n\nPending"
+        }
+      },
+      {
+        "name": "mode-upgrade",
+        "action": "requestModeUpgrade",
+        "ok": true,
+        "data": {
+          "success": true,
+          "runtimeMode": "controlled_enhanced",
+          "session": {
+            "id": "e9011383-1bad-448b-8124-78923e5206e1",
+            "profile": "default",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "default",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T05:39:24.833Z",
+            "updatedAt": "2026-10-16T05:39:25.037Z",
+            "runtimeMode": "controlled_enhanced",
+            "url": "http://127.0.0.1:53542/",
+            "title": "N4 fixture"
+          }
+        }
+      },
+      {
+        "name": "snapshot-before",
+        "action": "takeSnapshot",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "e9011383-1bad-448b-8124-78923e5206e1",
+            "profile": "default",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "default",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T05:39:24.833Z",
+            "updatedAt": "2026-10-16T05:39:25.049Z",
+            "runtimeMode": "controlled_enhanced",
+            "url": "http://127.0.0.1:53542/",
+            "title": "N4 fixture"
+          },
+          "snapshot": "# 浏览器页面快照\n页面标题：N4 fixture\n页面 URL：http://127.0.0.1:53542/\n\n- uid=1_1 RootWebArea \"N4 fixture\" focused=\"true\"\n  - uid=1_2 heading \"N4 fixture\"\n    - uid=1_3 StaticText \"N4 fixture\"\n  - uid=1_4 textbox \"Name\" required=\"false\"\n    - uid=1_5 generic\n  - uid=1_6 button \"Save\"\n    - uid=1_7 StaticText \"Save\"\n  - uid=1_8 paragraph\n    - uid=1_9 StaticText \"Pending\""
+        }
+      },
+      {
+        "name": "page-text",
+        "action": "extractPageText",
+        "ok": true,
+        "data": {
+          "success": true,
+          "text": "N4 fixture Save Pending",
+          "truncated": false,
+          "usedFallback": true,
+          "sourceUrl": "http://127.0.0.1:53542/"
+        }
+      },
+      {
+        "name": "type",
+        "action": "type",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "e9011383-1bad-448b-8124-78923e5206e1",
+            "profile": "default",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "default",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T05:39:24.833Z",
+            "updatedAt": "2026-10-16T05:39:25.073Z",
+            "runtimeMode": "controlled_enhanced",
+            "url": "http://127.0.0.1:53542/",
+            "title": "N4 fixture"
+          }
+        }
+      },
+      {
+        "name": "click",
+        "action": "click",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "e9011383-1bad-448b-8124-78923e5206e1",
+            "profile": "default",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "default",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T05:39:24.833Z",
+            "updatedAt": "2026-10-16T05:39:25.083Z",
+            "runtimeMode": "controlled_enhanced",
+            "url": "http://127.0.0.1:53542/",
+            "title": "N4 fixture"
+          }
+        }
+      },
+      {
+        "name": "press-key",
+        "action": "pressKey",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "e9011383-1bad-448b-8124-78923e5206e1",
+            "profile": "default",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "default",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T05:39:24.833Z",
+            "updatedAt": "2026-10-16T05:39:25.094Z",
+            "runtimeMode": "controlled_enhanced",
+            "url": "http://127.0.0.1:53542/",
+            "title": "N4 fixture"
+          }
+        }
+      },
+      {
+        "name": "snapshot-after",
+        "action": "takeSnapshot",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "e9011383-1bad-448b-8124-78923e5206e1",
+            "profile": "default",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "default",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T05:39:24.833Z",
+            "updatedAt": "2026-10-16T05:39:25.100Z",
+            "runtimeMode": "controlled_enhanced",
+            "url": "http://127.0.0.1:53542/",
+            "title": "N4 fixture"
+          },
+          "snapshot": "# 浏览器页面快照\n页面标题：N4 fixture\n页面 URL：http://127.0.0.1:53542/\n\n- uid=1_1 RootWebArea \"N4 fixture\" focused=\"true\"\n  - uid=1_2 heading \"N4 fixture\"\n    - uid=1_3 StaticText \"N4 fixture\"\n  - uid=1_4 textbox \"Name\" value=\"[REDACTED]\" value_redacted required=\"false\"\n    - uid=1_5 generic\n      - uid=2_1 StaticText \"Agent proof\"\n  - uid=1_6 button \"Save\" focused=\"true\"\n    - uid=1_7 StaticText \"Save\"\n  - uid=1_8 paragraph\n    - uid=2_2 StaticText \"Saved Agent proof\""
+        }
+      },
+      {
+        "name": "verify-pass",
+        "action": "verifyFlow",
+        "ok": true,
+        "data": {
+          "success": true,
+          "ok": true,
+          "content": "# verify_flow PASS\n\n## Collection (ok)\n- console: ok\n- network: ok\n- all signal channels collected\n\n## Selectors (0/0 found)\n- (none requested)\n\n## Business assertions (1/1 passed)\n- [ok] text #result\n\n## Console (baseline 0, +0 errors, +0 warnings)\n- no new console issues\n\n## Network failures (0)\n- none\n\n## Screenshots\n- .ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png",
+          "data": {
+            "schemaVersion": 1,
+            "ok": true,
+            "outcome": "pass",
+            "collection": {
+              "console": "ok",
+              "network": "ok",
+              "overall": "ok",
+              "notes": []
+            },
+            "startedAt": "2026-10-16T05:39:25.109Z",
+            "endedAt": "2026-10-16T05:39:25.210Z",
+            "sessionId": "e9011383-1bad-448b-8124-78923e5206e1",
+            "selectors": [],
+            "expectations": [
+              {
+                "type": "text",
+                "label": "text #result",
+                "passed": true
+              }
+            ],
+            "consoleDiff": {
+              "baselineCount": 0,
+              "newErrors": [],
+              "newWarnings": [],
+              "collection": "ok"
+            },
+            "networkFailures": {
+              "count": 0,
+              "failures": [],
+              "collection": "ok"
+            },
+            "screenshotPaths": [
+              ".ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png"
+            ],
+            "summaryMarkdown": "# verify_flow PASS\n\n## Collection (ok)\n- console: ok\n- network: ok\n- all signal channels collected\n\n## Selectors (0/0 found)\n- (none requested)\n\n## Business assertions (1/1 passed)\n- [ok] text #result\n\n## Console (baseline 0, +0 errors, +0 warnings)\n- no new console issues\n\n## Network failures (0)\n- none\n\n## Screenshots\n- .ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png",
+            "evidence": [
+              {
+                "id": "ev-screenshot-mvajflwa",
+                "kind": "screenshot",
+                "label": "screenshot verify.png",
+                "createdAt": "2026-10-16T05:39:25.210Z",
+                "path": ".ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png",
+                "mimeType": "image/png",
+                "size": 19051
+              }
+            ],
+            "diagnosis": {
+              "schemaVersion": 1,
+              "createdAt": "2026-10-16T05:39:25.221Z",
+              "sessionId": "e9011383-1bad-448b-8124-78923e5206e1",
+              "ok": true,
+              "failureCount": 0,
+              "failures": [],
+              "summaryMarkdown": "# trajectory diagnosis CLEAN\n\nNo failure points detected in the recorded timeline.\n\n## Recommendation\nNo recorded failure was found. Check the verification outcome and collection status before accepting the task; a clean timeline alone does not establish success."
+            },
+            "prComment": "<!-- versebrowser-evidence -->\n## versebrowser verify_flow: PASS\n\n**Result:** PASS\n**Session:** e9011383-1bad-448b-8124-78923e5206e1\n**Evidence pack:** `.ae/evidence/verify/verify-3dc56731`\n\n### First failure\n\n_No failure points in recorded timeline._\n\n### Checks\n\n\n**Business assertions:** 1/1\n- [ok] text #result\n\n### Evidence\n\n- pack directory: `.ae/evidence/verify/verify-3dc56731`\n- screenshot: `.ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png`\n- screenshots: 1 file(s) on disk (not inlined)\n\n<details>\n<summary>Raw summary</summary>\n\n```markdown\n# verify_flow PASS\n\n## Collection (ok)\n- console: ok\n- network: ok\n- all signal channels collected\n\n## Selectors (0/0 found)\n- (none requested)\n\n## Business assertions (1/1 passed)\n- [ok] text #result\n\n## Console (baseline 0, +0 errors, +0 warnings)\n- no new console issues\n\n## Network failures (0)\n- none\n\n## Screenshots\n- .ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png\n```\n\n</details>\n\n_Generated by versebrowser Evidence Pack. Screenshots/HAR stay on disk; this comment is summary-only._"
+          },
+          "evidence": [
+            {
+              "id": "ev-screenshot-mvajflwa",
+              "kind": "screenshot",
+              "label": "screenshot verify.png",
+              "createdAt": "2026-10-16T05:39:25.210Z",
+              "path": ".ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png",
+              "mimeType": "image/png",
+              "size": 19051
+            },
+            {
+              "id": "ev-verify-mvajflx0",
+              "kind": "verify",
+              "label": "verify_flow summary",
+              "createdAt": "2026-10-16T05:39:25.236Z",
+              "path": ".ae/evidence/verify/verify-3dc56731/summary.md",
+              "mimeType": "text/markdown"
+            },
+            {
+              "id": "ev-summary-mvajflx0",
+              "kind": "summary",
+              "label": "diagnosis",
+              "createdAt": "2026-10-16T05:39:25.236Z",
+              "path": ".ae/evidence/verify/verify-3dc56731/diagnosis.md",
+              "mimeType": "text/markdown"
+            },
+            {
+              "id": "ev-summary-mvajflx0",
+              "kind": "summary",
+              "label": "pr-comment",
+              "createdAt": "2026-10-16T05:39:25.236Z",
+              "path": ".ae/evidence/verify/verify-3dc56731/pr-comment.md",
+              "mimeType": "text/markdown"
+            },
+            {
+              "id": "ev-summary-mvajflx0",
+              "kind": "summary",
+              "label": "trajectory viewer",
+              "createdAt": "2026-10-16T05:39:25.236Z",
+              "path": ".ae/evidence/verify/verify-3dc56731/viewer.html",
+              "mimeType": "text/html"
+            }
+          ]
+        }
+      },
+      {
+        "name": "verify-fail",
+        "action": "verifyFlow",
+        "ok": true,
+        "data": {
+          "success": true,
+          "ok": true,
+          "content": "# verify_flow FAIL\n\n## Collection (ok)\n- console: ok\n- network: ok\n- all signal channels collected\n\n## Selectors (0/0 found)\n- (none requested)\n\n## Business assertions (0/1 passed)\n- [miss] text #result -- expected equals \"definitely-not-there\", got \"Saved Agent proof\"\n\n## Console (baseline 0, +0 errors, +0 warnings)\n- no new console issues\n\n## Network failures (0)\n- none\n\n## Screenshots\n- .ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png\n\n## First failure\nexpect text #result {\"detail\":\"expected equals \\\"definitely-not-there\\\", got \\\"Saved Agent proof\\\"\"}",
+          "data": {
+            "schemaVersion": 1,
+            "ok": false,
+            "outcome": "fail",
+            "collection": {
+              "console": "ok",
+              "network": "ok",
+              "overall": "ok",
+              "notes": []
+            },
+            "startedAt": "2026-10-16T05:39:25.246Z",
+            "endedAt": "2026-10-16T05:39:25.342Z",
+            "sessionId": "e9011383-1bad-448b-8124-78923e5206e1",
+            "selectors": [],
+            "expectations": [
+              {
+                "type": "text",
+                "label": "text #result",
+                "passed": false,
+                "detail": "expected equals \"definitely-not-there\", got \"Saved Agent proof\""
+              }
+            ],
+            "consoleDiff": {
+              "baselineCount": 0,
+              "newErrors": [],
+              "newWarnings": [],
+              "collection": "ok"
+            },
+            "networkFailures": {
+              "count": 0,
+              "failures": [],
+              "collection": "ok"
+            },
+            "screenshotPaths": [
+              ".ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png"
+            ],
+            "summaryMarkdown": "# verify_flow FAIL\n\n## Collection (ok)\n- console: ok\n- network: ok\n- all signal channels collected\n\n## Selectors (0/0 found)\n- (none requested)\n\n## Business assertions (0/1 passed)\n- [miss] text #result -- expected equals \"definitely-not-there\", got \"Saved Agent proof\"\n\n## Console (baseline 0, +0 errors, +0 warnings)\n- no new console issues\n\n## Network failures (0)\n- none\n\n## Screenshots\n- .ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png",
+            "evidence": [
+              {
+                "id": "ev-screenshot-mvajflzy",
+                "kind": "screenshot",
+                "label": "screenshot verify.png",
+                "createdAt": "2026-10-16T05:39:25.342Z",
+                "path": ".ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png",
+                "mimeType": "image/png",
+                "size": 19051
+              }
+            ],
+            "diagnosis": {
+              "schemaVersion": 1,
+              "createdAt": "2026-10-16T05:39:25.350Z",
+              "sessionId": "e9011383-1bad-448b-8124-78923e5206e1",
+              "ok": false,
+              "failureCount": 1,
+              "firstFailure": {
+                "index": 1,
+                "kind": "action",
+                "name": "expect text #result",
+                "at": "2026-10-16T05:39:25.342Z",
+                "summary": "expect text #result {\"detail\":\"expected equals \\\"definitely-not-there\\\", got \\\"Saved Agent proof\\\"\"}",
+                "context": [
+                  {
+                    "seq": 1,
+                    "at": "2026-10-16T05:39:25.342Z",
+                    "kind": "action",
+                    "name": "expect text #result",
+                    "ok": false,
+                    "detail": {
+                      "detail": "expected equals \"definitely-not-there\", got \"Saved Agent proof\""
+                    }
+                  }
+                ]
+              },
+              "failures": [
+                {
+                  "index": 1,
+                  "kind": "action",
+                  "name": "expect text #result",
+                  "at": "2026-10-16T05:39:25.342Z",
+                  "summary": "expect text #result {\"detail\":\"expected equals \\\"definitely-not-there\\\", got \\\"Saved Agent proof\\\"\"}",
+                  "context": [
+                    {
+                      "seq": 1,
+                      "at": "2026-10-16T05:39:25.342Z",
+                      "kind": "action",
+                      "name": "expect text #result",
+                      "ok": false,
+                      "detail": {
+                        "detail": "expected equals \"definitely-not-there\", got \"Saved Agent proof\""
+                      }
+                    }
+                  ]
+                }
+              ],
+              "summaryMarkdown": "# trajectory diagnosis FAIL\n\nFailure points: 1. First failure at seq=1 (action).\n\n## First failure\n\n- **when**: 2026-10-16T05:39:25.342Z\n- **kind**: action\n- **name**: expect text #result\n- **summary**: expect text #result {\"detail\":\"expected equals \\\"definitely-not-there\\\", got \\\"Saved Agent proof\\\"\"}\n\n### Context\n\n&gt;&gt;&gt; #1 2026-10-16T05:39:25.342Z [action] expect text #result FAIL\n\n## Recommendation\nStart at the first failure — later failures are often cascade effects. Use explain_error on any console frame, then re-verify."
+            },
+            "prComment": "<!-- versebrowser-evidence -->\n## versebrowser verify_flow: FAIL\n\n**Result:** FAIL\n**Session:** e9011383-1bad-448b-8124-78923e5206e1\n**Evidence pack:** `.ae/evidence/verify/verify-0168f60e`\n\n### First failure\n\n- **kind**: action\n- **name**: expect text #result\n- **when**: 2026-10-16T05:39:25.342Z\n- **summary**: expect text #result {\"detail\":\"expected equals \\\"definitely-not-there\\\", got \\\"Saved Agent proof\\\"\"}\n\n### Checks\n\n\n**Business assertions:** 0/1\n- [miss] text #result — expected equals \"definitely-not-there\", got \"Saved Agent proof\"\n\n### Evidence\n\n- pack directory: `.ae/evidence/verify/verify-0168f60e`\n- screenshot: `.ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png`\n- screenshots: 1 file(s) on disk (not inlined)\n\n<details>\n<summary>Raw summary</summary>\n\n```markdown\n# verify_flow FAIL\n\n## Collection (ok)\n- console: ok\n- network: ok\n- all signal channels collected\n\n## Selectors (0/0 found)\n- (none requested)\n\n## Business assertions (0/1 passed)\n- [miss] text #result -- expected equals \"definitely-not-there\", got \"Saved Agent proof\"\n\n## Console (baseline 0, +0 errors, +0 warnings)\n- no new console issues\n\n## Network failures (0)\n- none\n\n## Screenshots\n- .ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png\n```\n\n</details>\n\n_Generated by versebrowser Evidence Pack. Screenshots/HAR stay on disk; this comment is summary-only._"
+          },
+          "evidence": [
+            {
+              "id": "ev-screenshot-mvajflzy",
+              "kind": "screenshot",
+              "label": "screenshot verify.png",
+              "createdAt": "2026-10-16T05:39:25.342Z",
+              "path": ".ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png",
+              "mimeType": "image/png",
+              "size": 19051
+            },
+            {
+              "id": "ev-verify-mvajfm0j",
+              "kind": "verify",
+              "label": "verify_flow summary",
+              "createdAt": "2026-10-16T05:39:25.363Z",
+              "path": ".ae/evidence/verify/verify-0168f60e/summary.md",
+              "mimeType": "text/markdown"
+            },
+            {
+              "id": "ev-summary-mvajfm0j",
+              "kind": "summary",
+              "label": "diagnosis",
+              "createdAt": "2026-10-16T05:39:25.363Z",
+              "path": ".ae/evidence/verify/verify-0168f60e/diagnosis.md",
+              "mimeType": "text/markdown"
+            },
+            {
+              "id": "ev-summary-mvajfm0j",
+              "kind": "summary",
+              "label": "pr-comment",
+              "createdAt": "2026-10-16T05:39:25.363Z",
+              "path": ".ae/evidence/verify/verify-0168f60e/pr-comment.md",
+              "mimeType": "text/markdown"
+            },
+            {
+              "id": "ev-summary-mvajfm0j",
+              "kind": "summary",
+              "label": "trajectory viewer",
+              "createdAt": "2026-10-16T05:39:25.363Z",
+              "path": ".ae/evidence/verify/verify-0168f60e/viewer.html",
+              "mimeType": "text/html"
+            }
+          ]
+        }
+      },
+      {
+        "name": "close",
+        "action": "close",
+        "ok": true,
+        "data": {
+          "success": true
+        }
+      }
+    ],
+    "sessionId": "e9011383-1bad-448b-8124-78923e5206e1",
+    "passVerdict": "# verify_flow PASS\n\n## Collection (ok)\n- console: ok\n- network: ok\n- all signal channels collected\n\n## Selectors (0/0 found)\n- (none requested)\n\n## Business assertions (1/1 passed)\n- [ok] text #result\n\n## Console (baseline 0, +0 errors, +0 warnings)\n- no new console issues\n\n## Network failures (0)\n- none\n\n## Screenshots\n- .ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png",
+    "failVerdict": "# verify_flow FAIL\n\n## Collection (ok)\n- console: ok\n- network: ok\n- all signal channels collected\n\n## Selectors (0/0 found)\n- (none requested)\n\n## Business assertions (0/1 passed)\n- [miss] text #result -- expected equals \"definitely-not-there\", got \"Saved Agent proof\"\n\n## Console (baseline 0, +0 errors, +0 warnings)\n- no new console issues\n\n## Network failures (0)\n- none\n\n## Screenshots\n- .ae/evidence/shots/e9011383-1bad-448b-8124-78923e5206e1/verify.png\n\n## First failure\nexpect text #result {\"detail\":\"expected equals \\\"definitely-not-there\\\", got \\\"Saved Agent proof\\\"\"}"
+  },
+  "url": "file:///D:/ClawX-candidates/vb-invocation-n1-20261016/dist/index.html?bootTheme=dark#/setup",
+  "cleanup": {
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "runRoot": "D:\\tmp\\verse-claw-e2e-run-jYsmGX\\",
+    "owned": [],
+    "remaining": []
+  },
+  "endedAt": "2026-10-16T05:39:26.483Z",
+  "candidateDirtyAfter": true,
+  "ok": true
+}

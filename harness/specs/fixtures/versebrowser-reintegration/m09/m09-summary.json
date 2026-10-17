@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m09-regression-matrix-summary",
+  "scope": "Frozen control regression, 24x2 business/security matrix, agent-driven continuation, and A/B/C comparison for the imported package: A=current ClawX host surface, B=pinned source, C=host-integrated module.",
+  "driven_by": "agent",
+  "actor": "codex",
+  "testClosure": {
+    "sourceTestCount": 158,
+    "dispositions": {
+      "module_runtime": 127,
+      "source_research_or_release": 24,
+      "source_guard_or_release": 7
+    },
+    "importedTests": 127,
+    "boundary": "module_runtime tests are byte-identical (LF-normalized) copies; source_research_or_release and source_guard_or_release stay in the source repository because their import closure or runtime root reads leave the module boundary"
+  },
+  "moduleRegression": {
+    "files": 127,
+    "tests": 1098,
+    "failedBatches": 0,
+    "command": "compatible node vitest run over packages/versebrowser/tests in 19 bounded batches",
+    "note": "A single uncapped parallel run over 127 files produces contention flakes in browser-heavy suites (C79); bounded batching is the recorded reproducible form."
+  },
+  "sourceRegression": {
+    "files": 158,
+    "tests": 1384,
+    "note": "the frozen pinned-source suite run in the source repository (B)"
+  },
+  "matrix": {
+    "matrix": "original-v2",
+    "tasks": 24,
+    "entrances": 2,
+    "total": 48,
+    "B": {
+      "pass": 44,
+      "notRun": [
+        "mig-01-docs-quote/SDK",
+        "mig-22-auth-handoff/SDK",
+        "mig-01-docs-quote/stdio",
+        "mig-22-auth-handoff/stdio"
+      ]
+    },
+    "C": {
+      "pass": 44,
+      "notRun": [
+        "mig-01-docs-quote/SDK",
+        "mig-22-auth-handoff/SDK",
+        "mig-01-docs-quote/stdio",
+        "mig-22-auth-handoff/stdio"
+      ]
+    },
+    "parity": true,
+    "preservedNotRun": [
+      "mig-01-docs-quote/SDK",
+      "mig-01-docs-quote/stdio",
+      "mig-22-auth-handoff/SDK",
+      "mig-22-auth-handoff/stdio"
+    ],
+    "notRunReasons": {
+      "mig-01-docs-quote": "requires a real external HTTPS reference read (opt-in origin); never substituted by the local fixture, exactly as in the pinned source",
+      "mig-22-auth-handoff": "historical not_run from the pinned source; the agent-driven equivalent is recorded separately, the archived humanSteps are not rewritten"
+    },
+    "migratedTaskNote": "mig-21, mig-24 and mig-01 credits are pinned-source history readings; no pass is manufactured here."
+  },
+  "supplement": {
+    "matrix": "supplement-v1",
+    "total": 12,
+    "C": 10,
+    "B": 10,
+    "notRun": [
+      "site-01/SDK",
+      "site-01/stdio"
+    ]
+  },
+  "frozenConsumer": {
+    "checks": 42,
+    "B": "pass",
+    "C": "pass",
+    "note": "the same frozen control consumer (scripts/check-toolbox-consumer.mjs from the pinned source) run against the packed B and C packages; the documented-SDK program expectation is read from a frozen control copy outside the candidate"
+  },
+  "agentDrivenContinuation": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "tests": [
+      "packages/versebrowser/tests/hitl-operator-handoff.test.ts",
+      "packages/versebrowser/tests/hitl-gate-status-restart.test.ts",
+      "packages/versebrowser/tests/redline-hitl.test.ts"
+    ],
+    "result": "synthetic auth/challenge fixture: account sign-in, session expiry pauses automation, an out-of-band operator (holding a secret the agent surface never sees) completes the step, the agent re-observes and submits exactly once; token rotation/refusal/replay negative cases pass",
+    "note": "does not impersonate a human, does not solve a real CAPTCHA, does not rewrite archived humanSteps; historical mig-22 not_run remains historical"
+  },
+  "hostSurfaceA": {
+    "tests": 88,
+    "files": 9,
+    "result": "pass"
+  },
+  "requiredGates": {
+    "pnpm contract:check": "pass",
+    "pnpm run typecheck": "pass (node/web/test, 0 errors)",
+    "pnpm run comms:replay": "pass",
+    "pnpm run comms:compare": "pass",
+    "pnpm run build:vite": "pass (renderer + electron main)"
+  },
+  "electronE2e": {
+    "required": "pnpm run test:e2e tests/e2e/agent-browser-workbench.spec.ts",
+    "result": "pass",
+    "evidence": "tests/e2e/agent-browser-workbench.spec.ts passes (13-19s) when the Playwright temp root is a writable in-repo path (CLAWX_E2E_RUN_ROOT / TEMP under D:\\ClawX\\.tmp\\e2e-root) and ELECTRON_DISABLE_SANDBOX=1. An earlier run failed at fixtures/electron.ts firstWindow because the temp root was D:\\tmp, where the app hit an intermittent EPERM atomic-write on app-version-state.json.",
+    "correction": "The earlier 'environment_blocked' note in this file was wrong; it was a temp-root permission issue, not a host limiter."
+  },
+  "artifacts": [
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m09/m09-test-closure.json",
+      "sha256": "a47f96ffa3f340ea7b4145a72353191d91c60c9d9fde0cf6c270e7c4cce64ded",
+      "bytes": 40698
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m09/m09-B-source-consumer.log",
+      "sha256": "82bf3bcb60a82e47ac976cd95a911efb42b11a2e5fd2219366fd06bad484df7b",
+      "bytes": 2421
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m09/m09-C-module-consumer.log",
+      "sha256": "82bf3bcb60a82e47ac976cd95a911efb42b11a2e5fd2219366fd06bad484df7b",
+      "bytes": 2421
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m09/m09-C-original-oracles.json",
+      "sha256": "bb565302065725b0922403734d54cf73b2057df678927bf0876b62938966caee",
+      "bytes": 16902
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m09/m09-C-supplement-oracles.json",
+      "sha256": "ab80d44f2417dd1031df71c5c73cc5395c9ac49bdbee4a4f60377a955e59af4a",
+      "bytes": 4129
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m09/m09-B-original-oracles.json",
+      "sha256": "d0de2c29c41b1ac5c686b75fe8dc690d358ac2336a1a094b68b08ce53fdd79c8",
+      "bytes": 16902
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m09/m09-B-supplement-oracles.json",
+      "sha256": "05b6af6e9b4132c2f5173274c6fb69fa03484d5c561c6d8bc43f7dfcf0b1ecf8",
+      "bytes": 4129
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m09/m09-regression-verify.json",
+      "sha256": "bb70800322ca51c42f574fe1e2b8dcd06807d33d6087e9fd294c6ff168c95a5c",
+      "bytes": 758
+    }
+  ],
+  "verification": "node scripts/versebrowser-m09-regression-verify.mjs",
+  "remainingCheckpointWork": [
+    "M10 packaged Windows Electron/clean-consumer/package-path acceptance remains.",
+    "M11 cutover/rollback remains."
+  ],
+  "validationBoundary": "Development-path evidence: frozen control consumer and 24-task matrix run against the packed module and the pinned source, plus the module-local and host-local regression suites. It does not prove packaged distribution, cross-platform execution, or product cutover.",
+  "denominators": {
+    "note": "Four denominators are counted separately and never aggregated into a single pass rate.",
+    "frozenConsumer42": {
+      "source": "scripts/check-toolbox-consumer.mjs EXPECTED_CHECKS",
+      "B": "42/42 pass",
+      "C": "42/42 pass"
+    },
+    "matrix48": {
+      "source": "docs/integration/upstream-task-matrix.md v2, 24 tasks x SDK/stdio",
+      "B": "44/48 pass, 4 not_run",
+      "C": "44/48 pass, 4 not_run"
+    },
+    "agent72": {
+      "source": "docs/integration/agent72-preregistration.md G4 formal run",
+      "reading": "71/72 source-history reading (24 tasks x 3 runs)",
+      "status": "source-history; NOT re-run in this checkpoint (a separate model/subject denominator); recorded as-is, neither credited nor re-derived for C"
+    },
+    "clawxHostNew": {
+      "source": "tests/unit ClawX host surface (A) + packages/versebrowser module tests (C)",
+      "result": "host 9 files/88 tests pass; module 127 files/1098 tests pass"
+    }
+  }
+}

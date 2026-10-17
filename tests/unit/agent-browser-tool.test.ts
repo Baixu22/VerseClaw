@@ -86,6 +86,92 @@ describe('agent_browser tool', () => {
     });
   });
 
+  it('maps the 13 source-only facade actions without dropping payload fidelity', async () => {
+    const invoke = vi.fn(async (action, payload) => ({ action, payload }));
+    const tool = createAgentBrowserTool({ invoke });
+    const cases = [
+      ['downloadFile', { selector: '#f', path: 'D:/tmp/f.bin' }],
+      ['uploadFiles', { selector: '#f', paths: ['D:/tmp/a.txt'] }],
+      ['pointer', { pointerAction: 'hover', selector: '#menu' }],
+      ['drag', { sourceSelector: '#a', targetSelector: '#b' }],
+      ['selectOption', { selector: '#s', label: 'One' }],
+      ['selectValues', { selector: '#s', values: ['a', 'b'] }],
+      ['appendText', { selector: '#t', text: ' tail' }],
+      ['setChecked', { selector: '#c', checked: true }],
+      ['findElement', { role: 'button', name: 'Save' }],
+      ['semanticRead', { instruction: 'extract totals', schema: { type: 'object' } }],
+      ['readForms', { selector: '#form' }],
+      ['readDialogs', {}],
+      ['respondDialog', { dialogId: 'd1', accept: true, promptText: 'ok' }],
+    ] as const;
+    for (const [action, extra] of cases) {
+      const result = await tool!.execute('tool-' + action, { action, sessionId: 's1', ...extra });
+      const expected = action === 'pointer'
+        ? { sessionId: 's1', action: 'hover', selector: '#menu' }
+        : { sessionId: 's1', ...extra };
+      expect(readJsonResult(result)).toMatchObject({ action, payload: expect.objectContaining(expected) });
+    }
+    expect(invoke).toHaveBeenCalledTimes(cases.length);
+  });
+
+  it('preserves driver-unsupported errors instead of advertising a false pass', async () => {
+    const invoke = vi.fn(async () => ({ success: false, ok: false, content: 'driver does not support authorized downloads', error: { code: 'E_NOT_IMPLEMENTED', message: 'driver does not support authorized downloads' } }));
+    const tool = createAgentBrowserTool({ invoke });
+    const result = await tool!.execute('tool-1', { action: 'downloadFile', sessionId: 's1', selector: '#f', path: 'D:/tmp/f.bin' });
+    expect(isToolResultError(result)).toBe(true);
+    expect(readJsonResult(result)).toMatchObject({ status: 'error', success: false, error: { code: 'E_NOT_IMPLEMENTED' } });
+  });
+
+  it('forwards owner correlation and consumes the gateway request id without losing task/page ids', async () => {
+    const invoke = vi.fn(async (action, payload, correlation) => ({
+      success: true,
+      gatewayRequestId: 'req-9',
+      action,
+      payload,
+      correlation,
+    }));
+    const tool = createAgentBrowserTool({
+      invoke,
+      correlation: {
+        runId: 'run-1',
+        sessionKey: 'agent:main:session-1',
+        agentSessionKey: 'agent:main:session-1',
+        agentId: 'main',
+      },
+    });
+
+    const result = await tool!.execute('tool-9', {
+      action: 'open',
+      url: 'http://127.0.0.1:9/fixture',
+      taskId: 'task-1',
+      pageId: 'page-1',
+    });
+
+    expect(invoke).toHaveBeenCalledWith(
+      'open',
+      expect.objectContaining({
+        url: 'http://127.0.0.1:9/fixture',
+        sessionKey: 'agent:main:session-1',
+        agentId: 'main',
+      }),
+      expect.objectContaining({
+        runId: 'run-1',
+        sessionKey: 'agent:main:session-1',
+        toolCallId: 'tool-9',
+        taskId: 'task-1',
+        pageId: 'page-1',
+      }),
+    );
+    expect(readJsonResult(result)?.browserAutomationEvent).toMatchObject({
+      gatewayRequestId: 'req-9',
+      runId: 'run-1',
+      sessionKey: 'agent:main:session-1',
+      toolCallId: 'tool-9',
+      taskId: 'task-1',
+      pageId: 'page-1',
+    });
+  });
+
   it('requires session ids for session-scoped actions', async () => {
     const tool = createAgentBrowserTool({ invoke: vi.fn() });
 
@@ -276,7 +362,7 @@ describe('agent_browser tool', () => {
       },
     });
     expect(invoke).toHaveBeenCalledTimes(1);
-    expect(invoke.mock.calls[0]).toEqual(['getConsoleMessages', { sessionId: 's-console' }]);
+    expect(invoke).toHaveBeenCalledWith('getConsoleMessages', { sessionId: 's-console' }, expect.objectContaining({ toolCallId: 'tool-1' }));
   });
 
   it('getConsoleMessages does not trigger failure diagnostics when invoker throws', async () => {
@@ -329,7 +415,7 @@ describe('agent_browser tool', () => {
       },
     });
     expect(invoke).toHaveBeenCalledTimes(1);
-    expect(invoke.mock.calls[0]).toEqual(['navigate', { sessionId: 's-nav', url: 'https://example.com/page' }]);
+    expect(invoke).toHaveBeenCalledWith('navigate', { sessionId: 's-nav', url: 'https://example.com/page' }, expect.objectContaining({ toolCallId: 'tool-1' }));
   });
 
   it('routes waitForSelector with selector and timeout payload', async () => {
@@ -358,10 +444,7 @@ describe('agent_browser tool', () => {
       },
     });
     expect(invoke).toHaveBeenCalledTimes(1);
-    expect(invoke.mock.calls[0]).toEqual([
-      'waitForSelector',
-      { sessionId: 's-wait', selector: '.loaded', timeoutMs: 5000 },
-    ]);
+    expect(invoke).toHaveBeenCalledWith('waitForSelector', { sessionId: 's-wait', selector: '.loaded', timeoutMs: 5000 }, expect.objectContaining({ toolCallId: 'tool-1' }));
   });
 
   it('routes type with text and clear payload', async () => {
@@ -392,10 +475,7 @@ describe('agent_browser tool', () => {
       },
     });
     expect(invoke).toHaveBeenCalledTimes(1);
-    expect(invoke.mock.calls[0]).toEqual([
-      'type',
-      { sessionId: 's-type', selector: '#search', text: 'hello world', clear: true },
-    ]);
+    expect(invoke).toHaveBeenCalledWith('type', { sessionId: 's-type', selector: '#search', text: 'hello world', clear: true }, expect.objectContaining({ toolCallId: 'tool-1' }));
   });
 
   it('routes evaluate with expression payload', async () => {
@@ -423,10 +503,7 @@ describe('agent_browser tool', () => {
       },
     });
     expect(invoke).toHaveBeenCalledTimes(1);
-    expect(invoke.mock.calls[0]).toEqual([
-      'evaluate',
-      { sessionId: 's-eval', expression: 'document.title' },
-    ]);
+    expect(invoke).toHaveBeenCalledWith('evaluate', { sessionId: 's-eval', expression: 'document.title' }, expect.objectContaining({ toolCallId: 'tool-1' }));
   });
 
   it('routes close with sessionId payload', async () => {
@@ -451,7 +528,7 @@ describe('agent_browser tool', () => {
       },
     });
     expect(invoke).toHaveBeenCalledTimes(1);
-    expect(invoke.mock.calls[0]).toEqual(['close', { sessionId: 's-close' }]);
+    expect(invoke).toHaveBeenCalledWith('close', { sessionId: 's-close' }, expect.objectContaining({ toolCallId: 'tool-1' }));
   });
 
   it('routes status with empty payload and returns session list', async () => {
@@ -475,6 +552,6 @@ describe('agent_browser tool', () => {
       },
     });
     expect(invoke).toHaveBeenCalledTimes(1);
-    expect(invoke.mock.calls[0]).toEqual(['status', {}]);
+    expect(invoke).toHaveBeenCalledWith('status', {}, expect.objectContaining({ toolCallId: 'tool-1' }));
   });
 });

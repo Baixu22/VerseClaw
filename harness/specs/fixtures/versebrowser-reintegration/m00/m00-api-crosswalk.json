@@ -1,0 +1,4282 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m00-api-crosswalk",
+  "scope": "Explicit 67 legacy + 13 source-only method ownership; no capability is advertised until a later checkpoint wires and verifies it",
+  "driven_by": "agent",
+  "actor": "codex",
+  "counts": {
+    "legacy": 67,
+    "sourceOnly": 13,
+    "total": 80,
+    "entries": 80
+  },
+  "entries": [
+    {
+      "method": "open",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 844,
+        "optional": false,
+        "params": "payload?: AgentBrowserOpenPayload, options?: { signal?: AbortSignal }",
+        "result": "AgentBrowserSessionResult",
+        "signature": "open: (payload?: AgentBrowserOpenPayload, options?: { signal?: AbortSignal }) => AgentBrowserSessionResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5383,
+        "optional": false,
+        "params": "payload?: AgentBrowserOpenPayload",
+        "result": "AgentBrowserSessionResult",
+        "signature": "open: (payload?: AgentBrowserOpenPayload) => AgentBrowserSessionResult;"
+      },
+      "mapping": {
+        "parameterParity": "source_adds_abort_signal",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "source-boundary AbortSignal is non-serializable and must remain an in-process option",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "external-access policy",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5383,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": "open",
+          "present": true
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "status",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 845,
+        "optional": false,
+        "params": "",
+        "result": "AgentBrowserStatusResult",
+        "signature": "status: () => AgentBrowserStatusResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5384,
+        "optional": false,
+        "params": "",
+        "result": "AgentBrowserStatusResult",
+        "signature": "status: () => AgentBrowserStatusResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ungated-read-or-lifecycle",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5384,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": "status",
+          "present": true
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "setEnabled",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 846,
+        "optional": false,
+        "params": "payload: AgentBrowserSetEnabledPayload",
+        "result": "AgentBrowserSetEnabledResult",
+        "signature": "setEnabled: (payload: AgentBrowserSetEnabledPayload) => AgentBrowserSetEnabledResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5385,
+        "optional": false,
+        "params": "payload: AgentBrowserSetEnabledPayload",
+        "result": "AgentBrowserSetEnabledResult",
+        "signature": "setEnabled: (payload: AgentBrowserSetEnabledPayload) => AgentBrowserSetEnabledResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5385,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "profiles",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 847,
+        "optional": false,
+        "params": "",
+        "result": "AgentBrowserProfilesResult",
+        "signature": "profiles: () => AgentBrowserProfilesResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5386,
+        "optional": false,
+        "params": "",
+        "result": "AgentBrowserProfilesResult",
+        "signature": "profiles: () => AgentBrowserProfilesResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ungated-read-or-lifecycle",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5386,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "saveProfile",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 848,
+        "optional": false,
+        "params": "payload: AgentBrowserProfileSavePayload",
+        "result": "AgentBrowserProfileSaveResult",
+        "signature": "saveProfile: (payload: AgentBrowserProfileSavePayload) => AgentBrowserProfileSaveResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5387,
+        "optional": false,
+        "params": "payload: AgentBrowserProfileSavePayload",
+        "result": "AgentBrowserProfileSaveResult",
+        "signature": "saveProfile: (payload: AgentBrowserProfileSavePayload) => AgentBrowserProfileSaveResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5387,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "validate",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 849,
+        "optional": false,
+        "params": "payload?: AgentBrowserValidatePayload",
+        "result": "AgentBrowserValidateResult",
+        "signature": "validate: (payload?: AgentBrowserValidatePayload) => AgentBrowserValidateResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5388,
+        "optional": false,
+        "params": "payload?: AgentBrowserValidatePayload",
+        "result": "AgentBrowserValidateResult",
+        "signature": "validate: (payload?: AgentBrowserValidatePayload) => AgentBrowserValidateResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ungated-read-or-lifecycle",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5388,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "navigate",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 850,
+        "optional": false,
+        "params": "payload: AgentBrowserNavigatePayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "navigate: (payload: AgentBrowserNavigatePayload) => AgentBrowserActionResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5389,
+        "optional": false,
+        "params": "payload: AgentBrowserNavigatePayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "navigate: (payload: AgentBrowserNavigatePayload) => AgentBrowserActionResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "bounded timeout/abort semantics must be preserved and tested at the named checkpoint",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5389,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": "navigate",
+          "present": true
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "focus",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 851,
+        "optional": false,
+        "params": "payload: AgentBrowserSessionPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "focus: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5390,
+        "optional": false,
+        "params": "payload: AgentBrowserSessionPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "focus: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5390,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "waitForSelector",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 852,
+        "optional": false,
+        "params": "payload: AgentBrowserSelectorPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "waitForSelector: (payload: AgentBrowserSelectorPayload) => AgentBrowserActionResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5391,
+        "optional": false,
+        "params": "payload: AgentBrowserSelectorPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "waitForSelector: (payload: AgentBrowserSelectorPayload) => AgentBrowserActionResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "bounded timeout/abort semantics must be preserved and tested at the named checkpoint",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5391,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": "waitForSelector",
+          "present": true
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "click",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 853,
+        "optional": false,
+        "params": "payload: AgentBrowserClickPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "click: (payload: AgentBrowserClickPayload) => AgentBrowserActionResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5392,
+        "optional": false,
+        "params": "payload: AgentBrowserClickPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "click: (payload: AgentBrowserClickPayload) => AgentBrowserActionResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "session-effect policy currently covers click/type",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5392,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": "click",
+          "present": true
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "downloadFile",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 854,
+        "optional": true,
+        "params": "payload: AgentBrowserDownloadPayload",
+        "result": "AgentBrowserDownloadResult",
+        "signature": "downloadFile?: (payload: AgentBrowserDownloadPayload) => AgentBrowserDownloadResult;"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "bounded timeout/abort semantics must be preserved and tested at the named checkpoint",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "uploadFiles",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 855,
+        "optional": true,
+        "params": "payload: AgentBrowserUploadPayload",
+        "result": "AgentBrowserUploadResult",
+        "signature": "uploadFiles?: (payload: AgentBrowserUploadPayload) => AgentBrowserUploadResult;"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "bounded timeout/abort semantics must be preserved and tested at the named checkpoint",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "pointer",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 856,
+        "optional": true,
+        "params": "payload: AgentBrowserPointerPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "pointer?: (payload: AgentBrowserPointerPayload) => AgentBrowserActionResult;"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "drag",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 857,
+        "optional": true,
+        "params": "payload: AgentBrowserDragPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "drag?: (payload: AgentBrowserDragPayload) => AgentBrowserActionResult;"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "type",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 858,
+        "optional": false,
+        "params": "payload: AgentBrowserTypePayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "type: (payload: AgentBrowserTypePayload) => AgentBrowserActionResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5393,
+        "optional": false,
+        "params": "payload: AgentBrowserTypePayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "type: (payload: AgentBrowserTypePayload) => AgentBrowserActionResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "session-effect policy currently covers click/type",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5393,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": "type",
+          "present": true
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "selectOption",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 859,
+        "optional": true,
+        "params": "payload: AgentBrowserSelectorPayload & { label: string }",
+        "result": "AgentBrowserActionResult",
+        "signature": "selectOption?: (payload: AgentBrowserSelectorPayload & { label: string }) => AgentBrowserActionResult;"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "selectValues",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 860,
+        "optional": true,
+        "params": "payload: AgentBrowserSelectorPayload & { values: string[] }",
+        "result": "AgentBrowserActionResult",
+        "signature": "selectValues?: (payload: AgentBrowserSelectorPayload & { values: string[] }) => AgentBrowserActionResult;"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "appendText",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 861,
+        "optional": true,
+        "params": "payload: AgentBrowserTypePayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "appendText?: (payload: AgentBrowserTypePayload) => AgentBrowserActionResult;"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "setChecked",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 862,
+        "optional": true,
+        "params": "payload: AgentBrowserSelectorPayload & { checked: boolean }",
+        "result": "AgentBrowserActionResult",
+        "signature": "setChecked?: (payload: AgentBrowserSelectorPayload & { checked: boolean }) => AgentBrowserActionResult;"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "evaluate",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 863,
+        "optional": false,
+        "params": "payload: AgentBrowserEvaluatePayload",
+        "result": "AgentBrowserEvaluateResult",
+        "signature": "evaluate: (payload: AgentBrowserEvaluatePayload) => AgentBrowserEvaluateResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5394,
+        "optional": false,
+        "params": "payload: AgentBrowserEvaluatePayload",
+        "result": "AgentBrowserEvaluateResult",
+        "signature": "evaluate: (payload: AgentBrowserEvaluatePayload) => AgentBrowserEvaluateResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M03",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5394,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": "evaluate",
+          "present": true
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "screenshot",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 864,
+        "optional": false,
+        "params": "payload: AgentBrowserScreenshotPayload",
+        "result": "AgentBrowserScreenshotResult",
+        "signature": "screenshot: (payload: AgentBrowserScreenshotPayload) => AgentBrowserScreenshotResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5395,
+        "optional": false,
+        "params": "payload: AgentBrowserScreenshotPayload",
+        "result": "AgentBrowserScreenshotResult",
+        "signature": "screenshot: (payload: AgentBrowserScreenshotPayload) => AgentBrowserScreenshotResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5395,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": "screenshot",
+          "present": true
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "command",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 865,
+        "optional": false,
+        "params": "payload: AgentBrowserCommandPayload",
+        "result": "AgentBrowserCommandResult",
+        "signature": "command: (payload: AgentBrowserCommandPayload) => AgentBrowserCommandResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5396,
+        "optional": false,
+        "params": "payload: AgentBrowserCommandPayload",
+        "result": "AgentBrowserCommandResult",
+        "signature": "command: (payload: AgentBrowserCommandPayload) => AgentBrowserCommandResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "external-access policy",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5396,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": "command",
+          "present": true
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "tasks",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 866,
+        "optional": false,
+        "params": "",
+        "result": "AgentBrowserTasksResult",
+        "signature": "tasks: () => AgentBrowserTasksResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5397,
+        "optional": false,
+        "params": "",
+        "result": "AgentBrowserTasksResult",
+        "signature": "tasks: () => AgentBrowserTasksResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ungated-read-or-lifecycle",
+        "cancellation": "TaskService-owned AbortController plus terminal-status and late-completion guards",
+        "errors": "preserve task status, errorCode/error, approval and recovery fields without turning unknown into success",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M05"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5397,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "createTask",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 867,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskCreatePayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "createTask: (payload: AgentBrowserTaskCreatePayload) => AgentBrowserTaskResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5398,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskCreatePayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "createTask: (payload: AgentBrowserTaskCreatePayload) => AgentBrowserTaskResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "TaskService-owned AbortController plus terminal-status and late-completion guards",
+        "errors": "preserve task status, errorCode/error, approval and recovery fields without turning unknown into success",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M05"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5398,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "runTask",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 868,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskPayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "runTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5399,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskPayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "runTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "TaskService-owned AbortController plus terminal-status and late-completion guards",
+        "errors": "preserve task status, errorCode/error, approval and recovery fields without turning unknown into success",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M05"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5399,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "retryTask",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 869,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskPayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "retryTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5400,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskPayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "retryTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "TaskService-owned AbortController plus terminal-status and late-completion guards",
+        "errors": "preserve task status, errorCode/error, approval and recovery fields without turning unknown into success",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M05"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5400,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "cancelTask",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 870,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskPayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "cancelTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5401,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskPayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "cancelTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "TaskService-owned AbortController plus terminal-status and late-completion guards",
+        "errors": "preserve task status, errorCode/error, approval and recovery fields without turning unknown into success",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M05"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5401,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "requestTaskApproval",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 871,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskPayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "requestTaskApproval: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5402,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskPayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "requestTaskApproval: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "TaskService-owned AbortController plus terminal-status and late-completion guards",
+        "errors": "preserve task status, errorCode/error, approval and recovery fields without turning unknown into success",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M05"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5402,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "approveTask",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 872,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskPayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "approveTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5403,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskPayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "approveTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "TaskService-owned AbortController plus terminal-status and late-completion guards",
+        "errors": "preserve task status, errorCode/error, approval and recovery fields without turning unknown into success",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M05"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5403,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "rejectTask",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 873,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskPayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "rejectTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5404,
+        "optional": false,
+        "params": "payload: AgentBrowserTaskPayload",
+        "result": "AgentBrowserTaskResult",
+        "signature": "rejectTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "TaskService-owned AbortController plus terminal-status and late-completion guards",
+        "errors": "preserve task status, errorCode/error, approval and recovery fields without turning unknown into success",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M05"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5404,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "show",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 874,
+        "optional": false,
+        "params": "payload: AgentBrowserSessionPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "show: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5405,
+        "optional": false,
+        "params": "payload: AgentBrowserSessionPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "show: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5405,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "hide",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 875,
+        "optional": false,
+        "params": "payload: AgentBrowserSessionPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "hide: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5406,
+        "optional": false,
+        "params": "payload: AgentBrowserSessionPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "hide: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5406,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "vault",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 876,
+        "optional": false,
+        "params": "",
+        "result": "AgentBrowserVaultResult",
+        "signature": "vault: () => AgentBrowserVaultResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5407,
+        "optional": false,
+        "params": "",
+        "result": "AgentBrowserVaultResult",
+        "signature": "vault: () => AgentBrowserVaultResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ungated-read-or-lifecycle",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve safeStorage availability, corruption, origin/profile mismatch and code/message distinctions without exposing secrets",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5407,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "vaultHealth",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 877,
+        "optional": false,
+        "params": "",
+        "result": "AgentBrowserVaultHealthResult",
+        "signature": "vaultHealth: () => AgentBrowserVaultHealthResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5408,
+        "optional": false,
+        "params": "",
+        "result": "AgentBrowserVaultHealthResult",
+        "signature": "vaultHealth: () => AgentBrowserVaultHealthResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve safeStorage availability, corruption, origin/profile mismatch and code/message distinctions without exposing secrets",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5408,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "saveCredential",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 878,
+        "optional": false,
+        "params": "payload: AgentBrowserCredentialSavePayload",
+        "result": "AgentBrowserCredentialResult",
+        "signature": "saveCredential: (payload: AgentBrowserCredentialSavePayload) => AgentBrowserCredentialResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5409,
+        "optional": false,
+        "params": "payload: AgentBrowserCredentialSavePayload",
+        "result": "AgentBrowserCredentialResult",
+        "signature": "saveCredential: (payload: AgentBrowserCredentialSavePayload) => AgentBrowserCredentialResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve safeStorage availability, corruption, origin/profile mismatch and code/message distinctions without exposing secrets",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5409,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "deleteCredential",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 879,
+        "optional": false,
+        "params": "payload: AgentBrowserCredentialPayload",
+        "result": "HostSuccess",
+        "signature": "deleteCredential: (payload: AgentBrowserCredentialPayload) => HostSuccess;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5410,
+        "optional": false,
+        "params": "payload: AgentBrowserCredentialPayload",
+        "result": "HostSuccess",
+        "signature": "deleteCredential: (payload: AgentBrowserCredentialPayload) => HostSuccess;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve safeStorage availability, corruption, origin/profile mismatch and code/message distinctions without exposing secrets",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5410,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "close",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 880,
+        "optional": false,
+        "params": "payload: AgentBrowserSessionPayload",
+        "result": "HostSuccess",
+        "signature": "close: (payload: AgentBrowserSessionPayload) => HostSuccess;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5411,
+        "optional": false,
+        "params": "payload: AgentBrowserSessionPayload",
+        "result": "HostSuccess",
+        "signature": "close: (payload: AgentBrowserSessionPayload) => HostSuccess;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ungated-read-or-lifecycle",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5411,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": "close",
+          "present": true
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "takeSnapshot",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 881,
+        "optional": false,
+        "params": "payload: AgentBrowserTakeSnapshotPayload",
+        "result": "AgentBrowserTakeSnapshotResult",
+        "signature": "takeSnapshot: (payload: AgentBrowserTakeSnapshotPayload) => AgentBrowserTakeSnapshotResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5412,
+        "optional": false,
+        "params": "payload: AgentBrowserTakeSnapshotPayload",
+        "result": "AgentBrowserTakeSnapshotResult",
+        "signature": "takeSnapshot: (payload: AgentBrowserTakeSnapshotPayload) => AgentBrowserTakeSnapshotResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ungated-read-or-lifecycle",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5412,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "findElement",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 882,
+        "optional": true,
+        "params": "payload: AgentBrowserFindPayload",
+        "result": "AgentBrowserFindResult",
+        "signature": "findElement?: (payload: AgentBrowserFindPayload) => AgentBrowserFindResult;"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "bounded timeout/abort semantics must be preserved and tested at the named checkpoint",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "semanticRead",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 883,
+        "optional": true,
+        "params": "payload: AgentBrowserSemanticPayload, options?: { signal?: AbortSignal }",
+        "result": "AgentBrowserSemanticResult",
+        "signature": "semanticRead?: (payload: AgentBrowserSemanticPayload, options?: { signal?: AbortSignal }) => AgentBrowserSemanticResult;"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "source-boundary AbortSignal is non-serializable and must remain an in-process option",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "readForms",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 884,
+        "optional": true,
+        "params": "payload: AgentBrowserSessionPayload & { selector?: string }",
+        "result": "HostSuccess & { fields: unknown[]; scope: {pageId:string;frameId:string;observationId:string}; trust:string }",
+        "signature": "readForms?: (payload: AgentBrowserSessionPayload & {selector?:string}) => HostSuccess & { fields: unknown[]; scope: {pageId:string;frameId:string;observationId:string}; trust:string };"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "clickByUid",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 885,
+        "optional": false,
+        "params": "payload: AgentBrowserClickByUidPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "clickByUid: (payload: AgentBrowserClickByUidPayload) => AgentBrowserActionResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5413,
+        "optional": false,
+        "params": "payload: AgentBrowserClickByUidPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "clickByUid: (payload: AgentBrowserClickByUidPayload) => AgentBrowserActionResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5413,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "fillByUid",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 886,
+        "optional": false,
+        "params": "payload: AgentBrowserFillByUidPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "fillByUid: (payload: AgentBrowserFillByUidPayload) => AgentBrowserActionResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5414,
+        "optional": false,
+        "params": "payload: AgentBrowserFillByUidPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "fillByUid: (payload: AgentBrowserFillByUidPayload) => AgentBrowserActionResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5414,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "pressKey",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 887,
+        "optional": false,
+        "params": "payload: AgentBrowserPressKeyPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "pressKey: (payload: AgentBrowserPressKeyPayload) => AgentBrowserActionResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5415,
+        "optional": false,
+        "params": "payload: AgentBrowserPressKeyPayload",
+        "result": "AgentBrowserActionResult",
+        "signature": "pressKey: (payload: AgentBrowserPressKeyPayload) => AgentBrowserActionResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5415,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "requestModeUpgrade",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 888,
+        "optional": false,
+        "params": "payload: AgentBrowserRequestModeUpgradePayload",
+        "result": "AgentBrowserRequestModeUpgradeResult",
+        "signature": "requestModeUpgrade: (payload: AgentBrowserRequestModeUpgradePayload) => AgentBrowserRequestModeUpgradeResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5416,
+        "optional": false,
+        "params": "payload: AgentBrowserRequestModeUpgradePayload",
+        "result": "AgentBrowserRequestModeUpgradeResult",
+        "signature": "requestModeUpgrade: (payload: AgentBrowserRequestModeUpgradePayload) => AgentBrowserRequestModeUpgradeResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5416,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "respondBoundaryChoice",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 889,
+        "optional": false,
+        "params": "payload: AgentBrowserRespondBoundaryChoicePayload",
+        "result": "AgentBrowserRespondBoundaryChoiceResult",
+        "signature": "respondBoundaryChoice: (payload: AgentBrowserRespondBoundaryChoicePayload) => AgentBrowserRespondBoundaryChoiceResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5417,
+        "optional": false,
+        "params": "payload: AgentBrowserRespondBoundaryChoicePayload",
+        "result": "AgentBrowserRespondBoundaryChoiceResult",
+        "signature": "respondBoundaryChoice: (payload: AgentBrowserRespondBoundaryChoicePayload) => AgentBrowserRespondBoundaryChoiceResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5417,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "networkListRequests",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 890,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkListPayload",
+        "result": "AgentBrowserNetworkListResult",
+        "signature": "networkListRequests: (payload: AgentBrowserNetworkListPayload) => AgentBrowserNetworkListResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5418,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkListPayload",
+        "result": "AgentBrowserNetworkListResult",
+        "signature": "networkListRequests: (payload: AgentBrowserNetworkListPayload) => AgentBrowserNetworkListResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5418,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "networkGetRequestDetails",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 891,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkDetailPayload",
+        "result": "AgentBrowserNetworkDetailResult",
+        "signature": "networkGetRequestDetails: (payload: AgentBrowserNetworkDetailPayload) => AgentBrowserNetworkDetailResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5419,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkDetailPayload",
+        "result": "AgentBrowserNetworkDetailResult",
+        "signature": "networkGetRequestDetails: (payload: AgentBrowserNetworkDetailPayload) => AgentBrowserNetworkDetailResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5419,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "networkClearRequests",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 892,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkClearPayload",
+        "result": "AgentBrowserNetworkClearResult",
+        "signature": "networkClearRequests: (payload: AgentBrowserNetworkClearPayload) => AgentBrowserNetworkClearResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5420,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkClearPayload",
+        "result": "AgentBrowserNetworkClearResult",
+        "signature": "networkClearRequests: (payload: AgentBrowserNetworkClearPayload) => AgentBrowserNetworkClearResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5420,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "networkWaitForRequests",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 893,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkWaitPayload",
+        "result": "AgentBrowserNetworkWaitResult",
+        "signature": "networkWaitForRequests: (payload: AgentBrowserNetworkWaitPayload) => AgentBrowserNetworkWaitResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5421,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkWaitPayload",
+        "result": "AgentBrowserNetworkWaitResult",
+        "signature": "networkWaitForRequests: (payload: AgentBrowserNetworkWaitPayload) => AgentBrowserNetworkWaitResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "bounded timeout/abort semantics must be preserved and tested at the named checkpoint",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5421,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "networkCompareRequests",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 894,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkComparePayload",
+        "result": "AgentBrowserNetworkCompareResult",
+        "signature": "networkCompareRequests: (payload: AgentBrowserNetworkComparePayload) => AgentBrowserNetworkCompareResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5422,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkComparePayload",
+        "result": "AgentBrowserNetworkCompareResult",
+        "signature": "networkCompareRequests: (payload: AgentBrowserNetworkComparePayload) => AgentBrowserNetworkCompareResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5422,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "networkFindParameterCandidates",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 895,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkFindParamsPayload",
+        "result": "AgentBrowserNetworkFindParamsResult",
+        "signature": "networkFindParameterCandidates: (payload: AgentBrowserNetworkFindParamsPayload) => AgentBrowserNetworkFindParamsResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5423,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkFindParamsPayload",
+        "result": "AgentBrowserNetworkFindParamsResult",
+        "signature": "networkFindParameterCandidates: (payload: AgentBrowserNetworkFindParamsPayload) => AgentBrowserNetworkFindParamsResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5423,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "networkExtractJsCandidates",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 896,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkExtractJsPayload",
+        "result": "AgentBrowserNetworkExtractJsResult",
+        "signature": "networkExtractJsCandidates: (payload: AgentBrowserNetworkExtractJsPayload) => AgentBrowserNetworkExtractJsResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5424,
+        "optional": false,
+        "params": "payload: AgentBrowserNetworkExtractJsPayload",
+        "result": "AgentBrowserNetworkExtractJsResult",
+        "signature": "networkExtractJsCandidates: (payload: AgentBrowserNetworkExtractJsPayload) => AgentBrowserNetworkExtractJsResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5424,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "newPage",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 897,
+        "optional": false,
+        "params": "payload: AgentBrowserNewPagePayload",
+        "result": "AgentBrowserListPagesResult",
+        "signature": "newPage: (payload: AgentBrowserNewPagePayload) => AgentBrowserListPagesResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5425,
+        "optional": false,
+        "params": "payload: AgentBrowserNewPagePayload",
+        "result": "AgentBrowserListPagesResult",
+        "signature": "newPage: (payload: AgentBrowserNewPagePayload) => AgentBrowserListPagesResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5425,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "listPages",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 898,
+        "optional": false,
+        "params": "payload: AgentBrowserSessionPayload",
+        "result": "AgentBrowserListPagesResult",
+        "signature": "listPages: (payload: AgentBrowserSessionPayload) => AgentBrowserListPagesResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5426,
+        "optional": false,
+        "params": "payload: AgentBrowserSessionPayload",
+        "result": "AgentBrowserListPagesResult",
+        "signature": "listPages: (payload: AgentBrowserSessionPayload) => AgentBrowserListPagesResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5426,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "readDialogs",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 899,
+        "optional": true,
+        "params": "payload: AgentBrowserSessionPayload",
+        "result": "AgentBrowserDialogsResult",
+        "signature": "readDialogs?: (payload: AgentBrowserSessionPayload) => AgentBrowserDialogsResult;"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "respondDialog",
+      "origin": "source_only",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 900,
+        "optional": true,
+        "params": "payload: AgentBrowserDialogResponsePayload",
+        "result": "AgentBrowserDialogResponseResult",
+        "signature": "respondDialog?: (payload: AgentBrowserDialogResponsePayload) => AgentBrowserDialogResponseResult;"
+      },
+      "host": null,
+      "mapping": {
+        "parameterParity": "pending_source_only_wiring",
+        "resultParity": "pending_source_only_wiring",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04",
+          "M06"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "source_only_missing_from_host_surface"
+    },
+    {
+      "method": "selectPage",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 901,
+        "optional": false,
+        "params": "payload: AgentBrowserSelectPagePayload",
+        "result": "AgentBrowserListPagesResult",
+        "signature": "selectPage: (payload: AgentBrowserSelectPagePayload) => AgentBrowserListPagesResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5427,
+        "optional": false,
+        "params": "payload: AgentBrowserSelectPagePayload",
+        "result": "AgentBrowserListPagesResult",
+        "signature": "selectPage: (payload: AgentBrowserSelectPagePayload) => AgentBrowserListPagesResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5427,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "closePage",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 902,
+        "optional": false,
+        "params": "payload: AgentBrowserClosePagePayload",
+        "result": "AgentBrowserListPagesResult",
+        "signature": "closePage: (payload: AgentBrowserClosePagePayload) => AgentBrowserListPagesResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5428,
+        "optional": false,
+        "params": "payload: AgentBrowserClosePagePayload",
+        "result": "AgentBrowserListPagesResult",
+        "signature": "closePage: (payload: AgentBrowserClosePagePayload) => AgentBrowserListPagesResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5428,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "navigatePage",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 903,
+        "optional": false,
+        "params": "payload: AgentBrowserNavigatePagePayload",
+        "result": "AgentBrowserListPagesResult",
+        "signature": "navigatePage: (payload: AgentBrowserNavigatePagePayload) => AgentBrowserListPagesResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5429,
+        "optional": false,
+        "params": "payload: AgentBrowserNavigatePagePayload",
+        "result": "AgentBrowserListPagesResult",
+        "signature": "navigatePage: (payload: AgentBrowserNavigatePagePayload) => AgentBrowserListPagesResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5429,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "jsListResources",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 904,
+        "optional": false,
+        "params": "payload: AgentBrowserJsListResourcesPayload",
+        "result": "AgentBrowserJsListResourcesResult",
+        "signature": "jsListResources: (payload: AgentBrowserJsListResourcesPayload) => AgentBrowserJsListResourcesResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5430,
+        "optional": false,
+        "params": "payload: AgentBrowserJsListResourcesPayload",
+        "result": "AgentBrowserJsListResourcesResult",
+        "signature": "jsListResources: (payload: AgentBrowserJsListResourcesPayload) => AgentBrowserJsListResourcesResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5430,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "jsSearchSources",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 905,
+        "optional": false,
+        "params": "payload: AgentBrowserJsSearchSourcesPayload",
+        "result": "AgentBrowserJsSearchSourcesResult",
+        "signature": "jsSearchSources: (payload: AgentBrowserJsSearchSourcesPayload) => AgentBrowserJsSearchSourcesResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5431,
+        "optional": false,
+        "params": "payload: AgentBrowserJsSearchSourcesPayload",
+        "result": "AgentBrowserJsSearchSourcesResult",
+        "signature": "jsSearchSources: (payload: AgentBrowserJsSearchSourcesPayload) => AgentBrowserJsSearchSourcesResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5431,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "jsExtractContext",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 906,
+        "optional": false,
+        "params": "payload: AgentBrowserJsExtractContextPayload",
+        "result": "AgentBrowserJsExtractContextResult",
+        "signature": "jsExtractContext: (payload: AgentBrowserJsExtractContextPayload) => AgentBrowserJsExtractContextResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5432,
+        "optional": false,
+        "params": "payload: AgentBrowserJsExtractContextPayload",
+        "result": "AgentBrowserJsExtractContextResult",
+        "signature": "jsExtractContext: (payload: AgentBrowserJsExtractContextPayload) => AgentBrowserJsExtractContextResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5432,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "sourceMapListCandidates",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 907,
+        "optional": false,
+        "params": "payload: AgentBrowserSourceMapListCandidatesPayload",
+        "result": "AgentBrowserSourceMapListCandidatesResult",
+        "signature": "sourceMapListCandidates: (payload: AgentBrowserSourceMapListCandidatesPayload) => AgentBrowserSourceMapListCandidatesResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5433,
+        "optional": false,
+        "params": "payload: AgentBrowserSourceMapListCandidatesPayload",
+        "result": "AgentBrowserSourceMapListCandidatesResult",
+        "signature": "sourceMapListCandidates: (payload: AgentBrowserSourceMapListCandidatesPayload) => AgentBrowserSourceMapListCandidatesResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5433,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "sourceMapResolveLocation",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 908,
+        "optional": false,
+        "params": "payload: AgentBrowserSourceMapResolveLocationPayload",
+        "result": "AgentBrowserSourceMapResolveLocationResult",
+        "signature": "sourceMapResolveLocation: (payload: AgentBrowserSourceMapResolveLocationPayload) => AgentBrowserSourceMapResolveLocationResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5434,
+        "optional": false,
+        "params": "payload: AgentBrowserSourceMapResolveLocationPayload",
+        "result": "AgentBrowserSourceMapResolveLocationResult",
+        "signature": "sourceMapResolveLocation: (payload: AgentBrowserSourceMapResolveLocationPayload) => AgentBrowserSourceMapResolveLocationResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5434,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "sourceMapExtractOriginalContext",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 909,
+        "optional": false,
+        "params": "payload: AgentBrowserSourceMapExtractOriginalContextPayload",
+        "result": "AgentBrowserSourceMapExtractOriginalContextResult",
+        "signature": "sourceMapExtractOriginalContext: (payload: AgentBrowserSourceMapExtractOriginalContextPayload) => AgentBrowserSourceMapExtractOriginalContextResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5435,
+        "optional": false,
+        "params": "payload: AgentBrowserSourceMapExtractOriginalContextPayload",
+        "result": "AgentBrowserSourceMapExtractOriginalContextResult",
+        "signature": "sourceMapExtractOriginalContext: (payload: AgentBrowserSourceMapExtractOriginalContextPayload) => AgentBrowserSourceMapExtractOriginalContextResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5435,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "runtimeInspectGlobals",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 910,
+        "optional": false,
+        "params": "payload: AgentBrowserRuntimeInspectGlobalsPayload",
+        "result": "AgentBrowserRuntimeInspectGlobalsResult",
+        "signature": "runtimeInspectGlobals: (payload: AgentBrowserRuntimeInspectGlobalsPayload) => AgentBrowserRuntimeInspectGlobalsResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5436,
+        "optional": false,
+        "params": "payload: AgentBrowserRuntimeInspectGlobalsPayload",
+        "result": "AgentBrowserRuntimeInspectGlobalsResult",
+        "signature": "runtimeInspectGlobals: (payload: AgentBrowserRuntimeInspectGlobalsPayload) => AgentBrowserRuntimeInspectGlobalsResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5436,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "runtimeSearchModules",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 911,
+        "optional": false,
+        "params": "payload: AgentBrowserRuntimeSearchModulesPayload",
+        "result": "AgentBrowserRuntimeSearchModulesResult",
+        "signature": "runtimeSearchModules: (payload: AgentBrowserRuntimeSearchModulesPayload) => AgentBrowserRuntimeSearchModulesResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5437,
+        "optional": false,
+        "params": "payload: AgentBrowserRuntimeSearchModulesPayload",
+        "result": "AgentBrowserRuntimeSearchModulesResult",
+        "signature": "runtimeSearchModules: (payload: AgentBrowserRuntimeSearchModulesPayload) => AgentBrowserRuntimeSearchModulesResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5437,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "runtimeDescribeFunction",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 912,
+        "optional": false,
+        "params": "payload: AgentBrowserRuntimeDescribeFunctionPayload",
+        "result": "AgentBrowserRuntimeDescribeFunctionResult",
+        "signature": "runtimeDescribeFunction: (payload: AgentBrowserRuntimeDescribeFunctionPayload) => AgentBrowserRuntimeDescribeFunctionResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5438,
+        "optional": false,
+        "params": "payload: AgentBrowserRuntimeDescribeFunctionPayload",
+        "result": "AgentBrowserRuntimeDescribeFunctionResult",
+        "signature": "runtimeDescribeFunction: (payload: AgentBrowserRuntimeDescribeFunctionPayload) => AgentBrowserRuntimeDescribeFunctionResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5438,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "replayPrepareRequest",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 913,
+        "optional": false,
+        "params": "payload: AgentBrowserReplayPrepareRequestPayload",
+        "result": "AgentBrowserReplayPrepareRequestResult",
+        "signature": "replayPrepareRequest: (payload: AgentBrowserReplayPrepareRequestPayload) => AgentBrowserReplayPrepareRequestResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5439,
+        "optional": false,
+        "params": "payload: AgentBrowserReplayPrepareRequestPayload",
+        "result": "AgentBrowserReplayPrepareRequestResult",
+        "signature": "replayPrepareRequest: (payload: AgentBrowserReplayPrepareRequestPayload) => AgentBrowserReplayPrepareRequestResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5439,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "replaySendRequest",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 914,
+        "optional": false,
+        "params": "payload: AgentBrowserReplaySendRequestPayload",
+        "result": "AgentBrowserReplaySendRequestResult",
+        "signature": "replaySendRequest: (payload: AgentBrowserReplaySendRequestPayload) => AgentBrowserReplaySendRequestResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5440,
+        "optional": false,
+        "params": "payload: AgentBrowserReplaySendRequestPayload",
+        "result": "AgentBrowserReplaySendRequestResult",
+        "signature": "replaySendRequest: (payload: AgentBrowserReplaySendRequestPayload) => AgentBrowserReplaySendRequestResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5440,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "replayCompareResponses",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 915,
+        "optional": false,
+        "params": "payload: AgentBrowserReplayCompareResponsesPayload",
+        "result": "AgentBrowserReplayCompareResponsesResult",
+        "signature": "replayCompareResponses: (payload: AgentBrowserReplayCompareResponsesPayload) => AgentBrowserReplayCompareResponsesResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5441,
+        "optional": false,
+        "params": "payload: AgentBrowserReplayCompareResponsesPayload",
+        "result": "AgentBrowserReplayCompareResponsesResult",
+        "signature": "replayCompareResponses: (payload: AgentBrowserReplayCompareResponsesPayload) => AgentBrowserReplayCompareResponsesResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5441,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "getConsoleMessages",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 916,
+        "optional": false,
+        "params": "payload: AgentBrowserConsoleMessagesPayload",
+        "result": "AgentBrowserConsoleMessagesResult",
+        "signature": "getConsoleMessages: (payload: AgentBrowserConsoleMessagesPayload) => AgentBrowserConsoleMessagesResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5442,
+        "optional": false,
+        "params": "payload: AgentBrowserConsoleMessagesPayload",
+        "result": "AgentBrowserConsoleMessagesResult",
+        "signature": "getConsoleMessages: (payload: AgentBrowserConsoleMessagesPayload) => AgentBrowserConsoleMessagesResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M07",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5442,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": "getConsoleMessages",
+          "present": true
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "fullAccessExecuteScript",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 917,
+        "optional": false,
+        "params": "payload: AgentBrowserFullAccessExecuteScriptPayload",
+        "result": "AgentBrowserFullAccessExecuteScriptResult",
+        "signature": "fullAccessExecuteScript: (payload: AgentBrowserFullAccessExecuteScriptPayload) => AgentBrowserFullAccessExecuteScriptResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5443,
+        "optional": false,
+        "params": "payload: AgentBrowserFullAccessExecuteScriptPayload",
+        "result": "AgentBrowserFullAccessExecuteScriptResult",
+        "signature": "fullAccessExecuteScript: (payload: AgentBrowserFullAccessExecuteScriptPayload) => AgentBrowserFullAccessExecuteScriptResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M03",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5443,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "fullAccessFetch",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 918,
+        "optional": false,
+        "params": "payload: AgentBrowserFullAccessFetchPayload",
+        "result": "AgentBrowserFullAccessFetchResult",
+        "signature": "fullAccessFetch: (payload: AgentBrowserFullAccessFetchPayload) => AgentBrowserFullAccessFetchResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5444,
+        "optional": false,
+        "params": "payload: AgentBrowserFullAccessFetchPayload",
+        "result": "AgentBrowserFullAccessFetchResult",
+        "signature": "fullAccessFetch: (payload: AgentBrowserFullAccessFetchPayload) => AgentBrowserFullAccessFetchResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M03",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5444,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "fullAccessGetNetworkDetails",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 919,
+        "optional": false,
+        "params": "payload: AgentBrowserFullAccessGetNetworkDetailsPayload",
+        "result": "AgentBrowserFullAccessGetNetworkDetailsResult",
+        "signature": "fullAccessGetNetworkDetails: (payload: AgentBrowserFullAccessGetNetworkDetailsPayload) => AgentBrowserFullAccessGetNetworkDetailsResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5445,
+        "optional": false,
+        "params": "payload: AgentBrowserFullAccessGetNetworkDetailsPayload",
+        "result": "AgentBrowserFullAccessGetNetworkDetailsResult",
+        "signature": "fullAccessGetNetworkDetails: (payload: AgentBrowserFullAccessGetNetworkDetailsPayload) => AgentBrowserFullAccessGetNetworkDetailsResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M03",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5445,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "fullAccessReadStorage",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 920,
+        "optional": false,
+        "params": "payload: AgentBrowserFullAccessReadStoragePayload",
+        "result": "AgentBrowserFullAccessReadStorageResult",
+        "signature": "fullAccessReadStorage: (payload: AgentBrowserFullAccessReadStoragePayload) => AgentBrowserFullAccessReadStorageResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5446,
+        "optional": false,
+        "params": "payload: AgentBrowserFullAccessReadStoragePayload",
+        "result": "AgentBrowserFullAccessReadStorageResult",
+        "signature": "fullAccessReadStorage: (payload: AgentBrowserFullAccessReadStoragePayload) => AgentBrowserFullAccessReadStorageResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M03",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5446,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "fullAccessRevoke",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 921,
+        "optional": false,
+        "params": "payload: AgentBrowserFullAccessRevokePayload",
+        "result": "AgentBrowserFullAccessRevokeResult",
+        "signature": "fullAccessRevoke: (payload: AgentBrowserFullAccessRevokePayload) => AgentBrowserFullAccessRevokeResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5447,
+        "optional": false,
+        "params": "payload: AgentBrowserFullAccessRevokePayload",
+        "result": "AgentBrowserFullAccessRevokeResult",
+        "signature": "fullAccessRevoke: (payload: AgentBrowserFullAccessRevokePayload) => AgentBrowserFullAccessRevokeResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M03",
+          "M08"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5447,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "extractPageText",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 922,
+        "optional": false,
+        "params": "payload: AgentBrowserExtractPageTextPayload",
+        "result": "AgentBrowserExtractPageTextResult",
+        "signature": "extractPageText: (payload: AgentBrowserExtractPageTextPayload) => AgentBrowserExtractPageTextResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5448,
+        "optional": false,
+        "params": "payload: AgentBrowserExtractPageTextPayload",
+        "result": "AgentBrowserExtractPageTextResult",
+        "signature": "extractPageText: (payload: AgentBrowserExtractPageTextPayload) => AgentBrowserExtractPageTextResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5448,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    },
+    {
+      "method": "validateExtractionRule",
+      "origin": "legacy_shared",
+      "source": {
+        "path": "src/types/host-api.ts",
+        "line": 923,
+        "optional": false,
+        "params": "payload: AgentBrowserValidateExtractionRulePayload",
+        "result": "AgentBrowserValidateExtractionRuleResult",
+        "signature": "validateExtractionRule: (payload: AgentBrowserValidateExtractionRulePayload) => AgentBrowserValidateExtractionRuleResult;"
+      },
+      "host": {
+        "path": "shared/host-api/contract.ts",
+        "line": 5449,
+        "optional": false,
+        "params": "payload: AgentBrowserValidateExtractionRulePayload",
+        "result": "AgentBrowserValidateExtractionRuleResult",
+        "signature": "validateExtractionRule: (payload: AgentBrowserValidateExtractionRulePayload) => AgentBrowserValidateExtractionRuleResult;"
+      },
+      "mapping": {
+        "parameterParity": "exact",
+        "resultParity": "exact_type_name",
+        "permissionGate": "ClawX sandbox high-risk gate (fail-closed when degraded)",
+        "cancellation": "no separate cancellation channel in the current contract; preserve existing timeout/error behavior",
+        "errors": "preserve action context, success/error discriminator, truncation/omission and recovery references through facade and host envelopes",
+        "runtimePolicy": "existing Main policy remains authoritative",
+        "checkpoints": [
+          "M04"
+        ]
+      },
+      "consumers": [
+        {
+          "path": "shared/host-api/contract.ts",
+          "line": 5449,
+          "present": true
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "line": null,
+          "present": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "action": null,
+          "present": false
+        }
+      ],
+      "integrationState": "present_in_current_host_surface"
+    }
+  ],
+  "checks": {
+    "legacyCountExact": true,
+    "sourceOnlyCountExact": true,
+    "sourceSignaturesCaptured": true,
+    "legacyHostSignaturesCaptured": true,
+    "legacySignatureParityExceptOpenSignal": true,
+    "runtimeExposureExplicit": true
+  },
+  "validationBoundary": "This is an ownership map, not an implemented or advertised capability list. Source-only entries remain absent from the current host surface."
+}

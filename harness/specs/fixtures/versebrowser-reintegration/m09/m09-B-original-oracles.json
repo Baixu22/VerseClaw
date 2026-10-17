@@ -1,0 +1,592 @@
+{
+  "schemaVersion": 1,
+  "matrix": "original-v2",
+  "originalTaskCount": 24,
+  "entryPointCount": 2,
+  "results": [
+    {
+      "entrance": "SDK",
+      "taskId": "mig-01-docs-quote",
+      "status": "not_run"
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-02-table-pages",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:17:54.636Z",
+      "oracle": "r02/r04/r06fromtwopages with exactamount/status; firstpageonlyandmissingsecondfield rejected",
+      "ioRange": [
+        201,
+        208
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-03-form-native",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:16:51.220Z",
+      "oracle": "one server multipart-free form receipt, exact name/value/label/multi/checked; empty required submission yields0",
+      "ioRange": [
+        0,
+        10
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-04-form-custom",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:17:51.415Z",
+      "oracle": "invalidbademailzero receipt, nativecustomcombo and correctedemail oneexactserverreceipt",
+      "ioRange": [
+        157,
+        188
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-05-spa-navigation",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:16:59.713Z",
+      "oracle": "oldref rejected and onlyitem202receipt across fixedseeds0/1/2",
+      "ioRange": [
+        0,
+        49
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-06-fast-response",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:16:59.713Z",
+      "oracle": "old response cannot satisfy new cursor; one new-id response perseed0/1/2",
+      "ioRange": [
+        0,
+        49
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-07-menu-scroll",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:17:04.476Z",
+      "oracle": "nativehover+nestedscroll Item20serverreceipt; duplicate/coveredzeroextraeffects",
+      "ioRange": [
+        0,
+        78
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-08-list-drag",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:17:06.264Z",
+      "oracle": "virtual30-row source21draggedbefore20 with persistedserverorder; stalevirtualrefrefused",
+      "ioRange": [
+        0,
+        90
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-09-popup-return",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:04.693Z",
+      "oracle": "explicit parent/child/openerIDs andclose/reselect retain draft-A; foreign/staleref rejected",
+      "ioRange": [
+        247,
+        275
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-10-dialog",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:06.003Z",
+      "oracle": "confirmcancelzero sideeffect; explicitapprovedpromptreceipt; foreign/stale/defaultaccept refused",
+      "ioRange": [
+        247,
+        300
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-11-iframe",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:17:09.501Z",
+      "oracle": "authorized cross-origin leaf ref posted one exact peer receipt; detached stale ref refused without replay",
+      "ioRange": [
+        93,
+        102
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-12-shadow",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:17:10.992Z",
+      "oracle": "open shadow field/button posted one exact receipt; closed shadow stayed unreachable and unexecuted",
+      "ioRange": [
+        103,
+        109
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-13-upload",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:17:27.160Z",
+      "oracle": "native UTF8versebrowserLFreceiverbytes/hash; physicaljunctionsourceoutsideworkspace refused",
+      "ioRange": [
+        138,
+        145
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-14-download",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:17:34.547Z",
+      "oracle": "exactfrozenCSVnativebytes andserver-startedcancel has nofile/completion; no replay",
+      "ioRange": [
+        138,
+        154
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-15-editor-save",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:17:02.026Z",
+      "oracle": "server emptythenUnicodecontent receipts and reload exacttext; olddraft rejected",
+      "ioRange": [
+        0,
+        61
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-16-keyboard-focus",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:17:02.174Z",
+      "oracle": "Aalpha/Bbeta via nativekeyflow; deniedControlW preservespageandfields",
+      "ioRange": [
+        0,
+        70
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-17-viewport-desktop",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:17:17.211Z",
+      "oracle": "independent form receipt and exact viewport/DPR/PNGdimensions; successful screenshot never overrides failed business/hidden target",
+      "ioRange": [
+        111,
+        121
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-18-viewport-mobile",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:17:24.336Z",
+      "oracle": "independent form receipt and exact viewport/DPR/PNGdimensions; successful screenshot never overrides failed business/hidden target",
+      "ioRange": [
+        123,
+        134
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-19-debug-mapped",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:19:28.510Z",
+      "oracle": "originalpromo-crashnativeconsole -> src/promo.ts14; brokenfail/fixedpass independentexpectation",
+      "ioRange": [
+        668,
+        673
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-20-debug-negative",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:19:28.525Z",
+      "oracle": "noresolverunmappedoriginalstack; cleanpagewrongbusinessfail",
+      "ioRange": [
+        668,
+        675
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-21-auth-session",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:01.401Z",
+      "oracle": "fixture test account signs in; the protected page reports that account with an Active session; a named/personal profile is refused by the standalone upstream slice",
+      "ioRange": [
+        229,
+        237
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-22-auth-handoff",
+      "status": "not_run"
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-23-permission-isolation",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:19:29.927Z",
+      "oracle": "twoownedworkspaces; Afieldoneaccepted thenactrevoke keepssecondold whileBsecondbeta",
+      "ioRange": [
+        686,
+        695
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "mig-24-cancel-reconnect",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:16:43.199Z",
+      "oracle": "dispose() cancels a pending wait (ends not-ok); another entrance session stays usable (vb_page_text still returns the receipt); the disposed facade refuses further opens (E_DISPOSED). Maintainer decision 2026-10-14: dispose() is the accepted Codex-cancel proxy."
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-01-docs-quote",
+      "status": "not_run"
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-02-table-pages",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:19:05.751Z",
+      "oracle": "r02/r04/r06fromtwopages with exactamount/status; firstpageonlyandmissingsecondfield rejected",
+      "ioRange": [
+        529,
+        536
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-03-form-native",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:16.663Z",
+      "oracle": "one server multipart-free form receipt, exact name/value/label/multi/checked; empty required submission yields0",
+      "ioRange": [
+        328,
+        338
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-04-form-custom",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:19:03.830Z",
+      "oracle": "invalidbademailzero receipt, nativecustomcombo and correctedemail oneexactserverreceipt",
+      "ioRange": [
+        485,
+        516
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-05-spa-navigation",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:25.196Z",
+      "oracle": "oldref rejected and onlyitem202receipt across fixedseeds0/1/2",
+      "ioRange": [
+        328,
+        377
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-06-fast-response",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:25.196Z",
+      "oracle": "old response cannot satisfy new cursor; one new-id response perseed0/1/2",
+      "ioRange": [
+        328,
+        377
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-07-menu-scroll",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:29.357Z",
+      "oracle": "nativehover+nestedscroll Item20serverreceipt; duplicate/coveredzeroextraeffects",
+      "ioRange": [
+        328,
+        406
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-08-list-drag",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:31.078Z",
+      "oracle": "virtual30-row source21draggedbefore20 with persistedserverorder; stalevirtualrefrefused",
+      "ioRange": [
+        328,
+        418
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-09-popup-return",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:19:14.624Z",
+      "oracle": "explicit parent/child/openerIDs andclose/reselect retain draft-A; foreign/staleref rejected",
+      "ioRange": [
+        575,
+        603
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-10-dialog",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:19:15.927Z",
+      "oracle": "confirmcancelzero sideeffect; explicitapprovedpromptreceipt; foreign/stale/defaultaccept refused",
+      "ioRange": [
+        575,
+        628
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-11-iframe",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:34.699Z",
+      "oracle": "authorized cross-origin leaf ref posted one exact peer receipt; detached stale ref refused without replay",
+      "ioRange": [
+        421,
+        430
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-12-shadow",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:36.135Z",
+      "oracle": "open shadow field/button posted one exact receipt; closed shadow stayed unreachable and unexecuted",
+      "ioRange": [
+        431,
+        437
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-13-upload",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:54.994Z",
+      "oracle": "native UTF8versebrowserLFreceiverbytes/hash; physicaljunctionsourceoutsideworkspace refused",
+      "ioRange": [
+        466,
+        473
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-14-download",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:56.742Z",
+      "oracle": "exactfrozenCSVnativebytes andserver-startedcancel has nofile/completion; no replay",
+      "ioRange": [
+        466,
+        482
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-15-editor-save",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:27.539Z",
+      "oracle": "server emptythenUnicodecontent receipts and reload exacttext; olddraft rejected",
+      "ioRange": [
+        328,
+        389
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-16-keyboard-focus",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:27.630Z",
+      "oracle": "Aalpha/Bbeta via nativekeyflow; deniedControlW preservespageandfields",
+      "ioRange": [
+        328,
+        398
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-17-viewport-desktop",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:42.831Z",
+      "oracle": "independent form receipt and exact viewport/DPR/PNGdimensions; successful screenshot never overrides failed business/hidden target",
+      "ioRange": [
+        439,
+        449
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-18-viewport-mobile",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:18:52.482Z",
+      "oracle": "independent form receipt and exact viewport/DPR/PNGdimensions; successful screenshot never overrides failed business/hidden target",
+      "ioRange": [
+        451,
+        462
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-19-debug-mapped",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:19:28.948Z",
+      "oracle": "originalpromo-crashnativeconsole -> src/promo.ts14; brokenfail/fixedpass independentexpectation",
+      "ioRange": [
+        677,
+        682
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-20-debug-negative",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:19:29.235Z",
+      "oracle": "noresolverunmappedoriginalstack; cleanpagewrongbusinessfail",
+      "ioRange": [
+        677,
+        684
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-21-auth-session",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:19:11.312Z",
+      "oracle": "fixture test account signs in; the protected page reports that account with an Active session; a named/personal profile is refused by the standalone upstream slice",
+      "ioRange": [
+        557,
+        565
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-22-auth-handoff",
+      "status": "not_run"
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-23-permission-isolation",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:19:31.928Z",
+      "oracle": "twoownedworkspaces; Afieldoneaccepted thenactrevoke keepssecondold whileBsecondbeta",
+      "ioRange": [
+        696,
+        705
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "mig-24-cancel-reconnect",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T15:19:21.118Z",
+      "oracle": "worker closed and gone at the OS boundary (ESRCH); the restarted worker rejects the old session (unknown session) and old pageId (E_PAGE_ID) with the page count unchanged; the restarted worker exits. Maintainer decision 2026-10-14: worker close is the accepted Codex-cancel proxy."
+    }
+  ]
+}

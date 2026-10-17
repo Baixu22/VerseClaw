@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m01-checker-evidence",
+  "scope": "M01 checker and negative-case evidence; preparation is not migration completion",
+  "driven_by": "agent",
+  "actor": "codex",
+  "commands": [
+    {
+      "command": "node scripts/versebrowser-reintegration-check.mjs --json",
+      "exitCode": 0,
+      "purpose": "preparation report"
+    },
+    {
+      "command": "node scripts/versebrowser-reintegration-check.mjs --require-final --json",
+      "exitCode": 1,
+      "purpose": "must reject incomplete migration even when preparation checks pass"
+    },
+    {
+      "command": "node --test --test-reporter=tap scripts/versebrowser-reintegration-check.test.mjs",
+      "exitCode": 0,
+      "purpose": "positive fixture plus five required rejection classes"
+    }
+  ],
+  "tests": {
+    "count": 6,
+    "cases": [
+      "accepts a preserved preparation baseline without declaring migration complete",
+      "rejects a missing frozen source input",
+      "rejects deletion of a legacy host method",
+      "rejects an omitted source-task mapping",
+      "rejects a process-only path in the next-phase allowlist",
+      "rejects a runtime patch that is not registered in the source lock"
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "m01-check-report.json",
+      "sha256": "d7970c0246161ebf9d0151d99f0a43212f97f35666a681b101454b7ff7ecec34",
+      "bytes": 8609
+    },
+    {
+      "path": "m01-final-mode-report.json",
+      "sha256": "fd46bae05631256a5eefc55d3d4962a258648e2e081065312d40a851d37eb701",
+      "bytes": 8603
+    },
+    {
+      "path": "m01-negative-tests.tap",
+      "sha256": "ab3b9a6c318a1424b4d453551fbf4acf9fefa19a34a8b2ee8f1b1267d9dbb786",
+      "bytes": 1154
+    }
+  ],
+  "acceptance": {
+    "source_path_api_task_checks_use_frozen_lock": true,
+    "missing_source_file_rejected": true,
+    "deleted_legacy_method_rejected": true,
+    "missing_source_task_rejected": true,
+    "process_path_rejected": true,
+    "unregistered_patch_rejected": true,
+    "outputs_are_separate": true,
+    "preparation_does_not_claim_complete": true
+  },
+  "validationBoundary": "The checker concludes prepared/incomplete from frozen inputs. It does not import product code or prove runtime, package or release acceptance.",
+  "implementation": [
+    {
+      "path": "scripts/versebrowser-reintegration-check.mjs",
+      "sha256": "345e82086e1c9de0e8853ec6ed8f76aa5cf43918112ebcdfbffd8296d06f1b0c",
+      "bytes": 14913
+    },
+    {
+      "path": "scripts/versebrowser-reintegration-check.test.mjs",
+      "sha256": "63303bfe8097bb1e555b624e0f848aa39fc8100325526ce235b2ed8d61b2c72c",
+      "bytes": 4364
+    }
+  ]
+}

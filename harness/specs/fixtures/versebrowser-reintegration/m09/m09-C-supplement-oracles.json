@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "matrix": "supplement-v1",
+  "original24Untouched": true,
+  "results": [
+    {
+      "entrance": "SDK",
+      "taskId": "read-01",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T14:53:50.960Z",
+      "oracle": "independent r02/r04/r06 values and sources; incomplete page and missing amount rejected",
+      "ioRange": [
+        201,
+        208
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "read-02",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T14:53:50.980Z",
+      "oracle": "declared metadata and duplicate-text link targets preserved; missing description and unvisited canonical do not become source",
+      "ioRange": [
+        201,
+        211
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "form-01",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T14:53:42.879Z",
+      "oracle": "native field ownership/options/flags with zero read-side events; intentional wrong owner rejected",
+      "ioRange": [
+        157,
+        160
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "form-02",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T14:53:43.082Z",
+      "oracle": "native validity corrected, associated error cleared, unobserved server validation stays unknown; synthetic pass rejected",
+      "ioRange": [
+        157,
+        172
+      ]
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "site-01",
+      "status": "not_run",
+      "reason": "requires actual external HTTPS run; never substituted by local consumer"
+    },
+    {
+      "entrance": "SDK",
+      "taskId": "site-02",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T14:54:03.499Z",
+      "oracle": "server A redirect/B page/A asset counts plus C zero connections; intentional C hit rejected",
+      "ioRange": [
+        239,
+        245
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "read-01",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T14:55:03.669Z",
+      "oracle": "independent r02/r04/r06 values and sources; incomplete page and missing amount rejected",
+      "ioRange": [
+        529,
+        536
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "read-02",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T14:55:03.689Z",
+      "oracle": "declared metadata and duplicate-text link targets preserved; missing description and unvisited canonical do not become source",
+      "ioRange": [
+        529,
+        539
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "form-01",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T14:54:55.552Z",
+      "oracle": "native field ownership/options/flags with zero read-side events; intentional wrong owner rejected",
+      "ioRange": [
+        485,
+        488
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "form-02",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T14:54:55.773Z",
+      "oracle": "native validity corrected, associated error cleared, unobserved server validation stays unknown; synthetic pass rejected",
+      "ioRange": [
+        485,
+        500
+      ]
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "site-01",
+      "status": "not_run",
+      "reason": "requires actual external HTTPS run; never substituted by local consumer"
+    },
+    {
+      "entrance": "stdio",
+      "taskId": "site-02",
+      "status": "pass",
+      "positive": "pass",
+      "negative": "pass",
+      "finishedAt": "2026-10-15T14:55:09.446Z",
+      "oracle": "server A redirect/B page/A asset counts plus C zero connections; intentional C hit rejected",
+      "ioRange": [
+        567,
+        573
+      ]
+    }
+  ]
+}

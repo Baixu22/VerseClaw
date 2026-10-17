@@ -1,0 +1,924 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "sourceCommit": "47b076f85d4e37cdaea67c1564d1c4f4dbf2b011",
+  "packageRoot": "packages/versebrowser",
+  "files": [
+    {
+      "source": "src/cli.ts",
+      "target": "packages/versebrowser/src/cli.ts",
+      "sha256": "38bd90f49822fbf7b6f30e7fd39884556c1fb10e5f1de4ead6613c6858ad96c1",
+      "lfSha256": "38bd90f49822fbf7b6f30e7fd39884556c1fb10e5f1de4ead6613c6858ad96c1",
+      "bytes": 20200
+    },
+    {
+      "source": "src/collab/multi-agent-boundary.ts",
+      "target": "packages/versebrowser/src/collab/multi-agent-boundary.ts",
+      "sha256": "1bb3ff686ff68c84b8663816844132c2cf0dc5d2439da9195c293148754687ec",
+      "lfSha256": "1bb3ff686ff68c84b8663816844132c2cf0dc5d2439da9195c293148754687ec",
+      "bytes": 8078
+    },
+    {
+      "source": "src/collab/remote-policy.ts",
+      "target": "packages/versebrowser/src/collab/remote-policy.ts",
+      "sha256": "8aeef207ed3156bc0c0bbb8f95c494206cc9b6963461ea863ede21e250f12348",
+      "lfSha256": "8aeef207ed3156bc0c0bbb8f95c494206cc9b6963461ea863ede21e250f12348",
+      "bytes": 10060
+    },
+    {
+      "source": "src/contracts/index.ts",
+      "target": "packages/versebrowser/src/contracts/index.ts",
+      "sha256": "be81154674bbb4c14eb60ac4e35841dfdd1e6f26b9bdc2f72a72095e192f9bb5",
+      "lfSha256": "be81154674bbb4c14eb60ac4e35841dfdd1e6f26b9bdc2f72a72095e192f9bb5",
+      "bytes": 6606
+    },
+    {
+      "source": "src/core/automation-playbook-selector.ts",
+      "target": "packages/versebrowser/src/core/automation-playbook-selector.ts",
+      "sha256": "845f38ce8880c72c22c2b8791c36dcc50c52fffde7160423fec07f80abd33724",
+      "lfSha256": "337c4e05b691c440c02b2006a1ae58d908a94b0e6422363686c7282c86759b0b",
+      "bytes": 5812
+    },
+    {
+      "source": "src/core/automation-playbooks.ts",
+      "target": "packages/versebrowser/src/core/automation-playbooks.ts",
+      "sha256": "3f9249f8cb8acbda98b45ee91b80d9e7be5aa32d103d88f61e289b42dfd005fc",
+      "lfSha256": "ec2c0ac43e0bc067e9c2fb94b2d7c9cb55088afca8b07b9a012df52bc99ebfb1",
+      "bytes": 13005
+    },
+    {
+      "source": "src/core/browser-control.ts",
+      "target": "packages/versebrowser/src/core/browser-control.ts",
+      "sha256": "aaba1becab778d420942f34f7fae926df0334cbb136a8c0acfd485022a5e97b0",
+      "lfSha256": "87ddb8c8d715b19efdcb90080078543654796083ae9ea0d8932cca9f0960adb3",
+      "bytes": 5621
+    },
+    {
+      "source": "src/core/extraction-rules/validation.ts",
+      "target": "packages/versebrowser/src/core/extraction-rules/validation.ts",
+      "sha256": "a04ef84b5ce1a8e1ffbeb75b272758ec3c1b8d63640da0f32f3b5022b52713db",
+      "lfSha256": "90a18de892e57873c7282042fbf1c2816dcb38f0ea6b98b994674e6bf3d9ec96",
+      "bytes": 4658
+    },
+    {
+      "source": "src/core/filesystem-boundary.ts",
+      "target": "packages/versebrowser/src/core/filesystem-boundary.ts",
+      "sha256": "9f917610c88a354a51b5a17e75293df4c7ce98f2e5b1288edcde39840ad3816a",
+      "lfSha256": "2f536aad37b5bf98f2fb094d7489662138ca6ebb5107d3af60c6ec8b532b3820",
+      "bytes": 3117
+    },
+    {
+      "source": "src/core/index.ts",
+      "target": "packages/versebrowser/src/core/index.ts",
+      "sha256": "4a7cf1ff0eb509dad68fc8be5a469a85c813823ce4fab9ec865bf8265fe73946",
+      "lfSha256": "4a7cf1ff0eb509dad68fc8be5a469a85c813823ce4fab9ec865bf8265fe73946",
+      "bytes": 538
+    },
+    {
+      "source": "src/core/network-context.ts",
+      "target": "packages/versebrowser/src/core/network-context.ts",
+      "sha256": "46550063b927358d08a905a58e38fab9901916c73d0be29c61e553513f81a460",
+      "lfSha256": "3c39eb32de8e22efbb0cba671d56bf8faa6ad4ec1c7fa2807197c2778857a623",
+      "bytes": 11289
+    },
+    {
+      "source": "src/core/runtime-mode-policy.ts",
+      "target": "packages/versebrowser/src/core/runtime-mode-policy.ts",
+      "sha256": "0cf10e9b3128b866fa8e7017cc5c1ed64e24364ed95ddb6c0d3f24effcc2a07a",
+      "lfSha256": "0cf10e9b3128b866fa8e7017cc5c1ed64e24364ed95ddb6c0d3f24effcc2a07a",
+      "bytes": 7620
+    },
+    {
+      "source": "src/core/text.ts",
+      "target": "packages/versebrowser/src/core/text.ts",
+      "sha256": "74c2b974abd088eb0542e18457471b1b006ab42879274bc3075d94ad4cb7ce92",
+      "lfSha256": "3512cb9b4512dc0b353a3da6c61a98df12a42315b5fab728a1889e72627ea97a",
+      "bytes": 584
+    },
+    {
+      "source": "src/core/tool-artifacts.ts",
+      "target": "packages/versebrowser/src/core/tool-artifacts.ts",
+      "sha256": "d8d459c4c62755c13c251f42794d91234a005e1785d4465d9d053bdfbbca26dc",
+      "lfSha256": "0192015281c0c83183124eca6ea4833ba3d34cda17637aa70b113a6ac449949f",
+      "bytes": 91426
+    },
+    {
+      "source": "src/core/tool-authorization.ts",
+      "target": "packages/versebrowser/src/core/tool-authorization.ts",
+      "sha256": "af533645bdffa4e57a00a51be2eabaeb5005a085005282b3b4e1a40e8c93c282",
+      "lfSha256": "b59391f7be253275f3bca0f48eb2ffa93139f41314e4397c0a2c357afdc58c8b",
+      "bytes": 5370
+    },
+    {
+      "source": "src/core/tool-classification.ts",
+      "target": "packages/versebrowser/src/core/tool-classification.ts",
+      "sha256": "4c757f047054e4c15d9dd9fb1f0bd7caa6ec8a6b4594a9fc90820873dfe7cc63",
+      "lfSha256": "350601d9500f11c5c22061c8ad21cdec7dcf1caf8f4e4fcf362d5f3e27e7268d",
+      "bytes": 4665
+    },
+    {
+      "source": "src/core/tool-registry.ts",
+      "target": "packages/versebrowser/src/core/tool-registry.ts",
+      "sha256": "87c22b38563d35f56a8855bc3bebb290d3886537b2d20c973fa86b6c1c5222e2",
+      "lfSha256": "ad2713ddd2652e218992166f85979a81452b7de437be2cef1b067d3bc60e6398",
+      "bytes": 69507
+    },
+    {
+      "source": "src/core/types.ts",
+      "target": "packages/versebrowser/src/core/types.ts",
+      "sha256": "053ba5745f7fcfbe77083f0e460b3026cab9917a14242e4eee7720a3829a02e2",
+      "lfSha256": "ea2f6c7abc1468a1f50c275ff6f7b985d687afbbb6ca474de06761b7aa0ee2f9",
+      "bytes": 10554
+    },
+    {
+      "source": "src/core/web-search/tavily.ts",
+      "target": "packages/versebrowser/src/core/web-search/tavily.ts",
+      "sha256": "aac71bacab36ab25506daa4e70327e950fede3f249dd6a855e97eaf355880143",
+      "lfSha256": "1815e390076c4c3a82c88d9f3d21831e355978ce9e6cdd98ac45042a126b4f3d",
+      "bytes": 2088
+    },
+    {
+      "source": "src/engine/api.ts",
+      "target": "packages/versebrowser/src/engine/api.ts",
+      "sha256": "ce1ada9b6f22f89be59d3e9e831025c1e8f116ed0fb53ded70ce4e23b952bea8",
+      "lfSha256": "700776ca9cd403f8f81823acf51792a98b2c87890dfdf8615826e89f620a7f15",
+      "bytes": 12432
+    },
+    {
+      "source": "src/engine/browser-control/actions.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/actions.ts",
+      "sha256": "847d3e3c6c76e376539966d132b95c62d85d1fda2ba6a4fd487c43529635d417",
+      "lfSha256": "959d3385ee1e6d8236494a11d517a9f4e2eb1b9aaf59616efa923d8dc52b9ac0",
+      "bytes": 44354
+    },
+    {
+      "source": "src/engine/browser-control/automation-boundary-detector.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/automation-boundary-detector.ts",
+      "sha256": "b8c41735183c4407ba7dfc967192331cc4416396ad9fbe14eb8b3790897af439",
+      "lfSha256": "dea889426c0351c2864908a6b6d1450360356cfe950faefa72d6498770c237c9",
+      "bytes": 10031
+    },
+    {
+      "source": "src/engine/browser-control/boundary-choice-tool-executor.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/boundary-choice-tool-executor.ts",
+      "sha256": "31bd431fd42ba986f058db7655e5a495f14b7520ce5be3b639769e9c9978d20e",
+      "lfSha256": "179695cab242631498e4e6080526703c5f4b7d2eb551dc0a5ee6b64a5f48a9f3",
+      "bytes": 15270
+    },
+    {
+      "source": "src/engine/browser-control/browser-debugger-connection.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/browser-debugger-connection.ts",
+      "sha256": "b08b6799b6a29a84dd4d49a7da1d37ac372d6672d0aabbd19a6e8a322b293445",
+      "lfSha256": "8ceabfea29a49fa4c65bb1a1309bd9045e3f8853759c220f48ee9dac85b1f258",
+      "bytes": 16488
+    },
+    {
+      "source": "src/engine/browser-control/console-recorder.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/console-recorder.ts",
+      "sha256": "bf56f1d43c89289ca7960160f225ae714fc7ef285d8083d1dd31eb64af9c9375",
+      "lfSha256": "1e8184dc0a2279753a5a962ea25f9dc2855e96d756880bda4b129e3ecd18c329",
+      "bytes": 9732
+    },
+    {
+      "source": "src/engine/browser-control/full-access-tool-executor.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/full-access-tool-executor.ts",
+      "sha256": "5c61747b9d2ce868dfe778b73668cc638c7da9aa5c1a0b9f855d5dc1caa91f11",
+      "lfSha256": "1fc7a885a5a2ba0263ef5b733494dc55a39380bfa10b1febb5e44554fdbbe3a5",
+      "bytes": 11922
+    },
+    {
+      "source": "src/engine/browser-control/js-source-index.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/js-source-index.ts",
+      "sha256": "b46c8194023d221056dc992f3fe3074c7a698c46bca032c6949404a774f1e352",
+      "lfSha256": "7e691b7fd74ac8d065fd7418fa07ef157876485108971078f5500d7ee24d8885",
+      "bytes": 11078
+    },
+    {
+      "source": "src/engine/browser-control/js-source-tool-executor.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/js-source-tool-executor.ts",
+      "sha256": "2d52f692d8e2fddf0da5e643af7cc32e3e039661fbd84435a6c6b99981d976c6",
+      "lfSha256": "b40cfc3a5064d93cabc0daa190aec0c6d090b01b542fb23c1718c1c9df045368",
+      "bytes": 12025
+    },
+    {
+      "source": "src/engine/browser-control/network-recorder.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/network-recorder.ts",
+      "sha256": "98ce7f16d9657d98909c043724323fb497df47ba9703840057e338c288f865b2",
+      "lfSha256": "47b4a42ae88090f08945238e0f5edf59f14c54bd10c08138d16e6b7e471d15ee",
+      "bytes": 15587
+    },
+    {
+      "source": "src/engine/browser-control/page-text-extractor.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/page-text-extractor.ts",
+      "sha256": "499e22c9d8d647bdc1ec2e48d8e7ceb5e1a5d61efda5407630d2b95d76b30fd2",
+      "lfSha256": "a569337c84f9645068d0d1df66e1aa46b57e148b7312f5d4587a96ea58b59c24",
+      "bytes": 20746
+    },
+    {
+      "source": "src/engine/browser-control/replay-tool-executor.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/replay-tool-executor.ts",
+      "sha256": "2c2511f127474daf6973cc6bfe9311679d78c7f7fa3c3048c4c6ff9047feff70",
+      "lfSha256": "9fa0bc3306020cc6414a1aaba65ebfdc570b2372463ec04fc220a0409b0d1ada",
+      "bytes": 19282
+    },
+    {
+      "source": "src/engine/browser-control/runtime-read-tool-executor.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/runtime-read-tool-executor.ts",
+      "sha256": "8f997f9883ca8aa80ce542346682e13b021166ea831c6570f751502496936102",
+      "lfSha256": "c1b7a6a57d57093dd4ad26902e79d475cca558992e408c115f49746205bbecda",
+      "bytes": 27663
+    },
+    {
+      "source": "src/engine/browser-control/same-origin-js-fetcher.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/same-origin-js-fetcher.ts",
+      "sha256": "30e44d5f71fdc40f2ebbd94dcad00adf071d118a4e775f9cdac72d5349683249",
+      "lfSha256": "21d564735ffa89e191da13456352a79f3bfbcd6315fc8378037f96240cc7f7ad",
+      "bytes": 7880
+    },
+    {
+      "source": "src/engine/browser-control/same-origin-source-map-fetcher.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/same-origin-source-map-fetcher.ts",
+      "sha256": "5da189fb8f1a6253a62d40fa273406934922c94c1f1a6c1686a9df968f9f6d65",
+      "lfSha256": "06de921dd51a04e7e646e1dcb4ecd57933ad55beb165ad42a90b4a9917b7a943",
+      "bytes": 6664
+    },
+    {
+      "source": "src/engine/browser-control/snapshot-manager.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/snapshot-manager.ts",
+      "sha256": "9ec216a6adf53c542c46be6c3a7bfb6e70b9811fb75141535397c545d1a97004",
+      "lfSha256": "56acd7353563428c24e4cf1d48a1213efd910cf4c7a0a20738db422ab8a46a49",
+      "bytes": 11472
+    },
+    {
+      "source": "src/engine/browser-control/source-map-fetch-guards.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/source-map-fetch-guards.ts",
+      "sha256": "574f21906e4b384acbcbb10e4c8d48c064c2fdb882ae14b62fa83500193a388f",
+      "lfSha256": "71b3a33113fa164e3cefdc5dd3a0e98eb9901a085961017f9cbd65c1411d6b39",
+      "bytes": 2232
+    },
+    {
+      "source": "src/engine/browser-control/source-map-tool-executor.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/source-map-tool-executor.ts",
+      "sha256": "bb7fa9ae1187642e971aeb2f86969288fd1e1a09f3036b3255e13a5c10e4717f",
+      "lfSha256": "65a0576f72fa554caaa01c12a1b1dae387f12dadcaffbc776ea1bd8867410ea4",
+      "bytes": 29025
+    },
+    {
+      "source": "src/engine/browser-control/tab-manager.ts",
+      "target": "packages/versebrowser/src/engine/browser-control/tab-manager.ts",
+      "sha256": "ce08e2e49bad4542ab2bd27bb395a0d6254bacd2f6c65d662a6ecf38ee9f8b9d",
+      "lfSha256": "cd965c4dd7c44990cf6b0ebe4093892c3e370dd0dbb96e6bcc10ee8839f30423",
+      "bytes": 11401
+    },
+    {
+      "source": "src/engine/cli-runner.ts",
+      "target": "packages/versebrowser/src/engine/cli-runner.ts",
+      "sha256": "f9340d33d2dde08dc6e832c058af4246a6acaca181393f3feeb760c27efe1dd0",
+      "lfSha256": "2fe5f6e36a3e2cf49eece7ad558b5beb7768712e6f2fdc559a64f6c40dca1e98",
+      "bytes": 13703
+    },
+    {
+      "source": "src/engine/diagnose-pack.ts",
+      "target": "packages/versebrowser/src/engine/diagnose-pack.ts",
+      "sha256": "d210e87f5784ac07061d2c226464f35a90c30c67871dfee344f4e0929517e762",
+      "lfSha256": "d210e87f5784ac07061d2c226464f35a90c30c67871dfee344f4e0929517e762",
+      "bytes": 8681
+    },
+    {
+      "source": "src/engine/driver-availability.ts",
+      "target": "packages/versebrowser/src/engine/driver-availability.ts",
+      "sha256": "a8cddcee6744dfcf86e01ccdf003e3fb01be3624add82ffd80d01c2dfd89b283",
+      "lfSha256": "a8cddcee6744dfcf86e01ccdf003e3fb01be3624add82ffd80d01c2dfd89b283",
+      "bytes": 2550
+    },
+    {
+      "source": "src/engine/driver-profile.ts",
+      "target": "packages/versebrowser/src/engine/driver-profile.ts",
+      "sha256": "0eae1cf460d76420a4f1155b6a073f41fcd681380fa99ac9cef8e8aa90d05e6e",
+      "lfSha256": "0eae1cf460d76420a4f1155b6a073f41fcd681380fa99ac9cef8e8aa90d05e6e",
+      "bytes": 6046
+    },
+    {
+      "source": "src/engine/electron-attach.ts",
+      "target": "packages/versebrowser/src/engine/electron-attach.ts",
+      "sha256": "efb4ca5a174004aca947a3a4627e0d785f991d98cd7e921ae95d84c412a7585f",
+      "lfSha256": "efb4ca5a174004aca947a3a4627e0d785f991d98cd7e921ae95d84c412a7585f",
+      "bytes": 7186
+    },
+    {
+      "source": "src/engine/electron-host-api.ts",
+      "target": "packages/versebrowser/src/engine/electron-host-api.ts",
+      "sha256": "b9d33e6341c4180f07974207de1d134d13fccbaaeb26cf73339d4b81114a685f",
+      "lfSha256": "b9d33e6341c4180f07974207de1d134d13fccbaaeb26cf73339d4b81114a685f",
+      "bytes": 15993
+    },
+    {
+      "source": "src/engine/electron-source-map.ts",
+      "target": "packages/versebrowser/src/engine/electron-source-map.ts",
+      "sha256": "26f0a234f79acc2e1b0979012d549d38ea678624b50832c07c0a3dd5226194cd",
+      "lfSha256": "26f0a234f79acc2e1b0979012d549d38ea678624b50832c07c0a3dd5226194cd",
+      "bytes": 5334
+    },
+    {
+      "source": "src/engine/facade.ts",
+      "target": "packages/versebrowser/src/engine/facade.ts",
+      "sha256": "fba5e0e94a53681d69019f29a0eeb6528bb31d9e40578d79b9b6ea1f9146db62",
+      "lfSha256": "fba5e0e94a53681d69019f29a0eeb6528bb31d9e40578d79b9b6ea1f9146db62",
+      "bytes": 135708
+    },
+    {
+      "source": "src/engine/hitl-checkpoint.ts",
+      "target": "packages/versebrowser/src/engine/hitl-checkpoint.ts",
+      "sha256": "650379b28a498648970c8646e14000b678b6bd03f6b7bdbced706d3ce7b443d3",
+      "lfSha256": "650379b28a498648970c8646e14000b678b6bd03f6b7bdbced706d3ce7b443d3",
+      "bytes": 11415
+    },
+    {
+      "source": "src/engine/interactive-snapshot.ts",
+      "target": "packages/versebrowser/src/engine/interactive-snapshot.ts",
+      "sha256": "08bf1e2561498b49bde0922dddde88ee3134739eec3b67a399ff6c7bff090d0b",
+      "lfSha256": "08bf1e2561498b49bde0922dddde88ee3134739eec3b67a399ff6c7bff090d0b",
+      "bytes": 21094
+    },
+    {
+      "source": "src/engine/navigation-errors.ts",
+      "target": "packages/versebrowser/src/engine/navigation-errors.ts",
+      "sha256": "88c1217bcbe3177de4c752d616b3211c2fbbad3303977d803450f0480ee4fafe",
+      "lfSha256": "88c1217bcbe3177de4c752d616b3211c2fbbad3303977d803450f0480ee4fafe",
+      "bytes": 2050
+    },
+    {
+      "source": "src/engine/oneshot-verify.ts",
+      "target": "packages/versebrowser/src/engine/oneshot-verify.ts",
+      "sha256": "041ab2d08b496f1e51fb18e0a595de59b96caad343b19effd5377a88309e30df",
+      "lfSha256": "041ab2d08b496f1e51fb18e0a595de59b96caad343b19effd5377a88309e30df",
+      "bytes": 2869
+    },
+    {
+      "source": "src/engine/persistent-sessions.ts",
+      "target": "packages/versebrowser/src/engine/persistent-sessions.ts",
+      "sha256": "488a8229d7298ba03364119f64349840ed3a3fcf5673c150a6c2101d15f5ceca",
+      "lfSha256": "488a8229d7298ba03364119f64349840ed3a3fcf5673c150a6c2101d15f5ceca",
+      "bytes": 16815
+    },
+    {
+      "source": "src/engine/playwright-host-api.ts",
+      "target": "packages/versebrowser/src/engine/playwright-host-api.ts",
+      "sha256": "5b27c817aca158e98a6244226f2c6f15d828277bd967ab14d626c4a5a97d9509",
+      "lfSha256": "5b27c817aca158e98a6244226f2c6f15d828277bd967ab14d626c4a5a97d9509",
+      "bytes": 92248
+    },
+    {
+      "source": "src/engine/runtime-compatibility.ts",
+      "target": "packages/versebrowser/src/engine/runtime-compatibility.ts",
+      "sha256": "08570e1c85d676e7a15a283f246ba25f252b9b5ba7ee713cbd9e1fc74377dc98",
+      "lfSha256": "08570e1c85d676e7a15a283f246ba25f252b9b5ba7ee713cbd9e1fc74377dc98",
+      "bytes": 796
+    },
+    {
+      "source": "src/engine/semantic-browser.ts",
+      "target": "packages/versebrowser/src/engine/semantic-browser.ts",
+      "sha256": "ef4d56bb396c0c5f2201ac5a70a72f4bb73cc8d1ffd30f3dfc24590f2254f040",
+      "lfSha256": "ef4d56bb396c0c5f2201ac5a70a72f4bb73cc8d1ffd30f3dfc24590f2254f040",
+      "bytes": 13459
+    },
+    {
+      "source": "src/engine/service.ts",
+      "target": "packages/versebrowser/src/engine/service.ts",
+      "sha256": "081b80a0524834f6571c4bf5da812471789aa698f38b732d512ace38812b1424",
+      "lfSha256": "f8382356e892f130d99310ab73a97560485033c306af0b405ddc12b95bb3ebfc",
+      "bytes": 108176
+    },
+    {
+      "source": "src/engine/standalone.ts",
+      "target": "packages/versebrowser/src/engine/standalone.ts",
+      "sha256": "bd216908ef266dc6bdc1cf935d44244103e868d951a0bcf233243ba7aed6a411",
+      "lfSha256": "bd216908ef266dc6bdc1cf935d44244103e868d951a0bcf233243ba7aed6a411",
+      "bytes": 6565
+    },
+    {
+      "source": "src/engine/supervised-task-executor.ts",
+      "target": "packages/versebrowser/src/engine/supervised-task-executor.ts",
+      "sha256": "2ae4f90414ccf39ab6d493e84b3fb3a3baa08f0d9a6444025e8aefb28f7defc9",
+      "lfSha256": "404f426f99a570567b807dd039d3324e352c9fd24238c3d26608a779466a20ae",
+      "bytes": 15894
+    },
+    {
+      "source": "src/engine/task-service.ts",
+      "target": "packages/versebrowser/src/engine/task-service.ts",
+      "sha256": "73b91538f8d0a68ec2cb08d676c0830d44f4acd7fc251b35f77d73feea491e5e",
+      "lfSha256": "b8ecb02c51e2899b967b80b274336d165dc01a7378726283b9b5873a49f7d95b",
+      "bytes": 25584
+    },
+    {
+      "source": "src/engine/upstream-control.ts",
+      "target": "packages/versebrowser/src/engine/upstream-control.ts",
+      "sha256": "b4549086fe388410e8f014cf4af8d4942306154febbd61dd97ba5ad07a56d55c",
+      "lfSha256": "b4549086fe388410e8f014cf4af8d4942306154febbd61dd97ba5ad07a56d55c",
+      "bytes": 83473
+    },
+    {
+      "source": "src/engine/vault.ts",
+      "target": "packages/versebrowser/src/engine/vault.ts",
+      "sha256": "91731aa44daf7599eb2feeae4d535013f25db3107882d8e718ad1badb343ef1e",
+      "lfSha256": "509baa745fd2c0e77610b61707f19f3996b657cfc30357f991d0d05a814aa181",
+      "bytes": 10251
+    },
+    {
+      "source": "src/engine/visual-browser.ts",
+      "target": "packages/versebrowser/src/engine/visual-browser.ts",
+      "sha256": "6edf44bc97e144ebe26eedb801ecd27573d3ab9efe6269f9032d71fd32fab0a1",
+      "lfSha256": "6edf44bc97e144ebe26eedb801ecd27573d3ab9efe6269f9032d71fd32fab0a1",
+      "bytes": 7220
+    },
+    {
+      "source": "src/evidence/diagnosis.ts",
+      "target": "packages/versebrowser/src/evidence/diagnosis.ts",
+      "sha256": "128edf6e9fa67745153cfd285ebd05c1f401e954da4d868ca827db647e080e83",
+      "lfSha256": "128edf6e9fa67745153cfd285ebd05c1f401e954da4d868ca827db647e080e83",
+      "bytes": 5479
+    },
+    {
+      "source": "src/evidence/index.ts",
+      "target": "packages/versebrowser/src/evidence/index.ts",
+      "sha256": "dae5d87085ccb1a92263d2e65c0440089670271c7a68159043484b9a6d5c6f72",
+      "lfSha256": "dae5d87085ccb1a92263d2e65c0440089670271c7a68159043484b9a6d5c6f72",
+      "bytes": 212
+    },
+    {
+      "source": "src/evidence/output.ts",
+      "target": "packages/versebrowser/src/evidence/output.ts",
+      "sha256": "98e9c48d261c8247b1a9f57bc199c3e50b22f62927020c1d26e2b9150c2586cb",
+      "lfSha256": "98e9c48d261c8247b1a9f57bc199c3e50b22f62927020c1d26e2b9150c2586cb",
+      "bytes": 1229
+    },
+    {
+      "source": "src/evidence/path-guard.ts",
+      "target": "packages/versebrowser/src/evidence/path-guard.ts",
+      "sha256": "47ce434c06805853b8829b391d6e74365c596cf392fa6cc289637325a2d393ac",
+      "lfSha256": "47ce434c06805853b8829b391d6e74365c596cf392fa6cc289637325a2d393ac",
+      "bytes": 3240
+    },
+    {
+      "source": "src/evidence/pr-comment.ts",
+      "target": "packages/versebrowser/src/evidence/pr-comment.ts",
+      "sha256": "159dd8eb9e2d9c95716e6c36aa6acc62bdabc6f58b998f7b0b652d0cd9746117",
+      "lfSha256": "159dd8eb9e2d9c95716e6c36aa6acc62bdabc6f58b998f7b0b652d0cd9746117",
+      "bytes": 7811
+    },
+    {
+      "source": "src/evidence/reader.ts",
+      "target": "packages/versebrowser/src/evidence/reader.ts",
+      "sha256": "56ff64b0d503ff3db6637f2e33d8a465515b9f865ad6868ab9264ba7a697db44",
+      "lfSha256": "56ff64b0d503ff3db6637f2e33d8a465515b9f865ad6868ab9264ba7a697db44",
+      "bytes": 3580
+    },
+    {
+      "source": "src/evidence/schema.ts",
+      "target": "packages/versebrowser/src/evidence/schema.ts",
+      "sha256": "7cdfcc9fbc52b06768806e9074faa431fc25019098d9816703d4783e488d349c",
+      "lfSha256": "7cdfcc9fbc52b06768806e9074faa431fc25019098d9816703d4783e488d349c",
+      "bytes": 1659
+    },
+    {
+      "source": "src/evidence/timeline.ts",
+      "target": "packages/versebrowser/src/evidence/timeline.ts",
+      "sha256": "a7936ad2b6350ca9275ceeb23cc2b30af44bdf34ce4d5fdc5d3a339fca5b5d70",
+      "lfSha256": "a7936ad2b6350ca9275ceeb23cc2b30af44bdf34ce4d5fdc5d3a339fca5b5d70",
+      "bytes": 3672
+    },
+    {
+      "source": "src/evidence/viewer.ts",
+      "target": "packages/versebrowser/src/evidence/viewer.ts",
+      "sha256": "b89f4c935576200dfb28be2d67564e30580d5128718b3b7c616bd5685be0e34c",
+      "lfSha256": "b89f4c935576200dfb28be2d67564e30580d5128718b3b7c616bd5685be0e34c",
+      "bytes": 17989
+    },
+    {
+      "source": "src/evidence/writer.ts",
+      "target": "packages/versebrowser/src/evidence/writer.ts",
+      "sha256": "7ecedb62e63dbd1fe80adadd4909a3ec0b49de0b6a49a26d62b43390fe8f4f0f",
+      "lfSha256": "7ecedb62e63dbd1fe80adadd4909a3ec0b49de0b6a49a26d62b43390fe8f4f0f",
+      "bytes": 7321
+    },
+    {
+      "source": "src/gateway/bridge.ts",
+      "target": "packages/versebrowser/src/gateway/bridge.ts",
+      "sha256": "e657e2a877b9609de568d190f53d668605358bddbb6e2712f35382155ea0c2ef",
+      "lfSha256": "e24b0efa2fd9529e96065a4f903e8d9a7e6501077ea59da56ce18ef747880529",
+      "bytes": 4510
+    },
+    {
+      "source": "src/gateway/manager.ts",
+      "target": "packages/versebrowser/src/gateway/manager.ts",
+      "sha256": "d733c3ecee4d9e16123528b91034908d0c79fbc75d6a3c89b16c9304122110f0",
+      "lfSha256": "d2c0bacbedaee28c808ef14dc700bfe9868e60e2bd05d666a72b45834d663003",
+      "bytes": 594
+    },
+    {
+      "source": "src/gateway/protocol.ts",
+      "target": "packages/versebrowser/src/gateway/protocol.ts",
+      "sha256": "877ebd2367a242e0cc34902ee1593c73c8354d47ebd60b287cd3696a0a8a33a4",
+      "lfSha256": "950d560567731a1dcaadc1cee6ae5e37bf1ea363d9edc823002d4e193bcbfc5b",
+      "bytes": 322
+    },
+    {
+      "source": "src/host/active-sandbox-high-risk-policy.ts",
+      "target": "packages/versebrowser/src/host/active-sandbox-high-risk-policy.ts",
+      "sha256": "a3dba74f19f9e4e978e47b224164c4587dda7aee65ce84070f8ceae32f41b26f",
+      "lfSha256": "9f2c74253a340f487ef636f0e1051d199dc5bf402a5dfc865b31006c41c6df9c",
+      "bytes": 2197
+    },
+    {
+      "source": "src/host/electron-optional.ts",
+      "target": "packages/versebrowser/src/host/electron-optional.ts",
+      "sha256": "4cc477d61d48441f0c6de696816b912bc05008293268ce2803372529c22da893",
+      "lfSha256": "4cc477d61d48441f0c6de696816b912bc05008293268ce2803372529c22da893",
+      "bytes": 1169
+    },
+    {
+      "source": "src/host/logger.ts",
+      "target": "packages/versebrowser/src/host/logger.ts",
+      "sha256": "c37ad13b4eefb547dab490a5966e46184c349e3f568800175aec15a87a2531ce",
+      "lfSha256": "953df8934e6c7850886f78f047c974f708b451650392028529afbf601d627a11",
+      "bytes": 662
+    },
+    {
+      "source": "src/host/paths.ts",
+      "target": "packages/versebrowser/src/host/paths.ts",
+      "sha256": "e101ac185db2d0611136d96da3471b93f5ab711bb411013cb1952a5076778ef2",
+      "lfSha256": "e101ac185db2d0611136d96da3471b93f5ab711bb411013cb1952a5076778ef2",
+      "bytes": 663
+    },
+    {
+      "source": "src/host/permissions-hooks.ts",
+      "target": "packages/versebrowser/src/host/permissions-hooks.ts",
+      "sha256": "de4c04968e7bd9ee1df00e0bb06ac5bdc74ea87985a48ef44ddc31edbeb8376e",
+      "lfSha256": "bfc84f912cf8528c2f6d6ff33ed0d0ca0a5d88aa28c4869196a2f50a3f609b21",
+      "bytes": 952
+    },
+    {
+      "source": "src/host/sandbox-high-risk-gate.ts",
+      "target": "packages/versebrowser/src/host/sandbox-high-risk-gate.ts",
+      "sha256": "0f4b68b5bc205920d4945bdef753fb2e5c42eb810a123ce1b46774b0e482452a",
+      "lfSha256": "1ae678024676e4d3dc6372f7d39eb53938a310fb862d19180daa0b5047e71117",
+      "bytes": 7862
+    },
+    {
+      "source": "src/host/sandbox-policy-resolver.ts",
+      "target": "packages/versebrowser/src/host/sandbox-policy-resolver.ts",
+      "sha256": "8748d47a6375cbb00a19f5ced8bd5c4dad86e34d6383d0bc4d7fb9aa1eb0fca4",
+      "lfSha256": "e98eaaed0ad5fc6a206ef545cf214ec67b680c373f6262ae96480b1c4100942f",
+      "bytes": 5057
+    },
+    {
+      "source": "src/host/sandbox-provider-detection.ts",
+      "target": "packages/versebrowser/src/host/sandbox-provider-detection.ts",
+      "sha256": "913185ef9fcd3a62e889971281da9ef275d71e9ccaa55fb2f10b78068d1d9a10",
+      "lfSha256": "9ee0cc63f50874e6251b4adc728170d3d96f79dd1238753a104bb68c928e85bb",
+      "bytes": 5985
+    },
+    {
+      "source": "src/host/sensitive-capture-gate.ts",
+      "target": "packages/versebrowser/src/host/sensitive-capture-gate.ts",
+      "sha256": "13279cf0c0340b9cd5408c74e9df09a8b4f97fbc8237a6d692ab9d0cdfc322b8",
+      "lfSha256": "e5aee5d2d2bc99e178e96580a3948a5ae460e956976000d405df9201c0b52521",
+      "bytes": 711
+    },
+    {
+      "source": "src/host/sensitive-capture-policy-loader.ts",
+      "target": "packages/versebrowser/src/host/sensitive-capture-policy-loader.ts",
+      "sha256": "084f5ddda89635b9d3710d9a7fec633e110f318dccb0b4eee93d8aceaf4b8e2a",
+      "lfSha256": "f811d648d36a17933234ee547a748fb0829bf46eceb1ca5dd494d35119494b5f",
+      "bytes": 899
+    },
+    {
+      "source": "src/host/workspace-hooks.ts",
+      "target": "packages/versebrowser/src/host/workspace-hooks.ts",
+      "sha256": "e8488606daa530e6b280cb5143a241bea7a985141a572ebf466c059cfa8d2350",
+      "lfSha256": "e7e21980361a79644a95b518b18a8c6b3cd25aaf5353714dd322044651daefa4",
+      "bytes": 926
+    },
+    {
+      "source": "src/host/workspace-paths.ts",
+      "target": "packages/versebrowser/src/host/workspace-paths.ts",
+      "sha256": "b5de8eaeb8a80b2746fd2bdef1232a9821167ba391a747d716250d92938c8de3",
+      "lfSha256": "b5de8eaeb8a80b2746fd2bdef1232a9821167ba391a747d716250d92938c8de3",
+      "bytes": 3292
+    },
+    {
+      "source": "src/host/workspace-runtime-permissions.ts",
+      "target": "packages/versebrowser/src/host/workspace-runtime-permissions.ts",
+      "sha256": "416a2fd0e30ea9ef12f05c216d07eda985e10721c96a5258e798466d8dbfe975",
+      "lfSha256": "178099a4dd270e3ce554602dabe71c4d330da6b31abde81a08d9f23178e3bf1f",
+      "bytes": 11094
+    },
+    {
+      "source": "src/index.ts",
+      "target": "packages/versebrowser/src/index.ts",
+      "sha256": "ffcb659f77eb66ed4c0cff13191abf755598fb411dc95686310a1da24e8c21a3",
+      "lfSha256": "be4a1c780ef02f66c450f4e174009dd213598bf2e3b14dd88969cb4d768c6d6d",
+      "bytes": 2693
+    },
+    {
+      "source": "src/mcp/argument-guard.ts",
+      "target": "packages/versebrowser/src/mcp/argument-guard.ts",
+      "sha256": "e310b66397ca35522368584cff93be470b74598ac8fcea7bfc3b390453f40650",
+      "lfSha256": "e310b66397ca35522368584cff93be470b74598ac8fcea7bfc3b390453f40650",
+      "bytes": 1948
+    },
+    {
+      "source": "src/mcp/capability-policy.ts",
+      "target": "packages/versebrowser/src/mcp/capability-policy.ts",
+      "sha256": "dbd55dcdc1730151e01ba4e8eb85c77cbd300859b53705d7a9d5e5377473e6b1",
+      "lfSha256": "dbd55dcdc1730151e01ba4e8eb85c77cbd300859b53705d7a9d5e5377473e6b1",
+      "bytes": 11549
+    },
+    {
+      "source": "src/mcp/explain-error.ts",
+      "target": "packages/versebrowser/src/mcp/explain-error.ts",
+      "sha256": "8d4ffdeeebfeb8ff05f48781e2a86d8b500690d61865a0b3db840f16d9a61328",
+      "lfSha256": "8d4ffdeeebfeb8ff05f48781e2a86d8b500690d61865a0b3db840f16d9a61328",
+      "bytes": 12355
+    },
+    {
+      "source": "src/mcp/result-envelope.ts",
+      "target": "packages/versebrowser/src/mcp/result-envelope.ts",
+      "sha256": "0a4f9456029d37d33c25fc7531f6eb96fcbbcaf39e7ac87e3262e93b7d7b1aa7",
+      "lfSha256": "0a4f9456029d37d33c25fc7531f6eb96fcbbcaf39e7ac87e3262e93b7d7b1aa7",
+      "bytes": 18193
+    },
+    {
+      "source": "src/mcp/server.ts",
+      "target": "packages/versebrowser/src/mcp/server.ts",
+      "sha256": "0f17dfdfbf1f4f84e78c49bbbb7965aa90834b3c6db7f0f23188c1ce1094e8b1",
+      "lfSha256": "0f17dfdfbf1f4f84e78c49bbbb7965aa90834b3c6db7f0f23188c1ce1094e8b1",
+      "bytes": 69069
+    },
+    {
+      "source": "src/mcp/tool-availability.ts",
+      "target": "packages/versebrowser/src/mcp/tool-availability.ts",
+      "sha256": "28d6c3cc24cd3fbec143c1320d3c2c70155fb7496714862ca3c7e39dbac69d64",
+      "lfSha256": "28d6c3cc24cd3fbec143c1320d3c2c70155fb7496714862ca3c7e39dbac69d64",
+      "bytes": 8778
+    },
+    {
+      "source": "src/openclaw/automation-event.ts",
+      "target": "packages/versebrowser/src/openclaw/automation-event.ts",
+      "sha256": "1cc824f60f3d572f1f9786fe77c1b7f160b8480f0d966e8616c154854b884ce8",
+      "lfSha256": "1cc824f60f3d572f1f9786fe77c1b7f160b8480f0d966e8616c154854b884ce8",
+      "bytes": 6080
+    },
+    {
+      "source": "src/openclaw/common.ts",
+      "target": "packages/versebrowser/src/openclaw/common.ts",
+      "sha256": "787da068e3c7a708d07f80bde6948ec8a7237294dfc4595d88e5ce5098b728ef",
+      "lfSha256": "c533ce2191aaff0fa5b83a7a60de0be292f509fd0bfbc2d506b331b87cb66c4e",
+      "bytes": 4444
+    },
+    {
+      "source": "src/openclaw/external-access-policy.ts",
+      "target": "packages/versebrowser/src/openclaw/external-access-policy.ts",
+      "sha256": "fef9ca4fc2863d292f2905634a52791b37adc8b0dfc8817dadf15a6bd287d580",
+      "lfSha256": "952f4c8b17063add4da91013240b5a256474e9cfa2b61c771b203136f7bd7bd3",
+      "bytes": 2546
+    },
+    {
+      "source": "src/openclaw/gateway-protocol/client-info.ts",
+      "target": "packages/versebrowser/src/openclaw/gateway-protocol/client-info.ts",
+      "sha256": "254f65b17c0f1f5d14164d06ec2047302fb9c1ed6b79882f771c0b1aecbe2b08",
+      "lfSha256": "254f65b17c0f1f5d14164d06ec2047302fb9c1ed6b79882f771c0b1aecbe2b08",
+      "bytes": 4625
+    },
+    {
+      "source": "src/openclaw/gateway-protocol/error-codes.ts",
+      "target": "packages/versebrowser/src/openclaw/gateway-protocol/error-codes.ts",
+      "sha256": "8225e68feeabad77eba0793e7cad0e2327102fdd13ad1ef7f52d67b924984457",
+      "lfSha256": "8225e68feeabad77eba0793e7cad0e2327102fdd13ad1ef7f52d67b924984457",
+      "bytes": 1404
+    },
+    {
+      "source": "src/openclaw/gateway-protocol/index.ts",
+      "target": "packages/versebrowser/src/openclaw/gateway-protocol/index.ts",
+      "sha256": "64f835d0e9f6bad8f060dcef1c43d1389858a58711d363b0451bb1371ac0d6d1",
+      "lfSha256": "51feb49487bf0417304b9ef08dac60ad8021eb0450427b32a52af5018ceb2929",
+      "bytes": 560
+    },
+    {
+      "source": "src/openclaw/gateway-protocol/types.ts",
+      "target": "packages/versebrowser/src/openclaw/gateway-protocol/types.ts",
+      "sha256": "0b14e39bfdcbab577e7e9b4c045aa0ba0406ef9f2bf5419e8f4bcde1b55b5aa3",
+      "lfSha256": "a793757d7e2cb0a63ee5c781b0495f4a5903db9421bf46784335f8306e0c0deb",
+      "bytes": 417
+    },
+    {
+      "source": "src/openclaw/gateway/agent-browser.ts",
+      "target": "packages/versebrowser/src/openclaw/gateway/agent-browser.ts",
+      "sha256": "27cfbef2d2b1dae21db94e955496703b1ecda6ca745c299797b93d97a8fb28f8",
+      "lfSha256": "b39f4a9e9f939a790ccd54ed5def84cadee05ef1e59701ff7b8f9114d7c98768",
+      "bytes": 9583
+    },
+    {
+      "source": "src/openclaw/gateway/types.ts",
+      "target": "packages/versebrowser/src/openclaw/gateway/types.ts",
+      "sha256": "f8572588e41efb1b460fe8438f3ddce453c8c8f39f85571b75855c873a00819f",
+      "lfSha256": "852ee77ce8198cdabf6427d992432277fec5b0dc6c8b32f249230da656766f84",
+      "bytes": 1482
+    },
+    {
+      "source": "src/openclaw/param-key.ts",
+      "target": "packages/versebrowser/src/openclaw/param-key.ts",
+      "sha256": "4e05a09ede2e10f8c9ba0df0d058fcc02a7034cd29c68b195f2f227df70906a9",
+      "lfSha256": "4e05a09ede2e10f8c9ba0df0d058fcc02a7034cd29c68b195f2f227df70906a9",
+      "bytes": 924
+    },
+    {
+      "source": "src/openclaw/string-coerce.ts",
+      "target": "packages/versebrowser/src/openclaw/string-coerce.ts",
+      "sha256": "bd8aeddbb97cfa5a0980ab76d30973ce3ef5941e9e612994feaa4cbd412a1c94",
+      "lfSha256": "bd8aeddbb97cfa5a0980ab76d30973ce3ef5941e9e612994feaa4cbd412a1c94",
+      "bytes": 3930
+    },
+    {
+      "source": "src/openclaw/string-enum.ts",
+      "target": "packages/versebrowser/src/openclaw/string-enum.ts",
+      "sha256": "cfbf8ac1b46a0dbdc3513b79b78c1447bf36559baedb808e91c0c84f0426f42a",
+      "lfSha256": "cfbf8ac1b46a0dbdc3513b79b78c1447bf36559baedb808e91c0c84f0426f42a",
+      "bytes": 1122
+    },
+    {
+      "source": "src/openclaw/tool-result.ts",
+      "target": "packages/versebrowser/src/openclaw/tool-result.ts",
+      "sha256": "e9d9f0e511e0e82adce9302706d027cdadf013c2ca8e0683418d65de584fce17",
+      "lfSha256": "2ccfd5a89910b1199b6e9d575fb0a55caaf17a0696166ac7e3e491a4e8c51422",
+      "bytes": 1243
+    },
+    {
+      "source": "src/openclaw/tool.ts",
+      "target": "packages/versebrowser/src/openclaw/tool.ts",
+      "sha256": "fac88c9531613ab34588944bda2e510177f4c481b6cf62d971097b163ad54310",
+      "lfSha256": "5a642232457765d6c7b0bdb3ad20ee83dd7555f1530065d32e83253a1c0365a5",
+      "bytes": 14770
+    },
+    {
+      "source": "src/security/audit-trail.ts",
+      "target": "packages/versebrowser/src/security/audit-trail.ts",
+      "sha256": "d1334f41813e4c1cd117c38f55154b69930a3eb7ea62bbb8aa5d74da667b6e94",
+      "lfSha256": "d1334f41813e4c1cd117c38f55154b69930a3eb7ea62bbb8aa5d74da667b6e94",
+      "bytes": 6191
+    },
+    {
+      "source": "src/security/content-provenance.ts",
+      "target": "packages/versebrowser/src/security/content-provenance.ts",
+      "sha256": "3e85dda3e85b696eb5c034190a1a819c9111d7791368401274bdbcc9911d994b",
+      "lfSha256": "3e85dda3e85b696eb5c034190a1a819c9111d7791368401274bdbcc9911d994b",
+      "bytes": 11317
+    },
+    {
+      "source": "src/security/markdown.ts",
+      "target": "packages/versebrowser/src/security/markdown.ts",
+      "sha256": "3376d54073afcb10047c76d8a10e9197b7b9cfb43a8ca57e419329e83e131be1",
+      "lfSha256": "3376d54073afcb10047c76d8a10e9197b7b9cfb43a8ca57e419329e83e131be1",
+      "bytes": 1344
+    },
+    {
+      "source": "src/security/net-policy/index.ts",
+      "target": "packages/versebrowser/src/security/net-policy/index.ts",
+      "sha256": "2affd494ab84413454471ff9e4cea0fae42e65beb603df8ff578c08987f43e40",
+      "lfSha256": "2affd494ab84413454471ff9e4cea0fae42e65beb603df8ff578c08987f43e40",
+      "bytes": 319
+    },
+    {
+      "source": "src/security/net-policy/ip-test-fixtures.ts",
+      "target": "packages/versebrowser/src/security/net-policy/ip-test-fixtures.ts",
+      "sha256": "080e77444b3bb0e687764d1953c654dd6408cf9a8c2e0e972a450155cae74f44",
+      "lfSha256": "080e77444b3bb0e687764d1953c654dd6408cf9a8c2e0e972a450155cae74f44",
+      "bytes": 155
+    },
+    {
+      "source": "src/security/net-policy/ip.ts",
+      "target": "packages/versebrowser/src/security/net-policy/ip.ts",
+      "sha256": "a948c49bc1e117ce9cf78202873527eac7ae81c44bc761f8f1ea171af252d0ad",
+      "lfSha256": "a948c49bc1e117ce9cf78202873527eac7ae81c44bc761f8f1ea171af252d0ad",
+      "bytes": 14357
+    },
+    {
+      "source": "src/security/net-policy/ipv4.ts",
+      "target": "packages/versebrowser/src/security/net-policy/ipv4.ts",
+      "sha256": "f8d605248c814de141e24c817d6cbff0238e9a14d35ed7cb1aa3ae0493f3aa69",
+      "lfSha256": "f8d605248c814de141e24c817d6cbff0238e9a14d35ed7cb1aa3ae0493f3aa69",
+      "bytes": 690
+    },
+    {
+      "source": "src/security/net-policy/redact-sensitive-url.ts",
+      "target": "packages/versebrowser/src/security/net-policy/redact-sensitive-url.ts",
+      "sha256": "cd56d6a273f09dcd26fe72d705614eed706220c78be89a8433e7aec59405c7bb",
+      "lfSha256": "cd56d6a273f09dcd26fe72d705614eed706220c78be89a8433e7aec59405c7bb",
+      "bytes": 3220
+    },
+    {
+      "source": "src/security/net-policy/url-userinfo.ts",
+      "target": "packages/versebrowser/src/security/net-policy/url-userinfo.ts",
+      "sha256": "52320861b13e3c510b982e264cb9f0a6fbd0b90d015f4e3b21616e7d99cdb1e0",
+      "lfSha256": "52320861b13e3c510b982e264cb9f0a6fbd0b90d015f4e3b21616e7d99cdb1e0",
+      "bytes": 370
+    },
+    {
+      "source": "src/security/redact-secrets.ts",
+      "target": "packages/versebrowser/src/security/redact-secrets.ts",
+      "sha256": "5b9f5fed9f23443f16df9cf36f0de49c28f11d86ac036bfa9b023a104c191842",
+      "lfSha256": "5b9f5fed9f23443f16df9cf36f0de49c28f11d86ac036bfa9b023a104c191842",
+      "bytes": 6897
+    },
+    {
+      "source": "src/security/redline-policy.ts",
+      "target": "packages/versebrowser/src/security/redline-policy.ts",
+      "sha256": "ad303dfe053e993a7ba6adaa50bdbacbebbe408da45a2eab5a1609c56396eb0b",
+      "lfSha256": "ad303dfe053e993a7ba6adaa50bdbacbebbe408da45a2eab5a1609c56396eb0b",
+      "bytes": 3674
+    },
+    {
+      "source": "src/security/secret-names.ts",
+      "target": "packages/versebrowser/src/security/secret-names.ts",
+      "sha256": "2c0cb23cb2d822e4e519e5269c8ef3a7aee8d8b3e32657a55b2d6223249e3dd7",
+      "lfSha256": "2c0cb23cb2d822e4e519e5269c8ef3a7aee8d8b3e32657a55b2d6223249e3dd7",
+      "bytes": 1966
+    },
+    {
+      "source": "src/security/sensitive-capture-policy.ts",
+      "target": "packages/versebrowser/src/security/sensitive-capture-policy.ts",
+      "sha256": "54d117f07a6a3bec9495a95009be3c3bdd55ad5bd04db58684f88fe5dfa7a930",
+      "lfSha256": "55e09dc5c4ed31914fed24b3bea6589a445d003fcc6d4766335de03a41fb13fc",
+      "bytes": 6380
+    },
+    {
+      "source": "src/security/url-policy.ts",
+      "target": "packages/versebrowser/src/security/url-policy.ts",
+      "sha256": "e274c0248a2a74d4a0c1b63c73b3f20ab29186b9787ecbf9fc42724a1be3e07e",
+      "lfSha256": "171bdf82adb1b54fdd17abfc05e31779b9934f62aba15687d05efa2dc3144f93",
+      "bytes": 6886
+    },
+    {
+      "source": "src/types/host-api.ts",
+      "target": "packages/versebrowser/src/types/host-api.ts",
+      "sha256": "cd5895578e7581735bf39121596eaaf135d9226b9d97bdf18971f3a142be7743",
+      "lfSha256": "2b716a179cef11168d8ba28d90b46d61e08873a2502a7bbf36d72967677634ca",
+      "bytes": 38366
+    },
+    {
+      "source": "src/types/product-semantics.ts",
+      "target": "packages/versebrowser/src/types/product-semantics.ts",
+      "sha256": "d7829eaeed934c38e9533b07030ac4ef22eec56656b1525b181e17304d4a2519",
+      "lfSha256": "e3f70a0536aaf853648c55cf1d85f58dbbaea2db3d08dab81a6b0e38bc2ac667",
+      "bytes": 1732
+    },
+    {
+      "source": "src/types/sandbox.ts",
+      "target": "packages/versebrowser/src/types/sandbox.ts",
+      "sha256": "eb4eb373efb7845262d8583eeaecefeb13e0b9bd098eb7db667d6d83b5d2b0d8",
+      "lfSha256": "03d947aab829db2fc752d137987be0de0156adc64137272479996d0275c219b4",
+      "bytes": 2884
+    },
+    {
+      "source": "src/types/workspace.ts",
+      "target": "packages/versebrowser/src/types/workspace.ts",
+      "sha256": "084ca2815b260ed6993507428c9da46e5386c4b6af0d3fdc65d68fb515ac29e3",
+      "lfSha256": "d89a6adf7b9095f5da16a1e5381be115309f4e50d9036ea0f51894dc74a6d8f5",
+      "bytes": 1379
+    },
+    {
+      "source": "src/version.ts",
+      "target": "packages/versebrowser/src/version.ts",
+      "sha256": "9fe3d3d5288ad47acac459d33c615cbae1505659ec34dcbe51e1edae44d2797e",
+      "lfSha256": "9fe3d3d5288ad47acac459d33c615cbae1505659ec34dcbe51e1edae44d2797e",
+      "bytes": 654
+    },
+    {
+      "source": "LICENSE",
+      "target": "packages/versebrowser/LICENSE",
+      "sha256": "00d7be7fb211d703a9bca7fb6d55f4a6dc26f93527a217bcdab745f01a0358c7",
+      "bytes": 1082
+    },
+    {
+      "source": "tsconfig.json",
+      "target": "packages/versebrowser/tsconfig.json",
+      "sha256": "1974c202d338587a42fa3b355e344ba6ac1751eeae42807e7bcd88b7898a7338",
+      "bytes": 479
+    },
+    {
+      "source": "tsconfig.build.json",
+      "target": "packages/versebrowser/tsconfig.build.json",
+      "sha256": "466e43d806f334e9ef3957e05ebcf92b47e32e40e0b59c6c2ff786ad4d7c7535",
+      "bytes": 444
+    },
+    {
+      "source": "scripts/patch-upstream.mjs",
+      "target": "packages/versebrowser/scripts/patch-upstream.mjs",
+      "sha256": "4a5e5f06f4abd263dc73cd02df102c2d649c2a108ba08507ccb8f90e37a90f4e",
+      "bytes": 4360
+    }
+  ],
+  "productSourceCount": 127,
+  "fileCount": 131
+}

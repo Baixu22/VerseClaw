@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m04-api-surface-summary",
+  "scope": "Host API surface, facade bridge and runtime advertisement; driver-positive business flows remain later checkpoints",
+  "driven_by": "agent",
+  "actor": "codex",
+  "commands": [
+    {
+      "command": "node scripts/versebrowser-api-coverage-verify.mjs",
+      "exitCode": 0,
+      "legacy": 67,
+      "sourceOnly": 13,
+      "hostContract": 80,
+      "hostClient": 80,
+      "runtimeNewActions": 13
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec vitest run <6 M04-related suites>",
+      "exitCode": 0,
+      "tests": 54,
+      "files": 6
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m04/api-coverage-report.json",
+      "sha256": "baeb12fdfc5c127a7d338cf5e1429f0cce9dc01dd49960b20712e344a71ece5d",
+      "bytes": 238
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m04/typecheck.log",
+      "sha256": "446ed57859343117ff263ad3e7d98641e592af8875a3c059f3411856ce103c50",
+      "bytes": 1585
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m04/targeted-tests.log",
+      "sha256": "439c93cf5c15f72d62ead561e6d5d3d69174bcb4e55a84804ca15a712c4f6f88",
+      "bytes": 7932
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "50c2cf73d8fc84aeca7b7eb88dcbee6c7fdbf3689bf4d7506f1c4ab48a72cb86",
+      "bytes": 202677
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "186d7474d1d4997492745caf4fbb2bce55951b63cd3bb8ce4ad48f23460fdc4f",
+      "bytes": 91378
+    },
+    {
+      "path": "electron/services/agent-browser-api.ts",
+      "sha256": "d848f05e248f0e9fc88078440f76a412a8f873f9b108e91fbdbb88975bc3e603",
+      "bytes": 8530
+    },
+    {
+      "path": "electron/gateway/agent-browser-bridge.ts",
+      "sha256": "872560fe8825c1cc2065a85dfc1efa74e24da2ae3eebc48a72c4b9f0fcdd5636",
+      "bytes": 4474
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+      "sha256": "128452cb9eb12863029fad04b9b0d720815fba7e6d12aba6f868bc96516bb795",
+      "bytes": 18062
+    },
+    {
+      "path": "tests/unit/agent-browser-tool.test.ts",
+      "sha256": "167b3e887f7f2d12ebe0b2ae0ecea5e6f4e6ca5e4668b62e304fda858875f848",
+      "bytes": 16999
+    },
+    {
+      "path": "tests/unit/versebrowser-host-adapter.test.ts",
+      "sha256": "78d0561c24dd69b5cf49bd0c78af31e6a1506ded43f1398d9dce32a437fa98ca",
+      "bytes": 6624
+    }
+  ],
+  "acceptance": {
+    "legacy_67_preserved_in_contract_and_client": true,
+    "13_source_only_methods_typed_in_contract_and_client": true,
+    "13_methods_implemented_via_package_facade": true,
+    "13_new_runtime_actions_advertised_and_payload_mapped": true,
+    "driver_unsupported_results_remain_errors": true,
+    "tool_result_content_data_evidence_error_recovery_preserved": true,
+    "gateway_new_actions_use_complete_host_api": true,
+    "same_sandbox_gate_applies_to_new_actions": true,
+    "typecheck_passes": true,
+    "targeted_54_tests_pass": true
+  },
+  "remainingCheckpointWork": [
+    "Driver-specific positive and adversarial behavior belongs to M06/M07",
+    "Real runtime/model fidelity belongs to M08",
+    "Full original regression matrix belongs to M09"
+  ],
+  "validationBoundary": "API ownership, mapping, advertisement and error preservation are proven. Actual protocol/business success for each driver and evidence/ref/cursor lifecycle is not yet claimed."
+}

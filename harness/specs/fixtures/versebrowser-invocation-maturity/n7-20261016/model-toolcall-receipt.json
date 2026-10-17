@@ -1,0 +1,130 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "real local model -> tool call capture; not the ClawX packaged path",
+  "endpointHost": "127.0.0.1:3065",
+  "model": "glm-5.3-flash",
+  "advertisedActions": [
+    "open",
+    "status",
+    "navigate",
+    "waitForSelector",
+    "click",
+    "type",
+    "evaluate",
+    "screenshot",
+    "close",
+    "getConsoleMessages",
+    "takeSnapshot",
+    "extractPageText",
+    "pressKey",
+    "verifyFlow"
+  ],
+  "httpStatus": 200,
+  "response": {
+    "background": false,
+    "completed_at": 1792130994,
+    "created_at": 1792130994,
+    "error": null,
+    "id": "resp_b05905fbba09477ca0f8ad88b0f43a5a",
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 400,
+    "max_tool_calls": null,
+    "metadata": {},
+    "model": "glm-5.3-flash",
+    "object": "response",
+    "output": [
+      {
+        "arguments": "action\":\"open\",\"url\":\"https://example.com\"}",
+        "call_id": "call_1d1a1cc3239840f38486fca8",
+        "id": "fc_ba605e099a10055f6ce00683c9863692",
+        "name": "agent_browser",
+        "status": "completed",
+        "type": "function_call"
+      }
+    ],
+    "output_text": "",
+    "parallel_tool_calls": true,
+    "previous_response_id": null,
+    "reasoning": {
+      "effort": null,
+      "summary": null
+    },
+    "status": "completed",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "text"
+      }
+    },
+    "tool_choice": "auto",
+    "tools": [
+      {
+        "function": {
+          "description": "Drive Verse Claw's internal Agent Browser.",
+          "name": "agent_browser",
+          "parameters": {
+            "additionalProperties": false,
+            "properties": {
+              "action": {
+                "enum": [
+                  "open",
+                  "status",
+                  "navigate",
+                  "waitForSelector",
+                  "click",
+                  "type",
+                  "evaluate",
+                  "screenshot",
+                  "close",
+                  "getConsoleMessages",
+                  "takeSnapshot",
+                  "extractPageText",
+                  "pressKey",
+                  "verifyFlow"
+                ],
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "selector": {
+                "type": "string"
+              },
+              "sessionId": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "action"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ],
+    "top_logprobs": 0,
+    "top_p": 1,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 282,
+      "output_tokens": 21,
+      "total_tokens": 303
+    },
+    "user": null
+  },
+  "toolCalls": [
+    {
+      "name": "agent_browser",
+      "arguments": "action\":\"open\",\"url\":\"https://example.com\"}",
+      "callId": "call_1d1a1cc3239840f38486fca8"
+    }
+  ],
+  "status": "pass"
+}

@@ -1,0 +1,248 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "built package standalone upstream driver, NOT ClawX Main/Gateway/model",
+  "workspaceRoot": "D:\\tmp\\versebrowser-hygiene-sdk-nzOqAz",
+  "node": "v24.16.0",
+  "uv": "1.52.1",
+  "calls": [
+    {
+      "action": "open",
+      "result": {
+        "ok": true,
+        "content": "session 9011f4af-5300-45b3-a27b-57274da0f826 opened",
+        "data": {
+          "session": {
+            "id": "9011f4af-5300-45b3-a27b-57274da0f826",
+            "profile": "standalone",
+            "mode": "headless",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T04:54:01.452Z",
+            "updatedAt": "2026-10-16T04:54:03.600Z",
+            "runtimeMode": "normal_restricted",
+            "url": "http://127.0.0.1:59450/",
+            "title": "VB hygiene fixture"
+          }
+        }
+      }
+    },
+    {
+      "action": "snapshot",
+      "result": {
+        "ok": true,
+        "content": "# snapshot\n- title: VB hygiene fixture\n- url: http://127.0.0.1:59450/\n\n## Interactive (5)\n- use selector `[data-vb-ref=\"ref\"]` with vb_click / vb_type / vb_press / vb_select / vb_check\n- [u642dd8ae-1-e1] generic | sel=[data-vb-ref=\"u642dd8ae-1-e1\"]\n- [u642dd8ae-1-e2] heading | \"Fixture\" | sel=[data-vb-ref=\"u642dd8ae-1-e2\"]\n- [u642dd8ae-1-e3] textbox | \"Name\" | sel=[data-vb-ref=\"u642dd8ae-1-e3\"]\n- [u642dd8ae-1-e4] button | \"Save\" | sel=[data-vb-ref=\"u642dd8ae-1-e4\"]\n- [u642dd8ae-1-e5] paragraph | sel=[data-vb-ref=\"u642dd8ae-1-e5\"]\n\n## Metrics\n- html_bytes: 298\n- text_chars: 39\n\n## Text (20 chars)\nFixture Save Pending",
+        "data": {
+          "snapshot": "# snapshot\n- title: VB hygiene fixture\n- url: http://127.0.0.1:59450/\n\n## Interactive (5)\n- use selector `[data-vb-ref=\"ref\"]` with vb_click / vb_type / vb_press / vb_select / vb_check\n- [u642dd8ae-1-e1] generic | sel=[data-vb-ref=\"u642dd8ae-1-e1\"]\n- [u642dd8ae-1-e2] heading | \"Fixture\" | sel=[data-vb-ref=\"u642dd8ae-1-e2\"]\n- [u642dd8ae-1-e3] textbox | \"Name\" | sel=[data-vb-ref=\"u642dd8ae-1-e3\"]\n- [u642dd8ae-1-e4] button | \"Save\" | sel=[data-vb-ref=\"u642dd8ae-1-e4\"]\n- [u642dd8ae-1-e5] paragraph | sel=[data-vb-ref=\"u642dd8ae-1-e5\"]\n\n## Metrics\n- html_bytes: 298\n- text_chars: 39",
+          "text": {
+            "text": "Fixture Save Pending",
+            "chars": 20,
+            "truncated": false
+          }
+        }
+      }
+    },
+    {
+      "action": "type",
+      "result": {
+        "ok": true,
+        "content": "typed into #name",
+        "data": {
+          "session": {
+            "id": "9011f4af-5300-45b3-a27b-57274da0f826",
+            "profile": "standalone",
+            "mode": "headless",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T04:54:01.452Z",
+            "updatedAt": "2026-10-16T04:54:03.600Z",
+            "runtimeMode": "normal_restricted",
+            "url": "http://127.0.0.1:59450/",
+            "title": "VB hygiene fixture"
+          },
+          "observation": {
+            "changed": "unknown",
+            "beforeUrl": "http://127.0.0.1:59450/",
+            "afterUrl": "http://127.0.0.1:59450/",
+            "sinceCursor": "75a3cfe0-8a8f-4ac4-ae69-00003eac6aff:1",
+            "networkObserved": 0,
+            "scope": "session-window",
+            "businessOutcome": "unknown",
+            "events": [],
+            "eventsTruncated": false
+          },
+          "fieldChange": {
+            "before": {
+              "value": ""
+            },
+            "after": {
+              "value": "Agent proof"
+            },
+            "changed": true
+          }
+        }
+      }
+    },
+    {
+      "action": "snapshot-after-type",
+      "result": {
+        "ok": true,
+        "content": "# snapshot\n- title: VB hygiene fixture\n- url: http://127.0.0.1:59450/\n\n## Interactive (5)\n- use selector `[data-vb-ref=\"ref\"]` with vb_click / vb_type / vb_press / vb_select / vb_check\n- [u642dd8ae-2-e1] generic | sel=[data-vb-ref=\"u642dd8ae-2-e1\"]\n- [u642dd8ae-2-e2] heading | \"Fixture\" | sel=[data-vb-ref=\"u642dd8ae-2-e2\"]\n- [u642dd8ae-2-e3] textbox | \"Name\" | sel=[data-vb-ref=\"u642dd8ae-2-e3\"]\n- [u642dd8ae-2-e4] button | \"Save\" | sel=[data-vb-ref=\"u642dd8ae-2-e4\"]\n- [u642dd8ae-2-e5] paragraph | sel=[data-vb-ref=\"u642dd8ae-2-e5\"]\n\n## Metrics\n- html_bytes: 298\n- text_chars: 39",
+        "data": {
+          "snapshot": "# snapshot\n- title: VB hygiene fixture\n- url: http://127.0.0.1:59450/\n\n## Interactive (5)\n- use selector `[data-vb-ref=\"ref\"]` with vb_click / vb_type / vb_press / vb_select / vb_check\n- [u642dd8ae-2-e1] generic | sel=[data-vb-ref=\"u642dd8ae-2-e1\"]\n- [u642dd8ae-2-e2] heading | \"Fixture\" | sel=[data-vb-ref=\"u642dd8ae-2-e2\"]\n- [u642dd8ae-2-e3] textbox | \"Name\" | sel=[data-vb-ref=\"u642dd8ae-2-e3\"]\n- [u642dd8ae-2-e4] button | \"Save\" | sel=[data-vb-ref=\"u642dd8ae-2-e4\"]\n- [u642dd8ae-2-e5] paragraph | sel=[data-vb-ref=\"u642dd8ae-2-e5\"]\n\n## Metrics\n- html_bytes: 298\n- text_chars: 39"
+        }
+      }
+    },
+    {
+      "action": "click",
+      "result": {
+        "ok": true,
+        "content": "clicked #save; observed change=unknown; business outcome unknown",
+        "data": {
+          "session": {
+            "id": "9011f4af-5300-45b3-a27b-57274da0f826",
+            "profile": "standalone",
+            "mode": "headless",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-10-16T04:54:01.452Z",
+            "updatedAt": "2026-10-16T04:54:03.600Z",
+            "runtimeMode": "normal_restricted",
+            "url": "http://127.0.0.1:59450/",
+            "title": "VB hygiene fixture"
+          },
+          "observation": {
+            "changed": "unknown",
+            "beforeUrl": "http://127.0.0.1:59450/",
+            "afterUrl": "http://127.0.0.1:59450/",
+            "sinceCursor": "75a3cfe0-8a8f-4ac4-ae69-00003eac6aff:1",
+            "networkObserved": 0,
+            "scope": "session-window",
+            "businessOutcome": "unknown",
+            "events": [],
+            "eventsTruncated": false
+          },
+          "targetChange": "unknown"
+        }
+      }
+    },
+    {
+      "action": "snapshot-result",
+      "result": {
+        "ok": true,
+        "content": "# snapshot\n- title: VB hygiene fixture\n- url: http://127.0.0.1:59450/\n\n## Interactive (5)\n- use selector `[data-vb-ref=\"ref\"]` with vb_click / vb_type / vb_press / vb_select / vb_check\n- [u642dd8ae-3-e1] generic | sel=[data-vb-ref=\"u642dd8ae-3-e1\"]\n- [u642dd8ae-3-e2] heading | \"Fixture\" | sel=[data-vb-ref=\"u642dd8ae-3-e2\"]\n- [u642dd8ae-3-e3] textbox | \"Name\" | sel=[data-vb-ref=\"u642dd8ae-3-e3\"]\n- [u642dd8ae-3-e4] button | \"Save\" | sel=[data-vb-ref=\"u642dd8ae-3-e4\"]\n- [u642dd8ae-3-e5] paragraph | sel=[data-vb-ref=\"u642dd8ae-3-e5\"]\n\n## Metrics\n- html_bytes: 308\n- text_chars: 49\n\n## Text (30 chars)\nFixture Save Saved Agent proof",
+        "data": {
+          "snapshot": "# snapshot\n- title: VB hygiene fixture\n- url: http://127.0.0.1:59450/\n\n## Interactive (5)\n- use selector `[data-vb-ref=\"ref\"]` with vb_click / vb_type / vb_press / vb_select / vb_check\n- [u642dd8ae-3-e1] generic | sel=[data-vb-ref=\"u642dd8ae-3-e1\"]\n- [u642dd8ae-3-e2] heading | \"Fixture\" | sel=[data-vb-ref=\"u642dd8ae-3-e2\"]\n- [u642dd8ae-3-e3] textbox | \"Name\" | sel=[data-vb-ref=\"u642dd8ae-3-e3\"]\n- [u642dd8ae-3-e4] button | \"Save\" | sel=[data-vb-ref=\"u642dd8ae-3-e4\"]\n- [u642dd8ae-3-e5] paragraph | sel=[data-vb-ref=\"u642dd8ae-3-e5\"]\n\n## Metrics\n- html_bytes: 308\n- text_chars: 49",
+          "text": {
+            "text": "Fixture Save Saved Agent proof",
+            "chars": 30,
+            "truncated": false
+          }
+        }
+      }
+    },
+    {
+      "action": "verifyFlow",
+      "result": {
+        "ok": true,
+        "content": "# verify_flow PASS\n\n## Collection (ok)\n- console: ok\n- network: ok\n- all signal channels collected\n\n## Selectors (0/0 found)\n- (none requested)\n\n## Business assertions (1/1 passed)\n- [ok] text #result\n\n## Console (baseline 0, +0 errors, +0 warnings)\n- no new console issues\n\n## Network failures (0)\n- none\n\n## Screenshots\n- (skipped)",
+        "data": {
+          "schemaVersion": 1,
+          "ok": true,
+          "outcome": "pass",
+          "collection": {
+            "console": "ok",
+            "network": "ok",
+            "overall": "ok",
+            "notes": []
+          },
+          "startedAt": "2026-10-16T04:54:03.598Z",
+          "endedAt": "2026-10-16T04:54:03.601Z",
+          "sessionId": "9011f4af-5300-45b3-a27b-57274da0f826",
+          "selectors": [],
+          "expectations": [
+            {
+              "type": "text",
+              "label": "text #result",
+              "passed": true
+            }
+          ],
+          "consoleDiff": {
+            "baselineCount": 0,
+            "newErrors": [],
+            "newWarnings": [],
+            "collection": "ok"
+          },
+          "networkFailures": {
+            "count": 0,
+            "failures": [],
+            "collection": "ok"
+          },
+          "screenshotPaths": [],
+          "summaryMarkdown": "# verify_flow PASS\n\n## Collection (ok)\n- console: ok\n- network: ok\n- all signal channels collected\n\n## Selectors (0/0 found)\n- (none requested)\n\n## Business assertions (1/1 passed)\n- [ok] text #result\n\n## Console (baseline 0, +0 errors, +0 warnings)\n- no new console issues\n\n## Network failures (0)\n- none\n\n## Screenshots\n- (skipped)",
+          "evidence": [],
+          "diagnosis": {
+            "schemaVersion": 1,
+            "createdAt": "2026-10-16T04:54:03.615Z",
+            "sessionId": "9011f4af-5300-45b3-a27b-57274da0f826",
+            "ok": true,
+            "failureCount": 0,
+            "failures": [],
+            "summaryMarkdown": "# trajectory diagnosis CLEAN\n\nNo failure points detected in the recorded timeline.\n\n## Recommendation\nNo recorded failure was found. Check the verification outcome and collection status before accepting the task; a clean timeline alone does not establish success."
+          },
+          "prComment": "<!-- versebrowser-evidence -->\n## versebrowser verify_flow: PASS\n\n**Result:** PASS\n**Session:** 9011f4af-5300-45b3-a27b-57274da0f826\n**Evidence pack:** `.ae/evidence/verify/verify-f0d39039`\n\n### First failure\n\n_No failure points in recorded timeline._\n\n### Checks\n\n\n**Business assertions:** 1/1\n- [ok] text #result\n\n### Evidence\n\n- pack directory: `.ae/evidence/verify/verify-f0d39039`\n\n<details>\n<summary>Raw summary</summary>\n\n```markdown\n# verify_flow PASS\n\n## Collection (ok)\n- console: ok\n- network: ok\n- all signal channels collected\n\n## Selectors (0/0 found)\n- (none requested)\n\n## Business assertions (1/1 passed)\n- [ok] text #result\n\n## Console (baseline 0, +0 errors, +0 warnings)\n- no new console issues\n\n## Network failures (0)\n- none\n\n## Screenshots\n- (skipped)\n```\n\n</details>\n\n_Generated by versebrowser Evidence Pack. Screenshots/HAR stay on disk; this comment is summary-only._"
+        },
+        "evidence": [
+          {
+            "id": "ev-verify-mvaht9wr",
+            "kind": "verify",
+            "label": "verify_flow summary",
+            "createdAt": "2026-10-16T04:54:03.627Z",
+            "path": ".ae/evidence/verify/verify-f0d39039/summary.md",
+            "mimeType": "text/markdown"
+          },
+          {
+            "id": "ev-summary-mvaht9ws",
+            "kind": "summary",
+            "label": "diagnosis",
+            "createdAt": "2026-10-16T04:54:03.628Z",
+            "path": ".ae/evidence/verify/verify-f0d39039/diagnosis.md",
+            "mimeType": "text/markdown"
+          },
+          {
+            "id": "ev-summary-mvaht9ws",
+            "kind": "summary",
+            "label": "pr-comment",
+            "createdAt": "2026-10-16T04:54:03.628Z",
+            "path": ".ae/evidence/verify/verify-f0d39039/pr-comment.md",
+            "mimeType": "text/markdown"
+          },
+          {
+            "id": "ev-summary-mvaht9ws",
+            "kind": "summary",
+            "label": "trajectory viewer",
+            "createdAt": "2026-10-16T04:54:03.628Z",
+            "path": ".ae/evidence/verify/verify-f0d39039/viewer.html",
+            "mimeType": "text/html"
+          }
+        ]
+      }
+    },
+    {
+      "action": "close",
+      "result": {
+        "ok": true,
+        "content": "session 9011f4af-5300-45b3-a27b-57274da0f826 closed"
+      }
+    }
+  ],
+  "driver": "upstream",
+  "status": "pass",
+  "dispose": {
+    "ok": true,
+    "content": "browser toolbox disposed"
+  }
+}

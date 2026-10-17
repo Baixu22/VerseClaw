@@ -36,7 +36,7 @@ Make Agent Browser suitable for **internal canary**, not a capability expansion:
 ## Mode upgrade gate
 
 ```ts
-// electron/services/agent-browser-service.ts
+// packages/versebrowser/src/engine/service.ts (embedded module; host route: electron/services/agent-browser-api.ts)
 if (targetMode !== 'normal_restricted' && payload.userApproval !== true) {
   throw new Error('... requires explicit userApproval: true ...');
 }
@@ -61,9 +61,9 @@ Host route: `agentBrowser.vaultHealth`
 
 | Layer | Path |
 |---|---|
-| Task persist + restart | `tests/unit/agent-browser-task-service.test.ts` |
-| Vault health | `tests/unit/agent-browser-vault.test.ts` |
-| Mode approval gate | `tests/unit/agent-browser-runtime-mode.test.ts` |
+| Task persist + restart | `packages/versebrowser/tests/agent-browser-task-service.test.ts`; host wiring `tests/unit/versebrowser-task-session-conservation.test.ts` |
+| Vault health | `packages/versebrowser/tests/agent-browser-vault.test.ts` |
+| Mode approval gate | `packages/versebrowser/tests/agent-browser-runtime-mode.test.ts`; host adapter `tests/unit/versebrowser-host-adapter.test.ts` |
 | Private network default | `tests/unit/default-config-matrix.test.ts` |
 | Workflow E2E | `tests/e2e/browser-security-recovery.spec.ts` |
 | E2E artifact | `artifacts/browser-security-recovery/evidence.json` |
@@ -71,7 +71,8 @@ Host route: `agentBrowser.vaultHealth`
 ## Verify
 
 ```powershell
-pnpm exec vitest run tests/unit/agent-browser-task-service.test.ts tests/unit/agent-browser-vault.test.ts tests/unit/agent-browser-runtime-mode.test.ts tests/unit/default-config-matrix.test.ts
+pnpm --dir packages/versebrowser exec vitest run tests/agent-browser-task-service.test.ts tests/agent-browser-vault.test.ts tests/agent-browser-runtime-mode.test.ts
+pnpm exec vitest run tests/unit/versebrowser-task-session-conservation.test.ts tests/unit/versebrowser-host-adapter.test.ts tests/unit/default-config-matrix.test.ts
 pnpm contract:check
 pnpm run build:vite
 pnpm exec playwright test tests/e2e/browser-security-recovery.spec.ts

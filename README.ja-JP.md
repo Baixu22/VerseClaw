@@ -190,12 +190,15 @@ Renderer の入口は `src/lib/host-api.ts` と `src/lib/host-api-client.ts` で
 | `electron/` | デスクトップのライフサイクル、Host サービス、Gateway、プロセス管理 |
 | `shared/` | 型契約、4 言語の翻訳、シナリオ登録、機能定義 |
 | `openclaw_runtime/` | 独立した依存ワークスペースのランタイムとプラグイン |
+| `packages/` | 埋め込みワークスペースモジュール。`packages/versebrowser` は固定版のブラウザ自動化エンジンで、公開 exports 経由で消費 |
 | `harness/` | 仕様 CLI、シナリオ、規則、タスク、レイヤー規約 |
 | `tests/` | デスクトップの単体・統合・Electron E2E テスト |
 | `scripts/` | ビルド、リソース同期、検証、証拠生成 |
 | `resources/` | 内蔵スキル、バイナリ、第三者ソースの声明 |
 | `docs/` | 製品セマンティクス、設計、開発ガイド、運用手順 |
 | `artifacts/` | 精選した証拠とローカル生成レポート。追跡対象は保管規則で決定 |
+
+VerseBrowser: インストール・開発・ビルド時に組み込みモジュールを自動コンパイルします。80 メソッドの契約は Electron の 80 機能の実装を意味しません。[呼び出し方法とドライバー制限](packages/README.md#versebrowser-integration-and-invocation)を参照してください。
 
 <a id="development"></a>
 

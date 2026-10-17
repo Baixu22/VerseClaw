@@ -11,6 +11,7 @@ import type {
   AgentBrowserVaultHealthResult,
   AgentBrowserEvaluatePayload,
   AgentBrowserEvaluateResult,
+  AgentBrowserFacadeResult,
   AgentBrowserFillByUidPayload,
   AgentBrowserNavigatePayload,
   AgentBrowserOpenPayload,
@@ -1101,6 +1102,32 @@ export const hostApi = {
       invokeHost('agentBrowser', 'extractPageText', input),
     validateExtractionRule: (input: AgentBrowserValidateExtractionRulePayload): Promise<AgentBrowserValidateExtractionRuleResult> =>
       invokeHost('agentBrowser', 'validateExtractionRule', input),
+    downloadFile: (input: AgentBrowserSelectorPayload & { path: string }): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'downloadFile', input),
+    uploadFiles: (input: AgentBrowserSelectorPayload & { paths: string[] }): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'uploadFiles', input),
+    pointer: (input: AgentBrowserSessionPayload & { action: 'hover' | 'double-click' | 'right-click' | 'scroll' | 'scroll-into-view'; selector?: string; deltaX?: number; deltaY?: number; timeoutMs?: number }): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'pointer', input),
+    drag: (input: AgentBrowserSessionPayload & { sourceSelector: string; targetSelector: string; timeoutMs?: number }): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'drag', input),
+    selectOption: (input: AgentBrowserSelectorPayload & { label: string }): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'selectOption', input),
+    selectValues: (input: AgentBrowserSelectorPayload & { values: string[] }): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'selectValues', input),
+    appendText: (input: AgentBrowserTypePayload): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'appendText', input),
+    setChecked: (input: AgentBrowserSelectorPayload & { checked: boolean }): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'setChecked', input),
+    findElement: (input: AgentBrowserSessionPayload & { role?: string; name?: string; label?: string; testId?: string; timeoutMs?: number }): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'findElement', input),
+    semanticRead: (input: AgentBrowserSessionPayload & { action: 'observe' | 'extract'; instruction: string; schema?: Record<string, unknown>; timeoutMs?: number }): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'semanticRead', input),
+    readForms: (input: AgentBrowserSessionPayload & { selector?: string }): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'readForms', input),
+    readDialogs: (input: AgentBrowserSessionPayload): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'readDialogs', input),
+    respondDialog: (input: AgentBrowserSessionPayload & { dialogId: string; accept: boolean; promptText?: string }): Promise<AgentBrowserFacadeResult> =>
+      invokeHost('agentBrowser', 'respondDialog', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),

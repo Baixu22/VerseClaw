@@ -11,8 +11,8 @@ severity: error
 
 ## 适用范围
 
-`electron/services/agent-browser/browser-control/tab-manager.ts`、
-`electron/services/agent-browser-service.ts` 中的 newPage/listPages/selectPage/closePage/navigatePage 方法、
+`packages/versebrowser/src/engine/browser-control/tab-manager.ts`、
+`packages/versebrowser/src/engine/service.ts` 中的 newPage/listPages/selectPage/closePage/navigatePage 方法、
 `shared/host-api/contract.ts` 中 `agentBrowser` 命名空间的 5 个 tab 动作。
 
 ## 硬性规则
@@ -86,5 +86,5 @@ CLI 引擎（`agent-browser-cli`）不支持多 tab。
 
 - `pnpm contract:check` 必须通过（contract.ts 与 host-api.ts 与 agent-browser-api.ts 对齐）
 - `pnpm run typecheck:node` 必须通过
-- `tests/unit/agent-browser-tab-manager.test.ts` 必须通过
-- `tests/unit/agent-browser-*.test.ts` 全量回归无破坏
+- `packages/versebrowser/tests/agent-browser-tab-manager.test.ts` 必须通过
+- `pnpm --dir packages/versebrowser exec vitest run tests/agent-browser-tab-manager.test.ts` 全量 tab 回归无破坏

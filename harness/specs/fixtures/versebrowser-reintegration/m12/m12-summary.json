@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m12-closeout-summary",
+  "scope": "Retire evidence-confirmed duplicate implementations, re-audit task/conservation/package invariants and bind final receipts to the final candidate",
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "worktree": "D:/ClawX",
+    "retirementChangeSet": "23 duplicate implementation files and 24 duplicate host unit tests deleted; cross-references repointed",
+    "note": "Receipts below were produced after the retirement, against this worktree's final candidate."
+  },
+  "retirement": {
+    "implementationsDeleted": 23,
+    "hostTestsDeleted": 24,
+    "callerTrace": "No electron/src/shared/openclaw_runtime/scripts module imported the retired specifiers; the only remaining importers were the retired duplicate tests themselves.",
+    "livePath": "electron/services/agent-browser-api.ts wraps @verse-claw/versebrowser; electron/gateway/agent-browser-bridge.ts and electron/main/ipc-handlers.ts consume that adapter.",
+    "moduleCounterpartsPresent": 24,
+    "twoLiveAlgorithmsRemaining": false
+  },
+  "hostOnlyTestDispositions": [
+    {
+      "file": "tests/unit/agent-browser-full-access-tool-executor.test.ts",
+      "cases": [
+        "revoke 后拒绝完全访问且不重放撤销动作"
+      ],
+      "disposition": "retired",
+      "note": "The case was added only in this migration worktree (uncommitted `git diff` on HEAD), so it was never a committed governed requirement. It asserted the retired host copy. The live module covers the same transition from the other direction: agent-browser-runtime-mode.test.ts \"降级回 normal_restricted 清理过期时间\" asserts that after the runtime mode drops back to normal_restricted, actions are rejected again, and service.revokeFullAccessRuntime() performs that same runtimeMode transition (plus a grant-context clear). What is no longer separately asserted is the literal fullAccessRevoke entry point followed by a denial. Recorded as a residual gap, not claimed as covered; closing it would need an upstream test added to the pinned source repo, not a private edit here (M09 pins module tests byte-for-byte to the source repo)."
+    },
+    {
+      "file": "tests/unit/agent-browser-page-text-extractor.test.ts",
+      "cases": [
+        "CDP 返回非字符串值时返回空结果",
+        "CDP 返回非法 JSON 字符串时返回空结果"
+      ],
+      "disposition": "obsolete",
+      "note": "The module intentionally changed both paths to explicit failure; module tests assert 'CDP 返回非字符串值时明确失败' and 'CDP 返回非法 JSON 字符串时明确失败'. Retaining the host expectation would re-introduce the old silent-empty behaviour."
+    },
+    {
+      "file": "tests/unit/agent-browser-service.test.ts",
+      "cases": [
+        "raises a typed sandbox denial before opening a browser under a degraded gate"
+      ],
+      "disposition": "covered_elsewhere",
+      "note": "Covered by tests/unit/versebrowser-host-adapter.test.ts ('raises typed denial before the module call and records the deny decision'), which additionally asserts the recorded deny decision."
+    }
+  ],
+  "gates": [
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "note": "typecheck:node, typecheck:web, typecheck:test all exit 0 with errorCount 0"
+    },
+    {
+      "command": "pnpm contract:check",
+      "exitCode": 0
+    },
+    {
+      "command": "node scripts/validate-system-maturity-privacy.mjs",
+      "exitCode": 0,
+      "note": "evidenceRefs resolve after repointing agent-browser-service.ts to agent-browser-api.ts"
+    },
+    {
+      "command": "node scripts/versebrowser-reintegration-check.mjs",
+      "exitCode": 0,
+      "note": "prepared: source-preservation 292/292, host-api legacy 67/67, task-mapping 190 entries"
+    },
+    {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "note": "history_load_qps and rpc_p95_ms deltas 0.00%"
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0
+    },
+    {
+      "command": "playwright test tests/e2e/agent-browser-workbench.spec.ts tests/e2e/browser-security-recovery.spec.ts",
+      "exitCode": 0,
+      "tests": 2,
+      "log": "harness/specs/fixtures/versebrowser-reintegration/m12/m12-e2e.log"
+    },
+    {
+      "command": "vitest run <13 live host agent-browser/versebrowser suites>",
+      "exitCode": 0,
+      "files": 13,
+      "tests": 154,
+      "log": "harness/specs/fixtures/versebrowser-reintegration/m12/m12-live-host-tests.log"
+    },
+    {
+      "command": "vitest run <24 module counterpart suites> (packages/versebrowser)",
+      "exitCode": 0,
+      "files": 24,
+      "tests": 279,
+      "log": "harness/specs/fixtures/versebrowser-reintegration/m12/m12-module-counterpart-tests.log"
+    },
+    {
+      "command": "node scripts/versebrowser-m09-regression-verify.mjs",
+      "exitCode": 0,
+      "report": "harness/specs/fixtures/versebrowser-reintegration/m12/m12-m09-recheck.json"
+    },
+    {
+      "command": "node scripts/versebrowser-m12-closeout-verify.mjs",
+      "exitCode": 0,
+      "report": "harness/specs/fixtures/versebrowser-reintegration/m12/m12-closeout-verify.json"
+    },
+    {
+      "command": "node scripts/run-system-maturity-security-suite.mjs --mode pr --out D:\\tmp\\p7-002-pr",
+      "exitCode": 0,
+      "note": "mode=pr scenarios=9 commands=3 failed=0 after repointing SM-SEC-P1-BROWSER-MULTI-WINDOW at the module test"
+    },
+    {
+      "command": "pnpm exec vitest run (full tests/unit + tests/integration)",
+      "exitCode": 1,
+      "files": "938 total",
+      "note": "8169 passed / 31 failed / 53 skipped. 13 files failed from the C: junction and 9 from the real path; all remaining failures are unrelated to this change set (docs-index ignored local file, runtime-memory baseline doc, skills lock, VerseShell facade, windows process probe). One real breakage WAS ours - system-maturity-security-suite-p7-002 pointing at a retired duplicate test - and is fixed in this change set."
+    }
+  ],
+  "conservation": {
+    "sourceTasks": {
+      "nodes": 190,
+      "edges": 338,
+      "dispositions": {
+        "wire_required": 137,
+        "constraint_preserved": 20,
+        "historical_evidence_preserved": 31,
+        "deferred": 2
+      }
+    },
+    "deferredScopes": [
+      {
+        "sourceTaskId": "TF-0174",
+        "hostNode": "TF-0343",
+        "hostStatus": "proposed"
+      },
+      {
+        "sourceTaskId": "TF-0176",
+        "hostNode": "TF-0344",
+        "hostStatus": "proposed"
+      }
+    ],
+    "hostApiSurface": {
+      "legacyPresent": 67,
+      "legacyExpected": 67,
+      "sourceOnlyPresent": 13,
+      "sourceOnlyPending": 0
+    },
+    "runtimeStateConservation": "M05/M11 receipts unchanged and re-bound: task/session store version 2, restart recovery, rollback set and state readback remain the referenced evidence; M12 touched no state code.",
+    "permissionResourceEvidence": "M03 adapter gates and resource envelope are untouched; privacy inventory evidenceRef now points at electron/services/agent-browser-api.ts.",
+    "processHistoryStaysLocal": true
+  },
+  "docSync": [
+    "README.md, README.zh-CN.md, README.ja-JP.md: added packages/ row describing the embedded pins",
+    "harness/specs/guides/versebrowser-reintegration-playbook.md: recorded M00->M12 execution and repointed the resource-owner path",
+    "harness/specs/rules/agent-browser-multi-tab.md: repointed the multi-tab rule to the module paths and module test command",
+    "harness/specs/tasks/phase-a-sandbox-truth-20261012.md: repointed the sandbox-denial test",
+    "plans/system-maturity/privacy-data-flow-inventory.json: evidenceRef repointed",
+    "package.json: p0:accept now runs the live versebrowser host suites",
+    "docs/dev/browser-security-recovery.md: mode-upgrade pointer and Evidence/Verify tables repointed to the module tests",
+    "docs/dev/error-governance-decision-record.md: approval-gate evidence pointer repointed",
+    "docs/dev/dcs-visible-production/P1-06-BROWSER-SUPERVISED-SOAK.md: soak matrix test paths repointed",
+    "plans/system-maturity/security-regression-suite.json: repointed the P4-002 browser-isolation scenario and its command from the retired host duplicate to the module test (caught by the full unit suite)"
+  ],
+  "packageBinding": {
+    "check": "harness/specs/fixtures/versebrowser-reintegration/m12/m12-closeout-verify.json",
+    "builtFilesHashedAgainstPackagedAppAsar": 1520,
+    "mismatches": 0,
+    "conclusion": "The freshly rebuilt dist/ and dist-electron/ output is byte-identical to release/win-unpacked/resources/app.asar, so the M10 packaged-app evidence binds to the final candidate without an installer rebuild.",
+    "notReExecuted": "NSIS installer/uninstaller execution remains an agent-driven equivalent per the repository HITL policy; no new interactive run was performed."
+  },
+  "remainingCheckpointWork": [
+    "Full node/vitest suite was not re-run end-to-end in M12; component receipts above plus the required profiles cover the changed surface.",
+    "Full installer execution stays out of scope as before."
+  ],
+  "validationBoundary": "M12 proves the duplicate implementations are retired, their coverage lives in the module suite, task/scope conservation inputs are intact, and the final build output equals the packaged bundle. It is not a product GA verdict.",
+  "harnessBoundary": {
+    "specValidateNoDiff": "pass (Spec is valid)",
+    "specValidateSinceHead": "exits 1 solely on pre-existing unrelated VerseShell dirt; every M12 changed path is covered by touchedAreas (TFD-vb-m12-harness-validate-dirty-worktree-20261016)",
+    "taskForest": "TF-0342 and TF-0329 closed done; TF-0343/TF-0344 remain proposed deferred scope; validate + export re-run"
+  },
+  "preExistingLocalIssues": [
+    {
+      "check": "pnpm exec vitest run tests/unit/docs-index.test.ts",
+      "result": "1 of 3 failed",
+      "cause": "docs/role-maturation-and-enhancement-proposal.md is a git-ignored local file (LastWriteTime 2026-07-12, before this session) so docs/README.md cannot link it. Not caused by M12: no docs/*.md top-level file was added or removed and docs/README.md is untouched.",
+      "action": "left untouched (local user file outside this change set)"
+    }
+  ],
+  "knownCollateral": [
+    {
+      "check": "node scripts/validate-system-maturity-evidence.mjs",
+      "before": "43 FAIL lines on this worktree before the security-suite manifest fix (package.json, harness specs and other migration/workstream artifacts are sealed in P0-004/P8-00x evidence indexes)",
+      "after": "45 FAIL lines; the two added lines are the P7-002 / P8-003 recordings of plans/system-maturity/security-regression-suite.json whose bytes now changed",
+      "decision": "Manifest repoint kept: it turns a live failing gate (tests/unit/system-maturity-security-suite-p7-002.test.ts + pnpm maturity:security pr mode) green. The evidence-index hashes were deliberately NOT rewritten because those indexes record bytes at seal time.",
+      "upgrade": "The affected indexes belong to other sealed tasks and need their own re-seal if the project wants this gate green again."
+    }
+  ]
+}

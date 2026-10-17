@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m03-host-owner-summary",
+  "scope": "Main owner wiring for the embedded VerseBrowser module; preparation evidence only",
+  "driven_by": "agent",
+  "actor": "codex",
+  "commands": [
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/agent-browser-service.test.ts tests/unit/agent-browser-task-service.test.ts tests/unit/agent-browser-vault.test.ts tests/unit/versebrowser-host-adapter.test.ts",
+      "exitCode": 0,
+      "tests": 33,
+      "files": 4
+    },
+    {
+      "command": "node scripts/versebrowser-host-integration-verify.mjs",
+      "exitCode": 0
+    },
+    {
+      "command": "package AgentBrowserVault profile/plaintext check",
+      "exitCode": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m03/host-integration-verify-report.json",
+      "sha256": "479f502b74cf6ad66bf254e23cdafb1625c47c870273537ee11d61a368084e73",
+      "bytes": 1169
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m03/typecheck.log",
+      "sha256": "f50c95c74e05dc6954b424a20547b68509454a87d005a0d4724e5f0aa73985ce",
+      "bytes": 1585
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m03/targeted-tests.log",
+      "sha256": "2b6faef38324a89503f3f02f13c4d8abaaa16fa60724f6ff4408324e1e0dbdf5",
+      "bytes": 5042
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m03/package-build.log",
+      "sha256": "341dbf950da7c23a1afd5a2e8fb0f704a557673bfc3c4ee9948da208e55071cb",
+      "bytes": 30
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m03/package-vault-test.json",
+      "sha256": "da6717806c047e2a4f220d5504694e96b3ed2bbeded35d9031187b73e76da2d9",
+      "bytes": 66
+    },
+    {
+      "path": "packages/versebrowser/integration-patches.json",
+      "sha256": "70fbca681f78b1b424504fd1fdee77d32f18c9881598b4c61ffb8bd54b7dc0d2",
+      "bytes": 1629
+    },
+    {
+      "path": "packages/versebrowser/patches/src__host__paths.ts.patch",
+      "sha256": "f0ccd29be55463fe87d780961ea739209bfe1fa1b0040b3988c77f7b947a8062",
+      "bytes": 613
+    },
+    {
+      "path": "packages/versebrowser/patches/src__index.ts.patch",
+      "sha256": "6e205d289d644de05a7294e6bef1424bda3f2169801fea0e378e71f89f7eb9dd",
+      "bytes": 347
+    },
+    {
+      "path": "electron/services/agent-browser-api.ts",
+      "sha256": "5dd26a6df53e22887cb0b78ca41d07cad797fc6655afb557ea1fb7e0de9f5ced",
+      "bytes": 5680
+    },
+    {
+      "path": "electron/gateway/agent-browser-bridge.ts",
+      "sha256": "d03786307e9cc2a827b3d740e8e0efc82ec240ded8dd046b5c7c018241729ea4",
+      "bytes": 4102
+    },
+    {
+      "path": "tests/unit/versebrowser-host-adapter.test.ts",
+      "sha256": "9d93aaf965b71067be21b1e366541c370d7ef9b84bc1d82a83e4e97e00d6c227",
+      "bytes": 5554
+    }
+  ],
+  "acceptance": {
+    "module_api_is_default_implementation": true,
+    "typed_sandbox_gate_precedes_module_call": true,
+    "permission_recorder_is_host_api": true,
+    "workspace_profile_and_root_refresh_each_call": true,
+    "sensitive_capture_remains_host_owned": true,
+    "data_dir_is_host_injected": true,
+    "resource_envelope_remains_main_owned": true,
+    "gateway_bridge_applies_same_sandbox_gate": true,
+    "audit_unavailable_fails_closed": true,
+    "cancel_and_task_state_tests_pass": true,
+    "credentials_remain_safeStorage_backed": true,
+    "package_vault_profile_isolation_verified": true
+  },
+  "remainingCheckpointWork": [
+    "Runtime→Gateway→Main real-call verification remains M08",
+    "Package path and Electron package verification remain M10",
+    "Rollback/cutover remains M11"
+  ],
+  "validationBoundary": "Adapter tests, typecheck and package-level credential test prove wiring and fail-closed behavior, not a real browser, Gateway/model round trip, or installed-package acceptance."
+}

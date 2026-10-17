@@ -13,10 +13,10 @@ touchedAreas:
   - openclaw_runtime/src/agents/tools/agent-browser-tool.ts
   - openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts
   - openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts
-  - electron/services/agent-browser-service.ts
+  - packages/versebrowser/src/engine/service.ts
   - electron/gateway/agent-browser-bridge.ts
   - tests/unit/agent-browser-tool.test.ts
-  - tests/unit/agent-browser-service.test.ts
+  - packages/versebrowser/tests/agent-browser-service.test.ts
   - tests/unit/agent-browser-gateway-bridge.test.ts
 requiredProfiles:
   - fast
@@ -30,7 +30,7 @@ requiredTests:
   - openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts
   - openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts
   - tests/unit/agent-browser-tool.test.ts
-  - tests/unit/agent-browser-service.test.ts
+  - packages/versebrowser/tests/agent-browser-service.test.ts
   - tests/unit/agent-browser-gateway-bridge.test.ts
   - openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts
   - openclaw_runtime/src/agents/exec-provenance-policy.test.ts

@@ -1,0 +1,190 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "MCP stdio protocol + capability filtering; not a model or packaged-app claim",
+  "node": "v24.16.0",
+  "uv": "1.52.1",
+  "exchange": [
+    {
+      "result": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {
+          "tools": {}
+        },
+        "serverInfo": {
+          "name": "versebrowser",
+          "version": "0.3.1"
+        }
+      },
+      "jsonrpc": "2.0",
+      "id": 1
+    },
+    {
+      "result": {
+        "tools": [
+          {
+            "name": "vb_ping",
+            "description": "Health check. Always available.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true,
+              "idempotentHint": true
+            }
+          }
+        ]
+      },
+      "jsonrpc": "2.0",
+      "id": 2
+    },
+    {
+      "result": {
+        "_meta": {
+          "versebrowser/audit": "unavailable"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"ok\": true,\n  \"content\": \"ok\",\n  \"data\": {\n    \"ok\": true,\n    \"server\": \"versebrowser\"\n  }\n}"
+          }
+        ]
+      },
+      "jsonrpc": "2.0",
+      "id": 3
+    },
+    {
+      "result": {
+        "_meta": {
+          "versebrowser/audit": "unavailable"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"ok\": false,\n  \"content\": \"vb_open requires an explicit tool group grant (deny-by-default).\",\n  \"error\": {\n    \"code\": \"E_GROUP_DENY\",\n    \"message\": \"vb_open requires an explicit tool group grant (deny-by-default).\",\n    \"details\": {\n      \"group\": \"core\",\n      \"recoveryHint\": {\n        \"category\": \"denied\",\n        \"retryable\": false,\n        \"reobserve\": false,\n        \"needs_user\": false,\n        \"execution\": \"not_started\"\n      }\n    }\n  }\n}"
+          }
+        ],
+        "isError": true
+      },
+      "jsonrpc": "2.0",
+      "id": 4
+    },
+    {
+      "result": {
+        "_meta": {
+          "versebrowser/audit": "unavailable"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"ok\": false,\n  \"content\": \"Unknown tool: vb_not_a_tool\",\n  \"error\": {\n    \"code\": \"E_TOOL_DENY\",\n    \"message\": \"Unknown tool: vb_not_a_tool\",\n    \"details\": {\n      \"recoveryHint\": {\n        \"category\": \"denied\",\n        \"retryable\": false,\n        \"reobserve\": false,\n        \"needs_user\": false,\n        \"execution\": \"not_started\"\n      }\n    }\n  }\n}"
+          }
+        ],
+        "isError": true
+      },
+      "jsonrpc": "2.0",
+      "id": 5
+    }
+  ],
+  "initialize": {
+    "result": {
+      "protocolVersion": "2025-06-18",
+      "capabilities": {
+        "tools": {}
+      },
+      "serverInfo": {
+        "name": "versebrowser",
+        "version": "0.3.1"
+      }
+    },
+    "jsonrpc": "2.0",
+    "id": 1
+  },
+  "toolsList": {
+    "result": {
+      "tools": [
+        {
+          "name": "vb_ping",
+          "description": "Health check. Always available.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "annotations": {
+            "readOnlyHint": true,
+            "idempotentHint": true
+          }
+        }
+      ]
+    },
+    "jsonrpc": "2.0",
+    "id": 2
+  },
+  "advertised": [
+    "vb_ping"
+  ],
+  "pingCall": {
+    "result": {
+      "_meta": {
+        "versebrowser/audit": "unavailable"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"ok\": true,\n  \"content\": \"ok\",\n  \"data\": {\n    \"ok\": true,\n    \"server\": \"versebrowser\"\n  }\n}"
+        }
+      ]
+    },
+    "jsonrpc": "2.0",
+    "id": 3
+  },
+  "blockedCall": {
+    "result": {
+      "_meta": {
+        "versebrowser/audit": "unavailable"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"ok\": false,\n  \"content\": \"vb_open requires an explicit tool group grant (deny-by-default).\",\n  \"error\": {\n    \"code\": \"E_GROUP_DENY\",\n    \"message\": \"vb_open requires an explicit tool group grant (deny-by-default).\",\n    \"details\": {\n      \"group\": \"core\",\n      \"recoveryHint\": {\n        \"category\": \"denied\",\n        \"retryable\": false,\n        \"reobserve\": false,\n        \"needs_user\": false,\n        \"execution\": \"not_started\"\n      }\n    }\n  }\n}"
+        }
+      ],
+      "isError": true
+    },
+    "jsonrpc": "2.0",
+    "id": 4
+  },
+  "unknownCall": {
+    "result": {
+      "_meta": {
+        "versebrowser/audit": "unavailable"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"ok\": false,\n  \"content\": \"Unknown tool: vb_not_a_tool\",\n  \"error\": {\n    \"code\": \"E_TOOL_DENY\",\n    \"message\": \"Unknown tool: vb_not_a_tool\",\n    \"details\": {\n      \"recoveryHint\": {\n        \"category\": \"denied\",\n        \"retryable\": false,\n        \"reobserve\": false,\n        \"needs_user\": false,\n        \"execution\": \"not_started\"\n      }\n    }\n  }\n}"
+        }
+      ],
+      "isError": true
+    },
+    "jsonrpc": "2.0",
+    "id": 5
+  },
+  "cancelledRequestId": 6,
+  "status": "pass",
+  "assertions": {
+    "advertisedCount": 1,
+    "advertised": [
+      "vb_ping"
+    ],
+    "driverToolsNotAdvertised": true,
+    "pingIsError": false,
+    "blockedIsError": true,
+    "unknownIsError": true,
+    "blockedMessage": "{\n  \"ok\": false,\n  \"content\": \"vb_open requires an explicit tool group grant (deny-by-default).\",\n  \"error\": {\n    \"code\": \"E_GROUP_DENY\",\n    \"message\": \"vb_open requires an explicit tool group grant (deny-by-default).\",\n    \"details\": {\n      \"group\": \"core\",\n      \"recoveryHint\": {\n        \"category\": \"denied\",\n        \"retryable\": false,\n        \"reobserve\": false,\n        \"needs_user\": false,\n        \"execution\": \"not_started\"\n      }\n    }\n  }\n}",
+    "unknownMessage": "{\n  \"ok\": false,\n  \"content\": \"Unknown tool: vb_not_a_tool\",\n  \"error\": {\n    \"code\": \"E_TOOL_DENY\",\n    \"message\": \"Unknown tool: vb_not_a_tool\",\n    \"details\": {\n      \"recoveryHint\": {\n        \"category\": \"denied\",\n        \"retryable\": false,\n        \"reobserve\": false,\n        \"needs_user\": false,\n        \"execution\": \"not_started\"\n      }\n    }\n  }\n}"
+  }
+}

@@ -1,0 +1,21 @@
+--- a/src/host/paths.ts
++++ b/src/host/paths.ts
+@@ -10,7 +10,18 @@
+ /**
+  * Get Verse Claw data directory
+  */
++export type DataDirProvider = () => string | undefined;
++
++let dataDirProvider: DataDirProvider | null = null;
++
++/** Host-injectable data directory; keeps Main state ownership outside the package. */
++export function setDataDirProvider(provider: DataDirProvider | null): void {
++  dataDirProvider = provider;
++}
++
+ export function getDataDir(): string {
++  const provided = dataDirProvider?.();
++  if (provided) return provided;
+   try {
+     const app = tryElectron()?.app;
+     if (app?.getPath) {

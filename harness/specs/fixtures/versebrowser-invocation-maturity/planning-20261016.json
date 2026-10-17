@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-10-16",
+  "scope": "planning only; implementation and operational acceptance have not started",
+  "plan": {
+    "path": "harness/specs/tasks/versebrowser-invocation-maturity.md",
+    "sha256": "004861e92a0859c5ff93004b29b059d0fcf6a670d71baef5a56c8632e1e93dfd"
+  },
+  "previousAudit": {
+    "path": "harness/specs/fixtures/versebrowser-reintegration/hygiene-20261016/summary.json",
+    "boundSourceFilesChecked": 28,
+    "changedSourceFiles": 0,
+    "testsRerunThisPlanningTurn": false
+  },
+  "taskForest": {
+    "proposalId": "TFP-versebrowser-invocation-maturity-20261016",
+    "proposalPath": ".agent-workbench/task-forest/proposals/TFP-versebrowser-invocation-maturity-20261016.json",
+    "baseGraphHashGuard": "checked by proposal-apply; no allow-stale",
+    "beforeNodes": 344,
+    "afterNodes": 354,
+    "priorTitlesStatusesEvidenceAcceptancePreserved": true,
+    "historicalMigrationStatus": "done (historical; not current invocation acceptance)",
+    "deferredSourceScopesPreserved": [
+      "TF-0343",
+      "TF-0344"
+    ],
+    "newNodes": [
+      {
+        "id": "TF-0345",
+        "title": "让 VerseBrowser 调用链达到可验证的成熟状态",
+        "status": "in_progress",
+        "progress": 0.0
+      },
+      {
+        "id": "TF-0346",
+        "title": "隔离候选并冻结可重复基线",
+        "status": "ready",
+        "progress": 0.0
+      },
+      {
+        "id": "TF-0347",
+        "title": "打通受支持运行时与桌面启动",
+        "status": "proposed",
+        "progress": 0.0
+      },
+      {
+        "id": "TF-0348",
+        "title": "统一会话能力发现和模型调用门禁",
+        "status": "proposed",
+        "progress": 0.0
+      },
+      {
+        "id": "TF-0349",
+        "title": "打通模型观察动作复核闭环",
+        "status": "proposed",
+        "progress": 0.0
+      },
+      {
+        "id": "TF-0350",
+        "title": "完成新增十三项的准入与缺口处置",
+        "status": "proposed",
+        "progress": 0.0
+      },
+      {
+        "id": "TF-0351",
+        "title": "验证授权会话和副作用守恒",
+        "status": "proposed",
+        "progress": 0.0
+      },
+      {
+        "id": "TF-0352",
+        "title": "验证真实模型链与独立MCP协议",
+        "status": "proposed",
+        "progress": 0.0
+      },
+      {
+        "id": "TF-0353",
+        "title": "验证干净消费与实际安装包",
+        "status": "proposed",
+        "progress": 0.0
+      },
+      {
+        "id": "TF-0354",
+        "title": "重复运行并按当前证据收口",
+        "status": "proposed",
+        "progress": 0.0
+      }
+    ],
+    "nextReady": "TF-0346",
+    "implementationNodesClosed": 0,
+    "htmlPath": ".agent-workbench/task-forest/exports/task-forest.html",
+    "htmlContainsNewRoot": true,
+    "htmlBytes": 178570880,
+    "note": "Global task is in_progress for planning; execution tasks remain ready/proposed. HTML renders started nodes and counts unstarted work; the full plan is in the spec."
+  },
+  "checks": [
+    {
+      "name": "task-forest init",
+      "exitCode": 0
+    },
+    {
+      "name": "task-forest list/todo",
+      "exitCode": 0
+    },
+    {
+      "name": "task-forest validate before",
+      "exitCode": 0
+    },
+    {
+      "name": "proposal-save",
+      "exitCode": 0
+    },
+    {
+      "name": "proposal-apply --yes",
+      "exitCode": 0
+    },
+    {
+      "name": "task-forest validate after",
+      "exitCode": 0
+    },
+    {
+      "name": "task-forest export",
+      "exitCode": 0
+    },
+    {
+      "name": "harness context",
+      "exitCode": 0
+    },
+    {
+      "name": "harness validate (full working diff)",
+      "exitCode": 1
+    },
+    {
+      "name": "git diff --check (full working diff)",
+      "exitCode": 2
+    }
+  ],
+  "limitations": [
+    "Full harness validation rejects 131 pre-existing/mixed paths outside the new task spec; no --no-diff or unrelated ownership widening was used.",
+    "Whole-worktree diff check reports three trailing-whitespace lines in the existing electron/main/ipc-handlers.ts; that file was not edited in this planning turn.",
+    "No new product code, toolchain installation, runtime/default policy change, source commit, push, release, real-model run or packaged acceptance was performed.",
+    "Planned counts (10 cold starts, 30 loops, 3 recovery runs) are future criteria, not measured results."
+  ],
+  "rawPlanningLogs": "D:\\tmp\\clawx-vb-plan-20261016"
+}

@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m05-task-session-conservation-summary",
+  "scope": "Task store, session/page ownership, cancel/restart and late-callback conservation",
+  "driven_by": "agent",
+  "actor": "codex",
+  "commands": [
+    {
+      "command": "pnpm exec vitest run <6 M05-related suites>",
+      "exitCode": 0,
+      "tests": 63,
+      "files": 6
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m05/targeted-tests.log",
+      "sha256": "ffc73683d3261d6d891bcfcfcdbbe0e7a4ecbd6d87da1fb4f2533b38642a99e6",
+      "bytes": 9102
+    },
+    {
+      "path": "harness/specs/fixtures/versebrowser-reintegration/m05/typecheck.log",
+      "sha256": "bdb7ccdab51b6308be710e08513a6349e9f72c7c2be07ce36a485b9a6643cc2e",
+      "bytes": 1585
+    },
+    {
+      "path": "packages/versebrowser/src/engine/task-service.ts",
+      "sha256": "73b91538f8d0a68ec2cb08d676c0830d44f4acd7fc251b35f77d73feea491e5e",
+      "bytes": 25584
+    },
+    {
+      "path": "packages/versebrowser/src/engine/service.ts",
+      "sha256": "081b80a0524834f6571c4bf5da812471789aa698f38b732d512ace38812b1424",
+      "bytes": 108176
+    },
+    {
+      "path": "tests/unit/versebrowser-task-session-conservation.test.ts",
+      "sha256": "f709ae5ce0097d93054f5f142d6bd64f5d8094cef3cf1b95a6d8cc0228e570af",
+      "bytes": 6596
+    }
+  ],
+  "acceptance": {
+    "version_2_store_and_task_service_single_owner": true,
+    "task_ids_counts_steps_counters_verification_approval_and_terminal_state_preserved": true,
+    "running_restart_becomes_interrupted_with_recovery": true,
+    "queued_waiting_paused_and_terminal_states_survive": true,
+    "late_cancel_pause_completion_do_not_rewrite_terminal_state": true,
+    "unknown_steps_rejected_before_persist": true,
+    "approval_consumed_once_and_retry_requires_new_approval": true,
+    "workspace_session_page_ownership_explicit": true,
+    "unload_recycles_only_owned_session_and_other_session_survives": true,
+    "page_ids_do_not_reuse_and_stale_refs_reset_on_page_switch": true
+  },
+  "remainingCheckpointWork": [
+    "Real Electron restart process boundary remains M10",
+    "Production Runtime/Gateway call ownership remains M08",
+    "Full cancellation/adversarial matrix remains M09"
+  ],
+  "validationBoundary": "Synthetic task-store and in-memory session tests prove state-machine and ownership invariants. They do not claim a real app restart, packaged install, or model/runtime round trip."
+}

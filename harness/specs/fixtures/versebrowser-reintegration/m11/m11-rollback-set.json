@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m11-rollback-set",
+  "driven_by": "agent",
+  "actor": "codex",
+  "sourceCommit": "47b076f85d4e37cdaea67c1564d1c4f4dbf2b011",
+  "groups": {
+    "source": [
+      {
+        "path": "packages/versebrowser/import-manifest.json",
+        "present": true,
+        "bytes": 42763,
+        "sha256": "ca8ec19363d3241e24d3a50ba3938d6eccb3c4dc9c4031c88439d55da8ba61e8"
+      }
+    ],
+    "patch": [
+      {
+        "path": "packages/versebrowser/integration-patches.json",
+        "present": true,
+        "bytes": 1629,
+        "sha256": "70fbca681f78b1b424504fd1fdee77d32f18c9881598b4c61ffb8bd54b7dc0d2"
+      },
+      {
+        "path": "packages/versebrowser/patches/src__index.ts.patch",
+        "present": true,
+        "bytes": 347,
+        "sha256": "6e205d289d644de05a7294e6bef1424bda3f2169801fea0e378e71f89f7eb9dd"
+      },
+      {
+        "path": "packages/versebrowser/patches/src__host__paths.ts.patch",
+        "present": true,
+        "bytes": 613,
+        "sha256": "f0ccd29be55463fe87d780961ea739209bfe1fa1b0040b3988c77f7b947a8062"
+      },
+      {
+        "path": "packages/versebrowser/scripts/patch-upstream.mjs",
+        "present": true,
+        "bytes": 4360,
+        "sha256": "4a5e5f06f4abd263dc73cd02df102c2d649c2a108ba08507ccb8f90e37a90f4e"
+      }
+    ],
+    "lock": [
+      {
+        "path": "pnpm-lock.yaml",
+        "present": true,
+        "bytes": 735492,
+        "sha256": "b75f6e06d80915c463e9d36d8bbd750324b717339461818c536c8b8adaaf9f42"
+      },
+      {
+        "path": "packages/versebrowser/package.json",
+        "present": true,
+        "bytes": 4213,
+        "sha256": "5d2925a3b0cd321a3b8cebff8532c6c7c344f8e0973a222db4a06f935a5e2506"
+      }
+    ],
+    "adapter": [
+      {
+        "path": "electron/services/agent-browser-api.ts",
+        "present": true,
+        "bytes": 8530,
+        "sha256": "d848f05e248f0e9fc88078440f76a412a8f873f9b108e91fbdbb88975bc3e603"
+      },
+      {
+        "path": "electron/gateway/agent-browser-bridge.ts",
+        "present": true,
+        "bytes": 10005,
+        "sha256": "0363ac9a8b229fc2fdac6ed0bf86a4957458127bdbd2a24afdec38ccf3ea04fe"
+      },
+      {
+        "path": "electron/main/ipc-handlers.ts",
+        "present": true,
+        "bytes": 66919,
+        "sha256": "078695eeb2e06eeb7a5c29bd7a6e3b832e95602fe62095ad195bc9d0962aa685"
+      }
+    ],
+    "contract": [
+      {
+        "path": "shared/host-api/contract.ts",
+        "present": true,
+        "bytes": 202677,
+        "sha256": "50c2cf73d8fc84aeca7b7eb88dcbee6c7fdbf3689bf4d7506f1c4ab48a72cb86"
+      },
+      {
+        "path": "src/lib/host-api.ts",
+        "present": true,
+        "bytes": 91378,
+        "sha256": "186d7474d1d4997492745caf4fbb2bce55951b63cd3bb8ce4ad48f23460fdc4f"
+      }
+    ],
+    "state-reader": [
+      {
+        "path": "packages/versebrowser/src/engine/task-service.ts",
+        "present": true,
+        "bytes": 25584,
+        "sha256": "73b91538f8d0a68ec2cb08d676c0830d44f4acd7fc251b35f77d73feea491e5e"
+      },
+      {
+        "path": "packages/versebrowser/src/engine/vault.ts",
+        "present": true,
+        "bytes": 10251,
+        "sha256": "91731aa44daf7599eb2feeae4d535013f25db3107882d8e718ad1badb343ef1e"
+      },
+      {
+        "path": "packages/versebrowser/src/engine/service.ts",
+        "present": true,
+        "bytes": 108176,
+        "sha256": "081b80a0524834f6571c4bf5da812471789aa698f38b732d512ace38812b1424"
+      }
+    ],
+    "assets": [
+      {
+        "path": "packages/versebrowser/dist/index.js",
+        "present": true,
+        "bytes": 2511,
+        "sha256": "bb06d01034c6b5e6ec25dc634b8f126ddc70ffb8a5451b169f7733506a31cf72"
+      },
+      {
+        "path": "packages/versebrowser/dist/engine/service.js",
+        "present": true,
+        "bytes": 97643,
+        "sha256": "f4bed49fde27291bdd74f2409d83ac07d5039cf53afd5c47e6c510c6459ae8e0"
+      },
+      {
+        "path": "resources/bin/win32-x64/node-runtime.json",
+        "present": true,
+        "bytes": 132,
+        "sha256": "a7cc13971a8a95d55428a6fa8ee085b9dba2e1979086ea5a3e023985378bbcc3"
+      }
+    ]
+  },
+  "missing": [],
+  "defaultSelector": {
+    "driver": "playwright",
+    "isLegacy": true
+  },
+  "status": "pass",
+  "validationBoundary": "Binds the files that must roll back together and confirms the default selector is still legacy. It does not perform a rollback; it proves the set is present and hashable."
+}

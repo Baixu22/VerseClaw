@@ -4,13 +4,13 @@
   "driven_by": "agent",
   "actor": "codex/root",
   "candidate": {
-    "commit": "812cba73ffda0d59fd81e78543e35e16940084ff",
-    "tree": "df5b958a049a3369ced0dd2852a6d8335981c7b9",
-    "dirty": false
+    "commit": "c689f05c2791a653ae55b631aa60d077b4570d82",
+    "tree": "b55de5430a16e3bf2fe38eafd9ab6825c368cb93",
+    "dirty": true
   },
   "taskId": "TF-0009",
-  "generatedAt": "2026-09-30T08:41:51.594Z",
-  "campaignId": "856927b0-6393-4be3-b177-f25aaaf1ba8e",
+  "generatedAt": "2026-10-17T00:52:34.382Z",
+  "campaignId": "e3a8bf66-5d18-4f50-844e-49557023d472",
   "authority": "engineering-agent-surrogate-only",
   "result": "agent-acceptance-complete",
   "humanEquivalent": false,

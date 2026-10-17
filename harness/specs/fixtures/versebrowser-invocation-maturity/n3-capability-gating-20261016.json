@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-10-16",
+  "taskForestNode": "TF-0348",
+  "specNode": "N3",
+  "scope": "Session-bound capability discovery and the model/Main invocation gate. Not browser business acceptance (N4/N5).",
+  "verdict": "pass",
+  "design": {
+    "singleTable": "electron/services/agent-browser-capabilities.ts owns MODEL_ACTION_REQUIREMENTS: each of the 24 model actions maps to the host-api methods it really needs, plus CLI/facade-local flags.",
+    "driverFact": "Availability comes from the package's real DriverProfile via the already-exported AgentBrowserFacade#getDriverProfile (structural); the profile is built to detect thin-driver refusal stubs by declaration shape. No `typeof api.method === 'function'` inference, no 80-method-contract counting, and the facade wrappers are deliberately NOT the source.",
+    "deterministicVersion": "version = sha256 over the canonical (driverKind, cliAvailable, sorted action/available/reason) map",
+    "surfaces": [
+      "renderer IPC hostApi adapter (electron/services/agent-browser-api.ts withCapabilityGate + status.capabilities)",
+      "Gateway bridge (defence in depth: assertActionAvailable before dispatch, status carries the snapshot)",
+      "model tool (schema built from the snapshot; execute rejects unavailable actions before invoking)"
+    ],
+    "noSideEffects": "building the snapshot constructs an api view only; the desktop probe proves status returns the snapshot with 0 sessions created"
+  },
+  "desktopEvidence": {
+    "receipt": "desktop-capability-receipt.json",
+    "sha256": "e9239ea0884048919b038d610fa10758277ac838ba3ac225c24fb517821a4774",
+    "startupOutcome": "pass",
+    "stage": "host-bridge",
+    "capabilitiesVersion": "b7ab90d113821909e5956e7596b3182376f8f2ec57c1cd1321fe1b63219f6a8e",
+    "driverKind": "injected",
+    "cliAvailable": false,
+    "actionCount": 24,
+    "available": [
+      "open",
+      "status",
+      "navigate",
+      "waitForSelector",
+      "click",
+      "type",
+      "evaluate",
+      "screenshot",
+      "close",
+      "getConsoleMessages"
+    ],
+    "unavailable": [
+      "command",
+      "downloadFile",
+      "uploadFiles",
+      "pointer",
+      "drag",
+      "selectOption",
+      "selectValues",
+      "appendText",
+      "setChecked",
+      "findElement",
+      "semanticRead",
+      "readForms",
+      "readDialogs",
+      "respondDialog"
+    ],
+    "forgedCall": {
+      "ok": false,
+      "errorCode": "INTERNAL",
+      "errorMessage": "Agent browser action \"downloadFile\" is not available: driver \"injected\" declares downloadFile but refuses them (E_NOT_IMPLEMENTED)"
+    },
+    "sessionsAfterForgedCall": [],
+    "note": "A hand-forged agentBrowser.downloadFile call is rejected by Main with the refusal-stub reason and creates no session."
+  },
+  "matrix": {
+    "cliAbsent": "command is unavailable in both the engine and the host snapshot (no bundled agent-browser in this checkout)",
+    "cliPresent": "simulated in unit tests via the injectable capability provider; command routes to the service",
+    "driverDifference": "none / injected-full / playwright / refusal-stub profiles are unit-tested and produce different versions and reasons",
+    "staleSnapshot": "a tool built from an older snapshot can be stale; Main rejects at the adapter/bridge so no browser effect is possible",
+    "schemaOrder": "canonical order preserved; the TypeBox schema is cached by action list so a version bump with the same list does not rebuild it"
+  },
+  "verifiers": {
+    "apiCoverage": {
+      "status": "pass",
+      "sha256": "68f73f7a4f871b1c7e20d3862b140668e2f28f3a7b80fbbf32d49c3d43fdda21"
+    },
+    "module": {
+      "status": "pass",
+      "sha256": "4534413d728dca4b46f9d2538bc4c69cbae464a72cbfeb984d77ae4cff59595a"
+    },
+    "hostIntegration": {
+      "status": "pass",
+      "sha256": "db3b4ca06b81b9c3c3069a81b3372b657dc95bc2339ace679637150605c02699"
+    },
+    "contractCheck": "pass"
+  },
+  "tests": {
+    "command": "pnpm exec vitest run tests/unit/agent-browser-gateway-bridge.test.ts tests/unit/versebrowser-capability-gating.test.ts tests/unit/versebrowser-model-action-capabilities.test.ts tests/unit/agent-browser-tool.test.ts tests/unit/agent-browser-tool.provenance.test.ts tests/unit/versebrowser-driver-capabilities.test.ts tests/unit/versebrowser-host-adapter.test.ts tests/unit/versebrowser-task-session-conservation.test.ts",
+    "result": "48 passed / 7 files",
+    "typecheck": "pnpm run typecheck exit 0",
+    "newFiles": [
+      "tests/unit/versebrowser-capability-gating.test.ts",
+      "tests/unit/versebrowser-model-action-capabilities.test.ts"
+    ]
+  },
+  "frozenBounds": {
+    "untouched": [
+      "packages/versebrowser/src/index.ts (frozen patch target, hash restored)",
+      "packages/versebrowser/package.json export map (pinned at 17 entries)",
+      "harness/specs/fixtures/versebrowser-reintegration/source-lock.json"
+    ],
+    "reason": "the public export map and patched import files are frozen; the capability model therefore lives in the host-owned electron/ layer and reuses the package DriverProfile through the existing facade export."
+  },
+  "limitations": [
+    "Availability advertises driver+environment facts; per-session authorization/revocation is N6.",
+    "The 13 additions remain unavailable here; enabling them is N5.",
+    "No browser business loop or real-model evidence in this node (N4/N7)."
+  ],
+  "rawEvidenceRoot": "D:\\tmp\\clawx-vb-n3-20261016"
+}

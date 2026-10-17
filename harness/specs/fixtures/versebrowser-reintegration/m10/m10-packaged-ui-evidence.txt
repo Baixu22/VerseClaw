@@ -1,0 +1,13 @@
+packaged UI evidence (agent, codex)
+
+exe: release/win-unpacked/Verse Claw.exe
+mode: --no-sandbox --remote-debugging-port=9363 --user-data-dir=<in-repo temp> --lang=en-US --disable-gpu
+env: VERSE_CLAW_E2E=1 VERSE_CLAW_E2E_SKIP_SETUP=1 VERSE_CLAW_USER_DATA_DIR=<temp>
+
+CDP http://127.0.0.1:9363/json/version -> webSocketDebuggerUrl present; connectOverCDP succeeds; 1 page.
+page title: Verse Claw
+page url: file:///D:/ClawX/release/win-unpacked/resources/app.asar/dist/index.html?bootTheme=dark&e2eSkipSetup=1
+rendered body (trimmed): "Verse 新任务 收件箱 已安排 知识 项目 默认工作区 new session main 新建工作线 存储不足 — 点击清理 设置 Ctrl+, 默认工作区 master / new session main 无法加载此会话 Gateway not connected 重新加载 添加文件 搜..."
+
+interpretation: the packaged artifact serves and renders the real renderer from app.asar and is remotely drivable via CDP.
+gap: Playwright electron.launch firstWindow() still does not attach to the packaged exe on this host; the packaged E2E should use the CDP path or run on a host where electron.launch attaches.

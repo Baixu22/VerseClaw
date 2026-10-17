@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-25T03:46:02.915Z",
+  "generatedAt": "2026-10-15T21:00:30.813Z",
   "entries": [
     {
       "task": "P0-001",
@@ -10,7 +10,7 @@
     {
       "task": "P0-001",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178"
+      "sha256": "8eecfa7355987d9f7775c24040f453abcab8398f7da3e3c4c7df0d039398d29e"
     },
     {
       "task": "P0-001",
@@ -70,7 +70,7 @@
     {
       "task": "P0-003",
       "path": "vitest.config.ts",
-      "sha256": "48f15e358063436f4ff6e366832ae650b7ce8990ed299865b723485434187e3b"
+      "sha256": "9fc0c29daa2b0751cb64a7099792db229333855765fded8e2836c5b314021e0a"
     },
     {
       "task": "P0-003",
@@ -85,17 +85,17 @@
     {
       "task": "P0-003",
       "path": "src/lib/host-api.ts",
-      "sha256": "caa74d4b1e2eaa290699961c4fabf207f15a2f2b3a1d214cbcf5114a294f28ff"
+      "sha256": "186d7474d1d4997492745caf4fbb2bce55951b63cd3bb8ce4ad48f23460fdc4f"
     },
     {
       "task": "P0-003",
       "path": "tests/unit/host-api-facade.test.ts",
-      "sha256": "021b7e33909ddf71e33334d2fa9f0d4cc63af1fe900f00ce380b186626fe95b4"
+      "sha256": "6df457d1ce4cfb44fec4de66810130d50c10d99dca7596a6b197c0e8f76224fc"
     },
     {
       "task": "P0-003",
       "path": "package.json",
-      "sha256": "1a39578d38fa704e5472236a36aa6abc83571df529e75da4511165ee47c57338"
+      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
     },
     {
       "task": "P0-003",
@@ -130,12 +130,12 @@
     {
       "task": "P0-004",
       "path": "scripts/validate-system-maturity-evidence.mjs",
-      "sha256": "afd81298c58bfa3c9d08ccd2fefb906f27d82cfb841caacae0f56c89e4c00e34"
+      "sha256": "86041babf3bb616410eae40007638196cd0a1b00c2074112a61faab8c1dccd35"
     },
     {
       "task": "P0-004",
       "path": "package.json",
-      "sha256": "1a39578d38fa704e5472236a36aa6abc83571df529e75da4511165ee47c57338"
+      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
     },
     {
       "task": "P0-004",
@@ -190,12 +190,12 @@
     {
       "task": "P1-001",
       "path": "shared/host-api/contract.ts",
-      "sha256": "5b8db0f9926ea680a5a75843c921ae16551f2e43e5f23ef09a883de4f3eb8fac"
+      "sha256": "50c2cf73d8fc84aeca7b7eb88dcbee6c7fdbf3689bf4d7506f1c4ab48a72cb86"
     },
     {
       "task": "P1-001",
       "path": "src/lib/host-api.ts",
-      "sha256": "caa74d4b1e2eaa290699961c4fabf207f15a2f2b3a1d214cbcf5114a294f28ff"
+      "sha256": "186d7474d1d4997492745caf4fbb2bce55951b63cd3bb8ce4ad48f23460fdc4f"
     },
     {
       "task": "P1-001",
@@ -220,7 +220,7 @@
     {
       "task": "P1-002",
       "path": "electron/main/ipc/host-invoke.ts",
-      "sha256": "55d106a708432b33b95b079a8f63599f40498030cb003c64e71df610dbb24ee1"
+      "sha256": "d915a31293b07ccbb83c5df97a7e2a5cf39fb896ad480ed142d60d0f3e887e80"
     },
     {
       "task": "P1-002",
@@ -230,7 +230,7 @@
     {
       "task": "P1-002",
       "path": "electron/main/ipc-handlers.ts",
-      "sha256": "c50e24d3c174ddf237e3d7b5e207f4f9d4360bad48b121723b670996ab7408b5"
+      "sha256": "810f318dab4978823dca9287c6fec427a756179c2856639a0d9de71a58bfc665"
     },
     {
       "task": "P1-002",
@@ -255,12 +255,12 @@
     {
       "task": "P1-003",
       "path": "electron/services/files-api.ts",
-      "sha256": "6cbb73f53dd7efabdcf868a7791390ccc2c5a09e9b8a36494d3dfb7552c51b6f"
+      "sha256": "99f5dcdd3d2fa9d240b656bf6b97b6f3937923ba0c17e869f53b916637835d08"
     },
     {
       "task": "P1-003",
       "path": "electron/services/workspace-permissions.ts",
-      "sha256": "953f2dff07c880b897ecaeea46c0d86fda3bcfc626a3bbc541509208410cd1c0"
+      "sha256": "de1cc44ee1379f53fd31a751026409f1cd387b3030905994c0a9b4a98f5a67e0"
     },
     {
       "task": "P1-003",
@@ -280,7 +280,7 @@
     {
       "task": "P1-004",
       "path": "shared/security/url-policy.ts",
-      "sha256": "b39c676620af5841b2f7991b0a06d19f7fcfb080fef1e351d59a6c6889681495"
+      "sha256": "b11c8d42f6189f2b07b5495a4e443b96473d0aedbd1e67e443d252714f47a49c"
     },
     {
       "task": "P1-004",
@@ -310,7 +310,7 @@
     {
       "task": "P2-001",
       "path": "shared/types/workspace.ts",
-      "sha256": "f813c022e8b7e713345a613584867bf08753dc920f3e3c24b2f40e9c1330b6a3"
+      "sha256": "67c8b8b399d0e560def06a55b8a18f4c20fd0f171982ce9863964dece548b41f"
     },
     {
       "task": "P2-001",
@@ -320,12 +320,12 @@
     {
       "task": "P2-001",
       "path": "electron/services/workspace-permissions.ts",
-      "sha256": "953f2dff07c880b897ecaeea46c0d86fda3bcfc626a3bbc541509208410cd1c0"
+      "sha256": "de1cc44ee1379f53fd31a751026409f1cd387b3030905994c0a9b4a98f5a67e0"
     },
     {
       "task": "P2-001",
       "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
-      "sha256": "29cba9bf2d6299078ebe759e3e22dc5591b334cafd2b0707ec4adb5a253d571f"
+      "sha256": "ed167cab96a8a7bbf336b170e0f0aa4f99c9321aafb3c9e4feac1184da359f16"
     },
     {
       "task": "P2-002",
@@ -355,7 +355,7 @@
     {
       "task": "P2-002",
       "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
-      "sha256": "29cba9bf2d6299078ebe759e3e22dc5591b334cafd2b0707ec4adb5a253d571f"
+      "sha256": "ed167cab96a8a7bbf336b170e0f0aa4f99c9321aafb3c9e4feac1184da359f16"
     },
     {
       "task": "P2-003",
@@ -375,17 +375,17 @@
     {
       "task": "P2-003",
       "path": "openclaw_runtime/src/agents/role-contract.ts",
-      "sha256": "691aeb78d20282a1815e9f8d3957ac152000b41f8176a15522b080a353369ad6"
+      "sha256": "2c795e993a9693afd7d418fa7406b3485d54d8d9bde325d9cbaa5a4a007a7d29"
     },
     {
       "task": "P2-003",
       "path": "openclaw_runtime/src/agents/role-permissions-policy.ts",
-      "sha256": "3caae086de53b130b0f9dee357e1969867c26b140c40db861d47fa2e4d9413c8"
+      "sha256": "1ef47b843d6d2172752f5d4d330e89f7ab6c33037dda2d3e602ac577437d9983"
     },
     {
       "task": "P2-003",
       "path": "openclaw_runtime/src/agents/role-spawn.ts",
-      "sha256": "dc565bec0698fd89d41a4648b4eb486ddcaa2b5a5e35b7b82599887ee4cd36f0"
+      "sha256": "15971602b84b118fd1b4de50669d72b225386b2bec3b85df401a986fa5be789b"
     },
     {
       "task": "P2-003",
@@ -395,7 +395,7 @@
     {
       "task": "P2-003",
       "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
-      "sha256": "29cba9bf2d6299078ebe759e3e22dc5591b334cafd2b0707ec4adb5a253d571f"
+      "sha256": "ed167cab96a8a7bbf336b170e0f0aa4f99c9321aafb3c9e4feac1184da359f16"
     },
     {
       "task": "P2-004",
@@ -411,21 +411,6 @@
       "task": "P2-004",
       "path": "artifacts/system-maturity/P2-004/acceptance-matrix.json",
       "sha256": "de78edacf94f4daeff420c0a869ebaba11318b027ad9c48e5ee1aeb942b7a9da"
-    },
-    {
-      "task": "P2-005",
-      "path": "artifacts/system-maturity/P2-005/vitest.stdout.txt",
-      "sha256": "14581a2fa31acc7676ce72c45132cbaf16b75f882c0c519ca93bc68af2a023aa"
-    },
-    {
-      "task": "P2-005",
-      "path": "artifacts/system-maturity/P2-005/evidence-index.json",
-      "sha256": "f16fce1862cd67dc3b927441da42264846de40c0749b46fa6dbffcb6f7fc8b4b"
-    },
-    {
-      "task": "P2-005",
-      "path": "artifacts/system-maturity/P2-005/acceptance-matrix.json",
-      "sha256": "3cae6d6fef814224a1ea3b7772c602d4d535681461d521ac4f8a59a1f9507d31"
     },
     {
       "task": "P3-001",
@@ -788,61 +773,6 @@
       "sha256": "9bbcbf8094a18c4eb86b97db02ecb1eaeb5c48b5444b00d2dfd43092f9707fb5"
     },
     {
-      "task": "P6-005",
-      "path": "artifacts/system-maturity/P6-005/acceptance-matrix.json",
-      "sha256": "d96c22c4d6dbb7beaa30e3643e58246b046d81505a1781ca85c83d81fc2035fd"
-    },
-    {
-      "task": "P6-005",
-      "path": "artifacts/system-maturity/P6-005/release-gate-evidence.json",
-      "sha256": "9f3e1b4e220aef7c37b9ba181f9b310ee814e29985ad7552a3171fea099a1c4e"
-    },
-    {
-      "task": "P6-005",
-      "path": "artifacts/system-maturity/P6-005/release-source-manifest.json",
-      "sha256": "453553124189783c7949c7c62f975cad62d520e8caced5aac52902bc1f861284"
-    },
-    {
-      "task": "P6-005",
-      "path": "artifacts/system-maturity/P6-005/evidence-index.json",
-      "sha256": "193de198d18b7c82a915ba683a2d8e415454f2ec5b3f8fb47dbc5f72e2b27e99"
-    },
-    {
-      "task": "P6-005",
-      "path": "artifacts/system-maturity/P6-005/full-electron-e2e-audit.json",
-      "sha256": "bca96b8ae8f763daef8497ed5623466ad085762eb229797d8b00d08242d2f572"
-    },
-    {
-      "task": "P6-005",
-      "path": "artifacts/system-maturity/P6-005/gates/test.stdout.txt",
-      "sha256": "4b56387c7da9750c9b83d6417aaf2d649cfc5f994341587915a3d253d29eff15"
-    },
-    {
-      "task": "P6-005",
-      "path": "artifacts/system-maturity/P6-005/gates/lint-check.stdout.txt",
-      "sha256": "20de2507035b0b47ca632a4c1f93fe22d2925f8938ef4380b5696552069fdf10"
-    },
-    {
-      "task": "P6-005",
-      "path": "artifacts/system-maturity/P6-005/gates/typecheck.stdout.txt",
-      "sha256": "82ce041683605bb9545a648d8dfc186d42052d78d00e90241e1d50c101c00e3e"
-    },
-    {
-      "task": "P6-005",
-      "path": "artifacts/system-maturity/P6-005/gates/agent-dev-deep-test.stdout.txt",
-      "sha256": "26c03cde11f84a9b9d3c627925d9bc74f0581c09c74760825b4a63ab37d0d638"
-    },
-    {
-      "task": "P6-005",
-      "path": "artifacts/system-maturity/P6-005/gates/test-e2e-agent-dev-quality.stdout.txt",
-      "sha256": "f9b972299ec24da57059eaa9a31adadffa4130d1f1e223b8ab1d85c2360e3850"
-    },
-    {
-      "task": "P6-005",
-      "path": "artifacts/system-maturity/P6-005/gates/maturity-validate.stdout.txt",
-      "sha256": "034690d21b71a173974b885d053f7adf37e0dc975825fe7d59d82dc61cb33011"
-    },
-    {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/full-validation.json",
       "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833"
@@ -890,12 +820,12 @@
     {
       "task": "P7-001",
       "path": "tests/unit/system-maturity-traceability-p7-001.test.ts",
-      "sha256": "d7c5c951749aeef2538c201982e6dcc7fd1dd26d1c2a6b2dc9ea64f93d9a31c5"
+      "sha256": "f81eb9592427d6bf8724c2c50289f2bb682109b23692996edf9528a8981db833"
     },
     {
       "task": "P7-001",
       "path": "harness/specs/tasks/system-maturity-traceability.md",
-      "sha256": "675bac97e59dc189955734614eaad6d4266f5dd30e79b88c11c1781ab7e01aa0"
+      "sha256": "15e14bd31c31f1dbe121f8d33a4d2a5b05feda6a72d5eb81f50aca763e8fd63b"
     },
     {
       "task": "P7-002",
@@ -945,7 +875,7 @@
     {
       "task": "P7-002",
       "path": "plans/system-maturity/security-regression-suite.json",
-      "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af"
+      "sha256": "9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c"
     },
     {
       "task": "P7-002",
@@ -965,12 +895,12 @@
     {
       "task": "P7-002",
       "path": "harness/specs/tasks/system-maturity-security-regression.md",
-      "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9"
+      "sha256": "ead99d2bb256dbe86bf501c808ce88467735885fd647c9543c3ddcd80a2efdd9"
     },
     {
       "task": "P7-002",
       "path": ".github/workflows/system-maturity-security.yml",
-      "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb"
+      "sha256": "7f20569ee913273b85e7bc30f01c532b1710925327610b8f0adbb82425ee1f62"
     },
     {
       "task": "P7-003",
@@ -1015,7 +945,7 @@
     {
       "task": "P7-003",
       "path": "plans/system-maturity/privacy-data-flow-inventory.json",
-      "sha256": "75c97f10101fe60d5df4a95f1005bf24053936441a6600f86ea6f9d78dfd573b"
+      "sha256": "ca55a14ce9f0e80b639f720f8463286d4d3136e97ca77d7f365b35a8d3fa69fd"
     },
     {
       "task": "P7-003",
@@ -1055,7 +985,7 @@
     {
       "task": "P7-003",
       "path": "harness/specs/tasks/system-maturity-privacy-controls.md",
-      "sha256": "51b9e4b274dfbd121c6756b6d03d0341965432a620d25e0f0fd2c21e075e48c5"
+      "sha256": "7121335fbf0b2b1f57000f383305446c2ea766c9cfd6d6940dbffee1745142fb"
     },
     {
       "task": "P7-003",
@@ -1065,12 +995,12 @@
     {
       "task": "P7-003",
       "path": "shared/host-api/contract.ts",
-      "sha256": "5b8db0f9926ea680a5a75843c921ae16551f2e43e5f23ef09a883de4f3eb8fac"
+      "sha256": "50c2cf73d8fc84aeca7b7eb88dcbee6c7fdbf3689bf4d7506f1c4ab48a72cb86"
     },
     {
       "task": "P7-003",
       "path": "electron/services/agent-browser-api.ts",
-      "sha256": "94dfcf70eb5dd6a7110d634f7c6afc573f228bc8b008e330e06ca6f13fbc439b"
+      "sha256": "d848f05e248f0e9fc88078440f76a412a8f873f9b108e91fbdbb88975bc3e603"
     },
     {
       "task": "P7-003",
@@ -1080,22 +1010,22 @@
     {
       "task": "P7-003",
       "path": "electron/services/gateway-api.ts",
-      "sha256": "8415d663c01b7fa22092b792420390b314673f1c0d2d8d396d542d4c89e9227c"
+      "sha256": "fa8c8f6555b199838bb6dd49ae6e6477d6068cdbc9e994d0fa58f36e7cda2a27"
     },
     {
       "task": "P7-003",
       "path": "electron/utils/store.ts",
-      "sha256": "d486b4e2d0dabdf248410d61786594c79a61431a77cb19b08054d3d96561a180"
+      "sha256": "ccd304d83dcf1920ee2dafcab31751aae90d6e54ba782421592ac63f3ce7a44c"
     },
     {
       "task": "P7-003",
       "path": "package.json",
-      "sha256": "1a39578d38fa704e5472236a36aa6abc83571df529e75da4511165ee47c57338"
+      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
     },
     {
       "task": "P7-003",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178"
+      "sha256": "8eecfa7355987d9f7775c24040f453abcab8398f7da3e3c4c7df0d039398d29e"
     },
     {
       "task": "P7-003",
@@ -1225,27 +1155,27 @@
     {
       "task": "P7-004",
       "path": "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
-      "sha256": "32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27"
+      "sha256": "3ca93f513122530299b43049a59227425b932b18e041cb05a64bba8a2269ca36"
     },
     {
       "task": "P7-004",
       "path": "harness/specs/tasks/system-maturity-quarterly-audit.md",
-      "sha256": "7010ea25f4397a674147399ebabe5739b7e60d396ab2c2e8ae74e320f4e19302"
+      "sha256": "bec66f3cbf0f3dcfef5bd11d2dde4364b28a5bb7241cb1ddaf4d5e900740f050"
     },
     {
       "task": "P7-004",
       "path": "package.json",
-      "sha256": "1a39578d38fa704e5472236a36aa6abc83571df529e75da4511165ee47c57338"
+      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
     },
     {
       "task": "P7-004",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178"
+      "sha256": "8eecfa7355987d9f7775c24040f453abcab8398f7da3e3c4c7df0d039398d29e"
     },
     {
       "task": "P7-004",
       "path": "plans/system-maturity/risk-acceptance.json",
-      "sha256": "323089048338a1b07232898a6e1e6e087f551369cd8a50e4610e360f376f3e29"
+      "sha256": "ace5cec594927b5a21123c2c5db40214c2e8b7a04e81cbcdb2109f282cb749bd"
     },
     {
       "task": "P7-004",
@@ -1260,7 +1190,7 @@
     {
       "task": "P7-004",
       "path": "plans/system-maturity/INDEX.md",
-      "sha256": "1d72a4b5b08d92d65ae5f649cb18d917f1780fd46cc44af6781af62ef378e3ef"
+      "sha256": "1bf49b5e0f6c53ce82c3d5a5a92ad70349d24e065b6e595d04682840f8920194"
     },
     {
       "task": "P7-004",
@@ -1315,7 +1245,7 @@
     {
       "task": "P8-001",
       "path": "tests/unit/system-maturity-residual-p8-001.test.ts",
-      "sha256": "308c3f5500fedabc1e00927c7a05e5186e25490d8eab597e2fad60b9285f76b8"
+      "sha256": "29258d48f0c765b29713ff1cf66b17ff77729235935ab8313b9e3c438c98fd84"
     },
     {
       "task": "P8-001",
@@ -1325,22 +1255,22 @@
     {
       "task": "P8-001",
       "path": "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
-      "sha256": "32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27"
+      "sha256": "3ca93f513122530299b43049a59227425b932b18e041cb05a64bba8a2269ca36"
     },
     {
       "task": "P8-001",
       "path": "electron/utils/channel-config.ts",
-      "sha256": "c6858cb024ec73891f202c71f9ad0c75292c7db2319e109d31a047846dd3ef25"
+      "sha256": "ef1593ee9a87554d9fab777438bd3684265d8295e8a403fed9eb4ac29e9d4377"
     },
     {
       "task": "P8-001",
       "path": "package.json",
-      "sha256": "1a39578d38fa704e5472236a36aa6abc83571df529e75da4511165ee47c57338"
+      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
     },
     {
       "task": "P8-001",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178"
+      "sha256": "8eecfa7355987d9f7775c24040f453abcab8398f7da3e3c4c7df0d039398d29e"
     },
     {
       "task": "P8-001",
@@ -1355,7 +1285,7 @@
     {
       "task": "P8-001",
       "path": "plans/system-maturity/INDEX.md",
-      "sha256": "1d72a4b5b08d92d65ae5f649cb18d917f1780fd46cc44af6781af62ef378e3ef"
+      "sha256": "1bf49b5e0f6c53ce82c3d5a5a92ad70349d24e065b6e595d04682840f8920194"
     },
     {
       "task": "P8-002",
@@ -1375,7 +1305,7 @@
     {
       "task": "P8-002",
       "path": "electron/utils/channel-config.ts",
-      "sha256": "c6858cb024ec73891f202c71f9ad0c75292c7db2319e109d31a047846dd3ef25"
+      "sha256": "ef1593ee9a87554d9fab777438bd3684265d8295e8a403fed9eb4ac29e9d4377"
     },
     {
       "task": "P8-002",
@@ -1390,7 +1320,7 @@
     {
       "task": "P8-002",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178"
+      "sha256": "8eecfa7355987d9f7775c24040f453abcab8398f7da3e3c4c7df0d039398d29e"
     },
     {
       "task": "P8-002",
@@ -1435,7 +1365,7 @@
     {
       "task": "P8-003",
       "path": "plans/system-maturity/security-regression-suite.json",
-      "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af"
+      "sha256": "9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c"
     },
     {
       "task": "P8-003",
@@ -1445,12 +1375,12 @@
     {
       "task": "P8-003",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178"
+      "sha256": "8eecfa7355987d9f7775c24040f453abcab8398f7da3e3c4c7df0d039398d29e"
     },
     {
       "task": "P8-003",
       "path": "package.json",
-      "sha256": "1a39578d38fa704e5472236a36aa6abc83571df529e75da4511165ee47c57338"
+      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
     },
     {
       "task": "P8-004",
@@ -1485,7 +1415,7 @@
     {
       "task": "P8-004",
       "path": "plans/system-maturity/INDEX.md",
-      "sha256": "1d72a4b5b08d92d65ae5f649cb18d917f1780fd46cc44af6781af62ef378e3ef"
+      "sha256": "1bf49b5e0f6c53ce82c3d5a5a92ad70349d24e065b6e595d04682840f8920194"
     },
     {
       "task": "P8-004",
@@ -1500,7 +1430,7 @@
     {
       "task": "P8-004",
       "path": "package.json",
-      "sha256": "1a39578d38fa704e5472236a36aa6abc83571df529e75da4511165ee47c57338"
+      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
     }
   ]
 }

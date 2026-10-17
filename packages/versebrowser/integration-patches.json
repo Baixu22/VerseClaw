@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "entries": [
+    {
+      "id": "host-data-dir-provider",
+      "sourcePath": "src/host/paths.ts",
+      "targetPath": "packages/versebrowser/src/host/paths.ts",
+      "sourceNormalization": "lf",
+      "originalRawSha256": "e101ac185db2d0611136d96da3471b93f5ab711bb411013cb1952a5076778ef2",
+      "originalLfSha256": "e101ac185db2d0611136d96da3471b93f5ab711bb411013cb1952a5076778ef2",
+      "patchedSha256": "8ca029e90b540738c046207610db8962ee22520ff35282154c8225395bc0dd95",
+      "patchPath": "packages/versebrowser/patches/src__host__paths.ts.patch",
+      "patchSha256": "f0ccd29be55463fe87d780961ea739209bfe1fa1b0040b3988c77f7b947a8062",
+      "reason": "Inject ClawX-owned userData path so package code never downloads or discovers a second Electron instance in tests or Main."
+    },
+    {
+      "id": "index-data-dir-provider",
+      "sourcePath": "src/index.ts",
+      "targetPath": "packages/versebrowser/src/index.ts",
+      "sourceNormalization": "lf",
+      "originalRawSha256": "ffcb659f77eb66ed4c0cff13191abf755598fb411dc95686310a1da24e8c21a3",
+      "originalLfSha256": "be4a1c780ef02f66c450f4e174009dd213598bf2e3b14dd88969cb4d768c6d6d",
+      "patchedSha256": "00c21de9899223a1aa9cfa9825c4d6d539d83aaa3e3b6a6dcdf4ed069694b5b0",
+      "patchPath": "packages/versebrowser/patches/src__index.ts.patch",
+      "patchSha256": "52e8d4650b6b772e4ae025fed383318e8a95b4126555cf478ee73f5aeded8acc",
+      "reason": "Inject ClawX-owned userData path so package code never downloads or discovers a second Electron instance in tests or Main. Export the existing CLI runner factory so the single host service preserves bundled-CLI command and external-browser support."
+    }
+  ]
+}

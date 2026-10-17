@@ -9,9 +9,9 @@ touchedAreas:
   - harness/specs/tasks/agent-browser-browserwindow-playwright-prototype.md
   - electron/main/ipc-handlers.ts
   - electron/services/agent-browser-api.ts
-  - electron/services/agent-browser-service.ts
-  - electron/services/agent-browser-vault.ts
-  - electron/services/agent-browser-task-service.ts
+  - packages/versebrowser/src/engine/service.ts
+  - packages/versebrowser/src/engine/vault.ts
+  - packages/versebrowser/src/engine/task-service.ts
   - shared/host-api/contract.ts
   - shared/host-events/contract.ts
   - src/lib/host-api.ts
@@ -21,9 +21,9 @@ touchedAreas:
   - openclaw_runtime/src/agents/openclaw-tools.ts
   - openclaw_runtime/src/agents/tools/agent-browser-tool.ts
   - openclaw_runtime/src/agents/tools/web-tools.ts
-  - tests/unit/agent-browser-service.test.ts
-  - tests/unit/agent-browser-vault.test.ts
-  - tests/unit/agent-browser-task-service.test.ts
+  - packages/versebrowser/tests/agent-browser-service.test.ts
+  - packages/versebrowser/tests/agent-browser-vault.test.ts
+  - packages/versebrowser/tests/agent-browser-task-service.test.ts
   - tests/unit/agent-browser-tool.test.ts
   - tests/e2e/agent-browser-workbench.spec.ts
 expectedUserBehavior:

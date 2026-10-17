@@ -73,7 +73,7 @@
       "retention": "Bounded by retentionMaxHours; session cascade for browser artifacts",
       "evidenceRefs": [
         "shared/privacy/sensitive-capture-policy.ts",
-        "electron/services/agent-browser-service.ts",
+        "electron/services/agent-browser-api.ts",
         "electron/services/remote-control-api.ts",
         "electron/services/gateway-api.ts"
       ]

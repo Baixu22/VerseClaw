@@ -1,0 +1,11 @@
+packaged app launch probe (agent, codex)
+
+exe: release/win-unpacked/Verse Claw.exe
+env: VERSE_CLAW_E2E=1 VERSE_CLAW_E2E_SKIP_SETUP=1 VERSE_CLAW_USER_DATA_DIR=<in-repo temp>
+args: --no-sandbox --remote-debugging-port=9356 --user-data-dir=<temp> --lang=en-US --disable-gpu
+
+result: process stays alive; Chromium CDP http://127.0.0.1:9356/json/list returns 1 target
+  type=page title="Verse Claw" url=file:///D:/ClawX/release/win-unpacked/resources/app.asar/dist/index.html?...
+
+note: Playwright electron.launch firstWindow() does NOT resolve for the packaged exe on this host,
+but a direct launch does create a real renderer window served from app.asar inside the packaged bundle.

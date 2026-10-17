@@ -1,0 +1,983 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m00-file-delta-review",
+  "scope": "Review the 42 explicit source/host path counterparts; unmatched source files are handled by the next-phase allowlist, not assumed equivalent",
+  "driven_by": "agent",
+  "actor": "codex",
+  "counts": {
+    "pairs": 42,
+    "verbatim": 7,
+    "importRewriteOnly": 10,
+    "behaviorDeltaReviewRequired": 25,
+    "unmatchedSourcePaths": 85
+  },
+  "entries": [
+    {
+      "source": "src/core/automation-playbook-selector.ts",
+      "target": "shared/agent-browser/automation-playbook-selector.ts",
+      "sourceSha256": "845f38ce8880c72c22c2b8791c36dcc50c52fffde7160423fec07f80abd33724",
+      "targetSha256": "e235ffbe9a7ea157a8c91426512a876121f8fffcbc92049d054e6d7dac896913",
+      "byteEqual": false,
+      "importOnly": true,
+      "classification": "import_rewrite_only",
+      "diff": {
+        "addedLines": 1,
+        "removedLines": 1,
+        "sampleChangedLines": [
+          "} from \"./automation-playbooks.ts\";",
+          "} from \"./automation-playbooks\";"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Re-apply the mechanically proven import rewrite only; any body change requires a declared patch."
+    },
+    {
+      "source": "src/core/automation-playbooks.ts",
+      "target": "shared/agent-browser/automation-playbooks.ts",
+      "sourceSha256": "3f9249f8cb8acbda98b45ee91b80d9e7be5aa32d103d88f61e289b42dfd005fc",
+      "targetSha256": "7d159b81f611e693803034a648aae5b6f9de0e1fde02bba3f5686e87c3fecf4e",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 1,
+        "removedLines": 54,
+        "sampleChangedLines": [
+          "} from \"./types.ts\";",
+          "} from \"./types\";",
+          "id: \"authorized_signup_acceptance\","
+        ]
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/core/browser-control.ts",
+      "target": "shared/agent-browser/browser-control.ts",
+      "sourceSha256": "aaba1becab778d420942f34f7fae926df0334cbb136a8c0acfd485022a5e97b0",
+      "targetSha256": "6865f317ff4ecdaf818dc9ad9074009e2248afcfe9143c721c1e5ae8a2c6af22",
+      "byteEqual": false,
+      "importOnly": true,
+      "classification": "import_rewrite_only",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Re-apply the mechanically proven import rewrite only; any body change requires a declared patch."
+    },
+    {
+      "source": "src/core/extraction-rules/validation.ts",
+      "target": "shared/agent-browser/extraction-rules/validation.ts",
+      "sourceSha256": "a04ef84b5ce1a8e1ffbeb75b272758ec3c1b8d63640da0f32f3b5022b52713db",
+      "targetSha256": "01be2fe2a1ac94015f6fa55ba0af9d5404e9bdc17b09c7c57c22c8a7d8c24f7b",
+      "byteEqual": false,
+      "importOnly": true,
+      "classification": "import_rewrite_only",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Re-apply the mechanically proven import rewrite only; any body change requires a declared patch."
+    },
+    {
+      "source": "src/core/filesystem-boundary.ts",
+      "target": "shared/agent-browser/filesystem-boundary.ts",
+      "sourceSha256": "9f917610c88a354a51b5a17e75293df4c7ce98f2e5b1288edcde39840ad3816a",
+      "targetSha256": "9f917610c88a354a51b5a17e75293df4c7ce98f2e5b1288edcde39840ad3816a",
+      "byteEqual": true,
+      "importOnly": true,
+      "classification": "verbatim",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Preserve byte-for-byte; re-verify after module import at M02."
+    },
+    {
+      "source": "src/core/network-context.ts",
+      "target": "shared/agent-browser/network-context.ts",
+      "sourceSha256": "46550063b927358d08a905a58e38fab9901916c73d0be29c61e553513f81a460",
+      "targetSha256": "7a73ef3e8cbe353509571b79171a7343e150bc13adbcea37c644ccb8e4ed3e7c",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 8,
+        "removedLines": 23,
+        "sampleChangedLines": [
+          "/*",
+          "* 2026-10-03：脱敏标记统一为**单一来源** `REDACTED`（`src/security/redact-secrets.ts`）。",
+          "* 此前网络侧用 `[已脱敏]`、值模式脱敏侧用 `[REDACTED]`，同一份输出里出现两种标记——集成方做字符串匹配"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/core/text.ts",
+      "target": "shared/agent-browser/text.ts",
+      "sourceSha256": "74c2b974abd088eb0542e18457471b1b006ab42879274bc3075d94ad4cb7ce92",
+      "targetSha256": "74c2b974abd088eb0542e18457471b1b006ab42879274bc3075d94ad4cb7ce92",
+      "byteEqual": true,
+      "importOnly": true,
+      "classification": "verbatim",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Preserve byte-for-byte; re-verify after module import at M02."
+    },
+    {
+      "source": "src/core/tool-artifacts.ts",
+      "target": "shared/agent-browser/tool-artifacts.ts",
+      "sourceSha256": "d8d459c4c62755c13c251f42794d91234a005e1785d4465d9d053bdfbbca26dc",
+      "targetSha256": "c08a223875981877f26a4096d5ce158aa63aa605c44e7cf1de835460637862f1",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 5,
+        "removedLines": 6,
+        "sampleChangedLines": [
+          "} from \"./types.ts\";",
+          "} from \"./types\";",
+          "const SENSITIVE_INLINE_PATTERN = /\\b(token|access_token|refresh_token|password|passwd|secret|api[_-]?key|authorization|session|cookie|csrf|jwt)\\s*[:=]\\s*([^\\s,;&\"'<>]+)/gi;"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/core/tool-authorization.ts",
+      "target": "shared/agent-browser/tool-authorization.ts",
+      "sourceSha256": "af533645bdffa4e57a00a51be2eabaeb5005a085005282b3b4e1a40e8c93c282",
+      "targetSha256": "af533645bdffa4e57a00a51be2eabaeb5005a085005282b3b4e1a40e8c93c282",
+      "byteEqual": true,
+      "importOnly": true,
+      "classification": "verbatim",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Preserve byte-for-byte; re-verify after module import at M02."
+    },
+    {
+      "source": "src/core/tool-classification.ts",
+      "target": "shared/agent-browser/tool-classification.ts",
+      "sourceSha256": "4c757f047054e4c15d9dd9fb1f0bd7caa6ec8a6b4594a9fc90820873dfe7cc63",
+      "targetSha256": "8e6b5f0cc1065ea13753253a8f1e249fd869861c7ac00a207933b1a792fd5adb",
+      "byteEqual": false,
+      "importOnly": true,
+      "classification": "import_rewrite_only",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Re-apply the mechanically proven import rewrite only; any body change requires a declared patch."
+    },
+    {
+      "source": "src/core/tool-registry.ts",
+      "target": "shared/agent-browser/tool-registry.ts",
+      "sourceSha256": "87c22b38563d35f56a8855bc3bebb290d3886537b2d20c973fa86b6c1c5222e2",
+      "targetSha256": "05ad1bc334864c484488279ef174f064e285cea6a09ae17aef894f2a3277572f",
+      "byteEqual": false,
+      "importOnly": true,
+      "classification": "import_rewrite_only",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Re-apply the mechanically proven import rewrite only; any body change requires a declared patch."
+    },
+    {
+      "source": "src/core/types.ts",
+      "target": "shared/agent-browser/types.ts",
+      "sourceSha256": "053ba5745f7fcfbe77083f0e460b3026cab9917a14242e4eee7720a3829a02e2",
+      "targetSha256": "053ba5745f7fcfbe77083f0e460b3026cab9917a14242e4eee7720a3829a02e2",
+      "byteEqual": true,
+      "importOnly": true,
+      "classification": "verbatim",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Preserve byte-for-byte; re-verify after module import at M02."
+    },
+    {
+      "source": "src/core/web-search/tavily.ts",
+      "target": "shared/agent-browser/web-search/tavily.ts",
+      "sourceSha256": "aac71bacab36ab25506daa4e70327e950fede3f249dd6a855e97eaf355880143",
+      "targetSha256": "c980c7f7f57e98b71ba725e3c425af5027bcebd42e622a58731935151a3c609b",
+      "byteEqual": false,
+      "importOnly": true,
+      "classification": "import_rewrite_only",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M04"
+      ],
+      "requiredAction": "Re-apply the mechanically proven import rewrite only; any body change requires a declared patch."
+    },
+    {
+      "source": "src/engine/api.ts",
+      "target": "electron/services/agent-browser-api.ts",
+      "sourceSha256": "ce1ada9b6f22f89be59d3e9e831025c1e8f116ed0fb53ded70ce4e23b952bea8",
+      "targetSha256": "6e1e00e449ba82021b5ba7872f085385d9d5c77b5628bba5f6014a834ff86cf5",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 14,
+        "removedLines": 14,
+        "sampleChangedLines": [
+          "} from '../host/sandbox-high-risk-gate.ts';",
+          "",
+          "/**"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M03"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/actions.ts",
+      "target": "electron/services/agent-browser/browser-control/actions.ts",
+      "sourceSha256": "847d3e3c6c76e376539966d132b95c62d85d1fda2ba6a4fd487c43529635d417",
+      "targetSha256": "8d422125b6391352b234c18acd38236fa990c51b4f1d427ef31ef2f07dc24ea8",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 5,
+        "removedLines": 13,
+        "sampleChangedLines": [
+          "*   （来自 ../core/types，结构与源项目 ModelToolCall/Result 完全一致）",
+          "*   （来自 @shared/agent-browser/types，结构与源项目 ModelToolCall/Result 完全一致）",
+          "private readonly connection: BrowserControlCommandConnection;"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/automation-boundary-detector.ts",
+      "target": "electron/services/agent-browser/browser-control/automation-boundary-detector.ts",
+      "sourceSha256": "b8c41735183c4407ba7dfc967192331cc4416396ad9fbe14eb8b3790897af439",
+      "targetSha256": "7fee1bb59220bbc4020550ece5530f3eed79514138332a58235814a2f619a7db",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 3,
+        "removedLines": 8,
+        "sampleChangedLines": [
+          "* 2. `../../shared/toolAuthorization` → `../core/tool-authorization`",
+          "* 2. `../../shared/toolAuthorization` → `@shared/agent-browser/tool-authorization`",
+          "// C96/TF-0123: the inline key rules used to omit api_key / credential / private_key / sid /"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/boundary-choice-tool-executor.ts",
+      "target": "electron/services/agent-browser/browser-control/boundary-choice-tool-executor.ts",
+      "sourceSha256": "31bd431fd42ba986f058db7655e5a495f14b7520ce5be3b639769e9c9978d20e",
+      "targetSha256": "75bd3b6b16e7b97258b373341c3fa625498624255c0deb33f771f7d7df12aa37",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 9,
+        "removedLines": 15,
+        "sampleChangedLines": [
+          "* 1. `../../shared/browserControl` → `../core/browser-control`",
+          "* 1. `../../shared/browserControl` → `@shared/agent-browser/browser-control`",
+          "* 2. `../../shared/toolAuthorization` → `../core/tool-authorization`"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/browser-debugger-connection.ts",
+      "target": "electron/services/agent-browser/browser-control/browser-debugger-connection.ts",
+      "sourceSha256": "b08b6799b6a29a84dd4d49a7da1d37ac372d6672d0aabbd19a6e8a322b293445",
+      "targetSha256": "b08b6799b6a29a84dd4d49a7da1d37ac372d6672d0aabbd19a6e8a322b293445",
+      "byteEqual": true,
+      "importOnly": true,
+      "classification": "verbatim",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M07"
+      ],
+      "requiredAction": "Preserve byte-for-byte; re-verify after module import at M02."
+    },
+    {
+      "source": "src/engine/browser-control/console-recorder.ts",
+      "target": "electron/services/agent-browser/browser-control/console-recorder.ts",
+      "sourceSha256": "bf56f1d43c89289ca7960160f225ae714fc7ef285d8083d1dd31eb64af9c9375",
+      "targetSha256": "4d74397f50892286ea1c9fc226bc47302d27ecd406f0716582ea68b43ea85815",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 7,
+        "removedLines": 28,
+        "sampleChangedLines": [
+          "",
+          "private readonly connection: BrowserConsoleConnection;",
+          ""
+        ]
+      },
+      "ownerCheckpoints": [
+        "M07"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/full-access-tool-executor.ts",
+      "target": "electron/services/agent-browser/browser-control/full-access-tool-executor.ts",
+      "sourceSha256": "5c61747b9d2ce868dfe778b73668cc638c7da9aa5c1a0b9f855d5dc1caa91f11",
+      "targetSha256": "f4267664a64faab9ac05cbba237c27639567925bbed0c56b9de4308dce00e986",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 6,
+        "removedLines": 16,
+        "sampleChangedLines": [
+          "* 3. import 路径改为 ClawX 约定（../core/*）",
+          "* 3. import 路径改为 ClawX 约定（@shared/agent-browser/*）",
+          "private readonly connection: FullAccessConnection;"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/js-source-index.ts",
+      "target": "electron/services/agent-browser/browser-control/js-source-index.ts",
+      "sourceSha256": "b46c8194023d221056dc992f3fe3074c7a698c46bca032c6949404a774f1e352",
+      "targetSha256": "976f17f5efd693d6820412b17fddd7a4819d390b6a3e6b1f075930cd9bf93e06",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 4,
+        "removedLines": 8,
+        "sampleChangedLines": [
+          "* 适配点：仅 import 路径（../../shared/types → ../core/types，",
+          "* ../../shared/utils/text → ../core/text）。",
+          "* 适配点：仅 import 路径（../../shared/types → @shared/agent-browser/types，"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/js-source-tool-executor.ts",
+      "target": "electron/services/agent-browser/browser-control/js-source-tool-executor.ts",
+      "sourceSha256": "2d52f692d8e2fddf0da5e643af7cc32e3e039661fbd84435a6c6b99981d976c6",
+      "targetSha256": "9a1b9ddc613bcba4471c406d7745ed3e8b6d83870007adc2275ab9657317a337",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 5,
+        "removedLines": 12,
+        "sampleChangedLines": [
+          "* 3. import 路径改为 ClawX 约定（../core/*, ./js-source-index, ./same-origin-js-fetcher）",
+          "* 3. import 路径改为 ClawX 约定（@shared/agent-browser/*, ./js-source-index, ./same-origin-js-fetcher）",
+          "} from '../../core/types.ts';"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/network-recorder.ts",
+      "target": "electron/services/agent-browser/browser-control/network-recorder.ts",
+      "sourceSha256": "98ce7f16d9657d98909c043724323fb497df47ba9703840057e338c288f865b2",
+      "targetSha256": "612aa05c985a26a9f760b0052f562004aac6c2ec09209a67d78870da6328c690",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 4,
+        "removedLines": 8,
+        "sampleChangedLines": [
+          "* 1. `../../shared/types` → `../core/types`",
+          "* 2. `../../shared/networkContext` → `../core/network-context`",
+          "* 3. `../../shared/utils/text` → `../core/text`"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M07"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/page-text-extractor.ts",
+      "target": "electron/services/agent-browser/browser-control/page-text-extractor.ts",
+      "sourceSha256": "499e22c9d8d647bdc1ec2e48d8e7ceb5e1a5d61efda5407630d2b95d76b30fd2",
+      "targetSha256": "d8c510d11319d14e2275f7dd3ebea268bf2316b0184a89dce50be378517cfc7f",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 33,
+        "removedLines": 252,
+        "sampleChangedLines": [
+          "metadata?: boolean;",
+          "structured?: boolean;",
+          "rows?: AgentBrowserExtractPageTextPayload['rows'];"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/replay-tool-executor.ts",
+      "target": "electron/services/agent-browser/browser-control/replay-tool-executor.ts",
+      "sourceSha256": "2c2511f127474daf6973cc6bfe9311679d78c7f7fa3c3048c4c6ff9047feff70",
+      "targetSha256": "caf6da536145c8111d2efe6e5c7d227fb2a4e9a21a32eba6c0d2774f5eaedba1",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 7,
+        "removedLines": 19,
+        "sampleChangedLines": [
+          "* 3. import 路径改为 ClawX 约定（../core/*）",
+          "* 3. import 路径改为 ClawX 约定（@shared/agent-browser/*）",
+          "// C96/TF-0123: the free-text body rule used to omit private_key / authorization / cookie /"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/runtime-read-tool-executor.ts",
+      "target": "electron/services/agent-browser/browser-control/runtime-read-tool-executor.ts",
+      "sourceSha256": "8f997f9883ca8aa80ce542346682e13b021166ea831c6570f751502496936102",
+      "targetSha256": "a0e2f49de8c8c90563670d087017d49f797802f6879455a6c9a43d3cc03a9b32",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 26,
+        "removedLines": 97,
+        "sampleChangedLines": [
+          "* 3. import 路径改为 ClawX 约定（../core/tool-authorization）",
+          "* 保留上游实现：固定 Runtime.evaluate 模板、路径白名单、敏感值脱敏、结果截断。",
+          "* 4. TF-0105 接线到薄驱动时发现两处口径问题并修正（都不改页面模板，只改 Node 侧汇总）："
+        ]
+      },
+      "ownerCheckpoints": [
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/same-origin-js-fetcher.ts",
+      "target": "electron/services/agent-browser/browser-control/same-origin-js-fetcher.ts",
+      "sourceSha256": "30e44d5f71fdc40f2ebbd94dcad00adf071d118a4e775f9cdac72d5349683249",
+      "targetSha256": "038a47d45b116839be4ab530ce54d50b04b07aa3d389b9427b3482674b3f6a54",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 3,
+        "removedLines": 26,
+        "sampleChangedLines": [
+          "* 适配点：仅 import 路径（../../shared/types → ../core/types，",
+          "* ../../shared/utils/text → ../core/text）。",
+          "* 适配点：仅 import 路径（../../shared/types → @shared/agent-browser/types，"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/same-origin-source-map-fetcher.ts",
+      "target": "electron/services/agent-browser/browser-control/same-origin-source-map-fetcher.ts",
+      "sourceSha256": "5da189fb8f1a6253a62d40fa273406934922c94c1f1a6c1686a9df968f9f6d65",
+      "targetSha256": "ba45f000b6a005a65ca7c1bfa8931dc296d9a071935efb37dfe949dab8f95e2d",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 3,
+        "removedLines": 25,
+        "sampleChangedLines": [
+          "* 适配点：仅 import 路径（../../shared/utils/text → ../core/text；",
+          "* 适配点：仅 import 路径（../../shared/utils/text → @shared/agent-browser/text；",
+          "} from './source-map-fetch-guards.ts';"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M07"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/snapshot-manager.ts",
+      "target": "electron/services/agent-browser/browser-control/snapshot-manager.ts",
+      "sourceSha256": "9ec216a6adf53c542c46be6c3a7bfb6e70b9811fb75141535397c545d1a97004",
+      "targetSha256": "4a60c670614d961a3870e86e3532ae7fbf1efbfe75c7c8cb61d6968faa7c3e76",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 6,
+        "removedLines": 41,
+        "sampleChangedLines": [
+          "*   ../core/types 导入（结构与源项目一致）。",
+          "*   @shared/agent-browser/types 导入（结构与源项目一致）。",
+          "} from \"../../core/types.ts\";"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/source-map-fetch-guards.ts",
+      "target": "electron/services/agent-browser/browser-control/source-map-fetch-guards.ts",
+      "sourceSha256": "574f21906e4b384acbcbb10e4c8d48c064c2fdb882ae14b62fa83500193a388f",
+      "targetSha256": "574f21906e4b384acbcbb10e4c8d48c064c2fdb882ae14b62fa83500193a388f",
+      "byteEqual": true,
+      "importOnly": true,
+      "classification": "verbatim",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M07"
+      ],
+      "requiredAction": "Preserve byte-for-byte; re-verify after module import at M02."
+    },
+    {
+      "source": "src/engine/browser-control/source-map-tool-executor.ts",
+      "target": "electron/services/agent-browser/browser-control/source-map-tool-executor.ts",
+      "sourceSha256": "bb7fa9ae1187642e971aeb2f86969288fd1e1a09f3036b3255e13a5c10e4717f",
+      "targetSha256": "4c986a4d1afe7b3d7f0ace92d064ea623dfaabb998295a315e922f584107d802",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 3,
+        "removedLines": 6,
+        "sampleChangedLines": [
+          "* 3. import 路径改为 ClawX 约定（../core/*, ./js-source-index, ./same-origin-source-map-fetcher, ./source-map-fetch-guards）",
+          "* 3. import 路径改为 ClawX 约定（@shared/agent-browser/*, ./js-source-index, ./same-origin-source-map-fetcher, ./source-map-fetch-guards）",
+          "} from '../../core/types.ts';"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M07"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/browser-control/tab-manager.ts",
+      "target": "electron/services/agent-browser/browser-control/tab-manager.ts",
+      "sourceSha256": "ce08e2e49bad4542ab2bd27bb395a0d6254bacd2f6c65d662a6ecf38ee9f8b9d",
+      "targetSha256": "b7995f2577cfd5fc0337081606cdb2489ec6af35f1c466940f359e3690492407",
+      "byteEqual": false,
+      "importOnly": true,
+      "classification": "import_rewrite_only",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M06"
+      ],
+      "requiredAction": "Re-apply the mechanically proven import rewrite only; any body change requires a declared patch."
+    },
+    {
+      "source": "src/engine/cli-runner.ts",
+      "target": "electron/services/agent-browser-cli-runner.ts",
+      "sourceSha256": "f9340d33d2dde08dc6e832c058af4246a6acaca181393f3feeb760c27efe1dd0",
+      "targetSha256": "3fb838c9f2b39dedf682fef16845e8025246ffa6f81ef6f003ba02926e832517",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 2,
+        "removedLines": 2,
+        "sampleChangedLines": [
+          "if (tryElectron()?.app?.isPackaged) {",
+          "if (app.isPackaged) {",
+          "return this.userDataPath ?? tryElectron()?.app?.getPath('userData') ?? join(process.cwd(), '.agent-browser-data');"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M05",
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/service.ts",
+      "target": "electron/services/agent-browser-service.ts",
+      "sourceSha256": "081b80a0524834f6571c4bf5da812471789aa698f38b732d512ace38812b1424",
+      "targetSha256": "87de8c77f54aac6961a9486901445c889106df739ba3576bcb1e6c3d0385787a",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 9,
+        "removedLines": 7,
+        "sampleChangedLines": [
+          "} from '../types/host-api.ts';",
+          "} from '@shared/host-api/contract';",
+          "} from '../core/filesystem-boundary.ts';"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M05",
+        "M06"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/supervised-task-executor.ts",
+      "target": "electron/services/agent-browser-supervised-task-executor.ts",
+      "sourceSha256": "2ae4f90414ccf39ab6d493e84b3fb3a3baa08f0d9a6444025e8aefb28f7defc9",
+      "targetSha256": "b4c7721244c0b9eadedea3493d8d1f07279363e209d4cae6540cb375071e815e",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 3,
+        "removedLines": 14,
+        "sampleChangedLines": [
+          "} from './task-service.ts';",
+          "} from './agent-browser-task-service';",
+          "// C96/TF-0123: the local anchored list keeps the extras this guard has always had (`key`,"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M05"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/task-service.ts",
+      "target": "electron/services/agent-browser-task-service.ts",
+      "sourceSha256": "73b91538f8d0a68ec2cb08d676c0830d44f4acd7fc251b35f77d73feea491e5e",
+      "targetSha256": "8bf272e4ed8dd4acb27917a351b641d6891bc66d9887803805ff295660ac4878",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 7,
+        "removedLines": 48,
+        "sampleChangedLines": [
+          "",
+          "/** States where the run has ended: a late cancel must not rewrite the recorded outcome. */",
+          "const TERMINAL_TASK_STATUSES: ReadonlySet<AgentBrowserTaskStatus> = new Set(["
+        ]
+      },
+      "ownerCheckpoints": [
+        "M05"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/engine/vault.ts",
+      "target": "electron/services/agent-browser-vault.ts",
+      "sourceSha256": "91731aa44daf7599eb2feeae4d535013f25db3107882d8e718ad1badb343ef1e",
+      "targetSha256": "11bbac260f53bfbf7793e42a6f43ea1031c05a128b182cc6fb389cb8180d349f",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 3,
+        "removedLines": 12,
+        "sampleChangedLines": [
+          "const fallbackCrypto: VaultCrypto = {",
+          "isEncryptionAvailable: () => false,",
+          "encryptString: () => {"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M03",
+        "M05"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/gateway/bridge.ts",
+      "target": "electron/gateway/agent-browser-bridge.ts",
+      "sourceSha256": "e657e2a877b9609de568d190f53d668605358bddbb6e2712f35382155ea0c2ef",
+      "targetSha256": "9500349d0584c94c4da0a48cd9fcf0de0c6b4afca606ce49c7b3659478739320",
+      "byteEqual": false,
+      "importOnly": false,
+      "classification": "behavior_delta_review_required",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 6,
+        "sampleChangedLines": [
+          "// P2-004 / F-ISO-001: the same fail-closed sandbox gate the host API applies. This bridge is",
+          "// another product entry point into AgentBrowserService, and the gateway routes to it by a",
+          "// trusted-client allow-list (isAgentBrowserBridgeClient), not by a per-action approval flow -"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M08"
+      ],
+      "requiredAction": "Do not assume equivalence. Reconcile source and host behavior at the named checkpoints and register every intentional patch."
+    },
+    {
+      "source": "src/openclaw/automation-event.ts",
+      "target": "openclaw_runtime/src/agents/tools/agent-browser-automation-event.ts",
+      "sourceSha256": "1cc824f60f3d572f1f9786fe77c1b7f160b8480f0d966e8616c154854b884ce8",
+      "targetSha256": "1cc824f60f3d572f1f9786fe77c1b7f160b8480f0d966e8616c154854b884ce8",
+      "byteEqual": true,
+      "importOnly": true,
+      "classification": "verbatim",
+      "diff": {
+        "addedLines": 0,
+        "removedLines": 0,
+        "sampleChangedLines": []
+      },
+      "ownerCheckpoints": [
+        "M08"
+      ],
+      "requiredAction": "Preserve byte-for-byte; re-verify after module import at M02."
+    },
+    {
+      "source": "src/openclaw/external-access-policy.ts",
+      "target": "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.ts",
+      "sourceSha256": "fef9ca4fc2863d292f2905634a52791b37adc8b0dfc8817dadf15a6bd287d580",
+      "targetSha256": "2c6971526cee20e12c3e9fda54197936a808babda21c2ea9a4298d7d907fb15e",
+      "byteEqual": false,
+      "importOnly": true,
+      "classification": "import_rewrite_only",
+      "diff": {
+        "addedLines": 1,
+        "removedLines": 1,
+        "sampleChangedLines": [
+          "} from \"../security/content-provenance.ts\";",
+          "} from \"../../../../shared/security/content-provenance.js\";"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M08"
+      ],
+      "requiredAction": "Re-apply the mechanically proven import rewrite only; any body change requires a declared patch."
+    },
+    {
+      "source": "src/openclaw/gateway/agent-browser.ts",
+      "target": "openclaw_runtime/src/gateway/server-methods/agent-browser.ts",
+      "sourceSha256": "27cfbef2d2b1dae21db94e955496703b1ecda6ca745c299797b93d97a8fb28f8",
+      "targetSha256": "e2b021e8f63a0ce2a62b0b75d5695dccbe2de25cd6cdafbb2448afbaf34e6b22",
+      "byteEqual": false,
+      "importOnly": true,
+      "classification": "import_rewrite_only",
+      "diff": {
+        "addedLines": 2,
+        "removedLines": 2,
+        "sampleChangedLines": [
+          "} from \"../gateway-protocol/client-info.ts\";",
+          "} from \"../../../packages/gateway-protocol/src/client-info.js\";",
+          "} from \"./types.ts\";"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M08"
+      ],
+      "requiredAction": "Re-apply the mechanically proven import rewrite only; any body change requires a declared patch."
+    },
+    {
+      "source": "src/openclaw/tool.ts",
+      "target": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+      "sourceSha256": "fac88c9531613ab34588944bda2e510177f4c481b6cf62d971097b163ad54310",
+      "targetSha256": "ea1b28b2d8bf93e1caa6a17f6713f3f2fe2c842bfdfbe41efd6ea8e7fa00203f",
+      "byteEqual": false,
+      "importOnly": true,
+      "classification": "import_rewrite_only",
+      "diff": {
+        "addedLines": 2,
+        "removedLines": 2,
+        "sampleChangedLines": [
+          "} from \"./common.ts\";",
+          "} from \"./common.js\";",
+          "} from \"./external-access-policy.ts\";"
+        ]
+      },
+      "ownerCheckpoints": [
+        "M08"
+      ],
+      "requiredAction": "Re-apply the mechanically proven import rewrite only; any body change requires a declared patch."
+    }
+  ],
+  "unmatchedSourcePaths": [
+    "src/cli.ts",
+    "src/collab/multi-agent-boundary.ts",
+    "src/collab/remote-policy.ts",
+    "src/contracts/index.ts",
+    "src/core/index.ts",
+    "src/core/runtime-mode-policy.ts",
+    "src/engine/diagnose-pack.ts",
+    "src/engine/driver-availability.ts",
+    "src/engine/driver-profile.ts",
+    "src/engine/electron-attach.ts",
+    "src/engine/electron-host-api.ts",
+    "src/engine/electron-source-map.ts",
+    "src/engine/facade.ts",
+    "src/engine/hitl-checkpoint.ts",
+    "src/engine/interactive-snapshot.ts",
+    "src/engine/navigation-errors.ts",
+    "src/engine/oneshot-verify.ts",
+    "src/engine/persistent-sessions.ts",
+    "src/engine/playwright-host-api.ts",
+    "src/engine/runtime-compatibility.ts",
+    "src/engine/semantic-browser.ts",
+    "src/engine/standalone.ts",
+    "src/engine/upstream-control.ts",
+    "src/engine/visual-browser.ts",
+    "src/evidence/diagnosis.ts",
+    "src/evidence/index.ts",
+    "src/evidence/output.ts",
+    "src/evidence/path-guard.ts",
+    "src/evidence/pr-comment.ts",
+    "src/evidence/reader.ts",
+    "src/evidence/schema.ts",
+    "src/evidence/timeline.ts",
+    "src/evidence/viewer.ts",
+    "src/evidence/writer.ts",
+    "src/gateway/manager.ts",
+    "src/gateway/protocol.ts",
+    "src/host/active-sandbox-high-risk-policy.ts",
+    "src/host/electron-optional.ts",
+    "src/host/logger.ts",
+    "src/host/paths.ts",
+    "src/host/permissions-hooks.ts",
+    "src/host/sandbox-high-risk-gate.ts",
+    "src/host/sandbox-policy-resolver.ts",
+    "src/host/sandbox-provider-detection.ts",
+    "src/host/sensitive-capture-gate.ts",
+    "src/host/sensitive-capture-policy-loader.ts",
+    "src/host/workspace-hooks.ts",
+    "src/host/workspace-paths.ts",
+    "src/host/workspace-runtime-permissions.ts",
+    "src/index.ts",
+    "src/mcp/argument-guard.ts",
+    "src/mcp/capability-policy.ts",
+    "src/mcp/explain-error.ts",
+    "src/mcp/result-envelope.ts",
+    "src/mcp/server.ts",
+    "src/mcp/tool-availability.ts",
+    "src/openclaw/common.ts",
+    "src/openclaw/gateway-protocol/client-info.ts",
+    "src/openclaw/gateway-protocol/error-codes.ts",
+    "src/openclaw/gateway-protocol/index.ts",
+    "src/openclaw/gateway-protocol/types.ts",
+    "src/openclaw/gateway/types.ts",
+    "src/openclaw/param-key.ts",
+    "src/openclaw/string-coerce.ts",
+    "src/openclaw/string-enum.ts",
+    "src/openclaw/tool-result.ts",
+    "src/security/audit-trail.ts",
+    "src/security/content-provenance.ts",
+    "src/security/markdown.ts",
+    "src/security/net-policy/index.ts",
+    "src/security/net-policy/ip-test-fixtures.ts",
+    "src/security/net-policy/ip.ts",
+    "src/security/net-policy/ipv4.ts",
+    "src/security/net-policy/redact-sensitive-url.ts",
+    "src/security/net-policy/url-userinfo.ts",
+    "src/security/redact-secrets.ts",
+    "src/security/redline-policy.ts",
+    "src/security/secret-names.ts",
+    "src/security/sensitive-capture-policy.ts",
+    "src/security/url-policy.ts",
+    "src/types/host-api.ts",
+    "src/types/product-semantics.ts",
+    "src/types/sandbox.ts",
+    "src/types/workspace.ts",
+    "src/version.ts"
+  ],
+  "checks": {
+    "all42PairsReviewed": true,
+    "classificationPartitionExact": true,
+    "nonEquivalentPairsExplicit": true,
+    "unmatchedPathsExplicit": true
+  },
+  "validationBoundary": "A path-pair review is not semantic equivalence. All non-import body differences remain open until later checkpoints reconcile them."
+}

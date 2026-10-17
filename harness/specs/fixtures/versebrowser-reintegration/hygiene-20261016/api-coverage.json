@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "scope": "contract coverage only; not runtime capability acceptance",
+  "modelActions": {
+    "declared": [
+      "open",
+      "status",
+      "navigate",
+      "waitForSelector",
+      "click",
+      "type",
+      "evaluate",
+      "screenshot",
+      "command",
+      "close",
+      "getConsoleMessages",
+      "downloadFile",
+      "uploadFiles",
+      "pointer",
+      "drag",
+      "selectOption",
+      "selectValues",
+      "appendText",
+      "setChecked",
+      "findElement",
+      "semanticRead",
+      "readForms",
+      "readDialogs",
+      "respondDialog"
+    ],
+    "implementedByHostDriver": [
+      "open",
+      "status",
+      "navigate",
+      "waitForSelector",
+      "click",
+      "type",
+      "evaluate",
+      "screenshot",
+      "command",
+      "close",
+      "getConsoleMessages"
+    ],
+    "snapshotRequiresOptionalCli": true
+  },
+  "driverCapabilities": {
+    "implementedSourceOnly": [],
+    "unavailableSourceOnly": [
+      "downloadFile",
+      "uploadFiles",
+      "pointer",
+      "drag",
+      "selectOption",
+      "selectValues",
+      "appendText",
+      "setChecked",
+      "findElement",
+      "semanticRead",
+      "readForms",
+      "readDialogs",
+      "respondDialog"
+    ],
+    "unavailableOutcome": "E_NOT_IMPLEMENTED; do not retry through another backend"
+  },
+  "counts": {
+    "legacy": 67,
+    "sourceOnly": 13,
+    "hostContract": 80,
+    "hostClient": 80,
+    "runtimeNewActions": 13
+  },
+  "issues": []
+}

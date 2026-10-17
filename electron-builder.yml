@@ -12,6 +12,15 @@ files:
   - dist
   - dist-electron
   - package.json
+  # The embedded @verse-claw/versebrowser workspace package is a symlink into
+  # packages/versebrowser. electron-builder copies the whole link target, so drop
+  # its dev/process artifacts here too (the main-runtime ASAR already excludes them).
+  - "!node_modules/@verse-claw/versebrowser/src/**"
+  - "!node_modules/@verse-claw/versebrowser/tests/**"
+  - "!node_modules/@verse-claw/versebrowser/.ae/**"
+  - "!node_modules/@verse-claw/versebrowser/tsconfig.json"
+  - "!node_modules/@verse-claw/versebrowser/tsconfig.build.json"
+  - "!node_modules/@verse-claw/versebrowser/vitest.config.ts"
 
 extraResources:
   # Directory mapping keeps main-runtime.asar in electron-builder's embedded

@@ -53,6 +53,28 @@ it('ships transitive dependency conflicts and never relies on parent node_module
   expect(createRequire(join(output, 'node_modules', 'sdk', 'index.js'))('schema')).toBe('1');
 });
 
+it('ships only a private workspace package allowlist and drops .ae runtime evidence', () => {
+  const root = fixture();
+  const source = join(root, 'source');
+  const module = join(source, 'node_modules', '@verse-claw', 'versebrowser');
+  mkdirSync(join(module, 'dist'), { recursive: true });
+  mkdirSync(join(module, 'tests'), { recursive: true });
+  mkdirSync(join(module, '.ae', 'evidence'), { recursive: true });
+  writeFileSync(join(module, 'package.json'), JSON.stringify({ name: '@verse-claw/versebrowser', version: '1', private: true, files: ['dist', 'LICENSE'], main: 'dist/index.js' }));
+  writeFileSync(join(module, 'dist', 'index.js'), "module.exports = 'ok';");
+  writeFileSync(join(module, 'tests', 'dev.test.ts'), 'x');
+  writeFileSync(join(module, '.ae', 'evidence', 'console.log'), 'x');
+  pkg(source, 'mcp', '1', { '@verse-claw/versebrowser': '1' });
+  const output = join(root, 'output');
+  pkg(output, 'mcp', '1');
+  copyRuntimeDependencies(source, output);
+  const copied = join(output, 'node_modules', '@verse-claw', 'versebrowser');
+  expect(JSON.parse(readFileSync(join(copied, 'package.json'), 'utf8')).version).toBe('1');
+  expect(readFileSync(join(copied, 'dist', 'index.js'), 'utf8')).toContain('ok');
+  expect(() => readFileSync(join(copied, 'tests', 'dev.test.ts'), 'utf8')).toThrow();
+  expect(() => readFileSync(join(copied, '.ae', 'evidence', 'console.log'), 'utf8')).toThrow();
+});
+
 it('rejects missing installed dependencies even when a user-level copy is available', () => {
   const root = fixture();
   const source = join(root, 'source');

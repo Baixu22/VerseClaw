@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-10-16",
+  "taskForestNode": "TF-0352",
+  "specNode": "N7",
+  "scope": "Real model tool call + MCP stdio protocol. The live runtime->Gateway->Main correlation leg is NOT yet demonstrated.",
+  "verdict": "partial",
+  "done": {
+    "mcpProtocol": {
+      "transport": "real stdio against the built CLI (vb mcp)",
+      "initialize": "ok",
+      "toolsList": {
+        "advertised": [
+          "vb_ping"
+        ],
+        "count": 1,
+        "driverToolsNotAdvertised": true
+      },
+      "toolsCall": {
+        "vb_ping_isError": false,
+        "vb_open_isError": true,
+        "vb_open_code": "E_GROUP_DENY",
+        "unknownTool_isError": true,
+        "unknownTool_code": "E_TOOL_DENY"
+      },
+      "cancel": "tools/call + notifications/cancelled sent on the same connection",
+      "conclusion": "failure is never degraded to isError=false; the advertised list is filtered by the active driver",
+      "artifact": "mcp-protocol-receipt.json",
+      "sha256": "011d27303ece4486d1138a0655fbf2d04edd1082e85816f14a6d534247ef6fe1"
+    },
+    "realModelToolCall": {
+      "endpointHost": "127.0.0.1:3065",
+      "model": "glm-5.3-flash",
+      "toolCalls": [
+        {
+          "name": "agent_browser",
+          "arguments": "action\":\"open\",\"url\":\"https://example.com\"}",
+          "callId": "call_1d1a1cc3239840f38486fca8"
+        }
+      ],
+      "artifact": "model-toolcall-receipt.json",
+      "sha256": "725c307727705e3d23df20aafdb1c2f07bb39e5d2a7fc4e90bae95215a253e44"
+    }
+  },
+  "fix": {
+    "id": "vb-mcp-stdio-lifetime",
+    "problem": "vb mcp exited immediately: the CLI deliberate post-command flush termination ran right after startMcpServer connected the stdio transport, so initialize/tools-list/tools-call never happened. The whole MCP surface was dead.",
+    "change": "packages/versebrowser/src/cli.ts keeps the MCP process alive after startMcpServer (await a never-resolving promise), applied through the sanctioned integration patch because src/cli.ts is a hash-pinned import.",
+    "artifacts": [
+      "packages/versebrowser/patches/src__cli.ts.patch",
+      "packages/versebrowser/integration-patches.json"
+    ],
+    "verified": "module/host-integration/api-coverage verify pass (the manifest pins the patched hash); the MCP probe passes after the patch and timed out before it."
+  },
+  "gap": {
+    "id": "live-runtime-gateway-main-chain",
+    "detail": "The model->Gateway->Main->driver correlation leg (requestId/toolCallId/session/owner/event) still needs a runtime-side run: the renderer gateway.rpc surface is intentionally read-only for mutations, so a probe cannot drive agentBrowser.invoke from the renderer.",
+    "attempt": "model-chain-attempt-receipt.json",
+    "sha256": "7ceb81ec071c3b989d59cdc50ad0312c01fede8f98fa377f8e75416f311df5e2",
+    "nextStep": "capture the app/runtime error for a failing chat turn (chat error surface or runtime logs) now that the provider config is proven correct, and inspect the full provider entry shape (api/baseUrl) in the isolated openclaw.json.",
+    "notBlockedOnOwner": "the local endpoint is live (127.0.0.1:3065); no owner action is needed for the next step.",
+    "liveAttempt": {
+      "result": "The live chain now reaches a REAL model tool call: with the real local endpoint the runtime records assistant toolCall entries for agent_browser carrying call ids (call_bb62b56ad73a43768051895c, call_0771c867f9eb4e8e93d58e01). It stops before Main because the endpoint returns malformed tool arguments (the string is missing its opening brace), which the runtime correctly rejects.",
+      "realToolCall": {
+        "type": "toolCall",
+        "id": "call_bb62b56ad73a43768051895c",
+        "name": "agent_browser",
+        "arguments": {}
+      },
+      "providerLimitation": "glm-5.3-flash returns arguments: {} for the tool call regardless of the prompt; hy3 does not call the tool at all",
+      "spec": "tests/e2e/versebrowser-live-model-chain.spec.ts",
+      "artifacts": {
+        "glm53flash": "n7-20261016/live-chain-glm53flash.json",
+        "hy3": "n7-20261016/live-chain-hy3.json"
+      },
+      "sha256": {
+        "glm53flash": "3932c78132fd8edeb722d6fe01f6772e782cea76e1e0c88ffe62b609991e5681",
+        "hy3": "6d0795bbe65e8d871e8cf18139fd86984a85faefd4cff40d39b462a612cfcee6"
+      },
+      "harnessFixes": [
+        "built openclaw_runtime/dist/entry.js (was missing)",
+        "local (ignored) node_modules/electron dist + path.txt pointing at the frozen Electron 40.8.4",
+        "spec uses launchElectronApp with skipSetup and the DERIVED runtime provider key (custom-livee2ec), not the bare vendor id"
+      ]
+    },
+    "providerRootCause": {
+      "detail": "the resident endpoint's tool-call argument assembly drops the first chunk",
+      "observed": "the arguments string arrives without its leading brace",
+      "effect": "runtime JSON parse yields {} -> 'action: must have required properties action'"
+    },
+    "stubAttempt": {
+      "detail": "a labelled in-spec protocol stub returning a well-formed OpenAI Responses function_call was added, and the stub logs every incoming request. It received ZERO requests in two runs (stub-key and real-looking key), so the E2E run is not actually routed to the injected endpoint - it most likely uses the machine's own configured provider.",
+      "impact": "this means the observed empty tool arguments cannot yet be attributed to the injected endpoint from the E2E; only the DIRECT call to 127.0.0.1:3065 (recorded earlier) proves that endpoint's malformed arguments.",
+      "honestyFix": "the E2E assertion originally matched the tool name anywhere in the history, which the PROMPT text satisfied; it now requires an actual toolCall entry, so the current stub runs correctly FAIL.",
+      "artifacts": [
+        "n7-20261016/live-chain-stub.json",
+        "n7-20261016/live-chain-stub-real-key.json"
+      ]
+    },
+    "isolationFinding": {
+      "detail": "the in-test protocol stub logged ZERO incoming requests across three runs (stub key, real-looking key, and with apiProtocol=openai-responses on an ephemeral base URL). The provider account IS created with that base URL and the model ref IS updated, yet the runtime never calls it - so the app provider store is not the source the runtime uses for the model call (the runtime resolves providers from its own openclaw config).",
+      "consequence": "every live run so far therefore used the machine's own configured provider. The agent_browser toolCall with a real call id is still real model evidence, but it is NOT evidence about the injected endpoint, and the empty arguments cannot be attributed to that endpoint.",
+      "codeChange": "the spec now forwards CLAWX_LIVE_API_PROTOCOL into the provider account (a real gap: custom endpoints need the protocol set).",
+      "status": "open - needs the runtime-side provider resolution instrumented"
+    },
+    "controlExperiment": {
+      "detail": "the repository's own live-model spec (chat-cache-live-model.spec.ts) fails identically against the same endpoint: no assistant message within 180s. So provider injection is broken repo-wide in this checkout, not just in the N7 spec.",
+      "implication": "live runs here are not attributable to an injected endpoint; fixing the provider injection is a prerequisite for N7's live leg.",
+      "artifact": "n7-20261016/repo-live-spec-control.md",
+      "sha256": "ecfb1f957dcaa0afcd52644762eb9fc43a1630d8982b510713d117a14fbebecc",
+      "status": "SUPERSEDED - see providerSyncDiagnostic"
+    },
+    "providerSyncDiagnostic": {
+      "finding": "provider injection WORKS. A dedicated diagnostic (tests/e2e/versebrowser-provider-sync-diagnostic.spec.ts) created a custom account, set it default and updated the agent model, then read the isolated runtime config directly: ~/.openclaw/openclaw.json contains the runtime provider key, the app store contains the account, and agents.updateModel reported runtimeSynced: true.",
+      "correction": "the previous conclusion that provider injection is broken repo-wide was WRONG and is superseded. The sync path (providers.createAccount -> syncSavedProviderToRuntime -> models.providers + scheduleGatewayRefresh) is implemented and demonstrably reaches the isolated runtime config.",
+      "stillOpen": "why a live chat turn then produces no assistant message and no HTTP request to the injected endpoint is unexplained; the failure is AFTER a correct provider configuration (e.g. provider entry shape/api mapping, gateway reload timing, or the runtime rejecting the request before dialing out).",
+      "artifact": "n7-20261016/provider-sync-diagnostic.json",
+      "sha256": "51014cfafabe9cb4364c0e7dd9e68dbc0db731be8ce83b53eba17d0e11184e1d",
+      "turnAttempt": {
+        "step1": "with an INCORRECT runtime provider key in the agent model ref the runtime answered 'Agent failed before reply: Unknown model: custom-diagnost/diag-model' - i.e. the key in the model ref must be the derived runtime key.",
+        "step2": "with the CORRECT derived key (custom-diagturn/diag-model the runtime stopped saying 'unknown model' and instead reported 'LLM request failed: network connection error' - so it DID dial the injected endpoint.",
+        "conclusion": "provider injection works end to end up to the network call. The remaining blocker for the live chain is the stub's protocol: it replies with plain JSON while the openai-responses client expects a streaming (SSE) response, which surfaces as a network connection error.",
+        "nextStep": "make the protocol stub stream SSE in the provider's expected format; then the live chain can reach Main and the correlation can be asserted."
+      }
+    },
+    "liveTurnNetworkError": {
+      "detail": "the runtime never dials the injected endpoint. Raw TCP logging on the stub (server.on('connection')) records ZERO connections while the app reports 'LLM request failed: network connection error'. The failure is PRE-DIAL.",
+      "ruledOut": [
+        "provider injection (the isolated runtime config carries a well-formed provider entry)",
+        "model resolution (the derived runtime key resolves; a wrong key gives a different error)",
+        "the HTTP(S)_PROXY env vars (removing them changed nothing)",
+        "app proxy settings (setting proxyEnabled=false + proxyBypassRules=<local> and restarting the Gateway changed nothing)",
+        "treating the account as a local endpoint (authMode: local changed nothing)"
+      ],
+      "codePointers": [
+        "openclaw_runtime/src/agents/embedded-agent-helpers/sanitize-user-facing-text.ts:173 maps a generic fetch failure to 'network connection error'",
+        "openclaw_runtime/src/infra/net/proxy-fetch.ts builds an undici ProxyAgent from managed env proxy agent options",
+        "electron/utils/proxy.ts resolves app proxy settings into the child HTTP_PROXY/HTTPS_PROXY env"
+      ],
+      "assessment": "ClawX-side wiring is correct through provider injection and model resolution. The remaining failure is inside the runtime's model HTTP fetch layer and needs either a runtime/product change (e.g. how local endpoints are dialled) or a different environment."
+    }
+  },
+  "verifiers": {
+    "apiCoverage": {
+      "status": "pass",
+      "sha256": "ccc92e363fa32d4201b02c041d0abac6748ed4e9278757db6f0cfe87a4a9f657"
+    },
+    "module": {
+      "status": "pass",
+      "sha256": "4534413d728dca4b46f9d2538bc4c69cbae464a72cbfeb984d77ae4cff59595a"
+    },
+    "hostIntegration": {
+      "status": "pass",
+      "sha256": "61a1f269d6f47bf2c07396727c0286f806a4d6f02adbf65e2a85e37627c94f6f"
+    }
+  },
+  "rawEvidenceRoot": "D:\\tmp\\clawx-vb-n7-20261016"
+}

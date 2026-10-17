@@ -1,0 +1,33 @@
+import { it, expect } from 'vitest';
+import { createRequire } from 'node:module';
+import { readFileSync } from 'node:fs';
+import { createConnection } from '@playwright/mcp';
+
+it('requires an idempotent exact-hash upstream patch and rejects tampering', async () => {
+  const script = new URL('../scripts/patch-upstream.mjs', import.meta.url).href;
+  const { patchText } = await import(script);
+  const require = createRequire(import.meta.url);
+  const upstream = createRequire(require.resolve('@playwright/mcp'));
+  const source = readFileSync(upstream.resolve('playwright-core/lib/coreBundle'), 'utf8');
+  const browserCore = createRequire(require.resolve('playwright'));
+  const browserSource = readFileSync(browserCore.resolve('playwright-core/lib/coreBundle'), 'utf8');
+  expect(browserSource).toBe(source);
+  expect(patchText(browserSource)).toBe(browserSource);
+  expect(browserSource).toContain('role === "generic" && box.cursor !== "pointer" && box.inline');
+  expect(patchText(source)).toBe(source);
+  const fileSetter='await modalState.fileChooser.setFiles(tab2.context.config.vbFilePayloads ? tab2.context.config.vbFilePayloads(paths) : paths);';
+  const fileMarker='createConnection.versebrowserFilesVersion = 1;\n';
+  const downloadMarker='createConnection.versebrowserDownloadsVersion = 1;\n';
+  const beforeDownloads=source.replace('    if (this.context.config.vbManualDownloads) return;\n','').replace(downloadMarker,'');
+  expect(patchText(beforeDownloads)).toBe(source);
+  const previous=beforeDownloads.replace(fileSetter,'await modalState.fileChooser.setFiles(paths);').replace(fileMarker,'');
+  expect(patchText(previous)).toBe(source);
+  expect(() => patchText(beforeDownloads.replace(fileMarker,''))).toThrow('partially modified bundle');
+  expect(() => patchText(source.replace(fileMarker,''))).toThrow('unexpected bundle SHA-256');
+  expect(() => patchText(source.replace(downloadMarker,''))).toThrow('partially modified bundle');
+  expect(() => patchText(source + '\n// unrelated modification')).toThrow('unexpected bundle SHA-256');
+  expect((createConnection as typeof createConnection & { versebrowserLogSinkVersion?: number }).versebrowserLogSinkVersion).toBe(1);
+  expect((createConnection as typeof createConnection & { versebrowserFocusVersion?: number }).versebrowserFocusVersion).toBe(1);
+  expect((createConnection as typeof createConnection & { versebrowserFilesVersion?: number }).versebrowserFilesVersion).toBe(1);
+  expect((createConnection as typeof createConnection & { versebrowserDownloadsVersion?: number }).versebrowserDownloadsVersion).toBe(1);
+});

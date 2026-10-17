@@ -7,11 +7,12 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "postinstall": "node scripts/assert-pnpm-toolchain.mjs && node scripts/patch-browser-hint.mjs && pnpm --dir openclaw_runtime install",
+    "postinstall": "node scripts/assert-pnpm-toolchain.mjs && pnpm run versebrowser:build && node scripts/patch-browser-hint.mjs && pnpm --dir openclaw_runtime install",
     "init": "pnpm install && pnpm run uv:download && pnpm run agent-browser:download",
-    "predev": "node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs && node scripts/build-openclaw-runtime.mjs && zx scripts/prepare-preinstalled-skills-dev.mjs",
+    "predev": "pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs && node scripts/build-openclaw-runtime.mjs && zx scripts/prepare-preinstalled-skills-dev.mjs",
     "dev": "vite",
     "dev:mock": "vite --open \"/?mock=1#/\"",
+    "versebrowser:build": "pnpm --filter @verse-claw/versebrowser build",
     "build:runtime": "node scripts/build-openclaw-runtime.mjs",
     "provider:deepseek:configure": "node scripts/configure-deepseek-runtime.mjs",
     "runtime:event-log:inspect": "node openclaw_runtime/scripts/inspect-runtime-event-log.mjs",
@@ -34,7 +35,7 @@
     "runtime:long-stability": "node scripts/runtime-long-stability.mjs",
     "ext:bridge": "node scripts/generate-ext-bridge.mjs",
     "build": "node scripts/generate-ext-bridge.mjs && pnpm run build:vite && pnpm run build:runtime && zx scripts/bundle-openclaw.mjs && zx scripts/bundle-openclaw-plugins.mjs && zx scripts/bundle-openclaw-runtime.mjs && zx scripts/bundle-preinstalled-skills.mjs && node scripts/bundle-main-runtime.mjs && node scripts/run-electron-builder.mjs",
-    "prebuild:vite": "node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs",
+    "prebuild:vite": "pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs",
     "build:vite": "node --max-old-space-size=6144 ./node_modules/vite/bin/vite.js build",
     "build:startup-check": "node scripts/check-renderer-startup-chunks.mjs",
     "bundle:openclaw-plugins": "zx scripts/bundle-openclaw-plugins.mjs",
@@ -236,7 +237,7 @@
     "maturity:seal": "node scripts/seal-system-maturity.mjs",
     "maturity:residual": "node scripts/run-system-maturity-residual-audit.mjs",
     "maturity:capability-inventory": "node scripts/run-system-maturity-capability-inventory.mjs",
-    "p0:accept": "vitest run tests/unit/p0-production-acceptance.test.ts tests/unit/default-config-matrix.test.ts tests/unit/context-orchestrator-entry-scan.test.ts tests/unit/tf0001-controlled-operable-closeout.test.ts tests/unit/agent-browser-task-service.test.ts tests/unit/agent-browser-vault.test.ts tests/unit/agent-browser-runtime-mode.test.ts tests/unit/openclaw-auth.test.ts",
+    "p0:accept": "vitest run tests/unit/p0-production-acceptance.test.ts tests/unit/default-config-matrix.test.ts tests/unit/context-orchestrator-entry-scan.test.ts tests/unit/tf0001-controlled-operable-closeout.test.ts tests/unit/versebrowser-task-session-conservation.test.ts tests/unit/versebrowser-host-adapter.test.ts tests/unit/openclaw-auth.test.ts",
     "dcs:ops:preflight": "node scripts/dcs-ops-preflight.mjs",
     "dcs:ops:preflight:gates": "node scripts/dcs-ops-preflight.mjs --gates",
     "tf0009:agent-surrogate": "pnpm --dir openclaw_runtime exec node --import tsx scripts/tf0009-agent-surrogate.mts",
@@ -253,7 +254,7 @@
     "uas:06:real-canary:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts --check",
     "eval:runtime-memory:locomo:verify": "node --experimental-strip-types scripts/check-locomo-evidence.mjs",
     "a4:decision-quality-audit": "pnpm --dir openclaw_runtime exec tsx ../scripts/a4-decision-quality-audit.mts",
-    "predev:mock": "node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs && node scripts/build-openclaw-runtime.mjs && zx scripts/prepare-preinstalled-skills-dev.mjs",
+    "predev:mock": "pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs && node scripts/build-openclaw-runtime.mjs && zx scripts/prepare-preinstalled-skills-dev.mjs",
     "lobe-icons:sync": "node scripts/sync-lobe-icons.mjs",
     "lobe-icons:check": "node scripts/sync-lobe-icons.mjs --check"
   },
@@ -290,7 +291,8 @@
     "unified": "^11.0.0",
     "ws": "^8.19.0",
     "yaml": "^2.9.0",
-    "zod": "4.4.3"
+    "zod": "4.4.3",
+    "@verse-claw/versebrowser": "workspace:*"
   },
   "devDependencies": {
     "@buape/carbon": "0.16.0",

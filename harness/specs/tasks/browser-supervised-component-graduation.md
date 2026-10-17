@@ -9,18 +9,18 @@ touchedAreas:
   - harness/specs/tasks/browser-supervised-component-graduation.md
   - harness/specs/rules/agent-browser-supervised-task-boundary.md
   - electron/services/agent-browser-api.ts
-  - electron/services/agent-browser-service.ts
-  - electron/services/agent-browser-task-service.ts
-  - electron/services/agent-browser-supervised-task-executor.ts
-  - electron/services/agent-browser/**
+  - packages/versebrowser/src/engine/service.ts
+  - packages/versebrowser/src/engine/task-service.ts
+  - packages/versebrowser/src/engine/supervised-task-executor.ts
+  - packages/versebrowser/src/engine/browser-control/**
   - shared/host-api/contract.ts
   - src/lib/host-api.ts
   - src/pages/Browser/index.tsx
   - src/components/file-preview/WorkspaceLiveBrowserPanel.tsx
   - src/components/file-preview/WorkspaceWebPreviewPanel.tsx
   - shared/i18n/locales/**/browser.json
-  - tests/unit/agent-browser-task-service.test.ts
-  - tests/unit/agent-browser-service.test.ts
+  - packages/versebrowser/tests/agent-browser-task-service.test.ts
+  - packages/versebrowser/tests/agent-browser-service.test.ts
   - tests/unit/agent-browser-supervised-task-executor.test.ts
   - tests/unit/agent-browser-browser-control.test.ts
   - tests/unit/browser-workbench.test.tsx

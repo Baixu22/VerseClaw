@@ -377,6 +377,7 @@ async function launchVerseClawElectron(
   const app = await electron.launch({
     executablePath: String(electronBinaryPath),
     args: [
+      ...(process.platform === 'win32' && process.env.ELECTRON_DISABLE_SANDBOX === '1' ? ['--no-sandbox'] : []),
       `--user-data-dir=${userDataDir}`,
       '--lang=en-US',
       '--disable-gpu',
@@ -464,6 +465,7 @@ export const test = base.extend<ElectronFixtures>({
   homeDir: async ({ browserName: _browserName }, provideHomeDir) => {
     const homeDir = await mkdtemp(join(process.env.CLAWX_E2E_RUN_ROOT ?? tmpdir(), 'verse-claw-e2e-home-'));
     await mkdir(join(homeDir, '.config'), { recursive: true });
+    await mkdir(join(homeDir, '.openclaw'), { recursive: true });
     await mkdir(join(homeDir, 'AppData', 'Local'), { recursive: true });
     await mkdir(join(homeDir, 'AppData', 'Roaming'), { recursive: true });
     try {

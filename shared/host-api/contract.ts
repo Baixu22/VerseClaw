@@ -1296,6 +1296,13 @@ export type AgentBrowserSetEnabledResult = HostSuccess & {
 export type AgentBrowserActionResult = HostSuccess & {
   session: AgentBrowserSession;
 };
+export type AgentBrowserFacadeResult = HostSuccess & {
+  ok?: boolean;
+  content?: string;
+  data?: unknown;
+  evidence?: unknown[];
+  error?: { code: string; message: string; details?: Record<string, unknown> } | string;
+};
 export type AgentBrowserEvaluateResult = AgentBrowserActionResult & {
   value?: unknown;
 };
@@ -5447,6 +5454,19 @@ export type HostApiContract = {
     fullAccessRevoke: (payload: AgentBrowserFullAccessRevokePayload) => AgentBrowserFullAccessRevokeResult;
     extractPageText: (payload: AgentBrowserExtractPageTextPayload) => AgentBrowserExtractPageTextResult;
     validateExtractionRule: (payload: AgentBrowserValidateExtractionRulePayload) => AgentBrowserValidateExtractionRuleResult;
+    downloadFile: (payload: AgentBrowserSelectorPayload & { path: string }) => AgentBrowserFacadeResult;
+    uploadFiles: (payload: AgentBrowserSelectorPayload & { paths: string[] }) => AgentBrowserFacadeResult;
+    pointer: (payload: AgentBrowserSessionPayload & { action: 'hover' | 'double-click' | 'right-click' | 'scroll' | 'scroll-into-view'; selector?: string; deltaX?: number; deltaY?: number; timeoutMs?: number }) => AgentBrowserFacadeResult;
+    drag: (payload: AgentBrowserSessionPayload & { sourceSelector: string; targetSelector: string; timeoutMs?: number }) => AgentBrowserFacadeResult;
+    selectOption: (payload: AgentBrowserSelectorPayload & { label: string }) => AgentBrowserFacadeResult;
+    selectValues: (payload: AgentBrowserSelectorPayload & { values: string[] }) => AgentBrowserFacadeResult;
+    appendText: (payload: AgentBrowserTypePayload) => AgentBrowserFacadeResult;
+    setChecked: (payload: AgentBrowserSelectorPayload & { checked: boolean }) => AgentBrowserFacadeResult;
+    findElement: (payload: AgentBrowserSessionPayload & { role?: string; name?: string; label?: string; testId?: string; timeoutMs?: number }) => AgentBrowserFacadeResult;
+    semanticRead: (payload: AgentBrowserSessionPayload & { action: 'observe' | 'extract'; instruction: string; schema?: Record<string, unknown>; timeoutMs?: number }, options?: { signal?: AbortSignal }) => AgentBrowserFacadeResult;
+    readForms: (payload: AgentBrowserSessionPayload & { selector?: string }) => AgentBrowserFacadeResult;
+    readDialogs: (payload: AgentBrowserSessionPayload) => AgentBrowserFacadeResult;
+    respondDialog: (payload: AgentBrowserSessionPayload & { dialogId: string; accept: boolean; promptText?: string }) => AgentBrowserFacadeResult;
   };
   mcp: {
     listServers: () => McpServerListResult;

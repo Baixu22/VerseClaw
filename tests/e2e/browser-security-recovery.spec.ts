@@ -8,8 +8,8 @@
  *   → artifacts/browser-security-recovery/evidence.json
  *
  * Mode upgrade userApproval gate is unit-locked in
- * tests/unit/agent-browser-runtime-mode.test.ts (host path also proven once via open+upgrade).
- * Restart recovery is unit-locked in tests/unit/agent-browser-task-service.test.ts.
+ * packages/versebrowser/tests/agent-browser-runtime-mode.test.ts (host path also proven once via open+upgrade).
+ * Restart recovery is unit-locked in packages/versebrowser/tests/agent-browser-task-service.test.ts.
  * Private-network default false is locked in tests/unit/default-config-matrix.test.ts.
  *
  * Intentionally avoids agent-browser open/CLI and long Electron quit hangs.
@@ -166,9 +166,9 @@ test.describe('Browser security + task recovery (TF-0005)', () => {
         },
         vaultHealth: vaultHealth.health,
         unitLocks: {
-          modeUpgradeUserApproval: 'tests/unit/agent-browser-runtime-mode.test.ts',
-          taskPersistRestartInterrupted: 'tests/unit/agent-browser-task-service.test.ts',
-          vaultNotConfiguredVsCorrupted: 'tests/unit/agent-browser-vault.test.ts',
+          modeUpgradeUserApproval: 'packages/versebrowser/tests/agent-browser-runtime-mode.test.ts',
+          taskPersistRestartInterrupted: 'packages/versebrowser/tests/agent-browser-task-service.test.ts',
+          vaultNotConfiguredVsCorrupted: 'packages/versebrowser/tests/agent-browser-vault.test.ts',
           privateNetworkDefaultFalse: 'tests/unit/default-config-matrix.test.ts',
         },
         acceptance: {

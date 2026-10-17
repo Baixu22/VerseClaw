@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-10-16",
+  "taskForestNode": "TF-0351",
+  "specNode": "N6",
+  "scope": "Authorization, revocation, terminal-state and resource-conservation matrix for the model->Main browser loop.",
+  "verdict": "pass",
+  "matrix": [
+    {
+      "criterion": "cross-session rejection",
+      "evidence": "bridge unit: a session owned by owner-A asked for by owner-B returns E_OWNER_MISMATCH and the service is never touched",
+      "artifact": "tests/unit/versebrowser-n6-authorization-conservation.test.ts"
+    },
+    {
+      "criterion": "missing owner rejected (no default-allow)",
+      "evidence": "bridge unit: a session without owner metadata returns E_OWNER_MISSING",
+      "artifact": "tests/unit/versebrowser-n6-authorization-conservation.test.ts"
+    },
+    {
+      "criterion": "unknown session rejected (no implicit create)",
+      "evidence": "bridge unit: E_SESSION_NOT_FOUND",
+      "artifact": "tests/unit/versebrowser-n6-authorization-conservation.test.ts"
+    },
+    {
+      "criterion": "cross-workspace isolation",
+      "evidence": "adapter unit: the facade cache is keyed by workspace root, so two workspaces never share refs/baselines",
+      "artifact": "tests/unit/versebrowser-host-adapter.test.ts"
+    },
+    {
+      "criterion": "path + dialog boundaries",
+      "evidence": "downloadFile/uploadFiles/readDialogs/respondDialog are not advertised and are refused (UNSUPPORTED) before any effect",
+      "artifact": "n5-20261016/source-only-rejection-receipt.json"
+    },
+    {
+      "criterion": "grant revoked -> action stops and cannot be replayed",
+      "evidence": "desktop: after downgrading session A to normal_restricted, takeSnapshot(A) is rejected and a second identical call is still rejected",
+      "artifact": "authorization-receipt.json",
+      "observed": {
+        "revokedActionRejected": true,
+        "replayStillRejected": true
+      }
+    },
+    {
+      "criterion": "revocation scoped to the owned session",
+      "evidence": "desktop: session B still snapshots after A is revoked",
+      "artifact": "authorization-receipt.json",
+      "observed": {
+        "otherSessionUnaffected": true
+      }
+    },
+    {
+      "criterion": "terminal state not rewritten by late calls",
+      "evidence": "task-service unit: completed/cancelled outcomes survive late lifecycle calls",
+      "artifact": "tests/unit/versebrowser-task-session-conservation.test.ts"
+    },
+    {
+      "criterion": "unknown outcome does not retry the mutation via another backend",
+      "evidence": "tool unit: the mutation dispatches exactly once and no other mutating action is issued",
+      "artifact": "tests/unit/versebrowser-n6-authorization-conservation.test.ts"
+    },
+    {
+      "criterion": "stale reference surfaced as failure",
+      "evidence": "tool unit: an E_STALE_REF result is returned as an error, not a pass",
+      "artifact": "tests/unit/versebrowser-n6-authorization-conservation.test.ts"
+    },
+    {
+      "criterion": "only owned resources released",
+      "evidence": "desktop: closing A leaves exactly B in the session list; after closing B the list is empty",
+      "artifact": "authorization-receipt.json",
+      "observed": {
+        "remainingAfterClose": [
+          "bb341247-29b8-46e1-8138-1cd8090fdac3"
+        ],
+        "onlyOwnedSessionReleased": true,
+        "sessionsAtEnd": 0
+      }
+    }
+  ],
+  "cleanup": {
+    "ownedElectronProcessesRemaining": 0,
+    "sessionsAtEnd": 0
+  },
+  "verifiers": {
+    "apiCoverage": {
+      "status": "pass",
+      "sha256": "ccc92e363fa32d4201b02c041d0abac6748ed4e9278757db6f0cfe87a4a9f657"
+    },
+    "module": {
+      "status": "pass",
+      "sha256": "4534413d728dca4b46f9d2538bc4c69cbae464a72cbfeb984d77ae4cff59595a"
+    },
+    "hostIntegration": {
+      "status": "pass",
+      "sha256": "db3b4ca06b81b9c3c3069a81b3372b657dc95bc2339ace679637150605c02699"
+    },
+    "contractCheck": "pass"
+  },
+  "tests": {
+    "result": "39 passed / 7 files (focused)",
+    "typecheck": "pnpm run typecheck exit 0",
+    "newFiles": [
+      "tests/unit/versebrowser-n6-authorization-conservation.test.ts",
+      "scripts/versebrowser-authorization-probe.mjs"
+    ]
+  },
+  "limitations": [
+    "Ownership is enforced on the Gateway path (the renderer IPC surface is the local user surface and carries no owner key by design).",
+    "Path and dialog capabilities are still unavailable, so their boundary is proven by refusal rather than by an allowed/denied pair.",
+    "Vault/secure-storage conservation is covered by the existing task/session conservation suite, not re-measured here."
+  ],
+  "rawEvidenceRoot": "D:\\tmp\\clawx-vb-n6-20261016"
+}

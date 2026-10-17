@@ -1,0 +1,53 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "generatedAt": "2026-10-16T07:00:57.607Z",
+  "model": "custom/hy3",
+  "baseUrlConfigured": true,
+  "sessionKey": "agent:main:main",
+  "sawBrowserCall": false,
+  "history": {
+    "sessionKey": "agent:main:main",
+    "messages": [],
+    "defaults": {
+      "modelProvider": "custom-livee2ec",
+      "model": "hy3",
+      "contextTokens": 200000,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off"
+    },
+    "sessionInfo": {
+      "key": "agent:main:main",
+      "kind": "direct",
+      "updatedAt": null,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off",
+      "totalTokensFresh": false,
+      "modelProvider": "custom-livee2ec",
+      "model": "hy3",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 200000,
+      "hasActiveRun": false
+    },
+    "thinkingLevel": "off"
+  }
+}

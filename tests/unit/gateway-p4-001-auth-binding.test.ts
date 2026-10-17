@@ -1,5 +1,6 @@
 import { EventEmitter } from 'node:events';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
 import { registerAgentBrowserGatewayBridge } from '@electron/gateway/agent-browser-bridge';
 import {
   agentBrowserHandlers,
@@ -19,6 +20,7 @@ function makeBridgeClient(connId: string) {
     connect: {
       role: 'operator',
       scopes: ['operator.admin', 'operator.read'],
+      caps: ['agent-browser-bridge'],
       client: {
         id: 'gateway-client',
         version: '0.1.0',
@@ -118,7 +120,12 @@ describe('P4-001 gateway method auth / origin / rate-limit matrix', () => {
 });
 
 describe('P4-001 agent browser first-response binding', () => {
+  beforeEach(() => {
+    setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
+  });
+
   afterEach(() => {
+    setSandboxHighRiskPolicyLoader(null);
     __testing.clearPendingInvokes();
   });
 
@@ -222,6 +229,12 @@ describe('P4-001 agent browser first-response binding', () => {
         requestId: 'req-race',
         responderConnId: 'bridge-a',
         sessionKey: 'wrong-session',
+      }).ok,
+    ).toBe(false);
+    expect(
+      claimAgentBrowserResult({
+        requestId: 'req-race',
+        responderConnId: 'bridge-a',
       }).ok,
     ).toBe(false);
 

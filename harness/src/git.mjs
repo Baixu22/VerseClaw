@@ -60,6 +60,11 @@ export async function getChangedFiles(since = 'origin/main', cwd = ROOT) {
   for (const file of await gitPaths(['diff', '--name-only', '-z', `${since}...HEAD`], cwd)) files.add(file);
   for (const file of await gitPaths(['diff', '--cached', '--name-only', '-z'], cwd)) files.add(file);
   for (const file of await gitPaths(['diff', '--name-only', '-z'], cwd)) files.add(file);
-  for (const file of await gitPaths(['ls-files', '--others', '--exclude-standard', '-z'], cwd)) files.add(file);
+  for (const file of await gitPaths(['ls-files', '--others', '--exclude-standard', '-z'], cwd)) {
+    // `.gitignore` can re-include a directory so a later exact-file exception is
+    // possible. Those directory placeholders are not changed files and must not
+    // consume touchedArea ownership.
+    if (!file.endsWith('/')) files.add(file);
+  }
   return [...files].sort();
 }

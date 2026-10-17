@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m12-closeout-verify",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "retirement": {
+    "status": "pass",
+    "retiredImplementations": 23,
+    "retiredTests": 24,
+    "implementationsPresent": [],
+    "testsPresent": [],
+    "moduleCounterpartMissing": [],
+    "liveImporters": [],
+    "issues": []
+  },
+  "taskMapping": {
+    "status": "pass",
+    "sourceNodes": 190,
+    "sourceEdges": 338,
+    "entries": 190,
+    "dispositions": {
+      "wire_required": 137,
+      "constraint_preserved": 20,
+      "historical_evidence_preserved": 31,
+      "deferred": 2
+    },
+    "deferred": [
+      {
+        "sourceTaskId": "TF-0174",
+        "hostTargetTaskIds": [
+          "TF-0343"
+        ]
+      },
+      {
+        "sourceTaskId": "TF-0176",
+        "hostTargetTaskIds": [
+          "TF-0344"
+        ]
+      }
+    ],
+    "deferredNodeStatus": [
+      {
+        "id": "TF-0343",
+        "status": "proposed",
+        "title": "后置范围：真实业务阻塞出现后再增强"
+      },
+      {
+        "id": "TF-0344",
+        "status": "proposed",
+        "title": "后置范围：按真实集成需求扩展驱动与调试能力"
+      }
+    ],
+    "forestInspected": true,
+    "issues": []
+  },
+  "hostApi": {
+    "status": "pass",
+    "legacyExpected": 67,
+    "legacyPresent": 67,
+    "legacyMissing": [],
+    "sourceOnlyExpected": 13,
+    "sourceOnlyPresent": 13,
+    "sourceOnlyPending": [],
+    "issues": []
+  },
+  "moduleAllowlist": {
+    "status": "pass",
+    "files": [
+      "LICENSE",
+      "dist",
+      "import-manifest.json",
+      "integration-patches.json",
+      "package.json",
+      "patches",
+      "scripts/patch-upstream.mjs"
+    ],
+    "issues": []
+  },
+  "packagedCandidate": {
+    "status": "pass",
+    "archive": "release/win-unpacked/resources/app.asar",
+    "builtFiles": 1520,
+    "matchedFiles": 1520,
+    "issues": []
+  },
+  "issues": [],
+  "validationBoundary": "A pass proves the retired duplicates are gone, the module counterparts still exist, the task/scope conservation inputs are intact and the final build output equals the packaged bundle. It is not a product GA verdict and does not re-run the packaged NSIS installer."
+}

@@ -111,11 +111,11 @@ function createDefaultAgentBrowserInvoker(params: {
   if (process.env.CLAWX_AGENT_BROWSER_BRIDGE !== "1") {
     return undefined;
   }
-  return async (action, payload) =>
+  return async (action, payload, correlation) =>
     await openClawToolsDeps.callGateway({
       config: params.config,
       method: "agentBrowser.invoke",
-      params: { action, payload },
+      params: { action, payload, ...(correlation ? { correlation } : {}) },
       timeoutMs: 120_000,
     });
 }
@@ -383,8 +383,18 @@ export function createOpenClawTools(
   options?.recordToolPrepStage?.("openclaw-tools:web-fetch-tool");
   const agentBrowserInvoker =
     options?.agentBrowserInvoker ?? createDefaultAgentBrowserInvoker({ config: resolvedConfig });
+  const agentBrowserCorrelation = {
+    ...(options?.runId ? { runId: options.runId } : {}),
+    ...(options?.runSessionKey ?? options?.agentSessionKey
+      ? { sessionKey: options?.runSessionKey ?? options?.agentSessionKey }
+      : {}),
+    ...(options?.agentSessionKey ? { agentSessionKey: options.agentSessionKey } : {}),
+    ...(options?.sessionId ? { agentSessionId: options.sessionId } : {}),
+    ...(sessionAgentId ? { agentId: sessionAgentId } : {}),
+  };
   const agentBrowserTool = createAgentBrowserTool({
     contentProvenanceContext: options?.contentProvenanceContext,
+    ...(Object.keys(agentBrowserCorrelation).length > 0 ? { correlation: agentBrowserCorrelation } : {}),
     invoke: agentBrowserInvoker,
   });
   options?.recordToolPrepStage?.("openclaw-tools:agent-browser-tool");

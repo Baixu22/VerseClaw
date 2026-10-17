@@ -1,0 +1,1205 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m09-test-closure",
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "Classify every frozen source regression input (160 files: 158 tests + 2 helpers) by whether its import closure stays inside the imported module",
+  "sourceTestCount": 158,
+  "helperCount": 2,
+  "entries": [
+    {
+      "sourcePath": "tests/agent-browser-automation-boundary-detector.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-automation-boundary-detector.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-automation-playbook-selector.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-automation-playbook-selector.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-automation-playbooks.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-automation-playbooks.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-boundary-choice-tool-executor.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-boundary-choice-tool-executor.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-browser-control.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-browser-control.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-cdp-lifecycle.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-cdp-lifecycle.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-cli-runner.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-cli-runner.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-console-recorder.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-console-recorder.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-extraction-rules-validation.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-extraction-rules-validation.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-flight-recorder.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-flight-recorder.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-full-access-tool-executor.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-full-access-tool-executor.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-gateway-bridge.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-gateway-bridge.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-js-source-index.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-js-source-index.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-js-source-tool-executor.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-js-source-tool-executor.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-m6-flight-pr.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-m6-flight-pr.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-network-context.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-network-context.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-network-recorder.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-network-recorder.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-network-service.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-network-service.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-p4-002-isolation.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-p4-002-isolation.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-page-text-extractor.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-page-text-extractor.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-redact-secrets.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-redact-secrets.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-replay-tool-executor.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-replay-tool-executor.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-runtime-mode-policy.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-runtime-mode-policy.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-runtime-mode.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-runtime-mode.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-runtime-read-tool-executor.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-runtime-read-tool-executor.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-same-origin-source-map-fetcher.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-same-origin-source-map-fetcher.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-service.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-service.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-source-map-tool-executor.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-source-map-tool-executor.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-standalone-facade.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-standalone-facade.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-supervised-task-executor.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-supervised-task-executor.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-tab-manager.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-tab-manager.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-task-service.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-task-service.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-tool-artifacts.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-tool-artifacts.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-tool-classification.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-tool-classification.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-tool-registry.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-tool-registry.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-tool.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-tool.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-trajectory-viewer.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-trajectory-viewer.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-vault.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-vault.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-browser-workspace-paths.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/agent-browser-workspace-paths.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/agent-loop-analysis.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/bench/agent-loop-analysis.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/agent-loop-protocol.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/bench/agent-loop-protocol.ts",
+        "scripts-import:../scripts/bench/agent-loop-tools.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/agent-loop-report.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/bench/agent-loop-report.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/archive-path-guard.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/integrity.ts",
+        "scripts-import:../scripts/data/paths.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/archive-path-normalization.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/archive-recognition.ts",
+        "scripts-import:../scripts/data/product-paths.ts",
+        "scripts-import:../scripts/data/paths.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/argument-guard-and-pr-comment.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/argument-guard-and-pr-comment.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/bench-browser-loop-fixtures.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/bench/browser-loop-acceptance.ts",
+        "scripts-import:../scripts/bench/browser-loop-tasks.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/bench-browser-loop-ref-entry.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/bench/browser-loop-acceptance.ts",
+        "scripts-import:../scripts/bench/browser-loop-tasks.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/bench-browser-loop-rollup.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/bench/run-browser-loop-experiment.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/bench-noisy-envelope.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/bench/measure-envelope.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/benefit-experiment-contract.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/bench/experiment-tasks.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/browser-resource-lifecycle.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/browser-resource-lifecycle.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/browser-runtime-compatibility.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/browser-runtime-compatibility.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/change-scope.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/check-change-scope.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/close-recording-integrity.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/close-recording-integrity.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/closed-session-history.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/closed-session-history.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/collab-multi-agent-boundary.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/collab-multi-agent-boundary.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/collab-remote-policy.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/collab-remote-policy.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/console-severity-and-href.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/console-severity-and-href.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/contracts.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/contracts.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/corpus-integrity-negative.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/integrity.ts",
+        "scripts-import:../scripts/data/catalog.ts",
+        "scripts-import:../scripts/data/paths.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/current-page-verdict.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/current-page-verdict.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/data-corpus.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/catalog.ts",
+        "scripts-import:../scripts/data/paths.ts",
+        "scripts-import:../scripts/data/types.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/diagnose-pack-budget.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/diagnose-pack-budget.test.ts",
+      "reasons": [
+        "bare:not observed"
+      ]
+    },
+    {
+      "sourcePath": "tests/diagnose-page.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/diagnose-page.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/doc-numbers-gate.test.ts",
+      "disposition": "source_guard_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/driver-availability.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/driver-availability.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/electron-loop.test.ts",
+      "disposition": "source_guard_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/evidence-jail.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/evidence-jail.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/evidence-output-redaction.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/evidence-output-redaction.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/evidence-pack.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/evidence-pack.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/evidence-sinks-coverage.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/evidence-sinks-coverage.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/evidence-writer-paths.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/evidence-writer-paths.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/experiment-batch-replay.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/experiment-batches.ts",
+        "scripts-import:../scripts/data/replay-experiment-batches.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/explain-error-injection.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/explain-error-injection.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/explain-error.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/explain-error.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/external-import-guard.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/import-external.ts",
+        "scripts-import:../scripts/data/external-sources.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/external-miniwob-cases.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/integrity.ts",
+        "scripts-import:../scripts/data/paths.ts",
+        "scripts-import:../scripts/external/miniwob/miniwob-tasks.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/external-source-map-vectors.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/paths.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/external-url-vectors.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/paths.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/frontend-loop-fixtures.test.ts",
+      "disposition": "source_guard_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/harness-feedback.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/harness-feedback.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/harness-live-feedback.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/harness-live-feedback.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/hitl-gate-status-restart.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/hitl-gate-status-restart.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/hitl-operator-handoff.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/hitl-operator-handoff.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/integration-pack.test.ts",
+      "disposition": "source_guard_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "bare:versebrowser/engine/standalone"
+      ]
+    },
+    {
+      "sourcePath": "tests/interactive-snapshot.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/interactive-snapshot.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/mcp-capability-policy.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/mcp-capability-policy.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/mcp-protocol-cancel.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/mcp-protocol-cancel.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/mcp-result-envelope.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/mcp-result-envelope.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/mcp-shutdown-race.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/mcp-shutdown-race.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/mcp-surface-sync.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/mcp-surface-sync.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/mcp-tool-exposure.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/mcp-tool-exposure.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/model-transcript-archive.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/integrity.ts",
+        "scripts-import:../scripts/data/paths.ts",
+        "scripts-import:../scripts/data/model-transcripts.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/navigate-url-guard.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/navigate-url-guard.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/net-policy.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/net-policy.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/network-detail-body-limit.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/network-detail-body-limit.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/network-detail.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/network-detail.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/network-wait.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/network-wait.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/oneshot-verify.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/oneshot-verify.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/open-problems-regression.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/open-problems-regression.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/openclaw-external-access-policy.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/openclaw-external-access-policy.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/openclaw-tool-provenance.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/openclaw-tool-provenance.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/output-boundary.test.ts",
+      "disposition": "source_guard_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "bare:fs/promises"
+      ]
+    },
+    {
+      "sourcePath": "tests/page-text-fidelity.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/page-text-fidelity.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/page-text-read.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/page-text-read.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/persistent-cleanup-errors.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/persistent-cleanup-errors.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/persistent-launch-error.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/persistent-launch-error.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/persistent-reattach-lifecycle.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/persistent-reattach-lifecycle.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/persistent-session-lifecycle.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/persistent-session-lifecycle.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/persistent-session-paths.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/persistent-session-paths.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/persistent-session-store.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/persistent-session-store.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/persistent-sessions.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/persistent-sessions.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/persistent-startup-deadline.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/persistent-startup-deadline.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/pilot-check-run.test.ts",
+      "disposition": "source_guard_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/playwright-actionable-snapshot.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/playwright-actionable-snapshot.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/pr-comment-injection.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/pr-comment-injection.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/press-key.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/press-key.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/product-path-archive.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/integrity.ts",
+        "scripts-import:../scripts/data/paths.ts",
+        "scripts-import:../scripts/data/product-paths.ts",
+        "scripts-import:../scripts/data/capture-model-runs.ts",
+        "scripts-import:../scripts/data/capture-product-paths.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/r0-4-agent-browser-nav-timeout.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/r0-4-agent-browser-nav-timeout.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/recognition-archive.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/paths.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/redline-hitl.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/redline-hitl.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/runtime-read.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/runtime-read.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/same-origin-js-fetcher.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/same-origin-js-fetcher.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/screenshot-retry.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/screenshot-retry.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/security-audit-trail.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/security-audit-trail.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/semantic-browser.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/semantic-browser.test.ts",
+      "reasons": [
+        "bare:+JSON.stringify(serverUrl)+",
+        "bare:+JSON.stringify(policyUrl)+",
+        "bare:+JSON.stringify(import.meta.resolve("
+      ]
+    },
+    {
+      "sourcePath": "tests/sensitive-capture-policy.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/sensitive-capture-policy.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/session-location-sync.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/session-location-sync.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/session-result.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/session-result.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/snapshot-aria-state.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/snapshot-aria-state.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/snapshot-diff.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/snapshot-diff.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/snapshot-form-state.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/snapshot-form-state.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/snapshot-secret-redaction.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/snapshot-secret-redaction.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/snapshot-with-text.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/snapshot-with-text.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/stray-browser-gate.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/check-stray-browsers.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/toolbox-embedding.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/toolbox-embedding.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/toolbox-host-authority.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/toolbox-host-authority.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/toolbox-review-regressions.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/toolbox-review-regressions.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/trajectory-capture-redaction.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/data/capture-trajectories.ts",
+        "scripts-import:../scripts/data/integrity.ts"
+      ]
+    },
+    {
+      "sourcePath": "tests/unknown-session-verdict.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/unknown-session-verdict.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/upstream-control.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/upstream-control.test.ts",
+      "reasons": [
+        "bare:present but not permitted"
+      ]
+    },
+    {
+      "sourcePath": "tests/upstream-drag-editor.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/upstream-drag-editor.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/upstream-files.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/upstream-files.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/upstream-find.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/upstream-find.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/upstream-form-values.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/upstream-form-values.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/upstream-input.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/upstream-input.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/upstream-network-policy.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/upstream-network-policy.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/upstream-patch.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/upstream-patch.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/upstream-pointer.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/upstream-pointer.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/upstream-ref-lifecycle.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/upstream-ref-lifecycle.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/upstream-tabs.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/upstream-tabs.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/upstream-viewport.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/upstream-viewport.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/verify-collection-integrity.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/verify-collection-integrity.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/verify-network-baseline.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/verify-network-baseline.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/version-sync.test.ts",
+      "disposition": "source_guard_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/visual-browser.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/visual-browser.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/wait-primitive.test.ts",
+      "disposition": "module_runtime",
+      "imported": true,
+      "moduleTarget": "packages/versebrowser/tests/wait-primitive.test.ts",
+      "reasons": []
+    },
+    {
+      "sourcePath": "tests/with-compatible-node.test.ts",
+      "disposition": "source_research_or_release",
+      "imported": false,
+      "moduleTarget": null,
+      "reasons": [
+        "scripts-import:../scripts/with-compatible-node.mjs"
+      ]
+    }
+  ],
+  "dispositionCounts": {
+    "module_runtime": 127,
+    "source_research_or_release": 24,
+    "source_guard_or_release": 7
+  },
+  "importedTestCount": 127,
+  "validationBoundary": "Classification is derived from static import/repo-reference analysis; module_runtime tests are byte-identical copies proven runnable at M09. Research/release/guard tests stay in the source repository."
+}
