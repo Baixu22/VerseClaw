@@ -1,0 +1,35 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0378",
+  "node": "TF-0378",
+  "title": "补齐面边界与结构化运行协议",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "pending-source-commit",
+    "base": "c97d92d8f",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "导出契约有版本号与兼容策略。",
+      "result": "pass",
+      "evidence": ["docs/dev/coding-run-protocol.md", "shared/types/coding-run.ts — CODING_RUN_PROTOCOL_SCHEMA = coding-run/v1"]
+    },
+    {
+      "criterion": "正反样例测试覆盖合法、缺字段、非法事件和未知字段。",
+      "result": "pass",
+      "evidence": ["tests/fixtures/coding-run-protocol/valid.jsonl", "tests/fixtures/coding-run-protocol/missing-field.jsonl", "tests/fixtures/coding-run-protocol/invalid-event.jsonl", "tests/fixtures/coding-run-protocol/unknown-field.jsonl", "tests/unit/coding-run.test.ts"]
+    },
+    {
+      "criterion": "文档标注与 Codex exec 的差异。",
+      "result": "pass",
+      "evidence": ["docs/dev/coding-run-protocol.md — Difference from Codex exec"]
+    }
+  ],
+  "boundaries": [
+    "The protocol is a versioned display/CI envelope, not a new runtime event authority.",
+    "No Codex CLI compatibility layer, persistence, state-machine change or downstream implementation was added.",
+    "Invalid input fails closed with a structured error line and non-zero script exit.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}

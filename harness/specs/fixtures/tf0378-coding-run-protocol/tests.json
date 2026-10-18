@@ -1,0 +1,13 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0378",
+  "head": "pending-source-commit",
+  "dirty": false,
+  "unit": {"command": "pnpm exec vitest run tests/unit/coding-run.test.ts tests/unit/execution-projection.test.ts", "files": 2, "tests": 21, "passed": 21, "failed": 0, "result": "pass"},
+  "protocolFixtures": [
+    {"file": "valid.jsonl", "exitCode": 0, "summary": {"codingRunId": "cr-valid", "records": 6, "turns": 1, "approvals": 1, "files": 1, "tests": 1, "verification": "passed"}},
+    {"file": "unknown-field.jsonl", "exitCode": 1, "errorCode": "UNKNOWN_FIELD"},
+    {"file": "missing-field.jsonl", "exitCode": 1, "errorCode": "MISSING_FIELD"},
+    {"file": "invalid-event.jsonl", "exitCode": 1, "errorCode": "INVALID_FIELD"}
+  ]
+}

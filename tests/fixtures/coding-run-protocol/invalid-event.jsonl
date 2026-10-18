@@ -1,0 +1,2 @@
+{"schema":"coding-run/v1","sequence":0,"recordType":"coding-run","payload":{"codingRunId":"cr-event","objective":null,"acceptanceContractRef":null,"sessionIds":[],"scope":null,"runIds":[],"attemptIds":[],"taskLedgerRootId":null,"traceId":null,"permissionEnvelopeRef":null,"contextFingerprint":null,"completion":null}}
+{"schema":"coding-run/v1","sequence":1,"recordType":"mystery","payload":{"type":"mystery","codingRunId":"cr-event"}}

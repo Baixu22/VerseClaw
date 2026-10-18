@@ -1,0 +1,1 @@
+{"schema":"coding-run/v1","sequence":0,"recordType":"coding-run","payload":{"codingRunId":"cr-invalid","objective":null,"acceptanceContractRef":null,"sessionIds":[],"scope":null,"runIds":[],"attemptIds":[],"taskLedgerRootId":null,"traceId":null,"permissionEnvelopeRef":null,"contextFingerprint":null,"completion":null,"unexpected":"not allowed"}}

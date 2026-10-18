@@ -1,0 +1,13 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0378",
+  "head": "pending-source-commit",
+  "dirty": false,
+  "receipts": [
+    {"command": "pnpm typecheck", "exitCode": 0, "durationMs": 35514, "result": "pass"},
+    {"command": "pnpm contract:check", "exitCode": 0, "result": "pass"},
+    {"command": "pnpm harness validate --spec harness/specs/tasks/coding-run-protocol-v1.md", "exitCode": 0, "result": "pass"},
+    {"command": "pnpm exec eslint shared/types/coding-run.ts shared/product-semantics.ts tests/unit/coding-run.test.ts --max-warnings 0", "exitCode": 0, "result": "pass"},
+    {"command": "git diff --check", "exitCode": 0, "result": "pass"}
+  ]
+}

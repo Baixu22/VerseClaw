@@ -1424,6 +1424,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/codex-parity/runtime-interaction-maturity.md
 !/docs/dev/coding-parity-gap-inventory.md
 !/docs/dev/coding-parity-introduce-assessment.md
+!/docs/dev/coding-run-protocol.md
 !/docs/dev/component-controlled-rollout-p0-closeout.md
 !/docs/dev/component-operational-readiness-checklist.md
 !/docs/dev/component-operationalization-index.md

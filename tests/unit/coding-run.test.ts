@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   createCodingRunView,
+  parseCodingRunJsonl,
   resolveCodingRun,
   serializeCodingRunJsonl,
+  summarizeCodingRunJsonl,
   type CodingRunView,
   type RunScope,
   type ScopedRunId,
@@ -150,9 +152,48 @@ describe('CodingRun read-only contract', () => {
     const lines = jsonl.split('\n').map((line) => JSON.parse(line));
 
     expect(lines).toHaveLength(3);
-    expect(lines[0]).toMatchObject({ codingRunId: 'cr-jsonl', traceId: 'trace-jsonl' });
-    expect(lines[1]).toMatchObject({ type: 'loop', phase: 'verify' });
-    expect(lines[2]).toMatchObject({ type: 'verification', status: 'passed' });
-    expect(lines[0].scope).toEqual(scope);
+    expect(lines[0]).toMatchObject({ schema: 'coding-run/v1', sequence: 0, recordType: 'coding-run' });
+    expect(lines[0].payload).toMatchObject({ codingRunId: 'cr-jsonl', traceId: 'trace-jsonl' });
+    expect(lines[1]).toMatchObject({ sequence: 1, recordType: 'loop', payload: { phase: 'verify' } });
+    expect(lines[2]).toMatchObject({ sequence: 2, recordType: 'verification', payload: { status: 'passed' } });
+    expect(lines[0].payload.scope).toEqual(scope);
+  });
+
+  it('parses valid versioned JSONL and produces a stable CI summary', () => {
+    const jsonl = serializeCodingRunJsonl(view({ codingRunId: 'cr-summary', scope }), [
+      { type: 'test', codingRunId: 'cr-summary', command: 'pnpm test', status: 'passed' },
+      { type: 'verification', codingRunId: 'cr-summary', status: 'passed', authority: 'task-loop-verification' },
+    ]);
+
+    expect(parseCodingRunJsonl(jsonl)).toMatchObject({ status: 'ok' });
+    expect(summarizeCodingRunJsonl(jsonl)).toEqual({
+      codingRunId: 'cr-summary',
+      records: 3,
+      turns: 0,
+      approvals: 0,
+      files: 0,
+      tests: 1,
+      verification: 'passed',
+      finalStatus: null,
+    });
+  });
+
+  it.each([
+    ['missing field', 'coding-run/v1', '{"schema":"coding-run/v1","sequence":0,"recordType":"coding-run","payload":{"codingRunId":"cr"}}', 'MISSING_FIELD'],
+    ['unknown field', 'coding-run/v1', '{"schema":"coding-run/v1","sequence":0,"recordType":"coding-run","payload":{"codingRunId":"cr","objective":null,"acceptanceContractRef":null,"sessionIds":[],"scope":null,"runIds":[],"attemptIds":[],"taskLedgerRootId":null,"traceId":null,"permissionEnvelopeRef":null,"contextFingerprint":null,"completion":null,"extra":true}}', 'UNKNOWN_FIELD'],
+    ['unknown event field', 'coding-run/v1', '{"schema":"coding-run/v1","sequence":0,"recordType":"coding-run","payload":{"codingRunId":"cr","objective":null,"acceptanceContractRef":null,"sessionIds":[],"scope":null,"runIds":[],"attemptIds":[],"taskLedgerRootId":null,"traceId":null,"permissionEnvelopeRef":null,"contextFingerprint":null,"completion":null}}\n{"schema":"coding-run/v1","sequence":1,"recordType":"test","payload":{"type":"test","codingRunId":"cr","command":"pnpm test","status":"passed","extra":true}}', 'UNKNOWN_FIELD'],
+    ['invalid schema', 'coding-run/v2', '{"schema":"coding-run/v2","sequence":0,"recordType":"coding-run","payload":{}}', 'INVALID_SCHEMA'],
+  ] as const)('fails closed on %s', (_label, _schema, line, code) => {
+    const result = parseCodingRunJsonl(line);
+    expect(result.status).toBe('error');
+    if (result.status === 'error') expect(result.code).toBe(code);
+  });
+
+  it('fails closed when sequence order is wrong', () => {
+    const valid = serializeCodingRunJsonl(view({ codingRunId: 'cr-sequence' }));
+    const first = valid.split('\n')[0];
+    const malformed = `${first.replace('"sequence":0', '"sequence":2')}\n${first}`;
+    const result = parseCodingRunJsonl(malformed);
+    expect(result).toMatchObject({ status: 'error', code: 'INVALID_SEQUENCE', line: 1 });
   });
 });
