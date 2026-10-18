@@ -1,7 +1,7 @@
 {
   "driven_by": "agent",
   "actor": "codex-tf0381",
-  "head": "pending-source-commit",
+  "head": "0ba519107f8c76debf430be7173464e2cc3a0f31",
   "dirty": false,
   "receipts": [
     {
