@@ -1,0 +1,24 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0387",
+  "node": "TF-0387",
+  "title": "补齐 Project 容器与 attempt/apply 产品闭环",
+  "verdict": "pass",
+  "candidate": {"sha": "7e2e22b5", "base": "7e2e22b5", "dirty": false},
+  "originalAcceptance": [
+    {"criterion": "Project 支持 master instruction 和 knowledge refs，且可迁移现有 workspace 映射。", "result": "pass", "evidence": ["harness/specs/fixtures/tf0388-project-projection/acceptance.json", "shared/types/project.ts"]},
+    {"criterion": "attempt 有 immutable identity、独立 session/worktree/evidence、diff 和 verification。", "result": "pass", "evidence": ["harness/specs/fixtures/tf0389-attempt-apply/acceptance.json", "shared/types/attempt.ts"]},
+    {"criterion": "apply 是显式动作并受审批。", "result": "pass", "evidence": ["shared/types/attempt.ts — preflight then approval-required", "tests/e2e/workspace-git-mcp-runtime.spec.ts — 3 passed"]},
+    {"criterion": "没有多人实时协作或 Website Builder 的范围扩张。", "result": "pass", "evidence": ["No collaboration, Website Builder, Cloud VM or marketplace implementation was added."]}
+  ],
+  "childCompletion": [
+    {"node": "TF-0388", "status": "done", "evidence": "harness/specs/fixtures/tf0388-project-projection/acceptance.json; db1a1260"},
+    {"node": "TF-0389", "status": "done", "evidence": "harness/specs/fixtures/tf0389-attempt-apply/acceptance.json; 1de73a4f"}
+  ],
+  "boundaries": [
+    "Project is read-only and does not replace Workspace.",
+    "Attempt apply is explicit, preflight-first and approval-gated; failures are preserved.",
+    "No auto merge/commit/PR, Best-of-N, Cloud attempts, realtime collaboration or Website Builder was added.",
+    "All receipts are agent-driven."
+  ]
+}
