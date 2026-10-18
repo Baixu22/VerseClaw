@@ -1,0 +1,80 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0392",
+  "node": "TF-0392",
+  "title": "风险：语义收敛被当作重命名或新建真源",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "cdc62dd5f74895de22a4b7dff4f730a26b790f8f",
+    "short": "cdc62dd5f",
+    "base": "78f16bd5d",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "语义节点通过兼容性测试。",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/identity-scope.test.ts — byte-preserving legacy workspaceKey normalization and explicit conflict rejection",
+        "tests/unit/coding-run.test.ts — missing/unknown/multiple/conflict associations remain explicit",
+        "tests/unit/project-projection.test.ts — existing workspace projects without migration",
+        "tests/unit/attempt-apply.test.ts — existing Git apply authority remains the mutation path"
+      ]
+    },
+    {
+      "criterion": "没有第二套 task/run/trace authority。",
+      "result": "pass",
+      "evidence": [
+        "shared/types/identity-scope.ts — vocabulary only; no registry, storage, authorization or ID generation",
+        "shared/types/coding-run.ts — in-memory association and display protocol; no task status or trace storage ownership",
+        "shared/types/project.ts — read-only projection over Workspace; no task/trace state ownership",
+        "shared/types/attempt.ts — immutable view plus adapter to existing Git apply and approval authority"
+      ]
+    },
+    {
+      "criterion": "旧数据仍可读取。",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/identity-scope.test.ts — legacy workspaceKey input normalizes in memory without mutating the source object",
+        "tests/unit/coding-run.test.ts — null/empty associations remain explicit and unresolved relations are not guessed",
+        "tests/unit/project-projection.test.ts — transitional 1:1 workspace projection requires no migration"
+      ]
+    }
+  ],
+  "compatibilityReceipts": [
+    {
+      "command": "pnpm exec vitest run tests/unit/identity-scope.test.ts tests/unit/coding-run.test.ts tests/unit/execution-environment.test.ts tests/unit/instruction-precedence.test.ts tests/unit/project-projection.test.ts tests/unit/attempt-apply.test.ts",
+      "files": 6,
+      "tests": 62,
+      "passed": 62,
+      "failed": 0,
+      "exitCode": 0,
+      "durationMs": 26590
+    },
+    {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 11051,
+      "result": "pass"
+    }
+  ],
+  "bytePreservingCompatibility": [
+    "normalizeRunScope maps legacy workspaceKey to workspaceId/projectId in a new in-memory object and leaves the input JSON unchanged.",
+    "Explicit canonical identifiers are copied byte-for-byte, including surrounding spaces; no trim or ID rewrite occurs.",
+    "Equal WorkspaceId/ProjectId bytes are a transitional compatibility mapping, not an alias type or durable ownership claim.",
+    "createProjectForWorkspace projects an existing workspace without writing or migrating workspace data.",
+    "CodingRun JSONL is display/CI interchange only; it does not write a task, trace, attempt or permission record."
+  ],
+  "noSecondAuthority": [
+    "No Task Ledger, Task Loop, Goal, Memory, Knowledge or scheduler store was added.",
+    "No trace writer, run scheduler, permission authority or attempt store was added.",
+    "Attempt apply delegates to the existing Git apply adapter and requires the existing explicit approval ID.",
+    "MCP lifecycle state was not promoted from publication/availability into fake connected state."
+  ],
+  "boundaries": [
+    "This is evidence-only closeout for an already-landed semantic convergence program; no source behavior changed in this closeout.",
+    "The semantic tests are compatibility/authority guards, not GA or release acceptance.",
+    "Agent Dev performance remains independently fail/blocked on fresh e2e-build budget; this node does not claim performance green.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}
