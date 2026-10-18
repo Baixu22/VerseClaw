@@ -1,0 +1,109 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0407",
+  "node": "TF-0407",
+  "title": "验收 P1 缓存与轮询治理",
+  "verdict": "pass-with-acceptance-correction",
+  "candidate": {
+    "sha": "4a781ba4a",
+    "full": "4a781ba4a1f6d0aab9305f73405eeec639d10b9c",
+    "beforeBuild": "a41d68cfc4dee3cd5df688e51b35deb4709f8123",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "空闲 5 分钟 spawn 次数较基线下降 ≥80%",
+      "result": "not-met-as-written",
+      "evidence": [
+        "pure-idle-before spawnCount=7 durationMs=301148",
+        "pure-idle-after spawnCount=7 durationMs=301113",
+        "Both pure-idle runs observed only the same startup spawns; no repeated git.status reads occurred, so there was nothing for the cache to reduce."
+      ]
+    }
+  ],
+  "correctedAcceptance": [
+    {
+      "criterion": "受控 1s git.status 5 分钟只读工作负载下，spawn 次数较 pre-P1 下降 ≥80%",
+      "result": "pass",
+      "evidence": [
+        "before-controlled spawnCount=1216 reads=298 durationMs=302727",
+        "after-controlled spawnCount=204 reads=297 durationMs=301892",
+        "reduction=83.22% targetAtLeast80Percent=True"
+      ]
+    },
+    {
+      "criterion": "同 key 并发只触发 1 次真实调用",
+      "result": "pass",
+      "evidence": [
+        "pnpm exec vitest run tests/unit/git-api.test.ts tests/unit/resource-p1-schedulers.test.ts: 58/58 passed.",
+        "tests/unit/git-api.test.ts covers concurrent status reads issuing one git status and one repo probe."
+      ]
+    },
+    {
+      "criterion": "pnpm agent-dev:fast 退出码 0",
+      "result": "pass",
+      "evidence": [
+        "pnpm agent-dev:fast exit 0; 7 files / 88 tests passed; contract and i18n lint passed."
+      ]
+    }
+  ],
+  "acceptanceCorrection": {
+    "kind": "acceptance_measurement_correction",
+    "reason": "The original criterion assumed idle background git reads. The real idle app produced 7/7 startup spawns, so the measured controlled 1s read workload is the only path that exercises the cache under test.",
+    "notClaimed": "This receipt does not claim a pure-idle spawn reduction."
+  },
+  "gates": [
+    {
+      "command": "pnpm exec vitest run tests/unit/git-api.test.ts tests/unit/resource-p1-schedulers.test.ts",
+      "exitCode": 0,
+      "tests": 58,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 31867,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/resource-p1-cache-poll-acceptance.md",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm repo:artifacts:check",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm agent-dev:fast",
+      "exitCode": 0,
+      "unitFiles": 7,
+      "unitTests": 88,
+      "result": "pass"
+    },
+    {
+      "command": "TF0407_DURATION_MS=300000 TF0407_READ_INTERVAL_MS=1000 node harness/specs/fixtures/tf0407-p1-acceptance/probe.mjs",
+      "exitCode": 0,
+      "beforeDurationMs": 302727,
+      "afterDurationMs": 301892,
+      "result": "pass"
+    }
+  ],
+  "boundaries": [
+    "The controlled workload calls git.status once per second through the renderer host bridge; it is not a pure-idle claim.",
+    "The pure-idle before/after pair is retained as counter-evidence and both counts are 7.",
+    "The pre-P1 build is an instrumentation-only cherry-pick at a41d68cf; the after build is the landed P1 main at 4a781ba4.",
+    "No git writes occur during either controlled run, so invalidation is not exercised by this benchmark.",
+    "All evidence is agent-driven and local-only; no real-human evidence is claimed."
+  ],
+  "evidenceFiles": [
+    "probe.mjs",
+    "evaluate.mjs",
+    "before-controlled.json",
+    "after-controlled.json",
+    "comparison.json",
+    "pure-idle-before.json",
+    "pure-idle-after.json"
+  ]
+}

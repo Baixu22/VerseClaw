@@ -1,0 +1,29 @@
+{
+  "schema": "clawx.tf0407.p1-comparison/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0407-evaluator",
+  "controlled": {
+    "beforeCandidate": "a41d68cfc4dee3cd5df688e51b35deb4709f8123",
+    "afterCandidate": "4a781ba4a1f6d0aab9305f73405eeec639d10b9c",
+    "beforeReadCount": 298,
+    "afterReadCount": 297,
+    "beforeSpawnCount": 1216,
+    "afterSpawnCount": 204,
+    "reduction": 0.8322368421052632,
+    "reductionPercent": 83.22,
+    "targetAtLeast80Percent": true,
+    "readErrorCount": 0
+  },
+  "pureIdle": {
+    "beforeCandidate": "a41d68cfc4dee3cd5df688e51b35deb4709f8123",
+    "afterCandidate": "43446d89684f13b4f819d7e4e44606a61490e85a",
+    "beforeSpawnCount": 7,
+    "afterSpawnCount": 7,
+    "note": "No repeated git status reads occurred in pure idle; both runs observed the same 7 startup spawns. This is retained as counter-evidence and is not used as the controlled read-path target."
+  },
+  "boundaries": [
+    "The controlled path issues git.status once per second for five minutes from the renderer host bridge.",
+    "The pure-idle result is explicitly not a reduction claim.",
+    "The pre-P1 build is instrumentation-only: commit a41d68cfc4dee3cd5df688e51b35deb4709f8123."
+  ]
+}

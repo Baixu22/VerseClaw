@@ -1,0 +1,1971 @@
+{
+  "schema": "clawx.tf0417.performance-probe/v1",
+  "driven_by": "agent",
+  "actor": "tf0417-electron-probe",
+  "candidate": "a41d68cfc4dee3cd5df688e51b35deb4709f8123",
+  "startedAt": "2026-10-18T14:48:35.497Z",
+  "completedAt": "2026-10-18T14:53:36.645Z",
+  "durationMs": 301148,
+  "platform": "win32",
+  "node": "v24.15.0",
+  "main": {
+    "startedAt": 1792334907269,
+    "elapsedMs": 309315.8262,
+    "marks": [
+      {
+        "name": "app-ready",
+        "at": 1792334915173,
+        "fromStartMs": 7903.6058
+      },
+      {
+        "name": "window-created",
+        "at": 1792334915584,
+        "fromStartMs": 8314.6963
+      },
+      {
+        "name": "ready-to-show",
+        "at": 1792334915957,
+        "fromStartMs": 8688.314199999999
+      }
+    ],
+    "counters": {
+      "spawnCount": 7,
+      "spawnByMethod": {
+        "spawn": 0,
+        "exec": 0,
+        "execFile": 7,
+        "fork": 0,
+        "spawnSync": 0,
+        "execSync": 0,
+        "execFileSync": 0
+      },
+      "recentSpawns": [
+        {
+          "method": "execFile",
+          "at": 1792334916358,
+          "fromStartMs": 9088.7146,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792334916386,
+          "fromStartMs": 9117.356,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792334916466,
+          "fromStartMs": 9197.3401,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792334916471,
+          "fromStartMs": 9201.892,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792334916474,
+          "fromStartMs": 9205.162199999999,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792334916477,
+          "fromStartMs": 9208.3141,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792334916482,
+          "fromStartMs": 9212.9497,
+          "command": "git"
+        }
+      ],
+      "activeIntervals": 4,
+      "activeWatchers": 0,
+      "unavailable": []
+    },
+    "rssBytes": 307712000
+  },
+  "renderer": {
+    "schema": "clawx.renderer-performance/v1",
+    "startedAt": 1792334915954,
+    "generatedAt": 1792335216454,
+    "marks": [
+      {
+        "name": "renderer-start",
+        "at": 1792334915954,
+        "fromStartMs": 0.09999999403953552
+      },
+      {
+        "name": "renderer-first-paint",
+        "at": 1792334915990,
+        "fromStartMs": 36.400000005960464
+      }
+    ],
+    "longTasks": [
+      {
+        "startTime": 687.8000000119209,
+        "durationMs": 115
+      },
+      {
+        "startTime": 818.7000000178814,
+        "durationMs": 70
+      },
+      {
+        "startTime": 1026.2000000178814,
+        "durationMs": 50
+      },
+      {
+        "startTime": 1085.7000000178814,
+        "durationMs": 72
+      },
+      {
+        "startTime": 1253.2000000178814,
+        "durationMs": 55
+      }
+    ],
+    "inputLatency": [
+      {
+        "kind": "click",
+        "at": 1792335215991,
+        "latencyMs": 14
+      },
+      {
+        "kind": "keydown",
+        "at": 1792335215995,
+        "latencyMs": 1.7000000178813934
+      }
+    ],
+    "ipc": {
+      "count": 256,
+      "p50Ms": 7,
+      "p95Ms": 10,
+      "recent": [
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335142982,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335143308,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335143620,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335143933,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335144259,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335144571,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335144885,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335145208,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335145518,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335145828,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335146142,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "resourceTracker",
+          "action": "list",
+          "at": 1792335146337,
+          "durationMs": 0,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335146453,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335146765,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335147085,
+          "durationMs": 14,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335147406,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335147733,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335148049,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335148363,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335148688,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335148997,
+          "durationMs": 5,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335149309,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335149622,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335149934,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335150245,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335150555,
+          "durationMs": 5,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335150869,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335151181,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335151491,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335151804,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335152118,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335152450,
+          "durationMs": 29,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335152769,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335153082,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335153396,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335153721,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335154034,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335154345,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335154659,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335154983,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335155298,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335155620,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335155944,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335156258,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "permissions",
+          "action": "approvals",
+          "at": 1792335156330,
+          "durationMs": 1,
+          "ok": true
+        },
+        {
+          "module": "agentBrowser",
+          "action": "tasks",
+          "at": 1792335156330,
+          "durationMs": 1,
+          "ok": true
+        },
+        {
+          "module": "gateway",
+          "action": "rpc",
+          "at": 1792335156334,
+          "durationMs": 5,
+          "ok": true
+        },
+        {
+          "module": "resourceTracker",
+          "action": "list",
+          "at": 1792335156334,
+          "durationMs": 5,
+          "ok": true
+        },
+        {
+          "module": "remoteTasks",
+          "action": "list",
+          "at": 1792335156334,
+          "durationMs": 5,
+          "ok": true
+        },
+        {
+          "module": "gateway",
+          "action": "status",
+          "at": 1792335156487,
+          "durationMs": 0,
+          "ok": true
+        },
+        {
+          "module": "system",
+          "action": "info",
+          "at": 1792335156504,
+          "durationMs": 2,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335156571,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335156882,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335157207,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335157520,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335157830,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335158142,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335158466,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335158778,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335159088,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335159400,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335159713,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335160024,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335160335,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335160649,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335160962,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335161273,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335161597,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335161911,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335162222,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335162534,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335162846,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335163158,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335163481,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335163792,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335164102,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335164414,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335164729,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335165038,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335165355,
+          "durationMs": 11,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335165678,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335165991,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335166304,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "resourceTracker",
+          "action": "list",
+          "at": 1792335166343,
+          "durationMs": 0,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335166628,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335166940,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335167263,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335167587,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335167900,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335168215,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335168524,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335168838,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335169147,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335169473,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335169786,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335170100,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335170419,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335170729,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335171042,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335171353,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335171666,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335171978,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335172303,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335172632,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335172943,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335173267,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335173584,
+          "durationMs": 11,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335173909,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335174219,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335174541,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335174855,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335175169,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335175493,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335175804,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335176128,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "resourceTracker",
+          "action": "list",
+          "at": 1792335176339,
+          "durationMs": 0,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335176452,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335176765,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335177087,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335177412,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335177723,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335178048,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335178357,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335178667,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335178978,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335179288,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335179599,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335179911,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335180224,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335180533,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335180846,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335181156,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335181469,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335181794,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335182105,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335182417,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335182728,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335183039,
+          "durationMs": 5,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335183352,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335183662,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335183974,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335184284,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335184594,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335184920,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335185233,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335185558,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335185868,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335186180,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "permissions",
+          "action": "approvals",
+          "at": 1792335186330,
+          "durationMs": 1,
+          "ok": true
+        },
+        {
+          "module": "agentBrowser",
+          "action": "tasks",
+          "at": 1792335186330,
+          "durationMs": 1,
+          "ok": true
+        },
+        {
+          "module": "gateway",
+          "action": "rpc",
+          "at": 1792335186334,
+          "durationMs": 5,
+          "ok": true
+        },
+        {
+          "module": "resourceTracker",
+          "action": "list",
+          "at": 1792335186334,
+          "durationMs": 5,
+          "ok": true
+        },
+        {
+          "module": "remoteTasks",
+          "action": "list",
+          "at": 1792335186336,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335186504,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "gateway",
+          "action": "status",
+          "at": 1792335186507,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335186815,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335187142,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335187464,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335187773,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335188098,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335188414,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335188726,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335189037,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335189361,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335189674,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335189996,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335190308,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335190621,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335190933,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335191243,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335191553,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335191865,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335192181,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335192494,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335192805,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335193114,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335193426,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335193739,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335194063,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335194385,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335194698,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335195009,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335195320,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335195632,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335195946,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335196257,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "resourceTracker",
+          "action": "list",
+          "at": 1792335196344,
+          "durationMs": 1,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335196570,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335196897,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335197220,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335197532,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335197844,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335198154,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335198467,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335198779,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335199105,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335199417,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335199727,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335200043,
+          "durationMs": 11,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335200352,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335200665,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335200987,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335201316,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335201642,
+          "durationMs": 11,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335201967,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335202291,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335202601,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335202912,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335203223,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335203533,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335203843,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335204152,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335204477,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335204790,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335205114,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335205441,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335205762,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335206074,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "resourceTracker",
+          "action": "list",
+          "at": 1792335206335,
+          "durationMs": 0,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335206388,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335206713,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335207032,
+          "durationMs": 14,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335207350,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335207662,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335207976,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335208299,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335208611,
+          "durationMs": 5,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335208922,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335209234,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335209562,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335209885,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335210196,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335210523,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335210837,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335211161,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335211474,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335211785,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335212096,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335212405,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335212719,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335213032,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335213357,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335213682,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335213995,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335214307,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335214619,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335214931,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335215241,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335215556,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335215874,
+          "durationMs": 11,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792335216196,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "permissions",
+          "action": "approvals",
+          "at": 1792335216330,
+          "durationMs": 0,
+          "ok": true
+        },
+        {
+          "module": "agentBrowser",
+          "action": "tasks",
+          "at": 1792335216331,
+          "durationMs": 1,
+          "ok": true
+        },
+        {
+          "module": "gateway",
+          "action": "rpc",
+          "at": 1792335216334,
+          "durationMs": 4,
+          "ok": true
+        },
+        {
+          "module": "resourceTracker",
+          "action": "list",
+          "at": 1792335216334,
+          "durationMs": 4,
+          "ok": true
+        },
+        {
+          "module": "remoteTasks",
+          "action": "list",
+          "at": 1792335216336,
+          "durationMs": 6,
+          "ok": true
+        }
+      ]
+    },
+    "unavailable": []
+  },
+  "sampler": {
+    "running": true,
+    "measured": true,
+    "summary": {
+      "sampleCount": 60,
+      "coverageMs": 295486,
+      "latest": {
+        "at": 1792335215863,
+        "cpuPercent": 1.24,
+        "rssBytes": 296337408,
+        "heapUsedBytes": 107613204,
+        "systemFreeBytes": 3126345728,
+        "systemTotalBytes": 16295432192,
+        "cpuCount": 16,
+        "shed": false,
+        "source": "os-cpu"
+      },
+      "avgCpuPercent": 1.77,
+      "peakCpuPercent": 17.17,
+      "peakRssBytes": 589455360,
+      "shedSampleCount": 8
+    }
+  },
+  "boundaries": [
+    "This is a real Electron run; spawn, interval, watcher, renderer long-task and IPC values come from runtime counters.",
+    "The renderer ring buffer is local JSON in localStorage; the Main snapshot is returned by the existing efficiency host API.",
+    "No static grep estimate is substituted and no real-human evidence is claimed."
+  ]
+}

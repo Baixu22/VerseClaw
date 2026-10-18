@@ -1,0 +1,247 @@
+{
+  "schema": "clawx.tf0407.p1-read-benchmark/v1",
+  "driven_by": "agent",
+  "actor": "tf0407-p1-read-probe",
+  "candidate": "4a781ba4a1f6d0aab9305f73405eeec639d10b9c",
+  "startedAt": "2026-10-18T15:00:30.675Z",
+  "completedAt": "2026-10-18T15:00:47.870Z",
+  "durationMs": 17195,
+  "readIntervalMs": 1000,
+  "requestedDurationMs": 15000,
+  "readCallCount": 15,
+  "readOkCount": 15,
+  "readErrorCount": 0,
+  "reads": [
+    {
+      "index": 0,
+      "atMs": 1,
+      "durationMs": 1,
+      "ok": true
+    },
+    {
+      "index": 1,
+      "atMs": 1013.9000000059605,
+      "durationMs": 10.400000005960464,
+      "ok": true
+    },
+    {
+      "index": 2,
+      "atMs": 2013,
+      "durationMs": 1.2999999821186066,
+      "ok": true
+    },
+    {
+      "index": 3,
+      "atMs": 3027.9000000059605,
+      "durationMs": 4.299999982118607,
+      "ok": true
+    },
+    {
+      "index": 4,
+      "atMs": 4034.300000011921,
+      "durationMs": 1.300000011920929,
+      "ok": true
+    },
+    {
+      "index": 5,
+      "atMs": 5234.5,
+      "durationMs": 188.5,
+      "ok": true
+    },
+    {
+      "index": 6,
+      "atMs": 6054.9000000059605,
+      "durationMs": 1.699999988079071,
+      "ok": true
+    },
+    {
+      "index": 7,
+      "atMs": 7066.300000011921,
+      "durationMs": 1.300000011920929,
+      "ok": true
+    },
+    {
+      "index": 8,
+      "atMs": 8080.100000023842,
+      "durationMs": 1.300000011920929,
+      "ok": true
+    },
+    {
+      "index": 9,
+      "atMs": 9090.600000023842,
+      "durationMs": 1.2000000178813934,
+      "ok": true
+    },
+    {
+      "index": 10,
+      "atMs": 10100.5,
+      "durationMs": 1.5,
+      "ok": true
+    },
+    {
+      "index": 11,
+      "atMs": 11320.700000017881,
+      "durationMs": 211.80000001192093,
+      "ok": true
+    },
+    {
+      "index": 12,
+      "atMs": 12118.40000000596,
+      "durationMs": 1.4000000059604645,
+      "ok": true
+    },
+    {
+      "index": 13,
+      "atMs": 13128.200000017881,
+      "durationMs": 1.5,
+      "ok": true
+    },
+    {
+      "index": 14,
+      "atMs": 14128.40000000596,
+      "durationMs": 1.199999988079071,
+      "ok": true
+    }
+  ],
+  "main": {
+    "startedAt": 1792335626048,
+    "elapsedMs": 21785.8557,
+    "marks": [
+      {
+        "name": "app-ready",
+        "at": 1792335630482,
+        "fromStartMs": 4434.1302
+      },
+      {
+        "name": "window-created",
+        "at": 1792335630765,
+        "fromStartMs": 4716.737999999999
+      },
+      {
+        "name": "ready-to-show",
+        "at": 1792335631182,
+        "fromStartMs": 5133.322099999999
+      }
+    ],
+    "counters": {
+      "spawnCount": 16,
+      "spawnByMethod": {
+        "spawn": 0,
+        "exec": 0,
+        "execFile": 16,
+        "fork": 0,
+        "spawnSync": 0,
+        "execSync": 0,
+        "execFileSync": 0
+      },
+      "recentSpawns": [
+        {
+          "method": "execFile",
+          "at": 1792335631557,
+          "fromStartMs": 5508.8764,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335631623,
+          "fromStartMs": 5575.0067,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335631629,
+          "fromStartMs": 5580.7636,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335631636,
+          "fromStartMs": 5587.6169,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335631742,
+          "fromStartMs": 5693.3661999999995,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335631774,
+          "fromStartMs": 5725.7817,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335631897,
+          "fromStartMs": 5848.5526,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335631902,
+          "fromStartMs": 5853.9851,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335637743,
+          "fromStartMs": 11694.3479,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335637778,
+          "fromStartMs": 11729.687600000001,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335637867,
+          "fromStartMs": 11818.2739,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335637870,
+          "fromStartMs": 11821.8979,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335643806,
+          "fromStartMs": 17757.2057,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335643840,
+          "fromStartMs": 17792.0196,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335643955,
+          "fromStartMs": 17906.8981,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792335643959,
+          "fromStartMs": 17911.1216,
+          "command": "git"
+        }
+      ],
+      "activeIntervals": 4,
+      "activeWatchers": 0,
+      "unavailable": []
+    },
+    "rssBytes": 549445632
+  },
+  "boundaries": [
+    "Controlled 1s git.status read workload; this is not a pure-idle background-spawn claim.",
+    "Pre-P1 and P1 builds use the same probe, Electron flags, and local user-data setup.",
+    "Counts come from the runtime child_process wrapper; no static grep or inferred spawn count is substituted.",
+    "The probe is agent-driven, local-only, and does not upload data."
+  ]
+}
