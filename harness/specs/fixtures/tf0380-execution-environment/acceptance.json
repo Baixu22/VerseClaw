@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0380",
+  "node": "TF-0380",
+  "title": "定义 ExecutionEnvironment 与保证等级",
+  "verdict": "pass",
+  "candidate": {"sha": "pending-source-commit", "base": "22563e11", "dirty": false},
+  "originalAcceptance": [
+    {"criterion": "shared 类型与映射函数通过 typecheck。", "result": "pass", "evidence": ["shared/types/execution-environment.ts", "gates.json"]},
+    {"criterion": "单测覆盖 policy-light、windows-light、docker-strong、ssh-strong、codex-native。", "result": "pass", "evidence": ["tests/unit/execution-environment.test.ts", "tests.json"]},
+    {"criterion": "文档明确完整 OS 沙箱为非目标。", "result": "pass", "evidence": ["shared/execution-environment-semantics.md"]}
+  ],
+  "boundaries": [
+    "Semantic contract only; execution defaults, approval behavior and runtime paths are unchanged.",
+    "Provider names never imply a stronger guarantee; unavailable strong providers retain backend but report policy guarantee with a reason.",
+    "No container runtime or complete OS sandbox was added.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}

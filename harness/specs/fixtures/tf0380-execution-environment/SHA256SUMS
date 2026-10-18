@@ -1,0 +1,4 @@
+8588ffa14468fc26ab68ea243238782d5a9da89775b714c82e384460acc6f2f3  ./harness/specs/fixtures/tf0380-execution-environment/acceptance.json
+f6216b495f9c5c284af23f4dc1cdda5b182d7ab6d3eb4edb41cc0b8003fc8333  ./harness/specs/fixtures/tf0380-execution-environment/tests.json
+bda79c77d7248b8078b202f9e56e4cc6f803f61d1e67e50b889a71813ffaafbd  ./harness/specs/fixtures/tf0380-execution-environment/gates.json
+305f0ef9c65dac47601bee5602b1dd0a8b86f7f1941c9c51c594d0d502afcae8  ./harness/specs/fixtures/tf0380-execution-environment/ci-boundary.json

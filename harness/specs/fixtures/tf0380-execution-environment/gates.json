@@ -1,0 +1,13 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0380",
+  "head": "pending-source-commit",
+  "dirty": false,
+  "receipts": [
+    {"command": "pnpm typecheck", "exitCode": 0, "durationMs": 44237, "result": "pass"},
+    {"command": "pnpm contract:check", "exitCode": 0, "result": "pass"},
+    {"command": "pnpm harness validate --spec harness/specs/tasks/execution-environment-semantics.md", "exitCode": 0, "result": "pass"},
+    {"command": "pnpm exec eslint shared/types/execution-environment.ts tests/unit/execution-environment.test.ts --max-warnings 0", "exitCode": 0, "result": "pass"},
+    {"command": "git diff --check", "exitCode": 0, "result": "pass"}
+  ]
+}
