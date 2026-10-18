@@ -1,4 +1,4 @@
-import { execFile } from 'node:child_process';
+import { execFile } from './counted-child-process';
 import { promisify } from 'node:util';
 import type {
   SandboxDockerAvailability,

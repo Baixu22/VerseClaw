@@ -437,6 +437,35 @@ export type RuntimeEfficiencyShedState = {
   lastTransitionAt: number | null;
 };
 export type RuntimeBackgroundWorkState = Pick<BackgroundWorkGateState, 'deferring' | 'reason' | 'deferredCount' | 'resumeCount' | 'lastDeferReason' | 'pendingCount' | 'transitionCount'>;
+export type RuntimePerformanceMark = {
+  name: string;
+  at: number;
+  fromStartMs: number;
+};
+
+export type RuntimePerformanceSpawnSample = {
+  method: string;
+  at: number;
+  fromStartMs: number;
+  command: string | null;
+};
+
+export type RuntimePerformanceCounterState = {
+  spawnCount: number;
+  spawnByMethod: Record<string, number>;
+  recentSpawns: RuntimePerformanceSpawnSample[];
+  activeIntervals: number;
+  activeWatchers: number;
+  unavailable: string[];
+};
+
+export type RuntimePerformanceState = {
+  startedAt: number;
+  elapsedMs: number;
+  marks: RuntimePerformanceMark[];
+  counters: RuntimePerformanceCounterState;
+  rssBytes: number;
+};
 
 export type RuntimeEfficiencyState = {
   /** Persisted user preference. */
@@ -453,6 +482,8 @@ export type RuntimeEfficiencyState = {
   shed: RuntimeEfficiencyShedState | null;
   /** Background work gate state, or null while runtime efficiency sampling is stopped. */
   backgroundWork: RuntimeBackgroundWorkState | null;
+  /** Local main-process performance counters and startup marks. */
+  performance: RuntimePerformanceState;
 };
 export type RuntimeEfficiencySetEnabledPayload = { enabled: boolean };
 

@@ -1,7 +1,7 @@
 import { access, cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { basename, join, relative, resolve } from 'node:path';
-import { execFile, spawn } from 'node:child_process';
+import { execFile, spawn } from '../utils/counted-child-process';
 import { promisify } from 'node:util';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { officeCliKnownInstallPaths, resolveOfficeCliOnPath } from '../utils/officecli-path';

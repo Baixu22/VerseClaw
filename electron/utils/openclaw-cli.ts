@@ -11,7 +11,7 @@ import {
   symlinkSync,
   unlinkSync,
 } from 'node:fs';
-import { spawn } from 'node:child_process';
+import { spawn } from './counted-child-process';
 import { homedir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { getActiveOpenClawDir, getActiveOpenClawEntryPath, isOpenClawRuntimeEnabled } from './paths';

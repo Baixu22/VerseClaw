@@ -41,7 +41,7 @@ vi.mock('sonner', () => ({
 }));
 
 function unmeasuredState(enabled: boolean): RuntimeEfficiencyState {
-  return { enabled, running: false, measured: false, summary: null, samples: [], shed: null, backgroundWork: null };
+  return { enabled, running: false, measured: false, summary: null, samples: [], shed: null, backgroundWork: null, performance: { startedAt: 1, elapsedMs: 0, marks: [], counters: { spawnCount: 0, spawnByMethod: {}, recentSpawns: [], activeIntervals: 0, activeWatchers: 0, unavailable: [] }, rssBytes: 0 } };
 }
 
 describe('EfficiencySamplingPanel', () => {
@@ -88,6 +88,7 @@ describe('EfficiencySamplingPanel', () => {
       samples: [],
       shed: { shedding: false, reason: null, activeReasons: [], transitionCount: 0, lastTransitionAt: null },
       backgroundWork: { deferring: false, reason: null, deferredCount: 2, resumeCount: 1, lastDeferReason: 'tree-rss', pendingCount: 0, transitionCount: 2 },
+      performance: { startedAt: 1, elapsedMs: 0, marks: [], counters: { spawnCount: 0, spawnByMethod: {}, recentSpawns: [], activeIntervals: 0, activeWatchers: 0, unavailable: [] }, rssBytes: 0 },
     });
     render(<EfficiencySamplingPanel />);
 

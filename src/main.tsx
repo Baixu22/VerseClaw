@@ -7,6 +7,7 @@ import './i18n';
 import './styles/globals.css';
 import { RendererRoot } from './components/loading/RendererRoot';
 import { installMockHostBridge, isMockModeEnabled, seedMockPersistedSettings } from './lib/mock-host-bridge';
+import { initRendererPerformanceMetrics } from './lib/performance-metrics';
 
 // Mock host bridge for browser-only UI development (`?mock=1`). Must install
 // BEFORE any store init or host call: stores cache their first host response
@@ -16,6 +17,8 @@ if (isMockModeEnabled()) {
   seedMockPersistedSettings();
   installMockHostBridge();
 }
+
+initRendererPerformanceMetrics();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

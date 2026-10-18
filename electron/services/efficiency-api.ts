@@ -27,6 +27,7 @@ import {
   startRuntimeEfficiency,
   stopRuntimeEfficiency,
 } from './efficiency-orchestrator';
+import { getMainPerformanceSnapshot } from './performance-metrics';
 
 /** The documented default is enabled; only an explicit `false` disables. */
 function normalizeEnabled(value: unknown): boolean {
@@ -70,6 +71,7 @@ async function buildState(): Promise<RuntimeEfficiencyState> {
     samples: getEfficiencySamples(),
     shed: toShedState(getEfficiencyShedState()),
     backgroundWork: getBackgroundWorkGateState(),
+    performance: getMainPerformanceSnapshot(),
   };
 }
 

@@ -3,7 +3,8 @@
  *
  * Product default OFF (opt-in diagnostics). Opt-in Working Context assembly runs in gateway turns.
  */
-import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
+import { spawn } from '../utils/counted-child-process';
+import type { ChildProcessWithoutNullStreams } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { app } from 'electron';

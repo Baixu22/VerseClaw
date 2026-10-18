@@ -1,7 +1,7 @@
 import { openExternalSafe } from '../utils/safe-open-external';
 import { capToolResultText } from '@shared/agent-resource-limits';
 import { BoundedCache, Singleflight } from '../../shared/resources/index.js';
-import { execFile } from 'node:child_process';
+import { execFile } from '../utils/counted-child-process';
 import type { ExecFileException, ExecFileOptionsWithStringEncoding } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';

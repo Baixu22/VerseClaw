@@ -1,4 +1,4 @@
-import { execFile } from 'node:child_process';
+import { execFile } from '../utils/counted-child-process';
 import type { ExecFileException, ExecFileOptionsWithStringEncoding } from 'node:child_process';
 
 /** execFile options that also carry hardened stdio (string-encoding variant). */

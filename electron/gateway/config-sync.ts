@@ -1,4 +1,4 @@
-import { spawnSync } from 'node:child_process';
+import { spawnSync } from '../utils/counted-child-process';
 import { app } from 'electron';
 import path from 'path';
 import { existsSync, readFileSync, mkdirSync, readdirSync, rmSync, symlinkSync, writeFileSync } from 'fs';

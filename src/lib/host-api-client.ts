@@ -7,6 +7,7 @@ import type {
 import type { HostResponse, TypedHostRequest } from '@shared/host-api/types';
 import { hostActionTimeoutMs } from '@shared/host-api/host-action-timeouts';
 import { AppError, mapBackendErrorCode, normalizeAppError } from './error-model';
+import { recordRendererIpcSample } from './performance-metrics';
 
 /** Renderer-side margin above the Main-process budget (Main wins the race). */
 const RENDERER_TIMEOUT_MARGIN_MS = 10_000;
@@ -106,6 +107,14 @@ function getReplayConfig(): AgentDevReplayConfig {
 }
 
 function rememberHostApiCall(call: AgentDevHostApiCall): void {
+  if (typeof call.durationMs === 'number') {
+    recordRendererIpcSample({
+      module: call.module,
+      action: call.action,
+      durationMs: call.durationMs,
+      ok: call.ok === true,
+    });
+  }
   const surface = getAgentDevSurface();
   if (!surface) return;
   const calls = surface.hostApiCalls ?? [];

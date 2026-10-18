@@ -1,6 +1,7 @@
 import { access, mkdir, readFile, realpath, rm, stat, unlink, writeFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
-import { execFile, spawn, type ChildProcess, type ChildProcessByStdio } from 'node:child_process';
+import { execFile, spawn } from '../utils/counted-child-process';
+import type { ChildProcess, ChildProcessByStdio } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { createServer, connect } from 'node:net';
 import { basename, dirname, extname, join, relative, resolve } from 'node:path';

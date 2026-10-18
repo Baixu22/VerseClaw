@@ -2,6 +2,7 @@
  * Electron Main Process Entry
  * Manages window creation, system tray, and IPC handlers
  */
+import { markPerformance } from '../services/performance-metrics';
 import { app, BrowserWindow, dialog, nativeTheme, session } from 'electron';
 import { join } from 'path';
 import { openExternalSafe } from '../utils/safe-open-external';
@@ -873,6 +874,7 @@ async function createWindow(): Promise<BrowserWindow> {
   });
 
   registerZoomShortcuts(win);
+  markPerformance('window-created');
   if (app.isPackaged) {
     win.webContents.closeDevTools();
     win.webContents.on('before-input-event', (event, input) => {
@@ -996,6 +998,7 @@ async function createMainWindow(): Promise<BrowserWindow> {
   applySystemThemeIcons(win);
 
   win.once('ready-to-show', () => {
+    markPerformance('ready-to-show');
     if (mainWindow !== win) {
       return;
     }
@@ -1437,6 +1440,7 @@ if (gotTheLock) {
 
   // Application lifecycle
   app.whenReady().then(() => {
+    markPerformance('app-ready');
     installHtmlPreviewProtocol();
     // Runtime efficiency sampling (P2 #161); cheap unref'd timer, local only.
     // Honour the persisted opt-out: start only when enabled (default true).

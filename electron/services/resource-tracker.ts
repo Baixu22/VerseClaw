@@ -7,7 +7,7 @@
 
 import { randomUUID } from 'node:crypto';
 import { connect as netConnect, type Socket } from 'node:net';
-import { exec } from 'node:child_process';
+import { exec } from '../utils/counted-child-process';
 import { promisify } from 'node:util';
 import {
   type ResourceOwnership,

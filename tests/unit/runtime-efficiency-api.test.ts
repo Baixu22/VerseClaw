@@ -50,6 +50,8 @@ describe('runtime efficiency host api', () => {
     expect(state.measured).toBe(false);
     expect(state.summary).toBeNull();
     expect(state.samples).toEqual([]);
+    expect(state.performance.counters.spawnCount).toBeGreaterThanOrEqual(0);
+    expect(Array.isArray(state.performance.marks)).toBe(true);
   });
 
   it('persists the toggle and starts or stops the sampler', async () => {
