@@ -1,0 +1,4 @@
+6db9d6a33d8cfe6d78088496231284e67bfa953ea817702ffc202573ce26dace  harness/specs/fixtures/tf0388-project-projection/acceptance.json
+97287a5a66d4deb2e4f391ec1cef5e13369170aaccc585e22ccc65036f98dab1  harness/specs/fixtures/tf0388-project-projection/tests.json
+374353cba86f930c820b742e1ef57ab3bb8a7591fab66664cf701963aad0ff0e  harness/specs/fixtures/tf0388-project-projection/gates.json
+9740405cbadfffac35f180daa0ec9b37d33f83967d60e3d6163bb2cdee2557d9  harness/specs/fixtures/tf0388-project-projection/ci-boundary.json

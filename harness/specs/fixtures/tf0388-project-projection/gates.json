@@ -1,0 +1,29 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0388",
+  "head": "pending-source-commit",
+  "dirty": false,
+  "receipts": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "durationMs": 47032,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm contract:check",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/project-read-only-aggregation.md",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "result": "pass"
+    }
+  ]
+}

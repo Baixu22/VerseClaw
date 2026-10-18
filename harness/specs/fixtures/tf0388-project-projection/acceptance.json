@@ -1,0 +1,18 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0388",
+  "node": "TF-0388",
+  "title": "Project 只读聚合与 master instruction/knowledge refs",
+  "verdict": "pass",
+  "candidate": {"sha": "pending-source-commit", "base": "6b8936a5", "dirty": false},
+  "originalAcceptance": [
+    {"criterion": "Project contract 通过 typecheck 和 contract:check。", "result": "pass", "evidence": ["shared/types/project.ts", "gates.json"]},
+    {"criterion": "支持 master instruction 和 knowledge refs 的读取与投影。", "result": "pass", "evidence": ["shared/types/project.ts", "tests/unit/project-projection.test.ts"]},
+    {"criterion": "现有 workspace 不迁移也可工作。", "result": "pass", "evidence": ["tests/unit/project-projection.test.ts — unmodified workspace projection"]}
+  ],
+  "boundaries": [
+    "Project is a read-only projection and does not replace Workspace or copy its data.",
+    "No persistence, shared permissions or real-time collaboration was added.",
+    "All receipts are agent-driven."
+  ]
+}
