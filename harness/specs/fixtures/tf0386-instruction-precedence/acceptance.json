@@ -5,7 +5,7 @@
   "title": "统一指令层优先级与 explain 输出",
   "verdict": "pass",
   "candidate": {
-    "sha": "pending-source-commit",
+    "sha": "9b96f17021f62457410a5a74e2a77ec0f52045ad",
     "base": "717e9fff",
     "dirty": false
   },
