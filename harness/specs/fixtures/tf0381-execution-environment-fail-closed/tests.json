@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0381",
+  "head": "pending-source-commit",
+  "dirty": false,
+  "unit": {
+    "command": "pnpm exec vitest run tests/unit/sandbox-explicit-strong-156.test.ts tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+    "files": 2,
+    "tests": 26,
+    "passed": 26,
+    "failed": 0,
+    "result": "pass"
+  },
+  "cases": [
+    "default policy",
+    "container available",
+    "container unavailable fail-closed",
+    "codex-native conflict"
+  ]
+}

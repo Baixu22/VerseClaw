@@ -10,6 +10,11 @@ import type {
 } from '@shared/types/sandbox';
 import type { WorkspacePermissionMode } from '@shared/types/workspace';
 import {
+  createExecutionEnvironment,
+  sandboxNetworkToExecutionNetwork,
+  type ExecutionEnvironment,
+} from '@shared/types/execution-environment';
+import {
   describeSandboxRuntimeLevel,
   mapWorkspacePermissionToSandboxConfig,
   normalizeSandboxProviderId,
@@ -29,6 +34,8 @@ type ResolveSandboxPolicyInput = {
   profile?: Pick<SandboxProfile, 'providerId' | 'networkPolicy'> | null;
   providers: SandboxProviderStatus[];
   docker?: SandboxDockerAvailability;
+  /** Optional explicit environment supplied by the execution boundary. */
+  executionEnvironment?: ExecutionEnvironment | null;
 };
 
 /**
@@ -120,7 +127,11 @@ function findProvider(providers: SandboxProviderStatus[], providerId: SandboxPro
     };
 }
 
-export function resolveSandboxEffectivePolicy(input: ResolveSandboxPolicyInput): SandboxEffectivePolicy {
+export type ResolvedSandboxExecutionPolicy = SandboxEffectivePolicy & {
+  executionEnvironment: ExecutionEnvironment;
+};
+
+export function resolveSandboxEffectivePolicy(input: ResolveSandboxPolicyInput): ResolvedSandboxExecutionPolicy {
   const requestedProviderId = normalizeSandboxProviderId(
     input.requestedProviderId ?? input.profile?.providerId ?? 'policy-light',
   );
@@ -163,6 +174,37 @@ export function resolveSandboxEffectivePolicy(input: ResolveSandboxPolicyInput):
     warnings.push('Read-only mode blocks writes and mutating Gateway requests through policy controls without strong runtime isolation.');
   }
 
+  const executionEnvironment = input.executionEnvironment
+    ? createExecutionEnvironment(input.executionEnvironment)
+    : createExecutionEnvironment({
+        backend: resolvedProvider.effectiveProviderId === 'docker-strong'
+          ? 'docker'
+          : resolvedProvider.effectiveProviderId === 'ssh-strong'
+            ? 'ssh'
+            : 'host',
+        guarantee: runtimeLevel === 'strong'
+          ? (resolvedProvider.effectiveProviderId === 'ssh-strong' ? 'vm' : 'container')
+          : runtimeLevel === 'light' ? 'process' : 'policy',
+        network: sandboxNetworkToExecutionNetwork(normalizeNetworkPolicy(input.profile?.networkPolicy)),
+        writableRoots: openClawConfig.agents.defaults.sandbox.workspaceAccess === 'none' ? [] : ['.'],
+        status: resolvedProvider.degraded ? 'degraded' : 'available',
+        reason: resolvedProvider.degradeReason,
+      });
+  if (input.executionEnvironment) {
+    const expectedBackend = resolvedProvider.effectiveProviderId === 'docker-strong'
+      ? 'docker'
+      : resolvedProvider.effectiveProviderId === 'ssh-strong'
+        ? 'ssh'
+        : 'host';
+    if (executionEnvironment.backend !== expectedBackend) {
+      throw new SandboxStrengthUnavailableError({
+        requestedProviderId,
+        effectiveProviderId: resolvedProvider.effectiveProviderId,
+        runtimeLevel: effectiveRuntimeLevel,
+        reason: `Execution environment conflict: requested backend ${executionEnvironment.backend} does not match resolved backend ${expectedBackend}.`,
+      });
+    }
+  }
   return {
     requestedProviderId,
     effectiveProviderId: resolvedProvider.effectiveProviderId,
@@ -176,5 +218,6 @@ export function resolveSandboxEffectivePolicy(input: ResolveSandboxPolicyInput):
     workspaceAccess: openClawConfig.agents.defaults.sandbox.workspaceAccess,
     docker: input.docker,
     warnings,
+    executionEnvironment,
   };
 }

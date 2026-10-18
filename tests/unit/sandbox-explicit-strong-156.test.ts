@@ -93,6 +93,54 @@ describe('explicit strong sandbox requests fail closed (#156)', () => {
     expect(policy.degraded).toBe(false);
   });
 
+  it('exposes the default policy environment without implying a container guarantee', async () => {
+    const { resolveSandboxEffectivePolicy } = await import('@electron/utils/sandbox-policy-resolver');
+    const policy = resolveSandboxEffectivePolicy({
+      permissionMode: 'readOnly',
+      requestedProviderId: 'policy-light',
+      providers: [{ id: 'policy-light', label: 'Policy-light', available: true, runtimeLevel: 'policy', capabilities: [] }],
+    });
+    expect(policy.executionEnvironment).toMatchObject({ backend: 'host', guarantee: 'policy', status: 'available' });
+  });
+
+  it('exposes a container guarantee only when the strong provider is actually available', async () => {
+    const { resolveSandboxEffectivePolicy } = await import('@electron/utils/sandbox-policy-resolver');
+    const policy = resolveSandboxEffectivePolicy({
+      permissionMode: 'readOnly',
+      requestedProviderId: 'docker-strong',
+      requireStrong: true,
+      providers: [{ id: 'docker-strong', label: 'Docker', available: true, runtimeLevel: 'strong', capabilities: [] }],
+    });
+    expect(policy.executionEnvironment).toMatchObject({ backend: 'docker', guarantee: 'container', status: 'available' });
+  });
+
+  it('fails closed for an unavailable container instead of returning a host fallback', async () => {
+    const { resolveSandboxEffectivePolicy, SandboxStrengthUnavailableError } = await import('@electron/utils/sandbox-policy-resolver');
+    expect(() => resolveSandboxEffectivePolicy({
+      permissionMode: 'readOnly',
+      requestedProviderId: 'docker-strong',
+      requireStrong: true,
+      providers: [{ id: 'docker-strong', label: 'Docker', available: false, runtimeLevel: 'unavailable', capabilities: [] }],
+    })).toThrow(SandboxStrengthUnavailableError);
+  });
+
+  it('rejects an explicit codex-native environment that conflicts with the resolved backend', async () => {
+    const { resolveSandboxEffectivePolicy, SandboxStrengthUnavailableError } = await import('@electron/utils/sandbox-policy-resolver');
+    expect(() => resolveSandboxEffectivePolicy({
+      permissionMode: 'readOnly',
+      requestedProviderId: 'policy-light',
+      executionEnvironment: {
+        backend: 'codex-native',
+        guarantee: 'policy',
+        network: 'disabled',
+        writableRoots: [],
+        status: 'available',
+        reason: null,
+      },
+      providers: [{ id: 'policy-light', label: 'Policy-light', available: true, runtimeLevel: 'policy', capabilities: [] }],
+    })).toThrow(SandboxStrengthUnavailableError);
+  });
+
   it('high-risk gate denies outright when strength is required but unmet, even with an approval path', async () => {
     const { decideSandboxHighRiskAction } = await import('@electron/utils/sandbox-high-risk-gate');
     const decision = decideSandboxHighRiskAction({

@@ -1,0 +1,43 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0381",
+  "node": "TF-0381",
+  "title": "接入默认策略与降级 fail-closed 路径",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "pending-source-commit",
+    "base": "956ef3dd",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "默认 policy 路径、container 可用、container 不可用、Codex native 冲突四类测试通过。",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/sandbox-explicit-strong-156.test.ts",
+        "tests.json"
+      ]
+    },
+    {
+      "criterion": "失败返回稳定错误和可读原因。",
+      "result": "pass",
+      "evidence": [
+        "electron/utils/sandbox-policy-resolver.ts — SandboxStrengthUnavailableError and execution environment conflict reason"
+      ]
+    },
+    {
+      "criterion": "不出现完整 OS 沙箱依赖。",
+      "result": "pass",
+      "evidence": [
+        "shared/execution-environment-semantics.md — complete OS sandbox non-goal",
+        "No new provider or container runtime was added."
+      ]
+    }
+  ],
+  "boundaries": [
+    "Default policy-light remains host/policy with approval; explicit strong container failure does not silently fall back.",
+    "Codex-native environment conflicts are rejected with the existing stable error family.",
+    "No product lock, approval default, all-command container migration or full OS sandbox was added.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}
