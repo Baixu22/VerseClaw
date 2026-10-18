@@ -1,0 +1,13 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0377",
+  "head": "pending-source-commit",
+  "ci": {
+    "claimed": false,
+    "reason": "The current private remote CI path remains subject to the documented account-billing boundary."
+  },
+  "local": {
+    "result": "pass",
+    "commands": ["pnpm typecheck", "pnpm contract:check", "pnpm run i18n:lint", "pnpm exec vitest run tests/unit/coding-run.test.ts tests/unit/execution-projection.test.ts", "electron E2E on Node 24.16.0", "git diff --check"]
+  }
+}

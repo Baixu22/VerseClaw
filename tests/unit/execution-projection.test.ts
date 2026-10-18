@@ -300,9 +300,16 @@ describe('execution projection', () => {
       runId: "run-chat",
       scope: { workspaceId: "workspace-a", projectId: "workspace-a", sessionKey: SESSION_KEY },
     });
+    expect(scoped.cards[0].codingRunView).toMatchObject({
+      codingRunId: scoped.cards[0].runKey,
+      scope: { workspaceId: "workspace-a", projectId: "workspace-a", sessionKey: SESSION_KEY },
+      runIds: [{ runId: "run-chat" }],
+    });
     const unscoped = project({ messages, sending: true, activeRunId: "run-chat", runtimeRuns });
     expect(unscoped.cards[0].active).toBe(true);
     expect(unscoped.cards[0].scopedRunId).toBeUndefined();
     expect(unscoped.cards[0].completionAuthority).toBeUndefined();
+    expect(unscoped.cards[0].codingRunView?.scope).toBeNull();
+    expect(unscoped.cards[0].codingRunView?.sessionIds).toEqual([]);
   });
 });

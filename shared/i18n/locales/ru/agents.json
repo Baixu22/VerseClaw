@@ -387,6 +387,7 @@
         "taskLoopQuality": "Качество {{good}}/{{needs}}/{{poor}}",
         "taskLoopFiles": "Файлы: {{count}}",
         "taskLoopTests": "Тесты: {{count}}",
+        "taskLoopCodingRun": "Доказательства CodingRun",
         "missionControl": "Mission Control",
         "missionStarted": "Mission {{status}}, tick {{tick}}",
         "missionUpdated": "Mission {{status}}",

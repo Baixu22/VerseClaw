@@ -1,8 +1,10 @@
 import type { ChatRuntimeRunState, RawMessage, ToolStatus } from '@/stores/chat';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
 import {
+  createCodingRunView,
   displayCompletionStatus,
   resolveProjectIdForWorkspace,
+  type CodingRunView,
   type CompletionAuthority,
   type ScopedRunId,
   type WorkspaceId,
@@ -83,6 +85,8 @@ export type UserRunCard = {
   completionAuthority?: CompletionAuthority;
   /** Only set when the owning workspace is known; a session cannot supply it. */
   scopedRunId?: ScopedRunId;
+  /** Read-only association view shared by Chat and export surfaces. */
+  codingRunView?: CodingRunView;
   suppressThinking: boolean;
   /**
    * Runtime events promoted out of the execution graph into rich Tool UI cards.
@@ -428,6 +432,32 @@ function latestRuntimeRunForSession(
   return latest;
 }
 
+function codingRunForCard(input: {
+  runKey: string;
+  scopedRunId?: ScopedRunId;
+  traceId?: string;
+  status: UserRunStatus;
+  completionAuthority?: CompletionAuthority;
+  objective?: string;
+}): CodingRunView {
+  const sessionKey = input.scopedRunId?.scope.sessionKey;
+  return createCodingRunView({
+    codingRunId: input.runKey,
+    objective: input.objective,
+    sessionIds: sessionKey === undefined ? [] : [sessionKey],
+    scope: input.scopedRunId?.scope ?? null,
+    runIds: input.scopedRunId === undefined ? [] : [input.scopedRunId],
+    traceId: input.traceId,
+    completion: {
+      turnStatus: input.status,
+      runStatus: input.status,
+      verification: 'unavailable',
+      taskStatus: 'unavailable',
+      completionAuthority: input.completionAuthority ?? null,
+    },
+  });
+}
+
 function scopedRunForCard(input: {
   workspaceId: WorkspaceId | null;
   sessionKey: string;
@@ -641,7 +671,7 @@ export function deriveUserRunProjection({
 
     if (steps.length === 0 && !hasSurfaceContent) {
       if (isLatestOpenRun && streamingReplyText != null) {
-        cards.push({
+        const card: UserRunCard = {
           runKey,
           triggerIndex: idx,
           replyIndex,
@@ -669,9 +699,19 @@ export function deriveUserRunProjection({
             sessionKey: currentSessionKey,
             runId: surfaceRuntimeRun?.runId,
           }),
+          codingRunView: undefined,
           suppressThinking: false,
           surfaces,
+        };
+        card.codingRunView = codingRunForCard({
+          runKey,
+          scopedRunId: card.scopedRunId,
+          traceId: card.traceId,
+          status: card.status,
+          completionAuthority: card.completionAuthority,
+          objective: typeof message.content === 'string' ? message.content : undefined,
         });
+        cards.push(card);
         return;
       }
       if (isLatestOpenRun && streamingReplyText == null) {
@@ -679,7 +719,7 @@ export function deriveUserRunProjection({
         if (historyReplyOffset >= 0 && !hasActiveStreamingReply && !currentRuntimeRunActive) {
           return;
         }
-        cards.push({
+        const card: UserRunCard = {
           runKey,
           triggerIndex: idx,
           replyIndex,
@@ -707,9 +747,19 @@ export function deriveUserRunProjection({
             sessionKey: currentSessionKey,
             runId: surfaceRuntimeRun?.runId,
           }),
+          codingRunView: undefined,
           suppressThinking: false,
           surfaces,
+        };
+        card.codingRunView = codingRunForCard({
+          runKey,
+          scopedRunId: card.scopedRunId,
+          traceId: card.traceId,
+          status: card.status,
+          completionAuthority: card.completionAuthority,
+          objective: typeof message.content === 'string' ? message.content : undefined,
         });
+        cards.push(card);
         return;
       }
 
@@ -719,7 +769,7 @@ export function deriveUserRunProjection({
         (s) => !(s.kind === 'message' && s.id.startsWith('stream-message')),
       ), surfaces.promotedStepIds);
       const cachedReplyIndex = cached.replyIndex;
-      cards.push({
+      const card: UserRunCard = {
         runKey,
         triggerIndex: idx,
         replyIndex: cachedReplyIndex,
@@ -746,9 +796,19 @@ export function deriveUserRunProjection({
             sessionKey: currentSessionKey,
             runId: surfaceRuntimeRun?.runId,
           }),
+        codingRunView: undefined,
         suppressThinking: false,
         surfaces,
+      };
+      card.codingRunView = codingRunForCard({
+        runKey,
+        scopedRunId: card.scopedRunId,
+        traceId: card.traceId,
+        status: card.status,
+        completionAuthority: card.completionAuthority,
+        objective: typeof message.content === 'string' ? message.content : undefined,
       });
+      cards.push(card);
       return;
     }
 
@@ -767,7 +827,7 @@ export function deriveUserRunProjection({
       && streamingReplyText == null
       && streamVisiblyActiveInGraph;
 
-    cards.push({
+    const card: UserRunCard = {
       runKey,
       triggerIndex: idx,
       replyIndex,
@@ -795,9 +855,19 @@ export function deriveUserRunProjection({
             sessionKey: currentSessionKey,
             runId: surfaceRuntimeRun?.runId,
           }),
+      codingRunView: undefined,
       suppressThinking,
       surfaces,
+    };
+    card.codingRunView = codingRunForCard({
+      runKey,
+      scopedRunId: card.scopedRunId,
+      traceId: card.traceId,
+      status: card.status,
+      completionAuthority: card.completionAuthority,
+      objective: typeof message.content === 'string' ? message.content : undefined,
     });
+    cards.push(card);
   });
 
   const hasActiveExecutionGraph = cards.some((card) => card.active);

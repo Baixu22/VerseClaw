@@ -2346,7 +2346,13 @@
     "aborted": "停止しました",
     "dismissCompleted": "完了状態を非表示"
   },
-  "turnSummary": {
+    "turnSummary": {
+    "codingRun": {
+      "title": "CodingRun 証跡",
+      "jsonl": "読み取り専用 JSONL 投影",
+      "copy": "コピー",
+      "copied": "コピー済み"
+    },
     "working": "作業中",
     "workingFor": "{{duration}} 作業中",
     "workedFor": "作業時間 {{duration}}",

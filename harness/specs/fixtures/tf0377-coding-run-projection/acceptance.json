@@ -1,0 +1,44 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0377",
+  "node": "TF-0377",
+  "title": "建立只读投影并接入 Chat 与导出",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "pending-source-commit",
+    "base": "1615e4886aceb3208614110ba6fe856705ca6d3d",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "至少一个普通 Chat 和一个显式 Task Loop 的投影可在 UI 与导出中回读。",
+      "result": "pass",
+      "evidence": [
+        "tests/e2e/chat-task-visualizer.spec.ts — chat-coding-run-evidence + codingRunId JSONL visible",
+        "tests/e2e/task-loop-panel.spec.ts — role-task-loop-coding-run + verification JSONL visible",
+        "src/components/assistant-render/CodingRunEvidence.tsx",
+        "src/components/agents/RolesOrchestrationPanel.tsx"
+      ]
+    },
+    {
+      "criterion": "JSONL 含 run/turn/item/approval/file/test/verification 类型或有明确映射说明。",
+      "result": "pass",
+      "evidence": [
+        "shared/types/coding-run.ts — CodingRunEvidenceEvent union and serializeCodingRunJsonl",
+        "tests/unit/coding-run.test.ts — JSONL loop/test/verification serialization",
+        "harness/specs/tasks/coding-run-projection-export.md — explicit mapping boundary"
+      ]
+    },
+    {
+      "criterion": "相关 Electron E2E 与单测通过。",
+      "result": "pass",
+      "evidence": ["tests.json", "gates.json"]
+    }
+  ],
+  "boundaries": [
+    "The export is an in-memory JSONL text projection; no file write, host route or persistence was added.",
+    "Session keys are associations only; scope and lineage still require the existing owner.",
+    "Task Loop evidence gate is displayed as unavailable when absent and is never upgraded to a pass.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}

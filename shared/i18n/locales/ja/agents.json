@@ -387,6 +387,7 @@
         "taskLoopQuality": "品質 {{good}}/{{needs}}/{{poor}}",
         "taskLoopFiles": "ファイル: {{count}}",
         "taskLoopTests": "テスト: {{count}}",
+        "taskLoopCodingRun": "CodingRun 証跡",
         "missionControl": "Mission Control",
         "missionStarted": "Mission {{status}}、tick {{tick}}",
         "missionUpdated": "Mission {{status}}",

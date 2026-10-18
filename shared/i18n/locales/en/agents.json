@@ -231,6 +231,8 @@
         "taskLoopQuality": "Q {{good}}/{{needs}}/{{poor}}",
         "taskLoopFiles": "Files: {{count}}",
         "taskLoopTests": "Tests: {{count}}",
+
+        "taskLoopCodingRun": "CodingRun evidence",
         "missionControl": "Mission Control",
         "missionStarted": "Mission {{status}} at tick {{tick}}",
         "missionUpdated": "Mission {{status}}",

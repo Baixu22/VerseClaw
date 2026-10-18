@@ -27,6 +27,59 @@ export type CodingRunView = {
   completion: CompletionView | null;
 };
 
+export type CodingRunEvidenceEvent =
+  | {
+      type: 'run';
+      codingRunId: string;
+      event: 'projected' | 'warning';
+      runIds: string[];
+      warning?: string;
+    }
+  | {
+      type: 'turn';
+      codingRunId: string;
+      sessionKey: SessionKey | null;
+      status: CompletionView['turnStatus'] | null;
+    }
+  | {
+      type: 'item';
+      codingRunId: string;
+      itemKind: 'message' | 'tool' | 'artifact';
+      itemId: string;
+      status: string;
+    }
+  | {
+      type: 'approval';
+      codingRunId: string;
+      approvalId: string | null;
+      decision: string | null;
+    }
+  | {
+      type: 'file';
+      codingRunId: string;
+      path: string;
+      operation: string | null;
+    }
+  | {
+      type: 'test';
+      codingRunId: string;
+      command: string;
+      status: string;
+    }
+  | {
+      type: 'verification';
+      codingRunId: string;
+      status: CompletionView['verification'];
+      authority: CompletionView['completionAuthority'];
+    }
+  | {
+      type: 'loop';
+      codingRunId: string;
+      phase: string;
+      status: string;
+      iteration: number | null;
+      warning?: string;
+    };
 export type CodingRunRelation =
   | { kind: 'coding-run'; codingRunId: string }
   | { kind: 'session'; sessionKey: SessionKey }
@@ -176,4 +229,8 @@ export function resolveCodingRun(input: CodingRunResolutionInput): CodingRunReso
     };
   }
   return { status: 'resolved', codingRun: selected[0] };
+}
+/** Stable JSONL serialization for display/export; it never persists on its own. */
+export function serializeCodingRunJsonl(codingRun: CodingRunView, events: readonly CodingRunEvidenceEvent[] = []): string {
+  return [codingRun, ...events].map((entry) => JSON.stringify(entry)).join('\n');
 }

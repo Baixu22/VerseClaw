@@ -2346,7 +2346,13 @@
     "aborted": "Остановлено",
     "dismissCompleted": "Скрыть завершенный статус"
   },
-  "turnSummary": {
+    "turnSummary": {
+    "codingRun": {
+      "title": "Доказательства CodingRun",
+      "jsonl": "Только для чтения JSONL",
+      "copy": "Копировать",
+      "copied": "Скопировано"
+    },
     "working": "Выполняется",
     "workingFor": "Выполняется {{duration}}",
     "workedFor": "Выполнено за {{duration}}",

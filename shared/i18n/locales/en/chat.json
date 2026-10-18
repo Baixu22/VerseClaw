@@ -2346,7 +2346,13 @@
     "aborted": "Stopped",
     "dismissCompleted": "Hide completed status"
   },
-  "turnSummary": {
+    "turnSummary": {
+    "codingRun": {
+      "title": "CodingRun evidence",
+      "jsonl": "Read-only JSONL projection",
+      "copy": "Copy",
+      "copied": "Copied"
+    },
     "working": "Working",
     "workingFor": "Working for {{duration}}",
     "workedFor": "Worked for {{duration}}",

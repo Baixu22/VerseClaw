@@ -1,0 +1,4 @@
+f52f9f66d2423cbfc18646188162b85f013eff181a738c4815b8622cf5a84ce7  ./harness/specs/fixtures/tf0377-coding-run-projection/acceptance.json
+832f085c2a0fa76a5c31734924a6906b5cb4c5ebe22ce761cef7dd951639f756  ./harness/specs/fixtures/tf0377-coding-run-projection/tests.json
+e71508ba0dda6fc50d9c434eb44e33d7fc34d03688abe85def5931294239daba  ./harness/specs/fixtures/tf0377-coding-run-projection/gates.json
+e124e3a1c7dd4631846906acedb62536b0011b2d09fb9abecec95e0c28402b7a  ./harness/specs/fixtures/tf0377-coding-run-projection/ci-boundary.json

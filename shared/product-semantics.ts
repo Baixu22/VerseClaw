@@ -29,6 +29,8 @@ export {
 export {
   createCodingRunView,
   resolveCodingRun,
+  serializeCodingRunJsonl,
+  type CodingRunEvidenceEvent,
   type CodingRunProjectionInput,
   type CodingRunRelation,
   type CodingRunResolution,

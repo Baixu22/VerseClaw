@@ -97,6 +97,7 @@ import { useStickToBottomInstant } from '@/hooks/use-stick-to-bottom-instant';
 import { extractGeneratedFiles, generatedFileHasDiffPayload, isHtmlPreviewExt, type GeneratedFile } from '@/lib/generated-files';
 import { AssistantErrorCard, SelectionQuoteToolbar } from '@/components/assistant-render/AssistantRender';
 import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
+import { CodingRunEvidence } from '@/components/assistant-render/CodingRunEvidence';
 import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
 import { extractAssistantReasoning, type AssistantReasoning } from '@/components/assistant-render/model';
 import { PendingRunApprovals } from '@/components/tool-ui/PendingRunApprovals';
@@ -3519,6 +3520,9 @@ export function Chat() {
                                 }))
                               }
                             >
+                              {card.codingRunView && (
+                                <CodingRunEvidence codingRun={card.codingRunView} />
+                              )}
                               {/* Pending approvals first — the run is blocked on them. */}
                               {cardApprovals.length > 0 && (
                                 <PendingRunApprovals

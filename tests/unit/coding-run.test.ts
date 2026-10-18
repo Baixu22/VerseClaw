@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   createCodingRunView,
   resolveCodingRun,
+  serializeCodingRunJsonl,
   type CodingRunView,
   type RunScope,
   type ScopedRunId,
@@ -123,5 +124,35 @@ describe('CodingRun read-only contract', () => {
       codingRunId: 'cr-1',
       runIds: [scopedRun('run-1', { ...scope, workspaceId: '   ' as WorkspaceId })],
     })).toThrow('runIds[0].scope.workspaceId');
+  });
+  it('serializes display events as JSONL without adding persistence or inferred scope', () => {
+    const codingRun = view({
+      codingRunId: 'cr-jsonl',
+      scope,
+      runIds: [scopedRun('run-jsonl')],
+      traceId: 'trace-jsonl',
+    });
+    const jsonl = serializeCodingRunJsonl(codingRun, [
+      {
+        type: 'loop',
+        codingRunId: 'cr-jsonl',
+        phase: 'verify',
+        status: 'complete',
+        iteration: 2,
+      },
+      {
+        type: 'verification',
+        codingRunId: 'cr-jsonl',
+        status: 'passed',
+        authority: 'task-loop-verification',
+      },
+    ]);
+    const lines = jsonl.split('\n').map((line) => JSON.parse(line));
+
+    expect(lines).toHaveLength(3);
+    expect(lines[0]).toMatchObject({ codingRunId: 'cr-jsonl', traceId: 'trace-jsonl' });
+    expect(lines[1]).toMatchObject({ type: 'loop', phase: 'verify' });
+    expect(lines[2]).toMatchObject({ type: 'verification', status: 'passed' });
+    expect(lines[0].scope).toEqual(scope);
   });
 });

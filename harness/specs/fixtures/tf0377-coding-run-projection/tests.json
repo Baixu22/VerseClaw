@@ -1,0 +1,34 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0377",
+  "head": "pending-source-commit",
+  "dirty": false,
+  "unit": {
+    "command": "pnpm exec vitest run tests/unit/coding-run.test.ts tests/unit/execution-projection.test.ts",
+    "files": 2,
+    "tests": 15,
+    "passed": 15,
+    "failed": 0,
+    "result": "pass"
+  },
+  "e2e": [
+    {
+      "command": "pnpm run test:e2e:run tests/e2e/chat-task-visualizer.spec.ts --grep \"renders team orchestration\"",
+      "node": "24.16.0",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "durationMs": 22800,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run test:e2e:run tests/e2e/task-loop-panel.spec.ts",
+      "node": "24.16.0",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "durationMs": 10600,
+      "result": "pass"
+    }
+  ]
+}

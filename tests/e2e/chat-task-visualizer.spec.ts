@@ -391,6 +391,8 @@ test.describe('Verse Claw chat execution graph', () => {
         await summary.getByTestId('chat-turn-summary-toggle').click();
       }
       await expect(page.getByTestId('chat-team-orchestration-card')).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('chat-coding-run-evidence')).toHaveCount(1);
+      await expect(page.getByTestId('chat-coding-run-evidence')).toContainText('"codingRunId"');
       const card = page.getByTestId('chat-team-orchestration-card');
       await expect(card).toContainText('implementer');
       await expect(card).toContainText('tester');

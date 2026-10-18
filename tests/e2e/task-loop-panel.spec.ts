@@ -162,6 +162,8 @@ test.describe('Agent task loop panel', () => {
     await expect(page.getByTestId('role-task-loop-files')).toContainText('1');
     await expect(page.getByTestId('role-task-loop-tests')).toContainText('1');
     await expect(page.getByTestId('role-task-loop-trace')).toContainText('trace-loop-e2e');
+    await page.getByTestId('role-task-loop-coding-run').locator('summary').click();
+    await expect(page.getByTestId('role-task-loop-coding-run')).toContainText('"type":"verification"');
 
     const calls = await electronApp.evaluate(() => {
       const state = (globalThis as unknown as { __taskLoopPanelState?: { methods: string[]; taskLoopRuns: number } }).__taskLoopPanelState;
