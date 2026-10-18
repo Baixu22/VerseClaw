@@ -283,6 +283,14 @@ async function killElectronProcessTree(app: ElectronApplication): Promise<void> 
 async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Promise<void> {
   let closed = false;
 
+  // Windows Electron can ignore app.quit() while a Gateway child still owns
+  // inherited stdio. Kill the owned process tree first, then use the bounded
+  // close races below as the Playwright cleanup path. Without this order the
+  // worker can sit behind a 90s teardown wait despite all tests passing.
+  if (process.platform === 'win32') {
+    await killElectronProcessTree(app);
+  }
+
   await Promise.race([
     (async () => {
       const [closeResult] = await Promise.allSettled([
