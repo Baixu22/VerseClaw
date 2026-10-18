@@ -1,0 +1,96 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0418",
+  "node": "TF-0418",
+  "title": "缩短首帧前的 Electron 初始化关键路径",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "3d903a731",
+    "full": "3d903a731e9c2e830bd3d45085daada3a37fb6ab",
+    "beforeCandidate": "865d57b505670c145fac35664ebc2320d82841a2",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "createMenu、createTray、initTelemetry、extensionRegistry.initialize 不再串行阻塞 ready-to-show；保留必要安全初始化顺序",
+      "result": "pass",
+      "evidence": [
+        "electron/main/index.ts: proxy/launch-at-startup and WebView security remain awaited before window creation; menu, tray, telemetry, theme icons and extension setup are deferred with setImmediate after window creation.",
+        "createTray remains non-E2E only; native menu and extension host changes are no longer awaited in the pre-window path."
+      ]
+    },
+    {
+      "criterion": "before/after 启动 trace 成对落盘，记录 app-ready、window-created、ready-to-show 和 renderer-first-paint",
+      "result": "pass",
+      "evidence": [
+        "before.json / after.json contain five independent launches each with all four marks.",
+        "after marks: app-ready P50=3402.6218999999996ms, window-created P50=3524.0468ms, ready-to-show P50=3733.0323000000003ms, renderer-first-paint P50=25.19999998807907ms"
+      ]
+    },
+    {
+      "criterion": "ready-to-show 的 P50 有改善且 P95 无回归",
+      "result": "pass",
+      "evidence": [
+        "before P50=4059.7691ms, P95=11431.061599999999ms; after P50=3733.0323000000003ms, P95=6017.289199999999ms",
+        "P50 improvement=8.05%; P95 regression=-47.36%",
+        "The after run includes its first cold launch; no warm-up exclusion or synthetic substitution was applied."
+      ]
+    },
+    {
+      "criterion": "Settings、Gateway、扩展和托盘相关 Electron E2E smoke 通过",
+      "result": "pass",
+      "evidence": [
+        "Playwright with portable Node 24.16.0: 9 passed / 1.1m",
+        "tests/e2e/main-navigation.spec.ts, settings-storage.spec.ts, gateway-lifecycle.spec.ts",
+        "The existing cycle uses the real built Electron main output and the repo E2E fixtures."
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 24890,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/electron-startup-critical-path.md",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm repo:artifacts:check",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm agent-dev:fast",
+      "exitCode": 0,
+      "unitFiles": 7,
+      "unitTests": 88,
+      "result": "pass"
+    },
+    {
+      "command": "portable Node 24.16.0 + @playwright/test cli: main-navigation, settings-storage, gateway-lifecycle",
+      "exitCode": 0,
+      "tests": 9,
+      "result": "pass"
+    }
+  ],
+  "boundaries": [
+    "Timing is local Windows Electron with GPU disabled and E2E setup bypass; it is not a cross-platform release benchmark.",
+    "The first launch of each five-run series is retained; P95 includes cold-start variance.",
+    "Deferred initialization may make extension-dependent surfaces appear after first paint; the E2E smoke covers menu, settings and Gateway lifecycle, not every future extension.",
+    "No external APM, upload, product-lock change, or real-human evidence is involved."
+  ],
+  "evidenceFiles": [
+    "measure.mjs",
+    "before.json",
+    "after.json"
+  ]
+}
