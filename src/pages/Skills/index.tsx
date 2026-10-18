@@ -38,6 +38,7 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
 import { createPollScheduler } from '@/lib/poll-scheduler';
+import { isResourceShed } from '@/lib/resource-shed';
 import { hostEvents } from '@/lib/host-events';
 import { isGatewayStopped } from '@/lib/gateway-status';
 import { toast } from 'sonner';
@@ -321,6 +322,8 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
     const stopPolling = gatewayRunning && !gatewayReportedReady
       ? createPollScheduler({
           intervalMs: 5_000,
+          priority: 'background',
+          isShed: isResourceShed,
           task: attemptFetch,
           isVisible: () => document.visibilityState !== 'hidden',
         })

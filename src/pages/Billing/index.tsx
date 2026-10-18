@@ -43,6 +43,7 @@ import {
 import { useGatewayStore } from '@/stores/gateway';
 import { hostApi } from '@/lib/host-api';
 import { createPollScheduler } from '@/lib/poll-scheduler';
+import { isResourceShed } from '@/lib/resource-shed';
 import { cn } from '@/lib/utils';
 import { computeCacheHitRate, isHiddenUsageSource, promptTokensForUsage } from '@shared/types/usage';
 import type { UsageAggregateDimension, UsageAggregateSummary } from '@shared/host-api/contract';
@@ -1128,6 +1129,8 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
     void fetchUsage(1);
     const stopPolling = createPollScheduler({
       intervalMs: USAGE_REFRESH_INTERVAL_MS,
+      priority: 'background',
+      isShed: isResourceShed,
       task: () => fetchUsage(1),
       isVisible: () => document.visibilityState !== 'hidden',
     });

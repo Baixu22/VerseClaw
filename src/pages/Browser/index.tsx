@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { hostApi } from '@/lib/host-api';
 import { createPollScheduler } from '@/lib/poll-scheduler';
+import { isResourceShed } from '@/lib/resource-shed';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -95,7 +96,12 @@ export function BrowserWorkbench() {
 
   useEffect(() => {
     void refresh();
-    return createPollScheduler({ intervalMs: 5000, priority: 'background', task: refresh });
+    return createPollScheduler({
+      intervalMs: 5000,
+      priority: 'background',
+      isShed: isResourceShed,
+      task: refresh,
+    });
   }, [refresh]);
 
   const submitForApproval = async () => {

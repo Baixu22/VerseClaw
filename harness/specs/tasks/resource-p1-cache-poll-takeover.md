@@ -16,6 +16,7 @@ touchedAreas:
   - electron/services/system-api.ts
   - shared/types/resources.ts
   - src/lib/poll-scheduler.ts
+  - src/lib/resource-shed.ts
   - src/lib/read-only-query-cache.ts
   - src/pages/Billing/index.tsx
   - src/pages/Browser/index.tsx

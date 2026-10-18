@@ -35,6 +35,7 @@ import {
   type DeliveryChannelGroup,
 } from '@/lib/host-api';
 import { createPollScheduler } from '@/lib/poll-scheduler';
+import { isResourceShed } from '@/lib/resource-shed';
 import { useCronStore } from '@/stores/cron';
 import {
   projectScheduledItems,
@@ -2103,7 +2104,12 @@ export function Cron() {
 
   useEffect(() => {
     void refreshBrowserTasks();
-    return createPollScheduler({ intervalMs: 15_000, priority: 'background', task: refreshBrowserTasks });
+    return createPollScheduler({
+      intervalMs: 15_000,
+      priority: 'background',
+      isShed: isResourceShed,
+      task: refreshBrowserTasks,
+    });
   }, [refreshBrowserTasks]);
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { hostApi } from '@/lib/host-api';
 import { createPollScheduler } from '@/lib/poll-scheduler';
+import { isResourceShed } from '@/lib/resource-shed';
 import type { TrackedResource } from '@shared/types/resource-tracker';
 
 const POLL_INTERVAL_MS = 10_000; // Poll more frequently than heartbeat (30s)
@@ -40,6 +41,7 @@ export const useResourceStore = create<ResourceTrackerState>((set, get) => ({
     stopPolling = createPollScheduler({
       intervalMs: POLL_INTERVAL_MS,
       priority: 'background',
+      isShed: isResourceShed,
       task: () => get().refresh(),
     });
   },
