@@ -5,8 +5,8 @@
   "title": "开发 P1 缓存接管与轮询调度",
   "verdict": "pass-for-TF0405",
   "candidate": {
-    "sha": "1efb9929",
-    "base": "fed4bec1",
+    "sha": "568d5f946",
+    "base": "1efb9929",
     "dirty": false
   },
   "originalAcceptance": [
@@ -31,7 +31,8 @@
       "result": "pass-for-implemented-surfaces",
       "evidence": [
         "src/lib/poll-scheduler.ts: visibility guard, no-overlap guard, priority/isShed support",
-        "Billing, Browser, Cron, Skills and resource-tracker now use createPollScheduler",
+        "src/lib/resource-shed.ts: one shared cached Main-process shed signal for renderer schedulers",
+        "Billing, Browser, Cron, Skills and resource-tracker now pass isResourceShed",
         "tests/unit/resource-p1-schedulers.test.ts: hidden/blocked/shed behavior"
       ]
     }
@@ -42,6 +43,7 @@
     "shared/types/resources.ts",
     "src/lib/poll-scheduler.ts",
     "src/lib/read-only-query-cache.ts",
+    "src/lib/resource-shed.ts",
     "src/pages/Billing/index.tsx",
     "src/pages/Browser/index.tsx",
     "src/pages/Cron/index.tsx",
@@ -61,7 +63,7 @@
     {
       "command": "pnpm run typecheck",
       "exitCode": 0,
-      "durationMs": 40475,
+      "durationMs": 24390,
       "result": "pass"
     },
     {
@@ -87,6 +89,12 @@
     {
       "command": "pnpm repo:artifacts:check",
       "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "durationMs": 58585,
       "result": "pass"
     },
     {
