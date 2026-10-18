@@ -4,7 +4,7 @@
   "node": "TF-0380",
   "title": "定义 ExecutionEnvironment 与保证等级",
   "verdict": "pass",
-  "candidate": {"sha": "pending-source-commit", "base": "22563e11", "dirty": false},
+  "candidate": {"sha": "956bff925cc8c0dd0a52677a59a27b8d7874e6e0", "base": "22563e11", "dirty": false},
   "originalAcceptance": [
     {"criterion": "shared 类型与映射函数通过 typecheck。", "result": "pass", "evidence": ["shared/types/execution-environment.ts", "gates.json"]},
     {"criterion": "单测覆盖 policy-light、windows-light、docker-strong、ssh-strong、codex-native。", "result": "pass", "evidence": ["tests/unit/execution-environment.test.ts", "tests.json"]},

@@ -1,7 +1,7 @@
 {
   "driven_by": "agent",
   "actor": "codex-tf0380",
-  "head": "pending-source-commit",
+  "head": "956bff925cc8c0dd0a52677a59a27b8d7874e6e0",
   "dirty": false,
   "receipts": [
     {"command": "pnpm typecheck", "exitCode": 0, "durationMs": 44237, "result": "pass"},

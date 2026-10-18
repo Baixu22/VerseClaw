@@ -1,7 +1,7 @@
 {
   "driven_by": "agent",
   "actor": "codex-tf0380",
-  "head": "pending-source-commit",
+  "head": "956bff925cc8c0dd0a52677a59a27b8d7874e6e0",
   "ci": {"claimed": false, "reason": "The current private remote CI path remains subject to the documented account-billing boundary."},
   "local": {"result": "pass", "commands": ["pnpm typecheck", "pnpm contract:check", "pnpm exec vitest run tests/unit/execution-environment.test.ts", "pnpm harness validate --spec harness/specs/tasks/execution-environment-semantics.md", "git diff --check"]}
 }
