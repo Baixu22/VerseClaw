@@ -1161,6 +1161,10 @@ export const hostApi = {
       invokeHost('sandbox', 'explain', input)
     ),
   },
+  hooks: {
+    list: () => invokeHost('hooks', 'list'),
+    setTrusted: (payload: { hookKey: string; trusted?: boolean; enabled?: boolean }) => invokeHost('hooks', 'setTrusted', payload),
+  },
   logs: {
     recent: (tailLines = 100) => invokeHost('logs', 'recent', { tailLines }),
     memory: (input?: LogMemoryPayload) => invokeHost('logs', 'memory', input),

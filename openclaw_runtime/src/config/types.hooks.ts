@@ -69,6 +69,10 @@ export type HooksGmailConfig = {
 
 export type HookConfig = {
   enabled?: boolean;
+  /** Whether an owner explicitly trusted this hook handler. */
+  trusted?: boolean;
+  /** SHA-256 pin captured when the handler was trusted; a change disables execution. */
+  trustedHash?: string;
   env?: Record<string, string>;
   [key: string]: unknown;
 };

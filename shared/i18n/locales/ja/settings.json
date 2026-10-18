@@ -341,6 +341,16 @@
     "dockerChecks": "Docker 強隔離チェック",
     "ok": "OK",
     "missing": "不足",
+    "hooks": {
+      "title": "実行可能 Hook",
+      "description": "Hook コードの実行前に source、hash、trust、managed を確認します。",
+      "empty": "Hook が見つかりません。",
+      "managed": "管理対象",
+      "trust": "信頼",
+      "untrust": "信頼解除",
+      "enable": "有効化",
+      "disable": "無効化"
+    },
     "runtimeLevels": {
       "policy": "ポリシー",
       "light": "軽量",

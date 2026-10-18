@@ -95,6 +95,7 @@ import { createRemoteControlApi } from '../services/remote-control-api';
 import { createAgentBrowserApi } from '../services/agent-browser-api';
 import { createMcpApiWithContext } from '../services/mcp-api';
 import { createSandboxApi } from '../services/sandbox-api';
+import { createHooksApi } from '../services/hooks-api';
 import { createTopicsApi } from '../services/topics-api';
 import { createTaskLedgerApi } from '../services/task-ledger-api';
 import { createRemoteTasksApi } from '../services/remote-tasks-api';
@@ -234,6 +235,7 @@ function registerTypedHostHandlers(
     agentBrowser: agentBrowserApi,
     mcp: createMcpApiWithContext({ gatewayManager, remoteForgeApi }),
     sandbox: createSandboxApi(),
+    hooks: createHooksApi(),
     logs: createLogsApi(),
     channels: createChannelsApi({ gatewayManager, mainWindow }),
     agents: createAgentsApi({ gatewayManager }),

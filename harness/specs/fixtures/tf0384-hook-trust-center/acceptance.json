@@ -1,0 +1,49 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0384",
+  "node": "TF-0384",
+  "title": "Hooks 信任与生命周期中心",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "pending-source-commit",
+    "base": "e74317ad",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "未信任或变更后的 hook 默认不执行。",
+      "result": "pass",
+      "evidence": [
+        "openclaw_runtime/src/hooks/trust.ts",
+        "openclaw_runtime/src/hooks/loader.ts",
+        "tests/unit/hook-trust.test.ts"
+      ]
+    },
+    {
+      "criterion": "UI 和 host-api 能列出来源、hash、状态、managed。",
+      "result": "pass",
+      "evidence": [
+        "shared/host-api/contract.ts",
+        "electron/services/hooks-api.ts",
+        "src/components/settings/HooksTrustPanel.tsx",
+        "tests/e2e/settings-hooks-trust.spec.ts"
+      ]
+    },
+    {
+      "criterion": "信任/禁用变更写审计事件，并有单测与 E2E。",
+      "result": "pass",
+      "evidence": [
+        "openclaw_runtime/src/hooks/trust.ts — appendHookTrustAudit",
+        "tests/unit/hook-trust.test.ts",
+        "tests.json"
+      ]
+    }
+  ],
+  "boundaries": [
+    "Workspace hooks require explicit trust and an exact hash pin; changed or untrusted code is not registered.",
+    "Bundled/managed/plugin hooks remain owner-managed and cannot be disabled from the user UI.",
+    "Main uses a lightweight HOOK.md scan plus the shared pure trust resolver to avoid bundling the runtime discovery graph.",
+    "No second hook runtime, event vocabulary or marketplace was added.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}

@@ -71,6 +71,7 @@ import { hostEvents } from '@/lib/host-events';
 import { cn } from '@/lib/utils';
 import { recoverFromDynamicImportLoadError } from '@/lib/dynamic-import-recovery';
 import type { SandboxNetworkPolicy, SandboxProviderId, SandboxProviderStatus } from '@shared/types/sandbox';
+import { HooksTrustPanel } from '@/components/settings/HooksTrustPanel';
 import type { KnowledgeWatchedDirectoryConfig } from '@shared/host-api/contract';
 import { resolveSettingsSection, type SettingsSectionId } from './route-config';
 
@@ -1872,7 +1873,8 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
                   </div>
                 </div>
               </div>
-              {devModeUnlocked && sandboxRuntimeSection}
+              {devModeUnlocked && <HooksTrustPanel />}
+{sandboxRuntimeSection}
           </div>
             </>
           )}

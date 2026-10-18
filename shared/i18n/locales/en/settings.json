@@ -341,6 +341,16 @@
     "dockerChecks": "Docker strong checks",
     "ok": "OK",
     "missing": "Missing",
+    "hooks": {
+      "title": "Executable hooks",
+      "description": "Review source, hash, trust and managed state before hook code runs.",
+      "empty": "No hooks discovered.",
+      "managed": "managed",
+      "trust": "Trust",
+      "untrust": "Untrust",
+      "enable": "Enable",
+      "disable": "Disable"
+    },
     "runtimeLevels": {
       "policy": "Policy",
       "light": "Light",

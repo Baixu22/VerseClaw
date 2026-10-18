@@ -12,6 +12,7 @@ import {
   type HookEnableStateReason,
 } from "./policy.js";
 import type { HookEligibilityContext, HookEntry, HookInstallSpec } from "./types.js";
+import { hashHookFile, normalizeHookTrustSource, resolveHookTrust, type HookTrustState } from "./trust.js";
 import { loadWorkspaceHookEntries } from "./workspace.js";
 
 export type HookStatusConfigCheck = RequirementConfigCheck;
@@ -45,6 +46,11 @@ export type HookStatusEntry = {
   missing: Requirements;
   configChecks: HookStatusConfigCheck[];
   install: HookInstallOption[];
+  managed: boolean;
+  trustState: HookTrustState;
+  trustHash: string | null;
+  trustExpectedHash: string | null;
+  trustReason: string;
 };
 
 export type HookStatusReport = {
@@ -94,6 +100,13 @@ function buildHookStatus(
   const hookConfig = resolveHookConfig(config, hookKey);
   const managedByPlugin = entry.hook.source === "openclaw-plugin";
   const enableState = resolveHookEnableState({ entry, config, hookConfig });
+  const trust = resolveHookTrust({
+    source: normalizeHookTrustSource(entry.hook.source),
+    enabledByConfig: enableState.enabled,
+    trusted: hookConfig?.trusted === true,
+    trustedHash: typeof hookConfig?.trustedHash === "string" ? hookConfig.trustedHash : null,
+    hash: hashHookFile(entry.hook.handlerPath),
+  });
   const always = entry.metadata?.always === true;
   const events = entry.metadata?.events ?? [];
   const isEnvSatisfied = (envName: string) =>
@@ -137,6 +150,11 @@ function buildHookStatus(
     missing,
     configChecks,
     install: normalizeInstallOptions(entry),
+    managed: trust.managed,
+    trustState: trust.state,
+    trustHash: trust.hash,
+    trustExpectedHash: trust.expectedHash,
+    trustReason: trust.reason,
   };
 }
 

@@ -1762,6 +1762,32 @@ export type McpCallToolPayload = {
 };
 export type McpReloadRuntimePayload = { workspaceId?: string | null; agentId?: string | null };
 
+export type HookTrustStateView = 'trusted' | 'untrusted' | 'changed' | 'disabled';
+export type HookTrustEntryView = {
+  hookKey: string;
+  name: string;
+  source: string;
+  managed: boolean;
+  trustState: HookTrustStateView;
+  hash: string | null;
+  expectedHash: string | null;
+  enabled: boolean;
+  loadable: boolean;
+  reason: string;
+  filePath: string;
+};
+export type HookListResult = HostSuccess & {
+  hooks: HookTrustEntryView[];
+};
+export type HookSetTrustedPayload = {
+  hookKey: string;
+  trusted?: boolean;
+  enabled?: boolean;
+};
+export type HookTrustMutationResult = HookListResult & {
+  hookKey: string;
+  trustState: HookTrustStateView;
+};
 export type SandboxStatusResult = HostSuccess & SandboxStatus;
 export type SandboxDetectProvidersResult = HostSuccess & {
   providers: SandboxProviderStatus[];
@@ -5494,6 +5520,10 @@ export type HostApiContract = {
     detectProviders: () => SandboxDetectProvidersResult;
     updateProfile: (payload: SandboxUpdateProfilePayload) => SandboxUpdateProfileResult;
     explain: (payload?: SandboxExplainPayload) => SandboxExplainResult;
+  };
+  hooks: {
+    list: () => HookListResult;
+    setTrusted: (payload: HookSetTrustedPayload) => HookTrustMutationResult;
   };
   logs: {
     recent: (payload?: LogRecentPayload) => LogContentResult;

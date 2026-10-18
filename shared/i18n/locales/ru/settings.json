@@ -341,6 +341,16 @@
     "dockerChecks": "Проверки Docker strong",
     "ok": "OK",
     "missing": "Отсутствует",
+    "hooks": {
+      "title": "Исполняемые hooks",
+      "description": "Проверьте источник, хеш, доверие и managed-состояние до запуска кода hook.",
+      "empty": "Hooks не обнаружены.",
+      "managed": "управляется",
+      "trust": "Доверять",
+      "untrust": "Снять доверие",
+      "enable": "Включить",
+      "disable": "Отключить"
+    },
     "runtimeLevels": {
       "policy": "Policy",
       "light": "Light",

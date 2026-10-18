@@ -341,6 +341,16 @@
     "dockerChecks": "Docker 强隔离检查",
     "ok": "正常",
     "missing": "缺失",
+    "hooks": {
+      "title": "可执行 Hooks",
+      "description": "在 hook 代码执行前审查来源、hash、信任和 managed 状态。",
+      "empty": "未发现 hooks。",
+      "managed": "受管理",
+      "trust": "信任",
+      "untrust": "取消信任",
+      "enable": "启用",
+      "disable": "禁用"
+    },
     "runtimeLevels": {
       "policy": "策略",
       "light": "轻量",

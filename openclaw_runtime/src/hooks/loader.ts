@@ -14,6 +14,8 @@ import { formatErrorMessage } from "../infra/errors.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
 import { shouldIncludeHook } from "./config.js";
+import { resolveHookConfig } from "./policy.js";
+import { hashHookFile, hookTrustAllowsExecution, normalizeHookTrustSource, resolveHookTrust } from "./trust.js";
 import { hasConfiguredInternalHooks, resolveConfiguredInternalHookNames } from "./configured.js";
 import { buildImportUrl } from "./import-url.js";
 import type { InternalHookHandler } from "./internal-hooks.js";
@@ -121,6 +123,21 @@ export async function loadInternalHooks(
 
     for (const entry of eligible) {
       try {
+        const hookKey = entry.metadata?.hookKey ?? entry.hook.name;
+        const hookConfig = resolveHookConfig(cfg, hookKey);
+        const trust = resolveHookTrust({
+          source: normalizeHookTrustSource(entry.hook.source),
+          enabledByConfig: true,
+          trusted: hookConfig?.trusted === true,
+          trustedHash: typeof hookConfig?.trustedHash === "string" ? hookConfig.trustedHash : null,
+          hash: hashHookFile(entry.hook.handlerPath),
+        });
+        if (!hookTrustAllowsExecution(trust)) {
+          log.warn(
+            `Hook '${safeLogValue(entry.hook.name)}' is not executable: ${safeLogValue(trust.reason)}`,
+          );
+          continue;
+        }
         const hookBaseDir = resolveExistingRealpath(entry.hook.baseDir);
         if (!hookBaseDir) {
           log.error(

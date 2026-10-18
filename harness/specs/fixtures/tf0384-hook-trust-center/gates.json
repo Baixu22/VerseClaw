@@ -1,0 +1,44 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0384",
+  "head": "pending-source-commit",
+  "dirty": false,
+  "receipts": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "durationMs": 30783,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm contract:check",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run i18n:lint",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/hook-trust-center.md",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm exec eslint <changed files> --max-warnings 0",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "result": "pass"
+    }
+  ]
+}

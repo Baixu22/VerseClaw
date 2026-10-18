@@ -1,0 +1,25 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0384",
+  "head": "pending-source-commit",
+  "dirty": false,
+  "unit": {
+    "command": "pnpm exec vitest run tests/unit/hook-trust.test.ts",
+    "files": 1,
+    "tests": 3,
+    "passed": 3,
+    "failed": 0,
+    "result": "pass"
+  },
+  "e2e": [
+    {
+      "command": "pnpm run test:e2e:run tests/e2e/settings-hooks-trust.spec.ts",
+      "node": "24.16.0",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "durationMs": 7500,
+      "result": "pass"
+    }
+  ]
+}
