@@ -1,0 +1,24 @@
+{
+  "head": "b157d9fc0e30a2f5604db835727203f99c34b841",
+  "dirty": false,
+  "unit": {
+    "command": "pnpm exec vitest run tests/unit/identity-scope.test.ts tests/unit/resource-envelope.test.ts tests/unit/handoff-artifacts.test.ts tests/unit/agent-steering-team-bundle.test.ts tests/unit/execution-projection.test.ts tests/unit/product-semantics.test.ts",
+    "tests": 71,
+    "failed": 0,
+    "skipped": 0,
+    "files": 6,
+    "result": "pass"
+  },
+  "e2e": {
+    "durationMs": 14900,
+    "result": "pass",
+    "tests": 1,
+    "command": "pnpm run test:e2e:run tests/e2e/chat-task-visualizer.spec.ts --grep \"renders team orchestration\"",
+    "passed": 1,
+    "executionNode": "D:\\ClawX-candidates\\node-24.16.0\\node-v24.16.0-win-x64\\node.exe",
+    "failed": 0,
+    "files": 1
+  },
+  "actor": "codex-tf0373",
+  "driven_by": "agent"
+}

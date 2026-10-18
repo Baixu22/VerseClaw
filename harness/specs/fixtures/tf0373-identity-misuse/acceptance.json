@@ -1,0 +1,49 @@
+{
+  "node": "TF-0373",
+  "driven_by": "agent",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "b157d9fc0e30a2f5604db835727203f99c34b841",
+    "base": "d0f23b79c40768a68d148b6693f8b93c60beb3ca",
+    "tree": "5ab20626fa972be28b57b9e8d73da101454e3712",
+    "dirty": false
+  },
+  "title": "消除已知身份混用与新增守卫",
+  "boundaries": [
+    "CI jobs did not start with recorded steps; no CI pass is claimed.",
+    "No full-repo rename, persistence migration, new task/run/trace authority, frozen-default change, or TF-0374 implementation.",
+    "All test and acceptance receipts are agent-driven."
+  ],
+  "originalAcceptance": [
+    {
+      "result": "pass",
+      "criterion": "至少覆盖 agent-browser workspaceKey 回退、steering queue 的 taskNodeId/taskId、Chat run 关联和 completion 显示",
+      "evidence": [
+        "electron/services/agent-browser-api.ts",
+        "openclaw_runtime/src/agents/agent-steering-queue.ts",
+        "openclaw_runtime/src/agents/handoff-artifacts.ts",
+        "src/pages/Chat/execution-projection.ts",
+        "tests.json"
+      ]
+    },
+    {
+      "result": "pass",
+      "criterion": "修复后 typecheck、contract:check、相关 Vitest 通过",
+      "evidence": [
+        "gates.json",
+        "tests.json"
+      ]
+    },
+    {
+      "result": "pass",
+      "criterion": "新增守卫的负向用例证明旧写法会失败",
+      "evidence": [
+        "tests/unit/handoff-artifacts.test.ts",
+        "tests/unit/agent-steering-team-bundle.test.ts",
+        "tests/unit/resource-envelope.test.ts",
+        "tests/unit/identity-scope.test.ts"
+      ]
+    }
+  ],
+  "actor": "codex-tf0373"
+}

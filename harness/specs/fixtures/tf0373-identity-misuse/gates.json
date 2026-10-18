@@ -1,0 +1,54 @@
+{
+  "head": "b157d9fc0e30a2f5604db835727203f99c34b841",
+  "receipts": [
+    {
+      "result": "pass",
+      "exitCode": 0,
+      "command": "pnpm typecheck"
+    },
+    {
+      "result": "pass",
+      "exitCode": 0,
+      "command": "pnpm contract:check"
+    },
+    {
+      "result": "pass",
+      "exitCode": 0,
+      "command": "pnpm harness validate --spec harness/specs/tasks/tf0373-identity-misuse-guards.md"
+    },
+    {
+      "result": "pass",
+      "exitCode": 0,
+      "warnings": 120,
+      "command": "pnpm run lint:check",
+      "errors": 0
+    },
+    {
+      "result": "pass",
+      "exitCode": 0,
+      "command": "pnpm run i18n:lint"
+    },
+    {
+      "result": "pass",
+      "exitCode": 0,
+      "command": "pnpm run comms:replay && pnpm run comms:compare"
+    },
+    {
+      "result": "pass",
+      "exitCode": 0,
+      "command": "pnpm repo:evidence:check && pnpm repo:test-coverage:check"
+    },
+    {
+      "result": "pass",
+      "exitCode": 0,
+      "command": "pnpm repo:duplicates:check"
+    },
+    {
+      "result": "pass",
+      "exitCode": 0,
+      "command": "git diff HEAD^ --check"
+    }
+  ],
+  "actor": "codex-tf0373",
+  "driven_by": "agent"
+}

@@ -29,6 +29,7 @@ touchedAreas:
   - tests/unit/resource-envelope.test.ts
   - tests/e2e/chat-task-visualizer.spec.ts
   - harness/specs/tasks/tf0373-identity-misuse-guards.md
+  - harness/specs/fixtures/tf0373-identity-misuse/**
 ---
 
 # TF-0373 Identity Misuse Removal and Guards
