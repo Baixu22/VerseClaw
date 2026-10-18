@@ -4,7 +4,7 @@
   "node": "TF-0388",
   "title": "Project 只读聚合与 master instruction/knowledge refs",
   "verdict": "pass",
-  "candidate": {"sha": "pending-source-commit", "base": "6b8936a5", "dirty": false},
+  "candidate": {"sha": "db1a126021a7c9158b0307ba8cc9a0e5ac3238b8", "base": "6b8936a5", "dirty": false},
   "originalAcceptance": [
     {"criterion": "Project contract 通过 typecheck 和 contract:check。", "result": "pass", "evidence": ["shared/types/project.ts", "gates.json"]},
     {"criterion": "支持 master instruction 和 knowledge refs 的读取与投影。", "result": "pass", "evidence": ["shared/types/project.ts", "tests/unit/project-projection.test.ts"]},
