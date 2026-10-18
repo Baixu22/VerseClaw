@@ -1,0 +1,25 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0379",
+  "node": "TF-0379",
+  "title": "重整执行环境与安全姿态，明确不引入完整 OS 沙箱",
+  "verdict": "pass",
+  "candidate": {"sha": "e0276aca3", "base": "e0276aca3", "dirty": false},
+  "originalAcceptance": [
+    {"criterion": "执行环境模型有单一 shared 类型与文档。", "result": "pass", "evidence": ["shared/types/execution-environment.ts", "shared/execution-environment-semantics.md", "harness/specs/fixtures/tf0380-execution-environment/acceptance.json"]},
+    {"criterion": "默认路径不新增 OS sandbox 依赖。", "result": "pass", "evidence": ["electron/utils/sandbox-policy-resolver.ts", "shared/execution-environment-semantics.md"]},
+    {"criterion": "至少四个真实场景：readOnly、policy-light、docker-strong 可用、docker-strong 不可用，均有测试与 UI 映射。", "result": "pass", "evidence": ["tests/unit/execution-environment.test.ts", "tests/unit/sandbox-explicit-strong-156.test.ts", "tests/e2e/settings-sandbox-environment.spec.ts", "harness/specs/fixtures/tf0381-execution-environment-fail-closed/tests.json", "harness/specs/fixtures/tf0382-execution-environment-settings/tests.json"]},
+    {"criterion": "Settings 能显示 backend、guarantee、approval、network 和降级原因。", "result": "pass", "evidence": ["src/pages/Settings/index.tsx", "tests/e2e/settings-sandbox-environment.spec.ts", "harness/specs/fixtures/tf0382-execution-environment-settings/acceptance.json"]}
+  ],
+  "childCompletion": [
+    {"node": "TF-0380", "status": "done", "evidence": "harness/specs/fixtures/tf0380-execution-environment/acceptance.json; 956bff92"},
+    {"node": "TF-0381", "status": "done", "evidence": "harness/specs/fixtures/tf0381-execution-environment-fail-closed/acceptance.json; 0ba51910"},
+    {"node": "TF-0382", "status": "done", "evidence": "harness/specs/fixtures/tf0382-execution-environment-settings/acceptance.json; 039df0c6"}
+  ],
+  "boundaries": [
+    "Complete OS sandboxing remains a non-goal; no OS sandbox dependency was added.",
+    "Default Docker or cloud VM behavior was not introduced and frozen defaults were not changed.",
+    "UI displays the resolved guarantee; this is not an OS sandbox capability claim.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}
