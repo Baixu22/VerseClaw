@@ -1,0 +1,2888 @@
+{
+  "schema": "clawx.tf0418.startup-measurement/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0418-startup-probe",
+  "candidate": "164f88735c8e1e7bc3925c0ea107211bc6880e24",
+  "completedAt": "2026-10-18T16:00:04.580Z",
+  "runs": 5,
+  "waitMs": 6000,
+  "platform": "win32",
+  "metrics": {
+    "appReady": {
+      "count": 5,
+      "p50Ms": 3225.9694,
+      "p95Ms": 3276.8611,
+      "values": [
+        3276.8611,
+        3225.9694,
+        3235.6838,
+        3207.9846,
+        3191.3442
+      ]
+    },
+    "windowCreated": {
+      "count": 5,
+      "p50Ms": 3327.233,
+      "p95Ms": 3394.7832,
+      "values": [
+        3394.7832,
+        3327.233,
+        3351.6324,
+        3311.8251,
+        3293.8972
+      ]
+    },
+    "readyToShow": {
+      "count": 5,
+      "p50Ms": 3531.6791000000003,
+      "p95Ms": 3607.7175000000007,
+      "values": [
+        3607.7175000000007,
+        3531.6791000000003,
+        3535.1895999999997,
+        3493.8347000000003,
+        3474.9033
+      ]
+    },
+    "rendererFirstPaint": {
+      "count": 5,
+      "p50Ms": 25.099999994039536,
+      "p95Ms": 58.39999997615814,
+      "values": [
+        25,
+        58.39999997615814,
+        26.799999982118607,
+        22.900000005960464,
+        25.099999994039536
+      ]
+    },
+    "sampler": {
+      "count": 5,
+      "sampleCounts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "avgCpuPercent": [
+        26.56,
+        30.62,
+        21.24,
+        23.74,
+        26.85
+      ],
+      "peakCpuPercent": [
+        26.56,
+        30.62,
+        21.24,
+        23.74,
+        26.85
+      ]
+    }
+  },
+  "successfulRuns": 5,
+  "failedRuns": 0,
+  "results": [
+    {
+      "run": 1,
+      "ok": true,
+      "main": {
+        "startedAt": 1792339153775,
+        "elapsedMs": 9596.941499999999,
+        "marks": [
+          {
+            "name": "app-ready",
+            "at": 1792339157052,
+            "fromStartMs": 3276.8611
+          },
+          {
+            "name": "window-created",
+            "at": 1792339157170,
+            "fromStartMs": 3394.7832
+          },
+          {
+            "name": "ready-to-show",
+            "at": 1792339157383,
+            "fromStartMs": 3607.7175000000007
+          },
+          {
+            "name": "gateway-start",
+            "at": 1792339157399,
+            "fromStartMs": 3623.6089
+          }
+        ],
+        "counters": {
+          "spawnCount": 7,
+          "spawnByMethod": {
+            "spawn": 0,
+            "exec": 0,
+            "execFile": 7,
+            "fork": 0,
+            "spawnSync": 0,
+            "execSync": 0,
+            "execFileSync": 0
+          },
+          "recentSpawns": [
+            {
+              "method": "execFile",
+              "at": 1792339157738,
+              "fromStartMs": 3963.4758,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339157761,
+              "fromStartMs": 3986.2775,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339157882,
+              "fromStartMs": 4107.1458,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339157886,
+              "fromStartMs": 4110.5967,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339157891,
+              "fromStartMs": 4115.740900000001,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339157894,
+              "fromStartMs": 4119.0796,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339157897,
+              "fromStartMs": 4121.4961,
+              "command": "git"
+            }
+          ],
+          "activeIntervals": 4,
+          "activeWatchers": 0,
+          "unavailable": []
+        },
+        "rssBytes": 584458240
+      },
+      "sampler": {
+        "sampleCount": 1,
+        "coverageMs": 0,
+        "latest": {
+          "at": 1792339162099,
+          "cpuPercent": 26.56,
+          "rssBytes": 584306688,
+          "heapUsedBytes": 112729944,
+          "systemFreeBytes": 4797579264,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": false,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 26.56,
+        "peakCpuPercent": 26.56,
+        "peakRssBytes": 584306688,
+        "shedSampleCount": 0
+      },
+      "renderer": {
+        "schema": "clawx.renderer-performance/v1",
+        "startedAt": 1792339157364,
+        "generatedAt": 1792339163259,
+        "marks": [
+          {
+            "name": "renderer-start",
+            "at": 1792339157364,
+            "fromStartMs": 0.09999999403953552
+          },
+          {
+            "name": "renderer-first-paint",
+            "at": 1792339157389,
+            "fromStartMs": 25
+          }
+        ],
+        "longTasks": [
+          {
+            "startTime": 516.7999999821186,
+            "durationMs": 50
+          },
+          {
+            "startTime": 584,
+            "durationMs": 81
+          },
+          {
+            "startTime": 668.5,
+            "durationMs": 56
+          },
+          {
+            "startTime": 948.7999999821186,
+            "durationMs": 57
+          }
+        ],
+        "inputLatency": [],
+        "ipc": {
+          "count": 58,
+          "p50Ms": 50,
+          "p95Ms": 202,
+          "recent": [
+            {
+              "module": "window",
+              "action": "isMaximized",
+              "at": 1792339157747,
+              "durationMs": 35,
+              "ok": true
+            },
+            {
+              "module": "permissions",
+              "action": "approvals",
+              "at": 1792339157747,
+              "durationMs": 34,
+              "ok": true
+            },
+            {
+              "module": "agentBrowser",
+              "action": "tasks",
+              "at": 1792339157747,
+              "durationMs": 34,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "rpc",
+              "at": 1792339157747,
+              "durationMs": 34,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339157752,
+              "durationMs": 39,
+              "ok": true
+            },
+            {
+              "module": "resourceTracker",
+              "action": "list",
+              "at": 1792339157752,
+              "durationMs": 39,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "vendors",
+              "at": 1792339157837,
+              "durationMs": 123,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "getDefaultAccount",
+              "at": 1792339157837,
+              "durationMs": 123,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339157837,
+              "durationMs": 123,
+              "ok": true
+            },
+            {
+              "module": "remoteTasks",
+              "action": "list",
+              "at": 1792339157837,
+              "durationMs": 124,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "list",
+              "at": 1792339157840,
+              "durationMs": 123,
+              "ok": true
+            },
+            {
+              "module": "runtimeApprovals",
+              "action": "list",
+              "at": 1792339157896,
+              "durationMs": 179,
+              "ok": false
+            },
+            {
+              "module": "settings",
+              "action": "getAll",
+              "at": 1792339157897,
+              "durationMs": 179,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339157901,
+              "durationMs": 183,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "vendors",
+              "at": 1792339157906,
+              "durationMs": 188,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "getDefaultAccount",
+              "at": 1792339157906,
+              "durationMs": 188,
+              "ok": true
+            },
+            {
+              "module": "system",
+              "action": "info",
+              "at": 1792339157906,
+              "durationMs": 188,
+              "ok": true
+            },
+            {
+              "module": "agents",
+              "action": "list",
+              "at": 1792339157908,
+              "durationMs": 195,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339157916,
+              "durationMs": 202,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339157916,
+              "durationMs": 202,
+              "ok": true
+            },
+            {
+              "module": "agents",
+              "action": "list",
+              "at": 1792339157916,
+              "durationMs": 200,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339157919,
+              "durationMs": 201,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339157919,
+              "durationMs": 201,
+              "ok": true
+            },
+            {
+              "module": "sessionActivity",
+              "action": "snapshot",
+              "at": 1792339157919,
+              "durationMs": 204,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339157931,
+              "durationMs": 50,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339157931,
+              "durationMs": 50,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "branches",
+              "at": 1792339157931,
+              "durationMs": 50,
+              "ok": false
+            },
+            {
+              "module": "git",
+              "action": "worktrees",
+              "at": 1792339157932,
+              "durationMs": 51,
+              "ok": false
+            },
+            {
+              "module": "gateway",
+              "action": "rpc",
+              "at": 1792339157932,
+              "durationMs": 49,
+              "ok": false
+            },
+            {
+              "module": "permissions",
+              "action": "approvals",
+              "at": 1792339157947,
+              "durationMs": 51,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339157947,
+              "durationMs": 46,
+              "ok": true
+            },
+            {
+              "module": "sessionActivity",
+              "action": "snapshot",
+              "at": 1792339157947,
+              "durationMs": 65,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339157967,
+              "durationMs": 83,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339157967,
+              "durationMs": 85,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "list",
+              "at": 1792339157967,
+              "durationMs": 51,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "list",
+              "at": 1792339157981,
+              "durationMs": 62,
+              "ok": true
+            },
+            {
+              "module": "sessions",
+              "action": "history",
+              "at": 1792339158015,
+              "durationMs": 83,
+              "ok": false
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339158226,
+              "durationMs": 9,
+              "ok": true
+            },
+            {
+              "module": "sessions",
+              "action": "compactionStatus",
+              "at": 1792339158389,
+              "durationMs": 2,
+              "ok": false
+            },
+            {
+              "module": "sessions",
+              "action": "longTaskControlStatus",
+              "at": 1792339158389,
+              "durationMs": 2,
+              "ok": false
+            },
+            {
+              "module": "usage",
+              "action": "contextRange",
+              "at": 1792339158391,
+              "durationMs": 4,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "live",
+              "at": 1792339158391,
+              "durationMs": 4,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339158544,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339158865,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "promptCacheStatus",
+              "at": 1792339159059,
+              "durationMs": 3,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339159188,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339159499,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339159812,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339160138,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339160465,
+              "durationMs": 10,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339160792,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339161118,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339161445,
+              "durationMs": 11,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339161756,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339162067,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339162379,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339162690,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339163002,
+              "durationMs": 7,
+              "ok": true
+            }
+          ]
+        },
+        "unavailable": []
+      }
+    },
+    {
+      "run": 2,
+      "ok": true,
+      "main": {
+        "startedAt": 1792339164085,
+        "elapsedMs": 9520.359100000001,
+        "marks": [
+          {
+            "name": "app-ready",
+            "at": 1792339167311,
+            "fromStartMs": 3225.9694
+          },
+          {
+            "name": "window-created",
+            "at": 1792339167412,
+            "fromStartMs": 3327.233
+          },
+          {
+            "name": "ready-to-show",
+            "at": 1792339167617,
+            "fromStartMs": 3531.6791000000003
+          },
+          {
+            "name": "gateway-start",
+            "at": 1792339167639,
+            "fromStartMs": 3554.0278
+          }
+        ],
+        "counters": {
+          "spawnCount": 7,
+          "spawnByMethod": {
+            "spawn": 0,
+            "exec": 0,
+            "execFile": 7,
+            "fork": 0,
+            "spawnSync": 0,
+            "execSync": 0,
+            "execFileSync": 0
+          },
+          "recentSpawns": [
+            {
+              "method": "execFile",
+              "at": 1792339167963,
+              "fromStartMs": 3878.0006999999996,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339167988,
+              "fromStartMs": 3902.7649999999994,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339168108,
+              "fromStartMs": 4022.5446999999995,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339168111,
+              "fromStartMs": 4025.7030999999997,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339168115,
+              "fromStartMs": 4029.7325,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339168118,
+              "fromStartMs": 4032.6188999999995,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339168122,
+              "fromStartMs": 4036.4362,
+              "command": "git"
+            }
+          ],
+          "activeIntervals": 4,
+          "activeWatchers": 0,
+          "unavailable": []
+        },
+        "rssBytes": 583639040
+      },
+      "sampler": {
+        "sampleCount": 1,
+        "coverageMs": 0,
+        "latest": {
+          "at": 1792339172351,
+          "cpuPercent": 30.62,
+          "rssBytes": 583532544,
+          "heapUsedBytes": 111005540,
+          "systemFreeBytes": 4998627328,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": false,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 30.62,
+        "peakCpuPercent": 30.62,
+        "peakRssBytes": 583532544,
+        "shedSampleCount": 0
+      },
+      "renderer": {
+        "schema": "clawx.renderer-performance/v1",
+        "startedAt": 1792339167598,
+        "generatedAt": 1792339173493,
+        "marks": [
+          {
+            "name": "renderer-start",
+            "at": 1792339167598,
+            "fromStartMs": 0.09999999403953552
+          },
+          {
+            "name": "renderer-first-paint",
+            "at": 1792339167657,
+            "fromStartMs": 58.39999997615814
+          }
+        ],
+        "longTasks": [
+          {
+            "startTime": 567,
+            "durationMs": 81
+          },
+          {
+            "startTime": 651.7000000178814,
+            "durationMs": 55
+          },
+          {
+            "startTime": 864.3000000119209,
+            "durationMs": 55
+          }
+        ],
+        "inputLatency": [],
+        "ipc": {
+          "count": 58,
+          "p50Ms": 45,
+          "p95Ms": 208,
+          "recent": [
+            {
+              "module": "window",
+              "action": "isMaximized",
+              "at": 1792339167970,
+              "durationMs": 36,
+              "ok": true
+            },
+            {
+              "module": "permissions",
+              "action": "approvals",
+              "at": 1792339167971,
+              "durationMs": 37,
+              "ok": true
+            },
+            {
+              "module": "agentBrowser",
+              "action": "tasks",
+              "at": 1792339167971,
+              "durationMs": 37,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "rpc",
+              "at": 1792339167971,
+              "durationMs": 37,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339167978,
+              "durationMs": 43,
+              "ok": true
+            },
+            {
+              "module": "resourceTracker",
+              "action": "list",
+              "at": 1792339167978,
+              "durationMs": 43,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "vendors",
+              "at": 1792339168062,
+              "durationMs": 127,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "getDefaultAccount",
+              "at": 1792339168062,
+              "durationMs": 127,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339168062,
+              "durationMs": 127,
+              "ok": true
+            },
+            {
+              "module": "remoteTasks",
+              "action": "list",
+              "at": 1792339168062,
+              "durationMs": 128,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "list",
+              "at": 1792339168065,
+              "durationMs": 127,
+              "ok": true
+            },
+            {
+              "module": "runtimeApprovals",
+              "action": "list",
+              "at": 1792339168122,
+              "durationMs": 182,
+              "ok": false
+            },
+            {
+              "module": "settings",
+              "action": "getAll",
+              "at": 1792339168122,
+              "durationMs": 182,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339168129,
+              "durationMs": 189,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "vendors",
+              "at": 1792339168132,
+              "durationMs": 192,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "getDefaultAccount",
+              "at": 1792339168132,
+              "durationMs": 192,
+              "ok": true
+            },
+            {
+              "module": "system",
+              "action": "info",
+              "at": 1792339168133,
+              "durationMs": 193,
+              "ok": true
+            },
+            {
+              "module": "agents",
+              "action": "list",
+              "at": 1792339168134,
+              "durationMs": 200,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339168143,
+              "durationMs": 208,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339168143,
+              "durationMs": 208,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339168143,
+              "durationMs": 203,
+              "ok": true
+            },
+            {
+              "module": "agents",
+              "action": "list",
+              "at": 1792339168144,
+              "durationMs": 207,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339168147,
+              "durationMs": 207,
+              "ok": true
+            },
+            {
+              "module": "sessionActivity",
+              "action": "snapshot",
+              "at": 1792339168147,
+              "durationMs": 211,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339168158,
+              "durationMs": 52,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339168158,
+              "durationMs": 52,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "branches",
+              "at": 1792339168158,
+              "durationMs": 51,
+              "ok": false
+            },
+            {
+              "module": "git",
+              "action": "worktrees",
+              "at": 1792339168158,
+              "durationMs": 51,
+              "ok": false
+            },
+            {
+              "module": "gateway",
+              "action": "rpc",
+              "at": 1792339168159,
+              "durationMs": 51,
+              "ok": false
+            },
+            {
+              "module": "permissions",
+              "action": "approvals",
+              "at": 1792339168159,
+              "durationMs": 38,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339168159,
+              "durationMs": 30,
+              "ok": true
+            },
+            {
+              "module": "sessionActivity",
+              "action": "snapshot",
+              "at": 1792339168159,
+              "durationMs": 52,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339168171,
+              "durationMs": 63,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339168172,
+              "durationMs": 65,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "list",
+              "at": 1792339168184,
+              "durationMs": 41,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "list",
+              "at": 1792339168200,
+              "durationMs": 53,
+              "ok": true
+            },
+            {
+              "module": "sessions",
+              "action": "history",
+              "at": 1792339168210,
+              "durationMs": 51,
+              "ok": false
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339168430,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "sessions",
+              "action": "compactionStatus",
+              "at": 1792339168614,
+              "durationMs": 1,
+              "ok": false
+            },
+            {
+              "module": "sessions",
+              "action": "longTaskControlStatus",
+              "at": 1792339168614,
+              "durationMs": 1,
+              "ok": false
+            },
+            {
+              "module": "usage",
+              "action": "contextRange",
+              "at": 1792339168616,
+              "durationMs": 3,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "live",
+              "at": 1792339168616,
+              "durationMs": 3,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339168745,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339169057,
+              "durationMs": 9,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "promptCacheStatus",
+              "at": 1792339169283,
+              "durationMs": 2,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339169382,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339169694,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339170019,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339170332,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339170661,
+              "durationMs": 11,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339170984,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339171311,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339171622,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339171935,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339172246,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339172608,
+              "durationMs": 45,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339172926,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339173236,
+              "durationMs": 7,
+              "ok": true
+            }
+          ]
+        },
+        "unavailable": []
+      }
+    },
+    {
+      "run": 3,
+      "ok": true,
+      "main": {
+        "startedAt": 1792339174355,
+        "elapsedMs": 9532.2279,
+        "marks": [
+          {
+            "name": "app-ready",
+            "at": 1792339177591,
+            "fromStartMs": 3235.6838
+          },
+          {
+            "name": "window-created",
+            "at": 1792339177707,
+            "fromStartMs": 3351.6324
+          },
+          {
+            "name": "ready-to-show",
+            "at": 1792339177890,
+            "fromStartMs": 3535.1895999999997
+          },
+          {
+            "name": "gateway-start",
+            "at": 1792339177912,
+            "fromStartMs": 3557.4622
+          }
+        ],
+        "counters": {
+          "spawnCount": 7,
+          "spawnByMethod": {
+            "spawn": 0,
+            "exec": 0,
+            "execFile": 7,
+            "fork": 0,
+            "spawnSync": 0,
+            "execSync": 0,
+            "execFileSync": 0
+          },
+          "recentSpawns": [
+            {
+              "method": "execFile",
+              "at": 1792339178231,
+              "fromStartMs": 3875.6261999999997,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339178255,
+              "fromStartMs": 3900.2232999999997,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339178386,
+              "fromStartMs": 4031.0459,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339178391,
+              "fromStartMs": 4036.2119000000002,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339178395,
+              "fromStartMs": 4040.2604,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339178399,
+              "fromStartMs": 4044.4029,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339178405,
+              "fromStartMs": 4049.8586999999998,
+              "command": "git"
+            }
+          ],
+          "activeIntervals": 4,
+          "activeWatchers": 0,
+          "unavailable": []
+        },
+        "rssBytes": 585662464
+      },
+      "sampler": {
+        "sampleCount": 1,
+        "coverageMs": 0,
+        "latest": {
+          "at": 1792339182636,
+          "cpuPercent": 21.24,
+          "rssBytes": 585543680,
+          "heapUsedBytes": 112573088,
+          "systemFreeBytes": 5100654592,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": false,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 21.24,
+        "peakCpuPercent": 21.24,
+        "peakRssBytes": 585543680,
+        "shedSampleCount": 0
+      },
+      "renderer": {
+        "schema": "clawx.renderer-performance/v1",
+        "startedAt": 1792339177868,
+        "generatedAt": 1792339183775,
+        "marks": [
+          {
+            "name": "renderer-start",
+            "at": 1792339177868,
+            "fromStartMs": 0.19999998807907104
+          },
+          {
+            "name": "renderer-first-paint",
+            "at": 1792339177895,
+            "fromStartMs": 26.799999982118607
+          }
+        ],
+        "longTasks": [
+          {
+            "startTime": 536.5999999940395,
+            "durationMs": 90
+          },
+          {
+            "startTime": 631,
+            "durationMs": 58
+          },
+          {
+            "startTime": 830.9000000059605,
+            "durationMs": 68
+          },
+          {
+            "startTime": 903.5,
+            "durationMs": 66
+          }
+        ],
+        "inputLatency": [],
+        "ipc": {
+          "count": 58,
+          "p50Ms": 60,
+          "p95Ms": 222,
+          "recent": [
+            {
+              "module": "window",
+              "action": "isMaximized",
+              "at": 1792339178236,
+              "durationMs": 30,
+              "ok": true
+            },
+            {
+              "module": "permissions",
+              "action": "approvals",
+              "at": 1792339178236,
+              "durationMs": 30,
+              "ok": true
+            },
+            {
+              "module": "agentBrowser",
+              "action": "tasks",
+              "at": 1792339178236,
+              "durationMs": 30,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "rpc",
+              "at": 1792339178236,
+              "durationMs": 30,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339178241,
+              "durationMs": 35,
+              "ok": true
+            },
+            {
+              "module": "resourceTracker",
+              "action": "list",
+              "at": 1792339178241,
+              "durationMs": 35,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "vendors",
+              "at": 1792339178335,
+              "durationMs": 128,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "getDefaultAccount",
+              "at": 1792339178335,
+              "durationMs": 128,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339178335,
+              "durationMs": 128,
+              "ok": true
+            },
+            {
+              "module": "remoteTasks",
+              "action": "list",
+              "at": 1792339178335,
+              "durationMs": 129,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "list",
+              "at": 1792339178339,
+              "durationMs": 130,
+              "ok": true
+            },
+            {
+              "module": "runtimeApprovals",
+              "action": "list",
+              "at": 1792339178398,
+              "durationMs": 188,
+              "ok": false
+            },
+            {
+              "module": "settings",
+              "action": "getAll",
+              "at": 1792339178398,
+              "durationMs": 188,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339178410,
+              "durationMs": 200,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "vendors",
+              "at": 1792339178415,
+              "durationMs": 205,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "getDefaultAccount",
+              "at": 1792339178415,
+              "durationMs": 205,
+              "ok": true
+            },
+            {
+              "module": "system",
+              "action": "info",
+              "at": 1792339178415,
+              "durationMs": 205,
+              "ok": true
+            },
+            {
+              "module": "agents",
+              "action": "list",
+              "at": 1792339178418,
+              "durationMs": 212,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339178428,
+              "durationMs": 221,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339178428,
+              "durationMs": 221,
+              "ok": true
+            },
+            {
+              "module": "agents",
+              "action": "list",
+              "at": 1792339178428,
+              "durationMs": 220,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339178432,
+              "durationMs": 222,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339178432,
+              "durationMs": 222,
+              "ok": true
+            },
+            {
+              "module": "sessionActivity",
+              "action": "snapshot",
+              "at": 1792339178432,
+              "durationMs": 224,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339178446,
+              "durationMs": 62,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339178446,
+              "durationMs": 62,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "branches",
+              "at": 1792339178447,
+              "durationMs": 63,
+              "ok": false
+            },
+            {
+              "module": "git",
+              "action": "worktrees",
+              "at": 1792339178447,
+              "durationMs": 63,
+              "ok": false
+            },
+            {
+              "module": "gateway",
+              "action": "rpc",
+              "at": 1792339178448,
+              "durationMs": 61,
+              "ok": false
+            },
+            {
+              "module": "permissions",
+              "action": "approvals",
+              "at": 1792339178448,
+              "durationMs": 51,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339178448,
+              "durationMs": 38,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339178470,
+              "durationMs": 85,
+              "ok": true
+            },
+            {
+              "module": "sessionActivity",
+              "action": "snapshot",
+              "at": 1792339178471,
+              "durationMs": 87,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339178488,
+              "durationMs": 102,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "list",
+              "at": 1792339178488,
+              "durationMs": 60,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "list",
+              "at": 1792339178494,
+              "durationMs": 62,
+              "ok": true
+            },
+            {
+              "module": "sessions",
+              "action": "history",
+              "at": 1792339178528,
+              "durationMs": 80,
+              "ok": false
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339178729,
+              "durationMs": 10,
+              "ok": true
+            },
+            {
+              "module": "sessions",
+              "action": "compactionStatus",
+              "at": 1792339178890,
+              "durationMs": 2,
+              "ok": false
+            },
+            {
+              "module": "sessions",
+              "action": "longTaskControlStatus",
+              "at": 1792339178890,
+              "durationMs": 2,
+              "ok": false
+            },
+            {
+              "module": "usage",
+              "action": "contextRange",
+              "at": 1792339178892,
+              "durationMs": 5,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "live",
+              "at": 1792339178892,
+              "durationMs": 4,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339179043,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339179368,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "promptCacheStatus",
+              "at": 1792339179548,
+              "durationMs": 3,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339179694,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339180017,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339180344,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339180659,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339180986,
+              "durationMs": 11,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339181309,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339181636,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339181946,
+              "durationMs": 5,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339182261,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339182573,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339182896,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339183207,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339183520,
+              "durationMs": 8,
+              "ok": true
+            }
+          ]
+        },
+        "unavailable": []
+      }
+    },
+    {
+      "run": 4,
+      "ok": true,
+      "main": {
+        "startedAt": 1792339184713,
+        "elapsedMs": 9508.012799999999,
+        "marks": [
+          {
+            "name": "app-ready",
+            "at": 1792339187921,
+            "fromStartMs": 3207.9846
+          },
+          {
+            "name": "window-created",
+            "at": 1792339188025,
+            "fromStartMs": 3311.8251
+          },
+          {
+            "name": "ready-to-show",
+            "at": 1792339188207,
+            "fromStartMs": 3493.8347000000003
+          },
+          {
+            "name": "gateway-start",
+            "at": 1792339188227,
+            "fromStartMs": 3514.1067000000003
+          }
+        ],
+        "counters": {
+          "spawnCount": 7,
+          "spawnByMethod": {
+            "spawn": 0,
+            "exec": 0,
+            "execFile": 7,
+            "fork": 0,
+            "spawnSync": 0,
+            "execSync": 0,
+            "execFileSync": 0
+          },
+          "recentSpawns": [
+            {
+              "method": "execFile",
+              "at": 1792339188568,
+              "fromStartMs": 3855.2384,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339188595,
+              "fromStartMs": 3882.2108,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339188699,
+              "fromStartMs": 3985.4371,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339188702,
+              "fromStartMs": 3988.6400000000003,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339188708,
+              "fromStartMs": 3994.3277,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339188712,
+              "fromStartMs": 3998.2871000000005,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339188715,
+              "fromStartMs": 4001.4806,
+              "command": "git"
+            }
+          ],
+          "activeIntervals": 4,
+          "activeWatchers": 0,
+          "unavailable": []
+        },
+        "rssBytes": 613646336
+      },
+      "sampler": {
+        "sampleCount": 1,
+        "coverageMs": 0,
+        "latest": {
+          "at": 1792339192963,
+          "cpuPercent": 23.74,
+          "rssBytes": 613482496,
+          "heapUsedBytes": 266355796,
+          "systemFreeBytes": 5262372864,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": false,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 23.74,
+        "peakCpuPercent": 23.74,
+        "peakRssBytes": 613482496,
+        "shedSampleCount": 0
+      },
+      "renderer": {
+        "schema": "clawx.renderer-performance/v1",
+        "startedAt": 1792339188205,
+        "generatedAt": 1792339194063,
+        "marks": [
+          {
+            "name": "renderer-start",
+            "at": 1792339188205,
+            "fromStartMs": 0
+          },
+          {
+            "name": "renderer-first-paint",
+            "at": 1792339188228,
+            "fromStartMs": 22.900000005960464
+          }
+        ],
+        "longTasks": [
+          {
+            "startTime": 561.0999999940395,
+            "durationMs": 70
+          },
+          {
+            "startTime": 631.8000000119209,
+            "durationMs": 53
+          },
+          {
+            "startTime": 827.4000000059605,
+            "durationMs": 63
+          },
+          {
+            "startTime": 893.8000000119209,
+            "durationMs": 69
+          }
+        ],
+        "inputLatency": [],
+        "ipc": {
+          "count": 58,
+          "p50Ms": 54,
+          "p95Ms": 192,
+          "recent": [
+            {
+              "module": "window",
+              "action": "isMaximized",
+              "at": 1792339188577,
+              "durationMs": 33,
+              "ok": true
+            },
+            {
+              "module": "permissions",
+              "action": "approvals",
+              "at": 1792339188577,
+              "durationMs": 33,
+              "ok": true
+            },
+            {
+              "module": "agentBrowser",
+              "action": "tasks",
+              "at": 1792339188577,
+              "durationMs": 32,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "rpc",
+              "at": 1792339188577,
+              "durationMs": 32,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339188581,
+              "durationMs": 36,
+              "ok": true
+            },
+            {
+              "module": "resourceTracker",
+              "action": "list",
+              "at": 1792339188581,
+              "durationMs": 36,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "vendors",
+              "at": 1792339188658,
+              "durationMs": 112,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "getDefaultAccount",
+              "at": 1792339188658,
+              "durationMs": 112,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339188658,
+              "durationMs": 112,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "list",
+              "at": 1792339188658,
+              "durationMs": 110,
+              "ok": true
+            },
+            {
+              "module": "runtimeApprovals",
+              "action": "list",
+              "at": 1792339188713,
+              "durationMs": 164,
+              "ok": false
+            },
+            {
+              "module": "settings",
+              "action": "getAll",
+              "at": 1792339188713,
+              "durationMs": 164,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339188718,
+              "durationMs": 169,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "vendors",
+              "at": 1792339188724,
+              "durationMs": 175,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "getDefaultAccount",
+              "at": 1792339188724,
+              "durationMs": 175,
+              "ok": true
+            },
+            {
+              "module": "remoteTasks",
+              "action": "list",
+              "at": 1792339188724,
+              "durationMs": 180,
+              "ok": true
+            },
+            {
+              "module": "system",
+              "action": "info",
+              "at": 1792339188725,
+              "durationMs": 176,
+              "ok": true
+            },
+            {
+              "module": "agents",
+              "action": "list",
+              "at": 1792339188729,
+              "durationMs": 184,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339188735,
+              "durationMs": 189,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339188735,
+              "durationMs": 189,
+              "ok": true
+            },
+            {
+              "module": "agents",
+              "action": "list",
+              "at": 1792339188736,
+              "durationMs": 189,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339188741,
+              "durationMs": 192,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339188741,
+              "durationMs": 192,
+              "ok": true
+            },
+            {
+              "module": "sessionActivity",
+              "action": "snapshot",
+              "at": 1792339188742,
+              "durationMs": 195,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339188753,
+              "durationMs": 55,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339188753,
+              "durationMs": 55,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "branches",
+              "at": 1792339188754,
+              "durationMs": 55,
+              "ok": false
+            },
+            {
+              "module": "git",
+              "action": "worktrees",
+              "at": 1792339188754,
+              "durationMs": 56,
+              "ok": false
+            },
+            {
+              "module": "gateway",
+              "action": "rpc",
+              "at": 1792339188754,
+              "durationMs": 54,
+              "ok": false
+            },
+            {
+              "module": "permissions",
+              "action": "approvals",
+              "at": 1792339188770,
+              "durationMs": 58,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339188770,
+              "durationMs": 52,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339188770,
+              "durationMs": 70,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339188770,
+              "durationMs": 72,
+              "ok": true
+            },
+            {
+              "module": "sessionActivity",
+              "action": "snapshot",
+              "at": 1792339188770,
+              "durationMs": 72,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "list",
+              "at": 1792339188791,
+              "durationMs": 56,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "list",
+              "at": 1792339188799,
+              "durationMs": 58,
+              "ok": true
+            },
+            {
+              "module": "sessions",
+              "action": "history",
+              "at": 1792339188801,
+              "durationMs": 46,
+              "ok": false
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339189037,
+              "durationMs": 13,
+              "ok": true
+            },
+            {
+              "module": "sessions",
+              "action": "compactionStatus",
+              "at": 1792339189207,
+              "durationMs": 1,
+              "ok": false
+            },
+            {
+              "module": "sessions",
+              "action": "longTaskControlStatus",
+              "at": 1792339189207,
+              "durationMs": 1,
+              "ok": false
+            },
+            {
+              "module": "usage",
+              "action": "contextRange",
+              "at": 1792339189209,
+              "durationMs": 4,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "live",
+              "at": 1792339189209,
+              "durationMs": 3,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339189366,
+              "durationMs": 16,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339189689,
+              "durationMs": 13,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "promptCacheStatus",
+              "at": 1792339189865,
+              "durationMs": 2,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339190009,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339190325,
+              "durationMs": 12,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339190645,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339190957,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339191283,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339191594,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339191908,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339192219,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339192544,
+              "durationMs": 5,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339192857,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339193170,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339193494,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339193805,
+              "durationMs": 7,
+              "ok": true
+            }
+          ]
+        },
+        "unavailable": []
+      }
+    },
+    {
+      "run": 5,
+      "ok": true,
+      "main": {
+        "startedAt": 1792339194922,
+        "elapsedMs": 9485.2367,
+        "marks": [
+          {
+            "name": "app-ready",
+            "at": 1792339198113,
+            "fromStartMs": 3191.3442
+          },
+          {
+            "name": "window-created",
+            "at": 1792339198216,
+            "fromStartMs": 3293.8972
+          },
+          {
+            "name": "ready-to-show",
+            "at": 1792339198397,
+            "fromStartMs": 3474.9033
+          },
+          {
+            "name": "gateway-start",
+            "at": 1792339198416,
+            "fromStartMs": 3493.6625
+          }
+        ],
+        "counters": {
+          "spawnCount": 7,
+          "spawnByMethod": {
+            "spawn": 0,
+            "exec": 0,
+            "execFile": 7,
+            "fork": 0,
+            "spawnSync": 0,
+            "execSync": 0,
+            "execFileSync": 0
+          },
+          "recentSpawns": [
+            {
+              "method": "execFile",
+              "at": 1792339198775,
+              "fromStartMs": 3853.1625,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339198800,
+              "fromStartMs": 3878.2135999999996,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339198929,
+              "fromStartMs": 4006.9312999999997,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339198934,
+              "fromStartMs": 4012.1317000000004,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339198938,
+              "fromStartMs": 4015.8258,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339198942,
+              "fromStartMs": 4019.9265,
+              "command": "git"
+            },
+            {
+              "method": "execFile",
+              "at": 1792339198945,
+              "fromStartMs": 4023.5615999999995,
+              "command": "git"
+            }
+          ],
+          "activeIntervals": 4,
+          "activeWatchers": 0,
+          "unavailable": []
+        },
+        "rssBytes": 594509824
+      },
+      "sampler": {
+        "sampleCount": 1,
+        "coverageMs": 0,
+        "latest": {
+          "at": 1792339203159,
+          "cpuPercent": 26.85,
+          "rssBytes": 594350080,
+          "heapUsedBytes": 291574592,
+          "systemFreeBytes": 4453838848,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": false,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 26.85,
+        "peakCpuPercent": 26.85,
+        "peakRssBytes": 594350080,
+        "shedSampleCount": 0
+      },
+      "renderer": {
+        "schema": "clawx.renderer-performance/v1",
+        "startedAt": 1792339198395,
+        "generatedAt": 1792339204278,
+        "marks": [
+          {
+            "name": "renderer-start",
+            "at": 1792339198395,
+            "fromStartMs": 0.09999999403953552
+          },
+          {
+            "name": "renderer-first-paint",
+            "at": 1792339198420,
+            "fromStartMs": 25.099999994039536
+          }
+        ],
+        "longTasks": [
+          {
+            "startTime": 504.5,
+            "durationMs": 51
+          },
+          {
+            "startTime": 575.2000000178814,
+            "durationMs": 83
+          },
+          {
+            "startTime": 662.5,
+            "durationMs": 65
+          },
+          {
+            "startTime": 862.7000000178814,
+            "durationMs": 61
+          },
+          {
+            "startTime": 924.9000000059605,
+            "durationMs": 78
+          }
+        ],
+        "inputLatency": [],
+        "ipc": {
+          "count": 58,
+          "p50Ms": 72,
+          "p95Ms": 244,
+          "recent": [
+            {
+              "module": "window",
+              "action": "isMaximized",
+              "at": 1792339198783,
+              "durationMs": 38,
+              "ok": true
+            },
+            {
+              "module": "permissions",
+              "action": "approvals",
+              "at": 1792339198783,
+              "durationMs": 37,
+              "ok": true
+            },
+            {
+              "module": "agentBrowser",
+              "action": "tasks",
+              "at": 1792339198783,
+              "durationMs": 37,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "rpc",
+              "at": 1792339198783,
+              "durationMs": 37,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339198788,
+              "durationMs": 42,
+              "ok": true
+            },
+            {
+              "module": "resourceTracker",
+              "action": "list",
+              "at": 1792339198788,
+              "durationMs": 41,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "vendors",
+              "at": 1792339198877,
+              "durationMs": 130,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "getDefaultAccount",
+              "at": 1792339198877,
+              "durationMs": 130,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339198877,
+              "durationMs": 130,
+              "ok": true
+            },
+            {
+              "module": "remoteTasks",
+              "action": "list",
+              "at": 1792339198877,
+              "durationMs": 131,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "list",
+              "at": 1792339198880,
+              "durationMs": 130,
+              "ok": true
+            },
+            {
+              "module": "runtimeApprovals",
+              "action": "list",
+              "at": 1792339198946,
+              "durationMs": 194,
+              "ok": false
+            },
+            {
+              "module": "settings",
+              "action": "getAll",
+              "at": 1792339198946,
+              "durationMs": 195,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339198952,
+              "durationMs": 201,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "vendors",
+              "at": 1792339198958,
+              "durationMs": 207,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "getDefaultAccount",
+              "at": 1792339198958,
+              "durationMs": 207,
+              "ok": true
+            },
+            {
+              "module": "system",
+              "action": "info",
+              "at": 1792339198958,
+              "durationMs": 207,
+              "ok": true
+            },
+            {
+              "module": "agents",
+              "action": "list",
+              "at": 1792339198961,
+              "durationMs": 215,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339198973,
+              "durationMs": 226,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339198973,
+              "durationMs": 226,
+              "ok": true
+            },
+            {
+              "module": "agents",
+              "action": "list",
+              "at": 1792339198973,
+              "durationMs": 224,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339198995,
+              "durationMs": 244,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339198995,
+              "durationMs": 244,
+              "ok": true
+            },
+            {
+              "module": "sessionActivity",
+              "action": "snapshot",
+              "at": 1792339198995,
+              "durationMs": 247,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339199008,
+              "durationMs": 81,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "status",
+              "at": 1792339199008,
+              "durationMs": 80,
+              "ok": true
+            },
+            {
+              "module": "git",
+              "action": "branches",
+              "at": 1792339199008,
+              "durationMs": 80,
+              "ok": false
+            },
+            {
+              "module": "git",
+              "action": "worktrees",
+              "at": 1792339199008,
+              "durationMs": 80,
+              "ok": false
+            },
+            {
+              "module": "gateway",
+              "action": "rpc",
+              "at": 1792339199009,
+              "durationMs": 79,
+              "ok": false
+            },
+            {
+              "module": "permissions",
+              "action": "approvals",
+              "at": 1792339199024,
+              "durationMs": 79,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339199024,
+              "durationMs": 72,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339199024,
+              "durationMs": 94,
+              "ok": true
+            },
+            {
+              "module": "sessionActivity",
+              "action": "snapshot",
+              "at": 1792339199024,
+              "durationMs": 96,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339199045,
+              "durationMs": 116,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "list",
+              "at": 1792339199045,
+              "durationMs": 72,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "list",
+              "at": 1792339199053,
+              "durationMs": 58,
+              "ok": true
+            },
+            {
+              "module": "sessions",
+              "action": "history",
+              "at": 1792339199060,
+              "durationMs": 51,
+              "ok": false
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339199264,
+              "durationMs": 11,
+              "ok": true
+            },
+            {
+              "module": "sessions",
+              "action": "compactionStatus",
+              "at": 1792339199441,
+              "durationMs": 1,
+              "ok": false
+            },
+            {
+              "module": "sessions",
+              "action": "longTaskControlStatus",
+              "at": 1792339199441,
+              "durationMs": 1,
+              "ok": false
+            },
+            {
+              "module": "usage",
+              "action": "contextRange",
+              "at": 1792339199443,
+              "durationMs": 4,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "live",
+              "at": 1792339199443,
+              "durationMs": 3,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339199579,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339199897,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "promptCacheStatus",
+              "at": 1792339200111,
+              "durationMs": 3,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339200213,
+              "durationMs": 11,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339200540,
+              "durationMs": 11,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339200861,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339201173,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339201489,
+              "durationMs": 11,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339201812,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339202123,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339202439,
+              "durationMs": 10,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339202763,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339203080,
+              "durationMs": 9,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339203399,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339203711,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339204023,
+              "durationMs": 9,
+              "ok": true
+            }
+          ]
+        },
+        "unavailable": []
+      }
+    }
+  ],
+  "boundaries": [
+    "Each run launches a fresh Electron process and a fresh user-data directory.",
+    "P50/P95 use the nearest-rank index on the measured runs; no values are synthesized.",
+    "This is agent-driven local evidence and does not include a human verdict."
+  ]
+}

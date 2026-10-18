@@ -1,0 +1,97 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0419",
+  "node": "TF-0419",
+  "title": "把主进程启动路径上的同步 I/O 移出首帧",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "164f88735",
+    "full": "164f88735c8e1e7bc3925c0ea107211bc6880e24",
+    "beforeCandidate": "3d903a731e9c2e830bd3d45085daada3a37fb6ab",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "启动 trace 能定位每次 >5ms 的主进程同步阻塞；窗口创建前无可解释的长同步 I/O",
+      "result": "pass",
+      "evidence": [
+        "loadExtensionsFromManifest now uses fs/promises readFile; no readFileSync manifest parse remains.",
+        "Before/after 5-run marks retain app-ready, window-created, ready-to-show and renderer-first-paint; all runs have complete mark sets.",
+        "The gateway-start mark is present after ready-to-show in 5/5 after runs, so config-sync starts after the first-frame signal."
+      ]
+    },
+    {
+      "criterion": "目录扫描、prelaunch maintenance 和大 manifest 读取改为异步或首帧后执行；保留必要的原子写入语义",
+      "result": "pass",
+      "evidence": [
+        "launch-at-startup synchronization moved from awaited pre-window path to the deferred window-services block.",
+        "Gateway config-sync directory scans and Docker spawnSync remain in the existing config-sync implementation, but execute only after the ready-to-show-gated gateway start.",
+        "No atomic-write implementation was changed."
+      ]
+    },
+    {
+      "criterion": "config-sync 的 Docker spawnSync 不在窗口首帧前执行，或记录明确的阻断理由",
+      "result": "pass",
+      "evidence": [
+        "after results gateway-start after ready-to-show: [True, True, True, True, True]",
+        "The marker is emitted immediately before the deferred gateway auto-start; config-sync runs inside that start path."
+      ]
+    },
+    {
+      "criterion": "主进程启动前后 CPU 采样与启动 marks 成对落盘，证明没有把阻塞转移到 renderer",
+      "result": "pass-with-variance-boundary",
+      "evidence": [
+        "before ready-to-show P50/P95=3757.5203/4537.2969ms; after=3531.6791000000003/3607.7175000000007ms",
+        "before sampler avg CPU samples=[28.33, 24.36, 26.18, 23.76, 24.38]; after=[26.56, 30.62, 21.24, 23.74, 26.85]; each run produced one real sampler sample and renderer-first-paint mark.",
+        "renderer-first-paint P50=26.099999994039536→25.099999994039536ms; no consistent transfer to renderer is evidenced."
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 30129,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/electron-main-blocking-io.md",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm repo:artifacts:check",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm agent-dev:fast",
+      "exitCode": 0,
+      "unitFiles": 7,
+      "unitTests": 88,
+      "result": "pass"
+    },
+    {
+      "command": "portable Node 24.16.0 + @playwright/test cli: main-navigation, settings-storage, gateway-lifecycle",
+      "exitCode": 0,
+      "tests": 9,
+      "result": "pass"
+    }
+  ],
+  "boundaries": [
+    "Short-run CPU sampling produces one real sample per run; this is not a long CPU curve or release benchmark.",
+    "P50/P95 startup variance is retained; this node claims removal of pre-first-frame blocking work, not a universal latency percentage.",
+    "Renderer first-paint P95 is noisy across five fresh processes; no synthetic smoothing or warm-up exclusion was applied.",
+    "All evidence is local, agent-driven, and contains no real-human verdict."
+  ],
+  "evidenceFiles": [
+    "measure.mjs",
+    "before.json",
+    "after.json"
+  ]
+}

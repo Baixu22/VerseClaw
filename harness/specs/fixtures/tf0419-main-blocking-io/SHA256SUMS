@@ -1,0 +1,5 @@
+2f55b9fa6a1f7b5ccc98fc977b7a2d5d03d95b18e12c6db9dd2912836b33419e  harness/specs/fixtures/tf0419-main-blocking-io/measure.mjs
+bff83f75755b34c32d4503d35278c651a74947a48adcc683e68a540daf32b51f  harness/specs/fixtures/tf0419-main-blocking-io/README.md
+a98ad2e561c4d3702ed83c104545ffd0c02403067b6432bbc991539f0d23948c  harness/specs/fixtures/tf0419-main-blocking-io/before.json
+e3563b154b4649c83968fb2d5d4f7724f62b8944d74d4cfdc2a56845fab67213  harness/specs/fixtures/tf0419-main-blocking-io/after.json
+c733f210e8d3fd4cc9c048df27f5d77a551bb93f4db15622e00b2e0c29cbd9f3  harness/specs/fixtures/tf0419-main-blocking-io/acceptance.json

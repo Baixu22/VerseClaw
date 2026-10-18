@@ -3,57 +3,81 @@
   "driven_by": "agent",
   "actor": "codex-tf0418-startup-probe",
   "candidate": "3d903a731e9c2e830bd3d45085daada3a37fb6ab",
-  "completedAt": "2026-10-18T15:33:13.252Z",
+  "completedAt": "2026-10-18T15:59:03.255Z",
   "runs": 5,
-  "waitMs": 2500,
+  "waitMs": 6000,
   "platform": "win32",
   "metrics": {
     "appReady": {
       "count": 5,
-      "p50Ms": 3402.6218999999996,
-      "p95Ms": 5200.174300000001,
+      "p50Ms": 3427.4283000000005,
+      "p95Ms": 3755.7379,
       "values": [
-        5200.174300000001,
-        3315.8139,
-        3290.8917,
-        3429.2176,
-        3402.6218999999996
+        3755.7379,
+        3457.242,
+        3384.5168000000003,
+        3132.6967999999997,
+        3427.4283000000005
       ]
     },
     "windowCreated": {
       "count": 5,
-      "p50Ms": 3524.0468,
-      "p95Ms": 5546.3066,
+      "p50Ms": 3544.8377,
+      "p95Ms": 4092.3234,
       "values": [
-        5546.3066,
-        3410.9386000000004,
-        3405.0037,
-        3559.1854000000003,
-        3524.0468
+        4092.3234,
+        3600.3853,
+        3534.4656999999997,
+        3245.0836,
+        3544.8377
       ]
     },
     "readyToShow": {
       "count": 5,
-      "p50Ms": 3733.0323000000003,
-      "p95Ms": 6017.289199999999,
+      "p50Ms": 3757.5203,
+      "p95Ms": 4537.2969,
       "values": [
-        6017.289199999999,
-        3601.4344,
-        3578.1204,
-        3738.1893,
-        3733.0323000000003
+        4537.2969,
+        3764.4735,
+        3757.5203,
+        3436.5035,
+        3714.9473
       ]
     },
     "rendererFirstPaint": {
       "count": 5,
-      "p50Ms": 25.19999998807907,
-      "p95Ms": 35.400000005960464,
+      "p50Ms": 26.099999994039536,
+      "p95Ms": 43.900000005960464,
       "values": [
-        35.400000005960464,
-        21.399999976158142,
-        26.900000005960464,
-        23,
-        25.19999998807907
+        43.900000005960464,
+        24.80000001192093,
+        27.69999998807907,
+        26,
+        26.099999994039536
+      ]
+    },
+    "sampler": {
+      "count": 5,
+      "sampleCounts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "avgCpuPercent": [
+        28.33,
+        24.36,
+        26.18,
+        23.76,
+        24.38
+      ],
+      "peakCpuPercent": [
+        28.33,
+        24.36,
+        26.18,
+        23.76,
+        24.38
       ]
     }
   },
@@ -64,23 +88,23 @@
       "run": 1,
       "ok": true,
       "main": {
-        "startedAt": 1792337556434,
-        "elapsedMs": 8525.9911,
+        "startedAt": 1792339085515,
+        "elapsedMs": 11201.687999999998,
         "marks": [
           {
             "name": "app-ready",
-            "at": 1792337561634,
-            "fromStartMs": 5200.174300000001
+            "at": 1792339089271,
+            "fromStartMs": 3755.7379
           },
           {
             "name": "window-created",
-            "at": 1792337561980,
-            "fromStartMs": 5546.3066
+            "at": 1792339089608,
+            "fromStartMs": 4092.3234
           },
           {
             "name": "ready-to-show",
-            "at": 1792337562451,
-            "fromStartMs": 6017.289199999999
+            "at": 1792339090052,
+            "fromStartMs": 4537.2969
           }
         ],
         "counters": {
@@ -97,44 +121,44 @@
           "recentSpawns": [
             {
               "method": "execFile",
-              "at": 1792337562836,
-              "fromStartMs": 6402.9465,
+              "at": 1792339090470,
+              "fromStartMs": 4954.5807,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337562865,
-              "fromStartMs": 6431.476199999999,
+              "at": 1792339090504,
+              "fromStartMs": 4989.1217,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337562930,
-              "fromStartMs": 6496.8135,
+              "at": 1792339090596,
+              "fromStartMs": 5080.3162,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337562933,
-              "fromStartMs": 6499.5039,
+              "at": 1792339090600,
+              "fromStartMs": 5084.6241,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337562935,
-              "fromStartMs": 6501.861499999999,
+              "at": 1792339090604,
+              "fromStartMs": 5089.0321,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337562938,
-              "fromStartMs": 6504.043899999999,
+              "at": 1792339090608,
+              "fromStartMs": 5092.8785,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337562941,
-              "fromStartMs": 6506.979599999999,
+              "at": 1792339090612,
+              "fromStartMs": 5097.1363,
               "command": "git"
             }
           ],
@@ -142,375 +166,450 @@
           "activeWatchers": 0,
           "unavailable": []
         },
-        "rssBytes": 592351232
+        "rssBytes": 594923520
+      },
+      "sampler": {
+        "sampleCount": 1,
+        "coverageMs": 0,
+        "latest": {
+          "at": 1792339094470,
+          "cpuPercent": 28.33,
+          "rssBytes": 594722816,
+          "heapUsedBytes": 308300748,
+          "systemFreeBytes": 4145172480,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": false,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 28.33,
+        "peakCpuPercent": 28.33,
+        "peakRssBytes": 594722816,
+        "shedSampleCount": 0
       },
       "renderer": {
         "schema": "clawx.renderer-performance/v1",
-        "startedAt": 1792337562448,
-        "generatedAt": 1792337564783,
+        "startedAt": 1792339090049,
+        "generatedAt": 1792339096884,
         "marks": [
           {
             "name": "renderer-start",
-            "at": 1792337562449,
-            "fromStartMs": 0.10000002384185791
+            "at": 1792339090049,
+            "fromStartMs": 0
           },
           {
             "name": "renderer-first-paint",
-            "at": 1792337562484,
-            "fromStartMs": 35.400000005960464
+            "at": 1792339090093,
+            "fromStartMs": 43.900000005960464
           }
         ],
         "longTasks": [
           {
-            "startTime": 785.3000000119209,
-            "durationMs": 74
+            "startTime": 674.8000000119209,
+            "durationMs": 57
           },
           {
-            "startTime": 895.4000000059605,
-            "durationMs": 63
+            "startTime": 763.4000000059605,
+            "durationMs": 136
           },
           {
-            "startTime": 1105.300000011921,
-            "durationMs": 77
+            "startTime": 921.6000000238419,
+            "durationMs": 80
           },
           {
-            "startTime": 1288.5,
-            "durationMs": 58
+            "startTime": 5177.700000017881,
+            "durationMs": 105
           }
         ],
         "inputLatency": [],
         "ipc": {
-          "count": 47,
-          "p50Ms": 60,
-          "p95Ms": 158,
+          "count": 55,
+          "p50Ms": 112,
+          "p95Ms": 257,
           "recent": [
             {
               "module": "window",
               "action": "isMaximized",
-              "at": 1792337562865,
-              "durationMs": 61,
+              "at": 1792339090521,
+              "durationMs": 92,
               "ok": true
             },
             {
               "module": "permissions",
               "action": "approvals",
-              "at": 1792337562865,
-              "durationMs": 60,
+              "at": 1792339090521,
+              "durationMs": 91,
               "ok": true
             },
             {
               "module": "agentBrowser",
               "action": "tasks",
-              "at": 1792337562865,
-              "durationMs": 60,
+              "at": 1792339090521,
+              "durationMs": 91,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "rpc",
-              "at": 1792337562865,
-              "durationMs": 60,
+              "at": 1792339090521,
+              "durationMs": 91,
               "ok": true
             },
             {
               "module": "remoteTasks",
               "action": "list",
-              "at": 1792337562865,
-              "durationMs": 60,
+              "at": 1792339090521,
+              "durationMs": 91,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337562871,
-              "durationMs": 66,
+              "at": 1792339090529,
+              "durationMs": 99,
               "ok": true
             },
             {
               "module": "resourceTracker",
               "action": "list",
-              "at": 1792337562871,
-              "durationMs": 66,
+              "at": 1792339090530,
+              "durationMs": 99,
               "ok": true
             },
             {
               "module": "providers",
               "action": "vendors",
-              "at": 1792337562872,
-              "durationMs": 66,
+              "at": 1792339090530,
+              "durationMs": 98,
               "ok": true
             },
             {
               "module": "providers",
               "action": "getDefaultAccount",
-              "at": 1792337562872,
-              "durationMs": 66,
+              "at": 1792339090530,
+              "durationMs": 98,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337562872,
-              "durationMs": 66,
+              "at": 1792339090530,
+              "durationMs": 98,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "list",
-              "at": 1792337562876,
-              "durationMs": 68,
+              "at": 1792339090530,
+              "durationMs": 94,
               "ok": true
             },
             {
               "module": "runtimeApprovals",
               "action": "list",
-              "at": 1792337562941,
-              "durationMs": 131,
+              "at": 1792339090611,
+              "durationMs": 171,
               "ok": false
             },
             {
               "module": "settings",
               "action": "getAll",
-              "at": 1792337562941,
-              "durationMs": 130,
+              "at": 1792339090612,
+              "durationMs": 166,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337562948,
-              "durationMs": 137,
+              "at": 1792339090639,
+              "durationMs": 192,
               "ok": true
             },
             {
               "module": "providers",
               "action": "vendors",
-              "at": 1792337562952,
-              "durationMs": 141,
+              "at": 1792339090652,
+              "durationMs": 205,
               "ok": true
             },
             {
               "module": "providers",
               "action": "getDefaultAccount",
-              "at": 1792337562952,
-              "durationMs": 141,
+              "at": 1792339090652,
+              "durationMs": 205,
               "ok": true
             },
             {
               "module": "system",
               "action": "info",
-              "at": 1792337562952,
-              "durationMs": 140,
+              "at": 1792339090652,
+              "durationMs": 205,
               "ok": true
             },
             {
               "module": "agents",
               "action": "list",
-              "at": 1792337562954,
-              "durationMs": 149,
+              "at": 1792339090657,
+              "durationMs": 227,
               "ok": true
             },
             {
               "module": "providers",
               "action": "accounts",
-              "at": 1792337562964,
-              "durationMs": 158,
+              "at": 1792339090681,
+              "durationMs": 249,
               "ok": true
             },
             {
               "module": "providers",
               "action": "accountKeyInfo",
-              "at": 1792337562964,
-              "durationMs": 158,
+              "at": 1792339090681,
+              "durationMs": 249,
               "ok": true
             },
             {
               "module": "providers",
               "action": "accounts",
-              "at": 1792337562964,
-              "durationMs": 153,
+              "at": 1792339090681,
+              "durationMs": 234,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339090681,
+              "durationMs": 234,
               "ok": true
             },
             {
               "module": "agents",
               "action": "list",
-              "at": 1792337562964,
-              "durationMs": 156,
-              "ok": true
-            },
-            {
-              "module": "providers",
-              "action": "accountKeyInfo",
-              "at": 1792337562968,
-              "durationMs": 157,
+              "at": 1792339090681,
+              "durationMs": 245,
               "ok": true
             },
             {
               "module": "sessionActivity",
               "action": "snapshot",
-              "at": 1792337562971,
-              "durationMs": 164,
+              "at": 1792339090698,
+              "durationMs": 263,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337562985,
-              "durationMs": 56,
+              "at": 1792339090706,
+              "durationMs": 113,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337562985,
-              "durationMs": 55,
+              "at": 1792339090706,
+              "durationMs": 112,
               "ok": true
             },
             {
               "module": "git",
               "action": "branches",
-              "at": 1792337562985,
-              "durationMs": 55,
+              "at": 1792339090707,
+              "durationMs": 112,
               "ok": false
             },
             {
               "module": "git",
               "action": "worktrees",
-              "at": 1792337562985,
-              "durationMs": 55,
+              "at": 1792339090707,
+              "durationMs": 113,
               "ok": false
             },
             {
               "module": "gateway",
               "action": "rpc",
-              "at": 1792337562985,
-              "durationMs": 54,
+              "at": 1792339090707,
+              "durationMs": 111,
               "ok": false
             },
             {
               "module": "permissions",
               "action": "approvals",
-              "at": 1792337562987,
-              "durationMs": 47,
-              "ok": true
-            },
-            {
-              "module": "gateway",
-              "action": "status",
-              "at": 1792337562987,
-              "durationMs": 39,
+              "at": 1792339090735,
+              "durationMs": 125,
               "ok": true
             },
             {
               "module": "sessionActivity",
               "action": "snapshot",
-              "at": 1792337562987,
-              "durationMs": 57,
+              "at": 1792339090735,
+              "durationMs": 141,
               "ok": true
             },
             {
               "module": "taskLedger",
               "action": "snapshot",
-              "at": 1792337562999,
-              "durationMs": 68,
+              "at": 1792339090763,
+              "durationMs": 169,
               "ok": true
             },
             {
               "module": "taskLedger",
               "action": "snapshot",
-              "at": 1792337562999,
-              "durationMs": 69,
+              "at": 1792339090764,
+              "durationMs": 168,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "status",
+              "at": 1792339090764,
+              "durationMs": 124,
               "ok": true
             },
             {
               "module": "providers",
               "action": "list",
-              "at": 1792337563005,
-              "durationMs": 41,
+              "at": 1792339090783,
+              "durationMs": 102,
               "ok": true
             },
             {
               "module": "providers",
               "action": "list",
-              "at": 1792337563019,
-              "durationMs": 51,
+              "at": 1792339090798,
+              "durationMs": 117,
               "ok": true
             },
             {
               "module": "sessions",
               "action": "history",
-              "at": 1792337563047,
-              "durationMs": 60,
+              "at": 1792339090831,
+              "durationMs": 96,
               "ok": false
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337563258,
-              "durationMs": 11,
+              "at": 1792339090942,
+              "durationMs": 27,
               "ok": true
             },
             {
               "module": "sessions",
               "action": "compactionStatus",
-              "at": 1792337563443,
+              "at": 1792339091108,
               "durationMs": 2,
               "ok": false
             },
             {
               "module": "sessions",
               "action": "longTaskControlStatus",
-              "at": 1792337563443,
+              "at": 1792339091108,
               "durationMs": 2,
               "ok": false
             },
             {
               "module": "usage",
               "action": "contextRange",
-              "at": 1792337563444,
-              "durationMs": 3,
+              "at": 1792339091111,
+              "durationMs": 6,
               "ok": true
             },
             {
               "module": "usage",
               "action": "live",
-              "at": 1792337563445,
-              "durationMs": 4,
+              "at": 1792339091111,
+              "durationMs": 5,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337563577,
-              "durationMs": 7,
+              "at": 1792339091267,
+              "durationMs": 9,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337563888,
-              "durationMs": 6,
+              "at": 1792339091628,
+              "durationMs": 42,
               "ok": true
             },
             {
               "module": "usage",
               "action": "promptCacheStatus",
-              "at": 1792337564102,
-              "durationMs": 2,
+              "at": 1792339091775,
+              "durationMs": 3,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337564212,
-              "durationMs": 6,
-              "ok": true
-            },
-            {
-              "module": "workspaces",
-              "action": "saveState",
-              "at": 1792337564527,
+              "at": 1792339091950,
               "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339092261,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339092633,
+              "durationMs": 68,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339093076,
+              "durationMs": 137,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339093470,
+              "durationMs": 81,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339093898,
+              "durationMs": 121,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339094471,
+              "durationMs": 257,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339095002,
+              "durationMs": 217,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339095449,
+              "durationMs": 134,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339096536,
+              "durationMs": 770,
               "ok": true
             }
           ]
@@ -522,23 +621,23 @@
       "run": 2,
       "ok": true,
       "main": {
-        "startedAt": 1792337565867,
-        "elapsedMs": 6108.8681,
+        "startedAt": 1792339101807,
+        "elapsedMs": 9782.5788,
         "marks": [
           {
             "name": "app-ready",
-            "at": 1792337569182,
-            "fromStartMs": 3315.8139
+            "at": 1792339105264,
+            "fromStartMs": 3457.242
           },
           {
             "name": "window-created",
-            "at": 1792337569278,
-            "fromStartMs": 3410.9386000000004
+            "at": 1792339105408,
+            "fromStartMs": 3600.3853
           },
           {
             "name": "ready-to-show",
-            "at": 1792337569468,
-            "fromStartMs": 3601.4344
+            "at": 1792339105572,
+            "fromStartMs": 3764.4735
           }
         ],
         "counters": {
@@ -555,44 +654,44 @@
           "recentSpawns": [
             {
               "method": "execFile",
-              "at": 1792337569831,
-              "fromStartMs": 3964.8572999999997,
+              "at": 1792339105939,
+              "fromStartMs": 4132.1667,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337569859,
-              "fromStartMs": 3992.0724,
+              "at": 1792339105966,
+              "fromStartMs": 4158.7297,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337569966,
-              "fromStartMs": 4099.4349999999995,
+              "at": 1792339106024,
+              "fromStartMs": 4216.7928,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337569969,
-              "fromStartMs": 4102.7117,
+              "at": 1792339106028,
+              "fromStartMs": 4220.4333,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337569973,
-              "fromStartMs": 4106.1592,
+              "at": 1792339106032,
+              "fromStartMs": 4224.5045,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337569977,
-              "fromStartMs": 4110.5354,
+              "at": 1792339106036,
+              "fromStartMs": 4229.2659,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337569980,
-              "fromStartMs": 4113.099999999999,
+              "at": 1792339106040,
+              "fromStartMs": 4232.8059,
               "command": "git"
             }
           ],
@@ -600,375 +699,479 @@
           "activeWatchers": 0,
           "unavailable": []
         },
-        "rssBytes": 594100224
+        "rssBytes": 582815744
+      },
+      "sampler": {
+        "sampleCount": 1,
+        "coverageMs": 0,
+        "latest": {
+          "at": 1792339110318,
+          "cpuPercent": 24.36,
+          "rssBytes": 582680576,
+          "heapUsedBytes": 112518428,
+          "systemFreeBytes": 4106584064,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": false,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 24.36,
+        "peakCpuPercent": 24.36,
+        "peakRssBytes": 582680576,
+        "shedSampleCount": 0
       },
       "renderer": {
         "schema": "clawx.renderer-performance/v1",
-        "startedAt": 1792337569466,
-        "generatedAt": 1792337571817,
+        "startedAt": 1792339105569,
+        "generatedAt": 1792339111447,
         "marks": [
           {
             "name": "renderer-start",
-            "at": 1792337569466,
-            "fromStartMs": 0
+            "at": 1792339105569,
+            "fromStartMs": 0.09999999403953552
           },
           {
             "name": "renderer-first-paint",
-            "at": 1792337569488,
-            "fromStartMs": 21.399999976158142
+            "at": 1792339105594,
+            "fromStartMs": 24.80000001192093
           }
         ],
         "longTasks": [
           {
-            "startTime": 571.3000000119209,
-            "durationMs": 77
+            "startTime": 477.09999999403954,
+            "durationMs": 60
           },
           {
-            "startTime": 649.2000000178814,
+            "startTime": 568.9000000059605,
+            "durationMs": 57
+          },
+          {
+            "startTime": 774.3000000119209,
+            "durationMs": 61
+          },
+          {
+            "startTime": 848.4000000059605,
+            "durationMs": 70
+          },
+          {
+            "startTime": 947.5999999940395,
+            "durationMs": 57
+          },
+          {
+            "startTime": 1021.8000000119209,
             "durationMs": 51
-          },
-          {
-            "startTime": 837.0999999940395,
-            "durationMs": 73
-          },
-          {
-            "startTime": 911.7000000178814,
-            "durationMs": 74
           }
         ],
         "inputLatency": [],
         "ipc": {
-          "count": 47,
-          "p50Ms": 53,
-          "p95Ms": 193,
+          "count": 58,
+          "p50Ms": 59,
+          "p95Ms": 181,
           "recent": [
             {
               "module": "window",
               "action": "isMaximized",
-              "at": 1792337569838,
-              "durationMs": 35,
+              "at": 1792339105962,
+              "durationMs": 51,
               "ok": true
             },
             {
               "module": "permissions",
               "action": "approvals",
-              "at": 1792337569839,
-              "durationMs": 36,
-              "ok": true
-            },
-            {
-              "module": "agentBrowser",
-              "action": "tasks",
-              "at": 1792337569839,
-              "durationMs": 35,
-              "ok": true
-            },
-            {
-              "module": "gateway",
-              "action": "rpc",
-              "at": 1792337569839,
-              "durationMs": 35,
+              "at": 1792339105962,
+              "durationMs": 50,
               "ok": true
             },
             {
               "module": "remoteTasks",
               "action": "list",
-              "at": 1792337569839,
-              "durationMs": 35,
+              "at": 1792339105962,
+              "durationMs": 50,
+              "ok": true
+            },
+            {
+              "module": "agentBrowser",
+              "action": "tasks",
+              "at": 1792339105962,
+              "durationMs": 50,
+              "ok": true
+            },
+            {
+              "module": "gateway",
+              "action": "rpc",
+              "at": 1792339105962,
+              "durationMs": 50,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337569847,
-              "durationMs": 43,
+              "at": 1792339105972,
+              "durationMs": 60,
               "ok": true
             },
             {
               "module": "resourceTracker",
               "action": "list",
-              "at": 1792337569847,
-              "durationMs": 43,
+              "at": 1792339105972,
+              "durationMs": 59,
               "ok": true
             },
             {
               "module": "providers",
               "action": "vendors",
-              "at": 1792337569927,
-              "durationMs": 122,
+              "at": 1792339105977,
+              "durationMs": 64,
               "ok": true
             },
             {
               "module": "providers",
               "action": "getDefaultAccount",
-              "at": 1792337569927,
-              "durationMs": 122,
+              "at": 1792339105977,
+              "durationMs": 64,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337569927,
-              "durationMs": 122,
+              "at": 1792339105977,
+              "durationMs": 63,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "list",
-              "at": 1792337569928,
-              "durationMs": 121,
+              "at": 1792339105977,
+              "durationMs": 62,
               "ok": true
             },
             {
               "module": "runtimeApprovals",
               "action": "list",
-              "at": 1792337569980,
-              "durationMs": 171,
+              "at": 1792339106035,
+              "durationMs": 119,
               "ok": false
             },
             {
               "module": "settings",
               "action": "getAll",
-              "at": 1792337569980,
-              "durationMs": 171,
+              "at": 1792339106036,
+              "durationMs": 119,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337569984,
-              "durationMs": 175,
+              "at": 1792339106043,
+              "durationMs": 126,
               "ok": true
             },
             {
               "module": "providers",
               "action": "vendors",
-              "at": 1792337569988,
-              "durationMs": 179,
+              "at": 1792339106048,
+              "durationMs": 131,
               "ok": true
             },
             {
               "module": "providers",
               "action": "getDefaultAccount",
-              "at": 1792337569988,
-              "durationMs": 179,
+              "at": 1792339106048,
+              "durationMs": 131,
               "ok": true
             },
             {
               "module": "system",
               "action": "info",
-              "at": 1792337569988,
+              "at": 1792339106065,
+              "durationMs": 148,
+              "ok": true
+            },
+            {
+              "module": "agents",
+              "action": "list",
+              "at": 1792339106067,
+              "durationMs": 155,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339106094,
+              "durationMs": 181,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339106094,
+              "durationMs": 181,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339106094,
+              "durationMs": 177,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339106094,
+              "durationMs": 177,
+              "ok": true
+            },
+            {
+              "module": "agents",
+              "action": "list",
+              "at": 1792339106094,
               "durationMs": 179,
-              "ok": true
-            },
-            {
-              "module": "agents",
-              "action": "list",
-              "at": 1792337569989,
-              "durationMs": 185,
-              "ok": true
-            },
-            {
-              "module": "providers",
-              "action": "accounts",
-              "at": 1792337569998,
-              "durationMs": 193,
-              "ok": true
-            },
-            {
-              "module": "providers",
-              "action": "accountKeyInfo",
-              "at": 1792337569998,
-              "durationMs": 193,
-              "ok": true
-            },
-            {
-              "module": "agents",
-              "action": "list",
-              "at": 1792337569998,
-              "durationMs": 192,
-              "ok": true
-            },
-            {
-              "module": "providers",
-              "action": "accounts",
-              "at": 1792337570002,
-              "durationMs": 193,
-              "ok": true
-            },
-            {
-              "module": "providers",
-              "action": "accountKeyInfo",
-              "at": 1792337570002,
-              "durationMs": 193,
               "ok": true
             },
             {
               "module": "sessionActivity",
               "action": "snapshot",
-              "at": 1792337570002,
+              "at": 1792339106111,
               "durationMs": 197,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337570014,
-              "durationMs": 49,
+              "at": 1792339106116,
+              "durationMs": 94,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337570014,
-              "durationMs": 49,
+              "at": 1792339106116,
+              "durationMs": 93,
               "ok": true
             },
             {
               "module": "git",
               "action": "branches",
-              "at": 1792337570014,
-              "durationMs": 49,
+              "at": 1792339106116,
+              "durationMs": 93,
               "ok": false
             },
             {
               "module": "git",
               "action": "worktrees",
-              "at": 1792337570015,
-              "durationMs": 50,
+              "at": 1792339106117,
+              "durationMs": 93,
               "ok": false
             },
             {
               "module": "gateway",
               "action": "rpc",
-              "at": 1792337570031,
-              "durationMs": 64,
+              "at": 1792339106117,
+              "durationMs": 93,
               "ok": false
             },
             {
               "module": "permissions",
               "action": "approvals",
-              "at": 1792337570032,
-              "durationMs": 53,
+              "at": 1792339106117,
+              "durationMs": 83,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337570032,
-              "durationMs": 47,
+              "at": 1792339106117,
+              "durationMs": 74,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339106118,
+              "durationMs": 95,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339106118,
+              "durationMs": 94,
               "ok": true
             },
             {
               "module": "sessionActivity",
               "action": "snapshot",
-              "at": 1792337570032,
-              "durationMs": 66,
-              "ok": true
-            },
-            {
-              "module": "taskLedger",
-              "action": "snapshot",
-              "at": 1792337570053,
-              "durationMs": 87,
-              "ok": true
-            },
-            {
-              "module": "taskLedger",
-              "action": "snapshot",
-              "at": 1792337570053,
-              "durationMs": 86,
+              "at": 1792339106118,
+              "durationMs": 95,
               "ok": true
             },
             {
               "module": "providers",
               "action": "list",
-              "at": 1792337570053,
-              "durationMs": 55,
+              "at": 1792339106145,
+              "durationMs": 51,
               "ok": true
             },
             {
               "module": "providers",
               "action": "list",
-              "at": 1792337570065,
-              "durationMs": 63,
+              "at": 1792339106153,
+              "durationMs": 59,
               "ok": true
             },
             {
               "module": "sessions",
               "action": "history",
-              "at": 1792337570071,
-              "durationMs": 39,
+              "at": 1792339106169,
+              "durationMs": 52,
               "ok": false
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337570290,
-              "durationMs": 7,
+              "at": 1792339106346,
+              "durationMs": 10,
               "ok": true
             },
             {
               "module": "sessions",
               "action": "compactionStatus",
-              "at": 1792337570477,
-              "durationMs": 2,
+              "at": 1792339106539,
+              "durationMs": 1,
               "ok": false
             },
             {
               "module": "sessions",
               "action": "longTaskControlStatus",
-              "at": 1792337570477,
+              "at": 1792339106539,
               "durationMs": 2,
               "ok": false
             },
             {
               "module": "usage",
-              "action": "live",
-              "at": 1792337570479,
-              "durationMs": 4,
+              "action": "contextRange",
+              "at": 1792339106540,
+              "durationMs": 3,
               "ok": true
             },
             {
               "module": "usage",
-              "action": "contextRange",
-              "at": 1792337570479,
+              "action": "live",
+              "at": 1792339106541,
               "durationMs": 4,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337570613,
+              "at": 1792339106671,
+              "durationMs": 9,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339106998,
+              "durationMs": 9,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "promptCacheStatus",
+              "at": 1792339107196,
+              "durationMs": 2,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339107328,
+              "durationMs": 11,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339107654,
+              "durationMs": 11,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339107975,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339108287,
               "durationMs": 8,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337570938,
+              "at": 1792339108597,
               "durationMs": 6,
-              "ok": true
-            },
-            {
-              "module": "usage",
-              "action": "promptCacheStatus",
-              "at": 1792337571136,
-              "durationMs": 2,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337571249,
+              "at": 1792339108907,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339109219,
               "durationMs": 7,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337571559,
+              "at": 1792339109533,
+              "durationMs": 9,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339109853,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339110182,
+              "durationMs": 13,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339110502,
               "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339110844,
+              "durationMs": 38,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339111184,
+              "durationMs": 32,
               "ok": true
             }
           ]
@@ -980,23 +1183,23 @@
       "run": 3,
       "ok": true,
       "main": {
-        "startedAt": 1792337572837,
-        "elapsedMs": 6095.8367,
+        "startedAt": 1792339112422,
+        "elapsedMs": 9765.9809,
         "marks": [
           {
             "name": "app-ready",
-            "at": 1792337576127,
-            "fromStartMs": 3290.8917
+            "at": 1792339115807,
+            "fromStartMs": 3384.5168000000003
           },
           {
             "name": "window-created",
-            "at": 1792337576242,
-            "fromStartMs": 3405.0037
+            "at": 1792339115957,
+            "fromStartMs": 3534.4656999999997
           },
           {
             "name": "ready-to-show",
-            "at": 1792337576415,
-            "fromStartMs": 3578.1204
+            "at": 1792339116180,
+            "fromStartMs": 3757.5203
           }
         ],
         "counters": {
@@ -1013,44 +1216,44 @@
           "recentSpawns": [
             {
               "method": "execFile",
-              "at": 1792337576786,
-              "fromStartMs": 3949.7191000000003,
+              "at": 1792339116560,
+              "fromStartMs": 4137.6501,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337576845,
-              "fromStartMs": 4007.9296999999997,
+              "at": 1792339116590,
+              "fromStartMs": 4167.9775,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337576921,
-              "fromStartMs": 4084.8842000000004,
+              "at": 1792339116725,
+              "fromStartMs": 4302.4334,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337576927,
-              "fromStartMs": 4089.9492,
+              "at": 1792339116728,
+              "fromStartMs": 4305.8766,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337576931,
-              "fromStartMs": 4093.942,
+              "at": 1792339116731,
+              "fromStartMs": 4308.588699999999,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337576934,
-              "fromStartMs": 4097.439,
+              "at": 1792339116734,
+              "fromStartMs": 4311.9085,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337576937,
-              "fromStartMs": 4099.9856,
+              "at": 1792339116739,
+              "fromStartMs": 4316.189899999999,
               "command": "git"
             }
           ],
@@ -1058,371 +1261,471 @@
           "activeWatchers": 0,
           "unavailable": []
         },
-        "rssBytes": 582451200
+        "rssBytes": 582561792
+      },
+      "sampler": {
+        "sampleCount": 1,
+        "coverageMs": 0,
+        "latest": {
+          "at": 1792339120879,
+          "cpuPercent": 26.18,
+          "rssBytes": 582361088,
+          "heapUsedBytes": 112696684,
+          "systemFreeBytes": 5222113280,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": false,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 26.18,
+        "peakCpuPercent": 26.18,
+        "peakRssBytes": 582361088,
+        "shedSampleCount": 0
       },
       "renderer": {
         "schema": "clawx.renderer-performance/v1",
-        "startedAt": 1792337576412,
-        "generatedAt": 1792337578774,
+        "startedAt": 1792339116178,
+        "generatedAt": 1792339122155,
         "marks": [
           {
             "name": "renderer-start",
-            "at": 1792337576412,
+            "at": 1792339116178,
             "fromStartMs": 0.09999999403953552
           },
           {
             "name": "renderer-first-paint",
-            "at": 1792337576439,
-            "fromStartMs": 26.900000005960464
+            "at": 1792339116205,
+            "fromStartMs": 27.69999998807907
           }
         ],
         "longTasks": [
           {
-            "startTime": 564.2000000178814,
-            "durationMs": 73
+            "startTime": 544,
+            "durationMs": 50
           },
           {
-            "startTime": 640.4000000059605,
-            "durationMs": 52
+            "startTime": 612.3999999761581,
+            "durationMs": 79
           },
           {
-            "startTime": 904.8000000119209,
+            "startTime": 696.0999999940395,
+            "durationMs": 85
+          },
+          {
+            "startTime": 993.7999999821186,
             "durationMs": 62
           }
         ],
         "inputLatency": [],
         "ipc": {
-          "count": 47,
-          "p50Ms": 52,
-          "p95Ms": 196,
+          "count": 58,
+          "p50Ms": 70,
+          "p95Ms": 268,
           "recent": [
             {
               "module": "window",
               "action": "isMaximized",
-              "at": 1792337576794,
-              "durationMs": 33,
+              "at": 1792339116563,
+              "durationMs": 35,
               "ok": true
             },
             {
               "module": "permissions",
               "action": "approvals",
-              "at": 1792337576794,
-              "durationMs": 32,
+              "at": 1792339116563,
+              "durationMs": 35,
               "ok": true
             },
             {
               "module": "agentBrowser",
               "action": "tasks",
-              "at": 1792337576794,
-              "durationMs": 32,
+              "at": 1792339116563,
+              "durationMs": 35,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "rpc",
-              "at": 1792337576794,
-              "durationMs": 32,
+              "at": 1792339116567,
+              "durationMs": 39,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337576798,
-              "durationMs": 36,
+              "at": 1792339116570,
+              "durationMs": 42,
               "ok": true
             },
             {
               "module": "resourceTracker",
               "action": "list",
-              "at": 1792337576798,
-              "durationMs": 36,
+              "at": 1792339116570,
+              "durationMs": 42,
               "ok": true
             },
             {
               "module": "providers",
               "action": "vendors",
-              "at": 1792337576881,
-              "durationMs": 118,
+              "at": 1792339116652,
+              "durationMs": 123,
               "ok": true
             },
             {
               "module": "providers",
               "action": "getDefaultAccount",
-              "at": 1792337576881,
-              "durationMs": 118,
+              "at": 1792339116652,
+              "durationMs": 123,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337576881,
-              "durationMs": 118,
+              "at": 1792339116652,
+              "durationMs": 123,
               "ok": true
             },
             {
               "module": "remoteTasks",
               "action": "list",
-              "at": 1792337576881,
-              "durationMs": 119,
+              "at": 1792339116652,
+              "durationMs": 124,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "list",
-              "at": 1792337576883,
-              "durationMs": 118,
+              "at": 1792339116655,
+              "durationMs": 124,
               "ok": true
             },
             {
               "module": "runtimeApprovals",
               "action": "list",
-              "at": 1792337576936,
-              "durationMs": 171,
+              "at": 1792339116741,
+              "durationMs": 208,
               "ok": false
             },
             {
               "module": "settings",
               "action": "getAll",
-              "at": 1792337576936,
-              "durationMs": 170,
+              "at": 1792339116741,
+              "durationMs": 209,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337576943,
-              "durationMs": 177,
+              "at": 1792339116748,
+              "durationMs": 215,
               "ok": true
             },
             {
               "module": "providers",
               "action": "vendors",
-              "at": 1792337576948,
-              "durationMs": 182,
+              "at": 1792339116763,
+              "durationMs": 230,
               "ok": true
             },
             {
               "module": "providers",
               "action": "getDefaultAccount",
-              "at": 1792337576948,
-              "durationMs": 182,
+              "at": 1792339116763,
+              "durationMs": 230,
               "ok": true
             },
             {
               "module": "system",
               "action": "info",
-              "at": 1792337576948,
-              "durationMs": 182,
+              "at": 1792339116764,
+              "durationMs": 231,
               "ok": true
             },
             {
               "module": "agents",
               "action": "list",
-              "at": 1792337576950,
-              "durationMs": 188,
+              "at": 1792339116766,
+              "durationMs": 238,
               "ok": true
             },
             {
               "module": "providers",
               "action": "accounts",
-              "at": 1792337576957,
-              "durationMs": 194,
+              "at": 1792339116789,
+              "durationMs": 260,
               "ok": true
             },
             {
               "module": "providers",
               "action": "accountKeyInfo",
-              "at": 1792337576958,
-              "durationMs": 195,
+              "at": 1792339116789,
+              "durationMs": 260,
               "ok": true
             },
             {
               "module": "agents",
               "action": "list",
-              "at": 1792337576958,
-              "durationMs": 194,
+              "at": 1792339116790,
+              "durationMs": 259,
               "ok": true
             },
             {
               "module": "providers",
               "action": "accounts",
-              "at": 1792337576962,
-              "durationMs": 196,
+              "at": 1792339116801,
+              "durationMs": 268,
               "ok": true
             },
             {
               "module": "providers",
               "action": "accountKeyInfo",
-              "at": 1792337576962,
-              "durationMs": 196,
+              "at": 1792339116802,
+              "durationMs": 269,
               "ok": true
             },
             {
               "module": "sessionActivity",
               "action": "snapshot",
-              "at": 1792337576962,
-              "durationMs": 198,
+              "at": 1792339116802,
+              "durationMs": 272,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337576973,
-              "durationMs": 53,
+              "at": 1792339116809,
+              "durationMs": 84,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337576973,
-              "durationMs": 52,
+              "at": 1792339116809,
+              "durationMs": 84,
               "ok": true
             },
             {
               "module": "git",
               "action": "branches",
-              "at": 1792337576974,
-              "durationMs": 52,
+              "at": 1792339116809,
+              "durationMs": 84,
               "ok": false
             },
             {
               "module": "git",
               "action": "worktrees",
-              "at": 1792337576974,
-              "durationMs": 53,
+              "at": 1792339116809,
+              "durationMs": 84,
               "ok": false
             },
             {
               "module": "gateway",
               "action": "rpc",
-              "at": 1792337576974,
-              "durationMs": 52,
+              "at": 1792339116809,
+              "durationMs": 83,
               "ok": false
             },
             {
               "module": "permissions",
               "action": "approvals",
-              "at": 1792337576975,
-              "durationMs": 40,
+              "at": 1792339116810,
+              "durationMs": 70,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337576976,
-              "durationMs": 32,
+              "at": 1792339116810,
+              "durationMs": 62,
               "ok": true
             },
             {
               "module": "sessionActivity",
               "action": "snapshot",
-              "at": 1792337576976,
-              "durationMs": 55,
+              "at": 1792339116810,
+              "durationMs": 85,
               "ok": true
             },
             {
               "module": "taskLedger",
               "action": "snapshot",
-              "at": 1792337576986,
-              "durationMs": 65,
+              "at": 1792339116817,
+              "durationMs": 92,
               "ok": true
             },
             {
               "module": "taskLedger",
               "action": "snapshot",
-              "at": 1792337576986,
-              "durationMs": 64,
+              "at": 1792339116817,
+              "durationMs": 90,
               "ok": true
             },
             {
               "module": "providers",
               "action": "list",
-              "at": 1792337576998,
-              "durationMs": 40,
+              "at": 1792339116867,
+              "durationMs": 78,
               "ok": true
             },
             {
               "module": "providers",
               "action": "list",
-              "at": 1792337577008,
-              "durationMs": 46,
+              "at": 1792339116877,
+              "durationMs": 75,
               "ok": true
             },
             {
               "module": "sessions",
               "action": "history",
-              "at": 1792337577019,
-              "durationMs": 44,
+              "at": 1792339116880,
+              "durationMs": 70,
               "ok": false
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337577249,
-              "durationMs": 7,
+              "at": 1792339117076,
+              "durationMs": 13,
               "ok": true
             },
             {
               "module": "sessions",
               "action": "compactionStatus",
-              "at": 1792337577426,
+              "at": 1792339117233,
               "durationMs": 1,
               "ok": false
             },
             {
               "module": "sessions",
               "action": "longTaskControlStatus",
-              "at": 1792337577426,
+              "at": 1792339117233,
               "durationMs": 1,
               "ok": false
             },
             {
               "module": "usage",
-              "action": "live",
-              "at": 1792337577428,
-              "durationMs": 3,
+              "action": "contextRange",
+              "at": 1792339117236,
+              "durationMs": 5,
               "ok": true
             },
             {
               "module": "usage",
-              "action": "contextRange",
-              "at": 1792337577428,
-              "durationMs": 3,
+              "action": "live",
+              "at": 1792339117236,
+              "durationMs": 5,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337577564,
-              "durationMs": 6,
+              "at": 1792339117398,
+              "durationMs": 13,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337577879,
-              "durationMs": 6,
+              "at": 1792339117719,
+              "durationMs": 8,
               "ok": true
             },
             {
               "module": "usage",
               "action": "promptCacheStatus",
-              "at": 1792337578093,
-              "durationMs": 2,
+              "at": 1792339117900,
+              "durationMs": 3,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337578191,
+              "at": 1792339118075,
+              "durationMs": 38,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339118400,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339118712,
               "durationMs": 7,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337578523,
-              "durationMs": 14,
+              "at": 1792339119022,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339119334,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339119659,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339119970,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339120301,
+              "durationMs": 24,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339120629,
+              "durationMs": 12,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339120943,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339121258,
+              "durationMs": 11,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339121581,
+              "durationMs": 15,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339121904,
+              "durationMs": 12,
               "ok": true
             }
           ]
@@ -1434,23 +1737,23 @@
       "run": 4,
       "ok": true,
       "main": {
-        "startedAt": 1792337579734,
-        "elapsedMs": 6254.5195,
+        "startedAt": 1792339122965,
+        "elapsedMs": 9436.777199999999,
         "marks": [
           {
             "name": "app-ready",
-            "at": 1792337583163,
-            "fromStartMs": 3429.2176
+            "at": 1792339126098,
+            "fromStartMs": 3132.6967999999997
           },
           {
             "name": "window-created",
-            "at": 1792337583293,
-            "fromStartMs": 3559.1854000000003
+            "at": 1792339126210,
+            "fromStartMs": 3245.0836
           },
           {
             "name": "ready-to-show",
-            "at": 1792337583472,
-            "fromStartMs": 3738.1893
+            "at": 1792339126402,
+            "fromStartMs": 3436.5035
           }
         ],
         "counters": {
@@ -1467,44 +1770,44 @@
           "recentSpawns": [
             {
               "method": "execFile",
-              "at": 1792337583844,
-              "fromStartMs": 4109.9366,
+              "at": 1792339126751,
+              "fromStartMs": 3785.5773,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337583877,
-              "fromStartMs": 4143.4158,
+              "at": 1792339126780,
+              "fromStartMs": 3814.6947,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337583988,
-              "fromStartMs": 4254.2613,
+              "at": 1792339126895,
+              "fromStartMs": 3930.3169,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337583992,
-              "fromStartMs": 4258.1563,
+              "at": 1792339126898,
+              "fromStartMs": 3933.0369,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337583996,
-              "fromStartMs": 4262.3057,
+              "at": 1792339126900,
+              "fromStartMs": 3935.2252,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337584001,
-              "fromStartMs": 4266.8724,
+              "at": 1792339126904,
+              "fromStartMs": 3939.2896,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337584004,
-              "fromStartMs": 4270.1086,
+              "at": 1792339126908,
+              "fromStartMs": 3942.6223,
               "command": "git"
             }
           ],
@@ -1512,375 +1815,463 @@
           "activeWatchers": 0,
           "unavailable": []
         },
-        "rssBytes": 589705216
+        "rssBytes": 599265280
+      },
+      "sampler": {
+        "sampleCount": 1,
+        "coverageMs": 0,
+        "latest": {
+          "at": 1792339131139,
+          "cpuPercent": 23.76,
+          "rssBytes": 599142400,
+          "heapUsedBytes": 301221084,
+          "systemFreeBytes": 4703690752,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": false,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 23.76,
+        "peakCpuPercent": 23.76,
+        "peakRssBytes": 599142400,
+        "shedSampleCount": 0
       },
       "renderer": {
         "schema": "clawx.renderer-performance/v1",
-        "startedAt": 1792337583469,
-        "generatedAt": 1792337585872,
+        "startedAt": 1792339126380,
+        "generatedAt": 1792339132243,
         "marks": [
           {
             "name": "renderer-start",
-            "at": 1792337583469,
-            "fromStartMs": 0.09999999403953552
+            "at": 1792339126380,
+            "fromStartMs": 0.19999998807907104
           },
           {
             "name": "renderer-first-paint",
-            "at": 1792337583492,
-            "fromStartMs": 23
+            "at": 1792339126406,
+            "fromStartMs": 26
           }
         ],
         "longTasks": [
           {
-            "startTime": 563.4000000059605,
-            "durationMs": 87
+            "startTime": 558.7999999821186,
+            "durationMs": 69
           },
           {
-            "startTime": 654.5,
-            "durationMs": 53
-          },
-          {
-            "startTime": 848.8000000119209,
-            "durationMs": 76
-          },
-          {
-            "startTime": 942.2000000178814,
-            "durationMs": 55
+            "startTime": 631.7999999821186,
+            "durationMs": 63
           }
         ],
         "inputLatency": [],
         "ipc": {
-          "count": 47,
-          "p50Ms": 64,
-          "p95Ms": 217,
+          "count": 58,
+          "p50Ms": 43,
+          "p95Ms": 200,
           "recent": [
             {
               "module": "window",
               "action": "isMaximized",
-              "at": 1792337583845,
+              "at": 1792339126754,
               "durationMs": 32,
               "ok": true
             },
             {
               "module": "permissions",
               "action": "approvals",
-              "at": 1792337583845,
+              "at": 1792339126754,
               "durationMs": 31,
               "ok": true
             },
             {
               "module": "agentBrowser",
               "action": "tasks",
-              "at": 1792337583845,
+              "at": 1792339126754,
               "durationMs": 31,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "rpc",
-              "at": 1792337583851,
-              "durationMs": 37,
+              "at": 1792339126758,
+              "durationMs": 35,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337583853,
-              "durationMs": 39,
+              "at": 1792339126758,
+              "durationMs": 35,
               "ok": true
             },
             {
               "module": "resourceTracker",
               "action": "list",
-              "at": 1792337583853,
-              "durationMs": 39,
+              "at": 1792339126758,
+              "durationMs": 35,
               "ok": true
             },
             {
               "module": "providers",
               "action": "vendors",
-              "at": 1792337583944,
-              "durationMs": 129,
+              "at": 1792339126840,
+              "durationMs": 116,
               "ok": true
             },
             {
               "module": "providers",
               "action": "getDefaultAccount",
-              "at": 1792337583944,
-              "durationMs": 129,
+              "at": 1792339126840,
+              "durationMs": 116,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337583945,
-              "durationMs": 130,
+              "at": 1792339126840,
+              "durationMs": 116,
               "ok": true
             },
             {
               "module": "remoteTasks",
               "action": "list",
-              "at": 1792337583945,
-              "durationMs": 131,
+              "at": 1792339126840,
+              "durationMs": 117,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "list",
-              "at": 1792337583948,
-              "durationMs": 131,
+              "at": 1792339126843,
+              "durationMs": 117,
               "ok": true
             },
             {
               "module": "runtimeApprovals",
               "action": "list",
-              "at": 1792337584001,
-              "durationMs": 183,
+              "at": 1792339126907,
+              "durationMs": 180,
               "ok": false
             },
             {
               "module": "settings",
               "action": "getAll",
-              "at": 1792337584002,
-              "durationMs": 184,
+              "at": 1792339126907,
+              "durationMs": 180,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337584013,
-              "durationMs": 195,
+              "at": 1792339126912,
+              "durationMs": 185,
               "ok": true
             },
             {
               "module": "providers",
               "action": "vendors",
-              "at": 1792337584018,
-              "durationMs": 200,
+              "at": 1792339126915,
+              "durationMs": 188,
               "ok": true
             },
             {
               "module": "providers",
               "action": "getDefaultAccount",
-              "at": 1792337584018,
-              "durationMs": 200,
+              "at": 1792339126915,
+              "durationMs": 188,
               "ok": true
             },
             {
               "module": "system",
               "action": "info",
-              "at": 1792337584019,
-              "durationMs": 201,
+              "at": 1792339126915,
+              "durationMs": 188,
               "ok": true
             },
             {
               "module": "agents",
               "action": "list",
-              "at": 1792337584020,
-              "durationMs": 206,
+              "at": 1792339126916,
+              "durationMs": 193,
               "ok": true
             },
             {
               "module": "providers",
               "action": "accounts",
-              "at": 1792337584032,
-              "durationMs": 217,
+              "at": 1792339126924,
+              "durationMs": 200,
               "ok": true
             },
             {
               "module": "providers",
               "action": "accountKeyInfo",
-              "at": 1792337584032,
-              "durationMs": 217,
+              "at": 1792339126924,
+              "durationMs": 200,
               "ok": true
             },
             {
               "module": "providers",
               "action": "accounts",
-              "at": 1792337584033,
-              "durationMs": 215,
+              "at": 1792339126924,
+              "durationMs": 197,
               "ok": true
             },
             {
               "module": "agents",
               "action": "list",
-              "at": 1792337584033,
-              "durationMs": 217,
+              "at": 1792339126924,
+              "durationMs": 199,
               "ok": true
             },
             {
               "module": "providers",
               "action": "accountKeyInfo",
-              "at": 1792337584037,
-              "durationMs": 219,
+              "at": 1792339126927,
+              "durationMs": 200,
               "ok": true
             },
             {
               "module": "sessionActivity",
               "action": "snapshot",
-              "at": 1792337584037,
-              "durationMs": 221,
+              "at": 1792339126927,
+              "durationMs": 202,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337584051,
-              "durationMs": 65,
+              "at": 1792339126938,
+              "durationMs": 44,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337584051,
-              "durationMs": 64,
+              "at": 1792339126938,
+              "durationMs": 44,
               "ok": true
             },
             {
               "module": "git",
               "action": "branches",
-              "at": 1792337584051,
-              "durationMs": 64,
+              "at": 1792339126938,
+              "durationMs": 44,
               "ok": false
             },
             {
               "module": "git",
               "action": "worktrees",
-              "at": 1792337584051,
-              "durationMs": 64,
+              "at": 1792339126938,
+              "durationMs": 43,
               "ok": false
             },
             {
               "module": "gateway",
               "action": "rpc",
-              "at": 1792337584051,
-              "durationMs": 63,
+              "at": 1792339126954,
+              "durationMs": 58,
               "ok": false
             },
             {
               "module": "permissions",
               "action": "approvals",
-              "at": 1792337584052,
-              "durationMs": 51,
+              "at": 1792339126955,
+              "durationMs": 49,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337584052,
-              "durationMs": 39,
+              "at": 1792339126955,
+              "durationMs": 43,
               "ok": true
             },
             {
               "module": "sessionActivity",
               "action": "snapshot",
-              "at": 1792337584052,
-              "durationMs": 65,
+              "at": 1792339126955,
+              "durationMs": 60,
               "ok": true
             },
             {
               "module": "taskLedger",
               "action": "snapshot",
-              "at": 1792337584066,
+              "at": 1792339126974,
               "durationMs": 79,
               "ok": true
             },
             {
               "module": "taskLedger",
               "action": "snapshot",
-              "at": 1792337584066,
+              "at": 1792339126974,
               "durationMs": 78,
               "ok": true
             },
             {
               "module": "providers",
               "action": "list",
-              "at": 1792337584081,
-              "durationMs": 49,
+              "at": 1792339126974,
+              "durationMs": 50,
               "ok": true
             },
             {
               "module": "providers",
               "action": "list",
-              "at": 1792337584085,
-              "durationMs": 48,
+              "at": 1792339126984,
+              "durationMs": 57,
               "ok": true
             },
             {
               "module": "sessions",
               "action": "history",
-              "at": 1792337584133,
-              "durationMs": 81,
+              "at": 1792339126993,
+              "durationMs": 39,
               "ok": false
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337584341,
-              "durationMs": 38,
+              "at": 1792339127213,
+              "durationMs": 7,
               "ok": true
             },
             {
               "module": "sessions",
               "action": "compactionStatus",
-              "at": 1792337584493,
+              "at": 1792339127404,
               "durationMs": 2,
               "ok": false
             },
             {
               "module": "sessions",
               "action": "longTaskControlStatus",
-              "at": 1792337584493,
+              "at": 1792339127404,
               "durationMs": 2,
               "ok": false
             },
             {
               "module": "usage",
-              "action": "live",
-              "at": 1792337584495,
-              "durationMs": 4,
+              "action": "contextRange",
+              "at": 1792339127406,
+              "durationMs": 5,
               "ok": true
             },
             {
               "module": "usage",
-              "action": "contextRange",
-              "at": 1792337584495,
-              "durationMs": 5,
+              "action": "live",
+              "at": 1792339127406,
+              "durationMs": 4,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337584668,
+              "at": 1792339127528,
+              "durationMs": 9,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339127842,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "promptCacheStatus",
+              "at": 1792339128074,
+              "durationMs": 2,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339128155,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339128468,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339128786,
+              "durationMs": 13,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339129106,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339129431,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339129744,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339130070,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339130384,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339130698,
+              "durationMs": 9,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339131011,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339131336,
+              "durationMs": 11,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339131661,
               "durationMs": 10,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337584979,
-              "durationMs": 7,
-              "ok": true
-            },
-            {
-              "module": "usage",
-              "action": "promptCacheStatus",
-              "at": 1792337585160,
-              "durationMs": 2,
-              "ok": true
-            },
-            {
-              "module": "workspaces",
-              "action": "saveState",
-              "at": 1792337585289,
-              "durationMs": 6,
-              "ok": true
-            },
-            {
-              "module": "workspaces",
-              "action": "saveState",
-              "at": 1792337585613,
-              "durationMs": 5,
+              "at": 1792339131986,
+              "durationMs": 9,
               "ok": true
             }
           ]
@@ -1892,23 +2283,23 @@
       "run": 5,
       "ok": true,
       "main": {
-        "startedAt": 1792337586859,
-        "elapsedMs": 6220.7421,
+        "startedAt": 1792339133316,
+        "elapsedMs": 9731.054999999998,
         "marks": [
           {
             "name": "app-ready",
-            "at": 1792337590262,
-            "fromStartMs": 3402.6218999999996
+            "at": 1792339136744,
+            "fromStartMs": 3427.4283000000005
           },
           {
             "name": "window-created",
-            "at": 1792337590383,
-            "fromStartMs": 3524.0468
+            "at": 1792339136861,
+            "fromStartMs": 3544.8377
           },
           {
             "name": "ready-to-show",
-            "at": 1792337590592,
-            "fromStartMs": 3733.0323000000003
+            "at": 1792339137031,
+            "fromStartMs": 3714.9473
           }
         ],
         "counters": {
@@ -1925,44 +2316,44 @@
           "recentSpawns": [
             {
               "method": "execFile",
-              "at": 1792337590947,
-              "fromStartMs": 4087.4909999999995,
+              "at": 1792339137393,
+              "fromStartMs": 4077.3405000000002,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337590968,
-              "fromStartMs": 4108.724700000001,
+              "at": 1792339137416,
+              "fromStartMs": 4099.9268,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337591108,
-              "fromStartMs": 4248.856000000001,
+              "at": 1792339137552,
+              "fromStartMs": 4235.639700000001,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337591113,
-              "fromStartMs": 4253.6187,
+              "at": 1792339137557,
+              "fromStartMs": 4241.2925000000005,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337591116,
-              "fromStartMs": 4256.488200000001,
+              "at": 1792339137561,
+              "fromStartMs": 4244.4898,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337591119,
-              "fromStartMs": 4259.784000000001,
+              "at": 1792339137563,
+              "fromStartMs": 4246.8538,
               "command": "git"
             },
             {
               "method": "execFile",
-              "at": 1792337591122,
-              "fromStartMs": 4262.964800000001,
+              "at": 1792339137566,
+              "fromStartMs": 4249.441400000001,
               "command": "git"
             }
           ],
@@ -1970,371 +2361,467 @@
           "activeWatchers": 0,
           "unavailable": []
         },
-        "rssBytes": 582582272
+        "rssBytes": 612945920
+      },
+      "sampler": {
+        "sampleCount": 1,
+        "coverageMs": 0,
+        "latest": {
+          "at": 1792339141788,
+          "cpuPercent": 24.38,
+          "rssBytes": 612847616,
+          "heapUsedBytes": 267225416,
+          "systemFreeBytes": 5059977216,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": false,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 24.38,
+        "peakCpuPercent": 24.38,
+        "peakRssBytes": 612847616,
+        "shedSampleCount": 0
       },
       "renderer": {
         "schema": "clawx.renderer-performance/v1",
-        "startedAt": 1792337590573,
-        "generatedAt": 1792337593016,
+        "startedAt": 1792339137028,
+        "generatedAt": 1792339142951,
         "marks": [
           {
             "name": "renderer-start",
-            "at": 1792337590573,
-            "fromStartMs": 0.19999998807907104
+            "at": 1792339137028,
+            "fromStartMs": 0.09999999403953552
           },
           {
             "name": "renderer-first-paint",
-            "at": 1792337590598,
-            "fromStartMs": 25.19999998807907
+            "at": 1792339137054,
+            "fromStartMs": 26.099999994039536
           }
         ],
         "longTasks": [
           {
-            "startTime": 573.6000000238419,
-            "durationMs": 96
+            "startTime": 545.6999999880791,
+            "durationMs": 80
           },
           {
-            "startTime": 673.2000000178814,
-            "durationMs": 65
+            "startTime": 630.3999999761581,
+            "durationMs": 71
           },
           {
-            "startTime": 976.2000000178814,
-            "durationMs": 53
+            "startTime": 840,
+            "durationMs": 64
           }
         ],
         "inputLatency": [],
         "ipc": {
-          "count": 47,
-          "p50Ms": 59,
-          "p95Ms": 236,
+          "count": 58,
+          "p50Ms": 48,
+          "p95Ms": 232,
           "recent": [
             {
               "module": "window",
               "action": "isMaximized",
-              "at": 1792337590947,
-              "durationMs": 35,
+              "at": 1792339137399,
+              "durationMs": 34,
               "ok": true
             },
             {
               "module": "permissions",
               "action": "approvals",
-              "at": 1792337590947,
-              "durationMs": 34,
+              "at": 1792339137399,
+              "durationMs": 33,
               "ok": true
             },
             {
               "module": "agentBrowser",
               "action": "tasks",
-              "at": 1792337590947,
-              "durationMs": 34,
+              "at": 1792339137399,
+              "durationMs": 33,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "rpc",
-              "at": 1792337590951,
-              "durationMs": 38,
+              "at": 1792339137399,
+              "durationMs": 33,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337590952,
-              "durationMs": 39,
+              "at": 1792339137404,
+              "durationMs": 38,
               "ok": true
             },
             {
               "module": "resourceTracker",
               "action": "list",
-              "at": 1792337590952,
-              "durationMs": 39,
+              "at": 1792339137404,
+              "durationMs": 37,
               "ok": true
             },
             {
               "module": "providers",
               "action": "vendors",
-              "at": 1792337591055,
-              "durationMs": 141,
+              "at": 1792339137489,
+              "durationMs": 122,
               "ok": true
             },
             {
               "module": "providers",
               "action": "getDefaultAccount",
-              "at": 1792337591055,
-              "durationMs": 141,
+              "at": 1792339137489,
+              "durationMs": 122,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337591055,
-              "durationMs": 141,
+              "at": 1792339137489,
+              "durationMs": 121,
               "ok": true
             },
             {
               "module": "remoteTasks",
               "action": "list",
-              "at": 1792337591055,
-              "durationMs": 142,
+              "at": 1792339137489,
+              "durationMs": 123,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "list",
-              "at": 1792337591057,
-              "durationMs": 141,
+              "at": 1792339137492,
+              "durationMs": 122,
               "ok": true
             },
             {
               "module": "runtimeApprovals",
               "action": "list",
-              "at": 1792337591123,
-              "durationMs": 206,
+              "at": 1792339137564,
+              "durationMs": 192,
               "ok": false
             },
             {
               "module": "settings",
               "action": "getAll",
-              "at": 1792337591123,
-              "durationMs": 206,
+              "at": 1792339137564,
+              "durationMs": 192,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337591132,
-              "durationMs": 215,
+              "at": 1792339137570,
+              "durationMs": 198,
               "ok": true
             },
             {
               "module": "providers",
               "action": "vendors",
-              "at": 1792337591137,
-              "durationMs": 220,
+              "at": 1792339137577,
+              "durationMs": 205,
               "ok": true
             },
             {
               "module": "providers",
               "action": "getDefaultAccount",
-              "at": 1792337591137,
-              "durationMs": 220,
+              "at": 1792339137577,
+              "durationMs": 205,
               "ok": true
             },
             {
               "module": "system",
               "action": "info",
-              "at": 1792337591137,
-              "durationMs": 219,
+              "at": 1792339137577,
+              "durationMs": 205,
               "ok": true
             },
             {
               "module": "agents",
               "action": "list",
-              "at": 1792337591140,
+              "at": 1792339137579,
+              "durationMs": 213,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339137599,
+              "durationMs": 232,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accountKeyInfo",
+              "at": 1792339137599,
+              "durationMs": 232,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "accounts",
+              "at": 1792339137599,
               "durationMs": 227,
               "ok": true
             },
             {
-              "module": "providers",
-              "action": "accountKeyInfo",
-              "at": 1792337591149,
-              "durationMs": 235,
-              "ok": true
-            },
-            {
-              "module": "providers",
-              "action": "accounts",
-              "at": 1792337591150,
-              "durationMs": 236,
-              "ok": true
-            },
-            {
-              "module": "providers",
-              "action": "accounts",
-              "at": 1792337591150,
-              "durationMs": 233,
-              "ok": true
-            },
-            {
               "module": "agents",
               "action": "list",
-              "at": 1792337591150,
-              "durationMs": 235,
+              "at": 1792339137599,
+              "durationMs": 230,
               "ok": true
             },
             {
               "module": "providers",
               "action": "accountKeyInfo",
-              "at": 1792337591153,
-              "durationMs": 236,
+              "at": 1792339137614,
+              "durationMs": 242,
               "ok": true
             },
             {
               "module": "sessionActivity",
               "action": "snapshot",
-              "at": 1792337591153,
-              "durationMs": 238,
+              "at": 1792339137615,
+              "durationMs": 246,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337591166,
-              "durationMs": 60,
+              "at": 1792339137618,
+              "durationMs": 69,
               "ok": true
             },
             {
               "module": "git",
               "action": "status",
-              "at": 1792337591166,
-              "durationMs": 59,
+              "at": 1792339137618,
+              "durationMs": 68,
               "ok": true
             },
             {
               "module": "git",
               "action": "branches",
-              "at": 1792337591166,
-              "durationMs": 59,
+              "at": 1792339137618,
+              "durationMs": 68,
               "ok": false
             },
             {
               "module": "git",
               "action": "worktrees",
-              "at": 1792337591166,
-              "durationMs": 59,
+              "at": 1792339137618,
+              "durationMs": 68,
               "ok": false
             },
             {
               "module": "gateway",
               "action": "rpc",
-              "at": 1792337591167,
-              "durationMs": 57,
+              "at": 1792339137618,
+              "durationMs": 65,
               "ok": false
             },
             {
               "module": "permissions",
               "action": "approvals",
-              "at": 1792337591167,
-              "durationMs": 45,
+              "at": 1792339137619,
+              "durationMs": 56,
               "ok": true
             },
             {
               "module": "gateway",
               "action": "status",
-              "at": 1792337591167,
-              "durationMs": 34,
-              "ok": true
-            },
-            {
-              "module": "taskLedger",
-              "action": "snapshot",
-              "at": 1792337591167,
-              "durationMs": 57,
+              "at": 1792339137619,
+              "durationMs": 48,
               "ok": true
             },
             {
               "module": "sessionActivity",
               "action": "snapshot",
-              "at": 1792337591168,
-              "durationMs": 61,
+              "at": 1792339137619,
+              "durationMs": 69,
               "ok": true
             },
             {
               "module": "taskLedger",
               "action": "snapshot",
-              "at": 1792337591184,
-              "durationMs": 76,
+              "at": 1792339137632,
+              "durationMs": 81,
+              "ok": true
+            },
+            {
+              "module": "taskLedger",
+              "action": "snapshot",
+              "at": 1792339137633,
+              "durationMs": 80,
               "ok": true
             },
             {
               "module": "providers",
               "action": "list",
-              "at": 1792337591198,
+              "at": 1792339137639,
+              "durationMs": 40,
+              "ok": true
+            },
+            {
+              "module": "providers",
+              "action": "list",
+              "at": 1792339137662,
               "durationMs": 48,
-              "ok": true
-            },
-            {
-              "module": "providers",
-              "action": "list",
-              "at": 1792337591216,
-              "durationMs": 63,
               "ok": true
             },
             {
               "module": "sessions",
               "action": "history",
-              "at": 1792337591251,
-              "durationMs": 84,
+              "at": 1792339137666,
+              "durationMs": 46,
               "ok": false
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337591465,
+              "at": 1792339137880,
               "durationMs": 8,
               "ok": true
             },
             {
               "module": "sessions",
               "action": "compactionStatus",
-              "at": 1792337591619,
+              "at": 1792339138055,
               "durationMs": 1,
               "ok": false
             },
             {
               "module": "sessions",
               "action": "longTaskControlStatus",
-              "at": 1792337591619,
-              "durationMs": 1,
+              "at": 1792339138056,
+              "durationMs": 2,
               "ok": false
             },
             {
               "module": "usage",
               "action": "contextRange",
-              "at": 1792337591621,
-              "durationMs": 3,
+              "at": 1792339138058,
+              "durationMs": 4,
               "ok": true
             },
             {
               "module": "usage",
               "action": "live",
-              "at": 1792337591621,
+              "at": 1792339138058,
+              "durationMs": 4,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339138221,
+              "durationMs": 35,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339138531,
+              "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "usage",
+              "action": "promptCacheStatus",
+              "at": 1792339138716,
               "durationMs": 3,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337591784,
+              "at": 1792339138845,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339139158,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339139483,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339139809,
+              "durationMs": 8,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339140133,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339140460,
+              "durationMs": 9,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339140783,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339141094,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339141423,
               "durationMs": 12,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337592112,
-              "durationMs": 13,
-              "ok": true
-            },
-            {
-              "module": "usage",
-              "action": "promptCacheStatus",
-              "at": 1792337592287,
-              "durationMs": 2,
+              "at": 1792339141746,
+              "durationMs": 9,
               "ok": true
             },
             {
               "module": "workspaces",
               "action": "saveState",
-              "at": 1792337592435,
-              "durationMs": 12,
-              "ok": true
-            },
-            {
-              "module": "workspaces",
-              "action": "saveState",
-              "at": 1792337592756,
+              "at": 1792339142068,
               "durationMs": 6,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339142381,
+              "durationMs": 7,
+              "ok": true
+            },
+            {
+              "module": "workspaces",
+              "action": "saveState",
+              "at": 1792339142694,
+              "durationMs": 8,
               "ok": true
             }
           ]

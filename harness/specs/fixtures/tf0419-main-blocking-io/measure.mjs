@@ -67,6 +67,7 @@ for (let index = 0; index < runs; index += 1) {
       run: index + 1,
       ok: true,
       main: response.data.performance,
+      sampler: response.data.summary,
       renderer,
     });
   } catch (error) {
@@ -109,6 +110,12 @@ const report = {
     windowCreated: metric('main', 'window-created'),
     readyToShow: metric('main', 'ready-to-show'),
     rendererFirstPaint: metric('renderer', 'renderer-first-paint'),
+    sampler: {
+      count: results.filter((result) => result.ok && result.sampler).length,
+      sampleCounts: results.filter((result) => result.ok).map((result) => result.sampler?.sampleCount ?? 0),
+      avgCpuPercent: results.map((result) => result.sampler?.avgCpuPercent).filter((value) => typeof value === 'number'),
+      peakCpuPercent: results.map((result) => result.sampler?.peakCpuPercent).filter((value) => typeof value === 'number'),
+    },
   },
   successfulRuns: results.filter((result) => result.ok).length,
   failedRuns: results.filter((result) => !result.ok).length,
