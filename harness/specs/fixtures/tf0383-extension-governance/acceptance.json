@@ -1,0 +1,24 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0383",
+  "node": "TF-0383",
+  "title": "收敛 Hooks、Plugins、MCP 与上下文层的生命周期治理",
+  "verdict": "pass",
+  "candidate": {"sha": "b5777c74c", "base": "b5777c74c", "dirty": false},
+  "originalAcceptance": [
+    {"criterion": "Hooks 信任中心有来源、hash、启用/禁用、managed 标识和审计事件。", "result": "pass", "evidence": ["harness/specs/fixtures/tf0384-hook-trust-center/acceptance.json", "openclaw_runtime/src/hooks/trust.ts", "electron/services/hooks-api.ts"]},
+    {"criterion": "MCP 只有真实握手才 connected；回归测试覆盖。", "result": "pass", "evidence": ["tests/unit/mcp-api.test.ts", "harness/specs/fixtures/tf0385-capability-conflicts/acceptance.json"]},
+    {"criterion": "Project rules、AGENTS.md、Harness、skills、role 的 precedence 有单一解析器和 explain 输出。", "result": "pass", "evidence": ["shared/instruction-precedence.ts", "electron/services/project-rules-api.ts", "harness/specs/fixtures/tf0386-instruction-precedence/acceptance.json"]},
+    {"criterion": "插件生命周期仅做来源/能力/升级边界的最小治理，不做完整 marketplace 复制。", "result": "pass", "evidence": ["openclaw_runtime/src/runtime-core/capability-publications.ts", "src/lib/capability-publication-view-model.ts", "No marketplace or new plugin runtime was added."]}
+  ],
+  "childCompletion": [
+    {"node": "TF-0384", "status": "done", "evidence": "harness/specs/fixtures/tf0384-hook-trust-center/acceptance.json; 48186155"},
+    {"node": "TF-0385", "status": "done", "evidence": "harness/specs/fixtures/tf0385-capability-conflicts/acceptance.json; 556a7d09"},
+    {"node": "TF-0386", "status": "done", "evidence": "harness/specs/fixtures/tf0386-instruction-precedence/acceptance.json; 9b96f170"}
+  ],
+  "boundaries": [
+    "No second extension registry, hook runtime, prompt debugger or plugin marketplace was added.",
+    "Instruction explain is read-only and does not edit rule files.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}
