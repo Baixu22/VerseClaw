@@ -52,7 +52,7 @@ type Detail = {
 
 describe('vb_network_detail (TF-0103)', () => {
   it('live：拿到响应体与头，且敏感请求头始终脱敏；未知 id 如实报告', async () => {
-    let api: AgentBrowserHostApi | null = null;
+    let api: AgentBrowserHostApi;
     try {
       api = await createPlaywrightHostApi();
     } catch {
@@ -102,7 +102,7 @@ describe('vb_network_detail (TF-0103)', () => {
   }, 90_000);
 
   it('空 id 列表直接拒绝，不静默返回空', async () => {
-    let api: AgentBrowserHostApi | null = null;
+    let api: AgentBrowserHostApi;
     try {
       api = await createPlaywrightHostApi();
     } catch {

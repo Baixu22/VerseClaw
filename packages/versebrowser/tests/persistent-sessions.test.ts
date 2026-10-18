@@ -57,7 +57,7 @@ describe('persistent sessions survive the process (TF-0097)', () => {
       const fixture = await startFixture();
       const apis: AgentBrowserHostApi[] = [];
       let sessionId = '';
-      let endpoint = '';
+      let endpoint: string;
 
       try {
         const apiA = await tryPersistentApi();

@@ -58,7 +58,7 @@ describe('snapshot disclosure state (TF-0107)', () => {
   });
 
   it('live：agent 能直接从快照看出哪个控件是收起的，点击后 diff 报出状态翻转', async () => {
-    let api: AgentBrowserHostApi | null = null;
+    let api: AgentBrowserHostApi;
     try {
       api = await createPlaywrightHostApi();
     } catch {

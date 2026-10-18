@@ -8,7 +8,7 @@ import { isNavigationReadError, recoveryHint } from './navigation-errors.ts';
  */
 import { mkdir } from 'node:fs/promises';
 import { writeEvidenceText, writeEvidenceJson, writeEvidenceBinary } from '../evidence/output.ts';
-import { join, resolve, sep } from 'node:path';
+import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import {
   createEvidenceRef,
@@ -2255,7 +2255,6 @@ export class AgentBrowserFacade {
     );
 
     // Flight Recorder + Trajectory Diagnosis land in the same pack (M6).
-    let diagnosisReport: DiagnosisReport | undefined;
     let timelineRecord: TimelineRecord | undefined;
     const activeRecorder = this.recorders.get(sessionId);
     if (activeRecorder) {
@@ -2308,7 +2307,7 @@ export class AgentBrowserFacade {
       }
     }
     if (activeRecorder) timelineRecord = activeRecorder.toRecord();
-    diagnosisReport = diagnoseTimeline({ dir, timeline: timelineRecord });
+    const diagnosisReport: DiagnosisReport = diagnoseTimeline({ dir, timeline: timelineRecord });
     await writeDiagnosisPack(dir, diagnosisReport);
 
     const prComment = formatVerifyPrComment(report, {

@@ -43,7 +43,6 @@ const CONFIG_ERROR = 'E_VISUAL_CONFIG';
 const UNAVAILABLE = 'E_VISUAL_UNAVAILABLE';
 const STALE = 'E_VISUAL_STALE';
 const BUDGET = 'E_VISUAL_BUDGET';
-const MODEL = 'E_VISUAL_MODEL';
 
 function fail(code: string, message: string, details?: Record<string, unknown>): never {
   throw Object.assign(new Error(`${code}: ${message}`), { code, ...(details ? { details } : {}) });

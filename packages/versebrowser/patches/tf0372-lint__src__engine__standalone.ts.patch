@@ -1,0 +1,10 @@
+--- a/src/engine/standalone.ts
++++ b/src/engine/standalone.ts
+@@ -118,6 +118,7 @@
+       `failed to start playwright-core driver: ${message}. ` +
+         `Install chromium (npx playwright-core install chromium) or set executablePath, ` +
+         `or set VERSEBROWSER_NO_DRIVER=1 for offline-only tools.`,
++      { cause: error },
+     );
+   }
+ }

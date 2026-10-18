@@ -1,0 +1,10 @@
+--- a/src/engine/visual-browser.ts
++++ b/src/engine/visual-browser.ts
+@@ -43,7 +43,6 @@
+ const UNAVAILABLE = 'E_VISUAL_UNAVAILABLE';
+ const STALE = 'E_VISUAL_STALE';
+ const BUDGET = 'E_VISUAL_BUDGET';
+-const MODEL = 'E_VISUAL_MODEL';
+
+ function fail(code: string, message: string, details?: Record<string, unknown>): never {
+   throw Object.assign(new Error(`${code}: ${message}`), { code, ...(details ? { details } : {}) });

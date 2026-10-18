@@ -90,7 +90,7 @@ it.each(['sdk', 'stdio', 'legacy'] as const)('performs pointer tasks through %s 
           center: document.elementFromPoint(box.x + box.width/2, box.y + box.height/2)?.outerHTML,
           hovered: Array.from(document.querySelectorAll(':hover')).map(node => node.id || node.tagName), visibility: document.visibilityState };
       }) : null;
-      throw new Error(`${String(error)}; page position: ${(await call('vb_page_text', { sessionId: id, selector: '#page-state' })).content}; failure-only geometry: ${JSON.stringify(diagnostic)}`);
+      throw new Error(`${String(error)}; page position: ${(await call('vb_page_text', { sessionId: id, selector: '#page-state' })).content}; failure-only geometry: ${JSON.stringify(diagnostic)}`, { cause: error });
     }
     expect((await call('vb_snapshot', { sessionId: id })).ok).toBe(true);
     expect((await pointer('scroll-into-view', { selector: '#list button:last-child' })).ok).toBe(true);

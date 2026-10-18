@@ -5,6 +5,37 @@ scenario: identity-scope-compatibility
 taskType: shared-contract
 intent: Distinguish workspace, project, session, run and task identities through shared types and one compatibility boundary without migrating persisted data.
 ownedPaths:
+  - eslint.config.mjs
+  - packages/versebrowser/src/collab/remote-policy.ts
+  - packages/versebrowser/src/engine/driver-profile.ts
+  - packages/versebrowser/src/engine/facade.ts
+  - packages/versebrowser/src/engine/persistent-sessions.ts
+  - packages/versebrowser/src/engine/playwright-host-api.ts
+  - packages/versebrowser/src/engine/semantic-browser.ts
+  - packages/versebrowser/src/engine/standalone.ts
+  - packages/versebrowser/src/engine/upstream-control.ts
+  - packages/versebrowser/src/engine/visual-browser.ts
+  - packages/versebrowser/src/evidence/reader.ts
+  - packages/versebrowser/src/openclaw/gateway/types.ts
+  - packages/versebrowser/tests/agent-browser-m6-flight-pr.test.ts
+  - packages/versebrowser/tests/argument-guard-and-pr-comment.test.ts
+  - packages/versebrowser/tests/evidence-jail.test.ts
+  - packages/versebrowser/tests/evidence-sinks-coverage.test.ts
+  - packages/versebrowser/tests/mcp-shutdown-race.test.ts
+  - packages/versebrowser/tests/network-detail.test.ts
+  - packages/versebrowser/tests/network-wait.test.ts
+  - packages/versebrowser/tests/persistent-sessions.test.ts
+  - packages/versebrowser/tests/runtime-read.test.ts
+  - packages/versebrowser/tests/semantic-browser.test.ts
+  - packages/versebrowser/tests/snapshot-aria-state.test.ts
+  - packages/versebrowser/tests/snapshot-diff.test.ts
+  - packages/versebrowser/tests/unknown-session-verdict.test.ts
+  - packages/versebrowser/tests/upstream-files.test.ts
+  - packages/versebrowser/tests/upstream-pointer.test.ts
+  - packages/versebrowser/tests/upstream-viewport.test.ts
+  - tests/unit/versebrowser-n4-observation-loop.test.ts
+  - packages/versebrowser/integration-patches.json
+  - packages/versebrowser/patches/tf0372-lint__*.patch
   - .github/workflows/check.yml
   - shared/types/identity-scope.ts
   - shared/product-semantics.ts
@@ -19,6 +50,37 @@ ownedPaths:
   - harness/specs/rules/identity-scope-boundary.md
   - harness/specs/fixtures/identity-scope/**
 touchedAreas:
+  - eslint.config.mjs
+  - packages/versebrowser/src/collab/remote-policy.ts
+  - packages/versebrowser/src/engine/driver-profile.ts
+  - packages/versebrowser/src/engine/facade.ts
+  - packages/versebrowser/src/engine/persistent-sessions.ts
+  - packages/versebrowser/src/engine/playwright-host-api.ts
+  - packages/versebrowser/src/engine/semantic-browser.ts
+  - packages/versebrowser/src/engine/standalone.ts
+  - packages/versebrowser/src/engine/upstream-control.ts
+  - packages/versebrowser/src/engine/visual-browser.ts
+  - packages/versebrowser/src/evidence/reader.ts
+  - packages/versebrowser/src/openclaw/gateway/types.ts
+  - packages/versebrowser/tests/agent-browser-m6-flight-pr.test.ts
+  - packages/versebrowser/tests/argument-guard-and-pr-comment.test.ts
+  - packages/versebrowser/tests/evidence-jail.test.ts
+  - packages/versebrowser/tests/evidence-sinks-coverage.test.ts
+  - packages/versebrowser/tests/mcp-shutdown-race.test.ts
+  - packages/versebrowser/tests/network-detail.test.ts
+  - packages/versebrowser/tests/network-wait.test.ts
+  - packages/versebrowser/tests/persistent-sessions.test.ts
+  - packages/versebrowser/tests/runtime-read.test.ts
+  - packages/versebrowser/tests/semantic-browser.test.ts
+  - packages/versebrowser/tests/snapshot-aria-state.test.ts
+  - packages/versebrowser/tests/snapshot-diff.test.ts
+  - packages/versebrowser/tests/unknown-session-verdict.test.ts
+  - packages/versebrowser/tests/upstream-files.test.ts
+  - packages/versebrowser/tests/upstream-pointer.test.ts
+  - packages/versebrowser/tests/upstream-viewport.test.ts
+  - tests/unit/versebrowser-n4-observation-loop.test.ts
+  - packages/versebrowser/integration-patches.json
+  - packages/versebrowser/patches/tf0372-lint__*.patch
   - .github/workflows/check.yml
   - shared/types/identity-scope.ts
   - shared/product-semantics.ts
@@ -77,3 +139,11 @@ This slice introduces no route or transport change.
 The independent hygiene prerequisite repairs literal PowerShell newline tokens in
 `.github/workflows/check.yml`; those tokens made the existing CI YAML invalid.
 It preserves the two existing intended hygiene commands and does not alter gates.
+
+The full lint gate also exposed pre-existing imported-module lint failures. The
+independent hygiene slice excludes generated module dist only, removes dead code,
+adds typed test inputs, preserves sanitized error causes, and repairs the shadowed
+download cleanup outcome. Frozen source hashes stay unchanged in import-manifest;
+new integration patches carry before/after hashes and replay against the pinned
+upstream commit. Existing browser regression suites and comms gates verify this
+prerequisite; no permission/default or identity migration is included.

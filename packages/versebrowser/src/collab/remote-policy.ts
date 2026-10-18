@@ -92,7 +92,7 @@ export async function buildEvidenceIndex(
   }
   const packs: EvidenceIndexEntry[] = [];
 
-  let names: string[] = [];
+  let names: string[];
   try {
     names = await readdir(root);
   } catch {

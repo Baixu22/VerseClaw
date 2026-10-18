@@ -13,7 +13,6 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { createMcpServer } from '../src/mcp/server.ts';
 import { resolveMcpPolicy } from '../src/mcp/capability-policy.ts';
 import { writeFile } from 'node:fs/promises';
-import { pathToFileURL } from 'node:url';
 
 const budgets = { modelId: 'deterministic-test-host', maxCalls: 3, maxInputChars: 100000, maxOutputChars: 20000, maxOutputTokens: 2048 };
 async function fixture(generate: SemanticGateway['generate'], overrides: Partial<SemanticGateway> = {}) {
@@ -27,7 +26,8 @@ async function fixture(generate: SemanticGateway['generate'], overrides: Partial
   const adapter=await attachSemanticBrowser(browser,prepared);
   return {page,adapter,prepared,browser,close:async()=>{try{await adapter.close();}finally{await control.close();await browser.close();server.closeAllConnections();await new Promise<void>(done=>server.close(()=>done()));}}};
 }
-const jsonResult = (data: any, usage?: {inputTokens:number;outputTokens:number;totalTokens:number}) => ({role:'assistant' as const,content:{type:'text' as const,text:JSON.stringify(data)},outputFormat:'json_schema' as const,structuredContent:data,...(usage?{usage}:{})});
+type StructuredResult = Extract<Awaited<ReturnType<SemanticGateway['generate']>>, { outputFormat: 'json_schema' }>;
+const jsonResult = (data: StructuredResult['structuredContent'], usage?: {inputTokens:number;outputTokens:number;totalTokens:number}) => ({role:'assistant' as const,content:{type:'text' as const,text:JSON.stringify(data)},outputFormat:'json_schema' as const,structuredContent:data,...(usage?{usage}:{})});
 it('uses exact owned page and host callback for observe/extract, preserves missing usage and disconnect ownership',async()=>{
   const names:string[]=[],inputs:string[]=[];
   const f=await fixture(async(input,context)=>{
@@ -50,7 +50,7 @@ it('uses exact owned page and host callback for observe/extract, preserves missi
   }finally{await f.close();}
 });
 it('rejects absent model configuration and invalid host budgets before launching',async()=>{
-  await expect(prepareSemanticBrowser(undefined as any)).rejects.toThrow('host model');
+  await expect(prepareSemanticBrowser(undefined as unknown as SemanticGateway)).rejects.toThrow('host model');
   await expect(prepareSemanticBrowser({...budgets,maxCalls:0,generate:async()=>jsonResult({})})).rejects.toThrow('budget');
 });
 it('keeps model schema errors and exhausted call budgets as failures',async()=>{
@@ -107,7 +107,7 @@ it.each(['sdk','mcp'])('wires explicit semantic extract through %s without repla
   const client=new Client({name:'semantic-entry',version:'1'}),[a,b]=InMemoryTransport.createLinkedPair();
   try{
     await mcp.connect(a);await client.connect(b);
-    const call=async(name:string,args:Record<string,any>):Promise<any>=>{if(!facade)return JSON.parse(((await client.callTool({name,arguments:args})).content as Array<{text:string}>)[0]!.text);if(name==='vb_open')return facade.open(args);if(name==='vb_semantic_read')return facade.semanticRead(args as any);return facade.extractPageText(args as any);};
+    const call=async(name:string,args:Record<string,unknown>):Promise<any>=>{if(!facade)return JSON.parse(((await client.callTool({name,arguments:args})).content as Array<{text:string}>)[0]!.text);if(name==='vb_open')return facade.open(args);if(name==='vb_semantic_read')return facade.semanticRead(args as Parameters<typeof facade.semanticRead>[0]);return facade.extractPageText(args as Parameters<typeof facade.extractPageText>[0]);};
     expect((await client.listTools()).tools.some(tool=>tool.name==='vb_semantic_read')).toBe(true);
     const opened=await call('vb_open',{url});expect(opened.ok,opened.content).toBe(true);const sessionId=opened.data.session.id;
     const extracted=await call('vb_semantic_read',{sessionId,action:'extract',instruction:'Read name',schema:{type:'object',properties:{name:{type:'string'}},required:['name']}});

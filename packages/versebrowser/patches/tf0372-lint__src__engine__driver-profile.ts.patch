@@ -1,0 +1,11 @@
+--- a/src/engine/driver-profile.ts
++++ b/src/engine/driver-profile.ts
+@@ -117,7 +117,7 @@
+  * the behaviour. Anything else counts as served, which is the safe direction: a capability is
+  * only withdrawn when the declaration proves the refusal.
+  */
+-function throwsNotImplemented(fn: Function): boolean {
++function throwsNotImplemented(fn: unknown): boolean {
+   const body = String(fn).replace(/\s+/g, ' ');
+   // The argument may be single- or double-quoted: the bundler rewrites string literals, so
+   // both forms must match or the check silently stops working in built output.

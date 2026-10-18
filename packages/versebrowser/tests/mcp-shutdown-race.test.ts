@@ -95,10 +95,11 @@ it.each([false, true])('closes the stdio worker on EOF with an open request pend
   const exited = new Promise<number | null>(done => child.once('exit', done));
   let stderr = '';
   child.stderr.on('data', chunk => { stderr += String(chunk); });
-  const responses = new Map<number, (value: any) => void>();
+  type TestResponse = { result: { content: Array<{ text: string }> } };
+  const responses = new Map<number, (value: TestResponse) => void>();
   const lines = createInterface({ input: child.stdout });
   lines.on('line', line => { const message = JSON.parse(line); responses.get(message.id)?.(message); });
-  const request = (id: number, method: string, params: object) => new Promise<any>(done => {
+  const request = (id: number, method: string, params: object) => new Promise<TestResponse>(done => {
     responses.set(id, done); child.stdin.write(JSON.stringify({ jsonrpc: '2.0', id, method, params }) + '\n');
   });
   try {

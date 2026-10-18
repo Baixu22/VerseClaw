@@ -24,6 +24,7 @@ export default [
       'artifacts/**',
       'dist/**',
       'dist-electron/**',
+      'packages/versebrowser/dist/**',
       'openclaw/**',
       'release/**',
       'build/**',

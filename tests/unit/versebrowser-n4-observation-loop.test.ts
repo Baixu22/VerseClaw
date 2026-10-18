@@ -3,12 +3,6 @@ import { createAgentBrowserTool } from '../../openclaw_runtime/src/agents/tools/
 import { MODEL_ACTION_NAMES } from '@electron/services/agent-browser-capabilities';
 import { getAgentBrowserCapabilities } from '@electron/services/agent-browser-api';
 
-function readJsonResult(result: unknown): Record<string, unknown> | undefined {
-  const record = result as { content?: Array<{ text?: string }> };
-  const text = record.content?.[0]?.text;
-  return text ? (JSON.parse(text) as Record<string, unknown>) : undefined;
-}
-
 const invoke = () => vi.fn(async (action: string, payload: unknown) => ({ action, payload }));
 
 describe('agent browser typed observation loop (spec N4)', () => {

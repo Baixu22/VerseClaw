@@ -1281,7 +1281,7 @@ export async function createPlaywrightHostApi(
         const snapshot = formatActionableSnapshot({ title: state.session.title ?? title, url: state.page.url(), htmlBytes: Buffer.byteLength(html), textChars: textLen }, items, 'vb_click / vb_type / vb_press / vb_select / vb_check');
         return { success: true, session: state.session, snapshot, items, ...(slice ? { page: slice.page } : {}) };
       }
-      let items: InteractiveElement[] = [];
+      let items: InteractiveElement[];
       try {
         // TF-0092：可点击元素发现规则默认 off（保持既有快照面与已发布读数）；
         // `VERSEBROWSER_SNAPSHOT_CLICKABLE=pointer` 才额外收录 cursor:pointer 的叶子式元素。

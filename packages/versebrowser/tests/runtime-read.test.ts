@@ -68,7 +68,7 @@ describe('vb_runtime_read 接口面（TF-0105，静态）', () => {
 
 describe('vb_runtime_read（TF-0105）', () => {
   it('live：未提权拒绝、提权后读形状并脱敏截断、危险路径拒绝、revoke 后立即拒绝', async () => {
-    let api: AgentBrowserHostApi | null = null;
+    let api: AgentBrowserHostApi;
     try {
       api = await createPlaywrightHostApi();
     } catch {

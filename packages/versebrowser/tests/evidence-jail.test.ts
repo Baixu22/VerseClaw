@@ -10,7 +10,7 @@
  * 无 Chromium 时 live 用例 SKIP，不红 CI。
  */
 import { describe, expect, it } from 'vitest';
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve, sep } from 'node:path';

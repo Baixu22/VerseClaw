@@ -118,6 +118,7 @@ export async function createStandaloneFacade(
       `failed to start playwright-core driver: ${message}. ` +
         `Install chromium (npx playwright-core install chromium) or set executablePath, ` +
         `or set VERSEBROWSER_NO_DRIVER=1 for offline-only tools.`,
+      { cause: error },
     );
   }
 }

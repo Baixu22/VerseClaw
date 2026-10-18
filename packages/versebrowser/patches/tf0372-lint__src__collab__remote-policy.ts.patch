@@ -1,0 +1,11 @@
+--- a/src/collab/remote-policy.ts
++++ b/src/collab/remote-policy.ts
+@@ -92,7 +92,7 @@
+   }
+   const packs: EvidenceIndexEntry[] = [];
+
+-  let names: string[] = [];
++  let names: string[];
+   try {
+     names = await readdir(root);
+   } catch {

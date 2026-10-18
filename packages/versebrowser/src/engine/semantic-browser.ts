@@ -82,7 +82,10 @@ export async function attachSemanticBrowser(browser: Browser, prepared: Awaited<
         ...(result.outputFormat === 'json_schema' ? { structuredContent: redactSecretsInValue(result.structuredContent) } : {}) };
     } catch (error) {
       receipt.status = 'failed';
-      throw new Error(redactSecretsInText(error instanceof Error ? error.message : String(error)));
+      // The causal value crosses the same secret boundary as the public message.
+      const message = redactSecretsInText(error instanceof Error ? error.message : String(error));
+      const sanitizedOptions: ErrorOptions = { cause: message };
+      throw new Error(message, sanitizedOptions);
     } finally { receipt.durationMs = Date.now() - startedAt; }
   };
   try {

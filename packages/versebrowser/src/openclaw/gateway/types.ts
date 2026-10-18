@@ -23,7 +23,7 @@ export type RespondFn = (
 ) => void;
 
 export type GatewayRequestContext = {
-  getApprovalClientConnIds?: <TPayload>(params?: {
+  getApprovalClientConnIds?: (params?: {
     excludeConnId?: string;
     filter?: (client: GatewayClient, record?: unknown) => boolean;
     record?: unknown;

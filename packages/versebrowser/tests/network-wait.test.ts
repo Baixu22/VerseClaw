@@ -117,7 +117,7 @@ describe('vb_network_wait (TF-0104)', () => {
   });
 
   it('live：等到匹配请求；无过滤时等安静；过滤超时显式失败；列表 URL 脱敏', async () => {
-    let api: AgentBrowserHostApi | null = null;
+    let api: AgentBrowserHostApi;
     try {
       api = await createPlaywrightHostApi();
     } catch {

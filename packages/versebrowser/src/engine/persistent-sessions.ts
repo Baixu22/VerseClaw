@@ -133,7 +133,7 @@ export async function loadWindow(sessionId: string, workspaceRoot?: string): Pro
 }
 
 export async function listSessionRecords(workspaceRoot?: string): Promise<PersistentSessionRecord[]> {
-  let entries: string[] = [];
+  let entries: string[];
   try {
     // TF-0167: honour the caller workspace. This used to call sessionsRoot() with no
     // argument, so a session listing always read the DEFAULT workspace and another

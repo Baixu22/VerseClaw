@@ -160,7 +160,6 @@ describe('unknown session is an operational error, not a page verdict (TF-0118)'
     const root = await mkdtemp(join(tmpdir(), `vb-xproc-${randomUUID().slice(0, 8)}-`));
     setWorkspaceRoot(root);
     let apiA: AgentBrowserHostApi | undefined;
-    let apiB: AgentBrowserHostApi | undefined;
     let sid = '';
     try {
       let a;
@@ -183,7 +182,6 @@ describe('unknown session is an operational error, not a page verdict (TF-0118)'
 
       // 「第二个进程」：全新 api + facade，内存里没有该会话
       const b = await create({ persistent: true });
-      apiB = b;
       const facadeB = new Facade({ api: b, evidenceRoot: join(root, 'ev') });
       // 前提：status() 此时看不到该会话（正是不能用它做判据的原因）
       const statusB = await Promise.resolve(b.status());

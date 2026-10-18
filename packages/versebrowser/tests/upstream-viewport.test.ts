@@ -44,23 +44,23 @@ async function entrance(kind: string, root: string) {
       env: { ...process.env, VERSEBROWSER_BACKEND: 'upstream', VERSEBROWSER_TOOL_GROUPS: 'core,debug,network,evidence', VERSEBROWSER_CAPS: 'browser.open,browser.navigate,browser.act,browser.observe,browser.close,debug.console,debug.explain,network.read,evidence.write' } as Record<string, string>, stderr: 'pipe' });
     transport.stderr?.on('data', () => {}); await client.connect(transport);
   }
-  const call = async (name: string, args: Record<string, any>): Promise<any> => {
+  const call = async (name: string, args: Record<string, unknown>): Promise<any> => {
     if (!facade) return JSON.parse(((await client.callTool({ name, arguments: args })).content as Array<{ text: string }>)[0]!.text);
     const id = String(args.sessionId ?? '');
     if (name === 'vb_open') return facade.open(args);
-    if (name === 'vb_click') return facade.click(id, args.selector);
-    if (name === 'vb_type') return facade.type(id, args.selector, args.text);
-    if (name === 'vb_page_text') return facade.extractPageText({ sessionId: id, selector: args.selector });
+    if (name === 'vb_click') return facade.click(id, args.selector as string);
+    if (name === 'vb_type') return facade.type(id, args.selector as string, args.text as string);
+    if (name === 'vb_page_text') return facade.extractPageText({ sessionId: id, selector: args.selector as string | undefined });
     if (name === 'vb_screenshot') return facade.screenshotToDisk(id, args);
     if (name === 'vb_snapshot') return facade.snapshot(id);
     if (name === 'vb_pages') return facade.listPages(id);
-    if (name === 'vb_page_new') return facade.newPage(id, { url: args.url, background: true });
-    if (name === 'vb_page_select') return facade.selectPage(id, args.pageId);
-    if (name === 'vb_page_close') return facade.closePage(id, args.pageId);
+    if (name === 'vb_page_new') return facade.newPage(id, { url: args.url as string | undefined, background: true });
+    if (name === 'vb_page_select') return facade.selectPage(id, args.pageId as string);
+    if (name === 'vb_page_close') return facade.closePage(id, args.pageId as string);
     if (name === 'vb_close') return facade.close(id);
-    if (name === 'vb_nav') return facade.nav(id, args.url);
+    if (name === 'vb_nav') return facade.nav(id, args.url as string);
     if (name === 'vb_console') return facade.console(id);
-    if (name === 'vb_explain_error') return facade.explain(args.error);
+    if (name === 'vb_explain_error') return facade.explain(args.error as string);
     if (name === 'vb_verify_flow') return facade.verifyFlow({ ...args, sessionId: id });
     if (name === 'vb_wait') return facade.wait({ ...args, sessionId: id });
     throw new Error(name);
@@ -208,7 +208,7 @@ it('uses actual DPR and keeps screenshot failure, changed metrics, and unavailab
     let refused = 0;
     const metadata = vi.spyOn(context, 'newCDPSession').mockImplementation(async target => {
       const cdp = await original(target); const send = cdp.send.bind(cdp);
-      cdp.send = ((method: string, params: any) => method === 'Page.createIsolatedWorld' ? (refused++, Promise.reject(new Error('synthetic metrics refusal'))) : send(method as any, params)) as typeof cdp.send;
+      cdp.send = ((method: string, params: Parameters<typeof send>[1]) => method === 'Page.createIsolatedWorld' ? (refused++, Promise.reject(new Error('synthetic metrics refusal'))) : send(method as Parameters<typeof send>[0], params)) as typeof cdp.send;
       return cdp;
     });
     // Recreate a page so its metadata connection is created through the explicit failure injection.
@@ -261,7 +261,7 @@ it.each(['sdk', 'mcp-injected'])('retains a real minified stack source mapping w
   const client=new Client({name:'mapped-viewport',version:'1'}),[serverTransport,clientTransport]=InMemoryTransport.createLinkedPair();
   try {
     await mcp.connect(serverTransport);await client.connect(clientTransport);
-    const call=async(name:string,args:Record<string,any>):Promise<any>=>kind==='sdk'?(name==='vb_open'?facade.open(args):name==='vb_console'?facade.console(args.sessionId):facade.explain(args.error)):JSON.parse(((await client.callTool({name,arguments:args})).content as Array<{text:string}>)[0]!.text);
+    const call=async(name:string,args:Record<string,unknown>):Promise<any>=>kind==='sdk'?(name==='vb_open'?facade.open(args):name==='vb_console'?facade.console(args.sessionId as string):facade.explain(args.error as string)):JSON.parse(((await client.callTool({name,arguments:args})).content as Array<{text:string}>)[0]!.text);
     const opened=await call('vb_open',{url});expect(opened.ok).toBe(true);const sessionId=opened.data.session.id;
     const captured=await call('vb_console',{sessionId});expect(captured.content).toContain('mapped screenshot failure');
     const explained=await call('vb_explain_error',{error:captured.data?.content??captured.content});expect(explained.ok).toBe(true);

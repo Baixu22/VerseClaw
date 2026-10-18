@@ -40,7 +40,7 @@ export async function readEvidencePack(packDir: string): Promise<EvidencePackCon
   };
 
   const shotsDir = assertInsideRoot(packDir, join(packDir, PACK_FILES.shotsDir), 'screenshots directory');
-  let screenshots: string[] = [];
+  let screenshots: string[];
   try {
     const shots = await readdir(shotsDir);
     screenshots = shots.filter((name) => name.toLowerCase().endsWith('.png')).map((name) => assertInsideRoot(packDir, join(shotsDir, name), 'screenshot'));

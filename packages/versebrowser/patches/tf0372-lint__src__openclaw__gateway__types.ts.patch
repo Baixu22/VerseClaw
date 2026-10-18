@@ -1,0 +1,11 @@
+--- a/src/openclaw/gateway/types.ts
++++ b/src/openclaw/gateway/types.ts
+@@ -23,7 +23,7 @@
+ ) => void;
+
+ export type GatewayRequestContext = {
+-  getApprovalClientConnIds?: <TPayload>(params?: {
++  getApprovalClientConnIds?: (params?: {
+     excludeConnId?: string;
+     filter?: (client: GatewayClient, record?: unknown) => boolean;
+     record?: unknown;

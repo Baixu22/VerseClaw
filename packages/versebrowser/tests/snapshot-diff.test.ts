@@ -214,7 +214,7 @@ describe('snapshot diff + stale-ref resolution (TF-0102)', () => {
   });
 
   it('live：DOM 变化后 diff 报出新增项', async () => {
-    let api: AgentBrowserHostApi | null = null;
+    let api: AgentBrowserHostApi;
     try {
       api = await createPlaywrightHostApi();
     } catch {

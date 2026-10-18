@@ -1,0 +1,46 @@
+--- a/src/engine/upstream-control.ts
++++ b/src/engine/upstream-control.ts
+@@ -439,7 +439,7 @@
+     abortPending();
+     // The owner releases its dedicated browser; a bare adapter owns only its context.
+     try { await (closeOwnedSession ? closeOwnedSession() : context.close()); }
+-    catch (cleanup) { throw new AggregateError([error, cleanup], 'Upstream timeout; session cleanup unconfirmed'); }
++    catch (cleanup) { throw new AggregateError([error, cleanup], 'Upstream timeout; session cleanup unconfirmed', { cause: cleanup }); }
+   }
+   async function call(name: 'browser_file_upload' | 'browser_tabs' | 'browser_snapshot' | 'browser_click' | 'browser_type' | 'browser_press_key' | 'browser_fill_form' | 'browser_hover' | 'browser_mouse_wheel' | 'browser_mouse_move_xy', args: Record<string, unknown>, timeoutMs = 10_000) {
+     if(name==='browser_tabs') {if(closed)throw new Error('E_UPSTREAM_CLOSED: session control is closed');}
+@@ -554,7 +554,7 @@
+     return owner.frames().map((frame, position) => {
+       if (position === 0) return undefined;
+       const frameUrl = frame.url();
+-      let authorized = false;
++      let authorized: boolean;
+       try { authorized = origins.has(new URL(frameUrl).origin); } catch { authorized = false; }
+       return { frameId: `f${position}`, index: position, url: redactSensitiveUrl(frameUrl), name: redactSecretsInText(frame.name()).slice(0, 120), authorized };
+     }).filter((frame): frame is NonNullable<typeof frame> => frame !== undefined);
+@@ -743,7 +743,7 @@
+         return {...inventory,createdPageId,...navigation};
+       }catch(error){
+         if(created && !created.isClosed()) {
+-          try{await created.close();}catch(cleanup){throw new AggregateError([error,cleanup],'new page failed; owned page cleanup unconfirmed');}
++          try{await created.close();}catch(cleanup){throw new AggregateError([error,cleanup],'new page failed; owned page cleanup unconfirmed',{cause:cleanup});}
+         }
+         throw error;
+       }
+@@ -800,7 +800,6 @@
+         // bounded transfer — which is what the browser's download-attribute channel needs, because it
+         // bypasses context.route and a dead proxy never fulfils it. Origin guard, 4 MiB bound,
+         // destination grants and exclusive-create checks apply to both paths.
+-        let outcome:({kind:'page';selected:Download}|{kind:'fetch';body:Buffer}|undefined);
+         try{
+           const selected=await Promise.race([chosen,failed]);
+           signal.throwIfAborted();
+@@ -920,7 +919,7 @@
+         if (error === chooserTimeout) await closeAfterTimeout(error);
+         if (chooser && !assigned && !closed && !owner.isClosed() && generation===pageGeneration) {
+           try { await call('browser_file_upload',{},remaining()); }
+-          catch(cleanup) { throw new AggregateError([error,cleanup],'Upload failed; file chooser cleanup unconfirmed'); }
++          catch(cleanup) { throw new AggregateError([error,cleanup],'Upload failed; file chooser cleanup unconfirmed',{cause:cleanup}); }
+         }
+         throw error;
+       } finally { uploadPayloads=undefined;clearTimeout(timer);owner.off('filechooser',opened);owner.off('close',ended);refs.clear(); }
