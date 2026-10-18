@@ -83,6 +83,8 @@ Wiki 操作依赖已加载的 `memory-wiki` 扩展。页面可以在未配置时
 
 普通对话适合即时协作；Task Ledger 保存目标、任务节点、检查点与证据事实；Task Loop 用于显式启动的受约束执行。普通对话可以建议升级任务，但不会自动变成 Task Loop。
 
+Workspace 标识本地执行根目录、agent 绑定与权限上下文；Project 表示长期工作容器，当前 shared 身份契约仅提供兼容映射，尚未交付独立 Project 管理。Run 标识一次执行尝试；Task Ledger 仍是用户可见任务事实的唯一来源。详见[身份词汇表](docs/clawx-product-semantics.md#identity-and-scope-vocabulary)。
+
 ClawGraph 从工作区 YAML 加载流程，展示编译诊断、节点状态、事件和复核项。运行时的 Workboard 负责调度，和面向用户的 Task Ledger 各有职责。详见[Agent 编排](docs/multi-agent-orchestration/README.md)与[产品概念边界](docs/clawx-product-semantics.md)。
 
 ### 管理结构化产物

@@ -83,6 +83,8 @@ Wiki 操作にはロード済みの `memory-wiki` 拡張が必要です。未設
 
 通常の Chat は即時の共同作業に使います。Task Ledger は目標、タスクノード、チェックポイント、証拠の事実を保存します。Task Loop は明示的に開始する制約付き実行です。Chat がアップグレードを提案しても、自動的に Task Loop へ移行することはありません。
 
+Workspace はローカルの実行ルート、agent の関連付け、権限コンテキストを識別します。Project は長期的な作業コンテナを表し、現在の shared ID 契約は互換マッピングのみを提供します。独立した Project 管理は未実装です。Run は一回の実行試行を識別し、ユーザー向けタスクの事実は Task Ledger が一元管理します。[ID 用語集](docs/clawx-product-semantics.md#identity-and-scope-vocabulary)を参照してください。
+
 ClawGraph はワークスペースの YAML ワークフローを読み込み、コンパイル診断、ノード状態、イベント、レビュー項目を表示します。ランタイムの Workboard はスケジューリングを担当し、ユーザー向け Task Ledger とは役割が異なります。[Agent オーケストレーション](docs/multi-agent-orchestration/README.md)と[概念の境界](docs/clawx-product-semantics.md)を参照してください。
 
 ### 構造化成果物を管理する

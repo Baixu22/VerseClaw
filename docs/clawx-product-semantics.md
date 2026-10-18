@@ -1,12 +1,69 @@
 # ClawX Product Semantics
 
-Last updated: 2026-07-27
+Last updated: 2026-10-18
 
 Evidence boundary: this document is a product-semantics guardrail that complements `shared/capability-claims.ts` and `artifacts/capability-claims/status-table.json`.
 
 ## Positioning
 
 ClawX is an agent workbench, not an automatic project manager. Ordinary Chat is for immediate collaboration. Durable task facts belong to Task Ledger. High-constraint execution belongs to explicit Task Loop runs. Runtime/plugin scheduling belongs to Workboard. Routing Memo stays shadow until scorecard-backed quality input can safely affect routing.
+
+## Identity and scope vocabulary
+
+Workspace is not an alias for Project. A Workspace identifies a local executable
+root, its agent binding and permission context; a Project is the user-visible,
+long-lived container for work. Project is not Task Ledger. Run is not Task.
+**Task Ledger remains the only source of user-visible task facts.** Project
+aggregation and execution attempts reference those facts without owning a second
+copy of their state.
+
+| Identity | Owner | Scope | Lifecycle | Allowed references | Prohibited use |
+| --- | --- | --- | --- | --- | --- |
+| `WorkspaceId` | Main workspace registry and the existing workspace/permission owner | One registered local execution root with its agent binding and permission context | Survives conversations and runs; ends when the workspace registration is removed, not when a run ends | Explicit Project compatibility association, scoped sessions/runs, permission decisions | Using a conversation key, raw unverified directory, browser session or resource token as a missing workspace fallback; treating the ID itself as permission |
+| `ProjectId` | Product work-container owner; currently a compatibility projection, with no new Project store in this slice | Long-term user-visible work container, independent of the execution root abstraction | Outlives individual sessions and attempts; this slice only projects an existing workspace lifetime and does not implement Project lifecycle | Explicit Workspace association and references to existing Task Ledger facts/sessions/runs | Interchanging Project and Workspace fields; duplicating Task Ledger; claiming independent Project CRUD is delivered |
+| `SessionKey` | Existing conversation/session owner in Gateway/runtime | One logical conversation within its explicit owner/workspace context | Many turns and runs can share it; transcript reset/rotation may change physical session IDs without establishing a new execution lineage | Conversation history and an optional link in an explicitly scoped run | Workspace fallback, parent-run inference, task completion authority |
+| `RunId` | Existing execution owner (ordinary agent turn, Task Loop, ClawGraph or other declared runner) | One execution attempt under an explicit `RunScope`; never assume global uniqueness | Created for an attempt; retry/continuation relationships and terminal state come from the execution owner | Scoped execution, trace/evidence and explicit Task Ledger links | Persisting or transporting a standalone unscoped run reference; using a session string to infer ancestry; treating a run as a durable task |
+| `TaskId` | Task Ledger | One user-visible task fact within its owning ledger/workspace | Survives attempts, retries and sessions; status/removal belongs to Task Ledger | `taskNodeId`/`taskLedgerNodeId` references from runs, Workboard and projections | A bare runtime/browser/install task ID, cron run ID, scheduling authority, or a second task store |
+
+### Legacy field compatibility
+
+| Existing field | Meaning at its existing boundary | Rule for a new boundary |
+| --- | --- | --- |
+| `workspaceKey` | Owner-specific workspace grouping key; some old resource producers use a root path or an unrelated fallback | Resolve it with the workspace owner first. The shared adapter accepts it only as the owner's legacy spelling of a resolved WorkspaceId; conflicting `workspaceId`/`workspaceKey` values are rejected. It never consults `sessionKey`. |
+| `sessionId` | Endpoint-specific physical transcript/runtime session ID or browser/terminal session token | Do not globally rename it to SessionKey. Obtain the logical conversation key from the existing session owner; browser and terminal IDs remain in their own domains. |
+| `taskNodeId`, `taskLedgerNodeId` | A reference to the existing Task Ledger node | Carry TaskId in new typed references, retaining the existing wire key when adapting an old endpoint. |
+| `runtimeTaskId` | A runtime scheduling/dispatch item | Keep its runtime owner; optionally reference a Task Ledger node one-way. It is not TaskId. |
+| bare `taskId` | An old endpoint may mean a ledger projection, browser job, office installer or runtime item | Owner is determined by that endpoint, never by the string value. The new adapter rejects this ambiguous key; explicitly translate it to `taskNodeId`, `runtimeTaskId`, `browserTaskId`, `cronRunId` or `installTaskId` at the compatibility boundary. |
+| `runId` without scope | Existing endpoint-local token whose owner may be implicit in its route/store | Keep existing persistence intact. Before a new cross-boundary reference or persistence call, carry explicit RunScope with the token. |
+
+`shared/types/identity-scope.ts`, re-exported by the existing
+`shared/product-semantics.ts`, is the single compatibility module. Its five brands
+erase to the original strings: no prefix, UUID, case, whitespace or storage key is
+rewritten. `resolveProjectIdForWorkspace()` projects a WorkspaceId to a distinct
+ProjectId with the same bytes for the transition only.
+`resolveWorkspaceIdForProject()` also requires the owner's WorkspaceId and rejects
+a mismatched pair; it cannot discover an execution root from an arbitrary project.
+
+`normalizeRunScope()` requires `runId` and a scope containing a resolved
+`workspaceId` (or its explicit legacy `workspaceKey`). A missing ProjectId uses the
+central transitional mapping; an explicit ProjectId remains an owner-supplied
+association. SessionKey is optional metadata, never a substitute for that scope.
+It returns an in-memory `ScopedRunId`; it neither writes storage nor infers parent,
+retry or attempt lineage. `normalizeTaskReference()` requires an explicit kind and
+the matching owner-specific field, and rejects bare or mixed task keys.
+
+The executable boundary is opt-in for new callers: branded type checks and negative
+normalization tests guard against new identity confusion. Existing raw host-api
+payloads remain compatibility surfaces. In particular,
+`electron/services/agent-browser-api.ts` still has a legacy session-based
+resource-envelope workspace fallback; this slice records it rather than claiming
+it is migrated. The program's later migration work must remove it before claiming
+whole-system identity convergence.
+
+TF-0372 supplies no Project store, new Task/Run/Trace/Goal/Memory authority, execution
+protocol, permission provider or full OS sandbox. Frozen boundaries remain
+`liveReady=false`, `productApproved=false`, `defaultOn=false`, C1 keep-off,
+Runtime Memory diagnostics-only and SEKB auto-writeback disabled.
 
 ## Windows x64 Controlled Preview
 

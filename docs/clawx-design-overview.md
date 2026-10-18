@@ -7,6 +7,26 @@
 
 ---
 
+## Identity and scope boundary (2026-10-18)
+
+The canonical [identity vocabulary](clawx-product-semantics.md#identity-and-scope-vocabulary)
+defines owner, scope, lifecycle and references for WorkspaceId, ProjectId,
+SessionKey, RunId and TaskId. `shared/types/identity-scope.ts` supplies their
+distinct brands and the sole compatibility mapping, re-exported by the existing
+product-semantics module for shared contract consumers.
+
+Workspace is the local execution root/agent/permission context, not an alias for
+Project. Project is a long-term user work container, not Task Ledger. Run is an
+execution attempt, not Task. Task Ledger remains the only source of user-visible
+task facts. Transitional ProjectId values may equal WorkspaceId bytes, while the
+types and field names stay distinct; no independent Project store is delivered.
+
+New run references require scope. Session metadata never fills a missing workspace
+or determines lineage, and task references name the ledger/runtime/browser/cron/
+install owner. Legacy endpoint payloads and persisted strings are unchanged; the
+vocabulary explicitly records unmigrated call sites. No full OS sandbox, permission
+default change, new execution engine or product-lock promotion is part of TF-0372.
+
 ## Cross-platform FakeCoding UI v2 shell and overlay routing
 
 - `UiVersion` is `v2` on every supported desktop platform. Compatibility query values cannot restore the previous shell or duplicate Browser/Review page destinations.
