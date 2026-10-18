@@ -5,7 +5,7 @@
   "title": "开发 P0 六个资源原语模块",
   "verdict": "pass",
   "candidate": {
-    "sha": "edeb596bd",
+    "sha": "5aea169b9",
     "base": "40f1a61e0",
     "dirty": false
   },
