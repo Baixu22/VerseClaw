@@ -66,6 +66,7 @@ import { OrchestrationPlanView, type PlanView } from './OrchestrationPlanView';
 import { SubagentRunnerPanel } from './SubagentRunnerPanel';
 import { AgencyRolePromotionPanel } from './AgencyRolePromotionPanel';
 import { AgentRoleIdentity, RoleBadge } from './AgentAvatar';
+import { isTaskLoopPassed } from '@shared/product-semantics';
 import type { AgentAvatarView } from '@shared/types/agent';
 import { subagentLifecycleIdentityKey } from '@shared/subagent-lifecycle';
 
@@ -3063,7 +3064,9 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                   <CircleDot className="h-4 w-4 text-primary" />
                   <span className="text-xs font-medium text-foreground">
                     {tt('roles.taskLoopSummary', 'Task loop {{status}} at {{phase}}', {
-                      status: taskLoopResult.status,
+                      status: isTaskLoopPassed({ status: taskLoopResult.status, evidenceGate: taskLoopResult.evidenceGate })
+                        ? 'complete (verified)'
+                        : taskLoopResult.status,
                       phase: taskLoopResult.phase,
                     })}
                   </span>

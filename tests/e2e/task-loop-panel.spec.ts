@@ -155,8 +155,9 @@ test.describe('Agent task loop panel', () => {
     await expect(page.getByTestId('role-task-loop-event')).toContainText('self_check');
     await expect(page.getByTestId('role-task-loop-event')).toContainText('running');
     await expect(page.getByTestId('role-task-loop-event')).toContainText('complete');
-    await expect(page.getByTestId('role-task-loop-result')).toContainText('Task loop complete at complete');
+    await expect(page.getByTestId('role-task-loop-result')).toContainText('Task loop complete (verified) at complete');
     await expect(page.getByTestId('role-task-loop-result-gate')).toContainText('pass');
+    await expect(page.getByTestId('role-task-loop-result')).not.toHaveAttribute('data-completion-authority', 'task-ledger');
     await expect(page.getByTestId('role-task-loop-result-quality')).toContainText('3/0/0');
     await expect(page.getByTestId('role-task-loop-files')).toContainText('1');
     await expect(page.getByTestId('role-task-loop-tests')).toContainText('1');

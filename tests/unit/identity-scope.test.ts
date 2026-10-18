@@ -1,6 +1,8 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 import {
+  completionView,
   displayCompletionStatus,
+  isTaskLoopPassed,
   normalizeRunScope,
   normalizeTaskReference,
   resolveProjectIdForWorkspace,
@@ -21,6 +23,48 @@ describe('identity and scope boundary', () => {
     expect(displayCompletionStatus({ status: "running" })).toBe("running");
   });
 
+  it('keeps Chat final, Task Loop pass, and unavailable verification distinct', () => {
+    const chat = completionView({ turnStatus: 'completed', runStatus: 'completed', authority: 'run' });
+    expect(chat).toMatchObject({
+      turnStatus: 'completed',
+      runStatus: 'completed',
+      verification: 'unavailable',
+      taskStatus: 'unavailable',
+      completionAuthority: 'run',
+    });
+
+    const noAuthority = completionView({ turnStatus: 'completed', runStatus: 'completed' });
+    expect(noAuthority.turnStatus).toBe('unavailable');
+    expect(noAuthority.runStatus).toBe('unavailable');
+    expect(noAuthority.taskStatus).toBe('unavailable');
+    expect(noAuthority.completionAuthority).toBeNull();
+
+    const taskLoop = completionView({
+      runStatus: 'completed',
+      verification: 'passed',
+      taskStatus: 'completed',
+      authority: 'task-loop-verification',
+    });
+    expect(taskLoop).toMatchObject({
+      runStatus: 'completed',
+      verification: 'passed',
+      taskStatus: 'completed',
+      completionAuthority: 'task-loop-verification',
+    });
+
+    const noVerification = completionView({
+      runStatus: 'completed',
+      verification: 'unavailable',
+      taskStatus: 'completed',
+      authority: 'task-loop-verification',
+    });
+    expect(noVerification.verification).toBe('unavailable');
+    expect(noVerification.taskStatus).toBe('unavailable');
+
+    expect(isTaskLoopPassed({ status: 'complete', evidenceGate: { status: 'pass' } })).toBe(true);
+    expect(isTaskLoopPassed({ status: 'complete', evidenceGate: { status: 'repair' } })).toBe(false);
+    expect(isTaskLoopPassed({ status: 'blocked', evidenceGate: { status: 'pass' } })).toBe(false);
+  });
   it('keeps identity brands distinct and requires scope at typed run boundaries', () => {
     // These assertions are checked by pnpm typecheck (tsconfig.test.json), not Vitest alone.
     expectTypeOf<WorkspaceId>().toExtend<string>();

@@ -114,11 +114,65 @@ export type CompletionAuthority =
   | "task-ledger";
 
 export type CompletionStatus = "running" | "completed" | "error" | "aborted" | "unavailable";
+export type VerificationStatus = "passed" | "unavailable" | "failed";
+
+/**
+ * The four distinct completion facts the UI may display. They do not imply
+ * each other: a turn result is not a task result, and a Task Loop pass is not a
+ * verifier pass.
+ */
+export type CompletionView = {
+  turnStatus: CompletionStatus;
+  runStatus: CompletionStatus;
+  verification: VerificationStatus;
+  taskStatus: CompletionStatus;
+  completionAuthority: CompletionAuthority | null;
+};
 
 /** Presentation-only mapping. It never creates completion authority. */
 export function displayCompletionStatus(input: {
   authority?: CompletionAuthority | null;
   status: CompletionStatus;
 }): CompletionStatus {
-  return input.status === "completed" && !input.authority ? "unavailable" : input.status;
+  if (input.status !== "completed") return input.status;
+  return input.authority ? "completed" : "unavailable";
+}
+
+/**
+ * Map owner-supplied facts into one UI vocabulary. This function does not
+ * decide whether a task passed; it only prevents the display from upgrading a
+ * lower-authority result into a stronger one.
+ */
+export function completionView(input: {
+  turnStatus?: CompletionStatus;
+  runStatus?: CompletionStatus;
+  verification?: VerificationStatus;
+  taskStatus?: CompletionStatus;
+  authority?: CompletionAuthority | null;
+}): CompletionView {
+  const authority = input.authority ?? null;
+  const verification = input.verification ?? "unavailable";
+  const requestedTaskStatus = input.taskStatus ?? "unavailable";
+  const verifiedTaskLoop = authority === "task-loop-verification" && verification === "passed";
+  const taskAuthority = authority === "task-ledger" || verifiedTaskLoop;
+  return {
+    turnStatus: displayCompletionStatus({
+      status: input.turnStatus ?? "unavailable",
+      authority,
+    }),
+    runStatus: displayCompletionStatus({
+      status: input.runStatus ?? "unavailable",
+      authority,
+    }),
+    verification,
+    taskStatus: requestedTaskStatus === "completed"
+      ? (taskAuthority ? "completed" : "unavailable")
+      : requestedTaskStatus,
+    completionAuthority: authority,
+  };
+}
+
+/** A no-authority Task Loop result is not a completed task. */
+export function isTaskLoopPassed(input: { status: string; evidenceGate?: { status: string } | null }): boolean {
+  return input.status === "complete" && input.evidenceGate?.status === "pass";
 }
