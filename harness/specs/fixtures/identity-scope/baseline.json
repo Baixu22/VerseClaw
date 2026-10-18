@@ -1,0 +1,176 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0372",
+  "candidate": {
+    "sha": "2651d5a7fcfa4e2f377e3ffc49f271bcd8f0222b",
+    "dirty": false
+  },
+  "initialStatus": {
+    "name": "initial-status",
+    "command": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "-uall"
+    ],
+    "cwd": "D:/ClawX-candidates/codex-manus-semantics-20261018-r2",
+    "started": "2026-10-18T02:46:12.698Z",
+    "ended": "2026-10-18T02:46:12.897Z",
+    "exitCode": 0,
+    "stdout": "initial-status.stdout.log",
+    "stderr": "initial-status.stderr.log",
+    "driven_by": "agent",
+    "actor": "codex-tf0372"
+  },
+  "initialStatusText": "",
+  "receipts": [
+    {
+      "command": "pnpm run repo:duplicates:check",
+      "head": "2651d5a7fcfa4e2f377e3ffc49f271bcd8f0222b",
+      "dirty": false,
+      "started": "2026-10-18T02:47:55.650Z",
+      "ended": "2026-10-18T02:48:06.726Z",
+      "exitCode": 0,
+      "signal": null,
+      "driven_by": "agent",
+      "actor": "codex-tf0372",
+      "stdout": "baseline2-run_repo-duplicates-check.stdout.log",
+      "stderr": "baseline2-run_repo-duplicates-check.stderr.log",
+      "stdoutText": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n[duplicates] 12 reviewed duplicate groups matched the allowlist.\n",
+      "stderrText": "$ node scripts/check-duplicate-assets.mjs\n"
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "head": "2651d5a7fcfa4e2f377e3ffc49f271bcd8f0222b",
+      "dirty": false,
+      "started": "2026-10-18T02:48:07.161Z",
+      "ended": "2026-10-18T02:48:12.866Z",
+      "exitCode": 0,
+      "signal": null,
+      "driven_by": "agent",
+      "actor": "codex-tf0372",
+      "stdout": "baseline2-run_repo-artifacts-check.stdout.log",
+      "stderr": "baseline2-run_repo-artifacts-check.stderr.log",
+      "stdoutText": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\nRepository artifact retention passed (18010 tracked paths).\n",
+      "stderrText": "$ node scripts/check-repository-artifacts.mjs\n"
+    },
+    {
+      "command": "pnpm run repo:local-paths:check",
+      "head": "2651d5a7fcfa4e2f377e3ffc49f271bcd8f0222b",
+      "dirty": false,
+      "started": "2026-10-18T02:48:13.433Z",
+      "ended": "2026-10-18T02:48:16.181Z",
+      "exitCode": 0,
+      "signal": null,
+      "driven_by": "agent",
+      "actor": "codex-tf0372",
+      "stdout": "baseline2-run_repo-local-paths-check.stdout.log",
+      "stderr": "baseline2-run_repo-local-paths-check.stderr.log",
+      "stdoutText": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n[local-paths] PASS active docs contain no developer-local absolute paths\n",
+      "stderrText": "$ node scripts/check-local-paths.mjs\n"
+    },
+    {
+      "command": "pnpm run repo:evidence:check",
+      "head": "2651d5a7fcfa4e2f377e3ffc49f271bcd8f0222b",
+      "dirty": false,
+      "started": "2026-10-18T02:48:16.687Z",
+      "ended": "2026-10-18T02:48:18.688Z",
+      "exitCode": 0,
+      "signal": null,
+      "driven_by": "agent",
+      "actor": "codex-tf0372",
+      "stdout": "baseline2-run_repo-evidence-check.stdout.log",
+      "stderr": "baseline2-run_repo-evidence-check.stderr.log",
+      "stdoutText": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n[evidence-refs] PASS 157 referenced path(s)\n",
+      "stderrText": "$ node scripts/check-evidence-refs.mjs\n"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "head": "2651d5a7fcfa4e2f377e3ffc49f271bcd8f0222b",
+      "dirty": false,
+      "started": "2026-10-18T02:51:09.665Z",
+      "ended": "2026-10-18T02:51:37.200Z",
+      "exitCode": 0,
+      "signal": null,
+      "driven_by": "agent",
+      "actor": "codex-tf0372",
+      "stdout": "bootstrap-run_typecheck.stdout.log",
+      "stderr": "bootstrap-run_typecheck.stderr.log",
+      "stdoutText": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n[ext-bridge] No external extensions configured — empty stubs up to date.\n{\n  \"success\": true,\n  \"mode\": \"parallel\",\n  \"testTypes\": {\n    \"commandLine\": \"pnpm run typecheck:test\",\n    \"exitCode\": 0,\n    \"durationMs\": 24227,\n    \"observationMode\": false,\n    \"errorCount\": 0,\n    \"errorLog\": \"D:\\\\ClawX-candidates\\\\codex-manus-semantics-20261018-r2\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n  },\n  \"cache\": {\n    \"enabled\": false,\n    \"status\": \"disabled\",\n    \"key\": \"9b81e99a7244577bc8b78850c843f954fa44fbc09d7ae2c089f8d7490d16c36b\",\n    \"inputCount\": 12187,\n    \"report\": \"D:\\\\ClawX-candidates\\\\codex-manus-semantics-20261018-r2\\\\artifacts\\\\typecheck-cache\\\\report.json\"\n  },\n  \"totalDurationMs\": 26762,\n  \"coverageNote\": \"Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.\",\n  \"results\": [\n    {\n      \"commandLine\": \"node scripts/generate-ext-bridge.mjs\",\n      \"exitCode\": 0,\n      \"durationMs\": 48\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:node\",\n      \"exitCode\": 0,\n      \"durationMs\": 19374\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:web\",\n      \"exitCode\": 0,\n      \"durationMs\": 5119\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:test\",\n      \"exitCode\": 0,\n      \"durationMs\": 24227,\n      \"observationMode\": false,\n      \"errorCount\": 0,\n      \"errorLog\": \"D:\\\\ClawX-candidates\\\\codex-manus-semantics-20261018-r2\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n    }\n  ]\n}\n",
+      "stderrText": "$ node scripts/typecheck-agent-dev.mjs\n$ tsgo --noEmit -p tsconfig.node.json --composite false\n$ tsgo --noEmit -p tsconfig.web.json --composite false\n"
+    },
+    {
+      "command": "git diff --check",
+      "head": "2651d5a7fcfa4e2f377e3ffc49f271bcd8f0222b",
+      "dirty": false,
+      "started": "2026-10-18T02:48:47.885Z",
+      "ended": "2026-10-18T02:48:47.954Z",
+      "exitCode": 0,
+      "signal": null,
+      "driven_by": "agent",
+      "actor": "codex-tf0372",
+      "stdout": "baseline2-git_diff_--check.stdout.log",
+      "stderr": "baseline2-git_diff_--check.stderr.log",
+      "stdoutText": "",
+      "stderrText": ""
+    }
+  ],
+  "trackedPaths": 18010,
+  "reviewedDuplicateGroups": 12,
+  "evidenceReferences": 157,
+  "environmentPreparation": {
+    "freshInstall": false,
+    "dependencyReuse": "Installed external dependencies reused through local junctions; workspace package junctions point to isolated source. VerseBrowser exports built from the isolated checkout.",
+    "pnpmVersion": "11.2.2",
+    "tempDirectory": "D:/tmp",
+    "verifyDepsBeforeRun": "warn (process-local; avoids automatic purge of reused dependencies; check scripts unchanged)",
+    "attempts": [
+      {
+        "receipt": "pnpm-version.json",
+        "exitCode": 1,
+        "classification": "environment",
+        "reason": "Git sh missing from subprocess PATH; restored Git bin/usr/bin in this process"
+      },
+      {
+        "receipt": "baseline-run_typecheck.json",
+        "exitCode": 1,
+        "classification": "environment",
+        "reason": "pnpm attempted automatic dependency reinstall and aborted without TTY"
+      },
+      {
+        "receipt": "baseline2-run_typecheck.json",
+        "exitCode": 1,
+        "testTypeErrors": 892,
+        "classification": "environment",
+        "reason": "Missing isolated runtime/package dependency links"
+      },
+      {
+        "receipt": "baseline3-run_typecheck.json",
+        "exitCode": 1,
+        "testTypeErrors": 8,
+        "classification": "environment",
+        "reason": "Missing generated VerseBrowser exports; resolved by the existing versebrowser:build command"
+      }
+    ],
+    "buildReceipt": {
+      "command": "pnpm run versebrowser:build",
+      "head": "2651d5a7fcfa4e2f377e3ffc49f271bcd8f0222b",
+      "dirty": false,
+      "started": "2026-10-18T02:51:03.002Z",
+      "ended": "2026-10-18T02:51:09.539Z",
+      "exitCode": 0,
+      "signal": null,
+      "driven_by": "agent",
+      "actor": "codex-tf0372",
+      "stdout": "bootstrap-run_versebrowser-build.stdout.log",
+      "stderr": "bootstrap-run_versebrowser-build.stderr.log",
+      "stdoutText": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n{\"patch\":\"versebrowser-log-pointer-focus-files-downloads-v1\",\"owner\":\"@playwright/mcp\",\"upstream\":\"1.64.0-alpha-1790635538000\",\"sha256\":\"1532f36aa4fcd0dbdd6a0c0cb49fbb7e55b30b649d67eadde69d5eb70be33c13\"}\n{\"patch\":\"versebrowser-log-pointer-focus-files-downloads-v1\",\"owner\":\"playwright\",\"upstream\":\"1.64.0-alpha-1790635538000\",\"sha256\":\"1532f36aa4fcd0dbdd6a0c0cb49fbb7e55b30b649d67eadde69d5eb70be33c13\"}\n",
+      "stderrText": "$ pnpm --filter @verse-claw/versebrowser build\n$ node scripts/patch-upstream.mjs && tsc -p tsconfig.build.json\n"
+    }
+  },
+  "historicalDeviations": {
+    "total": 150,
+    "unresolved": 2,
+    "disposition": "Unrelated historical VerseBrowser scope/accidental-main-commit records remain unchanged"
+  }
+}

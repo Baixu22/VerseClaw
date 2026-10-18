@@ -1,0 +1,150 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0372",
+  "node": "TF-0372",
+  "title": "定义身份与范围词汇，并建立兼容映射",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "40881bb1b62016e186a89d58023a85933b52002f",
+    "tree": "5e244db44674d11eb4420f5c45e2996ada64e2c6",
+    "base": "2651d5a7fcfa4e2f377e3ffc49f271bcd8f0222b",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "语义文档列出每个身份的所有者、作用域、生命周期和禁止用法。",
+      "result": "pass",
+      "evidence": [
+        "docs/clawx-product-semantics.md",
+        "docs/clawx-design-overview.md",
+        "source-inputs.json"
+      ]
+    },
+    {
+      "criterion": "shared 类型提供至少 WorkspaceId/ProjectId/RunId/TaskId 的区分方式。",
+      "result": "pass",
+      "evidence": [
+        "shared/types/identity-scope.ts",
+        "source-inputs.json",
+        "tests.json"
+      ]
+    },
+    {
+      "criterion": "contract:check 与 typecheck 通过。",
+      "result": "pass",
+      "evidence": [
+        "gates.json",
+        "tests.json"
+      ]
+    }
+  ],
+  "supplementalChecks": [
+    {
+      "requirement": "SessionKey is not a WorkspaceId and never fills a missing workspace scope",
+      "evidence": [
+        "tests.json",
+        "gates.json"
+      ],
+      "result": "pass"
+    },
+    {
+      "requirement": "Bare or mixed taskId rejected for all five owner kinds",
+      "evidence": [
+        "tests.json"
+      ],
+      "result": "pass"
+    },
+    {
+      "requirement": "RunId requires RunScope at new boundaries; same-session attempts do not imply lineage",
+      "evidence": [
+        "tests.json",
+        "gates.json"
+      ],
+      "result": "pass"
+    },
+    {
+      "requirement": "Existing identifier bytes and legacy input objects are unchanged",
+      "evidence": [
+        "tests.json",
+        "source-inputs.json"
+      ],
+      "result": "pass"
+    }
+  ],
+  "counts": {
+    "identityTests": 27,
+    "existingSemanticTests": 8,
+    "passed": 35,
+    "failed": 0,
+    "skipped": 0,
+    "browserRegressionPassed": 156,
+    "browserRegressionFailed": 0,
+    "browserRegressionSkipped": 0,
+    "hostRegressionPassed": 5,
+    "candidateCommands": 20,
+    "candidateCommandFailures": 0
+  },
+  "implementationFiles": [
+    ".github/workflows/check.yml",
+    "README.ja-JP.md",
+    "README.md",
+    "README.zh-CN.md",
+    "docs/clawx-design-overview.md",
+    "docs/clawx-product-semantics.md",
+    "eslint.config.mjs",
+    "harness/specs/rules/identity-scope-boundary.md",
+    "harness/specs/scenarios/identity-scope-compatibility.md",
+    "harness/specs/tasks/identity-scope-semantics.md",
+    "packages/versebrowser/integration-patches.json",
+    "packages/versebrowser/patches/tf0372-lint__src__collab__remote-policy.ts.patch",
+    "packages/versebrowser/patches/tf0372-lint__src__engine__driver-profile.ts.patch",
+    "packages/versebrowser/patches/tf0372-lint__src__engine__facade.ts.patch",
+    "packages/versebrowser/patches/tf0372-lint__src__engine__persistent-sessions.ts.patch",
+    "packages/versebrowser/patches/tf0372-lint__src__engine__playwright-host-api.ts.patch",
+    "packages/versebrowser/patches/tf0372-lint__src__engine__semantic-browser.ts.patch",
+    "packages/versebrowser/patches/tf0372-lint__src__engine__standalone.ts.patch",
+    "packages/versebrowser/patches/tf0372-lint__src__engine__upstream-control.ts.patch",
+    "packages/versebrowser/patches/tf0372-lint__src__engine__visual-browser.ts.patch",
+    "packages/versebrowser/patches/tf0372-lint__src__evidence__reader.ts.patch",
+    "packages/versebrowser/patches/tf0372-lint__src__openclaw__gateway__types.ts.patch",
+    "packages/versebrowser/src/collab/remote-policy.ts",
+    "packages/versebrowser/src/engine/driver-profile.ts",
+    "packages/versebrowser/src/engine/facade.ts",
+    "packages/versebrowser/src/engine/persistent-sessions.ts",
+    "packages/versebrowser/src/engine/playwright-host-api.ts",
+    "packages/versebrowser/src/engine/semantic-browser.ts",
+    "packages/versebrowser/src/engine/standalone.ts",
+    "packages/versebrowser/src/engine/upstream-control.ts",
+    "packages/versebrowser/src/engine/visual-browser.ts",
+    "packages/versebrowser/src/evidence/reader.ts",
+    "packages/versebrowser/src/openclaw/gateway/types.ts",
+    "packages/versebrowser/tests/agent-browser-m6-flight-pr.test.ts",
+    "packages/versebrowser/tests/argument-guard-and-pr-comment.test.ts",
+    "packages/versebrowser/tests/evidence-jail.test.ts",
+    "packages/versebrowser/tests/evidence-sinks-coverage.test.ts",
+    "packages/versebrowser/tests/mcp-shutdown-race.test.ts",
+    "packages/versebrowser/tests/network-detail.test.ts",
+    "packages/versebrowser/tests/network-wait.test.ts",
+    "packages/versebrowser/tests/persistent-sessions.test.ts",
+    "packages/versebrowser/tests/runtime-read.test.ts",
+    "packages/versebrowser/tests/semantic-browser.test.ts",
+    "packages/versebrowser/tests/snapshot-aria-state.test.ts",
+    "packages/versebrowser/tests/snapshot-diff.test.ts",
+    "packages/versebrowser/tests/unknown-session-verdict.test.ts",
+    "packages/versebrowser/tests/upstream-files.test.ts",
+    "packages/versebrowser/tests/upstream-pointer.test.ts",
+    "packages/versebrowser/tests/upstream-viewport.test.ts",
+    "shared/product-semantics.ts",
+    "shared/types/identity-scope.ts",
+    "tests/unit/identity-scope.test.ts",
+    "tests/unit/versebrowser-n4-observation-loop.test.ts"
+  ],
+  "limitations": [
+    "TF-0373/TF-0374/TF-0375 are not implemented. Existing bare endpoint fields and the documented browser session-to-workspace fallback are not migrated.",
+    "The new adapter is an opt-in shared vocabulary boundary; it is not workspace authorization, registry lookup, Project CRUD, run persistence or a new truth store.",
+    "No Electron UI/E2E, full root/runtime unit suite, installer, live-provider workflow, full OS sandbox or release acceptance was run. Harness full-profile selection was inspected by dry-run only.",
+    "Dependencies were reused, not freshly installed; source/build/typecheck evidence is local Windows evidence. CI jobs inspected did not start because of account billing/limits.",
+    "Product locks/defaults, transport, persisted formats and public-release boundaries are unchanged. All work/evidence is agent-driven."
+  ],
+  "provenanceNote": "All gate and test reports were read from files and bound to the clean candidate before this evidence-only commit. The final remote landing SHA and Task Forest closure receipt are local follow-up records, not backfilled into this candidate verdict."
+}

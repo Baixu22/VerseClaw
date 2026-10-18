@@ -1,0 +1,480 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0372",
+  "candidate": {
+    "sha": "40881bb1b62016e186a89d58023a85933b52002f",
+    "tree": "5e244db44674d11eb4420f5c45e2996ada64e2c6",
+    "base": "2651d5a7fcfa4e2f377e3ffc49f271bcd8f0222b",
+    "dirty": false
+  },
+  "report": {
+    "numTotalTestSuites": 4,
+    "numPassedTestSuites": 4,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 35,
+    "numPassedTests": 35,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1792293826104,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary keeps identity brands distinct and requires scope at typed run boundaries",
+            "status": "passed",
+            "title": "keeps identity brands distinct and requires scope at typed run boundaries",
+            "duration": 1.16800000000012,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary centralizes a byte-preserving workspace/project compatibility mapping",
+            "status": "passed",
+            "title": "centralizes a byte-preserving workspace/project compatibility mapping",
+            "duration": 0.9109000000003107,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary normalizes an owner-resolved legacy workspace spelling without mutating its input",
+            "status": "passed",
+            "title": "normalizes an owner-resolved legacy workspace spelling without mutating its input",
+            "duration": 0.5973000000003594,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary keeps an explicit project association and every identifier byte unchanged",
+            "status": "passed",
+            "title": "keeps an explicit project association and every identifier byte unchanged",
+            "duration": 0.15799999999990177,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\"}",
+            "status": "passed",
+            "title": "rejects a run without valid explicit workspace scope: {\"runId\":\"run\"}",
+            "duration": 0.1526000000003478,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":null}",
+            "status": "passed",
+            "title": "rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":null}",
+            "duration": 0.09239999999999782,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":[]}",
+            "status": "passed",
+            "title": "rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":[]}",
+            "duration": 0.08320000000003347,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{}}",
+            "status": "passed",
+            "title": "rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{}}",
+            "duration": 0.08079999999972642,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"sessionKey\":\"session\"}}",
+            "status": "passed",
+            "title": "rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"sessionKey\":\"session\"}}",
+            "duration": 0.088799999999992,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"sessionId\":\"physical-session\"}}",
+            "status": "passed",
+            "title": "rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"sessionId\":\"physical-session\"}}",
+            "duration": 0.10689999999976862,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"projectId\":\"project\"}}",
+            "status": "passed",
+            "title": "rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"projectId\":\"project\"}}",
+            "duration": 0.0704000000000633,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"workspaceId\":\"\"}}",
+            "status": "passed",
+            "title": "rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"workspaceId\":\"\"}}",
+            "duration": 0.06970000000001164,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"workspaceKey\":42}}",
+            "status": "passed",
+            "title": "rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"workspaceKey\":42}}",
+            "duration": 0.04919999999992797,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\" \",\"scope\":{\"workspaceId\":\"workspace\"}}",
+            "status": "passed",
+            "title": "rejects a run without valid explicit workspace scope: {\"runId\":\" \",\"scope\":{\"workspaceId\":\"workspace\"}}",
+            "duration": 0.05079999999998108,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects conflicting legacy and canonical workspace identities",
+            "status": "passed",
+            "title": "rejects conflicting legacy and canonical workspace identities",
+            "duration": 0.1752000000001317,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary keeps same-session attempts independent and never converts a physical sessionId",
+            "status": "passed",
+            "title": "keeps same-session attempts independent and never converts a physical sessionId",
+            "duration": 0.7105999999998858,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary requires the ledger owner-specific task field",
+            "status": "passed",
+            "title": "requires the ledger owner-specific task field",
+            "duration": 0.3708000000001448,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary requires the runtime owner-specific task field",
+            "status": "passed",
+            "title": "requires the runtime owner-specific task field",
+            "duration": 0.22469999999975698,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary requires the browser owner-specific task field",
+            "status": "passed",
+            "title": "requires the browser owner-specific task field",
+            "duration": 0.2157999999999447,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary requires the cron owner-specific task field",
+            "status": "passed",
+            "title": "requires the cron owner-specific task field",
+            "duration": 0.23139999999966676,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary requires the install owner-specific task field",
+            "status": "passed",
+            "title": "requires the install owner-specific task field",
+            "duration": 0.1590000000001055,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a task reference without a declared owner: null",
+            "status": "passed",
+            "title": "rejects a task reference without a declared owner: null",
+            "duration": 0.08649999999988722,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a task reference without a declared owner: undefined",
+            "status": "passed",
+            "title": "rejects a task reference without a declared owner: undefined",
+            "duration": 0.05120000000033542,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a task reference without a declared owner: {}",
+            "status": "passed",
+            "title": "rejects a task reference without a declared owner: {}",
+            "duration": 0.05430000000023938,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a task reference without a declared owner: {\"taskId\":\"bare\"}",
+            "status": "passed",
+            "title": "rejects a task reference without a declared owner: {\"taskId\":\"bare\"}",
+            "duration": 0.05420000000003711,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a task reference without a declared owner: {\"kind\":\"toString\"}",
+            "status": "passed",
+            "title": "rejects a task reference without a declared owner: {\"kind\":\"toString\"}",
+            "duration": 0.045900000000074215,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "identity and scope boundary"
+            ],
+            "fullName": "identity and scope boundary rejects a task reference without a declared owner: {\"kind\":\"unknown\"}",
+            "status": "passed",
+            "title": "rejects a task reference without a declared owner: {\"kind\":\"unknown\"}",
+            "duration": 0.03900000000021464,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1792293829252,
+        "endTime": 1792293829258.2314,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-candidates/codex-manus-semantics-20261018-r2/tests/unit/identity-scope.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "ClawX product semantics"
+            ],
+            "fullName": "ClawX product semantics pins the seven product concepts to distinct responsibilities",
+            "status": "passed",
+            "title": "pins the seven product concepts to distinct responsibilities",
+            "duration": 2.150699999999688,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ClawX product semantics"
+            ],
+            "fullName": "ClawX product semantics uses explicit orchestration quality states instead of an empty array ambiguity",
+            "status": "passed",
+            "title": "uses explicit orchestration quality states instead of an empty array ambiguity",
+            "duration": 0.41229999999995925,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ClawX product semantics"
+            ],
+            "fullName": "ClawX product semantics models Workboard to Task Ledger as a one-way reference",
+            "status": "passed",
+            "title": "models Workboard to Task Ledger as a one-way reference",
+            "duration": 0.5850000000000364,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ClawX product semantics"
+            ],
+            "fullName": "ClawX product semantics normalizes permission decisions without replacing existing permission systems",
+            "status": "passed",
+            "title": "normalizes permission decisions without replacing existing permission systems",
+            "duration": 0.20910000000003492,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ClawX product semantics"
+            ],
+            "fullName": "ClawX product semantics keeps ordinary Chat to Task Loop as an explicit user-confirmed upgrade suggestion",
+            "status": "passed",
+            "title": "keeps ordinary Chat to Task Loop as an explicit user-confirmed upgrade suggestion",
+            "duration": 0.18960000000015498,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ClawX product semantics"
+            ],
+            "fullName": "ClawX product semantics lists the product-positioning claims that public docs must not make",
+            "status": "passed",
+            "title": "lists the product-positioning claims that public docs must not make",
+            "duration": 0.18029999999998836,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ClawX product semantics"
+            ],
+            "fullName": "ClawX product semantics assigns every P0 and P1 planning item to an explicit semantic boundary",
+            "status": "passed",
+            "title": "assigns every P0 and P1 planning item to an explicit semantic boundary",
+            "duration": 6.394200000000183,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ClawX product semantics"
+            ],
+            "fullName": "ClawX product semantics marks verified P0/P1 closures done while preserving product boundaries",
+            "status": "passed",
+            "title": "marks verified P0/P1 closures done while preserving product boundaries",
+            "duration": 0.5938000000001011,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1792293829252,
+        "endTime": 1792293829263.5938,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-candidates/codex-manus-semantics-20261018-r2/tests/unit/product-semantics.test.ts"
+      }
+    ]
+  },
+  "note": "Vitest executes 27 identity tests and 8 existing product-semantics tests. Type assertions are additionally checked by the full test-project typecheck."
+}

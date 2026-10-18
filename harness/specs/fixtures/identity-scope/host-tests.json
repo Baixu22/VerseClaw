@@ -1,0 +1,110 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0372",
+  "candidate": {
+    "sha": "40881bb1b62016e186a89d58023a85933b52002f",
+    "tree": "5e244db44674d11eb4420f5c45e2996ada64e2c6",
+    "base": "2651d5a7fcfa4e2f377e3ffc49f271bcd8f0222b",
+    "dirty": false
+  },
+  "report": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 5,
+    "numPassedTests": 5,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1792293830501,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "agent browser typed observation loop (spec N4)"
+            ],
+            "fullName": "agent browser typed observation loop (spec N4) exposes snapshot/text/keyboard/verify as typed actions",
+            "status": "passed",
+            "title": "exposes snapshot/text/keyboard/verify as typed actions",
+            "duration": 1.691899999999805,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent browser typed observation loop (spec N4)"
+            ],
+            "fullName": "agent browser typed observation loop (spec N4) never advertises an approval-granting action to the model",
+            "status": "passed",
+            "title": "never advertises an approval-granting action to the model",
+            "duration": 0.4217999999996209,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent browser typed observation loop (spec N4)"
+            ],
+            "fullName": "agent browser typed observation loop (spec N4) does not forward a model-supplied userApproval to any action",
+            "status": "passed",
+            "title": "does not forward a model-supplied userApproval to any action",
+            "duration": 2.729400000000169,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent browser typed observation loop (spec N4)"
+            ],
+            "fullName": "agent browser typed observation loop (spec N4) builds snapshots, page text, keyboard and verify payloads",
+            "status": "passed",
+            "title": "builds snapshots, page text, keyboard and verify payloads",
+            "duration": 1.2394999999996799,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent browser typed observation loop (spec N4)"
+            ],
+            "fullName": "agent browser typed observation loop (spec N4) reports the new actions as available for the real Electron driver",
+            "status": "passed",
+            "title": "reports the new actions as available for the real Electron driver",
+            "duration": 1.4193999999997686,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1792293833979,
+        "endTime": 1792293833986.4194,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-candidates/codex-manus-semantics-20261018-r2/tests/unit/versebrowser-n4-observation-loop.test.ts"
+      }
+    ]
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0372",
+  "candidate": {
+    "sha": "40881bb1b62016e186a89d58023a85933b52002f",
+    "tree": "5e244db44674d11eb4420f5c45e2996ada64e2c6",
+    "base": "2651d5a7fcfa4e2f377e3ffc49f271bcd8f0222b",
+    "dirty": false
+  },
+  "result": "not-verified",
+  "runs": [
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-10-18T03:16:55Z",
+      "databaseId": 39093063642,
+      "headSha": "40881bb1b62016e186a89d58023a85933b52002f",
+      "status": "completed",
+      "url": "https://github.com/Baixu22/VerseClaw/actions/runs/39093063642",
+      "workflowName": "Harness"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-10-18T03:16:55Z",
+      "databaseId": 39093063618,
+      "headSha": "40881bb1b62016e186a89d58023a85933b52002f",
+      "status": "completed",
+      "url": "https://github.com/Baixu22/VerseClaw/actions/runs/39093063618",
+      "workflowName": "System Maturity Security Regression"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-10-18T03:16:55Z",
+      "databaseId": 39093063610,
+      "headSha": "40881bb1b62016e186a89d58023a85933b52002f",
+      "status": "completed",
+      "url": "https://github.com/Baixu22/VerseClaw/actions/runs/39093063610",
+      "workflowName": "Comms Regression"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-10-18T03:16:55Z",
+      "databaseId": 39093063627,
+      "headSha": "40881bb1b62016e186a89d58023a85933b52002f",
+      "status": "completed",
+      "url": "https://github.com/Baixu22/VerseClaw/actions/runs/39093063627",
+      "workflowName": "Electron E2E"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-10-18T03:16:55Z",
+      "databaseId": 39093063608,
+      "headSha": "40881bb1b62016e186a89d58023a85933b52002f",
+      "status": "completed",
+      "url": "https://github.com/Baixu22/VerseClaw/actions/runs/39093063608",
+      "workflowName": ".github/workflows/check.yml"
+    }
+  ],
+  "inspectedRuns": [
+    39093063608,
+    39093063627
+  ],
+  "checkView": "\nX codex/codex-manus-semantics-20261018-r2 .github/workflows/check.yml · 39093063608\nTriggered via push about 2 minutes ago\n\nJOBS\nX build in 4s (ID 117573698629)\nX check in 4s (ID 117573698825)\n\nANNOTATIONS\nX The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings\nbuild: .github#1\n\nX The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings\ncheck: .github#1\n\n- \"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\"\ncheck: .github#1\n\n\nTo see what failed, try: gh run view 39093063608 --log-failed\nView this run on GitHub: https://github.com/Baixu22/VerseClaw/actions/runs/39093063608\n",
+  "electronView": "\nX codex/codex-manus-semantics-20261018-r2 Electron E2E · 39093063627\nTriggered via push about 2 minutes ago\n\nJOBS\nX Electron E2E (macos-latest) in 6s (ID 117573698709)\nX Electron E2E (ubuntu-latest) in 4s (ID 117573698804)\nX Electron E2E (windows-latest) in 3s (ID 117573699058)\n\nANNOTATIONS\nX The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings\nElectron E2E (macos-latest): .github#1\n\n- Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.\nElectron E2E (macos-latest): .github#1\n\nX The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings\nElectron E2E (ubuntu-latest): .github#1\n\n- \"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\"\nElectron E2E (ubuntu-latest): .github#1\n\nX The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings\nElectron E2E (windows-latest): .github#1\n\n\nTo see what failed, try: gh run view 39093063627 --log-failed\nView this run on GitHub: https://github.com/Baixu22/VerseClaw/actions/runs/39093063627\n",
+  "reason": "Inspected job annotations explicitly say the jobs did not start because account payments failed or the spending limit must be increased. No CI pass is claimed."
+}
