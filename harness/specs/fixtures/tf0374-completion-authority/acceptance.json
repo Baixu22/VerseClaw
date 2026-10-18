@@ -1,0 +1,43 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0374",
+  "node": "TF-0374",
+  "title": "冻结完成权威与状态展示规则",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "c1297b8fc71372712f2d9d6a65a19de00b616eb3",
+    "base": "854593897f1bfaa720242b2ab09a951bef1f255d",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "shared 类型和 UI 映射有单一来源",
+      "result": "pass",
+      "evidence": [
+        "shared/types/identity-scope.ts",
+        "shared/product-semantics.ts",
+        "tests/unit/identity-scope.test.ts"
+      ]
+    },
+    {
+      "criterion": "相关单测覆盖 Chat final、Task Loop passed、verification unavailable 三类",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/identity-scope.test.ts"
+      ]
+    },
+    {
+      "criterion": "现有 Task Ledger 与 Task Loop 语义不被改变",
+      "result": "pass",
+      "evidence": [
+        "src/components/agents/RolesOrchestrationPanel.tsx",
+        "tests/e2e/task-loop-panel.spec.ts"
+      ]
+    }
+  ],
+  "boundaries": [
+    "No completion decision engine was added.",
+    "CI jobs did not start with recorded steps; no CI pass is claimed.",
+    "All receipts are agent-driven."
+  ]
+}

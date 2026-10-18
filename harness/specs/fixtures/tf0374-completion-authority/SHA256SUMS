@@ -1,0 +1,4 @@
+0a7b17e2b144b8a00a61fd2d88813b8fe17a96db318aa9ef23a4141b6a57ace7  harness/specs/fixtures/tf0374-completion-authority/acceptance.json
+49e315a157fd4df719a70e3253f6eb8616e540b1d6e3a3f797aad88a12c99cf2  harness/specs/fixtures/tf0374-completion-authority/tests.json
+54923a719c4cf464a641eefc5b14fbce6e43d5d69b20e15df82a5d9a19751f1b  harness/specs/fixtures/tf0374-completion-authority/gates.json
+9dc0d7de6bdc7666c6da0683dbf3488766d484dc7863da2ddb6d5aed05c5a666  harness/specs/fixtures/tf0374-completion-authority/ci-boundary.json

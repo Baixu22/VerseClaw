@@ -19,6 +19,7 @@ touchedAreas:
   - tests/unit/identity-scope.test.ts
   - tests/e2e/task-loop-panel.spec.ts
   - harness/specs/tasks/tf0374-completion-authority.md
+  - harness/specs/fixtures/tf0374-completion-authority/**
 ---
 
 # TF-0374 Freeze Completion Authority and Display Rules

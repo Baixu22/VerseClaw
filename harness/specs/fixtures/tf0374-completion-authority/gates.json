@@ -1,0 +1,37 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0374",
+  "head": "c1297b8fc71372712f2d9d6a65a19de00b616eb3",
+  "receipts": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm contract:check",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/tf0374-completion-authority.md",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm exec eslint shared/types/identity-scope.ts shared/product-semantics.ts src/components/agents/RolesOrchestrationPanel.tsx tests/unit/identity-scope.test.ts tests/e2e/task-loop-panel.spec.ts --max-warnings 0",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "result": "pass"
+    }
+  ]
+}

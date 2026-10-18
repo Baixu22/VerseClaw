@@ -1,0 +1,24 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0374",
+  "head": "c1297b8fc71372712f2d9d6a65a19de00b616eb3",
+  "dirty": false,
+  "unit": {
+    "files": 4,
+    "tests": 48,
+    "passed": 48,
+    "failed": 0,
+    "command": "pnpm exec vitest run tests/unit/identity-scope.test.ts tests/unit/product-semantics.test.ts tests/unit/execution-projection.test.ts tests/unit/task-loop-upgrade.test.ts",
+    "result": "pass"
+  },
+  "e2e": {
+    "files": 1,
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "command": "pnpm run test:e2e:run tests/e2e/task-loop-panel.spec.ts",
+    "result": "pass",
+    "durationMs": 22900,
+    "executionNode": "Node 24.16.0 / Electron 40.8.4"
+  }
+}
