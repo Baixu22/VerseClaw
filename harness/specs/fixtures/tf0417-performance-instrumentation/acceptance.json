@@ -1,0 +1,117 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0417",
+  "node": "TF-0417",
+  "title": "补齐 Electron 启动、交互与长期运行性能计数器",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "43446d896",
+    "full": "43446d89684f13b4f819d7e4e44606a61490e85a",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "记录 app-ready、window-created、ready-to-show、renderer-first-paint 四个启动 marks 及相对耗时",
+      "result": "pass",
+      "evidence": [
+        "baseline.json main marks: ['app-ready', 'window-created', 'ready-to-show']",
+        "baseline.json renderer marks: ['renderer-start', 'renderer-first-paint']",
+        "ready-to-show fromStartMs=3371.8021",
+        "renderer-first-paint fromStartMs=23.80000001192093"
+      ]
+    },
+    {
+      "criterion": "渲染进程记录 >=50ms long task、点击/键盘输入延迟和 IPC P50/P95，并写入本地 JSON ring buffer",
+      "result": "pass",
+      "evidence": [
+        "longTasks=4, maxDurationMs=79",
+        "inputLatency=2 samples, kinds=['click', 'keydown']",
+        "ipc count=256, p50Ms=7, p95Ms=24",
+        "src/lib/performance-metrics.ts persists schema clawx.renderer-performance/v1 to localStorage under clawx.performance.metrics.v1"
+      ]
+    },
+    {
+      "criterion": "主进程真实计数 spawn 次数、活跃 setInterval、活跃 watcher；缺失时明确标注 unavailable",
+      "result": "pass",
+      "evidence": [
+        "spawnCount=7, spawnByMethod={'spawn': 0, 'exec': 0, 'execFile': 7, 'fork': 0, 'spawnSync': 0, 'execSync': 0, 'execFileSync': 0}",
+        "activeIntervals=4, activeWatchers=0, unavailable=[]",
+        "electron/utils/counted-child-process.ts is used by all main child_process value imports changed in this node"
+      ]
+    },
+    {
+      "criterion": "同一命令可重复生成 5 分钟 idle 基线，不上传网络，产物含 driven_by=agent",
+      "result": "pass",
+      "evidence": [
+        "baseline durationMs=301113, sampleCount=60, coverageMs=295437",
+        "smoke durationMs=16049, candidate=43446d89684f13b4f819d7e4e44606a61490e85a",
+        "probe.mjs launches local Electron with --disable-gpu and writes local JSON only; no network upload path exists."
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "command": "pnpm exec vitest run tests/unit/performance-metrics.test.ts tests/unit/efficiency-sampling-panel.test.tsx tests/unit/runtime-efficiency-api.test.ts tests/unit/git-api.test.ts",
+      "exitCode": 0,
+      "tests": 65,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 25505,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm contract:check",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/electron-performance-instrumentation.md",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm repo:artifacts:check",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm agent-dev:fast",
+      "exitCode": 0,
+      "unitFiles": 7,
+      "unitTests": 88,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "TF0417_DURATION_MS=15000 node harness/specs/fixtures/tf0417-performance-instrumentation/probe.mjs",
+      "exitCode": 0,
+      "durationMs": 16049,
+      "result": "pass"
+    },
+    {
+      "command": "TF0417_DURATION_MS=300000 node harness/specs/fixtures/tf0417-performance-instrumentation/probe.mjs",
+      "exitCode": 0,
+      "durationMs": 301113,
+      "result": "pass"
+    }
+  ],
+  "boundaries": [
+    "The five-minute run is idle and agent-driven; it is not a real-user interaction trace.",
+    "activeWatchers=0 is a measured value for this Main process run, not an unavailable field; the counter currently covers the fs.watch wrapper surface used by Main.",
+    "Renderer IPC samples are capped by the local 256-entry ring buffer, so count=256 is a bounded sample count, not a claim about total lifetime calls.",
+    "Long-task support is browser/Electron dependent; this run reported four measured long tasks and no unavailable marker.",
+    "No upload, external APM, performance claim, or real-human evidence is involved."
+  ],
+  "evidenceFiles": [
+    "probe.mjs",
+    "smoke.json",
+    "baseline.json"
+  ]
+}
