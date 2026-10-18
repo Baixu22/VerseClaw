@@ -1,0 +1,66 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0404",
+  "node": "TF-0404",
+  "title": "独立复验 P0 原语层",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "a785dfc5",
+    "base": "edeb596bd",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "pnpm agent-dev:fast 退出码 0 且日志留存",
+      "result": "pass",
+      "evidence": [
+        "AGENT_DEV_FAST_EXIT=0; 7 files / 88 tests passed; contract:check and i18n:lint passed."
+      ]
+    },
+    {
+      "criterion": "git diff 证明未修改任何现有调用方",
+      "result": "pass",
+      "evidence": [
+        "TF-0403 source commit 5aea169b changed only shared/resources/**, tests/unit/resource-fabric-primitives.test.ts, task spec and its fixture. No existing caller, package.json or pnpm-lock.yaml changes."
+      ]
+    },
+    {
+      "criterion": "六模块单测通过且分支覆盖记录进 evidence",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/resource-fabric-primitives.test.ts: 6/6 passed; each test covers its module boundary path.",
+        "harness/specs/fixtures/tf0403-resource-primitives/acceptance.json"
+      ]
+    }
+  ],
+  "independentChecks": [
+    {
+      "command": "pnpm exec vitest run tests/unit/resource-fabric-primitives.test.ts",
+      "exitCode": 0,
+      "tests": 6,
+      "failed": 0
+    },
+    {
+      "command": "pnpm agent-dev:fast",
+      "exitCode": 0,
+      "unitFiles": 7,
+      "unitTests": 88,
+      "failed": 0
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "result": "pass"
+    }
+  ],
+  "changedPaths": [
+    "shared/resources/**",
+    "tests/unit/resource-fabric-primitives.test.ts",
+    "harness/specs/tasks/resource-fabric-p0-primitives.md",
+    "harness/specs/fixtures/tf0403-resource-primitives/**"
+  ],
+  "boundaries": [
+    "Independent verification is a repeat of P0 guards, not a runtime integration or P1-P5 claim.",
+    "No human verdict or human data was used; evidence is agent-driven."
+  ]
+}
