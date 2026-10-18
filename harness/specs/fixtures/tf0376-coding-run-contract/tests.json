@@ -1,0 +1,14 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0376",
+  "head": "pending-source-commit",
+  "dirty": false,
+  "unit": {
+    "command": "pnpm exec vitest run tests/unit/coding-run.test.ts",
+    "files": 1,
+    "tests": 7,
+    "passed": 7,
+    "failed": 0,
+    "result": "pass"
+  }
+}

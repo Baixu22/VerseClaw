@@ -1,0 +1,34 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0376",
+  "node": "TF-0376",
+  "title": "定义 CodingRun 聚合与只读契约",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "pending-source-commit",
+    "base": "2bc123652241edebe20b54183c1e4e84d956ee20",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "shared contract 通过 typecheck 和 contract:check。",
+      "result": "pass",
+      "evidence": ["gates.json", "shared/types/coding-run.ts", "shared/product-semantics.ts"]
+    },
+    {
+      "criterion": "单测覆盖缺失、未知、多 run 关联和冲突。",
+      "result": "pass",
+      "evidence": ["tests.json", "tests/unit/coding-run.test.ts"]
+    },
+    {
+      "criterion": "文档明确 CodingRun 不是状态机。",
+      "result": "pass",
+      "evidence": ["harness/specs/tasks/coding-run-read-only-contract.md", "shared/types/coding-run.ts"]
+    }
+  ],
+  "boundaries": [
+    "CodingRun is an in-memory read-only association view, not a persistence store or state machine.",
+    "No host-api route, Gateway, Task Ledger/Task Loop state machine, runtime scheduling, permission authority or frozen default changed.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}

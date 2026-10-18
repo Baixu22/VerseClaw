@@ -27,6 +27,15 @@ export {
   type VerificationStatus,
 } from './types/identity-scope.js';
 export {
+  createCodingRunView,
+  resolveCodingRun,
+  type CodingRunProjectionInput,
+  type CodingRunRelation,
+  type CodingRunResolution,
+  type CodingRunResolutionInput,
+  type CodingRunView,
+} from './types/coding-run.js';
+export {
   PRODUCT_SEMANTIC_UNSAFE_CLAIMS,
   type ProductSemanticUnsafeClaim,
 } from './product-semantic-unsafe-claims.js';

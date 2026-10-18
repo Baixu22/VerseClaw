@@ -1,0 +1,4 @@
+0b0865afd5449fd26f583897f0d89de0873537c68846288ff00a57e24014c5b5  ./harness/specs/fixtures/tf0376-coding-run-contract/gates.json
+b0257e8f2b22ea6fe4833bed996c588060660dd5c9a241a5213b8072a78ccc2a  ./harness/specs/fixtures/tf0376-coding-run-contract/tests.json
+f90dc019a1627cedf819d7ded2a75ca43b6ef88b677d79f1240e501fd909d812  ./harness/specs/fixtures/tf0376-coding-run-contract/acceptance.json
+d96f62429539382f825e6a2e7c1a6b31b8d7b2734ae24bb8940e2b9399993f14  ./harness/specs/fixtures/tf0376-coding-run-contract/ci-boundary.json
