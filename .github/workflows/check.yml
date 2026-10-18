@@ -32,7 +32,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Check source and local artifact boundary
-        run: node scripts/check-repository-artifacts.mjs`n`n      - name: Check active documentation for local absolute paths`n        run: pnpm run repo:local-paths:check
+        run: node scripts/check-repository-artifacts.mjs
+
+      - name: Check active documentation for local absolute paths
+        run: pnpm run repo:local-paths:check
 
       - name: Verify committed SHA256SUMS evidence
         run: pnpm run repo:evidence:sha256

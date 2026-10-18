@@ -5,6 +5,7 @@ scenario: identity-scope-compatibility
 taskType: shared-contract
 intent: Distinguish workspace, project, session, run and task identities through shared types and one compatibility boundary without migrating persisted data.
 ownedPaths:
+  - .github/workflows/check.yml
   - shared/types/identity-scope.ts
   - shared/product-semantics.ts
   - tests/unit/identity-scope.test.ts
@@ -18,6 +19,7 @@ ownedPaths:
   - harness/specs/rules/identity-scope-boundary.md
   - harness/specs/fixtures/identity-scope/**
 touchedAreas:
+  - .github/workflows/check.yml
   - shared/types/identity-scope.ts
   - shared/product-semantics.ts
   - tests/unit/identity-scope.test.ts
@@ -71,3 +73,7 @@ nodes are outside this implementation.
 Transport remains governed by `gateway-backend-communication`; adopting these
 types in a renderer/Main/runtime route requires that scenario and comms gates.
 This slice introduces no route or transport change.
+
+The independent hygiene prerequisite repairs literal PowerShell newline tokens in
+`.github/workflows/check.yml`; those tokens made the existing CI YAML invalid.
+It preserves the two existing intended hygiene commands and does not alter gates.
