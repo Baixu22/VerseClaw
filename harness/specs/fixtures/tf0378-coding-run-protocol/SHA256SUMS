@@ -1,4 +1,4 @@
-42a4204c4e43719446fbabf5a462e21288b35c8f93382ea451de9b9ef6c5722c  ./harness/specs/fixtures/tf0378-coding-run-protocol/acceptance.json
-1f0c67aacd59aeb270265d72da14d72d45a1572c90fdebb08793032c8ea47155  ./harness/specs/fixtures/tf0378-coding-run-protocol/tests.json
-1700fed6c339e3739a916cc6418edd44f7c0a7427b065ba26b2b46a796850b8e  ./harness/specs/fixtures/tf0378-coding-run-protocol/gates.json
-de8eec30bbf9bd414549d8509b1df590e5629a0dec8d137fe9b86ee8ba54ce35  ./harness/specs/fixtures/tf0378-coding-run-protocol/ci-boundary.json
+20950f3c44b72071a87ef095c2c3332d5ab7b19fd6fffebd0dbd75096798c664  ./harness/specs/fixtures/tf0378-coding-run-protocol/acceptance.json
+b374f76f4909a9f337ea18ad624a4373ca2d5b5dccdeac0406d9c49ece8ef61f  ./harness/specs/fixtures/tf0378-coding-run-protocol/tests.json
+7e99c683a0f00baf369fc536c77dc5547539c2617d03ecfdc8ac8c288a714174  ./harness/specs/fixtures/tf0378-coding-run-protocol/gates.json
+f3f9dee117ac96539caf4b756f4dba348695cd025c0269f20993e8e0b8a15d1f  ./harness/specs/fixtures/tf0378-coding-run-protocol/ci-boundary.json

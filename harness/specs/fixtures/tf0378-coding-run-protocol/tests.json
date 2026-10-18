@@ -1,7 +1,7 @@
 {
   "driven_by": "agent",
   "actor": "codex-tf0378",
-  "head": "pending-source-commit",
+  "head": "1e401b1ed8864445f023976fb0f7ab66f3c8e3aa",
   "dirty": false,
   "unit": {"command": "pnpm exec vitest run tests/unit/coding-run.test.ts tests/unit/execution-projection.test.ts", "files": 2, "tests": 21, "passed": 21, "failed": 0, "result": "pass"},
   "protocolFixtures": [

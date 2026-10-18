@@ -5,7 +5,7 @@
   "title": "补齐面边界与结构化运行协议",
   "verdict": "pass",
   "candidate": {
-    "sha": "pending-source-commit",
+    "sha": "1e401b1ed8864445f023976fb0f7ab66f3c8e3aa",
     "base": "c97d92d8f",
     "dirty": false
   },
