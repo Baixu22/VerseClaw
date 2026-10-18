@@ -264,6 +264,22 @@ describe("handoff artifacts", () => {
     expect(result).toEqual({ status: "unavailable", reason: "identity-mismatch" });
   });
 
+  it("does not accept a same-string taskId as the ledger taskNodeId", async () => {
+    const result = await captureRuntimeWorkerOutputUsing(captureInput(), {
+      waitForRun: async () => ({ status: "ok" }),
+      getRunById: () => registryRun({
+        orchestration: {
+          orchestrationRunId: "orch-1",
+          roleName: "planner",
+          phase: "worker",
+          taskId: "planner-1",
+          attempt: 1,
+        } as never,
+      }),
+    });
+    expect(result).toEqual({ status: "unavailable", reason: "identity-mismatch" });
+  });
+
   it("fails closed for wait, terminal-state, and missing-output failures", async () => {
     await expect(captureRuntimeWorkerOutputUsing(captureInput(), {
       waitForRun: async () => ({ status: "timeout" }),

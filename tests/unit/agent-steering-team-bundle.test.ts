@@ -185,6 +185,70 @@ describe('agent steering team result bundles', () => {
     expect(leased?.prompt).toContain('ready; implementer-1 -> tester-1');
   });
 
+  it("does not use a same-string taskId as the handoff taskNodeId", () => {
+    const taskGraph: NonNullable<TeamOrchestrationMetadata["taskGraph"]> = {
+      graphRunId: "graph_bundle",
+      mode: "staged",
+      status: "completed" as never,
+      nodes: [
+        {
+          taskNodeId: "implementer-1",
+          roleName: "implementer",
+          task: "implementer task",
+          phase: "implementation",
+          dependsOn: [],
+          scope: "implementation",
+          requiredCapabilities: [],
+          attemptPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 1 },
+          status: "completed" as never,
+        },
+        {
+          taskNodeId: "tester-1",
+          roleName: "tester",
+          task: "tester task",
+          phase: "verification",
+          dependsOn: ["implementer-1"],
+          scope: "verification",
+          requiredCapabilities: [],
+          attemptPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 1 },
+          status: "completed" as never,
+        },
+      ],
+      edges: [
+        { from: "implementer-1", to: "tester-1", type: "handoff" },
+      ],
+    };
+    const runs = new Map<string, SubagentRunRecord>();
+    runs.set("run_worker_1", runRecord({
+      runId: "run_worker_1",
+      roleName: "implementer",
+      verifierStartedRunId: "run_verifier",
+      meta: { taskId: "implementer-1", graphRunId: "graph_bundle", taskGraph, handoffArtifactsMode: "on" },
+    }));
+    runs.set("run_worker_2", runRecord({
+      runId: "run_worker_2",
+      roleName: "tester",
+      verifierStartedRunId: "run_verifier",
+      meta: { taskNodeId: "tester-1", graphRunId: "graph_bundle", taskGraph, handoffArtifactsMode: "on" },
+    }));
+    runs.set("run_verifier", runRecord({
+      runId: "run_verifier",
+      roleName: "reviewer",
+      phase: "verifier",
+      verifierStartedRunId: "run_verifier",
+      meta: { taskNodeId: "reviewer-1", graphRunId: "graph_bundle", taskGraph, handoffArtifactsMode: "on" },
+    }));
+
+    const leased = leasePendingAgentSteeringItemsFromSubagentRuns({
+      runs,
+      requesterSessionKey: "agent:main:abc",
+      leaseId: "lease_missing_task_node",
+    });
+
+    expect(leased?.prompt).toContain("handoffArtifacts: 0");
+    expect(leased?.prompt).not.toContain("implementer-1 -> tester-1");
+  });
+
   it('renders schema gate failure when successful worker evidence is missing', () => {
     const runs = new Map<string, SubagentRunRecord>();
     runs.set(

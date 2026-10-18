@@ -181,7 +181,7 @@ function toNodes(payload: AnyRecord | null): TeamOrchestrationNodeView[] {
   return arrayOfRecords(graph?.nodes).map((node, index) => {
     const taskNodeId = readString(node, 'taskNodeId') ?? `node-${index + 1}`;
     const outcome = outcomes.find((candidate) => (
-      readString(candidate, 'taskNodeId') === taskNodeId || readString(candidate, 'taskId') === taskNodeId
+      readString(candidate, 'taskNodeId') === taskNodeId
     ));
     return {
       taskNodeId,

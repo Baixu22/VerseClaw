@@ -1,5 +1,6 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 import {
+  displayCompletionStatus,
   normalizeRunScope,
   normalizeTaskReference,
   resolveProjectIdForWorkspace,
@@ -14,6 +15,12 @@ import {
 } from '@shared/product-semantics';
 
 describe('identity and scope boundary', () => {
+  it("does not let a completed label invent completion authority", () => {
+    expect(displayCompletionStatus({ status: "completed" })).toBe("unavailable");
+    expect(displayCompletionStatus({ status: "completed", authority: "turn" })).toBe("completed");
+    expect(displayCompletionStatus({ status: "running" })).toBe("running");
+  });
+
   it('keeps identity brands distinct and requires scope at typed run boundaries', () => {
     // These assertions are checked by pnpm typecheck (tsconfig.test.json), not Vitest alone.
     expectTypeOf<WorkspaceId>().toExtend<string>();

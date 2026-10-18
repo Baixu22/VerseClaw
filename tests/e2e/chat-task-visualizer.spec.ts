@@ -398,6 +398,9 @@ test.describe('Verse Claw chat execution graph', () => {
       await expect(card).toContainText('Task graph selected for staged multi-agent work.');
       await expect(card.getByTestId('chat-team-node-implementer-1')).toBeVisible();
       await expect(card.getByTestId('chat-team-node-implementer-2')).toBeVisible();
+      const acceptedWorker = card.getByTestId('chat-team-node-implementer-2');
+      await expect(acceptedWorker).toHaveAttribute('data-completion-authority', 'worker-accepted');
+      await expect(acceptedWorker).not.toHaveAttribute('data-completion-authority', 'turn');
       await expect(card).toContainText('Snapshot mismatch');
 
       await page.setViewportSize({ width: 480, height: 820 });

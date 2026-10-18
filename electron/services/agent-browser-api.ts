@@ -94,7 +94,7 @@ class HostAgentBrowserService extends ModuleAgentBrowserService {
     const result = await super.open(payload);
     recordResourceEnvelopeEntry({
       id: `main:browser-session:${result.session.id}`,
-      workspaceKey: result.session.workspaceId ?? result.session.sessionKey ?? result.session.id,
+      workspaceKey: result.session.workspaceId,
       kind: 'browser-session',
       priority: 'foreground',
       owner: 'main',

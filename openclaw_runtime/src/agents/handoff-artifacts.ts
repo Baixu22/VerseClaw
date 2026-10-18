@@ -293,7 +293,7 @@ export async function captureRuntimeWorkerOutputUsing(
     entry.requesterSessionKey !== input.ownerSessionKey ||
     meta?.orchestrationRunId !== input.orchestrationRunId ||
     meta.roleName !== input.fromRole ||
-    (meta.taskNodeId ?? meta.taskId) !== input.fromTaskId ||
+    meta.taskNodeId !== input.fromTaskId ||
     (meta.attempt ?? 1) !== input.attempt
   ) {
     return { status: "unavailable", reason: "identity-mismatch" };

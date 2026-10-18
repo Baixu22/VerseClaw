@@ -41,7 +41,10 @@ function statusTone(status: string): string {
   if (normalized === 'partial' || normalized === 'planned' || normalized === 'ready') {
     return 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400';
   }
-  if (normalized === 'verified' || normalized === 'completed' || normalized === 'accepted') {
+  if (normalized === 'accepted') {
+    return 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400';
+  }
+  if (normalized === 'verified' || normalized === 'completed') {
     return 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400';
   }
   if (normalized === 'skipped') return 'border-border bg-black/5 text-muted-foreground dark:bg-white/5';
@@ -53,7 +56,10 @@ function statusIcon(status: string) {
   if (normalized === 'failed' || normalized === 'error' || normalized === 'refuted') {
     return <AlertTriangle className="h-3.5 w-3.5" />;
   }
-  if (normalized === 'verified' || normalized === 'completed' || normalized === 'accepted') {
+  if (normalized === 'accepted') {
+    return <CircleDashed className="h-3.5 w-3.5" />;
+  }
+  if (normalized === 'verified' || normalized === 'completed') {
     return <CheckCircle2 className="h-3.5 w-3.5" />;
   }
   return <CircleDashed className="h-3.5 w-3.5" />;
@@ -84,7 +90,9 @@ function NodeCard({ node, agent, embedded = false }: { node: TeamOrchestrationNo
         ? 'min-w-0 border-l border-conversation py-1 pl-3'
         : 'min-w-0 rounded-xl border border-conversation bg-surface-modal p-3 transition-colors',
       running && (embedded ? 'border-primary/50' : 'border-blue-500/30 bg-blue-500/[0.04] motion-safe:animate-pulse'),
-    )} data-testid={`chat-team-node-${node.taskNodeId}`}>
+    )}
+    data-testid={`chat-team-node-${node.taskNodeId}`}
+    data-completion-authority={status === 'accepted' ? 'worker-accepted' : undefined}>
       <div className="flex min-w-0 items-start gap-2.5">
         {agent ? (
           <AgentRoleIdentity agentId={agent.id} name={agent.name} avatar={agent.avatar} roleName={node.roleName} size={36} />

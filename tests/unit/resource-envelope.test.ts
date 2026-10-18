@@ -63,6 +63,22 @@ describe("resource envelope shadow ledger", () => {
     ]);
   });
 
+  it("rejects a browser resource entry that has no workspace identity", () => {
+    const ledger = new ResourceEnvelopeLedger();
+    expect(() => ledger.update({
+      id: "main:browser-session:s1",
+      kind: "browser-session",
+      priority: "foreground",
+      owner: "main",
+      activeSlots: 1,
+      queuedCount: 0,
+      queueWaitMs: 0,
+      processCount: 0,
+      treeRssBytes: 0,
+      treeCpuPercent: 0,
+    } as never)).toThrow(/workspaceKey/);
+  });
+
   it("merges Main and Gateway totals without letting adjacent leases hide them", () => {
     const merged = mergeResourceEnvelopeSnapshots([snapshot("main", 2), snapshot("gateway", 1)], 2_000);
     expect(merged.schema).toBe(RESOURCE_ENVELOPE_SCHEMA);

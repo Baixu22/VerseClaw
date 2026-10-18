@@ -20,6 +20,7 @@ function project({
   activeRunId = null,
   runtimeRuns = {},
   graphStepCache = {},
+  workspaceId = null,
 }: {
   messages: RawMessage[];
   sending?: boolean;
@@ -29,6 +30,7 @@ function project({
   activeRunId?: string | null;
   runtimeRuns?: Record<string, ChatRuntimeRunState>;
   graphStepCache?: Record<string, GraphStepCacheEntry>;
+  workspaceId?: string | null;
 }): UserRunProjection {
   const subagentCompletionInfos = messages.map(() => null);
   const nextUserMessageIndexes = deriveNextUserMessageIndexes(messages, subagentCompletionInfos);
@@ -51,6 +53,7 @@ function project({
     runError: null,
     activeRunId,
     runtimeRuns,
+    workspaceId,
   });
 }
 
@@ -277,5 +280,29 @@ describe('execution projection', () => {
     expect(result.cards[0].steps).toEqual([
       expect.objectContaining({ id: 'cached-read', label: 'read_file', status: 'completed' }),
     ]);
+  });
+
+
+  it("scopes a runtime chat run only when the owning workspace is known", () => {
+    const messages: RawMessage[] = [{ role: "user", content: "Keep the run scoped" }];
+    const runtimeRuns: Record<string, ChatRuntimeRunState> = {
+      "run-chat": {
+        runId: "run-chat",
+        sessionKey: SESSION_KEY,
+        status: "running",
+        assistantText: "",
+        thinkingText: "",
+        events: [{ type: "run.started", runId: "run-chat", sessionKey: SESSION_KEY }],
+      },
+    };
+    const scoped = project({ messages, sending: true, activeRunId: "run-chat", runtimeRuns, workspaceId: "workspace-a" });
+    expect(scoped.cards[0].scopedRunId).toEqual({
+      runId: "run-chat",
+      scope: { workspaceId: "workspace-a", projectId: "workspace-a", sessionKey: SESSION_KEY },
+    });
+    const unscoped = project({ messages, sending: true, activeRunId: "run-chat", runtimeRuns });
+    expect(unscoped.cards[0].active).toBe(true);
+    expect(unscoped.cards[0].scopedRunId).toBeUndefined();
+    expect(unscoped.cards[0].completionAuthority).toBeUndefined();
   });
 });

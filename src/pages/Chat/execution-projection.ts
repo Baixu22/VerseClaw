@@ -1,5 +1,12 @@
 import type { ChatRuntimeRunState, RawMessage, ToolStatus } from '@/stores/chat';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
+import {
+  displayCompletionStatus,
+  resolveProjectIdForWorkspace,
+  type CompletionAuthority,
+  type ScopedRunId,
+  type WorkspaceId,
+} from '@shared/product-semantics';
 import { isInternalMessage } from '@/stores/chat/helpers';
 import {
   extractImages,
@@ -70,7 +77,12 @@ export type UserRunCard = {
    * "this approval belongs to the turn you are looking at" from "this approval
    * is older than anything we can place".
    */
+  /** The bare runtime token is route-local and is never persisted as identity. */
   runId?: string;
+  /** Completion is a presentation capability from the run owner, not a bare label. */
+  completionAuthority?: CompletionAuthority;
+  /** Only set when the owning workspace is known; a session cannot supply it. */
+  scopedRunId?: ScopedRunId;
   suppressThinking: boolean;
   /**
    * Runtime events promoted out of the execution graph into rich Tool UI cards.
@@ -374,7 +386,7 @@ function deriveRunLifecycle(input: {
   replyMessage?: RawMessage;
   hasVisibleReply: boolean;
   hasRunError: boolean;
-}): Pick<UserRunCard, 'status' | 'startedAt' | 'endedAt' | 'hasVisibleReply'> {
+}): Pick<UserRunCard, 'status' | 'startedAt' | 'endedAt' | 'hasVisibleReply' | 'completionAuthority'> {
   const runtimeStatus = input.runtimeRun?.status;
   const status: UserRunStatus = runtimeStatus === 'aborted'
     ? 'aborted'
@@ -389,8 +401,17 @@ function deriveRunLifecycle(input: {
     ? undefined
     : normalizeRunTimestamp(input.runtimeRun?.endedAt)
       ?? normalizeRunTimestamp(input.replyMessage?.timestamp);
+  // This projection never invents task authority: a settled ordinary turn is at most run-level.
+  const completionAuthority: CompletionAuthority | undefined = status === 'completed' ? 'run' : undefined;
+  const displayedStatus = displayCompletionStatus({ status, authority: completionAuthority });
 
-  return { status, startedAt, endedAt, hasVisibleReply: input.hasVisibleReply };
+  return {
+    status: (displayedStatus === 'unavailable' ? status : displayedStatus) as UserRunStatus,
+    startedAt,
+    endedAt,
+    hasVisibleReply: input.hasVisibleReply,
+    completionAuthority,
+  };
 }
 
 function latestRuntimeRunForSession(
@@ -405,6 +426,22 @@ function latestRuntimeRunForSession(
     if (startedAt >= latestStartedAt) latest = run;
   }
   return latest;
+}
+
+function scopedRunForCard(input: {
+  workspaceId: WorkspaceId | null;
+  sessionKey: string;
+  runId?: string;
+}): ScopedRunId | undefined {
+  if (!input.workspaceId || !input.runId) return undefined;
+  return {
+    runId: input.runId as ScopedRunId['runId'],
+    scope: {
+      workspaceId: input.workspaceId,
+      projectId: resolveProjectIdForWorkspace(input.workspaceId),
+      sessionKey: input.sessionKey as ScopedRunId['scope']['sessionKey'],
+    },
+  };
 }
 
 export function deriveUserRunProjection({
@@ -425,6 +462,7 @@ export function deriveUserRunProjection({
   runError,
   activeRunId,
   runtimeRuns,
+  workspaceId = null,
 }: {
   messages: RawMessage[];
   subagentCompletionInfos: Array<SubagentCompletionInfo | null | undefined>;
@@ -443,9 +481,11 @@ export function deriveUserRunProjection({
   runError: string | null;
   activeRunId: string | null;
   runtimeRuns: Record<string, ChatRuntimeRunState>;
+  workspaceId?: string | null;
 }): UserRunProjection {
   const foldedNarrationIndices = new Set<number>();
   const cards: UserRunCard[] = [];
+  const workspaceIdValue = workspaceId?.trim() ? workspaceId.trim() as WorkspaceId : null;
   const currentRuntimeRun = activeRunId ? runtimeRuns[activeRunId] ?? null : null;
   const currentRuntimeRunActive = currentRuntimeRun?.status === 'running';
   const currentRuntimeHasToolActivity = runtimeRunHasToolActivity(currentRuntimeRun);
@@ -624,6 +664,11 @@ export function deriveUserRunProjection({
           streamingReplyText,
           traceId,
           runId: surfaceRuntimeRun?.runId,
+          scopedRunId: scopedRunForCard({
+            workspaceId: workspaceIdValue,
+            sessionKey: currentSessionKey,
+            runId: surfaceRuntimeRun?.runId,
+          }),
           suppressThinking: false,
           surfaces,
         });
@@ -657,6 +702,11 @@ export function deriveUserRunProjection({
           streamingReplyText: null,
           traceId,
           runId: surfaceRuntimeRun?.runId,
+          scopedRunId: scopedRunForCard({
+            workspaceId: workspaceIdValue,
+            sessionKey: currentSessionKey,
+            runId: surfaceRuntimeRun?.runId,
+          }),
           suppressThinking: false,
           surfaces,
         });
@@ -691,6 +741,11 @@ export function deriveUserRunProjection({
         messageStepTexts: getPrimaryMessageStepTexts(cleanedSteps),
         streamingReplyText: null,
         runId: surfaceRuntimeRun?.runId,
+          scopedRunId: scopedRunForCard({
+            workspaceId: workspaceIdValue,
+            sessionKey: currentSessionKey,
+            runId: surfaceRuntimeRun?.runId,
+          }),
         suppressThinking: false,
         surfaces,
       });
@@ -735,6 +790,11 @@ export function deriveUserRunProjection({
       streamingReplyText,
       traceId,
       runId: surfaceRuntimeRun?.runId,
+          scopedRunId: scopedRunForCard({
+            workspaceId: workspaceIdValue,
+            sessionKey: currentSessionKey,
+            runId: surfaceRuntimeRun?.runId,
+          }),
       suppressThinking,
       surfaces,
     });

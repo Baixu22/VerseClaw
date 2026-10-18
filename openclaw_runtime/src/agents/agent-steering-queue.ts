@@ -375,7 +375,7 @@ function buildCompletionHandoffArtifacts(
       return (
         candidate.payload.requesterSessionKey === ownerSessionKey &&
         candidateMeta?.orchestrationRunId === meta.orchestrationRunId &&
-        (candidateMeta.taskNodeId ?? candidateMeta.taskId) === edge.from
+        candidateMeta.taskNodeId === edge.from
       );
     });
     if (!fromNode || !toNode || !item) return [];

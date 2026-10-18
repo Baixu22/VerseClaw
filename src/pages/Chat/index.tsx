@@ -2626,6 +2626,7 @@ export function Chat() {
     runError,
     activeRunId,
     runtimeRuns,
+    workspaceId: activeWorkspace?.id ?? null,
   }), [
     messages,
     subagentCompletionInfos,
@@ -2644,6 +2645,7 @@ export function Chat() {
     runError,
     activeRunId,
     runtimeRuns,
+    activeWorkspace?.id,
   ]);
   const userRunCards = executionProjection.cards;
   // Pending approvals belong to the newest turn regardless of whether the run

@@ -6,6 +6,7 @@ import type { WorkspacePermissionMode } from './types/workspace.js';
 
 export type { TaskLedgerReference } from './types/task-ledger-reference.js';
 export {
+  displayCompletionStatus,
   normalizeRunScope,
   normalizeTaskReference,
   resolveProjectIdForWorkspace,
@@ -18,6 +19,8 @@ export {
   type RunScope,
   type ScopedRunId,
   type TaskIdentityReference,
+  type CompletionAuthority,
+  type CompletionStatus,
 } from './types/identity-scope.js';
 export {
   PRODUCT_SEMANTIC_UNSAFE_CLAIMS,

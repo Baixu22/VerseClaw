@@ -106,3 +106,19 @@ export function normalizeTaskReference(value: unknown): TaskIdentityReference {
   }
   return { kind, [field]: requiredText(input[field], field) } as TaskIdentityReference;
 }
+
+export type CompletionAuthority =
+  | "turn"
+  | "run"
+  | "task-loop-verification"
+  | "task-ledger";
+
+export type CompletionStatus = "running" | "completed" | "error" | "aborted" | "unavailable";
+
+/** Presentation-only mapping. It never creates completion authority. */
+export function displayCompletionStatus(input: {
+  authority?: CompletionAuthority | null;
+  status: CompletionStatus;
+}): CompletionStatus {
+  return input.status === "completed" && !input.authority ? "unavailable" : input.status;
+}

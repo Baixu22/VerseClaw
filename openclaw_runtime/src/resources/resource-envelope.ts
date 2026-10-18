@@ -21,7 +21,9 @@ export {
   type ResourcePriority,
 } from "../../../shared/types/resources.js";
 
-export type ResourceEnvelopeCandidate = Omit<ResourceEnvelopeEntry, "updatedAt" | "limits"> & {
+export type ResourceEnvelopeCandidate = Omit<ResourceEnvelopeEntry, "workspaceKey" | "updatedAt" | "limits"> & {
+  /** A missing workspace is different from an unknown one and must stay absent. */
+  workspaceKey?: string;
   updatedAt?: number;
   limits?: Partial<ResourceLimits>;
 };
@@ -89,6 +91,9 @@ export class ResourceEnvelopeLedger {
 
   update(candidate: ResourceEnvelopeCandidate): ResourceEnvelopeEntry {
     const existing = this.entries.get(candidate.id);
+    if (!candidate.workspaceKey) {
+      throw new TypeError("ResourceEnvelopeCandidate requires an owner-resolved workspaceKey");
+    }
     const limits = mergeLimits(candidate.kind, {
       ...this.limits[candidate.kind],
       ...existing?.limits,
@@ -96,6 +101,7 @@ export class ResourceEnvelopeLedger {
     });
     const entry: ResourceEnvelopeEntry = {
       ...candidate,
+      workspaceKey: candidate.workspaceKey,
       limits,
       updatedAt: candidate.updatedAt ?? Date.now(),
     };
