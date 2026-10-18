@@ -1,0 +1,63 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0375",
+  "node": "TF-0375",
+  "title": "建立 CodingRun 只读聚合与统一运行协议",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "23c477754",
+    "base": "23c477754",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "CodingRun read model 能关联至少两类真实运行。",
+      "result": "pass",
+      "evidence": [
+        "src/pages/Chat/execution-projection.ts — ordinary Chat card projection",
+        "src/components/agents/RolesOrchestrationPanel.tsx — explicit Task Loop result projection",
+        "tests/e2e/chat-task-visualizer.spec.ts",
+        "tests/e2e/task-loop-panel.spec.ts"
+      ]
+    },
+    {
+      "criterion": "Chat 可显示聚合结果，CI 可导出同一组关联 ID。",
+      "result": "pass",
+      "evidence": [
+        "src/components/assistant-render/CodingRunEvidence.tsx",
+        "shared/types/coding-run.ts — serializeCodingRunJsonl",
+        "scripts/coding-run-summary.mjs",
+        "harness/specs/fixtures/tf0377-coding-run-projection/tests.json",
+        "harness/specs/fixtures/tf0378-coding-run-protocol/tests.json"
+      ]
+    },
+    {
+      "criterion": "缺失关联时显式 null，不猜测 lineage。",
+      "result": "pass",
+      "evidence": [
+        "shared/types/coding-run.ts",
+        "tests/unit/coding-run.test.ts",
+        "tests/unit/execution-projection.test.ts",
+        "docs/dev/coding-run-protocol.md"
+      ]
+    },
+    {
+      "criterion": "不新增第二套 trace/task/goal 真源。",
+      "result": "pass",
+      "evidence": [
+        "CodingRunView is an in-memory association view; no persistence store, scheduler, trace writer or task authority was added.",
+        "TF-0376 / TF-0377 / TF-0378 child receipts"
+      ]
+    }
+  ],
+  "childCompletion": [
+    {"node": "TF-0376", "status": "done", "evidence": "harness/specs/fixtures/tf0376-coding-run-contract/acceptance.json; 72735054c"},
+    {"node": "TF-0377", "status": "done", "evidence": "harness/specs/fixtures/tf0377-coding-run-projection/acceptance.json; 1db002815"},
+    {"node": "TF-0378", "status": "done", "evidence": "harness/specs/fixtures/tf0378-coding-run-protocol/acceptance.json; 1e401b1e"}
+  ],
+  "boundaries": [
+    "No new run scheduler, Task Loop/Mission/ClawGraph replacement or Best-of-N scope was added.",
+    "CodingRun remains read-only and may be incomplete; missing associations are explicit.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}
