@@ -5,7 +5,7 @@
   "title": "更新 Settings、解释层与场景验证",
   "verdict": "pass",
   "candidate": {
-    "sha": "pending-source-commit",
+    "sha": "039df0c6fb94e392d9d0b052ca64fe9c14d6ebac",
     "base": "4d652b9e",
     "dirty": false
   },
