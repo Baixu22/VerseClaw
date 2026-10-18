@@ -6,6 +6,20 @@ import type { WorkspacePermissionMode } from './types/workspace.js';
 
 export type { TaskLedgerReference } from './types/task-ledger-reference.js';
 export {
+  normalizeRunScope,
+  normalizeTaskReference,
+  resolveProjectIdForWorkspace,
+  resolveWorkspaceIdForProject,
+  type WorkspaceId,
+  type ProjectId,
+  type SessionKey,
+  type RunId,
+  type TaskId,
+  type RunScope,
+  type ScopedRunId,
+  type TaskIdentityReference,
+} from './types/identity-scope.js';
+export {
   PRODUCT_SEMANTIC_UNSAFE_CLAIMS,
   type ProductSemanticUnsafeClaim,
 } from './product-semantic-unsafe-claims.js';
