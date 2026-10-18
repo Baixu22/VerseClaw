@@ -5,7 +5,7 @@
   "title": "定义 CodingRun 聚合与只读契约",
   "verdict": "pass",
   "candidate": {
-    "sha": "pending-source-commit",
+    "sha": "72735054c1bd5e3399bc586959ea40d6eab4702d",
     "base": "2bc123652241edebe20b54183c1e4e84d956ee20",
     "dirty": false
   },
