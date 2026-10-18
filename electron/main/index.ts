@@ -1066,9 +1066,6 @@ async function initialize(): Promise<void> {
       logger.warn('Network optimization warmup failed:', error);
     });
 
-    // Initialize Telemetry early
-    await initTelemetry();
-
     // Apply persisted proxy settings before creating windows or network requests.
     await applyProxySettings();
     await syncLaunchAtStartupSettingFromStore();
@@ -1076,18 +1073,8 @@ async function initialize(): Promise<void> {
     logger.info('Running in E2E mode: startup side effects minimized');
   }
 
-  // Set application menu
-  await createMenu();
-
   // Create the main window
   const window = await createMainWindow();
-
-  // Create system tray
-  if (!isE2EMode) {
-    createTray(window);
-  }
-  applySystemThemeIcons(window);
-  syncTrayIconWithSystemTheme();
 
   if (!systemThemeIconListenerRegistered) {
     systemThemeIconListenerRegistered = true;
@@ -1123,22 +1110,40 @@ async function initialize(): Promise<void> {
   // Register IPC handlers
   registerIpcHandlers(gatewayManager, clawHubService, window, hostApiRegistry);
 
-  // Initialize extension system
-  await extensionRegistry.initialize({
-    gatewayManager,
-    getMainWindow: () => mainWindow,
-    hostApi: {
-      register: (extensionId, contributions) => (
-        hostApiRegistry.registerExtensionContributions(extensionId, contributions)
-      ),
-    },
+  // Keep the first-paint critical path free of menu/tray/telemetry/extension
+  // work. These services are still initialized locally, but only after the
+  // window has had a chance to emit ready-to-show.
+  setImmediate(() => {
+    if (!isE2EMode) {
+      void initTelemetry().catch((error) => {
+        logger.warn('Telemetry initialization failed after first paint:', error);
+      });
+    }
+    void createMenu().catch((error) => {
+      logger.warn('Application menu initialization failed after first paint:', error);
+    });
+    if (!isE2EMode) {
+      createTray(window);
+    }
+    applySystemThemeIcons(window);
+    syncTrayIconWithSystemTheme();
+    void extensionRegistry.initialize({
+      gatewayManager,
+      getMainWindow: () => mainWindow,
+      hostApi: {
+        register: (extensionId, contributions) => (
+          hostApiRegistry.registerExtensionContributions(extensionId, contributions)
+        ),
+      },
+    }).then(() => {
+      const marketplaceProvider = extensionRegistry.getMarketplaceProvider();
+      if (marketplaceProvider) {
+        clawHubService.setMarketplaceProvider(marketplaceProvider);
+      }
+    }).catch((error) => {
+      logger.warn('Extension initialization failed after first paint:', error);
+    });
   });
-
-  // Wire marketplace provider to ClawHubService if an extension provides one
-  const marketplaceProvider = extensionRegistry.getMarketplaceProvider();
-  if (marketplaceProvider) {
-    clawHubService.setMarketplaceProvider(marketplaceProvider);
-  }
 
   // Seed a stable default IDENTITY.md before the Gateway initializes the
   // workspace so Verse Claw desktop sessions skip OpenClaw's chat-first bootstrap.
