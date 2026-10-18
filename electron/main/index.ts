@@ -1037,6 +1037,26 @@ async function createMainWindow(): Promise<BrowserWindow> {
   return win;
 }
 
+async function startGatewayAfterFirstPaint(): Promise<void> {
+  markPerformance('gateway-start');
+  const gatewayAutoStart = await getSetting('gatewayAutoStart');
+  if (!isE2EMode && gatewayAutoStart) {
+    try {
+      await syncAllProviderAuthToRuntime();
+      logger.debug('Auto-starting Gateway...');
+      await gatewayManager.start();
+      logger.info('Gateway auto-start succeeded');
+    } catch (error) {
+      logger.error('Gateway auto-start failed:', error);
+      mainWindow?.webContents.send('gateway:error', String(error));
+    }
+  } else if (isE2EMode) {
+    logger.info('Gateway auto-start skipped in E2E mode');
+  } else {
+    logger.info('Gateway auto-start disabled in settings');
+  }
+}
+
 /**
  * Initialize the application
  */
@@ -1068,13 +1088,18 @@ async function initialize(): Promise<void> {
 
     // Apply persisted proxy settings before creating windows or network requests.
     await applyProxySettings();
-    await syncLaunchAtStartupSettingFromStore();
   } else {
     logger.info('Running in E2E mode: startup side effects minimized');
   }
 
   // Create the main window
   const window = await createMainWindow();
+  window.once('ready-to-show', () => {
+    setImmediate(() => {
+      void startGatewayAfterFirstPaint();
+    });
+  });
+
 
   if (!systemThemeIconListenerRegistered) {
     systemThemeIconListenerRegistered = true;
@@ -1115,6 +1140,9 @@ async function initialize(): Promise<void> {
   // window has had a chance to emit ready-to-show.
   setImmediate(() => {
     if (!isE2EMode) {
+      void syncLaunchAtStartupSettingFromStore().catch((error) => {
+        logger.warn('Launch-at-startup sync failed after first paint:', error);
+      });
       void initTelemetry().catch((error) => {
         logger.warn('Telemetry initialization failed after first paint:', error);
       });
@@ -1345,24 +1373,6 @@ async function initialize(): Promise<void> {
   whatsAppLoginManager.on('error', (error) => {
     sendMainWindowEvent('channel:whatsapp-error', error);
   });
-
-  // Start Gateway automatically (this seeds missing bootstrap files with full templates)
-  const gatewayAutoStart = await getSetting('gatewayAutoStart');
-  if (!isE2EMode && gatewayAutoStart) {
-    try {
-      await syncAllProviderAuthToRuntime();
-      logger.debug('Auto-starting Gateway...');
-      await gatewayManager.start();
-      logger.info('Gateway auto-start succeeded');
-    } catch (error) {
-      logger.error('Gateway auto-start failed:', error);
-      mainWindow?.webContents.send('gateway:error', String(error));
-    }
-  } else if (isE2EMode) {
-    logger.info('Gateway auto-start skipped in E2E mode');
-  } else {
-    logger.info('Gateway auto-start disabled in settings');
-  }
 
   // Merge Verse Claw context snippets into the workspace bootstrap files.
   // The gateway seeds workspace files asynchronously after its HTTP server

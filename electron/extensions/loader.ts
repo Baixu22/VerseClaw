@@ -1,4 +1,5 @@
-import { existsSync, readFileSync } from 'fs';
+import { existsSync } from 'fs';
+import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { app } from 'electron';
 import { logger } from '../utils/logger';
@@ -30,7 +31,7 @@ export async function loadExtensionsFromManifest(): Promise<void> {
 
   if (existsSync(manifestPath)) {
     try {
-      manifest = JSON.parse(readFileSync(manifestPath, 'utf-8')) as ExtensionManifest;
+      manifest = JSON.parse(await readFile(manifestPath, 'utf-8')) as ExtensionManifest;
       logger.info(`[extensions] Loaded manifest from ${manifestPath}`);
     } catch (err) {
       logger.warn(`[extensions] Failed to parse ${manifestPath}, using defaults:`, err);
