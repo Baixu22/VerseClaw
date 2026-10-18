@@ -1330,6 +1330,10 @@ openclaw_runtime/_tmp_*
 !/artifacts/unblock-pack/tf0042-h-scenarios.md
 !/artifacts/unblock-pack/tf0047-docker-sandbox.md
 !/artifacts/unblock-pack/tf0127-tf0129-tcorpus.md
+!/artifacts/versebrowser-acceptance/2026-10-16T000000Z/SHA256SUMS
+!/artifacts/versebrowser-acceptance/2026-10-16T000000Z/evidence-index.json
+!/artifacts/versebrowser-acceptance/2026-10-16T000000Z/gaps.md
+!/artifacts/versebrowser-acceptance/2026-10-16T000000Z/verdict.json
 !/artifacts/verseconf-adoption-decision-20261001/decision.json
 !/artifacts/verseconf-clawx-integration/SHA256SUMS
 !/artifacts/verseconf-clawx-integration/acceptance-20261003.json
@@ -1723,6 +1727,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/prompt-cache-tool-mask-auto-20261012/SHA256SUMS
 !/docs/dev/prompt-cache-tool-mask-auto-20261012/acceptance.json
 !/docs/dev/provider-error-retry-boundaries.md
+!/docs/dev/repo-hygiene-20261017.md
 !/docs/dev/repository-artifact-retention.md
 !/docs/dev/repository-cleanup-triage-2026-10-08.md
 !/docs/dev/repository-layout.md
@@ -1771,6 +1776,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/verseconf-clawx-adoption-decision.md
 !/docs/dev/verseconf-clawx-contract-v1.md
 !/docs/dev/verseconf-clawx-implementation-20261001.md
+!/docs/dev/versegit-validation-layer/README.md
 !/docs/dev/verseshell-foundation/CAPABILITY-AUDIT-AND-IMPLEMENTATION-PLAN.zh-CN.md
 !/docs/dev/verseshell-foundation/STATUS.md
 !/docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
@@ -1985,12 +1991,6 @@ openclaw_runtime/_tmp_*
 !/team/dcs/dcs-v1.6-spec.md
 !/team/dcs/dcs-v1.6.1-addendum.md
 !/team/role-architecture-design/area-4-role-memory-completion.md
-!/artifacts/versebrowser-acceptance/2026-10-16T000000Z/SHA256SUMS
-!/artifacts/versebrowser-acceptance/2026-10-16T000000Z/evidence-index.json
-!/artifacts/versebrowser-acceptance/2026-10-16T000000Z/gaps.md
-!/artifacts/versebrowser-acceptance/2026-10-16T000000Z/verdict.json
-!/docs/dev/repo-hygiene-20261017.md
-!/docs/dev/versegit-validation-layer/README.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
