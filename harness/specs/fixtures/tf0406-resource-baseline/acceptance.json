@@ -5,7 +5,8 @@
   "title": "采集 P1 改动前资源基线",
   "verdict": "pass-with-unavailable-metrics",
   "candidate": {
-    "sha": "e9ce71afa2389593169af6ced421aa499c2d9688",
+    "sha": "fed4bec1b",
+    "preEditBase": "e9ce71afa2389593169af6ced421aa499c2d9688",
     "dirty": false
   },
   "outcome": "A real 300.225s Electron run produced 59 samples at 5s cadence. CPU/RSS and shed counts are measured; process-spawn and live setInterval counts are not exposed by the current Main contract and remain explicitly unavailable.",
