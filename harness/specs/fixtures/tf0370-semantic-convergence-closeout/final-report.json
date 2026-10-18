@@ -1,0 +1,185 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0370",
+  "node": "TF-0370",
+  "title": "Codex、Manus 对照下的统一缺口补齐与产品语义收敛（非 GA）",
+  "verdict": "pass-with-explicit-boundaries",
+  "candidate": {
+    "sha": "aa83971e290db2bcddaa7c9c2e93d47ab41b9d47",
+    "short": "aa83971e2",
+    "dirty": false
+  },
+  "programOutcome": "The planned semantic convergence and bounded engineering children are complete on the private main candidate. This is not GA, release, installer acceptance, or a performance green.",
+  "childCompletion": [
+    {
+      "node": "TF-0371",
+      "status": "done",
+      "evidence": "harness/specs/fixtures/tf0371-identity-scope/acceptance.json"
+    },
+    {
+      "node": "TF-0375",
+      "status": "done",
+      "evidence": "harness/specs/fixtures/tf0375-coding-run-read-model/acceptance.json"
+    },
+    {
+      "node": "TF-0379",
+      "status": "done",
+      "evidence": "harness/specs/fixtures/tf0379-execution-environment/acceptance.json"
+    },
+    {
+      "node": "TF-0383",
+      "status": "done",
+      "evidence": "harness/specs/fixtures/tf0383-extension-governance/acceptance.json"
+    },
+    {
+      "node": "TF-0387",
+      "status": "done",
+      "evidence": "harness/specs/fixtures/tf0387-project-attempt-closeout/acceptance.json"
+    },
+    {
+      "node": "TF-0390",
+      "status": "done",
+      "evidence": "harness/specs/fixtures/tf0390-final-boundary/final-report.json"
+    },
+    {
+      "node": "TF-0391",
+      "status": "done",
+      "evidence": "Decision node: semantic-first, non-OS-sandbox, reuse existing authorities."
+    },
+    {
+      "node": "TF-0392",
+      "status": "done",
+      "evidence": "harness/specs/fixtures/tf0392-semantic-risk-closeout/acceptance.json"
+    },
+    {
+      "node": "TF-0393",
+      "status": "done",
+      "evidence": "Non-goal node: OS sandbox, cloud VM, realtime collab, Website Builder and Cloud attempts remain excluded."
+    }
+  ],
+  "engineeringDelivered": [
+    {
+      "area": "Identity and completion vocabulary",
+      "result": "Workspace/Project/Session/Run/Task/Completion identities and authority are explicit; legacy workspaceKey is normalized only in memory.",
+      "evidence": [
+        "shared/types/identity-scope.ts",
+        "tests/unit/identity-scope.test.ts",
+        "harness/specs/fixtures/tf0371-identity-scope/acceptance.json"
+      ]
+    },
+    {
+      "area": "CodingRun read model and JSONL protocol",
+      "result": "Read-only association view, Chat/Task Loop projection, versioned coding-run/v1 JSONL and fail-closed parser/summary.",
+      "evidence": [
+        "shared/types/coding-run.ts",
+        "scripts/coding-run-summary.mjs",
+        "harness/specs/fixtures/tf0375-coding-run-read-model/acceptance.json"
+      ]
+    },
+    {
+      "area": "Execution environment semantics",
+      "result": "Backend, guarantee, network and approval posture remain explicit; provider names do not imply stronger isolation; strong providers fail closed when unavailable.",
+      "evidence": [
+        "shared/types/execution-environment.ts",
+        "harness/specs/fixtures/tf0379-execution-environment/acceptance.json"
+      ]
+    },
+    {
+      "area": "Extension governance",
+      "result": "Hook trust/hash pinning, capability conflict diagnostics, and instruction precedence explain are bounded to existing extension/runtime owners.",
+      "evidence": [
+        "openclaw_runtime/src/hooks/trust.ts",
+        "shared/instruction-precedence.ts",
+        "harness/specs/fixtures/tf0383-extension-governance/acceptance.json"
+      ]
+    },
+    {
+      "area": "Project and attempt/apply",
+      "result": "Project is a read-only Workspace projection; immutable attempt evidence and diff-first apply delegate to existing Git apply and approval authority.",
+      "evidence": [
+        "shared/types/project.ts",
+        "shared/types/attempt.ts",
+        "harness/specs/fixtures/tf0387-project-attempt-closeout/acceptance.json"
+      ]
+    }
+  ],
+  "gates": {
+    "semanticCompatibility": {
+      "command": "pnpm exec vitest run <six semantic test files>",
+      "files": 6,
+      "tests": 62,
+      "passed": 62,
+      "failed": 0,
+      "exitCode": 0,
+      "durationMs": 26590
+    },
+    "semanticTypecheck": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 11051
+    },
+    "fullAgentDevDeepTest": {
+      "command": "pnpm agent-dev:deep-test",
+      "exitCode": 0,
+      "functionalSuccess": true,
+      "totalDurationMs": 163138,
+      "decision": {
+        "status": "blocked",
+        "releaseReady": false,
+        "fullGateComplete": true,
+        "budgetStatus": "limit",
+        "hardFailure": {
+          "step": "e2e-build",
+          "durationMs": 83583,
+          "limitMs": 58000,
+          "overLimitMs": 25583
+        }
+      }
+    },
+    "agentDevAudit": {
+      "command": "pnpm agent-dev:audit",
+      "exitCode": 1,
+      "status": "fail",
+      "grade": "B",
+      "score": 80,
+      "maturityLevel": "blocked",
+      "disqualifiers": [
+        "latest-decision-blocked",
+        "performance-limit:e2e-build"
+      ]
+    },
+    "fullAgentDevE2E": {
+      "passed": 4,
+      "failed": 0,
+      "note": "Functional E2E passed; the audit is still blocked by build-budget performance discipline."
+    },
+    "release": {
+      "status": "unproven",
+      "releaseDirectoryExists": false,
+      "nsisInstallerSuccess": false
+    }
+  },
+  "boundaries": [
+    "Agent Dev functional evidence is green for the selected tests, but the full audit is fail/B/80 and maturity is blocked because fresh e2e-build exceeded its hard 58s budget.",
+    "Build budgeting, product locks and frozen defaults were not changed.",
+    "No current release/ installer exists; NSIS installer success is unproven and no executable or release claim is made.",
+    "No CI pass is claimed; historical account/billing boundaries remain separate from local functional evidence.",
+    "All evidence is agent-driven; no real-human evidence is claimed."
+  ],
+  "deliberateNonGoals": [
+    "Complete OS sandbox.",
+    "Manus cloud VM.",
+    "Website Builder.",
+    "Realtime collaboration.",
+    "Codex Cloud.",
+    "A second Task Ledger, Trace, Goal, Memory, Knowledge or scheduler authority."
+  ],
+  "publicationBoundary": {
+    "privateRemoteOnly": true,
+    "tagCreated": false,
+    "releasePublished": false,
+    "repositoryVisibilityChanged": false,
+    "productLockChanged": false,
+    "frozenDefaultChanged": false
+  }
+}
