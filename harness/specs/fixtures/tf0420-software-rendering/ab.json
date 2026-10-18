@@ -1,0 +1,221 @@
+{
+  "schema": "clawx.tf0420.software-rendering-ab/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0420-render-probe",
+  "candidate": "4f7a9f68eeb3e6f43b0448f71d2f3e7c222c33fa",
+  "completedAt": "2026-10-18T16:28:21.764Z",
+  "platform": "win32",
+  "baseline": {
+    "chat": {
+      "label": "chat",
+      "frame": {
+        "scrollableCount": 1,
+        "syntheticScroll": true,
+        "frames": 46,
+        "avgFrameMs": 17.14130434795567,
+        "maxFrameMs": 50
+      },
+      "screenshot": {
+        "path": "D:\\ClawX-candidates\\codex-manus-semantics-20261018-r2\\harness\\specs\\fixtures\\tf0420-software-rendering\\screenshots\\chat-baseline.png",
+        "bytes": 598532,
+        "sha256": "cd0cf860c5955c3ce689d29cb29821ebe552a6eb6f70c08641af6f40821fe0cc"
+      },
+      "longTaskCount": 3,
+      "longTaskMaxMs": 95,
+      "sampler": null,
+      "mainRssBytes": 628457472
+    },
+    "dialog": {
+      "label": "dialog",
+      "frame": {
+        "scrollableCount": 1,
+        "syntheticScroll": true,
+        "frames": 46,
+        "avgFrameMs": 17.226086956392226,
+        "maxFrameMs": 33.30000000000291
+      },
+      "screenshot": {
+        "path": "D:\\ClawX-candidates\\codex-manus-semantics-20261018-r2\\harness\\specs\\fixtures\\tf0420-software-rendering\\screenshots\\dialog-baseline.png",
+        "bytes": 767800,
+        "sha256": "8189afe3218f484b3850b63cf66997b90304e5c04e7f9fb69807ba1aa464ae7d"
+      },
+      "longTaskCount": 3,
+      "longTaskMaxMs": 95,
+      "sampler": {
+        "sampleCount": 7,
+        "coverageMs": 30065,
+        "latest": {
+          "at": 1792340859969,
+          "cpuPercent": 8.71,
+          "rssBytes": 329056256,
+          "heapUsedBytes": 109727780,
+          "systemFreeBytes": 1752973312,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": true,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 10.48,
+        "peakCpuPercent": 47.16,
+        "peakRssBytes": 631967744,
+        "shedSampleCount": 4
+      },
+      "mainRssBytes": 329515008
+    },
+    "settings": {
+      "label": "settings",
+      "frame": {
+        "scrollableCount": 1,
+        "syntheticScroll": true,
+        "frames": 48,
+        "avgFrameMs": 16.477083333333365,
+        "maxFrameMs": 16.80000000000291
+      },
+      "screenshot": {
+        "path": "D:\\ClawX-candidates\\codex-manus-semantics-20261018-r2\\harness\\specs\\fixtures\\tf0420-software-rendering\\screenshots\\settings-baseline.png",
+        "bytes": 93932,
+        "sha256": "ccca609922535819a02606822e43fd7a85ff7bf2ff4888a25aad6f19d2df36d1"
+      },
+      "longTaskCount": 3,
+      "longTaskMaxMs": 95,
+      "sampler": {
+        "sampleCount": 7,
+        "coverageMs": 30065,
+        "latest": {
+          "at": 1792340859969,
+          "cpuPercent": 8.71,
+          "rssBytes": 329056256,
+          "heapUsedBytes": 109727780,
+          "systemFreeBytes": 1752973312,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": true,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 10.48,
+        "peakCpuPercent": 47.16,
+        "peakRssBytes": 631967744,
+        "shedSampleCount": 4
+      },
+      "mainRssBytes": 361578496
+    }
+  },
+  "noFx": {
+    "chat": {
+      "label": "chat-no-fx",
+      "frame": {
+        "scrollableCount": 1,
+        "syntheticScroll": true,
+        "frames": 44,
+        "avgFrameMs": 17.759090909090943,
+        "maxFrameMs": 50
+      },
+      "screenshot": {
+        "path": "D:\\ClawX-candidates\\codex-manus-semantics-20261018-r2\\harness\\specs\\fixtures\\tf0420-software-rendering\\screenshots\\chat-no-fx.png",
+        "bytes": 626103,
+        "sha256": "5063e1fcfeadca950bd0c724baef4cf102b9f91cb3220322021779f225b6e9f8"
+      },
+      "longTaskCount": 5,
+      "longTaskMaxMs": 95,
+      "sampler": {
+        "sampleCount": 8,
+        "coverageMs": 35072,
+        "latest": {
+          "at": 1792340864976,
+          "cpuPercent": 44.96,
+          "rssBytes": 384942080,
+          "heapUsedBytes": 138196896,
+          "systemFreeBytes": 1218347008,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": true,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 14.79,
+        "peakCpuPercent": 47.16,
+        "peakRssBytes": 631967744,
+        "shedSampleCount": 5
+      },
+      "mainRssBytes": 385150976
+    },
+    "dialog": {
+      "label": "dialog-no-fx",
+      "frame": {
+        "scrollableCount": 1,
+        "syntheticScroll": true,
+        "frames": 47,
+        "avgFrameMs": 16.90212765932077,
+        "maxFrameMs": 33.40000000000873
+      },
+      "screenshot": {
+        "path": "D:\\ClawX-candidates\\codex-manus-semantics-20261018-r2\\harness\\specs\\fixtures\\tf0420-software-rendering\\screenshots\\dialog-no-fx.png",
+        "bytes": 849806,
+        "sha256": "5538e5df4dc8c4d01208f9e9c478e464ffa466b5f415fe61f45769dd81b4c8d4"
+      },
+      "longTaskCount": 7,
+      "longTaskMaxMs": 95,
+      "sampler": {
+        "sampleCount": 14,
+        "coverageMs": 65119,
+        "latest": {
+          "at": 1792340895023,
+          "cpuPercent": 3.41,
+          "rssBytes": 314974208,
+          "heapUsedBytes": 106969184,
+          "systemFreeBytes": 441982976,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": true,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 11.3,
+        "peakCpuPercent": 47.16,
+        "peakRssBytes": 631967744,
+        "shedSampleCount": 11
+      },
+      "mainRssBytes": 314650624
+    },
+    "settings": {
+      "label": "settings-no-fx",
+      "frame": {
+        "scrollableCount": 1,
+        "syntheticScroll": true,
+        "frames": 49,
+        "avgFrameMs": 16.11632653085541,
+        "maxFrameMs": 16.80000000000291
+      },
+      "screenshot": {
+        "path": "D:\\ClawX-candidates\\codex-manus-semantics-20261018-r2\\harness\\specs\\fixtures\\tf0420-software-rendering\\screenshots\\settings-no-fx.png",
+        "bytes": 89552,
+        "sha256": "ccb4079909578d62342dbff16a95bfaf175bf79a0ccccfa4f017a8808ea31803"
+      },
+      "longTaskCount": 7,
+      "longTaskMaxMs": 95,
+      "sampler": {
+        "sampleCount": 15,
+        "coverageMs": 70125,
+        "latest": {
+          "at": 1792340900029,
+          "cpuPercent": 18.12,
+          "rssBytes": 327548928,
+          "heapUsedBytes": 107094212,
+          "systemFreeBytes": 1343180800,
+          "systemTotalBytes": 16295432192,
+          "cpuCount": 16,
+          "shed": true,
+          "source": "os-cpu"
+        },
+        "avgCpuPercent": 11.75,
+        "peakCpuPercent": 47.16,
+        "peakRssBytes": 631967744,
+        "shedSampleCount": 12
+      },
+      "mainRssBytes": 327553024
+    }
+  },
+  "boundaries": [
+    "The A/B override is injected in the live renderer; no production CSS is changed by this probe.",
+    "The dialog step may be skipped if the sidebar search trigger is unavailable; the report records actual surfaces.",
+    "Frame timing is a local Windows software-rendering rAF sample, not a cross-platform benchmark."
+  ]
+}

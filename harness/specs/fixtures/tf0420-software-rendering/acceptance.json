@@ -1,0 +1,300 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0420",
+  "node": "TF-0420",
+  "title": "审计软件渲染下的合成、模糊与常驻图层",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "4f7a9f68e",
+    "full": "4f7a9f68eeb3e6f43b0448f71d2f3e7c222c33fa",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "列出所有 backdrop-filter 与 will-change 的使用点，并标注短时动画或常驻层",
+      "result": "pass",
+      "evidence": [
+        "audit.json lists 32 occurrences with surface/class/decision/reason.",
+        "Removed three persistent will-change hints: composer host, sidebar marquee inner, effort status."
+      ]
+    },
+    {
+      "criterion": "对 composer、sidebar、settings、dialog 做低配软件渲染 A/B：滚动 frame time、long task 数量、RSS 和视觉回归均有记录",
+      "result": "pass-with-synthetic-scroll-boundary",
+      "evidence": [
+        "ab.json (candidate 4f7a9f68eeb3e6f43b0448f71d2f3e7c222c33fa) ran under GPU-disabled Electron with baseline/noFx across chat, dialog and settings.",
+        "Each side forced a document overflow for scroll measurement when the seeded shell exposed no scroll container; scrollableCount=1 and syntheticScroll=true are recorded.",
+        "chat frame 17.14130434795567→17.759090909090943ms; dialog 17.226086956392226→16.90212765932077ms; settings 16.477083333333365→16.11632653085541ms.",
+        "Six PNG screenshots (baseline/noFx for chat, dialog, settings) and their SHA-256 hashes are retained."
+      ]
+    },
+    {
+      "criterion": "删除或收敛无正当理由的常驻 will-change；保留项必须有动画周期或性能证据",
+      "result": "pass",
+      "evidence": [
+        "Removed .codex-composer-host, sidebar marquee inner, and .effort-status will-change declarations.",
+        "Kept settings panel/topfade hints because their explicit scroll-shadow rationale is retained; menus/dialogs/sweeps are short-lived."
+      ]
+    },
+    {
+      "criterion": "不降低可读性、焦点态和 reduced-motion 行为",
+      "result": "pass",
+      "evidence": [
+        "No color, typography, focus ring, or reduced-motion rule changed.",
+        "Playwright: chat-layout-cdp + main-navigation + settings-storage 6/6 passed after fixing the sticky heading pointer-events."
+      ]
+    }
+  ],
+  "ab": {
+    "baseline": {
+      "chat": {
+        "frame": {
+          "scrollableCount": 1,
+          "syntheticScroll": true,
+          "frames": 46,
+          "avgFrameMs": 17.14130434795567,
+          "maxFrameMs": 50
+        },
+        "longTaskCount": 3,
+        "longTaskMaxMs": 95,
+        "mainRssBytes": 628457472,
+        "sampler": null,
+        "screenshot": {
+          "path": "D:\\ClawX-candidates\\codex-manus-semantics-20261018-r2\\harness\\specs\\fixtures\\tf0420-software-rendering\\screenshots\\chat-baseline.png",
+          "bytes": 598532,
+          "sha256": "cd0cf860c5955c3ce689d29cb29821ebe552a6eb6f70c08641af6f40821fe0cc"
+        }
+      },
+      "dialog": {
+        "frame": {
+          "scrollableCount": 1,
+          "syntheticScroll": true,
+          "frames": 46,
+          "avgFrameMs": 17.226086956392226,
+          "maxFrameMs": 33.30000000000291
+        },
+        "longTaskCount": 3,
+        "longTaskMaxMs": 95,
+        "mainRssBytes": 329515008,
+        "sampler": {
+          "sampleCount": 7,
+          "coverageMs": 30065,
+          "latest": {
+            "at": 1792340859969,
+            "cpuPercent": 8.71,
+            "rssBytes": 329056256,
+            "heapUsedBytes": 109727780,
+            "systemFreeBytes": 1752973312,
+            "systemTotalBytes": 16295432192,
+            "cpuCount": 16,
+            "shed": true,
+            "source": "os-cpu"
+          },
+          "avgCpuPercent": 10.48,
+          "peakCpuPercent": 47.16,
+          "peakRssBytes": 631967744,
+          "shedSampleCount": 4
+        },
+        "screenshot": {
+          "path": "D:\\ClawX-candidates\\codex-manus-semantics-20261018-r2\\harness\\specs\\fixtures\\tf0420-software-rendering\\screenshots\\dialog-baseline.png",
+          "bytes": 767800,
+          "sha256": "8189afe3218f484b3850b63cf66997b90304e5c04e7f9fb69807ba1aa464ae7d"
+        }
+      },
+      "settings": {
+        "frame": {
+          "scrollableCount": 1,
+          "syntheticScroll": true,
+          "frames": 48,
+          "avgFrameMs": 16.477083333333365,
+          "maxFrameMs": 16.80000000000291
+        },
+        "longTaskCount": 3,
+        "longTaskMaxMs": 95,
+        "mainRssBytes": 361578496,
+        "sampler": {
+          "sampleCount": 7,
+          "coverageMs": 30065,
+          "latest": {
+            "at": 1792340859969,
+            "cpuPercent": 8.71,
+            "rssBytes": 329056256,
+            "heapUsedBytes": 109727780,
+            "systemFreeBytes": 1752973312,
+            "systemTotalBytes": 16295432192,
+            "cpuCount": 16,
+            "shed": true,
+            "source": "os-cpu"
+          },
+          "avgCpuPercent": 10.48,
+          "peakCpuPercent": 47.16,
+          "peakRssBytes": 631967744,
+          "shedSampleCount": 4
+        },
+        "screenshot": {
+          "path": "D:\\ClawX-candidates\\codex-manus-semantics-20261018-r2\\harness\\specs\\fixtures\\tf0420-software-rendering\\screenshots\\settings-baseline.png",
+          "bytes": 93932,
+          "sha256": "ccca609922535819a02606822e43fd7a85ff7bf2ff4888a25aad6f19d2df36d1"
+        }
+      }
+    },
+    "noFx": {
+      "chat": {
+        "frame": {
+          "scrollableCount": 1,
+          "syntheticScroll": true,
+          "frames": 44,
+          "avgFrameMs": 17.759090909090943,
+          "maxFrameMs": 50
+        },
+        "longTaskCount": 5,
+        "longTaskMaxMs": 95,
+        "mainRssBytes": 385150976,
+        "sampler": {
+          "sampleCount": 8,
+          "coverageMs": 35072,
+          "latest": {
+            "at": 1792340864976,
+            "cpuPercent": 44.96,
+            "rssBytes": 384942080,
+            "heapUsedBytes": 138196896,
+            "systemFreeBytes": 1218347008,
+            "systemTotalBytes": 16295432192,
+            "cpuCount": 16,
+            "shed": true,
+            "source": "os-cpu"
+          },
+          "avgCpuPercent": 14.79,
+          "peakCpuPercent": 47.16,
+          "peakRssBytes": 631967744,
+          "shedSampleCount": 5
+        },
+        "screenshot": {
+          "path": "D:\\ClawX-candidates\\codex-manus-semantics-20261018-r2\\harness\\specs\\fixtures\\tf0420-software-rendering\\screenshots\\chat-no-fx.png",
+          "bytes": 626103,
+          "sha256": "5063e1fcfeadca950bd0c724baef4cf102b9f91cb3220322021779f225b6e9f8"
+        }
+      },
+      "dialog": {
+        "frame": {
+          "scrollableCount": 1,
+          "syntheticScroll": true,
+          "frames": 47,
+          "avgFrameMs": 16.90212765932077,
+          "maxFrameMs": 33.40000000000873
+        },
+        "longTaskCount": 7,
+        "longTaskMaxMs": 95,
+        "mainRssBytes": 314650624,
+        "sampler": {
+          "sampleCount": 14,
+          "coverageMs": 65119,
+          "latest": {
+            "at": 1792340895023,
+            "cpuPercent": 3.41,
+            "rssBytes": 314974208,
+            "heapUsedBytes": 106969184,
+            "systemFreeBytes": 441982976,
+            "systemTotalBytes": 16295432192,
+            "cpuCount": 16,
+            "shed": true,
+            "source": "os-cpu"
+          },
+          "avgCpuPercent": 11.3,
+          "peakCpuPercent": 47.16,
+          "peakRssBytes": 631967744,
+          "shedSampleCount": 11
+        },
+        "screenshot": {
+          "path": "D:\\ClawX-candidates\\codex-manus-semantics-20261018-r2\\harness\\specs\\fixtures\\tf0420-software-rendering\\screenshots\\dialog-no-fx.png",
+          "bytes": 849806,
+          "sha256": "5538e5df4dc8c4d01208f9e9c478e464ffa466b5f415fe61f45769dd81b4c8d4"
+        }
+      },
+      "settings": {
+        "frame": {
+          "scrollableCount": 1,
+          "syntheticScroll": true,
+          "frames": 49,
+          "avgFrameMs": 16.11632653085541,
+          "maxFrameMs": 16.80000000000291
+        },
+        "longTaskCount": 7,
+        "longTaskMaxMs": 95,
+        "mainRssBytes": 327553024,
+        "sampler": {
+          "sampleCount": 15,
+          "coverageMs": 70125,
+          "latest": {
+            "at": 1792340900029,
+            "cpuPercent": 18.12,
+            "rssBytes": 327548928,
+            "heapUsedBytes": 107094212,
+            "systemFreeBytes": 1343180800,
+            "systemTotalBytes": 16295432192,
+            "cpuCount": 16,
+            "shed": true,
+            "source": "os-cpu"
+          },
+          "avgCpuPercent": 11.75,
+          "peakCpuPercent": 47.16,
+          "peakRssBytes": 631967744,
+          "shedSampleCount": 12
+        },
+        "screenshot": {
+          "path": "D:\\ClawX-candidates\\codex-manus-semantics-20261018-r2\\harness\\specs\\fixtures\\tf0420-software-rendering\\screenshots\\settings-no-fx.png",
+          "bytes": 89552,
+          "sha256": "ccb4079909578d62342dbff16a95bfaf175bf79a0ccccfa4f017a8808ea31803"
+        }
+      }
+    }
+  },
+  "boundaries": [
+    "The scroll measurement uses a forced document overflow because the seeded shell did not expose a real scroll container; it is a local software-rendering probe, not a production frame trace.",
+    "Removing backdrop-filter produced no consistent benefit and a dialog side-effect in the prior noFx attempt; production blur is intentionally retained.",
+    "The sidebar pointer-events fix is part of this node because it unblocked the session-search dialog A/B and its E2E.",
+    "No product lock, color token, focus ring, or reduced-motion behavior changed."
+  ],
+  "gates": [
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 20544,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/software-rendering-compositing.md",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm repo:artifacts:check",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm agent-dev:fast",
+      "exitCode": 0,
+      "unitFiles": 7,
+      "unitTests": 88,
+      "result": "pass"
+    },
+    {
+      "command": "portable Node 24.16.0 + @playwright/test cli: chat-layout-cdp, main-navigation, settings-storage",
+      "exitCode": 0,
+      "tests": 6,
+      "result": "pass"
+    }
+  ],
+  "evidenceFiles": [
+    "audit.json",
+    "measure.mjs",
+    "ab.json",
+    "screenshots/"
+  ]
+}

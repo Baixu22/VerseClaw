@@ -66,6 +66,13 @@ async function exercise() {
       return element.clientHeight > 80 && element.scrollHeight > element.clientHeight + 40
         && (style.overflowY === 'auto' || style.overflowY === 'scroll');
     }).slice(0, 12);
+    let syntheticScroll = false;
+    if (scrollables.length === 0) {
+      syntheticScroll = true;
+      document.documentElement.style.overflowY = 'auto';
+      document.body.style.minHeight = '2400px';
+      scrollables.push(document.scrollingElement ?? document.documentElement);
+    }
     let frames = 0;
     let total = 0;
     let max = 0;
@@ -88,8 +95,14 @@ async function exercise() {
     }, 16);
     await new Promise((resolveWait) => setTimeout(resolveWait, durationMs));
     clearInterval(timer);
+    if (syntheticScroll) {
+      document.documentElement.style.overflowY = '';
+      document.body.style.minHeight = '';
+      document.scrollingElement?.scrollTo?.(0, 0);
+    }
     return {
       scrollableCount: scrollables.length,
+      syntheticScroll,
       frames,
       avgFrameMs: frames > 0 ? total / frames : null,
       maxFrameMs: max,
