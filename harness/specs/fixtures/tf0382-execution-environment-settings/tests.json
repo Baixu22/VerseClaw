@@ -1,0 +1,17 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0382",
+  "head": "pending-source-commit",
+  "dirty": false,
+  "e2e": [
+    {
+      "command": "pnpm run test:e2e:run tests/e2e/settings-sandbox-environment.spec.ts",
+      "node": "24.16.0",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "durationMs": 19600,
+      "result": "pass"
+    }
+  ]
+}

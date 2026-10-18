@@ -92,6 +92,7 @@ export async function buildSandboxStatus(): Promise<SandboxStatus> {
     ...policy,
     providers,
     permissionMode,
+    executionEnvironment: policy.executionEnvironment,
     summary: `${policy.provider.label} / ${permissionMode} / ${policy.runtimeLevel} / network=${policy.networkPolicy}`,
     updatedAt: Date.now(),
   };

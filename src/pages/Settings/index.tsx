@@ -1117,7 +1117,10 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
           ['permissionMode', t('sandbox.permissionMode'), sandboxStatus?.permissionMode ?? '-'],
           ['workspaceAccess', t('sandbox.workspaceAccess'), sandboxStatus?.workspaceAccess ?? '-'],
           ['execPolicy', t('sandbox.execPolicy'), sandboxExecPolicy],
-          ['networkPolicy', t('sandbox.networkPolicy'), sandboxStatus?.networkPolicy ?? '-'],
+          ['backend', t('sandbox.backend'), sandboxStatus?.executionEnvironment.backend ?? '-'],
+          ['guarantee', t('sandbox.guarantee'), sandboxStatus?.executionEnvironment.guarantee ?? '-'],
+          ['networkPolicy', t('sandbox.networkPolicy'), sandboxStatus?.executionEnvironment.network ?? sandboxStatus?.networkPolicy ?? '-'],
+          ['approval', t('sandbox.approval'), sandboxExecPolicy],
           ['openClawMode', t('sandbox.openClawMode'), sandboxStatus?.openClawConfig.agents.defaults.sandbox.mode ?? '-'],
           ['updatedAt', t('sandbox.updatedAt'), sandboxStatus ? new Date(sandboxStatus.updatedAt).toLocaleTimeString() : '-'],
         ].map(([key, label, value]) => (

@@ -1,0 +1,41 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0382",
+  "node": "TF-0382",
+  "title": "更新 Settings、解释层与场景验证",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "pending-source-commit",
+    "base": "4d652b9e",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "Settings 展示 backend/guarantee/network/approval；降级有原因。",
+      "result": "pass",
+      "evidence": [
+        "src/pages/Settings/index.tsx",
+        "tests/e2e/settings-sandbox-environment.spec.ts"
+      ]
+    },
+    {
+      "criterion": "E2E 覆盖 policy-light 和不可用强隔离。",
+      "result": "pass",
+      "evidence": [
+        "tests.json"
+      ]
+    },
+    {
+      "criterion": "i18n lint 通过。",
+      "result": "pass",
+      "evidence": [
+        "gates.json"
+      ]
+    }
+  ],
+  "boundaries": [
+    "The UI reads existing sandbox status; no new permission entry or management console was added.",
+    "Degraded strong isolation stays visible as policy guarantee with the owner reason.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}

@@ -1,3 +1,4 @@
+import type { ExecutionEnvironment } from './execution-environment.js';
 import type { WorkspacePermissionMode } from './workspace';
 
 export type SandboxProviderId =
@@ -93,6 +94,7 @@ export interface SandboxEffectivePolicy {
 export interface SandboxStatus extends SandboxEffectivePolicy {
   providers: SandboxProviderStatus[];
   permissionMode: WorkspacePermissionMode;
+  executionEnvironment: ExecutionEnvironment;
   summary: string;
   updatedAt: number;
 }
