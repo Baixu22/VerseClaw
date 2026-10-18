@@ -1,0 +1,106 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0405",
+  "node": "TF-0405",
+  "title": "开发 P1 缓存接管与轮询调度",
+  "verdict": "pass-for-TF0405",
+  "candidate": {
+    "sha": "1efb9929",
+    "base": "fed4bec1",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "git 只读查询命中缓存时不再 spawn 子进程",
+      "result": "pass",
+      "evidence": [
+        "electron/services/git-api.ts: BoundedCache(5s/16) + Singleflight",
+        "tests/unit/git-api.test.ts: concurrent status reads issue one `git status`; repeated status reuses cache"
+      ]
+    },
+    {
+      "criterion": "写操作后按 repo 前缀失效缓存",
+      "result": "pass",
+      "evidence": [
+        "electron/services/git-api.ts: successful withGitOperation and direct commit call invalidateGitStatusCache(repoRoot)",
+        "tests/unit/git-api.test.ts: stage and direct commit each force fresh status"
+      ]
+    },
+    {
+      "criterion": "renderer 轮询在页面隐藏或 shed 时降频/暂停",
+      "result": "pass-for-implemented-surfaces",
+      "evidence": [
+        "src/lib/poll-scheduler.ts: visibility guard, no-overlap guard, priority/isShed support",
+        "Billing, Browser, Cron, Skills and resource-tracker now use createPollScheduler",
+        "tests/unit/resource-p1-schedulers.test.ts: hidden/blocked/shed behavior"
+      ]
+    }
+  ],
+  "changedSurfaces": [
+    "electron/services/git-api.ts",
+    "electron/services/system-api.ts",
+    "shared/types/resources.ts",
+    "src/lib/poll-scheduler.ts",
+    "src/lib/read-only-query-cache.ts",
+    "src/pages/Billing/index.tsx",
+    "src/pages/Browser/index.tsx",
+    "src/pages/Cron/index.tsx",
+    "src/pages/Skills/index.tsx",
+    "src/stores/resource-tracker.ts",
+    "tests/unit/git-api.test.ts",
+    "tests/unit/resource-p1-schedulers.test.ts"
+  ],
+  "gates": [
+    {
+      "command": "pnpm exec vitest run tests/unit/git-api.test.ts tests/unit/resource-p1-schedulers.test.ts",
+      "exitCode": 0,
+      "files": 2,
+      "tests": 58,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 40475,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm contract:check",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/resource-p1-cache-poll-takeover.md",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm repo:artifacts:check",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "command": "pnpm agent-dev:fast",
+      "exitCode": 0,
+      "result": "pass",
+      "unitFiles": 7,
+      "unitTests": 88
+    }
+  ],
+  "boundaries": [
+    "This is TF-0405 implementation evidence, not TF-0398 milestone acceptance.",
+    "The 5-minute spawn-count ≥80% target is not claimed by this node; current baseline records spawn count unavailable and TF-0421 must provide the real counter.",
+    "The sandbox provider detector already had a 15s cache and is unchanged here.",
+    "All evidence is agent-driven; no real-human evidence is claimed."
+  ]
+}

@@ -37,6 +37,7 @@ import { useGatewayStore } from '@/stores/gateway';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
+import { createPollScheduler } from '@/lib/poll-scheduler';
 import { hostEvents } from '@/lib/host-events';
 import { isGatewayStopped } from '@/lib/gateway-status';
 import { toast } from 'sonner';
@@ -309,30 +310,25 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
 
   useEffect(() => {
     let cancelled = false;
-    let retryTimer: ReturnType<typeof setInterval> | null = null;
 
     const attemptFetch = async () => {
       const ok = await fetchSkills();
       if (cancelled || !ok) return;
-      if (retryTimer) {
-        clearInterval(retryTimer);
-        retryTimer = null;
-      }
     };
 
     void attemptFetch();
 
-    if (gatewayRunning && !gatewayReportedReady) {
-      retryTimer = setInterval(() => {
-        void attemptFetch();
-      }, 5_000);
-    }
+    const stopPolling = gatewayRunning && !gatewayReportedReady
+      ? createPollScheduler({
+          intervalMs: 5_000,
+          task: attemptFetch,
+          isVisible: () => document.visibilityState !== 'hidden',
+        })
+      : null;
 
     return () => {
       cancelled = true;
-      if (retryTimer) {
-        clearInterval(retryTimer);
-      }
+      stopPolling?.();
     };
   }, [fetchSkills, gatewayReportedReady, gatewayRunning, gatewayRuntimeKey]);
 

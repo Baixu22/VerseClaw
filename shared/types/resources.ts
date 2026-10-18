@@ -30,6 +30,9 @@ export type ResourceKind =
 
 export type ResourcePriority = "foreground" | "background";
 
+/** Cooperative QoS class for the P1/P2 resource fabric. */
+export type RequestPriority = "interactive" | "background" | "opportunistic";
+
 export type ResourceLimits = {
   memoryBytes: number;
   cpuPercent: number;

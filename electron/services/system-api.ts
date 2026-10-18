@@ -19,6 +19,7 @@ import { listAgentIdsWithSessionDirs } from '../utils/token-usage';
 import { sweepSessionArtefacts } from '../utils/session-files';
 import { recordPermissionAudit } from './permissions-api';
 import { isRecord } from './payload-utils';
+import { BoundedCache, Singleflight } from '../../shared/resources/index.js';
 
 const MAX_ITEMS_PER_CATEGORY = 500;
 const DRY_RUN_CACHE_TTL_MS = 60_000;
@@ -515,21 +516,40 @@ async function buildWorkspaceStub() {
   };
 }
 
+const SYSTEM_INFO_CACHE_TTL_MS = 60_000;
+const systemInfoCache = new BoundedCache<string, SystemInfoResult>({
+  maxEntries: 1,
+  ttlMs: SYSTEM_INFO_CACHE_TTL_MS,
+});
+const systemInfoFlight = new Singleflight<string, SystemInfoResult>();
+
+async function readSystemInfo(): Promise<SystemInfoResult> {
+  const [ram, disk] = await Promise.all([scanRam(), scanDisk()]);
+  const cpu = scanCpu();
+  return {
+    success: true,
+    ram,
+    disk,
+    cpu,
+    platform: platform(),
+    arch: arch(),
+  } satisfies SystemInfoResult;
+}
+
+export function clearSystemInfoCacheForTest(): void {
+  systemInfoCache.clear();
+}
+
 // ── Public API ──────────────────────────────────────────────────
 
 export function createSystemApi(): CompleteHostServiceRegistry['system'] {
   return {
     info: async () => {
-      const [ram, disk] = await Promise.all([scanRam(), scanDisk()]);
-      const cpu = scanCpu();
-      return {
-        success: true,
-        ram,
-        disk,
-        cpu,
-        platform: platform(),
-        arch: arch(),
-      } satisfies SystemInfoResult;
+      const cached = systemInfoCache.get('system:info');
+      if (cached) return cached;
+      const value = await systemInfoFlight.run('system:info', readSystemInfo);
+      systemInfoCache.set('system:info', value);
+      return value;
     },
 
     scan: async (payload) => {

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { hostApi } from '@/lib/host-api';
+import { createPollScheduler } from '@/lib/poll-scheduler';
 import type { TrackedResource } from '@shared/types/resource-tracker';
 
 const POLL_INTERVAL_MS = 10_000; // Poll more frequently than heartbeat (30s)
@@ -20,7 +21,7 @@ interface ResourceTrackerState {
   stop: () => void;
 }
 
-let pollTimer: ReturnType<typeof setInterval> | null = null;
+let stopPolling: (() => void) | null = null;
 
 export const useResourceStore = create<ResourceTrackerState>((set, get) => ({
   resources: [],
@@ -35,10 +36,12 @@ export const useResourceStore = create<ResourceTrackerState>((set, get) => ({
     if (get().isInitialized) return;
     set({ isInitialized: true });
     void get().refresh();
-    if (pollTimer) clearInterval(pollTimer);
-    pollTimer = setInterval(() => {
-      void get().refresh();
-    }, POLL_INTERVAL_MS);
+    stopPolling?.();
+    stopPolling = createPollScheduler({
+      intervalMs: POLL_INTERVAL_MS,
+      priority: 'background',
+      task: () => get().refresh(),
+    });
   },
 
   refresh: async () => {
@@ -85,10 +88,8 @@ export const useResourceStore = create<ResourceTrackerState>((set, get) => ({
   },
 
   stop: () => {
-    if (pollTimer) {
-      clearInterval(pollTimer);
-      pollTimer = null;
-    }
+    stopPolling?.();
+    stopPolling = null;
     set({ isInitialized: false });
   },
 }));

@@ -1,5 +1,6 @@
 import { openExternalSafe } from '../utils/safe-open-external';
 import { capToolResultText } from '@shared/agent-resource-limits';
+import { BoundedCache, Singleflight } from '../../shared/resources/index.js';
 import { execFile } from 'node:child_process';
 import type { ExecFileException, ExecFileOptionsWithStringEncoding } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
@@ -364,8 +365,7 @@ function projectGitPatch(params: {
   };
 }
 
-async function requireRepoContext(): Promise<RepoContext> {
-  const workspace = requireWorkspace(await getActiveWorkspaceProfile());
+async function requireRepoContextForWorkspace(workspace: WorkspaceProfile): Promise<RepoContext> {
   const workspaceRoot = resolve(workspace.rootPath);
   const repo = await git(['rev-parse', '--show-toplevel'], workspaceRoot);
   if (repo.exitCode !== 0 || !repo.stdout.trim()) {
@@ -375,9 +375,15 @@ async function requireRepoContext(): Promise<RepoContext> {
   return { workspace, workspaceRoot, repoRoot };
 }
 
-async function getRepoContextOrNull(): Promise<RepoContext | null> {
+async function requireRepoContext(): Promise<RepoContext> {
+  return requireRepoContextForWorkspace(requireWorkspace(await getActiveWorkspaceProfile()));
+}
+
+async function getRepoContextOrNull(workspace?: WorkspaceProfile): Promise<RepoContext | null> {
   try {
-    return await requireRepoContext();
+    return workspace
+      ? await requireRepoContextForWorkspace(workspace)
+      : await requireRepoContext();
   } catch {
     return null;
   }
@@ -616,9 +622,32 @@ async function enrichStatusWithDiffStats(ctx: RepoContext, status: GitRepository
   return { ...status, changes };
 }
 
-export async function readCurrentGitStatus(): Promise<GitRepositoryStatus> {
-  const workspace = requireWorkspace(await getActiveWorkspaceProfile());
-  const ctx = await getRepoContextOrNull();
+type GitStatusCacheEntry = { status: GitRepositoryStatus; repoRoot: string | null };
+const GIT_STATUS_CACHE_TTL_MS = 5_000;
+const gitStatusCache = new BoundedCache<string, GitStatusCacheEntry>({
+  maxEntries: 16,
+  ttlMs: GIT_STATUS_CACHE_TTL_MS,
+});
+const gitStatusFlight = new Singleflight<string, GitStatusCacheEntry>();
+
+function gitStatusCacheKey(workspace: WorkspaceProfile): string {
+  return `git-workspace:${workspace.id}:${resolve(workspace.rootPath)}`;
+}
+
+/** Read-through cache for the read-only status surface; mutations invalidate its repo prefix. */
+export function invalidateGitStatusCache(repoRoot: string): number {
+  const target = resolve(repoRoot);
+  return gitStatusCache.invalidate((_key, entry) => entry.repoRoot === target);
+}
+
+export function clearGitStatusCacheForTest(): void {
+  gitStatusCache.clear();
+}
+
+async function readUncachedGitStatus(
+  workspace: WorkspaceProfile,
+  ctx: RepoContext | null,
+): Promise<GitRepositoryStatus> {
   if (!ctx) {
     return {
       isRepository: false,
@@ -638,6 +667,25 @@ export async function readCurrentGitStatus(): Promise<GitRepositoryStatus> {
   const result = await git(['status', '--porcelain=v2', '-z', '--branch'], ctx.workspaceRoot);
   if (result.exitCode !== 0) throw new Error(result.stderr || 'git status failed');
   return enrichStatusWithDiffStats(ctx, parsePorcelainStatus(ctx, result.stdout));
+}
+
+export async function readCurrentGitStatus(): Promise<GitRepositoryStatus> {
+  const workspace = requireWorkspace(await getActiveWorkspaceProfile());
+  const key = gitStatusCacheKey(workspace);
+  const cached = gitStatusCache.get(key);
+  if (cached) return cached.status;
+  const entry = await gitStatusFlight.run(key, async () => {
+    const ctx = await getRepoContextOrNull(workspace);
+    return {
+      status: await readUncachedGitStatus(workspace, ctx),
+      repoRoot: ctx ? resolve(ctx.repoRoot) : null,
+    };
+  });
+  // Non-repository workspaces are cheap to re-check and must not hide a later
+  // `git init`; only real repositories enter the bounded cache.
+  if (!entry.repoRoot) return entry.status;
+  gitStatusCache.set(key, entry);
+  return entry.status;
 }
 
 async function enforcePermission(input: {
@@ -742,6 +790,7 @@ async function withGitOperation(
   });
   if (blocked) return blocked;
   const result = await git(args, ctx.workspaceRoot);
+  if (result.exitCode === 0) invalidateGitStatusCache(ctx.repoRoot);
   return {
     success: result.exitCode === 0,
     stdout: result.stdout,
@@ -1494,6 +1543,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       try {
         await writeFile(messageFile, message, 'utf8');
         const result = await git(['commit', '-F', messageFile, ...(paths.length ? ['--', ...paths] : [])], ctx.workspaceRoot);
+        if (result.exitCode === 0) invalidateGitStatusCache(ctx.repoRoot);
         const head = result.exitCode === 0 ? await git(['rev-parse', '--short', 'HEAD'], ctx.workspaceRoot) : null;
         return {
           success: result.exitCode === 0,

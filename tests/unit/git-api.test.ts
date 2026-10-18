@@ -82,6 +82,82 @@ describe('git api', () => {
     activeWorkspace.profile = workspace();
   });
 
+  it('coalesces concurrent status reads and reuses a fresh cached status', async () => {
+    let statusCalls = 0;
+    let repoProbeCalls = 0;
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse' && args[1] === '--show-toplevel') {
+        repoProbeCalls += 1;
+        return { stdout: `${process.cwd()}\n` };
+      }
+      if (args[0] === 'status') {
+        statusCalls += 1;
+        return { stdout: '# branch.head main\0' };
+      }
+      if (args[0] === 'diff' && args.includes('--numstat')) return { stdout: '' };
+      return { stdout: '' };
+    });
+    const { createGitApi, clearGitStatusCacheForTest } = await import('@electron/services/git-api');
+    clearGitStatusCacheForTest();
+    const api = createGitApi();
+    const [first, second] = await Promise.all([api.status(), api.status()]);
+    expect(first.success).toBe(true);
+    expect(second.success).toBe(true);
+    expect(statusCalls).toBe(1);
+    expect(repoProbeCalls).toBe(1);
+    await api.status();
+    expect(statusCalls).toBe(1);
+    expect(repoProbeCalls).toBe(1);
+  });
+
+  it('invalidates the repo status cache after a successful write', async () => {
+    let statusCalls = 0;
+    const calls: string[][] = [];
+    mockExec((_command, args) => {
+      calls.push(args);
+      if (args[0] === 'rev-parse' && args[1] === '--show-toplevel') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'status') {
+        statusCalls += 1;
+        return { stdout: '# branch.head main\0' };
+      }
+      if (args[0] === 'diff' && args.includes('--numstat')) return { stdout: '' };
+      return { stdout: '' };
+    });
+    const { createGitApi, clearGitStatusCacheForTest } = await import('@electron/services/git-api');
+    clearGitStatusCacheForTest();
+    const api = createGitApi();
+    await api.status();
+    expect(statusCalls).toBe(1);
+    await api.stage({ paths: ['src/app.ts'] });
+    expect(calls.some((args) => args[0] === 'add')).toBe(true);
+    await api.status();
+    expect(statusCalls).toBe(2);
+  });
+
+  it('invalidates a cached status when a direct commit succeeds', async () => {
+    let statusCalls = 0;
+    mockExec((command, args) => {
+      if (args[0] === 'rev-parse' && args[1] === '--show-toplevel') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'status') {
+        statusCalls += 1;
+        return { stdout: '# branch.head main\0' };
+      }
+      if (args[0] === 'diff' && args.includes('--numstat')) return { stdout: '' };
+      if (args[0] === 'commit') return { stdout: '[main abc123] test\n' };
+      if (args[0] === 'rev-parse' && args[1] === '--short') return { stdout: 'abc123\n' };
+      return { stdout: '' };
+    });
+    const { createGitApi, clearGitStatusCacheForTest } = await import('@electron/services/git-api');
+    clearGitStatusCacheForTest();
+    const api = createGitApi();
+    await api.status();
+    expect(statusCalls).toBe(1);
+    const commit = await api.commit({ message: 'test' });
+    expect(commit.success).toBe(true);
+    await api.status();
+    expect(statusCalls).toBe(2);
+  });
+
   it('parses porcelain v2 status into branch and change buckets', async () => {
     mockExec((_command, args) => {
       if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };

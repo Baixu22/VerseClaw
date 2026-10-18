@@ -34,6 +34,7 @@ import {
   type DeliveryChannelAccount,
   type DeliveryChannelGroup,
 } from '@/lib/host-api';
+import { createPollScheduler } from '@/lib/poll-scheduler';
 import { useCronStore } from '@/stores/cron';
 import {
   projectScheduledItems,
@@ -2102,8 +2103,7 @@ export function Cron() {
 
   useEffect(() => {
     void refreshBrowserTasks();
-    const intervalId = window.setInterval(() => void refreshBrowserTasks(), 15_000);
-    return () => window.clearInterval(intervalId);
+    return createPollScheduler({ intervalMs: 15_000, priority: 'background', task: refreshBrowserTasks });
   }, [refreshBrowserTasks]);
 
   useEffect(() => {

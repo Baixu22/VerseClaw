@@ -42,6 +42,7 @@ import {
 } from 'recharts';
 import { useGatewayStore } from '@/stores/gateway';
 import { hostApi } from '@/lib/host-api';
+import { createPollScheduler } from '@/lib/poll-scheduler';
 import { cn } from '@/lib/utils';
 import { computeCacheHitRate, isHiddenUsageSource, promptTokensForUsage } from '@shared/types/usage';
 import type { UsageAggregateDimension, UsageAggregateSummary } from '@shared/host-api/contract';
@@ -1125,11 +1126,15 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
     };
 
     void fetchUsage(1);
-    const interval = window.setInterval(() => void fetchUsage(1), USAGE_REFRESH_INTERVAL_MS);
+    const stopPolling = createPollScheduler({
+      intervalMs: USAGE_REFRESH_INTERVAL_MS,
+      task: () => fetchUsage(1),
+      isVisible: () => document.visibilityState !== 'hidden',
+    });
 
     return () => {
       cancelled = true;
-      window.clearInterval(interval);
+      stopPolling();
       if (fetchTimerRef.current) {
         clearTimeout(fetchTimerRef.current);
         fetchTimerRef.current = null;

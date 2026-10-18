@@ -18,6 +18,7 @@ import {
   X,
 } from 'lucide-react';
 import { hostApi } from '@/lib/host-api';
+import { createPollScheduler } from '@/lib/poll-scheduler';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -94,8 +95,7 @@ export function BrowserWorkbench() {
 
   useEffect(() => {
     void refresh();
-    const timer = window.setInterval(() => void refresh(), 5000);
-    return () => window.clearInterval(timer);
+    return createPollScheduler({ intervalMs: 5000, priority: 'background', task: refresh });
   }, [refresh]);
 
   const submitForApproval = async () => {
