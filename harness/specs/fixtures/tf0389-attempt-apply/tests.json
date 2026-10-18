@@ -1,0 +1,24 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0389",
+  "head": "pending-source-commit",
+  "dirty": false,
+  "unit": {
+    "command": "pnpm exec vitest run tests/unit/attempt-apply.test.ts",
+    "files": 1,
+    "tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "result": "pass"
+  },
+  "e2e": {
+    "command": "pnpm run test:e2e:run tests/e2e/workspace-git-mcp-runtime.spec.ts",
+    "node": "24.16.0",
+    "files": 1,
+    "tests": 3,
+    "passed": 3,
+    "failed": 0,
+    "durationMs": 41600,
+    "result": "pass"
+  }
+}

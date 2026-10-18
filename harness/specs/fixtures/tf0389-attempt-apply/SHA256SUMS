@@ -1,0 +1,4 @@
+0892f1110df9943d310ca925d7890d38ff8372d29bb99f787274306107c3111b  harness/specs/fixtures/tf0389-attempt-apply/acceptance.json
+711ae94eece1875ab53df6cc4153bd8d64549f99f60c9c6128c62ac7b18a4fd8  harness/specs/fixtures/tf0389-attempt-apply/tests.json
+4b5518e2b2564fa32a47c37a94b97595a8810e53c88ac3580edb311348a7af07  harness/specs/fixtures/tf0389-attempt-apply/gates.json
+aa60e2fff84ded4228ac14bf80bf73d4edd4b6576a8f65f40cf9d784503a3730  harness/specs/fixtures/tf0389-attempt-apply/ci-boundary.json

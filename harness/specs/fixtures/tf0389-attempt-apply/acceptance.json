@@ -1,0 +1,51 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0389",
+  "node": "TF-0389",
+  "title": "Immutable attempt 与 diff-first apply",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "pending-source-commit",
+    "base": "0322a9f6",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "attempt 有 immutable ID、session/worktree/evidence 引用。",
+      "result": "pass",
+      "evidence": [
+        "shared/types/attempt.ts",
+        "tests/unit/attempt-apply.test.ts"
+      ]
+    },
+    {
+      "criterion": "diff 和 verification 可在 apply 前查看。",
+      "result": "pass",
+      "evidence": [
+        "shared/types/attempt.ts — patch + verification + preflight result"
+      ]
+    },
+    {
+      "criterion": "apply 受现有权限审批，失败显式保留。",
+      "result": "pass",
+      "evidence": [
+        "shared/types/attempt.ts — approval-required before apply",
+        "tests/unit/attempt-apply.test.ts"
+      ]
+    },
+    {
+      "criterion": "单测与 E2E 通过。",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/attempt-apply.test.ts — 5 tests",
+        "tests/e2e/workspace-git-mcp-runtime.spec.ts — 3 tests, real repo/approval/conflict"
+      ]
+    }
+  ],
+  "boundaries": [
+    "Attempt identity is immutable; no overwrite or silent replacement.",
+    "Apply always preflights first and requires an explicit approval ID before mutation.",
+    "The adapter reuses existing Git apply and permission approval; no auto merge, commit, PR, Best-of-N or new worktree system was added.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}
