@@ -150,6 +150,23 @@ describe("runtime efficiency sampler", () => {
     sampler.stop();
   });
 
+  it("includes the latest manual capture before the next timer tick", () => {
+    const clock = fixedClock();
+    const sampler = new EfficiencySampler({
+      intervalMs: 1000,
+      now: clock.now,
+      readCpuTime: () => ({ user: 0, system: 0 }),
+      readMemory: () => ({ rss: 1, heapUsed: 1 }),
+      readSystemMemory: () => ({ free: 1, total: 2 }),
+    });
+    sampler.start();
+    clock.advance(1000);
+    const sample = sampler.capture();
+    expect(sampler.getSummary().sampleCount).toBe(1);
+    expect(sampler.getSamples()).toEqual(sample ? [sample] : []);
+    sampler.stop();
+  });
+
   it("summary is empty-safe before any sample", () => {
     const sampler = new EfficiencySampler();
     const summary = sampler.getSummary();

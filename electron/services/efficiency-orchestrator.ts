@@ -172,6 +172,10 @@ export function stopRuntimeEfficiency(): void {
 export function getEfficiencySummary(): EfficiencySummary | null {
   return sampler?.getSummary() ?? null;
 }
+/** Bounded raw samples for explicit runtime before/after diagnostics. */
+export function getEfficiencySamples(): ReturnType<EfficiencySampler['getSamples']> {
+  return sampler?.getSamples() ?? [];
+}
 
 export function getEfficiencyShedState(): EfficiencyShedState | null {
   return policy?.getState() ?? null;

@@ -21,6 +21,7 @@ import { getSetting, setSetting } from '../utils/store';
 import {
   getBackgroundWorkGateState,
   getEfficiencyShedState,
+  getEfficiencySamples,
   getEfficiencySummary,
   isRuntimeEfficiencyRunning,
   startRuntimeEfficiency,
@@ -66,6 +67,7 @@ async function buildState(): Promise<RuntimeEfficiencyState> {
     running: isRuntimeEfficiencyRunning(),
     measured: summary !== null,
     summary,
+    samples: getEfficiencySamples(),
     shed: toShedState(getEfficiencyShedState()),
     backgroundWork: getBackgroundWorkGateState(),
   };

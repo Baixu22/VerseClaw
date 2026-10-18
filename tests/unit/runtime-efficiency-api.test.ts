@@ -49,6 +49,7 @@ describe('runtime efficiency host api', () => {
     expect(state.running).toBe(false);
     expect(state.measured).toBe(false);
     expect(state.summary).toBeNull();
+    expect(state.samples).toEqual([]);
   });
 
   it('persists the toggle and starts or stops the sampler', async () => {

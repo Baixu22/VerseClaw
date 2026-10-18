@@ -447,6 +447,8 @@ export type RuntimeEfficiencyState = {
   measured: boolean;
   /** Bounded rolling summary including the latest sample, or null when unmeasured. */
   summary: RuntimeEfficiencySummary | null;
+  /** Bounded rolling raw samples for explicit before/after diagnostics. */
+  samples: RuntimeEfficiencySample[];
   /** Load-shed policy state, or null before the policy has been created. */
   shed: RuntimeEfficiencyShedState | null;
   /** Background work gate state, or null while runtime efficiency sampling is stopped. */

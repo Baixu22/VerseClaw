@@ -1,0 +1,49 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0406",
+  "node": "TF-0406",
+  "title": "采集 P1 改动前资源基线",
+  "verdict": "pass-with-unavailable-metrics",
+  "candidate": {
+    "sha": "e9ce71afa2389593169af6ced421aa499c2d9688",
+    "dirty": false
+  },
+  "outcome": "A real 300.225s Electron run produced 59 samples at 5s cadence. CPU/RSS and shed counts are measured; process-spawn and live setInterval counts are not exposed by the current Main contract and remain explicitly unavailable.",
+  "acceptance": [
+    {
+      "criterion": "基线报告落盘且绑定当前 HEAD 提交",
+      "result": "pass",
+      "evidence": [
+        "before.json candidate=e9ce71af...",
+        "baseline-summary.json"
+      ]
+    },
+    {
+      "criterion": "spawn 次数与轮询次数为实测值，非估算",
+      "result": "pass-with-explicit-unavailability",
+      "evidence": [
+        "No spawn or setInterval count exists in the current Main contract; no estimate was substituted. Real CPU/RSS samples are present."
+      ]
+    }
+  ],
+  "measured": {
+    "sampleCount": 59,
+    "coverageMs": 290452,
+    "cpuAvgPercent": 1.9956,
+    "cpuPeakPercent": 26.23,
+    "rssAvgBytes": 331834802,
+    "rssPeakBytes": 587759616,
+    "shedSamples": 5
+  },
+  "evidenceFiles": [
+    "probe.mjs",
+    "before.json",
+    "baseline-summary.json"
+  ],
+  "boundaries": [
+    "The baseline is a real Electron process, not a synthetic sampler.",
+    "Spawn and setInterval counts are unavailable rather than invented.",
+    "This baseline does not establish a P1 improvement; an after run is required.",
+    "All evidence is agent-driven; no real-human evidence is claimed."
+  ]
+}

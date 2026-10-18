@@ -1,0 +1,4 @@
+ecbffccabd431a286ab62372b1a576aeb2daf5bebf54b298f665726a7fcd5e1c  harness/specs/fixtures/tf0406-resource-baseline/probe.mjs
+3fb735154c13138db8519d85285fbbd5d320c89d3352918e1b42bb5c5552d6db  harness/specs/fixtures/tf0406-resource-baseline/before.json
+8592cef9b3b0c63306cc5eecb1bc51f5feb20002a93a5702848faaa414f63349  harness/specs/fixtures/tf0406-resource-baseline/baseline-summary.json
+7405c837f309886bda094d4db1920d59aeb890e853f869b01753492592af7293  harness/specs/fixtures/tf0406-resource-baseline/acceptance.json

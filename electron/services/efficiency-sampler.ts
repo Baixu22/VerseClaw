@@ -116,6 +116,7 @@ export class EfficiencySampler {
   private lastCpuTime: { user: number; system: number } | null = null;
   private lastCpuAt: number | null = null;
   private lastSampleAt: number | null = null;
+  private lastSample: EfficiencySample | null = null;
   private shedSampleCount = 0;
 
   constructor(options: EfficiencySamplerOptions = {}) {
@@ -200,12 +201,15 @@ export class EfficiencySampler {
     }
     if (shed) this.shedSampleCount += 1;
     this.lastSampleAt = at;
+    this.lastSample = sample;
     return sample;
   }
 
-  /** Bounded rolling window, oldest first. */
+  /** Bounded rolling window, oldest first, including the latest capture before the next timer tick. */
   getSamples(): EfficiencySample[] {
-    return this.samples.slice();
+    return this.lastSample && this.samples[this.samples.length - 1] !== this.lastSample
+      ? [...this.samples, this.lastSample]
+      : this.samples.slice();
   }
 
   getSummary(): EfficiencySummary {
@@ -247,6 +251,7 @@ export class EfficiencySampler {
     this.samples = [];
     this.shedSampleCount = 0;
     this.lastSampleAt = null;
+    this.lastSample = null;
     this.lastCpuTime = null;
     this.lastCpuAt = null;
   }

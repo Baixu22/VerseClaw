@@ -1,0 +1,41 @@
+{
+  "schema": "clawx.tf0406.resource-baseline-summary/v1",
+  "driven_by": "agent",
+  "actor": "tf0406-electron-probe",
+  "candidate": "e9ce71afa2389593169af6ced421aa499c2d9688",
+  "sourceReport": "harness/specs/fixtures/tf0406-resource-baseline/before.json",
+  "measuredAt": "2026-10-18T12:51:00.491Z",
+  "durationMs": 300225,
+  "sampler": {
+    "sampleCount": 59,
+    "coverageMs": 290452,
+    "firstAt": 1792327565231,
+    "lastAt": 1792327855683,
+    "gapMinMs": 5000,
+    "gapMaxMs": 5016,
+    "gapAvgMs": 5007.793103448276,
+    "cpuAvgPercent": 1.9955932203389832,
+    "cpuPeakPercent": 26.23,
+    "rssAvgBytes": 331834802,
+    "rssPeakBytes": 587759616,
+    "shedSamples": 5,
+    "systemFreeMinBytes": 1486209024,
+    "cpuCount": 16,
+    "source": "os-cpu"
+  },
+  "unavailable": {
+    "spawnCount": "The current Main efficiency contract exposes no process-spawn counter; no estimated value is substituted.",
+    "setIntervalCount": "Node does not expose a supported live interval registry; no estimated value is substituted."
+  },
+  "comparisonContract": {
+    "metricSource": "Main efficiency sampler, 5s cadence, one real Electron process",
+    "beforeFile": "before.json",
+    "afterFile": "after.json",
+    "requiredDelta": "spawn count >=80% reduction, source-side spawn counter unavailable in this baseline; do not infer it."
+  },
+  "boundaries": [
+    "This is a real Electron run of the existing Main process sampler, not a synthetic sampler.",
+    "Spawn and setInterval counts are unavailable rather than fabricated.",
+    "The report is agent-driven and is a P1 before baseline only."
+  ]
+}
