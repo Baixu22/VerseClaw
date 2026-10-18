@@ -487,7 +487,6 @@ const EFFORT_CSS = `
   }
   .effort-status {
     transition: color 0.3s, text-shadow 0.3s;
-    will-change: transform, opacity, filter;
     transform-origin: center bottom;
     transform: rotateX(0deg) translateY(0);
   }

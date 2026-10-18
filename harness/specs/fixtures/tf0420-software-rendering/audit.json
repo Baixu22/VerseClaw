@@ -1,0 +1,317 @@
+{
+  "schema": "clawx.tf0420.layer-audit/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0420",
+  "generatedAt": "2026-10-19T00:10:00+08:00",
+  "uses": [
+    {
+      "file": "src/styles/plus-menu-morph.css",
+      "line": 21,
+      "property": "will-change: width,height,border-radius",
+      "surface": "composer plus menu",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "only exists during the menu morph; no persistent layer hint after close"
+    },
+    {
+      "file": "src/styles/codex-composer-menu.css",
+      "line": 72,
+      "property": "-webkit-backdrop-filter",
+      "surface": "composer menu",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "popover surface, not part of the resting frame"
+    },
+    {
+      "file": "src/styles/codex-composer-menu.css",
+      "line": 73,
+      "property": "backdrop-filter",
+      "surface": "composer menu",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "popover surface, not part of the resting frame"
+    },
+    {
+      "file": "src/styles/codex-composer-menu.css",
+      "line": 544,
+      "property": "-webkit-backdrop-filter",
+      "surface": "composer header menu",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "menu opens on demand"
+    },
+    {
+      "file": "src/styles/codex-composer-menu.css",
+      "line": 545,
+      "property": "backdrop-filter",
+      "surface": "composer header menu",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "menu opens on demand"
+    },
+    {
+      "file": "src/styles/globals.css",
+      "line": 334,
+      "property": "will-change: opacity,transform",
+      "surface": "dialog content",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "open/close animation only"
+    },
+    {
+      "file": "src/styles/globals.css",
+      "line": 396,
+      "property": "will-change: auto",
+      "surface": "drawer reset",
+      "class": "reset",
+      "decision": "keep",
+      "reason": "explicitly prevents persistent promotion"
+    },
+    {
+      "file": "src/styles/codex-workspace-panel.css",
+      "line": 758,
+      "property": "will-change: transform",
+      "surface": "workspace panel sweep",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "260ms open animation only"
+    },
+    {
+      "file": "src/styles/codex-welcome-hero.css",
+      "line": 254,
+      "property": "will-change: auto",
+      "surface": "composer reduced-motion reset",
+      "class": "reset",
+      "decision": "keep",
+      "reason": "reduced-motion guard remains"
+    },
+    {
+      "file": "src/styles/codex-welcome-hero.css",
+      "line": 310,
+      "property": "-webkit-backdrop-filter",
+      "surface": "welcome context control",
+      "class": "persistent",
+      "decision": "keep-pending-ab",
+      "reason": "design-critical glass control; A/B below checks cost"
+    },
+    {
+      "file": "src/styles/codex-welcome-hero.css",
+      "line": 311,
+      "property": "backdrop-filter",
+      "surface": "welcome context control",
+      "class": "persistent",
+      "decision": "keep-pending-ab",
+      "reason": "design-critical glass control; A/B below checks cost"
+    },
+    {
+      "file": "src/styles/codex-welcome-hero.css",
+      "line": 381,
+      "property": "backdrop-filter",
+      "surface": "welcome context chip",
+      "class": "persistent",
+      "decision": "keep-pending-ab",
+      "reason": "small chip; A/B below checks cost"
+    },
+    {
+      "file": "src/styles/codex-sidebar.css",
+      "line": 699,
+      "property": "-webkit-backdrop-filter",
+      "surface": "sidebar dropdown",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "dropdown only"
+    },
+    {
+      "file": "src/styles/codex-sidebar.css",
+      "line": 700,
+      "property": "backdrop-filter",
+      "surface": "sidebar dropdown",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "dropdown only"
+    },
+    {
+      "file": "src/styles/codex-setup-motion.css",
+      "line": 194,
+      "property": "will-change: transform",
+      "surface": "setup orbit",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "only while setup step animates"
+    },
+    {
+      "file": "src/styles/codex-settings.css",
+      "line": 95,
+      "property": "will-change: transform",
+      "surface": "settings panel",
+      "class": "persistent-justified",
+      "decision": "keep",
+      "reason": "large shadow/scroll layer with explicit paint containment; retained for A/B"
+    },
+    {
+      "file": "src/styles/codex-settings.css",
+      "line": 122,
+      "property": "will-change: transform",
+      "surface": "settings top fade",
+      "class": "persistent-justified",
+      "decision": "keep",
+      "reason": "sticky gradient over scroll viewport; retained for A/B"
+    },
+    {
+      "file": "src/styles/codex-settings-controls.css",
+      "line": 490,
+      "property": "backdrop-filter",
+      "surface": "settings select menu",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "popover only"
+    },
+    {
+      "file": "src/styles/codex-settings-controls.css",
+      "line": 628,
+      "property": "backdrop-filter",
+      "surface": "settings row menu",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "popover only"
+    },
+    {
+      "file": "src/styles/codex-settings-controls.css",
+      "line": 670,
+      "property": "-webkit-backdrop-filter",
+      "surface": "header menu",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "popover only"
+    },
+    {
+      "file": "src/styles/codex-settings-controls.css",
+      "line": 671,
+      "property": "backdrop-filter",
+      "surface": "header menu",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "popover only"
+    },
+    {
+      "file": "src/styles/codex-composer-shell.css",
+      "line": 40,
+      "property": "backdrop-filter",
+      "surface": "resting composer shell",
+      "class": "persistent",
+      "decision": "keep-pending-ab",
+      "reason": "single resting glass surface; A/B below checks cost"
+    },
+    {
+      "file": "src/styles/codex-composer-shell.css",
+      "line": 41,
+      "property": "-webkit-backdrop-filter",
+      "surface": "resting composer shell",
+      "class": "persistent",
+      "decision": "keep-pending-ab",
+      "reason": "single resting glass surface; A/B below checks cost"
+    },
+    {
+      "file": "src/components/chat/ChatAgentEffortPopover.tsx",
+      "line": 473,
+      "property": "-webkit-backdrop-filter",
+      "surface": "effort popover",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "popover only; the separate persistent will-change was removed"
+    },
+    {
+      "file": "src/components/chat/ChatAgentEffortPopover.tsx",
+      "line": 474,
+      "property": "backdrop-filter",
+      "surface": "effort popover",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "popover only"
+    },
+    {
+      "file": "src/components/tool-ui/weather-widget/generated/weather-runtime-core.generated.ts",
+      "line": 71,
+      "property": "runtime backdropFilter",
+      "surface": "weather widget runtime",
+      "class": "tool-local",
+      "decision": "keep",
+      "reason": "generated optional tool surface, outside persistent shell"
+    },
+    {
+      "file": "src/pages/Chat/ChatMessage.tsx",
+      "line": 1206,
+      "property": "backdrop-blur-sm",
+      "surface": "assistant/tool message chip",
+      "class": "message-local",
+      "decision": "keep",
+      "reason": "small message surface; not a resting composer/sidebar layer"
+    },
+    {
+      "file": "src/pages/Chat/ChatMessage.tsx",
+      "line": 1547,
+      "property": "backdrop-blur-sm",
+      "surface": "image overlay",
+      "class": "short-lived",
+      "decision": "keep",
+      "reason": "overlay only"
+    },
+    {
+      "file": "src/components/chat/WorkModeSummaryPanel.tsx",
+      "line": 158,
+      "property": "backdrop-blur",
+      "surface": "work mode summary",
+      "class": "panel-local",
+      "decision": "keep",
+      "reason": "optional summary card; A/B includes chat/settings not this optional panel"
+    },
+    {
+      "file": "src/components/file-preview/SheetViewer.tsx",
+      "line": 222,
+      "property": "backdrop-blur",
+      "surface": "sticky sheet header",
+      "class": "viewer-local",
+      "decision": "keep",
+      "reason": "document viewer only"
+    },
+    {
+      "file": "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+      "line": 92,
+      "property": "backdrop-blur",
+      "surface": "task ledger summary",
+      "class": "panel-local",
+      "decision": "keep",
+      "reason": "optional ledger panel"
+    },
+    {
+      "file": "src/components/file-preview/WorkspaceGitPanel.tsx",
+      "line": 852,
+      "property": "backdrop-blur",
+      "surface": "sticky Git header",
+      "class": "viewer-local",
+      "decision": "keep",
+      "reason": "Git panel only"
+    }
+  ],
+  "removedPersistentWillChange": [
+    {
+      "file": "src/styles/codex-welcome-hero.css",
+      "selector": ".codex-composer-host",
+      "reason": "WAAPI animation works without a permanent layer hint"
+    },
+    {
+      "file": "src/styles/codex-sidebar.css",
+      "selector": "marquee-text__inner",
+      "reason": "marquee is hover-only and short-lived"
+    },
+    {
+      "file": "src/components/chat/ChatAgentEffortPopover.tsx",
+      "selector": ".effort-status",
+      "reason": "status animation is conditional; no persistent hint needed"
+    }
+  ],
+  "notes": [
+    "Generated weather widget is not a ClawX shell surface and is not part of the A/B probe.",
+    "Settings panel/topfade hints have explicit comments and are retained pending pixel/performance evidence."
+  ]
+}

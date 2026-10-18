@@ -193,6 +193,9 @@
   align-items: center;
   padding: 0 5px 2px 8px;
   background: hsl(var(--surface-sidebar));
+  /* The sticky heading is a hit-test backdrop, not a click target. Its label
+   * and the hover action strip opt back into pointer events below. */
+  pointer-events: none;
 }
 .codex-sidebar .section-label-button {
   flex: 1;
@@ -209,6 +212,7 @@
   border-radius: var(--radius-md);
   transition: color 120ms ease;
   padding: 2px 4px 2px 0;
+  pointer-events: auto;
 }
 .codex-sidebar .section-label-button > span { line-height: 1.2; }
 .codex-sidebar .section-label-button:hover {
@@ -440,7 +444,6 @@
 .codex-sidebar .task-title-block > .marquee-text > .marquee-text__inner {
   display: inline-block;
   white-space: nowrap;
-  will-change: transform;
 }
 .codex-sidebar .task-title-block {
   min-width: 0;

@@ -239,7 +239,6 @@
   /* The actual hero-to-conversation position is measured in ChatInput and
    * animated with WAAPI. A static translate here would stack on the layout
    * reflow and create the old downward overshoot. */
-  will-change: transform;
 }
 
 .codex-composer-host--sending { transform: none; }
