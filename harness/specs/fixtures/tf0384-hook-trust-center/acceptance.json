@@ -5,7 +5,7 @@
   "title": "Hooks 信任与生命周期中心",
   "verdict": "pass",
   "candidate": {
-    "sha": "pending-source-commit",
+    "sha": "481861551cca88b43a423b14756d58d3b359b8f9",
     "base": "e74317ad",
     "dirty": false
   },

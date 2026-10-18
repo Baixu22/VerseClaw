@@ -1,4 +1,4 @@
-eebc2de867b6c08ba9af7180f47fc7169c4b6b6403f8814500ac46f786023867  harness/specs/fixtures/tf0384-hook-trust-center/acceptance.json
-b2b83212a95aa4d878f015014f169e076ecfa96826fd6a13af3bc76212ec88b7  harness/specs/fixtures/tf0384-hook-trust-center/tests.json
-6b719eff0421b8951451c33b494ed8c9f61d63995ddb30091447e8691a42ac4c  harness/specs/fixtures/tf0384-hook-trust-center/gates.json
-5b5450d9461002e9cbb0e520ec75ae36b41fa6b41a58008960d2923442c6d281  harness/specs/fixtures/tf0384-hook-trust-center/ci-boundary.json
+703979d1930070fdbc45cc215049d3efeadc383b845e624950eb860a0611abad  harness/specs/fixtures/tf0384-hook-trust-center/acceptance.json
+8b77864ad2dc877e8adcaea864c91204ec6bbde3078a408614a3d42d9f700c5b  harness/specs/fixtures/tf0384-hook-trust-center/tests.json
+3bdfd125e27131291e9c78e2846e4dc86299e21466755c9f85bba8ed1248b957  harness/specs/fixtures/tf0384-hook-trust-center/gates.json
+262830060089b0069665ea76012bba1eeae92db48c5ae4066bcc4ef6d2df3d85  harness/specs/fixtures/tf0384-hook-trust-center/ci-boundary.json
