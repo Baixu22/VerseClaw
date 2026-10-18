@@ -5,7 +5,7 @@
   "title": "建立只读投影并接入 Chat 与导出",
   "verdict": "pass",
   "candidate": {
-    "sha": "pending-source-commit",
+    "sha": "1db00281551147958076cd5447d20eb8a15a1f54",
     "base": "1615e4886aceb3208614110ba6fe856705ca6d3d",
     "dirty": false
   },

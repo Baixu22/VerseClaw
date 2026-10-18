@@ -1,4 +1,4 @@
-f52f9f66d2423cbfc18646188162b85f013eff181a738c4815b8622cf5a84ce7  ./harness/specs/fixtures/tf0377-coding-run-projection/acceptance.json
-832f085c2a0fa76a5c31734924a6906b5cb4c5ebe22ce761cef7dd951639f756  ./harness/specs/fixtures/tf0377-coding-run-projection/tests.json
-e71508ba0dda6fc50d9c434eb44e33d7fc34d03688abe85def5931294239daba  ./harness/specs/fixtures/tf0377-coding-run-projection/gates.json
-e124e3a1c7dd4631846906acedb62536b0011b2d09fb9abecec95e0c28402b7a  ./harness/specs/fixtures/tf0377-coding-run-projection/ci-boundary.json
+1759d4132e13427420e1b2d47b34ba8e01c76bc73ef6940e06d5738db8b20e5d  ./harness/specs/fixtures/tf0377-coding-run-projection/acceptance.json
+5717c563079d0d27485e9f71ddf8173d92e6e50ebb5cda9e576643a23675298a  ./harness/specs/fixtures/tf0377-coding-run-projection/tests.json
+3f62bee9a5abc5cf87eea8f122b475f487d203073dc66de247634ba05988e918  ./harness/specs/fixtures/tf0377-coding-run-projection/gates.json
+e8377828b88e0fc2288ffa247b29baf2b0df32ba4cca02a8614460d07a248caa  ./harness/specs/fixtures/tf0377-coding-run-projection/ci-boundary.json
