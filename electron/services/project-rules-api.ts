@@ -1,12 +1,14 @@
 import { access, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
+import { resolveInstructionPrecedence, type InstructionLayerInput, type InstructionTrust } from '@shared/instruction-precedence';
 import type {
   ProjectRulesAgentsFile,
   ProjectRulesIssue,
   ProjectRulesIssueSeverity,
   ProjectRulesRuleFile,
   ProjectRulesSnapshot,
+  ProjectRulesExplainPayload,
   ProjectRulesSnapshotResult,
 } from '@shared/host-api/contract';
 import type { WorkspaceProfile } from '@shared/types/workspace';
@@ -461,9 +463,87 @@ async function createAgentsTemplate(): Promise<ProjectRulesSnapshotResult> {
   }
 }
 
+
+function explainPayload(value: unknown): ProjectRulesExplainPayload {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  const body = value as Record<string, unknown>;
+  const trust = (raw: unknown): InstructionTrust | undefined =>
+    raw === 'owner' || raw === 'user' || raw === 'runtime' || raw === 'untrusted' ? raw : undefined;
+  const skills = Array.isArray(body.skills)
+    ? body.skills.flatMap((entry) => {
+        if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return [];
+        const record = entry as Record<string, unknown>;
+        if (typeof record.id !== 'string' || typeof record.content !== 'string') return [];
+        return [{ id: record.id, content: record.content, trust: trust(record.trust) }];
+      })
+    : undefined;
+  const roleRecord = body.role && typeof body.role === 'object' && !Array.isArray(body.role)
+    ? body.role as Record<string, unknown>
+    : null;
+  const turnRecord = body.turnOverride && typeof body.turnOverride === 'object' && !Array.isArray(body.turnOverride)
+    ? body.turnOverride as Record<string, unknown>
+    : null;
+  return {
+    ...(skills ? { skills } : {}),
+    ...(roleRecord && typeof roleRecord.name === 'string' && typeof roleRecord.content === 'string'
+      ? { role: { name: roleRecord.name, content: roleRecord.content, trust: trust(roleRecord.trust) } }
+      : {}),
+    ...(turnRecord && typeof turnRecord.content === 'string'
+      ? { turnOverride: { ...(typeof turnRecord.source === 'string' ? { source: turnRecord.source } : {}), content: turnRecord.content } }
+      : {}),
+  };
+}
+
+async function explainInstructions(payload?: unknown) {
+  const request = explainPayload(payload);
+  const snapshot = await buildSnapshot(false);
+  const inputs: InstructionLayerInput[] = [];
+  if (snapshot.agentsFile?.exists && typeof snapshot.agentsFile.content === 'string' && snapshot.agentsFile.content.trim()) {
+    inputs.push({
+      kind: 'agents',
+      source: snapshot.agentsFile.relativePath,
+      scope: 'workspace',
+      trust: 'owner',
+      content: snapshot.agentsFile.content,
+    });
+  }
+  for (const rule of snapshot.ruleFiles) {
+    if (rule.status !== 'present') continue;
+    try {
+      inputs.push({
+        kind: 'project-rules',
+        source: rule.relativePath,
+        scope: 'workspace',
+        trust: 'owner',
+        content: await readFile(rule.path, 'utf8'),
+      });
+    } catch {
+      // The snapshot already reports unreadable files; explain omits the content it cannot read.
+    }
+  }
+  for (const skill of request.skills ?? []) {
+    inputs.push({ kind: 'skill', source: skill.id, scope: 'context', trust: skill.trust ?? 'owner', content: skill.content });
+  }
+  if (request.role) {
+    inputs.push({ kind: 'role', source: request.role.name, scope: 'role', trust: request.role.trust ?? 'owner', content: request.role.content });
+  }
+  if (request.turnOverride) {
+    inputs.push({
+      kind: 'turn-override',
+      source: request.turnOverride.source ?? 'turn',
+      scope: 'turn',
+      trust: 'user',
+      content: request.turnOverride.content,
+    });
+  }
+  const resolution = resolveInstructionPrecedence(inputs);
+  return { success: true as const, ...resolution };
+}
+
 export function createProjectRulesApi(): CompleteHostServiceRegistry['projectRules'] {
   return {
     snapshot: async () => buildSnapshot(false),
     createAgentsTemplate,
+    explain: async (payload) => explainInstructions(payload),
   };
 }

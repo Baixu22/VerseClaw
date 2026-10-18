@@ -1,0 +1,4 @@
+8660eac5acdc540d9cfa7b9249bf09c29b13c5818c3df4409d73c10c016fb972  harness/specs/fixtures/tf0386-instruction-precedence/acceptance.json
+462e5753c64b12ccc001003bfeccd60cb6ba5a74e5235cf78052cfd9bc8d9000  harness/specs/fixtures/tf0386-instruction-precedence/tests.json
+1f309363b4158a29cb3efdf6295f0eef01087c83c073e1e3730218c39b11a588  harness/specs/fixtures/tf0386-instruction-precedence/gates.json
+251f926d5aa7250bf9a4b4e5a00d2e9817dc18b83012124376d2e6c9418e47a7  harness/specs/fixtures/tf0386-instruction-precedence/ci-boundary.json

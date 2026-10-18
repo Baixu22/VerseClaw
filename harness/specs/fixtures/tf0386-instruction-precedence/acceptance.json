@@ -1,0 +1,45 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0386",
+  "node": "TF-0386",
+  "title": "统一指令层优先级与 explain 输出",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "pending-source-commit",
+    "base": "717e9fff",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "解析器输出每个层的来源、scope、precedence、trust、token 和冲突。",
+      "result": "pass",
+      "evidence": [
+        "shared/instruction-precedence.ts",
+        "tests/unit/instruction-precedence.test.ts"
+      ]
+    },
+    {
+      "criterion": "至少覆盖 AGENTS.md + project rules + skill + role 组合。",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/instruction-precedence.test.ts",
+        "electron/services/project-rules-api.ts — explain"
+      ]
+    },
+    {
+      "criterion": "UI 或 host-api explain 有测试。",
+      "result": "pass",
+      "evidence": [
+        "shared/host-api/contract.ts — projectRules.explain",
+        "src/lib/host-api.ts",
+        "tests.json"
+      ]
+    }
+  ],
+  "boundaries": [
+    "The resolver is read-only and does not modify instruction files.",
+    "Precedence is fixed as turn override > harness > project rules > AGENTS > role > skill.",
+    "No full prompt debugger or second rules source was introduced.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}

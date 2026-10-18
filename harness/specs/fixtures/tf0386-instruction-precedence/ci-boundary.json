@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0386",
+  "head": "pending-source-commit",
+  "ci": {
+    "claimed": false,
+    "reason": "The current private remote CI path remains subject to the documented account-billing boundary."
+  },
+  "local": {
+    "result": "pass",
+    "commands": [
+      "pnpm typecheck",
+      "pnpm contract:check",
+      "pnpm exec vitest run tests/unit/instruction-precedence.test.ts tests/unit/project-rules-api.test.ts",
+      "pnpm harness validate --spec harness/specs/tasks/instruction-precedence-explain.md",
+      "git diff --check"
+    ]
+  }
+}

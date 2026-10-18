@@ -1,4 +1,5 @@
 import type { RawMessage } from '../chat/types';
+import type { InstructionLayerKind, InstructionResolution, InstructionTrust } from '../instruction-precedence';
 import type { BackgroundWorkGateState, ResourceEnvelopeSnapshot } from '../types/resources';
 import type {
   VtokenAssembleHostResult,
@@ -760,6 +761,13 @@ export type ProjectRulesSnapshot = {
   };
   generatedAt: string;
 };
+export type ProjectRulesExplainPayload = {
+  skills?: Array<{ id: string; content: string; trust?: InstructionTrust }>;
+  role?: { name: string; content: string; trust?: InstructionTrust };
+  turnOverride?: { source?: string; content: string };
+};
+export type ProjectRulesExplainResult = HostSuccess & InstructionResolution;
+export type ProjectRulesExplainLayerKind = InstructionLayerKind;
 export type ProjectRulesSnapshotResult = HostSuccess & ProjectRulesSnapshot & {
   templateCreated?: boolean;
 };
@@ -5301,6 +5309,7 @@ export type HostApiContract = {
   projectRules: {
     snapshot: () => ProjectRulesSnapshotResult;
     createAgentsTemplate: () => ProjectRulesSnapshotResult;
+    explain: (payload?: ProjectRulesExplainPayload) => ProjectRulesExplainResult;
   };
   codeReview: {
     run: (payload: CodeReviewRunPayload) => CodeReviewRunResult;

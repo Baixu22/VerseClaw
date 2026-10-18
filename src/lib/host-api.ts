@@ -848,6 +848,7 @@ export const hostApi = {
   projectRules: {
     snapshot: () => invokeHost('projectRules', 'snapshot'),
     createAgentsTemplate: () => invokeHost('projectRules', 'createAgentsTemplate'),
+    explain: (input: { skills?: Array<{ id: string; content: string; trust?: 'owner' | 'user' | 'runtime' | 'untrusted' }>; role?: { name: string; content: string; trust?: 'owner' | 'user' | 'runtime' | 'untrusted' }; turnOverride?: { source?: string; content: string } } = {}) => invokeHost('projectRules', 'explain', input),
   },
   terminal: {
     run: (input: WorkspaceTerminalRunPayload) => invokeHost('terminal', 'run', input),
