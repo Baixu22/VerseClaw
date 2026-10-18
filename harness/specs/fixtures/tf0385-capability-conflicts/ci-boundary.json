@@ -1,7 +1,7 @@
 {
   "driven_by": "agent",
   "actor": "codex-tf0385",
-  "head": "pending-source-commit",
+  "head": "556a7d098dc2932bd3dea0f6e9c3fc064fced251",
   "ci": {
     "claimed": false,
     "reason": "The current private remote CI path remains subject to the documented account-billing boundary."

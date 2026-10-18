@@ -1,7 +1,7 @@
 {
   "driven_by": "agent",
   "actor": "codex-tf0385",
-  "head": "pending-source-commit",
+  "head": "556a7d098dc2932bd3dea0f6e9c3fc064fced251",
   "dirty": false,
   "unit": {
     "command": "pnpm exec vitest run tests/unit/capability-conflicts.test.ts tests/unit/capability-publication-view-model.test.ts tests/unit/runtime-capability-publications.test.ts tests/unit/mcp-api.test.ts",

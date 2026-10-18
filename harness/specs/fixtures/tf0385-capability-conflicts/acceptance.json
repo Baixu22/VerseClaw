@@ -5,7 +5,7 @@
   "title": "MCP、插件与技能的真实状态和冲突解释",
   "verdict": "pass",
   "candidate": {
-    "sha": "pending-source-commit",
+    "sha": "556a7d098dc2932bd3dea0f6e9c3fc064fced251",
     "base": "b2cb816d0",
     "dirty": false
   },
