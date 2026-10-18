@@ -1,27 +1,32 @@
 # TF-0390 Final Evidence and Boundary Report
 
-Generated: 2026-10-18T11:48:19.246Z
+Generated: 2026-10-18T12:01:43.648Z
+
+## Candidate
+
+- `78f16bd5d` (clean candidate; source commit before this evidence-only correction)
+- All receipts are `driven_by: agent`.
 
 ## Engineering evidence
 
-- Workbench: generated, 15 scenarios, scenario recordings present.
-- Deep-test: success=true, 148379ms (full run), 43266ms (smoke daily-loop refresh).
-- Full Agent Dev E2E: 4/4 passed in 55.9s; teardown fix also validated independently at 4/4 in 24.2s.
-- Required full gates executed: pnpm run typecheck exit 0 (53.4s); pnpm run build:vite exit 0 (77.5s); full Agent Dev E2E exit 0 (24.2s).
+- Workbench evidence is generated for 15 scenarios; scenario recordings are present.
+- Full deep-test ran with a fresh build, full typecheck and full Agent Dev E2E; functional result `success=true`.
+- Full Agent Dev E2E passed 4/4.
+- Typecheck 36896ms and full Agent Dev E2E 30663ms were over target but under their hard limits in the latest full run.
 
 ## Audit truth
 
-Audit status is **fail** (grade B, score 80/100, maturity blocked). It is not called green.
+The latest audit is **fail** (grade B, score 80/100, maturity blocked); it is not called green.
 
-- typecheck 69858ms > 45000ms.
-- playwright-agent-dev 58623ms > 40000ms.
-- Smoke daily-loop evidence is needs-full-gate, not release-ready.
-- Evidence freshness: 4 fresh generated sources; no stale source reported.
+- Fresh `e2e-build` took 83583ms, exceeding the 58000ms hard limit by 25583ms.
+- The audit exit code is 1 because of the hard performance veto, not because a functional test failed.
+- Build budgeting was not relaxed and no frozen default was changed.
+- The run is full-gate-complete and release-ready=false.
 
 ## Release boundary
 
 - No current release/ installer exists for this candidate.
-- NSIS installer success is **unproven**; no executable/installer claim is made. Historical failure remains recorded.
+- NSIS installer success is **unproven**; no executable/installer claim is made.
 - No publishing, tag, public-repo change, product lock or frozen-default change is included.
 
 ## Deliberate exclusions

@@ -3,85 +3,122 @@
   "actor": "codex-tf0390",
   "node": "TF-0390",
   "title": "证据、发布与验收边界收口",
-  "candidate": "pending-source-commit",
-  "generatedAt": "2026-10-18T11:48:19.246Z",
+  "candidate": "78f16bd5d",
+  "generatedAt": "2026-10-18T12:01:43.648Z",
   "evidence": {
     "workbench": "artifacts/agent-dev-workbench/evidence.json",
     "deepTest": "artifacts/agent-dev-deep-test/report.json",
-    "audit": "artifacts/agent-dev-audit/report.json",
+    "audit": "artifacts/agent-dev-audit/report.json (local ignored)",
     "quality": "artifacts/agent-dev-quality/report.json"
   },
   "deepTest": {
-    "generatedAt": "2026-10-18T11:47:59.789Z",
+    "generatedAt": "2026-10-18T12:00:49.862Z",
     "success": true,
-    "totalDurationMs": 43266,
-    "modes": {
-      "buildReuse": "reused",
-      "unit": "full",
-      "typecheck": "cached",
-      "e2e": "smoke"
-    },
+    "totalDurationMs": 163138,
     "decision": {
-      "status": "needs-full-gate",
-      "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
-      "dailyLoopReady": true,
+      "status": "blocked",
+      "reason": "e2e-build exceeded hard performance limits.",
+      "dailyLoopReady": false,
       "releaseReady": false,
-      "fullGateComplete": false,
-      "budgetStatus": "watch",
-      "fastPathModes": [
-        "reuse-build",
-        "cached-typecheck",
-        "smoke-e2e"
-      ],
-      "requiredFullGates": [
-        "pnpm run build:vite",
-        "pnpm run typecheck",
-        "pnpm test:e2e:agent-dev-quality"
-      ],
+      "fullGateComplete": true,
+      "budgetStatus": "limit",
+      "fastPathModes": [],
+      "requiredFullGates": [],
       "watchSteps": [
-        "playwright-agent-dev"
+        "typecheck",
+        "playwright-agent-dev",
+        "i18n",
+        "contract"
       ],
-      "limitSteps": []
+      "limitSteps": [
+        "e2e-build"
+      ]
     },
     "performanceLimits": [
       {
-        "id": "playwright-agent-dev",
-        "durationMs": 23719,
-        "targetMs": 15000,
-        "limitMs": 25000,
-        "overTargetMs": 8719,
+        "id": "e2e-build",
+        "durationMs": 83583,
+        "targetMs": 25000,
+        "limitMs": 58000,
+        "overTargetMs": 58583,
+        "overLimitMs": 25583,
+        "ratioToTarget": 3.34,
+        "severity": "limit",
+        "loop": "full-local",
+        "owner": "Vite/Electron production build",
+        "mitigation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+        "commandLine": "pnpm run build:vite",
+        "skipped": false,
+        "reuseStatus": "fresh"
+      },
+      {
+        "id": "typecheck",
+        "durationMs": 36896,
+        "targetMs": 25000,
+        "limitMs": 45000,
+        "overTargetMs": 11896,
         "overLimitMs": 0,
-        "ratioToTarget": 1.58,
+        "ratioToTarget": 1.48,
+        "severity": "watch",
+        "loop": "full-local",
+        "owner": "compiled contract and renderer/Main safety",
+        "mitigation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+        "commandLine": "pnpm run typecheck",
+        "skipped": false
+      },
+      {
+        "id": "playwright-agent-dev",
+        "durationMs": 30663,
+        "targetMs": 25000,
+        "limitMs": 40000,
+        "overTargetMs": 5663,
+        "overLimitMs": 0,
+        "ratioToTarget": 1.23,
         "severity": "watch",
         "loop": "full-local",
         "owner": "Electron Agent Dev scenario path",
         "mitigation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding.",
-        "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
+        "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
         "skipped": false
       },
       {
-        "id": "typecheck",
-        "durationMs": 7886,
-        "targetMs": 25000,
-        "limitMs": 45000,
-        "overTargetMs": 0,
+        "id": "i18n",
+        "durationMs": 1118,
+        "targetMs": 1000,
+        "limitMs": 3000,
+        "overTargetMs": 118,
         "overLimitMs": 0,
-        "ratioToTarget": 0.32,
-        "severity": "ok",
-        "loop": "full-local",
-        "owner": "compiled contract and renderer/Main safety",
-        "mitigation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
-        "commandLine": "pnpm run typecheck:cached",
+        "ratioToTarget": 1.12,
+        "severity": "watch",
+        "loop": "fast-pr",
+        "owner": "locale namespace/key coverage",
+        "mitigation": "Keep literal namespace scans bounded to source and locale directories.",
+        "commandLine": "pnpm i18n:lint",
+        "skipped": false
+      },
+      {
+        "id": "contract",
+        "durationMs": 1035,
+        "targetMs": 1000,
+        "limitMs": 3000,
+        "overTargetMs": 35,
+        "overLimitMs": 0,
+        "ratioToTarget": 1.03,
+        "severity": "watch",
+        "loop": "fast-pr",
+        "owner": "host-api contract drift",
+        "mitigation": "Keep contract scanning text-based and bounded to host-api/service sources.",
+        "commandLine": "pnpm contract:check",
         "skipped": false
       },
       {
         "id": "vitest-agent-dev",
-        "durationMs": 5630,
+        "durationMs": 6096,
         "targetMs": 10000,
         "limitMs": 21000,
         "overTargetMs": 0,
         "overLimitMs": 0,
-        "ratioToTarget": 0.56,
+        "ratioToTarget": 0.61,
         "severity": "ok",
         "loop": "fast-pr",
         "owner": "focused Agent Dev unit and facade tests",
@@ -91,12 +128,12 @@
       },
       {
         "id": "harness-agent-dev",
-        "durationMs": 2235,
+        "durationMs": 1459,
         "targetMs": 3000,
         "limitMs": 8000,
         "overTargetMs": 0,
         "overLimitMs": 0,
-        "ratioToTarget": 0.74,
+        "ratioToTarget": 0.49,
         "severity": "ok",
         "loop": "full-local",
         "owner": "shared Agent Dev scenario baseline",
@@ -105,13 +142,28 @@
         "skipped": false
       },
       {
+        "id": "workbench-refresh",
+        "durationMs": 638,
+        "targetMs": 1500,
+        "limitMs": 5000,
+        "overTargetMs": 0,
+        "overLimitMs": 0,
+        "ratioToTarget": 0.43,
+        "severity": "ok",
+        "loop": "nightly-release",
+        "owner": "post-quality Workbench evidence refresh",
+        "mitigation": "Refresh evidence from existing artifacts only.",
+        "commandLine": "pnpm agent-dev:workbench",
+        "skipped": false
+      },
+      {
         "id": "comms-compare",
-        "durationMs": 1042,
+        "durationMs": 544,
         "targetMs": 2000,
         "limitMs": 5000,
         "overTargetMs": 0,
         "overLimitMs": 0,
-        "ratioToTarget": 0.52,
+        "ratioToTarget": 0.27,
         "severity": "ok",
         "loop": "nightly-release",
         "owner": "communication baseline comparison",
@@ -120,28 +172,13 @@
         "skipped": false
       },
       {
-        "id": "i18n",
-        "durationMs": 839,
-        "targetMs": 1000,
-        "limitMs": 3000,
-        "overTargetMs": 0,
-        "overLimitMs": 0,
-        "ratioToTarget": 0.84,
-        "severity": "ok",
-        "loop": "fast-pr",
-        "owner": "locale namespace/key coverage",
-        "mitigation": "Keep literal namespace scans bounded to source and locale directories.",
-        "commandLine": "pnpm i18n:lint",
-        "skipped": false
-      },
-      {
         "id": "comms-replay",
-        "durationMs": 506,
+        "durationMs": 537,
         "targetMs": 2000,
         "limitMs": 5000,
         "overTargetMs": 0,
         "overLimitMs": 0,
-        "ratioToTarget": 0.25,
+        "ratioToTarget": 0.27,
         "severity": "ok",
         "loop": "nightly-release",
         "owner": "communication replay metrics",
@@ -151,69 +188,23 @@
       },
       {
         "id": "workbench",
-        "durationMs": 478,
+        "durationMs": 463,
         "targetMs": 1500,
         "limitMs": 5000,
         "overTargetMs": 0,
         "overLimitMs": 0,
-        "ratioToTarget": 0.32,
+        "ratioToTarget": 0.31,
         "severity": "ok",
         "loop": "fast-pr",
         "owner": "static Workbench evidence indexing",
         "mitigation": "Index report presence and contract metadata only; avoid expensive test/build execution inside Workbench generation.",
         "commandLine": "pnpm agent-dev:workbench",
         "skipped": false
-      },
-      {
-        "id": "workbench-refresh",
-        "durationMs": 419,
-        "targetMs": 1500,
-        "limitMs": 5000,
-        "overTargetMs": 0,
-        "overLimitMs": 0,
-        "ratioToTarget": 0.28,
-        "severity": "ok",
-        "loop": "nightly-release",
-        "owner": "post-quality Workbench evidence refresh",
-        "mitigation": "Refresh evidence from existing artifacts only.",
-        "commandLine": "pnpm agent-dev:workbench",
-        "skipped": false
-      },
-      {
-        "id": "contract",
-        "durationMs": 394,
-        "targetMs": 1000,
-        "limitMs": 3000,
-        "overTargetMs": 0,
-        "overLimitMs": 0,
-        "ratioToTarget": 0.39,
-        "severity": "ok",
-        "loop": "fast-pr",
-        "owner": "host-api contract drift",
-        "mitigation": "Keep contract scanning text-based and bounded to host-api/service sources.",
-        "commandLine": "pnpm contract:check",
-        "skipped": false
-      },
-      {
-        "id": "e2e-build",
-        "durationMs": 1,
-        "targetMs": 25000,
-        "limitMs": 58000,
-        "overTargetMs": 0,
-        "overLimitMs": 0,
-        "ratioToTarget": 0,
-        "severity": "ok",
-        "loop": "full-local",
-        "owner": "Vite/Electron production build",
-        "mitigation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
-        "commandLine": "reuse existing build",
-        "skipped": true,
-        "reuseStatus": "reused"
       }
     ]
   },
   "audit": {
-    "generatedAt": "2026-10-18T11:44:00.366Z",
+    "generatedAt": "2026-10-18T12:00:56.675Z",
     "status": "fail",
     "grade": "B",
     "totalScore": 80,
@@ -231,45 +222,33 @@
         "id": "latest-decision-blocked",
         "severity": "fail",
         "priority": "P0",
-        "message": "Latest deep-test decision is blocked: typecheck, playwright-agent-dev exceeded hard performance limits.",
+        "message": "Latest deep-test decision is blocked: e2e-build exceeded hard performance limits.",
         "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
       },
       {
         "dimension": "performance-discipline",
-        "id": "performance-limit:typecheck",
+        "id": "performance-limit:e2e-build",
         "severity": "fail",
         "priority": "P0",
-        "message": "typecheck exceeded hard limit: 69858ms > 45000ms.",
-        "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
-      },
-      {
-        "dimension": "performance-discipline",
-        "id": "performance-limit:playwright-agent-dev",
-        "severity": "fail",
-        "priority": "P0",
-        "message": "playwright-agent-dev exceeded hard limit: 58623ms > 40000ms.",
-        "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+        "message": "e2e-build exceeded hard limit: 83583ms > 58000ms.",
+        "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build."
       }
     ]
   },
   "requiredFullGatesExecuted": [
     {
-      "command": "pnpm run typecheck",
+      "command": "pnpm agent-dev:deep-test",
       "exitCode": 0,
-      "durationMs": 53399,
-      "measured": true
+      "durationMs": 163138,
+      "measured": true,
+      "note": "Full fresh-build/typecheck/E2E diagnostic completed; functional success=true, decision=blocked by hard build-budget veto."
     },
     {
-      "command": "pnpm run build:vite",
-      "exitCode": 0,
-      "durationMs": 77547,
-      "measured": true
-    },
-    {
-      "command": "pnpm test:e2e:agent-dev-quality",
-      "exitCode": 0,
-      "durationMs": 24200,
-      "measured": true
+      "command": "pnpm agent-dev:audit",
+      "exitCode": 1,
+      "durationMs": null,
+      "measured": true,
+      "note": "Audit intentionally failed on the hard performance veto; it was not rewritten as green."
     }
   ],
   "installer": {
@@ -278,9 +257,9 @@
     "reason": "No current release/ installer exists in this clean candidate; historical NSIS failure remains a preserved boundary and no executable/installer claim is made."
   },
   "boundaries": [
-    "Engineering functionality and evidence freshness pass for the selected Agent Dev surfaces.",
-    "The full deep-test audit is fail because typecheck and full Agent Dev E2E exceed hard performance limits; this is not rewritten or relaxed.",
-    "The smoke daily-loop evidence is needs-full-gate, not release-ready.",
+    "Engineering functionality passed for the selected Agent Dev surfaces; the audit still fails on performance discipline.",
+    "The latest full deep-test and audit are fail/blocked because fresh e2e-build took 83583ms, exceeding the 58000ms hard limit; no limit was relaxed.",
+    "Full-gate-complete and releaseReady=false; daily-loop readiness is false for this full run.",
     "NSIS installer success is not proven; no installer artifact is claimed.",
     "No publishing, tag, release, public-repo, product-lock or frozen-default change is included."
   ],
