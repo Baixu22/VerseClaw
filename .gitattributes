@@ -54,3 +54,6 @@ artifacts/uas-06-single-local-exec-canary/live-observations.json -text whitespac
 artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/human-verdict.yaml -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 
 artifacts/stepfun-basic-live-evidence-20261008/* -text
+
+# SHA-256 evidence manifests use the standard two-space separator. Keep their hash-locked bytes and recognize CRLF line endings on every checkout.
+harness/specs/fixtures/**/SHA256SUMS -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

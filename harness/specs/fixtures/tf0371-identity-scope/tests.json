@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0371",
+  "head": "fd800739d1553608d4d7292bc478ac5d20231866",
+  "dirty": false,
+  "unit": {
+    "command": "pnpm exec vitest run tests/unit/identity-scope.test.ts tests/unit/resource-envelope.test.ts tests/unit/handoff-artifacts.test.ts tests/unit/agent-steering-team-bundle.test.ts tests/unit/execution-projection.test.ts tests/unit/product-semantics.test.ts",
+    "files": 6,
+    "tests": 72,
+    "passed": 72,
+    "failed": 0,
+    "result": "pass"
+  },
+  "e2e": [
+    {
+      "source": "harness/specs/fixtures/tf0373-identity-misuse/tests.json",
+      "result": "pass",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "command": "pnpm run test:e2e:run tests/e2e/chat-task-visualizer.spec.ts --grep \"renders team orchestration\""
+    },
+    {
+      "source": "harness/specs/fixtures/tf0374-completion-authority/tests.json",
+      "result": "pass",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "command": "pnpm run test:e2e:run tests/e2e/task-loop-panel.spec.ts"
+    }
+  ]
+}

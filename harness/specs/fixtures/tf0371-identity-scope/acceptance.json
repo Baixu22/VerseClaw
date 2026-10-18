@@ -1,0 +1,75 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0371",
+  "node": "TF-0371",
+  "title": "统一 Workspace、Project、Session、Run、Task 与完成权威",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "fd800739d1553608d4d7292bc478ac5d20231866",
+    "base": "fd800739d1553608d4d7292bc478ac5d20231866",
+    "tree": "clean",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "shared 文档或类型明确 Workspace/Project/Session/Run/Task/Completion 的定义、所有者、作用域和禁止引用。",
+      "result": "pass",
+      "evidence": [
+        "docs/clawx-product-semantics.md#identity-and-scope-vocabulary",
+        "shared/types/identity-scope.ts",
+        "shared/product-semantics.ts",
+        "harness/specs/rules/identity-scope-boundary.md"
+      ]
+    },
+    {
+      "criterion": "typecheck、contract:check、i18n:lint 通过，且不改变现有持久化格式。",
+      "result": "pass",
+      "evidence": [
+        "gates.json",
+        "No persistence schema or migration files changed in this node's child commits."
+      ]
+    },
+    {
+      "criterion": "静态检查或单测能捕获至少 4 类混用。",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/identity-scope.test.ts",
+        "tests/unit/resource-envelope.test.ts",
+        "tests/unit/handoff-artifacts.test.ts",
+        "tests/unit/agent-steering-team-bundle.test.ts",
+        "tests/unit/execution-projection.test.ts"
+      ]
+    },
+    {
+      "criterion": "现有 UI 继续工作；新增文档和类型不引入第二套 runtime。",
+      "result": "pass",
+      "evidence": [
+        "tests/e2e/task-loop-panel.spec.ts",
+        "tests/e2e/chat-task-visualizer.spec.ts",
+        "Child receipts tf0373-identity-misuse and tf0374-completion-authority"
+      ]
+    }
+  ],
+  "childCompletion": [
+    {
+      "node": "TF-0372",
+      "status": "done",
+      "evidence": "harness/specs/tasks/identity-scope-semantics.md; shared/types/identity-scope.ts; shared/product-semantics.ts; tests/unit/identity-scope.test.ts; d0f23b79c"
+    },
+    {
+      "node": "TF-0373",
+      "status": "done",
+      "evidence": "harness/specs/fixtures/tf0373-identity-misuse/acceptance.json; b157d9fc0"
+    },
+    {
+      "node": "TF-0374",
+      "status": "done",
+      "evidence": "harness/specs/fixtures/tf0374-completion-authority/acceptance.json; c1297b8fc"
+    }
+  ],
+  "boundaries": [
+    "No new runtime, persistence migration, Project store, OS sandbox, product lock or frozen-default change was introduced.",
+    "The tests and receipts are agent-driven; no real-human evidence is claimed.",
+    "This parent closeout only aggregates completed child evidence and verifies the current clean candidate; it does not implement downstream TF-0375."
+  ]
+}

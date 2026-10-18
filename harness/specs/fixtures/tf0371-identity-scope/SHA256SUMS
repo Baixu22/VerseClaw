@@ -1,0 +1,4 @@
+3edb83c8a91667e0927bc950aebc15dbb8816b64ceb2364812109977dd38c5e2  ./harness/specs/fixtures/tf0371-identity-scope/acceptance.json
+cae14a0dad362e2383b17e579407ed62cbd3f986298f12491273622c21c01292  ./harness/specs/fixtures/tf0371-identity-scope/tests.json
+abce0e73e926e3acf4eb81191b0fcd8e453c979e3480f541e5da1d70cd47b8f3  ./harness/specs/fixtures/tf0371-identity-scope/gates.json
+af9bd357cf5e941da6bc7a3d5acd0f162385fe146d558eb193cd1b4dcc3ba3be  ./harness/specs/fixtures/tf0371-identity-scope/ci-boundary.json

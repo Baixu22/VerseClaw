@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0371",
+  "head": "fd800739d1553608d4d7292bc478ac5d20231866",
+  "ci": {
+    "claimed": false,
+    "reason": "The current private remote CI path remains subject to the documented account-billing boundary; child receipts record no CI pass claim."
+  },
+  "local": {
+    "result": "pass",
+    "commands": [
+      "pnpm typecheck",
+      "pnpm contract:check",
+      "pnpm run i18n:lint",
+      "pnpm harness validate --spec harness/specs/tasks/identity-scope-semantics.md",
+      "git diff --check"
+    ]
+  }
+}
