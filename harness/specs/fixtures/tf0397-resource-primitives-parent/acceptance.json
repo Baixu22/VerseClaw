@@ -1,0 +1,50 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0397",
+  "node": "TF-0397",
+  "title": "P0 资源调度原语层：六个纯函数模块",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "339fb7a9",
+    "base": "edeb596bd",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "六个模块落盘且核心分支单测全覆盖",
+      "result": "pass",
+      "evidence": [
+        "shared/resources/{bounded-cache,singleflight,adaptive-limit,token-bucket,priority-queue,drf-share}.ts plus index.ts",
+        "tests/unit/resource-fabric-primitives.test.ts — 6 tests, each exercises a module happy path and at least one boundary/failure path",
+        "harness/specs/fixtures/tf0403-resource-primitives/acceptance.json — child receipt with 6/6 passed"
+      ]
+    },
+    {
+      "criterion": "pnpm agent-dev:fast 退出码 0",
+      "result": "pass",
+      "evidence": [
+        "AGENT_DEV_FAST_EXIT=0 in 10.468s; 7 Agent Dev unit files / 88 tests passed; contract and i18n lint passed."
+      ]
+    },
+    {
+      "criterion": "不修改任何现有调用方（git diff 证明仅新增）",
+      "result": "pass",
+      "evidence": [
+        "TF-0403 source commit 5aea169b adds only shared/resources/**, its unit test, task spec and receipt.",
+        "git diff --numstat against base shows no package.json, pnpm-lock.yaml or existing caller changes."
+      ]
+    }
+  ],
+  "childCompletion": [
+    {
+      "node": "TF-0403",
+      "status": "done",
+      "evidence": "harness/specs/fixtures/tf0403-resource-primitives/acceptance.json; 5aea169b"
+    }
+  ],
+  "boundaries": [
+    "This parent closeout verifies the P0 layer only; no P1 cache integration, P2 ResourceFabric caller wiring, P3 timer/watcher work, P4 network/I/O work or P5 process pool is claimed.",
+    "The primitives are in-memory and deterministic with injected clocks; they create no persistence, scheduler service, IPC or host-api surface.",
+    "All evidence is agent-driven; no real-human evidence is claimed."
+  ]
+}
