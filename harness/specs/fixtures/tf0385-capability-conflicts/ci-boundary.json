@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0385",
+  "head": "pending-source-commit",
+  "ci": {
+    "claimed": false,
+    "reason": "The current private remote CI path remains subject to the documented account-billing boundary."
+  },
+  "local": {
+    "result": "pass",
+    "commands": [
+      "pnpm typecheck",
+      "pnpm contract:check",
+      "pnpm exec vitest run <4 capability test files>",
+      "pnpm harness validate --spec harness/specs/tasks/capability-status-conflicts.md",
+      "git diff --check"
+    ]
+  }
+}

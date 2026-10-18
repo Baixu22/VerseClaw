@@ -1,0 +1,44 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0385",
+  "node": "TF-0385",
+  "title": "MCP、插件与技能的真实状态和冲突解释",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "pending-source-commit",
+    "base": "b2cb816d0",
+    "dirty": false
+  },
+  "originalAcceptance": [
+    {
+      "criterion": "MCP connected 仍只在真实握手后出现。",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/mcp-api.test.ts — stdio config check never reports connected",
+        "electron/services/mcp-api.ts — initialize handshake gate"
+      ]
+    },
+    {
+      "criterion": "插件/技能列表显示来源、状态和冲突结果。",
+      "result": "pass",
+      "evidence": [
+        "openclaw_runtime/src/runtime-core/capability-publications.ts — conflicts + capabilityConflict diagnostic",
+        "src/lib/capability-publication-view-model.ts",
+        "src/pages/Agents/index.tsx — diagnostics rendering"
+      ]
+    },
+    {
+      "criterion": "相关单测与 UI 测试通过。",
+      "result": "pass",
+      "evidence": [
+        "tests.json",
+        "tests/unit/capability-publication-view-model.test.ts"
+      ]
+    }
+  ],
+  "boundaries": [
+    "Conflicts are diagnostics over the existing publication registry; no second registry or plugin runtime was added.",
+    "MCP connected is unchanged and still requires the real initialize handshake.",
+    "All receipts are agent-driven; no real-human evidence is claimed."
+  ]
+}

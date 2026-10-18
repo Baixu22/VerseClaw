@@ -54,6 +54,8 @@ export type CapabilityPublicationEntry = {
   toolNames?: string[];
   reasons: string[];
   diagnostics: CapabilityPublicationDiagnostic[];
+  /** Other publication IDs that canonicalize to the same capability identity. */
+  conflicts?: string[];
   skillId?: string;
   serverId?: string;
 };
@@ -337,6 +339,48 @@ function mcpPublications(params: {
   }).filter((entry): entry is CapabilityPublicationEntry => entry !== null);
 }
 
+export function applyCapabilityConflictDiagnostics(publications: CapabilityPublicationEntry[]): {
+  publications: CapabilityPublicationEntry[];
+  diagnostics: CapabilityPublicationDiagnostic[];
+} {
+  const groups = new Map<string, CapabilityPublicationEntry[]>();
+  for (const entry of publications) {
+    const key = `${entry.kind}:${normalizeComparable(entry.sourceId)}`;
+    if (!key.endsWith(":")) {
+      const group = groups.get(key) ?? [];
+      group.push(entry);
+      groups.set(key, group);
+    }
+  }
+  const conflicts = new Map<string, string[]>();
+  const diagnostics: CapabilityPublicationDiagnostic[] = [];
+  for (const group of groups.values()) {
+    if (group.length < 2) continue;
+    const ids = [...new Set(group.map((entry) => entry.id))];
+    for (const entry of group) {
+      const others = ids.filter((id) => id !== entry.id);
+      conflicts.set(entry.id, others);
+      diagnostics.push(
+        diagnostic(
+          "capabilityConflict",
+          "warning",
+          `Capability "${entry.sourceId}" is provided by ${group.length} sources; explicit source selection is required.`,
+          { entryId: entry.id, conflictWith: others },
+        ),
+      );
+    }
+  }
+  return {
+    publications: publications.map((entry) => {
+      const conflictWith = conflicts.get(entry.id);
+      return conflictWith && conflictWith.length > 0
+        ? { ...entry, conflicts: conflictWith }
+        : entry;
+    }),
+    diagnostics,
+  };
+}
+
 function addRoleRequirementDiagnostics(
   publications: CapabilityPublicationEntry[],
   role: RoleContract | undefined,
@@ -383,10 +427,13 @@ export function buildCapabilityPublicationResult(params: {
       ),
     );
   }
-  const publications = [
+  const builtPublications = [
     ...skillPublications({ cfg: params.cfg, agentId, workspaceDir, role, includeCandidates }),
     ...mcpPublications({ cfg: params.cfg, workspaceDir, workspaceId, agentId, roleName, role, includeCandidates }),
   ];
+  const conflicted = applyCapabilityConflictDiagnostics(builtPublications);
+  const publications = conflicted.publications;
+  diagnostics.push(...conflicted.diagnostics);
   diagnostics.push(...addRoleRequirementDiagnostics(publications, role));
   return {
     success: true,

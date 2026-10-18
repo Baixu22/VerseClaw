@@ -1,0 +1,4 @@
+9d107de06be8fcc4f834f4c2667a936e29fe410a68360feebefad569d5339fa9  harness/specs/fixtures/tf0385-capability-conflicts/acceptance.json
+549d30a5ee27694e0f35653a94b33de131d8e16ce8c44466777a5f6cc8b42c90  harness/specs/fixtures/tf0385-capability-conflicts/tests.json
+dc53552afacf0ff0fec47359cf8362b7b690191c3b721ea8917c52d08d9a290b  harness/specs/fixtures/tf0385-capability-conflicts/gates.json
+2acbd6900b70248ba76da3399b0af9c7cdc7b3cfbe349137c285de70a19f5956  harness/specs/fixtures/tf0385-capability-conflicts/ci-boundary.json
