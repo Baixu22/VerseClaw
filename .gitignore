@@ -5,8 +5,6 @@ node_modules/
 
 # Build outputs
 dist/
-!openclaw_runtime/extensions/codegraph/dist/
-!openclaw_runtime/extensions/codegraph/dist/**
 !openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/dist/
 !openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/dist/**
 dist-electron/

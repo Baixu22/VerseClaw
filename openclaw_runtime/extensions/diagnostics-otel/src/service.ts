@@ -39,14 +39,14 @@ import type {
   DiagnosticEventMetadata,
   DiagnosticEventPayload,
   DiagnosticTraceContext,
-  OpenClawPluginService,
-} from "../api.js";
+} from "openclaw/plugin-sdk/diagnostic-runtime";
 import {
   isValidDiagnosticSpanId,
   isValidDiagnosticTraceFlags,
   isValidDiagnosticTraceId,
-  redactSensitiveText,
-} from "../api.js";
+} from "openclaw/plugin-sdk/diagnostic-runtime";
+import { redactSensitiveText } from "openclaw/plugin-sdk/security-runtime";
+import type { OpenClawPluginService as OpenClawPluginServiceFromEntry } from "openclaw/plugin-sdk/plugin-entry";
 
 const DEFAULT_SERVICE_NAME = "openclaw";
 const DROPPED_OTEL_ATTRIBUTE_KEYS = new Set([
@@ -1054,7 +1054,7 @@ function addTraceAttributes(
   }
 }
 
-export function createDiagnosticsOtelService(): OpenClawPluginService {
+export function createDiagnosticsOtelService(): OpenClawPluginServiceFromEntry {
   let sdk: NodeSDK | null = null;
   let logProvider: LoggerProvider | null = null;
   let unsubscribe: (() => void) | null = null;
@@ -3619,5 +3619,5 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
     async stop() {
       await stopStarted();
     },
-  } satisfies OpenClawPluginService;
+  } satisfies OpenClawPluginServiceFromEntry;
 }

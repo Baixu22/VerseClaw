@@ -18,10 +18,7 @@ See also (siblings, written in parallel; no dependency assumed):
 
 ## Exploration Log
 
-**CodeGraph note.** This repo ships CodeGraph as a runtime extension
-(`openclaw_runtime/extensions/codegraph/`) whose 15 tools (`codegraph_decide`,
-`codegraph_context_plan`, ...) are registered for the runtime's own agents — they are NOT
-connected to this design session. The manual equivalent of a `codegraph_context_plan` I ran
+**CodeGraph note (historical).** At the time of this exploration, the repo shipped CodeGraph as a runtime extension with 15 tools. CodeGraph was retired and removed on 2026-10-17; this paragraph records the original exploration context only. The manual equivalent of a `codegraph_context_plan` I ran
 instead, in priority order: (1) full reads of the four Electron sandbox policy files (they
 are the declared single source of policy truth, all < 320 lines); (2) full read of the
 runtime tool-invocation interception point and its two seam files (the place any per-turn

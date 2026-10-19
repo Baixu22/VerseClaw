@@ -2,7 +2,7 @@
 
 Generated: 2026-10-18T12:00:49.862Z
 
-Result: pass
+Result: fail
 
 Decision: blocked - e2e-build exceeded hard performance limits.
 

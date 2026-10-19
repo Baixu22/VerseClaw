@@ -104,7 +104,6 @@
     "runtime:effectiveness": "node scripts/runtime-effectiveness.mjs",
     "runtime:effectiveness:live": "node scripts/runtime-effectiveness.mjs --live",
     "runtime:effectiveness:report": "node scripts/runtime-effectiveness.mjs --report-only",
-    "runtime:effectiveness:codegraph-e2e": "vitest run --config vitest.runtime-effectiveness.config.ts openclaw_runtime/extensions/codegraph/runtime.e2e.test.ts --reporter=verbose",
     "runtime:long-stability": "node scripts/runtime-long-stability.mjs",
     "ext:bridge": "node scripts/generate-ext-bridge.mjs",
     "build": "node scripts/generate-ext-bridge.mjs && pnpm run build:vite && pnpm run build:runtime && zx scripts/bundle-openclaw.mjs && zx scripts/bundle-openclaw-plugins.mjs && zx scripts/bundle-openclaw-runtime.mjs && zx scripts/bundle-preinstalled-skills.mjs && node scripts/bundle-main-runtime.mjs && node scripts/run-electron-builder.mjs",
@@ -406,12 +405,12 @@
   "artifactStatus": {
     "workbench": true,
     "quality": true,
-    "channelConformance": false,
+    "channelConformance": true,
     "scenarioRecordings": true
   },
   "artifacts": {
     "quality": true,
-    "channelConformance": false,
+    "channelConformance": true,
     "scenarioRecordings": true
   },
   "gateCommands": {
@@ -483,6 +482,12 @@
           "id": "vitest-agent-dev",
           "durationMs": 6096,
           "commandLine": "pnpm agent-dev:unit",
+          "skipped": false
+        },
+        {
+          "id": "playwright-agent-dev",
+          "durationMs": 1849,
+          "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
           "skipped": false
         },
         {
@@ -1300,23 +1305,17 @@
         {
           "id": "performance-discipline",
           "title": "Performance Discipline",
-          "score": 14,
+          "score": 12,
           "maxScore": 20,
-          "deducted": 6,
-          "status": "warn",
-          "reason": "2 finding(s) deducted 6 point(s).",
+          "deducted": 8,
+          "status": "fail",
+          "reason": "1 finding(s) deducted 8 point(s).",
           "findings": [
             {
-              "id": "latest-needs-full-gate",
-              "severity": "warn",
-              "estimatedPenalty": 3,
-              "recommendation": "Run decision.requiredFullGates before PR/release review."
-            },
-            {
-              "id": "performance-watch:playwright-agent-dev",
-              "severity": "warn",
-              "estimatedPenalty": 3,
-              "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+              "id": "latest-decision-blocked",
+              "severity": "fail",
+              "estimatedPenalty": 8,
+              "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
             }
           ]
         },
@@ -1344,7 +1343,7 @@
       "disqualifierCount": 0
     },
     "quality": {
-      "success": true,
+      "success": false,
       "build": {
         "ok": true,
         "durationMs": 83583,

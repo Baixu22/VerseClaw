@@ -20,16 +20,35 @@ import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { AgentRoleProfile } from '@shared/types/agent';
 
+/**
+ * Select values are locale-independent keys. `roleLabel` is the legacy value
+ * persisted in SOUL.md / role-profile.json; keeping it at the storage boundary
+ * avoids a migration while letting the UI render the active language.
+ */
 const ROLE_OPTIONS = [
-  { labelKey: 'roleProfile.roles.general', value: '通用助手' },
-  { labelKey: 'roleProfile.roles.coding', value: '代码助手' },
-  { labelKey: 'roleProfile.roles.writing', value: '写作伙伴' },
-  { labelKey: 'roleProfile.roles.devops', value: 'DevOps' },
-  { labelKey: 'roleProfile.roles.review', value: '代码审查' },
-  { labelKey: 'roleProfile.roles.architecture', value: '架构设计' },
-  { labelKey: 'roleProfile.roles.analysis', value: '数据分析' },
-  { labelKey: 'roleProfile.roles.custom', value: '自定义' },
+  { labelKey: 'roleProfile.roles.general', value: 'general', roleLabel: '通用助手' },
+  { labelKey: 'roleProfile.roles.coding', value: 'coding', roleLabel: '代码助手' },
+  { labelKey: 'roleProfile.roles.writing', value: 'writing', roleLabel: '写作伙伴' },
+  { labelKey: 'roleProfile.roles.devops', value: 'devops', roleLabel: 'DevOps' },
+  { labelKey: 'roleProfile.roles.review', value: 'review', roleLabel: '代码审查' },
+  { labelKey: 'roleProfile.roles.architecture', value: 'architecture', roleLabel: '架构设计' },
+  { labelKey: 'roleProfile.roles.analysis', value: 'analysis', roleLabel: '数据分析' },
+  { labelKey: 'roleProfile.roles.custom', value: 'custom', roleLabel: '自定义' },
 ];
+
+const CUSTOM_ROLE_KEY = 'custom';
+
+function resolveRoleOption(role: string, customRole?: string) {
+  const isCustom = role === '自定义'
+    || role === CUSTOM_ROLE_KEY
+    || Boolean(customRole?.trim());
+  if (isCustom) {
+    return ROLE_OPTIONS[ROLE_OPTIONS.length - 1];
+  }
+  return ROLE_OPTIONS.find((option) => (
+    option.value === role || option.roleLabel === role
+  )) ?? ROLE_OPTIONS[0];
+}
 
 const VERBOSITY_OPTIONS: { value: AgentRoleProfile['verbosity']; labelKey: string; hintKey: string }[] = [
   { value: 'concise', labelKey: 'roleProfile.verbosity.concise', hintKey: 'roleProfile.verbosityHint.concise' },
@@ -108,7 +127,8 @@ interface RoleProfileEditorProps {
 export function RoleProfileEditor({ profile, onChange, disabled }: RoleProfileEditorProps) {
   const { t } = useTranslation('agents');
   const update = useCallback((patch: Partial<AgentRoleProfile>) => onChange({ ...profile, ...patch }), [profile, onChange]);
-  const currentRoleValue = profile.customRole ? '自定义' : profile.role;
+  const currentRole = resolveRoleOption(profile.role, profile.customRole);
+  const currentRoleValue = currentRole.value;
 
   return (
     <div className="space-y-5">
@@ -136,8 +156,12 @@ export function RoleProfileEditor({ profile, onChange, disabled }: RoleProfileEd
           <Select
             value={currentRoleValue}
             onValueChange={(value) => {
-              if (value === '自定义') update({ role: value, customRole: '' });
-              else update({ role: value, customRole: undefined });
+              const option = resolveRoleOption(value);
+              if (option.value === CUSTOM_ROLE_KEY) {
+                update({ role: option.roleLabel, customRole: '' });
+              } else {
+                update({ role: option.roleLabel, customRole: undefined });
+              }
             }}
             disabled={disabled}
           >
@@ -155,7 +179,7 @@ export function RoleProfileEditor({ profile, onChange, disabled }: RoleProfileEd
         </div>
       </div>
 
-      {profile.role === '自定义' && (
+      {currentRoleValue === CUSTOM_ROLE_KEY && (
         <div className="space-y-2">
           <Label className="text-sm font-medium text-foreground/80">{t('roleProfile.customRole')}</Label>
           <Input value={profile.customRole || ''} onChange={(e) => update({ customRole: e.target.value })}

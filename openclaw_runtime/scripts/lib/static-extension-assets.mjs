@@ -43,12 +43,18 @@ function listTrackedExtensionPackageDirs(rootDir, fsImpl) {
         return [];
       }
       const packageDir = path.join(rootDir, "extensions", match[1]);
+      const packageJsonPath = path.join(packageDir, "package.json");
+      // git ls-files includes tracked paths that are deleted in the working tree.
+      // Extension asset discovery must only consider packages that still exist.
+      if (!fsImpl.existsSync(packageJsonPath)) {
+        return [];
+      }
       return [
         {
           dirName: match[1],
           hasPackageJson: true,
           packageDir,
-          packageJsonPath: path.join(packageDir, "package.json"),
+          packageJsonPath,
         },
       ];
     })

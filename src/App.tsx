@@ -6,7 +6,7 @@ import { Navigate, Routes, Route, useNavigate, useLocation, type Location } from
 import { Component, lazy, memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
 import { Toaster } from 'sonner';
-import i18n from './i18n';
+import i18n, { changeLanguageWithResources } from './i18n';
 import { MainLayout } from './components/layout/MainLayout';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { RuntimeApprovalPrompt } from '@/components/runtime-approvals/RuntimeApprovalPrompt';
@@ -314,7 +314,7 @@ function App() {
   // Sync i18n language with persisted settings on mount
   useEffect(() => {
     if (language && language !== i18n.language) {
-      i18n.changeLanguage(language);
+      void changeLanguageWithResources(language);
     }
   }, [language]);
 

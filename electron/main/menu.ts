@@ -3,7 +3,7 @@
  * Creates the native application menu for macOS/Windows/Linux
  */
 import { Menu, app, BrowserWindow } from 'electron';
-import { MENU_LABELS } from '@shared/i18n/resources';
+import { MENU_LABELS } from '@shared/i18n/menu-labels';
 import { resolveSupportedLanguage, type LanguageCode } from '@shared/language';
 import { openExternalSafe } from '../utils/safe-open-external';
 import { getSetting } from '../utils/store';

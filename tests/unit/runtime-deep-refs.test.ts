@@ -60,7 +60,7 @@ describe('runtime deep reference guard (#93)', () => {
         "const claim = ['openclaw_runtime/src/knowledge/governance-store.ts'];",
         "const glob = 'openclaw_runtime/src/**';",
         "const braced = 'openclaw_runtime/src/x.{ts,js}';",
-        "const negated = '!openclaw_runtime/extensions/codegraph/dist/';",
+        "const negated = '!openclaw_runtime/generated/**';",
         'const interpolated = `openclaw_runtime/src/${name}`;',
       ].join('\n'),
     );

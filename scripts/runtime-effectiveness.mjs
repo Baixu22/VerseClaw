@@ -45,7 +45,7 @@ if (report.decision.status === 'blocked') {
 async function runEvaluation({ live }) {
   const script = String.raw`
   (async () => {
-    const helperModule = await import("./tests/unit/helpers/runtime-effectiveness-eval.ts");
+    const helperModule = await import("../tests/unit/helpers/runtime-effectiveness-eval.ts");
     const helper = helperModule.evaluateRuntimeEffectiveness ? helperModule : helperModule.default;
     const report = await helper.evaluateRuntimeEffectiveness({
       mode: ${JSON.stringify(live ? 'hybrid' : 'deterministic')},
@@ -59,10 +59,12 @@ async function runEvaluation({ live }) {
   `;
   const result = spawnPnpm([
     '--config.verify-deps-before-run=false',
+    '--dir',
+    'openclaw_runtime',
     'exec',
     'tsx',
     '--tsconfig',
-    'openclaw_runtime/tsconfig.json',
+    'tsconfig.json',
     '-',
   ], {
     cwd: ROOT,
@@ -87,7 +89,7 @@ async function runEvaluation({ live }) {
 async function renderMarkdown(report) {
   const script = String.raw`
   (async () => {
-    const helperModule = await import("./tests/unit/helpers/runtime-effectiveness-eval.ts");
+    const helperModule = await import("../tests/unit/helpers/runtime-effectiveness-eval.ts");
     const helper = helperModule.renderRuntimeEffectivenessMarkdown ? helperModule : helperModule.default;
     const report = JSON.parse(process.env.RUNTIME_EFFECTIVENESS_REPORT_JSON ?? "{}");
     console.log(helper.renderRuntimeEffectivenessMarkdown(report));
@@ -98,10 +100,12 @@ async function renderMarkdown(report) {
   `;
   const result = spawnPnpm([
     '--config.verify-deps-before-run=false',
+    '--dir',
+    'openclaw_runtime',
     'exec',
     'tsx',
     '--tsconfig',
-    'openclaw_runtime/tsconfig.json',
+    'tsconfig.json',
     '-',
   ], {
     cwd: ROOT,

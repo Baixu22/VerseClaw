@@ -1234,7 +1234,6 @@ async function loadSessionSummary(
     return { sessionKey, firstUserText: null, lastTimestamp: null };
   }
 }
-
 async function loadSessionTranscriptByKey(sessionKey: string, limit: number, gateway?: Pick<GatewayManager, 'rpc'>): Promise<RawMessage[] | null> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return null;

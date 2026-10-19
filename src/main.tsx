@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './i18n';
+import { i18nReady } from './i18n';
 import './styles/globals.css';
 import { RendererRoot } from './components/loading/RendererRoot';
 import { installMockHostBridge, isMockModeEnabled, seedMockPersistedSettings } from './lib/mock-host-bridge';

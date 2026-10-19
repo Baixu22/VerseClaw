@@ -4,7 +4,7 @@
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import i18n from '@/i18n';
+import { changeLanguageWithResources } from '@/i18n';
 import { hostApi } from '@/lib/host-api';
 import { OPENCLAW_GATEWAY_PORT } from '@shared/gateway-endpoint';
 import { resolveSupportedLanguage } from '@shared/language';
@@ -164,7 +164,7 @@ export const useSettingsStore = create<SettingsState>()(
               : {}),
           }));
           if (resolvedLanguage) {
-            i18n.changeLanguage(resolvedLanguage);
+            void changeLanguageWithResources(resolvedLanguage);
           }
         } catch {
           // Keep renderer-persisted settings as a fallback when the main
@@ -178,7 +178,7 @@ export const useSettingsStore = create<SettingsState>()(
       },
       setLanguage: (language) => {
         const resolvedLanguage = resolveSupportedLanguage(language);
-        i18n.changeLanguage(resolvedLanguage);
+        void changeLanguageWithResources(resolvedLanguage);
         set({ language: resolvedLanguage });
         void hostApi.settings.set('language', resolvedLanguage).catch(() => { });
       },

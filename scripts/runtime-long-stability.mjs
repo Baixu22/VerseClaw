@@ -126,9 +126,9 @@ async function runRuntimeRound(index) {
   });
   const effectivenessReport = await readJsonIfExists(RUNTIME_EFFECTIVENESS_JSON);
 
-  console.log(`[runtime-long-stability] round ${index}/3: CodeGraph e2e`);
-  const codegraphE2e = await runPnpm(['run', 'runtime:effectiveness:codegraph-e2e'], {
-    label: `round-${index}:codegraph-e2e`,
+  console.log(`[runtime-long-stability] round ${index}/3: FactStore impact parity`);
+  const impactParity = await runPnpm(['--dir', 'openclaw_runtime', 'exec', 'node', 'scripts/run-vitest.mjs', 'run', '--config', 'test/vitest/vitest.unit.config.ts', 'src/context-engine/views/impact/impact-parity.test.ts'], {
+    label: `round-${index}:impact-parity`,
     timeoutMs: 180_000,
   });
 
@@ -144,33 +144,26 @@ async function runRuntimeRound(index) {
     timeoutMs: 240_000,
   });
 
-  const codegraphComponent = getComponent(effectivenessReport, 'codegraph');
+  const impactParityComponent = getComponent(effectivenessReport, 'impact-parity');
   const agentMapComponent = getComponent(effectivenessReport, 'agentmap-shadow');
-  const codegraphE2eMetrics = parseMarkerJson(codegraphE2e.stdout, 'CODEGRAPH_E2E_METRICS') ?? {
-    indexedFileCount: codegraphComponent?.metrics?.indexedFileCount,
-    planHitTarget: codegraphComponent?.metrics?.checks?.planHitTarget,
-    sourceReadBoundary: codegraphComponent?.metrics?.checks?.sourceReadBoundary,
-  };
-
   const acceptanceStatus = effectivenessReport?.acceptance?.status;
   const round = {
     index,
     commands: {
       effectiveness: summarizeCommand(effectiveness),
-      codegraphE2e: summarizeCommand(codegraphE2e),
+      impactParity: summarizeCommand(impactParity),
       loopStability: summarizeCommand(loopStability),
     },
     aggregateDecision: effectivenessReport?.decision?.status ?? 'missing',
     acceptanceStatus: acceptanceStatus ?? 'missing',
     blockedComponents: effectivenessReport?.decision?.blockedComponents ?? [],
     regressionCount: effectivenessReport?.summary?.regressionCount ?? null,
-    codegraph: {
-      decision: codegraphComponent?.decision ?? 'missing',
-      indexedFileCount: codegraphComponent?.metrics?.indexedFileCount ?? null,
-      planHitTarget: codegraphComponent?.metrics?.checks?.planHitTarget ?? false,
-      sourceReadBoundary: codegraphComponent?.metrics?.checks?.sourceReadBoundary ?? false,
-      freshnessObserved: codegraphComponent?.metrics?.checks?.freshnessObserved ?? false,
-      e2eMetrics: codegraphE2eMetrics,
+    impactParity: {
+      decision: impactParityComponent?.decision ?? 'missing',
+      queryCount: impactParityComponent?.metrics?.queryCount ?? null,
+      allQueriesFound: impactParityComponent?.metrics?.checks?.allQueriesFound ?? false,
+      callerCount: impactParityComponent?.metrics?.callerCount ?? null,
+      impactFileCount: impactParityComponent?.metrics?.impactFileCount ?? null,
     },
     agentMap: {
       decision: agentMapComponent?.decision ?? 'missing',
@@ -290,17 +283,17 @@ function assessStability(data) {
   const durations = data.runtimeRounds.map((round) => round.commands.effectiveness.durationMs).filter(Number.isFinite);
   const variance = durationVariance(durations);
   const loopFailures = data.runtimeRounds.filter((round) => round.commands.loopStability.exitCode !== 0).map((round) => round.index);
-  const codegraphFailures = data.runtimeRounds.filter((round) => round.commands.codegraphE2e.exitCode !== 0).map((round) => round.index);
+  const impactParityFailures = data.runtimeRounds.filter((round) => round.commands.impactParity.exitCode !== 0).map((round) => round.index);
   return {
     runtimeRoundsPassed,
     passedRounds: data.runtimeRounds.filter((round) => round.passed).length,
     totalRounds: data.runtimeRounds.length,
     loopFailures,
-    codegraphFailures,
+    impactParityFailures,
     runtimeEffectivenessDurationMs: durations,
     durationVariance: variance,
     excessiveVariance: variance.maxMinRatio > 2 || variance.coefficientOfVariation > 0.35,
-    stable: runtimeRoundsPassed && loopFailures.length === 0 && codegraphFailures.length === 0,
+    stable: runtimeRoundsPassed && loopFailures.length === 0 && impactParityFailures.length === 0,
   };
 }
 
@@ -423,15 +416,15 @@ function buildOptimizationTargets(data) {
 function isRuntimeRoundPassed(round) {
   return (
     round.commands.effectiveness.exitCode === 0 &&
-    round.commands.codegraphE2e.exitCode === 0 &&
+    round.commands.impactParity.exitCode === 0 &&
     round.commands.loopStability.exitCode === 0 &&
     round.aggregateDecision === 'effective' &&
     round.acceptanceStatus === 'passed' &&
     round.blockedComponents.length === 0 &&
     round.regressionCount === 0 &&
-    round.codegraph.decision === 'effective' &&
-    (round.codegraph.indexedFileCount ?? 0) > 0 &&
-    round.codegraph.planHitTarget === true &&
+    round.impactParity.decision === 'effective' &&
+    (round.impactParity.queryCount ?? 0) > 0 &&
+    round.impactParity.allQueriesFound === true &&
     round.agentMap.decision === 'shadow-only' &&
     round.agentMap.noAuthority === true
   );
@@ -510,10 +503,10 @@ function renderMarkdown(data) {
 
   lines.push('## Runtime Rounds');
   lines.push('');
-  lines.push('| Round | Passed | Aggregate | Acceptance | CodeGraph | Indexed | Plan hit | AgentMap | Runtime ms | CodeGraph e2e ms | Loop ms |');
+  lines.push('| Round | Passed | Aggregate | Acceptance | Impact parity | Queries | All found | AgentMap | Runtime ms | Impact parity ms | Loop ms |');
   lines.push('|---:|---|---|---|---|---:|---|---|---:|---:|---:|');
   for (const round of data.runtimeRounds) {
-    lines.push(`| ${round.index} | ${yesNo(round.passed)} | ${round.aggregateDecision} | ${round.acceptanceStatus} | ${round.codegraph.decision} | ${round.codegraph.indexedFileCount ?? 'n/a'} | ${yesNo(round.codegraph.planHitTarget)} | ${round.agentMap.decision} | ${round.commands.effectiveness.durationMs} | ${round.commands.codegraphE2e.durationMs} | ${round.commands.loopStability.durationMs} |`);
+    lines.push(`| ${round.index} | ${yesNo(round.passed)} | ${round.aggregateDecision} | ${round.acceptanceStatus} | ${round.impactParity.decision} | ${round.impactParity.queryCount ?? 'n/a'} | ${yesNo(round.impactParity.allQueriesFound)} | ${round.agentMap.decision} | ${round.commands.effectiveness.durationMs} | ${round.commands.impactParity.durationMs} | ${round.commands.loopStability.durationMs} |`);
   }
   if (data.runtimeRounds.length === 0) lines.push('| n/a | running | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a |');
   lines.push('');

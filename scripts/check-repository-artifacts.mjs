@@ -52,7 +52,8 @@ export function checkRepositoryArtifacts(root = ROOT) {
     maxBuffer: 32 * 1024 * 1024,
     windowsHide: true,
   }).split('\0').filter(Boolean);
-  for (const path of shadowTracked) issues.push(`Tracked path is ignored: ${path}`);
+  const existingShadowTracked = shadowTracked.filter((path) => existsSync(join(root, path)));
+  for (const path of existingShadowTracked) issues.push(`Tracked path is ignored: ${path}`);
   const retained = policy.retainedFiles ?? [];
   for (const path of retained) {
     if (path.startsWith('/') || path.includes('..') || /[\\*?\[\]]/.test(path)

@@ -162,6 +162,19 @@ describe('repository artifact retention', () => {
     ]));
   });
 
+  it('does not report a staged deletion as an ignored tracked path', () => {
+    const directory = createFixture();
+    const path = 'scratch-output/replay.log';
+    write(directory, '.gitignore', '/scratch-output/\n');
+    write(directory, path, 'log');
+    git(directory, 'add', '--force', '--', path);
+    rmSync(join(directory, path));
+    git(directory, 'rm', '--cached', '--quiet', '--', path);
+    expect(checkRepositoryArtifacts(directory).issues).not.toContain(
+      `Tracked path is ignored: ${path}`,
+    );
+  });
+
   it('rejects a tracked path that is also matched by .gitignore (shadow tracking)', () => {
     const directory = createFixture();
     write(directory, '.gitignore', '/scratch-output/');

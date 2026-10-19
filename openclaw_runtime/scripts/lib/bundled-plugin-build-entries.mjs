@@ -170,6 +170,9 @@ function collectBundledPluginCandidates(cwd, extensionsRoot) {
         relativeFiles,
         topLevelPublicSurfaceEntries: collectTopLevelPublicSurfaceEntriesFromFiles(relativeFiles),
       }))
+      // git ls-files includes tracked files deleted from the working tree. A
+      // removed bundled plugin must not remain a build entry.
+      .filter((candidate) => fs.existsSync(candidate.pluginDir))
       .toSorted((left, right) => left.dirName.localeCompare(right.dirName));
   }
 

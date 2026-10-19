@@ -1072,6 +1072,43 @@ describe('host services', () => {
       });
   });
 
+  it('summarizes large transcripts from bounded head/tail reads', async () => {
+    const sessionsDir = join(testOpenClawConfigDir, 'agents', 'main', 'sessions');
+    mkdirSync(sessionsDir, { recursive: true });
+    writeFileSync(join(sessionsDir, 'sessions.json'), JSON.stringify({
+      sessions: [{ key: 'agent:main:large', file: 'large.jsonl' }],
+    }));
+    const filler = 'x'.repeat(4096);
+    const lines = [
+      JSON.stringify({
+        type: 'message',
+        message: { role: 'user', content: 'First prompt in a large transcript', timestamp: 2000 },
+      }),
+      ...Array.from({ length: 200 }, (_, index) => JSON.stringify({
+        type: 'message',
+        message: { role: 'assistant', content: `${index}:${filler}`, timestamp: 2001 + index },
+      })),
+      JSON.stringify({
+        type: 'message',
+        message: { role: 'assistant', content: 'Final answer', timestamp: 9000 },
+      }),
+    ];
+    writeFileSync(join(sessionsDir, 'large.jsonl'), lines.join('\n'));
+
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const sessionsApi = createSessionsApi();
+    const result = await sessionsApi.summaries({ sessionKeys: ['agent:main:large'] });
+
+    expect(result).toEqual({
+      success: true,
+      summaries: [{
+        sessionKey: 'agent:main:large',
+        firstUserText: 'First prompt in a large transcript',
+        lastTimestamp: 9000000,
+      }],
+    });
+  });
+
   it('reports compaction status unavailable when Gateway is missing', async () => {
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const sessionsApi = createSessionsApi();

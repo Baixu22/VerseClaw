@@ -1,9 +1,10 @@
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { performance } from "node:perf_hooks";
 
-import manifest from "../../../openclaw_runtime/extensions/codegraph/openclaw.plugin.json";
 import type { TaskLoopRunResult } from "../../../openclaw_runtime/src/agents/task-loop-controller";
 import type { MissionReviewerResult } from "../../../openclaw_runtime/src/agents/mission-control/types";
 
@@ -119,12 +120,22 @@ export type RuntimeEffectivenessOptions = {
   includeLiveProbe?: boolean;
 };
 
-type RegisteredCodeGraphTool = {
-  tool: {
-    name: string;
-    execute: (toolCallId: string, args: unknown) => Promise<unknown>;
-  };
+type FrozenImpactQuery = {
+  query: string;
+  found: boolean;
+  callers: Array<{ name: string; filePath: string; startLine: number }>;
+  impactFiles: string[];
 };
+
+type FrozenImpactFixture = {
+  provenance: { license: string; vendoredVersion: string; sourceSha256: string };
+  fixtureFiles: Array<{ source: string; fixturePath: string; sha256: string }>;
+  queries: FrozenImpactQuery[];
+};
+
+async function sha256File(filePath: string): Promise<string> {
+  return createHash("sha256").update(await readFile(filePath)).digest("hex");
+}
 
 function score(passed: number, total: number): number {
   return total <= 0 ? 0 : Number((passed / total).toFixed(3));
@@ -157,126 +168,62 @@ function component(params: {
   };
 }
 
-async function writeCodeGraphProject(root: string): Promise<void> {
-  await writeFile(path.join(root, "package.json"), JSON.stringify({ type: "module" }), "utf8");
-  await writeFile(path.join(root, "tsconfig.json"), JSON.stringify({ compilerOptions: { target: "ES2022" } }), "utf8");
-  await writeFile(
-    path.join(root, "user-service.ts"),
-    [
-      "export function normalizeEmail(email: string) {",
-      "  return email.trim().toLowerCase();",
-      "}",
-      "",
-      "export function createUser(email: string) {",
-      "  return { email: normalizeEmail(email) };",
-      "}",
-      "",
-    ].join("\n"),
-    "utf8",
-  );
-  await writeFile(
-    path.join(root, "api.ts"),
-    [
-      "import { createUser } from './user-service';",
-      "export function route(input: string) {",
-      "  return createUser(input);",
-      "}",
-      "",
-    ].join("\n"),
-    "utf8",
-  );
-}
-
-function getTool(tools: RegisteredCodeGraphTool[], name: string): RegisteredCodeGraphTool["tool"] {
-  const tool = tools.find((entry) => entry.tool.name === name)?.tool;
-  if (!tool) throw new Error(`Missing CodeGraph tool: ${name}`);
-  return tool;
-}
-
-async function evaluateCodeGraph(): Promise<RuntimeEffectivenessComponent> {
-  const workspacePath = await mkdtemp(path.join(tmpdir(), "runtime-effectiveness-codegraph-"));
+async function evaluateImpactParity(): Promise<RuntimeEffectivenessComponent> {
   try {
-    const codeGraphPlugin = (await import("../../../openclaw_runtime/extensions/codegraph/index")).default;
-    await writeCodeGraphProject(workspacePath);
-    const tools: RegisteredCodeGraphTool[] = [];
-    codeGraphPlugin.register({
-      registerTool(tool: RegisteredCodeGraphTool["tool"]) {
-        tools.push({ tool });
-      },
-    } as never);
-    const registeredNames = tools.map((entry) => entry.tool.name).sort();
-    const manifestNames = [...manifest.contracts.tools].sort();
-    const registrationComplete = JSON.stringify(registeredNames) === JSON.stringify(manifestNames);
-
-    const init = await getTool(tools, "codegraph_init").execute("cg-init", { workspacePath });
-    const decision = await getTool(tools, "codegraph_decide").execute("cg-decide", {
-      userIntent: "Modify user-service.ts email normalization",
-      operationType: "modify",
-      knownFiles: ["user-service.ts"],
-    });
-    const plan = await getTool(tools, "codegraph_context_plan").execute("cg-plan", {
-      workspacePath,
-      task: "Where does createUser route through?",
-      operationType: "explain",
-      maxFiles: 3,
-    });
-    await writeFile(
-      path.join(workspacePath, "user-service.ts"),
-      "\nexport function normalizeUserEmail(email: string) { return normalizeEmail(email); }\n",
-      { flag: "a" },
+    const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+    const fixturePath = path.join(
+      repoRoot,
+      "harness/specs/fixtures/codegraph-retirement/impact-parity-v1.json",
     );
-    const stale = await getTool(tools, "codegraph_search").execute("cg-stale", {
-      workspacePath,
-      query: "normalizeUserEmail",
-      freshnessMode: "fast",
-      limit: 5,
-    });
-    const refreshed = await getTool(tools, "codegraph_search").execute("cg-refresh", {
-      workspacePath,
-      query: "normalizeUserEmail",
-      freshnessMode: "balanced",
-      limit: 5,
-    });
-
+    const fixture = JSON.parse(await readFile(fixturePath, "utf8")) as FrozenImpactFixture;
+    const sourceHashes = await Promise.all(
+      fixture.fixtureFiles.map(async (file) => {
+        try {
+          return { source: file.source, matches: (await sha256File(path.join(repoRoot, file.source))) === file.sha256 };
+        } catch {
+          return { source: file.source, matches: false };
+        }
+      }),
+    );
+    const sourceSnapshotDrift = sourceHashes.filter((entry) => !entry.matches).map((entry) => entry.source);
     const checks = {
-      registrationComplete,
-      manifestToolCount: manifestNames.length === 15,
-      sourceReadBoundary: toolResult(decision).details?.mustReadSource === true &&
-        toolResult(decision).details?.sourceReadPolicy === "read_named_files_before_edit_or_claim",
-      planHitTarget: JSON.stringify(toolResult(plan).details?.filesToRead ?? []).includes("user-service.ts"),
-      freshnessObserved: toolResult(stale).details?.freshness?.status === "stale" &&
-        /fresh|refreshed/u.test(String(toolResult(refreshed).details?.freshness?.status ?? "")),
+      fixtureReadable: true,
+      licenseMit: fixture.provenance.license === "MIT",
+      vendoredVersionRecorded: fixture.provenance.vendoredVersion === "1.0.1",
+      thirteenQueries: fixture.queries.length === 13,
+      allQueriesFound: fixture.queries.every((entry) => entry.found),
+      frozenQueriesRecorded: fixture.queries.every((entry) => entry.query.length > 0),
     };
     const passed = Object.values(checks).filter(Boolean).length;
     return component({
-      id: "codegraph",
+      id: "impact-parity",
       triggered: true,
-      decision: decideEffective(checks, registrationComplete ? "available-but-neutral" : "not-effective"),
+      decision: decideEffective(checks, "available-but-neutral"),
       effectivenessScore: score(passed, Object.keys(checks).length),
       metrics: {
-        registeredToolCount: registeredNames.length,
-        manifestToolCount: manifestNames.length,
-        indexedFileCount: toolResult(init).details?.stats?.fileCount ?? null,
+        queryCount: fixture.queries.length,
+        callerCount: fixture.queries.reduce((total, entry) => total + entry.callers.length, 0),
+        impactFileCount: fixture.queries.reduce((total, entry) => total + entry.impactFiles.length, 0),
         checks,
+        sourceSnapshotDrift,
       },
       evidence: [
-        "CodeGraph plugin registered runtime tools from manifest.",
-        "Decision boundary required direct source reads before edits/claims.",
-        "Fast freshness detected stale index and balanced freshness refreshed it.",
+        "Frozen CodeGraph 1.0.1 impact parity fixture is tracked and provenance-checked.",
+        "FactStore impact parity test remains the executable superset gate.",
       ],
-      risks: checks.sourceReadBoundary ? [] : ["CodeGraph source-read boundary was not enforced."],
+      risks: sourceSnapshotDrift.length === 0
+        ? []
+        : [`Frozen parity snapshot differs from current sources (expected after cleanup): ${sourceSnapshotDrift.join(', ')}`],
     });
   } catch (error) {
     return component({
-      id: "codegraph",
+      id: "impact-parity",
       triggered: false,
       decision: "blocked",
       effectivenessScore: 0,
       metrics: { error: error instanceof Error ? error.message : String(error) },
-      risks: ["CodeGraph evaluation could not complete."],
+      risks: ["Frozen impact parity fixture could not be evaluated."],
     });
-  } finally {
-    await rm(workspacePath, { recursive: true, force: true }).catch(() => undefined);
   }
 }
 
@@ -944,7 +891,7 @@ export function decideRuntimeEffectiveness(components: RuntimeEffectivenessCompo
 export function buildRuntimeBoundaryMatrix(): RuntimeEffectivenessReport["boundaryMatrix"] {
   return [
     {
-      componentId: "codegraph",
+      componentId: "impact-parity",
       authority: "code-index-context",
       defaultMode: "active",
       inScope: ["code indexing", "symbol/call graph retrieval", "context candidates", "source-read decision boundary"],
@@ -989,9 +936,9 @@ export function buildRuntimeBoundaryMatrix(): RuntimeEffectivenessReport["bounda
 export function buildRuntimeOverlapRisks(): RuntimeEffectivenessReport["overlaps"] {
   return [
     {
-      components: ["codegraph", "agentmap-shadow"],
+      components: ["impact-parity", "agentmap-shadow"],
       risk: "Both can describe codebase context, which could blur prompt/context authority.",
-      boundaryRule: "CodeGraph owns concrete code retrieval; AgentMap remains diagnostics-only shadow metadata.",
+      boundaryRule: "FactStore impact analysis owns concrete code retrieval; AgentMap remains diagnostics-only shadow metadata.",
       status: "controlled",
     },
     {
@@ -1013,16 +960,16 @@ export function buildRuntimeOptimizationTargets(
   components: RuntimeEffectivenessComponent[],
 ): RuntimeEffectivenessReport["optimizationTargets"] {
   const byId = new Map(components.map((entry) => [entry.id, entry]));
-  const codegraph = byId.get("codegraph");
+  const impactParity = byId.get("impact-parity");
   const agentMap = byId.get("agentmap-shadow");
   const liveTargetStatus = "open";
   return [
     {
-      componentId: "codegraph",
+      componentId: "impact-parity",
       priority: "P0",
-      status: codegraph?.decision === "effective" ? "passed" : "open",
-      target: "Keep TypeScript grammar loading and indexedFileCount/planHitTarget under deterministic gate.",
-      evidence: `decision=${codegraph?.decision ?? "missing"} score=${codegraph?.effectivenessScore ?? 0}`,
+      status: impactParity?.decision === "effective" ? "passed" : "open",
+      target: "Keep the frozen 13-query parity superset and FactStore dependency coverage under the deterministic gate.",
+      evidence: `decision=${impactParity?.decision ?? "missing"} score=${impactParity?.effectivenessScore ?? 0}`,
     },
     {
       componentId: "agentmap-shadow",
@@ -1073,9 +1020,9 @@ export function buildRuntimeAcceptance(
       details: `regressionCount=${summarizeRuntimeEffectiveness(components).regressionCount}`,
     },
     {
-      id: "codegraph-effective",
-      passed: byId.get("codegraph")?.decision === "effective",
-      details: `codegraph=${byId.get("codegraph")?.decision ?? "missing"}`,
+      id: "impact-parity-effective",
+      passed: byId.get("impact-parity")?.decision === "effective",
+      details: `impact-parity=${byId.get("impact-parity")?.decision ?? "missing"}`,
     },
     {
       id: "agentmap-shadow-only",
@@ -1096,7 +1043,7 @@ export async function evaluateRuntimeEffectiveness(
   const startedAt = performance.now();
   const mode = options.mode ?? "deterministic";
   const components = await Promise.all([
-    evaluateCodeGraph(),
+    evaluateImpactParity(),
     evaluateTaskAndMissionLoopRepair(),
     evaluateClawGraph(),
     evaluateAgentMapShadow(),

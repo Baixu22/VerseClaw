@@ -1,7 +1,7 @@
 // Impact analysis view (SPEC Task 6, gate G): semantic rewrite of ragcode's
 // src/graph/impact-report.ts + src/graph/target-matcher.ts (MIT,
 // https://github.com/MarshallEriksen-Neura/ragcode) over the local FactStore.
-// Parity baseline is the vendored codegraph extension's callers/impact output
+// Parity baseline is the frozen CodeGraph 1.0.1 callers/impact output
 // (ALIGNMENT 校正2); recall must be a superset, never less.
 //
 // Join note: tree-sitter/TS-compiler call edges carry targetId =
