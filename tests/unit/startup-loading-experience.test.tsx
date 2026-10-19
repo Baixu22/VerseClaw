@@ -75,8 +75,9 @@ describe('Settings section loading feedback', () => {
 
     const loading = screen.getByTestId('settings-section-loading');
     const status = screen.getByTestId('settings-section-loading-status');
-    const skeleton = loading.children.item(1);
-    expect(skeleton).not.toBeNull();
+    const skeleton = screen.getByTestId('settings-section-loading-skeleton');
+    expect(loading).toHaveAttribute('aria-busy', 'true');
+    expect(loading.querySelector('.structural-loading-overlay')).not.toBeNull();
     expect(skeleton).toHaveClass('opacity-0');
     expect(status).toHaveClass('opacity-0');
 
@@ -145,3 +146,4 @@ describe('boot shell handoff', () => {
     expect(screen.queryByTestId('boot-shell')).not.toBeInTheDocument();
   });
 });
+
