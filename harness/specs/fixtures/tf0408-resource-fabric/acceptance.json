@@ -11,7 +11,7 @@
     "sha": "b276d5aee74cee4f99df8deb4c9560cace93e031",
     "subject": "feat(resources): unify admission through ResourceFabric"
   },
-  "generatedAt": "2026-10-19T03:28:25.986Z",
+  "generatedAt": "2026-10-19T03:35:11.821Z",
   "result": "pass",
   "pressure": {
     "before": "pressure-before.json",
@@ -20,9 +20,9 @@
       "historyTimeouts": 0,
       "maxActiveExec": 4,
       "maxActiveHistory": 4,
-      "totalMs": 73,
+      "totalMs": 98,
       "fair": true,
-      "limitEvents": 16
+      "limitEvents": 10
     },
     "workload": {
       "exec": 20,
@@ -101,5 +101,58 @@
   "hygiene": {
     "commit": "b31b6fd85",
     "note": "Retained network-protocol-reliability evidence paths in the reviewed artifact policy and regenerated the reviewed ignore block after rebasing onto origin/main fbecb0a4."
+  },
+  "postMerge": {
+    "mainMergeCommit": "7dba61375",
+    "upstreamMain": "3d1aa8337",
+    "gates": [
+      {
+        "command": "focused ResourceFabric + host-service vitest",
+        "exitCode": 0,
+        "testFiles": 10,
+        "tests": 90
+      },
+      {
+        "command": "pnpm run typecheck:node|web|test",
+        "exitCode": 0
+      },
+      {
+        "command": "pnpm run contract:check",
+        "exitCode": 0
+      },
+      {
+        "command": "pnpm run repo:artifacts:check",
+        "exitCode": 0,
+        "trackedPaths": 18331
+      },
+      {
+        "command": "pnpm run lint:bom",
+        "exitCode": 0
+      },
+      {
+        "command": "pnpm harness validate --spec harness/specs/tasks/resource-fabric-p2-admission.md",
+        "exitCode": 0
+      },
+      {
+        "command": "pnpm agent-dev:fast",
+        "exitCode": 0,
+        "testFiles": 7,
+        "tests": 88
+      },
+      {
+        "command": "pnpm run build:vite",
+        "exitCode": 0
+      },
+      {
+        "command": "portable Node 24.16.0 + @playwright/test: gateway-lifecycle + workspace-terminal-panel",
+        "exitCode": 0,
+        "tests": 6
+      },
+      {
+        "command": "pnpm run comms:replay && pnpm run comms:compare",
+        "exitCode": 0,
+        "result": "PASS"
+      }
+    ]
   }
 }

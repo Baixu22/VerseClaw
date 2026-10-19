@@ -21,5 +21,5 @@ also written into the shadow resource-envelope ledger.
 ## Result
 
 - Before: 0 exec timeouts / 0 history timeouts, peak concurrency 2/2, total 160 ms.
-- After: 0 exec timeouts / 0 history timeouts, peak concurrency 4/4, total 73 ms in the retained run, fair=true, 16 replayable limit events.
+- After: 0 exec timeouts / 0 history timeouts, peak concurrency 4/4, total 98 ms in the retained final run, fair=true, 10 replayable limit events. Timing varies run to run; the zero-timeout and fairness assertions are the stable acceptance signals.
 - The after run uses the same 20+20 workload; the fabric limit converges between 1 and 4 and records both expansion and contraction.

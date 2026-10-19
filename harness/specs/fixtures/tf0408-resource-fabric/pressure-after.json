@@ -3,7 +3,7 @@
   "phase": "after",
   "driven_by": "agent",
   "actor": "codex-tf0408-pressure",
-  "generatedAt": "2026-10-19T02:15:38.958Z",
+  "generatedAt": "2026-10-19T03:34:51.772Z",
   "workload": {
     "exec": 20,
     "history": 20,
@@ -15,146 +15,110 @@
   "maxActiveExec": 4,
   "maxActiveHistory": 4,
   "execDurations": [
-    11,
-    12,
-    12,
-    12,
-    12,
-    12,
-    12,
-    12,
-    12,
-    27,
-    27,
-    27,
-    27,
-    27,
-    27,
-    27,
-    27,
-    27,
-    27,
-    27
+    19,
+    18,
+    18,
+    18,
+    18,
+    19,
+    19,
+    19,
+    19,
+    33,
+    33,
+    33,
+    33,
+    33,
+    33,
+    33,
+    33,
+    33,
+    33,
+    33
   ],
   "historyDurations": [
-    12,
-    12,
-    11,
-    26,
-    26,
-    26,
-    26,
-    41,
-    41,
-    41,
-    41,
-    56,
-    56,
-    57,
-    57,
-    63,
-    63,
-    63,
-    63,
-    72
+    19,
+    19,
+    19,
+    33,
+    34,
+    34,
+    34,
+    49,
+    49,
+    49,
+    49,
+    65,
+    65,
+    65,
+    65,
+    81,
+    81,
+    81,
+    81,
+    96
   ],
-  "totalMs": 73,
+  "totalMs": 98,
   "fair": true,
   "limitEvents": [
     {
-      "at": 1792376138884,
+      "at": 1792380891674,
       "from": 2,
       "to": 3,
       "reason": "gradient2 latency sample"
     },
     {
-      "at": 1792376138885,
+      "at": 1792380891674,
       "from": 2,
       "to": 3,
       "reason": "gradient2 latency sample"
     },
     {
-      "at": 1792376138896,
+      "at": 1792380891693,
       "from": 3,
       "to": 4,
       "reason": "gradient2 latency sample"
     },
     {
-      "at": 1792376138897,
+      "at": 1792380891693,
+      "from": 2,
+      "to": 4,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792380891693,
+      "from": 2,
+      "to": 4,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792380891693,
+      "from": 2,
+      "to": 4,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792380891694,
       "from": 3,
       "to": 4,
       "reason": "gradient2 latency sample"
     },
     {
-      "at": 1792376138897,
-      "from": 2,
-      "to": 4,
-      "reason": "gradient2 latency sample"
-    },
-    {
-      "at": 1792376138897,
-      "from": 2,
-      "to": 4,
-      "reason": "gradient2 latency sample"
-    },
-    {
-      "at": 1792376138897,
-      "from": 2,
-      "to": 4,
-      "reason": "gradient2 latency sample"
-    },
-    {
-      "at": 1792376138912,
+      "at": 1792380891694,
       "from": 4,
       "to": 3,
       "reason": "gradient2 latency sample"
     },
     {
-      "at": 1792376138912,
-      "from": 3,
-      "to": 2,
-      "reason": "gradient2 latency sample"
-    },
-    {
-      "at": 1792376138912,
-      "from": 2,
-      "to": 1,
-      "reason": "gradient2 latency sample"
-    },
-    {
-      "at": 1792376138912,
+      "at": 1792380891694,
       "from": 4,
       "to": 3,
       "reason": "gradient2 latency sample"
     },
     {
-      "at": 1792376138912,
-      "from": 3,
-      "to": 2,
-      "reason": "gradient2 latency sample"
-    },
-    {
-      "at": 1792376138912,
-      "from": 2,
-      "to": 1,
-      "reason": "gradient2 latency sample"
-    },
-    {
-      "at": 1792376138912,
+      "at": 1792380891694,
       "from": 4,
       "to": 3,
-      "reason": "gradient2 latency sample"
-    },
-    {
-      "at": 1792376138912,
-      "from": 3,
-      "to": 2,
-      "reason": "gradient2 latency sample"
-    },
-    {
-      "at": 1792376138912,
-      "from": 2,
-      "to": 1,
       "reason": "gradient2 latency sample"
     }
   ],
@@ -172,13 +136,13 @@
       },
       "limitHistory": [
         {
-          "at": 1792376138884,
+          "at": 1792380891674,
           "from": 2,
           "to": 3,
           "reason": "gradient2 latency sample"
         },
         {
-          "at": 1792376138896,
+          "at": 1792380891693,
           "from": 3,
           "to": 4,
           "reason": "gradient2 latency sample"
@@ -198,13 +162,13 @@
       },
       "limitHistory": [
         {
-          "at": 1792376138885,
+          "at": 1792380891674,
           "from": 2,
           "to": 3,
           "reason": "gradient2 latency sample"
         },
         {
-          "at": 1792376138897,
+          "at": 1792380891694,
           "from": 3,
           "to": 4,
           "reason": "gradient2 latency sample"
@@ -214,7 +178,7 @@
     "workspaceExec:pressure-ws-1": {
       "active": 0,
       "queued": 0,
-      "limit": 1,
+      "limit": 3,
       "minLimit": 1,
       "maxLimit": 4,
       "activeByQos": {
@@ -224,27 +188,15 @@
       },
       "limitHistory": [
         {
-          "at": 1792376138897,
+          "at": 1792380891693,
           "from": 2,
           "to": 4,
           "reason": "gradient2 latency sample"
         },
         {
-          "at": 1792376138912,
+          "at": 1792380891694,
           "from": 4,
           "to": 3,
-          "reason": "gradient2 latency sample"
-        },
-        {
-          "at": 1792376138912,
-          "from": 3,
-          "to": 2,
-          "reason": "gradient2 latency sample"
-        },
-        {
-          "at": 1792376138912,
-          "from": 2,
-          "to": 1,
           "reason": "gradient2 latency sample"
         }
       ]
@@ -252,7 +204,7 @@
     "workspaceExec:pressure-ws-2": {
       "active": 0,
       "queued": 0,
-      "limit": 1,
+      "limit": 3,
       "minLimit": 1,
       "maxLimit": 4,
       "activeByQos": {
@@ -262,27 +214,15 @@
       },
       "limitHistory": [
         {
-          "at": 1792376138897,
+          "at": 1792380891693,
           "from": 2,
           "to": 4,
           "reason": "gradient2 latency sample"
         },
         {
-          "at": 1792376138912,
+          "at": 1792380891694,
           "from": 4,
           "to": 3,
-          "reason": "gradient2 latency sample"
-        },
-        {
-          "at": 1792376138912,
-          "from": 3,
-          "to": 2,
-          "reason": "gradient2 latency sample"
-        },
-        {
-          "at": 1792376138912,
-          "from": 2,
-          "to": 1,
           "reason": "gradient2 latency sample"
         }
       ]
@@ -290,7 +230,7 @@
     "workspaceExec:pressure-ws-3": {
       "active": 0,
       "queued": 0,
-      "limit": 1,
+      "limit": 3,
       "minLimit": 1,
       "maxLimit": 4,
       "activeByQos": {
@@ -300,27 +240,15 @@
       },
       "limitHistory": [
         {
-          "at": 1792376138897,
+          "at": 1792380891693,
           "from": 2,
           "to": 4,
           "reason": "gradient2 latency sample"
         },
         {
-          "at": 1792376138912,
+          "at": 1792380891694,
           "from": 4,
           "to": 3,
-          "reason": "gradient2 latency sample"
-        },
-        {
-          "at": 1792376138912,
-          "from": 3,
-          "to": 2,
-          "reason": "gradient2 latency sample"
-        },
-        {
-          "at": 1792376138912,
-          "from": 2,
-          "to": 1,
           "reason": "gradient2 latency sample"
         }
       ]
