@@ -18,7 +18,7 @@ import { Compile } from "typebox/compile";
 import { parseStrictNonNegativeInteger } from "../../../../infra/parse-finite-number.js";
 import { getCustomThemesDir, getThemesDir } from "../../../config.js";
 import type { SourceInfo } from "../../../sessions/source-info.js";
-import { closeWatcher, watchWithErrorHandler } from "../../../utils/fs-watch.js";
+import { closeWatcher, watchWithErrorHandler, type WatcherHubHandle } from "../../../utils/fs-watch.js";
 import { highlight, supportsLanguage } from "../../../utils/syntax-highlight.js";
 
 // ============================================================================
@@ -797,7 +797,7 @@ function setGlobalTheme(t: Theme): void {
 }
 
 let currentThemeName: string | undefined;
-let themeWatcher: fs.FSWatcher | undefined;
+let themeWatcher: WatcherHubHandle | undefined;
 let themeReloadTimer: NodeJS.Timeout | undefined;
 let onThemeChangeCallback: (() => void) | undefined;
 const registeredThemes = new Map<string, Theme>();

@@ -11,6 +11,7 @@ import type { GatewayManager } from '../gateway/manager';
 import { logger } from '../utils/logger';
 import { resolveAgentIdFromChannel } from '../utils/agent-config';
 import { resolveAccountIdFromSessionHistory } from '../utils/session-util';
+import { getTimerAligner } from '../../shared/resources';
 
 const CRON_AGENT_REPAIR_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 const REPAIR_ERROR_LOG_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
@@ -32,7 +33,7 @@ type CronRepairJob = {
   state?: Record<string, unknown>;
 };
 
-let repairTimer: ReturnType<typeof setInterval> | null = null;
+let repairUnregister: (() => void) | null = null;
 let lastRepairErrorLogAt = 0;
 
 const stats: CronRepairStats = {
@@ -97,9 +98,12 @@ async function runRepairTick(gatewayManager: GatewayManager): Promise<void> {
 }
 
 export function startCronAgentRepair(gatewayManager: GatewayManager): void {
-  if (repairTimer) return;
-  repairTimer = setInterval(() => {
-    void runRepairTick(gatewayManager).catch((error) => {
+  if (repairUnregister) return;
+  repairUnregister = getTimerAligner().register({
+    id: 'cron-agent-repair',
+    intervalMs: CRON_AGENT_REPAIR_INTERVAL_MS,
+    priority: 'background',
+    run: () => runRepairTick(gatewayManager).catch((error) => {
       stats.failures += 1;
       stats.lastError = String(error);
       const now = Date.now();
@@ -107,14 +111,13 @@ export function startCronAgentRepair(gatewayManager: GatewayManager): void {
         lastRepairErrorLogAt = now;
         logger.warn('Periodic cron repair error:', error);
       }
-    });
-  }, CRON_AGENT_REPAIR_INTERVAL_MS);
-  repairTimer.unref?.();
+    }),
+  });
 }
 
 export function disposeCronMaintenance(): void {
-  if (repairTimer) {
-    clearInterval(repairTimer);
-    repairTimer = null;
+  if (repairUnregister) {
+    repairUnregister();
+    repairUnregister = null;
   }
 }

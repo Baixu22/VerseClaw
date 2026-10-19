@@ -1,0 +1,22 @@
+{
+  "schema": "clawx.tf0400.watcher-handle-pressure/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0400",
+  "generatedAt": "2026-10-19T03:55:30.343Z",
+  "workload": {
+    "roots": 2,
+    "subscriptions": 5
+  },
+  "legacyHandles": 5,
+  "hubHandles": 2,
+  "reductionRatio": 0.6,
+  "diagnostics": {
+    "directoryWatchers": 2,
+    "fileWatchers": 0,
+    "subscriptions": 5,
+    "keys": [
+      "D:\\tmp\\tf0400-watch-bXJG2c\\a",
+      "D:\\tmp\\tf0400-watch-bXJG2c\\b"
+    ]
+  }
+}

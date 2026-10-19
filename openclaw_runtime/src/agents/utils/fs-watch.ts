@@ -3,11 +3,13 @@
  *
  * Centralizes retry timing and close/error handling for agent file watchers.
  */
-import { type FSWatcher, type WatchListener, watch } from "node:fs";
+import { type FSWatcher, type WatchListener } from "node:fs";
+import { getWatcherHub, type WatcherHubHandle } from "../../../../shared/resources/watcher-hub.js";
+export type { WatcherHubHandle };
 
 export const FS_WATCH_RETRY_DELAY_MS = 5000;
 
-export function closeWatcher(watcher: FSWatcher | null | undefined): void {
+export function closeWatcher(watcher: FSWatcher | WatcherHubHandle | null | undefined): void {
   if (!watcher) {
     return;
   }
@@ -23,11 +25,9 @@ export function watchWithErrorHandler(
   path: string,
   listener: WatchListener<string>,
   onError: () => void,
-): FSWatcher | null {
+): WatcherHubHandle | null {
   try {
-    const watcher = watch(path, listener);
-    watcher.on("error", onError);
-    return watcher;
+    return getWatcherHub().subscribeDirectory(path, listener as (eventType: string, filename: string | null) => void, onError);
   } catch {
     onError();
     return null;

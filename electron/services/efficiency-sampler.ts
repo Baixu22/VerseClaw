@@ -20,6 +20,7 @@
  */
 
 import { cpus, freemem, totalmem } from 'node:os';
+import type { TimerAligner } from '../../shared/resources';
 import { logger } from '../utils/logger';
 
 export type EfficiencySampleSource = 'os-cpu' | 'process-memory';
@@ -71,6 +72,8 @@ export interface EfficiencySamplerOptions {
   readSystemMemory?: () => { free: number; total: number };
   /** Current shed state, injected so the sampler stays policy-free. */
   isShed?: () => boolean;
+  /** Optional shared timer aligner; production wires the process singleton. */
+  scheduler?: Pick<TimerAligner, 'register'>;
 }
 
 const DEFAULT_INTERVAL_MS = 5_000;
@@ -110,9 +113,11 @@ export class EfficiencySampler {
   private readonly readMemory: () => { rss: number; heapUsed: number };
   private readonly readSystemMemory: () => { free: number; total: number };
   private readonly isShed: () => boolean;
+  private readonly optionsScheduler: Pick<TimerAligner, 'register'> | undefined;
 
   private samples: EfficiencySample[] = [];
   private timer: ReturnType<typeof setInterval> | null = null;
+  private unregister: (() => void) | null = null;
   private lastCpuTime: { user: number; system: number } | null = null;
   private lastCpuAt: number | null = null;
   private lastSampleAt: number | null = null;
@@ -127,18 +132,28 @@ export class EfficiencySampler {
     this.readMemory = options.readMemory ?? defaultReadMemory;
     this.readSystemMemory = options.readSystemMemory ?? defaultReadSystemMemory;
     this.isShed = options.isShed ?? (() => false);
+    this.optionsScheduler = options.scheduler;
   }
 
   /** Start periodic sampling. Idempotent: a second call is a no-op. */
   start(): void {
-    if (this.timer) return;
+    if (this.timer || this.unregister) return;
     // Take a baseline immediately so the first interval tick can report a real
     // CPU percentage instead of waiting a full interval.
     this.lastCpuTime = this.readCpuTime();
     this.lastCpuAt = this.now();
-    this.timer = setInterval(() => this.capture(), this.intervalMs);
-    // Never hold the process open just for telemetry.
-    this.timer.unref?.();
+    if (this.optionsScheduler) {
+      this.unregister = this.optionsScheduler.register({
+        id: 'efficiency-sampler',
+        intervalMs: this.intervalMs,
+        priority: 'background',
+        run: () => { this.capture(); },
+      });
+    } else {
+      this.timer = setInterval(() => this.capture(), this.intervalMs);
+      // Never hold the process open just for telemetry.
+      this.timer.unref?.();
+    }
     logger.info('[efficiency-sampler] started', {
       intervalMs: this.intervalMs,
       maxSamples: this.maxSamples,
@@ -147,6 +162,10 @@ export class EfficiencySampler {
 
   /** Stop sampling and release the timer. Safe to call when not started. */
   stop(): void {
+    if (this.unregister) {
+      this.unregister();
+      this.unregister = null;
+    }
     if (this.timer) {
       clearInterval(this.timer);
       this.timer = null;
@@ -155,7 +174,7 @@ export class EfficiencySampler {
   }
 
   get running(): boolean {
-    return this.timer !== null;
+    return this.timer !== null || this.unregister !== null;
   }
 
   /**

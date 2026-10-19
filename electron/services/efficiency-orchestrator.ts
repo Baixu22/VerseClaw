@@ -16,12 +16,13 @@ import { EfficiencySampler, type EfficiencySummary } from './efficiency-sampler'
 import { EfficiencyPowerPolicy, type EfficiencyShedState } from './efficiency-power-policy';
 import { getBackgroundWorkGate, resetBackgroundWorkGateForTest, type BackgroundWorkGateState } from '../../openclaw_runtime/src/resources/background-work-gate';
 import { getAggregatedResourceEnvelopeSnapshot } from './resource-envelope';
+import { getTimerAligner } from '../../shared/resources';
 
 let sampler: EfficiencySampler | null = null;
 let policy: EfficiencyPowerPolicy | null = null;
 let started = false;
 let unsubscribeWindowEvents: (() => void) | null = null;
-let backgroundGateTimer: ReturnType<typeof setInterval> | null = null;
+let backgroundGateUnregister: (() => void) | null = null;
 let backgroundGateInFlight = false;
 
 function getOrCreate(): { sampler: EfficiencySampler; policy: EfficiencyPowerPolicy } {
@@ -29,6 +30,7 @@ function getOrCreate(): { sampler: EfficiencySampler; policy: EfficiencyPowerPol
     // The policy is constructed first so the sampler can read its shed state.
     policy = new EfficiencyPowerPolicy({
       onTransition: (state) => {
+        getTimerAligner().setShedding(state.shedding);
         logger.info('[efficiency] shed state changed', {
           shedding: state.shedding,
           reason: state.reason,
@@ -54,7 +56,7 @@ function startBackgroundWorkGate(
   activeSampler: EfficiencySampler,
   activePolicy: EfficiencyPowerPolicy,
 ): void {
-  if (backgroundGateTimer) return;
+  if (backgroundGateUnregister) return;
   const update = async (): Promise<void> => {
     if (backgroundGateInFlight) return;
     backgroundGateInFlight = true;
@@ -74,10 +76,12 @@ function startBackgroundWorkGate(
     }
   };
   void update();
-  backgroundGateTimer = setInterval(() => {
-    void update();
-  }, 5_000);
-  backgroundGateTimer.unref?.();
+  backgroundGateUnregister = getTimerAligner().register({
+    id: 'efficiency-background-gate',
+    intervalMs: 5_000,
+    priority: 'background',
+    run: update,
+  });
 }
 export function startRuntimeEfficiency(): void {
   if (started) return;
@@ -158,9 +162,9 @@ export function attachWindowVisibility(): () => void {
 /** Stop sampling and detach listeners. Safe to call when not started. */
 export function stopRuntimeEfficiency(): void {
   if (!started) return;
-  if (backgroundGateTimer) {
-    clearInterval(backgroundGateTimer);
-    backgroundGateTimer = null;
+  if (backgroundGateUnregister) {
+    backgroundGateUnregister();
+    backgroundGateUnregister = null;
   }
   sampler?.stop();
   unsubscribeWindowEvents?.();

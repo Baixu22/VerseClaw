@@ -1,0 +1,15 @@
+{
+  "schema": "clawx.tf0400.timer-shed-pressure/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0400",
+  "generatedAt": "2026-10-19T03:59:08.486Z",
+  "windowMs": 1500,
+  "tasks": 6,
+  "taskIntervalMs": 500,
+  "busyMsPerTask": 5,
+  "unshedRuns": 18,
+  "shedRuns": 6,
+  "unshedCpuMs": 93,
+  "shedCpuMs": 32,
+  "cpuReductionRatio": 0.6559139784946236
+}

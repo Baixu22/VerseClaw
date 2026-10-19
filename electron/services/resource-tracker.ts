@@ -17,6 +17,7 @@ import {
 } from '../../shared/types/resource-tracker';
 import { logger } from '../utils/logger';
 import { getBackgroundWorkGate } from '../../openclaw_runtime/src/resources/background-work-gate';
+import { getTimerAligner } from '../../shared/resources';
 
 const execAsync = promisify(exec);
 
@@ -61,21 +62,25 @@ function beforeKeys(before: ListeningPort[] | Set<string>): Set<string> {
 
 export class ResourceTracker {
   private resources = new Map<string, ResourceRecord>();
-  private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
+  private heartbeatUnregister: (() => void) | null = null;
   private discoveryTimers = new Set<ReturnType<typeof setTimeout>>();
   private heartbeatInFlight = false;
 
   start(): void {
-    if (this.heartbeatTimer) return;
-    this.heartbeatTimer = setInterval(() => this.runHeartbeat(), HEARTBEAT_INTERVAL_MS);
-    this.heartbeatTimer.unref?.();
+    if (this.heartbeatUnregister) return;
+    this.heartbeatUnregister = getTimerAligner().register({
+      id: 'resource-tracker-heartbeat',
+      intervalMs: HEARTBEAT_INTERVAL_MS,
+      priority: 'background',
+      run: () => this.runHeartbeat(),
+    });
     logger.info('[ResourceTracker] Started heartbeat interval');
   }
 
   stop(): void {
-    if (this.heartbeatTimer) {
-      clearInterval(this.heartbeatTimer);
-      this.heartbeatTimer = null;
+    if (this.heartbeatUnregister) {
+      this.heartbeatUnregister();
+      this.heartbeatUnregister = null;
     }
     for (const timer of this.discoveryTimers) clearTimeout(timer);
     this.discoveryTimers.clear();

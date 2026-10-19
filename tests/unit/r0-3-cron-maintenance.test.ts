@@ -3,6 +3,7 @@
 // expose failure counts through the diagnostics stats surface.
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { resetTimerAlignerForTest } from '../../shared/resources/timer-aligner';
 
 const mocks = vi.hoisted(() => ({
   resolveAgentIdFromChannel: vi.fn(),
@@ -45,11 +46,13 @@ describe('R0-3 cron maintenance loop', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
+    resetTimerAlignerForTest();
     mocks.resolveAgentIdFromChannel.mockResolvedValue('agent-resolved');
     mocks.resolveAccountIdFromSessionHistory.mockResolvedValue(null);
   });
 
   afterEach(() => {
+    resetTimerAlignerForTest();
     vi.useRealTimers();
   });
 
@@ -80,6 +83,7 @@ describe('R0-3 cron maintenance loop', () => {
 
     startCronAgentRepair(gateway as never);
     await vi.advanceTimersByTimeAsync(5 * 60 * 1000);
+    await Promise.resolve();
 
     const stats = getCronRepairStats();
     expect(stats.failures).toBe(1);

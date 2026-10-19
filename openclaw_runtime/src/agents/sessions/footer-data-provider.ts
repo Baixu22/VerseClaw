@@ -6,14 +6,12 @@
 import { type ExecFileException, execFile, spawnSync } from "node:child_process";
 import {
   existsSync,
-  type FSWatcher,
   readFileSync,
   statSync,
-  unwatchFile,
-  watchFile,
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { closeWatcher, FS_WATCH_RETRY_DELAY_MS, watchWithErrorHandler } from "../utils/fs-watch.js";
+import { closeWatcher, FS_WATCH_RETRY_DELAY_MS, watchWithErrorHandler, type WatcherHubHandle } from "../utils/fs-watch.js";
+import { getWatcherHub } from "../../../../shared/resources/watcher-hub.js";
 
 type GitPaths = {
   repoDir: string;
@@ -113,10 +111,9 @@ export class FooterDataProvider {
   private extensionStatuses = new Map<string, string>();
   private cachedBranch: string | null | undefined = undefined;
   private gitPaths: GitPaths | null | undefined = undefined;
-  private headWatcher: FSWatcher | null = null;
-  private reftableWatcher: FSWatcher | null = null;
-  private reftableTablesListWatcher: FSWatcher | null = null;
-  private reftableTablesListPath: string | null = null;
+  private headWatcher: WatcherHubHandle | null = null;
+  private reftableWatcher: WatcherHubHandle | null = null;
+  private reftableTablesListWatcher: WatcherHubHandle | null = null;
   private branchChangeCallbacks = new Set<() => void>();
   private availableProviderCount = 0;
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
@@ -295,10 +292,6 @@ export class FooterDataProvider {
     this.reftableWatcher = null;
     closeWatcher(this.reftableTablesListWatcher);
     this.reftableTablesListWatcher = null;
-    if (this.reftableTablesListPath) {
-      unwatchFile(this.reftableTablesListPath);
-      this.reftableTablesListPath = null;
-    }
     if (this.gitWatcherRetryTimer) {
       clearTimeout(this.gitWatcherRetryTimer);
       this.gitWatcherRetryTimer = null;
@@ -361,26 +354,19 @@ export class FooterDataProvider {
 
       const tablesListPath = join(reftableDir, "tables.list");
       if (existsSync(tablesListPath)) {
-        this.reftableTablesListPath = tablesListPath;
-        this.reftableTablesListWatcher = watchWithErrorHandler(
+        this.reftableTablesListWatcher = getWatcherHub().subscribeFile(
           tablesListPath,
-          () => {
-            this.scheduleRefresh();
+          (current, previous) => {
+            if (
+              current.mtimeMs !== previous.mtimeMs ||
+              current.ctimeMs !== previous.ctimeMs ||
+              current.size !== previous.size
+            ) {
+              this.scheduleRefresh();
+            }
           },
-          () => this.handleGitWatcherError(),
+          { intervalMs: 250, onError: () => this.handleGitWatcherError() },
         );
-        if (!this.reftableTablesListWatcher) {
-          return;
-        }
-        watchFile(tablesListPath, { interval: 250 }, (current, previous) => {
-          if (
-            current.mtimeMs !== previous.mtimeMs ||
-            current.ctimeMs !== previous.ctimeMs ||
-            current.size !== previous.size
-          ) {
-            this.scheduleRefresh();
-          }
-        });
       }
     }
   }
