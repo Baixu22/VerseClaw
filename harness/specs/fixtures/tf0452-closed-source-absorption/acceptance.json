@@ -118,7 +118,9 @@
       "Codex Cloud：托管 attempt",
       "NotebookLM：claim 级溯源改造 Knowledge 审阅语义",
       "Glean / Readwise：捕获摩擦与知识管线产品决策",
-      "Claude Code：权限模型整体替换"
+      "Claude Code：权限模型整体替换",
+      "Augment Code / §9.2：先对固定任务集做上下文检索精度基准，再提升 C6 —— 属 TF-0424 决策门，本树无晋级权",
+      "§9.4：Knowledge 审阅队列 diff-first 审批 —— 会改已冻结的三段结构，需独立任务规格与独立 E2E，超出本树 8 节点范围"
     ],
     "unverifiedBoundaries": [
       "未运行完整仓库 typecheck（pnpm run typecheck）；仅运行 web / test / openclaw_runtime core 三个 tsgo project",
@@ -220,5 +222,21 @@
     "modifiesFrozenDefaults": false,
     "touchesResourceFabric": false,
     "touchesContextLifecycle": false
+  },
+  "sectionCoverage": {
+    "§0": "not-applicable-background",
+    "§1": "absorbed:TF-0447",
+    "§2": "absorbed:TF-0448",
+    "§3": "deliberately-not-done:belongs-to-TF-0424-C6-gate",
+    "§4": "absorbed:TF-0449; blocks already covered by TaskLedgerEdgeType",
+    "§5": "deliberately-not-done:local-first-boundary",
+    "§6": "covered:PermissionDecisionEvent+TF-0379/0380",
+    "§7": "deliberately-not-done:frozen-review-semantics",
+    "§8": "absorbed:TF-0450",
+    "§9.1": "absorbed:TF-0447+TF-0448+TF-0450",
+    "§9.2": "deliberately-not-done:belongs-to-TF-0424-C6-gate",
+    "§9.3": "absorbed:TF-0449",
+    "§9.4": "deliberately-not-done:needs-separate-spec-and-e2e",
+    "§9.5": "absorbed:TF-0450"
   }
 }

@@ -32,7 +32,7 @@
 | Codex/Manus 语义收敛（CodingRun、ExecutionEnvironment、diff-first attempt） | TF-0370 子树（TF-0371/0375/0379/0383/0387/0390） | 本轮不重复实现 |
 | Task Ledger 阻塞关系 | `shared/types/task-ledger.ts` 的 `TaskLedgerEdgeType` 含 `blocks` | 计划原以为缺失，核对后确认已存在；裁定为已覆盖而非重造 |
 
-## 三、刻意不做（8 项，具名清单）
+## 三、刻意不做（10 项，具名清单）
 
 见 `harness/specs/decisions/tf0451-closed-source-non-goals.md`。摘要：
 
@@ -44,11 +44,22 @@
 6. NotebookLM：claim 级溯源改造 Knowledge 审阅语义
 7. Glean / Readwise：捕获摩擦与知识管线产品决策
 8. Claude Code：权限模型整体替换
+9. Augment Code / §9.2：先对固定任务集做上下文检索精度基准，再提升 C6 —— 属 TF-0424 决策门，本树无晋级权
+10. §9.4：Knowledge 审阅队列 diff-first 审批 —— 会改已冻结的三段结构，需独立任务规格与独立 E2E，超出本树 8 节点范围
 
 锚定边界：本地 Electron + 本地 gateway；Windows x64 受控预览。引入远端 VM 属产品范围变更，不在设计吸收范围。
 
 保留的最小吸收形式：Cursor 的隔离立场 → `ExecutionEnvironment` 分层；Codex Cloud 的只读聚合 → `CodingRun` + diff-first attempt。
 
+### 逐节完整性补正
+
+补正时发现初版三态裁定只覆盖了 8 个产品条目，漏掉调研 §3、§9.2、§9.4。已在
+harness/specs/decisions/tf0446-closed-source-three-state-verdict.md 末尾追加
+「调研文档逐节完整性对照」，把 §0–§9.5 共 14 节全部映射为三态，漏掉的 3 项
+显式归入「刻意不做（本轮）」并写明归属与理由。
+
+这不是把它们当作已完成，而是补齐根节点「无遗漏」的验收依据。机器可读映射见
+cceptance.json 的 sectionCoverage 字段。
 ## 四、未验证边界（8 项，如实记录为 limitation）
 
 1. 未运行完整仓库 `pnpm run typecheck`；只跑 web / test / openclaw_runtime core 三个 tsgo project
