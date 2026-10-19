@@ -14,6 +14,9 @@ Agent-driven evidence for `network-io-governance`:
   `maxBatch=5`, retained as a smaller deterministic batching check.
 - `wal-schedule.json`: a real `DatabaseSync` WAL maintenance task registered
   and removed through `TimerAligner`.
+- `acceptance.json`: the independent detached-worktree run at candidate
+  `ef69644e65f2837d09b0b0318ca582b890a689ee`. The retained sample shows an
+  81.278% HTTPS P50 reduction and a 95% reduction in ACP update transactions.
 
 Generate the samples from the repository root:
 

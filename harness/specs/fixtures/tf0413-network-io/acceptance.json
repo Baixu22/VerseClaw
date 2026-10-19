@@ -1,0 +1,148 @@
+{
+  "schema": "clawx.tf0401.network-io-acceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0413",
+  "nodes": [
+    "TF-0401",
+    "TF-0413",
+    "TF-0414"
+  ],
+  "candidate": {
+    "sha": "ef69644e65f2837d09b0b0318ca582b890a689ee",
+    "subject": "feat(resources): pool direct network I/O and coalesce SQLite writes"
+  },
+  "acceptanceRun": {
+    "worktree": "D:\\ClawX-candidates\\tf0401-acceptance-20261019",
+    "mode": "detached clean worktree",
+    "head": "ef69644e65f2837d09b0b0318ca582b890a689ee",
+    "result": "pass"
+  },
+  "generatedAt": "2026-10-19T07:59:50.9891706Z",
+  "result": "pass",
+  "evidence": {
+    "fetchBoundary": {
+      "artifact": "fetch-boundary.json",
+      "scannedFiles": 243,
+      "directFetchViolations": 0,
+      "proxyAwareCallSites": 30,
+      "transportOwners": [
+        "utils\\network-pool.ts",
+        "utils\\proxy-fetch.ts"
+      ]
+    },
+    "networkPool": {
+      "artifact": "https-p50.json",
+      "workloadRequests": 5,
+      "beforeP50Ms": 8.250699999999824,
+      "afterP50Ms": 1.5446999999999207,
+      "p50Reduction": 0.81278,
+      "threshold": 0.3,
+      "beforeConnections": 5,
+      "afterConnections": 1,
+      "connectionReduction": 0.8,
+      "metrics": {
+        "transport": "undici-agent",
+        "connectionLimit": 1,
+        "openedConnections": 1,
+        "activeConnections": 0,
+        "requests": 5,
+        "dnsLookups": 1,
+        "active": 0,
+        "reuseRatio": 0.8
+      }
+    },
+    "sqliteWrites": {
+      "artifact": "production-write-coalescing.json",
+      "productionPath": "createSqliteAcpEventLedger",
+      "baselineTransactions": 20,
+      "updateTransactions": 1,
+      "totalTransactions": 2,
+      "rowsBefore": 20,
+      "rowsAfter": 20,
+      "reductionRatio": 0.95,
+      "threshold": 0.4
+    },
+    "walSchedule": {
+      "artifact": "wal-schedule.json",
+      "checkpointSucceeded": true,
+      "registeredTasks": 1,
+      "tasksAfterClose": 0,
+      "schedulerId": "sqlite-wal:wal-test",
+      "priority": "background"
+    }
+  },
+  "gates": [
+    {
+      "command": "focused P4 tests",
+      "exitCode": 0,
+      "testFiles": 14,
+      "tests": 78
+    },
+    {
+      "command": "targeted eslint",
+      "exitCode": 0,
+      "files": 22
+    },
+    {
+      "command": "pnpm run typecheck:node",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:web",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run contract:check",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/network-io-governance.md",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 18356
+    },
+    {
+      "command": "pnpm run lint:bom",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run build:runtime",
+      "exitCode": 0,
+      "result": "gateway ready"
+    },
+    {
+      "command": "portable Node 24.16.0 + @playwright/test: gateway-lifecycle + workspace-terminal-panel",
+      "exitCode": 0,
+      "tests": 6
+    },
+    {
+      "command": "pnpm run comms:replay && pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "PASS",
+      "rpcP95Ms": 284.1667,
+      "historyLoadQps": 0.4127,
+      "baselineDelta": "0.00%"
+    }
+  ],
+  "boundaries": [
+    "The HTTPS sample is a controlled local self-signed workload, not production traffic or a cross-platform latency claim.",
+    "Direct Electron requests use NetworkPool; fixed-proxy configuration intentionally stays on Electron net.fetch so Chromium owns proxy routing and bypass rules.",
+    "The SQLite result measures transaction count and durable row persistence on a temporary real database; it is not a device-level fsync or power-loss benchmark.",
+    "A clean worktree requires build:vite to generate the gitignored extension bridge before typecheck:node/typecheck:web; pre-build bridge-missing errors were environment setup, not retained gate failures.",
+    "Runtime core tsgo was not rerun in this acceptance run; build:runtime completed and its gateway smoke became ready. The previously recorded core typecheck boundary is not upgraded to a pass."
+  ],
+  "productLocks": "unchanged",
+  "mergedCandidate": null,
+  "postMergeGates": []
+}
