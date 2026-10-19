@@ -1645,6 +1645,14 @@
         "gateway_unavailable": "Gateway недоступен"
       }
     },
+    "contextPressure": {
+      "title": "Контекст сессии",
+      "cacheRead": "Токены из кэша",
+      "warmHitRate": "Доля попаданий (тёплый префикс)",
+      "lastTurnHitRate": "Доля попаданий (последний ход)",
+      "estimatedCost": "Оценочная стоимость",
+      "unknown": "Ещё не измерено"
+    },
     "taskLoopUpgrade": {
       "title": "Доступен Task Loop",
       "summary": "Проектное выполнение с checkpoint.",

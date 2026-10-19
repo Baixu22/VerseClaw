@@ -79,6 +79,7 @@ import { rendererExtensionRegistry } from '@/extensions/registry';
 import { collectDroppedFiles } from '@/lib/collect-dropped-files';
 import { fetchQuickAccessSkills } from '@/lib/quick-access-skills';
 import { ChatAgentEffortPanel, getAgentEffortLabelKey } from '@/components/chat/ChatAgentEffortPopover';
+import { ChatContextPressure } from '@/components/chat/ChatContextPressure';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import {
   buildCapabilityActionMessage,
@@ -4600,6 +4601,7 @@ export function ChatInput({
           <DialogDescription className="mt-2 text-sm text-muted-foreground">
             {t('composer.compaction.dialogDescription')}
           </DialogDescription>
+          <ChatContextPressure liveUsage={liveUsage} contextRange={contextRange} />
           <div className="mt-4 grid gap-2 text-sm">
             <div className="flex items-center justify-between gap-4 rounded-md bg-surface-input px-3 py-2">
               <span className="text-muted-foreground">{t('composer.compaction.tokenUsage')}</span>

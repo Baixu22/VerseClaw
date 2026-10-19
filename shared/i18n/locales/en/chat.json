@@ -1657,6 +1657,14 @@
         "gateway_unavailable": "Gateway unavailable"
       }
     },
+    "contextPressure": {
+      "title": "Session context",
+      "cacheRead": "Cache-served tokens",
+      "warmHitRate": "Warm hit rate",
+      "lastTurnHitRate": "Last turn hit rate",
+      "estimatedCost": "Estimated cost",
+      "unknown": "Not measured yet"
+    },
     "taskLoopUpgrade": {
       "title": "Task Loop available",
       "summary": "Project-scale execution with checkpoints.",
