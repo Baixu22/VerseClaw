@@ -1,0 +1,27 @@
+{
+  "schema": "clawx.tf0413.production-write-coalescing/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0413",
+  "generatedAt": "2026-10-19T07:41:25.111Z",
+  "workload": {
+    "updates": 20,
+    "writeBatchSize": 32,
+    "writeFlushDelayMs": 25,
+    "implementation": "createSqliteAcpEventLedger"
+  },
+  "before": {
+    "transactions": 20,
+    "rows": 20
+  },
+  "after": {
+    "updateTransactions": 1,
+    "totalTransactions": 2,
+    "rows": 20,
+    "stats": {
+      "queued": 0,
+      "batches": 2,
+      "flushedItems": 21
+    }
+  },
+  "reductionRatio": 0.95
+}

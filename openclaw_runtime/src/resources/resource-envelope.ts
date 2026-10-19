@@ -42,6 +42,7 @@ const DEFAULT_LIMITS: Record<ResourceKind, ResourceLimits> = {
   "provider-sidecar": { memoryBytes: 1024 * 1024 ** 2, cpuPercent: 200, processCount: 8, concurrencySlots: 16, queueLength: 64 },
   "background-index": { memoryBytes: 1024 * 1024 ** 2, cpuPercent: 200, processCount: 32, concurrencySlots: 4, queueLength: 128 },
   "chat-history": { memoryBytes: 512 * 1024 ** 2, cpuPercent: 100, processCount: 16, concurrencySlots: 2, queueLength: 64 },
+  "network-pool": { memoryBytes: 512 * 1024 ** 2, cpuPercent: 100, processCount: 32, concurrencySlots: 8, queueLength: 64 },
 };
 
 function mergeLimits(kind: ResourceKind, overrides?: Partial<ResourceLimits>): ResourceLimits {

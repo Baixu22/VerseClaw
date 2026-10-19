@@ -3,6 +3,7 @@ import { machineIdSync } from 'node-machine-id';
 import { app } from 'electron';
 import { getSetting, setSetting } from './store';
 import { logger } from './logger';
+import { proxyAwareFetch } from './proxy-fetch';
 
 /**
  * PostHog is an optional, build/runtime-configured outbound integration.
@@ -95,7 +96,7 @@ export function setTelemetryEnabled(enabled: boolean): Promise<void> {
             const signal = options.signal
                 ? AbortSignal.any([options.signal, controller.signal])
                 : controller.signal;
-            return fetch(url, { ...options, signal });
+            return proxyAwareFetch(url, { ...options, signal });
         },
     });
     const session: TelemetrySession = { client, controller, distinctId: '', ready: Promise.resolve() };

@@ -20,6 +20,7 @@ import type { GatewayManager } from '../gateway/manager';
 import { isRecord } from './payload-utils';
 import { listResourceEnvelopeEntries, recordResourceEnvelopeEntry, removeResourceEnvelopeEntry } from './resource-envelope';
 import { readAgentBootstrapTools } from '../utils/agent-config';
+import { proxyAwareFetch } from '../utils/proxy-fetch';
 import { readOpenClawConfig, writeOpenClawConfig } from '../utils/channel-config';
 import { withConfigLock } from '../utils/config-mutex';
 import { getDataDir } from '../utils/paths';
@@ -1130,7 +1131,7 @@ async function checkMcpHeartbeat(server: McpServerConfig): Promise<{ message: st
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 3500);
   try {
-    const response = await fetch(server.url, {
+    const response = await proxyAwareFetch(server.url, {
       method: 'GET',
       signal: controller.signal,
     });

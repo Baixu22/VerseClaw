@@ -1,15 +1,13 @@
 // Configures SQLite WAL and related pragmas for local stores.
 import type { DatabaseSync } from "node:sqlite";
 import { MAX_TIMER_TIMEOUT_MS } from "../shared/number-coercion.js";
+import { getTimerAligner } from "../../../shared/resources/index.js";
 
 // WAL maintenance configures SQLite write-ahead logging and schedules bounded
 // checkpoints so state databases do not accumulate unbounded WAL files.
 export const DEFAULT_SQLITE_WAL_AUTOCHECKPOINT_PAGES = 1000;
 export const DEFAULT_SQLITE_WAL_TRUNCATE_INTERVAL_MS = 30 * 60 * 1000;
 
-type IntervalHandle = ReturnType<typeof setInterval> & {
-  unref?: () => void;
-};
 
 type SqliteWalCheckpointMode = "PASSIVE" | "FULL" | "RESTART" | "TRUNCATE";
 
@@ -36,6 +34,7 @@ function normalizeNonNegativeInteger(value: number, label: string): number {
 }
 
 /** Configure WAL pragmas and return a handle for checkpoint/close maintenance. */
+let nextWalSchedulerId = 1;
 export function configureSqliteWalMaintenance(
   db: DatabaseSync,
   options: SqliteWalMaintenanceOptions = {},
@@ -63,19 +62,22 @@ export function configureSqliteWalMaintenance(
     }
   };
 
-  let timer: IntervalHandle | null = null;
+  let unregister: (() => void) | null = null;
   if (timerIntervalMs > 0) {
-    timer = setInterval(checkpoint, timerIntervalMs) as IntervalHandle;
-    timer.unref?.();
+    const schedulerId = `sqlite-wal:${options.databaseLabel ?? options.databasePath ?? `anonymous-${nextWalSchedulerId++}`}`;
+    unregister = getTimerAligner().register({
+      id: schedulerId,
+      intervalMs: Math.max(1_000, timerIntervalMs),
+      priority: "background",
+      run: () => { checkpoint(); },
+    });
   }
 
   return {
     checkpoint,
     close: () => {
-      if (timer) {
-        clearInterval(timer);
-        timer = null;
-      }
+      unregister?.();
+      unregister = null;
       return checkpoint();
     },
   };

@@ -1,0 +1,16 @@
+{
+  "schema": "clawx.tf0413.write-coalescer-pressure/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0413",
+  "generatedAt": "2026-10-19T07:41:23.931Z",
+  "enqueued": 20,
+  "batchSize": 5,
+  "transactions": 4,
+  "rows": 20,
+  "stats": {
+    "queued": 0,
+    "batches": 4,
+    "flushedItems": 20
+  },
+  "reductionRatio": 0.8
+}

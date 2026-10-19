@@ -2,6 +2,7 @@ import { assertSensitiveCaptureAllowed } from './sensitive-capture-gate';
 import WebSocket from 'ws';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { getAllSettings } from '../utils/store';
+import { proxyAwareFetch } from '../utils/proxy-fetch';
 import { getRemoteControlLaunchState, normalizeRemoteDebuggingPort } from '../utils/remote-control';
 import type {
   RemoteControlInspectTarget,
@@ -16,7 +17,7 @@ type CdpResponse = {
 };
 
 async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url);
+  const response = await proxyAwareFetch(url);
   if (!response.ok) {
     throw new Error(`CDP endpoint returned HTTP ${response.status}`);
   }

@@ -6,3 +6,4 @@ export { PriorityQueue, type PriorityItem, type QosClass } from './priority-queu
 export { DrfShare, type DrfUsage, type ResourceCapacity } from './drf-share.js';
 export { TimerAligner, getTimerAligner, resetTimerAlignerForTest, type TimerAlignTaskOptions, type TimerAlignerDiagnostics } from './timer-aligner.js';
 export { WatcherHub, getWatcherHub, resetWatcherHubForTest, type WatcherHubHandle, type WatcherHubDiagnostics } from './watcher-hub.js';
+export { WriteCoalescer, type WriteCoalescerOptions, type WriteCoalescerStats } from './write-coalescer.js';

@@ -9,6 +9,7 @@ import { resolveOpenClawRuntimeModulePath } from './runtime-package-resolution';
 import { getOpenClawConfigDir } from './paths';
 import { writeJsonAtomic } from './atomic-write';
 import { sealWechatAccountToken } from '../services/secrets/wechat-account-secret-broker';
+import { proxyAwareFetch } from './proxy-fetch';
 
 export const DEFAULT_WECHAT_BASE_URL = 'https://ilinkai.weixin.qq.com';
 const DEFAULT_ILINK_BOT_TYPE = '3';
@@ -253,7 +254,7 @@ async function fetchWeChatQrCode(apiBaseUrl: string, accountId?: string, botType
     headers.SKRouteTag = routeTag;
   }
 
-  const response = await fetch(url.toString(), { headers });
+  const response = await proxyAwareFetch(url.toString(), { headers });
   if (!response.ok) {
     const body = await response.text().catch(() => '(unreadable)');
     throw new Error(`Failed to fetch QR code: ${response.status} ${response.statusText} ${body}`);
@@ -275,7 +276,7 @@ async function pollWeChatQrStatus(apiBaseUrl: string, qrcode: string, accountId?
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), QR_POLL_TIMEOUT_MS);
   try {
-    const response = await fetch(url.toString(), { headers, signal: controller.signal });
+    const response = await proxyAwareFetch(url.toString(), { headers, signal: controller.signal });
     clearTimeout(timer);
     const rawText = await response.text();
     if (!response.ok) {

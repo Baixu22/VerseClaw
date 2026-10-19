@@ -27,7 +27,8 @@ export type ResourceKind =
   | "mcp-process"
   | "provider-sidecar"
   | "background-index"
-  | "chat-history";
+  | "chat-history"
+  | "network-pool";
 
 export type ResourcePriority = "foreground" | "background";
 

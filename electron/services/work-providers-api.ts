@@ -4,6 +4,7 @@ import { mkdir, readFile, realpath, stat, writeFile } from 'node:fs/promises';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { expandPath } from '../utils/paths';
 import { getSetting } from '../utils/store';
+import { proxyAwareFetch } from '../utils/proxy-fetch';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { isRecord } from './payload-utils';
 import {
@@ -317,7 +318,7 @@ async function fetchSearchResults(
 
   if (provider === 'tavily') {
     if (!apiKey) throw new Error('missingConfig');
-    const response = await fetch(endpoint || 'https://api.tavily.com/search', {
+    const response = await proxyAwareFetch(endpoint || 'https://api.tavily.com/search', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
@@ -334,7 +335,7 @@ async function fetchSearchResults(
     const url = new URL(endpoint || 'https://api.search.brave.com/res/v1/web/search');
     url.searchParams.set('q', query);
     url.searchParams.set('count', String(maxResults));
-    const response = await fetch(url, {
+    const response = await proxyAwareFetch(url, {
       headers: { 'x-subscription-token': apiKey, accept: 'application/json' },
     });
     return { provider, results: normalizeSearchResults(await readJsonResponse(response)).slice(0, maxResults) };
@@ -345,7 +346,7 @@ async function fetchSearchResults(
     const url = new URL(endpoint || 'https://api.bing.microsoft.com/v7.0/search');
     url.searchParams.set('q', query);
     url.searchParams.set('count', String(maxResults));
-    const response = await fetch(url, {
+    const response = await proxyAwareFetch(url, {
       headers: { 'ocp-apim-subscription-key': apiKey, accept: 'application/json' },
     });
     return { provider, results: normalizeSearchResults(await readJsonResponse(response)).slice(0, maxResults) };
@@ -358,7 +359,7 @@ async function fetchSearchResults(
   if (provider === 'searxng') url.searchParams.set('format', 'json');
   const headers: Record<string, string> = { accept: 'application/json' };
   if (apiKey) headers.authorization = `Bearer ${apiKey}`;
-  const response = await fetch(url, { headers });
+  const response = await proxyAwareFetch(url, { headers });
   return { provider, results: normalizeSearchResults(await readJsonResponse(response)).slice(0, maxResults) };
 }
 
@@ -529,7 +530,7 @@ async function runWebExtract(input: Record<string, unknown>): Promise<Record<str
   const url = typeof input.url === 'string' ? input.url.trim() : '';
   let html = typeof input.html === 'string' ? input.html : '';
   if (!html && url) {
-    const response = await fetch(normalizeHttpUrl(url));
+    const response = await proxyAwareFetch(normalizeHttpUrl(url));
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     html = await response.text();
   }

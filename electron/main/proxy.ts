@@ -2,6 +2,7 @@ import { session } from 'electron';
 import { getAllSettings, type AppSettings } from '../utils/store';
 import { buildElectronProxyConfig } from '../utils/proxy';
 import { logger } from '../utils/logger';
+import { setElectronProxyEnabled } from '../utils/proxy-fetch';
 
 export async function applyProxySettings(
   partialSettings?: Pick<AppSettings,
@@ -17,6 +18,7 @@ export async function applyProxySettings(
   const config = buildElectronProxyConfig(settings);
 
   await session.defaultSession.setProxy(config);
+  setElectronProxyEnabled(config.mode === 'fixed_servers');
   try {
     await session.defaultSession.closeAllConnections();
   } catch (error) {

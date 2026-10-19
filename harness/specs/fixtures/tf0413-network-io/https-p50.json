@@ -1,0 +1,43 @@
+{
+  "schema": "clawx.tf0413.network-pool-https/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0413",
+  "generatedAt": "2026-10-19T07:41:24.189Z",
+  "workload": {
+    "requests": 5,
+    "url": "https://localhost",
+    "mode": "fresh-agent-vs-keep-alive-pool"
+  },
+  "before": {
+    "p50Ms": 8.614199999999983,
+    "connections": 5,
+    "durationsMs": [
+      44.18150000000003,
+      8.380400000000009,
+      8.614199999999983,
+      6.397100000000023,
+      11.99879999999996
+    ]
+  },
+  "after": {
+    "p50Ms": 1.7754999999999654,
+    "connections": 1,
+    "durationsMs": [
+      6.365299999999934,
+      1.806600000000003,
+      1.5072999999999865,
+      1.5208000000000084,
+      1.7754999999999654
+    ],
+    "metrics": {
+      "transport": "undici-agent",
+      "connectionLimit": 1,
+      "openedConnections": 1,
+      "activeConnections": 0,
+      "requests": 5,
+      "dnsLookups": 1,
+      "active": 0,
+      "reuseRatio": 0.8
+    }
+  }
+}

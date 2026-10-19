@@ -1541,7 +1541,7 @@ async function validateDiscordCredentials(
     }
 
     try {
-        const meResponse = await fetch('https://discord.com/api/v10/users/@me', {
+        const meResponse = await proxyAwareFetch('https://discord.com/api/v10/users/@me', {
             headers: { Authorization: `Bot ${token}` },
         });
         if (!meResponse.ok) {
@@ -1565,7 +1565,7 @@ async function validateDiscordCredentials(
     const guildId = config.guildId?.trim();
     if (guildId) {
         try {
-            const guildResponse = await fetch(`https://discord.com/api/v10/guilds/${guildId}`, {
+            const guildResponse = await proxyAwareFetch(`https://discord.com/api/v10/guilds/${guildId}`, {
                 headers: { Authorization: `Bot ${token}` },
             });
             if (!guildResponse.ok) {
@@ -1588,7 +1588,7 @@ async function validateDiscordCredentials(
     const channelId = config.channelId?.trim();
     if (channelId) {
         try {
-            const channelResponse = await fetch(`https://discord.com/api/v10/channels/${channelId}`, {
+            const channelResponse = await proxyAwareFetch(`https://discord.com/api/v10/channels/${channelId}`, {
                 headers: { Authorization: `Bot ${token}` },
             });
             if (!channelResponse.ok) {

@@ -13,6 +13,10 @@ import {
   runOpenClawStateWriteTransaction,
 } from "../state/openclaw-state-db.js";
 import { isRecord } from "../utils.js";
+import {
+  WriteCoalescer,
+  type WriteCoalescerStats,
+} from "../../../shared/resources/write-coalescer.js";
 
 const LEDGER_VERSION = 1;
 const DEFAULT_MAX_SESSIONS = 200;
@@ -72,6 +76,10 @@ export type AcpEventLedger = {
   readReplayBySessionKey: (params: { sessionKey: string }) => Promise<AcpEventLedgerReplay>;
 };
 
+export type SqliteAcpEventLedger = AcpEventLedger & {
+  getWriteStats: () => WriteCoalescerStats;
+};
+
 type LedgerSession = {
   sessionId: string;
   sessionKey: string;
@@ -92,6 +100,8 @@ type LedgerOptions = {
   maxSessions?: number;
   maxEventsPerSession?: number;
   maxSerializedBytes?: number;
+  writeBatchSize?: number;
+  writeFlushDelayMs?: number;
   now?: () => number;
 };
 
@@ -123,6 +133,8 @@ function normalizeLedgerOptions(options: LedgerOptions = {}) {
       DEFAULT_MAX_SERIALIZED_BYTES,
       { min: 1_024 },
     ),
+    writeBatchSize: resolveIntegerOption(options.writeBatchSize, 32, { min: 1 }),
+    writeFlushDelayMs: resolveIntegerOption(options.writeFlushDelayMs, 10, { min: 0 }),
     now: options.now ?? Date.now,
   };
 }
@@ -890,26 +902,36 @@ function buildSqliteReplay(session: LedgerSession | undefined): AcpEventLedgerRe
 /** Creates the SQLite-backed ACP event ledger used by the state database. */
 export function createSqliteAcpEventLedger(
   params: OpenClawStateDatabaseOptions & LedgerOptions = {},
-): AcpEventLedger {
+): SqliteAcpEventLedger {
   const normalized = normalizeLedgerOptions(params);
   const dbOptions = { env: params.env, path: params.path };
   const state = {
     ...normalized,
   };
-  const mutate = (fn: (db: DatabaseSync) => void) =>
-    runOpenClawStateWriteTransaction((database) => fn(database.db), dbOptions);
+  const writeQueue = new WriteCoalescer<(db: DatabaseSync) => void>({
+    maxBatch: normalized.writeBatchSize,
+    flushDelayMs: normalized.writeFlushDelayMs,
+    flush: (batch) => {
+      runOpenClawStateWriteTransaction((database) => {
+        for (const operation of batch) {
+          operation(database.db);
+        }
+      }, dbOptions);
+    },
+  });
+  const mutate = (fn: (db: DatabaseSync) => void) => writeQueue.enqueue(fn);
   const read = <T>(fn: (db: DatabaseSync) => T): T => fn(openOpenClawStateDatabase(dbOptions).db);
 
   return {
     async startSession(sessionParams) {
-      mutate((db) => {
+      await mutate((db) => {
         upsertSqliteSession(db, state, sessionParams);
         trimSqliteLedger(db, state);
       });
     },
 
     async recordUserPrompt(promptParams) {
-      mutate((db) => {
+      await mutate((db) => {
         for (const update of createUserPromptUpdates(promptParams.prompt)) {
           appendSqliteUpdate(db, state, {
             sessionId: promptParams.sessionId,
@@ -922,13 +944,13 @@ export function createSqliteAcpEventLedger(
     },
 
     async recordUpdate(updateParams) {
-      mutate((db) => {
+      await mutate((db) => {
         appendSqliteUpdate(db, state, updateParams);
       });
     },
 
     async markIncomplete(markParams) {
-      mutate((db) => {
+      await mutate((db) => {
         db.prepare(
           `UPDATE acp_replay_sessions
               SET complete = 0, updated_at = ?
@@ -955,6 +977,10 @@ export function createSqliteAcpEventLedger(
       return read((db) =>
         buildSqliteReplay(readLatestCompleteSqliteSessionByKey(db, replayParams.sessionKey)),
       );
+    },
+
+    getWriteStats() {
+      return writeQueue.getStats();
     },
   };
 }

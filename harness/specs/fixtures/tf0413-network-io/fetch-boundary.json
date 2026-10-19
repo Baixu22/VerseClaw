@@ -1,0 +1,13 @@
+{
+  "schema": "clawx.tf0413.electron-fetch-boundary/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0413",
+  "generatedAt": "2026-10-19T07:42:50.868Z",
+  "scannedFiles": 244,
+  "transportOwners": [
+    "utils\\network-pool.ts",
+    "utils\\proxy-fetch.ts"
+  ],
+  "proxyAwareCallSites": 30,
+  "directFetchViolations": []
+}
