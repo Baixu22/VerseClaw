@@ -55,6 +55,22 @@ describe("bounded subagent report contract (TF-0448)", () => {
     expect(report.body.length).toBeGreaterThanOrEqual(1);
   });
 
+  it("cannot receive intermediate narration through any field other than outputText", () => {
+    // The contract's only content input is outputText. A caller that still
+    // holds reasoning/trace fields cannot leak them into the report body, so
+    // the intermediate churn is structurally dropped rather than filtered.
+    const withChurn = {
+      outputText: "final answer only",
+      reasoning: "step 1: think\nstep 2: reconsider\nstep 3: discard",
+      intermediateSteps: ["tool call 1", "tool call 2"],
+      trace: "internal narration",
+    } as unknown as { outputText: string };
+    const report = buildSubagentReport(withChurn);
+    expect(report.body).toBe("final answer only");
+    expect(report.body).not.toContain("step 1");
+    expect(report.body).not.toContain("tool call");
+    expect(report.body).not.toContain("internal narration");
+  });
   it("keeps failures out of the report body", () => {
     // Failures are structured, not prose: a role cannot smuggle unbounded text
     // into the bounded body by putting it in the failures channel.

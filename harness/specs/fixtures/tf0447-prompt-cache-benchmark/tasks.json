@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TF-0447",
+  "description": "固定任务集：用于在本仓库自身工作负载形状上复现 prompt-cache 命中率与断点归因。任务不调用任何模型，只重放 usage 序列。",
+  "driven_by": "agent",
+  "tasks": [
+    {
+      "id": "code-warm-1",
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4",
+      "cacheRetention": "long",
+      "streamStrategy": "streaming",
+      "systemPrompt": "You are Verse Claw coding agent.",
+      "toolNames": [
+        "read_file",
+        "write_file",
+        "apply_patch"
+      ],
+      "usage": {
+        "input": 1200,
+        "cacheRead": 48000
+      }
+    },
+    {
+      "id": "code-warm-2",
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4",
+      "cacheRetention": "long",
+      "streamStrategy": "streaming",
+      "systemPrompt": "You are Verse Claw coding agent.",
+      "toolNames": [
+        "read_file",
+        "write_file",
+        "apply_patch"
+      ],
+      "usage": {
+        "input": 900,
+        "cacheRead": 52000
+      }
+    },
+    {
+      "id": "code-warm-3",
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4",
+      "cacheRetention": "long",
+      "streamStrategy": "streaming",
+      "systemPrompt": "You are Verse Claw coding agent.",
+      "toolNames": [
+        "read_file",
+        "write_file",
+        "apply_patch"
+      ],
+      "usage": {
+        "input": 1500,
+        "cacheRead": 61000
+      }
+    },
+    {
+      "id": "code-break-system",
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4",
+      "cacheRetention": "long",
+      "streamStrategy": "streaming",
+      "systemPrompt": "You are Verse Claw coding agent. MODE=strict-review",
+      "toolNames": [
+        "read_file",
+        "write_file",
+        "apply_patch"
+      ],
+      "usage": {
+        "input": 30000,
+        "cacheRead": 2000
+      }
+    },
+    {
+      "id": "code-cold-1",
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4",
+      "cacheRetention": "long",
+      "streamStrategy": "streaming",
+      "systemPrompt": "You are Verse Claw coding agent. MODE=strict-review",
+      "toolNames": [
+        "read_file",
+        "apply_patch"
+      ],
+      "usage": {
+        "input": 26000,
+        "cacheRead": 0
+      }
+    },
+    {
+      "id": "chat-warm-1",
+      "provider": "openai",
+      "modelId": "gpt-5",
+      "cacheRetention": "short",
+      "streamStrategy": "buffered",
+      "systemPrompt": "You are Verse Claw chat assistant.",
+      "toolNames": [],
+      "usage": {
+        "input": 800,
+        "cacheRead": 12000
+      }
+    },
+    {
+      "id": "chat-warm-2",
+      "provider": "openai",
+      "modelId": "gpt-5",
+      "cacheRetention": "short",
+      "streamStrategy": "buffered",
+      "systemPrompt": "You are Verse Claw chat assistant.",
+      "toolNames": [],
+      "usage": {
+        "input": 600,
+        "cacheRead": 15000
+      }
+    }
+  ]
+}

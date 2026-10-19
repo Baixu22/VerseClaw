@@ -137,7 +137,15 @@ export function buildRuntimeBlackboard(input: RuntimeBlackboardInput): RuntimeBl
             ? {
                 outputPreview: report.body,
                 outputOriginalChars: report.originalChars,
+                outputReportChars: report.body.length,
                 outputTruncated: report.truncated,
+                // Bundle-level input consumption, named as such so it is never
+                // mistaken for a per-role figure. Together with the per-role
+                // report size this makes the isolation boundary readable:
+                // what the subagent burned in vs what it handed back.
+                ...(typeof input.resultBundle.budgetSummary?.inputTokens === "number"
+                  ? { bundleInputTokens: input.resultBundle.budgetSummary.inputTokens }
+                  : {}),
               }
             : {}),
         },

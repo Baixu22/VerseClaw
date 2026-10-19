@@ -8,14 +8,30 @@ import {
 
 describe("TaskLedgerReference inheritance table (TF-0449)", () => {
   it("declares a closed, explicit inheritance table", () => {
-    expect(TASK_LEDGER_REFERENCE_INHERITANCE.inherits).toEqual(["priority", "tags", "owner"]);
+    expect(TASK_LEDGER_REFERENCE_INHERITANCE.inherits).toEqual([
+      "priority",
+      "tags",
+      "labels",
+      "owner",
+    ]);
     expect(TASK_LEDGER_REFERENCE_INHERITANCE.doesNotInherit).toEqual([
       "status",
       "projectId",
       "assignee",
+      "team",
+      "cycle",
     ]);
   });
 
+  it("explicitly covers the Linear-style property set", () => {
+    // team / priority / project / cycle / labels must each have an explicit
+    // row; "not listed" is the ambiguity this table exists to remove.
+    expect(isTaskLedgerReferenceInheritedField("priority")).toBe(true);
+    expect(isTaskLedgerReferenceInheritedField("labels")).toBe(true);
+    expect(isTaskLedgerReferenceNonInheritedField("projectId")).toBe(true);
+    expect(isTaskLedgerReferenceNonInheritedField("team")).toBe(true);
+    expect(isTaskLedgerReferenceNonInheritedField("cycle")).toBe(true);
+  });
   it("never lets status cross the one-way reference", () => {
     // The Ledger owns task status; a Workboard scheduling state must not
     // overwrite it. This is the single most important row of the table.

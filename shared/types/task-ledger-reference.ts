@@ -58,6 +58,7 @@ export function isTaskLedgerReference(value: unknown): value is TaskLedgerRefere
 export type TaskLedgerReferenceInheritedField =
   | 'priority'
   | 'tags'
+  | 'labels'
   | 'owner';
 
 /**
@@ -73,12 +74,17 @@ export type TaskLedgerReferenceInheritedField =
 export type TaskLedgerReferenceNonInheritedField =
   | 'status'
   | 'projectId'
-  | 'assignee';
+  | 'assignee'
+  | 'team'
+  | 'cycle';
 
 /** The full, closed inheritance decision table. */
 export const TASK_LEDGER_REFERENCE_INHERITANCE = {
-  inherits: ['priority', 'tags', 'owner'],
-  doesNotInherit: ['status', 'projectId', 'assignee'],
+  // Explicitly covers the Linear-style property set: team / priority /
+  // project / cycle / labels. `tags` and `labels` are treated as the same
+  // task-fact class here; the Ledger owns both.
+  inherits: ['priority', 'tags', 'labels', 'owner'],
+  doesNotInherit: ['status', 'projectId', 'assignee', 'team', 'cycle'],
 } as const satisfies {
   inherits: readonly TaskLedgerReferenceInheritedField[];
   doesNotInherit: readonly TaskLedgerReferenceNonInheritedField[];

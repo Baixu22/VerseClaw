@@ -14,9 +14,9 @@
 
 | 节点 | 结论 | 盘上证据 | 复现命令与结果 |
 | --- | --- | --- | --- |
-| TF-0447 | KV-cache 命中率成为具名头条指标，并在 `attempt.ts` 真实路径接线 | `prompt-cache-observability.ts`、`run/attempt.ts`、`tests/unit/prompt-cache-hit-rate.test.ts` | `vitest run prompt-cache-hit-rate + prompt-cache-observability` → 20 passed / 2 files |
-| TF-0448 | subagent 返回契约有界可测；两处魔法 240 截断改为走契约 | `orchestration-runtime-blackboard.ts`、`tests/unit/subagent-report-contract.test.ts` | 单测 10 passed；既有黑板/合成/结果包 25 passed / 5 files |
-| TF-0449 | `TaskLedgerReference` 有显式继承/不继承表 | `shared/types/task-ledger-reference.ts`、`tests/unit/task-ledger-reference-inheritance.test.ts` | 10 passed / 2 files |
+| TF-0447 | KV-cache 命中率成为具名头条指标，并在 `attempt.ts` 真实路径接线；有固定任务集基准 | `prompt-cache-observability.ts`、`run/attempt.ts`、`harness/specs/decisions/tf0447-prompt-cache-metric.md`、`harness/specs/fixtures/tf0447-prompt-cache-benchmark/` | 单测 20 passed / 2 files；基准 1 passed → `result.json`：7 tasks / hitRate 0.757 / cacheRead 190000 / total 251000 / breaks 2（systemPrompt、tools） |
+| TF-0448 | subagent 返回契约有界可测；仅 `outputText` 进入契约；`bundleInputTokens` + `outputReportChars` 使隔离边界可回读 | `orchestration-runtime-blackboard.ts`、`tests/unit/subagent-report-contract.test.ts` | 单测 13 passed / 2 files；既有黑板/合成/结果包 25 passed / 5 files |
+| TF-0449 | 继承表显式覆盖 team/priority/project/cycle/labels | `shared/types/task-ledger-reference.ts`、`tests/unit/task-ledger-reference-inheritance.test.ts` | 12 passed / 3 files（含 TF-0447 基准） |
 | TF-0450 | Chat 有会话级上下文压力指示器；四语 i18n；E2E 覆盖完整态与部分态 | `ChatContextPressure.tsx`、`ChatInput.tsx`、四语 `chat.json`、单测与 E2E | 单测 11 passed；i18n lint passed；E2E 2 passed / 16.5s；与既有 compaction 合跑 3 passed / 30.7s |
 
 ### 过程中修正的两个真实缺陷（不是走过场）
@@ -60,6 +60,18 @@ harness/specs/decisions/tf0446-closed-source-three-state-verdict.md 末尾追加
 
 这不是把它们当作已完成，而是补齐根节点「无遗漏」的验收依据。机器可读映射见
 cceptance.json 的 sectionCoverage 字段。
+### 收口前的 AC 复核（发现并修复 4 处证据不足）
+
+初版收口审计时逐条比对节点 AC，发现 4 处证据不足，均已补齐而不是放行：
+
+| 节点 | 缺口 | 补法 |
+| --- | --- | --- |
+| TF-0447 AC1 | 指标只定义在 runtime 模块，不在 shared 类型或语义文档 | 新增 harness/specs/decisions/tf0447-prompt-cache-metric.md 作为唯一口径 |
+| TF-0447 AC2 | 只有单测，没有「本仓库自身任务集」上的可跑基准 | 新增 	asks.json（7 条固定任务）+ esult.json（命中率 0.757、2 次断点归因） |
+| TF-0448 AC2/AC3 | 未证明 churn 被结构性丢弃；未记录输入消耗 | 新增「仅 outputText 可进入」测试；黑板块新增 undleInputTokens 与 outputReportChars |
+| TF-0449 AC1 | 继承表未覆盖 team/cycle/labels | 表扩展为 inherits=priority/tags/labels/owner，not=status/projectId/assignee/team/cycle |
+
+补跑后单测 76 → 80（12 文件）。
 ## 四、未验证边界（8 项，如实记录为 limitation）
 
 1. 未运行完整仓库 `pnpm run typecheck`；只跑 web / test / openclaw_runtime core 三个 tsgo project
@@ -75,7 +87,7 @@ harness/specs/decisions/tf0446-closed-source-three-state-verdict.md 末尾追加
 
 | 门 | 命令 | 结果 |
 | --- | --- | --- |
-| 单测 | `vitest run <11 files>` | 11 files / 76 tests / 76 passed / 0 failed / exit 0 |
+| 单测 | `vitest run <12 files>` | 12 files / 80 tests / 80 passed / 0 failed / exit 0 |
 | i18n | `node scripts/i18n-lint.mjs` | passed / exit 0 |
 | web tsgo | `tsgo --noEmit -p tsconfig.web.json` | 0 errors / exit 0 |
 | test tsgo | `tsgo --noEmit -p tsconfig.test.json` | 0 errors / exit 0 |

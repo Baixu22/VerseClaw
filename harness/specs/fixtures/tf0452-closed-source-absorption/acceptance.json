@@ -19,18 +19,26 @@
         "artifacts": [
           "openclaw_runtime/src/agents/embedded-agent-runner/prompt-cache-observability.ts",
           "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
-          "tests/unit/prompt-cache-hit-rate.test.ts"
+          "tests/unit/prompt-cache-hit-rate.test.ts",
+          "harness/specs/decisions/tf0447-prompt-cache-metric.md",
+          "harness/specs/fixtures/tf0447-prompt-cache-benchmark/tasks.json",
+          "harness/specs/fixtures/tf0447-prompt-cache-benchmark/result.json",
+          "tests/unit/tf0447-prompt-cache-benchmark.test.ts"
         ],
         "commands": [
           {
             "cmd": "vitest run tests/unit/prompt-cache-hit-rate.test.ts tests/unit/prompt-cache-observability.test.ts",
             "result": "20 passed (2 files)"
+          },
+          {
+            "cmd": "vitest run tests/unit/tf0447-prompt-cache-benchmark.test.ts",
+            "result": "1 passed; result.json: taskCount=7 observations=7 hitRate=0.757 cacheRead=190000 total=251000 breaks=2 (systemPrompt, tools)"
           }
         ]
       },
       {
         "taskId": "TF-0448",
-        "claim": "subagent 返回契约有界、可测量，且两处魔法 240 截断改为走契约",
+        "claim": "subagent 返回契约有界、可测量；仅 outputText 进入契约；bundleInputTokens 与 outputReportChars 使隔离边界可回读",
         "artifacts": [
           "openclaw_runtime/src/agents/orchestration-runtime-blackboard.ts",
           "tests/unit/subagent-report-contract.test.ts"
@@ -43,12 +51,16 @@
           {
             "cmd": "vitest run orchestration-runtime-blackboard/orchestration-blackboard/trace/synthesizer/result-bundle",
             "result": "25 passed (5 files)"
+          },
+          {
+            "cmd": "vitest run subagent-report-contract + orchestration-runtime-blackboard",
+            "result": "13 passed (2 files)"
           }
         ]
       },
       {
         "taskId": "TF-0449",
-        "claim": "TaskLedgerReference 有显式继承/不继承表；阻塞关系经核对已由 TaskLedgerEdgeType.blocks 覆盖，未重复建模",
+        "claim": "TaskLedgerReference 继承表显式覆盖 team/priority/project/cycle/labels；阻塞关系由 TaskLedgerEdgeType.blocks 覆盖",
         "artifacts": [
           "shared/types/task-ledger-reference.ts",
           "tests/unit/task-ledger-reference-inheritance.test.ts"
@@ -135,10 +147,10 @@
   },
   "verification": {
     "unit": {
-      "command": "vitest run <11 files>",
-      "files": 11,
-      "tests": 76,
-      "passed": 76,
+      "command": "vitest run <12 files>",
+      "files": 12,
+      "tests": 80,
+      "passed": 80,
       "failed": 0,
       "exitCode": 0
     },
