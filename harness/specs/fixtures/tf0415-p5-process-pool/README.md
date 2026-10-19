@@ -22,8 +22,8 @@ $env:PROCESS_POOL_BENCHMARK_OUT='harness/specs/fixtures/tf0415-p5-process-pool/w
 node harness/specs/fixtures/tf0415-p5-process-pool/benchmark.mjs
 ```
 
-The retained sample measured direct P50 35.3548 ms and relay P50 36.4728 ms
-(-3.16% improvement), far below the >=50% implementation threshold.
+The retained independent sample measured direct P50 47.9499 ms and relay P50
+47.7009 ms (0.52% improvement), far below the >=50% implementation threshold.
 
 ## Boundary
 

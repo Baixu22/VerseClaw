@@ -64,9 +64,9 @@ is changed, and the unimplemented process-pool path remains an explicit gap.**
 `harness/specs/fixtures/tf0415-p5-process-pool/worker-overhead.json` records 30
 ABBA-style paired samples of `git rev-parse HEAD` on Windows:
 
-- direct `execFile`: P50 35.3548 ms
-- persistent relay that still `execFile`s git per job: P50 36.4728 ms
-- P50 reduction: approximately -3.16%, versus the >=50% implementation gate
+- direct `execFile`: P50 47.9499 ms
+- persistent relay that still `execFile`s git per job: P50 47.7009 ms
+- P50 reduction: approximately 0.52%, versus the >=50% implementation gate
 
 The relay is not Electron `utilityProcess`, but it models the relevant control
 flow: a persistent Node process receiving jobs while still creating the external

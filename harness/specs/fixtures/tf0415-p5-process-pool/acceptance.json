@@ -1,0 +1,115 @@
+{
+  "schema": "clawx.tf0402.process-pool-review-acceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0402",
+  "nodes": [
+    "TF-0402",
+    "TF-0415"
+  ],
+  "candidate": {
+    "sha": "22601fa1b3f9b122ca3eacd70337d10393ff6873",
+    "subject": "docs(resources): reject general long-lived process pool"
+  },
+  "acceptanceRun": {
+    "worktree": "D:\\ClawX-candidates\\tf0402-p5-acceptance-20261019",
+    "mode": "detached clean worktree",
+    "head": "22601fa1b3f9b122ca3eacd70337d10393ff6873",
+    "result": "pass"
+  },
+  "generatedAt": "2026-10-19T08:19:40.1783014Z",
+  "decision": "reject",
+  "implementationStatus": "not-implemented",
+  "rationale": "The current Windows x64 Controlled Preview has no demonstrated high-frequency batch git/office path that justifies a new long-lived process lifecycle. Existing git caching/singleflight covers repeated status reads, officecli watch already reuses long-lived preview processes, and a persistent relay that still spawns git per job measured only 0.52% P50 improvement against a >=50% implementation threshold.",
+  "evidence": {
+    "benchmark": {
+      "artifact": "worker-overhead.json",
+      "command": "git rev-parse HEAD",
+      "samples": 30,
+      "directP50Ms": 47.94990000000007,
+      "relayP50Ms": 47.70089999999982,
+      "p50ReductionRatio": 0.005192920110370421,
+      "targetReduction": 0.5,
+      "result": "far-below-threshold"
+    },
+    "localAudit": {
+      "gitStatusCache": "electron/services/git-api.ts uses BoundedCache TTL 5000 ms plus Singleflight for readCurrentGitStatus and invalidates by repo root after mutations",
+      "gitExecutionGuards": "electron/services/git-api.ts binds cwd/env, GIT_OPTIONAL_LOCKS=0, terminal-prompt suppression, disabled hooks/fsmonitor, 15s timeout and SIGKILL per command",
+      "officeWatchReuse": "electron/services/office-tools-api.ts reuses officecli watch by target key with refcounts and a 32-watch cap",
+      "spawnMetrics": "electron/utils/counted-child-process.ts already records git/office spawns through performance-metrics",
+      "windowsProcessTreeRisk": "git-api.ts records that Windows grandchildren may outlive execFile timeout; worker kill alone is insufficient for a pool"
+    },
+    "benefits": [
+      "Theoretical reduction in Main-thread spawn blocking under a high-concurrency spawn storm.",
+      "Potential reuse of a warm Node runtime if a future supported batch protocol exists."
+    ],
+    "risks": [
+      "Windows process-tree or grandchild leakage and app-update residue.",
+      "Stale env, proxy, credential, cwd or approval context crossing workspaces.",
+      "Two competing long-lived lifecycles beside officecli watch reuse.",
+      "Worker crash/restart and queue failure modes without a demonstrated bottleneck.",
+      "Additional resident RSS with no measured reclamation curve."
+    ],
+    "rollback": "No production code changed. Rollback is retaining the P4 direct execFile path; any future pool must be feature-flagged with direct execution as fallback.",
+    "reopenConditions": [
+      "Real workload evidence shows repeated read-only git/office calls are a perceptible bottleneck.",
+      "A design removes per-command CLI spawn or uses a supported batch protocol.",
+      "Target workload P50 improves at least 50% against the direct path.",
+      "Windows process-tree cleanup, orphan scanning, crash recovery and RSS after reclamation are verified by readable artifacts."
+    ],
+    "gaps": [
+      "General long-lived git/office utilityProcess worker pool is not implemented.",
+      "No 60-second worker reclamation or worker RSS curve exists because the implementation was rejected.",
+      "The relay benchmark is not an actual Electron utilityProcess runtime; it measures the same per-job external spawn cost while adding a persistent Node process boundary."
+    ],
+    "externalSources": [
+      "https://www.electronjs.org/docs/latest/api/utility-process",
+      "https://nodejs.org/api/child_process.html",
+      "https://blog.val.town/node-spawn-performance"
+    ]
+  },
+  "gates": [
+    {
+      "command": "node --check benchmark.mjs",
+      "exitCode": 0
+    },
+    {
+      "command": "node --check worker-relay.mjs",
+      "exitCode": 0
+    },
+    {
+      "command": "node benchmark.mjs",
+      "exitCode": 0,
+      "samples": 30
+    },
+    {
+      "command": "pnpm exec eslint benchmark.mjs worker-relay.mjs",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/resource-p5-process-pool-review.md",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 18363
+    },
+    {
+      "command": "pnpm run lint:bom",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "boundaries": [
+    "This is one local Windows sample, not a cross-platform benchmark.",
+    "The decision rejects the general process pool only; it does not claim a performance improvement.",
+    "The unimplemented process-pool gap remains explicit and must not be marked as an implemented capability.",
+    "No product lock, frozen default, release path or production process behavior changed."
+  ],
+  "productLocks": "unchanged",
+  "mergedCandidate": null,
+  "postMergeGates": []
+}
