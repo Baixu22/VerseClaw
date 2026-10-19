@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TF-0452",
+  "parentTaskId": "TF-0445",
+  "title": "闭源吸收证据链与四层分层审计",
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-10-19",
+  "baseRef": "origin/main",
+  "baseCommit": "765a47cb1a24e56e42e139cb0b1314b3b64ba9e1",
+  "branch": "codex/closed-source-absorption-20261019",
+  "decisionDoc": "harness/specs/decisions/tf0446-closed-source-three-state-verdict.md",
+  "nonGoalsDoc": "harness/specs/decisions/tf0451-closed-source-non-goals.md",
+  "layers": {
+    "absorbed": [
+      {
+        "taskId": "TF-0447",
+        "claim": "KV-cache 命中率成为 context assembly 的具名头条指标，并在 attempt 真实路径接线",
+        "artifacts": [
+          "openclaw_runtime/src/agents/embedded-agent-runner/prompt-cache-observability.ts",
+          "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+          "tests/unit/prompt-cache-hit-rate.test.ts"
+        ],
+        "commands": [
+          {
+            "cmd": "vitest run tests/unit/prompt-cache-hit-rate.test.ts tests/unit/prompt-cache-observability.test.ts",
+            "result": "20 passed (2 files)"
+          }
+        ]
+      },
+      {
+        "taskId": "TF-0448",
+        "claim": "subagent 返回契约有界、可测量，且两处魔法 240 截断改为走契约",
+        "artifacts": [
+          "openclaw_runtime/src/agents/orchestration-runtime-blackboard.ts",
+          "tests/unit/subagent-report-contract.test.ts"
+        ],
+        "commands": [
+          {
+            "cmd": "vitest run tests/unit/subagent-report-contract.test.ts",
+            "result": "10 passed"
+          },
+          {
+            "cmd": "vitest run orchestration-runtime-blackboard/orchestration-blackboard/trace/synthesizer/result-bundle",
+            "result": "25 passed (5 files)"
+          }
+        ]
+      },
+      {
+        "taskId": "TF-0449",
+        "claim": "TaskLedgerReference 有显式继承/不继承表；阻塞关系经核对已由 TaskLedgerEdgeType.blocks 覆盖，未重复建模",
+        "artifacts": [
+          "shared/types/task-ledger-reference.ts",
+          "tests/unit/task-ledger-reference-inheritance.test.ts"
+        ],
+        "commands": [
+          {
+            "cmd": "vitest run tests/unit/task-ledger-reference-inheritance.test.ts tests/unit/task-ledger-reference.test.ts",
+            "result": "10 passed (2 files)"
+          }
+        ]
+      },
+      {
+        "taskId": "TF-0450",
+        "claim": "Chat 有会话级上下文压力指示器；四语 i18n；E2E 覆盖完整态与部分态",
+        "artifacts": [
+          "src/components/chat/ChatContextPressure.tsx",
+          "src/pages/Chat/ChatInput.tsx",
+          "shared/i18n/locales/en/chat.json",
+          "shared/i18n/locales/zh/chat.json",
+          "shared/i18n/locales/ja/chat.json",
+          "shared/i18n/locales/ru/chat.json",
+          "tests/unit/chat-context-pressure.test.tsx",
+          "tests/e2e/chat-context-pressure.spec.ts"
+        ],
+        "commands": [
+          {
+            "cmd": "vitest run tests/unit/chat-context-pressure.test.tsx",
+            "result": "11 passed"
+          },
+          {
+            "cmd": "node scripts/i18n-lint.mjs",
+            "result": "i18n lint passed"
+          },
+          {
+            "cmd": "playwright test tests/e2e/chat-context-pressure.spec.ts --workers=1",
+            "result": "2 passed (16.5s)"
+          },
+          {
+            "cmd": "playwright test chat-context-pressure + chat-manual-compaction --workers=1",
+            "result": "3 passed (30.7s)"
+          }
+        ]
+      }
+    ],
+    "coveredByExistingWork": [
+      {
+        "reference": "Claude Code 具名逃逸口",
+        "coveredBy": "PermissionDecisionEvent + docs/clawx-product-semantics.md §Unsafe Claims + TF-0379/TF-0380",
+        "note": "既有边界的显式程度不低于该参照"
+      },
+      {
+        "reference": "Codex/Manus 语义收敛（CodingRun、ExecutionEnvironment、diff-first attempt）",
+        "coveredBy": "TF-0370 子树（TF-0371/0375/0379/0383/0387/0390）",
+        "note": "本轮不重复实现"
+      },
+      {
+        "reference": "Task Ledger 阻塞关系",
+        "coveredBy": "shared/types/task-ledger.ts TaskLedgerEdgeType 含 blocks",
+        "note": "类型已存在，本轮裁定为已覆盖"
+      }
+    ],
+    "deliberatelyNotDone": [
+      "Cursor Cloud Agents：远端 VM 执行与托管环境生命周期",
+      "Manus：云 VM 沙盒作为每次运行执行环境",
+      "Manus / Codex Cloud：实时多人 Collab",
+      "Manus：Website Builder",
+      "Codex Cloud：托管 attempt",
+      "NotebookLM：claim 级溯源改造 Knowledge 审阅语义",
+      "Glean / Readwise：捕获摩擦与知识管线产品决策",
+      "Claude Code：权限模型整体替换"
+    ],
+    "unverifiedBoundaries": [
+      "未运行完整仓库 typecheck（pnpm run typecheck）；仅运行 web / test / openclaw_runtime core 三个 tsgo project",
+      "openclaw_runtime core 仍有 4 个既有错误（cross-area-facades.ts lastPlan 未使用；ui/vitest.config.ts 3 处类型栈深度），与 origin/main 基线一致，不在本次文件",
+      "未运行 pnpm test 全量单测；只运行与本树相关的 11 个测试文件",
+      "未运行 pnpm run test:e2e 全量 E2E；只运行 2 个相关 spec",
+      "未运行 openclaw_runtime 全量 build；仅构建 renderer/electron bundle 以支撑 E2E",
+      "未在 macOS / Linux 上验证",
+      "未验证 KV-cache 命中率指标在真实 provider 账单上的准确性；本次只验证记账逻辑与接线",
+      "未验证 subagent 报告契约在真实多角色长跑下的截断分布"
+    ]
+  },
+  "verification": {
+    "unit": {
+      "command": "vitest run <11 files>",
+      "files": 11,
+      "tests": 76,
+      "passed": 76,
+      "failed": 0,
+      "exitCode": 0
+    },
+    "i18nLint": {
+      "command": "node scripts/i18n-lint.mjs",
+      "exitCode": 0,
+      "result": "i18n lint passed"
+    },
+    "typecheckWeb": {
+      "command": "tsgo --noEmit -p tsconfig.web.json --composite false",
+      "errors": 0,
+      "exitCode": 0
+    },
+    "typecheckTest": {
+      "command": "tsgo --noEmit -p tsconfig.test.json --composite false",
+      "errors": 0,
+      "exitCode": 0
+    },
+    "typecheckCore": {
+      "command": "tsgo --noEmit -p tsconfig.core.json",
+      "errors": 4,
+      "exitCode": 2,
+      "baselineErrors": 4,
+      "baselineMeasuredBy": "git stash of uncommitted TF-0447 files before commit de138d53",
+      "note": "identical error set; none in touched files"
+    },
+    "e2e": {
+      "command": "playwright test chat-context-pressure + chat-manual-compaction --workers=1",
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "exitCode": 0,
+      "durationSeconds": 30.7
+    },
+    "build": {
+      "command": "vite build",
+      "exitCode": 0
+    }
+  },
+  "commits": [
+    {
+      "sha": "bef614bc9",
+      "taskId": "TF-0446",
+      "subject": "docs(decision): TF-0446 闭源参照三态归属裁定"
+    },
+    {
+      "sha": "de138d53a",
+      "taskId": "TF-0447",
+      "subject": "feat(context): TF-0447 KV-cache 命中率成为 context assembly 具名指标"
+    },
+    {
+      "sha": "88694125a",
+      "taskId": "TF-0448",
+      "subject": "feat(subagent): TF-0448 有界 subagent 报告契约"
+    },
+    {
+      "sha": "4228c083d",
+      "taskId": "TF-0449",
+      "subject": "feat(task-ledger): TF-0449 显式 TaskLedgerReference 继承表"
+    },
+    {
+      "sha": "c83623843",
+      "taskId": "TF-0451",
+      "subject": "docs(non-goals): TF-0451 刻意不吸收项清单"
+    },
+    {
+      "sha": "af52cef8e",
+      "taskId": "TF-0450",
+      "subject": "feat(chat): TF-0450 会话级上下文压力指示器"
+    },
+    {
+      "sha": "3d97f3906",
+      "taskId": "TF-0450",
+      "subject": "test(e2e): TF-0450 稳定会话上下文压力用例"
+    }
+  ],
+  "claimsBoundary": {
+    "isGa": false,
+    "isReleaseReady": false,
+    "claimsRealHumanEvidence": false,
+    "modifiesFrozenDefaults": false,
+    "touchesResourceFabric": false,
+    "touchesContextLifecycle": false
+  }
+}
