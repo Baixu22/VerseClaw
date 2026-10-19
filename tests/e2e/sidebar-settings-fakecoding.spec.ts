@@ -255,7 +255,7 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       await page.screenshot({ path: narrowScreenshot });
       await testInfo.attach('settings-full-page-light-narrow', { path: narrowScreenshot, contentType: 'image/png' });
 
-      await page.getByTestId('settings-nav-storage').click();
+      await page.getByTestId('settings-nav-archived').click();
       await expect(page.getByTestId('settings-page')).toBeVisible();
       await expect(page.getByTestId('settings-sidebar')).toBeVisible();
       const transitionContent = page.locator('[data-testid="settings-section-loading"], [data-testid="settings-implementation"]');
@@ -263,7 +263,7 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       const loadingScreenshot = testInfo.outputPath('settings-loading-populated.png');
       await page.screenshot({ path: loadingScreenshot });
       await testInfo.attach('settings-loading-populated', { path: loadingScreenshot, contentType: 'image/png' });
-      await expect(page.getByTestId('storage-info-ram')).toBeVisible({ timeout: 10_000 });
+      await expect(page.getByTestId('settings-nav-archived')).toBeVisible({ timeout: 10_000 });
     } finally {
       await closeElectronApp(app);
     }

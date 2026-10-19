@@ -445,8 +445,6 @@ import type {
   WorkProviderStatusSnapshot,
   WorkProviderValidateArtifactPayload,
   WorkProviderValidateArtifactResult,
-  SystemScanPayload,
-  SystemDeleteItemsPayload,
   WorkspaceCreatePayload,
   WorkspaceFolderCreatePayload,
   WorkspaceFolderDeletePayload,
@@ -731,13 +729,6 @@ export type {
   GithubPrListResult,
   GithubPrViewResult,
   GithubPrCreateResult,
-  SystemInfoResult,
-  SystemScanCategory,
-  SystemScanItem,
-  SystemScanResult,
-  SystemScanPayload,
-  SystemDeleteItemsPayload,
-  SystemDeleteItemsResult,
 } from '@shared/host-api/contract';
 
 export const hostApi = {
@@ -1160,11 +1151,6 @@ export const hostApi = {
     readFile: (path: string, tailLines?: number) => (
       invokeHost('logs', 'readFile', { path, tailLines })
     ),
-  },
-  system: {
-    info: () => invokeHost('system', 'info'),
-    scan: (input?: SystemScanPayload) => invokeHost('system', 'scan', input),
-    deleteItems: (input: SystemDeleteItemsPayload) => invokeHost('system', 'deleteItems', input),
   },
   resourceTracker: {
     list: () => invokeHost('resourceTracker', 'list'),

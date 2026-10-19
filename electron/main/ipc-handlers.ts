@@ -101,7 +101,6 @@ import { createRemoteTasksApi } from '../services/remote-tasks-api';
 import { createClawGraphApi } from '../services/clawgraph-api';
 import { createObservabilityApi } from '../services/observability-api';
 import { recordObservabilityHostDiagnostic } from '../services/observability-service';
-import { createSystemApi } from '../services/system-api';
 import { createResourceTrackerApi } from '../services/resource-tracker-api';
 import { HOST_EVENT_CHANNELS } from '@shared/host-events/contract';
 import {
@@ -267,7 +266,6 @@ function registerTypedHostHandlers(
         mainWindow.webContents.send(HOST_EVENT_CHANNELS.observability.trajectoryEvent, event)
       ),
     }).observability,
-    system: createSystemApi(),
     resourceTracker: createResourceTrackerApi(),
     memory: createMemoryApi({ gatewayManager }),
   });

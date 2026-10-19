@@ -107,11 +107,6 @@
     "restarting": "Gateway 重启中",
     "warning": "网关未运行。"
   },
-  "storageHealth": {
-    "ramLow": "内存不足",
-    "diskLow": "磁盘空间不足",
-    "bannerLow": "存储不足 — 点击清理"
-  },
   "resourceTracker": {
     "chip": {
       "ariaLabel": "{{count}} 个运行中的资源",
