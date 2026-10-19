@@ -42,6 +42,16 @@
       "id": "not-mount-drain",
       "method": "临时连续测量两个相邻 2.5s 空闲窗口（同一次运行；探针改动已回退，属本地诊断）。",
       "result": "window1 = 6，window2 = 6，长任务恒定不衰减，判定为周期性工作而非初次挂载余波；渐进挂载不适用。"
+    },
+    {
+      "id": "content-visibility-not-the-cause",
+      "method": "临时给 .task-row/.sidebar-row 注入 content-visibility:auto + contain-intrinsic-size:auto 30px 后复测同一 2.5s 空闲窗口（探针改动已回退）。",
+      "result": "idle long tasks 5 -> 6，无改善，排除浏览器屏外行样式/布局/绘制。"
+    },
+    {
+      "id": "session-object-identity-not-the-cause",
+      "method": "临时给 loadSessions 增加“字段未变则复用旧 session 对象”的结构共享后重建并复测（改动已回退）。",
+      "result": "idle 6 / open 10，与基线一致，排除周期性全量对象替换导致的行重渲。"
     }
   ]
 }
