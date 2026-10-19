@@ -11,11 +11,11 @@
     "sha": "fb5eb2c8b7c91069881af000b7618c1fdf342462",
     "subject": "feat(resources): align timers and share watcher roots"
   },
-  "generatedAt": "2026-10-19T04:10:25.091Z",
+  "generatedAt": "2026-10-19T04:16:39.494Z",
   "result": "pass-with-controlled-watcher-boundary",
   "intervalSample": {
     "beforeCandidate": "c001a9b64270884a2bd62a4ee687380f86345ebe",
-    "afterCandidate": "fb5eb2c8b7c91069881af000b7618c1fdf342462",
+    "afterCandidate": "c1ee45db97edd807a0d134d7d359116511b4f8ef",
     "beforeActiveIntervals": 4,
     "afterActiveIntervals": 2,
     "reductionRatio": 0.5
@@ -90,5 +90,45 @@
     "Runtime core typecheck still reports the pre-existing unused lastPlan error in src/agents/cross-area/cross-area-facades.ts; the P3 files themselves have no reported type errors.",
     "The 60% watcher reduction is measured on a controlled real-fs-watcher workload, not on the entire runtime watcher set; complex chokidar watchers remain a follow-up boundary."
   ],
-  "productLocks": "unchanged"
+  "productLocks": "unchanged",
+  "mergedCandidate": "c1ee45db97edd807a0d134d7d359116511b4f8ef",
+  "postMergeGates": [
+    {
+      "command": "focused timer/watcher/runtime tests",
+      "exitCode": 0,
+      "testFiles": 6,
+      "tests": 17
+    },
+    {
+      "command": "pnpm run typecheck:node|web|test",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run contract:check",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 18340
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/resource-timer-watcher-governance.md",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0
+    },
+    {
+      "command": "portable Node 24.16.0 + @playwright/test: gateway-lifecycle + workspace-terminal-panel",
+      "exitCode": 0,
+      "tests": 6
+    },
+    {
+      "command": "pnpm --dir openclaw_runtime exec node scripts/run-tsgo.mjs -p tsconfig.core.json --noEmit",
+      "exitCode": 1,
+      "result": "pre-existing unused lastPlan error outside P3 files"
+    }
+  ]
 }

@@ -2,43 +2,43 @@
   "schema": "clawx.tf0417.performance-probe/v1",
   "driven_by": "agent",
   "actor": "tf0417-electron-probe",
-  "candidate": "fb5eb2c8b7c91069881af000b7618c1fdf342462",
-  "startedAt": "2026-10-19T04:07:49.323Z",
-  "completedAt": "2026-10-19T04:08:05.567Z",
-  "durationMs": 16244,
+  "candidate": "c1ee45db97edd807a0d134d7d359116511b4f8ef",
+  "startedAt": "2026-10-19T04:15:14.047Z",
+  "completedAt": "2026-10-19T04:15:29.888Z",
+  "durationMs": 15841,
   "platform": "win32",
   "node": "v24.16.0",
   "main": {
-    "startedAt": 1792382863083,
-    "elapsedMs": 22435.751,
+    "startedAt": 1792383310794,
+    "elapsedMs": 19051.573900000003,
     "marks": [
       {
         "name": "app-ready",
-        "at": 1792382869049,
-        "fromStartMs": 5966.7098000000005
+        "at": 1792383313965,
+        "fromStartMs": 3171.5411000000004
       },
       {
         "name": "window-created",
-        "at": 1792382869403,
-        "fromStartMs": 6320.5596000000005
+        "at": 1792383314076,
+        "fromStartMs": 3281.919
       },
       {
         "name": "ready-to-show",
-        "at": 1792382869859,
-        "fromStartMs": 6776.795099999999
+        "at": 1792383314235,
+        "fromStartMs": 3440.7124999999996
       },
       {
         "name": "gateway-start",
-        "at": 1792382870149,
-        "fromStartMs": 7066.8387
+        "at": 1792383314249,
+        "fromStartMs": 3455.0271000000002
       }
     ],
     "counters": {
-      "spawnCount": 5,
+      "spawnCount": 7,
       "spawnByMethod": {
         "spawn": 0,
         "exec": 0,
-        "execFile": 5,
+        "execFile": 7,
         "fork": 0,
         "spawnSync": 0,
         "execSync": 0,
@@ -47,32 +47,44 @@
       "recentSpawns": [
         {
           "method": "execFile",
-          "at": 1792382870663,
-          "fromStartMs": 7580.540799999999,
+          "at": 1792383314608,
+          "fromStartMs": 3813.6543999999994,
           "command": "git"
         },
         {
           "method": "execFile",
-          "at": 1792382870666,
-          "fromStartMs": 7583.492999999999,
+          "at": 1792383314634,
+          "fromStartMs": 3840.0729,
           "command": "git"
         },
         {
           "method": "execFile",
-          "at": 1792382870669,
-          "fromStartMs": 7586.1032,
+          "at": 1792383314725,
+          "fromStartMs": 3931.4349999999995,
           "command": "git"
         },
         {
           "method": "execFile",
-          "at": 1792382870671,
-          "fromStartMs": 7588.4151999999995,
+          "at": 1792383314729,
+          "fromStartMs": 3935.2254000000003,
           "command": "git"
         },
         {
           "method": "execFile",
-          "at": 1792382870675,
-          "fromStartMs": 7592.843699999999,
+          "at": 1792383314732,
+          "fromStartMs": 3938.4825,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792383314736,
+          "fromStartMs": 3941.6939,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792383314740,
+          "fromStartMs": 3946.0639,
           "command": "git"
         }
       ],
@@ -80,669 +92,679 @@
       "activeWatchers": 0,
       "unavailable": []
     },
-    "rssBytes": 561336320
+    "rssBytes": 584491008
   },
   "renderer": {
     "schema": "clawx.renderer-performance/v1",
-    "startedAt": 1792382869856,
-    "generatedAt": 1792382885458,
+    "startedAt": 1792383314232,
+    "generatedAt": 1792383329699,
     "marks": [
       {
         "name": "renderer-start",
-        "at": 1792382869856,
-        "fromStartMs": 0.2000000011175871
+        "at": 1792383314232,
+        "fromStartMs": 0.09999999962747097
       },
       {
         "name": "renderer-first-paint",
-        "at": 1792382869916,
-        "fromStartMs": 59.59999999962747
+        "at": 1792383314252,
+        "fromStartMs": 19.5
       }
     ],
     "longTasks": [
       {
-        "startTime": 841,
-        "durationMs": 91
+        "startTime": 538.3000000007451,
+        "durationMs": 68
       },
       {
-        "startTime": 974.3000000007451,
-        "durationMs": 137
+        "startTime": 607.4000000003725,
+        "durationMs": 51
       },
       {
-        "startTime": 1111.9000000003725,
-        "durationMs": 52
+        "startTime": 788,
+        "durationMs": 63
       },
       {
-        "startTime": 1212.800000000745,
-        "durationMs": 56
-      },
-      {
-        "startTime": 1286.4000000003725,
-        "durationMs": 64
+        "startTime": 856.9000000003725,
+        "durationMs": 58
       }
     ],
     "inputLatency": [
       {
         "kind": "click",
-        "at": 1792382884914,
-        "latencyMs": 28
+        "at": 1792383329252,
+        "latencyMs": 3.599999999627471
       },
       {
         "kind": "keydown",
-        "at": 1792382884922,
-        "latencyMs": 5.900000000372529
+        "at": 1792383329258,
+        "latencyMs": 1.699999999254942
       }
     ],
     "ipc": {
-      "count": 87,
-      "p50Ms": 14,
-      "p95Ms": 103,
+      "count": 89,
+      "p50Ms": 12,
+      "p95Ms": 189,
       "recent": [
         {
           "module": "window",
           "action": "isMaximized",
-          "at": 1792382870349,
-          "durationMs": 100,
+          "at": 1792383314607,
+          "durationMs": 31,
           "ok": true
         },
         {
           "module": "permissions",
           "action": "approvals",
-          "at": 1792382870349,
-          "durationMs": 99,
+          "at": 1792383314607,
+          "durationMs": 31,
           "ok": true
         },
         {
           "module": "agentBrowser",
           "action": "tasks",
-          "at": 1792382870349,
-          "durationMs": 99,
+          "at": 1792383314607,
+          "durationMs": 31,
           "ok": true
         },
         {
           "module": "gateway",
           "action": "rpc",
-          "at": 1792382870351,
-          "durationMs": 101,
+          "at": 1792383314612,
+          "durationMs": 36,
           "ok": true
         },
         {
           "module": "remoteTasks",
           "action": "list",
-          "at": 1792382870351,
-          "durationMs": 101,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "list",
-          "at": 1792382870353,
-          "durationMs": 102,
-          "ok": true
-        },
-        {
-          "module": "runtimeApprovals",
-          "action": "list",
-          "at": 1792382870361,
-          "durationMs": 63,
-          "ok": false
-        },
-        {
-          "module": "settings",
-          "action": "getAll",
-          "at": 1792382870361,
-          "durationMs": 59,
-          "ok": true
-        },
-        {
-          "module": "gateway",
-          "action": "status",
-          "at": 1792382870369,
-          "durationMs": 67,
-          "ok": true
-        },
-        {
-          "module": "providers",
-          "action": "vendors",
-          "at": 1792382870377,
-          "durationMs": 75,
-          "ok": true
-        },
-        {
-          "module": "providers",
-          "action": "getDefaultAccount",
-          "at": 1792382870377,
-          "durationMs": 75,
-          "ok": true
-        },
-        {
-          "module": "system",
-          "action": "info",
-          "at": 1792382870377,
-          "durationMs": 74,
-          "ok": true
-        },
-        {
-          "module": "agents",
-          "action": "list",
-          "at": 1792382870377,
-          "durationMs": 127,
-          "ok": true
-        },
-        {
-          "module": "providers",
-          "action": "accounts",
-          "at": 1792382870379,
-          "durationMs": 77,
-          "ok": true
-        },
-        {
-          "module": "providers",
-          "action": "accountKeyInfo",
-          "at": 1792382870379,
-          "durationMs": 77,
-          "ok": true
-        },
-        {
-          "module": "gateway",
-          "action": "status",
-          "at": 1792382870569,
-          "durationMs": 200,
-          "ok": true
-        },
-        {
-          "module": "providers",
-          "action": "list",
-          "at": 1792382870570,
-          "durationMs": 191,
+          "at": 1792383314612,
+          "durationMs": 36,
           "ok": true
         },
         {
           "module": "git",
           "action": "status",
-          "at": 1792382870685,
-          "durationMs": 23,
+          "at": 1792383314615,
+          "durationMs": 38,
           "ok": true
         },
         {
           "module": "resourceTracker",
           "action": "list",
-          "at": 1792382870685,
-          "durationMs": 23,
+          "at": 1792383314615,
+          "durationMs": 38,
           "ok": true
-        },
-        {
-          "module": "git",
-          "action": "status",
-          "at": 1792382870689,
-          "durationMs": 27,
-          "ok": true
-        },
-        {
-          "module": "git",
-          "action": "branches",
-          "at": 1792382870689,
-          "durationMs": 27,
-          "ok": false
-        },
-        {
-          "module": "git",
-          "action": "worktrees",
-          "at": 1792382870689,
-          "durationMs": 27,
-          "ok": false
         },
         {
           "module": "providers",
           "action": "vendors",
-          "at": 1792382870689,
-          "durationMs": 26,
+          "at": 1792383314684,
+          "durationMs": 107,
           "ok": true
         },
         {
           "module": "providers",
           "action": "getDefaultAccount",
-          "at": 1792382870690,
-          "durationMs": 27,
+          "at": 1792383314684,
+          "durationMs": 107,
           "ok": true
         },
         {
           "module": "gateway",
           "action": "status",
-          "at": 1792382870690,
-          "durationMs": 27,
+          "at": 1792383314684,
+          "durationMs": 107,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "list",
+          "at": 1792383314684,
+          "durationMs": 105,
+          "ok": true
+        },
+        {
+          "module": "runtimeApprovals",
+          "action": "list",
+          "at": 1792383314736,
+          "durationMs": 155,
+          "ok": false
+        },
+        {
+          "module": "settings",
+          "action": "getAll",
+          "at": 1792383314736,
+          "durationMs": 155,
           "ok": true
         },
         {
           "module": "gateway",
-          "action": "rpc",
-          "at": 1792382870756,
-          "durationMs": 91,
-          "ok": false
+          "action": "status",
+          "at": 1792383314747,
+          "durationMs": 166,
+          "ok": true
         },
         {
-          "module": "permissions",
-          "action": "approvals",
-          "at": 1792382870758,
-          "durationMs": 84,
+          "module": "providers",
+          "action": "vendors",
+          "at": 1792383314752,
+          "durationMs": 171,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "getDefaultAccount",
+          "at": 1792383314752,
+          "durationMs": 171,
           "ok": true
         },
         {
           "module": "agents",
           "action": "list",
-          "at": 1792382870758,
-          "durationMs": 94,
+          "at": 1792383314752,
+          "durationMs": 176,
           "ok": true
         },
         {
-          "module": "providers",
-          "action": "accounts",
-          "at": 1792382870766,
-          "durationMs": 103,
-          "ok": true
-        },
-        {
-          "module": "providers",
-          "action": "accountKeyInfo",
-          "at": 1792382870766,
-          "durationMs": 103,
-          "ok": true
-        },
-        {
-          "module": "taskLedger",
-          "action": "snapshot",
-          "at": 1792382870766,
-          "durationMs": 102,
+          "module": "agents",
+          "action": "list",
+          "at": 1792383314764,
+          "durationMs": 184,
           "ok": true
         },
         {
           "module": "sessionActivity",
           "action": "snapshot",
-          "at": 1792382870766,
-          "durationMs": 102,
+          "at": 1792383314768,
+          "durationMs": 190,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "accountKeyInfo",
+          "at": 1792383314770,
+          "durationMs": 193,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "accounts",
+          "at": 1792383314770,
+          "durationMs": 193,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "accountKeyInfo",
+          "at": 1792383314770,
+          "durationMs": 189,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "accounts",
+          "at": 1792383314770,
+          "durationMs": 189,
+          "ok": true
+        },
+        {
+          "module": "git",
+          "action": "status",
+          "at": 1792383314778,
+          "durationMs": 55,
+          "ok": true
+        },
+        {
+          "module": "git",
+          "action": "status",
+          "at": 1792383314778,
+          "durationMs": 55,
+          "ok": true
+        },
+        {
+          "module": "git",
+          "action": "branches",
+          "at": 1792383314778,
+          "durationMs": 55,
+          "ok": false
+        },
+        {
+          "module": "git",
+          "action": "worktrees",
+          "at": 1792383314779,
+          "durationMs": 55,
+          "ok": false
+        },
+        {
+          "module": "gateway",
+          "action": "rpc",
+          "at": 1792383314779,
+          "durationMs": 54,
+          "ok": false
+        },
+        {
+          "module": "permissions",
+          "action": "approvals",
+          "at": 1792383314779,
+          "durationMs": 44,
+          "ok": true
+        },
+        {
+          "module": "gateway",
+          "action": "status",
+          "at": 1792383314779,
+          "durationMs": 31,
           "ok": true
         },
         {
           "module": "taskLedger",
           "action": "snapshot",
-          "at": 1792382870771,
-          "durationMs": 106,
+          "at": 1792383314779,
+          "durationMs": 55,
+          "ok": true
+        },
+        {
+          "module": "sessionActivity",
+          "action": "snapshot",
+          "at": 1792383314780,
+          "durationMs": 56,
+          "ok": true
+        },
+        {
+          "module": "taskLedger",
+          "action": "snapshot",
+          "at": 1792383314795,
+          "durationMs": 70,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "list",
+          "at": 1792383314795,
+          "durationMs": 25,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "list",
+          "at": 1792383314806,
+          "durationMs": 36,
           "ok": true
         },
         {
           "module": "sessions",
           "action": "history",
-          "at": 1792382870773,
-          "durationMs": 15,
+          "at": 1792383314811,
+          "durationMs": 32,
           "ok": false
-        },
-        {
-          "module": "providers",
-          "action": "list",
-          "at": 1792382870792,
-          "durationMs": 26,
-          "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382870994,
-          "durationMs": 12,
+          "at": 1792383315048,
+          "durationMs": 7,
           "ok": true
         },
         {
           "module": "sessions",
           "action": "compactionStatus",
-          "at": 1792382871171,
+          "at": 1792383315228,
           "durationMs": 1,
           "ok": false
         },
         {
           "module": "sessions",
           "action": "longTaskControlStatus",
-          "at": 1792382871171,
+          "at": 1792383315228,
           "durationMs": 1,
           "ok": false
         },
         {
           "module": "usage",
           "action": "contextRange",
-          "at": 1792382871174,
-          "durationMs": 4,
+          "at": 1792383315230,
+          "durationMs": 3,
           "ok": true
         },
         {
           "module": "usage",
           "action": "live",
-          "at": 1792382871174,
-          "durationMs": 4,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382871326,
-          "durationMs": 16,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382871649,
-          "durationMs": 14,
-          "ok": true
-        },
-        {
-          "module": "usage",
-          "action": "promptCacheStatus",
-          "at": 1792382871840,
+          "at": 1792383315230,
           "durationMs": 3,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382871979,
-          "durationMs": 16,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382872309,
-          "durationMs": 16,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382872635,
-          "durationMs": 15,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382872957,
-          "durationMs": 12,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382873280,
-          "durationMs": 6,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382873594,
+          "at": 1792383315374,
           "durationMs": 8,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382873919,
-          "durationMs": 8,
+          "at": 1792383315685,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "usage",
+          "action": "promptCacheStatus",
+          "at": 1792383315900,
+          "durationMs": 3,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382874236,
+          "at": 1792383315997,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383316313,
           "durationMs": 12,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382874566,
+          "at": 1792383316635,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383316961,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383317279,
           "durationMs": 13,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382874887,
-          "durationMs": 7,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382875199,
-          "durationMs": 7,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382875510,
-          "durationMs": 6,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382875822,
-          "durationMs": 7,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382876154,
-          "durationMs": 14,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382876476,
-          "durationMs": 7,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382876800,
-          "durationMs": 6,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382877113,
-          "durationMs": 6,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382877433,
-          "durationMs": 14,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382877761,
-          "durationMs": 14,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382878111,
-          "durationMs": 36,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382878429,
-          "durationMs": 12,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382878760,
-          "durationMs": 14,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382879087,
-          "durationMs": 13,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382879413,
+          "at": 1792383317607,
           "durationMs": 11,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382879745,
-          "durationMs": 13,
+          "at": 1792383317931,
+          "durationMs": 7,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382880075,
-          "durationMs": 16,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382880401,
+          "at": 1792383318250,
           "durationMs": 14,
           "ok": true
         },
         {
-          "module": "efficiency",
-          "action": "getState",
-          "at": 1792382880671,
-          "durationMs": 1,
-          "ok": true
-        },
-        {
-          "module": "resourceTracker",
-          "action": "list",
-          "at": 1792382880671,
-          "durationMs": 1,
-          "ok": true
-        },
-        {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382880729,
-          "durationMs": 13,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382881055,
-          "durationMs": 12,
-          "ok": true
-        },
-        {
-          "module": "workspaces",
-          "action": "saveState",
-          "at": 1792382881376,
+          "at": 1792383318571,
           "durationMs": 8,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382881688,
+          "at": 1792383318898,
+          "durationMs": 22,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383319224,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383319534,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383319855,
+          "durationMs": 15,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383320174,
           "durationMs": 9,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382882015,
+          "at": 1792383320498,
           "durationMs": 7,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382882326,
+          "at": 1792383320820,
+          "durationMs": 17,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383321136,
           "durationMs": 7,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382882638,
-          "durationMs": 7,
+          "at": 1792383321462,
+          "durationMs": 8,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382882956,
+          "at": 1792383321792,
           "durationMs": 11,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382883284,
-          "durationMs": 13,
+          "at": 1792383322124,
+          "durationMs": 16,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382883609,
+          "at": 1792383322445,
+          "durationMs": 11,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383322760,
           "durationMs": 10,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382883919,
+          "at": 1792383323088,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383323413,
           "durationMs": 7,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382884232,
+          "at": 1792383323725,
           "durationMs": 7,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382884553,
-          "durationMs": 15,
+          "at": 1792383324038,
+          "durationMs": 8,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382884879,
-          "durationMs": 12,
+          "at": 1792383324350,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "efficiency",
+          "action": "getState",
+          "at": 1792383324593,
+          "durationMs": 1,
+          "ok": true
+        },
+        {
+          "module": "resourceTracker",
+          "action": "list",
+          "at": 1792383324593,
+          "durationMs": 1,
           "ok": true
         },
         {
           "module": "workspaces",
           "action": "saveState",
-          "at": 1792382885200,
+          "at": 1792383324662,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383324986,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383325311,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383325633,
+          "durationMs": 18,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383325954,
+          "durationMs": 11,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383326276,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383326592,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383326914,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383327228,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383327538,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383327852,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383328165,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383328489,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383328801,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383329120,
+          "durationMs": 14,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792383329441,
           "durationMs": 7,
           "ok": true
         }
@@ -755,22 +777,22 @@
     "measured": true,
     "summary": {
       "sampleCount": 3,
-      "coverageMs": 10020,
+      "coverageMs": 10014,
       "latest": {
-        "at": 1792382884255,
-        "cpuPercent": 0.64,
-        "rssBytes": 553308160,
-        "heapUsedBytes": 114976460,
-        "systemFreeBytes": 6090059776,
+        "at": 1792383329044,
+        "cpuPercent": 1.24,
+        "rssBytes": 576536576,
+        "heapUsedBytes": 269332876,
+        "systemFreeBytes": 6516772864,
         "systemTotalBytes": 16295432192,
         "cpuCount": 16,
-        "shed": true,
+        "shed": false,
         "source": "os-cpu"
       },
-      "avgCpuPercent": 5.41,
-      "peakCpuPercent": 14.67,
-      "peakRssBytes": 572825600,
-      "shedSampleCount": 2
+      "avgCpuPercent": 8.43,
+      "peakCpuPercent": 21.22,
+      "peakRssBytes": 618532864,
+      "shedSampleCount": 0
     }
   },
   "boundaries": [
