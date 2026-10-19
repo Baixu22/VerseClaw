@@ -243,4 +243,58 @@ describe('Sidebar re-render containment', () => {
 
     expect(rowRenderCounts.count).toBeGreaterThan(settled);
   });
+  /**
+   * TF-0423: mounting every row of a long-lived sidebar made the renderer emit
+   * >50 ms long tasks (6-8 per 2.5 s with 333 sessions vs 0-1 with 20). The list
+   * now mounts one chunk at a time; this guards the bound and the scroll-driven
+   * growth that keeps every session reachable.
+   */
+  it('mounts session rows incrementally instead of all at once', async () => {
+    const keys = Array.from({ length: 200 }, (_, index) => `agent:main:s${String(index).padStart(3, '0')}`);
+    const { useChatStore } = await seedStores();
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+
+    const workspace = {
+      id: 'ws-1',
+      name: 'repo',
+      rootPath: '/repo',
+      activeSessionKey: keys[0],
+      sessionStates: Object.fromEntries(keys.map((key) => [key, {}])),
+      sessionFolders: [],
+      sessionFolderAssignments: {},
+      lastOpenedAt: 1_700_000_000_000,
+    };
+    useWorkspacesStore.setState({ profiles: [workspace], activeWorkspace: workspace, loading: false, error: null } as never);
+    useChatStore.setState({
+      sessions: keys.map((key, index) => ({ key, displayName: key, updatedAt: 1_700_000_000_000 + index })),
+      messages: [{ role: 'user', content: 'hi' }],
+      currentSessionKey: keys[0],
+      sessionLabels: Object.fromEntries(keys.map((key) => [key, key])),
+      sessionLastActivity: Object.fromEntries(keys.map((key) => [key, 1])),
+    } as never);
+
+    const { Sidebar } = await import('@/components/layout/Sidebar');
+    const view = render(<MemoryRouter><TooltipProvider><Sidebar /></TooltipProvider></MemoryRouter>);
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    });
+
+    const mounted = view.container.querySelectorAll('[data-testid^="sidebar-session-agent:main:s"]').length;
+    expect(mounted).toBeGreaterThan(0);
+    expect(mounted).toBeLessThanOrEqual(80);
+
+    const scroller = view.container.querySelector('.sidebar-scroll');
+    expect(scroller).not.toBeNull();
+    if (scroller) {
+      Object.defineProperty(scroller, 'scrollHeight', { value: 4_000, configurable: true });
+      Object.defineProperty(scroller, 'clientHeight', { value: 600, configurable: true });
+      Object.defineProperty(scroller, 'scrollTop', { value: 3_600, configurable: true });
+      await act(async () => {
+        scroller.dispatchEvent(new Event('scroll', { bubbles: true }));
+      });
+    }
+
+    const afterScroll = view.container.querySelectorAll('[data-testid^="sidebar-session-agent:main:s"]').length;
+    expect(afterScroll).toBeGreaterThan(mounted);
+  });
 });

@@ -219,6 +219,11 @@ let _sendGenerationCounter = 0;
 const _activeSendGenerationBySession = new Map<string, number>();
 const SESSION_LOAD_MIN_INTERVAL_MS = 1_200;
 const HISTORY_LOAD_MIN_INTERVAL_MS = 800;
+const SESSION_LABEL_HYDRATION_LIMIT = 40;
+const SESSION_LABEL_BATCH_SIZE = 40;
+const SESSION_SUMMARY_SWEEP_COOLDOWN_MS = 30_000;
+let _lastSessionSummarySweepAt = 0;
+
 const CHAT_EVENT_DEDUPE_TTL_MS = 30_000;
 const HISTORY_PAGE_SIZE = () => getAgentResourceLimits().historyPageSize;
 const HISTORY_MAX_RENDERED_MESSAGES = () => getAgentResourceLimits().maxRenderedMessages;
@@ -269,8 +274,14 @@ function applySessionBackendLabels(set: ChatSet, sessions: ChatSession[]): void 
 
 async function fetchSessionLabelSummaries(sessionKeys: string[]): Promise<SessionLabelSummary[]> {
   if (sessionKeys.length === 0) return [];
-  const response = await hostApi.sessions.summaries({ sessionKeys });
-  return Array.isArray(response?.summaries) ? response.summaries : [];
+  const summaries: SessionLabelSummary[] = [];
+  for (let index = 0; index < sessionKeys.length; index += SESSION_LABEL_BATCH_SIZE) {
+    const response = await hostApi.sessions.summaries({
+      sessionKeys: sessionKeys.slice(index, index + SESSION_LABEL_BATCH_SIZE),
+    });
+    if (Array.isArray(response?.summaries)) summaries.push(...response.summaries);
+  }
+  return summaries;
 }
 
 function applySessionLabelSummaries(
@@ -333,14 +344,39 @@ async function refreshVisibleSessionSummaries(
   get: ChatGet,
   sessionKeys?: string[],
 ): Promise<void> {
-  const sessions = get().sessions;
-  const currentSessionKey = get().currentSessionKey;
-  const targetKeys = (sessionKeys && sessionKeys.length > 0
+  const { sessions, currentSessionKey, sessionLabels } = get();
+  const sessionByKey = new Map(sessions.map((session) => [session.key, session]));
+  const requestedKeys = sessionKeys && sessionKeys.length > 0
     ? sessionKeys
-    : sessions.map((session) => session.key)
-  )
-    .filter((key) => key && !key.endsWith(':main') && key !== currentSessionKey);
+    : sessions.map((session) => session.key);
+
+  const targetKeys = requestedKeys
+    .filter((key) => {
+      if (!key || key.endsWith(':main') || key === currentSessionKey) return false;
+      if (sessionLabels[key]?.trim()) return false;
+      const session = sessionByKey.get(key);
+      // The gateway already ships its own title for most sessions. Only scan
+      // transcripts whose sidebar row would otherwise stay empty.
+      return !session?.label?.trim() && !session?.derivedTitle?.trim();
+    })
+    .map((key) => ({ key, updatedAt: sessionByKey.get(key)?.updatedAt ?? 0 }))
+    .sort((left, right) => right.updatedAt - left.updatedAt)
+    .slice(0, SESSION_LABEL_HYDRATION_LIMIT)
+    // Return to sidebar order after selecting the newest rows; batch order is
+    // observable and must not depend on activity sorting.
+    .sort((left, right) => requestedKeys.indexOf(left.key) - requestedKeys.indexOf(right.key))
+    .map((entry) => entry.key);
   if (targetKeys.length === 0) return;
+
+  // loadSessions already starts a bounded label sweep. Skip the immediate
+  // refresh triggered by the first history load so it cannot scan a second
+  // batch of old transcripts.
+  const isImplicitSweep = !sessionKeys || sessionKeys.length === 0;
+  if (isImplicitSweep) {
+    const now = Date.now();
+    if (now - _lastSessionSummarySweepAt < SESSION_SUMMARY_SWEEP_COOLDOWN_MS) return;
+    _lastSessionSummarySweepAt = now;
+  }
 
   try {
     const summaries = await fetchSessionLabelSummaries(targetKeys);
@@ -2994,12 +3030,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 existingSessionActivity,
               ),
             }))
+            .map((entry, index) => ({ ...entry, index }))
             .filter((entry) => entry.candidate != null)
+            .sort((left, right) => (
+              ((right.session.updatedAt ?? 0) - (left.session.updatedAt ?? 0))
+              || (left.index - right.index)
+            ))
+            .slice(0, SESSION_LABEL_HYDRATION_LIMIT)
+            .sort((left, right) => left.index - right.index)
             .map((entry) => ({
               session: entry.session,
               version: entry.candidate!.version,
             }));
           if (sessionsToLabel.length > 0) {
+            _lastSessionSummarySweepAt = Date.now();
             void (async () => {
               let pending = sessionsToLabel.filter(({ session, version }) => beginSessionLabelHydration(session.key, version));
               for (let attempt = 0; attempt <= LABEL_FETCH_RETRY_DELAYS_MS.length; attempt += 1) {
@@ -3066,7 +3110,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     clearHistoryPoll();
     clearBaselines();
     set((s) => buildSessionSwitchPatch(s, key));
-    get().loadHistory();
+    void get().loadHistory();
     void get().refreshTaskLedger();
     void ensureSessionLinkedToLedger(key);
   },

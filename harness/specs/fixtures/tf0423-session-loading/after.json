@@ -1,0 +1,310 @@
+{
+  "schema": "clawx.tf0423.session-loading-probe/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0423-session-probe",
+  "candidate": "codex/tf0423-sidebar-windowing-20261019",
+  "completedAt": "2026-10-19T01:16:37.510Z",
+  "platform": "win32",
+  "node": "v24.16.0",
+  "fixture": {
+    "sessionCount": 333,
+    "transcriptBytes": 59932341,
+    "transcriptMiB": 57.16
+  },
+  "loadSessionsMs": 606,
+  "idleLongTaskControl": {
+    "windowMs": 2500,
+    "longTasksOver50Ms": []
+  },
+  "longSessionOpen": {
+    "sessionKey": "agent:main:s332",
+    "transcriptBytes": 180000,
+    "durationMs": 178.79999999981374,
+    "renderedRows": 3,
+    "longTasksOver50Ms": []
+  },
+  "sessionSwitch": {
+    "count": 5,
+    "durationsMs": [
+      137.30000000074506,
+      136.70000000018626,
+      155.79999999981374,
+      152.20000000018626,
+      129.20000000018626
+    ],
+    "p50Ms": 137.30000000074506,
+    "p95Ms": 155.79999999981374,
+    "longTasksOver50Ms": [
+      {
+        "startTime": 8887.299999999814,
+        "durationMs": 55
+      }
+    ]
+  },
+  "summariesHostCall": {
+    "calls": [
+      {
+        "durationMs": 0,
+        "keys": 40
+      }
+    ],
+    "requestedKeys": 40,
+    "durationMs": 0,
+    "durationP50Ms": 0
+  },
+  "idleRss": {
+    "durationMs": 300000,
+    "sampleMs": 5000,
+    "samples": [
+      {
+        "at": 1792372297469,
+        "rssBytes": 573112320
+      },
+      {
+        "at": 1792372302482,
+        "rssBytes": 574808064
+      },
+      {
+        "at": 1792372307491,
+        "rssBytes": 567963648
+      },
+      {
+        "at": 1792372312499,
+        "rssBytes": 564891648
+      },
+      {
+        "at": 1792372317520,
+        "rssBytes": 564948992
+      },
+      {
+        "at": 1792372322525,
+        "rssBytes": 138989568
+      },
+      {
+        "at": 1792372327536,
+        "rssBytes": 301617152
+      },
+      {
+        "at": 1792372332551,
+        "rssBytes": 302104576
+      },
+      {
+        "at": 1792372337562,
+        "rssBytes": 149041152
+      },
+      {
+        "at": 1792372342577,
+        "rssBytes": 143818752
+      },
+      {
+        "at": 1792372347594,
+        "rssBytes": 154259456
+      },
+      {
+        "at": 1792372352610,
+        "rssBytes": 152297472
+      },
+      {
+        "at": 1792372357619,
+        "rssBytes": 152375296
+      },
+      {
+        "at": 1792372362632,
+        "rssBytes": 152444928
+      },
+      {
+        "at": 1792372367641,
+        "rssBytes": 152514560
+      },
+      {
+        "at": 1792372372647,
+        "rssBytes": 154034176
+      },
+      {
+        "at": 1792372377661,
+        "rssBytes": 155508736
+      },
+      {
+        "at": 1792372382665,
+        "rssBytes": 154406912
+      },
+      {
+        "at": 1792372387670,
+        "rssBytes": 153546752
+      },
+      {
+        "at": 1792372392672,
+        "rssBytes": 153550848
+      },
+      {
+        "at": 1792372397684,
+        "rssBytes": 153849856
+      },
+      {
+        "at": 1792372402697,
+        "rssBytes": 149790720
+      },
+      {
+        "at": 1792372407699,
+        "rssBytes": 156405760
+      },
+      {
+        "at": 1792372412706,
+        "rssBytes": 155799552
+      },
+      {
+        "at": 1792372417721,
+        "rssBytes": 154873856
+      },
+      {
+        "at": 1792372422737,
+        "rssBytes": 151785472
+      },
+      {
+        "at": 1792372427739,
+        "rssBytes": 154816512
+      },
+      {
+        "at": 1792372432742,
+        "rssBytes": 154890240
+      },
+      {
+        "at": 1792372437758,
+        "rssBytes": 155738112
+      },
+      {
+        "at": 1792372442767,
+        "rssBytes": 152580096
+      },
+      {
+        "at": 1792372447772,
+        "rssBytes": 155693056
+      },
+      {
+        "at": 1792372452784,
+        "rssBytes": 155729920
+      },
+      {
+        "at": 1792372457794,
+        "rssBytes": 155820032
+      },
+      {
+        "at": 1792372462810,
+        "rssBytes": 155844608
+      },
+      {
+        "at": 1792372467819,
+        "rssBytes": 155996160
+      },
+      {
+        "at": 1792372472826,
+        "rssBytes": 155914240
+      },
+      {
+        "at": 1792372477841,
+        "rssBytes": 155373568
+      },
+      {
+        "at": 1792372482857,
+        "rssBytes": 155377664
+      },
+      {
+        "at": 1792372487861,
+        "rssBytes": 155430912
+      },
+      {
+        "at": 1792372492869,
+        "rssBytes": 155451392
+      },
+      {
+        "at": 1792372497878,
+        "rssBytes": 156545024
+      },
+      {
+        "at": 1792372502891,
+        "rssBytes": 156368896
+      },
+      {
+        "at": 1792372507894,
+        "rssBytes": 156442624
+      },
+      {
+        "at": 1792372512905,
+        "rssBytes": 156446720
+      },
+      {
+        "at": 1792372517914,
+        "rssBytes": 156495872
+      },
+      {
+        "at": 1792372522920,
+        "rssBytes": 153468928
+      },
+      {
+        "at": 1792372527928,
+        "rssBytes": 158826496
+      },
+      {
+        "at": 1792372532941,
+        "rssBytes": 159457280
+      },
+      {
+        "at": 1792372537956,
+        "rssBytes": 159141888
+      },
+      {
+        "at": 1792372542971,
+        "rssBytes": 156143616
+      },
+      {
+        "at": 1792372547975,
+        "rssBytes": 159199232
+      },
+      {
+        "at": 1792372552984,
+        "rssBytes": 159391744
+      },
+      {
+        "at": 1792372557989,
+        "rssBytes": 159592448
+      },
+      {
+        "at": 1792372562994,
+        "rssBytes": 159481856
+      },
+      {
+        "at": 1792372568015,
+        "rssBytes": 159649792
+      },
+      {
+        "at": 1792372573020,
+        "rssBytes": 159637504
+      },
+      {
+        "at": 1792372578022,
+        "rssBytes": 159694848
+      },
+      {
+        "at": 1792372583031,
+        "rssBytes": 161939456
+      },
+      {
+        "at": 1792372588035,
+        "rssBytes": 162828288
+      },
+      {
+        "at": 1792372593050,
+        "rssBytes": 163008512
+      }
+    ],
+    "longestMonotonicRise": 6,
+    "growthBytes": -410103808,
+    "persistentGrowth": false
+  },
+  "boundaries": [
+    "Gateway RPC is agent-mocked; sessions.summaries is the real Electron host service reading synthetic local transcripts.",
+    "Synthetic transcripts contain no private user content and are generated at runtime.",
+    "Timing is a local Windows Electron sample, not a cross-platform benchmark.",
+    "Switch latency is click -> two settled animation frames so the same probe runs on pre-change and post-change builds."
+  ]
+}

@@ -1,0 +1,548 @@
+{
+  "schema": "clawx.tf0423.session-loading-probe/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0423-session-probe",
+  "candidate": "9cae5341 (pre-TF-0423)",
+  "completedAt": "2026-10-19T01:22:13.740Z",
+  "platform": "win32",
+  "node": "v24.16.0",
+  "fixture": {
+    "sessionCount": 333,
+    "transcriptBytes": 59932341,
+    "transcriptMiB": 57.16
+  },
+  "loadSessionsMs": 633,
+  "idleLongTaskControl": {
+    "windowMs": 2500,
+    "longTasksOver50Ms": [
+      {
+        "startTime": 3666.199999999255,
+        "durationMs": 88
+      },
+      {
+        "startTime": 4054.899999999441,
+        "durationMs": 112
+      },
+      {
+        "startTime": 4476,
+        "durationMs": 111
+      },
+      {
+        "startTime": 4895.699999999255,
+        "durationMs": 105
+      },
+      {
+        "startTime": 5313.0999999996275,
+        "durationMs": 105
+      },
+      {
+        "startTime": 5718.5999999996275,
+        "durationMs": 115
+      }
+    ]
+  },
+  "longSessionOpen": {
+    "sessionKey": "agent:main:s332",
+    "transcriptBytes": 180000,
+    "durationMs": 427.20000000018626,
+    "renderedRows": 3,
+    "longTasksOver50Ms": [
+      {
+        "startTime": 6133.899999999441,
+        "durationMs": 86
+      },
+      {
+        "startTime": 6228,
+        "durationMs": 108
+      },
+      {
+        "startTime": 6343.299999999814,
+        "durationMs": 114
+      },
+      {
+        "startTime": 6458.799999999814,
+        "durationMs": 89
+      },
+      {
+        "startTime": 6558.399999999441,
+        "durationMs": 96
+      },
+      {
+        "startTime": 6967.0999999996275,
+        "durationMs": 97
+      },
+      {
+        "startTime": 7371.299999999814,
+        "durationMs": 85
+      },
+      {
+        "startTime": 7762.799999999814,
+        "durationMs": 102
+      },
+      {
+        "startTime": 8167.0999999996275,
+        "durationMs": 88
+      },
+      {
+        "startTime": 8554.899999999441,
+        "durationMs": 101
+      },
+      {
+        "startTime": 8959.099999999627,
+        "durationMs": 93
+      }
+    ]
+  },
+  "sessionSwitch": {
+    "count": 5,
+    "durationsMs": [
+      215.1000000005588,
+      232,
+      240.80000000074506,
+      222.3999999994412,
+      230.5
+    ],
+    "p50Ms": 230.5,
+    "p95Ms": 240.80000000074506,
+    "longTasksOver50Ms": [
+      {
+        "startTime": 3666.199999999255,
+        "durationMs": 88
+      },
+      {
+        "startTime": 4054.899999999441,
+        "durationMs": 112
+      },
+      {
+        "startTime": 4476,
+        "durationMs": 111
+      },
+      {
+        "startTime": 4895.699999999255,
+        "durationMs": 105
+      },
+      {
+        "startTime": 5313.0999999996275,
+        "durationMs": 105
+      },
+      {
+        "startTime": 5718.5999999996275,
+        "durationMs": 115
+      },
+      {
+        "startTime": 6133.899999999441,
+        "durationMs": 86
+      },
+      {
+        "startTime": 6228,
+        "durationMs": 108
+      },
+      {
+        "startTime": 6343.299999999814,
+        "durationMs": 114
+      },
+      {
+        "startTime": 6458.799999999814,
+        "durationMs": 89
+      },
+      {
+        "startTime": 6558.399999999441,
+        "durationMs": 96
+      },
+      {
+        "startTime": 6967.0999999996275,
+        "durationMs": 97
+      },
+      {
+        "startTime": 7371.299999999814,
+        "durationMs": 85
+      },
+      {
+        "startTime": 7762.799999999814,
+        "durationMs": 102
+      },
+      {
+        "startTime": 8167.0999999996275,
+        "durationMs": 88
+      },
+      {
+        "startTime": 8554.899999999441,
+        "durationMs": 101
+      },
+      {
+        "startTime": 8959.099999999627,
+        "durationMs": 93
+      },
+      {
+        "startTime": 9167,
+        "durationMs": 99
+      },
+      {
+        "startTime": 9271,
+        "durationMs": 110
+      },
+      {
+        "startTime": 9383.099999999627,
+        "durationMs": 128
+      },
+      {
+        "startTime": 9531.5,
+        "durationMs": 105
+      },
+      {
+        "startTime": 9646.399999999441,
+        "durationMs": 113
+      },
+      {
+        "startTime": 9771.799999999814,
+        "durationMs": 106
+      },
+      {
+        "startTime": 9879,
+        "durationMs": 116
+      },
+      {
+        "startTime": 10008.899999999441,
+        "durationMs": 93
+      },
+      {
+        "startTime": 10112.5,
+        "durationMs": 109
+      },
+      {
+        "startTime": 10232.199999999255,
+        "durationMs": 120
+      },
+      {
+        "startTime": 10353.899999999441,
+        "durationMs": 126
+      },
+      {
+        "startTime": 10495.799999999814,
+        "durationMs": 111
+      },
+      {
+        "startTime": 10632.199999999255,
+        "durationMs": 108
+      },
+      {
+        "startTime": 10752,
+        "durationMs": 102
+      },
+      {
+        "startTime": 10855.5,
+        "durationMs": 118
+      },
+      {
+        "startTime": 10990.299999999814,
+        "durationMs": 114
+      },
+      {
+        "startTime": 11129.399999999441,
+        "durationMs": 105
+      },
+      {
+        "startTime": 11246.299999999814,
+        "durationMs": 113
+      },
+      {
+        "startTime": 11360.599999999627,
+        "durationMs": 113
+      },
+      {
+        "startTime": 11488.399999999441,
+        "durationMs": 98
+      }
+    ]
+  },
+  "summariesHostCall": {
+    "calls": [
+      {
+        "durationMs": 0,
+        "keys": 332
+      },
+      {
+        "durationMs": 0,
+        "keys": 332
+      },
+      {
+        "durationMs": 0,
+        "keys": 332
+      },
+      {
+        "durationMs": 0,
+        "keys": 332
+      },
+      {
+        "durationMs": 0,
+        "keys": 332
+      },
+      {
+        "durationMs": 0,
+        "keys": 332
+      },
+      {
+        "durationMs": 0,
+        "keys": 332
+      }
+    ],
+    "requestedKeys": 332,
+    "durationMs": 0,
+    "durationP50Ms": 0
+  },
+  "idleRss": {
+    "durationMs": 300000,
+    "sampleMs": 5000,
+    "samples": [
+      {
+        "at": 1792372633729,
+        "rssBytes": 608124928
+      },
+      {
+        "at": 1792372638743,
+        "rssBytes": 611192832
+      },
+      {
+        "at": 1792372643753,
+        "rssBytes": 607182848
+      },
+      {
+        "at": 1792372648763,
+        "rssBytes": 604700672
+      },
+      {
+        "at": 1792372653769,
+        "rssBytes": 309469184
+      },
+      {
+        "at": 1792372658777,
+        "rssBytes": 309911552
+      },
+      {
+        "at": 1792372663788,
+        "rssBytes": 309170176
+      },
+      {
+        "at": 1792372668801,
+        "rssBytes": 308322304
+      },
+      {
+        "at": 1792372673814,
+        "rssBytes": 307458048
+      },
+      {
+        "at": 1792372678825,
+        "rssBytes": 301244416
+      },
+      {
+        "at": 1792372683827,
+        "rssBytes": 304373760
+      },
+      {
+        "at": 1792372688840,
+        "rssBytes": 304242688
+      },
+      {
+        "at": 1792372693853,
+        "rssBytes": 303783936
+      },
+      {
+        "at": 1792372698863,
+        "rssBytes": 303464448
+      },
+      {
+        "at": 1792372703867,
+        "rssBytes": 303480832
+      },
+      {
+        "at": 1792372708881,
+        "rssBytes": 303611904
+      },
+      {
+        "at": 1792372713893,
+        "rssBytes": 305324032
+      },
+      {
+        "at": 1792372718903,
+        "rssBytes": 304082944
+      },
+      {
+        "at": 1792372723914,
+        "rssBytes": 304119808
+      },
+      {
+        "at": 1792372728923,
+        "rssBytes": 303792128
+      },
+      {
+        "at": 1792372733926,
+        "rssBytes": 303583232
+      },
+      {
+        "at": 1792372738942,
+        "rssBytes": 303030272
+      },
+      {
+        "at": 1792372743959,
+        "rssBytes": 303972352
+      },
+      {
+        "at": 1792372748972,
+        "rssBytes": 304046080
+      },
+      {
+        "at": 1792372753980,
+        "rssBytes": 303243264
+      },
+      {
+        "at": 1792372758995,
+        "rssBytes": 303099904
+      },
+      {
+        "at": 1792372764009,
+        "rssBytes": 303173632
+      },
+      {
+        "at": 1792372769019,
+        "rssBytes": 303239168
+      },
+      {
+        "at": 1792372774035,
+        "rssBytes": 304295936
+      },
+      {
+        "at": 1792372779040,
+        "rssBytes": 300838912
+      },
+      {
+        "at": 1792372784052,
+        "rssBytes": 303824896
+      },
+      {
+        "at": 1792372789057,
+        "rssBytes": 304037888
+      },
+      {
+        "at": 1792372794065,
+        "rssBytes": 303058944
+      },
+      {
+        "at": 1792372799077,
+        "rssBytes": 300077056
+      },
+      {
+        "at": 1792372804082,
+        "rssBytes": 303390720
+      },
+      {
+        "at": 1792372809098,
+        "rssBytes": 303206400
+      },
+      {
+        "at": 1792372814109,
+        "rssBytes": 303288320
+      },
+      {
+        "at": 1792372819116,
+        "rssBytes": 303349760
+      },
+      {
+        "at": 1792372824122,
+        "rssBytes": 303415296
+      },
+      {
+        "at": 1792372829125,
+        "rssBytes": 303493120
+      },
+      {
+        "at": 1792372834134,
+        "rssBytes": 304021504
+      },
+      {
+        "at": 1792372839146,
+        "rssBytes": 303783936
+      },
+      {
+        "at": 1792372844163,
+        "rssBytes": 277897216
+      },
+      {
+        "at": 1792372849179,
+        "rssBytes": 252071936
+      },
+      {
+        "at": 1792372854190,
+        "rssBytes": 251985920
+      },
+      {
+        "at": 1792372859193,
+        "rssBytes": 250978304
+      },
+      {
+        "at": 1792372864198,
+        "rssBytes": 252170240
+      },
+      {
+        "at": 1792372869207,
+        "rssBytes": 252133376
+      },
+      {
+        "at": 1792372874221,
+        "rssBytes": 251359232
+      },
+      {
+        "at": 1792372879236,
+        "rssBytes": 248377344
+      },
+      {
+        "at": 1792372884254,
+        "rssBytes": 251392000
+      },
+      {
+        "at": 1792372889257,
+        "rssBytes": 251592704
+      },
+      {
+        "at": 1792372894267,
+        "rssBytes": 252456960
+      },
+      {
+        "at": 1792372899278,
+        "rssBytes": 249221120
+      },
+      {
+        "at": 1792372904280,
+        "rssBytes": 251891712
+      },
+      {
+        "at": 1792372909289,
+        "rssBytes": 252067840
+      },
+      {
+        "at": 1792372914290,
+        "rssBytes": 252698624
+      },
+      {
+        "at": 1792372919304,
+        "rssBytes": 252641280
+      },
+      {
+        "at": 1792372924314,
+        "rssBytes": 252846080
+      },
+      {
+        "at": 1792372929320,
+        "rssBytes": 252960768
+      }
+    ],
+    "longestMonotonicRise": 6,
+    "growthBytes": -355164160,
+    "persistentGrowth": false
+  },
+  "boundaries": [
+    "Gateway RPC is agent-mocked; sessions.summaries is the real Electron host service reading synthetic local transcripts.",
+    "Synthetic transcripts contain no private user content and are generated at runtime.",
+    "Timing is a local Windows Electron sample, not a cross-platform benchmark.",
+    "Switch latency is click -> two settled animation frames so the same probe runs on pre-change and post-change builds."
+  ]
+}

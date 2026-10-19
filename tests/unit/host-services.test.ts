@@ -1060,7 +1060,6 @@ describe('host services', () => {
            sessionKey: 'agent:main:abc123',
            firstUserText: 'Hello from transcript',
            lastTimestamp: 1001000,
-           messageCount: 1,
         }],
       });
     await expect(sessionsApi.history({ sessionKey: 'agent:main:abc123', limit: 5 }))
