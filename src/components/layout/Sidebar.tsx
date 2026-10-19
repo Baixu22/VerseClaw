@@ -158,6 +158,9 @@ type SidebarSessionStatus = {
   dismissible: boolean;
 };
 
+/** TF-0423: rows mounted per incremental chunk (bounded DOM for long-lived sidebars). */
+const SIDEBAR_SESSION_RENDER_CHUNK = 80;
+
 const COMPLETED_SESSION_STATUSES = new Set(['completed', 'success', 'done', 'finished']);
 const ERROR_SESSION_STATUSES = new Set(['failed', 'error', 'killed', 'timeout']);
 const ABORTED_SESSION_STATUSES = new Set(['aborted', 'cancelled', 'canceled']);
@@ -655,6 +658,24 @@ export function Sidebar() {
   /* Official sections are collapsible; conversations default to open so the
      restored session list is visible without an extra click. */
   const [sessionSectionOpen, setSessionSectionOpen] = useState(true);
+  /*
+   * TF-0423: mounting hundreds of session rows made the renderer produce >50 ms
+   * long tasks while idle and when opening a session (measured: 6-8 tasks per
+   * 2.5 s with 333 rows vs 0-1 with 20 rows; CSS, content-visibility, memo
+   * comparators and object identity were all ruled out). Mount rows
+   * incrementally instead: a chunk per scroll-to-bottom, so the mounted DOM
+   * stays bounded while every session remains reachable.
+   */
+  const [sessionRenderLimit, setSessionRenderLimit] = useState(SIDEBAR_SESSION_RENDER_CHUNK);
+  const sessionRenderResetKey = `${sessionView}:${sessions.length}:${currentSessionKey}`;
+  useEffect(() => {
+    setSessionRenderLimit(SIDEBAR_SESSION_RENDER_CHUNK);
+  }, [sessionRenderResetKey]);
+  const handleSessionListScroll = useCallback((event: React.UIEvent<HTMLDivElement>) => {
+    const element = event.currentTarget;
+    if (element.scrollTop + element.clientHeight < element.scrollHeight - 160) return;
+    setSessionRenderLimit((current) => Math.min(current + SIDEBAR_SESSION_RENDER_CHUNK, sessions.length));
+  }, [sessions.length]);
   const [sessionOrganizeMenu, setSessionOrganizeMenu] = useState<{ top: number; left: number } | null>(null);
   const [footerMenu, setFooterMenu] = useState<{ bottom: number; left: number; maxHeight: number } | null>(null);
   const [collapsedWorkspaceIds, setCollapsedWorkspaceIds] = useState<Record<string, boolean>>({});
@@ -1266,7 +1287,7 @@ export function Sidebar() {
 
       {/* Session list stays structurally present while the gateway and workspace data hydrate. */}
       {!sidebarCollapsed && (
-        <div className="sidebar-scroll">
+        <div className="sidebar-scroll" onScroll={handleSessionListScroll}>
           <section className={cn('sidebar-section', !sessionSectionOpen && 'section-collapsed')}>
             {/* Official section heading: the label itself is the collapse
                 control (`aria-expanded` + trailing chevron), and the organize
@@ -1335,7 +1356,7 @@ export function Sidebar() {
             <div className="task-collection-list">
               {sidebarSessionEntries
                 ? sidebarSessionEntries.length > 0
-                  ? sidebarSessionEntries.map((entry) => renderSessionRow(entry))
+                  ? sidebarSessionEntries.slice(0, sessionRenderLimit).map((entry) => renderSessionRow(entry))
                   : <p className="px-2 py-2 text-xs text-muted-foreground">{sessionPanelMessage}</p>
                  : sortedWorkspaceSessionGroups.length > 0
                    ? sortedWorkspaceSessionGroups.map((group) => {
@@ -1414,7 +1435,7 @@ export function Sidebar() {
                         <div className="project-tasks" data-flat={showWorkspaceRow ? undefined : 'true'}>
                           <SessionFolderTree
                             workspace={group.workspace}
-                            sessions={group.sessions}
+                            sessions={sessionRenderLimit >= sessions.length ? group.sessions : group.sessions.slice(0, sessionRenderLimit)}
                             collapsedFolders={collapsedFolderIds}
                             sessionStatusKinds={sessionStatusKinds}
                             sessionSort={sessionSort}

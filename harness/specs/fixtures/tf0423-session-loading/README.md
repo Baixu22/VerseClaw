@@ -23,13 +23,14 @@ node harness/specs/fixtures/tf0423-session-loading/probe.mjs <仓库根> <输出
 
 ## 结论（见 acceptance.json）
 
-- 侧栏一次扫描请求的会话键数量：**332 → 40**。
-- `sessions.summaries` 调用次数：**7 → 1**。
-- 打开大 transcript 会话的耗时与 renderer long task 数量：改善前后一致（8 vs 8）；同一台机器上空闲对照窗口本身就有 6 个 long task/2.5 s（探针被强制软件渲染）。
-- 五分钟空闲 RSS：`persistentGrowth=false`。
+最终同探针结果（333 个合成会话，Windows Electron，agent 驱动）：
 
-关于 long task 的边界：软件渲染下环境本身持续产生 >50 ms 长任务。
-`attribution.json` 用同一构建、同一 fixture 只改 `TF0423_SESSION_COUNT` 做了归因：
-20 个会话时空闲对照 1 个 / 打开 0 个 long task；333 个会话时空闲对照 6 个 / 打开 8 个。
-**长任务随侧栏会话数增长，而不是随 transcript 大小增长**，因此绝对阈值不可归因于“打开长会话”，
-剩余工作属于侧栏渲染收敛（虚拟化/分批挂载），不在 08744fac 的 transcript 读取与标签预算修复范围内。
+- 侧栏一次扫描请求的会话键数量：**332 → 40**；`sessions.summaries` 调用次数：**7 → 1**。
+- 打开大 transcript 会话：**427.2 ms / 11 个 long task → 178.8 ms / 0 个**；空闲对照 long task：**6 → 0**。
+- 会话切换 long task：**37 → 1**；切换 P50/P95：**230.5/240.8 ms → 137.3/155.8 ms**。
+- 五分钟空闲 RSS：`persistentGrowth=false`（60 个样本；前后均无持续单调增长）。
+
+侧栏修复把会话行按每批 80 行挂载，并在滚动接近底部时继续加载；因此 333 会话不再一次挂满 DOM。
+`attribution.json` 保留早期归因实验：长任务随会话行数增长，而非 transcript 大小；负向诊断也保留在文件中，供后续避免重复试错。
+
+边界：这些是本机 Windows Electron 样本，不是跨平台基准；Gateway RPC 由 agent 模拟，`sessions.summaries` 读取的是真实 Main 服务与合成本地 transcript。

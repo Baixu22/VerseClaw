@@ -8,6 +8,8 @@ intent: Bound sidebar transcript summary reads and label sweeps so long-lived se
 touchedAreas:
   - electron/services/sessions-api.ts
   - src/stores/chat.ts
+  - src/components/layout/Sidebar.tsx
+  - tests/unit/sidebar-render-containment.test.tsx
   - shared/host-api/contract.ts
   - tests/unit/host-services.test.ts
   - tests/unit/session-summary-bounded-read.test.ts

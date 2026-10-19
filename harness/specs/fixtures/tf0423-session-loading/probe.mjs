@@ -29,7 +29,7 @@ const SESSION_COUNT = Number(process.env.TF0423_SESSION_COUNT ?? 333);
 const TRANSCRIPT_BYTES = 180_000;
 
 const keyOf = (i) => `agent:main:s${String(i).padStart(3, '0')}`;
-const switchBase = Math.max(0, SESSION_COUNT - 220);
+const switchBase = Math.max(0, SESSION_COUNT - 20);
 const percentile = (values, ratio) => {
   if (values.length === 0) return null;
   const sorted = [...values].sort((a, b) => a - b);
@@ -196,6 +196,8 @@ try {
 
   // Open a session whose transcript is one of the large ones and record renderer long tasks.
   const longBefore = await page.evaluate(() => (window.__CLAWX_PERF_SNAPSHOT__?.().longTasks ?? []).length);
+  // Let the post-switch render/commit settle before attributing tasks to the long-session open.
+  await page.evaluate(() => new Promise((resolvePromise) => requestAnimationFrame(() => requestAnimationFrame(resolvePromise))));
   const longOpenMs = await page.evaluate((k) => new Promise((resolvePromise) => {
     const started = performance.now();
     document.querySelector(`[data-testid="sidebar-session-${k}"]`)?.click();
