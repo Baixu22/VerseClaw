@@ -25,10 +25,11 @@ const runRoot = resolve(process.argv[4] ?? join(process.env.TMP ?? process.env.T
 const idleMs = Number(process.env.TF0423_IDLE_MS ?? 300_000);
 const idleSampleMs = Number(process.env.TF0423_IDLE_SAMPLE_MS ?? 5_000);
 const SWITCH_COUNT = 5;
-const SESSION_COUNT = 333;
+const SESSION_COUNT = Number(process.env.TF0423_SESSION_COUNT ?? 333);
 const TRANSCRIPT_BYTES = 180_000;
 
 const keyOf = (i) => `agent:main:s${String(i).padStart(3, '0')}`;
+const switchBase = Math.max(0, SESSION_COUNT - 220);
 const percentile = (values, ratio) => {
   if (values.length === 0) return null;
   const sorted = [...values].sort((a, b) => a - b);
@@ -201,7 +202,7 @@ try {
     requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => {
       resolvePromise(performance.now() - started);
     })));
-  }), keyOf(0));
+  }), keyOf(Math.max(0, SESSION_COUNT - 1)));
   await page.waitForTimeout(2_500);
   const longOpenDiagnostics = await page.evaluate(() => {
     const rows = document.querySelectorAll('[data-testid^="chat-message-"]').length;
@@ -210,7 +211,7 @@ try {
   });
   const longOpenLongTasks = longOpenDiagnostics.longTasks.slice(longBefore).filter((task) => task.durationMs >= 50);
 
-  const switchKeys = Array.from({ length: SWITCH_COUNT }, (_, index) => keyOf(100 + index));
+  const switchKeys = Array.from({ length: SWITCH_COUNT }, (_, index) => keyOf(switchBase + index));
   const switchMs = [];
   for (const key of switchKeys) {
     const elapsed = await page.evaluate((k) => new Promise((resolvePromise) => {
@@ -262,7 +263,7 @@ try {
     fixture: { sessionCount: SESSION_COUNT, transcriptBytes: fixture.bytes, transcriptMiB: Number((fixture.bytes / 1024 / 1024).toFixed(2)) },
     loadSessionsMs,
     idleLongTaskControl: { windowMs: 2_500, longTasksOver50Ms: idleLongTasks },
-    longSessionOpen: { sessionKey: keyOf(0), transcriptBytes: TRANSCRIPT_BYTES, durationMs: longOpenMs, renderedRows: longOpenDiagnostics.rows, longTasksOver50Ms: longOpenLongTasks },
+    longSessionOpen: { sessionKey: keyOf(Math.max(0, SESSION_COUNT - 1)), transcriptBytes: TRANSCRIPT_BYTES, durationMs: longOpenMs, renderedRows: longOpenDiagnostics.rows, longTasksOver50Ms: longOpenLongTasks },
     sessionSwitch: { count: switchMs.length, durationsMs: switchMs, p50Ms: percentile(switchMs, 0.5), p95Ms: percentile(switchMs, 0.95), longTasksOver50Ms: switchLongTasks },
     summariesHostCall: {
       calls: summaryCalls,

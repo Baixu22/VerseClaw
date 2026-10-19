@@ -1,0 +1,35 @@
+{
+  "schema": "clawx.tf0423.sidebar-attribution/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0423-session-probe",
+  "generatedAt": "2026-10-19T00:42:23.080Z",
+  "build": "codex/tf0423-session-loading-regression-20261019",
+  "question": "Is the >50 ms renderer long-task background on the synthetic fixture caused by the number of sidebar sessions, or by opening a long transcript?",
+  "method": "Same probe, same 180 KB-per-transcript fixture, only TF0423_SESSION_COUNT differs. Both runs use the committed after build (08744fac dist).",
+  "runs": [
+    {
+      "sessionCount": 20,
+      "command": "$env:TF0423_SESSION_COUNT='20'; $env:TF0423_IDLE_MS='3000'; $env:TF0423_IDLE_SAMPLE_MS='1000'; node harness/specs/fixtures/tf0423-session-loading/probe.mjs . <out> <tmpdir>",
+      "loadSessionsMs": 808,
+      "switchP50Ms": 69.90000000037253,
+      "switchP95Ms": 75.20000000018626,
+      "idleControlLongTasks": 1,
+      "longSessionOpenMs": 95.29999999981374,
+      "longSessionOpenLongTasks": 0,
+      "switchWindowLongTasks": 1
+    },
+    {
+      "sessionCount": 333,
+      "command": "$env:TF0423_IDLE_MS='300000'; $env:TF0423_IDLE_SAMPLE_MS='5000'; node harness/specs/fixtures/tf0423-session-loading/probe.mjs . <out> <tmpdir>",
+      "loadSessionsMs": 976,
+      "switchP50Ms": 323.5,
+      "switchP95Ms": 346.19999999995343,
+      "idleControlLongTasks": 6,
+      "longSessionOpenMs": 231.80000000004657,
+      "longSessionOpenLongTasks": 8,
+      "switchWindowLongTasks": 34
+    }
+  ],
+  "finding": "The long-task background scales with sidebar session count, not with the transcript size of the opened session: 20 sessions -> 0 long tasks on open and 1 in the idle control; 333 sessions -> 8 on open and 6 idle. Opening one 180 KB transcript adds no distinct long-task class; the cost is the 333-row sidebar itself.",
+  "implication": "TF-0423 acceptance item 3 (\"opening a long session must not produce a renderer long task over 50 ms\") is unattainable while the sidebar mounts/updates hundreds of rows on this forced-software-rendering host. The remaining work is sidebar render containment/virtualization, which is outside the transcript-read and label-budget fix shipped in 08744fac."
+}

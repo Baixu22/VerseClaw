@@ -28,5 +28,8 @@ node harness/specs/fixtures/tf0423-session-loading/probe.mjs <仓库根> <输出
 - 打开大 transcript 会话的耗时与 renderer long task 数量：改善前后一致（8 vs 8）；同一台机器上空闲对照窗口本身就有 6 个 long task/2.5 s（探针被强制软件渲染）。
 - 五分钟空闲 RSS：`persistentGrowth=false`。
 
-关于 long task 的边界：软件渲染下环境本身持续产生 >50 ms 长任务，
-因此**绝对阈值不可归因于“打开长会话”**，只记录相对增量，不宣称绝对通过。
+关于 long task 的边界：软件渲染下环境本身持续产生 >50 ms 长任务。
+`attribution.json` 用同一构建、同一 fixture 只改 `TF0423_SESSION_COUNT` 做了归因：
+20 个会话时空闲对照 1 个 / 打开 0 个 long task；333 个会话时空闲对照 6 个 / 打开 8 个。
+**长任务随侧栏会话数增长，而不是随 transcript 大小增长**，因此绝对阈值不可归因于“打开长会话”，
+剩余工作属于侧栏渲染收敛（虚拟化/分批挂载），不在 08744fac 的 transcript 读取与标签预算修复范围内。
