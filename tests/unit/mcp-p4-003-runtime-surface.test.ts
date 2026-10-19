@@ -236,7 +236,6 @@ describe('P4-003 MCP runtime projection / schema / reload / secret broker', () =
     });
     // ClawX bridge servers stay Main-local and never leak into runtime config.
     expect(Object.keys(mirrored.mcp?.servers ?? {})).not.toContain('clawx-git');
-    expect(Object.keys(mirrored.mcp?.servers ?? {})).not.toContain('clawx-storage');
   });
 
   it('A3 never returns env plaintext to Renderer list/test surfaces', async () => {

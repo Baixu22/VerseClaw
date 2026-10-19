@@ -18,7 +18,6 @@ import {
   Check,
   X,
   Loader2,
-  AlertTriangle,
   Activity,
   GitCompare,
   ImagePlus,
@@ -42,7 +41,6 @@ import { useChatStore, type ChatRuntimeRunState, type ChatSession } from '@/stor
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useWorkspacesStore } from '@/stores/workspaces';
-import { useStorageHealthStore } from '@/stores/storage-health';
 import { isInboxItemActionable, useInboxStore } from '@/stores/inbox';
 import {
   buildLatestRuntimeRunBySession,
@@ -607,9 +605,6 @@ export function Sidebar() {
   const isGatewayRunning = gatewayStatus.state === 'running';
   const isGatewayReady = isGatewayRunning && gatewayStatus.gatewayReady !== false;
   const gatewayRestarting = isGatewayRestarting(gatewayStatus);
-  const storageRamLow = useStorageHealthStore((s) => s.ramLow);
-  const storageDiskLow = useStorageHealthStore((s) => s.diskLow);
-  const storageHealthLow = storageRamLow || storageDiskLow;
   const gatewayRuntimeKey = `${gatewayStatus.pid ?? 'none'}:${gatewayStatus.connectedAt ?? 'none'}:${gatewayStatus.port}`;
 
   useEffect(() => {
@@ -1623,9 +1618,6 @@ export function Sidebar() {
         <span data-testid="sidebar-gateway-restarting" data-state={gatewayRestarting ? 'visible' : 'hidden'} className="sr-only" aria-live="polite">
           {gatewayRestarting ? t('common:gateway.restarting') : ''}
         </span>
-        <span data-testid="sidebar-storage-low" data-state={storageHealthLow ? 'visible' : 'hidden'} className="sr-only" aria-live="polite">
-          {storageHealthLow ? t('common:storageHealth.bannerLow') : ''}
-        </span>
         <div className="sidebar-account-control">
           <SidebarSettingsNavItem collapsed={sidebarCollapsed} />
         </div>
@@ -1648,7 +1640,7 @@ export function Sidebar() {
               });
             }}
           >
-            {gatewayRestarting ? <Loader2 className="animate-spin text-yellow-500" /> : storageHealthLow ? <AlertTriangle className="text-red-500" /> : <MoreHorizontal />}
+            {gatewayRestarting ? <Loader2 className="animate-spin text-yellow-500" /> : <MoreHorizontal />}
           </button>
         )}
       </footer>
@@ -1726,18 +1718,6 @@ export function Sidebar() {
               <Loader2 className="h-4 w-4 animate-spin" />
               <span className="codex-dropdown__text">{t('common:gateway.restarting')}</span>
             </div>
-          )}
-          {storageHealthLow && (
-            <button
-              type="button"
-              role="menuitem"
-              data-state="visible"
-              className="codex-dropdown__item text-red-500"
-              onClick={() => { setFooterMenu(null); navigate('/settings/storage'); }}
-            >
-              <AlertTriangle className="h-4 w-4" />
-              <span className="codex-dropdown__text">{t('common:storageHealth.bannerLow')}</span>
-            </button>
           )}
           <button
             type="button"

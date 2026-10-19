@@ -107,11 +107,6 @@
     "restarting": "ゲートウェイを再起動中",
     "warning": "ゲートウェイが停止中です。"
   },
-  "storageHealth": {
-    "ramLow": "メモリが不足しています",
-    "diskLow": "ディスク容量が不足しています",
-    "bannerLow": "ストレージ不足 — クリックして整理"
-  },
   "resourceTracker": {
     "chip": {
       "ariaLabel": "実行中のリソース {{count}} 件",

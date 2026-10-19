@@ -16,7 +16,6 @@ import type {
   McpServerUpdatePayload,
 } from '@shared/host-api/contract';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
-import type { SystemScanCategoryId } from '@shared/host-api/contract';
 import type { GatewayManager } from '../gateway/manager';
 import { isRecord } from './payload-utils';
 import { listResourceEnvelopeEntries, recordResourceEnvelopeEntry, removeResourceEnvelopeEntry } from './resource-envelope';
@@ -27,7 +26,6 @@ import { getDataDir } from '../utils/paths';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createGitApi } from './git-api';
 import type { RemoteForgeApi } from './remote-forge-api';
-import { createSystemApi } from './system-api';
 import {
   createMcpToolCallRequestShadow,
   createMcpToolCallResultShadow,
@@ -581,88 +579,6 @@ const VERSE_CLAW_GIT_MCP_TOOLS = [
   },
 ];
 
-const VERSE_CLAW_STORAGE_MCP_SERVER_ID = 'clawx-storage';
-
-const VERSE_CLAW_STORAGE_MCP_SERVER: McpServerConfig = {
-  id: VERSE_CLAW_STORAGE_MCP_SERVER_ID,
-  name: 'Verse Claw Storage',
-  localAddress: 'clawx://mcp/clawx-storage',
-  transport: 'stdio',
-  canonicalTransport: 'stdio',
-  enabled: true,
-  scope: 'workspace',
-  ownerId: '*',
-  networkPolicy: 'disabled',
-  runtimeStatus: 'registered',
-  toolCount: 4,
-  createdAt: 1,
-  updatedAt: 1,
-};
-
-const VERSE_CLAW_STORAGE_MCP_TOOLS = [
-  {
-    name: 'storage_info',
-    description: 'Read a snapshot of system RAM, disk, and CPU usage. Use this first to assess resource pressure.',
-    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
-    serverId: VERSE_CLAW_STORAGE_MCP_SERVER_ID,
-  },
-  {
-    name: 'storage_scan',
-    description: 'Scan app-owned data directories (logs, sessions, trajectories, media, uv cache, electron cache, trash) and return categorized item lists with sizes. Pass categories to filter.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        categories: {
-          type: 'array',
-          items: {
-            type: 'string',
-            enum: ['logs', 'sessions', 'trajectories', 'mediaOutbound', 'mediaThumbs', 'uvCache', 'electronCache', 'trash'],
-          },
-        },
-      },
-      additionalProperties: false,
-    },
-    serverId: VERSE_CLAW_STORAGE_MCP_SERVER_ID,
-  },
-  {
-    name: 'storage_delete',
-    description: 'Delete selected storage items. Always call with dryRun=true first to obtain an approvalId, then call again with dryRun=false and the approvalId to perform the real deletion. Real deletion requires a valid approvalId from a dry-run within the last 60 seconds.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        items: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              id: { type: 'string' },
-              path: { type: 'string' },
-            },
-            required: ['id', 'path'],
-          },
-        },
-        dryRun: { type: 'boolean' },
-        approvalId: { type: 'string' },
-      },
-      required: ['items', 'dryRun'],
-      additionalProperties: false,
-    },
-    serverId: VERSE_CLAW_STORAGE_MCP_SERVER_ID,
-  },
-  {
-    name: 'storage_recommend',
-    description: 'Scan storage and return a ranked list of recommended items to delete (largest first). Use this to help the user decide what to clean up.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        limit: { type: 'number' },
-      },
-      additionalProperties: false,
-    },
-    serverId: VERSE_CLAW_STORAGE_MCP_SERVER_ID,
-  },
-];
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let mcpStoreInstance: any = null;
 
@@ -935,7 +851,7 @@ function normalizeRuntimeMcpTransport(server: McpServerConfig): 'sse' | 'streama
  *  OpenClaw runtime, so they must never be mirrored into openclaw.json. Note that user servers
  *  also carry a hydrated `clawx://mcp/<id>` localAddress, so exclusion is by builtin id only. */
 function isClawxBridgeServer(server: McpServerConfig | StoredMcpServer): boolean {
-  return server.id === VERSE_CLAW_GIT_MCP_SERVER_ID || server.id === VERSE_CLAW_STORAGE_MCP_SERVER_ID;
+  return server.id === VERSE_CLAW_GIT_MCP_SERVER_ID;
 }
 
 function withMembership(values: string[] | undefined, value: string, enabled: boolean): string[] | undefined {
@@ -1021,7 +937,6 @@ export async function syncAgentMcpExposureToOpenClawConfig(
 ): Promise<void> {
   const selectedIds = new Set(defaultMcpServerIds);
   selectedIds.delete(VERSE_CLAW_GIT_MCP_SERVER_ID);
-  selectedIds.delete(VERSE_CLAW_STORAGE_MCP_SERVER_ID);
   const servers = await readServers();
   await withConfigLock(async () => {
     const config = await readOpenClawConfig();
@@ -1121,7 +1036,7 @@ function listResult(servers: Array<StoredMcpServer | McpServerConfig>) {
   const custom = hydrateMcpServerAddresses(servers as McpServerConfig[]).map((server) => toRendererServer(server));
   return {
     success: true,
-    servers: [VERSE_CLAW_GIT_MCP_SERVER, VERSE_CLAW_STORAGE_MCP_SERVER, ...custom],
+    servers: [VERSE_CLAW_GIT_MCP_SERVER, ...custom],
   };
 }
 
@@ -1182,7 +1097,6 @@ export async function resolveMcpServersForContext(input: {
   const ordered = orderResolvedServers(resolved as McpServerConfig[], defaultIdSet) as StoredMcpServer[];
   const withBuiltins: Array<StoredMcpServer | McpServerConfig> = [
     VERSE_CLAW_GIT_MCP_SERVER,
-    VERSE_CLAW_STORAGE_MCP_SERVER,
     ...ordered,
   ];
   if (!input.forRuntime) {
@@ -1249,7 +1163,6 @@ async function updateServerRuntimeFields(
 
 async function findServer(id: string): Promise<StoredMcpServer | McpServerConfig> {
   if (id === VERSE_CLAW_GIT_MCP_SERVER_ID) return VERSE_CLAW_GIT_MCP_SERVER;
-  if (id === VERSE_CLAW_STORAGE_MCP_SERVER_ID) return VERSE_CLAW_STORAGE_MCP_SERVER;
   const server = (await readServers()).find((entry) => entry.id === id);
   if (!server) throw new Error(`MCP server "${id}" not found`);
   return server;
@@ -1476,60 +1389,6 @@ async function callClawxGitTool(
   }
 }
 
-async function callClawxStorageTool(toolName: string, args: Record<string, unknown>) {
-  const systemApi = createSystemApi();
-  switch (toolName) {
-    case 'storage_info':
-      return await systemApi.info();
-
-    case 'storage_scan': {
-      const categories = Array.isArray(args.categories)
-        ? args.categories.filter((c): c is string => typeof c === 'string')
-        : undefined;
-      return await systemApi.scan({ categories: categories as SystemScanCategoryId[] | undefined });
-    }
-
-    case 'storage_delete': {
-      const items = Array.isArray(args.items)
-        ? args.items
-            .filter((i): i is Record<string, unknown> => isRecord(i) && typeof i.path === 'string')
-            .map((i) => ({
-              id: typeof i.id === 'string' ? i.id : '',
-              path: typeof i.path === 'string' ? i.path : '',
-            }))
-        : [];
-      const dryRun = args.dryRun !== false;
-      const approvalId = normalizeString(args.approvalId);
-      return await systemApi.deleteItems({ items, dryRun, approvalId });
-    }
-
-    case 'storage_recommend': {
-      const limit = typeof args.limit === 'number' && args.limit > 0 ? Math.min(args.limit, 50) : 10;
-      const scan = await systemApi.scan({});
-      const allItems = scan.categories.flatMap((cat) =>
-        cat.items.map((item) => ({
-          category: cat.id,
-          id: item.id,
-          path: item.path,
-          sizeBytes: item.sizeBytes,
-          mtime: item.mtime,
-          safeToDelete: item.safeToDelete,
-        })),
-      );
-      allItems.sort((a, b) => b.sizeBytes - a.sizeBytes);
-      return {
-        success: true,
-        system: scan.system,
-        recommendations: allItems.slice(0, limit),
-        totalScannedBytes: allItems.reduce((sum, i) => sum + i.sizeBytes, 0),
-      };
-    }
-
-    default:
-      throw new Error(`Unknown Verse Claw Storage tool "${toolName}"`);
-  }
-}
-
 async function tryGatewayMcpRpc<T>(
   gatewayManager: GatewayManager | undefined,
   method: string,
@@ -1695,17 +1554,14 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         } else {
           server = buildServer(parsePayload<McpServerCreatePayload>(body.server), new Set());
         }
-        const isBuiltin = server.id === VERSE_CLAW_GIT_MCP_SERVER_ID
-          || server.id === VERSE_CLAW_STORAGE_MCP_SERVER_ID;
+        const isBuiltin = server.id === VERSE_CLAW_GIT_MCP_SERVER_ID;
         const runtimeServer = isBuiltin
           ? server as McpServerConfig
           : await toRuntimeServer(server, await readEnvVault());
         if (!isBuiltin) validateServer(runtimeServer);
         const heartbeat = server.id === VERSE_CLAW_GIT_MCP_SERVER_ID
           ? { message: 'Verse Claw Git tools are host-native: served by the host Git service, not an MCP server.', latencyMs: 0 }
-          : server.id === VERSE_CLAW_STORAGE_MCP_SERVER_ID
-            ? { message: 'Verse Claw Storage tools are host-native: served by the host System service, not an MCP server.', latencyMs: 0 }
-            : await checkMcpHeartbeat(runtimeServer);
+          : await checkMcpHeartbeat(runtimeServer);
         return {
           success: true,
           server: toRendererServer(server),
@@ -1740,16 +1596,6 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           status: 'registered',
           latencyMs: 0,
           message: 'Verse Claw Git tools are host-native: served by the host Git service, not an MCP server.',
-          server: toRendererServer(server),
-        };
-      }
-      if (id === VERSE_CLAW_STORAGE_MCP_SERVER_ID) {
-        return {
-          success: true,
-          serverId: id,
-          status: 'registered',
-          latencyMs: 0,
-          message: 'Verse Claw Storage tools are host-native: served by the host System service, not an MCP server.',
           server: toRendererServer(server),
         };
       }
@@ -1803,7 +1649,7 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
       const id = normalizeString(body.serverId);
       if (!id) throw new Error('serverId is required');
       const server = await findServer(id);
-      if (id !== VERSE_CLAW_GIT_MCP_SERVER_ID && id !== VERSE_CLAW_STORAGE_MCP_SERVER_ID) {
+      if (id !== VERSE_CLAW_GIT_MCP_SERVER_ID) {
         try {
           assertMcpNetworkPolicyAllows(server);
         } catch (error) {
@@ -1823,15 +1669,6 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           tools: VERSE_CLAW_GIT_MCP_TOOLS,
           status: 'registered',
           message: 'Verse Claw Git host-native tools',
-        };
-      }
-      if (id === VERSE_CLAW_STORAGE_MCP_SERVER_ID) {
-        return {
-          success: true,
-          serverId: id,
-          tools: VERSE_CLAW_STORAGE_MCP_TOOLS,
-          status: 'registered',
-          message: 'Verse Claw Storage host-native tools',
         };
       }
       const runtime = await tryGatewayMcpRpc<McpListToolsResult>(ctx.gatewayManager, 'mcp.listTools', { serverId: id });
@@ -1871,10 +1708,8 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
       const agentId = normalizeString(body.agentId) ?? undefined;
 
       // A4: reject calls whose tool schema is invalid or args do not conform.
-      if (serverId === VERSE_CLAW_GIT_MCP_SERVER_ID || serverId === VERSE_CLAW_STORAGE_MCP_SERVER_ID) {
-        const catalog = serverId === VERSE_CLAW_GIT_MCP_SERVER_ID
-          ? VERSE_CLAW_GIT_MCP_TOOLS
-          : VERSE_CLAW_STORAGE_MCP_TOOLS;
+      if (serverId === VERSE_CLAW_GIT_MCP_SERVER_ID) {
+        const catalog = VERSE_CLAW_GIT_MCP_TOOLS;
         const tool = catalog.find((entry) => entry.name === toolName);
         if (!tool) {
           return {
@@ -1955,28 +1790,6 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
             serverId,
             toolName,
             result: await callClawxGitTool(toolName, gitArgs, ctx.remoteForgeApi),
-          });
-        } catch (error) {
-          return finish({
-            success: false,
-            serverId,
-            toolName,
-            error: error instanceof Error ? error.message : String(error),
-          });
-        }
-      }
-
-      if (serverId === VERSE_CLAW_STORAGE_MCP_SERVER_ID) {
-        const storageArgs = { ...args };
-        if (approvalId && !normalizeString(storageArgs.approvalId)) {
-          storageArgs.approvalId = approvalId;
-        }
-        try {
-          return finish({
-            success: true,
-            serverId,
-            toolName,
-            result: await callClawxStorageTool(toolName, storageArgs),
           });
         } catch (error) {
           return finish({

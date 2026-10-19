@@ -1898,85 +1898,6 @@ export type LogFileEntry = {
 };
 export type LogFilesResult = { files: LogFileEntry[] };
 
-export type SystemRamInfo = {
-  totalBytes: number;
-  freeBytes: number;
-  appUsedBytes: number;
-};
-export type SystemDiskInfo = {
-  root: string;
-  totalBytes: number;
-  freeBytes: number;
-};
-export type SystemCpuInfo = {
-  loadPercent: number;
-  cores: number;
-  available: boolean;
-};
-export type SystemInfoResult = HostSuccess & {
-  ram: SystemRamInfo;
-  disk: SystemDiskInfo[];
-  cpu: SystemCpuInfo;
-  platform: string;
-  arch: string;
-};
-export type SystemScanCategoryId =
-  | 'logs'
-  | 'sessions'
-  | 'trajectories'
-  | 'mediaOutbound'
-  | 'mediaThumbs'
-  | 'uvCache'
-  | 'electronCache'
-  | 'trash';
-export type SystemScanItem = {
-  id: string;
-  path: string;
-  displayPath: string;
-  sizeBytes: number;
-  mtime: number;
-  isDir: boolean;
-  safeToDelete: boolean;
-  riskNoteKey?: string;
-  metadata?: Record<string, unknown>;
-};
-export type SystemScanCategory = {
-  id: SystemScanCategoryId;
-  labelKey: string;
-  totalBytes: number;
-  itemCount: number;
-  deletable: 'always' | 'conditional' | 'never';
-  regenerate: boolean;
-  items: SystemScanItem[];
-  truncated: boolean;
-};
-export type SystemScanResult = HostSuccess & {
-  scannedAt: number;
-  system: {
-    ram: SystemRamInfo;
-    disk: SystemDiskInfo[];
-    cpu: SystemCpuInfo;
-    platform: string;
-    arch: string;
-  };
-  categories: SystemScanCategory[];
-};
-export type SystemScanPayload = {
-  categories?: SystemScanCategoryId[];
-};
-export type SystemDeleteItemsPayload = {
-  items: Array<{ id: string; path: string }>;
-  dryRun?: boolean;
-  approvalId?: string;
-};
-export type SystemDeleteItemsResult = HostSuccess & {
-  dryRun: boolean;
-  removed: string[];
-  errors: Array<{ path: string; error: string }>;
-  freedBytes: number;
-  auditId?: string;
-};
-
 export type GatewayHealthSummary = {
   state: 'healthy' | 'degraded' | 'unresponsive';
   reasons: string[];
@@ -5939,11 +5860,6 @@ export type HostApiContract = {
     trajectorySessions: () => { sessions: ObservabilityTrajectorySessionSupply[] };
     trajectoryHistory: (payload: { sessionKey: string; fromSeq?: number; limit?: number }) => ObservabilityTrajectoryHistoryPage;
     clearTraces: () => HostSuccess;
-  };
-  system: {
-    info: () => SystemInfoResult;
-    scan: (payload?: SystemScanPayload) => SystemScanResult;
-    deleteItems: (payload: SystemDeleteItemsPayload) => SystemDeleteItemsResult;
   };
   resourceTracker: {
     list: () => import('../types/resource-tracker').ResourceTrackerListResult;

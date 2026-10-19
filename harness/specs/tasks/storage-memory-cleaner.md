@@ -62,6 +62,23 @@ docs:
   required: true
 ---
 
+## Retired (2026-10-19)
+
+This spec is retained as historical record only. The Storage & Memory Cleaner
+surface was removed from the product: the `system` host-api module
+(`info` / `scan` / `deleteItems`), the `clawx-storage` MCP bridge server and
+its four tools, the Settings > Storage & Memory section, and the
+`useStorageHealthStore` RAM/disk polling banner.
+
+Deletion capability was reachable by agents independently of the Settings UI
+through the `clawx-storage` MCP bridge, so the retirement removes both paths.
+Independent modules that share naming but were not part of this feature
+(`workspace-preflight` disk checks, `efficiency-*` background-load shedding,
+`sessions-api` session deletion, and the `'cleaner'` permission-audit source
+used to read back historical audit records) were deliberately left intact.
+
+The removal was executed in an isolated worktree at base commit `8fe67fc2`.
+
 ## Overview
 
 Adds a Storage & Memory Cleaner tool under Settings. The tool addresses

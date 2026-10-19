@@ -52,10 +52,6 @@
       "title": "计费",
       "description": "Token 用量历史、费用估算及使用活跃度图表。"
     },
-    "storage": {
-      "title": "存储与内存",
-      "description": "扫描并清理应用缓存、日志和会话产物。"
-    },
     "archived": {
       "title": "已归档",
       "description": "恢复或永久删除已归档的会话。"
@@ -737,87 +733,6 @@
         "default": "默认值",
         "kill": "被 kill 开关压制"
       }
-    }
-  },
-  "storage": {
-    "title": "存储与内存",
-    "description": "扫描并清理应用缓存、日志和会话产物。",
-    "systemInfo": {
-      "ram": "内存 (RAM)",
-      "disk": "磁盘空间",
-      "cpu": "CPU",
-      "used": "已用",
-      "free": "可用",
-      "total": "总计",
-      "cores": "{{count}} 核",
-      "load": "{{percent}}% 负载",
-      "notAvailable": "不可用"
-    },
-    "categories": {
-      "logs": {
-        "label": "日志",
-        "description": "应用日志文件"
-      },
-      "sessions": {
-        "label": "会话",
-        "description": "对话记录"
-      },
-      "trajectories": {
-        "label": "轨迹",
-        "description": "Agent 运行轨迹和飞行记录"
-      },
-      "mediaOutbound": {
-        "label": "出站媒体",
-        "description": "生成的媒体产物"
-      },
-      "mediaThumbs": {
-        "label": "媒体缩略图",
-        "description": "缓存的媒体缩略图（可重建）"
-      },
-      "uvCache": {
-        "label": "UV 缓存",
-        "description": "Python uv 工具缓存（可重建）"
-      },
-      "electronCache": {
-        "label": "Electron 缓存",
-        "description": "Electron 运行时缓存（可重建）"
-      },
-      "trash": {
-        "label": "回收站",
-        "description": "待清理的软删除项"
-      }
-    },
-    "actions": {
-      "refresh": "刷新",
-      "scan": "立即扫描",
-      "deleteSelected": "删除所选",
-      "askAgent": "让 Agent 推荐",
-      "confirmDelete": "确认删除",
-      "cancel": "取消",
-      "dryRun": "试运行",
-      "itemsSelected": "已选 {{count}} 项"
-    },
-    "status": {
-      "scanning": "扫描中...",
-      "deleting": "删除中...",
-      "empty": "未找到项目",
-      "truncated": "显示前 {{count}} 项（已截断）",
-      "safeToDelete": "可安全删除",
-      "notDeletable": "不可删除",
-      "regenerable": "可重建"
-    },
-    "toast": {
-      "deleteSucceeded": "已删除 {{count}} 项，释放 {{bytes}}",
-      "deleteFailed": "删除失败：{{error}}",
-      "scanFailed": "扫描失败：{{error}}",
-      "ramLow": "内存不足。建议在 设置 > 存储 中清理。",
-      "diskLow": "磁盘空间不足。建议在 设置 > 存储 中清理。"
-    },
-    "agent": {
-      "recommendPrompt": "请扫描应用存储并推荐可安全删除的项目以释放空间。使用 clawx-storage 工具扫描并推荐，然后以 tool-ui OptionListCard 形式呈现推荐，让我确认要删除哪些项目。"
-    },
-    "riskNote": {
-      "activeSession": "活跃会话 — 无法删除"
     }
   },
   "about": {

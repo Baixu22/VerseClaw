@@ -48,7 +48,7 @@ for (const theme of ['light', 'dark'] as const) {
       const page = await getStableWindow(app);
       await page.reload();
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      for (const section of ['general', 'models', 'agents', 'channels', 'skills', 'browser', 'system', 'developer', 'billing', 'storage', 'archived', 'recovery']) {
+      for (const section of ['general', 'models', 'agents', 'channels', 'skills', 'browser', 'system', 'developer', 'billing', 'archived', 'recovery']) {
         await page.evaluate((selected) => { window.location.hash = `/settings/${selected}`; }, section);
         await expect(page.getByTestId(`settings-nav-${section}`)).toHaveAttribute('aria-current', 'page');
         await expect(page.getByTestId('settings-page')).toBeVisible();

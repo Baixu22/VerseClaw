@@ -10,7 +10,6 @@ import {
   ReceiptText,
   Search,
   Server,
-  Trash2,
   RotateCcw,
   Wrench,
   X,
@@ -55,7 +54,6 @@ function SettingsDrawerNavigation({ children, currentSection, onClose }: Setting
     { id: 'billing', to: '/settings/billing', icon: ReceiptText, group: 'operations' },
     { id: 'system', to: '/settings/system', icon: Server, group: 'operations' },
     { id: 'developer', to: '/settings/developer', icon: Wrench, group: 'operations' },
-    { id: 'storage', to: '/settings/storage', icon: Trash2, group: 'operations' },
     { id: 'recovery', to: '/settings/recovery', icon: RotateCcw, group: 'operations' },
   ].map((section) => ({
     ...section,
