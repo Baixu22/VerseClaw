@@ -1,0 +1,752 @@
+{
+  "schema": "clawx.tf0417.performance-probe/v1",
+  "driven_by": "agent",
+  "actor": "tf0417-electron-probe",
+  "candidate": "c001a9b64270884a2bd62a4ee687380f86345ebe",
+  "startedAt": "2026-10-19T03:42:18.508Z",
+  "completedAt": "2026-10-19T03:42:35.020Z",
+  "durationMs": 16512,
+  "platform": "win32",
+  "node": "v24.16.0",
+  "main": {
+    "startedAt": 1792381331831,
+    "elapsedMs": 23135.1892,
+    "marks": [
+      {
+        "name": "app-ready",
+        "at": 1792381338127,
+        "fromStartMs": 6295.795999999999
+      },
+      {
+        "name": "window-created",
+        "at": 1792381338667,
+        "fromStartMs": 6836.0528
+      },
+      {
+        "name": "ready-to-show",
+        "at": 1792381339335,
+        "fromStartMs": 7504.552699999999
+      },
+      {
+        "name": "gateway-start",
+        "at": 1792381339519,
+        "fromStartMs": 7688.206999999999
+      }
+    ],
+    "counters": {
+      "spawnCount": 5,
+      "spawnByMethod": {
+        "spawn": 0,
+        "exec": 0,
+        "execFile": 5,
+        "fork": 0,
+        "spawnSync": 0,
+        "execSync": 0,
+        "execFileSync": 0
+      },
+      "recentSpawns": [
+        {
+          "method": "execFile",
+          "at": 1792381340132,
+          "fromStartMs": 8300.5975,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792381340135,
+          "fromStartMs": 8303.893800000002,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792381340137,
+          "fromStartMs": 8306.279999999999,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792381340140,
+          "fromStartMs": 8308.991600000001,
+          "command": "git"
+        },
+        {
+          "method": "execFile",
+          "at": 1792381340144,
+          "fromStartMs": 8312.932799999999,
+          "command": "git"
+        }
+      ],
+      "activeIntervals": 4,
+      "activeWatchers": 0,
+      "unavailable": []
+    },
+    "rssBytes": 567148544
+  },
+  "renderer": {
+    "schema": "clawx.renderer-performance/v1",
+    "startedAt": 1792381339333,
+    "generatedAt": 1792381354787,
+    "marks": [
+      {
+        "name": "renderer-start",
+        "at": 1792381339333,
+        "fromStartMs": 0.19999999925494194
+      },
+      {
+        "name": "renderer-first-paint",
+        "at": 1792381339395,
+        "fromStartMs": 61.5
+      }
+    ],
+    "longTasks": [
+      {
+        "startTime": 989,
+        "durationMs": 116
+      },
+      {
+        "startTime": 1153.5999999996275,
+        "durationMs": 162
+      },
+      {
+        "startTime": 1316.2000000011176,
+        "durationMs": 58
+      }
+    ],
+    "inputLatency": [
+      {
+        "kind": "click",
+        "at": 1792381354365,
+        "latencyMs": 10.5
+      },
+      {
+        "kind": "keydown",
+        "at": 1792381354441,
+        "latencyMs": 73.80000000074506
+      }
+    ],
+    "ipc": {
+      "count": 84,
+      "p50Ms": 18,
+      "p95Ms": 158,
+      "recent": [
+        {
+          "module": "window",
+          "action": "isMaximized",
+          "at": 1792381339788,
+          "durationMs": 127,
+          "ok": true
+        },
+        {
+          "module": "permissions",
+          "action": "approvals",
+          "at": 1792381339788,
+          "durationMs": 126,
+          "ok": true
+        },
+        {
+          "module": "agentBrowser",
+          "action": "tasks",
+          "at": 1792381339788,
+          "durationMs": 126,
+          "ok": true
+        },
+        {
+          "module": "gateway",
+          "action": "rpc",
+          "at": 1792381339791,
+          "durationMs": 129,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "list",
+          "at": 1792381339791,
+          "durationMs": 128,
+          "ok": true
+        },
+        {
+          "module": "remoteTasks",
+          "action": "list",
+          "at": 1792381339801,
+          "durationMs": 139,
+          "ok": true
+        },
+        {
+          "module": "runtimeApprovals",
+          "action": "list",
+          "at": 1792381339803,
+          "durationMs": 95,
+          "ok": false
+        },
+        {
+          "module": "settings",
+          "action": "getAll",
+          "at": 1792381339804,
+          "durationMs": 83,
+          "ok": true
+        },
+        {
+          "module": "gateway",
+          "action": "status",
+          "at": 1792381339816,
+          "durationMs": 95,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "vendors",
+          "at": 1792381339821,
+          "durationMs": 99,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "getDefaultAccount",
+          "at": 1792381339821,
+          "durationMs": 99,
+          "ok": true
+        },
+        {
+          "module": "agents",
+          "action": "list",
+          "at": 1792381339821,
+          "durationMs": 158,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "accounts",
+          "at": 1792381339822,
+          "durationMs": 100,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "accountKeyInfo",
+          "at": 1792381339822,
+          "durationMs": 100,
+          "ok": true
+        },
+        {
+          "module": "system",
+          "action": "info",
+          "at": 1792381339823,
+          "durationMs": 101,
+          "ok": true
+        },
+        {
+          "module": "gateway",
+          "action": "status",
+          "at": 1792381340044,
+          "durationMs": 228,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "list",
+          "at": 1792381340044,
+          "durationMs": 222,
+          "ok": true
+        },
+        {
+          "module": "git",
+          "action": "status",
+          "at": 1792381340158,
+          "durationMs": 27,
+          "ok": true
+        },
+        {
+          "module": "resourceTracker",
+          "action": "list",
+          "at": 1792381340158,
+          "durationMs": 27,
+          "ok": true
+        },
+        {
+          "module": "git",
+          "action": "status",
+          "at": 1792381340163,
+          "durationMs": 32,
+          "ok": true
+        },
+        {
+          "module": "git",
+          "action": "branches",
+          "at": 1792381340163,
+          "durationMs": 32,
+          "ok": false
+        },
+        {
+          "module": "git",
+          "action": "worktrees",
+          "at": 1792381340163,
+          "durationMs": 32,
+          "ok": false
+        },
+        {
+          "module": "providers",
+          "action": "vendors",
+          "at": 1792381340164,
+          "durationMs": 32,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "getDefaultAccount",
+          "at": 1792381340164,
+          "durationMs": 32,
+          "ok": true
+        },
+        {
+          "module": "gateway",
+          "action": "status",
+          "at": 1792381340164,
+          "durationMs": 32,
+          "ok": true
+        },
+        {
+          "module": "gateway",
+          "action": "rpc",
+          "at": 1792381340165,
+          "durationMs": 31,
+          "ok": false
+        },
+        {
+          "module": "permissions",
+          "action": "approvals",
+          "at": 1792381340166,
+          "durationMs": 23,
+          "ok": true
+        },
+        {
+          "module": "agents",
+          "action": "list",
+          "at": 1792381340166,
+          "durationMs": 33,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "accountKeyInfo",
+          "at": 1792381340171,
+          "durationMs": 39,
+          "ok": true
+        },
+        {
+          "module": "providers",
+          "action": "accounts",
+          "at": 1792381340171,
+          "durationMs": 39,
+          "ok": true
+        },
+        {
+          "module": "sessionActivity",
+          "action": "snapshot",
+          "at": 1792381340171,
+          "durationMs": 39,
+          "ok": true
+        },
+        {
+          "module": "taskLedger",
+          "action": "snapshot",
+          "at": 1792381340175,
+          "durationMs": 42,
+          "ok": true
+        },
+        {
+          "module": "taskLedger",
+          "action": "snapshot",
+          "at": 1792381340175,
+          "durationMs": 41,
+          "ok": true
+        },
+        {
+          "module": "sessions",
+          "action": "history",
+          "at": 1792381340175,
+          "durationMs": 9,
+          "ok": false
+        },
+        {
+          "module": "providers",
+          "action": "list",
+          "at": 1792381340187,
+          "durationMs": 16,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381340457,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "sessions",
+          "action": "compactionStatus",
+          "at": 1792381340638,
+          "durationMs": 2,
+          "ok": false
+        },
+        {
+          "module": "sessions",
+          "action": "longTaskControlStatus",
+          "at": 1792381340638,
+          "durationMs": 2,
+          "ok": false
+        },
+        {
+          "module": "usage",
+          "action": "live",
+          "at": 1792381340641,
+          "durationMs": 5,
+          "ok": true
+        },
+        {
+          "module": "usage",
+          "action": "contextRange",
+          "at": 1792381340641,
+          "durationMs": 5,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381340787,
+          "durationMs": 12,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381341100,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "usage",
+          "action": "promptCacheStatus",
+          "at": 1792381341306,
+          "durationMs": 2,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381341422,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381341747,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381342074,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381342401,
+          "durationMs": 14,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381342728,
+          "durationMs": 18,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381343048,
+          "durationMs": 13,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381343376,
+          "durationMs": 13,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381343823,
+          "durationMs": 134,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381344150,
+          "durationMs": 14,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381344467,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381344792,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381345191,
+          "durationMs": 80,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381345509,
+          "durationMs": 8,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381345841,
+          "durationMs": 16,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381346163,
+          "durationMs": 13,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381346490,
+          "durationMs": 13,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381346815,
+          "durationMs": 11,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381347139,
+          "durationMs": 9,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381347460,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381347784,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381348118,
+          "durationMs": 16,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381348442,
+          "durationMs": 10,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381348771,
+          "durationMs": 15,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381349115,
+          "durationMs": 34,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381349442,
+          "durationMs": 18,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381349757,
+          "durationMs": 6,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381350076,
+          "durationMs": 11,
+          "ok": true
+        },
+        {
+          "module": "efficiency",
+          "action": "getState",
+          "at": 1792381350143,
+          "durationMs": 1,
+          "ok": true
+        },
+        {
+          "module": "resourceTracker",
+          "action": "list",
+          "at": 1792381350143,
+          "durationMs": 1,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381350408,
+          "durationMs": 14,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381350782,
+          "durationMs": 60,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381351108,
+          "durationMs": 14,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381351427,
+          "durationMs": 7,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381351759,
+          "durationMs": 12,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381352370,
+          "durationMs": 295,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381352694,
+          "durationMs": 11,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381353015,
+          "durationMs": 15,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381353485,
+          "durationMs": 159,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381353805,
+          "durationMs": 13,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381354132,
+          "durationMs": 12,
+          "ok": true
+        },
+        {
+          "module": "workspaces",
+          "action": "saveState",
+          "at": 1792381354530,
+          "durationMs": 70,
+          "ok": true
+        }
+      ]
+    },
+    "unavailable": []
+  },
+  "sampler": {
+    "running": true,
+    "measured": true,
+    "summary": {
+      "sampleCount": 3,
+      "coverageMs": 10137,
+      "latest": {
+        "at": 1792381353484,
+        "cpuPercent": 0.92,
+        "rssBytes": 554790912,
+        "heapUsedBytes": 115177760,
+        "systemFreeBytes": 4213481472,
+        "systemTotalBytes": 16295432192,
+        "cpuCount": 16,
+        "shed": true,
+        "source": "os-cpu"
+      },
+      "avgCpuPercent": 6.96,
+      "peakCpuPercent": 17.75,
+      "peakRssBytes": 574484480,
+      "shedSampleCount": 2
+    }
+  },
+  "boundaries": [
+    "This is a real Electron run; spawn, interval, watcher, renderer long-task and IPC values come from runtime counters.",
+    "The renderer ring buffer is local JSON in localStorage; the Main snapshot is returned by the existing efficiency host API.",
+    "No static grep estimate is substituted and no real-human evidence is claimed."
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "schema": "clawx.tf0400.timer-watcher-acceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0400",
+  "nodes": [
+    "TF-0400",
+    "TF-0411",
+    "TF-0412"
+  ],
+  "candidate": {
+    "sha": "fb5eb2c8b7c91069881af000b7618c1fdf342462",
+    "subject": "feat(resources): align timers and share watcher roots"
+  },
+  "generatedAt": "2026-10-19T04:10:25.091Z",
+  "result": "pass-with-controlled-watcher-boundary",
+  "intervalSample": {
+    "beforeCandidate": "c001a9b64270884a2bd62a4ee687380f86345ebe",
+    "afterCandidate": "fb5eb2c8b7c91069881af000b7618c1fdf342462",
+    "beforeActiveIntervals": 4,
+    "afterActiveIntervals": 2,
+    "reductionRatio": 0.5
+  },
+  "watcherHandleSample": {
+    "workload": {
+      "roots": 2,
+      "subscriptions": 5
+    },
+    "legacyHandles": 5,
+    "hubHandles": 2,
+    "reductionRatio": 0.6,
+    "boundary": "Controlled real-fs-watcher workload over two roots; runtime still has complex chokidar watchers outside this bounded adoption. Main activeWatchers remains 0 in both Electron probes."
+  },
+  "shedCpuSample": {
+    "windowMs": 1500,
+    "tasks": 6,
+    "unshedRuns": 18,
+    "shedRuns": 6,
+    "unshedCpuMs": 93,
+    "shedCpuMs": 32,
+    "cpuReductionRatio": 0.6559139784946236
+  },
+  "gates": [
+    {
+      "command": "focused timer/watcher/runtime tests",
+      "exitCode": 0,
+      "testFiles": 6,
+      "tests": 17
+    },
+    {
+      "command": "pnpm run typecheck:node",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:web",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run contract:check",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 18340
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/resource-timer-watcher-governance.md",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run build:runtime",
+      "exitCode": 0
+    },
+    {
+      "command": "portable Node 24.16.0 + @playwright/test: gateway-lifecycle + workspace-terminal-panel",
+      "exitCode": 0,
+      "tests": 6
+    }
+  ],
+  "boundaries": [
+    "The interval/watcher/CPU values are local Windows samples; they are agent-driven evidence, not a cross-platform benchmark.",
+    "Runtime core typecheck still reports the pre-existing unused lastPlan error in src/agents/cross-area/cross-area-facades.ts; the P3 files themselves have no reported type errors.",
+    "The 60% watcher reduction is measured on a controlled real-fs-watcher workload, not on the entire runtime watcher set; complex chokidar watchers remain a follow-up boundary."
+  ],
+  "productLocks": "unchanged"
+}
