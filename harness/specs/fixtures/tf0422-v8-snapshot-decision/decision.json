@@ -1,0 +1,93 @@
+{
+  "node": "TF-0422",
+  "rollbackPath": [
+    "Keep the current asar + afterPack pipeline unchanged; no fuse or artifact change is made by this decision.",
+    "If later implemented behind an explicit experiment, gate it as a separate build flavor, keep the stock Electron artifact as the default, and compare launch/app-ready/ready-to-show plus smoke tests before promotion.",
+    "A failed experiment can revert the fuse, snapshot files and afterPack mapping without migrating user data; no database or product default is involved."
+  ],
+  "generatedAt": "2026-10-19T01:38:37.4836699Z",
+  "actor": "codex-tf0422-v8-snapshot-reviewer",
+  "externalResearch": [
+    {
+      "finding": "loadBrowserProcessSpecificV8Snapshot is disabled by default; enabling it requires browser_v8_context_snapshot.bin; when a custom main snapshot is used Electron bootstraps the main Node environment from source, costing part of the embedded snapshot benefit.",
+      "source": "Electron Fuses documentation",
+      "url": "https://electronjs.org/docs/latest/tutorial/fuses"
+    },
+    {
+      "finding": "Custom snapshots require an mksnapshot binary matching the Electron major version and produce snapshot_blob.bin plus v8_context_snapshot.bin; platform and architecture-specific artifacts are required.",
+      "source": "electron/mksnapshot",
+      "url": "https://github.com/electron/mksnapshot"
+    },
+    {
+      "finding": "A package can crash with Error loading V8 startup snapshot file if browser_v8_context_snapshot.bin is absent; electron-builder does not synthesize the missing snapshot and the afterPack/resource mapping must be implemented per platform/arch.",
+      "source": "electron-builder issue #8797",
+      "url": "https://github.com/electron-userland/electron-builder/issues/8797"
+    }
+  ],
+  "estimatedBenefit": {
+    "upperBoundMs": "At most the app-ready/Node heap initialization portion (roughly <= 3.2 s local P50), not the observed full launch; no same-version snapshot build was run, so no percentage is claimed.",
+    "whyNotMeasured": "Building a custom Electron binary with a matched mksnapshot, browser snapshot fuse, per-arch resources and code signing was not attempted because the decision is to reject unless a later external constraint justifies the build-chain expansion.",
+    "status": "unproven"
+  },
+  "abiAndContentRisks": [
+    "V8 snapshot format is tied to the exact V8/Electron build; version upgrades require regenerated snapshots and a new failure mode.",
+    "Only a constrained main-process bootstrap can be snapshotted; user-land modules, native addons, environment-dependent objects and the large runtime/extension graph are not automatically covered.",
+    "The snapshot runs before normal error boundaries and configuration loading; a corrupt or stale artifact can fail before the app can show a recovery surface.",
+    "Electron custom main snapshot causes Node bootstrap from source, which can reduce the expected benefit."
+  ],
+  "candidate": {
+    "verifiedMain": "68d894af",
+    "asar": true,
+    "sha": "68d894af",
+    "electron": "40.8.4",
+    "builder": "electron-builder 26.8.1"
+  },
+  "platformMatrix": [
+    {
+      "platform": "Windows x64",
+      "risk": "Requires browser_v8_context_snapshot.bin in the packaged root; absent file causes fatal startup error. afterPack must copy the artifact before signing."
+    },
+    {
+      "platform": "Windows arm64",
+      "risk": "Separate mksnapshot/arch artifact; current CI matrix and build scripts do not prove it."
+    },
+    {
+      "platform": "macOS x64/arm64",
+      "risk": "Snapshot lives inside Electron Framework.framework Resources with arch-specific filenames; framework signing must include the artifact; current local run cannot prove it."
+    },
+    {
+      "platform": "Linux x64/arm64",
+      "risk": "Separate packaged snapshot path and artifact; not exercised in this Windows-only task."
+    }
+  ],
+  "verdict": "reject",
+  "schema": "clawx.tf0422.v8-snapshot-decision/v1",
+  "decision": "reject-for-now",
+  "decisionRationale": "本机 Electron 40.8.4 的实际启动耗时主要发生在 Electron launch 到 app-ready（约 3.1–3.2 s），而自定义 main-process snapshot 只可能影响 V8 heap 初始化，并会让 Electron 从源码 bootstrap Node 环境、抵消部分收益；项目还要求 Windows/macOS/Linux x64/arm64 矩阵、afterPack 平台资源映射与签名前 fuse 翻转，收益未被同版本 before/after 证明。因此不把 V8 snapshot 加入构建链，保留为条件式复核项。",
+  "driven_by": "agent",
+  "title": "决定是否引入 Electron V8 snapshot",
+  "reopenConditions": [
+    "A same-version Electron A/B demonstrates a repeatable reduction in app-ready or ready-to-show beyond the measured noise.",
+    "The build matrix can generate and verify Windows/macOS/Linux x64/arm64 snapshots before signing.",
+    "A packaged smoke run proves the stock path and snapshot path both start with no fatal snapshot error.",
+    "The benefit survives the documented Node-from-source bootstrap cost and remains worth the added build/signing complexity."
+  ],
+  "localEvidence": [
+    {
+      "fact": "Electron launch to app-ready 3100.8362 ms; app-ready to window 105.014 ms; window to ready-to-show 165.9519 ms; renderer-first-paint 23.8 ms.",
+      "artifact": "harness/specs/fixtures/tf0417-performance-instrumentation/baseline.json"
+    },
+    {
+      "fact": "Five-run P50: app-ready 3225.9694 ms; window-created 3327.233 ms; ready-to-show 3531.6791 ms; renderer-first-paint 25.1 ms.",
+      "artifact": "harness/specs/fixtures/tf0419-main-blocking-io/after.json"
+    },
+    {
+      "fact": "Five-run ready-to-show P50 3733.0323 ms and P95 6017.2892 ms; prior startup work already removed serial non-critical initialization.",
+      "artifact": "harness/specs/fixtures/tf0418-startup/after.json"
+    },
+    {
+      "fact": "asar=true, embedded ASAR integrity and onlyLoadAppFromAsar are enabled; afterPack exists; native modules are intentionally not rebuilt. Snapshot wiring would add a new pre-sign build artifact and platform/arch resource mapping.",
+      "artifact": "electron-builder.yml"
+    }
+  ]
+}
