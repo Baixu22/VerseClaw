@@ -143,6 +143,52 @@
     "Runtime core tsgo was not rerun in this acceptance run; build:runtime completed and its gateway smoke became ready. The previously recorded core typecheck boundary is not upgraded to a pass."
   ],
   "productLocks": "unchanged",
-  "mergedCandidate": null,
-  "postMergeGates": []
+  "mergedCandidate": "74de535942452b89964f869a090b8d36342a6967",
+  "postMergeGates": [
+    {
+      "command": "focused P4 tests",
+      "exitCode": 0,
+      "testFiles": 14,
+      "tests": 78
+    },
+    {
+      "command": "pnpm run typecheck:node",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:web",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run contract:check",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 18358
+    },
+    {
+      "command": "pnpm run lint:bom",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/network-io-governance.md",
+      "exitCode": 0,
+      "note": "changed-path ownership gate had no diff after push; full spec structure validated"
+    },
+    {
+      "command": "pnpm run comms:replay && pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "PASS",
+      "rpcP95Ms": 284.1667,
+      "historyLoadQps": 0.4127,
+      "baselineDelta": "0.00%"
+    }
+  ],
+  "postMergeGeneratedAt": "2026-10-19T08:02:17.0596971Z"
 }
