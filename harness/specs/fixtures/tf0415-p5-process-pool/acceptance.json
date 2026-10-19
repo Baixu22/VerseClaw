@@ -110,6 +110,42 @@
     "No product lock, frozen default, release path or production process behavior changed."
   ],
   "productLocks": "unchanged",
-  "mergedCandidate": null,
-  "postMergeGates": []
+  "mergedCandidate": "ee19d4d699eaebd2400a70fd929111c2a11d5d48",
+  "postMergeGates": [
+    {
+      "command": "node --check benchmark.mjs && node --check worker-relay.mjs",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec eslint benchmark.mjs worker-relay.mjs",
+      "exitCode": 0
+    },
+    {
+      "command": "node benchmark.mjs",
+      "exitCode": 0,
+      "samples": 30,
+      "directP50Ms": 50.8805,
+      "relayP50Ms": 50.8519,
+      "p50ReductionRatio": 0.000562101394441277
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/resource-p5-process-pool-review.md",
+      "exitCode": 0,
+      "note": "changed-path ownership gate had no diff after push; full spec structure validated"
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 18365
+    },
+    {
+      "command": "pnpm run lint:bom",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "postMergeGeneratedAt": "2026-10-19T08:21:16.7459149Z"
 }
