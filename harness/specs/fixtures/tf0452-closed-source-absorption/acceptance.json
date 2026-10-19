@@ -174,7 +174,7 @@
       "errors": 4,
       "exitCode": 2,
       "baselineErrors": 4,
-      "baselineMeasuredBy": "git stash of uncommitted TF-0447 files before commit de138d53",
+      "baselineMeasuredBy": "git stash of uncommitted TF-0447 files before commit 56ec982d",
       "note": "identical error set; none in touched files"
     },
     "e2e": {
@@ -192,37 +192,37 @@
   },
   "commits": [
     {
-      "sha": "bef614bc9",
+      "sha": "e11dc7ab",
       "taskId": "TF-0446",
       "subject": "docs(decision): TF-0446 闭源参照三态归属裁定"
     },
     {
-      "sha": "de138d53a",
+      "sha": "56ec982d",
       "taskId": "TF-0447",
       "subject": "feat(context): TF-0447 KV-cache 命中率成为 context assembly 具名指标"
     },
     {
-      "sha": "88694125a",
+      "sha": "9e45b4cc",
       "taskId": "TF-0448",
       "subject": "feat(subagent): TF-0448 有界 subagent 报告契约"
     },
     {
-      "sha": "4228c083d",
+      "sha": "a0e7e9e0",
       "taskId": "TF-0449",
       "subject": "feat(task-ledger): TF-0449 显式 TaskLedgerReference 继承表"
     },
     {
-      "sha": "c83623843",
+      "sha": "f127ed11",
       "taskId": "TF-0451",
       "subject": "docs(non-goals): TF-0451 刻意不吸收项清单"
     },
     {
-      "sha": "af52cef8e",
+      "sha": "21cac445",
       "taskId": "TF-0450",
       "subject": "feat(chat): TF-0450 会话级上下文压力指示器"
     },
     {
-      "sha": "3d97f3906",
+      "sha": "5dfbde0a",
       "taskId": "TF-0450",
       "subject": "test(e2e): TF-0450 稳定会话上下文压力用例"
     }

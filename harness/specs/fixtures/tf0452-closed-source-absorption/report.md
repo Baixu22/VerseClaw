@@ -109,10 +109,10 @@ core 基线测量方法：在 TF-0447 提交前，用 `git stash` 暂存当次�
 
 | SHA | 节点 | 主题 |
 | --- | --- | --- |
-| `bef614bc9` | TF-0446 | docs(decision): 闭源参照三态归属裁定 |
-| `de138d53a` | TF-0447 | feat(context): KV-cache 命中率具名指标 |
-| `88694125a` | TF-0448 | feat(subagent): 有界 subagent 报告契约 |
-| `4228c083d` | TF-0449 | feat(task-ledger): 显式 TaskLedgerReference 继承表 |
-| `c83623843` | TF-0451 | docs(non-goals): 刻意不吸收项清单 |
-| `af52cef8e` | TF-0450 | feat(chat): 会话级上下文压力指示器 |
-| `3d97f3906` | TF-0450 | test(e2e): 稳定会话上下文压力用例 |
+| `e11dc7ab` | TF-0446 | docs(decision): 闭源参照三态归属裁定 |
+| `56ec982d` | TF-0447 | feat(context): KV-cache 命中率具名指标 |
+| `9e45b4cc` | TF-0448 | feat(subagent): 有界 subagent 报告契约 |
+| `a0e7e9e0` | TF-0449 | feat(task-ledger): 显式 TaskLedgerReference 继承表 |
+| `f127ed11` | TF-0451 | docs(non-goals): 刻意不吸收项清单 |
+| `21cac445` | TF-0450 | feat(chat): 会话级上下文压力指示器 |
+| `5dfbde0a` | TF-0450 | test(e2e): 稳定会话上下文压力用例 |
