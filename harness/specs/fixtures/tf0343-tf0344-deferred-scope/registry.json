@@ -1,0 +1,125 @@
+{
+  "schema": "clawx.versebrowser-deferred-scope/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0344",
+  "source": {
+    "project": "versebrowser",
+    "commit": "47b076f85d4e37cdaea67c1564d1c4f4dbf2b011",
+    "tasks": ["TF-0174", "TF-0176"]
+  },
+  "currentState": "deferred",
+  "implementedInThisCycle": false,
+  "activationPolicy": {
+    "requiresExplicitTask": true,
+    "requiresRealTaskOrReproduction": true,
+    "requiresMinimalReproduction": true,
+    "requiresIndependentVerdict": true,
+    "requiresSeparateHostAcceptancePerDriver": true,
+    "cloudSchedulingAllowed": false,
+    "genericPlannerAllowed": false,
+    "stealthProxyPlatformAllowed": false,
+    "captchaBypassAllowed": false
+  },
+  "items": [
+    {
+      "id": "visual-coordinates",
+      "ownerTask": "TF-0343",
+      "disposition": "deferred",
+      "implemented": false,
+      "capability": "Visual coordinate actions beyond the current selector/UID-oriented path",
+      "trigger": "A real task cannot be completed through the existing selector/UID interfaces and a minimal visual-coordinate reproduction demonstrates the gap.",
+      "activationGate": ["named real task", "minimal reproduction", "independent verdict", "rollback path"],
+      "evidence": ["packages/versebrowser/src/engine/driver-profile.ts", "packages/versebrowser/src/engine/visual-browser.ts"]
+    },
+    {
+      "id": "additional-browser-or-host-targets",
+      "ownerTask": "TF-0343",
+      "disposition": "deferred",
+      "implemented": false,
+      "capability": "Additional browser/host targets beyond the landed Playwright/CDP/Electron paths",
+      "trigger": "A concrete integration requires a target that the current host matrix cannot serve and reproduces the incompatibility.",
+      "activationGate": ["named target", "compatibility reproduction", "driver-specific acceptance", "no extrapolation from existing matrix"],
+      "evidence": ["packages/versebrowser/src/engine/driver-profile.ts", "packages/versebrowser/tests/mcp-surface-sync.test.ts"]
+    },
+    {
+      "id": "advanced-network-performance-tools",
+      "ownerTask": "TF-0343",
+      "disposition": "deferred",
+      "implemented": false,
+      "capability": "Advanced network performance profiling beyond current list/detail/wait/compare surfaces",
+      "trigger": "Measured task performance shows a bottleneck that existing network observation cannot explain or resolve.",
+      "activationGate": ["measured bottleneck", "minimal reproduction", "metric threshold", "independent verdict"],
+      "evidence": ["packages/versebrowser/src/mcp/tool-availability.ts", "packages/versebrowser/tests/mcp-tool-exposure.test.ts"]
+    },
+    {
+      "id": "multi-browser-drivers",
+      "ownerTask": "TF-0344",
+      "disposition": "deferred",
+      "implemented": false,
+      "capability": "Additional browser drivers",
+      "trigger": "A real integration requires a browser not covered by the existing Playwright/CDP/upstream driver profiles.",
+      "activationGate": ["real integration task", "existing-interface first", "driver-specific acceptance", "capability-policy update"],
+      "evidence": ["packages/versebrowser/src/engine/driver-profile.ts", "packages/versebrowser/src/mcp/tool-availability.ts"]
+    },
+    {
+      "id": "additional-harness-backends",
+      "ownerTask": "TF-0344",
+      "disposition": "deferred",
+      "implemented": false,
+      "capability": "Additional harness/backend engines, including Lightpanda only as a candidate",
+      "trigger": "Measured throughput/memory bottleneck or compatibility task cannot be served by the existing backend.",
+      "activationGate": ["pinned version", "license review", "same-task success rate", "resource measurement", "manual-intervention count"],
+      "evidence": ["harness/specs/guides/versebrowser-reintegration-playbook.md"]
+    },
+    {
+      "id": "websocket-sse-details",
+      "ownerTask": "TF-0344",
+      "disposition": "deferred",
+      "implemented": false,
+      "capability": "Detailed WebSocket/SSE frame inspection",
+      "trigger": "A real debugging task requires frame-level WS/SSE evidence not available from current Main diagnostics.",
+      "activationGate": ["named debugging task", "boundary/privacy review", "minimal reproduction", "independent verdict"],
+      "evidence": ["harness/specs/scenarios/gateway-backend-communication.md", "packages/versebrowser/src/mcp/tool-availability.ts"]
+    },
+    {
+      "id": "network-mock-replay",
+      "ownerTask": "TF-0344",
+      "disposition": "deferred",
+      "implemented": false,
+      "capability": "Credentialed network mock/replay",
+      "trigger": "A real task needs a credentialed replay path and a scoped boundary grant.",
+      "activationGate": ["credentialed path", "boundary grant", "replay prepare/send/compare acceptance", "privacy review"],
+      "evidence": ["packages/versebrowser/src/mcp/tool-availability.ts"]
+    },
+    {
+      "id": "performance-traces",
+      "ownerTask": "TF-0344",
+      "disposition": "deferred",
+      "implemented": false,
+      "capability": "Browser performance trace capture and interpretation",
+      "trigger": "A real performance task needs trace-grade evidence beyond current metrics and screenshots.",
+      "activationGate": ["measured bottleneck", "trace schema", "bounded artifact policy", "independent verdict"],
+      "evidence": ["packages/versebrowser/src/engine/visual-browser.ts"]
+    },
+    {
+      "id": "site-native-tools",
+      "ownerTask": "TF-0344",
+      "disposition": "deferred",
+      "implemented": false,
+      "capability": "Site-specific native tools",
+      "trigger": "A recurring real integration demonstrates that generic browser operations are insufficient.",
+      "activationGate": ["recurring task evidence", "site contract", "permissions review", "independent acceptance"],
+      "evidence": ["packages/versebrowser/src/mcp/capability-policy.ts"]
+    },
+    {
+      "id": "remote-browser",
+      "ownerTask": "TF-0344",
+      "disposition": "deferred",
+      "implemented": false,
+      "capability": "Remote browser execution",
+      "trigger": "A real integration requires remote execution that cannot be met by the local host.",
+      "activationGate": ["named remote target", "security review", "credential path", "driver-specific acceptance", "rollback"],
+      "evidence": ["packages/versebrowser/src/engine/driver-profile.ts", "packages/versebrowser/src/mcp/tool-availability.ts"]
+    }
+  ]
+}
