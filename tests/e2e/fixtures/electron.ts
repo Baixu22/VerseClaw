@@ -7,6 +7,7 @@ import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { recordElectronProcess } from './electron-process-cleanup';
 
 type LaunchElectronOptions = {
   skipSetup?: boolean;
@@ -425,6 +426,7 @@ async function launchVerseClawElectron(
     }),
     timeout: 90_000,
   });
+  await recordElectronProcess(userDataDir, app.process().pid);
   /*
    * The app's own output is otherwise swallowed, which makes a stalled turn
    * unattributable from the test side: the composer just goes idle and the
