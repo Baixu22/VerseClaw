@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -65,7 +66,7 @@ async function main() {
   console.log(`[verseshell-manifest] OK: mode=${result.mode} platform=${result.platform}`);
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   main().catch((error) => {
     console.error(`[verseshell-manifest] ${error instanceof Error ? error.message : String(error)}`);
     process.exitCode = 1;

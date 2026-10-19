@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -65,4 +66,4 @@ async function main() {
   console.log(`[test-coverage] gateway=${actual['electron/gateway']} services=${actual['electron/services']} meet baseline`);
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) await main();
+if (isMainEntrypoint(import.meta.url)) await main();

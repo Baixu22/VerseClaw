@@ -18,6 +18,7 @@
  * failure analysis -> prompt patch -> re-run -> select best. Our fitness
  * function is the Phase 0 handoff benchmark, not a proxy.
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { buildRecoveryLedger, buildContinuationDirective } from './context-compression-recovery-ledger.mjs';
@@ -582,7 +583,7 @@ async function main() {
   }, null, 2));
 }
 
-if (process.argv[1] && import.meta.url === `file:///${process.argv[1].replace(/\\/gu, '/')}`) {
+if (isMainEntrypoint(import.meta.url)) {
   main().catch((error) => {
     console.error(`[optimization-loop] FATAL: ${error.stack ?? error}`);
     process.exit(1);

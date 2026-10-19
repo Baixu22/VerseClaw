@@ -1,0 +1,43 @@
+{
+  "schema": "clawx.network-protocol-reliability.net-a.evidence.v1",
+  "node": "TF-0438",
+  "driven_by": "agent",
+  "timestamp": "2026-10-19T02:59:13.4385516+08:00",
+  "candidate_sha": "9cae5341ab0fa94a9b21bc3838107d804669bd4c",
+  "commands": [
+    {
+      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/request-attempt-budget.test.ts src/agents/model-fallback.loop-termination.test.ts --maxWorkers=1",
+      "exit_code": 0,
+      "result": "11 tests passed"
+    },
+    {
+      "command": "pnpm --dir openclaw_runtime exec vitest run src/infra/retry.test.ts src/agents/retry-after.test.ts src/agents/provider-outbound-budget.test.ts --maxWorkers=1",
+      "exit_code": 0,
+      "result": "26 tests passed"
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/provider-error-retry-boundaries.test.ts --maxWorkers=1",
+      "exit_code": 0,
+      "result": "48 tests passed"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit_code": 0,
+      "result": "node/web/test exit 0"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/network-retry-budget-v1.md",
+      "exit_code": 0,
+      "result": "Spec is valid"
+    }
+  ],
+  "implementation": [
+    "request-attempt-budget.ts: logical request budget + AsyncLocalStorage context",
+    "infra/retry.ts: shared attemptBudget consumption and exhausted fail-closed",
+    "agent-session.ts: turn-scoped budget, auto-retry consumption, Retry-After + positive-only jitter",
+    "model-fallback.ts: candidate attempts consume same budget",
+    "provider-transport-fetch.ts: physical outbound attempts record to same budget and fail closed",
+    "retry-after.ts: finite non-negative Retry-After parsing"
+  ],
+  "boundary": "No paid provider request; no second usage store; TF-0444 fault injection remains open."
+}

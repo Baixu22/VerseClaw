@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 /** Reject developer-local absolute paths in active repository documentation. */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
@@ -33,4 +34,4 @@ function main() {
   console.log('[local-paths] PASS active docs contain no developer-local absolute paths');
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) main();
+if (isMainEntrypoint(import.meta.url)) main();

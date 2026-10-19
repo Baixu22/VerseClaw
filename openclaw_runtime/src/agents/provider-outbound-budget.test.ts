@@ -22,6 +22,7 @@ import {
   resolveProviderOutboundQuotaGroup,
 } from "./provider-outbound-budget.js";
 import { buildGuardedModelFetch } from "./provider-transport-fetch.js";
+import { createRequestAttemptBudget, runWithRequestAttemptBudget } from "./request-attempt-budget.js";
 import { attachModelProviderRequestTransport } from "./provider-request-config.js";
 
 const ENDPOINT = "https://api.deepseek.com/v1/chat/completions";
@@ -440,6 +441,35 @@ describe("provider outbound concurrency budget", () => {
         });
       });
       expect(attemptsMade()).toBe(0);
+    });
+  });
+
+  describe("logical request budget", () => {
+    it("records a physical provider attempt inside an ambient logical request", async () => {
+      const budget = createRequestAttemptBudget({ maxPhysicalAttempts: 1 });
+      const { response } = createOpenBody();
+      guardedFetchMock.mockResolvedValueOnce({ response });
+      const guardedFetch = guardedFetchFor(makeModel());
+      await runWithRequestAttemptBudget(budget, async () => {
+        await guardedFetch(ENDPOINT, REQUEST_INIT);
+      });
+      expect(budget.snapshot()).toMatchObject({
+        used: 1,
+        remaining: 0,
+        attempts: [{ physicalAttempt: 1, layer: "provider-transport" }],
+      });
+    });
+
+    it("fails closed before sending when the ambient budget is already exhausted", async () => {
+      const budget = createRequestAttemptBudget({ maxPhysicalAttempts: 1 });
+      budget.recordAttempt({ layer: "sdk", outcome: "failure" });
+      const guardedFetch = guardedFetchFor(makeModel());
+      await expect(
+        runWithRequestAttemptBudget(budget, async () => {
+          await guardedFetch(ENDPOINT, REQUEST_INIT);
+        }),
+      ).rejects.toThrow("request attempt budget exhausted");
+      expect(guardedFetchMock).not.toHaveBeenCalled();
     });
   });
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFile, stat, writeFile } from 'node:fs/promises';
@@ -150,4 +151,4 @@ async function main() {
   console.log(`[duplicates] ${groups.length} reviewed duplicate groups matched the allowlist.`);
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) await main();
+if (isMainEntrypoint(import.meta.url)) await main();

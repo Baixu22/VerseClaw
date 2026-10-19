@@ -4,6 +4,7 @@
  * These are strings, not imports, so a rename would otherwise silently break
  * the claim's source evidence.
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -85,4 +86,4 @@ function main() {
   console.log(`[evidence-refs] PASS ${count} referenced path(s)`);
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) main();
+if (isMainEntrypoint(import.meta.url)) main();

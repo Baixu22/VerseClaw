@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import {
   existsSync,
   lstatSync,
@@ -5731,8 +5732,7 @@ async function main() {
   }
 }
 
-if (process.argv[1] && existsSync(process.argv[1])
-  && realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1])) {
+if (isMainEntrypoint(import.meta.url)) {
   main().catch((error) => {
     console.error(error);
     process.exitCode = 1;

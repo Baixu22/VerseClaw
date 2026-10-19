@@ -1,3 +1,4 @@
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createHash, randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
@@ -193,7 +194,7 @@ export function verifyLocomoEvidenceFile(file, options) {
   return { ...assertVerifiedLocomoReport(report, options), report: file, sha256: checksum };
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (isMainEntrypoint(import.meta.url)) {
   try {
     const { values } = parseArgs({ options: { report: { type: 'string' } } });
     const file = resolve(values.report ?? join(ROOT, 'tests/fixtures/runtime-memory-eval/locomo-full-500-measured-report.json'));

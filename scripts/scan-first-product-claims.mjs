@@ -1,3 +1,4 @@
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, extname, join, relative, resolve } from 'node:path';
@@ -194,4 +195,4 @@ function scan() {
   return report;
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) scan();
+if (isMainEntrypoint(import.meta.url)) scan();

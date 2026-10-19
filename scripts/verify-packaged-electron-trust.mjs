@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createHash } from 'node:crypto';
 import { readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
@@ -101,7 +102,7 @@ function readArg(name) {
   return index >= 0 ? process.argv[index + 1] : undefined;
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   const appDir = readArg('--app-dir');
   const platform = readArg('--platform');
   const output = readArg('--output');

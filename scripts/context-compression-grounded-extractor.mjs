@@ -14,6 +14,7 @@
  * The module is imported by both twins (eval-runner / recovery-ledger based
  * tooling); the semantic-audit copy stays independent.
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
@@ -396,7 +397,7 @@ async function main() {
   console.log(JSON.stringify({ outDir, samples: summaryRows.length, budget: { estSpentCny: budget.spentCny, calls: budget.calls } }, null, 2));
 }
 
-if (process.argv[1] && import.meta.url === `file:///${process.argv[1].replace(/\\/gu, '/')}`) {
+if (isMainEntrypoint(import.meta.url)) {
   main().catch((error) => {
     console.error(`[grounded-extractor] FATAL: ${error.stack ?? error}`);
     process.exit(1);

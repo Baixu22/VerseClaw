@@ -3,6 +3,7 @@
  * source artifacts. Fails closed when their formula, corpus identity, or
  * safety markers drift.
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -270,7 +271,7 @@ function writeOrCheck(root, decision, check) {
   fs.writeFileSync(markdownPath, markdown, "utf8");
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   const args = parseArgs(process.argv.slice(2));
   const decision = buildC1AuthoritativeDecision(args.root);
   writeOrCheck(args.root, decision, args.check);

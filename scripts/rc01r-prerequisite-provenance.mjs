@@ -2,6 +2,7 @@
 // Record and verify the historical RC-01R prerequisite identity without
 // re-signing acceptedBase or treating the current batch comparison base as
 // that prerequisite.
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { realpathSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -144,12 +145,7 @@ export function verifyRc01rPrerequisiteProvenance(options = {}) {
 }
 
 function invokedAsCli() {
-  if (!process.argv[1]) return false;
-  try {
-    return realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url));
-  } catch {
-    return false;
-  }
+  return isMainEntrypoint(import.meta.url);
 }
 const invokedDirectly = invokedAsCli();
 if (invokedDirectly) {

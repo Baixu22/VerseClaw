@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
@@ -922,7 +923,7 @@ export {
   parseAuditArgs,
 };
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (isMainEntrypoint(import.meta.url)) {
   main().catch((error) => {
     console.error(error);
     process.exitCode = 1;

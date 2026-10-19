@@ -5,6 +5,7 @@
  * shows a misleading "app cannot be closed" dialog even when ClawX is not running.
  */
 
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -69,7 +70,7 @@ export function patchNsisUninstallTemplate(targetPath = INSTALL_UTIL_NSH) {
   return true;
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   const ok = patchNsisUninstallTemplate();
   process.exit(ok ? 0 : 1);
 }

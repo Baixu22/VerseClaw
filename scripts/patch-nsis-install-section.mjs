@@ -9,6 +9,7 @@
  * files remain installed.
  */
 
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -76,7 +77,7 @@ export function patchNsisInstallSectionTemplate(targetPath = INSTALL_SECTION_NSH
   return true;
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   const ok = patchNsisInstallSectionTemplate();
   process.exit(ok ? 0 : 1);
 }

@@ -18,6 +18,7 @@
 // wildcard: ownership globs are never widened to absorb it, every excluded
 // path names its introducing commit, and a path that can be attributed to
 // neither set aborts the generator with a non-zero exit code.
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -379,6 +380,6 @@ function sameRealPath(a, b) {
   }
 }
 
-if (process.argv[1] && sameRealPath(process.argv[1], fileURLToPath(import.meta.url))) {
+if (isMainEntrypoint(import.meta.url)) {
   process.exitCode = main();
 }

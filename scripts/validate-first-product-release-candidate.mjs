@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
@@ -523,7 +524,7 @@ async function main() {
   );
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   main().catch((error) => {
     console.error(`[FP-P3-01] validation FAIL: ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -28,4 +29,4 @@ function main() {
   console.log(JSON.stringify(summary, null, 2));
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) main();
+if (isMainEntrypoint(import.meta.url)) main();

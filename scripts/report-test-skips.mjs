@@ -4,6 +4,7 @@
  * green run. Discovers suites that mention hasDeepSeekKey(), runs them once
  * with Vitest's JSON reporter, and prints file/test skipped counts.
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -64,4 +65,4 @@ function main() {
   for (const file of summary.files) console.log(`  ${file.skipped.toString().padStart(3)} skipped  ${file.file}`);
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) main();
+if (isMainEntrypoint(import.meta.url)) main();

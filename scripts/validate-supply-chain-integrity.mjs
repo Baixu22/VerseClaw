@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { readFileSync, readdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -219,7 +220,7 @@ async function fetchGitHubJson(url, headers) {
   }
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   runCli().catch((error) => {
     console.error(`[supply-chain-integrity] FAIL: ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);

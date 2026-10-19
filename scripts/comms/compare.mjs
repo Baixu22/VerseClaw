@@ -1,3 +1,4 @@
+import { isMainEntrypoint } from '../lib/entrypoint.mjs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
@@ -158,7 +159,7 @@ export async function main(options = {}) {
   return machineReport;
 }
 
-const isEntrypoint = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+const isEntrypoint = isMainEntrypoint(import.meta.url);
 if (isEntrypoint) {
   main().catch((error) => {
     console.error('[comms:compare] failed:', error);

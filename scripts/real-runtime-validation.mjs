@@ -1,3 +1,4 @@
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -428,6 +429,6 @@ async function main() {
   console.log(JSON.stringify(report.verdict, null, 2));
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   await main();
 }

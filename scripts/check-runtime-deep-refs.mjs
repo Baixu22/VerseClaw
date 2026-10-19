@@ -35,6 +35,7 @@
  * Usage:
  *   node scripts/check-runtime-deep-refs.mjs [--root <dir>] [--json]
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, normalize, resolve, sep } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -259,6 +260,6 @@ function main(argv) {
   process.exitCode = report.ok ? 0 : 1;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (isMainEntrypoint(import.meta.url)) {
   main(process.argv.slice(2));
 }

@@ -62,6 +62,7 @@ import {
   type ModelFallbackDecisionParams,
   type ModelFallbackStepFields,
 } from "./model-fallback-observation.js";
+import { getRequestAttemptBudget } from "./request-attempt-budget.js";
 import type { FallbackAttempt, ModelCandidate } from "./model-fallback.types.js";
 import { isCliRuntimeAlias } from "./model-runtime-aliases.js";
 import { isCliProvider } from "./model-selection-cli.js";
@@ -1236,8 +1237,10 @@ export async function runWithModelFallback<T>(
     classifyResult?: ModelFallbackResultClassifier<T>;
     skipAuthProfileRuntime?: boolean;
     abortSignal?: AbortSignal;
+    attemptBudget?: import("./request-attempt-budget.js").RequestAttemptBudget;
   } & ModelManifestNormalizationContext,
 ): Promise<ModelFallbackRunResult<T>> {
+  const attemptBudget = params.attemptBudget ?? getRequestAttemptBudget();
   const candidates = resolveModelCandidateChain({
     cfg: params.cfg,
     provider: params.provider,
@@ -1521,6 +1524,12 @@ export async function runWithModelFallback<T>(
       }
     }
 
+    const fallbackPhysicalAttempt = attemptBudget
+      ? attemptBudget.tryRecordAttempt({ layer: "model-fallback", outcome: "failure" })
+      : i + 1;
+    if (fallbackPhysicalAttempt === undefined) {
+      break;
+    }
     const attemptRun = await runFallbackAttempt({
       run: params.run,
       ...candidate,
@@ -1533,6 +1542,7 @@ export async function runWithModelFallback<T>(
       abortSignal: params.abortSignal,
     });
     if ("success" in attemptRun) {
+      attemptBudget?.completeAttempt(fallbackPhysicalAttempt, "success");
       if (i > 0 || attempts.length > 0 || attemptedDuringCooldown) {
         await observeDecision({
           decision: "candidate_succeeded",
@@ -1559,6 +1569,7 @@ export async function runWithModelFallback<T>(
       }
       return attemptRun.success;
     }
+    attemptBudget?.completeAttempt(fallbackPhysicalAttempt, "failure");
     const err = attemptRun.error;
     {
       // Local runtime coordination errors (session write-lock timeout, embedded

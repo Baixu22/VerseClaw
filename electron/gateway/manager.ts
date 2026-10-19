@@ -1338,9 +1338,11 @@ export class GatewayManager extends EventEmitter {
    * Connect WebSocket to Gateway
    */
   private async connect(port: number, _externalToken?: string): Promise<void> {
+    const isReconnect = this.status.connectedAt !== undefined || this.reconnectAttempts > 0;
     this.ws = await connectGatewaySocket({
       port,
       deviceIdentity: this.deviceIdentity,
+      isReconnect,
       platform: process.platform,
       pendingRequests: this.pendingRequests,
       getToken: async () => await import('../utils/store').then(({ getSetting }) => getSetting('gatewayToken')),
@@ -1365,8 +1367,15 @@ export class GatewayManager extends EventEmitter {
       onMessage: (message) => {
         this.handleMessage(message);
       },
+      onSequenceGap: (gap) => {
+        this.handleSequenceGap(gap);
+      },
+      onReconnect: () => {
+        this.emit('gateway:resubscribe', { reason: 'reconnect' });
+      },
       onCloseAfterHandshake: (closeCode) => {
         this.connectionMonitor.clear();
+        clearPendingGatewayRequests(this.pendingRequests, new Error('Gateway connection closed'));
         this.recordSocketClose(closeCode);
         this.diagnostics.consecutiveHeartbeatMisses = 0;
         if (this.status.state === 'running') {
@@ -1386,6 +1395,14 @@ export class GatewayManager extends EventEmitter {
         }
       },
     });
+  }
+
+  private handleSequenceGap(gap: { expected: number; received: number }): void {
+    logger.warn(
+      `Gateway event sequence gap detected (expected=${gap.expected}, received=${gap.received}); requesting resubscribe`,
+    );
+    this.emit('gateway:sequence-gap', gap);
+    this.emit('gateway:resubscribe', { reason: 'sequence-gap', ...gap });
   }
 
   /**

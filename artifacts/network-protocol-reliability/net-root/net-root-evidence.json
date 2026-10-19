@@ -1,0 +1,41 @@
+{
+  "schema": "clawx.network-protocol-reliability.net-root.evidence.v2",
+  "node": "TF-0443",
+  "driven_by": "agent",
+  "timestamp": "2026-10-19T02:09:43.7505274+08:00",
+  "candidate_sha": "9cae5341ab0fa94a9b21bc3838107d804669bd4c",
+  "branch": "codex/network-protocol-reliability-20261019",
+  "commands": [
+    {
+      "command": "pnpm exec vitest run tests/unit/network-protocol-owner-matrix.test.ts --maxWorkers=1",
+      "exit_code": 0,
+      "result": "9 tests passed"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit_code": 0,
+      "result": "node/web/test exit 0"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/network-protocol-reliability-owner-matrix.md",
+      "exit_code": 0,
+      "result": "Spec is valid"
+    }
+  ],
+  "entrypoint_scan": {
+    "helper": "scripts/lib/entrypoint.mjs",
+    "direct_process_argv_1_refs": 1,
+    "helper_imports": 76,
+    "self_referential_imports": 0,
+    "junction_regression": "passed in unit test"
+  },
+  "owner_matrix": {
+    "path": "docs/dev/network-protocol-reliability/owner-matrix.md",
+    "concerns": 14
+  },
+  "current_gaps": {
+    "path": "docs/dev/network-protocol-reliability/current-gaps.md",
+    "gaps": 10
+  },
+  "validation_boundary": "TF-0443 owner matrix + entrypoint guard only; TF-0437 remains in_progress until NET-A..G acceptance."
+}

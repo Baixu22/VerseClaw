@@ -1,0 +1,125 @@
+{
+  "schema": "clawx.network-protocol-reliability-owners.v1",
+  "owners": [
+    {
+      "id": "gateway-protocol",
+      "primaryOwner": "openclaw_runtime/packages/gateway-client/src/client.ts",
+      "componentPatterns": ["GatewayClient", "GatewayClientRequestError"],
+      "forbiddenIndependentEvolution": ["electron/gateway/ws-client.ts"],
+      "disposition": "merge",
+      "downstreamNode": "TF-0439"
+    },
+    {
+      "id": "electron-gateway-adapter",
+      "primaryOwner": "electron/gateway/ws-client.ts",
+      "componentPatterns": ["connectGatewaySocket", "probeGatewayReady"],
+      "forbiddenIndependentEvolution": [],
+      "disposition": "temporary-adapter",
+      "downstreamNode": "TF-0439"
+    },
+    {
+      "id": "provider-endpoint-breaker",
+      "primaryOwner": "openclaw_runtime/src/agents/rate-circuit-breaker.ts",
+      "componentPatterns": ["RateCircuitBreaker"],
+      "forbiddenIndependentEvolution": ["openclaw_runtime/src/infra/circuit-breaker.ts"],
+      "disposition": "merge",
+      "downstreamNode": "TF-0440"
+    },
+    {
+      "id": "generic-circuit-breaker",
+      "primaryOwner": "openclaw_runtime/src/infra/circuit-breaker.ts",
+      "componentPatterns": ["CircuitBreaker", "CircuitBreakerOpenError"],
+      "forbiddenIndependentEvolution": ["openclaw_runtime/src/agents/provider-transport-fetch.ts"],
+      "disposition": "retain-non-provider",
+      "downstreamNode": "TF-0440"
+    },
+    {
+      "id": "provider-outbound-admission",
+      "primaryOwner": "openclaw_runtime/src/agents/provider-outbound-budget.ts",
+      "componentPatterns": ["ProviderOutboundSlot", "ProviderOutboundOverloadedError", "acquireProviderOutboundSlot"],
+      "forbiddenIndependentEvolution": [],
+      "disposition": "resourcefabric-adapter",
+      "downstreamNode": "TF-0438"
+    },
+    {
+      "id": "gateway-history-backpressure",
+      "primaryOwner": "electron/gateway/rpc-backpressure.ts",
+      "componentPatterns": ["GatewayRpcBackpressure"],
+      "forbiddenIndependentEvolution": [],
+      "disposition": "retain-narrow",
+      "downstreamNode": "TF-0439"
+    },
+    {
+      "id": "physical-retry-executor",
+      "primaryOwner": "openclaw_runtime/src/infra/retry.ts",
+      "componentPatterns": ["retryAsync", "resolveRetryConfig"],
+      "forbiddenIndependentEvolution": [],
+      "disposition": "budget-consumer",
+      "downstreamNode": "TF-0438"
+    },
+    {
+      "id": "logical-attempt-budget",
+      "primaryOwner": "openclaw_runtime/src/agents/sessions/agent-session.ts",
+      "componentPatterns": ["auto_retry_start", "auto_retry_end", "retryCount"],
+      "forbiddenIndependentEvolution": [],
+      "disposition": "budget-owner",
+      "downstreamNode": "TF-0438"
+    },
+    {
+      "id": "model-fallback",
+      "primaryOwner": "openclaw_runtime/src/agents/failover-error.ts",
+      "componentPatterns": ["FailoverError", "classifyFailoverSignal"],
+      "forbiddenIndependentEvolution": [],
+      "disposition": "budget-consumer",
+      "downstreamNode": "TF-0438"
+    },
+    {
+      "id": "host-action-deadline",
+      "primaryOwner": "shared/host-api/host-action-timeouts.ts",
+      "componentPatterns": ["hostActionTimeoutMs"],
+      "forbiddenIndependentEvolution": [],
+      "disposition": "deadline-child",
+      "downstreamNode": "TF-0442"
+    },
+    {
+      "id": "gateway-request-deadline",
+      "primaryOwner": "openclaw_runtime/packages/gateway-client/src/client.ts",
+      "componentPatterns": ["requestTimeoutMs"],
+      "forbiddenIndependentEvolution": [],
+      "disposition": "deadline-child",
+      "downstreamNode": "TF-0442"
+    },
+    {
+      "id": "provider-request-deadline",
+      "primaryOwner": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+      "componentPatterns": ["resolveModelRequestTimeoutMs", "buildModelRequestSignal"],
+      "forbiddenIndependentEvolution": [],
+      "disposition": "deadline-child",
+      "downstreamNode": "TF-0442"
+    },
+    {
+      "id": "attempt-observability",
+      "primaryOwner": "openclaw_runtime/src/logging/diagnostic-run-activity.ts",
+      "componentPatterns": ["model.call.started", "model.call.completed", "model.call.error"],
+      "forbiddenIndependentEvolution": [],
+      "disposition": "existing-observability-surface",
+      "downstreamNode": "TF-0438"
+    },
+    {
+      "id": "stream-failure",
+      "primaryOwner": "openclaw_runtime/src/agents/embedded-agent-runner/thinking.ts",
+      "componentPatterns": ["retryStreamWithoutThinking", "pumpStreamWithRecovery"],
+      "forbiddenIndependentEvolution": [],
+      "disposition": "stream-attempt-owner",
+      "downstreamNode": "TF-0441"
+    },
+    {
+      "id": "script-entrypoint",
+      "primaryOwner": "scripts/lib/entrypoint.mjs",
+      "componentPatterns": ["isMainEntrypoint"],
+      "forbiddenIndependentEvolution": ["scripts/**"],
+      "disposition": "single-helper",
+      "downstreamNode": "TF-0443"
+    }
+  ]
+}

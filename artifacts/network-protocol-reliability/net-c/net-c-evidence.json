@@ -1,0 +1,54 @@
+{
+  "schema": "clawx.network-protocol-reliability.net-c.evidence.v1",
+  "node": "TF-0440",
+  "driven_by": "agent",
+  "timestamp": "2026-10-19T08:39:39.710711+08:00",
+  "candidate_sha": "9cae5341ab0fa94a9b21bc3838107d804669bd4c",
+  "commands": [
+    {
+      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/provider-endpoint-health.test.ts src/agents/provider-outbound-budget.test.ts --maxWorkers=1",
+      "cwd": "openclaw_runtime",
+      "exit_code": 0,
+      "result": "2 files, 31 tests passed"
+    },
+    {
+      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.verseshell.config.ts src/logging/diagnostic-stability.exec.test.ts --maxWorkers=1",
+      "cwd": "openclaw_runtime",
+      "exit_code": 0,
+      "result": "1 file, 2 tests passed"
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/provider-error-retry-boundaries.test.ts --maxWorkers=1",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "1 file, 48 tests passed"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "node/web/test exit 0, errorCount 0"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/provider-endpoint-circuit-breaker-v1.md",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "Spec is valid"
+    }
+  ],
+  "implementation": [
+    "openclaw_runtime/src/agents/provider-endpoint-health.ts: one provider breaker (RateCircuitBreaker) keyed by normalized endpoint + non-exportable account discriminator; opt-in env flag; typed ProviderEndpointCircuitOpenError; half-open single probe; sanitized snapshots",
+    "openclaw_runtime/src/agents/provider-transport-fetch.ts: real outbound boundary admits the health gate after concurrency-budget admission and before local-service startup; records transport failure, timeout (as transport error), 429 and 5xx; neutral non-429 4xx; releases the outbound slot when the breaker refuses",
+    "openclaw_runtime/src/logging/diagnostic-stability.ts: optional summary.providerEndpointHealth block in diagnostics.stability; omitted when inert; contains no credential or account discriminator",
+    "openclaw_runtime/src/agents/provider-endpoint-health.test.ts: 14 tests covering legal traffic, 429/503/transport counting, open fail-fast, half-open single probe, recovery, identity isolation, export hygiene, budget non-double-counting",
+    "openclaw_runtime/src/logging/diagnostic-stability.exec.test.ts: diagnostics.stability exposes sanitized breaker snapshots",
+    "docs/dev/network-protocol-reliability/provider-health.md: decision, identity, counting policy, states, opt-in and diagnostics"
+  ],
+  "boundaries": {
+    "single_breaker": "Only RateCircuitBreaker is enabled for provider endpoints; infra/circuit-breaker.ts stays for non-provider call sites.",
+    "product_defaults": "No default-on change; OPENCLAW_PROVIDER_ENDPOINT_BREAKER is opt-in.",
+    "sensitive_data": "No credential, raw account value or account discriminator is logged, persisted or exported.",
+    "live_provider": "No paid provider request and no live-provider conformance; synthetic guarded-fetch stubs only.",
+    "mid_stream": "Mid-stream body failures are deferred to TF-0441."
+  }
+}

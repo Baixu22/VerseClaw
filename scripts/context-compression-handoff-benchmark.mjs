@@ -21,6 +21,7 @@
  * COMPACTION_MAX_ATTEMPTS, COMPACTION_REQUEST_TIMEOUT_MS,
  * COMPACTION_EXTRA_HEADERS, COMPACTION_OMIT_RESPONSE_FORMAT.
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
@@ -992,7 +993,7 @@ async function main() {
   console.log(JSON.stringify({ outDir, metrics: aggregate.metrics, lockStatus: aggregate.lockStatus, budget: aggregate.budget }, null, 2));
 }
 
-if (process.argv[1] && import.meta.url === `file:///${process.argv[1].replace(/\\/gu, '/')}`) {
+if (isMainEntrypoint(import.meta.url)) {
   main().catch((error) => {
     console.error(`[handoff-benchmark] FATAL: ${error.stack ?? error}`);
     process.exit(1);

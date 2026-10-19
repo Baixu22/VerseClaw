@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -127,7 +128,7 @@ export function validateBaseline(data, readText) {
     counts: { slots: slots.length, packets: packets.length, references: Object.keys(references).length }, errors };
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (isMainEntrypoint(import.meta.url)) {
   try {
     const root = resolve(process.argv[3] ?? '.');
     const inventory = resolve(process.argv[2] ?? 'docs/dev/harness-gap-closure/source-inventory.json');

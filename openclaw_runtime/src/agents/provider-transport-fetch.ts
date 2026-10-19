@@ -32,6 +32,7 @@ import { emitModelTransportDebug } from "./model-transport-debug.js";
 import { formatModelTransportDebugUrl } from "./model-transport-url.js";
 import { ProviderHttpError, readResponseTextLimited } from "./provider-http-errors.js";
 import { appendProviderRequestAuthQuery } from "./provider-request-auth.js";
+import { getRequestAttemptBudget, type RequestAttemptBudget } from "./request-attempt-budget.js";
 import {
   isProviderPayloadTraceEnabled,
   recordProviderPayloadTrace,
@@ -45,6 +46,11 @@ import {
   ProviderOutboundOverloadedError,
   resolveProviderOutboundQuotaGroup,
 } from "./provider-outbound-budget.js";
+import {
+  admitProviderEndpointRequest,
+  classifyProviderEndpointResponse,
+  ProviderEndpointCircuitOpenError,
+} from "./provider-endpoint-health.js";
 import {
   buildProviderRequestDispatcherPolicy,
   getModelProviderRequestTransport,
@@ -787,15 +793,25 @@ function resolveModelTransportSsrFPolicy(params: {
   );
 }
 
+export class ProviderRequestAttemptBudgetExhaustedError extends Error {
+  readonly code = "E_PROVIDER_REQUEST_ATTEMPT_BUDGET_EXHAUSTED";
+
+  constructor() {
+    super("provider request attempt budget exhausted");
+    this.name = "ProviderRequestAttemptBudgetExhaustedError";
+  }
+}
+
 export function buildGuardedModelFetch(
   model: Model,
   timeoutMs?: number,
-  options?: { sanitizeSse?: boolean },
+  options?: { sanitizeSse?: boolean; attemptBudget?: RequestAttemptBudget },
   shadow?: ShadowReceiptOptions,
 ): typeof fetch {
   const requestConfig = resolveModelRequestPolicy(model);
   const dispatcherPolicy = buildProviderRequestDispatcherPolicy(requestConfig);
   const requestTimeoutMs = resolveModelRequestTimeoutMs(model, timeoutMs);
+  const configuredAttemptBudget = options?.attemptBudget;
   // Quota identity is stable per model+credential; resolving it once per guarded fetch keeps the
   // per-attempt cost to one gate lookup.
   const outboundGroup = resolveProviderOutboundQuotaGroup({ model, requestConfig });
@@ -819,6 +835,11 @@ export function buildGuardedModelFetch(
     ].join(" ");
   };
   return async (input, init) => {
+    const attemptBudget = configuredAttemptBudget ?? getRequestAttemptBudget();
+    const physicalAttempt = attemptBudget?.tryRecordAttempt({ layer: "provider-transport", outcome: "failure" });
+    if (attemptBudget && physicalAttempt === undefined) {
+      throw new ProviderRequestAttemptBudgetExhaustedError();
+    }
     let localServiceLease: ProviderLocalServiceLease | undefined;
     const request = input instanceof Request ? new Request(input, init) : undefined;
     const url = appendProviderRequestAuthQuery(
@@ -1002,13 +1023,28 @@ export function buildGuardedModelFetch(
         releaseOutboundSlot();
       }
     };
+    // NET-C: the endpoint health gate sits after budget admission so a circuit
+    // refusal never counts as a budget rejection (and vice versa). An open
+    // endpoint fails fast here, before any provider request is sent.
+    const endpointAdmission = admitProviderEndpointRequest(outboundGroup);
+    if (!endpointAdmission.ok) {
+      releaseOutboundSlot();
+      throw new ProviderEndpointCircuitOpenError({
+        model,
+        endpoint: endpointAdmission.endpoint,
+        retryAfterMs: endpointAdmission.retryAfterMs,
+        snapshot: endpointAdmission.snapshot,
+      });
+    }
+    const endpointTicket = endpointAdmission.ticket;
     emitModelTransportDebug(
       log,
       `[model-fetch] start provider=${model.provider} api=${model.api} model=${model.id} ` +
         `method=${baseInit?.method ?? "GET"} url=${formatModelTransportDebugUrl(url)} timeoutMs=${requestTimeoutMs} ` +
         `proxy=${dispatcherPolicy ? "configured" : useEnvProxy ? "env" : "none"} ` +
         `policy=${policy ? "custom" : "default"} ` +
-        `outbound=${outboundSlot.limited ? "gated" : "ungated"} admissionWaitMs=${outboundSlot.waitedMs}`,
+        `outbound=${outboundSlot.limited ? "gated" : "ungated"} admissionWaitMs=${outboundSlot.waitedMs} ` +
+        `endpointHealth=${endpointTicket.getSnapshot().state}`,
     );
     try {
       localServiceLease = await ensureModelProviderLocalService(
@@ -1026,6 +1062,7 @@ export function buildGuardedModelFetch(
         `[model-fetch] error provider=${model.provider} api=${model.api} model=${model.id} ` +
           `elapsedMs=${Date.now() - fetchStartedAt} ${summarizeError(error)}`,
       );
+      endpointTicket.record("failure");
       localServiceLease?.release();
       releaseOutboundSlot();
       throw error;
@@ -1037,6 +1074,10 @@ export function buildGuardedModelFetch(
         `status=${response.status} elapsedMs=${Date.now() - fetchStartedAt} ` +
         `contentType=${response.headers.get("content-type") ?? ""}`,
     );
+    if (attemptBudget && physicalAttempt !== undefined) {
+      attemptBudget.completeAttempt(physicalAttempt, response.ok ? "success" : "failure");
+    }
+    endpointTicket.record(classifyProviderEndpointResponse(response.status));
     if (shouldBypassLongSdkRetry(response)) {
       const headers = new Headers(response.headers);
       headers.set("x-should-retry", "false");

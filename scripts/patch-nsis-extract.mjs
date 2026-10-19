@@ -9,6 +9,7 @@
  * Must run before makensis (package:win), not only in afterPack.
  */
 
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -181,7 +182,7 @@ export function patchNsisExtractTemplate(targetPath = EXTRACT_APP_PACKAGE_NSH) {
   return true;
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   const ok = patchNsisExtractTemplate();
   process.exit(ok ? 0 : 1);
 }

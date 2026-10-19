@@ -1,3 +1,4 @@
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { spawnSync } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
@@ -220,7 +221,7 @@ async function main() {
   console.log(JSON.stringify(verified, null, 2));
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {
+if (isMainEntrypoint(import.meta.url)) {
   try { await main(); }
   catch (error) {
     console.error('LoCoMo full evaluation NOT VERIFIED: ' + (error instanceof Error ? error.message : String(error)));

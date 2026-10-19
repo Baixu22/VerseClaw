@@ -53,6 +53,8 @@ import {
 } from "../runtime/index.js";
 import { stripFrontmatter } from "../utils/frontmatter.js";
 import { sleep } from "../utils/sleep.js";
+import { createRequestAttemptBudget, runWithRequestAttemptBudget, type RequestAttemptBudget } from "../request-attempt-budget.js";
+import { parseRetryAfterMsFromText } from "../retry-after.js";
 import { formatNoApiKeyFoundMessage, formatNoModelSelectedMessage } from "./auth-guidance.js";
 import { type BashResult, executeBashWithOperations } from "./bash-executor.js";
 import { DEFAULT_THINKING_LEVEL } from "./defaults.js";
@@ -377,6 +379,7 @@ export class AgentSession {
   // Retry state
   private retryAbortController: AbortController | undefined = undefined;
   private retryCount = 0;
+  private requestAttemptBudget: RequestAttemptBudget | undefined;
 
   // Bash execution state
   private bashAbortController: AbortController | undefined = undefined;
@@ -696,6 +699,7 @@ export class AgentSession {
             attempt: this.retryCount,
           });
           this.retryCount = 0;
+          this.requestAttemptBudget = undefined;
         }
       }
     }
@@ -1197,12 +1201,21 @@ export class AgentSession {
   // =========================================================================
 
   private async runAgentPrompt(messages: AgentMessage | AgentMessage[]): Promise<void> {
+    const retrySettings = this.settingsManager.getRetrySettings();
+    const budget = createRequestAttemptBudget({
+      logicalRequestId: this.sessionId,
+      maxPhysicalAttempts: Math.max(1, retrySettings.maxRetries + 1),
+    });
+    this.requestAttemptBudget = budget;
     try {
-      await this.agent.prompt(messages);
-      while (await this.handlePostAgentRun()) {
-        await this.agent.continue();
-      }
+      await runWithRequestAttemptBudget(budget, async () => {
+        await this.agent.prompt(messages);
+        while (await this.handlePostAgentRun()) {
+          await this.agent.continue();
+        }
+      });
     } finally {
+      this.requestAttemptBudget = undefined;
       this.flushPendingBashMessages();
     }
   }
@@ -1226,6 +1239,7 @@ export class AgentSession {
         finalError: msg.errorMessage,
       });
       this.retryCount = 0;
+      this.requestAttemptBudget = undefined;
     }
 
     return await this.checkCompaction(msg);
@@ -1322,12 +1336,21 @@ export class AgentSession {
       // Check if we need to compact before sending (catches aborted responses)
       const lastAssistant = this.findLastAssistantMessage();
       if (lastAssistant && (await this.checkCompaction(lastAssistant, false))) {
+        const retrySettings = this.settingsManager.getRetrySettings();
+        const budget = createRequestAttemptBudget({
+          logicalRequestId: this.sessionId,
+          maxPhysicalAttempts: Math.max(1, retrySettings.maxRetries + 1),
+        });
+        this.requestAttemptBudget = budget;
         try {
-          await this.agent.continue();
-          while (await this.handlePostAgentRun()) {
+          await runWithRequestAttemptBudget(budget, async () => {
             await this.agent.continue();
-          }
+            while (await this.handlePostAgentRun()) {
+              await this.agent.continue();
+            }
+          });
         } finally {
+          this.requestAttemptBudget = undefined;
           this.flushPendingBashMessages();
         }
       }
@@ -2748,6 +2771,17 @@ export class AgentSession {
       return false;
     }
 
+    const retryBudget =
+      this.requestAttemptBudget ??
+      (this.requestAttemptBudget = createRequestAttemptBudget({
+        logicalRequestId: this.sessionManager.getSessionId(),
+        maxPhysicalAttempts: Math.max(1, settings.maxRetries + 1),
+      }));
+    retryBudget.setRetryAfterMs(parseRetryAfterMsFromText(message.errorMessage));
+    if (retryBudget.tryRecordAttempt({ layer: "agent-auto-retry", outcome: "failure" }) === undefined) {
+      return false;
+    }
+
     this.retryCount++;
 
     if (this.retryCount > settings.maxRetries) {
@@ -2756,7 +2790,17 @@ export class AgentSession {
       return false;
     }
 
-    const delayMs = settings.baseDelayMs * 2 ** (this.retryCount - 1);
+    const retryAfterMs = retryBudget.getRetryAfterMs();
+    if (retryAfterMs !== undefined && retryAfterMs > 5 * 60_000) {
+      this.retryCount--;
+      return false;
+    }
+    const baseDelayMs = retryAfterMs !== undefined ? retryAfterMs : settings.baseDelayMs * 2 ** (this.retryCount - 1);
+    const jitterFraction = Math.random();
+    const delayMs =
+      retryAfterMs !== undefined
+        ? Math.ceil(baseDelayMs + baseDelayMs * jitterFraction * 0.2)
+        : Math.max(0, Math.round(baseDelayMs * (0.8 + jitterFraction * 0.4)));
 
     this.emit({
       type: "auto_retry_start",

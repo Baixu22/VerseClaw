@@ -1,3 +1,4 @@
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { spawnSync as nodeSpawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -165,7 +166,7 @@ export function runWithPinnedPnpm(args, options = {}) {
 }
 
 function isCliEntry() {
-  return process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+  return isMainEntrypoint(import.meta.url);
 }
 
 if (isCliEntry()) {

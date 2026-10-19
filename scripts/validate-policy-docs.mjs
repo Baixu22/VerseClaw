@@ -24,6 +24,7 @@
  * Pure Node, no dependencies, so it can run in a bare checkout before
  * `pnpm install`.
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -398,6 +399,6 @@ function main() {
   if (!args.quiet) console.log(`[policy-docs] PASS: ${report.checks.length} checks`);
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (isMainEntrypoint(import.meta.url)) {
   main();
 }

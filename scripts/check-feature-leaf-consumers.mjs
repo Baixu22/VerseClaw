@@ -47,6 +47,7 @@
  *   node scripts/check-feature-leaf-consumers.mjs [--root <dir>] [--json]
  *   node scripts/check-feature-leaf-consumers.mjs --self-test
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve, sep } from 'node:path';
@@ -404,7 +405,7 @@ export function runSelfTest() {
   return failed.length === 0;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (isMainEntrypoint(import.meta.url)) {
   const argv = process.argv.slice(2);
   if (argv.includes('--self-test')) {
     process.exitCode = runSelfTest() ? 0 : 1;

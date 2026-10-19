@@ -8,6 +8,10 @@ import {
 } from '../utils/device-identity';
 import { logger } from '../utils/logger';
 import {
+  MIN_CLIENT_PROTOCOL_VERSION,
+  PROTOCOL_VERSION,
+} from '../../openclaw_runtime/packages/gateway-protocol/src/version';
+import {
   isGatewayWsTraceEnabled,
   redactGatewayFrameForTrace,
   summarizeGatewayFrameForTrace,
@@ -125,7 +129,8 @@ export async function waitForGatewayReady(options: {
   throw new Error(`Gateway failed to start after ${retries} retries (port ${options.port})`);
 }
 
-const GATEWAY_PROTOCOL_VERSION = 4;
+const GATEWAY_MIN_PROTOCOL_VERSION = MIN_CLIENT_PROTOCOL_VERSION;
+const GATEWAY_MAX_PROTOCOL_VERSION = PROTOCOL_VERSION;
 
 export function buildGatewayConnectFrame(options: {
   challengeNonce: string;
@@ -173,8 +178,8 @@ export function buildGatewayConnectFrame(options: {
       id: connectId,
       method: 'connect',
       params: {
-        minProtocol: GATEWAY_PROTOCOL_VERSION,
-        maxProtocol: GATEWAY_PROTOCOL_VERSION,
+        minProtocol: GATEWAY_MIN_PROTOCOL_VERSION,
+        maxProtocol: GATEWAY_MAX_PROTOCOL_VERSION,
         client: {
           id: clientId,
           displayName: 'Verse Claw',
@@ -195,6 +200,7 @@ export function buildGatewayConnectFrame(options: {
 export async function connectGatewaySocket(options: {
   port: number;
   deviceToken?: string;
+  isReconnect?: boolean;
   deviceIdentity: DeviceIdentity | null;
   platform: string;
   pendingRequests: Map<string, PendingGatewayRequest>;
@@ -202,6 +208,8 @@ export async function connectGatewaySocket(options: {
   onHandshakeComplete: (ws: WebSocket, payload: unknown) => void;
   onMessage: (message: unknown) => void;
   onCloseAfterHandshake: (code: number) => void;
+  onSequenceGap?: (gap: { expected: number; received: number }) => void;
+  onReconnect?: () => void;
   challengeTimeoutMs?: number;
   connectTimeoutMs?: number;
 }): Promise<WebSocket> {
@@ -218,6 +226,7 @@ export async function connectGatewaySocket(options: {
     let challengeTimer: NodeJS.Timeout | null = null;
     let challengeReceived = false;
     let settled = false;
+    let lastSeq: number | null = null;
 
     const cleanupHandshakeRequest = () => {
       if (challengeTimer) {
@@ -300,8 +309,20 @@ export async function connectGatewaySocket(options: {
             void connectGatewaySocket({ ...options, deviceToken: auth.deviceToken }).then(resolve, reject);
             return;
           }
+          const negotiatedProtocol = (payload as { protocol?: unknown } | null)?.protocol;
+          if (
+            typeof negotiatedProtocol !== 'number' ||
+            negotiatedProtocol < GATEWAY_MIN_PROTOCOL_VERSION ||
+            negotiatedProtocol > GATEWAY_MAX_PROTOCOL_VERSION
+          ) {
+            rejectOnce(new Error(`Gateway negotiated unsupported protocol: ${String(negotiatedProtocol)}`));
+            return;
+          }
           handshakeComplete = true;
-          logger.debug('Gateway connect handshake completed');
+          if (options.isReconnect) {
+            options.onReconnect?.();
+          }
+          logger.debug(`Gateway connect handshake completed (protocol=${negotiatedProtocol})`);
           options.onHandshakeComplete(ws, payload);
           resolveOnce();
         },
@@ -354,6 +375,19 @@ export async function connectGatewaySocket(options: {
           return;
         }
 
+        if (
+          handshakeComplete &&
+          typeof message === 'object' && message !== null &&
+          (message as { type?: unknown }).type === 'event'
+        ) {
+          const seq = (message as { seq?: unknown }).seq;
+          if (typeof seq === 'number' && Number.isFinite(seq)) {
+            if (lastSeq !== null && seq > lastSeq + 1) {
+              options.onSequenceGap?.({ expected: lastSeq + 1, received: seq });
+            }
+            lastSeq = seq;
+          }
+        }
         options.onMessage(message);
       } catch (error) {
         logger.debug('Failed to parse Gateway WebSocket message:', error);

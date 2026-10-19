@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { readFile, readdir } from 'node:fs/promises';
@@ -196,7 +197,7 @@ async function main() {
   console.log('i18n lint passed.');
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (isMainEntrypoint(import.meta.url)) {
   main().catch((error) => {
     console.error(error);
     process.exitCode = 1;

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -52,4 +53,4 @@ async function main() {
   console.log(`[specs] lifecycle status present for ${(await listTaskSpecs(TASK_SPEC_ROOT)).length} task specs.`);
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) await main();
+if (isMainEntrypoint(import.meta.url)) await main();

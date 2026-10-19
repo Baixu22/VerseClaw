@@ -1,3 +1,4 @@
+import { isMainEntrypoint } from '../lib/entrypoint.mjs';
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
@@ -214,7 +215,7 @@ export async function main(options = {}) {
   return output;
 }
 
-const isEntrypoint = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+const isEntrypoint = isMainEntrypoint(import.meta.url);
 if (isEntrypoint) {
   main().catch((error) => {
     console.error('[comms:replay] failed:', error);

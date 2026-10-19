@@ -4,6 +4,10 @@ import {
   type DiagnosticEventPayload,
   type DiagnosticMemoryUsage,
 } from "../infra/diagnostic-events.js";
+import {
+  providerEndpointHealthSnapshots,
+  type ProviderEndpointHealthSnapshot,
+} from "../agents/provider-endpoint-health.js";
 
 // Ring-buffer recorder for stability diagnostics and support-bundle snapshots.
 const DEFAULT_DIAGNOSTIC_STABILITY_CAPACITY = 1000;
@@ -111,6 +115,12 @@ export type DiagnosticStabilitySnapshot = {
   events: DiagnosticStabilityEventRecord[];
   summary: {
     byType: Record<string, number>;
+    /**
+     * NET-C: opt-in provider endpoint breaker snapshots. The block is omitted
+     * while no breaker is configured; entries never contain credentials or
+     * account discriminators.
+     */
+    providerEndpointHealth?: ProviderEndpointHealthSnapshot[];
     memory?: {
       latest?: DiagnosticMemoryUsage;
       maxRssBytes?: number;
@@ -734,6 +744,20 @@ export function stopDiagnosticStabilityRecorder(): void {
   state.unsubscribe = null;
 }
 
+/**
+ * Attaches the NET-C provider endpoint health snapshots only when at least one
+ * breaker exists. The block is additive, opt-in and sanitized by the provider
+ * health module itself.
+ */
+function withProviderEndpointHealth(
+  summary: DiagnosticStabilitySnapshot["summary"],
+): DiagnosticStabilitySnapshot["summary"] {
+  const providerEndpointHealth = providerEndpointHealthSnapshots();
+  return providerEndpointHealth.length > 0
+    ? { ...summary, providerEndpointHealth }
+    : summary;
+}
+
 /** Returns a sanitized stability snapshot from the process-wide ring buffer. */
 export function getDiagnosticStabilitySnapshot(options?: {
   limit?: number;
@@ -750,7 +774,7 @@ export function getDiagnosticStabilitySnapshot(options?: {
     firstSeq: filtered[0]?.seq,
     lastSeq: filtered.at(-1)?.seq,
     events,
-    summary: summarizeRecords(filtered),
+    summary: withProviderEndpointHealth(summarizeRecords(filtered)),
   };
 }
 
@@ -770,7 +794,7 @@ export function selectDiagnosticStabilitySnapshot(
     firstSeq: filtered[0]?.seq,
     lastSeq: filtered.at(-1)?.seq,
     events,
-    summary: summarizeRecords(filtered),
+    summary: withProviderEndpointHealth(summarizeRecords(filtered)),
   };
 }
 

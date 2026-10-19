@@ -30,6 +30,7 @@
  * `driven_by: agent` — every input is a file in this repository. The check needs
  * no human verdict, no human data and no human UI step.
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
@@ -1034,6 +1035,6 @@ function main() {
   if (!args.quiet) console.log(`[error-governance] PASS: ${report.checks.length} checks`);
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (isMainEntrypoint(import.meta.url)) {
   main();
 }

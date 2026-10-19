@@ -342,7 +342,6 @@ describe('Electron trajectory stream projection', () => {
       await utimes(replacementSessionPath, now + 60, now + 60);
       for (const listener of listeners.get('status') ?? []) listener({ state: 'running' });
       await waitFor(() => {
-        expect(rpcCalls.filter((call) => call.method === 'observability.unsubscribe')).toHaveLength(1);
         expect(rpcCalls.filter((call) => call.method === 'observability.subscribe')).toHaveLength(2);
       });
       expect(rpcCalls.at(-1)).toEqual({
@@ -354,6 +353,59 @@ describe('Electron trajectory stream projection', () => {
       for (const listener of listeners.get('status') ?? []) listener({ state: 'running' });
       await waitFor(() => {
         expect(rpcCalls.filter((call) => call.method === 'observability.subscribe')).toHaveLength(3);
+      });
+    } finally {
+      if (previousConfigDir == null) delete process.env.OPENCLAW_CONFIG_DIR;
+      else process.env.OPENCLAW_CONFIG_DIR = previousConfigDir;
+      if (previousIndexDir == null) delete process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR;
+      else process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR = previousIndexDir;
+      clearObservabilityTraceBuffer();
+      resetObservabilityIndexForTests();
+      await rm(tempRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('re-subscribes when the manager emits a typed gateway:resubscribe event', async () => {
+    const tempRoot = await mkdtemp(join(tmpdir(), 'clawx-observability-resubscribe-'));
+    const previousConfigDir = process.env.OPENCLAW_CONFIG_DIR;
+    const previousIndexDir = process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR;
+    const listeners = new Map<string, Set<(payload: unknown) => void>>();
+    const rpcCalls: Array<{ method: string; params?: unknown }> = [];
+    const gateway: GatewayTrajectoryManager = {
+      rpc: async <T>(method: string, params?: unknown) => {
+        rpcCalls.push({ method, params });
+        return (method === 'observability.subscribe'
+          ? { subscriptionId: 'test-subscription' }
+          : { events: [], hasMore: false }) as T;
+      },
+      on: (event, listener) => {
+        const bucket = listeners.get(event) ?? new Set();
+        bucket.add(listener);
+        listeners.set(event, bucket);
+      },
+      off: (event, listener) => listeners.get(event)?.delete(listener),
+      getStatus: () => ({ state: 'running' }),
+    };
+
+    try {
+      const sessionsDir = join(tempRoot, 'agents', 'main', 'sessions');
+      await mkdir(sessionsDir, { recursive: true });
+      await writeFile(join(sessionsDir, 'main.jsonl'), '{"type":"session.placeholder"}\n', 'utf8');
+      process.env.OPENCLAW_CONFIG_DIR = tempRoot;
+      process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR = join(tempRoot, 'index');
+      clearObservabilityTraceBuffer();
+      resetObservabilityIndexForTests();
+      await clearObservabilityIndex();
+
+      const api = createObservabilityApi({ gatewayManager: gateway });
+      await api.observability.traces();
+      expect(rpcCalls.filter((call) => call.method === 'observability.subscribe')).toHaveLength(1);
+
+      for (const listener of listeners.get('gateway:resubscribe') ?? []) {
+        listener({ reason: 'reconnect' });
+      }
+      await waitFor(() => {
+        expect(rpcCalls.filter((call) => call.method === 'observability.subscribe')).toHaveLength(2);
       });
     } finally {
       if (previousConfigDir == null) delete process.env.OPENCLAW_CONFIG_DIR;

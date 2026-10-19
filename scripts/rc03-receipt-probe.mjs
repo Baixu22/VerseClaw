@@ -4,6 +4,7 @@
 // directory, an explicit provider/model, a credential environment variable,
 // a non-sensitive message confirmation, and an explicit network confirmation.
 // It never prints or stores child stdout/stderr, prompt text, or credentials.
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { spawnSync } from "node:child_process";
 import { DatabaseSync } from "node:sqlite";
 import {
@@ -306,6 +307,6 @@ export function main(argv = process.argv.slice(2)) {
   }
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   process.exitCode = main();
 }

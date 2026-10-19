@@ -17,6 +17,7 @@
  *   pnpm catalogs:check   -> fail closed (exit 1) when generated files are
  *                            stale or missing
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
@@ -219,7 +220,7 @@ async function main() {
   }, null, 2));
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (isMainEntrypoint(import.meta.url)) {
   main().catch((error) => {
     console.error(error);
     process.exitCode = 1;

@@ -13,6 +13,7 @@
  * Exit code is 0 after printing matches unless `--fail-on-match` is given, in
  * which case any match exits 1 (use it for anti-pattern guards).
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
@@ -194,6 +195,6 @@ export function main(argv = process.argv.slice(2)) {
   return 0;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (isMainEntrypoint(import.meta.url)) {
   process.exitCode = main();
 }

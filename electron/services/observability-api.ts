@@ -68,8 +68,14 @@ export type GatewayTrajectoryStatus = {
 
 export type GatewayTrajectoryManager = {
   rpc: <T = unknown>(method: string, params?: unknown, timeoutMs?: number) => Promise<T>;
-  on: (event: 'notification' | 'status', listener: (payload: unknown) => void) => void;
-  off: (event: 'notification' | 'status', listener: (payload: unknown) => void) => void;
+  on: (
+    event: 'notification' | 'status' | 'gateway:resubscribe',
+    listener: (payload: unknown) => void,
+  ) => void;
+  off: (
+    event: 'notification' | 'status' | 'gateway:resubscribe',
+    listener: (payload: unknown) => void,
+  ) => void;
   getStatus?: () => GatewayTrajectoryStatus;
 };
 
@@ -329,6 +335,13 @@ export function createObservabilityApi(ctx: ObservabilityApiContext = {}): Pick<
     void ensureSubscriptions();
   };
 
+  const handleGatewayResubscribe = (): void => {
+    // The old socket is already gone; do not send unsubscribe on it. Clearing
+    // the local binding makes ensureSubscriptions establish a fresh one.
+    subscribedSession = undefined;
+    void ensureSubscriptions();
+  };
+
   const startTrajectoryStream = (): Promise<void> => {
     if (!ctx.gatewayManager) return Promise.resolve();
     if (streamStartPromise) return streamStartPromise;
@@ -337,6 +350,7 @@ export function createObservabilityApi(ctx: ObservabilityApiContext = {}): Pick<
       streamStarted = true;
       ctx.gatewayManager?.on('notification', handleTrajectoryNotification);
       ctx.gatewayManager?.on('status', handleGatewayStatus);
+      ctx.gatewayManager?.on('gateway:resubscribe', handleGatewayResubscribe);
 
       // Files are read once as an explicitly marked v1 migration fallback.
       // Live v2 history and updates are supplied by Gateway readFrom/subscribe.

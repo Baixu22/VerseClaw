@@ -3,6 +3,7 @@ import { asFiniteNumber } from "@openclaw/normalization-core/number-coercion";
 import { MAX_TIMER_TIMEOUT_MS, resolveTimerTimeoutMs } from "../shared/number-coercion.js";
 import { sleep } from "../utils.js";
 import { generateSecureFraction } from "./secure-random.js";
+import { getRequestAttemptBudget, type RequestAttemptBudget } from "../agents/request-attempt-budget.js";
 
 /** Retry timing knobs shared by generic retry runners and channel retry policies. */
 export type RetryConfig = {
@@ -26,6 +27,10 @@ export type RetryOptions = RetryConfig & {
   label?: string;
   shouldRetry?: (err: unknown, attempt: number) => boolean;
   retryAfterMs?: (err: unknown) => number | undefined;
+  /** Optional logical-request budget shared with other retry layers. */
+  attemptBudget?: RequestAttemptBudget;
+  /** Layer label recorded in the shared attempt budget. */
+  attemptLayer?: string;
   onRetry?: (info: RetryInfo) => void;
 };
 
@@ -127,9 +132,15 @@ export async function retryAsync<T>(
   }
 
   const options = attemptsOrOptions;
-
+  const attemptBudget = options.attemptBudget ?? getRequestAttemptBudget();
+  if (attemptBudget && !attemptBudget.canRetry()) {
+    throw new Error("retry attempt budget exhausted");
+  }
+  const attemptLayer = options.attemptLayer ?? "retryAsync";
   const resolved = resolveRetryConfig(DEFAULT_RETRY_CONFIG, options);
-  const maxAttempts = resolved.attempts;
+  const maxAttempts = attemptBudget
+    ? Math.min(resolved.attempts, Math.max(1, attemptBudget.remaining))
+    : resolved.attempts;
   const minDelayMs = resolved.minDelayMs;
   const maxDelayMs =
     Number.isFinite(resolved.maxDelayMs) && resolved.maxDelayMs > 0
@@ -140,8 +151,16 @@ export async function retryAsync<T>(
   let lastErr: unknown;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const physicalAttempt = attemptBudget
+      ? attemptBudget.tryRecordAttempt({ layer: attemptLayer, outcome: "failure" })
+      : attempt;
+    if (physicalAttempt === undefined) {
+      break;
+    }
     try {
-      return await fn();
+      const result = await fn();
+      attemptBudget?.completeAttempt(physicalAttempt, "success");
+      return result;
     } catch (err) {
       lastErr = err;
       if (attempt >= maxAttempts || !shouldRetry(err, attempt)) {
@@ -151,6 +170,9 @@ export async function retryAsync<T>(
       const retryAfterMs = options.retryAfterMs?.(err);
       const hasRetryAfter =
         typeof retryAfterMs === "number" && Number.isFinite(retryAfterMs) && retryAfterMs >= 0;
+      if (hasRetryAfter) {
+        attemptBudget?.setRetryAfterMs(retryAfterMs);
+      }
       // A server lower bound cannot be shortened to fit our budget or timer range.
       // Stop before scheduling and preserve the failure's retry metadata for the caller.
       if (hasRetryAfter && retryAfterMs > Math.min(maxDelayMs, MAX_TIMER_TIMEOUT_MS)) {
@@ -179,7 +201,6 @@ export async function retryAsync<T>(
 
   throw toLintErrorObject(lastErr ?? new Error("Retry failed"), "Non-Error thrown");
 }
-
 function toLintErrorObject(value: unknown, fallbackMessage: string): Error {
   if (value instanceof Error) {
     return value;

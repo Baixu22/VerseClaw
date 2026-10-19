@@ -2,6 +2,7 @@
 // Runtime Authority Convergence final-evidence validator. It intentionally
 // fails closed: engineering evidence and the user-authored human verdict are
 // independently bound to one clean Git candidate and one acceptance manifest.
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
@@ -813,6 +814,6 @@ export function main(argv = process.argv.slice(2)) {
   }
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {
+if (isMainEntrypoint(import.meta.url)) {
   process.exitCode = main();
 }

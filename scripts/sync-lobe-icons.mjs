@@ -35,6 +35,7 @@
  * `LOBE_ICONS_TARGET_DIR` overrides the target directory (used by tests so they
  * do not mutate the checkout).
  */
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
@@ -227,4 +228,4 @@ async function main() {
   }
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))) await main();
+if (isMainEntrypoint(import.meta.url)) await main();

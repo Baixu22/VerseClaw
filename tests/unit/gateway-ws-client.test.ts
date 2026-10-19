@@ -140,7 +140,7 @@ describe('connectGatewaySocket', () => {
       token: 'issued-device-token', nonce: 'second',
     });
     expect(verify(null, Buffer.from(signed), publicKey, Buffer.from(second.params.device.signature, 'base64url'))).toBe(true);
-    authenticated.emitJsonMessage({ type: 'res', id: second.id, ok: accepted, payload: { auth: { deviceToken: 'issued-device-token' } } });
+    authenticated.emitJsonMessage({ type: 'res', id: second.id, ok: accepted, payload: { protocol: 4, auth: { deviceToken: 'issued-device-token' } } });
     if (accepted) {
       expect(await result).toEqual({ socket: authenticated });
       expect(onHandshakeComplete).toHaveBeenCalledTimes(1);
@@ -210,12 +210,110 @@ describe('connectGatewaySocket', () => {
       type: 'res',
       id: connectFrame.id,
       ok: true,
-      payload: { protocol: 3 },
+      payload: { protocol: 4 },
     });
 
     await expect(connectionPromise).resolves.toBe(socket);
-    expect(onHandshakeComplete).toHaveBeenCalledWith(socket, { protocol: 3 });
+    expect(onHandshakeComplete).toHaveBeenCalledWith(socket, { protocol: 4 });
     expect(pendingRequests.size).toBe(0);
+  });
+
+  it('rejects an unsupported negotiated protocol instead of accepting it silently', async () => {
+    const pendingRequests = new Map();
+    const onHandshakeComplete = vi.fn();
+    const connectionPromise = connectGatewaySocket({
+      port: 18789,
+      deviceIdentity: null,
+      platform: 'win32',
+      pendingRequests,
+      getToken: vi.fn().mockResolvedValue('token-123'),
+      onHandshakeComplete,
+      onMessage: (input) => {
+        const message = input as { id: string; ok: boolean; payload: unknown };
+        const request = pendingRequests.get(message.id);
+        if (message.ok) request?.resolve(message.payload);
+        else request?.reject(new Error('device rejected'));
+      },
+      onCloseAfterHandshake: vi.fn(),
+    });
+    const connectionErrorPromise = connectionPromise.then(
+      () => null,
+      (error) => error,
+    );
+    const socket = getLatestSocket();
+    socket.emitOpen();
+    socket.emitJsonMessage({ type: 'event', event: 'connect.challenge', payload: { nonce: 'nonce-123' } });
+    await flushMicrotasks();
+    const connectFrame = JSON.parse(socket.sentFrames[0]) as { id: string };
+    socket.emitJsonMessage({ type: 'res', id: connectFrame.id, ok: true, payload: { protocol: 3 } });
+    const error = await connectionErrorPromise;
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).toContain('unsupported protocol');
+    expect(onHandshakeComplete).not.toHaveBeenCalled();
+    expect(pendingRequests.size).toBe(0);
+  });
+
+  it('emits a typed sequence gap after the handshake', async () => {
+    const pendingRequests = new Map();
+    const onSequenceGap = vi.fn();
+    const onMessage = vi.fn((input) => {
+      const message = input as { id: string; ok: boolean; payload: unknown };
+      const request = pendingRequests.get(message.id);
+      if (message.ok) request?.resolve(message.payload);
+      else request?.reject(new Error('device rejected'));
+    });
+    const connectionPromise = connectGatewaySocket({
+      port: 18789,
+      deviceIdentity: null,
+      platform: 'win32',
+      pendingRequests,
+      getToken: vi.fn().mockResolvedValue('token-123'),
+      onHandshakeComplete: vi.fn(),
+      onMessage,
+      onSequenceGap,
+      onCloseAfterHandshake: vi.fn(),
+    });
+    const socket = getLatestSocket();
+    socket.emitOpen();
+    socket.emitJsonMessage({ type: 'event', event: 'connect.challenge', payload: { nonce: 'nonce-123' } });
+    await flushMicrotasks();
+    const connectFrame = JSON.parse(socket.sentFrames[0]) as { id: string };
+    socket.emitJsonMessage({ type: 'res', id: connectFrame.id, ok: true, payload: { protocol: 4 } });
+    await expect(connectionPromise).resolves.toBe(socket);
+    socket.emitJsonMessage({ type: 'event', event: 'agent', seq: 1, payload: {} });
+    socket.emitJsonMessage({ type: 'event', event: 'agent', seq: 4, payload: {} });
+    expect(onSequenceGap).toHaveBeenCalledWith({ expected: 2, received: 4 });
+    expect(onMessage).toHaveBeenCalledTimes(3);
+  });
+
+  it('invokes the reconnect callback only when explicitly reconnecting', async () => {
+    const pendingRequests = new Map();
+    const onReconnect = vi.fn();
+    const connectionPromise = connectGatewaySocket({
+      port: 18789,
+      deviceIdentity: null,
+      platform: 'win32',
+      pendingRequests,
+      isReconnect: true,
+      getToken: vi.fn().mockResolvedValue('token-123'),
+      onReconnect,
+      onHandshakeComplete: vi.fn(),
+      onMessage: (input) => {
+        const message = input as { id: string; ok: boolean; payload: unknown };
+        const request = pendingRequests.get(message.id);
+        if (message.ok) request?.resolve(message.payload);
+        else request?.reject(new Error('device rejected'));
+      },
+      onCloseAfterHandshake: vi.fn(),
+    });
+    const socket = getLatestSocket();
+    socket.emitOpen();
+    socket.emitJsonMessage({ type: 'event', event: 'connect.challenge', payload: { nonce: 'nonce-123' } });
+    await flushMicrotasks();
+    const connectFrame = JSON.parse(socket.sentFrames[0]) as { id: string };
+    socket.emitJsonMessage({ type: 'res', id: connectFrame.id, ok: true, payload: { protocol: 4 } });
+    await expect(connectionPromise).resolves.toBe(socket);
+    expect(onReconnect).toHaveBeenCalledOnce();
   });
 
   it('still fails when the connect response exceeds the configured timeout', async () => {

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -54,4 +55,4 @@ async function main() {
   console.log('[runtime-policy] upstream, prune, layout and LOC baseline metadata are aligned.');
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) await main();
+if (isMainEntrypoint(import.meta.url)) await main();

@@ -1,0 +1,57 @@
+{
+  "schema": "clawx.network-protocol-reliability.net-b.evidence.v1",
+  "node": "TF-0439",
+  "driven_by": "agent",
+  "timestamp": "2026-10-19T08:20:09.591912+08:00",
+  "candidate_sha": "9cae5341ab0fa94a9b21bc3838107d804669bd4c",
+  "commands": [
+    {
+      "command": "pnpm exec vitest run tests/unit/gateway-ws-client.test.ts tests/unit/gateway-events.test.ts --maxWorkers=1",
+      "exit_code": 0,
+      "result": "2 files, 33 tests passed"
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/observability-trajectory-projection.test.ts --maxWorkers=1",
+      "exit_code": 0,
+      "result": "1 file, 7 tests passed"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit_code": 0,
+      "result": "typecheck:node/web/test exit 0, errorCount 0"
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exit_code": 0,
+      "result": "main + preload + renderer built"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/gateway-client-single-owner-v1.md",
+      "exit_code": 0,
+      "result": "Spec is valid"
+    },
+    {
+      "command": "rg -n 'new WebSocket|ws://127.0.0.1|ws://localhost' src --glob '*.ts' --glob '*.tsx'",
+      "exit_code": 1,
+      "result": "0 hits (rg exit 1 = no matches); renderer opens no Gateway WS"
+    }
+  ],
+  "implementation": [
+    "electron/gateway/ws-client.ts: imports MIN_CLIENT_PROTOCOL_VERSION/PROTOCOL_VERSION from openclaw_runtime/packages/gateway-protocol/src/version; connect frame uses min/max range; negotiated hello protocol validated and unsupported values rejected; typed onSequenceGap; onReconnect",
+    "electron/gateway/manager.ts: isReconnect flag wired into connectGatewaySocket; gateway:sequence-gap and gateway:resubscribe typed events; pending RPCs rejected on socket close with 'Gateway connection closed'",
+    "electron/services/observability-api.ts: listens to gateway:resubscribe, clears stale subscription binding, re-subscribes without unsubscribe on a dead socket",
+    "tests/unit/gateway-ws-client.test.ts: unsupported protocol rejection, seq gap emission, reconnect-only callback",
+    "tests/unit/observability-trajectory-projection.test.ts: typed gateway:resubscribe re-subscription",
+    "docs/dev/network-protocol-reliability/gateway-client.md: unit-owner and adapter dependency documented"
+  ],
+  "normalization": [
+    "electron/services/observability-api.ts was rewritten with LF line endings before this gate run (CRLF had inflated the diff to 577/563); final diff is 16 insertions / 2 deletions with no semantic change.",
+    "All commands above were executed against the normalized worktree on 2026-10-19 (Asia/Shanghai)."
+  ],
+  "renderer_boundary": {
+    "policy": "Renderer keeps using the Main-owned transport policy; no Renderer Gateway WS connection.",
+    "direct_websocket_or_ws_endpoint_hits": [],
+    "scan": "src/**/*.{ts,tsx}"
+  },
+  "boundary": "No paid provider request and no live Gateway E2E run in this node; independent fault injection remains TF-0444. driven_by=agent."
+}
