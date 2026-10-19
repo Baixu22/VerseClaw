@@ -1,0 +1,101 @@
+{
+  "declined": [
+    "Removing design-critical backdrop-filter based on a non-consistent local A/B"
+  ],
+  "scope": [
+    "TF-0417 instrumentation and five-minute baseline",
+    "TF-0418 startup critical path",
+    "TF-0419 main blocking I/O",
+    "TF-0420 software-rendering layer audit",
+    "TF-0423 long-lived session loading and sidebar windowing"
+  ],
+  "driven_by": "agent",
+  "verdict": "pass",
+  "candidate": {
+    "sha": "5dd23a3203335fce41a9a921c37c8a5d068c723c",
+    "verifiedRemote": "origin/main",
+    "short": "5dd23a32",
+    "subject": "perf(sidebar): window long-lived session rows"
+  },
+  "title": "独立验收 Electron 启动与渲染性能治理",
+  "node": "TF-0421",
+  "schema": "clawx.tf0421.independent-acceptance/v1",
+  "generatedAt": "2026-10-19T01:34:34.4842876Z",
+  "method": [
+    "Read committed acceptance, raw JSON and SHA256SUMS from the candidate commit, not command stdout alone.",
+    "Verified every candidate short SHA is an ancestor of 5dd23a32.",
+    "Verified all four fixture SHA256SUMS manifests against current bytes.",
+    "Recomputed the key P50/P95, counter, long-task, request-key and screenshot facts from raw JSON.",
+    "Compared declared acceptance verdicts against those recomputed facts and retained boundaries."
+  ],
+  "unmeasured": [
+    "macOS/Linux startup and rendering behavior",
+    "GPU-enabled cross-platform frame timing",
+    "A real-user interaction trace",
+    "Every optional extension/panel not covered by the selected E2E and A/B",
+    "Production p99 or release benchmark across machines"
+  ],
+  "residual_risks": [
+    "P50/P95 values are local Windows Electron samples with retained run-to-run variance.",
+    "TF-0420 scroll frame measurements use a synthetic document overflow.",
+    "TF-0421 is an evidence audit; it does not add a second runtime authority or product default."
+  ],
+  "measured": [
+    "Main startup marks and child-process/timer/watcher counters",
+    "Renderer first-paint, long tasks, input latency and bounded IPC samples",
+    "Five-run startup before/after distributions",
+    "Five-run blocking-I/O before/after distributions",
+    "GPU-disabled software-rendering A/B and six screenshots",
+    "333-session loading, switching, idle long tasks and five-minute RSS"
+  ],
+  "actor": "codex-tf0421-independent-auditor",
+  "checks": [
+    {
+      "result": "pass",
+      "id": "candidate-ancestry",
+      "detail": "43446d896, 3d903a731, 164f88735, 4f7a9f68e are ancestors of 5dd23a32; origin/main equals 5dd23a32."
+    },
+    {
+      "result": "pass",
+      "id": "checksum-integrity",
+      "detail": "TF-0417 5/5, TF-0418 4/4, TF-0419 5/5, TF-0420 11/11 and TF-0423 6/6 checksums match."
+    },
+    {
+      "result": "pass",
+      "id": "tf0417-instrumentation",
+      "detail": "301113 ms real Electron; 3 Main marks + renderer-first-paint; spawnCount=7; activeIntervals=4; activeWatchers=0; unavailable=[]; 4 long tasks; IPC count=256, P50=7 ms, P95=24 ms."
+    },
+    {
+      "result": "pass",
+      "id": "tf0418-startup",
+      "detail": "5/5 runs each side; ready-to-show P50 4059.7691->3733.0323 ms, P95 11431.0616->6017.2892 ms; renderer-first-paint P50 27.7->25.2 ms."
+    },
+    {
+      "result": "pass",
+      "id": "tf0419-main-io",
+      "detail": "5/5 runs each side; ready-to-show P50 3757.5203->3531.6791 ms, P95 4537.2969->3607.7175 ms; renderer-first-paint P50 26.1->25.1 ms; gateway-start after ready-to-show 5/5."
+    },
+    {
+      "result": "pass-with-boundary",
+      "id": "tf0420-render-audit",
+      "detail": "32 layer/blur uses classified; 3 unjustified persistent will-change removed; six screenshots retained; A/B has no consistent backdrop-filter win, so design blur retained. Synthetic document overflow remains a declared boundary."
+    },
+    {
+      "result": "pass",
+      "id": "tf0423-session-loading",
+      "detail": "Final same-probe: requested keys 332->40, summary calls 7->1, idle long tasks 6->0, open 11->0, switch 37->1, switch P50/P95 230.5/240.8->137.3/155.8 ms, five-minute RSS persistentGrowth=false."
+    },
+    {
+      "result": "pass",
+      "id": "regression-evidence",
+      "detail": "TF-0423 focused Vitest 4 files / 45 tests; typecheck:node/web/test; contract:check; repo:artifacts:check; harness validate; agent-dev:fast 7 files / 88 tests; comms:replay + compare PASS."
+    }
+  ],
+  "evidence": [
+    "harness/specs/fixtures/tf0417-performance-instrumentation/{acceptance.json,baseline.json,smoke.json,SHA256SUMS}",
+    "harness/specs/fixtures/tf0418-startup/{acceptance.json,before.json,after.json,SHA256SUMS}",
+    "harness/specs/fixtures/tf0419-main-blocking-io/{acceptance.json,before.json,after.json,SHA256SUMS}",
+    "harness/specs/fixtures/tf0420-software-rendering/{acceptance.json,audit.json,ab.json,screenshots/,SHA256SUMS}",
+    "harness/specs/fixtures/tf0423-session-loading/{acceptance.json,before.json,after.json,attribution.json,SHA256SUMS}"
+  ]
+}
