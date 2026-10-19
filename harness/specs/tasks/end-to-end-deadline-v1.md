@@ -15,7 +15,17 @@ touchedAreas:
   - openclaw_runtime/src/agents/provider-transport-fetch.ts
   - openclaw_runtime/packages/gateway-client/src/client.ts
   - openclaw_runtime/src/gateway/http-common.ts
+  - shared/host-api/host-deadline.ts
+  - electron/utils/host-deadline-context.ts
   - tests/unit/host-api-client-error-metadata.test.ts
+  - tests/unit/r0-4-host-api-client-timeout.test.ts
+  - tests/unit/r0-4-host-invoke-timeout.test.ts
+  - tests/unit/host-deadline.test.ts
+  - shared/host-api/types.ts
+  - harness/specs/tasks/end-to-end-deadline-v1.md
+  - docs/dev/network-protocol-reliability/deadline.md
+  - docs/dev/network-protocol-reliability/STATUS.md
+  - artifacts/network-protocol-reliability/net-e/**
 expectedUserBehavior:
   - 用户取消或超时后请求会真正停止，并得到可解释的阶段与耗时信息。
 requiredProfiles:

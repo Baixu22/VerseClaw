@@ -10,6 +10,8 @@ import { PORTS } from '../utils/config';
 import { getSetting } from '../utils/store';
 import { JsonRpcNotification, isNotification, isResponse } from './protocol';
 import { logger } from '../utils/logger';
+import { clampHostTimeoutToDeadline } from '@shared/host-api/host-deadline';
+import { getHostDeadline } from '../utils/host-deadline-context';
 import { captureTelemetryEvent, trackMetric } from '../utils/telemetry';
 import {
   loadOrCreateDeviceIdentity,
@@ -1073,6 +1075,13 @@ export class GatewayManager extends EventEmitter {
    */
   async rpc<T>(method: string, params?: unknown, timeoutMs = 30000): Promise<T> {
     const startedAt = Date.now();
+    // NET-E (TF-0442): never exceed the caller's logical deadline. The ambient
+    // deadline is set by the Main host dispatcher for the current host action,
+    // so this RPC cannot outlive the budget the renderer granted.
+    const ambientDeadline = getHostDeadline();
+    const effectiveTimeoutMs = ambientDeadline
+      ? clampHostTimeoutToDeadline(timeoutMs, ambientDeadline)
+      : timeoutMs;
     return await new Promise<T>((resolve, reject) => {
       if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
         reject(new Error('Gateway not connected'));
@@ -1084,10 +1093,10 @@ export class GatewayManager extends EventEmitter {
       // Set timeout for request
       const timeout = setTimeout(() => {
         if (method === 'chat.send') {
-          logger.warn(`[gateway-rpc] chat.send timeout id=${id} timeoutMs=${timeoutMs}`);
+          logger.warn(`[gateway-rpc] chat.send timeout id=${id} timeoutMs=${effectiveTimeoutMs}`);
         }
         rejectPendingGatewayRequest(this.pendingRequests, id, new Error(`RPC timeout: ${method}`));
-      }, timeoutMs);
+      }, effectiveTimeoutMs);
 
       // Store pending request
       this.pendingRequests.set(id, {

@@ -6,6 +6,11 @@ import type {
 } from '@shared/host-api/contract';
 import type { HostResponse, TypedHostRequest } from '@shared/host-api/types';
 import { hostActionTimeoutMs } from '@shared/host-api/host-action-timeouts';
+import {
+  createHostDeadline,
+  remainingHostBudgetMs,
+  toHostTimeoutDetails,
+} from '@shared/host-api/host-deadline';
 import { AppError, mapBackendErrorCode, normalizeAppError } from './error-model';
 import { recordRendererIpcSample } from './performance-metrics';
 
@@ -175,6 +180,15 @@ export async function invokeHost<
     request.payload = payloadArgs[0];
   }
 
+  // NET-E (TF-0442): one logical deadline for the whole host action. Main clamps
+  // its own budget to what remains here, so layers never add their timeouts.
+  const deadline = createHostDeadline({
+    stage: 'renderer',
+    timeoutMs: hostActionTimeoutMs(module, action),
+    requestId: request.id,
+  });
+  request.deadline = deadline;
+
   const replayConfig = getReplayConfig();
   const startedAt = Date.now();
   const call: AgentDevHostApiCall = {
@@ -211,10 +225,11 @@ export async function invokeHost<
     );
   }
 
-  // R0-4: last-line renderer fallback. The Main dispatcher enforces the
-  // same budget (shared table) and normally answers first with a TIMEOUT
-  // code; this race only fires when Main itself hangs and never responds.
-  const timeoutMs = hostActionTimeoutMs(module, action) + RENDERER_TIMEOUT_MARGIN_MS;
+  // R0-4: last-line renderer fallback. Main enforces the same logical deadline
+  // (shared table, clamped to this budget) and normally answers first with a
+  // TIMEOUT code; this race only fires when Main itself hangs and never
+  // responds. The margin is a grace period, not a second timeout window.
+  const timeoutMs = remainingHostBudgetMs(deadline) + RENDERER_TIMEOUT_MARGIN_MS;
   let timer: ReturnType<typeof setTimeout> | null = null;
   let response: HostResponse<HostApiResult<M, A>>;
   try {
@@ -222,11 +237,18 @@ export async function invokeHost<
       bridge<HostApiResult<M, A>>(request),
       new Promise<HostApiResult<M, A>>((_, reject) => {
         timer = setTimeout(() => {
+          const timeoutDetails = toHostTimeoutDetails({
+            stage: 'renderer',
+            deadlineMs: timeoutMs,
+            elapsedMs: Date.now() - startedAt,
+            requestId: request.id,
+            deadline,
+          });
           reject(new AppError(
             'TIMEOUT',
             `Host request timed out: ${module}.${action}`,
             undefined,
-            { module, action, requestId: request.id },
+            { module, action, requestId: request.id, ...timeoutDetails },
             request.id,
           ));
         }, timeoutMs);

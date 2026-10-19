@@ -82,6 +82,39 @@ describe('host-api-client structured error preservation (#118)', () => {
     });
   });
 
+  it('preserves the Main timeout stage, budget and elapsed details', async () => {
+    hostInvoke.mockResolvedValueOnce({
+      id: 'req-timeout-stage',
+      ok: false,
+      error: {
+        code: 'TIMEOUT',
+        message: 'Host action gateway.rpc timed out after 5s',
+        details: {
+          stage: 'main',
+          deadlineMs: 5000,
+          elapsedMs: 5000,
+          requestId: 'req-timeout-stage',
+          deadlineAtMs: 1_700_000_005_000,
+        },
+      },
+    });
+    const { invokeHost } = await import('@/lib/host-api-client');
+
+    const rejection = await invokeHost('app', 'version').catch((error: unknown) => error);
+    expect(rejection).toMatchObject({
+      code: 'TIMEOUT',
+      requestId: 'req-timeout-stage',
+      details: {
+        stage: 'main',
+        deadlineMs: 5000,
+        elapsedMs: 5000,
+        requestId: 'req-timeout-stage',
+        module: 'app',
+        action: 'version',
+      },
+    });
+  });
+
   it('records a renderer timeout instead of leaking a bare Error', async () => {
     vi.useFakeTimers();
     hostInvoke.mockImplementation(() => new Promise(() => {}));

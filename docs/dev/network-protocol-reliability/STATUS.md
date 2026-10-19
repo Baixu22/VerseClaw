@@ -9,13 +9,13 @@
 
 | Node | Status | Evidence boundary |
 |---|---|---|
-| TF-0437 | in_progress (~90%) | Phase gate frozen; TF-0443/0438/0439/0440/0441 done; NET-E/F/G (0442/0444) open |
+| TF-0437 | in_progress (~85%) | Phase gate frozen; TF-0443/0438/0439/0440/0441 done; TF-0442 partial (host path landed, gateway wire + provider deadline open); TF-0444 open |
 | TF-0443 | done | Owner matrix, gap inventory, entrypoint guard and junction regression verified |
 | TF-0438 | done | Shared logical request attempt budget across auto-retry, fallback, retryAsync and provider transport |
 | TF-0439 | done | Gateway protocol range + negotiated hello validation, typed seq gap, reconnect resubscribe, explicit pending-RPC failure |
 | TF-0440 | done | Provider endpoint breaker wired at the real transport boundary; opt-in, endpoint+account scoped, sanitized diagnostics |
 | TF-0441 | done | Typed stream failure, failed-attempt isolation, responses post-header failure fixed |
-| TF-0442 | proposed | Not started |
+| TF-0442 | in_progress (~70%) | Logical deadline landed for Renderer -> Main -> Main-side gateway RPC; gateway wire deadline and provider-side deadline remain open |
 | TF-0444 | proposed | Not started |
 
 ## TF-0443 completed
@@ -64,9 +64,24 @@
 - Gates: 20 provider error HTTP boundary tests (incl. 4 new mid-stream/disconnect cases), 13 stream-failure unit tests, 117 sessions tests, 25 responses usage/tool-history tests, `pnpm run typecheck` exit 0, `pnpm run comms:replay` / `comms:compare` exit 0 (all metrics PASS), `pnpm harness validate --spec harness/specs/tasks/stream-failure-recovery-v1.md --since bbd15fed` exit 0.
 - Evidence: `artifacts/network-protocol-reliability/net-d/net-d-evidence.json` (SHA256 `C7986449989509441400529CF2BDEA7118607E95B67D7CC16054AFD9AF90B32E`).
 
+## TF-0442 partial (kept open)
+
+Landed and verified:
+
+- `shared/host-api/host-deadline.ts`: one logical deadline (absolute `deadlineAtMs` + budget + stage + local `requestId`), remaining-budget and clamp helpers, validated metadata reader, structured timeout details.
+- `src/lib/host-api-client.ts`: creates the deadline per invoke, sends it as request metadata, derives the last-line fallback from the same budget plus grace margin, reports `stage/deadlineMs/elapsedMs/requestId` on timeout.
+- `electron/main/ipc/host-invoke.ts`: enforces `min(local budget, remaining)`, fails closed before an expired deadline starts an action, returns the details envelope, and runs the action inside the ambient deadline context.
+- `electron/utils/host-deadline-context.ts` + `electron/gateway/manager.ts`: nested Main-side gateway RPCs clamp their timeout to the ambient remaining budget.
+- Gates: 8 required host-api tests, 21 deadline/host-invoke tests, 66 dispatcher/security/facade tests, 17 provider outbound budget tests, `pnpm run typecheck` exit 0, `comms:replay`/`comms:compare` exit 0 (all metrics PASS), `pnpm harness validate --spec harness/specs/tasks/end-to-end-deadline-v1.md --since 1462fb4b9` exit 0.
+- Evidence: `artifacts/network-protocol-reliability/net-e/net-e-evidence.json` (SHA256 `0486D9FA1B6DF853A7073CE2950D755134FB7D722C4657BBA2028981837050D2`).
+
+Still open for TF-0442:
+
+- The deadline is host-request metadata, not a gateway wire field: a gateway-side absolute deadline (and a provider-side absolute deadline) is not propagated, so the provider leg still relies on the existing `AbortSignal` cancellation plus its own provider timeout rather than the caller budget.
+
 ## Remaining before TF-0437 can close
 
-- `TF-0442`: end-to-end deadline and cancellation propagation.
+- `TF-0442`: propagate the logical deadline past the Main process boundary (gateway wire + provider).
 - `TF-0444`: independent fault-injection acceptance.
 
 ## Boundaries

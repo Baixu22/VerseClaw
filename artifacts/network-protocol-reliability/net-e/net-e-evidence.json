@@ -1,0 +1,68 @@
+{
+  "schema": "clawx.network-protocol-reliability.net-e.evidence.v1",
+  "node": "TF-0442",
+  "driven_by": "agent",
+  "timestamp": "2026-10-19T09:13:35.321533+08:00",
+  "candidate_sha": "1462fb4b9",
+  "commands": [
+    {
+      "command": "pnpm exec vitest run tests/unit/host-api-client-error-metadata.test.ts tests/unit/r0-4-host-api-client-timeout.test.ts --maxWorkers=1",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "2 files, 8 tests passed (spec requiredTests)"
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/r0-4-host-invoke-timeout.test.ts tests/unit/host-deadline.test.ts tests/unit/host-api-client-error-metadata.test.ts tests/unit/r0-4-host-api-client-timeout.test.ts --maxWorkers=1",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "4 files, 21 tests passed (clamp, fail-fast, long-action clamp, ambient context, deadline primitive)"
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/host-invoke.test.ts tests/unit/host-invoke-security.test.ts tests/unit/host-api-facade.test.ts --maxWorkers=1",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "3 files, 66 tests passed (dispatcher/security/facade regression)"
+    },
+    {
+      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/provider-outbound-budget.test.ts --maxWorkers=1",
+      "cwd": "openclaw_runtime",
+      "exit_code": 0,
+      "result": "1 file, 17 tests passed (slot released only on real end/cancel/error)"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "node/web/test exit 0, errorCount 0"
+    },
+    {
+      "command": "pnpm run comms:replay && pnpm run comms:compare",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "all comms metrics PASS; history_load_qps and rpc_p95_ms deltas 0.00%"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/end-to-end-deadline-v1.md --since 1462fb4b9",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "Spec is valid"
+    }
+  ],
+  "implementation": [
+    "shared/host-api/host-deadline.ts: absolute logical deadline (deadlineAtMs/timeoutMs/stage/requestId), remaining budget, clamp (min, never sum), expiry, validated metadata reader and structured timeout details",
+    "shared/host-api/types.ts: HostRequest/TypedHostRequest accept the optional deadline metadata",
+    "src/lib/host-api-client.ts: creates one deadline per invoke, attaches it to the request, derives the last-line fallback from the same budget plus grace margin, and reports stage/deadlineMs/elapsedMs/requestId on a renderer timeout",
+    "electron/main/ipc/host-invoke.ts: reads the caller deadline, enforces min(local budget, remaining), fails closed before starting an action whose deadline already expired, returns stage/deadlineMs/elapsedMs/requestId details, and runs the action inside the ambient deadline context",
+    "electron/utils/host-deadline-context.ts: AsyncLocalStorage carrier for nested Main-side work",
+    "electron/gateway/manager.ts: GatewayManager.rpc clamps its timeout to the ambient remaining budget so a host action's gateway RPC cannot outlive the renderer budget",
+    "tests: new tests/unit/host-deadline.test.ts plus extended r0-4-host-invoke-timeout, r0-4-host-api-client-timeout and host-api-client-error-metadata suites"
+  ],
+  "acceptance_boundaries": {
+    "no_timeout_summation": "Renderer grant is the only budget; Main and gateway RPC clamp to what remains (verified by tests).",
+    "late_success": "An expired deadline fails closed before the action starts; the renderer fallback fires from the same budget.",
+    "provider_slot": "The outbound slot still releases only on a real end/cancel/error event (provider-outbound-budget suite re-run).",
+    "long_actions": "Whitelist budgets are preserved but clamped to the caller deadline; no default changed.",
+    "gateway_wire_deadline": "Not claimed: the deadline is host-request metadata, not a gateway wire protocol field. Main-side gateway RPCs are clamped; a gateway-side absolute deadline would need a protocol field.",
+    "provider_deadline": "Not claimed: the provider leg keeps AbortSignal cancellation plus its own provider timeout (TF-0438 wiring); no absolute provider-side deadline is propagated."
+  }
+}

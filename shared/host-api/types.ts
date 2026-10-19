@@ -3,12 +3,15 @@ import type {
   HostApiModule,
   HostApiPayload,
 } from './contract';
+import type { HostDeadline } from './host-deadline';
 
 export type HostRequest = {
   id: string;
   module: string;
   action: string;
   payload?: unknown;
+  /** NET-E (TF-0442): logical deadline propagated from the outermost layer. */
+  deadline?: HostDeadline;
 };
 
 export type TypedHostRequest<
@@ -19,6 +22,8 @@ export type TypedHostRequest<
   module: M;
   action: A;
   payload?: HostApiPayload<M, A>;
+  /** NET-E (TF-0442): logical deadline propagated from the outermost layer. */
+  deadline?: HostDeadline;
 };
 
 export type HostResponse<T = unknown> =

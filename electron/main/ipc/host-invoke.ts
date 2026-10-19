@@ -15,26 +15,59 @@ import {
   type IpcEventLike,
 } from './host-invoke-security';
 import { hostActionTimeoutMs } from '@shared/host-api/host-action-timeouts';
+import {
+  clampHostTimeoutToDeadline,
+  isHostDeadlineExpired,
+  readHostDeadline,
+  toHostTimeoutDetails,
+  type HostDeadline,
+  type HostTimeoutDetails,
+} from '@shared/host-api/host-deadline';
+import { runWithHostDeadline } from '../../utils/host-deadline-context';
 
 class HostActionTimeoutError extends Error {
-  constructor(moduleName: string, actionName: string, timeoutMs: number) {
+  readonly details: HostTimeoutDetails;
+
+  constructor(
+    moduleName: string,
+    actionName: string,
+    timeoutMs: number,
+    details: HostTimeoutDetails,
+  ) {
     super(`Host action ${moduleName}.${actionName} timed out after ${Math.round(timeoutMs / 1000)}s`);
     this.name = 'HostActionTimeoutError';
+    this.details = details;
   }
 }
 
 async function withHostActionTimeout<T>(
   promise: Promise<T>,
-  moduleName: string,
-  actionName: string,
+  params: {
+    moduleName: string;
+    actionName: string;
+    /** Already clamped to the caller's remaining logical budget. */
+    timeoutMs: number;
+    deadline?: HostDeadline;
+    requestId?: string;
+    startedAt: number;
+  },
 ): Promise<T> {
-  const timeoutMs = hostActionTimeoutMs(moduleName, actionName);
+  const { timeoutMs } = params;
   let timer: ReturnType<typeof setTimeout> | null = null;
   try {
     return await Promise.race([
       promise,
       new Promise<never>((_, reject) => {
-        timer = setTimeout(() => reject(new HostActionTimeoutError(moduleName, actionName, timeoutMs)), timeoutMs);
+        timer = setTimeout(
+          () => reject(new HostActionTimeoutError(params.moduleName, params.actionName, timeoutMs, toHostTimeoutDetails({
+            stage: 'main',
+            deadlineMs: timeoutMs,
+            elapsedMs: Date.now() - params.startedAt,
+            ...(params.requestId ? { requestId: params.requestId } : {}),
+            ...(params.deadline ? { deadline: params.deadline } : {}),
+          }))),
+          timeoutMs,
+        );
         timer.unref?.();
       }),
     ]);
@@ -263,19 +296,60 @@ export function createHostInvokeDispatcher(
       };
     }
 
+    // NET-E (TF-0442): one logical deadline. The caller's deadline is clamped
+    // against the local budget from the shared table, so the layers never add
+    // their timeouts together; an already-expired deadline fails closed before
+    // the action starts.
+    const deadline = readHostDeadline((request as { deadline?: unknown }).deadline);
+    const startedAt = Date.now();
+    const localTimeoutMs = hostActionTimeoutMs(request.module, request.action);
+    const effectiveTimeoutMs = clampHostTimeoutToDeadline(localTimeoutMs, deadline);
+    if (deadline && isHostDeadlineExpired(deadline)) {
+      return {
+        id: request.id,
+        ok: false,
+        error: {
+          code: 'TIMEOUT',
+          message: `Host action ${request.module}.${request.action} timed out before it started`,
+          details: toHostTimeoutDetails({
+            stage: 'main',
+            deadlineMs: 0,
+            elapsedMs: 0,
+            requestId: request.id,
+            deadline,
+          }),
+        },
+      };
+    }
+
     try {
       // R0-4: per-action timeout — a hung host action must fail closed with a
       // TIMEOUT code instead of leaving the renderer waiting forever. Long
       // actions (git fetch/pull/push, installs, doctor, downloads, …) get the
-      // extended budget from the shared whitelist.
-      const data = await withHostActionTimeout(Promise.resolve(action(request.payload)), request.module, request.action);
+      // extended budget from the shared whitelist, clamped to the caller's
+      // remaining logical budget.
+      const data = await withHostActionTimeout(
+        Promise.resolve(runWithHostDeadline(deadline, () => action(request.payload))),
+        {
+          moduleName: request.module,
+          actionName: request.action,
+          timeoutMs: effectiveTimeoutMs,
+          ...(deadline ? { deadline } : {}),
+          requestId: request.id,
+          startedAt,
+        },
+      );
       return { id: request.id, ok: true, data };
     } catch (error) {
       if (error instanceof HostActionTimeoutError) {
         return {
           id: request.id,
           ok: false,
-          error: { code: 'TIMEOUT', message: sanitizeHostErrorMessage(error.message) },
+          error: {
+            code: 'TIMEOUT',
+            message: sanitizeHostErrorMessage(error.message),
+            details: error.details,
+          },
         };
       }
       const rawMessage = error instanceof Error ? error.message : String(error);

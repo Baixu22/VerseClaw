@@ -33,6 +33,20 @@ describe('R0-4 host-api-client timeout fallback', () => {
     await assertion;
   });
 
+  it('propagates one logical deadline to Main instead of a second timeout window', async () => {
+    hostInvokeMock.mockImplementation(async () => ({ id: 'r2', ok: true, data: '1.2.3' }));
+    const { invokeHost } = await import('@/lib/host-api-client');
+
+    await invokeHost('app', 'version');
+    const request = hostInvokeMock.mock.calls[0][0] as { id: string; deadline?: Record<string, unknown> };
+    expect(request.deadline).toMatchObject({
+      stage: 'renderer',
+      timeoutMs: 60_000,
+      requestId: request.id,
+    });
+    expect(request.deadline?.deadlineAtMs).toBeGreaterThan(Date.now());
+  });
+
   it('resolves normally when Main answers inside the budget', async () => {
     hostInvokeMock.mockImplementation(async () => ({ id: 'r1', ok: true, data: '1.2.3' }));
     const { invokeHost } = await import('@/lib/host-api-client');
