@@ -5,6 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { i18nReady } from './i18n';
 import './styles/globals.css';
+import './styles/structural-loading.css';
 import { RendererRoot } from './components/loading/RendererRoot';
 import { installMockHostBridge, isMockModeEnabled, seedMockPersistedSettings } from './lib/mock-host-bridge';
 import { initRendererPerformanceMetrics } from './lib/performance-metrics';
