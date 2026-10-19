@@ -1,0 +1,84 @@
+{
+  "schema": "clawx.tf0343-tf0344.deferred-scope-acceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0344",
+  "candidate": {
+    "sha": "fc95d736c9a18f81aad2f324fe0bfb82f2be60cd",
+    "subject": "docs(browser): register deferred enhancement activation gates"
+  },
+  "generatedAt": "2026-10-19T09:55:41.5265419Z",
+  "result": "pass-deferred-scope-registration",
+  "nodes": [
+    "TF-0343",
+    "TF-0344"
+  ],
+  "source": {
+    "project": "versebrowser",
+    "commit": "47b076f85d4e37cdaea67c1564d1c4f4dbf2b011",
+    "tasks": [
+      "TF-0174",
+      "TF-0176"
+    ]
+  },
+  "currentState": "deferred",
+  "implementedInThisCycle": false,
+  "itemCount": 10,
+  "ownerCounts": {
+    "TF_0343": 3,
+    "TF_0344": 7
+  },
+  "activationPolicy": {
+    "requiresExplicitTask": true,
+    "requiresRealTaskOrReproduction": true,
+    "requiresMinimalReproduction": true,
+    "requiresIndependentVerdict": true,
+    "requiresSeparateHostAcceptancePerDriver": true,
+    "cloudSchedulingAllowed": false,
+    "genericPlannerAllowed": false,
+    "stealthProxyPlatformAllowed": false,
+    "captchaBypassAllowed": false
+  },
+  "evidence": [
+    "harness/specs/fixtures/tf0343-tf0344-deferred-scope/registry.json",
+    "harness/specs/tasks/versebrowser-deferred-scope.md",
+    "tests/unit/versebrowser-deferred-scope.test.ts",
+    "harness/specs/guides/versebrowser-reintegration-playbook.md",
+    ".local/versebrowser-reintegration-20261015/task-crosswalk.json",
+    "git main fc95d736c9a18f81aad2f324fe0bfb82f2be60cd"
+  ],
+  "gates": [
+    {
+      "command": "pnpm exec vitest run tests/unit/versebrowser-deferred-scope.test.ts",
+      "exitCode": 0,
+      "testFiles": 1,
+      "tests": 4
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/versebrowser-deferred-scope.md",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:node",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:web",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 18406
+    }
+  ],
+  "boundaries": [
+    "Deferred means not implemented. No visual-coordinate, extra-driver, advanced-network, replay, trace, site-native or remote-browser capability is claimed as delivered.",
+    "A new driver or host target requires its own acceptance; existing matrix results cannot be extrapolated.",
+    "Cloud scheduling, generic planner, stealth/proxy platform and CAPTCHA bypass remain excluded.",
+    "TF-0343/TF-0344 can close as registration nodes while their capability scopes remain deferred."
+  ]
+}
