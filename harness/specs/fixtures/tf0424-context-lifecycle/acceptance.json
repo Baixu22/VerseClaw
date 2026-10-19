@@ -42,7 +42,9 @@
     "newDurableAuthority": false,
     "productionImports": 0,
     "taskLedgerAuthorityChanged": false,
-    "rendererGatewayBypass": false
+    "rendererGatewayBypass": false,
+    "explorationImportCount": 0,
+    "existingCRKDefaultUnchanged": true
   },
   "decisionRecords": "decisions.json",
   "gates": [
@@ -89,6 +91,11 @@
       "result": "PASS",
       "sampleCount": 12,
       "evidenceInsufficient": true
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "worktree": "D:\\ClawX-candidates\\tf0424-context-lifecycle-acceptance-20261019"
     }
   ],
   "boundaries": [
@@ -98,5 +105,8 @@
     "Value-pruning has deterministic would-drop diagnostics but no configured provider, paired quality or cost evidence.",
     "Segment summary tree has a bounded local token curve but no current-source paired recovery-fidelity evaluation.",
     "No product default, prompt order, compaction timing, storage authority, Task Ledger/ClawGraph authority or renderer boundary was changed."
-  ]
+  ],
+  "acceptanceWorktree": "D:\\ClawX-candidates\\tf0424-context-lifecycle-acceptance-20261019",
+  "acceptanceCandidate": "073272e3d60c42c1718c07a3a2545d42c43319bf",
+  "productionRootIsCRK": true
 }
