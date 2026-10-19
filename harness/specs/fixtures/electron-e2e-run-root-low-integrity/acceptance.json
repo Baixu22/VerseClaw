@@ -1,0 +1,53 @@
+{
+  "schema": "clawx-electron-e2e-run-root-acceptance/1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-10-20",
+  "base_commit": "5a9f340f726f5dc9dc496b9f42c38f1ea5aad9c3",
+  "platform": "win32-x64",
+  "node": "24.19.0",
+  "electron": "40.8.4",
+  "electron_binary_sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e",
+  "electron_zip_sha256": "f72e4f646cd1fd4ca6d92ae2fdcc83db9303518f18b4743998db95c37169856a",
+  "electron_release_sha256": "f72e4f646cd1fd4ca6d92ae2fdcc83db9303518f18b4743998db95c37169856a",
+  "command": "node node_modules/@playwright/test/cli.js test tests/e2e/structural-loading-pilot.spec.ts --reporter=list",
+  "environment": {
+    "ELECTRON_DISABLE_SANDBOX": "1",
+    "CLAWX_E2E_RUN_ROOT": "D:\\ClawX\\.local\\e2e-run-base-final",
+    "TEMP": "D:\\ClawX\\.local\\tmp",
+    "TMP": "D:\\ClawX\\.local\\tmp"
+  },
+  "exit_code": 0,
+  "tests": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "duration_ms_observed": 20200
+  },
+  "run_root": {
+    "base": "D:\\ClawX\\.local\\e2e-run-base-final",
+    "unique": "D:\\ClawX\\.local\\e2e-run-base-final\\verse-claw-e2e-run-oNK4y2",
+    "evidence": "process-run.json"
+  },
+  "startup": {
+    "browser_window_created": true,
+    "first_window_reached": true,
+    "settings_page_visible": true,
+    "evidence": [
+      "startup-trace.txt",
+      "screenshots/slow-stable.png",
+      "screenshots/fast-ready.png"
+    ]
+  },
+  "cleanup": {
+    "ledger_entries": 2,
+    "survivors": 0,
+    "sweep_status": "ok",
+    "evidence": "process-cleanup.json"
+  },
+  "unverified_boundaries": [
+    "Full Playwright suite was not run in this node.",
+    "macOS and Linux Electron hosts were not run.",
+    "Installer and release packaging gates were not run."
+  ]
+}

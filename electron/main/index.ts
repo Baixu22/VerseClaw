@@ -4,6 +4,7 @@
  */
 import { markPerformance } from '../services/performance-metrics';
 import { app, BrowserWindow, dialog, nativeTheme, session } from 'electron';
+import { appendFileSync } from 'node:fs';
 import { join } from 'path';
 import { openExternalSafe } from '../utils/safe-open-external';
 import { registerWebViewSecurity } from '../utils/register-webview-security';
@@ -83,6 +84,21 @@ const WINDOWS_APP_USER_MODEL_ID = 'app.verse-claw.desktop';
 const isE2EMode = process.env.VERSE_CLAW_E2E === '1';
 const requestedUserDataDir = process.env.VERSE_CLAW_USER_DATA_DIR?.trim();
 const requestedRemoteDebuggingPort = resolveRemoteDebuggingLaunchPort(app);
+
+function traceStartup(phase: string): void {
+  if (process.env.CLAWX_E2E_STARTUP_TRACE !== '1') return;
+  const line = `${new Date().toISOString()} ${phase} pid=${process.pid} type=${process.type ?? 'unknown'}`;
+  console.log(`[startup-trace] ${line}`);
+  const traceFile = process.env.CLAWX_E2E_STARTUP_TRACE_FILE?.trim();
+  if (!traceFile) return;
+  try {
+    appendFileSync(traceFile, `[startup-trace] ${line}\n`, 'utf8');
+  } catch {
+    // Diagnostics must never affect startup.
+  }
+}
+
+traceStartup('main-module-loaded');
 
 installOutputStreamErrorHandlers();
 
@@ -837,11 +853,14 @@ function getE2EDelayQuery(envName: string): string | undefined {
  * Create the main application window
  */
 async function createWindow(): Promise<BrowserWindow> {
+  traceStartup('create-window-enter');
   const isMac = process.platform === 'darwin';
   const isWindows = process.platform === 'win32';
   const useCustomTitleBar = isWindows;
   const shouldSkipSetupForE2E = process.env.VERSE_CLAW_E2E_SKIP_SETUP === '1';
+  traceStartup('create-window-theme-start');
   const bootTheme = await resolveRendererBootTheme();
+  traceStartup('create-window-theme-done:' + bootTheme);
   const rendererQuery: Record<string, string> = { bootTheme };
   const e2eBootHoldMs = getE2EDelayQuery('CLAWX_E2E_BOOT_HOLD_MS');
   const e2eSettingsSectionDelayMs = getE2EDelayQuery('CLAWX_E2E_SETTINGS_SECTION_DELAY_MS');
@@ -851,6 +870,7 @@ async function createWindow(): Promise<BrowserWindow> {
     rendererQuery.e2eSettingsSectionDelayMs = e2eSettingsSectionDelayMs;
   }
 
+  traceStartup('create-window-browser-window-start');
   const win = new BrowserWindow({
     width: 1280,
     height: 800,
@@ -873,6 +893,7 @@ async function createWindow(): Promise<BrowserWindow> {
     show: false,
   });
 
+  traceStartup('create-window-browser-window-done');
   registerZoomShortcuts(win);
   markPerformance('window-created');
   if (app.isPackaged) {
@@ -1061,13 +1082,17 @@ async function startGatewayAfterFirstPaint(): Promise<void> {
  * Initialize the application
  */
 async function initialize(): Promise<void> {
+  traceStartup('initialize-enter');
   // Initialize logger first
   logger.init();
+  traceStartup('initialize-logger-ready');
   logger.info('=== Verse Claw Application Starting ===');
 
   // FP-P1-05: reconcile a persisted newer-version marker before a gateway
   // child can observe any preview flags from settings or openclaw.json.
+  traceStartup('initialize-version-reconcile-start');
   await reconcileAppVersionRollback();
+  traceStartup('initialize-version-reconcile-done');
 
   // P2-004 / F-ISO-002: install WebView attach/permission/navigation controls
   // before any BrowserWindow or guest <webview> is created.
@@ -1093,7 +1118,9 @@ async function initialize(): Promise<void> {
   }
 
   // Create the main window
+  traceStartup('initialize-main-window-create-start');
   const window = await createMainWindow();
+  traceStartup('initialize-main-window-create-done');
   window.once('ready-to-show', () => {
     setImmediate(() => {
       void startGatewayAfterFirstPaint();
@@ -1455,6 +1482,7 @@ if (gotTheLock) {
 
   // Application lifecycle
   app.whenReady().then(() => {
+    traceStartup('app-ready-callback');
     markPerformance('app-ready');
     installHtmlPreviewProtocol();
     // Runtime efficiency sampling (P2 #161); cheap unref'd timer, local only.

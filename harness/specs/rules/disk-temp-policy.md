@@ -36,12 +36,19 @@ Also:
   directories are overridden, point them at `D:` too.
 - Low-integrity checkout exception: if the checkout that hosts the executable carries a
   Low mandatory integrity label (this `D:\ClawX` tree does), processes it spawns cannot
-  write into a Medium-integrity `D:\tmp`. Point `TEMP`/`TMP` — and, for Playwright,
-  `CLAWX_E2E_RUN_ROOT` — at an ignored scratch directory *inside* the checkout instead.
-  Verified 2026-10-15: `governed-exec.real.test.ts` and `tests/e2e/agent-dev-quality.spec.ts`
-  both fail under `D:\tmp` (missing artifact / `EPERM: mkdir <userData>\logs` leading to
-  "Application initialization failed") and both pass under an in-checkout scratch
-  directory, with no code change.
+  write into a Medium-integrity `D:\tmp`. Point `TEMP`/`TMP` at an ignored scratch
+  directory *inside* the checkout. For Playwright, set `CLAWX_E2E_RUN_ROOT` to the
+  ignored base directory (for example `D:\ClawX\.local\e2e-run-base`); global setup
+  treats it as the base and creates a unique `verse-claw-e2e-run-*` child, rather than
+  overwriting the caller's path with an unusable OS-temp child.
+  Verified 2026-10-15: `governed-exec.real.test.ts` and
+  `tests/e2e/agent-dev-quality.spec.ts` both fail under `D:\tmp` (missing artifact /
+  `EPERM: mkdir <userData>\logs` leading to "Application initialization failed") and
+  both pass under an in-checkout scratch directory. Verified 2026-10-20:
+  `structural-loading-pilot.spec.ts` similarly reached Electron 40.8.4 but waited
+  forever for `firstWindow` with `userData` under `D:\tmp`; moving
+  `CLAWX_E2E_RUN_ROOT` under `D:\ClawX\.local` restored BrowserWindow creation without
+  changing product behavior; the only main-process change is an env-gated startup trace.
 
 ## Verification and interpretation
 

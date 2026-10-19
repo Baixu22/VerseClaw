@@ -100,7 +100,7 @@ async function killTree(pid: number): Promise<{ nodeKill: boolean; taskkill: boo
     process.kill(pid, 'SIGKILL');
     nodeKill = true;
   } catch {
-    nodeKill = false;
+    // Keep nodeKill false; taskkill still gets a chance below.
   }
   await delay(150);
   let taskkill = false;
@@ -189,11 +189,14 @@ export async function cleanupElectronProcesses(runRoot: string, outputDir: strin
 export default async function setupElectronProcessCleanup(config: FullConfig) {
   if (process.platform !== 'win32') return;
   const previousRoot = process.env.CLAWX_E2E_RUN_ROOT;
-  const runRoot = await mkdtemp(join(tmpdir(), 'verse-claw-e2e-run-'));
+  const requestedBase = process.env.CLAWX_E2E_RUN_ROOT_BASE?.trim() || previousRoot?.trim();
+  const baseRoot = requestedBase ? resolve(requestedBase) : tmpdir();
+  await mkdir(baseRoot, { recursive: true });
+  const runRoot = await mkdtemp(join(baseRoot, 'verse-claw-e2e-run-'));
   process.env.CLAWX_E2E_RUN_ROOT = resolve(runRoot);
   const outputDir = config.projects[0].outputDir;
   await mkdir(outputDir, { recursive: true });
-  await writeFile(join(outputDir, 'electron-process-run.json'), JSON.stringify({ runRoot, runnerPid: process.pid }));
+  await writeFile(join(outputDir, 'electron-process-run.json'), JSON.stringify({ runRoot, baseRoot, runnerPid: process.pid }, null, 2));
 
   return async () => {
     try { await cleanupElectronProcesses(runRoot, outputDir); }

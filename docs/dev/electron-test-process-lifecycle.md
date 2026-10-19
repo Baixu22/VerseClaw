@@ -24,9 +24,34 @@ global setup to receive this protection.
 
 Cleanup writes `electron-process-cleanup.json` under the test output directory.
 An uncleaned process fails teardown; the original failed test stays failed.
-Profiles left by a crash are retained for diagnosis. Set `TEMP` and `TMP` to a
-D: task directory when running locally. Product startup, transport, permissions,
-test retries, and screenshot tolerances are unchanged.
+Profiles left by a crash are retained for diagnosis.
+
+On a low-integrity checkout, a spawned Electron main process cannot write to the
+medium-integrity `D:\tmp` directory even though the caller can. Set
+`CLAWX_E2E_RUN_ROOT` to an ignored scratch directory inside the checkout before
+Playwright starts; global setup creates a unique `verse-claw-e2e-run-*` child
+under it and uses that child for every isolated profile and the cleanup ledger:
+
+```powershell
+$env:TEMP = "$PWD\.local\tmp"
+$env:TMP = "$env:TEMP"
+$env:CLAWX_E2E_RUN_ROOT = "$PWD\.local\e2e-run-base"
+New-Item -ItemType Directory -Force $env:TEMP, $env:CLAWX_E2E_RUN_ROOT | Out-Null
+node --version  # must be >= 24.16.0 on Windows
+node node_modules/@playwright/test/cli.js test tests/e2e/<spec>.ts --reporter=list
+```
+
+On a normal checkout, leaving `CLAWX_E2E_RUN_ROOT` unset keeps the default OS temp
+base. Product startup, transport, permissions, test retries, and screenshot
+tolerances are unchanged.
+
+On 2026-10-20, `structural-loading-pilot.spec.ts` reproduced the distinction:
+both cases reached Electron 40.8.4 but timed out waiting for `firstWindow` when
+the isolated `userData` lived under `D:\tmp`. Electron main returned `EPERM`
+while the calling shell could write there. Moving only the E2E run root to
+`D:\ClawX\.local` restored `BrowserWindow` creation; the instrumentation then
+failed cleanly on the intentionally missing renderer `dist/index.html` from an
+aborted diagnostic build, not on startup. Rebuild `dist/` before the real E2E run.
 
 ## Verification on 2026-10-07
 
