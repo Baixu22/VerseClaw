@@ -11,6 +11,8 @@ touchedAreas:
   - scripts/network-reliability-fault-injection.mjs
   - harness/specs/tasks/network-reliability-fault-injection-v1.md
   - artifacts/network-protocol-reliability/net-g/**
+  - artifacts/network-protocol-reliability/net-d/net-d-evidence.json
+  - docs/dev/network-protocol-reliability/STATUS.md
 expectedUserBehavior:
   - 故障注入结果可直接复核哪些可靠性承诺已通过、哪些仍未验证。
 requiredProfiles:

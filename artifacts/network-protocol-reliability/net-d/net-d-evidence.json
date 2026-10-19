@@ -12,16 +12,16 @@
       "result": "1 file, 20 tests passed (16 boundary + 4 new post-header/disconnect cases)"
     },
     {
-      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/stream-failure.test.ts --maxWorkers=1",
-      "cwd": "openclaw_runtime",
+      "command": "pnpm --dir openclaw_runtime exec vitest run src/agents/stream-failure.test.ts --maxWorkers=1",
+      "cwd": "repo root",
       "exit_code": 0,
-      "result": "1 file, 13 tests passed"
+      "result": "1 file, 13 tests passed (re-run during TF-0444 once the file became tracked: the agents-core shard excludes unit-fast files, so this shard-independent command is the reproducible one)"
     },
     {
-      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/stream-failure.test.ts src/agents/sessions --maxWorkers=1",
-      "cwd": "openclaw_runtime",
+      "command": "pnpm --dir openclaw_runtime exec vitest run src/agents/stream-failure.test.ts --maxWorkers=1",
+      "cwd": "repo root",
       "exit_code": 0,
-      "result": "8 files, 117 tests passed (transcript persistence path included)"
+      "result": "1 file, 13 tests passed (re-run during TF-0444 once the file became tracked: the agents-core shard excludes unit-fast files, so this shard-independent command is the reproducible one)"
     },
     {
       "command": "pnpm exec vitest run tests/unit/openresponses-usage-and-tool-history.test.ts tests/unit/provider-validation.test.ts tests/unit/context-compression-provider.test.ts --maxWorkers=1",

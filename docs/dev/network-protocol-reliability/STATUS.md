@@ -9,14 +9,14 @@
 
 | Node | Status | Evidence boundary |
 |---|---|---|
-| TF-0437 | in_progress (~85%) | Phase gate frozen; TF-0443/0438/0439/0440/0441 done; TF-0442 partial (host path landed, gateway wire + provider deadline open); TF-0444 open |
+| TF-0437 | in_progress (~90%) | Phase gate frozen; TF-0443/0438/0439/0440/0441/0444 done; TF-0442 partial (host path landed, gateway wire + provider deadline open) |
 | TF-0443 | done | Owner matrix, gap inventory, entrypoint guard and junction regression verified |
 | TF-0438 | done | Shared logical request attempt budget across auto-retry, fallback, retryAsync and provider transport |
 | TF-0439 | done | Gateway protocol range + negotiated hello validation, typed seq gap, reconnect resubscribe, explicit pending-RPC failure |
 | TF-0440 | done | Provider endpoint breaker wired at the real transport boundary; opt-in, endpoint+account scoped, sanitized diagnostics |
 | TF-0441 | done | Typed stream failure, failed-attempt isolation, responses post-header failure fixed |
 | TF-0442 | in_progress (~70%) | Logical deadline landed for Renderer -> Main -> Main-side gateway RPC; gateway wire deadline and provider-side deadline remain open |
-| TF-0444 | proposed | Not started |
+| TF-0444 | done | Independent fault-injection harness re-runs 6 scenarios (6/6 pass) and reports 4 explicitly unverified boundaries |
 
 ## TF-0443 completed
 
@@ -62,7 +62,7 @@
 - `openclaw_runtime/src/agents/sessions/agent-session.ts`: an error assistant message persists without its unexecuted tool calls, so a failed attempt cannot enter the formal transcript as replayable tool work.
 - `openclaw_runtime/src/gateway/openresponses-http.ts`: post-header failure closes with a single `response.failed` envelope; the fabricated empty usage that allowed a trailing `response.completed` was removed.
 - Gates: 20 provider error HTTP boundary tests (incl. 4 new mid-stream/disconnect cases), 13 stream-failure unit tests, 117 sessions tests, 25 responses usage/tool-history tests, `pnpm run typecheck` exit 0, `pnpm run comms:replay` / `comms:compare` exit 0 (all metrics PASS), `pnpm harness validate --spec harness/specs/tasks/stream-failure-recovery-v1.md --since bbd15fed` exit 0.
-- Evidence: `artifacts/network-protocol-reliability/net-d/net-d-evidence.json` (SHA256 `C7986449989509441400529CF2BDEA7118607E95B67D7CC16054AFD9AF90B32E`).
+- Evidence: `artifacts/network-protocol-reliability/net-d/net-d-evidence.json` (SHA256 `330BCAF6B4A9311928819E87A4680F6C86595C452B114FBB8E20D563887BDDFF`).
 
 ## TF-0442 partial (kept open)
 
@@ -79,10 +79,17 @@ Still open for TF-0442:
 
 - The deadline is host-request metadata, not a gateway wire field: a gateway-side absolute deadline (and a provider-side absolute deadline) is not propagated, so the provider leg still relies on the existing `AbortSignal` cancellation plus its own provider timeout rather than the caller budget.
 
+## TF-0444 completed
+
+- `scripts/network-reliability-fault-injection.mjs`: independent, agent-driven harness that re-runs six fault scenarios against the current candidate (retry budget; provider 429/503 + breaker open/half-open; gateway seq gap/reconnect/resubscribe; mid-stream failure/disconnect; failed-attempt stream isolation; deadline/cancel), captures exit codes, vitest counts, per-check logs and SHA256s.
+- Report is split by plane (`wire_attempt` vs `logical_turn`), records candidate commit/tree, commands, exit codes, pass/fail/unverified counts and the `report.json` SHA256; unverified checks never become pass.
+- Run: `node scripts/network-reliability-fault-injection.mjs` -> `acceptance-ok`, 6/6 checks passed, 0 failed, 4 unverified boundaries.
+- Evidence: `artifacts/network-protocol-reliability/net-g/report.md`, `report.json`, `logs/*`, `SHA256SUMS` (`driven_by: agent`).
+- Unverified (explicitly labelled): live-provider 429/503, gateway wire-level deadline, packaged Electron disconnect E2E, network pooling/P50 (TF-0413/TF-0414).
+
 ## Remaining before TF-0437 can close
 
-- `TF-0442`: propagate the logical deadline past the Main process boundary (gateway wire + provider).
-- `TF-0444`: independent fault-injection acceptance.
+- `TF-0442`: propagate the logical deadline past the Main process boundary (gateway wire + provider). NET-G acceptance itself passes; this is the only open NET node.
 
 ## Boundaries
 

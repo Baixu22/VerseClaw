@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 D:/ClawX-candidates/network-protocol-reliability-20261019
+
+
+ Test Files  3 passed (3)
+      Tests  40 passed (40)
+   Start at  09:26:04
+   Duration  5.12s (transform 1.11s, setup 285ms, import 674ms, tests 1.70s, environment 1.89s)
+
