@@ -145,4 +145,46 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
 
     expect(getWorkspaceRootPathByIdMock).not.toHaveBeenCalled();
   });
+
+  it('forwards the ambient logical deadline to Gateway chat.send (NET-E)', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async () => ({ runId: 'run-deadline' })),
+      getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
+    };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const { runWithHostDeadline } = await import('@electron/utils/host-deadline-context');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+
+    const deadlineAtMs = Date.now() + 30_000;
+    await runWithHostDeadline(
+      { deadlineAtMs, timeoutMs: 30_000, stage: 'renderer', requestId: 'req-net-e' },
+      () =>
+        api.sendWithMedia({
+          sessionKey: 'agent:main:main',
+          message: 'Continue work',
+          idempotencyKey: 'idem-deadline',
+        }),
+    );
+
+    const payload = (gatewayManager.rpc.mock.calls as unknown[][])[0]?.[1] as Record<string, unknown>;
+    expect(payload.deadlineAtMs).toBe(deadlineAtMs);
+  });
+
+  it('omits deadlineAtMs when no logical deadline is ambient (NET-E)', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async () => ({ runId: 'run-no-deadline' })),
+      getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
+    };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+
+    await api.sendWithMedia({
+      sessionKey: 'agent:main:main',
+      message: 'Continue work',
+      idempotencyKey: 'idem-no-deadline',
+    });
+
+    const payload = (gatewayManager.rpc.mock.calls as unknown[][])[0]?.[1] as Record<string, unknown>;
+    expect(payload.deadlineAtMs).toBeUndefined();
+  });
 });

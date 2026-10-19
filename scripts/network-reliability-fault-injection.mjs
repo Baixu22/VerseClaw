@@ -85,6 +85,15 @@ export const CHECKS = [
     minTests: 13,
   },
   {
+    id: 'turn-gateway-provider-deadline',
+    plane: 'logical_turn',
+    faults: ['gateway deadline gate', 'provider request-timeout clamp', 'spent deadline fail-closed'],
+    claim: 'the gateway rejects a spent deadline before starting the turn, a live deadline is clamped to what remains and the provider request timeout never starts a fresh window',
+    cwd: '.',
+    command: ['pnpm', '--dir', 'openclaw_runtime', 'exec', 'vitest', 'run', 'src/agents/request-deadline.test.ts', 'src/agents/provider-endpoint-health.test.ts', 'packages/gateway-protocol/src/schema/logs-chat.test.ts', '--maxWorkers=1'],
+    minTests: 40,
+  },
+  {
     id: 'repo-typecheck',
     plane: 'repo_gate',
     faults: ['type surface drift'],
@@ -99,8 +108,8 @@ export const CHECKS = [
     faults: ['host deadline clamp', 'expired deadline fail-fast', 'long-action clamp', 'renderer timeout details'],
     claim: 'one logical deadline is clamped per layer (never summed), an expired deadline fails closed before the action runs and timeout details carry stage/deadlineMs/elapsedMs/requestId',
     cwd: '.',
-    command: ['pnpm', 'exec', 'vitest', 'run', 'tests/unit/host-deadline.test.ts', 'tests/unit/host-api-client-error-metadata.test.ts', 'tests/unit/r0-4-host-api-client-timeout.test.ts', 'tests/unit/r0-4-host-invoke-timeout.test.ts', '--maxWorkers=1'],
-    minTests: 20,
+    command: ['pnpm', 'exec', 'vitest', 'run', 'tests/unit/host-deadline.test.ts', 'tests/unit/host-api-client-error-metadata.test.ts', 'tests/unit/r0-4-host-api-client-timeout.test.ts', 'tests/unit/r0-4-host-invoke-timeout.test.ts', 'tests/unit/chat-api-workspace-fingerprint.test.ts', '--maxWorkers=1'],
+    minTests: 28,
   },
 ];
 
@@ -111,8 +120,8 @@ export const UNVERIFIED = [
     reason: 'no real credential or paid provider request is allowed; 429/503 are injected synthetically',
   },
   {
-    id: 'gateway-wire-deadline',
-    reason: 'TF-0442 keeps the logical deadline as host-request metadata; a gateway/provider wire-level deadline is not propagated yet',
+    id: 'non-chat-gateway-deadline',
+    reason: 'TF-0442 propagates the deadline through the chat turn path (chat.sendWithMedia -> chat.send -> provider); other gateway RPC methods and a packaged Electron run are not covered',
   },
   {
     id: 'electron-e2e-disconnect',

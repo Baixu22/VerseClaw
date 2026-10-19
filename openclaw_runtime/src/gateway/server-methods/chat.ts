@@ -41,6 +41,10 @@ import { resolveSessionWorkspaceDir } from "../../agents/spawned-context.js";
 import { normalizeRuntimeIntensityPreference } from "../../agents/intensity-policy.js";
 import { rewriteTranscriptEntriesInSessionFile } from "../../agents/embedded-agent-runner/transcript-rewrite.js";
 import { runAgentHarnessBeforeMessageWriteHook } from "../../agents/harness/hook-helpers.js";
+import {
+  resolveRequestDeadlineGate,
+  runWithRequestDeadline,
+} from "../../agents/request-deadline.js";
 import { resolveProviderIdForAuth } from "../../agents/provider-auth-aliases.js";
 import type { AgentMessage } from "../../agents/runtime/index.js";
 import { ensureSandboxWorkspaceForSession } from "../../agents/sandbox/context.js";
@@ -3194,6 +3198,8 @@ export const chatHandlers: GatewayRequestHandlers = {
         content?: unknown;
       }>;
       timeoutMs?: number;
+      /** NET-E (TF-0442): absolute logical deadline propagated by Main. */
+      deadlineAtMs?: number;
       workspaceId?: string;
       workspaceDir?: string;
       /**
@@ -3421,10 +3427,38 @@ export const chatHandlers: GatewayRequestHandlers = {
     let mediaPathOffloadPaths: string[] = [];
     let mediaPathOffloadTypes: string[] = [];
     let mediaPathOffloadWorkspaceDir: string | undefined;
-    const timeoutMs = resolveAgentTimeoutMs({
+    // NET-E (TF-0442): the caller's absolute logical deadline. A deadline that
+    // is already spent fails closed before any model work starts, and a live one
+    // clamps the turn watchdog to the remaining budget instead of starting a
+    // fresh full window at this layer.
+    const deadlineGate = resolveRequestDeadlineGate({
+      deadlineAtMs: p.deadlineAtMs,
+      requestId: clientRunId,
+    });
+    if (!deadlineGate.ok) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.AGENT_TIMEOUT, "chat.send deadline already expired", {
+          details: deadlineGate.details,
+          retryable: true,
+        }),
+      );
+      return;
+    }
+    const requestDeadlineAtMs = deadlineGate.deadlineAtMs;
+    const configuredTurnTimeoutMs = resolveAgentTimeoutMs({
       cfg,
       overrideMs: p.timeoutMs,
     });
+    const remainingDeadlineMs =
+      requestDeadlineAtMs === undefined
+        ? undefined
+        : Math.max(0, requestDeadlineAtMs - Date.now());
+    const timeoutMs =
+      remainingDeadlineMs === undefined
+        ? configuredTurnTimeoutMs
+        : Math.min(configuredTurnTimeoutMs, remainingDeadlineMs);
     const now = Date.now();
 
     const sendPolicy = resolveSendPolicy({
@@ -4457,7 +4491,12 @@ export const chatHandlers: GatewayRequestHandlers = {
       };
       void measureDiagnosticsTimelineSpan(
         "gateway.chat_send.dispatch_inbound",
-        async () => {
+        // NET-E (TF-0442): the whole dispatch - and every nested provider call -
+        // runs under the caller's absolute logical deadline.
+        () =>
+          runWithRequestDeadline(
+            requestDeadlineAtMs,
+            async () => {
           applyChatSendManagedMediaFields(ctx, await pluginBoundMediaFieldsPromise);
           const dispatchResult = await dispatchInboundMessage({
             ctx,
@@ -4557,7 +4596,9 @@ export const chatHandlers: GatewayRequestHandlers = {
             userTurnRecorder.markBlocked();
           }
           return dispatchResult;
-        },
+            },
+            { stage: "gateway", requestId: clientRunId },
+          ),
         {
           phase: "agent-turn",
           config: cfg,

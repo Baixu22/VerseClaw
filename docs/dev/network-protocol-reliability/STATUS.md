@@ -9,13 +9,13 @@
 
 | Node | Status | Evidence boundary |
 |---|---|---|
-| TF-0437 | in_progress (~90%) | Phase gate frozen; TF-0443/0438/0439/0440/0441/0444 done; TF-0442 partial (host path landed, gateway wire + provider deadline open) |
+| TF-0437 | done | Phase gate frozen; TF-0438/0439/0440/0441/0442/0443/0444 all done; NET-G independent acceptance 8/8 with 4 bounded unverified items |
 | TF-0443 | done | Owner matrix, gap inventory, entrypoint guard and junction regression verified |
 | TF-0438 | done | Shared logical request attempt budget across auto-retry, fallback, retryAsync and provider transport |
 | TF-0439 | done | Gateway protocol range + negotiated hello validation, typed seq gap, reconnect resubscribe, explicit pending-RPC failure |
 | TF-0440 | done | Provider endpoint breaker wired at the real transport boundary; opt-in, endpoint+account scoped, sanitized diagnostics |
 | TF-0441 | done | Typed stream failure, failed-attempt isolation, responses post-header failure fixed |
-| TF-0442 | in_progress (~70%) | Logical deadline landed for Renderer -> Main -> Main-side gateway RPC; gateway wire deadline and provider-side deadline remain open |
+| TF-0442 | done | One logical deadline across Renderer -> Main -> Gateway -> provider on the chat path; expired deadlines fail closed at every layer |
 | TF-0444 | done | Independent fault-injection harness re-runs 6 scenarios (6/6 pass) and reports 4 explicitly unverified boundaries |
 
 ## TF-0443 completed
@@ -64,20 +64,16 @@
 - Gates: 20 provider error HTTP boundary tests (incl. 4 new mid-stream/disconnect cases), 13 stream-failure unit tests, 117 sessions tests, 25 responses usage/tool-history tests, `pnpm run typecheck` exit 0, `pnpm run comms:replay` / `comms:compare` exit 0 (all metrics PASS), `pnpm harness validate --spec harness/specs/tasks/stream-failure-recovery-v1.md --since bbd15fed` exit 0.
 - Evidence: `artifacts/network-protocol-reliability/net-d/net-d-evidence.json` (SHA256 `330BCAF6B4A9311928819E87A4680F6C86595C452B114FBB8E20D563887BDDFF`).
 
-## TF-0442 partial (kept open)
+## TF-0442 completed
 
-Landed and verified:
-
-- `shared/host-api/host-deadline.ts`: one logical deadline (absolute `deadlineAtMs` + budget + stage + local `requestId`), remaining-budget and clamp helpers, validated metadata reader, structured timeout details.
-- `src/lib/host-api-client.ts`: creates the deadline per invoke, sends it as request metadata, derives the last-line fallback from the same budget plus grace margin, reports `stage/deadlineMs/elapsedMs/requestId` on timeout.
-- `electron/main/ipc/host-invoke.ts`: enforces `min(local budget, remaining)`, fails closed before an expired deadline starts an action, returns the details envelope, and runs the action inside the ambient deadline context.
-- `electron/utils/host-deadline-context.ts` + `electron/gateway/manager.ts`: nested Main-side gateway RPCs clamp their timeout to the ambient remaining budget.
-- Gates: 8 required host-api tests, 21 deadline/host-invoke tests, 66 dispatcher/security/facade tests, 17 provider outbound budget tests, `pnpm run typecheck` exit 0, `comms:replay`/`comms:compare` exit 0 (all metrics PASS), `pnpm harness validate --spec harness/specs/tasks/end-to-end-deadline-v1.md --since 1462fb4b9` exit 0.
-- Evidence: `artifacts/network-protocol-reliability/net-e/net-e-evidence.json` (SHA256 `0486D9FA1B6DF853A7073CE2950D755134FB7D722C4657BBA2028981837050D2`).
-
-Still open for TF-0442:
-
-- The deadline is host-request metadata, not a gateway wire field: a gateway-side absolute deadline (and a provider-side absolute deadline) is not propagated, so the provider leg still relies on the existing `AbortSignal` cancellation plus its own provider timeout rather than the caller budget.
+- `shared/host-api/host-deadline.ts` + `src/lib/host-api-client.ts`: one absolute logical deadline per host invoke, sent as request metadata; the renderer fallback is derived from the same budget.
+- `electron/main/ipc/host-invoke.ts` + `electron/utils/host-deadline-context.ts` + `electron/gateway/manager.ts`: Main enforces `min(local, remaining)`, fails closed on a spent deadline, returns `stage/deadlineMs/elapsedMs/requestId`, and nested gateway RPCs clamp to the same budget.
+- `electron/services/chat-api.ts` + `ChatSendParamsSchema`: `chat.send` carries `deadlineAtMs` to the gateway (no protocol version bump).
+- `openclaw_runtime/src/agents/request-deadline.ts` + `gateway/server-methods/chat.ts`: the gateway answers `AGENT_TIMEOUT` before any work when the deadline is spent, clamps the turn watchdog to what remains, and runs the dispatch under an ambient deadline.
+- `openclaw_runtime/src/agents/provider-transport-fetch.ts`: the provider fails closed on a spent deadline and clamps its request timeout to the remaining budget.
+- Gates: 8 required host-api tests, 28 deadline/host-invoke/Main-forwarding tests, 40 runtime deadline/gateway/provider tests, 93 gateway-methods tests, 17 provider budget tests, `pnpm run typecheck` exit 0, `comms:replay`/`comms:compare` exit 0 (all metrics PASS), `pnpm harness validate --spec harness/specs/tasks/end-to-end-deadline-v1.md --since 55584aaf` exit 0.
+- Evidence: `artifacts/network-protocol-reliability/net-e/net-e-evidence.json` (SHA256 `79E6BFAC15DF3355E80CD474270CC2655B7FDE839A67CA54DD1A86D766669604`).
+- Bounded coverage: propagation is verified for the chat turn path; other gateway RPC methods and a packaged Electron end-to-end run remain in the NET-G unverified list.
 
 ## TF-0444 completed
 
@@ -87,9 +83,12 @@ Still open for TF-0442:
 - Evidence: `artifacts/network-protocol-reliability/net-g/report.md`, `report.json`, `logs/*`, `SHA256SUMS` (`driven_by: agent`).
 - Unverified (explicitly labelled): live-provider 429/503, gateway wire-level deadline, packaged Electron disconnect E2E, network pooling/P50 (TF-0413/TF-0414).
 
-## Remaining before TF-0437 can close
+## Phase root (TF-0437)
 
-- `TF-0442`: propagate the logical deadline past the Main process boundary (gateway wire + provider). NET-G acceptance itself passes; this is the only open NET node.
+All NET nodes are complete and the independent fault-injection acceptance
+re-runs green against the current candidate (`net-g/report.json`: 8/8 checks, 0
+failed, 4 bounded unverified items). TF-0437 closes on that evidence; the
+unverified items stay explicit and never count as pass.
 
 ## Boundaries
 

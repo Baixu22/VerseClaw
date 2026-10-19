@@ -34,6 +34,12 @@ import { ProviderHttpError, readResponseTextLimited } from "./provider-http-erro
 import { appendProviderRequestAuthQuery } from "./provider-request-auth.js";
 import { getRequestAttemptBudget, type RequestAttemptBudget } from "./request-attempt-budget.js";
 import {
+  clampRequestTimeoutToDeadline,
+  getRequestDeadline,
+  isRequestDeadlineExpired,
+  RequestDeadlineExceededError,
+} from "./request-deadline.js";
+import {
   isProviderPayloadTraceEnabled,
   recordProviderPayloadTrace,
 } from "./provider-payload-trace.js";
@@ -810,7 +816,7 @@ export function buildGuardedModelFetch(
 ): typeof fetch {
   const requestConfig = resolveModelRequestPolicy(model);
   const dispatcherPolicy = buildProviderRequestDispatcherPolicy(requestConfig);
-  const requestTimeoutMs = resolveModelRequestTimeoutMs(model, timeoutMs);
+  const configuredProviderTimeoutMs = resolveModelRequestTimeoutMs(model, timeoutMs);
   const configuredAttemptBudget = options?.attemptBudget;
   // Quota identity is stable per model+credential; resolving it once per guarded fetch keeps the
   // per-attempt cost to one gate lookup.
@@ -835,6 +841,18 @@ export function buildGuardedModelFetch(
     ].join(" ");
   };
   return async (input, init) => {
+    // NET-E (TF-0442): share the caller's logical deadline. An already-expired
+    // deadline fails closed before any provider request is prepared, and a live
+    // budget tightens the provider window to what remains.
+    const ambientDeadline = getRequestDeadline();
+    if (ambientDeadline && isRequestDeadlineExpired()) {
+      throw new RequestDeadlineExceededError({
+        deadlineAtMs: ambientDeadline.deadlineAtMs,
+        stage: "provider",
+        ...(ambientDeadline.requestId ? { requestId: ambientDeadline.requestId } : {}),
+      });
+    }
+    const requestTimeoutMs = clampRequestTimeoutToDeadline(configuredProviderTimeoutMs);
     const attemptBudget = configuredAttemptBudget ?? getRequestAttemptBudget();
     const physicalAttempt = attemptBudget?.tryRecordAttempt({ layer: "provider-transport", outcome: "failure" });
     if (attemptBudget && physicalAttempt === undefined) {

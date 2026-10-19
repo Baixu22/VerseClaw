@@ -11,6 +11,7 @@ import { LONG_TASK_INPUT_MODES } from '../../shared/types/long-task-control';
 import { getSessionTokenUsageSummary } from '../utils/token-usage';
 import { computeWorkspaceFingerprint } from '@shared/workspace-fingerprint';
 import { getWorkspaceRootPathById } from './workspaces-api';
+import { getHostDeadline } from '../utils/host-deadline-context';
 
 const VISION_MIME_TYPES = new Set([
   'image/png',
@@ -348,6 +349,13 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         }
         if (imageAttachments.length > 0) {
           rpcParams.attachments = imageAttachments;
+        }
+        // NET-E (TF-0442): forward the renderer's logical deadline so the gateway
+        // clamps its turn watchdog and the provider request timeout to what
+        // remains instead of starting a fresh window per layer.
+        const hostDeadline = getHostDeadline();
+        if (hostDeadline) {
+          rpcParams.deadlineAtMs = hostDeadline.deadlineAtMs;
         }
 
         const tracker = getResourceTracker();

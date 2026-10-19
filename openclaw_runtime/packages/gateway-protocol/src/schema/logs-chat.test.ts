@@ -48,6 +48,20 @@ describe("ChatSendParamsSchema (D3 closeout)", () => {
     expect(Value.Check(ChatSendParamsSchema, params)).toBe(true);
   });
 
+  it("accepts the logical deadline propagated by Main (NET-E)", () => {
+    const params = {
+      ...minimalValid,
+      deadlineAtMs: 1_800_000_000_000,
+    };
+    expect(Value.Check(ChatSendParamsSchema, params)).toBe(true);
+  });
+
+  it("rejects a non-integer or non-positive logical deadline", () => {
+    expect(Value.Check(ChatSendParamsSchema, { ...minimalValid, deadlineAtMs: 1_800_000_000_000.5 })).toBe(false);
+    expect(Value.Check(ChatSendParamsSchema, { ...minimalValid, deadlineAtMs: 0 })).toBe(false);
+    expect(Value.Check(ChatSendParamsSchema, { ...minimalValid, deadlineAtMs: "soon" })).toBe(false);
+  });
+
   it("rejects unknown fields (additionalProperties: false still enforced)", () => {
     const params = {
       ...minimalValid,

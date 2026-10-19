@@ -2,58 +2,55 @@
 
 ## Decision
 
-A host action now carries ONE logical deadline instead of every layer applying
-its own full timeout:
+One logical deadline crosses every layer of a chat turn; no layer starts a fresh
+full timeout on top of the previous one.
 
-- `shared/host-api/host-deadline.ts` owns the primitive: an absolute
-  `deadlineAtMs`, the granted `timeoutMs`, the creating `stage`, the local
-  `requestId`, plus `remainingHostBudgetMs()`,
-  `clampHostTimeoutToDeadline()`, `readHostDeadline()` and
-  `toHostTimeoutDetails()`.
-- The renderer creates the deadline once per `invokeHost()` call and sends it as
-  request metadata. Its own last-line fallback is derived from the same budget
-  (remaining logical budget + grace margin), so it is a grace period, not a
-  second timeout window.
-- The Main dispatcher reads the deadline and enforces
-  `min(local budget, remaining)`. A whitelisted long action keeps its long
-  budget only while the caller deadline allows it; an already-expired deadline
-  fails closed before the action starts. Timeouts carry
-  `{stage, deadlineMs, elapsedMs, requestId, deadlineAtMs}` in the response
-  details, which the renderer already preserves through `AppError`.
-- `electron/utils/host-deadline-context.ts` exposes the clamped deadline to
-  nested Main-side work through `AsyncLocalStorage`, and
-  `GatewayManager.rpc()` clamps every RPC timeout to that remaining budget, so a
-  gateway RPC started inside a host action cannot outlive the caller's budget.
+| Layer | Owner | Behaviour |
+|---|---|---|
+| Renderer | `src/lib/host-api-client.ts` + `shared/host-api/host-deadline.ts` | Creates the deadline once per `invokeHost()` (absolute `deadlineAtMs`, granted budget, stage, local `requestId`), sends it as request metadata and derives its last-line fallback from the same budget plus a grace margin. |
+| Main (host action) | `electron/main/ipc/host-invoke.ts`, `electron/utils/host-deadline-context.ts` | Enforces `min(local budget, remaining)`, fails closed before an expired deadline starts an action, returns `{stage, deadlineMs, elapsedMs, requestId, deadlineAtMs}` details, and exposes the deadline to nested Main-side work. |
+| Main (gateway RPC) | `electron/gateway/manager.ts` | Clamps every RPC timeout to the ambient remaining budget, so an RPC started inside a host action cannot outlive the caller. |
+| Main to Gateway | `electron/services/chat-api.ts` | Forwards `deadlineAtMs` with `chat.send` (validated by `ChatSendParamsSchema`). |
+| Gateway | `openclaw_runtime/src/gateway/server-methods/chat.ts` | Gates the request (`resolveRequestDeadlineGate`): a spent deadline answers `AGENT_TIMEOUT` with structured details *before* any session/model work; a live one clamps the turn watchdog to the remaining budget and runs the whole dispatch under the ambient deadline. |
+| Provider | `openclaw_runtime/src/agents/request-deadline.ts` + `provider-transport-fetch.ts` | `buildGuardedModelFetch` fails closed when the ambient deadline is spent and otherwise clamps the provider request timeout to what remains (never starts a fresh provider window). |
 
 ## Cancellation
 
-- The renderer never reports a late success for an expired deadline: the client
-  races the bridge with the budget-derived fallback, and the Main dispatcher
-  refuses to start an action whose deadline already expired.
-- The gateway RPC path rejects the pending request when its clamped timer fires
-  and the pending-RPC store is settled exactly once.
-- The provider leg keeps the existing cancellation contract: the guarded model
-  fetch combines the caller `AbortSignal` with the provider timeout
-  (`buildModelRequestSignal`) and the outbound slot is released only on a real
+- The renderer never reports a late success: its fallback fires from the same
+  budget, and Main refuses to start an action whose deadline already expired.
+- The gateway refuses to start a chat turn whose deadline is spent and clamps
+  the turn watchdog otherwise, so the run (and its abort signal) end with the
+  logical request.
+- The provider request aborts at the deadline through the shared
+  `AbortSignal`/timeout path; the outbound slot is still released only on a real
   end/cancel/error event.
+
+## Timeout details
+
+Timeout errors carry `stage`, `deadlineMs`, `elapsedMs` and the local
+correlation id (`requestId`), plus `deadlineAtMs` when a deadline was
+propagated. The provider request id stays a distinct field and is never reused
+as the local correlation id.
 
 ## Boundaries
 
 - No product-wide timeout default change: budgets still come from
-  `host-action-timeouts.ts`, including the long-action allowlist.
-- The deadline travels as host-request metadata. It is not a gateway wire
-  protocol field, so a *gateway-side* absolute deadline is not claimed here;
-  what is enforced is that no Main-side gateway RPC outlives the renderer's
-  logical budget.
-- Provider request ids stay distinct from the local correlation id; the timeout
-  details only carry the local `requestId`.
+  `host-action-timeouts.ts` (including the long-action allowlist) and the model's
+  own `requestTimeoutMs`; the deadline only ever *tightens* them.
+- Deadline propagation is implemented for the chat turn path
+  (`chat.sendWithMedia` -> `chat.send`). Other gateway RPC methods and a packaged
+  Electron end-to-end run are not claimed; those remain in the NET-G
+  "unverified" list.
+- No gateway protocol version bump: `deadlineAtMs` is an optional field, and a
+  server that does not understand it simply behaves as before.
 
 ## Verification
 
 Evidence: `artifacts/network-protocol-reliability/net-e/net-e-evidence.json`
-(`driven_by: agent`). Synthetic unit tests cover the shared primitive
-(remaining budget, clamping without summation, expiry, metadata validation,
-structured details), the renderer deadline propagation and fallback, the Main
-dispatcher clamp/fail-fast/long-action clamp/ambient context, and Main timeout
-detail preservation in the renderer. No paid provider request and no live
-four-layer E2E run is claimed; independent fault injection remains TF-0444.
+(`driven_by: agent`). Coverage: the shared host primitive (remaining budget,
+clamping without summation, expiry, metadata validation, structured details),
+renderer propagation and fallback, Main clamp/fail-fast/long-action clamp/ambient
+context, Main timeout detail preservation, `chat.send` schema acceptance,
+gateway gate semantics (spent deadline fails closed with details), the runtime
+ambient context and the provider request-timeout clamp plus provider fail-closed
+behaviour. No paid provider request is made.

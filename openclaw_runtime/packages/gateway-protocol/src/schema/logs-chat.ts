@@ -132,6 +132,13 @@ export const ChatSendParamsSchema = Type.Object(
     originatingThreadId: Type.Optional(Type.String()),
     attachments: Type.Optional(Type.Array(Type.Unknown())),
     timeoutMs: Type.Optional(Type.Integer({ minimum: 0 })),
+    /**
+     * NET-E (TF-0442): absolute epoch-ms deadline for the whole logical request,
+     * propagated from the outermost layer (renderer -> Main). The gateway clamps
+     * its turn watchdog and the provider request timeout to the remaining budget
+     * instead of starting a fresh window at every layer.
+     */
+    deadlineAtMs: Type.Optional(Type.Integer({ minimum: 1 })),
     systemInputProvenance: Type.Optional(InputProvenanceSchema),
     systemProvenanceReceipt: Type.Optional(Type.String()),
     suppressCommandInterpretation: Type.Optional(Type.Boolean()),

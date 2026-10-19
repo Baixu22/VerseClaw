@@ -3,11 +3,11 @@
   "node": "TF-0444",
   "phase_root": "TF-0437",
   "driven_by": "agent",
-  "generated_at": "2026-10-19T01:27:32.819Z",
+  "generated_at": "2026-10-19T01:59:56.648Z",
   "live_provider": false,
   "candidate": {
-    "commit": "368692dbf10fd2e50479788610a34c63c3e9250e",
-    "tree": "bde7b7ff65b10bb3c9300da4704f4f02baa15583"
+    "commit": "1f7dea8854816aa357337353b8909db57ef47a59",
+    "tree": "8bb34151fe6d29d711351736dbd0162e57866ef5"
   },
   "environment": {
     "platform": "win32",
@@ -15,8 +15,8 @@
     "temp_dir": "D:\\tmp"
   },
   "summary": {
-    "checks": 7,
-    "passed": 7,
+    "checks": 8,
+    "passed": 8,
     "failed": 0,
     "unverified": 4,
     "decision": "acceptance-ok"
@@ -27,7 +27,7 @@
       "failed": 0
     },
     "logical_turn": {
-      "passed": 4,
+      "passed": 5,
       "failed": 0
     },
     "repo_gate": {
@@ -49,7 +49,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 23393,
+      "duration_ms": 20389,
       "tests_passed": 15,
       "tests_failed": 0,
       "files_passed": 3,
@@ -57,7 +57,7 @@
       "min_tests": 15,
       "status": "pass",
       "log": "logs/wire-retry-budget.log",
-      "log_sha256": "433f8da298182f55bb9366e6840ee1bb0fd14b0bc81f26bcfa29c2e499da18f0"
+      "log_sha256": "ed28596d2de625143367dadef11b06cf47ca91fdb0332899c9b3c94d55d40c4c"
     },
     {
       "id": "wire-provider-429-503-breaker",
@@ -74,15 +74,15 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 24784,
-      "tests_passed": 31,
+      "duration_ms": 21856,
+      "tests_passed": 33,
       "tests_failed": 0,
       "files_passed": 2,
       "files_failed": 0,
       "min_tests": 30,
       "status": "pass",
       "log": "logs/wire-provider-429-503-breaker.log",
-      "log_sha256": "84b29cc62df7cc1cb57a8e42b8ad07057dd3b93e1768d76c1153224e5d586a5e"
+      "log_sha256": "a5081b5cedc87317fc5c627f6931bd3aaabea8e25bc5f5e2e837755223d787b9"
     },
     {
       "id": "turn-gateway-seq-gap-reconnect",
@@ -97,7 +97,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 7014,
+      "duration_ms": 7664,
       "tests_passed": 40,
       "tests_failed": 0,
       "files_passed": 3,
@@ -105,7 +105,7 @@
       "min_tests": 30,
       "status": "pass",
       "log": "logs/turn-gateway-seq-gap-reconnect.log",
-      "log_sha256": "ce4752100bacb76ffab87cab6898080776a16a47ef45e2b033ece3debe82b8ff"
+      "log_sha256": "73fd6efb7a52b6c5e50d85165682971d6afae60686511de703387f6846121bda"
     },
     {
       "id": "turn-mid-stream-failure",
@@ -120,7 +120,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 7291,
+      "duration_ms": 6985,
       "tests_passed": 20,
       "tests_failed": 0,
       "files_passed": 1,
@@ -128,7 +128,7 @@
       "min_tests": 20,
       "status": "pass",
       "log": "logs/turn-mid-stream-failure.log",
-      "log_sha256": "09e3b6ebc43efce45d3247b19ffacb8b9b5675940cb50bacf906737e09912919"
+      "log_sha256": "57fe1fe568c53ac7f6cb1224f21b21df419344850b209569cc013d1655d9c7b2"
     },
     {
       "id": "turn-stream-failure-isolation",
@@ -142,7 +142,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 23975,
+      "duration_ms": 21985,
       "tests_passed": 13,
       "tests_failed": 0,
       "files_passed": 1,
@@ -150,7 +150,30 @@
       "min_tests": 13,
       "status": "pass",
       "log": "logs/turn-stream-failure-isolation.log",
-      "log_sha256": "8f8cb787ffb57fdd3d1cfd243eb13923d738da33fb7f95079e813666be4f15fb"
+      "log_sha256": "188045dc42c3f1c88da893a7c4d9279149b06333a5f2dad827998e6c74cc8e3e"
+    },
+    {
+      "id": "turn-gateway-provider-deadline",
+      "plane": "logical_turn",
+      "faults": [
+        "gateway deadline gate",
+        "provider request-timeout clamp",
+        "spent deadline fail-closed"
+      ],
+      "claim": "the gateway rejects a spent deadline before starting the turn, a live deadline is clamped to what remains and the provider request timeout never starts a fresh window",
+      "command": "pnpm --dir openclaw_runtime exec vitest run src/agents/request-deadline.test.ts src/agents/provider-endpoint-health.test.ts packages/gateway-protocol/src/schema/logs-chat.test.ts --maxWorkers=1",
+      "cwd": ".",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_ms": 27177,
+      "tests_passed": 40,
+      "tests_failed": 0,
+      "files_passed": 4,
+      "files_failed": 0,
+      "min_tests": 40,
+      "status": "pass",
+      "log": "logs/turn-gateway-provider-deadline.log",
+      "log_sha256": "e63cf72c8db8d1f3317e7c29cdd1618b3a62e469ccaf5853745c035df0d032a8"
     },
     {
       "id": "repo-typecheck",
@@ -163,7 +186,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 43698,
+      "duration_ms": 32926,
       "tests_passed": 0,
       "tests_failed": 0,
       "files_passed": 0,
@@ -171,7 +194,7 @@
       "min_tests": 0,
       "status": "pass",
       "log": "logs/repo-typecheck.log",
-      "log_sha256": "3a0384804b1ec288a4df8dfec8c244794bf07bc1421c280352f4dfcadd338cef"
+      "log_sha256": "7069286b6dd582f19467683dd59d4bf4415546e5bc046565099917e2431a6ad0"
     },
     {
       "id": "turn-deadline-cancel",
@@ -183,19 +206,19 @@
         "renderer timeout details"
       ],
       "claim": "one logical deadline is clamped per layer (never summed), an expired deadline fails closed before the action runs and timeout details carry stage/deadlineMs/elapsedMs/requestId",
-      "command": "pnpm exec vitest run tests/unit/host-deadline.test.ts tests/unit/host-api-client-error-metadata.test.ts tests/unit/r0-4-host-api-client-timeout.test.ts tests/unit/r0-4-host-invoke-timeout.test.ts --maxWorkers=1",
+      "command": "pnpm exec vitest run tests/unit/host-deadline.test.ts tests/unit/host-api-client-error-metadata.test.ts tests/unit/r0-4-host-api-client-timeout.test.ts tests/unit/r0-4-host-invoke-timeout.test.ts tests/unit/chat-api-workspace-fingerprint.test.ts --maxWorkers=1",
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 8315,
-      "tests_passed": 21,
+      "duration_ms": 8724,
+      "tests_passed": 28,
       "tests_failed": 0,
-      "files_passed": 4,
+      "files_passed": 5,
       "files_failed": 0,
-      "min_tests": 20,
+      "min_tests": 28,
       "status": "pass",
       "log": "logs/turn-deadline-cancel.log",
-      "log_sha256": "55d1c8bd657416904ea6030bb826dbb0a8b20cb0289c75e94a35e7922a3b35ef"
+      "log_sha256": "81dc49a96a4b66fe5fbba0a78fe5ccb9997506846cfc041bc343a8f15b5d5bab"
     }
   ],
   "unverified": [
@@ -204,8 +227,8 @@
       "reason": "no real credential or paid provider request is allowed; 429/503 are injected synthetically"
     },
     {
-      "id": "gateway-wire-deadline",
-      "reason": "TF-0442 keeps the logical deadline as host-request metadata; a gateway/provider wire-level deadline is not propagated yet"
+      "id": "non-chat-gateway-deadline",
+      "reason": "TF-0442 propagates the deadline through the chat turn path (chat.sendWithMedia -> chat.send -> provider); other gateway RPC methods and a packaged Electron run are not covered"
     },
     {
       "id": "electron-e2e-disconnect",

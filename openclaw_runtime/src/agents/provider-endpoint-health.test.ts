@@ -28,6 +28,7 @@ import {
   ProviderOutboundOverloadedError,
 } from "./provider-outbound-budget.js";
 import { buildGuardedModelFetch } from "./provider-transport-fetch.js";
+import { RequestDeadlineExceededError, runWithRequestDeadline } from "./request-deadline.js";
 import {
   attachModelProviderRequestTransport,
   getModelProviderRequestTransport,
@@ -393,6 +394,41 @@ describe("provider endpoint health gate", () => {
       expect(recovered.status).toBe(200);
       expect(stub.attemptsMade()).toBe(3);
       expect(providerEndpointHealthSnapshots()).toMatchObject([{ state: "closed", trips: 1 }]);
+    });
+
+    it("clamps the provider request timeout to the remaining logical deadline", async () => {
+      const fetchImpl = guardedFetchFor(makeModel());
+      guardedFetchMock.mockImplementationOnce(async () => ({
+        response: new Response(null, { status: 200 }),
+        finalUrl: ENDPOINT,
+        release: async () => undefined,
+        refreshTimeout: undefined,
+      }));
+
+      const deadlineAtMs = Date.now() + 2_500;
+      const response = await runWithRequestDeadline(deadlineAtMs, () =>
+        fetchImpl(ENDPOINT, REQUEST_INIT),
+      );
+      expect(response.status).toBe(200);
+
+      const guardOptions = guardedFetchMock.mock.calls[0][0] as { timeoutMs?: number };
+      // The configured provider window is 5s; the ambient deadline caps it below
+      // that instead of starting a fresh provider timeout.
+      expect(guardOptions.timeoutMs).toBeGreaterThan(0);
+      expect(guardOptions.timeoutMs).toBeLessThanOrEqual(2_500);
+      expect(guardOptions.timeoutMs).toBeLessThan(5_000);
+    });
+
+    it("fails closed before any provider request when the logical deadline is spent", async () => {
+      const fetchImpl = guardedFetchFor(makeModel());
+      const error = await runWithRequestDeadline(Date.now() - 1, () =>
+        fetchImpl(ENDPOINT, REQUEST_INIT).then(
+          () => null,
+          (thrown: unknown) => thrown,
+        ),
+      );
+      expect(error).toBeInstanceOf(RequestDeadlineExceededError);
+      expect(guardedFetchMock).not.toHaveBeenCalled();
     });
 
     it("does not double count a concurrency-budget refusal", async () => {

@@ -17,6 +17,16 @@ touchedAreas:
   - openclaw_runtime/src/gateway/http-common.ts
   - shared/host-api/host-deadline.ts
   - electron/utils/host-deadline-context.ts
+  - electron/services/chat-api.ts
+  - openclaw_runtime/src/agents/request-deadline.ts
+  - openclaw_runtime/src/agents/request-deadline.test.ts
+  - openclaw_runtime/src/gateway/server-methods/chat.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.test.ts
+  - openclaw_runtime/src/agents/provider-endpoint-health.test.ts
+  - tests/unit/chat-api-workspace-fingerprint.test.ts
+  - scripts/network-reliability-fault-injection.mjs
+  - artifacts/network-protocol-reliability/net-g/**
   - tests/unit/host-api-client-error-metadata.test.ts
   - tests/unit/r0-4-host-api-client-timeout.test.ts
   - tests/unit/r0-4-host-invoke-timeout.test.ts

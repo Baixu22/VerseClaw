@@ -10,17 +10,7 @@ Already up to date
 . prepare$ node scripts/prepare-git-hooks.mjs
 . prepare: Done
 Done in 2.2s using pnpm v11.2.2
-[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
-
-[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
-
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
-
-[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
-
-[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
-
-[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
@@ -29,17 +19,13 @@ Done in 2.2s using pnpm v11.2.2
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
-
-[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
-
-[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
 
  RUN  v4.1.7 D:/ClawX-candidates/network-protocol-reliability-20261019/openclaw_runtime
 
 
  Test Files  2 passed (2)
-      Tests  31 passed (31)
-   Start at  09:25:59
-   Duration  3.32s (transform 1.54s, setup 404ms, import 2.27s, tests 394ms, environment 0ms)
+      Tests  33 passed (33)
+   Start at  09:58:07
+   Duration  3.07s (transform 1.66s, setup 386ms, import 2.01s, tests 434ms, environment 0ms)
 
