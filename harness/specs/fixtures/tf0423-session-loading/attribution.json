@@ -31,5 +31,17 @@
     }
   ],
   "finding": "The long-task background scales with sidebar session count, not with the transcript size of the opened session: 20 sessions -> 0 long tasks on open and 1 in the idle control; 333 sessions -> 8 on open and 6 idle. Opening one 180 KB transcript adds no distinct long-task class; the cost is the 333-row sidebar itself.",
-  "implication": "TF-0423 acceptance item 3 (\"opening a long session must not produce a renderer long task over 50 ms\") is unattainable while the sidebar mounts/updates hundreds of rows on this forced-software-rendering host. The remaining work is sidebar render containment/virtualization, which is outside the transcript-read and label-budget fix shipped in 08744fac."
+  "implication": "TF-0423 acceptance item 3 (\"opening a long session must not produce a renderer long task over 50 ms\") is unattainable while the sidebar mounts/updates hundreds of rows on this forced-software-rendering host. The remaining work is sidebar render containment/virtualization, which is outside the transcript-read and label-budget fix shipped in 08744fac.",
+  "diagnostics": [
+    {
+      "id": "css-compositing-not-the-cause",
+      "method": "临时在 probe 注入 *,*::before,*::after { backdrop-filter:none; animation:none; transition:none } 后复测同一 2.5s 空闲窗口（探针改动已回退，属本地诊断）。",
+      "result": "idle long tasks 6 -> 7，CSS 关闭无改善，排除合成/动画为主因。"
+    },
+    {
+      "id": "not-mount-drain",
+      "method": "临时连续测量两个相邻 2.5s 空闲窗口（同一次运行；探针改动已回退，属本地诊断）。",
+      "result": "window1 = 6，window2 = 6，长任务恒定不衰减，判定为周期性工作而非初次挂载余波；渐进挂载不适用。"
+    }
+  ]
 }
