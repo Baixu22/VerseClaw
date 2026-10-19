@@ -10,6 +10,9 @@ import type { GatewayManager } from '../gateway/manager';
 import type { ChatRuntimeEvent } from '../../shared/chat-runtime-events';
 import { expandPath, getDataDir, getOpenClawConfigDir, getOpenClawRuntimeDir } from '../utils/paths';
 import { isRecord } from './payload-utils';
+import { logger } from '../utils/logger';
+import { readJsonAtomic, writeJsonAtomic } from '../utils/atomic-write';
+import { rotateLogIfNeeded } from '../utils/log-retention';
 // R2: main-side error returns must stay inside the sanitize boundary — the
 // renderer renders these strings directly in banners/toasts.
 import { sanitizeUiErrorText } from '../../shared/privacy/ui-error-sanitize';
@@ -867,6 +870,16 @@ export function __resetGovernanceWriterQueueForTests(): void {
   governanceWriterQueue = Promise.resolve();
 }
 
+/** Non-throwing existence check used to distinguish "absent" from "corrupt". */
+async function fileExistsOrNull(targetPath: string): Promise<boolean> {
+  try {
+    await stat(targetPath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function getKnowledgeDir(): string {
   return join(getOpenClawConfigDir(), 'knowledge');
 }
@@ -1114,6 +1127,11 @@ function hasSourceSetShape(value: unknown): value is KnowledgeSourceSet {
 async function appendAudit(event: Record<string, unknown>): Promise<void> {
   const timestamp = nowIso();
   await mkdir(getKnowledgeDir(), { recursive: true });
+  // Keep the append-only audit log bounded. Rotation renames the live file
+  // aside and starts a fresh one, so no history is lost; the SQLite
+  // governance event table remains the authority regardless.
+  await rotateLogIfNeeded(getAuditPath()).catch(() => undefined);
+
   await appendFile(getAuditPath(), `${JSON.stringify({ ...event, timestamp })}
 `, 'utf8');
   // KS-03: governance events are also persisted in the SQLite event table.
@@ -3469,19 +3487,34 @@ export function createKnowledgeApi({
 
   const watchedStates = new Map<string, { configId: string; watcher: FSWatcher | null; debounceTimer: ReturnType<typeof setTimeout> | null }>();
 
+  /**
+   * Read watched-directory configuration.
+   *
+   * Corruption policy is fail-closed (harness rule
+   * `local-data-fail-closed-config`). The previous implementation swallowed every
+   * error and returned `[]`; because every caller follows with a
+   * read-modify-write that rewrites the whole array, a corrupt or unreadable
+   * file would have been silently replaced by an empty list, dropping every
+   * user's watched directory with no error surfaced. `readJsonAtomic`
+   * restores from `.bak` when the primary is corrupt or missing; only a
+   * genuinely absent file yields `[]`.
+   */
   async function readWatchedDirConfigs(): Promise<KnowledgeWatchedDirectoryConfig[]> {
-    try {
-      const content = await readFile(WATCHED_DIR_CONFIG_PATH(), 'utf8');
-      const parsed = JSON.parse(content);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
+    const configPath = WATCHED_DIR_CONFIG_PATH();
+    if (!(await fileExistsOrNull(configPath))) return [];
+    const result = await readJsonAtomic<KnowledgeWatchedDirectoryConfig[]>(configPath, {
+      fallback: [],
+    });
+    if (result.recoveredFromBackup) {
+      logger.warn(`[knowledge] ${result.recoveryNote ?? 'recovered watched-directories.json from backup'}`);
     }
+    return Array.isArray(result.data) ? result.data : [];
   }
 
+  /** Persist watched-directory configuration atomically (temp + fsync + rename + `.bak`). */
   async function writeWatchedDirConfigs(configs: KnowledgeWatchedDirectoryConfig[]): Promise<void> {
     await mkdir(getKnowledgeDir(), { recursive: true });
-    await writeFile(WATCHED_DIR_CONFIG_PATH(), JSON.stringify(configs, null, 2), 'utf8');
+    await writeJsonAtomic(WATCHED_DIR_CONFIG_PATH(), configs);
   }
 
   async function appendWatchedDirEvent(configId: string, event: Omit<KnowledgeWatchedDirectoryEvent, 'id' | 'timestamp'>): Promise<void> {

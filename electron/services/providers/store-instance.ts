@@ -15,6 +15,10 @@ export async function getClawXProviderStore() {
         providerSecrets: {} as Record<string, unknown>,
         // P8-002: Verse Claw managed channel credential vault (encrypted envelopes).
         channelSecrets: {} as Record<string, unknown>,
+        // OpenClaw auth-profiles credential vault (encrypted envelopes).
+        authProfileSecrets: {} as Record<string, unknown>,
+        // WeChat account bot-token vault (encrypted envelopes).
+        wechatAccountSecrets: {} as Record<string, unknown>,
         defaultProvider: null as string | null,
         defaultProviderAccountId: null as string | null,
       },

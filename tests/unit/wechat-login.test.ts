@@ -90,13 +90,30 @@ describe('wechat login utility', () => {
 
     expect(normalizedAccountId).toBe('bot-im-bot');
 
-    const accountFile = JSON.parse(
-      await readFile(join(testHome, '.openclaw', 'openclaw-weixin', 'accounts', 'bot-im-bot.json'), 'utf-8'),
-    ) as { token?: string; baseUrl?: string; userId?: string };
-    expect(accountFile.token).toBe('secret-token');
+    const accountFileRaw = await readFile(
+      join(testHome, '.openclaw', 'openclaw-weixin', 'accounts', 'bot-im-bot.json'),
+      'utf-8',
+    );
+    const accountFile = JSON.parse(accountFileRaw) as {
+      token?: string;
+      tokenSecretId?: string;
+      baseUrl?: string;
+      userId?: string;
+    };
+
+    // The bot token must not be readable from the account-state file. It is
+    // sealed in the WeChat account vault and referenced by id.
+    expect(accountFileRaw).not.toContain('secret-token');
+    expect(accountFile.token).toBeUndefined();
+    expect(accountFile.tokenSecretId).toBeTruthy();
     expect(accountFile.baseUrl).toBe('https://ilinkai.weixin.qq.com');
     expect(accountFile.userId).toBe('user-123');
 
+    // The sealed reference still resolves back to the original token.
+    const { resolveWechatAccountToken } = await import(
+      '@electron/services/secrets/wechat-account-secret-broker'
+    );
+    expect(await resolveWechatAccountToken('bot-im-bot', accountFile)).toBe('secret-token');
     const accountIndex = JSON.parse(
       await readFile(join(testHome, '.openclaw', 'openclaw-weixin', 'accounts.json'), 'utf-8'),
     ) as string[];

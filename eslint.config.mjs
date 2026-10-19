@@ -24,7 +24,6 @@ export default [
       'artifacts/**',
       'dist/**',
       'dist-electron/**',
-      'packages/versebrowser/dist/**',
       'openclaw/**',
       'release/**',
       'build/**',
@@ -33,7 +32,6 @@ export default [
       'openclaw_runtime/**/dist/**',
       // Complete VerseConf deliveries are hash-locked; lint --fix must not rewrite them.
       'openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/**',
-      'openclaw_runtime/extensions/codegraph/dist/**',
       'openclaw_runtime/packages/agent-core/dist/**',
       // Fixture AST samples intentionally use synthetic use* identifiers.
       'tests/fixtures/ast-patch-planner/**',
@@ -109,6 +107,54 @@ export default [
     files: ['src/lib/host-api-client.ts'],
     rules: {
       'no-restricted-syntax': 'off',
+    },
+  },
+  {
+    // Harness rule `local-data-fail-closed-config`: new persistence code must go
+    // through the unified entry point so every config store gets the same
+    // durability contract (temp + fsync + rename, `.bak` recovery, file lock).
+    // Existing bare call sites are grandfathered; new code is not.
+    files: [
+      'electron/utils/durable-store.ts',
+      'electron/utils/atomic-write.ts',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.name='writeFile']",
+          message: 'Use writeFileAtomic/writeJsonAtomic from electron/utils/durable-store.ts instead of a bare writeFile.',
+        },
+        {
+          selector: "CallExpression[callee.type='MemberExpression'][callee.object.name='fs'][callee.property.name='writeFile']",
+          message: 'Use writeFileAtomic/writeJsonAtomic from electron/utils/durable-store.ts instead of a bare writeFile.',
+        },
+        {
+          selector: "CallExpression[callee.type='MemberExpression'][callee.object.name='fs'][callee.property.name='writeFileSync']",
+          message: 'Use writeFileAtomicSync from electron/utils/durable-store.ts instead of a bare writeFileSync.',
+        },
+      ],
+    },
+  },
+  {
+    // Secret-bearing stores must not import a raw fs writer directly: they are
+    // required to seal credentials through the vault and persist atomically.
+    files: [
+      'electron/services/secrets/**/*.ts',
+      'electron/services/providers/**/*.ts',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.name='writeFile']",
+          message: 'Secret/provider stores must persist via writeJsonAtomic (see electron/services/secrets/*-broker.ts).',
+        },
+        {
+          selector: "CallExpression[callee.type='MemberExpression'][callee.object.name='fs'][callee.property.name='writeFile']",
+          message: 'Secret/provider stores must persist via writeJsonAtomic (see electron/services/secrets/*-broker.ts).',
+        },
+      ],
     },
   },
   {
