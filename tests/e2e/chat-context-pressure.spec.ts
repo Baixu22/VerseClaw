@@ -135,7 +135,10 @@ test.describe('Verse Claw chat context pressure', () => {
       // entry point for session-level context controls.
       await page.getByTestId('chat-composer-input').fill('/compact');
       const compact = page.getByTestId('chat-slash-command-option-compact');
-      await expect(compact).toBeVisible();
+      // Wait for the option to settle with its computed token text before
+      // clicking: asserting only visibility races the composer's status refresh
+      // and the click can land on a not-yet-ready item.
+      await expect(compact).toContainText('64k / 128k tokens');
       await compact.click();
 
       const pressure = page.getByTestId('chat-context-pressure');
@@ -261,7 +264,10 @@ test.describe('Verse Claw chat context pressure', () => {
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill('/compact');
       const compact = page.getByTestId('chat-slash-command-option-compact');
-      await expect(compact).toBeVisible();
+      // Wait for the option to settle with its computed token text before
+      // clicking: asserting only visibility races the composer's status refresh
+      // and the click can land on a not-yet-ready item.
+      await expect(compact).toContainText('64k / 128k tokens');
       await compact.click();
 
       // Partial measurement: the session row is shown, but the optional cache
