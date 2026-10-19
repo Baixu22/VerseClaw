@@ -15,6 +15,8 @@ requiredRules:
   - repository-artifact-retention
   - task-forest-autoclose-and-roles
 touchedAreas:
+  - .gitignore
+  - scripts/repository-artifacts.json
   - electron/services/resource-fabric.ts
   - electron/services/resource-leases.ts
   - electron/services/terminal-api.ts
