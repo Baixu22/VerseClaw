@@ -3,11 +3,11 @@
   "node": "TF-0444",
   "phase_root": "TF-0437",
   "driven_by": "agent",
-  "generated_at": "2026-10-19T01:59:56.648Z",
+  "generated_at": "2026-10-19T02:22:29.821Z",
   "live_provider": false,
   "candidate": {
-    "commit": "1f7dea8854816aa357337353b8909db57ef47a59",
-    "tree": "8bb34151fe6d29d711351736dbd0162e57866ef5"
+    "commit": "cb3f3e7cc5949da985cf45d72b4f092cf3138456",
+    "tree": "fe8d431eacca3f994605a4693bdf967d77990f66"
   },
   "environment": {
     "platform": "win32",
@@ -49,7 +49,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 20389,
+      "duration_ms": 27655,
       "tests_passed": 15,
       "tests_failed": 0,
       "files_passed": 3,
@@ -57,7 +57,7 @@
       "min_tests": 15,
       "status": "pass",
       "log": "logs/wire-retry-budget.log",
-      "log_sha256": "ed28596d2de625143367dadef11b06cf47ca91fdb0332899c9b3c94d55d40c4c"
+      "log_sha256": "37ec518d4b5f9a71084c432feee5f9788f5d5947f23ce2854c559dadf2c8e6a0"
     },
     {
       "id": "wire-provider-429-503-breaker",
@@ -74,7 +74,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 21856,
+      "duration_ms": 26209,
       "tests_passed": 33,
       "tests_failed": 0,
       "files_passed": 2,
@@ -82,7 +82,7 @@
       "min_tests": 30,
       "status": "pass",
       "log": "logs/wire-provider-429-503-breaker.log",
-      "log_sha256": "a5081b5cedc87317fc5c627f6931bd3aaabea8e25bc5f5e2e837755223d787b9"
+      "log_sha256": "2eb82c325a57ecaf044d01c546398e13dd15da7047b7a098c209d15014d69bd1"
     },
     {
       "id": "turn-gateway-seq-gap-reconnect",
@@ -97,7 +97,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 7664,
+      "duration_ms": 8322,
       "tests_passed": 40,
       "tests_failed": 0,
       "files_passed": 3,
@@ -105,7 +105,7 @@
       "min_tests": 30,
       "status": "pass",
       "log": "logs/turn-gateway-seq-gap-reconnect.log",
-      "log_sha256": "73fd6efb7a52b6c5e50d85165682971d6afae60686511de703387f6846121bda"
+      "log_sha256": "9f6623f07b8176333b8046aff355b4d9b5389dfe42b437c15c717c715213def6"
     },
     {
       "id": "turn-mid-stream-failure",
@@ -120,7 +120,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 6985,
+      "duration_ms": 9458,
       "tests_passed": 20,
       "tests_failed": 0,
       "files_passed": 1,
@@ -128,7 +128,7 @@
       "min_tests": 20,
       "status": "pass",
       "log": "logs/turn-mid-stream-failure.log",
-      "log_sha256": "57fe1fe568c53ac7f6cb1224f21b21df419344850b209569cc013d1655d9c7b2"
+      "log_sha256": "4081cc4c919153d0ecb888f76c68ec6a4acf988e1465cc00a40a816ef0b08779"
     },
     {
       "id": "turn-stream-failure-isolation",
@@ -142,7 +142,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 21985,
+      "duration_ms": 42278,
       "tests_passed": 13,
       "tests_failed": 0,
       "files_passed": 1,
@@ -150,7 +150,7 @@
       "min_tests": 13,
       "status": "pass",
       "log": "logs/turn-stream-failure-isolation.log",
-      "log_sha256": "188045dc42c3f1c88da893a7c4d9279149b06333a5f2dad827998e6c74cc8e3e"
+      "log_sha256": "4d28b17f489de9700a5da792b6e86d501563a2b33e8f876fbf21bbe862906bd8"
     },
     {
       "id": "turn-gateway-provider-deadline",
@@ -165,7 +165,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 27177,
+      "duration_ms": 46394,
       "tests_passed": 40,
       "tests_failed": 0,
       "files_passed": 4,
@@ -173,7 +173,7 @@
       "min_tests": 40,
       "status": "pass",
       "log": "logs/turn-gateway-provider-deadline.log",
-      "log_sha256": "e63cf72c8db8d1f3317e7c29cdd1618b3a62e469ccaf5853745c035df0d032a8"
+      "log_sha256": "2b8273d1154bd37e2c543682bc62b8faa85e564428d5e553517e1daef5dc7ccf"
     },
     {
       "id": "repo-typecheck",
@@ -186,7 +186,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 32926,
+      "duration_ms": 97578,
       "tests_passed": 0,
       "tests_failed": 0,
       "files_passed": 0,
@@ -194,7 +194,7 @@
       "min_tests": 0,
       "status": "pass",
       "log": "logs/repo-typecheck.log",
-      "log_sha256": "7069286b6dd582f19467683dd59d4bf4415546e5bc046565099917e2431a6ad0"
+      "log_sha256": "007bdaad98d158e0c9cb25543bd6333321b97733dfee8b39763e08ab45e03807"
     },
     {
       "id": "turn-deadline-cancel",
@@ -210,7 +210,7 @@
       "cwd": ".",
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 8724,
+      "duration_ms": 15112,
       "tests_passed": 28,
       "tests_failed": 0,
       "files_passed": 5,
@@ -218,7 +218,7 @@
       "min_tests": 28,
       "status": "pass",
       "log": "logs/turn-deadline-cancel.log",
-      "log_sha256": "81dc49a96a4b66fe5fbba0a78fe5ccb9997506846cfc041bc343a8f15b5d5bab"
+      "log_sha256": "da0a8cc81aedc2a50f7340c5719afd30bfabfd1e44074acc4939655a70b3ea47"
     }
   ],
   "unverified": [

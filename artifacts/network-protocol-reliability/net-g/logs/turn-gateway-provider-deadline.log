@@ -9,7 +9,7 @@ Already up to date
 . postinstall: Done
 . prepare$ node scripts/prepare-git-hooks.mjs
 . prepare: Done
-Done in 2.4s using pnpm v11.2.2
+Done in 7.1s using pnpm v11.2.2
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
@@ -18,21 +18,47 @@ Done in 2.4s using pnpm v11.2.2
 
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
-[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
-
-[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `externalize-deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
 [33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `inject-file-scope-variables`. See https://rolldown.rs/options/checks#plugintimings for more details.
 
@@ -42,6 +68,6 @@ Done in 2.4s using pnpm v11.2.2
 
  Test Files  4 passed (4)
       Tests  40 passed (40)
-   Start at  09:59:09
-   Duration  5.26s (transform 3.11s, setup 1.24s, import 2.74s, tests 590ms, environment 0ms)
+   Start at  10:20:25
+   Duration  10.77s (transform 3.37s, setup 1.59s, import 7.40s, tests 642ms, environment 0ms)
 

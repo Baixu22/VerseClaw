@@ -1,14 +1,14 @@
 $ node scripts/typecheck-agent-dev.mjs
 [ext-bridge] No external extensions configured — empty stubs up to date.
-$ tsgo --noEmit -p tsconfig.node.json --composite false
 $ tsgo --noEmit -p tsconfig.web.json --composite false
+$ tsgo --noEmit -p tsconfig.node.json --composite false
 {
   "success": true,
   "mode": "parallel",
   "testTypes": {
     "commandLine": "pnpm run typecheck:test",
     "exitCode": 0,
-    "durationMs": 24961,
+    "durationMs": 28177,
     "observationMode": false,
     "errorCount": 0,
     "errorLog": "D:\\ClawX-candidates\\network-protocol-reliability-20261019\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
@@ -16,32 +16,32 @@ $ tsgo --noEmit -p tsconfig.web.json --composite false
   "cache": {
     "enabled": false,
     "status": "disabled",
-    "key": "86af3f48c8b34506b885eb0e87c464497533ba3abcb21bd0487a75dfc3dbf5db",
-    "inputCount": 12241,
+    "key": "f82fa1751fd8a224987d9022eda1602259015d12fb2b66f9936da601c8c7f061",
+    "inputCount": 12243,
     "report": "D:\\ClawX-candidates\\network-protocol-reliability-20261019\\artifacts\\typecheck-cache\\report.json"
   },
-  "totalDurationMs": 31995,
+  "totalDurationMs": 94591,
   "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
   "results": [
     {
       "commandLine": "node scripts/generate-ext-bridge.mjs",
       "exitCode": 0,
-      "durationMs": 59
+      "durationMs": 75
     },
     {
       "commandLine": "pnpm run typecheck:node",
       "exitCode": 0,
-      "durationMs": 16057
+      "durationMs": 80058
     },
     {
       "commandLine": "pnpm run typecheck:web",
       "exitCode": 0,
-      "durationMs": 8513
+      "durationMs": 12396
     },
     {
       "commandLine": "pnpm run typecheck:test",
       "exitCode": 0,
-      "durationMs": 24961,
+      "durationMs": 28177,
       "observationMode": false,
       "errorCount": 0,
       "errorLog": "D:\\ClawX-candidates\\network-protocol-reliability-20261019\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
