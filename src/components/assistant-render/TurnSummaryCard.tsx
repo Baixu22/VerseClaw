@@ -1,5 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import { useId, type ReactNode } from 'react';
+import { useTickingNow } from '@/hooks/use-ticking-now';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import type { UserRunStatus } from '@/pages/Chat/execution-projection';
@@ -103,7 +104,8 @@ export function TurnSummaryCard({
   status: UserRunStatus;
   startedAt?: number;
   endedAt?: number;
-  now: number;
+  /** Optional externally-supplied clock. When omitted the card ticks its own 1 Hz clock while the turn is still running (endedAt unset). */
+  now?: number;
   expanded: boolean;
   summary?: TurnSummaryCounts;
   /** Reasoning adopted from the turn's reply message (or the live run). */
@@ -115,7 +117,11 @@ export function TurnSummaryCard({
 }) {
   const { t } = useTranslation('chat');
   const detailsId = useId();
-  const duration = formatDuration(startedAt, endedAt, now, t);
+  // Tick locally while the turn is live so the elapsed-time label advances
+  // without forcing the whole Chat page to re-render every second.
+  const tickingNow = useTickingNow(endedAt == null);
+  const effectiveNow = now ?? tickingNow;
+  const duration = formatDuration(startedAt, endedAt, effectiveNow, t);
   const label = status === 'running'
     ? duration
       ? t('turnSummary.workingFor', { duration })

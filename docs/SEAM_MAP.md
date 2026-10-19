@@ -42,7 +42,7 @@
 
 ## C. codegraph 五能力 → 新 impact provider 字段级对照
 
-> 真实路径：`openclaw_runtime/extensions/codegraph/index.ts`（ALIGNMENT 校正2 写的 `extensions/codegraph/` 少了 `openclaw_runtime/` 前缀，以本行为准）。
+> 历史路径：`openclaw_runtime/extensions/codegraph/index.ts`。该扩展已于 2026-10-17 移除；以下对照保留为设计考古，当前替代为 `harness/specs/fixtures/codegraph-retirement/impact-parity-v1.json` + DCS FactStore。
 
 ⚠️ **SPEC-GAP-1（见下）**：codegraph extension 实为 **15 个工具**（grep `name: "codegraph_` 实测：explore/search/callers/callees/impact/status/sync/init/entrypoints/find_flow/minimal_context/git_stats/freshness/decide/context_plan），非 ALIGNMENT 假设的 5 个。以下先给 spec 点名的核心 5 基线；其余 10 的 parity 取舍需人拍板。
 
@@ -56,7 +56,7 @@
 | **其余10**：status/sync/init/entrypoints/find_flow/minimal_context/git_stats/freshness/decide/context_plan | 见 index.ts:1054-1285 | — | **SPEC-GAP-1 待决**（status/sync/init/freshness 属索引运维，FactStore 按需物化后天然消解；真正待决的是 entrypoints/find_flow/minimal_context/git_stats/decide/context_plan 六个分析能力） |
 
 - codegraph 底层是 `cg`（vendored CodeGraph 实例，`prepareCG`），非外部进程 → 退役=解绑 plugin 注册（openclaw.plugin.json），非卸 npm。
-- **Task G golden 复现参数**（与基线对齐必须用同参）：callers/callees 先 `searchNodes(sym,{limit:1})` 取 top-1 再走链，depth 默认 **2**；impact = `getImpactRadius(nodeId, depth=3)`；explore = `findRelevantContext(query,{searchLimit:5, traversalDepth:2, maxNodes:50})` + maxFiles 默认 5；search = `searchNodes(query,{kinds?, limit:10})`。symbol 未命中时返回 `Symbol not found: <sym>` 文本。codegraph 自有 e2e 门 = `pnpm test:codegraph-runtime`（Task I 退役时须一并处理）。
+- **Task G golden 复现参数**（与基线对齐必须用同参）：callers/callees 先 `searchNodes(sym,{limit:1})` 取 top-1 再走链，depth 默认 **2**；impact = `getImpactRadius(nodeId, depth=3)`；explore = `findRelevantContext(query,{searchLimit:5, traversalDepth:2, maxNodes:50})` + maxFiles 默认 5；search = `searchNodes(query,{kinds?, limit:10})`。symbol 未命中时返回 `Symbol not found: <sym>` 文本。codegraph 自有 e2e 门（已随 2026-10-17 移除）原为 `pnpm test:codegraph-runtime`；当前门禁为冻结 parity fixture + FactStore 测试。
 - `freshnessMode: fast|balanced|strict`（index.ts:12-17 `FreshnessModeParam`，:217 类型）：fast 跳同步 / balanced 节流增量同步 / strict 等同步完再读。**FactStore 新鲜度门直接对齐这三档**（比 ragcode env 变量更贴本仓库），Task C 采纳。
 
 ## D. Task B/C 地基情报（迭代1续摸底）

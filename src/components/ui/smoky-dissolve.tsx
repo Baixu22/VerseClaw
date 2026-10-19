@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, type ReactNode } from 'react';
-import html2canvas from 'html2canvas';
 
 /**
  * SmokyDissolve — ported from manba pro/smoky-dissolve (initPro6).
@@ -103,15 +102,20 @@ function paintHostToCanvas(
       return;
     }
   }
-  return html2canvas(host, {
-    width: w,
-    height: h,
-    scale: 1,
-    backgroundColor: null,
-    logging: false,
-  }).then((snapshot) => {
-    ctx.drawImage(snapshot, 0, 0, w, h);
-  });
+  // html2canvas is only needed for the dissolve effect, not for the chat
+  // composer's startup path. Load it on first use so the default Chat route
+  // does not pay for a ~200 KB DOM rasterizer during boot.
+  return import('html2canvas')
+    .then(({ default: html2Canvas }) => html2Canvas(host, {
+      width: w,
+      height: h,
+      scale: 1,
+      backgroundColor: null,
+      logging: false,
+    }))
+    .then((snapshot) => {
+      ctx.drawImage(snapshot, 0, 0, w, h);
+    });
 }
 
 function makeEaseSampler(raw: string): (t: number) => number {

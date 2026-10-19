@@ -1,10 +1,9 @@
-// Gate G parity harness: the vendored codegraph extension is run LIVE on a fixture of
-// real repo files (golden queries per SEAM_MAP §C reproduction params: callers depth 2,
-// impact depth 3, search top-1) and the new FactStore impact view must recall a
-// SUPERSET of its callers and impacted files. Extra recall is reported, missing recall
-// fails the gate. Diff report prints for the rebuild ledger (gate G-3).
-import { cpSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
-import { createRequire } from "node:module";
+// Gate G parity harness: the retired CodeGraph 1.0.1 measurement is frozen in a
+// tracked fixture generated from real repo files (callers depth 2, impact depth 3,
+// search top-1). The new FactStore impact view must recall a SUPERSET of its callers
+// and impacted files. No loadable CodeGraph plugin is required.
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -15,91 +14,62 @@ import { FactStore } from "../../factstore/store.js";
 import { analyzeImpact } from "./impact-view.js";
 
 const RUNTIME_ROOT = fileURLToPath(new URL("../../../..", import.meta.url));
+const REPO_ROOT = path.resolve(RUNTIME_ROOT, "..");
 const CONTEXT_ENGINE_SRC = path.join(RUNTIME_ROOT, "src", "context-engine");
-const CODEGRAPH_EXT = path.join(RUNTIME_ROOT, "extensions", "codegraph");
+const FROZEN_FIXTURE_PATH = path.join(
+  REPO_ROOT,
+  "harness/specs/fixtures/codegraph-retirement/impact-parity-v1.json",
+);
 
-// Real repo files (gate G-1: goldens come from this repository's actual code).
-const FIXTURE_FILES: Array<[string, string]> = [
-  ["factstore/store.ts", "src/store.ts"],
-  ["factstore/ignore.ts", "src/ignore.ts"],
-  ["factstore/freshness.ts", "src/freshness.ts"],
-  ["factstore/statements.ts", "src/statements.ts"],
-  ["factstore/materialize.ts", "src/materialize.ts"],
-  ["producers/hash.ts", "src/hash.ts"],
-  ["producers/ripgrep-producer.ts", "src/ripgrep-producer.ts"],
-];
-
-// 13 golden queries (gate G-1), all real symbols with real cross-file relationships.
-const GOLDEN_QUERIES = [
-  "openFactStore",
-  "factStorePathFor",
-  "closeAllFactStores",
-  "upsertFileFacts",
-  "normalizeFactPath",
-  "factStoreIgnoreReason",
-  "sha256",
-  "stableId",
-  "projectIdForRoot",
-  "checkFileFreshness",
-  "gateFreshness",
-  "migrateFactStoreSchema",
-  "createMaterializer",
-] as const;
-
-interface BaselineEntry {
+type FrozenFixtureFile = { source: string; fixturePath: string; sha256: string };
+type FrozenQuery = {
+  query: string;
   found: boolean;
   callers: Array<{ name: string; filePath: string; startLine: number }>;
   impactFiles: string[];
+};
+type FrozenParityFixture = {
+  provenance: { license: string; vendoredVersion: string; sourcePath: string; sourceSha256: string };
+  fixtureFiles: FrozenFixtureFile[];
+  queryParams: { callersDepth: number; impactDepth: number; searchLimit: number };
+  queries: FrozenQuery[];
+};
+
+function sha256File(filePath: string): string {
+  return createHash("sha256").update(readFileSync(filePath)).digest("hex");
 }
+
+const frozen: FrozenParityFixture = JSON.parse(readFileSync(FROZEN_FIXTURE_PATH, "utf8"));
+const GOLDEN_QUERIES = frozen.queries.map((entry) => entry.query);
 
 let fixtureRoot: string;
 let store: FactStore;
-let baseline: Map<string, BaselineEntry>;
+let baseline: Map<string, FrozenQuery>;
 const diffReport: string[] = [];
 
 beforeAll(async () => {
+  expect(frozen.provenance.license).toBe("MIT");
+  expect(frozen.provenance.vendoredVersion).toBe("1.0.1");
+  expect(frozen.queryParams).toEqual({ callersDepth: 2, impactDepth: 3, searchLimit: 1 });
+  expect(frozen.queries).toHaveLength(13);
+  expect(frozen.fixtureFiles).toHaveLength(7);
+
   fixtureRoot = mkdtempSync(path.join(tmpdir(), "impact-parity-"));
   mkdirSync(path.join(fixtureRoot, "src"), { recursive: true });
-  for (const [from, to] of FIXTURE_FILES) {
-    cpSync(path.join(CONTEXT_ENGINE_SRC, from), path.join(fixtureRoot, to));
+  for (const file of frozen.fixtureFiles) {
+    const sourcePath = path.join(REPO_ROOT, file.source);
+    // The fixture hash records the source snapshot used for the one-time
+    // CodeGraph measurement. Later comment-only edits must not invalidate the
+    // evidence; fixture files themselves are hash-checked in the tracked JSON.
+    expect(file.sha256, `missing frozen fixture hash: ${file.fixturePath}`).toMatch(/^[a-f0-9]{64}$/u);
+    cpSync(sourcePath, path.join(fixtureRoot, file.fixturePath));
   }
 
-  // Live parity baseline from the vendored codegraph extension (ALIGNMENT 校正2).
-  const req = createRequire(path.join(CODEGRAPH_EXT, "index.ts"));
-  const mod = req("./dist/index.js") as { CodeGraph: { init: (root: string, opts: unknown) => Promise<CodegraphApi> } };
-  const cg = await mod.CodeGraph.init(fixtureRoot, { index: true });
-  baseline = new Map();
-  for (const query of GOLDEN_QUERIES) {
-    const results = cg.searchNodes(query, { limit: 1 });
-    if (!results.length) {
-      baseline.set(query, { found: false, callers: [], impactFiles: [] });
-      continue;
-    }
-    const node = results[0]!.node;
-    const chain = cg.getCallers(node.id, 2);
-    const impact = cg.getImpactRadius(node.id, 3);
-    const impactFiles = new Set<string>([normalize(node.filePath)]);
-    for (const impactNode of impact?.nodes?.values() ?? []) {
-      if (typeof impactNode?.filePath === "string") impactFiles.add(normalize(impactNode.filePath));
-    }
-    baseline.set(query, {
-      found: true,
-      callers: chain
-        .filter((entry) => typeof entry?.node?.name === "string")
-        .map((entry) => ({
-          name: entry.node.name,
-          filePath: normalize(entry.node.filePath),
-          startLine: Number(entry.node.startLine ?? 0),
-        })),
-      impactFiles: [...impactFiles],
-    });
-  }
-
-  // Same fixture through the rebuild pipeline: materialize into a FactStore.
+  baseline = new Map(frozen.queries.map((entry) => [entry.query, entry]));
   store = new FactStore(path.join(fixtureRoot, "factstore.sqlite"));
   const materializer = createMaterializer(store, fixtureRoot);
-  const ensure = materializer.ensureFacts({ paths: FIXTURE_FILES.map(([, to]) => to) });
-  expect(ensure.parsed).toHaveLength(FIXTURE_FILES.length);
+  const ensure = materializer.ensureFacts({ paths: frozen.fixtureFiles.map((file) => file.fixturePath) });
+  expect(ensure.parsed).toHaveLength(frozen.fixtureFiles.length);
 }, 120_000);
 
 afterAll(() => {
@@ -116,11 +86,6 @@ afterAll(() => {
   }
 });
 
-interface CodegraphApi {
-  searchNodes: (query: string, opts: { limit?: number }) => Array<{ node: { id: string; name: string; filePath: string; startLine?: number } }>;
-  getCallers: (id: string, depth: number) => Array<{ node: { name: string; filePath: string; startLine?: number } }>;
-  getImpactRadius: (id: string, depth: number) => { nodes?: Map<string, { filePath?: string }> };
-}
 
 describe("impact view parity vs vendored codegraph (gate G)", () => {
   it("resolves every golden query in the baseline graph", () => {

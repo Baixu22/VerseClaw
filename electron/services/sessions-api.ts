@@ -83,12 +83,24 @@ const SAFE_SESSION_SEGMENT = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
 const RECENT_TRANSCRIPT_INITIAL_READ_BYTES = 256 * 1024;
 const RECENT_TRANSCRIPT_MAX_READ_BYTES = 8 * 1024 * 1024;
 const RECENT_TRANSCRIPT_MAX_SCAN_LINES = 5_000;
+// Sidebar label hydration only needs the first user turn and the newest
+// timestamp. Reading both ends of a transcript is enough; scanning the whole
+// file (previously done for every session) turns long-lived histories into
+// hundreds of MB of JSON parsing on the main process.
+const SUMMARY_HEAD_READ_BYTES = 64 * 1024;
+const SUMMARY_TAIL_READ_BYTES = 128 * 1024;
+const MAX_SESSION_SUMMARY_KEYS = 100;
+// Bounded label reads must never queue behind healthy bulk history. Eight
+// small head/tail reads keep the sidebar responsive while leaving CPU for
+// session switching; the previous unbounded scan also flooded the event loop.
+const SESSION_SUMMARY_CONCURRENCY = 8;
 
 type SessionSummary = {
   sessionKey: string;
   firstUserText: string | null;
   lastTimestamp: number | null;
-  messageCount: number;
+  /** Omitted when the summary came from the bounded head/tail read. */
+  messageCount?: number;
 };
 
 type TranscriptMessage = RawMessage;
@@ -251,37 +263,85 @@ function readRecentTranscriptMessages(transcriptPath: string, limit: number): Tr
   }
 }
 
-async function readAllTranscriptMessages(transcriptPath: string): Promise<TranscriptMessage[]> {
-  const fsP = await import('node:fs/promises');
-  const raw = await fsP.readFile(transcriptPath, 'utf8');
-  return raw.split(/\r?\n/).filter(Boolean).flatMap((line) => {
+type TranscriptSummaryFields = {
+  firstUserText: string | null;
+  lastTimestamp: number | null;
+};
+
+function parseTranscriptLinesFromChunk(
+  chunk: string,
+  hasPartialFirstLine: boolean,
+  hasPartialLastLine: boolean,
+): TranscriptMessage[] {
+  const lines = chunk.split(/\r?\n/);
+  if (hasPartialFirstLine) lines.shift();
+  if (hasPartialLastLine) lines.pop();
+  return lines.flatMap((line) => {
+    if (!line.trim()) return [];
     const message = parseMessageLine(line);
     return message ? [message] : [];
   });
 }
 
-function summarizeTranscriptMessages(sessionKey: string, messages: TranscriptMessage[]): SessionSummary {
-  let firstUserText: string | null = null;
-  let lastTimestamp: number | null = null;
-  let messageCount = 0;
+/**
+ * Read only the head and tail of a transcript for sidebar summaries.
+ *
+ * The head supplies the first visible user text; the tail supplies the latest
+ * message timestamp. We deliberately do not count messages here — the gateway's
+ * sessions.list payload already carries messageCount, and a full-file scan just
+ * to compute a secondary sort key is what made long-lived histories slow.
+ */
+function readTranscriptSummaryFields(transcriptPath: string): TranscriptSummaryFields {
+  let fd: number | null = null;
+  try {
+    fd = openSync(transcriptPath, 'r');
+    const size = fstatSync(fd).size;
+    if (size === 0) return { firstUserText: null, lastTimestamp: null };
 
-  for (const message of messages) {
-    const normalizedTs = normalizeTimestamp(message.timestamp);
-    if (normalizedTs != null) {
-      lastTimestamp = normalizedTs;
-    }
-    if (message.role === 'user') {
-      messageCount += 1;
-    }
-    if (firstUserText == null && message.role === 'user') {
+    const headLength = Math.min(size, SUMMARY_HEAD_READ_BYTES);
+    const headBuffer = Buffer.allocUnsafe(headLength);
+    readSync(fd, headBuffer, 0, headLength, 0);
+    const headMessages = parseTranscriptLinesFromChunk(
+      headBuffer.toString('utf8'),
+      false,
+      headLength < size,
+    );
+
+    let firstUserText: string | null = null;
+    for (const message of headMessages) {
+      if (message.role !== 'user') continue;
       const text = cleanSummaryUserText(extractMessageText(message.content));
       if (text && !isInternalSummaryText(text)) {
         firstUserText = text;
+        break;
       }
     }
-  }
 
-  return { sessionKey, firstUserText, lastTimestamp, messageCount };
+    const tailStart = Math.max(0, size - SUMMARY_TAIL_READ_BYTES);
+    const tailLength = size - tailStart;
+    const tailBuffer = Buffer.allocUnsafe(tailLength);
+    readSync(fd, tailBuffer, 0, tailLength, tailStart);
+    const tailMessages = parseTranscriptLinesFromChunk(
+      tailBuffer.toString('utf8'),
+      tailStart > 0,
+      false,
+    );
+
+    let lastTimestamp: number | null = null;
+    for (let index = tailMessages.length - 1; index >= 0; index -= 1) {
+      const normalizedTs = normalizeTimestamp(tailMessages[index]?.timestamp);
+      if (normalizedTs != null) {
+        lastTimestamp = normalizedTs;
+        break;
+      }
+    }
+
+    return { firstUserText, lastTimestamp };
+  } catch {
+    return { firstUserText: null, lastTimestamp: null };
+  } finally {
+    if (fd !== null) closeSync(fd);
+  }
 }
 
 function parseSessionKey(sessionKey: string): { agentId: string; suffix: string } | null {
@@ -1148,27 +1208,29 @@ function resolveSessionTranscriptPathByKey(
   return resolvedSrcPath ?? null;
 }
 
-async function loadSessionSummary(sessionKey: string): Promise<SessionSummary> {
+async function loadSessionSummary(
+  sessionKey: string,
+  readSessionsJsonForAgent: (agentId: string) => Promise<Record<string, unknown>> = readSessionsJson,
+): Promise<SessionSummary> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) {
-    return { sessionKey, firstUserText: null, lastTimestamp: null, messageCount: 0 };
+    return { sessionKey, firstUserText: null, lastTimestamp: null };
   }
 
   try {
     const sessionsDir = join(getOpenClawConfigDir(), 'agents', parsed.agentId, 'sessions');
-    const sessionsJson = await readSessionsJson(parsed.agentId);
+    const sessionsJson = await readSessionsJsonForAgent(parsed.agentId);
     const transcriptPath = resolveSessionTranscriptPathByKey(sessionKey, sessionsDir, sessionsJson);
     if (!transcriptPath) {
-      return { sessionKey, firstUserText: null, lastTimestamp: null, messageCount: 0 };
+      return { sessionKey, firstUserText: null, lastTimestamp: null };
     }
 
-    const messages = await readAllTranscriptMessages(transcriptPath);
-    return summarizeTranscriptMessages(sessionKey, messages);
+    const fields = readTranscriptSummaryFields(transcriptPath);
+    return { sessionKey, ...fields };
   } catch {
-    return { sessionKey, firstUserText: null, lastTimestamp: null, messageCount: 0 };
+    return { sessionKey, firstUserText: null, lastTimestamp: null };
   }
 }
-
 async function loadSessionTranscriptByKey(sessionKey: string, limit: number, gateway?: Pick<GatewayManager, 'rpc'>): Promise<RawMessage[] | null> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return null;
@@ -1792,13 +1854,46 @@ export function createSessionsApi(ctx: {
     summaries: async (payload) => {
       const body = isRecord(payload) ? payload as SessionPayload : {};
       const sessionKeys = Array.isArray(body.sessionKeys)
-        ? body.sessionKeys.filter((value): value is string => typeof value === 'string' && value.startsWith('agent:'))
+        ? [...new Set(body.sessionKeys.filter(
+          (value): value is string => typeof value === 'string' && value.startsWith('agent:'),
+        ))].slice(0, MAX_SESSION_SUMMARY_KEYS)
         : [];
       if (sessionKeys.length === 0) return { success: true, summaries: [] };
-      return {
-        success: true,
-        summaries: await Promise.all(sessionKeys.map((sessionKey) => loadSessionSummary(sessionKey))),
+
+      // sessions.json is shared by every session of an agent. Without this
+      // cache a 300-session sidebar issued 300 reads/parses of the same file.
+      const sessionsJsonCache = new Map<string, Promise<Record<string, unknown>>>();
+      const readSessionsJsonOnce = (agentId: string) => {
+        let pending = sessionsJsonCache.get(agentId);
+        if (!pending) {
+          pending = readSessionsJson(agentId);
+          sessionsJsonCache.set(agentId, pending);
+        }
+        return pending;
       };
+
+      // Bound disk concurrency. The previous unbounded Promise.all could open
+      // hundreds of transcripts at once and stall the main process.
+      const summaries = new Array<SessionSummary>(sessionKeys.length);
+      let nextIndex = 0;
+      const worker = async () => {
+        while (nextIndex < sessionKeys.length) {
+          const index = nextIndex;
+          nextIndex += 1;
+          summaries[index] = await loadSessionSummary(
+            sessionKeys[index]!,
+            readSessionsJsonOnce,
+          );
+        }
+      };
+      await Promise.all(
+        Array.from(
+          { length: Math.min(SESSION_SUMMARY_CONCURRENCY, sessionKeys.length) },
+          () => worker(),
+        ),
+      );
+
+      return { success: true, summaries };
     },
     history: async (payload) => {
       const body = isRecord(payload) ? payload as SessionPayload : {};

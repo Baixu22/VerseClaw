@@ -157,6 +157,7 @@ export default defineConfig(({ command }) => ({
           resolve: { alias },
           build: {
             outDir: 'dist-electron/main',
+            emptyOutDir: true,
             reportCompressedSize: false,
             rollupOptions: {
               external: isMainProcessExternal,
@@ -175,6 +176,7 @@ export default defineConfig(({ command }) => ({
           resolve: { alias },
           build: {
             outDir: 'dist-electron/preload',
+            emptyOutDir: true,
             reportCompressedSize: false,
             rollupOptions: {
               external: ['electron'],

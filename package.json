@@ -31,7 +31,6 @@
     "runtime:effectiveness": "node scripts/runtime-effectiveness.mjs",
     "runtime:effectiveness:live": "node scripts/runtime-effectiveness.mjs --live",
     "runtime:effectiveness:report": "node scripts/runtime-effectiveness.mjs --report-only",
-    "runtime:effectiveness:codegraph-e2e": "vitest run --config vitest.runtime-effectiveness.config.ts openclaw_runtime/extensions/codegraph/runtime.e2e.test.ts --reporter=verbose",
     "runtime:long-stability": "node scripts/runtime-long-stability.mjs",
     "ext:bridge": "node scripts/generate-ext-bridge.mjs",
     "build": "node scripts/generate-ext-bridge.mjs && pnpm run build:vite && pnpm run build:runtime && zx scripts/bundle-openclaw.mjs && zx scripts/bundle-openclaw-plugins.mjs && zx scripts/bundle-openclaw-runtime.mjs && zx scripts/bundle-preinstalled-skills.mjs && node scripts/bundle-main-runtime.mjs && node scripts/run-electron-builder.mjs",

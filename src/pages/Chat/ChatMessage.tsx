@@ -19,6 +19,7 @@ import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { useTickingNow } from '@/hooks/use-ticking-now';
 import { statFile } from '@/lib/file-preview-client';
 import { hostApi } from '@/lib/host-api';
 import type { RawMessage, AttachedFileMeta } from '@/stores/chat';
@@ -676,7 +677,10 @@ function AssistantStreamStatusBar({
   status: NonNullable<ChatMessageProps['streamStatus']>;
 }) {
   const { t, i18n } = useTranslation('chat');
-  const elapsed = formatElapsedSeconds(status.startedAt, status.now);
+  // Keep the 1 Hz clock inside the small status bar. Previously the page held
+  // this state, so every tick re-rendered the whole Chat tree.
+  const now = useTickingNow(status.active);
+  const elapsed = formatElapsedSeconds(status.startedAt, now);
   const tokenCount = status.tokenCount ?? 0;
   const dotState = status.state === 'syncing'
     ? 'syncing'

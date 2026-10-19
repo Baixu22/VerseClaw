@@ -31,7 +31,7 @@ function fixtureComponent(
 describe("runtime effectiveness eval report helpers", () => {
   it("summarizes component decisions and treats AgentMap shadow-only as healthy", () => {
     const components = [
-      fixtureComponent("codegraph", "effective"),
+      fixtureComponent("impact-parity", "effective"),
       fixtureComponent("task-mission-repair", "effective"),
       fixtureComponent("clawgraph", "effective"),
       fixtureComponent("agentmap-shadow", "shadow-only"),
@@ -55,17 +55,17 @@ describe("runtime effectiveness eval report helpers", () => {
 
   it("blocks the aggregate decision when a core component is not effective", () => {
     const decision = decideRuntimeEffectiveness([
-      fixtureComponent("codegraph", "not-effective"),
+      fixtureComponent("impact-parity", "not-effective"),
       fixtureComponent("agentmap-shadow", "shadow-only"),
     ]);
 
     expect(decision.status).toBe("blocked");
-    expect(decision.blockedComponents).toEqual(["codegraph"]);
+    expect(decision.blockedComponents).toEqual(["impact-parity"]);
   });
 
   it("renders markdown with live lane context and component scores", () => {
     const components = [
-      fixtureComponent("codegraph", "effective"),
+      fixtureComponent("impact-parity", "effective"),
       fixtureComponent("agentmap-shadow", "shadow-only"),
     ];
     const report: RuntimeEffectivenessReport = {
@@ -89,7 +89,7 @@ describe("runtime effectiveness eval report helpers", () => {
 
     const markdown = renderRuntimeEffectivenessMarkdown(report);
     expect(markdown).toContain("# Runtime Effectiveness Evaluation");
-    expect(markdown).toContain("| codegraph | deterministic | yes | effective | 100% |");
+    expect(markdown).toContain("| impact-parity | deterministic | yes | effective | 100% |");
     expect(markdown).toContain("Live Lane");
     expect(markdown).toContain("no provider");
     expect(markdown).toContain("Boundary Matrix");

@@ -18,7 +18,6 @@
     "runtime-research",
     ".design-staging",
     ".audit",
-    ".agent-workbench",
     "artifacts/chain-audit",
     "artifacts/real-runtime-validation",
     "artifacts/agent-dev-recording-test-1783053411792",

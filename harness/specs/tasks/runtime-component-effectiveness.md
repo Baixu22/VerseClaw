@@ -11,8 +11,7 @@ touchedAreas:
   - harness/specs/tasks/runtime-component-effectiveness.md
   - tests/unit/helpers/runtime-effectiveness-eval.ts
   - tests/unit/runtime-effectiveness-eval.test.ts
-  - vitest.runtime-effectiveness.config.ts
-  - openclaw_runtime/extensions/codegraph/**
+  - harness/specs/fixtures/codegraph-retirement/**
   - openclaw_runtime/src/agents/task-loop-controller.ts
   - openclaw_runtime/src/agents/mission-control/**
   - openclaw_runtime/src/agents/clawgraph/**
@@ -36,10 +35,9 @@ requiredTests:
   - pnpm exec vitest run tests/unit/runtime-effectiveness-eval.test.ts
   - pnpm runtime:effectiveness
   - pnpm exec vitest run tests/integration/loop-stability-check.test.ts
-  - pnpm runtime:effectiveness:codegraph-e2e
 acceptance:
-  - The deterministic lane covers CodeGraph, TaskLoop/MissionLoop repair, ClawGraph, AgentMap shadow, and transcript/tool-call repair.
-  - Deterministic hard-gate acceptance requires aggregate `effective`, CodeGraph `effective`, no blocked components, no regressions, and AgentMap `shadow-only`.
+  - The deterministic lane covers frozen CodeGraph impact parity, TaskLoop/MissionLoop repair, ClawGraph, AgentMap shadow, and transcript/tool-call repair.
+  - Deterministic hard-gate acceptance requires aggregate `effective`, `impact-parity` `effective`, no blocked components, no regressions, and AgentMap `shadow-only`.
   - `report.json` includes component records with triggered, decision, effectivenessScore, metrics, evidence, and risks.
   - `report.json` includes backward-compatible `boundaryMatrix`, `overlaps`, `optimizationTargets`, `notInScope`, and `acceptance` sections.
   - AgentMap is scored as shadow-only unless future specs explicitly promote it; default-off/no-authority boundaries are treated as required evidence.

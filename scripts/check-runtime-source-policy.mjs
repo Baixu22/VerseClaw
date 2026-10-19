@@ -32,13 +32,13 @@ export async function collectRuntimeSourcePolicyErrors() {
   if (!runtimePackage.scripts?.['deadcode:unused-files']) failures.push('runtime package must expose deadcode:unused-files');
   const gitignore = await readFile(path.join(ROOT, '.gitignore'), 'utf8');
   for (const required of [
-    '!openclaw_runtime/extensions/codegraph/dist/',
-    '!openclaw_runtime/extensions/codegraph/dist/**',
     '!openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/dist/',
     '!openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/dist/**',
   ]) {
     if (!gitignore.includes(required)) failures.push(`.gitignore missing tracked build-output exception: ${required}`);
   }
+  if (gitignore.includes('!openclaw_runtime/extensions/codegraph/dist/')) failures.push('.gitignore must not retain removed CodeGraph tracked-output exception');
+  if (!upstream.includes('CodeGraph') || !upstream.includes('2026-10-17')) failures.push('UPSTREAM.md must record the CodeGraph retirement date');
   if (!layoutDoc.includes('send-button-states-design.md')) failures.push('repository layout doc must record the moved root design file');
   if (!layoutDoc.includes('packages/vtoken')) failures.push('repository layout doc must classify packages/vtoken');
   return failures;

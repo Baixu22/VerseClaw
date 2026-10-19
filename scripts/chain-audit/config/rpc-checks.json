@@ -206,7 +206,7 @@
     },
     {
       "id": "clawgraph",
-      "name": "CodeGraph 集成",
+      "name": "ClawGraph 工作流",
       "checks": [
         {
           "method": "clawgraph.listWorkflows",

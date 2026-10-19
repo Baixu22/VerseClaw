@@ -1,5 +1,3 @@
-import type { LanguageCode } from '../language';
-
 // EN
 import enCommon from './locales/en/common.json';
 import enSettings from './locales/en/settings.json';
@@ -84,27 +82,7 @@ import ruCodeReview from './locales/ru/codeReview.json';
 import ruBrowser from './locales/ru/browser.json';
 import ruInbox from './locales/ru/inbox.json';
 
-export const I18N_NAMESPACES = [
-  'common',
-  'settings',
-  'dashboard',
-  'chat',
-  'channels',
-  'agents',
-  'observability',
-  'skills',
-  'cron',
-  'dreams',
-  'setup',
-  'menu',
-  'taskLedger',
-  'remoteTasks',
-  'clawGraph',
-  'knowledge',
-  'codeReview',
-  'browser',
-  'inbox',
-] as const;
+export { I18N_NAMESPACES } from './namespaces';
 
 export const I18N_RESOURCES = {
   en: {
@@ -193,11 +171,4 @@ export const I18N_RESOURCES = {
   },
 } as const;
 
-export type MenuLabels = typeof enMenu;
-
-export const MENU_LABELS: Record<LanguageCode, MenuLabels> = {
-  en: enMenu,
-  zh: zhMenu,
-  ja: jaMenu,
-  ru: ruMenu,
-};
+export { MENU_LABELS, type MenuLabels } from './menu-labels';

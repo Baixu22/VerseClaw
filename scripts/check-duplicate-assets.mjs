@@ -31,12 +31,24 @@ async function sha256(filePath) {
 }
 
 export async function findMissingTrackedFiles() {
+  // `git ls-files` includes tracked paths that are intentionally deleted in the
+  // working tree. A deletion is a valid pending change, not a missing asset;
+  // only paths still present in the index and absent on disk are anomalies.
+  const deletedOutput = execFileSync(
+    "git",
+    ["diff", "--name-only", "--diff-filter=D", "--"],
+    { cwd: ROOT, encoding: "utf8" },
+  );
+  const intentionallyDeleted = new Set(
+    deletedOutput.split(/\r?\n/u).filter(Boolean).map(normalize),
+  );
   const missing = [];
   for (const filePath of listTrackedFiles()) {
+    if (intentionallyDeleted.has(filePath)) continue;
     try {
       await stat(path.join(ROOT, filePath));
     } catch (error) {
-      if (error?.code === 'ENOENT') missing.push(filePath);
+      if (error?.code === "ENOENT") missing.push(filePath);
       else throw error;
     }
   }

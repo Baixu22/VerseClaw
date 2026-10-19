@@ -3,9 +3,8 @@
 // staleness is decided by content-hash comparison (files.produced_hash vs the hash of
 // the file's current content), not by ragcode's indexStatus stale/pending lists.
 //
-// Mode names follow the vendored codegraph extension's freshnessMode tiers
-// (fast | balanced | strict, see extensions/codegraph — ALIGNMENT 校正2 / SEAM_MAP §C),
-// which this repo already standardized on. ragcode's env values map onto them.
+// Mode names follow the retired CodeGraph freshnessMode tiers
+// (fast | balanced | strict) documented in the frozen parity provenance / SEAM_MAP §C; ragcode's env values map onto them.
 
 export type FreshnessMode = "fast" | "balanced" | "strict";
 

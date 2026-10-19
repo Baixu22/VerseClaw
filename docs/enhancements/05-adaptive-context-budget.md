@@ -12,7 +12,7 @@ See also (sibling designs, by filename + scope only): `01-layered-execution-isol
 
 ## Exploration Log
 
-**CodeGraph note.** This repo vendors CodeGraph as a runtime extension (`openclaw_runtime/extensions/codegraph/`) whose 15 tools (`codegraph_decide`, `codegraph_context_plan`, `codegraph_search`, `codegraph_impact`, …) are registered for the runtime's own agents. They are NOT connected to this design session. Direct-exploration equivalent performed instead: `Grep` for tier/threshold/quality/capability identifiers across `openclaw_runtime/packages/agent-core/src/harness/compaction/`, `openclaw_runtime/src/context-engine/`, `openclaw_runtime/src/agents/`, plus full `Read` of every planner/artifact/type file below and targeted reads of `docs/clawx-design-overview.md` (§1.2 non-goals at line 30, §5.2 sub-domains at line 253, §8.5.1 at line 739).
+**CodeGraph note (historical).** At the time of this exploration, the repo shipped CodeGraph as a runtime extension with 15 tools. CodeGraph was retired and removed on 2026-10-17; this paragraph records the original exploration context only.
 
 **Files read** (repo-relative; maturity label per module):
 
@@ -29,7 +29,7 @@ See also (sibling designs, by filename + scope only): `01-layered-execution-isol
 - `openclaw_runtime/src/context-engine/shadow-flags.ts` — FULL. `contextProviderShadowFlagEnabled` helper. **shadow** infrastructure (ADVISORY_ONLY flag reads).
 - `openclaw_runtime/src/agents/agent-compaction-constants.ts` — FULL. `MIN_PROMPT_BUDGET_TOKENS = 8_000`, `MIN_PROMPT_BUDGET_RATIO = 0.5`. **production**.
 - `openclaw_runtime/src/agents/bootstrap-budget.ts` — FULL. Bootstrap-file char budgets, `DEFAULT_BOOTSTRAP_NEAR_LIMIT_RATIO = 0.85` (bootstrap-budget.ts:10), truncation causes `per-file-limit` / `total-limit`, once/always warning dedupe. **production**.
-- `openclaw_runtime/extensions/codegraph/README.md` + `index.ts` (targeted grep). `codegraph_decide` operation vocabulary at index.ts:218. **production** extension (runtime-agent tools).
+- `openclaw_runtime/extensions/codegraph/README.md` + `index.ts` (historical targeted grep; the directory was removed on 2026-10-17). `codegraph_decide` operation vocabulary was at index.ts:218.
 - `openclaw_runtime/src/gateway/methods/core-descriptors.ts` (targeted grep) — `sessions.compactionHistory` / `sessions.compressionArtifact` RPCs at core-descriptors.ts:218-219. **production**.
 - `docs/clawx-design-overview.md` — §1.2 non-goals, §5.2 sub-domains, §8.5.1 Long Conversation Control and Manual Compaction.
 
@@ -58,7 +58,7 @@ See also (sibling designs, by filename + scope only): `01-layered-execution-isol
 - **Trim independently of compaction.** Cache-TTL context pruning (`context-pruning/pruner.ts`, production, config-gated) soft-trims prunable tool results at ratio 0.3 and hard-clears at 0.5 of the char window.
 - **Budget bootstrap injection.** `bootstrap-budget.ts` (production) already speaks a budget vocabulary — per-file/total char limits, `nearLimitRatio` 0.85, truncation warnings.
 - **Describe context sources.** The `ContextEngine` contract (production) assembles under an optional `tokenBudget`, and compatibility provider manifests retain `priority` / `order`; no production registry runner currently consumes them.
-- **Classify tasks deterministically (prior art).** `codegraph_decide` (production extension) infers `OperationType` from cheap keyword heuristics (e.g. "refactor/重构/rename/extract" → `refactor`, "where/在哪/find/entrypoint" → `locate`, `extensions/codegraph/index.ts:595,600`) and derives risk/freshness policy from it — without a model call.
+- **Classify tasks deterministically (prior art).** `codegraph_decide` (historical production extension, removed 2026-10-17) inferred `OperationType` from cheap keyword heuristics (e.g. "refactor/重构/rename/extract" → `refactor`, "where/在哪/find/entrypoint" → `locate`, `extensions/codegraph/index.ts:595,600`) and derives risk/freshness policy from it — without a model call.
 
 ### What the system CANNOT do (the precise gap)
 
@@ -346,7 +346,7 @@ export type BudgetShadowRecord = {
 | `src/context-engine/shadow-flags.ts` (shadow infra) | **Additive:** one more flag reader for `contextBudget` mode (same `runtime.*`/`agents.defaults.*` resolution style). | Reuse the existing flag plumbing instead of a new config system. |
 | `src/agents/agent-compaction-constants.ts` (production) | **Additive exports only:** re-export `DEFAULT_TIER_THRESHOLDS` and add `DEFAULT_BUDGET_RESERVE_RATIO` derived from `MIN_PROMPT_BUDGET_RATIO`/`MIN_PROMPT_BUDGET_TOKENS`. Existing constants untouched. | One constants home; extend its vocabulary rather than duplicating it. |
 | `src/agents/bootstrap-budget.ts` (production) | **No change.** The planner reuses its vocabulary (`nearLimitRatio` 0.85 semantics for "budget near-limit" warnings; once/always warning dedupe pattern for budget warnings). | Prior art for budget warnings; consume, don't copy. |
-| `extensions/codegraph/` (production extension) | **No change.** Classifier mirrors the `OperationType` vocabulary and keyword heuristics as data. | Vocabulary alignment without a runtime dependency on an optional extension. |
+| `extensions/codegraph/` (historical production extension, removed 2026-10-17) | **No change.** The classifier mirrors the historical `OperationType` vocabulary and keyword heuristics as data. | Vocabulary alignment without a runtime dependency on an optional extension. |
 | `src/gateway/methods/core-descriptors.ts` (production) | **Pilot phase only, additive:** optional read-only `sessions.contextBudget` descriptor (scope `operator.read`) returning the active plan + shadow rollup. Not needed for shadow phase. | Lets Verse Claw's Chat UI show the plan next to the existing compaction indicator (§8.5.1's UI already shows quality/score); renderer stays display-only per §1.2. |
 
 ## 5. Data Flow

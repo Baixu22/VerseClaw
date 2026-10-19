@@ -5,8 +5,6 @@ node_modules/
 
 # Build outputs
 dist/
-!openclaw_runtime/extensions/codegraph/dist/
-!openclaw_runtime/extensions/codegraph/dist/**
 !openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/dist/
 !openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/dist/**
 dist-electron/
@@ -2006,3 +2004,8 @@ openclaw_runtime/_tmp_*
 !/docs/dev/session-handoff-depth-20261013/
 !/docs/dev/session-handoff-depth-20261013/acceptance.json
 !/docs/dev/session-handoff-depth-20261013/SHA256SUMS
+
+# Local audit workspaces under artifacts contain nested .git repositories.
+# They are registered as local-only inputs in scripts/repository-artifacts.json.
+/artifacts/chain-audit/
+/artifacts/real-runtime-validation/

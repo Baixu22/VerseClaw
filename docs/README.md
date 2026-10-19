@@ -13,6 +13,7 @@ and the [default configuration matrix](dev/default-config-matrix.md).
 - [Role-first design](role-first-design.md)
 - [Role identity taxonomy](role-identity-taxonomy.md)
 - [Role packs](role-packs.md)
+- [Role maturation and enhancement proposal](role-maturation-and-enhancement-proposal.md)
 
 ## Development and operations
 

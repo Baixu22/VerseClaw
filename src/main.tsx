@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './i18n';
+import { i18nReady } from './i18n';
 import './styles/globals.css';
 import { RendererRoot } from './components/loading/RendererRoot';
 import { installMockHostBridge, isMockModeEnabled, seedMockPersistedSettings } from './lib/mock-host-bridge';
@@ -17,8 +17,13 @@ if (isMockModeEnabled()) {
   installMockHostBridge();
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <RendererRoot />
-  </React.StrictMode>,
-);
+// Wait for the navigator locale bundle before the first paint. The promise is
+// internally fail-open, so a dynamic import failure still mounts the app with
+// the English fallback instead of leaving a blank window.
+void i18nReady.then(() => {
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <RendererRoot />
+    </React.StrictMode>,
+  );
+});

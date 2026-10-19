@@ -42,11 +42,13 @@ function hasExportedDeclaration(source, symbol) {
 function callSiteCount(symbol, definingFile) {
   const pattern = new RegExp(`\\b${escapeRegExp(symbol)}\\b`, "gu");
   let count = 0;
-  for (const filePath of walk(repoRoot)) {
+  for (const sourceRoot of SOURCE_ROOTS) {
+  for (const filePath of walk(path.join(repoRoot, sourceRoot))) {
     const relativePath = path.relative(repoRoot, filePath).replaceAll(path.sep, "/");
     if (relativePath === definingFile) continue;
     const source = fs.readFileSync(filePath, "utf8");
     count += [...source.matchAll(pattern)].length;
+  }
   }
   return count;
 }

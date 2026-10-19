@@ -1,7 +1,7 @@
 {
   "schema": "clawx.agent-dev.quality-report.v1",
-  "generatedAt": "2026-10-14T09:39:53.776Z",
-  "success": true,
+  "generatedAt": "2026-10-18T03:47:54.011Z",
+  "success": false,
   "buildReuse": {
     "mode": "reuse",
     "status": "reused",
@@ -11,15 +11,15 @@
     "artifacts": [
       {
         "path": "dist/index.html",
-        "mtimeMs": 1791970270875.446
+        "mtimeMs": 1792248901116.9482
       },
       {
         "path": "dist-electron/main/index.js",
-        "mtimeMs": 1791970275170.767
+        "mtimeMs": 1792248904870.0781
       },
       {
         "path": "dist-electron/preload/index.js",
-        "mtimeMs": 1791970275207.804
+        "mtimeMs": 1792248904893.8572
       }
     ],
     "requiredArtifacts": [
@@ -38,9 +38,9 @@
     ]
   },
   "decision": {
-    "status": "needs-full-gate",
-    "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
-    "dailyLoopReady": true,
+    "status": "blocked",
+    "reason": "playwright-agent-dev failed; inspect stdoutTail/stderrTail before relying on this run.",
+    "dailyLoopReady": false,
     "releaseReady": false,
     "fullGateComplete": false,
     "budgetStatus": "ok",
@@ -69,22 +69,17 @@
     "reuseStatus": "reused"
   },
   "playwright": {
-    "ok": true,
-    "durationMs": 13854,
+    "ok": false,
+    "durationMs": 1849,
     "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
     "spec": "tests/e2e/agent-dev-quality.spec.ts",
     "mode": "smoke",
     "expectedTests": 1,
     "diagnostics": {
       "kind": "playwright",
-      "passed": 1,
-      "reportedDurationMs": 12400,
-      "tests": [
-        {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-          "durationMs": 10900
-        }
-      ]
+      "passed": 0,
+      "reportedDurationMs": null,
+      "tests": []
     },
     "evidence": [
       "Settings > Developer Agent Dev Workbench host-api record path"

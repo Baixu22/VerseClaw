@@ -31,9 +31,12 @@ manifest and this document stay aligned.
 
 ## Tracked build output
 
-The `codegraph` and `verseconf` WASM/browser bundles under `dist/` are tracked
-because the desktop build consumes them as prebuilt runtime assets. They may
-only be removed after a reproducible build replacement is wired into the normal
-build and packaging path. The `.gitignore` exceptions for those two directories
-are therefore intentional; a policy check verifies that the exceptions remain
-paired with the documented reason.
+The `verseconf` WASM/browser bundles under `dist/` are tracked because the
+desktop build consumes them as prebuilt runtime assets. They may only be
+removed after a reproducible build replacement is wired into the normal build
+and packaging path. The `.gitignore` exceptions for that directory are
+therefore intentional; a policy check verifies that the exception remains paired
+with the documented reason.
+
+CodeGraph's tracked `dist` exception was removed on 2026-10-17 together with the
+retired plugin. Only its frozen impact-parity fixture remains.

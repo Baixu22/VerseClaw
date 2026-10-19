@@ -1131,7 +1131,6 @@ export function Chat() {
     return () => { if (controlScopeRef.current === controlScope) controlScopeRef.current = null; };
   }, [controlScope]);
   const [sessionLineage, setSessionLineage] = useState<Record<string, SessionLineageOverride>>({});
-  const [streamStatusNow, setStreamStatusNow] = useState(() => Date.now());
   const [composerDraft, setComposerDraft] = useState('');
   const [composerPaused, setComposerPaused] = useState(false);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
@@ -3039,7 +3038,6 @@ export function Chat() {
     ? {
       active: true,
       startedAt: activeRuntimeRunStartedAt,
-      now: streamStatusNow,
       tokenCount: liveUsage?.totalTokens ?? null,
       state: (pendingFinal || streamingTools.length > 0 || hasRunningRuntimeToolStatus
         ? 'syncing'
@@ -3060,12 +3058,6 @@ export function Chat() {
     [userRunCards],
   );
 
-  useEffect(() => {
-    if (!assistantStreamStatus?.active) return;
-    setStreamStatusNow(Date.now());
-    const timer = window.setInterval(() => setStreamStatusNow(Date.now()), 1000);
-    return () => window.clearInterval(timer);
-  }, [assistantStreamStatus?.active, activeRuntimeRunStartedAt]);
 
   // Cache generated files per run so the activity receipt and artifact panel share one projection.
   const filesByRun = useMemo(() => {
@@ -3497,7 +3489,6 @@ export function Chat() {
                               status={card.status}
                               startedAt={card.startedAt}
                               endedAt={card.endedAt}
-                              now={streamStatusNow}
                               expanded={expanded}
                               reasoning={cardReasoning}
                               reasoningStreaming={card.active && assistantStreamStatus?.state === 'thinking'}

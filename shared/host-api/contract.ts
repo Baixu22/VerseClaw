@@ -293,6 +293,47 @@ export type OpenClawDoctorResult = HostSuccess & {
 };
 export type OpenClawDoctorPayload = { mode: OpenClawDoctorMode };
 
+// ── Local backup inspect / restore ────────────────────────────────────────
+//
+// `openclaw backup create` can produce a `tar.gz` archive with a manifest, but
+// the product had no restore surface. These types describe a conservative
+// restore: only paths that do not exist yet are written, existing files are
+// reported and left untouched, and entries escaping the manifest asset roots
+// are rejected. See `electron/services/backup-restore.ts`.
+
+export type BackupRestoreEntryAction = 'create' | 'skip-existing' | 'rejected';
+
+export type BackupRestorePreviewEntry = {
+  archivePath: string;
+  targetPath: string;
+  action: BackupRestoreEntryAction;
+  reason?: string;
+};
+
+export type BackupRestorePreviewResult = HostSuccess & {
+  valid: boolean;
+  dryRun: true;
+  archivePath: string;
+  createdAt?: string;
+  includeWorkspace?: boolean;
+  entries: BackupRestorePreviewEntry[];
+  counts: { create: number; skipped: number; rejected: number };
+  errors: string[];
+};
+
+export type BackupRestoreResult = HostSuccess & {
+  dryRun: boolean;
+  archivePath: string;
+  written: string[];
+  skipped: string[];
+  rejected: Array<{ archivePath: string; reason: string }>;
+  errors: string[];
+  rolledBack: string[];
+};
+
+/** Inspect (and optionally apply) a restore. `dryRun` performs no writes. */
+export type BackupRestorePayload = { archivePath: string; dryRun?: boolean };
+
 export type OpenClawStatusResult = {
   packageExists: boolean;
   isBuilt: boolean;
@@ -5189,6 +5230,8 @@ export type HostApiContract = {
   app: {
     version: () => string;
     openClawDoctor: (payload: OpenClawDoctorPayload) => Omit<OpenClawDoctorResult, 'mode'>;
+    backupRestorePreview: (payload: { archivePath: string }) => BackupRestorePreviewResult;
+    backupRestoreApply: (payload: { archivePath: string }) => BackupRestoreResult;
   };
   openclaw: {
     status: () => OpenClawStatusResult;
