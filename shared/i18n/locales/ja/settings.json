@@ -52,10 +52,6 @@
       "title": "課金",
       "description": "トークン使用履歴、コスト見積もり、利用アクティビティのグラフ。"
     },
-    "storage": {
-      "title": "ストレージとメモリ",
-      "description": "アプリのキャッシュ、ログ、セッション成果物をスキャンして整理します。"
-    },
     "archived": {
       "title": "アーカイブ",
       "description": "アーカイブした会話を復元、または完全に削除します。"
@@ -737,87 +733,6 @@
         "default": "既定値から",
         "kill": "kill switch により無効"
       }
-    }
-  },
-  "storage": {
-    "title": "ストレージとメモリ",
-    "description": "アプリのキャッシュ、ログ、セッション成果物をスキャンして整理します。",
-    "systemInfo": {
-      "ram": "メモリ (RAM)",
-      "disk": "ディスク容量",
-      "cpu": "CPU",
-      "used": "使用量",
-      "free": "空き",
-      "total": "合計",
-      "cores": "{{count}} コア",
-      "load": "{{percent}}% 負荷",
-      "notAvailable": "利用不可"
-    },
-    "categories": {
-      "logs": {
-        "label": "ログ",
-        "description": "アプリケーションログファイル"
-      },
-      "sessions": {
-        "label": "セッション",
-        "description": "会話トランスクリプト"
-      },
-      "trajectories": {
-        "label": "軌跡",
-        "description": "エージェント実行軌跡とフライトレコーダー"
-      },
-      "mediaOutbound": {
-        "label": "送信メディア",
-        "description": "生成されたメディア成果物"
-      },
-      "mediaThumbs": {
-        "label": "メディアサムネイル",
-        "description": "キャッシュされたメディアサムネイル（再生成可能）"
-      },
-      "uvCache": {
-        "label": "UV キャッシュ",
-        "description": "Python uv ツールキャッシュ（再生成可能）"
-      },
-      "electronCache": {
-        "label": "Electron キャッシュ",
-        "description": "Electron ランタイムキャッシュ（再生成可能）"
-      },
-      "trash": {
-        "label": "ゴミ箱",
-        "description": "クリーンアップ待ちのソフト削除項目"
-      }
-    },
-    "actions": {
-      "refresh": "更新",
-      "scan": "今すぐスキャン",
-      "deleteSelected": "選択項目を削除",
-      "askAgent": "エージェントに推奨を依頼",
-      "confirmDelete": "削除を確認",
-      "cancel": "キャンセル",
-      "dryRun": "ドライラン",
-      "itemsSelected": "{{count}} 件選択中"
-    },
-    "status": {
-      "scanning": "スキャン中...",
-      "deleting": "削除中...",
-      "empty": "項目が見つかりません",
-      "truncated": "最初の {{count}} 件を表示（切り捨て）",
-      "safeToDelete": "削除可能",
-      "notDeletable": "削除不可",
-      "regenerable": "再生成可能"
-    },
-    "toast": {
-      "deleteSucceeded": "{{count}} 件削除、{{bytes}} 解放",
-      "deleteFailed": "削除失敗：{{error}}",
-      "scanFailed": "スキャン失敗：{{error}}",
-      "ramLow": "メモリが不足しています。設定 > ストレージ でクリーンアップを検討してください。",
-      "diskLow": "ディスク容量が不足しています。設定 > ストレージ でクリーンアップを検討してください。"
-    },
-    "agent": {
-      "recommendPrompt": "アプリのストレージをスキャンし、安全に削除できる項目を推奨して容量を解放してください。clawx-storage ツールでスキャンと推奨を行い、tool-ui OptionListCard として推奨内容を提示して、どの項目を削除するか確認できるようにしてください。"
-    },
-    "riskNote": {
-      "activeSession": "アクティブセッション — 削除できません"
     }
   },
   "about": {

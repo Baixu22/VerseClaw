@@ -107,11 +107,6 @@
     "restarting": "Gateway restarting",
     "warning": "Gateway is not running."
   },
-  "storageHealth": {
-    "ramLow": "Memory is running low",
-    "diskLow": "Disk space is running low",
-    "bannerLow": "Storage low — click to clean up"
-  },
   "resourceTracker": {
     "chip": {
       "ariaLabel": "{{count}} running resources",

@@ -60,9 +60,6 @@ const settingsBilling = createPreloadableLazy<{ embedded?: boolean }>(() => impo
 const settingsBrowser = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/components/settings/BrowserSettingsPanel').then((module) => ({
   default: module.BrowserSettingsPanel as ComponentType<{ embedded?: boolean }>,
 })));
-const settingsStorage = createPreloadableLazy<Record<string, never>>(() => import('./sections/StorageCleanerSection').then((module) => ({
-  default: module.StorageCleanerSection as ComponentType<Record<string, never>>,
-})));
 const settingsArchived = createPreloadableLazy<Record<string, never>>(() => import('./sections/ArchivedSection').then((module) => ({
   default: module.ArchivedSection as ComponentType<Record<string, never>>,
 })));
@@ -78,7 +75,6 @@ const standaloneSections = {
   billing: settingsBilling.Component,
   browser: settingsBrowser.Component,
 } as const;
-const SettingsStorage = settingsStorage.Component;
 const SettingsArchived = settingsArchived.Component;
 const SettingsRecovery = settingsRecovery.Component;
 
@@ -103,7 +99,6 @@ export function SettingsRoute() {
     system: { title: t('navigation.system.title'), description: t('navigation.system.description') },
     developer: { title: t('navigation.developer.title'), description: t('navigation.developer.description') },
     billing: { title: t('navigation.billing.title'), description: t('navigation.billing.description') },
-    storage: { title: t('navigation.storage.title'), description: t('navigation.storage.description') },
     archived: { title: t('navigation.archived.title'), description: t('navigation.archived.description') },
     recovery: { title: t('navigation.recovery.title'), description: t('navigation.recovery.description') },
   } satisfies Record<Exclude<SettingsSectionId, 'overview'>, { title: string; description: string }>;
@@ -136,8 +131,8 @@ export function SettingsRoute() {
     );
   }
 
-  if (currentSection === 'storage' || currentSection === 'archived') {
-    const StandalonePage = currentSection === 'storage' ? SettingsStorage : SettingsArchived;
+  if (currentSection === 'archived') {
+    const StandalonePage = SettingsArchived;
     return (
       <Suspense fallback={loadingShell}>
         <SettingsPageChrome title={meta.title} description={meta.description}>

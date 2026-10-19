@@ -9,7 +9,6 @@ export type SettingsSectionId =
   | 'system'
   | 'developer'
   | 'billing'
-  | 'storage'
   | 'archived'
   | 'recovery';
 
@@ -23,7 +22,6 @@ export const SETTINGS_SECTION_SEGMENTS: Record<Exclude<SettingsSectionId, 'overv
   system: 'system',
   developer: 'developer',
   billing: 'billing',
-  storage: 'storage',
   archived: 'archived',
   recovery: 'recovery',
 };

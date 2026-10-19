@@ -165,7 +165,7 @@ A build target does not guarantee a downloadable package for a particular versio
 | General | Theme, language, startup options and interface detail |
 | System & Runtime / Developer | Gateway, runtime, proxy, CLI, Doctor and Agent Dev Workbench |
 | Billing | Local token history, estimated costs and activity |
-| Storage & Memory / Archived / Sessions & Recovery | Storage scanning and cleanup, archive restoration, session state and recovery settings |
+| Archived / Sessions & Recovery | Archive restoration, session state and recovery settings |
 
 No separate database server is required. App settings use local storage; runtime subsystems use configuration files, JSONL transcripts and SQLite state databases.
 

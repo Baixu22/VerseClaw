@@ -14,7 +14,6 @@ import { BootShellHandoff, SetupRouteLoadingShell } from './components/loading/R
 import { useSettingsStore } from './stores/settings';
 import { useGatewayStore } from './stores/gateway';
 import { useProviderStore } from './stores/providers';
-import { useStorageHealthStore } from './stores/storage-health';
 import { useSessionActivityStore } from './stores/session-activity';
 import { rendererExtensionRegistry } from './extensions/registry';
 import { loadExternalRendererExtensions } from './extensions/_ext-bridge.generated';
@@ -257,7 +256,6 @@ function App() {
   const devModeUnlocked = useSettingsStore((state) => state.devModeUnlocked);
   const initGateway = useGatewayStore((state) => state.init);
   const initProviders = useProviderStore((state) => state.init);
-  const initStorageHealth = useStorageHealthStore((state) => state.init);
   const initSessionActivity = useSessionActivityStore((state) => state.init);
   const handleNewChat = useNewChatAction();
   const uiVersion = resolveUiVersion(window.electron?.platform, window.location.search);
@@ -333,14 +331,6 @@ function App() {
   useEffect(() => {
     initProviders();
   }, [initProviders]);
-
-  // Initialize storage health polling on mount
-  useEffect(() => {
-    void initStorageHealth();
-    return () => {
-      useStorageHealthStore.getState().stop();
-    };
-  }, [initStorageHealth]);
 
   // Redirect to setup wizard if not complete
   useEffect(() => {

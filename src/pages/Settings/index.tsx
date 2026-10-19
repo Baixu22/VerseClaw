@@ -116,7 +116,6 @@ const settingsDcsProdFlags = createPreloadableLazy<Record<string, never>>(() => 
 const settingsVtokenBridge = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/VtokenBridgePanel').then((m) => ({ default: m.VtokenBridgePanel as ComponentType<Record<string, never>> })));
 const settingsContextLayers = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ContextLayersExplainer').then((m) => ({ default: m.ContextLayersExplainer as ComponentType<Record<string, never>> })));
 const settingsEfficiencySampling = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/EfficiencySamplingPanel').then((m) => ({ default: m.EfficiencySamplingPanel as ComponentType<Record<string, never>> })));
-const settingsStorage = createPreloadableLazy<Record<string, never>>(() => import('./sections/StorageCleanerSection').then((m) => ({ default: m.StorageCleanerSection as ComponentType<Record<string, never>> })));
 const settingsRecovery = createPreloadableLazy<Record<string, never>>(() => import('./sections/RecoverySettingsSection').then((m) => ({ default: m.RecoverySettingsSection as ComponentType<Record<string, never>> })));
 
 const SettingsModelsLazy = settingsModels.Component;
@@ -132,7 +131,6 @@ const DcsProdFlagsPanelLazy = settingsDcsProdFlags.Component;
 const VtokenBridgePanelLazy = settingsVtokenBridge.Component;
 const ContextLayersExplainerLazy = settingsContextLayers.Component;
 const EfficiencySamplingPanelLazy = settingsEfficiencySampling.Component;
-const StorageCleanerSectionLazy = settingsStorage.Component;
 type ControlUiInfo = {
   port: number;
   hasToken: boolean;
@@ -147,7 +145,6 @@ function preloadSettingsSection(section: SettingsSectionId) {
     case 'billing': settingsBilling.preload(); break;
     case 'system': settingsProjectRules.preload(); break;
     case 'developer': settingsAgentDev.preload(); settingsRemoteTaskDeveloper.preload(); settingsDcsProdFlags.preload(); settingsVtokenBridge.preload(); settingsContextControlPlane.preload(); settingsEfficiencySampling.preload(); break;
-    case 'storage': settingsStorage.preload(); break;
     case 'recovery': settingsRecovery.preload(); break;
     default: break;
   }
@@ -1302,10 +1299,6 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
       title: t('navigation.billing.title'),
       description: t('navigation.billing.description'),
     },
-    storage: {
-      title: t('navigation.storage.title'),
-      description: t('navigation.storage.description'),
-    },
     archived: {
       title: t('navigation.archived.title'),
       description: t('navigation.archived.description'),
@@ -1381,13 +1374,6 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
       testId: 'settings-nav-billing',
     },
     {
-      id: 'storage',
-      to: '/settings/storage',
-      icon: <Trash2 className="h-5 w-5" />,
-      ...sectionMeta.storage,
-      testId: 'settings-nav-storage',
-    },
-    {
       id: 'archived',
       to: '/settings/archived',
       icon: <Archive className="h-5 w-5" />,
@@ -1416,7 +1402,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
     {
       id: 'operations',
       title: t('navigation.groups.operations'),
-      sections: settingsSections.filter((section) => ['billing', 'system', 'developer', 'storage', 'recovery'].includes(section.id)),
+      sections: settingsSections.filter((section) => ['billing', 'system', 'developer', 'recovery'].includes(section.id)),
     },
   ] as const;
 
@@ -2290,19 +2276,6 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
             </>
           )}
 
-          {currentSection === 'storage' && (
-            <>
-              <Separator className="bg-black/5 dark:bg-white/5" />
-              <div data-testid="settings-storage-section">
-                <h2 data-testid="settings-storage-title" className="mb-4 text-sm font-medium leading-[21px] text-foreground">
-                  {t('storage.title')}
-                </h2>
-                <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
-                  <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><StorageCleanerSectionLazy /></div>
-                </Suspense>
-              </div>
-            </>
-          )}
 
           {currentSection === 'general' && (
             <SettingsSection title={t('about.title')}>

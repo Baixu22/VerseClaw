@@ -69,7 +69,7 @@ test.describe('startup and route loading experience', () => {
 
       await page.getByTestId('sidebar-nav-settings').click();
       await expect(page.getByTestId('settings-implementation')).toBeVisible();
-      await page.getByTestId('settings-nav-storage').click();
+      await page.getByTestId('settings-nav-archived').click();
 
       await expect(page.getByTestId('settings-page')).toBeVisible();
       await expect(page.getByTestId('settings-back-button')).toBeVisible();
@@ -77,7 +77,7 @@ test.describe('startup and route loading experience', () => {
       const transitionContent = page.locator('[data-testid="settings-section-loading"], [data-testid="settings-implementation"]');
       await expect(transitionContent.first()).toBeVisible();
 
-      await expect(page.getByTestId('storage-info-ram')).toBeVisible({ timeout: 10_000 });
+      await expect(page.getByTestId('settings-nav-archived')).toBeVisible({ timeout: 10_000 });
       await expect(page.getByTestId('settings-section-loading')).toHaveCount(0);
     } finally {
       await closeElectronApp(app);

@@ -52,10 +52,6 @@
       "title": "Billing",
       "description": "Token usage history, cost estimates, and usage activity charts."
     },
-    "storage": {
-      "title": "Storage & Memory",
-      "description": "Scan and clean app caches, logs, and session artefacts."
-    },
     "archived": {
       "title": "Archived",
       "description": "Restore or permanently delete conversations you have archived."
@@ -737,87 +733,6 @@
         "default": "default",
         "kill": "kill switch"
       }
-    }
-  },
-  "storage": {
-    "title": "Storage & Memory",
-    "description": "Scan and clean app caches, logs, and session artefacts.",
-    "systemInfo": {
-      "ram": "Memory (RAM)",
-      "disk": "Disk Space",
-      "cpu": "CPU",
-      "used": "Used",
-      "free": "Free",
-      "total": "Total",
-      "cores": "{{count}} cores",
-      "load": "{{percent}}% load",
-      "notAvailable": "Not available"
-    },
-    "categories": {
-      "logs": {
-        "label": "Logs",
-        "description": "Application log files"
-      },
-      "sessions": {
-        "label": "Sessions",
-        "description": "Conversation transcripts"
-      },
-      "trajectories": {
-        "label": "Trajectories",
-        "description": "Agent run trajectories and flight records"
-      },
-      "mediaOutbound": {
-        "label": "Outbound Media",
-        "description": "Generated media artifacts"
-      },
-      "mediaThumbs": {
-        "label": "Media Thumbnails",
-        "description": "Cached media thumbnails (regenerable)"
-      },
-      "uvCache": {
-        "label": "UV Cache",
-        "description": "Python uv tool cache (regenerable)"
-      },
-      "electronCache": {
-        "label": "Electron Cache",
-        "description": "Electron runtime cache (regenerable)"
-      },
-      "trash": {
-        "label": "Trash",
-        "description": "Soft-deleted items awaiting cleanup"
-      }
-    },
-    "actions": {
-      "refresh": "Refresh",
-      "scan": "Scan Now",
-      "deleteSelected": "Delete Selected",
-      "askAgent": "Ask Agent to Recommend",
-      "confirmDelete": "Confirm Delete",
-      "cancel": "Cancel",
-      "dryRun": "Dry Run",
-      "itemsSelected": "{{count}} item(s) selected"
-    },
-    "status": {
-      "scanning": "Scanning...",
-      "deleting": "Deleting...",
-      "empty": "No items found",
-      "truncated": "Showing first {{count}} items (truncated)",
-      "safeToDelete": "Safe to delete",
-      "notDeletable": "Not deletable",
-      "regenerable": "Regenerable"
-    },
-    "toast": {
-      "deleteSucceeded": "Deleted {{count}} item(s), freed {{bytes}}",
-      "deleteFailed": "Delete failed: {{error}}",
-      "scanFailed": "Scan failed: {{error}}",
-      "ramLow": "Memory is running low. Consider cleaning up in Settings > Storage.",
-      "diskLow": "Disk space is running low. Consider cleaning up in Settings > Storage."
-    },
-    "agent": {
-      "recommendPrompt": "Please scan the app's storage and recommend items I can safely delete to free up space. Use the clawx-storage tools to scan and recommend, then present the recommendation as a tool-ui OptionListCard so I can confirm which items to delete."
-    },
-    "riskNote": {
-      "activeSession": "Active session — cannot be deleted"
     }
   },
   "about": {

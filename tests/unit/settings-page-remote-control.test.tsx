@@ -345,7 +345,7 @@ describe('Settings remote control section', () => {
   it('keeps the settings shell visible while a lazy section is loading', async () => {
     window.history.replaceState({}, '', '/?e2eSkipSetup=1&e2eSettingsSectionDelayMs=900');
     render(
-      <MemoryRouter initialEntries={['/settings/storage']}>
+      <MemoryRouter initialEntries={['/settings/archived']}>
         <SettingsRoute />
       </MemoryRouter>,
     );

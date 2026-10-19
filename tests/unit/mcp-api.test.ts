@@ -172,7 +172,7 @@ describe('mcp api registry', () => {
 
     await expect(api.resolveForContext({ agentId: 'main' })).resolves.toMatchObject({
       success: true,
-      servers: [{ id: 'clawx-git' }, { id: 'clawx-storage' }],
+      servers: [{ id: 'clawx-git' }],
       agentId: 'main',
     });
 
@@ -185,7 +185,7 @@ describe('mcp api registry', () => {
 
     await expect(api.deleteServer({ id: 'filesystem' })).resolves.toMatchObject({
       success: true,
-      servers: [{ id: 'clawx-git' }, { id: 'clawx-storage' }],
+      servers: [{ id: 'clawx-git' }],
     });
   });
 
@@ -229,7 +229,6 @@ describe('mcp api registry', () => {
 
     expect(resolved.servers.map((server) => server.id)).toEqual([
       'clawx-git',
-      'clawx-storage',
       'global',
       'agent-default',
       'agent-owned',
@@ -237,7 +236,6 @@ describe('mcp api registry', () => {
     ]);
     expect(resolved.servers.map((server) => server.localAddress)).toEqual([
       'clawx://mcp/clawx-git',
-      'clawx://mcp/clawx-storage',
       'clawx://mcp/global',
       'clawx://mcp/agent-default',
       'clawx://mcp/agent-owned',
@@ -308,7 +306,6 @@ describe('mcp api registry', () => {
     });
     // ...but ClawX bridge servers (clawx:// localAddress) must NOT leak into runtime config.
     expect(Object.keys(mirrored.mcp?.servers ?? {})).not.toContain('clawx-git');
-    expect(Object.keys(mirrored.mcp?.servers ?? {})).not.toContain('clawx-storage');
 
     const listed = await api.listServers();
     expect(listed.servers.find((server) => server.id === 'http-local')).toMatchObject({
@@ -896,11 +893,6 @@ describe('mcp api registry', () => {
           id: 'clawx-git',
           scope: 'workspace',
           localAddress: 'clawx://mcp/clawx-git',
-        }),
-        expect.objectContaining({
-          id: 'clawx-storage',
-          scope: 'workspace',
-          localAddress: 'clawx://mcp/clawx-storage',
         }),
       ],
     });

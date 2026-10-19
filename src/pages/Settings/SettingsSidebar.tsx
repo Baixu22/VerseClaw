@@ -16,7 +16,6 @@ const sections = [
   { id: 'billing', to: '/settings/billing', icon: 'appearance', group: 'operations' },
   { id: 'system', to: '/settings/system', icon: 'computer', group: 'operations' },
   { id: 'developer', to: '/settings/developer', icon: 'hooks', group: 'operations' },
-  { id: 'storage', to: '/settings/storage', icon: 'environments', group: 'operations' },
   { id: 'archived', to: '/settings/archived', icon: 'archived', group: 'experience' },
   { id: 'recovery', to: '/settings/recovery', icon: 'computer', group: 'operations' },
 ] satisfies Array<{

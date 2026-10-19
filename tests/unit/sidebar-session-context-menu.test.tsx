@@ -46,11 +46,6 @@ vi.mock('@/stores/inbox', () => ({
   isInboxItemActionable: () => false,
 }));
 
-vi.mock('@/stores/storage-health', () => ({
-  useStorageHealthStore: (selector: (state: { ramLow: boolean; diskLow: boolean }) => unknown) =>
-    selector({ ramLow: false, diskLow: false }),
-}));
-
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
     window: { syncTrafficLightPosition: vi.fn().mockResolvedValue(undefined) },
