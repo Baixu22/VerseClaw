@@ -21,8 +21,13 @@ if (isMockModeEnabled()) {
 
 initRendererPerformanceMetrics();
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <RendererRoot />
-  </React.StrictMode>,
-);
+// Wait for the navigator locale bundle before the first paint. The promise is
+// internally fail-open, so a dynamic import failure still mounts the app with
+// the English fallback instead of leaving a blank window.
+void i18nReady.then(() => {
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <RendererRoot />
+    </React.StrictMode>,
+  );
+});
