@@ -1645,6 +1645,14 @@
         "gateway_unavailable": "Gateway 不可用"
       }
     },
+    "contextPressure": {
+      "title": "会话上下文",
+      "cacheRead": "缓存命中的 token",
+      "warmHitRate": "暖前缀命中率",
+      "lastTurnHitRate": "上一轮命中率",
+      "estimatedCost": "预估费用",
+      "unknown": "尚未测量"
+    },
     "taskLoopUpgrade": {
       "title": "可升级为 Task Loop",
       "summary": "项目级执行与检查点。",

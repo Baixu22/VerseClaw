@@ -72,7 +72,7 @@ export function buildRuntimeBlackboard(input: RuntimeBlackboardInput): RuntimeBl
               outputSha256: artifact.outputSha256,
               redacted: artifact.redacted,
               truncated: artifact.truncated,
-              outputPreview: artifact.outputText.slice(0, 240),
+              outputPreview: buildSubagentReport({ outputText: artifact.outputText }).body,
             },
             confidence: 0.9,
             evidenceRefs: [artifact.artifactId, artifact.childRunId],
@@ -119,6 +119,9 @@ export function buildRuntimeBlackboard(input: RuntimeBlackboardInput): RuntimeBl
 
   for (const outcome of input.resultBundle.roleOutcomes) {
     const evidenceRefs = outcome.evidenceRefs.map((ref) => ref.ref);
+    // Build the bounded report once; it is the single source for the preview,
+    // the pre-truncation size, and the truncation flag.
+    const report = outcome.outputText ? buildSubagentReport({ outputText: outcome.outputText }) : null;
     const appended = appendBlackboardEntry(
       state,
       {
@@ -130,7 +133,21 @@ export function buildRuntimeBlackboard(input: RuntimeBlackboardInput): RuntimeBl
           subject: outcome.task,
           conclusion: outcome.status,
           phase: outcome.phase,
-          ...(outcome.outputText ? { outputPreview: outcome.outputText.trim().slice(0, 240) } : {}),
+          ...(report
+            ? {
+                outputPreview: report.body,
+                outputOriginalChars: report.originalChars,
+                outputReportChars: report.body.length,
+                outputTruncated: report.truncated,
+                // Bundle-level input consumption, named as such so it is never
+                // mistaken for a per-role figure. Together with the per-role
+                // report size this makes the isolation boundary readable:
+                // what the subagent burned in vs what it handed back.
+                ...(typeof input.resultBundle.budgetSummary?.inputTokens === "number"
+                  ? { bundleInputTokens: input.resultBundle.budgetSummary.inputTokens }
+                  : {}),
+              }
+            : {}),
         },
         confidence: outcome.status === "completed" ? 0.8 : 0.45,
         evidenceRefs: evidenceRefs.length > 0 ? evidenceRefs : input.resultBundle.traceIds,
@@ -197,4 +214,57 @@ export function buildRuntimeBlackboard(input: RuntimeBlackboardInput): RuntimeBl
   }
 
   return { state, summary: summaryFromState(state), traceEvents };
+}
+
+/**
+ * TF-0448: bounded subagent report contract.
+ *
+ * Deep Agents frames a general-purpose subagent as existing "purely for
+ * context isolation": it burns through intermediate reasoning and returns a
+ * report, and everything in between is discarded. Verse Claw already had the
+ * discard half — two call sites truncated to a magic 240 chars — but had no
+ * named contract and no measurement, so nobody could see what a subagent
+ * actually cost versus what it returned.
+ *
+ * This adds the missing half: a named, bounded report shape with a measurable
+ * size. It is deliberately reporting-only. It does not alter orchestration,
+ * does not grant the report any authority over Task Ledger facts, and does not
+ * change what a verifier may decide.
+ */
+
+/** Hard cap on a single role report body. */
+export const SUBAGENT_REPORT_MAX_CHARS = 2_000;
+
+export type SubagentReport = {
+  /** Bounded body. Never contains intermediate reasoning or tool narration. */
+  body: string;
+  /** Character count of the *untruncated* body, so truncation is observable. */
+  originalChars: number;
+  /** True when `body` was cut at SUBAGENT_REPORT_MAX_CHARS. */
+  truncated: boolean;
+  /** Failures the role itself surfaced, kept out of the body on purpose. */
+  failures: string[];
+};
+
+/**
+ * Build a bounded report from a role's raw output.
+ *
+ * Normalises whitespace first: a subagent that streams progress lines should
+ * not be able to spend the whole budget on blank lines, and the reported
+ * size should describe content rather than formatting.
+ */
+export function buildSubagentReport(input: {
+  outputText?: string | null;
+  failures?: readonly string[];
+  maxChars?: number;
+}): SubagentReport {
+  const maxChars = Math.max(1, input.maxChars ?? SUBAGENT_REPORT_MAX_CHARS);
+  const normalized = (input.outputText ?? "").replace(/\s+/g, " ").trim();
+  const truncated = normalized.length > maxChars;
+  return {
+    body: truncated ? normalized.slice(0, maxChars) : normalized,
+    originalChars: normalized.length,
+    truncated,
+    failures: [...(input.failures ?? [])],
+  };
 }

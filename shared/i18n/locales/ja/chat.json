@@ -1645,6 +1645,14 @@
         "gateway_unavailable": "Gateway を利用できません"
       }
     },
+    "contextPressure": {
+      "title": "セッションコンテキスト",
+      "cacheRead": "キャッシュ提供トークン",
+      "warmHitRate": "ウォームヒット率",
+      "lastTurnHitRate": "前ターンのヒット率",
+      "estimatedCost": "推定コスト",
+      "unknown": "未計測"
+    },
     "taskLoopUpgrade": {
       "title": "Task Loop を利用できます",
       "summary": "チェックポイント付きのプロジェクト実行。",

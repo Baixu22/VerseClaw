@@ -90,3 +90,29 @@ describe('runtime orchestration blackboard projection', () => {
     expect(JSON.stringify(result.state.entries)).not.toContain('"memoryWrite"');
   });
 });
+
+describe('subagent isolation boundary (TF-0448 AC3)', () => {
+  it('records bundle input consumption alongside the per-role report size', () => {
+    const b = bundle();
+    b.budgetSummary = { inputTokens: 120_000, outputTokens: 3_000, totalTokens: 123_000 };
+    const projection = buildRuntimeBlackboard({
+      resultBundle: b,
+      failures: [],
+      knownRoleNames: ['planner', 'implementer', 'tester'],
+      now: '2026-10-19T00:00:00.000Z',
+    });
+
+    const claim = projection.state.entries.find(
+      (entry) => entry.authorRole === 'implementer' && entry.type === 'claim',
+    );
+    expect(claim).toBeTruthy();
+    // Bundle-level input, explicitly named so it is not read as per-role.
+    expect(claim?.content.bundleInputTokens).toBe(120_000);
+    // Per-role report size, so "burned in vs handed back" is readable.
+    expect(typeof claim?.content.outputReportChars).toBe('number');
+    expect(Number(claim?.content.outputReportChars)).toBeGreaterThan(0);
+    expect(Number(claim?.content.outputReportChars)).toBeLessThanOrEqual(
+      Number(claim?.content.outputOriginalChars),
+    );
+  });
+});

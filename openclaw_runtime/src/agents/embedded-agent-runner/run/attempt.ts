@@ -298,6 +298,7 @@ import {
   collectPromptCacheToolNames,
   beginPromptCacheObservation,
   completePromptCacheObservation,
+  recordPromptCacheHitRateSample,
   isPromptCacheObservabilityEnabled,
   type PromptCacheBreak,
   type PromptCacheChange,
@@ -5340,6 +5341,20 @@ ${preparedProjection.systemPromptAddition}`
                 usage: attemptUsage,
               })
             : null;
+          // Advance the bounded prompt-cache hit-rate window for this key. This is
+          // the headline context-assembly metric (how much of the prompt budget
+          // was actually served from cache), kept separate from break
+          // attribution above. It is accounting only: nothing here routes,
+          // reorders or reprioritises a run.
+          if (cacheObservabilityEnabled) {
+            recordPromptCacheHitRateSample({
+              sessionId: params.sessionId,
+              promptCacheKey: params.promptCacheKey,
+              sessionKey: params.sessionKey,
+              usage: attemptUsage,
+              broke: Boolean(cacheBreak),
+            });
+          }
           if (cacheBreak) {
             // Publish the break on the sequenced agent bus so Main can persist it
             // in the existing prompt-cache ledger. Only bounded identifiers,

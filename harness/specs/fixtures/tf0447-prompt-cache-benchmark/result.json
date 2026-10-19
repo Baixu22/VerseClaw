@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TF-0447",
+  "driven_by": "agent",
+  "generatedBy": "tests/unit/tf0447-prompt-cache-benchmark.test.ts",
+  "command": "vitest run tests/unit/tf0447-prompt-cache-benchmark.test.ts",
+  "taskSet": "harness/specs/fixtures/tf0447-prompt-cache-benchmark/tasks.json",
+  "taskCount": 7,
+  "boundary": "Replays a recorded usage shape; no model is called and no provider bill is verified. The number proves the accounting and attribution path, not production cost.",
+  "aggregate": {
+    "cacheReadTokens": 190000,
+    "totalPromptTokens": 251000,
+    "observations": 7,
+    "breaks": 2,
+    "hitRate": 0.7569721115537849
+  },
+  "perTask": [
+    {
+      "id": "code-warm-1",
+      "cacheReadTokens": 48000,
+      "totalPromptTokens": 49200,
+      "hitRate": 0.975609756097561,
+      "breaks": 0,
+      "breakChanges": null
+    },
+    {
+      "id": "code-warm-2",
+      "cacheReadTokens": 100000,
+      "totalPromptTokens": 102100,
+      "hitRate": 0.9794319294809011,
+      "breaks": 0,
+      "breakChanges": null
+    },
+    {
+      "id": "code-warm-3",
+      "cacheReadTokens": 161000,
+      "totalPromptTokens": 164600,
+      "hitRate": 0.9781287970838396,
+      "breaks": 0,
+      "breakChanges": null
+    },
+    {
+      "id": "code-break-system",
+      "cacheReadTokens": 163000,
+      "totalPromptTokens": 196600,
+      "hitRate": 0.8290946083418108,
+      "breaks": 1,
+      "breakChanges": [
+        "systemPrompt"
+      ]
+    },
+    {
+      "id": "code-cold-1",
+      "cacheReadTokens": 163000,
+      "totalPromptTokens": 222600,
+      "hitRate": 0.7322551662174304,
+      "breaks": 2,
+      "breakChanges": [
+        "tools"
+      ]
+    },
+    {
+      "id": "chat-warm-1",
+      "cacheReadTokens": 12000,
+      "totalPromptTokens": 12800,
+      "hitRate": 0.9375,
+      "breaks": 0,
+      "breakChanges": null
+    },
+    {
+      "id": "chat-warm-2",
+      "cacheReadTokens": 27000,
+      "totalPromptTokens": 28400,
+      "hitRate": 0.9507042253521126,
+      "breaks": 0,
+      "breakChanges": null
+    }
+  ]
+}
