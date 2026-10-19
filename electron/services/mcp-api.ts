@@ -847,7 +847,7 @@ function normalizeRuntimeMcpTransport(server: McpServerConfig): 'sse' | 'streama
   return undefined;
 }
 
-/** ClawX-local bridge servers (clawx-git / clawx-storage) are implemented in Main, not in the
+/** ClawX-local bridge servers (clawx-git) are implemented in Main, not in the
  *  OpenClaw runtime, so they must never be mirrored into openclaw.json. Note that user servers
  *  also carry a hydrated `clawx://mcp/<id>` localAddress, so exclusion is by builtin id only. */
 function isClawxBridgeServer(server: McpServerConfig | StoredMcpServer): boolean {
