@@ -1,0 +1,500 @@
+{
+  "schema": "clawx.tf0423.session-loading-probe/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0423-session-probe",
+  "candidate": "codex/tf0423-session-loading-regression-20261019",
+  "completedAt": "2026-10-19T00:22:42.005Z",
+  "platform": "win32",
+  "node": "v24.16.0",
+  "fixture": {
+    "sessionCount": 333,
+    "transcriptBytes": 59932341,
+    "transcriptMiB": 57.16
+  },
+  "loadSessionsMs": 976,
+  "idleLongTaskControl": {
+    "windowMs": 2500,
+    "longTasksOver50Ms": [
+      {
+        "startTime": 4114.799999999814,
+        "durationMs": 120
+      },
+      {
+        "startTime": 4534.399999999907,
+        "durationMs": 94
+      },
+      {
+        "startTime": 4938.5,
+        "durationMs": 115
+      },
+      {
+        "startTime": 5360.399999999907,
+        "durationMs": 95
+      },
+      {
+        "startTime": 5760.799999999814,
+        "durationMs": 97
+      },
+      {
+        "startTime": 6169.199999999953,
+        "durationMs": 107
+      }
+    ]
+  },
+  "longSessionOpen": {
+    "sessionKey": "agent:main:s000",
+    "transcriptBytes": 180000,
+    "durationMs": 231.80000000004657,
+    "renderedRows": 3,
+    "longTasksOver50Ms": [
+      {
+        "startTime": 6511.799999999814,
+        "durationMs": 103
+      },
+      {
+        "startTime": 6615.799999999814,
+        "durationMs": 118
+      },
+      {
+        "startTime": 6915.5,
+        "durationMs": 112
+      },
+      {
+        "startTime": 7337.399999999907,
+        "durationMs": 101
+      },
+      {
+        "startTime": 7741.399999999907,
+        "durationMs": 111
+      },
+      {
+        "startTime": 8143.5,
+        "durationMs": 104
+      },
+      {
+        "startTime": 8549.5,
+        "durationMs": 106
+      },
+      {
+        "startTime": 8956,
+        "durationMs": 107
+      }
+    ]
+  },
+  "sessionSwitch": {
+    "count": 5,
+    "durationsMs": [
+      249.19999999995343,
+      249.80000000004657,
+      323.5,
+      346.19999999995343,
+      325.9000000001397
+    ],
+    "p50Ms": 323.5,
+    "p95Ms": 346.19999999995343,
+    "longTasksOver50Ms": [
+      {
+        "startTime": 4114.799999999814,
+        "durationMs": 120
+      },
+      {
+        "startTime": 4534.399999999907,
+        "durationMs": 94
+      },
+      {
+        "startTime": 4938.5,
+        "durationMs": 115
+      },
+      {
+        "startTime": 5360.399999999907,
+        "durationMs": 95
+      },
+      {
+        "startTime": 5760.799999999814,
+        "durationMs": 97
+      },
+      {
+        "startTime": 6169.199999999953,
+        "durationMs": 107
+      },
+      {
+        "startTime": 6511.799999999814,
+        "durationMs": 103
+      },
+      {
+        "startTime": 6615.799999999814,
+        "durationMs": 118
+      },
+      {
+        "startTime": 6915.5,
+        "durationMs": 112
+      },
+      {
+        "startTime": 7337.399999999907,
+        "durationMs": 101
+      },
+      {
+        "startTime": 7741.399999999907,
+        "durationMs": 111
+      },
+      {
+        "startTime": 8143.5,
+        "durationMs": 104
+      },
+      {
+        "startTime": 8549.5,
+        "durationMs": 106
+      },
+      {
+        "startTime": 8956,
+        "durationMs": 107
+      },
+      {
+        "startTime": 9253.699999999953,
+        "durationMs": 128
+      },
+      {
+        "startTime": 9388.09999999986,
+        "durationMs": 114
+      },
+      {
+        "startTime": 9503.59999999986,
+        "durationMs": 186
+      },
+      {
+        "startTime": 9728.299999999814,
+        "durationMs": 105
+      },
+      {
+        "startTime": 9839.59999999986,
+        "durationMs": 120
+      },
+      {
+        "startTime": 9975,
+        "durationMs": 114
+      },
+      {
+        "startTime": 10090,
+        "durationMs": 176
+      },
+      {
+        "startTime": 10299.199999999953,
+        "durationMs": 102
+      },
+      {
+        "startTime": 10412.59999999986,
+        "durationMs": 162
+      },
+      {
+        "startTime": 10590.5,
+        "durationMs": 145
+      },
+      {
+        "startTime": 10736.799999999814,
+        "durationMs": 211
+      },
+      {
+        "startTime": 10987.199999999953,
+        "durationMs": 120
+      },
+      {
+        "startTime": 11119.899999999907,
+        "durationMs": 162
+      },
+      {
+        "startTime": 11297,
+        "durationMs": 168
+      },
+      {
+        "startTime": 11466.799999999814,
+        "durationMs": 257
+      },
+      {
+        "startTime": 11778.899999999907,
+        "durationMs": 160
+      },
+      {
+        "startTime": 11953,
+        "durationMs": 161
+      },
+      {
+        "startTime": 12129.59999999986,
+        "durationMs": 149
+      },
+      {
+        "startTime": 12279.899999999907,
+        "durationMs": 261
+      },
+      {
+        "startTime": 12596.399999999907,
+        "durationMs": 202
+      }
+    ]
+  },
+  "summariesHostCall": {
+    "calls": [
+      {
+        "durationMs": 0,
+        "keys": 40
+      }
+    ],
+    "requestedKeys": 40,
+    "durationMs": 0,
+    "durationP50Ms": 0
+  },
+  "idleRss": {
+    "durationMs": 300000,
+    "sampleMs": 5000,
+    "samples": [
+      {
+        "at": 1792369062001,
+        "rssBytes": 555474944
+      },
+      {
+        "at": 1792369067011,
+        "rssBytes": 556539904
+      },
+      {
+        "at": 1792369072031,
+        "rssBytes": 553259008
+      },
+      {
+        "at": 1792369077036,
+        "rssBytes": 334045184
+      },
+      {
+        "at": 1792369082053,
+        "rssBytes": 271515648
+      },
+      {
+        "at": 1792369087062,
+        "rssBytes": 270286848
+      },
+      {
+        "at": 1792369092078,
+        "rssBytes": 269144064
+      },
+      {
+        "at": 1792369097080,
+        "rssBytes": 268963840
+      },
+      {
+        "at": 1792369102088,
+        "rssBytes": 269467648
+      },
+      {
+        "at": 1792369107099,
+        "rssBytes": 267722752
+      },
+      {
+        "at": 1792369112105,
+        "rssBytes": 263254016
+      },
+      {
+        "at": 1792369117122,
+        "rssBytes": 266199040
+      },
+      {
+        "at": 1792369122126,
+        "rssBytes": 266285056
+      },
+      {
+        "at": 1792369127133,
+        "rssBytes": 266608640
+      },
+      {
+        "at": 1792369132144,
+        "rssBytes": 263462912
+      },
+      {
+        "at": 1792369137159,
+        "rssBytes": 266465280
+      },
+      {
+        "at": 1792369142172,
+        "rssBytes": 266870784
+      },
+      {
+        "at": 1792369147178,
+        "rssBytes": 266883072
+      },
+      {
+        "at": 1792369152187,
+        "rssBytes": 263405568
+      },
+      {
+        "at": 1792369157201,
+        "rssBytes": 266944512
+      },
+      {
+        "at": 1792369162217,
+        "rssBytes": 266948608
+      },
+      {
+        "at": 1792369167223,
+        "rssBytes": 266350592
+      },
+      {
+        "at": 1792369172237,
+        "rssBytes": 266121216
+      },
+      {
+        "at": 1792369177242,
+        "rssBytes": 266698752
+      },
+      {
+        "at": 1792369182254,
+        "rssBytes": 266608640
+      },
+      {
+        "at": 1792369187266,
+        "rssBytes": 266702848
+      },
+      {
+        "at": 1792369192271,
+        "rssBytes": 266117120
+      },
+      {
+        "at": 1792369197281,
+        "rssBytes": 266801152
+      },
+      {
+        "at": 1792369202293,
+        "rssBytes": 266878976
+      },
+      {
+        "at": 1792369207304,
+        "rssBytes": 266964992
+      },
+      {
+        "at": 1792369212316,
+        "rssBytes": 263417856
+      },
+      {
+        "at": 1792369217322,
+        "rssBytes": 266715136
+      },
+      {
+        "at": 1792369222336,
+        "rssBytes": 266838016
+      },
+      {
+        "at": 1792369227351,
+        "rssBytes": 266854400
+      },
+      {
+        "at": 1792369232367,
+        "rssBytes": 263884800
+      },
+      {
+        "at": 1792369237379,
+        "rssBytes": 266657792
+      },
+      {
+        "at": 1792369242383,
+        "rssBytes": 266788864
+      },
+      {
+        "at": 1792369247399,
+        "rssBytes": 266928128
+      },
+      {
+        "at": 1792369252415,
+        "rssBytes": 263303168
+      },
+      {
+        "at": 1792369257423,
+        "rssBytes": 266842112
+      },
+      {
+        "at": 1792369262428,
+        "rssBytes": 266919936
+      },
+      {
+        "at": 1792369267429,
+        "rssBytes": 267112448
+      },
+      {
+        "at": 1792369272437,
+        "rssBytes": 263561216
+      },
+      {
+        "at": 1792369277447,
+        "rssBytes": 267268096
+      },
+      {
+        "at": 1792369282460,
+        "rssBytes": 267374592
+      },
+      {
+        "at": 1792369287472,
+        "rssBytes": 267489280
+      },
+      {
+        "at": 1792369292473,
+        "rssBytes": 267137024
+      },
+      {
+        "at": 1792369297483,
+        "rssBytes": 267726848
+      },
+      {
+        "at": 1792369302491,
+        "rssBytes": 270585856
+      },
+      {
+        "at": 1792369307508,
+        "rssBytes": 266944512
+      },
+      {
+        "at": 1792369312511,
+        "rssBytes": 266936320
+      },
+      {
+        "at": 1792369317523,
+        "rssBytes": 265973760
+      },
+      {
+        "at": 1792369322534,
+        "rssBytes": 267083776
+      },
+      {
+        "at": 1792369327549,
+        "rssBytes": 267177984
+      },
+      {
+        "at": 1792369332562,
+        "rssBytes": 263626752
+      },
+      {
+        "at": 1792369337580,
+        "rssBytes": 267202560
+      },
+      {
+        "at": 1792369342585,
+        "rssBytes": 267210752
+      },
+      {
+        "at": 1792369347601,
+        "rssBytes": 267415552
+      },
+      {
+        "at": 1792369352614,
+        "rssBytes": 264019968
+      },
+      {
+        "at": 1792369357623,
+        "rssBytes": 267550720
+      }
+    ],
+    "longestMonotonicRise": 4,
+    "growthBytes": -287924224,
+    "persistentGrowth": false
+  },
+  "boundaries": [
+    "Gateway RPC is agent-mocked; sessions.summaries is the real Electron host service reading synthetic local transcripts.",
+    "Synthetic transcripts contain no private user content and are generated at runtime.",
+    "Timing is a local Windows Electron sample, not a cross-platform benchmark.",
+    "Switch latency is click -> two settled animation frames so the same probe runs on pre-change and post-change builds."
+  ]
+}

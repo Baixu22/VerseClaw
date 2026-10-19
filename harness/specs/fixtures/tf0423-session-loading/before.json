@@ -1,0 +1,308 @@
+{
+  "schema": "clawx.tf0423.session-loading-probe/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0423-session-probe",
+  "candidate": "9cae5341 (pre-TF-0423, 332-key sweep)",
+  "completedAt": "2026-10-19T00:17:14.953Z",
+  "platform": "win32",
+  "node": "v24.16.0",
+  "fixture": {
+    "sessionCount": 333,
+    "transcriptBytes": 59932341,
+    "transcriptMiB": 57.16
+  },
+  "loadSessionsMs": 563,
+  "idleLongTaskControl": {
+    "windowMs": 2500,
+    "longTasksOver50Ms": [
+      {
+        "startTime": 3922.6999999999534,
+        "durationMs": 93
+      },
+      {
+        "startTime": 4329.399999999907,
+        "durationMs": 78
+      },
+      {
+        "startTime": 4716,
+        "durationMs": 74
+      },
+      {
+        "startTime": 5090.5,
+        "durationMs": 94
+      },
+      {
+        "startTime": 5483.5,
+        "durationMs": 92
+      },
+      {
+        "startTime": 5886.300000000047,
+        "durationMs": 91
+      }
+    ]
+  },
+  "longSessionOpen": {
+    "sessionKey": "agent:main:s000",
+    "transcriptBytes": 180000,
+    "durationMs": 208.10000000009313,
+    "renderedRows": 3,
+    "longTasksOver50Ms": [
+      {
+        "startTime": 6134.300000000047,
+        "durationMs": 87
+      },
+      {
+        "startTime": 6222.199999999953,
+        "durationMs": 107
+      },
+      {
+        "startTime": 6524.59999999986,
+        "durationMs": 93
+      },
+      {
+        "startTime": 6916.09999999986,
+        "durationMs": 104
+      },
+      {
+        "startTime": 7317.300000000047,
+        "durationMs": 96
+      },
+      {
+        "startTime": 7720.399999999907,
+        "durationMs": 90
+      },
+      {
+        "startTime": 8123.199999999953,
+        "durationMs": 86
+      },
+      {
+        "startTime": 8511,
+        "durationMs": 84
+      }
+    ]
+  },
+  "sessionSwitch": {
+    "count": 5,
+    "durationsMs": [
+      204.5999999998603,
+      216,
+      215.39999999990687,
+      219.30000000004657,
+      222.10000000009313
+    ],
+    "p50Ms": 216,
+    "p95Ms": 222.10000000009313,
+    "longTasksOver50Ms": [
+      {
+        "startTime": 3485.6999999999534,
+        "durationMs": 125
+      },
+      {
+        "startTime": 3922.6999999999534,
+        "durationMs": 93
+      },
+      {
+        "startTime": 4329.399999999907,
+        "durationMs": 78
+      },
+      {
+        "startTime": 4716,
+        "durationMs": 74
+      },
+      {
+        "startTime": 5090.5,
+        "durationMs": 94
+      },
+      {
+        "startTime": 5483.5,
+        "durationMs": 92
+      },
+      {
+        "startTime": 5886.300000000047,
+        "durationMs": 91
+      },
+      {
+        "startTime": 6134.300000000047,
+        "durationMs": 87
+      },
+      {
+        "startTime": 6222.199999999953,
+        "durationMs": 107
+      },
+      {
+        "startTime": 6524.59999999986,
+        "durationMs": 93
+      },
+      {
+        "startTime": 6916.09999999986,
+        "durationMs": 104
+      },
+      {
+        "startTime": 7317.300000000047,
+        "durationMs": 96
+      },
+      {
+        "startTime": 7720.399999999907,
+        "durationMs": 90
+      },
+      {
+        "startTime": 8123.199999999953,
+        "durationMs": 86
+      },
+      {
+        "startTime": 8511,
+        "durationMs": 84
+      },
+      {
+        "startTime": 8844.199999999953,
+        "durationMs": 99
+      },
+      {
+        "startTime": 8947.399999999907,
+        "durationMs": 101
+      },
+      {
+        "startTime": 9049.699999999953,
+        "durationMs": 161
+      },
+      {
+        "startTime": 9247.300000000047,
+        "durationMs": 87
+      },
+      {
+        "startTime": 9340.09999999986,
+        "durationMs": 109
+      },
+      {
+        "startTime": 9460,
+        "durationMs": 96
+      },
+      {
+        "startTime": 9556.699999999953,
+        "durationMs": 161
+      },
+      {
+        "startTime": 9742.800000000047,
+        "durationMs": 95
+      },
+      {
+        "startTime": 9847.59999999986,
+        "durationMs": 108
+      },
+      {
+        "startTime": 9967.300000000047,
+        "durationMs": 95
+      },
+      {
+        "startTime": 10063.699999999953,
+        "durationMs": 160
+      },
+      {
+        "startTime": 10245.59999999986,
+        "durationMs": 89
+      },
+      {
+        "startTime": 10339.899999999907,
+        "durationMs": 105
+      },
+      {
+        "startTime": 10455.5,
+        "durationMs": 103
+      },
+      {
+        "startTime": 10560.09999999986,
+        "durationMs": 192
+      },
+      {
+        "startTime": 10782.699999999953,
+        "durationMs": 100
+      },
+      {
+        "startTime": 11100.59999999986,
+        "durationMs": 104
+      },
+      {
+        "startTime": 11223.399999999907,
+        "durationMs": 99
+      },
+      {
+        "startTime": 11323.300000000047,
+        "durationMs": 166
+      },
+      {
+        "startTime": 11515.800000000047,
+        "durationMs": 106
+      }
+    ]
+  },
+  "summariesHostCall": {
+    "calls": [
+      {
+        "durationMs": 0,
+        "keys": 332
+      },
+      {
+        "durationMs": 0,
+        "keys": 332
+      },
+      {
+        "durationMs": 0,
+        "keys": 332
+      },
+      {
+        "durationMs": 0,
+        "keys": 332
+      },
+      {
+        "durationMs": 0,
+        "keys": 332
+      },
+      {
+        "durationMs": 0,
+        "keys": 332
+      },
+      {
+        "durationMs": 0,
+        "keys": 332
+      }
+    ],
+    "requestedKeys": 332,
+    "durationMs": 0,
+    "durationP50Ms": 0
+  },
+  "idleRss": {
+    "durationMs": 5000,
+    "sampleMs": 1000,
+    "samples": [
+      {
+        "at": 1792369029952,
+        "rssBytes": 551755776
+      },
+      {
+        "at": 1792369030957,
+        "rssBytes": 557608960
+      },
+      {
+        "at": 1792369031963,
+        "rssBytes": 557748224
+      },
+      {
+        "at": 1792369032977,
+        "rssBytes": 557793280
+      },
+      {
+        "at": 1792369033986,
+        "rssBytes": 557842432
+      }
+    ],
+    "longestMonotonicRise": 5,
+    "growthBytes": 6086656,
+    "persistentGrowth": false
+  },
+  "boundaries": [
+    "Gateway RPC is agent-mocked; sessions.summaries is the real Electron host service reading synthetic local transcripts.",
+    "Synthetic transcripts contain no private user content and are generated at runtime.",
+    "Timing is a local Windows Electron sample, not a cross-platform benchmark.",
+    "Switch latency is click -> two settled animation frames so the same probe runs on pre-change and post-change builds."
+  ]
+}

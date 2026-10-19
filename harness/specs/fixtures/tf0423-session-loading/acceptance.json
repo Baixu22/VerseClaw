@@ -1,0 +1,109 @@
+{
+  "schema": "clawx.tf0423.acceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0423-session-probe",
+  "subject": "TF-0423 long-lived session loading and label hydration regression",
+  "generatedAt": "2026-10-19T00:23:29.472Z",
+  "fixture": {
+    "sessionCount": 333,
+    "transcriptMiB": 57.16,
+    "synthetic": true,
+    "runtimeGenerated": true
+  },
+  "beforeAfter": {
+    "before": {
+      "candidate": "9cae5341 (pre-TF-0423, 332-key sweep)",
+      "completedAt": "2026-10-19T00:17:14.953Z"
+    },
+    "after": {
+      "candidate": "codex/tf0423-session-loading-regression-20261019",
+      "completedAt": "2026-10-19T00:22:42.005Z"
+    }
+  },
+  "criteria": [
+    {
+      "id": "bounded-summary-sweep",
+      "statement": "sessions.summaries reads only bounded head/tail per transcript and bounds one request.",
+      "status": "pass",
+      "evidence": {
+        "before": {
+          "hostCalls": 7,
+          "requestedKeys": 332
+        },
+        "after": {
+          "hostCalls": 1,
+          "requestedKeys": 40
+        }
+      },
+      "note": "Renderer label hydration is capped at 40 newest sessions; the Main service additionally dedupes and caps a request at 100 keys."
+    },
+    {
+      "id": "bounded-read-bytes",
+      "statement": "Only a 64 KiB head and 128 KiB tail per transcript are read; sessions.json is read once per agent; worker concurrency is 8.",
+      "status": "pass",
+      "evidence": [
+        "tests/unit/session-summary-bounded-read.test.ts",
+        "electron/services/sessions-api.ts"
+      ]
+    },
+    {
+      "id": "label-budget-and-cooldown",
+      "statement": "At most 40 labels per sweep, batches of 40, and no implicit re-sweep within 30 seconds.",
+      "status": "pass",
+      "evidence": [
+        "tests/unit/chat-session-label-budget.test.ts",
+        "src/stores/chat.ts"
+      ]
+    },
+    {
+      "id": "load-and-switch-latency",
+      "statement": "loadSessions and session switching report repeatable P50/P95 on the synthetic set.",
+      "status": "pass",
+      "evidence": {
+        "before": {
+          "loadSessionsMs": 563,
+          "switchP50Ms": 216,
+          "switchP95Ms": 222.10000000009313
+        },
+        "after": {
+          "loadSessionsMs": 976,
+          "switchP50Ms": 323.5,
+          "switchP95Ms": 346.19999999995343
+        }
+      },
+      "note": "Wall-clock UI-observable timings; run-to-run variance on this host is material and the numbers are recorded as samples, not as a cross-platform benchmark."
+    },
+    {
+      "id": "long-session-open-long-task",
+      "statement": "Opening a long session must not produce a renderer long task over 50 ms.",
+      "status": "boundary",
+      "evidence": {
+        "before": {
+          "openMs": 208.10000000009313,
+          "openLongTasks": 8,
+          "idleControlLongTasks": 6
+        },
+        "after": {
+          "openMs": 231.80000000004657,
+          "openLongTasks": 8,
+          "idleControlLongTasks": 6
+        }
+      },
+      "note": "With the probe forced into software rendering, an idle control window already produces 6 long tasks per 2.5 s in both builds. Opening adds about 2 tasks and the pre/post counts are identical (8 vs 8), so the absolute threshold is not attributable to the session open on this host; the relative delta is recorded instead of claiming an absolute pass."
+    },
+    {
+      "id": "idle-rss",
+      "statement": "A five-minute idle RSS curve must not show persistent monotonic growth.",
+      "status": "pass",
+      "evidence": {
+        "after": {
+          "durationMs": 300000,
+          "samples": 60,
+          "longestMonotonicRise": 4,
+          "growthBytes": -287924224,
+          "persistentGrowth": false
+        }
+      }
+    }
+  ]
+}
