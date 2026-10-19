@@ -1,6 +1,7 @@
 import { mkdir, readFile, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { resolveAuthProfileSecret } from '@electron/services/secrets/auth-profile-secret-broker';
 
 const { testHome, testUserData, getSettingMock } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
@@ -57,9 +58,15 @@ async function readOpenClawJson(): Promise<Record<string, unknown>> {
   return JSON.parse(content) as Record<string, unknown>;
 }
 
-async function readAuthProfiles(agentId: string): Promise<Record<string, unknown>> {
+type AuthProfilesStoreShape = {
+  profiles: Record<string, Record<string, unknown>>;
+  order?: Record<string, string[]>;
+  lastGood?: Record<string, string>;
+};
+
+async function readAuthProfiles(agentId: string): Promise<AuthProfilesStoreShape> {
   const content = await readFile(join(testHome, '.openclaw', 'agents', agentId, 'agent', 'auth-profiles.json'), 'utf8');
-  return JSON.parse(content) as Record<string, unknown>;
+  return JSON.parse(content) as AuthProfilesStoreShape;
 }
 
 async function writeAgentAuthProfiles(agentId: string, store: Record<string, unknown>): Promise<void> {
@@ -252,13 +259,17 @@ describe('removeProviderKeyFromOpenClaw', () => {
     await removeProviderKeyFromOpenClaw('custom-abc12345', 'main');
 
     const mainProfiles = await readAuthProfiles('main');
-    expect(mainProfiles.profiles).toEqual({
-      'custom-abc12345:backup': {
-        type: 'api_key',
-        provider: 'custom-abc12345',
-        key: 'sk-backup',
-      },
+    // The surviving backup profile keeps its credential, now stored as a
+    // sealed vault reference rather than plaintext.
+    expect(Object.keys(mainProfiles.profiles)).toEqual(['custom-abc12345:backup']);
+    expect(mainProfiles.profiles['custom-abc12345:backup']).toMatchObject({
+      type: 'api_key',
+      provider: 'custom-abc12345',
     });
+    expect(await resolveAuthProfileSecret(
+      (mainProfiles.profiles['custom-abc12345:backup'] as Record<string, unknown>).key,
+      { agentId: 'main', profileId: 'custom-abc12345:backup' },
+    )).toBe('sk-backup');
     expect(mainProfiles.order).toEqual({
       'custom-abc12345': ['custom-abc12345:backup'],
     });
@@ -291,13 +302,17 @@ describe('removeProviderKeyFromOpenClaw', () => {
     await removeProviderKeyFromOpenClaw('custom-abc12345', 'main');
 
     const mainProfiles = await readAuthProfiles('main');
-    expect(mainProfiles.profiles).toEqual({
-      'custom-abc12345:backup': {
-        type: 'api_key',
-        provider: 'custom-abc12345',
-        key: 'sk-backup',
-      },
+    // The surviving backup profile keeps its credential, now stored as a
+    // sealed vault reference rather than plaintext.
+    expect(Object.keys(mainProfiles.profiles)).toEqual(['custom-abc12345:backup']);
+    expect(mainProfiles.profiles['custom-abc12345:backup']).toMatchObject({
+      type: 'api_key',
+      provider: 'custom-abc12345',
     });
+    expect(await resolveAuthProfileSecret(
+      (mainProfiles.profiles['custom-abc12345:backup'] as Record<string, unknown>).key,
+      { agentId: 'main', profileId: 'custom-abc12345:backup' },
+    )).toBe('sk-backup');
     expect(mainProfiles.order).toEqual({
       'custom-abc12345': ['custom-abc12345:backup'],
     });
@@ -329,15 +344,22 @@ describe('removeProviderKeyFromOpenClaw', () => {
     await removeProviderKeyFromOpenClaw('openai-codex', 'main');
 
     const mainProfiles = await readAuthProfiles('main');
-    expect(mainProfiles.profiles).toEqual({
-      'openai-codex:default': {
-        type: 'oauth',
-        provider: 'openai-codex',
-        access: 'acc',
-        refresh: 'ref',
-        expires: 1,
-      },
-    });
+    // The OAuth profile survives an api-key-only delete with its tokens sealed.
+    expect(Object.keys(mainProfiles.profiles)).toEqual(['openai-codex:default']);
+    const oauthProfile = mainProfiles.profiles['openai-codex:default'] as Record<string, unknown>;
+    expect(oauthProfile).toMatchObject({ type: 'oauth', provider: 'openai-codex', expires: 1 });
+    expect(
+      await resolveAuthProfileSecret(oauthProfile.access, {
+        agentId: 'main',
+        profileId: 'openai-codex:default',
+      }),
+    ).toBe('acc');
+    expect(
+      await resolveAuthProfileSecret(oauthProfile.refresh, {
+        agentId: 'main',
+        profileId: 'openai-codex:default',
+      }),
+    ).toBe('ref');
     expect(mainProfiles.order).toEqual({
       'openai-codex': ['openai-codex:default'],
     });
@@ -379,15 +401,17 @@ describe('removeProviderKeyFromOpenClaw', () => {
     await removeProviderKeyFromOpenClaw('minimax-portal', 'main');
 
     const mainProfiles = await readAuthProfiles('main');
-    expect(mainProfiles.profiles).toEqual({
-      'minimax-portal:oauth-backup': {
-        type: 'oauth',
-        provider: 'minimax-portal',
-        access: 'acc',
-        refresh: 'ref',
-        expires: 1,
-      },
-    });
+    // The OAuth backup profile survives, credentials sealed.
+    expect(Object.keys(mainProfiles.profiles)).toEqual(['minimax-portal:oauth-backup']);
+    const backupProfile =
+      mainProfiles.profiles['minimax-portal:oauth-backup'] as Record<string, unknown>;
+    expect(backupProfile).toMatchObject({ type: 'oauth', provider: 'minimax-portal', expires: 1 });
+    expect(
+      await resolveAuthProfileSecret(backupProfile.access, {
+        agentId: 'main',
+        profileId: 'minimax-portal:oauth-backup',
+      }),
+    ).toBe('acc');
     expect(mainProfiles.order).toEqual({
       'minimax-portal': ['minimax-portal:oauth-backup'],
     });

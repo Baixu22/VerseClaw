@@ -1,5 +1,4 @@
 import type { RawMessage } from '../chat/types';
-import type { InstructionLayerKind, InstructionResolution, InstructionTrust } from '../instruction-precedence';
 import type { BackgroundWorkGateState, ResourceEnvelopeSnapshot } from '../types/resources';
 import type {
   VtokenAssembleHostResult,
@@ -294,6 +293,47 @@ export type OpenClawDoctorResult = HostSuccess & {
 };
 export type OpenClawDoctorPayload = { mode: OpenClawDoctorMode };
 
+// ── Local backup inspect / restore ────────────────────────────────────────
+//
+// `openclaw backup create` can produce a `tar.gz` archive with a manifest, but
+// the product had no restore surface. These types describe a conservative
+// restore: only paths that do not exist yet are written, existing files are
+// reported and left untouched, and entries escaping the manifest asset roots
+// are rejected. See `electron/services/backup-restore.ts`.
+
+export type BackupRestoreEntryAction = 'create' | 'skip-existing' | 'rejected';
+
+export type BackupRestorePreviewEntry = {
+  archivePath: string;
+  targetPath: string;
+  action: BackupRestoreEntryAction;
+  reason?: string;
+};
+
+export type BackupRestorePreviewResult = HostSuccess & {
+  valid: boolean;
+  dryRun: true;
+  archivePath: string;
+  createdAt?: string;
+  includeWorkspace?: boolean;
+  entries: BackupRestorePreviewEntry[];
+  counts: { create: number; skipped: number; rejected: number };
+  errors: string[];
+};
+
+export type BackupRestoreResult = HostSuccess & {
+  dryRun: boolean;
+  archivePath: string;
+  written: string[];
+  skipped: string[];
+  rejected: Array<{ archivePath: string; reason: string }>;
+  errors: string[];
+  rolledBack: string[];
+};
+
+/** Inspect (and optionally apply) a restore. `dryRun` performs no writes. */
+export type BackupRestorePayload = { archivePath: string; dryRun?: boolean };
+
 export type OpenClawStatusResult = {
   packageExists: boolean;
   isBuilt: boolean;
@@ -437,35 +477,6 @@ export type RuntimeEfficiencyShedState = {
   lastTransitionAt: number | null;
 };
 export type RuntimeBackgroundWorkState = Pick<BackgroundWorkGateState, 'deferring' | 'reason' | 'deferredCount' | 'resumeCount' | 'lastDeferReason' | 'pendingCount' | 'transitionCount'>;
-export type RuntimePerformanceMark = {
-  name: string;
-  at: number;
-  fromStartMs: number;
-};
-
-export type RuntimePerformanceSpawnSample = {
-  method: string;
-  at: number;
-  fromStartMs: number;
-  command: string | null;
-};
-
-export type RuntimePerformanceCounterState = {
-  spawnCount: number;
-  spawnByMethod: Record<string, number>;
-  recentSpawns: RuntimePerformanceSpawnSample[];
-  activeIntervals: number;
-  activeWatchers: number;
-  unavailable: string[];
-};
-
-export type RuntimePerformanceState = {
-  startedAt: number;
-  elapsedMs: number;
-  marks: RuntimePerformanceMark[];
-  counters: RuntimePerformanceCounterState;
-  rssBytes: number;
-};
 
 export type RuntimeEfficiencyState = {
   /** Persisted user preference. */
@@ -476,14 +487,10 @@ export type RuntimeEfficiencyState = {
   measured: boolean;
   /** Bounded rolling summary including the latest sample, or null when unmeasured. */
   summary: RuntimeEfficiencySummary | null;
-  /** Bounded rolling raw samples for explicit before/after diagnostics. */
-  samples: RuntimeEfficiencySample[];
   /** Load-shed policy state, or null before the policy has been created. */
   shed: RuntimeEfficiencyShedState | null;
   /** Background work gate state, or null while runtime efficiency sampling is stopped. */
   backgroundWork: RuntimeBackgroundWorkState | null;
-  /** Local main-process performance counters and startup marks. */
-  performance: RuntimePerformanceState;
 };
 export type RuntimeEfficiencySetEnabledPayload = { enabled: boolean };
 
@@ -794,13 +801,6 @@ export type ProjectRulesSnapshot = {
   };
   generatedAt: string;
 };
-export type ProjectRulesExplainPayload = {
-  skills?: Array<{ id: string; content: string; trust?: InstructionTrust }>;
-  role?: { name: string; content: string; trust?: InstructionTrust };
-  turnOverride?: { source?: string; content: string };
-};
-export type ProjectRulesExplainResult = HostSuccess & InstructionResolution;
-export type ProjectRulesExplainLayerKind = InstructionLayerKind;
 export type ProjectRulesSnapshotResult = HostSuccess & ProjectRulesSnapshot & {
   templateCreated?: boolean;
 };
@@ -1803,32 +1803,6 @@ export type McpCallToolPayload = {
 };
 export type McpReloadRuntimePayload = { workspaceId?: string | null; agentId?: string | null };
 
-export type HookTrustStateView = 'trusted' | 'untrusted' | 'changed' | 'disabled';
-export type HookTrustEntryView = {
-  hookKey: string;
-  name: string;
-  source: string;
-  managed: boolean;
-  trustState: HookTrustStateView;
-  hash: string | null;
-  expectedHash: string | null;
-  enabled: boolean;
-  loadable: boolean;
-  reason: string;
-  filePath: string;
-};
-export type HookListResult = HostSuccess & {
-  hooks: HookTrustEntryView[];
-};
-export type HookSetTrustedPayload = {
-  hookKey: string;
-  trusted?: boolean;
-  enabled?: boolean;
-};
-export type HookTrustMutationResult = HookListResult & {
-  hookKey: string;
-  trustState: HookTrustStateView;
-};
 export type SandboxStatusResult = HostSuccess & SandboxStatus;
 export type SandboxDetectProvidersResult = HostSuccess & {
   providers: SandboxProviderStatus[];
@@ -5256,6 +5230,8 @@ export type HostApiContract = {
   app: {
     version: () => string;
     openClawDoctor: (payload: OpenClawDoctorPayload) => Omit<OpenClawDoctorResult, 'mode'>;
+    backupRestorePreview: (payload: { archivePath: string }) => BackupRestorePreviewResult;
+    backupRestoreApply: (payload: { archivePath: string }) => BackupRestoreResult;
   };
   openclaw: {
     status: () => OpenClawStatusResult;
@@ -5342,7 +5318,6 @@ export type HostApiContract = {
   projectRules: {
     snapshot: () => ProjectRulesSnapshotResult;
     createAgentsTemplate: () => ProjectRulesSnapshotResult;
-    explain: (payload?: ProjectRulesExplainPayload) => ProjectRulesExplainResult;
   };
   codeReview: {
     run: (payload: CodeReviewRunPayload) => CodeReviewRunResult;
@@ -5521,15 +5496,6 @@ export type HostApiContract = {
     fullAccessReadStorage: (payload: AgentBrowserFullAccessReadStoragePayload) => AgentBrowserFullAccessReadStorageResult;
     fullAccessRevoke: (payload: AgentBrowserFullAccessRevokePayload) => AgentBrowserFullAccessRevokeResult;
     extractPageText: (payload: AgentBrowserExtractPageTextPayload) => AgentBrowserExtractPageTextResult;
-    verifyFlow: (payload: AgentBrowserSessionPayload & {
-      selectors?: string[];
-      expect?: Array<{ type: 'text' | 'value' | 'enabled' | 'disabled' | 'url'; selector: string; contains?: string; equals?: string; pattern?: string; label?: string }>;
-      baselineConsoleCount?: number;
-      baselineNetworkCount?: number;
-      screenshot?: boolean;
-      evidenceDirName?: string;
-      compactHealthSummary?: boolean;
-    }) => AgentBrowserFacadeResult;
     validateExtractionRule: (payload: AgentBrowserValidateExtractionRulePayload) => AgentBrowserValidateExtractionRuleResult;
     downloadFile: (payload: AgentBrowserSelectorPayload & { path: string }) => AgentBrowserFacadeResult;
     uploadFiles: (payload: AgentBrowserSelectorPayload & { paths: string[] }) => AgentBrowserFacadeResult;
@@ -5562,10 +5528,6 @@ export type HostApiContract = {
     detectProviders: () => SandboxDetectProvidersResult;
     updateProfile: (payload: SandboxUpdateProfilePayload) => SandboxUpdateProfileResult;
     explain: (payload?: SandboxExplainPayload) => SandboxExplainResult;
-  };
-  hooks: {
-    list: () => HookListResult;
-    setTrusted: (payload: HookSetTrustedPayload) => HookTrustMutationResult;
   };
   logs: {
     recent: (payload?: LogRecentPayload) => LogContentResult;

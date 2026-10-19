@@ -1,12 +1,14 @@
 import { createRequire } from 'node:module';
 import { randomUUID } from 'node:crypto';
-import { chmod, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, readFile, rm } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { deflateSync } from 'node:zlib';
 import { normalizeOpenClawAccountId } from './channel-alias';
 import { resolveOpenClawRuntimeModulePath } from './runtime-package-resolution';
 import { getOpenClawConfigDir } from './paths';
+import { writeJsonAtomic } from './atomic-write';
+import { sealWechatAccountToken } from '../services/secrets/wechat-account-secret-broker';
 
 export const DEFAULT_WECHAT_BASE_URL = 'https://ilinkai.weixin.qq.com';
 const DEFAULT_ILINK_BOT_TYPE = '3';
@@ -300,11 +302,26 @@ async function readAccountIndex(): Promise<string[]> {
   }
 }
 
+/**
+ * Persist the account id index.
+ *
+ * Atomic (temp + fsync + rename + `.bak`) so a crash mid-write cannot leave a
+ * truncated index that would silently drop every WeChat account from the UI.
+ * The index holds ids only; no credential is stored here.
+ */
 async function writeAccountIndex(accountIds: string[]): Promise<void> {
   await mkdir(WECHAT_STATE_DIR, { recursive: true });
-  await writeFile(WECHAT_ACCOUNT_INDEX_FILE, JSON.stringify(accountIds, null, 2), 'utf-8');
+  await writeJsonAtomic(WECHAT_ACCOUNT_INDEX_FILE, accountIds);
 }
 
+/**
+ * Persist WeChat account routing state.
+ *
+ * The bot token is a credential: it is sealed into the WeChat account vault and
+ * the on-disk record keeps only `tokenSecretId` plus non-sensitive routing
+ * metadata (baseUrl / userId). The file write is atomic, so a crash cannot
+ * leave a half-written account record.
+ */
 export async function saveWeChatAccountState(rawAccountId: string, payload: {
   token: string;
   baseUrl?: string;
@@ -314,13 +331,16 @@ export async function saveWeChatAccountState(rawAccountId: string, payload: {
   await mkdir(WECHAT_ACCOUNTS_DIR, { recursive: true });
 
   const filePath = join(WECHAT_ACCOUNTS_DIR, `${accountId}.json`);
-  const data = {
+  const data = await sealWechatAccountToken({
+    accountId,
     token: payload.token.trim(),
-    savedAt: new Date().toISOString(),
-    ...(payload.baseUrl?.trim() ? { baseUrl: payload.baseUrl.trim() } : {}),
-    ...(payload.userId?.trim() ? { userId: payload.userId.trim() } : {}),
-  };
-  await writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+    meta: {
+      savedAt: new Date().toISOString(),
+      ...(payload.baseUrl?.trim() ? { baseUrl: payload.baseUrl.trim() } : {}),
+      ...(payload.userId?.trim() ? { userId: payload.userId.trim() } : {}),
+    },
+  });
+  await writeJsonAtomic(filePath, data);
   try {
     await chmod(filePath, 0o600);
   } catch {

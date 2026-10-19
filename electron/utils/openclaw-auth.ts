@@ -28,7 +28,12 @@ import {
 } from './provider-keys';
 import { normalizePiAiModelCost, type PiAiModelCostRates } from '../shared/pi-ai-model-cost';
 import { withConfigLock } from './config-mutex';
-import { writeJsonAtomic } from './atomic-write';
+import { readJsonAtomic, writeJsonAtomic } from './atomic-write';
+import {
+  deleteAuthProfileSecrets,
+  resolveAuthProfileSecret,
+  sealAuthProfileSecrets,
+} from '../services/secrets/auth-profile-secret-broker';
 import { PORTS } from './config';
 import { getSetting } from './store';
 import {
@@ -313,21 +318,29 @@ async function writeJsonFile(filePath: string, data: unknown): Promise<void> {
 
 // ── Types ────────────────────────────────────────────────────────
 
+/**
+ * A credential field is either legacy plaintext (pre-migration) or a sealed
+ * reference into the `authProfileSecrets` vault. Both shapes are accepted on
+ * read; new writes always seal.
+ */
+type AuthProfileCredential = string | { kind: 'auth-profile-secret'; secretId: string };
+
 interface AuthProfileEntry {
   type: 'api_key';
   provider: string;
-  key: string;
+  key: AuthProfileCredential;
 }
 
 interface OAuthProfileEntry {
   type: 'oauth';
   provider: string;
-  access: string;
-  refresh: string;
+  access: AuthProfileCredential;
+  refresh: AuthProfileCredential;
   expires: number;
   email?: string;
   projectId?: string;
 }
+
 
 interface AuthProfilesStore {
   version: number;
@@ -418,44 +431,103 @@ function getAuthProfilesPath(agentId = 'main'): string {
   return join(getOpenClawConfigDir(), 'agents', agentId, 'agent', AUTH_PROFILE_FILENAME);
 }
 
+/**
+ * Read `auth-profiles.json` and seal any legacy plaintext credential fields.
+ *
+ * Corruption policy is fail-closed (harness rule
+ * `local-data-fail-closed-config`): a corrupt file throws instead of returning an
+ * empty projection, because every writer here performs read-modify-write and
+ * would otherwise overwrite every other provider key. `readJsonAtomic` restores
+ * from the `.bak` sibling when the primary is corrupt or missing.
+ *
+ * Migration is self-healing and idempotent: legacy plaintext fields are sealed
+ * into the vault and the file is rewritten in sealed form on first read.
+ */
 async function readAuthProfiles(agentId = 'main'): Promise<AuthProfilesStore> {
   const filePath = getAuthProfilesPath(agentId);
+  let store: AuthProfilesStore;
   try {
-    const data = await readJsonFile<AuthProfilesStore>(filePath);
-    if (data?.version && data.profiles && typeof data.profiles === 'object') {
-      return data;
+    const result = await readJsonAtomic<AuthProfilesStore>(filePath);
+    store = result.data;
+    if (result.recoveredFromBackup) {
+      console.warn(`[auth-profiles] ${agentId}: ${result.recoveryNote ?? 'recovered from backup'}`);
     }
   } catch (error) {
-    console.warn('Failed to read auth-profiles.json, creating fresh store:', error);
+    if (error instanceof Error && error.message.includes('not found')) {
+      // No store yet: a genuinely new agent has nothing to lose.
+      return { version: AUTH_STORE_VERSION, profiles: {} };
+    }
+    // Corrupt with no usable backup, or unreadable. Fail closed.
+    console.error(`[auth-profiles] ${agentId}: refusing to continue with unreadable store`, error);
+    throw error;
   }
-  return { version: AUTH_STORE_VERSION, profiles: {} };
+
+  if (!store || typeof store !== 'object' || !store.profiles || typeof store.profiles !== 'object') {
+    throw new Error(`auth-profiles.json at ${filePath} has an invalid shape; refusing to overwrite it`);
+  }
+  if (typeof store.version !== 'number') {
+    store.version = AUTH_STORE_VERSION;
+  }
+
+  const sealedCount = await sealLegacyAuthProfileCredentials(store, agentId);
+  if (sealedCount > 0) {
+    console.log(`[auth-profiles] ${agentId}: sealed ${sealedCount} legacy plaintext credential field(s)`);
+    await writeAuthProfiles(store, agentId);
+  }
+  return store;
+}
+
+/**
+ * Seal every plaintext credential field in the store. Returns how many fields
+ * were sealed so the caller can decide whether to write back.
+ */
+async function sealLegacyAuthProfileCredentials(
+  store: AuthProfilesStore,
+  agentId: string,
+): Promise<number> {
+  let sealedCount = 0;
+  for (const [profileId, profile] of Object.entries(store.profiles ?? {})) {
+    if (!profile || typeof profile !== 'object') continue;
+    const record = profile as unknown as Record<string, unknown>;
+    const fields = await sealAuthProfileSecrets({ agentId, profileId, profile: record });
+    sealedCount += fields.length;
+  }
+  return sealedCount;
 }
 
 async function writeAuthProfiles(store: AuthProfilesStore, agentId = 'main'): Promise<void> {
   await writeJsonFile(getAuthProfilesPath(agentId), store);
 }
 
-function getApiKeyFromAuthProfilesStore(
+async function getApiKeyFromAuthProfilesStore(
   store: AuthProfilesStore,
   provider: string,
-): string | null {
+  agentId: string,
+): Promise<string | null> {
   const profileIds = [
     store.lastGood?.[provider],
     ...(store.order?.[provider] ?? []),
     `${provider}:default`,
   ].filter((id): id is string => Boolean(id));
 
-  for (const profileId of profileIds) {
-    const profile = store.profiles[profileId];
-    if (profile?.type === 'api_key' && profile.provider === provider && profile.key) {
-      return profile.key;
-    }
-  }
+  const seen = new Set<string>();
+  const candidates = [
+    ...profileIds,
+    ...Object.keys(store.profiles ?? {}),
+  ].filter((id) => {
+    if (seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
 
-  for (const profile of Object.values(store.profiles)) {
-    if (profile.type === 'api_key' && profile.provider === provider && profile.key) {
-      return profile.key;
+  for (const profileId of candidates) {
+    const profile = store.profiles[profileId];
+    if (profile?.type !== 'api_key' || profile.provider !== provider || !profile.key) {
+      continue;
     }
+    // `key` may be legacy plaintext or a sealed vault reference.
+    const resolved = await resolveAuthProfileSecret(profile.key, { agentId, profileId });
+    if (resolved) return resolved;
   }
 
   return null;
@@ -476,7 +548,7 @@ export async function getProviderApiKeyFromOpenClaw(
 
   for (const id of agentIds) {
     const store = await readAuthProfiles(id);
-    const apiKey = getApiKeyFromAuthProfilesStore(store, provider);
+    const apiKey = await getApiKeyFromAuthProfilesStore(store, provider, id);
     if (apiKey) {
       return apiKey;
     }
@@ -907,7 +979,8 @@ export async function getOAuthTokenFromOpenClaw(
     const profile = store.profiles[profileId];
 
     if (profile && profile.type === 'oauth' && 'access' in profile) {
-      return (profile as OAuthProfileEntry).access;
+      // 'access' may be legacy plaintext or a sealed vault reference.
+      return resolveAuthProfileSecret((profile as OAuthProfileEntry).access, { agentId, profileId });
     }
   } catch (err) {
     console.warn(`[getOAuthToken] Failed to read token for ${provider}:`, err);
@@ -984,13 +1057,20 @@ export async function removeProviderFromOpenClaw(provider: string): Promise<void
   for (const id of agentIds) {
     const store = await readAuthProfiles(id);
     let storeModified = false;
+    const removedProfileIds: string[] = [];
     for (const key of providerKeysToRemove) {
+      for (const profileId of Object.keys(store.profiles ?? {})) {
+        if (store.profiles[profileId]?.provider === key) removedProfileIds.push(profileId);
+      }
       if (removeProfilesForProvider(store, key)) {
         storeModified = true;
       }
     }
     if (storeModified) {
       await writeAuthProfiles(store, id);
+      // Drop only the sealed credentials owned by the removed profiles; other
+      // providers on this agent must keep their keys.
+      await deleteAuthProfileSecrets(id, removedProfileIds).catch(() => 0);
     }
   }
 
@@ -2059,9 +2139,10 @@ function applyControlUiAllowedOrigins(controlUi: Record<string, unknown>, port: 
 }
 
 /**
- * Write the ClawX gateway token into ~/.openclaw/openclaw.json.
+ * Record the token auth MODE in ~/.openclaw/openclaw.json without persisting the
+ * token value itself (see the comment at the assignment below).
  */
-export async function syncGatewayTokenToConfig(token: string): Promise<void> {
+export async function syncGatewayTokenToConfig(_token: string): Promise<void> {
   return withConfigLock(async () => {
     const config = await readOpenClawJson();
 
@@ -2078,7 +2159,13 @@ export async function syncGatewayTokenToConfig(token: string): Promise<void> {
     ) as Record<string, unknown>;
 
     auth.mode = 'token';
-    auth.token = token;
+    // The shared token reaches the Gateway through the `OPENCLAW_GATEWAY_TOKEN`
+    // fork environment (gateway/config-sync.ts), which the runtime resolves as
+    // the first-class auth source at startup (openclaw_runtime/src/gateway/
+    // startup-auth.ts). Persisting it here as plaintext is redundant exposure:
+    // openclaw.json is plain JSON while settings.json keeps the same token
+    // sealed by safeStorage. Keep the mode declaration, drop the value.
+    delete auth.token;
     gateway.auth = auth;
 
     const controlUi = (
@@ -2299,7 +2386,7 @@ export async function syncSessionIdleMinutesToOpenClaw(): Promise<void> {
  * single config lock + read + write cycle.  Replaces three separate
  * withConfigLock calls during pre-launch sync.
  */
-export async function batchSyncConfigFields(token: string): Promise<void> {
+export async function batchSyncConfigFields(_token: string): Promise<void> {
   const DEFAULT_IDLE_MINUTES = 10_080; // 7 days
 
   return withConfigLock(async () => {
@@ -2319,7 +2406,13 @@ export async function batchSyncConfigFields(token: string): Promise<void> {
         : {}
     ) as Record<string, unknown>;
     auth.mode = 'token';
-    auth.token = token;
+    // The shared token reaches the Gateway through the `OPENCLAW_GATEWAY_TOKEN`
+    // fork environment (gateway/config-sync.ts), which the runtime resolves as
+    // the first-class auth source at startup (openclaw_runtime/src/gateway/
+    // startup-auth.ts). Persisting it here as plaintext is redundant exposure:
+    // openclaw.json is plain JSON while settings.json keeps the same token
+    // sealed by safeStorage. Keep the mode declaration, drop the value.
+    delete auth.token;
     gateway.auth = auth;
 
     const controlUi = (
@@ -2540,6 +2633,26 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     }
     const config: Record<string, unknown> = rawConfig;
     let modified = false;
+
+    // Migration: strip a previously persisted plaintext gateway token.
+    // The token now travels only through the OPENCLAW_GATEWAY_TOKEN fork
+    // environment, so any value still present here is a leftover plaintext
+    // copy. Keep `auth.mode` so the auth mode declaration survives.
+    const gatewaySection = (
+      config.gateway && typeof config.gateway === 'object'
+        ? config.gateway as Record<string, unknown>
+        : null
+    );
+    const gatewayAuth = (
+      gatewaySection?.auth && typeof gatewaySection.auth === 'object'
+        ? gatewaySection.auth as Record<string, unknown>
+        : null
+    );
+    if (gatewayAuth && typeof gatewayAuth.token === 'string' && gatewayAuth.token.trim()) {
+      delete gatewayAuth.token;
+      console.log('[sanitize] Removed plaintext gateway.auth.token from openclaw.json');
+      modified = true;
+    }
 
     // agents.list[].reasoningEffort was a Verse Claw UI key from an older
     // mapping. OpenClaw's strict agent schema accepts thinkingDefault instead.

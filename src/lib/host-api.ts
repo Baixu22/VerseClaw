@@ -323,6 +323,9 @@ import type {
   McpServerUpdatePayload,
   OpenClawDoctorMode,
   OpenClawDoctorResult,
+  BackupRestorePayload,
+  BackupRestorePreviewResult,
+  BackupRestoreResult,
   OfficecliInstallPayload,
   OfficecliRenderHtmlPayload,
   OfficecliSkillApplyLinksPayload,
@@ -658,6 +661,9 @@ export type {
   LogDirResult,
   OpenClawCliCommandResult,
   OpenClawDoctorResult,
+  BackupRestorePayload,
+  BackupRestorePreviewResult,
+  BackupRestoreResult,
   OpenClawStatusResult,
   PermissionApprovalDecisionResult,
   PermissionApprovalListResult,
@@ -747,6 +753,26 @@ export const hostApi = {
       ...(await invokeHost('app', 'openClawDoctor', { mode })),
       mode,
     }),
+
+    /**
+     * Inspect a backup archive without writing anything. Returns the plan a
+     * restore would follow: which paths would be created, which already exist
+     * and would be skipped, and which entries were rejected as unsafe.
+     */
+    backupRestorePreview: (
+      payload: BackupRestorePayload,
+    ): Promise<BackupRestorePreviewResult> =>
+      invokeHost('app', 'backupRestorePreview', payload),
+
+    /**
+     * Apply a restore using conservative writes: existing files are never
+     * overwritten. The result reports what was written, skipped, rejected, and
+     * (on failure) rolled back.
+     */
+    backupRestoreApply: (
+      payload: BackupRestorePayload,
+    ): Promise<BackupRestoreResult> =>
+      invokeHost('app', 'backupRestoreApply', payload),
   },
   openclaw: {
     status: () => invokeHost('openclaw', 'status'),
@@ -848,7 +874,6 @@ export const hostApi = {
   projectRules: {
     snapshot: () => invokeHost('projectRules', 'snapshot'),
     createAgentsTemplate: () => invokeHost('projectRules', 'createAgentsTemplate'),
-    explain: (input: { skills?: Array<{ id: string; content: string; trust?: 'owner' | 'user' | 'runtime' | 'untrusted' }>; role?: { name: string; content: string; trust?: 'owner' | 'user' | 'runtime' | 'untrusted' }; turnOverride?: { source?: string; content: string } } = {}) => invokeHost('projectRules', 'explain', input),
   },
   terminal: {
     run: (input: WorkspaceTerminalRunPayload) => invokeHost('terminal', 'run', input),
@@ -1101,16 +1126,6 @@ export const hostApi = {
       invokeHost('agentBrowser', 'fullAccessRevoke', input),
     extractPageText: (input: AgentBrowserExtractPageTextPayload): Promise<AgentBrowserExtractPageTextResult> =>
       invokeHost('agentBrowser', 'extractPageText', input),
-    verifyFlow: (input: AgentBrowserSessionPayload & {
-      selectors?: string[];
-      expect?: Array<{ type: 'text' | 'value' | 'enabled' | 'disabled' | 'url'; selector: string; contains?: string; equals?: string; pattern?: string; label?: string }>;
-      baselineConsoleCount?: number;
-      baselineNetworkCount?: number;
-      screenshot?: boolean;
-      evidenceDirName?: string;
-      compactHealthSummary?: boolean;
-    }): Promise<AgentBrowserFacadeResult> =>
-      invokeHost('agentBrowser', 'verifyFlow', input),
     validateExtractionRule: (input: AgentBrowserValidateExtractionRulePayload): Promise<AgentBrowserValidateExtractionRuleResult> =>
       invokeHost('agentBrowser', 'validateExtractionRule', input),
     downloadFile: (input: AgentBrowserSelectorPayload & { path: string }): Promise<AgentBrowserFacadeResult> =>
@@ -1161,10 +1176,6 @@ export const hostApi = {
     explain: (input?: SandboxExplainPayload): Promise<SandboxExplainResult> => (
       invokeHost('sandbox', 'explain', input)
     ),
-  },
-  hooks: {
-    list: () => invokeHost('hooks', 'list'),
-    setTrusted: (payload: { hookKey: string; trusted?: boolean; enabled?: boolean }) => invokeHost('hooks', 'setTrusted', payload),
   },
   logs: {
     recent: (tailLines = 100) => invokeHost('logs', 'recent', { tailLines }),
