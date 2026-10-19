@@ -41,6 +41,7 @@ const DEFAULT_LIMITS: Record<ResourceKind, ResourceLimits> = {
   "mcp-process": { memoryBytes: 1024 * 1024 ** 2, cpuPercent: 200, processCount: 8, concurrencySlots: 200, queueLength: 64 },
   "provider-sidecar": { memoryBytes: 1024 * 1024 ** 2, cpuPercent: 200, processCount: 8, concurrencySlots: 16, queueLength: 64 },
   "background-index": { memoryBytes: 1024 * 1024 ** 2, cpuPercent: 200, processCount: 32, concurrencySlots: 4, queueLength: 128 },
+  "chat-history": { memoryBytes: 512 * 1024 ** 2, cpuPercent: 100, processCount: 16, concurrencySlots: 2, queueLength: 64 },
 };
 
 function mergeLimits(kind: ResourceKind, overrides?: Partial<ResourceLimits>): ResourceLimits {
@@ -103,6 +104,7 @@ export class ResourceEnvelopeLedger {
       ...candidate,
       workspaceKey: candidate.workspaceKey,
       limits,
+      limitHistory: candidate.limitHistory ?? existing?.limitHistory,
       updatedAt: candidate.updatedAt ?? Date.now(),
     };
     this.entries.set(entry.id, entry);
@@ -175,7 +177,12 @@ export function mergeResourceEnvelopeSnapshots(
       const key = workspaceEntryKey(entry);
       const existing = byKey.get(key);
       if (!existing) {
-        const copy = { ...entry, pids: entry.pids?.slice(), limits: { ...entry.limits } };
+        const copy = {
+          ...entry,
+          pids: entry.pids?.slice(),
+          limits: { ...entry.limits },
+          ...(entry.limitHistory ? { limitHistory: entry.limitHistory.map((event) => ({ ...event })) } : {}),
+        };
         byKey.set(key, copy);
         entries.push(copy);
         continue;
@@ -188,6 +195,16 @@ export function mergeResourceEnvelopeSnapshots(
       existing.treeCpuPercent += entry.treeCpuPercent;
       existing.updatedAt = Math.max(existing.updatedAt, entry.updatedAt);
       existing.pids = [...(existing.pids ?? []), ...(entry.pids ?? [])];
+      if (entry.limitHistory?.length) {
+        const mergedHistory = [...(existing.limitHistory ?? []), ...entry.limitHistory];
+        const seen = new Set<string>();
+        existing.limitHistory = mergedHistory.filter((event) => {
+          const key = `${event.at}:${event.from}:${event.to}:${event.reason}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        }).slice(-64);
+      }
     }
   }
   const merged = new ResourceEnvelopeLedger();

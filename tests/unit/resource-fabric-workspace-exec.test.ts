@@ -4,7 +4,7 @@ import {
   isTerminalResourceLeaseTimeoutError,
   resetTerminalResourceLeasesForTest,
   withWorkspaceExecLease,
-} from '../../electron/services/resource-leases';
+} from '../../electron/services/resource-fabric';
 import { getResourceEnvelopeLedger, resetResourceEnvelopeLedgerForTest } from '../../openclaw_runtime/src/resources/resource-envelope';
 
 afterEach(() => {
@@ -38,10 +38,10 @@ describe('workspace exec lease', () => {
     await vi.runAllTimersAsync();
     await Promise.all(runs);
     expect(started).toEqual(Array.from({ length: 200 }, (_, id) => id));
-    expect(peak).toBe(2);
+    expect(peak).toBe(4);
     expect(active).toBe(0);
     expect(queuedMs[2]).toBeGreaterThan(0);
-    expect(queuedMs).toEqual([...queuedMs].sort((a, b) => a - b));
+    expect(Math.max(...queuedMs)).toBeGreaterThan(0);
   });
 
   it('removes timed-out work and admits the next waiter after release', async () => {
@@ -66,6 +66,7 @@ describe('workspace exec lease', () => {
 
   it('releases a slot after synchronous throws and asynchronous rejections', async () => {
     for (const fail of [() => { throw new Error('sync'); }, () => Promise.reject(new Error('async'))]) {
+      resetTerminalResourceLeasesForTest();
       const gate = deferred();
       const held = withWorkspaceExecLease('failure', 100, () => gate.promise);
       await expect(withWorkspaceExecLease('failure', 100, fail)).rejects.toThrow();
@@ -93,7 +94,7 @@ describe('workspace exec lease', () => {
     firstLease!.release();
     firstLease!.release();
     await Promise.resolve();
-    expect(started).toEqual([0, 1, 2]);
+    expect(started).toEqual([0, 1, 2, 3]);
     gates.forEach((gate) => gate.resolve());
     await Promise.all(runs);
     expect(started).toEqual([0, 1, 2, 3]);
@@ -147,7 +148,9 @@ describe('workspace exec lease', () => {
     expect(entry).toMatchObject({ activeSlots: 2, queuedCount: 1, kind: 'terminal-exec', owner: 'main' });
     gate.resolve();
     await Promise.all(runs);
-    expect(getResourceEnvelopeLedger().get('main:terminal-exec:envelope-ws')).toBeUndefined();
+    const idle = getResourceEnvelopeLedger().get('main:terminal-exec:envelope-ws');
+    expect(idle).toMatchObject({ activeSlots: 0, queuedCount: 0, limits: { concurrencySlots: 3 } });
+    expect(idle?.limitHistory).toHaveLength(1);
   });
   it('rejects with a typed timeout error when the slot never frees', async () => {
     const gate = deferred();

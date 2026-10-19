@@ -26,9 +26,17 @@ export type ResourceKind =
   | "pty-session"
   | "mcp-process"
   | "provider-sidecar"
-  | "background-index";
+  | "background-index"
+  | "chat-history";
 
 export type ResourcePriority = "foreground" | "background";
+
+export type ResourceLimitEvent = {
+  at: number;
+  from: number;
+  to: number;
+  reason: string;
+};
 
 /** Cooperative QoS class for the P1/P2 resource fabric. */
 export type RequestPriority = "interactive" | "background" | "opportunistic";
@@ -55,6 +63,7 @@ export type ResourceEnvelopeEntry = {
   treeCpuPercent: number;
   pids?: number[];
   limits: ResourceLimits;
+  limitHistory?: ResourceLimitEvent[];
   updatedAt: number;
   reason?: string;
 };

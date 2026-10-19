@@ -19,7 +19,7 @@ import {
   recordPermissionAudit,
 } from './permissions-api';
 import { TerminalSessionManager } from './terminal-session-manager';
-import { isTerminalResourceLeaseTimeoutError, withWorkspaceExecLease } from './resource-leases';
+import { isTerminalResourceLeaseTimeoutError, withWorkspaceExecLease } from './resource-fabric';
 import { findSessionDeleteGateBySession, tryWithSessionDeleteGateLock } from './session-delete-gate';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
@@ -341,8 +341,8 @@ function resolveWorkspaceLeaseKey(workspacePath: string): string {
 }
 
 /**
- * Runs a Gateway exec RPC under the workspace exec lease so a single workspace
- * cannot exceed `WORKSPACE_EXEC_CAPACITY` concurrent Gateway exec RPC sequences.
+ * Runs a Gateway exec RPC under the shared ResourceFabric workspace account so a
+ * single workspace cannot exceed its adaptive concurrent exec limit.
  *
  * A lease timeout is reported as a stable, non-retryable terminal result with
  * `blocked: true` rather than surfacing as a raw rejection.

@@ -1,6 +1,6 @@
 import { assertSensitiveCaptureAllowed } from './sensitive-capture-gate';
 import type { GatewayManager } from '../gateway/manager';
-import type { GatewayRpcBackpressure } from '../gateway/rpc-backpressure';
+import type { ResourceFabric } from './resource-fabric';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createHash } from 'node:crypto';
 import type {
@@ -98,12 +98,12 @@ function buildParamsPreview(params: unknown): string | undefined {
 
 function runGatewayRpc(
   gatewayManager: GatewayManager,
-  gatewayRpcBackpressure: GatewayRpcBackpressure,
+  resourceFabricInstance: ResourceFabric,
   method: string,
   params: unknown,
   timeoutMs: number | undefined,
 ): Promise<unknown> {
-  return gatewayRpcBackpressure.run(
+  return resourceFabricInstance.run(
     method,
     params,
     timeoutMs,
@@ -335,7 +335,7 @@ async function captureMissionKnowledgeCandidates(
 
 export function createGatewayApi(
   gatewayManager: GatewayManager,
-  gatewayRpcBackpressure: GatewayRpcBackpressure,
+  resourceFabricInstance: ResourceFabric,
   options: GatewayApiOptions = {},
 ): CompleteHostServiceRegistry['gateway'] {
   const capturedMissionKnowledgeKeys = new Set<string>();
@@ -344,7 +344,7 @@ export function createGatewayApi(
     params: unknown,
     timeoutMs: number | undefined,
   ) => {
-    const result = await runGatewayRpc(gatewayManager, gatewayRpcBackpressure, method, params, timeoutMs);
+    const result = await runGatewayRpc(gatewayManager, resourceFabricInstance, method, params, timeoutMs);
     await captureMissionKnowledgeCandidates(method, result, options.createKnowledgeInboxItem, capturedMissionKnowledgeKeys);
     return result;
   };

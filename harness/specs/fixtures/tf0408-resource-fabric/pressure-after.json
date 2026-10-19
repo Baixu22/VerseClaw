@@ -1,0 +1,329 @@
+{
+  "schema": "clawx.tf0408.resource-pressure/v1",
+  "phase": "after",
+  "driven_by": "agent",
+  "actor": "codex-tf0408-pressure",
+  "generatedAt": "2026-10-19T02:15:38.958Z",
+  "workload": {
+    "exec": 20,
+    "history": 20,
+    "workspaceKeys": 4,
+    "perTaskMs": 5
+  },
+  "execTimeouts": 0,
+  "historyTimeouts": 0,
+  "maxActiveExec": 4,
+  "maxActiveHistory": 4,
+  "execDurations": [
+    11,
+    12,
+    12,
+    12,
+    12,
+    12,
+    12,
+    12,
+    12,
+    27,
+    27,
+    27,
+    27,
+    27,
+    27,
+    27,
+    27,
+    27,
+    27,
+    27
+  ],
+  "historyDurations": [
+    12,
+    12,
+    11,
+    26,
+    26,
+    26,
+    26,
+    41,
+    41,
+    41,
+    41,
+    56,
+    56,
+    57,
+    57,
+    63,
+    63,
+    63,
+    63,
+    72
+  ],
+  "totalMs": 73,
+  "fair": true,
+  "limitEvents": [
+    {
+      "at": 1792376138884,
+      "from": 2,
+      "to": 3,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138885,
+      "from": 2,
+      "to": 3,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138896,
+      "from": 3,
+      "to": 4,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138897,
+      "from": 3,
+      "to": 4,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138897,
+      "from": 2,
+      "to": 4,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138897,
+      "from": 2,
+      "to": 4,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138897,
+      "from": 2,
+      "to": 4,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138912,
+      "from": 4,
+      "to": 3,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138912,
+      "from": 3,
+      "to": 2,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138912,
+      "from": 2,
+      "to": 1,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138912,
+      "from": 4,
+      "to": 3,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138912,
+      "from": 3,
+      "to": 2,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138912,
+      "from": 2,
+      "to": 1,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138912,
+      "from": 4,
+      "to": 3,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138912,
+      "from": 3,
+      "to": 2,
+      "reason": "gradient2 latency sample"
+    },
+    {
+      "at": 1792376138912,
+      "from": 2,
+      "to": 1,
+      "reason": "gradient2 latency sample"
+    }
+  ],
+  "accounts": {
+    "workspaceExec:pressure-ws-0": {
+      "active": 0,
+      "queued": 0,
+      "limit": 4,
+      "minLimit": 1,
+      "maxLimit": 4,
+      "activeByQos": {
+        "interactive": 0,
+        "background": 0,
+        "opportunistic": 0
+      },
+      "limitHistory": [
+        {
+          "at": 1792376138884,
+          "from": 2,
+          "to": 3,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1792376138896,
+          "from": 3,
+          "to": 4,
+          "reason": "gradient2 latency sample"
+        }
+      ]
+    },
+    "chatHistory": {
+      "active": 0,
+      "queued": 0,
+      "limit": 4,
+      "minLimit": 1,
+      "maxLimit": 4,
+      "activeByQos": {
+        "interactive": 0,
+        "background": 0,
+        "opportunistic": 0
+      },
+      "limitHistory": [
+        {
+          "at": 1792376138885,
+          "from": 2,
+          "to": 3,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1792376138897,
+          "from": 3,
+          "to": 4,
+          "reason": "gradient2 latency sample"
+        }
+      ]
+    },
+    "workspaceExec:pressure-ws-1": {
+      "active": 0,
+      "queued": 0,
+      "limit": 1,
+      "minLimit": 1,
+      "maxLimit": 4,
+      "activeByQos": {
+        "interactive": 0,
+        "background": 0,
+        "opportunistic": 0
+      },
+      "limitHistory": [
+        {
+          "at": 1792376138897,
+          "from": 2,
+          "to": 4,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1792376138912,
+          "from": 4,
+          "to": 3,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1792376138912,
+          "from": 3,
+          "to": 2,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1792376138912,
+          "from": 2,
+          "to": 1,
+          "reason": "gradient2 latency sample"
+        }
+      ]
+    },
+    "workspaceExec:pressure-ws-2": {
+      "active": 0,
+      "queued": 0,
+      "limit": 1,
+      "minLimit": 1,
+      "maxLimit": 4,
+      "activeByQos": {
+        "interactive": 0,
+        "background": 0,
+        "opportunistic": 0
+      },
+      "limitHistory": [
+        {
+          "at": 1792376138897,
+          "from": 2,
+          "to": 4,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1792376138912,
+          "from": 4,
+          "to": 3,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1792376138912,
+          "from": 3,
+          "to": 2,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1792376138912,
+          "from": 2,
+          "to": 1,
+          "reason": "gradient2 latency sample"
+        }
+      ]
+    },
+    "workspaceExec:pressure-ws-3": {
+      "active": 0,
+      "queued": 0,
+      "limit": 1,
+      "minLimit": 1,
+      "maxLimit": 4,
+      "activeByQos": {
+        "interactive": 0,
+        "background": 0,
+        "opportunistic": 0
+      },
+      "limitHistory": [
+        {
+          "at": 1792376138897,
+          "from": 2,
+          "to": 4,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1792376138912,
+          "from": 4,
+          "to": 3,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1792376138912,
+          "from": 3,
+          "to": 2,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1792376138912,
+          "from": 2,
+          "to": 1,
+          "reason": "gradient2 latency sample"
+        }
+      ]
+    }
+  }
+}

@@ -24,6 +24,17 @@ export class PriorityQueue<T> {
     this.items.push({ value, qos, enqueuedAt: this.now() });
   }
 
+  remove(predicate: (value: T) => boolean): boolean {
+    const index = this.items.findIndex((item) => predicate(item.value));
+    if (index < 0) return false;
+    this.items.splice(index, 1);
+    return true;
+  }
+
+  clear(): T[] {
+    return this.items.splice(0).map((item) => item.value);
+  }
+
   boost(value: T, durationMs: number): boolean {
     const item = this.items.find((entry) => entry.value === value);
     if (!item) return false;

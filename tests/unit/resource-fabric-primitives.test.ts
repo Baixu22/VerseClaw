@@ -62,8 +62,24 @@ describe('resource fabric P0 primitives', () => {
     expect(limit.sample(100, 0)).toBe(4);
     expect(limit.sample(10, 1)).toBe(5);
     expect(limit.sample(100, 0)).toBe(5);
+    const contraction = new AdaptiveLimit({ initialLimit: 4, minLimit: 1, maxLimit: 8, smoothing: 0.2, minChangeRatio: 0.1 });
+    contraction.sample(100, 0);
+    contraction.sample(10, 0);
+    expect(contraction.sample(1000, 0)).toBe(2);
     expect(() => limit.sample(0)).toThrow(RangeError);
     expect(() => limit.sample(1, -1)).toThrow(RangeError);
+  });
+
+  it('removes and clears queued priority items', () => {
+    const queue = new PriorityQueue<string>();
+    queue.push('a', 'interactive');
+    queue.push('b', 'background');
+    expect(queue.remove((value) => value === 'a')).toBe(true);
+    expect(queue.remove((value) => value === 'missing')).toBe(false);
+    expect(queue.dequeue()).toBe('b');
+    queue.push('c');
+    expect(queue.clear()).toEqual(['c']);
+    expect(queue.size).toBe(0);
   });
 
   it('enforces token-bucket bursts with injected time and rejects invalid input', () => {

@@ -118,7 +118,7 @@ describe('terminal api workspace exec lease', () => {
   });
 
   afterEach(async () => {
-    const { resetTerminalResourceLeasesForTest } = await import('@electron/services/resource-leases');
+    const { resetTerminalResourceLeasesForTest } = await import('@electron/services/resource-fabric');
     resetTerminalResourceLeasesForTest();
   });
 

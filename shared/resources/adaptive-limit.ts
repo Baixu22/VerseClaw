@@ -54,7 +54,9 @@ export class AdaptiveLimit {
     this.longAverage = this.longAverage == null
       ? latencyMs
       : this.longAverage + (this.options.smoothing / 5) * (latencyMs - this.longAverage);
-    const gradient = Math.max(1, this.longAverage / this.shortAverage);
+    // Gradient2: allow contraction when short latency rises above the long
+    // average, but clamp expansion to 1 so only queue depth grows the limit.
+    const gradient = Math.min(1, Math.max(0.5, this.longAverage / this.shortAverage));
     const target = Math.max(
       this.options.minLimit,
       Math.min(this.options.maxLimit, Math.floor(this.current * gradient + queueSize)),
