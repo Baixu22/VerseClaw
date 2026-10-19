@@ -108,5 +108,44 @@
   ],
   "acceptanceWorktree": "D:\\ClawX-candidates\\tf0424-context-lifecycle-acceptance-20261019",
   "acceptanceCandidate": "073272e3d60c42c1718c07a3a2545d42c43319bf",
-  "productionRootIsCRK": true
+  "productionRootIsCRK": true,
+  "mergedCandidate": "71a7bfd57049b4d52348ff5739dae74eaf907cc7",
+  "postMergeGeneratedAt": "2026-10-19T09:41:17.3811693Z",
+  "postMergeGates": [
+    {
+      "command": "focused context lifecycle + CRK default tests",
+      "exitCode": 0,
+      "testFiles": 6,
+      "tests": 37
+    },
+    {
+      "command": "pnpm run typecheck:node",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:web",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/context-lifecycle-exploration.md",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 18403
+    },
+    {
+      "command": "pnpm run lint:bom",
+      "exitCode": 0
+    },
+    {
+      "command": "targeted eslint",
+      "exitCode": 0
+    }
+  ]
 }
