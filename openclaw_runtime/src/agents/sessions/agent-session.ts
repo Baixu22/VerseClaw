@@ -55,6 +55,7 @@ import { stripFrontmatter } from "../utils/frontmatter.js";
 import { sleep } from "../utils/sleep.js";
 import { createRequestAttemptBudget, runWithRequestAttemptBudget, type RequestAttemptBudget } from "../request-attempt-budget.js";
 import { parseRetryAfterMsFromText } from "../retry-after.js";
+import { sanitizeFailedAttemptTranscriptMessage } from "../stream-failure.js";
 import { formatNoApiKeyFoundMessage, formatNoModelSelectedMessage } from "./auth-guidance.js";
 import { type BashResult, executeBashWithOperations } from "./bash-executor.js";
 import { DEFAULT_THINKING_LEVEL } from "./defaults.js";
@@ -660,14 +661,19 @@ export class AgentSession {
         // Regular LLM message - persist as SessionMessageEntry. The model-call
         // observation is projected onto the entry (or a null custom entry)
         // without entering provider content.
+        // NET-D (TF-0441): an assistant message that ended in "error" is a
+        // failed attempt. Its tool calls were never executed, so they must not
+        // enter the formal transcript (a later replay would try to resurrect
+        // orphaned tool calls and approvals).
+        const persistedMessage = sanitizeFailedAttemptTranscriptMessage(event.message);
         if (modelCallObservation) {
-          attachModelCallObservation(event.message, modelCallObservation);
+          attachModelCallObservation(persistedMessage, modelCallObservation);
         }
-        const entryId = this.sessionManager.appendMessage(event.message);
+        const entryId = this.sessionManager.appendMessage(persistedMessage);
         if (modelCallObservation) {
           markModelCallPersisted(this.sessionId, modelCallObservation, entryId);
-          if (event.message.role === "assistant") {
-            for (const block of event.message.content) {
+          if (persistedMessage.role === "assistant") {
+            for (const block of persistedMessage.content) {
               if (block.type === "toolCall") {
                 this.toolCallObservations.set(block.id, modelCallObservation);
               }

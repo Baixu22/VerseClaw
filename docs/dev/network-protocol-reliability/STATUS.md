@@ -9,12 +9,12 @@
 
 | Node | Status | Evidence boundary |
 |---|---|---|
-| TF-0437 | in_progress (~75%) | Phase gate frozen; TF-0443/0438/0439/0440 done; NET-D..G (0441/0442/0444) open |
+| TF-0437 | in_progress (~90%) | Phase gate frozen; TF-0443/0438/0439/0440/0441 done; NET-E/F/G (0442/0444) open |
 | TF-0443 | done | Owner matrix, gap inventory, entrypoint guard and junction regression verified |
 | TF-0438 | done | Shared logical request attempt budget across auto-retry, fallback, retryAsync and provider transport |
 | TF-0439 | done | Gateway protocol range + negotiated hello validation, typed seq gap, reconnect resubscribe, explicit pending-RPC failure |
 | TF-0440 | done | Provider endpoint breaker wired at the real transport boundary; opt-in, endpoint+account scoped, sanitized diagnostics |
-| TF-0441 | proposed | Not started |
+| TF-0441 | done | Typed stream failure, failed-attempt isolation, responses post-header failure fixed |
 | TF-0442 | proposed | Not started |
 | TF-0444 | proposed | Not started |
 
@@ -55,9 +55,17 @@
 - Gates: 31 focused endpoint/budget tests, 2 diagnostics tests and 48 provider retry-boundary tests passed; `pnpm run typecheck` exit 0; `pnpm harness validate --spec harness/specs/tasks/provider-endpoint-circuit-breaker-v1.md` exit 0.
 - Evidence: `artifacts/network-protocol-reliability/net-c/net-c-evidence.json` (SHA256 `939D739D6FABB453808D90BE2D4CCA900AB06A689E3A30ABEA71C71311495432`).
 
+## TF-0441 completed
+
+- `openclaw_runtime/src/agents/stream-failure.ts`: typed `StreamFailureError` (code/reason/isRetryable/phase/partialOutput/status), abort-safe wrapper, `planFailedAttemptRetry()` (discard + same-logical-step-only) and the failed-attempt transcript projection.
+- `openclaw_runtime/src/agents/embedded-agent-runner/thinking.ts`: mid-stream pump classifies non-abort failures with phase and delivered-output flags.
+- `openclaw_runtime/src/agents/sessions/agent-session.ts`: an error assistant message persists without its unexecuted tool calls, so a failed attempt cannot enter the formal transcript as replayable tool work.
+- `openclaw_runtime/src/gateway/openresponses-http.ts`: post-header failure closes with a single `response.failed` envelope; the fabricated empty usage that allowed a trailing `response.completed` was removed.
+- Gates: 20 provider error HTTP boundary tests (incl. 4 new mid-stream/disconnect cases), 13 stream-failure unit tests, 117 sessions tests, 25 responses usage/tool-history tests, `pnpm run typecheck` exit 0, `pnpm run comms:replay` / `comms:compare` exit 0 (all metrics PASS), `pnpm harness validate --spec harness/specs/tasks/stream-failure-recovery-v1.md --since bbd15fed` exit 0.
+- Evidence: `artifacts/network-protocol-reliability/net-d/net-d-evidence.json` (SHA256 `C7986449989509441400529CF2BDEA7118607E95B67D7CC16054AFD9AF90B32E`).
+
 ## Remaining before TF-0437 can close
 
-- `TF-0441`: typed stream failure and failed-attempt effect isolation.
 - `TF-0442`: end-to-end deadline and cancellation propagation.
 - `TF-0444`: independent fault-injection acceptance.
 

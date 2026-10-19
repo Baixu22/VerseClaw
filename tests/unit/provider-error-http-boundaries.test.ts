@@ -3,6 +3,7 @@ import { createServer, type Server } from 'node:http';
 import { once } from 'node:events';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { FailoverError } from '../../openclaw_runtime/src/agents/failover-error';
+import { emitAgentEvent } from '../../openclaw_runtime/src/infra/agent-events';
 import { handleOpenAiHttpRequest } from '../../openclaw_runtime/src/gateway/openai-http';
 import { handleOpenResponsesHttpRequest } from '../../openclaw_runtime/src/gateway/openresponses-http';
 
@@ -111,3 +112,95 @@ describe.each(['/v1/chat/completions', '/v1/responses'])('provider failure bound
     expect(JSON.stringify(envelope)).not.toContain(secret);
   });
 });
+
+describe.each(['/v1/chat/completions', '/v1/responses'])(
+  'post-header stream failure %s (TF-0441)',
+  (path) => {
+    const partialText = 'partial-synthetic-output';
+
+    function streamingPayload(): Record<string, unknown> {
+      return path === '/v1/responses'
+        ? { model: 'openclaw', input: 'mid-stream failure', stream: true }
+        : {
+            model: 'openclaw',
+            messages: [{ role: 'user', content: 'mid-stream failure' }],
+            stream: true,
+          };
+    }
+
+    function dispatchWithPartialOutput(
+      beforeThrow?: (input: { abortSignal?: AbortSignal }) => Promise<void>,
+    ) {
+      dispatch.mockImplementationOnce(async (input: { runId?: string; abortSignal?: AbortSignal }) => {
+        if (input?.runId) {
+          emitAgentEvent({
+            runId: input.runId,
+            stream: 'assistant',
+            data: { delta: partialText },
+          } as never);
+        }
+        if (beforeThrow) await beforeThrow(input ?? {});
+        throw new Error(raw);
+      });
+    }
+
+    it('keeps partial output visible, never fabricates a stop, and writes no usage', async () => {
+      dispatchWithPartialOutput();
+      const response = await fetch(`${origin}${path}`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(streamingPayload()),
+        signal: AbortSignal.timeout(5000),
+      });
+      const text = await response.text();
+      expect(response.status).toBe(200);
+      // Partial output was delivered before the failure.
+      expect(text).toContain(partialText);
+      // Redaction still holds for mid-stream failures.
+      expect(text).not.toContain(secret);
+      expect(text).not.toContain('"finish_reason":"stop"');
+      if (path === '/v1/chat/completions') {
+        // No usage chunk is fabricated for a failed stream.
+        expect(text).not.toContain('"usage"');
+        const envelopes = text
+          .split('\n')
+          .filter((line) => line.startsWith('data: ') && line !== 'data: [DONE]')
+          .map((line) => JSON.parse(line.slice(6)));
+        // The wire-level error envelope is unchanged by the typed classification.
+        expect(envelopes.find((event) => event.error)?.error).toEqual({
+          message: 'internal error',
+          type: 'api_error',
+        });
+      } else {
+        const envelopes = text
+          .split('\n')
+          .filter((line) => line.startsWith('data: ') && line !== 'data: [DONE]')
+          .map((line) => JSON.parse(line.slice(6)));
+        const failed = envelopes.find((event) => event.type === 'response.failed');
+        expect(failed?.response?.status).toBe('failed');
+        expect(text).not.toContain('response.completed');
+      }
+    });
+
+    it('does not fabricate an error envelope after the client disconnects', async () => {
+      const controller = new AbortController();
+      dispatchWithPartialOutput(async (input) => {
+        controller.abort();
+        const deadline = Date.now() + 2000;
+        while (!input.abortSignal?.aborted && Date.now() < deadline) {
+          await new Promise((resolve) => setTimeout(resolve, 10));
+        }
+      });
+      const request = fetch(`${origin}${path}`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(streamingPayload()),
+        signal: controller.signal,
+      });
+      await expect(request).rejects.toBeTruthy();
+      // Let the handler observe the socket close and finish its catch path.
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      expect(logWarn).not.toHaveBeenCalled();
+    });
+  },
+);

@@ -1258,63 +1258,65 @@ export async function handleOpenResponsesHttpRequest(
       }
       logWarn(`openresponses: streaming response failed: ${redactProviderErrorBody(String(err))}`);
 
-      finalUsage = finalUsage ?? createEmptyUsage();
-      if (isClientToolNameConflictError(err)) {
-        const errorResponse = createResponseResource({
-          id: responseId,
-          model,
-          status: "failed",
-          output: [],
-          error: { code: "invalid_request_error", message: "invalid tool configuration" },
-          usage: finalUsage,
-        });
-
-        writeSseEvent(res, { type: "response.failed", response: errorResponse });
+      // NET-D (TF-0441): a post-header failure is terminal on its own. Close the
+      // stream with a single `response.failed` envelope and never let the
+      // lifecycle-end finally path emit a contradictory `response.completed`
+      // sequence. `finalUsage` stays undefined unless the attempt reported
+      // usage, so no measured-zero usage is fabricated for the failure.
+      const closeWithFailure = (failure: ReturnType<typeof createResponseResource>) => {
+        closed = true;
+        stopWatchingDisconnect();
+        unsubscribe();
+        rememberResponseSession();
+        writeSseEvent(res, { type: "response.failed", response: failure });
         emitAgentEvent({
           runId: responseId,
           stream: "lifecycle",
           data: { phase: "error" },
         });
+        writeDone(res);
+        res.end();
+      };
+      if (isClientToolNameConflictError(err)) {
+        closeWithFailure(
+          createResponseResource({
+            id: responseId,
+            model,
+            status: "failed",
+            output: [],
+            error: { code: "invalid_request_error", message: "invalid tool configuration" },
+            usage: finalUsage,
+          }),
+        );
         return;
       }
-      const errorResponse = createResponseResource({
-        id: responseId,
-        model,
-        status: "failed",
-        output: [],
-        error: { code: "api_error", message: "internal error" },
-        usage: finalUsage,
-      });
-
       const mapped = resolveOpenAiCompatError(err);
       if (mapped) {
-        const mappedResponse = createResponseResource({
+        closeWithFailure(
+          createResponseResource({
+            id: responseId,
+            model,
+            status: "failed",
+            output: [],
+            error: {
+              code: mapped.error.type,
+              message: mapped.error.message,
+            },
+            usage: finalUsage,
+          }),
+        );
+        return;
+      }
+      closeWithFailure(
+        createResponseResource({
           id: responseId,
           model,
           status: "failed",
           output: [],
-          error: {
-            code: mapped.error.type,
-            message: mapped.error.message,
-          },
+          error: { code: "api_error", message: "internal error" },
           usage: finalUsage,
-        });
-        rememberResponseSession();
-        writeSseEvent(res, { type: "response.failed", response: mappedResponse });
-        emitAgentEvent({
-          runId: responseId,
-          stream: "lifecycle",
-          data: { phase: "error" },
-        });
-        return;
-      }
-      rememberResponseSession();
-      writeSseEvent(res, { type: "response.failed", response: errorResponse });
-      emitAgentEvent({
-        runId: responseId,
-        stream: "lifecycle",
-        data: { phase: "error" },
-      });
+        }),
+      );
     } finally {
       if (!closed) {
         // Emit lifecycle end to trigger completion

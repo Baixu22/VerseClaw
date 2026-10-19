@@ -14,7 +14,12 @@ touchedAreas:
   - openclaw_runtime/src/agents/sessions/agent-session.ts
   - openclaw_runtime/src/agents/failover-error.ts
   - openclaw_runtime/src/agents/stream-failure.ts
+  - openclaw_runtime/src/agents/stream-failure.test.ts
   - tests/unit/provider-error-http-boundaries.test.ts
+  - harness/specs/tasks/stream-failure-recovery-v1.md
+  - docs/dev/network-protocol-reliability/stream-failure.md
+  - docs/dev/network-protocol-reliability/STATUS.md
+  - artifacts/network-protocol-reliability/net-d/**
 expectedUserBehavior:
   - 流式回答中断时会明确显示不完整，且不会重复执行工具副作用。
 requiredProfiles:

@@ -5,6 +5,7 @@ import { formatErrorMessage } from "../../infra/errors.js";
 import type { AssistantMessageEvent } from "../../llm/types.js";
 import { createAssistantMessageEventStream } from "../../llm/utils/event-stream.js";
 import type { AgentMessage, StreamFn } from "../runtime/index.js";
+import { toStreamFailure } from "../stream-failure.js";
 import { log } from "./logger.js";
 
 type AssistantContentBlock = Extract<AgentMessage, { role: "assistant" }>["content"][number];
@@ -612,6 +613,7 @@ async function pumpStreamWithRecovery(
   retry: () => ReturnType<StreamFn>,
 ): Promise<AssistantMessage> {
   let yieldedOutput = false;
+  let deliveredVisibleOutput = false;
   try {
     const resolved = stream instanceof Promise ? await stream : stream;
     for await (const chunk of resolved as AsyncIterable<unknown>) {
@@ -636,6 +638,13 @@ async function pumpStreamWithRecovery(
         }
       } else {
         yieldedOutput = true;
+        const chunkType = (chunk as { type?: unknown }).type;
+        if (
+          typeof chunkType === "string" &&
+          (chunkType.startsWith("text_") || chunkType.startsWith("toolcall_"))
+        ) {
+          deliveredVisibleOutput = true;
+        }
       }
       outer.push(chunk as Parameters<typeof outer.push>[0]);
     }
@@ -643,13 +652,22 @@ async function pumpStreamWithRecovery(
     return result as AssistantMessage;
   } catch (error: unknown) {
     if (!shouldRecoverAnthropicThinkingError(error, sessionMeta)) {
-      throw error;
+      // NET-D (TF-0441): classify every mid-stream failure so retryability and
+      // partial output stay explicit for callers. Abort errors keep their
+      // original identity so abort handling is unaffected.
+      throw toStreamFailure(error, {
+        phase: yieldedOutput ? "after_headers" : "before_headers",
+        partialOutput: deliveredVisibleOutput,
+      });
     }
     if (yieldedOutput) {
       log.warn(
         `[session-recovery] Anthropic thinking error occurred after streaming began; skipping retry to avoid duplicate chunks: sessionId=${sessionMeta.id}`,
       );
-      throw error;
+      throw toStreamFailure(error, {
+        phase: "after_headers",
+        partialOutput: deliveredVisibleOutput,
+      });
     }
     sessionMeta.recoveredAnthropicThinking = true;
     log.warn(

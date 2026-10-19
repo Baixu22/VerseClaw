@@ -1,0 +1,74 @@
+{
+  "schema": "clawx.network-protocol-reliability.net-d.evidence.v1",
+  "node": "TF-0441",
+  "driven_by": "agent",
+  "timestamp": "2026-10-19T09:01:57.428610+08:00",
+  "candidate_sha": "bbd15fed",
+  "commands": [
+    {
+      "command": "pnpm exec vitest run tests/unit/provider-error-http-boundaries.test.ts --maxWorkers=1",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "1 file, 20 tests passed (16 boundary + 4 new post-header/disconnect cases)"
+    },
+    {
+      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/stream-failure.test.ts --maxWorkers=1",
+      "cwd": "openclaw_runtime",
+      "exit_code": 0,
+      "result": "1 file, 13 tests passed"
+    },
+    {
+      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/stream-failure.test.ts src/agents/sessions --maxWorkers=1",
+      "cwd": "openclaw_runtime",
+      "exit_code": 0,
+      "result": "8 files, 117 tests passed (transcript persistence path included)"
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/openresponses-usage-and-tool-history.test.ts tests/unit/provider-validation.test.ts tests/unit/context-compression-provider.test.ts --maxWorkers=1",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "3 files, 25 tests passed (responses usage/tool-history regression)"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "node/web/test exit 0, errorCount 0"
+    },
+    {
+      "command": "pnpm run comms:replay",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "metrics written to artifacts/comms/current-metrics.json"
+    },
+    {
+      "command": "pnpm run comms:compare",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "every metric PASS; history_load_qps delta 0.00%, rpc_p95_ms delta 0.00%"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/stream-failure-recovery-v1.md --since bbd15fed",
+      "cwd": "repo root",
+      "exit_code": 0,
+      "result": "Spec is valid"
+    }
+  ],
+  "implementation": [
+    "openclaw_runtime/src/agents/stream-failure.ts: typed StreamFailureError (code/reason/isRetryable/phase/partialOutput/status), classification table, abort-safe toStreamFailure(), planFailedAttemptRetry() (discard + same-logical-step-only) and sanitizeFailedAttemptTranscriptMessage()",
+    "openclaw_runtime/src/agents/embedded-agent-runner/thinking.ts: mid-stream pump classifies non-abort failures with phase and delivered-output flags; abort identity preserved",
+    "openclaw_runtime/src/agents/sessions/agent-session.ts: failed-attempt assistant messages persist through the transcript projection, so unexecuted tool calls never enter the formal transcript",
+    "openclaw_runtime/src/gateway/openresponses-http.ts: post-header failure now closes with a single response.failed envelope; removed the fabricated empty usage assignment that let the lifecycle-end path emit a contradictory response.completed",
+    "tests/unit/provider-error-http-boundaries.test.ts: partial-text mid-stream failure for both endpoints, no fabricated stop/usage, no response.completed after response.failed, client disconnect without a fabricated error envelope",
+    "openclaw_runtime/src/agents/stream-failure.test.ts: 13 tests for classification, isolation planning, transcript projection and the thinking-pump wrapper"
+  ],
+  "found_defects": [
+    "/v1/responses emitted response.output_text.done/content_part.done/output_item.done plus response.completed (status=failed) after a post-header failure because the catch path forced finalUsage to empty usage; fixed in TF-0441."
+  ],
+  "boundaries": {
+    "wire_envelope": "The OpenAI-compatible error envelope ({message, type}) and the Responses failed envelope codes are unchanged.",
+    "retry": "No unconditional replay and no stream resume claim; retries remain same-logical-step only and are blocked after output or tool effects.",
+    "live_provider": "Synthetic loopback HTTP + stubs only; no paid provider request, no live conformance claim.",
+    "testing_boundary": "No E2E Electron run in this node; TF-0444 owns independent fault injection."
+  }
+}
