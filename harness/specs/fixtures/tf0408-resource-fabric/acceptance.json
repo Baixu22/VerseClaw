@@ -8,10 +8,10 @@
     "TF-0410"
   ],
   "candidate": {
-    "sha": "636749c98927c7183b099e4e7b0071cf5bf9a136",
+    "sha": "b276d5aee74cee4f99df8deb4c9560cace93e031",
     "subject": "feat(resources): unify admission through ResourceFabric"
   },
-  "generatedAt": "2026-10-19T02:57:23.157Z",
+  "generatedAt": "2026-10-19T03:28:25.986Z",
   "result": "pass",
   "pressure": {
     "before": "pressure-before.json",
@@ -95,7 +95,11 @@
   "boundary": {
     "fullSuite": "full-suite-boundary.json",
     "fullSuiteResult": "fail",
-    "note": "Full repository harness run reports 21 unrelated pre-existing failures; retained separately and not counted as a P2 pass."
+    "note": "The repository-wide harness run was executed on the pre-rebase P2 branch and reports 21 unrelated pre-existing failures; it is retained separately and is not counted as a P2 pass."
   },
-  "productLocks": "unchanged"
+  "productLocks": "unchanged",
+  "hygiene": {
+    "commit": "b31b6fd85",
+    "note": "Retained network-protocol-reliability evidence paths in the reviewed artifact policy and regenerated the reviewed ignore block after rebasing onto origin/main fbecb0a4."
+  }
 }
