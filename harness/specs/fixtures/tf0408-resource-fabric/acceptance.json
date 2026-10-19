@@ -1,0 +1,101 @@
+{
+  "schema": "clawx.tf0408.resource-fabric-acceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0408",
+  "nodes": [
+    "TF-0408",
+    "TF-0409",
+    "TF-0410"
+  ],
+  "candidate": {
+    "sha": "636749c98927c7183b099e4e7b0071cf5bf9a136",
+    "subject": "feat(resources): unify admission through ResourceFabric"
+  },
+  "generatedAt": "2026-10-19T02:57:23.157Z",
+  "result": "pass",
+  "pressure": {
+    "before": "pressure-before.json",
+    "after": {
+      "execTimeouts": 0,
+      "historyTimeouts": 0,
+      "maxActiveExec": 4,
+      "maxActiveHistory": 4,
+      "totalMs": 73,
+      "fair": true,
+      "limitEvents": 16
+    },
+    "workload": {
+      "exec": 20,
+      "history": 20,
+      "workspaceKeys": 4,
+      "perTaskMs": 5
+    }
+  },
+  "invariants": {
+    "I1": "tests/unit/resource-fabric-invariants.test.ts",
+    "I2": "tests/unit/resource-fabric-invariants.test.ts",
+    "I3": "tests/unit/resource-fabric-invariants.test.ts"
+  },
+  "gates": [
+    {
+      "command": "pnpm exec vitest run tests/unit/resource-fabric-primitives.test.ts tests/unit/resource-fabric-workspace-exec.test.ts tests/unit/resource-fabric-chat-history.test.ts tests/unit/resource-fabric-invariants.test.ts tests/unit/resource-fabric-pressure.test.ts tests/unit/resource-envelope.test.ts tests/unit/resource-envelope-api.test.ts tests/unit/terminal-api.test.ts tests/unit/host-services.test.ts tests/unit/gateway-permissions-api.test.ts",
+      "exitCode": 0,
+      "testFiles": 10,
+      "tests": 90
+    },
+    {
+      "command": "pnpm run typecheck:node",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:web",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run contract:check",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/resource-fabric-p2-admission.md",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run lint:bom",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm agent-dev:fast",
+      "exitCode": 0,
+      "testFiles": 7,
+      "tests": 88
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0
+    },
+    {
+      "command": "portable Node 24.16.0 + @playwright/test: gateway-lifecycle + workspace-terminal-panel",
+      "exitCode": 0,
+      "tests": 6
+    },
+    {
+      "command": "pnpm run comms:replay && pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "PASS"
+    }
+  ],
+  "boundary": {
+    "fullSuite": "full-suite-boundary.json",
+    "fullSuiteResult": "fail",
+    "note": "Full repository harness run reports 21 unrelated pre-existing failures; retained separately and not counted as a P2 pass."
+  },
+  "productLocks": "unchanged"
+}

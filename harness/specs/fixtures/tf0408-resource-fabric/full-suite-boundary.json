@@ -1,0 +1,36 @@
+{
+  "schema": "clawx.tf0408.full-suite-boundary/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0408",
+  "generatedAt": "2026-10-19T02:57:23.155Z",
+  "command": "pnpm harness run --spec harness/specs/tasks/resource-fabric-p2-admission.md",
+  "result": "fail",
+  "scope": "repository-wide unit suite; not a P2 acceptance gate",
+  "summary": {
+    "testFiles": 959,
+    "passedFiles": 942,
+    "failedFiles": 12,
+    "skippedFiles": 5,
+    "tests": 8387,
+    "passedTests": 8313,
+    "failedTests": 21,
+    "skippedTests": 53,
+    "teardownErrors": 3,
+    "durationMs": 1105030
+  },
+  "failingFiles": [
+    "tests/unit/first-product-claims.test.ts",
+    "tests/unit/harness-spec-lifecycle.test.ts",
+    "tests/unit/harness-spec-portability.test.ts",
+    "tests/unit/r0-5-office-cmd-spawn.test.ts",
+    "tests/unit/repository-artifact-retention.test.ts",
+    "tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts",
+    "tests/unit/resource-tracker.test.ts",
+    "tests/unit/runtime-source-policy.test.ts",
+    "tests/unit/spec-doc-gardening.test.ts",
+    "tests/unit/uas-05-verseshell-process-lifecycle.test.ts",
+    "tests/unit/verseshell-manifest.test.ts",
+    "tests/unit/verseshell-facade.test.ts"
+  ],
+  "boundary": "The failures are in pre-existing specs/fixtures and unrelated subsystems (first-product claims, spec lifecycle/portability, child_process mocks, repository retention fixture, runtime-memory replay, resource port scan, verseshell manifest/facade). None of the focused ResourceFabric tests fail. This run is retained as an honest environment/hygiene boundary and is not used to claim P2 pass."
+}
