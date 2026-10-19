@@ -1,0 +1,507 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-17T14:45:33.682Z",
+  "provenance": {
+    "project": "colbymchenry/codegraph",
+    "repository": "https://github.com/colbymchenry/codegraph",
+    "license": "MIT",
+    "vendoredVersion": "1.0.1",
+    "upstreamLatestObserved": "1.6.2",
+    "sourcePath": "openclaw_runtime/extensions/codegraph/dist/index.js",
+    "sourceSha256": "5bbcfdae6043e882f6821a504dce8a51371a0dd158fc5c5488743991ec8e76cc",
+    "note": "Frozen measurement only; regenerated from the full 693-file CodeGraph 1.0.1 tree after the loadable plugin was removed.",
+    "measurementSourcePath": "D:/ClawX-work/codegraph-freeze-worktree-20261017/openclaw_runtime/extensions/codegraph",
+    "measurementSourceSha256": "5bbcfdae6043e882f6821a504dce8a51371a0dd158fc5c5488743991ec8e76cc"
+  },
+  "fixtureRoot": "harness/specs/fixtures/codegraph-retirement/impact-parity-v1",
+  "fixtureFiles": [
+    {
+      "source": "openclaw_runtime/src/context-engine/factstore/store.ts",
+      "fixturePath": "src/store.ts",
+      "bytes": 19028,
+      "sha256": "6143c2c2f6f8295b7f9ef8d787452160d8ff970542c860008d8f8e22d005e3ae"
+    },
+    {
+      "source": "openclaw_runtime/src/context-engine/factstore/ignore.ts",
+      "fixturePath": "src/ignore.ts",
+      "bytes": 1820,
+      "sha256": "f3827d3e359b24163b679e181fbbb98e1b8fa7a1ffdda869767df8838a2cdb96"
+    },
+    {
+      "source": "openclaw_runtime/src/context-engine/factstore/freshness.ts",
+      "fixturePath": "src/freshness.ts",
+      "bytes": 4326,
+      "sha256": "94151aeb43676a56f87e7a9c4745ca2f64ebb09431902779142eeb62ca5b34b3"
+    },
+    {
+      "source": "openclaw_runtime/src/context-engine/factstore/statements.ts",
+      "fixturePath": "src/statements.ts",
+      "bytes": 10404,
+      "sha256": "df6ed6dfa5211518a72d79b187e225395f8f780af2088c253f75f664abc66dfe"
+    },
+    {
+      "source": "openclaw_runtime/src/context-engine/factstore/materialize.ts",
+      "fixturePath": "src/materialize.ts",
+      "bytes": 11150,
+      "sha256": "98f5567f2ca2e084a5d807a0afdaeb88f96202b195510ad5f83628f77c8820c5"
+    },
+    {
+      "source": "openclaw_runtime/src/context-engine/producers/hash.ts",
+      "fixturePath": "src/hash.ts",
+      "bytes": 764,
+      "sha256": "d46c07104f8afeffbe2aada12afe2451a83d1d6ea7d9aaa15c722c2d297fab88"
+    },
+    {
+      "source": "openclaw_runtime/src/context-engine/producers/ripgrep-producer.ts",
+      "fixturePath": "src/ripgrep-producer.ts",
+      "bytes": 10551,
+      "sha256": "c5c22f2cb96098816cd69c49c180dad687df0f259cf775bd80e6dab48d7e395e"
+    }
+  ],
+  "queryParams": {
+    "callersDepth": 2,
+    "impactDepth": 3,
+    "searchLimit": 1
+  },
+  "queries": [
+    {
+      "query": "openFactStore",
+      "found": true,
+      "matchedSymbol": {
+        "name": "openFactStore",
+        "filePath": "src/store.ts",
+        "startLine": 67
+      },
+      "callers": [],
+      "impactFiles": [
+        "src/store.ts"
+      ]
+    },
+    {
+      "query": "factStorePathFor",
+      "found": true,
+      "matchedSymbol": {
+        "name": "factStorePathFor",
+        "filePath": "src/store.ts",
+        "startLine": 57
+      },
+      "callers": [
+        {
+          "name": "openFactStore",
+          "filePath": "src/store.ts",
+          "startLine": 67
+        }
+      ],
+      "impactFiles": [
+        "src/store.ts"
+      ]
+    },
+    {
+      "query": "closeAllFactStores",
+      "found": true,
+      "matchedSymbol": {
+        "name": "closeAllFactStores",
+        "filePath": "src/store.ts",
+        "startLine": 78
+      },
+      "callers": [],
+      "impactFiles": [
+        "src/store.ts"
+      ]
+    },
+    {
+      "query": "upsertFileFacts",
+      "found": true,
+      "matchedSymbol": {
+        "name": "upsertFileFacts",
+        "filePath": "src/store.ts",
+        "startLine": 118
+      },
+      "callers": [
+        {
+          "name": "createMaterializer",
+          "filePath": "src/materialize.ts",
+          "startLine": 94
+        }
+      ],
+      "impactFiles": [
+        "src/materialize.ts",
+        "src/store.ts"
+      ]
+    },
+    {
+      "query": "normalizeFactPath",
+      "found": true,
+      "matchedSymbol": {
+        "name": "normalizeFactPath",
+        "filePath": "src/ignore.ts",
+        "startLine": 39
+      },
+      "callers": [
+        {
+          "name": "factStoreIgnoreReason",
+          "filePath": "src/ignore.ts",
+          "startLine": 51
+        },
+        {
+          "name": "createMaterializer",
+          "filePath": "src/materialize.ts",
+          "startLine": 94
+        },
+        {
+          "name": "createMaterializer",
+          "filePath": "src/materialize.ts",
+          "startLine": 94
+        },
+        {
+          "name": "upsertFileFacts",
+          "filePath": "src/store.ts",
+          "startLine": 118
+        },
+        {
+          "name": "materialize.ts",
+          "filePath": "src/materialize.ts",
+          "startLine": 1
+        },
+        {
+          "name": "store.ts",
+          "filePath": "src/store.ts",
+          "startLine": 1
+        },
+        {
+          "name": "createMaterializer",
+          "filePath": "src/materialize.ts",
+          "startLine": 94
+        },
+        {
+          "name": "upsertFileFacts",
+          "filePath": "src/store.ts",
+          "startLine": 118
+        },
+        {
+          "name": "getFileRecord",
+          "filePath": "src/store.ts",
+          "startLine": 220
+        },
+        {
+          "name": "getSymbolsByFile",
+          "filePath": "src/store.ts",
+          "startLine": 228
+        },
+        {
+          "name": "getEdgesByFile",
+          "filePath": "src/store.ts",
+          "startLine": 236
+        },
+        {
+          "name": "getChunksByFile",
+          "filePath": "src/store.ts",
+          "startLine": 251
+        },
+        {
+          "name": "recordTouch",
+          "filePath": "src/store.ts",
+          "startLine": 285
+        },
+        {
+          "name": "observeContentHash",
+          "filePath": "src/store.ts",
+          "startLine": 297
+        },
+        {
+          "name": "freshness",
+          "filePath": "src/store.ts",
+          "startLine": 310
+        },
+        {
+          "name": "materialize.ts",
+          "filePath": "src/materialize.ts",
+          "startLine": 1
+        },
+        {
+          "name": "store.ts",
+          "filePath": "src/store.ts",
+          "startLine": 1
+        }
+      ],
+      "impactFiles": [
+        "src/ignore.ts",
+        "src/materialize.ts",
+        "src/store.ts"
+      ]
+    },
+    {
+      "query": "factStoreIgnoreReason",
+      "found": true,
+      "matchedSymbol": {
+        "name": "factStoreIgnoreReason",
+        "filePath": "src/ignore.ts",
+        "startLine": 51
+      },
+      "callers": [
+        {
+          "name": "createMaterializer",
+          "filePath": "src/materialize.ts",
+          "startLine": 94
+        },
+        {
+          "name": "upsertFileFacts",
+          "filePath": "src/store.ts",
+          "startLine": 118
+        },
+        {
+          "name": "materialize.ts",
+          "filePath": "src/materialize.ts",
+          "startLine": 1
+        },
+        {
+          "name": "store.ts",
+          "filePath": "src/store.ts",
+          "startLine": 1
+        }
+      ],
+      "impactFiles": [
+        "src/ignore.ts",
+        "src/materialize.ts",
+        "src/store.ts"
+      ]
+    },
+    {
+      "query": "sha256",
+      "found": true,
+      "matchedSymbol": {
+        "name": "sha256",
+        "filePath": "src/hash.ts",
+        "startLine": 5
+      },
+      "callers": [
+        {
+          "name": "stableId",
+          "filePath": "src/hash.ts",
+          "startLine": 9
+        },
+        {
+          "name": "parseRipgrepEvent",
+          "filePath": "src/ripgrep-producer.ts",
+          "startLine": 257
+        },
+        {
+          "name": "ripgrep-producer.ts",
+          "filePath": "src/ripgrep-producer.ts",
+          "startLine": 1
+        },
+        {
+          "name": "projectIdForRoot",
+          "filePath": "src/hash.ts",
+          "startLine": 17
+        },
+        {
+          "name": "createMaterializer",
+          "filePath": "src/materialize.ts",
+          "startLine": 94
+        },
+        {
+          "name": "upsertFileFacts",
+          "filePath": "src/store.ts",
+          "startLine": 118
+        },
+        {
+          "name": "materialize.ts",
+          "filePath": "src/materialize.ts",
+          "startLine": 1
+        },
+        {
+          "name": "store.ts",
+          "filePath": "src/store.ts",
+          "startLine": 1
+        },
+        {
+          "name": "createMaterializer",
+          "filePath": "src/materialize.ts",
+          "startLine": 94
+        },
+        {
+          "name": "parseRipgrepEvent",
+          "filePath": "src/ripgrep-producer.ts",
+          "startLine": 257
+        },
+        {
+          "name": "ripgrepSearch",
+          "filePath": "src/ripgrep-producer.ts",
+          "startLine": 79
+        },
+        {
+          "name": "materialize.ts",
+          "filePath": "src/materialize.ts",
+          "startLine": 1
+        },
+        {
+          "name": "ripgrep-producer.ts",
+          "filePath": "src/ripgrep-producer.ts",
+          "startLine": 1
+        }
+      ],
+      "impactFiles": [
+        "src/hash.ts",
+        "src/materialize.ts",
+        "src/ripgrep-producer.ts",
+        "src/store.ts"
+      ]
+    },
+    {
+      "query": "stableId",
+      "found": true,
+      "matchedSymbol": {
+        "name": "stableId",
+        "filePath": "src/hash.ts",
+        "startLine": 9
+      },
+      "callers": [
+        {
+          "name": "parseRipgrepEvent",
+          "filePath": "src/ripgrep-producer.ts",
+          "startLine": 257
+        },
+        {
+          "name": "ripgrepSearch",
+          "filePath": "src/ripgrep-producer.ts",
+          "startLine": 79
+        },
+        {
+          "name": "ripgrep-producer.ts",
+          "filePath": "src/ripgrep-producer.ts",
+          "startLine": 1
+        }
+      ],
+      "impactFiles": [
+        "src/hash.ts",
+        "src/materialize.ts",
+        "src/ripgrep-producer.ts"
+      ]
+    },
+    {
+      "query": "projectIdForRoot",
+      "found": true,
+      "matchedSymbol": {
+        "name": "projectIdForRoot",
+        "filePath": "src/hash.ts",
+        "startLine": 17
+      },
+      "callers": [
+        {
+          "name": "createMaterializer",
+          "filePath": "src/materialize.ts",
+          "startLine": 94
+        },
+        {
+          "name": "upsertFileFacts",
+          "filePath": "src/store.ts",
+          "startLine": 118
+        },
+        {
+          "name": "materialize.ts",
+          "filePath": "src/materialize.ts",
+          "startLine": 1
+        },
+        {
+          "name": "store.ts",
+          "filePath": "src/store.ts",
+          "startLine": 1
+        }
+      ],
+      "impactFiles": [
+        "src/hash.ts",
+        "src/materialize.ts",
+        "src/store.ts"
+      ]
+    },
+    {
+      "query": "checkFileFreshness",
+      "found": true,
+      "matchedSymbol": {
+        "name": "checkFileFreshness",
+        "filePath": "src/freshness.ts",
+        "startLine": 40
+      },
+      "callers": [
+        {
+          "name": "freshness",
+          "filePath": "src/store.ts",
+          "startLine": 310
+        },
+        {
+          "name": "store.ts",
+          "filePath": "src/store.ts",
+          "startLine": 1
+        }
+      ],
+      "impactFiles": [
+        "src/freshness.ts",
+        "src/store.ts"
+      ]
+    },
+    {
+      "query": "gateFreshness",
+      "found": true,
+      "matchedSymbol": {
+        "name": "gateFreshness",
+        "filePath": "src/freshness.ts",
+        "startLine": 80
+      },
+      "callers": [
+        {
+          "name": "freshness",
+          "filePath": "src/store.ts",
+          "startLine": 310
+        },
+        {
+          "name": "store.ts",
+          "filePath": "src/store.ts",
+          "startLine": 1
+        }
+      ],
+      "impactFiles": [
+        "src/freshness.ts",
+        "src/store.ts"
+      ]
+    },
+    {
+      "query": "migrateFactStoreSchema",
+      "found": true,
+      "matchedSymbol": {
+        "name": "migrateFactStoreSchema",
+        "filePath": "src/statements.ts",
+        "startLine": 96
+      },
+      "callers": [
+        {
+          "name": "constructor",
+          "filePath": "src/store.ts",
+          "startLine": 91
+        },
+        {
+          "name": "store.ts",
+          "filePath": "src/store.ts",
+          "startLine": 1
+        }
+      ],
+      "impactFiles": [
+        "src/statements.ts",
+        "src/store.ts"
+      ]
+    },
+    {
+      "query": "createMaterializer",
+      "found": true,
+      "matchedSymbol": {
+        "name": "createMaterializer",
+        "filePath": "src/materialize.ts",
+        "startLine": 94
+      },
+      "callers": [],
+      "impactFiles": [
+        "src/materialize.ts"
+      ]
+    }
+  ]
+}
