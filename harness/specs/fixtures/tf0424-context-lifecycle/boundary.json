@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.tf0424.shadow-boundary/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0424",
+  "generatedAt": "2026-10-19T08:54:00.627Z",
+  "productionImportViolations": [],
+  "defaultsChanged": false,
+  "productLocksChanged": false,
+  "result": "shadow-only"
+}

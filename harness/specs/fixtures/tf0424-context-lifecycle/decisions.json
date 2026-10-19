@@ -1,0 +1,53 @@
+{
+  "schema": "clawx.tf0424.context-lifecycle-decisions/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0424",
+  "generatedAt": "2026-10-19T08:50:51.9650413Z",
+  "tf0435": {
+    "decision": "keep-shadow-default-off",
+    "promotion": "no-controlled-pilot",
+    "reasons": [
+      "first-token and wall-clock baseline incomplete",
+      "safe background session adoption not implemented",
+      "flag-off parity is the only current production claim"
+    ],
+    "evidence": [
+      "soft-threshold.json",
+      "soft-threshold-eval.json",
+      "stage1-baseline.json"
+    ]
+  },
+  "tf0436": {
+    "smallModelProvider": {
+      "decision": "NO-GO",
+      "reason": "No configured provider, credential/privacy budget or paired value-pruning quality evidence."
+    },
+    "valuePruning": {
+      "decision": "keep-shadow-default-off",
+      "reason": "Deterministic candidates are explainable, but live quality and cost gates are absent."
+    },
+    "summaryTree": {
+      "decision": "keep-shadow-default-off",
+      "reason": "A local token curve exists, but current-source paired recovery fidelity is absent."
+    },
+    "evidence": [
+      "value-pruning.json",
+      "value-pruning-eval.json",
+      "segment-summary.json",
+      "segment-summary-eval.json"
+    ]
+  },
+  "tf0424": {
+    "decision": "exploration-complete-no-go-for-default-on",
+    "defaultValuesChanged": false,
+    "productLocksChanged": false,
+    "newAuthorityCreated": false,
+    "evidence": [
+      "boundary.json",
+      "soft-threshold-eval.json",
+      "value-pruning-eval.json",
+      "segment-summary-eval.json",
+      "existing-compression-baseline.json"
+    ]
+  }
+}

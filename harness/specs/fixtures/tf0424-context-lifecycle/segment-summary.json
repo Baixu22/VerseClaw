@@ -1,0 +1,26 @@
+{
+  "schema": "clawx.tf0433.segment-summary-shadow/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0424",
+  "generatedAt": "2026-10-19T08:53:59.236Z",
+  "defaultPathChanged": false,
+  "durableStoreCreated": false,
+  "segmentCount": 9,
+  "reuseCount": 1,
+  "rollupDigest": "sha256:b53eaa9e9d247bef837f0bd8c61f12c67fbb41f08a879f396df7822aec6d1140",
+  "tokenCurve": [
+    {
+      "tokenBudget": 80,
+      "projectedTokens": 77
+    },
+    {
+      "tokenBudget": 160,
+      "projectedTokens": 150
+    },
+    {
+      "tokenBudget": 320,
+      "projectedTokens": 237
+    }
+  ],
+  "boundary": "in-memory shadow projection; transcript remains canonical"
+}

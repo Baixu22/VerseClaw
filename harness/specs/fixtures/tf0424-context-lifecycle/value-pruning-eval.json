@@ -1,0 +1,35 @@
+{
+  "schema": "clawx.tf0431.value-pruning-eval/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0424",
+  "generatedAt": "2026-10-19T08:50:28.5389701Z",
+  "shadowReport": {
+    "schema": "clawx.tf0430.value-pruning-shadow/v1",
+    "driven_by": "agent",
+    "actor": "codex-tf0424",
+    "generatedAt": "2026-10-19T08:47:29.836Z",
+    "defaultPathChanged": false,
+    "candidateCount": 5,
+    "secretBlocked": 1,
+    "eligibleSecretHits": 0,
+    "wouldDropCount": 2,
+    "wouldCompressCount": 2,
+    "wouldDropChars": 79,
+    "projectedCharsAfterGist": 79,
+    "providerConfigured": false,
+    "boundary": "shadow-only report; input items are never mutated"
+  },
+  "qualityComparison": {
+    "status": "NOT_RUN",
+    "reason": "No current-source paired task evaluation with a configured pruning provider and judge.",
+    "defaultPathUnchanged": true
+  },
+  "cost": {
+    "providerCalls": 0,
+    "providerTokens": 0,
+    "estimatedUsd": 0,
+    "status": "not-applicable-without-provider"
+  },
+  "decision": "NO-GO",
+  "decisionReason": "Deterministic shadow candidates exist, but quality, live provider value and cost evidence do not meet a controlled-pilot gate."
+}

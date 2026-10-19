@@ -1,0 +1,16 @@
+{
+  "schema": "clawx.tf0430.value-pruning-shadow/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0424",
+  "generatedAt": "2026-10-19T08:53:59.236Z",
+  "defaultPathChanged": false,
+  "candidateCount": 5,
+  "secretBlocked": 1,
+  "eligibleSecretHits": 0,
+  "wouldDropCount": 2,
+  "wouldCompressCount": 2,
+  "wouldDropChars": 79,
+  "projectedCharsAfterGist": 79,
+  "providerConfigured": false,
+  "boundary": "shadow-only report; input items are never mutated"
+}

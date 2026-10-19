@@ -1,0 +1,44 @@
+{
+  "schema": "clawx.tf0434.segment-summary-eval/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0424",
+  "generatedAt": "2026-10-19T08:50:28.5636785Z",
+  "localShadow": {
+    "schema": "clawx.tf0433.segment-summary-shadow/v1",
+    "driven_by": "agent",
+    "actor": "codex-tf0424",
+    "generatedAt": "2026-10-19T08:47:29.836Z",
+    "defaultPathChanged": false,
+    "durableStoreCreated": false,
+    "segmentCount": 9,
+    "reuseCount": 1,
+    "rollupDigest": "sha256:b53eaa9e9d247bef837f0bd8c61f12c67fbb41f08a879f396df7822aec6d1140",
+    "tokenCurve": [
+      {
+        "tokenBudget": 80,
+        "projectedTokens": 77
+      },
+      {
+        "tokenBudget": 160,
+        "projectedTokens": 150
+      },
+      {
+        "tokenBudget": 320,
+        "projectedTokens": 237
+      }
+    ],
+    "boundary": "in-memory shadow projection; transcript remains canonical"
+  },
+  "pairedEval": {
+    "status": "NOT_EXECUTED",
+    "reason": "The existing context-compression eval baseline does not compare the new segment-tree assembly against full-history summaries.",
+    "existingBaseline": "existing-compression-baseline.json"
+  },
+  "quality": {
+    "recoveryFidelity": "unverified",
+    "criticalFactRetention": "unverified",
+    "defaultPathUnchanged": true
+  },
+  "decision": "NO-GO",
+  "decisionReason": "The local token curve is bounded, but no current-source paired quality evaluation establishes recovery fidelity for the summary tree."
+}

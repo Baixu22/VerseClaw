@@ -1,0 +1,37 @@
+{
+  "schema": "clawx.tf0427.soft-threshold-shadow/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0424",
+  "generatedAt": "2026-10-19T08:54:28.255Z",
+  "defaultEnabled": false,
+  "scenarios": {
+    "softThreshold": {
+      "action": "would-defer",
+      "reason": "soft_threshold_headroom",
+      "minHeadroomTokens": 12000,
+      "headroomTokens": 20000,
+      "tokenBudget": 100000,
+      "currentTokenCount": 80000
+    },
+    "headMismatch": {
+      "verified": true,
+      "matchesBeforeAppend": true,
+      "matchesAfterAppend": false
+    },
+    "backgroundFailure": {
+      "status": "fallback-sync",
+      "fallbackApplied": true,
+      "error": "synthetic evidence failure"
+    },
+    "manualSync": {
+      "action": "sync",
+      "reason": "manual_stays_sync",
+      "minHeadroomTokens": 12000
+    },
+    "overflowSync": {
+      "action": "sync",
+      "reason": "overflow_stays_sync",
+      "minHeadroomTokens": 12000
+    }
+  }
+}

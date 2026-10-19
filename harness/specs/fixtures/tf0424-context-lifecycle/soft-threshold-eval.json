@@ -1,0 +1,83 @@
+{
+  "schema": "clawx.tf0428.async-soft-threshold-eval/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0424",
+  "generatedAt": "2026-10-19T08:54:55.1815203Z",
+  "shadowScenarios": {
+    "schema": "clawx.tf0427.soft-threshold-shadow/v1",
+    "driven_by": "agent",
+    "actor": "codex-tf0424",
+    "generatedAt": "2026-10-19T08:54:28.255Z",
+    "defaultEnabled": false,
+    "scenarios": {
+      "softThreshold": {
+        "action": "would-defer",
+        "reason": "soft_threshold_headroom",
+        "minHeadroomTokens": 12000,
+        "headroomTokens": 20000,
+        "tokenBudget": 100000,
+        "currentTokenCount": 80000
+      },
+      "headMismatch": {
+        "verified": true,
+        "matchesBeforeAppend": true,
+        "matchesAfterAppend": false
+      },
+      "backgroundFailure": {
+        "status": "fallback-sync",
+        "fallbackApplied": true,
+        "error": "synthetic evidence failure"
+      },
+      "manualSync": {
+        "action": "sync",
+        "reason": "manual_stays_sync",
+        "minHeadroomTokens": 12000
+      },
+      "overflowSync": {
+        "action": "sync",
+        "reason": "overflow_stays_sync",
+        "minHeadroomTokens": 12000
+      }
+    }
+  },
+  "baseline": {
+    "schema": "clawx.tf0427.stage1-baseline/v1",
+    "driven_by": "agent",
+    "actor": "codex-tf0424",
+    "generatedAt": "2026-10-19T08:50:08.2592394Z",
+    "source": "existing-compression-baseline.json",
+    "sampleCount": 12,
+    "sampleMix": {
+      "realRequested": 5,
+      "syntheticRequested": 7,
+      "realActual": 5,
+      "syntheticActual": 7,
+      "realShortfall": 0,
+      "evidenceInsufficient": false
+    },
+    "metrics": {
+      "firstTokenLatencyMs": null,
+      "compressionWallClockMs": null,
+      "tokenAmplificationProxyFromCompressionRatio": null,
+      "compressionRatioMean": null,
+      "informationDensityMean": null
+    },
+    "status": "partial",
+    "reason": "Existing deterministic compression evaluation provides aggregate compression economics but not a live pre-change first-token latency or compaction wall-clock sample.",
+    "boundary": "No first-token latency or production compaction-time claim is made from this fixture."
+  },
+  "qualityAndCost": {
+    "firstTokenLatency": "unmeasured",
+    "compressionWallClock": "unmeasured",
+    "tokenAmplificationProxy": null,
+    "liveQualityEval": "not-executed"
+  },
+  "safety": {
+    "safeSessionAdoptionImplemented": false,
+    "branchDigestCasImplemented": true,
+    "fallbackSyncImplemented": true,
+    "defaultBehaviorChanged": false
+  },
+  "decision": "NO-GO",
+  "decisionReason": "Only a shadow planner and CAS/fallback seam exist. Missing live first-token/compaction-cost evidence and missing safe session-store adoption prevent a controlled pilot."
+}

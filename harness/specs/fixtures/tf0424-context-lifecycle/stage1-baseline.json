@@ -1,0 +1,26 @@
+{
+  "schema": "clawx.tf0427.stage1-baseline/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0424",
+  "generatedAt": "2026-10-19T08:50:08.2592394Z",
+  "source": "existing-compression-baseline.json",
+  "sampleCount": 12,
+  "sampleMix": {
+    "realRequested": 5,
+    "syntheticRequested": 7,
+    "realActual": 5,
+    "syntheticActual": 7,
+    "realShortfall": 0,
+    "evidenceInsufficient": false
+  },
+  "metrics": {
+    "firstTokenLatencyMs": null,
+    "compressionWallClockMs": null,
+    "tokenAmplificationProxyFromCompressionRatio": null,
+    "compressionRatioMean": null,
+    "informationDensityMean": null
+  },
+  "status": "partial",
+  "reason": "Existing deterministic compression evaluation provides aggregate compression economics but not a live pre-change first-token latency or compaction wall-clock sample.",
+  "boundary": "No first-token latency or production compaction-time claim is made from this fixture."
+}

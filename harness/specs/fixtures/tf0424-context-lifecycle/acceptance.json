@@ -1,0 +1,102 @@
+{
+  "schema": "clawx.tf0424.context-lifecycle-acceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0424",
+  "generatedAt": "2026-10-19T09:04:02.6261522Z",
+  "result": "pass-shadow-no-go",
+  "existingBaseline": {
+    "sampleCount": 12,
+    "sampleMix": {
+      "realRequested": 5,
+      "syntheticRequested": 7,
+      "realActual": 5,
+      "syntheticActual": 7,
+      "realShortfall": 0,
+      "evidenceInsufficient": false
+    },
+    "acceptance": "PASS",
+    "evidenceInsufficient": true,
+    "layer1Pass": true,
+    "informationLoss": 0
+  },
+  "tracks": {
+    "softThreshold": {
+      "decision": "NO-GO",
+      "reason": "Only a shadow planner and CAS/fallback seam exist. Missing live first-token/compaction-cost evidence and missing safe session-store adoption prevent a controlled pilot.",
+      "evidence": "soft-threshold.json / soft-threshold-eval.json"
+    },
+    "valuePruning": {
+      "decision": "NO-GO",
+      "reason": "Deterministic shadow candidates exist, but quality, live provider value and cost evidence do not meet a controlled-pilot gate.",
+      "evidence": "value-pruning.json / value-pruning-eval.json"
+    },
+    "summaryTree": {
+      "decision": "NO-GO",
+      "reason": "The local token curve is bounded, but no current-source paired quality evaluation establishes recovery fidelity for the summary tree.",
+      "evidence": "segment-summary.json / segment-summary-eval.json"
+    }
+  },
+  "safety": {
+    "defaultValuesChanged": false,
+    "productLocksChanged": false,
+    "newDurableAuthority": false,
+    "productionImports": 0,
+    "taskLedgerAuthorityChanged": false,
+    "rendererGatewayBypass": false
+  },
+  "decisionRecords": "decisions.json",
+  "gates": [
+    {
+      "command": "focused context lifecycle + default matrix tests",
+      "exitCode": 0,
+      "testFiles": 5,
+      "tests": 31
+    },
+    {
+      "command": "pnpm run typecheck:node",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:web",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/context-lifecycle-exploration.md",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 18381
+    },
+    {
+      "command": "pnpm run lint:bom",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run build:runtime",
+      "exitCode": 0,
+      "node": "24.16.0",
+      "result": "gateway ready"
+    },
+    {
+      "command": "node scripts/context-compression-eval-runner.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "sampleCount": 12,
+      "evidenceInsufficient": true
+    }
+  ],
+  "boundaries": [
+    "All three exploration paths remain shadow/bypass prototypes and are not imported by production runtime code.",
+    "Existing compression evaluation passed deterministically but explicitly reports evidenceInsufficient=true; no live judge/continuation evidence is claimed.",
+    "First-token latency and compaction wall-clock remain unmeasured for async soft-threshold.",
+    "Value-pruning has deterministic would-drop diagnostics but no configured provider, paired quality or cost evidence.",
+    "Segment summary tree has a bounded local token curve but no current-source paired recovery-fidelity evaluation.",
+    "No product default, prompt order, compaction timing, storage authority, Task Ledger/ClawGraph authority or renderer boundary was changed."
+  ]
+}

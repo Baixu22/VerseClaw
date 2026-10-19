@@ -1,0 +1,84 @@
+{
+  "schema": "clawx.tf0424.existing-compression-baseline/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0424",
+  "generatedAt": "2026-10-19T08:49:41.8327234Z",
+  "sourceRunId": "2026-10-19T08-48-08-642Z",
+  "command": "node scripts/context-compression-eval-runner.mjs",
+  "sampleCount": 12,
+  "sampleMix": {
+    "realRequested": 5,
+    "syntheticRequested": 7,
+    "realActual": 5,
+    "syntheticActual": 7,
+    "realShortfall": 0,
+    "evidenceInsufficient": false
+  },
+  "layer0": {
+    "recallMean": 1,
+    "precisionMean": 1,
+    "criticalDroppedSamples": 0,
+    "staleLeakSamples": 0,
+    "compressionRatioMean": null,
+    "informationDensityMean": null
+  },
+  "layer1": {
+    "pass": true,
+    "advisory": {
+      "compressionRatioMean": 0.5822,
+      "informationDensityMean": 2.289,
+      "note": "Compression ratio is reported for economics only; it is not a pass/fail success criterion."
+    }
+  },
+  "informationLoss": {
+    "totalVerifiedClaims": 95,
+    "retainedVerifiedClaims": 95,
+    "droppedVerifiedClaims": 0,
+    "verifiedClaimsRetentionRate": 1,
+    "informationLossRate": 0,
+    "criticalDroppedVerifiedClaims": 0,
+    "samplesWithCriticalDropped": 0,
+    "criticalDroppedMaxPerSample": 0,
+    "importantDroppedVerifiedClaims": 0,
+    "niceToHaveDroppedVerifiedClaims": 0,
+    "bySeverity": {
+      "critical": {
+        "total": 45,
+        "retained": 45,
+        "retentionRate": 1
+      },
+      "important": {
+        "total": 43,
+        "retained": 43,
+        "retentionRate": 1
+      },
+      "nice_to_have": {
+        "total": 7,
+        "retained": 7,
+        "retentionRate": 1
+      }
+    }
+  },
+  "layer2": {
+    "judgeScoreMean": 10,
+    "scoreDistributionWarning": "all_scores_identical_check_judge_calibration_or_sample_difficulty",
+    "completenessRate": 1,
+    "accuracyRate": 1
+  },
+  "pairedAnalysis": {
+    "requested": false,
+    "executed": false,
+    "reason": "No --paired-summary overlay was provided, or no samples were overlaid.",
+    "samples": 0,
+    "damageCounts": {}
+  },
+  "acceptance": {
+    "status": "PASS",
+    "evidenceInsufficient": true
+  },
+  "boundaries": [
+    "No live LLM judge, schema-free judge, continuation judge or critic was requested.",
+    "This baseline validates existing compression evaluation infrastructure, not the new async/value-pruning/segment-tree exploration paths.",
+    "The source summary contains local transcript inventory counts; the retained fixture includes only aggregate metrics."
+  ]
+}
