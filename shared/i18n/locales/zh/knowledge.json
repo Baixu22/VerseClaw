@@ -624,7 +624,8 @@
     "defaultTitle": "未命名 Source Set",
     "addResult": "加入 Source Set",
     "saved": "Source Set 已保存",
-    "answerBoundary": "回答优先使用已选来源；持久写入仍需要草稿审查和明确确认。"
+    "answerBoundary": "回答优先使用已选来源；持久写入仍需要草稿审查和明确确认。",
+    "semanticToggle": "使用语义检索"
   },
   "studio": {
     "title": "Studio 助手",

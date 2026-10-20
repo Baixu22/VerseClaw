@@ -779,6 +779,7 @@ test.describe('Knowledge Hub MVP', () => {
           question: 'Create a Decision Memo from the current Source Set.',
           sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
           sourceSetId: 'ks-e2e',
+          semantic: true,
         })]: {
           success: true,
           draft: {
@@ -817,6 +818,10 @@ test.describe('Knowledge Hub MVP', () => {
     await expect(page.getByTestId('knowledge-source-set-panel')).toContainText('1 sources');
 
     await page.getByTestId('knowledge-source-set-title').fill('Decision sources');
+    const semanticToggle = page.getByTestId('knowledge-source-set-semantic-toggle');
+    await expect(semanticToggle).toHaveAttribute('aria-pressed', 'false');
+    await semanticToggle.click();
+    await expect(semanticToggle).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByTestId('knowledge-source-set-save')).toBeEnabled();
     await page.getByTestId('knowledge-source-set-save').click();
     await expect(page.getByText(/Source Set saved/)).toBeVisible();

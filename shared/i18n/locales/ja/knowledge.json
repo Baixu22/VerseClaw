@@ -624,7 +624,8 @@
     "defaultTitle": "無題の Source Set",
     "addResult": "Source Set に追加",
     "saved": "Source Set を保存しました",
-    "answerBoundary": "回答は選択したソースを優先します。永続的な書き込みには草稿レビューと明示的な確認が必要です。"
+    "answerBoundary": "回答は選択したソースを優先します。永続的な書き込みには草稿レビューと明示的な確認が必要です。",
+    "semanticToggle": "セマンティック検索を使用"
   },
   "studio": {
     "title": "Studio アシスタント",

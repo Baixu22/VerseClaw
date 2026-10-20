@@ -1306,15 +1306,17 @@
     },
     "knowledgePreflight": {
       "title": "Knowledge Preflight",
-      "summary": "{{docs}} related docs, {{pitfalls}} prior pitfalls, {{rules}} rules may apply.",
+      "summary": "{{docs}} related docs, {{pitfalls}} prior pitfalls, {{rules}} rules, and {{runtimeLessons}} runtime lessons may apply.",
       "confidence": "{{confidence}}%",
       "whyMatched": "Why: {{reason}}",
       "source": "{{corpus}} ? {{source}}",
       "groups": {
         "docs": "Related docs",
         "pitfalls": "Prior pitfalls",
-        "rules": "Rules"
-      }
+        "rules": "Rules",
+        "runtime_lessons": "Runtime lessons"
+      },
+      "runtimeLesson": "Runtime lesson: {{condition}} → {{action}}"
     },
     "knowledgeQuick": {
       "enable": "Use wiki knowledge",
@@ -1793,7 +1795,7 @@
             "title": "Transcript is not available",
             "description": "The handoff draft could not read enough conversation context."
           },
-                    "handoff_ancestry_unavailable": {
+          "handoff_ancestry_unavailable": {
             "title": "Handoff history is unavailable",
             "description": "The persisted handoff history could not be verified. Continue in the current session until the history is repaired."
           },
@@ -1805,7 +1807,7 @@
             "title": "Handoff loop detected",
             "description": "This session already appears in its own handoff ancestry, so the handoff was refused."
           },
-"unknown": {
+          "unknown": {
             "title": "Handoff preparation failed",
             "description": "The continuation draft could not be prepared."
           }
@@ -2058,7 +2060,11 @@
       "defaultPath": "Default path",
       "defaultPathUnavailable": "Enter a branch name to preview its path"
     },
-    "modelSwitchSessionResetFailed": "Default model saved, but this session could not be reset: {{error}}"
+    "modelSwitchSessionResetFailed": "Default model saved, but this session could not be reset: {{error}}",
+    "knowledgeRuntimeLessons": {
+      "title": "Runtime Lessons",
+      "description": "Opt in to reviewed SEKB principles as a visible knowledge source."
+    }
   },
   "historyBuckets": {
     "today": "Today",
@@ -2354,7 +2360,7 @@
     "aborted": "Stopped",
     "dismissCompleted": "Hide completed status"
   },
-    "turnSummary": {
+  "turnSummary": {
     "codingRun": {
       "title": "CodingRun evidence",
       "jsonl": "Read-only JSONL projection",

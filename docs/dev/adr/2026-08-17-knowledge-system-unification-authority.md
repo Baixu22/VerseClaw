@@ -8,7 +8,7 @@
 | 分支 | `codex/knowledge-system-unification-plan` |
 | 基线 | `734ec877e75682861103660fbdea2bd55253ece0` |
 | 范围 | Knowledge Hub、Role Memory、SEKB、DCS experience Block、Session delete cascade、GovernanceStore、Owner Adapters |
-| 关联文档 | `docs/dev/knowledge-system-unification-development-plan.zh-CN.md`、`docs/dev/unified-agent-system/runtime-convergence/README.md`、`docs/dev/adr/2026-08-16-context-authority-boundaries.md` |
+| 关联文档 | `docs/dev/knowledge-system-unification/README.md`、`docs/dev/knowledge-system-unification/WORK-PACKAGES.md`、`docs/dev/unified-agent-system/runtime-convergence/README.md`、`docs/dev/adr/2026-08-16-context-authority-boundaries.md` |
 
 ---
 
@@ -47,7 +47,13 @@
 
 `runtime-convergence/README.md` 的 `done`（user-accepted）作为历史 runtime-convergence program 的拟议状态裁决；`STATUS.md` 的当前 WIP 正在向 `done`、`human_verdict=accepted` 对齐。Task Forest 不应因此强制关闭全局父节点 `TF-0010`：统一知识系统仍是该全局目标下的新 follow-up milestone。拟议变更是在 `TF-0010` 下新增“统一知识系统生命周期”milestone、挂载 KS-00～KS-09，并让该 milestone `contributes_to TF-0038`；全部变更仍必须通过 proposal-save、用户确认和 proposal-apply，当前不得写成已应用。milestone 只分组任务，不成为运行时 authority。该裁决不解除 `live_ready=false`、`product_approved=false`、`default_on=false` 产品锁。
 
-## 3. 后果
+## 3. 当前实现边界
+
+- `routeContext` 仍未默认接入 SEKB；Runtime Lessons 只在显式 `sourcePolicy.runtimeLessons` 开启时参与候选，并保留结构化 provenance。
+- SourceSet 语义通道仍为显式 opt-in；未配置真实 embedding provider 或调用失败时保留 lexical fallback。
+- `wiki_apply` 对普通 agent 默认不注册，只有显式配置 `tools.allowAgentApply` 时才暴露。
+
+## 4. 后果
 
 - KS-01 错配/并发/孤儿状态为 0。
 - KS-02 假成功/重复写/删除残留为 0。

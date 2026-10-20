@@ -55,6 +55,9 @@ export type MemoryWikiPluginConfig = {
     createBacklinks?: boolean;
     createDashboards?: boolean;
   };
+  tools?: {
+    allowAgentApply?: boolean;
+  };
 };
 
 export type ResolvedMemoryWikiConfig = {
@@ -97,6 +100,9 @@ export type ResolvedMemoryWikiConfig = {
     preserveHumanBlocks: boolean;
     createBacklinks: boolean;
     createDashboards: boolean;
+  };
+  tools: {
+    allowAgentApply: boolean;
   };
 };
 
@@ -160,6 +166,11 @@ const MemoryWikiConfigSource = z.strictObject({
       preserveHumanBlocks: z.boolean().optional(),
       createBacklinks: z.boolean().optional(),
       createDashboards: z.boolean().optional(),
+    })
+    .optional(),
+  tools: z
+    .strictObject({
+      allowAgentApply: z.boolean().optional(),
     })
     .optional(),
 });
@@ -249,6 +260,9 @@ export function resolveMemoryWikiConfig(
       preserveHumanBlocks: safeConfig.render?.preserveHumanBlocks ?? true,
       createBacklinks: safeConfig.render?.createBacklinks ?? true,
       createDashboards: safeConfig.render?.createDashboards ?? true,
+    },
+    tools: {
+      allowAgentApply: safeConfig.tools?.allowAgentApply ?? false,
     },
   };
 }
