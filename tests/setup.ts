@@ -2,7 +2,7 @@
  * Vitest Test Setup
  * Global test configuration and mocks
  */
-import { vi } from 'vitest';
+import { afterAll, vi } from 'vitest';
 import '@testing-library/jest-dom';
 
 // Provide a minimal `electron` mock so tests that transitively import
@@ -215,6 +215,13 @@ if (typeof window !== 'undefined') {
     Object.defineProperty(window, 'CSS', { writable: true, configurable: true, value: cssObject });
   }
 }
+
+// jsdom 28 teardown expects Node's global interval cleaner to remain available.
+afterAll(() => {
+  if (typeof globalThis.clearInterval === 'undefined') {
+    (globalThis as { clearInterval?: typeof clearInterval }).clearInterval = () => {};
+  }
+});
 
 // Reset mocks after each test
 afterEach(() => {
