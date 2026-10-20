@@ -33,6 +33,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useObservabilityStore } from '@/stores/observability';
+import { ProgressiveLoadingSurface } from '@/components/loading/StructuralLoadingOverlay';
+import { ObservabilityGraphLoadingSkeleton } from '@/components/loading/PageLoadingSkeletons';
 import type {
   ObservabilityDashboardSnapshot,
   ObservabilityGraphNode,
@@ -503,13 +505,6 @@ export function ObservabilityDashboard() {
     setSearchParams({});
   };
 
-  if (!snapshot && loading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -778,11 +773,14 @@ export function ObservabilityDashboard() {
         </aside>
 
         <main className="flex min-h-0 flex-col gap-2">
-          {traceLoading && !selectedGraph ? (
-            <div className="flex h-full min-h-[520px] items-center justify-center rounded-md border">
-              <RefreshCw className="h-5 w-5 animate-spin text-muted-foreground" />
-            </div>
-          ) : selectedGraph ? (
+          <ProgressiveLoadingSurface
+            surfaceId="observability"
+            loading={traceLoading && !selectedGraph}
+            label={t('graph.loading', { defaultValue: 'Loading trace graph' })}
+            skeleton={<ObservabilityGraphLoadingSkeleton />}
+            className="flex min-h-[520px] flex-1 flex-col"
+          >
+          {!traceLoading || selectedGraph ? (selectedGraph ? (
             <>
               <TraceSummaryHeader
                 graphResult={selectedGraph}
@@ -845,7 +843,8 @@ export function ObservabilityDashboard() {
               <p className="mt-3 text-sm font-medium">{t('graph.emptyTitle')}</p>
               <p className="mt-1 max-w-md text-xs text-muted-foreground">{t('graph.emptyBody')}</p>
             </div>
-          )}
+          )) : null}
+          </ProgressiveLoadingSurface>
         </main>
       </div>
 

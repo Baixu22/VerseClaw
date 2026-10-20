@@ -1,307 +1,360 @@
 import {
+  useEffect,
+  useId,
   useLayoutEffect,
   useRef,
-  type ComponentProps,
+  useState,
   type ReactNode,
 } from 'react';
+import { SketchBlock } from '@/components/loading/StructuralSketch';
 import { cn } from '@/lib/utils';
+import { getLoadingPolicy, type LoadingSurfaceId } from './loading-policy';
+import { useDelayedVisibility, usePrefersReducedMotion } from './use-delayed-visibility';
 
-type StructuralPhase = 'frame' | 'nodes' | 'trace';
-
-type Region = {
-  line: SVGElement;
-  fill: SVGElement;
-  marker: SVGElement;
-  start: number;
-};
-
-type StructuralLoadingOverlayProps = Omit<ComponentProps<'div'>, 'children'> & {
-  children: ReactNode;
-  loading?: boolean;
-  label: string;
-  regionSelector?: string;
-};
-
-const SVG_NS = 'http://www.w3.org/2000/svg';
-const PAD = 14;
+const EXIT_MS = 180;
 const MAX_REGIONS = 16;
-const HOLD_PHASES = [0.16, 0.28, 0.34] as const;
+const PAD = 12;
+const SVG_NS = 'http://www.w3.org/2000/svg';
 
-const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
-const span = (value: number, start: number, end: number) => clamp((value - start) / (end - start));
-const easeOutCubic = (value: number) => 1 - (1 - value) ** 3;
+type ProgressiveLoadingSurfaceProps = {
+  surfaceId: LoadingSurfaceId;
+  loading: boolean;
+  label: string;
+  skeleton: ReactNode;
+  children: ReactNode;
+  className?: string;
+};
+
+type QuietLoadingSurfaceProps = {
+  surfaceId: LoadingSurfaceId;
+  loading: boolean;
+  label: string;
+  skeleton: ReactNode;
+  children?: ReactNode;
+  className?: string;
+};
 
 function svgElement<K extends keyof SVGElementTagNameMap>(
   name: K,
   attrs: Record<string, string | number> = {},
 ): SVGElementTagNameMap[K] {
-  const element = document.createElementNS(SVG_NS, name);
-  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, String(value));
-  return element;
+  const node = document.createElementNS(SVG_NS, name);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, String(value));
+  return node;
 }
 
-function radiusOf(element: HTMLElement, width: number, height: number) {
+function radiusOf(element: HTMLElement, width: number, height: number): number {
   const value = Number.parseFloat(getComputedStyle(element).borderTopLeftRadius);
   return Number.isFinite(value) ? Math.min(value, width / 2, height / 2) : 0;
 }
 
-function regionCandidates(root: HTMLElement, selector?: string) {
-  if (selector) return Array.from(root.querySelectorAll<HTMLElement>(selector));
-  const declared = Array.from(root.querySelectorAll<HTMLElement>('[data-structural-region]'));
-  return declared.length > 0
-    ? declared
-    : Array.from(root.children).filter((child): child is HTMLElement => child instanceof HTMLElement);
-}
+function buildOverlay(
+  svg: SVGSVGElement,
+  surface: HTMLElement,
+  patternId: string,
+  buildMs: number,
+): void {
+  const surfaceRect = surface.getBoundingClientRect();
+  if (surfaceRect.width < 4 || surfaceRect.height < 4) return;
+  const regions = Array.from(surface.querySelectorAll<HTMLElement>('[data-structural-region]'))
+    .slice(0, MAX_REGIONS)
+    .filter((element) => {
+      const rect = element.getBoundingClientRect();
+      return rect.width >= 4 && rect.height >= 4;
+    });
+  // Only a region this canvas actually outlines may hide its own border.
+  surface.querySelectorAll<HTMLElement>('[data-structure-drawn]').forEach((element) => element.removeAttribute('data-structure-drawn'));
+  regions.forEach((element) => element.setAttribute('data-structure-drawn', ''));
 
-/**
- * Purely measured loading overlay. It never owns the success state: the caller
- * unmounts it only after the real data/module has resolved.
- */
-export function StructuralLoadingOverlay({
-  children,
-  loading = true,
-  label,
-  regionSelector,
-  className,
-  ...props
-}: StructuralLoadingOverlayProps) {
-  const hostRef = useRef<HTMLDivElement>(null);
-  const frameRef = useRef(0);
-  const geometryFrameRef = useRef(0);
-  const regionsRef = useRef<Region[]>([]);
-  const phaseRef = useRef<StructuralPhase>('frame');
-  const startedAtRef = useRef(0);
-  const holdAtRef = useRef<number>(HOLD_PHASES[0]);
+  svg.replaceChildren();
+  svg.setAttribute('viewBox', `${-PAD} ${-PAD} ${surfaceRect.width + PAD * 2} ${surfaceRect.height + PAD * 2}`);
+  svg.setAttribute('preserveAspectRatio', 'none');
+  svg.dataset.regionCount = String(regions.length);
+  svg.dataset.bounds = `${Math.round(surfaceRect.width)}x${Math.round(surfaceRect.height)}`;
+  svg.dataset.durationMs = String(Math.round(buildMs));
 
-  useLayoutEffect(() => {
-    const host = hostRef.current;
-    if (!host || !loading) return;
-    const root = host.querySelector<HTMLElement>('[data-structural-root]') ?? host;
-    const overlay = host.querySelector<HTMLElement>('.structural-loading-overlay') ?? null;
-    const canvas = overlay?.querySelector<SVGSVGElement>('.structural-loading-canvas') ?? null;
-    const dots = overlay?.querySelector<HTMLElement>('.structural-loading-dots') ?? null;
-    const scan = overlay?.querySelector<HTMLElement>('.structural-loading-scan') ?? null;
-    if (!overlay || !canvas || !dots || !scan) return;
-    const hostElement = host;
-    const overlayElement = overlay;
-    const canvasElement = canvas;
-    const dotsElement = dots;
-    const scanElement = scan;
+  const defs = svgElement('defs');
+  const pattern = svgElement('pattern', {
+    id: patternId,
+    width: 14,
+    height: 14,
+    patternUnits: 'userSpaceOnUse',
+  });
+  pattern.append(svgElement('circle', {
+    class: 'progressive-loading-dot',
+    cx: 1.2,
+    cy: 1.2,
+    r: 0.75,
+  }));
+  defs.append(pattern);
+  svg.append(defs);
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const mutationObserver = typeof MutationObserver === 'undefined'
-      ? null
-      : new MutationObserver((records) => {
-          if (records.some((record) => !overlayElement.contains(record.target))) queueGeometry();
-        });
-    mutationObserver?.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
-    const resizeObserver = typeof ResizeObserver === 'undefined'
-      ? null
-      : new ResizeObserver(() => queueGeometry());
-    resizeObserver?.observe(hostElement);
-    resizeObserver?.observe(root);
-
-    function queueGeometry() {
-      cancelAnimationFrame(geometryFrameRef.current);
-      geometryFrameRef.current = requestAnimationFrame(() => {
-        if (!loading) return;
-        measure();
-      });
-    }
-
-    function measure() {
-      const rootRect = root.getBoundingClientRect();
-      const hostRect = hostElement.getBoundingClientRect();
-      if (rootRect.width < 4 || rootRect.height < 4) return;
-      const rootX = rootRect.left - hostRect.left;
-      const rootY = rootRect.top - hostRect.top;
-      canvasElement.style.left = `${rootX - PAD}px`;
-      canvasElement.style.top = `${rootY - PAD}px`;
-      canvasElement.style.width = `${rootRect.width + PAD * 2}px`;
-      canvasElement.style.height = `${rootRect.height + PAD * 2}px`;
-      canvasElement.setAttribute('viewBox', `${-PAD} ${-PAD} ${rootRect.width + PAD * 2} ${rootRect.height + PAD * 2}`);
-      canvasElement.setAttribute('preserveAspectRatio', 'none');
-      canvasElement.replaceChildren();
-      dotsElement.style.left = `${rootX}px`;
-      dotsElement.style.top = `${rootY}px`;
-      dotsElement.style.width = `${rootRect.width}px`;
-      dotsElement.style.height = `${rootRect.height}px`;
-      dotsElement.style.borderRadius = `${radiusOf(root, rootRect.width, rootRect.height)}px`;
-
-      const measureLayer = svgElement('g');
-      measureLayer.dataset.layer = 'measure';
-      const rootLine = svgElement('rect', {
-        class: 'structural-loading-root',
-        x: 0,
-        y: 0,
-        width: rootRect.width,
-        height: rootRect.height,
-        rx: radiusOf(root, rootRect.width, rootRect.height),
+  const layer = svgElement('g', { class: 'progressive-loading-structure' });
+  const drawMs = Math.max(320, buildMs * 0.6);
+  const surfaceDiagonal = Math.max(1, surfaceRect.width + surfaceRect.height);
+  regions.forEach((element, index) => {
+    const rect = element.getBoundingClientRect();
+    const x = rect.left - surfaceRect.left;
+    const y = rect.top - surfaceRect.top;
+    const radius = radiusOf(element, rect.width, rect.height);
+    // The outline wavefront travels from the surface's top-left corner.
+    const delay = Math.round(Math.min(((x + y) / surfaceDiagonal) * buildMs * 0.45, buildMs * 0.45));
+    const group = svgElement('g', {
+      'data-structure-index': index,
+      style: `--structure-delay:${delay}ms;--structure-duration:${Math.round(drawMs)}ms`,
+    });
+    group.append(
+      svgElement('rect', {
+        class: 'progressive-loading-region-fill',
+        x,
+        y,
+        width: rect.width,
+        height: rect.height,
+        rx: radius,
+      }),
+      svgElement('rect', {
+        class: 'progressive-loading-region-outline',
+        x,
+        y,
+        width: rect.width,
+        height: rect.height,
+        rx: radius,
         pathLength: 1,
-      });
-      measureLayer.append(
-        rootLine,
+      }),
+      svgElement('rect', {
+        class: 'progressive-loading-region-dots',
+        x,
+        y,
+        width: rect.width,
+        height: rect.height,
+        rx: radius,
+        fill: `url(#${patternId})`,
+      }),
+    );
+
+    const markerX = x + Math.min(12, rect.width / 2);
+    const markerY = y + Math.min(12, rect.height / 2);
+    group.append(svgElement('circle', {
+      class: index === 0
+        ? 'progressive-loading-marker progressive-loading-marker--primary'
+        : 'progressive-loading-marker',
+      cx: markerX,
+      cy: markerY,
+      r: index === 0 ? 2.4 : 1.7,
+    }));
+
+    if (index === 0 && rect.width > 240) {
+      group.append(
         svgElement('path', {
-          class: 'structural-loading-ruler',
-          d: `M 0 ${-8} H ${rootRect.width}`,
-        }),
-        svgElement('path', {
-          class: 'structural-loading-ruler',
-          d: `M ${-8} 0 V ${rootRect.height}`,
+          class: 'progressive-loading-ruler',
+          d: `M ${x} ${Math.max(0, y - 7)} H ${x + rect.width}`,
         }),
       );
-      const widthText = svgElement('text', {
-        x: rootRect.width / 2,
-        y: -11,
+      const label = svgElement('text', {
+        class: 'progressive-loading-label',
+        x: x + rect.width / 2,
+        y: Math.max(7, y - 11),
         'text-anchor': 'middle',
-        class: 'structural-loading-label',
       });
-      widthText.textContent = `${Math.round(rootRect.width)} × ${Math.round(rootRect.height)}`;
-      measureLayer.append(widthText);
-      canvasElement.append(measureLayer);
+      label.textContent = `${Math.round(rect.width)} px`;
+      group.append(label);
+    }
 
-      const regionLayer = svgElement('g');
-      regionLayer.dataset.layer = 'regions';
-      const regions: Region[] = [];
-      const visible = regionCandidates(root, regionSelector)
-        .slice(0, MAX_REGIONS)
-        .filter((element) => {
-          const rect = element.getBoundingClientRect();
-          return rect.width >= 4 && rect.height >= 4;
-        });
-      visible.forEach((element, index) => {
-        const rect = element.getBoundingClientRect();
-        const x = rect.left - rootRect.left;
-        const y = rect.top - rootRect.top;
-        const radius = radiusOf(element, rect.width, rect.height);
-        const fill = svgElement('rect', {
-          class: 'structural-loading-fill',
-          x,
-          y,
-          width: rect.width,
-          height: rect.height,
-          rx: radius,
-        });
-        fill.style.opacity = '0';
-        const line = svgElement('rect', {
-          class: 'structural-loading-region',
-          x,
-          y,
-          width: rect.width,
-          height: rect.height,
-          rx: radius,
-          pathLength: 1,
-        });
-        line.style.opacity = '0';
-        const marker = svgElement('circle', {
-          class: index === 0 ? 'structural-loading-marker structural-loading-marker--primary' : 'structural-loading-marker',
-          cx: x + rect.width / 2,
-          cy: y + rect.height / 2,
-          r: index === 0 ? 2.2 : 1.6,
-        });
-        marker.style.opacity = '0';
-        regionLayer.append(fill, line, marker);
-        regions.push({
-          fill,
-          line,
-          marker,
-          start: 0.24 + index * 0.026,
-        });
+    layer.append(group);
+  });
+  svg.append(layer);
+}
+
+function StructuralOverlay({
+  surfaceRef,
+  surfaceId,
+  buildMs,
+  visible,
+}: {
+  surfaceRef: React.RefObject<HTMLDivElement | null>;
+  surfaceId: LoadingSurfaceId;
+  buildMs: number;
+  visible: boolean;
+}) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const patternId = `progressive-loading-dots-${useId().replace(/:/g, '')}`;
+
+  useLayoutEffect(() => {
+    if (!visible) return;
+    const surface = surfaceRef.current;
+    const svg = svgRef.current;
+    if (!surface || !svg) return;
+
+    let frame = 0;
+    const rebuild = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        buildOverlay(svg, surface, patternId, buildMs);
       });
-      canvasElement.append(regionLayer);
-      regionsRef.current = regions;
-      overlayElement.dataset.regionCount = String(regions.length);
-      overlayElement.dataset.bounds = `${Math.round(rootRect.width)}x${Math.round(rootRect.height)}`;
-
-      if (reduceMotion) {
-        render(1, false);
-        overlayElement.dataset.phase = 'trace';
-        phaseRef.current = 'trace';
-        return;
-      }
-      if (startedAtRef.current === 0) startedAtRef.current = performance.now();
-      render(currentProgress(performance.now()), true);
-    }
-
-    function currentProgress(now: number) {
-      if (startedAtRef.current === 0) return 0;
-      // The visual timeline saturates quickly, then waits without pretending to
-      // know request progress. A late ready() starts a separate short reveal.
-      return Math.min(holdAtRef.current, (now - startedAtRef.current) / 900 * holdAtRef.current);
-    }
-
-    function render(progress: number, animate: boolean) {
-      const measureLayer = canvasElement.querySelector<SVGGElement>('[data-layer="measure"]');
-      const regionLayer = canvasElement.querySelector<SVGGElement>('[data-layer="regions"]');
-      if (!measureLayer || !regionLayer) return;
-      const phase: StructuralPhase = progress < HOLD_PHASES[0] ? 'frame' : progress < HOLD_PHASES[1] ? 'nodes' : 'trace';
-      phaseRef.current = phase;
-      overlayElement.dataset.phase = phase;
-      measureLayer.style.opacity = String(animate ? 1 - span(progress, 0.14, 0.28) : 1);
-      dotsElement.style.opacity = String(animate ? 0.42 * easeOutCubic(span(progress, 0.03, 0.2)) : 0.3);
-      const scanValue = animate ? span(progress, 0.06, 0.22) : 1;
-      scanElement.style.opacity = String(scanValue > 0 && scanValue < 1 ? 0.8 * Math.sin(Math.PI * scanValue) : 0);
-      scanElement.style.transform = `translateY(${Math.round(root.getBoundingClientRect().height * scanValue)}px)`;
-      regionLayer.style.opacity = '1';
-      regionsRef.current.forEach(({ line, fill, marker, start }) => {
-        const draw = easeOutCubic(span(progress, start, start + 0.1));
-        line.style.strokeDashoffset = String(animate ? 1 - draw : 0);
-        line.style.opacity = '0.85';
-        fill.style.opacity = '0.1';
-        marker.style.opacity = String(animate ? draw : 1);
+    };
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(rebuild);
+    observer?.observe(surface);
+    const mutation = typeof MutationObserver === 'undefined'
+      ? null
+      : new MutationObserver((records) => {
+        if (records.some((record) => !svg.contains(record.target))) rebuild();
       });
-    }
-
-    function tick(now: number) {
-      if (!loading) return;
-      const progress = currentProgress(now);
-      render(progress, true);
-      if (progress >= holdAtRef.current - 0.0001) {
-        overlayElement.dataset.waiting = 'true';
-        return;
-      }
-      frameRef.current = requestAnimationFrame(tick);
-    }
-    if (reduceMotion) {
-      measure();
-    } else {
-      measure();
-      tick(performance.now());
-    }
+    mutation?.observe(surface, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+    rebuild();
 
     return () => {
-      cancelAnimationFrame(frameRef.current);
-      cancelAnimationFrame(geometryFrameRef.current);
-      resizeObserver?.disconnect();
-      mutationObserver?.disconnect();
-      regionsRef.current = [];
-      startedAtRef.current = 0;
+      cancelAnimationFrame(frame);
+      observer?.disconnect();
+      mutation?.disconnect();
     };
-  }, [loading, regionSelector]);
+  }, [buildMs, patternId, surfaceId, surfaceRef, visible]);
+
+  return (
+    <svg
+      ref={svgRef}
+      className="progressive-loading-canvas"
+      data-structural-canvas
+      aria-hidden="true"
+    />
+  );
+}
+
+export function ProgressiveLoadingSurface({
+  surfaceId,
+  loading,
+  label,
+  skeleton,
+  children,
+  className,
+}: ProgressiveLoadingSurfaceProps) {
+  const policy = getLoadingPolicy(surfaceId);
+  const skeletonRef = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(false);
+  const reducedMotion = usePrefersReducedMotion();
+  const active = policy.strategy === 'structural' && loading;
+
+  useEffect(() => {
+    if (!active) {
+      const timer = window.setTimeout(() => setShown(false), 0);
+      return () => window.clearTimeout(timer);
+    }
+    const timer = window.setTimeout(() => setShown(true), policy.delayMs);
+    return () => window.clearTimeout(timer);
+  }, [active, policy.delayMs]);
+
+  useEffect(() => {
+    if (loading || !shown) return;
+    const timer = window.setTimeout(() => setShown(false), reducedMotion ? 0 : EXIT_MS + 80);
+    return () => window.clearTimeout(timer);
+  }, [loading, reducedMotion, shown]);
+
+  const leaving = shown && !loading;
+  const renderLayer = loading || shown;
 
   return (
     <div
-      ref={hostRef}
-      data-testid="structural-loading-overlay"
-      data-state={loading ? 'loading' : 'ready'}
-      data-phase={phaseRef.current}
-      aria-busy={loading}
-      aria-label={label}
-      className={cn('relative isolate', className)}
-      {...props}
+      className={cn('progressive-loading-surface', className)}
+      data-structural-surface={surfaceId}
+      data-state={leaving ? 'leaving' : shown ? 'visible' : 'idle'}
+      aria-busy={loading || leaving}
     >
-      <div data-structural-root className="relative isolate min-h-full">
-        {loading ? (
-          <div className="structural-loading-overlay" aria-hidden="true">
-            <div className="structural-loading-dots" />
-            <div className="structural-loading-scan" />
-            <svg className="structural-loading-canvas" aria-hidden="true" />
+      {shown ? <span className="sr-only" role="status">{label}</span> : null}
+      <div className="progressive-loading-grid">
+        <div
+          className="progressive-loading-content"
+          data-content-state={!loading ? 'entering' : 'pending'}
+        >
+          {children}
+        </div>
+        {renderLayer ? (
+          <div
+            ref={skeletonRef}
+            className="progressive-loading-skeleton"
+            data-structural-skeleton
+            data-state={leaving ? 'leaving' : shown ? 'visible' : 'pending'}
+            aria-hidden={!shown}
+            onAnimationEnd={(event) => {
+              if (event.target === event.currentTarget && leaving) setShown(false);
+            }}
+          >
+            {skeleton}
+            {shown ? (
+              <StructuralOverlay
+                surfaceRef={skeletonRef}
+                surfaceId={surfaceId}
+                buildMs={policy.buildMs ?? 720}
+                visible={!leaving}
+              />
+            ) : null}
           </div>
         ) : null}
-        {children}
       </div>
     </div>
   );
 }
 
+export function QuietLoadingSurface({
+  surfaceId,
+  loading,
+  label,
+  skeleton,
+  children,
+  className,
+}: QuietLoadingSurfaceProps) {
+  const policy = getLoadingPolicy(surfaceId);
+  const visible = useDelayedVisibility(loading, policy.delayMs);
 
+  return (
+    <div
+      className={cn('progressive-loading-surface', className)}
+      data-quiet-surface={surfaceId}
+      data-state={visible ? 'visible' : 'idle'}
+      aria-busy={loading}
+    >
+      {visible ? <span className="sr-only" role="status">{label}</span> : null}
+      <div className="progressive-loading-grid">
+        <div className={cn('progressive-loading-content', loading && 'invisible')}>{children}</div>
+        {loading ? (
+          <div
+            data-structural-sketch-root
+            className={cn(
+              'progressive-loading-skeleton progressive-loading-skeleton--quiet',
+              !visible && 'invisible',
+            )}
+            aria-hidden={!visible}
+          >
+            {skeleton}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+export function SkeletonRows({
+  rows = 4,
+  rowClassName,
+  className,
+}: {
+  rows?: number;
+  rowClassName?: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn('space-y-3', className)} data-testid="quiet-skeleton-rows">
+      {Array.from({ length: rows }, (_, index) => (
+        <div
+          key={index}
+          className={cn(
+            'rounded-xl border border-border/60 bg-surface-modal p-4',
+            rowClassName,
+          )}
+        >
+          <SketchBlock className="h-3 w-1/3" />
+          <SketchBlock className="mt-3 h-3 w-4/5" />
+          <SketchBlock className="mt-2 h-3 w-3/5" />
+        </div>
+      ))}
+    </div>
+  );
+}

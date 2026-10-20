@@ -45,7 +45,8 @@ import {
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { MeasuredLoadingList } from '@/components/loading/MeasuredLoadingList';
+import { ScheduledRowFrame, ScheduledStructureRow } from '@/components/loading/DataListFrames';
 import { formatRelativeTime, cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { CronJob, CronJobCreateInput, ScheduleType } from '@/types/cron';
@@ -1672,27 +1673,25 @@ function CronJobCard({ job, selected, onSelect, onToggle, onDetails }: CronJobCa
     : job.message;
 
   return (
-    <div
+    <ScheduledRowFrame
       role="button"
       tabIndex={0}
       data-testid={`cron-job-card-${job.id}`}
       className={cn(
-        'group grid w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-start gap-3 rounded-lg px-3 py-3 text-left transition-colors',
         selected
           ? 'bg-black/5 dark:bg-white/10'
           : 'hover:bg-black/5 dark:hover:bg-white/5',
       )}
       onClick={onSelect}
       onKeyDown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
+        if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) {
           event.preventDefault();
           onSelect();
         }
       }}
-    >
+      icon={(
       <span
         className={cn(
-          'mt-1 flex h-5 w-5 items-center justify-center',
           job.enabled
             ? isBrowserAutomation
               ? 'text-green-700 dark:text-green-400'
@@ -1702,9 +1701,9 @@ function CronJobCard({ job, selected, onSelect, onToggle, onDetails }: CronJobCa
       >
         {isBrowserAutomation ? <CronBrowserTaskIcon /> : <CronAgentTaskIcon />}
       </span>
-
-      <span className="min-w-0">
-        <span className="flex min-w-0 items-baseline gap-2">
+      )}
+      title={(
+        <>
           <span
             data-testid={`cron-job-card-title-${job.id}`}
             className="min-w-0 truncate text-sm font-medium leading-5 text-foreground"
@@ -1714,21 +1713,18 @@ function CronJobCard({ job, selected, onSelect, onToggle, onDetails }: CronJobCa
           <span className="shrink-0 truncate text-meta leading-5 text-muted-foreground">
             {parseCronSchedule(job.schedule, t)}
           </span>
-        </span>
-        <span className="mt-0.5 block truncate text-meta leading-5 text-muted-foreground">
-          {summary}
-        </span>
-        {job.nextRun && job.enabled ? (
-          <span className="mt-0.5 block truncate text-xs leading-4 text-muted-foreground/80">
+        </>
+      )}
+      detail={summary}
+      meta={job.nextRun && job.enabled ? (
+          <>
             {t('card.next')}: {new Date(job.nextRun).toLocaleString()}
-          </span>
+          </>
         ) : null}
-      </span>
-
+      actions={(
       <span
         data-testid={`cron-job-card-switch-${job.id}`}
-        className="flex min-h-8 shrink-0 items-center gap-1 pl-2"
-        onClick={(event) => event.stopPropagation()}
+        className="flex items-center gap-1"
       >
         {isBrowserAutomation ? (
           <Button
@@ -1742,9 +1738,10 @@ function CronJobCard({ job, selected, onSelect, onToggle, onDetails }: CronJobCa
             <CodexListChecks className="h-4 w-4" />
           </Button>
         ) : null}
-        <Switch checked={job.enabled} onCheckedChange={onToggle} aria-label={job.enabled ? t('stats.active') : t('stats.paused')} />
+        <Switch data-build-action checked={job.enabled} onCheckedChange={onToggle} aria-label={job.enabled ? t('stats.active') : t('stats.paused')} />
       </span>
-    </div>
+      )}
+    />
   );
 }
 
@@ -2209,13 +2206,7 @@ export function Cron() {
 
 
 
-  if ((loading || loadingBrowserTasks) && scheduledItems.length === 0) {
-    return (
-      <div data-testid="cron-page" className="-m-6 flex min-h-[calc(100vh-2.5rem)] items-center justify-center bg-background">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
+  const showInitialLoading = (loading || loadingBrowserTasks) && scheduledItems.length === 0;
 
   return (
     <div data-testid="cron-page" className="relative -m-6 flex h-[calc(100vh-2.5rem)] overflow-hidden bg-background">
@@ -2352,14 +2343,20 @@ export function Cron() {
                 <span>{t('scheduled.browserLoadFailed', { error: browserError })}</span>
               </div>
             ) : null}
-            <div data-testid="cron-assurance-panel" className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
+            <div data-testid="cron-assurance-panel" className="mb-3 flex min-h-4 items-center gap-2 text-xs text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
               <span>{gatewayAssuranceLabel}</span>
               <span aria-hidden="true">·</span>
               <span>{t('scheduled.itemCount', { count: scheduledItems.length })}</span>
             </div>
 
-            {scheduledItems.length === 0 ? (
+            <MeasuredLoadingList
+              surfaceId="cron"
+              loading={showInitialLoading}
+              label={t('common:status.loading')}
+              listClassName="divide-y divide-border/70"
+              skeletonRows={[0, 1, 2].map((index) => <ScheduledStructureRow key={index} />)}
+              emptyState={scheduledItems.length === 0 ? (
               <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
                 <p className="text-[13px] font-medium text-foreground">{t('scheduled.emptyTitle')}</p>
                 <p className="mt-1 max-w-md text-xs leading-5 text-muted-foreground">{t('scheduled.emptyDescription')}</p>
@@ -2368,9 +2365,8 @@ export function Cron() {
               <div className="px-6 py-12 text-center text-xs text-muted-foreground">
                 {t('workbench.noMatches')}
               </div>
-            ) : (
-              <div data-testid="cron-job-list" className="divide-y divide-border/70" aria-label={t('scheduled.listLabel')}>
-                {visibleItems.map((item) => item.source === 'cron-job' ? (
+            ) : null}
+              rows={visibleItems.map((item) => item.source === 'cron-job' ? (
                   <CronJobCard
                     key={item.key}
                     job={item.job}
@@ -2387,8 +2383,7 @@ export function Cron() {
                     onSelect={() => setSelectedKey(item.key)}
                   />
                 ))}
-              </div>
-            )}
+            />
           </div>
         </div>
       </main>

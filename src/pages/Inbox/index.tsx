@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useDelayedVisibility } from '@/components/loading/use-delayed-visibility';
 import { useShallow } from 'zustand/shallow';
 import {
   AlertTriangle,
@@ -351,9 +352,14 @@ export function Inbox() {
 }
 
 function InboxListLoading() {
+  const visible = useDelayedVisibility(true, 200);
   return (
-    <div className="divide-y divide-border" aria-hidden="true">
-      {[0, 1, 2].map((index) => (
+    <div
+      className={cn('min-h-[228px] divide-y divide-border transition-opacity duration-150 motion-reduce:transition-none', !visible && 'opacity-0')}
+      aria-hidden="true"
+      data-testid="inbox-list-loading"
+    >
+      {visible ? [0, 1, 2].map((index) => (
         <div key={index} className="flex min-h-[76px] gap-3 px-3 py-3">
           <LoadingBar className="h-4 w-4 shrink-0" />
           <div className="flex-1 space-y-2">
@@ -362,7 +368,7 @@ function InboxListLoading() {
             <LoadingBar className="h-3 w-1/3" />
           </div>
         </div>
-      ))}
+      )) : null}
     </div>
   );
 }

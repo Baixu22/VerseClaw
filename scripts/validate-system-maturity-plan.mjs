@@ -12,10 +12,17 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import {
+  PLAN_ROOT_REL,
+  discoverPhaseDirs,
+  phaseDirsFromTopology,
+  readPhaseTopology,
+  tierLabel,
+} from './lib/system-maturity-phases.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
-const planRoot = path.join(root, 'plans/system-maturity');
+const planRoot = path.join(root, PLAN_ROOT_REL);
 
 const TASK_STATUSES = new Set(['todo', 'in_progress', 'blocked', 'done']);
 const PHASE_STATUSES = new Set(['planned', 'in_progress', 'blocked', 'done']);
@@ -196,39 +203,77 @@ if (!/planned/.test(readme)) {
 }
 
 
+// Canonical phase topology must match the phase directories and PLAN/STATUS metadata.
+let topology;
+try {
+  topology = readPhaseTopology(root);
+} catch (error) {
+  fail(error instanceof Error ? error.message : String(error));
+}
+
+if (topology) {
+  const declaredDirs = phaseDirsFromTopology(topology);
+  const discoveredDirs = discoverPhaseDirs(planRoot);
+  const undeclared = discoveredDirs.filter((dir) => !declaredDirs.includes(dir));
+  const missing = declaredDirs.filter((dir) => !discoveredDirs.includes(dir));
+  for (const dir of undeclared) fail(`phase directory ${dir} is not declared in phases.json`);
+  for (const dir of missing) fail(`phases.json declares ${dir} but the directory is missing`);
+
+  for (const phase of topology.phases) {
+    const planPath = path.join(planRoot, phase.id, 'PLAN.md');
+    const statusPath = path.join(planRoot, phase.id, 'STATUS.json');
+    if (!fs.existsSync(planPath)) {
+      fail(`phase ${phase.id} missing PLAN.md`);
+      continue;
+    }
+    if (!fs.existsSync(statusPath)) {
+      fail(`phase ${phase.id} missing STATUS.json`);
+      continue;
+    }
+    const plan = fs.readFileSync(planPath, 'utf8');
+    const tier = tierLabel(phase);
+    const dependencies = phase.dependencies.length > 0 ? phase.dependencies.join(', ') : 'none';
+    const expected = new Map([
+      ['Tier', tier],
+      ['Owner', phase.owner],
+      ['Findings', phase.findings],
+      ['Dependencies', dependencies],
+    ]);
+    for (const [field, value] of expected.entries()) {
+      const match = plan.match(new RegExp(`^${field}:\\s*(.+)$`, 'm'));
+      if (!match) fail(`phase ${phase.id} PLAN.md missing ${field}`);
+      else if (match[1].trim() !== value) {
+        fail(`phase ${phase.id} PLAN.md ${field} mismatch: plan=${match[1].trim()} phases.json=${value}`);
+      }
+    }
+    const status = readJson(statusPath);
+    if (status.phase !== phase.id) fail(`phase ${phase.id} STATUS.json has phase=${status.phase}`);
+  }
+  info(`phase topology OK (${topology.phases.length} phases)`);
+}
+
 // INDEX.md Status column must match each phase STATUS.json.phaseStatus
 {
   const indexPath = path.join(planRoot, 'INDEX.md');
   if (!fs.existsSync(indexPath)) {
     fail('missing plans/system-maturity/INDEX.md');
-  } else {
+  } else if (topology) {
     const indexText = fs.readFileSync(indexPath, 'utf8');
-    const phaseDirs = [
-      'phase0-foundation',
-      'phase1-direct-boundaries',
-      'phase2-authorization-isolation',
-      'phase3-data-authority',
-      'phase4-runtime-surfaces',
-      'phase5-reliability-abuse',
-      'phase6-supply-release',
-      'phase7-continuous-governance',
-      'phase8-residual-closure',
-    ];
-    for (const dir of phaseDirs) {
-      const statusPath = path.join(planRoot, dir, 'STATUS.json');
+    for (const phase of topology.phases) {
+      const statusPath = path.join(planRoot, phase.id, 'STATUS.json');
       if (!fs.existsSync(statusPath)) continue;
       const phaseStatus = readJson(statusPath).phaseStatus || 'planned';
-      const row = indexText.split(/\r?\n/).find((line) => line.match(new RegExp(`\\|\\s*${dir}\\s*\\|`)));
+      const row = indexText.split(/\r?\n/).find((line) => line.match(new RegExp(`\\|\\s*${phase.id}\\s*\\|`)));
       if (!row) {
-        fail(`INDEX missing row for ${dir}`);
+        fail(`INDEX missing row for ${phase.id}`);
         continue;
       }
       const cells = row.split('|').map((c) => c.trim()).filter(Boolean);
       const indexStatus = cells[cells.length - 1];
       if (indexStatus !== phaseStatus) {
-        fail(`INDEX status mismatch for ${dir}: INDEX=${indexStatus} STATUS.json=${phaseStatus}`);
+        fail(`INDEX status mismatch for ${phase.id}: INDEX=${indexStatus} STATUS.json=${phaseStatus}`);
       } else {
-        info(`INDEX status OK ${dir}=${phaseStatus}`);
+        info(`INDEX status OK ${phase.id}=${phaseStatus}`);
       }
     }
   }

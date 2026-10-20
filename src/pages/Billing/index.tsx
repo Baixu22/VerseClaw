@@ -26,6 +26,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FeedbackState } from '@/components/common/FeedbackState';
+import { ProgressiveLoadingSurface } from '@/components/loading/StructuralLoadingOverlay';
+import { BillingUsageLoadingSkeleton } from '@/components/loading/PageLoadingSkeletons';
 import {
   Area,
   AreaChart,
@@ -1298,11 +1300,13 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
             </Badge>
           </div>
 
-          {usageLoading ? (
-            <div className="flex min-h-[360px] items-center justify-center rounded-lg border border-dashed border-black/10 bg-black/[0.02] dark:border-white/10 dark:bg-white/[0.03]">
-              <FeedbackState state="loading" title={t('dashboard:billing.loading')} />
-            </div>
-          ) : hasNoData ? (
+          <ProgressiveLoadingSurface
+            surfaceId="billing"
+            loading={usageLoading}
+            label={t('dashboard:billing.loading')}
+            skeleton={<BillingUsageLoadingSkeleton />}
+          >
+          {!usageLoading ? (hasNoData ? (
             <div className="flex min-h-[360px] items-center justify-center rounded-lg border border-dashed border-black/10 bg-black/[0.02] p-8 dark:border-white/10 dark:bg-white/[0.03]" data-testid="billing-empty">
               <div className="max-w-md text-center">
                 <Coins className="mx-auto mb-4 h-10 w-10 text-muted-foreground/50" />
@@ -1648,7 +1652,8 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
                 </div>
               </section>
             </div>
-          )}
+          )) : null}
+          </ProgressiveLoadingSurface>
     </div>
   );
 

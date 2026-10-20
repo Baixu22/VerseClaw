@@ -46,7 +46,7 @@ import { errorMessageFrom, toastUserError } from '@/lib/user-error';
 import { getAgentResourceLimits, selectMessageRenderWindow } from '../../../shared/agent-resource-limits';
 import { hostEvents } from '@/lib/host-events';
 import { VerseRouteBrand } from '@/components/loading/RouteLoadingShell';
-import { ShimmerBlock } from '@/components/ai-elements/shimmer';
+import { SketchBlock } from '@/components/loading/StructuralSketch';
 import { Badge } from '@/components/ui/badge';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
@@ -4055,6 +4055,7 @@ function ChatLoadingSkeleton({
     <div
       data-testid="chat-startup-skeleton"
       data-startup-phase={phase}
+      data-structural-sketch-root
       className="mx-auto flex min-h-[50vh] w-full max-w-4xl flex-col gap-7 px-1 pt-4"
       aria-busy="true"
     >
@@ -4072,26 +4073,26 @@ function ChatLoadingSkeleton({
         </div>
       )}
       <div className="flex items-start gap-3">
-        <ShimmerBlock className="h-8 w-8 shrink-0 rounded-full" />
+        <SketchBlock className="h-8 w-8 shrink-0 rounded-full" />
         <div className="w-full max-w-xl space-y-2 rounded-2xl bg-black/[0.025] px-4 py-4 dark:bg-white/[0.035]">
-          <ShimmerBlock className="h-3 w-4/5" />
-          <ShimmerBlock className="h-3 w-3/5" />
+          <SketchBlock className="h-3 w-4/5" />
+          <SketchBlock className="h-3 w-3/5" />
         </div>
       </div>
       <div className="ml-auto flex w-full max-w-2xl items-start justify-end gap-3">
         <div className="w-full max-w-lg space-y-2 rounded-2xl bg-black/[0.04] px-4 py-4 dark:bg-white/[0.06]">
-          <ShimmerBlock className="h-3 w-11/12" />
-          <ShimmerBlock className="h-3 w-2/3" />
-          <ShimmerBlock className="h-3 w-1/2" />
+          <SketchBlock className="h-3 w-11/12" />
+          <SketchBlock className="h-3 w-2/3" />
+          <SketchBlock className="h-3 w-1/2" />
         </div>
-        <ShimmerBlock className="h-8 w-8 shrink-0 rounded-full" />
+        <SketchBlock className="h-8 w-8 shrink-0 rounded-full" />
       </div>
       <div className="flex items-start gap-3">
-        <ShimmerBlock className="h-8 w-8 shrink-0 rounded-full" />
+        <SketchBlock className="h-8 w-8 shrink-0 rounded-full" />
         <div className="w-full max-w-2xl space-y-2 rounded-2xl bg-black/[0.025] px-4 py-4 dark:bg-white/[0.035]">
-          <ShimmerBlock className="h-3 w-5/6" />
-          <ShimmerBlock className="h-3 w-full" />
-          <ShimmerBlock className="h-3 w-3/4" />
+          <SketchBlock className="h-3 w-5/6" />
+          <SketchBlock className="h-3 w-full" />
+          <SketchBlock className="h-3 w-3/4" />
         </div>
       </div>
     </div>

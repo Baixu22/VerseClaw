@@ -41,6 +41,14 @@ function renderDeferredMainRoute(pathname: string) {
 }
 
 describe('route loading shells', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it.each([
     ['/', 'route-loading-chat', 'sidebar'],
     ['/settings/models', 'route-loading-settings', 'settings-sidebar'],
@@ -51,11 +59,20 @@ describe('route loading shells', () => {
     expect(screen.getByTestId('main-layout')).toBeVisible();
     expect(screen.getByTestId(sidebarTestId)).toBeInTheDocument();
     expect(screen.getByTestId('titlebar')).toBeInTheDocument();
+    expect(screen.getByTestId('route-loading-pending')).toHaveAttribute('aria-busy', 'true');
+
+    act(() => vi.advanceTimersByTime(199));
+    expect(screen.queryByTestId(fallbackTestId)).not.toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(1));
     expect(screen.getByTestId(fallbackTestId)).toHaveAttribute('aria-busy', 'true');
 
-    await act(async () => deferred.resolve());
+    vi.useRealTimers();
+    await act(async () => {
+      deferred.resolve();
+      await Promise.resolve();
+    });
 
-    expect(await screen.findByTestId('resolved-route')).toBeVisible();
+    expect(screen.getByTestId('resolved-route')).toBeVisible();
     expect(screen.queryByTestId(fallbackTestId)).not.toBeInTheDocument();
     expect(screen.getByTestId('main-layout')).toBeVisible();
   });
@@ -70,27 +87,22 @@ describe('Settings section loading feedback', () => {
     vi.useRealTimers();
   });
 
-  it('delays the local skeleton and status without losing reduced-motion safeguards', () => {
-    render(<SettingsSectionLoading label="Loading settings" />);
+  it('delays the quiet section skeleton and never mounts a structural surface', () => {
+    render(<SettingsSectionLoading label="Loading settings" variant="archived" />);
 
     const loading = screen.getByTestId('settings-section-loading');
-    const status = screen.getByTestId('settings-section-loading-status');
-    const skeleton = screen.getByTestId('settings-section-loading-skeleton');
     expect(loading).toHaveAttribute('aria-busy', 'true');
-    expect(loading.querySelector('.structural-loading-overlay')).not.toBeNull();
-    expect(skeleton).toHaveClass('opacity-0');
-    expect(status).toHaveClass('opacity-0');
+    expect(loading).toHaveAttribute('data-state', 'pending');
+    expect(screen.queryByTestId('settings-section-loading-skeleton')).not.toBeInTheDocument();
 
-    act(() => vi.advanceTimersByTime(100));
-    expect(skeleton).toHaveClass('opacity-100');
-    expect(status).toHaveClass('opacity-0');
+    act(() => vi.advanceTimersByTime(199));
+    expect(screen.queryByTestId('settings-section-loading-skeleton')).not.toBeInTheDocument();
 
-    act(() => vi.advanceTimersByTime(500));
-    expect(status).toHaveClass('opacity-100', 'motion-reduce:transition-none');
+    act(() => vi.advanceTimersByTime(1));
+    expect(loading).toHaveAttribute('data-state', 'visible');
+    expect(screen.getByTestId('settings-section-loading-skeleton')).toBeVisible();
+    expect(loading.querySelector('[data-structural-surface]')).toBeNull();
     expect(screen.getByText('Loading settings')).toBeInTheDocument();
-    const orb = loading.querySelector('canvas[role="img"]');
-    expect(orb).not.toBeNull();
-    expect(orb).toHaveAttribute('aria-label', 'Loading settings');
   });
 });
 

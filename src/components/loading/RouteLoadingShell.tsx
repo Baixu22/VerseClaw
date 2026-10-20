@@ -1,5 +1,5 @@
 import { useLayoutEffect } from 'react';
-import { ShimmerBlock } from '@/components/ai-elements/shimmer';
+import { SketchBlock } from '@/components/loading/StructuralSketch';
 import { DiaTextReveal } from '@/components/magicui/dia-text-reveal';
 import { cn } from '@/lib/utils';
 
@@ -44,7 +44,7 @@ export function BootShellHandoff() {
 }
 
 function SkeletonLine({ className }: { className: string }) {
-  return <ShimmerBlock className={cn('rounded-full', className)} />;
+  return <SketchBlock className={cn('rounded-full', className)} />;
 }
 
 /**
@@ -69,6 +69,7 @@ export function ChatRouteLoadingShell() {
   return (
     <div
       data-testid="route-loading-chat"
+      data-structural-sketch-root
       className="flex h-full min-h-[420px] flex-col"
       aria-busy="true"
     >
@@ -80,7 +81,7 @@ export function ChatRouteLoadingShell() {
           <SkeletonLine className="h-4 w-36" />
           <SkeletonLine className="h-2.5 w-20" />
         </div>
-        <ShimmerBlock className="size-8 rounded-lg" />
+        <SketchBlock className="size-8 rounded-lg" />
       </div>
 
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center gap-8 py-8">
@@ -91,7 +92,7 @@ export function ChatRouteLoadingShell() {
           </div>
         </div>
         <div className="flex gap-3">
-          <ShimmerBlock className="size-8 shrink-0 rounded-xl" />
+          <SketchBlock className="size-8 shrink-0 rounded-xl" />
           <div className="w-[72%] space-y-3 pt-1">
             <SkeletonLine className="h-3 w-5/6" />
             <SkeletonLine className="h-3 w-full" />
@@ -104,10 +105,10 @@ export function ChatRouteLoadingShell() {
         <SkeletonLine className="h-3 w-2/5" />
         <div className="mt-8 flex items-center justify-between">
           <div className="flex gap-2">
-            <ShimmerBlock className="size-7 rounded-lg" />
-            <ShimmerBlock className="size-7 rounded-lg" />
+            <SketchBlock className="size-7 rounded-lg" />
+            <SketchBlock className="size-7 rounded-lg" />
           </div>
-          <ShimmerBlock className="size-8 rounded-xl" />
+          <SketchBlock className="size-8 rounded-xl" />
         </div>
       </div>
     </div>
@@ -118,6 +119,7 @@ export function SettingsRouteLoadingShell() {
   return (
     <div
       data-testid="route-loading-settings"
+      data-structural-sketch-root
       className="mx-auto w-full max-w-6xl"
       aria-busy="true"
     >
@@ -129,7 +131,7 @@ export function SettingsRouteLoadingShell() {
           <SkeletonLine className="h-10 w-52" />
           <SkeletonLine className="h-3 w-72 max-w-[70vw]" />
         </div>
-        <ShimmerBlock className="size-9 rounded-lg" />
+        <SketchBlock className="size-9 rounded-lg" />
       </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {[0, 1, 2, 3, 4, 5].map((item) => (
@@ -137,7 +139,7 @@ export function SettingsRouteLoadingShell() {
             key={item}
             className="rounded-2xl border border-border/60 bg-surface-modal p-5"
           >
-            <ShimmerBlock className="mb-5 size-9 rounded-xl" />
+            <SketchBlock className="mb-5 size-9 rounded-xl" />
             <SkeletonLine className="mb-3 h-4 w-28" />
             <SkeletonLine className="h-3 w-full" />
             <SkeletonLine className="mt-2 h-3 w-2/3" />
@@ -152,6 +154,7 @@ export function GenericRouteLoadingShell() {
   return (
     <div
       data-testid="route-loading-generic"
+      data-structural-sketch-root
       className="mx-auto w-full max-w-5xl"
       aria-busy="true"
     >
@@ -179,6 +182,7 @@ export function SetupRouteLoadingShell() {
   return (
     <div
       data-testid="route-loading-setup"
+      data-structural-sketch-root
       className="flex min-h-screen items-center justify-center bg-background p-8"
       aria-busy="true"
     >
@@ -187,13 +191,13 @@ export function SetupRouteLoadingShell() {
         <VerseRouteBrand />
       </div>
       <div className="w-full max-w-2xl rounded-3xl border border-border/60 bg-surface-modal p-8 shadow-sm">
-        <ShimmerBlock className="mb-8 h-14 w-[70px] rounded-2xl" />
+        <SketchBlock className="mb-8 h-14 w-[70px] rounded-2xl" />
         <SkeletonLine className="h-9 w-64 max-w-full" />
         <SkeletonLine className="mt-4 h-3 w-full" />
         <SkeletonLine className="mt-2 h-3 w-4/5" />
         <div className="mt-10 grid gap-3 sm:grid-cols-2">
-          <ShimmerBlock className="h-28 rounded-2xl" />
-          <ShimmerBlock className="h-28 rounded-2xl" />
+          <SketchBlock className="h-28 rounded-2xl" />
+          <SketchBlock className="h-28 rounded-2xl" />
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { Check, CircleStop, RefreshCw, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { ScheduledRowFrame } from '@/components/loading/DataListFrames';
 import { cn } from '@/lib/utils';
 import type { BrowserScheduledAction, BrowserScheduledItem } from '@/stores/scheduled';
 import { CronBrowserTaskIcon, CronCloseIcon } from './cron-icons';
@@ -28,32 +29,41 @@ export function BrowserTaskRow({
   const { t } = useTranslation(['cron', 'browser']);
   const task = item.task;
   return (
-    <button
-      type="button"
+    <ScheduledRowFrame
+      role="button"
+      tabIndex={0}
       data-testid={`browser-task-card-${task.id}`}
       className={cn(
-        'grid w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-start gap-3 rounded-lg px-3 py-3 text-left transition-colors duration-150',
         selected ? 'bg-black/5 dark:bg-white/10' : 'hover:bg-black/5 dark:hover:bg-white/5',
       )}
       onClick={onSelect}
-    >
-      <span className={cn('mt-1 flex h-5 w-5 items-center justify-center', statusStyles[task.status])}>
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onSelect();
+        }
+      }}
+      icon={(
+      <span className={statusStyles[task.status]}>
         <CronBrowserTaskIcon />
       </span>
-      <span className="min-w-0">
-        <span className="flex min-w-0 items-baseline gap-2">
+      )}
+      title={(
+        <>
           <span className="min-w-0 truncate text-sm font-medium leading-5 text-foreground">{task.name}</span>
           <span className={cn('shrink-0 text-meta leading-5', statusStyles[task.status])}>
             {t(`browser:status.${task.status}`)}
           </span>
-        </span>
-        <span className="mt-0.5 block truncate text-meta leading-5 text-muted-foreground">{task.objective}</span>
-        <span className="mt-0.5 block truncate font-mono text-xs leading-4 text-muted-foreground/80">{task.url}</span>
-      </span>
-      <span className="mt-1 shrink-0 text-xs text-muted-foreground">
+        </>
+      )}
+      detail={task.objective}
+      meta={<span className="font-mono">{task.url}</span>}
+      actions={(
+      <span className="shrink-0 text-xs text-muted-foreground">
         {t('cron:scheduled.browserSource')}
       </span>
-    </button>
+      )}
+    />
   );
 }
 

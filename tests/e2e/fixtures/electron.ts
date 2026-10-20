@@ -643,6 +643,16 @@ export async function installIpcMocks(
         error: { code: 'INTERNAL', message },
       });
 
+      const resolveHostApiMock = async (value: unknown): Promise<unknown> => {
+        if (value && typeof value === 'object' && '__delayMs' in value && 'result' in value) {
+          const delayMs = Number((value as { __delayMs?: unknown }).__delayMs);
+          if (Number.isFinite(delayMs) && delayMs > 0) {
+            await new Promise((resolve) => setTimeout(resolve, delayMs));
+          }
+          return (value as { result: unknown }).result;
+        }
+        return value;
+      };
       const unwrapLegacyResponse = (response: unknown): unknown => {
         if (!response || typeof response !== 'object') return response;
         const record = response as Record<string, unknown>;
@@ -781,7 +791,7 @@ export async function installIpcMocks(
               request?.payload ?? null,
             ]);
             if (typedKey in mockConfig.hostApi) {
-              return respond(request.id, unwrapLegacyResponse(mockConfig.hostApi[typedKey]));
+              return respond(request.id, unwrapLegacyResponse(await resolveHostApiMock(mockConfig.hostApi[typedKey])));
             }
             const typedFallbackKey = stableStringify([
               request?.module ?? null,
@@ -789,14 +799,14 @@ export async function installIpcMocks(
               null,
             ]);
             if (typedFallbackKey in mockConfig.hostApi) {
-              return respond(request.id, unwrapLegacyResponse(mockConfig.hostApi[typedFallbackKey]));
+              return respond(request.id, unwrapLegacyResponse(await resolveHostApiMock(mockConfig.hostApi[typedFallbackKey])));
             }
 
             const legacyPath = legacyPathForHostRequest(request ?? {});
             if (legacyPath) {
               const key = stableStringify(legacyPath);
               if (key in mockConfig.hostApi) {
-                return respond(request.id, unwrapLegacyResponse(mockConfig.hostApi[key]));
+                return respond(request.id, unwrapLegacyResponse(await resolveHostApiMock(mockConfig.hostApi[key])));
               }
             }
           }

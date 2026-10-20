@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Download, GitBranch, GitMerge, History, Link2, ListTree, Plus, RefreshCw, Search, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { QuietLoadingSurface } from '@/components/loading/StructuralLoadingOverlay';
+import { QuietListSkeleton } from '@/components/loading/PageLoadingSkeletons';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -276,6 +278,12 @@ export default function TaskLedgerPage() {
         </TabsList>
 
         <TabsContent value="tree" className="h-[calc(100%-3rem)] overflow-y-auto">
+          <QuietLoadingSurface
+            surfaceId="task-ledger"
+            loading={loading && !snapshot}
+            label={t('common:status.loading')}
+            skeleton={<QuietListSkeleton rows={6} />}
+          >
           <div className="space-y-3" data-testid="task-ledger-tree">
             {(childMap.get('root') ?? []).length === 0 ? (
               <div className="rounded-md border border-dashed border-border p-8 text-center text-sm text-muted-foreground">{t('empty')}</div>
@@ -292,6 +300,7 @@ export default function TaskLedgerPage() {
               ))
             )}
           </div>
+          </QuietLoadingSurface>
         </TabsContent>
 
         <TabsContent value="dag" className="h-[calc(100%-3rem)] overflow-y-auto">

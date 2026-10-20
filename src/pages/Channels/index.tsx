@@ -11,7 +11,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useGatewayStore } from '@/stores/gateway';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { MeasuredLoadingList } from '@/components/loading/MeasuredLoadingList';
+import { ChannelGroupFrame, ChannelStructureRow } from '@/components/loading/DataListFrames';
 import {
   hostApi,
   type ChannelAccountsResult,
@@ -566,16 +567,7 @@ export function Channels({ embedded = false }: { embedded?: boolean } = {}) {
     return nextAccountId;
   };
 
-  if (loading && !hasStableValue) {
-    return (
-      <div className={cn(
-        'flex flex-col items-center justify-center',
-        embedded ? 'min-h-64' : '-m-6 min-h-[calc(100vh-2.5rem)] dark:bg-background',
-      )}>
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
+  const showInitialLoading = loading && visibleChannelGroups.length === 0;
 
   return (
     <div
@@ -617,9 +609,11 @@ export function Channels({ embedded = false }: { embedded?: boolean } = {}) {
           </div>
         </div>
 
-        <div className={cn(
-          embedded ? 'min-h-0' : 'flex-1 overflow-y-auto pr-2 pb-10 min-h-0 -mr-2',
-        )}>
+        <div
+          className={cn(
+            embedded ? 'min-h-0' : 'flex-1 overflow-y-auto pr-2 pb-10 min-h-0 -mr-2',
+          )}
+        >
           {isGatewayStopped(gatewayStatus) && (
             <div className="mb-8 p-4 rounded-xl border border-yellow-500/50 bg-yellow-500/10 flex items-center gap-3">
               <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
@@ -718,23 +712,28 @@ export function Channels({ embedded = false }: { embedded?: boolean } = {}) {
             </div>
           )}
 
-          {configuredGroups.length > 0 && (
+          {(showInitialLoading || configuredGroups.length > 0) && (
             <div className="mb-12">
               <h2 className="text-xl font-serif text-foreground mb-6 font-normal tracking-tight">
                 {t('configured')}
               </h2>
-              <div className="space-y-4">
-                {configuredGroups.map((group) => (
-                  <div key={group.channelType} className="rounded-2xl border border-black/10 dark:border-white/10 p-4 bg-transparent">
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-[40px] w-[40px] shrink-0 flex items-center justify-center text-foreground bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-full shadow-sm">
-                          <ChannelLogo type={group.channelType as ChannelType} />
-                        </div>
-                        <div className="min-w-0">
+              <MeasuredLoadingList
+                surfaceId="channels"
+                loading={showInitialLoading}
+                label={t('common:status.loading')}
+                listClassName="space-y-4"
+                skeletonRows={[0, 1, 2].map((index) => <ChannelStructureRow key={index} />)}
+                rows={configuredGroups.map((group) => (
+                  <ChannelGroupFrame
+                    key={group.channelType}
+                    data-testid={`channel-group-${group.channelType}`}
+                    icon={<ChannelLogo type={group.channelType as ChannelType} />}
+                    title={(
                           <h3 className="text-base font-semibold text-foreground truncate">
                             {CHANNEL_NAMES[group.channelType as ChannelType] || group.channelType}
                           </h3>
+                    )}
+                    detail={(
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <span>{group.channelType}</span>
                             <span className="w-1 h-1 rounded-full bg-black/20 dark:bg-white/20" />
@@ -752,16 +751,19 @@ export function Channels({ embedded = false }: { embedded?: boolean } = {}) {
                               {statusLabel(group.status)}
                             </span>
                           </div>
+                    )}
+                    meta={(
                           <AccessPolicyPills
                             policy={group.accessPolicy}
                             t={t}
                             testIdPrefix={`channels-policy-${safeTestIdSegment(group.channelType)}`}
                           />
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
+                    )}
+                    actions={(
+                      <>
                         <Button
+                          data-build-action
+                          data-testid={`channel-add-${group.channelType}`}
                           size="sm"
                           variant="outline"
                           className="h-8 text-xs rounded-full"
@@ -786,6 +788,7 @@ export function Channels({ embedded = false }: { embedded?: boolean } = {}) {
                           {t('account.add')}
                         </Button>
                         <Button
+                          data-build-action
                           size="icon"
                           variant="ghost"
                           className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
@@ -794,8 +797,9 @@ export function Channels({ embedded = false }: { embedded?: boolean } = {}) {
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
-                      </div>
-                    </div>
+                      </>
+                    )}
+                  >
 
                     <div className="space-y-2">
                       {group.accounts.map((account) => {
@@ -887,9 +891,9 @@ export function Channels({ embedded = false }: { embedded?: boolean } = {}) {
                         );
                       })}
                     </div>
-                  </div>
+                  </ChannelGroupFrame>
                 ))}
-              </div>
+              />
             </div>
           )}
 
