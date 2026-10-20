@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-20T15:56:47.202Z
+Generated at: 2026-10-20T17:04:02.987Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -169,13 +169,13 @@ This file is generated — edit the source of truth instead.
 - kind: api
 - key: `applyContextLadder(...)`
 - default: false
-- defaultDisplay: opt-in API (assembler not flipped)
+- defaultDisplay: explicit assembler opt-in (defaults unchanged)
 - risk: api-only
-- enable: Import and call applyContextLadder from context-ladder.ts with an explicit tokenBudget. Assembler production path does not auto-ladder.
-- rollback: Stop calling applyContextLadder; leave assembler defaults unchanged.
-- executor: pending-wiring — The implementation remains under openclaw_runtime/experiments and the production assembler does not call applyContextLadder. TF-0461 migrates it into src, then TF-0462 wires the assembler path.
+- enable: Pass AssembleRequest contextLadder={ enabled: true, tokenBudget, mode?, heatThreshold? }. The assembler queries session blocks, calls applyContextLadder with the explicit tokenBudget, and uses only active blocks for DCS injections.
+- rollback: Omit request.contextLadder or leave enabled unset/false; ordinary per-channel BlockStore queries and defaults resume unchanged.
+- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:384`, `openclaw_runtime/src/context-engine/assembler.ts:393`
 
-> 64K evidence is synthetic until C6-H live corpus. L4 embedding remains deferred.
+> C6-H agent-driven live corpus evidence is harness/specs/fixtures/context-ladder-live-corpus/evidence.json (104,607 raw chars, driven_by=agent). L4 embedding remains deferred; no assembler default is flipped.
 
 ## routing-memo-shadow
 

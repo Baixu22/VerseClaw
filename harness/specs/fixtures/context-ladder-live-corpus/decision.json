@@ -1,0 +1,79 @@
+{
+  "ok": true,
+  "card": "B1",
+  "wave": "C6-H",
+  "completionClass": "done (hard-gates+live)",
+  "live64k": true,
+  "recorded64k": false,
+  "synthetic64k": false,
+  "corpusKind": "live",
+  "metricGates": {
+    "promptNotLinearExploding": true,
+    "compactionLayersHit": true,
+    "passRateFloor": true,
+    "cumulativeRawGe64k": true,
+    "allMetricGatesGreen": true
+  },
+  "readyToConsiderAssemblerFlip": false,
+  "autoAppliedAssemblerFlip": false,
+  "recommendation": "metrics-green-review-required",
+  "productReviewApproved": false,
+  "defaultsUnchanged": true,
+  "checklist": [
+    {
+      "id": "metric-prompt-not-linear",
+      "ok": true,
+      "note": "final prompt estimate << cumulative raw"
+    },
+    {
+      "id": "metric-compaction-layers",
+      "ok": true,
+      "note": "tool compress / archive / pressure layers observed"
+    },
+    {
+      "id": "metric-pass-rate-floor",
+      "ok": true,
+      "note": "simulated pass-rate within baseline floor"
+    },
+    {
+      "id": "metric-64k-cumulative",
+      "ok": true,
+      "note": "cumulative raw chars >= 64K"
+    },
+    {
+      "id": "product-review-approved",
+      "ok": false,
+      "note": "explicit product review field (never inferred)"
+    },
+    {
+      "id": "no-auto-flip",
+      "ok": true,
+      "note": "autoAppliedAssemblerFlip always false"
+    },
+    {
+      "id": "live-corpus-optional",
+      "ok": true,
+      "note": "live 64K present"
+    }
+  ],
+  "notes": [
+    "corpus loaded from D:\\ClawX\\harness\\specs\\fixtures\\context-ladder-live-corpus\\live-corpus.json",
+    "corpus kind=live (manifest.kind=live)",
+    "Agent-driven live corpus from current-session source/test files.",
+    "Not human traffic; driven_by=agent and actor=codex.",
+    "No synthetic 64K fixture is used.",
+    "Assembler production defaults remain unchanged.",
+    "assembler production flags remain unflipped",
+    "TF-0462 live corpus is agent-driven from current repository source.",
+    "No real-human traffic is claimed.",
+    "Explicit assembler contextLadder request remains opt-in; defaults unchanged.",
+    "readyToConsiderAssemblerFlip is never auto-true from metrics alone",
+    "applyContextLadder remains opt-in; assembler production flags unflipped",
+    "curve hard-gate readyToConsiderAssemblerFlip=false respected"
+  ],
+  "howToOptInLadder": "Call applyContextLadder({ blocks, tokenBudget }) opt-in from host code; do not flip assembler production defaults. Kill switch: stop calling ladder / leave defaults.",
+  "residual": [
+    "Product review approval not set; assembler flip stays consider-only/keep-off",
+    "No automatic assembler production default flip from this package"
+  ]
+}

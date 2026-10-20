@@ -253,16 +253,19 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     wave: 'C6',
     kind: 'api',
     key: 'applyContextLadder(...)',
-    defaultDisplay: 'opt-in API (assembler not flipped)',
+    defaultDisplay: 'explicit assembler opt-in (defaults unchanged)',
     defaultValue: false,
     risk: 'api-only',
     enable:
-      'Import and call applyContextLadder from context-ladder.ts with an explicit tokenBudget. Assembler production path does not auto-ladder.',
-    rollback: 'Stop calling applyContextLadder; leave assembler defaults unchanged.',
-    riskNote: '64K evidence is synthetic until C6-H live corpus. L4 embedding remains deferred.',
+      'Pass AssembleRequest contextLadder={ enabled: true, tokenBudget, mode?, heatThreshold? }. The assembler queries session blocks, calls applyContextLadder with the explicit tokenBudget, and uses only active blocks for DCS injections.',
+    rollback: 'Omit request.contextLadder or leave enabled unset/false; ordinary per-channel BlockStore queries and defaults resume unchanged.',
+    riskNote: 'C6-H agent-driven live corpus evidence is harness/specs/fixtures/context-ladder-live-corpus/evidence.json (104,607 raw chars, driven_by=agent). L4 embedding remains deferred; no assembler default is flipped.',
     executor: {
-      status: 'pending-wiring',
-      reason: 'The implementation remains under openclaw_runtime/experiments and the production assembler does not call applyContextLadder. TF-0461 migrates it into src, then TF-0462 wires the assembler path.',
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/context-engine/assembler.ts:384',
+        'openclaw_runtime/src/context-engine/assembler.ts:393',
+      ],
     },
   },
   {

@@ -1,0 +1,100 @@
+{
+  "kind": "live",
+  "sessionId": "tf-0462-agent-driven-live-corpus",
+  "source": "agent-driven current-session source corpus",
+  "targetCumulativeChars": 104607,
+  "turns": [
+    {
+      "turn": 1,
+      "rawChars": 1987,
+      "label": "openclaw_runtime/src/context-engine/context-ladder.ts"
+    },
+    {
+      "turn": 2,
+      "rawChars": 3013,
+      "label": "openclaw_runtime/src/context-engine/token-pressure.ts"
+    },
+    {
+      "turn": 3,
+      "rawChars": 30881,
+      "label": "openclaw_runtime/src/context-engine/assembler.ts"
+    },
+    {
+      "turn": 4,
+      "rawChars": 44320,
+      "label": "openclaw_runtime/src/context-engine/assembler.test.ts"
+    },
+    {
+      "turn": 5,
+      "rawChars": 4058,
+      "label": "openclaw_runtime/src/context-engine/block-lifecycle.ts"
+    },
+    {
+      "turn": 6,
+      "rawChars": 6693,
+      "label": "openclaw_runtime/src/context-engine/block-lifecycle.test.ts"
+    },
+    {
+      "turn": 7,
+      "rawChars": 3861,
+      "label": "openclaw_runtime/src/agents/orchestration-patch-flow.ts"
+    },
+    {
+      "turn": 8,
+      "rawChars": 9794,
+      "label": "openclaw_runtime/src/agents/orchestration-patch-flow.test.ts"
+    }
+  ],
+  "notes": [
+    "Agent-driven live corpus from current-session source/test files.",
+    "Not human traffic; driven_by=agent and actor=codex.",
+    "No synthetic 64K fixture is used.",
+    "Assembler production defaults remain unchanged."
+  ],
+  "driven_by": "agent",
+  "actor": "codex",
+  "sourceFiles": [
+    {
+      "path": "openclaw_runtime/src/context-engine/context-ladder.ts",
+      "sha256": "756cc0db5e957a4a9e634addf4fa3cb35591fd00d6aaf400867ec20bd30af290",
+      "rawChars": 1987
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/token-pressure.ts",
+      "sha256": "8cfad2a3bdc0902ef3610126095c8702b6cd1d1569f198f06d472675ce83a2f3",
+      "rawChars": 3013
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/assembler.ts",
+      "sha256": "8189fd703ce653fbaac67258875649312417a7d3ce2b93b7450eceb8c420a01e",
+      "rawChars": 30881
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/assembler.test.ts",
+      "sha256": "04cf633d661fe3bc2285ed5e22eda2af1217e37fa6ab98031f5912c9668a70bc",
+      "rawChars": 44320
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/block-lifecycle.ts",
+      "sha256": "c8d7f9556265cd5323c671c7d391ba35a4fa25fff7474e89ec6760916e3f4973",
+      "rawChars": 4058
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/block-lifecycle.test.ts",
+      "sha256": "1d380e08789287e73ee015601268f802910368e409765e0697762ede9e5a20cc",
+      "rawChars": 6693
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestration-patch-flow.ts",
+      "sha256": "b80bc434cbe5845c43e8ee29fdc19d286e5c17c0b17da5eed94f341fc296dd13",
+      "rawChars": 3861
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestration-patch-flow.test.ts",
+      "sha256": "0ad26e2a3f0227b65e24d03e79a7e6047e04cb468664a9588635e3b4a81662d1",
+      "rawChars": 9794
+    }
+  ],
+  "generatedAt": "2026-10-20T17:05:01.734Z",
+  "reproduceCommand": "pnpm --dir openclaw_runtime exec tsx scripts/context-ladder-live-corpus.mts"
+}
