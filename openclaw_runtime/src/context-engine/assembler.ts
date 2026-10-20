@@ -390,7 +390,7 @@ export class Assembler {
             session_id: request.session_id,
             limit: 100,
           });
-          const ladder = await this.#dependencies.applyContextLadder({
+          const ladder = this.#dependencies.applyContextLadder({
             blocks: blocks.map(hydrateLifecycleBlock),
             tokenBudget: request.contextLadder.tokenBudget,
             mode: request.contextLadder.mode,

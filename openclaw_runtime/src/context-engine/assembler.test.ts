@@ -1158,7 +1158,7 @@ describe("explicit context-ladder assembler wiring", () => {
     );
     const assembler = new Assembler({
       workingMemoryStore: { query, upsert: vi.fn() },
-      applyContextLadder: vi.fn(async () => {
+      applyContextLadder: vi.fn(() => {
         throw new Error("ladder fixture failure");
       }),
     });

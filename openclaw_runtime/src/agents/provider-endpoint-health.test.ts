@@ -158,7 +158,7 @@ describe("provider endpoint health gate", () => {
       const model = makeModel();
       const admission = admitProviderEndpointRequest(groupFor(model));
       expect(admission.ok).toBe(true);
-      admission.ok && admission.ticket.record("failure");
+      if (admission.ok) admission.ticket.record("failure");
       expect(providerEndpointHealthSnapshots()).toHaveLength(0);
       expect(readProviderEndpointHealthConfigFromEnv({})).toBeUndefined();
     });

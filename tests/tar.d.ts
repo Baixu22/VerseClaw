@@ -10,7 +10,7 @@
  */
 declare module 'tar' {
   import type { EventEmitter } from 'node:events';
-  import type { Readable, Writable } from 'node:stream';
+  import type { Readable } from 'node:stream';
 
   export interface ReadEntry extends EventEmitter {
     path: string;

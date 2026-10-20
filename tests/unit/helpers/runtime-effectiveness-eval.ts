@@ -8,23 +8,6 @@ import { performance } from "node:perf_hooks";
 import type { TaskLoopRunResult } from "../../../openclaw_runtime/src/agents/task-loop-controller";
 import type { MissionReviewerResult } from "../../../openclaw_runtime/src/agents/mission-control/types";
 
-function toolResult(value: unknown): { details?: {
-  mustReadSource?: unknown;
-  sourceReadPolicy?: unknown;
-  filesToRead?: unknown;
-  freshness?: { status?: string };
-  stats?: { fileCount?: number };
-    path?: string;
-} } {
-  return value as { details?: {
-    mustReadSource?: unknown;
-    sourceReadPolicy?: unknown;
-    filesToRead?: unknown;
-    freshness?: { status?: string };
-    stats?: { fileCount?: number };
-    path?: string;
-  } };
-}
 
 export type RuntimeEffectivenessMode = "deterministic" | "live" | "hybrid";
 

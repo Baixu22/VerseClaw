@@ -19,6 +19,9 @@ export default [
     ignores: [
       '.tmp/**',
       '**/.tmp/**',
+      '.local/**',
+      'tmp/**',
+      'packages/versebrowser/dist/**',
       '**/.artifacts/**',
       '.claude/worktrees/**',
       'artifacts/**',

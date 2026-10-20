@@ -3,7 +3,6 @@
 // search top-1). The new FactStore impact view must recall a SUPERSET of its callers
 // and impacted files. No loadable CodeGraph plugin is required.
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
-import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -15,7 +14,6 @@ import { analyzeImpact } from "./impact-view.js";
 
 const RUNTIME_ROOT = fileURLToPath(new URL("../../../..", import.meta.url));
 const REPO_ROOT = path.resolve(RUNTIME_ROOT, "..");
-const CONTEXT_ENGINE_SRC = path.join(RUNTIME_ROOT, "src", "context-engine");
 const FROZEN_FIXTURE_PATH = path.join(
   REPO_ROOT,
   "harness/specs/fixtures/codegraph-retirement/impact-parity-v1.json",
@@ -34,10 +32,6 @@ type FrozenParityFixture = {
   queryParams: { callersDepth: number; impactDepth: number; searchLimit: number };
   queries: FrozenQuery[];
 };
-
-function sha256File(filePath: string): string {
-  return createHash("sha256").update(readFileSync(filePath)).digest("hex");
-}
 
 const frozen: FrozenParityFixture = JSON.parse(readFileSync(FROZEN_FIXTURE_PATH, "utf8"));
 const GOLDEN_QUERIES = frozen.queries.map((entry) => entry.query);
@@ -163,7 +157,3 @@ describe("impact view parity vs vendored codegraph (gate G)", () => {
     expect(String(result.contextItems[0]?.text)).toContain("Impact of sha256");
   });
 });
-
-function normalize(filePath: string): string {
-  return filePath.replaceAll("\\", "/").replace(/^\.\//, "");
-}

@@ -1,8 +1,8 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, extname, join, relative, resolve } from "node:path";
-import { pathToFileURL, fileURLToPath } from "node:url";
+import { extname, join, relative, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import { describe, expect, it } from "vitest";
 
 const repoRoot = resolve(process.cwd());
@@ -35,11 +35,6 @@ function walkScripts(dir: string): string[] {
   return out;
 }
 
-function scriptsReferencing(argv1: string): string[] {
-  return walkScripts(join(repoRoot, "scripts"))
-    .filter((file) => readFileSync(file, "utf8").includes(argv1))
-    .map((file) => relative(repoRoot, file).split(String.fromCharCode(92)).join("/"));
-}
 
 function hasNaiveEntrypointComparison(source: string): boolean {
   if (!source.includes("process.argv[1]")) return false;
