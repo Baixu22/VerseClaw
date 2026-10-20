@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "generatedAt": "2026-10-20T16:05:49.866Z",
+  "task": "TF-0460",
+  "sourceTest": "openclaw_runtime/src/agents/orchestration-patch-flow.test.ts",
+  "reproduceCommand": "$env:PATCH_FLOW_SOAK_EVIDENCE_PATH='harness/specs/fixtures/patch-flow-execution-orchestrator-wiring/soak.json'; pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.agents-core.config.ts src/agents/orchestration-patch-flow.test.ts --reporter=verbose",
+  "patchFlowDefault": false,
+  "cycleCount": 10,
+  "proposalCount": 20,
+  "okCount": 20,
+  "failedCount": 0,
+  "status": "applied",
+  "cycles": [
+    {
+      "cycle": 1,
+      "status": "applied",
+      "proposalCount": 2,
+      "okCount": 2
+    },
+    {
+      "cycle": 2,
+      "status": "applied",
+      "proposalCount": 2,
+      "okCount": 2
+    },
+    {
+      "cycle": 3,
+      "status": "applied",
+      "proposalCount": 2,
+      "okCount": 2
+    },
+    {
+      "cycle": 4,
+      "status": "applied",
+      "proposalCount": 2,
+      "okCount": 2
+    },
+    {
+      "cycle": 5,
+      "status": "applied",
+      "proposalCount": 2,
+      "okCount": 2
+    },
+    {
+      "cycle": 6,
+      "status": "applied",
+      "proposalCount": 2,
+      "okCount": 2
+    },
+    {
+      "cycle": 7,
+      "status": "applied",
+      "proposalCount": 2,
+      "okCount": 2
+    },
+    {
+      "cycle": 8,
+      "status": "applied",
+      "proposalCount": 2,
+      "okCount": 2
+    },
+    {
+      "cycle": 9,
+      "status": "applied",
+      "proposalCount": 2,
+      "okCount": 2
+    },
+    {
+      "cycle": 10,
+      "status": "applied",
+      "proposalCount": 2,
+      "okCount": 2
+    }
+  ]
+}

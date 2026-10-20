@@ -56,6 +56,7 @@ import {
   safeRemoveAttachmentsDir,
 } from "./subagent-registry-helpers.js";
 import { createSubagentRegistryLifecycleController } from "./subagent-registry-lifecycle.js";
+import { applyDeferredPatchFlow } from "./orchestration-patch-flow.js";
 import { subagentRuns } from "./subagent-registry-memory.js";
 import {
   countActiveDescendantRunsFromRuns,
@@ -100,6 +101,7 @@ export {
   resolveSubagentSessionStatus,
 } from "./subagent-registry-helpers.js";
 const log = createSubsystemLogger("agents/subagent-registry");
+const deferredPatchFlowRunsInProgress = new Set<string>();
 
 type SubagentAnnounceModule = Pick<
   typeof import("./subagent-announce.js"),
@@ -597,9 +599,38 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
     return;
   }
   await processCompletedOrchestrationWorktrees(expectedWorkers);
-  const latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
+  let latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
   if (!latestMeta) {
     return;
+  }
+  if (latestMeta.patchFlowExecution === true && latestMeta.patchFlowStatus === undefined) {
+    if (deferredPatchFlowRunsInProgress.has(orchestrationRunId)) {
+      return;
+    }
+    deferredPatchFlowRunsInProgress.add(orchestrationRunId);
+    try {
+      const outcome = await applyDeferredPatchFlow({
+        workers: expectedWorkers,
+        workspaceDir:
+          expectedWorkers.find((worker) => worker.workspaceDir)?.workspaceDir ??
+          completed.workspaceDir,
+      });
+      markOrchestrationWorkers({
+        workers: expectedWorkers,
+        patch: {
+          patchFlowStatus: outcome.status,
+          patchFlowResults: outcome.results,
+          patchFlowAppliedAt: outcome.appliedAt,
+          ...(outcome.error ? { patchFlowError: outcome.error } : {}),
+        },
+      });
+    } finally {
+      deferredPatchFlowRunsInProgress.delete(orchestrationRunId);
+    }
+    latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
+    if (!latestMeta) {
+      return;
+    }
   }
   if (latestMeta.verifierStartedRunId || latestMeta.verifierSkippedReason) {
     return;

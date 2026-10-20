@@ -74,6 +74,7 @@ import {
 } from "./orchestration-runtime-blackboard.js";
 import type { BlackboardSynthesisSummary } from "./orchestration-synthesizer.js";
 import { createWorktreeService } from "./worktree-service.js";
+import { PATCH_FLOW_PROPOSAL_ONLY_DENIED_TOOLS } from "./orchestration-patch-flow.js";
 
 export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
   cfg?: RoleRegistryConfigCarrier;
@@ -84,6 +85,12 @@ export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
   includeVerifier?: boolean;
   orchestrationRunId?: string;
   patchRegistryMetadata?: boolean;
+  /**
+   * P2b explicit execution-side opt-in. Advisory patch-flow output alone never
+   * enables this; the caller must request execution and the plan must recommend
+   * patch-flow before workers switch to proposal-only mode.
+   */
+  patchFlowExecution?: true;
 };
 
 export type OrchestrationWorkerOutcome = {
@@ -530,7 +537,22 @@ export async function runOrchestrationWithRecorder(
         return;
       }
       const role = resolvePlanRole(roleName, request);
+      const proposalOnly = patchFlowExecution && !isVerifier;
       const framing = orchestrationFraming(plan, request.task, roleName, isVerifier, role);
+      const systemPrompt = proposalOnly
+        ? `${framing}\n\n## Patch-Flow Proposal Contract\n- This worker is proposal-only; direct write and shell tools are denied.\n- Return exactly one fenced \`\`\`apply_patch block containing a complete patch from \`*** Begin Patch\` through \`*** End Patch\`.\n- Do not modify disk directly. The orchestration lead applies all proposals serially after every worker completes.`
+        : framing;
+      const spawnCtx = proposalOnly
+        ? {
+            ...ctx,
+            inheritedToolDenylist: [
+              ...new Set([
+                ...(ctx.inheritedToolDenylist ?? []),
+                ...PATCH_FLOW_PROPOSAL_ONLY_DENIED_TOOLS,
+              ]),
+            ],
+          }
+        : ctx;
       const worktree =
         node?.isolation === "worktree"
           ? (() => {
@@ -563,8 +585,8 @@ export async function runOrchestrationWithRecorder(
           // worker is expected to touch (no-op when the node has none).
           ...(node?.writeSet ? { writeSet: [...node.writeSet] } : {}),
           extraSystemPrompt: handoffPrompt.status === "ready"
-            ? `${framing}\n\n${handoffPrompt.prompt}`
-            : framing,
+            ? `${systemPrompt}\n\n${handoffPrompt.prompt}`
+            : systemPrompt,
           ...(orchestrationRunId
             ? {
                 orchestration: {
@@ -601,6 +623,12 @@ export async function runOrchestrationWithRecorder(
                       }
                     : {}),
                   routeDiagnostics: plan.routeDiagnostics,
+                  ...(proposalOnly
+                    ? {
+                        patchFlowExecution: true as const,
+                        ...(node?.writeSet ? { patchFlowWriteSet: [...node.writeSet] } : {}),
+                      }
+                    : {}),
                   qualityPolicy: request.qualityPolicy,
                   repairPolicy: request.repairPolicy,
                   workerCommunication: request.workerCommunication ?? "none",
@@ -610,7 +638,7 @@ export async function runOrchestrationWithRecorder(
               }
             : {}),
         },
-        ctx,
+        spawnCtx,
         deps,
       );
       const endedLedger: OrchestrationTaskLedgerEntry = {
@@ -705,6 +733,10 @@ export async function runOrchestrationWithRecorder(
   // see all worker results); v4 executes task graph waves in order and uses
   // Promise.allSettled inside each wave so independent ready nodes run together.
   const workerNodes = taskGraphWorkerNodes(plan.taskGraph);
+  const patchFlowExecution =
+    request.patchFlowExecution === true &&
+    plan.routeDiagnostics.isolationAdvisory?.recommendedMode === "patch-flow" &&
+    typeof ctx.workspaceDir === "string";
   const workerNodeById = new Map(workerNodes.map((node) => [node.taskNodeId, node]));
   const fallbackIndex = new Map(workerNodes.map((node, index) => [node.taskNodeId, index]));
   const captureWaveHandoffs = async (nodes: readonly OrchestrationTaskNode[]): Promise<void> => {
