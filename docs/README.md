@@ -8,6 +8,7 @@ and the [default configuration matrix](dev/default-config-matrix.md).
 - [Architecture overview](architecture-overview.md)
 - [Desktop design overview](clawx-design-overview.md)
 - [Product semantics](clawx-product-semantics.md)
+- [Runtime control planes](dev/runtime-control-planes.md)
 - [Subsystem seam map](SEAM_MAP.md)
 - [Context Engine rebuild specification](CONTEXT_ENGINE_REBUILD_SPEC.md)
 - [Role-first design](role-first-design.md)

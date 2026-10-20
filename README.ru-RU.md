@@ -12,7 +12,7 @@
 
 Verse Claw — приложение Electron на базе OpenClaw. Начните работу в диалоге, просматривайте файлы, терминалы, браузер, изменения кода и созданные материалы в том же рабочем пространстве, затем сохраняйте полезные результаты как проверяемые знания проекта. Приложение также предоставляет настройки моделей и агентов, каналы сообщений, задания по расписанию и диагностику среды выполнения.
 
-Интерфейс использует React, TypeScript и Vite. Исходники OpenClaw и плагинов входят в репозиторий и доступны для редактирования. Текущая версия и зависимости указаны в [package.json](package.json). В части исходников, настроек и исторических документов сохраняется название ClawX.
+Интерфейс использует React, TypeScript и Vite. Это не только оболочка Renderer: репозиторий также содержит Electron Main Host, типизированные общие контракты, встроенную среду OpenClaw с каталогом расширений, встроенные VerseBrowser и VToken, адаптер VerseShell MCP, исполняемые спецификации Harness и конвейер сборки, выпуска и доказательств. Текущая версия и зависимости указаны в [package.json](package.json). В части исходников, настроек и исторических документов сохраняется название ClawX.
 
 > **Текущее состояние:** проект находится на стадии alpha. Основная локальная приёмка охватывает контролируемые сценарии Windows x64. Для macOS и Linux предусмотрены цели сборки; покрытие проверками зависит от платформы и функции. Условия включения экспериментальных возможностей описаны ниже, в [семантике продукта](docs/clawx-product-semantics.md) и [матрице возможностей](shared/capability-claims.ts).
 
@@ -184,18 +184,70 @@ pnpm dev
 
 Точки входа Renderer — `src/lib/host-api.ts` и `src/lib/host-api-client.ts`. Эти границы нельзя описывать как универсальный «WS → HTTP → IPC fallback». [Обзор архитектуры](docs/architecture-overview.md) содержит карту исходников, последовательность диалога и обязанности подсистем задач, знаний, плагинов и локальных данных.
 
-| Путь | Назначение |
-| --- | --- |
-| `src/` | Страницы React, компоненты, состояние и API Renderer |
-| `electron/` | Жизненный цикл приложения, сервисы Host, Gateway и процессы |
-| `shared/` | Контракты типов, четыре локализации, реестр сценариев и возможности |
-| `openclaw_runtime/` | Исходники runtime и плагинов с отдельными зависимостями |
-| `harness/` | CLI спецификаций, сценарии, правила, задачи и соглашения слоёв |
-| `tests/` | Модульные, интеграционные и Electron E2E тесты приложения |
-| `scripts/` | Сборка, синхронизация ресурсов, проверки и сбор подтверждений |
-| `resources/` | Встроенные навыки, бинарные ресурсы и сведения об исходниках компонентов |
-| `docs/` | Семантика продукта, проекты, руководства разработки и эксплуатации |
-| `artifacts/` | Отобранные подтверждения и локальные отчёты; отслеживание определяется правилами хранения |
+### Карта текущих модулей
+
+Таблица отражает текущее распределение исходников, а не прежнее описание только по верхнеуровневым каталогам. Подробный перечень, а также границы генерируемых файлов и локального состояния приведены в разделе [Структура репозитория и корни доказательств](docs/dev/repository-layout.md).
+
+| Слой | Основные пути | Текущая ответственность |
+| --- | --- | --- |
+| Renderer | `src/pages/`, `src/components/`, `src/stores/`, `src/lib/`, `src/i18n/`, `src/styles/`, `src/extensions/`, `src/hooks/`, `src/types/`, `src/assets/` | Страницы маршрутов, общий UI, состояние клиента, типизированный Host facade и события, локализация, стили и статические ресурсы |
+| Electron Main и Host | `electron/main/`, `electron/services/`, `electron/preload/`, `electron/extensions/`, `electron/shared/`, `electron/types/`, `electron/utils/` | Жизненный цикл окон, меню и трея, авторизация IPC и диспетчеризация Host, настольные сервисы, общие типы и утилиты Main, передача событий |
+| Мост Gateway | `electron/gateway/` | Запуск и восстановление Gateway, WebSocket RPC, политика подключения и перезапуска, адаптация событий runtime |
+| Общая граница | `shared/host-api/`, `shared/types/`, `shared/i18n/`, `shared/host-events/`, `shared/agent-dev/`, `shared/knowledge/`, `shared/mcp/`, `shared/sandbox/`, `shared/security/`, `shared/verseshell/`, `shared/vtoken/` и общие модули семантики | Контракт Host API, межпроцессные типы, четыре языковых набора, типы событий, доменные вспомогательные модули, определения возможностей и семантики продукта |
+| Встроенный runtime OpenClaw | `openclaw_runtime/src/`, `openclaw_runtime/packages/`, `openclaw_runtime/ui/`, `openclaw_runtime/apps/`, `openclaw_runtime/experiments/`, `openclaw_runtime/test/` | Агенты, модели и провайдеры, инструменты, сеансы, контекст и память, каналы, планирование, внутренние части Gateway, пакеты runtime, приложения и эксперименты |
+| Расширения runtime | `openclaw_runtime/extensions/` | Реализации провайдеров, каналов, инструментов, браузера, памяти, медиа и плагинов; доступность зависит от включения и политик runtime |
+| Встроенные компоненты продукта | `packages/versebrowser/`, `packages/vtoken/`, `resources/verseshell-mcp/` | Закреплённый движок автоматизации браузера, Python/uv sidecar токенов и внешний адаптер совместимости MCP |
+| Встроенные ресурсы и упаковка | `resources/skills/`, `resources/skill-packs/`, `resources/openclaw-plugins/`, `resources/verseshell/`, `resources/cli/`, `resources/context/`, `resources/icons/`, `resources/readme/`, `resources/brand-exploration/`, `resources/bin/`, `resources/workspace-harness/`, `public/`, `patches/`, `electron-builder.yml` | Предустановленные навыки и наборы, плагины ClawX, ресурсы CLI и контекста, нативные бинарные файлы, входные данные Harness рабочего пространства, медиа документации и ресурсы упаковки |
+| Harness и тесты | `harness/specs/`, `harness/src/`, `harness/workspace/`, `tests/unit/`, `tests/integration/`, `tests/e2e/` | Исполняемые правила, сценарии, спецификации задач и fixture; модульное, интеграционное и Electron Playwright покрытие |
+| Автоматизация сборки и выпуска | `scripts/`, `.github/workflows/` | Сборка, синхронизация ресурсов, проверки, зрелость, доказательства, упаковка, выпуск и CI |
+| Документация и доказательства | `docs/`, `plans/`, `team/`, `reports/`, `artifacts/` | Текущая архитектура и runbook, решения о зрелости, исторические проектные материалы, длинные отчёты, отобранные доказательства и сохранённые результаты |
+
+### Плоскости управления средой выполнения
+
+| Плоскость | Текущий механизм | Граница |
+| --- | --- | --- |
+| Системные ресурсы | `ResourceFabric` управляет допуском выполнения в workspace и загрузки истории чата; `BackgroundWorkGate` откладывает фоновую работу при давлении очереди, RSS или CPU; `ResourceTracker` обнаруживает и очищает серверные ресурсы, связанные с сессией | Это кооперативный допуск внутри Main, а не глобальный планировщик ОС; пользовательская foreground-работа не вытесняется |
+| Контекстная инженерия | `ContextEngine` выполняет bootstrap, ingest, maintain, after-turn и assemble/compact; общий бюджет одного хода в 6 000 символов применяет приоритеты и fail-closed kill switch; `ContextHealthMonitor` оценивает давление, структуру, соответствие цели и новизну | Контекстные расширения включаются opt-in; целевая конвергенция authority остаётся отдельной работой |
+| Жизненный цикл сессии | `SessionManager` хранит JSONL append-only дерево с ветвлением по leaf, компактацией, метками и восстановлением контекста; Host добавляет checkpoint, handoff, архив/восстановление и каскадное удаление производных данных | Сессия не равна Run, Task, Workspace или Project; пользовательские факты задач принадлежат Task Ledger |
+| Память | Role Memory — SQLite control plane с Memory Card, проверкой Gatekeeper, конфликтами и семисекционным Context Pack; Runtime Memory имеет отдельные шлюзы persistence, hydration и injection | Шлюзы write/use и Runtime Memory по умолчанию выключены; автоматической записи опыта и неконтролируемой production-инъекции нет |
+| Восприятие проблем | Обнаружение Issue в отдельном trace агрегируется в кросс-запусковые Problem по сигнатуре, семидневному окну, состоянию жизненного цикла и обезличенным артефактам доказательств | `pnpm observability:problems` — это agent batch, а не постоянный сервис автоматического исправления |
+| Мультиагентность и роли | `RoleContract`, восемь встроенных ролей, режимы `router`/`lead-workers`/`adversarial-review`, шаблоны команд, граф задач и ресурсно-осведомлённые волны | Write-set, конфликты инструментов и лимит параллелизма ограничивают выполнение; `bounded_a2a` отключён, Runtime V2 Kernel остаётся планом |
+
+```mermaid
+flowchart LR
+  UI["Chat / Agents / Task surfaces"] --> HOST["Electron Host"]
+  HOST --> RESOURCE["ResourceFabric + ResourceTracker"]
+  HOST --> SHED["BackgroundWorkGate"]
+  HOST --> GATEWAY["Gateway"]
+  GATEWAY --> SESSION["SessionManager<br/>JSONL session tree"]
+  GATEWAY --> CONTEXT["ContextEngine + Orchestrator"]
+  MEMORY["Role Memory / Runtime Memory"] --> CONTEXT
+  SESSION --> CONTEXT
+  CONTEXT --> BUDGET["Turn injection budget<br/>precedence + kill switch"]
+  ROLE["Roles / teams"] --> ORCH["Orchestrator + task graph"]
+  ORCH --> WAVES["Resource-aware waves"]
+  WAVES --> WORKERS["Role-spawned workers"]
+  WORKERS --> GATEWAY
+  GATEWAY --> OBS["Observability traces / issues"]
+  OBS --> PROBLEMS["Cross-run Problem batch"]
+```
+
+Диаграмма последовательности, поток мультиагентного выполнения, отключённые по умолчанию границы и исходные anchors приведены в разделе [Плоскости управления средой выполнения](docs/dev/runtime-control-planes.md).
+
+### Кодирование, инструменты агента и знания
+
+| Поверхность | Текущие источники и входы | Граница |
+| --- | --- | --- |
+| Кодирование и review | `src/pages/CodeReview/`, `electron/services/code-review-api.ts`, `git-api.ts`, `shared/types/coding-run.ts`, Task Loop и Task Ledger | Code Review явно доступен только для чтения; CodingRun — представление связей и проекций, а не второй конечный автомат задач. Пользовательские факты задач принадлежат Task Ledger |
+| VerseShell | `openclaw_runtime/src/agents/verseshell/`, `verseshell-runtime.ts`, `shared/verseshell/`, `resources/verseshell/`, `resources/verseshell-mcp/` | Управляемое выполнение, typed ACI, artifact results и patch preview независимо отключены по умолчанию. Внешний MCP adapter не является внутренним execution path |
+| VerseBrowser | `packages/versebrowser/`, `electron/services/agent-browser-*`, `electron/gateway/agent-browser-bridge.ts`, `shared/agent-browser/` | 81 метод контракта не означает 81 возможность Electron: драйвер реализует 67, модельный слой содержит 28 actions, а текущая Windows-сборка рекламирует только 14 |
+| Знания | `src/pages/Knowledge/`, `electron/services/knowledge-api.ts`, `memory-wiki`, `openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first и ролевое управление: агенты читают и предлагают; Inbox → Draft → Steward → Proposal → явное подтверждение → apply является единственным путём durable-записи. Автоматический SEKB writeback остаётся default-off/shadow |
+
+Подробный поток инструментов и знаний приведён в разделе [Плоскости управления средой выполнения](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces).
+
+`src/App.tsx` регистрирует первичную настройку через Setup (`/setup/*`), Chat (`/`), Knowledge, Inbox, Scheduled, Task Ledger, ClawGraph, Observability и Settings. Models, Agents, Channels и Skills являются разделами Settings; Code Review и Browser — совместимыми входами в панели рабочего пространства. Image Generation и Dreams требуют режима разработчика.
+
+Текущие члены pnpm workspace — корень, `harness/`, `packages/versebrowser/` и `resources/verseshell-mcp/`. `packages/vtoken/` является Python/uv sidecar. `openclaw_runtime/` — встроенное Git-дерево исходников с отдельным рабочим пространством зависимостей, а не Git submodule и не npm runtime, используемый при упаковке.
 
 <a id="development"></a>
 

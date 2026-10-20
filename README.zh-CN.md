@@ -12,7 +12,7 @@
 
 Verse Claw 是基于 OpenClaw 的 Electron 桌面应用：在对话中发起工作，在同一工作区查看文件、终端、浏览器、代码改动和生成产物，再将有价值的内容整理为可复核的项目知识。它也提供模型与 Agent 配置、消息频道、定时任务和运行诊断。
 
-桌面端使用 React、TypeScript 和 Vite；仓库包含可编辑的 OpenClaw 运行时与插件源码。当前版本和依赖以 [package.json](package.json) 为准。部分源码、配置和历史文档仍使用 ClawX 名称。
+桌面端使用 React、TypeScript 和 Vite。这不是只包含 Renderer 的外壳：仓库同时包含 Electron Main Host、类型化共享契约、随仓内置的 OpenClaw 运行时与扩展目录、内嵌 VerseBrowser 与 VToken 组件、VerseShell MCP 适配器、可执行 Harness 规格，以及构建、发布与证据流水线。当前版本和依赖以 [package.json](package.json) 为准。部分源码、配置和历史文档仍使用 ClawX 名称。
 
 > **当前状态：** 项目处于 alpha 阶段，本地验收重点是受控的 Windows x64 工作流。macOS、Linux 有构建目标，验证覆盖按具体平台和能力区分。实验能力的启用条件见下文，以及[产品语义](docs/clawx-product-semantics.md)和[能力矩阵](shared/capability-claims.ts)。
 
@@ -186,19 +186,70 @@ pnpm dev
 
 Renderer 请求入口是 `src/lib/host-api.ts` 与 `src/lib/host-api-client.ts`。这两个边界不能合并描述为统一的“WS → HTTP → IPC 回退”。[架构导读](docs/architecture-overview.md)包含源码映射、聊天时序图，以及任务、知识、插件和本地数据的职责。
 
-| 路径 | 内容 |
-| --- | --- |
-| `src/` | React 页面、组件、状态管理与 Renderer API 入口 |
-| `electron/` | 桌面生命周期、Host 服务、Gateway 与进程管理 |
-| `shared/` | 类型契约、四语言翻译、场景注册与能力定义 |
-| `openclaw_runtime/` | 独立依赖工作区中的运行时与插件源码 |
-| `packages/` | 内嵌工作区模块；`packages/versebrowser` 为固定版本的浏览器自动化引擎，经公开 exports 被宿主消费 |
-| `harness/` | 规格 CLI，以及场景、规则、任务和分层规范 |
-| `tests/` | 桌面端单元、集成与 Electron E2E 测试 |
-| `scripts/` | 构建、资源同步、验证与证据生成脚本 |
-| `resources/` | 内置技能、二进制资源和第三方源码声明 |
-| `docs/` | 产品语义、设计、开发手册与运行说明 |
-| `artifacts/` | 精选验证证据及本地生成报告；保留规则决定哪些入 Git |
+### 当前模块地图
+
+下表按当前源码所有权划分，而不是沿用早期仅按顶层目录概括的方式。更细的模块清单、生成文件与本地状态边界见[仓库布局与证据根目录](docs/dev/repository-layout.md)。
+
+| 层面 | 主要路径 | 当前职责 |
+| --- | --- | --- |
+| Renderer | `src/pages/`、`src/components/`、`src/stores/`、`src/lib/`、`src/i18n/`、`src/styles/`、`src/extensions/`、`src/hooks/`、`src/types/`、`src/assets/` | 路由页面、共享界面、客户端状态、类型化 Host facade 与事件、国际化、样式和静态资源 |
+| Electron Main 与 Host | `electron/main/`、`electron/services/`、`electron/preload/`、`electron/extensions/`、`electron/shared/`、`electron/types/`、`electron/utils/` | 窗口/菜单/托盘生命周期、IPC 授权与 Host 分发、桌面服务、Main 共享类型与工具及事件回传 |
+| Gateway 桥接 | `electron/gateway/` | Gateway 启动与恢复、WebSocket RPC、连接/重启策略和运行事件适配 |
+| 共享边界 | `shared/host-api/`、`shared/types/`、`shared/i18n/`、`shared/host-events/`、`shared/agent-dev/`、`shared/knowledge/`、`shared/mcp/`、`shared/sandbox/`、`shared/security/`、`shared/verseshell/`、`shared/vtoken/` 及共享语义模块 | Host API 契约、跨进程类型、四语言资源、事件类型、领域辅助模块、能力声明与产品语义定义 |
+| 内置 OpenClaw 运行时 | `openclaw_runtime/src/`、`openclaw_runtime/packages/`、`openclaw_runtime/ui/`、`openclaw_runtime/apps/`、`openclaw_runtime/experiments/`、`openclaw_runtime/test/` | Agent、模型/供应商、工具、会话、上下文/记忆、频道、调度、Gateway 内部实现、运行时包、应用宿主与实验 |
+| 运行时扩展 | `openclaw_runtime/extensions/` | 供应商、频道、工具、浏览器、记忆、媒体和插件实现；是否可用取决于运行时启用状态与策略 |
+| 内嵌产品组件 | `packages/versebrowser/`、`packages/vtoken/`、`resources/verseshell-mcp/` | 固定版本浏览器自动化引擎、Python/uv Token sidecar 和外部 MCP 兼容适配器 |
+| 随包资源与打包 | `resources/skills/`、`resources/skill-packs/`、`resources/openclaw-plugins/`、`resources/verseshell/`、`resources/cli/`、`resources/context/`、`resources/icons/`、`resources/readme/`、`resources/brand-exploration/`、`resources/bin/`、`resources/workspace-harness/`、`public/`、`patches/`、`electron-builder.yml` | 预装技能与技能包、ClawX 插件、CLI 与上下文资源、原生二进制、工作区 Harness 输入、文档媒体和打包资源 |
+| Harness 与测试 | `harness/specs/`、`harness/src/`、`harness/workspace/`、`tests/unit/`、`tests/integration/`、`tests/e2e/` | 可执行规则、场景、任务规格与 fixture；单元、集成和 Electron Playwright 覆盖 |
+| 构建与发布自动化 | `scripts/`、`.github/workflows/` | 构建、资源同步、验证、成熟度、证据、打包、发布和 CI 流程 |
+| 文档与证据 | `docs/`、`plans/`、`team/`、`reports/`、`artifacts/` | 当前架构与运行手册、成熟度决策、历史设计记录、长报告、精选证据和保留输出 |
+
+### 运行时控制平面
+
+| 平面 | 当前机制 | 边界 |
+| --- | --- | --- |
+| 系统资源调度 | `ResourceFabric` 对工作区执行与聊天历史做准入控制；`BackgroundWorkGate` 在队列、RSS 或 CPU 压力下延后后台任务；`ResourceTracker` 负责会话关联服务的发现与清理 | 这是 Main 进程内的协作式准入，不是全局 OS 调度器；前台工作不会被资源收缩策略丢弃 |
+| 上下文工程 | `ContextEngine` 覆盖 bootstrap、ingest、maintain、after-turn 与 assemble/compact；共享的 6,000 字符单轮注入预算按优先级记账并受 fail-closed kill switch 控制；`ContextHealthMonitor` 评估注入压力、结构保真、目标对齐和新颖度 | 上下文增强默认按 opt-in 使用；目标 authority 收敛仍是独立设计工作 |
+| 会话生命周期 | `SessionManager` 使用 JSONL append-only 树，支持 leaf 分支、压缩、标签和上下文重建；Host 侧增加 checkpoint、handoff、归档/恢复与级联删除 | 会话不等于 Run、Task、Workspace 或 Project；用户可见任务事实仍只归 Task Ledger |
+| 记忆系统 | Role Memory 是 SQLite 控制平面，包含 Memory Card、Gatekeeper 审核、冲突处理和七桶 Context Pack；Runtime Memory 有独立的持久化、hydrate 与 inject 门控 | write/use gate 与 Runtime Memory 路径默认关闭；没有自动经验回写，也不把未门控注入当作生产能力 |
+| 问题感知 | 先对单条 trace 检测 Issue，再按签名聚合成跨运行 Problem，保留 7 天窗口、生命周期状态和脱敏证据产物 | `pnpm observability:problems` 是 agent 批处理，不是常驻自动修复服务 |
+| 多智能体与角色 | `RoleContract`、8 个内置角色、`router`/`lead-workers`/`adversarial-review` 三种模式、团队模板、任务图和资源感知执行波次 | 写入集证明、工具争用与并发上限共同约束执行；`bounded_a2a` 仍禁用；Runtime V2 Kernel 仍是规划项 |
+
+```mermaid
+flowchart LR
+  UI["Chat / Agents / Task surfaces"] --> HOST["Electron Host"]
+  HOST --> RESOURCE["ResourceFabric + ResourceTracker"]
+  HOST --> SHED["BackgroundWorkGate"]
+  HOST --> GATEWAY["Gateway"]
+  GATEWAY --> SESSION["SessionManager<br/>JSONL session tree"]
+  GATEWAY --> CONTEXT["ContextEngine + Orchestrator"]
+  MEMORY["Role Memory / Runtime Memory"] --> CONTEXT
+  SESSION --> CONTEXT
+  CONTEXT --> BUDGET["Turn injection budget<br/>precedence + kill switch"]
+  ROLE["Roles / teams"] --> ORCH["Orchestrator + task graph"]
+  ORCH --> WAVES["Resource-aware waves"]
+  WAVES --> WORKERS["Role-spawned workers"]
+  WORKERS --> GATEWAY
+  GATEWAY --> OBS["Observability traces / issues"]
+  OBS --> PROBLEMS["Cross-run Problem batch"]
+```
+
+时序图、多智能体流程图、默认关闭边界和源码锚点见[运行时控制平面](docs/dev/runtime-control-planes.md)。
+
+### 编码、Agent 工具与知识
+
+| 表面 | 当前源码与入口 | 边界 |
+| --- | --- | --- |
+| 编码与代码审查 | `src/pages/CodeReview/`、`electron/services/code-review-api.ts`、`git-api.ts`、`shared/types/coding-run.ts`、Task Loop 与 Task Ledger | Code Review 明确只读；CodingRun 是关联/投影视图，不是第二套任务状态机。用户可见任务事实仍由 Task Ledger 拥有 |
+| VerseShell | `openclaw_runtime/src/agents/verseshell/`、`verseshell-runtime.ts`、`shared/verseshell/`、`resources/verseshell/`、`resources/verseshell-mcp/` | 受控执行、typed ACI、结果 artifact 和 patch preview 分别默认关闭；外部 MCP 适配器不等于内部执行路径 |
+| VerseBrowser | `packages/versebrowser/`、`electron/services/agent-browser-*`、`electron/gateway/agent-browser-bridge.ts`、`shared/agent-browser/` | 81 个契约方法不是 81 项 Electron 能力：驱动实现 67 个，模型层 28 个 action，当前 Windows 桌面只广告 14 个可用 action |
+| 知识库 | `src/pages/Knowledge/`、`electron/services/knowledge-api.ts`、`memory-wiki`、`openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first 且受角色治理：Agent 可读、可提议；Inbox → Draft → Steward → Proposal → 明确确认后 apply。SEKB 自动回写仍是默认关闭/影子阶段 |
+
+更完整的工具与知识流转图见[运行时控制平面](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces)。
+
+`src/App.tsx` 当前注册首次运行 Setup（`/setup/*`）、Chat（`/`）、Knowledge、Inbox、Scheduled、Task Ledger、ClawGraph、Observability 和 Settings 界面；Models、Agents、Channels、Skills 是 Settings 内的分区，Code Review 和 Browser 是进入工作区面板的兼容入口；Image Generation 与 Dreams 需要开发者模式。
+
+当前 pnpm workspace 成员是仓库根目录、`harness/`、`packages/versebrowser/` 和 `resources/verseshell-mcp/`。`packages/vtoken/` 是 Python/uv sidecar；`openclaw_runtime/` 是随仓内置的 Git 源码树，拥有独立依赖工作区，不是 Git submodule，也不是打包时使用的 npm 运行时。
 
 VerseBrowser：安装、开发和构建会自动编译内嵌模块。81 个契约方法不代表 Electron 已实现 81 项能力；参见[调用方式与驱动限制](packages/README.md#versebrowser-integration-and-invocation)。
 

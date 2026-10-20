@@ -12,7 +12,7 @@
 
 Verse Claw は OpenClaw を基盤とする Electron デスクトップアプリです。対話で作業を開始し、同じワークスペースでファイル、ターミナル、ブラウザープレビュー、コードの変更、生成物を確認できます。有用な内容は、根拠を確認できるプロジェクト知識として整理します。モデルと Agent の設定、メッセージチャンネル、定期タスク、ランタイム診断も備えています。
 
-デスクトップは React、TypeScript、Vite を使用し、編集可能な OpenClaw ランタイムとプラグインのソースを同梱しています。現在のバージョンと依存関係は [package.json](package.json) を参照してください。一部のソース、設定、過去の文書には ClawX という名称が残っています。
+デスクトップは React、TypeScript、Vite を使用します。これは Renderer だけのラッパーではありません。リポジトリには Electron Main Host、型付き共有契約、同梱 OpenClaw ランタイムと拡張カタログ、組み込み VerseBrowser と VToken、VerseShell MCP アダプター、実行可能な Harness 仕様、ビルド・リリース・証拠パイプラインも含まれます。現在のバージョンと依存関係は [package.json](package.json) を参照してください。一部のソース、設定、過去の文書には ClawX という名称が残っています。
 
 > **現在の状態：** alpha 段階のプロジェクトです。ローカル受け入れ検証の中心は、制御された Windows x64 のワークフローです。macOS と Linux にもビルド対象がありますが、検証範囲はプラットフォームと機能ごとに異なります。実験的機能の有効化条件は、以下の説明、[製品セマンティクス](docs/clawx-product-semantics.md)、[機能マトリクス](shared/capability-claims.ts)に記載しています。
 
@@ -186,19 +186,70 @@ Node.js に Corepack が含まれない場合は、pnpm 11.2.2 を別途イン�
 
 Renderer の入口は `src/lib/host-api.ts` と `src/lib/host-api-client.ts` です。これらの境界を一律の「WS → HTTP → IPC fallback」と表現することはできません。[アーキテクチャガイド](docs/architecture-overview.md)にはソース対応表、対話の時系列図、タスク・知識・プラグイン・ローカルデータの責務があります。
 
-| パス | 内容 |
-| --- | --- |
-| `src/` | React ページ、コンポーネント、状態管理、Renderer API |
-| `electron/` | デスクトップのライフサイクル、Host サービス、Gateway、プロセス管理 |
-| `shared/` | 型契約、4 言語の翻訳、シナリオ登録、機能定義 |
-| `openclaw_runtime/` | 独立した依存ワークスペースのランタイムとプラグイン |
-| `packages/` | 埋め込みワークスペースモジュール。`packages/versebrowser` は固定版のブラウザ自動化エンジンで、公開 exports 経由で消費 |
-| `harness/` | 仕様 CLI、シナリオ、規則、タスク、レイヤー規約 |
-| `tests/` | デスクトップの単体・統合・Electron E2E テスト |
-| `scripts/` | ビルド、リソース同期、検証、証拠生成 |
-| `resources/` | 内蔵スキル、バイナリ、第三者ソースの声明 |
-| `docs/` | 製品セマンティクス、設計、開発ガイド、運用手順 |
-| `artifacts/` | 精選した証拠とローカル生成レポート。追跡対象は保管規則で決定 |
+### 現在のモジュールマップ
+
+下表は初期のトップレベル概括ではなく、現在のソース所有権に沿っています。生成物とローカル状態の境界を含む詳細は[リポジトリ構成と証拠ルート](docs/dev/repository-layout.md)を参照してください。
+
+| レイヤー | 主なパス | 現在の責務 |
+| --- | --- | --- |
+| Renderer | `src/pages/`、`src/components/`、`src/stores/`、`src/lib/`、`src/i18n/`、`src/styles/`、`src/extensions/`、`src/hooks/`、`src/types/`、`src/assets/` | ルートページ、共有 UI、クライアント状態、型付き Host facade とイベント、国際化、スタイル、静的アセット |
+| Electron Main と Host | `electron/main/`、`electron/services/`、`electron/preload/`、`electron/extensions/`、`electron/shared/`、`electron/types/`、`electron/utils/` | ウィンドウ・メニュー・トレイのライフサイクル、IPC 認可と Host ディスパッチ、デスクトップサービス、Main の共有型・ユーティリティ、イベント転送 |
+| Gateway ブリッジ | `electron/gateway/` | Gateway の起動と復旧、WebSocket RPC、接続・再起動ポリシー、ランタイムイベントの変換 |
+| 共有境界 | `shared/host-api/`、`shared/types/`、`shared/i18n/`、`shared/host-events/`、`shared/agent-dev/`、`shared/knowledge/`、`shared/mcp/`、`shared/sandbox/`、`shared/security/`、`shared/verseshell/`、`shared/vtoken/`、共有セマンティクス | Host API 契約、プロセス間型、4 言語リソース、イベント型、ドメイン補助モジュール、機能宣言、製品セマンティクス |
+| 同梱 OpenClaw ランタイム | `openclaw_runtime/src/`、`openclaw_runtime/packages/`、`openclaw_runtime/ui/`、`openclaw_runtime/apps/`、`openclaw_runtime/experiments/`、`openclaw_runtime/test/` | Agent、モデル・プロバイダー、ツール、セッション、コンテキスト・メモリ、チャネル、スケジュール、Gateway 内部、ランタイムパッケージ、アプリホスト、実験 |
+| ランタイム拡張 | `openclaw_runtime/extensions/` | プロバイダー、チャネル、ツール、ブラウザー、メモリ、メディア、プラグイン実装。利用可否は有効化とポリシーに依存 |
+| 組み込み製品コンポーネント | `packages/versebrowser/`、`packages/vtoken/`、`resources/verseshell-mcp/` | 固定版ブラウザー自動化エンジン、Python/uv トークン sidecar、外部 MCP 互換アダプター |
+| 同梱リソースとパッケージング | `resources/skills/`、`resources/skill-packs/`、`resources/openclaw-plugins/`、`resources/verseshell/`、`resources/cli/`、`resources/context/`、`resources/icons/`、`resources/readme/`、`resources/brand-exploration/`、`resources/bin/`、`resources/workspace-harness/`、`public/`、`patches/`、`electron-builder.yml` | プリインストールスキルとパック、ClawX プラグイン、CLI・コンテキスト資産、ネイティブバイナリ、ワークスペース Harness 入力、ドキュメント用メディア、パッケージ資産 |
+| Harness とテスト | `harness/specs/`、`harness/src/`、`harness/workspace/`、`tests/unit/`、`tests/integration/`、`tests/e2e/` | 実行可能な規則、シナリオ、タスク仕様、fixture、単体・統合・Electron Playwright テスト |
+| ビルドとリリース自動化 | `scripts/`、`.github/workflows/` | ビルド、リソース同期、検証、成熟度、証拠、パッケージング、リリース、CI |
+| ドキュメントと証拠 | `docs/`、`plans/`、`team/`、`reports/`、`artifacts/` | 現在のアーキテクチャと運用手順、成熟度の決定、過去の設計記録、長文レポート、精選証拠、保持された出力 |
+
+### ランタイム制御プレーン
+
+| プレーン | 現在の仕組み | 境界 |
+| --- | --- | --- |
+| システムリソース | `ResourceFabric` がワークスペース実行とチャット履歴の受け入れを制御し、`BackgroundWorkGate` がキュー・RSS・CPU の圧力時にバックグラウンド処理を延期します。`ResourceTracker` はセッションに関連するサーバーの検出とクリーンアップを担当します | Main プロセス内の協調的な受け入れ制御であり、OS 全体のスケジューラではありません。フォアグラウンド処理は負荷抑制の対象になりません |
+| コンテキストエンジニアリング | `ContextEngine` が bootstrap、ingest、maintain、after-turn、assemble/compact を提供します。共有の 1 ターン 6,000 文字予算が優先順位を適用し、fail-closed の拡張 kill switch で停止できます。`ContextHealthMonitor` は注入圧力、構造、目標整合、新規性を評価します | コンテキスト拡張は opt-in です。目標となる authority 統合は別の設計作業です |
+| セッションライフサイクル | `SessionManager` は JSONL の append-only ツリーで、leaf 分岐、圧縮、ラベル、コンテキスト再構築を扱います。Host 側はチェックポイント、handoff、アーカイブ/復元、派生データのカスケード削除を追加します | セッションは Run、Task、Workspace、Project のいずれとも同じではありません。ユーザー可視のタスク事実は Task Ledger が所有します |
+| メモリ | Role Memory は Memory Card、Gatekeeper レビュー、競合処理、7 バケット Context Pack を持つ SQLite 制御プレーンです。Runtime Memory は永続化、hydrate、inject を別々に制御します | write/use gate と Runtime Memory 経路は既定で無効です。自動経験書き戻しや、未制御の本番注入を提供するものではありません |
+| 問題認識 | trace 単位の Issue 検出から、署名・7 日ウィンドウ・ライフサイクル状態・秘匿化証拠を持つクロスラン Problem を集約します | `pnpm observability:problems` は agent のバッチ処理であり、常駐する自動修復サービスではありません |
+| マルチエージェントとロール | `RoleContract`、8 個の組み込みロール、`router`/`lead-workers`/`adversarial-review`、チームテンプレート、タスクグラフ、リソース認識の実行ウェーブ | write-set、ツール競合、同時実行上限で実行を制約します。`bounded_a2a` は無効のままで、Runtime V2 Kernel は計画段階です |
+
+```mermaid
+flowchart LR
+  UI["Chat / Agents / Task surfaces"] --> HOST["Electron Host"]
+  HOST --> RESOURCE["ResourceFabric + ResourceTracker"]
+  HOST --> SHED["BackgroundWorkGate"]
+  HOST --> GATEWAY["Gateway"]
+  GATEWAY --> SESSION["SessionManager<br/>JSONL session tree"]
+  GATEWAY --> CONTEXT["ContextEngine + Orchestrator"]
+  MEMORY["Role Memory / Runtime Memory"] --> CONTEXT
+  SESSION --> CONTEXT
+  CONTEXT --> BUDGET["Turn injection budget<br/>precedence + kill switch"]
+  ROLE["Roles / teams"] --> ORCH["Orchestrator + task graph"]
+  ORCH --> WAVES["Resource-aware waves"]
+  WAVES --> WORKERS["Role-spawned workers"]
+  WORKERS --> GATEWAY
+  GATEWAY --> OBS["Observability traces / issues"]
+  OBS --> PROBLEMS["Cross-run Problem batch"]
+```
+
+シーケンス図、マルチエージェントの流れ、既定で無効な範囲、ソースの基点は[ランタイム制御プレーン](docs/dev/runtime-control-planes.md)を参照してください。
+
+### コーディング、Agent ツール、知識
+
+| 表面 | 現在のソースと入口 | 境界 |
+| --- | --- | --- |
+| コーディングとレビュー | `src/pages/CodeReview/`、`electron/services/code-review-api.ts`、`git-api.ts`、`shared/types/coding-run.ts`、Task Loop、Task Ledger | Code Review は明示的に読み取り専用です。CodingRun は関連付けと投影のビューで、第二のタスク状態機械ではありません。ユーザー可視のタスク事実は Task Ledger が所有します |
+| VerseShell | `openclaw_runtime/src/agents/verseshell/`、`verseshell-runtime.ts`、`shared/verseshell/`、`resources/verseshell/`、`resources/verseshell-mcp/` | 統制実行、typed ACI、artifact result、patch preview は個別に既定無効です。外部 MCP アダプターは内部実行経路とは別です |
+| VerseBrowser | `packages/versebrowser/`、`electron/services/agent-browser-*`、`electron/gateway/agent-browser-bridge.ts`、`shared/agent-browser/` | 81 の契約メソッドは 81 の Electron 機能ではありません。ドライバーは 67 を実装し、モデル層は 28 action、現在の Windows デスクトップでは 14 action のみ広告します |
+| 知識 | `src/pages/Knowledge/`、`electron/services/knowledge-api.ts`、`memory-wiki`、`openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first かつロール統治です。Agent は読み取りと提案が可能で、Inbox → Draft → Steward → Proposal → 明示確認後の apply が永続書き込み経路です。SEKB の自動書き戻しは既定無効/影運用です |
+
+ツールと知識の詳細フローは[ランタイム制御プレーン](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces)にあります。
+
+`src/App.tsx` は現在、初回 Setup（`/setup/*`）、Chat（`/`）、Knowledge、Inbox、Scheduled、Task Ledger、ClawGraph、Observability、Settings の画面を登録しています。Models、Agents、Channels、Skills は Settings 内のセクションで、Code Review と Browser はワークスペースパネルへの互換入口です。Image Generation と Dreams には開発者モードが必要です。
+
+現在の pnpm workspace メンバーはルート、`harness/`、`packages/versebrowser/`、`resources/verseshell-mcp/` です。`packages/vtoken/` は Python/uv sidecar、`openclaw_runtime/` は独立した依存ワークスペースを持つ同梱 Git ソースツリーであり、Git submodule でもパッケージ用 npm ランタイムでもありません。
 
 VerseBrowser: インストール・開発・ビルド時に組み込みモジュールを自動コンパイルします。81 メソッドの契約は Electron の 81 機能の実装を意味しません。[呼び出し方法とドライバー制限](packages/README.md#versebrowser-integration-and-invocation)を参照してください。
 

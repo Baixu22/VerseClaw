@@ -12,7 +12,7 @@
 
 Verse Claw is an Electron desktop application built on OpenClaw. Start work in a conversation, inspect files, terminals, browser previews, code changes and generated artifacts in the same workspace, then turn useful material into reviewable project knowledge. The app also provides model and agent configuration, messaging channels, scheduled tasks and runtime diagnostics.
 
-The desktop uses React, TypeScript and Vite. Editable OpenClaw runtime and plugin sources are included in this repository. See [package.json](package.json) for the current version and dependencies. Some source, configuration and historical documents retain the ClawX name.
+The desktop uses React, TypeScript and Vite. It is more than a renderer wrapper: the repository also contains the Electron Main host, typed shared contracts, a vendored OpenClaw runtime and extension catalogue, the embedded VerseBrowser and VToken components, the VerseShell MCP adapter, executable Harness specs, and the build/release/evidence pipeline. See [package.json](package.json) for the current version and dependencies. Some source, configuration and historical documents retain the ClawX name.
 
 > **Current status:** this is an alpha project. Controlled Windows x64 workflows are the primary local acceptance target. macOS and Linux have build targets, with validation coverage specific to each platform and capability. Experimental features retain the activation conditions described below, in the [product semantics](docs/clawx-product-semantics.md) and in the [capability matrix](shared/capability-claims.ts).
 
@@ -186,19 +186,70 @@ The current request path is **React → typed host facade → preload IPC → El
 
 Renderer requests enter through `src/lib/host-api.ts` and `src/lib/host-api-client.ts`. These boundaries are not one universal “WS → HTTP → IPC fallback”. The [architecture guide](docs/architecture-overview.md) maps the source, traces a chat turn and explains task, knowledge, plugin and local-data ownership.
 
-| Path | Purpose |
-| --- | --- |
-| `src/` | React pages, components, state and renderer API facade |
-| `electron/` | Desktop lifecycle, host services, Gateway and process supervision |
-| `shared/` | Typed contracts, four-language locales, scenario registry and capabilities |
-| `openclaw_runtime/` | Runtime and plugin sources in a separate dependency workspace |
-| `packages/` | Embedded workspace modules; `packages/versebrowser` is the pinned browser-automation engine consumed through public exports |
-| `harness/` | Specification CLI, scenarios, rules, tasks and layer conventions |
-| `tests/` | Desktop unit, integration and Electron E2E tests |
-| `scripts/` | Build, resource synchronization, validation and evidence scripts |
-| `resources/` | Bundled skills, binaries and third-party source notices |
-| `docs/` | Product semantics, designs, development guides and runbooks |
-| `artifacts/` | Curated evidence and locally generated reports; retention rules determine what is tracked |
+### Current module map
+
+This map follows current source ownership rather than the older single-directory view. The detailed inventory and local/generated boundaries are in [repository layout and evidence roots](docs/dev/repository-layout.md).
+
+| Surface | Key paths | Responsibility |
+| --- | --- | --- |
+| Renderer | `src/pages/`, `src/components/`, `src/stores/`, `src/lib/`, `src/i18n/`, `src/styles/`, `src/extensions/`, `src/hooks/`, `src/types/`, `src/assets/` | Route-level pages, shared UI, client state, typed host facade and events, localization, styling and static assets |
+| Electron Main and Host | `electron/main/`, `electron/services/`, `electron/preload/`, `electron/extensions/`, `electron/shared/`, `electron/types/`, `electron/utils/` | Window/menu/tray lifecycle, IPC authorization and host dispatch, desktop services, shared Main types/utilities and event forwarding |
+| Gateway bridge | `electron/gateway/` | Gateway startup and recovery, WebSocket RPC, connection/restart policy and runtime event adaptation |
+| Shared boundary | `shared/host-api/`, `shared/types/`, `shared/i18n/`, `shared/host-events/`, `shared/agent-dev/`, `shared/knowledge/`, `shared/mcp/`, `shared/sandbox/`, `shared/security/`, `shared/verseshell/`, `shared/vtoken/` and shared semantic modules | Host API contract, cross-process types, four-language resources, event types, domain helpers, capability and product-semantics definitions |
+| Embedded OpenClaw runtime | `openclaw_runtime/src/`, `openclaw_runtime/packages/`, `openclaw_runtime/ui/`, `openclaw_runtime/apps/`, `openclaw_runtime/experiments/`, `openclaw_runtime/test/` | Agents, models/providers, tools, sessions, context/memory, channels, scheduling, Gateway internals, runtime packages, app hosts and experiments |
+| Runtime extensions | `openclaw_runtime/extensions/` | Provider, channel, tool, browser, memory, media and plugin implementations; availability depends on runtime enablement and policy |
+| Embedded product components | `packages/versebrowser/`, `packages/vtoken/`, `resources/verseshell-mcp/` | Pinned browser-automation engine, Python/uv token sidecar and external MCP compatibility adapter |
+| Bundled resources and packaging | `resources/skills/`, `resources/skill-packs/`, `resources/openclaw-plugins/`, `resources/verseshell/`, `resources/cli/`, `resources/context/`, `resources/icons/`, `resources/readme/`, `resources/brand-exploration/`, `resources/bin/`, `resources/workspace-harness/`, `public/`, `patches/`, `electron-builder.yml` | Preinstalled skills and packs, ClawX plugins, CLI/context assets, native binaries, workspace harness inputs, documentation media and packaging assets |
+| Harness and tests | `harness/specs/`, `harness/src/`, `harness/workspace/`, `tests/unit/`, `tests/integration/`, `tests/e2e/` | Executable rules, scenarios, task specs and fixtures; unit, integration and Electron Playwright coverage |
+| Build and release automation | `scripts/`, `.github/workflows/` | Build, resource synchronization, validation, maturity, evidence, packaging, release and CI workflows |
+| Documentation and evidence | `docs/`, `plans/`, `team/`, `reports/`, `artifacts/` | Current architecture and runbooks, maturity decisions, historical design records, long-form reports, curated evidence and retained outputs |
+
+### Runtime control planes
+
+| Plane | Current mechanism | Boundary |
+| --- | --- | --- |
+| System resources | `ResourceFabric` admits workspace execution and chat-history work; `BackgroundWorkGate` defers background work under queue, RSS or CPU pressure; `ResourceTracker` owns session-linked server discovery and cleanup | Cooperative Main-process admission, not a global OS scheduler; foreground work is never shed |
+| Context engineering | `ContextEngine` runs bootstrap, ingest, maintain, after-turn and assemble/compact; a shared 6,000-character turn budget applies precedence and a fail-closed enhancement kill switch; `ContextHealthMonitor` scores pressure, structure, goal alignment and novelty | Context enhancements are opt-in; target authority convergence is still separate design work |
+| Session lifecycle | `SessionManager` is a JSONL append-only tree with leaf branching, compaction, labels and context reconstruction; Host actions add checkpoints, handoff, archive/restore and cascade delete | A session is not a run, task, workspace or project; Task Ledger owns user-visible task facts |
+| Memory | Role Memory is a SQLite control plane with cards, gatekeeper review, conflict handling and a seven-bucket Context Pack; Runtime Memory has separate persistence, hydration and inject gates | Write/use gates and runtime-memory paths are default-off; no automatic writeback or un-gated production injection |
+| Problem perception | Per-trace issue detection feeds a cross-run Problem signature aggregator with a seven-day window, lifecycle state and redacted evidence artifacts | `pnpm observability:problems` is an agent batch, not a resident auto-remediation service |
+| Multi-agent and roles | `RoleContract`, eight built-in roles, `router`/`lead-workers`/`adversarial-review` modes, team templates, task graphs and resource-aware waves | Write-set proof, tool contention and concurrency caps bound execution; `bounded_a2a` remains disabled; Runtime V2 Kernel work is planned |
+
+```mermaid
+flowchart LR
+  UI["Chat / Agents / Task surfaces"] --> HOST["Electron Host"]
+  HOST --> RESOURCE["ResourceFabric + ResourceTracker"]
+  HOST --> SHED["BackgroundWorkGate"]
+  HOST --> GATEWAY["Gateway"]
+  GATEWAY --> SESSION["SessionManager<br/>JSONL session tree"]
+  GATEWAY --> CONTEXT["ContextEngine + Orchestrator"]
+  MEMORY["Role Memory / Runtime Memory"] --> CONTEXT
+  SESSION --> CONTEXT
+  CONTEXT --> BUDGET["Turn injection budget<br/>precedence + kill switch"]
+  ROLE["Roles / teams"] --> ORCH["Orchestrator + task graph"]
+  ORCH --> WAVES["Resource-aware waves"]
+  WAVES --> WORKERS["Role-spawned workers"]
+  WORKERS --> GATEWAY
+  GATEWAY --> OBS["Observability traces / issues"]
+  OBS --> PROBLEMS["Cross-run Problem batch"]
+```
+
+See [runtime control planes](docs/dev/runtime-control-planes.md) for the sequence diagram, multi-agent flow, default-off boundaries and source anchors.
+
+### Coding, agent tools and knowledge
+
+| Surface | Current source and entry points | Boundary |
+| --- | --- | --- |
+| Coding and review | `src/pages/CodeReview/`, `electron/services/code-review-api.ts`, `git-api.ts`, `shared/types/coding-run.ts`, Task Loop and Task Ledger | Code review is explicitly read-only; CodingRun is an association/projection view, not a second task state machine. Task Ledger remains the user-visible task authority |
+| VerseShell | `openclaw_runtime/src/agents/verseshell/`, `verseshell-runtime.ts`, `shared/verseshell/`, `resources/verseshell/`, `resources/verseshell-mcp/` | Governed execution, typed ACI, artifact results and patch preview are independently default-off; the external MCP adapter is separate from the internal execution path |
+| VerseBrowser | `packages/versebrowser/`, `electron/services/agent-browser-*`, `electron/gateway/agent-browser-bridge.ts`, `shared/agent-browser/` | 81 contract methods are not 81 Electron capabilities: the driver implements 67, exposes 28 model actions and currently advertises 14 on the Windows desktop build |
+| Knowledge | `src/pages/Knowledge/`, `electron/services/knowledge-api.ts`, `memory-wiki`, `openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first and role-governed: agents read and propose; Inbox → Draft → Steward → Proposal → explicit apply is the durable write path. SEKB writeback remains default-off/shadow |
+
+The detailed tool and knowledge flow is included in [runtime control planes](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces).
+
+`src/App.tsx` currently registers first-run Setup (`/setup/*`), Chat (`/`), Knowledge, Inbox, Scheduled, Task Ledger, ClawGraph, Observability and Settings surfaces; Models, Agents, Channels and Skills are Settings sections, while Code Review and Browser are compatibility entry points into workspace panels. Image Generation and Dreams require developer mode.
+
+Current pnpm workspace members are the root, `harness/`, `packages/versebrowser/` and `resources/verseshell-mcp/`. `packages/vtoken/` is a Python/uv sidecar. `openclaw_runtime/` is a vendored Git tree with its own dependency workspace, not a Git submodule or the packaged npm runtime.
 
 VerseBrowser: install/dev/build compile the embedded module automatically. The 81-method contract is not 81 implemented Electron capabilities; see [invocation and driver limits](packages/README.md#versebrowser-integration-and-invocation).
 
