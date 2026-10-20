@@ -231,16 +231,19 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     wave: 'C5',
     kind: 'api',
     key: 'applyPatchProposalsSerial() / recommendIsolationMode()',
-    defaultDisplay: 'api-only (patchFlow.default=false)',
+    defaultDisplay: 'advisory wired (execution api-only; patchFlow.default=false)',
     defaultValue: false,
     risk: 'api-only',
     enable:
-      'Call applyPatchProposalsSerial() / recommendIsolationMode({...}). Do NOT set runtime.coding.patchFlow.default=true without C5-H + approval.',
-    rollback: 'Stop calling patch-flow APIs; keep patchFlow.default=false.',
-    riskNote: 'recommendIsolationMode is advisory only; no auto-switch of production isolation.',
+      'Orchestrator plan diagnostics call recommendIsolationMode(...) automatically as advisory-only. Execution still requires explicitly calling applyPatchProposalsSerial(); do NOT set runtime.coding.patchFlow.default=true without C5-H + approval.',
+    rollback: 'Ignore or stop consuming the advisory diagnostic; execution remains off and patchFlow.default stays false.',
+    riskNote: 'TF-0459 wires recommendation visibility in every production orchestrator plan. It never switches isolation. TF-0460 remains responsible for execution-side applyPatchProposalsSerial wiring and agent-driven soak.',
     executor: {
-      status: 'pending-wiring',
-      reason: 'No production orchestrator path calls applyPatchProposalsSerial or recommendIsolationMode; only the graduation assessment does. TF-0459 wires advisory visibility, then TF-0460 wires execution.',
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/agents/orchestrator.ts:547',
+        'openclaw_runtime/src/agents/orchestrator.ts:557',
+      ],
     },
   },
   {

@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-20T10:51:16.819Z
+Generated at: 2026-10-20T11:17:54.274Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -155,13 +155,13 @@ This file is generated — edit the source of truth instead.
 - kind: api
 - key: `applyPatchProposalsSerial() / recommendIsolationMode()`
 - default: false
-- defaultDisplay: api-only (patchFlow.default=false)
+- defaultDisplay: advisory wired (execution api-only; patchFlow.default=false)
 - risk: api-only
-- enable: Call applyPatchProposalsSerial() / recommendIsolationMode({...}). Do NOT set runtime.coding.patchFlow.default=true without C5-H + approval.
-- rollback: Stop calling patch-flow APIs; keep patchFlow.default=false.
-- executor: pending-wiring — No production orchestrator path calls applyPatchProposalsSerial or recommendIsolationMode; only the graduation assessment does. TF-0459 wires advisory visibility, then TF-0460 wires execution.
+- enable: Orchestrator plan diagnostics call recommendIsolationMode(...) automatically as advisory-only. Execution still requires explicitly calling applyPatchProposalsSerial(); do NOT set runtime.coding.patchFlow.default=true without C5-H + approval.
+- rollback: Ignore or stop consuming the advisory diagnostic; execution remains off and patchFlow.default stays false.
+- executor: wired — `openclaw_runtime/src/agents/orchestrator.ts:547`, `openclaw_runtime/src/agents/orchestrator.ts:557`
 
-> recommendIsolationMode is advisory only; no auto-switch of production isolation.
+> TF-0459 wires recommendation visibility in every production orchestrator plan. It never switches isolation. TF-0460 remains responsible for execution-side applyPatchProposalsSerial wiring and agent-driven soak.
 
 ## context-ladder
 

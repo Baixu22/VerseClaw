@@ -30,6 +30,26 @@ export type OrchestrationRepairPolicy = {
   maxFollowupRuns: number;
 };
 
+export type RouteIsolationAdvisoryMode = "shared" | "worktree" | "patch-flow";
+
+/**
+ * P2a advisory-only isolation recommendation. `applied:false` is a contract:
+ * consumers may display or audit this value, but must not use it to switch
+ * production isolation. Patch-flow remains an execution-side opt-in (TF-0460).
+ */
+export type RouteIsolationAdvisory = {
+  boundary: "advisory-only";
+  applied: false;
+  recommendedMode: RouteIsolationAdvisoryMode;
+  reason: string;
+  score: {
+    duration: number;
+    workers: number;
+    writeDensity: number;
+    writeSetOverlapRisk: number;
+  };
+};
+
 export type RouteDiagnostics = {
   difficulty: OrchestrationDifficulty;
   confidence: number;
@@ -38,6 +58,7 @@ export type RouteDiagnostics = {
   rejectedRoles: Array<{ roleName: string; reason: string }>;
   requiredCapabilities: string[];
   capabilityGaps: Array<{ roleName: string; missing: string[] }>;
+  isolationAdvisory?: RouteIsolationAdvisory;
 };
 
 export type OrchestrationTaskLedgerEntry = {

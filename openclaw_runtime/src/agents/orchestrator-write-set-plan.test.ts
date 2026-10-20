@@ -41,6 +41,70 @@ describe("createOrchestratorPlan writeSet fill (C3 live)", () => {
     expect(plan.taskGraph.nodes[0]?.writeSet).toEqual(["src/explicit.ts"]);
   });
 
+  it("records patch-flow as advisory-only without changing isolation", () => {
+    const plan = createOrchestratorPlan({
+      task: "long dense overlapping implementation",
+      roles: BUILT_IN_ROLE_CONTRACTS,
+      durationMinutes: 45,
+      workers: [
+        { roleName: "implementer", task: "edit shared module", writeSet: ["src/shared.ts"] },
+        { roleName: "implementer", task: "edit shared module again", writeSet: ["src/shared.ts"] },
+        { roleName: "implementer", task: "edit shared module once more", writeSet: ["src/shared.ts"] },
+      ],
+    });
+
+    expect(plan.routeDiagnostics.isolationAdvisory).toMatchObject({
+      boundary: "advisory-only",
+      applied: false,
+      recommendedMode: "patch-flow",
+      reason: "long_goal_dense_multi_worker",
+      score: {
+        duration: 45,
+        workers: 3,
+        writeDensity: 1,
+        writeSetOverlapRisk: 1,
+      },
+    });
+    expect(plan.isolation).toBe("shared");
+    expect(plan.workers.every((worker) => worker.isolation === undefined)).toBe(true);
+  });
+
+  it("attaches the advisory to automatic routed plans", () => {
+    const plan = createOrchestratorPlan({
+      task: "read a small note and summarize it",
+      roles: BUILT_IN_ROLE_CONTRACTS,
+    });
+
+    expect(plan.routeDiagnostics.isolationAdvisory?.boundary).toBe("advisory-only");
+    expect(plan.routeDiagnostics.isolationAdvisory?.applied).toBe(false);
+    expect(plan.isolation).toBe("shared");
+  });
+
+  it("records a conservative shared advisory when duration and write sets are absent", () => {
+    const plan = createOrchestratorPlan({
+      task: "short read-only review",
+      roles: BUILT_IN_ROLE_CONTRACTS,
+      workers: [
+        { roleName: "reviewer", task: "review implementation" },
+        { roleName: "skeptic", task: "refute completion" },
+      ],
+    });
+
+    expect(plan.routeDiagnostics.isolationAdvisory).toMatchObject({
+      boundary: "advisory-only",
+      applied: false,
+      recommendedMode: "shared",
+      score: {
+        duration: 0,
+        workers: 2,
+        writeDensity: 0,
+        writeSetOverlapRisk: 0,
+      },
+    });
+    expect(plan.isolation).toBe("shared");
+    expect(plan.workers.every((worker) => worker.isolation === undefined)).toBe(true);
+  });
+
   it("leaves writeSet empty when no hints (coverage 0 for empty graph workers)", () => {
     const plan = createOrchestratorPlan({
       task: "implement without scope",

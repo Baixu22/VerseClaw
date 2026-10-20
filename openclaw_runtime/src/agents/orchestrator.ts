@@ -8,6 +8,7 @@ import {
   buildRouteDiagnostics,
   buildTaskGraph,
   resolveWorkerWriteSet,
+  writeSetsConflict,
   normalizeGraphMode,
   normalizeIsolationMode,
   normalizeRepairPolicy,
@@ -21,6 +22,7 @@ import {
   type RouteDiagnostics,
   type WorkerCommunicationPolicy,
 } from "./orchestration-protocol.js";
+import { recommendIsolationMode } from "./isolation-mode-matrix.js";
 import {
   buildMemoShadowReason,
   computeTaskDigest,
@@ -62,6 +64,12 @@ export type OrchestratorRequest = {
   priorFailureCount?: number;
   /** Max non-verifier workers to plan. Existing subagent depth/children limits still apply at spawn time. */
   maxWorkers?: number;
+  /**
+   * Optional caller-supplied goal-duration estimate in minutes. Used only by
+   * the advisory-only isolation recommendation; omitted/invalid values become
+   * zero rather than inventing a duration.
+   */
+  durationMinutes?: number;
   /** Config carrier used to resolve config-defined team templates. */
   cfg?: {
     agents?: { teams?: unknown };
@@ -511,6 +519,52 @@ function createTemplatePlan(
   );
 }
 
+function normalizeAdvisoryDuration(value: number | undefined): number {
+  return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+/**
+ * P2a: derive a diagnostic-only isolation recommendation from the completed
+ * task graph. This never rewrites plan.isolation, worker isolation, waves, or
+ * execution behavior. Omitted duration is conservatively zero.
+ */
+function withIsolationAdvisory<TPlan extends OrchestratorPlanBase>(
+  plan: TPlan,
+  request: OrchestratorRequest,
+): TPlan {
+  const workerNodes = taskGraphWorkerNodes(plan.taskGraph);
+  const writerNodes = workerNodes.filter((node) => (node.writeSet?.length ?? 0) > 0);
+  let conflictPairs = 0;
+  let totalPairs = 0;
+  for (let left = 0; left < workerNodes.length; left += 1) {
+    for (let right = left + 1; right < workerNodes.length; right += 1) {
+      totalPairs += 1;
+      if (writeSetsConflict(workerNodes[left]!.writeSet, workerNodes[right]!.writeSet)) {
+        conflictPairs += 1;
+      }
+    }
+  }
+  const { mode: recommendedMode, reason, score } = recommendIsolationMode({
+    durationMinutes: normalizeAdvisoryDuration(request.durationMinutes),
+    workerCount: workerNodes.length,
+    writeDensity: workerNodes.length === 0 ? 0 : writerNodes.length / workerNodes.length,
+    writeSetOverlapRisk: totalPairs === 0 ? 0 : conflictPairs / totalPairs,
+  });
+  return {
+    ...plan,
+    routeDiagnostics: {
+      ...plan.routeDiagnostics,
+      isolationAdvisory: {
+        boundary: "advisory-only",
+        applied: false,
+        recommendedMode,
+        reason,
+        score,
+      },
+    },
+  };
+}
+
 function attachQualityRouting(
   plan: OrchestratorPlanBase,
   authority: OrchestrationQualityAuthority,
@@ -535,13 +589,18 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
     unavailableOrchestrationQualityAuthority("No verified quality authority was supplied for routing.");
   const explicitPlan = createExplicitWorkersPlan(request);
   if (explicitPlan) {
-    return attachQualityRouting(explicitPlan, qualityAuthority, false, "explicit-plan");
+    return attachQualityRouting(
+      withIsolationAdvisory(explicitPlan, request),
+      qualityAuthority,
+      false,
+      "explicit-plan",
+    );
   }
   const templateId = request.templateId?.trim() || request.teamTemplateId?.trim();
   const template = resolveTeamTemplate(templateId, request.cfg);
   if (template) {
     return attachQualityRouting(
-      createTemplatePlan(request, template),
+      withIsolationAdvisory(createTemplatePlan(request, template), request),
       qualityAuthority,
       false,
       "template-plan",
@@ -571,7 +630,12 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
       : undefined;
   const runbookPlan = createRunbookPlan(request, metadata);
   if (runbookPlan) {
-    return attachQualityRouting(runbookPlan, qualityAuthority, false, "runbook-plan");
+    return attachQualityRouting(
+      withIsolationAdvisory(runbookPlan, request),
+      qualityAuthority,
+      false,
+      "runbook-plan",
+    );
   }
   const route = routeRole({
     task: request.task,
@@ -630,21 +694,24 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
       graphRunId: "router",
     });
     return attachQualityRouting(
-      attachP2Metadata(
-        {
-          mode: route.mode,
-          leadRole: leadName,
-          workers: graph.projectedWorkers,
-          reasons,
-          routeDiagnostics,
-          taskGraph: graph.taskGraph,
-          graphStatus: graph.taskGraph.status,
-          executionWaves: graph.executionWaves,
-          capabilityGaps: routeDiagnostics.capabilityGaps,
-          estimatedRepairPolicy: graph.estimatedRepairPolicy,
-          isolation: graph.isolation,
-        },
-        metadata,
+      withIsolationAdvisory(
+        attachP2Metadata(
+          {
+            mode: route.mode,
+            leadRole: leadName,
+            workers: graph.projectedWorkers,
+            reasons,
+            routeDiagnostics,
+            taskGraph: graph.taskGraph,
+            graphStatus: graph.taskGraph.status,
+            executionWaves: graph.executionWaves,
+            capabilityGaps: routeDiagnostics.capabilityGaps,
+            estimatedRepairPolicy: graph.estimatedRepairPolicy,
+            isolation: graph.isolation,
+          },
+          metadata,
+          request,
+        ),
         request,
       ),
       qualityAuthority,
@@ -684,22 +751,25 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
     graphRunId: route.mode,
   });
   return attachQualityRouting(
-    attachP2Metadata(
-      {
-        mode: route.mode,
-        leadRole,
-        workers: graph.projectedWorkers,
-        verifierRole,
-        reasons: finalReasons,
-        routeDiagnostics,
-        taskGraph: graph.taskGraph,
-        graphStatus: graph.taskGraph.status,
-        executionWaves: graph.executionWaves,
-        capabilityGaps: routeDiagnostics.capabilityGaps,
-        estimatedRepairPolicy: graph.estimatedRepairPolicy,
-        isolation: graph.isolation,
-      },
-      metadata,
+    withIsolationAdvisory(
+      attachP2Metadata(
+        {
+          mode: route.mode,
+          leadRole,
+          workers: graph.projectedWorkers,
+          verifierRole,
+          reasons: finalReasons,
+          routeDiagnostics,
+          taskGraph: graph.taskGraph,
+          graphStatus: graph.taskGraph.status,
+          executionWaves: graph.executionWaves,
+          capabilityGaps: routeDiagnostics.capabilityGaps,
+          estimatedRepairPolicy: graph.estimatedRepairPolicy,
+          isolation: graph.isolation,
+        },
+        metadata,
+        request,
+      ),
       request,
     ),
     qualityAuthority,
