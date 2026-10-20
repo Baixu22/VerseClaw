@@ -1097,7 +1097,7 @@ describe('Knowledge page', () => {
     await screen.findByTestId('knowledge-utility-sheet');
     fireEvent.click(screen.getByRole('button', { name: 'Close panel' }));
 
-    fireEvent.click(screen.getByText('Initialize'));
+    fireEvent.click(screen.getByTestId('knowledge-init-trigger'));
     await waitFor(() => expect(hostApiMock.init).toHaveBeenCalled());
     fireEvent.pointerDown(screen.getByTestId('knowledge-more-actions'));
     await waitFor(() => expect(screen.getByText('Import Files')).toBeInTheDocument());
