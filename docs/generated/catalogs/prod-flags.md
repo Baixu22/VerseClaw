@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-14T08:57:45.680Z
+Generated at: 2026-10-20T10:03:12.591Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -93,12 +93,12 @@ This file is generated — edit the source of truth instead.
 - kind: api
 - key: `createWorktreeService(baseRoot, { backend })`
 - default: "inprocess"
-- defaultDisplay: api-only (config leaf observability-only)
+- defaultDisplay: api-only (config leaf wired via orchestrator)
 - risk: api-only
 - enable: Call createWorktreeService(baseRoot, { backend: "git" }) with isolation=worktree on the request/plan.
 - rollback: Stop calling the API with backend=git. Isolation request default remains shared.
 
-> C4-H git lifecycle hardened (lock/path/cleanup). The runtime.coding.worktree.backend config leaf is observability-only and does not drive this API.
+> C4-H git lifecycle hardened (lock/path/cleanup). The runtime.coding.worktree.backend config leaf is wired: when plan nodes request worktree isolation, orchestrator-run-observed resolves the backend via resolveWorktreeBackend, so the leaf drives inprocess vs git. API opt-in (isolation=worktree on request/plan) remains the activation gate.
 
 ## isolation-request
 
