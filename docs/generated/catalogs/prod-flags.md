@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-20T17:04:02.987Z
+Generated at: 2026-10-20T17:19:09.560Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -47,7 +47,7 @@ This file is generated — edit the source of truth instead.
 - risk: opt-in
 - enable: Settings switch or openclaw config runtime.contextBlock.working-memory.enabled=true; restart gateway/runtime so config-sync applies.
 - rollback: Set enabled=false or Settings off; restart if needed. Injection stops; producers may still emit envelopes unused.
-- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:424`
+- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:479`
 
 > TASK-P1-02: when on, Assembler injects ## Recent Actions once per context (exactly-once). Default remains off until product soak.
 
@@ -61,7 +61,7 @@ This file is generated — edit the source of truth instead.
 - risk: opt-in
 - enable: Settings switch or openclaw config runtime.contextBlock.tool-registry.enabled=true; restart gateway/runtime.
 - rollback: Set enabled=false or Settings off; restart if needed. Tool summary injection stops.
-- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:434`
+- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:490`
 
 > TASK-P1-03: when on, before_agent_start writes tool_registry Block and Assembler injects ## Tools summary (exactly-once). Aligns with C1 on_demand schema mode.
 
@@ -103,7 +103,7 @@ This file is generated — edit the source of truth instead.
 - risk: api-only
 - enable: Call createWorktreeService(baseRoot, { backend: "git" }) with isolation=worktree on the request/plan.
 - rollback: Stop calling the API with backend=git. Isolation request default remains shared.
-- executor: wired — `openclaw_runtime/src/agents/orchestrator-run-observed.ts:428`
+- executor: wired — `openclaw_runtime/src/agents/orchestrator-run-observed.ts:435`
 
 > C4-H git lifecycle hardened (lock/path/cleanup). The runtime.coding.worktree.backend config leaf is wired: when plan nodes request worktree isolation, orchestrator-run-observed resolves the backend via resolveWorktreeBackend, so the leaf drives inprocess vs git. API opt-in (isolation=worktree on request/plan) remains the activation gate.
 
@@ -117,7 +117,7 @@ This file is generated — edit the source of truth instead.
 - risk: request-only
 - enable: Pass isolation: "worktree" on orchestrator request/plan (or worker) when multi-worker writes need isolation.
 - rollback: Omit isolation or set "shared". Unknown values normalize to shared.
-- executor: wired — `openclaw_runtime/src/agents/orchestrator.ts:199`
+- executor: wired — `openclaw_runtime/src/agents/orchestrator.ts:207`
 
 > normalizeIsolationMode defaults shared; C4-H landed but production default stays shared until product approval.
 
@@ -201,7 +201,7 @@ This file is generated — edit the source of truth instead.
 - risk: api-only
 - enable: Call the host knowledge.sekbConfirmPrinciple API with payload { experienceShadow: { enabled: true } }; the host resolves workspaceRoot and passes it to DistillationTool.confirm_and_save.
 - rollback: Omit payload.experienceShadow or set experienceShadow.enabled=false.
-- executor: wired — `electron/services/knowledge-api.ts:5296`, `electron/services/knowledge-api.ts:5309`
+- executor: wired — `electron/services/knowledge-api.ts:5483`, `electron/services/knowledge-api.ts:5496`
 
 > Shadow journal only. The runtime.coding.sekb.experienceShadow config leaf remains observability-only; the production host confirm route wires the explicit API opt-in without changing defaults.
 
@@ -271,7 +271,7 @@ This file is generated — edit the source of truth instead.
 - risk: read-only
 - enable: runtime.contextBlock.compass.enabled=true.
 - rollback: runtime.contextBlock.compass.enabled=false (default).
-- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:680`
+- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:755`
 
 > R3-1: Assembler compass handler 接收生产检索输入；默认关闭。
 
@@ -285,7 +285,7 @@ This file is generated — edit the source of truth instead.
 - risk: read-only
 - enable: runtime.contextBlock.role-memory.enabled=true.
 - rollback: runtime.contextBlock.role-memory.enabled=false (default).
-- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:684`
+- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:758`
 
 > R3-1: role-memory projection 接收真实 role/task 输入且不移除其他 provider；默认关闭。
 

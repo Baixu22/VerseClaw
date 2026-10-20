@@ -1,0 +1,484 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "generatedAt": "2026-10-20T17:19:43.731Z",
+  "task": "TF-0463",
+  "totalEntries": 22,
+  "wiredCount": 22,
+  "pendingCount": 0,
+  "missingCount": 0,
+  "trueUnwiredCount": 0,
+  "allSitesVerified": true,
+  "catalogSha256": "f386b61577f148372746fe13df1063d45ae8666b60da79cec852e6ddc458b7ac",
+  "entries": [
+    {
+      "id": "context-view-tools",
+      "wave": "C1",
+      "kind": "env",
+      "risk": "opt-in",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/agents/tools/context-agent-tools.ts:267",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "if (!resolveViewToolsEnabled(options)) {",
+          "fileSha256": "857fc59535148afedd93edbb0e4683196a47068839644212818b63fd120768b4"
+        }
+      ]
+    },
+    {
+      "id": "context-tools-alias",
+      "wave": "C1",
+      "kind": "env",
+      "risk": "opt-in",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/context-engine/dcs-context-tools-flags.ts:30",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "isTruthyEnvValue(env.OPENCLAW_DCS_CONTEXT_TOOLS)",
+          "fileSha256": "2967076810c907102d1952e0f02bc2776bdc88dcaa96123b2a36df32bd96ae86"
+        }
+      ]
+    },
+    {
+      "id": "working-memory",
+      "wave": "DCS-S1",
+      "kind": "config",
+      "risk": "opt-in",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/context-engine/assembler.ts:479",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "if (resolvedFlags[\"runtime.contextBlock.working_memory.enabled\"]) {",
+          "fileSha256": "8189fd703ce653fbaac67258875649312417a7d3ce2b93b7450eceb8c420a01e"
+        }
+      ]
+    },
+    {
+      "id": "tool-registry",
+      "wave": "DCS-S3",
+      "kind": "config",
+      "risk": "opt-in",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/context-engine/assembler.ts:490",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "if (resolvedFlags[\"runtime.contextBlock.tool_registry.enabled\"]) {",
+          "fileSha256": "8189fd703ce653fbaac67258875649312417a7d3ce2b93b7450eceb8c420a01e"
+        }
+      ]
+    },
+    {
+      "id": "stale-write-guard",
+      "wave": "C2",
+      "kind": "config",
+      "risk": "opt-in",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/agents/agent-tools.ts:885",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "next = wrapToolWithStaleWriteGuard(next, {",
+          "fileSha256": "a2591744f2b8846e87a383de09fc43345a8c9af0974a5e0d4f037ce5404d60b7"
+        }
+      ]
+    },
+    {
+      "id": "write-journal",
+      "wave": "C2",
+      "kind": "info",
+      "risk": "baseline-on",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/agents/agent-tools.ts:876",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "next = wrapToolWithWriteJournal(next, {",
+          "fileSha256": "a2591744f2b8846e87a383de09fc43345a8c9af0974a5e0d4f037ce5404d60b7"
+        }
+      ]
+    },
+    {
+      "id": "worktree-backend",
+      "wave": "C4",
+      "kind": "api",
+      "risk": "api-only",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/agents/orchestrator-run-observed.ts:435",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "? createWorktreeService(ctx.workspaceDir, {",
+          "fileSha256": "efcda79202537fd96dce6beeb38962d109ee63881b21274189e96606954cead7"
+        }
+      ]
+    },
+    {
+      "id": "isolation-request",
+      "wave": "C4",
+      "kind": "request",
+      "risk": "request-only",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/agents/orchestrator.ts:207",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "const isolation = normalizeIsolationMode(params.request.isolation);",
+          "fileSha256": "b03f55e3bad9b6e690c9a5f54bee301f6a46fb68e4d7b0f261d91f4e745925d5"
+        }
+      ]
+    },
+    {
+      "id": "symbol-lease",
+      "wave": "C5",
+      "kind": "config",
+      "risk": "opt-in",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/agents/agent-tools.ts:867",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "next = wrapToolWithSymbolLease(next, {",
+          "fileSha256": "a2591744f2b8846e87a383de09fc43345a8c9af0974a5e0d4f037ce5404d60b7"
+        }
+      ]
+    },
+    {
+      "id": "symbol-lease-mode",
+      "wave": "C5",
+      "kind": "config",
+      "risk": "opt-in",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/agents/agent-tools.ts:871",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "mode: symbolLeaseMode,",
+          "fileSha256": "a2591744f2b8846e87a383de09fc43345a8c9af0974a5e0d4f037ce5404d60b7"
+        }
+      ]
+    },
+    {
+      "id": "patch-flow",
+      "wave": "C5",
+      "kind": "api",
+      "risk": "api-only",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/agents/orchestrator.ts:547",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "const { mode: recommendedMode, reason, score } = recommendIsolationMode({",
+          "fileSha256": "b03f55e3bad9b6e690c9a5f54bee301f6a46fb68e4d7b0f261d91f4e745925d5"
+        },
+        {
+          "site": "openclaw_runtime/src/agents/orchestrator.ts:557",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "isolationAdvisory: {",
+          "fileSha256": "b03f55e3bad9b6e690c9a5f54bee301f6a46fb68e4d7b0f261d91f4e745925d5"
+        },
+        {
+          "site": "openclaw_runtime/src/agents/orchestrator-run-observed.ts:736",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "const patchFlowExecution =",
+          "fileSha256": "efcda79202537fd96dce6beeb38962d109ee63881b21274189e96606954cead7"
+        },
+        {
+          "site": "openclaw_runtime/src/agents/subagent-registry.ts:612",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "const outcome = await applyDeferredPatchFlow({",
+          "fileSha256": "8cd9e6c94e7803c4090721d73375a4aea7a7bc0396eddebc0994876cd49aeefb"
+        }
+      ]
+    },
+    {
+      "id": "context-ladder",
+      "wave": "C6",
+      "kind": "api",
+      "risk": "api-only",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/context-engine/assembler.ts:384",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "if (request.contextLadder?.enabled === true) {",
+          "fileSha256": "8189fd703ce653fbaac67258875649312417a7d3ce2b93b7450eceb8c420a01e"
+        },
+        {
+          "site": "openclaw_runtime/src/context-engine/assembler.ts:393",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "const ladder = await this.#dependencies.applyContextLadder({",
+          "fileSha256": "8189fd703ce653fbaac67258875649312417a7d3ce2b93b7450eceb8c420a01e"
+        }
+      ]
+    },
+    {
+      "id": "routing-memo-shadow",
+      "wave": "C7",
+      "kind": "config",
+      "risk": "shadow-only",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts:1349",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "if (!isCodingRoutingMemoShadowEnabled(ctx.config)) return;",
+          "fileSha256": "90f2056d7a378299cd5fa428f3739ca1346855dea606a9ed47702c2134d1f1e2"
+        }
+      ]
+    },
+    {
+      "id": "sekb-experience-shadow",
+      "wave": "C7",
+      "kind": "api",
+      "risk": "api-only",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "electron/services/knowledge-api.ts:5483",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "const experienceShadow = resolveHostExperienceShadowOptions(",
+          "fileSha256": "ef2b0912b5a585d24cc63f05ea016997c7fef160866444d40d62e5ba2ac052a9"
+        },
+        {
+          "site": "electron/services/knowledge-api.ts:5496",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "...(experienceShadow ? { experienceShadow } : {}),",
+          "fileSha256": "ef2b0912b5a585d24cc63f05ea016997c7fef160866444d40d62e5ba2ac052a9"
+        }
+      ]
+    },
+    {
+      "id": "sekb-retrieval-shadow",
+      "wave": "KE-P1",
+      "kind": "config",
+      "risk": "shadow-only",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/knowledge/sekb/retrieval-engine.ts:97",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "const result = runKeRetrievalShadow(",
+          "fileSha256": "dc20b1c23af5178cfb766b4a11ab388573c6dd6aa5c250e27aaf91ef177324a1"
+        }
+      ]
+    },
+    {
+      "id": "runtime-memory-persist",
+      "wave": "R3",
+      "kind": "config",
+      "risk": "opt-in",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/runtime-core/memory-persistence.ts:518",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "if (!resolveRuntimeMemoryFeatureFlags(options.config).persist) {",
+          "fileSha256": "3f9526e0de7f1c1bb215bfcd0e4134e8d904a64c41301d7697d417b0ead4d861"
+        }
+      ]
+    },
+    {
+      "id": "runtime-memory-inject-pilot",
+      "wave": "R3",
+      "kind": "config",
+      "risk": "opt-in",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts:2144",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "if (memoryPilotConfig.enabled && memoryPilotConfig.providers.includes(\"runtime-memory\")) {",
+          "fileSha256": "ad91c6be5669066ffdf135a3aa2477ecefa35953bc0d5b5fb0aa8a92c693af5e"
+        },
+        {
+          "site": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts:2160",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "...(memoryPilotConfig.enabled ? { memoryProviderIds: memoryPilotConfig.providers } : {}),",
+          "fileSha256": "ad91c6be5669066ffdf135a3aa2477ecefa35953bc0d5b5fb0aa8a92c693af5e"
+        }
+      ]
+    },
+    {
+      "id": "runtime-memory-candidate-generation",
+      "wave": "KE-P1",
+      "kind": "config",
+      "risk": "opt-in",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/runtime-core/ke-candidate-generation.ts:254",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "if (!flags.candidateGeneration) {",
+          "fileSha256": "64024d9a7b62bc7fdd529a4cf1bb03c543e305246e4011182d70ceb946eb55d4"
+        }
+      ]
+    },
+    {
+      "id": "compass-context-block",
+      "wave": "R3",
+      "kind": "config",
+      "risk": "read-only",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/context-engine/assembler.ts:755",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "if (eligibleHandlers.has(\"compass\") && flags[\"runtime.contextBlock.compass.enabled\"]) {",
+          "fileSha256": "8189fd703ce653fbaac67258875649312417a7d3ce2b93b7450eceb8c420a01e"
+        }
+      ]
+    },
+    {
+      "id": "role-memory",
+      "wave": "R3",
+      "kind": "config",
+      "risk": "read-only",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/context-engine/assembler.ts:758",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "if (eligibleHandlers.has(\"role_memory\") && flags[\"runtime.contextBlock.role_memory.enabled\"]) {",
+          "fileSha256": "8189fd703ce653fbaac67258875649312417a7d3ce2b93b7450eceb8c420a01e"
+        }
+      ]
+    },
+    {
+      "id": "verseshell-patch-preview",
+      "wave": "VS-P3",
+      "kind": "config",
+      "risk": "read-only",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/agents/agent-tools.ts:1224",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "const verseShellPatchPreviewTool = includeShellTools",
+          "fileSha256": "a2591744f2b8846e87a383de09fc43345a8c9af0974a5e0d4f037ce5404d60b7"
+        },
+        {
+          "site": "openclaw_runtime/src/agents/agent-tools.ts:1354",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "...(verseShellPatchPreviewTool ? [verseShellPatchPreviewTool] : []),",
+          "fileSha256": "a2591744f2b8846e87a383de09fc43345a8c9af0974a5e0d4f037ce5404d60b7"
+        }
+      ]
+    },
+    {
+      "id": "rc03-seal",
+      "wave": "RC-03",
+      "kind": "config",
+      "risk": "opt-in",
+      "executorStatus": "wired",
+      "sites": [
+        {
+          "site": "openclaw_runtime/src/context-engine/context-orchestrator.ts:376",
+          "fileExists": true,
+          "lineInRange": true,
+          "lineText": "(params.rc03Seal?.enabled === true || resolveRc03SealState(params.cfg).enabled);",
+          "fileSha256": "757bc052d695ab960af64f3c50ca33ed65709ba4d7bd1d4a919b901a7f33122d"
+        }
+      ]
+    }
+  ],
+  "lineage": [
+    {
+      "taskId": "TF-0454",
+      "title": "消灭 landed-unwired",
+      "status": "in_progress"
+    },
+    {
+      "taskId": "TF-0455",
+      "title": "接线裁定",
+      "status": "done"
+    },
+    {
+      "taskId": "TF-0456",
+      "title": "P0 目录漂移",
+      "commit": "5cb76bc0b",
+      "status": "done"
+    },
+    {
+      "taskId": "TF-0457",
+      "title": "executor 硬门禁",
+      "commit": "e99e51e62",
+      "status": "done"
+    },
+    {
+      "taskId": "TF-0458",
+      "title": "sekb-experience-shadow",
+      "commit": "21b1ab79a",
+      "status": "done"
+    },
+    {
+      "taskId": "TF-0459",
+      "title": "patch-flow advisory",
+      "commit": "be19c3c66",
+      "status": "done"
+    },
+    {
+      "taskId": "TF-0460",
+      "title": "patch-flow execution",
+      "commit": "d9d4f4227",
+      "status": "done"
+    },
+    {
+      "taskId": "TF-0461",
+      "title": "context-ladder migration",
+      "commit": "34e0263a2",
+      "status": "done"
+    },
+    {
+      "taskId": "TF-0462",
+      "title": "context-ladder assembler",
+      "commits": [
+        "2d9cc81b7",
+        "899ef0eae"
+      ],
+      "status": "done"
+    },
+    {
+      "taskId": "TF-0463",
+      "title": "final audit",
+      "status": "done"
+    }
+  ],
+  "notes": [
+    "Every wired executor site was read from disk with its file SHA256 and line text.",
+    "Pending-wiring entries, if any, must carry a deliberate reason.",
+    "No human traffic or real-human evidence is claimed."
+  ]
+}

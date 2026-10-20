@@ -88,7 +88,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     executor: {
       status: 'wired',
       sites: [
-        'openclaw_runtime/src/context-engine/assembler.ts:424',
+        'openclaw_runtime/src/context-engine/assembler.ts:479',
       ],
     },
   },
@@ -108,7 +108,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     executor: {
       status: 'wired',
       sites: [
-        'openclaw_runtime/src/context-engine/assembler.ts:434',
+        'openclaw_runtime/src/context-engine/assembler.ts:490',
       ],
     },
   },
@@ -165,7 +165,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     executor: {
       status: 'wired',
       sites: [
-        'openclaw_runtime/src/agents/orchestrator-run-observed.ts:428',
+        'openclaw_runtime/src/agents/orchestrator-run-observed.ts:435',
       ],
     },
   },
@@ -185,7 +185,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     executor: {
       status: 'wired',
       sites: [
-        'openclaw_runtime/src/agents/orchestrator.ts:199',
+        'openclaw_runtime/src/agents/orchestrator.ts:207',
       ],
     },
   },
@@ -302,8 +302,8 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     executor: {
       status: 'wired',
       sites: [
-        'electron/services/knowledge-api.ts:5296',
-        'electron/services/knowledge-api.ts:5309',
+        'electron/services/knowledge-api.ts:5483',
+        'electron/services/knowledge-api.ts:5496',
       ],
     },
   },
@@ -394,7 +394,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     executor: {
       status: 'wired',
       sites: [
-        'openclaw_runtime/src/context-engine/assembler.ts:680',
+        'openclaw_runtime/src/context-engine/assembler.ts:755',
       ],
     },
   },
@@ -412,7 +412,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     executor: {
       status: 'wired',
       sites: [
-        'openclaw_runtime/src/context-engine/assembler.ts:684',
+        'openclaw_runtime/src/context-engine/assembler.ts:758',
       ],
     },
   },
