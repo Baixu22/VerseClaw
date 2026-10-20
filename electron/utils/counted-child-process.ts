@@ -20,7 +20,9 @@ function counted(method: SpawnMethod, original: AnyFunction): AnyFunction {
     recordChildProcessSpawn(method, args);
     return original(...args);
   };
-  const customPromisify = Reflect.get(original, promisify.custom);
+  const customPromisify = typeof original === 'function'
+    ? Reflect.get(original, promisify.custom)
+    : undefined;
   if (typeof customPromisify === 'function') {
     Reflect.set(wrapped, promisify.custom, customPromisify);
   }
