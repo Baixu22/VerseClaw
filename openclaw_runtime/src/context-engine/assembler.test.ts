@@ -1037,3 +1037,149 @@ describe("FP-P2-06 DCS turn-ledger attribution", () => {
     expect(getTurnInjectionBudget("undefined")).toBeUndefined();
   });
 });
+
+
+describe("explicit context-ladder assembler wiring", () => {
+  const knowledgeBlock = {
+    block_id: "knowledge:main",
+    block_type: "knowledge" as const,
+    source_system: "compass" as const,
+    session_id: "main",
+    presence: { always_on: false, background: true, heat: 0 },
+    entities: [],
+    valid_at: new Date("2026-10-01T00:00:00.000Z"),
+    mutability: "system_managed" as const,
+    summary: "Compass knowledge",
+    full_content: "Compass knowledge",
+    compression_depth: 0 as const,
+    entity_extraction_status: "empty" as const,
+  };
+  const workingMemoryBlock = {
+    block_id: "working-memory:main",
+    block_type: "working_memory" as const,
+    source_system: "working-memory" as const,
+    session_id: "main",
+    presence: { always_on: false, background: true, heat: 100 },
+    entities: [],
+    valid_at: new Date("2026-10-01T00:00:00.000Z"),
+    mutability: "system_managed" as const,
+    summary: "Recent actions",
+    full_content: JSON.stringify({
+      actions: [
+        { tool: "write", result_summary: "Created handler", significance: "high" },
+      ],
+    }),
+    compression_depth: 0 as const,
+    entity_extraction_status: "empty" as const,
+  };
+  const ladderFlags = {
+    "runtime.contextBlock.compass.enabled": true,
+    "runtime.contextBlock.working_memory.enabled": true,
+  } as const;
+
+  it("keeps the ordinary two-channel path when contextLadder is omitted", async () => {
+    const query = vi.fn(async (params: {
+      block_types?: readonly string[];
+      source_systems?: readonly string[];
+    }) =>
+      [knowledgeBlock, workingMemoryBlock].filter(
+        (block) =>
+          (!params.block_types || params.block_types.includes(block.block_type)) &&
+          (!params.source_systems || params.source_systems.includes(block.source_system)),
+      ),
+    );
+    const assembler = new Assembler({ workingMemoryStore: { query, upsert: vi.fn() } });
+    const messages = [{ role: "user" as const, content: "next" }];
+
+    const result = await assembler.assemble(
+      { session_id: "main" },
+      { existing_output: messages },
+      ladderFlags,
+    );
+
+    expect(result.context_ladder).toBeUndefined();
+    expect(JSON.stringify(result.output)).toContain("## Knowledge");
+    expect(JSON.stringify(result.output)).toContain("## Recent Actions");
+  });
+
+  it("runs the explicit ladder under pressure and uses only active blocks", async () => {
+    const query = vi.fn(async (params: {
+      block_types?: readonly string[];
+      source_systems?: readonly string[];
+    }) =>
+      [knowledgeBlock, workingMemoryBlock].filter(
+        (block) =>
+          (!params.block_types || params.block_types.includes(block.block_type)) &&
+          (!params.source_systems || params.source_systems.includes(block.source_system)),
+      ),
+    );
+    const assembler = new Assembler({ workingMemoryStore: { query, upsert: vi.fn() } });
+    const messages = [{ role: "user" as const, content: "next" }];
+
+    const result = await assembler.assemble(
+      {
+        session_id: "main",
+        contextLadder: {
+          enabled: true,
+          tokenBudget: 4000,
+          mode: "pressure",
+          heatThreshold: 1,
+        },
+      },
+      { existing_output: messages },
+      ladderFlags,
+    );
+
+    expect(result.context_ladder).toEqual({
+      mode: "pressure",
+      activeBlocks: 1,
+      archivedBlocks: 1,
+    });
+    expect(JSON.stringify(result.output)).not.toContain("## Knowledge");
+    expect(JSON.stringify(result.output)).toContain("## Recent Actions");
+    expect(query).toHaveBeenCalledTimes(1);
+    expect(query).toHaveBeenCalledWith({
+      requester_session_id: "main",
+      session_id: "main",
+      limit: 100,
+    });
+  });
+
+  it("falls back to the ordinary path when the ladder fails", async () => {
+    const query = vi.fn(async (params: {
+      block_types?: readonly string[];
+      source_systems?: readonly string[];
+    }) =>
+      [knowledgeBlock, workingMemoryBlock].filter(
+        (block) =>
+          (!params.block_types || params.block_types.includes(block.block_type)) &&
+          (!params.source_systems || params.source_systems.includes(block.source_system)),
+      ),
+    );
+    const assembler = new Assembler({
+      workingMemoryStore: { query, upsert: vi.fn() },
+      applyContextLadder: vi.fn(async () => {
+        throw new Error("ladder fixture failure");
+      }),
+    });
+    const messages = [{ role: "user" as const, content: "next" }];
+
+    const result = await assembler.assemble(
+      {
+        session_id: "main",
+        contextLadder: {
+          enabled: true,
+          tokenBudget: 4000,
+          mode: "pressure",
+        },
+      },
+      { existing_output: messages },
+      ladderFlags,
+    );
+
+    expect(result.context_ladder).toBeUndefined();
+    expect(result.context_ladder_error).toBe("ladder fixture failure");
+    expect(JSON.stringify(result.output)).toContain("## Knowledge");
+    expect(JSON.stringify(result.output)).toContain("## Recent Actions");
+  });
+});

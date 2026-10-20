@@ -12,6 +12,8 @@ import {
   type PressureMode,
 } from "./token-pressure.js";
 
+export type { PressureMode } from "./token-pressure.js";
+
 export type ContextLadderResult = {
   blocks: LifecycleBlock[];
   activeBlocks: LifecycleBlock[];

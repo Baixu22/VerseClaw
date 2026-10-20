@@ -40,6 +40,11 @@ import {
   createInjectionBudget,
   type InjectionBudgetState,
 } from "./injection-budget.js";
+import { applyContextLadder, type PressureMode } from "./context-ladder.js";
+import {
+  hydrateLifecycleBlock,
+  type LifecycleBlock,
+} from "./block-lifecycle.js";
 
 export interface AssembleRequest {
   session_id: string;
@@ -84,6 +89,17 @@ export interface AssembleRequest {
    * off: legacy behavior, byte-identical (no regather, no skip lineage).
    */
   skipChannels?: TurnInjectionChannel[];
+  /**
+   * Explicit context-ladder opt-in. Omitted keeps the assembler byte-identical
+   * to the pre-ladder path; enabled runs the ladder once over this session's
+   * blocks and uses only its active blocks for DCS injections.
+   */
+  contextLadder?: {
+    enabled: true;
+    tokenBudget: number;
+    mode?: PressureMode;
+    heatThreshold?: number;
+  };
 }
 
 export type LegacyHandlerId = "compass" | "role_memory";
@@ -157,6 +173,12 @@ export interface AssemblerResult<TExistingOutput = unknown> {
   compass?: PreReplyInjection;
   role_memory?: ContextPack;
   injection_budget?: AssemblerInjectionBudget;
+  context_ladder?: {
+    mode: PressureMode;
+    activeBlocks: number;
+    archivedBlocks: number;
+  };
+  context_ladder_error?: string;
 }
 
 export interface AssemblerDependencies {
@@ -165,6 +187,8 @@ export interface AssemblerDependencies {
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
   /** DCS Stage 4: sink for writing knowledge Blocks after legacy builder calls. */
   contextBlockSink?: ContextBlockSink;
+  /** Explicit context-ladder executor; injectable for fail-closed tests. */
+  applyContextLadder: typeof applyContextLadder;
 }
 
 function chargeAssemblerInjection(
@@ -256,6 +280,7 @@ export class Assembler {
       ...(dependencies.contextBlockSink
         ? { contextBlockSink: dependencies.contextBlockSink }
         : {}),
+      applyContextLadder: dependencies.applyContextLadder ?? applyContextLadder,
     };
   }
 
@@ -355,6 +380,35 @@ export class Assembler {
       };
     }
 
+    let ladderBlocks: readonly LifecycleBlock[] | undefined;
+    if (request.contextLadder?.enabled === true) {
+      const store = this.#dependencies.workingMemoryStore;
+      if (store && Array.isArray(inputs.existing_output)) {
+        try {
+          const blocks = await store.query({
+            requester_session_id: request.session_id,
+            session_id: request.session_id,
+            limit: 100,
+          });
+          const ladder = await this.#dependencies.applyContextLadder({
+            blocks: blocks.map(hydrateLifecycleBlock),
+            tokenBudget: request.contextLadder.tokenBudget,
+            mode: request.contextLadder.mode,
+            heatThreshold: request.contextLadder.heatThreshold,
+          });
+          ladderBlocks = ladder.activeBlocks;
+          result.context_ladder = {
+            mode: ladder.mode,
+            activeBlocks: ladder.activeBlocks.length,
+            archivedBlocks: ladder.archivedBlocks.length,
+          };
+        } catch (error) {
+          result.context_ladder_error =
+            error instanceof Error ? error.message : String(error);
+        }
+      }
+    }
+
     if (
       eligibleHandlers.has("compass") &&
       resolvedFlags["runtime.contextBlock.compass.enabled"] &&
@@ -418,6 +472,7 @@ export class Assembler {
         injectionBudget,
         turnLedger,
         killCfg,
+        ladderBlocks,
       )) as TExistingOutput;
     }
 
@@ -428,6 +483,7 @@ export class Assembler {
         injectionBudget,
         turnLedger,
         killCfg,
+        ladderBlocks,
       )) as TExistingOutput;
     }
 
@@ -438,6 +494,7 @@ export class Assembler {
         injectionBudget,
         turnLedger,
         killCfg,
+        ladderBlocks,
       )) as TExistingOutput;
     }
 
@@ -473,6 +530,7 @@ export class Assembler {
     budget: InjectionBudgetState,
     turnLedger: TurnInjectionLedger | undefined,
     killCfg: unknown,
+    ladderBlocks: readonly LifecycleBlock[] | undefined,
   ): Promise<TExistingOutput> {
     if (request.skipChannels?.includes("working_memory")) {
       this.#recordChannelSkip(
@@ -507,14 +565,21 @@ export class Assembler {
       dcsObservability.recordDcsTransformContextInjection({ chars: 0, suppressed: true });
       return output;
     }
-    const blocks = await store.query({
-      requester_session_id: request.session_id,
-      session_id: request.session_id,
-      block_types: ["working_memory"],
-      source_systems: ["working-memory"],
-      limit: 1,
-    });
-    const block = blocks[0];
+    const block = ladderBlocks
+      ? ladderBlocks.find(
+          (candidate) =>
+            candidate.block_type === "working_memory" &&
+            candidate.source_system === "working-memory",
+        )
+      : (
+          await store.query({
+            requester_session_id: request.session_id,
+            session_id: request.session_id,
+            block_types: ["working_memory"],
+            source_systems: ["working-memory"],
+            limit: 1,
+          })
+        )[0];
     const injection = formatWorkingMemoryInjection(block);
     if (!injection) {
       if (request.deferProjection && request.turnId) {
@@ -561,6 +626,7 @@ export class Assembler {
     budget: InjectionBudgetState,
     turnLedger: TurnInjectionLedger | undefined,
     killCfg: unknown,
+    ladderBlocks: readonly LifecycleBlock[] | undefined,
   ): Promise<TExistingOutput> {
     if (request.skipChannels?.includes("tool_registry")) {
       this.#recordChannelSkip(request, "tool_registry", "context-block:cvk:tool_registry", killCfg);
@@ -588,14 +654,21 @@ export class Assembler {
       dcsObservability.recordDcsTransformContextInjection({ chars: 0, suppressed: true });
       return output;
     }
-    const blocks = await store.query({
-      requester_session_id: request.session_id,
-      session_id: request.session_id,
-      block_types: ["tool_registry"],
-      source_systems: ["cvk"],
-      limit: 1,
-    });
-    const block = blocks[0];
+    const block = ladderBlocks
+      ? ladderBlocks.find(
+          (candidate) =>
+            candidate.block_type === "tool_registry" &&
+            candidate.source_system === "cvk",
+        )
+      : (
+          await store.query({
+            requester_session_id: request.session_id,
+            session_id: request.session_id,
+            block_types: ["tool_registry"],
+            source_systems: ["cvk"],
+            limit: 1,
+          })
+        )[0];
     const injection = formatToolRegistryInjection(block);
     if (!injection) {
       if (request.deferProjection && request.turnId) {
@@ -649,6 +722,7 @@ export class Assembler {
     budget: InjectionBudgetState,
     turnLedger: TurnInjectionLedger | undefined,
     killCfg: unknown,
+    ladderBlocks: readonly LifecycleBlock[] | undefined,
   ): Promise<TExistingOutput> {
     if (request.skipChannels?.includes("knowledge")) {
       this.#recordChannelSkip(request, "knowledge", "context-block:knowledge", killCfg);
@@ -687,14 +761,21 @@ export class Assembler {
     if (sourceSystems.length === 0) {
       return output;
     }
-    const blocks = await store.query({
-      requester_session_id: request.session_id,
-      session_id: request.session_id,
-      block_types: ["knowledge"],
-      source_systems: sourceSystems,
-      limit: 1,
-    });
-    const block = blocks[0];
+    const block = ladderBlocks
+      ? ladderBlocks.find(
+          (candidate) =>
+            candidate.block_type === "knowledge" &&
+            sourceSystems.includes(candidate.source_system),
+        )
+      : (
+          await store.query({
+            requester_session_id: request.session_id,
+            session_id: request.session_id,
+            block_types: ["knowledge"],
+            source_systems: sourceSystems,
+            limit: 1,
+          })
+        )[0];
     const injection = formatKnowledgeInjection(block);
     if (!injection) {
       if (request.deferProjection && request.turnId) {
