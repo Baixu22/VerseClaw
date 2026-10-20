@@ -1,4 +1,5 @@
 import type { RuntimeEmbeddingProvider } from '../../openclaw_runtime/src/runtime-core/memory-embedding-provider';
+import { proxyAwareFetch } from '../utils/proxy-fetch';
 
 const DEFAULT_SILICONFLOW_BASE = 'https://api.siliconflow.cn/v1';
 const DEFAULT_SILICONFLOW_MODEL = 'Qwen/Qwen3-Embedding-8B';
@@ -24,7 +25,7 @@ export function createSiliconFlowEmbeddingProvider(): RuntimeEmbeddingProvider {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     try {
-      const response = await fetch(endpoint, {
+      const response = await proxyAwareFetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
