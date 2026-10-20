@@ -42,4 +42,27 @@ describe('SQLite WAL checkpoint scheduling', () => {
     }
     db.close();
   });
+
+  it('allows distinct database paths to register independent checkpoint tasks', () => {
+    const first = new DatabaseSync(':memory:');
+    const second = new DatabaseSync(':memory:');
+    first.exec('CREATE TABLE t (value INTEGER);');
+    second.exec('CREATE TABLE t (value INTEGER);');
+    const firstMaintenance = configureSqliteWalMaintenance(first, {
+      databaseLabel: 'shared-label',
+      databasePath: 'path-a',
+      checkpointIntervalMs: 1_000,
+    });
+    const secondMaintenance = configureSqliteWalMaintenance(second, {
+      databaseLabel: 'shared-label',
+      databasePath: 'path-b',
+      checkpointIntervalMs: 1_000,
+    });
+    const taskIds = getTimerAligner().getDiagnostics().tasks.map((task) => task.id);
+    expect(taskIds).toEqual(['sqlite-wal:path-a', 'sqlite-wal:path-b']);
+    firstMaintenance.close();
+    secondMaintenance.close();
+    first.close();
+    second.close();
+  });
 });

@@ -64,7 +64,7 @@ export function configureSqliteWalMaintenance(
 
   let unregister: (() => void) | null = null;
   if (timerIntervalMs > 0) {
-    const schedulerId = `sqlite-wal:${options.databaseLabel ?? options.databasePath ?? `anonymous-${nextWalSchedulerId++}`}`;
+    const schedulerId = `sqlite-wal:${options.databasePath ?? options.databaseLabel ?? `anonymous-${nextWalSchedulerId++}`}`;
     unregister = getTimerAligner().register({
       id: schedulerId,
       intervalMs: Math.max(1_000, timerIntervalMs),

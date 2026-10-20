@@ -10,7 +10,12 @@ const { spawnMock } = vi.hoisted(() => ({
 
 vi.mock('node:child_process', () => ({
   spawn: spawnMock,
+  exec: vi.fn(),
   execFile: vi.fn(),
+  execFileSync: vi.fn(),
+  execSync: vi.fn(),
+  fork: vi.fn(),
+  spawnSync: vi.fn(),
 }));
 
 const originalPlatform = process.platform;

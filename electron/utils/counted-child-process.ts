@@ -11,14 +11,20 @@ import {
   recordChildProcessSpawn,
   type SpawnMethod,
 } from '../services/performance-metrics';
+import { promisify } from 'node:util';
 
 type AnyFunction = (...args: unknown[]) => unknown;
 
 function counted(method: SpawnMethod, original: AnyFunction): AnyFunction {
-  return (...args: unknown[]) => {
+  const wrapped = (...args: unknown[]) => {
     recordChildProcessSpawn(method, args);
     return original(...args);
   };
+  const customPromisify = Reflect.get(original, promisify.custom);
+  if (typeof customPromisify === 'function') {
+    Reflect.set(wrapped, promisify.custom, customPromisify);
+  }
+  return wrapped;
 }
 
 export const exec = counted('exec', nodeExec as unknown as AnyFunction) as typeof nodeExec;
