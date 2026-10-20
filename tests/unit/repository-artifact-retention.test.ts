@@ -53,7 +53,8 @@ describe('repository artifact retention', () => {
     expect(policy.retiredTests).toHaveLength(4);
     for (const path of policy.requiredInputs) expect(isLocalArtifact(path, policy), path).toBe(false);
     expect(isLocalArtifact('runtime-research-notes/fixture.json', policy)).toBe(false);
-    expect(isLocalArtifact('.agent-workbench/task-forest-history/fixture.json', policy)).toBe(false);
+    expect(isLocalArtifact('.agent-workbench/task-forest/fixture.json', policy)).toBe(true);
+    expect(isLocalArtifact('.agent-workbench/task-forest-history/fixture.json', policy)).toBe(true);
   });
 
   it('ignores regenerated local history while keeping gate inputs addable', () => {

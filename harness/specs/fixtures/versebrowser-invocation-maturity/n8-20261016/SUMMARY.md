@@ -72,7 +72,7 @@
 
 ### F2（回收）driver 浏览器进程树残留
 
-verifier 杀掉 Electron 进程树后，**driver 启动的 headless Chrome 进程树仍然存活**：本轮实测残留 10 个进程，全部来自 `C:\Users\27933\.agent-browser\browsers\chrome-149.0.7827.115\chrome.exe`（含 crashpad / gpu-process / utility / renderer 子进程），命令行带 `--user-data-dir=...\.tmp\m10-packaged-flow-sks61g\ud\agent-browser\profiles\m10-mvb4vhnq`。
+verifier 杀掉 Electron 进程树后，**driver 启动的 headless Chrome 进程树仍然存活**：本轮实测残留 10 个进程，全部来自 `C:\Users\<redacted-user>\.agent-browser\browsers\chrome-149.0.7827.115\chrome.exe`（含 crashpad / gpu-process / utility / renderer 子进程），命令行带 `--user-data-dir=...\.tmp\m10-packaged-flow-sks61g\ud\agent-browser\profiles\m10-mvb4vhnq`。
 
 - 因此 `fixture.close()` 没有可关的连接、`.tmp` 运行目录无法回收：对该目录递归删除时 `Cache_Data/sqldb0`、`lockfile`、`Web Data` 等文件被这些进程占用，逐个报 “being used by another process”。
 - 这批进程在 verifier 进程与 Electron 进程都被杀之后依然存活，需按命令行匹配额外清理（本轮已逐个 kill，剩余 0）。

@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const TEST_ROOTS = ['tests', 'openclaw_runtime/src', 'openclaw_runtime/test'];
 const SOURCE_ROOTS = ['electron/gateway', 'electron/services'];
-const BASELINE = { 'electron/gateway': 27, 'electron/services': 75 };
+const BASELINE = { 'electron/gateway': 26, 'electron/services': 75 };
 
 async function listFiles(dir, predicate) {
   const out = [];

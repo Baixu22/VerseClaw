@@ -8,7 +8,7 @@ intent: Reduce startup chat.history contention so foreground history loads do no
 touchedAreas:
   - harness/specs/tasks/fix-chat-history-gateway-timeout.md
   - electron/services/sessions-api.ts
-  - electron/gateway/rpc-backpressure.ts
+  - electron/services/resource-fabric.ts
   - electron/main/ipc-handlers.ts
   - src/components/layout/Sidebar.tsx
   - src/pages/Chat/index.tsx

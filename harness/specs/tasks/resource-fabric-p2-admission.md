@@ -21,7 +21,7 @@ touchedAreas:
   - electron/services/resource-leases.ts
   - electron/services/terminal-api.ts
   - electron/services/gateway-api.ts
-  - electron/gateway/rpc-backpressure.ts
+  - electron/services/resource-fabric.ts
   - electron/main/ipc-handlers.ts
   - shared/types/resources.ts
   - shared/resources/adaptive-limit.ts

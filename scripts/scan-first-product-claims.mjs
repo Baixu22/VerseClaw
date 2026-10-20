@@ -124,7 +124,11 @@ export function findForbiddenClaims(text) {
     }
     line = line
       .replace(/单项工程证据不等于[^。\r\n]*。/g, '')
-      .replace(/タスク単位の証拠は、[^。\r\n]*を許可しません。/g, '');
+      .replace(/タスク単位の証拠は、[^。\r\n]*を許可しません。/g, '')
+      // Explicit false gate fields are factual boundaries, not graduation claims.
+      // Strip the exact assignment only; any adjacent claim remains visible.
+      .replace(/\bliveReady\s*=\s*false\b/gi, '')
+      .replace(/\bproductApproved\s*=\s*false\b/gi, '');
     for (const claim of FORBIDDEN_CLAIMS) {
       claim.pattern.lastIndex = 0;
       const count = [...line.matchAll(claim.pattern)].length;

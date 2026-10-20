@@ -12,7 +12,7 @@ describe('runtime source policy', () => {
   it('keeps gateway and service file coverage above the reviewed baseline', async () => {
     const { failures, actual } = await collectCoverageBaselineErrors();
     expect(failures).toEqual([]);
-    expect(actual['electron/gateway']).toBeGreaterThanOrEqual(27);
+    expect(actual['electron/gateway']).toBeGreaterThanOrEqual(26);
     expect(actual['electron/services']).toBeGreaterThanOrEqual(75);
   });
 

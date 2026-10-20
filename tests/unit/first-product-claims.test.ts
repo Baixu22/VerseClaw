@@ -38,6 +38,10 @@ describe('FP-P1-08 first-product claim boundary', () => {
     expect(findForbiddenClaims('这只是 engineering evidence，不开启 default-on、GA 或产品审批。')).toEqual([]);
     expect(findForbiddenClaims('これは engineering evidence であり、default-on、GA を有効化しません。')).toEqual([]);
     expect(findForbiddenClaims('A GA hardening pass (2026-08-19) added verification; product locks remain unchanged.')).toEqual([]);
+    expect(findForbiddenClaims('Frozen boundary: liveReady=false, productApproved=false.')).toEqual([]);
+    expect(findForbiddenClaims('Frozen boundary: liveReady=false, productApproved=false. Now GA for all users.')).toEqual([
+      { term: 'ga-abbreviation', line: 1, count: 1 },
+    ]);
     // Real graduation claims must stay flagged.
     expect(findForbiddenClaims('This feature ships default-on.')).toEqual([{ term: 'default-on', line: 1, count: 1 }]);
     expect(findForbiddenClaims('Now GA for all users.')).toEqual([{ term: 'ga-abbreviation', line: 1, count: 1 }]);

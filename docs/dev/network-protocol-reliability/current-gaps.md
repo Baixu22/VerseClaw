@@ -47,7 +47,7 @@
 
 ## G6 — Gateway history backpressure is narrow but real
 
-- Files: `electron/gateway/rpc-backpressure.ts`; `electron/main/ipc-handlers.ts`; `electron/services/gateway-api.ts`.
+- Files: `electron/services/resource-fabric.ts`; `electron/main/ipc-handlers.ts`; `electron/services/gateway-api.ts`.
 - Behaviour: only `chat.history` calls are coalesced by a stable params key and run through a bounded FIFO; other methods pass through.
 - Boundary: this is not general admission and must not be expanded into one.
 - Owner decision: retain narrow owner.
@@ -80,7 +80,7 @@
 ## G10 — Entrypoint checks can silently no-op through a junction
 
 - Files: `scripts/lib/entrypoint.mjs`; 49 script files under `scripts/**` that still reference `process.argv[1]` in a main-entrypoint comparison.
-- Behaviour: a path reached through `C:\Users\27933\Desktop\clawx\ClawX` and the real `D:\ClawX` can disagree between `process.argv[1]` and `import.meta.url`. The helper realpath-resolves both sides. Current source has 36 direct comparisons and 13 `pathToFileURL` variants that do not use the helper.
+- Behaviour: a path reached through `C:\Users\<example-user>\Desktop\clawx\ClawX` and the real `D:\ClawX` can disagree between `process.argv[1]` and `import.meta.url`. The helper realpath-resolves both sides. Current source has 36 direct comparisons and 13 `pathToFileURL` variants that do not use the helper.
 - Boundary: the exact count is a source scan result, not a claim that every file was executed through a junction.
 - Owner decision: all scripts import `isMainEntrypoint`; the guard rejects new direct comparisons.
 - Downstream node: `TF-0443`.

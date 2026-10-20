@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: identity-scope-semantics
 title: Identity and Scope Vocabulary (TF-0372)
 scenario: identity-scope-compatibility

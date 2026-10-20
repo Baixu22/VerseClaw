@@ -43,8 +43,8 @@
     },
     {
       "id": "gateway-history-backpressure",
-      "primaryOwner": "electron/gateway/rpc-backpressure.ts",
-      "componentPatterns": ["GatewayRpcBackpressure"],
+      "primaryOwner": "electron/services/resource-fabric.ts",
+      "componentPatterns": ["ResourceFabric", "chatHistory"],
       "forbiddenIndependentEvolution": [],
       "disposition": "retain-narrow",
       "downstreamNode": "TF-0439"
