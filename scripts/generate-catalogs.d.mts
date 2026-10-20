@@ -38,6 +38,11 @@ export type CatalogCheckResult = {
   issues: Array<{ file: string; reason: string }>;
 };
 
+export function validateFlagExecutors(
+  flags: Array<Record<string, unknown>>,
+  repoRoot?: string,
+): Promise<CatalogCheckResult>;
+
 export function renderCatalogs(options?: { outDir?: string; now?: string }): Promise<CatalogRender>;
 
 export function generateCatalogs(options?: { outDir?: string; now?: string }): Promise<GeneratedCatalogs>;

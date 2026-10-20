@@ -20,7 +20,7 @@
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { dirname, isAbsolute, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
@@ -89,6 +89,87 @@ export function renderToolsMarkdown(sections, now) {
   return lines.join('\n') + '\n';
 }
 
+function renderFlagExecutor(executor) {
+  if (!executor) return 'missing (catalogs:check will fail)';
+  if (executor.status === 'wired') {
+    const sites = Array.isArray(executor.sites) ? executor.sites : [];
+    return sites.length > 0
+      ? 'wired — ' + sites.map((site) => code(site)).join(', ')
+      : 'wired (no sites; catalogs:check will fail)';
+  }
+  if (executor.status === 'pending-wiring') {
+    return executor.reason
+      ? 'pending-wiring — ' + executor.reason
+      : 'pending-wiring (reason missing; catalogs:check will fail)';
+  }
+  return 'invalid executor status: ' + String(executor.status);
+}
+
+const EXECUTOR_SITE_PATTERN = /^(.+):([1-9][0-9]*)$/u;
+
+/**
+ * Hard gate for landed-unwired drift: every wired catalog entry must point at
+ * a readable, non-empty production line inside the repository. Pending-wiring
+ * is allowed only when the reason is explicit.
+ */
+export async function validateFlagExecutors(flags, repoRoot = REPO_ROOT) {
+  const issues = [];
+  for (const flag of flags) {
+    const executor = flag?.executor;
+    if (!executor) {
+      issues.push({ file: 'prod-flags', reason: `executor missing for flag ${flag?.id ?? '<unknown>'}` });
+      continue;
+    }
+    if (executor.status === 'wired') {
+      if (!Array.isArray(executor.sites) || executor.sites.length === 0) {
+        issues.push({ file: 'prod-flags', reason: `wired executor for flag ${flag.id} must list at least one file:line site` });
+        continue;
+      }
+      for (const site of executor.sites) {
+        const match = typeof site === 'string' ? site.match(EXECUTOR_SITE_PATTERN) : undefined;
+        if (!match) {
+          issues.push({ file: 'prod-flags', reason: `executor site for flag ${flag.id} must be '<relative-path>:<line>': ${JSON.stringify(site)}` });
+          continue;
+        }
+        const [, relativePath, lineText] = match;
+        const absolutePath = resolve(repoRoot, relativePath);
+        const rootedRelative = relative(repoRoot, absolutePath);
+        if (
+          isAbsolute(relativePath) ||
+          rootedRelative === '' ||
+          rootedRelative.startsWith('..') ||
+          isAbsolute(rootedRelative)
+        ) {
+          issues.push({ file: 'prod-flags', reason: `executor site escapes repository root for flag ${flag.id}: ${site}` });
+          continue;
+        }
+        if (!existsSync(absolutePath)) {
+          issues.push({ file: 'prod-flags', reason: `executor site file missing for flag ${flag.id}: ${site}` });
+          continue;
+        }
+        const contents = await readFile(absolutePath, 'utf8');
+        const lines = contents.split(/\r?\n/u);
+        const lineNumber = Number(lineText);
+        if (lineNumber < 1 || lineNumber > lines.length) {
+          issues.push({ file: 'prod-flags', reason: `executor site line out of range for flag ${flag.id}: ${site} (file has ${lines.length} lines)` });
+        } else if (!lines[lineNumber - 1].trim()) {
+          issues.push({ file: 'prod-flags', reason: `executor site points to a blank line for flag ${flag.id}: ${site}` });
+        }
+      }
+    } else if (executor.status === 'pending-wiring') {
+      if (typeof executor.reason !== 'string' || executor.reason.trim() === '') {
+        issues.push({ file: 'prod-flags', reason: `pending-wiring executor for flag ${flag.id} requires a reason` });
+      }
+      if (Array.isArray(executor.sites) && executor.sites.length > 0) {
+        issues.push({ file: 'prod-flags', reason: `pending-wiring executor for flag ${flag.id} must not list sites` });
+      }
+    } else {
+      issues.push({ file: 'prod-flags', reason: `executor status invalid for flag ${flag.id}: ${JSON.stringify(executor.status)}` });
+    }
+  }
+  return { fresh: issues.length === 0, issues };
+}
+
 /** Render the DCS production flag catalog from the same-module source export. */
 export function renderFlagsMarkdown(flags, now) {
   const lines = [
@@ -112,6 +193,7 @@ export function renderFlagsMarkdown(flags, now) {
       '- risk: ' + flag.risk,
       '- enable: ' + flag.enable,
       '- rollback: ' + flag.rollback,
+      '- executor: ' + renderFlagExecutor(flag.executor),
       '',
       '> ' + flag.riskNote,
       '',
@@ -180,6 +262,8 @@ export async function checkCatalogs(options = {}) {
   const toolsPath = resolve(outDir, 'tools.md');
   const flagsPath = resolve(outDir, 'prod-flags.md');
   const issues = [];
+  const executorCheck = await validateFlagExecutors(expected.flags);
+  issues.push(...executorCheck.issues);
   for (const [label, path, expectedText] of [
     ['tools', toolsPath, expected.toolsMarkdown],
     ['prod-flags', flagsPath, expected.flagsMarkdown],

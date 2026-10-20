@@ -13,6 +13,7 @@ import {
   checkCatalogs,
   generateCatalogs,
   setCatalogResolvers,
+  validateFlagExecutors,
 } from '../../scripts/generate-catalogs.mjs';
 
 const tempDirs: string[] = [];
@@ -69,7 +70,25 @@ describe('generated catalogs (R6-4)', () => {
       expect(flagsText).toContain(flag.enable);
       expect(flagsText).toContain(flag.rollback);
       expect(flagsText).toContain(flag.riskNote);
+      expect(flag.executor).toBeDefined();
+      expect(['wired', 'pending-wiring']).toContain(flag.executor?.status);
+      expect(flagsText).toContain('- executor: ');
     }
+  });
+
+  it('records an explicit executor decision for every production flag', () => {
+    for (const flag of DCS_PROD_FLAGS) {
+      expect(flag.executor, `flag ${flag.id}`).toBeDefined();
+      expect(['wired', 'pending-wiring']).toContain(flag.executor?.status);
+    }
+  });
+
+  it('validates executor sites fail-closed when a wired site disappears', async () => {
+    const invalid = await validateFlagExecutors([
+      { id: 'executor-negative', executor: { status: 'wired', sites: ['tests/unit/missing-executor-site.ts:1'] } },
+    ]);
+    expect(invalid.fresh).toBe(false);
+    expect(invalid.issues.some((issue) => issue.reason.includes('executor site file missing for flag executor-negative'))).toBe(true);
   });
 
   it('is byte-deterministic for a pinned timestamp', async () => {
@@ -107,5 +126,31 @@ describe('generated catalogs (R6-4)', () => {
     const missing = await checkCatalogs({ outDir, now: pinned });
     expect(missing.fresh).toBe(false);
     expect(missing.issues.some((issue) => issue.file === 'prod-flags')).toBe(true);
+  });
+
+  it('--check fails closed when a catalog executor site is missing', async () => {
+    const outDir = await tempOutDir();
+    const pinned = '2026-08-14T00:00:00.000Z';
+    await generateCatalogs({ outDir, now: pinned });
+
+    const flag = DCS_PROD_FLAGS.find((entry) => entry.executor?.status === 'wired');
+    expect(flag).toBeDefined();
+    if (!flag) throw new Error('wired executor fixture missing');
+    const originalExecutor = flag.executor;
+    try {
+      flag.executor = {
+        status: 'wired',
+        sites: ['tests/unit/missing-executor-site.ts:1'],
+      };
+      const result = await checkCatalogs({ outDir, now: pinned });
+      expect(result.fresh).toBe(false);
+      expect(
+        result.issues.some((issue) =>
+          issue.reason.includes(`executor site file missing for flag ${flag.id}`),
+        ),
+      ).toBe(true);
+    } finally {
+      flag.executor = originalExecutor;
+    }
   });
 });

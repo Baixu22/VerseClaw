@@ -14,6 +14,10 @@ export type DcsProdFlagRisk =
 
 export type DcsProdFlagKind = 'env' | 'config' | 'api' | 'request' | 'info';
 
+export type DcsProdFlagExecutor =
+  | { status: 'wired'; sites: readonly string[] }
+  | { status: 'pending-wiring'; reason: string };
+
 export type DcsProdFlagEntry = {
   id: string;
   wave: string;
@@ -25,6 +29,7 @@ export type DcsProdFlagEntry = {
   enable: string;
   rollback: string;
   riskNote: string;
+  executor?: DcsProdFlagExecutor;
 };
 
 export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
@@ -41,6 +46,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     rollback: 'Unset env or set to 0/false and restart. View tools leave the default catalog.',
     riskNote:
       'Single source of truth: env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS (or Settings switch). The removed runtime.coding.factViews leaf is rejected by the strict config schema; remove it before upgrading. Keep default-off until C1 graduation + product approval.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/agents/tools/context-agent-tools.ts:267',
+      ],
+    },
   },
   {
     id: 'context-tools-alias',
@@ -54,6 +65,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
       'Alias of OPENCLAW_DCS_CONTEXT_VIEW_TOOLS; set =1 only when intentionally enabling view tools.',
     rollback: 'Unset or set to 0/false and restart.',
     riskNote: 'Alias only; do not treat as a separate graduation path.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/context-engine/dcs-context-tools-flags.ts:30',
+      ],
+    },
   },
   {
     id: 'working-memory',
@@ -68,6 +85,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     rollback: 'Set enabled=false or Settings off; restart if needed. Injection stops; producers may still emit envelopes unused.',
     riskNote:
       'TASK-P1-02: when on, Assembler injects ## Recent Actions once per context (exactly-once). Default remains off until product soak.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/context-engine/assembler.ts:424',
+      ],
+    },
   },
   {
     id: 'tool-registry',
@@ -82,6 +105,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     rollback: 'Set enabled=false or Settings off; restart if needed. Tool summary injection stops.',
     riskNote:
       'TASK-P1-03: when on, before_agent_start writes tool_registry Block and Assembler injects ## Tools summary (exactly-once). Aligns with C1 on_demand schema mode.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/context-engine/assembler.ts:434',
+      ],
+    },
   },
   {
     id: 'stale-write-guard',
@@ -95,6 +124,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     rollback: 'Set enabled=false or remove leaf; process restart if config is file-backed.',
     riskNote:
       'Can block full-file writes that look stale; monitor coding.write.falseBlockRate. Override: force=true or allowStaleWrite=true on write (TASK-P1-07). Keep default-off until live false-block corpus passes.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/agents/agent-tools.ts:885',
+      ],
+    },
   },  {
     id: 'write-journal',
     wave: 'C2',
@@ -107,6 +142,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     rollback:
       'Set runtime.coding.writeJournal.enabled=false only as temporary kill-switch (loses undo snapshots).',
     riskNote: 'Read-only ops note in P0 packaging; not an enhancement to flip for demos.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/agents/agent-tools.ts:876',
+      ],
+    },
   },
   {
     id: 'worktree-backend',
@@ -121,6 +162,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     rollback: 'Stop calling the API with backend=git. Isolation request default remains shared.',
     riskNote:
       'C4-H git lifecycle hardened (lock/path/cleanup). The runtime.coding.worktree.backend config leaf is wired: when plan nodes request worktree isolation, orchestrator-run-observed resolves the backend via resolveWorktreeBackend, so the leaf drives inprocess vs git. API opt-in (isolation=worktree on request/plan) remains the activation gate.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/agents/orchestrator-run-observed.ts:428',
+      ],
+    },
   },
   {
     id: 'isolation-request',
@@ -135,6 +182,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     rollback: 'Omit isolation or set "shared". Unknown values normalize to shared.',
     riskNote:
       'normalizeIsolationMode defaults shared; C4-H landed but production default stays shared until product approval.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/agents/orchestrator.ts:199',
+      ],
+    },
   },
   {
     id: 'symbol-lease',
@@ -148,6 +201,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     rollback: 'enabled=false. Shared write path is unperturbed when off.',
     riskNote:
       'C5-H multi-process WAL hardened (opt-in mode=wal). Prefer mode=memory default; keep enabled=false until product approval.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/agents/agent-tools.ts:867',
+      ],
+    },
   },
   {
     id: 'symbol-lease-mode',
@@ -160,6 +219,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     enable: 'runtime.coding.symbolLease.mode=wal only after multi-process WAL acceptance.',
     rollback: 'mode=memory.',
     riskNote: 'wal multi-process hardened (C5-H); still opt-in; default mode remains memory.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/agents/agent-tools.ts:871',
+      ],
+    },
   },
   {
     id: 'patch-flow',
@@ -173,6 +238,10 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
       'Call applyPatchProposalsSerial() / recommendIsolationMode({...}). Do NOT set runtime.coding.patchFlow.default=true without C5-H + approval.',
     rollback: 'Stop calling patch-flow APIs; keep patchFlow.default=false.',
     riskNote: 'recommendIsolationMode is advisory only; no auto-switch of production isolation.',
+    executor: {
+      status: 'pending-wiring',
+      reason: 'No production orchestrator path calls applyPatchProposalsSerial or recommendIsolationMode; only the graduation assessment does. TF-0459 wires advisory visibility, then TF-0460 wires execution.',
+    },
   },
   {
     id: 'context-ladder',
@@ -186,6 +255,10 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
       'Import and call applyContextLadder from context-ladder.ts with an explicit tokenBudget. Assembler production path does not auto-ladder.',
     rollback: 'Stop calling applyContextLadder; leave assembler defaults unchanged.',
     riskNote: '64K evidence is synthetic until C6-H live corpus. L4 embedding remains deferred.',
+    executor: {
+      status: 'pending-wiring',
+      reason: 'The implementation remains under openclaw_runtime/experiments and the production assembler does not call applyContextLadder. TF-0461 migrates it into src, then TF-0462 wires the assembler path.',
+    },
   },
   {
     id: 'routing-memo-shadow',
@@ -199,6 +272,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
       'runtime.coding.routingMemo.shadow=true OR recordRoutingMemoShadow({ enabled: true }). Dual-write only; no prompt injection cutover.',
     rollback: 'shadow=false. Does not alter default COMPASS/role-memory/routing injection.',
     riskNote: 'cutoverAllowed stays false until C7-H + written product approval.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/agents/agent-tools.before-tool-call.ts:1349',
+      ],
+    },
   },
   {
     id: 'sekb-experience-shadow',
@@ -212,6 +291,10 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
       'Call DistillationTool.confirm_and_save(suggestion, edits, { sessionId, experienceShadow: { enabled: true, workspaceRoot } }).',
     rollback: 'Omit options.experienceShadow or set experienceShadow.enabled=false.',
     riskNote: 'Shadow journal only. The runtime.coding.sekb.experienceShadow config leaf is observability-only and does not drive this API.',
+    executor: {
+      status: 'pending-wiring',
+      reason: 'The options.experienceShadow branch exists in DistillationTool, but no production confirm path passes experienceShadow. TF-0458 wires the runtime confirmation path.',
+    },
   },
   {
     id: 'sekb-retrieval-shadow',
@@ -224,6 +307,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     enable: 'runtime.coding.sekb.retrievalShadow=true.',
     rollback: 'runtime.coding.sekb.retrievalShadow=false (default).',
     riskNote: 'KE-P1-2: would_retrieve shadow -> shadow_context receipt. Zero prompt injection; no default retrieval.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/knowledge/sekb/retrieval-engine.ts:97',
+      ],
+    },
   },
   {
     id: 'runtime-memory-persist',
@@ -236,6 +325,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     enable: 'runtime.memory.persist=true.',
     rollback: 'runtime.memory.persist=false (default).',
     riskNote: 'R3-1 E-1: persist=true 只有在 runtime-memory 被选为 plugins.slots.memory owner 时才合法；Settings 默认关闭。',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/runtime-core/memory-persistence.ts:518',
+      ],
+    },
   },
   {
     id: 'runtime-memory-inject-pilot',
@@ -248,6 +343,13 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     enable: 'runtime.memory.injectPilot.enabled=true.',
     rollback: 'runtime.memory.injectPilot.enabled=false (default).',
     riskNote: 'R3-1: injectPilot 通过 Context Orchestrator 接入 role-memory/runtime-memory provider；runtime-memory 仅在 E-1 合法面（plugins.slots.memory=runtime-memory + persist=true + provider=true）下读真实持久库，默认关闭。',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts:2144',
+        'openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts:2160',
+      ],
+    },
   },
   {
     id: 'runtime-memory-candidate-generation',
@@ -260,6 +362,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     enable: 'runtime.memory.candidateGeneration=true.',
     rollback: 'runtime.memory.candidateGeneration=false (default).',
     riskNote: 'KE-P1-1: task-terminal candidate generation (failure-guard -> Review Queue). Queue-visible only; never auto-persisted.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/runtime-core/ke-candidate-generation.ts:254',
+      ],
+    },
   },
   {
     id: 'compass-context-block',
@@ -272,6 +380,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     enable: 'runtime.contextBlock.compass.enabled=true.',
     rollback: 'runtime.contextBlock.compass.enabled=false (default).',
     riskNote: 'R3-1: Assembler compass handler 接收生产检索输入；默认关闭。',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/context-engine/assembler.ts:680',
+      ],
+    },
   },
   {
     id: 'role-memory',
@@ -284,6 +398,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     enable: 'runtime.contextBlock.role-memory.enabled=true.',
     rollback: 'runtime.contextBlock.role-memory.enabled=false (default).',
     riskNote: 'R3-1: role-memory projection 接收真实 role/task 输入且不移除其他 provider；默认关闭。',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/context-engine/assembler.ts:684',
+      ],
+    },
   },
   {
     id: 'verseshell-patch-preview',
@@ -299,6 +419,13 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
       'runtime.verseShellFoundation.patchPreview=false（默认）或移除该叶；preview_patch 从工具面消失，apply_patch 与其 write journal 完全不变。任一前置旗标关闭或 kill switch 生效有同样效果。',
     riskNote:
       'VS-P3-01：只读桥。clawx-patch-preview-v1 profile 只列 file.diff / file.hash / file.read_range，14 个写入与 tx.* operation 在请求发出前被机械拒绝；commit / undo / stale-write guard / recovery 仍只属 runtime.coding.writeJournal（见本表 write-journal 条）。已知登记缺口：同族另外 10 个 verseShellFoundation 旗标（VS-P0/P1/P2 交付物）尚未单独入本目录，故本条的 enable 串是目前唯一记录整条前置链的落盘处。',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/agents/agent-tools.ts:1224',
+        'openclaw_runtime/src/agents/agent-tools.ts:1354',
+      ],
+    },
   },
   {
     id: 'rc03-seal',
@@ -314,6 +441,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
       'Unset OPENCLAW_RC03_SEAL or set runtime.rc03.seal = false and restart. With the flag off no seal, runtime receipt, or wire receipt is written.',
     riskNote:
       'Opt-in observation only. Before this entry existed, the "RC-03 is opt-in" intent had no referencable record, so a reviewer could not cite it as proven design intent (deviation TFD-lane2-rc03-seal-default-zero-2026-08-27). Keep default-off; do not flip it inside an implementation task.',
+    executor: {
+      status: 'wired',
+      sites: [
+        'openclaw_runtime/src/context-engine/context-orchestrator.ts:376',
+      ],
+    },
   },
 ] as const;
 
