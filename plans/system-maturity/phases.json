@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "program": "clawx-system-maturity",
+  "description": "Canonical phase topology and navigation metadata. Task and phase status live only in phase STATUS.json files; generated INDEX status is a projection.",
+  "phases": [
+    {
+      "order": 1,
+      "id": "phase0-foundation",
+      "tierFrom": "M0",
+      "tierTo": "M1",
+      "owner": "program-governance",
+      "findings": "F-GOV-001, F-GOV-002, F-GOV-003, F-REL-004",
+      "dependencies": [],
+      "title": "Foundation / Evidence Control"
+    },
+    {
+      "order": 2,
+      "id": "phase1-direct-boundaries",
+      "tierFrom": "M1",
+      "tierTo": "M2",
+      "owner": "main-boundary",
+      "findings": "F-SEC-001, F-SEC-002, F-SEC-003, F-SEC-004, F-SEC-005, F-SEC-006, F-SEC-007, F-SEC-010",
+      "dependencies": [
+        "phase0-foundation"
+      ],
+      "title": "Direct Boundary Closure"
+    },
+    {
+      "order": 3,
+      "id": "phase2-authorization-isolation",
+      "tierFrom": "M2",
+      "tierTo": "M3",
+      "owner": "runtime-auth",
+      "findings": "F-AUTH-001, F-AUTH-002, F-AUTH-003, F-AUTH-004, F-AUTH-005, F-AUTH-006, F-ISO-001, F-ISO-002, F-REL-003",
+      "dependencies": [
+        "phase1-direct-boundaries"
+      ],
+      "title": "Authorization / Isolation Kernel"
+    },
+    {
+      "order": 4,
+      "id": "phase3-data-authority",
+      "tierFrom": "M3",
+      "tierTo": "M4",
+      "owner": "data-governance",
+      "findings": "F-DATA-001, F-DATA-002, F-DATA-003, F-DATA-004, F-DATA-005",
+      "dependencies": [
+        "phase2-authorization-isolation"
+      ],
+      "title": "Data Authority / Privacy"
+    },
+    {
+      "order": 5,
+      "id": "phase4-runtime-surfaces",
+      "tierFrom": "M4",
+      "tierTo": "M5",
+      "owner": "runtime-surfaces",
+      "findings": "F-AUTH-008, F-AUTH-009, F-SEC-007, F-REL-003, F-DATA-004",
+      "dependencies": [
+        "phase2-authorization-isolation",
+        "phase3-data-authority"
+      ],
+      "title": "Gateway / Browser / MCP / Channels"
+    },
+    {
+      "order": 6,
+      "id": "phase5-reliability-abuse",
+      "tierFrom": "M5",
+      "tierTo": "M6",
+      "owner": "reliability",
+      "findings": "F-REL-001, F-REL-002, F-REL-005, F-UX-001, F-GOV-001",
+      "dependencies": [
+        "phase0-foundation",
+        "phase2-authorization-isolation"
+      ],
+      "title": "Reliability / Abuse Resistance"
+    },
+    {
+      "order": 7,
+      "id": "phase6-supply-release",
+      "tierFrom": "M6",
+      "tierTo": "M7",
+      "owner": "supplychain-release",
+      "findings": "F-SUPPLY-001, F-SUPPLY-002, F-GOV-003",
+      "dependencies": [
+        "phase0-foundation",
+        "phase5-reliability-abuse"
+      ],
+      "title": "Supply Chain / Release Trust"
+    },
+    {
+      "order": 8,
+      "id": "phase7-continuous-governance",
+      "tierFrom": "M7",
+      "tierTo": "continuous",
+      "owner": "program-governance",
+      "findings": "F-GOV-001, F-GOV-002, F-GOV-003, F-UX-002",
+      "dependencies": [
+        "phase6-supply-release"
+      ],
+      "title": "Continuous Governance / Maturity"
+    },
+    {
+      "order": 9,
+      "id": "phase8-residual-closure",
+      "tierFrom": "M8",
+      "tierTo": "residual",
+      "owner": "program-governance",
+      "findings": "F-SEC-001, F-REL-004, F-DATA-004, F-GOV-002",
+      "dependencies": [
+        "phase7-continuous-governance"
+      ],
+      "title": "Residual Closure / Continuous Residual Hardening"
+    }
+  ]
+}

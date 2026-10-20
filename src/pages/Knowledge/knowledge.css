@@ -1,0 +1,48 @@
+/*
+ * Knowledge workbench motion.
+ *
+ * One shared spring, one short travel: switching workbench tabs lifts the new
+ * panel in from 6px, and pressable rows dip 0.6% instead of jumping. Both honour
+ * prefers-reduced-motion, and the easing token is shared with the rest of the app
+ * (`--ease-spring`, matching MOTION_SPRING in src/components/ui/motion.ts).
+ */
+
+.knowledge-enter {
+  animation: knowledge-enter 320ms var(--ease-spring) both;
+}
+
+@keyframes knowledge-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.knowledge-press {
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    transform 260ms var(--ease-spring);
+}
+
+.knowledge-press:active {
+  transform: scale(0.994);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .knowledge-enter {
+    animation: none;
+  }
+
+  .knowledge-press {
+    transition: none;
+  }
+
+  .knowledge-press:active {
+    transform: none;
+  }
+}

@@ -22,11 +22,11 @@ export function KnowledgeReviewQueue({ items, filter, query, onFilterChange, onQ
     && (!normalizedQuery || `${item.title} ${item.summary}`.toLocaleLowerCase().includes(normalizedQuery)));
   return (
     <section className="flex h-full min-h-0 flex-col" data-testid="knowledge-review-queue">
-      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border px-3 py-2">
+      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border/50 px-3 py-2">
         <div className="flex flex-wrap gap-1" role="group" aria-label={t('reviewQueue.filterLabel')}>
           {(['all', 'inbox', 'draft', 'proposal'] as const).map((kind) => (
             <button key={kind} type="button" aria-pressed={filter === kind}
-              className={cn('h-8 rounded-md px-2.5 text-xs text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10', filter === kind && 'bg-black/5 text-foreground dark:bg-white/10')}
+              className={cn('h-8 rounded-lg px-2.5 text-xs text-muted-foreground transition-colors hover:bg-foreground/[0.04]', filter === kind && 'bg-foreground/[0.06] text-foreground')}
               data-testid={`knowledge-review-filter-${kind}`} onClick={() => onFilterChange(kind)}>
               {t(`reviewQueue.filters.${kind}`)}
               <span className="ml-1.5 tabular-nums">{kind === 'all' ? items.length : items.filter((item) => item.kind === kind).length}</span>
@@ -35,7 +35,7 @@ export function KnowledgeReviewQueue({ items, filter, query, onFilterChange, onQ
         </div>
         <Input value={query} onChange={(event) => onQueryChange(event.target.value)}
           placeholder={t('reviewQueue.search')} aria-label={t('reviewQueue.search')}
-          className="ml-auto h-8 w-full sm:w-60" data-testid="knowledge-review-search" />
+          className="ml-auto h-8 w-full rounded-lg border-border/60 bg-surface-input sm:w-60" data-testid="knowledge-review-search" />
       </div>
       <div className="min-h-0 flex-1 overflow-auto p-2">
         {visible.length === 0 && <p className="py-10 text-center text-sm text-muted-foreground">{t('reviewQueue.empty')}</p>}
@@ -43,7 +43,7 @@ export function KnowledgeReviewQueue({ items, filter, query, onFilterChange, onQ
           const Icon = ICONS[item.kind];
           return (
             <button key={item.key} type="button" onClick={() => onSelect(item)}
-              className="flex w-full items-start gap-3 rounded-md px-3 py-3 text-left hover:bg-black/5 dark:hover:bg-white/10"
+              className="knowledge-press flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left hover:bg-foreground/[0.04]"
               data-testid="knowledge-review-item" data-item-key={item.key}>
               <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
               <span className="min-w-0 flex-1">
@@ -51,7 +51,7 @@ export function KnowledgeReviewQueue({ items, filter, query, onFilterChange, onQ
                 <span className="mt-1 line-clamp-2 block text-xs text-muted-foreground">{item.summary}</span>
                 <span className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
                   <span>{t(`reviewQueue.filters.${item.kind}`)}</span>
-                  <Badge variant="outline" className="text-[10px]">{t(`reviewQueue.status.${item.status}`)}</Badge>
+                  <Badge variant="outline" className="rounded-full border-border/60 bg-transparent text-[10px] font-normal text-muted-foreground">{t(`reviewQueue.status.${item.status}`)}</Badge>
                 </span>
               </span>
               <ArrowRight className="mt-1 h-3.5 w-3.5 shrink-0 text-muted-foreground" />

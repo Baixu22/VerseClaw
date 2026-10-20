@@ -2,22 +2,18 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  PLAN_ROOT_REL,
+  readPhaseTopology,
+  renderIndexTable,
+  renderStructureTable,
+} from './lib/system-maturity-phases.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const planRoot = path.join(root, 'plans/system-maturity');
+const planRoot = path.join(root, PLAN_ROOT_REL);
 const indexPath = path.join(planRoot, 'INDEX.md');
-
-const phaseDirs = [
-  'phase0-foundation',
-  'phase1-direct-boundaries',
-  'phase2-authorization-isolation',
-  'phase3-data-authority',
-  'phase4-runtime-surfaces',
-  'phase5-reliability-abuse',
-  'phase6-supply-release',
-  'phase7-continuous-governance',
-  'phase8-residual-closure',
-];
+const topology = readPhaseTopology(root);
+const phaseDirs = topology.phases.map((phase) => phase.id);
 
 const statusByPhase = {};
 for (const dir of phaseDirs) {
@@ -32,20 +28,35 @@ for (const dir of phaseDirs) {
 
 const source = fs.readFileSync(indexPath, 'utf8');
 const lines = source.split(/\r?\n/);
-const next = lines.map((line) => {
-  if (!line.startsWith('| phase')) return line;
-  // | phaseX-... | ... | status |
-  const cells = line.split('|').map((c) => c.trim());
-  // cells[0]='' cells[1]=phase ... last non-empty is status
-  if (cells.length < 6) return line;
-  const phaseId = cells[1];
-  if (!statusByPhase[phaseId]) return line;
-  cells[cells.length - 2] = statusByPhase[phaseId];
-  return `| ${cells.slice(1, -1).join(' | ')} |`;
-});
+const headerIndex = lines.findIndex((line) => line.startsWith('| Phase |'));
+let next;
+if (headerIndex >= 0) {
+  const table = renderIndexTable(topology, statusByPhase);
+  let end = headerIndex;
+  while (end < lines.length && lines[end].startsWith('|')) end += 1;
+  next = [...lines.slice(0, headerIndex), ...table, ...lines.slice(end)];
+} else {
+  const suffix = lines.join('\n').replace(/\n*$/u, '');
+  next = `${suffix}\n\n${renderIndexTable(topology, statusByPhase).join('\n')}`.split(/\r?\n/);
+}
 
 const out = `${next.join('\n').replace(/\n*$/u, '')}\n`;
 fs.writeFileSync(indexPath, out);
+
+const structurePath = path.join(planRoot, 'STRUCTURE.md');
+if (fs.existsSync(structurePath)) {
+  const structure = fs.readFileSync(structurePath, 'utf8').replaceAll('\r\n', '\n');
+  const begin = '<!-- BEGIN GENERATED PHASE TABLE -->';
+  const end = '<!-- END GENERATED PHASE TABLE -->';
+  const start = structure.indexOf(begin);
+  const stop = structure.indexOf(end);
+  if (start >= 0 && stop > start) {
+    const table = `${begin}\n${renderStructureTable(topology, statusByPhase).join('\n')}\n${end}`;
+    const nextStructure = structure.slice(0, start) + table + structure.slice(stop + end.length);
+    fs.writeFileSync(structurePath, nextStructure);
+  }
+}
+
 console.log('sync-system-maturity-index: OK');
 for (const [phase, status] of Object.entries(statusByPhase)) {
   console.log(`  ${phase}=${status}`);

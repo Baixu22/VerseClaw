@@ -2,19 +2,18 @@
 
 本文档把 `plans/system-maturity` 中的阶段、依赖、状态、验收、证据和交付规则整理为可直接交给 AI Coding Agent 的提示词。默认使用第一节的总提示词即可；除非需要限定任务或只做审计，不必再逐项补问。
 
-## 当前基线摘要
+## 当前入口（无状态快照）
 
-以下是 2026-07-17 的入口快照；执行时仍须以重新读取的 Git、worktree 和 STATUS 实际状态为准。
+本文件不复制阶段数、任务数或完成状态；这些会漂移。每次执行先读取以下权威来源，再决定任务：
 
-- 计划共 8 个阶段、34 个任务。
-- 当前所有 phase 均为 `planned`，所有 task 均为 `todo`。
-- 当前唯一合法的首任务是 `P0-001`。
-- 当前 `main` HEAD 为 `b1ff416dd162554f74e325fe77be5b5fba29387b`，并已有干净的 `C:\Users\27933\Desktop\clawx\ClawX-maturity-p0` worktree / `codex/maturity-p0` branch 指向同一 commit；开始 P0 时应先检查并复用或明确处置，不要重复创建冲突 worktree。
-- Phase 0 必须串行完成；`phase0-foundation/STATUS.json.phaseStatus=done` 前不得开始 Phase 1 产品开发。
-- 产品改动必须在独立 worktree 中进行；规划文件所在工作树只保存规划与治理变更。
-- `EXECUTION-ORDER.md` 记录的产品开发基线是 `60061e33554311ac3c9871195210df59fe1b5bf2`；`BRANCH-RECONCILIATION.md` 又记录了以 `836a8e2dd4a7fa5f4e10a0948316f1a8a1d251b8` 为比较基线的分支处置。`P0-001` 必须把当前 HEAD、这两个历史记录和 dirty patch 对齐成一个可复核的 canonical baseline，后续任务不得自行猜测或静默替换基线。
-- `README.md` 的 Status values 未列出 `planned`，但全部 phase `STATUS.json` 与 `INDEX.md` 正在使用 `planned`。`P0-002` 必须明确 phase/task 的合法状态枚举并让 validator、文档和现有状态一致；此前不得擅自批量改写状态。
-- `BRANCH-RECONCILIATION.md` 中列出的旧分支均不得直接合并或随意 cherry-pick；仍需的能力必须从当前认可基线重新立项、实现、测试和留证。
+- `plans/system-maturity/phases.json`：阶段顺序、负责人、Finding 与阶段依赖。
+- `plans/system-maturity/*/STATUS.json`：唯一的任务和阶段实时状态。
+- `plans/system-maturity/INDEX.md`：由 `pnpm maturity:sync-index` 生成的状态投影。
+- `plans/system-maturity/BASELINE.json`：P0-001 冻结的审计与产品基线。
+- `plans/system-maturity/BRANCH-RECONCILIATION.md`：历史分支处置；所列旧分支不得直接 merge 或 cherry-pick。
+- 当前 Git HEAD、worktree 和用户 dirty changes：以实际命令输出为准，不得用规划文档替代现场核对。
+
+第一个可执行任务必须通过依赖和状态共同计算，不得把“P0-001”或任何其它历史起点当成当前事实。
 
 ## 一、持续执行总提示词（默认使用）
 
@@ -28,14 +27,14 @@
 
 一、开始前必须完整读取并遵守
 1. 仓库根目录及所触及路径范围内的 AGENTS.md。
-2. plans/system-maturity/README.md、INDEX.md、EXECUTION-ORDER.md、DELIVERY-FORMAT.md、BRANCH-RECONCILIATION.md。
+2. plans/system-maturity/README.md、STRUCTURE.md、phases.json、INDEX.md、EXECUTION-ORDER.md、DELIVERY-FORMAT.md、BRANCH-RECONCILIATION.md。
 3. 当前 phase 的 PLAN.md、STATUS.json 和目标 task 文件。
 4. 触及路径对应的 harness/specs/rules、scenarios、tasks、guides、layers。若任务涉及 Renderer/Main/host-api/api-client/Gateway/OpenClaw runtime 通信，必须从引用 gateway-backend-communication 的 task spec 开始，先运行 pnpm harness context --spec <task-spec>，并按 spec 验证。
 
 二、任务选择规则
 1. 先读取全部 STATUS.json 和 task Depends on，不凭印象选择任务。
 2. 若存在 in_progress 任务，优先恢复它；否则选择依赖全部完成、且符合 EXECUTION-ORDER.md wave/串并行限制的第一个 todo 任务。
-3. 当前初始状态必须从 P0-001 开始。Phase 0 未全部 done 前禁止开始 Phase 1 产品工作。
+3. 第一可执行任务必须由 phases.json、STATUS.json 和任务 Depends on 共同计算；不得用历史首任务 P0-001 覆盖当前状态。
 4. 创建 branch/worktree 前先检查现有同任务 branch、worktree、未提交改动和证据，优先安全恢复，禁止创建重复或冲突的执行现场。
 5. 一个 worktree 只允许一个活跃任务链。不得让不同 worktree 同时编辑 shared/host-api/contract.ts、src/lib/host-api.ts、electron/main/ipc/*、permission stores、共享 schema 或 release manifests。
 6. 未经用户明确授权，不要启动并行子 Agent；即使允许并行，也必须满足 EXECUTION-ORDER.md 的 worktree 和文件所有权条件。
@@ -44,7 +43,7 @@
 1. 执行 git status、git branch --show-current、git rev-parse HEAD、git worktree list，记录实际基线和 dirty 状态。
 2. 用户现有 dirty changes 一律保留；禁止 reset、clean、checkout 覆盖、批量搬运或擅自 stash。
 3. 规划工作树只修改计划、状态、证据和治理文件。产品代码从 EXECUTION-ORDER.md 指定并经 P0-001 固化的 commit 建独立 worktree。
-4. EXECUTION-ORDER.md 与 BRANCH-RECONCILIATION.md 出现的基线差异必须在 P0-001 中显式核对并固化；未完成前不得自行选一个继续产品开发。
+4. BASELINE.json、EXECUTION-ORDER.md 与 BRANCH-RECONCILIATION.md 的基线差异只能由新的治理任务显式核对并固化；不得自行选一个继续产品开发。
 5. BRANCH-RECONCILIATION.md 中的旧分支不得直接 merge/cherry-pick。不得删除 remote refs；任何本地 ref 删除也只能按已批准的分支处置执行。
 
 四、每个任务的执行闭环
@@ -65,7 +64,7 @@
 1. STATUS.json 只保存 phaseStatus、task status、allTasksDone，不写解释。
 2. 最终交付严格使用 DELIVERY-FORMAT.md 的字段：TASK_ID、STATUS、OWNER、CHANGED、TESTS、RESULTS、EVIDENCE、ACCEPTANCE、BLOCKERS、NEXT。
 3. STATUS=done 时 TESTS、RESULTS、EVIDENCE、ACCEPTANCE 均不得为空。
-4. 在 Phase 0 建立 canonical evidence manifest、hash 与 delivery 路径之前，不要为后续 phase 私自创造第二套证据系统；应先完成 P0-001 至 P0-004 的单一控制面。
+4. 不要把 task 文件、STATUS.json、delivery 或成绩单复制成第二套状态真源；证据沿既有 hash-addressed manifest 与 delivery 路径落盘。
 5. 最终回复先给结果和当前状态，再给严格交付字段；不要用长篇解释替代证据。
 
 六、持续推进与停止条件
@@ -74,7 +73,7 @@
 3. 只有以下情况停止并请求用户：需要新权限/凭据；需要执行未授权的远端发布、合并、删除等外部变更；存在会显著改变产品行为的不可判定选择；或同一外部阻断已被充分验证且无法绕过。
 4. 如果本轮无法完成整个计划，必须把当前 task 保持为真实状态，留下可复现证据、精确 NEXT 和续跑入口，禁止虚报 done。
 
-现在从仓库实际状态开始执行。初始计划若未发生变化，从 P0-001 开始；不要跳过前置检查，也不要只复述计划。
+现在从仓库实际状态开始执行。先读取 phases.json、全部 STATUS.json 和任务 Depends on，再计算唯一合法的下一任务；不要跳过前置检查，也不要只复述计划。
 ```
 
 ## 二、指定任务执行提示词
@@ -141,7 +140,7 @@ Phase 6/7 或正式发布前使用：
 输出明确结论：READY 或 NOT READY。READY 必须附全部门禁、退出码、artifact/hash 和 task Acceptance；NOT READY 必须列出硬阻断、责任 task、修复顺序和精确 NEXT。未经用户明确授权不得 tag、push、创建 release、上传产物或删除分支。
 ```
 
-## 七、立即开始 P0-001 的精简提示词
+## 七、历史起点提示词（仅在明确重放 P0-001 时使用）
 
 当前计划尚未启动时，下面这段是最短的可靠入口：
 
@@ -160,4 +159,4 @@ Phase 6/7 或正式发布前使用：
 - 上下文丢失或换 Agent：使用“中断后续跑提示词”。
 - PR/合并前：使用“Wave 集成复核提示词”。
 - 发布前：使用“发布资格审查提示词”。
-- 当前第一次启动：直接使用“立即开始 P0-001 的精简提示词”。
+- 历史重放：仅在明确需要重放 P0-001 时使用“历史起点提示词”；当前推进一律先计算真实依赖与状态。

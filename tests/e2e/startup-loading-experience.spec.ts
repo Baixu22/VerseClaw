@@ -25,6 +25,18 @@ test.describe('startup and route loading experience', () => {
 
       await expect(bootShell).toBeVisible();
       await expect(bootShell).toHaveAttribute('aria-hidden', 'true');
+      await expect(bootShell.locator('.boot-sketch')).toHaveCount(22);
+      await expect(bootShell.locator('.boot-shimmer')).toHaveCount(0);
+      const drawn = await bootShell.evaluate((shell) => ({
+        strokes: shell.querySelectorAll('.boot-sketch rect[pathLength="1"]').length,
+        timeline: Array.from(shell.querySelectorAll('.boot-sketch rect')).map((node) => {
+          const style = getComputedStyle(node);
+          return { name: style.animationName, duration: style.animationDuration, dash: style.strokeDasharray };
+        }),
+      }));
+      expect(drawn.strokes).toBe(22);
+      expect(drawn.timeline.every((entry) => entry.name === 'boot-draw' && entry.duration === '0.38s')).toBe(true);
+      expect(drawn.timeline.every((entry) => entry.dash === '1px')).toBe(true);
       await expect(page.getByTestId('main-layout')).toBeVisible();
       await expect(bootShell).toHaveCount(0, { timeout: 5_000 });
     } finally {
@@ -135,6 +147,14 @@ test.describe('startup and route loading experience', () => {
       const skeleton = page.getByTestId('chat-startup-skeleton');
       await expect(skeleton).toBeVisible();
       await expect(skeleton).toHaveAttribute('aria-busy', 'true');
+      await expect(skeleton.locator('[data-structural-sketch]')).toHaveCount(11);
+      await expect(skeleton.locator('[data-testid="ai-element-shimmer"]')).toHaveCount(0);
+      const sketchTimeline = await skeleton.evaluate((node) => Array.from(node.querySelectorAll('[data-structural-sketch] rect')).map((rect) => {
+        const style = getComputedStyle(rect);
+        return { name: style.animationName, dash: style.strokeDasharray, length: rect.getAttribute('pathLength') };
+      }));
+      expect(sketchTimeline).toHaveLength(11);
+      expect(sketchTimeline.every((entry) => entry.name === 'progressive-stroke' && entry.dash === '1px' && entry.length === '1')).toBe(true);
       await expect(page.getByTestId('chat-welcome-suggestions')).toHaveCount(0);
 
       await expect(page.getByTestId('chat-welcome-suggestions')).toBeVisible({ timeout: 10_000 });

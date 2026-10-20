@@ -13,6 +13,8 @@ import { trackUiEvent } from '@/lib/telemetry';
 import { cn } from '@/lib/utils';
 import { ProvidersSettings } from '@/components/settings/ProvidersSettings';
 import { FeedbackState } from '@/components/common/FeedbackState';
+import { ProgressiveLoadingSurface } from '@/components/loading/StructuralLoadingOverlay';
+import { ModelsUsageLoadingSkeleton } from '@/components/loading/PageLoadingSkeletons';
 import {
   filterUsageHistoryByWindow,
   groupUsageHistory,
@@ -302,11 +304,13 @@ export function Models({ embedded = false }: { embedded?: boolean } = {}) {
               {t('dashboard:recentTokenHistory.title', 'Token Usage History')}
             </h2>
             <div>
-              {usageLoading ? (
-                <div className="flex items-center justify-center py-12 text-muted-foreground bg-black/5 dark:bg-white/5 rounded-3xl border border-transparent border-dashed">
-                  <FeedbackState state="loading" title={t('dashboard:recentTokenHistory.loading')} />
-                </div>
-              ) : visibleUsageHistory.length === 0 ? (
+              <ProgressiveLoadingSurface
+                surfaceId="models"
+                loading={usageLoading}
+                label={t('dashboard:recentTokenHistory.loading')}
+                skeleton={<ModelsUsageLoadingSkeleton />}
+              >
+              {!usageLoading ? (visibleUsageHistory.length === 0 ? (
                 <div className="flex items-center justify-center py-12 text-muted-foreground bg-black/5 dark:bg-white/5 rounded-3xl border border-transparent border-dashed">
                   <FeedbackState state="empty" title={t('dashboard:recentTokenHistory.empty')} />
                 </div>
@@ -494,7 +498,8 @@ export function Models({ embedded = false }: { embedded?: boolean } = {}) {
                     </div>
                   </div>
                 </div>
-              )}
+              )) : null}
+              </ProgressiveLoadingSurface>
             </div>
           </div>
 

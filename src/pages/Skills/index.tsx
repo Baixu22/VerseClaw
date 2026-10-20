@@ -35,6 +35,8 @@ import { useSkillPacksStore } from '@/stores/skill-packs';
 import { useMcpStore } from '@/stores/mcp';
 import { useGatewayStore } from '@/stores/gateway';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { MeasuredLoadingList } from '@/components/loading/MeasuredLoadingList';
+import { SkillRowFrame, SkillStructureRow } from '@/components/loading/DataListFrames';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
 import { createPollScheduler } from '@/lib/poll-scheduler';
@@ -420,16 +422,7 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
       .catch(console.error);
   }, []);
 
-  if (loading) {
-    return (
-      <div className={cn(
-        'flex flex-col items-center justify-center',
-        embedded ? 'min-h-64' : '-m-6 min-h-[calc(100vh-2.5rem)] dark:bg-background',
-      )}>
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
+  const showSkillsLoading = loading && toolTab === 'skills';
 
   return (
     <div
@@ -461,9 +454,10 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
           )}
 
           <div className="flex items-center gap-3 md:mt-2">
-            {hasInstalledSkills && (
+            {(hasInstalledSkills || showSkillsLoading) && (
               <button
                 onClick={handleOpenSkillsFolder}
+                disabled={!hasInstalledSkills}
                 className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors shrink-0 text-meta font-medium px-4 h-8 rounded-full border border-black/10 dark:border-white/10 flex items-center justify-center text-foreground/80 hover:text-foreground"
               >
                 <FolderOpen className="h-4 w-4 mr-2" />
@@ -608,9 +602,11 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
           </div>
 
         {/* Content Area */}
-        <div className={cn(
-          embedded ? 'min-h-0' : 'flex-1 overflow-y-auto pr-2 pb-10 min-h-0 -mr-2',
-        )}>
+        <div
+          className={cn(
+            embedded ? 'min-h-0' : 'flex-1 overflow-y-auto pr-2 pb-10 min-h-0 -mr-2',
+          )}
+        >
           {toolTab === 'mcp' ? (
             <McpServicesPanel />
           ) : toolTab === 'packs' ? (
@@ -654,59 +650,71 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
             </div>
           )}
 
-          <div className="flex flex-col gap-1">
-            {filteredSkills.length === 0 ? (
+          <MeasuredLoadingList
+            surfaceId="skills"
+            loading={showSkillsLoading}
+            label={t('common:status.loading')}
+            listClassName="flex flex-col gap-1"
+            skeletonRows={[0, 1, 2].map((index) => <SkillStructureRow key={index} />)}
+            emptyState={(
               <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
                 <Puzzle className="h-10 w-10 mb-4 opacity-50" />
                 <p>{searchQuery ? t('noSkillsSearch') : t('noSkillsAvailable')}</p>
               </div>
-            ) : (
-              filteredSkills.map((skill) => (
-                <div
+            )}
+            rows={filteredSkills.map((skill) => (
+                <SkillRowFrame
                   key={skill.id}
-                  className="group flex flex-row items-center justify-between py-3.5 px-3 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer border-b border-black/5 dark:border-white/5 last:border-0"
+                  data-testid={`skill-row-${skill.id}`}
+                  role="button"
+                  tabIndex={0}
+                  className="cursor-pointer"
                   onClick={() => setSelectedSkill(skill)}
-                >
-                  <div className="flex items-start gap-4 flex-1 overflow-hidden pr-4">
-                    <div className="h-10 w-10 shrink-0 flex items-center justify-center text-2xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-xl overflow-hidden">
-                      {skill.icon || '🧩'}
-                    </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <div className="flex items-center gap-2 mb-1">
+                  onKeyDown={(event) => {
+                    if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) {
+                      event.preventDefault();
+                      setSelectedSkill(skill);
+                    }
+                  }}
+                  icon={skill.icon || '🧩'}
+                  title={(
+                    <>
                         <h3 className="text-sm font-semibold text-foreground truncate">{skill.name}</h3>
                         {skill.isCore ? (
                           <Lock className="h-3 w-3 text-muted-foreground" />
                         ) : null}
-                      </div>
-                      <p className="text-sm text-muted-foreground line-clamp-1 pr-6 leading-relaxed">
-                        {skill.description}
-                      </p>
-                      <div className="mt-1 flex items-center gap-2 text-tiny text-foreground/55 min-w-0">
-                        <Badge variant="secondary" className="shrink-0 whitespace-nowrap px-1.5 py-0 h-5 text-2xs font-medium bg-black/5 dark:bg-white/10 border-0 shadow-none">
+                    </>
+                  )}
+                  detail={skill.description}
+                  meta={(
+                    <>
+                        <Badge data-build-chip variant="secondary" className="shrink-0 whitespace-nowrap px-1.5 py-0 h-5 text-2xs font-medium bg-black/5 dark:bg-white/10 border-0 shadow-none">
                           {resolveSkillSourceLabel(skill, t)}
                         </Badge>
                         <span className="truncate font-mono min-w-0">
                           {skill.baseDir || t('detail.pathUnavailable')}
                         </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-6 shrink-0" onClick={e => e.stopPropagation()}>
+                    </>
+                  )}
+                  actions={(
+                    <>
                     {skill.version && (
                       <span className="text-meta font-mono text-muted-foreground">
                         v{skill.version}
                       </span>
                     )}
                     <Switch
+                      data-build-action
+                      aria-label={skill.name}
                       checked={skill.enabled}
                       onCheckedChange={(checked) => handleToggle(skill.id, checked)}
                       disabled={skill.isCore}
                     />
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+                    </>
+                  )}
+                />
+              ))}
+          />
             </>
           )}
         </div>

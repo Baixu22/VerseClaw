@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import './knowledge.css';
 import type { KnowledgeChatContext } from '@/pages/Chat/KnowledgeChat';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { AlertTriangle, ArrowRight, BookOpen, Bot, Check, Columns3, Database, Edit3, Ellipsis, Eye, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, Link2, ListTodo, Loader2, Plus, Puzzle, RefreshCw, RotateCcw, Ruler, Save, Search, ShieldCheck, Sparkles, Tags, Upload, Wrench, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
+import { useDelayedVisibility } from '@/components/loading/use-delayed-visibility';
+import { QuietListSkeleton } from '@/components/loading/PageLoadingSkeletons';
 import remarkGfm from 'remark-gfm';
 import { toast } from 'sonner';
 
@@ -93,8 +96,8 @@ type SourceSetRef = KnowledgeSourceSet['sourceRefs'][number];
  *   panel   bg-surface-modal    raised cards and popovers
  *   control bg-surface-input    inputs, code panes, recessed rows
  */
-const PANEL_CLASS = 'rounded-xl border border-black/10 bg-surface-modal shadow-sm dark:border-white/10';
-const QUIET_BUTTON_CLASS = 'h-9 rounded-lg border border-black/10 bg-transparent px-3 text-meta font-medium text-foreground/80 shadow-none transition-colors hover:bg-black/5 hover:text-foreground dark:border-white/10 dark:hover:bg-white/5';
+const PANEL_CLASS = 'rounded-2xl border border-border/50 bg-surface-modal';
+const QUIET_BUTTON_CLASS = 'h-9 rounded-lg border border-border/60 bg-transparent px-3 text-meta font-medium text-foreground/80 shadow-none transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5';
 const MENU_ITEM_CLASS = 'flex h-9 cursor-default select-none items-center gap-2 rounded-md px-2.5 text-sm outline-none transition-colors data-[disabled]:opacity-40 data-[highlighted]:bg-black/5 dark:data-[highlighted]:bg-white/10 motion-reduce:transition-none';
 const ROW_CLASS = 'flex items-center justify-between gap-4 rounded-lg bg-surface-input px-3 py-2';
 const WORKSPACE_SECTION_CLASS = 'min-h-0 bg-surface-sidebar';
@@ -285,21 +288,12 @@ function inboxTokenCost(item: KnowledgeInboxItem): number | null {
 function inboxSensitivityClass(sensitivity: 'normal' | 'secret_adjacent' | 'secret'): string {
   if (sensitivity === 'secret') return 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400';
   if (sensitivity === 'secret_adjacent') return 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400';
-  return 'border-slate-500/30 bg-slate-500/10 text-slate-700 dark:text-slate-400';
-}
-
-function inboxRecommendationClass(recommendation: InboxRecommendation): string {
-  if (recommendation === 'save') return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400';
-  if (recommendation === 'archive-only') return 'border-slate-500/30 bg-slate-500/10 text-slate-700 dark:text-slate-400';
-  return 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400';
+  return 'border-border/60 bg-transparent text-muted-foreground';
 }
 
 function inboxTriageClass(action: InboxTriageGroup): string {
-  if (action === 'needs-decision') return 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400';
-  if (action === 'ready-for-review') return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400';
-  if (action === 'possible-duplicate') return 'border-violet-500/30 bg-violet-500/10 text-violet-700 dark:text-violet-400';
-  if (action === 'observe') return 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-400';
-  return 'border-slate-500/30 bg-slate-500/10 text-slate-700 dark:text-slate-400';
+  if (action === 'needs-decision') return 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400';
+  return 'border-border/60 bg-transparent text-muted-foreground';
 }
 
 function inboxKnownLabel(namespace: 'status' | 'temporality' | 'outcomes', value: string): string {
@@ -336,7 +330,7 @@ function runtimeLineageBadges(lineage: KnowledgeRuntimeLineage | undefined, t: (
     ...(lineage.taskLedgerRootId ? [[t('runtime.lineageLedger'), lineage.taskLedgerRootId] as [string, string]] : []),
   ];
   return fields.map(([label, value]) => (
-    <Badge key={`${label}:${value}`} variant="outline" className="max-w-full border-black/10 bg-transparent text-[10px] dark:border-white/10">
+    <Badge key={`${label}:${value}`} variant="outline" className="max-w-full border-border/60 bg-transparent text-[10px]">
       <span className="mr-1 text-muted-foreground">{label}:</span><span className="max-w-[18rem] truncate font-mono">{value}</span>
     </Badge>
   ));
@@ -414,6 +408,7 @@ export function Knowledge() {
   const [, setDismissedIssueIds] = useState<Set<string>>(() => new Set());
   const [runtimeLessons, setRuntimeLessons] = useState<KnowledgeRuntimeLessonsReportResult | null>(null);
   const [runtimeLessonsLoading, setRuntimeLessonsLoading] = useState(false);
+  const runtimeSkeletonVisible = useDelayedVisibility(runtimeLessonsLoading && !runtimeLessons, 200);
   const [runtimeLessonsRequested, setRuntimeLessonsRequested] = useState(false);
   const [runtimeSuggestions, setRuntimeSuggestions] = useState<KnowledgeSekbDistillationSuggestion[]>([]);
   const [selectedRuntimeSuggestionIndex, setSelectedRuntimeSuggestionIndex] = useState(0);
@@ -444,9 +439,6 @@ export function Knowledge() {
   const warnings = status?.warnings ?? [];
   const selectedPageBody = useMemo(() => getPageBody(selectedPage), [selectedPage]);
   const ready = Boolean(status?.vaultExists);
-  const statusTone = ready
-    ? 'border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400'
-    : 'border-yellow-500/20 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400';
   const groupedInboxItems = useMemo(() => {
     const groups: Record<InboxTriageGroup, KnowledgeInboxItem[]> = INBOX_TRIAGE_ORDER.reduce((acc, action) => {
       acc[action] = [];
@@ -505,7 +497,7 @@ export function Knowledge() {
       ? 'border-red-500/30 bg-red-500/5 text-red-700 dark:text-red-400'
       : severity === 'warning'
         ? 'border-yellow-500/30 bg-yellow-500/5 text-yellow-700 dark:text-yellow-400'
-        : 'border-black/10 bg-surface-input text-muted-foreground dark:border-white/10';
+        : 'border-border/60 bg-surface-input text-muted-foreground';
     return {
       kind,
       count,
@@ -1423,53 +1415,46 @@ export function Knowledge() {
   return (
     <div data-testid="knowledge-page" className="-m-5 flex h-[calc(100%+2.5rem)] min-h-0 flex-col overflow-hidden bg-background">
       <TooltipProvider delayDuration={250}>
-      <header className="shrink-0 border-b border-black/10 bg-surface-modal px-5 pt-4 dark:border-white/10 md:px-6">
-        <div className="flex min-w-0 items-center justify-between gap-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <BookOpen className="h-5 w-5 shrink-0 text-foreground/65" />
-            <h1 className="truncate font-serif text-2xl font-normal tracking-tight text-foreground">{t('title')}</h1>
-            <button
-              type="button"
-              className={cn('inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border px-2 text-xs font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5', statusTone)}
-              onClick={() => setUtilityPanel('status')}
-              data-testid="knowledge-status-trigger"
-            >
-              <span className={cn('h-1.5 w-1.5 rounded-full', ready ? 'bg-green-500' : 'bg-yellow-500')} />
-              {ready ? t('status.ready') : t('status.missing')}
-            </button>
-          </div>
+      <header className="shrink-0 border-b border-border/50 bg-surface-modal px-3 md:px-5">
+        <div className="flex min-w-0 items-center justify-between gap-3">
+          <nav className="flex h-12 min-w-0 items-center gap-0.5 overflow-x-auto" data-testid="knowledge-workbench-tabs" aria-label={t('tabs.navigation')}>
+            {PRIMARY_WORKBENCH_TABS.map((tab) => {
+              const TabIcon = TAB_ICONS[tab];
+              const isActive = workbenchTab === tab || (tab === 'review-queue' && ['inbox', 'drafts', 'review'].includes(workbenchTab));
+              const count = tab === 'review-queue' ? reviewQueueItems.length : 0;
+              return (
+                <button
+                  key={tab}
+                  type="button"
+                  className={cn(
+                    'flex h-8 shrink-0 items-center gap-1.5 rounded-lg border-b-2 px-2.5 text-[13px] font-medium transition-colors',
+                    isActive
+                      ? 'border-foreground bg-foreground/[0.045] text-foreground'
+                      : 'border-transparent text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground',
+                  )}
+                  onClick={() => setWorkbenchTab(tab)}
+                  data-testid={`knowledge-tab-${tab}`}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  <TabIcon className="h-3.5 w-3.5" />
+                  {t(tab === 'library' ? 'tabs.library' : 'tabs.reviewQueue')}
+                  {count > 0 ? <span className="rounded-full bg-foreground/[0.07] px-1.5 text-[10px] tabular-nums text-muted-foreground">{count}</span> : null}
+                </button>
+              );
+            })}
+          </nav>
 
           <div className="flex shrink-0 items-center gap-1.5">
-            {!ready ? (
-              <Button type="button" size="sm" onClick={() => void runAction('init', () => hostApi.knowledge.init())} disabled={busy}>
-                {running === 'init' ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin motion-reduce:animate-none" /> : <Check className="mr-2 h-3.5 w-3.5" />}
-                {t('actions.init')}
-              </Button>
-            ) : null}
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 rounded-lg text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
-                  onClick={() => {
-                    const knowledgeContext: KnowledgeChatContext = { editorTitle, editorBody, editorSource, editorTags, editorType, editorMode, query, sourceRefs: currentSourceRefs, sourceSetId: currentSourceSetId, sourceSetTitle, searchResult, selectedRow, selectedPage };
-                    navigate({ pathname: location.pathname, search: location.search }, { replace: true, state: { knowledgeContext } });
-                    const search = new URLSearchParams(location.search);
-                    for (const key of ['view', 'kind', 'id', 'lookup']) search.delete(key);
-                    search.set('knowledge', 'ask');
-                    navigate({ pathname: '/', search: search.toString() }, { state: { knowledgeContext } });
-                  }}
-                  aria-label={t('librarian.openAssistant')}
-                  data-testid="knowledge-librarian-open"
-                >
-                  <Bot className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>{t('librarian.openAssistant')}</TooltipContent>
-            </Tooltip>
+            <button
+              type="button"
+              className="knowledge-press flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2 text-xs text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground"
+              onClick={() => setUtilityPanel('status')}
+              data-testid="knowledge-status-trigger"
+              aria-label={ready ? t('status.ready') : t('status.missing')}
+            >
+              <span className={cn('h-1.5 w-1.5 rounded-full', ready ? 'bg-emerald-500' : 'bg-amber-500')} />
+              <span className="hidden sm:inline">{ready ? t('status.ready') : t('status.missing')}</span>
+            </button>
 
             <DropdownMenu.Root>
               <Tooltip>
@@ -1547,38 +1532,11 @@ export function Knowledge() {
             </DropdownMenu.Root>
           </div>
         </div>
-
-        <nav className="mt-3 flex h-10 items-end gap-1 overflow-x-auto" data-testid="knowledge-workbench-tabs" aria-label={t('tabs.navigation')}>
-          {PRIMARY_WORKBENCH_TABS.map((tab) => {
-            const TabIcon = TAB_ICONS[tab];
-            const isActive = workbenchTab === tab || (tab === 'review-queue' && ['inbox', 'drafts', 'review'].includes(workbenchTab));
-            const count = tab === 'review-queue' ? reviewQueueItems.length : 0;
-            return (
-              <button
-                key={tab}
-                type="button"
-                className={cn(
-                  'flex h-9 shrink-0 items-center gap-2 border-b-2 px-3 text-sm font-medium transition-colors',
-                  isActive
-                    ? 'border-foreground text-foreground'
-                    : 'border-transparent text-muted-foreground hover:border-black/20 hover:text-foreground dark:hover:border-white/20',
-                )}
-                onClick={() => setWorkbenchTab(tab)}
-                data-testid={`knowledge-tab-${tab}`}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                <TabIcon className="h-4 w-4" />
-                {t(tab === 'library' ? 'tabs.library' : 'tabs.reviewQueue')}
-                {count > 0 ? <span className="text-xs tabular-nums text-muted-foreground">{count}</span> : null}
-              </button>
-            );
-          })}
-        </nav>
       </header>
 
       <main className="flex min-h-0 flex-1 flex-col overflow-hidden px-5 pb-5 pt-4 md:px-6">
         {error && (
-          <div data-testid="knowledge-error" className="mb-4 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          <div data-testid="knowledge-error" className="mb-3 rounded-xl bg-destructive/[0.07] px-3 py-2 text-xs text-destructive">
             {error}
           </div>
         )}
@@ -1588,7 +1546,7 @@ export function Knowledge() {
               card header repeating that name plus a read-only badge on every tab was
               duplicated chrome. Boundary wording now lives once per flow, at the
               point of action, rather than as a standing banner. */}
-          <CardContent className={cn('min-h-0 flex-1', workbenchTab === 'library' || workbenchTab === 'review-queue' ? 'p-0' : 'overflow-y-auto p-4')}>
+          <CardContent key={workbenchTab} className={cn('knowledge-enter min-h-0 flex-1', workbenchTab === 'library' || workbenchTab === 'review-queue' ? 'p-0' : 'overflow-y-auto p-4')}>
             {workbenchTab === 'review-queue' && <KnowledgeReviewQueue items={reviewQueueItems} filter={reviewQueueFilter} query={reviewQueueQuery} onFilterChange={setReviewQueueFilter} onQueryChange={setReviewQueueQuery} onSelect={openReviewItem} />}
             {['inbox', 'drafts', 'review'].includes(workbenchTab) && (
               <Button variant="ghost" size="sm" className="mb-3 h-8" onClick={() => setWorkbenchTab('review-queue')} data-testid="knowledge-review-back">
@@ -1597,55 +1555,78 @@ export function Knowledge() {
             )}
             {workbenchTab === 'library' && (
               <div className="grid h-full min-h-0 grid-cols-[232px_minmax(0,1fr)]" data-testid="knowledge-library">
-                <aside className={cn('flex min-h-0 flex-col border-r border-black/10 dark:border-white/10', WORKSPACE_SECTION_CLASS)} data-testid="knowledge-vault-sidebar">
-                  <div className="space-y-1.5 border-b border-black/10 p-3 dark:border-white/10">
-                    <div className="flex gap-1.5">
+                <aside className={cn('flex min-h-0 flex-col border-r border-border/60', WORKSPACE_SECTION_CLASS)} data-testid="knowledge-vault-sidebar">
+                  <div className="border-b border-border/50 p-2.5">
+                    <div className="flex items-center gap-1">
                       <div className="relative min-w-0 flex-1">
                         <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-                        <Input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void searchWiki(); }} placeholder={t('search.placeholder')} data-testid="knowledge-search-input" className="h-8 border-black/10 bg-surface-input pl-8 text-xs shadow-none dark:border-white/10" />
+                        <Input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void searchWiki(); }} placeholder={t('search.placeholder')} data-testid="knowledge-search-input" className="h-8 rounded-lg border-border/60 bg-surface-input pl-8 text-xs shadow-none" />
                       </div>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground" onClick={() => void searchWiki()} disabled={busy || !query.trim()} data-testid="knowledge-search-submit" aria-label={t('search.button')}>
+                          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 shrink-0 rounded-lg text-muted-foreground hover:text-foreground" onClick={() => void searchWiki()} disabled={busy || !query.trim()} data-testid="knowledge-search-submit" aria-label={t('search.button')}>
                             {running === 'search' ? <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" /> : <Search className="h-3.5 w-3.5" />}
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>{t('search.button')}</TooltipContent>
                       </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 shrink-0 rounded-lg text-muted-foreground hover:text-foreground" onClick={createEditorNote} data-testid="knowledge-new-note" aria-label={t('workspace.newNote')}>
+                            <Plus className="h-3.5 w-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>{t('workspace.newNote')}</TooltipContent>
+                      </Tooltip>
+                      <DropdownMenu.Root>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <DropdownMenu.Trigger asChild>
+                              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 shrink-0 rounded-lg text-muted-foreground hover:text-foreground" data-testid="knowledge-type-menu" aria-label={t('workspace.browseTypes')}>
+                                <Tags className="h-3.5 w-3.5" />
+                              </Button>
+                            </DropdownMenu.Trigger>
+                          </TooltipTrigger>
+                          <TooltipContent>{t('workspace.browseTypes')}</TooltipContent>
+                        </Tooltip>
+                        <DropdownMenu.Portal>
+                          <DropdownMenu.Content align="start" sideOffset={5} className="z-[80] min-w-60 rounded-lg border border-border bg-surface-modal p-1.5 shadow-xl">
+                            {KNOWLEDGE_TYPES.map((type) => {
+                              const TypeIcon = TYPE_ICONS[type];
+                              return (
+                                <DropdownMenu.Item key={type} className={MENU_ITEM_CLASS} onSelect={() => void searchWiki(t(`types.${type}`))}>
+                                  <TypeIcon className="h-4 w-4 text-muted-foreground" />
+                                  <span className="min-w-0 flex-1 truncate">{t(`types.${type}`)}</span>
+                                  <span className="tabular-nums text-muted-foreground">{knowledgeTypeCount(pageCounts, type)}</span>
+                                </DropdownMenu.Item>
+                              );
+                            })}
+                          </DropdownMenu.Content>
+                        </DropdownMenu.Portal>
+                      </DropdownMenu.Root>
                     </div>
-                    <Button type="button" variant="ghost" className="h-8 w-full justify-start px-2 text-xs font-normal text-muted-foreground shadow-none hover:text-foreground" onClick={createEditorNote} data-testid="knowledge-new-note">
-                      <Plus className="mr-2 h-3.5 w-3.5" />
-                      {t('workspace.newNote')}
-                    </Button>
-                    <DropdownMenu.Root>
-                      <DropdownMenu.Trigger asChild>
-                        <Button type="button" variant="ghost" className="h-8 w-full justify-between px-2 text-xs font-normal text-muted-foreground shadow-none hover:text-foreground" data-testid="knowledge-type-menu">
-                          <span className="flex items-center gap-2"><Tags className="h-3.5 w-3.5" />{t('workspace.browseTypes')}</span>
-                          <Ellipsis className="h-3.5 w-3.5" />
-                        </Button>
-                      </DropdownMenu.Trigger>
-                      <DropdownMenu.Portal>
-                        <DropdownMenu.Content align="start" sideOffset={5} className="z-[80] min-w-60 rounded-lg border border-border bg-surface-modal p-1.5 shadow-xl">
-                          {KNOWLEDGE_TYPES.map((type) => {
-                            const TypeIcon = TYPE_ICONS[type];
-                            return (
-                              <DropdownMenu.Item key={type} className={MENU_ITEM_CLASS} onSelect={() => void searchWiki(t(`types.${type}`))}>
-                                <TypeIcon className="h-4 w-4 text-muted-foreground" />
-                                <span className="min-w-0 flex-1 truncate">{t(`types.${type}`)}</span>
-                                <span className="tabular-nums text-muted-foreground">{knowledgeTypeCount(pageCounts, type)}</span>
-                              </DropdownMenu.Item>
-                            );
-                          })}
-                        </DropdownMenu.Content>
-                      </DropdownMenu.Portal>
-                    </DropdownMenu.Root>
                   </div>
                   <div className="min-h-0 flex-1 overflow-auto p-2">
-                    <div className="mb-1.5 px-2 font-mono text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">{t('workspace.documents')}</div>
+                    <div className="mb-1 flex items-center justify-between px-2 font-mono text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                      <span>{t('workspace.documents')}</span>
+                      {rows.length > 0 ? <span className="tabular-nums">{rows.length}</span> : null}
+                    </div>
                     <div className="space-y-0.5" data-testid="knowledge-document-list">
                       {rows.length === 0 && (
-                        <div className="px-2 py-0.5 text-xs text-muted-foreground">
-                          {t('workspace.emptyDocuments')}
+                        <div className="mx-1 mt-1 rounded-xl border border-dashed border-border/60 px-3 py-6 text-center">
+                          <FileText className="mx-auto h-5 w-5 text-muted-foreground/60" />
+                          <p className="mt-2 text-xs leading-5 text-muted-foreground">{t('workspace.emptyDocuments')}</p>
+                          {ready ? (
+                            <Button type="button" variant="ghost" size="sm" className="mt-2 h-7 rounded-lg px-2 text-xs" onClick={createEditorNote} data-testid="knowledge-empty-new-note">
+                              <Plus className="mr-1 h-3.5 w-3.5" />
+                              {t('workspace.newNote')}
+                            </Button>
+                          ) : (
+                            <Button type="button" size="sm" className="mt-2 h-7 rounded-lg px-2.5 text-xs" onClick={() => void runAction('init', () => hostApi.knowledge.init())} disabled={busy} data-testid="knowledge-empty-init">
+                              {running === 'init' ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin motion-reduce:animate-none" /> : <Plus className="mr-1 h-3.5 w-3.5" />}
+                              {t('actions.init')}
+                            </Button>
+                          )}
                         </div>
                       )}
                       {rows.map((row, index) => {
@@ -1655,10 +1636,10 @@ export function Knowledge() {
                           <div
                             key={`${lookup || index}:workspace`}
                             className={cn(
-                              'group flex items-center gap-1 rounded-[6px] pr-1 transition-colors',
+                              'group flex items-center gap-1 rounded-lg pr-1 transition-colors',
                               selected
-                                ? 'bg-black/[0.06] text-foreground dark:bg-white/10'
-                                : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
+                                ? 'bg-foreground/[0.07] text-foreground'
+                                : 'hover:bg-foreground/[0.045]',
                             )}
                             data-testid="knowledge-document-row"
                           >
@@ -1684,7 +1665,7 @@ export function Knowledge() {
                   </div>
                 </aside>
                 <section className="flex min-h-0 flex-col bg-background" data-testid="knowledge-markdown-workspace">
-                  <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-background p-3 dark:border-white/10">
+                  <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-border/60 bg-background p-3">
                     <div className="min-w-0 flex-1">
                       {effectiveEditorMode === 'preview'
                         ? <h2 className="truncate font-serif text-xl font-normal tracking-tight" data-testid="knowledge-editor-title">{editorTitle || t('workspace.untitled')}</h2>
@@ -1696,17 +1677,17 @@ export function Knowledge() {
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-1.5">
-                      <Button type="button" variant="ghost" className="h-8 rounded-md px-2.5 text-xs" data-testid="knowledge-use-result-draft" onClick={useSelectedResultInDraft} disabled={!selectedRow || !selectedPageBody.trim()}>
+                      <Button type="button" variant="ghost" className="h-8 rounded-lg px-2.5 text-xs" data-testid="knowledge-use-result-draft" onClick={useSelectedResultInDraft} disabled={!selectedRow || !selectedPageBody.trim()}>
                         <Edit3 className="mr-1.5 h-3.5 w-3.5" />{t('search.useInDraft')}
                       </Button>
-                      <Button type="button" variant="ghost" className="h-8 rounded-md px-2.5 text-xs" onClick={() => setUtilityPanel('sources')} data-testid="knowledge-source-tools">
+                      <Button type="button" variant="ghost" className="h-8 rounded-lg px-2.5 text-xs" onClick={() => setUtilityPanel('sources')} data-testid="knowledge-source-tools">
                         <Layers className="mr-1.5 h-3.5 w-3.5" />{t('workspace.sourceTools')}
                       </Button>
-                      <div className="flex items-center gap-1 rounded-lg border border-black/10 bg-background p-1 dark:border-white/10">
+                      <div className="flex items-center gap-0.5 rounded-lg bg-foreground/[0.05] p-0.5">
                         {((narrowEditor ? ['edit', 'preview'] : ['edit', 'preview', 'split']) as MarkdownEditorMode[]).map((mode) => {
                           const ModeIcon = mode === 'edit' ? Edit3 : mode === 'preview' ? Eye : Columns3;
                           return (
-                            <button key={mode} type="button" className={cn('flex h-7 w-8 items-center justify-center rounded-md transition-colors', effectiveEditorMode === mode ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5')} onClick={() => setEditorMode(mode)} title={t(`workspace.modes.${mode}`)} aria-label={t(`workspace.modes.${mode}`)} aria-pressed={effectiveEditorMode === mode} data-testid={`knowledge-editor-mode-${mode}`}>
+                            <button key={mode} type="button" className={cn('flex h-7 w-8 items-center justify-center rounded-[7px] transition-colors', effectiveEditorMode === mode ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5')} onClick={() => setEditorMode(mode)} title={t(`workspace.modes.${mode}`)} aria-label={t(`workspace.modes.${mode}`)} aria-pressed={effectiveEditorMode === mode} data-testid={`knowledge-editor-mode-${mode}`}>
                               <ModeIcon className="h-3.5 w-3.5" />
                             </button>
                           );
@@ -1714,12 +1695,12 @@ export function Knowledge() {
                       </div>
                     </div>
                   </div>
-                  {effectiveEditorMode !== 'preview' && <div className="grid shrink-0 gap-2 border-b border-black/10 bg-surface-input p-2.5 dark:border-white/10 md:grid-cols-[160px_minmax(0,1fr)_150px]">
-                    <select value={editorType} onChange={(event) => setEditorType(event.target.value as KnowledgeDraftType)} className="h-9 rounded-lg border border-black/10 bg-surface-input px-3 text-sm shadow-none dark:border-white/10" data-testid="knowledge-editor-type" aria-label={t('draft.typeLabel')}>
+                  {effectiveEditorMode !== 'preview' && <div className="grid shrink-0 gap-2 border-b border-border/40 bg-surface-input/40 p-2.5 md:grid-cols-[160px_minmax(0,1fr)_150px]">
+                    <select value={editorType} onChange={(event) => setEditorType(event.target.value as KnowledgeDraftType)} className="h-9 rounded-lg border border-border/60 bg-surface-input px-3 text-sm shadow-none" data-testid="knowledge-editor-type" aria-label={t('draft.typeLabel')}>
                       {KNOWLEDGE_TYPES.map((type) => <option key={type} value={type}>{t(`types.${type}`)}</option>)}
                     </select>
-                    <Input value={editorTags} onChange={(event) => setEditorTags(event.target.value)} placeholder={t('workspace.tagsPlaceholder')} className="h-9 bg-surface-input shadow-none" data-testid="knowledge-editor-tags" />
-                    <Button type="button" className="shadow-none" onClick={() => void sendEditorToReview()} disabled={busy || !editorBody.trim()} data-testid="knowledge-editor-save-draft">
+                    <Input value={editorTags} onChange={(event) => setEditorTags(event.target.value)} placeholder={t('workspace.tagsPlaceholder')} className="h-9 rounded-lg border-border/60 bg-surface-input shadow-none" data-testid="knowledge-editor-tags" />
+                    <Button type="button" className="h-9 rounded-lg shadow-none" onClick={() => void sendEditorToReview()} disabled={busy || !editorBody.trim()} data-testid="knowledge-editor-save-draft">
                       {running === 'editorDraft' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                       {t('workspace.submitReview')}
                     </Button>
@@ -1729,7 +1710,7 @@ export function Knowledge() {
                       <Textarea value={editorBody} onChange={(event) => setEditorBody(event.target.value)} className="h-full min-h-0 resize-none rounded-none border-0 bg-background p-5 font-mono text-sm leading-7 shadow-none focus-visible:ring-0" data-testid="knowledge-markdown-editor" />
                     )}
                     {(effectiveEditorMode === 'preview' || effectiveEditorMode === 'split') && (
-                      <div className="h-full min-h-0 overflow-auto border-black/10 bg-background p-5 text-sm leading-7 dark:border-white/10 lg:border-l [&_a]:text-primary [&_blockquote]:border-l-2 [&_blockquote]:border-black/20 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1 [&_h1]:mb-4 [&_h1]:font-serif [&_h1]:text-3xl [&_h1]:font-normal [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-normal [&_li]:ml-5 [&_ol]:list-decimal [&_p]:mb-3 [&_pre]:overflow-auto [&_pre]:rounded-lg [&_pre]:bg-black/5 [&_pre]:p-3 [&_ul]:list-disc" data-testid="knowledge-markdown-preview">
+                      <div className="h-full min-h-0 overflow-auto border-border/60 bg-background p-5 text-sm leading-7 lg:border-l [&_a]:text-primary [&_blockquote]:border-l-2 [&_blockquote]:border-black/20 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1 [&_h1]:mb-4 [&_h1]:font-serif [&_h1]:text-3xl [&_h1]:font-normal [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-normal [&_li]:ml-5 [&_ol]:list-decimal [&_p]:mb-3 [&_pre]:overflow-auto [&_pre]:rounded-lg [&_pre]:bg-black/5 [&_pre]:p-3 [&_ul]:list-disc" data-testid="knowledge-markdown-preview">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{editorBody || t('workspace.emptyPreview')}</ReactMarkdown>
                       </div>
                     )}
@@ -1742,19 +1723,12 @@ export function Knowledge() {
               <div className="grid gap-4 lg:grid-cols-[340px_minmax(0,1fr)]" data-testid="knowledge-inbox">
                 <div className="space-y-3">
                   {keReviewQueueEnabled === false && (
-                    <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400" data-testid="knowledge-inbox-ke-unavailable">
+                    <div className="flex items-start gap-2 rounded-xl bg-amber-500/[0.07] px-3 py-2 text-xs leading-5 text-amber-700 dark:text-amber-400" data-testid="knowledge-inbox-ke-unavailable">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
                       {t('inbox.keUnavailable')}
                     </div>
                   )}
-                  <div className="flex items-center gap-3 rounded-lg bg-surface-input p-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10">
-                      <Inbox className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
-                    </div>
-                    <div>
-                      <div className="text-xl font-semibold tabular-nums tracking-tight">{inboxItems.length}</div>
-                      <div className="text-[11px] text-muted-foreground">{t('inbox.pending')}</div>
-                    </div>
-                  </div>
+
                   <div className="max-h-80 space-y-1.5 overflow-auto">
                     {inboxItems.length === 0 && <p className="py-6 text-center text-sm text-muted-foreground">{t('inbox.empty')}</p>}
                     {INBOX_TRIAGE_ORDER.map((triageAction) => {
@@ -1769,17 +1743,17 @@ export function Knowledge() {
                           {group.map((item) => {
                             const isSelected = selectedInboxItem?.id === item.id;
                             const triage = inboxTriage(item);
-                            const recommendationForItem = inboxRecommendation(item);
+                            const recommendation = inboxRecommendation(item);
                             const reason = inboxReason(item);
                             return (
                               <button
                                 key={item.id}
                                 type="button"
                                 className={cn(
-                                  'w-full rounded-lg border border-black/10 p-3 text-left transition-all duration-200 dark:border-white/10',
+                                  'knowledge-press w-full rounded-xl px-3 py-2.5 text-left',
                                   isSelected
-                                    ? 'border-primary/30 bg-primary/5 shadow-sm'
-                                    : 'hover:bg-black/5 hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
+                                    ? 'bg-foreground/[0.055]'
+                                    : 'hover:bg-foreground/[0.04]',
                                 )}
                                 onClick={() => setSelectedInboxId(item.id)}
                                 data-testid="knowledge-inbox-row"
@@ -1794,14 +1768,11 @@ export function Knowledge() {
                                   <Badge variant="outline" className={cn('border text-[10px] font-medium', inboxTriageClass(triage.action))} data-testid="knowledge-inbox-triage-badge">
                                     {t(`inbox.triage.actions.${triage.action}`)}
                                   </Badge>
-                                  <Badge variant="outline" className={cn('border text-[10px] font-medium', inboxRecommendationClass(recommendationForItem))}>
-                                    {t(`inbox.recommendations.${recommendationForItem}`)}
-                                  </Badge>
-                                  <Badge variant="outline" className="border-black/10 bg-transparent text-[10px] font-medium dark:border-white/10">{t(`inbox.kinds.${item.kind}`)}</Badge>
                                   <span className="font-medium">{t(`types.${item.type}`)}</span>
+                                  <span>{t(`inbox.recommendations.${recommendation}`)}</span>
                                   <span>{t('inbox.evidenceCount', { count: inboxEvidenceCount(item) })}</span>
                                   {item.warnings && item.warnings.length > 0 && (
-                                    <span className="text-yellow-600 dark:text-yellow-400 font-medium">{t('inbox.warningCount', { count: item.warnings.length })}</span>
+                                    <span className="font-medium text-amber-700 dark:text-amber-400">{t('inbox.warningCount', { count: item.warnings.length })}</span>
                                   )}
                                 </div>
                                 {reason && <p className="mt-1 line-clamp-2 text-xs leading-4 text-muted-foreground">{reason}</p>}
@@ -1813,23 +1784,23 @@ export function Knowledge() {
                     })}
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
+                <div className="space-y-4 rounded-2xl bg-surface-input/50 p-4">
+                  <div className="p-0">
                     <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
                       <div className="min-w-0">
                         <h3 className="truncate text-sm font-semibold">{selectedInboxItem?.title ?? t('inbox.noSelection')}</h3>
                         <p className="mt-1 text-xs text-muted-foreground">
-                          {selectedInboxItem ? `${t(`inbox.kinds.${selectedInboxItem.kind}`)} / ${t(`types.${selectedInboxItem.type}`)}` : t('inbox.noSelectionHint')}
+                          {selectedInboxItem ? `${t(`inbox.kinds.${selectedInboxItem.kind}`, { defaultValue: selectedInboxItem.kind })} / ${t(`types.${selectedInboxItem.type}`)}` : t('inbox.noSelectionHint')}
                         </p>
                         {selectedInboxItem && (
                           <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
                             <Badge variant="outline" className={cn('border', inboxTriageClass(inboxTriage(selectedInboxItem).action))} data-testid="knowledge-inbox-triage-detail">
                               {t(`inbox.triage.actions.${inboxTriage(selectedInboxItem).action}`)}
                             </Badge>
-                            <Badge variant="outline" className={cn('border', inboxRecommendationClass(inboxRecommendation(selectedInboxItem)))}>
+                            <Badge variant="outline" className="border-border/60 bg-transparent text-muted-foreground">
                               {t(`inbox.recommendations.${inboxRecommendation(selectedInboxItem)}`)}
                             </Badge>
-                            <Badge variant="outline" className="border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-400" data-testid="knowledge-inbox-boundary">
+                            <Badge variant="outline" className="border-border/60 bg-transparent text-muted-foreground" data-testid="knowledge-inbox-boundary">
                               {t('inbox.boundary')}
                             </Badge>
                             {keReviewQueueEnabled === true && (
@@ -1875,44 +1846,42 @@ export function Knowledge() {
                       )}
                     </div>
                   </div>
-                  <div className="max-h-80 overflow-auto rounded-lg border border-black/10 bg-surface-input p-3 font-mono text-xs dark:border-white/10">
+                  <div className="max-h-64 overflow-auto rounded-xl bg-background/70 p-3 font-mono text-xs leading-5">
                     {selectedInboxItem?.body ?? t('inbox.noSelection')}
                   </div>
                   {selectedInboxItem && (
-                    <div className="grid gap-3 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
-                      <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-inbox-recommendation">
+                    <div className="grid gap-x-6 gap-y-4 border-t border-border/40 pt-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+                      <div className="p-0" data-testid="knowledge-inbox-recommendation">
                         <div className="flex items-center justify-between gap-2">
                           <div className="text-xs font-medium text-muted-foreground">{t('inbox.triage.title')}</div>
-                          <div className="flex shrink-0 items-center gap-1.5">
-                            <Badge variant="outline" className={cn('border text-[10px]', inboxTriageClass(inboxTriage(selectedInboxItem).action))}>
-                              {t('inbox.triage.confidence', { confidence: Math.round(inboxTriage(selectedInboxItem).confidence * 100) })}
-                            </Badge>
+                          <div className="flex shrink-0 items-center gap-2 text-[11px] tabular-nums text-muted-foreground">
+                            <span>{t('inbox.triage.confidence', { confidence: Math.round(inboxTriage(selectedInboxItem).confidence * 100) })}</span>
                             {inboxOverallScore(selectedInboxItem) != null && (
-                              <Badge variant="outline" className={cn('border text-[10px]', inboxRecommendationClass(inboxRecommendation(selectedInboxItem)))}>
-                                {t('inbox.score', { score: Math.round((inboxOverallScore(selectedInboxItem) ?? 0) * 100) })}
-                              </Badge>
+                              <span>{t('inbox.score', { score: Math.round((inboxOverallScore(selectedInboxItem) ?? 0) * 100) })}</span>
                             )}
                           </div>
                         </div>
-                        <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                          {inboxReason(selectedInboxItem) || t('inbox.noReason')}
-                        </p>
+                        {inboxReason(selectedInboxItem) && (
+                          <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                            {inboxReason(selectedInboxItem)}
+                          </p>
+                        )}
                         {(inboxTriage(selectedInboxItem).duplicateOf || (inboxTriage(selectedInboxItem).conflictWith ?? []).length > 0 || (inboxTriage(selectedInboxItem).suggestedEdits ?? []).length > 0) && (
                           <div className="mt-3 grid gap-2 text-xs" data-testid="knowledge-inbox-triage-details">
                             {inboxTriage(selectedInboxItem).duplicateOf && (
-                              <div className="rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+                              <div className="rounded-lg bg-background/70 p-2">
                                 <span className="font-medium text-foreground/80">{t('inbox.triage.duplicateOf')}: </span>
                                 <span className="font-mono text-[11px] text-muted-foreground">{inboxTriage(selectedInboxItem).duplicateOf}</span>
                               </div>
                             )}
                             {(inboxTriage(selectedInboxItem).conflictWith ?? []).length > 0 && (
-                              <div className="rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+                              <div className="rounded-lg bg-background/70 p-2">
                                 <span className="font-medium text-foreground/80">{t('inbox.triage.conflictWith')}: </span>
                                 <span className="font-mono text-[11px] text-muted-foreground">{(inboxTriage(selectedInboxItem).conflictWith ?? []).join(', ')}</span>
                               </div>
                             )}
                             {(inboxTriage(selectedInboxItem).suggestedEdits ?? []).length > 0 && (
-                              <div className="rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+                              <div className="rounded-lg bg-background/70 p-2">
                                 <div className="font-medium text-foreground/80">{t('inbox.triage.suggestedEdits')}</div>
                                 <ul className="mt-1 space-y-1 text-muted-foreground">
                                   {(inboxTriage(selectedInboxItem).suggestedEdits ?? []).map((edit) => (
@@ -1923,19 +1892,21 @@ export function Knowledge() {
                             )}
                           </div>
                         )}
+                        {INBOX_SCORE_DIMENSIONS.some((dimension) => inboxScorePercent(selectedInboxItem, dimension) != null) && (
                         <div className="mt-3 grid gap-2 sm:grid-cols-3" data-testid="knowledge-inbox-scores">
                           {INBOX_SCORE_DIMENSIONS.map((dimension) => {
                             const percent = inboxScorePercent(selectedInboxItem, dimension);
                             return (
-                              <div key={dimension} className="rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+                              <div key={dimension} className="rounded-lg bg-background/60 p-2">
                                 <div className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">{t(`inbox.scoreDimensions.${dimension}`)}</div>
                                 <div className="mt-1 text-sm font-semibold tabular-nums">{percent == null ? t('inbox.notAvailable') : t('inbox.percentValue', { percent })}</div>
                               </div>
                             );
                           })}
                         </div>
+                        )}
                       </div>
-                      <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-inbox-context">
+                      <div className="p-0" data-testid="knowledge-inbox-context">
                         <div className="text-xs font-medium text-muted-foreground">{t('inbox.context')}</div>
                         <dl className="mt-2 space-y-1.5 text-xs">
                           <div className="flex items-center justify-between gap-2">
@@ -1974,7 +1945,7 @@ export function Knowledge() {
                           )}
                         </dl>
                         {inboxMetadataString(selectedInboxItem, 'captureKey') && (
-                          <details className="mt-3 rounded-md border border-black/10 bg-background p-2 text-xs dark:border-white/10" data-testid="knowledge-inbox-audit">
+                          <details className="mt-3 rounded-lg bg-background/70 p-2 text-xs" data-testid="knowledge-inbox-audit">
                             <summary className="cursor-pointer select-none font-medium text-muted-foreground">{t('inbox.auditDetails')}</summary>
                             <div className="mt-2 min-w-0 break-all font-mono text-[11px] text-muted-foreground">
                               <span className="font-sans text-muted-foreground">{t('inbox.captureKey')}: </span>
@@ -1983,14 +1954,14 @@ export function Knowledge() {
                           </details>
                         )}
                       </div>
-                      <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-inbox-sources">
+                      {(selectedInboxItem.sourceRefs.length > 0 || selectedInboxItem.sourceIds.length > 0) && (
+                      <div className="p-0" data-testid="knowledge-inbox-sources">
                         <div className="text-xs font-medium text-muted-foreground">{t('inbox.sources')}</div>
                         <div className="mt-2 space-y-2">
-                          {selectedInboxItem.sourceRefs.length === 0 && selectedInboxItem.sourceIds.length === 0 && <p className="text-xs text-muted-foreground">{t('inbox.noSources')}</p>}
                           {inboxSourceDisplays(selectedInboxItem).map((ref) => (
-                            <div key={ref.id} className="rounded-md border border-black/10 bg-background p-2 dark:border-white/10" data-testid="knowledge-inbox-source">
+                            <div key={ref.id} className="rounded-lg bg-background/60 px-2 py-1.5" data-testid="knowledge-inbox-source">
                               <div className="flex min-w-0 items-center gap-2">
-                                <Badge variant="outline" className="shrink-0 border-black/10 bg-transparent text-[10px] font-medium dark:border-white/10">
+                                <Badge variant="outline" className="shrink-0 border-border/60 bg-transparent text-[10px] font-medium">
                                   {t(inboxSourceKindLabel(ref.kind))}
                                 </Badge>
                                 <span className="min-w-0 truncate text-xs font-medium">{ref.label ?? ref.path ?? ref.id}</span>
@@ -2002,15 +1973,17 @@ export function Knowledge() {
                           ))}
                         </div>
                       </div>
-                      <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-inbox-warnings">
+                      )}
+                      {(selectedInboxItem.warnings ?? []).length > 0 && (
+                      <div className="p-0" data-testid="knowledge-inbox-warnings">
                         <div className="text-xs font-medium text-muted-foreground">{t('inbox.warnings')}</div>
                         <div className="mt-2 space-y-2">
-                          {(selectedInboxItem.warnings ?? []).length === 0 && <p className="text-xs text-muted-foreground">{t('inbox.noWarnings')}</p>}
                           {(selectedInboxItem.warnings ?? []).map((warning) => (
-                            <p key={warning} className="rounded-md border border-yellow-500/20 bg-yellow-500/10 p-2 text-xs text-yellow-700 dark:text-yellow-400">{warning}</p>
+                            <p key={warning} className="rounded-lg bg-amber-500/10 px-2 py-1.5 text-xs text-amber-700 dark:text-amber-400">{warning}</p>
                           ))}
                         </div>
                       </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -2039,7 +2012,7 @@ export function Knowledge() {
                         key={draft.id}
                         type="button"
                         className={cn(
-                          'w-full rounded-lg border border-black/10 p-3 text-left transition-all duration-200 dark:border-white/10',
+                          'w-full rounded-lg border border-border/60 p-3 text-left transition-all duration-200',
                           isSelected
                             ? 'border-primary/30 bg-primary/5 shadow-sm'
                             : 'hover:bg-black/5 hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
@@ -2069,7 +2042,7 @@ export function Knowledge() {
                     </div>
                     <div className="space-y-2">
                       <Label>{t('draft.typeLabel')}</Label>
-                      <select value={draftType} onChange={(event) => setDraftType(event.target.value as KnowledgeDraftType)} className="h-9 w-full rounded-lg border border-black/10 bg-surface-input px-3 text-sm transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40 dark:border-white/10 cursor-pointer" data-testid="knowledge-draft-type">
+                      <select value={draftType} onChange={(event) => setDraftType(event.target.value as KnowledgeDraftType)} className="h-9 w-full rounded-lg border border-border/60 bg-surface-input px-3 text-sm transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40 cursor-pointer" data-testid="knowledge-draft-type">
                         {KNOWLEDGE_TYPES.map((type) => <option key={type} value={type}>{t(`types.${type}`)}</option>)}
                       </select>
                     </div>
@@ -2116,12 +2089,12 @@ export function Knowledge() {
                       <div className="mt-0.5 text-xs text-muted-foreground">{selectedDraft ? `${t(`types.${selectedDraft.type}`)} · ${t(`draft.status.${selectedDraft.status}`)}` : '-'}</div>
                     </div>
                   </div>
-                  <div className="max-h-80 overflow-auto rounded-lg border border-black/10 bg-surface-input p-3 font-mono text-xs leading-relaxed dark:border-white/10">
+                  <div className="max-h-80 overflow-auto rounded-xl bg-surface-input p-3 font-mono text-xs leading-relaxed">
                     {selectedDraft?.body ?? t('review.noDraft')}
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
+                  <div className="rounded-xl bg-surface-input p-3">
                     <div className="text-sm font-semibold">{t('review.diffTitle')}</div>
                     <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap rounded-md bg-background p-2 text-xs leading-relaxed text-muted-foreground">{selectedProposal?.diff ?? selectedDraft?.body ?? t('review.noProposal')}</pre>
                   </div>
@@ -2151,7 +2124,7 @@ export function Knowledge() {
                   <p className="text-[11px] leading-4 text-muted-foreground">{t('review.confirmationBoundary')}</p>
 
                   {/* Area 5 §3.5 — Steward review result for the current draft */}
-                  <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-steward-review-result">
+                  <div className="rounded-xl bg-surface-input p-3" data-testid="knowledge-steward-review-result">
                     <div className="flex items-center justify-between gap-2">
                       <div className="text-sm font-semibold">{t('review.steward.section')}</div>
                       {stewardReview ? (
@@ -2194,7 +2167,7 @@ export function Knowledge() {
                   </div>
 
                   {/* Area 5 §3.5 — Steward queue: drafts awaiting steward review */}
-                  <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-steward-queue">
+                  <div className="rounded-xl bg-surface-input p-3" data-testid="knowledge-steward-queue">
                     <div className="text-sm font-semibold">{t('review.steward.queue')}</div>
                     {drafts.filter((draft) => draft.status === 'steward_reviewed').length > 0 ? (
                       <ul className="mt-2 space-y-1 text-xs">
@@ -2228,7 +2201,7 @@ export function Knowledge() {
                         <select
                           value={lifecycleOperation}
                           onChange={(event) => setLifecycleOperation(event.target.value as KnowledgeChangeOperation)}
-                          className="h-9 w-full rounded-lg border border-black/10 bg-surface-input px-3 text-sm dark:border-white/10"
+                          className="h-9 w-full rounded-xl bg-surface-input px-3 text-sm"
                           data-testid="knowledge-lifecycle-operation"
                         >
                           {LIFECYCLE_OPERATIONS.map((operation) => (
@@ -2318,9 +2291,9 @@ export function Knowledge() {
                     {receiptHistory.length > 0 ? (
                       <ul className="mt-2 space-y-2">
                         {receiptHistory.slice(0, 12).map((receipt) => (
-                          <li key={receipt.receiptId} className="rounded-md border border-black/10 bg-surface-input p-2 text-xs dark:border-white/10">
+                          <li key={receipt.receiptId} className="rounded-md border border-border/60 bg-surface-input p-2 text-xs">
                             <div className="flex flex-wrap items-center gap-2">
-                              <Badge variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">{receipt.operation}</Badge>
+                              <Badge variant="outline" className="border-border/60 bg-black/5 dark:bg-white/10">{receipt.operation}</Badge>
                               <span className="font-mono">{receipt.subjectId}@{receipt.subjectRevision ?? '-'}</span>
                               <span className="text-muted-foreground">{receipt.status}</span>
                               {receipt.compensation?.status === 'unrecoverable' ? <Badge variant="outline" className="border-red-500/30 bg-red-500/5 text-red-700 dark:text-red-400">{t('lifecycle.compensation.unrecoverable')}</Badge> : null}
@@ -2341,11 +2314,11 @@ export function Knowledge() {
 
             {workbenchTab === 'runtime' && (
               <div className="space-y-5" data-testid="knowledge-runtime-lessons">
-                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-black/10 pb-4 dark:border-white/10">
+                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border/60 pb-4">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="text-sm font-semibold">{t('runtime.title')}</h3>
-                      <Badge variant="outline" className="border-black/10 bg-black/5 text-[10px] font-medium text-muted-foreground dark:border-white/10 dark:bg-white/10">
+                      <Badge variant="outline" className="border-border/60 bg-black/5 text-[10px] font-medium text-muted-foreground dark:bg-white/10">
                         {t('runtime.reviewOnlyBadge')}
                       </Badge>
                     </div>
@@ -2367,15 +2340,12 @@ export function Knowledge() {
                   </Button>
                 </div>
 
-                {runtimeLessonsLoading && !runtimeLessons ? (
-                  <div className="flex min-h-40 items-center justify-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    {t('runtime.loading')}
-                  </div>
+                {runtimeLessonsLoading && !runtimeLessons && runtimeSkeletonVisible ? (
+                  <QuietListSkeleton rows={3} />
                 ) : null}
 
                 {!runtimeLessonsLoading && runtimeLessons && !runtimeLessons.available ? (
-                  <div className="rounded-lg border border-black/10 bg-surface-input p-5 text-sm text-muted-foreground dark:border-white/10">
+                  <div className="rounded-xl bg-surface-input p-5 text-sm text-muted-foreground">
                     {t('runtime.unavailable')}
                   </div>
                 ) : null}
@@ -2388,7 +2358,7 @@ export function Knowledge() {
                         ['undistilled', runtimeLessons.counts.undistilledTrajectories],
                         ['principles', runtimeLessons.counts.activePrinciples],
                       ] as const).map(([key, value]) => (
-                        <div key={key} className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
+                        <div key={key} className="rounded-xl bg-surface-input p-3">
                           <div className="text-xl font-semibold tabular-nums">{value}</div>
                           <div className="mt-1 text-xs text-muted-foreground">{t(`runtime.metrics.${key}`)}</div>
                         </div>
@@ -2412,15 +2382,15 @@ export function Knowledge() {
                         </div>
                         <div className="space-y-2">
                           {runtimeLessons.undistilled.map((entry) => (
-                            <div key={entry.trajectory_id} className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
+                            <div key={entry.trajectory_id} className="rounded-xl bg-surface-input p-3">
                               <div className="flex flex-wrap items-start justify-between gap-2">
                                 <span className="text-sm font-medium">{entry.task_intent}</span>
-                                <Badge variant="outline" className="border-black/10 bg-black/5 text-[10px] dark:border-white/10 dark:bg-white/10">{entry.outcome}</Badge>
+                                <Badge variant="outline" className="border-border/60 bg-black/5 text-[10px] dark:bg-white/10">{entry.outcome}</Badge>
                               </div>
                               <div className="mt-2 flex flex-wrap gap-1">
-                                <Badge variant="outline" className="border-black/10 bg-transparent font-mono text-[10px] dark:border-white/10">{entry.trajectory_id}</Badge>
-                                <Badge variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{t('runtime.taskType')}: {entry.task_type}</Badge>
-                                {entry.context_fingerprint.map((tag) => <Badge key={tag} variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{tag}</Badge>)}
+                                <Badge variant="outline" className="border-border/60 bg-transparent font-mono text-[10px]">{entry.trajectory_id}</Badge>
+                                <Badge variant="outline" className="border-border/60 bg-transparent text-[10px]">{t('runtime.taskType')}: {entry.task_type}</Badge>
+                                {entry.context_fingerprint.map((tag) => <Badge key={tag} variant="outline" className="border-border/60 bg-transparent text-[10px]">{tag}</Badge>)}
                               </div>
                               {entry.lineage ? (
                                 <div className="mt-2 flex flex-wrap gap-1" data-testid={`knowledge-runtime-lineage-${entry.trajectory_id}`}>
@@ -2438,15 +2408,15 @@ export function Knowledge() {
                         <h4 id="runtime-principles-title" className="text-sm font-semibold">{t('runtime.principlesTitle')}</h4>
                         <div className="space-y-2">
                           {runtimeLessons.activePrinciples.map((principle) => (
-                            <div key={principle.principle_id} className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
+                            <div key={principle.principle_id} className="rounded-xl bg-surface-input p-3">
                               <div className="flex flex-wrap items-start justify-between gap-2">
                                 <span className="text-sm font-medium">{principle.title}</span>
                                 <Badge variant="outline" className="border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400">{principle.criticality}</Badge>
                               </div>
                               <p className="mt-1 truncate font-mono text-[10px] text-muted-foreground">{principle.principle_id}</p>
                               <div className="mt-2 flex flex-wrap gap-1">
-                                {principle.task_types.map((type) => <Badge key={`type:${type}`} variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{type}</Badge>)}
-                                {principle.context_tags.map((tag) => <Badge key={`tag:${tag}`} variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{tag}</Badge>)}
+                                {principle.task_types.map((type) => <Badge key={`type:${type}`} variant="outline" className="border-border/60 bg-transparent text-[10px]">{type}</Badge>)}
+                                {principle.context_tags.map((tag) => <Badge key={`tag:${tag}`} variant="outline" className="border-border/60 bg-transparent text-[10px]">{tag}</Badge>)}
                               </div>
                               {principle.lineage ? (
                                 <div className="mt-2 flex flex-wrap gap-1" data-testid={`knowledge-runtime-principle-lineage-${principle.principle_id}`}>
@@ -2468,10 +2438,10 @@ export function Knowledge() {
 
                     <section className="space-y-2" aria-labelledby="runtime-index-title">
                       <h4 id="runtime-index-title" className="text-sm font-semibold">{t('runtime.indexTitle')}</h4>
-                      <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-black/10 bg-surface-input p-3 text-xs leading-5 text-muted-foreground dark:border-white/10">{runtimeLessons.indexPreview || t('runtime.emptyIndex')}</pre>
+                      <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-words rounded-xl bg-surface-input p-3 text-xs leading-5 text-muted-foreground">{runtimeLessons.indexPreview || t('runtime.emptyIndex')}</pre>
                     </section>
 
-                    <section className="space-y-3 border-t border-black/10 pt-5 dark:border-white/10" aria-labelledby="runtime-suggestions-title">
+                    <section className="space-y-3 border-t border-border/60 pt-5" aria-labelledby="runtime-suggestions-title">
                       <div>
                         <h4 id="runtime-suggestions-title" className="text-sm font-semibold">{t('runtime.suggestionsTitle')}</h4>
                         <p className="mt-1 text-xs text-muted-foreground">{t('runtime.suggestionsDescription')}</p>
@@ -2487,7 +2457,7 @@ export function Knowledge() {
                                   'w-full rounded-lg border p-3 text-left transition-colors',
                                   selectedRuntimeSuggestionIndex === index
                                     ? 'border-primary/30 bg-primary/5'
-                                    : 'border-black/10 bg-surface-input hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5',
+                                    : 'border-border/60 bg-surface-input hover:bg-black/5 dark:hover:bg-white/5',
                                 )}
                                 onClick={() => setSelectedRuntimeSuggestionIndex(index)}
                                 data-testid={`knowledge-runtime-suggestion-${index}`}
@@ -2500,7 +2470,7 @@ export function Knowledge() {
                           </div>
 
                           {selectedRuntimeSuggestion ? (
-                            <div className="space-y-4 rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10" data-testid="knowledge-runtime-suggestion-review">
+                            <div className="space-y-4 rounded-xl bg-surface-input p-4" data-testid="knowledge-runtime-suggestion-review">
                               <div className="space-y-2">
                                 <div className="flex flex-wrap items-center justify-between gap-2">
                                   <h5 className="text-sm font-semibold">{runtimePrincipleField(selectedRuntimeSuggestion, 'title') || t('runtime.untitledSuggestion')}</h5>
@@ -2512,7 +2482,7 @@ export function Knowledge() {
                                     const source = runtimeLessons.undistilled.find((entry) => entry.trajectory_id === id);
                                     return (
                                       <div key={id} className="flex flex-wrap gap-1" data-testid={`knowledge-runtime-review-lineage-${id}`}>
-                                        <Badge variant="outline" className="border-black/10 bg-transparent font-mono text-[10px] dark:border-white/10">{id}</Badge>
+                                        <Badge variant="outline" className="border-border/60 bg-transparent font-mono text-[10px]">{id}</Badge>
                                         {runtimeLineageBadges(source?.lineage, t)}
                                       </div>
                                     );
@@ -2584,7 +2554,7 @@ export function Knowledge() {
                       ) : null}
                     </section>
 
-                    <section className="space-y-4 border-t border-black/10 pt-5 dark:border-white/10" aria-labelledby="runtime-retrieve-title">
+                    <section className="space-y-4 border-t border-border/60 pt-5" aria-labelledby="runtime-retrieve-title">
                       <div>
                         <h4 id="runtime-retrieve-title" className="text-sm font-semibold">{t('runtime.retrieveTitle')}</h4>
                         <p className="mt-1 text-xs text-muted-foreground">{t('runtime.retrieveDescription')}</p>
@@ -2612,7 +2582,7 @@ export function Knowledge() {
                         <div className="grid gap-3 lg:grid-cols-2" data-testid="knowledge-runtime-retrieve-result">
                           <div className="space-y-2">
                             {runtimeRetrieveResult.principles.map((principle) => (
-                              <div key={principle.principle_id} className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
+                              <div key={principle.principle_id} className="rounded-xl bg-surface-input p-3">
                                 <div className="text-sm font-medium">{principle.title}</div>
                                 <p className="mt-1 text-xs leading-5 text-muted-foreground">{principle.action}</p>
                               </div>
@@ -2627,7 +2597,7 @@ export function Knowledge() {
                       ) : null}
                     </section>
 
-                    <section className="space-y-3 border-t border-black/10 pt-5 dark:border-white/10" aria-labelledby="runtime-capture-title">
+                    <section className="space-y-3 border-t border-border/60 pt-5" aria-labelledby="runtime-capture-title">
                       <div>
                         <h4 id="runtime-capture-title" className="text-sm font-semibold">{t('runtime.captureTitle')}</h4>
                         <p className="mt-1 text-xs text-muted-foreground">{t('runtime.captureDescription')}</p>
@@ -2645,7 +2615,7 @@ export function Knowledge() {
                           <Label htmlFor="runtime-capture-outcome">{t('runtime.outcome')}</Label>
                           <select
                             id="runtime-capture-outcome"
-                            className="h-9 w-full rounded-lg border border-black/10 bg-surface-input px-3 text-sm dark:border-white/10"
+                            className="h-9 w-full rounded-xl bg-surface-input px-3 text-sm"
                             value={runtimeCaptureOutcome}
                             onChange={(event) => setRuntimeCaptureOutcome(event.target.value as 'success' | 'failure' | 'partial')}
                             data-testid="knowledge-runtime-capture-outcome"
@@ -2673,7 +2643,7 @@ export function Knowledge() {
                       ) : null}
                     </section>
 
-                    <section className="space-y-3 border-t border-black/10 pt-5 dark:border-white/10" aria-labelledby="runtime-distill-title">
+                    <section className="space-y-3 border-t border-border/60 pt-5" aria-labelledby="runtime-distill-title">
                       <div>
                         <h4 id="runtime-distill-title" className="text-sm font-semibold">{t('runtime.distillTitle')}</h4>
                         <p className="mt-1 text-xs text-muted-foreground">{t('runtime.distillDescription')}</p>
@@ -2689,7 +2659,7 @@ export function Knowledge() {
                       ) : null}
                     </section>
 
-                    <section className="space-y-3 border-t border-black/10 pt-5 dark:border-white/10" aria-labelledby="runtime-shadow-title">
+                    <section className="space-y-3 border-t border-border/60 pt-5" aria-labelledby="runtime-shadow-title">
                       <div>
                         <h4 id="runtime-shadow-title" className="text-sm font-semibold">{t('runtime.shadowTitle')}</h4>
                         <p className="mt-1 text-xs text-muted-foreground">{t('runtime.shadowDescription')}</p>
@@ -2703,7 +2673,7 @@ export function Knowledge() {
                         {t(running === 'runtimeShadow' ? 'runtime.shadowRunning' : 'runtime.shadowReport')}
                       </Button>
                       {runtimeShadowResult ? (
-                        <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-black/10 bg-surface-input p-3 text-xs leading-5 text-muted-foreground dark:border-white/10" data-testid="knowledge-runtime-shadow-result">
+                        <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-words rounded-xl bg-surface-input p-3 text-xs leading-5 text-muted-foreground" data-testid="knowledge-runtime-shadow-result">
                           {JSON.stringify(runtimeShadowResult, null, 2)}
                         </pre>
                       ) : null}
@@ -2733,7 +2703,7 @@ export function Knowledge() {
                     disabled={governanceRunning}
                     variant="outline"
                     size="sm"
-                    className="h-8 gap-1.5 rounded-lg border-black/10 px-3 text-xs font-medium text-foreground/80 shadow-none hover:bg-black/5 hover:text-foreground dark:border-white/10 dark:hover:bg-white/5"
+                    className="h-8 gap-1.5 rounded-lg border-border/60 px-3 text-xs font-medium text-foreground/80 shadow-none hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
                   >
                     <Wrench className="h-3.5 w-3.5" />
                     {t('governance.runLint')}
@@ -2743,7 +2713,7 @@ export function Knowledge() {
                     disabled={governanceRunning}
                     variant="outline"
                     size="sm"
-                    className="h-8 gap-1.5 rounded-lg border-black/10 px-3 text-xs font-medium text-foreground/80 shadow-none hover:bg-black/5 hover:text-foreground dark:border-white/10 dark:hover:bg-white/5"
+                    className="h-8 gap-1.5 rounded-lg border-border/60 px-3 text-xs font-medium text-foreground/80 shadow-none hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
                   >
                     <RefreshCw className="h-3.5 w-3.5" />
                     {t('governance.runCompile')}
@@ -2759,7 +2729,7 @@ export function Knowledge() {
                     'rounded-lg border p-4 transition-shadow',
                     governanceContradictions > 0
                       ? 'border-red-500/30 bg-red-500/5'
-                      : 'border-black/10 bg-surface-input dark:border-white/10'
+                      : 'border-border/60 bg-surface-input'
                   )}>
                     <div className="flex items-center gap-3">
                       <div className={cn(
@@ -2808,7 +2778,7 @@ export function Knowledge() {
                     'rounded-lg border p-4 transition-shadow',
                     governanceStale > 0
                       ? 'border-yellow-500/30 bg-yellow-500/5'
-                      : 'border-black/10 bg-surface-input dark:border-white/10'
+                      : 'border-border/60 bg-surface-input'
                   )}>
                     <div className="flex items-center gap-3">
                       <div className={cn(
@@ -2857,7 +2827,7 @@ export function Knowledge() {
                     'rounded-lg border p-4 transition-shadow',
                     governanceDangling > 0
                       ? 'border-yellow-500/30 bg-yellow-500/5'
-                      : 'border-black/10 bg-surface-input dark:border-white/10'
+                      : 'border-border/60 bg-surface-input'
                   )}>
                     <div className="flex items-center gap-3">
                       <div className={cn(
@@ -2909,7 +2879,7 @@ export function Knowledge() {
                       <h4 className="text-sm font-semibold">{t('governance.qualityMetrics.title')}</h4>
                       <p className="mt-0.5 text-xs text-muted-foreground">{t('governance.qualityMetrics.description')}</p>
                     </div>
-                    <Badge variant="outline" className="border-black/10 bg-surface-input text-xs font-medium dark:border-white/10">
+                    <Badge variant="outline" className="border-border/60 bg-surface-input text-xs font-medium">
                       {governanceQualityMetrics ? t('governance.qualityMetrics.sourceAudit') : t('governance.qualityMetrics.pendingAudit')}
                     </Badge>
                   </div>
@@ -2947,7 +2917,7 @@ export function Knowledge() {
 
                 {/* Action list */}
                 {governanceIssues.length > 0 && (
-                  <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
+                  <div className="rounded-xl bg-surface-input p-4">
                     <h4 className="mb-3 text-sm font-semibold">{t('governance.suggestions')}</h4>
                     <div className="space-y-1.5">
                       {governanceIssues.map(issue => (
@@ -2999,7 +2969,7 @@ export function Knowledge() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="h-7 gap-1 rounded-md border-black/10 px-2 text-[11px] font-medium shadow-none dark:border-white/10"
+                        className="h-7 gap-1 rounded-md border-border/60 px-2 text-[11px] font-medium shadow-none"
                         onClick={() => setGovernanceIssues([])}
                         data-testid="knowledge-governance-dismiss-all"
                       >
@@ -3012,7 +2982,7 @@ export function Knowledge() {
 
                 {/* Empty state */}
                 {governanceIssues.length === 0 && !governanceRunning && (
-                  <div className="flex flex-col items-center gap-3 rounded-lg border border-black/10 bg-surface-input p-8 dark:border-white/10">
+                  <div className="flex flex-col items-center gap-3 rounded-xl bg-surface-input p-8">
                     <ShieldCheck className="h-10 w-10 text-muted-foreground/40" />
                     <div className="text-center">
                       <p className="text-sm font-semibold text-foreground/80">{t('governance.allClear')}</p>
@@ -3027,9 +2997,31 @@ export function Knowledge() {
         </Card>
       </main>
 
+      {/* The librarian is a quiet corner action, not a tab: it opens the same
+          knowledge-aware Chat surface and carries the draft context with it. */}
+      <button
+        type="button"
+        onClick={() => {
+          const knowledgeContext: KnowledgeChatContext = { editorTitle, editorBody, editorSource, editorTags, editorType, editorMode, query, sourceRefs: currentSourceRefs, sourceSetId: currentSourceSetId, sourceSetTitle, searchResult, selectedRow, selectedPage };
+          navigate({ pathname: location.pathname, search: location.search }, { replace: true, state: { knowledgeContext } });
+          const search = new URLSearchParams(location.search);
+          for (const key of ['view', 'kind', 'id', 'lookup']) search.delete(key);
+          search.set('knowledge', 'ask');
+          navigate({ pathname: '/', search: search.toString() }, { state: { knowledgeContext } });
+        }}
+        aria-label={t('librarian.openAssistant')}
+        data-testid="knowledge-librarian-open"
+        className="knowledge-press fixed bottom-6 right-6 z-30 flex h-9 items-center gap-2 rounded-full border border-border/60 bg-surface-modal pl-1.5 pr-3.5 text-xs font-medium text-foreground shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)] hover:bg-foreground/[0.04]"
+      >
+        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-background">
+          <Bot className="h-3.5 w-3.5" />
+        </span>
+        {t('librarian.openAssistant')}
+      </button>
+
       <Sheet open={utilityPanel !== null} onOpenChange={(open) => { if (!open) setUtilityPanel(null); }}>
         <SheetContent side="right" className="bottom-0 top-10 flex h-auto w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-lg" data-testid="knowledge-utility-sheet">
-          <SheetHeader className="shrink-0 border-b border-black/10 px-5 py-4 pr-14 text-left dark:border-white/10">
+          <SheetHeader className="shrink-0 border-b border-border/60 px-5 py-4 pr-14 text-left">
             <SheetTitle className="font-serif text-xl font-normal tracking-tight">
               {utilityPanel === 'status' ? t('utility.status.title') : utilityPanel === 'okf' ? t('utility.okf.title') : t('utility.sources.title')}
             </SheetTitle>
@@ -3086,7 +3078,7 @@ export function Knowledge() {
                     <div className="flex flex-wrap items-center gap-2" data-testid="knowledge-okf-type-distribution">
                       <span className="text-xs text-muted-foreground">{t('okf.typeDistribution')}</span>
                       {Object.entries(okfValidation.typeDistribution).map(([type, count]) => (
-                        <Badge key={type} variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">{type}: {count}</Badge>
+                        <Badge key={type} variant="outline" className="border-border/60 bg-black/5 dark:bg-white/10">{type}: {count}</Badge>
                       ))}
                     </div>
                   ) : null}
@@ -3104,21 +3096,21 @@ export function Knowledge() {
                   ) : null}
                   {okfConcepts.length > 0 ? (
                     <div className="space-y-2">
-                      <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-black/10 bg-surface-input px-3 py-2 text-xs font-medium dark:border-white/10">
+                      <label className="flex cursor-pointer items-center gap-2 rounded-xl bg-surface-input px-3 py-2 text-xs font-medium">
                         <input type="checkbox" checked={okfAllSelected} onChange={toggleAllOkfConcepts} data-testid="knowledge-okf-select-all" />
                         {t('okf.selectAll')}
                       </label>
                       <div className="grid gap-2">
                         {okfConcepts.map((concept) => (
-                          <label key={concept.conceptId} className="grid cursor-pointer gap-2 rounded-lg border border-black/10 bg-surface-input p-3 text-left dark:border-white/10" data-testid="knowledge-okf-concept">
+                          <label key={concept.conceptId} className="grid cursor-pointer gap-2 rounded-xl bg-surface-input p-3 text-left" data-testid="knowledge-okf-concept">
                             <div className="flex min-w-0 items-center gap-2">
                               <input type="checkbox" checked={selectedOkfConceptIds.has(concept.conceptId)} onChange={() => toggleOkfConcept(concept.conceptId)} />
                               <span className="min-w-0 flex-1 truncate text-sm font-medium">{okfConceptTitle(concept)}</span>
-                              <Badge variant="outline" className="shrink-0 border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">{concept.frontmatter.type}</Badge>
+                              <Badge variant="outline" className="shrink-0 border-border/60 bg-black/5 dark:bg-white/10">{concept.frontmatter.type}</Badge>
                             </div>
                             <div className="flex flex-wrap gap-1 pl-6">
-                              <Badge variant="outline" className="max-w-full truncate border-black/10 bg-transparent font-mono text-[10px] dark:border-white/10">{concept.conceptId}</Badge>
-                              {concept.frontmatter.resource ? <Badge variant="outline" className="max-w-full truncate border-black/10 bg-transparent text-[10px] dark:border-white/10">{concept.frontmatter.resource}</Badge> : null}
+                              <Badge variant="outline" className="max-w-full truncate border-border/60 bg-transparent font-mono text-[10px]">{concept.conceptId}</Badge>
+                              {concept.frontmatter.resource ? <Badge variant="outline" className="max-w-full truncate border-border/60 bg-transparent text-[10px]">{concept.frontmatter.resource}</Badge> : null}
                             </div>
                             {concept.bodyPreview ? <p className="line-clamp-2 pl-6 text-xs leading-5 text-muted-foreground">{concept.bodyPreview}</p> : null}
                             {concept.warnings.length > 0 ? <p className="pl-6 text-xs text-yellow-700 dark:text-yellow-400">{concept.warnings[0].message}</p> : null}
@@ -3149,7 +3141,7 @@ export function Knowledge() {
                   </div>
                   <Input value={sourceSetTitle} onChange={(event) => setSourceSetTitle(event.target.value)} placeholder={t('sourceSet.titlePlaceholder')} className="h-9 bg-surface-input text-sm shadow-none" data-testid="knowledge-source-set-title" />
                   {currentSourceRefs.length === 0 ? (
-                    <p className="rounded-lg border border-dashed border-black/10 p-3 text-xs leading-5 text-muted-foreground dark:border-white/10">{t('sourceSet.empty')}</p>
+                    <p className="rounded-lg border border-dashed border-border/60 p-3 text-xs leading-5 text-muted-foreground">{t('sourceSet.empty')}</p>
                   ) : (
                     <div className="space-y-1.5">
                       {currentSourceRefs.map((ref) => (
@@ -3168,11 +3160,11 @@ export function Knowledge() {
                 </section>
 
                 {sourceSets.length > 0 ? (
-                  <section className="space-y-2 border-t border-black/10 pt-4 dark:border-white/10">
+                  <section className="space-y-2 border-t border-border/60 pt-4">
                     <h3 className="text-sm font-semibold">{t('sourceSet.savedSets')}</h3>
                     <div className="grid gap-1.5">
                       {sourceSets.map((sourceSet) => (
-                        <button key={sourceSet.id} type="button" className="flex w-full items-center justify-between gap-3 rounded-md border border-black/10 px-3 py-2 text-left text-xs transition-colors hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5" onClick={() => { setCurrentSourceSetId(sourceSet.id); setSourceSetTitle(sourceSet.title); setCurrentSourceRefs(sourceSet.sourceRefs); }} data-testid="knowledge-source-set-saved">
+                        <button key={sourceSet.id} type="button" className="flex w-full items-center justify-between gap-3 rounded-md border border-border/60 px-3 py-2 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/5" onClick={() => { setCurrentSourceSetId(sourceSet.id); setSourceSetTitle(sourceSet.title); setCurrentSourceRefs(sourceSet.sourceRefs); }} data-testid="knowledge-source-set-saved">
                           <span className="min-w-0 flex-1 truncate font-medium">{sourceSet.title}</span>
                           <span className="shrink-0 tabular-nums text-muted-foreground">{sourceSet.sourceRefs.length}</span>
                         </button>
@@ -3181,7 +3173,7 @@ export function Knowledge() {
                   </section>
                 ) : null}
 
-                <section className="space-y-3 border-t border-black/10 pt-4 dark:border-white/10" data-testid="knowledge-studio-actions">
+                <section className="space-y-3 border-t border-border/60 pt-4" data-testid="knowledge-studio-actions">
                   <div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-muted-foreground" /><h3 className="text-sm font-semibold">{t('studio.title')}</h3></div>
                   <div className="grid grid-cols-2 gap-2">
                     {STUDIO_ARTIFACTS.map((artifact) => {
@@ -3197,7 +3189,7 @@ export function Knowledge() {
                 </section>
 
                 {relatedRows.length > 0 ? (
-                  <section className="space-y-2 border-t border-black/10 pt-4 dark:border-white/10">
+                  <section className="space-y-2 border-t border-border/60 pt-4">
                     <div className="flex items-center gap-2"><Link2 className="h-4 w-4 text-muted-foreground" /><h3 className="text-sm font-semibold">{t('librarian.related')}</h3></div>
                     {relatedRows.map((row, index) => (
                       <button key={`${getLookup(row) || index}:related`} type="button" className="block w-full rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/5" onClick={() => { void openResult(row); setUtilityPanel(null); }} data-testid="knowledge-related-row">
@@ -3216,7 +3208,7 @@ export function Knowledge() {
       {/* Area 5 §3.5 — Configure Steward modal: variant list + active selection */}
       {showStewardConfig ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" data-testid="knowledge-steward-config-modal" role="dialog" aria-modal="true">
-          <div className="w-full max-w-lg rounded-xl border border-black/10 bg-surface-modal p-5 shadow-lg dark:border-white/10">
+          <div className="w-full max-w-lg rounded-xl border border-border/60 bg-surface-modal p-5 shadow-lg">
             <div className="flex items-center justify-between gap-3">
               <div className="text-sm font-semibold">{t('review.steward.configureTitle')}</div>
               <button type="button" className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5" onClick={() => setShowStewardConfig(false)} aria-label={t('review.steward.close')}>
@@ -3235,7 +3227,7 @@ export function Knowledge() {
                         'rounded-lg border p-3 transition-colors',
                         isActive
                           ? 'border-violet-500/40 bg-violet-500/5'
-                          : 'border-black/10 bg-surface-input dark:border-white/10',
+                          : 'border-border/60 bg-surface-input',
                       )}
                       data-testid={`knowledge-steward-variant-${role.roleId}`}
                     >
