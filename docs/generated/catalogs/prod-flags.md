@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-20T10:28:52.339Z
+Generated at: 2026-10-20T10:51:16.819Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -197,13 +197,13 @@ This file is generated — edit the source of truth instead.
 - kind: api
 - key: `DistillationTool.confirm_and_save(suggestion, edits, options)`
 - default: false
-- defaultDisplay: api-only (config leaf observability-only)
+- defaultDisplay: api-only (host confirm explicit opt-in)
 - risk: api-only
-- enable: Call DistillationTool.confirm_and_save(suggestion, edits, { sessionId, experienceShadow: { enabled: true, workspaceRoot } }).
-- rollback: Omit options.experienceShadow or set experienceShadow.enabled=false.
-- executor: pending-wiring — The options.experienceShadow branch exists in DistillationTool, but no production confirm path passes experienceShadow. TF-0458 wires the runtime confirmation path.
+- enable: Call the host knowledge.sekbConfirmPrinciple API with payload { experienceShadow: { enabled: true } }; the host resolves workspaceRoot and passes it to DistillationTool.confirm_and_save.
+- rollback: Omit payload.experienceShadow or set experienceShadow.enabled=false.
+- executor: wired — `electron/services/knowledge-api.ts:5296`, `electron/services/knowledge-api.ts:5309`
 
-> Shadow journal only. The runtime.coding.sekb.experienceShadow config leaf is observability-only and does not drive this API.
+> Shadow journal only. The runtime.coding.sekb.experienceShadow config leaf remains observability-only; the production host confirm route wires the explicit API opt-in without changing defaults.
 
 ## sekb-retrieval-shadow
 

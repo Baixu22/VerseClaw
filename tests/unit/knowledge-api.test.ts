@@ -1,4 +1,4 @@
-import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -11,6 +11,64 @@ vi.mock('electron', () => ({
 }));
 
 const root = join(tmpdir(), `clawx-knowledge-api-${Date.now()}`);
+
+
+type FakeConfirmOptions = {
+  sessionId?: string;
+  requireSession?: boolean;
+  sourceSystem?: string;
+  integrityClaim?: unknown;
+  summaryOnly?: boolean;
+  contextBlockSink?: unknown;
+  contextBlockSinkKind?: string;
+  experienceShadow?: {
+    workspaceRoot: string;
+    enabled: boolean;
+    dualWrite?: boolean;
+  };
+};
+
+type FakeConfirmCall = { suggestion: unknown; edits: unknown; options: FakeConfirmOptions };
+
+/** Inject an in-memory runtime so the production host route can be observed without a built dist. */
+async function installFakeSekbRuntime(): Promise<FakeConfirmCall[]> {
+  const confirmCalls: FakeConfirmCall[] = [];
+  const runtime = {
+    KnowledgeStore: class {
+      constructor() {}
+    },
+    DistillationTool: class {
+      constructor() {}
+      async confirm_and_save_with_lineage(suggestion: unknown, edits: unknown, options: FakeConfirmOptions) {
+        confirmCalls.push({ suggestion, edits, options });
+        if (options?.experienceShadow?.enabled) {
+          const memoryDir = join(options.experienceShadow.workspaceRoot, '.openclaw', 'memory');
+          mkdirSync(memoryDir, { recursive: true });
+          writeFileSync(join(memoryDir, 'experience-shadow.jsonl'), JSON.stringify({
+            atMs: 1,
+            sessionId: options.sessionId,
+            principleId: 'principle-shadow',
+            mode: 'dual-write-shadow',
+          }) + '\n', 'utf8');
+        }
+        return {
+          principleId: 'principle-shadow',
+          provenance: undefined,
+          dcsWrite: 'persisted',
+          highTrustEligible: false,
+        };
+      }
+      confirm_and_save(suggestion: unknown, edits: unknown, options: FakeConfirmOptions) {
+        confirmCalls.push({ suggestion, edits, options });
+        return 'principle-shadow';
+      }
+    },
+    isSekbBatchDistillationAssistantEnabled: () => false,
+  };
+  const mod = await import('@electron/services/knowledge-api');
+  mod.__setSekbRuntimeModuleForTests(runtime as never);
+  return confirmCalls;
+}
 
 vi.mock('@electron/utils/paths', () => ({
   expandPath: (path: string) => path,
@@ -27,11 +85,14 @@ describe('knowledge host API', () => {
     mod.__resetKnowledgeGovernanceForTests();
     mod.__resetGovernanceWriterQueueForTests();
     mod.__resetHostGovernedAdaptersForTests();
+    mod.__setSekbRuntimeModuleForTests(undefined);
     rmSync(root, { recursive: true, force: true });
     mkdirSync(root, { recursive: true });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    const mod = await import('@electron/services/knowledge-api');
+    mod.__setSekbRuntimeModuleForTests(undefined);
     closeOpenClawStateDatabaseForTest();
     rmSync(root, { recursive: true, force: true });
   });
@@ -207,6 +268,84 @@ describe('knowledge host API', () => {
       reason: 'runtimeUnavailable',
     });
     expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+
+  it('passes explicit experienceShadow through the production SEKB confirm route', async () => {
+    const confirmCalls = await installFakeSekbRuntime();
+    confirmCalls.length = 0;
+    const workspaceRoot = join(root, 'repo-root');
+    const previousRoot = process.env.VERSE_CLAW_REPO_ROOT;
+    process.env.VERSE_CLAW_REPO_ROOT = workspaceRoot;
+    try {
+      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+      const api = createKnowledgeApi({ gatewayManager: { rpc: vi.fn() } as never });
+
+      const result = await api.sekbConfirmPrinciple({
+        sessionId: 'session-shadow',
+        suggestion: {
+          cluster_summary: 'x',
+          source_trajectory_ids: [],
+          suggested_principle: {},
+          confidence: 0.1,
+        },
+        experienceShadow: { enabled: true },
+      });
+
+      expect(result).toMatchObject({
+        success: true,
+        available: true,
+        principleId: 'principle-shadow',
+        dcsWrite: 'persisted',
+        principleOnly: false,
+      });
+      expect(confirmCalls).toHaveLength(1);
+      expect(confirmCalls[0]?.options.experienceShadow).toEqual({
+        workspaceRoot,
+        enabled: true,
+        dualWrite: true,
+      });
+      const journal = join(workspaceRoot, '.openclaw', 'memory', 'experience-shadow.jsonl');
+      expect(readFileSync(journal, 'utf8')).toContain('"sessionId":"session-shadow"');
+      expect(readFileSync(journal, 'utf8')).toContain('"mode":"dual-write-shadow"');
+    } finally {
+      if (previousRoot === undefined) delete process.env.VERSE_CLAW_REPO_ROOT;
+      else process.env.VERSE_CLAW_REPO_ROOT = previousRoot;
+    }
+  });
+
+  it('omits experienceShadow entirely when the explicit request is absent', async () => {
+    const confirmCalls = await installFakeSekbRuntime();
+    confirmCalls.length = 0;
+    const workspaceRoot = join(root, 'repo-root-off');
+    const previousRoot = process.env.VERSE_CLAW_REPO_ROOT;
+    process.env.VERSE_CLAW_REPO_ROOT = workspaceRoot;
+    try {
+      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+      const api = createKnowledgeApi({ gatewayManager: { rpc: vi.fn() } as never });
+
+      const result = await api.sekbConfirmPrinciple({
+        sessionId: 'session-off',
+        suggestion: {
+          cluster_summary: 'x',
+          source_trajectory_ids: [],
+          suggested_principle: {},
+          confidence: 0.1,
+        },
+      });
+
+      expect(result).toMatchObject({
+        success: true,
+        available: true,
+        principleId: 'principle-shadow',
+        dcsWrite: 'persisted',
+      });
+      expect(confirmCalls).toHaveLength(1);
+      expect(confirmCalls[0]?.options).not.toHaveProperty('experienceShadow');
+      expect(existsSync(join(workspaceRoot, '.openclaw', 'memory', 'experience-shadow.jsonl'))).toBe(false);
+    } finally {
+      if (previousRoot === undefined) delete process.env.VERSE_CLAW_REPO_ROOT;
+      else process.env.VERSE_CLAW_REPO_ROOT = previousRoot;
+    }
   });
 
   it('configures memory-wiki defaults without overwriting unrelated plugin config', async () => {

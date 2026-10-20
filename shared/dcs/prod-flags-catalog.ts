@@ -284,16 +284,19 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     wave: 'C7',
     kind: 'api',
     key: 'DistillationTool.confirm_and_save(suggestion, edits, options)',
-    defaultDisplay: 'api-only (config leaf observability-only)',
+    defaultDisplay: 'api-only (host confirm explicit opt-in)',
     defaultValue: false,
     risk: 'api-only',
     enable:
-      'Call DistillationTool.confirm_and_save(suggestion, edits, { sessionId, experienceShadow: { enabled: true, workspaceRoot } }).',
-    rollback: 'Omit options.experienceShadow or set experienceShadow.enabled=false.',
-    riskNote: 'Shadow journal only. The runtime.coding.sekb.experienceShadow config leaf is observability-only and does not drive this API.',
+      'Call the host knowledge.sekbConfirmPrinciple API with payload { experienceShadow: { enabled: true } }; the host resolves workspaceRoot and passes it to DistillationTool.confirm_and_save.',
+    rollback: 'Omit payload.experienceShadow or set experienceShadow.enabled=false.',
+    riskNote: 'Shadow journal only. The runtime.coding.sekb.experienceShadow config leaf remains observability-only; the production host confirm route wires the explicit API opt-in without changing defaults.',
     executor: {
-      status: 'pending-wiring',
-      reason: 'The options.experienceShadow branch exists in DistillationTool, but no production confirm path passes experienceShadow. TF-0458 wires the runtime confirmation path.',
+      status: 'wired',
+      sites: [
+        'electron/services/knowledge-api.ts:5296',
+        'electron/services/knowledge-api.ts:5309',
+      ],
     },
   },
   {

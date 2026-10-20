@@ -3641,6 +3641,11 @@ export type KnowledgeSekbConfirmPrinciplePayload = {
   integrityClaim?: 'advisory' | 'confirmed' | 'high_trust' | string;
   /** When true, server rejects elevating summary-only text to high_trust. */
   summaryOnly?: boolean;
+  /**
+   * Explicit API opt-in for the diagnostic experience-shadow journal.
+   * The host resolves workspaceRoot; the runtime config leaf stays observability-only.
+   */
+  experienceShadow?: { enabled: boolean };
 };
 
 export type KnowledgeSekbConfirmProvenance = {

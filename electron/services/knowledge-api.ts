@@ -257,6 +257,26 @@ export function resolveHostSekbWorkspaceRoot(env: NodeJS.ProcessEnv = process.en
   return resolve(getOpenClawRuntimeDir(), '..');
 }
 
+type HostExperienceShadowOptions = {
+  workspaceRoot: string;
+  enabled: true;
+  dualWrite: true;
+};
+
+/**
+ * Resolve the explicit host confirm API shadow request. Omitted/false returns
+ * undefined so the production options stay byte-identical to the pre-feature
+ * call. The host owns workspaceRoot; callers cannot choose an arbitrary path.
+ */
+function resolveHostExperienceShadowOptions(value: unknown): HostExperienceShadowOptions | undefined {
+  if (!isRecord(value) || value.enabled !== true) return undefined;
+  return {
+    workspaceRoot: resolveHostSekbWorkspaceRoot(),
+    enabled: true,
+    dualWrite: true,
+  };
+}
+
 type SekbRuntimeModule = {
   KnowledgeStore: new (options?: { database?: { env?: NodeJS.ProcessEnv } }) => {
     query_trajectories: (filters?: Record<string, unknown>) => unknown[];
@@ -276,6 +296,7 @@ type SekbRuntimeModule = {
         integrityClaim?: unknown;
         summaryOnly?: boolean;
         contextBlockSink?: ContextBlockSink;
+        experienceShadow?: HostExperienceShadowOptions;
       },
     ) => string;
     confirm_and_save_with_lineage?: (
@@ -288,6 +309,7 @@ type SekbRuntimeModule = {
         integrityClaim?: unknown;
         summaryOnly?: boolean;
         contextBlockSink?: ContextBlockSink;
+        experienceShadow?: HostExperienceShadowOptions;
         contextBlockSinkKind?: 'blockstore' | 'journal';
       },
     ) => Promise<{
@@ -359,7 +381,16 @@ type SekbRuntimeModule = {
   createDeepSeekSekbBatchDistillationProvider?: () => unknown;
 };
 
+let sekbRuntimeModuleOverrideForTests: SekbRuntimeModule | undefined;
+
+export function __setSekbRuntimeModuleForTests(
+  module?: SekbRuntimeModule,
+): void {
+  sekbRuntimeModuleOverrideForTests = module;
+}
+
 async function loadSekbRuntimeModule(): Promise<SekbRuntimeModule | null> {
+  if (sekbRuntimeModuleOverrideForTests) return sekbRuntimeModuleOverrideForTests;
   const entryPath = join(getOpenClawRuntimeDir(), 'dist', 'knowledge', 'sekb', 'index.js');
   if (!existsSync(entryPath)) return null;
   return import(pathToFileURL(entryPath).href) as Promise<SekbRuntimeModule>;
@@ -5262,6 +5293,9 @@ export function createKnowledgeApi({
         // journal sink when the shared state DB cannot be opened, and label it
         // journaled_degraded instead of pretending the write persisted.
         const projection = createHostExperienceProjectionSink(stateDir);
+        const experienceShadow = resolveHostExperienceShadowOptions(
+          body.experienceShadow ?? payload?.experienceShadow,
+        );
         const lineage =
           typeof distiller.confirm_and_save_with_lineage === 'function'
             ? await distiller.confirm_and_save_with_lineage(body.suggestion, body.edits ?? null, {
@@ -5272,6 +5306,7 @@ export function createKnowledgeApi({
                 summaryOnly: body.summaryOnly === true || payload.summaryOnly === true,
                 contextBlockSink: projection.sink,
                 contextBlockSinkKind: projection.kind,
+                ...(experienceShadow ? { experienceShadow } : {}),
               })
             : {
                 principleId: distiller.confirm_and_save(body.suggestion, body.edits ?? null, {
@@ -5279,6 +5314,7 @@ export function createKnowledgeApi({
                   requireSession: true,
                   sourceSystem: body.sourceSystem ?? 'ui-confirm',
                   contextBlockSink: projection.sink,
+                  ...(experienceShadow ? { experienceShadow } : {}),
                 }),
                 provenance: undefined,
                 dcsWrite: 'skipped' as const,

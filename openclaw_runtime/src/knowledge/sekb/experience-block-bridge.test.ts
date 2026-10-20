@@ -4,6 +4,7 @@ import {
   buildExperienceBlock,
   handleConfirmAndSave,
 } from "./experience-block-bridge.js";
+import { readExperienceShadowEvents } from "./experience-shadow-product.js";
 import { BlockStore } from "../../context-engine/block-store.js";
 import { createContextBlockSink } from "../../agents/harness/hook-context.js";
 import { DistillationTool } from "./distillation-tool.js";
@@ -189,6 +190,34 @@ describe("DCS Stage 5 experience-block-bridge", () => {
         confidence: 0.85,
         write_origin: "handler",
         verification_status: "confirmed",
+      });
+    });
+
+    it("appends the experience shadow journal without changing the sink result", async () => {
+      const workspaceRoot = mkdtempSync(path.join(os.tmpdir(), "openclaw-experience-shadow-"));
+      tempRoots.push(workspaceRoot);
+      const sink: ContextBlockSink = vi.fn(async (writes) =>
+        writes.map(() => ({ accepted: true })),
+      );
+      const result = await handleConfirmAndSave({
+        principle: makePrinciple({ principle_id: "principle-shadow" }),
+        suggestion: makeSuggestion(),
+        sessionId: "session-shadow",
+        contextBlockSink: sink,
+        experienceShadow: {
+          workspaceRoot,
+          enabled: true,
+          dualWrite: true,
+        },
+      });
+
+      expect(result).toMatchObject({ accepted: true });
+      const events = readExperienceShadowEvents(workspaceRoot);
+      expect(events).toHaveLength(1);
+      expect(events[0]).toMatchObject({
+        sessionId: "session-shadow",
+        principleId: "principle-shadow",
+        mode: "dual-write-shadow",
       });
     });
 
