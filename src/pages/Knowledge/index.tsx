@@ -1455,6 +1455,12 @@ export function Knowledge() {
               <span className={cn('h-1.5 w-1.5 rounded-full', ready ? 'bg-emerald-500' : 'bg-amber-500')} />
               <span className="hidden sm:inline">{ready ? t('status.ready') : t('status.missing')}</span>
             </button>
+            {!ready ? (
+              <Button type="button" size="sm" className="h-8 rounded-lg px-2.5 text-xs" onClick={() => void runAction('init', () => hostApi.knowledge.init())} disabled={busy} data-testid="knowledge-init-trigger">
+                {running === 'init' ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin motion-reduce:animate-none" /> : <Check className="mr-1.5 h-3.5 w-3.5" />}
+                {t('actions.init')}
+              </Button>
+            ) : null}
 
             <DropdownMenu.Root>
               <Tooltip>
