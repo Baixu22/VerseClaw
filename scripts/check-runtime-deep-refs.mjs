@@ -151,7 +151,10 @@ export function collectReferences(root = ROOT, files = listScannedFiles(root)) {
         if (raw.startsWith('!')) continue;
         const target = raw.startsWith('/') ? raw.slice(1) : raw;
         if (!target.includes(VENDOR_PREFIX)) continue;
-        references.push({ file, line: index + 1, kind: 'string', specifier: raw, target });
+        // A bare string may cite a repository file with its line number. Resolve
+        // the file itself; the line number is checked by the owning gate.
+        const fileTarget = target.replace(/:([1-9][0-9]*)$/u, '');
+        references.push({ file, line: index + 1, kind: 'string', specifier: raw, target: fileTarget });
       }
     }
   }

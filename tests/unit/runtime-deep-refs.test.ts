@@ -58,6 +58,7 @@ describe('runtime deep reference guard (#93)', () => {
         "import { openDatabase } from '../../openclaw_runtime/src/state/openclaw-state-db';",
         "const lazy = await import('../../openclaw_runtime/src/knowledge/governance-store');",
         "const claim = ['openclaw_runtime/src/knowledge/governance-store.ts'];",
+        "const citedLine = 'openclaw_runtime/src/state/openclaw-state-db.ts:17';",
         "const glob = 'openclaw_runtime/src/**';",
         "const braced = 'openclaw_runtime/src/x.{ts,js}';",
         "const negated = '!openclaw_runtime/generated/**';",
@@ -70,6 +71,7 @@ describe('runtime deep reference guard (#93)', () => {
     expect(kinds).toContain('import:openclaw_runtime/src/state/openclaw-state-db');
     expect(kinds).toContain('import:openclaw_runtime/src/knowledge/governance-store');
     expect(kinds).toContain('string:openclaw_runtime/src/knowledge/governance-store.ts');
+    expect(kinds).toContain('string:openclaw_runtime/src/state/openclaw-state-db.ts');
     expect(kinds.filter((entry) => entry.includes('**') || entry.includes('{') || entry.startsWith('string:!'))).toEqual([]);
     expect(kinds.filter((entry) => entry.includes('${'))).toEqual([]);
     // The quoted import specifier is reported once, as an import, not also as a string.
