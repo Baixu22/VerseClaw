@@ -168,10 +168,11 @@ flowchart LR
 ### Knowledge Hub, Wiki and SEKB
 
 - Knowledge is Markdown/wiki-first and role-governed. The allowed durable path is `Inbox → Draft → Steward review → Proposal → explicit confirmation → wiki.apply`.
+- `routeContext` does not inject SEKB by default. Runtime Lessons participate only when the caller explicitly sets `sourcePolicy.runtimeLessons`, and each candidate carries structured provenance.
 - The Knowledge workbench exposes `library`, `review-queue`, `inbox`, `drafts`, `review`, `runtime` and `governance` tabs.
 - Chat knowledge scopes are `none`, `memory`, `wiki` and `all`; modes are `manual`, `suggest` and `auto-read`. Knowledge references are read-only context and must not change tool or workspace permissions.
-- Source Sets and grounded answers return sources, unknowns, suggested next actions and a grounding status. The current answer path is page/snippet-level and does not claim a full RAG platform.
-- `memory-wiki` exposes `wiki_apply`, `wiki_get`, `wiki_lint`, `wiki_search` and `wiki_status`. Vault modes are `isolated`, `bridge` and experimental `unsafe-local`; search corpora are `wiki`, `memory` or `all`.
+- Source Sets and grounded answers return sources, unknowns, suggested next actions and a grounding status. The current answer path is page/snippet-level and does not claim a full RAG platform. A real SiliconFlow embedding provider can be opted into for the semantic lane; lexical fallback remains authoritative when the provider is unavailable.
+- `memory-wiki` exposes `wiki_get`, `wiki_lint`, `wiki_search` and `wiki_status`. `wiki_apply` is operator-gated and is not registered for ordinary agents unless `tools.allowAgentApply` is explicitly enabled. The generic agent `gateway` tool forwards only an allowlisted core-RPC subset and does not forward plugin `wiki.apply`; the Gateway RPC remains available to the governed Main host path. Vault modes are `isolated`, `bridge` and experimental `unsafe-local`; search corpora are `wiki`, `memory` or `all`.
 - Agents may read and propose. They may not silently apply, archive, delete or merge durable knowledge. SEKB remains default-off/shadow for automatic writeback.
 - Knowledge Hub is not an Obsidian clone, NotebookLM clone, separate RAG stack or second runtime memory authority.
 

@@ -57,6 +57,51 @@ function parseFacadeActions(hostApiText) {
   return modules;
 }
 
+
+function extractExportedObjectBody(moduleText, identifier) {
+  const exportRegex = new RegExp('export const ' + identifier + ' = \\{');
+  const match = moduleText.match(exportRegex);
+  if (!match || match.index === undefined) return '';
+  const openIndex = moduleText.indexOf('{', match.index);
+  return extractObjectBlock(moduleText, openIndex);
+}
+
+function resolveModuleFacadeBody(body, moduleFacadeTexts) {
+  let resolved = body;
+  for (;;) {
+    const spread = resolved.match(/^(\s*)\.\.\.([A-Za-z][A-Za-z0-9]*),?$/m);
+    if (!spread) break;
+    const identifier = spread[2];
+    const moduleText = moduleFacadeTexts[identifier];
+    const moduleBody = moduleText
+      ? extractExportedObjectBody(moduleText, identifier)
+      : '';
+    resolved = moduleBody
+      ? resolved.replace(spread[0], moduleBody)
+      : resolved.replace(spread[0], '');
+  }
+  return resolved;
+}
+
+function inlineModuleFacadeAliases(hostApiText, moduleFacadeTexts) {
+  let inlined = hostApiText;
+  for (const [identifier, moduleText] of Object.entries(moduleFacadeTexts)) {
+    const aliasRegex = new RegExp('^  ([A-Za-z][A-Za-z0-9]*): ' + identifier + ',?$', 'm');
+    const alias = inlined.match(aliasRegex);
+    if (!alias) continue;
+    const body = extractExportedObjectBody(moduleText, identifier);
+    if (!body) continue;
+    const resolved = resolveModuleFacadeBody(body, moduleFacadeTexts);
+    const indented = resolved
+      .split('\n')
+      .map((line) => (line ? '  ' + line : line))
+      .join('\n');
+    const replacement = '  ' + alias[1] + ': {' + indented + '\n  },';
+    inlined = inlined.replace(alias[0], () => replacement);
+  }
+  return inlined;
+}
+
 function parseRegisteredModules(ipcHandlersText) {
   const match = ipcHandlersText.match(/const services: HostServiceRegistry = \{([\s\S]*?)\n\s{2}\};/)
     ?? ipcHandlersText.match(/hostApiRegistry\.registerCoreServices\(\{([\s\S]*?)\n\s{2}\}\);/);
@@ -183,6 +228,7 @@ function collectContractIssues({
 
 export {
   collectContractIssues,
+  inlineModuleFacadeAliases,
   parseContractActions,
   parseFacadeActions,
   parseRegisteredModules,
@@ -192,7 +238,22 @@ export {
 async function main() {
   const files = {
     contractText: await readProjectFile('shared/host-api/contract.ts'),
-    hostApiText: await readProjectFile('src/lib/host-api.ts'),
+    hostApiText: inlineModuleFacadeAliases(
+      await readProjectFile('src/lib/host-api.ts'),
+      {
+        knowledgeHostApi: await readProjectFile('src/lib/host-api/knowledge/index.ts'),
+        knowledgeLibraryApi: await readProjectFile('src/lib/host-api/knowledge/library.ts'),
+        knowledgeRoutingApi: await readProjectFile('src/lib/host-api/knowledge/routing.ts'),
+        knowledgeInboxApi: await readProjectFile('src/lib/host-api/knowledge/inbox.ts'),
+        knowledgeDraftsApi: await readProjectFile('src/lib/host-api/knowledge/drafts.ts'),
+        knowledgeProposalsApi: await readProjectFile('src/lib/host-api/knowledge/proposals.ts'),
+        knowledgeStewardApi: await readProjectFile('src/lib/host-api/knowledge/steward.ts'),
+        knowledgeRuntimeLessonsApi: await readProjectFile('src/lib/host-api/knowledge/runtime-lessons.ts'),
+        knowledgeSourceSetApi: await readProjectFile('src/lib/host-api/knowledge/source-set.ts'),
+        knowledgeProvenanceApi: await readProjectFile('src/lib/host-api/knowledge/provenance.ts'),
+        knowledgeWatchedDirectoriesApi: await readProjectFile('src/lib/host-api/knowledge/watched-directories.ts'),
+      },
+    ),
     ipcHandlersText: [
       await readProjectFile('electron/main/ipc-handlers.ts'),
       await readProjectFile('electron/extensions/builtin/diagnostics.ts'),

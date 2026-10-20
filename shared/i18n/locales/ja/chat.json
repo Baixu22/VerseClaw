@@ -1781,7 +1781,7 @@
             "title": "Transcript を利用できません",
             "description": "Handoff 下書きに必要な会話コンテキストを十分に読めませんでした。"
           },
-                    "handoff_ancestry_unavailable": {
+          "handoff_ancestry_unavailable": {
             "title": "Handoff 履歴を確認できません",
             "description": "保存された Handoff 履歴を確認できません。履歴を修復するまで現在のセッションで続行してください。"
           },
@@ -1793,7 +1793,7 @@
             "title": "Handoff の循環を検出しました",
             "description": "このセッションは自身の Handoff 祖先にすでに含まれているため、Handoff を拒否しました。"
           },
-"unknown": {
+          "unknown": {
             "title": "Handoff の準備に失敗しました",
             "description": "継続用の下書きを準備できませんでした。"
           }
@@ -2011,15 +2011,17 @@
     },
     "knowledgePreflight": {
       "title": "????????",
-      "summary": "{{docs}} ???????????{{pitfalls}} ??????????{{rules}} ???????????????????",
+      "summary": "関連ドキュメント {{docs}} 件、過去の落とし穴 {{pitfalls}} 件、ルール {{rules}} 件、ランタイムレッスン {{runtimeLessons}} 件が該当する可能性があります。",
       "confidence": "{{confidence}}%",
       "whyMatched": "??: {{reason}}",
       "source": "{{corpus}} ? {{source}}",
       "groups": {
         "docs": "????????",
         "pitfalls": "???????",
-        "rules": "???"
-      }
+        "rules": "???",
+        "runtime_lessons": "ランタイムレッスン"
+      },
+      "runtimeLesson": "ランタイムレッスン：{{condition}} → {{action}}"
     },
     "providerGate": {
       "title": "No AI provider configured",
@@ -2058,7 +2060,11 @@
       "defaultPath": "既定のパス",
       "defaultPathUnavailable": "ブランチ名を入力してパスを確認"
     },
-    "modelSwitchSessionResetFailed": "既定のモデルは保存されましたが、このセッションをリセットできませんでした: {{error}}"
+    "modelSwitchSessionResetFailed": "既定のモデルは保存されましたが、このセッションをリセットできませんでした: {{error}}",
+    "knowledgeRuntimeLessons": {
+      "title": "ランタイムレッスン",
+      "description": "確認済みの SEKB プリンシップを可視的な知識ソースとして利用します。"
+    }
   },
   "historyBuckets": {
     "today": "今日",
@@ -2354,7 +2360,7 @@
     "aborted": "停止しました",
     "dismissCompleted": "完了状態を非表示"
   },
-    "turnSummary": {
+  "turnSummary": {
     "codingRun": {
       "title": "CodingRun 証跡",
       "jsonl": "読み取り専用 JSONL 投影",

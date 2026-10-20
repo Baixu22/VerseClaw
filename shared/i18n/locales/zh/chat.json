@@ -1781,7 +1781,7 @@
             "title": "Transcript 不可用",
             "description": "接力草稿无法读取足够的对话上下文。"
           },
-                    "handoff_ancestry_unavailable": {
+          "handoff_ancestry_unavailable": {
             "title": "接力历史无法核验",
             "description": "持久化的接力历史无法核验。请继续当前会话，修复历史后再接力。"
           },
@@ -1793,7 +1793,7 @@
             "title": "检测到接力环路",
             "description": "本会话已出现在自己的接力祖先链中，因此拒绝了本次接力。"
           },
-"unknown": {
+          "unknown": {
             "title": "接力准备失败",
             "description": "无法准备延续草稿。"
           }
@@ -2011,15 +2011,17 @@
     },
     "knowledgePreflight": {
       "title": "????",
-      "summary": "{{docs}} ??????{{pitfalls}} ??????{{rules}} ????????",
+      "summary": "{{docs}} 篇相关文档、{{pitfalls}} 条既往坑、{{rules}} 条规则、{{runtimeLessons}} 条运行时经验可能适用。",
       "confidence": "{{confidence}}%",
       "whyMatched": "???{{reason}}",
       "source": "{{corpus}} ? {{source}}",
       "groups": {
         "docs": "????",
         "pitfalls": "????",
-        "rules": "??"
-      }
+        "rules": "??",
+        "runtime_lessons": "运行时经验"
+      },
+      "runtimeLesson": "运行时经验：{{condition}} → {{action}}"
     },
     "providerGate": {
       "title": "尚未配置 AI Provider",
@@ -2058,7 +2060,11 @@
       "defaultPath": "默认路径",
       "defaultPathUnavailable": "输入分支名称以预览路径"
     },
-    "modelSwitchSessionResetFailed": "默认模型已保存，但当前会话未能重置：{{error}}"
+    "modelSwitchSessionResetFailed": "默认模型已保存，但当前会话未能重置：{{error}}",
+    "knowledgeRuntimeLessons": {
+      "title": "运行时经验",
+      "description": "将已确认的 SEKB 原则作为可见知识来源。"
+    }
   },
   "historyBuckets": {
     "today": "今天",
@@ -2354,7 +2360,7 @@
     "aborted": "已停止",
     "dismissCompleted": "隐藏已完成状态"
   },
-    "turnSummary": {
+  "turnSummary": {
     "codingRun": {
       "title": "CodingRun 证据",
       "jsonl": "只读 JSONL 投影",

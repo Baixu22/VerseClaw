@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   collectContractIssues,
+  inlineModuleFacadeAliases,
   parseContractActions,
   parseFacadeActions,
   parseRegistryScenarioIds,
@@ -85,6 +86,29 @@ describe('contract check', () => {
     expect([...parseContractActions(contractText).get('agentDev')!]).toEqual(['status', 'seedState']);
     expect([...parseFacadeActions(hostApiText).get('agentDev')!]).toEqual(['status', 'seedState']);
     expect(parseRegistryScenarioIds(scenarioRegistryText)).toContain('doctor-failed');
+  });
+
+  it('inlines aliased module facades for contract parsing', () => {
+    const aliasedHostApi = [
+      'export const hostApi = {',
+      '  knowledge: knowledgeHostApi,',
+      '};',
+    ].join('\n');
+    const moduleFacades = {
+      knowledgeHostApi: [
+        'export const knowledgeHostApi = {',
+        '  ...knowledgeRoutingApi,',
+        '};',
+      ].join('\n'),
+      knowledgeRoutingApi: [
+        'export const knowledgeRoutingApi = {',
+        "  routeContext: (input) => invokeHost('knowledge', 'routeContext', input),",
+        '};',
+      ].join('\n'),
+    };
+    const inlined = inlineModuleFacadeAliases(aliasedHostApi, moduleFacades);
+
+    expect([...parseFacadeActions(inlined).get('knowledge')!]).toEqual(['routeContext']);
   });
 
   it('passes representative aligned P0 inputs', () => {

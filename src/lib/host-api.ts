@@ -1,3 +1,4 @@
+import { knowledgeHostApi } from './host-api/knowledge';
 import type {
   AgentCreatePayload,
   AgentBrowserClickPayload,
@@ -173,7 +174,6 @@ import type {
   DialogOpenPayload,
   FilePreviewTreeOptions,
   FileReadBinaryOptions,
-  HostSuccess,
   GitBranchCheckoutPayload,
   GitBranchCreatePayload,
   GitBranchListResult,
@@ -220,91 +220,6 @@ import type {
   HostApiContract,
   SessionActivitySnapshotPayload,
   ImageGenerationSettingsPayload,
-  KnowledgeApplyDraftPayload,
-  KnowledgeApplyDraftResult,
-  KnowledgeApplyReviewedChangePayload,
-  KnowledgeApplyReviewedChangeResult,
-  KnowledgeAnswerFromSourceSetPayload,
-  KnowledgeAnswerFromSourceSetResult,
-  KnowledgeCreateArtifactDraftPayload,
-  KnowledgeCreateDraftPayload,
-  KnowledgeCreateInboxItemPayload,
-  KnowledgeCompileResult,
-  KnowledgeConfigurePayload,
-  KnowledgeDeleteSourceSetPayload,
-  KnowledgeDraftResult,
-  KnowledgeGetPayload,
-  KnowledgeGetResult,
-  KnowledgeInboxItemIdPayload,
-  KnowledgeInboxResult,
-  KnowledgeImportOkfBundlePayload,
-  KnowledgeIngestFilesPayload,
-  KnowledgeIngestFilesResult,
-  KnowledgeInitResult,
-  KnowledgeListDraftsPayload,
-  KnowledgeListDraftsResult,
-  KnowledgeListInboxItemsPayload,
-  KnowledgeListInboxItemsResult,
-  KnowledgeListProposalsPayload,
-  KnowledgeListProposalsResult,
-  KnowledgeListGovernanceReceiptsResult,
-  KnowledgeListReviewBundlesPayload,
-  KnowledgeListReviewBundlesResult,
-  KnowledgeListSourceSetsResult,
-  KnowledgeLintResult,
-  KnowledgeMatchErrorExperiencePayload,
-  KnowledgeMatchErrorExperienceResult,
-  KnowledgeOkfImportResult,
-  KnowledgeOkfValidationResult,
-  KnowledgeOpenVaultResult,
-  KnowledgePreviewChangePayload,
-  KnowledgePreviewChangeResult,
-  KnowledgeProposalResult,
-  KnowledgeProposeChangePayload,
-  KnowledgeProvenancePayload,
-  KnowledgeProvenanceResult,
-  KnowledgeRecordReferencePayload,
-  KnowledgeReviewDraftPayload,
-  KnowledgeRouteContextPayload,
-  KnowledgeRouteContextResult,
-  KnowledgeRuntimeLessonsReportResult,
-  KnowledgeSekbSuggestPrinciplesResult,
-  KnowledgeSekbSuggestPrinciplesPayload,
-  KnowledgeSekbShadowEvaluationReportResult,
-  KnowledgeSekbShadowEvaluationReportPayload,
-  KnowledgeSekbShadowEvaluationProtocolResult,
-  KnowledgeSekbShadowEvaluationProtocolPayload,
-  KnowledgeSekbShadowEvaluationExportResult,
-  KnowledgeSekbShadowEvaluationExportPayload,
-  KnowledgeSekbRejectSuggestionResult,
-  KnowledgeSekbCaptureTrajectoryResult,
-  KnowledgeSekbCaptureTrajectoryPayload,
-  KnowledgeSekbRetrieveForTaskResult,
-  KnowledgeSekbRetrieveForTaskPayload,
-  KnowledgeSekbRejectSuggestionPayload,
-  KnowledgeSekbConfirmPrincipleResult,
-  KnowledgeSekbConfirmPrinciplePayload,
-  KnowledgeSekbBatchDistillSuggestResult,
-  KnowledgeSekbBatchDistillSuggestPayload,
-  KnowledgeSearchPayload,
-  KnowledgeSearchResult,
-  KnowledgeSaveSourceSetPayload,
-  KnowledgeSourceSetResult,
-  KnowledgeStewardReviewPayload,
-  KnowledgeStewardReviewResult,
-  KnowledgeStewardConfigGetResult,
-  KnowledgeStewardConfigUpdatePayload,
-  KnowledgeStewardConfigUpdateResult,
-  KnowledgeStatusResult,
-  KnowledgeUpdateErrorExperienceEffectivenessPayload,
-  KnowledgeUpdateErrorExperienceEffectivenessResult,
-  KnowledgeUpdateDraftPayload,
-  KnowledgeUpdateInboxItemPayload,
-  KnowledgeValidateOkfBundlePayload,
-  KnowledgeGovernanceResult,
-  KnowledgeListWatchedDirectoryEventsPayload,
-  KnowledgeWatchedDirectoryConfig,
-  KnowledgeWatchedDirectoryEvent,
   LogMemoryPayload,
   LocalControlPlaneCorrelationFilter,
   LocalControlPlaneCorrelationsResult,
@@ -633,6 +548,7 @@ export type {
   KnowledgeQualityMetrics,
   KnowledgeRetrievalDiagnostics,
   KnowledgeSearchResult,
+  KnowledgeSourceRef,
   KnowledgeSourceSet,
   KnowledgeSourceSetAnswerSource,
   KnowledgeSourceSetResult,
@@ -1606,149 +1522,7 @@ export const hostApi = {
       invokeHost('workProviders', 'validateArtifact', input)
     ),
   },
-  knowledge: {
-    status: (): Promise<KnowledgeStatusResult> => invokeHost('knowledge', 'status'),
-    init: (): Promise<KnowledgeInitResult> => invokeHost('knowledge', 'init'),
-    configure: (input?: KnowledgeConfigurePayload) => invokeHost('knowledge', 'configure', input),
-    ingestFiles: (input: KnowledgeIngestFilesPayload): Promise<KnowledgeIngestFilesResult> => (
-      invokeHost('knowledge', 'ingestFiles', input)
-    ),
-    validateOkfBundle: (input: KnowledgeValidateOkfBundlePayload): Promise<KnowledgeOkfValidationResult> => (
-      invokeHost('knowledge', 'validateOkfBundle', input)
-    ),
-    importOkfBundle: (input: KnowledgeImportOkfBundlePayload): Promise<KnowledgeOkfImportResult> => (
-      invokeHost('knowledge', 'importOkfBundle', input)
-    ),
-    search: (input: KnowledgeSearchPayload): Promise<KnowledgeSearchResult> => invokeHost('knowledge', 'search', input),
-    get: (input: KnowledgeGetPayload): Promise<KnowledgeGetResult> => invokeHost('knowledge', 'get', input),
-    compile: (): Promise<KnowledgeCompileResult> => invokeHost('knowledge', 'compile'),
-    lint: (): Promise<KnowledgeLintResult> => invokeHost('knowledge', 'lint'),
-    applyDraft: (input: KnowledgeApplyDraftPayload): Promise<KnowledgeApplyDraftResult> => (
-      invokeHost('knowledge', 'applyDraft', input)
-    ),
-    openVault: (): Promise<KnowledgeOpenVaultResult> => invokeHost('knowledge', 'openVault'),
-    createInboxItem: (input: KnowledgeCreateInboxItemPayload): Promise<KnowledgeInboxResult> => (
-      invokeHost('knowledge', 'createInboxItem', input)
-    ),
-    listInboxItems: (input?: KnowledgeListInboxItemsPayload): Promise<KnowledgeListInboxItemsResult> => (
-      invokeHost('knowledge', 'listInboxItems', input)
-    ),
-    updateInboxItem: (input: KnowledgeUpdateInboxItemPayload): Promise<KnowledgeInboxResult> => (
-      invokeHost('knowledge', 'updateInboxItem', input)
-    ),
-    dismissInboxItem: (input: KnowledgeInboxItemIdPayload): Promise<KnowledgeInboxResult> => (
-      invokeHost('knowledge', 'dismissInboxItem', input)
-    ),
-    promoteInboxItemToDraft: (input: KnowledgeInboxItemIdPayload): Promise<KnowledgeInboxResult> => (
-      invokeHost('knowledge', 'promoteInboxItemToDraft', input)
-    ),
-    createDraft: (input: KnowledgeCreateDraftPayload): Promise<KnowledgeDraftResult> => (
-      invokeHost('knowledge', 'createDraft', input)
-    ),
-    listSourceSets: (): Promise<KnowledgeListSourceSetsResult> => (
-      invokeHost('knowledge', 'listSourceSets')
-    ),
-    saveSourceSet: (input: KnowledgeSaveSourceSetPayload): Promise<KnowledgeSourceSetResult> => (
-      invokeHost('knowledge', 'saveSourceSet', input)
-    ),
-    deleteSourceSet: (input: KnowledgeDeleteSourceSetPayload): Promise<HostSuccess> => (
-      invokeHost('knowledge', 'deleteSourceSet', input)
-    ),
-    answerFromSourceSet: (input: KnowledgeAnswerFromSourceSetPayload): Promise<KnowledgeAnswerFromSourceSetResult> => (
-      invokeHost('knowledge', 'answerFromSourceSet', input)
-    ),
-    createArtifactDraft: (input: KnowledgeCreateArtifactDraftPayload): Promise<KnowledgeDraftResult> => (
-      invokeHost('knowledge', 'createArtifactDraft', input)
-    ),
-    listDrafts: (input?: KnowledgeListDraftsPayload): Promise<KnowledgeListDraftsResult> => (
-      invokeHost('knowledge', 'listDrafts', input)
-    ),
-    getDraft: (input: { id: string }): Promise<KnowledgeDraftResult> => invokeHost('knowledge', 'getDraft', input),
-    updateDraft: (input: KnowledgeUpdateDraftPayload): Promise<KnowledgeDraftResult> => (
-      invokeHost('knowledge', 'updateDraft', input)
-    ),
-    reviewDraft: (input: KnowledgeReviewDraftPayload): Promise<KnowledgeDraftResult> => (
-      invokeHost('knowledge', 'reviewDraft', input)
-    ),
-    proposeChange: (input: KnowledgeProposeChangePayload): Promise<KnowledgeProposalResult> => (
-      invokeHost('knowledge', 'proposeChange', input)
-    ),
-    listProposals: (input?: KnowledgeListProposalsPayload): Promise<KnowledgeListProposalsResult> => (
-      invokeHost('knowledge', 'listProposals', input)
-    ),
-    listReviewBundles: (input?: KnowledgeListReviewBundlesPayload): Promise<KnowledgeListReviewBundlesResult> => (
-      invokeHost('knowledge', 'listReviewBundles', input)
-    ),
-    previewChange: (input: KnowledgePreviewChangePayload): Promise<KnowledgePreviewChangeResult> => (
-      invokeHost('knowledge', 'previewChange', input)
-    ),
-    applyReviewedChange: (input: KnowledgeApplyReviewedChangePayload): Promise<KnowledgeApplyReviewedChangeResult> => (
-      invokeHost('knowledge', 'applyReviewedChange', input)
-    ),
-    stewardReview: (input: KnowledgeStewardReviewPayload): Promise<KnowledgeStewardReviewResult> => (
-      invokeHost('knowledge', 'stewardReview', input)
-    ),
-    stewardConfigGet: (): Promise<KnowledgeStewardConfigGetResult> => (
-      invokeHost('knowledge', 'stewardConfigGet')
-    ),
-    stewardConfigUpdate: (input: KnowledgeStewardConfigUpdatePayload): Promise<KnowledgeStewardConfigUpdateResult> => (
-      invokeHost('knowledge', 'stewardConfigUpdate', input)
-    ),
-    routeContext: (input: KnowledgeRouteContextPayload): Promise<KnowledgeRouteContextResult> => (
-      invokeHost('knowledge', 'routeContext', input)
-    ),
-    runtimeLessonsReport: (): Promise<KnowledgeRuntimeLessonsReportResult> => (
-      invokeHost('knowledge', 'runtimeLessonsReport')
-    ),
-    sekbShadowEvaluationExport: (input: KnowledgeSekbShadowEvaluationExportPayload): Promise<KnowledgeSekbShadowEvaluationExportResult> => (
-      invokeHost('knowledge', 'sekbShadowEvaluationExport', input)
-    ),
-    sekbShadowEvaluationProtocol: (input: KnowledgeSekbShadowEvaluationProtocolPayload): Promise<KnowledgeSekbShadowEvaluationProtocolResult> => (
-      invokeHost('knowledge', 'sekbShadowEvaluationProtocol', input)
-    ),
-    sekbShadowEvaluationReport: (input: KnowledgeSekbShadowEvaluationReportPayload): Promise<KnowledgeSekbShadowEvaluationReportResult> => (
-      invokeHost('knowledge', 'sekbShadowEvaluationReport', input)
-    ),
-    sekbSuggestPrinciples: (input?: KnowledgeSekbSuggestPrinciplesPayload): Promise<KnowledgeSekbSuggestPrinciplesResult> => (
-      invokeHost('knowledge', 'sekbSuggestPrinciples', input)
-    ),
-    sekbBatchDistillSuggest: (input?: KnowledgeSekbBatchDistillSuggestPayload): Promise<KnowledgeSekbBatchDistillSuggestResult> => (
-      invokeHost('knowledge', 'sekbBatchDistillSuggest', input)
-    ),
-    sekbConfirmPrinciple: (input: KnowledgeSekbConfirmPrinciplePayload): Promise<KnowledgeSekbConfirmPrincipleResult> => (
-      invokeHost('knowledge', 'sekbConfirmPrinciple', input)
-    ),
-    sekbRejectSuggestion: (input: KnowledgeSekbRejectSuggestionPayload): Promise<KnowledgeSekbRejectSuggestionResult> => (
-      invokeHost('knowledge', 'sekbRejectSuggestion', input)
-    ),
-    sekbCaptureTrajectory: (input: KnowledgeSekbCaptureTrajectoryPayload): Promise<KnowledgeSekbCaptureTrajectoryResult> => (
-      invokeHost('knowledge', 'sekbCaptureTrajectory', input)
-    ),
-    sekbRetrieveForTask: (input: KnowledgeSekbRetrieveForTaskPayload): Promise<KnowledgeSekbRetrieveForTaskResult> => (
-      invokeHost('knowledge', 'sekbRetrieveForTask', input)
-    ),
-    matchErrorExperience: (input: KnowledgeMatchErrorExperiencePayload): Promise<KnowledgeMatchErrorExperienceResult> => (
-      invokeHost('knowledge', 'matchErrorExperience', input)
-    ),
-    updateErrorExperienceEffectiveness: (input: KnowledgeUpdateErrorExperienceEffectivenessPayload): Promise<KnowledgeUpdateErrorExperienceEffectivenessResult> => (
-      invokeHost('knowledge', 'updateErrorExperienceEffectiveness', input)
-    ),
-    recordKnowledgeReference: (input: KnowledgeRecordReferencePayload): Promise<KnowledgeProvenanceResult> => (
-      invokeHost('knowledge', 'recordKnowledgeReference', input)
-    ),
-    getProvenance: (input: KnowledgeProvenancePayload): Promise<KnowledgeProvenanceResult> => (
-      invokeHost('knowledge', 'getProvenance', input)
-    ),
-    governanceAudit: (): Promise<KnowledgeGovernanceResult> => invokeHost('knowledge', 'governanceAudit'),
-    listGovernanceReceipts: (): Promise<KnowledgeListGovernanceReceiptsResult> => (
-      invokeHost('knowledge', 'listGovernanceReceipts')
-    ),
-    listWatchedDirectories: (): Promise<KnowledgeWatchedDirectoryConfig[]> => invokeHost('knowledge', 'listWatchedDirectories'),
-    addWatchedDirectory: (config: KnowledgeWatchedDirectoryConfig): Promise<HostSuccess> => invokeHost('knowledge', 'addWatchedDirectory', config),
-    updateWatchedDirectory: (id: string, config: Partial<KnowledgeWatchedDirectoryConfig>): Promise<HostSuccess> => invokeHost('knowledge', 'updateWatchedDirectory', { id, config }),
-    removeWatchedDirectory: (id: string): Promise<HostSuccess> => invokeHost('knowledge', 'removeWatchedDirectory', { id }),
-    listWatchedDirectoryEvents: (payload: KnowledgeListWatchedDirectoryEventsPayload): Promise<KnowledgeWatchedDirectoryEvent[]> => invokeHost('knowledge', 'listWatchedDirectoryEvents', payload),
-  },
+  knowledge: knowledgeHostApi,
   cron: {
     list: () => invokeHost('cron', 'list'),
     create: (input: CronJobCreateInput) => invokeHost('cron', 'create', input),

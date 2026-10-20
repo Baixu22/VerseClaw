@@ -38,6 +38,10 @@
       "label": "Allow Private Memory Access",
       "help": "Experimental same-repo escape hatch for reading memory-core private paths."
     },
+    "tools.allowAgentApply": {
+      "label": "Allow Agent Wiki Apply",
+      "help": "Explicitly expose wiki_apply to ordinary agents. Keep this off unless the operator has approved direct wiki mutations."
+    },
     "context.includeCompiledDigestPrompt": {
       "label": "Include Compiled Digest In Prompt",
       "help": "Append a compact compiled wiki digest snapshot to memory prompt sections for context engines and legacy prompt assembly."
@@ -156,6 +160,15 @@
         "additionalProperties": false,
         "properties": {
           "includeCompiledDigestPrompt": {
+            "type": "boolean"
+          }
+        }
+      },
+      "tools": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "allowAgentApply": {
             "type": "boolean"
           }
         }

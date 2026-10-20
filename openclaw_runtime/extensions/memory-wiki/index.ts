@@ -42,7 +42,9 @@ export default definePluginEntry({
     registerMemoryWikiGatewayMethods({ api, config, appConfig: api.config });
     api.registerTool(createWikiStatusTool(config, api.config), { name: "wiki_status" });
     api.registerTool(createWikiLintTool(config, api.config), { name: "wiki_lint" });
-    api.registerTool(createWikiApplyTool(config, api.config), { name: "wiki_apply" });
+    if (config.tools.allowAgentApply) {
+      api.registerTool(createWikiApplyTool(config, api.config), { name: "wiki_apply" });
+    }
     api.registerTool(
       (ctx) =>
         createWikiSearchTool(config, api.config, {

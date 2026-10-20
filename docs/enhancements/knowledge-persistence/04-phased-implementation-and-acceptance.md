@@ -3,6 +3,14 @@
 This document breaks Knowledge persistence into implementable phases. Each phase
 has scope, non-goals, and acceptance criteria.
 
+## Status update: 2026-10-20
+
+- Phase 1 retrieval is now available through the Library, Review Queue, Runtime Lessons, Governance, and SourceSet/Studio module split.
+- Runtime Lessons are an explicit `routeContext` source policy with visible provenance; default requests remain without SEKB injection.
+- Phase 5 semantic retrieval has a real provider boundary (SiliconFlow Qwen3 Embedding 8B) and preserves lexical fallback.
+- `wiki_apply` is operator-gated and is not exposed to ordinary agents by default.
+- Agent-driven E4 cohort evidence records three-task real repository outcomes for explicit refs, automatic retrieval, and SEKB retrieval (Hit@1/Hit@3/MRR 1.000 per surface); it is not real-human evidence.
+
 ## Phase 0: Structured Capture MVP
 
 Goal:

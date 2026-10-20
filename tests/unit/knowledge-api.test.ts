@@ -1050,11 +1050,103 @@ describe('knowledge host API', () => {
         pitfalls: [expect.objectContaining({ id: 'pitfall-1' })],
         rules: [expect.objectContaining({ id: 'rule-1' })],
       }),
+      runtimeLessons: {
+        requested: false,
+        included: false,
+        available: false,
+        principleCount: 0,
+        reason: 'not-requested',
+      },
     });
     expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.search', expect.objectContaining({
       corpus: 'wiki',
       maxResults: 3,
     }), 30000);
+    expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
+  });
+
+  it('keeps Runtime Lessons opt-in and exposes principle provenance', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'wiki.search') {
+          return {
+            results: [{
+              id: 'route-1',
+              title: 'Architecture Decision',
+              lookup: 'architecture/decision.md',
+              pagePath: 'architecture/decision.md',
+              snippet: 'Use the managed wiki as read-only context.',
+              score: 0.82,
+            }],
+          };
+        }
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const principle = {
+      principle_id: 'principle-route',
+      title: 'Keep knowledge side effects best-effort',
+      condition: 'When Chat routes knowledge context',
+      action: 'Keep retrieval advisory and non-blocking',
+      reason: 'Chat send must remain usable when knowledge routing fails',
+      retrieval_count: 4,
+    };
+    const runtime = {
+      KnowledgeStore: class {},
+      RetrievalEngine: class {
+        retrieve_for_task() {
+          return [principle];
+        }
+      },
+    };
+    const mod = await import('@electron/services/knowledge-api');
+    mod.__setSekbRuntimeModuleForTests(runtime as never);
+    const api = mod.createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    const withoutSourcePolicy = await api.routeContext({
+      message: '之前项目里为什么选择 managed wiki 架构？',
+      scope: 'wiki',
+      mode: 'suggest',
+    });
+    expect(withoutSourcePolicy.runtimeLessons).toEqual({
+      requested: false,
+      included: false,
+      available: false,
+      principleCount: 0,
+      reason: 'not-requested',
+    });
+    expect(withoutSourcePolicy.candidates).toHaveLength(1);
+    expect(withoutSourcePolicy.candidates[0]).not.toHaveProperty('runtimeLesson');
+
+    const withSourcePolicy = await api.routeContext({
+      message: '之前项目里为什么选择 managed wiki 架构？',
+      scope: 'wiki',
+      mode: 'suggest',
+      sourcePolicy: { runtimeLessons: true },
+    });
+    expect(withSourcePolicy.runtimeLessons).toEqual({
+      requested: true,
+      included: true,
+      available: true,
+      principleCount: 1,
+    });
+    expect(withSourcePolicy.candidates).toHaveLength(2);
+    expect(withSourcePolicy.candidates[1]).toMatchObject({
+      id: 'sekb:principle-route',
+      lookup: 'sekb:principle-route',
+      routeGroup: 'runtime_lessons',
+      sourceKind: 'sekb-principle',
+      runtimeLesson: {
+        principleId: 'principle-route',
+        condition: 'When Chat routes knowledge context',
+        action: 'Keep retrieval advisory and non-blocking',
+        reason: 'Chat send must remain usable when knowledge routing fails',
+        retrievalCount: 4,
+      },
+    });
+    expect(withSourcePolicy.candidateGroups).toEqual(expect.arrayContaining([
+      expect.objectContaining({ key: 'runtime_lessons' }),
+    ]));
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
 
@@ -1550,6 +1642,68 @@ describe('knowledge host API', () => {
       corpus: 'wiki',
     }), 30000);
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
+  });
+
+  it('uses the real semantic lane for opt-in SourceSet answers while preserving fallback inputs', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'wiki.get') {
+          return {
+            lookup: params.lookup,
+            title: params.lookup === 'notes/decision.md' ? 'Decision note' : 'Procedure note',
+            pagePath: params.lookup,
+            body: params.lookup === 'notes/decision.md'
+              ? 'Use source-backed drafts before durable Knowledge writes.'
+              : 'Review generated artifacts before applying them.',
+          };
+        }
+        if (method === 'wiki.apply') throw new Error('wiki.apply must not be called');
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body ?? '{}')) as { input: string[] };
+      const data = body.input.map((text, index) => ({
+        index,
+        embedding: body.input.length === 1
+          ? [1, 0]
+          : (text.includes('Review generated artifacts') ? [0, 1] : [1, 0]),
+      }));
+      return new Response(JSON.stringify({ data }), { status: 200 });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubEnv('SILICONFLOW_API_KEY', 'test-key');
+    try {
+      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+      const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+      const answer = await api.answerFromSourceSet({
+        question: 'Why keep review before durable writes?',
+        semantic: true,
+        sourceRefs: [
+          { id: 'notes/procedure.md', kind: 'wiki', path: 'notes/procedure.md', label: 'Procedure note' },
+          { id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision note' },
+        ],
+      });
+
+      expect(answer.success).toBe(true);
+      expect(answer.semanticRequested).toBe(true);
+      expect(answer.semanticLane).toMatchObject({
+        status: 'available',
+        providerId: 'siliconflow-qwen3-embed-8b',
+      });
+      expect(answer.retrievalDiagnostics.backend).toBe('semantic');
+      expect(answer.sources.map((source) => source.lookup)).toEqual([
+        'notes/decision.md',
+        'notes/procedure.md',
+      ]);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      const batchBody = JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit | undefined)?.body)) as { input: string[] };
+      expect(batchBody.input).toHaveLength(2);
+      expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
+    } finally {
+      vi.unstubAllGlobals();
+      vi.unstubAllEnvs();
+    }
   });
 
   it('creates reviewable studio artifact drafts from selected source sets', async () => {
