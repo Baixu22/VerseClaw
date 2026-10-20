@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-20T17:19:09.560Z
+Generated at: 2026-10-20T17:51:28.645Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -199,7 +199,7 @@ This file is generated — edit the source of truth instead.
 - default: false
 - defaultDisplay: api-only (host confirm explicit opt-in)
 - risk: api-only
-- enable: Call the host knowledge.sekbConfirmPrinciple API with payload { experienceShadow: { enabled: true } }; the host resolves workspaceRoot and passes it to DistillationTool.confirm_and_save.
+- enable: Call the host knowledge.sekbConfirmPrinciple API with payload { sessionId, experienceShadow: { enabled: true } }; the host resolves workspaceRoot and passes both to DistillationTool.confirm_and_save.
 - rollback: Omit payload.experienceShadow or set experienceShadow.enabled=false.
 - executor: wired — `electron/services/knowledge-api.ts:5483`, `electron/services/knowledge-api.ts:5496`
 

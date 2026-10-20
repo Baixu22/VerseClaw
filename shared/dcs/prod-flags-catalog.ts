@@ -296,7 +296,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     defaultValue: false,
     risk: 'api-only',
     enable:
-      'Call the host knowledge.sekbConfirmPrinciple API with payload { experienceShadow: { enabled: true } }; the host resolves workspaceRoot and passes it to DistillationTool.confirm_and_save.',
+      'Call the host knowledge.sekbConfirmPrinciple API with payload { sessionId, experienceShadow: { enabled: true } }; the host resolves workspaceRoot and passes both to DistillationTool.confirm_and_save.',
     rollback: 'Omit payload.experienceShadow or set experienceShadow.enabled=false.',
     riskNote: 'Shadow journal only. The runtime.coding.sekb.experienceShadow config leaf remains observability-only; the production host confirm route wires the explicit API opt-in without changing defaults.',
     executor: {
