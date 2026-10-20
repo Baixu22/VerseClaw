@@ -8,14 +8,15 @@ import {
 } from '@shared/verseshell';
 
 describe('ClawX VerseShell facade catalog', () => {
-  it('keeps the exact four-operation order and canonical mapping', () => {
+  it('keeps the exact five-operation order and canonical mapping', () => {
     expect(CLAWX_VERSESHELL_FACADE.map(({ name, canonical_op }) => [name, canonical_op])).toEqual([
       ['read_file', 'file.view'],
+      ['read_files', 'file.read_many'],
       ['search_content', 'repo.search'],
       ['run_command', 'exec.run'],
       ['result_query', 'result.query'],
     ]);
-    expect(CLAWX_VERSESHELL_FACADE).toHaveLength(4);
+    expect(CLAWX_VERSESHELL_FACADE).toHaveLength(5);
   });
 
   it('provides concise when/not-when guidance and closed model-facing schemas', () => {
@@ -29,7 +30,7 @@ describe('ClawX VerseShell facade catalog', () => {
       expect(() => decodeOperationCatalogEntry(facadeCatalogEntries().find((entry) => entry.mcp_name === operation.name))).not.toThrow();
     }
 
-    const runCommand = CLAWX_VERSESHELL_FACADE[2];
+    const runCommand = CLAWX_VERSESHELL_FACADE[3];
     expect(Object.keys(runCommand.input_schema.properties ?? {})).toEqual(['argv', 'cwd']);
     expect(Object.keys(runCommand.input_schema.properties ?? {})).not.toContain('max_memory_mb');
     expect(Object.keys(runCommand.input_schema.properties ?? {})).not.toContain('max_processes');
