@@ -1781,7 +1781,7 @@
             "title": "Transcript недоступен",
             "description": "Handoff-черновик не смог прочитать достаточно контекста диалога."
           },
-                    "handoff_ancestry_unavailable": {
+          "handoff_ancestry_unavailable": {
             "title": "История передачи недоступна",
             "description": "Не удалось проверить сохранённую историю передачи. Продолжайте в текущем сеансе до восстановления истории."
           },
@@ -1793,7 +1793,7 @@
             "title": "Обнаружен цикл передачи",
             "description": "Этот сеанс уже присутствует в своей цепочке предков передачи, поэтому передача отклонена."
           },
-"unknown": {
+          "unknown": {
             "title": "Не удалось подготовить Handoff",
             "description": "Не удалось подготовить черновик продолжения."
           }
@@ -2011,15 +2011,17 @@
     },
     "knowledgePreflight": {
       "title": "Knowledge Preflight",
-      "summary": "{{docs}} ????????? ??????????, {{pitfalls}} ??????? ??????, {{rules}} ?????? ????? ???????.",
+      "summary": "Возможны релевантные документы: {{docs}}, прошлые проблемы: {{pitfalls}}, правила: {{rules}}, уроки выполнения: {{runtimeLessons}}.",
       "confidence": "{{confidence}}%",
       "whyMatched": "???????: {{reason}}",
       "source": "{{corpus}} ? {{source}}",
       "groups": {
         "docs": "????????? ?????????",
         "pitfalls": "??????? ??????",
-        "rules": "???????"
-      }
+        "rules": "???????",
+        "runtime_lessons": "Уроки выполнения"
+      },
+      "runtimeLesson": "Урок выполнения: {{condition}} → {{action}}"
     },
     "providerGate": {
       "title": "No AI provider configured",
@@ -2058,7 +2060,11 @@
       "defaultPath": "Путь по умолчанию",
       "defaultPathUnavailable": "Введите имя ветки для просмотра пути"
     },
-    "modelSwitchSessionResetFailed": "Модель по умолчанию сохранена, но сбросить текущий сеанс не удалось: {{error}}"
+    "modelSwitchSessionResetFailed": "Модель по умолчанию сохранена, но сбросить текущий сеанс не удалось: {{error}}",
+    "knowledgeRuntimeLessons": {
+      "title": "Уроки выполнения",
+      "description": "Использовать подтверждённые принципы SEKB как видимый источник знаний."
+    }
   },
   "historyBuckets": {
     "today": "Сегодня",
@@ -2354,7 +2360,7 @@
     "aborted": "Остановлено",
     "dismissCompleted": "Скрыть завершенный статус"
   },
-    "turnSummary": {
+  "turnSummary": {
     "codingRun": {
       "title": "Доказательства CodingRun",
       "jsonl": "Только для чтения JSONL",

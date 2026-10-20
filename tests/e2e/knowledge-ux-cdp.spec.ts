@@ -695,6 +695,21 @@ test.describe('Chat Knowledge Attachment UX', () => {
     }
   });
 
+  test('runtime lessons source toggle is opt-in', async ({ page }) => {
+    const scopeBtn = page.getByTestId('chat-knowledge-scope-button');
+    await scopeBtn.click();
+
+    const runtimeLessonsToggle = page.getByTestId('chat-knowledge-runtime-lessons-toggle');
+    await expect(runtimeLessonsToggle).toBeVisible();
+    await expect(runtimeLessonsToggle).toHaveAttribute('aria-pressed', 'false');
+
+    await runtimeLessonsToggle.click();
+    await expect(runtimeLessonsToggle).toHaveAttribute('aria-pressed', 'true');
+
+    await runtimeLessonsToggle.click();
+    await expect(runtimeLessonsToggle).toHaveAttribute('aria-pressed', 'false');
+  });
+
   test('scope picker shows search input for knowledge attachment', async ({ page }) => {
     const scopeBtn = page.getByTestId('chat-knowledge-scope-button');
     await scopeBtn.click();

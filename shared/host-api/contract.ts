@@ -3402,7 +3402,7 @@ export type ChatKnowledgeReference = {
   matchedClaimStatus?: string;
 };
 
-export type KnowledgeRouteCandidateGroupKey = 'docs' | 'pitfalls' | 'rules';
+export type KnowledgeRouteCandidateGroupKey = 'docs' | 'pitfalls' | 'rules' | 'runtime_lessons';
 
 export type KnowledgeRouteContextPayload = {
   message: string;
@@ -3411,6 +3411,9 @@ export type KnowledgeRouteContextPayload = {
   selectedReferences?: ChatKnowledgeReference[];
   sessionKey?: string;
   workspaceId?: string | null;
+  sourcePolicy?: {
+    runtimeLessons?: boolean;
+  };
 };
 
 export type KnowledgeRouteCandidate = ChatKnowledgeReference & {
@@ -3420,6 +3423,14 @@ export type KnowledgeRouteCandidate = ChatKnowledgeReference & {
   routeGroup?: KnowledgeRouteCandidateGroupKey;
   freshnessLevel?: string;
   matchedClaimStatus?: string;
+  sourceKind?: 'wiki-page' | 'sekb-principle';
+  runtimeLesson?: {
+    principleId: string;
+    condition: string;
+    action: string;
+    reason: string;
+    retrievalCount: number;
+  };
 };
 
 export type KnowledgeRouteCandidateGroup = {
@@ -3438,6 +3449,13 @@ export type KnowledgeRouteContextResult = HostSuccess & {
   budget: {
     maxReferences: number;
     maxSnippetChars: number;
+  };
+  runtimeLessons?: {
+    requested: boolean;
+    included: boolean;
+    available: boolean;
+    principleCount: number;
+    reason?: string;
   };
 };
 
@@ -4313,12 +4331,14 @@ export type KnowledgeSourceSetAnswerSource = {
   title: string;
   excerpt: string;
   path?: string;
+  content?: string;
 };
 export type KnowledgeAnswerFromSourceSetPayload = {
   question: string;
   sourceRefs: KnowledgeSourceRef[];
   artifactType?: KnowledgeArtifactType;
   sourceSetId?: string;
+  semantic?: boolean;
 };
 export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
   question: string;
@@ -4329,6 +4349,13 @@ export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
   groundingStatus: 'grounded' | 'partial' | 'missing_sources';
   confidence: number;
   retrievalDiagnostics: KnowledgeRetrievalDiagnostics;
+  semanticRequested?: boolean;
+  semanticLane?: {
+    status: 'available' | 'unavailable' | 'error';
+    providerId?: string;
+    dimension?: number;
+    reason?: string;
+  };
 };
 export type KnowledgeCreateArtifactDraftPayload = {
   artifactType: KnowledgeArtifactType;
@@ -4336,6 +4363,7 @@ export type KnowledgeCreateArtifactDraftPayload = {
   question?: string;
   sourceRefs: KnowledgeSourceRef[];
   sourceSetId?: string;
+  semantic?: boolean;
   metadata?: Record<string, unknown>;
 };
 export type KnowledgeListDraftsPayload = {

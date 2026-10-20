@@ -1,0 +1,75 @@
+{
+  "schema": "KnowledgeE4RealTaskCohort/v1",
+  "drivenBy": "agent",
+  "tasks": [
+    {
+      "taskId": "TF-0453",
+      "taskIntent": "Recover Electron E2E firstWindow startup when the isolated run root cannot initialize userData on a low-integrity checkout.",
+      "taskType": "e2e-recovery",
+      "expectedSourceIds": ["electron-run-root-recovery"],
+      "sources": [
+        {
+          "id": "electron-run-root-recovery",
+          "title": "Electron E2E run-root recovery",
+          "content": "Electron E2E firstWindow startup can fail when Playwright overrides CLAWX_E2E_RUN_ROOT and the low-integrity checkout cannot write to the caller run root. The fixture must create a unique verse-claw-e2e-run-* child directory under the caller-provided base, and startup tracing must remain opt-in."
+        },
+        {
+          "id": "sekb-confirm-provenance",
+          "title": "SEKB confirm provenance",
+          "content": "Confirmed SEKB principles must preserve session and trajectory provenance. Confirm-and-save remains the only durable principle write path and shadow writes are advisory."
+        },
+        {
+          "id": "dcs-catalog-drift",
+          "title": "DCS catalog drift",
+          "content": "Catalog entries must record executor sites so landed-unwired components are detected mechanically. A catalog claim without a production call site is stale."
+        }
+      ]
+    },
+    {
+      "taskId": "TF-0458",
+      "taskIntent": "Wire the explicit SEKB experience-shadow confirm option without changing the default durable write path.",
+      "taskType": "sekb-wiring",
+      "expectedSourceIds": ["sekb-confirm-provenance"],
+      "sources": [
+        {
+          "id": "electron-run-root-recovery",
+          "title": "Electron E2E run-root recovery",
+          "content": "Electron E2E startup recovery is unrelated to SEKB principle confirmation."
+        },
+        {
+          "id": "sekb-confirm-provenance",
+          "title": "SEKB confirm provenance",
+          "content": "SEKB confirm-and-save must preserve provenance and may optionally write an experience-shadow journal. The runtime config leaf stays observability-only and the durable BlockStore write remains authoritative."
+        },
+        {
+          "id": "dcs-catalog-drift",
+          "title": "DCS catalog drift",
+          "content": "Catalog drift is detected by executor sites, not by source presence alone."
+        }
+      ]
+    },
+    {
+      "taskId": "TF-0454",
+      "taskIntent": "Eliminate landed-unwired components by wiring each developed component into a real production development flow and enforcing catalog executor sites.",
+      "taskType": "wiring-audit",
+      "expectedSourceIds": ["dcs-catalog-drift"],
+      "sources": [
+        {
+          "id": "electron-run-root-recovery",
+          "title": "Electron E2E run-root recovery",
+          "content": "Electron E2E recovery focuses on startup and run-root isolation."
+        },
+        {
+          "id": "sekb-confirm-provenance",
+          "title": "SEKB confirm provenance",
+          "content": "SEKB provenance governs principle confirmation and shadow journals."
+        },
+        {
+          "id": "dcs-catalog-drift",
+          "title": "DCS catalog drift",
+          "content": "A component is wired only when the catalog records a production executor site. Landed-unwired components are counted and must be reduced to zero with file:line evidence."
+        }
+      ]
+    }
+  ]
+}
