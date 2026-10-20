@@ -48,6 +48,14 @@ In practice, a phase is allowed to accept compatibility shims, degraded modes,
 or docs corrections when they keep the system moving. It should not require
 large code rewrites merely to match an aspirational architecture diagram.
 
+## Status Update: 2026-10-20
+
+- Knowledge now has separate Library, Review Queue, Runtime Lessons, Governance, and SourceSet/Studio module boundaries.
+- Chat `routeContext` can opt in to Runtime Lessons with visible provenance; default requests still do not inject SEKB.
+- SourceSet answers can opt in to a real SiliconFlow embedding provider for semantic ranking, while lexical fallback remains available.
+- `wiki_apply` is no longer registered to ordinary agents by default; operators must explicitly enable `tools.allowAgentApply`.
+- Agent-driven E4 cohort evidence now covers explicit refs, automatic retrieval, and SEKB retrieval for three real repository tasks; each surface reports Hit@1/Hit@3/MRR 1.000 in `KS-E4-REAL-TASK-COHORTS.md`. It is not real-human usefulness or E5 soak evidence.
+
 ## Status Update: 2026-07-04
 
 Completed baseline work now covers the Chat-facing proactive knowledge loop:

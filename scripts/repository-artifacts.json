@@ -1568,6 +1568,8 @@
     "docs/dev/knowledge-system-unification/evidence/KS-07-SEMANTIC-RETRIEVAL-SOURCE-SET-ACCEPTANCE.md",
     "docs/dev/knowledge-system-unification/evidence/KS-08-UI-OBSERVABILITY-ACCEPTANCE.md",
     "docs/dev/knowledge-system-unification/evidence/KS-09-CANARY-GRADUATION-ACCEPTANCE.md",
+    "docs/dev/knowledge-system-unification/evidence/KS-E4-REAL-TASK-COHORTS.json",
+    "docs/dev/knowledge-system-unification/evidence/KS-E4-REAL-TASK-COHORTS.md",
     "docs/dev/knowledge-system-unification/evidence/KS-FULL-INTEGRATION-ACCEPTANCE.md",
     "docs/dev/knowledge-system-unification/evidence/KS-REAL-PROVIDER-E2E.md",
     "docs/dev/knowledge-system-unification/quality/KS-07-SOURCE-SET-QUALITY.json",

@@ -764,10 +764,15 @@ function knowledgeReferenceFromRow(row: KnowledgeSearchRow, corpus: 'wiki' | 'me
   };
 }
 
-const KNOWLEDGE_PREFLIGHT_GROUP_ORDER: KnowledgeRouteCandidateGroupKey[] = ['docs', 'pitfalls', 'rules'];
+const KNOWLEDGE_PREFLIGHT_GROUP_ORDER: KnowledgeRouteCandidateGroupKey[] = ['docs', 'pitfalls', 'rules', 'runtime_lessons'];
 
 function routeGroupForCandidate(candidate: KnowledgeRouteCandidate): KnowledgeRouteCandidateGroupKey {
-  if (candidate.routeGroup === 'pitfalls' || candidate.routeGroup === 'rules' || candidate.routeGroup === 'docs') {
+  if (
+    candidate.routeGroup === 'pitfalls'
+    || candidate.routeGroup === 'rules'
+    || candidate.routeGroup === 'docs'
+    || candidate.routeGroup === 'runtime_lessons'
+  ) {
     return candidate.routeGroup;
   }
   const status = `${candidate.matchedClaimStatus ?? ''} ${candidate.freshnessLevel ?? ''}`.toLowerCase();
@@ -1005,6 +1010,7 @@ export function ChatInput({
   const [suggestedKnowledgeRefs, setSuggestedKnowledgeRefs] = useState<KnowledgeRouteCandidate[]>([]);
   const [knowledgePreflightExpanded, setKnowledgePreflightExpanded] = useState(false);
   const [knowledgeRoutingBusy, setKnowledgeRoutingBusy] = useState(false);
+  const [runtimeLessonsSourceEnabled, setRuntimeLessonsSourceEnabled] = useState(false);
   const dismissedRouteKeysRef = useRef<Map<string, number>>(new Map());
   const [quickSkills, setQuickSkills] = useState<QuickAccessSkill[]>([]);
   const [dynamicSkillCommands, setDynamicSkillCommands] = useState<QuickAccessSkill[]>([]);
@@ -1115,7 +1121,12 @@ export function ChatInput({
   const selectedKnowledgeIds = useMemo(() => new Set(selectedKnowledgeRefs.map((reference) => reference.id)), [selectedKnowledgeRefs]);
   const suggestedKnowledgeGroups = useMemo(() => groupKnowledgePreflightCandidates(suggestedKnowledgeRefs), [suggestedKnowledgeRefs]);
   const suggestedKnowledgeCounts = useMemo(() => {
-    const counts: Record<KnowledgeRouteCandidateGroupKey, number> = { docs: 0, pitfalls: 0, rules: 0 };
+    const counts: Record<KnowledgeRouteCandidateGroupKey, number> = {
+      docs: 0,
+      pitfalls: 0,
+      rules: 0,
+      runtime_lessons: 0,
+    };
     for (const group of suggestedKnowledgeGroups) counts[group.key] = group.candidates.length;
     return counts;
   }, [suggestedKnowledgeGroups]);
@@ -1637,6 +1648,9 @@ export function ChatInput({
         selectedReferences: selectedKnowledgeRefs,
         sessionKey: currentSessionKey,
         workspaceId: workspace?.id ?? null,
+        sourcePolicy: {
+          runtimeLessons: runtimeLessonsSourceEnabled,
+        },
       });
       if (!result.success) return [];
       const routedCandidates = result.candidates.length > 0
@@ -1661,7 +1675,7 @@ export function ChatInput({
     } finally {
       setKnowledgeRoutingBusy(false);
     }
-  }, [currentSessionKey, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, workspace?.id]);
+  }, [currentSessionKey, knowledgeMode, knowledgeScope, runtimeLessonsSourceEnabled, selectedKnowledgeRefs, workspace?.id]);
 
   const attachSuggestedKnowledge = useCallback(() => {
     if (suggestedKnowledgeRefs.length === 0) return;
@@ -3317,6 +3331,7 @@ export function ChatInput({
                     docs: suggestedKnowledgeCounts.docs,
                     pitfalls: suggestedKnowledgeCounts.pitfalls,
                     rules: suggestedKnowledgeCounts.rules,
+                    runtimeLessons: suggestedKnowledgeCounts.runtime_lessons,
                   })}
                 </span>
                 {knowledgeRoutingBusy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
@@ -3375,6 +3390,14 @@ export function ChatInput({
                                 <span className="truncate">
                                   {t('composer.knowledgePreflight.source', { corpus: candidate.corpus ?? knowledgeCorpus, source })}
                                 </span>
+                                {candidate.runtimeLesson ? (
+                                  <span className="truncate" data-testid="chat-knowledge-runtime-lesson-provenance">
+                                    {t('composer.knowledgePreflight.runtimeLesson', {
+                                      condition: candidate.runtimeLesson.condition,
+                                      action: candidate.runtimeLesson.action,
+                                    })}
+                                  </span>
+                                ) : null}
                               </div>
                             </div>
                           );
@@ -3987,6 +4010,28 @@ export function ChatInput({
                       );
                     })}
                   </div>
+                  <div className="my-1.5 h-px bg-border/70" />
+                  <button
+                    type="button"
+                    className={cn(
+                      'codex-composer-menu__item codex-composer-menu__option',
+                      !runtimeLessonsSourceEnabled && 'opacity-80',
+                    )}
+                    data-testid="chat-knowledge-runtime-lessons-toggle"
+                    aria-pressed={runtimeLessonsSourceEnabled}
+                    onClick={() => {
+                      setRuntimeLessonsSourceEnabled((enabled) => !enabled);
+                      textareaRef.current?.focus();
+                    }}
+                  >
+                    <span className="codex-composer-menu__icon">
+                      {runtimeLessonsSourceEnabled && <Check className="h-4 w-4" />}
+                    </span>
+                    <span className="codex-composer-menu__option-text">
+                      <b>{t('composer.knowledgeRuntimeLessons.title')}</b>
+                      <small>{t('composer.knowledgeRuntimeLessons.description')}</small>
+                    </span>
+                  </button>
                   <div className="my-1.5 h-px bg-border/70" />
                   <div className="px-3 py-2">
                     <div className="mb-2 flex items-center justify-between gap-2">

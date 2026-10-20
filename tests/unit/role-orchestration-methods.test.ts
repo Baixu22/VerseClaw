@@ -75,6 +75,7 @@ type FakeSpawnParams = {
     roleName: string;
     isVerifier: boolean;
     phase: string;
+    executionWave?: number;
   };
 };
 type FakeSpawnResult = {

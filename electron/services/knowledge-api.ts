@@ -36,6 +36,15 @@ import {
 } from '../../openclaw_runtime/src/knowledge/governance-adapters';
 import { createContextBlockSink } from '../../openclaw_runtime/src/agents/harness/hook-context';
 import { isRuntimeLineage } from '../../openclaw_runtime/src/runtime-core/lineage';
+import {
+  digestSourceSetContent,
+  retrieveSourceSet,
+  type SourceSetCandidate,
+} from '../../openclaw_runtime/src/context-engine/source-set';
+import {
+  createSiliconFlowEmbeddingProvider,
+  hasSiliconFlowEmbeddingProvider,
+} from './knowledge-embedding-provider';
 import type { ContextBlockSink } from '../../openclaw_runtime/src/context-engine/block';
 import type {
   HostSuccess,
@@ -3042,11 +3051,12 @@ function groupedRouteCandidates(candidates: KnowledgeRouteCandidate[]): Knowledg
     docs: [],
     pitfalls: [],
     rules: [],
+    runtime_lessons: [],
   };
   for (const candidate of candidates) {
     groups[candidate.routeGroup ?? 'docs'].push(candidate);
   }
-  return (['docs', 'pitfalls', 'rules'] as KnowledgeRouteCandidateGroupKey[])
+  return (['docs', 'pitfalls', 'rules', 'runtime_lessons'] as KnowledgeRouteCandidateGroupKey[])
     .flatMap((key) => (groups[key].length > 0 ? [{ key, candidates: groups[key] }] : []));
 }
 
@@ -3359,6 +3369,7 @@ export function createKnowledgeApi({
         lookup,
         title,
         excerpt: bodyPreview(body || ref.label || lookup),
+        ...(body ? { content: body } : {}),
         ...(pagePath ? { path: pagePath } : {}),
       };
     } catch {
@@ -3366,16 +3377,84 @@ export function createKnowledgeApi({
     }
   }
 
+  function publicSourceSetAnswerSource(source: KnowledgeSourceSetAnswerSource): KnowledgeSourceSetAnswerSource {
+    return {
+      id: source.id,
+      lookup: source.lookup,
+      title: source.title,
+      excerpt: source.excerpt,
+      ...(source.path ? { path: source.path } : {}),
+    };
+  }
+
+  function sourceSetCandidateFromAnswerSource(source: KnowledgeSourceSetAnswerSource): SourceSetCandidate {
+    const content = source.content ?? source.excerpt;
+    return {
+      ref: {
+        refId: `memory-wiki:${source.lookup}`,
+        owner: 'memory-wiki',
+        subjectKind: 'wiki-page',
+        subjectId: source.lookup,
+        revision: 'selected',
+        contentDigest: digestSourceSetContent(content),
+        trust: 'confirmed',
+        sensitivity: 'workspace',
+        acl: { read: ['operator'] },
+        provenance: {
+          sourceRefs: [source.id || source.lookup],
+          evidenceRefs: [],
+        },
+      },
+      content,
+      status: 'active',
+      indexedAt: nowIso(),
+    };
+  }
+
   async function buildAnswerFromSourceSet(input: {
     question: string;
     sourceRefs: KnowledgeSourceRef[];
     artifactType?: KnowledgeArtifactType;
     sourceSetId?: string;
+    semantic?: boolean;
   }): Promise<KnowledgeAnswerFromSourceSetResult> {
     const question = input.question.trim();
     const sourceRefs = normalizeSourceRefs(input.sourceRefs);
     const sources = (await Promise.all(sourceRefs.map((ref) => readSourceSetAnswerSource(ref))))
       .filter((source): source is KnowledgeSourceSetAnswerSource => Boolean(source));
+    const semanticRequested = input.semantic === true;
+    let semanticLane: NonNullable<KnowledgeAnswerFromSourceSetResult['semanticLane']> | undefined;
+    let orderedSources = sources;
+    if (semanticRequested && sources.length > 0) {
+      const embeddingProvider = hasSiliconFlowEmbeddingProvider()
+        ? createSiliconFlowEmbeddingProvider()
+        : undefined;
+      const sourceSetCandidates = sources.map(sourceSetCandidateFromAnswerSource);
+      const sourceSetResult = await retrieveSourceSet({
+        sources: sourceSetCandidates,
+        query: {
+          text: question,
+          aclSubjects: ['operator'],
+          limit: Math.max(1, sources.length),
+        },
+        embeddingProvider,
+        now: () => new Date(),
+      });
+      semanticLane = sourceSetResult.semanticLane;
+      const nextSources: KnowledgeSourceSetAnswerSource[] = [];
+      for (const entry of sourceSetResult.retrieved) {
+        const source = sources.find((item) => `memory-wiki:${item.lookup}` === entry.ref.refId);
+        if (source) {
+          nextSources.push({ ...source, content: entry.content });
+        }
+      }
+      orderedSources = nextSources;
+      if (orderedSources.length === 0) {
+        orderedSources = sources;
+      }
+    } else if (semanticRequested) {
+      semanticLane = { status: 'unavailable', reason: 'no-readable-sources' };
+    }
     const rows = sources.length > 0
       ? sources.map((source) => ({
         id: source.id,
@@ -3397,7 +3476,7 @@ export function createKnowledgeApi({
       rows,
       selectedLookups,
       reason: 'explicit Source Set selection',
-      backend: 'fallback-keyword',
+      backend: semanticRequested && semanticLane?.status === 'available' ? 'semantic' : 'fallback-keyword',
     });
     const missingCount = Math.max(0, sourceRefs.length - sources.length);
     const groundingStatus: KnowledgeAnswerFromSourceSetResult['groundingStatus'] = sources.length === 0
@@ -3414,12 +3493,12 @@ export function createKnowledgeApi({
       ? ['Add readable sources to the Source Set.', 'Broaden the search and save a new Source Set.']
       : ['Review this answer before creating a durable draft.', 'Create a Studio artifact draft when the synthesis looks useful.'];
     const artifactHint = input.artifactType ? ` Artifact focus: ${input.artifactType}.` : '';
-    const sourceLines = sources.map((source, index) => (
+    const sourceLines = orderedSources.map((source, index) => (
       `${index + 1}. ${source.title}: ${source.excerpt}`
     ));
-    const answer = sources.length > 0
+    const answer = orderedSources.length > 0
       ? [
-        `Answer grounded in ${sources.length} selected source(s).${artifactHint}`,
+        `Answer grounded in ${orderedSources.length} selected source(s).${artifactHint}`,
         `Question: ${question}`,
         '',
         ...sourceLines,
@@ -3436,12 +3515,14 @@ export function createKnowledgeApi({
       success: true,
       question,
       answer,
-      sources,
+      sources: orderedSources.map(publicSourceSetAnswerSource),
       unknowns,
       suggestedNextActions,
       groundingStatus,
       confidence: groundingStatus === 'grounded' ? 0.78 : groundingStatus === 'partial' ? 0.48 : 0,
       retrievalDiagnostics,
+      semanticRequested,
+      ...(semanticLane ? { semanticLane } : {}),
     };
   }
 
@@ -3683,6 +3764,78 @@ export function createKnowledgeApi({
       }
     } catch { /* ignore */ }
   })();
+  const retrieveRuntimeLessonsForRoute = async (
+    query: string,
+    mode: 'manual' | 'suggest' | 'auto-read',
+    reason: string,
+  ): Promise<{
+    candidates: KnowledgeRouteCandidate[];
+    runtimeLessons: NonNullable<KnowledgeRouteContextResult['runtimeLessons']>;
+  }> => {
+    const sekb = await loadSekbRuntimeModule();
+    if (!sekb || typeof sekb.RetrievalEngine !== 'function') {
+      return {
+        candidates: [],
+        runtimeLessons: {
+          requested: true,
+          included: false,
+          available: false,
+          principleCount: 0,
+          reason: 'runtimeUnavailable',
+        },
+      };
+    }
+    try {
+      const store = createHostSekbStore(sekb);
+      const engine = new sekb.RetrievalEngine({ store });
+      const principles = engine.retrieve_for_task(query, 'chat', [], ROUTER_BUDGET.maxReferences);
+      const candidates: KnowledgeRouteCandidate[] = principles.map((principle) => ({
+        id: `sekb:${principle.principle_id}`,
+        title: principle.title,
+        lookup: `sekb:${principle.principle_id}`,
+        corpus: 'all',
+        attachKind: mode === 'auto-read' ? 'auto' : 'suggested',
+        routingReason: reason,
+        routeGroup: 'runtime_lessons',
+        confidence: 0.72,
+        snippet: [
+          `Condition: ${principle.condition}`,
+          `Action: ${principle.action}`,
+          `Reason: ${principle.reason}`,
+        ].join('\n').slice(0, ROUTER_BUDGET.maxSnippetChars),
+        sourceKind: 'sekb-principle',
+        runtimeLesson: {
+          principleId: principle.principle_id,
+          condition: principle.condition,
+          action: principle.action,
+          reason: principle.reason,
+          retrievalCount: principle.retrieval_count,
+        },
+      }));
+      return {
+        candidates,
+        runtimeLessons: {
+          requested: true,
+          included: candidates.length > 0,
+          available: true,
+          principleCount: candidates.length,
+          ...(candidates.length === 0 ? { reason: 'noMatchingPrinciples' } : {}),
+        },
+      };
+    } catch {
+      return {
+        candidates: [],
+        runtimeLessons: {
+          requested: true,
+          included: false,
+          available: false,
+          principleCount: 0,
+          reason: 'retrieveFailed',
+        },
+      };
+    }
+  };
+
   return {
     status: async () => {
       try {
@@ -4250,6 +4403,7 @@ export function createKnowledgeApi({
         sourceRefs: normalizeSourceRefs(body.sourceRefs),
         artifactType: normalizeArtifactType(body.artifactType),
         sourceSetId: getString(body.sourceSetId),
+        semantic: body.semantic === true,
       });
     },
 
@@ -4264,6 +4418,7 @@ export function createKnowledgeApi({
         sourceRefs,
         artifactType,
         sourceSetId: getString(body.sourceSetId),
+        semantic: body.semantic === true,
       });
       const draft = createDraftFromPayload({
         title,
@@ -4849,6 +5004,8 @@ export function createKnowledgeApi({
       const selectedReferences = Array.isArray(body.selectedReferences)
         ? body.selectedReferences.filter(isRecord) as ChatKnowledgeReference[]
         : [];
+      const sourcePolicy = isRecord(body.sourcePolicy) ? body.sourcePolicy : {};
+      const runtimeLessonsRequested = sourcePolicy.runtimeLessons === true;
       const decision = shouldRouteKnowledge(message, scope, mode, selectedReferences.length);
       if (!decision.route || !decision.query || mode === 'manual') {
         return {
@@ -4866,6 +5023,13 @@ export function createKnowledgeApi({
             reason: decision.reason,
           }),
           budget: ROUTER_BUDGET,
+          runtimeLessons: {
+            requested: runtimeLessonsRequested,
+            included: false,
+            available: false,
+            principleCount: 0,
+            reason: runtimeLessonsRequested ? 'not-routed' : 'not-requested',
+          },
         };
       }
 
@@ -4877,8 +5041,15 @@ export function createKnowledgeApi({
           corpus,
         }, 30_000);
         const rows = getRouteSearchRows(result);
-        const candidates = routeCandidatesFromSearch(result, corpus, mode, decision.reason);
-        const selectedLookups = new Set(candidates.map((candidate) => candidate.lookup));
+        const wikiCandidates = routeCandidatesFromSearch(result, corpus, mode, decision.reason);
+        const runtimeLessonResult = runtimeLessonsRequested
+          ? await retrieveRuntimeLessonsForRoute(decision.query, mode, decision.reason)
+          : undefined;
+        const candidates = runtimeLessonResult
+          ? [...wikiCandidates, ...runtimeLessonResult.candidates]
+              .sort((left, right) => right.confidence - left.confidence)
+              .slice(0, ROUTER_BUDGET.maxReferences)
+          : wikiCandidates;
         const candidateGroups = groupedRouteCandidates(candidates);
         const routeDecision = mode === 'auto-read' && candidates.length > 0
           ? 'auto_attach'
@@ -4894,6 +5065,8 @@ export function createKnowledgeApi({
           candidates: candidates.length,
           sessionKey: getString(body.sessionKey),
           workspaceId: typeof body.workspaceId === 'string' ? body.workspaceId : null,
+          runtimeLessonsRequested,
+          runtimeLessonsIncluded: runtimeLessonResult?.runtimeLessons.included ?? false,
         });
         return {
           success: true,
@@ -4908,10 +5081,17 @@ export function createKnowledgeApi({
             corpus,
             mode,
             rows,
-            selectedLookups,
+            selectedLookups: new Set(candidates.map((candidate) => candidate.lookup)),
             reason: candidates.length > 0 ? decision.reason : 'no relevant knowledge candidates found',
           }),
           budget: ROUTER_BUDGET,
+          runtimeLessons: runtimeLessonResult?.runtimeLessons ?? {
+            requested: runtimeLessonsRequested,
+            included: false,
+            available: false,
+            principleCount: 0,
+            reason: runtimeLessonsRequested ? 'not-routed' : 'not-requested',
+          },
         };
       } catch (error) {
         return {
@@ -4930,6 +5110,13 @@ export function createKnowledgeApi({
             reason: 'knowledge routing search failed',
           }),
           budget: ROUTER_BUDGET,
+          runtimeLessons: {
+            requested: runtimeLessonsRequested,
+            included: false,
+            available: false,
+            principleCount: 0,
+            reason: runtimeLessonsRequested ? 'routingFailed' : 'not-requested',
+          },
         };
       }
     },

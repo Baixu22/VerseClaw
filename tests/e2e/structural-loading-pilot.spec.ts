@@ -143,7 +143,7 @@ async function launchDataList(launchElectronApp: LaunchElectronApp, surfaceId: '
 
 async function pauseClockNow(page: Page): Promise<void> {
   for (let attempt = 0; attempt < 6; attempt += 1) {
-    const target = await page.evaluate(() => Date.now() + 40);
+    const target = await page.evaluate(() => Date.now() + 5);
     try {
       await page.clock.pauseAt(target);
       return;
@@ -238,7 +238,7 @@ test.describe('progressive loading surfaces', () => {
   }
 
   test('agents reduced motion is static and content is immediate', async ({ launchElectronApp }) => {
-    const { app, page } = await launchDelayedAgents(launchElectronApp, 'light', 1_300, { reducedMotion: true });
+    const { app, page } = await launchDelayedAgents(launchElectronApp, 'light', 5_000, { reducedMotion: true });
     try {
       const surface = page.locator('[data-structural-surface="agents"]');
       await expect(surface).toHaveAttribute('data-state', 'visible');
@@ -385,7 +385,7 @@ test.describe('progressive loading surfaces', () => {
           const bounds = await surface.boundingBox();
           await page.screenshot({ path: join(artifactDir, `${surfaceId}-structure-${theme}.png`) });
 
-          await page.waitForFunction((id) => document.querySelector(`[data-structural-surface="${id}"]`)?.getAttribute('data-reveal-group') === '2', surfaceId, { timeout: 5_000, polling: 50 });
+          await page.waitForFunction((id) => document.querySelector(`[data-structural-surface="${id}"]`)?.getAttribute('data-reveal-group') === '2', surfaceId, { timeout: 5_000, polling: 10 });
           await pauseClockNow(page);
           await expect(surface.locator('[data-build-state="complete"]')).toHaveCount(1);
           await expect(surface.locator('[data-build-state="pending"]')).toHaveCount(1);

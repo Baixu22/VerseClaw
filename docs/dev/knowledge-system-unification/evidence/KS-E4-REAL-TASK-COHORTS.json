@@ -1,0 +1,133 @@
+{
+  "schema": "KnowledgeE4RealTaskCohortReport/v1",
+  "generatedAt": "2026-10-20T15:11:52.822Z",
+  "drivenBy": "agent",
+  "evidenceLevel": "E4-agent-driven",
+  "realProvider": true,
+  "semanticLane": {
+    "status": "available",
+    "providerId": "siliconflow-qwen3-embed-8b",
+    "dimension": 4096,
+    "similarities": [
+      {
+        "refId": "memory-wiki:electron-run-root-recovery",
+        "similarity": 0.43787568214825984
+      },
+      {
+        "refId": "memory-wiki:sekb-confirm-provenance",
+        "similarity": 0.4078913929881304
+      },
+      {
+        "refId": "memory-wiki:dcs-catalog-drift",
+        "similarity": 0.8326670890298549
+      }
+    ]
+  },
+  "cohorts": {
+    "explicit-refs": {
+      "taskCount": 3,
+      "hitAt1": 1,
+      "hitAt3": 1,
+      "meanReciprocalRank": 1,
+      "results": [
+        {
+          "surface": "explicit-refs",
+          "taskId": "TF-0453",
+          "expectedId": "electron-run-root-recovery",
+          "rank": 1,
+          "hitAt1": true,
+          "hitAt3": true,
+          "reciprocalRank": 1
+        },
+        {
+          "surface": "explicit-refs",
+          "taskId": "TF-0458",
+          "expectedId": "sekb-confirm-provenance",
+          "rank": 1,
+          "hitAt1": true,
+          "hitAt3": true,
+          "reciprocalRank": 1
+        },
+        {
+          "surface": "explicit-refs",
+          "taskId": "TF-0454",
+          "expectedId": "dcs-catalog-drift",
+          "rank": 1,
+          "hitAt1": true,
+          "hitAt3": true,
+          "reciprocalRank": 1
+        }
+      ]
+    },
+    "automatic-retrieval": {
+      "taskCount": 3,
+      "hitAt1": 1,
+      "hitAt3": 1,
+      "meanReciprocalRank": 1,
+      "results": [
+        {
+          "surface": "automatic-retrieval",
+          "taskId": "TF-0453",
+          "expectedId": "electron-run-root-recovery",
+          "rank": 1,
+          "hitAt1": true,
+          "hitAt3": true,
+          "reciprocalRank": 1
+        },
+        {
+          "surface": "automatic-retrieval",
+          "taskId": "TF-0458",
+          "expectedId": "sekb-confirm-provenance",
+          "rank": 1,
+          "hitAt1": true,
+          "hitAt3": true,
+          "reciprocalRank": 1
+        },
+        {
+          "surface": "automatic-retrieval",
+          "taskId": "TF-0454",
+          "expectedId": "dcs-catalog-drift",
+          "rank": 1,
+          "hitAt1": true,
+          "hitAt3": true,
+          "reciprocalRank": 1
+        }
+      ]
+    },
+    "sekb-retrieval": {
+      "taskCount": 3,
+      "hitAt1": 1,
+      "hitAt3": 1,
+      "meanReciprocalRank": 1,
+      "results": [
+        {
+          "surface": "sekb-retrieval",
+          "taskId": "TF-0453",
+          "expectedId": "electron-run-root-recovery",
+          "rank": 1,
+          "hitAt1": true,
+          "hitAt3": true,
+          "reciprocalRank": 1
+        },
+        {
+          "surface": "sekb-retrieval",
+          "taskId": "TF-0458",
+          "expectedId": "sekb-confirm-provenance",
+          "rank": 1,
+          "hitAt1": true,
+          "hitAt3": true,
+          "reciprocalRank": 1
+        },
+        {
+          "surface": "sekb-retrieval",
+          "taskId": "TF-0454",
+          "expectedId": "dcs-catalog-drift",
+          "rank": 1,
+          "hitAt1": true,
+          "hitAt3": true,
+          "reciprocalRank": 1
+        }
+      ]
+    }
+  }
+}
