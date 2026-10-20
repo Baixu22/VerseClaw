@@ -6,7 +6,7 @@ import {
   archiveLowHeatBlocks,
   filterBlocksByLifecycle,
   type LifecycleBlock,
-} from "../src/context-engine/block-lifecycle.js";
+} from "./block-lifecycle.js";
 import {
   selectBlocksUnderTokenPressure,
   type PressureMode,

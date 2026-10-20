@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { LifecycleBlock } from "../src/context-engine/block-lifecycle.js";
+import type { LifecycleBlock } from "./block-lifecycle.js";
 import { selectBlocksUnderTokenPressure } from "./token-pressure.js";
-import { codingObservability } from "../src/context-engine/coding-observability.js";
+import { codingObservability } from "./coding-observability.js";
 
 function blk(type: LifecycleBlock["block_type"], content: string): LifecycleBlock {
   return {

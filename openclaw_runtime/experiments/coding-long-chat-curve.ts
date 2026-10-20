@@ -4,7 +4,7 @@
  */
 import { archiveLowHeatBlocks, type LifecycleBlock } from "../src/context-engine/block-lifecycle.js";
 import { codingObservability } from "../src/context-engine/coding-observability.js";
-import { selectBlocksUnderTokenPressure } from "./token-pressure.js";
+import { selectBlocksUnderTokenPressure } from "../src/context-engine/token-pressure.js";
 import { compressToolOutputText } from "../src/agents/tool-output-compress.js";
 
 export type LongChatCurvePoint = {

@@ -3,11 +3,11 @@
  * Priority: persona > task_state > working_memory > remaining.
  * Emergency preserves: persona + task_state + most recent turn.
  */
-import type { ContextBlock } from "../src/context-engine/block.js";
-import { codingObservability } from "../src/context-engine/coding-observability.js";
-import { dcsObservability } from "../src/context-engine/dcs-observability.js";
-import type { LifecycleBlock } from "../src/context-engine/block-lifecycle.js";
-import { isArchived } from "../src/context-engine/block-lifecycle.js";
+import type { ContextBlock } from "./block.js";
+import { codingObservability } from "./coding-observability.js";
+import { dcsObservability } from "./dcs-observability.js";
+import type { LifecycleBlock } from "./block-lifecycle.js";
+import { isArchived } from "./block-lifecycle.js";
 
 const PRIORITY: Record<string, number> = {
   persona: 100,
