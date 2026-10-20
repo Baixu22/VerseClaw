@@ -2,9 +2,10 @@
  * Issue #120: the unified user error exit must speak the active language and
  * classify from structured error data — never from an already-translated string.
  */
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import i18n from '@/i18n';
+import { loadLanguageResources } from '@/i18n/resources';
 import { APP_ERROR_CODES, AppError, normalizeAppError } from '@/lib/error-model';
 import { getErrorCopy, toUserMessage } from '@/lib/error-message';
 
@@ -14,6 +15,16 @@ const LANGUAGES = ['en', 'zh', 'ja', 'ru'] as const;
 function localized(language: (typeof LANGUAGES)[number], namespacedKey: string): string | undefined {
   return i18n.getResource(language, 'common', namespacedKey.replace(/^common:/, '')) as string | undefined;
 }
+
+beforeAll(async () => {
+  for (const language of LANGUAGES) {
+    if (language === 'en') continue;
+    const resources = await loadLanguageResources(language);
+    for (const [namespace, bundle] of Object.entries(resources)) {
+      i18n.addResourceBundle(language, namespace, bundle, true, true);
+    }
+  }
+});
 
 afterEach(async () => {
   await i18n.changeLanguage('en');

@@ -3,8 +3,9 @@
  * neutral reason plus a shared `common:errors.*` key and params, never only
  * English prose, and its diagnostics are redacted.
  */
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import i18n from '@/i18n';
+import { loadLanguageResources } from '@/i18n/resources';
 import {
   classifyProviderRequestError,
   isProviderConversationStateErrorMessage,
@@ -20,6 +21,16 @@ function expectKeyInEveryLocale(messageKey: string | undefined): void {
     expect(typeof value === 'string' && value.length > 0, `${language}:${messageKey}`).toBe(true);
   }
 }
+
+beforeAll(async () => {
+  for (const language of LANGUAGES) {
+    if (language === 'en') continue;
+    const resources = await loadLanguageResources(language);
+    for (const [namespace, bundle] of Object.entries(resources)) {
+      i18n.addResourceBundle(language, namespace, bundle, true, true);
+    }
+  }
+});
 
 describe('provider request error classifier (#120)', () => {
   it('returns a neutral reason, message key and params for a 429 failure', () => {
