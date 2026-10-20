@@ -354,7 +354,8 @@ describe('Settings remote control section', () => {
     expect(screen.getByTestId('settings-section-loading')).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.getByTestId('settings-section-loading-status')).toHaveClass('opacity-100');
-    }, { timeout: 800 });
+      expect(screen.getByTestId('settings-section-loading')).toHaveAttribute('data-state', 'visible');
+      expect(screen.getByTestId('settings-section-loading-skeleton')).toBeInTheDocument();
+    }, { timeout: 2000 });
   });
 });

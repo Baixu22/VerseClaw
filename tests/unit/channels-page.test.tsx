@@ -304,6 +304,7 @@ describe('Channels page status refresh', () => {
     });
 
     render(<Channels />);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     expect(await screen.findByText('Feishu / Lark')).toBeInTheDocument();
 
@@ -479,6 +480,7 @@ describe('Channels page status refresh', () => {
     });
 
     render(<Channels />);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     expect(await screen.findByText('Feishu / Lark')).toBeInTheDocument();
 
@@ -649,6 +651,7 @@ describe('Channels page status refresh', () => {
     });
 
     render(<Channels />);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     expect(await screen.findByText('Feishu / Lark')).toBeInTheDocument();
     expect(screen.queryByTestId('channels-health-banner')).not.toBeInTheDocument();

@@ -617,15 +617,17 @@ describe('Agents page status refresh', () => {
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
-  it('keeps the blocking spinner during the initial load before any stable snapshot exists', async () => {
+  it('keeps the blocking loading surface during the initial load before any stable snapshot exists', async () => {
     agentsState.loading = true;
     fetchAgentsMock.mockImplementation(() => new Promise(() => {}));
     refreshProviderSnapshotMock.mockImplementation(() => new Promise(() => {}));
     channelsAccountsMock.mockImplementation(() => new Promise(() => {}));
 
     const { container } = renderAgents();
+    const loadingSurface = container.querySelector('[data-structural-surface="agents"]');
 
-    expect(container.querySelector('svg.animate-spin')).toBeTruthy();
-    expect(screen.queryByText('title')).not.toBeInTheDocument();
+    await waitFor(() => expect(loadingSurface).toHaveAttribute('data-state', 'visible'));
+    expect(loadingSurface).toHaveAttribute('aria-busy', 'true');
+    expect(screen.queryByText('Main')).not.toBeInTheDocument();
   });
 });
