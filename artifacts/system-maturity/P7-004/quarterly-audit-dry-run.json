@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "task": "P7-004",
-  "generatedAt": "2026-07-19T03:38:46.760Z",
-  "ok": true,
+  "generatedAt": "2026-10-20T01:45:58.328Z",
+  "ok": false,
   "primaryFindingIds": [
     "F-GOV-002",
     "F-GOV-003"
@@ -39,8 +39,8 @@
     {
       "phase": "phase2-authorization-isolation",
       "statusPath": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
-      "phaseStatus": "done",
-      "allTasksDone": true,
+      "phaseStatus": "blocked",
+      "allTasksDone": false,
       "consistent": true,
       "missing": false,
       "tasks": {
@@ -48,7 +48,7 @@
         "P2-002": "done",
         "P2-003": "done",
         "P2-004": "done",
-        "P2-005": "done"
+        "P2-005": "blocked"
       }
     },
     {
@@ -96,8 +96,8 @@
     {
       "phase": "phase6-supply-release",
       "statusPath": "plans/system-maturity/phase6-supply-release/STATUS.json",
-      "phaseStatus": "done",
-      "allTasksDone": true,
+      "phaseStatus": "in_progress",
+      "allTasksDone": false,
       "consistent": true,
       "missing": false,
       "tasks": {
@@ -105,35 +105,35 @@
         "P6-002": "done",
         "P6-003": "done",
         "P6-004": "done",
-        "P6-005": "done"
+        "P6-005": "in_progress"
       }
     },
     {
       "phase": "phase7-continuous-governance",
       "statusPath": "plans/system-maturity/phase7-continuous-governance/STATUS.json",
-      "phaseStatus": "in_progress",
-      "allTasksDone": false,
+      "phaseStatus": "done",
+      "allTasksDone": true,
       "consistent": true,
       "missing": false,
       "tasks": {
-        "P7-001": "in_progress",
-        "P7-002": "in_progress",
-        "P7-003": "in_progress",
-        "P7-004": "in_progress"
+        "P7-003": "done",
+        "P7-004": "done",
+        "P7-002": "done",
+        "P7-001": "done"
       }
     },
     {
       "phase": "phase8-residual-closure",
       "statusPath": "plans/system-maturity/phase8-residual-closure/STATUS.json",
-      "phaseStatus": "in_progress",
-      "allTasksDone": false,
+      "phaseStatus": "done",
+      "allTasksDone": true,
       "consistent": true,
       "missing": false,
       "tasks": {
-        "P8-001": "in_progress",
-        "P8-002": "in_progress",
-        "P8-003": "in_progress",
-        "P8-004": "in_progress"
+        "P8-003": "done",
+        "P8-001": "done",
+        "P8-002": "done",
+        "P8-004": "done"
       }
     }
   ],
@@ -145,8 +145,8 @@
         "owner": "security-lead",
         "reviewBy": "2026-10-18",
         "rationale": "Sandbox strong-mode visibility residual re-audit each quarter after isolation fixes.",
-        "status": "active",
-        "ok": true,
+        "status": "expired",
+        "ok": false,
         "entry": {
           "findingId": "F-ISO-001",
           "decision": "Track",
@@ -162,15 +162,15 @@
         "decision": "Track",
         "owner": "security-lead",
         "reviewBy": "2026-10-18",
-        "rationale": "CVK enforce-mode roadmap tracked; Fixed baseline re-reviewed quarterly.",
-        "status": "active",
-        "ok": true,
+        "rationale": "CVK gate API deny is covered by historical unit evidence, but the production CVK engine does not consume denied at the tool execution boundary. Track as Partial; a separate default-off brb-M-or-larger follow-up with an execution-boundary test is required before any production hard-blocking claim. Frozen P2-005 delivery/acceptance artifacts remain historical evidence and are not the current status source.",
+        "status": "expired",
+        "ok": false,
         "entry": {
           "findingId": "F-AUTH-003",
           "decision": "Track",
           "owner": "security-lead",
           "reviewBy": "2026-10-18",
-          "rationale": "CVK enforce-mode roadmap tracked; Fixed baseline re-reviewed quarterly.",
+          "rationale": "CVK gate API deny is covered by historical unit evidence, but the production CVK engine does not consume denied at the tool execution boundary. Track as Partial; a separate default-off brb-M-or-larger follow-up with an execution-boundary test is required before any production hard-blocking claim. Frozen P2-005 delivery/acceptance artifacts remain historical evidence and are not the current status source.",
           "acceptedBy": "program-governance",
           "acceptedAt": "2026-07-18"
         }
@@ -181,8 +181,8 @@
         "owner": "security-lead",
         "reviewBy": "2026-10-18",
         "rationale": "Runtime Spine diagnostic residual re-audit.",
-        "status": "active",
-        "ok": true,
+        "status": "expired",
+        "ok": false,
         "entry": {
           "findingId": "F-AUTH-004",
           "decision": "Track",
@@ -199,8 +199,8 @@
         "owner": "security-lead",
         "reviewBy": "2026-10-18",
         "rationale": "Verifier heuristic residual re-audit.",
-        "status": "active",
-        "ok": true,
+        "status": "expired",
+        "ok": false,
         "entry": {
           "findingId": "F-AUTH-005",
           "decision": "Track",
@@ -217,8 +217,8 @@
         "owner": "data-governance",
         "reviewBy": "2026-10-18",
         "rationale": "SEKB/DCS context residual re-audit.",
-        "status": "active",
-        "ok": true,
+        "status": "expired",
+        "ok": false,
         "entry": {
           "findingId": "F-DATA-002",
           "decision": "Track",
@@ -235,8 +235,8 @@
         "owner": "privacy-governance",
         "reviewBy": "2026-10-18",
         "rationale": "Sensitive content boundary residual after P7-003; modelEcho no-guarantee remains Track with review deadline.",
-        "status": "active",
-        "ok": true,
+        "status": "expired",
+        "ok": false,
         "entry": {
           "findingId": "F-DATA-004",
           "decision": "Track",
@@ -253,8 +253,8 @@
         "owner": "program-governance",
         "reviewBy": "2026-10-18",
         "rationale": "Quarterly maturity scorecard separates Agent Dev grade from whole-system release; residual monitoring of agent-dev evidence freshness.",
-        "status": "active",
-        "ok": true,
+        "status": "expired",
+        "ok": false,
         "entry": {
           "findingId": "F-GOV-002",
           "decision": "Track",
@@ -271,8 +271,8 @@
         "owner": "frontend-lead",
         "reviewBy": "2026-10-18",
         "rationale": "Frontend module size residual re-audit after Fixed mitigation.",
-        "status": "active",
-        "ok": true,
+        "status": "expired",
+        "ok": false,
         "entry": {
           "findingId": "F-UX-001",
           "decision": "Track",
@@ -289,8 +289,8 @@
         "owner": "privacy-governance",
         "reviewBy": "2026-10-18",
         "rationale": "ErrorBoundary stack sanitization residual re-audit after P7-003.",
-        "status": "active",
-        "ok": true,
+        "status": "expired",
+        "ok": false,
         "entry": {
           "findingId": "F-UX-002",
           "decision": "Track",
@@ -302,8 +302,18 @@
         }
       }
     ],
-    "errors": [],
-    "ok": true
+    "errors": [
+      "F-ISO-001: risk acceptance expired at 2026-10-18",
+      "F-AUTH-003: risk acceptance expired at 2026-10-18",
+      "F-AUTH-004: risk acceptance expired at 2026-10-18",
+      "F-AUTH-005: risk acceptance expired at 2026-10-18",
+      "F-DATA-002: risk acceptance expired at 2026-10-18",
+      "F-DATA-004: risk acceptance expired at 2026-10-18",
+      "F-GOV-002: risk acceptance expired at 2026-10-18",
+      "F-UX-001: risk acceptance expired at 2026-10-18",
+      "F-UX-002: risk acceptance expired at 2026-10-18"
+    ],
+    "ok": false
   },
   "residualRegister": {
     "rows": [
@@ -313,8 +323,8 @@
         "owner": "main-boundary",
         "reviewBy": "2026-10-18",
         "residualScope": "Channel credentials vaulted in clawx-providers channelSecrets; openclaw.json plaintext co-read by OpenClaw Gateway remains residual until runtime secret-input migration.",
-        "status": "active",
-        "ok": true,
+        "status": "expired",
+        "ok": false,
         "entry": {
           "findingId": "F-SEC-001",
           "status": "Partial",
@@ -337,8 +347,8 @@
         "owner": "qa-governance",
         "reviewBy": "2026-10-18",
         "residualScope": "Multi-impl surfaces inventoried; secret-handling remains mixed due to OpenClaw co-read residual tracked under F-SEC-001.",
-        "status": "active",
-        "ok": true,
+        "status": "expired",
+        "ok": false,
         "entry": {
           "findingId": "F-REL-004",
           "status": "Partial",
@@ -356,14 +366,32 @@
         }
       }
     ],
-    "errors": [],
-    "ok": true
+    "errors": [
+      "F-SEC-001: residual-register expired at 2026-10-18",
+      "F-REL-004: residual-register expired at 2026-10-18"
+    ],
+    "ok": false
   },
   "releaseDecision": {
-    "allowed": true,
-    "blockers": [],
-    "notes": [],
-    "code": "release-eligible"
+    "allowed": false,
+    "blockers": [
+      "risk acceptance registry has missing or expired entries",
+      "residual register has missing or expired Partial+Act-now entries"
+    ],
+    "notes": [
+      {
+        "code": "agent-dev-not-system-release",
+        "message": "Agent Dev audit score/grade/releaseReady must not be extrapolated to whole-system release readiness",
+        "status": "fail",
+        "releaseReady": null,
+        "score": 92
+      },
+      {
+        "code": "agent-dev-status-fail",
+        "message": "Agent Dev audit status=fail (informational for system maturity; not an automatic P0/P1 release veto)"
+      }
+    ],
+    "code": "release-blocked"
   },
   "scorecard": {
     "dimensions": [
@@ -379,35 +407,61 @@
       },
       {
         "id": "risk-acceptance",
-        "score": 20,
+        "score": 0,
         "max": 20
       },
       {
         "id": "release-gate",
-        "score": 20,
+        "score": 0,
         "max": 20
       }
     ],
-    "total": 91,
+    "total": 51,
     "max": 100,
-    "grade": "A",
-    "agentDevNote": null
+    "grade": "D",
+    "agentDevNote": {
+      "status": "fail",
+      "releaseReady": null,
+      "score": 92,
+      "grade": "A",
+      "caveat": "Agent Dev A-grade must not be extrapolated to whole-system release readiness (F-GOV-002)"
+    }
   },
-  "agentDevAudit": null,
-  "fail": [],
+  "agentDevAudit": {
+    "path": "artifacts/agent-dev-audit/report.json",
+    "status": "fail",
+    "releaseReady": null,
+    "score": 92,
+    "grade": "A",
+    "generatedAt": "2026-10-18T03:10:22.578Z"
+  },
+  "fail": [
+    "F-ISO-001: risk acceptance expired at 2026-10-18",
+    "F-AUTH-003: risk acceptance expired at 2026-10-18",
+    "F-AUTH-004: risk acceptance expired at 2026-10-18",
+    "F-AUTH-005: risk acceptance expired at 2026-10-18",
+    "F-DATA-002: risk acceptance expired at 2026-10-18",
+    "F-DATA-004: risk acceptance expired at 2026-10-18",
+    "F-GOV-002: risk acceptance expired at 2026-10-18",
+    "F-UX-001: risk acceptance expired at 2026-10-18",
+    "F-UX-002: risk acceptance expired at 2026-10-18",
+    "F-SEC-001: residual-register expired at 2026-10-18",
+    "F-REL-004: residual-register expired at 2026-10-18",
+    "risk acceptance registry has missing or expired entries",
+    "residual register has missing or expired Partial+Act-now entries"
+  ],
   "summary": {
     "phaseCount": 9,
     "phasesDone": 7,
     "phasesTraceable": 9,
-    "riskActive": 9,
-    "riskExpired": 0,
+    "riskActive": 0,
+    "riskExpired": 9,
     "riskMissing": 0,
-    "residualActive": 2,
+    "residualActive": 0,
     "residualMissing": 0,
-    "residualOk": true,
-    "releaseAllowed": true,
-    "score": 91,
-    "grade": "A"
-  },
-  "_resealMarker": "cd87e3735"
+    "residualOk": false,
+    "releaseAllowed": false,
+    "score": 51,
+    "grade": "D"
+  }
 }

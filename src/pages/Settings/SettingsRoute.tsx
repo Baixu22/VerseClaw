@@ -1,12 +1,10 @@
-import { lazy, Suspense, type ComponentType } from 'react';
+import { useEffect, useState, type ComponentType } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { recoverFromDynamicImportLoadError } from '@/lib/dynamic-import-recovery';
-import { SettingsSectionLoading } from './sections/SettingsSectionLoading';
+import { SettingsSectionLoading, type SettingsSectionSkeletonVariant } from './sections/SettingsSectionLoading';
 import { SettingsPageChrome } from './SettingsPageChrome';
 import { resolveSettingsSection, type SettingsSectionId } from './route-config';
-
-let settingsModulePromise: ReturnType<typeof importSettingsModule> | null = null;
 
 function getE2ESectionDelayMs(): number {
   const params = new URLSearchParams(window.location.search);
@@ -14,9 +12,22 @@ function getE2ESectionDelayMs(): number {
   return Number.isFinite(delay) && delay > 0 ? Math.min(delay, 30_000) : 0;
 }
 
-function createPreloadableLazy<P extends object>(loader: () => Promise<{ default: ComponentType<P> }>) {
+/**
+ * Commits the loading page before starting the module work. This keeps the
+ * real async state visible during React Router transitions, where a lazy
+ * component would otherwise leave the previous page mounted until it resolves.
+ */
+function createDeferredComponent<P extends object>(
+  loader: () => Promise<{ default: ComponentType<P> }>,
+  fallbackVariant: SettingsSectionSkeletonVariant = 'settings-rows',
+) {
   let pending: Promise<{ default: ComponentType<P> }> | null = null;
+  let settledComponent: ComponentType<P> | null = null;
+
   const load = () => {
+    if (settledComponent) {
+      return Promise.resolve({ default: settledComponent });
+    }
     if (!pending) {
       const modulePromise = loader();
       const delayMs = getE2ESectionDelayMs();
@@ -25,7 +36,12 @@ function createPreloadableLazy<P extends object>(loader: () => Promise<{ default
             modulePromise,
             new Promise<void>((resolve) => window.setTimeout(resolve, delayMs)),
           ]).then(([module]) => module)
-        : modulePromise).catch((error) => {
+        : modulePromise)
+        .then((module) => {
+          settledComponent = module.default;
+          return module;
+        })
+        .catch((error) => {
           pending = null;
           recoverFromDynamicImportLoadError(error);
           throw error;
@@ -33,39 +49,86 @@ function createPreloadableLazy<P extends object>(loader: () => Promise<{ default
     }
     return pending;
   };
-  return { Component: lazy(load), preload: () => { void load(); } };
-}
 
-function importSettingsModule() {
-  return import('./index').then((module) => ({ default: module.Settings }));
-}
+  function DeferredComponent(props: P) {
+    const { t } = useTranslation('settings');
+    const [LoadedComponent, setLoadedComponent] = useState<ComponentType<P> | null>(
+      () => settledComponent,
+    );
+    const [loadError, setLoadError] = useState<unknown>(null);
 
-function loadSettingsModule() {
-  if (!settingsModulePromise) {
-    settingsModulePromise = importSettingsModule().catch((error) => {
-      settingsModulePromise = null;
-      recoverFromDynamicImportLoadError(error);
-      throw error;
-    });
+    useEffect(() => {
+      if (LoadedComponent) return;
+      let active = true;
+      void load()
+        .then((module) => {
+          if (active) setLoadedComponent(() => module.default);
+        })
+        .catch((error: unknown) => {
+          if (active) setLoadError(error);
+        });
+      return () => {
+        active = false;
+      };
+    }, [LoadedComponent]);
+
+    if (loadError) throw loadError;
+    if (!LoadedComponent) {
+      return <SettingsSectionLoading label={t('loading.section')} variant={fallbackVariant} />;
+    }
+    return <LoadedComponent {...props} />;
   }
-  return settingsModulePromise;
+
+  return {
+    Component: DeferredComponent,
+    preload: () => {
+      void load();
+    },
+  };
 }
 
-const SettingsImplementation = lazy(loadSettingsModule);
-const settingsModels = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Models').then((module) => ({ default: module.Models })));
-const settingsAgents = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Agents').then((module) => ({ default: module.Agents })));
-const settingsSkills = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Skills').then((module) => ({ default: module.Skills })));
-const settingsChannels = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Channels').then((module) => ({ default: module.Channels })));
-const settingsBilling = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Billing').then((module) => ({ default: module.Billing })));
-const settingsBrowser = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/components/settings/BrowserSettingsPanel').then((module) => ({
-  default: module.BrowserSettingsPanel as ComponentType<{ embedded?: boolean }>,
-})));
-const settingsArchived = createPreloadableLazy<Record<string, never>>(() => import('./sections/ArchivedSection').then((module) => ({
-  default: module.ArchivedSection as ComponentType<Record<string, never>>,
-})));
-const settingsRecovery = createPreloadableLazy<Record<string, never>>(() => import('./sections/RecoverySettingsSection').then((module) => ({
-  default: module.RecoverySettingsSection as ComponentType<Record<string, never>>,
-})));
+const settingsImplementation = createDeferredComponent<{ embedded?: boolean }>(
+  () => import('./index').then((module) => ({ default: module.Settings })),
+  'settings-rows',
+);
+const settingsModels = createDeferredComponent<{ embedded?: boolean }>(
+  () => import('@/pages/Models').then((module) => ({ default: module.Models })),
+  'generic',
+);
+const settingsAgents = createDeferredComponent<{ embedded?: boolean }>(
+  () => import('@/pages/Agents').then((module) => ({ default: module.Agents })),
+  'agent-list',
+);
+const settingsSkills = createDeferredComponent<{ embedded?: boolean }>(
+  () => import('@/pages/Skills').then((module) => ({ default: module.Skills })),
+  'skill-list',
+);
+const settingsChannels = createDeferredComponent<{ embedded?: boolean }>(
+  () => import('@/pages/Channels').then((module) => ({ default: module.Channels })),
+  'channel-grid',
+);
+const settingsBilling = createDeferredComponent<{ embedded?: boolean }>(
+  () => import('@/pages/Billing').then((module) => ({ default: module.Billing })),
+  'billing',
+);
+const settingsBrowser = createDeferredComponent<{ embedded?: boolean }>(
+  () => import('@/components/settings/BrowserSettingsPanel').then((module) => ({
+    default: module.BrowserSettingsPanel as ComponentType<{ embedded?: boolean }>,
+  })),
+  'settings-rows',
+);
+const settingsArchived = createDeferredComponent<Record<string, never>>(
+  () => import('./sections/ArchivedSection').then((module) => ({
+    default: module.ArchivedSection as ComponentType<Record<string, never>>,
+  })),
+  'archived',
+);
+const settingsRecovery = createDeferredComponent<Record<string, never>>(
+  () => import('./sections/RecoverySettingsSection').then((module) => ({
+    default: module.RecoverySettingsSection as ComponentType<Record<string, never>>,
+  })),
+  'settings-rows',
+);
 
 const standaloneSections = {
   models: settingsModels.Component,
@@ -75,6 +138,7 @@ const standaloneSections = {
   billing: settingsBilling.Component,
   browser: settingsBrowser.Component,
 } as const;
+const SettingsImplementation = settingsImplementation.Component;
 const SettingsArchived = settingsArchived.Component;
 const SettingsRecovery = settingsRecovery.Component;
 
@@ -109,11 +173,6 @@ export function SettingsRoute() {
     : currentSection === 'billing'
       ? 'billing-page-title'
       : undefined;
-  const loadingShell = (
-    <SettingsPageChrome title={meta.title} description={meta.description} titleTestId={pageTitleTestId}>
-      <SettingsSectionLoading label={t('loading.section')} />
-    </SettingsPageChrome>
-  );
 
   const StandaloneSection = currentSection in standaloneSections
     ? standaloneSections[currentSection as keyof typeof standaloneSections]
@@ -121,47 +180,39 @@ export function SettingsRoute() {
 
   if (StandaloneSection) {
     return (
-      <Suspense fallback={loadingShell}>
-        <SettingsPageChrome title={meta.title} description={meta.description} titleTestId={pageTitleTestId}>
-          <div className="codex-settings-content animate-in fade-in duration-150 motion-reduce:animate-none">
-            <StandaloneSection embedded />
-          </div>
-        </SettingsPageChrome>
-      </Suspense>
+      <SettingsPageChrome title={meta.title} description={meta.description} titleTestId={pageTitleTestId}>
+        <div className="codex-settings-content animate-in fade-in duration-150 motion-reduce:animate-none">
+          <StandaloneSection embedded />
+        </div>
+      </SettingsPageChrome>
     );
   }
 
   if (currentSection === 'archived') {
     const StandalonePage = SettingsArchived;
     return (
-      <Suspense fallback={loadingShell}>
-        <SettingsPageChrome title={meta.title} description={meta.description}>
-          <div className="codex-settings-content animate-in fade-in duration-150 motion-reduce:animate-none">
-            <StandalonePage />
-          </div>
-        </SettingsPageChrome>
-      </Suspense>
+      <SettingsPageChrome title={meta.title} description={meta.description}>
+        <div className="codex-settings-content animate-in fade-in duration-150 motion-reduce:animate-none">
+          <StandalonePage />
+        </div>
+      </SettingsPageChrome>
     );
   }
 
   if (currentSection === 'recovery') {
     return (
-      <Suspense fallback={loadingShell}>
-        <SettingsPageChrome title={meta.title} description={meta.description}>
-          <div className="codex-settings-content animate-in fade-in duration-150 motion-reduce:animate-none">
-            <SettingsRecovery />
-          </div>
-        </SettingsPageChrome>
-      </Suspense>
+      <SettingsPageChrome title={meta.title} description={meta.description}>
+        <div className="codex-settings-content animate-in fade-in duration-150 motion-reduce:animate-none">
+          <SettingsRecovery />
+        </div>
+      </SettingsPageChrome>
     );
   }
 
   return (
-    <Suspense fallback={loadingShell}>
-      <SettingsPageChrome title={meta.title} description={meta.description}>
-        <SettingsImplementation embedded />
-      </SettingsPageChrome>
-    </Suspense>
+    <SettingsPageChrome title={meta.title} description={meta.description}>
+      <SettingsImplementation embedded />
+    </SettingsPageChrome>
   );
 }
 

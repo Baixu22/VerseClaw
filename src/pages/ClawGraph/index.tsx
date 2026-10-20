@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, CheckCircle2, GitBranch, History, Play, RefreshCw, ShieldCheck, Square, Workflow, XCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { QuietLoadingSurface } from '@/components/loading/StructuralLoadingOverlay';
+import { QuietGraphSkeleton } from '@/components/loading/PageLoadingSkeletons';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -345,6 +347,12 @@ export default function ClawGraphPage() {
         </TabsList>
 
         <TabsContent value="dag" className="h-[calc(100%-3rem)] overflow-y-auto">
+          <QuietLoadingSurface
+            surfaceId="clawgraph"
+            loading={loading && workflows.length === 0 && !currentRun}
+            label={t('common:status.loading')}
+            skeleton={<QuietGraphSkeleton />}
+          >
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3" data-testid="clawgraph-dag">
             {(currentRun?.nodes ?? []).length === 0 ? (
               <div className="rounded-md border border-dashed border-border p-8 text-center text-sm text-muted-foreground md:col-span-2 xl:col-span-3">
@@ -355,6 +363,7 @@ export default function ClawGraphPage() {
               currentRun!.nodes.map((node) => <NodeCard key={node.id} node={node} t={t} />)
             )}
           </div>
+          </QuietLoadingSurface>
         </TabsContent>
 
         <TabsContent value="events" className="h-[calc(100%-3rem)] overflow-y-auto">

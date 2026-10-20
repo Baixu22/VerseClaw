@@ -5,6 +5,8 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { AlertTriangle, ArrowRight, BookOpen, Bot, Check, Columns3, Database, Edit3, Ellipsis, Eye, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, Link2, ListTodo, Loader2, Plus, Puzzle, RefreshCw, RotateCcw, Ruler, Save, Search, ShieldCheck, Sparkles, Tags, Upload, Wrench, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
+import { useDelayedVisibility } from '@/components/loading/use-delayed-visibility';
+import { QuietListSkeleton } from '@/components/loading/PageLoadingSkeletons';
 import remarkGfm from 'remark-gfm';
 import { toast } from 'sonner';
 
@@ -413,6 +415,7 @@ export function Knowledge() {
   const [, setDismissedIssueIds] = useState<Set<string>>(() => new Set());
   const [runtimeLessons, setRuntimeLessons] = useState<KnowledgeRuntimeLessonsReportResult | null>(null);
   const [runtimeLessonsLoading, setRuntimeLessonsLoading] = useState(false);
+  const runtimeSkeletonVisible = useDelayedVisibility(runtimeLessonsLoading && !runtimeLessons, 200);
   const [runtimeLessonsRequested, setRuntimeLessonsRequested] = useState(false);
   const [runtimeSuggestions, setRuntimeSuggestions] = useState<KnowledgeSekbDistillationSuggestion[]>([]);
   const [selectedRuntimeSuggestionIndex, setSelectedRuntimeSuggestionIndex] = useState(0);
@@ -2367,11 +2370,8 @@ export function Knowledge() {
                   </Button>
                 </div>
 
-                {runtimeLessonsLoading && !runtimeLessons ? (
-                  <div className="flex min-h-40 items-center justify-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    {t('runtime.loading')}
-                  </div>
+                {runtimeLessonsLoading && !runtimeLessons && runtimeSkeletonVisible ? (
+                  <QuietListSkeleton rows={3} />
                 ) : null}
 
                 {!runtimeLessonsLoading && runtimeLessons && !runtimeLessons.available ? (

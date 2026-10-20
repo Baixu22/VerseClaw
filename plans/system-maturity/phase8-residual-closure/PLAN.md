@@ -1,6 +1,6 @@
 # Phase 8 — Residual Closure / Continuous Residual Hardening
 
-Tier: M8→residual-continuous
+Tier: M8→residual
 Owner: program-governance
 Findings: F-SEC-001, F-REL-004, F-DATA-004, F-GOV-002
 Dependencies: phase7-continuous-governance

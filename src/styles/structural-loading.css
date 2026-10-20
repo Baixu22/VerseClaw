@@ -1,108 +1,413 @@
-.structural-loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 20;
-  overflow: hidden;
-  pointer-events: none;
-  color: hsl(var(--muted-foreground));
+.progressive-loading-surface {
+  position: relative;
+  min-width: 0;
+  /* A pen stroke keeps a near-constant speed; expo-out reads as a shape appearing. */
+  --ease-draw: cubic-bezier(0.25, 0.1, 0.55, 0.95);
 }
 
-.structural-loading-canvas {
+.progressive-loading-grid {
+  display: grid;
+  min-width: 0;
+}
+
+.progressive-loading-grid > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
+.progressive-loading-content {
+  position: relative;
+  z-index: 12;
+}
+
+.progressive-loading-content[data-content-state='entering'] {
+  animation: progressive-content-in 160ms var(--ease-ui-out) both;
+}
+
+.progressive-loading-skeleton {
+  position: relative;
+  z-index: 10;
+  min-width: 0;
+  pointer-events: none;
+}
+
+.progressive-loading-skeleton[data-state='pending'] {
+  visibility: hidden;
+}
+
+.progressive-loading-skeleton[data-state='leaving'] {
+  animation: progressive-structure-out 180ms var(--ease-ui-out) both;
+}
+
+.progressive-loading-skeleton--quiet {
+  z-index: 10;
+}
+
+.progressive-loading-canvas {
   position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
   overflow: visible;
   pointer-events: none;
 }
 
-.structural-loading-canvas text {
-  fill: hsl(var(--muted-foreground));
+.progressive-loading-canvas text {
+  fill: hsl(var(--muted-foreground) / 0.65);
   font-family: "SFMono-Regular", "Cascadia Mono", Consolas, monospace;
   font-size: 7px;
   letter-spacing: 0.04em;
 }
 
-.structural-loading-root,
-.structural-loading-region {
+.progressive-loading-region-fill {
+  fill: hsl(var(--foreground) / 0.022);
+  opacity: 0;
+  animation: progressive-dots-in 260ms ease-out calc(var(--structure-delay, 0ms) + var(--structure-duration, 520ms) * 0.55) both;
+}
+
+.progressive-loading-region-outline {
   fill: none;
-  stroke: hsl(var(--foreground) / 0.32);
-  stroke-width: 0.9px;
-  stroke-dasharray: 0.8 3.2;
+  stroke: hsl(var(--foreground) / 0.18);
+  stroke-width: 0.8px;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
+  animation: progressive-stroke var(--structure-duration, 520ms) var(--ease-draw, cubic-bezier(0.25, 0.1, 0.55, 0.95)) var(--structure-delay, 0ms) both;
 }
 
-.structural-loading-region {
-  stroke: hsl(var(--foreground) / 0.24);
-  stroke-width: 0.75px;
+.progressive-loading-region-dots {
+  opacity: 0;
+  animation: progressive-dots-in 240ms ease-out calc(var(--structure-delay, 0ms) + var(--structure-duration, 520ms) * 0.7) both;
 }
 
-.structural-loading-fill {
-  fill: hsl(var(--foreground) / 0.027);
-  stroke: none;
+.progressive-loading-dot {
+  fill: hsl(var(--muted-foreground) / 0.16);
 }
 
-.structural-loading-ruler {
+.progressive-loading-marker {
+  fill: hsl(var(--background));
+  stroke: hsl(var(--foreground) / 0.3);
+  stroke-width: 0.7px;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  animation: progressive-marker-in 180ms ease-out calc(var(--structure-delay, 0ms) + var(--structure-duration, 520ms) * 0.9) both;
+}
+
+.progressive-loading-marker--primary {
+  fill: hsl(var(--destructive) / 0.78);
+  stroke: hsl(var(--destructive) / 0.9);
+}
+
+.progressive-loading-ruler {
   fill: none;
-  stroke: hsl(var(--foreground) / 0.15);
+  stroke: hsl(var(--muted-foreground) / 0.18);
   stroke-width: 0.65px;
   stroke-dasharray: 1 4;
   vector-effect: non-scaling-stroke;
+  opacity: 0;
+  animation: progressive-marker-in 200ms ease-out calc(var(--structure-delay, 0ms) + var(--structure-duration, 520ms) * 0.8) both;
 }
 
-.structural-loading-marker {
-  fill: hsl(var(--background));
-  stroke: hsl(var(--foreground) / 0.33);
-  stroke-width: 0.7px;
+.progressive-loading-label {
+  opacity: 0;
+  animation: progressive-marker-in 200ms ease-out calc(var(--structure-delay, 0ms) + var(--structure-duration, 520ms) * 0.9) both;
+}
+
+.progressive-loading-skeleton [data-structural-region] {
+  opacity: 0;
+}
+
+/* Drawing must not spend its travel behind a hidden placeholder. */
+.progressive-loading-hold *,
+.progressive-loading-skeleton[data-state='pending'] *,
+.progressive-loading-skeleton.invisible * {
+  animation-play-state: paused !important;
+}
+
+/* The measured SVG draws each boundary; a ghost must not draw it first. */
+.progressive-loading-skeleton[data-state='visible'] [data-structural-region][data-structure-drawn] {
+  border-color: transparent;
+}
+
+.progressive-loading-skeleton[data-state='visible'] [data-reveal-order='0'],
+.progressive-loading-skeleton[data-state='leaving'] [data-reveal-order='0'] {
+  animation: progressive-skeleton-in 220ms var(--ease-ui-out) 0ms both;
+}
+
+.progressive-loading-skeleton[data-state='visible'] [data-reveal-order='1'],
+.progressive-loading-skeleton[data-state='leaving'] [data-reveal-order='1'] {
+  animation: progressive-skeleton-in 220ms var(--ease-ui-out) 50ms both;
+}
+
+.progressive-loading-skeleton[data-state='visible'] [data-reveal-order='2'],
+.progressive-loading-skeleton[data-state='leaving'] [data-reveal-order='2'] {
+  animation: progressive-skeleton-in 220ms var(--ease-ui-out) 100ms both;
+}
+
+.dark .progressive-loading-region-fill {
+  fill: hsl(var(--foreground) / 0.028);
+}
+
+.dark .progressive-loading-region-outline {
+  stroke: hsl(var(--foreground) / 0.16);
+}
+
+.dark .progressive-loading-dot {
+  fill: hsl(var(--muted-foreground) / 0.12);
+}
+
+@keyframes progressive-stroke {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes progressive-dots-in {
+  to { opacity: 1; }
+}
+
+@keyframes progressive-marker-in {
+  to { opacity: 1; }
+}
+
+@keyframes progressive-skeleton-in {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes progressive-content-in {
+  from { opacity: 0; filter: blur(2px); }
+  to { opacity: 1; filter: blur(0); }
+}
+
+@keyframes progressive-structure-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Construction and content occupy the same measured component frame. */
+.measured-loading-surface {
+  --build-line: hsl(var(--foreground) / 0.48);
+  --build-guide: hsl(var(--muted-foreground) / 0.48);
+  --build-dot: hsl(var(--foreground) / 0.24);
+  --build-node: hsl(var(--foreground) / 0.68);
+}
+
+.dark .measured-loading-surface {
+  --build-line: hsl(var(--foreground) / 0.34);
+  --build-guide: hsl(var(--muted-foreground) / 0.4);
+  --build-dot: hsl(var(--foreground) / 0.17);
+  --build-node: hsl(var(--foreground) / 0.5);
+}
+
+.component-build-row {
+  position: relative;
+  min-width: 0;
+  border-radius: 1rem;
+}
+
+.component-build-row[data-build-state='pending'] .component-build-content [data-build-root] {
+  background: transparent;
+}
+
+.component-build-row[data-build-state='pending'] .component-build-content [data-build-part] {
+  visibility: hidden;
+}
+
+.component-construction {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.component-construction-dot { fill: var(--build-dot); }
+
+.component-construction-frame,
+.component-construction-outline {
+  fill: none;
+  stroke: var(--build-line);
+  stroke-width: 1px;
   vector-effect: non-scaling-stroke;
 }
 
-.structural-loading-marker--primary {
-  fill: hsl(var(--destructive));
-  stroke: hsl(var(--destructive));
+.component-construction-frame {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: progressive-stroke 520ms var(--ease-draw, cubic-bezier(0.25, 0.1, 0.55, 0.95)) var(--build-row-delay, 0ms) both;
 }
 
-.structural-loading-overlay[data-waiting='true'] .structural-loading-marker--primary {
-  animation: structural-loading-marker-pulse 2.4s ease-in-out infinite;
+.component-construction-trace {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: progressive-stroke var(--trace-duration, 340ms) var(--ease-draw, cubic-bezier(0.25, 0.1, 0.55, 0.95)) calc(var(--build-row-delay, 0ms) + var(--trace-delay, 0ms)) both;
 }
 
-@keyframes structural-loading-marker-pulse {
-  0%, 100% { opacity: 0.45; }
-  50% { opacity: 1; }
-}
-
-.structural-loading-dots {
-  position: absolute;
+.component-construction-dots {
   opacity: 0;
-  background-image: radial-gradient(
-    circle,
-    hsl(var(--foreground) / 0.2) 0 0.7px,
-    transparent 0.95px
-  );
-  background-position: 1px 1px;
-  background-size: 14px 14px;
-  pointer-events: none;
+  animation: progressive-dots-in 460ms ease-out calc(var(--build-row-delay, 0ms) + 160ms) both;
 }
 
-.structural-loading-scan {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 28px;
+.component-construction-guide {
+  fill: none;
+  stroke: var(--build-guide);
+  stroke-width: 0.8px;
+  stroke-dasharray: 1 4;
+}
+
+.component-construction-text-line {
+  fill: none;
+  stroke: var(--build-line);
+  stroke-width: 1.2px;
+  stroke-dasharray: 1 3;
+}
+
+.component-construction-node {
+  fill: hsl(var(--background));
+  stroke: var(--build-node);
+  stroke-width: 1px;
+}
+
+.component-construction-label {
+  fill: hsl(var(--muted-foreground) / 0.85);
+  stroke: none;
+  font-family: 'Cascadia Mono', Consolas, monospace;
+  font-size: 8px;
+  letter-spacing: 0.04em;
   opacity: 0;
-  background: linear-gradient(to bottom, transparent, hsl(var(--foreground) / 0.055), transparent);
-  pointer-events: none;
+  animation: build-part-in 160ms ease-out calc(var(--build-row-delay, 0ms) + var(--trace-delay, 80ms) + var(--trace-duration, 340ms)) both;
+}
+
+.component-construction-node {
+  opacity: 0;
+  animation: build-part-in 160ms ease-out calc(var(--build-row-delay, 0ms) + var(--trace-delay, 0ms) + var(--trace-duration, 340ms)) both;
+}
+
+.component-construction-active {
+  fill: hsl(var(--destructive) / 0.85);
+  opacity: 0;
+  animation: build-part-in 140ms ease-out calc(var(--build-row-delay, 0ms) + 760ms) forwards, build-node-pulse 1.2s ease-in-out calc(var(--build-row-delay, 0ms) + 900ms) infinite;
+}
+
+.component-build-row[data-build-state='revealing'] .component-construction-field {
+  animation: progressive-structure-out 210ms ease-out both;
+}
+
+.component-build-row[data-build-state='revealing'] .component-build-content [data-build-part],
+.component-build-row[data-build-state='revealing'] .component-construction-part {
+  animation: progressive-content-in 130ms ease-out var(--build-part-delay, 0ms) both;
+}
+
+.component-build-row[data-build-state='revealing'] .component-construction-part {
+  animation-name: progressive-structure-out;
+}
+
+.component-build-row[data-build-state='revealing'] [data-build-part='title'] { --build-part-delay: 25ms; }
+.component-build-row[data-build-state='revealing'] [data-build-part='detail'] { --build-part-delay: 45ms; }
+.component-build-row[data-build-state='revealing'] [data-build-part='meta'] { --build-part-delay: 70ms; }
+.component-build-row[data-build-state='revealing'] [data-build-part='body'] { --build-part-delay: 70ms; }
+.component-build-row[data-build-state='revealing'] [data-build-part='actions'] { --build-part-delay: 85ms; }
+
+@keyframes build-part-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes build-node-pulse {
+  50% { opacity: 0.4; }
+}
+
+@media (max-width: 600px) {
+  .component-construction-label { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .structural-loading-scan {
-    display: none;
+  .progressive-loading-content[data-content-state='entering'],
+  .progressive-loading-skeleton[data-state='leaving'],
+  .progressive-loading-region-fill,
+  .progressive-loading-region-outline,
+  .progressive-loading-region-dots,
+  .progressive-loading-marker,
+  .progressive-loading-ruler,
+  .progressive-loading-label,
+  .progressive-loading-skeleton [data-structural-region] {
+    animation: none !important;
   }
 
-  .structural-loading-marker--primary {
-    animation: none;
+  .progressive-loading-region-outline {
+    stroke-dashoffset: 0;
   }
+
+  .progressive-loading-region-fill,
+  .progressive-loading-region-dots,
+  .progressive-loading-marker,
+  .progressive-loading-ruler,
+  .progressive-loading-label,
+  .progressive-loading-skeleton [data-structural-region] {
+    opacity: 1;
+  }
+
+  .component-construction *,
+  .component-build-content [data-build-part] {
+    animation: none !important;
+  }
+
+  .component-construction-frame {
+    stroke-dashoffset: 0;
+  }
+
+  .component-construction-trace { stroke-dashoffset: 0; }
+  .component-construction-dots,
+  .component-construction-node,
+  .component-construction-label,
+  .component-construction-active { opacity: 1; }
 }
 
+/* Shared sketch placeholder: a drawn outline replaces a sweeping shimmer. */
+.structural-sketch {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
 
+.structural-sketch__outline {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
 
+.structural-sketch__outline rect {
+  fill: hsl(var(--foreground) / 0.025);
+  stroke: hsl(var(--foreground) / 0.26);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: progressive-stroke var(--sketch-duration, 380ms) var(--ease-draw, cubic-bezier(0.25, 0.1, 0.55, 0.95)) var(--sketch-delay, 0ms) both;
+}
+
+.dark .structural-sketch__outline rect {
+  fill: hsl(var(--foreground) / 0.045);
+  stroke: hsl(var(--foreground) / 0.22);
+}
+
+/* A faint drafting field behind conversation and route skeletons. */
+.structural-sketch-field {
+  background-image: radial-gradient(hsl(var(--muted-foreground) / 0.16) 0.7px, transparent 0.8px);
+  background-size: 14px 14px;
+  background-position: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .structural-sketch__outline rect {
+    animation: none !important;
+    stroke-dashoffset: 0;
+  }
+}

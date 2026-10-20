@@ -1512,25 +1512,25 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
           )}
 
           {currentSection === 'models' && (
-            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} variant="generic" />}>
               <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><SettingsModelsLazy embedded /></div>
             </Suspense>
           )}
 
           {currentSection === 'agents' && (
-            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} variant="generic" />}>
               <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><SettingsAgentsLazy embedded /></div>
             </Suspense>
           )}
 
           {currentSection === 'skills' && (
-            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} variant="generic" />}>
               <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><SettingsSkillsLazy embedded /></div>
             </Suspense>
           )}
 
           {currentSection === 'channels' && (
-            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} variant="generic" />}>
               <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><SettingsChannelsLazy embedded /></div>
             </Suspense>
           )}
@@ -1693,7 +1693,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
               divider rhythm. */}
           <div className="space-y-6">
               {remoteControlSection}
-              <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+              <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} variant="generic" />}>
                 <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><ProjectRulesCenterLazy /></div>
               </Suspense>
               <div className="rounded-lg border border-black/10 bg-surface-modal p-5 shadow-none dark:border-white/10">
@@ -1868,7 +1868,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
 
           {/* Developer */}
           {currentSection === 'billing' && (
-            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} variant="generic" />}>
               <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><SettingsBillingLazy embedded /></div>
             </Suspense>
           )}
@@ -2055,7 +2055,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
                     </div>
                   </div>
 
-                  <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+                  <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} variant="generic" />}>
                     <div className="space-y-4 animate-in fade-in duration-150 motion-reduce:animate-none">
                       <ContextLayersExplainerLazy />
                       <EfficiencySamplingPanelLazy />

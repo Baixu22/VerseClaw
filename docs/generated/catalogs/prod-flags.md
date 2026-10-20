@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-20T11:17:54.274Z
+Generated at: 2026-10-20T15:56:47.202Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -155,13 +155,13 @@ This file is generated — edit the source of truth instead.
 - kind: api
 - key: `applyPatchProposalsSerial() / recommendIsolationMode()`
 - default: false
-- defaultDisplay: advisory wired (execution api-only; patchFlow.default=false)
+- defaultDisplay: advisory + explicit execution opt-in (patchFlow.default=false)
 - risk: api-only
-- enable: Orchestrator plan diagnostics call recommendIsolationMode(...) automatically as advisory-only. Execution still requires explicitly calling applyPatchProposalsSerial(); do NOT set runtime.coding.patchFlow.default=true without C5-H + approval.
-- rollback: Ignore or stop consuming the advisory diagnostic; execution remains off and patchFlow.default stays false.
-- executor: wired — `openclaw_runtime/src/agents/orchestrator.ts:547`, `openclaw_runtime/src/agents/orchestrator.ts:557`
+- enable: Pass patchFlowExecution=true with durationMinutes and overlapping worker writeSets through orchestrator.run or team_orchestrate. Workers emit fenced apply_patch proposals; deferred orchestration completion calls applyPatchProposalsSerial. Do NOT set runtime.coding.patchFlow.default=true without C5-H + approval.
+- rollback: Omit patchFlowExecution or set it false. The advisory remains display-only, workers keep their ordinary tool surface, and patchFlow.default stays false.
+- executor: wired — `openclaw_runtime/src/agents/orchestrator.ts:547`, `openclaw_runtime/src/agents/orchestrator.ts:557`, `openclaw_runtime/src/agents/orchestrator-run-observed.ts:736`, `openclaw_runtime/src/agents/subagent-registry.ts:612`
 
-> TF-0459 wires recommendation visibility in every production orchestrator plan. It never switches isolation. TF-0460 remains responsible for execution-side applyPatchProposalsSerial wiring and agent-driven soak.
+> TF-0459 wires advisory visibility in every production orchestrator plan; TF-0460 adds the explicit execution opt-in and proposal-only worker boundary. Neither switches isolation automatically, and serial-apply failure is recorded without blocking verifier startup.
 
 ## context-ladder
 

@@ -15,6 +15,8 @@ import {
   GenericRouteLoadingShell,
   SettingsRouteLoadingShell,
 } from '@/components/loading/RouteLoadingShell';
+import { useDelayedVisibility } from '@/components/loading/use-delayed-visibility';
+import { getLoadingPolicy } from '@/components/loading/loading-policy';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { useSettingsStore } from '@/stores/settings';
 
@@ -22,6 +24,10 @@ const SIDEBAR_AUTO_COLLAPSE_WIDTH = 1120;
 const SIDEBAR_AUTO_EXPAND_WIDTH = 1200;
 
 function RouteLoadingFallback({ pathname }: { pathname: string }) {
+  const visible = useDelayedVisibility(true, getLoadingPolicy('route-chunk').delayMs);
+  if (!visible) {
+    return <div data-testid="route-loading-pending" className="min-h-full" aria-busy="true" />;
+  }
   if (pathname === '/') return <ChatRouteLoadingShell />;
   if (pathname.startsWith('/settings')) return <SettingsRouteLoadingShell />;
   return <GenericRouteLoadingShell />;

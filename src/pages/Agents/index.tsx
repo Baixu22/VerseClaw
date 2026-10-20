@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity,
   AlertCircle,
-  Check,
   ChevronDown,
   Info,
   ListChecks,
@@ -12,9 +11,7 @@ import {
   Save,
   Search,
   Server,
-  Settings2,
   ShieldAlert,
-  Trash2,
   Wrench,
   X,
 } from 'lucide-react';
@@ -34,7 +31,6 @@ import {
 import RoleProfileEditor from '@/components/agents/RoleProfileEditor';
 import RolesOrchestrationPanel from '@/components/agents/RolesOrchestrationPanel';
 import { ProposeFactsConfirmQueue } from '@/components/agents/ProposeFactsConfirmQueue';
-import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import { AgentAvatarEditor } from '@/components/agents/AgentAvatarEditor';
 import type { AgentRoleProfile } from '@shared/types/agent';
 import { DEFAULT_ROLE_PROFILE } from '@shared/types/agent';
@@ -43,7 +39,8 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { AgentCard } from './AgentCard';
+import { AgentsLoadingSurface } from './AgentsLoadingSurface';
 import { useAgentsStore } from '@/stores/agents';
 import { useGatewayStore } from '@/stores/gateway';
 import { useProviderStore } from '@/stores/providers';
@@ -162,16 +159,7 @@ export function Agents({ embedded = false }: { embedded?: boolean } = {}) {
     void Promise.all([fetchAgents(), fetchChannelAccounts()]);
   };
 
-  if (loading && !hasCompletedInitialLoad) {
-    return (
-      <div className={cn(
-        'flex flex-col items-center justify-center',
-        embedded ? 'min-h-64' : '-m-6 min-h-[calc(100vh-2.5rem)] dark:bg-background',
-      )}>
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
+  const showInitialLoading = loading && !hasCompletedInitialLoad;
 
   return (
     <div
@@ -217,20 +205,17 @@ export function Agents({ embedded = false }: { embedded?: boolean } = {}) {
           </div>
         </div>
 
-        <div className={cn(
-          embedded ? 'min-h-0' : 'flex-1 overflow-y-auto pr-2 pb-10 min-h-0 -mr-2',
-        )}>
+        <div className={cn('min-h-0', !embedded && 'flex-1 overflow-y-auto pr-2 pb-10 -mr-2')}>
           {error && (
             <div className="mb-8 p-4 rounded-xl border border-destructive/50 bg-destructive/10 flex items-center gap-3">
               <AlertCircle className="h-5 w-5 text-destructive" />
-              <span className="text-destructive text-sm font-medium">
-                {error}
-              </span>
+              <span className="text-destructive text-sm font-medium">{error}</span>
             </div>
           )}
-
-          <div className="space-y-3">
-            {visibleAgents.map((agent) => (
+          <AgentsLoadingSurface
+            loading={showInitialLoading}
+            label={t('common:status.loading')}
+            rows={visibleAgents.map((agent) => (
               <AgentCard
                 key={agent.id}
                 agent={agent}
@@ -242,10 +227,13 @@ export function Agents({ embedded = false }: { embedded?: boolean } = {}) {
                 onDelete={() => setAgentToDelete(agent)}
               />
             ))}
-          </div>
-
-          <RolesOrchestrationPanel agents={agents} />
-          <ProposeFactsConfirmQueue />
+          />
+          {!showInitialLoading && (
+            <>
+              <RolesOrchestrationPanel agents={agents} />
+              <ProposeFactsConfirmQueue />
+            </>
+          )}
         </div>
       </div>
 
@@ -291,97 +279,6 @@ export function Agents({ embedded = false }: { embedded?: boolean } = {}) {
         }}
         onCancel={() => setAgentToDelete(null)}
       />
-    </div>
-  );
-}
-
-function AgentCard({
-  agent,
-  channelGroups,
-  onOpenSettings,
-  onDelete,
-}: {
-  agent: AgentSummary;
-  channelGroups: ChannelGroupItem[];
-  onOpenSettings: () => void;
-  onDelete: () => void;
-}) {
-  const { t } = useTranslation('agents');
-  const boundChannelAccounts = channelGroups.flatMap((group) =>
-    group.accounts
-      .filter((account) => account.agentId === agent.id)
-      .map((account) => {
-        const channelName = CHANNEL_NAMES[group.channelType as ChannelType] || group.channelType;
-        const accountLabel =
-          account.accountId === 'default'
-            ? t('settingsDialog.mainAccount')
-            : account.name || account.accountId;
-        return `${channelName} · ${accountLabel}`;
-      }),
-  );
-  const channelsText = boundChannelAccounts.length > 0
-    ? boundChannelAccounts.join(', ')
-    : t('none');
-
-  return (
-    <div
-      className={cn(
-        'group flex items-start gap-4 p-4 rounded-2xl transition-all text-left border relative overflow-hidden bg-transparent border-transparent hover:bg-black/5 dark:hover:bg-white/5',
-        agent.isDefault && 'bg-black/[0.04] dark:bg-white/[0.06]'
-      )}
-    >
-      <AgentAvatar agentId={agent.id} name={agent.name} avatar={agent.avatar} size={46} className="mb-3 shadow-sm" />
-      <div className="flex flex-col flex-1 min-w-0 py-0.5 mt-1">
-        <div className="flex items-center justify-between gap-3 mb-1">
-          <div className="flex items-center gap-2 min-w-0">
-            <h2 className="text-base font-semibold text-foreground truncate">{agent.name}</h2>
-            {agent.isDefault && (
-              <Badge
-                variant="secondary"
-                className="flex items-center gap-1 font-mono text-2xs font-medium px-2 py-0.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] border-0 shadow-none text-foreground/70"
-              >
-                <Check className="h-3 w-3" />
-                {t('defaultBadge')}
-              </Badge>
-            )}
-          </div>
-          <div className="flex items-center gap-1 shrink-0">
-            {!agent.isDefault && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="opacity-0 group-hover:opacity-100 h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
-                onClick={onDelete}
-                title={t('deleteAgent')}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
-            <Button
-              data-testid={`agent-settings-${agent.id}`}
-              variant="ghost"
-              size="icon"
-              className={cn(
-                'h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-all',
-                !agent.isDefault && 'opacity-0 group-hover:opacity-100',
-              )}
-              onClick={onOpenSettings}
-              title={t('settings')}
-            >
-              <Settings2 className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-        <p className="text-sm text-muted-foreground line-clamp-2 leading-[1.5]">
-          {t('modelLine', {
-            model: agent.modelDisplay,
-            suffix: agent.inheritedModel ? ` (${t('inherited')})` : '',
-          })}
-        </p>
-        <p className="text-sm text-muted-foreground line-clamp-2 leading-[1.5]">
-          {t('channelsLine', { channels: channelsText })}
-        </p>
-      </div>
     </div>
   );
 }

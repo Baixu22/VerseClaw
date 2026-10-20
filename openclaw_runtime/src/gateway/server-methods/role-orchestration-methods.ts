@@ -459,6 +459,8 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           capabilityHints: readStringArray(params.capabilityHints),
           toolHints: readStringArray(params.toolHints),
           priorFailureCount: readPositiveInteger(params.priorFailureCount),
+          durationMinutes: readPositiveInteger(params.durationMinutes),
+          patchFlowExecution: params.patchFlowExecution === true ? true : undefined,
           maxWorkers: resolveMaxWorkers(params, cfg),
           graphMode: normalizeGraphMode(params.graphMode),
           allowAutoRepair: readBoolean(params.allowAutoRepair) ?? true,

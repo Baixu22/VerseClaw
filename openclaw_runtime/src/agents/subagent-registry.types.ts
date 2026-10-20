@@ -21,6 +21,20 @@ import type {
 
 export type TeamOrchestrationPhase = "worker" | "verifier";
 
+export type TeamPatchFlowStatus =
+  | "applied"
+  | "partial"
+  | "failed"
+  | "no-proposals";
+
+export type TeamPatchFlowResultSummary = {
+  workerId: string;
+  ok: boolean;
+  error?: string;
+  summary?: { added: string[]; modified: string[]; deleted: string[] };
+  destructive?: { reason?: string; requiresApproval?: boolean };
+};
+
 export type TeamOrchestrationMetadata = {
   orchestrationRunId: string;
   templateId?: string;
@@ -66,6 +80,15 @@ export type TeamOrchestrationMetadata = {
   workerCommunication?: WorkerCommunicationPolicy;
   handoffArtifactsMode?: "off" | "on";
   allowFollowupPlanning?: boolean;
+  /** Explicit execution-side patch-flow opt-in; advisory output alone never sets this. */
+  patchFlowExecution?: true;
+  /** Worker write-set provenance carried with an extracted patch proposal. */
+  patchFlowWriteSet?: string[];
+  /** Final best-effort result after all expected workers complete. */
+  patchFlowStatus?: TeamPatchFlowStatus;
+  patchFlowResults?: TeamPatchFlowResultSummary[];
+  patchFlowAppliedAt?: number;
+  patchFlowError?: string;
 };
 
 export type PendingFinalDeliveryPayload = {

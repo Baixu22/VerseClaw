@@ -75,6 +75,7 @@ type FakeSpawnParams = {
     roleName: string;
     isVerifier: boolean;
     phase: string;
+    executionWave?: number;
   };
 };
 type FakeSpawnResult = {
@@ -84,6 +85,7 @@ type FakeSpawnResult = {
   note?: string;
   error?: string;
 };
+type FakeSpawnContext = { inheritedToolDenylist?: string[] };
 
 /** Invoke a named handler with captured args; returns the single respond() call. */
 async function callHandler(
@@ -592,6 +594,100 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     });
     // Trace still persisted even on all-failures.
     expect(getRuntimeTraceBuffer().length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('enables proposal-only patch-flow execution only with explicit opt-in and advisory', async () => {
+    const spawned: FakeSpawnParams[] = [];
+    const contexts: FakeSpawnContext[] = [];
+    let counter = 0;
+    const fakeSpawn = async (
+      params: FakeSpawnParams,
+      ctx?: FakeSpawnContext,
+    ): Promise<FakeSpawnResult> => {
+      spawned.push(params);
+      contexts.push(ctx ?? {});
+      counter += 1;
+      return { status: 'accepted', runId: `run_${counter}`, childSessionKey: `child_${counter}` };
+    };
+    clearRuntimeTraceBuffer();
+    const result = await runOrchestrationObserved(
+      {
+        task: 'long dense overlapping implementation',
+        workers: [
+          { roleName: 'implementer', task: 'edit shared module', writeSet: ['src/shared.ts'] },
+          { roleName: 'implementer', task: 'edit shared module again', writeSet: ['src/shared.ts'] },
+          { roleName: 'implementer', task: 'edit shared module once more', writeSet: ['src/shared.ts'] },
+        ],
+        durationMinutes: 45,
+        patchFlowExecution: true,
+      },
+      { agentSessionKey: 'agent:main:abc', workspaceDir: 'D:/workspace' },
+      { spawn: fakeSpawn as unknown as never },
+    );
+
+    expect(result.plan.routeDiagnostics.isolationAdvisory).toMatchObject({
+      recommendedMode: 'patch-flow',
+      applied: false,
+    });
+    expect(result.plan.isolation).toBe('shared');
+    expect(spawned).toHaveLength(3);
+    expect(contexts.length).toBe(3);
+    for (const context of contexts) {
+      expect(context.inheritedToolDenylist).toEqual(
+        expect.arrayContaining(['write', 'edit', 'apply_patch', 'bash', 'exec']),
+      );
+    }
+    for (const [index, params] of spawned.entries()) {
+      expect(params.roleSystemPrompt).toContain('## Patch-Flow Proposal Contract');
+      const orchestration = params.orchestration as unknown as {
+        patchFlowExecution?: true;
+        patchFlowWriteSet?: string[];
+      };
+      expect(orchestration.patchFlowExecution).toBe(true);
+      expect(orchestration.patchFlowWriteSet).toEqual(['src/shared.ts']);
+      expect(params.orchestration?.executionWave).toBe(index + 1);
+    }
+  });
+
+  it('keeps ordinary worker execution unchanged when patchFlowExecution is omitted', async () => {
+    const spawned: FakeSpawnParams[] = [];
+    const contexts: FakeSpawnContext[] = [];
+    const fakeSpawn = async (
+      params: FakeSpawnParams,
+      ctx?: FakeSpawnContext,
+    ): Promise<FakeSpawnResult> => {
+      spawned.push(params);
+      contexts.push(ctx ?? {});
+      return { status: 'accepted', runId: 'run_ordinary', childSessionKey: 'child_ordinary' };
+    };
+
+    const result = await runOrchestrationObserved(
+      {
+        task: 'ordinary implementation',
+        workers: [
+          { roleName: 'implementer', task: 'edit one file', writeSet: ['src/a.ts'] },
+          { roleName: 'implementer', task: 'edit another file', writeSet: ['src/b.ts'] },
+        ],
+      },
+      {
+        agentSessionKey: 'agent:main:abc',
+        workspaceDir: 'D:/workspace',
+        inheritedToolDenylist: ['custom-deny'],
+      },
+      { spawn: fakeSpawn as unknown as never },
+    );
+
+    expect(result.plan.isolation).toBe('shared');
+    expect(spawned).toHaveLength(2);
+    for (const context of contexts) {
+      expect(context.inheritedToolDenylist).toContain('custom-deny');
+      expect(context.inheritedToolDenylist).not.toContain('write');
+      expect(context.inheritedToolDenylist).not.toContain('apply_patch');
+    }
+    for (const params of spawned) {
+      expect(params.roleSystemPrompt).not.toContain('## Patch-Flow Proposal Contract');
+      expect((params.orchestration as { patchFlowExecution?: true }).patchFlowExecution).toBeUndefined();
+    }
   });
 
   it('uses resolved role contracts for scheduler contention when request roles are omitted', async () => {

@@ -1847,6 +1847,7 @@ openclaw_runtime/_tmp_*
 !/plans/system-maturity/EXECUTION-ORDER.md
 !/plans/system-maturity/INDEX.md
 !/plans/system-maturity/README.md
+!/plans/system-maturity/STRUCTURE.md
 !/plans/system-maturity/capability-inventory.json
 !/plans/system-maturity/findings-registry.json
 !/plans/system-maturity/gates.json
@@ -1954,6 +1955,7 @@ openclaw_runtime/_tmp_*
 !/plans/system-maturity/phase8-residual-closure/tasks/P8-003.md
 !/plans/system-maturity/phase8-residual-closure/tasks/P8-004.delivery.md
 !/plans/system-maturity/phase8-residual-closure/tasks/P8-004.md
+!/plans/system-maturity/phases.json
 !/plans/system-maturity/privacy-data-flow-inventory.json
 !/plans/system-maturity/residual-register.json
 !/plans/system-maturity/risk-acceptance.json
