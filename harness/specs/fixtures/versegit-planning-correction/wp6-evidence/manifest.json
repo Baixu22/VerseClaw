@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.wp6-manifest/v1",
-  "generated_at": "2026-10-21T18:29:12.930Z",
+  "generated_at": "2026-10-21T20:23:43.034Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0472",
@@ -8,14 +8,14 @@
   "finalReport": {
     "path": "artifacts/versegit/wp6/final-report.json",
     "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json",
-    "sha256": "543f6d8def8fc6f74f6668fb8c8a1ce437a127ff5b20ae6eb6c5f2553f7b2aa3",
-    "digest": "ba7cd3a1a283ef4a6247a7f5b5edc1a2f28b97d128773dc205c136326889de42"
+    "sha256": "1644c75664142dce9860b217cf039971a735d6e877a6aae677f1185d15cda1a8",
+    "digest": "81de5e2904491baf25c3b80637d673d353dd5f77bcc2be9de7560ff09846e066"
   },
   "mc6Decision": {
     "path": "artifacts/versegit/mc6/decision.json",
     "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
-    "sha256": "31cbe8be8174d4d73d682b8bb440622656a07e0c9d4c854544d292590ef9c3fe",
-    "digest": "50424e0aabdd12f4a740d878d357013556b5266c3eeefd14e2c0a8027fbaa749",
+    "sha256": "0fc2598df969be3061f253b2c4ce542f18aa1f52d8f1a293a5562e6909ab7f43",
+    "digest": "04e0a1d023ab73aee14006ef9471c8f12d29112bb61a94f1dfbc245a506483b3",
     "decision": "sidecar-only",
     "sourceExtractionTriggered": false
   },
@@ -88,9 +88,9 @@
       "nodeId": "TF-0477",
       "role": "MC4",
       "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
-      "curatedSha256": "9b81dfc507be6a5489957eb59ba0d1d19172fdb9e5f2a83d8920d5d6e18e13b3",
+      "curatedSha256": "c2646aab06fce2d3652344c1562448f12a0d887941e4a45d25c4044bcaf1f98f",
       "artifactPath": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
-      "artifactSha256": "9b81dfc507be6a5489957eb59ba0d1d19172fdb9e5f2a83d8920d5d6e18e13b3",
+      "artifactSha256": "c2646aab06fce2d3652344c1562448f12a0d887941e4a45d25c4044bcaf1f98f",
       "localMirrorPath": "artifacts/versegit/mc4/adapter-report.json",
       "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
       "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
@@ -152,9 +152,9 @@
       "nodeId": "TF-0468",
       "role": "WP2",
       "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json",
-      "curatedSha256": "662835cb5feae8afc23d47ab045c7b27cf0dd3f6b30965b3b3e7b205fa76a590",
+      "curatedSha256": "8bbbcb5366e8bbd6094325ae1a143403053c01ab8453b9dd25c1393b43547361",
       "artifactPath": "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json",
-      "artifactSha256": "662835cb5feae8afc23d47ab045c7b27cf0dd3f6b30965b3b3e7b205fa76a590",
+      "artifactSha256": "8bbbcb5366e8bbd6094325ae1a143403053c01ab8453b9dd25c1393b43547361",
       "localMirrorPath": "artifacts/versegit/wp2/report.json",
       "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
       "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
@@ -168,9 +168,9 @@
       "nodeId": "TF-0469",
       "role": "WP3",
       "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json",
-      "curatedSha256": "45616e27e474069480e9a3183cbee83d5aa16dcf658755f2ad5b26f0ad9b6273",
+      "curatedSha256": "b825944e09cc7c0d160fdeb5e511092f1071597a83a452502031ca2f745218d1",
       "artifactPath": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json",
-      "artifactSha256": "45616e27e474069480e9a3183cbee83d5aa16dcf658755f2ad5b26f0ad9b6273",
+      "artifactSha256": "b825944e09cc7c0d160fdeb5e511092f1071597a83a452502031ca2f745218d1",
       "localMirrorPath": "artifacts/versegit/wp3/verdict.json",
       "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
       "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
@@ -236,7 +236,7 @@
     },
     {
       "path": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/SHA256SUMS",
-      "sha256": "0eac41919e9e3a4893cdf8a7d05e2108ef2c02216653539dbe8cc97d6473dfbb",
+      "sha256": "47bc19256e97e779c365b1d10a540c5e891245e1baf1f78bab0846567455f95f",
       "entries": 7
     },
     {
@@ -256,12 +256,12 @@
     },
     {
       "path": "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/SHA256SUMS",
-      "sha256": "c17fbc68d20740015de099e3a4940b871d6ce2067ae6884cbe1436d5a775e94a",
+      "sha256": "1ff5b7665a9579e7cde6c4184f205debc2ca3be3f5eca8f2dda1c472f008d2d5",
       "entries": 8
     },
     {
       "path": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/SHA256SUMS",
-      "sha256": "36c5be9fe345cf6bdf769b36994b1192a3377a80f4777fe8c68ff5f5357eca96",
+      "sha256": "4323f532059704ac2415b7aca73d4ed0641016f7c74b28b3a9e3193b19ec42e5",
       "entries": 7
     },
     {
@@ -389,5 +389,5 @@
     ]
   },
   "passed": true,
-  "digest": "13906bb98e0f50ff22f4cccf29716ccc34206480c306524e1ffdff62ef8140e3"
+  "digest": "0276e5340f175d240343d89887b97d6bc5d4bfb0f411e0493678bb061a998673"
 }

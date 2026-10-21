@@ -54,6 +54,7 @@ export type VerseGitReportCorrelation = {
   runId: string;
   requestId: string | null;
   traceId: string;
+  epoch: number;
 };
 
 export type VerseGitReportInput = {

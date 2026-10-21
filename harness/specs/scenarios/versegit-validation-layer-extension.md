@@ -104,11 +104,21 @@ part of `fast`, `comms`, or an implicit task default.
 
 ## Execution coupling
 
-In ClawX host mode, all external commands and verification runs use VerseShell's
-governed ACI. A caller-provided receipt is not evidence: the host reads its own
-process/artifact authority. Without a host-authoritative receipt, verification is
-`unmeasured`. VG must not spawn a second verifier, interpret shell strings, or fall
-back to native execution. `vg land` and `vg admit` are not invoked by M1-M3.
+In ClawX host mode, user-code commands, tests, builds and verification runs use
+VerseShell's governed ACI. A caller-provided receipt is not evidence: the host reads
+its own process/artifact authority. Without a host-authoritative receipt,
+verification is `unmeasured`.
+
+M1/M2 repository facts use the host-owned typed VerseGit adapter with a frozen
+fixed-argv allowlist in a host-created workspace. It may update only VG
+provider-domain state, records binary/argv/cwd/pid/exit/timeout/output digests,
+and cannot run user code, tests, builds, arbitrary model argv or land/admit.
+This is a provider fact seam, not a second verifier or execution authority.
+
+VerseShell remains the sole executor for user code, tests, builds and candidate
+verification, and the sole source of host-authoritative execution receipts. VG
+must not spawn a second verifier, interpret shell strings, or fall back to native
+execution for verification. `vg land` and `vg admit` are not invoked by M1-M3.
 
 ## Failure posture
 

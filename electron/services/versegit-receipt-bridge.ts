@@ -20,6 +20,8 @@ export type VerificationPlan = {
   schema: typeof VG_COMMAND_PLAN_SCHEMA;
   runId: string;
   candidateId: string;
+  /** Content-addressed candidate input manifest. Required for live receipts. */
+  candidateInputDigest?: string;
   checkId: string;
   owner: string;
   epoch: number;
@@ -63,7 +65,24 @@ export type VerseShellReceipt = {
   authority: { writer: 'verseshell'; trusted_source: 'clawx-host-process-artifact-authority' };
   origin: 'verseshell' | 'host-fixture';
   realVerseshell: boolean;
+  /** Required for a live VerseShell receipt. These are checked against host-retained evidence. */
+  observationId?: string;
+  observationDigest?: string;
+  planFileDigest?: string;
+  inputManifestDigest?: string;
 };
+
+export type ReceiptAuthorityCheck = {
+  ok: boolean;
+  issues: string[];
+  observationDigest?: string;
+  artifactDigests?: string[];
+};
+
+/** The host supplies this reader; a caller-authored object is not execution authority. */
+export interface VerseShellReceiptAuthority {
+  verifyReceipt(input: { plan: VerificationPlan; receipt: VerseShellReceipt }): ReceiptAuthorityCheck;
+}
 
 export type ReceiptResult = {
   status: 'accepted' | 'duplicate' | 'rejected_by_policy';
@@ -94,6 +113,17 @@ export type VerdictFacts = {
 };
 
 function digest(value: unknown): string { return createHash('sha256').update(JSON.stringify(value)).digest('hex'); }
+export function executionInputDigest(plan: VerificationPlan): string {
+  const command = plan.commands[0];
+  const execution = {
+    argv: command?.argv ?? [],
+    cwd: command?.cwd ?? '',
+    env: command?.env ?? {},
+  };
+  return plan.candidateInputDigest === undefined
+    ? digest(execution)
+    : digest({ candidateId: plan.candidateId, candidateInputDigest: plan.candidateInputDigest, ...execution });
+}
 function isRecord(value: unknown): value is Record<string, unknown> { return !!value && typeof value === 'object' && !Array.isArray(value); }
 function isDigest(value: unknown): value is string { return typeof value === 'string' && /^[0-9a-f]{64}$/u.test(value); }
 function nonEmpty(value: unknown): value is string { return typeof value === 'string' && value.trim().length > 0; }
@@ -104,6 +134,7 @@ export function createVerificationPlan(input: Omit<VerificationPlan, 'schema' | 
   const plan: VerificationPlan = { schema: VG_COMMAND_PLAN_SCHEMA, ...input };
   const issues: string[] = [];
   if (!nonEmpty(plan.runId) || !nonEmpty(plan.candidateId) || !nonEmpty(plan.checkId) || !nonEmpty(plan.owner)) issues.push('plan identity fields are invalid');
+  if (plan.candidateInputDigest !== undefined && !isDigest(plan.candidateInputDigest)) issues.push('plan candidateInputDigest is invalid');
   if (!Number.isInteger(plan.epoch) || plan.epoch < 1 || !nonEmpty(plan.authorizationId)) issues.push('plan authorization fields are invalid');
   if (!['full', 'selected'].includes(plan.requiredScope)) issues.push('plan requiredScope is invalid');
   if (!Array.isArray(plan.commands) || plan.commands.length === 0) issues.push('plan commands must be non-empty');
@@ -137,20 +168,37 @@ export function validateReceipt(plan: VerificationPlan, receipt: unknown): Recei
   if (value.requiredScope !== 'full') issues.push('receipt scope is not full');
   if (value.selected_scope === 'full') issues.push('receipt may not self-claim selected scope as full');
   if (!Array.isArray(value.artifactDigests) || value.artifactDigests.length === 0 || !value.artifactDigests.every(isDigest)) issues.push('receipt artifact digests are missing or invalid');
+  const artifactDigests = Array.isArray(value.artifactDigests) ? value.artifactDigests.filter(isDigest) : [];
   if (value.cleanupStatus !== 'clean') issues.push('receipt cleanup is not clean');
   if (!['exited', 'timed-out', 'cancelled', 'lost'].includes(String(value.status))) issues.push('receipt status is invalid');
   const command = plan.commands[0];
   if (value.argvDigest !== digest(command?.argv)) issues.push('receipt argv digest mismatch');
   if (value.cwdDigest !== digest(command?.cwd)) issues.push('receipt cwd digest mismatch');
   if (value.envDigest !== digest(command?.env)) issues.push('receipt env digest mismatch');
-  if (value.executionInputDigest !== digest({ argv: command?.argv, cwd: command?.cwd, env: command?.env })) issues.push('receipt execution input digest mismatch');
+  if (value.executionInputDigest !== executionInputDigest(plan)) issues.push('receipt execution input digest mismatch');
+  if (value.realVerseshell === true) {
+    if (value.origin !== 'verseshell') issues.push('live receipt origin is not VerseShell');
+    if (!nonEmpty(value.observationId)) issues.push('live receipt missing observationId');
+    if (!isDigest(value.observationDigest)) issues.push('live receipt observation digest is invalid');
+    if (!isDigest(value.planFileDigest)) issues.push('live receipt plan file digest is invalid');
+    if (!isDigest(value.inputManifestDigest)) issues.push('live receipt input manifest digest is invalid');
+    if (!isDigest(value.stdoutDigest) || !artifactDigests.includes(value.stdoutDigest)) issues.push('live receipt stdout artifact is not bound');
+    if (!isDigest(value.stderrDigest) || !artifactDigests.includes(value.stderrDigest)) issues.push('live receipt stderr artifact is not bound');
+    if (!artifactDigests.includes(String(value.observationDigest))) issues.push('live receipt observation artifact is not bound');
+  }
   if (issues.length > 0) return { status: 'rejected_by_policy', reason: issues[0] ?? 'receipt_rejected', issues, hostVerdict: 'unchanged' };
   return { status: 'accepted', reason: 'receipt_bound', issues: [], hostVerdict: 'unchanged' };
 }
 
 export class VerseGitReceiptBridge {
   private readonly plans = new Map<string, VerificationPlan>();
-  private readonly receipts = new Map<string, { receipt: VerseShellReceipt; result: ReceiptResult }>();
+  private readonly receipts = new Map<string, { receipt: VerseShellReceipt; result: ReceiptResult; authorityVerified: boolean }>();
+
+  private readonly authority?: VerseShellReceiptAuthority;
+
+  constructor(authority?: VerseShellReceiptAuthority) {
+    this.authority = authority;
+  }
 
   registerPlan(plan: VerificationPlan): ReceiptResult {
     if (!plan.planDigest || planDigest(plan) !== plan.planDigest) return { status: 'rejected_by_policy', reason: 'plan_digest_invalid', issues: ['plan digest is not reproducible'], hostVerdict: 'unchanged' };
@@ -165,7 +213,26 @@ export class VerseGitReceiptBridge {
     if (!isRecord(receipt) || !nonEmpty(receipt.receiptId)) return { status: 'rejected_by_policy', reason: 'invalid_receipt_id', issues: ['receipt id missing'], hostVerdict: 'unchanged' };
     if (this.receipts.has(receipt.receiptId as string)) return { status: 'duplicate', reason: 'duplicate_receipt', issues: ['receipt id was already consumed'], hostVerdict: 'unchanged' };
     const result = validateReceipt(plan, receipt);
-    if (result.status === 'accepted') this.receipts.set(receipt.receiptId as string, { receipt: receipt as VerseShellReceipt, result });
+    if (result.status !== 'accepted') return result;
+    const typedReceipt = receipt as VerseShellReceipt;
+    let authorityVerified = false;
+    if (typedReceipt.realVerseshell) {
+      if (!this.authority) {
+        return {
+          status: 'rejected_by_policy', reason: 'host_evidence_authority_missing',
+          issues: ['live receipt requires host-retained observation and artifact authority'], hostVerdict: 'unchanged',
+        };
+      }
+      const checked = this.authority.verifyReceipt({ plan, receipt: typedReceipt });
+      if (!checked.ok) {
+        return {
+          status: 'rejected_by_policy', reason: 'host_evidence_authority_rejected',
+          issues: checked.issues.length > 0 ? checked.issues : ['host evidence authority rejected the receipt'], hostVerdict: 'unchanged',
+        };
+      }
+      authorityVerified = true;
+    }
+    this.receipts.set(typedReceipt.receiptId, { receipt: typedReceipt, result, authorityVerified });
     return result;
   }
 
@@ -181,18 +248,19 @@ export class VerseGitReceiptBridge {
       };
     }
     const receipt = accepted.receipt;
-    const success = receipt.status === 'exited' && receipt.exitCode === 0 && receipt.realVerseshell;
+    const live = receipt.realVerseshell === true && accepted.authorityVerified;
+    const success = receipt.status === 'exited' && receipt.exitCode === 0 && live;
     return {
       schema: VG_VERDICT_SCHEMA, planId, receiptId: receipt.receiptId,
-      status: receipt.realVerseshell ? 'observed' : 'partial',
-      reasons: receipt.realVerseshell ? [] : ['unmeasured'],
+      status: live ? 'observed' : 'partial',
+      reasons: live ? [] : ['unmeasured'],
       dimensions: {
-        candidate: 'observed', execution: success ? 'verified' : receipt.realVerseshell ? 'failed' : 'unmeasured',
-        evidence: 'receipt-bound', freshness: `epoch:${receipt.epoch}`, risk: 'unknown', trial: 'not_run',
+        candidate: 'observed', execution: success ? 'verified' : live ? 'failed' : 'unmeasured',
+        evidence: live ? 'receipt-bound' : 'missing', freshness: `epoch:${receipt.epoch}`, risk: 'unknown', trial: 'not_run',
       },
-      evidenceGrade: receipt.realVerseshell ? 'direct-receipt' : 'normalized-event',
-      realVerseshellExecution: receipt.realVerseshell, hostVerdict: 'unchanged', singleGreenLight: false,
-      issues: receipt.realVerseshell ? [] : ['structural receipt fixture; no live VerseShell authority claimed'],
+      evidenceGrade: live ? 'direct-receipt' : 'normalized-event',
+      realVerseshellExecution: live, hostVerdict: 'unchanged', singleGreenLight: false,
+      issues: live ? [] : ['structural receipt or unverified live claim; no host-authoritative execution is claimed'],
     };
   }
 }

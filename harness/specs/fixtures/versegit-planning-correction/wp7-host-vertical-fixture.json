@@ -11,6 +11,8 @@
     "artifacts/versegit/wp7/host-vertical-report.json",
     "artifacts/versegit/wp7/SHA256SUMS",
     "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/report.json",
-    "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/SHA256SUMS"
+    "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/SHA256SUMS",
+    "artifacts/versegit/wp7/evidence/manifest.json",
+    "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/evidence/manifest.json"
   ]
 }

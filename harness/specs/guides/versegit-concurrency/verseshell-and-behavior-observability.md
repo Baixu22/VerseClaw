@@ -42,6 +42,10 @@ VG 在 standalone 模式可以自己执行检查；在 ClawX host mode 中，这
 - 禁止把模型生成的 shell 字符串直接交给 VG；
 - VG 的只读查询可以作为工具暴露；
 - VG 的写/候选命令默认 host-only，不对模型开放。
+- M1/M2 的 session/observe/check fact seam 是固定 argv 的 provider-state
+  adapter，记录 binary/argv/pid/exit/timeout/output digest；它不是用户代码或验证
+  执行器，也不能把 fact 升级为 verified。
+- 用户代码、测试、build 和 candidate verification 仍唯一由 VerseShell 执行。
 
 ### 2.2 VerseGit -> VerseShell
 

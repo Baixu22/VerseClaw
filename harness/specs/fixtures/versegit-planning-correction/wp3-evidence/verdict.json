@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.wp3-receipt-evidence/v1",
-  "generated_at": "2026-10-21T16:59:34.979Z",
+  "generated_at": "2026-10-21T20:22:19.856Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0469",
@@ -57,7 +57,7 @@
         "dimensions": {
           "candidate": "observed",
           "execution": "unmeasured",
-          "evidence": "receipt-bound",
+          "evidence": "missing",
           "freshness": "epoch:3",
           "risk": "unknown",
           "trial": "not_run"
@@ -67,7 +67,7 @@
         "hostVerdict": "unchanged",
         "singleGreenLight": false,
         "issues": [
-          "structural receipt fixture; no live VerseShell authority claimed"
+          "structural receipt or unverified live claim; no host-authoritative execution is claimed"
         ]
       },
       "hostVerdict": "unchanged"
@@ -354,7 +354,7 @@
         "dimensions": {
           "candidate": "observed",
           "execution": "unmeasured",
-          "evidence": "receipt-bound",
+          "evidence": "missing",
           "freshness": "epoch:3",
           "risk": "unknown",
           "trial": "not_run"
@@ -364,7 +364,7 @@
         "hostVerdict": "unchanged",
         "singleGreenLight": false,
         "issues": [
-          "structural receipt fixture; no live VerseShell authority claimed"
+          "structural receipt or unverified live claim; no host-authoritative execution is claimed"
         ]
       },
       "hostVerdict": "unchanged"
@@ -426,5 +426,5 @@
   "hostVerdict": "unchanged",
   "issues": [],
   "passed": true,
-  "digest": "23d54d10cf7f54a03c9fa933d10d66249e263c37b47674071d05b3f0c1a4c0d9"
+  "digest": "ce5d852d6961d6320e0b05f5efcd47c991530449e8cb59501da7629bc945f392"
 }

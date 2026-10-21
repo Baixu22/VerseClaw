@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.mc6-decision/v1",
-  "generated_at": "2026-10-21T18:29:12.930Z",
+  "generated_at": "2026-10-21T20:23:43.034Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0479",
@@ -17,7 +17,7 @@
         {
           "role": "MC4",
           "path": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
-          "sha256": "9b81dfc507be6a5489957eb59ba0d1d19172fdb9e5f2a83d8920d5d6e18e13b3"
+          "sha256": "c2646aab06fce2d3652344c1562448f12a0d887941e4a45d25c4044bcaf1f98f"
         },
         {
           "role": "MC5",
@@ -85,5 +85,5 @@
   },
   "passed": true,
   "issues": [],
-  "digest": "50424e0aabdd12f4a740d878d357013556b5266c3eeefd14e2c0a8027fbaa749"
+  "digest": "04e0a1d023ab73aee14006ef9471c8f12d29112bb61a94f1dfbc245a506483b3"
 }

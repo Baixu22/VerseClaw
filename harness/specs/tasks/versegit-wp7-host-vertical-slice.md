@@ -8,19 +8,37 @@ intent: Prove one real host-managed concurrency chain from two worktree/session 
 touchedAreas:
   - harness/specs/tasks/versegit-wp7-host-vertical-slice.md
   - harness/specs/scenarios/versegit-validation-layer-extension.md
+  - harness/specs/rules/versegit-validation-layer-extension-boundary.md
   - harness/specs/guides/versegit-concurrency/implementation-roadmap-and-acceptance.md
+  - harness/specs/guides/versegit-concurrency/versegit-planning-correction-matrix.md
+  - harness/specs/guides/versegit-concurrency/verseshell-and-behavior-observability.md
   - docs/dev/versegit-validation-layer/README.md
+  - harness/specs/fixtures/versegit-planning-correction/execution-receipt-contract.json
+  - harness/specs/fixtures/versegit-planning-correction/mc4-evidence/**
+  - harness/specs/fixtures/versegit-planning-correction/mc6-evidence/**
+  - harness/specs/fixtures/versegit-planning-correction/wp2-evidence/**
+  - harness/specs/fixtures/versegit-planning-correction/wp3-evidence/**
+  - harness/specs/fixtures/versegit-planning-correction/wp6-evidence/**
   - harness/specs/fixtures/versegit-planning-correction/wp7-host-vertical-fixture.json
   - harness/specs/fixtures/versegit-planning-correction/wp7-evidence/**
-  - artifacts/versegit/wp7/**
+  - artifacts/versegit/**
   - scripts/versegit-wp7-host-vertical.mts
   - scripts/verify-versegit-wp7.mts
   - scripts/validate-versegit-planning-correction.mjs
+  - electron/services/versegit-module.ts
+  - electron/services/versegit-observation.ts
+  - electron/services/versegit-behavior-coverage.ts
+  - electron/services/versegit-receipt-bridge.ts
+  - electron/services/versegit-receipt-evidence.ts
+  - openclaw_runtime/src/agents/verseshell/governed-exec.ts
+  - openclaw_runtime/src/agents/verseshell/process-manager.ts
+  - openclaw_runtime/src/agents/verseshell/policy-profile.ts
   - tests/unit/versegit-wp7-host-vertical.test.ts
+  - tests/unit/versegit-receipt-authority.test.ts
 expectedUserBehavior:
   - Two active host worktree/session traces bind distinct producer and consumer identities without crossing.
   - Real VerseGit sessions and observations identify the producer-consumer stale-read fact; an own-write negative control remains silent.
-  - VerseGit facts are collected by a fixed-argv host adapter inside the disposable fixture; the composite candidate is verified through real VerseShell governed execution.
+  - VerseGit facts are collected by the typed host-owned fixed-argv adapter, which records real process/output evidence but cannot execute user code or verification; the composite candidate is verified through real VerseShell governed execution.
   - Only a receipt reconstructed from the actual VerseShell observation and matching every plan/identity/artifact binding is accepted.
   - A wrong-candidate receipt is rejected with host verdict unchanged, and a second run proves continuation.
   - Cleanup removes all disposable worktrees and VerseShell processes while retaining evidence.
@@ -35,13 +53,13 @@ requiredTests:
   - pnpm exec vitest run tests/unit/versegit-wp7-host-vertical.test.ts
   - pnpm harness validate --spec harness/specs/tasks/versegit-wp7-host-vertical-slice.md
 acceptance:
-  - The live run uses the frozen vg.exe for fixed-argv repository facts and the bundled ae.exe for real VerseShell verification; native verification fallback is zero.
+  - The live run uses the frozen vg.exe through the typed host-owned fixed-argv provider adapter for repository facts and the bundled ae.exe through VerseShell for candidate verification; native verification fallback is zero.
   - Producer and consumer sessions map to distinct worktrees, sessions, traces and epochs; cross-worktree violations are zero.
   - Real VG `check` returns the producer-consumer `ssi/stale-read` fact and the own-write control remains silent.
   - A composite candidate tree includes both changes and is verified by a real VerseShell process.
-  - A host-authoritative receipt with `realVerseshell=true` is accepted only for the exact plan/candidate/epoch/argv/cwd/env/output-digest/cleanup binding.
+  - A host-authoritative receipt with `realVerseshell=true` is accepted only for the exact plan/candidate/input-manifest/epoch/argv/cwd/env/observation/output-digest/cleanup binding, with the receipt reconstructable from retained host evidence.
   - A wrong-candidate receipt is rejected, host verdict remains unchanged, and a second governed continuation run succeeds.
-  - Cleanup reports zero worktree, process and temp survivors; evidence and raw failure facts remain.
+  - Cleanup reports zero worktree, process and temp survivors; plan, receipt, observation, output, candidate input, cleanup and failure evidence remain digest-bound.
   - The current planning validator accepts TF-0479 either as optional/proposed or as explicitly completed with MC6 decision evidence.
   - No land/admit, default-on, GA, M4, native verification fallback or real-human evidence is claimed.
 docs:
@@ -61,7 +79,7 @@ The execution route is:
 ```text
 host ChatRuntimeEvent traces
   -> VerseGitObservationBridge
-  -> real VerseGit sessions/checks through VerseShell
+  -> real VerseGit facts through fixed-argv host adapter
   -> producer-consumer fact + composed candidate
   -> real VerseShell verification
   -> host-owned receipt
@@ -70,3 +88,12 @@ host ChatRuntimeEvent traces
   -> failure rejection + continuation
   -> cleanup and evidence seal
 ```
+
+## Evidence authority
+
+The typed VerseGit fact adapter is not a second verifier. It owns only the
+provider-domain calls listed by the frozen allowlist and records host-observed
+process facts. The host-owned evidence bundle retains plans, receipts, raw
+VerseShell observations, bounded stdout/stderr, candidate input manifests and
+cleanup attachments. `VerseGitReceiptBridge` promotes a live receipt to
+`observed` only after the file-backed authority re-reads those artifacts.

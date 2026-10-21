@@ -155,7 +155,7 @@ ClawX orchestrator
   -> harness consumes both receipts and host verdict
 ```
 
-VG 在 standalone 模式可以保留自己的 bounded executor；进入 ClawX host mode 后，所有外部命令、验证和测试的执行必须改由 VerseShell 的 governed ACI 完成。否则会产生第二套进程、超时、审批和结果所有权。
+VG 在 standalone 模式可以保留自己的 bounded executor。进入 ClawX host mode 后，candidate verification、用户代码、测试和 build 统一由 VerseShell governed ACI 执行并产生 host-authoritative receipt；M1/M2 的 VG session/observe/check 仓库事实走 host-owned typed fixed-argv adapter，只允许写 VG provider-domain state，且不能把事实升级为 verified。该适配器不是第二个 verifier 或第二个 harness authority。
 
 详细契约见
 [`verseshell-and-behavior-observability.md`](../../../harness/specs/guides/versegit-concurrency/verseshell-and-behavior-observability.md)。
@@ -210,7 +210,8 @@ WP6 的最终报告、manifest 与 checksum 位于 `artifacts/versegit/wp6/`；M
 
 **允许进入 M3：**
 
-- 所有外部命令都经 VerseShell；
+- candidate verification、用户代码、测试和 build 都经 VerseShell；
+- M1/M2 VG 仓库事实只经 typed fixed-argv host adapter，不允许任意 argv/shell 字符串；
 - VG 不再在宿主模式自行执行验证；
 - selected 结果永远不能升级为 full；
 - 执行回执、argv、exit、超时、清理和输入哈希可复查。

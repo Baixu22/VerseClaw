@@ -45,5 +45,20 @@
     "Selected scope never satisfies a full required gate.",
     "Plan, authorization, actual argv/cwd/env and script inputs must be bound to the same receipt.",
     "Effectful requests with unknown delivery are never replayed."
-  ]
+  ],
+  "live_evidence": {
+    "required_bindings": [
+      "observationId",
+      "observationDigest",
+      "planFileDigest",
+      "inputManifestDigest"
+    ],
+    "authority_reader": "host-retained observation/artifact store",
+    "missing_authority_result": "rejected_by_policy",
+    "unverified_live_claim_result": "partial",
+    "rules": [
+      "realVerseshell=true is only valid when the host authority rereads the plan, observation and every bound artifact.",
+      "A caller-authored in-memory receipt without host evidence cannot produce observed or verified."
+    ]
+  }
 }

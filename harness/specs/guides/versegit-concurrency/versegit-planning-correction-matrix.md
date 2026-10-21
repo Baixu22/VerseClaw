@@ -120,6 +120,20 @@ stop accepting work
 - 伪造或缺失 artifact；
 - scope 不是 `full` 时宣称满足 full gate。
 
+### 6.1 Execution-authority split（2026-10-22）
+
+- **Provider fact seam**：host-owned typed adapter，只执行冻结的
+  `version/capabilities/doctor/session/observe/check/report/basis` 固定 argv，
+  只写 VG provider-domain state；记录 binary、argv、cwd role、pid、exit、timeout、
+  stdout/stderr digest。它不接受模型 argv 或 shell 字符串，不运行用户代码、测试、
+  build，也不产生 verification authority。
+- **VerseShell**：用户代码、测试、build、candidate verification 的唯一执行面，
+  也是 host-authoritative receipt 的唯一来源。
+- 该分路不是“双执行器”：provider fact seam 不能把一个仓库事实升级为 verified，
+  且没有 VerseShell receipt 时 execution 维度必须为 `unmeasured`。
+- 将 provider facts 也迁入 VerseShell 需要新的 policy-profile 决策；不得借本次
+  WP7 静默扩大 VerseShell `file.write` 权限。
+
 ## 7. P1 修正矩阵
 
 | Finding | 处理 |
@@ -146,7 +160,7 @@ TF-0481 关闭条件：
 7. 剩余 gaps 只能是执行期验证项。
 8. 任务 spec 在干净树上通过不带 `--no-diff` 的完整 harness validate。
 
-2026-10-22 实施事实：P0/P1 修正与 MC0-MC5、WP0-WP6 的执行证据已完成，WP6 明确保留 release、live VerseShell、conflicts-plan、语言/平台/读面和 M4 残余边界。条件 6 是独立复验要求，不能被 WP6 自证或后续聚合替代：历史 manifest 与 deviation 记录最终 gpt-6.1-sol 复验曾被上游容量阻塞；新的独立复验结论必须单独登记，未取得前不得声称 `PASS_WITH_GAPS` 已满足。
+2026-10-22 实施事实：P0/P1 修正、MC0-MC5、WP0-WP6 与 WP7 bounded live host vertical slice 的执行证据已完成；execution-authority split 已有规则、scenario 与 WP7 evidence。WP6/WP7 明确保留 release、live product M3、conflicts-plan、语言/平台/读面和 M4 残余边界。条件 6 是独立复验要求，不能被 WP6 自证或后续聚合替代：历史 manifest 与 deviation 记录最终 gpt-6.1-sol 复验曾被上游容量阻塞；新的独立复验结论必须单独登记，未取得前不得声称 `PASS_WITH_GAPS` 已满足。
 
 ## 9. 非目标
 

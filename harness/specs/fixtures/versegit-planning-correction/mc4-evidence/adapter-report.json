@@ -1,11 +1,11 @@
 {
   "reportSchema": "clawx.versegit.mc4-adapter/v1",
-  "generated_at": "2026-10-21T16:29:05.041Z",
+  "generated_at": "2026-10-21T20:22:32.993Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0477",
   "adapter_module": "electron/services/versegit-module.ts",
-  "adapter_source_digest": "11f8025024e469368c61cca014b0a90e18c900b09881341575bd5a81c890841f",
+  "adapter_source_digest": "15f36a1202e2b09cd7d0fc6f6904acaa4d38728b27adc172a02620bae500e8fe",
   "adapter_imports_vg_internals": false,
   "forbidden_import_specifiers": [],
   "additional_runtime_dependency": null,
@@ -35,7 +35,7 @@
     "mc5_line_budget_applies": "host-owned-production-only",
     "bootstrap_budget": {
       "production_files": 1,
-      "production_lines": 746,
+      "production_lines": 747,
       "max_production_files": 2,
       "max_production_lines": 800,
       "max_lines_per_production_file": 800,
@@ -591,5 +591,5 @@
     "host_worktree_deleted": false,
     "note": "This node proves the shipped adapter matches the sidecar under the declared projection and refuses every escalation path. Host routes, the harness profile and the VerseShell receipt bridge belong to WP1-WP3 and are not claimed here."
   },
-  "digest": "2a7e4a3ba4609c066956eb9519ce55fbbaa5c14b79c7015126337a6b29fb5fad"
+  "digest": "4477903c1a9410a5faeef4f426f9c42507e211420fb60d8fdb27d8291c4de45e"
 }

@@ -50,17 +50,54 @@ change. VG must not be added to `fast`, `comms`, or an undeclared implicit profi
 
 ## Execution
 
-- In ClawX host mode, external commands, tests, and verification use the VerseShell
-  governed ACI with immutable argv, cwd, owner, deadline, output/artifact bounds,
-  and process-tree cleanup.
-- VG must not spawn a second verifier, reinterpret shell strings, retry an
-  effectful request with unknown delivery, or fall back to native execution.
-- VG may keep its standalone executor only for standalone mode. Host mode must be
-  plan/receipt-driven; without a VerseShell receipt the result is `unmeasured`.
+- In ClawX host mode, user-code commands, tests, builds, and verification runs use
+  the VerseShell governed ACI with immutable argv, cwd, owner, deadline,
+  output/artifact bounds, and process-tree cleanup.
+- M1/M2 repository-fact acquisition may use the host-owned typed VerseGit adapter
+  with a fixed argv allowlist (`version`, `capabilities`, `doctor`, session,
+  `observe`, `check` and read-only report/basis seams) in a host-created
+  workspace. This path is not a second verifier or execution owner: it must not
+  interpret shell strings, run user commands, tests or builds, accept arbitrary
+  argv from a model, or invoke land/admit. Its VG ledger/session writes remain
+  provider-domain state and every call must be bounded, timed out, and represented
+  by an output digest.
+- Disposable Git setup and cleanup remain the host worktree service's fixed-argv
+  fixture operations; they are not user-code execution.
+- VG must not spawn a second verifier, retry an effectful request with unknown
+  delivery, or fall back to native execution for verification.
+- VG may keep its standalone executor only for standalone mode. Host verification
+  remains plan/receipt-driven; without a VerseShell receipt the result is
+  `unmeasured`.
 - Renderer code must not invoke VG CLI, MCP, Gateway HTTP, or a shell directly.
   Host calls go through a typed Main/host adapter.
 - `vg land` and `vg admit` are not invoked by M1-M3. ClawX Git and write-journal
   semantics remain unchanged.
+
+### Execution-authority decision (2026-10-22)
+
+There are two intentionally different channels:
+
+1. **Host fact adapter**: typed, host-owned, fixed-argv calls to the frozen VG
+   binary for provider status/session/observation/check facts. This adapter may
+   create or update VG's own provider-domain ledger inside the host-created
+   disposable repository. It records binary digest, argv digest, cwd role,
+   process id, exit status, timeout and bounded stdout/stderr digests. It never
+   accepts model-authored argv, shell strings, URLs, file contents or environment,
+   and it never runs tests, builds or arbitrary user code.
+2. **VerseShell governed ACI**: the only executor for user code, tests, builds
+   and candidate verification, and the only producer of host-authoritative
+   execution receipts.
+
+This split is required because VerseShell's strict agent policy deliberately
+denies generic child-process filesystem writes. Forcing `vg init/observe` through
+that profile would either fail closed or require a broad write grant that weakens
+the execution boundary. The fact adapter is therefore a typed provider-state
+seam, not a second verifier or a second harness authority. A positive fact from
+that adapter is only semantic evidence; it cannot become verified execution without
+a VerseShell receipt.
+
+Any future move to execute VG facts through VerseShell requires a separate rule and
+policy-profile decision; it cannot be inferred from this adapter.
 
 ## Coverage
 

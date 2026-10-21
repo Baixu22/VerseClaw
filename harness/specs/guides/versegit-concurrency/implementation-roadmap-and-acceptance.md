@@ -16,6 +16,7 @@ appliesTo:
 2026-10-22：WP6 已回读 MC0-MC5、WP0-WP5 的 12 个必需门禁，复算 12 份 tracked evidence manifest / 78 条摘要记录（77 个唯一文件），并在本地存在时额外核对 12 份 artifact mirror manifest；credential pattern scan 覆盖 85 个 retained files，0 hits；以证据裁定 MC6 为 `sidecar-only`、源码提取未触发。当前模块为非 GA、默认关闭、landed-unwired：provider source 仍 dirty，只有 debug sidecar，`releaseEligible=false`；WP7 已增加一次 bounded live VerseShell candidate-verification receipt 与 continuation 证据，但不构成完整产品 M3；`conflicts-plan` seam 仍 unavailable，M4 未授权。
 
 2026-10-22：WP7 已在 disposable host-shaped vertical slice 中通过真实 VG producer-consumer stale-read、组合 candidate、两次真实 VerseShell candidate verification、错误 receipt 拒绝、continuation 与零 survivor 清理。该证据关闭 TF-0465 的 bounded live vertical-slice P1，但仍是 agent-driven 宿主集成，不是外部模型会话或产品 M3 验收。
+2026-10-22 终审修正：独立 agent 初审发现 5 个 P1（执行权威、事件到 fact 的接线、candidate/input 绑定、自报 receipt、process/cleanup evidence）。当前 WP7 已改为 host-owned fixed-argv provider fact seam + VerseShell-only verification，保留完整 plan/receipt/observation/stdout/stderr/input manifest，要求 file-backed host authority 重建 live receipt，并以 OS PID inventory 与 cleanup barrier 证明零 survivor。WP8 将重新独立审查这些修正后才能进入 TF-0465 全局聚合。
 
 ## 1. 总体策略
 

@@ -110,6 +110,11 @@ function validateReceipt(receipt, issues) {
     if (!(receipt.rejects ?? []).includes(rejection)) issues.push(`receipt: missing rejection ${rejection}`);
   }
   if (receipt.authority?.caller_self_report_allowed !== false) issues.push('receipt: caller self-report must be forbidden');
+  for (const binding of ['observationId','observationDigest','planFileDigest','inputManifestDigest']) {
+    if (!(receipt.live_evidence?.required_bindings ?? []).includes(binding)) issues.push(`receipt: missing live evidence ${binding}`);
+  }
+  if (receipt.live_evidence?.missing_authority_result !== 'rejected_by_policy') issues.push('receipt: missing live authority must be rejected_by_policy');
+  if (receipt.live_evidence?.unverified_live_claim_result !== 'partial') issues.push('receipt: unverified live claim must remain partial');
 }
 
 function validateProvider(provider, issues) {
