@@ -222,7 +222,7 @@ Google 的大规模迁移经验给出一条硬规则：
 2. **一次只迁移一个 seam。**
    例如一次只迁移 `capabilities` 或 `doctor`，不做“VG 全量适配”。
 3. **每个节点必须有 diff budget。**
-   超过预算就拆节点，不靠 review 硬扛。
+   超过预算就拆节点，不靠 review 硬扛。Host-owned、provider-free anti-corruption bootstrap 依据边界规则使用独立有界预算（最多 2 个生产文件 / 800 行 / 单文件 800 行）；测试、脚本和证据必须 digest-bound，但不能把 provider-derived migration 伪装成 bootstrap。
 4. **不允许顺手优化。**
    若模型认为某个行为需要变更，必须停在 exception report 里，不能直接改。
 5. **不允许格式化 diff。**

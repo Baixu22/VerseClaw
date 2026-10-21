@@ -13,7 +13,7 @@ appliesTo:
 
 ## 0. 当前状态与下一步
 
-2026-10-21：TF-0481 已关闭；MC0-MC3、MC5、WP0、MC4 技术实现和 WP1 观测桥已在仓内并有执行 verifier。MC4 当前仅因冻结的 MC5 bootstrap budget 缺少一项目录之外的授权而保持 `in_progress`；在所有者记录有界例外或拆分节点前，不得宣称 MC4 完成，也不得进入 WP2。
+2026-10-21：TF-0481 已关闭；MC0-MC3、MC5、WP0、MC4 技术实现和 WP1 观测桥已在仓内并有执行 verifier。边界规则新增 host-owned bootstrap 的客观范围和有界生产预算（最多 2 文件 / 800 行 / 单文件 800 行）；provider-derived migration 仍使用原 MC5 预算。MC4 完成技术复核后进入 WP2。
 
 ## 1. 总体策略
 

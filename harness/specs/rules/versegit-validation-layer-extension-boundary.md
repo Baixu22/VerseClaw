@@ -122,6 +122,27 @@ These values must not be flattened into one boolean.
 - Do not add `land`, `admit`, commit, ref-update, approval bypass, or arbitrary
   shell tools to the model-facing catalog.
 
+## Host-Owned Bootstrap Scope
+
+The MC5 per-PR budget applies to **provider-derived migration slices** that copy,
+replace, or re-author VerseGit behaviour. A host-owned anti-corruption bootstrap is
+not a provider migration slice when all of the following are true:
+
+- `provider_source_files_changed = 0` and `provider_internal_imports = 0`;
+- `behavior_migration = false`;
+- executable authority remains fixed to the host adapter and M0-M3 rules;
+- the complete provider JSON document is compared against the raw sidecar with an
+  empty lossless projection, not a summary;
+- pre-execution source, binary, contract, golden and package identity checks pass;
+- verifier scripts, tests, fixtures and evidence are digest-bound and treated as
+  verification artifacts, not as provider behavioural code.
+
+The bounded host-owned production budget is at most **2 application files and 800
+changed lines, with no application file above 800 lines**. Supporting tests, scripts
+and evidence are excluded from the provider migration line budget, but failing any
+identity, differential, default-off, authority or cleanup control still rejects the
+node. This scope does not permit source extraction, provider imports, native
+execution, land/admit or a default-on profile.
 ## Migration Control
 
 - Do not copy the entire VerseGit source tree, repository history, Task Forest data, build outputs, evaluation corpora, or private evidence into ClawX.
