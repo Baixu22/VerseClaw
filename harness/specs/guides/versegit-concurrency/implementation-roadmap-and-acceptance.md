@@ -13,7 +13,9 @@ appliesTo:
 
 ## 0. 当前状态与下一步
 
-2026-10-22：WP6 已回读 MC0-MC5、WP0-WP5 的 12 个必需门禁，复算 12 份 tracked evidence manifest / 78 条摘要记录（77 个唯一文件），并在本地存在时额外核对 12 份 artifact mirror manifest；credential pattern scan 覆盖 85 个 retained files，0 hits；以证据裁定 MC6 为 `sidecar-only`、源码提取未触发。当前模块为非 GA、默认关闭、landed-unwired：provider source 仍 dirty，只有 debug sidecar，`releaseEligible=false`；没有 live VerseShell receipt，`conflicts-plan` seam 仍 unavailable，M4 未授权。
+2026-10-22：WP6 已回读 MC0-MC5、WP0-WP5 的 12 个必需门禁，复算 12 份 tracked evidence manifest / 78 条摘要记录（77 个唯一文件），并在本地存在时额外核对 12 份 artifact mirror manifest；credential pattern scan 覆盖 85 个 retained files，0 hits；以证据裁定 MC6 为 `sidecar-only`、源码提取未触发。当前模块为非 GA、默认关闭、landed-unwired：provider source 仍 dirty，只有 debug sidecar，`releaseEligible=false`；WP7 已增加一次 bounded live VerseShell candidate-verification receipt 与 continuation 证据，但不构成完整产品 M3；`conflicts-plan` seam 仍 unavailable，M4 未授权。
+
+2026-10-22：WP7 已在 disposable host-shaped vertical slice 中通过真实 VG producer-consumer stale-read、组合 candidate、两次真实 VerseShell candidate verification、错误 receipt 拒绝、continuation 与零 survivor 清理。该证据关闭 TF-0465 的 bounded live vertical-slice P1，但仍是 agent-driven 宿主集成，不是外部模型会话或产品 M3 验收。
 
 ## 1. 总体策略
 
@@ -304,7 +306,7 @@ WP6 收口不会把这些事实升级成成功：
 
 | 残余缺口 | 当前事实 | 授权状态 |
 | --- | --- | --- |
-| live VerseShell receipt | 只有 structural bridge 与拒绝矩阵，未执行 host-authoritative receipt | `unmeasured`；不得产生 full verification |
+| live VerseShell receipt | WP7 已在 disposable vertical slice 中执行真实 candidate verification 并拒绝错误 receipt；完整产品 M3 仍未验收 | bounded `observed`；不得外推为产品 M3 |
 | `conflicts-plan` seam | 当前 CLI 没有纯只读 seam，WP2 记录 `provider_seam_unavailable` | `unavailable`，不得用 effectful 命令替代 |
 | shell/direct-fs/arbitrary-MCP/network/browser | 读面仍为 `unobserved`、`inferred` 或 `partial` | 不得写成零冲突或完整覆盖 |
 | 语言覆盖 | Python 仅限 MC2 fixture；`.mjs/.jsx/.sh` partial；其他语言 unverified | 不得声明全语言覆盖 |

@@ -1,0 +1,7 @@
+70b2344ff864cba4f03b2a6547ff5ba9381de1d51e3a499b37381fc570fbc94c  harness/specs/fixtures/versegit-planning-correction/wp7-evidence/report.json
+00f43672c7bceb02747e9b8aa8911f2f747c5938a8034fa906ee5319f516b71c  scripts/versegit-wp7-host-vertical.mts
+5a8dbd7bbf0edca4856613f4818778b3465b52eb44441c8ae9ce75b543b8b6d0  scripts/verify-versegit-wp7.mts
+d54e5fd98d89df8711c66e7212fc599387cb579556a4018107cc6209ae69bfb2  scripts/validate-versegit-planning-correction.mjs
+afa302fd65fbbb11302092b1d29620ec94f63ccefabbf35de9cc29c84b192f4e  tests/unit/versegit-wp7-host-vertical.test.ts
+829d30f78c98f295747dbe9381eae0d7cf852d5d4ad9e093130e6bfe9726e13d  harness/specs/tasks/versegit-wp7-host-vertical-slice.md
+dfba05d7ddb7499166c48b08059b5acef264f646e2404ff5e5df660a556cbe23  harness/specs/fixtures/versegit-planning-correction/wp7-host-vertical-fixture.json

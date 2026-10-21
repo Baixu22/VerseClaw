@@ -60,7 +60,9 @@ function validateDagAgainstGraph(core, root, issues) {
   }
   if (edges.some((edge) => edge.from === 'TF-0478' && edge.to === 'TF-0477')) issues.push('dag: live graph contains forbidden TF-0478->TF-0477');
   if (graph.nodes?.['TF-0480']?.status !== 'deprecated') issues.push('dag: TF-0480 must be deprecated in live graph');
-  if (graph.nodes?.['TF-0479']?.status !== 'proposed') issues.push('dag: TF-0479 must remain optional/proposed');
+  const optionalStatus = graph.nodes?.['TF-0479']?.status;
+  if (!['proposed', 'done'].includes(optionalStatus)) issues.push('dag: TF-0479 must be optional/proposed or explicitly completed');
+  if (optionalStatus === 'done' && !existsSync(resolve(root, 'harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json'))) issues.push('dag: completed TF-0479 requires MC6 decision evidence');
   const correctionStatus = graph.nodes?.['TF-0481']?.status;
   if (correctionStatus !== 'in_progress' && correctionStatus !== 'done') {
     issues.push('dag: TF-0481 must be in_progress while open or done after correction');

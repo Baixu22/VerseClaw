@@ -1,0 +1,921 @@
+{
+  "schema": "clawx.versegit.wp7-host-vertical/v1",
+  "generated_at": "2026-10-21T19:07:21.879Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0513",
+  "fixture": "harness/specs/fixtures/versegit-planning-correction/wp7-host-vertical-fixture.json",
+  "fixtureDigest": "6edeaa44e383f190149f1a7f2f99f8743e8df3e7bc813660eab6f03edaa55dcd",
+  "status": "passed",
+  "passed": true,
+  "identity": {
+    "repoId": "repo-3070a6698c0a463e",
+    "worktrees": [
+      {
+        "role": "producer",
+        "worktreeId": "worktree-producer-d9720536ceebddc1",
+        "agentSessionId": "agent-session-producer-d1990f97a1f4",
+        "vgSessionId": "vg-session-producer-6dfc10dc4b8c9944",
+        "traceId": "trace-wp7-producer",
+        "epoch": 7
+      },
+      {
+        "role": "consumer",
+        "worktreeId": "worktree-consumer-c90e51f209801a67",
+        "agentSessionId": "agent-session-consumer-6bfbd709d5fd",
+        "vgSessionId": "vg-session-consumer-0679b73887a5556e",
+        "traceId": "trace-wp7-consumer",
+        "epoch": 7
+      }
+    ],
+    "crossWorktreeViolations": 0
+  },
+  "provider": {
+    "binarySha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+    "version": "vg 0.1.0",
+    "capabilitiesSchema": "versegit.capabilities/v1",
+    "defaultEnable": false,
+    "singleGreenLight": false,
+    "factRoute": "host-owned-sidecar-fixed-argv",
+    "verificationRoute": "verseshell-governed-aci",
+    "providerCalls": [
+      {
+        "id": "vg-init",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "init",
+          "--json"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "f006cc878477553e4135a9bc15aa72c4f019ecbd7fc95a19e9d54c723de4e6b1",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-version",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "--version"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "e889ed4a6af6a9a7c6767647f6898c460eceaab1da027f4b5239af552f6e7aee",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-capabilities",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "capabilities",
+          "--json"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "2f446f9ffb81f2675e7b1140fd07994755e8bb8836acb1d1c840f14b9b194a9b",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-session-start-producer",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "session",
+          "start",
+          "--json",
+          "--actor",
+          "agent:wp7-producer",
+          "--worktree",
+          "<producer_worktree>",
+          "--client",
+          "manual"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "08c2d59e51b5160a75141a4ed9d272224cc57a849c3f6d4e650b6e90d6bd42cb",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-session-start-consumer",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "session",
+          "start",
+          "--json",
+          "--actor",
+          "agent:wp7-consumer",
+          "--worktree",
+          "<consumer_worktree>",
+          "--client",
+          "manual"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "0406c3d91a24bb41961198e5b01b54319ad9630a907d8250c776574f344cc047",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-session-start-self-writer",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "session",
+          "start",
+          "--json",
+          "--actor",
+          "agent:wp7-self-writer",
+          "--worktree",
+          "<producer_worktree>",
+          "--client",
+          "manual"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "19856b190a9538889caceab7925cbb6063d5bcdeeb88854e778a87a124cd449e",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-observe-producer-read",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "observe",
+          "read",
+          "--json",
+          "--session",
+          "<producer_vg_session>",
+          "--path",
+          "pricedb.py",
+          "--line-start",
+          "1",
+          "--line-end",
+          "3"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-observe-consumer-write",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "observe",
+          "write",
+          "--json",
+          "--session",
+          "<consumer_vg_session>",
+          "--path",
+          "pricedb.py",
+          "--kind",
+          "modify_signature"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-check-producer-stale-read",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "check",
+          "--json",
+          "--file",
+          "pricedb.py",
+          "--session",
+          "<producer_vg_session>"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "5c2d53c960a01cf6a73ee67800bcc777adfe383abcea925811ea6ec331591bd2",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-observe-self-read",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "observe",
+          "read",
+          "--json",
+          "--session",
+          "<self_writer_vg_session>",
+          "--path",
+          "notes.py",
+          "--line-start",
+          "1",
+          "--line-end",
+          "2"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-observe-self-write",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "observe",
+          "write",
+          "--json",
+          "--session",
+          "<self_writer_vg_session>",
+          "--path",
+          "notes.py",
+          "--kind",
+          "modify_body"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-check-self-own-write",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "check",
+          "--json",
+          "--file",
+          "notes.py",
+          "--session",
+          "<self_writer_vg_session>"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "2fefc4293f2389783f2b174e26f9293b969157b5069322b13e349ecf66d5dbf2",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-observe-producer-write",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "observe",
+          "write",
+          "--json",
+          "--session",
+          "<producer_vg_session>",
+          "--path",
+          "pricedb.py",
+          "--kind",
+          "modify_body"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-session-end-consumer",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "session",
+          "end",
+          "<consumer_vg_session>",
+          "--reason",
+          "wp7-complete",
+          "--json"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "83b9c7abd7817b14e8511e1e027d26fa476656094ecbf06aecf11f125b8fcdc6",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-session-end-producer",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "session",
+          "end",
+          "<producer_vg_session>",
+          "--reason",
+          "wp7-complete",
+          "--json"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "a8ba7b9029282e4f2e206dea5edcea40c2363cae98ab030134ef2a246a5bae6c",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-session-end-self-writer",
+        "route": "host-owned-sidecar-fixed-argv",
+        "argvShape": [
+          "<vg_binary>",
+          "session",
+          "end",
+          "<self_writer_vg_session>",
+          "--reason",
+          "wp7-complete",
+          "--json"
+        ],
+        "cwdRole": "repo",
+        "success": true,
+        "exitCode": 0,
+        "stdoutDigest": "f8c5c68ee6af7ec161622dcf03a21e738b7e7c04b703a90a5166507347a89f46",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "nativeVerificationFallbacks": 0
+  },
+  "verseshell": {
+    "binarySha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+    "runtimeVersion": "1.0.0",
+    "protocol": "verseshell.jsonl/v1",
+    "catalogDigest": "sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8",
+    "catalogCount": 32,
+    "governedCalls": [
+      {
+        "id": "verseshell-candidate-primary",
+        "route": "verseshell-governed-aci",
+        "argvShape": [
+          "<node_executable>",
+          "verify.cjs"
+        ],
+        "cwdRole": "candidate_worktree",
+        "approvalRequired": true,
+        "approvedByHost": true,
+        "success": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 56,
+        "stdoutDigest": "ed965e0e8c9707ad38719e8cfd4b1833e6b22f2b590f3e219bd5c29efa313b7a",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "observationDigest": "a856fa0896159f7b5c54ee4c76c75bc7761cf0e9aba7c87bb9a1667ad0cdb392",
+        "processKeyDigest": "f3f4051ee3242a8f7cda150f9c0a8057ecb7e74ef23254a0fb68a2fb84a8ff31",
+        "capabilities": [
+          "shell.exec"
+        ],
+        "authorityObserved": true
+      },
+      {
+        "id": "verseshell-candidate-continuation",
+        "route": "verseshell-governed-aci",
+        "argvShape": [
+          "<node_executable>",
+          "verify.cjs"
+        ],
+        "cwdRole": "candidate_worktree",
+        "approvalRequired": true,
+        "approvedByHost": true,
+        "success": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 54,
+        "stdoutDigest": "ed965e0e8c9707ad38719e8cfd4b1833e6b22f2b590f3e219bd5c29efa313b7a",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "observationDigest": "65b490c9f9b0be58e0bd36c88d3593f269151135cefaed53436c8a8df80f6a18",
+        "processKeyDigest": "f3f4051ee3242a8f7cda150f9c0a8057ecb7e74ef23254a0fb68a2fb84a8ff31",
+        "capabilities": [
+          "shell.exec"
+        ],
+        "authorityObserved": true
+      }
+    ],
+    "approvalRequiredCalls": 2,
+    "shellExecAuthorityCalls": 2
+  },
+  "vgFacts": {
+    "producerConsumer": {
+      "advisoryKinds": [
+        "ssi/stale-read",
+        "ssi/api-drift"
+      ],
+      "advisories": [
+        {
+          "kind": "ssi/stale-read",
+          "file": null,
+          "line": null
+        },
+        {
+          "kind": "ssi/api-drift",
+          "file": null,
+          "line": null
+        }
+      ]
+    },
+    "ownWriteNegativeControl": {
+      "advisoryKinds": [],
+      "advisories": []
+    }
+  },
+  "candidate": {
+    "candidateId": "9134c0e1be1a8bf4d42bbf1846fbf442cb8eea8ec125eec3a83bbaa1c9182d13",
+    "baseOid": "a462787da00fe20d45093f6fe759bbe8363a3197",
+    "parentHeads": [
+      "df0151e536c26a0e8f7d8529db7ecf422b6b1947",
+      "aa0c1a09a9b6c8d33e9c0ffe3b8a1131e9bbc2b2"
+    ],
+    "materializedTreeOid": "12fe057df0cdff0fbba2cd6e55757d4d637c6395",
+    "commitOid": "a01207ca40408a733837372c5804aecae5a6cfca",
+    "inputDigest": "c37e3c703411a85c377bd45edd2fe7dff7f5175f15dbdcbb659dc863027b963f"
+  },
+  "receiptFlow": {
+    "wrongReceipt": {
+      "status": "rejected_by_policy",
+      "reason": "receipt candidateId mismatch",
+      "issues": [
+        "receipt candidateId mismatch",
+        "receipt cleanup is not clean"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "abandonedVerdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-primary",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    },
+    "continuationReceipt": {
+      "status": "accepted",
+      "reason": "receipt_bound",
+      "issues": [],
+      "hostVerdict": "unchanged"
+    },
+    "continuationVerdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": "receipt-wp7-continuation",
+      "status": "observed",
+      "reasons": [],
+      "dimensions": {
+        "candidate": "observed",
+        "execution": "verified",
+        "evidence": "receipt-bound",
+        "freshness": "epoch:7",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "direct-receipt",
+      "realVerseshellExecution": true,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": []
+    }
+  },
+  "behavior": {
+    "coverage": {
+      "fileRead": "host-event",
+      "fileWrite": "host-event",
+      "search": "unobserved",
+      "shellRead": "unobserved",
+      "shellWrite": "unobserved",
+      "mcpRead": "unobserved",
+      "mcpWrite": "unobserved",
+      "network": "unobserved",
+      "browser": "unobserved",
+      "directFs": "unobserved"
+    },
+    "counts": {
+      "eventCount": 6,
+      "uniqueEventCount": 6,
+      "duplicateCount": 0,
+      "droppedCount": 0
+    },
+    "knownGaps": [],
+    "lateEventStatus": "stale",
+    "sessionSeals": [
+      {
+        "schema": "clawx.versegit.observation-seal/v1",
+        "status": "detached",
+        "why": "session observations sealed before host cleanup",
+        "runId": "run-wp7-producer",
+        "coverage": {
+          "schema": "clawx.versegit.observation-coverage/v1",
+          "runId": "run-wp7-producer",
+          "repoId": "repo-3070a6698c0a463e",
+          "worktreeId": "worktree-producer-d9720536ceebddc1",
+          "agentSessionId": "agent-session-producer-d1990f97a1f4",
+          "vgSessionId": "vg-session-producer-6dfc10dc4b8c9944",
+          "epoch": 7,
+          "values": {
+            "fileRead": "host-event",
+            "fileWrite": "unobserved",
+            "search": "unobserved",
+            "shellRead": "unobserved",
+            "shellWrite": "unobserved",
+            "mcpRead": "unobserved",
+            "mcpWrite": "unobserved",
+            "network": "unobserved",
+            "browser": "unobserved",
+            "directFs": "unobserved"
+          },
+          "knownGaps": [
+            "shellRead is unobserved: a structured exec event cannot prove which files a process read",
+            "shellWrite is inferred from process events until VerseShell supplies a filesystem receipt",
+            "external MCP and browser/network effects are partially observable",
+            "direct filesystem access outside host tools remains unobserved"
+          ],
+          "eventCount": 2,
+          "duplicateCount": 0,
+          "staleCount": 0,
+          "rejectedCount": 0,
+          "surfaceCounts": {
+            "file.read": 2,
+            "file.write": 0,
+            "repo.search": 0,
+            "exec": 0,
+            "test": 0,
+            "mcp": 0,
+            "network": 0,
+            "browser": 0,
+            "control": 0
+          }
+        },
+        "sessionEnd": {
+          "schema": "clawx.versegit.behavior-event/v1",
+          "eventId": "vge_412eed415f7feea82654cec6",
+          "runId": "run-wp7-producer",
+          "traceId": "trace-wp7-producer",
+          "requestId": "request-wp7-producer",
+          "agentSessionId": "agent-session-producer-d1990f97a1f4",
+          "vgSessionId": "vg-session-producer-6dfc10dc4b8c9944",
+          "repoId": "repo-3070a6698c0a463e",
+          "worktreeId": "worktree-producer-d9720536ceebddc1",
+          "ownerId": "owner-wp7-producer",
+          "actor": "agent:codex",
+          "epoch": 7,
+          "source": "chat-runtime",
+          "sourceEventType": "session.detach",
+          "surface": "control",
+          "operation": "session.end",
+          "effect": "none",
+          "status": "succeeded",
+          "coverage": "host-event",
+          "evidence": {
+            "grade": "normalized-event",
+            "ref": null
+          },
+          "inputDigest": "sha256:af5e3d140748474b08c1cbd1db1454ee8fd7b1e927601cb7e2e3586878b08c01",
+          "outputDigest": "sha256:82c6618cd2c1da3a90334faa477dccde66793aabaaebd481e99666d1f889015a",
+          "startedAt": "2026-10-21T19:07:23.148Z",
+          "endedAt": "2026-10-21T19:07:24.575Z",
+          "durationMs": 1427,
+          "reason": "wp7-evidence-sealed"
+        },
+        "issues": [],
+        "host_verdict": "unchanged"
+      },
+      {
+        "schema": "clawx.versegit.observation-seal/v1",
+        "status": "detached",
+        "why": "session observations sealed before host cleanup",
+        "runId": "run-wp7-consumer",
+        "coverage": {
+          "schema": "clawx.versegit.observation-coverage/v1",
+          "runId": "run-wp7-consumer",
+          "repoId": "repo-3070a6698c0a463e",
+          "worktreeId": "worktree-consumer-c90e51f209801a67",
+          "agentSessionId": "agent-session-consumer-6bfbd709d5fd",
+          "vgSessionId": "vg-session-consumer-0679b73887a5556e",
+          "epoch": 7,
+          "values": {
+            "fileRead": "unobserved",
+            "fileWrite": "host-event",
+            "search": "unobserved",
+            "shellRead": "unobserved",
+            "shellWrite": "unobserved",
+            "mcpRead": "unobserved",
+            "mcpWrite": "unobserved",
+            "network": "unobserved",
+            "browser": "unobserved",
+            "directFs": "unobserved"
+          },
+          "knownGaps": [
+            "shellRead is unobserved: a structured exec event cannot prove which files a process read",
+            "shellWrite is inferred from process events until VerseShell supplies a filesystem receipt",
+            "external MCP and browser/network effects are partially observable",
+            "direct filesystem access outside host tools remains unobserved"
+          ],
+          "eventCount": 2,
+          "duplicateCount": 0,
+          "staleCount": 0,
+          "rejectedCount": 0,
+          "surfaceCounts": {
+            "file.read": 0,
+            "file.write": 2,
+            "repo.search": 0,
+            "exec": 0,
+            "test": 0,
+            "mcp": 0,
+            "network": 0,
+            "browser": 0,
+            "control": 0
+          }
+        },
+        "sessionEnd": {
+          "schema": "clawx.versegit.behavior-event/v1",
+          "eventId": "vge_1a7de85b8fdd1cb54a0bf992",
+          "runId": "run-wp7-consumer",
+          "traceId": "trace-wp7-consumer",
+          "requestId": "request-wp7-consumer",
+          "agentSessionId": "agent-session-consumer-6bfbd709d5fd",
+          "vgSessionId": "vg-session-consumer-0679b73887a5556e",
+          "repoId": "repo-3070a6698c0a463e",
+          "worktreeId": "worktree-consumer-c90e51f209801a67",
+          "ownerId": "owner-wp7-consumer",
+          "actor": "agent:codex",
+          "epoch": 7,
+          "source": "chat-runtime",
+          "sourceEventType": "session.detach",
+          "surface": "control",
+          "operation": "session.end",
+          "effect": "none",
+          "status": "succeeded",
+          "coverage": "host-event",
+          "evidence": {
+            "grade": "normalized-event",
+            "ref": null
+          },
+          "inputDigest": "sha256:cbe2c947c02914539c7ad7951efa2b1ad4eff2e751747ea33ec54e100bef0d6e",
+          "outputDigest": "sha256:a478f8bb7f4a23ba6af5091ba05d5c7255cfff0204dcf92204ea87765a5ce200",
+          "startedAt": "2026-10-21T19:07:23.148Z",
+          "endedAt": "2026-10-21T19:07:24.576Z",
+          "durationMs": 1428,
+          "reason": "wp7-evidence-sealed"
+        },
+        "issues": [],
+        "host_verdict": "unchanged"
+      }
+    ]
+  },
+  "moduleReport": {
+    "schema": "clawx.versegit.module-report/v1",
+    "mode": "M3",
+    "component": "versegit-wp7-host-vertical",
+    "trigger": {
+      "reason": "multiple-worktrees",
+      "worktreeCount": 3,
+      "activeSessionCount": 2
+    },
+    "repository": {
+      "repoId": "repo-3070a6698c0a463e",
+      "worktrees": [
+        "worktree-producer-d9720536ceebddc1",
+        "worktree-consumer-c90e51f209801a67"
+      ]
+    },
+    "identity": {
+      "repoId": "repo-3070a6698c0a463e",
+      "worktreeIds": [
+        "worktree-producer-d9720536ceebddc1",
+        "worktree-consumer-c90e51f209801a67"
+      ],
+      "agentSessionIds": [
+        "agent-session-producer-d1990f97a1f4",
+        "agent-session-consumer-6bfbd709d5fd"
+      ],
+      "vgSessionIds": [
+        "vg-session-producer-6dfc10dc4b8c9944",
+        "vg-session-consumer-0679b73887a5556e"
+      ],
+      "epoch": 7
+    },
+    "correlation": {
+      "runId": "run-wp7-continuation",
+      "requestId": "request-wp7-continuation",
+      "traceId": "trace-wp7-continuation",
+      "epoch": 7
+    },
+    "sessions": [
+      {
+        "agentSessionId": "agent-session-producer-d1990f97a1f4",
+        "vgSessionId": "vg-session-producer-6dfc10dc4b8c9944",
+        "worktreeId": "worktree-producer-d9720536ceebddc1",
+        "epoch": 7,
+        "traceId": "trace-wp7-producer",
+        "status": "detached"
+      },
+      {
+        "agentSessionId": "agent-session-consumer-6bfbd709d5fd",
+        "vgSessionId": "vg-session-consumer-0679b73887a5556e",
+        "worktreeId": "worktree-consumer-c90e51f209801a67",
+        "epoch": 7,
+        "traceId": "trace-wp7-consumer",
+        "status": "detached"
+      }
+    ],
+    "coverage": {
+      "declared": [
+        "fileRead",
+        "fileWrite",
+        "test"
+      ],
+      "unobserved": [
+        "shellRead",
+        "directFs",
+        "mcpWrite",
+        "network",
+        "browser"
+      ],
+      "vector": {
+        "fileRead": "host-event",
+        "fileWrite": "host-event",
+        "search": "unobserved",
+        "shellRead": "unobserved",
+        "shellWrite": "unobserved",
+        "mcpRead": "unobserved",
+        "mcpWrite": "unobserved",
+        "network": "unobserved",
+        "browser": "unobserved",
+        "directFs": "unobserved"
+      }
+    },
+    "facts": {
+      "conflicts": [
+        {
+          "kind": "ssi/stale-read",
+          "file": null,
+          "line": null
+        },
+        {
+          "kind": "ssi/api-drift",
+          "file": null,
+          "line": null
+        }
+      ],
+      "warnings": [],
+      "unknowns": []
+    },
+    "candidate": {
+      "candidateId": "9134c0e1be1a8bf4d42bbf1846fbf442cb8eea8ec125eec3a83bbaa1c9182d13",
+      "baseOid": "a462787da00fe20d45093f6fe759bbe8363a3197",
+      "parentHeads": [
+        "df0151e536c26a0e8f7d8529db7ecf422b6b1947",
+        "aa0c1a09a9b6c8d33e9c0ffe3b8a1131e9bbc2b2"
+      ],
+      "materializedTreeOid": "12fe057df0cdff0fbba2cd6e55757d4d637c6395",
+      "commitOid": "a01207ca40408a733837372c5804aecae5a6cfca",
+      "inputDigest": "c37e3c703411a85c377bd45edd2fe7dff7f5175f15dbdcbb659dc863027b963f"
+    },
+    "verification": {
+      "status": "verified",
+      "executor": "verseshell",
+      "receiptId": "receipt-wp7-continuation",
+      "realVerseshellExecution": true,
+      "dimensions": {
+        "candidate": "observed",
+        "execution": "verified",
+        "evidence": "receipt-bound",
+        "freshness": "epoch:7",
+        "risk": "unknown",
+        "trial": "not_run"
+      }
+    },
+    "result": {
+      "status": "observed",
+      "reasons": []
+    },
+    "authority": {
+      "harnessVerdict": "host",
+      "execution": "verseshell",
+      "land": "host-git"
+    },
+    "host_verdict": "unchanged",
+    "contract": {
+      "version": "clawx.versegit.consumer-contract/v1",
+      "digest": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749"
+    },
+    "allowed": {
+      "processes_started": 1,
+      "state_read": true,
+      "domain_state_write": true,
+      "execution": "via_verseshell_only",
+      "workspace_write": false
+    },
+    "usage": {
+      "processes_started": 0,
+      "state_reads": 0
+    },
+    "timings": {
+      "orchestrationMs": 2918
+    },
+    "digests": {
+      "candidate": "9134c0e1be1a8bf4d42bbf1846fbf442cb8eea8ec125eec3a83bbaa1c9182d13",
+      "evidence": "direct-receipt",
+      "contract": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749"
+    }
+  },
+  "hostVerdict": {
+    "owner": "host",
+    "before": "pass",
+    "afterFailure": "pass",
+    "afterContinuation": "pass",
+    "unchanged": true,
+    "value": "pass"
+  },
+  "continuation": {
+    "failedReceiptRejected": true,
+    "continuationExecuted": true,
+    "continuationAccepted": true,
+    "status": "observed"
+  },
+  "cleanup": {
+    "status": "clean",
+    "processesDeleted": true,
+    "processSurvivors": 0,
+    "worktreesDeleted": 3,
+    "worktreeSurvivors": 0,
+    "tempRootRemoved": true,
+    "deletionErrors": [],
+    "hostWorktreesDeleted": 0
+  },
+  "normalizedOutcome": {
+    "producerConsumerKinds": [
+      "ssi/api-drift",
+      "ssi/stale-read"
+    ],
+    "ownWriteKinds": [],
+    "crossWorktreeViolations": 0,
+    "candidateMaterialized": true,
+    "candidateCheckOk": true,
+    "wrongReceiptStatus": "rejected_by_policy",
+    "continuationVerdict": "observed",
+    "hostVerdictBefore": "pass",
+    "hostVerdictAfter": "pass",
+    "cleanup": {
+      "status": "clean",
+      "processesDeleted": true,
+      "processSurvivors": 0,
+      "worktreesDeleted": 3,
+      "worktreeSurvivors": 0,
+      "tempRootRemoved": true,
+      "deletionErrors": [],
+      "hostWorktreesDeleted": 0
+    }
+  },
+  "normalizedOutcomeDigest": "0122d8a0602140eb36d8ffd1457ddb8df4f6994e3e2b3b0f4a49141214ec460b",
+  "boundaries": {
+    "hostSourceMutated": false,
+    "userIdRepositoryMutated": false,
+    "landOrAdmitInvoked": false,
+    "defaultOn": false,
+    "ga": false,
+    "releaseEligible": false,
+    "m4Authorized": false,
+    "rawPayloadStored": false,
+    "rawAbsolutePathsStored": false,
+    "realHumanEvidenceClaimed": false,
+    "unobservedSurfaces": [
+      "shellRead",
+      "directFs",
+      "mcpWrite",
+      "network",
+      "browser"
+    ]
+  },
+  "limitations": [
+    "Real host-shaped ChatRuntimeEvent objects were generated by the agent harness; no external model conversation is claimed.",
+    "VerseGit init/session/observe/check facts are fixed-argv host-adapter calls in a disposable repository; only candidate verification is executed through VerseShell.",
+    "The verification receipt binds retained observation/stdout/stderr digests; the bundled VerseShell run did not expose an artifact handle for this output size.",
+    "Only Windows win32-x64 was executed.",
+    "No GA, release, default-on, land/admit or M4 authority is claimed."
+  ],
+  "issues": [],
+  "digest": "fb6c3f98ef8452ea58a575c39f7d074f9fe4444ae1baea7511990d5281f24971"
+}

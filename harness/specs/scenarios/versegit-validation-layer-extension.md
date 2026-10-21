@@ -21,6 +21,7 @@ ownedPaths:
   - harness/specs/tasks/versegit-wp5-replay-soak.md
   - harness/specs/tasks/versegit-wp6-merged-closeout.md
   - harness/specs/tasks/versegit-mc6-extraction-decision.md
+  - harness/specs/tasks/versegit-wp7-host-vertical-slice.md
   - electron/services/versegit-module.ts
   - electron/services/versegit-observation.ts
   - electron/services/versegit-receipt-bridge.ts
@@ -41,6 +42,8 @@ ownedPaths:
   - scripts/versegit-wp6-closeout.mjs
   - scripts/verify-versegit-wp6.mjs
   - scripts/verify-versegit-mc6.mjs
+  - scripts/versegit-wp7-host-vertical.mts
+  - scripts/verify-versegit-wp7.mts
   - tests/unit/versegit-mc4-adapter.test.ts
   - tests/unit/versegit-wp1-observation.test.ts
   - tests/unit/versegit-wp2-profile.test.ts
@@ -48,8 +51,10 @@ ownedPaths:
   - tests/unit/versegit-wp4-coverage.test.ts
   - tests/unit/versegit-wp5-soak.test.ts
   - tests/unit/versegit-wp6-closeout.test.ts
+  - tests/unit/versegit-wp7-host-vertical.test.ts
   - artifacts/versegit/wp6/**
   - artifacts/versegit/mc6/**
+  - artifacts/versegit/wp7/**
   - harness/specs/guides/versegit-concurrency/**
   - harness/specs/fixtures/versegit-planning-correction/**
   - docs/dev/versegit-validation-layer/README.md
@@ -62,7 +67,7 @@ VerseGit (VG) participates in ClawX as an **opt-in, host-managed repository fact
 candidate control plane** for genuinely concurrent development. ClawX keeps
 orchestration, approval, execution, mutation-journal, and final harness authority.
 
-2026-10-22 closeout status: MC0-MC5 and WP0-WP5 are evidence-backed, and WP6 recomputes 12/12 required gates plus the optional MC6 sidecar-only decision. The module is non-GA, default-off, landed-unwired and release-ineligible while the provider source is dirty and only a debug sidecar exists. No live VerseShell receipt is claimed, the conflicts-plan seam remains unavailable, and M4 is not authorized.
+2026-10-22 closeout status: MC0-MC5 and WP0-WP5 are evidence-backed, and WP6 recomputes 12/12 required gates plus the optional MC6 sidecar-only decision. The module is non-GA, default-off, landed-unwired and release-ineligible while the provider source is dirty and only a debug sidecar exists. WP7 adds one bounded live VerseShell candidate-verification receipt for a disposable host-shaped vertical slice; this is not full product M3 acceptance. The conflicts-plan seam remains unavailable and M4 is not authorized.
 
 ## Authority
 

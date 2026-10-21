@@ -132,9 +132,11 @@ discover -> eligible -> attach -> observe -> evaluate
 - `concurrency-aux` 是显式 opt-in profile，不在 `fast`、`comms` 或隐式默认中；单 worktree/单 session 仍为 0 次 VG 调用；
 - host adapter、observation bridge、VerseShell structural receipt bridge 和 behavior coverage 均已落地；host verdict 始终独立；
 - WP3 没有执行 live host-authoritative VerseShell receipt，只证明了 plan/receipt 绑定与拒绝矩阵；
+- WP7 已在 disposable host-shaped vertical slice 中执行真实 VerseShell candidate verification，并在错误 receipt 被拒后完成 continuation；这仍不是完整产品 M3 或真实模型会话闭环；
 - 当前 CLI 没有纯 `conflicts-plan` seam，完整 conflict-plan 仍为 `unavailable`；
 - WP5 的 3 轮双 worktree replay 使用真实 disposable Git worktree，但 VG process calls 为 0，不能冒充真实 agent→VG 工具闭环；
-- provider source 当前 dirty，只有 debug sidecar；MC0/MC3 保留 `source_worktree_dirty`、`not_a_deliverable_baseline`、`release_binary_not_built`；
+- provider source 当前 dirty，只有 debug sidecar；MC0/MC3 保留 `source_worktree_dirty`、
+ot_a_deliverable_baseline`、`release_binary_not_built`；
 - shell read、direct filesystem、arbitrary MCP、network/browser 仍为 unobserved/partial；`.mjs/.jsx/.sh` 为 partial，其他语言 unverified；
 - 执行证据仅覆盖 `win32-x64`；Linux/macOS 未跑；
 - M4 CAS landing broker 未授权，`vg land` / `vg admit` 不在默认宿主路径。
