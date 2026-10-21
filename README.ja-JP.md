@@ -330,6 +330,7 @@ VerseBrowser: インストール・開発・ビルド時に組み込みモジュ
 | 知識、メモリ、コンテキスト | [知識システム](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
 | Agent とワークフロー | [オーケストレーション](docs/multi-agent-orchestration/README.md) · [役割パック](docs/role-packs.md) |
 | 構造化ドキュメント | [VerseConf 統合](docs/dev/verseconf-clawx-implementation-20261001.md) |
+| 会話とワークスペースの操作 | [Rare UI 操作の適応](docs/dev/rareui-interactions.md) |
 | 開発規則と継続作業 | [AGENTS.md](AGENTS.md) · [継続開発ガイド](docs/dev/Sustained-Development-Playbook.md) · [Agent Dev](docs/agent-dev-control-plane.md) |
 | ランタイムと受け入れ | [ランタイム収束](docs/dev/unified-agent-system/runtime-convergence/README.md) · [RC-09/RC-10 の証拠境界](docs/dev/windows-alpha-closeout-20261008.md) |
 | リソース、保管、ソース復元 | [保管規則](docs/dev/repository-artifact-retention.md) · [VerseShell ソース契約](resources/verseshell/SOURCE.md) |
@@ -340,7 +341,7 @@ VerseBrowser: インストール・開発・ビルド時に組み込みモジュ
 
 変更範囲を明確にし、対応する検証を行い、動作変更時は 4 言語の README を更新してください。API、i18n、仕様、証拠は [AGENTS.md](AGENTS.md) に従います。ソース、再利用可能な fixture、精選した最終証拠を追跡し、非公開タスク履歴と生成した生ログはローカルに保管します。
 
-Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell チームの ClawX を基盤としています。リポジトリは [MIT ライセンス](LICENSE) を採用しています。内蔵コンポーネントには固有のライセンスとソース提供義務があり、[VerseShell の声明](resources/verseshell/SOURCE.md)も参照してください。
+Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell チームの ClawX を基盤としています。リポジトリは [MIT ライセンス](LICENSE) を採用しています。内蔵コンポーネントには固有のライセンスとソース提供義務があり、[VerseShell の声明](resources/verseshell/SOURCE.md)も参照してください。会話とワークスペースのコンパクトな操作は Swami Malode の [Rare UI](https://rareui.com) を基に適応しており、ライセンスと帰属表示を `src/components/rareui` に保持しています。
 
 ### Coding 診断ログ
 

@@ -516,7 +516,7 @@ export function WorkspaceBrowserBody({
 
     if (selectedNode.contentType === 'document') {
       return (
-        <div className="h-full overflow-auto">
+        <div className="h-full overflow-hidden">
           <MarkdownPreview source={fileState.content} />
         </div>
       );

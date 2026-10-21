@@ -735,6 +735,10 @@
       "install": "安装 OfficeCLI",
       "installing": "正在安装...",
       "retry": "重试"
+    },
+    "toc": {
+      "title": "本文目录",
+      "progress": "阅读进度 {{percent}}%。打开目录"
     }
   },
   "workspace": {
@@ -2500,5 +2504,11 @@
     "deny": "拒绝",
     "busy": "正在发送决定…",
     "resolveFailed": "运行时没有接受这个决定。"
+  },
+  "completionActivity": {
+    "label": "完成动态，{{count}} 条未读",
+    "title": "最近完成",
+    "empty": "已完成的回答和运行会显示在这里。",
+    "completed": "运行已完成"
   }
 }

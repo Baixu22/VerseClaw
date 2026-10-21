@@ -735,6 +735,10 @@
       "install": "Install OfficeCLI",
       "installing": "Installing...",
       "retry": "Retry"
+    },
+    "toc": {
+      "title": "On this page",
+      "progress": "Reading progress {{percent}}%. Open table of contents"
     }
   },
   "workspace": {
@@ -2500,5 +2504,11 @@
     "deny": "Deny",
     "busy": "Sending decision…",
     "resolveFailed": "The runtime did not accept this decision."
+  },
+  "completionActivity": {
+    "label": "Completed activity, {{count}} unread",
+    "title": "Recently completed",
+    "empty": "Completed replies and runs will appear here.",
+    "completed": "Run completed"
   }
 }

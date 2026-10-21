@@ -54,6 +54,9 @@ import { SessionSearchModal } from './SessionSearchModal';
 import { SessionFolderTree } from './SessionFolderTree';
 import { SessionContextMenu, type SessionContextMenuTarget } from './SessionContextMenu';
 import { SidebarRow } from './SidebarRow';
+import { HookSidebar } from '@/components/rareui/HookSidebar';
+import { CompletionActivityMenu } from '@/components/rareui/CompletionActivityMenu';
+import { DeleteButton } from '@/components/rareui/DeleteButton';
 import {
   OfficialArchiveIcon,
   OfficialFolderClosedIcon,
@@ -359,6 +362,7 @@ const SessionRowMemo = memo(function SessionRow({
     <Tooltip>
     <SidebarRow
       className="task-row"
+      hookKey={s.key}
       selected={isSelected}
       actionsClassName="task-hover-actions"
       onMouseEnter={handleRowHoverStart}
@@ -399,7 +403,7 @@ const SessionRowMemo = memo(function SessionRow({
           >
             <Pencil />
           </button>
-          <button
+          <DeleteButton
             type="button"
             data-testid={`sidebar-session-delete-${s.key}`}
             aria-label={t('common:sidebar.deleteSession', { ns: 'common' })}
@@ -408,9 +412,7 @@ const SessionRowMemo = memo(function SessionRow({
               onDeleteClick(s.key, sessionLabel);
             }}
             className="task-hover-btn hover:!text-destructive"
-          >
-            <Trash2 />
-          </button>
+          />
         </>
       )}
       /* While a row's move-menu is open the controls must not fade out from
@@ -1228,7 +1230,7 @@ export function Sidebar() {
       <div
         className={cn(
           'sidebar-heading',
-          sidebarCollapsed && 'justify-center',
+          sidebarCollapsed && 'sidebar-heading--collapsed justify-center',
         )}
       >
         {!sidebarCollapsed && (
@@ -1239,6 +1241,7 @@ export function Sidebar() {
             </span>
           </div>
         )}
+        <CompletionActivityMenu />
         <button
           type="button"
           data-testid="sidebar-collapse-toggle"
@@ -1348,7 +1351,7 @@ export function Sidebar() {
                 headers inside. Row count in this list is bounded by the session
                 list itself, so there is nothing to virtualize away. */}
             <div className={cn('section-list-outer', sessionSectionOpen && 'open')} aria-hidden={!sessionSectionOpen}>
-            <div className="task-collection-list">
+            <HookSidebar className="task-collection-list" activeKey={currentSessionKey}>
               {sidebarSessionEntries
                 ? sidebarSessionEntries.length > 0
                   ? sidebarSessionEntries.slice(0, sessionRenderLimit).map((entry) => renderSessionRow(entry))
@@ -1370,6 +1373,7 @@ export function Sidebar() {
                       {showWorkspaceRow && (
                       <SidebarRow
                         className="project-row-wrap"
+                        hookKey={group.workspace.id}
                         actionsClassName="project-hover-actions"
                         actions={(
                           <>
@@ -1468,7 +1472,7 @@ export function Sidebar() {
                       </button>
                     )}
                   </div>}
-            </div>
+            </HookSidebar>
             </div>
           </section>
         </div>

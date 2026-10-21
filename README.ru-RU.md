@@ -326,6 +326,7 @@ Agent Dev Workbench в «Настройки → Разработчик» пре�
 | Знания, память и контекст | [Система знаний](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
 | Агенты и процессы | [Оркестрация](docs/multi-agent-orchestration/README.md) · [Наборы ролей](docs/role-packs.md) |
 | Структурированные документы | [Интеграция VerseConf](docs/dev/verseconf-clawx-implementation-20261001.md) |
+| Взаимодействие в диалогах и рабочей области | [Адаптация Rare UI](docs/dev/rareui-interactions.md) |
 | Правила разработки и преемственность | [AGENTS.md](AGENTS.md) · [Руководство разработки](docs/dev/Sustained-Development-Playbook.md) · [Agent Dev](docs/agent-dev-control-plane.md) |
 | Runtime и приёмка | [Согласование runtime](docs/dev/unified-agent-system/runtime-convergence/README.md) · [Границы подтверждений RC-09/RC-10](docs/dev/windows-alpha-closeout-20261008.md) |
 | Ресурсы, архивы и восстановление исходников | [Правила хранения](docs/dev/repository-artifact-retention.md) · [Контракт исходников VerseShell](resources/verseshell/SOURCE.md) |
@@ -336,7 +337,7 @@ Agent Dev Workbench в «Настройки → Разработчик» пре�
 
 Ограничивайте область изменений, выполняйте необходимые проверки и обновляйте все четыре README при изменении поведения. Следуйте [AGENTS.md](AGENTS.md) в вопросах API, i18n, спецификаций и подтверждений. Отслеживайте исходники, повторно используемые fixture и отобранные итоговые результаты вместе; закрытую историю задач и сырые журналы храните локально.
 
-Verse Claw основан на [OpenClaw](https://github.com/openclaw/openclaw) и работе команды ValueCell над ClawX. Репозиторий использует [лицензию MIT](LICENSE). Встроенные компоненты сохраняют собственные лицензии и обязательства по предоставлению исходников, включая [сведения о VerseShell](resources/verseshell/SOURCE.md).
+Verse Claw основан на [OpenClaw](https://github.com/openclaw/openclaw) и работе команды ValueCell над ClawX. Репозиторий использует [лицензию MIT](LICENSE). Встроенные компоненты сохраняют собственные лицензии и обязательства по предоставлению исходников, включая [сведения о VerseShell](resources/verseshell/SOURCE.md). Компактные взаимодействия в диалогах и рабочей области адаптированы из [Rare UI](https://rareui.com) Swami Malode; лицензия и обязательная атрибуция сохранены в `src/components/rareui`.
 
 ### Диагностические журналы coding
 

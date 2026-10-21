@@ -10,9 +10,7 @@
  *   - `clientWidth` is always 0 and read-only, so the width gate is exercised by
  *     defining it per case. 0 deliberately means "not laid out yet", which is why
  *     the default-width case still renders.
- *   - `scrollIntoView` does not exist, so it is stubbed and asserted on. That is
- *     the actual navigation contract — the rail owns the anchor id, not the
- *     scroll animation.
+ *   - Scrolling is scoped to the transcript's own scrollTo, so outer panes stay put.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -60,11 +58,11 @@ function mountRail(items: MessageNavRailItem[], scrollerWidth = 0) {
   Object.defineProperty(scroller, 'clientWidth', { value: scrollerWidth, configurable: true });
   document.body.appendChild(scroller);
 
-  const scrollIntoView = vi.fn();
+  const scrollTo = vi.fn();
+  scroller.scrollTo = scrollTo;
   for (const item of items) {
     const anchor = document.createElement('div');
     anchor.id = `chat-message-${item.index}`;
-    anchor.scrollIntoView = scrollIntoView;
     scroller.appendChild(anchor);
   }
 
@@ -76,7 +74,7 @@ function mountRail(items: MessageNavRailItem[], scrollerWidth = 0) {
       <MessageNavRail items={items} scrollRef={ref} />
     </TooltipProvider>,
   );
-  return { ...view, scroller, scrollIntoView };
+  return { ...view, scroller, scrollTo };
 }
 
 describe('MessageNavRail visibility', () => {
@@ -102,9 +100,9 @@ describe('MessageNavRail visibility', () => {
     expect(screen.getAllByTestId(/^chat-message-nav-rail-item-/)).toHaveLength(40);
   });
 
-  it('folds away when the reading pane is too narrow to spare a gutter', () => {
+  it('folds away when the reading pane is too narrow to spare a gutter', async () => {
     mountRail(makeItems(5), MESSAGE_NAV_RAIL_MIN_WIDTH - 1);
-    expect(screen.queryByTestId('chat-message-nav-rail')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByTestId('chat-message-nav-rail')).not.toBeInTheDocument());
   });
 
   it('shows when the pane is wide enough', () => {
@@ -130,21 +128,22 @@ describe('MessageNavRail navigation', () => {
 
   it('scrolls to the transcript anchor for the clicked prompt', () => {
     const items = makeItems(4);
-    const { scrollIntoView } = mountRail(items, 1200);
+    const { scrollTo } = mountRail(items, 1200);
 
     fireEvent.click(screen.getByTestId(`chat-message-nav-rail-item-${items[2].index}`));
 
-    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+    expect(scrollTo).toHaveBeenCalledWith({ behavior: 'smooth', top: -20 });
   });
 
   it('labels each tick with its prompt ordinal', () => {
-    mountRail(makeItems(3), 1200);
+    mountRail(makeItems(4), 1200);
     expect(screen.getByLabelText('Jump to prompt 1')).toBeInTheDocument();
     expect(screen.getByLabelText('Jump to prompt 3')).toBeInTheDocument();
   });
 
   it('carries the prompt text as the hover preview', async () => {
-    const items = makeItems(3);
+    const items = makeItems(4);
+    items[1].response = 'Visible assistant response';
     mountRail(items, 1200);
 
     fireEvent.focus(screen.getByTestId(`chat-message-nav-rail-item-${items[1].index}`));
@@ -152,6 +151,7 @@ describe('MessageNavRail navigation', () => {
     // Radix portals the content and mirrors it into a visually-hidden
     // `role="tooltip"` node, so the preview legitimately appears twice.
     expect(await screen.findAllByText('Prompt number 2')).not.toHaveLength(0);
+    expect(await screen.findAllByText('Visible assistant response')).not.toHaveLength(0);
     expect(screen.queryByText('Prompt number 1')).not.toBeInTheDocument();
   });
 
