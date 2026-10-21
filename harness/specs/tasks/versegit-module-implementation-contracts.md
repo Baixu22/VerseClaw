@@ -13,6 +13,7 @@ touchedAreas:
   - harness/specs/tasks/versegit-mc2-behavior-fingerprint.md
   - harness/specs/tasks/versegit-mc3-sidecar-delivery.md
   - harness/specs/tasks/versegit-wp0-module-contract.md
+  - harness/specs/tasks/versegit-mc5-differential-gate.md
   - scripts/versegit-mc1-contract.mjs
   - scripts/verify-versegit-mc1.mjs
   - scripts/versegit-mc2-fingerprint.mjs
@@ -21,10 +22,13 @@ touchedAreas:
   - scripts/verify-versegit-mc3.mjs
   - scripts/versegit-wp0-contract.mjs
   - scripts/verify-versegit-wp0.mjs
+  - scripts/versegit-mc5-differential.mjs
+  - scripts/verify-versegit-mc5.mjs
   - tests/unit/versegit-mc1-contract.test.ts
   - tests/unit/versegit-mc2-fingerprint.test.ts
   - tests/unit/versegit-mc3-delivery.test.ts
   - tests/unit/versegit-wp0-contract.test.ts
+  - tests/unit/versegit-mc5-differential.test.ts
   - harness/specs/guides/versegit-concurrency/**
   - harness/specs/fixtures/versegit-planning-correction/**
   - scripts/validate-versegit-planning-correction.mjs

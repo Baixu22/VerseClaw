@@ -1,0 +1,202 @@
+{
+  "reportSchema": "clawx.versegit.mc5-differential/v1",
+  "generated_at": "2026-10-21T08:09:29.520Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0478",
+  "purpose": "Make migration-vs-rewrite machine-decidable before any adapter code exists.",
+  "diff_budget": {
+    "max_files_per_seam": 6,
+    "max_changed_lines_per_seam": 400,
+    "max_changed_lines_per_file": 200,
+    "code_similarity": "normalized-whitespace-and-comment proxy (not a full parse)",
+    "ast_rule_exempt_classes": [
+      "docs",
+      "schema",
+      "config",
+      "evidence"
+    ]
+  },
+  "file_classes": {
+    "rules": [
+      {
+        "pattern": "/^tests?\\//u",
+        "file_class": "test"
+      },
+      {
+        "pattern": "/^docs\\//u",
+        "file_class": "docs"
+      },
+      {
+        "pattern": "/\\.md$/u",
+        "file_class": "docs"
+      },
+      {
+        "pattern": "/\\.(json|jsonl|toml|ya?ml)$/u",
+        "file_class": "config"
+      },
+      {
+        "pattern": "/\\.mjs$/u",
+        "file_class": "code"
+      },
+      {
+        "pattern": "/\\.(ts|tsx|js|jsx|rs|py|sh)$/u",
+        "file_class": "code"
+      }
+    ],
+    "ast_rule_exempt_classes": [
+      "docs",
+      "schema",
+      "config",
+      "evidence"
+    ]
+  },
+  "semantic_projection": {
+    "method": "declared per-seam volatile/drop keys, then canonical key order and sorted arrays",
+    "code_similarity": "normalized-whitespace-and-comment proxy (not a full parse)",
+    "honesty": "unknown/unobserved/partial/unmeasured values survive projection; they are never flattened to a clean result",
+    "declarations": {
+      "identity.version": {
+        "volatile_keys": []
+      },
+      "identity.capabilities": {
+        "volatile_keys": [],
+        "drop_keys": []
+      },
+      "behavior.conflict-report": {
+        "volatile_keys": [
+          "merged_tree_oid"
+        ]
+      },
+      "behavior.stale-read": {
+        "volatile_keys": [
+          "conflict_id",
+          "other_sessions"
+        ]
+      }
+    }
+  },
+  "provenance": {
+    "node": "TF-0478",
+    "source_commit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "binary_sha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+    "contract_digest": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749",
+    "golden_bundle_digest": "cffdbbeecff8eba5021c3b15208e148d839f41dc8f8e8055efdf3ad49fe36f7b",
+    "sidecar_package_digest": "9c57e5d46ad4c18c086584600eca5ecd0de687b8721727d15d1c548e0d7e5f0b"
+  },
+  "controlled_samples": {
+    "results": [
+      {
+        "id": "sample_identity_version",
+        "seam": "identity.version",
+        "identical": true,
+        "reference_digest": "9a388fc85902c7bee452330da940ad1654eddf7d5e6cbfae4ebde569e87a95f7",
+        "candidate_digest": "9a388fc85902c7bee452330da940ad1654eddf7d5e6cbfae4ebde569e87a95f7",
+        "behavior_change_record": false
+      },
+      {
+        "id": "sample_capabilities",
+        "seam": "identity.capabilities",
+        "identical": true,
+        "reference_digest": "1675f334c9fc50039ff6b42c8be54a888c8905e2333a914a46f0c23b11a3ab73",
+        "candidate_digest": "1675f334c9fc50039ff6b42c8be54a888c8905e2333a914a46f0c23b11a3ab73",
+        "behavior_change_record": false
+      },
+      {
+        "id": "sample_conflict_report",
+        "seam": "behavior.conflict-report",
+        "identical": true,
+        "reference_digest": "5d31a3822268bb5357f069716ebcc0f41606ab1bbf9f59487515d57c4949be17",
+        "candidate_digest": "5d31a3822268bb5357f069716ebcc0f41606ab1bbf9f59487515d57c4949be17",
+        "behavior_change_record": false
+      },
+      {
+        "id": "sample_stale_read_advisory",
+        "seam": "behavior.stale-read",
+        "identical": true,
+        "reference_digest": "603c8081773adb3f31db0e8b5a6dcc661bb057e85967c762d3a1121f0d40f14f",
+        "candidate_digest": "603c8081773adb3f31db0e8b5a6dcc661bb057e85967c762d3a1121f0d40f14f",
+        "behavior_change_record": false
+      }
+    ],
+    "representative_inputs": 4,
+    "failures": [],
+    "passed": true
+  },
+  "change_set_example": {
+    "seam": "identity.version",
+    "files": 1,
+    "changed_lines": 2,
+    "failures": [],
+    "notes": [],
+    "passed": true
+  },
+  "provenance_check": {
+    "failures": [],
+    "passed": true
+  },
+  "negative_controls": [
+    {
+      "id": "control_whitespace_only_diff",
+      "expected": "normalized_no_op_diff|whitespace_only_diff",
+      "fired": true,
+      "observed_cases": [
+        "whitespace_only_diff"
+      ]
+    },
+    {
+      "id": "control_seam_budget_exceeded",
+      "expected": "seam_budget_exceeded|per_file_budget_exceeded",
+      "fired": true,
+      "observed_cases": [
+        "per_file_budget_exceeded",
+        "seam_budget_exceeded"
+      ]
+    },
+    {
+      "id": "control_multiple_seams",
+      "expected": "multiple_seams_in_change_set|foreign_seam_file",
+      "fired": true,
+      "observed_cases": [
+        "multiple_seams_in_change_set",
+        "foreign_seam_file"
+      ]
+    },
+    {
+      "id": "control_undeclared_behavior_change",
+      "expected": "undeclared_behavior_change",
+      "fired": true,
+      "observed_cases": [
+        "undeclared_behavior_change"
+      ]
+    },
+    {
+      "id": "control_swallowed_unknown",
+      "expected": "empty_projection",
+      "fired": true,
+      "observed_cases": [
+        "undeclared_behavior_change",
+        "empty_projection"
+      ]
+    },
+    {
+      "id": "control_provenance_drift",
+      "expected": "source_commit_mismatch",
+      "fired": true,
+      "observed_cases": [
+        "source_commit_mismatch"
+      ]
+    }
+  ],
+  "adapter_comparison_available": false,
+  "status": "framework_verified",
+  "blockers": [],
+  "boundaries": {
+    "adapter_implemented": false,
+    "vg_source_tree_copied": false,
+    "provider_source_modified": false,
+    "default_on": false,
+    "land_or_admit_invoked": false,
+    "note": "This node verifies the gate itself with controlled samples. Equal reference and candidate sides here prove the oracle fires; they do not claim MC4 equivalence, which MC4 must earn against the real adapter."
+  }
+}
