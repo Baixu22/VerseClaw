@@ -209,7 +209,6 @@
     "files": {
       "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/additional-probes.json": "e0d57743cc8fa9927d22486d5f394b0393fc9418a23ad11fb6502a6dac6b0171",
       "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/fresh-artifact-generation.json": "5fdba08571a52d58f984763b67d11d6c13d29cb7d750a3a5579148d43637ff14",
-      "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/fresh-artifact-verifier.log": "c6ac2943cf8f9c57353d96a92e38aae1ac844de5cbe774f4665caf517e67a3d1",
       "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/history-audit.json": "6d521f15162964349d0ccd560e63f2981315df2e68b496b8e189e4677dab7268",
       "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/negative-probes.json": "87edb28d765361412918511289c0cca31123f9f6d6f1899acf9f4fac0f0ef79f",
       "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/probe-summary.json": "5698a841377ef7db0c95153602edac5de7e20e1bbcded8b0de9393e8cd39fffd",
@@ -364,5 +363,5 @@
       }
     ]
   },
-  "digest": "b2ed442eb7d277b76c3d4d3dbd33cb25a942a2bab31664bbb2d1fec20c66e14e"
+  "digest": "7c64e8147be9bbfc4b8de6b1f89a0103bfcb9171c5a0f065fcc497e95b662574"
 }
