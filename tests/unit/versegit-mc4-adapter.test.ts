@@ -208,15 +208,18 @@ describe('MC4 VerseGit host adapter', () => {
 
   it('executes fixed identity seams and rejects null, drift and product-lock violations', () => {
     const expectedCapabilitiesDigest = contractDigestOf(capabilities);
+    const doctor = { chain: { valid: true, events_verified: 10 }, worktree_diagnostic: { ok: true, count: 2 }, plugins: [], unified_recovery: { mode: 'read_only' } };
     const run = vi.fn((argv: readonly string[]) => {
       if (argv[0] === '--version') return { stdout: 'vg 0.1.0', stderr: '', code: 0 };
+      if (argv[0] === 'doctor') return { stdout: JSON.stringify(doctor), stderr: '', code: 0 };
       return { stdout: JSON.stringify(capabilities), stderr: '', code: 0 };
     });
     const module = makeModule(run, { expectedCapabilitiesDigest });
     expect(module.attach('M1', grant('M1')).ok).toBe(true);
     expect(module.readVersion()).toMatchObject({ status: 'observed', value: 'vg 0.1.0', host_verdict: 'unchanged' });
     expect(module.readCapabilities()).toMatchObject({ status: 'observed', document: capabilities, host_verdict: 'unchanged' });
-    expect(run.mock.calls.map((call) => call[0])).toEqual([['--version'], ['capabilities', '--json']]);
+    expect(module.readDoctor()).toMatchObject({ status: 'observed', document: doctor, host_verdict: 'unchanged' });
+    expect(run.mock.calls.map((call) => call[0])).toEqual([['--version'], ['capabilities', '--json'], ['doctor', '--json']]);
 
     const nullDoc = makeModule(() => ({ stdout: 'null', stderr: '', code: 0 }), { expectedCapabilitiesDigest });
     nullDoc.attach('M1', grant('M1'));

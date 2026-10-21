@@ -1,10 +1,37 @@
 {
-  "schema": "clawx.versegit.node-fixture/v1",
+  "schema": "clawx.versegit.wp2-profile-fixture/v1",
   "nodeId": "TF-0468",
   "role": "WP2",
-  "fixturePurpose": "Frozen planning input for WP2; replace with execution fixture in the implementation node.",
+  "fixturePurpose": "Execution fixture for the explicit concurrency-aux profile: prove single-worktree zero-call behavior, multi-worktree diagnostic fact collection, and missing-binary fail-open cleanup.",
   "expectedOutputs": [
-    "artifacts/versegit/wp2/report.json"
+    "artifacts/versegit/wp2/report.json",
+    "artifacts/versegit/wp2/SHA256SUMS"
   ],
-  "oracle": "Single-worktree no-op and fail-open tests pass"
+  "cases": [
+    {
+      "id": "single-worktree",
+      "worktreeCount": 1,
+      "activeSessionCount": 1,
+      "sessionKey": "single-session",
+      "expectedStatus": "not_applicable",
+      "expectedProcesses": 0
+    },
+    {
+      "id": "multi-worktree",
+      "worktreeCount": 2,
+      "activeSessionCount": 2,
+      "sessionKey": "multi-session",
+      "expectedStatus": "partial",
+      "expectedProcesses": 3
+    },
+    {
+      "id": "missing-binary",
+      "worktreeCount": 2,
+      "activeSessionCount": 2,
+      "sessionKey": "missing-session",
+      "binaryPath": "D:/tmp/versegit-no-such-binary/vg.exe",
+      "expectedStatus": "unavailable",
+      "expectedProcesses": 0
+    }
+  ]
 }

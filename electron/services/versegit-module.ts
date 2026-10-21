@@ -611,6 +611,32 @@ export class VerseGitModule {
     return { status: 'observed', document, issues, host_verdict: 'unchanged' };
   }
 
+  readDoctor(): EvidenceRead<Record<string, unknown>> {
+    if (!this.attached) {
+      return { status: 'unavailable', reason: 'not_attached', issues: ['module is not attached'], host_verdict: 'unchanged' };
+    }
+    let result: CommandResult;
+    try {
+      result = this.invoke(['doctor', '--json']);
+    } catch (error) {
+      return readFailure(error);
+    }
+    if (result.code !== 0) {
+      return { status: 'degraded', reason: result.code === null ? 'timeout' : 'nonzero_exit', issues: [result.stderr.slice(0, 200)], host_verdict: 'unchanged' };
+    }
+    this.stateReads += 1;
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(result.stdout);
+    } catch (error) {
+      return { status: 'unavailable', reason: 'unparsable_output', issues: [String((error as Error)?.message ?? error)], host_verdict: 'unchanged' };
+    }
+    if (!isRecord(parsed)) {
+      return { status: 'unavailable', reason: 'invalid_document', issues: ['doctor must be a JSON object'], host_verdict: 'unchanged' };
+    }
+    return { status: 'observed', document: parsed, issues: [], host_verdict: 'unchanged' };
+  }
+
   /**
    * Emit the host-shaped report. The adapter always pins verdict/land authority back to
    * the host and always carries the contract digest and its own unobserved surface, so a

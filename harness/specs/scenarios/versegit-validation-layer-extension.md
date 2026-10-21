@@ -15,14 +15,19 @@ ownedPaths:
   - harness/specs/tasks/versegit-mc5-differential-gate.md
   - harness/specs/tasks/versegit-mc4-module-adapter.md
   - harness/specs/tasks/versegit-wp1-observation-bridge.md
+  - harness/specs/tasks/versegit-wp2-diagnostic-profile.md
   - electron/services/versegit-module.ts
   - electron/services/versegit-observation.ts
+  - harness/src/profiles.mjs
   - scripts/versegit-mc4-adapter.mjs
   - scripts/verify-versegit-mc4.mjs
   - scripts/versegit-wp1-observation.mjs
   - scripts/verify-versegit-wp1.mjs
+  - scripts/versegit-wp2-profile.mjs
+  - scripts/verify-versegit-wp2.mjs
   - tests/unit/versegit-mc4-adapter.test.ts
   - tests/unit/versegit-wp1-observation.test.ts
+  - tests/unit/versegit-wp2-profile.test.ts
   - harness/specs/guides/versegit-concurrency/**
   - harness/specs/fixtures/versegit-planning-correction/**
   - docs/dev/versegit-validation-layer/README.md

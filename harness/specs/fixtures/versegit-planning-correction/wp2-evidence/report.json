@@ -1,0 +1,316 @@
+{
+  "schema": "clawx.versegit.wp2-profile/v1",
+  "generated_at": "2026-10-21T16:25:00.544Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0468",
+  "fixture": "harness/specs/fixtures/versegit-planning-correction/wp2-diagnostic-profile-fixture.json",
+  "profile": "concurrency-aux",
+  "opt_in": true,
+  "cases": [
+    {
+      "caseId": "single-worktree",
+      "trigger": {
+        "id": "single-worktree",
+        "worktreeCount": 1,
+        "activeSessionCount": 1,
+        "eligible": false,
+        "reason": "single-worktree-single-session"
+      },
+      "profile": "concurrency-aux",
+      "optIn": true,
+      "probes": [],
+      "moduleReport": null,
+      "usage": {
+        "processesStarted": 0,
+        "stateReads": 0
+      },
+      "coverage": {
+        "declared": [
+          "identity.version",
+          "identity.capabilities"
+        ],
+        "unobserved": [
+          "provider.conflicts-plan",
+          "shell-write",
+          "network",
+          "direct-fs"
+        ]
+      },
+      "hostVerdict": "unchanged",
+      "cleanup": {
+        "sidecarProcessesSurviving": 0,
+        "candidateTempDirectories": 0,
+        "hostWorktreesDeleted": 0
+      },
+      "status": "not_applicable",
+      "issues": []
+    },
+    {
+      "caseId": "multi-worktree",
+      "trigger": {
+        "id": "multi-worktree",
+        "worktreeCount": 2,
+        "activeSessionCount": 2,
+        "eligible": true,
+        "reason": "concurrency-trigger"
+      },
+      "profile": "concurrency-aux",
+      "optIn": true,
+      "probes": [
+        {
+          "id": "identity.version",
+          "status": "observed",
+          "reason": null,
+          "issues": [],
+          "host_verdict": "unchanged"
+        },
+        {
+          "id": "identity.capabilities",
+          "status": "observed",
+          "reason": null,
+          "issues": [],
+          "host_verdict": "unchanged",
+          "summary": {
+            "schema": "versegit.capabilities/v1",
+            "default_enable": false,
+            "single_green_light": false,
+            "observed_channels": [
+              "read",
+              "grep",
+              "glob",
+              "write",
+              "edit"
+            ],
+            "unobserved_channels": [
+              "bash",
+              "other-mcp",
+              "network",
+              "direct-fs"
+            ]
+          }
+        },
+        {
+          "id": "provider.doctor",
+          "status": "observed",
+          "reason": null,
+          "issues": [],
+          "host_verdict": "unchanged",
+          "summary": {
+            "ledger_schema_version": 1,
+            "chain_valid": true,
+            "events": 10230,
+            "worktree_count": 5,
+            "worktrees_ok": true,
+            "plugins": 12,
+            "recovery_mode": "read_only",
+            "missing_objects": 0,
+            "pending_land_ops": 0,
+            "evidence_report_count": 0
+          }
+        },
+        {
+          "id": "provider.conflicts-plan",
+          "status": "unavailable",
+          "reason": "provider_seam_unavailable",
+          "issues": [
+            "the current CLI has no pure conflicts-plan seam"
+          ],
+          "host_verdict": "unchanged"
+        }
+      ],
+      "moduleReport": {
+        "schema": "clawx.versegit.module-report/v1",
+        "mode": "M1",
+        "component": "versegit-wp2-profile",
+        "trigger": {
+          "reason": "concurrency-trigger",
+          "worktreeCount": 2,
+          "activeSessionCount": 2
+        },
+        "repository": {
+          "repoId": "repo-a22cd901b9fe3d79",
+          "worktreeId": "worktree-298fd74478b3aadb"
+        },
+        "identity": {
+          "repoId": "repo-a22cd901b9fe3d79",
+          "worktreeIds": [
+            "worktree-298fd74478b3aadb"
+          ],
+          "agentSessionIds": [
+            "session-2c98c2a1ef5da635"
+          ],
+          "vgSessionIds": [
+            "vg-session-2c98c2a1ef5da635"
+          ],
+          "epoch": 1
+        },
+        "correlation": {
+          "runId": "run-1d061c3bc16a777c",
+          "requestId": "request-wp2",
+          "traceId": "trace-wp2",
+          "epoch": 1
+        },
+        "sessions": [
+          {
+            "agentSessionId": "session-2c98c2a1ef5da635",
+            "vgSessionId": "vg-session-2c98c2a1ef5da635",
+            "worktreeId": "worktree-298fd74478b3aadb",
+            "epoch": 1,
+            "traceId": "trace-wp2",
+            "status": "active"
+          }
+        ],
+        "coverage": {
+          "declared": [
+            "identity.version",
+            "identity.capabilities"
+          ],
+          "unobserved": [
+            "provider.conflicts-plan",
+            "shell-write",
+            "network",
+            "direct-fs"
+          ]
+        },
+        "facts": {
+          "conflicts": [],
+          "warnings": [],
+          "unknowns": [
+            "provider.conflicts-plan",
+            "shell-write",
+            "network",
+            "direct-fs"
+          ]
+        },
+        "candidate": null,
+        "verification": {
+          "status": "not_run",
+          "executor": "verseshell"
+        },
+        "result": {
+          "status": "partial",
+          "reasons": [
+            "unknown"
+          ]
+        },
+        "authority": {
+          "harnessVerdict": "host",
+          "execution": "verseshell",
+          "land": "host-git"
+        },
+        "host_verdict": "unchanged",
+        "contract": {
+          "version": "clawx.versegit.consumer-contract/v1",
+          "digest": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749"
+        },
+        "allowed": {
+          "processes_started": 1,
+          "state_read": true,
+          "domain_state_write": false,
+          "execution": "none",
+          "workspace_write": false
+        },
+        "usage": {
+          "processes_started": 3,
+          "state_reads": 2
+        },
+        "timings": {},
+        "digests": {
+          "contract": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749"
+        }
+      },
+      "usage": {
+        "processesStarted": 3,
+        "stateReads": 2
+      },
+      "coverage": {
+        "declared": [
+          "identity.version",
+          "identity.capabilities",
+          "provider.doctor"
+        ],
+        "unobserved": [
+          "provider.conflicts-plan",
+          "shell-write",
+          "network",
+          "direct-fs"
+        ]
+      },
+      "hostVerdict": "unchanged",
+      "cleanup": {
+        "sidecarProcessesSurviving": 0,
+        "candidateTempDirectories": 0,
+        "hostWorktreesDeleted": 0
+      },
+      "status": "partial",
+      "reason": null,
+      "reportIssues": []
+    },
+    {
+      "caseId": "missing-binary",
+      "trigger": {
+        "id": "missing-binary",
+        "worktreeCount": 2,
+        "activeSessionCount": 2,
+        "eligible": true,
+        "reason": "concurrency-trigger"
+      },
+      "profile": "concurrency-aux",
+      "optIn": true,
+      "probes": [],
+      "moduleReport": null,
+      "usage": {
+        "processesStarted": 0,
+        "stateReads": 0
+      },
+      "coverage": {
+        "declared": [
+          "identity.version",
+          "identity.capabilities"
+        ],
+        "unobserved": [
+          "provider.conflicts-plan",
+          "shell-write",
+          "network",
+          "direct-fs"
+        ]
+      },
+      "hostVerdict": "unchanged",
+      "cleanup": {
+        "sidecarProcessesSurviving": 0,
+        "candidateTempDirectories": 0,
+        "hostWorktreesDeleted": 0
+      },
+      "status": "unavailable",
+      "reason": "missing_binary",
+      "issues": [
+        "frozen sidecar binary missing"
+      ]
+    }
+  ],
+  "summary": {
+    "caseCount": 3,
+    "eligibleCount": 2,
+    "processCalls": 3,
+    "statuses": {
+      "not_applicable": 1,
+      "partial": 1,
+      "unavailable": 1
+    }
+  },
+  "hostVerdict": "unchanged",
+  "boundaries": {
+    "addedToFast": false,
+    "addedToComms": false,
+    "implicitProfile": false,
+    "defaultOn": false,
+    "rendererRouteAdded": false,
+    "landOrAdmitInvoked": false,
+    "hostWorktreeDeleted": false,
+    "providerSourceModified": false
+  },
+  "issues": [],
+  "passed": true,
+  "digest": "8ba1122b1d1c238eb3faf30e0e4ade1f4f4e752990619040da02f464876a31b5"
+}

@@ -12,6 +12,9 @@ export const PROFILES = {
   e2e: [
     { name: 'Electron E2E', command: 'pnpm', args: ['-w', 'run', 'test:e2e'] },
   ],
+  'concurrency-aux': [
+    { name: 'VerseGit concurrency diagnostic', command: 'node', args: ['scripts/versegit-wp2-profile.mjs'] },
+  ],
 };
 
 export function selectSteps(requiredProfiles) {
