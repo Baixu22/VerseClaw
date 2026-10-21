@@ -1821,6 +1821,10 @@ export function validateWp7Report(
   add(managedBefore.length > 0 && declaredManagedPids.length === managedBefore.length, 'VerseShell process inventory before shutdown is missing');
   add(stableJson(managedPids) === stableJson(declaredManagedPids), 'declared owned PID vector is inconsistent');
   add(managedPids.length > 0 && ownedPidChecks.length === managedPids.length && ownedPidChecks.every((entry) => entry.ok === true), 'owned PID exit checks are incomplete');
+  const checkedPids = ownedPidChecks.map((entry) => entry.pid).filter((pid): pid is number => Number.isInteger(pid) && Number(pid) > 0);
+  add(checkedPids.length === ownedPidChecks.length, 'owned PID exit-check identities are malformed');
+  add(new Set(checkedPids).size === checkedPids.length, 'owned PID exit-check identities are duplicated');
+  add(stableJson([...checkedPids].sort((a, b) => a - b)) === stableJson([...managedPids].sort((a, b) => a - b)), 'owned PID exit-check identities differ from managed PIDs');
   add(managedPids.every((pid) => duringPids.includes(pid)), 'managed VerseShell PIDs were not observed during the run');
   add(managedPids.every((pid) => !baselinePids.includes(pid)), 'managed VerseShell PIDs overlap the baseline inventory');
   add(managedPids.every((pid) => !afterPids.includes(pid)), 'managed VerseShell PID survived cleanup');

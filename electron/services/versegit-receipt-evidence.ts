@@ -401,9 +401,13 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
         : [];
       const nestedSurvivors = Array.isArray(inventory.survivorPids) ? inventory.survivorPids : [];
       const afterPids = Array.isArray(inventory.afterPids) ? inventory.afterPids.filter((pid): pid is number => Number.isInteger(pid)) : [];
+      const checkedPids = ownedPidChecks.map((entry) => entry.pid).filter((pid): pid is number => Number.isInteger(pid) && Number(pid) > 0);
       const checkedSurvivors = ownedPidChecks.filter((entry) => entry.ok === true && entry.exists === true).map((entry) => entry.pid);
       add(managedPids.length > 0, 'owned cleanup PID vector is missing');
       add(ownedPidChecks.length === managedPids.length, 'owned PID exit-check vector is incomplete');
+      add(checkedPids.length === ownedPidChecks.length, 'owned PID exit-check identities are malformed');
+      add(new Set(checkedPids).size === checkedPids.length, 'owned PID exit-check identities are duplicated');
+      add(stableJson([...checkedPids].sort((a, b) => a - b)) === stableJson([...managedPids].sort((a, b) => a - b)), 'owned PID exit-check identities differ from managed PIDs');
       add(ownedPidChecks.every((entry) => entry.ok === true && entry.exists === false), 'owned PID checks retained a survivor');
       add(managedPids.every((pid) => !afterPids.includes(pid)), 'owned PID remained in post-cleanup inventory');
       add(nestedSurvivors.length === 0 && checkedSurvivors.length === 0, 'nested cleanup retained process survivors');

@@ -228,4 +228,20 @@ describe('host-authoritative VerseShell receipts', () => {
     }
   });
 
+
+
+  it('rejects owned PID checks whose identities do not match the managed PID set', () => {
+    const root = mkdtempSync(join(process.platform === 'win32' ? 'D:/tmp' : process.env.TMPDIR ?? '/tmp', 'vg-receipt-pid-identity-'));
+    try {
+      const cleanup = cleanCleanup();
+      cleanup.processInventory.ownedPidChecks[0].pid = 999999;
+      const installed = installEvidence(root, { cleanup });
+      const checked = installed.authority.verifyReceipt({ plan: installed.plan, receipt: installed.receipt });
+      expect(checked.ok).toBe(false);
+      expect(checked.issues).toContain('owned PID exit-check identities differ from managed PIDs');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
 });
