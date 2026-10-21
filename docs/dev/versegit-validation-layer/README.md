@@ -146,6 +146,7 @@ discover -> eligible -> attach -> observe -> evaluate
 - WP7 在 disposable host-shaped Windows vertical slice 中完成了 host-owned fixed-argv VG facts、真实 producer-consumer、VerseShell-only candidate verification、file-backed receipt authority、failure-before-continuation 与零 survivor 清理；
 - WP8 由独立 `ccs-hub/gpt-6.1-sol` agent 给出 `PASS_WITH_GAPS`，`P0=0`、`P1=0`、`P2=3`；初版 `ccs-agentrouter/gpt-6.1-sol` FAIL 与后续 provider 403/high-demand 失败均保留；
 - WP9 将 TF-0465 的七条 acceptance 逐项映射到盘上证据，并确认 18 个非 WP9 必需子节点均 `done` 或显式 `deprecated`；
+- WP9 实现由独立 `ccs-hub/gpt-6.1-sol` 复核为 `PASS_WITH_GAPS`，`P0=0`、`P1=0`；主审 `ccs-agentrouter/gpt-6.1-sol` 的 403 quota 失败保留为 provider evidence，不构成 verdict；
 - WP9 最终结论仍是 bounded `observed`，不是外部模型会话、完整产品 M3、GA 或 M4；P2 与平台、语言、读面、release、conflicts-plan 和 recovery 边界全部保留。
 
 因此当前定位是：**host module 工程路径已闭合、产品未批准、默认未启用、发布不可用**。`passed` 只表示证据与边界可复现，不表示 GA。

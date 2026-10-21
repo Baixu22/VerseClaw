@@ -28,6 +28,9 @@ export const WP9_MANIFEST_PATH = 'artifacts/versegit/wp9/manifest.json';
 export const WP9_EVIDENCE_ROOT = 'harness/specs/fixtures/versegit-planning-correction/wp9-evidence';
 export const WP9_EVIDENCE_REPORT_PATH = `${WP9_EVIDENCE_ROOT}/global-report.json`;
 export const WP9_EVIDENCE_MANIFEST_PATH = `${WP9_EVIDENCE_ROOT}/manifest.json`;
+export const WP9_INDEPENDENT_REVIEW_PATH = `${WP9_EVIDENCE_ROOT}/independent-review-report.json`;
+export const WP9_INDEPENDENT_RESPONSE_PATH = `${WP9_EVIDENCE_ROOT}/independent-review-response.md`;
+export const WP9_PRIMARY_REVIEW_FAILURE_PATH = `${WP9_EVIDENCE_ROOT}/primary-reviewer-provider-failure.md`;
 export const WP9_SHA_PATH = 'artifacts/versegit/wp9/SHA256SUMS';
 export const WP9_EVIDENCE_SHA_PATH = `${WP9_EVIDENCE_ROOT}/SHA256SUMS`;
 export const WP9_LIFECYCLE_GUIDE = 'harness/specs/guides/versegit-concurrency/wp9-lifecycle-closeout.md';
@@ -39,6 +42,9 @@ export const WP9_COMMON_SHA_PATHS = [
   'tests/unit/versegit-wp9-global-acceptance.test.ts',
   WP9_TASK_SPEC_PATH,
   WP9_FIXTURE_PATH,
+  WP9_INDEPENDENT_REVIEW_PATH,
+  WP9_INDEPENDENT_RESPONSE_PATH,
+  WP9_PRIMARY_REVIEW_FAILURE_PATH,
   WP9_LIFECYCLE_GUIDE,
   WP9_README_PATH,
 ];
@@ -408,6 +414,26 @@ export function buildWp9GlobalAcceptance({ root = repositoryRoot, fixturePath = 
 
   const acceptanceResult = buildAcceptances({ root, criteria, graphSnapshot: forest.snapshot });
   issues.push(...acceptanceResult.issues);
+  const independentReview = readJson(root, WP9_INDEPENDENT_REVIEW_PATH, 'WP9 independent review');
+  const independentResponseText = readText(root, WP9_INDEPENDENT_RESPONSE_PATH);
+  const primaryReviewFailureText = readText(root, WP9_PRIMARY_REVIEW_FAILURE_PATH);
+  if (independentReview.schema !== 'clawx.versegit.wp9-independent-review/v1') issues.push('WP9 independent review schema mismatch');
+  if (independentReview.task !== 'TF-0515' || independentReview.driven_by !== 'agent') issues.push('WP9 independent review identity mismatch');
+  if (independentReview.actor !== 'ccs-hub/gpt-6.1-sol') issues.push('WP9 independent reviewer identity mismatch');
+  if (independentReview.reviewedImplementationCommit !== fixture.wp9ImplementationCommit) issues.push('WP9 independent review candidate differs from fixture');
+  if (independentReview.verdict !== 'PASS_WITH_GAPS' || independentReview.passed !== true) issues.push('WP9 independent review is not passing');
+  if ((independentReview.p0 ?? []).length !== 0 || (independentReview.p1 ?? []).length !== 0) issues.push('WP9 independent review P0/P1 must be empty');
+  if (!WP8_P2_IDS.every((id) => (independentReview.p2 ?? []).some((entry) => entry.id === id && entry.disposition === 'residual'))) issues.push('WP9 independent review residual set differs from WP8');
+  if (independentReview.reviewerProviderFailure?.model !== 'ccs-agentrouter/gpt-6.1-sol' || independentReview.reviewerProviderFailure?.httpStatus !== 403 || independentReview.reviewerProviderFailure?.verdictCreated !== false) issues.push('primary reviewer failure provenance missing');
+  if (!primaryReviewFailureText.includes('HTTP 403') && !primaryReviewFailureText.includes('http_status: 403')) issues.push('primary reviewer failure evidence is incomplete');
+  if (!independentResponseText.includes(String(fixture.wp9ImplementationCommit)) || !independentResponseText.includes('PASS_WITH_GAPS')) issues.push('independent review response is not bound to the final implementation candidate');
+  let reviewedCommit = '';
+  try {
+    reviewedCommit = gitValue(root, ['rev-parse', String(fixture.wp9ImplementationCommit ?? '')]);
+  } catch (error) {
+    issues.push(`WP9 independent review candidate is not resolvable: ${String(error?.message ?? error).slice(0, 180)}`);
+  }
+  if (reviewedCommit !== fixture.wp9ImplementationCommit) issues.push('WP9 independent review candidate does not resolve exactly');
   const wp6Verification = verifyWp6Closeout();
   const wp8Verification = verifyWp8Artifact();
   const wp6Report = wp6Verification.report;
@@ -458,6 +484,11 @@ export function buildWp9GlobalAcceptance({ root = repositoryRoot, fixturePath = 
   if (residuals.some((entry) => entry.disposition && entry.disposition !== 'retain' && entry.disposition !== 'residual')) issues.push('a retained WP8 P2 was promoted or closed');
 
   const acceptanceEvidence = acceptanceResult.acceptance.flatMap((entry) => entry.evidence);
+  const reviewEvidence = [
+    evidence(root, WP9_INDEPENDENT_REVIEW_PATH, 'independent WP9 PASS_WITH_GAPS review'),
+    evidence(root, WP9_INDEPENDENT_RESPONSE_PATH, 'raw independent reviewer response'),
+    evidence(root, WP9_PRIMARY_REVIEW_FAILURE_PATH, 'primary provider failure provenance'),
+  ];
   const fixtureDigest = hashFile(root, fixturePath);
   const requiredChildren = forest.snapshot.children.filter((child) => !child.self);
   const report = {
@@ -498,6 +529,7 @@ export function buildWp9GlobalAcceptance({ root = repositoryRoot, fixturePath = 
       { id: 'wp6-independent-verifier', passed: wp6Verification.ok, issues: wp6Verification.issues },
       { id: 'wp8-independent-verifier', passed: wp8Verification.ok, issues: wp8Verification.issues },
       { id: 'wp7-candidate-resolution', passed: resolvedCommit === fixture.wp7Candidate?.commit && resolvedTree === fixture.wp7Candidate?.tree, issues: [] },
+      { id: 'wp9-independent-review', passed: independentReview.passed === true && independentReview.verdict === 'PASS_WITH_GAPS' && (independentReview.p0 ?? []).length === 0 && (independentReview.p1 ?? []).length === 0, issues: [] },
     ],
     review: {
       wp6: {
@@ -520,6 +552,19 @@ export function buildWp9GlobalAcceptance({ root = repositoryRoot, fixturePath = 
         tree: resolvedTree,
         fixtureCommit: fixture.wp7Candidate?.commit,
         fixtureTree: fixture.wp7Candidate?.tree,
+      },
+      wp9: {
+        reportPath: WP9_INDEPENDENT_REVIEW_PATH,
+        responsePath: WP9_INDEPENDENT_RESPONSE_PATH,
+        providerFailurePath: WP9_PRIMARY_REVIEW_FAILURE_PATH,
+        actor: independentReview.actor,
+        verdict: independentReview.verdict,
+        p0: independentReview.p0?.length ?? null,
+        p1: independentReview.p1?.length ?? null,
+        p2: independentReview.p2?.length ?? null,
+        reviewedImplementationCommit: independentReview.reviewedImplementationCommit,
+        reviewedCommitResolvable: reviewedCommit === fixture.wp9ImplementationCommit,
+        passed: independentReview.passed === true,
       },
     },
     lifecycle: {
@@ -560,7 +605,7 @@ export function buildWp9GlobalAcceptance({ root = repositoryRoot, fixturePath = 
       preconditionsPassed: issues.length === 0,
       proposalRequired: true,
     },
-    inputs: uniqueInputs(acceptanceEvidence, fixturePath.replaceAll('\\', '/'), fixtureDigest),
+    inputs: uniqueInputs([...acceptanceEvidence, ...reviewEvidence], fixturePath.replaceAll('\\', '/'), fixtureDigest),
     issues: [...new Set(issues)],
   };
   report.digest = documentDigest(report);
@@ -608,6 +653,15 @@ export function buildManifest(report, generatedAt = report.generated_at) {
     },
     acceptance: report.acceptanceSummary,
     children: report.childGateSummary,
+    independentReview: {
+      actor: report.review.wp9.actor,
+      verdict: report.review.wp9.verdict,
+      p0: report.review.wp9.p0,
+      p1: report.review.wp9.p1,
+      p2: report.review.wp9.p2,
+      reviewedImplementationCommit: report.review.wp9.reviewedImplementationCommit,
+      passed: report.review.wp9.passed,
+    },
     authority: report.authority,
     residualDisposition: report.residualDisposition,
     residualCount: report.residuals.length,

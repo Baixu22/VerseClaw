@@ -1,12 +1,12 @@
 {
   "schema": "clawx.versegit.wp9-global-acceptance/v1",
-  "generated_at": "2026-10-21T22:18:28.974Z",
+  "generated_at": "2026-10-21T22:22:21.639Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0515",
   "parentTask": "TF-0465",
   "fixture": "harness/specs/fixtures/versegit-planning-correction/wp9-global-acceptance-fixture.json",
-  "fixtureDigest": "37e84c45670abbf5b1b1ec93d397d389a7f4f3345f0ff64effc6c8c8f430c0c4",
+  "fixtureDigest": "483787946891e60f9d465ec6a7e3b363f8f0e54fc7b88a52c627ba89c09f4b57",
   "globalVerdict": "PASS_WITH_GAPS",
   "passed": true,
   "p0": [],
@@ -687,6 +687,11 @@
       "id": "wp7-candidate-resolution",
       "passed": true,
       "issues": []
+    },
+    {
+      "id": "wp9-independent-review",
+      "passed": true,
+      "issues": []
     }
   ],
   "review": {
@@ -710,6 +715,19 @@
       "tree": "b3856199f4458a8ce23ec22325899a42efe00867",
       "fixtureCommit": "5d313871c0b6f612b000db2041c9670d571c97a4",
       "fixtureTree": "b3856199f4458a8ce23ec22325899a42efe00867"
+    },
+    "wp9": {
+      "reportPath": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/independent-review-report.json",
+      "responsePath": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/independent-review-response.md",
+      "providerFailurePath": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/primary-reviewer-provider-failure.md",
+      "actor": "ccs-hub/gpt-6.1-sol",
+      "verdict": "PASS_WITH_GAPS",
+      "p0": 0,
+      "p1": 0,
+      "p2": 3,
+      "reviewedImplementationCommit": "66cdac59f1b7ae54cef42ff0c1574110368a7449",
+      "reviewedCommitResolvable": true,
+      "passed": true
     }
   },
   "lifecycle": {
@@ -916,8 +934,20 @@
       "sha256": "15a018e4556dd5e1e7aa4621df20a8721d9af335664495382407f201373b1899"
     },
     {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/independent-review-report.json",
+      "sha256": "33d00d0f5974aa8c8b7effe59c96aa9e5d833477c6a3ac8b0a650baf815dbf9a"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/independent-review-response.md",
+      "sha256": "53d8fe4262b17da5c6dec3f4865364899c6929ec7f19d7545dea21360e503aa6"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/primary-reviewer-provider-failure.md",
+      "sha256": "6c3d992807cb4b642bcdd71f92eccaafa9d30d96a53e7e24a90c753233657d22"
+    },
+    {
       "path": "harness/specs/fixtures/versegit-planning-correction/wp9-global-acceptance-fixture.json",
-      "sha256": "37e84c45670abbf5b1b1ec93d397d389a7f4f3345f0ff64effc6c8c8f430c0c4"
+      "sha256": "483787946891e60f9d465ec6a7e3b363f8f0e54fc7b88a52c627ba89c09f4b57"
     },
     {
       "path": "harness/specs/guides/versegit-concurrency/wp9-lifecycle-closeout.md",
@@ -937,5 +967,5 @@
     }
   ],
   "issues": [],
-  "digest": "937014f8baa41d13d09c0710843af8a34852cb9b1a8740b9b420a869c8fde02a"
+  "digest": "b0099fa051dd407a4d251d0893e659f0918cb9350a3fe84f59d255f238eb53ba"
 }

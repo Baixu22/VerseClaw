@@ -14,7 +14,10 @@ import {
   WP9_EXPECTED_ACCEPTANCE_IDS,
   WP9_ACCEPTANCE_EVIDENCE,
   WP9_FIXTURE_PATH,
+  WP9_INDEPENDENT_REVIEW_PATH,
+  WP9_INDEPENDENT_RESPONSE_PATH,
   WP9_MANIFEST_SCHEMA,
+  WP9_PRIMARY_REVIEW_FAILURE_PATH,
   WP9_REPORT_PATH,
   WP9_SCHEMA,
   WP9_SHA_PATH,
@@ -125,11 +128,14 @@ export function validateWp9Report(report, { root, fixture } = {}) {
   add(issues, report?.childGateSummary?.total === 18 && report?.childGateSummary?.done + report?.childGateSummary?.deprecated === 18, 'child gate summary mismatch');
   add(issues, (report?.childGateSummary?.openOrBlocked ?? []).length === 0 && (report?.childGateSummary?.unresolvedDependencies ?? []).length === 0, 'child gate summary contains blockers');
 
-  add(issues, Array.isArray(report?.gateChecks) && report.gateChecks.length >= 3 && report.gateChecks.every((check) => check.passed === true), 'underlying gate verifier failed');
+  add(issues, Array.isArray(report?.gateChecks) && report.gateChecks.length >= 4 && report.gateChecks.every((check) => check.passed === true), 'underlying gate verifier failed');
   add(issues, report?.review?.wp6?.passed === true && report?.review?.wp6?.verifierPassed === true, 'WP6 review gate missing');
   add(issues, ['PASS', 'PASS_WITH_GAPS'].includes(report?.review?.wp8?.verdict) && report?.review?.wp8?.p0 === 0 && report?.review?.wp8?.p1 === 0 && report?.review?.wp8?.verifierPassed === true, 'WP8 review gate is not passing');
   add(issues, /^[0-9a-f]{40}$/u.test(String(report?.review?.wp7Candidate?.commit ?? '')) && /^[0-9a-f]{40}$/u.test(String(report?.review?.wp7Candidate?.tree ?? '')), 'WP7 candidate identity missing');
   add(issues, report?.review?.wp7Candidate?.commit === report?.review?.wp7Candidate?.fixtureCommit && report?.review?.wp7Candidate?.tree === report?.review?.wp7Candidate?.fixtureTree, 'WP7 candidate differs from fixture');
+  add(issues, report?.review?.wp9?.actor === 'ccs-hub/gpt-6.1-sol' && report?.review?.wp9?.verdict === 'PASS_WITH_GAPS', 'WP9 independent review identity/verdict mismatch');
+  add(issues, report?.review?.wp9?.p0 === 0 && report?.review?.wp9?.p1 === 0 && report?.review?.wp9?.p2 === 3 && report?.review?.wp9?.passed === true, 'WP9 independent review findings mismatch');
+  add(issues, /^[0-9a-f]{40}$/u.test(String(report?.review?.wp9?.reviewedImplementationCommit ?? '')) && report?.review?.wp9?.reviewedCommitResolvable === true, 'WP9 independent review candidate is not resolvable');
 
   const authority = report?.authority ?? {};
   for (const key of ['humanEvidence', 'realHumanEvidenceClaimed', 'singleGreenLight', 'defaultOn', 'ga', 'releaseEligible', 'm4Authorized']) {
@@ -194,6 +200,9 @@ function validateManifest(manifest, report, sha256Report) {
   add(issues, manifest?.verdict?.p0 === 0 && manifest?.verdict?.p1 === 0 && manifest?.verdict?.p2 === report.p2.length, 'manifest finding counts mismatch');
   add(issues, manifest?.acceptance?.required === 7 && manifest?.acceptance?.verified === 7 && manifest?.acceptance?.withoutEvidence === 0, 'manifest acceptance mismatch');
   add(issues, manifest?.children?.total === 18 && manifest?.children?.done + manifest?.children?.deprecated === 18, 'manifest child summary mismatch');
+  add(issues, manifest?.independentReview?.actor === report.review.wp9.actor && manifest?.independentReview?.verdict === report.review.wp9.verdict, 'manifest independent review identity mismatch');
+  add(issues, manifest?.independentReview?.p0 === 0 && manifest?.independentReview?.p1 === 0 && manifest?.independentReview?.p2 === report.p2.length && manifest?.independentReview?.passed === true, 'manifest independent review findings mismatch');
+  add(issues, manifest?.independentReview?.reviewedImplementationCommit === report.review.wp9.reviewedImplementationCommit, 'manifest independent review candidate mismatch');
   add(issues, manifest?.authority?.humanEvidence === false && manifest?.authority?.ga === false && manifest?.authority?.releaseEligible === false && manifest?.authority?.m4Authorized === false, 'manifest authority promoted');
   add(issues, manifest?.residualDisposition === 'retain' && manifest?.residualCount === report.residuals.length, 'manifest residual disposition mismatch');
   add(issues, manifest?.graphHash === report.taskForest.graphHash && manifest?.fixtureDigest === report.fixtureDigest, 'manifest graph/fixture identity mismatch');
@@ -208,6 +217,16 @@ export function verifyWp9Artifacts({ artifact, root = repositoryRoot } = {}) {
   const report = JSON.parse(reportBytes.toString('utf8'));
   const fixture = readJson(resolve(root, WP9_FIXTURE_PATH));
   const issues = validateWp9Report(report, { root, fixture }).issues.slice();
+  const independentReview = readJson(resolve(root, WP9_INDEPENDENT_REVIEW_PATH));
+  const independentResponse = readFileSync(resolve(root, WP9_INDEPENDENT_RESPONSE_PATH), 'utf8');
+  const primaryFailure = readFileSync(resolve(root, WP9_PRIMARY_REVIEW_FAILURE_PATH), 'utf8');
+  add(issues, independentReview.schema === 'clawx.versegit.wp9-independent-review/v1', 'independent review schema mismatch');
+  add(issues, independentReview.actor === report.review.wp9.actor && independentReview.verdict === report.review.wp9.verdict, 'independent review identity mismatch');
+  add(issues, independentReview.reviewedImplementationCommit === fixture.wp9ImplementationCommit && independentReview.reviewedImplementationCommit === report.review.wp9.reviewedImplementationCommit, 'independent review candidate mismatch');
+  add(issues, independentReview.passed === true && (independentReview.p0 ?? []).length === 0 && (independentReview.p1 ?? []).length === 0 && (independentReview.p2 ?? []).length === 3, 'independent review is not a passing bounded verdict');
+  add(issues, independentReview.reviewerProviderFailure?.model === 'ccs-agentrouter/gpt-6.1-sol' && independentReview.reviewerProviderFailure?.httpStatus === 403 && independentReview.reviewerProviderFailure?.verdictCreated === false, 'primary reviewer failure provenance mismatch');
+  add(issues, independentResponse.includes(String(fixture.wp9ImplementationCommit)) && independentResponse.includes('PASS_WITH_GAPS') && independentResponse.includes('P0=0') && independentResponse.includes('P1=0'), 'raw independent response is not bound to the reviewed candidate');
+  add(issues, primaryFailure.includes('ccs-agentrouter/gpt-6.1-sol') && /403/u.test(primaryFailure) && /quota/u.test(primaryFailure), 'primary reviewer failure file is incomplete');
   if (report.fixtureDigest !== sha256(readFileSync(resolve(root, WP9_FIXTURE_PATH)))) issues.push('fixture digest mismatch');
   if (report.taskForest.graphHash !== fixture.graphHash) issues.push('graph hash differs from fixture');
   if (!sameArray(report.taskForest.parent?.acceptanceCriteria, fixture.parent?.acceptanceCriteria)) issues.push('Task Forest acceptance criteria differ from fixture');

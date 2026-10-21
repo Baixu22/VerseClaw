@@ -23,7 +23,10 @@ interface StoredReport {
     parent: { status: string; acceptanceCriteria: string[] };
   };
   p1: unknown[];
-  review: { wp8: { verdict: string } };
+  review: {
+    wp8: { verdict: string };
+    wp9: { actor: string; verdict: string; p0: number; p1: number; p2: number; passed: boolean };
+  };
   authority: Record<string, boolean>;
   lifecycle: Record<string, boolean>;
   inputs: Array<{ sha256: string }>;
@@ -53,6 +56,7 @@ describe('WP9 whole-goal acceptance', () => {
     expect(report.p1).toEqual([]);
     expect(report.p2).toHaveLength(3);
     expect(report.review.wp8).toMatchObject({ verdict: 'PASS_WITH_GAPS', p0: 0, p1: 0, p2: 3, verifierPassed: true });
+    expect(report.review.wp9).toMatchObject({ actor: 'ccs-hub/gpt-6.1-sol', verdict: 'PASS_WITH_GAPS', p0: 0, p1: 0, p2: 3, passed: true });
     expect(report.authority).toMatchObject({ humanEvidence: false, singleGreenLight: false, defaultOn: false, ga: false, releaseEligible: false, m4Authorized: false });
     expect(report.lifecycle).toMatchObject({ m3BoundedHostSliceObserved: true, m3ProductComplete: false, m4Authorized: false });
     expect(validateWp9Report(report, { root: process.cwd() }).issues).toEqual([]);
@@ -76,6 +80,7 @@ describe('WP9 whole-goal acceptance', () => {
     report.taskForest.parent.status = 'blocked';
     report.p1.push({ id: 'P1-open' });
     report.review.wp8.verdict = 'FAIL';
+    report.review.wp9.p0 = 1;
     report.authority.ga = true;
     report.authority.releaseEligible = true;
     report.authority.m4Authorized = true;
@@ -90,6 +95,7 @@ describe('WP9 whole-goal acceptance', () => {
       'parent node status is illegal',
       'a required child is not done/deprecated',
       'WP8 review gate is not passing',
+      'WP9 independent review findings mismatch',
       'authority promotion: ga',
       'authority promotion: releaseEligible',
       'authority promotion: m4Authorized',
