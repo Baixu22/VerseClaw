@@ -400,7 +400,10 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
         ? inventory.ownedPidChecks.filter((entry): entry is Record<string, unknown> => Boolean(entry && typeof entry === 'object' && !Array.isArray(entry)))
         : [];
       const nestedSurvivors = Array.isArray(inventory.survivorPids) ? inventory.survivorPids : [];
+      const baselinePids = Array.isArray(inventory.baselinePids) ? inventory.baselinePids.filter((pid): pid is number => Number.isInteger(pid)) : [];
+      const duringPids = Array.isArray(inventory.duringPids) ? inventory.duringPids.filter((pid): pid is number => Number.isInteger(pid)) : [];
       const afterPids = Array.isArray(inventory.afterPids) ? inventory.afterPids.filter((pid): pid is number => Number.isInteger(pid)) : [];
+      const newProcessPids = Array.isArray(inventory.newProcessPids) ? inventory.newProcessPids.filter((pid): pid is number => Number.isInteger(pid)) : [];
       const checkedPids = ownedPidChecks.map((entry) => entry.pid).filter((pid): pid is number => Number.isInteger(pid) && Number(pid) > 0);
       const checkedSurvivors = ownedPidChecks.filter((entry) => entry.ok === true && entry.exists === true).map((entry) => entry.pid);
       add(managedPids.length > 0, 'owned cleanup PID vector is missing');
@@ -410,6 +413,9 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       add(new Set(checkedPids).size === checkedPids.length, 'owned PID exit-check identities are duplicated');
       add(stableJson([...checkedPids].sort((a, b) => a - b)) === stableJson([...managedPids].sort((a, b) => a - b)), 'owned PID exit-check identities differ from managed PIDs');
       add(ownedPidChecks.every((entry) => entry.ok === true && entry.exists === false), 'owned PID checks retained a survivor');
+      add(managedPids.every((pid) => !baselinePids.includes(pid)), 'owned PIDs overlap the pre-run baseline');
+      add(managedPids.every((pid) => duringPids.includes(pid)), 'owned PIDs were not observed during the run');
+      add(stableJson([...newProcessPids].sort((a, b) => a - b)) === stableJson([...managedPids].sort((a, b) => a - b)), 'new-process PID vector differs from managed PIDs');
       add(managedPids.every((pid) => !afterPids.includes(pid)), 'owned PID remained in post-cleanup inventory');
       add(nestedSurvivors.length === 0 && checkedSurvivors.length === 0, 'nested cleanup retained process survivors');
       add(stableJson(nestedSurvivors) === stableJson(checkedSurvivors), 'nested survivor vector differs from owned PID checks');

@@ -1,0 +1,29 @@
+{
+  "advisories": [
+    {
+      "conflict_id": "ssi/stale-read:69576424-1d8b-4472-8ce7-0c0c607a26da->267ebe12-0cc1-421e-acb3-24b3d23b87f6:charge",
+      "kind": "ssi/stale-read",
+      "message": "你读取的 charge 已被 Session 267ebe12 修改，读前提过期",
+      "other_sessions": [
+        "267ebe12-0cc1-421e-acb3-24b3d23b87f6"
+      ],
+      "path": "pricedb.py",
+      "severity": "warning",
+      "symbol": "charge"
+    },
+    {
+      "conflict_id": "ssi/api-drift:267ebe12-0cc1-421e-acb3-24b3d23b87f6->69576424-1d8b-4472-8ce7-0c0c607a26da:charge",
+      "kind": "ssi/api-drift",
+      "message": "Session 267ebe12 修改了 charge 的签名（8a2676d1d585… → 1aa43b5aac98…），你正在引用它，请先读取对方的改动再继续",
+      "other_sessions": [
+        "267ebe12-0cc1-421e-acb3-24b3d23b87f6"
+      ],
+      "path": "pricedb.py",
+      "severity": "warning",
+      "symbol": "charge"
+    }
+  ],
+  "file": "pricedb.py",
+  "focus": "69576424-1d8b-4472-8ce7-0c0c607a26da",
+  "policy": "advisory"
+}

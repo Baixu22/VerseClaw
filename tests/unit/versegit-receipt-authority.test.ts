@@ -90,8 +90,11 @@ function cleanCleanup() {
     worktreeSurvivors: 0, tempRootRemoved: true, hostWorktreesDeleted: 0,
     worktreesDeleted: 3, deletionErrors: [], processSurvivors: 0, survivorPids: [],
     processInventory: {
-      managedPids: [1234],
+      baselinePids: [],
+      duringPids: [1234],
       afterPids: [],
+      newProcessPids: [1234],
+      managedPids: [1234],
       managedAfterShutdown: [],
       survivorPids: [],
       ownedPidChecks: [{ ok: true, pid: 1234, exists: false }],
@@ -193,6 +196,8 @@ describe('host-authoritative VerseShell receipts', () => {
     try {
       const cleanup = cleanCleanup();
       cleanup.processInventory.managedPids.push(99999);
+      cleanup.processInventory.duringPids.push(99999);
+      cleanup.processInventory.newProcessPids.push(99999);
       cleanup.processInventory.ownedPidChecks.push({ ok: true, pid: 99999, exists: true });
       cleanup.processInventory.survivorPids.push(99999);
       const installed = installEvidence(root, { cleanup });
@@ -251,6 +256,8 @@ describe('host-authoritative VerseShell receipts', () => {
     try {
       const cleanup = cleanCleanup();
       cleanup.processInventory.managedPids.push(1234);
+      cleanup.processInventory.duringPids.push(1234);
+      cleanup.processInventory.newProcessPids.push(1234);
       cleanup.processInventory.ownedPidChecks.push({ ok: true, pid: 1234, exists: false });
       const installed = installEvidence(root, { cleanup });
       const checked = installed.authority.verifyReceipt({ plan: installed.plan, receipt: installed.receipt });
