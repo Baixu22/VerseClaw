@@ -1,5 +1,10 @@
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  MC6_FIXTURE_PATH,
+  buildMc6Decision,
   buildWp6Closeout,
   validateMc6Decision,
   validateWp6Report,
@@ -62,5 +67,22 @@ describe('WP6 merged closeout', () => {
       'migration files must remain empty',
       'in-process requirement must remain unobserved',
     ]));
+  });
+  it('fails closed when MC1 contract evidence required by MC6 is missing', () => {
+    const root = mkdtempSync(join(tmpdir(), 'versegit-mc6-missing-'));
+    try {
+      const fixture = JSON.parse(readFileSync(resolve(process.cwd(), MC6_FIXTURE_PATH), 'utf8')) as { requiredEvidence: string[] };
+      const targetFixture = resolve(root, MC6_FIXTURE_PATH);
+      mkdirSync(dirname(targetFixture), { recursive: true });
+      copyFileSync(resolve(process.cwd(), MC6_FIXTURE_PATH), targetFixture);
+      for (const path of fixture.requiredEvidence.filter((entry) => !entry.includes('mc1-evidence'))) {
+        const target = resolve(root, path);
+        mkdirSync(dirname(target), { recursive: true });
+        copyFileSync(resolve(process.cwd(), path), target);
+      }
+      expect(() => buildMc6Decision({ root, fixturePath: targetFixture })).toThrow(/MC6 evidence missing: .*mc1-evidence/u);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });
