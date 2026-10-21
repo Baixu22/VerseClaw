@@ -13,7 +13,7 @@ appliesTo:
 
 ## 0. 当前状态与下一步
 
-2026-10-22：WP6 已回读 MC0-MC5、WP0-WP5 的 12 个必需门禁，复算 24 份 evidence manifest / 159 个文件，并以证据裁定 MC6 为 `sidecar-only`、源码提取未触发。当前模块为非 GA、默认关闭、landed-unwired：provider source 仍 dirty，只有 debug sidecar，`releaseEligible=false`；没有 live VerseShell receipt，`conflicts-plan` seam 仍 unavailable，M4 未授权。
+2026-10-22：WP6 已回读 MC0-MC5、WP0-WP5 的 12 个必需门禁，复算 12 份 tracked evidence manifest / 78 个文件，并在本地存在时额外核对 12 份 artifact mirror manifest，并以证据裁定 MC6 为 `sidecar-only`、源码提取未触发。当前模块为非 GA、默认关闭、landed-unwired：provider source 仍 dirty，只有 debug sidecar，`releaseEligible=false`；没有 live VerseShell receipt，`conflicts-plan` seam 仍 unavailable，M4 未授权。
 
 ## 1. 总体策略
 
@@ -238,7 +238,7 @@ WP0 契约与身份
 
 ### 当前收口结果
 
-- `artifacts/versegit/wp6/final-report.json` 与 `manifest.json`：12/12 必需门禁、24 份 manifest、159 个被绑定文件；
+- `artifacts/versegit/wp6/final-report.json` 与 `manifest.json`：12/12 必需门禁、12 份 tracked manifest、78 个被绑定文件；另有 12 份 ignored artifact mirror manifest 仅在本地存在时复核。
 - `artifacts/versegit/mc6/decision.json`：`sidecar-only`，`sourceExtractionTriggered=false`；
 - `hostVerdict=unchanged`、`singleGreenLight=false`、`defaultOn=false`、`ga=false`、`releaseEligible=false`；
 - `liveVerseShellReceiptExecuted=false`、`conflictsPlan=unavailable`、`M4=not_authorized`；

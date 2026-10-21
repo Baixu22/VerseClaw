@@ -12,11 +12,12 @@ describe('WP6 merged closeout', () => {
     const built = buildWp6Closeout({ generatedAt });
     expect(built.report.gateSummary).toMatchObject({ required: 12, verified: 12, failed: 0, deprecated: 1, optionalDecision: 1 });
     expect(built.report.requiredGates.map((gate: { role: string }) => gate.role)).toEqual(expect.arrayContaining(['MC0', 'MC1', 'MC2', 'MC3', 'MC4', 'MC5', 'WP0', 'WP1', 'WP2', 'WP3', 'WP4', 'WP5']));
-    expect(built.report.evidenceManifests).toMatchObject({ count: 24, reproducible: true });
-    expect(built.report.evidenceManifests.entryCount).toBeGreaterThan(100);
+    expect(built.report.evidenceManifests).toMatchObject({ count: 12, reproducible: true });
+    expect(built.report.evidenceManifests.entryCount).toBeGreaterThan(40);
     expect(built.report.authority).toMatchObject({ hostVerdict: 'unchanged', singleGreenLight: false, liveVerseShellReceiptExecuted: false, m4Authorized: false });
     expect(built.report.release).toMatchObject({ defaultOn: false, ga: false, releaseEligible: false, packageStatus: 'rejected', binaryProfile: 'debug' });
     expect(built.report.coverage.coverageVector).toMatchObject({ shellRead: 'unobserved', directFs: 'unobserved', mcpWrite: 'unobserved', browser: 'unobserved' });
+    expect(built.report.localMirrorManifests).toMatchObject({ declared: 12, requiredForCleanReplay: false });
     expect(built.report.m4.status).toBe('not_authorized');
     expect(built.report.conflictsPlan.status).toBe('unavailable');
     expect(built.mc6Decision).toMatchObject({ decision: 'sidecar-only', sourceExtractionTriggered: false, passed: true });

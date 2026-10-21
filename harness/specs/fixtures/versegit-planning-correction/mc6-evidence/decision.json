@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.mc6-decision/v1",
-  "generated_at": "2026-10-21T18:04:47.226Z",
+  "generated_at": "2026-10-21T18:10:12.200Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0479",

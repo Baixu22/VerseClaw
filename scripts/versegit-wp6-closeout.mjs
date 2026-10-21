@@ -449,7 +449,16 @@ export function buildWp6Closeout({ root = repositoryRoot, fixturePath = resolve(
     if (manifest.missing.length > 0) issues.push(`${manifest.path}: missing ${manifest.missing.length} file(s)`);
     if (manifest.mismatches.length > 0) issues.push(`${manifest.path}: ${manifest.mismatches.length} digest mismatch(es)`);
   }
-  if (evidenceManifests.length !== 24) issues.push(`evidence manifest count ${evidenceManifests.length} != 24`);
+  if (evidenceManifests.length !== 12) issues.push(`required evidence manifest count ${evidenceManifests.length} != 12`);
+  const declaredLocalMirrorManifests = fixture.localMirrorManifests ?? [];
+  if (declaredLocalMirrorManifests.length !== 12) issues.push(`optional local mirror manifest count ${declaredLocalMirrorManifests.length} != 12`);
+  const localMirrorManifests = declaredLocalMirrorManifests
+    .filter((path) => existsSync(assertInsideRoot(root, path, 'optional local mirror manifest')))
+    .map((path) => collectManifest(root, path));
+  for (const manifest of localMirrorManifests) {
+    if (manifest.missing.length > 0) issues.push(`optional local mirror ${manifest.path}: missing ${manifest.missing.length} file(s)`);
+    if (manifest.mismatches.length > 0) issues.push(`optional local mirror ${manifest.path}: ${manifest.mismatches.length} digest mismatch(es)`);
+  }
 
   const gateByRole = Object.fromEntries(requiredGates.map((entry) => [entry.role, entry]));
   const mc0 = readJson(root, gateByRole.MC0.curatedPath, 'MC0 closeout read');
@@ -565,6 +574,11 @@ export function buildWp6Closeout({ root = repositoryRoot, fixturePath = resolve(
       reproducible: evidenceManifests.every((manifest) => manifest.missing.length === 0 && manifest.mismatches.length === 0),
       items: evidenceManifests,
     },
+    localMirrorManifests: {
+      declared: declaredLocalMirrorManifests.length,
+      policy: 'checked-when-present; ignored artifacts are not required for clean-checkout replay',
+      requiredForCleanReplay: false,
+    },
     mc6: {
       path: MC6_DECISION_PATH,
       curatedPath: `${MC6_EVIDENCE_ROOT}/decision.json`,
@@ -608,7 +622,8 @@ export function validateWp6Report(report) {
   add(new Set((report?.requiredGates ?? []).map((gate) => gate.role)).size === 12, 'gate roles are not unique');
   add((report?.requiredGates ?? []).every((gate) => gate.issues?.length === 0 && gate.taskSpecSha256 && gate.verifierSha256), 'one or more gates is incomplete');
   add(report?.gateSummary?.deprecated === 1 && report?.gateSummary?.optionalDecision === 1, 'optional/deprecated disposition missing');
-  add(report?.evidenceManifests?.count === 24 && report?.evidenceManifests?.reproducible === true, 'pre-closeout evidence manifests are not reproducible');
+  add(report?.evidenceManifests?.count === 12 && report?.evidenceManifests?.reproducible === true, 'tracked pre-closeout evidence manifests are not reproducible');
+  add(report?.localMirrorManifests?.declared === 12 && report?.localMirrorManifests?.requiredForCleanReplay === false, 'optional local mirror policy missing');
   add((report?.evidenceManifests?.items ?? []).every((manifest) => manifest.missing?.length === 0 && manifest.mismatches?.length === 0), 'an evidence manifest contains missing or stale files');
   add(report?.authority?.hostVerdict === 'unchanged', 'host verdict changed');
   add(report?.authority?.singleGreenLight === false && report?.authority?.defaultOn !== true, 'single green light or default-on promoted');
@@ -682,6 +697,7 @@ function buildManifest(reportText, report, mc6Text, mc6Decision) {
       sha256: manifestEntry.sha256,
       entries: manifestEntry.entries,
     })),
+    localMirrorManifests: report.localMirrorManifests,
     authority: report.authority,
     release: report.release,
     coverage: report.coverage,

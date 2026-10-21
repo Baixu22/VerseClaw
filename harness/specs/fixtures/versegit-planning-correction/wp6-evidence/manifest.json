@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.wp6-manifest/v1",
-  "generated_at": "2026-10-21T18:04:47.226Z",
+  "generated_at": "2026-10-21T18:10:12.200Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0472",
@@ -8,13 +8,13 @@
   "finalReport": {
     "path": "artifacts/versegit/wp6/final-report.json",
     "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json",
-    "sha256": "b260252ff181458ecc9e7a82a8dd3c1b3a63e61a11afa76ef374138580f240ff",
-    "digest": "4a58678eda1e8ad7148cc054f860055d6ae5066d157d0e797b2a0db221c7eee3"
+    "sha256": "5a4c140f28df921011b6aa6c499167f7e6afcd4b1ad19f1c8ab087045b007ff6",
+    "digest": "b62a85914cb705bcd7f459e13518bef050537209f52917c42ca47e686bd90ceb"
   },
   "mc6Decision": {
     "path": "artifacts/versegit/mc6/decision.json",
     "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
-    "sha256": "a3f4000ff4be02baff130854f81269dcbab72036748686182d940d1b5a580193",
+    "sha256": "4bb08b30d51ced9e1e6942eabe0f28ad229450a0ebee264063e6bb4793374b02",
     "digest": "282fccc0e441bf092ea3363d9a6cc341fd8279d0cc2b3d1a129b5182d2f8ca91",
     "decision": "sidecar-only",
     "sourceExtractionTriggered": false
@@ -273,68 +273,13 @@
       "path": "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/SHA256SUMS",
       "sha256": "b1d926f5d608b092b1b79febbed81f96c8031bb1bc85159995da3097b314efc1",
       "entries": 6
-    },
-    {
-      "path": "artifacts/versegit/mc0/SHA256SUMS",
-      "sha256": "f441a64d94b6eaf5d6d55ae763b9a0fb3cee61d9bdf4dc378ff6af010a3d1e04",
-      "entries": 5
-    },
-    {
-      "path": "artifacts/versegit/mc2/SHA256SUMS",
-      "sha256": "287550222c51202ba4949c3c9e024316412da4d1dd0d33cc9e42de715cd6f640",
-      "entries": 6
-    },
-    {
-      "path": "artifacts/versegit/mc3/SHA256SUMS",
-      "sha256": "490a1a0feba74d70d13df0e75bd382307147d56e111acd070b18317ffc59637a",
-      "entries": 5
-    },
-    {
-      "path": "artifacts/versegit/mc4/SHA256SUMS",
-      "sha256": "9a90f932a3ba38fc9ec46e9a6972948a7ccee83b18e065084e7da08d0fe10556",
-      "entries": 7
-    },
-    {
-      "path": "artifacts/versegit/mc5/SHA256SUMS",
-      "sha256": "ebeb2dc9fe5aab25b164850d4f1b30f097602bfaca5328c74d3152542fa46a8a",
-      "entries": 5
-    },
-    {
-      "path": "artifacts/versegit/wp0/SHA256SUMS",
-      "sha256": "dd717ffc4b87d6ed3325f1dbfdab4fa4520405c5e46933b3b6c1b743b27ecde3",
-      "entries": 5
-    },
-    {
-      "path": "artifacts/versegit/wp1/SHA256SUMS",
-      "sha256": "b7b94c1d3a2ca8606bab41dd9933ca0cdd2e260ad8d03238905f898a19e04c7b",
-      "entries": 8
-    },
-    {
-      "path": "artifacts/versegit/wp2/SHA256SUMS",
-      "sha256": "395efb60107382308b14dda42ecaade2b1f71108f553124208626485860611e2",
-      "entries": 8
-    },
-    {
-      "path": "artifacts/versegit/wp3/SHA256SUMS",
-      "sha256": "685ab6883fdf4c73bada6ca9a2ef4c1850813122fd0733d846d4c304cebf3d74",
-      "entries": 7
-    },
-    {
-      "path": "artifacts/versegit/wp4/SHA256SUMS",
-      "sha256": "965f03044193da37f571de95c5e453d482dbffcb5744db4a0874a82f45142052",
-      "entries": 7
-    },
-    {
-      "path": "artifacts/versegit/wp5/SHA256SUMS",
-      "sha256": "d6d95a9b8585e83512148eac320ded7b6c6bb5c25de4963f5a693f16739138a1",
-      "entries": 6
-    },
-    {
-      "path": "artifacts/versegit-planning-correction/SHA256SUMS",
-      "sha256": "4cf6618345e7815fceb165518703df7a028bb81cd24ccada3edd15a0cb559989",
-      "entries": 12
     }
   ],
+  "localMirrorManifests": {
+    "declared": 12,
+    "policy": "checked-when-present; ignored artifacts are not required for clean-checkout replay",
+    "requiredForCleanReplay": false
+  },
   "authority": {
     "hostVerdict": "unchanged",
     "singleGreenLight": false,
@@ -430,5 +375,5 @@
     ]
   },
   "passed": true,
-  "digest": "5ba12b41837bc1ffae1bf2f13b5e238d743606ae6bb6b06404cffa72d7527e8a"
+  "digest": "2f9d18fe9c0264187deb311b2aacb45d29673381f2f524efba331d646f9fe16d"
 }

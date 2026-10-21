@@ -139,19 +139,7 @@
     "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/SHA256SUMS",
     "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/SHA256SUMS",
     "harness/specs/fixtures/versegit-planning-correction/wp4-evidence/SHA256SUMS",
-    "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/SHA256SUMS",
-    "artifacts/versegit/mc0/SHA256SUMS",
-    "artifacts/versegit/mc2/SHA256SUMS",
-    "artifacts/versegit/mc3/SHA256SUMS",
-    "artifacts/versegit/mc4/SHA256SUMS",
-    "artifacts/versegit/mc5/SHA256SUMS",
-    "artifacts/versegit/wp0/SHA256SUMS",
-    "artifacts/versegit/wp1/SHA256SUMS",
-    "artifacts/versegit/wp2/SHA256SUMS",
-    "artifacts/versegit/wp3/SHA256SUMS",
-    "artifacts/versegit/wp4/SHA256SUMS",
-    "artifacts/versegit/wp5/SHA256SUMS",
-    "artifacts/versegit-planning-correction/SHA256SUMS"
+    "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/SHA256SUMS"
   ],
   "optionalDecision": {
     "nodeId": "TF-0479",
@@ -378,5 +366,19 @@
     "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/SHA256SUMS",
     "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
     "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/SHA256SUMS"
+  ],
+  "localMirrorManifests": [
+    "artifacts/versegit/mc0/SHA256SUMS",
+    "artifacts/versegit/mc2/SHA256SUMS",
+    "artifacts/versegit/mc3/SHA256SUMS",
+    "artifacts/versegit/mc4/SHA256SUMS",
+    "artifacts/versegit/mc5/SHA256SUMS",
+    "artifacts/versegit/wp0/SHA256SUMS",
+    "artifacts/versegit/wp1/SHA256SUMS",
+    "artifacts/versegit/wp2/SHA256SUMS",
+    "artifacts/versegit/wp3/SHA256SUMS",
+    "artifacts/versegit/wp4/SHA256SUMS",
+    "artifacts/versegit/wp5/SHA256SUMS",
+    "artifacts/versegit-planning-correction/SHA256SUMS"
   ]
 }

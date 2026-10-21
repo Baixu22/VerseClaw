@@ -76,7 +76,8 @@ export function verifyWp6Closeout({
   if (manifest.mc6Decision?.digest !== storedMc6.digest) issues.push('manifest MC6 digest mismatch');
   if (manifest.mc6Decision?.decision !== 'sidecar-only' || manifest.mc6Decision?.sourceExtractionTriggered !== false) issues.push('manifest MC6 disposition drifted');
   if (manifest.requiredGates?.length !== 12) issues.push('manifest required-gate count mismatch');
-  if (manifest.evidenceManifests?.length !== 24) issues.push('manifest evidence-manifest count mismatch');
+  if (manifest.evidenceManifests?.length !== 12) issues.push('manifest tracked evidence-manifest count mismatch');
+  if (manifest.localMirrorManifests?.declared !== 12 || manifest.localMirrorManifests?.requiredForCleanReplay !== false) issues.push('manifest local mirror policy mismatch');
   if (manifest.release?.releaseEligible !== false || manifest.release?.ga !== false || manifest.release?.defaultOn !== false) issues.push('manifest promoted release posture');
   if (manifest.authority?.hostVerdict !== 'unchanged' || manifest.authority?.m4Authorized !== false) issues.push('manifest authority drifted');
   if (manifest.digest !== documentDigest(manifest)) issues.push('manifest digest is not reproducible');
