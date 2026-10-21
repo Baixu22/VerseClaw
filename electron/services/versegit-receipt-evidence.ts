@@ -395,8 +395,19 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       const inventory = cleanup.processInventory && typeof cleanup.processInventory === 'object' && !Array.isArray(cleanup.processInventory)
         ? cleanup.processInventory as Record<string, unknown>
         : {};
-      add(!Array.isArray(inventory.survivorPids) || inventory.survivorPids.length === 0, 'nested cleanup retained process survivors');
-      add(!Array.isArray(inventory.ownedPidChecks) || inventory.ownedPidChecks.every((entry) => !entry || typeof entry !== 'object' || (entry as Record<string, unknown>).exists === false), 'owned PID checks retained a survivor');
+      const managedPids = Array.isArray(inventory.managedPids) ? inventory.managedPids.filter((pid): pid is number => Number.isInteger(pid) && Number(pid) > 0) : [];
+      const ownedPidChecks = Array.isArray(inventory.ownedPidChecks)
+        ? inventory.ownedPidChecks.filter((entry): entry is Record<string, unknown> => Boolean(entry && typeof entry === 'object' && !Array.isArray(entry)))
+        : [];
+      const nestedSurvivors = Array.isArray(inventory.survivorPids) ? inventory.survivorPids : [];
+      const afterPids = Array.isArray(inventory.afterPids) ? inventory.afterPids.filter((pid): pid is number => Number.isInteger(pid)) : [];
+      const checkedSurvivors = ownedPidChecks.filter((entry) => entry.ok === true && entry.exists === true).map((entry) => entry.pid);
+      add(managedPids.length > 0, 'owned cleanup PID vector is missing');
+      add(ownedPidChecks.length === managedPids.length, 'owned PID exit-check vector is incomplete');
+      add(ownedPidChecks.every((entry) => entry.ok === true && entry.exists === false), 'owned PID checks retained a survivor');
+      add(managedPids.every((pid) => !afterPids.includes(pid)), 'owned PID remained in post-cleanup inventory');
+      add(nestedSurvivors.length === 0 && checkedSurvivors.length === 0, 'nested cleanup retained process survivors');
+      add(stableJson(nestedSurvivors) === stableJson(checkedSurvivors), 'nested survivor vector differs from owned PID checks');
       add(!Array.isArray(inventory.managedAfterShutdown) || inventory.managedAfterShutdown.length === 0, 'managed processes remained after shutdown');
     }
 

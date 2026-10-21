@@ -90,6 +90,8 @@ function cleanCleanup() {
     worktreeSurvivors: 0, tempRootRemoved: true, hostWorktreesDeleted: 0,
     worktreesDeleted: 3, deletionErrors: [], processSurvivors: 0, survivorPids: [],
     processInventory: {
+      managedPids: [1234],
+      afterPids: [],
       managedAfterShutdown: [],
       survivorPids: [],
       ownedPidChecks: [{ ok: true, pid: 1234, exists: false }],
@@ -190,6 +192,7 @@ describe('host-authoritative VerseShell receipts', () => {
     const root = mkdtempSync(join(process.platform === 'win32' ? 'D:/tmp' : process.env.TMPDIR ?? '/tmp', 'vg-receipt-survivor-'));
     try {
       const cleanup = cleanCleanup();
+      cleanup.processInventory.managedPids.push(99999);
       cleanup.processInventory.ownedPidChecks.push({ ok: true, pid: 99999, exists: true });
       cleanup.processInventory.survivorPids.push(99999);
       const installed = installEvidence(root, { cleanup });
