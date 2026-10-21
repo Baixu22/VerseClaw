@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import {
   WP9_EVIDENCE_REPORT_PATH,
   WP9_FIXTURE_PATH,
+  WP9_GRAPH_CONFIG_PATH,
   buildWp9GlobalAcceptance,
   documentDigest,
 } from '../../scripts/versegit-wp9-global-acceptance.mjs';
@@ -38,14 +39,16 @@ function stored(): StoredReport {
   return JSON.parse(readFileSync(resolve(process.cwd(), WP9_EVIDENCE_REPORT_PATH), 'utf8')) as StoredReport;
 }
 
-function fixture(): { parent: { acceptanceCriteria: string[] } } {
-  return JSON.parse(readFileSync(resolve(process.cwd(), WP9_FIXTURE_PATH), 'utf8')) as { parent: { acceptanceCriteria: string[] } };
+function fixture(): { graphHash: string; parent: { acceptanceCriteria: string[] } } {
+  return JSON.parse(readFileSync(resolve(process.cwd(), WP9_FIXTURE_PATH), 'utf8')) as { graphHash: string; parent: { acceptanceCriteria: string[] } };
 }
 
 describe('WP9 whole-goal acceptance', () => {
   it('aggregates seven criteria, seventeen done children and one explicit retirement', () => {
-    const hasLiveGraph = existsSync(resolve(process.cwd(), '.agent-workbench/task-forest/graph/forest.json'));
-    const report = hasLiveGraph
+    const configPath = resolve(process.cwd(), WP9_GRAPH_CONFIG_PATH);
+    const hasPrecloseGraph = existsSync(configPath)
+      && (JSON.parse(readFileSync(configPath, 'utf8')) as { graph_hash?: string }).graph_hash === fixture().graphHash;
+    const report = hasPrecloseGraph
       ? buildWp9GlobalAcceptance({ generatedAt: '2026-10-22T00:00:00.000Z' })
       : stored();
     expect(report.passed).toBe(true);

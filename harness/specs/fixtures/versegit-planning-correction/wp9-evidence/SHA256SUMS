@@ -9,4 +9,4 @@ bfe019bfbce81b22369bc5fefa0188b9800387081e4f90624e0584514b358094  harness/specs/
 7c49ba2e76143de5a3cc99b0ec3f27e049b0da696a5cc6013f64ec916129a066  harness/specs/tasks/versegit-wp9-global-acceptance.md
 f81131aa287a1d7eb1ce0e61324e17a65a44c5a8d7cb10090870118c783f298a  scripts/verify-versegit-wp9.mjs
 2de6d5a520f2c4088edd1c39938a631fb8131b306c2ba283e96f5011a0c09b65  scripts/versegit-wp9-global-acceptance.mjs
-80bf936e082328a7b3388671c4a389fb55faf281cd5051bb57b22e4e5b103b8c  tests/unit/versegit-wp9-global-acceptance.test.ts
+1244223fc69e3c8eee1a40982d0740f5caef31f9c7c6f6d9316d74c8df40994d  tests/unit/versegit-wp9-global-acceptance.test.ts
