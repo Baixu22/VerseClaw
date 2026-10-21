@@ -19,15 +19,13 @@ export const NotificationBell = forwardRef<HTMLButtonElement, ComponentProps<'bu
     }, [total, reduced, swing]);
     return (
       <button ref={ref} type="button" {...props} data-slot="notification-bell" className={cn('rare-notification-bell', className)}>
-        <motion.svg viewBox="0 0 18 18" fill="currentColor" width="18" height="18" aria-hidden="true" style={{ rotate: swing, transformOrigin: '50% 12%' }}>
-          <path fillOpacity=".65" d="M3.5 6.5C3.5 3.46 5.96 1 9 1s5.5 2.46 5.5 5.5v4.25c0 .69.56 1.25 1.25 1.25a.75.75 0 0 1 0 1.5H2.25a.75.75 0 0 1 0-1.5c.69 0 1.25-.56 1.25-1.25V6.5Z" />
-          <path d="M6.5 14.5h5a2.5 2.5 0 0 1-5 0Z" />
+        <motion.svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" width="16" height="16" aria-hidden="true" style={{ rotate: swing, transformOrigin: '50% 10%' }}>
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
         </motion.svg>
         <AnimatePresence initial={false}>
-          {total > 0 && <motion.span key={total} aria-hidden="true" className="rare-notification-bell__count"
-            initial={reduced ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.14 }}>
-            {total > 99 ? '99+' : total}
-          </motion.span>}
+          {total > 0 && <motion.span key="unread" data-testid="chat-completion-unread-dot" aria-hidden="true" className="rare-notification-bell__count"
+            initial={reduced ? false : { opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.14 }} />}
         </AnimatePresence>
       </button>
     );

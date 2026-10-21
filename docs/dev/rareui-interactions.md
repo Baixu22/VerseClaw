@@ -11,10 +11,10 @@ Verse Claw adapts six compact interactions from [Rare UI](https://rareui.com) to
 | --- | --- | --- |
 | Hook Sidebar | Project and session menus | A travelling hook follows the selected or hovered row while preserving existing row actions. |
 | Proximity Sidebar | Chat transcript left edge | After more than three visible user turns, a 28 px turn rail appears. Its tooltip contains a bounded prompt and assistant-response preview; selecting a mark scrolls only the transcript. |
-| Rail TOC | Markdown file preview | A circular reading-progress control expands into a responsive, nested heading rail. Heading selection scrolls only the preview. |
+| Rail TOC | Markdown file preview | A circular reading-progress control sits at the preview's bottom-right and expands into a nested heading rail sized against the preview, so it never blankets the text. Heading selection scrolls only the preview. |
 | Duration Picker | Scheduled-task editor | Daily, weekly, and monthly cron expressions expose local hour/minute editing. Non-cron `every` and `at` schedules remain untouched unless the user explicitly edits the schedule. |
 | Delete Button | Scheduled-task detail panel | The compact delete affordance opens the existing confirmation flow. Cancelling performs no delete host call, and failure never renders a success state. |
-| Notification Bell | Persistent sidebar header | Completed runtime runs and completed visible assistant replies appear newest first. Active, failed, aborted, empty, and tool-only turns are excluded. |
+| Notification Bell | Persistent sidebar header | Completed runtime runs and completed visible assistant replies appear newest first. Active, failed, aborted, empty, and tool-only turns are excluded.  The glyph is a stroke icon with a small unread dot, matching the sidebar's line-icon weight. |
 
 ## Runtime and data boundaries
 

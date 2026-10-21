@@ -38,7 +38,7 @@ touchedAreas:
 expectedUserBehavior:
   - Project and session selection retain existing actions and gain a travelling hook indicator.
   - After more than three visible user turns, a narrow proximity rail appears at the boundary between the persistent sidebar and the main conversation area; hovering previews the prompt and response and clicking scrolls to that turn.
-  - Markdown previews show a circular scroll indicator; clicking it expands a hierarchical rail TOC and heading selection scrolls only the preview.
+  - Markdown previews show a circular scroll indicator at the preview's bottom-right; clicking it expands a hierarchical rail TOC sized relative to the preview (never blanketing the text), and heading selection scrolls only the preview.
   - Schedule editing provides hours and minutes for daily, weekly, and monthly cron times and preserves untouched cron/every/at schedule fields through the existing host contract.
   - The animated delete affordance opens confirmation and cannot delete on its first click.
   - A bell in the persistent sidebar header, above the projects/conversations section, records completed activity, opens newest-first items, and navigates to the corresponding run or session.

@@ -81,6 +81,7 @@ export default function MarkdownPreview({ source, className }: MarkdownPreviewPr
   const prefix = `preview-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const scrollRef = useRef<HTMLDivElement>(null);
   const controlRef = useRef<HTMLDivElement>(null);
+  const tocRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [progress, setProgress] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -117,11 +118,14 @@ export default function MarkdownPreview({ source, className }: MarkdownPreviewPr
   }, [body, sync]);
   useEffect(() => {
     if (!open) return;
-    const close = (event: PointerEvent) => { if (!controlRef.current?.contains(event.target as Node)) setOpen(false); };
+    const close = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (!controlRef.current?.contains(target) && !tocRef.current?.contains(target)) setOpen(false);
+    };
     const escape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); setOpen(false); controlRef.current?.querySelector<HTMLButtonElement>('button')?.focus(); }
     };
-    const frame = requestAnimationFrame(() => controlRef.current?.querySelector<HTMLButtonElement>('nav button[aria-current]')?.focus());
+    const frame = requestAnimationFrame(() => tocRef.current?.querySelector<HTMLButtonElement>('nav button[aria-current]')?.focus());
     document.addEventListener('pointerdown', close);
     document.addEventListener('keydown', escape, true);
     return () => { cancelAnimationFrame(frame); document.removeEventListener('pointerdown', close); document.removeEventListener('keydown', escape, true); };
@@ -215,15 +219,15 @@ export default function MarkdownPreview({ source, className }: MarkdownPreviewPr
         </TooltipTrigger>
         <TooltipContent side="left">{t('filePreview.toc.title')}</TooltipContent>
       </Tooltip>
-      {open && <div id={`${prefix}-toc`} className="rare-markdown-toc motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-150" data-testid="markdown-toc-panel">
-        <RailToc items={items} activeIndex={activeIndex} title={t('filePreview.toc.title')} onSelect={(item) => {
-          const scroller = scrollRef.current;
-          const heading = scroller?.querySelector<HTMLElement>(`#${item.id}`);
-          if (!scroller || !heading) return;
-          scroller.scrollTo({ top: heading.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - 20, behavior: reduced ? 'instant' : 'smooth' });
-          setActiveIndex(items.indexOf(item));
-        }} />
-      </div>}
+    </div>}
+    {items.length > 0 && open && <div id={`${prefix}-toc`} ref={tocRef} className="rare-markdown-toc motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-150" data-testid="markdown-toc-panel">
+      <RailToc items={items} activeIndex={activeIndex} title={t('filePreview.toc.title')} onSelect={(item) => {
+        const scroller = scrollRef.current;
+        const heading = scroller?.querySelector<HTMLElement>(`#${item.id}`);
+        if (!scroller || !heading) return;
+        scroller.scrollTo({ top: heading.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - 20, behavior: reduced ? 'instant' : 'smooth' });
+        setActiveIndex(items.indexOf(item));
+      }} />
     </div>}
     </div>
   );

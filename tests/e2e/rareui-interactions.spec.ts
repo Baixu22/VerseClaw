@@ -195,6 +195,18 @@ test('conversation rail, hook selection, completion bell and Markdown TOC have r
     const toc = page.getByTestId('markdown-toc-panel');
     await expect(toc.locator('nav button')).toHaveCount(6);
     await expect(toc).not.toContainText('Fenced heading');
+    const tocGeometry = await page.evaluate(() => {
+      const rect = (selector: string) => {
+        const element = document.querySelector(selector)?.getBoundingClientRect();
+        return element ? { top: element.top, right: element.right, bottom: element.bottom, width: element.width, height: element.height } : null;
+      };
+      return { panel: rect('[data-testid="markdown-toc-panel"]'), shell: rect('[data-testid="markdown-preview"]') };
+    });
+    expect(tocGeometry.panel).toBeTruthy();
+    expect(Math.abs(tocGeometry.shell!.right - tocGeometry.panel!.right)).toBeLessThan(12);
+    expect(Math.abs(tocGeometry.shell!.bottom - tocGeometry.panel!.bottom)).toBeLessThan(60);
+    expect(tocGeometry.panel!.width).toBeLessThan(tocGeometry.shell!.width * 0.8);
+    expect(tocGeometry.panel!.height).toBeLessThan(tocGeometry.shell!.height * 0.75);
     const transcriptTop = await page.getByTestId('chat-scroll-container').evaluate((el) => el.scrollTop);
     await toc.getByRole('button', { name: 'Nested headings', exact: true }).click();
     await expect.poll(() => page.getByTestId('markdown-preview-scroll').evaluate((el) => el.scrollTop)).toBeGreaterThan(200);

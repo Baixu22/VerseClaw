@@ -9,7 +9,7 @@ These files are curated, agent-driven evidence for the Rare UI interaction adapt
 
 ## Interaction results
 
-- `interaction-results.json` records the three-turn/four-turn threshold, the rail's sidebar/main-area boundary position, the bell's sidebar-header location, prompt and response tooltip content, five newest-first completion entries, six Markdown headings, isolated preview scrolling, Escape dismissal, light/dark/narrow/reduced-motion screenshots, and zero renderer page errors.
+- `interaction-results.json` records the three-turn/four-turn threshold, the rail's sidebar/main-area boundary position, the bell's sidebar-header location, prompt and response tooltip content, five newest-first completion entries, six Markdown headings, the TOC card's bottom-right anchor plus its container-relative width/height bounds (<80% / <75% of the preview), isolated preview scrolling, Escape dismissal, light/dark/narrow/reduced-motion screenshots, and zero renderer page errors.
 - `schedule-results.json` records `09:15` to `10:30` cron editing, reopening the saved value, preserving an untouched `every` schedule, no delete call after cancellation, and confirmed deletion through the existing dialog.
 
 ## Screenshots
