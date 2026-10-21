@@ -44,6 +44,7 @@ ownedPaths:
   - scripts/verify-versegit-mc6.mjs
   - scripts/versegit-wp7-host-vertical.mts
   - scripts/verify-versegit-wp7.mts
+  - scripts/validate-versegit-planning-correction.mjs
   - tests/unit/versegit-mc4-adapter.test.ts
   - tests/unit/versegit-wp1-observation.test.ts
   - tests/unit/versegit-wp2-profile.test.ts

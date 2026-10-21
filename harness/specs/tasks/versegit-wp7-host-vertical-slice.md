@@ -15,6 +15,7 @@ touchedAreas:
   - artifacts/versegit/wp7/**
   - scripts/versegit-wp7-host-vertical.mts
   - scripts/verify-versegit-wp7.mts
+  - scripts/validate-versegit-planning-correction.mjs
   - tests/unit/versegit-wp7-host-vertical.test.ts
 expectedUserBehavior:
   - Two active host worktree/session traces bind distinct producer and consumer identities without crossing.
