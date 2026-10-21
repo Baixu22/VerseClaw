@@ -61,6 +61,7 @@ export function verifyWp6Closeout({
   if (stored.digest !== live.report.digest) issues.push('stored report digest differs from the live closeout replay');
   if (storedMc6.digest !== live.mc6Decision.digest) issues.push('stored MC6 digest differs from the live decision replay');
   if (stored.evidenceManifests?.entryCount !== live.report.evidenceManifests.entryCount) issues.push('pre-closeout evidence entry count drifted');
+  if (stored.evidenceManifests?.uniqueFileCount !== live.report.evidenceManifests.uniqueFileCount) issues.push('pre-closeout unique file count drifted');
 
   if (manifest.schema !== WP6_MANIFEST_SCHEMA) issues.push('manifest schema mismatch');
   if (manifest.task !== 'TF-0472') issues.push('manifest task mismatch');
@@ -77,6 +78,7 @@ export function verifyWp6Closeout({
   if (manifest.mc6Decision?.decision !== 'sidecar-only' || manifest.mc6Decision?.sourceExtractionTriggered !== false) issues.push('manifest MC6 disposition drifted');
   if (manifest.requiredGates?.length !== 12) issues.push('manifest required-gate count mismatch');
   if (manifest.evidenceManifests?.length !== 12) issues.push('manifest tracked evidence-manifest count mismatch');
+  if (manifest.evidenceUniqueFileCount !== stored.evidenceManifests?.uniqueFileCount) issues.push('manifest unique evidence file count mismatch');
   if (manifest.localMirrorManifests?.declared !== 12 || manifest.localMirrorManifests?.requiredForCleanReplay !== false) issues.push('manifest local mirror policy mismatch');
   if (manifest.release?.releaseEligible !== false || manifest.release?.ga !== false || manifest.release?.defaultOn !== false) issues.push('manifest promoted release posture');
   if (manifest.authority?.hostVerdict !== 'unchanged' || manifest.authority?.m4Authorized !== false) issues.push('manifest authority drifted');

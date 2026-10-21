@@ -49,12 +49,23 @@ export function verifyMc6Decision({ artifact = existingOrFallback(resolve(root, 
   if (fixture.decision !== 'sidecar-only' || fixture.sourceExtractionTriggered !== false) issues.push('fixture triggered source extraction');
 
   const evidence = Object.fromEntries(fixture.requiredEvidence.map((path) => [path, readJson(resolve(root, path), path)]));
+  const mc1 = evidence['harness/specs/fixtures/versegit-planning-correction/mc1-evidence/contract.json'];
   const mc4 = evidence['harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json'];
   const mc5 = evidence['harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json'];
+  const wp0 = evidence['harness/specs/fixtures/versegit-planning-correction/wp0-evidence/contract.json'];
   const wp2 = evidence['harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json'];
   const wp5 = evidence['harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json'];
   if (mc4.status !== 'equivalent') issues.push('MC4 adapter equivalence is not stable');
   if (mc5.status !== 'framework_verified') issues.push('MC5 differential gate is not stable');
+  const publicContractStable = mc1.schema === 'clawx.versegit.consumer-contract/v1'
+    && mc1.import_policy?.deep_import_allowed === false
+    && wp0.status === 'verified'
+    && wp0.host_verdict === 'unchanged'
+    && wp0.gate?.passed === true
+    && wp0.version_matrix?.consumer_contract_version === mc1.schema
+    && wp0.version_matrix?.module_report_schema === mc1.surface?.module_report?.schema
+    && wp0.version_matrix?.command_plan_schema === mc1.surface?.command_plan?.schema;
+  if (!publicContractStable) issues.push('MC1/WP0 public consumer contract is not stable');
   if (wp5.passed !== true || wp5.summary?.processCalls !== 0) issues.push('WP5 replay is not sidecar-safe');
   const multi = (wp2.cases ?? []).find((entry) => entry.caseId === 'multi-worktree');
   if (!(multi?.probes ?? []).some((entry) => entry.id === 'provider.conflicts-plan' && entry.status === 'unavailable')) issues.push('WP2 conflicts-plan availability changed');

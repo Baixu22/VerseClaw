@@ -30,7 +30,7 @@ requiredTests:
   - pnpm exec vitest run tests/unit/versegit-wp6-closeout.test.ts
   - pnpm harness validate --spec harness/specs/tasks/versegit-mc6-extraction-decision.md
 acceptance:
-  - MC4 differential, MC5 gate, WP2 seam availability and WP5 replay facts are read from on-disk evidence.
+  - MC1 consumer contract, WP0 version matrix, MC4 differential, MC5 gate, WP2 seam availability and WP5 replay facts are read from on-disk evidence and digest-bound.
   - Decision=sidecar-only, sourceExtractionTriggered=false and measuredInProcessRequirement=false are digest-bound.
   - Migration files remain empty and the provider standalone product is preserved.
   - Reopen conditions require measured necessity and a separate decision; contract stability alone is insufficient.

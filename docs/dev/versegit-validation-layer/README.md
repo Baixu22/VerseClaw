@@ -128,7 +128,7 @@ discover -> eligible -> attach -> observe -> evaluate
 
 2026-10-22 的 WP6 收口只陈述盘上可回读事实：
 
-- MC0-MC5、WP0-WP5 共 12 个必需门禁均已闭合；WP6 复算 12 份 tracked evidence manifest、78 个绑定文件，并在本地存在时额外核对 12 份 artifact mirror manifest；干净检出不依赖 ignored artifacts；
+- MC0-MC5、WP0-WP5 共 12 个必需门禁均已闭合；WP6 复算 12 份 tracked evidence manifest、78 条摘要记录（77 个唯一文件），并在本地存在时额外核对 12 份 artifact mirror manifest；干净检出不依赖 ignored artifacts；
 - `concurrency-aux` 是显式 opt-in profile，不在 `fast`、`comms` 或隐式默认中；单 worktree/单 session 仍为 0 次 VG 调用；
 - host adapter、observation bridge、VerseShell structural receipt bridge 和 behavior coverage 均已落地；host verdict 始终独立；
 - WP3 没有执行 live host-authoritative VerseShell receipt，只证明了 plan/receipt 绑定与拒绝矩阵；
@@ -173,7 +173,7 @@ VG 在 standalone 模式可以保留自己的 bounded executor；进入 ClawX ho
 
 ## 10. 实施路线
 
-实施拆为 WP0-WP6，所有节点均已收口；这不改变默认关闭或产品锁：
+实施拆为 WP0-WP6；当前 WP0-WP6 的工程证据链已生成，Task Forest 节点状态由独立 proposal 在盘上证据复核后同步。这不改变默认关闭或产品锁：
 
 - WP0：契约与二进制身份；
 - WP1：宿主事件到 VG 的观测桥；

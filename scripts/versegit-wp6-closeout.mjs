@@ -332,24 +332,61 @@ export function buildMc6Decision({ root = repositoryRoot, fixturePath = resolve(
   const fixture = readJson(root, normalizePath(relative(root, fixturePath)), 'MC6 fixture');
   if (fixture.schema !== 'clawx.versegit.mc6-extraction-fixture/v1') throw new Error(`MC6 fixture schema mismatch: ${fixture.schema}`);
   const evidence = Object.fromEntries(fixture.requiredEvidence.map((path) => [path, readJson(root, path, 'MC6 evidence')]));
-  const mc4 = evidence['harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json'];
-  const mc5 = evidence['harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json'];
-  const wp2 = evidence['harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json'];
-  const wp5 = evidence['harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json'];
+  const mc1Path = 'harness/specs/fixtures/versegit-planning-correction/mc1-evidence/contract.json';
+  const mc4Path = 'harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json';
+  const mc5Path = 'harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json';
+  const wp0Path = 'harness/specs/fixtures/versegit-planning-correction/wp0-evidence/contract.json';
+  const wp2Path = 'harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json';
+  const wp5Path = 'harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json';
+  const mc1 = evidence[mc1Path];
+  const mc4 = evidence[mc4Path];
+  const mc5 = evidence[mc5Path];
+  const wp0 = evidence[wp0Path];
+  const wp2 = evidence[wp2Path];
+  const wp5 = evidence[wp5Path];
   const multi = (wp2.cases ?? []).find((entry) => entry.caseId === 'multi-worktree');
   const sidecarStable = mc4.status === 'equivalent'
     && mc5.status === 'framework_verified'
     && wp5.passed === true
     && wp5.summary?.processCalls === 0
     && (wp5.failures ?? []).some((entry) => entry.id === 'sidecar_crash' && entry.status === 'passed');
+  const publicContractStable = mc1.schema === 'clawx.versegit.consumer-contract/v1'
+    && mc1.import_policy?.deep_import_allowed === false
+    && wp0.status === 'verified'
+    && wp0.host_verdict === 'unchanged'
+    && wp0.gate?.passed === true
+    && wp0.version_matrix?.consumer_contract_version === mc1.schema
+    && wp0.version_matrix?.module_report_schema === mc1.surface?.module_report?.schema
+    && wp0.version_matrix?.command_plan_schema === mc1.surface?.command_plan?.schema;
   const conflictsPlanUnavailable = (multi?.probes ?? []).some(
     (entry) => entry.id === 'provider.conflicts-plan' && entry.status === 'unavailable' && entry.reason === 'provider_seam_unavailable',
   );
+  const bind = (role, path) => ({ role, path, sha256: fileSha(root, path, `${role} MC6 evidence`) });
   const assessment = [
-    { id: 'sidecar-contract-stable', observed: sidecarStable, evidence: ['MC4', 'MC5', 'WP5'] },
-    { id: 'public-contract-stable', observed: fixture.publicContractStable === true, evidence: ['MC1', 'WP0'] },
-    { id: 'measured-in-process-requirement', observed: fixture.measuredInProcessRequirement === true, evidence: [] },
-    { id: 'performance-or-security-blocker', observed: Boolean(fixture.performanceOrSecurityBlocker), evidence: [] },
+    {
+      id: 'sidecar-contract-stable',
+      status: sidecarStable ? 'observed' : 'unavailable',
+      observed: sidecarStable,
+      evidence: [bind('MC4', mc4Path), bind('MC5', mc5Path), bind('WP5', wp5Path)],
+    },
+    {
+      id: 'public-contract-stable',
+      status: publicContractStable ? 'observed' : 'unavailable',
+      observed: publicContractStable,
+      evidence: [bind('MC1', mc1Path), bind('WP0', wp0Path)],
+    },
+    {
+      id: 'measured-in-process-requirement',
+      status: 'not_observed',
+      evidence: [],
+      basis: 'No measured in-process performance or security requirement is present in the required evidence set.',
+    },
+    {
+      id: 'performance-or-security-blocker',
+      status: 'not_observed',
+      evidence: [],
+      basis: 'No sidecar performance or security blocker is present in the required evidence set.',
+    },
   ];
   const decision = {
     schema: MC6_SCHEMA,
@@ -382,7 +419,8 @@ export function buildMc6Decision({ root = repositoryRoot, fixturePath = resolve(
     },
     passed: fixture.decision === 'sidecar-only'
       && fixture.sourceExtractionTriggered === false
-      && fixture.measuredInProcessRequirement === false
+      && sidecarStable
+      && publicContractStable
       && conflictsPlanUnavailable,
     issues: [],
     digest: null,
@@ -409,11 +447,20 @@ export function validateMc6Decision(decision) {
   add(decision?.authority?.hostVerdict === 'unchanged', 'host verdict changed');
   add(decision?.authority?.singleGreenLight === false && decision?.authority?.defaultOn === false && decision?.authority?.m4Authorized === false, 'authority/product locks changed');
   add(decision?.boundaries?.providerSourceCopied === false && decision?.boundaries?.providerHistoryCopied === false && decision?.boundaries?.providerBuildOutputsCopied === false && decision?.boundaries?.userWorkspaceMutated === false, 'provider or workspace boundary failed');
-  const assessment = new Map((decision?.triggerAssessment ?? []).map((entry) => [entry.id, entry.observed]));
-  add(assessment.get('sidecar-contract-stable') === true, 'sidecar stability not observed');
-  add(assessment.get('public-contract-stable') === true, 'public contract stability not observed');
-  add(assessment.get('measured-in-process-requirement') === false, 'in-process requirement must remain unmeasured');
-  add(assessment.get('performance-or-security-blocker') === false, 'no performance/security blocker may be claimed');
+  const assessment = new Map((decision?.triggerAssessment ?? []).map((entry) => [entry.id, entry]));
+  const sidecar = assessment.get('sidecar-contract-stable');
+  const publicContract = assessment.get('public-contract-stable');
+  const inProcess = assessment.get('measured-in-process-requirement');
+  const blocker = assessment.get('performance-or-security-blocker');
+  add(sidecar?.status === 'observed' && sidecar?.observed === true && (sidecar?.evidence ?? []).length >= 3, 'sidecar stability not observed');
+  add(publicContract?.status === 'observed' && publicContract?.observed === true && (publicContract?.evidence ?? []).length >= 2, 'public contract stability not observed');
+  add(inProcess?.status === 'not_observed' && inProcess?.observed === undefined, 'in-process requirement must remain unobserved');
+  add(blocker?.status === 'not_observed' && blocker?.observed === undefined, 'no performance/security blocker may be claimed');
+  for (const entry of [sidecar, publicContract]) {
+    for (const binding of entry?.evidence ?? []) {
+      add(/^[0-9a-f]{64}$/u.test(binding.sha256 ?? ''), `${entry.id}: evidence digest missing for ${binding.role}`);
+    }
+  }
   add(decision?.passed === true, 'MC6 decision did not pass');
   add(Array.isArray(decision?.issues) && decision.issues.length === 0, 'MC6 issues must be empty');
   if (decision?.digest !== documentDigest(decision)) issues.push('digest is not reproducible');
@@ -521,7 +568,7 @@ export function buildWp6Closeout({ root = repositoryRoot, fixturePath = resolve(
 
   validateRetirement(fixture.retirementLayers, issues);
   const residualRisks = [...fixture.residualRisks];
-  for (const required of ['live-verseShell-receipt', 'conflicts-plan-seam', 'partial-read-surfaces', 'language-completeness', 'non-windows-platforms', 'release-package', 'm4-recovery']) {
+  for (const required of ['live-verseShell-receipt', 'conflicts-plan-seam', 'partial-read-surfaces', 'language-completeness', 'non-windows-platforms', 'release-package', 'm4-recovery', 'historical-planning-manifest', 'verifier-shared-builder']) {
     if (!residualRisks.some((entry) => entry.id === required)) issues.push(`residual risk missing ${required}`);
   }
   const mc6Built = buildMc6Decision({
@@ -571,6 +618,7 @@ export function buildWp6Closeout({ root = repositoryRoot, fixturePath = resolve(
     evidenceManifests: {
       count: evidenceManifests.length,
       entryCount: evidenceManifests.reduce((sum, manifest) => sum + manifest.entries, 0),
+      uniqueFileCount: new Set(evidenceManifests.flatMap((manifest) => manifest.files.map((entry) => entry.path))).size,
       reproducible: evidenceManifests.every((manifest) => manifest.missing.length === 0 && manifest.mismatches.length === 0),
       items: evidenceManifests,
     },
@@ -623,6 +671,7 @@ export function validateWp6Report(report) {
   add((report?.requiredGates ?? []).every((gate) => gate.issues?.length === 0 && gate.taskSpecSha256 && gate.verifierSha256), 'one or more gates is incomplete');
   add(report?.gateSummary?.deprecated === 1 && report?.gateSummary?.optionalDecision === 1, 'optional/deprecated disposition missing');
   add(report?.evidenceManifests?.count === 12 && report?.evidenceManifests?.reproducible === true, 'tracked pre-closeout evidence manifests are not reproducible');
+  add(Number.isInteger(report?.evidenceManifests?.uniqueFileCount) && report.evidenceManifests.uniqueFileCount > 0, 'unique evidence file count missing');
   add(report?.localMirrorManifests?.declared === 12 && report?.localMirrorManifests?.requiredForCleanReplay === false, 'optional local mirror policy missing');
   add((report?.evidenceManifests?.items ?? []).every((manifest) => manifest.missing?.length === 0 && manifest.mismatches?.length === 0), 'an evidence manifest contains missing or stale files');
   add(report?.authority?.hostVerdict === 'unchanged', 'host verdict changed');
@@ -697,6 +746,7 @@ function buildManifest(reportText, report, mc6Text, mc6Decision) {
       sha256: manifestEntry.sha256,
       entries: manifestEntry.entries,
     })),
+    evidenceUniqueFileCount: report.evidenceManifests.uniqueFileCount,
     localMirrorManifests: report.localMirrorManifests,
     authority: report.authority,
     release: report.release,

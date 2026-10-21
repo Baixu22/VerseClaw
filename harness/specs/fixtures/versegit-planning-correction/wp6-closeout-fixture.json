@@ -353,6 +353,16 @@
       "id": "independent-final-review",
       "status": "not-claimed",
       "detail": "The closeout relies on reproducible local verifiers and clean-worktree harness validation; no external model or human verdict is synthesized."
+    },
+    {
+      "id": "historical-planning-manifest",
+      "status": "retained",
+      "detail": "The historical TF-0481 artifacts/versegit-planning-correction/manifest.json has two stale input digests for scripts/validate-versegit-planning-correction.mjs and harness/specs/tasks/versegit-module-implementation-contracts.md. Its SHA256SUMS is reproducible; the immutable historical manifest is not rewritten and remains an explicit residual."
+    },
+    {
+      "id": "verifier-shared-builder",
+      "status": "retained",
+      "detail": "WP6 and MC6 verifiers replay through the producer builder/validator. Critical stored fields and every referenced digest are rechecked, but a shared-code omission risk remains."
     }
   ],
   "expectedOutputs": [

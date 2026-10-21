@@ -1,11 +1,11 @@
 {
   "schema": "clawx.versegit.wp6-closeout/v1",
-  "generated_at": "2026-10-21T18:11:59.954Z",
+  "generated_at": "2026-10-21T18:23:11.553Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0472",
   "fixture": "harness/specs/fixtures/versegit-planning-correction/wp6-closeout-fixture.json",
-  "fixtureDigest": "a3f78279435682cae540b4e07d540eea9ba19c226346971ce6b41a2e06f73f31",
+  "fixtureDigest": "73bcfcc088470dab695bf062838a6cf157e5ba28c71868d8a07b46bdf98b9c9d",
   "productPosture": "non-ga-landed-unwired",
   "requiredGates": [
     {
@@ -263,7 +263,7 @@
       "status": "done",
       "decision": "sidecar-only",
       "sourceExtractionTriggered": false,
-      "digest": "282fccc0e441bf092ea3363d9a6cc341fd8279d0cc2b3d1a129b5182d2f8ca91"
+      "digest": "50424e0aabdd12f4a740d878d357013556b5266c3eeefd14e2c0a8027fbaa749"
     },
     {
       "id": "TF-0480",
@@ -454,6 +454,7 @@
   "evidenceManifests": {
     "count": 12,
     "entryCount": 78,
+    "uniqueFileCount": 77,
     "reproducible": true,
     "items": [
       {
@@ -967,7 +968,7 @@
     "schema": "clawx.versegit.mc6-decision/v1",
     "decision": "sidecar-only",
     "sourceExtractionTriggered": false,
-    "digest": "282fccc0e441bf092ea3363d9a6cc341fd8279d0cc2b3d1a129b5182d2f8ca91"
+    "digest": "50424e0aabdd12f4a740d878d357013556b5266c3eeefd14e2c0a8027fbaa749"
   },
   "residualRisks": [
     {
@@ -1014,6 +1015,16 @@
       "id": "independent-final-review",
       "status": "not-claimed",
       "detail": "The closeout relies on reproducible local verifiers and clean-worktree harness validation; no external model or human verdict is synthesized."
+    },
+    {
+      "id": "historical-planning-manifest",
+      "status": "retained",
+      "detail": "The historical TF-0481 artifacts/versegit-planning-correction/manifest.json has two stale input digests for scripts/validate-versegit-planning-correction.mjs and harness/specs/tasks/versegit-module-implementation-contracts.md. Its SHA256SUMS is reproducible; the immutable historical manifest is not rewritten and remains an explicit residual."
+    },
+    {
+      "id": "verifier-shared-builder",
+      "status": "retained",
+      "detail": "WP6 and MC6 verifiers replay through the producer builder/validator. Critical stored fields and every referenced digest are rechecked, but a shared-code omission risk remains."
     }
   ],
   "boundaries": {
@@ -1028,5 +1039,5 @@
   },
   "passed": true,
   "issues": [],
-  "digest": "6c9465f39f60dce5b9ef474524dc7b10f4bfd8a172c85e93d5ee66fe4e5faf18"
+  "digest": "235e9a6754bcc2d4fc667dd8778361a1011773c8571b9b7ef6e646811c2c7f98"
 }

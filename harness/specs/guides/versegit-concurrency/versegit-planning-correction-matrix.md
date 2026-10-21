@@ -8,7 +8,7 @@ appliesTo:
 
 # VerseGit planning correction matrix
 
-> 状态：TF-0481 已关闭；MC0-MC5、WP0-WP6 已按本矩阵收口，MC6 裁定 `sidecar-only`，MC7 并入 WP6。
+> 状态：TF-0481 已关闭；WP6 工程证据链已生成，Task Forest 节点状态由独立 proposal 同步；MC6 裁定 `sidecar-only`，MC7 并入 WP6。
 > 历史输入：`D:\tmp\versegit-plan-review-6.1-sol.md` 的初版规划验收结论 **FAIL**；修正后由后续节点证据逐项闭合。
 > 目标：先把规划修到可执行、可验证、不可绕过，再允许任何实现节点开工。
 
@@ -146,7 +146,7 @@ TF-0481 关闭条件：
 7. 剩余 gaps 只能是执行期验证项。
 8. 任务 spec 在干净树上通过不带 `--no-diff` 的完整 harness validate。
 
-2026-10-22 收口事实：上述条件由 TF-0481、MC0-MC5、WP0-WP5 与 WP6 的盘上证据共同满足；WP6 明确保留 release、live VerseShell、conflicts-plan、语言/平台/读面和 M4 残余边界。
+2026-10-22 实施事实：P0/P1 修正与 MC0-MC5、WP0-WP6 的执行证据已完成，WP6 明确保留 release、live VerseShell、conflicts-plan、语言/平台/读面和 M4 残余边界。条件 6 是独立复验要求，不能被 WP6 自证或后续聚合替代：历史 manifest 与 deviation 记录最终 gpt-6.1-sol 复验曾被上游容量阻塞；新的独立复验结论必须单独登记，未取得前不得声称 `PASS_WITH_GAPS` 已满足。
 
 ## 9. 非目标
 

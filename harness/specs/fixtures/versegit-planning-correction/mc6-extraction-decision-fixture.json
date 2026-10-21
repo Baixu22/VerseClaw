@@ -6,8 +6,10 @@
   "decision": "sidecar-only",
   "sourceExtractionTriggered": false,
   "requiredEvidence": [
+    "harness/specs/fixtures/versegit-planning-correction/mc1-evidence/contract.json",
     "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
     "harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json",
+    "harness/specs/fixtures/versegit-planning-correction/wp0-evidence/contract.json",
     "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json",
     "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json"
   ],
@@ -28,9 +30,5 @@
     "artifacts/versegit/mc6/SHA256SUMS",
     "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
     "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/SHA256SUMS"
-  ],
-  "sidecarStable": true,
-  "publicContractStable": true,
-  "measuredInProcessRequirement": false,
-  "performanceOrSecurityBlocker": null
+  ]
 }

@@ -1,40 +1,64 @@
 {
   "schema": "clawx.versegit.mc6-decision/v1",
-  "generated_at": "2026-10-21T18:11:59.954Z",
+  "generated_at": "2026-10-21T18:23:11.553Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0479",
   "fixture": "harness/specs/fixtures/versegit-planning-correction/mc6-extraction-decision-fixture.json",
-  "fixtureDigest": "955688557fe5c9b5d279cd24ba524ad37ed23cea72845eee2f637595dc94f25f",
+  "fixtureDigest": "61563bb4b3fa76c746e7bc66a50b374d08203ea8d3a80278a4c8799cf4778a95",
   "decision": "sidecar-only",
   "sourceExtractionTriggered": false,
   "triggerAssessment": [
     {
       "id": "sidecar-contract-stable",
+      "status": "observed",
       "observed": true,
       "evidence": [
-        "MC4",
-        "MC5",
-        "WP5"
+        {
+          "role": "MC4",
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
+          "sha256": "9b81dfc507be6a5489957eb59ba0d1d19172fdb9e5f2a83d8920d5d6e18e13b3"
+        },
+        {
+          "role": "MC5",
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json",
+          "sha256": "687694fbb402e4c73d8827d2e2a1f79b4d37f1d54837334ca9c2cc263eb85cc5"
+        },
+        {
+          "role": "WP5",
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json",
+          "sha256": "13aeb09c889177d732faad7a842f2067c95d0dd27c38020110fe0ed8598aa6bf"
+        }
       ]
     },
     {
       "id": "public-contract-stable",
+      "status": "observed",
       "observed": true,
       "evidence": [
-        "MC1",
-        "WP0"
+        {
+          "role": "MC1",
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc1-evidence/contract.json",
+          "sha256": "0d7d316db47f42d164a800982183a4f24e550a28dee1c8d2d03361c1ff9859ae"
+        },
+        {
+          "role": "WP0",
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp0-evidence/contract.json",
+          "sha256": "d4ec1fc974ba36352d9f0c8f31dc61551442ba225420c07abba9bd44aa9bc585"
+        }
       ]
     },
     {
       "id": "measured-in-process-requirement",
-      "observed": false,
-      "evidence": []
+      "status": "not_observed",
+      "evidence": [],
+      "basis": "No measured in-process performance or security requirement is present in the required evidence set."
     },
     {
       "id": "performance-or-security-blocker",
-      "observed": false,
-      "evidence": []
+      "status": "not_observed",
+      "evidence": [],
+      "basis": "No sidecar performance or security blocker is present in the required evidence set."
     }
   ],
   "conflictsPlanSeam": "unavailable",
@@ -61,5 +85,5 @@
   },
   "passed": true,
   "issues": [],
-  "digest": "282fccc0e441bf092ea3363d9a6cc341fd8279d0cc2b3d1a129b5182d2f8ca91"
+  "digest": "50424e0aabdd12f4a740d878d357013556b5266c3eeefd14e2c0a8027fbaa749"
 }

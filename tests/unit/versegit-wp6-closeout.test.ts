@@ -13,7 +13,8 @@ describe('WP6 merged closeout', () => {
     expect(built.report.gateSummary).toMatchObject({ required: 12, verified: 12, failed: 0, deprecated: 1, optionalDecision: 1 });
     expect(built.report.requiredGates.map((gate: { role: string }) => gate.role)).toEqual(expect.arrayContaining(['MC0', 'MC1', 'MC2', 'MC3', 'MC4', 'MC5', 'WP0', 'WP1', 'WP2', 'WP3', 'WP4', 'WP5']));
     expect(built.report.evidenceManifests).toMatchObject({ count: 12, reproducible: true });
-    expect(built.report.evidenceManifests.entryCount).toBeGreaterThan(40);
+    expect(built.report.evidenceManifests.entryCount).toBe(78);
+    expect(built.report.evidenceManifests.uniqueFileCount).toBe(77);
     expect(built.report.authority).toMatchObject({ hostVerdict: 'unchanged', singleGreenLight: false, liveVerseShellReceiptExecuted: false, m4Authorized: false });
     expect(built.report.release).toMatchObject({ defaultOn: false, ga: false, releaseEligible: false, packageStatus: 'rejected', binaryProfile: 'debug' });
     expect(built.report.coverage.coverageVector).toMatchObject({ shellRead: 'unobserved', directFs: 'unobserved', mcpWrite: 'unobserved', browser: 'unobserved' });
@@ -22,6 +23,7 @@ describe('WP6 merged closeout', () => {
     expect(built.report.conflictsPlan.status).toBe('unavailable');
     expect(built.mc6Decision).toMatchObject({ decision: 'sidecar-only', sourceExtractionTriggered: false, passed: true });
     expect(built.mc6Decision.migrationFiles).toEqual([]);
+    expect(built.mc6Decision.triggerAssessment.find((entry: { id: string }) => entry.id === 'public-contract-stable')?.evidence).toHaveLength(2);
     expect(built.report.passed).toBe(true);
     expect(built.report.issues).toEqual([]);
     expect(validateWp6Report(built.report).issues).toEqual([]);
@@ -58,7 +60,7 @@ describe('WP6 merged closeout', () => {
       'decision must remain sidecar-only',
       'source extraction must not be triggered',
       'migration files must remain empty',
-      'in-process requirement must remain unmeasured',
+      'in-process requirement must remain unobserved',
     ]));
   });
 });
