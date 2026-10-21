@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.wp6-manifest/v1",
-  "generated_at": "2026-10-21T18:25:09.959Z",
+  "generated_at": "2026-10-21T18:29:12.930Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0472",
@@ -8,13 +8,13 @@
   "finalReport": {
     "path": "artifacts/versegit/wp6/final-report.json",
     "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json",
-    "sha256": "4472721037517d35f342be95aa4532624761bd4af6a996353bb7fc2420aba7cb",
-    "digest": "235e9a6754bcc2d4fc667dd8778361a1011773c8571b9b7ef6e646811c2c7f98"
+    "sha256": "543f6d8def8fc6f74f6668fb8c8a1ce437a127ff5b20ae6eb6c5f2553f7b2aa3",
+    "digest": "ba7cd3a1a283ef4a6247a7f5b5edc1a2f28b97d128773dc205c136326889de42"
   },
   "mc6Decision": {
     "path": "artifacts/versegit/mc6/decision.json",
     "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
-    "sha256": "c77200f23be02353d05f08013da33a7465d8d2a910521ae6fa78dff0e7bc5472",
+    "sha256": "31cbe8be8174d4d73d682b8bb440622656a07e0c9d4c854544d292590ef9c3fe",
     "digest": "50424e0aabdd12f4a740d878d357013556b5266c3eeefd14e2c0a8027fbaa749",
     "decision": "sidecar-only",
     "sourceExtractionTriggered": false
@@ -276,6 +276,19 @@
     }
   ],
   "evidenceUniqueFileCount": 77,
+  "credentialScan": {
+    "status": "passed",
+    "filesScanned": 85,
+    "patterns": [
+      "openai-like",
+      "github-like",
+      "aws-access-key",
+      "private-key",
+      "phc-like"
+    ],
+    "hits": [],
+    "passed": true
+  },
   "localMirrorManifests": {
     "declared": 12,
     "policy": "checked-when-present; ignored artifacts are not required for clean-checkout replay",
@@ -376,5 +389,5 @@
     ]
   },
   "passed": true,
-  "digest": "0e5cfda4cfb98feed20faf75c748eabcfcd811dc8185c0aaf03ceb2e987b1c6d"
+  "digest": "13906bb98e0f50ff22f4cccf29716ccc34206480c306524e1ffdff62ef8140e3"
 }

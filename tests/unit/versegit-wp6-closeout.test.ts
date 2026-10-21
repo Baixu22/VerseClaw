@@ -24,6 +24,7 @@ describe('WP6 merged closeout', () => {
     expect(built.report.release).toMatchObject({ defaultOn: false, ga: false, releaseEligible: false, packageStatus: 'rejected', binaryProfile: 'debug' });
     expect(built.report.coverage.coverageVector).toMatchObject({ shellRead: 'unobserved', directFs: 'unobserved', mcpWrite: 'unobserved', browser: 'unobserved' });
     expect(built.report.localMirrorManifests).toMatchObject({ declared: 12, requiredForCleanReplay: false });
+    expect(built.report.credentialScan).toMatchObject({ status: 'passed', hits: [] });
     expect(built.report.m4.status).toBe('not_authorized');
     expect(built.report.conflictsPlan.status).toBe('unavailable');
     expect(built.mc6Decision).toMatchObject({ decision: 'sidecar-only', sourceExtractionTriggered: false, passed: true });

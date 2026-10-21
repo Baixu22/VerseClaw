@@ -128,7 +128,7 @@ discover -> eligible -> attach -> observe -> evaluate
 
 2026-10-22 的 WP6 收口只陈述盘上可回读事实：
 
-- MC0-MC5、WP0-WP5 共 12 个必需门禁均已闭合；WP6 复算 12 份 tracked evidence manifest、78 条摘要记录（77 个唯一文件），并在本地存在时额外核对 12 份 artifact mirror manifest；干净检出不依赖 ignored artifacts；
+- MC0-MC5、WP0-WP5 共 12 个必需门禁均已闭合；WP6 复算 12 份 tracked evidence manifest、78 条摘要记录（77 个唯一文件），并在本地存在时额外核对 12 份 artifact mirror manifest；干净检出不依赖 ignored artifacts；凭证模式扫描 85 个 retained files，0 hits；
 - `concurrency-aux` 是显式 opt-in profile，不在 `fast`、`comms` 或隐式默认中；单 worktree/单 session 仍为 0 次 VG 调用；
 - host adapter、observation bridge、VerseShell structural receipt bridge 和 behavior coverage 均已落地；host verdict 始终独立；
 - WP3 没有执行 live host-authoritative VerseShell receipt，只证明了 plan/receipt 绑定与拒绝矩阵；

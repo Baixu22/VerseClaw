@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.wp6-closeout/v1",
-  "generated_at": "2026-10-21T18:25:09.959Z",
+  "generated_at": "2026-10-21T18:29:12.930Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0472",
@@ -957,6 +957,19 @@
       }
     ]
   },
+  "credentialScan": {
+    "status": "passed",
+    "filesScanned": 85,
+    "patterns": [
+      "openai-like",
+      "github-like",
+      "aws-access-key",
+      "private-key",
+      "phc-like"
+    ],
+    "hits": [],
+    "passed": true
+  },
   "localMirrorManifests": {
     "declared": 12,
     "policy": "checked-when-present; ignored artifacts are not required for clean-checkout replay",
@@ -1039,5 +1052,5 @@
   },
   "passed": true,
   "issues": [],
-  "digest": "235e9a6754bcc2d4fc667dd8778361a1011773c8571b9b7ef6e646811c2c7f98"
+  "digest": "ba7cd3a1a283ef4a6247a7f5b5edc1a2f28b97d128773dc205c136326889de42"
 }

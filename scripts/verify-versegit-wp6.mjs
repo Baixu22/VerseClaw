@@ -79,6 +79,7 @@ export function verifyWp6Closeout({
   if (manifest.requiredGates?.length !== 12) issues.push('manifest required-gate count mismatch');
   if (manifest.evidenceManifests?.length !== 12) issues.push('manifest tracked evidence-manifest count mismatch');
   if (manifest.evidenceUniqueFileCount !== stored.evidenceManifests?.uniqueFileCount) issues.push('manifest unique evidence file count mismatch');
+  if (manifest.credentialScan?.passed !== true || manifest.credentialScan?.hits?.length !== 0) issues.push('manifest credential scan is missing or failed');
   if (manifest.localMirrorManifests?.declared !== 12 || manifest.localMirrorManifests?.requiredForCleanReplay !== false) issues.push('manifest local mirror policy mismatch');
   if (manifest.release?.releaseEligible !== false || manifest.release?.ga !== false || manifest.release?.defaultOn !== false) issues.push('manifest promoted release posture');
   if (manifest.authority?.hostVerdict !== 'unchanged' || manifest.authority?.m4Authorized !== false) issues.push('manifest authority drifted');

@@ -44,6 +44,7 @@ requiredTests:
 acceptance:
   - All twelve required child gates exist and their task specs, verifiers, curated reports, schema identities and artifact aliases are present; TF-0480 is explicitly deprecated and merged.
   - Every required evidence manifest is recomputed from its listed files with zero missing files and zero digest mismatches.
+  - Credential-pattern scanning covers the retained evidence and static closeout inputs with zero hits.
   - The closeout remains non-GA and release-ineligible with the dirty-source and release-binary blockers retained; evidence closure is not promoted to product approval.
   - host verdict stays unchanged, singleGreenLight stays false, no land/admit or VG process is run, and M4 remains unauthorized.
   - The current conflicts-plan seam is unavailable, no live VerseShell receipt is claimed, and shell/direct-fs/arbitrary-MCP/network/browser gaps remain visible.

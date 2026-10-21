@@ -59,7 +59,34 @@ export const MC6_EVIDENCE_SHA_PATHS = [`${MC6_EVIDENCE_ROOT}/decision.json`, ...
 
 const repositoryRoot = resolve(process.cwd());
 const ignoredDigestKeys = new Set(['generated_at', 'digest']);
+const CREDENTIAL_PATTERNS = [
+  { id: 'openai-like', pattern: /sk-[A-Za-z0-9]{16,}/u },
+  { id: 'github-like', pattern: /ghp_[A-Za-z0-9]{16,}/u },
+  { id: 'aws-access-key', pattern: /AKIA[0-9A-Z]{16}/u },
+  { id: 'private-key', pattern: /-----BEGIN [A-Z ]*PRIVATE KEY-----/u },
+  { id: 'phc-like', pattern: /phc_[A-Za-z0-9]{16,}/u },
+];
 
+export function scanCredentialEvidence({ root = repositoryRoot, paths = [] } = {}) {
+  const uniquePaths = [...new Set(paths.map(normalizePath))].filter((path) => {
+    const full = resolve(root, path);
+    return existsSync(full) && statSync(full).isFile();
+  });
+  const hits = [];
+  for (const path of uniquePaths) {
+    const text = readFileSync(resolve(root, path), 'utf8');
+    for (const rule of CREDENTIAL_PATTERNS) {
+      if (rule.pattern.test(text)) hits.push({ path, pattern: rule.id });
+    }
+  }
+  return {
+    status: hits.length === 0 ? 'passed' : 'rejected',
+    filesScanned: uniquePaths.length,
+    patterns: CREDENTIAL_PATTERNS.map((rule) => rule.id),
+    hits,
+    passed: hits.length === 0,
+  };
+}
 export function sha256(value) {
   return createHash('sha256').update(value).digest('hex');
 }
@@ -506,6 +533,17 @@ export function buildWp6Closeout({ root = repositoryRoot, fixturePath = resolve(
     if (manifest.missing.length > 0) issues.push(`optional local mirror ${manifest.path}: missing ${manifest.missing.length} file(s)`);
     if (manifest.mismatches.length > 0) issues.push(`optional local mirror ${manifest.path}: ${manifest.mismatches.length} digest mismatch(es)`);
   }
+  const credentialScan = scanCredentialEvidence({
+    root,
+    paths: [
+      ...evidenceManifests.flatMap((manifest) => manifest.files.map((entry) => entry.path)),
+      ...WP6_COMMON_SHA_PATHS,
+      ...MC6_COMMON_SHA_PATHS,
+      WP6_FIXTURE_PATH,
+      MC6_FIXTURE_PATH,
+    ],
+  });
+  if (!credentialScan.passed) issues.push(`credential scan found ${credentialScan.hits.length} hit(s)`);
 
   const gateByRole = Object.fromEntries(requiredGates.map((entry) => [entry.role, entry]));
   const mc0 = readJson(root, gateByRole.MC0.curatedPath, 'MC0 closeout read');
@@ -622,6 +660,7 @@ export function buildWp6Closeout({ root = repositoryRoot, fixturePath = resolve(
       reproducible: evidenceManifests.every((manifest) => manifest.missing.length === 0 && manifest.mismatches.length === 0),
       items: evidenceManifests,
     },
+    credentialScan,
     localMirrorManifests: {
       declared: declaredLocalMirrorManifests.length,
       policy: 'checked-when-present; ignored artifacts are not required for clean-checkout replay',
@@ -673,6 +712,7 @@ export function validateWp6Report(report) {
   add(report?.evidenceManifests?.count === 12 && report?.evidenceManifests?.reproducible === true, 'tracked pre-closeout evidence manifests are not reproducible');
   add(Number.isInteger(report?.evidenceManifests?.uniqueFileCount) && report.evidenceManifests.uniqueFileCount > 0, 'unique evidence file count missing');
   add(report?.localMirrorManifests?.declared === 12 && report?.localMirrorManifests?.requiredForCleanReplay === false, 'optional local mirror policy missing');
+  add(report?.credentialScan?.passed === true && report?.credentialScan?.status === 'passed' && report?.credentialScan?.hits?.length === 0 && report?.credentialScan?.filesScanned > 0, 'credential scan missing or failed');
   add((report?.evidenceManifests?.items ?? []).every((manifest) => manifest.missing?.length === 0 && manifest.mismatches?.length === 0), 'an evidence manifest contains missing or stale files');
   add(report?.authority?.hostVerdict === 'unchanged', 'host verdict changed');
   add(report?.authority?.singleGreenLight === false && report?.authority?.defaultOn !== true, 'single green light or default-on promoted');
@@ -747,6 +787,7 @@ function buildManifest(reportText, report, mc6Text, mc6Decision) {
       entries: manifestEntry.entries,
     })),
     evidenceUniqueFileCount: report.evidenceManifests.uniqueFileCount,
+    credentialScan: report.credentialScan,
     localMirrorManifests: report.localMirrorManifests,
     authority: report.authority,
     release: report.release,
