@@ -17,8 +17,10 @@ touchedAreas:
   - harness/specs/tasks/versegit-mc4-module-adapter.md
   - harness/specs/tasks/versegit-wp1-observation-bridge.md
   - harness/specs/tasks/versegit-wp2-diagnostic-profile.md
+  - harness/specs/tasks/versegit-wp3-receipt-bridge.md
   - electron/services/versegit-module.ts
   - electron/services/versegit-observation.ts
+  - electron/services/versegit-receipt-bridge.ts
   - harness/src/profiles.mjs
   - scripts/versegit-mc1-contract.mjs
   - scripts/verify-versegit-mc1.mjs
@@ -36,6 +38,8 @@ touchedAreas:
   - scripts/verify-versegit-wp1.mjs
   - scripts/versegit-wp2-profile.mjs
   - scripts/verify-versegit-wp2.mjs
+  - scripts/versegit-wp3-receipts.mjs
+  - scripts/verify-versegit-wp3.mjs
   - tests/unit/versegit-mc1-contract.test.ts
   - tests/unit/versegit-mc2-fingerprint.test.ts
   - tests/unit/versegit-mc3-delivery.test.ts
@@ -44,6 +48,7 @@ touchedAreas:
   - tests/unit/versegit-mc4-adapter.test.ts
   - tests/unit/versegit-wp1-observation.test.ts
   - tests/unit/versegit-wp2-profile.test.ts
+  - tests/unit/versegit-wp3-receipts.test.ts
   - harness/specs/guides/versegit-concurrency/**
   - harness/specs/fixtures/versegit-planning-correction/**
   - scripts/validate-versegit-planning-correction.mjs
