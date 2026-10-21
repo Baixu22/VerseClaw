@@ -313,6 +313,11 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
     if (existsSync(this.absolute(inputPath))) {
       const storedInput = this.readJson<Record<string, unknown>>(inputPath);
       add(storedInput.candidateId === plan.candidateId, 'candidate input identity mismatch');
+      const manifest = storedInput.manifest && typeof storedInput.manifest === 'object' && !Array.isArray(storedInput.manifest)
+        ? storedInput.manifest as Record<string, unknown>
+        : {};
+      add(manifest.inputDigest === plan.candidateInputDigest, 'candidate input digest differs from plan');
+      add(sha256(stableJson(manifest)) === plan.candidateId, 'candidate input manifest does not reproduce candidateId');
     }
 
     const observationPath = join('observations', idFile(String(receipt.observationId ?? '')));
@@ -380,6 +385,13 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       const cleanup = this.readJson<Record<string, unknown>>(cleanupPath);
       add(cleanup.status === receipt.cleanupStatus, 'cleanup status differs from receipt');
       add(!Array.isArray(cleanup.survivorPids) || cleanup.survivorPids.length === 0, 'cleanup retained process survivors');
+      add(cleanup.processSurvivors === 0, 'cleanup survivor count is nonzero');
+      const inventory = cleanup.processInventory && typeof cleanup.processInventory === 'object' && !Array.isArray(cleanup.processInventory)
+        ? cleanup.processInventory as Record<string, unknown>
+        : {};
+      add(!Array.isArray(inventory.survivorPids) || inventory.survivorPids.length === 0, 'nested cleanup retained process survivors');
+      add(!Array.isArray(inventory.ownedPidChecks) || inventory.ownedPidChecks.every((entry) => !entry || typeof entry !== 'object' || (entry as Record<string, unknown>).exists === false), 'owned PID checks retained a survivor');
+      add(!Array.isArray(inventory.managedAfterShutdown) || inventory.managedAfterShutdown.length === 0, 'managed processes remained after shutdown');
     }
 
     return { ok: issues.length === 0, issues: [...new Set(issues)], observationDigest: receipt.observationDigest, artifactDigests: receipt.artifactDigests };

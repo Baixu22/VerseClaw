@@ -9,14 +9,17 @@ import {
   type VerificationPlan,
   type VerseShellReceipt,
 } from '../../electron/services/versegit-receipt-bridge';
-import { FileVerseShellReceiptAuthority } from '../../electron/services/versegit-receipt-evidence';
+import { FileVerseShellReceiptAuthority, stableJson } from '../../electron/services/versegit-receipt-evidence';
 
 const sha = (value: string | Uint8Array) => createHash('sha256').update(value).digest('hex');
 const candidateInputDigest = 'a'.repeat(64);
+const candidateManifest = { schemaVersion: 2, inputDigest: candidateInputDigest, inputFiles: [{ path: 'verify.cjs', sha256: candidateInputDigest }] };
+const candidateId = sha(stableJson(candidateManifest));
+const processKey = sha('process-live');
 
 function fixture(receiptId = 'receipt-live', argv: string[] = ['node', 'verify.cjs', candidateInputDigest]) {
   const created = createVerificationPlan({
-    runId: 'run-live', candidateId: 'candidate-live', candidateInputDigest,
+    runId: 'run-live', candidateId, candidateInputDigest,
     checkId: 'check-live', owner: 'owner-live', epoch: 1, authorizationId: 'auth-live',
     commands: [{
       argv, cwd: '.', env: {},
@@ -31,18 +34,8 @@ function fixture(receiptId = 'receipt-live', argv: string[] = ['node', 'verify.c
     op: 'exec.run',
     ok: true,
     status: 'ok' as const,
-    data: {
-      exit_code: 0,
-      timed_out: false,
-      stdout: { text: '{"ok":true}' },
-      stderr: { text: '' },
-    },
-    meta: {
-      elapsed_ms: 1,
-      profile: 'generic',
-      token_estimate: 4,
-      capabilities_used: ['shell.exec'],
-    },
+    data: { exit_code: 0, timed_out: false, stdout: { text: '{"ok":true}' }, stderr: { text: '' } },
+    meta: { elapsed_ms: 1, profile: 'generic', token_estimate: 4, capabilities_used: ['shell.exec'] },
   };
   return { plan: created.plan, observation, receiptId };
 }
@@ -83,12 +76,40 @@ function receiptFor(
     ])].sort(),
     cleanupStatus: 'clean', status: 'exited', exitCode: 0, signal: null, durationMs: 1,
     stdoutDigest: observationRef.stdoutDigest, stderrDigest: observationRef.stderrDigest,
-    processKey: sha('process-live'),
+    processKey,
     authority: { writer: 'verseshell', trusted_source: 'clawx-host-process-artifact-authority' },
     origin: 'verseshell', realVerseshell: true,
     observationId, observationDigest: observationRef.observationDigest,
     planFileDigest: planDigest, inputManifestDigest: inputDigest,
   };
+}
+
+function cleanCleanup() {
+  return {
+    status: 'clean', processSurvivors: 0, survivorPids: [],
+    processInventory: {
+      managedAfterShutdown: [],
+      survivorPids: [],
+      ownedPidChecks: [{ ok: true, pid: 1234, exists: false }],
+    },
+  };
+}
+
+function installEvidence(root: string, overrides: { manifest?: Record<string, unknown>; cleanup?: Record<string, unknown> } = {}) {
+  const { plan, observation, receiptId } = fixture();
+  const authority = new FileVerseShellReceiptAuthority(root);
+  authority.reset();
+  const planRef = authority.recordPlan(plan);
+  const inputRef = authority.recordCandidateInput(plan.candidateId, overrides.manifest ?? candidateManifest);
+  const observationRef = authority.recordObservation({
+    observation, stdout: '{"ok":true}', stderr: '',
+    processKeyDigest: processKey, processPid: 1234, managerKeyDigest: sha('manager-live'),
+    binding: bindingFor(plan),
+  });
+  authority.recordCleanup(overrides.cleanup ?? cleanCleanup());
+  const receipt = receiptFor(plan, receiptId, observation.id, observationRef, planRef.digest, inputRef.digest);
+  authority.recordReceipt(receipt);
+  return { authority, plan, observation, receipt };
 }
 
 describe('host-authoritative VerseShell receipts', () => {
@@ -106,23 +127,11 @@ describe('host-authoritative VerseShell receipts', () => {
   it('promotes a live receipt only after re-reading recorded plan, observation and artifacts', () => {
     const root = mkdtempSync(join(process.platform === 'win32' ? 'D:/tmp' : process.env.TMPDIR ?? '/tmp', 'vg-receipt-authority-'));
     try {
-      const { plan, observation, receiptId } = fixture();
-      const authority = new FileVerseShellReceiptAuthority(root);
-      authority.reset();
-      const planRef = authority.recordPlan(plan);
-      const inputRef = authority.recordCandidateInput(plan.candidateId, { inputDigest: candidateInputDigest });
-      const observationRef = authority.recordObservation({
-        observation, stdout: '{"ok":true}', stderr: '',
-        processKeyDigest: sha('process-live'), processPid: 1234, managerKeyDigest: sha('manager-live'),
-        binding: bindingFor(plan),
-      });
-      authority.recordCleanup({ status: 'clean', survivorPids: [] });
-      const receipt = receiptFor(plan, receiptId, observation.id, observationRef, planRef.digest, inputRef.digest);
-      authority.recordReceipt(receipt);
-      const bridge = new VerseGitReceiptBridge(authority);
-      bridge.registerPlan(plan);
-      expect(bridge.receive(plan.runId, receipt).status).toBe('accepted');
-      const verdict = bridge.verdict(plan.runId);
+      const installed = installEvidence(root);
+      const bridge = new VerseGitReceiptBridge(installed.authority);
+      bridge.registerPlan(installed.plan);
+      expect(bridge.receive(installed.plan.runId, installed.receipt).status).toBe('accepted');
+      const verdict = bridge.verdict(installed.plan.runId);
       expect(verdict.status).toBe('observed');
       expect(verdict.realVerseshellExecution).toBe(true);
       expect(verdict.hostVerdict).toBe('unchanged');
@@ -138,20 +147,16 @@ describe('host-authoritative VerseShell receipts', () => {
       const authority = new FileVerseShellReceiptAuthority(root);
       authority.reset();
       authority.recordPlan(original.plan);
-      const inputRef = authority.recordCandidateInput(original.plan.candidateId, { inputDigest: candidateInputDigest });
+      const inputRef = authority.recordCandidateInput(original.plan.candidateId, candidateManifest);
       const observationRef = authority.recordObservation({
         observation: original.observation, stdout: '{"ok":true}', stderr: '',
-        processKeyDigest: sha('process-live'), processPid: 1234, managerKeyDigest: sha('manager-live'),
+        processKeyDigest: processKey, processPid: 1234, managerKeyDigest: sha('manager-live'),
         binding: bindingFor(original.plan),
       });
-      authority.recordCleanup({ status: 'clean', survivorPids: [] });
-
+      authority.recordCleanup(cleanCleanup());
       const altered = fixture('receipt-altered', ['node', 'different-verifier.cjs', candidateInputDigest]);
       const alteredPlanRef = authority.recordPlan(altered.plan);
-      const alteredReceipt = receiptFor(
-        altered.plan, 'receipt-altered', original.observation.id, observationRef,
-        alteredPlanRef.digest, inputRef.digest,
-      );
+      const alteredReceipt = receiptFor(altered.plan, 'receipt-altered', original.observation.id, observationRef, alteredPlanRef.digest, inputRef.digest);
       authority.recordReceipt(alteredReceipt);
       const bridge = new VerseGitReceiptBridge(authority);
       bridge.registerPlan(altered.plan);
@@ -159,7 +164,39 @@ describe('host-authoritative VerseShell receipts', () => {
       expect(result.status).toBe('rejected_by_policy');
       expect(result.reason).toBe('host_evidence_authority_rejected');
       expect(result.issues.join(' ')).toContain('observation planDigest differs from plan');
-      expect(bridge.verdict(altered.plan.runId).realVerseshellExecution).toBe(false);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects an input manifest whose digest or candidate identity differs from the plan', () => {
+    const root = mkdtempSync(join(process.platform === 'win32' ? 'D:/tmp' : process.env.TMPDIR ?? '/tmp', 'vg-receipt-input-swap-'));
+    try {
+      const installed = installEvidence(root, { manifest: { ...candidateManifest, inputDigest: 'b'.repeat(64) } });
+      const checked = installed.authority.verifyReceipt({ plan: installed.plan, receipt: installed.receipt });
+      expect(checked.ok).toBe(false);
+      expect(checked.issues).toEqual(expect.arrayContaining([
+        'candidate input digest differs from plan',
+        'candidate input manifest does not reproduce candidateId',
+      ]));
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects a clean summary that hides an owned survivor in nested process inventory', () => {
+    const root = mkdtempSync(join(process.platform === 'win32' ? 'D:/tmp' : process.env.TMPDIR ?? '/tmp', 'vg-receipt-survivor-'));
+    try {
+      const cleanup = cleanCleanup();
+      cleanup.processInventory.ownedPidChecks.push({ ok: true, pid: 99999, exists: true });
+      cleanup.processInventory.survivorPids.push(99999);
+      const installed = installEvidence(root, { cleanup });
+      const checked = installed.authority.verifyReceipt({ plan: installed.plan, receipt: installed.receipt });
+      expect(checked.ok).toBe(false);
+      expect(checked.issues).toEqual(expect.arrayContaining([
+        'nested cleanup retained process survivors',
+        'owned PID checks retained a survivor',
+      ]));
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
