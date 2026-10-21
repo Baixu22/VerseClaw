@@ -35,15 +35,16 @@ requiredTests:
   - pnpm harness validate --spec harness/specs/tasks/versegit-mc4-module-adapter.md
 acceptance:
   - At least two identity seams execute the frozen sidecar through the imported adapter and compare the complete projected provider document to the raw sidecar reference, with no behavior-change record and no lost projected fields.
-  - A pre-execution identity gate recomputes the actual binary digest and provider HEAD, validates MC1/MC2/MC3/WP0, and proves source/binary/contract/golden/package agreement before any adapter process starts.
-  - Five semantic-loss controls fire for version drift, dropped capability fields, single-green-light laundering, lost unobserved coverage and authority claims.
+  - A pre-execution identity gate recomputes the actual binary digest, provider HEAD/tree and porcelain digest, validates internal MC0/MC2/MC3 digests plus MC1/MC2/MC3/WP0 cross-links, and proves source/binary/contract/golden/package agreement before any adapter process starts.
+  - Six semantic-loss controls fire for version drift, dropped capability fields, single-green-light laundering, lost unobserved coverage, authority claims and a `drop_keys` projection that would hide a field.
   - M0 performs zero adapter process calls, attaches nothing, writes no workspace, records zero usage, pins harness verdict and Git landing to the host and leaves the host verdict unchanged.
-  - Reports are bound to the effective grant, real usage counters, repo/worktree/session identity and run/request/trace correlation; a promoted report cannot be generated before attach and caller digests cannot override the host contract digest.
+  - Reports are bound to the effective grant, real usage counters, non-empty repo/worktree/session identity and run/request/trace correlation; a promoted report cannot be generated before attach, session identities must match the report identity vector, native verification executors are refused and caller digests cannot override the host contract digest.
+  - Deep MC1 conformance checks report/plan required and forbidden fields, mode permissions and failure mappings; `missing_receipt` maps to `unmeasured` and `partial_coverage` to `report_incomplete`.
   - Ungranted or mismatched promotion, reason-as-status, authority fields, shell strings, top-level land/admit, empty owners, path-qualified Git commands, shell interpreters, unknown retries and effectful replay are refused with an unchanged host verdict.
   - `capabilities` is the only verified command; `doctor`, `session`, `verdict`, `conflicts` and `report` are explicitly deferred, and `declare_intent` is forbidden.
   - JSON null, schema drift, default-enable, single-green-light and capability digest drift are refused without an uncaught exception.
   - The adapter adds no runtime dependency, imports no VerseGit internals and adds no renderer route, harness profile, fast/comms membership or VerseShell execution path.
-  - The report classifies MC4 as a host-owned adapter bootstrap rather than a provider behavioural migration; no provider source file or internal import is claimed, and the MC5 line budget is not silently omitted.
+  - The report classifies MC4 as a host-owned adapter bootstrap, claims no provider source/internal import, and leaves the MC5 bootstrap-budget exception pending explicit owner authorization rather than self-authorizing it; the task must remain open until that decision is recorded.
   - The stored report is digest-reproducible and the independent verifier rebuilds the live differential and re-fires the identity, capability, report and command-plan refusal matrices.
 docs:
   required: true
@@ -79,8 +80,11 @@ narrower than the VG CLI: only the capabilities seam is verified in MC4.
 
 MC4 adds host-owned anti-corruption code; it does not copy or replace provider source.
 The report therefore records `behavior_migration: false`, zero provider source files and
-zero provider internal imports. The MC5 line budget remains applicable to future
-provider-derived migration slices and is not silently omitted here.
+zero provider internal imports. No host-owned exemption exists in the upstream MC5 rule,
+so the report must keep `authorization_status: pending_owner_decision` and
+`mc5_bootstrap_budget_owner_decision` as an explicit closure blocker until the repository
+owner chooses either a bounded bootstrap exception or a node split. The adapter must not
+self-authorize the exception.
 
 ## Deferred integration
 

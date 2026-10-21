@@ -8,7 +8,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
-import { validateConsumerContract } from './versegit-mc1-contract.mjs';
+import { validateConsumerContract, validateReportEnvelope } from './versegit-mc1-contract.mjs';
 import { validateMc2Fingerprint } from './versegit-mc2-fingerprint.mjs';
 import { validateMc3Package } from './versegit-mc3-delivery.mjs';
 import { validateWp0Contract } from './versegit-wp0-contract.mjs';
@@ -41,12 +41,29 @@ function parseJson(text) {
   try { return JSON.parse(text); } catch { return null; }
 }
 
-function gitHead(repo) {
-  const result = spawnSync('git', ['-C', repo, 'rev-parse', 'HEAD'], { encoding: 'utf8', windowsHide: true });
+function gitValue(repo, expression) {
+  const result = spawnSync('git', ['-C', repo, 'rev-parse', expression], { encoding: 'utf8', windowsHide: true });
   return result.status === 0 ? String(result.stdout ?? '').trim() : null;
 }
 
-export function collectIdentityPreflight({ mc0, mc1, mc2, mc3, wp0, binaryDigest, sourceHead }) {
+function gitHead(repo) {
+  return gitValue(repo, 'HEAD');
+}
+
+function gitTree(repo) {
+  return gitValue(repo, 'HEAD^{tree}');
+}
+
+function gitPorcelainDigest(repo) {
+  const result = spawnSync('git', ['-C', repo, 'status', '--porcelain=v1', '--untracked-files=all'], { encoding: 'utf8', windowsHide: true });
+  return result.status === 0 ? sha256(String(result.stdout ?? '').replace(/\r/g, '').trim()) : null;
+}
+
+function declaredDigest(value) {
+  return sha256(JSON.stringify({ ...value, generated_at: undefined, digest: undefined }));
+}
+
+export function collectIdentityPreflight({ mc0, mc1, mc2, mc3, wp0, binaryDigest, sourceHead, sourceTree, porcelainDigest }) {
   const checks = [];
   const record = (name, passed, detail) => checks.push({ name, passed, detail });
   for (const [name, validation] of [
@@ -56,14 +73,29 @@ export function collectIdentityPreflight({ mc0, mc1, mc2, mc3, wp0, binaryDigest
     ['wp0_contract', validateWp0Contract(wp0)],
   ]) record(name, validation.ok, validation.issues ?? []);
   const contractDigest = sha256(JSON.stringify(mc1));
+  const mc0Digest = sha256(JSON.stringify({ ...mc0, digest: undefined }));
+  record('mc0_internal_digest', mc0Digest === mc0.digest, { actual: mc0Digest, expected: mc0.digest });
+  record('mc2_internal_digest', declaredDigest(mc2) === mc2.digest, { actual: declaredDigest(mc2), expected: mc2.digest });
+  record('mc3_internal_digest', declaredDigest(mc3) === mc3.digest, { actual: declaredDigest(mc3), expected: mc3.digest });
+  record('mc0_capabilities_digest', sha256(JSON.stringify(mc0.binary?.capability_document)) === mc0.binary?.capabilities_sha256, { actual: sha256(JSON.stringify(mc0.binary?.capability_document)), expected: mc0.binary?.capabilities_sha256 });
   record('source_head_matches_mc0', sourceHead === mc0.source?.head, { actual: sourceHead, expected: mc0.source?.head });
+  record('source_tree_matches_mc0', sourceTree === mc0.source?.tree, { actual: sourceTree, expected: mc0.source?.tree });
+  record('source_status_matches_mc0', porcelainDigest === mc0.source?.status_porcelain_sha256, { actual: porcelainDigest, expected: mc0.source?.status_porcelain_sha256 });
   record('binary_digest_matches_mc0', binaryDigest === mc0.binary?.sha256, { actual: binaryDigest, expected: mc0.binary?.sha256 });
   record('source_head_matches_golden', mc2.identity?.mc0_source_head === sourceHead, { actual: sourceHead, expected: mc2.identity?.mc0_source_head });
+  record('source_tree_matches_golden', mc2.identity?.mc0_source_tree === sourceTree, { actual: sourceTree, expected: mc2.identity?.mc0_source_tree });
   record('binary_digest_matches_golden', mc2.identity?.binary_sha256 === binaryDigest, { actual: binaryDigest, expected: mc2.identity?.binary_sha256 });
   record('source_head_matches_package', mc3.identity?.effective_source_commit === sourceHead, { actual: sourceHead, expected: mc3.identity?.effective_source_commit });
+  record('source_tree_matches_package', mc3.identity?.source_tree_digest === sourceTree, { actual: sourceTree, expected: mc3.identity?.source_tree_digest });
   record('binary_digest_matches_package', mc3.identity?.binary_sha256 === binaryDigest, { actual: binaryDigest, expected: mc3.identity?.binary_sha256 });
+  record('capabilities_digest_matches_package', mc3.identity?.capabilities_digest === mc0.binary?.capabilities_sha256, { actual: mc0.binary?.capabilities_sha256, expected: mc3.identity?.capabilities_digest });
   record('source_head_matches_wp0', wp0.binary_identity?.source_head === sourceHead, { actual: sourceHead, expected: wp0.binary_identity?.source_head });
+  record('source_tree_matches_wp0', wp0.binary_identity?.source_tree === sourceTree, { actual: sourceTree, expected: wp0.binary_identity?.source_tree });
   record('binary_digest_matches_wp0', wp0.binary_identity?.sha256 === binaryDigest, { actual: binaryDigest, expected: wp0.binary_identity?.sha256 });
+  record('capabilities_digest_matches_wp0', wp0.binary_identity?.capabilities_digest === mc0.binary?.capabilities_sha256, { actual: mc0.binary?.capabilities_sha256, expected: wp0.binary_identity?.capabilities_digest });
+
+  record('source_head_matches_wp0_matrix', wp0.version_matrix?.source_head === sourceHead, { actual: sourceHead, expected: wp0.version_matrix?.source_head });
+  record('binary_digest_matches_wp0_matrix', wp0.version_matrix?.binary_sha256 === binaryDigest, { actual: binaryDigest, expected: wp0.version_matrix?.binary_sha256 });
   record('contract_digest_matches_wp0', wp0.binary_identity?.consumer_contract_digest === contractDigest, { actual: contractDigest, expected: wp0.binary_identity?.consumer_contract_digest });
   record('contract_digest_matches_package', mc3.identity?.contract_digest === contractDigest, { actual: contractDigest, expected: mc3.identity?.contract_digest });
   record('golden_digest_matches_wp0', wp0.binary_identity?.golden_bundle_digest === mc2.digest, { actual: mc2.digest, expected: wp0.binary_identity?.golden_bundle_digest });
@@ -71,6 +103,13 @@ export function collectIdentityPreflight({ mc0, mc1, mc2, mc3, wp0, binaryDigest
   record('capabilities_schema_matches_golden', mc2.identity?.capabilities_schema === mc0.binary?.capabilities_schema, { actual: mc0.binary?.capabilities_schema, expected: mc2.identity?.capabilities_schema });
   const failures = checks.filter((check) => !check.passed);
   return { passed: failures.length === 0, checks, failures, contractDigest };
+}
+
+function isLosslessProjection(declaration) {
+  return !!declaration
+    && Array.isArray(declaration.volatile_keys)
+    && declaration.volatile_keys.length === 0
+    && declaration.drop_keys === undefined;
 }
 
 function countKeys(value) {
@@ -106,6 +145,48 @@ export function validateContractConformance(module, contract) {
   equal(module.VG_REASON_STATUSES, contract?.statuses?.reasons, 'reason statuses');
   equal(module.VG_MODULE_REPORT_SCHEMA, contract?.surface?.module_report?.schema, 'module report schema');
   equal(module.VG_COMMAND_PLAN_SCHEMA, contract?.surface?.command_plan?.schema, 'command plan schema');
+  return { ok: issues.length === 0, issues };
+}
+
+export function validateDeepContractConformance(module, contract, { report, plan } = {}) {
+  const issues = [];
+  const reportSurface = contract?.surface?.module_report;
+  for (const field of reportSurface?.required ?? []) {
+    if (report?.[field] === undefined) issues.push(`module report missing MC1 field ${field}`);
+  }
+  for (const field of reportSurface?.forbidden_fields ?? []) {
+    if (report?.[field] !== undefined) issues.push(`module report carries MC1 forbidden field ${field}`);
+  }
+  const planSurface = contract?.surface?.command_plan;
+  for (const field of planSurface?.required ?? []) {
+    if (plan?.[field] === undefined) issues.push(`command plan missing MC1 field ${field}`);
+  }
+  for (const field of planSurface?.forbidden_fields ?? []) {
+    if (plan?.[field] !== undefined) issues.push(`command plan carries MC1 forbidden field ${field}`);
+  }
+  const authority = module.VerseGitModule.modeAuthority;
+  for (const mode of contract?.modes ?? []) {
+    const expected = contract?.permissions?.[mode];
+    const actual = authority[mode];
+    if (!expected || !actual) { issues.push(`permission matrix missing ${mode}`); continue; }
+    if (expected.start_process !== (actual.processes > 0)) issues.push(`${mode} start_process differs from the contract`);
+    if (expected.write_workspace !== false) issues.push(`${mode} must not write the host workspace`);
+    if (expected.write_domain_state !== actual.domainWrite) issues.push(`${mode} domain-write permission differs from the contract`);
+    const expectedExecution = expected.execute === 'via_verseshell_only' ? 'via_verseshell_only' : expected.execute === false ? 'none' : expected.execute;
+    if (expectedExecution !== actual.execution) issues.push(`${mode} execution authority differs from the contract`);
+  }
+  const failures = [
+    ['missing_binary', 'unavailable', 'missing_binary'],
+    ['schema_mismatch', 'rejected_by_policy', 'schema_mismatch'],
+    ['missing_receipt', 'partial', 'unmeasured'],
+    ['partial_coverage', 'partial', 'report_incomplete'],
+    ['unknown_owner', 'rejected_by_policy', 'unknown_owner'],
+    ['timeout', 'degraded', 'timeout'],
+  ];
+  for (const [failureCase, status, reason] of failures) {
+    const classified = module.classifyFailure({ case: failureCase });
+    if (classified.status !== status || classified.reason !== reason) issues.push(`failure contract ${failureCase} classified as ${classified.status}/${classified.reason}`);
+  }
   return { ok: issues.length === 0, issues };
 }
 
@@ -152,7 +233,9 @@ export async function buildMc4Report({ root = repositoryRoot } = {}) {
   // Identity is revalidated before the mutable debug executable is allowed to run.
   const binaryDigest = sha256(readFileSync(binary));
   const sourceHead = gitHead(String(mc0.source.repo));
-  const preflight = collectIdentityPreflight({ mc0, mc1, mc2, mc3, wp0, binaryDigest, sourceHead });
+  const sourceTree = gitTree(String(mc0.source.repo));
+  const porcelainDigest = gitPorcelainDigest(String(mc0.source.repo));
+  const preflight = collectIdentityPreflight({ mc0, mc1, mc2, mc3, wp0, binaryDigest, sourceHead, sourceTree, porcelainDigest });
   if (!preflight.passed) {
     throw new Error(`identity preflight failed before execution: ${preflight.failures.map((failure) => failure.name).join(', ')}`);
   }
@@ -222,7 +305,11 @@ export async function buildMc4Report({ root = repositoryRoot } = {}) {
   }
   const seamProcessCount = adapterRunCount;
   const m1Report = vg.buildReport(reportInput('M1', 'partial', ['unknown']));
+  const mc1ReportValidation = validateReportEnvelope(m1Report);
   const overriddenReport = vg.buildReport({ ...reportInput('M1', 'partial', ['unknown']), digests: { contract: 'f'.repeat(64) } });
+  const nativeExecutorRefused = (() => {
+    try { vg.buildReport({ ...reportInput('M1', 'partial', ['unknown']), verification: { status: 'not_run', executor: 'native' } }); return false; } catch { return true; }
+  })();
   const noAttachClaim = (() => {
     const fresh = new module.VerseGitModule({ binaryPath: binary, contractDigest, run: () => ({ stdout: '{}', stderr: '', code: 0 }) });
     try { fresh.buildReport(reportInput('M1', 'partial', ['unknown'])); return false; } catch { return true; }
@@ -276,6 +363,10 @@ export async function buildMc4Report({ root = repositoryRoot } = {}) {
     { id: 'reject_empty_owner', plan: { ...validPlan, owner: '' } },
     { id: 'reject_git_path', plan: { ...validPlan, commands: [{ argv: ['C:\\Program Files\\Git\\cmd\\git.exe', 'push'], effect: 'execute', retry: 'never' }] } },
     { id: 'reject_shell_interpreter', plan: { ...validPlan, commands: [{ argv: ['powershell.exe', '-Command', 'Write-Host ok'], effect: 'execute', retry: 'never' }] } },
+    { id: 'reject_trailing_space_shell', plan: { ...validPlan, commands: [{ argv: ['powershell.exe ', '-Command', 'Write-Host ok'], effect: 'execute', retry: 'never' }] } },
+    { id: 'reject_env_wrapper', plan: { ...validPlan, commands: [{ argv: ['env', 'bash', '-c', 'git push'], effect: 'execute', retry: 'never' }] } },
+    { id: 'reject_vg_repo_land', plan: { ...validPlan, commands: [{ argv: ['vg', '--repo', 'repo', 'land'], effect: 'execute', retry: 'never' }] } },
+    { id: 'reject_scalar_forbidden', plan: { ...validPlan, forbidden: 'land' } },
     { id: 'reject_unknown_retry', plan: { ...validPlan, commands: [{ argv: ['pnpm', 'test'], effect: 'execute', retry: 'sometimes' }] } },
     { id: 'reject_effectful_auto_replay', plan: { ...validPlan, commands: [{ argv: ['pnpm', 'test'], effect: 'execute', retry: 'always' }] } },
   ].map((entry) => {
@@ -283,6 +374,14 @@ export async function buildMc4Report({ root = repositoryRoot } = {}) {
     return { id: entry.id, refused: result.ok === false, issues: result.issues };
   });
   const validPlanResult = module.validateCommandPlan(validPlan);
+  const deepContractConformance = validateDeepContractConformance(module, mc1, { report: m1Report, plan: validPlan });
+  const contractConformanceResult = {
+    ok: contractConformance.ok && deepContractConformance.ok && mc1ReportValidation.ok,
+    issues: [...contractConformance.issues, ...deepContractConformance.issues],
+    basic: contractConformance,
+    deep: deepContractConformance,
+    mc1_report_envelope: mc1ReportValidation,
+  };
 
   const ungranted = vg.attach('M3', { mode: 'M3', authorizationId: null });
   const mismatched = vg.attach('M2', { mode: 'M1', authorizationId: 'auth-1' });
@@ -311,6 +410,18 @@ export async function buildMc4Report({ root = repositoryRoot } = {}) {
   const afterDetach = vg.readCapabilities();
 
   const capabilityDocument = rawBySeam.get('identity.capabilities')?.json;
+  const identityEvidenceControls = [];
+  for (const [id, mutate] of [
+    ['mc0_internal_digest', (value) => { value.binary.capability_document.mcp_tools = [...value.binary.capability_document.mcp_tools, 'mutated']; }],
+    ['mc2_internal_digest', (value) => { value.cases[0].output_digest = 'f'.repeat(64); }],
+    ['mc3_internal_digest', (value) => { value.identity.capabilities_digest = 'f'.repeat(64); }],
+    ['wp0_source_tree_link', (value) => { value.binary_identity.source_tree = 'f'.repeat(40); }],
+  ]) {
+    const inputs = { mc0: structuredClone(mc0), mc1: structuredClone(mc1), mc2: structuredClone(mc2), mc3: structuredClone(mc3), wp0: structuredClone(wp0) };
+    mutate(id.startsWith('mc0') ? inputs.mc0 : id.startsWith('mc2') ? inputs.mc2 : id.startsWith('mc3') ? inputs.mc3 : inputs.wp0);
+    const control = collectIdentityPreflight({ ...inputs, binaryDigest, sourceHead, sourceTree, porcelainDigest });
+    identityEvidenceControls.push({ id, refused: control.passed === false, failures: control.failures.map((failure) => failure.name) });
+  }
   const negativeControls = [
     {
       id: 'control_version_drift',
@@ -344,6 +455,16 @@ export async function buildMc4Report({ root = repositoryRoot } = {}) {
       id: 'control_authority_claim',
       fired: authorityClaim.ok === false,
     },
+    {
+      id: 'control_drop_keys_projection',
+      fired: (() => {
+        const changed = structuredClone(capabilityDocument);
+        delete changed.verdict;
+        return isLosslessProjection({ drop_keys: ['verdict'] }) === false
+          && projectValue({ document: capabilityDocument }, { drop_keys: ['verdict'] })
+            === projectValue({ document: changed }, { drop_keys: ['verdict'] });
+      })(),
+    },
   ];
   const report = {
     reportSchema: MC4_SCHEMA,
@@ -357,15 +478,18 @@ export async function buildMc4Report({ root = repositoryRoot } = {}) {
     forbidden_import_specifiers: forbiddenImports,
     additional_runtime_dependency: null,
     second_executor: false,
-    contract_conformance: contractConformance,
+    contract_conformance: contractConformanceResult,
     migration_budget_scope: {
       classification: 'host-owned-adapter-bootstrap',
+      authorization_status: 'pending_owner_decision',
       behavior_migration: false,
       provider_source_files_changed: 0,
       provider_internal_imports: forbiddenImports.length,
-      mc5_line_budget_applies: false,
-      rationale: 'MC5 line/file budgets govern slices that copy or replace provider behaviour. MC4 introduces a host-owned anti-corruption module and verifies the complete provider JSON document against the raw sidecar; it does not import or reimplement VG internals. Supporting scripts, tests and evidence are not provider behavioural slices.',
+      mc5_line_budget_applies: 'undecided',
+      rationale: 'MC4 does not copy or replace provider behaviour: provider_source_files_changed and provider_internal_imports are both zero, while complete provider JSON documents are compared against the raw sidecar. The frozen MC5 node budget still requires an explicit owner decision for this bootstrap because no host-owned exemption exists in the upstream rule.',
     },
+    closure_blockers: ['mc5_bootstrap_budget_owner_decision'],
+    identity_evidence_controls: identityEvidenceControls,
     identity_preflight: {
       passed: preflight.passed,
       check_count: preflight.checks.length,
@@ -375,6 +499,8 @@ export async function buildMc4Report({ root = repositoryRoot } = {}) {
     provenance: {
       node: 'TF-0477',
       source_commit: sourceHead,
+      source_tree: sourceTree,
+      source_status_digest: porcelainDigest,
       binary_sha256: binaryDigest,
       contract_digest: contractDigest,
       golden_bundle_digest: mc2.digest,
@@ -410,6 +536,9 @@ export async function buildMc4Report({ root = repositoryRoot } = {}) {
     },
     report_usage_regression: {
       m1_report_valid: module.validateModuleReport(m1Report).ok,
+      mc1_report_valid: mc1ReportValidation.ok,
+      native_executor_refused: nativeExecutorRefused,
+      mismatched_session_rejected: module.validateModuleReport({ ...m1Report, sessions: [{ ...session, epoch: 999 }] }).ok === false,
       m1_usage: m1Report.usage,
       m1_identity: m1Report.identity,
       m1_correlation: m1Report.correlation,
@@ -435,8 +564,9 @@ export async function buildMc4Report({ root = repositoryRoot } = {}) {
     forbidden_command_surface: module.VerseGitModule.forbiddenCommands,
     read_only_command_surface: module.VerseGitModule.readOnlyCommands,
     deferred_command_surface: module.VerseGitModule.deferredCommands,
-    status: preflight.passed && contractConformance.ok && seams.length >= 2
-      && seams.every((entry) => entry.identical && entry.adapter_status === 'observed' && entry.reference_key_count === entry.candidate_key_count)
+    status: preflight.passed && contractConformanceResult.ok && seams.length >= 2
+      && seams.every((entry) => entry.identical && entry.adapter_status === 'observed' && entry.reference_key_count === entry.candidate_key_count && isLosslessProjection(entry.projection))
+      && identityEvidenceControls.every((control) => control.refused)
       && negativeControls.every((control) => control.fired)
       && capabilityNegatives.every((control) => control.refused)
       && validPlanResult.ok && commandNegatives.every((control) => control.refused)
@@ -466,6 +596,8 @@ export function validateMc4Report(report) {
   if (report?.reportSchema !== MC4_SCHEMA) issues.push(`reportSchema must be ${MC4_SCHEMA}`);
   if (report?.driven_by !== 'agent' || report?.actor !== 'codex') issues.push('evidence must be honestly marked as agent-driven');
   if (!/^[0-9a-f]{40}$/u.test(String(report?.provenance?.source_commit ?? ''))) issues.push('provenance source commit missing');
+  if (!/^[0-9a-f]{20,64}$/u.test(String(report?.provenance?.source_tree ?? ''))) issues.push('provenance source tree missing');
+  if (!/^[0-9a-f]{64}$/u.test(String(report?.provenance?.source_status_digest ?? ''))) issues.push('provenance source status digest missing');
   if (!/^[0-9a-f]{64}$/u.test(String(report?.provenance?.binary_sha256 ?? ''))) issues.push('provenance binary digest missing');
   if (!/^[0-9a-f]{64}$/u.test(String(report?.provenance?.contract_digest ?? ''))) issues.push('provenance contract digest missing');
   if (!/^[0-9a-f]{64}$/u.test(String(report?.provenance?.golden_bundle_digest ?? ''))) issues.push('provenance golden digest missing');
@@ -481,10 +613,15 @@ export function validateMc4Report(report) {
   if (report?.second_executor !== false) issues.push('the adapter must not add a second executor');
   if (report?.contract_conformance?.ok !== true || (report?.contract_conformance?.issues ?? []).length !== 0) issues.push('adapter types do not conform to the frozen consumer contract');
   if (report?.migration_budget_scope?.classification !== 'host-owned-adapter-bootstrap'
+    || report?.migration_budget_scope?.authorization_status !== 'pending_owner_decision'
     || report?.migration_budget_scope?.behavior_migration !== false
     || report?.migration_budget_scope?.provider_source_files_changed !== 0
-    || report?.migration_budget_scope?.provider_internal_imports !== 0) issues.push('migration-budget scope must prove that no provider behaviour was migrated');
-  if (report?.identity_preflight?.passed !== true || (report?.identity_preflight?.failures ?? []).length !== 0 || report?.identity_preflight?.check_count < 15) issues.push('pre-execution identity preflight did not cover every frozen identity');
+    || report?.migration_budget_scope?.provider_internal_imports !== 0) issues.push('migration-budget scope must remain honest and pending owner authorization');
+  if (!Array.isArray(report?.closure_blockers) || !report.closure_blockers.includes('mc5_bootstrap_budget_owner_decision')) issues.push('the unresolved MC5 bootstrap budget decision must remain a closure blocker');
+  if (report?.identity_preflight?.passed !== true || (report?.identity_preflight?.failures ?? []).length !== 0 || report?.identity_preflight?.check_count < 22) issues.push('pre-execution identity preflight did not cover every frozen identity');
+  for (const control of ['mc0_internal_digest', 'mc2_internal_digest', 'mc3_internal_digest', 'wp0_source_tree_link']) {
+    if (!(report?.identity_evidence_controls ?? []).some((entry) => entry.id === control && entry.refused === true)) issues.push(`identity evidence control ${control} did not fire`);
+  }
   if (report?.identity_preflight?.checks?.some((check) => check.passed !== true)) issues.push('an identity preflight check failed');
 
   const differential = report?.differential ?? {};
@@ -499,9 +636,10 @@ export function validateMc4Report(report) {
     if (seam.reference_digest !== seam.candidate_digest) issues.push(`seam ${seam.seam} digests differ`);
     if (!(seam.reference_key_count > 0) || seam.reference_key_count !== seam.candidate_key_count) issues.push(`seam ${seam.seam} lost projected fields`);
     if (seam.behavior_change_record !== null) issues.push(`seam ${seam.seam} must not declare a behavior change`);
+    if (!isLosslessProjection(seam.projection)) issues.push(`seam ${seam.seam} must use the empty lossless projection`);
   }
   if (differential.behavior_changes_declared !== 0) issues.push('MC4 may not smuggle a behavior change into the adapter');
-  for (const control of ['control_version_drift', 'control_dropped_capability_field', 'control_single_green_light_laundering', 'control_unknown_coverage_loss', 'control_authority_claim']) {
+  for (const control of ['control_version_drift', 'control_dropped_capability_field', 'control_single_green_light_laundering', 'control_unknown_coverage_loss', 'control_authority_claim', 'control_drop_keys_projection']) {
     if (!(differential.negative_controls ?? []).some((entry) => entry.id === control && entry.fired === true)) issues.push(`negative control ${control} did not fire`);
   }
 
@@ -517,10 +655,13 @@ export function validateMc4Report(report) {
     if (!(report?.capabilities_negative_controls ?? []).some((entry) => entry.id === control && entry.refused === true)) issues.push(`capability negative ${control} did not fire`);
   }
   if (report?.command_plan_regression?.valid_plan_accepted !== true) issues.push('the hardened command-plan validator rejected a valid structured plan');
-  for (const control of ['reject_shell_string', 'reject_top_level_land', 'reject_empty_owner', 'reject_git_path', 'reject_shell_interpreter', 'reject_unknown_retry', 'reject_effectful_auto_replay']) {
+  for (const control of ['reject_shell_string', 'reject_top_level_land', 'reject_empty_owner', 'reject_git_path', 'reject_shell_interpreter', 'reject_trailing_space_shell', 'reject_env_wrapper', 'reject_vg_repo_land', 'reject_scalar_forbidden', 'reject_unknown_retry', 'reject_effectful_auto_replay']) {
     if (!(report?.command_plan_regression?.negatives ?? []).some((entry) => entry.id === control && entry.refused === true)) issues.push(`command-plan negative ${control} did not fire`);
   }
   if (report?.report_usage_regression?.m1_report_valid !== true) issues.push('the effective M1 report must validate');
+  if (report?.report_usage_regression?.mc1_report_valid !== true) issues.push('the effective M1 report must satisfy the frozen MC1 envelope');
+  if (report?.report_usage_regression?.native_executor_refused !== true) issues.push('a native verification executor must be refused');
+  if (report?.report_usage_regression?.mismatched_session_rejected !== true) issues.push('mixed session identities must be refused');
   if (report?.report_usage_regression?.m1_usage?.processes_started !== 2 || report?.report_usage_regression?.m1_usage?.state_reads !== 1) issues.push('M1 report usage must reflect two processes and one state read');
   if (report?.report_usage_regression?.report_without_attach_refused !== true) issues.push('a promoted report must not be generated without an active attachment');
   if (report?.report_usage_regression?.contract_override_prevented !== true || report?.report_usage_regression?.contract_digest !== report?.provenance?.contract_digest) issues.push('caller-supplied digests must not override the host contract digest');

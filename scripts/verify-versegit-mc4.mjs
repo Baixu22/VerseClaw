@@ -19,8 +19,8 @@ function read(relative) {
   if (!existsSync(path)) throw new Error(`missing artifact: ${relative}`);
   return readFileSync(path, 'utf8');
 }
-function headOf(repo) {
-  const result = spawnSync('git', ['-C', repo, 'rev-parse', 'HEAD'], { encoding: 'utf8', windowsHide: true });
+function gitValue(repo, expression) {
+  const result = spawnSync('git', ['-C', repo, 'rev-parse', expression], { encoding: 'utf8', windowsHide: true });
   return result.status === 0 ? String(result.stdout ?? '').trim() : null;
 }
 
@@ -46,10 +46,12 @@ async function main() {
     issues.push('frozen sidecar binary is missing');
   } else {
     const binaryDigest = sha256(readFileSync(binaryPath));
-    const sourceHead = headOf(String(mc0.source?.repo));
+    const sourceHead = gitValue(String(mc0.source?.repo), 'HEAD');
+    const sourceTree = gitValue(String(mc0.source?.repo), 'HEAD^{tree}');
     if (binaryDigest !== mc0.binary?.sha256 || binaryDigest !== mc2.identity?.binary_sha256 || binaryDigest !== mc3.identity?.binary_sha256 || binaryDigest !== wp0.binary_identity?.sha256) issues.push('binary identity disagrees across MC0/MC2/MC3/WP0');
-    if (sourceHead !== mc0.source?.head || sourceHead !== mc2.identity?.mc0_source_head || sourceHead !== mc3.identity?.effective_source_commit || sourceHead !== wp0.binary_identity?.source_head) issues.push('source identity disagrees across MC0/MC2/MC3/WP0');
-    if (stored.provenance?.binary_sha256 !== binaryDigest || stored.provenance?.source_commit !== sourceHead) issues.push('stored provenance no longer matches the frozen source/binary');
+    if (sourceHead !== mc0.source?.head || sourceHead !== mc2.identity?.mc0_source_head || sourceHead !== mc3.identity?.effective_source_commit || sourceHead !== wp0.binary_identity?.source_head) issues.push('source head disagrees across MC0/MC2/MC3/WP0');
+    if (sourceTree !== mc0.source?.tree || sourceTree !== mc2.identity?.mc0_source_tree || sourceTree !== mc3.identity?.source_tree_digest || sourceTree !== wp0.binary_identity?.source_tree) issues.push('source tree disagrees across MC0/MC2/MC3/WP0');
+    if (stored.provenance?.binary_sha256 !== binaryDigest || stored.provenance?.source_commit !== sourceHead || stored.provenance?.source_tree !== sourceTree) issues.push('stored provenance no longer matches the frozen source/binary');
   }
   if (stored.provenance?.contract_digest !== contractDigest || contractDigest !== wp0.binary_identity?.consumer_contract_digest || contractDigest !== mc3.identity?.contract_digest) issues.push('contract digest no longer matches MC1/MC3/WP0');
   if (stored.provenance?.golden_bundle_digest !== mc2.digest || mc2.digest !== wp0.binary_identity?.golden_bundle_digest) issues.push('golden digest no longer matches MC2/WP0');
@@ -62,6 +64,11 @@ async function main() {
   if (providerStatus === null) issues.push('provider source repository is unavailable');
   if (providerStatus !== null && sha256(providerStatus) !== mc0.source?.status_porcelain_sha256) issues.push('provider working-tree status drifted from MC0');
 
+  if (issues.length > 0) {
+    for (const issue of issues) console.error(`[versegit-mc4] FAIL before execution: ${issue}`);
+    process.exitCode = 1;
+    return;
+  }
   const live = await buildMc4Report({ root });
   issues.push(...validateMc4Report(live).issues.map((issue) => `live: ${issue}`));
   if (stored.digest !== live.digest) issues.push('stored report digest differs from the live adapter run');

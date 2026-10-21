@@ -1,30 +1,78 @@
 {
   "reportSchema": "clawx.versegit.mc4-adapter/v1",
-  "generated_at": "2026-10-21T11:45:08.717Z",
+  "generated_at": "2026-10-21T14:24:31.090Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0477",
   "adapter_module": "electron/services/versegit-module.ts",
-  "adapter_source_digest": "e5b95b8ca059cf223e75355719b858b9aad7b9210f7041f0abcf806576283592",
+  "adapter_source_digest": "2cb8d5b3b1111e4d45c930cfa8d2f66fa18e4fe981fbdaac2365f6d9c6fffa26",
   "adapter_imports_vg_internals": false,
   "forbidden_import_specifiers": [],
   "additional_runtime_dependency": null,
   "second_executor": false,
   "contract_conformance": {
     "ok": true,
-    "issues": []
+    "issues": [],
+    "basic": {
+      "ok": true,
+      "issues": []
+    },
+    "deep": {
+      "ok": true,
+      "issues": []
+    },
+    "mc1_report_envelope": {
+      "ok": true,
+      "issues": []
+    }
   },
   "migration_budget_scope": {
     "classification": "host-owned-adapter-bootstrap",
+    "authorization_status": "pending_owner_decision",
     "behavior_migration": false,
     "provider_source_files_changed": 0,
     "provider_internal_imports": 0,
-    "mc5_line_budget_applies": false,
-    "rationale": "MC5 line/file budgets govern slices that copy or replace provider behaviour. MC4 introduces a host-owned anti-corruption module and verifies the complete provider JSON document against the raw sidecar; it does not import or reimplement VG internals. Supporting scripts, tests and evidence are not provider behavioural slices."
+    "mc5_line_budget_applies": "undecided",
+    "rationale": "MC4 does not copy or replace provider behaviour: provider_source_files_changed and provider_internal_imports are both zero, while complete provider JSON documents are compared against the raw sidecar. The frozen MC5 node budget still requires an explicit owner decision for this bootstrap because no host-owned exemption exists in the upstream rule."
   },
+  "closure_blockers": [
+    "mc5_bootstrap_budget_owner_decision"
+  ],
+  "identity_evidence_controls": [
+    {
+      "id": "mc0_internal_digest",
+      "refused": true,
+      "failures": [
+        "mc0_internal_digest",
+        "mc0_capabilities_digest"
+      ]
+    },
+    {
+      "id": "mc2_internal_digest",
+      "refused": true,
+      "failures": [
+        "mc2_internal_digest"
+      ]
+    },
+    {
+      "id": "mc3_internal_digest",
+      "refused": true,
+      "failures": [
+        "mc3_internal_digest",
+        "capabilities_digest_matches_package"
+      ]
+    },
+    {
+      "id": "wp0_source_tree_link",
+      "refused": true,
+      "failures": [
+        "source_tree_matches_wp0"
+      ]
+    }
+  ],
   "identity_preflight": {
     "passed": true,
-    "check_count": 17,
+    "check_count": 30,
     "checks": [
       {
         "name": "consumer_contract",
@@ -43,7 +91,31 @@
         "passed": true
       },
       {
+        "name": "mc0_internal_digest",
+        "passed": true
+      },
+      {
+        "name": "mc2_internal_digest",
+        "passed": true
+      },
+      {
+        "name": "mc3_internal_digest",
+        "passed": true
+      },
+      {
+        "name": "mc0_capabilities_digest",
+        "passed": true
+      },
+      {
         "name": "source_head_matches_mc0",
+        "passed": true
+      },
+      {
+        "name": "source_tree_matches_mc0",
+        "passed": true
+      },
+      {
+        "name": "source_status_matches_mc0",
         "passed": true
       },
       {
@@ -55,6 +127,10 @@
         "passed": true
       },
       {
+        "name": "source_tree_matches_golden",
+        "passed": true
+      },
+      {
         "name": "binary_digest_matches_golden",
         "passed": true
       },
@@ -63,7 +139,15 @@
         "passed": true
       },
       {
+        "name": "source_tree_matches_package",
+        "passed": true
+      },
+      {
         "name": "binary_digest_matches_package",
+        "passed": true
+      },
+      {
+        "name": "capabilities_digest_matches_package",
         "passed": true
       },
       {
@@ -71,7 +155,23 @@
         "passed": true
       },
       {
+        "name": "source_tree_matches_wp0",
+        "passed": true
+      },
+      {
         "name": "binary_digest_matches_wp0",
+        "passed": true
+      },
+      {
+        "name": "capabilities_digest_matches_wp0",
+        "passed": true
+      },
+      {
+        "name": "source_head_matches_wp0_matrix",
+        "passed": true
+      },
+      {
+        "name": "binary_digest_matches_wp0_matrix",
         "passed": true
       },
       {
@@ -100,6 +200,8 @@
   "provenance": {
     "node": "TF-0477",
     "source_commit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "source_tree": "7eb600c43556f9423cc9c5667c83652ba92a31a6",
+    "source_status_digest": "4cbdcb293cfe0337287d7787277758d5480c6df26c602d51a81828e52ce0a8f6",
     "binary_sha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
     "contract_digest": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749",
     "golden_bundle_digest": "cffdbbeecff8eba5021c3b15208e148d839f41dc8f8e8055efdf3ad49fe36f7b",
@@ -171,6 +273,10 @@
       },
       {
         "id": "control_authority_claim",
+        "fired": true
+      },
+      {
+        "id": "control_drop_keys_projection",
         "fired": true
       }
     ]
@@ -280,7 +386,35 @@
         "id": "reject_shell_interpreter",
         "refused": true,
         "issues": [
-          "plan command must not invoke shell interpreter powershell"
+          "plan command must not invoke shell or wrapper powershell"
+        ]
+      },
+      {
+        "id": "reject_trailing_space_shell",
+        "refused": true,
+        "issues": [
+          "plan command must not invoke shell or wrapper powershell"
+        ]
+      },
+      {
+        "id": "reject_env_wrapper",
+        "refused": true,
+        "issues": [
+          "plan command must not invoke shell or wrapper env"
+        ]
+      },
+      {
+        "id": "reject_vg_repo_land",
+        "refused": true,
+        "issues": [
+          "plan command vg land is forbidden"
+        ]
+      },
+      {
+        "id": "reject_scalar_forbidden",
+        "refused": true,
+        "issues": [
+          "plan forbidden field must be absent or an empty array"
         ]
       },
       {
@@ -303,6 +437,9 @@
   },
   "report_usage_regression": {
     "m1_report_valid": true,
+    "mc1_report_valid": true,
+    "native_executor_refused": true,
+    "mismatched_session_rejected": true,
     "m1_usage": {
       "processes_started": 2,
       "state_reads": 1
@@ -448,5 +585,5 @@
     "host_worktree_deleted": false,
     "note": "This node proves the shipped adapter matches the sidecar under the declared projection and refuses every escalation path. Host routes, the harness profile and the VerseShell receipt bridge belong to WP1-WP3 and are not claimed here."
   },
-  "digest": "57dbcb3ff35b63aae4af1551d28e0afc63d65bba57264862aa8bd4da934708a3"
+  "digest": "85ec71c18734348dd94b1a7575db744294891b732503b8f6f0d64914aea3a49e"
 }
