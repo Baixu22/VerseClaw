@@ -86,7 +86,9 @@ function receiptFor(
 
 function cleanCleanup() {
   return {
-    status: 'clean', processSurvivors: 0, survivorPids: [],
+    status: 'clean', processesDeleted: true, managerProcessSurvivors: 0,
+    worktreeSurvivors: 0, tempRootRemoved: true, hostWorktreesDeleted: 0,
+    worktreesDeleted: 3, deletionErrors: [], processSurvivors: 0, survivorPids: [],
     processInventory: {
       managedAfterShutdown: [],
       survivorPids: [],
@@ -201,4 +203,26 @@ describe('host-authoritative VerseShell receipts', () => {
       rmSync(root, { recursive: true, force: true });
     }
   });
+
+
+  it('rejects a clean cleanup record with contradictory worktree, temp-root or deletion facts', () => {
+    const root = mkdtempSync(join(process.platform === 'win32' ? 'D:/tmp' : process.env.TMPDIR ?? '/tmp', 'vg-receipt-cleanup-'));
+    try {
+      const cleanup = cleanCleanup();
+      cleanup.worktreeSurvivors = 1;
+      cleanup.tempRootRemoved = false;
+      cleanup.deletionErrors = ['worktree remove failed'];
+      const installed = installEvidence(root, { cleanup });
+      const checked = installed.authority.verifyReceipt({ plan: installed.plan, receipt: installed.receipt });
+      expect(checked.ok).toBe(false);
+      expect(checked.issues).toEqual(expect.arrayContaining([
+        'cleanup retained worktrees',
+        'cleanup retained the temporary root',
+        'cleanup retained deletion errors',
+      ]));
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
 });

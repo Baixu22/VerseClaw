@@ -384,6 +384,12 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
     if (existsSync(this.absolute(cleanupPath))) {
       const cleanup = this.readJson<Record<string, unknown>>(cleanupPath);
       add(cleanup.status === receipt.cleanupStatus, 'cleanup status differs from receipt');
+      add(cleanup.processesDeleted === true, 'cleanup does not prove process deletion');
+      add(cleanup.managerProcessSurvivors === 0, 'cleanup retained manager processes');
+      add(cleanup.worktreeSurvivors === 0, 'cleanup retained worktrees');
+      add(cleanup.tempRootRemoved === true, 'cleanup retained the temporary root');
+      add(cleanup.hostWorktreesDeleted === 0, 'cleanup deleted a host worktree');
+      add(Array.isArray(cleanup.deletionErrors) && cleanup.deletionErrors.length === 0, 'cleanup retained deletion errors');
       add(!Array.isArray(cleanup.survivorPids) || cleanup.survivorPids.length === 0, 'cleanup retained process survivors');
       add(cleanup.processSurvivors === 0, 'cleanup survivor count is nonzero');
       const inventory = cleanup.processInventory && typeof cleanup.processInventory === 'object' && !Array.isArray(cleanup.processInventory)
