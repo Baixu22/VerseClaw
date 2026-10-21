@@ -1,0 +1,5 @@
+a6ca4d222043dc6cca0733f9932f8416b0f9e7a1ae2b5aa411595961e2d64f63  harness/specs/fixtures/versegit-planning-correction/mc0-evidence/baseline.json
+04a227756b8aa01427087cd4fb21f73ff2d5eeac33526117eb9d8602bc597c00  scripts/versegit-mc0-baseline.mjs
+d0eaf5f0dee1d9c31e8ed90338e1ba2a0da817dc00a0347d7f1aa9b0842b71a7  scripts/verify-versegit-mc0.mjs
+d31b01207e077956f929f77e41da943707f8234b7463d277b462c808e5eeca6c  tests/unit/versegit-mc0-baseline.test.ts
+1cc3a24df04d4b7fd8d83a9e4113fa51f06776413a19295c11798e9bf5235134  harness/specs/tasks/versegit-mc0-baseline-freeze.md
