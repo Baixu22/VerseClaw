@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.wp6-manifest/v1",
-  "generated_at": "2026-10-21T18:10:12.200Z",
+  "generated_at": "2026-10-21T18:10:55.133Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0472",
@@ -8,13 +8,13 @@
   "finalReport": {
     "path": "artifacts/versegit/wp6/final-report.json",
     "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json",
-    "sha256": "5a4c140f28df921011b6aa6c499167f7e6afcd4b1ad19f1c8ab087045b007ff6",
-    "digest": "b62a85914cb705bcd7f459e13518bef050537209f52917c42ca47e686bd90ceb"
+    "sha256": "29b8b451f19d1ca9e889589028c6d29bf89acf1ddcdea192af6c6ddfeca8856b",
+    "digest": "6c9465f39f60dce5b9ef474524dc7b10f4bfd8a172c85e93d5ee66fe4e5faf18"
   },
   "mc6Decision": {
     "path": "artifacts/versegit/mc6/decision.json",
     "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
-    "sha256": "4bb08b30d51ced9e1e6942eabe0f28ad229450a0ebee264063e6bb4793374b02",
+    "sha256": "0c510fcdbcaffdfa6245bda2a08c169c16ccd5e4538c593704a9f0ea784ac2d3",
     "digest": "282fccc0e441bf092ea3363d9a6cc341fd8279d0cc2b3d1a129b5182d2f8ca91",
     "decision": "sidecar-only",
     "sourceExtractionTriggered": false
@@ -375,5 +375,5 @@
     ]
   },
   "passed": true,
-  "digest": "2f9d18fe9c0264187deb311b2aacb45d29673381f2f524efba331d646f9fe16d"
+  "digest": "994b7f2832e876e41390a9356df38bc38c0138539e74fdc3d052bbcb73b3fb49"
 }

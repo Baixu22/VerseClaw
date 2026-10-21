@@ -1,11 +1,11 @@
 {
   "schema": "clawx.versegit.wp6-closeout/v1",
-  "generated_at": "2026-10-21T18:10:12.200Z",
+  "generated_at": "2026-10-21T18:10:55.133Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0472",
   "fixture": "harness/specs/fixtures/versegit-planning-correction/wp6-closeout-fixture.json",
-  "fixtureDigest": "ae3da55e2084fe94119870b46a5def387d818ad431d2cd15aded3b97d131a9a0",
+  "fixtureDigest": "a3f78279435682cae540b4e07d540eea9ba19c226346971ce6b41a2e06f73f31",
   "productPosture": "non-ga-landed-unwired",
   "requiredGates": [
     {
@@ -1028,5 +1028,5 @@
   },
   "passed": true,
   "issues": [],
-  "digest": "b62a85914cb705bcd7f459e13518bef050537209f52917c42ca47e686bd90ceb"
+  "digest": "6c9465f39f60dce5b9ef474524dc7b10f4bfd8a172c85e93d5ee66fe4e5faf18"
 }
