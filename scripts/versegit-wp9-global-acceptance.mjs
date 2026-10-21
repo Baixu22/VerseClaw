@@ -258,6 +258,7 @@ export function inspectTaskForest({ root = repositoryRoot, fixture }) {
         status: String(parent?.status ?? 'missing'),
         title: String(parent?.title ?? ''),
         acceptanceCount: Array.isArray(parent?.acceptance_criteria) ? parent.acceptance_criteria.length : 0,
+        acceptanceCriteria: Array.isArray(parent?.acceptance_criteria) ? parent.acceptance_criteria.map(String) : [],
       },
       children,
       childCount: children.length,

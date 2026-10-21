@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.wp9-manifest/v1",
-  "generated_at": "2026-10-21T22:15:00.960Z",
+  "generated_at": "2026-10-21T22:18:28.974Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0515",
@@ -8,8 +8,8 @@
   "report": {
     "path": "artifacts/versegit/wp9/global-report.json",
     "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/global-report.json",
-    "digest": "68fd0af79b6e6f3e21771620b9dcd25ef294717cea4becb2656a60e304661afb",
-    "sha256": "f434abb408de6929f772b69ecc7737265e9363a61a55c4202ee7cafacec322bc"
+    "digest": "937014f8baa41d13d09c0710843af8a34852cb9b1a8740b9b420a869c8fde02a",
+    "sha256": "98711ce822bedc2852e098f8d68219c1d526633abf3b8801d3694f0c303cc121"
   },
   "verdict": {
     "globalVerdict": "PASS_WITH_GAPS",
@@ -62,5 +62,5 @@
     "preconditionsPassed": true,
     "proposalRequired": true
   },
-  "digest": "79af1f84f4a054b89bc4857c1c903416b1a376ec6e92599539566ee1234ef240"
+  "digest": "7431a711199a5f93f42f26b3bc0d5da60a25061ca81970b621d8fab2baa2fe1e"
 }

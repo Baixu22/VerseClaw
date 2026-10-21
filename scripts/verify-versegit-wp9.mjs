@@ -52,6 +52,10 @@ function sameSet(left, right) {
   return a.length === b.length && a.every((value, index) => value === b[index]);
 }
 
+function sameArray(left, right) {
+  return Array.isArray(left) && Array.isArray(right) && left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
 function add(issues, condition, message) {
   if (!condition) issues.push(message);
 }
@@ -66,7 +70,7 @@ function verifyInputDigest(root, entry, issues, label) {
   else if (sha256(readFileSync(full)) !== entry.sha256) issues.push(`${label}: input digest mismatch ${entry.path}`);
 }
 
-export function validateWp9Report(report, { root } = {}) {
+export function validateWp9Report(report, { root, fixture } = {}) {
   const issues = [];
   add(issues, report?.schema === WP9_SCHEMA, 'schema mismatch');
   add(issues, report?.driven_by === 'agent', 'report must be agent-driven');
@@ -82,8 +86,9 @@ export function validateWp9Report(report, { root } = {}) {
 
   const acceptance = Array.isArray(report?.acceptance) ? report.acceptance : [];
   add(issues, sameSet(acceptance.map((entry) => entry.id), WP9_EXPECTED_ACCEPTANCE_IDS), 'acceptance id set mismatch');
-  for (const entry of acceptance) {
+  for (const [index, entry] of acceptance.entries()) {
     add(issues, typeof entry?.criterion === 'string' && entry.criterion.length > 0, `${String(entry?.id)}: criterion missing`);
+    add(issues, entry?.criterion === report?.taskForest?.parent?.acceptanceCriteria?.[index], `${String(entry?.id)}: criterion differs from Task Forest snapshot`);
     add(issues, ['verified', 'not_applicable', 'retired'].includes(entry?.status), `${String(entry?.id)}: invalid disposition`);
     add(issues, Array.isArray(entry?.evidence) && entry.evidence.length > 0, `${String(entry?.id)}: evidence missing`);
     add(issues, Array.isArray(entry?.assertions) && entry.assertions.length > 0 && entry.assertions.every((item) => item.passed === true), `${String(entry?.id)}: assertion failed`);
@@ -101,6 +106,11 @@ export function validateWp9Report(report, { root } = {}) {
 
   const forest = report?.taskForest ?? {};
   add(issues, /^[0-9a-f]{64}$/u.test(String(forest.graphHash ?? '')), 'Task Forest graph hash missing');
+  if (fixture) {
+    add(issues, forest.graphHash === fixture.graphHash, 'Task Forest graph hash differs from fixture');
+    add(issues, sameArray(forest.parent?.acceptanceCriteria, fixture.parent?.acceptanceCriteria), 'Task Forest acceptance criteria differ from fixture');
+    add(issues, sameArray(acceptance.map((entry) => entry.criterion), fixture.parent?.acceptanceCriteria), 'acceptance criterion text differs from fixture');
+  }
   add(issues, ['ready', 'in_progress', 'done'].includes(forest?.self?.status), 'self node status is illegal');
   add(issues, ['in_progress', 'done'].includes(forest?.parent?.status), 'parent node status is illegal');
   add(issues, forest?.expectedFinal?.self === 'done' && forest?.expectedFinal?.parent === 'done', 'expected final Task Forest status is missing');
@@ -196,10 +206,12 @@ export function verifyWp9Artifacts({ artifact, root = repositoryRoot } = {}) {
   const storedReportPath = existsSync(artifactReportPath) ? artifactReportPath : resolve(root, WP9_EVIDENCE_REPORT_PATH);
   const reportBytes = readFileSync(storedReportPath);
   const report = JSON.parse(reportBytes.toString('utf8'));
-  const issues = validateWp9Report(report, { root }).issues.slice();
   const fixture = readJson(resolve(root, WP9_FIXTURE_PATH));
+  const issues = validateWp9Report(report, { root, fixture }).issues.slice();
   if (report.fixtureDigest !== sha256(readFileSync(resolve(root, WP9_FIXTURE_PATH)))) issues.push('fixture digest mismatch');
   if (report.taskForest.graphHash !== fixture.graphHash) issues.push('graph hash differs from fixture');
+  if (!sameArray(report.taskForest.parent?.acceptanceCriteria, fixture.parent?.acceptanceCriteria)) issues.push('Task Forest acceptance criteria differ from fixture');
+  if (!sameArray(report.acceptance.map((entry) => entry.criterion), fixture.parent?.acceptanceCriteria)) issues.push('acceptance criterion text differs from fixture');
   if (!sameSet(report.taskForest.children.map((child) => child.id), fixture.children.map((child) => child.id))) issues.push('Task Forest snapshot child set differs from fixture');
   if (!sameSet(fixture.expectedAcceptanceIds, WP9_EXPECTED_ACCEPTANCE_IDS)) issues.push('fixture acceptance ids mismatch');
   if (fixture.wp8Reviewer !== report.review.wp8.actor) issues.push('WP8 reviewer differs from fixture');

@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   WP9_EVIDENCE_REPORT_PATH,
+  WP9_FIXTURE_PATH,
   buildWp9GlobalAcceptance,
   documentDigest,
 } from '../../scripts/versegit-wp9-global-acceptance.mjs';
@@ -19,7 +20,7 @@ interface StoredReport {
   taskForest: {
     children: Array<{ self?: boolean; status: string }>;
     self: { status: string };
-    parent: { status: string };
+    parent: { status: string; acceptanceCriteria: string[] };
   };
   p1: unknown[];
   review: { wp8: { verdict: string } };
@@ -32,6 +33,10 @@ interface StoredReport {
 
 function stored(): StoredReport {
   return JSON.parse(readFileSync(resolve(process.cwd(), WP9_EVIDENCE_REPORT_PATH), 'utf8')) as StoredReport;
+}
+
+function fixture(): { parent: { acceptanceCriteria: string[] } } {
+  return JSON.parse(readFileSync(resolve(process.cwd(), WP9_FIXTURE_PATH), 'utf8')) as { parent: { acceptanceCriteria: string[] } };
 }
 
 describe('WP9 whole-goal acceptance', () => {
@@ -105,14 +110,26 @@ describe('WP9 whole-goal acceptance', () => {
     const report = structuredClone(stored());
     report.acceptance[0].evidence = structuredClone(report.acceptance[1].evidence);
     report.acceptance[0].status = 'unverified';
+    report.acceptance[0].criterion = 'replacement criterion';
     report.taskForest.children.find((entry) => entry.self === true).status = 'done';
     report.digest = documentDigest(report);
     const issues = validateWp9Report(report, { root: process.cwd() }).issues;
     expect(issues).toEqual(expect.arrayContaining([
       'AC1-contract-identity: evidence mapping drifted',
+      'AC1-contract-identity: criterion differs from Task Forest snapshot',
       'self snapshot contradiction',
       'acceptance summary is incomplete or self-reported',
     ]));
+  });
+
+  it('rejects coordinated criterion and snapshot replacement against the fixture', () => {
+    const report = structuredClone(stored());
+    const replacement = 'coordinated replacement criterion';
+    report.acceptance[0].criterion = replacement;
+    report.taskForest.parent.acceptanceCriteria[0] = replacement;
+    report.digest = documentDigest(report);
+    const issues = validateWp9Report(report, { root: process.cwd(), fixture: fixture() }).issues;
+    expect(issues).toContain('acceptance criterion text differs from fixture');
   });
 
   it('rejects a checksum surface after target bytes are mutated', () => {

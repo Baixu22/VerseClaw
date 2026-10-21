@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.wp9-global-acceptance/v1",
-  "generated_at": "2026-10-21T22:15:00.960Z",
+  "generated_at": "2026-10-21T22:18:28.974Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0515",
@@ -467,7 +467,16 @@
       "id": "TF-0465",
       "status": "in_progress",
       "title": "把 VerseGit 接入为宿主管理的并发工作区控制面（非 GA）",
-      "acceptanceCount": 7
+      "acceptanceCount": 7,
+      "acceptanceCriteria": [
+        "契约、身份、生命周期、失败姿态和 evidence schema 有版本化文档",
+        "ClawX 侧有 opt-in harness profile 与 host-owned adapter",
+        "真实双 worktree/producer-consumer replay 和负向样例均由盘上证据复核",
+        "单 worktree 单 session 行为零变化，VG 故障不改变 harness verdict",
+        "VerseShell receipt 是 host-mode 验证事实的必要条件",
+        "Task Forest 收口前保留未跑语言、平台、读面和非目标边界",
+        "MC0-MC7 节点覆盖源码污染与 LLM 重写风险"
+      ]
     },
     "children": [
       {
@@ -928,5 +937,5 @@
     }
   ],
   "issues": [],
-  "digest": "68fd0af79b6e6f3e21771620b9dcd25ef294717cea4becb2656a60e304661afb"
+  "digest": "937014f8baa41d13d09c0710843af8a34852cb9b1a8740b9b420a869c8fde02a"
 }
