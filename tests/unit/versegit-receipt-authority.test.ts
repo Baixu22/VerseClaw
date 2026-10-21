@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
@@ -284,6 +284,27 @@ describe('host-authoritative VerseShell receipts', () => {
       const checked = installed.authority.verifyReceipt({ plan: installed.plan, receipt: installed.receipt });
       expect(checked.ok).toBe(false);
       expect(checked.issues).toContain('cleanup managed PIDs do not contain the receipt observation PID');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+
+
+  it('rejects mutation of the host observation wrapper when raw observation bytes disagree', () => {
+    const root = mkdtempSync(join(process.platform === 'win32' ? 'D:/tmp' : process.env.TMPDIR ?? '/tmp', 'vg-receipt-observation-wrapper-'));
+    try {
+      const installed = installEvidence(root);
+      const observationPath = join(root, 'observations', `${sha(installed.observation.id)}.json`);
+      const stored = JSON.parse(readFileSync(observationPath, 'utf8')) as Record<string, unknown>;
+      const observation = stored.observation as Record<string, unknown>;
+      const data = observation.data as Record<string, unknown>;
+      data.exit_code = 7;
+      writeFileSync(observationPath, `${stableJson(stored)}
+`, 'utf8');
+      const checked = installed.authority.verifyReceipt({ plan: installed.plan, receipt: installed.receipt });
+      expect(checked.ok).toBe(false);
+      expect(checked.issues).toContain('observation artifact bytes differ from host wrapper');
     } finally {
       rmSync(root, { recursive: true, force: true });
     }

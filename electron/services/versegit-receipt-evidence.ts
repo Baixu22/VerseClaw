@@ -356,6 +356,20 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       const observationData = stored.observation.data && typeof stored.observation.data === 'object' && !Array.isArray(stored.observation.data)
         ? stored.observation.data as Record<string, unknown>
         : {};
+      const observationArtifactPath = join('artifacts', stored.observationDigest);
+      if (existsSync(this.absolute(observationArtifactPath))) {
+        add(readFileSync(this.absolute(observationArtifactPath), 'utf8') === stableJson(stored.observation), 'observation artifact bytes differ from host wrapper');
+      }
+      const streamText = (value: unknown): string => {
+        const stream = value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
+        return typeof stream.text === 'string' ? stream.text : typeof stream.summary === 'string' ? stream.summary : '';
+      };
+      const stdoutText = streamText(observationData.stdout);
+      const stderrText = streamText(observationData.stderr);
+      const stdoutArtifactPath = join('artifacts', stored.stdoutDigest);
+      const stderrArtifactPath = join('artifacts', stored.stderrDigest);
+      if (existsSync(this.absolute(stdoutArtifactPath))) add(readFileSync(this.absolute(stdoutArtifactPath), 'utf8') === stdoutText, 'stdout artifact bytes differ from observation');
+      if (existsSync(this.absolute(stderrArtifactPath))) add(readFileSync(this.absolute(stderrArtifactPath), 'utf8') === stderrText, 'stderr artifact bytes differ from observation');
       add(observationData.exit_code === receipt.exitCode, 'observation exit code differs from receipt');
       add((observationData.timed_out === true) === (receipt.status === 'timed-out'), 'observation timeout status differs from receipt');
       for (const digest of stored.artifactDigests) add(receipt.artifactDigests.includes(digest), `unexpected observation artifact ${digest}`);
