@@ -1,0 +1,6 @@
+0d7d316db47f42d164a800982183a4f24e550a28dee1c8d2d03361c1ff9859ae  harness/specs/fixtures/versegit-planning-correction/mc1-evidence/contract.json
+651828a284797783a3a1684873226985dc507cab88af862cfa69a834efb6db94  harness/specs/fixtures/versegit-planning-correction/mc1-consumer-contract.json
+c4ee4b9f1635868d74b963e2cfe5b1db9796db6ce04b9d11297321ead7ec6c1a  scripts/versegit-mc1-contract.mjs
+37111142b8fd0a98ecc23a0be2a24c06b5281cbc02d224d96a01461a72dfd1f8  scripts/verify-versegit-mc1.mjs
+b7d39292dc17a4d434c0974a86cdb5d88648ec790e3df886900183bf1b94c0ce  tests/unit/versegit-mc1-contract.test.ts
+3e07f728551954a9a4c29cf2cf69c8a3688c051000eaa83df7189b62ed5b11dc  harness/specs/tasks/versegit-mc1-consumer-contract.md

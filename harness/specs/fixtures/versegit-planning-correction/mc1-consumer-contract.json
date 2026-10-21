@@ -1,0 +1,45 @@
+{
+  "schema": "clawx.versegit.consumer-contract/v1",
+  "owner": "TF-0474",
+  "modes": ["M0", "M1", "M2", "M3"],
+  "statuses": {
+    "top_level": ["not_applicable", "unavailable", "partial", "observed", "degraded", "rejected_by_policy"],
+    "reasons": ["stale", "unknown", "unmeasured", "recovery_required", "lost", "identity_mismatch", "invalid_candidate", "report_incomplete"]
+  },
+  "surface": {
+    "module_report": {
+      "schema": "clawx.versegit.module-report/v1",
+      "required": ["schema", "mode", "component", "trigger", "repository", "coverage", "result"],
+      "forbidden_fields": ["declare_intent", "land", "admit"]
+    },
+    "command_plan": {
+      "schema": "clawx.versegit.command-plan/v1",
+      "required": ["schema", "runId", "candidateId", "owner", "commands"],
+      "forbidden_fields": ["shell", "land", "admit"]
+    },
+    "execution_receipt": {
+      "schema": "clawx.verseshell.execution-receipt/v2",
+      "required": ["planId", "planDigest", "candidateId", "checkId", "ownerId", "epoch", "authorizationId", "argvDigest", "cwdDigest", "envDigest", "executionInputDigest", "requiredScope", "artifactDigests", "cleanupStatus"],
+      "forbidden_claims": ["caller_self_report", "selected_as_full"]
+    }
+  },
+  "permissions": {
+    "M0": { "start_process": false, "write_workspace": false, "write_domain_state": false, "execute": false },
+    "M1": { "start_process": true, "write_workspace": false, "write_domain_state": false, "execute": false },
+    "M2": { "start_process": true, "write_workspace": false, "write_domain_state": true, "execute": false },
+    "M3": { "start_process": true, "write_workspace": false, "write_domain_state": true, "execute": "via_verseshell_only" }
+  },
+  "failure_contract": {
+    "missing_binary": "unavailable",
+    "schema_mismatch": "rejected_by_policy",
+    "missing_receipt": "unmeasured",
+    "partial_coverage": "partial",
+    "unknown_owner": "rejected_by_policy",
+    "timeout": "degraded"
+  },
+  "import_policy": {
+    "forbidden_internal_imports": ["vg_kernel", "vg_jj", "vg_battery_", "crate::", "clawx://"],
+    "allowed_cross_boundary": ["versioned JSON contract", "host API"],
+    "deep_import_allowed": false
+  }
+}
