@@ -19,6 +19,7 @@ touchedAreas:
   - harness/specs/tasks/versegit-wp2-diagnostic-profile.md
   - harness/specs/tasks/versegit-wp3-receipt-bridge.md
   - harness/specs/tasks/versegit-wp4-behavior-coverage.md
+  - harness/specs/tasks/versegit-wp5-replay-soak.md
   - electron/services/versegit-module.ts
   - electron/services/versegit-observation.ts
   - electron/services/versegit-receipt-bridge.ts
@@ -44,6 +45,8 @@ touchedAreas:
   - scripts/verify-versegit-wp3.mjs
   - scripts/versegit-wp4-coverage.mjs
   - scripts/verify-versegit-wp4.mjs
+  - scripts/versegit-wp5-soak.mjs
+  - scripts/verify-versegit-wp5.mjs
   - tests/unit/versegit-mc1-contract.test.ts
   - tests/unit/versegit-mc2-fingerprint.test.ts
   - tests/unit/versegit-mc3-delivery.test.ts
@@ -54,6 +57,7 @@ touchedAreas:
   - tests/unit/versegit-wp2-profile.test.ts
   - tests/unit/versegit-wp3-receipts.test.ts
   - tests/unit/versegit-wp4-coverage.test.ts
+  - tests/unit/versegit-wp5-soak.test.ts
   - harness/specs/guides/versegit-concurrency/**
   - harness/specs/fixtures/versegit-planning-correction/**
   - scripts/validate-versegit-planning-correction.mjs
