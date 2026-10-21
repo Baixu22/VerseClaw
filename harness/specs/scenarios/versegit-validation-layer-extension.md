@@ -9,6 +9,7 @@ ownedPaths:
   - harness/specs/tasks/versegit-module-implementation-contracts.md
   - harness/specs/tasks/versegit-mc0-baseline-freeze.md
   - harness/specs/tasks/versegit-mc1-consumer-contract.md
+  - harness/specs/tasks/versegit-mc2-behavior-fingerprint.md
   - harness/specs/guides/versegit-concurrency/**
   - harness/specs/fixtures/versegit-planning-correction/**
   - docs/dev/versegit-validation-layer/README.md

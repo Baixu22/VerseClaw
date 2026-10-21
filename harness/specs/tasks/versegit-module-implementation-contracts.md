@@ -10,9 +10,13 @@ touchedAreas:
   - harness/specs/tasks/versegit-module-planning-correction.md
   - harness/specs/tasks/versegit-mc0-baseline-freeze.md
   - harness/specs/tasks/versegit-mc1-consumer-contract.md
+  - harness/specs/tasks/versegit-mc2-behavior-fingerprint.md
   - scripts/versegit-mc1-contract.mjs
   - scripts/verify-versegit-mc1.mjs
+  - scripts/versegit-mc2-fingerprint.mjs
+  - scripts/verify-versegit-mc2.mjs
   - tests/unit/versegit-mc1-contract.test.ts
+  - tests/unit/versegit-mc2-fingerprint.test.ts
   - harness/specs/guides/versegit-concurrency/**
   - harness/specs/fixtures/versegit-planning-correction/**
   - scripts/validate-versegit-planning-correction.mjs

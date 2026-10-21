@@ -1,0 +1,1795 @@
+{
+  "fingerprintSchema": "clawx.versegit.mc2-fingerprint/v1",
+  "generated_at": "2026-10-21T06:46:25.011Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "identity": {
+    "binary_sha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+    "binary_bytes": 72509440,
+    "binary_relative": "../Projects/VerseGit/target/debug/vg.exe",
+    "matches_mc0": true,
+    "mc0_source_head": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "mc0_source_tree": "7eb600c43556f9423cc9c5667c83652ba92a31a6",
+    "mc0_source_status": "dirty",
+    "mc0_deliverable": "rejected",
+    "mc0_binary_sha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+    "capabilities_schema": "versegit.capabilities/v1"
+  },
+  "fixture": {
+    "kind": "disposable_git_repo_with_linked_worktrees",
+    "created_outside_repos": true,
+    "temp_root_placeholder": "<temp_root>",
+    "producer_consumer_sessions": 2,
+    "worktree_count": 3,
+    "base_content_sha256": "15b6912b01b712897cecd0a79893c160b9849f74ceaa71f604af305ea56ffed9",
+    "signature_change_sha256": "502ad0718a48284ad26c7492c99ad2bc054c05db701fc6c5e6577acbe024f216",
+    "body_change_sha256": "ff21643fe2b53c55b5f9f7bb2dcc032ea79ae7ac7ef5cab4ff583f8a152c4b1b"
+  },
+  "normalization": {
+    "volatile_keys": [
+      "session_id",
+      "operation_id",
+      "change_id",
+      "wc_commit_id",
+      "head_hash",
+      "last_seq",
+      "events",
+      "events_verified",
+      "derived_entries",
+      "ts",
+      "run_at",
+      "fingerprint",
+      "tree_oid",
+      "commit_oid",
+      "merged_tree_oid",
+      "event_id",
+      "seq",
+      "bytes",
+      "candidate_id",
+      "duration_ms",
+      "elapsed_ms",
+      "output_bytes",
+      "stdout_sha256",
+      "stderr_sha256"
+    ],
+    "value_rules": [
+      "uuid -> <uuid>",
+      "evt_<hex32> -> <event_id>",
+      "sha256:<hex64> -> <fingerprint>",
+      "<hex40-64> -> <oid>",
+      "iso-8601 -> <timestamp>",
+      "absolute path -> <abs_path>",
+      "disposable temp root -> <temp_root>",
+      "volatile ledger keys -> <key>",
+      "array entries canonicalized before hashing"
+    ],
+    "paths_policy": "repo_relative_or_placeholder_only"
+  },
+  "cases": [
+    {
+      "id": "identity_version",
+      "role": "identity",
+      "purpose": "Frozen binary version string.",
+      "argv": [
+        "--version"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "stdout_kind": "text"
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "text",
+      "normalized_stdout": "vg 0.1.0",
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "node:string"
+      ],
+      "output_digest": "9a388fc85902c7bee452330da940ad1654eddf7d5e6cbfae4ebde569e87a95f7"
+    },
+    {
+      "id": "identity_capabilities",
+      "role": "identity",
+      "purpose": "Versioned capability document the sidecar contract consumes.",
+      "argv": [
+        "capabilities",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "stdout_kind": "json_object",
+        "schema": "versegit.capabilities/v1"
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "compat": {
+          "git_only": "preserved",
+          "next": "preserved",
+          "package_names": [
+            "smart_sorter",
+            "smart-test-sorter"
+          ],
+          "sts_protocols": [
+            "1.1",
+            "2.0"
+          ]
+        },
+        "mcp_tools": [
+          "basis_status",
+          "basis_watermark",
+          "declare_intent",
+          "explain_conflict",
+          "integration_status",
+          "verdict",
+          "vg_capabilities",
+          "who_touches"
+        ],
+        "read": [
+          "basis.status",
+          "change.log",
+          "change.status",
+          "conflicts",
+          "doctor",
+          "report",
+          "verdict",
+          "verify.status",
+          "workspace.root"
+        ],
+        "safety": {
+          "default_enable": false,
+          "evidence_land_present": true,
+          "managed_opt_in": true,
+          "strict_admission_present": true
+        },
+        "schema": "versegit.capabilities/v1",
+        "verdict": {
+          "dimensions": [
+            "candidate",
+            "evidence",
+            "execution",
+            "freshness",
+            "risk",
+            "trial"
+          ],
+          "note": "六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集",
+          "read_surface": {
+            "observed_channels": [
+              "edit",
+              "glob",
+              "grep",
+              "read",
+              "write"
+            ],
+            "unobserved_channels": [
+              "bash",
+              "direct-fs",
+              "network",
+              "other-mcp"
+            ]
+          },
+          "schema": "versegit.verdict/v1",
+          "single_green_light": false
+        },
+        "workflows": [
+          {
+            "entries": [
+              "basis.status",
+              "verdict",
+              "verify.status"
+            ],
+            "evidence": [
+              "crates/vg-cli/tests/jj_evidence_land.rs",
+              "crates/vg-cli/tests/jj_managed_plan.rs",
+              "crates/vg-cli/tests/jj_verdict.rs"
+            ],
+            "id": "validation.admit",
+            "status": "verified"
+          },
+          {
+            "entries": [
+              "change.describe",
+              "change.diffedit",
+              "change.file",
+              "change.new",
+              "change.snapshot"
+            ],
+            "evidence": [
+              "crates/vg-cli/tests/jj_change_lifecycle.rs",
+              "crates/vg-cli/tests/jj_diffedit.rs"
+            ],
+            "id": "change.edit",
+            "status": "verified"
+          },
+          {
+            "entries": [
+              "change.log",
+              "op.restore",
+              "op.undo"
+            ],
+            "evidence": [
+              "crates/vg-cli/tests/jj_backup_restore.rs",
+              "crates/vg-cli/tests/jj_op_undo_redo.rs",
+              "crates/vg-cli/tests/jj_operation_restore.rs"
+            ],
+            "id": "history.recover",
+            "status": "verified"
+          },
+          {
+            "entries": [
+              "change.materialize",
+              "land",
+              "report"
+            ],
+            "evidence": [
+              "crates/vg-cli/tests/jj_closed_loop.rs",
+              "crates/vg-cli/tests/jj_managed_candidate.rs",
+              "crates/vg-cli/tests/land_concurrency.rs"
+            ],
+            "id": "candidate.land",
+            "status": "verified"
+          },
+          {
+            "entries": [
+              "doctor",
+              "workspace.init",
+              "workspace.root"
+            ],
+            "evidence": [
+              "crates/vg-cli/tests/jj_public_surface.rs",
+              "crates/vg-cli/tests/jj_workspace_lifecycle.rs"
+            ],
+            "id": "workspace",
+            "status": "verified"
+          },
+          {
+            "entries": [
+              "gerrit.upload",
+              "git.fetch",
+              "git.push"
+            ],
+            "evidence": [
+              "crates/vg-cli/tests/jj_gerrit_upload.rs",
+              "crates/vg-cli/tests/jj_git_ref_sync.rs"
+            ],
+            "id": "external.publish",
+            "status": "controlled"
+          }
+        ],
+        "write": [
+          "admit.check",
+          "change.abandon",
+          "change.describe",
+          "change.diffedit",
+          "change.duplicate",
+          "change.file",
+          "change.materialize",
+          "change.new",
+          "change.rebase",
+          "change.snapshot",
+          "change.split",
+          "change.squash",
+          "gerrit.upload",
+          "git.fetch",
+          "git.push",
+          "land",
+          "op.restore",
+          "op.undo",
+          "workspace.init"
+        ]
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "compat.git_only:string",
+        "compat.next:string",
+        "compat.package_names:array(2)",
+        "compat.package_names[0]:string",
+        "compat.package_names[1]:string",
+        "compat.sts_protocols:array(2)",
+        "compat.sts_protocols[0]:string",
+        "compat.sts_protocols[1]:string",
+        "mcp_tools:array(8)",
+        "mcp_tools[0]:string",
+        "mcp_tools[1]:string",
+        "mcp_tools[2]:string",
+        "mcp_tools[3]:string",
+        "mcp_tools[4]:string",
+        "mcp_tools[5]:string",
+        "mcp_tools[6]:string",
+        "mcp_tools[7]:string",
+        "read:array(9)",
+        "read[0]:string",
+        "read[1]:string",
+        "read[2]:string",
+        "read[3]:string",
+        "read[4]:string",
+        "read[5]:string",
+        "read[6]:string",
+        "read[7]:string",
+        "read[8]:string",
+        "safety.default_enable:boolean",
+        "safety.evidence_land_present:boolean",
+        "safety.managed_opt_in:boolean",
+        "safety.strict_admission_present:boolean",
+        "schema:string",
+        "verdict.dimensions:array(6)",
+        "verdict.dimensions[0]:string",
+        "verdict.dimensions[1]:string",
+        "verdict.dimensions[2]:string",
+        "verdict.dimensions[3]:string",
+        "verdict.dimensions[4]:string",
+        "verdict.dimensions[5]:string",
+        "verdict.note:string",
+        "verdict.read_surface.observed_channels:array(5)",
+        "verdict.read_surface.observed_channels[0]:string",
+        "verdict.read_surface.observed_channels[1]:string",
+        "verdict.read_surface.observed_channels[2]:string",
+        "verdict.read_surface.observed_channels[3]:string",
+        "verdict.read_surface.observed_channels[4]:string",
+        "verdict.read_surface.unobserved_channels:array(4)",
+        "verdict.read_surface.unobserved_channels[0]:string",
+        "verdict.read_surface.unobserved_channels[1]:string",
+        "verdict.read_surface.unobserved_channels[2]:string",
+        "verdict.read_surface.unobserved_channels[3]:string",
+        "verdict.schema:string",
+        "verdict.single_green_light:boolean",
+        "workflows:array(6)",
+        "workflows[0].entries:array(3)",
+        "workflows[0].entries[0]:string",
+        "workflows[0].entries[1]:string",
+        "workflows[0].entries[2]:string",
+        "workflows[0].evidence:array(3)",
+        "workflows[0].evidence[0]:string",
+        "workflows[0].evidence[1]:string",
+        "workflows[0].evidence[2]:string",
+        "workflows[0].id:string",
+        "workflows[0].status:string",
+        "workflows[1].entries:array(5)",
+        "workflows[1].entries[0]:string",
+        "workflows[1].entries[1]:string",
+        "workflows[1].entries[2]:string",
+        "workflows[1].entries[3]:string",
+        "workflows[1].entries[4]:string",
+        "workflows[1].evidence:array(2)",
+        "workflows[1].evidence[0]:string",
+        "workflows[1].evidence[1]:string",
+        "workflows[1].id:string",
+        "workflows[1].status:string",
+        "workflows[2].entries:array(3)",
+        "workflows[2].entries[0]:string",
+        "workflows[2].entries[1]:string",
+        "workflows[2].entries[2]:string",
+        "workflows[2].evidence:array(3)",
+        "workflows[2].evidence[0]:string",
+        "workflows[2].evidence[1]:string",
+        "workflows[2].evidence[2]:string",
+        "workflows[2].id:string",
+        "workflows[2].status:string",
+        "workflows[3].entries:array(3)",
+        "workflows[3].entries[0]:string",
+        "workflows[3].entries[1]:string",
+        "workflows[3].entries[2]:string",
+        "workflows[3].evidence:array(3)",
+        "workflows[3].evidence[0]:string",
+        "workflows[3].evidence[1]:string",
+        "workflows[3].evidence[2]:string",
+        "workflows[3].id:string",
+        "workflows[3].status:string",
+        "workflows[4].entries:array(3)",
+        "workflows[4].entries[0]:string",
+        "workflows[4].entries[1]:string",
+        "workflows[4].entries[2]:string",
+        "workflows[4].evidence:array(2)",
+        "workflows[4].evidence[0]:string",
+        "workflows[4].evidence[1]:string",
+        "workflows[4].id:string",
+        "workflows[4].status:string",
+        "workflows[5].entries:array(3)",
+        "workflows[5].entries[0]:string",
+        "workflows[5].entries[1]:string",
+        "workflows[5].entries[2]:string",
+        "workflows[5].evidence:array(2)",
+        "workflows[5].evidence[0]:string",
+        "workflows[5].evidence[1]:string",
+        "workflows[5].id:string",
+        "workflows[5].status:string",
+        "write:array(19)",
+        "write[0]:string",
+        "write[10]:string",
+        "write[11]:string",
+        "write[12]:string",
+        "write[13]:string",
+        "write[14]:string",
+        "write[15]:string",
+        "write[16]:string",
+        "write[17]:string",
+        "write[18]:string",
+        "write[1]:string",
+        "write[2]:string",
+        "write[3]:string",
+        "write[4]:string",
+        "write[5]:string",
+        "write[6]:string",
+        "write[7]:string",
+        "write[8]:string",
+        "write[9]:string"
+      ],
+      "output_digest": "1675f334c9fc50039ff6b42c8be54a888c8905e2333a914a46f0c23b11a3ab73",
+      "assertion": {
+        "capability_schema": "versegit.capabilities/v1",
+        "verdict_dimensions": [
+          "candidate",
+          "evidence",
+          "execution",
+          "freshness",
+          "risk",
+          "trial"
+        ],
+        "single_green_light": false,
+        "default_enable": false,
+        "unobserved_read_channels": [
+          "bash",
+          "direct-fs",
+          "network",
+          "other-mcp"
+        ]
+      }
+    },
+    {
+      "id": "fixture_workspace_init",
+      "role": "health",
+      "purpose": "Disposable fixture ledger creation (vg workspace init).",
+      "argv": [
+        "init",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "stdout_kind": "json_object"
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "schema_version": 1
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "schema_version:number"
+      ],
+      "output_digest": "a9d5f6d002d956b8af5787a05e0ca000d45c03977ffa54ee8fbed719fed5fd23"
+    },
+    {
+      "id": "health_doctor",
+      "role": "health",
+      "purpose": "Ledger chain, derived cache, plugin and worktree diagnostic shape.",
+      "argv": [
+        "doctor",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "stdout_kind": "json_object"
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "chain": {
+          "events_verified": "<events_verified>",
+          "head_hash": null,
+          "last_seq": null,
+          "valid": true
+        },
+        "derived_entries": "<derived_entries>",
+        "events": "<events>",
+        "evidence": {
+          "backup_scope": "备份 = 上列全部 exists:true 的位置 + Git 对象库；basis 回执库在 v2 账本上是物化视图（可删可重算）；.vg/derived.db 是派生缓存，不算证据",
+          "basis_receipts": {
+            "detail": "absent",
+            "exists": false,
+            "path": "<temp_root>/repo/.git\\versegit\\basis\\basis.sqlite3"
+          },
+          "check_registry": {
+            "exists": false,
+            "path": "<temp_root>/repo/.git\\versegit\\checks.json"
+          },
+          "git_notes": {
+            "exists": false,
+            "ref": "refs/notes/versegit"
+          },
+          "land_ops": {
+            "detail": "absent",
+            "exists": false,
+            "path": "<temp_root>/repo/.git\\versegit\\land-ops.sqlite3"
+          },
+          "landed_evidence": {
+            "backfilled": 0,
+            "landed_total": 0,
+            "note_in_git": 0,
+            "report_on_disk": 0,
+            "without_note": [],
+            "without_report": []
+          },
+          "ledger": {
+            "events": "<events>",
+            "path": "<temp_root>\\repo\\.vg\\ledger.db"
+          },
+          "ledger_receipts": {
+            "by_kind": {},
+            "total": 0
+          },
+          "receipt_reconciliation": {
+            "aligned": true
+          },
+          "reports": {
+            "exists": false,
+            "files": 0,
+            "path": "<temp_root>/repo/.git\\versegit\\reports"
+          }
+        },
+        "hooks": {
+          "diagnostics": [
+            {
+              "client": "claude-code",
+              "client_available": true,
+              "mcp_configured": false,
+              "mcp_path": ".\\.mcp.json",
+              "next_step": "Run `vg hooks install --client claude-code` from this repository.",
+              "ready": false,
+              "skill_current": false,
+              "skill_installed": false,
+              "skill_path": ".\\.claude\\skills/versegit/SKILL.md"
+            }
+          ],
+          "root": "."
+        },
+        "ledger_schema_version": 2,
+        "plugins": [
+          {
+            "name": "admit",
+            "provides": [
+              "admit_decide"
+            ],
+            "requires_capabilities": [
+              "admit",
+              "observe"
+            ],
+            "schema_version": 1,
+            "version": "0.1.0"
+          },
+          {
+            "name": "contend",
+            "provides": [
+              "contend_advise",
+              "contend_decide"
+            ],
+            "requires_capabilities": [
+              "contend",
+              "observe"
+            ],
+            "schema_version": 1,
+            "version": "0.1.0"
+          },
+          {
+            "name": "detect-rw",
+            "provides": [
+              "rw_detect"
+            ],
+            "requires_capabilities": [
+              "detect"
+            ],
+            "schema_version": 1,
+            "version": "0.1.0"
+          },
+          {
+            "name": "detect-syntactic",
+            "provides": [
+              "syntactic_interleave"
+            ],
+            "requires_capabilities": [
+              "detect"
+            ],
+            "schema_version": 1,
+            "version": "0.1.0"
+          },
+          {
+            "name": "detect-textual",
+            "provides": [
+              "conflicts"
+            ],
+            "requires_capabilities": [
+              "detect",
+              "observe"
+            ],
+            "schema_version": 1,
+            "version": "0.1.0"
+          },
+          {
+            "name": "export-notes",
+            "provides": [
+              "export_git_notes"
+            ],
+            "requires_capabilities": [
+              "export"
+            ],
+            "schema_version": 1,
+            "version": "0.1.0"
+          },
+          {
+            "name": "export-prov",
+            "provides": [
+              "export_prov"
+            ],
+            "requires_capabilities": [
+              "export"
+            ],
+            "schema_version": 1,
+            "version": "0.1.0"
+          },
+          {
+            "name": "impact",
+            "provides": [
+              "impact"
+            ],
+            "requires_capabilities": [
+              "detect"
+            ],
+            "schema_version": 1,
+            "version": "0.1.1"
+          },
+          {
+            "name": "index",
+            "provides": [
+              "changeset",
+              "reads",
+              "symbols"
+            ],
+            "requires_capabilities": [
+              "index"
+            ],
+            "schema_version": 1,
+            "version": "0.1.1"
+          },
+          {
+            "name": "observe-fswatch",
+            "provides": [
+              "fs_watch_poll",
+              "fs_watch_start"
+            ],
+            "requires_capabilities": [
+              "observe"
+            ],
+            "schema_version": 1,
+            "version": "0.1.0"
+          },
+          {
+            "name": "observe-hooks",
+            "provides": [
+              "hooks_diagnose",
+              "hooks_ingest",
+              "hooks_install"
+            ],
+            "requires_capabilities": [
+              "observe"
+            ],
+            "schema_version": 1,
+            "version": "0.1.0"
+          },
+          {
+            "name": "verify",
+            "provides": [
+              "verify_checks",
+              "verify_diagnose",
+              "verify_run",
+              "verify_status"
+            ],
+            "requires_capabilities": [
+              "observe",
+              "verify"
+            ],
+            "schema_version": 1,
+            "version": "0.1.0"
+          }
+        ],
+        "unified_recovery": {
+          "error": null,
+          "isolation_probe": "not_run_in_doctor; use `vg sts isolation-run --probe-only` explicitly",
+          "jj_metadata": {
+            "delete": "not_run",
+            "gc": "not_run",
+            "present": false,
+            "reconcile": "not_run"
+          },
+          "missing_count": 0,
+          "missing_objects": [],
+          "mode": "read_only",
+          "pending_count": 0,
+          "pending_land_ops": [],
+          "repair_actions": [],
+          "repo": "<temp_root>\\repo"
+        },
+        "worktree_diagnostic": {
+          "count": 3,
+          "ok": true,
+          "worktrees": [
+            [
+              "clean",
+              "main",
+              "main"
+            ],
+            [
+              "clean",
+              "side-a",
+              "wt-a"
+            ],
+            [
+              "clean",
+              "side-b",
+              "wt-b"
+            ]
+          ]
+        },
+        "worktrees": [
+          [
+            "clean",
+            "main",
+            "main"
+          ],
+          [
+            "clean",
+            "side-a",
+            "wt-a"
+          ],
+          [
+            "clean",
+            "side-b",
+            "wt-b"
+          ]
+        ]
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "chain.events_verified:string",
+        "chain.head_hash:null",
+        "chain.last_seq:null",
+        "chain.valid:boolean",
+        "derived_entries:string",
+        "events:string",
+        "evidence.backup_scope:string",
+        "evidence.basis_receipts.detail:string",
+        "evidence.basis_receipts.exists:boolean",
+        "evidence.basis_receipts.path:string",
+        "evidence.check_registry.exists:boolean",
+        "evidence.check_registry.path:string",
+        "evidence.git_notes.exists:boolean",
+        "evidence.git_notes.ref:string",
+        "evidence.land_ops.detail:string",
+        "evidence.land_ops.exists:boolean",
+        "evidence.land_ops.path:string",
+        "evidence.landed_evidence.backfilled:number",
+        "evidence.landed_evidence.landed_total:number",
+        "evidence.landed_evidence.note_in_git:number",
+        "evidence.landed_evidence.report_on_disk:number",
+        "evidence.landed_evidence.without_note:array(0)",
+        "evidence.landed_evidence.without_report:array(0)",
+        "evidence.ledger.events:string",
+        "evidence.ledger.path:string",
+        "evidence.ledger_receipts.total:number",
+        "evidence.receipt_reconciliation.aligned:boolean",
+        "evidence.reports.exists:boolean",
+        "evidence.reports.files:number",
+        "evidence.reports.path:string",
+        "hooks.diagnostics:array(1)",
+        "hooks.diagnostics[0].client:string",
+        "hooks.diagnostics[0].client_available:boolean",
+        "hooks.diagnostics[0].mcp_configured:boolean",
+        "hooks.diagnostics[0].mcp_path:string",
+        "hooks.diagnostics[0].next_step:string",
+        "hooks.diagnostics[0].ready:boolean",
+        "hooks.diagnostics[0].skill_current:boolean",
+        "hooks.diagnostics[0].skill_installed:boolean",
+        "hooks.diagnostics[0].skill_path:string",
+        "hooks.root:string",
+        "ledger_schema_version:number",
+        "plugins:array(12)",
+        "plugins[0].name:string",
+        "plugins[0].provides:array(1)",
+        "plugins[0].provides[0]:string",
+        "plugins[0].requires_capabilities:array(2)",
+        "plugins[0].requires_capabilities[0]:string",
+        "plugins[0].requires_capabilities[1]:string",
+        "plugins[0].schema_version:number",
+        "plugins[0].version:string",
+        "plugins[10].name:string",
+        "plugins[10].provides:array(3)",
+        "plugins[10].provides[0]:string",
+        "plugins[10].provides[1]:string",
+        "plugins[10].provides[2]:string",
+        "plugins[10].requires_capabilities:array(1)",
+        "plugins[10].requires_capabilities[0]:string",
+        "plugins[10].schema_version:number",
+        "plugins[10].version:string",
+        "plugins[11].name:string",
+        "plugins[11].provides:array(4)",
+        "plugins[11].provides[0]:string",
+        "plugins[11].provides[1]:string",
+        "plugins[11].provides[2]:string",
+        "plugins[11].provides[3]:string",
+        "plugins[11].requires_capabilities:array(2)",
+        "plugins[11].requires_capabilities[0]:string",
+        "plugins[11].requires_capabilities[1]:string",
+        "plugins[11].schema_version:number",
+        "plugins[11].version:string",
+        "plugins[1].name:string",
+        "plugins[1].provides:array(2)",
+        "plugins[1].provides[0]:string",
+        "plugins[1].provides[1]:string",
+        "plugins[1].requires_capabilities:array(2)",
+        "plugins[1].requires_capabilities[0]:string",
+        "plugins[1].requires_capabilities[1]:string",
+        "plugins[1].schema_version:number",
+        "plugins[1].version:string",
+        "plugins[2].name:string",
+        "plugins[2].provides:array(1)",
+        "plugins[2].provides[0]:string",
+        "plugins[2].requires_capabilities:array(1)",
+        "plugins[2].requires_capabilities[0]:string",
+        "plugins[2].schema_version:number",
+        "plugins[2].version:string",
+        "plugins[3].name:string",
+        "plugins[3].provides:array(1)",
+        "plugins[3].provides[0]:string",
+        "plugins[3].requires_capabilities:array(1)",
+        "plugins[3].requires_capabilities[0]:string",
+        "plugins[3].schema_version:number",
+        "plugins[3].version:string",
+        "plugins[4].name:string",
+        "plugins[4].provides:array(1)",
+        "plugins[4].provides[0]:string",
+        "plugins[4].requires_capabilities:array(2)",
+        "plugins[4].requires_capabilities[0]:string",
+        "plugins[4].requires_capabilities[1]:string",
+        "plugins[4].schema_version:number",
+        "plugins[4].version:string",
+        "plugins[5].name:string",
+        "plugins[5].provides:array(1)",
+        "plugins[5].provides[0]:string",
+        "plugins[5].requires_capabilities:array(1)",
+        "plugins[5].requires_capabilities[0]:string",
+        "plugins[5].schema_version:number",
+        "plugins[5].version:string",
+        "plugins[6].name:string",
+        "plugins[6].provides:array(1)",
+        "plugins[6].provides[0]:string",
+        "plugins[6].requires_capabilities:array(1)",
+        "plugins[6].requires_capabilities[0]:string",
+        "plugins[6].schema_version:number",
+        "plugins[6].version:string",
+        "plugins[7].name:string",
+        "plugins[7].provides:array(1)",
+        "plugins[7].provides[0]:string",
+        "plugins[7].requires_capabilities:array(1)",
+        "plugins[7].requires_capabilities[0]:string",
+        "plugins[7].schema_version:number",
+        "plugins[7].version:string",
+        "plugins[8].name:string",
+        "plugins[8].provides:array(3)",
+        "plugins[8].provides[0]:string",
+        "plugins[8].provides[1]:string",
+        "plugins[8].provides[2]:string",
+        "plugins[8].requires_capabilities:array(1)",
+        "plugins[8].requires_capabilities[0]:string",
+        "plugins[8].schema_version:number",
+        "plugins[8].version:string",
+        "plugins[9].name:string",
+        "plugins[9].provides:array(2)",
+        "plugins[9].provides[0]:string",
+        "plugins[9].provides[1]:string",
+        "plugins[9].requires_capabilities:array(1)",
+        "plugins[9].requires_capabilities[0]:string",
+        "plugins[9].schema_version:number",
+        "plugins[9].version:string",
+        "unified_recovery.error:null",
+        "unified_recovery.isolation_probe:string",
+        "unified_recovery.jj_metadata.delete:string",
+        "unified_recovery.jj_metadata.gc:string",
+        "unified_recovery.jj_metadata.present:boolean",
+        "unified_recovery.jj_metadata.reconcile:string",
+        "unified_recovery.missing_count:number",
+        "unified_recovery.missing_objects:array(0)",
+        "unified_recovery.mode:string",
+        "unified_recovery.pending_count:number",
+        "unified_recovery.pending_land_ops:array(0)",
+        "unified_recovery.repair_actions:array(0)",
+        "unified_recovery.repo:string",
+        "worktree_diagnostic.count:number",
+        "worktree_diagnostic.ok:boolean",
+        "worktree_diagnostic.worktrees:array(3)",
+        "worktree_diagnostic.worktrees[0]:array(3)",
+        "worktree_diagnostic.worktrees[0][0]:string",
+        "worktree_diagnostic.worktrees[0][1]:string",
+        "worktree_diagnostic.worktrees[0][2]:string",
+        "worktree_diagnostic.worktrees[1]:array(3)",
+        "worktree_diagnostic.worktrees[1][0]:string",
+        "worktree_diagnostic.worktrees[1][1]:string",
+        "worktree_diagnostic.worktrees[1][2]:string",
+        "worktree_diagnostic.worktrees[2]:array(3)",
+        "worktree_diagnostic.worktrees[2][0]:string",
+        "worktree_diagnostic.worktrees[2][1]:string",
+        "worktree_diagnostic.worktrees[2][2]:string",
+        "worktrees:array(3)",
+        "worktrees[0]:array(3)",
+        "worktrees[0][0]:string",
+        "worktrees[0][1]:string",
+        "worktrees[0][2]:string",
+        "worktrees[1]:array(3)",
+        "worktrees[1][0]:string",
+        "worktrees[1][1]:string",
+        "worktrees[1][2]:string",
+        "worktrees[2]:array(3)",
+        "worktrees[2][0]:string",
+        "worktrees[2][1]:string",
+        "worktrees[2][2]:string"
+      ],
+      "output_digest": "06f742d3ba415d9b8e4bb0edf9ceb583a0051ceac218592d2ebb52da5becda7e"
+    },
+    {
+      "id": "health_verify_registry_empty",
+      "role": "health",
+      "purpose": "Trusted check registry on a fresh workspace must not invent checks.",
+      "argv": [
+        "verify",
+        "list",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "stdout_kind": "json_object"
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "path": "<temp_root>/repo/.git\\versegit\\checks.json",
+        "registry": {
+          "acceptance_policy": "strict",
+          "checks": {},
+          "parallel_groups": {},
+          "verify_symbol_scopes": false,
+          "version": 1
+        }
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "path:string",
+        "registry.acceptance_policy:string",
+        "registry.verify_symbol_scopes:boolean",
+        "registry.version:number"
+      ],
+      "output_digest": "ae9b740aedda713546e2a0f4613d7101e0925258fe30e4ceeed636b02d11b336",
+      "assertion": {
+        "registered_checks": 0
+      }
+    },
+    {
+      "id": "health_verify_status_unverified",
+      "role": "health",
+      "purpose": "A worktree with no matching validation record must be UNVERIFIED, never passed.",
+      "argv": [
+        "verify",
+        "status",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "verdict": "UNVERIFIED"
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "candidate_id": "<candidate_id>",
+        "dirty": false,
+        "fingerprint": "<fingerprint>",
+        "latest": null,
+        "reason": "no verification check was run against this candidate",
+        "records": 0,
+        "reuse": [],
+        "verdict": "UNVERIFIED",
+        "worktree": "<temp_root>\\wt-a"
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "candidate_id:string",
+        "dirty:boolean",
+        "fingerprint:string",
+        "latest:null",
+        "reason:string",
+        "records:number",
+        "reuse:array(0)",
+        "verdict:string",
+        "worktree:string"
+      ],
+      "output_digest": "20d05c95a1f8b301050f9d6470b22dbc66c75556fc4ce1101f18f7adb24e2e2e",
+      "assertion": {
+        "verdict": "UNVERIFIED"
+      }
+    },
+    {
+      "id": "error_workspace_not_found",
+      "role": "error",
+      "purpose": "VG commands outside a VG workspace are refused rather than silently scoped elsewhere.",
+      "argv": [
+        "doctor",
+        "--json"
+      ],
+      "cwd_role": "outside_fixture",
+      "oracle": {
+        "exit": 1,
+        "stderr_class": "workspace_not_found"
+      },
+      "status": "observed",
+      "exit_code": 1,
+      "stdout_kind": "text",
+      "normalized_stdout": "",
+      "normalized_stderr": "vg: 未找到工作区：从 <temp_root>\\outside 向上未发现 .vg/，请先执行 `vg init` 或显式给出 --workspace",
+      "stderr_class": "workspace_not_found",
+      "output_shape": [
+        "node:string"
+      ],
+      "output_digest": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+    },
+    {
+      "id": "behavior_session_list",
+      "role": "behavior",
+      "purpose": "Session projection lists fixture sessions with actor and state.",
+      "argv": [
+        "session",
+        "list",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "stdout_kind": "json_array"
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_array",
+      "normalized_stdout": [
+        {
+          "session_id": "<session_id>",
+          "actor": "agent:mc2-bystander",
+          "state": "observing"
+        },
+        {
+          "session_id": "<session_id>",
+          "actor": "agent:mc2-consumer",
+          "state": "observing"
+        },
+        {
+          "session_id": "<session_id>",
+          "actor": "agent:mc2-producer",
+          "state": "observing"
+        },
+        {
+          "session_id": "<session_id>",
+          "actor": "agent:mc2-self-writer",
+          "state": "observing"
+        }
+      ],
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "[0].actor:string",
+        "[0].session_id:string",
+        "[0].state:string",
+        "[1].actor:string",
+        "[1].session_id:string",
+        "[1].state:string",
+        "[2].actor:string",
+        "[2].session_id:string",
+        "[2].state:string",
+        "[3].actor:string",
+        "[3].session_id:string",
+        "[3].state:string",
+        "node:array(4)"
+      ],
+      "output_digest": "ceb96d864c50dbd9c404604506fb156b110ff743de2061034770bef6ec05c3ee"
+    },
+    {
+      "id": "behavior_session_show",
+      "role": "behavior",
+      "purpose": "session show carries identity, read set and write set projections.",
+      "argv": [
+        "session",
+        "show",
+        "<session_id>",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "stdout_kind": "json_object"
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "session_id": "<session_id>",
+        "state": "observing",
+        "record": {
+          "session_id": "<session_id>",
+          "worktree_path": "<temp_root>/wt-a",
+          "branch": "side-a",
+          "base_commit": "<oid>",
+          "actor": "agent:mc2-producer",
+          "state": "observing"
+        },
+        "read_set": [],
+        "write_set": []
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "read_set:array(0)",
+        "record.actor:string",
+        "record.base_commit:string",
+        "record.branch:string",
+        "record.session_id:string",
+        "record.state:string",
+        "record.worktree_path:string",
+        "session_id:string",
+        "state:string",
+        "write_set:array(0)"
+      ],
+      "output_digest": "397d5cbc01b86c1b28abe76b43f71aad2cc425abb11a2fabe27e9add13162c60"
+    },
+    {
+      "id": "negative_control_silent_before_peer_write",
+      "role": "negative_control",
+      "purpose": "A read with no peer write must produce zero advisories.",
+      "argv": [
+        "check",
+        "--json",
+        "--file",
+        "pricedb.py",
+        "--session",
+        "<session_id>"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "advisories": 0
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "advisories": [],
+        "file": "pricedb.py",
+        "focus": "<uuid>",
+        "policy": "advisory"
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "advisories:array(0)",
+        "file:string",
+        "focus:string",
+        "policy:string"
+      ],
+      "output_digest": "cc7bdef704ffacf1a35bbe92d2c7c852b5b952ee40ba63efbf9db2930dc32e6c",
+      "assertion": {
+        "advisory_kinds": []
+      }
+    },
+    {
+      "id": "positive_stale_read_producer_consumer",
+      "role": "positive",
+      "purpose": "A peer signature change must invalidate the reader premise.",
+      "argv": [
+        "check",
+        "--json",
+        "--file",
+        "pricedb.py",
+        "--session",
+        "<session_id>"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "advisory_kind": "ssi/stale-read"
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "advisories": [
+          {
+            "conflict_id": "ssi/api-drift:<uuid>-><uuid>:charge",
+            "kind": "ssi/api-drift",
+            "message": "Session <hex> 修改了 charge 的签名（<hex>… → <hex>…），你正在引用它，请先读取对方的改动再继续",
+            "other_sessions": [
+              "<uuid>"
+            ],
+            "path": "pricedb.py",
+            "severity": "warning",
+            "symbol": "charge"
+          },
+          {
+            "conflict_id": "ssi/stale-read:<uuid>-><uuid>:charge",
+            "kind": "ssi/stale-read",
+            "message": "你读取的 charge 已被 Session <hex> 修改，读前提过期",
+            "other_sessions": [
+              "<uuid>"
+            ],
+            "path": "pricedb.py",
+            "severity": "warning",
+            "symbol": "charge"
+          }
+        ],
+        "file": "pricedb.py",
+        "focus": "<uuid>",
+        "policy": "advisory"
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "advisories:array(2)",
+        "advisories[0].conflict_id:string",
+        "advisories[0].kind:string",
+        "advisories[0].message:string",
+        "advisories[0].other_sessions:array(1)",
+        "advisories[0].other_sessions[0]:string",
+        "advisories[0].path:string",
+        "advisories[0].severity:string",
+        "advisories[0].symbol:string",
+        "advisories[1].conflict_id:string",
+        "advisories[1].kind:string",
+        "advisories[1].message:string",
+        "advisories[1].other_sessions:array(1)",
+        "advisories[1].other_sessions[0]:string",
+        "advisories[1].path:string",
+        "advisories[1].severity:string",
+        "advisories[1].symbol:string",
+        "file:string",
+        "focus:string",
+        "policy:string"
+      ],
+      "output_digest": "b19f3db25a31cea295419049997518c1eb0d1f3ff8281fbf1ff71796ae8da67c",
+      "assertion": {
+        "advisory_kinds": [
+          "ssi/api-drift",
+          "ssi/stale-read"
+        ]
+      }
+    },
+    {
+      "id": "negative_control_unrelated_symbol_silent",
+      "role": "negative_control",
+      "purpose": "Reading another symbol must stay silent when a peer changes a different symbol.",
+      "argv": [
+        "check",
+        "--json",
+        "--file",
+        "pricedb.py",
+        "--session",
+        "<session_id>"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "advisories": 0
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "advisories": [],
+        "file": "pricedb.py",
+        "focus": "<uuid>",
+        "policy": "advisory"
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "advisories:array(0)",
+        "file:string",
+        "focus:string",
+        "policy:string"
+      ],
+      "output_digest": "cc7bdef704ffacf1a35bbe92d2c7c852b5b952ee40ba63efbf9db2930dc32e6c",
+      "assertion": {
+        "advisory_kinds": []
+      }
+    },
+    {
+      "id": "negative_control_own_write_not_cross_session",
+      "role": "negative_control",
+      "purpose": "A session reading and writing its own file (untouched by peers) is not a cross-session conflict.",
+      "argv": [
+        "check",
+        "--json",
+        "--file",
+        "notes.py",
+        "--session",
+        "<session_id>"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "advisories": 0
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "advisories": [],
+        "file": "notes.py",
+        "focus": "<uuid>",
+        "policy": "advisory"
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "advisories:array(0)",
+        "file:string",
+        "focus:string",
+        "policy:string"
+      ],
+      "output_digest": "f2ba2f131f4f7c5a276b57e5b81ab49c4acce49d5d1c8fb0afdff7565818e785",
+      "assertion": {
+        "advisory_kinds": []
+      }
+    },
+    {
+      "id": "behavior_conflicts_worktree_mode",
+      "role": "behavior",
+      "purpose": "Multi-worktree conflict report shape must always carry the four class counters.",
+      "argv": [
+        "conflicts",
+        "--repo",
+        "<fixture_repo>",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "stdout_kind": "json_object",
+        "counter_classes": 4
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "cached": false,
+        "conflicts": [],
+        "counts": {
+          "behavioral": 0,
+          "ssi": 0,
+          "syntactic": 0,
+          "textual": 0
+        },
+        "mode": "worktree"
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "cached:boolean",
+        "conflicts:array(0)",
+        "counts.behavioral:number",
+        "counts.ssi:number",
+        "counts.syntactic:number",
+        "counts.textual:number",
+        "mode:string"
+      ],
+      "output_digest": "5d31a3822268bb5357f069716ebcc0f41606ab1bbf9f59487515d57c4949be17",
+      "assertion": {
+        "mode": "worktree",
+        "counts": {
+          "behavioral": 0,
+          "ssi": 0,
+          "syntactic": 0,
+          "textual": 0
+        }
+      }
+    },
+    {
+      "id": "behavior_verify_registered_check",
+      "role": "behavior",
+      "purpose": "Registering a trusted check is an explicit registry write.",
+      "argv": [
+        "verify",
+        "set",
+        "mc2smoke",
+        "--timeout",
+        "30",
+        "--",
+        "git",
+        "--version"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "stdout_kind": "text_or_json"
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "text",
+      "normalized_stdout": "已登记检查 mc2smoke（超时 30s，共 1 条）",
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "node:string"
+      ],
+      "output_digest": "626d807a43bfd4a32546b197e45869c2d686effbfa21c8a46c4c42bcda81d28a"
+    },
+    {
+      "id": "behavior_verify_run_then_status",
+      "role": "behavior",
+      "purpose": "A registered check that passes must produce a fingerprint-bound VERIFIED status for that worktree only.",
+      "argv": [
+        "verify",
+        "run",
+        "mc2smoke",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "stdout_kind": "json_object"
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "candidate_id": "<candidate_id>",
+        "dirty": true,
+        "fingerprint": "<fingerprint>",
+        "latest": {
+          "authoritative": true,
+          "candidate_id": "<candidate_id>",
+          "command": [
+            "--version",
+            "git"
+          ],
+          "event_id": "<event_id>",
+          "fingerprint": "<fingerprint>",
+          "passed": true,
+          "run_at": "<run_at>",
+          "seq": "<seq>",
+          "stale_reason": null
+        },
+        "reason": null,
+        "records": 1,
+        "reuse": [
+          {
+            "check": "mc2smoke",
+            "event_id": "<event_id>"
+          }
+        ],
+        "verdict": "VERIFIED",
+        "worktree": "<temp_root>\\wt-a"
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "candidate_id:string",
+        "dirty:boolean",
+        "fingerprint:string",
+        "latest.authoritative:boolean",
+        "latest.candidate_id:string",
+        "latest.command:array(2)",
+        "latest.command[0]:string",
+        "latest.command[1]:string",
+        "latest.event_id:string",
+        "latest.fingerprint:string",
+        "latest.passed:boolean",
+        "latest.run_at:string",
+        "latest.seq:string",
+        "latest.stale_reason:null",
+        "reason:null",
+        "records:number",
+        "reuse:array(1)",
+        "reuse[0].check:string",
+        "reuse[0].event_id:string",
+        "verdict:string",
+        "worktree:string"
+      ],
+      "output_digest": "bc5249b6b8371119f49682fbd4752d6d8a64d82852f9e630844e904f04433071",
+      "assertion": {
+        "verdict": "VERIFIED"
+      }
+    },
+    {
+      "id": "negative_control_sibling_worktree_not_verified",
+      "role": "negative_control",
+      "purpose": "Verifying one worktree must not upgrade a sibling worktree verdict.",
+      "argv": [
+        "verify",
+        "status",
+        "--json",
+        "--worktree",
+        "<side_b>"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "verdict": "UNVERIFIED"
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "candidate_id": "<candidate_id>",
+        "dirty": true,
+        "fingerprint": "<fingerprint>",
+        "latest": null,
+        "reason": "no verification check was run against this candidate",
+        "records": 0,
+        "reuse": [],
+        "verdict": "UNVERIFIED",
+        "worktree": "<temp_root>\\wt-b"
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "candidate_id:string",
+        "dirty:boolean",
+        "fingerprint:string",
+        "latest:null",
+        "reason:string",
+        "records:number",
+        "reuse:array(0)",
+        "verdict:string",
+        "worktree:string"
+      ],
+      "output_digest": "950fd8807fc6df59355f58634f28a3caa42cec8f184cb171353d3b8726e00f31",
+      "assertion": {
+        "verdict": "UNVERIFIED"
+      }
+    },
+    {
+      "id": "error_verify_unknown_check",
+      "role": "error",
+      "purpose": "Running an unregistered check must fail closed, not execute arbitrary argv.",
+      "argv": [
+        "verify",
+        "run",
+        "mc2missing",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "stderr_class": "subject_not_found_or_error",
+        "executed_argv": false
+      },
+      "status": "observed",
+      "exit_code": 1,
+      "stdout_kind": "text",
+      "normalized_stdout": "",
+      "normalized_stderr": "vg: 插件宿主错误: verify: 电池错误: NOT_FOUND: verification check 'mc2missing' is not configured for this repository; a repository operator can configure trusted checks with the 'vg verify set' CLI",
+      "stderr_class": "error",
+      "output_shape": [
+        "node:string"
+      ],
+      "output_digest": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+    },
+    {
+      "id": "negative_control_ended_session_stops_conflicting",
+      "role": "negative_control",
+      "purpose": "Ending a session must purge conflict views derived from it.",
+      "argv": [
+        "check",
+        "--json",
+        "--file",
+        "pricedb.py",
+        "--session",
+        "<session_id>"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 0,
+        "advisories": 0
+      },
+      "status": "observed",
+      "exit_code": 0,
+      "stdout_kind": "json_object",
+      "normalized_stdout": {
+        "advisories": [],
+        "file": "pricedb.py",
+        "focus": "<uuid>",
+        "policy": "advisory"
+      },
+      "normalized_stderr": "",
+      "stderr_class": "none",
+      "output_shape": [
+        "advisories:array(0)",
+        "file:string",
+        "focus:string",
+        "policy:string"
+      ],
+      "output_digest": "cc7bdef704ffacf1a35bbe92d2c7c852b5b952ee40ba63efbf9db2930dc32e6c",
+      "assertion": {
+        "advisory_kinds": []
+      }
+    },
+    {
+      "id": "error_session_not_found",
+      "role": "error",
+      "purpose": "An unknown session must fail closed with a classified error.",
+      "argv": [
+        "session",
+        "show",
+        "missing-session",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 1,
+        "stderr_class": "session_not_found"
+      },
+      "status": "observed",
+      "exit_code": 1,
+      "stdout_kind": "text",
+      "normalized_stdout": "",
+      "normalized_stderr": "vg: 会话不存在: missing-session",
+      "stderr_class": "session_not_found",
+      "output_shape": [
+        "node:string"
+      ],
+      "output_digest": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+    },
+    {
+      "id": "error_verdict_facts_missing",
+      "role": "error",
+      "purpose": "verdict --facts must reject a missing input file.",
+      "argv": [
+        "verdict",
+        "--facts",
+        "missing-facts.json",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "exit": 1,
+        "stderr_class": "facts_input_missing"
+      },
+      "status": "observed",
+      "exit_code": 1,
+      "stdout_kind": "text",
+      "normalized_stdout": "",
+      "normalized_stderr": "vg: 读 facts missing-facts.json 失败: 系统找不到指定的文件。 (os error 2)",
+      "stderr_class": "facts_input_missing",
+      "output_shape": [
+        "node:string"
+      ],
+      "output_digest": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+    },
+    {
+      "id": "error_usage_missing_argument",
+      "role": "error",
+      "purpose": "Argument validation must be structured, not a crash.",
+      "argv": [
+        "verdict",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "stderr_class": "usage_error"
+      },
+      "status": "observed",
+      "exit_code": 2,
+      "stdout_kind": "text",
+      "normalized_stdout": "",
+      "normalized_stderr": "error: the following required arguments were not provided:\n  --facts <FACTS>\n\nUsage: vg.exe verdict --facts <FACTS> --json\n\nFor more information, try '--help'.",
+      "stderr_class": "usage_error",
+      "output_shape": [
+        "node:string"
+      ],
+      "output_digest": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+    },
+    {
+      "id": "error_unsupported_argument",
+      "role": "error",
+      "purpose": "Unknown flags must be refused by the CLI surface.",
+      "argv": [
+        "session",
+        "show",
+        "x",
+        "--workspace",
+        "y",
+        "--json"
+      ],
+      "cwd_role": "fixture_repo",
+      "oracle": {
+        "stderr_class": "usage_error"
+      },
+      "status": "observed",
+      "exit_code": 2,
+      "stdout_kind": "text",
+      "normalized_stdout": "",
+      "normalized_stderr": "error: unexpected argument '--workspace' found\n\n  tip: to pass '--workspace' as a value, use '-- --workspace'\n\nUsage: vg.exe session show <ID>\n\nFor more information, try '--help'.",
+      "stderr_class": "error",
+      "output_shape": [
+        "node:string"
+      ],
+      "output_digest": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+    }
+  ],
+  "coverage": {
+    "roles": [
+      "identity",
+      "health",
+      "behavior",
+      "positive",
+      "negative_control",
+      "error",
+      "cleanup"
+    ],
+    "positive_controls": [
+      "positive_stale_read_producer_consumer"
+    ],
+    "negative_controls": [
+      "negative_control_silent_before_peer_write",
+      "negative_control_unrelated_symbol_silent",
+      "negative_control_own_write_not_cross_session",
+      "negative_control_sibling_worktree_not_verified",
+      "negative_control_ended_session_stops_conflicting"
+    ],
+    "error_paths": [
+      "error_workspace_not_found",
+      "error_verify_unknown_check",
+      "error_session_not_found",
+      "error_verdict_facts_missing",
+      "error_usage_missing_argument",
+      "error_unsupported_argument"
+    ],
+    "unobserved_surfaces": [
+      "real_agent_tool_invocation (fixture sessions are host-injected observations)",
+      "network and browser read surface",
+      "direct filesystem reads outside hooks",
+      "non-Windows platforms",
+      "languages outside the declared index coverage",
+      "vg land and vg admit (never invoked by MC2)"
+    ]
+  },
+  "cleanup": {
+    "disposable_root_pattern": "versegit-mc2-*",
+    "roots_created": 1,
+    "roots_removed": 1,
+    "survivors": 0,
+    "cleanup_status": "clean",
+    "host_worktrees_deleted": 0,
+    "evidence_retained": true
+  },
+  "boundaries": {
+    "vg_source_tree_copied": false,
+    "vg_history_copied": false,
+    "vg_task_forest_copied": false,
+    "vg_build_outputs_copied": false,
+    "vg_private_evidence_copied": false,
+    "fixture_only_execution": true,
+    "user_repository_mutated": false,
+    "land_or_admit_invoked": false,
+    "deliverable": "rejected",
+    "blockers": [
+      "source_worktree_dirty",
+      "not_a_deliverable_baseline"
+    ]
+  },
+  "digest": "cffdbbeecff8eba5021c3b15208e148d839f41dc8f8e8055efdf3ad49fe36f7b"
+}
