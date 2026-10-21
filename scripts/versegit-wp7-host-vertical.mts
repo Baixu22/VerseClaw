@@ -402,6 +402,7 @@ export type HostToolCall = {
   runId: string;
   name: string;
   args: Record<string, unknown>;
+  started: VerseGitBehaviorEvent;
   completion: VerseGitBehaviorEvent;
 };
 
@@ -421,6 +422,7 @@ export type ProviderCall = {
   stderrDigest: string;
   commandSpecDigest: string;
   sourceBehaviorEventId?: string;
+  sourceInputEventId?: string;
   sourceEventInputDigest?: string;
   sourceSurface?: string;
   sourceStatus?: string;
@@ -489,7 +491,8 @@ async function invokeVg(input: {
     evidenceDigest: evidence.digest,
     ...(input.source ? {
       sourceBehaviorEventId: input.source.completion.eventId,
-      sourceEventInputDigest: input.source.completion.inputDigest,
+      sourceInputEventId: input.source.started.eventId,
+      sourceEventInputDigest: input.source.started.inputDigest,
       sourceSurface: input.source.completion.surface,
       sourceStatus: input.source.completion.status,
       sourceOutputDigest: input.source.completion.outputDigest,
@@ -768,21 +771,22 @@ export async function buildWp7Report({
       if (!binding) throw new Error(`unbound host event run ${input.runId}`);
       const ownerId = binding.ownerId;
       const sequence = hostToolCalls.length * 2 + 1;
-      ingest(toolStarted(input.runId, input.sessionKey, sequence, input.toolCallId, input.name, input.args, input.ts), {
+      const started = ingest(toolStarted(input.runId, input.sessionKey, sequence, input.toolCallId, input.name, input.args, input.ts), {
         epoch, ownerId, requestId: input.requestId, traceId: input.traceId, eventId: `${input.toolCallId}-start`,
-      });
+      }).event;
+      if (!started) throw new Error(`start event missing for ${input.toolCallId}`);
       const completion = ingest(toolCompleted(input.runId, input.sessionKey, sequence + 1, input.toolCallId, input.name, input.result, input.ts + 1), {
         epoch, ownerId, requestId: input.requestId, traceId: input.traceId, eventId: `${input.toolCallId}-end`,
       }).event;
       if (!completion) throw new Error(`completion event missing for ${input.toolCallId}`);
-      const record: HostToolCall = { toolCallId: input.toolCallId, runId: input.runId, name: input.name, args: input.args, completion };
+      const record: HostToolCall = { toolCallId: input.toolCallId, runId: input.runId, name: input.name, args: input.args, started, completion };
       hostToolCalls.push(record);
       return record;
     };
     const projectHostFact = async (record: HostToolCall) => {
       const expected = classifyToolSurface(record.name, record.args);
       if (record.completion.status !== 'succeeded') throw new Error(`successful completion required for ${record.toolCallId}`);
-      if (record.completion.surface !== expected.surface) throw new Error(`normalized event surface mismatch for ${record.toolCallId}`);
+      if (record.started.surface !== expected.surface || record.completion.surface !== expected.surface) throw new Error(`normalized event surface mismatch for ${record.toolCallId}`);
       const binding = hostBindings.get(record.runId);
       if (!binding) throw new Error(`no VG binding for ${record.runId}`);
       const sessionByRun: Record<string, string> = {
@@ -1054,8 +1058,10 @@ export async function buildWp7Report({
         runId: call.runId,
         surface: call.completion.surface,
         status: call.completion.status,
-        inputDigest: call.completion.inputDigest,
+        inputDigest: call.started.inputDigest,
         outputDigest: call.completion.outputDigest,
+        sourceStartedEventId: call.started.eventId,
+        completionEventId: call.completion.eventId,
         behaviorEventId: call.completion.eventId,
         providerCallId: providerCall?.id ?? null,
         providerCallDigest: providerCall?.stdoutDigest ?? null,
@@ -1074,8 +1080,10 @@ export async function buildWp7Report({
         runId: entry.runId,
         surface: entry.surface,
         status: entry.source.completion.status,
-        inputDigest: entry.source.completion.inputDigest,
+        inputDigest: entry.source.started.inputDigest,
         outputDigest: providerCall?.stdoutDigest ?? null,
+        sourceStartedEventId: entry.source.started.eventId,
+        completionEventId: entry.source.completion.eventId,
         behaviorEventId: entry.source.completion.eventId,
         providerCallId: providerCall?.id ?? null,
         providerCallDigest: providerCall?.stdoutDigest ?? null,
@@ -1592,6 +1600,9 @@ export function validateWp7Report(
     const stored = readEvidence<Record<string, unknown>>({ path: entry.evidenceRef, digest: entry.evidenceDigest }, `provider command ${String(entry.id)}`);
     add(stored?.route === 'host-owned-sidecar-fixed-argv', `provider command route evidence mismatch: ${String(entry.id)}`);
     add(stored?.processPid === entry.processPid, `provider command pid evidence mismatch: ${String(entry.id)}`);
+    add(stableJson(stored?.argvShape) === stableJson(entry.argvShape), `provider command argv evidence mismatch: ${String(entry.id)}`);
+    add(stored?.cwdRole === entry.cwdRole, `provider command cwd evidence mismatch: ${String(entry.id)}`);
+    add(stored?.exitCode === entry.exitCode && stored?.timedOut === entry.timedOut, `provider command exit/timeout evidence mismatch: ${String(entry.id)}`);
     add(stored?.stdoutDigest === entry.stdoutDigest && stored?.stderrDigest === entry.stderrDigest, `provider command output evidence mismatch: ${String(entry.id)}`);
   }
   add(/^[0-9a-f]{64}$/u.test(String(provider?.binarySha256 ?? '')), 'VG binary digest missing');
@@ -1610,14 +1621,17 @@ export function validateWp7Report(
   for (const link of factProjectionLinks) {
     const matching = providerCalls.find((entry) => entry.id === link.providerCallId);
     const behaviorEvent = behaviorEvents.find((entry) => entry.eventId === link.behaviorEventId);
+    const sourceStartedEvent = behaviorEvents.find((entry) => entry.eventId === link.sourceStartedEventId);
     add(Boolean(matching), `provider call missing for fact projection ${String(link.toolCallId)}`);
-    add(Boolean(behaviorEvent), `normalized behavior event missing for ${String(link.behaviorEventId)}`);
-    add(link.inputDigest === behaviorEvent?.inputDigest, `fact projection input digest mismatch for ${String(link.toolCallId)}`);
+    add(Boolean(behaviorEvent), `normalized completion event missing for ${String(link.behaviorEventId)}`);
+    add(Boolean(sourceStartedEvent), `normalized started event missing for ${String(link.sourceStartedEventId)}`);
+    add(link.inputDigest === sourceStartedEvent?.inputDigest, `fact projection started-input digest mismatch for ${String(link.toolCallId)}`);
     add(link.providerCallDigest === matching?.stdoutDigest, `fact projection digest mismatch for ${String(link.toolCallId)}`);
     add(link.providerCallArgvDigest === matching?.argvDigest, `fact projection argv digest mismatch for ${String(link.toolCallId)}`);
     add(link.providerEvidenceDigest === matching?.evidenceDigest, `fact projection host-command evidence mismatch for ${String(link.toolCallId)}`);
     add(matching?.sourceBehaviorEventId === link.behaviorEventId, `provider call is not bound to behavior event ${String(link.behaviorEventId)}`);
-    add(matching?.sourceEventInputDigest === link.inputDigest, `provider call did not consume the normalized event input ${String(link.behaviorEventId)}`);
+    add(matching?.sourceInputEventId === link.sourceStartedEventId, `provider call was not bound to the started event ${String(link.sourceStartedEventId)}`);
+    add(matching?.sourceEventInputDigest === link.inputDigest, `provider call did not consume the normalized started-event input ${String(link.sourceStartedEventId)}`);
   }
 
   const facts = report.vgFacts as Record<string, unknown> | undefined;

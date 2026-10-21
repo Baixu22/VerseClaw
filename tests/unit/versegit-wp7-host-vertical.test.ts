@@ -32,6 +32,15 @@ describe('WP7 real host vertical slice', () => {
     expect((report.provider as { factRoute: string }).factRoute).toBe('host-owned-sidecar-fixed-argv');
     expect((report.provider as { verificationRoute: string }).verificationRoute).toBe('verseshell-governed-aci');
     expect((report.executionEvidence as { continuation: { receipt: { realVerseshell: boolean } } }).continuation.receipt.realVerseshell).toBe(true);
+    const behaviorEvents = (report.behavior as { events: Array<Record<string, unknown>> }).events;
+    const links = report.factProjectionLinks as Array<Record<string, unknown>>;
+    const nullDigest = createHash('sha256').update(JSON.stringify(null)).digest('hex');
+    for (const link of links) {
+      const started = behaviorEvents.find((event) => event.eventId === link.sourceStartedEventId);
+      expect(started).toBeTruthy();
+      expect(link.inputDigest).toBe(started?.inputDigest);
+      expect(link.inputDigest).not.toBe(nullDigest);
+    }
   });
 
   it('rejects host verdict, cross-worktree, cleanup and execution promotion even after re-sealing', () => {
@@ -62,11 +71,14 @@ describe('WP7 real host vertical slice', () => {
     const links = tampered.factProjectionLinks as Array<Record<string, unknown>>;
     links[1].behaviorEventId = links[0].behaviorEventId;
     (tampered.provider as { providerCalls: Array<Record<string, unknown>> }).providerCalls[0].success = false;
+    const alteredProvider = (tampered.provider as { providerCalls: Array<Record<string, unknown>> }).providerCalls[1];
+    (alteredProvider.argvShape as string[]).push('wrong-input.py');
     reseal(tampered);
     const issues = validateWp7Report(tampered).issues;
     expect(issues).toEqual(expect.arrayContaining([
       'identity field agentSessionId must be unique',
       'identity field vgSessionId must be unique',
+      `provider command argv evidence mismatch: ${String(alteredProvider.id)}`,
       `provider call is not bound to behavior event ${String(links[0].behaviorEventId)}`,
       'provider fact adapter failed or did not retain host command evidence',
     ]));
