@@ -15,7 +15,9 @@ touchedAreas:
   - harness/specs/tasks/versegit-wp0-module-contract.md
   - harness/specs/tasks/versegit-mc5-differential-gate.md
   - harness/specs/tasks/versegit-mc4-module-adapter.md
+  - harness/specs/tasks/versegit-wp1-observation-bridge.md
   - electron/services/versegit-module.ts
+  - electron/services/versegit-observation.ts
   - scripts/versegit-mc1-contract.mjs
   - scripts/verify-versegit-mc1.mjs
   - scripts/versegit-mc2-fingerprint.mjs
@@ -28,12 +30,15 @@ touchedAreas:
   - scripts/verify-versegit-mc5.mjs
   - scripts/versegit-mc4-adapter.mjs
   - scripts/verify-versegit-mc4.mjs
+  - scripts/versegit-wp1-observation.mjs
+  - scripts/verify-versegit-wp1.mjs
   - tests/unit/versegit-mc1-contract.test.ts
   - tests/unit/versegit-mc2-fingerprint.test.ts
   - tests/unit/versegit-mc3-delivery.test.ts
   - tests/unit/versegit-wp0-contract.test.ts
   - tests/unit/versegit-mc5-differential.test.ts
   - tests/unit/versegit-mc4-adapter.test.ts
+  - tests/unit/versegit-wp1-observation.test.ts
   - harness/specs/guides/versegit-concurrency/**
   - harness/specs/fixtures/versegit-planning-correction/**
   - scripts/validate-versegit-planning-correction.mjs

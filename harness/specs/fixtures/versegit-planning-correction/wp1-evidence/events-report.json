@@ -1,0 +1,223 @@
+{
+  "reportSchema": "clawx.versegit.wp1-evidence-report/v1",
+  "generated_at": "2026-10-21T12:12:46.655Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0467",
+  "fixture": "harness/specs/fixtures/versegit-planning-correction/wp1-observation-fixture.json",
+  "fixtureDigest": "fe722e782ae1dc7a7dcb89fc8e63e53ed0461aa3cde753f4062c0a8fbb341403",
+  "observationModule": "electron/services/versegit-observation.ts",
+  "observationModuleDigest": "120fc546cfed2e923309132b3c7667183b3393795b9aaed22d1ad5464a229ba0",
+  "eventLineCount": 20,
+  "behaviorEventCount": 9,
+  "sessionEndCount": 3,
+  "statusCounts": {
+    "attached": 3,
+    "observed": 6,
+    "duplicate": 1,
+    "partial": 2,
+    "unobserved": 1,
+    "stale": 2,
+    "rejected_by_policy": 2,
+    "detached": 3
+  },
+  "emittedSurfaceCounts": {
+    "file.read": 2,
+    "file.write": 1,
+    "repo.search": 1,
+    "test": 2,
+    "mcp": 1,
+    "network": 1,
+    "control": 4
+  },
+  "emittedCoverageCounts": {
+    "host-event": 9,
+    "partial": 2,
+    "unobserved": 1
+  },
+  "sessions": [
+    {
+      "fixtureStepId": "detach-a",
+      "runId": "run-a",
+      "repoId": "repo-alpha",
+      "worktreeId": "worktree-a",
+      "agentSessionId": "agent-session-a",
+      "epoch": 2,
+      "coverage": {
+        "schema": "clawx.versegit.observation-coverage/v1",
+        "runId": "run-a",
+        "repoId": "repo-alpha",
+        "worktreeId": "worktree-a",
+        "agentSessionId": "agent-session-a",
+        "vgSessionId": "vg-session-a",
+        "epoch": 2,
+        "values": {
+          "fileRead": "host-event",
+          "fileWrite": "unobserved",
+          "search": "host-event",
+          "shellRead": "unobserved",
+          "shellWrite": "inferred",
+          "mcpRead": "partial",
+          "mcpWrite": "partial",
+          "network": "unobserved",
+          "browser": "unobserved",
+          "directFs": "unobserved"
+        },
+        "knownGaps": [
+          "shellRead is unobserved: a structured exec event cannot prove which files a process read",
+          "shellWrite is inferred from process events until VerseShell supplies a filesystem receipt",
+          "external MCP and browser/network effects are partially observable",
+          "direct filesystem access outside host tools remains unobserved"
+        ],
+        "eventCount": 7,
+        "duplicateCount": 1,
+        "staleCount": 1,
+        "rejectedCount": 2,
+        "surfaceCounts": {
+          "file.read": 2,
+          "file.write": 0,
+          "repo.search": 1,
+          "exec": 0,
+          "test": 2,
+          "mcp": 1,
+          "network": 0,
+          "browser": 0,
+          "control": 1
+        }
+      }
+    },
+    {
+      "fixtureStepId": "detach-b",
+      "runId": "run-b",
+      "repoId": "repo-alpha",
+      "worktreeId": "worktree-b",
+      "agentSessionId": "agent-session-b",
+      "epoch": 1,
+      "coverage": {
+        "schema": "clawx.versegit.observation-coverage/v1",
+        "runId": "run-b",
+        "repoId": "repo-alpha",
+        "worktreeId": "worktree-b",
+        "agentSessionId": "agent-session-b",
+        "vgSessionId": "vg-session-b",
+        "epoch": 1,
+        "values": {
+          "fileRead": "unobserved",
+          "fileWrite": "host-event",
+          "search": "unobserved",
+          "shellRead": "unobserved",
+          "shellWrite": "unobserved",
+          "mcpRead": "unobserved",
+          "mcpWrite": "unobserved",
+          "network": "partial",
+          "browser": "unobserved",
+          "directFs": "unobserved"
+        },
+        "knownGaps": [
+          "shellRead is unobserved: a structured exec event cannot prove which files a process read",
+          "shellWrite is inferred from process events until VerseShell supplies a filesystem receipt",
+          "external MCP and browser/network effects are partially observable",
+          "direct filesystem access outside host tools remains unobserved"
+        ],
+        "eventCount": 2,
+        "duplicateCount": 0,
+        "staleCount": 0,
+        "rejectedCount": 0,
+        "surfaceCounts": {
+          "file.read": 0,
+          "file.write": 1,
+          "repo.search": 0,
+          "exec": 0,
+          "test": 0,
+          "mcp": 0,
+          "network": 1,
+          "browser": 0,
+          "control": 0
+        }
+      }
+    },
+    {
+      "fixtureStepId": "detach-a-epoch-3",
+      "runId": "run-a",
+      "repoId": "repo-alpha",
+      "worktreeId": "worktree-a",
+      "agentSessionId": "agent-session-a2",
+      "epoch": 3,
+      "coverage": {
+        "schema": "clawx.versegit.observation-coverage/v1",
+        "runId": "run-a",
+        "repoId": "repo-alpha",
+        "worktreeId": "worktree-a",
+        "agentSessionId": "agent-session-a2",
+        "vgSessionId": "vg-session-a2",
+        "epoch": 3,
+        "values": {
+          "fileRead": "unobserved",
+          "fileWrite": "unobserved",
+          "search": "unobserved",
+          "shellRead": "unobserved",
+          "shellWrite": "unobserved",
+          "mcpRead": "unobserved",
+          "mcpWrite": "unobserved",
+          "network": "unobserved",
+          "browser": "unobserved",
+          "directFs": "unobserved"
+        },
+        "knownGaps": [
+          "shellRead is unobserved: a structured exec event cannot prove which files a process read",
+          "shellWrite is inferred from process events until VerseShell supplies a filesystem receipt",
+          "external MCP and browser/network effects are partially observable",
+          "direct filesystem access outside host tools remains unobserved"
+        ],
+        "eventCount": 0,
+        "duplicateCount": 0,
+        "staleCount": 0,
+        "rejectedCount": 0,
+        "surfaceCounts": {
+          "file.read": 0,
+          "file.write": 0,
+          "repo.search": 0,
+          "exec": 0,
+          "test": 0,
+          "mcp": 0,
+          "network": 0,
+          "browser": 0,
+          "control": 0
+        }
+      }
+    }
+  ],
+  "duplicateRejectedWithoutCount": true,
+  "staleRejectedWithoutCount": true,
+  "wrongOwnerRejected": true,
+  "wrongSessionRejected": true,
+  "crossWorktreeViolations": 0,
+  "coverage": {
+    "fileRead": "host-event",
+    "fileWrite": "host-event",
+    "search": "host-event",
+    "shellRead": "unobserved",
+    "shellWrite": "inferred",
+    "mcpRead": "partial",
+    "mcpWrite": "partial",
+    "network": "partial",
+    "browser": "unobserved",
+    "directFs": "unobserved"
+  },
+  "eventsDigest": "sha256:e7bbfc76adff789f49f61831f6c4b670f4ea219c4c640d111122737204147ee9",
+  "host_verdict": "unchanged",
+  "boundaries": {
+    "vg_process_started": false,
+    "workspace_write": false,
+    "default_on": false,
+    "renderer_route_added": false,
+    "harness_profile_added": false,
+    "land_or_admit_invoked": false,
+    "host_worktree_deleted": false,
+    "raw_payload_stored": false,
+    "note": "WP1 normalizes host events only. Profile wiring, VG attachment and cleanup deletion belong to WP2/WP5."
+  },
+  "passed": true,
+  "issues": [],
+  "digest": "1b1e278284150fdd74ea8f584e467ebf49bd7ea1b6f5dac8f87a306aa8ae848c"
+}
