@@ -417,6 +417,17 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       add(managedPids.every((pid) => duringPids.includes(pid)), 'owned PIDs were not observed during the run');
       add(stableJson([...newProcessPids].sort((a, b) => a - b)) === stableJson([...managedPids].sort((a, b) => a - b)), 'new-process PID vector differs from managed PIDs');
       add(managedPids.every((pid) => !afterPids.includes(pid)), 'owned PID remained in post-cleanup inventory');
+      const receiptObservationPath = join('observations', idFile(String(receipt.observationId ?? '')));
+      const receiptObservation = existsSync(this.absolute(receiptObservationPath))
+        ? this.readJson<HostObservationEvidence>(receiptObservationPath)
+        : null;
+      const receiptPid = receiptObservation?.process.pid ?? null;
+      add(Number.isInteger(receiptPid) && Number(receiptPid) > 0, 'receipt observation process pid is missing');
+      add(Number.isInteger(receiptPid) && managedPids.includes(Number(receiptPid)), 'cleanup managed PIDs do not contain the receipt observation PID');
+      add(Number.isInteger(receiptPid) && checkedPids.includes(Number(receiptPid)), 'owned PID checks do not contain the receipt observation PID');
+      add(Number.isInteger(receiptPid) && duringPids.includes(Number(receiptPid)), 'during-run PIDs do not contain the receipt observation PID');
+      add(Number.isInteger(receiptPid) && !baselinePids.includes(Number(receiptPid)), 'receipt observation PID overlaps the baseline');
+      add(Number.isInteger(receiptPid) && !afterPids.includes(Number(receiptPid)), 'receipt observation PID survived cleanup');
       add(nestedSurvivors.length === 0 && checkedSurvivors.length === 0, 'nested cleanup retained process survivors');
       add(stableJson(nestedSurvivors) === stableJson(checkedSurvivors), 'nested survivor vector differs from owned PID checks');
       add(!Array.isArray(inventory.managedAfterShutdown) || inventory.managedAfterShutdown.length === 0, 'managed processes remained after shutdown');

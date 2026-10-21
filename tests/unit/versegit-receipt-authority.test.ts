@@ -268,4 +268,25 @@ describe('host-authoritative VerseShell receipts', () => {
     }
   });
 
+
+
+  it('rejects a consistent PID inventory that does not contain the receipt observation PID', () => {
+    const root = mkdtempSync(join(process.platform === 'win32' ? 'D:/tmp' : process.env.TMPDIR ?? '/tmp', 'vg-receipt-pid-crossbind-'));
+    try {
+      const cleanup = cleanCleanup();
+      cleanup.processInventory.baselinePids = [];
+      cleanup.processInventory.duringPids = [99999];
+      cleanup.processInventory.newProcessPids = [99999];
+      cleanup.processInventory.managedPids = [99999];
+      cleanup.processInventory.afterPids = [];
+      cleanup.processInventory.ownedPidChecks = [{ ok: true, pid: 99999, exists: false }];
+      const installed = installEvidence(root, { cleanup });
+      const checked = installed.authority.verifyReceipt({ plan: installed.plan, receipt: installed.receipt });
+      expect(checked.ok).toBe(false);
+      expect(checked.issues).toContain('cleanup managed PIDs do not contain the receipt observation PID');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
 });
