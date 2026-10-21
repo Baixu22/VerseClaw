@@ -139,6 +139,10 @@ function runGit(args: string[], cwd: string): string {
   }
 }
 
+function candidateStatusAt(cwd: string): string {
+  return runGit(['status', '--porcelain=v1', '--untracked-files=all', '--', '.', ':(exclude).ae'], cwd);
+}
+
 function recordShape(value: string, root: string, replacements: Record<string, string>): string {
   let output = value;
   for (const [needle, replacement] of Object.entries(replacements).sort((a, b) => b[0].length - a[0].length)) {
@@ -857,7 +861,7 @@ export async function buildWp7Report({
     const candidateInputDigest = candidateInputDigestAt(candidateWorktree);
     const baseOid = gitHost(['rev-parse', 'main'], repo);
     const candidateWorktreeHead = gitHost(['rev-parse', 'HEAD'], candidateWorktree);
-    const candidateStatus = gitHost(['status', '--porcelain=v1', '--untracked-files=all'], candidateWorktree);
+    const candidateStatus = candidateStatusAt(candidateWorktree);
     if (candidateWorktreeHead !== candidateCommit) throw new Error('candidate worktree HEAD differs from the composed commit');
     if (candidateStatus.length !== 0) throw new Error('candidate worktree is dirty before input freeze');
     const candidateManifest = {
@@ -870,6 +874,7 @@ export async function buildWp7Report({
       candidateWorktreeHead,
       dirtyFiles: [] as string[],
       untrackedFiles: [] as string[],
+      ignoredRuntimePaths: ['.ae/**'],
       verificationCwdRole: 'candidate_worktree',
       inputDigest: candidateInputDigest,
       inputFiles: ['pricedb.py', 'verify.cjs']
@@ -910,7 +915,7 @@ export async function buildWp7Report({
     const runCandidateCheck = async (plan: VerificationPlan, label: string) => {
       const beforeDigest = candidateInputDigestAt(candidateWorktree);
       const beforeHead = gitHost(['rev-parse', 'HEAD'], candidateWorktree);
-      const beforeStatus = gitHost(['status', '--porcelain=v1', '--untracked-files=all'], candidateWorktree);
+      const beforeStatus = candidateStatusAt(candidateWorktree);
       if (beforeDigest !== candidateInputDigest || beforeHead !== candidateCommit || beforeStatus.length !== 0) {
         throw new Error(`${label} input freeze failed before execution`);
       }
@@ -937,7 +942,7 @@ export async function buildWp7Report({
       const parsed = parseJson(firstLine, label);
       const afterDigest = candidateInputDigestAt(candidateWorktree);
       const afterHead = gitHost(['rev-parse', 'HEAD'], candidateWorktree);
-      const afterStatus = gitHost(['status', '--porcelain=v1', '--untracked-files=all'], candidateWorktree);
+      const afterStatus = candidateStatusAt(candidateWorktree);
       const inputStable = parsed.inputDigest === candidateInputDigest
         && beforeDigest === afterDigest
         && beforeHead === afterHead
@@ -950,7 +955,7 @@ export async function buildWp7Report({
     if (!primaryCheckOk) throw new Error('host candidate check did not pass');
     const collectHostVerdict = (candidateCheckOk: boolean, residualReceiptStatus: string) => {
       const currentHead = gitHost(['rev-parse', 'HEAD'], candidateWorktree);
-      const currentStatus = gitHost(['status', '--porcelain=v1', '--untracked-files=all'], candidateWorktree);
+      const currentStatus = candidateStatusAt(candidateWorktree);
       const currentInputDigest = candidateInputDigestAt(candidateWorktree);
       const repositoryHealthy = currentHead === candidateCommit
         && currentStatus.length === 0
@@ -1586,6 +1591,7 @@ export function validateWp7Report(
   add(candidate?.candidateWorktreeHead === candidate?.commitOid, 'candidate worktree HEAD is not bound to the candidate commit');
   add(Array.isArray(candidate?.dirtyFiles) && candidate.dirtyFiles.length === 0, 'candidate dirty inputs were not frozen');
   add(Array.isArray(candidate?.untrackedFiles) && candidate.untrackedFiles.length === 0, 'candidate untracked inputs were not frozen');
+  add(Array.isArray(candidate?.ignoredRuntimePaths) && candidate.ignoredRuntimePaths.includes('.ae/**'), 'candidate runtime metadata exclusion is not declared');
   const inputFiles = (candidate?.inputFiles ?? []) as Array<Record<string, unknown>>;
   add(inputFiles.length === 2 && inputFiles.every((entry) => typeof entry.path === 'string' && /^[0-9a-f]{64}$/u.test(String(entry.sha256))), 'candidate input manifest is incomplete');
   const recomputedInputDigest = sha256(JSON.stringify({ schemaVersion: 1, files: inputFiles }));
