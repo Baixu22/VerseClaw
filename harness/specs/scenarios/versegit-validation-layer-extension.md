@@ -11,6 +11,7 @@ ownedPaths:
   - harness/specs/tasks/versegit-mc1-consumer-contract.md
   - harness/specs/tasks/versegit-mc2-behavior-fingerprint.md
   - harness/specs/tasks/versegit-mc3-sidecar-delivery.md
+  - harness/specs/tasks/versegit-wp0-module-contract.md
   - harness/specs/guides/versegit-concurrency/**
   - harness/specs/fixtures/versegit-planning-correction/**
   - docs/dev/versegit-validation-layer/README.md
