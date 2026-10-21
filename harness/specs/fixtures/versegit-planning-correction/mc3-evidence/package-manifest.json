@@ -1,0 +1,273 @@
+{
+  "packageSchema": "clawx.versegit.mc3-package/v1",
+  "generated_at": "2026-10-21T07:20:36.307Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0476",
+  "delivery_model": "digest-addressed sidecar package",
+  "identity": {
+    "effective_source_commit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "source_tree_digest": "7eb600c43556f9423cc9c5667c83652ba92a31a6",
+    "allowed_residual_patches": [
+      "?? docs/integration/clawx-harness-module-lifecycle-2026-10-21.md",
+      "?? docs/integration/governance-response-plan-2026-10-19.md",
+      "?? docs/integration/proprietary-design-review-plan-2026-10-19.md",
+      "?? docs/integration/sts-test-trust-closure-plan-2026-10-19.md",
+      "?? evidence/proprietary-design-review/2026-10-19/.gitattributes",
+      "?? evidence/proprietary-design-review/2026-10-19/first-probe-build.json",
+      "?? evidence/proprietary-design-review/2026-10-19/landing-check-command.json",
+      "?? evidence/proprietary-design-review/2026-10-19/landing-check.json",
+      "?? evidence/proprietary-design-review/2026-10-19/manifest.json",
+      "?? evidence/proprietary-design-review/2026-10-19/ownership-check.json",
+      "?? evidence/proprietary-design-review/2026-10-19/report-probe-windows.json",
+      "?? evidence/proprietary-design-review/2026-10-19/report_probe.rs",
+      "?? evidence/proprietary-design-review/2026-10-19/report_snapshot.rs",
+      "?? evidence/proprietary-design-review/2026-10-19/verification.json",
+      "?? evidence/proprietary-design-review/2026-10-19/whitespace-check.json"
+    ],
+    "build_recipe_digest": "ad483450226e8c2ea6f507e9a9eacca13629b9d16635771b96a8e37d68aecd6e",
+    "lockfile_digest": "11eb2982c91b6cbfcf4f32c2c57ce81264c520b2602a74eca23270ed3ca47491",
+    "platform": "win32-x64",
+    "binary_sha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+    "binary_bytes": 72509440,
+    "binary_profile": "debug",
+    "capabilities_digest": "185a7f032e142662ba846b0eca026340ff7f9891c84d53d923d619c163407b58",
+    "capabilities_schema": "versegit.capabilities/v1",
+    "contract_digest": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749",
+    "golden_bundle_digest": "cffdbbeecff8eba5021c3b15208e148d839f41dc8f8e8055efdf3ad49fe36f7b",
+    "capability_matrix_digest": "c5896217b73ac495320832b04d2edc9182347b783e0606200d2ef680ff6f41dd",
+    "vg_version": "0.1.0",
+    "ledger_schema_version": 2
+  },
+  "identity_required_fields": [
+    "effective_source_commit",
+    "source_tree_digest",
+    "allowed_residual_patches",
+    "build_recipe_digest",
+    "lockfile_digest",
+    "platform",
+    "binary_sha256",
+    "capabilities_digest",
+    "contract_digest",
+    "golden_bundle_digest",
+    "capability_matrix_digest"
+  ],
+  "package_contents": [
+    {
+      "name": "binary_manifest",
+      "copied_into_clawx": true
+    },
+    {
+      "name": "capabilities",
+      "schema": "versegit.capabilities/v1",
+      "payload": "digest and document schema only",
+      "copied_into_clawx": true
+    },
+    {
+      "name": "consumer_contract",
+      "digest": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749",
+      "copied_into_clawx": true
+    },
+    {
+      "name": "golden_bundle",
+      "digest": "cffdbbeecff8eba5021c3b15208e148d839f41dc8f8e8055efdf3ad49fe36f7b",
+      "copied_into_clawx": true
+    },
+    {
+      "name": "capability_matrix",
+      "digest": "c5896217b73ac495320832b04d2edc9182347b783e0606200d2ef680ff6f41dd",
+      "copied_into_clawx": true
+    },
+    {
+      "name": "build_provenance",
+      "recipe": "cargo build --release --package vg-cli",
+      "reproducible_build_verified": false,
+      "copied_into_clawx": true
+    }
+  ],
+  "forbidden_contents": [
+    {
+      "name": "source_tree",
+      "copied_into_clawx": false
+    },
+    {
+      "name": "git_directory",
+      "copied_into_clawx": false
+    },
+    {
+      "name": "build_output_directory",
+      "copied_into_clawx": false
+    },
+    {
+      "name": "task_forest",
+      "copied_into_clawx": false
+    },
+    {
+      "name": "private_evidence",
+      "copied_into_clawx": false
+    }
+  ],
+  "installation": {
+    "root_policy": "host-owned per-user sidecar root addressed by the binary digest",
+    "root_template": "../ClawX-sidecar/versegit",
+    "path": "D:/ClawX-sidecar/versegit/0ff835bd1314441c/vg.exe",
+    "digest_addressed": true,
+    "temp_root": "D:/tmp",
+    "temp_root_off_system_drive": true,
+    "install_path_off_system_drive": true,
+    "no_system_drive_artifacts": true,
+    "mutable_checkout_path_consumed": false,
+    "provider_state_creation": "No provider state is created; missing state is unavailable, not initialized."
+  },
+  "startup_smoke": [
+    {
+      "id": "startup_version",
+      "expect": "exit_zero",
+      "status": "observed",
+      "host_verdict": "unchanged",
+      "module_state": "active",
+      "exit_code": 0,
+      "duration_ms": 21,
+      "survivors": 0,
+      "reason": null,
+      "stderr_excerpt": null
+    },
+    {
+      "id": "startup_capabilities",
+      "expect": "exit_zero_json",
+      "status": "observed",
+      "host_verdict": "unchanged",
+      "module_state": "active",
+      "exit_code": 0,
+      "duration_ms": 22,
+      "survivors": 0,
+      "reason": null,
+      "stderr_excerpt": null
+    },
+    {
+      "id": "startup_doctor_outside_workspace",
+      "expect": "refused_without_state",
+      "status": "degraded",
+      "host_verdict": "unchanged",
+      "module_state": "degraded",
+      "exit_code": 1,
+      "duration_ms": 22,
+      "survivors": 0,
+      "reason": "nonzero_exit",
+      "stderr_excerpt": "vg: 未找到工作区：从 D:\\tmp 向上未发现 .vg/，请先执行 `vg init` 或显式给出 --workspace"
+    },
+    {
+      "id": "startup_timeout_budget",
+      "expect": "bounded_timeout",
+      "status": "degraded",
+      "host_verdict": "unchanged",
+      "module_state": "degraded",
+      "exit_code": null,
+      "duration_ms": 4,
+      "survivors": 0,
+      "reason": "startup_timeout",
+      "stderr_excerpt": null
+    },
+    {
+      "id": "startup_kill_switch",
+      "expect": "no_survivors",
+      "status": "observed",
+      "host_verdict": "unchanged",
+      "module_state": "detached",
+      "exit_code": null,
+      "duration_ms": 1403,
+      "survivors": 0,
+      "reason": "kill_switch_completed",
+      "stderr_excerpt": null
+    },
+    {
+      "id": "startup_missing_binary",
+      "expect": "fail_open_host_verdict",
+      "status": "unavailable",
+      "host_verdict": "unchanged",
+      "module_state": "discovered_failed",
+      "exit_code": null,
+      "duration_ms": 0,
+      "survivors": 0,
+      "reason": "binary_missing",
+      "stderr_excerpt": "binary missing: D:\\tmp\\versegit-mc3-ub5m2T\\not-installed\\vg.exe"
+    },
+    {
+      "id": "identity_gate_match",
+      "expect": "verified",
+      "status": "verified",
+      "module_state": "verified",
+      "host_verdict": "unchanged",
+      "mismatches": []
+    },
+    {
+      "id": "identity_gate_digest_mismatch",
+      "expect": "rejected_by_policy",
+      "status": "rejected_by_policy",
+      "module_state": "rejected_by_policy",
+      "host_verdict": "unchanged",
+      "mismatches": [
+        "binary_sha256"
+      ]
+    }
+  ],
+  "runtime_contract": {
+    "startup_timeout_ms": 15000,
+    "command_timeout_ms": 30000,
+    "kill_switch": "stop_accepting_work -> drain_or_cancel_inflight -> terminate process tree -> verify no survivors",
+    "lifecycle_states": [
+      "absent",
+      "discovered",
+      "verified",
+      "attached",
+      "active",
+      "degraded",
+      "draining",
+      "detached",
+      "upgrade_pending",
+      "recovery_required"
+    ],
+    "crash_state": "lost",
+    "incomplete_cleanup_state": "recovery_required",
+    "missing_binary_state": "unavailable",
+    "digest_mismatch_state": "rejected_by_policy",
+    "schema_mismatch_state": "rejected_by_policy",
+    "startup_failure_effect_on_host": "fail_open: harness verdict unchanged and module disabled",
+    "cleanup_barrier_owner": "ClawX host",
+    "cleanup_barrier_order": [
+      "stop_accepting_work",
+      "drain_or_cancel_inflight",
+      "seal_evidence",
+      "detach_vg_session",
+      "verify_owner_epoch_reference",
+      "delete_disposable_worktree"
+    ],
+    "host_worktree_deletion_allowed": false
+  },
+  "cleanup": {
+    "disposable_root_pattern": "versegit-mc3-*",
+    "fixture_survivors": 0,
+    "sidecar_process_survivors": 0,
+    "cleanup_status": "clean",
+    "host_worktrees_deleted": 0,
+    "evidence_retained": true
+  },
+  "blockers": [
+    "source_worktree_dirty",
+    "release_binary_not_built"
+  ],
+  "status": "rejected",
+  "deliverable": "rejected",
+  "boundaries": {
+    "vg_source_tree_copied": false,
+    "vg_git_directory_copied": false,
+    "vg_build_outputs_copied": false,
+    "vg_task_forest_copied": false,
+    "vg_private_evidence_copied": false,
+    "user_repository_mutated": false,
+    "provider_state_created_in_user_repo": false,
+    "release_binary_built": false,
+    "land_or_admit_invoked": false
+  },
+  "digest": "9c57e5d46ad4c18c086584600eca5ecd0de687b8721727d15d1c548e0d7e5f0b"
+}

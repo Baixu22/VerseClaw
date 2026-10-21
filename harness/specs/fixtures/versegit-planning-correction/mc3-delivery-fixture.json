@@ -2,7 +2,7 @@
   "schema": "clawx.versegit.node-fixture/v1",
   "nodeId": "TF-0476",
   "role": "MC3",
-  "fixturePurpose": "Frozen planning input for MC3; replace with execution fixture in the implementation node.",
+  "fixturePurpose": "Frozen execution fixture for MC3: the sidecar package builder and its independent verifier are the implementation under test.",
   "expectedOutputs": [
     "artifacts/versegit/mc3/package-manifest.json"
   ],
