@@ -281,6 +281,20 @@ function outputEvidence(call: GovernedCall): Record<string, unknown> {
   };
 }
 type ProcessQuery = { ok: true; pids: number[] } | { ok: false; pids: []; error: string };
+type PidState = { ok: true; pid: number; exists: boolean } | { ok: false; pid: number; exists: null; error: string };
+
+function queryPidState(pid: number): PidState {
+  if (process.platform !== 'win32') return { ok: false, pid, exists: null, error: 'PID inventory is only implemented for win32 in WP7' };
+  try {
+    const output = execFileSync('tasklist.exe', ['/FI', `PID eq ${pid}`, '/FO', 'CSV', '/NH'], {
+      encoding: 'utf8', windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'], timeout: 15_000,
+    });
+    const exists = output.split(String.fromCharCode(10)).some((line) => new RegExp(`^"ae\.exe","${pid}"`, 'iu').test(line.trim()));
+    return { ok: true, pid, exists };
+  } catch (error) {
+    return { ok: false, pid, exists: null, error: String((error as Error)?.message ?? error).slice(0, 300) };
+  }
+}
 
 function queryAeProcesses(): ProcessQuery {
   if (process.platform !== 'win32') return { ok: false, pids: [], error: 'OS process inventory is only implemented for win32 in WP7' };
@@ -936,6 +950,16 @@ export async function buildWp7Report({
         processKeyDigest: call.processKeyDigest,
         processPid: call.processPid,
         managerKeyDigest: call.managerKeyDigest,
+        binding: {
+          planId: plan.runId,
+          planDigest: requiredString(plan.planDigest, 'plan digest'),
+          candidateId: plan.candidateId,
+          checkId: plan.checkId,
+          argvDigest: sha256(JSON.stringify(plan.commands[0].argv)),
+          cwdDigest: sha256(JSON.stringify(plan.commands[0].cwd)),
+          envDigest: sha256(JSON.stringify(plan.commands[0].env)),
+          executionInputDigest: executionInputDigest(plan),
+        },
       });
       if (!call.success) throw new Error(`${label} failed: ${call.stderr.slice(0, 400)}`);
       const firstLine = call.stdout.split(String.fromCharCode(10)).find((line) => line.trim().startsWith('{')) ?? '';
@@ -1153,10 +1177,18 @@ export async function buildWp7Report({
     await new Promise((resolveDelay) => setTimeout(resolveDelay, 500));
     const processAfterShutdownQuery = queryAeProcesses();
     const managedAfterShutdown = manager.list();
-    const survivorPids = processAfterShutdownQuery.ok
-      ? processAfterShutdownQuery.pids.filter((pid) => !aeBaselinePids.includes(pid))
-      : [];
-    const processInventoryClean = processAfterShutdownQuery.ok && survivorPids.length === 0 && managedAfterShutdown.length === 0 && shutdownError === null;
+    const managedPids = managedBeforeShutdown
+      .map((entry) => entry.pid)
+      .filter((pid): pid is number => typeof pid === 'number' && Number.isInteger(pid) && pid > 0);
+    const ownedPidChecks = managedPids.map((pid) => queryPidState(pid));
+    const survivorPids = ownedPidChecks
+      .filter((entry): entry is Extract<PidState, { ok: true; exists: true }> => entry.ok && entry.exists === true)
+      .map((entry) => entry.pid);
+    const processInventoryClean = processAfterShutdownQuery.ok
+      && ownedPidChecks.every((entry) => entry.ok)
+      && survivorPids.length === 0
+      && managedAfterShutdown.length === 0
+      && shutdownError === null;
     const deleted: string[] = [];
     const deletionErrors: string[] = [];
     if (processInventoryClean) {
@@ -1182,7 +1214,8 @@ export async function buildWp7Report({
         deletionErrors.push(`temp-root: ${String((rootError as Error)?.message ?? rootError).slice(0, 240)}`);
       }
     }
-    const newProcessPids = processPidsDuring.filter((pid) => !aeBaselinePids.includes(pid));
+    const newProcessPids = managedPids.filter((pid) => !aeBaselinePids.includes(pid));
+    const foreignProcessPids = processPidsDuring.filter((pid) => !aeBaselinePids.includes(pid) && !managedPids.includes(pid));
     const cleanupStatus = processInventoryClean
       && worktreeSurvivors === 0
       && tempRootRemoved
@@ -1199,6 +1232,9 @@ export async function buildWp7Report({
         duringPids: processPidsDuring,
         afterPids: processAfterShutdownQuery.pids,
         newProcessPids,
+        foreignProcessPids,
+        managedPids,
+        ownedPidChecks,
         survivorPids,
         queryOk: processAfterShutdownQuery.ok,
         queryError: processAfterShutdownQuery.ok ? null : processAfterShutdownQuery.error,
@@ -1626,7 +1662,8 @@ export function validateWp7Report(
     }
   }
   add(readEvidence(evidenceBundle?.preCleanupSeal, 'pre-cleanup seal') !== null, 'pre-cleanup seal is missing');
-  add(readEvidence(evidenceBundle?.cleanup, 'cleanup') !== null, 'cleanup evidence is missing');
+  const cleanupRecord = readEvidence<Record<string, unknown>>(evidenceBundle?.cleanup, 'cleanup');
+  add(cleanupRecord !== null, 'cleanup evidence is missing');
   const cleanupAttachment = readEvidence<Record<string, unknown>>(evidenceBundle?.postCleanupAttachment, 'post-cleanup attachment');
   add(cleanupAttachment !== null, 'post-cleanup attachment is missing');
   add(cleanupAttachment?.status === 'clean', 'cleanup attachment is not clean');
@@ -1686,6 +1723,13 @@ export function validateWp7Report(
     add(typeof observation?.stdout === 'string' && observation.stdout.length > 0, `${label} stdout evidence missing`);
     add(observationEvidence?.observationId === observation?.observationId, `${label} observation identity mismatch`);
     add(observationEvidence?.observationDigest === observation?.observationDigest, `${label} observation evidence digest mismatch`);
+    const binding = observationEvidence?.binding as Record<string, unknown> | undefined;
+    add(binding?.planId === plan?.runId, `${label} observation plan identity mismatch`);
+    add(binding?.planDigest === plan?.planDigest, `${label} observation plan digest mismatch`);
+    add(binding?.candidateId === plan?.candidateId, `${label} observation candidate mismatch`);
+    add(binding?.checkId === plan?.checkId, `${label} observation check mismatch`);
+    add(binding?.argvDigest === sha256(JSON.stringify(plan?.commands?.[0]?.argv ?? [])), `${label} observation argv mismatch`);
+    add(binding?.executionInputDigest === (plan ? executionInputDigest(plan) : null), `${label} observation execution input mismatch`);
   }
 
   const attemptedReceipt = primaryEvidence?.attemptedReceipt as VerseShellReceipt | undefined;
@@ -1735,14 +1779,26 @@ export function validateWp7Report(
   const processInventory = cleanup?.processInventory as Record<string, unknown> | undefined;
   const baselinePids = (processInventory?.baselinePids ?? []) as number[];
   const afterPids = (processInventory?.afterPids ?? []) as number[];
-  const survivorPids = afterPids.filter((pid) => !baselinePids.includes(pid));
-  add(cleanup?.status === 'clean' && cleanup?.processSurvivors === 0 && cleanup?.managerProcessSurvivors === 0 && cleanup?.worktreeSurvivors === 0 && cleanup?.tempRootRemoved === true && cleanup?.hostWorktreesDeleted === 0, 'cleanup boundary failed');
+  const duringPids = (processInventory?.duringPids ?? []) as number[];
+  const managedBefore = (processInventory?.managedBeforeShutdown ?? []) as Array<Record<string, unknown>>;
+  const managedPids = (processInventory?.managedPids ?? []) as number[];
+  const declaredManagedPids = managedBefore.map((entry) => entry.pid).filter((pid): pid is number => typeof pid === 'number');
+  const ownedPidChecks = (processInventory?.ownedPidChecks ?? []) as Array<Record<string, unknown>>;
+  const survivorPids = ownedPidChecks.filter((entry) => entry.ok === true && entry.exists === true).map((entry) => entry.pid);
+  add(stableJson(cleanupRecord) === stableJson(cleanup), 'report cleanup differs from host-recorded cleanup evidence');
+  add(cleanup?.status === 'clean' && cleanup?.processesDeleted === true && cleanup?.processSurvivors === 0 && cleanup?.managerProcessSurvivors === 0 && cleanup?.worktreeSurvivors === 0 && cleanup?.tempRootRemoved === true && cleanup?.hostWorktreesDeleted === 0 && cleanup?.worktreesDeleted === 3 && Array.isArray(cleanup?.deletionErrors) && cleanup.deletionErrors.length === 0, 'cleanup boundary failed');
   add(processInventory?.queryOk === true && processInventory?.queryError === null, 'OS process inventory was not available after cleanup');
   add(processInventory?.shutdownError === null, 'VerseShell shutdown failed');
-  add(Array.isArray(processInventory?.managedBeforeShutdown) && processInventory.managedBeforeShutdown.length > 0, 'VerseShell process inventory before shutdown is missing');
+  add(managedBefore.length > 0 && declaredManagedPids.length === managedBefore.length, 'VerseShell process inventory before shutdown is missing');
+  add(stableJson(managedPids) === stableJson(declaredManagedPids), 'declared owned PID vector is inconsistent');
+  add(managedPids.length > 0 && ownedPidChecks.length === managedPids.length && ownedPidChecks.every((entry) => entry.ok === true), 'owned PID exit checks are incomplete');
+  add(managedPids.every((pid) => duringPids.includes(pid)), 'managed VerseShell PIDs were not observed during the run');
+  add(managedPids.every((pid) => !baselinePids.includes(pid)), 'managed VerseShell PIDs overlap the baseline inventory');
+  add(managedPids.every((pid) => !afterPids.includes(pid)), 'managed VerseShell PID survived cleanup');
   add(Array.isArray(processInventory?.managedAfterShutdown) && processInventory.managedAfterShutdown.length === 0, 'VerseShell manager retained managed processes');
-  add(JSON.stringify(survivorPids) === JSON.stringify(processInventory?.survivorPids), 'OS process survivor inventory is inconsistent');
-  add(cleanup?.status === 'clean' && (cleanup?.evidence === undefined || typeof cleanup.evidence === 'object'), 'cleanup evidence relationship is invalid');
+  add(processInventory?.survivorPids?.length === 0 && survivorPids.length === 0, 'nonzero OS process survivor evidence was retained');
+  add(JSON.stringify(survivorPids) === JSON.stringify(processInventory?.survivorPids), 'owned OS process survivor inventory is inconsistent');
+  add(cleanup?.processSurvivors === survivorPids.length, 'cleanup survivor count differs from owned PID exit checks');
 
   const boundaries = report.boundaries as Record<string, unknown> | undefined;
   add(boundaries?.hostSourceMutated === false && boundaries?.userIdRepositoryMutated === false && boundaries?.landOrAdmitInvoked === false, 'repository or landing boundary failed');

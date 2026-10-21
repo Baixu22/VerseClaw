@@ -80,4 +80,27 @@ describe('WP7 real host vertical slice', () => {
     expect(issues).toContain('continuation receipt does not satisfy the structural binding contract');
     expect(issues.some((issue) => issue.startsWith('host evidence authority rejected continuation receipt:'))).toBe(true);
   });
+
+
+  it('rejects nonzero OS survivors hidden behind zero summary counts', () => {
+    const tampered = stored();
+    const cleanup = tampered.cleanup as Record<string, unknown>;
+    const inventory = cleanup.processInventory as Record<string, unknown>;
+    const extraPid = 99999;
+    inventory.managedPids = [...(inventory.managedPids as number[]), extraPid];
+    (inventory.managedBeforeShutdown as Array<Record<string, unknown>>).push({ keyDigest: 'f'.repeat(64), pid: extraPid, state: 'ready' });
+    (inventory.duringPids as number[]).push(extraPid);
+    (inventory.ownedPidChecks as Array<Record<string, unknown>>).push({ ok: true, pid: extraPid, exists: true });
+    inventory.survivorPids = [extraPid];
+    cleanup.processSurvivors = 0;
+    cleanup.processesDeleted = true;
+    reseal(tampered);
+    const issues = validateWp7Report(tampered).issues;
+    expect(issues).toEqual(expect.arrayContaining([
+      'nonzero OS process survivor evidence was retained',
+      'cleanup survivor count differs from owned PID exit checks',
+      'report cleanup differs from host-recorded cleanup evidence',
+    ]));
+  });
+
 });

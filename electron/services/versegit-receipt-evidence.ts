@@ -11,6 +11,7 @@ import {
 } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import type { Observation } from '../../shared/verseshell/types.ts';
+import { executionInputDigest } from './versegit-receipt-bridge.ts';
 import type {
   ReceiptAuthorityCheck,
   VerificationPlan,
@@ -24,6 +25,17 @@ export const VG_HOST_EVIDENCE_MANIFEST_SCHEMA = 'clawx.versegit.host-evidence-ma
 
 type EvidenceRef = { path: string; digest: string };
 
+export type HostObservationCommandBinding = {
+  planId: string;
+  planDigest: string;
+  candidateId: string;
+  checkId: string;
+  argvDigest: string;
+  cwdDigest: string;
+  envDigest: string;
+  executionInputDigest: string;
+};
+
 export type HostObservationEvidenceInput = {
   observation: Observation;
   stdout: string;
@@ -32,6 +44,7 @@ export type HostObservationEvidenceInput = {
   processPid: number | null;
   managerKeyDigest: string;
   capturedAt?: string;
+  binding?: HostObservationCommandBinding;
 };
 
 export type HostCommandEvidenceInput = {
@@ -64,6 +77,7 @@ export type HostObservationEvidence = EvidenceRef & {
   schema: typeof VG_HOST_OBSERVATION_SCHEMA;
   observationId: string;
   observation: Observation;
+  binding?: HostObservationCommandBinding;
   observationDigest: string;
   stdoutDigest: string;
   stderrDigest: string;
@@ -188,6 +202,7 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       schema: VG_HOST_OBSERVATION_SCHEMA,
       observationId: input.observation.id,
       observation: input.observation,
+      ...(input.binding ? { binding: input.binding } : {}),
       observationDigest,
       stdoutDigest,
       stderrDigest,
@@ -204,6 +219,8 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       ...stored,
       schema: VG_HOST_OBSERVATION_SCHEMA,
       observationId: input.observation.id,
+      observation: input.observation,
+      ...(input.binding ? { binding: input.binding } : {}),
       observationDigest,
       stdoutDigest,
       stderrDigest,
@@ -308,6 +325,29 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       add(stored.stderrDigest === receipt.stderrDigest, 'stderr digest mismatch');
       add(stored.process.processKeyDigest === receipt.processKey, 'process identity mismatch');
       add(Number.isInteger(stored.process.pid) && Number(stored.process.pid) > 0, 'OS process pid was not captured');
+      const command = plan.commands[0];
+      const expectedBinding = {
+        planId: plan.runId,
+        planDigest: String(plan.planDigest ?? ''),
+        candidateId: plan.candidateId,
+        checkId: plan.checkId,
+        argvDigest: sha256(JSON.stringify(command?.argv ?? [])),
+        cwdDigest: sha256(JSON.stringify(command?.cwd ?? '')),
+        envDigest: sha256(JSON.stringify(command?.env ?? {})),
+        executionInputDigest: executionInputDigest(plan),
+      };
+      add(Boolean(stored.binding), 'observation command binding is missing');
+      for (const [key, expected] of Object.entries(expectedBinding)) {
+        add(stored.binding?.[key as keyof typeof expectedBinding] === expected, `observation ${key} differs from plan`);
+      }
+      add(receipt.planId === stored.binding?.planId, 'receipt planId differs from observation binding');
+      add(receipt.planDigest === stored.binding?.planDigest, 'receipt planDigest differs from observation binding');
+      add(receipt.candidateId === stored.binding?.candidateId, 'receipt candidateId differs from observation binding');
+      add(receipt.checkId === stored.binding?.checkId, 'receipt checkId differs from observation binding');
+      add(receipt.argvDigest === stored.binding?.argvDigest, 'receipt argvDigest differs from observation binding');
+      add(receipt.cwdDigest === stored.binding?.cwdDigest, 'receipt cwdDigest differs from observation binding');
+      add(receipt.envDigest === stored.binding?.envDigest, 'receipt envDigest differs from observation binding');
+      add(receipt.executionInputDigest === stored.binding?.executionInputDigest, 'receipt executionInputDigest differs from observation binding');
       const observationData = stored.observation.data && typeof stored.observation.data === 'object' && !Array.isArray(stored.observation.data)
         ? stored.observation.data as Record<string, unknown>
         : {};

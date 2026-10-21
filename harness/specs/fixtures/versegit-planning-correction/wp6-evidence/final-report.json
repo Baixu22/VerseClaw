@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.wp6-closeout/v1",
-  "generated_at": "2026-10-21T20:23:43.034Z",
+  "generated_at": "2026-10-21T20:41:53.516Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0472",
@@ -193,9 +193,9 @@
       "role": "WP3",
       "schema": "clawx.versegit.wp3-receipt-evidence/v1",
       "artifactPath": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json",
-      "artifactSha256": "b825944e09cc7c0d160fdeb5e511092f1071597a83a452502031ca2f745218d1",
+      "artifactSha256": "b9b3cd1c14cb90712f4307af66808cb69294eedb142c23413797b0bbb4d48d7d",
       "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json",
-      "curatedSha256": "b825944e09cc7c0d160fdeb5e511092f1071597a83a452502031ca2f745218d1",
+      "curatedSha256": "b9b3cd1c14cb90712f4307af66808cb69294eedb142c23413797b0bbb4d48d7d",
       "localMirrorPath": "artifacts/versegit/wp3/verdict.json",
       "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
       "artifactAliasReason": "Tracked evidence is canonical; artifacts/ is an optional ignored local mirror and is not required for clean-checkout replay.",
@@ -830,13 +830,13 @@
       },
       {
         "path": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/SHA256SUMS",
-        "sha256": "4323f532059704ac2415b7aca73d4ed0641016f7c74b28b3a9e3193b19ec42e5",
+        "sha256": "56acaa151e1b16715c911f3a631c68a4edb16127b8a22d0103cd225a9454dd36",
         "entries": 7,
         "files": [
           {
             "path": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json",
-            "expected": "b825944e09cc7c0d160fdeb5e511092f1071597a83a452502031ca2f745218d1",
-            "actual": "b825944e09cc7c0d160fdeb5e511092f1071597a83a452502031ca2f745218d1"
+            "expected": "b9b3cd1c14cb90712f4307af66808cb69294eedb142c23413797b0bbb4d48d7d",
+            "actual": "b9b3cd1c14cb90712f4307af66808cb69294eedb142c23413797b0bbb4d48d7d"
           },
           {
             "path": "harness/specs/fixtures/versegit-planning-correction/wp3-receipt-fixture.json",
@@ -1052,5 +1052,5 @@
   },
   "passed": true,
   "issues": [],
-  "digest": "81de5e2904491baf25c3b80637d673d353dd5f77bcc2be9de7560ff09846e066"
+  "digest": "6255949df6a72663cf4e2be220638fd67c3572a0842380b255c79ded84cd62a4"
 }

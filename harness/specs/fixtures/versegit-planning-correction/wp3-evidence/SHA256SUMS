@@ -1,4 +1,4 @@
-b825944e09cc7c0d160fdeb5e511092f1071597a83a452502031ca2f745218d1  harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json
+b9b3cd1c14cb90712f4307af66808cb69294eedb142c23413797b0bbb4d48d7d  harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json
 e76622660042d80ad786245ff1173897dba81cebc53c6153ffc085d6f0cf20a9  harness/specs/fixtures/versegit-planning-correction/wp3-receipt-fixture.json
 9b0c8ddd8b43a3a7e924b8aafb05ad85e25e71dd756e1bdf301fcbc09820616d  harness/specs/tasks/versegit-wp3-receipt-bridge.md
 af8aebd0175959d71043dcb51ab90077f383cb4c2273a9aba13569a864751ead  electron/services/versegit-receipt-bridge.ts

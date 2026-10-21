@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.wp6-manifest/v1",
-  "generated_at": "2026-10-21T20:23:43.034Z",
+  "generated_at": "2026-10-21T20:41:53.516Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0472",
@@ -8,13 +8,13 @@
   "finalReport": {
     "path": "artifacts/versegit/wp6/final-report.json",
     "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json",
-    "sha256": "1644c75664142dce9860b217cf039971a735d6e877a6aae677f1185d15cda1a8",
-    "digest": "81de5e2904491baf25c3b80637d673d353dd5f77bcc2be9de7560ff09846e066"
+    "sha256": "27350249f602093eb055be9bb34ad56acca64b0c51a4e6aa05b19d5dd3f5e698",
+    "digest": "6255949df6a72663cf4e2be220638fd67c3572a0842380b255c79ded84cd62a4"
   },
   "mc6Decision": {
     "path": "artifacts/versegit/mc6/decision.json",
     "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
-    "sha256": "0fc2598df969be3061f253b2c4ce542f18aa1f52d8f1a293a5562e6909ab7f43",
+    "sha256": "9b39c1f3318be3ddf42e764d783ca1527ebad6f8c6170ab3ec1be9fd7f5152f4",
     "digest": "04e0a1d023ab73aee14006ef9471c8f12d29112bb61a94f1dfbc245a506483b3",
     "decision": "sidecar-only",
     "sourceExtractionTriggered": false
@@ -168,9 +168,9 @@
       "nodeId": "TF-0469",
       "role": "WP3",
       "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json",
-      "curatedSha256": "b825944e09cc7c0d160fdeb5e511092f1071597a83a452502031ca2f745218d1",
+      "curatedSha256": "b9b3cd1c14cb90712f4307af66808cb69294eedb142c23413797b0bbb4d48d7d",
       "artifactPath": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json",
-      "artifactSha256": "b825944e09cc7c0d160fdeb5e511092f1071597a83a452502031ca2f745218d1",
+      "artifactSha256": "b9b3cd1c14cb90712f4307af66808cb69294eedb142c23413797b0bbb4d48d7d",
       "localMirrorPath": "artifacts/versegit/wp3/verdict.json",
       "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
       "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
@@ -261,7 +261,7 @@
     },
     {
       "path": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/SHA256SUMS",
-      "sha256": "4323f532059704ac2415b7aca73d4ed0641016f7c74b28b3a9e3193b19ec42e5",
+      "sha256": "56acaa151e1b16715c911f3a631c68a4edb16127b8a22d0103cd225a9454dd36",
       "entries": 7
     },
     {
@@ -389,5 +389,5 @@
     ]
   },
   "passed": true,
-  "digest": "0276e5340f175d240343d89887b97d6bc5d4bfb0f411e0493678bb061a998673"
+  "digest": "a3e53ab7c8fcb969bd2d63a12ea2190c68ee47b785f3f082143e4af6eaa80719"
 }
