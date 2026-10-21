@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.wp7-host-vertical/v1",
-  "generated_at": "2026-10-21T20:58:52.615Z",
+  "generated_at": "2026-10-21T21:03:18.833Z",
   "driven_by": "agent",
   "actor": "codex",
   "task": "TF-0513",
@@ -9,21 +9,21 @@
   "status": "passed",
   "passed": true,
   "identity": {
-    "repoId": "repo-84c8e1071e80a824",
+    "repoId": "repo-7b7940ee79f4bf2f",
     "worktrees": [
       {
         "role": "producer",
-        "worktreeId": "worktree-producer-d3972525f0e1309a",
+        "worktreeId": "worktree-producer-048ef531fbfde228",
         "agentSessionId": "agent-session-producer-d1990f97a1f4",
-        "vgSessionId": "vg-session-producer-42cb7b1b5fcdb594",
+        "vgSessionId": "vg-session-producer-8bbb67f6e553878a",
         "traceId": "trace-wp7-producer",
         "epoch": 7
       },
       {
         "role": "consumer",
-        "worktreeId": "worktree-consumer-763319c60b842134",
+        "worktreeId": "worktree-consumer-f749662187efae04",
         "agentSessionId": "agent-session-consumer-6bfbd709d5fd",
-        "vgSessionId": "vg-session-consumer-4ceeed11fdbd3643",
+        "vgSessionId": "vg-session-consumer-2b4e2c4d831614b7",
         "traceId": "trace-wp7-consumer",
         "epoch": 7
       }
@@ -56,11 +56,11 @@
           "init",
           "--json"
         ],
-        "argvDigest": "23d379bbc9c4d541f16f10c27142d10c45d12496ed89e92ac9b694716782437c",
+        "argvDigest": "4152a9763893021aaf921db3a44d0304d28cbda1f3cff2e568bf684d3473a1c8",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 25584,
-        "processKeyDigest": "ff32ef37770ba19097d4ef764e986b5c056496c87bda75a8cc151ce3fc1b23a7",
+        "processPid": 41600,
+        "processKeyDigest": "21d367f64784d661a6706011a569e0df25aee2fe6b6a2c913c586323575d653b",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
@@ -68,7 +68,7 @@
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "23d0f033b10746d28fac1ba9a7c39e0e69308bcd7b6efdfe51375a7f74aa56e2",
         "evidenceRef": "commands/d73dd9468558a7057e402219e2e4a72eb73473fe52a0c29d6c282ac51feaff5a.json",
-        "evidenceDigest": "c14ed79ec7530c8cf7dd994a868ab848ce73700df1be63b9dd706e8b1d17395f"
+        "evidenceDigest": "a20f33c386315b3c835b387a4b04035be5047bb5af27119e90cf1221eb7cfc26"
       },
       {
         "id": "vg-version",
@@ -77,11 +77,11 @@
           "<temp_root>\\vg.exe",
           "--version"
         ],
-        "argvDigest": "b1d8b8bc076b497bf8d40935eff414cecc397f94f533d99a550a2376bc3a16b8",
+        "argvDigest": "e86e8551d80ba28a452b6f50be2cb6563427c363364948b9af3ff87a85f88629",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 23068,
-        "processKeyDigest": "8e9fc033c4781b0ef4d85d23ac249c8237034cfc9493fd57e809b9369e9a918d",
+        "processPid": 29776,
+        "processKeyDigest": "ddeff3fdfd7e880462a06772031c84fa2e7e4fa71b59a5013b43be74ddf5d34d",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
@@ -89,7 +89,7 @@
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "dc98e5fc89185b6ce37dc541be7c86f039c48331611dfdac8f6afe07cb34fc04",
         "evidenceRef": "commands/c834e18479d9d14c8e1684ce55cee7e552258479b79ac9254efc0cafa301885b.json",
-        "evidenceDigest": "02e900382f1df7c58b577aa94fc4cbca2b450d140bd6f67d928905edb9290635"
+        "evidenceDigest": "f1700fa36058c887eafb405ce1b0917013de2d474b38105ae6b1832277fbb93c"
       },
       {
         "id": "vg-capabilities",
@@ -99,11 +99,11 @@
           "capabilities",
           "--json"
         ],
-        "argvDigest": "e631b16af6fda6bc182f64fc1b7a55f37dbe51710a78d83cb4e86d5d41005be7",
+        "argvDigest": "676bca246575f340d629eb54d158ca1c06a3d6f10c285683cee737ffff64cdf6",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 30696,
-        "processKeyDigest": "e7977e2b067e244389dece46d8340c229ffd6053bc0a20d44579b0700d6d8be3",
+        "processPid": 18204,
+        "processKeyDigest": "6b8cc9663ad4a55aa75b697278c34c967e69aea2b6175540b1e37f55afd233f3",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
@@ -111,7 +111,7 @@
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "89357407309271ff7f8cf1127830f2abcdb5e3d584cee29290433b256231083d",
         "evidenceRef": "commands/734b441e7411789bb84263ada6820d0f20fa095153960b7076921c1b2c04a4fc.json",
-        "evidenceDigest": "cb3b0e765a7ad01dce42c41781c55b7f92806d46f9e15200314c711bf9935978"
+        "evidenceDigest": "411b7daa2c51e99064eb82a7b67d0bf3d2753f1f803135b4ddfaa4ec842a03df"
       },
       {
         "id": "vg-session-start-producer",
@@ -128,19 +128,19 @@
           "--client",
           "manual"
         ],
-        "argvDigest": "09ab819623df888d6969ee3ff997aaae68c3b8a06a85b9bb88a4dfa8835c63e0",
+        "argvDigest": "57c007bfe58156b3a6f7c9b565260a79de4cba3edd51182d9dd716232a3fafa4",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 30972,
-        "processKeyDigest": "97db211ba645474d5016098bd46320e04fda885dc74d95314f16abed5d6b29b9",
+        "processPid": 3264,
+        "processKeyDigest": "999cf03431454e01e8f7cab6a66457e67980a625f44c1e73d8dd7d00db2d87cf",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
-        "stdoutDigest": "91368d5ca470742b4b3f4aaf8a89be334c1a14f1936d85af6f1d1fa02b647b2a",
+        "stdoutDigest": "e5af405138b6126c4ac3a6e7873f6bbee2a4ce6f76f68117c2371a582b6e858a",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "018a1689f1163ad41cc1ae68dfe2a5b466d71b38e9aaae006f0b6661c8bd762e",
         "evidenceRef": "commands/2532f656fb7914063ef45eb7cfe6aeeaffd5d5e835d2eac11f2e497641913d05.json",
-        "evidenceDigest": "b4dc5d87e106c89f8e583d364e9ecf46086f6aa2c0c0e5ec0231c66a93f36444"
+        "evidenceDigest": "e9d4e0633f9aef95305d3141cb1e73f6f96b4aa2d0428b01095b4d1f586f8831"
       },
       {
         "id": "vg-session-start-consumer",
@@ -157,19 +157,19 @@
           "--client",
           "manual"
         ],
-        "argvDigest": "1a9889cd620bf2c70d254c48506315f5a04ec82ed778287b98b980b47b683fa7",
+        "argvDigest": "91d72fac65982a240d2a51c8de6a8aaba47e68261a6528fc478f9026acdfdb1a",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 31068,
-        "processKeyDigest": "680971dc7d0543643e6b64925bceb6b5fa85511972f55c42d70c2d57bab9d405",
+        "processPid": 1748,
+        "processKeyDigest": "75bb61b194f2dec1507163e842ad00d0451917e77e130f86b35966393b198164",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
-        "stdoutDigest": "7f6b19e696e9080a632cd29f675ad6d5b83e0d9781cbd955d2e0762e70310651",
+        "stdoutDigest": "9aad84ac36596f9e4a4b4abe5f718c5d39cd8c6bb2c723d05806debfd8d3e5f9",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "94beac4320ac292c8a0798c3f9fcf5a4e9c2fd0079e5136671ebd9c76ff83865",
         "evidenceRef": "commands/0dbb1d9cec44f6430c557e8f2215a38645a81f144448303475fdeb24459fad2d.json",
-        "evidenceDigest": "7f5a75d42c876bf400647fd61a64b74f2036120535e413499ca1604e670c4ec4"
+        "evidenceDigest": "7f8dbfca17094c5c28c5cccb4cfd9d1fc6fab5c22ae10418fc59017e268a3259"
       },
       {
         "id": "vg-session-start-self-writer",
@@ -186,19 +186,19 @@
           "--client",
           "manual"
         ],
-        "argvDigest": "159274dd1d3e4580ece9cccd14729588f09697747dfdd86e7133a0846b2172f8",
+        "argvDigest": "4d644cb80e4a8e01ca37661d075cf97565de908ee3bbc43974dcb473de2d98d5",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 26356,
-        "processKeyDigest": "81060e140d3692618653d8021d53b9148725d89020df443add5bf92d07615a9f",
+        "processPid": 40424,
+        "processKeyDigest": "7a5e0d0f7e446b667eca479095e0e74d761b8865f27a19e5cb5829671ce28c3d",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
-        "stdoutDigest": "299de82eb3d2797cae2c971c2780a13d37b3e6fb9f3fe7637dc79d675323f6c0",
+        "stdoutDigest": "e74ea7e7886b911cfecd2b115b92081a71a67a764a06ee637042cc8958633b5a",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "5842083a3654b39810e8abb71f7c6d313d66ab6cf4ff3d68a1ea2c79ee327df6",
         "evidenceRef": "commands/9748771923ef4468d8aae0059d5d677b6e46112005874c6a18cea76e96f589b1.json",
-        "evidenceDigest": "dabf7b705d76a0f955c5680309a587dcc75e3428c7e59fbd2591cb87bf53c7f9"
+        "evidenceDigest": "1e46474ee02cd55e0ada396fe035a9a6c4244d56c35a1ed1df7e1a2dd313e792"
       },
       {
         "id": "vg-observe-call-producer-read",
@@ -217,11 +217,11 @@
           "--line-end",
           "3"
         ],
-        "argvDigest": "6af594cc9cd4f9c73ed6570a755dbeea4e998e841ca5b6421ee105e25340036a",
+        "argvDigest": "faf2044af3f02d5b8438e0f4ab505b91443236397e16c782ebd5ab5f83649676",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 1688,
-        "processKeyDigest": "c194b539205b9359b06cd916c45c916929223276d9d296ad1072aa44064a4bf1",
+        "processPid": 21464,
+        "processKeyDigest": "fc18db8aa844c106a815c837d4174ec7d025629d91d50c75133925ceadf850f2",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
@@ -229,7 +229,7 @@
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "0bbef91cdf9383c45c70d0a7273abf15ec083aa087e7099d26261e0fe4541879",
         "evidenceRef": "commands/b7f88ebb5a47040c8dc3e270a60d5ab9b0bcc100131214223205e5096ea530b8.json",
-        "evidenceDigest": "38e7eb47757501b4e840839c30e9cc5fe2f55a3df7e8e99ce6055aaef84dedb2",
+        "evidenceDigest": "1ed93404b37de38aefa792cfd11a1c5b91716b96e943e334edc8bcd08668cd96",
         "sourceBehaviorEventId": "vge_8d7affe1048fbef31849c04c",
         "sourceEventInputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
         "sourceSurface": "file.read",
@@ -251,11 +251,11 @@
           "--kind",
           "modify_signature"
         ],
-        "argvDigest": "3ac5ad91ad72bfee93eaf3b72110b9c2bcb7daed45adddf910a0b3f26b5fbdb5",
+        "argvDigest": "ef4d57d10e24cde9da468ab574be67f411e40917c67e829ff7d1e586eaa75316",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 30132,
-        "processKeyDigest": "44625523f756526acf50ec2e6ed8317ad62cef0d26f1dddea29d065b0107ca05",
+        "processPid": 276,
+        "processKeyDigest": "a5f6073674545911ce1e98f423641288a3b1cc93adaf28a8daf731be0ee5e96d",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
@@ -263,7 +263,7 @@
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "00f77fe5b960bad578d4ebb4eac67f060ef70ebe1217c14660d4af51a1160385",
         "evidenceRef": "commands/473c4299faea1b62cf3e12f369dc32513acb552d78734ca4d13086a5b975934e.json",
-        "evidenceDigest": "50360ddfebd44e95d31759c4d18818283d41dc0cc255c3c348810983b79814ed",
+        "evidenceDigest": "79d1487c0e30b2022a27e6694e868173994f7fa05bb4b2e6592a18abbb5cb238",
         "sourceBehaviorEventId": "vge_4c2133a368cc9ef9bb17942f",
         "sourceEventInputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
         "sourceSurface": "file.write",
@@ -282,19 +282,19 @@
           "--session",
           "<producer_vg_session>"
         ],
-        "argvDigest": "8df08f7d62c1b733e7d9f9fbf94cbf7898ccd9aa9be9942adaa788c826b0d8ae",
+        "argvDigest": "5854d14b31b22282a4970c9b846441907a32e3cc3a7e380112a4d2fa0651545c",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 4596,
-        "processKeyDigest": "d7dcc7f0b73f68f4f596b5e8c174798a852d88521631bfb6a6f692901a9c5fa6",
+        "processPid": 42620,
+        "processKeyDigest": "f8f627e44d95f73895c40b63d65e7e87b8bf6378aa7e958537f677eff5c82386",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
-        "stdoutDigest": "290ce9261a7357a48febfd80c52ddcde92b6fc68ea54ac10e93d83fa51dd6d09",
+        "stdoutDigest": "5c03276b499ac28650edc6fe2829db35879943e505239bc680653a0e47c34d4b",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "30c93042bfa3bcbf4850d024b47a81cb4990f4ae36df0f1efd73d60843f7970f",
         "evidenceRef": "commands/1baa3fe34d69836ffccf890b86dab64a4e9f5acea92de79e5ddf0c1800326324.json",
-        "evidenceDigest": "51959c0122fc1b80dbeaa6c3671411f3d5ee54805735a2a03d2813957b8e20b2",
+        "evidenceDigest": "78413039c1fda5e52832fd18e5f65fb768389e9faf11255b99ac14afea250bc9",
         "sourceBehaviorEventId": "vge_4c2133a368cc9ef9bb17942f",
         "sourceEventInputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
         "sourceSurface": "file.write",
@@ -318,11 +318,11 @@
           "--line-end",
           "2"
         ],
-        "argvDigest": "018529af8d8fce4ed2bb9f03211d42a391f02c05444b4f5a68726c86d8e9ee62",
+        "argvDigest": "2f2cf4370a4fcada2315f60a8189bac2f80a5ede8b17fbc04bb1a776646a2c80",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 29640,
-        "processKeyDigest": "dca35f006dac90447739f086d70a62b4c77f7694435e6f81a95b8152ceff8916",
+        "processPid": 40292,
+        "processKeyDigest": "a5adf74fa46cea6cae8115d43af95fc32fbc5691e0794a6f5a91efc73f3aea91",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
@@ -330,7 +330,7 @@
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "88dfb6967a25059c8457345fbae8aa86eb82dbf3db225c645d6f477c54ad8649",
         "evidenceRef": "commands/5a34c7304849b411f0d73ac81d4767a147f3fb1cd4e5f7a001d79d094a1c2b55.json",
-        "evidenceDigest": "e4802842ad0a3308d30fec43a9921e881c97c0e529b0d430f89e3fb144148828",
+        "evidenceDigest": "e5aaa6ff709ec7dabd2285dd2eee6847392a50788d04ef37a696a51357cac927",
         "sourceBehaviorEventId": "vge_1943a8b6a84f214b390b52ed",
         "sourceEventInputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
         "sourceSurface": "file.read",
@@ -352,11 +352,11 @@
           "--kind",
           "modify_body"
         ],
-        "argvDigest": "64350f2b02bf098b20dedaeb4ce9c1903d32fd567448fb838a2ce898b08175d0",
+        "argvDigest": "109995e35c8ad1858d850975f2243ceca154b94ec19c10a707cdce218b4aed97",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 30952,
-        "processKeyDigest": "9d62b9fdcec7abbba7751d3b056be5fce55da5924f8da7b5c670d9cd93123440",
+        "processPid": 21708,
+        "processKeyDigest": "6b45ea299e2bd00ffe1d0389a392ebc7314976ec4b06910258aaa41d1b1ee798",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
@@ -364,7 +364,7 @@
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "5135163351624bbb58405a868e7659f3b6f99e52a54c85b4f1bb8dfcf117e2fa",
         "evidenceRef": "commands/ed2394935916147034c7b1b3d9e5cfb090b8cb647bc0483eb388c54abe3ae9a2.json",
-        "evidenceDigest": "3fe878ddb66a6a72b8c1f4d4dc7dc7bc70810b1641fab2d81fb78762bd457b14",
+        "evidenceDigest": "8b05554be6a330902b82be319a3a3f2dc672b9ee0396f966add6ae700fd91759",
         "sourceBehaviorEventId": "vge_ee2a9647eeeabe908c8d9bba",
         "sourceEventInputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
         "sourceSurface": "file.write",
@@ -383,19 +383,19 @@
           "--session",
           "<self_writer_vg_session>"
         ],
-        "argvDigest": "d8a99595750917624070a7daf272e6bdcc3d19683a924766f5be830c8fd9f0bc",
+        "argvDigest": "6a9286f8194d9a7bce7ce040a569c4ec70fe44186bc89fd8477b73251a221e23",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 16996,
-        "processKeyDigest": "ecf4cd4b64338ab6038e1f24cba92f186a8ab901059552b620da277247f250d4",
+        "processPid": 26860,
+        "processKeyDigest": "fe64bd91473047a09378da4bb64a1accf77a3ebf4a8c6cd22cbfb3190206d9fb",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
-        "stdoutDigest": "f702b73ca3437d3434a4a529400624beda78e7cb660a7544f320354be43bc7a2",
+        "stdoutDigest": "b9577435a07b720b65b51fcd7fc02664e83d76063d75da1facc416a0d1261dea",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "d03e4193b420065ea56c79be68e265fba0857707600bcd4a128691a593a3d00d",
         "evidenceRef": "commands/e8c7944acd9b9816c992fd6bf70b6f9b3846bceeec648d8591a1a087cb5c934a.json",
-        "evidenceDigest": "89e4766bd2d033c195811738ba4da72f07ea053d8cb39a1c932047becf6e785b",
+        "evidenceDigest": "7f29d9ec613a203f2edf15a88236a5a17b55bbe871d825b669d12a3e2f2a921d",
         "sourceBehaviorEventId": "vge_ee2a9647eeeabe908c8d9bba",
         "sourceEventInputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
         "sourceSurface": "file.write",
@@ -417,11 +417,11 @@
           "--kind",
           "modify_body"
         ],
-        "argvDigest": "1c9b72716df9f345de434a05ab147ed8b75cc826ddfad385e8ebdf2a675546a1",
+        "argvDigest": "8c901ddf9b45e79cdd006e14113fb62f8b0f4bb583cf0290e1c141c5b002b8ce",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 42792,
-        "processKeyDigest": "62e8bd7fa3a6387033babfc6d4a7f60a78dcf8ddaf6ea3c451ffd43a4d50cc23",
+        "processPid": 28332,
+        "processKeyDigest": "fe5ca6a70f7c96b7273253e88a3960239454e606b42cb8d4d98986f0300faeae",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
@@ -429,7 +429,7 @@
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "73869561e91557397d64714472be5a3a12f35c05924f1b109b90a2b4eafcadad",
         "evidenceRef": "commands/03c60bc76557cbb41cdf6b12c2de6030c16e634eef3549dcd175390bcb225f66.json",
-        "evidenceDigest": "ef58d91a2332429004a8af76aa45916cddbe43935bc756a484889e7baf200c4b",
+        "evidenceDigest": "b983a74f68ab2d48161e30ffeb414c6aca71478dd09e60d22bc33dcb2de12b6a",
         "sourceBehaviorEventId": "vge_93ed9a92b95b1e3df059fa70",
         "sourceEventInputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
         "sourceSurface": "file.write",
@@ -448,19 +448,19 @@
           "wp7-complete",
           "--json"
         ],
-        "argvDigest": "be4b67804f3a18bcb9c4312156782624664da82a08c0149da22430aa3d35d59d",
+        "argvDigest": "338d292986718ff050c10acce48bebd8d8d66432a22fe468f4290421e138553f",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 8088,
-        "processKeyDigest": "8c94b48a091533028caeb2ce0e75aa3d88a0ace002621debe3ea490c39d2771e",
+        "processPid": 21696,
+        "processKeyDigest": "e51af736c9aa5358e33f8c7f800b96b8f3fec6f6f879c714b2b4faafc37fed70",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
-        "stdoutDigest": "120319a40932d41b6a2f7531ee7cb7775edd33c086517284c061d05dd4ad37a4",
+        "stdoutDigest": "071c17bb20224ed2308eb10704c8dde6f585746539154f3cc9606fb5f5f36eb7",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "cceb57a2d212c88fedfad889f33928c54e96891fd47bfb1a7071c4d9dfdb52fe",
         "evidenceRef": "commands/2c8ef41ef18ade0cc632a3be4cfe6febccf8a86a5ade1795f8ef6422f0a6e2f0.json",
-        "evidenceDigest": "adee2a68a10832c92cbb00b1bdb223a284d75b59c57758a9a9f4dee4087e1c4f"
+        "evidenceDigest": "454bb9fa344b005aab2dfdf355514c10dcc00920ff8490ee7177a63cb0a5d6e0"
       },
       {
         "id": "vg-session-end-producer",
@@ -474,19 +474,19 @@
           "wp7-complete",
           "--json"
         ],
-        "argvDigest": "1d52cd8c49430f577061e9ff8eae1f835f4c038ff52f30e31f486f6dce1c1689",
+        "argvDigest": "9c3ad012c87255f3aad1b329f04cb7159a66a1793e0716d0f6e9f9ac7cc389d7",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 41600,
-        "processKeyDigest": "07d14e4cb6e8b8384e3ec3b92820f0299d3fb8c46c2325233c231d2e2817adf4",
+        "processPid": 13928,
+        "processKeyDigest": "379f1dd29a32e590719eee291dce517f3d941153218a84354ae5df9b4dd6956c",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
-        "stdoutDigest": "41c8f92e876c4f94a72edc2ef0aee835b25a11e4252d74ec93845a2cca33e14d",
+        "stdoutDigest": "094b05174c19c7ce62892fe16c0d4435b04ab417892bd989134dd247c6d116d7",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "fca786a7a6eeb01eed822f9062115df4d82419c967494a6a5d5d026defc618c8",
         "evidenceRef": "commands/dcce7d6edb31b8de10bee89165f1ede390dce2b8adb95eb6ad8160f8d71b60ed.json",
-        "evidenceDigest": "f96009456c299dd315c7e17df67b5f0c5d3cc18ec1d936ea09580a677468105b"
+        "evidenceDigest": "679f8472e23eac5a75f8b4fb2708d8ba748336cb63861c121adabcec540279f8"
       },
       {
         "id": "vg-session-end-self-writer",
@@ -500,19 +500,19 @@
           "wp7-complete",
           "--json"
         ],
-        "argvDigest": "d65eece2bb1d65b4e28c732f22df4a8c72754ee0e68f1004e5013f0d9d0cab55",
+        "argvDigest": "76022d8c30198cb79e7c069833f1fdebc656f606de98cff1f0292ea3592bafaf",
         "cwdRole": "repo",
         "cwdDigest": "dbaea41ed019272edff998e2f7175359143b308db52df8aa1076eba086bd5a81",
-        "processPid": 31060,
-        "processKeyDigest": "040ffdd1d02c625c3a8fe942a20bcccc86b3414e886b734fa8b220f51d799589",
+        "processPid": 36508,
+        "processKeyDigest": "3bc1921b7b1415525a9761dd39433a5ef7ba20fcf565b7575eb4fcc2ac985c02",
         "success": true,
         "exitCode": 0,
         "timedOut": false,
-        "stdoutDigest": "472b06f19674601f4f628a15f470d3a79c8b72dd6446a9b194891ae1ad6b7c88",
+        "stdoutDigest": "0656ff4d294a37a963ae24e4e3ba70b441709bc9ef496510145c5430d16514bd",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "commandSpecDigest": "725096f14d5ba5df14c9a7736969796823ae30a16c8d227eee1dd9b6cd7d16e5",
         "evidenceRef": "commands/43346251caf525c84a1eb75c04f0d8acac8e79566419e2e56c77544a9e2fce62.json",
-        "evidenceDigest": "5e90692e391c8a643fab5f593c46fececd54d82b4ef939ff1e119b784e6404a8"
+        "evidenceDigest": "19608dc2491a043ebca73fb616f01741d4ccceeddd0c6a63e21e854618e427b8"
       }
     ],
     "hostFixtureOperations": [
@@ -676,7 +676,7 @@
         ],
         "cwdRole": "producer_worktree",
         "success": true,
-        "stdoutDigest": "bda84f4f038c018a778c583e424a2a34cf95bd5f7343871e7f253a2cbb970f03",
+        "stdoutDigest": "905a21cb0c7197ab1e32d79a247b25587050c9068d2053f472e58291caddb294",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       {
@@ -688,7 +688,7 @@
         ],
         "cwdRole": "consumer_worktree",
         "success": true,
-        "stdoutDigest": "e00c058d39944f0b92bcaabdafd82619c50d97188504b36b1fda9a65ff1e4142",
+        "stdoutDigest": "30be7a2302875b82c5bf148085a5377220a08b157394d2f0a163e68214c564f2",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       {
@@ -712,15 +712,15 @@
           "commit-tree",
           "195c0d9ebf701b840d8f4fa32098b58ec9bcf45a",
           "-p",
-          "655abd39188328edbbc8869e1a5e4ee8d242a6c3",
+          "b832c5156d26ea91a424937210933361718874b6",
           "-p",
-          "c12017a1815b0a60bea538cb0b01b2caa97145c2",
+          "95aa29e8bce747781ee5bfdd269be08d4e960a67",
           "-m",
           "wp7 composed candidate"
         ],
         "cwdRole": "repo",
         "success": true,
-        "stdoutDigest": "628e3272fbc6d15b94ddeb3657e2119ff5030460b15602c0d4afd5bc9366c7e2",
+        "stdoutDigest": "13c234da3a92188e40ab071a41d4520efbd32d5338972789da5571fad224753b",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       {
@@ -732,7 +732,7 @@
           "--quiet",
           "--detach",
           "<candidate_worktree>",
-          "4aa72d4b8fb10247fbfead7c0fa7d96c81d82034"
+          "5298a9fbf572016a5e6179198239614d6080f2d1"
         ],
         "cwdRole": "repo",
         "success": true,
@@ -748,7 +748,7 @@
         ],
         "cwdRole": "repo",
         "success": true,
-        "stdoutDigest": "5864db9f039d13b3d91476ad6a31053b520dacaa77a678d2067aee027836dfb5",
+        "stdoutDigest": "6395430b5d189f4587e0ffb39a4b78ffe5548c5cc1d335bbcaca8bf1156980b4",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       {
@@ -760,7 +760,7 @@
         ],
         "cwdRole": "candidate_worktree",
         "success": true,
-        "stdoutDigest": "628e3272fbc6d15b94ddeb3657e2119ff5030460b15602c0d4afd5bc9366c7e2",
+        "stdoutDigest": "13c234da3a92188e40ab071a41d4520efbd32d5338972789da5571fad224753b",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       {
@@ -772,7 +772,7 @@
         ],
         "cwdRole": "candidate_worktree",
         "success": true,
-        "stdoutDigest": "628e3272fbc6d15b94ddeb3657e2119ff5030460b15602c0d4afd5bc9366c7e2",
+        "stdoutDigest": "13c234da3a92188e40ab071a41d4520efbd32d5338972789da5571fad224753b",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       {
@@ -784,7 +784,7 @@
         ],
         "cwdRole": "candidate_worktree",
         "success": true,
-        "stdoutDigest": "628e3272fbc6d15b94ddeb3657e2119ff5030460b15602c0d4afd5bc9366c7e2",
+        "stdoutDigest": "13c234da3a92188e40ab071a41d4520efbd32d5338972789da5571fad224753b",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       {
@@ -796,7 +796,7 @@
         ],
         "cwdRole": "candidate_worktree",
         "success": true,
-        "stdoutDigest": "628e3272fbc6d15b94ddeb3657e2119ff5030460b15602c0d4afd5bc9366c7e2",
+        "stdoutDigest": "13c234da3a92188e40ab071a41d4520efbd32d5338972789da5571fad224753b",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       {
@@ -808,7 +808,7 @@
         ],
         "cwdRole": "candidate_worktree",
         "success": true,
-        "stdoutDigest": "628e3272fbc6d15b94ddeb3657e2119ff5030460b15602c0d4afd5bc9366c7e2",
+        "stdoutDigest": "13c234da3a92188e40ab071a41d4520efbd32d5338972789da5571fad224753b",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       {
@@ -820,7 +820,7 @@
         ],
         "cwdRole": "candidate_worktree",
         "success": true,
-        "stdoutDigest": "628e3272fbc6d15b94ddeb3657e2119ff5030460b15602c0d4afd5bc9366c7e2",
+        "stdoutDigest": "13c234da3a92188e40ab071a41d4520efbd32d5338972789da5571fad224753b",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       {
@@ -832,7 +832,7 @@
         ],
         "cwdRole": "candidate_worktree",
         "success": true,
-        "stdoutDigest": "628e3272fbc6d15b94ddeb3657e2119ff5030460b15602c0d4afd5bc9366c7e2",
+        "stdoutDigest": "13c234da3a92188e40ab071a41d4520efbd32d5338972789da5571fad224753b",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       {
@@ -844,7 +844,7 @@
         ],
         "cwdRole": "candidate_worktree",
         "success": true,
-        "stdoutDigest": "628e3272fbc6d15b94ddeb3657e2119ff5030460b15602c0d4afd5bc9366c7e2",
+        "stdoutDigest": "13c234da3a92188e40ab071a41d4520efbd32d5338972789da5571fad224753b",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       {
@@ -931,9 +931,9 @@
         "stdoutDigest": "51aaf25b20189cd05fcd4de035c0d9a698dba625d1504ec66ca79ab149061907",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "observationDigest": "8be212640a2a2384a88d97455a5a6648286a028648e7f08b5168b10587df1352",
-        "processKeyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
-        "processPid": 9268,
-        "managerKeyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
+        "processKeyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
+        "processPid": 28384,
+        "managerKeyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
         "capabilities": [
           "shell.exec"
         ],
@@ -1001,9 +1001,9 @@
         "stdoutDigest": "51aaf25b20189cd05fcd4de035c0d9a698dba625d1504ec66ca79ab149061907",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "observationDigest": "331dbe3901e8ad6a80d290c7be2bc819451ffcf3a016bca9348c00bc7d259914",
-        "processKeyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
-        "processPid": 9268,
-        "managerKeyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
+        "processKeyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
+        "processPid": 28384,
+        "managerKeyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
         "capabilities": [
           "shell.exec"
         ],
@@ -1080,17 +1080,17 @@
     }
   },
   "candidate": {
-    "candidateId": "66073dda1ef0be06fa70d339c69ea35b352bc56bd32099f966a8d41a9c0455c0",
+    "candidateId": "882ced2fff93b8d02b9cdeb78de5c9197a47d107e0aa785f1348452d2fe1f467",
     "schemaVersion": 2,
-    "repoId": "repo-84c8e1071e80a824",
-    "baseOid": "4f21ce4f274f16887f3cd94b540ef0665fa5f54e",
+    "repoId": "repo-7b7940ee79f4bf2f",
+    "baseOid": "5389e94ad20bcd1133c92aa04973fe2773d72d98",
     "parentOrder": [
-      "655abd39188328edbbc8869e1a5e4ee8d242a6c3",
-      "c12017a1815b0a60bea538cb0b01b2caa97145c2"
+      "b832c5156d26ea91a424937210933361718874b6",
+      "95aa29e8bce747781ee5bfdd269be08d4e960a67"
     ],
     "materializedTreeOid": "195c0d9ebf701b840d8f4fa32098b58ec9bcf45a",
-    "commitOid": "4aa72d4b8fb10247fbfead7c0fa7d96c81d82034",
-    "candidateWorktreeHead": "4aa72d4b8fb10247fbfead7c0fa7d96c81d82034",
+    "commitOid": "5298a9fbf572016a5e6179198239614d6080f2d1",
+    "candidateWorktreeHead": "5298a9fbf572016a5e6179198239614d6080f2d1",
     "dirtyFiles": [],
     "untrackedFiles": [],
     "ignoredRuntimePaths": [
@@ -1121,8 +1121,8 @@
       "behaviorEventId": "vge_8d7affe1048fbef31849c04c",
       "providerCallId": "vg-observe-call-producer-read",
       "providerCallDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "providerCallArgvDigest": "6af594cc9cd4f9c73ed6570a755dbeea4e998e841ca5b6421ee105e25340036a",
-      "providerEvidenceDigest": "38e7eb47757501b4e840839c30e9cc5fe2f55a3df7e8e99ce6055aaef84dedb2"
+      "providerCallArgvDigest": "faf2044af3f02d5b8438e0f4ab505b91443236397e16c782ebd5ab5f83649676",
+      "providerEvidenceDigest": "1ed93404b37de38aefa792cfd11a1c5b91716b96e943e334edc8bcd08668cd96"
     },
     {
       "kind": "observe",
@@ -1135,8 +1135,8 @@
       "behaviorEventId": "vge_4c2133a368cc9ef9bb17942f",
       "providerCallId": "vg-observe-call-consumer-write",
       "providerCallDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "providerCallArgvDigest": "3ac5ad91ad72bfee93eaf3b72110b9c2bcb7daed45adddf910a0b3f26b5fbdb5",
-      "providerEvidenceDigest": "50360ddfebd44e95d31759c4d18818283d41dc0cc255c3c348810983b79814ed"
+      "providerCallArgvDigest": "ef4d57d10e24cde9da468ab574be67f411e40917c67e829ff7d1e586eaa75316",
+      "providerEvidenceDigest": "79d1487c0e30b2022a27e6694e868173994f7fa05bb4b2e6592a18abbb5cb238"
     },
     {
       "kind": "observe",
@@ -1149,8 +1149,8 @@
       "behaviorEventId": "vge_1943a8b6a84f214b390b52ed",
       "providerCallId": "vg-observe-call-self-read",
       "providerCallDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "providerCallArgvDigest": "018529af8d8fce4ed2bb9f03211d42a391f02c05444b4f5a68726c86d8e9ee62",
-      "providerEvidenceDigest": "e4802842ad0a3308d30fec43a9921e881c97c0e529b0d430f89e3fb144148828"
+      "providerCallArgvDigest": "2f2cf4370a4fcada2315f60a8189bac2f80a5ede8b17fbc04bb1a776646a2c80",
+      "providerEvidenceDigest": "e5aaa6ff709ec7dabd2285dd2eee6847392a50788d04ef37a696a51357cac927"
     },
     {
       "kind": "observe",
@@ -1163,8 +1163,8 @@
       "behaviorEventId": "vge_ee2a9647eeeabe908c8d9bba",
       "providerCallId": "vg-observe-call-self-write",
       "providerCallDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "providerCallArgvDigest": "64350f2b02bf098b20dedaeb4ce9c1903d32fd567448fb838a2ce898b08175d0",
-      "providerEvidenceDigest": "3fe878ddb66a6a72b8c1f4d4dc7dc7bc70810b1641fab2d81fb78762bd457b14"
+      "providerCallArgvDigest": "109995e35c8ad1858d850975f2243ceca154b94ec19c10a707cdce218b4aed97",
+      "providerEvidenceDigest": "8b05554be6a330902b82be319a3a3f2dc672b9ee0396f966add6ae700fd91759"
     },
     {
       "kind": "observe",
@@ -1177,8 +1177,8 @@
       "behaviorEventId": "vge_93ed9a92b95b1e3df059fa70",
       "providerCallId": "vg-observe-call-producer-write",
       "providerCallDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "providerCallArgvDigest": "1c9b72716df9f345de434a05ab147ed8b75cc826ddfad385e8ebdf2a675546a1",
-      "providerEvidenceDigest": "ef58d91a2332429004a8af76aa45916cddbe43935bc756a484889e7baf200c4b"
+      "providerCallArgvDigest": "8c901ddf9b45e79cdd006e14113fb62f8b0f4bb583cf0290e1c141c5b002b8ce",
+      "providerEvidenceDigest": "b983a74f68ab2d48161e30ffeb414c6aca71478dd09e60d22bc33dcb2de12b6a"
     },
     {
       "kind": "check",
@@ -1187,12 +1187,12 @@
       "surface": "file.write",
       "status": "succeeded",
       "inputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
-      "outputDigest": "290ce9261a7357a48febfd80c52ddcde92b6fc68ea54ac10e93d83fa51dd6d09",
+      "outputDigest": "5c03276b499ac28650edc6fe2829db35879943e505239bc680653a0e47c34d4b",
       "behaviorEventId": "vge_4c2133a368cc9ef9bb17942f",
       "providerCallId": "vg-check-producer-stale-read",
-      "providerCallDigest": "290ce9261a7357a48febfd80c52ddcde92b6fc68ea54ac10e93d83fa51dd6d09",
-      "providerCallArgvDigest": "8df08f7d62c1b733e7d9f9fbf94cbf7898ccd9aa9be9942adaa788c826b0d8ae",
-      "providerEvidenceDigest": "51959c0122fc1b80dbeaa6c3671411f3d5ee54805735a2a03d2813957b8e20b2"
+      "providerCallDigest": "5c03276b499ac28650edc6fe2829db35879943e505239bc680653a0e47c34d4b",
+      "providerCallArgvDigest": "5854d14b31b22282a4970c9b846441907a32e3cc3a7e380112a4d2fa0651545c",
+      "providerEvidenceDigest": "78413039c1fda5e52832fd18e5f65fb768389e9faf11255b99ac14afea250bc9"
     },
     {
       "kind": "check",
@@ -1201,28 +1201,28 @@
       "surface": "file.write",
       "status": "succeeded",
       "inputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
-      "outputDigest": "f702b73ca3437d3434a4a529400624beda78e7cb660a7544f320354be43bc7a2",
+      "outputDigest": "b9577435a07b720b65b51fcd7fc02664e83d76063d75da1facc416a0d1261dea",
       "behaviorEventId": "vge_ee2a9647eeeabe908c8d9bba",
       "providerCallId": "vg-check-self-own-write",
-      "providerCallDigest": "f702b73ca3437d3434a4a529400624beda78e7cb660a7544f320354be43bc7a2",
-      "providerCallArgvDigest": "d8a99595750917624070a7daf272e6bdcc3d19683a924766f5be830c8fd9f0bc",
-      "providerEvidenceDigest": "89e4766bd2d033c195811738ba4da72f07ea053d8cb39a1c932047becf6e785b"
+      "providerCallDigest": "b9577435a07b720b65b51fcd7fc02664e83d76063d75da1facc416a0d1261dea",
+      "providerCallArgvDigest": "6a9286f8194d9a7bce7ce040a569c4ec70fe44186bc89fd8477b73251a221e23",
+      "providerEvidenceDigest": "7f29d9ec613a203f2edf15a88236a5a17b55bbe871d825b669d12a3e2f2a921d"
     }
   ],
   "executionEvidence": {
     "candidate": {
-      "id": "66073dda1ef0be06fa70d339c69ea35b352bc56bd32099f966a8d41a9c0455c0",
+      "id": "882ced2fff93b8d02b9cdeb78de5c9197a47d107e0aa785f1348452d2fe1f467",
       "manifest": {
         "schemaVersion": 2,
-        "repoId": "repo-84c8e1071e80a824",
-        "baseOid": "4f21ce4f274f16887f3cd94b540ef0665fa5f54e",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "baseOid": "5389e94ad20bcd1133c92aa04973fe2773d72d98",
         "parentOrder": [
-          "655abd39188328edbbc8869e1a5e4ee8d242a6c3",
-          "c12017a1815b0a60bea538cb0b01b2caa97145c2"
+          "b832c5156d26ea91a424937210933361718874b6",
+          "95aa29e8bce747781ee5bfdd269be08d4e960a67"
         ],
         "materializedTreeOid": "195c0d9ebf701b840d8f4fa32098b58ec9bcf45a",
-        "commitOid": "4aa72d4b8fb10247fbfead7c0fa7d96c81d82034",
-        "candidateWorktreeHead": "4aa72d4b8fb10247fbfead7c0fa7d96c81d82034",
+        "commitOid": "5298a9fbf572016a5e6179198239614d6080f2d1",
+        "candidateWorktreeHead": "5298a9fbf572016a5e6179198239614d6080f2d1",
         "dirtyFiles": [],
         "untrackedFiles": [],
         "ignoredRuntimePaths": [
@@ -1242,15 +1242,15 @@
         ]
       },
       "evidence": {
-        "path": "inputs/20ebd13087fa2c1ce5b520e0ecd6af7a8ac898f63178c203cc57048b69c57b9c.json",
-        "digest": "11d6f793821cd48a6d4e70a02bcc67a270bc6e42c9537653551eb44d7ae07db0"
+        "path": "inputs/2a44f275d494e6c9ad197696dc3898711e8fb730e79c4bf717888528430491f3.json",
+        "digest": "25fef2d012c7c4b9ed7da6fead7105ecae0269811bfb5e4d9427044c7b6ddda3"
       }
     },
     "primary": {
       "plan": {
         "schema": "clawx.versegit.command-plan/v1",
         "runId": "run-wp7-primary",
-        "candidateId": "66073dda1ef0be06fa70d339c69ea35b352bc56bd32099f966a8d41a9c0455c0",
+        "candidateId": "882ced2fff93b8d02b9cdeb78de5c9197a47d107e0aa785f1348452d2fe1f467",
         "candidateInputDigest": "626a5fac26db9b9c236deb2230d6d8e148a5e7031369c11e9e71b77111307c28",
         "checkId": "candidate-composite-check",
         "owner": "owner-wp7-host",
@@ -1274,11 +1274,11 @@
           }
         ],
         "requiredScope": "full",
-        "planDigest": "fdb7b0cdb433115f139e1277ee019dcd98387d650fb393ff96d262ad72631d12"
+        "planDigest": "f720216e04054689bcef5c081324b1245e106de3cde5fc9993f166fb1cfc7fe5"
       },
       "planEvidence": {
         "path": "plans/5eb4d065ede7bc42a64e1695e693b755d18a398597f3666bb0494ccc3c5ec45d.json",
-        "digest": "bb8559229e934514277dfe58e1bea997dbabacf9bb704b93331761c20921a22a"
+        "digest": "b28b512d0996abf1247cb912f78c7e4eae611799669ac8c62b5040168af60889"
       },
       "observation": {
         "id": "verseshell-candidate-primary",
@@ -1296,9 +1296,9 @@
         "stdoutDigest": "51aaf25b20189cd05fcd4de035c0d9a698dba625d1504ec66ca79ab149061907",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "observationDigest": "8be212640a2a2384a88d97455a5a6648286a028648e7f08b5168b10587df1352",
-        "processKeyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
-        "processPid": 9268,
-        "managerKeyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
+        "processKeyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
+        "processPid": 28384,
+        "managerKeyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
         "capabilities": [
           "shell.exec"
         ],
@@ -1348,7 +1348,7 @@
       },
       "observationEvidence": {
         "path": "observations/7a9065cf7b66444dd38e67aee8b78d273cbc9f4ba163a4b6bc41fe27ca1dd651.json",
-        "digest": "cac645190be0c8f2eee7138619769e9101473929e76cdcb39f04ede478eedb03",
+        "digest": "98435e69535eaa6ad6cc6dd35a44e0d4aa4a774b2bfddda330528ae3a55dea44",
         "schema": "clawx.versegit.host-observation/v1",
         "observationId": "aci-2",
         "observation": {
@@ -1389,13 +1389,13 @@
         },
         "binding": {
           "planId": "run-wp7-primary",
-          "planDigest": "fdb7b0cdb433115f139e1277ee019dcd98387d650fb393ff96d262ad72631d12",
-          "candidateId": "66073dda1ef0be06fa70d339c69ea35b352bc56bd32099f966a8d41a9c0455c0",
+          "planDigest": "f720216e04054689bcef5c081324b1245e106de3cde5fc9993f166fb1cfc7fe5",
+          "candidateId": "882ced2fff93b8d02b9cdeb78de5c9197a47d107e0aa785f1348452d2fe1f467",
           "checkId": "candidate-composite-check",
           "argvDigest": "b1bedf8131f35daedce44096effa1822ac6dcab17c6b674abc6cb2daa754d6be",
           "cwdDigest": "7299b59de0b5dad3b622afc3bdf57544e505249c77a6d4254bd14b1fc9a4ade8",
           "envDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
-          "executionInputDigest": "149e313b34e40af0746c5b4dd39f36772b8f0eca8e10ad2dd0103bd9633b0f98"
+          "executionInputDigest": "21e3d1eef35eb92b18acc310ed9bcea0ee192982da3a80a65415117091cc8418"
         },
         "observationDigest": "8be212640a2a2384a88d97455a5a6648286a028648e7f08b5168b10587df1352",
         "stdoutDigest": "51aaf25b20189cd05fcd4de035c0d9a698dba625d1504ec66ca79ab149061907",
@@ -1406,17 +1406,17 @@
           "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         ],
         "process": {
-          "processKeyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
-          "pid": 9268,
-          "managerKeyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
-          "capturedAt": "2026-10-21T20:58:56.022Z"
+          "processKeyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
+          "pid": 28384,
+          "managerKeyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
+          "capturedAt": "2026-10-21T21:03:22.223Z"
         }
       },
       "attemptedReceipt": {
         "schema": "clawx.verseshell.execution-receipt/v2",
         "receiptId": "receipt-wp7-wrong-candidate",
         "planId": "run-wp7-primary",
-        "planDigest": "fdb7b0cdb433115f139e1277ee019dcd98387d650fb393ff96d262ad72631d12",
+        "planDigest": "f720216e04054689bcef5c081324b1245e106de3cde5fc9993f166fb1cfc7fe5",
         "candidateId": "candidate-wrong",
         "checkId": "candidate-composite-check",
         "ownerId": "owner-wp7-host",
@@ -1425,13 +1425,13 @@
         "argvDigest": "b1bedf8131f35daedce44096effa1822ac6dcab17c6b674abc6cb2daa754d6be",
         "cwdDigest": "7299b59de0b5dad3b622afc3bdf57544e505249c77a6d4254bd14b1fc9a4ade8",
         "envDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
-        "executionInputDigest": "149e313b34e40af0746c5b4dd39f36772b8f0eca8e10ad2dd0103bd9633b0f98",
+        "executionInputDigest": "21e3d1eef35eb92b18acc310ed9bcea0ee192982da3a80a65415117091cc8418",
         "requiredScope": "full",
         "artifactDigests": [
-          "11d6f793821cd48a6d4e70a02bcc67a270bc6e42c9537653551eb44d7ae07db0",
+          "25fef2d012c7c4b9ed7da6fead7105ecae0269811bfb5e4d9427044c7b6ddda3",
           "51aaf25b20189cd05fcd4de035c0d9a698dba625d1504ec66ca79ab149061907",
           "8be212640a2a2384a88d97455a5a6648286a028648e7f08b5168b10587df1352",
-          "bb8559229e934514277dfe58e1bea997dbabacf9bb704b93331761c20921a22a",
+          "b28b512d0996abf1247cb912f78c7e4eae611799669ac8c62b5040168af60889",
           "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         ],
         "cleanupStatus": "clean",
@@ -1441,7 +1441,7 @@
         "durationMs": 55,
         "stdoutDigest": "51aaf25b20189cd05fcd4de035c0d9a698dba625d1504ec66ca79ab149061907",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "processKey": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
+        "processKey": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
         "authority": {
           "writer": "verseshell",
           "trusted_source": "clawx-host-process-artifact-authority"
@@ -1450,15 +1450,15 @@
         "realVerseshell": true,
         "observationId": "aci-2",
         "observationDigest": "8be212640a2a2384a88d97455a5a6648286a028648e7f08b5168b10587df1352",
-        "planFileDigest": "bb8559229e934514277dfe58e1bea997dbabacf9bb704b93331761c20921a22a",
-        "inputManifestDigest": "11d6f793821cd48a6d4e70a02bcc67a270bc6e42c9537653551eb44d7ae07db0"
+        "planFileDigest": "b28b512d0996abf1247cb912f78c7e4eae611799669ac8c62b5040168af60889",
+        "inputManifestDigest": "25fef2d012c7c4b9ed7da6fead7105ecae0269811bfb5e4d9427044c7b6ddda3"
       }
     },
     "continuation": {
       "plan": {
         "schema": "clawx.versegit.command-plan/v1",
         "runId": "run-wp7-continuation",
-        "candidateId": "66073dda1ef0be06fa70d339c69ea35b352bc56bd32099f966a8d41a9c0455c0",
+        "candidateId": "882ced2fff93b8d02b9cdeb78de5c9197a47d107e0aa785f1348452d2fe1f467",
         "candidateInputDigest": "626a5fac26db9b9c236deb2230d6d8e148a5e7031369c11e9e71b77111307c28",
         "checkId": "candidate-composite-check",
         "owner": "owner-wp7-host",
@@ -1482,11 +1482,11 @@
           }
         ],
         "requiredScope": "full",
-        "planDigest": "b77f79b9c61b870274ef5d586779278164749074b5cfe257320ddce745122626"
+        "planDigest": "3c92affae5a1a0963e2174e6542d268c00db76f498adfa2f5810863349ab7cf5"
       },
       "planEvidence": {
         "path": "plans/03d5316ff995708b3f9f204fc62d4bb6a2e75238342f27300fcb71ca57938eb6.json",
-        "digest": "3a8d38cfc0b3606872f960f8a781a7d9731c1ec65454ebeb1a172a0353ae76ad"
+        "digest": "663e18c3707f143bc3f114258101ef5ba28feb751ad5b4edb15d7b6334365200"
       },
       "observation": {
         "id": "verseshell-candidate-continuation",
@@ -1504,9 +1504,9 @@
         "stdoutDigest": "51aaf25b20189cd05fcd4de035c0d9a698dba625d1504ec66ca79ab149061907",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "observationDigest": "331dbe3901e8ad6a80d290c7be2bc819451ffcf3a016bca9348c00bc7d259914",
-        "processKeyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
-        "processPid": 9268,
-        "managerKeyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
+        "processKeyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
+        "processPid": 28384,
+        "managerKeyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
         "capabilities": [
           "shell.exec"
         ],
@@ -1556,7 +1556,7 @@
       },
       "observationEvidence": {
         "path": "observations/d53a9a61ab45c55396e379315058d894efc13e321c2bd5f5cd6d7a4ebb9ffb9f.json",
-        "digest": "a05679e0bc1f810f8695484c9e69dad7f4b0c57b80a765d665a0b6b7c283ed61",
+        "digest": "817493ce0fe9a26383590b79b5d56a76f0cb25597640d0835ec865ac142983d4",
         "schema": "clawx.versegit.host-observation/v1",
         "observationId": "aci-3",
         "observation": {
@@ -1597,13 +1597,13 @@
         },
         "binding": {
           "planId": "run-wp7-continuation",
-          "planDigest": "b77f79b9c61b870274ef5d586779278164749074b5cfe257320ddce745122626",
-          "candidateId": "66073dda1ef0be06fa70d339c69ea35b352bc56bd32099f966a8d41a9c0455c0",
+          "planDigest": "3c92affae5a1a0963e2174e6542d268c00db76f498adfa2f5810863349ab7cf5",
+          "candidateId": "882ced2fff93b8d02b9cdeb78de5c9197a47d107e0aa785f1348452d2fe1f467",
           "checkId": "candidate-composite-check",
           "argvDigest": "b1bedf8131f35daedce44096effa1822ac6dcab17c6b674abc6cb2daa754d6be",
           "cwdDigest": "7299b59de0b5dad3b622afc3bdf57544e505249c77a6d4254bd14b1fc9a4ade8",
           "envDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
-          "executionInputDigest": "149e313b34e40af0746c5b4dd39f36772b8f0eca8e10ad2dd0103bd9633b0f98"
+          "executionInputDigest": "21e3d1eef35eb92b18acc310ed9bcea0ee192982da3a80a65415117091cc8418"
         },
         "observationDigest": "331dbe3901e8ad6a80d290c7be2bc819451ffcf3a016bca9348c00bc7d259914",
         "stdoutDigest": "51aaf25b20189cd05fcd4de035c0d9a698dba625d1504ec66ca79ab149061907",
@@ -1614,18 +1614,18 @@
           "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         ],
         "process": {
-          "processKeyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
-          "pid": 9268,
-          "managerKeyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
-          "capturedAt": "2026-10-21T20:58:56.324Z"
+          "processKeyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
+          "pid": 28384,
+          "managerKeyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
+          "capturedAt": "2026-10-21T21:03:22.658Z"
         }
       },
       "receipt": {
         "schema": "clawx.verseshell.execution-receipt/v2",
         "receiptId": "receipt-wp7-continuation",
         "planId": "run-wp7-continuation",
-        "planDigest": "b77f79b9c61b870274ef5d586779278164749074b5cfe257320ddce745122626",
-        "candidateId": "66073dda1ef0be06fa70d339c69ea35b352bc56bd32099f966a8d41a9c0455c0",
+        "planDigest": "3c92affae5a1a0963e2174e6542d268c00db76f498adfa2f5810863349ab7cf5",
+        "candidateId": "882ced2fff93b8d02b9cdeb78de5c9197a47d107e0aa785f1348452d2fe1f467",
         "checkId": "candidate-composite-check",
         "ownerId": "owner-wp7-host",
         "epoch": 7,
@@ -1633,13 +1633,13 @@
         "argvDigest": "b1bedf8131f35daedce44096effa1822ac6dcab17c6b674abc6cb2daa754d6be",
         "cwdDigest": "7299b59de0b5dad3b622afc3bdf57544e505249c77a6d4254bd14b1fc9a4ade8",
         "envDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
-        "executionInputDigest": "149e313b34e40af0746c5b4dd39f36772b8f0eca8e10ad2dd0103bd9633b0f98",
+        "executionInputDigest": "21e3d1eef35eb92b18acc310ed9bcea0ee192982da3a80a65415117091cc8418",
         "requiredScope": "full",
         "artifactDigests": [
-          "11d6f793821cd48a6d4e70a02bcc67a270bc6e42c9537653551eb44d7ae07db0",
+          "25fef2d012c7c4b9ed7da6fead7105ecae0269811bfb5e4d9427044c7b6ddda3",
           "331dbe3901e8ad6a80d290c7be2bc819451ffcf3a016bca9348c00bc7d259914",
-          "3a8d38cfc0b3606872f960f8a781a7d9731c1ec65454ebeb1a172a0353ae76ad",
           "51aaf25b20189cd05fcd4de035c0d9a698dba625d1504ec66ca79ab149061907",
+          "663e18c3707f143bc3f114258101ef5ba28feb751ad5b4edb15d7b6334365200",
           "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         ],
         "cleanupStatus": "clean",
@@ -1649,7 +1649,7 @@
         "durationMs": 54,
         "stdoutDigest": "51aaf25b20189cd05fcd4de035c0d9a698dba625d1504ec66ca79ab149061907",
         "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "processKey": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
+        "processKey": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
         "authority": {
           "writer": "verseshell",
           "trusted_source": "clawx-host-process-artifact-authority"
@@ -1658,8 +1658,8 @@
         "realVerseshell": true,
         "observationId": "aci-3",
         "observationDigest": "331dbe3901e8ad6a80d290c7be2bc819451ffcf3a016bca9348c00bc7d259914",
-        "planFileDigest": "3a8d38cfc0b3606872f960f8a781a7d9731c1ec65454ebeb1a172a0353ae76ad",
-        "inputManifestDigest": "11d6f793821cd48a6d4e70a02bcc67a270bc6e42c9537653551eb44d7ae07db0"
+        "planFileDigest": "663e18c3707f143bc3f114258101ef5ba28feb751ad5b4edb15d7b6334365200",
+        "inputManifestDigest": "25fef2d012c7c4b9ed7da6fead7105ecae0269811bfb5e4d9427044c7b6ddda3"
       }
     }
   },
@@ -1752,9 +1752,9 @@
         "traceId": "trace-wp7-producer-read",
         "requestId": "request-wp7-producer-read",
         "agentSessionId": "agent-session-producer-d1990f97a1f4",
-        "vgSessionId": "vg-session-producer-42cb7b1b5fcdb594",
-        "repoId": "repo-84c8e1071e80a824",
-        "worktreeId": "worktree-producer-d3972525f0e1309a",
+        "vgSessionId": "vg-session-producer-8bbb67f6e553878a",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "worktreeId": "worktree-producer-048ef531fbfde228",
         "ownerId": "owner-wp7-producer",
         "actor": "agent:codex",
         "epoch": 7,
@@ -1771,7 +1771,7 @@
         },
         "inputDigest": "sha256:210f1a92b956154f004230851b89468eeb47a7504d500ebd24ede69a7eb17699",
         "outputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
-        "startedAt": "2026-10-21T20:58:54.357Z",
+        "startedAt": "2026-10-21T21:03:20.603Z",
         "endedAt": null,
         "durationMs": null,
         "reason": null
@@ -1783,9 +1783,9 @@
         "traceId": "trace-wp7-producer-read",
         "requestId": "request-wp7-producer-read",
         "agentSessionId": "agent-session-producer-d1990f97a1f4",
-        "vgSessionId": "vg-session-producer-42cb7b1b5fcdb594",
-        "repoId": "repo-84c8e1071e80a824",
-        "worktreeId": "worktree-producer-d3972525f0e1309a",
+        "vgSessionId": "vg-session-producer-8bbb67f6e553878a",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "worktreeId": "worktree-producer-048ef531fbfde228",
         "ownerId": "owner-wp7-producer",
         "actor": "agent:codex",
         "epoch": 7,
@@ -1802,8 +1802,8 @@
         },
         "inputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
         "outputDigest": "sha256:b7ab7b1f4f97669374acf2199890d3788c6d10257b477c93b2dc010302bcf1f3",
-        "startedAt": "2026-10-21T20:58:54.357Z",
-        "endedAt": "2026-10-21T20:58:54.358Z",
+        "startedAt": "2026-10-21T21:03:20.603Z",
+        "endedAt": "2026-10-21T21:03:20.604Z",
         "durationMs": 1,
         "reason": null
       },
@@ -1814,9 +1814,9 @@
         "traceId": "trace-wp7-consumer-write",
         "requestId": "request-wp7-consumer-write",
         "agentSessionId": "agent-session-consumer-6bfbd709d5fd",
-        "vgSessionId": "vg-session-consumer-4ceeed11fdbd3643",
-        "repoId": "repo-84c8e1071e80a824",
-        "worktreeId": "worktree-consumer-763319c60b842134",
+        "vgSessionId": "vg-session-consumer-2b4e2c4d831614b7",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "worktreeId": "worktree-consumer-f749662187efae04",
         "ownerId": "owner-wp7-consumer",
         "actor": "agent:codex",
         "epoch": 7,
@@ -1833,7 +1833,7 @@
         },
         "inputDigest": "sha256:a7149e8d1b016253d0087a19f83462797bf8a02601e178123d3f3efb6a48c074",
         "outputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
-        "startedAt": "2026-10-21T20:58:54.359Z",
+        "startedAt": "2026-10-21T21:03:20.605Z",
         "endedAt": null,
         "durationMs": null,
         "reason": null
@@ -1845,9 +1845,9 @@
         "traceId": "trace-wp7-consumer-write",
         "requestId": "request-wp7-consumer-write",
         "agentSessionId": "agent-session-consumer-6bfbd709d5fd",
-        "vgSessionId": "vg-session-consumer-4ceeed11fdbd3643",
-        "repoId": "repo-84c8e1071e80a824",
-        "worktreeId": "worktree-consumer-763319c60b842134",
+        "vgSessionId": "vg-session-consumer-2b4e2c4d831614b7",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "worktreeId": "worktree-consumer-f749662187efae04",
         "ownerId": "owner-wp7-consumer",
         "actor": "agent:codex",
         "epoch": 7,
@@ -1864,8 +1864,8 @@
         },
         "inputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
         "outputDigest": "sha256:ec11b377cfcda488f0117c5d60c547107d36ddfc47ee11e4aa715887fbc8e6d0",
-        "startedAt": "2026-10-21T20:58:54.359Z",
-        "endedAt": "2026-10-21T20:58:54.360Z",
+        "startedAt": "2026-10-21T21:03:20.605Z",
+        "endedAt": "2026-10-21T21:03:20.606Z",
         "durationMs": 1,
         "reason": null
       },
@@ -1876,9 +1876,9 @@
         "traceId": "trace-wp7-self-read",
         "requestId": "request-wp7-self-read",
         "agentSessionId": "agent-session-self-writer-5a6e74971d3d",
-        "vgSessionId": "vg-session-self-writer-b04acf213dfd4390",
-        "repoId": "repo-84c8e1071e80a824",
-        "worktreeId": "worktree-producer-d3972525f0e1309a",
+        "vgSessionId": "vg-session-self-writer-530ba45269b2978d",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "worktreeId": "worktree-producer-048ef531fbfde228",
         "ownerId": "owner-wp7-self-writer",
         "actor": "agent:codex",
         "epoch": 7,
@@ -1895,7 +1895,7 @@
         },
         "inputDigest": "sha256:ec6d5d7443f8cd0e47437a029b272d52212bb104fff3b9c0aa20c042da25aa08",
         "outputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
-        "startedAt": "2026-10-21T20:58:54.363Z",
+        "startedAt": "2026-10-21T21:03:20.609Z",
         "endedAt": null,
         "durationMs": null,
         "reason": null
@@ -1907,9 +1907,9 @@
         "traceId": "trace-wp7-self-read",
         "requestId": "request-wp7-self-read",
         "agentSessionId": "agent-session-self-writer-5a6e74971d3d",
-        "vgSessionId": "vg-session-self-writer-b04acf213dfd4390",
-        "repoId": "repo-84c8e1071e80a824",
-        "worktreeId": "worktree-producer-d3972525f0e1309a",
+        "vgSessionId": "vg-session-self-writer-530ba45269b2978d",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "worktreeId": "worktree-producer-048ef531fbfde228",
         "ownerId": "owner-wp7-self-writer",
         "actor": "agent:codex",
         "epoch": 7,
@@ -1926,8 +1926,8 @@
         },
         "inputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
         "outputDigest": "sha256:a0b84fee133f93e055affd7b9f8662388f00e6d40f75ecdb024aa877706ee7fd",
-        "startedAt": "2026-10-21T20:58:54.363Z",
-        "endedAt": "2026-10-21T20:58:54.364Z",
+        "startedAt": "2026-10-21T21:03:20.609Z",
+        "endedAt": "2026-10-21T21:03:20.610Z",
         "durationMs": 1,
         "reason": null
       },
@@ -1938,9 +1938,9 @@
         "traceId": "trace-wp7-self-write",
         "requestId": "request-wp7-self-write",
         "agentSessionId": "agent-session-self-writer-5a6e74971d3d",
-        "vgSessionId": "vg-session-self-writer-b04acf213dfd4390",
-        "repoId": "repo-84c8e1071e80a824",
-        "worktreeId": "worktree-producer-d3972525f0e1309a",
+        "vgSessionId": "vg-session-self-writer-530ba45269b2978d",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "worktreeId": "worktree-producer-048ef531fbfde228",
         "ownerId": "owner-wp7-self-writer",
         "actor": "agent:codex",
         "epoch": 7,
@@ -1957,7 +1957,7 @@
         },
         "inputDigest": "sha256:2ec37bbea0c0c9c84c0af4f546d463eb1823b837972848084a5b9f96ee15d0e4",
         "outputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
-        "startedAt": "2026-10-21T20:58:54.365Z",
+        "startedAt": "2026-10-21T21:03:20.611Z",
         "endedAt": null,
         "durationMs": null,
         "reason": null
@@ -1969,9 +1969,9 @@
         "traceId": "trace-wp7-self-write",
         "requestId": "request-wp7-self-write",
         "agentSessionId": "agent-session-self-writer-5a6e74971d3d",
-        "vgSessionId": "vg-session-self-writer-b04acf213dfd4390",
-        "repoId": "repo-84c8e1071e80a824",
-        "worktreeId": "worktree-producer-d3972525f0e1309a",
+        "vgSessionId": "vg-session-self-writer-530ba45269b2978d",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "worktreeId": "worktree-producer-048ef531fbfde228",
         "ownerId": "owner-wp7-self-writer",
         "actor": "agent:codex",
         "epoch": 7,
@@ -1988,8 +1988,8 @@
         },
         "inputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
         "outputDigest": "sha256:2d6ef1acf0e713b3273b7ed5ceb9236db687791de7621a59ecf3f830a43d0f1c",
-        "startedAt": "2026-10-21T20:58:54.365Z",
-        "endedAt": "2026-10-21T20:58:54.366Z",
+        "startedAt": "2026-10-21T21:03:20.611Z",
+        "endedAt": "2026-10-21T21:03:20.612Z",
         "durationMs": 1,
         "reason": null
       },
@@ -2000,9 +2000,9 @@
         "traceId": "trace-wp7-producer-write",
         "requestId": "request-wp7-producer-write",
         "agentSessionId": "agent-session-producer-d1990f97a1f4",
-        "vgSessionId": "vg-session-producer-42cb7b1b5fcdb594",
-        "repoId": "repo-84c8e1071e80a824",
-        "worktreeId": "worktree-producer-d3972525f0e1309a",
+        "vgSessionId": "vg-session-producer-8bbb67f6e553878a",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "worktreeId": "worktree-producer-048ef531fbfde228",
         "ownerId": "owner-wp7-producer",
         "actor": "agent:codex",
         "epoch": 7,
@@ -2019,7 +2019,7 @@
         },
         "inputDigest": "sha256:4e5ecb07d186302eb3c764e4dc391d6bb07108978e8404e013871966a72ef632",
         "outputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
-        "startedAt": "2026-10-21T20:58:54.361Z",
+        "startedAt": "2026-10-21T21:03:20.607Z",
         "endedAt": null,
         "durationMs": null,
         "reason": null
@@ -2031,9 +2031,9 @@
         "traceId": "trace-wp7-producer-write",
         "requestId": "request-wp7-producer-write",
         "agentSessionId": "agent-session-producer-d1990f97a1f4",
-        "vgSessionId": "vg-session-producer-42cb7b1b5fcdb594",
-        "repoId": "repo-84c8e1071e80a824",
-        "worktreeId": "worktree-producer-d3972525f0e1309a",
+        "vgSessionId": "vg-session-producer-8bbb67f6e553878a",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "worktreeId": "worktree-producer-048ef531fbfde228",
         "ownerId": "owner-wp7-producer",
         "actor": "agent:codex",
         "epoch": 7,
@@ -2050,8 +2050,8 @@
         },
         "inputDigest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
         "outputDigest": "sha256:fb1ff04bc0c1e0b5aa5bd4657ec45caa693303327c441baa0fad226d51805f29",
-        "startedAt": "2026-10-21T20:58:54.361Z",
-        "endedAt": "2026-10-21T20:58:54.362Z",
+        "startedAt": "2026-10-21T21:03:20.607Z",
+        "endedAt": "2026-10-21T21:03:20.608Z",
         "durationMs": 1,
         "reason": null
       },
@@ -2062,9 +2062,9 @@
         "traceId": "trace-wp7-producer",
         "requestId": "request-wp7-producer",
         "agentSessionId": "agent-session-producer-d1990f97a1f4",
-        "vgSessionId": "vg-session-producer-42cb7b1b5fcdb594",
-        "repoId": "repo-84c8e1071e80a824",
-        "worktreeId": "worktree-producer-d3972525f0e1309a",
+        "vgSessionId": "vg-session-producer-8bbb67f6e553878a",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "worktreeId": "worktree-producer-048ef531fbfde228",
         "ownerId": "owner-wp7-producer",
         "actor": "agent:codex",
         "epoch": 7,
@@ -2079,11 +2079,11 @@
           "grade": "normalized-event",
           "ref": null
         },
-        "inputDigest": "sha256:6a3ed7fc48bb0bf13d84f43496ee5e16944eb0646c25099f57d6a882aa286a1b",
-        "outputDigest": "sha256:7cc094663f685671c6722c4d9fdca985ffd69d226207d0a6252e320d540289db",
-        "startedAt": "2026-10-21T20:58:54.357Z",
-        "endedAt": "2026-10-21T20:58:57.078Z",
-        "durationMs": 2721,
+        "inputDigest": "sha256:7e0a01cbdfb55533fed2a47d4dcf50684f0a0f4e2e99d892074aca1e0059f9ac",
+        "outputDigest": "sha256:6fee3e71fafd83efe4f7bbd799053503fa97f49475773bf8484d3f6600af32d1",
+        "startedAt": "2026-10-21T21:03:20.603Z",
+        "endedAt": "2026-10-21T21:03:23.364Z",
+        "durationMs": 2761,
         "reason": "wp7-evidence-sealed"
       },
       {
@@ -2093,9 +2093,9 @@
         "traceId": "trace-wp7-consumer",
         "requestId": "request-wp7-consumer",
         "agentSessionId": "agent-session-consumer-6bfbd709d5fd",
-        "vgSessionId": "vg-session-consumer-4ceeed11fdbd3643",
-        "repoId": "repo-84c8e1071e80a824",
-        "worktreeId": "worktree-consumer-763319c60b842134",
+        "vgSessionId": "vg-session-consumer-2b4e2c4d831614b7",
+        "repoId": "repo-7b7940ee79f4bf2f",
+        "worktreeId": "worktree-consumer-f749662187efae04",
         "ownerId": "owner-wp7-consumer",
         "actor": "agent:codex",
         "epoch": 7,
@@ -2110,11 +2110,11 @@
           "grade": "normalized-event",
           "ref": null
         },
-        "inputDigest": "sha256:b5582e3dd496ce7b5f959b17a79ea20ac4f6f79e8a2a0de97e54f70a7d35d636",
-        "outputDigest": "sha256:b09b5e4f12c0cc6f0aebff1d1821bdcf83aacc71d192b0f53111c84a11a0d157",
-        "startedAt": "2026-10-21T20:58:54.357Z",
-        "endedAt": "2026-10-21T20:58:57.078Z",
-        "durationMs": 2721,
+        "inputDigest": "sha256:ae74f6bafdf80ae2fa350da87318b47139cde9aa28157e0c3ef0e6c8d1d8f3d7",
+        "outputDigest": "sha256:3b56a74a6836150eae80660784e69756ac92f08ebdafe5a5709cad0242945134",
+        "startedAt": "2026-10-21T21:03:20.603Z",
+        "endedAt": "2026-10-21T21:03:23.364Z",
+        "durationMs": 2761,
         "reason": "wp7-evidence-sealed"
       }
     ],
@@ -2127,10 +2127,10 @@
         "coverage": {
           "schema": "clawx.versegit.observation-coverage/v1",
           "runId": "run-wp7-producer",
-          "repoId": "repo-84c8e1071e80a824",
-          "worktreeId": "worktree-producer-d3972525f0e1309a",
+          "repoId": "repo-7b7940ee79f4bf2f",
+          "worktreeId": "worktree-producer-048ef531fbfde228",
           "agentSessionId": "agent-session-producer-d1990f97a1f4",
-          "vgSessionId": "vg-session-producer-42cb7b1b5fcdb594",
+          "vgSessionId": "vg-session-producer-8bbb67f6e553878a",
           "epoch": 7,
           "values": {
             "fileRead": "host-event",
@@ -2173,9 +2173,9 @@
           "traceId": "trace-wp7-producer",
           "requestId": "request-wp7-producer",
           "agentSessionId": "agent-session-producer-d1990f97a1f4",
-          "vgSessionId": "vg-session-producer-42cb7b1b5fcdb594",
-          "repoId": "repo-84c8e1071e80a824",
-          "worktreeId": "worktree-producer-d3972525f0e1309a",
+          "vgSessionId": "vg-session-producer-8bbb67f6e553878a",
+          "repoId": "repo-7b7940ee79f4bf2f",
+          "worktreeId": "worktree-producer-048ef531fbfde228",
           "ownerId": "owner-wp7-producer",
           "actor": "agent:codex",
           "epoch": 7,
@@ -2190,11 +2190,11 @@
             "grade": "normalized-event",
             "ref": null
           },
-          "inputDigest": "sha256:6a3ed7fc48bb0bf13d84f43496ee5e16944eb0646c25099f57d6a882aa286a1b",
-          "outputDigest": "sha256:7cc094663f685671c6722c4d9fdca985ffd69d226207d0a6252e320d540289db",
-          "startedAt": "2026-10-21T20:58:54.357Z",
-          "endedAt": "2026-10-21T20:58:57.078Z",
-          "durationMs": 2721,
+          "inputDigest": "sha256:7e0a01cbdfb55533fed2a47d4dcf50684f0a0f4e2e99d892074aca1e0059f9ac",
+          "outputDigest": "sha256:6fee3e71fafd83efe4f7bbd799053503fa97f49475773bf8484d3f6600af32d1",
+          "startedAt": "2026-10-21T21:03:20.603Z",
+          "endedAt": "2026-10-21T21:03:23.364Z",
+          "durationMs": 2761,
           "reason": "wp7-evidence-sealed"
         },
         "issues": [],
@@ -2208,10 +2208,10 @@
         "coverage": {
           "schema": "clawx.versegit.observation-coverage/v1",
           "runId": "run-wp7-consumer",
-          "repoId": "repo-84c8e1071e80a824",
-          "worktreeId": "worktree-consumer-763319c60b842134",
+          "repoId": "repo-7b7940ee79f4bf2f",
+          "worktreeId": "worktree-consumer-f749662187efae04",
           "agentSessionId": "agent-session-consumer-6bfbd709d5fd",
-          "vgSessionId": "vg-session-consumer-4ceeed11fdbd3643",
+          "vgSessionId": "vg-session-consumer-2b4e2c4d831614b7",
           "epoch": 7,
           "values": {
             "fileRead": "unobserved",
@@ -2254,9 +2254,9 @@
           "traceId": "trace-wp7-consumer",
           "requestId": "request-wp7-consumer",
           "agentSessionId": "agent-session-consumer-6bfbd709d5fd",
-          "vgSessionId": "vg-session-consumer-4ceeed11fdbd3643",
-          "repoId": "repo-84c8e1071e80a824",
-          "worktreeId": "worktree-consumer-763319c60b842134",
+          "vgSessionId": "vg-session-consumer-2b4e2c4d831614b7",
+          "repoId": "repo-7b7940ee79f4bf2f",
+          "worktreeId": "worktree-consumer-f749662187efae04",
           "ownerId": "owner-wp7-consumer",
           "actor": "agent:codex",
           "epoch": 7,
@@ -2271,11 +2271,11 @@
             "grade": "normalized-event",
             "ref": null
           },
-          "inputDigest": "sha256:b5582e3dd496ce7b5f959b17a79ea20ac4f6f79e8a2a0de97e54f70a7d35d636",
-          "outputDigest": "sha256:b09b5e4f12c0cc6f0aebff1d1821bdcf83aacc71d192b0f53111c84a11a0d157",
-          "startedAt": "2026-10-21T20:58:54.357Z",
-          "endedAt": "2026-10-21T20:58:57.078Z",
-          "durationMs": 2721,
+          "inputDigest": "sha256:ae74f6bafdf80ae2fa350da87318b47139cde9aa28157e0c3ef0e6c8d1d8f3d7",
+          "outputDigest": "sha256:3b56a74a6836150eae80660784e69756ac92f08ebdafe5a5709cad0242945134",
+          "startedAt": "2026-10-21T21:03:20.603Z",
+          "endedAt": "2026-10-21T21:03:23.364Z",
+          "durationMs": 2761,
           "reason": "wp7-evidence-sealed"
         },
         "issues": [],
@@ -2289,10 +2289,10 @@
         "coverage": {
           "schema": "clawx.versegit.observation-coverage/v1",
           "runId": "run-wp7-self-writer",
-          "repoId": "repo-84c8e1071e80a824",
-          "worktreeId": "worktree-producer-d3972525f0e1309a",
+          "repoId": "repo-7b7940ee79f4bf2f",
+          "worktreeId": "worktree-producer-048ef531fbfde228",
           "agentSessionId": "agent-session-self-writer-5a6e74971d3d",
-          "vgSessionId": "vg-session-self-writer-b04acf213dfd4390",
+          "vgSessionId": "vg-session-self-writer-530ba45269b2978d",
           "epoch": 7,
           "values": {
             "fileRead": "host-event",
@@ -2335,9 +2335,9 @@
           "traceId": "trace-wp7-self-writer",
           "requestId": "request-wp7-self-writer",
           "agentSessionId": "agent-session-self-writer-5a6e74971d3d",
-          "vgSessionId": "vg-session-self-writer-b04acf213dfd4390",
-          "repoId": "repo-84c8e1071e80a824",
-          "worktreeId": "worktree-producer-d3972525f0e1309a",
+          "vgSessionId": "vg-session-self-writer-530ba45269b2978d",
+          "repoId": "repo-7b7940ee79f4bf2f",
+          "worktreeId": "worktree-producer-048ef531fbfde228",
           "ownerId": "owner-wp7-self-writer",
           "actor": "agent:codex",
           "epoch": 7,
@@ -2352,11 +2352,11 @@
             "grade": "normalized-event",
             "ref": null
           },
-          "inputDigest": "sha256:d7ae09275236f489f02f54bfdf457cea393ca23168c96c27f77278fb5b23cf19",
-          "outputDigest": "sha256:3d9d1e53bc21b350c0cd09b7a10d65c7942890c69e10414dd6bb845b70803b12",
-          "startedAt": "2026-10-21T20:58:54.357Z",
-          "endedAt": "2026-10-21T20:58:57.078Z",
-          "durationMs": 2721,
+          "inputDigest": "sha256:718946ee6f6b1e8f8d6065c85b1b5ee82048d80ac2c91e06ae77109e61d68906",
+          "outputDigest": "sha256:c4ddb8075068ef6f5b16db97e49abd4c0abbb3f88a40cee234a24a0cda8a3584",
+          "startedAt": "2026-10-21T21:03:20.603Z",
+          "endedAt": "2026-10-21T21:03:23.364Z",
+          "durationMs": 2761,
           "reason": "wp7-evidence-sealed"
         },
         "issues": [],
@@ -2374,25 +2374,25 @@
       "activeSessionCount": 2
     },
     "repository": {
-      "repoId": "repo-84c8e1071e80a824",
+      "repoId": "repo-7b7940ee79f4bf2f",
       "worktrees": [
-        "worktree-producer-d3972525f0e1309a",
-        "worktree-consumer-763319c60b842134"
+        "worktree-producer-048ef531fbfde228",
+        "worktree-consumer-f749662187efae04"
       ]
     },
     "identity": {
-      "repoId": "repo-84c8e1071e80a824",
+      "repoId": "repo-7b7940ee79f4bf2f",
       "worktreeIds": [
-        "worktree-producer-d3972525f0e1309a",
-        "worktree-consumer-763319c60b842134"
+        "worktree-producer-048ef531fbfde228",
+        "worktree-consumer-f749662187efae04"
       ],
       "agentSessionIds": [
         "agent-session-producer-d1990f97a1f4",
         "agent-session-consumer-6bfbd709d5fd"
       ],
       "vgSessionIds": [
-        "vg-session-producer-42cb7b1b5fcdb594",
-        "vg-session-consumer-4ceeed11fdbd3643"
+        "vg-session-producer-8bbb67f6e553878a",
+        "vg-session-consumer-2b4e2c4d831614b7"
       ],
       "epoch": 7
     },
@@ -2405,16 +2405,16 @@
     "sessions": [
       {
         "agentSessionId": "agent-session-producer-d1990f97a1f4",
-        "vgSessionId": "vg-session-producer-42cb7b1b5fcdb594",
-        "worktreeId": "worktree-producer-d3972525f0e1309a",
+        "vgSessionId": "vg-session-producer-8bbb67f6e553878a",
+        "worktreeId": "worktree-producer-048ef531fbfde228",
         "epoch": 7,
         "traceId": "trace-wp7-producer",
         "status": "detached"
       },
       {
         "agentSessionId": "agent-session-consumer-6bfbd709d5fd",
-        "vgSessionId": "vg-session-consumer-4ceeed11fdbd3643",
-        "worktreeId": "worktree-consumer-763319c60b842134",
+        "vgSessionId": "vg-session-consumer-2b4e2c4d831614b7",
+        "worktreeId": "worktree-consumer-f749662187efae04",
         "epoch": 7,
         "traceId": "trace-wp7-consumer",
         "status": "detached"
@@ -2463,17 +2463,17 @@
       "unknowns": []
     },
     "candidate": {
-      "candidateId": "66073dda1ef0be06fa70d339c69ea35b352bc56bd32099f966a8d41a9c0455c0",
+      "candidateId": "882ced2fff93b8d02b9cdeb78de5c9197a47d107e0aa785f1348452d2fe1f467",
       "schemaVersion": 2,
-      "repoId": "repo-84c8e1071e80a824",
-      "baseOid": "4f21ce4f274f16887f3cd94b540ef0665fa5f54e",
+      "repoId": "repo-7b7940ee79f4bf2f",
+      "baseOid": "5389e94ad20bcd1133c92aa04973fe2773d72d98",
       "parentOrder": [
-        "655abd39188328edbbc8869e1a5e4ee8d242a6c3",
-        "c12017a1815b0a60bea538cb0b01b2caa97145c2"
+        "b832c5156d26ea91a424937210933361718874b6",
+        "95aa29e8bce747781ee5bfdd269be08d4e960a67"
       ],
       "materializedTreeOid": "195c0d9ebf701b840d8f4fa32098b58ec9bcf45a",
-      "commitOid": "4aa72d4b8fb10247fbfead7c0fa7d96c81d82034",
-      "candidateWorktreeHead": "4aa72d4b8fb10247fbfead7c0fa7d96c81d82034",
+      "commitOid": "5298a9fbf572016a5e6179198239614d6080f2d1",
+      "candidateWorktreeHead": "5298a9fbf572016a5e6179198239614d6080f2d1",
       "dirtyFiles": [],
       "untrackedFiles": [],
       "ignoredRuntimePaths": [
@@ -2532,10 +2532,10 @@
       "state_reads": 0
     },
     "timings": {
-      "orchestrationMs": 5644
+      "orchestrationMs": 5594
     },
     "digests": {
-      "candidate": "66073dda1ef0be06fa70d339c69ea35b352bc56bd32099f966a8d41a9c0455c0",
+      "candidate": "882ced2fff93b8d02b9cdeb78de5c9197a47d107e0aa785f1348452d2fe1f467",
       "evidence": "direct-receipt",
       "contract": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749"
     }
@@ -2579,6 +2579,9 @@
   },
   "continuation": {
     "failedReceiptRejected": true,
+    "failureRejectedAt": "2026-10-21T21:03:22.405Z",
+    "continuationStartedAt": "2026-10-21T21:03:22.495Z",
+    "failureRejectedBeforeContinuation": true,
     "continuationExecuted": true,
     "continuationAccepted": true,
     "status": "observed"
@@ -2591,28 +2594,28 @@
     "processInventory": {
       "baselinePids": [],
       "duringPids": [
-        9268,
-        23072
+        15756,
+        28384
       ],
       "afterPids": [],
       "newProcessPids": [
-        23072,
-        9268
+        15756,
+        28384
       ],
       "foreignProcessPids": [],
       "managedPids": [
-        23072,
-        9268
+        15756,
+        28384
       ],
       "ownedPidChecks": [
         {
           "ok": true,
-          "pid": 23072,
+          "pid": 15756,
           "exists": false
         },
         {
           "ok": true,
-          "pid": 9268,
+          "pid": 28384,
           "exists": false
         }
       ],
@@ -2621,13 +2624,13 @@
       "queryError": null,
       "managedBeforeShutdown": [
         {
-          "keyDigest": "c38c47126ba2444e2be84b717b62cd62e38e4e85e0baae7df4c0c1ba6f92b760",
-          "pid": 23072,
+          "keyDigest": "8253e462b320ca8798cb38a0f25605b7646415184a007a9505ab2650b1f74164",
+          "pid": 15756,
           "state": "ready"
         },
         {
-          "keyDigest": "d69e15e01bb02e41f05f0ea7962a4d385f918b847d87a5f97a853c77e2d37b52",
-          "pid": 9268,
+          "keyDigest": "cd76e86536805891d33804909f3318e9fd805b51b33269a80cc9d8cdbb7425ed",
+          "pid": 28384,
           "state": "ready"
         }
       ],
@@ -2641,27 +2644,27 @@
     "hostWorktreesDeleted": 0,
     "preCleanupSealEvidence": {
       "path": "documents/6ed90c913c59ec339dddf174c4d7d4e8f89d542f6c192cf2013e8ed29126af79.json",
-      "digest": "598202ca4d7f9d53ce28797aa66498360affe6ddc3a1977dc09fa590fc26d9c1"
+      "digest": "98850a36db323b0a2ed8b93273921412c94492c6af367f0fec1f9b0e05bbab5c"
     }
   },
   "evidence": {
     "schema": "clawx.versegit.wp7-evidence-bundle/v1",
     "preCleanupSeal": {
       "path": "documents/6ed90c913c59ec339dddf174c4d7d4e8f89d542f6c192cf2013e8ed29126af79.json",
-      "digest": "598202ca4d7f9d53ce28797aa66498360affe6ddc3a1977dc09fa590fc26d9c1"
+      "digest": "98850a36db323b0a2ed8b93273921412c94492c6af367f0fec1f9b0e05bbab5c"
     },
     "cleanup": {
       "path": "cleanup.json",
-      "digest": "8529e34d13063b5e21042970b05de078ef3bbe51f9e35660a1ce1f6ae393f1ee"
+      "digest": "27d2cf31905cb5cf29e0040cb7a22797231e7f0de73b0bee4eed77f1abfdd790"
     },
     "postCleanupAttachment": {
       "path": "documents/ee6cddbb687745b1c2af7d9dbc74899a8acb3d42daf1d6a8cbc98a026386d3d6.json",
-      "digest": "acae1a16858f55c28b1c2d7d97e3ff4e57b02b88d195319c99f98363dadddb54"
+      "digest": "7343570e7e7ad1441171ec8299ce44d864513f001cbcefbb2a3d588980d7e3b9"
     },
     "manifest": {
       "path": "manifest.json",
-      "digest": "d4ad0e8dfdaae59793e8a0fd5b85168fa7c4e399093946740b353897de6a7210",
-      "aggregateDigest": "efdc6cbbf12e03088d4e004c2a14aa52228b32a609d56464d3b16ae1ec6b01cc",
+      "digest": "1d5e81b259cc42680a7322f41c85721d53c97a9e1f2990aa10de83cf2edc1516",
+      "aggregateDigest": "30ff6b7714f18e512315f151f92a7276adcca341f3a25f2167acf157ea3ff3fe",
       "fileCount": 42
     }
   },
@@ -2680,6 +2683,7 @@
     "governedCallCount": 2,
     "behaviorEventCount": 12,
     "wrongReceiptStatus": "rejected_by_policy",
+    "failureRejectedBeforeContinuation": true,
     "continuationVerdict": "observed",
     "receiptAuthorityVerified": true,
     "hostVerdictBefore": "pass",
@@ -2696,7 +2700,7 @@
       "hostWorktreesDeleted": 0
     }
   },
-  "normalizedOutcomeDigest": "ccf8d176bc75d7e012166f420586a64a45b69e79f7c5a7576bfaf1823fc1a424",
+  "normalizedOutcomeDigest": "b51660843bd4007c12ecf8f748ea59d9a4a9bf1297b3b6ec6d17534a0bc303b8",
   "boundaries": {
     "hostSourceMutated": false,
     "userIdRepositoryMutated": false,
@@ -2731,5 +2735,5 @@
     "No GA, release, default-on, land/admit or M4 authority is claimed."
   ],
   "issues": [],
-  "digest": "6d34b11b8cbf8355aa38a1f1a22935c97012e637095076b1d8618f82712404f9"
+  "digest": "2aca14627b50395af28da7198056c71a09d516fe669c8ce2516da576bc77fb8a"
 }

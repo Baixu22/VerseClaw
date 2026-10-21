@@ -543,6 +543,7 @@ function normalizedOutcome(input: {
   governedCallCount: number;
   behaviorEventCount: number;
   wrongReceiptStatus: string;
+  failureRejectedBeforeContinuation: boolean;
   continuationVerdict: string;
   receiptAuthorityVerified: boolean;
   hostVerdictBefore: string;
@@ -561,6 +562,7 @@ function normalizedOutcome(input: {
     governedCallCount: input.governedCallCount,
     behaviorEventCount: input.behaviorEventCount,
     wrongReceiptStatus: input.wrongReceiptStatus,
+    failureRejectedBeforeContinuation: input.failureRejectedBeforeContinuation,
     continuationVerdict: input.continuationVerdict,
     receiptAuthorityVerified: input.receiptAuthorityVerified,
     hostVerdictBefore: input.hostVerdictBefore,
@@ -1038,6 +1040,11 @@ export async function buildWp7Report({
       ...makeReceipt(primaryPlan.plan, primaryPlanRef, primaryRun, 'clean', 'receipt-wp7-wrong-candidate'),
       candidateId: 'candidate-wrong',
     };
+    const wrongReceiptResult = receiptBridge.receive(primaryPlan.plan.runId, wrongReceipt);
+    if (wrongReceiptResult.status !== 'rejected_by_policy') throw new Error('wrong-candidate receipt was not rejected');
+    const failureRejectedAt = Date.now();
+    const hostDecisionAfterFailure = collectHostVerdict(primaryCheckOk, wrongReceiptResult.status);
+    const hostVerdictAfterFailure = hostDecisionAfterFailure.value;
 
     const observeProjectionLinks = hostToolCalls.map((call) => {
       const providerCall = providerCalls.find((entry) => entry.sourceBehaviorEventId === call.completion.eventId);
@@ -1081,6 +1088,7 @@ export async function buildWp7Report({
       throw new Error('host event to VG fact projection is incomplete');
     }
 
+    const continuationStartedAt = Date.now();
     const continuationRun = await runCandidateCheck(continuationPlan.plan, 'verseshell-candidate-continuation');
     const continuationCheckOk = continuationRun.parsed.ok === true
       && continuationRun.parsed.schema === 'clawx.wp7.candidate-check/v1'
@@ -1112,6 +1120,7 @@ export async function buildWp7Report({
         planEvidence: primaryPlanRef,
         observation: outputEvidence(primaryRun.call),
         observationEvidence: primaryRun.observationEvidence,
+        attemptedReceipt: wrongReceipt,
       },
       continuation: {
         plan: continuationPlan.plan,
@@ -1120,13 +1129,6 @@ export async function buildWp7Report({
         observationEvidence: continuationRun.observationEvidence,
       },
     };
-    executionEvidence.primary.attemptedReceipt = wrongReceipt;
-    const wrongReceiptResult = receiptBridge.receive(primaryPlan.plan.runId, wrongReceipt);
-    if (wrongReceiptResult.status !== 'rejected_by_policy') throw new Error('wrong-candidate receipt was not rejected');
-    const hostDecisionAfterFailure = collectHostVerdict(primaryCheckOk, wrongReceiptResult.status);
-    const hostVerdictAfterFailure = hostDecisionAfterFailure.value;
-
-
     const processPidsDuringQuery = queryAeProcesses();
     if (!processPidsDuringQuery.ok) throw new Error(`OS process inventory during run unavailable: ${processPidsDuringQuery.error}`);
     const processPidsDuring = processPidsDuringQuery.pids;
@@ -1343,6 +1345,7 @@ export async function buildWp7Report({
       governedCallCount: publicCalls.length,
       behaviorEventCount: observed.length + sealedEvents.length,
       wrongReceiptStatus: wrongReceiptResult.status,
+      failureRejectedBeforeContinuation: failureRejectedAt <= continuationStartedAt,
       continuationVerdict: continuationVerdict.status,
       receiptAuthorityVerified: continuationVerdict.realVerseshellExecution,
       hostVerdictBefore,
@@ -1422,7 +1425,15 @@ export async function buildWp7Report({
         value: hostVerdictAfter,
         decisions: { before: hostDecisionBefore, afterFailure: hostDecisionAfterFailure, afterContinuation: hostDecisionAfterContinuation },
       },
-      continuation: { failedReceiptRejected: wrongReceiptResult.status === 'rejected_by_policy', continuationExecuted: true, continuationAccepted: continuationReceiptResult.status === 'accepted', status: continuationVerdict.status },
+      continuation: {
+        failedReceiptRejected: wrongReceiptResult.status === 'rejected_by_policy',
+        failureRejectedAt: new Date(failureRejectedAt).toISOString(),
+        continuationStartedAt: new Date(continuationStartedAt).toISOString(),
+        failureRejectedBeforeContinuation: failureRejectedAt <= continuationStartedAt,
+        continuationExecuted: true,
+        continuationAccepted: continuationReceiptResult.status === 'accepted',
+        status: continuationVerdict.status,
+      },
       cleanup,
       evidence: {
         schema: 'clawx.versegit.wp7-evidence-bundle/v1',
@@ -1774,6 +1785,10 @@ export function validateWp7Report(
   }
   const continuation = report.continuation as Record<string, unknown> | undefined;
   add(continuation?.failedReceiptRejected === true && continuation?.continuationAccepted === true && continuation?.continuationExecuted === true, 'failure continuation proof incomplete');
+  add(continuation?.failureRejectedBeforeContinuation === true
+    && typeof continuation?.failureRejectedAt === 'string'
+    && typeof continuation?.continuationStartedAt === 'string'
+    && Date.parse(continuation.failureRejectedAt) <= Date.parse(continuation.continuationStartedAt), 'failure rejection did not precede continuation');
 
   const cleanup = report.cleanup as Record<string, unknown> | undefined;
   const processInventory = cleanup?.processInventory as Record<string, unknown> | undefined;
@@ -1816,6 +1831,7 @@ export function validateWp7Report(
   add(normalized?.governedCallCount === governedCalls.length, 'normalized governed call count mismatch');
   add(normalized?.behaviorEventCount === behaviorEvents.length, 'normalized behavior event count mismatch');
   add(normalized?.receiptAuthorityVerified === true, 'normalized verdict did not retain host evidence authority');
+  add(normalized?.failureRejectedBeforeContinuation === true, 'normalized outcome lost failure-before-continuation ordering');
   add(findAbsolutePathLeaks(report).length === 0, `absolute path leak: ${findAbsolutePathLeaks(report).slice(0, 3).join(', ')}`);
   if (report.digest !== documentDigest(report)) issues.push('digest is not reproducible');
   return { ok: issues.length === 0, issues: [...new Set(issues)] };

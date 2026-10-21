@@ -41,6 +41,7 @@ describe('WP7 real host vertical slice', () => {
     (tampered.cleanup as Record<string, unknown>).processSurvivors = 1;
     (tampered.boundaries as Record<string, unknown>).landOrAdmitInvoked = true;
     (tampered.provider as Record<string, unknown>).nativeVerificationFallbacks = 1;
+    (tampered.continuation as Record<string, unknown>).failureRejectedBeforeContinuation = false;
     reseal(tampered);
     const issues = validateWp7Report(tampered).issues;
     expect(issues).toEqual(expect.arrayContaining([
@@ -49,6 +50,7 @@ describe('WP7 real host vertical slice', () => {
       'cleanup boundary failed',
       'repository or landing boundary failed',
       'provider fact and verification execution-authority boundary is inconsistent',
+      'failure rejection did not precede continuation',
     ]));
   });
 
