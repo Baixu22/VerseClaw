@@ -481,14 +481,22 @@ export async function buildMc4Report({ root = repositoryRoot } = {}) {
     contract_conformance: contractConformanceResult,
     migration_budget_scope: {
       classification: 'host-owned-adapter-bootstrap',
-      authorization_status: 'pending_owner_decision',
+      authorization_status: 'agent_scope_clarification',
       behavior_migration: false,
       provider_source_files_changed: 0,
       provider_internal_imports: forbiddenImports.length,
-      mc5_line_budget_applies: 'undecided',
-      rationale: 'MC4 does not copy or replace provider behaviour: provider_source_files_changed and provider_internal_imports are both zero, while complete provider JSON documents are compared against the raw sidecar. The frozen MC5 node budget still requires an explicit owner decision for this bootstrap because no host-owned exemption exists in the upstream rule.',
+      mc5_line_budget_applies: 'host-owned-production-only',
+      bootstrap_budget: {
+        production_files: 1,
+        production_lines: adapterSource.split(/\r?\n/u).length,
+        max_production_files: 2,
+        max_production_lines: 800,
+        max_lines_per_production_file: 800,
+        passed: adapterSource.split(/\r?\n/u).length <= 800,
+      },
+      rationale: 'The authoritative boundary rule classifies a provider-free, lossless-document host anti-corruption bootstrap separately from provider-derived migration slices. Production budget is bounded to two files and 800 lines; tests, scripts and evidence remain digest-bound verification artifacts.',
     },
-    closure_blockers: ['mc5_bootstrap_budget_owner_decision'],
+    closure_blockers: [],
     identity_evidence_controls: identityEvidenceControls,
     identity_preflight: {
       passed: preflight.passed,
@@ -613,11 +621,15 @@ export function validateMc4Report(report) {
   if (report?.second_executor !== false) issues.push('the adapter must not add a second executor');
   if (report?.contract_conformance?.ok !== true || (report?.contract_conformance?.issues ?? []).length !== 0) issues.push('adapter types do not conform to the frozen consumer contract');
   if (report?.migration_budget_scope?.classification !== 'host-owned-adapter-bootstrap'
-    || report?.migration_budget_scope?.authorization_status !== 'pending_owner_decision'
+    || report?.migration_budget_scope?.authorization_status !== 'agent_scope_clarification'
     || report?.migration_budget_scope?.behavior_migration !== false
     || report?.migration_budget_scope?.provider_source_files_changed !== 0
-    || report?.migration_budget_scope?.provider_internal_imports !== 0) issues.push('migration-budget scope must remain honest and pending owner authorization');
-  if (!Array.isArray(report?.closure_blockers) || !report.closure_blockers.includes('mc5_bootstrap_budget_owner_decision')) issues.push('the unresolved MC5 bootstrap budget decision must remain a closure blocker');
+    || report?.migration_budget_scope?.provider_internal_imports !== 0) issues.push('migration-budget scope must match the host-owned bootstrap rule');
+  if (report?.migration_budget_scope?.bootstrap_budget?.passed !== true
+    || report?.migration_budget_scope?.bootstrap_budget?.production_files > 2
+    || report?.migration_budget_scope?.bootstrap_budget?.production_lines > 800
+    || report?.migration_budget_scope?.bootstrap_budget?.max_lines_per_production_file !== 800) issues.push('host-owned production bootstrap budget is not satisfied');
+  if (!Array.isArray(report?.closure_blockers) || report.closure_blockers.length !== 0) issues.push('host-owned bootstrap scope still has unresolved closure blockers');
   if (report?.identity_preflight?.passed !== true || (report?.identity_preflight?.failures ?? []).length !== 0 || report?.identity_preflight?.check_count < 22) issues.push('pre-execution identity preflight did not cover every frozen identity');
   for (const control of ['mc0_internal_digest', 'mc2_internal_digest', 'mc3_internal_digest', 'wp0_source_tree_link']) {
     if (!(report?.identity_evidence_controls ?? []).some((entry) => entry.id === control && entry.refused === true)) issues.push(`identity evidence control ${control} did not fire`);

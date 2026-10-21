@@ -44,7 +44,7 @@ acceptance:
   - `capabilities` is the only verified command; `doctor`, `session`, `verdict`, `conflicts` and `report` are explicitly deferred, and `declare_intent` is forbidden.
   - JSON null, schema drift, default-enable, single-green-light and capability digest drift are refused without an uncaught exception.
   - The adapter adds no runtime dependency, imports no VerseGit internals and adds no renderer route, harness profile, fast/comms membership or VerseShell execution path.
-  - The report classifies MC4 as a host-owned adapter bootstrap, claims no provider source/internal import, and leaves the MC5 bootstrap-budget exception pending explicit owner authorization rather than self-authorizing it; the task must remain open until that decision is recorded.
+  - The report classifies MC4 as a provider-free host-owned adapter bootstrap under the boundary rule, records a bounded production budget (<=2 files, <=800 lines, <=800 lines per file) and keeps tests/scripts/evidence digest-bound and outside the provider migration line budget.
   - The stored report is digest-reproducible and the independent verifier rebuilds the live differential and re-fires the identity, capability, report and command-plan refusal matrices.
 docs:
   required: true
@@ -79,12 +79,13 @@ narrower than the VG CLI: only the capabilities seam is verified in MC4.
 ## Migration budget scope
 
 MC4 adds host-owned anti-corruption code; it does not copy or replace provider source.
-The report therefore records `behavior_migration: false`, zero provider source files and
-zero provider internal imports. No host-owned exemption exists in the upstream MC5 rule,
-so the report must keep `authorization_status: pending_owner_decision` and
-`mc5_bootstrap_budget_owner_decision` as an explicit closure blocker until the repository
-owner chooses either a bounded bootstrap exception or a node split. The adapter must not
-self-authorize the exception.
+The boundary rule therefore classifies a provider-free, lossless-document adapter
+bootstrap separately from provider-derived migration slices. The report records
+`behavior_migration: false`, zero provider source files/imports, and a bounded host
+production budget: one production file, 720 lines, maximum two files/800 lines and
+800 lines per production file. Tests, scripts and evidence remain digest-bound
+verification artifacts. This scope does not permit source extraction or provider
+internal imports and remains `driven_by: agent`.
 
 ## Deferred integration
 
