@@ -122,6 +122,8 @@ const ACCEPTANCE_EVIDENCE = {
   ],
 };
 
+export const WP9_ACCEPTANCE_EVIDENCE = ACCEPTANCE_EVIDENCE;
+
 const digestCache = new Map();
 const jsonCache = new Map();
 

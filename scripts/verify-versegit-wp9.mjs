@@ -12,6 +12,7 @@ import {
   WP9_EVIDENCE_SHA_PATH,
   WP9_EVIDENCE_SHA_PATHS,
   WP9_EXPECTED_ACCEPTANCE_IDS,
+  WP9_ACCEPTANCE_EVIDENCE,
   WP9_FIXTURE_PATH,
   WP9_MANIFEST_SCHEMA,
   WP9_REPORT_PATH,
@@ -86,12 +87,17 @@ export function validateWp9Report(report, { root } = {}) {
     add(issues, ['verified', 'not_applicable', 'retired'].includes(entry?.status), `${String(entry?.id)}: invalid disposition`);
     add(issues, Array.isArray(entry?.evidence) && entry.evidence.length > 0, `${String(entry?.id)}: evidence missing`);
     add(issues, Array.isArray(entry?.assertions) && entry.assertions.length > 0 && entry.assertions.every((item) => item.passed === true), `${String(entry?.id)}: assertion failed`);
+    const evidencePaths = new Set((entry?.evidence ?? []).map((input) => input?.path));
+    const requiredPaths = (WP9_ACCEPTANCE_EVIDENCE[entry?.id] ?? []).map(([path]) => path.replaceAll('\\', '/'));
+    add(issues, requiredPaths.length > 0 && requiredPaths.every((path) => evidencePaths.has(path)), `${String(entry?.id)}: evidence mapping drifted`);
     for (const input of entry?.evidence ?? []) {
       if (root) verifyInputDigest(root, input, issues, String(entry?.id));
       else add(issues, typeof input?.path === 'string' && /^[0-9a-f]{64}$/u.test(String(input?.sha256 ?? '')), `${String(entry?.id)}: malformed evidence`);
     }
   }
-  add(issues, report?.acceptanceSummary?.required === 7 && report?.acceptanceSummary?.verified === 7 && report?.acceptanceSummary?.withoutEvidence === 0, 'acceptance summary is incomplete');
+  const actualVerified = acceptance.filter((entry) => entry?.status === 'verified').length;
+  const actualWithoutEvidence = acceptance.filter((entry) => !Array.isArray(entry?.evidence) || entry.evidence.length === 0).length;
+  add(issues, report?.acceptanceSummary?.required === 7 && report?.acceptanceSummary?.verified === actualVerified && report?.acceptanceSummary?.withoutEvidence === actualWithoutEvidence && actualVerified === 7 && actualWithoutEvidence === 0, 'acceptance summary is incomplete or self-reported');
 
   const forest = report?.taskForest ?? {};
   add(issues, /^[0-9a-f]{64}$/u.test(String(forest.graphHash ?? '')), 'Task Forest graph hash missing');
@@ -100,7 +106,9 @@ export function validateWp9Report(report, { root } = {}) {
   add(issues, forest?.expectedFinal?.self === 'done' && forest?.expectedFinal?.parent === 'done', 'expected final Task Forest status is missing');
   const children = Array.isArray(forest?.children) ? forest.children : [];
   const requiredChildren = children.filter((child) => child.self !== true);
+  const selfChild = children.find((child) => child.self === true);
   add(issues, requiredChildren.length === 18, 'required child count must be 18 excluding WP9 self');
+  add(issues, forest?.self?.id === 'TF-0515' && selfChild?.id === 'TF-0515' && selfChild?.status === forest?.self?.status, 'self snapshot contradiction');
   add(issues, requiredChildren.every((child) => child.status === 'done' || child.status === 'deprecated'), 'a required child is not done/deprecated');
   add(issues, (forest?.openChildren ?? []).length === 0 && (forest?.blockedChildren ?? []).length === 0, 'required child remains open or blocked');
   add(issues, (forest?.unresolvedDependencies ?? []).length === 0, 'blocking dependency remains unresolved');

@@ -101,6 +101,20 @@ describe('WP9 whole-goal acceptance', () => {
     expect(issues.some((issue: string) => issue.includes('input digest mismatch'))).toBe(true);
   });
 
+  it('rejects re-sealed criterion, self-snapshot and count mismatches', () => {
+    const report = structuredClone(stored());
+    report.acceptance[0].evidence = structuredClone(report.acceptance[1].evidence);
+    report.acceptance[0].status = 'unverified';
+    report.taskForest.children.find((entry) => entry.self === true).status = 'done';
+    report.digest = documentDigest(report);
+    const issues = validateWp9Report(report, { root: process.cwd() }).issues;
+    expect(issues).toEqual(expect.arrayContaining([
+      'AC1-contract-identity: evidence mapping drifted',
+      'self snapshot contradiction',
+      'acceptance summary is incomplete or self-reported',
+    ]));
+  });
+
   it('rejects a checksum surface after target bytes are mutated', () => {
     const root = mkdtempSync(join(tmpdir(), 'versegit-wp9-sha-'));
     try {
