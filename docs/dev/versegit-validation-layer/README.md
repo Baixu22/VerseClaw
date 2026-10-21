@@ -1,6 +1,6 @@
 # VerseGit 作为 ClawX 并发工作区控制面
 
-> 状态：宿主适配与 WP6 工程收口证据已落盘；非 GA、默认关闭、landed-unwired，`releaseEligible=false`。
+> 状态：WP9 已完成 whole-goal 工程验收，结论为 `PASS_WITH_GAPS`；非 GA、默认关闭、landed-unwired，`releaseEligible=false`。
 > 日期：2026-10-22。
 > 本文取代“VerseGit 只是一个可选的符号级验证插件”的单点描述；它不改变任何产品锁、默认值或发布状态。深度设计位于 `harness/specs/guides/versegit-concurrency/`，README 作为稳定入口。
 
@@ -136,10 +136,17 @@ discover -> eligible -> attach -> observe -> evaluate
 - 当前 CLI 没有纯 `conflicts-plan` seam，完整 conflict-plan 仍为 `unavailable`；
 - WP5 的 3 轮双 worktree replay 使用真实 disposable Git worktree，但 VG process calls 为 0，不能冒充真实 agent→VG 工具闭环；
 - provider source 当前 dirty，只有 debug sidecar；MC0/MC3 保留 `source_worktree_dirty`、
-ot_a_deliverable_baseline`、`release_binary_not_built`；
+  `not_a_deliverable_baseline`、`release_binary_not_built`；
 - shell read、direct filesystem、arbitrary MCP、network/browser 仍为 unobserved/partial；`.mjs/.jsx/.sh` 为 partial，其他语言 unverified；
 - 执行证据仅覆盖 `win32-x64`；Linux/macOS 未跑；
 - M4 CAS landing broker 未授权，`vg land` / `vg admit` 不在默认宿主路径。
+
+2026-10-22 的 WP7/WP8/WP9 收口进一步确认：
+
+- WP7 在 disposable host-shaped Windows vertical slice 中完成了 host-owned fixed-argv VG facts、真实 producer-consumer、VerseShell-only candidate verification、file-backed receipt authority、failure-before-continuation 与零 survivor 清理；
+- WP8 由独立 `ccs-hub/gpt-6.1-sol` agent 给出 `PASS_WITH_GAPS`，`P0=0`、`P1=0`、`P2=3`；初版 `ccs-agentrouter/gpt-6.1-sol` FAIL 与后续 provider 403/high-demand 失败均保留；
+- WP9 将 TF-0465 的七条 acceptance 逐项映射到盘上证据，并确认 18 个非 WP9 必需子节点均 `done` 或显式 `deprecated`；
+- WP9 最终结论仍是 bounded `observed`，不是外部模型会话、完整产品 M3、GA 或 M4；P2 与平台、语言、读面、release、conflicts-plan 和 recovery 边界全部保留。
 
 因此当前定位是：**host module 工程路径已闭合、产品未批准、默认未启用、发布不可用**。`passed` 只表示证据与边界可复现，不表示 GA。
 
@@ -175,7 +182,7 @@ VG 在 standalone 模式可以保留自己的 bounded executor。进入 ClawX ho
 
 ## 10. 实施路线
 
-实施拆为 WP0-WP6；当前 WP0-WP6 的工程证据链已生成，Task Forest 节点状态由独立 proposal 在盘上证据复核后同步。这不改变默认关闭或产品锁：
+实施拆为 WP0-WP9；当前 WP0-WP6、WP7 bounded live slice、WP8 独立审查与 WP9 全局聚合的工程证据链已生成。Task Forest 状态只由独立 proposal 在盘上证据复核后同步。这不改变默认关闭或产品锁：
 
 - WP0：契约与二进制身份；
 - WP1：宿主事件到 VG 的观测桥；
@@ -183,16 +190,19 @@ VG 在 standalone 模式可以保留自己的 bounded executor。进入 ClawX ho
 - WP3：VerseShell execution receipt 结构桥和拒绝矩阵；
 - WP4：行为覆盖向量、缺口语义与反馈送达等级；
 - WP5：双 worktree replay、soak 和故障矩阵；
-- WP6：聚合 WP/MC 证据、MC7 退役职责与可选 MC6 `sidecar-only` 决策。
+- WP6：聚合 WP/MC 证据、MC7 退役职责与可选 MC6 `sidecar-only` 决策；
+- WP7：真实宿主纵向切片、故障清理与 continuation；
+- WP8：独立 agent 终审与偏差闭合；
+- WP9：TF-0465 七条 acceptance 的最终聚合与非 GA 生命周期收口。
 
-WP6 的最终报告、manifest 与 checksum 位于 `artifacts/versegit/wp6/`；MC6 决策位于 `artifacts/versegit/mc6/`。发布、default-on、`land/admit` 或 M4 所有权变更都需要另立任务，不能由本期证据自动升级。
+WP6 的最终报告、manifest 与 checksum 位于 `artifacts/versegit/wp6/`；MC6 决策位于 `artifacts/versegit/mc6/`；WP9 的全局报告、manifest 与 checksum 位于 `artifacts/versegit/wp9/`。发布、default-on、`land/admit` 或 M4 所有权变更都需要另立任务，不能由本期证据自动升级。
 
 每阶段的入口、门槛和停止条件见
 [`implementation-roadmap-and-acceptance.md`](../../../harness/specs/guides/versegit-concurrency/implementation-roadmap-and-acceptance.md)。
 
 ## 11. Go / No-Go
 
-> 当前产品状态：M1 的工程路径已接入并有证据，但 release-ineligible；M2/M3 没有 live 闭环，M4 未授权。下面的清单是产品启用前置，不代表当前已经启用。
+> 当前产品状态：M1 与 bounded M2/M3 host slice 已有证据，但完整产品 M3 未验收且 release-ineligible；M4 未授权。下面的清单是产品启用前置，不代表当前已经启用。
 
 **允许进入 M1：**
 
@@ -230,6 +240,7 @@ WP6 的最终报告、manifest 与 checksum 位于 `artifacts/versegit/wp6/`；M
 - [Harness 生命周期与权威契约](../../../harness/specs/guides/versegit-concurrency/harness-lifecycle-and-contracts.md)
 - [VerseShell 与行为观测](../../../harness/specs/guides/versegit-concurrency/verseshell-and-behavior-observability.md)
 - [实施路线与验收](../../../harness/specs/guides/versegit-concurrency/implementation-roadmap-and-acceptance.md)
+- [WP9 生命周期收口](../../../harness/specs/guides/versegit-concurrency/wp9-lifecycle-closeout.md)
 - [防重写迁移控制计划](../../../harness/specs/guides/versegit-concurrency/versegit-migration-control-plan.md)
 - [规划修正矩阵](../../../harness/specs/guides/versegit-concurrency/versegit-planning-correction-matrix.md)
 - [规划修正 task spec](../../../harness/specs/tasks/versegit-module-planning-correction.md)

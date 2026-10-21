@@ -1,0 +1,179 @@
+{
+  "schema": "clawx.versegit.wp9-global-acceptance-fixture/v1",
+  "nodeId": "TF-0515",
+  "parentNodeId": "TF-0465",
+  "capturedAt": "2026-10-21T21:52:03.492073Z",
+  "graphHash": "0b01d4b92c8168605809dd44dbcd4048392f58576be1973393735bcdba1aa07e",
+  "selfNode": {
+    "id": "TF-0515",
+    "status": "ready"
+  },
+  "parent": {
+    "id": "TF-0465",
+    "status": "in_progress",
+    "title": "把 VerseGit 接入为宿主管理的并发工作区控制面（非 GA）",
+    "acceptanceCriteria": [
+      "契约、身份、生命周期、失败姿态和 evidence schema 有版本化文档",
+      "ClawX 侧有 opt-in harness profile 与 host-owned adapter",
+      "真实双 worktree/producer-consumer replay 和负向样例均由盘上证据复核",
+      "单 worktree 单 session 行为零变化，VG 故障不改变 harness verdict",
+      "VerseShell receipt 是 host-mode 验证事实的必要条件",
+      "Task Forest 收口前保留未跑语言、平台、读面和非目标边界",
+      "MC0-MC7 节点覆盖源码污染与 LLM 重写风险"
+    ]
+  },
+  "children": [
+    {
+      "id": "TF-0466",
+      "title": "WP0：固定 VG 模块契约、二进制身份与版本矩阵",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0467",
+      "title": "WP1：建立 ClawX worktree/session 到 VG 的观测桥",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0468",
+      "title": "WP2：增加只读 harness profile 与 VG evidence pack",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0469",
+      "title": "WP3：用 VerseShell receipt 驱动 candidate verdict facts",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0470",
+      "title": "WP4：建立行为层覆盖向量与反馈送达证据",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0471",
+      "title": "WP5：执行真实并发 replay、soak 与故障矩阵",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0472",
+      "title": "WP6：VG 模块与迁移收口（合并 MC7，非 GA）",
+      "kind": "follow_up",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0473",
+      "title": "MC0：冻结 VG source/binary/schema 与行为基线",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0474",
+      "title": "MC1：定义 anti-corruption sidecar contract",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0475",
+      "title": "MC2：建立 behavior fingerprint",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0476",
+      "title": "MC3：固化 sidecar 交付",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0477",
+      "title": "MC4：实现 ClawX module adapter",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0478",
+      "title": "MC5：建立 differential migration gate",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0479",
+      "title": "MC6：裁定 sidecar-only 或 selective extraction",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0480",
+      "title": "MC7：迁移收口与临时层退役",
+      "kind": "follow_up",
+      "status": "deprecated",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0481",
+      "title": "VG 模块规划修正与独立复验（唯一 ready）",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0513",
+      "title": "WP7：真实宿主纵向集成、故障清理与 continuation",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0514",
+      "title": "WP8：TF-0481 独立终审与偏差闭合",
+      "kind": "task",
+      "status": "done",
+      "blocked_by": []
+    },
+    {
+      "id": "TF-0515",
+      "title": "WP9：TF-0465 全目标验收聚合与生命周期收口",
+      "kind": "task",
+      "status": "ready",
+      "blocked_by": []
+    }
+  ],
+  "wp7Candidate": {
+    "commit": "5d313871c0b6f612b000db2041c9670d571c97a4",
+    "tree": "b3856199f4458a8ce23ec22325899a42efe00867"
+  },
+  "wp8Reviewer": "ccs-hub/gpt-6.1-sol",
+  "allowedChildStatuses": [
+    "done",
+    "deprecated"
+  ],
+  "expectedAcceptanceIds": [
+    "AC1-contract-identity",
+    "AC2-opt-in-adapter",
+    "AC3-concurrent-replay",
+    "AC4-default-and-failure-isolation",
+    "AC5-verseshell-receipt-authority",
+    "AC6-residual-boundaries",
+    "AC7-migration-control"
+  ],
+  "residualDisposition": "retain"
+}

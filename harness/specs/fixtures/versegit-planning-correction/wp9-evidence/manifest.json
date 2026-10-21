@@ -1,0 +1,66 @@
+{
+  "schema": "clawx.versegit.wp9-manifest/v1",
+  "generated_at": "2026-10-21T22:04:37.393Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0515",
+  "parentTask": "TF-0465",
+  "report": {
+    "path": "artifacts/versegit/wp9/global-report.json",
+    "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/global-report.json",
+    "digest": "68fd0af79b6e6f3e21771620b9dcd25ef294717cea4becb2656a60e304661afb",
+    "sha256": "da0722e420a3b416368fbe08b417bbd05101037f7d48751749574af9d8fa947d"
+  },
+  "verdict": {
+    "globalVerdict": "PASS_WITH_GAPS",
+    "passed": true,
+    "p0": 0,
+    "p1": 0,
+    "p2": 3
+  },
+  "acceptance": {
+    "required": 7,
+    "verified": 7,
+    "withoutEvidence": 0,
+    "statusesAllowed": [
+      "verified",
+      "not_applicable",
+      "retired"
+    ]
+  },
+  "children": {
+    "total": 18,
+    "done": 17,
+    "deprecated": 1,
+    "openOrBlocked": [],
+    "unresolvedDependencies": [],
+    "includingSelf": {
+      "total": 19,
+      "selfStatus": "ready",
+      "expectedSelfStatus": "done"
+    }
+  },
+  "authority": {
+    "humanEvidence": false,
+    "realHumanEvidenceClaimed": false,
+    "singleGreenLight": false,
+    "defaultOn": false,
+    "ga": false,
+    "releaseEligible": false,
+    "m4Authorized": false
+  },
+  "residualDisposition": "retain",
+  "residualCount": 14,
+  "fixtureDigest": "37e84c45670abbf5b1b1ec93d397d389a7f4f3345f0ff64effc6c8c8f430c0c4",
+  "graphHash": "0b01d4b92c8168605809dd44dbcd4048392f58576be1973393735bcdba1aa07e",
+  "closeout": {
+    "evidenceRoot": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence",
+    "requiredFinalStatus": {
+      "self": "done",
+      "parent": "done"
+    },
+    "preconditionsPassed": true,
+    "proposalRequired": true
+  },
+  "digest": "94fbcb67deb92fa33de32f36b39b8cddb34f157e1833f5519280f4a587ce1800"
+}
