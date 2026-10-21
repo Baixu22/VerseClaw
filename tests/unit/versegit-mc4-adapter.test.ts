@@ -1,8 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   VG_COMMAND_PLAN_SCHEMA,
-  VG_CONSUMER_CONTRACT_VERSION,
-  VG_MODULE_REPORT_SCHEMA,
   VerseGitModule,
   authorizeCommand,
   classifyFailure,
@@ -10,13 +8,19 @@ import {
   validateCommandPlan,
   validateModuleReport,
   type VerseGitModuleOptions,
+  type VerseGitReportInput,
 } from '../../electron/services/versegit-module';
 
 const digest = 'a'.repeat(64);
 const grant = (mode: 'M0' | 'M1' | 'M2' | 'M3', authorizationId: string | null = 'grant') => ({ mode, authorizationId });
+const identity = {
+  repoId: 'repo-1', worktreeIds: ['worktree-1'], agentSessionIds: ['agent-session-1'],
+  vgSessionIds: ['vg-session-1'], epoch: 1,
+};
+const correlation = { runId: 'run-1', requestId: 'request-1', traceId: 'trace-1', epoch: 1 };
 
-function makeModule(run: VerseGitModuleOptions['run'] = vi.fn(() => ({ stdout: '', stderr: '', code: 0 }))) {
-  return new VerseGitModule({ binaryPath: 'D:/sidecar/vg.exe', contractDigest: digest, run });
+function makeModule(run: VerseGitModuleOptions['run'] = vi.fn(() => ({ stdout: '', stderr: '', code: 0 })), overrides: Partial<VerseGitModuleOptions> = {}) {
+  return new VerseGitModule({ binaryPath: 'D:/sidecar/vg.exe', contractDigest: digest, run, ...overrides });
 }
 
 function attached(mode: 'M1' | 'M2' | 'M3' = 'M1') {
@@ -25,16 +29,37 @@ function attached(mode: 'M1' | 'M2' | 'M3' = 'M1') {
   return module;
 }
 
-function validReport(module: VerseGitModule) {
-  return module.buildReport({
-    mode: 'M1',
+function reportInput(mode: 'M0' | 'M1' | 'M2' | 'M3', status: 'not_applicable' | 'partial' | 'observed', reasons: ('unknown' | 'unmeasured')[] = []): VerseGitReportInput {
+  return {
+    mode,
     component: 'versegit-module',
-    trigger: { reason: 'two-worktrees', worktreeCount: 2, activeSessionCount: 1 },
-    repository: { repoId: 'repo-1', worktreeId: 'wt-1' },
+    trigger: { reason: 'mc4-test', worktreeCount: 2, activeSessionCount: 1 },
+    repository: { repoId: identity.repoId, worktreeId: identity.worktreeIds[0] },
+    identity,
+    correlation,
+    sessions: [{ agentSessionId: identity.agentSessionIds[0], vgSessionId: identity.vgSessionIds[0], worktreeId: identity.worktreeIds[0], epoch: 1 }],
+    facts: { conflicts: [], warnings: [], unknowns: ['shell-file-effects'] },
     coverage: { declared: ['capabilities'], unobserved: ['bash', 'network', 'direct-fs'] },
-    result: { status: 'partial', reasons: ['unknown'] },
-  });
+    result: { status, reasons },
+  };
 }
+
+function validReport(module: VerseGitModule) {
+  return module.buildReport(reportInput('M1', 'partial', ['unknown']));
+}
+
+const validPlan = {
+  schema: VG_COMMAND_PLAN_SCHEMA,
+  runId: 'run-plan', candidateId: 'candidate-plan',
+  owner: { agentId: 'agent-1', sessionId: 'session-1', worktreeId: 'worktree-1' },
+  commands: [{ argv: ['pnpm', 'test'], effect: 'execute', retry: 'never' }],
+};
+
+const capabilities = {
+  schema: 'versegit.capabilities/v1',
+  safety: { default_enable: false },
+  verdict: { single_green_light: false, read_surface: { observed_channels: ['read'], unobserved_channels: ['bash'] } },
+};
 
 describe('MC4 VerseGit host adapter', () => {
   it('keeps M0 inert: no run, no attachment, no workspace write, no verdict authority', () => {
@@ -44,16 +69,15 @@ describe('MC4 VerseGit host adapter', () => {
     expect(module.readCapabilities()).toMatchObject({ status: 'unavailable', reason: 'not_attached', host_verdict: 'unchanged' });
     expect(module.attach('M0', grant('M0', null))).toMatchObject({ ok: true, status: 'not_applicable', host_verdict: 'unchanged' });
     expect(module.isAttached).toBe(false);
-    const report = module.buildReport({
-      mode: 'M0', component: 'versegit-module', trigger: { reason: 'single-worktree-single-session' },
-      repository: { repoId: 'repo' }, coverage: { declared: [], unobserved: ['all'] },
-      result: { status: 'not_applicable', reasons: [] },
-    });
+    const report = module.buildReport(reportInput('M0', 'not_applicable'));
     expect(run).not.toHaveBeenCalled();
     expect(report).toMatchObject({
       mode: 'M0', host_verdict: 'unchanged',
       authority: { harnessVerdict: 'host', execution: 'verseshell', land: 'host-git' },
       allowed: { processes_started: 0, state_read: false, domain_state_write: false, execution: 'none', workspace_write: false },
+      usage: { processes_started: 0, state_reads: 0 },
+      identity,
+      correlation,
     });
     expect(validateModuleReport(report).issues).toEqual([]);
   });
@@ -67,12 +91,30 @@ describe('MC4 VerseGit host adapter', () => {
     const invalidDigest = new VerseGitModule({ binaryPath: 'vg.exe', contractDigest: 'not-a-digest', run });
     expect(invalidDigest.attach('M1', grant('M1')).issues).toContain('contract digest is not a SHA-256 value');
     expect(module.attach('M1', grant('M1'))).toMatchObject({ ok: true, status: 'partial', host_verdict: 'unchanged' });
-    expect(module.isAttached).toBe(true);
+    expect(module.effectiveMode).toBe('M1');
     module.detach();
     expect(module.isAttached).toBe(false);
+    expect(module.effectiveMode).toBe('M0');
   });
 
-  it('rejects reason-as-status, authority claims, incomplete coverage and widened permissions', () => {
+  it('binds reports to the effective grant and records actual usage separately from permission', () => {
+    const module = makeModule((argv) => {
+      if (argv[0] === '--version') return { stdout: 'vg 0.1.0', stderr: '', code: 0 };
+      return { stdout: JSON.stringify(capabilities), stderr: '', code: 0 };
+    });
+    expect(() => module.buildReport(reportInput('M1', 'partial'))).toThrow(/does not match effective mode M0/);
+    expect(module.attach('M3', grant('M3', null)).ok).toBe(false);
+    expect(() => module.buildReport(reportInput('M3', 'partial'))).toThrow(/does not match effective mode M0/);
+    expect(module.attach('M1', grant('M1')).ok).toBe(true);
+    expect(module.readVersion().status).toBe('observed');
+    expect(module.readCapabilities().status).toBe('observed');
+    const report = validReport(module);
+    expect(report.usage).toEqual({ processes_started: 2, state_reads: 1 });
+    expect((report.allowed as Record<string, unknown>).processes_started).toBe(1);
+    expect((report.allowed as Record<string, unknown>).state_read).toBe(true);
+  });
+
+  it('rejects reason-as-status, authority claims, incomplete correlation and widened permissions', () => {
     const module = attached();
     const report = validReport(module);
     expect(validateModuleReport(report).issues).toEqual([]);
@@ -84,39 +126,47 @@ describe('MC4 VerseGit host adapter', () => {
       .toContain('report must leave the host verdict unchanged');
     expect(validateModuleReport({ ...report, coverage: { declared: [] } }).issues)
       .toContain('report coverage must declare observed and unobserved surfaces');
+    expect(validateModuleReport({ ...report, correlation: undefined }).issues)
+      .toContain('report correlation vector is missing or invalid');
     expect(validateModuleReport({
       ...report,
       allowed: { ...(report.allowed as Record<string, unknown>), workspace_write: true },
     }).issues).toContain('report allowed surface does not match M1');
   });
 
-  it('accepts structured argv but refuses shell strings, forbidden heads and effectful replay', () => {
-    const valid = {
-      schema: VG_COMMAND_PLAN_SCHEMA,
-      runId: 'run-1', candidateId: 'candidate-1', owner: 'owner-1',
-      commands: [{ argv: ['pnpm', 'test'], effect: 'execute', retry: 'never' }],
-    };
-    expect(validateCommandPlan(valid).issues).toEqual([]);
-    expect(validateCommandPlan({ ...valid, shell: 'pnpm test' }).issues).toContain('plan must not carry a shell string');
-    expect(validateCommandPlan({ ...valid, commands: [{ argv: ['land', 'candidate'], effect: 'execute' }] }).issues)
+  it('does not let caller digests replace the host contract digest', () => {
+    const module = attached();
+    const report = module.buildReport({ ...reportInput('M1', 'partial'), digests: { contract: 'f'.repeat(64), artifact: 'b'.repeat(64) } });
+    expect(report.digests).toEqual({ contract: digest, artifact: 'b'.repeat(64) });
+    expect(validateModuleReport({ ...report, digests: { contract: 'f'.repeat(64) } }).issues)
+      .toContain('report contract digest may not be overridden');
+  });
+
+  it('accepts structured argv and refuses shell strings, forbidden fields, interpreters and replay', () => {
+    expect(validateCommandPlan(validPlan).issues).toEqual([]);
+    expect(validateCommandPlan({ ...validPlan, owner: 'owner-1' }).issues).toEqual([]);
+    expect(validateCommandPlan({ ...validPlan, shell: 'pnpm test' }).issues).toContain('plan must not carry shell');
+    expect(validateCommandPlan({ ...validPlan, land: true }).issues).toContain('plan must not carry land');
+    expect(validateCommandPlan({ ...validPlan, owner: '' }).issues).toContain('plan owner must be an opaque id or a structured owner');
+    expect(validateCommandPlan({ ...validPlan, commands: [{ argv: ['land', 'candidate'], effect: 'execute', retry: 'never' }] }).issues)
       .toContain('plan command land is forbidden');
-    expect(validateCommandPlan({ ...valid, commands: [{ argv: ['pnpm', 'test'], effect: 'execute', retry: 'always' }] }).issues)
+    expect(validateCommandPlan({ ...validPlan, commands: [{ argv: ['C:\\Program Files\\Git\\cmd\\git.exe', 'push'], effect: 'execute', retry: 'never' }] }).issues)
+      .toContain('plan command git is forbidden');
+    expect(validateCommandPlan({ ...validPlan, commands: [{ argv: ['powershell.exe', '-Command', 'Write-Host ok'], effect: 'execute', retry: 'never' }] }).issues)
+      .toContain('plan command must not invoke shell interpreter powershell');
+    expect(validateCommandPlan({ ...validPlan, commands: [{ argv: ['pnpm', 'test'], effect: 'execute', retry: 'sometimes' }] }).issues)
+      .toContain('plan command retry sometimes is undeclared');
+    expect(validateCommandPlan({ ...validPlan, commands: [{ argv: ['pnpm', 'test'], effect: 'execute', retry: 'always' }] }).issues)
       .toContain('effectful command must never auto-replay');
-    expect(validateCommandPlan({ ...valid, commands: [{ argv: ['pnpm', 'test'] }] }).issues)
-      .toContain('plan command effect undefined is undeclared');
   });
 
   it('keeps only the verified capabilities seam reachable and fails every escalation open to authority', () => {
     expect(authorizeCommand('M1', ['capabilities', '--json'], grant('M1'))).toBeNull();
     for (const command of ['land', 'admit', 'declare_intent', 'git', 'gerrit', 'export']) {
-      expect(authorizeCommand('M3', [command], grant('M3'))).toMatchObject({
-        status: 'rejected_by_policy', host_verdict: 'unchanged',
-      });
+      expect(authorizeCommand('M3', [command], grant('M3'))).toMatchObject({ status: 'rejected_by_policy', host_verdict: 'unchanged' });
     }
     for (const command of VerseGitModule.deferredCommands) {
-      expect(authorizeCommand('M2', [command], grant('M2'))).toMatchObject({
-        status: 'rejected_by_policy', host_verdict: 'unchanged',
-      });
+      expect(authorizeCommand('M2', [command], grant('M2'))).toMatchObject({ status: 'rejected_by_policy', host_verdict: 'unchanged' });
     }
     expect(authorizeCommand('M0', ['capabilities'], grant('M0', null))).toMatchObject({ status: 'rejected_by_policy' });
     expect(authorizeCommand('M1', ['capabilities'], grant('M1', null))).toMatchObject({ status: 'rejected_by_policy' });
@@ -125,33 +175,42 @@ describe('MC4 VerseGit host adapter', () => {
     expect([...VerseGitModule.deferredCommands]).toEqual(['doctor', 'session', 'verdict', 'conflicts', 'report']);
   });
 
-  it('executes only fixed identity seams and maps provider failures without fail-closing the host', () => {
-    const capabilities = {
-      schema: 'versegit.capabilities/v1', safety: { default_enable: false },
-      verdict: { single_green_light: false, read_surface: { observed_channels: ['status'], unobserved_channels: ['bash'] } },
-    };
+  it('executes fixed identity seams and rejects null, drift and product-lock violations', () => {
+    const expectedCapabilitiesDigest = contractDigestOf(capabilities);
     const run = vi.fn((argv: readonly string[]) => {
       if (argv[0] === '--version') return { stdout: 'vg 0.1.0', stderr: '', code: 0 };
       return { stdout: JSON.stringify(capabilities), stderr: '', code: 0 };
     });
-    const module = makeModule(run);
+    const module = makeModule(run, { expectedCapabilitiesDigest });
     expect(module.attach('M1', grant('M1')).ok).toBe(true);
     expect(module.readVersion()).toMatchObject({ status: 'observed', value: 'vg 0.1.0', host_verdict: 'unchanged' });
     expect(module.readCapabilities()).toMatchObject({ status: 'observed', document: capabilities, host_verdict: 'unchanged' });
     expect(run.mock.calls.map((call) => call[0])).toEqual([['--version'], ['capabilities', '--json']]);
 
+    const nullDoc = makeModule(() => ({ stdout: 'null', stderr: '', code: 0 }));
+    nullDoc.attach('M1', grant('M1'));
+    expect(nullDoc.readCapabilities()).toMatchObject({ status: 'unavailable', reason: 'invalid_document' });
+    const singleGreen = makeModule(() => ({ stdout: JSON.stringify({ ...capabilities, verdict: { ...capabilities.verdict, single_green_light: true } }), stderr: '', code: 0 }));
+    singleGreen.attach('M1', grant('M1'));
+    expect(singleGreen.readCapabilities()).toMatchObject({ status: 'rejected_by_policy', reason: 'schema_mismatch' });
+    const defaultEnable = makeModule(() => ({ stdout: JSON.stringify({ ...capabilities, safety: { default_enable: true } }), stderr: '', code: 0 }));
+    defaultEnable.attach('M1', grant('M1'));
+    expect(defaultEnable.readCapabilities()).toMatchObject({ status: 'rejected_by_policy', reason: 'schema_mismatch' });
+    const schemaDrift = makeModule(() => ({ stdout: JSON.stringify({ ...capabilities, schema: 'versegit.capabilities/v999' }), stderr: '', code: 0 }));
+    schemaDrift.attach('M1', grant('M1'));
+    expect(schemaDrift.readCapabilities()).toMatchObject({ status: 'rejected_by_policy', reason: 'schema_mismatch' });
+    const digestDrift = makeModule(() => ({ stdout: JSON.stringify(capabilities), stderr: '', code: 0 }), { expectedCapabilitiesDigest: 'b'.repeat(64) });
+    digestDrift.attach('M1', grant('M1'));
+    expect(digestDrift.readCapabilities()).toMatchObject({ status: 'rejected_by_policy', reason: 'schema_mismatch' });
+  });
+
+  it('maps provider failures without fail-closing the host', () => {
     const degraded = makeModule(() => ({ stdout: '', stderr: 'boom', code: 7 }));
     degraded.attach('M1', grant('M1'));
     expect(degraded.readCapabilities()).toMatchObject({ status: 'degraded', reason: 'nonzero_exit', host_verdict: 'unchanged' });
     const malformed = makeModule(() => ({ stdout: '{', stderr: '', code: 0 }));
     malformed.attach('M1', grant('M1'));
     expect(malformed.readCapabilities()).toMatchObject({ status: 'unavailable', reason: 'unparsable_output' });
-    const widened = makeModule(() => ({ stdout: JSON.stringify({ ...capabilities, safety: { default_enable: true } }), stderr: '', code: 0 }));
-    widened.attach('M1', grant('M1'));
-    expect(widened.readCapabilities()).toMatchObject({ status: 'rejected_by_policy', reason: 'schema_mismatch' });
-  });
-
-  it('turns spawn exceptions into availability outcomes and always leaves host verdict unchanged', () => {
     const missing = makeModule(() => { throw Object.assign(new Error('missing'), { code: 'ENOENT' }); });
     missing.attach('M1', grant('M1'));
     expect(missing.readVersion()).toMatchObject({ status: 'unavailable', reason: 'missing_binary', host_verdict: 'unchanged' });
@@ -164,15 +223,5 @@ describe('MC4 VerseGit host adapter', () => {
     ] as const) {
       expect(classifyFailure({ case: failureCase })).toMatchObject({ host_verdict: 'unchanged' });
     }
-  });
-
-  it('computes deterministic contract and report digests', () => {
-    const contract = { schema: VG_CONSUMER_CONTRACT_VERSION, modes: ['M0', 'M1', 'M2', 'M3'] };
-    expect(contractDigestOf(contract)).toBe(contractDigestOf({ ...contract }));
-    const module = attached();
-    const report = validReport(module);
-    expect(report.schema).toBe(VG_MODULE_REPORT_SCHEMA);
-    expect(report.contract).toEqual({ version: VG_CONSUMER_CONTRACT_VERSION, digest });
-    expect(report.digests).toEqual({ contract: digest });
   });
 });

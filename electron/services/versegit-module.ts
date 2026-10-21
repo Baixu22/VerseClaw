@@ -37,8 +37,23 @@ export type VerseGitModuleOptions = {
   binaryPath: string;
   cwd?: string;
   contractDigest: string;
+  expectedCapabilitiesDigest?: string;
   timeoutMs?: number;
   run?: (argv: readonly string[], timeoutMs: number) => CommandResult;
+};
+
+export type VerseGitReportIdentity = {
+  repoId: string;
+  worktreeIds: string[];
+  agentSessionIds: string[];
+  vgSessionIds: string[];
+  epoch: number;
+};
+
+export type VerseGitReportCorrelation = {
+  runId: string;
+  requestId: string | null;
+  traceId: string;
 };
 
 export type VerseGitReportInput = {
@@ -46,6 +61,10 @@ export type VerseGitReportInput = {
   component: string;
   trigger: { reason: string; worktreeCount?: number; activeSessionCount?: number };
   repository: Record<string, unknown>;
+  identity: VerseGitReportIdentity;
+  correlation: VerseGitReportCorrelation;
+  sessions?: Array<Record<string, unknown>>;
+  facts?: { conflicts?: unknown[]; warnings?: unknown[]; unknowns?: unknown[] };
   coverage: Record<string, unknown>;
   result: { status: TopLevelStatus; reasons?: ReasonStatus[] };
   verification?: Record<string, unknown>;
@@ -131,6 +150,15 @@ function isSha256(value: unknown): value is string {
   return typeof value === 'string' && /^[0-9a-f]{64}$/u.test(value);
 }
 
+function isOpaqueId(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0 && value.trim().length <= 200
+    && !/^(?:[A-Za-z]:[\\/]|\/)/u.test(value.trim());
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
 type ValidationReport = Record<string, unknown> & {
   schema?: unknown;
   mode?: unknown;
@@ -138,6 +166,10 @@ type ValidationReport = Record<string, unknown> & {
   authority?: { harnessVerdict?: unknown; execution?: unknown; land?: unknown } | null;
   host_verdict?: unknown;
   contract?: { version?: unknown; digest?: unknown } | null;
+  identity?: { repoId?: unknown; worktreeIds?: unknown; agentSessionIds?: unknown; vgSessionIds?: unknown; epoch?: unknown } | null;
+  correlation?: { runId?: unknown; requestId?: unknown; traceId?: unknown; epoch?: unknown } | null;
+  sessions?: unknown;
+  facts?: { conflicts?: unknown; warnings?: unknown; unknowns?: unknown } | null;
   coverage?: { declared?: unknown; unobserved?: unknown } | null;
   allowed?: {
     processes_started?: unknown;
@@ -146,6 +178,8 @@ type ValidationReport = Record<string, unknown> & {
     execution?: unknown;
     workspace_write?: unknown;
   } | null;
+  usage?: { processes_started?: unknown; state_reads?: unknown } | null;
+  digests?: Record<string, unknown> | null;
 };
 
 type ValidationPlan = Record<string, unknown> & {
@@ -198,6 +232,36 @@ export function validateModuleReport(report: unknown): { ok: boolean; issues: st
   if (!value.contract || value.contract.version !== VG_CONSUMER_CONTRACT_VERSION || !isSha256(value.contract.digest)) {
     issues.push('report contract binding is missing or invalid');
   }
+  if (value.digests?.contract !== value.contract?.digest) {
+    issues.push('report contract digest may not be overridden');
+  }
+  if (!value.identity || !isOpaqueId(value.identity.repoId)
+    || !Array.isArray(value.identity.worktreeIds) || !value.identity.worktreeIds.every(isOpaqueId)
+    || !Array.isArray(value.identity.agentSessionIds) || !value.identity.agentSessionIds.every(isOpaqueId)
+    || !Array.isArray(value.identity.vgSessionIds) || !value.identity.vgSessionIds.every(isOpaqueId)
+    || !Number.isInteger(value.identity.epoch) || Number(value.identity.epoch) < 1) {
+    issues.push('report identity vector is missing or invalid');
+  }
+  if (!value.correlation || !isOpaqueId(value.correlation.runId) || !isOpaqueId(value.correlation.traceId)
+    || (value.correlation.requestId !== null && !isOpaqueId(value.correlation.requestId))
+    || !Number.isInteger(value.correlation.epoch) || Number(value.correlation.epoch) < 1) {
+    issues.push('report correlation vector is missing or invalid');
+  }
+  if (value.identity && value.correlation && value.identity.epoch !== value.correlation.epoch) {
+    issues.push('report identity and correlation epochs must match');
+  }
+  if (isRecord(value.repository) && value.identity && value.repository.repoId !== value.identity.repoId) {
+    issues.push('report repository and identity repoId must match');
+  }
+  if (!Array.isArray(value.sessions)) issues.push('report sessions must be an array');
+  if (!value.facts || !Array.isArray(value.facts.conflicts) || !Array.isArray(value.facts.warnings) || !Array.isArray(value.facts.unknowns)) {
+    issues.push('report facts must carry conflicts/warnings/unknowns arrays');
+  }
+  if (!value.usage || !Number.isInteger(value.usage.processes_started) || Number(value.usage.processes_started) < 0
+    || !Number.isInteger(value.usage.state_reads) || Number(value.usage.state_reads) < 0) {
+    issues.push('report usage counters are missing or invalid');
+  }
+  if (value.mode === 'M0' && value.usage?.processes_started !== 0) issues.push('M0 usage must record zero processes');
   if (!value.coverage || typeof value.coverage !== 'object'
     || !Array.isArray(value.coverage.declared) || !Array.isArray(value.coverage.unobserved)) {
     issues.push('report coverage must declare observed and unobserved surfaces');
@@ -218,6 +282,23 @@ export function validateModuleReport(report: unknown): { ok: boolean; issues: st
   return { ok: issues.length === 0, issues };
 }
 
+const COMMAND_EFFECTS = ['none', 'read', 'write', 'process', 'network', 'execute'] as const;
+const COMMAND_RETRIES = ['never', 'once'] as const;
+const SHELL_EXECUTABLES = ['powershell', 'pwsh', 'cmd', 'bash', 'sh', 'zsh', 'fish'] as const;
+const PLAN_FORBIDDEN_FIELDS = ['land', 'admit', 'declare_intent', 'shell', 'command', 'harnessVerdict'] as const;
+
+function executableName(value: string): string {
+  const base = value.replaceAll('\\', '/').split('/').pop() ?? '';
+  return base.toLowerCase().replace(/\.(?:exe|cmd|bat|com)$/u, '');
+}
+
+function validOwner(value: unknown): boolean {
+  if (isOpaqueId(value)) return true;
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const owner = value as Record<string, unknown>;
+  return isOpaqueId(owner.agentId) && isOpaqueId(owner.sessionId) && isOpaqueId(owner.worktreeId);
+}
+
 /**
  * The command plan is the only way VG can ask for work: structured argv, never a shell
  * string, never `vg land` / `vg admit`, and never a retry of an effectful request whose
@@ -229,24 +310,39 @@ export function validateCommandPlan(plan: unknown): { ok: boolean; issues: strin
   if (!value || typeof value !== 'object') return { ok: false, issues: ['plan must be an object'] };
   if (value.schema !== VG_COMMAND_PLAN_SCHEMA) issues.push('plan schema mismatch');
   for (const field of ['runId', 'candidateId', 'owner'] as const) if (value[field] === undefined) issues.push(`plan missing ${field}`);
-  if (typeof value.shell === 'string' || value.command !== undefined) issues.push('plan must not carry a shell string');
+  for (const field of PLAN_FORBIDDEN_FIELDS) {
+    if (value[field] !== undefined) issues.push(`plan must not carry ${field}`);
+  }
+  if (!isOpaqueId(value.runId)) issues.push('plan runId must be a non-empty opaque identifier');
+  if (!isOpaqueId(value.candidateId)) issues.push('plan candidateId must be a non-empty opaque identifier');
+  if (!validOwner(value.owner)) issues.push('plan owner must be an opaque id or a structured owner');
   if (Array.isArray(value.forbidden) && value.forbidden.length > 0) issues.push('plan must not declare extra authority');
   const commands: unknown[] | null = Array.isArray(value.commands) ? value.commands as unknown[] : null;
-  if (!commands) { issues.push('plan commands must be an array'); return { ok: false, issues }; }
+  if (!commands || commands.length === 0) { issues.push('plan commands must be a non-empty array'); return { ok: false, issues }; }
   for (const rawCommand of commands) {
     const command = (rawCommand && typeof rawCommand === 'object' ? rawCommand : {}) as ValidationCommand;
     if (!Array.isArray(command.argv) || command.argv.length === 0
-      || command.argv.some((arg: unknown) => typeof arg !== 'string')) {
-      issues.push('plan command argv must be a non-empty string array');
+      || command.argv.some((arg: unknown) => typeof arg !== 'string' || arg.includes('\0') || /[\r\n]/u.test(arg))) {
+      issues.push('plan command argv must be a non-empty string array without control characters');
       continue;
     }
-    const head = command.argv[0] as string;
+    const argv = command.argv as string[];
+    const head = executableName(argv[0]);
     if ((FORBIDDEN_COMMANDS as readonly string[]).includes(head)) issues.push(`plan command ${head} is forbidden`);
+    if (head === 'vg' && argv[1] && (FORBIDDEN_COMMANDS as readonly string[]).includes(argv[1].toLowerCase())) {
+      issues.push(`plan command vg ${argv[1]} is forbidden`);
+    }
+    if ((SHELL_EXECUTABLES as readonly string[]).includes(head)) {
+      issues.push(`plan command must not invoke shell interpreter ${head}`);
+    }
     const effect = typeof command.effect === 'string' ? command.effect : null;
-    if (!effect || !['none', 'read', 'write', 'process', 'network', 'execute'].includes(effect)) {
+    if (!effect || !(COMMAND_EFFECTS as readonly string[]).includes(effect)) {
       issues.push(`plan command effect ${String(command.effect)} is undeclared`);
     }
-    if (command.retry === 'always' && effect !== 'none' && effect !== 'read') {
+    if (command.retry !== undefined && !(COMMAND_RETRIES as readonly string[]).includes(String(command.retry))) {
+      issues.push(`plan command retry ${String(command.retry)} is undeclared`);
+    }
+    if (effect !== 'none' && effect !== 'read' && command.retry !== 'never') {
       issues.push('effectful command must never auto-replay');
     }
     if (command.forbidden !== undefined) issues.push('plan command must not declare extra authority');
@@ -289,13 +385,18 @@ function readFailure(error: unknown): Pick<EvidenceRead<never>, 'status' | 'reas
 
 export class VerseGitModule {
   private readonly run: NonNullable<VerseGitModuleOptions['run']>;
+  private readonly expectedCapabilitiesDigest: string | undefined;
   private attached = false;
+  private currentMode: VerseGitMode = 'M0';
+  private processesStarted = 0;
+  private stateReads = 0;
 
   readonly contractDigest: string;
   readonly timeoutMs: number;
 
   constructor(options: VerseGitModuleOptions) {
     this.contractDigest = options.contractDigest;
+    this.expectedCapabilitiesDigest = options.expectedCapabilitiesDigest;
     this.timeoutMs = options.timeoutMs ?? 30_000;
     this.run = options.run ?? ((argv, timeout) => {
       try {
@@ -325,6 +426,16 @@ export class VerseGitModule {
     return this.attached;
   }
 
+  get effectiveMode(): VerseGitMode {
+    return this.currentMode;
+  }
+
+  private invoke(argv: readonly string[]): CommandResult {
+    const result = this.run(argv, this.timeoutMs);
+    this.processesStarted += 1;
+    return result;
+  }
+
   /**
    * Attaching is the only state transition, and it requires an explicit grant for the
    * requested mode. M0 never starts a process and never claims an attachment.
@@ -335,6 +446,9 @@ export class VerseGitModule {
     }
     if (mode === 'M0') {
       this.attached = false;
+      this.currentMode = 'M0';
+      this.processesStarted = 0;
+      this.stateReads = 0;
       return { ok: true, status: 'not_applicable', issues: [], host_verdict: 'unchanged' };
     }
     const issues: string[] = [];
@@ -347,11 +461,15 @@ export class VerseGitModule {
       return { ok: false, status: 'rejected_by_policy', issues, host_verdict: 'unchanged' };
     }
     this.attached = true;
+    this.currentMode = mode;
+    this.processesStarted = 0;
+    this.stateReads = 0;
     return { ok: true, status: 'partial', issues: [], host_verdict: 'unchanged' };
   }
 
   detach(): void {
     this.attached = false;
+    this.currentMode = 'M0';
   }
 
   /**
@@ -364,7 +482,7 @@ export class VerseGitModule {
     }
     let result: CommandResult;
     try {
-      result = this.run(['--version'], this.timeoutMs);
+      result = this.invoke(['--version']);
     } catch (error) {
       return readFailure(error);
     }
@@ -387,13 +505,13 @@ export class VerseGitModule {
    * One provider seam: the versioned capability read. The command is fixed, and any
    * contract or product-lock mismatch is rejected before its document can be consumed.
    */
-  readCapabilities(expectedSchema: string = VG_CAPABILITIES_SCHEMA): EvidenceRead<Record<string, unknown>> {
+  readCapabilities(): EvidenceRead<Record<string, unknown>> {
     if (!this.attached) {
       return { status: 'unavailable', reason: 'not_attached', issues: ['module is not attached'], host_verdict: 'unchanged' };
     }
     let result: CommandResult;
     try {
-      result = this.run(['capabilities', '--json'], this.timeoutMs);
+      result = this.invoke(['capabilities', '--json']);
     } catch (error) {
       return readFailure(error);
     }
@@ -405,9 +523,9 @@ export class VerseGitModule {
         host_verdict: 'unchanged',
       };
     }
-    let document: Record<string, unknown>;
+    let parsed: unknown;
     try {
-      document = JSON.parse(result.stdout) as Record<string, unknown>;
+      parsed = JSON.parse(result.stdout);
     } catch (error) {
       return {
         status: 'unavailable',
@@ -416,14 +534,27 @@ export class VerseGitModule {
         host_verdict: 'unchanged',
       };
     }
+    if (!isRecord(parsed)) {
+      return { status: 'unavailable', reason: 'invalid_document', issues: ['capabilities must be a JSON object'], host_verdict: 'unchanged' };
+    }
+    const document = parsed;
     const issues: string[] = [];
-    if (document.schema !== expectedSchema) issues.push(`capabilities schema ${String(document.schema)} != ${expectedSchema}`);
-    if ((document as { safety?: { default_enable?: boolean } }).safety?.default_enable !== false) {
-      issues.push('capabilities claim default-enable, which the product lock forbids');
+    if (document.schema !== VG_CAPABILITIES_SCHEMA) issues.push(`capabilities schema ${String(document.schema)} != ${VG_CAPABILITIES_SCHEMA}`);
+    const safety = isRecord(document.safety) ? document.safety : null;
+    if (safety?.default_enable !== false) issues.push('capabilities claim default-enable, which the product lock forbids');
+    const verdict = isRecord(document.verdict) ? document.verdict : null;
+    if (verdict?.single_green_light !== false) issues.push('capabilities claim single-green-light, which the contract forbids');
+    if (this.expectedCapabilitiesDigest !== undefined) {
+      if (!isSha256(this.expectedCapabilitiesDigest)) {
+        issues.push('expected capabilities digest is not a SHA-256 value');
+      } else if (sha256(JSON.stringify(document)) !== this.expectedCapabilitiesDigest) {
+        issues.push('capabilities digest differs from the host-frozen identity');
+      }
     }
     if (issues.length > 0) {
       return { status: 'rejected_by_policy', reason: 'schema_mismatch', issues, host_verdict: 'unchanged' };
     }
+    this.stateReads += 1;
     return { status: 'observed', document, issues, host_verdict: 'unchanged' };
   }
 
@@ -433,15 +564,32 @@ export class VerseGitModule {
    * green VG fact can never be read as a harness pass.
    */
   buildReport(input: VerseGitReportInput): Record<string, unknown> {
+    if (input.mode !== this.currentMode) {
+      throw new Error(`report mode ${input.mode} does not match effective mode ${this.currentMode}`);
+    }
+    if (input.mode !== 'M0' && !this.attached) {
+      throw new Error('a promoted mode report requires an active attachment');
+    }
+    if (input.identity.repoId !== input.repository.repoId) {
+      throw new Error('report repository and identity repoId must match');
+    }
     const authority = MODE_AUTHORITY[input.mode];
+    const facts = {
+      conflicts: input.facts?.conflicts ?? [],
+      warnings: input.facts?.warnings ?? [],
+      unknowns: input.facts?.unknowns ?? [],
+    };
     const report = {
       schema: VG_MODULE_REPORT_SCHEMA,
       mode: input.mode,
       component: input.component,
       trigger: input.trigger,
       repository: input.repository,
+      identity: input.identity,
+      correlation: input.correlation,
+      sessions: input.sessions ?? [],
       coverage: input.coverage,
-      facts: input.mode === 'M0' ? { conflicts: [], warnings: [], unknowns: [] } : undefined,
+      facts,
       candidate: input.candidate ?? null,
       verification: input.verification ?? { status: 'not_run', executor: 'verseshell' },
       result: { status: input.result.status, reasons: input.result.reasons ?? [] },
@@ -455,14 +603,17 @@ export class VerseGitModule {
         execution: authority.execution,
         workspace_write: false,
       },
+      usage: {
+        processes_started: this.processesStarted,
+        state_reads: this.stateReads,
+      },
       timings: input.timings ?? {},
-      digests: { contract: this.contractDigest, ...(input.digests ?? {}) },
+      digests: { ...(input.digests ?? {}), contract: this.contractDigest },
     };
     const validation = validateModuleReport(report);
     if (!validation.ok) throw new Error(`invalid module report: ${validation.issues.join('; ')}`);
     return report;
   }
-
   static refusalForMode(mode: VerseGitMode, grant: AuthorityGrant): VerseGitFailure | null {
     if (!isMode(mode)) return classifyFailure({ case: 'unauthorized_mode' });
     if (mode === 'M0') return null;

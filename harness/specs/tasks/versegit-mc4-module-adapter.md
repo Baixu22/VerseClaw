@@ -18,10 +18,11 @@ touchedAreas:
   - scripts/verify-versegit-mc4.mjs
   - tests/unit/versegit-mc4-adapter.test.ts
 expectedUserBehavior:
-  - The differential harness imports the shipped Electron Main adapter and exercises exported adapter methods rather than a parallel copy of their projection logic.
-  - M0 remains inert with zero sidecar processes, no attachment, no workspace write and an unchanged host verdict.
-  - Only the verified capabilities command is reachable; land, admit, declare_intent, Git publish commands and unverified historical CLI names are refused before a process is created.
-  - Missing binaries, crashes and timeouts produce unavailable or degraded facts without failing the host harness.
+  - Every frozen binary/source/contract/golden/package identity is revalidated before the mutable sidecar executable is allowed to run.
+  - The differential harness imports the shipped Electron Main adapter and compares the complete projected capability document, not a hand-picked summary.
+  - M0 remains inert with zero sidecar processes, no attachment, no workspace write, zero recorded usage and an unchanged host verdict.
+  - Only the verified capabilities command is reachable; forbidden fields, empty owners, shell strings, shell interpreters, path-qualified Git commands and undeclared retry values are refused.
+  - Missing binaries, crashes, timeouts and valid JSON null produce structured unavailable/degraded facts without failing the host harness.
 requiredProfiles: []
 requiredRules:
   - versegit-validation-layer-extension-boundary
@@ -33,13 +34,17 @@ requiredTests:
   - pnpm exec vitest run tests/unit/versegit-mc4-adapter.test.ts
   - pnpm harness validate --spec harness/specs/tasks/versegit-mc4-module-adapter.md
 acceptance:
-  - At least two identity seams execute the frozen sidecar through the imported adapter and are semantically equal to the raw sidecar reference under the MC5 projection, with no behavior-change record.
-  - Provenance binds the adapter source, frozen source commit, binary digest, canonical MC1 contract digest, MC2 golden digest and MC3 package digest, and all four identities agree with WP0.
-  - M0 performs zero adapter process calls, attaches nothing, writes no workspace, pins harness verdict and Git landing to the host and leaves the host verdict unchanged.
-  - Ungranted or mismatched promotion, reason-as-status, authority fields, shell strings, effectful auto-replay and forbidden command heads are refused with an unchanged host verdict.
+  - At least two identity seams execute the frozen sidecar through the imported adapter and compare the complete projected provider document to the raw sidecar reference, with no behavior-change record and no lost projected fields.
+  - A pre-execution identity gate recomputes the actual binary digest and provider HEAD, validates MC1/MC2/MC3/WP0, and proves source/binary/contract/golden/package agreement before any adapter process starts.
+  - Five semantic-loss controls fire for version drift, dropped capability fields, single-green-light laundering, lost unobserved coverage and authority claims.
+  - M0 performs zero adapter process calls, attaches nothing, writes no workspace, records zero usage, pins harness verdict and Git landing to the host and leaves the host verdict unchanged.
+  - Reports are bound to the effective grant, real usage counters, repo/worktree/session identity and run/request/trace correlation; a promoted report cannot be generated before attach and caller digests cannot override the host contract digest.
+  - Ungranted or mismatched promotion, reason-as-status, authority fields, shell strings, top-level land/admit, empty owners, path-qualified Git commands, shell interpreters, unknown retries and effectful replay are refused with an unchanged host verdict.
   - `capabilities` is the only verified command; `doctor`, `session`, `verdict`, `conflicts` and `report` are explicitly deferred, and `declare_intent` is forbidden.
+  - JSON null, schema drift, default-enable, single-green-light and capability digest drift are refused without an uncaught exception.
   - The adapter adds no runtime dependency, imports no VerseGit internals and adds no renderer route, harness profile, fast/comms membership or VerseShell execution path.
-  - The stored report is digest-reproducible and the independent verifier rebuilds the live differential and re-fires the refusal matrix.
+  - The report classifies MC4 as a host-owned adapter bootstrap rather than a provider behavioural migration; no provider source file or internal import is claimed, and the MC5 line budget is not silently omitted.
+  - The stored report is digest-reproducible and the independent verifier rebuilds the live differential and re-fires the identity, capability, report and command-plan refusal matrices.
 docs:
   required: true
   files:
@@ -64,12 +69,21 @@ the reference side of each differential seam.
 
 An explicit matching grant is required for M1-M3. M0 never attaches. The module report
 reserves harness verdict, execution and landing ownership for ClawX, always reports
-`host_verdict: unchanged`, and rejects reason labels used as top-level statuses. The
-command surface is deny-by-default and intentionally narrower than the VG CLI: only the
-capabilities seam is verified in MC4.
+`host_verdict: unchanged`, and rejects reason labels used as top-level statuses. Reports
+are generated only for the effective mode, carry actual process/read usage separately
+from the permission matrix, and preserve repo/worktree/session/epoch plus
+run/request/trace correlation. The command surface is deny-by-default and intentionally
+narrower than the VG CLI: only the capabilities seam is verified in MC4.
+
+## Migration budget scope
+
+MC4 adds host-owned anti-corruption code; it does not copy or replace provider source.
+The report therefore records `behavior_migration: false`, zero provider source files and
+zero provider internal imports. The MC5 line budget remains applicable to future
+provider-derived migration slices and is not silently omitted here.
 
 ## Deferred integration
 
-WP1 owns event identity and stale/duplicate handling. WP2 owns the opt-in harness
+WP1 supplies the event identity and stale/duplicate bridge. WP2 owns the opt-in harness
 profile and evidence pack. WP3 owns VerseShell execution receipts and candidate facts.
 WP4-WP6 own coverage, replay/soak and merged closeout.
