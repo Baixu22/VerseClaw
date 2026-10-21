@@ -17,9 +17,11 @@ ownedPaths:
   - harness/specs/tasks/versegit-wp1-observation-bridge.md
   - harness/specs/tasks/versegit-wp2-diagnostic-profile.md
   - harness/specs/tasks/versegit-wp3-receipt-bridge.md
+  - harness/specs/tasks/versegit-wp4-behavior-coverage.md
   - electron/services/versegit-module.ts
   - electron/services/versegit-observation.ts
   - electron/services/versegit-receipt-bridge.ts
+  - electron/services/versegit-behavior-coverage.ts
   - harness/src/profiles.mjs
   - scripts/versegit-mc4-adapter.mjs
   - scripts/verify-versegit-mc4.mjs
@@ -29,10 +31,13 @@ ownedPaths:
   - scripts/verify-versegit-wp2.mjs
   - scripts/versegit-wp3-receipts.mjs
   - scripts/verify-versegit-wp3.mjs
+  - scripts/versegit-wp4-coverage.mjs
+  - scripts/verify-versegit-wp4.mjs
   - tests/unit/versegit-mc4-adapter.test.ts
   - tests/unit/versegit-wp1-observation.test.ts
   - tests/unit/versegit-wp2-profile.test.ts
   - tests/unit/versegit-wp3-receipts.test.ts
+  - tests/unit/versegit-wp4-coverage.test.ts
   - harness/specs/guides/versegit-concurrency/**
   - harness/specs/fixtures/versegit-planning-correction/**
   - docs/dev/versegit-validation-layer/README.md

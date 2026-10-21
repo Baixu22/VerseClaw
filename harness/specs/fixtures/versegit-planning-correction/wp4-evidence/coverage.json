@@ -1,0 +1,109 @@
+{
+  "schema": "clawx.versegit.wp4-coverage-evidence/v1",
+  "generated_at": "2026-10-21T17:15:22.575Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0470",
+  "sourceEvents": "harness/specs/fixtures/versegit-planning-correction/wp1-evidence/events.jsonl",
+  "sourceLineCount": 20,
+  "sourceStatusCounts": {
+    "attached": 3,
+    "observed": 6,
+    "duplicate": 1,
+    "partial": 2,
+    "unobserved": 1,
+    "stale": 2,
+    "rejected_by_policy": 2,
+    "detached": 3
+  },
+  "coverage": {
+    "schema": "clawx.versegit.behavior-coverage/v1",
+    "task": "TF-0470",
+    "eventCount": 12,
+    "uniqueEventCount": 12,
+    "duplicateCount": 0,
+    "droppedCount": 0,
+    "unobservedCount": 1,
+    "coverageVector": {
+      "fileRead": "host-event",
+      "fileWrite": "host-event",
+      "search": "host-event",
+      "shellRead": "unobserved",
+      "shellWrite": "inferred",
+      "mcpRead": "partial",
+      "mcpWrite": "unobserved",
+      "network": "partial",
+      "browser": "unobserved",
+      "directFs": "unobserved"
+    },
+    "feedbackDelivery": [
+      {
+        "id": "produced-only",
+        "tier": "produced",
+        "evidenceRefs": [
+          "artifact://produced"
+        ],
+        "claimedWithoutEvidence": false
+      },
+      {
+        "id": "host-delivered",
+        "tier": "host-delivered",
+        "evidenceRefs": [
+          "artifact://delivered"
+        ],
+        "claimedWithoutEvidence": false
+      },
+      {
+        "id": "transcript-confirmed",
+        "tier": "transcript-confirmed",
+        "evidenceRefs": [
+          "artifact://transcript"
+        ],
+        "claimedWithoutEvidence": false
+      },
+      {
+        "id": "behavior-shift",
+        "tier": "behavior-shift",
+        "evidenceRefs": [
+          "artifact://paired-experiment"
+        ],
+        "claimedWithoutEvidence": false
+      },
+      {
+        "id": "not-produced",
+        "tier": "not-produced",
+        "evidenceRefs": [],
+        "claimedWithoutEvidence": false
+      }
+    ],
+    "knownGaps": [
+      "shellRead is unobserved: a structured exec event cannot prove which files a process read",
+      "shellWrite is inferred from process events until VerseShell supplies a filesystem receipt",
+      "external MCP and browser/network effects are partially observable",
+      "direct filesystem access outside host tools remains unobserved"
+    ],
+    "limits": {
+      "maxEvents": 1000,
+      "truncated": false,
+      "rawPayloadStored": false
+    },
+    "passed": true,
+    "issues": [],
+    "digest": "6420faf49ddc1c6300a30bd8d46c1b420433559aed110c6365919463db7fd8bd"
+  },
+  "coverageDigest": "6420faf49ddc1c6300a30bd8d46c1b420433559aed110c6365919463db7fd8bd",
+  "redaction": {
+    "rawPayloadStored": false,
+    "absolutePathStored": false,
+    "secretStored": false
+  },
+  "boundaries": {
+    "duplicateEventsCountedOnce": true,
+    "staleEventsExcluded": true,
+    "droppedExplicit": true,
+    "hostVerdictUnchanged": true
+  },
+  "passed": true,
+  "issues": [],
+  "digest": "703e77720f59c15b3a90f1bf4becdd4f5cde2fa991c43348b938cd1c0fe6a375"
+}

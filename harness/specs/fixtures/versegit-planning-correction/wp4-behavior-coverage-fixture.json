@@ -1,10 +1,16 @@
 {
-  "schema": "clawx.versegit.node-fixture/v1",
+  "schema": "clawx.versegit.wp4-coverage-fixture/v1",
   "nodeId": "TF-0470",
   "role": "WP4",
-  "fixturePurpose": "Frozen planning input for WP4; replace with execution fixture in the implementation node.",
-  "expectedOutputs": [
-    "artifacts/versegit/wp4/coverage.json"
-  ],
-  "oracle": "Coverage vector and feedback tiers pass"
+  "fixturePurpose": "Aggregate WP1 normalized behavior facts into a bounded coverage vector and prove feedback delivery tiers require evidence at every stage.",
+  "sourceEvents": "harness/specs/fixtures/versegit-planning-correction/wp1-evidence/events.jsonl",
+  "sourceReport": "harness/specs/fixtures/versegit-planning-correction/wp1-evidence/events-report.json",
+  "maxEvents": 1000,
+  "feedbackCases": [
+    { "id": "produced-only", "produced": true, "hostDelivered": false, "transcriptConfirmed": false, "behaviorShift": false, "evidenceRefs": ["artifact://produced"] },
+    { "id": "host-delivered", "produced": true, "hostDelivered": true, "transcriptConfirmed": false, "behaviorShift": false, "evidenceRefs": ["artifact://delivered"] },
+    { "id": "transcript-confirmed", "produced": true, "hostDelivered": true, "transcriptConfirmed": true, "behaviorShift": false, "evidenceRefs": ["artifact://transcript"] },
+    { "id": "behavior-shift", "produced": true, "hostDelivered": true, "transcriptConfirmed": true, "behaviorShift": true, "evidenceRefs": ["artifact://paired-experiment"] },
+    { "id": "not-produced", "produced": false, "hostDelivered": false, "transcriptConfirmed": false, "behaviorShift": false, "evidenceRefs": [] }
+  ]
 }
