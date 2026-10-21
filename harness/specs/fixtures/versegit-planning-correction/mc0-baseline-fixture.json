@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0473",
+  "role": "MC0",
+  "fixturePurpose": "Frozen planning input for MC0; replace with execution fixture in the implementation node.",
+  "expectedOutputs": [
+    "artifacts/versegit/mc0/baseline.json"
+  ],
+  "oracle": "Source/binary/schema/golden baseline frozen"
+}

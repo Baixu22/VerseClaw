@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0469",
+  "role": "WP3",
+  "fixturePurpose": "Frozen planning input for WP3; replace with execution fixture in the implementation node.",
+  "expectedOutputs": [
+    "artifacts/versegit/wp3/verdict.json"
+  ],
+  "oracle": "Receipt binding and rejection matrix pass"
+}

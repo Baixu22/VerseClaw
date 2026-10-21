@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0467",
+  "role": "WP1",
+  "fixturePurpose": "Frozen planning input for WP1; replace with execution fixture in the implementation node.",
+  "expectedOutputs": [
+    "artifacts/versegit/wp1/events.jsonl"
+  ],
+  "oracle": "Session/worktree/trace binding, stale-event and cleanup-barrier tests pass"
+}

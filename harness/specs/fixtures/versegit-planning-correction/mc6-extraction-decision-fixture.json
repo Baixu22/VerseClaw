@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0479",
+  "role": "MC6_optional",
+  "fixturePurpose": "Frozen planning input for MC6_optional; replace with execution fixture in the implementation node.",
+  "expectedOutputs": [
+    "artifacts/versegit/mc6/decision.json"
+  ],
+  "oracle": "Optional extraction decision recorded only if triggered"
+}

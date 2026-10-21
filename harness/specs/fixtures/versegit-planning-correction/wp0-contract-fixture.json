@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0466",
+  "role": "WP0",
+  "fixturePurpose": "Frozen planning input for WP0; replace with execution fixture in the implementation node.",
+  "expectedOutputs": [
+    "artifacts/versegit/wp0/contract.json"
+  ],
+  "oracle": "Identity and contract schema pass"
+}

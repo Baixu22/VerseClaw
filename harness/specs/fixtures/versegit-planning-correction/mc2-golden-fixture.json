@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0475",
+  "role": "MC2",
+  "fixturePurpose": "Frozen execution fixture for MC2: the fingerprint collector and its independent verifier are the implementation under test.",
+  "expectedOutputs": [
+    "artifacts/versegit/mc2/golden.json"
+  ],
+  "oracle": "Behavior fingerprint recorded and reviewable"
+}

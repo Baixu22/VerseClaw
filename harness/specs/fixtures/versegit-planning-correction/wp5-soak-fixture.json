@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0471",
+  "role": "WP5",
+  "fixturePurpose": "Frozen planning input for WP5; replace with execution fixture in the implementation node.",
+  "expectedOutputs": [
+    "artifacts/versegit/wp5/soak-report.json"
+  ],
+  "oracle": "Bounded soak and three-way cases pass"
+}

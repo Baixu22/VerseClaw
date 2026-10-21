@@ -1,0 +1,49 @@
+{
+  "schema": "clawx.versegit.resource-soak/v2",
+  "limits": {
+    "max_active_sessions": 8,
+    "max_candidate_worktrees": 3,
+    "max_parallel_checks": 2,
+    "max_event_queue_bytes": 16777216,
+    "max_sidecar_memory_mb": 512,
+    "max_sidecar_cpu_percent": 50,
+    "max_log_bytes_per_run": 67108864,
+    "max_disk_bytes_per_run": 2147483648
+  },
+  "over_limit_action": "reject_new_work_and_report_degraded",
+  "soak_recipe": {
+    "iterations": 10,
+    "worktrees": 3,
+    "sessions": 3,
+    "duration_minutes": 30,
+    "sampling_interval_seconds": 5,
+    "cases": [
+      "PC-01_api_signature_change",
+      "PC-02_config_contract_change",
+      "PC-03_shared_helper_contract_change",
+      "3W-01_three_independent_worktrees",
+      "3W-02_producer_consumer_plus_observer",
+      "FI-01_stale_epoch",
+      "FI-02_sidecar_crash",
+      "FI-03_tool_timeout",
+      "FI-04_permission_revoke",
+      "FI-05_artifact_tamper",
+      "FI-06_cleanup_barrier_failure",
+      "FI-07_receipt_replay",
+      "FI-08_unsupported_language"
+    ],
+    "oracles": {
+      "PC": "combined candidate exposes a semantic risk while each side alone passes",
+      "3W": "host verdict remains unchanged when VG is auxiliary; every worktree/session remains distinct",
+      "FI": "expected rejection/degradation is visible and no fallback or evidence loss occurs"
+    }
+  },
+  "performance_tolerances": {
+    "profile_overhead_percent": 5,
+    "event_ingestion_p95_ms": 250,
+    "candidate_materialization_p95_ms": 3000,
+    "cleanup_survivors": 0,
+    "measurement": "wall-clock p95 over the bounded recipe; report raw samples and derivation"
+  },
+  "calibration_rule": "Thresholds may be calibrated only by a new evidence-backed contract revision; a green run cannot silently relax them."
+}

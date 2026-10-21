@@ -1,0 +1,54 @@
+{
+  "schema": "clawx.versegit.input-freeze/v2",
+  "git_backend": {
+    "head": true,
+    "dirty_files": true,
+    "untracked_files": true,
+    "ignored_runtime_files": false,
+    "deletions_and_renames": true,
+    "dependency_inputs": true
+  },
+  "inprocess_backend": {
+    "supported": false,
+    "reason": "Directory simulation cannot provide a Git tree identity for VG semantic analysis.",
+    "action": "report unsupported rather than silently upgrading isolation mode"
+  },
+  "manifest_schema": "clawx.versegit.input-manifest/v1",
+  "normalization": {
+    "path_encoding": "UTF-8",
+    "path_order": "ordinal_ascending",
+    "separator": "/",
+    "hash": "sha256",
+    "symlink_policy": "record_link_target_and_reject_escape",
+    "exclude_policy": "only_declared_ignored_runtime_paths"
+  },
+  "covered_items": [
+    "tracked file content",
+    "tracked file mode",
+    "dirty file content",
+    "untracked file content",
+    "deletion entries",
+    "rename old and new paths",
+    "dependency manifest content",
+    "verification cwd identity"
+  ],
+  "algorithm": [
+    "enumerate canonical relative paths and sort by ordinal",
+    "hash each content, mode, deletion and rename record",
+    "hash dependency manifests and verification cwd manifest",
+    "write immutable input manifest",
+    "rehash before and after verification",
+    "reject on any drift"
+  ],
+  "examples": [
+    { "case": "matched", "input": "same tree before and after", "expected": "accept" },
+    { "case": "dirty_drift", "input": "dirty content changes during run", "expected": "reject" },
+    { "case": "untracked_added", "input": "new untracked file appears", "expected": "reject" },
+    { "case": "inprocess_backend", "input": "backend=inprocess", "expected": "unsupported" }
+  ],
+  "rules": [
+    "HEAD, dirty tree and verification directory identities must not be mixed.",
+    "A frozen input that changes makes dependent evidence stale.",
+    "Unsupported backend is reported as unsupported, not as clean."
+  ]
+}

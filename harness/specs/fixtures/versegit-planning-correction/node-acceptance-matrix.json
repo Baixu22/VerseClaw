@@ -1,0 +1,186 @@
+{
+  "schema": "clawx.versegit.node-acceptance-matrix/v2",
+  "taskSpec": "harness/specs/tasks/versegit-module-implementation-contracts.md",
+  "verifierPolicy": {
+    "planning": "scripts/validate-versegit-planning-correction.mjs validates this bundle only",
+    "execution": "Every node must supply its own execution verifier and on-disk artifact; the planning verifier cannot close a node."
+  },
+  "nodes": [
+    {
+      "id": "TF-0465",
+      "role": "global_goal",
+      "anchor": "#tf-0465",
+      "fixture": "planning-contract.json",
+      "artifact": "artifacts/versegit/<run-id>/manifest.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0465",
+      "executionVerifier": "host aggregate verifier over all child artifacts",
+      "closure": "All required child gates close or are explicitly retired",
+      "next": "none"
+    },
+    {
+      "id": "TF-0466",
+      "role": "WP0",
+      "anchor": "#tf-0466",
+      "fixture": "wp0-contract-fixture.json",
+      "artifact": "artifacts/versegit/wp0/contract.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0466",
+      "executionVerifier": "scripts/verify-versegit-wp0.mjs",
+      "closure": "Identity and contract schema pass",
+      "next": "TF-0478"
+    },
+    {
+      "id": "TF-0467",
+      "role": "WP1",
+      "anchor": "#tf-0467",
+      "fixture": "wp1-observation-fixture.json",
+      "artifact": "artifacts/versegit/wp1/events.jsonl",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0467",
+      "executionVerifier": "scripts/verify-versegit-wp1.mjs",
+      "closure": "Session/worktree/trace binding, stale-event and cleanup-barrier tests pass",
+      "next": "TF-0468"
+    },
+    {
+      "id": "TF-0468",
+      "role": "WP2",
+      "anchor": "#tf-0468",
+      "fixture": "wp2-diagnostic-profile-fixture.json",
+      "artifact": "artifacts/versegit/wp2/report.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0468",
+      "executionVerifier": "scripts/verify-versegit-wp2.mjs",
+      "closure": "Single-worktree no-op and fail-open tests pass",
+      "next": "TF-0469"
+    },
+    {
+      "id": "TF-0469",
+      "role": "WP3",
+      "anchor": "#tf-0469",
+      "fixture": "wp3-receipt-fixture.json",
+      "artifact": "artifacts/versegit/wp3/verdict.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0469",
+      "executionVerifier": "scripts/verify-versegit-wp3.mjs",
+      "closure": "Receipt binding and rejection matrix pass",
+      "next": "TF-0470"
+    },
+    {
+      "id": "TF-0470",
+      "role": "WP4",
+      "anchor": "#tf-0470",
+      "fixture": "wp4-behavior-coverage-fixture.json",
+      "artifact": "artifacts/versegit/wp4/coverage.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0470",
+      "executionVerifier": "scripts/verify-versegit-wp4.mjs",
+      "closure": "Coverage vector and feedback tiers pass",
+      "next": "TF-0471"
+    },
+    {
+      "id": "TF-0471",
+      "role": "WP5",
+      "anchor": "#tf-0471",
+      "fixture": "wp5-soak-fixture.json",
+      "artifact": "artifacts/versegit/wp5/soak-report.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0471",
+      "executionVerifier": "scripts/verify-versegit-wp5.mjs",
+      "closure": "Bounded soak and three-way cases pass",
+      "next": "TF-0472"
+    },
+    {
+      "id": "TF-0472",
+      "role": "WP6",
+      "anchor": "#tf-0472",
+      "fixture": "wp6-closeout-fixture.json",
+      "artifact": "artifacts/versegit/wp6/final-report.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0472",
+      "executionVerifier": "scripts/verify-versegit-wp6.mjs",
+      "closure": "Merged migration closeout and M4 decision boundary recorded",
+      "next": "none"
+    },
+    {
+      "id": "TF-0473",
+      "role": "MC0",
+      "anchor": "#tf-0473",
+      "fixture": "mc0-baseline-fixture.json",
+      "artifact": "artifacts/versegit/mc0/baseline.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0473",
+      "executionVerifier": "scripts/verify-versegit-mc0.mjs",
+      "closure": "Source/binary/schema/golden baseline frozen",
+      "next": "TF-0474"
+    },
+    {
+      "id": "TF-0474",
+      "role": "MC1",
+      "anchor": "#tf-0474",
+      "fixture": "mc1-contract-fixture.json",
+      "artifact": "artifacts/versegit/mc1/contract.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0474",
+      "executionVerifier": "scripts/verify-versegit-mc1.mjs",
+      "closure": "Consumer contract tests pass",
+      "next": "TF-0475"
+    },
+    {
+      "id": "TF-0475",
+      "role": "MC2",
+      "anchor": "#tf-0475",
+      "fixture": "mc2-golden-fixture.json",
+      "artifact": "artifacts/versegit/mc2/golden.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0475",
+      "executionVerifier": "scripts/verify-versegit-mc2.mjs",
+      "closure": "Behavior fingerprint recorded and reviewable",
+      "next": "TF-0476"
+    },
+    {
+      "id": "TF-0476",
+      "role": "MC3",
+      "anchor": "#tf-0476",
+      "fixture": "mc3-delivery-fixture.json",
+      "artifact": "artifacts/versegit/mc3/package-manifest.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0476",
+      "executionVerifier": "scripts/verify-versegit-mc3.mjs",
+      "closure": "Digest-addressed sidecar package verified",
+      "next": "TF-0466"
+    },
+    {
+      "id": "TF-0477",
+      "role": "MC4",
+      "anchor": "#tf-0477",
+      "fixture": "mc4-adapter-fixture.json",
+      "artifact": "artifacts/versegit/mc4/adapter-report.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0477",
+      "executionVerifier": "scripts/verify-versegit-mc4.mjs",
+      "closure": "One-seam adapter differential passes",
+      "next": "TF-0467"
+    },
+    {
+      "id": "TF-0478",
+      "role": "MC5",
+      "anchor": "#tf-0478",
+      "fixture": "mc5-differential-fixture.json",
+      "artifact": "artifacts/versegit/mc5/differential-report.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0478",
+      "executionVerifier": "scripts/verify-versegit-mc5.mjs",
+      "closure": "Differential framework and diff budget pass",
+      "next": "TF-0477"
+    },
+    {
+      "id": "TF-0479",
+      "role": "MC6_optional",
+      "anchor": "#tf-0479",
+      "fixture": "mc6-extraction-decision-fixture.json",
+      "artifact": "artifacts/versegit/mc6/decision.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0479",
+      "executionVerifier": "scripts/verify-versegit-mc6.mjs",
+      "closure": "Optional extraction decision recorded only if triggered",
+      "next": "none"
+    },
+    {
+      "id": "TF-0480",
+      "role": "MC7_merged",
+      "anchor": "#tf-0480",
+      "fixture": "planning-contract.json",
+      "artifact": "artifacts/versegit/wp6/final-report.json",
+      "planningVerifier": "scripts/validate-versegit-planning-correction.mjs --node TF-0480",
+      "executionVerifier": "none: deprecated and merged into TF-0472",
+      "closure": "Deprecated and merged into TF-0472",
+      "next": "none"
+    }
+  ]
+}
