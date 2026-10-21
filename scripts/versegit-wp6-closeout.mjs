@@ -238,39 +238,44 @@ function mc0StableProjection(document) {
 
 function collectGate(root, entry) {
   const curated = readJson(root, entry.curatedPath, `${entry.role} curated evidence`);
-  const artifact = entry.artifactPath ? readJson(root, entry.artifactPath, `${entry.role} artifact`) : null;
+  const localMirrorPath = entry.artifactPath ?? null;
+  const localMirrorExists = localMirrorPath ? existsSync(assertInsideRoot(root, localMirrorPath, `${entry.role} local artifact mirror`)) : false;
+  const localMirror = localMirrorExists ? readJson(root, localMirrorPath, `${entry.role} local artifact mirror`) : null;
   const issues = [];
   const schema = curated?.[entry.schemaField];
   if (schema !== entry.expectedSchema) issues.push(`schema ${schema ?? 'missing'} != ${entry.expectedSchema}`);
   if (entry.taskSpec && !existsSync(assertInsideRoot(root, entry.taskSpec, `${entry.role} task spec`))) issues.push(`task spec missing: ${entry.taskSpec}`);
   if (entry.verifier && !existsSync(assertInsideRoot(root, entry.verifier, `${entry.role} verifier`))) issues.push(`verifier missing: ${entry.verifier}`);
-  let artifactRelationship = entry.artifactPath ? 'semantic-equivalent' : 'curated-only';
-  if (artifact) {
-    const artifactSchema = artifact?.[entry.schemaField];
-    if (artifactSchema !== entry.expectedSchema) issues.push(`artifact schema ${artifactSchema ?? 'missing'} != ${entry.expectedSchema}`);
-    if (semanticDigest(artifact) !== semanticDigest(curated)) {
+  const artifactRelationship = entry.artifactComparison
+    ?? (localMirrorPath ? 'semantic-equivalent-when-local-mirror-present' : 'curated-only');
+  if (localMirror) {
+    const artifactSchema = localMirror?.[entry.schemaField];
+    if (artifactSchema !== entry.expectedSchema) issues.push(`local mirror schema ${artifactSchema ?? 'missing'} != ${entry.expectedSchema}`);
+    if (semanticDigest(localMirror) !== semanticDigest(curated)) {
       if (entry.artifactComparison === 'separate-diagnostic-captures' && entry.role === 'MC0') {
-        artifactRelationship = 'separate-diagnostic-captures';
-        if (JSON.stringify(mc0StableProjection(artifact)) !== JSON.stringify(mc0StableProjection(curated))) {
+        if (JSON.stringify(mc0StableProjection(localMirror)) !== JSON.stringify(mc0StableProjection(curated))) {
           issues.push('separate MC0 captures disagree on stable source/binary/schema fields');
         }
       } else {
-        issues.push('artifact and curated evidence differ semantically');
+        issues.push('local artifact mirror and curated evidence differ semantically');
       }
     }
-  } else if (!entry.artifactAliasReason) {
-    issues.push('missing artifact requires an explicit alias reason');
+  } else if (!localMirrorPath && !entry.artifactAliasReason) {
+    issues.push('curated-only artifact requires an explicit alias reason');
   }
   issues.push(...gateChecks(entry.role, curated));
   return {
     nodeId: entry.nodeId,
     role: entry.role,
     schema,
+    artifactPath: entry.curatedPath,
+    artifactSha256: fileSha(root, entry.curatedPath, `${entry.role} canonical artifact`),
     curatedPath: entry.curatedPath,
     curatedSha256: fileSha(root, entry.curatedPath, `${entry.role} curated evidence`),
-    artifactPath: entry.artifactPath,
-    artifactSha256: entry.artifactPath ? fileSha(root, entry.artifactPath, `${entry.role} artifact`) : null,
-    artifactAliasReason: entry.artifactAliasReason ?? null,
+    localMirrorPath,
+    localMirrorPolicy: localMirrorPath ? 'tracked-curated-canonical; optional ignored mirror checked when present' : 'tracked-curated-canonical',
+    artifactAliasReason: entry.artifactAliasReason
+      ?? (localMirrorPath ? 'Tracked evidence is canonical; artifacts/ is an optional ignored local mirror and is not required for clean-checkout replay.' : null),
     artifactRelationship,
     semanticDigest: semanticDigest(curated),
     taskSpec: entry.taskSpec,
@@ -663,6 +668,9 @@ function buildManifest(reportText, report, mc6Text, mc6Decision) {
       curatedSha256: gate.curatedSha256,
       artifactPath: gate.artifactPath,
       artifactSha256: gate.artifactSha256,
+      localMirrorPath: gate.localMirrorPath,
+      localMirrorPolicy: gate.localMirrorPolicy,
+      artifactRelationship: gate.artifactRelationship,
       taskSpec: gate.taskSpec,
       taskSpecSha256: gate.taskSpecSha256,
       verifier: gate.verifier,
