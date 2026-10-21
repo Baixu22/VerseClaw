@@ -1,10 +1,382 @@
 {
-  "schema": "clawx.versegit.node-fixture/v1",
+  "schema": "clawx.versegit.wp6-closeout-fixture/v1",
   "nodeId": "TF-0472",
   "role": "WP6",
-  "fixturePurpose": "Frozen planning input for WP6; replace with execution fixture in the implementation node.",
-  "expectedOutputs": [
-    "artifacts/versegit/wp6/final-report.json"
+  "fixturePurpose": "Execution fixture for the merged WP6/MC7 closeout: aggregate every required WP/MC gate, seal the optional MC6 sidecar-only decision, preserve authority and coverage limits, and refuse any release or M4 promotion.",
+  "requiredGates": [
+    {
+      "nodeId": "TF-0473",
+      "role": "MC0",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc0-evidence/baseline.json",
+      "artifactPath": "artifacts/versegit/mc0/baseline.json",
+      "schemaField": "baselineSchema",
+      "artifactComparison": "separate-diagnostic-captures",
+      "expectedSchema": "clawx.versegit.mc0-baseline/v1",
+      "taskSpec": "harness/specs/tasks/versegit-mc0-baseline-freeze.md",
+      "verifier": "scripts/verify-versegit-mc0.mjs"
+    },
+    {
+      "nodeId": "TF-0474",
+      "role": "MC1",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc1-evidence/contract.json",
+      "artifactPath": null,
+      "artifactAliasReason": "The versioned consumer contract is the MC1 deliverable; no duplicate artifacts/versegit/mc1 copy is created.",
+      "schemaField": "schema",
+      "expectedSchema": "clawx.versegit.consumer-contract/v1",
+      "taskSpec": "harness/specs/tasks/versegit-mc1-consumer-contract.md",
+      "verifier": "scripts/verify-versegit-mc1.mjs"
+    },
+    {
+      "nodeId": "TF-0475",
+      "role": "MC2",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc2-evidence/golden.json",
+      "artifactPath": "artifacts/versegit/mc2/golden.json",
+      "schemaField": "fingerprintSchema",
+      "expectedSchema": "clawx.versegit.mc2-fingerprint/v1",
+      "taskSpec": "harness/specs/tasks/versegit-mc2-behavior-fingerprint.md",
+      "verifier": "scripts/verify-versegit-mc2.mjs"
+    },
+    {
+      "nodeId": "TF-0476",
+      "role": "MC3",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc3-evidence/package-manifest.json",
+      "artifactPath": "artifacts/versegit/mc3/package-manifest.json",
+      "schemaField": "packageSchema",
+      "expectedSchema": "clawx.versegit.mc3-package/v1",
+      "taskSpec": "harness/specs/tasks/versegit-mc3-sidecar-delivery.md",
+      "verifier": "scripts/verify-versegit-mc3.mjs"
+    },
+    {
+      "nodeId": "TF-0477",
+      "role": "MC4",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
+      "artifactPath": "artifacts/versegit/mc4/adapter-report.json",
+      "schemaField": "reportSchema",
+      "expectedSchema": "clawx.versegit.mc4-adapter/v1",
+      "taskSpec": "harness/specs/tasks/versegit-mc4-module-adapter.md",
+      "verifier": "scripts/verify-versegit-mc4.mjs"
+    },
+    {
+      "nodeId": "TF-0478",
+      "role": "MC5",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json",
+      "artifactPath": "artifacts/versegit/mc5/differential-report.json",
+      "schemaField": "reportSchema",
+      "expectedSchema": "clawx.versegit.mc5-differential/v1",
+      "taskSpec": "harness/specs/tasks/versegit-mc5-differential-gate.md",
+      "verifier": "scripts/verify-versegit-mc5.mjs"
+    },
+    {
+      "nodeId": "TF-0466",
+      "role": "WP0",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp0-evidence/contract.json",
+      "artifactPath": "artifacts/versegit/wp0/contract.json",
+      "schemaField": "contractSchema",
+      "expectedSchema": "clawx.versegit.wp0-contract/v1",
+      "taskSpec": "harness/specs/tasks/versegit-wp0-module-contract.md",
+      "verifier": "scripts/verify-versegit-wp0.mjs"
+    },
+    {
+      "nodeId": "TF-0467",
+      "role": "WP1",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp1-evidence/events-report.json",
+      "artifactPath": "artifacts/versegit/wp1/events-report.json",
+      "schemaField": "reportSchema",
+      "expectedSchema": "clawx.versegit.wp1-evidence-report/v1",
+      "taskSpec": "harness/specs/tasks/versegit-wp1-observation-bridge.md",
+      "verifier": "scripts/verify-versegit-wp1.mjs"
+    },
+    {
+      "nodeId": "TF-0468",
+      "role": "WP2",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json",
+      "artifactPath": "artifacts/versegit/wp2/report.json",
+      "schemaField": "schema",
+      "expectedSchema": "clawx.versegit.wp2-profile/v1",
+      "taskSpec": "harness/specs/tasks/versegit-wp2-diagnostic-profile.md",
+      "verifier": "scripts/verify-versegit-wp2.mjs"
+    },
+    {
+      "nodeId": "TF-0469",
+      "role": "WP3",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json",
+      "artifactPath": "artifacts/versegit/wp3/verdict.json",
+      "schemaField": "schema",
+      "expectedSchema": "clawx.versegit.wp3-receipt-evidence/v1",
+      "taskSpec": "harness/specs/tasks/versegit-wp3-receipt-bridge.md",
+      "verifier": "scripts/verify-versegit-wp3.mjs"
+    },
+    {
+      "nodeId": "TF-0470",
+      "role": "WP4",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp4-evidence/coverage.json",
+      "artifactPath": "artifacts/versegit/wp4/coverage.json",
+      "schemaField": "schema",
+      "expectedSchema": "clawx.versegit.wp4-coverage-evidence/v1",
+      "taskSpec": "harness/specs/tasks/versegit-wp4-behavior-coverage.md",
+      "verifier": "scripts/verify-versegit-wp4.mjs"
+    },
+    {
+      "nodeId": "TF-0471",
+      "role": "WP5",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json",
+      "artifactPath": "artifacts/versegit/wp5/soak-report.json",
+      "schemaField": "schema",
+      "expectedSchema": "clawx.versegit.wp5-soak/v1",
+      "taskSpec": "harness/specs/tasks/versegit-wp5-replay-soak.md",
+      "verifier": "scripts/verify-versegit-wp5.mjs"
+    }
   ],
-  "oracle": "Merged migration closeout and M4 decision boundary recorded"
+  "evidenceManifests": [
+    "harness/specs/fixtures/versegit-planning-correction/mc0-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/mc1-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/mc2-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/mc3-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/mc5-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/wp0-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/wp1-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/wp4-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/SHA256SUMS",
+    "artifacts/versegit/mc0/SHA256SUMS",
+    "artifacts/versegit/mc2/SHA256SUMS",
+    "artifacts/versegit/mc3/SHA256SUMS",
+    "artifacts/versegit/mc4/SHA256SUMS",
+    "artifacts/versegit/mc5/SHA256SUMS",
+    "artifacts/versegit/wp0/SHA256SUMS",
+    "artifacts/versegit/wp1/SHA256SUMS",
+    "artifacts/versegit/wp2/SHA256SUMS",
+    "artifacts/versegit/wp3/SHA256SUMS",
+    "artifacts/versegit/wp4/SHA256SUMS",
+    "artifacts/versegit/wp5/SHA256SUMS",
+    "artifacts/versegit-planning-correction/SHA256SUMS"
+  ],
+  "optionalDecision": {
+    "nodeId": "TF-0479",
+    "role": "MC6",
+    "decision": "sidecar-only",
+    "sourceExtractionTriggered": false,
+    "sidecarStable": true,
+    "publicContractStable": true,
+    "measuredInProcessRequirement": false,
+    "performanceOrSecurityBlocker": null
+  },
+  "deprecatedNodes": [
+    {
+      "id": "TF-0480",
+      "role": "MC7",
+      "status": "deprecated",
+      "mergedInto": "TF-0472",
+      "reason": "WP6 owns retirement, curated evidence and the M4 decision boundary; a second closeout authority is forbidden."
+    }
+  ],
+  "authority": {
+    "hostVerdict": "unchanged",
+    "singleGreenLight": false,
+    "harnessVerdictOwner": "host",
+    "executionOwner": "verseShell",
+    "landingOwner": "host-git",
+    "liveVerseShellReceiptExecuted": false,
+    "landOrAdmitInvoked": false,
+    "m4Authorized": false
+  },
+  "aggregateCoverage": {
+    "source": "WP4 normalized behavior coverage; WP5 matters are bounded replay observations, not a completeness upgrade",
+    "coverageVector": {
+      "fileRead": "host-event",
+      "fileWrite": "host-event",
+      "search": "host-event",
+      "shellRead": "unobserved",
+      "shellWrite": "inferred",
+      "mcpRead": "partial",
+      "mcpWrite": "unobserved",
+      "network": "partial",
+      "browser": "unobserved",
+      "directFs": "unobserved"
+    },
+    "requiredUnobservedSurfaces": [
+      "shell reads and process-derived file reads",
+      "direct filesystem access outside host instrumentation",
+      "arbitrary MCP reads and writes outside the typed host surface",
+      "network access",
+      "browser activity"
+    ]
+  },
+  "languageCoverage": [
+    {
+      "id": "python-fixture",
+      "status": "observed",
+      "scope": "MC2 disposable Python symbol-change fixture only"
+    },
+    {
+      "id": "javascript-mjs",
+      "status": "partial",
+      "reason": "Explicit unsupported-language case retained; no completeness claim"
+    },
+    {
+      "id": "jsx",
+      "status": "partial",
+      "reason": "Explicit unsupported-language case retained; no completeness claim"
+    },
+    {
+      "id": "shell-sh",
+      "status": "partial",
+      "reason": "Explicit unsupported-language case retained; no completeness claim"
+    },
+    {
+      "id": "all-other-languages",
+      "status": "unverified",
+      "reason": "Outside the declared index coverage and not part of this closeout"
+    }
+  ],
+  "platformCoverage": {
+    "executed": [
+      "win32-x64"
+    ],
+    "unexecuted": [
+      "linux",
+      "macos"
+    ],
+    "boundary": "Windows-only validation; other platforms are unmeasured, not proven equivalent"
+  },
+  "releaseExpectation": {
+    "productPosture": "non-ga-landed-unwired",
+    "defaultOn": false,
+    "packageStatus": "rejected",
+    "releaseEligible": false,
+    "ga": false,
+    "sourceStatus": "dirty",
+    "binaryProfile": "debug",
+    "releaseBinaryBuilt": false,
+    "blockers": [
+      "source_worktree_dirty",
+      "not_a_deliverable_baseline",
+      "release_binary_not_built"
+    ]
+  },
+  "retirementLayers": [
+    {
+      "id": "concurrency-aux-profile",
+      "disposition": "kept",
+      "reason": "Explicit opt-in remains the only route to concurrency diagnostics.",
+      "retirementCondition": "Retire when the harness profile catalog gains an equivalent host-owned concurrency contract without changing default-off or zero-call single-worktree behavior.",
+      "reviewPoint": "Every harness profile catalog major review"
+    },
+    {
+      "id": "versegit-module-adapter",
+      "disposition": "kept-long-term",
+      "reason": "The host-owned anti-corruption boundary is the supported sidecar integration seam.",
+      "retirementCondition": "Replace only after a stable public host-module protocol, lossless differential evidence and a separate ownership decision exist.",
+      "reviewPoint": "Every VerseGit consumer-contract major upgrade"
+    },
+    {
+      "id": "host-observation-bridge",
+      "disposition": "kept",
+      "reason": "It normalizes host events without creating a second event source of truth.",
+      "retirementCondition": "Retire when the native host event spine provides the same identity, stale/duplicate and coverage guarantees.",
+      "reviewPoint": "Every ChatRuntimeEvent or host event-spine schema change"
+    },
+    {
+      "id": "verseshell-receipt-bridge",
+      "disposition": "kept",
+      "reason": "It rejects caller self-report and binds verification plans to host-authoritative receipts.",
+      "retirementCondition": "Retire when VerseShell exposes the complete plan/receipt/artifact contract directly to the harness with equivalent negative controls.",
+      "reviewPoint": "Every execution-receipt schema major upgrade"
+    },
+    {
+      "id": "behavior-coverage-projector",
+      "disposition": "kept",
+      "reason": "It keeps inferred, partial and unobserved surfaces visible instead of flattening them to success.",
+      "retirementCondition": "Retire when native behavior telemetry publishes the same bounded, redacted vector and feedback tiers.",
+      "reviewPoint": "Every coverage or telemetry contract major upgrade"
+    },
+    {
+      "id": "mc5-differential-gate",
+      "disposition": "kept",
+      "reason": "It blocks LLM rewrite drift and provider-derived slices outside the frozen budget.",
+      "retirementCondition": "Retire only after the release pipeline owns equivalent golden, budget, provenance and no-op checks.",
+      "reviewPoint": "Every adapter or provider-derived migration slice"
+    },
+    {
+      "id": "disposable-candidate-worktrees",
+      "disposition": "removed-per-run",
+      "reason": "Bounded replay creates them only under D:/tmp and removes them with zero survivors.",
+      "retirementCondition": "No persistent layer is retained; any survivor requires recovery_required, not silent reuse.",
+      "reviewPoint": "Every replay/soak run"
+    }
+  ],
+  "m4Broker": {
+    "status": "not_authorized",
+    "requested": false,
+    "landOrAdmitInvoked": false,
+    "reason": "No separate CAS landing ownership decision exists; WP0-WP5 evidence cannot promote M1-M3 into M4.",
+    "prerequisites": [
+      "a live host-authoritative VerseShell receipt independently rebuilds verification facts",
+      "cross-process crash, CAS conflict and stale-head recovery evidence exists",
+      "product locks and owner change are separately decided",
+      "vg admitted is never written as the harness verdict",
+      "land and admit remain absent from the default development path"
+    ]
+  },
+  "residualRisks": [
+    {
+      "id": "live-verseShell-receipt",
+      "status": "unmeasured",
+      "detail": "WP3 proves structural plan/receipt rejection semantics only; no live host-authoritative execution receipt was run."
+    },
+    {
+      "id": "conflicts-plan-seam",
+      "status": "unavailable",
+      "detail": "The current provider CLI has no pure conflicts-plan seam; WP2 records provider_seam_unavailable."
+    },
+    {
+      "id": "partial-read-surfaces",
+      "status": "retained",
+      "detail": "Shell reads, direct filesystem access, arbitrary MCP, network and browser remain unobserved or partial."
+    },
+    {
+      "id": "language-completeness",
+      "status": "unverified",
+      "detail": "Only the fixture-scoped Python path is observed; .mjs/.jsx/.sh remain partial and all other languages are unverified."
+    },
+    {
+      "id": "non-windows-platforms",
+      "status": "unmeasured",
+      "detail": "Execution evidence is win32-x64 only; Linux and macOS were not executed."
+    },
+    {
+      "id": "release-package",
+      "status": "rejected",
+      "detail": "MC0/MC3 retain dirty-source and release-binary-not-built blockers; the debug sidecar is diagnostic evidence, not a releasable package."
+    },
+    {
+      "id": "real-agent-invocation",
+      "status": "not-claimed",
+      "detail": "WP1 fixtures are host-injected observations and WP5 intentionally records zero VG process calls; no real agent-to-VG tool invocation is claimed."
+    },
+    {
+      "id": "m4-recovery",
+      "status": "not-run",
+      "detail": "Crash/CAS/stale-head broker recovery prerequisites are absent and M4 remains outside authorization."
+    },
+    {
+      "id": "independent-final-review",
+      "status": "not-claimed",
+      "detail": "The closeout relies on reproducible local verifiers and clean-worktree harness validation; no external model or human verdict is synthesized."
+    }
+  ],
+  "expectedOutputs": [
+    "artifacts/versegit/wp6/final-report.json",
+    "artifacts/versegit/wp6/manifest.json",
+    "artifacts/versegit/wp6/SHA256SUMS",
+    "artifacts/versegit/mc6/decision.json",
+    "artifacts/versegit/mc6/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json",
+    "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/manifest.json",
+    "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
+    "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/SHA256SUMS"
+  ]
 }

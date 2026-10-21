@@ -8,12 +8,12 @@ appliesTo:
 
 # VerseGit 模块化实施路线与验收
 
-> 状态：实施中。不是默认开启授权。
+> 状态：工程证据链已收口（非 GA、默认关闭、landed-unwired）；不是发布、默认开启或 M4 授权。
 > 前置：现存 Task Forest 有独立 active lane；本路线不得在未建立新节点前直接并行开工。
 
 ## 0. 当前状态与下一步
 
-2026-10-21：TF-0481 已关闭；MC0-MC3、MC5、WP0、MC4 技术实现和 WP1 观测桥已在仓内并有执行 verifier。边界规则新增 host-owned bootstrap 的客观范围和有界生产预算（最多 2 文件 / 800 行 / 单文件 800 行）；provider-derived migration 仍使用原 MC5 预算。MC4 完成技术复核后进入 WP2。
+2026-10-22：WP6 已回读 MC0-MC5、WP0-WP5 的 12 个必需门禁，复算 24 份 evidence manifest / 159 个文件，并以证据裁定 MC6 为 `sidecar-only`、源码提取未触发。当前模块为非 GA、默认关闭、landed-unwired：provider source 仍 dirty，只有 debug sidecar，`releaseEligible=false`；没有 live VerseShell receipt，`conflicts-plan` seam 仍 unavailable，M4 未授权。
 
 ## 1. 总体策略
 
@@ -236,6 +236,14 @@ WP0 契约与身份
 - `SHA256SUMS`
 - Task Forest evidence lines + harness validation output
 
+### 当前收口结果
+
+- `artifacts/versegit/wp6/final-report.json` 与 `manifest.json`：12/12 必需门禁、24 份 manifest、159 个被绑定文件；
+- `artifacts/versegit/mc6/decision.json`：`sidecar-only`，`sourceExtractionTriggered=false`；
+- `hostVerdict=unchanged`、`singleGreenLight=false`、`defaultOn=false`、`ga=false`、`releaseEligible=false`；
+- `liveVerseShellReceiptExecuted=false`、`conflictsPlan=unavailable`、`M4=not_authorized`；
+- provider source dirty、debug binary、release binary absent 仍是发布阻塞，不可被 evidence closeout 覆盖。
+
 ### broker 讨论的前置
 
 只有 WP0-WP5 全部完成且满足以下条件，才可另立 M4 决策：
@@ -290,20 +298,20 @@ WP0-WP6 处理 harness 接入本身；迁移控制还需要 MC0-MC7，避免源�
 
 两边的节点标题可以不同，但必须引用同一版本化 contract 和同一 evidence run-id。
 
-## 10. 当前缺口
+## 10. 当前残余缺口
 
-| 缺口 | 影响 | 处理阶段 |
+WP6 收口不会把这些事实升级成成功：
+
+| 残余缺口 | 当前事实 | 授权状态 |
 | --- | --- | --- |
-| ClawX 没有 VG profile | scenario 是设计态 | WP2 |
-| ClawX `.mcp.json` 无 VG | 外部模型不可用 | WP0/WP2 |
-| VG `.mcp.json` 指向不存在的 release binary | 启动失败或静默不可用 | WP0 |
-| VG `mcp` 含 `declare_intent` 写入口 | 与只读边界冲突 | WP0/WP3 |
-| VG host mode 仍可能调用内部 verifier | 第二执行器风险 | WP3 |
-| 没有 ClawX 真实并发 positive | 不能证明收益 | WP5 |
-| `.mjs/.jsx/.sh` 未覆盖 | harness 自身覆盖不足 | 持续声明 |
-| 读集依赖 hook，Bash 不可见 | SSI cycle 漏触发 | WP1/WP4 |
-| hook 安装以 Claude Code 为主 | ClawX/Codex 需要原生事件桥 | WP1 |
-| ClawX worktree merge queue 只有路径级判断 | 语义风险不可见 | WP3/WP5 |
+| live VerseShell receipt | 只有 structural bridge 与拒绝矩阵，未执行 host-authoritative receipt | `unmeasured`；不得产生 full verification |
+| `conflicts-plan` seam | 当前 CLI 没有纯只读 seam，WP2 记录 `provider_seam_unavailable` | `unavailable`，不得用 effectful 命令替代 |
+| shell/direct-fs/arbitrary-MCP/network/browser | 读面仍为 `unobserved`、`inferred` 或 `partial` | 不得写成零冲突或完整覆盖 |
+| 语言覆盖 | Python 仅限 MC2 fixture；`.mjs/.jsx/.sh` partial；其他语言 unverified | 不得声明全语言覆盖 |
+| 非 Windows 平台 | 只有 `win32-x64` 执行证据，Linux/macOS 未跑 | 不得声明跨平台等价 |
+| 发布交付 | source dirty、debug binary、release binary absent，MC0/MC3 明确 rejected | `releaseEligible=false`；证据收口不是产品批准 |
+| 真实 agent→VG invocation | WP1 使用 host-injected events，WP5 明确 0 次 VG process call | 不声明真实模型工具闭环 |
+| M4 broker | 没有 CAS/crash/stale-head recovery 证据或所有权更替决定 | `not_authorized`，`land/admit` 不接入默认路径 |
 
 ## 11. 最终判定
 

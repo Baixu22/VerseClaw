@@ -1,10 +1,36 @@
 {
-  "schema": "clawx.versegit.node-fixture/v1",
+  "schema": "clawx.versegit.mc6-extraction-fixture/v1",
   "nodeId": "TF-0479",
   "role": "MC6_optional",
-  "fixturePurpose": "Frozen planning input for MC6_optional; replace with execution fixture in the implementation node.",
-  "expectedOutputs": [
-    "artifacts/versegit/mc6/decision.json"
+  "fixturePurpose": "Freeze the evidence-based decision that sidecar-only remains sufficient and selective source extraction is not triggered.",
+  "decision": "sidecar-only",
+  "sourceExtractionTriggered": false,
+  "requiredEvidence": [
+    "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
+    "harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json",
+    "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json",
+    "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json"
   ],
-  "oracle": "Optional extraction decision recorded only if triggered"
+  "triggerConditions": [
+    "The sidecar contract and differential gate are stable.",
+    "Measurements prove an in-process implementation is necessary for performance or security.",
+    "The public consumer contract is stable enough to extract.",
+    "A separate source-extraction decision and rollback path are authorized."
+  ],
+  "rollback": {
+    "path": "Disable the concurrency-aux profile, detach the host adapter and retain the standalone provider unchanged; no ClawX source extraction exists to unwind.",
+    "providerStandalonePreserved": true,
+    "userWorkspaceMutation": false
+  },
+  "reopenPolicy": "Reopen only with measured sidecar performance/security evidence and a separate Task Forest ownership decision; stable contracts alone do not authorize extraction.",
+  "expectedOutputs": [
+    "artifacts/versegit/mc6/decision.json",
+    "artifacts/versegit/mc6/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
+    "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/SHA256SUMS"
+  ],
+  "sidecarStable": true,
+  "publicContractStable": true,
+  "measuredInProcessRequirement": false,
+  "performanceOrSecurityBlocker": null
 }

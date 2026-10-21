@@ -1,0 +1,65 @@
+{
+  "schema": "clawx.versegit.mc6-decision/v1",
+  "generated_at": "2026-10-21T18:02:39.912Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0479",
+  "fixture": "harness/specs/fixtures/versegit-planning-correction/mc6-extraction-decision-fixture.json",
+  "fixtureDigest": "955688557fe5c9b5d279cd24ba524ad37ed23cea72845eee2f637595dc94f25f",
+  "decision": "sidecar-only",
+  "sourceExtractionTriggered": false,
+  "triggerAssessment": [
+    {
+      "id": "sidecar-contract-stable",
+      "observed": true,
+      "evidence": [
+        "MC4",
+        "MC5",
+        "WP5"
+      ]
+    },
+    {
+      "id": "public-contract-stable",
+      "observed": true,
+      "evidence": [
+        "MC1",
+        "WP0"
+      ]
+    },
+    {
+      "id": "measured-in-process-requirement",
+      "observed": false,
+      "evidence": []
+    },
+    {
+      "id": "performance-or-security-blocker",
+      "observed": false,
+      "evidence": []
+    }
+  ],
+  "conflictsPlanSeam": "unavailable",
+  "migrationFiles": [],
+  "retainedArchitecture": "versioned sidecar consumed through the host-owned anti-corruption adapter",
+  "rollback": {
+    "path": "Disable the concurrency-aux profile, detach the host adapter and retain the standalone provider unchanged; no ClawX source extraction exists to unwind.",
+    "providerStandalonePreserved": true,
+    "userWorkspaceMutation": false
+  },
+  "reopenPolicy": "Reopen only with measured sidecar performance/security evidence and a separate Task Forest ownership decision; stable contracts alone do not authorize extraction.",
+  "authority": {
+    "hostVerdict": "unchanged",
+    "singleGreenLight": false,
+    "defaultOn": false,
+    "m4Authorized": false
+  },
+  "boundaries": {
+    "providerStandalonePreserved": true,
+    "providerSourceCopied": false,
+    "providerHistoryCopied": false,
+    "providerBuildOutputsCopied": false,
+    "userWorkspaceMutated": false
+  },
+  "passed": true,
+  "issues": [],
+  "digest": "282fccc0e441bf092ea3363d9a6cc341fd8279d0cc2b3d1a129b5182d2f8ca91"
+}

@@ -8,33 +8,21 @@ appliesTo:
 
 # VerseGit 防重写与防污染迁移控制计划
 
-> 状态：设计基线。
+> 状态：实施收口（非 GA、默认关闭、release-ineligible）。
 
-## 0. 独立复验结果（2026-10-21）
+## 0. 契约修正与收口结果
 
-`ccs-agentrouter/gpt-6.1-sol` 的独立规划验收结论为 **FAIL**，原因是当前 WP/MC 任务图仍可绕过防重写门禁，且 M1 只读、宿主清理、回执绑定、状态建立、输入冻结和机器化验收尚未闭合。
+2026-10-21，`ccs-agentrouter/gpt-6.1-sol` 对初版规划给出 **FAIL**：WP/MC DAG 可绕过防重写门禁，宿主清理、回执绑定、状态、输入冻结和机器化验收尚未闭合。TF-0481 随后补齐统一 DAG、逐节点 fixture/artifact/verifier、清理屏障、receipt、状态、provenance 和证据保留契约。
 
-当前唯一允许开工的节点是：
+2026-10-22，WP6 回读并复算 MC0-MC5、WP0-WP5 的 12 个必需门禁；MC6 以证据裁定为 `sidecar-only`、源码提取未触发；MC7 的退役与 curated evidence 职责已并入 WP6。结论仍是：
 
-- **TF-0481：VG 模块规划修正与独立复验（唯一 ready）**
+- VerseGit source/history/build output 不进入 ClawX；
+- provider-derived migration 保持 MC5 单 seam / 6 文件 / 400 行 / 单文件 200 行预算；
+- host-owned anti-corruption bootstrap 使用单独的有界预算，不授权源码提取；
+- 当前只有 debug sidecar，provider source dirty，因此 `releaseEligible=false`；
+- 没有 live VerseShell receipt，`conflicts-plan` seam unavailable，M4 未授权。
 
-它必须先完成以下规划修正，才允许进入 MC0/WP0：
-
-1. 统一 WP/MC DAG，防重写门禁前移；
-2. 为 M1 建立纯只读效果接缝；
-3. 明确唯一宿主清理路径与 drain/detach 顺序；
-4. 补齐 execution receipt 绑定；
-5. 定义状态建立、共享 sidecar、升级与回滚；
-6. 建立 provider 交付包与有效源码/构建/binary 摘要门禁；
-7. 补齐真实输入冻结算法；
-8. 为每个 AC 建立可执行 task spec、fixture、artifact、verifier 映射；
-9. 修正证据保留矛盾；
-10. 定义资源上限、soak 配方、三方组合 case 与性能容差。
-
-完整报告：`D:\tmp\versegit-plan-review-6.1-sol.md`。`n`n当前开工矩阵：[`versegit-planning-correction-matrix.md`](versegit-planning-correction-matrix.md)。
-> 目标：把 VerseGit 从独立项目迁移为 ClawX harness 的可审计模块，同时避免两类事故：
-> 1. **源码级污染**：把独立仓库的历史、构建产物、文档和临时文件一并带进 ClawX。
-> 2. **LLM 重写**：模型在没有行为证据时按自己的理解重写，导致外部行为和隐性约束丢失。
+当前收口矩阵：[`versegit-planning-correction-matrix.md`](versegit-planning-correction-matrix.md)。
 
 ## 1. 结论
 

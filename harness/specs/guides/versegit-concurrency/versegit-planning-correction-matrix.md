@@ -8,8 +8,8 @@ appliesTo:
 
 # VerseGit planning correction matrix
 
-> 状态：TF-0481 开工包。
-> 输入：`D:\tmp\versegit-plan-review-6.1-sol.md` 的独立验收结论 **FAIL**。
+> 状态：TF-0481 已关闭；MC0-MC5、WP0-WP6 已按本矩阵收口，MC6 裁定 `sidecar-only`，MC7 并入 WP6。
+> 历史输入：`D:\tmp\versegit-plan-review-6.1-sol.md` 的初版规划验收结论 **FAIL**；修正后由后续节点证据逐项闭合。
 > 目标：先把规划修到可执行、可验证、不可绕过，再允许任何实现节点开工。
 
 ## 1. 目标
@@ -143,7 +143,10 @@ TF-0481 关闭条件：
 4. M1 effect matrix、cleanup barrier、receipt contract 已落盘；
 5. guide/scenario/rule/task spec 一致；
 6. 独立复验至少 `PASS_WITH_GAPS`；
-7. 剩余 gaps 只能是执行期验证项。`n8. 任务 spec 在干净树上通过不带 `--no-diff` 的完整 harness validate。
+7. 剩余 gaps 只能是执行期验证项。
+8. 任务 spec 在干净树上通过不带 `--no-diff` 的完整 harness validate。
+
+2026-10-22 收口事实：上述条件由 TF-0481、MC0-MC5、WP0-WP5 与 WP6 的盘上证据共同满足；WP6 明确保留 release、live VerseShell、conflicts-plan、语言/平台/读面和 M4 残余边界。
 
 ## 9. 非目标
 

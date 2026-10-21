@@ -1,7 +1,7 @@
 # VerseGit 作为 ClawX 并发工作区控制面
 
-> 状态：设计基线已落盘，宿主适配尚未实现，默认关闭。
-> 日期：2026-10-21。
+> 状态：宿主适配与 WP6 工程收口证据已落盘；非 GA、默认关闭、landed-unwired，`releaseEligible=false`。
+> 日期：2026-10-22。
 > 本文取代“VerseGit 只是一个可选的符号级验证插件”的单点描述；它不改变任何产品锁、默认值或发布状态。深度设计位于 `harness/specs/guides/versegit-concurrency/`，README 作为稳定入口。
 
 ## 1. 结论
@@ -126,18 +126,20 @@ discover -> eligible -> attach -> observe -> evaluate
 
 ## 7. 当前事实基线
 
-本次只读核对得到以下事实：
+2026-10-22 的 WP6 收口只陈述盘上可回读事实：
 
-- VerseGit Task Forest：361 个节点，355 done，1 archived，5 deprecated，0 open；
-- `vg doctor --json`：账本链 10,230 个事件校验有效，worktree 诊断检测到 6 个 worktree；
-- `vg capabilities --json`：`safety.default_enable=false`，`single_green_light=false`，六类工作流中五类为 verified，发布为 controlled；
-- ClawX 现有 `worktree-service.ts` 默认 `inprocess`，Git backend 为 opt-in；其 merge queue 目前是路径重叠/内容复制级，不是语义级；
-- ClawX harness 已有 VerseGit 场景与规则，但尚无实际 profile/adapter；
-- ClawX 根 `.mcp.json` 当前未注册 VG；
-- VG 仓 `.mcp.json` 指向不存在的 `target/release/vg.exe`，本轮构建产物位于 `target/debug/vg.exe`；
-- VG 的只读 MCP 目录包含 `declare_intent` 写入口，宿主只读 profile 必须显式过滤。
+- MC0-MC5、WP0-WP5 共 12 个必需门禁均已闭合；WP6 复算 24 份 evidence manifest、159 个绑定文件；
+- `concurrency-aux` 是显式 opt-in profile，不在 `fast`、`comms` 或隐式默认中；单 worktree/单 session 仍为 0 次 VG 调用；
+- host adapter、observation bridge、VerseShell structural receipt bridge 和 behavior coverage 均已落地；host verdict 始终独立；
+- WP3 没有执行 live host-authoritative VerseShell receipt，只证明了 plan/receipt 绑定与拒绝矩阵；
+- 当前 CLI 没有纯 `conflicts-plan` seam，完整 conflict-plan 仍为 `unavailable`；
+- WP5 的 3 轮双 worktree replay 使用真实 disposable Git worktree，但 VG process calls 为 0，不能冒充真实 agent→VG 工具闭环；
+- provider source 当前 dirty，只有 debug sidecar；MC0/MC3 保留 `source_worktree_dirty`、`not_a_deliverable_baseline`、`release_binary_not_built`；
+- shell read、direct filesystem、arbitrary MCP、network/browser 仍为 unobserved/partial；`.mjs/.jsx/.sh` 为 partial，其他语言 unverified；
+- 执行证据仅覆盖 `win32-x64`；Linux/macOS 未跑；
+- M4 CAS landing broker 未授权，`vg land` / `vg admit` 不在默认宿主路径。
 
-这些事实说明：VG 本体已足够成熟进入“宿主模块化设计”，但 ClawX 侧接入仍是设计态，不能宣称已集成。
+因此当前定位是：**host module 工程路径已闭合、产品未批准、默认未启用、发布不可用**。`passed` 只表示证据与边界可复现，不表示 GA。
 
 ## 8. 与 VerseShell 的关系
 
@@ -171,20 +173,24 @@ VG 在 standalone 模式可以保留自己的 bounded executor；进入 ClawX ho
 
 ## 10. 实施路线
 
-实施拆为 WP0-WP6，必须先做只读闭环，再谈 candidate，再谈落地：
+实施拆为 WP0-WP6，所有节点均已收口；这不改变默认关闭或产品锁：
 
 - WP0：契约与二进制身份；
 - WP1：宿主事件到 VG 的观测桥；
-- WP2：只读 harness profile 与 evidence pack；
-- WP3：VerseShell execution receipt 桥；
-- WP4：真实并发 replay、soak 和反向样例；
-- WP5：可选 broker 决策，不默认启用；
-- WP6：收口、文档、版本矩阵与退出条件。
+- WP2：只读 `concurrency-aux` profile 与 evidence pack；
+- WP3：VerseShell execution receipt 结构桥和拒绝矩阵；
+- WP4：行为覆盖向量、缺口语义与反馈送达等级；
+- WP5：双 worktree replay、soak 和故障矩阵；
+- WP6：聚合 WP/MC 证据、MC7 退役职责与可选 MC6 `sidecar-only` 决策。
 
-每个阶段的入口、门槛和停止条件见
+WP6 的最终报告、manifest 与 checksum 位于 `artifacts/versegit/wp6/`；MC6 决策位于 `artifacts/versegit/mc6/`。发布、default-on、`land/admit` 或 M4 所有权变更都需要另立任务，不能由本期证据自动升级。
+
+每阶段的入口、门槛和停止条件见
 [`implementation-roadmap-and-acceptance.md`](../../../harness/specs/guides/versegit-concurrency/implementation-roadmap-and-acceptance.md)。
 
 ## 11. Go / No-Go
+
+> 当前产品状态：M1 的工程路径已接入并有证据，但 release-ineligible；M2/M3 没有 live 闭环，M4 未授权。下面的清单是产品启用前置，不代表当前已经启用。
 
 **允许进入 M1：**
 
