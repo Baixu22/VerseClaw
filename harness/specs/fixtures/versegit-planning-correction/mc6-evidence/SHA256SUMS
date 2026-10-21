@@ -1,4 +1,4 @@
-0c510fcdbcaffdfa6245bda2a08c169c16ccd5e4538c593704a9f0ea784ac2d3  harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json
+401a26233e06e7532d703cc303df919c019296cc2b1da56737130a84bcbd3030  harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json
 955688557fe5c9b5d279cd24ba524ad37ed23cea72845eee2f637595dc94f25f  harness/specs/fixtures/versegit-planning-correction/mc6-extraction-decision-fixture.json
 87bb35fd94299be3050b12218283c792ec2f66f037da2eccdadc4334d897fac9  harness/specs/tasks/versegit-mc6-extraction-decision.md
 25b429cb4a55a17aebaafa4c9e0f7e1418818b4338d6a8a95a46f154c524402a  scripts/verify-versegit-mc6.mjs
