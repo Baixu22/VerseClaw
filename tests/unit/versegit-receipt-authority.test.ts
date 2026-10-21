@@ -244,4 +244,21 @@ describe('host-authoritative VerseShell receipts', () => {
     }
   });
 
+
+
+  it('rejects duplicate managed and owned PID identities', () => {
+    const root = mkdtempSync(join(process.platform === 'win32' ? 'D:/tmp' : process.env.TMPDIR ?? '/tmp', 'vg-receipt-pid-duplicate-'));
+    try {
+      const cleanup = cleanCleanup();
+      cleanup.processInventory.managedPids.push(1234);
+      cleanup.processInventory.ownedPidChecks.push({ ok: true, pid: 1234, exists: false });
+      const installed = installEvidence(root, { cleanup });
+      const checked = installed.authority.verifyReceipt({ plan: installed.plan, receipt: installed.receipt });
+      expect(checked.ok).toBe(false);
+      expect(checked.issues).toContain('owned cleanup PID vector contains duplicates');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
 });

@@ -404,6 +404,7 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       const checkedPids = ownedPidChecks.map((entry) => entry.pid).filter((pid): pid is number => Number.isInteger(pid) && Number(pid) > 0);
       const checkedSurvivors = ownedPidChecks.filter((entry) => entry.ok === true && entry.exists === true).map((entry) => entry.pid);
       add(managedPids.length > 0, 'owned cleanup PID vector is missing');
+      add(new Set(managedPids).size === managedPids.length, 'owned cleanup PID vector contains duplicates');
       add(ownedPidChecks.length === managedPids.length, 'owned PID exit-check vector is incomplete');
       add(checkedPids.length === ownedPidChecks.length, 'owned PID exit-check identities are malformed');
       add(new Set(checkedPids).size === checkedPids.length, 'owned PID exit-check identities are duplicated');

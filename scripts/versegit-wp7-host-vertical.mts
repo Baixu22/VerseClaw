@@ -1819,6 +1819,7 @@ export function validateWp7Report(
   add(processInventory?.queryOk === true && processInventory?.queryError === null, 'OS process inventory was not available after cleanup');
   add(processInventory?.shutdownError === null, 'VerseShell shutdown failed');
   add(managedBefore.length > 0 && declaredManagedPids.length === managedBefore.length, 'VerseShell process inventory before shutdown is missing');
+  add(new Set(declaredManagedPids).size === declaredManagedPids.length, 'VerseShell managed PID vector contains duplicates');
   add(stableJson(managedPids) === stableJson(declaredManagedPids), 'declared owned PID vector is inconsistent');
   add(managedPids.length > 0 && ownedPidChecks.length === managedPids.length && ownedPidChecks.every((entry) => entry.ok === true), 'owned PID exit checks are incomplete');
   const checkedPids = ownedPidChecks.map((entry) => entry.pid).filter((pid): pid is number => Number.isInteger(pid) && Number(pid) > 0);
