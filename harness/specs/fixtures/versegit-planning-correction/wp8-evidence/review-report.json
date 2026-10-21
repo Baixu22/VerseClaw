@@ -1,0 +1,368 @@
+{
+  "schema": "clawx.versegit.wp8-final-review/v1",
+  "task": "TF-0514",
+  "generated_at": "2026-10-21T21:41:18.851259Z",
+  "driven_by": "agent",
+  "actor": "ccs-hub/gpt-6.1-sol",
+  "reviewerModel": "ccs-hub/gpt-6.1-sol",
+  "reviewerThreadId": "01a16058-c9cc-7551-ad3e-3b3de9c40845",
+  "verdict": "PASS_WITH_GAPS",
+  "p0": [],
+  "p1": [],
+  "p2": [
+    {
+      "id": "P2-evidence-snapshot-pairing",
+      "summary": "新 live artifact 包含新 PID、时间戳和关联摘要；冻结 curated evidence 不变时，verifier 的字节镜像比较返回 exit 1。新报告自身验证及 normalized outcome 比较通过；候选快照的完整 verifier 含独立 live replay 返回 exit 0。",
+      "disposition": "residual"
+    },
+    {
+      "id": "P2-bounded-validation",
+      "summary": "仅验证 Windows agent 驱动的 bounded host vertical slice。非 Windows、外部模型会话、未观测读面、conflicts-plan unavailable、debug sidecar 及完整产品 M3 边界继续保留；builder/verifier 仍共享部分验证逻辑。",
+      "disposition": "residual"
+    },
+    {
+      "id": "P2-historical-manifest",
+      "summary": "历史 planning manifest 的输入摘要相对当前源码存在三项 drift；保留历史 FAIL、上游终审失败记录及偏差账本，不将旧 manifest 作为当前通过凭据。",
+      "disposition": "residual"
+    }
+  ],
+  "candidate": {
+    "commit": "5d313871c0b6f612b000db2041c9670d571c97a4",
+    "tree": "b3856199f4458a8ce23ec22325899a42efe00867",
+    "clean": true,
+    "checkout": "D:/tmp/ClawX-wp8-5d31-clean",
+    "trackedChanges": 0,
+    "untrackedChanges": 0
+  },
+  "historicalReview": {
+    "originalVerdict": "FAIL",
+    "finalReviewCompleted": true,
+    "historyRewritten": false
+  },
+  "initialReview": {
+    "verdict": "FAIL",
+    "historyRewritten": false,
+    "closureEvidence": [
+      {
+        "id": "P1-fact-authority",
+        "status": "closed",
+        "evidence": [
+          "harness/specs/rules/versegit-validation-layer-extension-boundary.md: execution-authority decision",
+          "harness/specs/guides/versegit-concurrency/versegit-planning-correction-matrix.md: section 6.1",
+          "Live run: 16 host-owned provider fact calls, 2 VerseShell governed verification calls, zero native verification fallbacks"
+        ]
+      },
+      {
+        "id": "P1-event-wiring",
+        "status": "closed",
+        "evidence": [
+          "scripts/versegit-wp7-host-vertical.mts: ingestToolCall and projectHostFact",
+          "Seven event-to-fact projections bind normalized started-event input digests and host-command evidence",
+          "D:/tmp/wp8-hub-review-5d31/live-report.json"
+        ]
+      },
+      {
+        "id": "P1-candidate-input",
+        "status": "closed",
+        "evidence": [
+          "Candidate manifest reproduces candidateId and inputDigest",
+          "verify.cjs is frozen with candidate inputs; execution checks input stability before and after verification",
+          "Candidate inputDigest/candidateId mismatch probes rejected"
+        ]
+      },
+      {
+        "id": "P1-receipt-authority",
+        "status": "closed",
+        "evidence": [
+          "electron/services/versegit-receipt-evidence.ts: file-backed plan, input, observation and artifact verification",
+          "Authority-free receipt and plan-swap observation reuse probes rejected",
+          "Raw observation/wrapper exit-code contradiction rejected",
+          "stdout/stderr raw-byte contradictions rejected",
+          "D:/tmp/wp8-hub-review-5d31/additional-probes.json",
+          "D:/tmp/wp8-hub-review-5d31/stream-probes.json"
+        ]
+      },
+      {
+        "id": "P1-cleanup-evidence",
+        "status": "closed",
+        "evidence": [
+          "Receipt observation PID cross-bound to managed, owned-check and during-run PID vectors",
+          "Consistent forged PID vectors rejected by authority and re-sealed full-report validation",
+          "Worktree/temp/deletion contradictions, duplicate or missing PID checks and nested survivors rejected",
+          "Live cleanup: 3 worktrees deleted; process/worktree/temp survivors zero",
+          "D:/tmp/wp8-hub-review-5d31/probe-summary.json"
+        ]
+      }
+    ]
+  },
+  "scope": {
+    "includesHostIntegration": true,
+    "includesHistoricalPlanning": true,
+    "factAdapterBoundaryReviewed": true,
+    "eventToFactWiringReviewed": true,
+    "candidateInputBindingReviewed": true,
+    "receiptAuthorityReviewed": true,
+    "cleanupBarrierReviewed": true
+  },
+  "authority": {
+    "humanEvidence": false,
+    "ga": false,
+    "releaseEligible": false,
+    "m4Authorized": false,
+    "defaultOnAuthorized": false,
+    "realHumanEvidenceClaimed": false,
+    "singleGreenLight": false
+  },
+  "executedChecks": [
+    {
+      "name": "candidate commit/tree and final git status",
+      "exitCode": 0,
+      "summary": "Exact requested commit/tree; clean tracked/index/untracked state"
+    },
+    {
+      "name": "WP7 live generation and report validation",
+      "exitCode": 0,
+      "summary": "16 provider calls, 2 governed verification calls, clean cleanup; normalized outcome b51660843bd4007c12ecf8f748ea59d9a4a9bf1297b3b6ec6d17534a0bc303b8"
+    },
+    {
+      "name": "scripts/verify-versegit-wp7.mts against candidate evidence",
+      "exitCode": 0,
+      "summary": "Candidate evidence verification, independent live replay and checksum checks passed"
+    },
+    {
+      "name": "all VerseGit unit tests excluding WP8 review test",
+      "exitCode": 0,
+      "summary": "16 files; 94/94 tests passed"
+    },
+    {
+      "name": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "summary": "Passed after ignored environment dependencies were supplied"
+    },
+    {
+      "name": "planning verifier",
+      "exitCode": 0,
+      "summary": "Current contracts and copied local Task Forest graph accepted"
+    },
+    {
+      "name": "WP6 verifier",
+      "exitCode": 0,
+      "summary": "12/12 gates; 12 manifests; 78 entries"
+    },
+    {
+      "name": "MC6 verifier",
+      "exitCode": 0,
+      "summary": "sidecar-only; source extraction false"
+    },
+    {
+      "name": "node harness/src/cli.mjs validate --spec harness/specs/tasks/versegit-wp7-host-vertical-slice.md --since c6a750c7f",
+      "exitCode": 0,
+      "summary": "Full-diff spec validation passed"
+    },
+    {
+      "name": "independent negative probes",
+      "exitCode": 0,
+      "summary": "19/19 rejected, including coherent PID substitution and raw observation/wrapper/output contradictions"
+    },
+    {
+      "name": "requiredInputs digest and curated SHA verification",
+      "exitCode": 0,
+      "summary": "23 inputs hashed; 21 candidate blobs matched; 65/65 curated SHA entries matched"
+    },
+    {
+      "name": "fresh ignored artifact generation",
+      "exitCode": 0,
+      "summary": "Fresh live report passed its evidence validation and matched candidate normalized outcome"
+    },
+    {
+      "name": "fresh artifact versus frozen curated snapshot diagnostic",
+      "exitCode": 1,
+      "summary": "Byte-mirror differences only; recorded as P2-evidence-snapshot-pairing. Fresh outputs preserved separately; final canonical snapshot verifier re-run exited 0."
+    }
+  ],
+  "residuals": [
+    "Fresh artifact and frozen curated evidence require explicit snapshot pairing; diagnostic exit 1 is retained.",
+    "Historical planning manifest drift is retained and distinguished from current evidence.",
+    "No human evidence, GA, release, default-on or M4 authorization.",
+    "TF-0465 whole-goal aggregation and TF-0515 lifecycle closure remain separate work."
+  ],
+  "gateConclusion": {
+    "usableAsWp8GateAfterTF0513BeforeTF0465Aggregation": true,
+    "closesTF0465": false,
+    "statement": "可作为 TF-0513 后、TF-0465 聚合前的 WP8 PASS_WITH_GAPS 门禁；不替代 TF-0515 聚合验收。"
+  },
+  "environmentSetup": {
+    "separateFromCodeVerdict": true,
+    "temporaryDirectory": "D:/tmp",
+    "generatedIgnoredExtensionBridges": true,
+    "copiedReadOnlyTaskForestSnapshot": true,
+    "reusedIgnoredRuntimeAndBuildDependencies": true,
+    "pnpmAutomaticDependencyInstallationDisabled": true,
+    "trackedFilesModified": false,
+    "mainWorkspaceKnowledgeUiIgnored": true
+  },
+  "probeEvidence": {
+    "path": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/probe-summary.json",
+    "sha256": "5698a841377ef7db0c95153602edac5de7e20e1bbcded8b0de9393e8cd39fffd",
+    "expectedRejections": 19,
+    "actualRejections": 19,
+    "files": {
+      "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/additional-probes.json": "e0d57743cc8fa9927d22486d5f394b0393fc9418a23ad11fb6502a6dac6b0171",
+      "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/fresh-artifact-generation.json": "5fdba08571a52d58f984763b67d11d6c13d29cb7d750a3a5579148d43637ff14",
+      "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/fresh-artifact-verifier.log": "c6ac2943cf8f9c57353d96a92e38aae1ac844de5cbe774f4665caf517e67a3d1",
+      "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/history-audit.json": "6d521f15162964349d0ccd560e63f2981315df2e68b496b8e189e4677dab7268",
+      "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/negative-probes.json": "87edb28d765361412918511289c0cca31123f9f6d6f1899acf9f4fac0f0ef79f",
+      "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/probe-summary.json": "5698a841377ef7db0c95153602edac5de7e20e1bbcded8b0de9393e8cd39fffd",
+      "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/required-input-digests.json": "fafc27feed709e55654373bd97cca0caa94a1f14c991aece29c6b32009bac819",
+      "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/stream-probes.json": "7b774835adf68453f56e51222f59a4a5e95f856f649817c2ef99ce20d524446d",
+      "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/probes/unit-results.json": "df8f8674bf4b47c891f9a4f050868284efb74c14e94e787fc398910df4af038c"
+    }
+  },
+  "inputDigestEvidence": {
+    "requiredInputs": 23,
+    "candidateBlobMatches": 21,
+    "supplementalHistoricalInputs": 2
+  },
+  "inputs": [
+    {
+      "path": "harness/specs/guides/versegit-concurrency/versegit-planning-correction-matrix.md",
+      "sha256": "0593fa055986a7f9c665f2d3ee7e3f4614c34676dc7b6bd54f7cdb25e990d058",
+      "candidateBlob": true
+    },
+    {
+      "path": "harness/specs/guides/versegit-concurrency/implementation-roadmap-and-acceptance.md",
+      "sha256": "9842a71e78e62dd33b7251de5eddf3561c074abbb5360035d17b67e26b31eac0",
+      "candidateBlob": true
+    },
+    {
+      "path": "harness/specs/guides/versegit-concurrency/verseshell-and-behavior-observability.md",
+      "sha256": "8ac7e77e40e175cec7392aa9b35934352aa620ea3a0f133846fc66003e54cee2",
+      "candidateBlob": true
+    },
+    {
+      "path": "harness/specs/rules/versegit-validation-layer-extension-boundary.md",
+      "sha256": "e5ff2ee1d166d138b0faf49cd97f15005251deedf4af1e02f2cf50dbf6314b1b",
+      "candidateBlob": true
+    },
+    {
+      "path": "harness/specs/scenarios/versegit-validation-layer-extension.md",
+      "sha256": "01c63ddb2f51bffb15d25a60023fe94ef51310342655501fa55e3de860345db3",
+      "candidateBlob": true
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/planning-contract.json",
+      "sha256": "a5087a435e248b58a3ccf038f8954ac1119bbdd0f41b7c08cb202944e45cf595",
+      "candidateBlob": true
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/node-acceptance-matrix.json",
+      "sha256": "a4fb15089133cd0835edb39419ef2827734ac38ef1f5474c9425890a8f287c8d",
+      "candidateBlob": true
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/execution-receipt-contract.json",
+      "sha256": "05984a357c5dc00210f16661694a180212db1452d9a674960b9515cf51251499",
+      "candidateBlob": true
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/initial-review-fail.md",
+      "sha256": "f6160e11e040227c8eeeb6a7c72b82c5a19e5026d4e77d6d7116cde8abcb8a1f",
+      "candidateBlob": false
+    },
+    {
+      "path": "harness/specs/tasks/versegit-wp7-host-vertical-slice.md",
+      "sha256": "186de693ae26e048a9ce3bc715452c8d021b09d630d9a26c315da2a33d40545f",
+      "candidateBlob": true
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/report.json",
+      "sha256": "44617536f879941ab082a308f738984c2a3cb0f88cf57f5da24a93f011d6698d",
+      "candidateBlob": true
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/SHA256SUMS",
+      "sha256": "2782ff13f9c8b87c5687ffcdf6dee0665a4db041cad64a7da17c7b469ba12da8",
+      "candidateBlob": true
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/evidence/manifest.json",
+      "sha256": "18ab46e1e8f453fde76b472950e39a649cdef0232ed34eb3a50c4be0f5c99b1d",
+      "candidateBlob": true
+    },
+    {
+      "path": "scripts/versegit-wp7-host-vertical.mts",
+      "sha256": "75bbf89eee74d145403e630ada0cc2387581df46191081eb8238e5105a9dc15f",
+      "candidateBlob": true
+    },
+    {
+      "path": "scripts/verify-versegit-wp7.mts",
+      "sha256": "2b61a652512e56ab3a84d5b67e126d56bed4226d20205bf76d159c30ecf75b71",
+      "candidateBlob": true
+    },
+    {
+      "path": "electron/services/versegit-receipt-bridge.ts",
+      "sha256": "af8aebd0175959d71043dcb51ab90077f383cb4c2273a9aba13569a864751ead",
+      "candidateBlob": true
+    },
+    {
+      "path": "electron/services/versegit-receipt-evidence.ts",
+      "sha256": "cfb359abf5da6b03ae57e6ceada58bc189f9c4d3b55a61228b2dae4f1627cfd8",
+      "candidateBlob": true
+    },
+    {
+      "path": "electron/services/versegit-module.ts",
+      "sha256": "15f36a1202e2b09cd7d0fc6f6904acaa4d38728b27adc172a02620bae500e8fe",
+      "candidateBlob": true
+    },
+    {
+      "path": "electron/services/versegit-observation.ts",
+      "sha256": "120fc546cfed2e923309132b3c7667183b3393795b9aaed22d1ad5464a229ba0",
+      "candidateBlob": true
+    },
+    {
+      "path": "electron/services/versegit-behavior-coverage.ts",
+      "sha256": "f0ec6d39f25311de4ac2ef55f22d708766503b5a9b7cb536d5ad08e3ce04090f",
+      "candidateBlob": true
+    },
+    {
+      "path": "tests/unit/versegit-wp7-host-vertical.test.ts",
+      "sha256": "7edc6fc8ff12cb4bacd28b63931aaf811f8b330e5a368336152e3812abbab0a5",
+      "candidateBlob": true
+    },
+    {
+      "path": "tests/unit/versegit-receipt-authority.test.ts",
+      "sha256": "24854274e402770493d40afcc55a0996d8d8326653d331d6c78797a181c7c9b7",
+      "candidateBlob": true
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/primary-reviewer-provider-failure.md",
+      "sha256": "36a93158819c3b9dde529551290a920244bb516f0fbdddcaa82d849e99152cae",
+      "candidateBlob": false
+    }
+  ],
+  "fixture": "harness/specs/fixtures/versegit-planning-correction/wp8-final-review-fixture.json",
+  "fixtureDigest": "9b1cccb617d5b1ab2c95eeda601d4f014d340bbcd51a8be8950e32656188a0c4",
+  "rawResponsePath": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/review-response.md",
+  "rawResponseDigest": "d36c181f54036e9c3eeb862aa22c87b9fc7eff5dd8aa8b2db7b551e1f75a2b2f",
+  "primaryReviewer": {
+    "model": "ccs-agentrouter/gpt-6.1-sol",
+    "providerFailure": true,
+    "httpStatus": 403,
+    "cause": "user quota is not enough",
+    "requestId": "202610220521579906657557pjxka8EnP5nd",
+    "evidencePath": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/primary-reviewer-provider-failure.md",
+    "fallbackAttempts": [
+      {
+        "model": "ccs-any/gpt-6.1-sol",
+        "outcome": "provider_error",
+        "cause": "high-demand temporary error"
+      },
+      {
+        "model": "ccs-hub/gpt-6.1-sol",
+        "outcome": "completed",
+        "verdict": "PASS_WITH_GAPS"
+      }
+    ]
+  },
+  "digest": "b2ed442eb7d277b76c3d4d3dbd33cb25a942a2bab31664bbb2d1fec20c66e14e"
+}

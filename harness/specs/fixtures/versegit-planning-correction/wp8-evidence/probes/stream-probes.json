@@ -1,0 +1,36 @@
+[
+  {
+    "name": "stdout-raw-vs-observation",
+    "result": {
+      "ok": false,
+      "issues": [
+        "stdout artifact bytes differ from observation"
+      ],
+      "observationDigest": "930b1c839cb4a847384cd204853bae7616759b7093090a47e623dc888fa7ea63",
+      "artifactDigests": [
+        "0ac4b635b848ef1a2eeab09fc47c4498e5a09bd12559c6ecc06f4b8e936509b7",
+        "8a8ca81c41f862458c20b46472f92269b902b14a2b5aa353725019ed321b03c3",
+        "930b1c839cb4a847384cd204853bae7616759b7093090a47e623dc888fa7ea63",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "4383a9f6383ee04ab0c4cec7100c8b9b0b3f1c8d768458eab9b4ec05751d9e66"
+      ]
+    }
+  },
+  {
+    "name": "stderr-raw-vs-observation",
+    "result": {
+      "ok": false,
+      "issues": [
+        "stderr artifact bytes differ from observation"
+      ],
+      "observationDigest": "930b1c839cb4a847384cd204853bae7616759b7093090a47e623dc888fa7ea63",
+      "artifactDigests": [
+        "0ac4b635b848ef1a2eeab09fc47c4498e5a09bd12559c6ecc06f4b8e936509b7",
+        "51aaf25b20189cd05fcd4de035c0d9a698dba625d1504ec66ca79ab149061907",
+        "8a8ca81c41f862458c20b46472f92269b902b14a2b5aa353725019ed321b03c3",
+        "930b1c839cb4a847384cd204853bae7616759b7093090a47e623dc888fa7ea63",
+        "440d64508c491eca69eb6e31bb73714628cb23c40d9826010e9520d9a8f1c4d5"
+      ]
+    }
+  }
+]

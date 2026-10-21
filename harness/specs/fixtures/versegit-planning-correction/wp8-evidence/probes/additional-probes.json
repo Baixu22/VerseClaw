@@ -1,0 +1,69 @@
+[
+  {
+    "name": "coherent-pid-full-report",
+    "expected": "rejected",
+    "result": {
+      "ok": false,
+      "issues": [
+        "host evidence authority rejected continuation receipt: cleanup managed PIDs do not contain the receipt observation PID; owned PID checks do not contain the receipt observation PID; during-run PIDs do not contain the receipt observation PID"
+      ]
+    },
+    "originalObservationPid": 28904,
+    "cleanupPids": [
+      900001,
+      900002
+    ]
+  },
+  {
+    "name": "raw-observation-vs-wrapper",
+    "expected": "rejected",
+    "rawArtifactExitCode": 7,
+    "wrapperExitCode": 0,
+    "result": {
+      "ok": false,
+      "issues": [
+        "observation artifact bytes differ from host wrapper"
+      ],
+      "observationDigest": "4f1079eec8061916b588effdba06c4ca77788498befde5fb284198cd9bb8dba4",
+      "artifactDigests": [
+        "0ac4b635b848ef1a2eeab09fc47c4498e5a09bd12559c6ecc06f4b8e936509b7",
+        "51aaf25b20189cd05fcd4de035c0d9a698dba625d1504ec66ca79ab149061907",
+        "8a8ca81c41f862458c20b46472f92269b902b14a2b5aa353725019ed321b03c3",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "4f1079eec8061916b588effdba06c4ca77788498befde5fb284198cd9bb8dba4"
+      ]
+    },
+    "received": {
+      "status": "rejected_by_policy",
+      "reason": "host_evidence_authority_rejected",
+      "issues": [
+        "observation artifact bytes differ from host wrapper"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "verdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    }
+  }
+]

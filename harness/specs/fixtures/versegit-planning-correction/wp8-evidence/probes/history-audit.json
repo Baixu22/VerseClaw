@@ -1,0 +1,22 @@
+{
+  "manifestSha256": "9e7e4e77c3f79749cea3f207d1b45bd7afeccfa2ecd01715f80029cce5260c6e",
+  "historicalDrift": [
+    {
+      "path": "scripts/validate-versegit-planning-correction.mjs",
+      "historicalSha256": "d54e5fd98d89df8711c66e7212fc599387cb579556a4018107cc6209ae69bfb2",
+      "currentSha256": "55071568d7276212173ee7beec4f5d5208641065e9869e2158c3c0a7614798c8"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/execution-receipt-contract.json",
+      "historicalSha256": "c3bcf81deb2f57dbe6be35b7c3ab27d59c2f5b456c4a2089e65b5fd3d128a388",
+      "currentSha256": "05984a357c5dc00210f16661694a180212db1452d9a674960b9515cf51251499"
+    },
+    {
+      "path": "harness/specs/tasks/versegit-module-implementation-contracts.md",
+      "historicalSha256": "b35f1d14f9f8254d77bede468d8ce9da00bd974925b384a6e5c370d9a80f6776",
+      "currentSha256": "6f7e1dd353ea3029aa15f2ab61b6715dc46f543939c48ab37b73ec2c3b07d3cd"
+    }
+  ],
+  "finalReviewPreviouslyCompleted": false,
+  "historyRewritten": false
+}

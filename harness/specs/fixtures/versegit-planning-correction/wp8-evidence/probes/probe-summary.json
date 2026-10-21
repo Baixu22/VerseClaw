@@ -1,0 +1,158 @@
+[
+  {
+    "name": "live-receipt-without-authority",
+    "rejected": true,
+    "issues": [
+      "host_evidence_authority_missing"
+    ]
+  },
+  {
+    "name": "plan-swap-observation-reuse",
+    "rejected": true,
+    "issues": [
+      "observation planDigest differs from plan",
+      "observation argvDigest differs from plan",
+      "observation executionInputDigest differs from plan",
+      "receipt planDigest differs from observation binding",
+      "receipt argvDigest differs from observation binding",
+      "receipt executionInputDigest differs from observation binding"
+    ]
+  },
+  {
+    "name": "candidate-input-and-id-mismatch",
+    "rejected": true,
+    "issues": [
+      "candidate input digest differs from plan",
+      "candidate input manifest does not reproduce candidateId"
+    ]
+  },
+  {
+    "name": "cleanup-worktree-contradiction",
+    "rejected": true,
+    "issues": [
+      "cleanup retained worktrees"
+    ]
+  },
+  {
+    "name": "cleanup-temp-contradiction",
+    "rejected": true,
+    "issues": [
+      "cleanup retained the temporary root"
+    ]
+  },
+  {
+    "name": "cleanup-deletion-contradiction",
+    "rejected": true,
+    "issues": [
+      "cleanup retained deletion errors"
+    ]
+  },
+  {
+    "name": "owned-pid-replaced",
+    "rejected": true,
+    "issues": [
+      "owned PID exit-check identities differ from managed PIDs"
+    ]
+  },
+  {
+    "name": "managed-pid-duplicated",
+    "rejected": true,
+    "issues": [
+      "owned cleanup PID vector contains duplicates",
+      "owned PID exit-check vector is incomplete",
+      "owned PID exit-check identities differ from managed PIDs",
+      "new-process PID vector differs from managed PIDs"
+    ]
+  },
+  {
+    "name": "owned-pid-duplicated",
+    "rejected": true,
+    "issues": [
+      "owned PID exit-check vector is incomplete",
+      "owned PID exit-check identities are duplicated",
+      "owned PID exit-check identities differ from managed PIDs"
+    ]
+  },
+  {
+    "name": "owned-pid-missing",
+    "rejected": true,
+    "issues": [
+      "owned PID exit-check vector is incomplete",
+      "owned PID exit-check identities differ from managed PIDs",
+      "owned PID checks do not contain the receipt observation PID"
+    ]
+  },
+  {
+    "name": "nested-survivor",
+    "rejected": true,
+    "issues": [
+      "owned PID checks retained a survivor",
+      "nested cleanup retained process survivors"
+    ]
+  },
+  {
+    "name": "coherent-managed-owned-pid-replacement",
+    "rejected": true,
+    "issues": [
+      "cleanup managed PIDs do not contain the receipt observation PID",
+      "owned PID checks do not contain the receipt observation PID",
+      "during-run PIDs do not contain the receipt observation PID"
+    ]
+  },
+  {
+    "name": "report-argv-vs-host-command",
+    "rejected": true,
+    "issues": [
+      "provider command argv evidence mismatch: vg-init"
+    ]
+  },
+  {
+    "name": "candidate-report-input-digest",
+    "rejected": true,
+    "issues": [
+      "candidate input digest is not reproducible",
+      "candidate ID does not match its retained manifest",
+      "candidate report differs from the frozen input manifest",
+      "primary plan input digest mismatch",
+      "primary plan argv must bind candidate input digest",
+      "continuation plan input digest mismatch",
+      "continuation plan argv must bind candidate input digest",
+      "normalized candidate input digest mismatch"
+    ]
+  },
+  {
+    "name": "wrong-receipt-rejection-after-continuation",
+    "rejected": true,
+    "issues": [
+      "failure rejection did not precede continuation"
+    ]
+  },
+  {
+    "name": "coherent-pid-full-report",
+    "rejected": true,
+    "issues": [
+      "host evidence authority rejected continuation receipt: cleanup managed PIDs do not contain the receipt observation PID; owned PID checks do not contain the receipt observation PID; during-run PIDs do not contain the receipt observation PID"
+    ]
+  },
+  {
+    "name": "raw-observation-vs-wrapper",
+    "rejected": true,
+    "issues": [
+      "observation artifact bytes differ from host wrapper"
+    ]
+  },
+  {
+    "name": "stdout-raw-vs-observation",
+    "rejected": true,
+    "issues": [
+      "stdout artifact bytes differ from observation"
+    ]
+  },
+  {
+    "name": "stderr-raw-vs-observation",
+    "rejected": true,
+    "issues": [
+      "stderr artifact bytes differ from observation"
+    ]
+  }
+]
