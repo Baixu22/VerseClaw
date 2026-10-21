@@ -1,0 +1,220 @@
+{
+  "reportSchema": "clawx.versegit.mc4-adapter/v1",
+  "generated_at": "2026-10-21T09:52:57.934Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0477",
+  "adapter_module": "electron/services/versegit-module.ts",
+  "adapter_source_digest": "90f3c6aa22c533da739a717f0a3315e48009e8d49dc715fa4e8d9ace8b722481",
+  "adapter_imports_vg_internals": false,
+  "forbidden_import_specifiers": [],
+  "additional_runtime_dependency": null,
+  "second_executor": false,
+  "contract_conformance": {
+    "ok": true,
+    "issues": []
+  },
+  "provenance": {
+    "node": "TF-0477",
+    "source_commit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "binary_sha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+    "contract_digest": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749",
+    "golden_bundle_digest": "cffdbbeecff8eba5021c3b15208e148d839f41dc8f8e8055efdf3ad49fe36f7b",
+    "sidecar_package_digest": "9c57e5d46ad4c18c086584600eca5ecd0de687b8721727d15d1c548e0d7e5f0b",
+    "contract_matches_wp0": true,
+    "golden_matches_wp0": true,
+    "sidecar_matches_wp0": true
+  },
+  "differential": {
+    "method": "raw sidecar reference vs shipped adapter candidate, compared under the MC5 semantic projection",
+    "adapter_run_count": 2,
+    "seams": [
+      {
+        "seam": "identity.version",
+        "argv": [
+          "--version"
+        ],
+        "reference_exit": 0,
+        "adapter_status": "observed",
+        "identical": true,
+        "reference_digest": "23aaf84be5a507c3ef307d03b72a4e3f059def2878748009a1c8993d9c2a84d7",
+        "candidate_digest": "23aaf84be5a507c3ef307d03b72a4e3f059def2878748009a1c8993d9c2a84d7",
+        "projection": {
+          "volatile_keys": []
+        },
+        "behavior_change_record": null
+      },
+      {
+        "seam": "identity.capabilities",
+        "argv": [
+          "capabilities",
+          "--json"
+        ],
+        "reference_exit": 0,
+        "adapter_status": "observed",
+        "identical": true,
+        "reference_digest": "3393aa040b24d1856c8368e53ff11625bde46379b773231a9c86c9029d55d71b",
+        "candidate_digest": "3393aa040b24d1856c8368e53ff11625bde46379b773231a9c86c9029d55d71b",
+        "projection": {
+          "volatile_keys": []
+        },
+        "behavior_change_record": null
+      }
+    ],
+    "identical_count": 2,
+    "seam_count": 2,
+    "behavior_changes_declared": 0
+  },
+  "default_off_regression": {
+    "m0_attach": {
+      "ok": true,
+      "status": "not_applicable",
+      "attached": false,
+      "process_calls": 0
+    },
+    "m0_report": {
+      "schema": "clawx.versegit.module-report/v1",
+      "mode": "M0",
+      "status": "not_applicable",
+      "processes_started": 0,
+      "workspace_write": false,
+      "harness_verdict": "host",
+      "land": "host-git",
+      "host_verdict": "unchanged"
+    }
+  },
+  "authority_regression": {
+    "ungranted_promotion": {
+      "status": "rejected_by_policy",
+      "ok": false
+    },
+    "mismatched_grant": {
+      "status": "rejected_by_policy",
+      "ok": false
+    },
+    "granted_read_only": {
+      "status": "partial",
+      "ok": true
+    },
+    "reason_label_as_status": {
+      "ok": false,
+      "issues": [
+        "reason label used as top-level status"
+      ]
+    },
+    "authority_claim_in_report": {
+      "ok": false,
+      "issues": [
+        "report must not carry authority field admitted",
+        "report may not claim harness verdict, execution, or Git landing",
+        "report must leave the host verdict unchanged",
+        "report contract binding is missing or invalid",
+        "report allowed surface does not match M3"
+      ]
+    },
+    "shell_string_plan": {
+      "ok": false,
+      "issues": [
+        "plan must not carry a shell string"
+      ]
+    },
+    "effectful_auto_replay": {
+      "ok": false,
+      "issues": [
+        "effectful command must never auto-replay"
+      ]
+    },
+    "land_command": {
+      "status": "rejected_by_policy",
+      "reason": "unauthorized_mode",
+      "host_verdict": "unchanged"
+    },
+    "admit_command": {
+      "status": "rejected_by_policy",
+      "reason": "unauthorized_mode",
+      "host_verdict": "unchanged"
+    },
+    "conflicts_in_m1": {
+      "status": "rejected_by_policy",
+      "reason": "unauthorized_mode",
+      "host_verdict": "unchanged"
+    },
+    "capabilities_in_m1": null,
+    "command_in_m0": {
+      "status": "rejected_by_policy",
+      "reason": "unauthorized_mode",
+      "host_verdict": "unchanged"
+    },
+    "deferred_commands_denied": {
+      "doctor": {
+        "status": "rejected_by_policy",
+        "reason": "unauthorized_mode",
+        "host_verdict": "unchanged"
+      },
+      "session": {
+        "status": "rejected_by_policy",
+        "reason": "unauthorized_mode",
+        "host_verdict": "unchanged"
+      },
+      "verdict": {
+        "status": "rejected_by_policy",
+        "reason": "unauthorized_mode",
+        "host_verdict": "unchanged"
+      },
+      "conflicts": {
+        "status": "rejected_by_policy",
+        "reason": "unauthorized_mode",
+        "host_verdict": "unchanged"
+      },
+      "report": {
+        "status": "rejected_by_policy",
+        "reason": "unauthorized_mode",
+        "host_verdict": "unchanged"
+      }
+    },
+    "read_without_attach": {
+      "status": "unavailable",
+      "reason": "not_attached",
+      "process_calls": 0
+    },
+    "read_after_detach": {
+      "status": "unavailable",
+      "reason": "not_attached"
+    }
+  },
+  "forbidden_command_surface": [
+    "land",
+    "admit",
+    "declare_intent",
+    "git",
+    "gerrit",
+    "export"
+  ],
+  "read_only_command_surface": [
+    "capabilities"
+  ],
+  "deferred_command_surface": [
+    "doctor",
+    "session",
+    "verdict",
+    "conflicts",
+    "report"
+  ],
+  "status": "equivalent",
+  "boundaries": {
+    "vg_source_tree_copied": false,
+    "vg_history_copied": false,
+    "vg_task_forest_copied": false,
+    "vg_build_outputs_copied": false,
+    "vg_private_evidence_copied": false,
+    "provider_source_modified": false,
+    "host_ipc_channel_added": false,
+    "renderer_can_call_adapter": false,
+    "profile_added_to_fast_or_comms": false,
+    "default_on": false,
+    "land_or_admit_invoked": false,
+    "host_worktree_deleted": false,
+    "note": "This node proves the shipped adapter matches the sidecar under the declared projection and refuses every escalation path. Host routes, the harness profile and the VerseShell receipt bridge belong to WP1-WP3 and are not claimed here."
+  },
+  "digest": "3ab884261a8afc06c6a153e3ec77e60ce9c53701b0b4991cb2a556aaaf53633e"
+}

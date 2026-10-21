@@ -14,6 +14,8 @@ touchedAreas:
   - harness/specs/tasks/versegit-mc3-sidecar-delivery.md
   - harness/specs/tasks/versegit-wp0-module-contract.md
   - harness/specs/tasks/versegit-mc5-differential-gate.md
+  - harness/specs/tasks/versegit-mc4-module-adapter.md
+  - electron/services/versegit-module.ts
   - scripts/versegit-mc1-contract.mjs
   - scripts/verify-versegit-mc1.mjs
   - scripts/versegit-mc2-fingerprint.mjs
@@ -24,11 +26,14 @@ touchedAreas:
   - scripts/verify-versegit-wp0.mjs
   - scripts/versegit-mc5-differential.mjs
   - scripts/verify-versegit-mc5.mjs
+  - scripts/versegit-mc4-adapter.mjs
+  - scripts/verify-versegit-mc4.mjs
   - tests/unit/versegit-mc1-contract.test.ts
   - tests/unit/versegit-mc2-fingerprint.test.ts
   - tests/unit/versegit-mc3-delivery.test.ts
   - tests/unit/versegit-wp0-contract.test.ts
   - tests/unit/versegit-mc5-differential.test.ts
+  - tests/unit/versegit-mc4-adapter.test.ts
   - harness/specs/guides/versegit-concurrency/**
   - harness/specs/fixtures/versegit-planning-correction/**
   - scripts/validate-versegit-planning-correction.mjs
@@ -58,7 +63,7 @@ docs:
 
 # VerseGit module implementation node contracts
 
-This spec is a contract index, not an implementation task. It becomes actionable only after TF-0481 closes.
+This spec is a contract index, not an implementation task. TF-0481 is closed; each execution node is authorized only by its own fixture, artifact, verifier and acceptance evidence.
 
 ## TF-0465 — global goal
 

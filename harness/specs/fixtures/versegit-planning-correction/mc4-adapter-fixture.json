@@ -2,9 +2,10 @@
   "schema": "clawx.versegit.node-fixture/v1",
   "nodeId": "TF-0477",
   "role": "MC4",
-  "fixturePurpose": "Frozen planning input for MC4; replace with execution fixture in the implementation node.",
+  "fixturePurpose": "Execution input for MC4: import the shipped host adapter, run the frozen sidecar over its fixed identity seams, and compare raw reference output with adapter publication while re-firing authority and default-off refusals.",
   "expectedOutputs": [
+    "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
     "artifacts/versegit/mc4/adapter-report.json"
   ],
-  "oracle": "One-seam adapter differential passes"
+  "oracle": "Two actual adapter seams are semantically equal to the frozen sidecar reference; M0 is inert; every authority escalation, shell plan and effectful replay is refused with host verdict unchanged."
 }
