@@ -37,7 +37,7 @@ export type VerseGitModuleOptions = {
   binaryPath: string;
   cwd?: string;
   contractDigest: string;
-  expectedCapabilitiesDigest?: string;
+  expectedCapabilitiesDigest: string;
   timeoutMs?: number;
   run?: (argv: readonly string[], timeoutMs: number) => CommandResult;
 };
@@ -67,7 +67,7 @@ export type VerseGitReportInput = {
   facts?: { conflicts?: unknown[]; warnings?: unknown[]; unknowns?: unknown[] };
   coverage: Record<string, unknown>;
   result: { status: TopLevelStatus; reasons?: ReasonStatus[] };
-  verification?: Record<string, unknown>;
+  verification?: { status?: string; executor?: string; [key: string]: unknown };
   candidate?: Record<string, unknown> | null;
   timings?: Record<string, number>;
   digests?: Record<string, string>;
@@ -131,7 +131,12 @@ export function classifyFailure(input: {
         return 'degraded';
     }
   })();
-  return { status, reason: input.case, host_verdict: 'unchanged' };
+  const reason = input.case === 'missing_receipt'
+    ? 'unmeasured'
+    : input.case === 'partial_coverage'
+      ? 'report_incomplete'
+      : input.case;
+  return { status, reason, host_verdict: 'unchanged' };
 }
 
 export function isTopLevelStatus(value: unknown): value is TopLevelStatus {
@@ -179,6 +184,7 @@ type ValidationReport = Record<string, unknown> & {
     workspace_write?: unknown;
   } | null;
   usage?: { processes_started?: unknown; state_reads?: unknown } | null;
+  verification?: { executor?: unknown; [key: string]: unknown } | null;
   digests?: Record<string, unknown> | null;
 };
 
@@ -195,6 +201,12 @@ type ValidationCommand = {
   effect?: unknown;
   retry?: unknown;
   forbidden?: unknown;
+  shell?: unknown;
+  command?: unknown;
+  land?: unknown;
+  admit?: unknown;
+  declare_intent?: unknown;
+  harnessVerdict?: unknown;
 };
 
 /**
@@ -236,9 +248,9 @@ export function validateModuleReport(report: unknown): { ok: boolean; issues: st
     issues.push('report contract digest may not be overridden');
   }
   if (!value.identity || !isOpaqueId(value.identity.repoId)
-    || !Array.isArray(value.identity.worktreeIds) || !value.identity.worktreeIds.every(isOpaqueId)
-    || !Array.isArray(value.identity.agentSessionIds) || !value.identity.agentSessionIds.every(isOpaqueId)
-    || !Array.isArray(value.identity.vgSessionIds) || !value.identity.vgSessionIds.every(isOpaqueId)
+    || !Array.isArray(value.identity.worktreeIds) || !value.identity.worktreeIds.length || !value.identity.worktreeIds.every(isOpaqueId)
+    || !Array.isArray(value.identity.agentSessionIds) || !value.identity.agentSessionIds.length || !value.identity.agentSessionIds.every(isOpaqueId)
+    || !Array.isArray(value.identity.vgSessionIds) || !value.identity.vgSessionIds.length || !value.identity.vgSessionIds.every(isOpaqueId)
     || !Number.isInteger(value.identity.epoch) || Number(value.identity.epoch) < 1) {
     issues.push('report identity vector is missing or invalid');
   }
@@ -253,7 +265,20 @@ export function validateModuleReport(report: unknown): { ok: boolean; issues: st
   if (isRecord(value.repository) && value.identity && value.repository.repoId !== value.identity.repoId) {
     issues.push('report repository and identity repoId must match');
   }
-  if (!Array.isArray(value.sessions)) issues.push('report sessions must be an array');
+  if (!Array.isArray(value.sessions) || value.sessions.length === 0) issues.push('report sessions must be a non-empty array');
+  if (Array.isArray(value.sessions) && value.identity) {
+    for (const session of value.sessions) {
+      if (!isRecord(session)
+        || !Array.isArray(value.identity.worktreeIds) || !value.identity.worktreeIds.includes(session.worktreeId)
+        || !Array.isArray(value.identity.agentSessionIds) || !value.identity.agentSessionIds.includes(session.agentSessionId)
+        || !Array.isArray(value.identity.vgSessionIds) || !value.identity.vgSessionIds.includes(session.vgSessionId)
+        || session.epoch !== value.identity.epoch) {
+        issues.push('report session identity does not match the report identity vector');
+        break;
+      }
+    }
+  }
+  if (!value.verification || value.verification.executor !== 'verseshell') issues.push('report verification executor must remain verseshell');
   if (!value.facts || !Array.isArray(value.facts.conflicts) || !Array.isArray(value.facts.warnings) || !Array.isArray(value.facts.unknowns)) {
     issues.push('report facts must carry conflicts/warnings/unknowns arrays');
   }
@@ -285,11 +310,22 @@ export function validateModuleReport(report: unknown): { ok: boolean; issues: st
 const COMMAND_EFFECTS = ['none', 'read', 'write', 'process', 'network', 'execute'] as const;
 const COMMAND_RETRIES = ['never', 'once'] as const;
 const SHELL_EXECUTABLES = ['powershell', 'pwsh', 'cmd', 'bash', 'sh', 'zsh', 'fish'] as const;
+const WRAPPER_EXECUTABLES = ['env', 'xargs', 'nice', 'timeout'] as const;
 const PLAN_FORBIDDEN_FIELDS = ['land', 'admit', 'declare_intent', 'shell', 'command', 'harnessVerdict'] as const;
 
 function executableName(value: string): string {
-  const base = value.replaceAll('\\', '/').split('/').pop() ?? '';
+  const base = value.trim().replaceAll('\\', '/').split('/').pop() ?? '';
   return base.toLowerCase().replace(/\.(?:exe|cmd|bat|com)$/u, '');
+}
+
+function vgSubcommand(argv: readonly string[]): string | null {
+  for (let index = 1; index < argv.length; index += 1) {
+    const token = argv[index];
+    if (token === '--') return argv[index + 1]?.toLowerCase() ?? null;
+    if (token.startsWith('-')) continue;
+    return token.toLowerCase();
+  }
+  return null;
 }
 
 function validOwner(value: unknown): boolean {
@@ -316,7 +352,9 @@ export function validateCommandPlan(plan: unknown): { ok: boolean; issues: strin
   if (!isOpaqueId(value.runId)) issues.push('plan runId must be a non-empty opaque identifier');
   if (!isOpaqueId(value.candidateId)) issues.push('plan candidateId must be a non-empty opaque identifier');
   if (!validOwner(value.owner)) issues.push('plan owner must be an opaque id or a structured owner');
-  if (Array.isArray(value.forbidden) && value.forbidden.length > 0) issues.push('plan must not declare extra authority');
+  if (value.forbidden !== undefined && (!Array.isArray(value.forbidden) || value.forbidden.length > 0)) {
+    issues.push('plan forbidden field must be absent or an empty array');
+  }
   const commands: unknown[] | null = Array.isArray(value.commands) ? value.commands as unknown[] : null;
   if (!commands || commands.length === 0) { issues.push('plan commands must be a non-empty array'); return { ok: false, issues }; }
   for (const rawCommand of commands) {
@@ -329,17 +367,26 @@ export function validateCommandPlan(plan: unknown): { ok: boolean; issues: strin
     const argv = command.argv as string[];
     const head = executableName(argv[0]);
     if ((FORBIDDEN_COMMANDS as readonly string[]).includes(head)) issues.push(`plan command ${head} is forbidden`);
-    if (head === 'vg' && argv[1] && (FORBIDDEN_COMMANDS as readonly string[]).includes(argv[1].toLowerCase())) {
-      issues.push(`plan command vg ${argv[1]} is forbidden`);
+    if (head === 'vg') {
+      const forbiddenSubcommand = argv.slice(1).map((token) => token.toLowerCase())
+        .find((token) => (FORBIDDEN_COMMANDS as readonly string[]).includes(token));
+      const subcommand = vgSubcommand(argv);
+      if (!subcommand) issues.push('plan command vg must declare a subcommand');
+      else if ((FORBIDDEN_COMMANDS as readonly string[]).includes(subcommand) || forbiddenSubcommand) {
+        issues.push(`plan command vg ${forbiddenSubcommand ?? subcommand} is forbidden`);
+      }
     }
-    if ((SHELL_EXECUTABLES as readonly string[]).includes(head)) {
-      issues.push(`plan command must not invoke shell interpreter ${head}`);
+    if ((SHELL_EXECUTABLES as readonly string[]).includes(head) || (WRAPPER_EXECUTABLES as readonly string[]).includes(head)) {
+      issues.push(`plan command must not invoke shell or wrapper ${head}`);
+    }
+    for (const field of PLAN_FORBIDDEN_FIELDS) {
+      if (command[field] !== undefined) issues.push(`plan command must not carry ${field}`);
     }
     const effect = typeof command.effect === 'string' ? command.effect : null;
     if (!effect || !(COMMAND_EFFECTS as readonly string[]).includes(effect)) {
       issues.push(`plan command effect ${String(command.effect)} is undeclared`);
     }
-    if (command.retry !== undefined && !(COMMAND_RETRIES as readonly string[]).includes(String(command.retry))) {
+    if (command.retry !== undefined && (typeof command.retry !== 'string' || !(COMMAND_RETRIES as readonly string[]).includes(command.retry))) {
       issues.push(`plan command retry ${String(command.retry)} is undeclared`);
     }
     if (effect !== 'none' && effect !== 'read' && command.retry !== 'never') {
@@ -385,7 +432,7 @@ function readFailure(error: unknown): Pick<EvidenceRead<never>, 'status' | 'reas
 
 export class VerseGitModule {
   private readonly run: NonNullable<VerseGitModuleOptions['run']>;
-  private readonly expectedCapabilitiesDigest: string | undefined;
+  private readonly expectedCapabilitiesDigest: string;
   private attached = false;
   private currentMode: VerseGitMode = 'M0';
   private processesStarted = 0;
@@ -431,9 +478,14 @@ export class VerseGitModule {
   }
 
   private invoke(argv: readonly string[]): CommandResult {
-    const result = this.run(argv, this.timeoutMs);
-    this.processesStarted += 1;
-    return result;
+    try {
+      const result = this.run(argv, this.timeoutMs);
+      this.processesStarted += 1;
+      return result;
+    } catch (error) {
+      if ((error as { code?: string } | null)?.code !== 'ENOENT') this.processesStarted += 1;
+      throw error;
+    }
   }
 
   /**
@@ -453,6 +505,7 @@ export class VerseGitModule {
     }
     const issues: string[] = [];
     if (!isSha256(this.contractDigest)) issues.push('contract digest is not a SHA-256 value');
+    if (!isSha256(this.expectedCapabilitiesDigest)) issues.push('expected capabilities digest is missing or invalid');
     if (!grant || typeof grant.authorizationId !== 'string' || grant.authorizationId.trim() === '') {
       issues.push('missing authorization for mode promotion');
     }
@@ -470,6 +523,8 @@ export class VerseGitModule {
   detach(): void {
     this.attached = false;
     this.currentMode = 'M0';
+    this.processesStarted = 0;
+    this.stateReads = 0;
   }
 
   /**
@@ -523,6 +578,7 @@ export class VerseGitModule {
         host_verdict: 'unchanged',
       };
     }
+    this.stateReads += 1;
     let parsed: unknown;
     try {
       parsed = JSON.parse(result.stdout);
@@ -544,17 +600,14 @@ export class VerseGitModule {
     if (safety?.default_enable !== false) issues.push('capabilities claim default-enable, which the product lock forbids');
     const verdict = isRecord(document.verdict) ? document.verdict : null;
     if (verdict?.single_green_light !== false) issues.push('capabilities claim single-green-light, which the contract forbids');
-    if (this.expectedCapabilitiesDigest !== undefined) {
-      if (!isSha256(this.expectedCapabilitiesDigest)) {
-        issues.push('expected capabilities digest is not a SHA-256 value');
-      } else if (sha256(JSON.stringify(document)) !== this.expectedCapabilitiesDigest) {
-        issues.push('capabilities digest differs from the host-frozen identity');
-      }
+    if (!isSha256(this.expectedCapabilitiesDigest)) {
+      issues.push('expected capabilities digest is not a SHA-256 value');
+    } else if (sha256(JSON.stringify(document)) !== this.expectedCapabilitiesDigest) {
+      issues.push('capabilities digest differs from the host-frozen identity');
     }
     if (issues.length > 0) {
       return { status: 'rejected_by_policy', reason: 'schema_mismatch', issues, host_verdict: 'unchanged' };
     }
-    this.stateReads += 1;
     return { status: 'observed', document, issues, host_verdict: 'unchanged' };
   }
 
@@ -564,6 +617,9 @@ export class VerseGitModule {
    * green VG fact can never be read as a harness pass.
    */
   buildReport(input: VerseGitReportInput): Record<string, unknown> {
+    if (input.facts === null) {
+      throw new Error('report facts may not be null');
+    }
     if (input.mode !== this.currentMode) {
       throw new Error(`report mode ${input.mode} does not match effective mode ${this.currentMode}`);
     }
@@ -572,6 +628,9 @@ export class VerseGitModule {
     }
     if (input.identity.repoId !== input.repository.repoId) {
       throw new Error('report repository and identity repoId must match');
+    }
+    if (input.verification?.executor !== undefined && input.verification.executor !== 'verseshell') {
+      throw new Error('report verification executor is host-owned and must be verseshell');
     }
     const authority = MODE_AUTHORITY[input.mode];
     const facts = {
@@ -591,7 +650,7 @@ export class VerseGitModule {
       coverage: input.coverage,
       facts,
       candidate: input.candidate ?? null,
-      verification: input.verification ?? { status: 'not_run', executor: 'verseshell' },
+      verification: { status: 'not_run', ...(input.verification ?? {}), executor: 'verseshell' },
       result: { status: input.result.status, reasons: input.result.reasons ?? [] },
       authority: { harnessVerdict: 'host', execution: 'verseshell', land: 'host-git' },
       host_verdict: 'unchanged',
@@ -633,6 +692,12 @@ export class VerseGitModule {
 
   static get deferredCommands(): readonly string[] {
     return DEFERRED_COMMANDS;
+  }
+
+  static get modeAuthority(): Record<VerseGitMode, { processes: number; stateRead: boolean; domainWrite: boolean; execution: 'none' | 'via_verseshell_only' }> {
+    return Object.fromEntries(VG_MODES.map((mode) => [mode, { ...MODE_AUTHORITY[mode] }])) as Record<VerseGitMode, {
+      processes: number; stateRead: boolean; domainWrite: boolean; execution: 'none' | 'via_verseshell_only';
+    }>;
   }
 }
 
