@@ -1,0 +1,676 @@
+{
+  "schema": "clawx.long-session.action-contract/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-a1",
+  "program": "long-session-development-20261022",
+  "task": "TF-0548",
+  "generatedAt": "2026-10-22T14:47:04.264Z",
+  "scope": "Current production behavior and ownership boundaries for one explicit Workspace/Assistant session tree. This is a fault baseline, not a completion claim.",
+  "identities": [
+    {
+      "kind": "Workspace",
+      "identifier": "WorkspaceId",
+      "owner": "Main workspace registry and permission owner",
+      "scope": "One registered local execution root, assistant binding and permission context.",
+      "lifecycle": "Survives sessions and runs; removed only by the workspace owner.",
+      "source": {
+        "path": "shared/types/identity-scope.ts",
+        "symbol": "WorkspaceId"
+      },
+      "prohibitedUse": "A session or run identity may never fill a missing workspace scope."
+    },
+    {
+      "kind": "Project",
+      "identifier": "ProjectId",
+      "owner": "Existing workspace compatibility projection; no independent Project store in this lane.",
+      "scope": "User-visible work container represented by a transitional 1:1 workspace projection.",
+      "lifecycle": "Compatibility lifetime only; this lane does not implement independent Project CRUD.",
+      "source": {
+        "path": "shared/types/project.ts",
+        "symbol": "createProjectForWorkspace"
+      },
+      "prohibitedUse": "Do not add a second Project store or treat equal bytes as type or lifecycle equality."
+    },
+    {
+      "kind": "Assistant",
+      "identifier": "agentId",
+      "owner": "Existing workspace agent binding and agent registry.",
+      "scope": "Stable assistant selection within one workspace.",
+      "lifecycle": "Persists in the workspace binding independently from a physical session.",
+      "source": {
+        "path": "shared/types/workspace.ts",
+        "symbol": "WorkspaceAgentBinding"
+      },
+      "prohibitedUse": "Do not infer workspace authorization or task completion from agentId."
+    },
+    {
+      "kind": "SessionKey",
+      "identifier": "SessionKey",
+      "owner": "Gateway/runtime session owner",
+      "scope": "One logical conversation within an explicit agent/workspace context.",
+      "lifecycle": "Many turns and runs may share it; reset may rotate the physical sessionId without changing lineage by string inference.",
+      "source": {
+        "path": "shared/types/identity-scope.ts",
+        "symbol": "SessionKey"
+      },
+      "prohibitedUse": "Not a workspace fallback, run lineage proof or task completion authority."
+    },
+    {
+      "kind": "PhysicalSession",
+      "identifier": "sessionId",
+      "owner": "Runtime session store and transcript/reset owner",
+      "scope": "An endpoint-specific physical transcript/runtime session generation.",
+      "lifecycle": "Rotated by sessions.reset; restored or removed by the session owner and its recovery paths.",
+      "source": {
+        "path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+        "symbol": "performGatewaySessionReset"
+      },
+      "prohibitedUse": "Do not globally rename sessionId to SessionKey or assume it survives reset."
+    },
+    {
+      "kind": "NativeThread",
+      "identifier": "backend-native thread/session binding",
+      "owner": "Actual provider backend adapter",
+      "scope": "Codex app-server thread or Anthropic CLI session bound to the current execution generation.",
+      "lifecycle": "Owned by the backend adapter and invalidated or resumed only through that adapter.",
+      "source": {
+        "path": "openclaw_runtime/extensions/codex/src/app-server/thread-lifecycle.ts",
+        "symbol": "startOrResumeThread"
+      },
+      "prohibitedUse": "Configured backend files or historical thread IDs do not prove the actual backend or continuity."
+    },
+    {
+      "kind": "Turn",
+      "identifier": "turnStatus",
+      "owner": "Runtime agent execution",
+      "scope": "One bounded model/tool turn inside a run.",
+      "lifecycle": "Terminal status is reported by the turn owner; it is not task completion.",
+      "source": {
+        "path": "shared/types/identity-scope.ts",
+        "symbol": "CompletionView"
+      },
+      "prohibitedUse": "A turn result must not be displayed as task or verifier completion."
+    },
+    {
+      "kind": "Run",
+      "identifier": "RunId / ScopedRunId",
+      "owner": "Runtime execution owner",
+      "scope": "One execution attempt under an explicit RunScope.",
+      "lifecycle": "Created for an attempt; retry/continuation relations require execution-owner evidence.",
+      "source": {
+        "path": "shared/types/identity-scope.ts",
+        "symbol": "ScopedRunId"
+      },
+      "prohibitedUse": "Never persist a standalone unscoped run or infer lineage from SessionKey text."
+    },
+    {
+      "kind": "Task",
+      "identifier": "TaskId",
+      "owner": "Task Ledger",
+      "scope": "One user-visible task fact for a workspace.",
+      "lifecycle": "Survives turns, runs and sessions; status changes only through Task Ledger.",
+      "source": {
+        "path": "shared/types/task-ledger.ts",
+        "symbol": "TaskLedgerSessionLink"
+      },
+      "prohibitedUse": "No second task/goal authority; runtime or browser task IDs are owner-qualified references."
+    },
+    {
+      "kind": "Resource",
+      "identifier": "TrackedResource",
+      "owner": "Resource tracker plus terminal, browser and background resource owners",
+      "scope": "A declared worktree, terminal, browser or background resource attached to a session.",
+      "lifecycle": "Registered, observed and cleaned by its owning registry; process restart may leave an auditable recovery_required state.",
+      "source": {
+        "path": "shared/types/resource-tracker.ts",
+        "symbol": "TrackedResource"
+      },
+      "prohibitedUse": "Do not introduce a universal session_resources truth table or silently claim cleanup."
+    }
+  ],
+  "actions": [
+    {
+      "id": "abort",
+      "label": "Turn/run abort",
+      "currentStatus": "implemented",
+      "visibleBehavior": "Stops the active turn or addressed run without archiving, resetting or deleting the session.",
+      "prerequisites": [
+        "Existing SessionKey",
+        "An active turn/run, or a runId that may already be inactive"
+      ],
+      "effects": [
+        "Request runtime cancellation",
+        "Block late events from that run in the current generation",
+        "Reload transcript state"
+      ],
+      "inherits": [
+        "SessionKey",
+        "Transcript/history",
+        "Physical sessionId until a separate reset",
+        "Workspace/assistant binding"
+      ],
+      "doesNotInherit": [
+        "Task completion",
+        "Goal completion",
+        "Resource deletion"
+      ],
+      "successReceipt": "chat.abort returns { ok, aborted, runIds }; sessions.abort returns { ok, abortedRunId, status }.",
+      "failureStates": {
+        "known": "Invalid scope or authorization rejects with an error.",
+        "unknown": "Transport failure keeps the pre-abort sending state and surfaces an error; a reload is required.",
+        "unsupported": "A backend unable to cancel reports an error; it must not report stopped.",
+        "refused": "No active run is a no-active-run outcome, not task completion."
+      },
+      "recovery": "Retry with the same SessionKey/runId; load history after an unknown outcome.",
+      "entrypoints": [
+        {
+          "layer": "renderer",
+          "path": "src/stores/chat.ts",
+          "symbol": "abortRun"
+        },
+        {
+          "layer": "gateway",
+          "path": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+          "symbol": "\"chat.abort\""
+        },
+        {
+          "layer": "gateway",
+          "path": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+          "symbol": "\"sessions.abort\""
+        }
+      ]
+    },
+    {
+      "id": "session_stop",
+      "label": "Session runtime stop",
+      "currentStatus": "implemented",
+      "visibleBehavior": "Stops runtime activity, queued state and child activity while preserving the session store and transcript.",
+      "prerequisites": [
+        "Existing SessionKey",
+        "Runtime lifecycle owner available"
+      ],
+      "effects": [
+        "Acquire admission fence",
+        "Clear queues",
+        "Abort parent and recursive children",
+        "Drain owned process/runtime handles",
+        "Release the stop fence on success"
+      ],
+      "inherits": [
+        "SessionKey",
+        "Physical sessionId",
+        "Transcript and history",
+        "Task and resource records"
+      ],
+      "doesNotInherit": [
+        "A session mutation",
+        "Archive or delete",
+        "Task completion"
+      ],
+      "successReceipt": "sessions.stop returns { ok: true, key }.",
+      "failureStates": {
+        "known": "Unknown session or invalid params is rejected.",
+        "unknown": "Fence wait failure is retryable and performs no stop or mutation.",
+        "unsupported": "Missing lifecycle owner is unavailable, not success.",
+        "refused": "Another lifecycle fence refuses the stop without degrading to an agent-wide kill."
+      },
+      "recovery": "Retry sessions.stop after the retryable drain window; no transcript rewrite is required.",
+      "entrypoints": [
+        {
+          "layer": "main",
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "stop: async"
+        },
+        {
+          "layer": "gateway",
+          "path": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+          "symbol": "\"sessions.stop\""
+        },
+        {
+          "layer": "runtime",
+          "path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "symbol": "stopSessionRuntime"
+        }
+      ]
+    },
+    {
+      "id": "archive",
+      "label": "Archive conversation",
+      "currentStatus": "partial",
+      "visibleBehavior": "Makes a conversation disappear from the live session list while retaining its transcript and restore snapshot.",
+      "prerequisites": [
+        "Valid SessionKey",
+        "Resolvable transcript",
+        "A runtime lifecycle barrier is required before mutation (not yet enforced by the current production path)"
+      ],
+      "effects": [
+        "Rename <base>.jsonl to <base>.archived.jsonl",
+        "Remove the sessions.json row",
+        "Write sessions.archives.json with the original row and workspace/folder hints"
+      ],
+      "inherits": [
+        "Transcript",
+        "Original sessions.json entry snapshot",
+        "Original workspace/folder identifiers when supplied"
+      ],
+      "doesNotInherit": [
+        "Running process ownership",
+        "Task or goal completion",
+        "A new SessionKey"
+      ],
+      "successReceipt": "Current Main action returns { success: true } after the rename and archive-index write.",
+      "failureStates": {
+        "known": "Missing transcript, unsafe path, or index write failure returns success false.",
+        "unknown": "There is no typed operation receipt or lifecycle fence in the current archive path; a crash can leave a partial local mutation.",
+        "unsupported": "Unsupported runtime backends still share the direct file/index path in this slice.",
+        "refused": "No active-run rejection is currently enforced by the archive caller."
+      },
+      "recovery": "Inspect sessions.archives.json, sessions.json and the transcript names; A2 must add the canonical lifecycle barrier and retry receipt.",
+      "knownGap": "archive-active-run-not-fenced",
+      "entrypoints": [
+        {
+          "layer": "renderer",
+          "path": "src/stores/chat.ts",
+          "symbol": "archiveSession: async"
+        },
+        {
+          "layer": "main",
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "async function archiveSession"
+        },
+        {
+          "layer": "filesystem",
+          "path": "electron/utils/session-files.ts",
+          "symbol": "archiveSessionTranscript"
+        }
+      ]
+    },
+    {
+      "id": "restore",
+      "label": "Restore archived conversation",
+      "currentStatus": "partial",
+      "visibleBehavior": "Brings an archived transcript back into the live list using the saved sessions.json snapshot.",
+      "prerequisites": [
+        "An existing archive-index entry"
+      ],
+      "effects": [
+        "Rename <base>.archived.jsonl back to <base>.jsonl",
+        "Reinsert the snapshotted sessions.json row",
+        "Drop the archive-index entry"
+      ],
+      "inherits": [
+        "Transcript",
+        "Snapshotted label and session metadata",
+        "Original workspace/folder hints"
+      ],
+      "doesNotInherit": [
+        "Running process ownership",
+        "Scheduler references",
+        "A restored task/goal status"
+      ],
+      "successReceipt": "Current Main action returns { success: true } after transcript rename and index removal.",
+      "failureStates": {
+        "known": "Missing archive entry or missing archived transcript returns success false; the index entry is re-added on rename failure.",
+        "unknown": "The current code removes the index entry before the transcript rename, leaving a crash window with no retry locator.",
+        "unsupported": "No typed operation identity or lifecycle barrier exists in the current restore path.",
+        "refused": "A live transcript conflict is not represented by a dedicated conflict state in this slice."
+      },
+      "recovery": "Re-read sessions.archives.json, sessions.json and the two transcript names; A2 must make restore retryable across crashes.",
+      "knownGap": "restore-index-removed-before-transcript-rename",
+      "entrypoints": [
+        {
+          "layer": "renderer",
+          "path": "src/stores/chat.ts",
+          "symbol": "restoreSession: async"
+        },
+        {
+          "layer": "main",
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "async function restoreSession"
+        },
+        {
+          "layer": "filesystem",
+          "path": "electron/utils/session-files.ts",
+          "symbol": "restoreSessionTranscript"
+        }
+      ]
+    },
+    {
+      "id": "reset",
+      "label": "Reset session generation",
+      "currentStatus": "implemented",
+      "visibleBehavior": "Creates a fresh physical session generation for the same logical SessionKey and retires the old transcript.",
+      "prerequisites": [
+        "Existing or creatable session row",
+        "Runtime lifecycle owner available"
+      ],
+      "effects": [
+        "Drain and fence the old generation",
+        "Rotate sessionId/sessionFile",
+        "Archive the old transcript",
+        "Create a fresh session header",
+        "Clear run-bound tokens and non-subagent CLI bindings",
+        "Emit end/start lifecycle hooks"
+      ],
+      "inherits": [
+        "SessionKey",
+        "Agent/workspace scope",
+        "Label, origin and delivery preferences",
+        "Task Ledger references"
+      ],
+      "doesNotInherit": [
+        "Old run or generation authority",
+        "Old CLI provider bindings for ordinary sessions",
+        "Old token counters"
+      ],
+      "successReceipt": "sessions.reset returns { ok: true, key, entry } with the new entry/sessionId.",
+      "failureStates": {
+        "known": "Invalid session or cleanup failure rejects the reset.",
+        "unknown": "Fence/drain timeout fails closed; the old generation is not mutated.",
+        "unsupported": "Missing ACP/runtime owner may be unavailable and cannot be reported as a fresh generation.",
+        "refused": "Another lifecycle fence refuses the reset without falling back to agent-wide kill."
+      },
+      "recovery": "Retry through sessions.reset after the lifecycle owner reaches a terminal/retryable state; pre-reset run events must be rejected by generation.",
+      "entrypoints": [
+        {
+          "layer": "gateway",
+          "path": "openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts",
+          "symbol": "\"sessions.reset\""
+        },
+        {
+          "layer": "runtime",
+          "path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "symbol": "performGatewaySessionReset"
+        }
+      ]
+    },
+    {
+      "id": "delete",
+      "label": "Delete conversation",
+      "currentStatus": "implemented",
+      "visibleBehavior": "Permanently removes a live or archived conversation after runtime/owner cleanup, with no user restore path after success.",
+      "prerequisites": [
+        "Valid non-main SessionKey",
+        "Caller-persisted operationId for live delete",
+        "Runtime delete journal available"
+      ],
+      "effects": [
+        "Fence and tombstone the generation",
+        "Delete the runtime session row",
+        "Commit a runtime_committed receipt",
+        "Close the session terminal",
+        "Sweep owned transcript/trajectory/context derivatives",
+        "For archived entries, use the archive index as a retry locator"
+      ],
+      "inherits": [
+        "Nothing after a committed delete"
+      ],
+      "doesNotInherit": [
+        "No restore entitlement",
+        "No late run event authority",
+        "No task completion inference"
+      ],
+      "successReceipt": "Live delete requires deleted=true, matching operationId, journalState=runtime_committed and a non-empty runtime sessionId; archived permanent delete requires every owned derivative sweep to succeed.",
+      "failureStates": {
+        "known": "Main session deletion is refused; missing archive entry or incomplete derivative cascade returns success false.",
+        "unknown": "RPC unknown keeps the same operationId and Electron mirror gate; no local sweep is allowed.",
+        "unsupported": "Webchat/plugin delete mismatch is refused.",
+        "refused": "Main session or unauthorized mutation is rejected."
+      },
+      "recovery": "Retry the live delete with the same operationId; for archived sessions retain the archive-index entry until all derivatives are gone.",
+      "entrypoints": [
+        {
+          "layer": "renderer",
+          "path": "src/stores/chat.ts",
+          "symbol": "deleteSession: async"
+        },
+        {
+          "layer": "main",
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "deleteSessionViaRuntimeSerialized"
+        },
+        {
+          "layer": "main",
+          "path": "electron/services/session-delete-gate.ts",
+          "symbol": "persistSessionDeleteGate"
+        },
+        {
+          "layer": "gateway",
+          "path": "openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts",
+          "symbol": "\"sessions.delete\""
+        },
+        {
+          "layer": "main",
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "async function permanentDeleteSession"
+        }
+      ]
+    },
+    {
+      "id": "fork",
+      "label": "Fork conversation",
+      "currentStatus": "implemented",
+      "visibleBehavior": "Creates a new child session from a source transcript without transferring source task or goal authority.",
+      "prerequisites": [
+        "Existing source SessionKey and transcript",
+        "Source session is idle",
+        "Fork-point ID, when supplied, resolves on the source transcript"
+      ],
+      "effects": [
+        "Reject active-run or oversized-parent forks",
+        "Copy the selected transcript point",
+        "Create a new child SessionKey",
+        "Persist fork lineage"
+      ],
+      "inherits": [
+        "Source transcript/model/workspace preferences",
+        "Explicit fork lineage"
+      ],
+      "doesNotInherit": [
+        "Task/goal completion",
+        "Running resources",
+        "Source session mutation authority"
+      ],
+      "successReceipt": "sessions.fork returns { ok: true, key, sourceKey, forkedFromParent }.",
+      "failureStates": {
+        "known": "Active source, oversized parent, or unresolved fromLeafId rejects without creating a child.",
+        "unknown": "Gateway unavailable reports failure; no local fork is synthesized.",
+        "unsupported": "Backend lacking transcript fork support rejects.",
+        "refused": "No silent fallback to transcript tip when a requested fork point is unresolved."
+      },
+      "recovery": "Retry after the source becomes idle or compact a smaller source; never silently switch fork points.",
+      "entrypoints": [
+        {
+          "layer": "renderer",
+          "path": "src/lib/workspace-session.ts",
+          "symbol": "hostApi.sessions.fork"
+        },
+        {
+          "layer": "main",
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "fork: async"
+        },
+        {
+          "layer": "gateway",
+          "path": "openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts",
+          "symbol": "\"sessions.fork\""
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "label": "Prepare and create handoff",
+      "currentStatus": "implemented",
+      "visibleBehavior": "Builds a bounded handoff draft and creates a new child session with that draft; the source remains running and unmodified.",
+      "prerequisites": [
+        "Source SessionKey",
+        "Readable context/checkpoint or an explicit bounded draft input",
+        "Handoff depth/cycle policy passes"
+      ],
+      "effects": [
+        "Prepare a read-only draft/checkpoint",
+        "Serialize handoff creation per source",
+        "Create a new child SessionKey",
+        "Optionally activate it in the supplied workspace binding"
+      ],
+      "inherits": [
+        "Bounded handoff context",
+        "Explicit handoff parent/root lineage",
+        "Workspace/model preferences used for the new session"
+      ],
+      "doesNotInherit": [
+        "Task or goal ownership",
+        "Running process/resource ownership",
+        "Source task completion",
+        "A second memory authority"
+      ],
+      "successReceipt": "prepareHandoff returns a draft and lineage; createHandoff returns { success: true, sessionKey, handoffDepth, parent/root ids }.",
+      "failureStates": {
+        "known": "Depth, cycle, empty draft, or inaccessible source is rejected.",
+        "unknown": "Gateway/session creation failure reports failure; no source mutation is attempted.",
+        "unsupported": "Missing checkpoint context is reported as unavailable, not fabricated.",
+        "refused": "Handoff policy denial returns a warning/error without moving goals."
+      },
+      "recovery": "Retry prepare/create after resolving depth or context; never reuse a duplicate handoff creation to claim task completion.",
+      "entrypoints": [
+        {
+          "layer": "renderer",
+          "path": "src/lib/workspace-session.ts",
+          "symbol": "hostApi.sessions.createHandoff"
+        },
+        {
+          "layer": "renderer",
+          "path": "src/pages/Chat/index.tsx",
+          "symbol": "hostApi.sessions.prepareHandoff"
+        },
+        {
+          "layer": "main",
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "prepareHandoff: async"
+        },
+        {
+          "layer": "main",
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "createHandoff:"
+        }
+      ]
+    },
+    {
+      "id": "schedule_pause",
+      "label": "Pause scheduled follow-up",
+      "currentStatus": "implemented",
+      "visibleBehavior": "Disables future Cron/Workboard triggers without aborting an active run, deleting the session, or releasing resources.",
+      "prerequisites": [
+        "Existing Cron job or schedule owner"
+      ],
+      "effects": [
+        "Persist enabled=false on the schedule owner",
+        "Stop arming future runs",
+        "Keep the session and transcript intact"
+      ],
+      "inherits": [
+        "SessionKey and history",
+        "Task Ledger references",
+        "Existing current-run state"
+      ],
+      "doesNotInherit": [
+        "Session stop",
+        "Archive/delete",
+        "Task or goal completion"
+      ],
+      "successReceipt": "cron.toggle sends cron.update { id, patch: { enabled: false } }; the returned job must report enabled=false.",
+      "failureStates": {
+        "known": "Invalid job or unsupported delivery patch is rejected.",
+        "unknown": "Gateway RPC failure leaves the previous enabled state visible and must not be treated as paused.",
+        "unsupported": "Workboard/session-generation binding is not implemented in this slice.",
+        "refused": "Pause never implies cancel/abort of an already-running turn."
+      },
+      "recovery": "Retry the same schedule toggle and re-read the job; use a separate abort/cancel action for the current run.",
+      "entrypoints": [
+        {
+          "layer": "renderer",
+          "path": "src/stores/cron.ts",
+          "symbol": "hostApi.cron.toggle"
+        },
+        {
+          "layer": "main",
+          "path": "electron/services/cron-api.ts",
+          "symbol": "toggle: async"
+        },
+        {
+          "layer": "gateway",
+          "path": "openclaw_runtime/src/gateway/server-methods/cron.ts",
+          "symbol": "\"cron.update\""
+        },
+        {
+          "layer": "runtime",
+          "path": "openclaw_runtime/src/cron/service/jobs.ts",
+          "symbol": "applyJobPatch"
+        }
+      ]
+    }
+  ],
+  "ownerBoundaries": [
+    {
+      "id": "workspace-project-separate",
+      "statement": "Workspace remains the execution/permission root; Project is compatibility-mapped and read-only in this lane.",
+      "source": "shared/types/project.ts"
+    },
+    {
+      "id": "task-ledger-only",
+      "statement": "Task Ledger owns user-visible task facts; run, browser, cron and install tasks are owner-qualified references.",
+      "source": "shared/types/identity-scope.ts"
+    },
+    {
+      "id": "session-not-lineage",
+      "statement": "SessionKey is a conversation identity; parent/retry/attempt relations require execution-owner evidence.",
+      "source": "shared/types/identity-scope.ts"
+    },
+    {
+      "id": "main-owned-transport",
+      "statement": "Renderer operations cross the typed host API and Main-owned transport rather than direct Gateway HTTP/WebSocket calls.",
+      "source": "harness/specs/scenarios/gateway-backend-communication.md"
+    },
+    {
+      "id": "single-resource-owners",
+      "statement": "Terminal, browser, background process and worktree resources retain their existing owners; no universal resource truth table is added.",
+      "source": "shared/types/resource-tracker.ts"
+    },
+    {
+      "id": "handoff-does-not-transfer-goals",
+      "statement": "Handoff is a read-only continuity artifact/new draft session; it does not transfer goals, mutate source or drain resources.",
+      "source": "harness/specs/rules/runtime-lifecycle-governance-boundary.md"
+    },
+    {
+      "id": "completion-facts-are-separate",
+      "statement": "Turn, run, verifier and Task Ledger completion are distinct fields and are not inferred from one another.",
+      "source": "shared/types/identity-scope.ts"
+    }
+  ],
+  "currentKnownGaps": [
+    {
+      "id": "archive-active-run-not-fenced",
+      "severity": "high",
+      "summary": "The production archive path can rename a live transcript without stopping/draining the active session or committing a lifecycle receipt.",
+      "nextNode": "TF-0549"
+    },
+    {
+      "id": "restore-index-removed-before-transcript-rename",
+      "severity": "medium",
+      "summary": "Restore removes its archive-index entry before the transcript rename; a process crash can strand the only retry locator.",
+      "nextNode": "TF-0549"
+    },
+    {
+      "id": "codegraph-retired",
+      "severity": "info",
+      "summary": "The historical CodeGraph extension is retired in the current repository; current source discovery used repository search and direct caller inspection.",
+      "nextNode": "N/A"
+    }
+  ],
+  "limitations": [
+    "No live backend switch, permission revocation, restart or long-running resource measurement was executed for this A1 baseline.",
+    "No real-human evidence is claimed; all fixtures and receipts are agent-driven.",
+    "Project remains a compatibility projection; no independent Project store or CRUD was added.",
+    "The action contract records current behavior and gaps; only A2 and later nodes may close lifecycle mutation gaps."
+  ]
+}

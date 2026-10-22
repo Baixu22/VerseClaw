@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-baseline-contract
 title: 固定长期会话身份、动作合同与故障基线
 program: long-session-development-20261022
@@ -10,6 +10,7 @@ taskType: runtime-bridge
 intent: 重新核读当前实现，固定长期工作范围和动作语义，避免把旧调研、历史 PASS 或文件夹存在当作新能力。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
 dependsOnTasks:
+diffBase: e73c29eebc5ae3f9c3355c5c446dbfd96577de8c
 
 touchedAreas:
   - harness/specs/tasks/long-session-baseline-contract.md
@@ -67,9 +68,16 @@ docs:
 
 重新核读当前实现，固定长期工作范围和动作语义，避免把旧调研、历史 PASS 或文件夹存在当作新能力。
 
-本规格为待执行合同。任务状态、前置与下一 ready 由 repo-local Task Forest 管理。节点创建、文件存在、静态 validate 或 dry-run 不是功能证据。这是本 lane 唯一初始 ready 执行任务。
+本规格已执行并留下当前源码、动作合同、负向矩阵和门禁回执。任务状态、前置与下一 ready 仍由 repo-local Task Forest 管理；本文件不是功能完成或后续阶段通过的替代证据。A1 的 archive/restore 当前仍标记为 partial，运行中归档与崩溃恢复由 A2/TF-0549 关闭。
 
 所属阶段一：统一会话动作并建立故障基线。统一边界见[规划合同索引](./long-session-development-plan.md)。
+
+**A1 交付**
+
+- `action-and-inheritance-contract.json` 区分 Workspace、Project 兼容投影、Assistant、SessionKey、物理 sessionId、native thread、Turn/Run、Task 与资源 owner，并固定九个动作的继承、失败和恢复语义。
+- `negative-scenario-index.json` 固定运行中归档、重复/迟到完成、generation 变化、后端切换、授权撤销、跨工作区、重启与调度暂停等负向场景；未实跑项保持 `unmeasured`。
+- `current-baseline.json` 记录当前源码 hash、候选身份和 D2 的 30 对配对评测预算；历史测试/性能样本不作为当前验收。
+- 当前生产 archive 路径尚未取得 runtime lifecycle fence，restore 在 transcript rename 前移除索引，是本节点保留给 A2 的真实 gap。
 
 **前置与读入**
 

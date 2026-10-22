@@ -1,0 +1,231 @@
+{
+  "schema": "clawx.long-session.negative-scenario-index/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-a1",
+  "program": "long-session-development-20261022",
+  "task": "TF-0548",
+  "generatedAt": "2026-10-22T14:47:51.294Z",
+  "fixture": {
+    "kind": "isolated-agent-fixture",
+    "isolation": "temporary userData/run root; one workspace; one assistant; no live provider requirement for structural cases",
+    "workspaceId": "workspace:long-session-a1",
+    "assistantId": "main",
+    "sessionKey": "agent:main:long-session-a1",
+    "physicalSessionId": "session-a1-generation-1",
+    "runId": "run-a1-generation-1",
+    "taskNodeId": "task-a1-observation",
+    "resourceIds": [
+      "terminal:a1",
+      "browser:a1",
+      "worktree:a1"
+    ]
+  },
+  "requiredFamilies": [
+    "active-archive",
+    "completion-ordering",
+    "generation-change",
+    "backend-identity",
+    "authorization",
+    "workspace-isolation",
+    "restart-recovery"
+  ],
+  "statusLegend": {
+    "known_gap": "Static current source establishes the missing guard or crash window; A2 must reproduce and close it.",
+    "unmeasured": "Scenario contract is fixed here but was not executed end-to-end in this A1 baseline.",
+    "covered": "A current automated test passed for this scenario; must reference a fresh receipt."
+  },
+  "cases": [
+    {
+      "id": "running-archive",
+      "family": "active-archive",
+      "setup": "Start a run under the fixture SessionKey, enqueue follow-up work, then request archive before the run reaches terminal state.",
+      "expected": "Archive must wait for the canonical lifecycle fence/finalizer or refuse; it must not rename/hide the transcript while the run is active and must return an operation receipt.",
+      "failureAxis": "active-run-bypass",
+      "owner": "Gateway session lifecycle + Main archive adapter",
+      "status": "known_gap",
+      "evidence": [
+        "src/stores/chat.ts#archiveSession",
+        "electron/services/sessions-api.ts#archiveSession"
+      ],
+      "nextNode": "TF-0549"
+    },
+    {
+      "id": "archive-partial-write",
+      "family": "active-archive",
+      "setup": "Inject failure after transcript rename but before archive-index write, then replay the same archive request.",
+      "expected": "The operation identity must be idempotent; source, index and live list must reconcile from disk and no success may be shown before commit.",
+      "failureAxis": "partial-write-unknown",
+      "owner": "Main archive adapter + session lifecycle operation journal",
+      "status": "known_gap",
+      "evidence": [
+        "electron/services/sessions-api.ts#archiveSession",
+        "electron/utils/session-files.ts#writeArchiveIndex"
+      ],
+      "nextNode": "TF-0549"
+    },
+    {
+      "id": "restore-crash-before-rename",
+      "family": "restore-crash",
+      "setup": "Remove the archive-index row and crash before the archived transcript is renamed back to live.",
+      "expected": "A retry locator must remain or be reconstructible from a committed operation receipt; the archived session must not disappear from the recovery surface.",
+      "failureAxis": "crash-window",
+      "owner": "Main restore adapter + session lifecycle operation journal",
+      "status": "known_gap",
+      "evidence": [
+        "electron/services/sessions-api.ts#restoreSession"
+      ],
+      "nextNode": "TF-0549"
+    },
+    {
+      "id": "restore-conflict",
+      "family": "restore-crash",
+      "setup": "Both <base>.jsonl and <base>.archived.jsonl exist, or the archive-index entry is missing.",
+      "expected": "Return a typed conflict/unavailable outcome, preserve the archive entry, and do not overwrite the live transcript.",
+      "failureAxis": "destination-conflict",
+      "owner": "Main restore adapter",
+      "status": "unmeasured",
+      "evidence": [
+        "electron/services/sessions-api.ts#restoreSession",
+        "electron/utils/session-files.ts#restoreSessionTranscript"
+      ],
+      "nextNode": "TF-0549"
+    },
+    {
+      "id": "duplicate-completion",
+      "family": "completion-ordering",
+      "setup": "Deliver the same completion wake/receipt twice for one child run.",
+      "expected": "At-least-once transport may repeat delivery, but the completion continuation and parent-visible side effects remain idempotent.",
+      "failureAxis": "duplicate-side-effect",
+      "owner": "Runtime completion/continuation owner",
+      "status": "unmeasured",
+      "evidence": [
+        "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts"
+      ],
+      "nextNode": "TF-0554"
+    },
+    {
+      "id": "late-completion-after-archive",
+      "family": "completion-ordering",
+      "setup": "Archive or stop the parent, then deliver a child completion and continuation event from the prior generation.",
+      "expected": "Late completion must be rejected or quarantined; it may not re-open an archived session, create a continuation, or mark a task done.",
+      "failureAxis": "late-event-barrier-bypass",
+      "owner": "Runtime lifecycle admission + completion continuation owner",
+      "status": "unmeasured",
+      "evidence": [
+        "openclaw_runtime/src/gateway/session-lifecycle-state.ts",
+        "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts"
+      ],
+      "nextNode": "TF-0554"
+    },
+    {
+      "id": "stale-generation-event",
+      "family": "generation-change",
+      "setup": "Reset from session-a1-generation-1 to generation-2, then replay a lifecycle event carrying generation-1 sessionId/runId.",
+      "expected": "The stale generation event is rejected and cannot mutate the new session row or continuation state.",
+      "failureAxis": "generation-mismatch",
+      "owner": "Runtime session lifecycle state",
+      "status": "unmeasured",
+      "evidence": [
+        "openclaw_runtime/src/gateway/session-lifecycle-state.ts"
+      ],
+      "nextNode": "TF-0549"
+    },
+    {
+      "id": "backend-switch",
+      "family": "backend-identity",
+      "setup": "Configure one provider while an active run continues on another actual backend, then attempt a reset/continuation.",
+      "expected": "Configured backend, effective backend and actual native backend remain distinct; the old native thread/generation cannot be adopted as the new backend.",
+      "failureAxis": "configured-actual-confusion",
+      "owner": "Provider configuration + backend adapter",
+      "status": "unmeasured",
+      "evidence": [
+        "openclaw_runtime/extensions/codex/src/app-server/thread-lifecycle.ts",
+        "openclaw_runtime/extensions/anthropic/cli-backend.ts"
+      ],
+      "nextNode": "TF-0551"
+    },
+    {
+      "id": "authorization-revocation",
+      "family": "authorization",
+      "setup": "Revoke a role/permission after a long-lived task has been admitted but before a follow-up, continuation, or resource action executes.",
+      "expected": "The revoked authority is rechecked at the next side-effect entry; the action fails closed and retains an auditable refusal state.",
+      "failureAxis": "permission-recheck",
+      "owner": "Existing permission/role/admission owner",
+      "status": "unmeasured",
+      "evidence": [
+        "shared/types/identity-scope.ts",
+        "harness/specs/rules/runtime-lifecycle-governance-boundary.md"
+      ],
+      "nextNode": "TF-0553"
+    },
+    {
+      "id": "cross-workspace-session",
+      "family": "workspace-isolation",
+      "setup": "Reuse a SessionKey or task reference under a second workspace/assistant binding with missing or conflicting workspace scope.",
+      "expected": "Reject the missing/conflicting workspace scope and do not fall back to SessionKey or sessionId; Task Ledger mutation stays in the owning workspace.",
+      "failureAxis": "scope-confusion",
+      "owner": "Workspace owner + Task Ledger + runtime admission",
+      "status": "unmeasured",
+      "evidence": [
+        "tests/unit/tf0018-cross-workspace-session-isolation.test.ts",
+        "tests/unit/workspace-session.test.ts"
+      ],
+      "nextNode": "TF-0552"
+    },
+    {
+      "id": "restart-unknown-delete",
+      "family": "restart-recovery",
+      "setup": "Delete a session, kill the app or Gateway after RPC dispatch but before a committed receipt, then restart and retry with the same operation identity.",
+      "expected": "The persisted operationId is reused; no local sweep is released on unknown; a committed receipt or still-unknown state is reported truthfully.",
+      "failureAxis": "crash-unknown-retry",
+      "owner": "Gateway delete journal + Electron mirror gate",
+      "status": "unmeasured",
+      "evidence": [
+        "electron/services/session-delete-gate.ts",
+        "electron/services/sessions-api.ts#deleteSessionViaRuntime"
+      ],
+      "nextNode": "TF-0561"
+    },
+    {
+      "id": "fork-while-active",
+      "family": "fork-handoff",
+      "setup": "Request sessions.fork while the source session has an active run or an unresolved fromLeafId.",
+      "expected": "Reject without creating a child; never fork the transcript tip or synthesize lineage when the requested source is invalid.",
+      "failureAxis": "active-run-or-invalid-fork-point",
+      "owner": "Gateway sessions lifecycle",
+      "status": "unmeasured",
+      "evidence": [
+        "openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts#sessions.fork"
+      ],
+      "nextNode": "TF-0552"
+    },
+    {
+      "id": "handoff-depth-cycle",
+      "family": "fork-handoff",
+      "setup": "Create a handoff beyond maximum depth or from a session already present in its own handoff ancestry.",
+      "expected": "Reject without mutating the source, transferring goals or creating a duplicate child lineage.",
+      "failureAxis": "handoff-policy",
+      "owner": "Main handoff lineage boundary",
+      "status": "unmeasured",
+      "evidence": [
+        "tests/unit/handoff-depth.test.ts",
+        "src/lib/workspace-session.ts"
+      ],
+      "nextNode": "TF-0552"
+    },
+    {
+      "id": "schedule-pause-current-run",
+      "family": "schedule-pause",
+      "setup": "Pause a Cron/Workboard schedule while a current turn is running and a cleanup resource remains registered.",
+      "expected": "Pause only prevents future triggers; it does not abort the current turn, archive/delete the session or release resources.",
+      "failureAxis": "pause-abort-delete-confusion",
+      "owner": "Cron/Workboard schedule owner",
+      "status": "unmeasured",
+      "evidence": [
+        "src/stores/cron.ts",
+        "electron/services/cron-api.ts#toggle"
+      ],
+      "nextNode": "TF-0559"
+    }
+  ]
+}
