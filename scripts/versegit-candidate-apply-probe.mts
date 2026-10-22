@@ -468,7 +468,7 @@ function authorityFrom(input: {
   verification: CandidateApplyVerification;
   current: PermissionState;
 }): CandidateApplyAuthorityState {
-  const verdict = verifyPermissionEffectAtFinalCheckpoint(input);
+  const verdict = verifyPermissionEffectAtFinalCheckpoint(permissionCheckpoint(input));
   return {
     ownerId: input.verification.ownerId,
     epoch: input.verification.epoch,
