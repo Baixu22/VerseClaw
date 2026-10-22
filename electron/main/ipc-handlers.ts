@@ -45,6 +45,7 @@ import { validateApiKeyWithProvider } from '../services/providers/provider-valid
 import { resourceFabric } from '../services/resource-fabric';
 import { HostApiRegistry, registerHostInvokeHandler } from './ipc/host-invoke';
 import { createAppApi } from '../services/app-api';
+import { createVerseGitApi } from '../services/versegit-api';
 import { createOpenClawApi } from '../services/openclaw-api';
 import { createShellApi } from '../services/shell-api';
 import { createDialogApi } from '../services/dialog-api';
@@ -202,6 +203,7 @@ function registerTypedHostHandlers(
 
   hostApiRegistry.registerCoreServices({
     app: createAppApi(),
+    versegit: createVerseGitApi(),
     openclaw: createOpenClawApi(),
     shell: createShellApi(),
     dialog: createDialogApi(),

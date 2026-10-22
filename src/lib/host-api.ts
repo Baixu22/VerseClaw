@@ -218,6 +218,8 @@ import type {
   GithubPrViewResult,
   GithubRepoResult,
   HostApiContract,
+  VerseGitDiagnosticBinding,
+  VerseGitDiagnosticStatus,
   SessionActivitySnapshotPayload,
   ImageGenerationSettingsPayload,
   LogMemoryPayload,
@@ -680,6 +682,11 @@ export const hostApi = {
       payload: BackupRestorePayload,
     ): Promise<BackupRestoreResult> =>
       invokeHost('app', 'backupRestoreApply', payload),
+  },
+  versegit: {
+    status: (binding: VerseGitDiagnosticBinding): Promise<VerseGitDiagnosticStatus> => (
+      invokeHost('versegit', 'status', binding)
+    ),
   },
   openclaw: {
     status: () => invokeHost('openclaw', 'status'),

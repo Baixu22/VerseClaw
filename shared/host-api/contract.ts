@@ -5248,12 +5248,59 @@ export type RuntimeApprovalResolveResult =
   | { success: true; approvalId: string; decision: string }
   | { success: false; error: string };
 
+export type VerseGitDiagnosticBinding = {
+  workspaceId: string;
+  sessionId: string;
+  worktreeId: string;
+  ownerId: string;
+  epoch: number;
+  mode: 'M1' | 'M2';
+};
+
+export type VerseGitDiagnosticStatus = {
+  schema: 'clawx.versegit.host-diagnostics/v1';
+  generatedAt: string;
+  enabled: boolean;
+  mode: 'M0' | 'M1' | 'M2';
+  status: 'not_applicable' | 'unavailable' | 'partial' | 'observed' | 'degraded' | 'rejected_by_policy';
+  reason?: string;
+  identity: {
+    repoId: string | null;
+    binarySha256: string | null;
+    version: string | null;
+    capabilitiesSchema: string | null;
+  };
+  coverage: { declared: string[]; unobserved: string[] };
+  capabilities: {
+    schema: string | null;
+    safety: { default_enable: false | null; managed_opt_in: boolean; strict_admission_present: boolean };
+    verdict: {
+      single_green_light: false | null;
+      dimensions: string[];
+      read_surface: { observed_channels: string[]; unobserved_channels: string[] } | null;
+    };
+  } | null;
+  observation: {
+    processStarted: boolean;
+    exitCode: number | null;
+    deadlineMs: number;
+    timedOut: boolean;
+    cancelled: boolean;
+    stdoutSha256: string;
+    stderrSha256: string;
+  } | null;
+  issues: string[];
+  hostVerdict: 'unchanged';
+};
 export type HostApiContract = {
   app: {
     version: () => string;
     openClawDoctor: (payload: OpenClawDoctorPayload) => Omit<OpenClawDoctorResult, 'mode'>;
     backupRestorePreview: (payload: BackupRestorePayload) => BackupRestorePreviewResult;
     backupRestoreApply: (payload: BackupRestorePayload) => BackupRestoreResult;
+  };
+  versegit: {
+    status: (payload: VerseGitDiagnosticBinding) => VerseGitDiagnosticStatus;
   };
   openclaw: {
     status: () => OpenClawStatusResult;
