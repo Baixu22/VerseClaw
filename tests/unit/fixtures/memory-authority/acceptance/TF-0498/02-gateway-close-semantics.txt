@@ -1,0 +1,10 @@
+
+ RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
+
+································································
+
+ Test Files  3 passed (3)
+      Tests  64 passed (64)
+   Start at  19:54:01
+   Duration  25.86s (transform 9.30s, setup 259ms, import 14.71s, tests 8.69s, environment 1.67s)
+

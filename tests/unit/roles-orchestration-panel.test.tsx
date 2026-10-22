@@ -10,6 +10,7 @@ const {
   memoryListMock,
   memoryExplainInjectionMock,
   memoryHealthMock,
+  memoryProposeFactsListMock,
   translate,
   settingsState,
 } = vi.hoisted(() => ({
@@ -19,6 +20,7 @@ const {
   memoryListMock: vi.fn(),
   memoryExplainInjectionMock: vi.fn(),
   memoryHealthMock: vi.fn(),
+  memoryProposeFactsListMock: vi.fn(),
   translate: (key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key,
   settingsState: { roleMemoryEnabled: false },
 }));
@@ -45,7 +47,8 @@ vi.mock('@/lib/host-api', () => ({
       detail: vi.fn(),
       propose: vi.fn(),
       feedback: vi.fn(),
-      delete: vi.fn(),
+      proposeFactsList: (...args: unknown[]) => memoryProposeFactsListMock(...args),
+      proposeFactsConfirm: vi.fn(),
     },
     permissions: {
       decideApproval: vi.fn(),
@@ -106,6 +109,7 @@ describe('RolesOrchestrationPanel', () => {
     memoryListMock.mockResolvedValue({ success: true, cards: [] });
     memoryExplainInjectionMock.mockResolvedValue({ success: true, injections: [] });
     memoryHealthMock.mockResolvedValue({ success: true, ok: true, checks: [] });
+    memoryProposeFactsListMock.mockResolvedValue({ success: true, enabled: false, candidates: [] });
     gatewayRpcMock.mockImplementation(async (method: string) => {
       if (method === 'roles.list') {
         return {
@@ -139,6 +143,9 @@ describe('RolesOrchestrationPanel', () => {
             },
           },
         };
+      }
+      if (method === 'memory.archive') {
+        return { card: { id: 'mem-1', status: 'tombstone' } };
       }
       if (method === 'memory.proposals') {
         return {
@@ -307,6 +314,50 @@ describe('RolesOrchestrationPanel', () => {
     fireEvent.click(await screen.findByText('Planner'));
 
     expect(screen.queryByTestId('role-config-edit-selected')).toBeNull();
+  });
+
+  it('exports accepted memory through the single surface and deletes through tombstone confirmation', async () => {
+    settingsState.roleMemoryEnabled = true;
+    memoryListMock.mockResolvedValue({
+      success: true,
+      cards: [{
+        id: 'mem-1',
+        type: 'procedure',
+        status: 'active',
+        content: 'Keep migration notes for future runs.',
+        source: 'user',
+        createdAt: '2026-10-21T00:00:00.000Z',
+      }],
+    });
+
+    const createObjectUrl = vi.fn(() => 'blob:tf-0498');
+    const revokeObjectUrl = vi.fn();
+    const originalCreateObjectUrl = URL.createObjectURL;
+    const originalRevokeObjectUrl = URL.revokeObjectURL;
+    Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: createObjectUrl });
+    Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: revokeObjectUrl });
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+
+    try {
+      renderPanel();
+      fireEvent.click(screen.getByTestId('role-orchestration-toggle'));
+      fireEvent.click(await screen.findByText('Planner'));
+      await screen.findByTestId('role-memory-card');
+
+      fireEvent.click(screen.getByTestId('memory-export'));
+      expect(createObjectUrl).toHaveBeenCalledTimes(1);
+      expect(clickSpy).toHaveBeenCalledTimes(1);
+
+      fireEvent.click(screen.getByTestId('role-memory-delete'));
+      fireEvent.click(await screen.findByTestId('confirm-dialog-confirm-button'));
+      await waitFor(() => {
+        expect(gatewayRpcMock).toHaveBeenCalledWith('memory.archive', { id: 'mem-1', tombstone: true });
+      });
+    } finally {
+      clickSpy.mockRestore();
+      Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: originalCreateObjectUrl });
+      Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: originalRevokeObjectUrl });
+    }
   });
 
   it('shows memory proposal source metadata in the review queue without claiming automatic writes', async () => {
