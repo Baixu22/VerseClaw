@@ -1,0 +1,63 @@
+{
+  "schema": "clawx.long-session.a2-mutation-recovery-receipts/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-a2",
+  "program": "long-session-development-20261022",
+  "task": "TF-0549",
+  "generatedAt": "2026-10-22T17:55:34.560Z",
+  "candidate": {
+    "sourceBase": "3b6a54598",
+    "cleanCandidateObserved": false,
+    "verificationRun": null
+  },
+  "operationJournal": {
+    "owner": "openclaw_runtime/src/gateway/session-delete-operation-journal.ts + session-mutation-operation-journal.ts",
+    "storage": "existing session_delete_operation_journal SQLite table",
+    "operations": [
+      "session-delete",
+      "session-archive",
+      "session-restore"
+    ],
+    "states": [
+      "intent",
+      "store_committed",
+      "runtime_committed",
+      "partial_committed"
+    ],
+    "mainMirrorGate": "electron/services/session-delete-gate.ts; one pending operation per SessionKey with kind + request digest"
+  },
+  "recoveryCases": [
+    {
+      "state": "archive-intent-before-store-commit",
+      "retryBehavior": "same operationId, reuse fence when present; re-upsert index, finish transcript rename, remove row and finalize"
+    },
+    {
+      "state": "archive-store-committed",
+      "retryBehavior": "skip cleanup/store mutation; finish index/transcript reconciliation and finalize"
+    },
+    {
+      "state": "archive-runtime-committed-unknown-response",
+      "retryBehavior": "return saved runtime_committed receipt and clear Main gate only after response"
+    },
+    {
+      "state": "restore-intent",
+      "retryBehavior": "same operationId prepares the same fresh sessionId and inserts its store row with store_committed journal"
+    },
+    {
+      "state": "restore-store-committed",
+      "retryBehavior": "skip row insert; rename transcript back, remove archive index and finalize"
+    },
+    {
+      "state": "main-rpc-timeout",
+      "retryBehavior": "retain Main gate and operationId; reject a different mutation kind until recovery"
+    }
+  ],
+  "commands": [],
+  "counts": null,
+  "unmeasured": [
+    "process kill at every individual fs/DB syscall boundary (the covered crash windows are the journaled intent, store_committed and unknown-response phases)",
+    "cross-workspace concurrent archive/restore",
+    "remote Gateway transport partition longer than local RPC timeout"
+  ],
+  "verdict": "implementation-complete-pending-clean-candidate-readback"
+}

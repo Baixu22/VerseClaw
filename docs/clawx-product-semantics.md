@@ -90,13 +90,21 @@ is already protected.
 | Handoff | Builds a bounded draft and creates a child session without mutating the source. | Bounded handoff context and explicit parent/root lineage. | Goal transfer, source mutation or resource drain. |
 | Schedule pause | Disables future Cron/Workboard triggers. | Existing session/history and current-run state. | Session stop, abort, archive/delete or task completion. |
 
-The archive/restore rows are currently marked `partial` in the contract: the
-production archive path does not yet acquire the canonical runtime lifecycle
-fence, and restore removes its archive-index locator before the transcript rename.
-A2/TF-0549 owns closing those gaps; until then, no archive/restore success claim may
-be extended to running sessions or crash recovery. No new Project, Task/Goal,
-Context/Memory, Scheduler or universal resource authority is introduced by this
-boundary.
+Archive and restore now execute through the runtime lifecycle owner. Archive
+acquires the existing admission fence, drains the session, records an immutable
+operation intent, writes the archive index and transcript, and only then commits
+the hidden store state. Restore inserts a fresh physical generation under the same
+SessionKey, reverses the archived transcript/index, and leaves the old generation
+tombstoned so late events cannot mutate the restored row. A failed or unknown RPC
+keeps the Main operation gate and the same operationId open for retry; archived
+keys are filtered from the live session list before the store-row commit is
+complete. The A1 contract remains a historical fault baseline and therefore keeps
+its original `partial` status for those rows.
+
+This boundary adds no Project, Task/Goal, Context/Memory, Scheduler or universal
+resource authority. Permanent deletion of an already archived conversation still
+uses the archive index as its retry locator and must not report success while an
+owned derivative remains.
 
 ## Windows x64 Controlled Preview
 

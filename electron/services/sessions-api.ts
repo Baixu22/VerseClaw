@@ -9,11 +9,14 @@ import type { ObservabilityTrace } from '@shared/types/observability';
 import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledger';
 import { getOpenClawConfigDir } from '../utils/paths';
 import { logger } from '../utils/logger';
+import { resolveHostOpenClawStateDir } from './knowledge-api';
 import type { GatewayManager } from '../gateway/manager';
 import type { TerminalSessionManager } from './terminal-session-manager';
 import {
+  buildSessionMutationRequestDigest,
   clearSessionDeleteGate,
   persistSessionDeleteGate,
+  persistSessionMutationGate,
   updateSessionDeleteGate,
   withSessionDeleteGateLock,
 } from './session-delete-gate';
@@ -46,14 +49,11 @@ import {
   resolveSessionTranscriptPath,
   sweepSessionArtefacts,
   cleanupContextArchiveArtifacts,
-  snapshotSessionEntry,
-  restoreSessionEntry,
-  archiveSessionTranscript,
-  restoreSessionTranscript,
   readArchiveIndex,
   upsertArchiveEntry,
   removeArchiveEntry,
-  writeArchiveIndex,} from '../utils/session-files';
+  writeArchiveIndex,
+} from '../utils/session-files';
 import { isRecord } from './payload-utils';
 import type { SessionArchiveEntry } from '@shared/types/workspace';
 
@@ -1439,7 +1439,7 @@ async function renameSession(sessionKey: string, label: string): Promise<{ succe
 }
 
 function getArchiveIndexPath(agentId: string): string {
-  return join(getOpenClawConfigDir(), 'agents', agentId, 'sessions', 'sessions.archives.json');
+  return join(resolveHostOpenClawStateDir(), 'agents', agentId, 'sessions', 'sessions.archives.json');
 }
 
 function getOptionalString(value: unknown): string | null {
@@ -1447,128 +1447,108 @@ function getOptionalString(value: unknown): string | null {
 }
 
 /**
- * Archive a session: rename the live transcript to `.archived.jsonl`, drop
- * the entry from `sessions.json` (so `sessions.list` stops surfacing it),
- * and record a Verse-Claw-owned archive index entry so the session can be
- * restored exactly. The renderer passes `originalWorkspaceId` /
- * `originalFolderId` so the index is self-contained without the main
- * process needing to read workspace profiles.
+ * Archive a session through the runtime lifecycle owner. The caller persists
+ * an operation id before the first RPC; any transport failure keeps the gate
+ * open so a retry resumes the same journaled mutation.
  */
-async function archiveSession(payload: SessionPayload): Promise<{ success: boolean; error?: string }> {
+async function archiveSession(
+  payload: SessionPayload,
+  gatewayManager?: GatewayManager,
+): Promise<{ success: boolean; error?: string }> {
   const sessionKey = getSessionKey(payload);
   const parsed = parseSessionKey(sessionKey);
-  if (!parsed) {
-    return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
-  }
-  const { agentId } = parsed;
-  const sessionsDir = join(getOpenClawConfigDir(), 'agents', agentId, 'sessions');
-  const sessionsJsonPath = join(sessionsDir, 'sessions.json');
-  const archiveIndexPath = getArchiveIndexPath(agentId);
-  logger.info(`[session:archive] key=${sessionKey} agentId=${agentId}`);
+  if (!parsed) return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
+  if (!gatewayManager) return { success: false, error: 'Gateway manager unavailable' };
 
-  const fsP = await import('node:fs/promises');
-  let sessionsJson: Record<string, unknown>;
+  const label = getOptionalString(payload.label);
+  const originalWorkspaceId = getOptionalString(payload.originalWorkspaceId);
+  const originalFolderId = getOptionalString(payload.originalFolderId);
+  let gate;
   try {
-    const raw = await fsP.readFile(sessionsJsonPath, 'utf8');
-    sessionsJson = JSON.parse(raw) as Record<string, unknown>;
-  } catch (error) {
-    logger.warn(`[session:archive] Could not read sessions.json: ${String(error)}`);
-    return { success: false, error: `Could not read sessions.json: ${String(error)}` };
-  }
-
-  const resolution = resolveSessionTranscriptPath(sessionsJson, sessionsDir, sessionKey);
-  if (!resolution.ok) {
-    if (resolution.failure.kind === 'not-found') {
-      return { success: false, error: `Cannot resolve file for session: ${sessionKey}` };
+    gate = await persistSessionMutationGate({
+      sessionKey,
+      agentId: parsed.agentId,
+      operationKind: 'archive',
+      requestDigest: buildSessionMutationRequestDigest('archive', {
+        sessionKey,
+        label,
+        originalWorkspaceId,
+        originalFolderId,
+      }),
+    });
+    const result = await gatewayManager.rpc<Record<string, unknown>>('sessions.archive', {
+      key: sessionKey,
+      operationId: gate.operationId,
+      ...(label ? { label } : {}),
+      ...(originalWorkspaceId ? { originalWorkspaceId } : {}),
+      ...(originalFolderId ? { originalFolderId } : {}),
+    }, 30_000);
+    if (
+      result?.ok !== true ||
+      result.operationId !== gate.operationId ||
+      result.journalState !== 'runtime_committed'
+    ) {
+      return {
+        success: false,
+        error: 'Gateway archive returned no matching runtime_committed receipt',
+      };
     }
-    return { success: false, error: `Resolved session path is outside the agent sessions dir: ${resolution.failure.resolvedPath}` };
-  }
-  const { sessionsDirAbs, baseId } = resolution;
-
-  // Snapshot the sessions.json entry BEFORE mutating so restore can re-insert
-  // it verbatim. Fall back to a minimal `{ key }` entry when sessions.json
-  // has no explicit row (e.g. the session was only ever a live .jsonl file).
-  const snapshot = snapshotSessionEntry(sessionsJson, sessionKey) ?? { key: sessionKey };
-
-  const archive = await archiveSessionTranscript(sessionsDirAbs, baseId);
-  if (!archive.renamed) {
-    logger.warn(`[session:archive] Could not rename transcript for ${sessionKey}: ${archive.error}`);
-    return { success: false, error: archive.error ?? 'Failed to archive transcript' };
-  }
-
-  // Remove from sessions.json so sessions.list stops returning it. Tolerate
-  // a missing/rewritten sessions.json (e.g. OpenClaw runtime rewrote it
-  // concurrently) — the .archived.jsonl rename is the source of truth for
-  // hiding the session, this just keeps the index consistent.
-  try {
-    const raw2 = await fsP.readFile(sessionsJsonPath, 'utf8');
-    const json2 = JSON.parse(raw2) as Record<string, unknown>;
-    removeSessionEntry(json2, sessionKey);
-    await fsP.writeFile(sessionsJsonPath, JSON.stringify(json2, null, 2), 'utf8');
+    await clearSessionDeleteGate(gate.operationId);
+    return { success: true };
   } catch (error) {
-    logger.warn(`[session:archive] Could not update sessions.json: ${String(error)}`);
+    // Unknown/failed RPC keeps the mirror gate and operationId for a retry.
+    return {
+      success: false,
+      error: `Gateway archive did not return a committed receipt: ${error instanceof Error ? error.message : String(error)}`,
+    };
   }
-
-  const entry: SessionArchiveEntry = {
-    sessionKey,
-    agentId,
-    transcriptPath: archive.archivedPath,
-    label: getOptionalString(payload.label) ?? sessionKey,
-    archivedAt: Date.now(),
-    originalWorkspaceId: getOptionalString(payload.originalWorkspaceId),
-    originalFolderId: getOptionalString(payload.originalFolderId),
-    sessionsJsonSnapshot: snapshot,
-  };
-  await upsertArchiveEntry(archiveIndexPath, entry);
-  logger.info(`[session:archive] Archived ${sessionKey} -> ${archive.archivedPath}`);
-  return { success: true };
 }
 
 /**
- * Restore an archived session: rename `.archived.jsonl` back to `.jsonl`,
- * re-insert the snapshotted sessions.json entry, and drop the archive index
- * entry. Returns success even if the transcript was already restored
- * (idempotent) — the only hard failure is a missing archive index entry,
- * which means we don't know which sessions.json row to restore.
+ * Restore an archived session through the runtime lifecycle owner. Runtime
+ * assigns a fresh physical sessionId and re-inserts the archived snapshot, so
+ * late events from the archived generation cannot mutate the restored row.
  */
-async function restoreSession(payload: SessionPayload): Promise<{ success: boolean; error?: string }> {
+async function restoreSession(
+  payload: SessionPayload,
+  gatewayManager?: GatewayManager,
+): Promise<{ success: boolean; error?: string }> {
   const sessionKey = getSessionKey(payload);
   const parsed = parseSessionKey(sessionKey);
-  if (!parsed) {
-    return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
-  }
-  const { agentId } = parsed;
-  const sessionsDir = join(getOpenClawConfigDir(), 'agents', agentId, 'sessions');
-  const sessionsJsonPath = join(sessionsDir, 'sessions.json');
-  const archiveIndexPath = getArchiveIndexPath(agentId);
-  logger.info(`[session:restore] key=${sessionKey} agentId=${agentId}`);
+  if (!parsed) return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
+  if (!gatewayManager) return { success: false, error: 'Gateway manager unavailable' };
 
-  const { removed } = await removeArchiveEntry(archiveIndexPath, sessionKey);
-  if (!removed) {
-    return { success: false, error: `Session is not in the archive index: ${sessionKey}` };
-  }
-
-  const restore = await restoreSessionTranscript(sessionsDir, basename(removed.transcriptPath).replace(/\.archived\.jsonl$/, ''));
-  if (!restore.restored) {
-    // The transcript file is gone (permanently deleted out from under us, or
-    // already restored by a prior call). Re-add the index entry so the user
-    // can retry / investigate, then surface the failure.
-    await upsertArchiveEntry(archiveIndexPath, removed);
-    return { success: false, error: restore.error ?? 'Archived transcript not found' };
-  }
-
+  let gate;
   try {
-    const fsP = await import('node:fs/promises');
-    const raw = await fsP.readFile(sessionsJsonPath, 'utf8');
-    const json = JSON.parse(raw) as Record<string, unknown>;
-    restoreSessionEntry(json, sessionKey, removed.sessionsJsonSnapshot);
-    await fsP.writeFile(sessionsJsonPath, JSON.stringify(json, null, 2), 'utf8');
+    gate = await persistSessionMutationGate({
+      sessionKey,
+      agentId: parsed.agentId,
+      operationKind: 'restore',
+      requestDigest: buildSessionMutationRequestDigest('restore', { sessionKey }),
+    });
+    const result = await gatewayManager.rpc<Record<string, unknown>>('sessions.restore', {
+      key: sessionKey,
+      operationId: gate.operationId,
+    }, 30_000);
+    if (
+      result?.ok !== true ||
+      result.operationId !== gate.operationId ||
+      result.journalState !== 'runtime_committed' ||
+      result.restored !== true
+    ) {
+      return {
+        success: false,
+        error: 'Gateway restore returned no matching runtime_committed receipt',
+      };
+    }
+    await clearSessionDeleteGate(gate.operationId);
+    return { success: true };
   } catch (error) {
-    logger.warn(`[session:restore] Could not update sessions.json: ${String(error)}`);
+    return {
+      success: false,
+      error: `Gateway restore did not return a committed receipt: ${error instanceof Error ? error.message : String(error)}`,
+    };
   }
-
-  logger.info(`[session:restore] Restored ${sessionKey}`);
-  return { success: true };
 }
 
 /**
@@ -2791,13 +2771,13 @@ export function createSessionsApi(ctx: {
         label: body.label,
         originalWorkspaceId: body.originalWorkspaceId,
         originalFolderId: body.originalFolderId,
-      });
+      }, ctx.gatewayManager);
       if (result.success) {
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
       }
       return result;
     },
-    restore: async (payload) => restoreSession({ id: getSessionKey(payload) }),
+    restore: async (payload) => restoreSession({ id: getSessionKey(payload) }, ctx.gatewayManager),
     permanentDelete: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const result = await permanentDeleteSession({ id: sessionKey });

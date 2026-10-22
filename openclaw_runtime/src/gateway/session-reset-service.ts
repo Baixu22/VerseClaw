@@ -384,7 +384,7 @@ export async function drainActiveSessionsForShutdown(params: {
 
 export async function emitSessionUnboundLifecycleEvent(params: {
   targetSessionKey: string;
-  reason: "session-reset" | "session-delete";
+  reason: "session-reset" | "session-delete" | "session-archive";
   emitHooks?: boolean;
   operationId?: string;
 }) {
@@ -556,7 +556,7 @@ async function runSessionStopFront(params: {
 
 async function runCleanupOtherOwners(
   params: SessionCleanupParams & {
-    reason: "session-reset" | "session-delete";
+    reason: "session-reset" | "session-delete" | "session-archive";
     onAcpResetMeta?: (meta: { sessionKey: string; meta: SessionAcpMeta }) => void;
   },
 ): Promise<ReturnType<typeof errorShape> | undefined> {
@@ -681,7 +681,7 @@ async function closeAcpRuntimeForSession(params: {
   cfg: OpenClawConfig;
   sessionKey: string;
   fallbackSessionKeys?: Array<string | undefined>;
-  reason: "session-reset" | "session-delete";
+  reason: "session-reset" | "session-delete" | "session-archive";
   onResetMeta?: (params: { sessionKey: string; meta: SessionAcpMeta }) => void;
 }) {
   const sessionKeys = Array.from(
@@ -794,7 +794,7 @@ function buildPendingAcpMeta(base: SessionAcpMeta, now: number): SessionAcpMeta 
 async function ensureFreshAcpResetState(params: {
   cfg: OpenClawConfig;
   sessionKey: string;
-  reason: "session-reset" | "session-delete";
+  reason: "session-reset" | "session-delete" | "session-archive";
   acpMeta: SessionAcpMeta;
 }): Promise<SessionAcpMeta | undefined> {
   if (params.reason !== "session-reset") {
@@ -839,7 +839,7 @@ async function ensureFreshAcpResetState(params: {
 async function closeChildAcpRuntimesForParent(params: {
   cfg: OpenClawConfig;
   parentKey: string;
-  reason: "session-reset" | "session-delete";
+  reason: "session-reset" | "session-delete" | "session-archive";
 }): Promise<void> {
   // Enumerate across every agent session store, not just the parent's: ACP
   // spawns create child keys under the target agent (`agent:<targetAgentId>:acp:…`)
@@ -891,7 +891,7 @@ export async function cleanupSessionBeforeMutation(params: {
   entry: SessionEntry | undefined;
   legacyKey?: string;
   canonicalKey?: string;
-  reason: "session-reset" | "session-delete";
+  reason: "session-reset" | "session-delete" | "session-archive";
   onAcpResetMeta?: (params: { sessionKey: string; meta: SessionAcpMeta }) => void;
 }): Promise<SessionMutationCleanupOutcome> {
   const identity = resolveSessionLifecycleIdentity(params);
@@ -901,9 +901,9 @@ export async function cleanupSessionBeforeMutation(params: {
   const settle = (mutationSucceeded: boolean): void => {
     if (settled) return;
     settled = true;
-    // Delete success keeps the old-generation fence as a tombstone. Every
-    // failure path, and successful reset, releases the fence.
-    if (params.reason === "session-delete" && mutationSucceeded) {
+    // Delete and archive success keep the old-generation fence as a tombstone.
+    // Every failure path, and successful reset, releases the fence.
+    if ((params.reason === "session-delete" || params.reason === "session-archive") && mutationSucceeded) {
       return;
     }
     fence?.release();

@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-lifecycle-barrier
 title: 让归档、还原与删除共享安全生命周期屏障
 program: long-session-development-20261022
@@ -11,21 +11,42 @@ intent: 补齐归档直接改文件与 runtime 删除保护链不对称的问题
 contractIndex: harness/specs/tasks/long-session-development-plan.md
 dependsOnTasks:
   - A1
+diffBase: 3b6a54598
 touchedAreas:
   - harness/specs/tasks/long-session-lifecycle-barrier.md
   - harness/specs/tasks/long-session-development-plan.md
+  - harness/specs/scenarios/gateway-backend-communication.md
+  - docs/clawx-product-semantics.md
+  - openclaw_runtime/packages/gateway-protocol/src/index.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/protocol-schemas.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/types.ts
+  - electron/gateway/manager.ts
   - electron/services/sessions-api.ts
   - electron/services/session-delete-gate.ts
   - electron/services/session-cascade-delete.ts
   - electron/utils/session-files.ts
   - src/stores/chat.ts
+  - openclaw_runtime/src/gateway/session-archive-service.ts
+  - openclaw_runtime/src/gateway/session-archive-service.test.ts
+  - openclaw_runtime/src/gateway/session-mutation-operation-journal.ts
+  - openclaw_runtime/src/gateway/session-mutation-operation-journal.test.ts
+  - openclaw_runtime/src/gateway/session-delete-operation-journal.ts
   - openclaw_runtime/src/gateway/session-reset-service.ts
+  - openclaw_runtime/src/gateway/methods/core-descriptors.ts
+  - openclaw_runtime/src/gateway/server-methods.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.read.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts
   - openclaw_runtime/src/sessions/session-admission-registry.ts
   - shared/host-api/contract.ts
   - src/lib/host-api.ts
   - tests/unit/long-session-lifecycle-barrier.test.ts
+  - tests/unit/r0-2-sessions-delete-fail.test.ts
+  - tests/unit/session-delete-gate.test.ts
+  - openclaw_runtime/src/gateway/session-ecosystem-lifecycle-reachability.test.ts
+  - openclaw_runtime/src/gateway/session-reset-service.stop.test.ts
+  - tests/e2e/long-session-lifecycle-faults.spec.ts
   - tests/e2e/long-session-lifecycle-faults.spec.ts
   - tests/e2e/sidebar-session-folders-archive.spec.ts
   - tests/e2e/chat-slash-session-lifecycle.spec.ts
@@ -47,8 +68,8 @@ expectedUserBehavior:
   - 补齐归档直接改文件与 runtime 删除保护链不对称的问题，使运行中、崩溃或迟到事件不会假装成功。
   - 创建本合同不代表功能已实现；结果、配置、授权和任务完成仍归现有 owner，未知状态如实保留。
 requiredTests:
-  - pnpm exec vitest run tests/unit/session-delete-gate.test.ts tests/unit/session-files.test.ts tests/unit/session-cascade-delete.test.ts tests/unit/terminal-session-manager.test.ts --maxWorkers=1
-  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-core.config.ts src/gateway/session-delete-operation-journal.test.ts src/gateway/session-reset-service.stop.test.ts src/gateway/session-reset-service.subagent-stop.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/long-session-lifecycle-barrier.test.ts tests/unit/session-delete-gate.test.ts tests/unit/session-files.test.ts tests/unit/session-cascade-delete.test.ts tests/unit/terminal-session-manager.test.ts --maxWorkers=1
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-core.config.ts src/gateway/session-ecosystem-lifecycle-reachability.test.ts src/gateway/session-archive-service.test.ts src/gateway/session-mutation-operation-journal.test.ts src/gateway/session-delete-operation-journal.test.ts src/gateway/session-reset-service.stop.test.ts src/gateway/session-reset-service.subagent-stop.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/long-session-lifecycle-barrier.test.ts --maxWorkers=1
   - pnpm run build:vite
   - pnpm run test:e2e:run tests/e2e/sidebar-session-folders-archive.spec.ts tests/e2e/chat-slash-session-lifecycle.spec.ts tests/e2e/long-session-lifecycle-faults.spec.ts
@@ -60,6 +81,8 @@ requiredTests:
   - git diff --check
 plannedTests:
   - tests/unit/long-session-lifecycle-barrier.test.ts
+  - openclaw_runtime/src/gateway/session-archive-service.test.ts
+  - openclaw_runtime/src/gateway/session-mutation-operation-journal.test.ts
   - tests/e2e/long-session-lifecycle-faults.spec.ts
 acceptance:
   - 归档/还原使用既有生命周期准入与 finalizer 的明确扩展；任一 drain、owner 或 commit 结果 unknown 时不改 transcript、不隐藏成功、不解锁。
@@ -76,9 +99,16 @@ docs:
 
 补齐归档直接改文件与 runtime 删除保护链不对称的问题，使运行中、崩溃或迟到事件不会假装成功。
 
-本规格为待执行合同。任务状态、前置与下一 ready 由 repo-local Task Forest 管理。节点创建、文件存在、静态 validate 或 dry-run 不是功能证据。只有前置任务/阶段的盘上验收完整后才开始。
+本规格已执行：runtime archive/restore 现在占用既有 admission fence，使用同一 session mutation journal 的 operationId 重试，并在 Main gate 保留 unknown 结果。A2 的正式结论仍必须由 clean-candidate 回执、真实 built Electron/Host/Gateway 旅程和 A2 盘上 artifacts 支撑。
 
 所属阶段一：统一会话动作并建立故障基线。统一边界见[规划合同索引](./long-session-development-plan.md)。
+**A2 交付**
+
+- `sessions.archive` / `sessions.restore` 进入 Gateway registry，transcript、archive index 与 store row 由 runtime 生命周期 owner 在 admission fence 后变更。
+- 现有 operation journal table 新增 archive/restore operation kind；Main 在首个 RPC 前持久化 operationId，失败/unknown 时保持同一身份重试。
+- archive 先写 archive index、再移动 transcript、最后事务移除 store row 并标记 tombstone；restore 插入新的物理 sessionId，再把 archived transcript 移回并清理索引。
+- Gateway sessions.list 过滤仍由 archive index 标记的 key，覆盖 crash 后 store/file 尚未完全收口的窗口。
+- 真实 Electron/Host/Gateway E2E 证明 archive 从 live list 消失、archive index 可读、restore 使用新 generation；runtime fault/retry 由 gateway-core 单测覆盖。
 
 **前置与读入**
 

@@ -81,6 +81,7 @@ async function makeConfigDir(): Promise<string> {
   const sessionsDir = join(root, 'agents', 'main', 'sessions');
   await mkdir(sessionsDir, { recursive: true });
   state.configDir = root;
+  process.env.OPENCLAW_STATE_DIR = root;
   process.env.OPENCLAW_CONTEXT_ARCHIVE_DIR = join(root, 'context-archive');
   return sessionsDir;
 }
@@ -94,6 +95,7 @@ beforeEach(() => {
 afterEach(async () => {
   state.configDir = null;
   delete process.env.OPENCLAW_CONTEXT_ARCHIVE_DIR;
+  delete process.env.OPENCLAW_STATE_DIR;
   await Promise.all(tempRoots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
 });
 

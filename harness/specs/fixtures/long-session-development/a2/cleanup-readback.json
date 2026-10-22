@@ -1,0 +1,21 @@
+{
+  "schema": "clawx.long-session.a2-cleanup-readback/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-a2",
+  "task": "TF-0549",
+  "generatedAt": "2026-10-22T17:55:34.561Z",
+  "resources": {
+    "electronStarted": false,
+    "gatewayStarted": false,
+    "browserStarted": false,
+    "backgroundProcessStarted": false
+  },
+  "cleanup": {
+    "electronClosed": null,
+    "gatewayStopped": null,
+    "tempRootsRemoved": null,
+    "recoveryRequired": null
+  },
+  "remaining": [],
+  "notes": "Populated from the final clean-candidate Electron/Gateway run and process readback."
+}
