@@ -59,6 +59,7 @@ touchedAreas:
   - harness/specs/tasks/versegit-product-b2-host-diagnostics.md
   - electron/main/ipc-handlers.ts
   - electron/services/versegit-api.ts
+  - scripts/versegit-product-b2-evidence.mts
   - shared/host-api/contract.ts
   - src/lib/host-api.ts
   - src/lib/host-api-client.ts
