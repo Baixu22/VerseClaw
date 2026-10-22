@@ -51,9 +51,11 @@ vi.mock('@electron/gateway/generation', () => ({
 
 import {
   getDcsPreviewState,
+  getWorkspaceContextState,
   resolveDcsPreviewPrereqs,
   setDcsProdFlag,
   setDcsPreview,
+  setWorkspaceContext,
 } from '@electron/services/dcs-prod-flags-api';
 import { DCS_PREVIEW_COMBO_FLAG_IDS } from '@shared/dcs/prod-flags-control';
 import type { GatewayManager } from '@electron/gateway/manager';
@@ -83,7 +85,7 @@ function completeAck(overrides: Record<string, unknown> = {}): Record<string, un
   };
 }
 
-function gatewayManager(overrides: Partial<Record<'state', string>> & { rpc?: () => Promise<unknown> } = {}): GatewayManager {
+function gatewayManager(overrides: { state?: string; rpc?: (...args: never[]) => Promise<unknown> } = {}): GatewayManager {
   return {
     getStatus: () => ({ state: overrides.state ?? 'running' }),
     restart: vi.fn(async () => undefined),
@@ -263,5 +265,68 @@ describe('FP-P1-03 getDcsPreviewState', () => {
     const on = await getDcsPreviewState();
     expect(on.enabled).toBe(true);
     expect(on.partial).toBe(false);
+  });
+});
+
+describe('Workspace Context user profile', () => {
+  it('defaults on from the two underlying runtime flags', async () => {
+    const stateResult = await getWorkspaceContextState(gatewayManager());
+    expect(stateResult.enabled).toBe(true);
+    expect(stateResult.partial).toBe(false);
+    expect(stateResult.comboFlagIds).toEqual(['working-memory', 'tool-registry']);
+    expect(stateResult.flags.map((flag) => flag.enabled)).toEqual([true, true]);
+    expect(stateResult.modelSummary).toContain('enabled');
+  });
+
+  it('turns both capabilities off with one save/restart/ack sequence', async () => {
+    let requested: Record<string, boolean> | undefined;
+    const manager = gatewayManager({
+      rpc: async (_method: string, params: { requestedFlags?: Record<string, boolean> }) => {
+        requested = params.requestedFlags;
+        return completeAck({
+          effectiveFlags: {
+            'runtime.contextBlock.working_memory.enabled': false,
+            'runtime.contextBlock.tool_registry.enabled': false,
+          },
+          turnEffectProbe: { wouldChangeTurn: true, killSwitchEngaged: false, activeSurfaces: ['wm-off'] },
+        });
+      },
+    });
+    const result = await setWorkspaceContext({ enabled: false, restartGateway: true }, manager);
+    expect(result.status).toBe('applied');
+    expect(result.comboFlagIds).toEqual(['working-memory', 'tool-registry']);
+    expect(state.settingWrites.map(([key]) => key).sort()).toEqual([
+      'dcsToolRegistryEnabled',
+      'dcsWorkingMemoryEnabled',
+    ].sort());
+    expect(Object.keys(requested ?? {}).sort()).toEqual([
+      'runtime.contextBlock.tool-registry.enabled',
+      'runtime.contextBlock.working-memory.enabled',
+    ].sort());
+    expect(JSON.stringify(state.config)).toContain('false');
+    expect((await getWorkspaceContextState(manager)).enabled).toBe(false);
+  });
+
+  it('reports kill-switch rejection as failed, not active', async () => {
+    const manager = gatewayManager({
+      rpc: async () => completeAck({
+        effectiveFlags: {
+          'runtime.contextBlock.working_memory.enabled': false,
+          'runtime.contextBlock.tool_registry.enabled': false,
+        },
+        turnEffectProbe: { wouldChangeTurn: false, killSwitchEngaged: true, activeSurfaces: [] },
+        rejectedFlags: [
+          {
+            id: 'runtime.contextBlock.working_memory.enabled',
+            requested: true,
+            effective: false,
+            reason: 'kill-switch',
+          },
+        ],
+      }),
+    });
+    const result = await setWorkspaceContext({ enabled: true, restartGateway: true }, manager);
+    expect(result.status).toBe('failed');
+    expect(result.failureReason).toBe('flag-rejected');
   });
 });

@@ -249,6 +249,8 @@ export type Rc03SealHookResult = {
   /** The compiled plan for this sealed turn; the runner carries it to the
    *  guarded wire boundary so WireReceipt/v1 can correlate. */
   plan?: CompilePlan;
+  /** Correlation digest of the immutable sealed ContextBundle. */
+  bundleDigest?: string;
   /** Registered non-semantic transport transforms applied after the seal. */
   postSealTransformIds: string[];
 };
@@ -571,6 +573,7 @@ export function runRc03SealHook(
     contextReceiptPersisted,
     unregisteredProducers,
     plan,
+    bundleDigest: bundle.bundleDigest,
     postSealTransformIds,
   };
 }

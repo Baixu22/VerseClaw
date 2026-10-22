@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-20T17:51:28.645Z
+Generated at: 2026-10-22T08:20:03.504Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -42,28 +42,28 @@ This file is generated — edit the source of truth instead.
 - wave: DCS-S1
 - kind: config
 - key: `runtime.contextBlock.working-memory.enabled`
-- default: false
-- defaultDisplay: false
-- risk: opt-in
-- enable: Settings switch or openclaw config runtime.contextBlock.working-memory.enabled=true; restart gateway/runtime so config-sync applies.
-- rollback: Set enabled=false or Settings off; restart if needed. Injection stops; producers may still emit envelopes unused.
+- default: true
+- defaultDisplay: true
+- risk: baseline-on
+- enable: On by default through Workspace Context; explicit runtime.contextBlock.working-memory.enabled=false remains a supported rollback.
+- rollback: Turn Workspace Context off or set enabled=false, then restart; recent-action injection stops.
 - executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:479`
 
-> TASK-P1-02: when on, Assembler injects ## Recent Actions once per context (exactly-once). Default remains off until product soak.
+> TF-0494: default-on after a predeclared paired canary; Assembler injects ## Recent Actions once per model-call context. Not long-term knowledge.
 
 ## tool-registry
 
 - wave: DCS-S3
 - kind: config
 - key: `runtime.contextBlock.tool-registry.enabled`
-- default: false
-- defaultDisplay: false
-- risk: opt-in
-- enable: Settings switch or openclaw config runtime.contextBlock.tool-registry.enabled=true; restart gateway/runtime.
-- rollback: Set enabled=false or Settings off; restart if needed. Tool summary injection stops.
+- default: true
+- defaultDisplay: true
+- risk: baseline-on
+- enable: On by default through Workspace Context; explicit runtime.contextBlock.tool-registry.enabled=false remains a supported rollback.
+- rollback: Turn Workspace Context off or set enabled=false, then restart; the tool summary stops.
 - executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:490`
 
-> TASK-P1-03: when on, before_agent_start writes tool_registry Block and Assembler injects ## Tools summary (exactly-once). Aligns with C1 on_demand schema mode.
+> TF-0494: default-on after a predeclared paired canary; tool-registry Block and ## Tools summary remain exactly-once per model call.
 
 ## stale-write-guard
 

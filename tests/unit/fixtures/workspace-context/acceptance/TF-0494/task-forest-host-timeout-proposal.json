@@ -1,0 +1,19 @@
+{
+  "proposal_id": "TFP-TF-0494-host-timeout-delta-20261022",
+  "session_id": "tf-0494-workspace-context-20261022",
+  "rationale": "Workspace Context set performs bounded gateway restart and child-ack collection, so its typed host action must share the existing long-timeout policy. Record this single exact authority path before implementation.",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0494",
+      "fields": {
+        "execution_hints": [
+          "复用 DCS Preview 组合逻辑；先运行 agent-driven canary，再翻转默认",
+          "canaryProtocol=tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-protocol.json",
+          "authorityDeltaPaths=electron/utils/store.ts,shared/host-api/contract.ts,shared/host-api/host-action-timeouts.ts,src/lib/host-api.ts,src/components/settings/WorkspaceContextPanel.tsx,src/pages/Settings/index.tsx,shared/i18n/",
+          "authorityDeltaReason=one user-level Workspace Context switch; DcsProdFlagsPanel remains developer diagnostics only"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+pnpm.cmd : $ node scripts/typecheck-agent-dev.mjs
+At D:\ClawX-work\component-graduation-20261021\tests\unit\fixtures\workspace-context\acceptance\TF-0494\run-verificatio
+n.ps1:15 char:13
++   $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ node scripts/typecheck-agent-dev.mjs:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[ext-bridge] No external extensions configured — empty stubs up to date.
+$ tsgo --noEmit -p tsconfig.web.json --composite false
+$ tsgo --noEmit -p tsconfig.node.json --composite false
+{
+  "success": true,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 0,
+    "durationMs": 22314,
+    "observationMode": false,
+    "errorCount": 0,
+    "errorLog": "D:\\ClawX-work\\component-graduation-20261021\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": "5b553b3d51d840374c492074b039d58eefa7842f66ef167e6ac21a34352ecc8e",
+    "inputCount": 12371,
+    "report": "D:\\ClawX-work\\component-graduation-20261021\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 26339,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 46
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 24203
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 10244
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 22314,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "D:\\ClawX-work\\component-graduation-20261021\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}

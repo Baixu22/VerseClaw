@@ -1,0 +1,93 @@
+[
+    {
+        "file":  "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+        "expected":  "e99d12049067a3a42bec959f8a62417d388996fb3fdc4471edb82a343abb4d21",
+        "actual":  "e99d12049067a3a42bec959f8a62417d388996fb3fdc4471edb82a343abb4d21",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/context-engine/context-final-snapshot.ts",
+        "expected":  "ffbe2caad45c08d063b5089ae5f594ce3b6d0fe11a7fb4f72e6d8da61bbd1f29",
+        "actual":  "ffbe2caad45c08d063b5089ae5f594ce3b6d0fe11a7fb4f72e6d8da61bbd1f29",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/context-engine/context-ladder.ts",
+        "expected":  "8b115c35c3f77b76f1a23ed798ab0e6107745f725038f9a919327a18a7d36337",
+        "actual":  "8b115c35c3f77b76f1a23ed798ab0e6107745f725038f9a919327a18a7d36337",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+        "expected":  "0277bd290fe08c85945b93ea2b9eb120e4a77a66461b18d874e68afe670cc866",
+        "actual":  "0277bd290fe08c85945b93ea2b9eb120e4a77a66461b18d874e68afe670cc866",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
+        "expected":  "3d3df91ff25e694ae2e2af1f3378fde6df3a55fd6867ae05373a5464f8824e14",
+        "actual":  "3d3df91ff25e694ae2e2af1f3378fde6df3a55fd6867ae05373a5464f8824e14",
+        "status":  "pass"
+    },
+    {
+        "file":  "src/pages/Settings/index.tsx",
+        "expected":  "93e0f00daf6ff3422f52c8110809df0b7faa9666d678c60fb859bfe092ba898b",
+        "actual":  "93e0f00daf6ff3422f52c8110809df0b7faa9666d678c60fb859bfe092ba898b",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/e2e/dcs-prod-p0-settings.spec.ts",
+        "expected":  "fa5f9dfa04eb709090307c53549fa5626eac8f538e9b998ad3482fa6ac44d146",
+        "actual":  "fa5f9dfa04eb709090307c53549fa5626eac8f538e9b998ad3482fa6ac44d146",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/e2e/vtoken-bridge-settings.spec.ts",
+        "expected":  "3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5",
+        "actual":  "3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/context-assembly-authority-tf0493.test.ts",
+        "expected":  "11bc28bf7d88e9e14d3a26a75cfcf64b852daba9e13093e743e1b53f0f45b590",
+        "actual":  "11bc28bf7d88e9e14d3a26a75cfcf64b852daba9e13093e743e1b53f0f45b590",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/README.md",
+        "expected":  "93ab603bdd32cdf2cca77482c7b98c6884bfcb3207fffd13cc0b8a5ba222d456",
+        "actual":  "93ab603bdd32cdf2cca77482c7b98c6884bfcb3207fffd13cc0b8a5ba222d456",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/component-graduation-report.json",
+        "expected":  "191645194119e171c9dcbfd5728f07c67f2810b6a401bdd436e9bc04f4c9138b",
+        "actual":  "191645194119e171c9dcbfd5728f07c67f2810b6a401bdd436e9bc04f4c9138b",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/generate-acceptance.mts",
+        "expected":  "1e1801a4c0e65fefc870404d69766add516106041c61be7b9a1c5d314c26402a",
+        "actual":  "1e1801a4c0e65fefc870404d69766add516106041c61be7b9a1c5d314c26402a",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
+        "expected":  "30486317e06749998b860b9728d065120fce288ba877a17151efab12c0850f35",
+        "actual":  "30486317e06749998b860b9728d065120fce288ba877a17151efab12c0850f35",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
+        "expected":  "6440d706155e8537679d8c4b15d5c55911812e115096d86bb5abe8eac95b625c",
+        "actual":  "6440d706155e8537679d8c4b15d5c55911812e115096d86bb5abe8eac95b625c",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/task-forest-scope-proposal.json",
+        "expected":  "93b883c0f2ae525b832c08025decd24220f2c4aaceee070b32f762b1ecfb9942",
+        "actual":  "93b883c0f2ae525b832c08025decd24220f2c4aaceee070b32f762b1ecfb9942",
+        "status":  "pass"
+    }
+]
+SHA256SUMS_STATUS=pass

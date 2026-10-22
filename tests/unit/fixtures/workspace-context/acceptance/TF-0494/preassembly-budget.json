@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "WorkspaceContextPreassemblyBudgetFixture/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": "openclaw_runtime/src/agents/embedded-agent-runner/run/preemptive-compaction.test.ts",
+  "testName": "uses the larger preassembly transcript pressure and routes overflow",
+  "inputs": {
+    "projectedMessages": 1,
+    "unwindowedMessages": 80,
+    "contextTokenBudget": 16000,
+    "reserveTokens": 4000
+  },
+  "measured": {
+    "estimatedPromptTokens": 21030,
+    "pressureSource": "unwindowed_transcript_estimate",
+    "promptBudgetBeforeReserve": 12000,
+    "overflowTokens": 9030,
+    "route": "compact_only"
+  }
+}

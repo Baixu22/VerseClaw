@@ -1,0 +1,33 @@
+{
+  "proposal_id": "TFP-TF-0494-runner-test-authority-20261022",
+  "session_id": "tf-0494-workspace-context-20261022",
+  "rationale": "TF-0494 acceptance requires proving tool-loop candidate dedup/refresh behaviour and the full-request preassembly overflow budget. The active guard covered context-engine paths but omitted the two embedded-agent-runner test files where those acceptance checks live. This proposal records the exact authority gap and the minimum exact path correction; it does not hide or revert the already-written test evidence, does not change node status, and does not activate another node.",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0494",
+      "fields": {
+        "execution_hints": [
+          "复用 DCS Preview 组合逻辑；先运行 agent-driven canary，再翻转默认",
+          "canaryProtocol=tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-protocol.json",
+          "authorityDeltaPaths=electron/utils/store.ts,shared/host-api/contract.ts,shared/host-api/host-action-timeouts.ts,src/lib/host-api.ts,src/components/settings/WorkspaceContextPanel.tsx,src/pages/Settings/index.tsx,shared/i18n/,docs/clawx-product-semantics.md,docs/dev/default-config-matrix.md,docs/dev/component-disposition-matrix-20261021.md,tests/fixtures/launch-contract-matrix.ts,docs/generated/catalogs/prod-flags.md,openclaw_runtime/src/agents/embedded-agent-runner/extensions.knowledge.test.ts,openclaw_runtime/src/agents/embedded-agent-runner/run/preemptive-compaction.test.ts",
+          "authorityDeltaReason=one user-level Workspace Context switch; DcsProdFlagsPanel remains developer diagnostics only; product semantics, default matrix, disposition matrix, the default-matrix fixture, generated DCS catalog projection, and the two runtime acceptance tests must describe and verify the same graduated default"
+        ]
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "id": "TFD-tf0494-runner-test-scope-gap-20261022",
+        "kind": "authority_scope_gap",
+        "summary": "TF-0494 changed openclaw_runtime/src/agents/embedded-agent-runner/extensions.knowledge.test.ts and run/preemptive-compaction.test.ts to verify candidate/target dedup, tool-loop projection and full-request preassembly overflow, but the active guard path list omitted those two exact files.",
+        "reason": "The implementation paths in the node were context-engine and user-control paths; the acceptance checks for the agent-runner boundary were not enumerated in the guard.",
+        "correction": "The two exact test paths were added to TF-0494 authority and to the worktree scope guard before closeout. The tests were retained, re-run from disk, and are bound into TF-0494 acceptance evidence; no later node was implemented.",
+        "related_task_ids": [
+          "TF-0494"
+        ],
+        "created_at": "2026-10-22T09:10:00Z"
+      }
+    }
+  ]
+}

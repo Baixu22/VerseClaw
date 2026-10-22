@@ -77,14 +77,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     wave: 'DCS-S1',
     kind: 'config',
     key: 'runtime.contextBlock.working-memory.enabled',
-    defaultDisplay: 'false',
-    defaultValue: false,
-    risk: 'opt-in',
-    enable:
-      'Settings switch or openclaw config runtime.contextBlock.working-memory.enabled=true; restart gateway/runtime so config-sync applies.',
-    rollback: 'Set enabled=false or Settings off; restart if needed. Injection stops; producers may still emit envelopes unused.',
-    riskNote:
-      'TASK-P1-02: when on, Assembler injects ## Recent Actions once per context (exactly-once). Default remains off until product soak.',
+    defaultDisplay: 'true',
+    defaultValue: true,
+    risk: 'baseline-on',
+    enable: 'On by default through Workspace Context; explicit runtime.contextBlock.working-memory.enabled=false remains a supported rollback.',
+    rollback: 'Turn Workspace Context off or set enabled=false, then restart; recent-action injection stops.',
+    riskNote: 'TF-0494: default-on after a predeclared paired canary; Assembler injects ## Recent Actions once per model-call context. Not long-term knowledge.',
     executor: {
       status: 'wired',
       sites: [
@@ -97,14 +95,12 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     wave: 'DCS-S3',
     kind: 'config',
     key: 'runtime.contextBlock.tool-registry.enabled',
-    defaultDisplay: 'false',
-    defaultValue: false,
-    risk: 'opt-in',
-    enable:
-      'Settings switch or openclaw config runtime.contextBlock.tool-registry.enabled=true; restart gateway/runtime.',
-    rollback: 'Set enabled=false or Settings off; restart if needed. Tool summary injection stops.',
-    riskNote:
-      'TASK-P1-03: when on, before_agent_start writes tool_registry Block and Assembler injects ## Tools summary (exactly-once). Aligns with C1 on_demand schema mode.',
+    defaultDisplay: 'true',
+    defaultValue: true,
+    risk: 'baseline-on',
+    enable: 'On by default through Workspace Context; explicit runtime.contextBlock.tool-registry.enabled=false remains a supported rollback.',
+    rollback: 'Turn Workspace Context off or set enabled=false, then restart; the tool summary stops.',
+    riskNote: 'TF-0494: default-on after a predeclared paired canary; tool-registry Block and ## Tools summary remain exactly-once per model call.',
     executor: {
       status: 'wired',
       sites: [

@@ -55,6 +55,7 @@ import { toast } from 'sonner';
 import { useSettingsStore } from '@/stores/settings';
 import { useGatewayStore } from '@/stores/gateway';
 import { SettingsSectionLoading } from './sections/SettingsSectionLoading';
+import { WorkspaceContextPanel } from '@/components/settings/WorkspaceContextPanel';
 import { toUserMessage } from '@/lib/error-message';
 import {
   clearUiTelemetry,
@@ -113,8 +114,6 @@ const settingsAgentDev = createPreloadableLazy<Record<string, never>>(() => impo
 const settingsContextControlPlane = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ContextControlPlanePanel').then((m) => ({ default: m.ContextControlPlanePanel as ComponentType<Record<string, never>> })));
 const settingsRemoteTaskDeveloper = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/RemoteTaskDeveloperPanel').then((m) => ({ default: m.RemoteTaskDeveloperPanel as ComponentType<Record<string, never>> })));
 const settingsDcsProdFlags = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/DcsProdFlagsPanel').then((m) => ({ default: m.DcsProdFlagsPanel as ComponentType<Record<string, never>> })));
-const settingsVtokenBridge = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/VtokenBridgePanel').then((m) => ({ default: m.VtokenBridgePanel as ComponentType<Record<string, never>> })));
-const settingsContextLayers = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ContextLayersExplainer').then((m) => ({ default: m.ContextLayersExplainer as ComponentType<Record<string, never>> })));
 const settingsEfficiencySampling = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/EfficiencySamplingPanel').then((m) => ({ default: m.EfficiencySamplingPanel as ComponentType<Record<string, never>> })));
 const settingsRecovery = createPreloadableLazy<Record<string, never>>(() => import('./sections/RecoverySettingsSection').then((m) => ({ default: m.RecoverySettingsSection as ComponentType<Record<string, never>> })));
 
@@ -128,8 +127,6 @@ const AgentDevWorkbenchPanelLazy = settingsAgentDev.Component;
 const ContextControlPlanePanelLazy = settingsContextControlPlane.Component;
 const RemoteTaskDeveloperPanelLazy = settingsRemoteTaskDeveloper.Component;
 const DcsProdFlagsPanelLazy = settingsDcsProdFlags.Component;
-const VtokenBridgePanelLazy = settingsVtokenBridge.Component;
-const ContextLayersExplainerLazy = settingsContextLayers.Component;
 const EfficiencySamplingPanelLazy = settingsEfficiencySampling.Component;
 type ControlUiInfo = {
   port: number;
@@ -144,7 +141,7 @@ function preloadSettingsSection(section: SettingsSectionId) {
     case 'skills': settingsSkills.preload(); break;
     case 'billing': settingsBilling.preload(); break;
     case 'system': settingsProjectRules.preload(); break;
-    case 'developer': settingsAgentDev.preload(); settingsRemoteTaskDeveloper.preload(); settingsDcsProdFlags.preload(); settingsVtokenBridge.preload(); settingsContextControlPlane.preload(); settingsEfficiencySampling.preload(); break;
+    case 'developer': settingsAgentDev.preload(); settingsRemoteTaskDeveloper.preload(); settingsDcsProdFlags.preload(); settingsContextControlPlane.preload(); settingsEfficiencySampling.preload(); break;
     case 'recovery': settingsRecovery.preload(); break;
     default: break;
   }
@@ -1511,6 +1508,9 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
             </SettingsSection>
           )}
 
+
+          {currentSection === 'general' && <WorkspaceContextPanel />}
+
           {currentSection === 'models' && (
             <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} variant="generic" />}>
               <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><SettingsModelsLazy embedded /></div>
@@ -2057,10 +2057,8 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
 
                   <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} variant="generic" />}>
                     <div className="space-y-4 animate-in fade-in duration-150 motion-reduce:animate-none">
-                      <ContextLayersExplainerLazy />
                       <EfficiencySamplingPanelLazy />
                       <DcsProdFlagsPanelLazy />
-                      <VtokenBridgePanelLazy />
                       <RemoteTaskDeveloperPanelLazy />
                       <AgentDevWorkbenchPanelLazy />
                       <ContextControlPlanePanelLazy />

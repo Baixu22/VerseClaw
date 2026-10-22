@@ -60,14 +60,44 @@
   "recovery": {
     "activityTitle": "Session & Recovery",
     "currentTitle": "Current session recovery",
-    "enabled": { "title": "Show session activity panel", "description": "Show structured runtime status beside Chat when real activity exists." },
-    "autoExpand": { "title": "Automatic expansion", "description": "Choose when the activity panel opens on desktop.", "active": "When active", "attention": "When attention is needed", "never": "Never" },
-    "completedRunsExpanded": { "title": "Keep completed run activity expanded", "description": "Show completed run details by default. Manually collapsed runs stay collapsed for that session." },
-    "showGit": { "title": "Show workspace Git", "description": "Include workspace-scoped branch and change status." },
-    "showCommands": { "title": "Show Agent commands", "description": "Include structured command summaries alongside interactive terminals." },
-    "notifications": { "title": "Recovery and blocked notifications", "description": "Notify when a real recovery or blocked signal needs review." },
-    "retention": { "title": "Recent activity retention", "description": "Keep completed activity visible for a bounded period.", "none": "Do not retain", "five": "5 minutes", "fifteen": "15 minutes" },
-    "session": { "title": "Session", "description": "Choose a workspace session to inspect." },
+    "enabled": {
+      "title": "Show session activity panel",
+      "description": "Show structured runtime status beside Chat when real activity exists."
+    },
+    "autoExpand": {
+      "title": "Automatic expansion",
+      "description": "Choose when the activity panel opens on desktop.",
+      "active": "When active",
+      "attention": "When attention is needed",
+      "never": "Never"
+    },
+    "completedRunsExpanded": {
+      "title": "Keep completed run activity expanded",
+      "description": "Show completed run details by default. Manually collapsed runs stay collapsed for that session."
+    },
+    "showGit": {
+      "title": "Show workspace Git",
+      "description": "Include workspace-scoped branch and change status."
+    },
+    "showCommands": {
+      "title": "Show Agent commands",
+      "description": "Include structured command summaries alongside interactive terminals."
+    },
+    "notifications": {
+      "title": "Recovery and blocked notifications",
+      "description": "Notify when a real recovery or blocked signal needs review."
+    },
+    "retention": {
+      "title": "Recent activity retention",
+      "description": "Keep completed activity visible for a bounded period.",
+      "none": "Do not retain",
+      "five": "5 minutes",
+      "fifteen": "15 minutes"
+    },
+    "session": {
+      "title": "Session",
+      "description": "Choose a workspace session to inspect."
+    },
     "runAction": "Run",
     "openConversation": "Open conversation",
     "healthy": "No recovery pressure detected for this session.",
@@ -653,7 +683,7 @@
         "detailDisabled": "These tools stay out of the default tool list until enabled: {{tools}}.",
         "detailEnabled": "View tools are on for this install. They still require a coding workspace with FactService."
       },
-      "layerRole": "DCS — working memory & context blocks — Opt-in BlockStore spine: working-memory injection, tool_registry summary, knowledge blocks, and context_* tools. Default…",
+      "layerRole": "DCS — developer diagnostics — advanced BlockStore controls. Workspace Context (recent actions + tool catalog) is the normal default-on user profile in Settings > General; low-level flags and experiment gates remain diagnostics.",
       "taskLoopNote": "Task state / phase / SEKB trajectory features require a TaskLoop (multi-step task) path — not single-turn chat alone. See docs/dev/dcs-visible-production/TASKLOOP-ACCEPTANCE.md.",
       "observability": {
         "title": "DCS observability (product keys)",
@@ -926,5 +956,22 @@
     "success": "Support bundle exported",
     "failed": "Support bundle export failed: {{error}}",
     "savedTo": "Saved to {{path}} · redaction hits: {{hits}}"
+  },
+  "workspaceContext": {
+    "title": "Workspace Context",
+    "label": "Use workspace context",
+    "description": "Keep recent tool actions and the available-tool catalog available across the tool loop.",
+    "refresh": "Refresh",
+    "loading": "Loading effective state...",
+    "loadFailed": "Could not load Workspace Context",
+    "setFailed": "Could not change Workspace Context",
+    "status": {
+      "applied": "On",
+      "acknowledged": "Confirmed",
+      "pending": "Pending restart",
+      "failed": "Needs attention",
+      "partial": "Partial",
+      "off": "Off"
+    }
   }
 }

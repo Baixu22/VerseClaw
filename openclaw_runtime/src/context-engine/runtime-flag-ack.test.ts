@@ -54,9 +54,10 @@ describe("FP-P0-04 runtime flag ack", () => {
     expect(buildRuntimeFlagAck({ env: BASE_ENV }).configSource.origin).toBe("env-override");
   });
 
-  it("defaults every enhancement surface off (product default)", () => {
+  it("defaults Workspace Context on while advanced and legacy surfaces stay off", () => {
     const flags = resolveEffectiveRuntimeFlags(undefined, BASE_ENV);
-    expect(flags["runtime.contextBlock.working_memory.enabled"]).toBe(false);
+    expect(flags["runtime.contextBlock.working_memory.enabled"]).toBe(true);
+    expect(flags["runtime.contextBlock.tool_registry.enabled"]).toBe(true);
     expect(flags["runtime.contextBlock.compass.enabled"]).toBe(false);
     expect(flags["runtime.vtoken.assembly.enabled"]).toBe(false);
     expect(flags["dcs.contextViewTools.enabled"]).toBe(false);
@@ -79,10 +80,13 @@ describe("FP-P0-04 runtime flag ack", () => {
     );
   });
 
-  it("turnEffectProbe says no turn change when nothing is enabled", () => {
+  it("turnEffectProbe reports baseline Workspace Context surfaces", () => {
     const ack = buildRuntimeFlagAck({ env: BASE_ENV });
-    expect(ack.turnEffectProbe.wouldChangeTurn).toBe(false);
-    expect(ack.turnEffectProbe.activeSurfaces).toEqual([]);
+    expect(ack.turnEffectProbe.wouldChangeTurn).toBe(true);
+    expect(ack.turnEffectProbe.activeSurfaces).toEqual([
+      "runtime.contextBlock.working_memory.enabled",
+      "runtime.contextBlock.tool_registry.enabled",
+    ]);
   });
 
   it("turnEffectProbe reports the active surface when a flag is really on", () => {
@@ -123,7 +127,7 @@ describe("FP-P0-04 runtime flag ack", () => {
       id: "runtime.contextBlock.working_memory.enabled",
       requested: true,
       effective: false,
-      reason: "kill-switch-engaged",
+      reason: "kill-switch",
     });
     expect(ack.degradedReason).toContain("partial-flag-reject");
   });
@@ -184,7 +188,7 @@ describe("FP-P0-04 runtime flag ack", () => {
       requestedFlags: { "runtime.contextBlock.working-memory.enabled": true },
     });
     expect(ack.rejectedFlags?.[0]?.id).toBe("runtime.contextBlock.working-memory.enabled");
-    expect(ack.rejectedFlags?.[0]?.reason).toBe("kill-switch-engaged");
+    expect(ack.rejectedFlags?.[0]?.reason).toBe("kill-switch");
   });
 
   it("flags a request for an unknown key rather than silently accepting it", () => {
@@ -199,14 +203,14 @@ describe("FP-P0-04 runtime flag ack", () => {
   });
 
   it("hash changes when the effective flags change", () => {
-    const off = buildRuntimeFlagAck({ env: BASE_ENV }).runtimeBuildOrConfigHash;
-    const on = buildRuntimeFlagAck({
+    const baseline = buildRuntimeFlagAck({ env: BASE_ENV }).runtimeBuildOrConfigHash;
+    const off = buildRuntimeFlagAck({
       env: BASE_ENV,
       cfg: {
-        runtime: { contextBlock: { "working-memory": { enabled: true } } },
+        runtime: { contextBlock: { "working-memory": { enabled: false } } },
       } as never,
     }).runtimeBuildOrConfigHash;
-    expect(off).not.toBe(on);
+    expect(baseline).not.toBe(off);
   });
 
   it("hash is stable for identical inputs", () => {

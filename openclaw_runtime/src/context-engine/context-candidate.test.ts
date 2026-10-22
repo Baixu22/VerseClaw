@@ -142,7 +142,7 @@ describe("ContextCandidate/v1", () => {
       objectId: "block-1",
       sourceId: "vtoken-assembly",
       channel: "vtoken",
-      target: "system_prompt",
+      target: "message",
       text: "same authority text",
     });
     expect(knowledge.schema).toBe("ContextCandidate/v1");
@@ -196,6 +196,29 @@ describe("ContextCandidate/v1", () => {
       "vtoken",
       "memory_pilot",
     ]);
+  });
+
+  it("deduplicates only the same authority identity, revision, and target", () => {
+    const turnId = "candidate-target-dedup";
+    const base = {
+      objectId: "shared-target-block",
+      version: "v1",
+      sourceId: "shared-source",
+      channel: "knowledge" as const,
+      text: "same text",
+    };
+    collectContextCandidate(turnId, candidate({ ...base, target: "message" }));
+    collectContextCandidate(turnId, candidate({ ...base, target: "system_prompt" }));
+    collectContextCandidate(turnId, candidate({ ...base, target: "message" }));
+    const ledger = beginTurnInjectionBudget({ turnId, total: 100 });
+    const projection = finalizeContextCandidates({ turnId, ledger, messages: [] });
+    expect(projection.lineage.filter((entry) => entry.reason === "applied")).toHaveLength(2);
+    expect(projection.lineage.filter((entry) => entry.reason === "duplicate")).toHaveLength(1);
+    expect(getContextCandidateCollection(turnId)?.diagnostics).toMatchObject({
+      collected: 3,
+      unique: 2,
+      duplicates: 1,
+    });
   });
 
   it("drops duplicate authority objects before charging the one turn ledger", () => {
