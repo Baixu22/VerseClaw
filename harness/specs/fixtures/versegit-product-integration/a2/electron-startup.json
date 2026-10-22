@@ -1,0 +1,80 @@
+{
+  "schema": "clawx.versegit.product-a2-evidence/v1",
+  "kind": "electron-startup",
+  "generated_at": "2026-10-22T12:39:29.628Z",
+  "task": "TF-0525",
+  "driven_by": "agent",
+  "actor": "codex",
+  "electron_binary_sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e",
+  "diagnostics": {
+    "ordinary_temp": {
+      "label": "ordinary-temp",
+      "kind": "diagnostic-probe",
+      "current_source": true,
+      "source_build": false,
+      "exit_code": 0,
+      "write": {
+        "ok": true,
+        "content": "ok"
+      },
+      "window": {
+        "ok": true,
+        "text": "probe"
+      },
+      "raw_result_sha256": "10a6d7ea6ee78adcfc4e274520d378ece643d38e12aa4d705fc998aeb3ba1765"
+    },
+    "writable_isolated_root": {
+      "label": "ignored-worktree-root",
+      "kind": "diagnostic-probe",
+      "current_source": true,
+      "source_build": false,
+      "exit_code": 0,
+      "write": {
+        "ok": true,
+        "content": "ok"
+      },
+      "window": {
+        "ok": true,
+        "text": "probe"
+      },
+      "raw_result_sha256": "71250cb40f3c7eec46f9a880e554564a0b83aed584575e57d151d44d62aa009b"
+    },
+    "historical_eperm": {
+      "status": "observed",
+      "current_source": false,
+      "source_head": "857baf3ece4cd223c4ca8a13816b486cb8e575eb",
+      "userDataWrite": {
+        "ok": false,
+        "code": "EPERM",
+        "message": "EPERM: operation not permitted, open '<machine-path>'"
+      },
+      "raw_artifact_sha256": "29db2bb11271522360e74f798b33c79e174c7d6add0cb6a8ba049ca932e11ebd"
+    }
+  },
+  "actual_app_smoke": {
+    "reporter": "playwright",
+    "tests": 5,
+    "expected": 5,
+    "failed": 0,
+    "entered_test_body": true,
+    "first_window_covered": true,
+    "host_invoke_covered": true
+  },
+  "distinction": {
+    "source_build": "build-identity.json",
+    "existing_build_reused": false,
+    "formal_test": "smoke-results.json",
+    "diagnostic_probe": "minimal Electron write/window probes only"
+  },
+  "retention": {
+    "user_data_role": "ignored worktree .local for formal E2E; D-scratch for ordinary probe",
+    "trace_policy": "Playwright retain-on-failure",
+    "failure_trace_count": 0,
+    "curated_evidence": "JSON summaries only"
+  },
+  "boundaries": {
+    "real_human_evidence": false,
+    "m4_authorized": false
+  },
+  "digest": "b284907a52321489b3e15a5f746f66712f7e11dc4b02d7e090397d511f63c7ec"
+}

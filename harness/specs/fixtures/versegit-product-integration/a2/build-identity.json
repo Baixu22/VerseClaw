@@ -1,0 +1,144 @@
+{
+  "schema": "clawx.versegit.product-a2-evidence/v1",
+  "kind": "build-identity",
+  "generated_at": "2026-10-22T12:39:28.441Z",
+  "task": "TF-0525",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "role": "worktree-root",
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "6061f4125b14f9777e081c57c7a0479726876cdb",
+    "tree": "d97833357c3807d0e220149760a55f0e704d82ea",
+    "dirty": false,
+    "dirtyEntryCount": 0
+  },
+  "run_identity": {
+    "host": {
+      "platform": "win32",
+      "release": "10.0.26200",
+      "arch": "x64",
+      "hostname": "LAPTOP-3LN94GP7"
+    },
+    "node": "v24.22.1",
+    "package_manager": "pnpm",
+    "temp_role": "D-scratch"
+  },
+  "provenance": {
+    "runtime": "source-build-in-this-task",
+    "ui": "source-build-in-this-task",
+    "existing_build_reused": false,
+    "diagnostic_only": false
+  },
+  "commands": [
+    {
+      "command": "pnpm run build:runtime",
+      "exit_code": 0,
+      "started_at": "2026-10-22T12:36:27.6714330Z",
+      "ended_at": "2026-10-22T12:37:04.3796229Z",
+      "duration_ms": 36699,
+      "log": {
+        "role": "D-scratch",
+        "sha256": "72e8a4e5bec6a8051dc584725d171d7d1da0e84afea479a742ca104d36cee77c",
+        "bytes": 3221
+      },
+      "readiness_marker": "\\[runtime-build-smoke\\] gateway ready"
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exit_code": 0,
+      "started_at": "2026-10-22T12:37:14.9320690Z",
+      "ended_at": "2026-10-22T12:38:02.0174383Z",
+      "duration_ms": 47079,
+      "log": {
+        "role": "D-scratch",
+        "sha256": "f054289e3bc096d90a316d92035fb3ff1e1beca84f099d26da98a39c5487507a",
+        "bytes": 47553
+      },
+      "readiness_marker": "built in"
+    },
+    {
+      "command": "pnpm contract:check",
+      "exit_code": 0,
+      "started_at": "2026-10-22T12:38:12.6118462Z",
+      "ended_at": "2026-10-22T12:38:13.4894333Z",
+      "duration_ms": 871,
+      "log": {
+        "role": "D-scratch",
+        "sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0",
+        "bytes": 59
+      },
+      "readiness_marker": "Contract check passed"
+    }
+  ],
+  "electron": {
+    "role": "electron-package-binary",
+    "package_version": "40.8.4",
+    "binary_sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e",
+    "binary_bytes": 213919232
+  },
+  "artifacts": [
+    {
+      "role": "runtime",
+      "path": "openclaw_runtime/dist/entry.js",
+      "sha256": "2cc3ae8aab7874151418e6ec7a86a3961839b6f12d609b9315be5f546b20eccf",
+      "bytes": 2782,
+      "mtime": "2026-10-22T12:36:40.756Z"
+    },
+    {
+      "role": "runtime",
+      "path": "openclaw_runtime/dist/knowledge/sekb/index.js",
+      "sha256": "94ba029285e2cd3b5e099a47994515e2f792425780e20c21f5d6183c4218e952",
+      "bytes": 376207,
+      "mtime": "2026-10-22T12:36:45.941Z"
+    },
+    {
+      "role": "runtime",
+      "path": "openclaw_runtime/dist/extensions/deepseek/provider-policy-api.js",
+      "sha256": "209a66fe17bda2b15dddfc594c255e8dd8261965687aecbc853fdff05253b1c1",
+      "bytes": 2475,
+      "mtime": "2026-10-22T12:36:40.793Z"
+    },
+    {
+      "role": "runtime",
+      "path": "openclaw_runtime/dist-runtime/extensions/deepseek/provider-policy-api.js",
+      "sha256": "dd9880d63d7b944fecc0288b22e760df90e906c6bb6edf4896460d1155f89af0",
+      "bytes": 434,
+      "mtime": "2026-10-22T12:36:46.845Z"
+    },
+    {
+      "role": "ui",
+      "path": "dist/index.html",
+      "sha256": "4b73bac67d907688a18e34251772ab06027ef0ccea86576c560a529374115ba6",
+      "bytes": 11768,
+      "mtime": "2026-10-22T12:37:57.487Z"
+    },
+    {
+      "role": "ui",
+      "path": "dist-electron/main/index.js",
+      "sha256": "11587c0d87211be10b54319adf3ec179df2993f10c868893a94ce361a4ba80d1",
+      "bytes": 1239,
+      "mtime": "2026-10-22T12:38:01.683Z"
+    },
+    {
+      "role": "ui",
+      "path": "dist-electron/preload/index.js",
+      "sha256": "a68b6b454855d8e1e8286ada428425c4d12ea1d1c5272d229db71d477922a8b7",
+      "bytes": 3394,
+      "mtime": "2026-10-22T12:38:01.704Z"
+    }
+  ],
+  "boundaries": {
+    "default_on": false,
+    "ga": false,
+    "live_ready": false,
+    "product_approved": false,
+    "m4_authorized": false,
+    "real_human_evidence": false
+  },
+  "limitations": [
+    "Only Windows x64 source-build outputs on this host are measured.",
+    "The provider debug sidecar is not promoted by this build baseline."
+  ],
+  "digest": "a5a8f1f5571bc157cc6be75e37c384640548d7640131fa36ce0f930118198388"
+}

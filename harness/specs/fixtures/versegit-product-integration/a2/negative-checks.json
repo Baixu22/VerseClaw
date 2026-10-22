@@ -1,0 +1,44 @@
+{
+  "schema": "clawx.versegit.product-a2-evidence/v1",
+  "kind": "negative-checks",
+  "generated_at": "2026-10-22T12:39:29.754Z",
+  "task": "TF-0525",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "cases": [
+    {
+      "id": "build-artifact-hash",
+      "mutation": "mutate a source-build artifact digest",
+      "rejected": true,
+      "issues": [
+        "build artifact changed: openclaw_runtime/dist/entry.js"
+      ]
+    },
+    {
+      "id": "host-invoke-coverage",
+      "mutation": "remove real host-invoke coverage",
+      "rejected": true,
+      "issues": [
+        "first window or host invoke not covered"
+      ]
+    },
+    {
+      "id": "smoke-failure",
+      "mutation": "relabel a formal smoke failure as expected",
+      "rejected": true,
+      "issues": [
+        "smoke stats are not clean"
+      ]
+    },
+    {
+      "id": "cleanup-survivor",
+      "mutation": "hide a surviving Electron process",
+      "rejected": true,
+      "issues": [
+        "cleanup process survivors remain"
+      ]
+    }
+  ],
+  "digest": "2817f8de1ec065ca93b74f0ba5679b6286255ac9c7203a5927594af288404012"
+}

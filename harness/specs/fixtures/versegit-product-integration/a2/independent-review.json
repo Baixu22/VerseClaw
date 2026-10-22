@@ -1,0 +1,52 @@
+{
+  "schema": "clawx.versegit.product-a2-evidence/v1",
+  "kind": "independent-review",
+  "generated_at": "2026-10-22T12:39:29.812Z",
+  "task": "TF-0525",
+  "driven_by": "agent",
+  "actor": "codex",
+  "reviewer_role": "independent-a2-verifier-process",
+  "status": "passed",
+  "checks": [
+    {
+      "id": "build-identity",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "electron-startup",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "smoke-results",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "cleanup",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "negative-checks",
+      "passed": true,
+      "issues": []
+    }
+  ],
+  "evidence_digests": {
+    "harness/specs/fixtures/versegit-product-integration/a2/build-identity.json": "204a498d59f4ba2ac3a05aa214a6a1e7b846f872fe0e6805f4fb8416ec67306b",
+    "harness/specs/fixtures/versegit-product-integration/a2/electron-startup.json": "5b012c2de305c859a3a8e465b7c4e06e8af3b15b3f29efd1b0178a778eb4b9a3",
+    "harness/specs/fixtures/versegit-product-integration/a2/smoke-results.json": "d2983f42c547e5e6f3fb05f9793116687a9eda04e5b32c89e7bf3965e6cf1f32",
+    "harness/specs/fixtures/versegit-product-integration/a2/cleanup.json": "01b8c7e354317766a370b2d61fbd06a4cf5d80e483cf4d2bc1ca3e830745369a",
+    "harness/specs/fixtures/versegit-product-integration/a2/negative-checks.json": "eba2bb90066812aea0c0381c86b5b141d257331776e0dfde5d54ce884efc3dba"
+  },
+  "boundaries": {
+    "real_human_evidence": false,
+    "default_on": false,
+    "ga": false,
+    "m4_authorized": false
+  },
+  "issues": [],
+  "digest": "b23fff843a82b012ca2f79fb704be233949de20b3d54711cef7027a3c45a4b08"
+}
