@@ -14,8 +14,8 @@
     "worktree": "D:/ClawX-work/worktrees/long-session-program",
     "cleanCandidateObserved": true,
     "dirtyScopeAtCapture": "A1 tracked fixtures, regression test and product-semantics documentation only",
-    "evidenceCandidateCommit": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
-    "evidenceCandidateTree": "1afe659a91a2af3b7c3b9ee6fec5ba6e84a4dd59"
+    "evidenceCandidateCommit": "b088635108f4c40c77efcd9f46a1c421f405b8d9",
+    "evidenceCandidateTree": "91026b1f0bc14fccd77b09119775725b658493a1"
   },
   "environment": {
     "platform": "win32",
@@ -105,8 +105,12 @@
       "sha256": "8ec554f2dad797a9a3c6c4f932e24bc04d55de0533ea82746390a09559e58f15"
     },
     {
+      "path": "harness/specs/fixtures/long-session-development/a1/verification-receipt.json",
+      "sha256": "b558111ff4a9a4dc36c7f069b634abfced091de00989441b48382ca4a4e8beff"
+    },
+    {
       "path": "tests/unit/long-session-action-contract.test.ts",
-      "sha256": "be2308b4b09d264f655e02934b1065c31ace25409a87631b297f1ab1d98fed63"
+      "sha256": "601f25515ab7674bad669d8f0f54931599a9f58148940b961bd2608489a74636"
     }
   ],
   "measurementContract": {

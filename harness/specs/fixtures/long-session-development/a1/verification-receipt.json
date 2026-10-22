@@ -8,8 +8,8 @@
   "verdict": "pass-with-deferred-gaps",
   "featureClaim": "baseline-only; long-session runtime remains unaccepted until later nodes",
   "candidate": {
-    "commit": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
-    "tree": "1afe659a91a2af3b7c3b9ee6fec5ba6e84a4dd59",
+    "commit": "b088635108f4c40c77efcd9f46a1c421f405b8d9",
+    "tree": "91026b1f0bc14fccd77b09119775725b658493a1",
     "branch": "codex/long-session-implementation-20261022",
     "dirtyBefore": false,
     "dirtyAfter": false
@@ -26,92 +26,92 @@
       "id": "existing-unit",
       "command": "pnpm exec vitest run tests/unit/workspace-session.test.ts tests/unit/chat-session-continuity.test.ts tests/unit/handoff-depth.test.ts --maxWorkers=1",
       "exitCode": 0,
-      "durationMs": 3939,
+      "durationMs": 7508,
       "files": 3,
       "tests": 24,
       "passed": 24,
       "failed": 0,
       "skipped": 0,
-      "rawLog": "D:\\tmp\\long-session-a1\\aac7b1953-r2\\existing-unit.log"
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\existing-unit.log"
     },
     {
       "id": "action-contract",
       "command": "pnpm exec vitest run tests/unit/long-session-action-contract.test.ts --maxWorkers=1",
       "exitCode": 0,
-      "durationMs": 2221,
+      "durationMs": 2623,
       "files": 1,
-      "tests": 7,
-      "passed": 7,
+      "tests": 8,
+      "passed": 8,
       "failed": 0,
       "skipped": 0,
-      "rawLog": "D:\\tmp\\long-session-a1\\aac7b1953-r2\\action-contract.log"
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\action-contract.log"
     },
     {
       "id": "typecheck",
       "command": "pnpm run typecheck",
       "exitCode": 0,
-      "durationMs": 39559,
+      "durationMs": 67805,
       "projects": 3,
       "errors": 0,
       "success": true,
-      "rawLog": "D:\\tmp\\long-session-a1\\aac7b1953-r2\\typecheck.log"
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\typecheck.log"
     },
     {
       "id": "contract-check",
       "command": "pnpm run contract:check",
       "exitCode": 0,
-      "durationMs": 1003,
+      "durationMs": 1017,
       "success": true,
-      "rawLog": "D:\\tmp\\long-session-a1\\aac7b1953-r2\\contract-check.log"
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\contract-check.log"
     },
     {
       "id": "comms-replay",
       "command": "pnpm run comms:replay",
       "exitCode": 0,
-      "durationMs": 819,
+      "durationMs": 982,
       "success": true,
-      "rawLog": "D:\\tmp\\long-session-a1\\aac7b1953-r2\\comms-replay.log"
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\comms-replay.log"
     },
     {
       "id": "comms-compare",
       "command": "pnpm run comms:compare",
       "exitCode": 0,
-      "durationMs": 690,
+      "durationMs": 908,
       "comparisonRows": 44,
       "passedRows": 44,
       "failedRows": 0,
       "result": "PASS",
-      "rawLog": "D:\\tmp\\long-session-a1\\aac7b1953-r2\\comms-compare.log"
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\comms-compare.log"
     },
     {
       "id": "harness-validate",
       "command": "pnpm harness validate --spec harness/specs/tasks/long-session-baseline-contract.md",
       "exitCode": 0,
-      "durationMs": 1560,
+      "durationMs": 1850,
       "result": "valid",
-      "rawLog": "D:\\tmp\\long-session-a1\\aac7b1953-r2\\harness-validate.log"
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\harness-validate.log"
     },
     {
       "id": "git-diff-check",
       "command": "git diff --check",
       "exitCode": 0,
-      "durationMs": 57,
+      "durationMs": 67,
       "whitespaceErrors": 0,
-      "rawLog": "D:\\tmp\\long-session-a1\\aac7b1953-r2\\git-diff-check.log"
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\git-diff-check.log"
     },
     {
       "id": "action-eslint",
       "command": "pnpm exec eslint tests/unit/long-session-action-contract.test.ts",
       "exitCode": 0,
-      "durationMs": 3676,
+      "durationMs": 4743,
       "errors": 0,
-      "rawLog": "D:\\tmp\\long-session-a1\\aac7b1953-r2\\action-eslint.log"
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\action-eslint.log"
     }
   ],
   "counts": {
     "testFiles": 4,
-    "tests": 31,
-    "passed": 31,
+    "tests": 32,
+    "passed": 32,
     "failed": 0,
     "skipped": 0,
     "commands": 9,
@@ -157,8 +157,8 @@
     }
   ],
   "rawRun": {
-    "manifest": "D:\\tmp\\long-session-a1\\aac7b1953-r2\\gate-run.json",
-    "runDirectory": "D:\\tmp\\long-session-a1\\aac7b1953-r2",
+    "manifest": "D:\\tmp\\long-session-a1\\b08863510-r1\\gate-run.json",
+    "runDirectory": "D:\\tmp\\long-session-a1\\b08863510-r1",
     "retainedInGit": false,
     "readback": "Commands, logs and candidate identity were read from disk after the clean-candidate run."
   },
