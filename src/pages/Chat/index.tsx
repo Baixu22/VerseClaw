@@ -420,6 +420,7 @@ function ProjectSessionHeader({
   handoffBusy,
   continuityRecommendation,
   sessionLineage,
+  sessionLastActivity,
   runtimeRuns,
   activeRunId,
   sending,
@@ -449,6 +450,7 @@ function ProjectSessionHeader({
   handoffBusy?: boolean;
   continuityRecommendation?: SessionContinuityRecommendation;
   sessionLineage?: Record<string, SessionLineageOverride>;
+  sessionLastActivity?: Record<string, number>;
   runtimeRuns?: Record<string, ChatRuntimeRunState>;
   activeRunId?: string | null;
   sending?: boolean;
@@ -736,6 +738,8 @@ function ProjectSessionHeader({
                 : sessionLineage?.[session.key]?.relation === 'forked_from'
                   ? sessionLineage[session.key].sourceSessionKey
                   : null;
+              const forkedFromTimestamp = session.forkedFromTimestamp
+                ?? (forkSourceSessionKey ? sessionLastActivity?.[forkSourceSessionKey] : undefined);
               const dotState = getHeaderSessionDotState({
                 sessionKey: session.key,
                 currentSessionKey,
@@ -771,10 +775,10 @@ function ProjectSessionHeader({
                         className="block truncate text-2xs text-muted-foreground"
                         data-testid="chat-session-lineage"
                       >
-                        {typeof session.forkedFromTimestamp === 'number'
+                        {typeof forkedFromTimestamp === 'number'
                           ? t('session.lineage.forkedFromAt', {
                               session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
-                              time: formatLineageTimestamp(session.forkedFromTimestamp),
+                              time: formatLineageTimestamp(forkedFromTimestamp),
                             })
                           : t('session.lineage.forkedFrom', {
                               session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
@@ -918,12 +922,13 @@ export function Chat() {
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
 
-  const { messages, currentSessionKey, currentAgentId, sessions, sessionLabels, loading, historyRefreshing, loadingMoreHistory, hasMoreHistory, sending, error, runError, startupPhase, startupError, streamingMessage, streamingTools, pendingFinal, activeRunId, runtimeRuns, lastUserMessageAt } = useChatStore(useShallow((s) => ({
+  const { messages, currentSessionKey, currentAgentId, sessions, sessionLabels, sessionLastActivity, loading, historyRefreshing, loadingMoreHistory, hasMoreHistory, sending, error, runError, startupPhase, startupError, streamingMessage, streamingTools, pendingFinal, activeRunId, runtimeRuns, lastUserMessageAt } = useChatStore(useShallow((s) => ({
     messages: s.messages,
     currentSessionKey: s.currentSessionKey,
     currentAgentId: s.currentAgentId,
     sessions: s.sessions ?? [],
     sessionLabels: s.sessionLabels,
+    sessionLastActivity: s.sessionLastActivity,
     loading: s.loading,
     historyRefreshing: s.historyRefreshing,
     loadingMoreHistory: s.loadingMoreHistory,
@@ -963,6 +968,8 @@ export function Chat() {
   const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
   const activeWorkspaceId = activeWorkspace?.id;
   const activeWorkspacePermissionMode = activeWorkspace?.permissionMode;
+  const coordinatorBinding = activeWorkspace?.coordinatorBinding ?? null;
+  const taskLedgerSnapshot = useChatStore((state) => state.taskLedgerSnapshot);
   const switchWorkspace = useWorkspacesStore((s) => s.switchWorkspace);
   const createWorkspace = useWorkspacesStore((s) => s.createWorkspace);
   const saveWorkspaceState = useWorkspacesStore((s) => s.saveWorkspaceState);
@@ -1817,6 +1824,13 @@ export function Chat() {
     const nodeId = longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId;
     navigate(nodeId ? `/task-ledger?nodeId=${encodeURIComponent(nodeId)}` : '/task-ledger');
   }, [longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId, navigate]);
+  const handleOpenCoordinatorTask = useCallback((nodeId: string) => {
+    navigate(`/task-ledger?nodeId=${encodeURIComponent(nodeId)}`);
+  }, [navigate]);
+  const handleOpenCoordinatorSession = useCallback((sessionKey: string) => {
+    if (currentSessionKey !== sessionKey) switchSession(sessionKey);
+    navigate('/');
+  }, [currentSessionKey, navigate, switchSession]);
   const handleOpenClawGraph = useCallback(() => {
     const runId = longTaskControlStatus?.latestCheckpoint?.clawGraphRunId;
     navigate(runId ? `/clawgraph?runId=${encodeURIComponent(runId)}` : '/clawgraph');
@@ -2858,7 +2872,9 @@ export function Chat() {
    * on the classifier alone therefore both hid the toggle over a card that had a
    * plan to show, and offered a toggle onto a card that rendered nothing.
    */
-  const sessionActivityHasContent = sessionActivityLevel !== 'none'
+  const coordinatorActivityBound = coordinatorBinding?.sessionKey === currentSessionKey;
+  const sessionActivityHasContent = coordinatorActivityBound
+    || sessionActivityLevel !== 'none'
     || Boolean(sessionActivityShowGit && visibleSessionActivitySnapshot?.git?.isRepository)
     || (sessionActivityPlan?.todos.length ?? 0) > 0
     || (sessionActivityShowCommands && sessionActivityProcesses.length > 0)
@@ -2869,7 +2885,7 @@ export function Chat() {
   const hasSessionActivityEntry = canShowChatSideRail
     && sessionActivityPanelEnabled
     && Boolean(visibleSessionActivitySnapshot)
-    && !isEmpty
+    && (!isEmpty || coordinatorActivityBound)
     && sessionActivityHasContent;
 
   /**
@@ -2904,9 +2920,9 @@ export function Chat() {
   const sessionActivityRailOpen = (sessionActivityOverride ?? sessionActivityPassive)
     && Boolean(visibleSessionActivitySnapshot)
     && sessionActivityPanelEnabled
-    && !compactToolbarLayout
-    && !isEmpty;
-  const sessionActivityRailLayer = sessionActivityOverride === true ? 'overlay' : 'inline';
+    && (!compactToolbarLayout || coordinatorActivityBound)
+    && (!isEmpty || coordinatorActivityBound);
+  const sessionActivityRailLayer = sessionActivityOverride === true || compactToolbarLayout ? 'overlay' : 'inline';
   /**
    * Toggle against the EFFECTIVE state, not against the override.
    *
@@ -2915,11 +2931,21 @@ export function Chat() {
    * user-overlay instead of closing it — one click, two surfaces, nothing shut.
    */
   const handleToggleSessionActivity = useCallback(() => {
+    const nextOpen = !(sessionActivityOpenOverrides[currentSessionKey] ?? sessionActivityPassive);
     setSessionActivityOpenOverrides((current) => ({
       ...current,
       [currentSessionKey]: !(current[currentSessionKey] ?? sessionActivityPassive),
     }));
-  }, [currentSessionKey, sessionActivityPassive]);
+    if (nextOpen) {
+      void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
+    }
+  }, [
+    activeWorkspaceId,
+    currentSessionKey,
+    loadSessionActivity,
+    sessionActivityOpenOverrides,
+    sessionActivityPassive,
+  ]);
 
   useEffect(() => {
     if (!shouldClearStoreLifecycleFromHistory) return;
@@ -3324,6 +3350,7 @@ export function Chat() {
                 handoffBusy={handoffBusy}
                 continuityRecommendation={continuityRecommendation}
                 sessionLineage={sessionLineage}
+                sessionLastActivity={sessionLastActivity}
                 runtimeRuns={runtimeRuns}
                 activeRunId={activeRunId}
                 sending={sending}
@@ -3352,7 +3379,7 @@ export function Chat() {
             * only that layer takes width from the transcript. */}
           <ChatToolbar
             promptCacheStatus={promptCacheStatus}
-            sessionActivityAvailable={hasSessionActivityEntry && !compactToolbarLayout}
+            sessionActivityAvailable={hasSessionActivityEntry && (!compactToolbarLayout || coordinatorActivityBound)}
             sessionActivityOpen={sessionActivityRailOpen}
             sessionActivityNeedsAttention={sessionActivityLevel === 'attention'}
             onToggleSessionActivity={handleToggleSessionActivity}
@@ -3390,6 +3417,15 @@ export function Chat() {
             onOpenSubagent={handleOpenSubagentTranscript}
             onOpenProcess={handleOpenProcess}
             onRetryStatus={() => void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey })}
+            coordinatorBinding={coordinatorBinding}
+            delegationReceipts={Object.values(activeWorkspace?.delegationReceipts ?? {})}
+            taskLedgerNodes={taskLedgerSnapshot?.nodes ?? []}
+            coordinatorRunActive={inputRunActive}
+            coordinatorPaused={composerPaused}
+            onOpenTaskNode={handleOpenCoordinatorTask}
+            onOpenCoordinatorSession={handleOpenCoordinatorSession}
+            onPauseCoordinator={() => void handlePauseComposerSession()}
+            onResumeCoordinator={() => void handleResumeComposerSession()}
           />
         </aside>
       )}

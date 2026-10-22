@@ -1,14 +1,41 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SessionActivityPanel } from '@/pages/Chat/SessionActivityPanel';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { createEmptySessionActivitySnapshot } from '@shared/types/session-activity';
 import type { SessionEffectivePolicy } from '@shared/types/session-effective-policy';
+import type { DelegationAdmissionReceipt } from '@shared/types/delegation-admission';
+import type { SessionCompletionBatch } from '@shared/types/session-activity';
+import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
 
 const translations: Record<string, string> = {
   'sessionActivity.title': 'Session activity',
   'sessionActivity.sections.goals': 'Goals & waits',
   'sessionActivity.sections.processes': 'Processes',
   'sessionActivity.sections.lineage': 'Lineage',
+  'sessionActivity.sections.coordination': 'Long session',
+  'sessionActivity.coordination.revision': 'Revision {{revision}}',
+  'sessionActivity.coordination.binding': 'Stable main session',
+  'sessionActivity.coordination.bindingState.active': 'Active',
+  'sessionActivity.coordination.bindingState.invalidated': 'Invalidated',
+  'sessionActivity.coordination.pause': 'Pause current turn',
+  'sessionActivity.coordination.resume': 'Resume current session',
+  'sessionActivity.coordination.unknownTask': 'Task status unavailable',
+  'sessionActivity.coordination.workDetail': '{{task}} · {{backend}} · {{isolation}}',
+  'sessionActivity.coordination.batchTitle': 'Completion result',
+  'sessionActivity.coordination.batchCounts': '{{completed}} done · {{failed}} failed · {{cancelled}} cancelled · {{pending}} pending',
+  'sessionActivity.coordination.invalidatedReason.archived': 'Archived',
+  'sessionActivity.coordination.state.draft': 'Draft',
+  'sessionActivity.coordination.state.accepted': 'Accepted',
+  'sessionActivity.coordination.state.running': 'Running',
+  'sessionActivity.coordination.state.waiting': 'Waiting',
+  'sessionActivity.coordination.state.failed': 'Failed',
+  'sessionActivity.coordination.state.cancelled': 'Cancelled',
+  'sessionActivity.coordination.state.reported': 'Reported',
+  'sessionActivity.coordination.state.accepted-by-task': 'Accepted by task',
+  'sessionActivity.coordination.state.unknown': 'Unknown',
+  'sessionActivity.taskStatus.running': 'Running',
+  'sessionActivity.taskStatus.completed': 'Done',
   'sessionActivity.goalStatus.running': 'Running',
   'sessionActivity.goalStatus.waiting': 'Waiting',
   'sessionActivity.processStatus.running': 'Running',
@@ -292,5 +319,187 @@ describe('SessionActivityPanel background read state', () => {
     }
     fireEvent.click(screen.getByTestId('session-activity-retry'));
     expect(onRetryStatus).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('SessionActivityPanel long-session coordination', () => {
+  const sessionKey = 'agent:main:long';
+  const binding: WorkspaceCoordinatorBinding = {
+    schemaVersion: 'WorkspaceCoordinatorBinding/v1',
+    workspaceId: 'workspace-a',
+    agentId: 'main',
+    sessionKey,
+    sessionId: 'generation-1',
+    taskRefs: [{ kind: 'task-ledger', nodeId: 'task-1' }],
+    state: 'active',
+    revision: 4,
+    createdAt: '2026-10-23T00:00:00.000Z',
+    updatedAt: '2026-10-23T00:00:00.000Z',
+    invalidatedAt: null,
+    invalidationReason: null,
+  };
+  const receipt: DelegationAdmissionReceipt = {
+    schemaVersion: 'DelegationAdmissionReceipt/v1',
+    receiptId: 'receipt-1',
+    idempotencyKey: 'delegation-1',
+    requestDigest: 'digest-1',
+    coordinator: {
+      workspaceId: 'workspace-a',
+      agentId: 'main',
+      sessionKey,
+      sessionId: 'generation-1',
+      bindingRevision: 4,
+    },
+    taskRef: { kind: 'task-ledger', nodeId: 'task-1' },
+    roleName: 'implementer',
+    task: 'Implement the long-session slice',
+    state: 'accepted',
+    acceptedIsNotCompletion: true,
+    orchestrationRunId: 'orch-1',
+    taskNodeId: 'task-node-1',
+    taskId: 'task-1',
+    roleInstanceId: 'role-1',
+    childSessionKey: 'agent:main:subagent:1',
+    childRunId: 'run-1',
+    backend: { kind: 'openclaw-embedded', provider: 'test', model: 'test', evidence: 'role-spawn' },
+    toolAuthorization: { allowlist: [], denylist: [], permissionDecisionCount: 0, source: 'role-clamped-inherited' },
+    isolation: { mode: 'inprocess-shared', backend: 'inprocess', worktreeId: null, writeSet: ['src/a.ts'], parallelWritesAllowed: false, writeSetBasis: 'serialized' },
+    reason: null,
+    createdAt: '2026-10-23T00:00:01.000Z',
+    updatedAt: '2026-10-23T00:00:01.000Z',
+    acceptedAt: '2026-10-23T00:00:01.000Z',
+    rejectedAt: null,
+  };
+  const completionBatch: SessionCompletionBatch = {
+    id: 'completion-batch:orch-1:' + sessionKey,
+    idempotencyKey: 'completion-batch:orch-1:' + sessionKey,
+    orchestrationRunId: 'orch-1',
+    requesterSessionKey: sessionKey,
+    requesterSessionId: 'generation-1',
+    generationState: 'consistent',
+    status: 'delivered',
+    terminal: true,
+    expectedWorkerCount: 2,
+    completedWorkerCount: 1,
+    failedWorkerCount: 1,
+    cancelledWorkerCount: 0,
+    pendingWorkerCount: 0,
+    workerRuns: [{
+      runId: 'run-1',
+      roleName: 'implementer',
+      taskNodeId: 'task-node-1',
+      childSessionKey: 'agent:main:subagent:1',
+      status: 'completed',
+    }],
+    verifier: null,
+    delivery: { state: 'delivered', pendingCount: 0, inProgressCount: 0, deliveredCount: 2, failedCount: 0, suspendedCount: 0, discardedCount: 0 },
+    bounded: true,
+    completionAuthority: 'none',
+    updatedAt: 2_000,
+  };
+
+  function coordinatorSnapshot() {
+    const snapshot = createEmptySessionActivitySnapshot(sessionKey);
+    snapshot.session.status = 'running';
+    snapshot.tasks = [{
+      id: 'task-1',
+      kind: 'taskLedger',
+      title: 'Ship coordinated slice',
+      status: 'running',
+      updatedAt: 1_000,
+      source: 'task-ledger',
+    }];
+    snapshot.subagents = [{
+      id: 'subagent-1',
+      role: 'implementer',
+      status: 'completed',
+      childSessionKey: 'agent:main:subagent:1',
+      updatedAt: 1_500,
+      source: 'snapshot',
+    }];
+    snapshot.completionBatches = [completionBatch];
+    return snapshot;
+  }
+
+  it('renders the stable session, task, worker result and completion batch as existing-source links', () => {
+    const onOpenTaskNode = vi.fn();
+    const onOpenSubagent = vi.fn();
+    render(
+      <SessionActivityPanel
+        snapshot={coordinatorSnapshot()}
+        coordinatorBinding={binding}
+        delegationReceipts={[receipt]}
+        taskLedgerNodes={[]}
+        onOpenTaskNode={onOpenTaskNode}
+        onOpenSubagent={onOpenSubagent}
+      />,
+    );
+
+    const section = screen.getByTestId('session-activity-coordination');
+    expect(within(section).getByText('Long session')).toBeInTheDocument();
+    expect(within(section).getByText('Stable main session')).toBeInTheDocument();
+    expect(within(section).getByText('Ship coordinated slice')).toBeInTheDocument();
+    expect(within(section).getByText('implementer')).toBeInTheDocument();
+    expect(within(section).getAllByText('Failed')).toHaveLength(2);
+    expect(within(section).getByText('Completion result')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('session-activity-coordination-task-task-1'));
+    fireEvent.click(screen.getByTestId('session-activity-coordination-work-receipt-1'));
+    fireEvent.click(screen.getByTestId('session-activity-coordination-batch-completion-batch-orch-1-agent-main-long'));
+    expect(onOpenTaskNode).toHaveBeenCalledWith('task-1');
+    expect(onOpenSubagent).toHaveBeenNthCalledWith(1, 'agent:main:subagent:1');
+    expect(onOpenSubagent).toHaveBeenNthCalledWith(2, 'agent:main:subagent:1');
+  });
+
+  it('uses the existing pause and resume controls without adding task lifecycle authority', () => {
+    const onPauseCoordinator = vi.fn();
+    const onResumeCoordinator = vi.fn();
+    const { rerender } = render(
+      <SessionActivityPanel
+        snapshot={coordinatorSnapshot()}
+        coordinatorBinding={binding}
+        delegationReceipts={[receipt]}
+        coordinatorRunActive
+        onPauseCoordinator={onPauseCoordinator}
+      />,
+      { wrapper: TooltipProvider },
+    );
+    fireEvent.click(screen.getByTestId('session-activity-coordination-pause'));
+    expect(onPauseCoordinator).toHaveBeenCalledTimes(1);
+
+    rerender(
+      <SessionActivityPanel
+        snapshot={coordinatorSnapshot()}
+        coordinatorBinding={binding}
+        delegationReceipts={[receipt]}
+        coordinatorPaused
+        onResumeCoordinator={onResumeCoordinator}
+      />,
+    );
+    fireEvent.click(screen.getByTestId('session-activity-coordination-resume'));
+    expect(onResumeCoordinator).toHaveBeenCalledTimes(1);
+    expect(within(screen.getByTestId('session-activity-coordination')).getByText('Waiting')).toBeInTheDocument();
+  });
+
+  it('surfaces an invalidated binding reason instead of presenting pause as available', () => {
+    render(
+      <SessionActivityPanel
+        snapshot={coordinatorSnapshot()}
+        coordinatorBinding={{
+          ...binding,
+          state: 'invalidated',
+          invalidationReason: 'archived',
+          invalidatedAt: '2026-10-23T00:10:00.000Z',
+        }}
+        delegationReceipts={[receipt]}
+        coordinatorRunActive
+        onPauseCoordinator={() => undefined}
+      />,
+      { wrapper: TooltipProvider },
+    );
+    const section = screen.getByTestId('session-activity-coordination');
+    expect(within(section).getByText('Invalidated')).toBeInTheDocument();
+    expect(screen.queryByTestId('session-activity-coordination-pause')).toBeNull();
+    expect(screen.getByTestId('session-activity-coordination-binding')).toHaveAttribute('title', 'Archived');
   });
 });

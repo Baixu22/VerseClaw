@@ -50,7 +50,8 @@
       "terminals": "Терминалы",
       "continuity": "Непрерывность",
       "environment": "Окружение",
-      "plan": "Задачи разработки"
+      "plan": "Задачи разработки",
+      "coordination": "Долгая сессия"
     },
     "status": {
       "idle": "Ожидание",
@@ -162,6 +163,38 @@
     "runningCount": "Выполняется: {{count}}",
     "processes": {
       "openOutput": "Открыть вывод {{command}}"
+    },
+    "coordination": {
+      "revision": "Ревизия {{revision}}",
+      "binding": "Стабильная основная сессия",
+      "bindingState": {
+        "active": "Активна",
+        "invalidated": "Недействительна"
+      },
+      "pause": "Приостановить текущий ход",
+      "resume": "Продолжить текущую сессию",
+      "unknownTask": "Статус задачи недоступен",
+      "workDetail": "{{task}} · {{backend}} · {{isolation}}",
+      "batchTitle": "Результат завершения",
+      "batchCounts": "{{completed}} готово · {{failed}} ошибок · {{cancelled}} отменено · {{pending}} ожидает",
+      "invalidatedReason": {
+        "archived": "В архиве",
+        "deleted": "Удалена",
+        "reset": "Сброшена на новое поколение",
+        "session_missing": "Сессия не найдена",
+        "session_key_changed": "Ключ сессии изменён"
+      },
+      "state": {
+        "draft": "Черновик",
+        "accepted": "Принято",
+        "running": "Выполняется",
+        "waiting": "Ожидание",
+        "failed": "Ошибка",
+        "cancelled": "Отменено",
+        "reported": "Передано",
+        "accepted-by-task": "Принято задачей",
+        "unknown": "Неизвестно"
+      }
     }
   },
   "noLogs": "(Журналы ещё недоступны)",
@@ -2130,7 +2163,8 @@
     "searchRelativeDays": "{{count}} д назад",
     "searchHintNavigate": "навигация",
     "searchHintSelect": "выбор",
-    "searchHintClose": "закрыть"
+    "searchHintClose": "закрыть",
+    "longSession": "Основной диалог долгой сессии"
   },
   "folders": {
     "create": "Новая папка",

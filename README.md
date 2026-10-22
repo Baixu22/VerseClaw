@@ -49,6 +49,8 @@ See [visual provenance](resources/readme/2026-10-05/README.md) for capture condi
 | Structured documents | Manage research tables, slide outlines, revisions and exports with the VerseConf plugin | Agent tools and artifact panel after plugin activation |
 | Diagnostics and recovery | Inspect session activity, processes, traces, runtime status, storage usage and recovery actions | Workspace panel, Observability and Settings |
 
+For an explicitly bound long session, the Chat activity rail also shows the stable coordinator conversation, its existing Task Ledger references and terminal completion batches, with direct links to the worker transcript and task record. These rows project existing owners; they do not create a second task list or completion authority.
+
 The interface supports English, Chinese, Japanese and Russian, with light, dark and system themes. Basic / Advanced in General settings controls diagnostic detail. Image generation and Dreams pages are also available after unlocking developer mode.
 
 <a id="workflows"></a>

@@ -50,7 +50,8 @@
       "terminals": "终端",
       "continuity": "连续性",
       "environment": "环境",
-      "plan": "开发任务"
+      "plan": "开发任务",
+      "coordination": "长期协作"
     },
     "status": {
       "idle": "空闲",
@@ -162,6 +163,38 @@
     "runningCount": "{{count}} 个运行中",
     "processes": {
       "openOutput": "查看 {{command}} 的输出"
+    },
+    "coordination": {
+      "revision": "修订 {{revision}}",
+      "binding": "稳定主会话",
+      "bindingState": {
+        "active": "有效",
+        "invalidated": "已失效"
+      },
+      "pause": "暂停当前回合",
+      "resume": "继续当前会话",
+      "unknownTask": "任务状态不可用",
+      "workDetail": "{{task}} · {{backend}} · {{isolation}}",
+      "batchTitle": "完成结果",
+      "batchCounts": "{{completed}} 完成 · {{failed}} 失败 · {{cancelled}} 取消 · {{pending}} 等待",
+      "invalidatedReason": {
+        "archived": "已归档",
+        "deleted": "已删除",
+        "reset": "已重置为新 generation",
+        "session_missing": "会话不存在",
+        "session_key_changed": "会话键已变化"
+      },
+      "state": {
+        "draft": "草稿",
+        "accepted": "已接收",
+        "running": "运行中",
+        "waiting": "等待中",
+        "failed": "失败",
+        "cancelled": "已取消",
+        "reported": "已回报",
+        "accepted-by-task": "任务已接收",
+        "unknown": "未知"
+      }
     }
   },
   "noLogs": "（暂无日志）",
@@ -2130,7 +2163,8 @@
     "searchRelativeDays": "{{count}} 天前",
     "searchHintNavigate": "导航",
     "searchHintSelect": "选择",
-    "searchHintClose": "关闭"
+    "searchHintClose": "关闭",
+    "longSession": "长期协作主会话"
   },
   "folders": {
     "create": "新建文件夹",

@@ -50,7 +50,8 @@
       "terminals": "Terminals",
       "continuity": "Continuity",
       "environment": "Environment",
-      "plan": "Development tasks"
+      "plan": "Development tasks",
+      "coordination": "Long session"
     },
     "status": {
       "idle": "Idle",
@@ -162,6 +163,38 @@
     "runningCount": "{{count}} running",
     "processes": {
       "openOutput": "Open the output of {{command}}"
+    },
+    "coordination": {
+      "revision": "Revision {{revision}}",
+      "binding": "Stable main session",
+      "bindingState": {
+        "active": "Active",
+        "invalidated": "Invalidated"
+      },
+      "pause": "Pause current turn",
+      "resume": "Resume current session",
+      "unknownTask": "Task status unavailable",
+      "workDetail": "{{task}} · {{backend}} · {{isolation}}",
+      "batchTitle": "Completion result",
+      "batchCounts": "{{completed}} done · {{failed}} failed · {{cancelled}} cancelled · {{pending}} pending",
+      "invalidatedReason": {
+        "archived": "Archived",
+        "deleted": "Deleted",
+        "reset": "Reset to a new generation",
+        "session_missing": "Session missing",
+        "session_key_changed": "Session key changed"
+      },
+      "state": {
+        "draft": "Draft",
+        "accepted": "Accepted",
+        "running": "Running",
+        "waiting": "Waiting",
+        "failed": "Failed",
+        "cancelled": "Cancelled",
+        "reported": "Reported",
+        "accepted-by-task": "Accepted by task",
+        "unknown": "Unknown"
+      }
     }
   },
   "noLogs": "(No logs available yet)",
@@ -2130,7 +2163,8 @@
     "searchRelativeDays": "{{count}} d ago",
     "searchHintNavigate": "navigate",
     "searchHintSelect": "select",
-    "searchHintClose": "close"
+    "searchHintClose": "close",
+    "longSession": "Long-session main conversation"
   },
   "folders": {
     "create": "New folder",

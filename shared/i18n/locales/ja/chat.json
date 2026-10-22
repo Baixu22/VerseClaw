@@ -50,7 +50,8 @@
       "terminals": "ターミナル",
       "continuity": "継続性",
       "environment": "環境",
-      "plan": "開発タスク"
+      "plan": "開発タスク",
+      "coordination": "長期セッション"
     },
     "status": {
       "idle": "待機中",
@@ -162,6 +163,38 @@
     "runningCount": "実行中 {{count}} 件",
     "processes": {
       "openOutput": "{{command}} の出力を開く"
+    },
+    "coordination": {
+      "revision": "リビジョン {{revision}}",
+      "binding": "安定したメインセッション",
+      "bindingState": {
+        "active": "有効",
+        "invalidated": "無効化済み"
+      },
+      "pause": "現在のターンを一時停止",
+      "resume": "現在のセッションを再開",
+      "unknownTask": "タスク状態を取得できません",
+      "workDetail": "{{task}} · {{backend}} · {{isolation}}",
+      "batchTitle": "完了結果",
+      "batchCounts": "完了 {{completed}} · 失敗 {{failed}} · キャンセル {{cancelled}} · 待機 {{pending}}",
+      "invalidatedReason": {
+        "archived": "アーカイブ済み",
+        "deleted": "削除済み",
+        "reset": "新しい世代にリセット済み",
+        "session_missing": "セッションが見つかりません",
+        "session_key_changed": "セッションキーが変更されました"
+      },
+      "state": {
+        "draft": "下書き",
+        "accepted": "受け付け済み",
+        "running": "実行中",
+        "waiting": "待機中",
+        "failed": "失敗",
+        "cancelled": "キャンセル",
+        "reported": "報告済み",
+        "accepted-by-task": "タスク受け付け済み",
+        "unknown": "不明"
+      }
     }
   },
   "noLogs": "（ログはまだありません）",
@@ -2130,7 +2163,8 @@
     "searchRelativeDays": "{{count}} 日前",
     "searchHintNavigate": "移動",
     "searchHintSelect": "選択",
-    "searchHintClose": "閉じる"
+    "searchHintClose": "閉じる",
+    "longSession": "長期セッションのメイン会話"
   },
   "folders": {
     "create": "新規フォルダ",
