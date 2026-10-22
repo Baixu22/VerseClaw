@@ -5,7 +5,9 @@
 > Scope: safety defaults for VToken / memory / SEKB / Browser private network
 > Locked by: tests/unit/default-config-matrix.test.ts + tests/unit/p0-production-acceptance.test.ts
 
-This matrix is the single source of truth for **product defaults**. It must stay fail-closed / opt-in until the human-canary and release-approval gates explicitly permit graduation; those gates are not complete today.
+This matrix is the single source of truth for **product defaults**. Values remain fail-closed / opt-in until the D9 component-graduation evidence and an explicit default-change decision are complete. Agent-driven evidence is admissible under the 2026-09-27 owner policy when it is labelled with `driven_by: agent` and a concrete actor; that evidence does not by itself authorize a value change.
+
+> D9 scope note (2026-10-21, TF-0488): component productization, default-graduation decisions, and agent-driven automatic acceptance are in scope for this program. This node changes no value in the table below. See [the D9 ADR](adr/2026-10-21-d9-component-graduation-scope.md) and [the current constraint matrix](component-graduation-scope-matrix-20261021.md).
 
 ## Matrix
 
@@ -28,7 +30,7 @@ This matrix is the single source of truth for **product defaults**. It must stay
 1. Opt-in wins over absent-means-on for VToken. Omitted config means disabled.
 2. Sync helpers do not overwrite arbitrary user config, with one safety exception: unacknowledged private-network allow (dangerouslyAllowPrivateNetwork or alias allowPrivateNetwork) is fail-closed migrated to deny on browser config sync.
 3. Kill switch is fail-closed: enhancement paths no-op (including CVK addition); the agent turn continues without the extra context.
-4. Do not graduate defaults to true while human-canary, soak, and joint-system release gates remain incomplete.
+4. Do not graduate defaults to true while production-path, canary, effective-state, rollback, or explicit-decision gates remain incomplete. Agent-driven evidence is admissible when labelled; synthetic/scripted-only evidence cannot carry the decision.
 5. SEKB automatic experience writeback remains forbidden (TF-0004 is human-gated golden path only).
 6. Coding auto verify defaults to `"auto"` (runs only when a test runner is detected within budget; otherwise skips without invoking the exec tool). Explicit `true` forces the run; `false` disables it. When it runs it reuses the effective `exec` tool and never creates a second process, approval, sandbox, or timeout authority.
 

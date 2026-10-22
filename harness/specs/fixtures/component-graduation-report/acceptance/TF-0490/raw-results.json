@@ -1,0 +1,197 @@
+{
+  "schemaVersion": "ComponentGraduationAcceptanceResults/v1",
+  "generatedAt": "2026-10-21T12:10:21.349Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "results": {
+    "contract": {
+      "status": "pass",
+      "summary": "Schema, validators and gates are verified by fixtures, CLI and tests."
+    }
+  },
+  "fixtureCounts": {
+    "positive": 6,
+    "negativeMutationCases": 15,
+    "standaloneNegativeReports": 2
+  },
+  "componentScaffolds": 34,
+  "cli": {
+    "exitZero": 1,
+    "exitOne": 3
+  },
+  "checks": [
+    {
+      "name": "fixtures",
+      "status": "pass",
+      "observed": {
+        "positiveFiles": [
+          "positive-advanced.json",
+          "positive-contract.json",
+          "positive-default.json",
+          "positive-internal.json",
+          "positive-retired.json",
+          "positive-shadow.json"
+        ],
+        "negativeCases": 15,
+        "standaloneNegatives": [
+          "negative-default-change.json",
+          "negative-invalid-report.json"
+        ]
+      }
+    },
+    {
+      "name": "positive-fixtures-validate",
+      "status": "pass",
+      "observed": [
+        {
+          "file": "positive-advanced.json",
+          "ok": true,
+          "graduationPass": true,
+          "issues": []
+        },
+        {
+          "file": "positive-contract.json",
+          "ok": true,
+          "graduationPass": true,
+          "issues": []
+        },
+        {
+          "file": "positive-default.json",
+          "ok": true,
+          "graduationPass": true,
+          "issues": []
+        },
+        {
+          "file": "positive-internal.json",
+          "ok": true,
+          "graduationPass": true,
+          "issues": []
+        },
+        {
+          "file": "positive-retired.json",
+          "ok": true,
+          "graduationPass": true,
+          "issues": []
+        },
+        {
+          "file": "positive-shadow.json",
+          "ok": true,
+          "graduationPass": false,
+          "issues": []
+        }
+      ]
+    },
+    {
+      "name": "all-components-scaffold",
+      "status": "pass",
+      "observed": {
+        "scaffolds": 34,
+        "components": 34
+      }
+    },
+    {
+      "name": "unit-tests",
+      "status": "pass"
+    },
+    {
+      "name": "cli-gates",
+      "status": "pass",
+      "observed": {
+        "cliExitZero": 1,
+        "cliExitOne": 3
+      }
+    },
+    {
+      "name": "typecheck",
+      "status": "pass"
+    },
+    {
+      "name": "eslint",
+      "status": "pass"
+    },
+    {
+      "name": "harness-context",
+      "status": "pass"
+    },
+    {
+      "name": "harness-validate",
+      "status": "pass"
+    },
+    {
+      "name": "catalogs-check",
+      "status": "pass"
+    },
+    {
+      "name": "contract-check",
+      "status": "pass"
+    },
+    {
+      "name": "git-diff-check",
+      "status": "pass"
+    },
+    {
+      "name": "default-values-unchanged",
+      "status": "pass",
+      "observed": {
+        "baseline": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1",
+        "current": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1"
+      }
+    },
+    {
+      "name": "component-labels-unchanged",
+      "status": "pass",
+      "observed": {
+        "baseline": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc",
+        "current": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc"
+      }
+    },
+    {
+      "name": "scope-path-audit",
+      "status": "pass",
+      "observed": {
+        "statusPaths": [
+          "docs/clawx-product-semantics.md",
+          "docs/dev/adr/2026-08-16-context-authority-boundaries.md",
+          "docs/dev/default-config-matrix.md",
+          "docs/dev/runtime-control-planes.md",
+          "harness/specs/fixtures/component-graduation-report/README.md",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/SHA256SUMS",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/acceptance.json",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/expected-context.json",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/raw-results.json",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/readback.json",
+          "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "harness/specs/fixtures/component-graduation-report/expected-context.json",
+          "harness/specs/fixtures/component-graduation-report/negative-cases.json",
+          "harness/specs/fixtures/component-graduation-report/negative-default-change.json",
+          "harness/specs/fixtures/component-graduation-report/negative-invalid-report.json",
+          "harness/specs/fixtures/component-graduation-report/positive-advanced.json",
+          "harness/specs/fixtures/component-graduation-report/positive-contract.json",
+          "harness/specs/fixtures/component-graduation-report/positive-default.json",
+          "harness/specs/fixtures/component-graduation-report/positive-internal.json",
+          "harness/specs/fixtures/component-graduation-report/positive-retired.json",
+          "harness/specs/fixtures/component-graduation-report/positive-shadow.json",
+          "harness/specs/tasks/component-graduation-report-v1.md",
+          "scripts/component-graduation-report.mts",
+          "shared/component-authority-manifest.ts",
+          "shared/component-graduation-report.ts",
+          "tests/unit/component-authority-manifest.test.ts",
+          "tests/unit/component-graduation-report.test.ts"
+        ],
+        "unexpectedStatusPaths": []
+      }
+    },
+    {
+      "name": "task-forest-validate-preapply",
+      "status": "pass"
+    },
+    {
+      "name": "task-forest-validate-postapply",
+      "status": "pass"
+    },
+    {
+      "name": "task-forest-export",
+      "status": "pass"
+    }
+  ]
+}

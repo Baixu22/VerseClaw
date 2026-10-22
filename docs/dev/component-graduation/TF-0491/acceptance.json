@@ -1,0 +1,372 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "tf-0491-component-disposition-manifest",
+  "reportKind": "contract",
+  "componentId": "component-disposition-manifest",
+  "taskForestNodeId": "TF-0491",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "TF-0491",
+  "entryPoint": "shared/dcs/component-disposition-catalog.ts",
+  "defaultMode": "internal",
+  "benefitEvidence": "Every component and runtime/product surface has one disposition and an implementation or retirement path.",
+  "rollback": "Remove the disposition manifest/test/docs and revert the table; no runtime rollback is needed.",
+  "modelEffectiveState": "not-applicable: decision manifest only; ModelCapabilityProfile wiring is a later node.",
+  "evidenceGrade": "unit-test",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "d7fb59801ac570d1217656c71b60023128ff1d6c",
+    "tree": "b62dd37b6f22345de5dde0daacdb1806af67397f",
+    "buildHash": "c6b7608c493ad48ac912270b83552df39288603ec9f1faac5a45efde906f1cfa",
+    "runtimeGeneration": "static-disposition-validator",
+    "provider": "not-applicable",
+    "model": "not-applicable",
+    "inputSet": "component disposition sources and acceptance logs",
+    "scope": "worktree:component-graduation-20261021",
+    "artifacts": [
+      {
+        "path": "docs/dev/component-graduation/TF-0491/raw-results.json",
+        "sha256": "31d68b75e05e17054b61295010db95f9a7fc5783214dcf762b52e7df3fe9c27a",
+        "bytes": 4758
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "contract",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "All coverage and disposition decisions are summarized in raw-results.json.",
+      "artifacts": [
+        {
+          "path": "docs/dev/component-graduation/TF-0491/raw-results.json",
+          "sha256": "31d68b75e05e17054b61295010db95f9a7fc5783214dcf762b52e7df3fe9c27a",
+          "bytes": 4758,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "435a6db1946bb6de7306ec75cffddaa86f2cad92dd5c0332618fd5ee15b8ede6",
+    "command": "pnpm --dir openclaw_runtime exec tsx ../scripts/component-graduation-report.mts --report docs/dev/component-graduation/TF-0491/acceptance.json --expected-context docs/dev/component-graduation/TF-0491/expected-context.json --require-graduation"
+  },
+  "acceptanceCriteria": [
+    "coverage=所有 current consumers / DCS flags / runtime leaves / routes / settings surfaces",
+    "每个组件都有 current consumer → disposition → implementation/retirement node → evidence artifact 的映射",
+    "无未分类项、无双重 disposition、无无 owner experiment、无无去向组件",
+    "产出稳定、可被后续 ModelCapabilityProfile 引用的 disposition manifest；实际 profile 引用核验由后置 model profile 节点完成"
+  ],
+  "acceptanceResults": [
+    {
+      "criterion": "coverage=所有 current consumers / DCS flags / runtime leaves / routes / settings surfaces",
+      "status": "verified",
+      "evidence": [
+        "shared/dcs/component-disposition-catalog.ts",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "docs/dev/component-graduation/TF-0491/unit-tests.log"
+      ],
+      "observation": "Coverage covers 34 authority components, 22 DCS flags, 112 runtime leaves, 20 routes, 12 Settings sections and 12 Settings panels."
+    },
+    {
+      "criterion": "每个组件都有 current consumer → disposition → implementation/retirement node → evidence artifact 的映射",
+      "status": "verified",
+      "evidence": [
+        "shared/dcs/component-disposition-catalog.ts",
+        "docs/dev/component-disposition-matrix-20261021.md"
+      ],
+      "observation": "52 entries each carry current consumers, one disposition, an owner, an implementation/retirement node and evidence refs."
+    },
+    {
+      "criterion": "无未分类项、无双重 disposition、无无 owner experiment、无无去向组件",
+      "status": "verified",
+      "evidence": [
+        "tests/unit/component-disposition-catalog.test.ts",
+        "docs/dev/component-graduation/TF-0491/readback.json"
+      ],
+      "observation": "unclassified=0; double=0; experimentsWithoutExpiry=0; missingPaths=0."
+    },
+    {
+      "criterion": "产出稳定、可被后续 ModelCapabilityProfile 引用的 disposition manifest；实际 profile 引用核验由后置 model profile 节点完成",
+      "status": "verified",
+      "evidence": [
+        "shared/dcs/component-disposition-catalog.ts",
+        "tests/unit/component-disposition-catalog.test.ts"
+      ],
+      "observation": "Stable ComponentDispositionManifest/v1 exposes 52 projection entries for later ModelCapabilityProfile consumption."
+    }
+  ],
+  "requirementsResults": [
+    {
+      "requirement": "每个组件恰好一个 disposition、owner、用户入口或明确 internal-only、具体实施/退役节点",
+      "status": "verified",
+      "evidence": [
+        "shared/dcs/component-disposition-catalog.ts",
+        "docs/dev/component-disposition-matrix-20261021.md"
+      ],
+      "observation": "Covered by the machine disposition manifest, exact coverage validation and the single-page matrix."
+    },
+    {
+      "requirement": "experiment 必须有 owner、截止日期、毕业/退役判据",
+      "status": "verified",
+      "evidence": [
+        "shared/dcs/component-disposition-catalog.ts",
+        "docs/dev/component-disposition-matrix-20261021.md"
+      ],
+      "observation": "Covered by the machine disposition manifest, exact coverage validation and the single-page matrix."
+    },
+    {
+      "requirement": "默认关闭只允许用于不可逆动作或带期限实验",
+      "status": "verified",
+      "evidence": [
+        "shared/dcs/component-disposition-catalog.ts",
+        "docs/dev/component-disposition-matrix-20261021.md"
+      ],
+      "observation": "Covered by the machine disposition manifest, exact coverage validation and the single-page matrix."
+    },
+    {
+      "requirement": "覆盖 DCS 全部目录项、runtime feature leaves、Settings panels、用户路由、memory/knowledge/capability/execution/browser 组件",
+      "status": "verified",
+      "evidence": [
+        "shared/dcs/component-disposition-catalog.ts",
+        "docs/dev/component-disposition-matrix-20261021.md"
+      ],
+      "observation": "Covered by the machine disposition manifest, exact coverage validation and the single-page matrix."
+    },
+    {
+      "requirement": "至少显式覆盖 stale-write-guard、symbol-lease/WAL、patch-flow、worktree isolation、COMPASS、Routing Memo、AgentMap、Dreams、Memory Embedding、VToken、V3",
+      "status": "verified",
+      "evidence": [
+        "shared/dcs/component-disposition-catalog.ts",
+        "docs/dev/component-disposition-matrix-20261021.md"
+      ],
+      "observation": "Covered by the machine disposition manifest, exact coverage validation and the single-page matrix."
+    },
+    {
+      "requirement": "无实施去向的组件必须有期限的 decision/retirement 节点，不能只留分类记录",
+      "status": "verified",
+      "evidence": [
+        "shared/dcs/component-disposition-catalog.ts",
+        "docs/dev/component-disposition-matrix-20261021.md"
+      ],
+      "observation": "Covered by the machine disposition manifest, exact coverage validation and the single-page matrix."
+    }
+  ],
+  "checks": [
+    {
+      "name": "disposition-validator",
+      "status": "pass",
+      "observed": {
+        "issues": []
+      }
+    },
+    {
+      "name": "coverage-counts",
+      "status": "pass",
+      "observed": {
+        "authorityComponents": 34,
+        "dcsFlags": 22,
+        "runtimeLeaves": 112,
+        "routes": 20,
+        "settingsSections": 12,
+        "settingsPanels": 12
+      }
+    },
+    {
+      "name": "entry-mappings",
+      "status": "pass",
+      "observed": {
+        "entries": 52,
+        "missingConsumers": [],
+        "missingEvidenceRefs": [],
+        "missingPaths": []
+      }
+    },
+    {
+      "name": "experiments",
+      "status": "pass",
+      "observed": {
+        "count": 10,
+        "experimentsWithoutExpiry": [],
+        "experimentsWithoutOwner": []
+      }
+    },
+    {
+      "name": "shadow-surfaces",
+      "status": "pass",
+      "observed": []
+    },
+    {
+      "name": "writable-dcs",
+      "status": "pass",
+      "observed": []
+    },
+    {
+      "name": "projection",
+      "status": "pass",
+      "observed": {
+        "entries": 52
+      }
+    },
+    {
+      "name": "unit-tests",
+      "status": "pass"
+    },
+    {
+      "name": "typecheck",
+      "status": "pass"
+    },
+    {
+      "name": "eslint",
+      "status": "pass"
+    },
+    {
+      "name": "catalogs-check",
+      "status": "pass"
+    },
+    {
+      "name": "contract-check",
+      "status": "pass"
+    },
+    {
+      "name": "git-diff-check",
+      "status": "pass"
+    },
+    {
+      "name": "scope-path-audit",
+      "status": "pass",
+      "observed": {
+        "statusPaths": [
+          "docs/clawx-product-semantics.md",
+          "docs/dev/adr/2026-08-16-context-authority-boundaries.md",
+          "docs/dev/default-config-matrix.md",
+          "docs/dev/runtime-control-planes.md",
+          "harness/specs/fixtures/component-graduation-report/README.md",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/SHA256SUMS",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/acceptance.json",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/expected-context.json",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/raw-results.json",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/readback.json",
+          "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "harness/specs/fixtures/component-graduation-report/expected-context.json",
+          "harness/specs/fixtures/component-graduation-report/negative-cases.json",
+          "harness/specs/fixtures/component-graduation-report/negative-default-change.json",
+          "harness/specs/fixtures/component-graduation-report/negative-invalid-report.json",
+          "harness/specs/fixtures/component-graduation-report/positive-advanced.json",
+          "harness/specs/fixtures/component-graduation-report/positive-contract.json",
+          "harness/specs/fixtures/component-graduation-report/positive-default.json",
+          "harness/specs/fixtures/component-graduation-report/positive-internal.json",
+          "harness/specs/fixtures/component-graduation-report/positive-retired.json",
+          "harness/specs/fixtures/component-graduation-report/positive-shadow.json",
+          "harness/specs/tasks/component-graduation-report-v1.md",
+          "scripts/component-graduation-report.mts",
+          "shared/component-authority-manifest.ts",
+          "shared/component-graduation-report.ts",
+          "shared/dcs/component-disposition-catalog.ts",
+          "tests/unit/component-authority-manifest.test.ts",
+          "tests/unit/component-disposition-catalog.test.ts",
+          "tests/unit/component-graduation-report.test.ts"
+        ],
+        "unexpectedStatusPaths": []
+      }
+    },
+    {
+      "name": "task-forest-validate-preapply",
+      "status": "pass"
+    },
+    {
+      "name": "task-forest-validate-postapply",
+      "status": "pass"
+    },
+    {
+      "name": "task-forest-export",
+      "status": "pass"
+    }
+  ],
+  "dispositionCounts": {
+    "internal": 15,
+    "default": 14,
+    "experiment": 10,
+    "advanced": 11,
+    "retired": 2
+  },
+  "coverage": {
+    "authorityComponents": 34,
+    "dcsFlags": 22,
+    "runtimeLeaves": 112,
+    "routes": 20,
+    "settingsSections": 12,
+    "settingsPanels": 12
+  },
+  "taskForest": {
+    "taskId": "TF-0491",
+    "status": "done",
+    "progress": 100,
+    "evidenceCount": 25,
+    "nextNode": {
+      "id": "TF-0492",
+      "status": "ready",
+      "displayOrder": 50
+    },
+    "proposal": {
+      "id": "TFP-TF-0491-component-disposition-manifest-20261021",
+      "status": "applied",
+      "baseGraphHash": "63827dba3432ed15a2dc5d7250e17fcb4e5f2d56fc451a3e3fbe2129e083aef3"
+    },
+    "validatePostApply": "pass",
+    "export": "pass"
+  },
+  "limitations": [
+    "Decision manifest only: no code deletion, runtime behavior or product default changes.",
+    "ModelCapabilityProfile wiring/effective-state verification remains for TF-0492/TF-0562 sequence.",
+    "No UI was changed; Settings panels/routes are covered as surfaces.",
+    "No live-provider or Electron E2E was required for this decision node.",
+    "New docs/dev matrix and evidence are currently local-only under the repository retention block.",
+    "VerseGit is excluded and untouched."
+  ],
+  "sourceFingerprints": [
+    {
+      "path": "shared/dcs/component-disposition-catalog.ts",
+      "sha256": "b401c677f6a4f43ce36967321651b92d7ef7bc2c086a3041eb134f56202f8528",
+      "bytes": 44123
+    },
+    {
+      "path": "shared/component-authority-manifest.ts",
+      "sha256": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+      "bytes": 59578
+    },
+    {
+      "path": "shared/component-graduation-report.ts",
+      "sha256": "777acf813a762278f71bac1bffa2d21b6254a19c3c9e8c27f9387dc84bfc6b4b",
+      "bytes": 26484
+    },
+    {
+      "path": "tests/unit/component-disposition-catalog.test.ts",
+      "sha256": "7a6e2baba87fddc918f44f77eac09c2efd5ddbfa48195f6ba14335072270daf7",
+      "bytes": 10153
+    },
+    {
+      "path": "docs/dev/component-disposition-matrix-20261021.md",
+      "sha256": "db5bc7fdaf5035c4e89ed0e67e8b26235656cedabd072c8e5a7ef0fb32381499",
+      "bytes": 26748
+    },
+    {
+      "path": "docs/dev/runtime-control-planes.md",
+      "sha256": "87187415b035a6a373dc256b195706956641a4ada0c8129831ac7aa49e72abd6",
+      "bytes": 20750
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0491/raw-results.json",
+      "sha256": "31d68b75e05e17054b61295010db95f9a7fc5783214dcf762b52e7df3fe9c27a",
+      "bytes": 4758
+    }
+  ],
+  "acceptanceSelfCheck": {
+    "ok": true,
+    "graduationPass": true,
+    "recomputedVerdict": "pass"
+  }
+}

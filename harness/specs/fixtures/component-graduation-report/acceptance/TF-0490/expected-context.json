@@ -1,0 +1,10 @@
+{
+  "scope": "worktree:component-graduation-20261021",
+  "actor": "codex",
+  "provider": "not-applicable",
+  "model": "not-applicable",
+  "commit": "d7fb59801ac570d1217656c71b60023128ff1d6c",
+  "tree": "b62dd37b6f22345de5dde0daacdb1806af67397f",
+  "buildHash": "3ba3937b16bd75ea6033c51a7378d519aa1d38f4572b87ccc38c84c6bb632065",
+  "recomputeInputDigest": "dbbb340b034dae957e667c5329c726cd1d647899dbd982e51b56486e0b5ed8c1"
+}

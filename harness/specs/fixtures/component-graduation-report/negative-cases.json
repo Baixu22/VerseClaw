@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "component-graduation-report-negative-cases/v1",
+  "cases": [
+    {
+      "id": "missing-field",
+      "base": "positive-internal.json",
+      "delete": [
+        "owner"
+      ],
+      "expected": [
+        "missing_field"
+      ]
+    },
+    {
+      "id": "human-attribution",
+      "base": "positive-internal.json",
+      "set": {
+        "driven_by": "human",
+        "actor": "human"
+      },
+      "expected": [
+        "agent_attribution_required"
+      ]
+    },
+    {
+      "id": "disposition-evidence-mismatch",
+      "base": "positive-internal.json",
+      "set": {
+        "disposition": "default"
+      },
+      "expected": [
+        "required_evidence_missing"
+      ]
+    },
+    {
+      "id": "missing-artifact",
+      "base": "positive-internal.json",
+      "resolver": "missing",
+      "expected": [
+        "artifact_missing"
+      ]
+    },
+    {
+      "id": "hash-mismatch",
+      "base": "positive-internal.json",
+      "resolver": "hash-mismatch",
+      "expected": [
+        "artifact_hash_mismatch"
+      ]
+    },
+    {
+      "id": "stale-source",
+      "base": "positive-internal.json",
+      "expectedContext": {
+        "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "tree": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "expected": [
+        "commit_mismatch",
+        "tree_mismatch"
+      ]
+    },
+    {
+      "id": "scope-mismatch",
+      "base": "positive-internal.json",
+      "expectedContext": {
+        "scope": "workspace:different"
+      },
+      "expected": [
+        "scope_mismatch"
+      ]
+    },
+    {
+      "id": "actor-mismatch",
+      "base": "positive-internal.json",
+      "expectedContext": {
+        "actor": "other-agent"
+      },
+      "expected": [
+        "actor_mismatch"
+      ]
+    },
+    {
+      "id": "model-mismatch",
+      "base": "positive-internal.json",
+      "expectedContext": {
+        "model": "different-model"
+      },
+      "expected": [
+        "model_mismatch"
+      ]
+    },
+    {
+      "id": "raw-result-does-not-support",
+      "base": "positive-internal.json",
+      "set": {
+        "evidence.0.artifacts.0.supportsVerdict": false
+      },
+      "expected": [
+        "artifact_does_not_support_verdict"
+      ]
+    },
+    {
+      "id": "recompute-verdict-mismatch",
+      "base": "positive-internal.json",
+      "set": {
+        "recompute.verdict": "fail"
+      },
+      "expected": [
+        "recompute_verdict_mismatch"
+      ]
+    },
+    {
+      "id": "experiment-without-expiry",
+      "base": "positive-shadow.json",
+      "set": {
+        "expiry": null
+      },
+      "expected": [
+        "expiry_required"
+      ]
+    },
+    {
+      "id": "stale-build",
+      "base": "positive-internal.json",
+      "expectedContext": {
+        "buildHash": "4444444444444444444444444444444444444444444444444444444444444444"
+      },
+      "expected": [
+        "buildHash_mismatch"
+      ]
+    },
+    {
+      "id": "recompute-digest-mismatch",
+      "base": "positive-internal.json",
+      "expectedContext": {
+        "recomputeInputDigest": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      "expected": [
+        "recompute_digest_mismatch"
+      ]
+    },
+    {
+      "id": "raw-result-mismatch",
+      "base": "positive-internal.json",
+      "resolver": "raw-mismatch",
+      "expected": [
+        "raw_result_mismatch"
+      ]
+    }
+  ]
+}

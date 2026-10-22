@@ -1,0 +1,275 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TF-0488",
+  "generatedAt": "2026-10-21T05:24:27.100Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "directDiskReadback": true,
+  "acceptanceSha256": "3ccd49be0c97e33f896be0dc0bbe22237b21eeb79899087b6821863f2b209eb7",
+  "checks": [
+    {
+      "name": "scope-guard",
+      "status": "pass",
+      "evidence": [
+        "docs/dev/component-graduation/TF-0488/scope-guard.log"
+      ]
+    },
+    {
+      "name": "scope-adr-and-matrix",
+      "status": "pass",
+      "observed": {
+        "matrixRowCount": 31,
+        "matrixGroups": {
+          "d7": 6,
+          "tf0007And0009": 7,
+          "defaultConfigMatrix": 7,
+          "contextAuthority": 8,
+          "tf0454": 3
+        },
+        "adrPath": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+        "matrixPath": "docs/dev/component-graduation-scope-matrix-20261021.md"
+      }
+    },
+    {
+      "name": "d7-history-and-applicability",
+      "status": "pass",
+      "observed": {
+        "d7DecisionCommit": "b2a406987",
+        "d7DirectionCommit": "9355d7763"
+      }
+    },
+    {
+      "name": "source-constraints-covered",
+      "status": "pass"
+    },
+    {
+      "name": "default-values-unchanged",
+      "status": "pass",
+      "observed": {
+        "baselineSha256": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1",
+        "currentSha256": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1"
+      }
+    },
+    {
+      "name": "component-labels-unchanged",
+      "status": "pass",
+      "observed": {
+        "baselineSha256": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc",
+        "currentSha256": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc"
+      }
+    },
+    {
+      "name": "product-locks-unchanged-text",
+      "status": "pass"
+    },
+    {
+      "name": "human-prerequisite-removed-from-current-surfaces",
+      "status": "pass"
+    },
+    {
+      "name": "current-surface-forbidden-claims",
+      "status": "pass",
+      "observed": [
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "matches": []
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "name": "focused-tests",
+      "status": "pass",
+      "observed": {
+        "command": "pnpm exec vitest run tests/unit/default-config-matrix.test.ts tests/unit/first-product-claims.test.ts tests/unit/product-semantics.test.ts tests/unit/vtoken-default-off-documentation.test.ts --reporter=verbose",
+        "testFiles": 4,
+        "tests": 34
+      }
+    },
+    {
+      "name": "tf0007-tf0009-agent-policy",
+      "status": "pass"
+    },
+    {
+      "name": "landed-unwired-audit",
+      "status": "pass",
+      "observed": {
+        "totalEntries": 22,
+        "wiredCount": 22,
+        "trueUnwiredCount": 0,
+        "actor": "codex",
+        "driven_by": "agent"
+      }
+    },
+    {
+      "name": "agent-attribution",
+      "status": "pass"
+    },
+    {
+      "name": "verseGit-excluded",
+      "status": "pass",
+      "observed": {
+        "changedVerseGitPaths": [],
+        "planVerseGitNodes": []
+      }
+    },
+    {
+      "name": "later-node-implementation-absent",
+      "status": "pass",
+      "observed": {
+        "trackedChangedPaths": [
+          "docs/clawx-product-semantics.md",
+          "docs/dev/adr/2026-08-16-context-authority-boundaries.md",
+          "docs/dev/default-config-matrix.md"
+        ],
+        "unallowedTrackedChanges": []
+      }
+    },
+    {
+      "name": "task-forest-validate-preapply",
+      "status": "pass",
+      "evidence": [
+        "docs/dev/component-graduation/TF-0488/task-forest-validate-preapply.log"
+      ]
+    },
+    {
+      "name": "task-forest-validate-postapply",
+      "status": "pass",
+      "evidence": [
+        "docs/dev/component-graduation/TF-0488/task-forest-validate.log"
+      ]
+    },
+    {
+      "name": "task-forest-export",
+      "status": "pass",
+      "evidence": [
+        "docs/dev/component-graduation/TF-0488/task-forest-export.log"
+      ]
+    }
+  ],
+  "allChecksPass": true,
+  "matrix": {
+    "rowCount": 31,
+    "groups": {
+      "d7": 6,
+      "tf0007And0009": 7,
+      "defaultConfigMatrix": 7,
+      "contextAuthority": 8,
+      "tf0454": 3
+    }
+  },
+  "defaultTable": {
+    "baselineSha256": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1",
+    "currentSha256": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1",
+    "unchanged": true
+  },
+  "componentTable": {
+    "baselineSha256": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc",
+    "currentSha256": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc",
+    "unchanged": true
+  },
+  "forbiddenClaims": [
+    {
+      "path": "docs/clawx-product-semantics.md",
+      "matches": []
+    },
+    {
+      "path": "docs/dev/default-config-matrix.md",
+      "matches": []
+    }
+  ],
+  "trackedChangedPaths": [
+    "docs/clawx-product-semantics.md",
+    "docs/dev/adr/2026-08-16-context-authority-boundaries.md",
+    "docs/dev/default-config-matrix.md"
+  ],
+  "taskForest": {
+    "taskId": "TF-0488",
+    "status": "done",
+    "progress": 100,
+    "evidenceCount": 13,
+    "activeLeaves": [
+      {
+        "id": "TF-0489",
+        "status": "ready"
+      }
+    ],
+    "nextNode": {
+      "id": "TF-0489",
+      "status": "ready",
+      "displayOrder": 20
+    },
+    "proposal": {
+      "id": "TFP-TF-0488-d9-scope-closeout-20261021",
+      "baseGraphHash": "d482e3082a614e9af22d638ad4e4c06c62b22f6fd5188e12cfd5bb826c1a834a",
+      "status": "applied"
+    },
+    "validatePostApply": "pass",
+    "export": "pass"
+  },
+  "artifacts": [
+    {
+      "path": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+      "sha256": "55ec3a96745f217232addb91b605ce1811765898a02d10b69bd70832f58fad5d",
+      "bytes": 7007
+    },
+    {
+      "path": "docs/dev/component-graduation-scope-matrix-20261021.md",
+      "sha256": "ad9f5e6b65ad3d8ca62dbf7141960d508931dad7811e72609a0f7da64beac2fa",
+      "bytes": 11203
+    },
+    {
+      "path": "docs/clawx-product-semantics.md",
+      "sha256": "077ce6277672d03bdf36be118aa7cf7e67fa34bcece75d95461de7697f5bced5",
+      "bytes": 18007
+    },
+    {
+      "path": "docs/dev/default-config-matrix.md",
+      "sha256": "e6168119305acaa316ba12f969e5d1c273de54cfd79d9caf64d0fb0dfec16a0c",
+      "bytes": 5717
+    },
+    {
+      "path": "docs/dev/adr/2026-08-16-context-authority-boundaries.md",
+      "sha256": "66c0ec85345aeba54b82eef01d62218f9144e81fb546b8b82a7f1682ae9351e7",
+      "bytes": 10812
+    },
+    {
+      "path": "docs/dev/tf0009-policy-decision-20260930.md",
+      "sha256": "f43a7567cc520b0ba7a2744715b063b6a69c43a2a3ceb0feafb0351bd5eecb35",
+      "bytes": 3712
+    },
+    {
+      "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+      "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+      "bytes": 15286
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0488/scope-guard.log",
+      "sha256": "48e9aa5944286043f668c9ef6aa6dfc2b844f04938d46e860cc7cf75d6ec5993",
+      "bytes": 669
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0488/focused-tests.log",
+      "sha256": "951fd2ec7514b0fbfab72700a7edd02ce88ed00d579b835d8e7df380de4ae242",
+      "bytes": 6452
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0488/task-forest-validate-preapply.log",
+      "sha256": "9f894472065e362b123dfe4206128588861543e672c09aeb9720d283884a3732",
+      "bytes": 294
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0488/task-forest-validate.log",
+      "sha256": "9f894472065e362b123dfe4206128588861543e672c09aeb9720d283884a3732",
+      "bytes": 294
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0488/task-forest-export.log",
+      "sha256": "45f4a1463672cbdf15466a823e6a70f1bce37dbfddbe317dcc39c94f565d3a8a",
+      "bytes": 275
+    }
+  ]
+}

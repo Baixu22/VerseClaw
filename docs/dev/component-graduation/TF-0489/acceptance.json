@@ -1,0 +1,416 @@
+{
+  "schemaVersion": 1,
+  "reportType": "ComponentGraduationReport/v1",
+  "reportCompatibility": {
+    "targetSchemaTask": "TF-0490",
+    "status": "decision-level-prefix",
+    "validatorAvailable": false
+  },
+  "taskId": "TF-0489",
+  "title": "建立机器可读的组件唯一职权矩阵",
+  "generatedAt": "2026-10-21T09:57:16.296Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "complete",
+  "scope": "Static machine-readable component authority manifest and tests only; no runtime wiring or product default change.",
+  "base": {
+    "ref": "origin/main",
+    "commit": "350b330ae44fb9b718403cdc1debcbe8c6c42bf5",
+    "branch": "codex/component-graduation-20261021",
+    "headAtReadback": "d7fb59801ac570d1217656c71b60023128ff1d6c"
+  },
+  "component": {
+    "componentId": "clawx-component-authority-manifest",
+    "disposition": "internal",
+    "maturity": "static-contract-guarded",
+    "owner": "TF-0489",
+    "entryPoint": "shared/component-authority-manifest.ts",
+    "defaultMode": "unchanged",
+    "benefitEvidence": "Unique authority keys=38; domains=10; sourceAnchors=37; no runtime import.",
+    "rollback": "Remove the manifest/test/doc change and Task Forest proposal; no runtime rollback is needed.",
+    "modelEffectiveState": "Defined via buildComponentAuthorityProfile; not wired into live model behavior by this node.",
+    "evidenceGrade": "static-contract+unit-tests+full-typecheck",
+    "actor": "codex",
+    "driven_by": "agent",
+    "expiry": null
+  },
+  "requirementsResults": [
+    {
+      "requirement": "为每个组件记录 purpose、ownedDataTypes、scopes、allowedReads、allowedWrites、effects、forbiddenActions 和 runtime availability source",
+      "status": "verified",
+      "evidence": [
+        "shared/component-authority-manifest.ts",
+        "tests/unit/component-authority-manifest.test.ts"
+      ],
+      "observation": "Covered by the machine manifest fields, source anchors and the component-authority-manifest architecture test."
+    },
+    {
+      "requirement": "按 data type + scope + operation 选唯一 accepting/update authority；不要求只有一个数据库或一个后端",
+      "status": "verified",
+      "evidence": [
+        "shared/component-authority-manifest.ts",
+        "tests/unit/component-authority-manifest.test.ts"
+      ],
+      "observation": "Covered by the machine manifest fields, source anchors and the component-authority-manifest architecture test."
+    },
+    {
+      "requirement": "Context 明确 CRK 生命周期、DCS 候选裁决、Assembler 兼容适配和 provider 最终请求边界的分工",
+      "status": "verified",
+      "evidence": [
+        "shared/component-authority-manifest.ts",
+        "tests/unit/component-authority-manifest.test.ts"
+      ],
+      "observation": "Covered by the machine manifest fields, source anchors and the component-authority-manifest architecture test."
+    },
+    {
+      "requirement": "Memory 区分卡片治理、原生文件检索、Runtime 事实/时序/episode、embedding 与候选队列的数据边界",
+      "status": "verified",
+      "evidence": [
+        "shared/component-authority-manifest.ts",
+        "tests/unit/component-authority-manifest.test.ts"
+      ],
+      "observation": "Covered by the machine manifest fields, source anchors and the component-authority-manifest architecture test."
+    },
+    {
+      "requirement": "Knowledge 统一 source/draft/proposal/applied 审阅；SEKB 只能提供 candidate/provenance",
+      "status": "verified",
+      "evidence": [
+        "shared/component-authority-manifest.ts",
+        "tests/unit/component-authority-manifest.test.ts"
+      ],
+      "observation": "Covered by the machine manifest fields, source anchors and the component-authority-manifest architecture test."
+    },
+    {
+      "requirement": "Capability catalog 中 Skills/MCP 提供来源，Tool Search 负责发现与 schema 展开；V3 descriptor 不携带 executor 闭包",
+      "status": "verified",
+      "evidence": [
+        "shared/component-authority-manifest.ts",
+        "tests/unit/component-authority-manifest.test.ts"
+      ],
+      "observation": "Covered by the machine manifest fields, source anchors and the component-authority-manifest architecture test."
+    },
+    {
+      "requirement": "Execution backend 不拥有 authorization；Browser session、task projection、approval 各有 owner；trace/receipt/log 只能记录",
+      "status": "verified",
+      "evidence": [
+        "shared/component-authority-manifest.ts",
+        "tests/unit/component-authority-manifest.test.ts"
+      ],
+      "observation": "Covered by the machine manifest fields, source anchors and the component-authority-manifest architecture test."
+    },
+    {
+      "requirement": "UI 不能直接调用 Gateway，renderer 不能直接读写 memory/knowledge",
+      "status": "verified",
+      "evidence": [
+        "shared/component-authority-manifest.ts",
+        "tests/unit/component-authority-manifest.test.ts"
+      ],
+      "observation": "Covered by the machine manifest fields, source anchors and the component-authority-manifest architecture test."
+    },
+    {
+      "requirement": "生成模型能力 profile 所需的静态与有效状态摘要",
+      "status": "verified",
+      "evidence": [
+        "shared/component-authority-manifest.ts",
+        "tests/unit/component-authority-manifest.test.ts"
+      ],
+      "observation": "Covered by the machine manifest fields, source anchors and the component-authority-manifest architecture test."
+    }
+  ],
+  "acceptanceResults": [
+    {
+      "criterion": "所有现有组件至少映射到一个 authority domain",
+      "status": "verified",
+      "evidence": [
+        "shared/component-authority-manifest.ts",
+        "tests/unit/component-authority-manifest.test.ts"
+      ],
+      "observation": "34 components map to 10 authority domains; validator reports no unowned domains."
+    },
+    {
+      "criterion": "同一 data type + scope + operation 没有两个 accepting/update writer；不同数据域允许不同 store",
+      "status": "verified",
+      "evidence": [
+        "shared/component-authority-manifest.ts",
+        "docs/dev/component-graduation/TF-0489/unit-tests.log"
+      ],
+      "observation": "38 assignments use unique dataType+scope+operation keys; role-card, runtime-fact/timeline/episode, candidate and embedding stores remain distinct."
+    },
+    {
+      "criterion": "存在自动测试拒绝第二个 accepted-memory writer、第二 context assembly owner、第二 domain executor 和权限扩大",
+      "status": "verified",
+      "evidence": [
+        "tests/unit/component-authority-manifest.test.ts",
+        "docs/dev/component-graduation/TF-0489/unit-tests.log"
+      ],
+      "observation": "Negative tests reject a second accepted-memory writer, second context assembly owner, second domain executor, permission escalation and unauthorized cross-domain writes."
+    },
+    {
+      "criterion": "Context/Memory/Knowledge/Capability/Execution/Browser/Observability 冲突边界都有架构测试或静态 guard",
+      "status": "verified",
+      "evidence": [
+        "shared/component-authority-manifest.ts",
+        "tests/unit/component-authority-manifest.test.ts",
+        "docs/dev/component-graduation/TF-0489/unit-tests.log"
+      ],
+      "observation": "Context, Memory, Knowledge, Capability, Execution, Permission, Task, Browser, Observability and UI transport each have explicit ownership and static guard assertions."
+    },
+    {
+      "criterion": "manifest 与 product semantics/default config 交叉检查通过",
+      "status": "verified",
+      "evidence": [
+        "tests/unit/component-authority-manifest.test.ts",
+        "docs/dev/component-graduation/TF-0489/unit-tests.log",
+        "docs/dev/component-graduation/TF-0489/typecheck.log"
+      ],
+      "observation": "Cross-check links cover 10 product-surface rows and 11 default-matrix rows; default cells and FP-P1 labels match baseline hashes."
+    }
+  ],
+  "checks": [
+    {
+      "name": "scope-guard",
+      "status": "pass"
+    },
+    {
+      "name": "manifest-validation",
+      "status": "pass",
+      "observed": {
+        "componentCount": 34,
+        "authorityCount": 38,
+        "duplicateAuthorityKeys": []
+      }
+    },
+    {
+      "name": "domain-coverage",
+      "status": "pass"
+    },
+    {
+      "name": "catalog-binding",
+      "status": "pass",
+      "observed": {
+        "mapped": 22,
+        "expected": 22
+      }
+    },
+    {
+      "name": "permission-owner",
+      "status": "pass",
+      "observed": [
+        "permission-approval-authority"
+      ]
+    },
+    {
+      "name": "shared-module-unwired",
+      "status": "pass",
+      "observed": []
+    },
+    {
+      "name": "default-values-unchanged",
+      "status": "pass",
+      "observed": {
+        "baseline": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1",
+        "current": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1"
+      }
+    },
+    {
+      "name": "product-component-labels-unchanged",
+      "status": "pass",
+      "observed": {
+        "baseline": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc",
+        "current": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc"
+      }
+    },
+    {
+      "name": "scope-path-audit",
+      "status": "pass",
+      "observed": {
+        "statusPaths": [
+          "docs/clawx-product-semantics.md",
+          "docs/dev/adr/2026-08-16-context-authority-boundaries.md",
+          "docs/dev/default-config-matrix.md",
+          "docs/dev/runtime-control-planes.md",
+          "shared/component-authority-manifest.ts",
+          "tests/unit/component-authority-manifest.test.ts"
+        ],
+        "unexpectedStatusPaths": [],
+        "missingStatusPaths": []
+      }
+    },
+    {
+      "name": "unit-tests",
+      "status": "pass"
+    },
+    {
+      "name": "runtime-catalog-tests",
+      "status": "pass"
+    },
+    {
+      "name": "typecheck",
+      "status": "pass"
+    },
+    {
+      "name": "eslint",
+      "status": "pass"
+    },
+    {
+      "name": "catalogs-check",
+      "status": "pass"
+    },
+    {
+      "name": "contract-check",
+      "status": "pass"
+    },
+    {
+      "name": "git-diff-check",
+      "status": "pass"
+    },
+    {
+      "name": "profile-summary",
+      "status": "pass",
+      "observed": {
+        "profileEntries": 34
+      }
+    },
+    {
+      "name": "task-forest-validate-preapply",
+      "status": "pass"
+    },
+    {
+      "name": "task-forest-validate-postapply",
+      "status": "pass"
+    },
+    {
+      "name": "task-forest-export",
+      "status": "pass"
+    }
+  ],
+  "taskForest": {
+    "taskId": "TF-0489",
+    "status": "done",
+    "progress": 100,
+    "evidenceCount": 18,
+    "nextNode": {
+      "id": "TF-0490",
+      "status": "ready",
+      "displayOrder": 30
+    },
+    "proposal": {
+      "id": "TFP-TF-0489-authority-manifest-20261021",
+      "status": "applied",
+      "baseGraphHash": "debf4947607ccd6c1ef78d274bb4edfae702d14123ad23b47ad67d0b2cbbaa7f"
+    },
+    "validatePostApply": "pass",
+    "export": "pass"
+  },
+  "manifest": {
+    "schemaVersion": "ComponentAuthorityManifest/v1",
+    "components": 34,
+    "authorities": 38,
+    "domains": 10,
+    "sourceAnchors": 37,
+    "catalogFlags": 22,
+    "productSurfaceLinks": 10,
+    "defaultMatrixLinks": 11,
+    "profileEntries": 34
+  },
+  "sourceFingerprints": [
+    {
+      "path": "shared/component-authority-manifest.ts",
+      "sha256": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+      "bytes": 59578
+    },
+    {
+      "path": "tests/unit/component-authority-manifest.test.ts",
+      "sha256": "a15c21f68c125ae192626487bcbd4ee191903da00b2c4b91261122f999b8826e",
+      "bytes": 13008
+    },
+    {
+      "path": "docs/dev/runtime-control-planes.md",
+      "sha256": "a426aa62b28f5cc9cead92d1c04bdf58d63aeb60d411f8cdf3b0c8af842eb664",
+      "bytes": 20497
+    },
+    {
+      "path": "docs/clawx-product-semantics.md",
+      "sha256": "077ce6277672d03bdf36be118aa7cf7e67fa34bcece75d95461de7697f5bced5",
+      "bytes": 18007
+    },
+    {
+      "path": "docs/dev/default-config-matrix.md",
+      "sha256": "e6168119305acaa316ba12f969e5d1c273de54cfd79d9caf64d0fb0dfec16a0c",
+      "bytes": 5717
+    },
+    {
+      "path": "shared/dcs/prod-flags-catalog.ts",
+      "sha256": "acef3cfdf6ea60bc077485cdf243d47ce815cf4acc83e781d3d5a011140df2de",
+      "bytes": 21052
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/scope-guard.log",
+      "sha256": "bc92291ad8400b00dbc6c2fc08e5c733d6710c7487a7e7f46f6d46885ece5d65",
+      "bytes": 652
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/unit-tests.log",
+      "sha256": "ddc887600d13fa80865b435f772862b407d4046a0b3859b91e55283970a55f47",
+      "bytes": 8346
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/runtime-catalog-tests.log",
+      "sha256": "18932cf4166bc558ec66beafe8e92ad38a647ec6bce21d08e532f4e2016f93a9",
+      "bytes": 1712
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/typecheck.log",
+      "sha256": "5d5cb309168e416972ef739983670c2631efaa9858c709e502e882f297755c5e",
+      "bytes": 1733
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/eslint.log",
+      "sha256": "69a2b40228bd504c50f8136edfc414f66f34b55437e2c205f787ed3642459bb1",
+      "bytes": 126
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/catalogs-check.log",
+      "sha256": "67b9d49ff66702d7433d5d124870320f8de42a87867b9aa142a8b0fb879fb0aa",
+      "bytes": 208
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/contract-check.log",
+      "sha256": "08d0c7825bda3011230c5177e9d2778ec438254c0d34abcacd6953f7a58b3b97",
+      "bytes": 105
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/git-diff-check.log",
+      "sha256": "f0e099a9be7b67864764c22bbfb70859bac3445a816e605759acccabf728c046",
+      "bytes": 39
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/task-forest-validate-preapply.log",
+      "sha256": "9f894472065e362b123dfe4206128588861543e672c09aeb9720d283884a3732",
+      "bytes": 294
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/task-forest-validate.log",
+      "sha256": "9f894472065e362b123dfe4206128588861543e672c09aeb9720d283884a3732",
+      "bytes": 294
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/task-forest-export.log",
+      "sha256": "45f4a1463672cbdf15466a823e6a70f1bce37dbfddbe317dcc39c94f565d3a8a",
+      "bytes": 275
+    }
+  ],
+  "limitations": [
+    "TF-0490 ComponentGraduationReport/v1 validator does not exist yet; this is a decision-level prefix.",
+    "The manifest is deliberately not imported by runtime behavior; TF-0489 proves structure and static ownership, not live effective state.",
+    "No product default, product lock, public release, GA, liveReady or productApproved state is changed.",
+    "New authority/evidence files under docs are currently local-only under the repository retention block; manifest/index landing is outside TF-0489 allowed paths.",
+    "VerseGit is excluded and untouched."
+  ],
+  "successMetrics": {
+    "unowned_authority_domains": 0,
+    "duplicate_accepting_authorities_per_data_scope_operation": 0,
+    "unauthorized_cross_domain_writes": 0,
+    "permission_escalations_from_component_manifest": 0
+  }
+}

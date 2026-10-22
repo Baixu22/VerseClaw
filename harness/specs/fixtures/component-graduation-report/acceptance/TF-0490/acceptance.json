@@ -1,0 +1,432 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "tf-0490-component-graduation-report-v1",
+  "reportKind": "contract",
+  "componentId": "component-graduation-report-v1",
+  "taskForestNodeId": "TF-0490",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "TF-0490",
+  "entryPoint": "shared/component-graduation-report.ts",
+  "defaultMode": "internal",
+  "benefitEvidence": "Mechanically validates component evidence by disposition and blocks invalid Task Forest/default changes.",
+  "rollback": "Remove the report schema/validator/CLI/fixtures and revert the gate test; no runtime state changes.",
+  "modelEffectiveState": "not-applicable: static schema/gate only; no live model wiring.",
+  "evidenceGrade": "unit-test",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "d7fb59801ac570d1217656c71b60023128ff1d6c",
+    "tree": "b62dd37b6f22345de5dde0daacdb1806af67397f",
+    "buildHash": "3ba3937b16bd75ea6033c51a7378d519aa1d38f4572b87ccc38c84c6bb632065",
+    "runtimeGeneration": "static-validator-fixture",
+    "provider": "not-applicable",
+    "model": "not-applicable",
+    "inputSet": "component-graduation-report fixtures and acceptance logs",
+    "scope": "worktree:component-graduation-20261021",
+    "artifacts": [
+      {
+        "path": "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/raw-results.json",
+        "sha256": "b6285d3048f734587fabb096fd5c0ef97c883f342420c2f0a841109666bb4acc",
+        "bytes": 5875
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "contract",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "All contract gate checks are summarized in raw-results.json.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/raw-results.json",
+          "sha256": "b6285d3048f734587fabb096fd5c0ef97c883f342420c2f0a841109666bb4acc",
+          "bytes": 5875,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "dbbb340b034dae957e667c5329c726cd1d647899dbd982e51b56486e0b5ed8c1",
+    "command": "pnpm --dir openclaw_runtime exec tsx ../scripts/component-graduation-report.mts --report harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/acceptance.json --expected-context harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/expected-context.json --require-graduation"
+  },
+  "acceptanceCriteria": [
+    "schema 与 validator 有 positive/negative fixtures",
+    "报告按 disposition 证据矩阵校验；default/advanced、internal、retired、experiment/shadow 各自只要求对应证据，缺少该类证据时失败",
+    "所有已登记组件都能生成报告，缺字段、actor 身份错误或 disposition 与证据类型不匹配时校验失败",
+    "Task Forest done 只接受报告通过状态",
+    "默认翻转与报告不合法时 CI 失败"
+  ],
+  "acceptanceResults": [
+    {
+      "criterion": "schema 与 validator 有 positive/negative fixtures",
+      "status": "verified",
+      "evidence": [
+        "harness/specs/fixtures/component-graduation-report",
+        "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/unit-tests.log"
+      ],
+      "observation": "6 positive reports and 15 negative mutation cases plus 2 standalone negative reports exercise the schema and validator."
+    },
+    {
+      "criterion": "报告按 disposition 证据矩阵校验；default/advanced、internal、retired、experiment/shadow 各自只要求对应证据，缺少该类证据时失败",
+      "status": "verified",
+      "evidence": [
+        "shared/component-graduation-report.ts",
+        "harness/specs/fixtures/component-graduation-report/positive-default.json",
+        "harness/specs/fixtures/component-graduation-report/positive-internal.json",
+        "harness/specs/fixtures/component-graduation-report/positive-retired.json",
+        "harness/specs/fixtures/component-graduation-report/positive-shadow.json"
+      ],
+      "observation": "Default/advanced, internal, retired, shadow/experiment and contract evidence matrices are distinct and tested."
+    },
+    {
+      "criterion": "所有已登记组件都能生成报告，缺字段、actor 身份错误或 disposition 与证据类型不匹配时校验失败",
+      "status": "verified",
+      "evidence": [
+        "shared/component-graduation-report.ts",
+        "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/unit-tests.log"
+      ],
+      "observation": "34/34 registered components can generate a scaffold; missing field, actor and disposition/evidence mismatch cases fail."
+    },
+    {
+      "criterion": "Task Forest done 只接受报告通过状态",
+      "status": "verified",
+      "evidence": [
+        "tests/unit/component-graduation-report.test.ts",
+        "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/cli-gate.log"
+      ],
+      "observation": "Task Forest done gate requires a matching passing report; shadow/experiment cannot close a done node."
+    },
+    {
+      "criterion": "默认翻转与报告不合法时 CI 失败",
+      "status": "verified",
+      "evidence": [
+        "harness/specs/fixtures/component-graduation-report/negative-default-change.json",
+        "harness/specs/fixtures/component-graduation-report/negative-invalid-report.json",
+        "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/cli-gate.log"
+      ],
+      "observation": "CLI exits nonzero for invalid reports, invalid default changes and shadow Task Forest done claims."
+    }
+  ],
+  "requirementsResults": [
+    {
+      "requirement": "报告字段包含 componentId、disposition、maturity、owner、entryPoint、defaultMode、benefitEvidence、rollback、modelEffectiveState、evidenceGrade、actor/driven_by、expiry（experiment）",
+      "status": "verified",
+      "evidence": [
+        "shared/component-graduation-report.ts",
+        "tests/unit/component-graduation-report.test.ts"
+      ],
+      "observation": "Covered by schema fields, evidence matrix and negative fixture validation."
+    },
+    {
+      "requirement": "disposition 与 maturity 分开：advanced/internal 不自动等于毕业，experiment 不能抵消未完成",
+      "status": "verified",
+      "evidence": [
+        "shared/component-graduation-report.ts",
+        "tests/unit/component-graduation-report.test.ts"
+      ],
+      "observation": "Covered by schema fields, evidence matrix and negative fixture validation."
+    },
+    {
+      "requirement": "行政/合同节点只要求合同证据；default/advanced 组件毕业要求完整生产、收益和 rollback 报告；internal/retired/experiment/shadow 按各自分类证据矩阵",
+      "status": "verified",
+      "evidence": [
+        "shared/component-graduation-report.ts",
+        "tests/unit/component-graduation-report.test.ts"
+      ],
+      "observation": "Covered by schema fields, evidence matrix and negative fixture validation."
+    },
+    {
+      "requirement": "证据矩阵：default/advanced=生产调用+E2E+effective state+权限负向+canary+rollback+收益/必要性；internal=真实消费者+边界+必要性+故障恢复+不冒充产品；retired=caller/入口移除+迁移+保留/恢复；experiment/shadow 不计毕业并计入未完成",
+      "status": "verified",
+      "evidence": [
+        "shared/component-graduation-report.ts",
+        "tests/unit/component-graduation-report.test.ts"
+      ],
+      "observation": "Covered by schema fields, evidence matrix and negative fixture validation."
+    },
+    {
+      "requirement": "报告绑定 commit/tree、build hash、runtime generation、provider/model、输入集、actor、原始 artifacts 和重新计算结果",
+      "status": "verified",
+      "evidence": [
+        "shared/component-graduation-report.ts",
+        "tests/unit/component-graduation-report.test.ts"
+      ],
+      "observation": "Covered by schema fields, evidence matrix and negative fixture validation."
+    },
+    {
+      "requirement": "validator 有 artifact 缺失、hash 错误、源码/构建陈旧、scope/actor/model 不匹配、原始结果不支持结论的负向 fixture，并从原始 artifact 重算 verdict",
+      "status": "verified",
+      "evidence": [
+        "shared/component-graduation-report.ts",
+        "tests/unit/component-graduation-report.test.ts"
+      ],
+      "observation": "Covered by schema fields, evidence matrix and negative fixture validation."
+    },
+    {
+      "requirement": "agent 证据必须写 driven_by=agent 和具体 actor，禁止写成 human",
+      "status": "verified",
+      "evidence": [
+        "shared/component-graduation-report.ts",
+        "tests/unit/component-graduation-report.test.ts"
+      ],
+      "observation": "Covered by schema fields, evidence matrix and negative fixture validation."
+    }
+  ],
+  "checks": [
+    {
+      "name": "fixtures",
+      "status": "pass",
+      "observed": {
+        "positiveFiles": [
+          "positive-advanced.json",
+          "positive-contract.json",
+          "positive-default.json",
+          "positive-internal.json",
+          "positive-retired.json",
+          "positive-shadow.json"
+        ],
+        "negativeCases": 15,
+        "standaloneNegatives": [
+          "negative-default-change.json",
+          "negative-invalid-report.json"
+        ]
+      }
+    },
+    {
+      "name": "positive-fixtures-validate",
+      "status": "pass",
+      "observed": [
+        {
+          "file": "positive-advanced.json",
+          "ok": true,
+          "graduationPass": true,
+          "issues": []
+        },
+        {
+          "file": "positive-contract.json",
+          "ok": true,
+          "graduationPass": true,
+          "issues": []
+        },
+        {
+          "file": "positive-default.json",
+          "ok": true,
+          "graduationPass": true,
+          "issues": []
+        },
+        {
+          "file": "positive-internal.json",
+          "ok": true,
+          "graduationPass": true,
+          "issues": []
+        },
+        {
+          "file": "positive-retired.json",
+          "ok": true,
+          "graduationPass": true,
+          "issues": []
+        },
+        {
+          "file": "positive-shadow.json",
+          "ok": true,
+          "graduationPass": false,
+          "issues": []
+        }
+      ]
+    },
+    {
+      "name": "all-components-scaffold",
+      "status": "pass",
+      "observed": {
+        "scaffolds": 34,
+        "components": 34
+      }
+    },
+    {
+      "name": "unit-tests",
+      "status": "pass"
+    },
+    {
+      "name": "cli-gates",
+      "status": "pass",
+      "observed": {
+        "cliExitZero": 1,
+        "cliExitOne": 3
+      }
+    },
+    {
+      "name": "typecheck",
+      "status": "pass"
+    },
+    {
+      "name": "eslint",
+      "status": "pass"
+    },
+    {
+      "name": "harness-context",
+      "status": "pass"
+    },
+    {
+      "name": "harness-validate",
+      "status": "pass"
+    },
+    {
+      "name": "catalogs-check",
+      "status": "pass"
+    },
+    {
+      "name": "contract-check",
+      "status": "pass"
+    },
+    {
+      "name": "git-diff-check",
+      "status": "pass"
+    },
+    {
+      "name": "default-values-unchanged",
+      "status": "pass",
+      "observed": {
+        "baseline": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1",
+        "current": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1"
+      }
+    },
+    {
+      "name": "component-labels-unchanged",
+      "status": "pass",
+      "observed": {
+        "baseline": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc",
+        "current": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc"
+      }
+    },
+    {
+      "name": "scope-path-audit",
+      "status": "pass",
+      "observed": {
+        "statusPaths": [
+          "docs/clawx-product-semantics.md",
+          "docs/dev/adr/2026-08-16-context-authority-boundaries.md",
+          "docs/dev/default-config-matrix.md",
+          "docs/dev/runtime-control-planes.md",
+          "harness/specs/fixtures/component-graduation-report/README.md",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/SHA256SUMS",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/acceptance.json",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/expected-context.json",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/raw-results.json",
+          "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/readback.json",
+          "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "harness/specs/fixtures/component-graduation-report/expected-context.json",
+          "harness/specs/fixtures/component-graduation-report/negative-cases.json",
+          "harness/specs/fixtures/component-graduation-report/negative-default-change.json",
+          "harness/specs/fixtures/component-graduation-report/negative-invalid-report.json",
+          "harness/specs/fixtures/component-graduation-report/positive-advanced.json",
+          "harness/specs/fixtures/component-graduation-report/positive-contract.json",
+          "harness/specs/fixtures/component-graduation-report/positive-default.json",
+          "harness/specs/fixtures/component-graduation-report/positive-internal.json",
+          "harness/specs/fixtures/component-graduation-report/positive-retired.json",
+          "harness/specs/fixtures/component-graduation-report/positive-shadow.json",
+          "harness/specs/tasks/component-graduation-report-v1.md",
+          "scripts/component-graduation-report.mts",
+          "shared/component-authority-manifest.ts",
+          "shared/component-graduation-report.ts",
+          "tests/unit/component-authority-manifest.test.ts",
+          "tests/unit/component-graduation-report.test.ts"
+        ],
+        "unexpectedStatusPaths": []
+      }
+    },
+    {
+      "name": "task-forest-validate-preapply",
+      "status": "pass"
+    },
+    {
+      "name": "task-forest-validate-postapply",
+      "status": "pass"
+    },
+    {
+      "name": "task-forest-export",
+      "status": "pass"
+    }
+  ],
+  "sourceFingerprints": [
+    {
+      "path": "shared/component-graduation-report.ts",
+      "sha256": "777acf813a762278f71bac1bffa2d21b6254a19c3c9e8c27f9387dc84bfc6b4b",
+      "bytes": 26484
+    },
+    {
+      "path": "shared/component-authority-manifest.ts",
+      "sha256": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+      "bytes": 59578
+    },
+    {
+      "path": "scripts/component-graduation-report.mts",
+      "sha256": "f05aa6193c962620c4f88db56858929e94d404a5ca4230141a88504debcae705",
+      "bytes": 4835
+    },
+    {
+      "path": "harness/specs/tasks/component-graduation-report-v1.md",
+      "sha256": "79bc2d0e1b06c5e178a3c6ac71c8a7688137f7bba1592bc9fd4359f277b0e771",
+      "bytes": 2213
+    },
+    {
+      "path": "tests/unit/component-graduation-report.test.ts",
+      "sha256": "e3a449b5a217a242dce40bb1b371e937275a24c031aad9d0ae8095e05ee2610e",
+      "bytes": 8528
+    },
+    {
+      "path": "tests/unit/component-authority-manifest.test.ts",
+      "sha256": "a15c21f68c125ae192626487bcbd4ee191903da00b2c4b91261122f999b8826e",
+      "bytes": 13008
+    },
+    {
+      "path": "harness/specs/fixtures/component-graduation-report/expected-context.json",
+      "sha256": "12807aa4fd9cbd3f1b773a96c2a4ccaeeccb2ced7e1a4201ab7344ae3dbc3f0c",
+      "bytes": 428
+    },
+    {
+      "path": "harness/specs/fixtures/component-graduation-report/negative-cases.json",
+      "sha256": "80124ea91dcfafd5fb6ef0505cc069ae6219d62d09fcf2659a77c251161032f2",
+      "bytes": 3545
+    },
+    {
+      "path": "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/raw-results.json",
+      "sha256": "b6285d3048f734587fabb096fd5c0ef97c883f342420c2f0a841109666bb4acc",
+      "bytes": 5875
+    }
+  ],
+  "limitations": [
+    "Fixtures are synthetic and driven by agent; they do not represent product, live-provider or real-human evidence.",
+    "The report validator is not yet called by the Task Forest CLI itself; Task Forest closure still uses the Task Forest proposal gate and the tested done-gate helper/CLI.",
+    "Harness diff-aware dry-run is not used as evidence because this worktree intentionally accumulates multiple nodes of uncommitted changes; structural harness validation passed.",
+    "No runtime behavior, product default or product lock is changed.",
+    "VerseGit is excluded and untouched."
+  ],
+  "taskForest": {
+    "taskId": "TF-0490",
+    "status": "done",
+    "progress": 100,
+    "evidenceCount": 34,
+    "nextNode": {
+      "id": "TF-0491",
+      "status": "ready",
+      "displayOrder": 40
+    },
+    "proposal": {
+      "id": "TFP-TF-0490-component-graduation-report-20261021",
+      "status": "applied",
+      "baseGraphHash": "f2d818889e41b5b6e63d06c4a14e26a23a324445beb6349ddfe6f44801ab8262"
+    },
+    "validatePostApply": "pass",
+    "export": "pass"
+  },
+  "acceptanceSelfCheck": {
+    "ok": true,
+    "graduationPass": true,
+    "recomputedVerdict": "pass"
+  }
+}

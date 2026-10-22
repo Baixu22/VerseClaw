@@ -8,6 +8,8 @@
 | 范围 | Tool/Skill 能力目录、DCS 上下文投影、Mem 语义记忆、Working Context、Provider Guard、Receipt |
 | 关联文档 | `docs/dev/context-capability-blueprint.md`、`docs/dev/dcs-first-context-engineering.md`、`docs/dev/capability-registry-v3-development-plan.md`、`docs/context-family/axioms.md` |
 
+> 2026-10-21 applicability note (TF-0488): [D9](2026-10-21-d9-component-graduation-scope.md) clarifies the current internal component-graduation scope. The authority boundaries and red lines below remain in force; the categorical “do not use agent-surrogate evidence to advance default-on” clause is narrowed by the 2026-09-27 owner policy: labelled agent evidence may support automated acceptance, while synthetic-only evidence remains insufficient and an explicit default decision is still required. This note does not mark any implementation stage complete and changes no product default.
+
 ## 0. 最终裁决修订记录（rev3）
 
 2026-08-16 最终裁决：**总体认可约 80%**，但不把初稿直接当作可执行路线。本 ADR 按裁决做如下修订：

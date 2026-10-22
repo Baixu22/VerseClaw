@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "fixture-advanced",
+  "reportKind": "component",
+  "componentId": "context-enhancement-gate",
+  "taskForestNodeId": "TF-TEST-CONTEXT-ENHANCEMENT-ADVANCED",
+  "disposition": "advanced",
+  "maturity": "verified",
+  "owner": "context-enhancement-gate",
+  "entryPoint": "fixture-entrypoint",
+  "defaultMode": "baseline",
+  "benefitEvidence": "Fixture evidence shows a bounded component benefit; no product claim.",
+  "rollback": "Disable the component and restore the prior default/configuration.",
+  "modelEffectiveState": "Fixture model-visible state is derived from the same evidence bundle.",
+  "evidenceGrade": "e2e",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "1111111111111111111111111111111111111111",
+    "tree": "2222222222222222222222222222222222222222",
+    "buildHash": "3333333333333333333333333333333333333333333333333333333333333333",
+    "runtimeGeneration": "fixture-runtime-generation-1",
+    "provider": "fixture-provider",
+    "model": "fixture-model-v1",
+    "inputSet": "fixture-input-set-v1",
+    "scope": "workspace:component-graduation-fixture",
+    "artifacts": [
+      {
+        "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+        "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+        "bytes": 2060
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "production-call",
+      "status": "pass",
+      "grade": "e2e",
+      "summary": "Fixture production-call evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "e2e",
+      "status": "pass",
+      "grade": "e2e",
+      "summary": "Fixture e2e evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "effective-state",
+      "status": "pass",
+      "grade": "e2e",
+      "summary": "Fixture effective-state evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "permission-negative",
+      "status": "pass",
+      "grade": "e2e",
+      "summary": "Fixture permission-negative evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "canary",
+      "status": "pass",
+      "grade": "e2e",
+      "summary": "Fixture canary evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "rollback",
+      "status": "pass",
+      "grade": "e2e",
+      "summary": "Fixture rollback evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "necessity",
+      "status": "pass",
+      "grade": "e2e",
+      "summary": "Fixture necessity evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "1e6c441a993f555d3760eb5a7cab08f831ef33389d2736a97a006cbd95befed4",
+    "command": "fixture recompute from raw-evidence.json"
+  }
+}
