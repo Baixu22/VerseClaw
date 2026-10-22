@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Page } from '@playwright/test';
-import { expect, test } from './fixtures/electron';
+import { closeElectronApp, expect, test } from './fixtures/electron';
 
 const repoRoot = process.cwd();
 const binaryPath = process.env.VERSEGIT_BINARY ?? 'D:/Projects/VerseGit/target/debug/vg.exe';
@@ -73,7 +73,7 @@ test.describe('VerseGit host diagnostics', () => {
       const denied = await hostStatus(page, { ...binding, workspaceId: 'workspace-other' });
       expect(denied).toMatchObject({ ok: true, data: { status: 'rejected_by_policy', reason: 'identity_mismatch', observation: null } });
     } finally {
-      await app.close();
+      await closeElectronApp(app);
     }
   });
 
@@ -85,7 +85,7 @@ test.describe('VerseGit host diagnostics', () => {
       const response = await hostStatus(page, binding);
       expect(response).toMatchObject({ ok: true, data: { status: 'rejected_by_policy', observation: { processStarted: false } } });
     } finally {
-      await app.close();
+      await closeElectronApp(app);
     }
   });
 });
