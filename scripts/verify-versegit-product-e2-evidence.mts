@@ -98,7 +98,9 @@ function buildReview(generatedAt: string): Record<string, any> {
     if (!Array.isArray(receipt.artifactDigests) || !receipt.artifactDigests.includes(receipt.authorizationDigest) || !receipt.artifactDigests.includes(receipt.cleanupEvidenceDigest)) receiptIssues.push(`${run.run_id}: required artifacts are not bound`);
     if (run.observation?.approved_by_host !== true || run.observation?.op !== 'process.start') receiptIssues.push(`${run.run_id}: governed process observation is invalid`);
   }
-  if (failed?.receipt?.exitCode === 0 || continued?.receipt?.exitCode !== 0) receiptIssues.push('failure/continuation exit ordering drifted');
+  const failedReceiptRun = receipts.runs?.find((run: any) => run.run_id === 'run-e2-candidate-failure');
+  const continuationReceiptRun = receipts.runs?.find((run: any) => run.run_id === 'run-e2-candidate-continuation');
+  if (failedReceiptRun?.receipt?.exitCode === 0 || continuationReceiptRun?.receipt?.exitCode !== 0) receiptIssues.push('failure/continuation exit ordering drifted');
   const boundary = receipts.failure_before_continuation ?? {};
   if (boundary.failure_receipt_retained_after_continuation !== true || boundary.failure_before_continuation !== true) receiptIssues.push('failure-before-continuation evidence is not ordered');
   if (boundary.candidate_ids_distinct !== true || boundary.observation_digests_distinct !== true) receiptIssues.push('failure and continuation identities are not distinct');
@@ -116,9 +118,9 @@ function buildReview(generatedAt: string): Record<string, any> {
   for (const entry of negative.cases ?? []) {
     if (entry.passed !== true || entry.actual?.reason === null) negativeIssues.push(`${entry.id}: negative case was not explained`);
     if (entry.id === 'missing-observation' && entry.actual?.reason !== 'host observation record is missing') negativeIssues.push('missing observation reason drifted');
-    if (entry.id === 'revoked-grant' && entry.actual?.reason !== 'authorization is revoked') negativeIssues.push('revoked grant reason drifted');
+    if (entry.id === 'revoked-grant' && !(entry.actual?.issues ?? []).includes('authorization is revoked')) negativeIssues.push('revoked grant reason drifted');
     if (entry.id === 'partial-scope' && entry.actual?.reason !== 'plan scope is not full') negativeIssues.push('partial scope reason drifted');
-    if (entry.id === 'tampered-artifact' && !String(entry.actual?.reason).includes('digest mismatch')) negativeIssues.push('tampered artifact reason drifted');
+    if (entry.id === 'tampered-artifact' && !String((entry.actual?.issues ?? []).join(' ')).includes('digest mismatch')) negativeIssues.push('tampered artifact reason drifted');
   }
   checks.push({ id: 'negative', passed: negativeIssues.length === 0, issues: negativeIssues });
 
