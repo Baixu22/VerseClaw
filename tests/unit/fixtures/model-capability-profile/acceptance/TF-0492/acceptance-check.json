@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ModelCapabilityAcceptanceCheck/v1",
+  "taskForestNodeId": "TF-0492",
+  "checkedAt": "2026-10-21T15:47:29.039Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "criteria": [
+    {
+      "criterion": "profile schema 和纯生成器有负向测试",
+      "status": "pass",
+      "evidenceRefs": [
+        "tests/unit/model-capability-profile.test.ts",
+        "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/raw-evidence.json#negativeCases"
+      ]
+    },
+    {
+      "criterion": "所有用户可见能力在静态 disposition 中恰有一条记录，五条状态轴不混淆",
+      "status": "pass",
+      "evidenceRefs": [
+        "shared/model-capability-profile.ts",
+        "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/profile.json",
+        "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/raw-evidence.json#measurements"
+      ]
+    },
+    {
+      "criterion": "静态 digest 只随静态配置变化；effective digest 的输入字段有 fixture 并规范化",
+      "status": "pass",
+      "evidenceRefs": [
+        "tests/unit/fixtures/model-capability-profile/state-cases.json",
+        "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/raw-evidence.json#digestNormalization"
+      ]
+    },
+    {
+      "criterion": "状态 fixture 覆盖 enabled/disabled/partial/degraded/quarantined/requires-approval/internal/retired",
+      "status": "pass",
+      "evidenceRefs": [
+        "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/raw-evidence.json#stateCoverage"
+      ]
+    },
+    {
+      "criterion": "profile prompt addition 有明确字符预算，不挤占工作上下文",
+      "status": "pass",
+      "evidenceRefs": [
+        "shared/model-capability-profile.ts",
+        "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/profile.json#promptAddition",
+        "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/raw-evidence.json#measurements.prompt"
+      ]
+    }
+  ],
+  "verificationStatus": "pass",
+  "graduationReportStatus": "pass",
+  "userVisibleCapabilities": 25,
+  "promptCharacters": 1020,
+  "promptMaxChars": 2000,
+  "workContextCharsUsed": 0
+}

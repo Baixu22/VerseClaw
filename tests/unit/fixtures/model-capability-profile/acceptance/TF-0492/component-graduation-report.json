@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "tf-0492-model-capability-profile-contract",
+  "reportKind": "contract",
+  "componentId": "TF-0492",
+  "taskForestNodeId": "TF-0492",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "TF-0492",
+  "entryPoint": "shared/model-capability-profile.ts",
+  "defaultMode": "internal",
+  "benefitEvidence": "The contract makes static disposition and effective runtime facts separately auditable before model-facing capability positioning is wired.",
+  "rollback": "Remove the profile generator import and retain the prior static capability positioning; no product default is changed by this node.",
+  "modelEffectiveState": "Pure fixture-driven contract only; real driver, grant, ack, quarantine and restart propagation remain deferred to TF-0512.",
+  "evidenceGrade": "documented-boundary",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "d7fb59801ac570d1217656c71b60023128ff1d6c",
+    "tree": "b62dd37b6f22345de5dde0daacdb1806af67397f",
+    "buildHash": "f3f8d70a9401bcf3d9d1562e30242ffa63efd9e999b07cdc03475223f109bffc",
+    "runtimeGeneration": "fixture-static-contract",
+    "provider": "not-applicable",
+    "model": "not-applicable",
+    "inputSet": "tests/unit/fixtures/model-capability-profile/state-cases.json",
+    "scope": "workspace:component-graduation/session:tf-0492",
+    "artifacts": [
+      {
+        "path": "shared/model-capability-profile.ts",
+        "sha256": "f821284baca4753b7b6f41220eb89177fc0ec7a6b616a3f853ffd47335299e6c",
+        "bytes": 50341
+      },
+      {
+        "path": "tests/unit/model-capability-profile.test.ts",
+        "sha256": "35072a6e0d9677304979f4a5508c9f5a04d952a6eac6b1f7b493c159bf0292ea",
+        "bytes": 17134
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/state-cases.json",
+        "sha256": "0ec9c3cfd8b4522e16593a73f061a9d9cb6ca53c6aa2b90a186c90f6e36e4ab2",
+        "bytes": 9115
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+        "sha256": "1c10dc803d101234b4eee76127aeb4fcca12a8eec6e576a19e7dc17e305c1434",
+        "bytes": 19007
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/README.md",
+        "sha256": "e04c6963d7e08f86cda24717867cac251c96ab9b7c9d6d6c4312296b3dcc014f",
+        "bytes": 2962
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/acceptance-check.json",
+        "sha256": "402ea1f65e3e728967df69a1b0bd0554c30b511d1c823fbb4f8f526c1fcdab15",
+        "bytes": 2225
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/10-task-forest-validate-preapply.txt",
+        "sha256": "2e0319f7432f5df95a21b522c0ef9f9b738a95ba259fd84a1ffbf53ea53930aa",
+        "bytes": 101
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/profile.json",
+        "sha256": "c34a3d14bf877da4a6308a49eba76cf582e35e4e0af2682e0afa84e32a3d8f42",
+        "bytes": 108893
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/raw-evidence.json",
+        "sha256": "a76cba126247f799ab255075049c156e2545519992fde37eecfd5dae6f4e5be2",
+        "bytes": 6803
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "contract",
+      "status": "pass",
+      "grade": "documented-boundary",
+      "summary": "Profile schema, normalization, state matrix, negative cases and prompt budget pass from disk fixtures.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/raw-evidence.json",
+          "sha256": "a76cba126247f799ab255075049c156e2545519992fde37eecfd5dae6f4e5be2",
+          "bytes": 6803,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "61e85b159746050666c615804af365ed1572c16616ba2e7788c284ee80b26dd2",
+    "command": "pnpm --dir openclaw_runtime exec tsx tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts"
+  }
+}

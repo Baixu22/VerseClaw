@@ -1,0 +1,314 @@
+{
+  "schemaVersion": "ModelCapabilityEffectiveFactsFixture/v1",
+  "scope": {
+    "workspaceId": "workspace:component-graduation",
+    "roleId": "role:product-acceptance",
+    "sessionKey": "session:tf-0492"
+  },
+  "runtimeGeneration": "gen-tf0492-fixture-1",
+  "observedAt": "2026-10-21T14:00:00.000Z",
+  "baseFact": {
+    "tool": {
+      "identity": {
+        "id": "fixture.tool",
+        "label": "Fixture tool",
+        "kind": "runtime-service"
+      },
+      "callableName": "fixture_capability"
+    },
+    "driver": {
+      "id": "driver:fixture-runtime",
+      "kind": "runtime",
+      "state": "ready",
+      "version": "1.0.0"
+    },
+    "runtimeAvailability": {
+      "state": "enabled",
+      "source": "fixture:runtime-health",
+      "reason": null,
+      "observedAt": "2026-10-21T13:59:59.000Z"
+    },
+    "actionAuthorization": [
+      {
+        "actionId": "execute",
+        "authorization": "allowed",
+        "grant": {
+          "grantId": "grant:fixture-execute",
+          "state": "active",
+          "expiresAt": "2026-10-22T14:00:00.000Z"
+        }
+      }
+    ],
+    "memory": {
+      "scope": "workspace",
+      "read": "allowed",
+      "write": "denied",
+      "candidate": "available"
+    },
+    "knowledge": {
+      "appliedState": "applied",
+      "version": "knowledge-v7",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "ack": {
+      "state": "acknowledged",
+      "generation": "gen-tf0492-fixture-1",
+      "source": "fixture:runtime-ack",
+      "rejectedFields": [],
+      "observedAt": "2026-10-21T13:59:59.500Z"
+    },
+    "quarantine": {
+      "state": "clear",
+      "reason": null,
+      "since": null
+    }
+  },
+  "cases": [
+    {
+      "id": "enabled",
+      "capabilityId": "component.working-memory-context",
+      "expectedStaticDisposition": "default",
+      "expectedAxis": "runtimeAvailability",
+      "expectedValue": "enabled",
+      "override": {}
+    },
+    {
+      "id": "disabled",
+      "capabilityId": "surface.cron",
+      "expectedStaticDisposition": "advanced",
+      "expectedAxis": "runtimeAvailability",
+      "expectedValue": "disabled",
+      "override": {
+        "driver": {
+          "id": "driver:cron",
+          "kind": "runtime",
+          "state": "disabled",
+          "version": "1.0.0"
+        },
+        "runtimeAvailability": {
+          "state": "disabled",
+          "source": "fixture:runtime-health",
+          "reason": "Scheduled execution is disabled for this session.",
+          "observedAt": "2026-10-21T13:59:59.000Z"
+        }
+      }
+    },
+    {
+      "id": "partial",
+      "capabilityId": "component.knowledge-retrieval-source",
+      "expectedStaticDisposition": "default",
+      "expectedAxis": "runtimeAvailability",
+      "expectedValue": "partial",
+      "override": {
+        "driver": {
+          "id": "driver:knowledge",
+          "kind": "native",
+          "state": "loading",
+          "version": "2.1.0"
+        },
+        "runtimeAvailability": {
+          "state": "partial",
+          "source": "fixture:runtime-health",
+          "reason": "Index is still loading; only one source set is available.",
+          "observedAt": "2026-10-21T13:59:59.000Z"
+        },
+        "knowledge": {
+          "appliedState": "stale",
+          "version": "knowledge-v6",
+          "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "ack": {
+          "state": "pending",
+          "generation": "gen-tf0492-fixture-1",
+          "source": "fixture:runtime-ack",
+          "rejectedFields": ["index-ready"],
+          "observedAt": "2026-10-21T13:59:59.500Z"
+        }
+      }
+    },
+    {
+      "id": "degraded",
+      "capabilityId": "component.browser-session-owner",
+      "expectedStaticDisposition": "advanced",
+      "expectedAxis": "runtimeAvailability",
+      "expectedValue": "degraded",
+      "override": {
+        "driver": {
+          "id": "driver:browser",
+          "kind": "browser",
+          "state": "error",
+          "version": "3.0.0"
+        },
+        "runtimeAvailability": {
+          "state": "degraded",
+          "source": "fixture:runtime-health",
+          "reason": "Browser driver is reachable but screenshots are unavailable.",
+          "observedAt": "2026-10-21T13:59:59.000Z"
+        },
+        "memory": {
+          "scope": "none",
+          "read": "not-applicable",
+          "write": "not-applicable",
+          "candidate": "not-applicable"
+        },
+        "knowledge": {
+          "appliedState": "unavailable",
+          "version": null,
+          "digest": null
+        }
+      }
+    },
+    {
+      "id": "quarantined",
+      "capabilityId": "component.coding-execution-backend",
+      "expectedStaticDisposition": "default",
+      "expectedAxis": "runtimeAvailability",
+      "expectedValue": "quarantined",
+      "override": {
+        "driver": {
+          "id": "driver:coding",
+          "kind": "native",
+          "state": "error",
+          "version": "4.4.0"
+        },
+        "runtimeAvailability": {
+          "state": "quarantined",
+          "source": "fixture:runtime-quarantine",
+          "reason": "Tool schema failed validation.",
+          "observedAt": "2026-10-21T13:59:59.000Z"
+        },
+        "ack": {
+          "state": "rejected",
+          "generation": "gen-tf0492-fixture-1",
+          "source": "fixture:runtime-ack",
+          "rejectedFields": ["toolSchema"],
+          "observedAt": "2026-10-21T13:59:59.500Z"
+        },
+        "quarantine": {
+          "state": "quarantined",
+          "reason": "Tool schema failed validation.",
+          "since": "2026-10-21T13:58:00.000Z"
+        }
+      }
+    },
+    {
+      "id": "requires-approval",
+      "capabilityId": "component.permission-approval-authority",
+      "expectedStaticDisposition": "default",
+      "expectedAxis": "actionAuthorization",
+      "expectedValue": "requires-approval",
+      "override": {
+        "actionAuthorization": [
+          {
+            "actionId": "execute-sensitive-action",
+            "authorization": "requires-approval",
+            "grant": {
+              "grantId": "grant:fixture-pending",
+              "state": "pending",
+              "expiresAt": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "internal",
+      "capabilityId": "component.dcs-context-authority",
+      "expectedStaticDisposition": "internal",
+      "expectedAxis": "runtimeAvailability",
+      "expectedValue": "unknown",
+      "override": {
+        "tool": {
+          "identity": {
+            "id": "fixture.internal",
+            "label": "Fixture internal service",
+            "kind": "runtime-service"
+          },
+          "callableName": null
+        },
+        "driver": {
+          "id": "none",
+          "kind": "none",
+          "state": "unknown",
+          "version": null
+        },
+        "runtimeAvailability": {
+          "state": "unknown",
+          "source": "not-reported",
+          "reason": null,
+          "observedAt": null
+        },
+        "actionAuthorization": [],
+        "memory": {
+          "scope": "none",
+          "read": "unknown",
+          "write": "unknown",
+          "candidate": "unknown"
+        },
+        "knowledge": {
+          "appliedState": "unknown",
+          "version": null,
+          "digest": null
+        },
+        "ack": {
+          "state": "unknown",
+          "generation": null,
+          "source": null,
+          "rejectedFields": [],
+          "observedAt": null
+        },
+        "quarantine": {
+          "state": "unknown",
+          "reason": null,
+          "since": null
+        }
+      }
+    },
+    {
+      "id": "retired",
+      "capabilityId": "surface.dreams",
+      "expectedStaticDisposition": "retired",
+      "expectedAxis": "runtimeAvailability",
+      "expectedValue": "disabled",
+      "override": {
+        "driver": {
+          "id": "none",
+          "kind": "none",
+          "state": "disabled",
+          "version": null
+        },
+        "runtimeAvailability": {
+          "state": "disabled",
+          "source": "static:retired-surface",
+          "reason": "The surface is retired.",
+          "observedAt": "2026-10-21T13:59:59.000Z"
+        },
+        "actionAuthorization": [],
+        "memory": {
+          "scope": "none",
+          "read": "not-applicable",
+          "write": "not-applicable",
+          "candidate": "not-applicable"
+        },
+        "knowledge": {
+          "appliedState": "not-applied",
+          "version": null,
+          "digest": null
+        }
+      }
+    }
+  ],
+  "digestNormalization": {
+    "equivalentObservedAt": "2026-10-21T14:05:00.000Z",
+    "equivalentScope": {
+      "workspaceId": " workspace:component-graduation ",
+      "roleId": " role:product-acceptance ",
+      "sessionKey": " session:tf-0492 "
+    },
+    "equivalentFactOrder": "reverse",
+    "equivalentActionOrder": "reverse",
+    "equivalentRejectedFields": ["toolSchema", "index-ready"],
+    "changedRuntimeReason": "A different effective reason changes the effective digest.",
+    "changedDriverState": "unavailable"
+  }
+}

@@ -1,6 +1,6 @@
 # ClawX Product Semantics
 
-Last updated: 2026-10-18
+Last updated: 2026-10-21
 
 Evidence boundary: this document is a product-semantics guardrail that complements `shared/capability-claims.ts` and `artifacts/capability-claims/status-table.json`.
 
@@ -67,7 +67,7 @@ Runtime Memory diagnostics-only and SEKB auto-writeback disabled.
 
 ## Windows x64 Controlled Preview
 
-The current first-product validation target is **Verse Claw Windows x64 - DCS Coding Controlled Preview**. It is an internal, single-workspace path with explicit opt-in, runtime acknowledgement, controlled writes, undo, restart recovery, kill/rollback, and a redacted support bundle. FP-P1 evidence is engineering and real-process evidence; human canary evidence and release approval remain pending.
+The current first-product validation target is **Verse Claw Windows x64 - DCS Coding Controlled Preview**. It is an internal, single-workspace path with explicit opt-in, runtime acknowledgement, controlled writes, undo, restart recovery, kill/rollback, and a redacted support bundle. FP-P1 evidence is engineering and real-process evidence; release approval remains pending, and no real-human evidence is claimed.
 
 The table below is the canonical component classification for this preview. Each component appears exactly once and has exactly one label. Other documents should link here instead of assigning another label.
 
@@ -86,7 +86,22 @@ The table below is the canonical component classification for this preview. Each
 | Surfaces listed in RETIRED-SURFACES.md | `retired` | Removed surfaces stay removed and cannot be used as current capability evidence. |
 <!-- FP-P1-08-COMPONENT-STATUS-END -->
 
-No component is classified above `opt-in` during FP-P1 because the program still has zero human product runs. The excluded and default-off details are locked by `docs/dev/default-config-matrix.md` and `docs/dev/first-product-controlled-preview/STATUS.md`.
+The table above is the controlled-preview baseline snapshot. Its labels remain the current runtime baseline until a component-specific graduation decision changes both behavior and documentation; TF-0488 changes neither. Under the 2026-09-27 owner policy, real-human evidence is no longer a prerequisite; agent-driven evidence may support a later decision only when it records `driven_by: agent` with a concrete actor and is backed by the current production path, rollback, and model-effective-state evidence. The excluded and default-off details remain locked by `docs/dev/default-config-matrix.md`, `docs/dev/first-product-controlled-preview/STATUS.md`, and the [D9 scope ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md).
+
+## Component Graduation Scope (D9)
+
+D9 moves the current internal workstream from showcase-only closing to evidence-backed component graduation without changing the release boundary. In scope are component inventory and disposition, the decision path for default/advanced/internal/experiment/retired outcomes, model-facing capability self-description, and agent-driven automatic acceptance.
+
+The following boundaries remain outside automatic authority and are not changed by TF-0488:
+
+- public release, general availability, live readiness, or product approval;
+- any product-default or product-lock change;
+- VerseGit nodes, worktrees, and product files;
+- implementation of TF-0489 or any later Context, Memory, Knowledge, Capability, Browser, or VerseShell node before that node is explicitly activated.
+
+“Default graduation” means a component can be evaluated and decided into a default mode through the component evidence matrix; it is not a blanket enablement or an automatic value flip. “Automatic acceptance” means an agent can execute checks, write evidence, and read results back from disk. It does not grant release approval. A green test, a wiring site, or a completed Task Forest node is necessary evidence, not a substitute for production-path, benefit, rollback, effective-state, and explicit-decision evidence.
+
+Agent evidence must remain `driven_by: agent` with a concrete actor. Zero real-human evidence is a retained fact, not an open/blocked condition. See the [D9 ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md) and the [current constraint matrix](dev/component-graduation-scope-matrix-20261021.md).
 
 ## Concept Boundaries
 
@@ -109,6 +124,7 @@ Do not publish these claims without changing the product and tests first:
 - Ordinary `team_orchestrate` returns complete or active quality scoring.
 - Routing Memo learns role quality by default.
 - Plan mode provides strict no-diff execution for every write.
+- Passing component acceptance or producing agent evidence grants public release, general availability, live readiness, product approval, or a product-default change.
 
 ## Minimal Interfaces
 

@@ -1,0 +1,51 @@
+{
+  "proposal_id": "TFP-TF-0492-model-capability-profile-20261021",
+  "session_id": "tf-0492-model-capability-profile-20261021",
+  "rationale": "TF-0492 的 5 条 acceptance_criteria 已由磁盘回读和自动检查逐条证明：ModelCapabilityProfile/v1 schema 与纯生成器有负向测试；52 条静态 disposition 精确覆盖现有清单，25 个用户可见能力各有且仅有一条记录；静态 digest 只随静态配置变化，effective fact 输入由 fixture 覆盖并规范化；8 个状态 fixture 覆盖 enabled/disabled/partial/degraded/quarantined/requires-approval/internal/retired；prompt addition 预算为 2000 字符、实际 1020 字符、工作上下文占用 0。相邻与 focused tests、full typecheck、lint、catalogs、contract、no-BOM、git diff、graduation report 与 SHA256 readback 均 exit 0。证据为 driven_by=agent、actor=codex；未翻转默认值，未修改 VerseGit，未接入真实 runtime effective state，该边界留给 TF-0512。应用后仅激活依赖已满足且 display_order 最低的 TF-0493，不执行它。",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0492",
+      "fields": {
+        "evidence": [
+          "shared/model-capability-profile.ts",
+          "tests/unit/model-capability-profile.test.ts",
+          "tests/unit/fixtures/model-capability-profile/state-cases.json",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/README.md",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/profile.json",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/raw-evidence.json",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/acceptance-check.json",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/component-graduation-report.json",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/SHA256SUMS",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/run-verification.ps1",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/verification.json",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/01-focused-tests.txt",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/02-typecheck.txt",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/03-lint-check.txt",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/04-catalogs-check.txt",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/05-contract-check.txt",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/06-no-bom.txt",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/07-diff-check.txt",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/08-component-graduation-gate.txt",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/09-sha256sums-check.txt",
+          "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/10-task-forest-validate-preapply.txt"
+        ],
+        "next_action": "TF-0492 已收口；仅 TF-0493 为下一 ready 节点，未执行。",
+        "summary": "ModelCapabilityProfile/v1 合同与纯生成器已落盘。52 条静态 disposition、25 个用户可见能力唯一覆盖，五条状态轴分离；static/effective digest 有规范化与负向测试；8 个状态 fixture 覆盖 required states；prompt addition 1020/2000 chars 且工作上下文占用 0。未翻转默认值，未修改 VerseGit；真实 runtime effective state 接线留给 TF-0512。"
+      }
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0492",
+      "status": "done",
+      "progress": 100
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0493",
+      "status": "ready",
+      "progress": 0
+    }
+  ]
+}

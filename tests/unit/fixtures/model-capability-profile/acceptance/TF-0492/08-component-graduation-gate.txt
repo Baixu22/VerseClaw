@@ -1,0 +1,24 @@
+{
+  "validation": {
+    "ok": true,
+    "issues": [],
+    "requiredEvidence": [
+      "contract"
+    ],
+    "missingEvidence": [],
+    "graduationPass": true,
+    "countsAsGraduated": false,
+    "recomputedVerdict": "pass",
+    "defaultChangedAgainstAuthority": false,
+    "evidenceGradeDetected": "documented-boundary"
+  },
+  "defaultChange": null,
+  "taskForestDone": null,
+  "ok": true,
+  "reportPath": "D:\\ClawX-work\\component-graduation-20261021\\tests\\unit\\fixtures\\model-capability-profile\\acceptance\\TF-0492\\component-graduation-report.json",
+  "expected": {
+    "recomputeInputDigest": "61e85b159746050666c615804af365ed1572c16616ba2e7788c284ee80b26dd2"
+  },
+  "currentDefaultMode": null,
+  "requireGraduation": true
+}

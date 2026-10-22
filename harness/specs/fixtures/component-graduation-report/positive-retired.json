@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "fixture-retired",
+  "reportKind": "component",
+  "componentId": "retired-surface-registry",
+  "taskForestNodeId": "TF-TEST-RETIRED-SURFACE",
+  "disposition": "retired",
+  "maturity": "verified",
+  "owner": "retired-surface-registry",
+  "entryPoint": "fixture-entrypoint",
+  "defaultMode": "retired",
+  "benefitEvidence": "Fixture evidence shows a bounded component benefit; no product claim.",
+  "rollback": "Disable the component and restore the prior default/configuration.",
+  "modelEffectiveState": "Fixture model-visible state is derived from the same evidence bundle.",
+  "evidenceGrade": "documented-boundary",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "1111111111111111111111111111111111111111",
+    "tree": "2222222222222222222222222222222222222222",
+    "buildHash": "3333333333333333333333333333333333333333333333333333333333333333",
+    "runtimeGeneration": "fixture-runtime-generation-1",
+    "provider": "fixture-provider",
+    "model": "fixture-model-v1",
+    "inputSet": "fixture-input-set-v1",
+    "scope": "workspace:component-graduation-fixture",
+    "artifacts": [
+      {
+        "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+        "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+        "bytes": 2060
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "caller-removal",
+      "status": "pass",
+      "grade": "documented-boundary",
+      "summary": "Fixture caller-removal evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "entrypoint-removal",
+      "status": "pass",
+      "grade": "documented-boundary",
+      "summary": "Fixture entrypoint-removal evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "migration",
+      "status": "pass",
+      "grade": "documented-boundary",
+      "summary": "Fixture migration evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "preservation-recovery",
+      "status": "pass",
+      "grade": "documented-boundary",
+      "summary": "Fixture preservation-recovery evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "1e6c441a993f555d3760eb5a7cab08f831ef33389d2736a97a006cbd95befed4",
+    "command": "fixture recompute from raw-evidence.json"
+  }
+}

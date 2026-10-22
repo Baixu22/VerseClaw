@@ -1,0 +1,56 @@
+COMMAND=pnpm exec vitest run tests/unit/component-authority-manifest.test.ts tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts tests/unit/default-config-matrix.test.ts tests/unit/product-semantics.test.ts --reporter=verbose
+
+ RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
+
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > keeps every component mapped to at least one domain and every domain owned 4ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > maps every existing DCS flag to exactly one component 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > preserves the Context, Memory, Knowledge, Capability, Execution, Browser and Observability separations 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > rejects a second accepted-memory writer 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > rejects a second context assembly owner 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > rejects a second domain executor 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > rejects permission escalation and unauthorized cross-domain writes 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > cross-checks the product semantic and default-config surfaces 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > keeps every declared source anchor present in the current tree with exact path case 33ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > documents the machine manifest in runtime-control-planes.md 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > guards renderer transport against direct Gateway, IPC and domain-store access 41ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > builds a static and effective model-safe component profile 3ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > pins the seven product concepts to distinct responsibilities 2ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > uses explicit orchestration quality states instead of an empty array ambiguity 0ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > models Workboard to Task Ledger as a one-way reference 1ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > normalizes permission decisions without replacing existing permission systems 0ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > keeps ordinary Chat to Task Loop as an explicit user-confirmed upgrade suggestion 0ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > lists the product-positioning claims that public docs must not make 0ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > assigns every P0 and P1 planning item to an explicit semantic boundary 7ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > marks verified P0/P1 closures done while preserving product boundaries 1ms
+ ✓ tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts > controlled runtime-use readiness boundary sentinels > keeps AST planner exports readonly and non-authoritative 2ms
+ ✓ tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts > controlled runtime-use readiness boundary sentinels > keeps AST planner source free of mutation, transport, and runtime invocation APIs 1ms
+ ✓ tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts > controlled runtime-use readiness boundary sentinels > keeps AST candidate generation explicit, readonly, and outside completion evidence 2ms
+ ✓ tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts > controlled runtime-use readiness boundary sentinels > keeps registry exports diagnostic-only and away from cutover helpers 1ms
+ ✓ tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts > controlled runtime-use readiness boundary sentinels > keeps registry collector default-off, bounded, and caller-owned 1ms
+ ✓ tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts > controlled runtime-use readiness boundary sentinels > keeps TaskLoop registry diagnostics behind every explicit shadow gate 1ms
+ ✓ tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts > controlled runtime-use readiness boundary sentinels > keeps renderer pages and components from bypassing host-api and Gateway ownership 33ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-03 md row coverage > every md row is registered in the fixture and still present in the md 2ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-03 md row coverage > every md table row has a fixture entry (no silently untested row) 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-03 md row coverage > every registered assertion group is actually exercised by a test in this file 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-07 md default-cell text lock (three-way parity) > every fixture row matches the md "Product default" cell byte-for-byte 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-07 md default-cell text lock (three-way parity) > the verbatim cell normalizes to the declaredDefault for every format variant 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-07 md default-cell text lock (three-way parity) > implementation defaults agree with declaredDefault for every row 22ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks VToken assembly default OFF (opt-in) [vtoken-assembly-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks working-memory and other DCS context-block flags default OFF [context-block-defaults] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Runtime Memory inject pilot default OFF [memory-inject-pilot-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Runtime Memory shadow/provider/persist default OFF [memory-shadow-provider-persist-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks SEKB master default OFF (no auto writeback graduation) [sekb-master-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > keeps SEKB auto writeback off with no enabling flag [sekb-auto-writeback-off] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks SEKB shadow evaluation default OFF and requires master [sekb-shadow-evaluation-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Browser private network default DENY and migrates unacked legacy allow [browser-private-network-default] 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks VToken bridge default OFF (opt-in) [vtoken-bridge-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks enhancement kill switch default OFF with env and config forms [enhancement-kill-switch-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks coding auto verify default to auto-detect and bounds explicit opt-in [coding-auto-verify-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > kill switch cuts VToken + memory inject fail-closed without requiring throw 0ms
+
+ Test Files  4 passed (4)
+      Tests  45 passed (45)
+   Start at  17:36:28
+   Duration  2.73s (transform 3.00s, setup 421ms, import 4.21s, tests 176ms, environment 1.24s)
+
+EXIT_CODE=0

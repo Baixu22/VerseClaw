@@ -1,0 +1,20 @@
+COMMAND=node .agent-workbench/component-graduation/check-scope.mjs --require-node TF-0489 --json
+{
+  "ok": true,
+  "worktree": "D:\\ClawX-work\\component-graduation-20261021",
+  "branch": "codex/component-graduation-20261021",
+  "activeNode": {
+    "id": "TF-0489",
+    "title": "建立机器可读的组件唯一职权矩阵",
+    "status": "ready"
+  },
+  "allowedPaths": [
+    "shared/",
+    "openclaw_runtime/src/context-engine/",
+    "openclaw_runtime/src/runtime-core/",
+    "docs/dev/",
+    "tests/unit/"
+  ],
+  "policy": "node-scoped: exactly one active leaf; ignore proposed nodes; never claim human evidence"
+}
+EXIT_CODE=0
