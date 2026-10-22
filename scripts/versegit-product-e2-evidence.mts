@@ -199,7 +199,7 @@ function pidExists(pid: number): boolean {
     return false;
   }
 }
-function cleanupEvidence(input: {
+async function cleanupEvidence(input: {
   result: Awaited<ReturnType<typeof executeGovernedVerseShellProcessObserved>>;
   baseRoot: string;
   candidatePath: string;
@@ -209,11 +209,24 @@ function cleanupEvidence(input: {
   const survivorPids = ownedPidChecks.filter((entry) => entry.exists).map((entry) => entry.pid);
   const deletionErrors: string[] = [];
   if (existsSync(input.candidatePath)) {
-    try {
-      git(input.baseRoot, ['worktree', 'remove', '--force', input.candidatePath]);
-    } catch (error) {
-      deletionErrors.push(String((error as Error).message ?? error).slice(0, 300));
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 12 && existsSync(input.candidatePath); attempt += 1) {
+      try {
+        git(input.baseRoot, ['worktree', 'remove', '--force', input.candidatePath]);
+      } catch (error) {
+        lastError = error;
+        await new Promise((resolveDelay) => setTimeout(resolveDelay, 100));
+      }
     }
+    if (existsSync(input.candidatePath)) {
+      try {
+        rmSync(input.candidatePath, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 });
+      } catch (error) {
+        lastError = error;
+      }
+    }
+    try { git(input.baseRoot, ['worktree', 'prune']); } catch {}
+    if (existsSync(input.candidatePath)) deletionErrors.push(String((lastError as Error)?.message ?? lastError ?? 'candidate worktree removal failed').slice(0, 300));
   }
   const candidateWorktreeSurvivors = existsSync(input.candidatePath) ? 1 : 0;
   return {
@@ -294,7 +307,7 @@ async function runCandidate(input: {
     manager: input.manager,
     traceId: plan.runId,
   });
-  const cleanup = cleanupEvidence({
+  const cleanup = await cleanupEvidence({
     result: execution,
     baseRoot: input.baseRoot,
     candidatePath: input.candidateRoot,
