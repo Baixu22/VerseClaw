@@ -23,6 +23,8 @@ residualPaths:
   - harness/specs/tasks/model-capability-effective-runtime-state.md
   - openclaw_runtime/src/agents/runtime-effective-capability.ts
   - tests/unit/runtime-effective-capability.test.ts
+  - scripts/versegit-product-d2-evidence.mts
+  - scripts/verify-versegit-product-d2-evidence.mts
 touchedAreas:
   - harness/specs/tasks/versegit-product-d2-paired-agent-evaluation.md
   - scripts/versegit-product-paired-evaluation.mts
