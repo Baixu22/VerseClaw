@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-completion-continuation
 title: 汇总子会话完成事件并在主会话空闲时幂等续接
 program: long-session-development-20261022
@@ -15,6 +15,7 @@ diffBase: 933c13cc8
 touchedAreas:
   - harness/specs/tasks/long-session-completion-continuation.md
   - harness/specs/tasks/long-session-development-plan.md
+  - docs/clawx-product-semantics.md
   - openclaw_runtime/src/agents/subagent-registry.ts
   - openclaw_runtime/src/agents/subagent-announce-delivery.ts
   - openclaw_runtime/src/agents/agent-steering-queue.ts

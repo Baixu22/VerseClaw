@@ -155,6 +155,8 @@ the child stop is requested rather than projecting a phantom completion. The C4
 entry is still required before users can operate this capability from the main
 product surface.
 
+Completion continuation reads the existing subagent registry and delivery outbox rather than starting a second scheduler. Workers of one orchestration run form a bounded batch keyed by `completion-batch:<orchestrationRunId>:<requesterSessionKey>`; completed, failed, cancelled and missing workers remain distinct, and a deferred verifier must also become terminal before the team bundle can be exposed. Delivery remains at-least-once, but the deterministic key, per-run delivery state and requester physical-generation pin make replay idempotent and prevent a reset/handoff generation from accepting stale work. The batch receipt reports task completion authority as `none`; final model text alone is not delivery evidence. The user-visible C4 entry is still required before this runtime capability becomes an operable product surface.
+
 ## Windows x64 Controlled Preview
 
 The current first-product validation target is **Verse Claw Windows x64 - DCS Coding Controlled Preview**. It is an internal, single-workspace path with explicit opt-in, runtime acknowledgement, controlled writes, undo, restart recovery, kill/rollback, and a redacted support bundle. FP-P1 evidence is engineering and real-process evidence; release approval remains pending, and no real-human evidence is claimed.
