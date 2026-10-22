@@ -1,0 +1,159 @@
+{
+  "schema": "clawx.versegit.c2-observation-coverage/v1",
+  "generated_at": "2026-10-22T19:05:11.033Z",
+  "task": "TF-0529",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "6f1f92385f9b75f4e7f583991f532526f802833c",
+    "tree": "3ba380507ff680648f45d07e54c8bdbc5cdf111a",
+    "dirty": false
+  },
+  "windows": {
+    "run-a": {
+      "schema": "clawx.versegit.observation-coverage/v1",
+      "runId": "run-a",
+      "repoId": "43edf3139fd3c28f4da9d6f8f6256ed31d0cc64035b0f6b62889a31903c0de58",
+      "worktreeId": "a804f006311f7701a9436946be9680a8e32a449f8e7ce6a935f42ec60500328a",
+      "agentSessionId": "agent-session-run-a",
+      "vgSessionId": "vg_fe7a78160c6811ced8c3e58f",
+      "epoch": 4,
+      "values": {
+        "fileRead": "direct",
+        "fileWrite": "direct",
+        "search": "unobserved",
+        "shellRead": "unobserved",
+        "shellWrite": "unobserved",
+        "mcpRead": "unobserved",
+        "mcpWrite": "unobserved",
+        "network": "unobserved",
+        "browser": "unobserved",
+        "directFs": "unobserved"
+      },
+      "knownGaps": [
+        "shellRead is unobserved: a structured exec event cannot prove which files a process read",
+        "shellWrite is inferred from process events until VerseShell supplies a filesystem receipt",
+        "external MCP and browser/network effects are partially observable",
+        "direct filesystem access outside host tools remains unobserved"
+      ],
+      "eventCount": 4,
+      "duplicateCount": 1,
+      "staleCount": 0,
+      "rejectedCount": 0,
+      "surfaceCounts": {
+        "file.read": 3,
+        "file.write": 1,
+        "repo.search": 0,
+        "exec": 0,
+        "test": 0,
+        "mcp": 0,
+        "network": 0,
+        "browser": 0,
+        "control": 0
+      },
+      "toolEventCount": 4,
+      "droppedCount": 0
+    },
+    "run-b": {
+      "schema": "clawx.versegit.observation-coverage/v1",
+      "runId": "run-b",
+      "repoId": "43edf3139fd3c28f4da9d6f8f6256ed31d0cc64035b0f6b62889a31903c0de58",
+      "worktreeId": "2f5791c620bfa90501aabfdb2d136ac5c08fa63243469acc03244313c7f64812",
+      "agentSessionId": "agent-session-run-b",
+      "vgSessionId": "vg_9f6d89bc3ce8bc5701eb3462",
+      "epoch": 4,
+      "values": {
+        "fileRead": "unobserved",
+        "fileWrite": "direct",
+        "search": "unobserved",
+        "shellRead": "unobserved",
+        "shellWrite": "unobserved",
+        "mcpRead": "unobserved",
+        "mcpWrite": "unobserved",
+        "network": "unobserved",
+        "browser": "unobserved",
+        "directFs": "unobserved"
+      },
+      "knownGaps": [
+        "shellRead is unobserved: a structured exec event cannot prove which files a process read",
+        "shellWrite is inferred from process events until VerseShell supplies a filesystem receipt",
+        "external MCP and browser/network effects are partially observable",
+        "direct filesystem access outside host tools remains unobserved"
+      ],
+      "eventCount": 3,
+      "duplicateCount": 0,
+      "staleCount": 0,
+      "rejectedCount": 0,
+      "surfaceCounts": {
+        "file.read": 0,
+        "file.write": 3,
+        "repo.search": 0,
+        "exec": 0,
+        "test": 0,
+        "mcp": 0,
+        "network": 0,
+        "browser": 0,
+        "control": 0
+      },
+      "toolEventCount": 3,
+      "droppedCount": 0
+    },
+    "queue": {
+      "schema": "clawx.versegit.observation-coverage/v1",
+      "runId": "run-queue",
+      "repoId": "43edf3139fd3c28f4da9d6f8f6256ed31d0cc64035b0f6b62889a31903c0de58",
+      "worktreeId": "worktree-queue",
+      "agentSessionId": "agent-session-queue",
+      "vgSessionId": "vg-session-queue",
+      "epoch": 4,
+      "values": {
+        "fileRead": "direct",
+        "fileWrite": "unobserved",
+        "search": "unobserved",
+        "shellRead": "unobserved",
+        "shellWrite": "unobserved",
+        "mcpRead": "unobserved",
+        "mcpWrite": "unobserved",
+        "network": "unobserved",
+        "browser": "unobserved",
+        "directFs": "unobserved"
+      },
+      "knownGaps": [
+        "shellRead is unobserved: a structured exec event cannot prove which files a process read",
+        "shellWrite is inferred from process events until VerseShell supplies a filesystem receipt",
+        "external MCP and browser/network effects are partially observable",
+        "direct filesystem access outside host tools remains unobserved",
+        "bounded_tool_observation_queue_dropped:1"
+      ],
+      "eventCount": 2,
+      "duplicateCount": 0,
+      "staleCount": 0,
+      "rejectedCount": 0,
+      "surfaceCounts": {
+        "file.read": 2,
+        "file.write": 0,
+        "repo.search": 0,
+        "exec": 0,
+        "test": 0,
+        "mcp": 0,
+        "network": 0,
+        "browser": 0,
+        "control": 0
+      },
+      "toolEventCount": 2,
+      "droppedCount": 1
+    }
+  },
+  "declared_unobserved": {
+    "shell_read": "unobserved",
+    "shell_write": "inferred",
+    "mcp_read": "partial",
+    "mcp_write": "partial",
+    "network": "partial",
+    "browser": "partial",
+    "direct_fs": "unobserved"
+  },
+  "passed": true,
+  "digest": "0e0f67423cadde176edc8fd07bb75b6ce8b5a6e201f9a0880ed242b683a6dda0"
+}

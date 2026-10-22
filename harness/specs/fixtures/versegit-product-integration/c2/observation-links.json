@@ -1,0 +1,349 @@
+{
+  "schema": "clawx.versegit.c2-observation-links/v1",
+  "generated_at": "2026-10-22T19:05:11.033Z",
+  "task": "TF-0529",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "6f1f92385f9b75f4e7f583991f532526f802833c",
+    "tree": "3ba380507ff680648f45d07e54c8bdbc5cdf111a",
+    "dirty": false
+  },
+  "production_caller": "embedded-agent-runner tool_result -> VerseGit tool observation derivation -> plugin-sdk observation port -> Electron Main VerseGitObservationBridge",
+  "bridge": {
+    "events_path": "raw:bridge-events.jsonl",
+    "observations_path": "raw:observations.jsonl",
+    "binding_a_events": 27,
+    "observation_records": 11
+  },
+  "links": [
+    {
+      "link_id": "vgl_ba207ce84aab7b437176b529",
+      "tool": {
+        "call_id": "read-api",
+        "name": "read"
+      },
+      "normalized_event": {
+        "event_id": "vge_ba207ce84aab7b437176b529",
+        "surface": "file.read",
+        "status": "succeeded",
+        "coverage": "direct",
+        "path": "src/api.ts",
+        "line_start": 1,
+        "line_end": 3,
+        "basis": {
+          "schema": "clawx.versegit.tool-basis/v1",
+          "kind": "read",
+          "path": "src/api.ts",
+          "lineStart": 1,
+          "lineEnd": 3,
+          "fileSha256": "1c4f6cd56a7b841544bbdbd3c30ad61214baeb746c40933afb2cf998b993be75",
+          "rangeSha256": "5bfcb4accb61eb7f971c1e7717468583c55e899f22e5fa1dbbe0de1754580b44",
+          "truncated": false
+        },
+        "input_digest": "sha256:c0c00d05f90f8f27d1a4b044f08fefa1cb145e8e55a8b61ced9d046b30a4990a",
+        "output_digest": "sha256:4ed53f0cd1ada567983c09668cde3936a9d213a506a64fde69a97a06d8e5d5a6"
+      },
+      "provider_fact": {
+        "identity": {
+          "repo_id": "43edf3139fd3c28f4da9d6f8f6256ed31d0cc64035b0f6b62889a31903c0de58",
+          "worktree_id": "a804f006311f7701a9436946be9680a8e32a449f8e7ce6a935f42ec60500328a",
+          "agent_session_id": "agent-session-run-a",
+          "vg_session_id": "vg_fe7a78160c6811ced8c3e58f",
+          "run_id": "run-a",
+          "epoch": 4
+        },
+        "kind": "repository-read-basis"
+      },
+      "replay": {
+        "path_recomputed": true,
+        "actual_file_sha256": "1c4f6cd56a7b841544bbdbd3c30ad61214baeb746c40933afb2cf998b993be75",
+        "basis_file_sha256": "1c4f6cd56a7b841544bbdbd3c30ad61214baeb746c40933afb2cf998b993be75",
+        "basis_matches_current_file": true,
+        "input_digest_well_formed": true,
+        "output_digest_well_formed": true
+      }
+    },
+    {
+      "link_id": "vgl_63ddee6cba4d2f87a515381b",
+      "tool": {
+        "call_id": "write-api",
+        "name": "write"
+      },
+      "normalized_event": {
+        "event_id": "vge_63ddee6cba4d2f87a515381b",
+        "surface": "file.write",
+        "status": "succeeded",
+        "coverage": "direct",
+        "path": "src/api.ts",
+        "line_start": 1,
+        "line_end": 3,
+        "basis": {
+          "schema": "clawx.versegit.tool-basis/v1",
+          "kind": "write",
+          "path": "src/api.ts",
+          "lineStart": 1,
+          "lineEnd": 3,
+          "beforeSha256": "1c4f6cd56a7b841544bbdbd3c30ad61214baeb746c40933afb2cf998b993be75",
+          "afterSha256": "85d29746590f087c3e5e8361f0d204f5544f14ec18c571ae31b5368f82ce4391"
+        },
+        "input_digest": "sha256:266fd5a370b3b80ec608a2a5c53c7d3de0f373bf53e575e8616aba110ff2b66c",
+        "output_digest": "sha256:77a3affa85385c716893e984fadaa8bb0f03ba9ba1f005637b2a0ee8d639b82c"
+      },
+      "provider_fact": {
+        "identity": {
+          "repo_id": "43edf3139fd3c28f4da9d6f8f6256ed31d0cc64035b0f6b62889a31903c0de58",
+          "worktree_id": "2f5791c620bfa90501aabfdb2d136ac5c08fa63243469acc03244313c7f64812",
+          "agent_session_id": "agent-session-run-b",
+          "vg_session_id": "vg_9f6d89bc3ce8bc5701eb3462",
+          "run_id": "run-b",
+          "epoch": 4
+        },
+        "kind": "repository-write-basis"
+      },
+      "replay": {
+        "path_recomputed": true,
+        "actual_file_sha256": "85d29746590f087c3e5e8361f0d204f5544f14ec18c571ae31b5368f82ce4391",
+        "basis_file_sha256": null,
+        "basis_matches_current_file": null,
+        "input_digest_well_formed": true,
+        "output_digest_well_formed": true
+      }
+    },
+    {
+      "link_id": "vgl_9f7d9f76de3b21c24c5ff48c",
+      "tool": {
+        "call_id": "write-cancelled",
+        "name": "write"
+      },
+      "normalized_event": {
+        "event_id": "vge_9f7d9f76de3b21c24c5ff48c",
+        "surface": "file.write",
+        "status": "cancelled",
+        "coverage": "partial",
+        "path": "src/api.ts",
+        "line_start": 1,
+        "line_end": 3,
+        "basis": {
+          "schema": "clawx.versegit.tool-basis/v1",
+          "kind": "write",
+          "path": "src/api.ts",
+          "lineStart": 1,
+          "lineEnd": 3,
+          "beforeSha256": "1c4f6cd56a7b841544bbdbd3c30ad61214baeb746c40933afb2cf998b993be75",
+          "afterSha256": "85d29746590f087c3e5e8361f0d204f5544f14ec18c571ae31b5368f82ce4391"
+        },
+        "input_digest": "sha256:66acfcbcc86b3cf05a6cba9645b2cbebc432bd80cabc9142214695175c71d2ec",
+        "output_digest": "sha256:7bfeb83950e9ce213803a7d1d83a28ee560784d52378f38519d6322fff5ac76c"
+      },
+      "provider_fact": {
+        "identity": {
+          "repo_id": "43edf3139fd3c28f4da9d6f8f6256ed31d0cc64035b0f6b62889a31903c0de58",
+          "worktree_id": "2f5791c620bfa90501aabfdb2d136ac5c08fa63243469acc03244313c7f64812",
+          "agent_session_id": "agent-session-run-b",
+          "vg_session_id": "vg_9f6d89bc3ce8bc5701eb3462",
+          "run_id": "run-b",
+          "epoch": 4
+        },
+        "kind": "repository-write-basis"
+      },
+      "replay": {
+        "path_recomputed": true,
+        "actual_file_sha256": "85d29746590f087c3e5e8361f0d204f5544f14ec18c571ae31b5368f82ce4391",
+        "basis_file_sha256": null,
+        "basis_matches_current_file": null,
+        "input_digest_well_formed": true,
+        "output_digest_well_formed": true
+      }
+    },
+    {
+      "link_id": "vgl_b7c3b29affe44a03db4ca1ab",
+      "tool": {
+        "call_id": "read-own",
+        "name": "read"
+      },
+      "normalized_event": {
+        "event_id": "vge_b7c3b29affe44a03db4ca1ab",
+        "surface": "file.read",
+        "status": "succeeded",
+        "coverage": "direct",
+        "path": "src/own.ts",
+        "line_start": 1,
+        "line_end": 1,
+        "basis": {
+          "schema": "clawx.versegit.tool-basis/v1",
+          "kind": "read",
+          "path": "src/own.ts",
+          "lineStart": 1,
+          "lineEnd": 1,
+          "fileSha256": "1f5c1512553f051685f5933df2417a895d9b782f48cb4b8c3a6704769669389c",
+          "rangeSha256": "1f5c1512553f051685f5933df2417a895d9b782f48cb4b8c3a6704769669389c",
+          "truncated": false
+        },
+        "input_digest": "sha256:944331b1791192f628c087165152b42ff29fb9904c814a58e0d036d596f40ecf",
+        "output_digest": "sha256:f467d19dc7a69565b611281d8296b6e64765159e19f96e822f96f3f4b77d5c21"
+      },
+      "provider_fact": {
+        "identity": {
+          "repo_id": "43edf3139fd3c28f4da9d6f8f6256ed31d0cc64035b0f6b62889a31903c0de58",
+          "worktree_id": "a804f006311f7701a9436946be9680a8e32a449f8e7ce6a935f42ec60500328a",
+          "agent_session_id": "agent-session-run-a",
+          "vg_session_id": "vg_fe7a78160c6811ced8c3e58f",
+          "run_id": "run-a",
+          "epoch": 4
+        },
+        "kind": "repository-read-basis"
+      },
+      "replay": {
+        "path_recomputed": true,
+        "actual_file_sha256": "7f02d6d336cb6e7d81b31a28b3559ff0f1b1bae39e1037b2122b133d54f935af",
+        "basis_file_sha256": "1f5c1512553f051685f5933df2417a895d9b782f48cb4b8c3a6704769669389c",
+        "basis_matches_current_file": false,
+        "input_digest_well_formed": true,
+        "output_digest_well_formed": true
+      }
+    },
+    {
+      "link_id": "vgl_149b034a0c3977bd8440998f",
+      "tool": {
+        "call_id": "write-own",
+        "name": "write"
+      },
+      "normalized_event": {
+        "event_id": "vge_149b034a0c3977bd8440998f",
+        "surface": "file.write",
+        "status": "succeeded",
+        "coverage": "direct",
+        "path": "src/own.ts",
+        "line_start": 1,
+        "line_end": 2,
+        "basis": {
+          "schema": "clawx.versegit.tool-basis/v1",
+          "kind": "write",
+          "path": "src/own.ts",
+          "lineStart": 1,
+          "lineEnd": 2,
+          "beforeSha256": "1f5c1512553f051685f5933df2417a895d9b782f48cb4b8c3a6704769669389c",
+          "afterSha256": "7f02d6d336cb6e7d81b31a28b3559ff0f1b1bae39e1037b2122b133d54f935af"
+        },
+        "input_digest": "sha256:ffe6e743ff5ab9e3df6df484cc528687cc255edddecac362924ed54fee3fab0e",
+        "output_digest": "sha256:06ee95a0e8ddf2a6157f45ff07d30f02f563ffb06df90de30785996bbfbcacf6"
+      },
+      "provider_fact": {
+        "identity": {
+          "repo_id": "43edf3139fd3c28f4da9d6f8f6256ed31d0cc64035b0f6b62889a31903c0de58",
+          "worktree_id": "a804f006311f7701a9436946be9680a8e32a449f8e7ce6a935f42ec60500328a",
+          "agent_session_id": "agent-session-run-a",
+          "vg_session_id": "vg_fe7a78160c6811ced8c3e58f",
+          "run_id": "run-a",
+          "epoch": 4
+        },
+        "kind": "repository-write-basis"
+      },
+      "replay": {
+        "path_recomputed": true,
+        "actual_file_sha256": "7f02d6d336cb6e7d81b31a28b3559ff0f1b1bae39e1037b2122b133d54f935af",
+        "basis_file_sha256": null,
+        "basis_matches_current_file": null,
+        "input_digest_well_formed": true,
+        "output_digest_well_formed": true
+      }
+    },
+    {
+      "link_id": "vgl_2b2b6e37699e22561e8c0252",
+      "tool": {
+        "call_id": "read-unrelated",
+        "name": "read"
+      },
+      "normalized_event": {
+        "event_id": "vge_2b2b6e37699e22561e8c0252",
+        "surface": "file.read",
+        "status": "succeeded",
+        "coverage": "direct",
+        "path": "src/unrelated.ts",
+        "line_start": 1,
+        "line_end": 1,
+        "basis": {
+          "schema": "clawx.versegit.tool-basis/v1",
+          "kind": "read",
+          "path": "src/unrelated.ts",
+          "lineStart": 1,
+          "lineEnd": 1,
+          "fileSha256": "378255daa9f6d32f4fbbd1cd950863c4d6452b88e9824be9c95abe991c3ae8a4",
+          "rangeSha256": "378255daa9f6d32f4fbbd1cd950863c4d6452b88e9824be9c95abe991c3ae8a4",
+          "truncated": false
+        },
+        "input_digest": "sha256:ac92649037a422122e78a618d1dc3a46769ec663b7d9606571a49f977a71c972",
+        "output_digest": "sha256:5349989fd0cd8a8841e1b5f8c165893c4750e9f650dce98d813a2f52e209e929"
+      },
+      "provider_fact": {
+        "identity": {
+          "repo_id": "43edf3139fd3c28f4da9d6f8f6256ed31d0cc64035b0f6b62889a31903c0de58",
+          "worktree_id": "a804f006311f7701a9436946be9680a8e32a449f8e7ce6a935f42ec60500328a",
+          "agent_session_id": "agent-session-run-a",
+          "vg_session_id": "vg_fe7a78160c6811ced8c3e58f",
+          "run_id": "run-a",
+          "epoch": 4
+        },
+        "kind": "repository-read-basis"
+      },
+      "replay": {
+        "path_recomputed": true,
+        "actual_file_sha256": "378255daa9f6d32f4fbbd1cd950863c4d6452b88e9824be9c95abe991c3ae8a4",
+        "basis_file_sha256": "378255daa9f6d32f4fbbd1cd950863c4d6452b88e9824be9c95abe991c3ae8a4",
+        "basis_matches_current_file": true,
+        "input_digest_well_formed": true,
+        "output_digest_well_formed": true
+      }
+    },
+    {
+      "link_id": "vgl_6186ac469d17847d312fc1e0",
+      "tool": {
+        "call_id": "write-other",
+        "name": "write"
+      },
+      "normalized_event": {
+        "event_id": "vge_6186ac469d17847d312fc1e0",
+        "surface": "file.write",
+        "status": "succeeded",
+        "coverage": "direct",
+        "path": "src/other.ts",
+        "line_start": 1,
+        "line_end": 2,
+        "basis": {
+          "schema": "clawx.versegit.tool-basis/v1",
+          "kind": "write",
+          "path": "src/other.ts",
+          "lineStart": 1,
+          "lineEnd": 2,
+          "beforeSha256": "061e591c3129b0aefbb193d47dc5fec865788afb516d118414c4b40271d0bf9d",
+          "afterSha256": "c766c611065a192e163038b3428a2f0432b983ab0b332338b82622fd4714be5e"
+        },
+        "input_digest": "sha256:6c89b351605f35831f5ce8835c86ef7d5fd7e5d59344918e8e15056c014898f1",
+        "output_digest": "sha256:3996f4f2ff44d8ec3796051d06c933334a41a32eb38c22a343fefc1016508c26"
+      },
+      "provider_fact": {
+        "identity": {
+          "repo_id": "43edf3139fd3c28f4da9d6f8f6256ed31d0cc64035b0f6b62889a31903c0de58",
+          "worktree_id": "2f5791c620bfa90501aabfdb2d136ac5c08fa63243469acc03244313c7f64812",
+          "agent_session_id": "agent-session-run-b",
+          "vg_session_id": "vg_9f6d89bc3ce8bc5701eb3462",
+          "run_id": "run-b",
+          "epoch": 4
+        },
+        "kind": "repository-write-basis"
+      },
+      "replay": {
+        "path_recomputed": true,
+        "actual_file_sha256": "c766c611065a192e163038b3428a2f0432b983ab0b332338b82622fd4714be5e",
+        "basis_file_sha256": null,
+        "basis_matches_current_file": null,
+        "input_digest_well_formed": true,
+        "output_digest_well_formed": true
+      }
+    }
+  ],
+  "passed": true,
+  "digest": "cfbeb7fd397c678f25590ca7d53e430c0584805bebd17f349a3b5572f2803218"
+}
