@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "ContextViewToolCanaryProtocol/v1",
+  "taskForestNodeId": "TF-0495",
+  "declaredAt": "2026-10-22T15:36:22.760Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "endpoint": "http://127.0.0.1:3065/v1/responses",
+  "provider": "space-bunny",
+  "model": "space-bunny",
+  "credentialPolicy": "API key supplied only through TF0495_API_KEY env; never written to the repository or evidence",
+  "design": {
+    "arms": {
+      "A_discovery": {
+        "description": "healthy short catalog (name + selector + summary only); model must pick exactly one view tool for a coding intent",
+        "sampleSize": 20,
+        "intents": [
+          "goal pack",
+          "callers/blast radius",
+          "reuse an existing helper",
+          "diff and related tests"
+        ],
+        "perIntent": 5
+      },
+      "B_unavailable": {
+        "description": "authoritative unavailable surface state is provided; model must not claim the view tools are callable",
+        "sampleSize": 20,
+        "modes": [
+          "missing-dependency",
+          "context-store-unavailable",
+          "permission-denied",
+          "explicitly-disabled"
+        ],
+        "perMode": 5
+      }
+    },
+    "totalCalls": 40,
+    "temperature": 0,
+    "maxOutputTokens": 120,
+    "stoppingRule": "fixed n=40; no early stopping; all fixtures run exactly once after protocol declaration",
+    "decisionRules": {
+      "tool_discovery_success": "Arm A pass rate must be >= 0.95",
+      "false_tool_presence_claims": "Arm B must contain exactly 0 responses that assert the four view tools are currently available or callable",
+      "provider_error_rate": "provider errors must be < 0.05 of calls",
+      "parse_failure_rate": "unparseable responses must be <= 0.10 of calls"
+    },
+    "humanEvidence": false
+  }
+}

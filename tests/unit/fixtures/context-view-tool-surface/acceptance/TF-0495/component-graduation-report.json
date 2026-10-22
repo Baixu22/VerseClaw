@@ -1,0 +1,184 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "tf-0495-context-view-tool-surface",
+  "reportKind": "contract",
+  "componentId": "dcs-fact-view-and-tools",
+  "taskForestNodeId": "TF-0495",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "TF-0495",
+  "entryPoint": "openclaw_runtime/src/agents/tools/context-view-tool-surface.ts",
+  "defaultMode": "opt-in",
+  "benefitEvidence": "Healthy workspaces discover the four read-only context views from the standard coding catalog without an environment switch. A declared agent-driven canary measured 20/20 (100%) tool selection and 20/20 correct unavailable-state descriptions with zero false presence claims.",
+  "rollback": "Set OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=0 (or OPENCLAW_DCS_CONTEXT_TOOLS=0) and restart; the four view tools leave the catalog. The production default value is unchanged.",
+  "modelEffectiveState": "When healthy, the model sees four named read-only context views with selectors and short summaries. When unavailable, the model sees no active names and a reason; the canary confirmed it describes them as not callable.",
+  "evidenceGrade": "e2e",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "39e9934d92c316a3d10e03961d93c0009f9cf26f",
+    "tree": "14f7cc96f26fd6a3cbdfe93fea45a0f3bcea8d69",
+    "buildHash": "e7784b83118a203d8c4c7374440d4215a5d3b03d444a6a860a79bfb8d21cceb4",
+    "runtimeGeneration": "context-view-tool-surface-tf0495",
+    "provider": "space-bunny",
+    "model": "space-bunny",
+    "inputSet": "tf0495-context-view-tool-surface+canary-v1",
+    "scope": "workspace:component-graduation/session:tf-0495",
+    "artifacts": [
+      {
+        "path": "openclaw_runtime/src/agents/tools/context-view-tool-surface.ts",
+        "sha256": "8166b373849f8cbc01af331b62a62e6adc39929c3dcfb5c2d9e4300ded66335b",
+        "bytes": 5797
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tools/context-agent-tools.ts",
+        "sha256": "55c5545fb63dbe82a0e4bf8de9233369f67028dcfda9639d21afb750e04fba5b",
+        "bytes": 31062
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts",
+        "sha256": "7ab431c735505bb3d73709ae50b4228ef5acee9ecde7633538c8e963256c5201",
+        "bytes": 24123
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tool-catalog.ts",
+        "sha256": "ca1f3f23d3315ca6148bdb803b8830fb8753dc09e9dd20ec44cdeba3767197f3",
+        "bytes": 17644
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/coding-tool-navigation.ts",
+        "sha256": "aa12059a49e452a32c0e6733832874939e359e8f5105fe4f1e0b9672452e4997",
+        "bytes": 3746
+      },
+      {
+        "path": "shared/dcs/prod-flags-catalog.ts",
+        "sha256": "e06424c28d44c833af4bc3738d0a66c8709b4ee66ed00f52a9dd0e9298af77c8",
+        "bytes": 21387
+      },
+      {
+        "path": "docs/generated/catalogs/prod-flags.md",
+        "sha256": "a0fa3c726a74ae918309e40c43b8c88b90f80d7a81992771d785034ff320bae2",
+        "bytes": 15390
+      },
+      {
+        "path": "tests/unit/context-view-tool-surface.test.ts",
+        "sha256": "35eb6fd9f29341c79506e049d58809956bc7cd8d2cdf154847a31612c6bf98c0",
+        "bytes": 5976
+      },
+      {
+        "path": "tests/unit/config-schema-parity.test.ts",
+        "sha256": "993581cf60a9efee2bd7faff39c46b52e22e42af7e435d7d29e0146d867c635a",
+        "bytes": 8487
+      },
+      {
+        "path": "tests/e2e/context-view-tool-surface.spec.ts",
+        "sha256": "1713cf99c7416f5ffb05c54341990f092eeb132952a039bcccef1e60619760b2",
+        "bytes": 2089
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/raw-evidence.json",
+        "sha256": "476453d4accc9fd710c2e804c78513eafe27867dd92bffece479049063e0f3cb",
+        "bytes": 6380
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/README.md",
+        "sha256": "b97591928e01e0995d8a60d6e59465e96501da22325a7ecde8fd0e5f631ea6c5",
+        "bytes": 2995
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/generate-acceptance.mts",
+        "sha256": "e9ab755ee05052dbbfff3bd20f6c157ebca6e627930a2fd30446dfd9f447c755",
+        "bytes": 14981
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/run-verification.ps1",
+        "sha256": "8234d06f24d79d89b6ff9c0dc5001cea30e8a1f096540db3369cae826dde9124",
+        "bytes": 5863
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/recheck-canary.mts",
+        "sha256": "46270d722178c41bd640399e50942a9b7a4e1f5533478f79afe76d18b7548cca",
+        "bytes": 2167
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/run-canary.mts",
+        "sha256": "390aeb163697c5bf517d0202a130d9fd45c756ca151c339675cdca015aa812fa",
+        "bytes": 9166
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/canary-protocol.json",
+        "sha256": "c2745b4b3093ac0301813db6d2bcde929fca1ad7ffd52b175ff012ca10696ea0",
+        "bytes": 1802
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/canary-run-v1.json",
+        "sha256": "67f10376ba6501bd7e2fd2b7324cfeea48c901c9006c20e30857c1514b7eb77b",
+        "bytes": 16062
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "contract",
+      "status": "pass",
+      "grade": "e2e",
+      "summary": "Standard catalog, digest, discovery, three-state readback and permission fail-closed contract pass.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/raw-evidence.json",
+          "sha256": "476453d4accc9fd710c2e804c78513eafe27867dd92bffece479049063e0f3cb",
+          "bytes": 6380,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "canary",
+      "status": "pass",
+      "grade": "e2e",
+      "summary": "Predeclared agent-driven canary: 20/20 tool selection, 20/20 correct unavailable descriptions, zero false presence claims, zero provider/parse failures.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/raw-evidence.json",
+          "sha256": "476453d4accc9fd710c2e804c78513eafe27867dd92bffece479049063e0f3cb",
+          "bytes": 6380,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "not-product-claim",
+      "status": "pass",
+      "grade": "documented-boundary",
+      "summary": "No public release, GA, liveReady, productApproved or real-human evidence is claimed; the product default is not flipped.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/raw-evidence.json",
+          "sha256": "476453d4accc9fd710c2e804c78513eafe27867dd92bffece479049063e0f3cb",
+          "bytes": 6380,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "boundary",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "Unavailable surfaces expose no active tool names; the generated prod-flags projection is bound under the recorded authority delta.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/raw-evidence.json",
+          "sha256": "476453d4accc9fd710c2e804c78513eafe27867dd92bffece479049063e0f3cb",
+          "bytes": 6380,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "04439f1a672b5a48db5aabf44a77e9fa9f16c5b86815739f3f90b0b23e6def91",
+    "command": "pnpm --dir openclaw_runtime exec tsx tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/generate-acceptance.mts"
+  }
+}

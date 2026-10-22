@@ -1,0 +1,661 @@
+pnpm.cmd : $ pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs
+At D:\ClawX-work\component-graduation-20261021\tests\unit\fixtures\context-view-tool-surface\acceptance\TF-0495\run-ver
+ification.ps1:15 char:13
++   $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ pnpm run vers...-lobe-icons.mjs:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+$ pnpm --filter @verse-claw/versebrowser build
+$ node scripts/patch-upstream.mjs && tsc -p tsconfig.build.json
+{"patch":"versebrowser-log-pointer-focus-files-downloads-v1","owner":"@playwright/mcp","upstream":"1.64.0-alpha-1790635538000","sha256":"1532f36aa4fcd0dbdd6a0c0cb49fbb7e55b30b649d67eadde69d5eb70be33c13"}
+{"patch":"versebrowser-log-pointer-focus-files-downloads-v1","owner":"playwright","upstream":"1.64.0-alpha-1790635538000","sha256":"1532f36aa4fcd0dbdd6a0c0cb49fbb7e55b30b649d67eadde69d5eb70be33c13"}
+[ext-bridge] No external extensions configured — empty stubs up to date.
+[lobe-icons] 910 icons from @lobehub/assets-fileicon@1.0.0 (MIT) -> public\lobe-icons (copied=0 unchanged=910 removed=0)
+$ node --max-old-space-size=6144 ./node_modules/vite/bin/vite.js build
+vite v7.3.1 building client environment for production...
+<script src="./boot-theme.js"> in "/index.html" can't be bundled without type="module" attribute
+transforming...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+warn - The class `duration-[280ms]` is ambiguous and matches multiple utilities.
+warn - If this is content and not a class, replace it with `duration-&lsqb;280ms&rsqb;` to silence this warning.
+
+warn - The class `ease-[cubic-bezier(0.22,1,0.36,1)]` is ambiguous and matches multiple utilities.
+warn - If this is content and not a class, replace it with `ease-&lsqb;cubic-bezier(0.22,1,0.36,1)&rsqb;` to silence th
+is warning.
+✓ 7920 modules transformed.
+Circular chunk: index -> react-vendor -> index. Consider disabling the "output.onlyExplicitManualChunks" option, as ena
+bling it causes the static dependencies of the manual chunk "react-vendor" to be bundled into the chunk "index".
+Circular chunk: App -> settings-overview -> App. Consider disabling the "output.onlyExplicitManualChunks" option, as en
+abling it causes the static dependencies of the manual chunk "settings-overview" to be bundled into the chunk "App".
+Circular chunk: index -> markdown-rendering -> index. Consider disabling the "output.onlyExplicitManualChunks" option,
+as enabling it causes the static dependencies of the manual chunk "markdown-rendering" to be bundled into the chunk "in
+dex".
+Circular chunk: index -> markdown-rendering -> index -> index. Consider disabling the "output.onlyExplicitManualChunks"
+ option, as enabling it causes the static dependencies of the manual chunk "index" to be bundled into the chunk "index"
+.
+Circular chunk: markdown-rendering -> index -> markdown-rendering. Consider disabling the "output.onlyExplicitManualChu
+nks" option, as enabling it causes the static dependencies of the manual chunk "index" to be bundled into the chunk "ma
+rkdown-rendering".
+Circular chunk: markdown-rendering -> GeneratedFilesPanel -> markdown-rendering. Consider disabling the "output.onlyExp
+licitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "GeneratedFilesPanel" to b
+e bundled into the chunk "markdown-rendering".
+Circular chunk: markdown-rendering -> FilePreviewBody -> markdown-rendering. Consider disabling the "output.onlyExplici
+tManualChunks" option, as enabling it causes the static dependencies of the manual chunk "FilePreviewBody" to be bundle
+d into the chunk "markdown-rendering".
+rendering chunks...
+[plugin vite:reporter]
+(!) D:/ClawX-work/component-graduation-20261021/src/stores/chat.ts is dynamically imported by D:/ClawX-work/component-g
+raduation-20261021/src/stores/gateway.ts, D:/ClawX-work/component-graduation-20261021/src/stores/gateway.ts, D:/ClawX-w
+ork/component-graduation-20261021/src/stores/gateway.ts, D:/ClawX-work/component-graduation-20261021/src/stores/gateway
+.ts but also statically imported by D:/ClawX-work/component-graduation-20261021/src/components/file-preview/WorkspaceAg
+entsPanel.tsx, D:/ClawX-work/component-graduation-20261021/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D
+:/ClawX-work/component-graduation-20261021/src/components/file-preview/WorkspaceProcessPanel.tsx, D:/ClawX-work/compone
+nt-graduation-20261021/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/component-graduation-20261
+021/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/component-graduation-20261021/src/components/
+file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/component-graduation-20261021/src/components/layout/Sidebar.ts
+x, D:/ClawX-work/component-graduation-20261021/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/component
+-graduation-20261021/src/lib/workspace-session.ts, D:/ClawX-work/component-graduation-20261021/src/pages/Chat/ChatInput
+.tsx, D:/ClawX-work/component-graduation-20261021/src/pages/Chat/ChatToolbar.tsx, D:/ClawX-work/component-graduation-20
+261021/src/pages/Chat/TeamOrchestrationCard.tsx, D:/ClawX-work/component-graduation-20261021/src/pages/Chat/index.tsx,
+D:/ClawX-work/component-graduation-20261021/src/pages/ClawGraph/index.tsx, D:/ClawX-work/component-graduation-20261021/
+src/pages/Cron/index.tsx, D:/ClawX-work/component-graduation-20261021/src/pages/Settings/sections/ArchivedSection.tsx,
+D:/ClawX-work/component-graduation-20261021/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/comp
+onent-graduation-20261021/src/pages/TaskLedger/index.tsx, D:/ClawX-work/component-graduation-20261021/src/stores/cron.t
+s, dynamic import will not move module into another chunk.
+
+dist/assets/feishu-9xPbmmGr.svg                                   4.10 kB
+dist/assets/KaTeX_Size3-Regular-CTq5MqoE.woff                     4.42 kB
+dist/assets/ollama-CTAH8FBw.svg                                   4.78 kB
+dist/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2                    4.93 kB
+dist/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2                    5.21 kB
+dist/assets/deepseek-CSSocskI.svg                                 5.26 kB
+dist/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2                    5.47 kB
+dist/assets/KaTeX_Size4-Regular-BF-4gkZK.woff                     5.98 kB
+dist/assets/KaTeX_Size2-Regular-oD1tc_U0.woff                     6.19 kB
+dist/assets/KaTeX_Size1-Regular-C195tn64.woff                     6.50 kB
+dist/assets/KaTeX_Caligraphic-Regular-Di6jR-x-.woff2              6.91 kB
+dist/assets/KaTeX_Caligraphic-Bold-Dq_IR9rO.woff2                 6.91 kB
+dist/assets/KaTeX_Size3-Regular-DgpXs0kz.ttf                      7.59 kB
+dist/assets/KaTeX_Caligraphic-Regular-CTRA-rTL.woff               7.66 kB
+dist/assets/KaTeX_Caligraphic-Bold-BEiXGLvX.woff                  7.72 kB
+dist/assets/qq-CADZtiVr.svg                                       8.13 kB
+dist/assets/KaTeX_Script-Regular-D3wIWfF6.woff2                   9.64 kB
+dist/assets/KaTeX_SansSerif-Regular-DDBCnlJ7.woff2               10.34 kB
+dist/assets/KaTeX_Size4-Regular-DWFBv043.ttf                     10.36 kB
+dist/assets/KaTeX_Script-Regular-D5yQViql.woff                   10.59 kB
+dist/assets/KaTeX_Fraktur-Regular-CTYiF6lA.woff2                 11.32 kB
+dist/assets/KaTeX_Fraktur-Bold-CL6g_b3V.woff2                    11.35 kB
+dist/assets/KaTeX_Size2-Regular-B7gKUWhC.ttf                     11.51 kB
+dist/index.html                                                  11.77 kB
+dist/assets/KaTeX_SansSerif-Italic-C3H0VqGB.woff2                12.03 kB
+dist/assets/KaTeX_SansSerif-Bold-D1sUS0GD.woff2                  12.22 kB
+dist/assets/KaTeX_Size1-Regular-Dbsnue_I.ttf                     12.23 kB
+dist/assets/KaTeX_SansSerif-Regular-CS6fqUqJ.woff                12.32 kB
+dist/assets/KaTeX_Caligraphic-Regular-wX97UBjC.ttf               12.34 kB
+dist/assets/KaTeX_Caligraphic-Bold-ATXxdsX0.ttf                  12.37 kB
+dist/assets/KaTeX_Fraktur-Regular-Dxdc4cR9.woff                  13.21 kB
+dist/assets/KaTeX_Fraktur-Bold-BsDP51OF.woff                     13.30 kB
+dist/assets/KaTeX_Typewriter-Regular-CO6r4hn1.woff2              13.57 kB
+dist/assets/KaTeX_SansSerif-Italic-DN2j7dab.woff                 14.11 kB
+dist/assets/KaTeX_SansSerif-Bold-DbIhKOiC.woff                   14.41 kB
+dist/assets/KaTeX_Typewriter-Regular-C0xS9mPB.woff               16.03 kB
+dist/assets/KaTeX_Math-BoldItalic-CZnvNsCZ.woff2                 16.40 kB
+dist/assets/KaTeX_Math-Italic-t53AETM-.woff2                     16.44 kB
+dist/assets/KaTeX_Script-Regular-C5JkGWo-.ttf                    16.65 kB
+dist/assets/KaTeX_Main-BoldItalic-DxDJ3AOS.woff2                 16.78 kB
+dist/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2                     16.99 kB
+dist/assets/KaTeX_Math-BoldItalic-iY-2wyZ7.woff                  18.67 kB
+dist/assets/KaTeX_Math-Italic-DA0__PXp.woff                      18.75 kB
+dist/assets/KaTeX_Main-BoldItalic-SpSLRI95.woff                  19.41 kB
+dist/assets/KaTeX_SansSerif-Regular-BNo7hRIc.ttf                 19.44 kB
+dist/assets/KaTeX_Fraktur-Regular-CB_wures.ttf                   19.57 kB
+dist/assets/KaTeX_Fraktur-Bold-BdnERNNW.ttf                      19.58 kB
+dist/assets/KaTeX_Main-Italic-BMLOBm91.woff                      19.68 kB
+dist/assets/KaTeX_SansSerif-Italic-YYjJ1zSn.ttf                  22.36 kB
+dist/assets/KaTeX_SansSerif-Bold-CFMepnvq.ttf                    24.50 kB
+dist/assets/KaTeX_Main-Bold-Cx986IdX.woff2                       25.32 kB
+dist/assets/KaTeX_Main-Regular-B22Nviop.woff2                    26.27 kB
+dist/assets/KaTeX_Typewriter-Regular-D3Ib7_Hf.ttf                27.56 kB
+dist/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2                     28.08 kB
+dist/assets/KaTeX_Main-Bold-Jm3AIy58.woff                        29.91 kB
+dist/assets/KaTeX_Main-Regular-Dr94JaBh.woff                     30.77 kB
+dist/assets/KaTeX_Math-BoldItalic-B3XSjfu4.ttf                   31.20 kB
+dist/assets/KaTeX_Math-Italic-flOr_0UB.ttf                       31.31 kB
+dist/assets/KaTeX_Main-BoldItalic-DzxPMmG6.ttf                   32.97 kB
+dist/assets/KaTeX_AMS-Regular-DMm9YOAa.woff                      33.52 kB
+dist/assets/KaTeX_Main-Italic-3WenGoN9.ttf                       33.58 kB
+dist/assets/KaTeX_Main-Bold-waoOVXN0.ttf                         51.34 kB
+dist/assets/KaTeX_Main-Regular-ypZvNtVU.ttf                      53.58 kB
+dist/assets/logo-D4iwvlOw.png                                    55.33 kB
+dist/assets/KaTeX_AMS-Regular-DRggAlZN.ttf                       63.63 kB
+dist/assets/codicon-ngg6Pgfi.ttf                                121.97 kB
+dist/.vite/manifest.json                                        247.16 kB
+dist/assets/editor.worker-CdQrwHl8.js                           251.81 kB
+dist/assets/logo_character-DQwddV-Y.png                         374.60 kB
+dist/assets/index-DmaSAMpS.css                                    0.49 kB
+dist/assets/ArtifactPanel-Dv47L9lv.css                            4.13 kB
+dist/assets/math-rendering-CS4LK5N6.css                          28.89 kB
+dist/assets/editor-DvjKNqdW.css                                 146.81 kB
+dist/assets/index-EXFfPZs4.css                                  262.93 kB
+dist/assets/chevron-down-BnkMXWP5.js                              0.13 kB
+dist/assets/arrow-left-CWjLLDd8.js                                0.17 kB
+dist/assets/arrow-right-xXPFeGLU.js                               0.17 kB
+dist/assets/clock-Xyc268YW.js                                     0.17 kB
+dist/assets/power-DlTB_fic.js                                     0.17 kB
+dist/assets/circle-check-CtHeqCa3.js                              0.18 kB
+dist/assets/use-reduced-motion-DtTwk25P.js                        0.18 kB
+dist/assets/user-round-C60-9ZZv.js                                0.18 kB
+dist/assets/play-B6s61d1L.js                                      0.19 kB
+dist/assets/rotate-ccw-BwMUzcq8.js                                0.20 kB
+dist/assets/info-BgXPiifO.js                                      0.20 kB
+dist/assets/circle-x-B2cGacbo.js                                  0.21 kB
+dist/assets/git-merge-D2Jm0hXH.js                                 0.23 kB
+dist/assets/download-CkPy2A8h.js                                  0.23 kB
+dist/assets/history-EW4C5pY9.js                                   0.24 kB
+dist/assets/index-CxxSQx6K.js                                     0.24 kB
+dist/assets/square-terminal-DSGhlbFp.js                           0.24 kB
+dist/assets/database-DopQt9JV.js                                  0.24 kB
+dist/assets/circle-alert-qHTvKKxA.js                              0.25 kB
+dist/assets/external-link-DFRTi4aA.js                             0.25 kB
+dist/assets/chart-column-D-NM5S1A.js                              0.25 kB
+dist/assets/eye-DqfCJuKr.js                                       0.26 kB
+dist/assets/triangle-alert-Ck7MXwZS.js                            0.27 kB
+dist/assets/shield--zKOvsJf.js                                    0.27 kB
+dist/assets/pen-line-BUIrP9wA.js                                  0.28 kB
+dist/assets/list-checks-BE4GMSo4.js                               0.28 kB
+dist/assets/book-open-BJAuemoj.js                                 0.28 kB
+dist/assets/eraser-D84k6Xa0.js                                    0.28 kB
+dist/assets/send-horizontal-B9dUS4hp.js                           0.29 kB
+dist/assets/inbox-CDuwXICF.js                                     0.29 kB
+dist/assets/send-BDEmCkRa.js                                      0.29 kB
+dist/assets/folder-open-CYs3k_Sg.js                               0.29 kB
+dist/assets/list-tree-E3aa7oEW.js                                 0.30 kB
+dist/assets/wrench-Cy514rKj.js                                    0.30 kB
+dist/assets/shield-check-W74JRQWJ.js                              0.32 kB
+dist/assets/refresh-cw-DEv4LdBt.js                                0.32 kB
+dist/assets/save-B9eoCV5q.js                                      0.33 kB
+dist/assets/bot-DGSFG6Hh.js                                       0.33 kB
+dist/assets/server-KfH9TdQ2.js                                    0.34 kB
+dist/assets/file-plus-corner-BJZfx0eC.js                          0.35 kB
+dist/assets/shield-alert-BNX20Lwk.js                              0.35 kB
+dist/assets/key-round-CTvAUgd6.js                                 0.36 kB
+dist/assets/LoadingSpinner-BQwutzDE.js                            0.37 kB
+dist/assets/file-text-D-mmWk6i.js                                 0.39 kB
+dist/assets/earth-CCgwyXLM.js                                     0.39 kB
+dist/assets/gauge-B4X0jYDo.js                                     0.41 kB
+dist/assets/tags-CHF00ocR.js                                      0.42 kB
+dist/assets/layers-BFSUlssl.js                                    0.42 kB
+dist/assets/eye-off-D4LKPT8A.js                                   0.43 kB
+dist/assets/sparkles-DPAlVSEx.js                                  0.49 kB
+dist/assets/zoom-out-DRsJ2P0M.js                                  0.50 kB
+dist/assets/codeowners-Bp6g37R7.js                                0.55 kB
+dist/assets/puzzle-DFFty-r7.js                                    0.57 kB
+dist/assets/telemetry-DFsLlqcG.js                                 0.59 kB
+dist/assets/timer-CXLRfHbK.js                                     0.64 kB
+dist/assets/textarea-CElaQirl.js                                  0.64 kB
+dist/assets/resource-shed-BVLOfAqy.js                             0.65 kB
+dist/assets/receipt-text-DucGLvoE.js                              0.66 kB
+dist/assets/shellsession-BADoaaVG.js                              0.71 kB
+dist/assets/tsv-B_m7g4N7.js                                       0.74 kB
+dist/assets/separator-DW4bGFGA.js                                 0.74 kB
+dist/assets/wifi-BgGEWfRg.js                                      0.77 kB
+dist/assets/qr-code-CPveHt6d.js                                   0.80 kB
+dist/assets/format-CEz6-uce.js                                    0.90 kB
+dist/assets/html-derivative-DlHx6ybY.js                           0.90 kB
+dist/assets/user-error-DzS3x4dV.js                                0.95 kB
+dist/assets/label-DvW_6Q3w.js                                     0.96 kB
+dist/assets/git-rebase-r7XF79zn.js                                0.98 kB
+dist/assets/qmldir-C8lEn-DE.js                                    1.00 kB
+dist/assets/card-B80ndXx1.js                                      1.07 kB
+dist/assets/csv-fuZLfV_i.js                                       1.14 kB
+dist/assets/MonacoViewer-DnTY9KPH.js                              1.21 kB
+dist/assets/git-commit-F4YmCXRG.js                                1.23 kB
+dist/assets/index-DiDX_gUY.js                                     1.31 kB
+dist/assets/xsl-CtQFsRM5.js                                       1.39 kB
+dist/assets/dotenv-Da5cRb03.js                                    1.42 kB
+dist/assets/cron-DffG4sd1.js                                      1.43 kB
+dist/assets/error-message-AFYy6Vfh.js                             1.45 kB
+dist/assets/sparql-rVzFXLq3.js                                    1.48 kB
+dist/assets/ini-BEwlwnbL.js                                       1.53 kB
+dist/assets/confirm-dialog-Bp6_K3qC.js                            1.55 kB
+dist/assets/upload-QsSizvW6.js                                    1.57 kB
+dist/assets/fortran-fixed-form-CkoXwp7k.js                        1.67 kB
+dist/assets/docker-BcOcwvcX.js                                    1.74 kB
+dist/assets/hxml-Bvhsp5Yf.js                                      1.74 kB
+dist/assets/usePopover-L7VOtEj9.js                                1.75 kB
+dist/assets/MonacoDiffViewer-DrVhffzY.js                          1.78 kB
+dist/assets/desktop-BmXAJ9_W.js                                   1.83 kB
+dist/assets/vite-runtime-DMGCcr4D.js                              1.94 kB
+dist/assets/usage-history-4tRMIMwA.js                             1.99 kB
+dist/assets/page-shell-BZP1B2qB.js                                2.05 kB
+dist/assets/wenyan-BV7otONQ.js                                    2.16 kB
+dist/assets/jssm-C2t-YnRu.js                                      2.24 kB
+dist/assets/knowledge-view-utils-DpFEEjiZ.js                      2.28 kB
+dist/assets/sheet-PspLHhl6.js                                     2.31 kB
+dist/assets/reg-C-SQnVFl.js                                       2.35 kB
+dist/assets/edge-FbVlp4U3.js                                      2.36 kB
+dist/assets/diff-D97Zzqfu.js                                      2.57 kB
+dist/assets/gleam-BspZqrRM.js                                     2.58 kB
+dist/assets/erb-Dm6A9KJ5.js                                       2.61 kB
+dist/assets/hy-DFXneXwc.js                                        2.65 kB
+dist/assets/json-Cp-IABpG.js                                      2.82 kB
+dist/assets/openscad-C4EeE6gA.js                                  2.82 kB
+dist/assets/log-2UxHyX5q.js                                       2.85 kB
+dist/assets/PdfViewer-Cao9InfA.js                                 2.88 kB
+dist/assets/switch-D9wPFbEa.js                                    2.90 kB
+dist/assets/cairo-KRGpt6FW.js                                     2.94 kB
+dist/assets/berry-uYugtg8r.js                                     3.01 kB
+dist/assets/jsonl-DcaNXYhu.js                                     3.01 kB
+dist/assets/jsonc-Des-eS-w.js                                     3.11 kB
+dist/assets/FilePreviewOverlay-BdGoVbwq.js                        3.11 kB
+dist/assets/logo-BtOb2qkB.js                                      3.13 kB
+dist/assets/po-BTJTHyun.js                                        3.24 kB
+dist/assets/json5-C9tS-k6U.js                                     3.25 kB
+dist/assets/index-BT7mgrsx.js                                     3.26 kB
+dist/assets/mipsasm-CKIfxQSi.js                                   3.26 kB
+dist/assets/index-HFRiex0f.js                                     3.26 kB
+dist/assets/tasl-QIJgUcNo.js                                      3.29 kB
+dist/assets/genie-D0YGMca9.js                                     3.36 kB
+dist/assets/rel-C3B-1QV4.js                                       3.37 kB
+dist/assets/vala-CsfeWuGM.js                                      3.37 kB
+dist/assets/splunk-BtCnVYZw.js                                    3.44 kB
+dist/assets/tabs-Ca-pNMgs.js                                      3.49 kB
+dist/assets/zap-CMWENVNC.js                                       3.53 kB
+dist/assets/index-BGUsB3VU.js                                     3.53 kB
+dist/assets/sun-FtJDW259.js                                       3.59 kB
+dist/assets/fluent-C4IJs8-o.js                                    3.61 kB
+dist/assets/ssh-config-_ykCGR6B.js                                3.62 kB
+dist/assets/jsonnet-DFQXde-d.js                                   3.62 kB
+dist/assets/kdl-DV7GczEv.js                                       3.63 kB
+dist/assets/glsl-DplSGwfg.js                                      3.63 kB
+dist/assets/hurl-irOxFIW8.js                                      3.65 kB
+dist/assets/narrat-DRg8JJMk.js                                    3.67 kB
+dist/assets/turtle-BsS91CYL.js                                    3.70 kB
+dist/assets/EfficiencySamplingPanel-CgN7wmOU.js                   3.76 kB
+dist/assets/usage-6N1AJFZF.js                                     3.91 kB
+dist/assets/zenscript-DVFEvuxE.js                                 3.91 kB
+dist/assets/ron-D8l8udqQ.js                                       3.91 kB
+dist/assets/gn-n2N0HUVH.js                                        4.00 kB
+dist/assets/pascal-D93ZcfNL.js                                    4.15 kB
+dist/assets/channels-DrIsk0k_.js                                  4.20 kB
+dist/assets/task-ledger-plan-projection-DZCuVHC6.js               4.27 kB
+dist/assets/PanelResizeDivider-BFjTDUbp.js                        4.32 kB
+dist/assets/tcl-dwOrl1Do.js                                       4.43 kB
+dist/assets/nextflow-C-mBbutL.js                                  4.51 kB
+dist/assets/rosmsg-BJDFO7_C.js                                    4.52 kB
+dist/assets/http-jrhK8wxY.js                                      4.55 kB
+dist/assets/polar-C0HS_06l.js                                     4.67 kB
+dist/assets/sdbl-DVxCFoDh.js                                      4.70 kB
+dist/assets/RemoteTaskDeveloperPanel-srkuLKv6.js                  4.75 kB
+dist/assets/fennel-BYunw83y.js                                    4.77 kB
+dist/assets/SettingsControls-DNIG8MU3.js                          4.77 kB
+dist/assets/bibtex-CHM0blh-.js                                    4.80 kB
+dist/assets/DataListFrames-BYL_jvqG.js                            4.82 kB
+dist/assets/ArchivedSection-CdHr6Qth.js                           5.00 kB
+dist/assets/PageLoadingSkeletons-D_6WxHR2.js                      5.01 kB
+dist/assets/llvm-DjAJT7YJ.js                                      5.05 kB
+dist/assets/wgsl-Dx-B1_4e.js                                      5.14 kB
+dist/assets/StructuralLoadingOverlay-BSF3M9uR.js                  5.23 kB
+dist/assets/HooksTrustPanel-CThqFyZn.js                           5.24 kB
+dist/assets/gdresource-BOOCDP_w.js                                5.29 kB
+dist/assets/qml-3beO22l8.js                                       5.34 kB
+dist/assets/zig-VOosw3JB.js                                       5.34 kB
+dist/assets/dax-CEL-wOlO.js                                       5.37 kB
+dist/assets/bicep-Bmn6On1c.js                                     5.38 kB
+dist/assets/xml-sdJ4AIDG.js                                       5.38 kB
+dist/assets/awk-DMzUqQB5.js                                       5.46 kB
+dist/assets/coq-DkFqJrB1.js                                       5.53 kB
+dist/assets/CheckpointsDialog-3arwibFa.js                         5.68 kB
+dist/assets/jinja-f2NsQr07.js                                     5.69 kB
+dist/assets/lean-BZvkOJ9d.js                                      5.78 kB
+dist/assets/moonbit-_H4v1dQx.js                                   5.90 kB
+dist/assets/powerquery-CEu0bR-o.js                                5.90 kB
+dist/assets/shaderlab-Dg9Lc6iA.js                                 5.92 kB
+dist/assets/verilog-BQ8w6xss.js                                   5.93 kB
+dist/assets/cypher-COkxafJQ.js                                    5.96 kB
+dist/assets/SheetViewer-BmssMz6H.js                               6.09 kB
+dist/assets/vb-D17OF-Vu.js                                        6.09 kB
+dist/assets/red-bN70gL4F.js                                       6.26 kB
+dist/assets/min-dark-CafNBF8u.js                                  6.29 kB
+dist/assets/gdshader-DkwncUOv.js                                  6.33 kB
+dist/assets/prisma-Dd19v3D-.js                                    6.33 kB
+dist/assets/ara-BRHolxvo.js                                       6.36 kB
+dist/assets/clojure-P80f7IUj.js                                   6.41 kB
+dist/assets/postcss-CXtECtnM.js                                   6.42 kB
+dist/assets/toml-vGWfd6FD.js                                      6.43 kB
+dist/assets/solarized-light-L9t79GZl.js                           6.48 kB
+dist/assets/r-Dspwwk_N.js                                         6.54 kB
+dist/assets/proto-C7zT0LnQ.js                                     6.55 kB
+dist/assets/smalltalk-BERRCDM3.js                                 6.59 kB
+dist/assets/talonscript-CkByrt1z.js                               6.76 kB
+dist/assets/solarized-dark-DXbdFlpD.js                            6.85 kB
+dist/assets/riscv-BM1_JUlF.js                                     6.91 kB
+dist/assets/min-light-CTRr51gU.js                                 6.97 kB
+dist/assets/soy-8wufbnw4.js                                       6.98 kB
+dist/assets/scheme-C98Dy4si.js                                    7.17 kB
+dist/assets/hlsl-D3lLCCz7.js                                      7.26 kB
+dist/assets/settings-overview-CaUoNCAF.js                         7.42 kB
+dist/assets/qss-IeuSbFQv.js                                       7.47 kB
+dist/assets/MeasuredLoadingList-BimolJeJ.js                       7.75 kB
+dist/assets/BrowserSettingsPanel-DgKOjhVj.js                      7.80 kB
+dist/assets/systemd-4A_iFExJ.js                                   7.87 kB
+dist/assets/monokai-D4h5O-jR.js                                   7.88 kB
+dist/assets/regexp-CDVJQ6XC.js                                    7.99 kB
+dist/assets/haml-D5jkg6IW.js                                      8.26 kB
+dist/assets/index-w6PwaWGP.js                                     8.32 kB
+dist/assets/typst-DHCkPAjA.js                                     8.39 kB
+dist/assets/ProjectRulesCenter-hAE5DA1A.js                        8.44 kB
+dist/assets/vue-html-AaS7Mt5G.js                                  8.47 kB
+dist/assets/index-Crs8WFl5.js                                     8.48 kB
+dist/assets/plsql-ChMvpjG-.js                                     8.51 kB
+dist/assets/dart-bE4Kk8sk.js                                      8.62 kB
+dist/assets/AgentDevWorkbenchPanel-iOFUXl8e.js                    8.72 kB
+dist/assets/horizon-BUw7H-hv.js                                   8.78 kB
+dist/assets/kotlin-BdnUsdx6.js                                    8.79 kB
+dist/assets/horizon-bright-CUuTKBJd.js                            8.79 kB
+dist/assets/CompactionArtifactViewer-BQ8q9i7i.js                  8.87 kB
+dist/assets/make-CHLpvVh8.js                                      8.96 kB
+dist/assets/andromeeda-C4gqWexZ.js                                9.02 kB
+dist/assets/sas-DEy46yEz.js                                       9.06 kB
+dist/assets/dark-plus-C3mMm8J8.js                                 9.10 kB
+dist/assets/slack-dark-BthQWCQV.js                                9.12 kB
+dist/assets/sass-Cj5Yp3dK.js                                      9.29 kB
+dist/assets/plastic-3e1v2bzS.js                                   9.30 kB
+dist/assets/slack-ochin-DqwNpetd.js                               9.43 kB
+dist/assets/tex-idrVyKtj.js                                       9.67 kB
+dist/assets/jison-wvAkD_A8.js                                     9.69 kB
+dist/assets/cmake-D1j8_8rp.js                                     9.86 kB
+dist/assets/light-plus-B7mTdjB0.js                                9.94 kB
+dist/assets/hcl-BWvSN4gD.js                                      10.05 kB
+dist/assets/channel-DaA4X8v-.js                                  10.27 kB
+dist/assets/RecoverySettingsSection-D_JYdMSQ.js                  10.31 kB
+dist/assets/pkl-u5AG7uiY.js                                      10.37 kB
+dist/assets/beancount-k_qm7-4y.js                                10.37 kB
+dist/assets/nextflow-groovy-vE_lwT2v.js                          10.44 kB
+dist/assets/dream-maker-BtqSS_iP.js                              10.47 kB
+dist/assets/raku-DXvB9xmW.js                                     10.47 kB
+dist/assets/yaml-Buea-lGh.js                                     10.51 kB
+dist/assets/rst-CpCqk9r5.js                                      10.67 kB
+dist/assets/elm-DbKCFpqz.js                                      10.97 kB
+dist/assets/github-light-DAi9KRSo.js                             11.18 kB
+dist/assets/just-CUsbIsdP.js                                     11.21 kB
+dist/assets/index-Dzej4oAB.js                                    11.33 kB
+dist/assets/prolog-CbFg5uaA.js                                   11.36 kB
+dist/assets/terraform-BETggiCN.js                                11.39 kB
+dist/assets/github-dark-DHJKELXO.js                              11.41 kB
+dist/assets/puppet-BMWR74SV.js                                   11.44 kB
+dist/assets/laserwave-DUszq2jm.js                                11.50 kB
+dist/assets/gherkin-DyxjwDmM.js                                  11.95 kB
+dist/assets/wasm-MzD3tlZU.js                                     12.01 kB
+dist/assets/hjson-D5-asLiD.js                                    12.05 kB
+dist/assets/index-DiJgltwd.js                                    12.07 kB
+dist/assets/qq-CnhAhC2b.js                                       12.12 kB
+dist/assets/handlebars-BpdQsYii.js                               12.15 kB
+dist/assets/apache-Pmp26Uib.js                                   12.46 kB
+dist/assets/vesper-DRje8inN.js                                   12.73 kB
+dist/assets/index-CyaHHSIK.js                                    12.77 kB
+dist/assets/bat-BkioyH1T.js                                      12.89 kB
+dist/assets/index-CfM9mbC9.js                                    12.92 kB
+dist/assets/fish-BvzEVeQv.js                                     13.04 kB
+dist/assets/v-BcVCzyr7.js                                        13.21 kB
+dist/assets/vitesse-light-CVO1_9PV.js                            13.62 kB
+dist/assets/aurora-x-D-2ljcwZ.js                                 13.66 kB
+dist/assets/vitesse-black-Bkuqu6BP.js                            13.68 kB
+dist/assets/vitesse-dark-D0r3Knsf.js                             13.76 kB
+dist/assets/pug-DKIMFp6K.js                                      13.84 kB
+dist/assets/synthwave-84-CbfX1IO0.js                             14.04 kB
+dist/assets/github-light-default-D7oLnXFd.js                     14.16 kB
+dist/assets/clarity-D53aC0YG.js                                  14.28 kB
+dist/assets/github-light-high-contrast-BfjtVDDH.js               14.28 kB
+dist/assets/github-dark-dimmed-DH5Ifo-i.js                       14.43 kB
+dist/assets/github-dark-default-Cuk6v7N8.js                      14.44 kB
+dist/assets/index-yAoJeqy-.js                                    14.49 kB
+dist/assets/github-dark-high-contrast-E3gJ1_iC.js                14.60 kB
+dist/assets/gnuplot-DdkO51Og.js                                  14.78 kB
+dist/assets/rust-B1yitclQ.js                                     15.07 kB
+dist/assets/kusto-wEQ09or8.js                                    15.17 kB
+dist/assets/ContextControlPlanePanel-VYFpi1MS.js                 15.20 kB
+dist/assets/actionscript-3-CoDkCxhg.js                           15.21 kB
+dist/assets/nix-CwoSXNpI.js                                      15.51 kB
+dist/assets/lua-BaeVxFsk.js                                      15.54 kB
+dist/assets/luau-KW6xsasC.js                                     15.63 kB
+dist/assets/abap-BdImnpbu.js                                     15.85 kB
+dist/assets/solidity-rGO070M0.js                                 16.07 kB
+dist/assets/matlab-D7o27uSR.js                                   16.09 kB
+dist/assets/cue-D82EKSYY.js                                      16.20 kB
+dist/assets/elixir-CkH2-t6x.js                                   16.32 kB
+dist/assets/odin-BBf5iR-q.js                                     16.51 kB
+dist/assets/ts-tags-D351s5mN.js                                  16.57 kB
+dist/assets/index-BcMJ9ADm.js                                    17.03 kB
+dist/assets/kanagawa-wave-DWedfzmr.js                            17.12 kB
+dist/assets/kanagawa-lotus-CfQXZHmo.js                           17.13 kB
+dist/assets/kanagawa-dragon-CkXjmgJE.js                          17.13 kB
+dist/assets/move-IF9eRakj.js                                     17.51 kB
+dist/assets/graphql-ChdNCCLP.js                                  18.00 kB
+dist/assets/liquid-C0sCDyMI.js                                   18.09 kB
+dist/assets/svelte-Cy7k_4gC.js                                   18.24 kB
+dist/assets/material-theme-D5KoaKCx.js                           18.62 kB
+dist/assets/material-theme-darker-BfHTSMKl.js                    18.63 kB
+dist/assets/material-theme-ocean-CyktbL80.js                     18.63 kB
+dist/assets/material-theme-lighter-B0m2ddpp.js                   18.63 kB
+dist/assets/material-theme-palenight-Csfq5Kiy.js                 18.64 kB
+dist/assets/generated-files-BSLcZXrO.js                          18.97 kB
+dist/assets/gdscript-C5YyOfLZ.js                                 18.99 kB
+dist/assets/groovy-gcz8RCvz.js                                   19.18 kB
+dist/assets/mdc-DTYItulj.js                                      19.63 kB
+dist/assets/glimmer-js-ByusRIyA.js                               20.07 kB
+dist/assets/glimmer-ts-BfAWNZQY.js                               20.07 kB
+dist/assets/ayu-dark-DYE7WIF3.js                                 20.08 kB
+dist/assets/ayu-mirage-32ctXXKs.js                               20.09 kB
+dist/assets/powershell-Dpen1YoG.js                               20.15 kB
+dist/assets/ayu-light-BA47KaF1.js                                20.15 kB
+dist/assets/viml-CJc9bBzg.js                                     20.37 kB
+dist/assets/nushell-Cz2AlsmD.js                                  20.41 kB
+dist/assets/snazzy-light-Bw305WKR.js                             20.77 kB
+dist/assets/dracula-BzJJZx-M.js                                  21.07 kB
+dist/assets/dracula-soft-BXkSAIEj.js                             21.08 kB
+dist/assets/select-JJunKNA5.js                                   21.15 kB
+dist/assets/twig-CW1WmMYd.js                                     21.36 kB
+dist/assets/wit-5i3qLPDT.js                                      21.47 kB
+dist/assets/rose-pine-qdsjHGoJ.js                                21.74 kB
+dist/assets/rose-pine-moon-D4_iv3hh.js                           21.75 kB
+dist/assets/rose-pine-dawn-DHQR4-dF.js                           21.75 kB
+dist/assets/nim-BIad80T-.js                                      22.46 kB
+dist/assets/common-lisp-Cg-RD9OK.js                              22.58 kB
+dist/assets/surrealql-Bq5Q-fJD.js                                22.58 kB
+dist/assets/gruvbox-dark-hard-CFHQjOhq.js                        22.63 kB
+dist/assets/gruvbox-dark-soft-CVdnzihN.js                        22.63 kB
+dist/assets/gruvbox-light-hard-CH1njM8p.js                       22.64 kB
+dist/assets/gruvbox-light-soft-hJgmCMqR.js                       22.64 kB
+dist/assets/gruvbox-dark-medium-GsRaNv29.js                      22.64 kB
+dist/assets/gruvbox-light-medium-DRw_LuNl.js                     22.64 kB
+dist/assets/bird2-BIv1doCn.js                                    22.94 kB
+dist/assets/sql-CRqJ_cUM.js                                      23.43 kB
+dist/assets/cadence-Bv_4Rxtq.js                                  23.67 kB
+dist/assets/astro-HNnZUWAn.js                                    24.01 kB
+dist/assets/apl-CORt7UWP.js                                      24.04 kB
+dist/assets/templ-DhtptRzy.js                                    24.06 kB
+dist/assets/model-options-C5BUtbFm.js                            24.21 kB
+dist/assets/vhdl-CeAyd5Ju.js                                     24.26 kB
+dist/assets/angular-html-3GT3A_0Q.js                             24.27 kB
+dist/assets/vue-D2xRrEX4.js                                      24.48 kB
+dist/assets/purescript-CklMAg4u.js                               24.69 kB
+dist/assets/typespec-CAFt9gP4.js                                 25.05 kB
+dist/assets/one-light-C3Wv6jpd.js                                25.30 kB
+dist/assets/fsharp-CXgrBDvD.js                                   25.31 kB
+dist/assets/FilePreviewBody-BHkyZoNS.js                          25.41 kB
+dist/assets/marko-DjSrsDqO.js                                    25.48 kB
+dist/assets/night-owl-light-CMTm3GFP.js                          25.90 kB
+dist/assets/system-verilog-CnnmHF94.js                           26.20 kB
+dist/assets/nord-Ddv68eIx.js                                     26.72 kB
+dist/assets/codeql-DsOJ9woJ.js                                   26.88 kB
+dist/assets/c3-MRO5bC_T.js                                       26.98 kB
+dist/assets/scss-D5BDwBP9.js                                     27.20 kB
+dist/assets/java-CylS5w8V.js                                     27.22 kB
+dist/assets/coffee-Ch7k5sss.js                                   27.42 kB
+dist/assets/razor-BjBPvh-w.js                                    27.51 kB
+dist/assets/scala-C151Ov-r.js                                    28.88 kB
+dist/assets/night-owl-C39BiMTA.js                                28.91 kB
+dist/assets/KnowledgeChat-DSvcz4Pl.js                            28.94 kB
+dist/assets/crystal-DGywbUpC.js                                  29.39 kB
+dist/assets/mermaid-mWjccvbQ.js                                  29.51 kB
+dist/assets/applescript-Co6uUVPk.js                              29.57 kB
+dist/assets/pierre-dark-CyvmCCZW.js                              30.55 kB
+dist/assets/pierre-light-480U9XYS.js                             30.55 kB
+dist/assets/pierre-dark-soft-BHGpRqa4.js                         30.56 kB
+dist/assets/pierre-light-soft-CVdyfjmI.js                        30.56 kB
+dist/assets/pierre-dark-tritanopia-Beq2gCRQ.js                   30.57 kB
+dist/assets/pierre-light-tritanopia-B4_gpKOM.js                  30.57 kB
+dist/assets/pierre-dark-protanopia-deuteranopia-Rgc0TwpF.js      30.60 kB
+dist/assets/pierre-light-protanopia-deuteranopia-CaVOBURG.js     30.60 kB
+dist/assets/stylus-BEDo0Tqx.js                                   31.07 kB
+dist/assets/julia-D7OTSIA_.js                                    31.08 kB
+dist/assets/index-CgKAUgQM.js                                    31.30 kB
+dist/assets/poimandres-CS3Unz2-.js                               33.49 kB
+dist/assets/one-dark-pro-DVMEJ2y_.js                             33.79 kB
+dist/assets/bsl-BO_Y6i37.js                                      33.87 kB
+dist/assets/index-BH8ILEKT.js                                    34.87 kB
+dist/assets/haxe-CzTSHFRz.js                                     35.16 kB
+dist/assets/nginx-BpAMiNFr.js                                    35.37 kB
+dist/assets/houston-DnULxvSX.js                                  35.42 kB
+dist/assets/tokyo-night-hegEt444.js                              35.67 kB
+dist/assets/DcsProdFlagsPanel-BuAdxm6I.js                        36.39 kB
+dist/assets/erlang-DsQrWhSR.js                                   37.48 kB
+dist/assets/cobol-nBiQ_Alo.js                                    39.13 kB
+dist/assets/asm-D_Q5rh1f.js                                      40.72 kB
+dist/assets/index-B5UWUwJK.js                                    41.35 kB
+dist/assets/shellscript-Yzrsuije.js                              41.48 kB
+dist/assets/haskell-Df6bDoY_.js                                  41.49 kB
+dist/assets/perl-B9cMNwum.js                                     43.16 kB
+dist/assets/d-85-TOEBH.js                                        43.80 kB
+dist/assets/pierre-dark-vibrant-BWBVywrn.js                      44.76 kB
+dist/assets/pierre-light-vibrant-DdTDNdfJ.js                     44.76 kB
+dist/assets/ruby-DyJCeAvU.js                                     46.72 kB
+dist/assets/go-C27-OAKa.js                                       46.82 kB
+dist/assets/catppuccin-mocha-D87Tk5Gz.js                         47.26 kB
+dist/assets/catppuccin-latte-C9dUb6Cb.js                         47.26 kB
+dist/assets/catppuccin-frappe-DFWUc33u.js                        47.26 kB
+dist/assets/catppuccin-macchiato-DQyhUUbL.js                     47.26 kB
+dist/assets/apex-Dqspr-GT.js                                     47.77 kB
+dist/assets/ada-bCR0ucgS.js                                      48.08 kB
+dist/assets/apple-drawer-0lKRtU0f.js                             48.79 kB
+dist/assets/css-CLj8gQPS.js                                      49.04 kB
+dist/assets/imba-DGztddWO.js                                     49.93 kB
+dist/assets/everforest-dark-BgDCqdQA.js                          53.75 kB
+dist/assets/everforest-light-C8M2exoo.js                         53.75 kB
+dist/assets/wikitext-BhOHFoWU.js                                 55.89 kB
+dist/assets/stata-DI20mbqo.js                                    56.99 kB
+dist/assets/html-pp8916En.js                                     57.25 kB
+dist/assets/index-CIIfovIb.js                                    58.39 kB
+dist/assets/ballerina-BFfxhgS-.js                                58.69 kB
+dist/assets/markdown-Cvjx9yec.js                                 59.34 kB
+dist/assets/settings-detail-B-bIBgFw.js                          60.34 kB
+dist/assets/ocaml-C0hk2d4L.js                                    62.45 kB
+dist/assets/index-BAI-GuPf.js                                    65.54 kB
+dist/assets/mojo-rZm6bMo-.js                                     69.80 kB
+dist/assets/python-B6aJPvgy.js                                   69.95 kB
+dist/assets/c-BIGW1oBm.js                                        72.11 kB
+dist/assets/latex-CaSxy8MP.js                                    72.90 kB
+dist/assets/index-BD_eRJ6u.js                                    74.33 kB
+dist/assets/vyper-CDx5xZoG.js                                    74.65 kB
+dist/assets/index-DIdn3-Re.js                                    77.98 kB
+dist/assets/chat-core-BvXzT38q.js                                78.81 kB
+dist/assets/hack-DbPARsA_.js                                     81.11 kB
+dist/assets/swift-D82vCrfD.js                                    86.69 kB
+dist/assets/fortran-free-form-BxgE0vQu.js                        88.97 kB
+dist/assets/csharp-DSvCPggb.js                                   90.19 kB
+dist/assets/racket-BqYA7rlc.js                                   92.39 kB
+dist/assets/less-B1dDrJ26.js                                     97.63 kB
+dist/assets/blade-2xfisSek.js                                   104.98 kB
+dist/assets/objective-c-DXmwc3jG.js                             105.41 kB
+dist/assets/php-Csjmro_R.js                                     113.09 kB
+dist/assets/index-CjtyVCOC.js                                   119.17 kB
+dist/assets/asciidoc-Ve4PFQV2.js                                131.53 kB
+dist/assets/mdx-Cmh6b_Ma.js                                     136.11 kB
+dist/assets/markdown-rendering-DrvhR_Ov.js                      150.08 kB
+dist/assets/objective-cpp-CLxacb5B.js                           171.97 kB
+dist/assets/javascript-wDzz0qaB.js                              174.83 kB
+dist/assets/tsx-COt5Ahok.js                                     175.54 kB
+dist/assets/jsx-g9-lgVsj.js                                     177.79 kB
+dist/assets/typescript-BPQ3VLAy.js                              181.08 kB
+dist/assets/angular-ts-CT0n3M0e.js                              183.82 kB
+dist/assets/vue-vine-BoDAl6tE.js                                190.05 kB
+dist/assets/react-vendor-C2mp-7Wl.js                            192.88 kB
+dist/assets/html2canvas.esm-DXEQVQnt.js                         201.04 kB
+dist/assets/index-C_SrTnev.js                                   221.64 kB
+dist/assets/zh-CicgC9_s.js                                      233.71 kB
+dist/assets/math-rendering-BtIipC_D.js                          258.80 kB
+dist/assets/wolfram-lXgVvXCa.js                                 262.39 kB
+dist/assets/ja-jTc-ABPM.js                                      300.36 kB
+dist/assets/AgentAvatar-WNKYgcil.js                             308.18 kB
+dist/assets/ru-CtlOn8pD.js                                      365.06 kB
+dist/assets/document-viewers-CNerDvZX.js                        429.19 kB
+dist/assets/index-Dt-Yx_qo.js                                   443.68 kB
+dist/assets/index-ABxRn-fH.js                                   535.08 kB
+dist/assets/ArtifactPanel-BmbN5z3O.js                           540.06 kB
+dist/assets/wasm-CG6Dc4jp.js                                    622.34 kB
+dist/assets/App-1SjKNo_U.js                                     622.47 kB
+dist/assets/cpp-UfJy6YNI.js                                     626.08 kB
+dist/assets/emacs-lisp-CXvaQtF9.js                              779.88 kB
+dist/assets/GeneratedFilesPanel-BGT9krB6.js                   2,167.73 kB
+dist/assets/editor-DbuRPMsT.js                                3,750.05 kB
+✓ built in 35.02s
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-m
+anualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+vite v7.3.1 building client environment for production...
+transforming...
+"default" is imported from external module "@shikijs/engine-oniguruma/wasm-inlined" but never used in "node_modules/.pn
+pm/shiki@4.3.1/node_modules/shiki/dist/wasm.mjs".
+✓ 842 modules transformed.
+rendering chunks...
+[plugin vite:reporter]
+(!) D:/ClawX-work/component-graduation-20261021/electron/utils/store.ts is dynamically imported by D:/ClawX-work/compon
+ent-graduation-20261021/electron/gateway/manager.ts but also statically imported by D:/ClawX-work/component-graduation-
+20261021/electron/gateway/config-sync.ts, D:/ClawX-work/component-graduation-20261021/electron/gateway/manager.ts, D:/C
+lawX-work/component-graduation-20261021/electron/main/index.ts, D:/ClawX-work/component-graduation-20261021/electron/ma
+in/ipc-handlers.ts, D:/ClawX-work/component-graduation-20261021/electron/main/launch-at-startup.ts, D:/ClawX-work/compo
+nent-graduation-20261021/electron/main/menu.ts, D:/ClawX-work/component-graduation-20261021/electron/main/proxy.ts, D:/
+ClawX-work/component-graduation-20261021/electron/services/agent-dev-api.ts, D:/ClawX-work/component-graduation-2026102
+1/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/component-graduation-20261021/electron/services/efficiency-api
+.ts, D:/ClawX-work/component-graduation-20261021/electron/services/gateway-api.ts, D:/ClawX-work/component-graduation-2
+0261021/electron/services/remote-control-api.ts, D:/ClawX-work/component-graduation-20261021/electron/services/remote-t
+asks-api.ts, D:/ClawX-work/component-graduation-20261021/electron/services/sensitive-capture-gate.ts, D:/ClawX-work/com
+ponent-graduation-20261021/electron/services/settings-api.ts, D:/ClawX-work/component-graduation-20261021/electron/serv
+ices/support-bundle.ts, D:/ClawX-work/component-graduation-20261021/electron/services/usage-api.ts, D:/ClawX-work/compo
+nent-graduation-20261021/electron/services/work-providers-api.ts, D:/ClawX-work/component-graduation-20261021/electron/
+utils/app-version-rollback.ts, D:/ClawX-work/component-graduation-20261021/electron/utils/control-ui-device-pairing.ts,
+ D:/ClawX-work/component-graduation-20261021/electron/utils/openclaw-auth.ts, D:/ClawX-work/component-graduation-202610
+21/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter]
+(!) D:/ClawX-work/component-graduation-20261021/electron/utils/channel-config.ts is dynamically imported by D:/ClawX-wo
+rk/component-graduation-20261021/electron/services/cron-api.ts but also statically imported by D:/ClawX-work/component-
+graduation-20261021/electron/gateway/config-sync.ts, D:/ClawX-work/component-graduation-20261021/electron/gateway/super
+visor.ts, D:/ClawX-work/component-graduation-20261021/electron/services/agents-api.ts, D:/ClawX-work/component-graduati
+on-20261021/electron/services/channels-api.ts, D:/ClawX-work/component-graduation-20261021/electron/services/dcs-prod-f
+lags-api.ts, D:/ClawX-work/component-graduation-20261021/electron/services/hooks-api.ts, D:/ClawX-work/component-gradua
+tion-20261021/electron/services/mcp-api.ts, D:/ClawX-work/component-graduation-20261021/electron/services/roles-api.ts,
+ D:/ClawX-work/component-graduation-20261021/electron/services/workspace-runtime-sync.ts, D:/ClawX-work/component-gradu
+ation-20261021/electron/utils/agent-config.ts, D:/ClawX-work/component-graduation-20261021/electron/utils/app-version-r
+ollback.ts, D:/ClawX-work/component-graduation-20261021/electron/utils/openclaw-image-generation.ts, D:/ClawX-work/comp
+onent-graduation-20261021/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk.
+
+dist-electron/main/index.js                                         1.24 kB
+dist-electron/main/active-sandbox-high-risk-policy-Clk8GBra.js      2.26 kB
+dist-electron/main/session-cascade-delete-DOCZ3d70.js               3.77 kB
+dist-electron/main/index-BHq0JUqP.js                            1,744.14 kB
+✓ built in 4.53s
+vite v7.3.1 building client environment for production...
+transforming...
+✓ 2 modules transformed.
+rendering chunks...
+dist-electron/preload/index.js  3.39 kB
+✓ built in 39ms

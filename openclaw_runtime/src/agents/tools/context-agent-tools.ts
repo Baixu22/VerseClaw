@@ -20,7 +20,6 @@ import type {
 } from "../../context-engine/block.js";
 import { codingObservability } from "../../context-engine/coding-observability.js";
 import {
-  isDcsContextViewToolsEnabled,
   resolveContextToolSchemaMode,
   type ContextToolSchemaMode,
 } from "../../context-engine/dcs-context-tools-flags.js";
@@ -58,6 +57,10 @@ import {
   readStringParam,
   asToolParamsRecord,
 } from "./common.js";
+import {
+  resolveContextViewToolSurfaceState,
+  type ContextViewToolSurfaceState,
+} from "./context-view-tool-surface.js";
 
 export const CONTEXT_READ_TOOL_NAME = "context_read";
 export const CONTEXT_ARCHIVE_RECALL_TOOL_NAME = "context_archive_recall";
@@ -108,10 +111,18 @@ export type DcsContextAgentToolOptions = {
    */
   factService?: WorkspaceFactService;
   /**
-   * C1-1 / C0-4 kill-switch for the four Fact view tools.
-   * Default resolves from env (OFF/shadow). Explicit true/false overrides env.
+   * Explicit rollback/override for the four Fact view tools.
+   * Unset means automatic discovery: healthy workspace + FactService + permission.
+   * false keeps the existing explicit rollback path.
    */
   viewToolsEnabled?: boolean;
+  /** Precomputed surface state for diagnostics and deterministic tests. */
+  contextViewSurfaceState?: ContextViewToolSurfaceState;
+  /** Optional health inputs for automatic discovery. */
+  workspaceHealthy?: boolean;
+  contextStoreHealthy?: boolean;
+  permissionAllowed?: boolean;
+  unavailableReason?: string;
   /** Optional ContextPack budget override (W0-4 / addendum 6). */
   budgetChars?: number;
   /**
@@ -254,20 +265,47 @@ function requireFactService(options: DcsContextAgentToolOptions): WorkspaceFactS
   return options.factService ?? null;
 }
 
-function resolveViewToolsEnabled(options: DcsContextAgentToolOptions): boolean {
-  if (typeof options.viewToolsEnabled === "boolean") {
-    return options.viewToolsEnabled;
-  }
-  return isDcsContextViewToolsEnabled();
+function resolveContextViewToolSurface(
+  options: DcsContextAgentToolOptions,
+): ContextViewToolSurfaceState {
+  return options.contextViewSurfaceState ?? resolveContextViewToolSurfaceState({
+    factService: options.factService,
+    viewToolsEnabled: options.viewToolsEnabled,
+    ...(options.workspaceHealthy !== undefined ? { workspaceHealthy: options.workspaceHealthy } : {}),
+    ...(options.contextStoreHealthy !== undefined ? { contextStoreHealthy: options.contextStoreHealthy } : {}),
+    ...(options.permissionAllowed !== undefined ? { permissionAllowed: options.permissionAllowed } : {}),
+    ...(options.unavailableReason ? { unavailableReason: options.unavailableReason } : {}),
+  });
+}
+
+export function getContextViewToolSurface(
+  options: DcsContextAgentToolOptions = {},
+): ContextViewToolSurfaceState {
+  return resolveContextViewToolSurface(options);
 }
 
 function requireViewFactService(
   options: DcsContextAgentToolOptions,
 ): WorkspaceFactService | null {
-  if (!resolveViewToolsEnabled(options)) {
+  if (resolveContextViewToolSurface(options).mode !== "healthy") {
     return null;
   }
   return requireFactService(options);
+}
+
+function viewToolBlockedResult(
+  options: DcsContextAgentToolOptions,
+): { ok: false; mode: string; reason: string; failClosed: true } | null {
+  const surface = resolveContextViewToolSurface(options);
+  if (surface.mode === "healthy") {
+    return null;
+  }
+  return {
+    ok: false,
+    mode: surface.mode,
+    reason: surface.reason ?? "Context view tools are unavailable for this run.",
+    failClosed: true,
+  };
 }
 
 function flushService(service: WorkspaceFactService): void {
@@ -527,6 +565,8 @@ export function createContextImpactTool(options: DcsContextAgentToolOptions): An
     parameters: ContextImpactSchema,
     risk: "readonly",
     execute: async (_toolCallId, args) => {
+      const blocked = viewToolBlockedResult(options);
+      if (blocked) return jsonResult(blocked);
       recordViewCall(CONTEXT_IMPACT_TOOL_NAME);
       const params = asToolParamsRecord(args);
       const target = readStringParam(params, "target", { required: true })!;
@@ -583,6 +623,8 @@ export function createContextUnderstandTool(options: DcsContextAgentToolOptions)
     parameters: ContextUnderstandSchema,
     risk: "readonly",
     execute: async (_toolCallId, args) => {
+      const blocked = viewToolBlockedResult(options);
+      if (blocked) return jsonResult(blocked);
       recordViewCall(CONTEXT_UNDERSTAND_TOOL_NAME);
       const params = asToolParamsRecord(args);
       const query = readStringParam(params, "query", { required: true })!;
@@ -631,6 +673,8 @@ export function createContextReuseTool(options: DcsContextAgentToolOptions): Any
     parameters: ContextReuseSchema,
     risk: "readonly",
     execute: async (_toolCallId, args) => {
+      const blocked = viewToolBlockedResult(options);
+      if (blocked) return jsonResult(blocked);
       recordViewCall(CONTEXT_REUSE_TOOL_NAME);
       const params = asToolParamsRecord(args);
       const query = readStringParam(params, "query", { required: true })!;
@@ -702,6 +746,8 @@ export function createContextVerifyTool(options: DcsContextAgentToolOptions): An
     parameters: ContextVerifySchema,
     risk: "readonly",
     execute: async (_toolCallId, args) => {
+      const blocked = viewToolBlockedResult(options);
+      if (blocked) return jsonResult(blocked);
       recordViewCall(CONTEXT_VERIFY_TOOL_NAME);
       const params = asToolParamsRecord(args);
       const diff =

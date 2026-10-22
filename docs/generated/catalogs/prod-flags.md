@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-22T08:20:03.504Z
+Generated at: 2026-10-22T15:22:41.980Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -15,13 +15,13 @@ This file is generated — edit the source of truth instead.
 - kind: env
 - key: `OPENCLAW_DCS_CONTEXT_VIEW_TOOLS`
 - default: false
-- defaultDisplay: off (shadow)
+- defaultDisplay: automatic when healthy (env override off)
 - risk: opt-in
-- enable: Set env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime.
-- rollback: Unset env or set to 0/false and restart. View tools leave the default catalog.
-- executor: wired — `openclaw_runtime/src/agents/tools/context-agent-tools.ts:267`
+- enable: Automatic discovery when workspace, FactService and permission are healthy; no env or Developer toggle is required.
+- rollback: Set env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=0 (or OPENCLAW_DCS_CONTEXT_TOOLS=0) and restart. This explicitly removes the four view tools even when dependencies are healthy.
+- executor: wired — `openclaw_runtime/src/agents/tools/context-view-tool-surface.ts:149`
 
-> Single source of truth: env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS (or Settings switch). The removed runtime.coding.factViews leaf is rejected by the strict config schema; remove it before upgrading. Keep default-off until C1 graduation + product approval.
+> TF-0495: the standard coding catalog is the discovery surface; the env switch is an explicit rollback/override, not the normal enable path. Automatic discovery occurs only when the workspace, FactService and permission checks are healthy. The removed runtime.coding.factViews leaf is rejected by the strict config schema; remove it before upgrading. Catalog defaultValue remains false as a fail-closed rollback override; this node does not flip the product default.
 
 ## context-tools-alias
 
@@ -29,13 +29,13 @@ This file is generated — edit the source of truth instead.
 - kind: env
 - key: `OPENCLAW_DCS_CONTEXT_TOOLS`
 - default: false
-- defaultDisplay: off (alias)
+- defaultDisplay: off (alias override)
 - risk: opt-in
-- enable: Alias of OPENCLAW_DCS_CONTEXT_VIEW_TOOLS; set =1 only when intentionally enabling view tools.
-- rollback: Unset or set to 0/false and restart.
+- enable: Alias of OPENCLAW_DCS_CONTEXT_VIEW_TOOLS; automatic discovery does not require setting it.
+- rollback: Set to 0/false and restart to force the four view tools out even when healthy.
 - executor: wired — `openclaw_runtime/src/context-engine/dcs-context-tools-flags.ts:30`
 
-> Alias only; do not treat as a separate graduation path.
+> Alias override only; do not treat as a separate graduation path.
 
 ## working-memory
 

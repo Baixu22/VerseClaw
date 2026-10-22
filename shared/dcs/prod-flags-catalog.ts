@@ -38,18 +38,18 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     wave: 'C1',
     kind: 'env',
     key: 'OPENCLAW_DCS_CONTEXT_VIEW_TOOLS',
-    defaultDisplay: 'off (shadow)',
+    defaultDisplay: 'automatic when healthy (env override off)',
     defaultValue: false,
     risk: 'opt-in',
     enable:
-      'Set env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime.',
-    rollback: 'Unset env or set to 0/false and restart. View tools leave the default catalog.',
+      'Automatic discovery when workspace, FactService and permission are healthy; no env or Developer toggle is required.',
+    rollback: 'Set env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=0 (or OPENCLAW_DCS_CONTEXT_TOOLS=0) and restart. This explicitly removes the four view tools even when dependencies are healthy.',
     riskNote:
-      'Single source of truth: env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS (or Settings switch). The removed runtime.coding.factViews leaf is rejected by the strict config schema; remove it before upgrading. Keep default-off until C1 graduation + product approval.',
+      'TF-0495: the standard coding catalog is the discovery surface; the env switch is an explicit rollback/override, not the normal enable path. Automatic discovery occurs only when the workspace, FactService and permission checks are healthy. The removed runtime.coding.factViews leaf is rejected by the strict config schema; remove it before upgrading. Catalog defaultValue remains false as a fail-closed rollback override; this node does not flip the product default.',
     executor: {
       status: 'wired',
       sites: [
-        'openclaw_runtime/src/agents/tools/context-agent-tools.ts:267',
+        'openclaw_runtime/src/agents/tools/context-view-tool-surface.ts:149',
       ],
     },
   },
@@ -58,13 +58,13 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     wave: 'C1',
     kind: 'env',
     key: 'OPENCLAW_DCS_CONTEXT_TOOLS',
-    defaultDisplay: 'off (alias)',
+    defaultDisplay: 'off (alias override)',
     defaultValue: false,
     risk: 'opt-in',
     enable:
-      'Alias of OPENCLAW_DCS_CONTEXT_VIEW_TOOLS; set =1 only when intentionally enabling view tools.',
-    rollback: 'Unset or set to 0/false and restart.',
-    riskNote: 'Alias only; do not treat as a separate graduation path.',
+      'Alias of OPENCLAW_DCS_CONTEXT_VIEW_TOOLS; automatic discovery does not require setting it.',
+    rollback: 'Set to 0/false and restart to force the four view tools out even when healthy.',
+    riskNote: 'Alias override only; do not treat as a separate graduation path.',
     executor: {
       status: 'wired',
       sites: [

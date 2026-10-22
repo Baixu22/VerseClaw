@@ -1,0 +1,437 @@
+{
+  "schemaVersion": "ContextViewToolCanaryRun/v1",
+  "taskForestNodeId": "TF-0495",
+  "startedAt": "2026-10-22T15:36:22.760Z",
+  "endedAt": "2026-10-22T15:42:25.658Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "endpoint": "http://127.0.0.1:3065/v1/responses",
+  "provider": "space-bunny",
+  "model": "space-bunny",
+  "protocolPath": "tests\\unit\\fixtures\\context-view-tool-surface\\acceptance\\TF-0495\\canary-protocol.json",
+  "protocolSha256": "c2745b4b3093ac0301813db6d2bcde929fca1ad7ffd52b175ff012ca10696ea0",
+  "summary": {
+    "totalCalls": 40,
+    "providerErrors": 0,
+    "parseFailures": 0,
+    "A_toolDiscoveryPassCount": 20,
+    "A_toolDiscoverySuccessRate": 1,
+    "B_correctUnavailableCount": 20,
+    "falseToolPresenceClaims": 0,
+    "unauthorizedViewToolCalls": 0
+  },
+  "checks": {
+    "sampleSize": true,
+    "toolDiscoverySuccess": true,
+    "falseToolPresenceClaims": true,
+    "providerErrorRate": true,
+    "parseFailureRate": true
+  },
+  "decision": {
+    "status": "pass",
+    "reasons": []
+  },
+  "credentialHandling": "API key read from TF0495_API_KEY only; no secret material is serialized into this file",
+  "results": [
+    {
+      "fixtureId": "A-01",
+      "arm": "A",
+      "promptSha256": "5279793ba8c8f578874cc773d151d6cd99fed7660794cf5bb2ab25261559f6c6",
+      "latencyMs": 2162,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_understand\"}",
+      "expected": "context_understand",
+      "chosen": "context_understand",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-02",
+      "arm": "A",
+      "promptSha256": "b173adc12b90fa4d8daf3b59e169682428c409d40db4bf54a22cf660ee398212",
+      "latencyMs": 1951,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_impact\"}",
+      "expected": "context_impact",
+      "chosen": "context_impact",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-03",
+      "arm": "A",
+      "promptSha256": "83f56804104d5c973eddad58afb1902c85630be1e3999aafd9b441d712557145",
+      "latencyMs": 2036,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_reuse\"}",
+      "expected": "context_reuse",
+      "chosen": "context_reuse",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-04",
+      "arm": "A",
+      "promptSha256": "91cdb9d6665a89d7f37bf1ba62801b49b13633ca59e82eb5500a013d0c800593",
+      "latencyMs": 2138,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_verify\"}",
+      "expected": "context_verify",
+      "chosen": "context_verify",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-05",
+      "arm": "A",
+      "promptSha256": "5279793ba8c8f578874cc773d151d6cd99fed7660794cf5bb2ab25261559f6c6",
+      "latencyMs": 1807,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_understand\"}",
+      "expected": "context_understand",
+      "chosen": "context_understand",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-06",
+      "arm": "A",
+      "promptSha256": "b173adc12b90fa4d8daf3b59e169682428c409d40db4bf54a22cf660ee398212",
+      "latencyMs": 1939,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_impact\"}",
+      "expected": "context_impact",
+      "chosen": "context_impact",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-07",
+      "arm": "A",
+      "promptSha256": "83f56804104d5c973eddad58afb1902c85630be1e3999aafd9b441d712557145",
+      "latencyMs": 2078,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_reuse\"}",
+      "expected": "context_reuse",
+      "chosen": "context_reuse",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-08",
+      "arm": "A",
+      "promptSha256": "91cdb9d6665a89d7f37bf1ba62801b49b13633ca59e82eb5500a013d0c800593",
+      "latencyMs": 2567,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_verify\"}",
+      "expected": "context_verify",
+      "chosen": "context_verify",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-09",
+      "arm": "A",
+      "promptSha256": "5279793ba8c8f578874cc773d151d6cd99fed7660794cf5bb2ab25261559f6c6",
+      "latencyMs": 1799,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_understand\"}",
+      "expected": "context_understand",
+      "chosen": "context_understand",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-10",
+      "arm": "A",
+      "promptSha256": "b173adc12b90fa4d8daf3b59e169682428c409d40db4bf54a22cf660ee398212",
+      "latencyMs": 2212,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_impact\"}",
+      "expected": "context_impact",
+      "chosen": "context_impact",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-11",
+      "arm": "A",
+      "promptSha256": "83f56804104d5c973eddad58afb1902c85630be1e3999aafd9b441d712557145",
+      "latencyMs": 1857,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_reuse\"}",
+      "expected": "context_reuse",
+      "chosen": "context_reuse",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-12",
+      "arm": "A",
+      "promptSha256": "91cdb9d6665a89d7f37bf1ba62801b49b13633ca59e82eb5500a013d0c800593",
+      "latencyMs": 2211,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_verify\"}",
+      "expected": "context_verify",
+      "chosen": "context_verify",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-13",
+      "arm": "A",
+      "promptSha256": "5279793ba8c8f578874cc773d151d6cd99fed7660794cf5bb2ab25261559f6c6",
+      "latencyMs": 1973,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_understand\"}",
+      "expected": "context_understand",
+      "chosen": "context_understand",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-14",
+      "arm": "A",
+      "promptSha256": "b173adc12b90fa4d8daf3b59e169682428c409d40db4bf54a22cf660ee398212",
+      "latencyMs": 2107,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_impact\"}",
+      "expected": "context_impact",
+      "chosen": "context_impact",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-15",
+      "arm": "A",
+      "promptSha256": "83f56804104d5c973eddad58afb1902c85630be1e3999aafd9b441d712557145",
+      "latencyMs": 1878,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_reuse\"}",
+      "expected": "context_reuse",
+      "chosen": "context_reuse",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-16",
+      "arm": "A",
+      "promptSha256": "91cdb9d6665a89d7f37bf1ba62801b49b13633ca59e82eb5500a013d0c800593",
+      "latencyMs": 3238,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_verify\"}",
+      "expected": "context_verify",
+      "chosen": "context_verify",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-17",
+      "arm": "A",
+      "promptSha256": "5279793ba8c8f578874cc773d151d6cd99fed7660794cf5bb2ab25261559f6c6",
+      "latencyMs": 2047,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_understand\"}",
+      "expected": "context_understand",
+      "chosen": "context_understand",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-18",
+      "arm": "A",
+      "promptSha256": "b173adc12b90fa4d8daf3b59e169682428c409d40db4bf54a22cf660ee398212",
+      "latencyMs": 1869,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_impact\"}",
+      "expected": "context_impact",
+      "chosen": "context_impact",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-19",
+      "arm": "A",
+      "promptSha256": "83f56804104d5c973eddad58afb1902c85630be1e3999aafd9b441d712557145",
+      "latencyMs": 1760,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_reuse\"}",
+      "expected": "context_reuse",
+      "chosen": "context_reuse",
+      "pass": true
+    },
+    {
+      "fixtureId": "A-20",
+      "arm": "A",
+      "promptSha256": "91cdb9d6665a89d7f37bf1ba62801b49b13633ca59e82eb5500a013d0c800593",
+      "latencyMs": 3204,
+      "responseText": "{\"decision\":\"call_tool\",\"tool\":\"context_verify\"}",
+      "expected": "context_verify",
+      "chosen": "context_verify",
+      "pass": true
+    },
+    {
+      "fixtureId": "B-01",
+      "arm": "B",
+      "promptSha256": "3e8503b9e2972b0348021114313689be915f96d654a9addec28fad1fa7bf164a",
+      "latencyMs": 1746,
+      "responseText": "{\"available\":false,\"reason\":\"The workspace FactService is unavailable, so no context view tools are enabled.\"}",
+      "mode": "missing-dependency",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-02",
+      "arm": "B",
+      "promptSha256": "b388a7a0f8605c8fdbfd5d0bf1ea666325c8deb347595ac39bcaa2683d8d3698",
+      "latencyMs": 2722,
+      "responseText": "{\"available\":false,\"reason\":\"The context store is unavailable and no active tool names are enabled.\"}",
+      "mode": "context-store-unavailable",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-03",
+      "arm": "B",
+      "promptSha256": "27086c4bad1bd0acb94748536c52f7abc8766747b85ba45c0e5bf2701b923321",
+      "latencyMs": 1767,
+      "responseText": "{\"available\":false,\"reason\":\"The context view tool surface is disabled by the current permission policy.\"}",
+      "mode": "permission-denied",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-04",
+      "arm": "B",
+      "promptSha256": "7f85eb72a42526883e00f15d67900a6566a6d3da31f53534c537e80e8b664671",
+      "latencyMs": 2148,
+      "responseText": "{\"available\":false,\"reason\":\"The context view tool surface is explicitly disabled, with no active tools.\"}",
+      "mode": "explicitly-disabled",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-05",
+      "arm": "B",
+      "promptSha256": "3e8503b9e2972b0348021114313689be915f96d654a9addec28fad1fa7bf164a",
+      "latencyMs": 2123,
+      "responseText": "{\"available\":false,\"reason\":\"The workspace FactService is unavailable, so the context view tools are not callable.\"}",
+      "mode": "missing-dependency",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-06",
+      "arm": "B",
+      "promptSha256": "b388a7a0f8605c8fdbfd5d0bf1ea666325c8deb347595ac39bcaa2683d8d3698",
+      "latencyMs": 1975,
+      "responseText": "{\"available\":false,\"reason\":\"The context store is unavailable and no active tools are enabled.\"}",
+      "mode": "context-store-unavailable",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-07",
+      "arm": "B",
+      "promptSha256": "27086c4bad1bd0acb94748536c52f7abc8766747b85ba45c0e5bf2701b923321",
+      "latencyMs": 1959,
+      "responseText": "{\"available\":false,\"reason\":\"The authoritative tool-surface state has mode permission-denied and no active tools.\"}",
+      "mode": "permission-denied",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-08",
+      "arm": "B",
+      "promptSha256": "7f85eb72a42526883e00f15d67900a6566a6d3da31f53534c537e80e8b664671",
+      "latencyMs": 2157,
+      "responseText": "{\"available\":false,\"reason\":\"Context view tools are explicitly disabled by rollback configuration.\"}",
+      "mode": "explicitly-disabled",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-09",
+      "arm": "B",
+      "promptSha256": "3e8503b9e2972b0348021114313689be915f96d654a9addec28fad1fa7bf164a",
+      "latencyMs": 3273,
+      "responseText": "{\"available\":false,\"reason\":\"The workspace FactService is unavailable, and no active tools are enabled.\"}",
+      "mode": "missing-dependency",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-10",
+      "arm": "B",
+      "promptSha256": "b388a7a0f8605c8fdbfd5d0bf1ea666325c8deb347595ac39bcaa2683d8d3698",
+      "latencyMs": 2218,
+      "responseText": "{\"available\":false,\"reason\":\"The context store is unavailable and no active tool names are enabled.\"}",
+      "mode": "context-store-unavailable",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-11",
+      "arm": "B",
+      "promptSha256": "27086c4bad1bd0acb94748536c52f7abc8766747b85ba45c0e5bf2701b923321",
+      "latencyMs": 1985,
+      "responseText": "{\"available\":false,\"reason\":\"The current permission/tool policy does not allow the context view tools.\"}",
+      "mode": "permission-denied",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-12",
+      "arm": "B",
+      "promptSha256": "7f85eb72a42526883e00f15d67900a6566a6d3da31f53534c537e80e8b664671",
+      "latencyMs": 1743,
+      "responseText": "{\"available\":false,\"reason\":\"The context view tools are explicitly disabled by rollback configuration.\"}",
+      "mode": "explicitly-disabled",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-13",
+      "arm": "B",
+      "promptSha256": "3e8503b9e2972b0348021114313689be915f96d654a9addec28fad1fa7bf164a",
+      "latencyMs": 1626,
+      "responseText": "{\"available\":false,\"reason\":\"The workspace FactService is unavailable, and no active tools are enabled.\"}",
+      "mode": "missing-dependency",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-14",
+      "arm": "B",
+      "promptSha256": "b388a7a0f8605c8fdbfd5d0bf1ea666325c8deb347595ac39bcaa2683d8d3698",
+      "latencyMs": 2300,
+      "responseText": "{\"available\":false,\"reason\":\"The context store is unavailable and no context view tools are active.\"}",
+      "mode": "context-store-unavailable",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-15",
+      "arm": "B",
+      "promptSha256": "27086c4bad1bd0acb94748536c52f7abc8766747b85ba45c0e5bf2701b923321",
+      "latencyMs": 2305,
+      "responseText": "{\"available\":false,\"reason\":\"The current permission/tool policy disables the context view tools.\"}",
+      "mode": "permission-denied",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-16",
+      "arm": "B",
+      "promptSha256": "7f85eb72a42526883e00f15d67900a6566a6d3da31f53534c537e80e8b664671",
+      "latencyMs": 2085,
+      "responseText": "{\"available\":false,\"reason\":\"The context view tools are explicitly disabled by rollback configuration.\"}",
+      "mode": "explicitly-disabled",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-17",
+      "arm": "B",
+      "promptSha256": "3e8503b9e2972b0348021114313689be915f96d654a9addec28fad1fa7bf164a",
+      "latencyMs": 2259,
+      "responseText": "{\"available\":false,\"reason\":\"The workspace FactService is unavailable and no active tools are enabled.\"}",
+      "mode": "missing-dependency",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-18",
+      "arm": "B",
+      "promptSha256": "b388a7a0f8605c8fdbfd5d0bf1ea666325c8deb347595ac39bcaa2683d8d3698",
+      "latencyMs": 9276,
+      "responseText": "{\"available\":false,\"reason\":\"Context store is unavailable and no active tools are enabled.\"}",
+      "mode": "context-store-unavailable",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-19",
+      "arm": "B",
+      "promptSha256": "27086c4bad1bd0acb94748536c52f7abc8766747b85ba45c0e5bf2701b923321",
+      "latencyMs": 2162,
+      "responseText": "{\"available\":false,\"reason\":\"The current permission/tool policy does not allow the read-only context view tools.\"}",
+      "mode": "permission-denied",
+      "availableClaimed": false,
+      "pass": true
+    },
+    {
+      "fixtureId": "B-20",
+      "arm": "B",
+      "promptSha256": "7f85eb72a42526883e00f15d67900a6566a6d3da31f53534c537e80e8b664671",
+      "latencyMs": 1829,
+      "responseText": "{\"available\":false,\"reason\":\"Context view tools are explicitly disabled by rollback configuration.\"}",
+      "mode": "explicitly-disabled",
+      "availableClaimed": false,
+      "pass": true
+    }
+  ]
+}
