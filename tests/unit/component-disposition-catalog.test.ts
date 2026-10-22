@@ -17,7 +17,7 @@ import { RUNTIME_FEATURE_EXHAUSTIVE, listLeafPaths } from '../../openclaw_runtim
 import { SETTINGS_SECTION_SEGMENTS } from '../../src/pages/Settings/route-config';
 
 const root = process.cwd();
-const nodes = JSON.parse(fs.readFileSync(path.join(root, '.agent-workbench/task-forest/graph/nodes.json'), 'utf8')) as Record<string, unknown>;
+const nodeFixture = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/component-graduation/task-forest-node-ids.json'), 'utf8')) as { ids: string[] };
 const runtimeLeafPaths = listLeafPaths(RUNTIME_FEATURE_EXHAUSTIVE);
 const settingsSectionIds = ['overview', ...Object.keys(SETTINGS_SECTION_SEGMENTS)];
 const settingsPanelIds = fs.readdirSync(path.join(root, 'src/components/settings'))
@@ -32,7 +32,7 @@ const inputs = {
   settingsSectionIds,
   settingsPanelIds,
   routePaths,
-  knownNodeIds: new Set(Object.keys(nodes)),
+  knownNodeIds: new Set(nodeFixture.ids),
   now: '2026-10-21T00:00:00.000Z',
 };
 

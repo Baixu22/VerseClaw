@@ -72,13 +72,13 @@ describe('WP0 module contract and identity', () => {
   it('refuses identity and version drift with an unchanged harness verdict', () => {
     const drift = evaluateGate({ ...baseGate, mc3: { ...mc3, identity: { ...mc3.identity, binary_sha256: 'f'.repeat(64) } } });
     expect(drift.passed).toBe(false);
-    expect(drift.failures.some((entry) => entry.case === 'binary_digest_mismatch' && entry.status === 'rejected_by_policy' && entry.host_verdict === 'unchanged')).toBe(true);
+    expect(drift.failures.some((entry: { case: string; status: string; host_verdict: string }) => entry.case === 'binary_digest_mismatch' && entry.status === 'rejected_by_policy' && entry.host_verdict === 'unchanged')).toBe(true);
     const ledger = evaluateGate({ ...baseGate, matrix: { ...baseGate.matrix, ledger_schema_version: 99 } });
-    expect(ledger.failures.some((entry) => entry.case === 'ledger_schema_too_new')).toBe(true);
+    expect(ledger.failures.some((entry: { case: string }) => entry.case === 'ledger_schema_too_new')).toBe(true);
     const contract = evaluateGate({ ...baseGate, matrix: { ...baseGate.matrix, consumer_contract_version: 'clawx.versegit.consumer-contract/v9' } });
-    expect(contract.failures.some((entry) => entry.case === 'contract_version_unsupported')).toBe(true);
+    expect(contract.failures.some((entry: { case: string }) => entry.case === 'contract_version_unsupported')).toBe(true);
     const caps = evaluateGate({ ...baseGate, capabilities: { ...capabilities, schema: 'versegit.capabilities/v9' }, capabilitiesDigest: null });
-    expect(caps.failures.map((entry) => entry.case)).toEqual(expect.arrayContaining(['capabilities_schema_unsupported', 'capabilities_digest_mismatch']));
+    expect(caps.failures.map((entry: { case: string }) => entry.case)).toEqual(expect.arrayContaining(['capabilities_schema_unsupported', 'capabilities_digest_mismatch']));
     expect(SUPPORTED_CAPABILITIES_SCHEMAS).toEqual(['versegit.capabilities/v1']);
   });
 

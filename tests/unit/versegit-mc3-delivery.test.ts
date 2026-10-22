@@ -22,7 +22,7 @@ function manifestFixture() {
   return {
     packageSchema: MC3_SCHEMA,
     identity: {
-      effective_source_commit: hex40, source_tree_digest: hex40, allowed_residual_patches: [],
+      effective_source_commit: hex40, source_tree_digest: hex40, allowed_residual_patches: [] as string[],
       build_recipe_digest: hex64, lockfile_digest: hex64, platform: 'win32-x64', binary_sha256: hex64,
       capabilities_digest: hex64, capabilities_schema: 'versegit.capabilities/v1', contract_digest: hex64,
       golden_bundle_digest: hex64, capability_matrix_digest: hex64,

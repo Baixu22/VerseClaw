@@ -4,10 +4,14 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   WP7_EVIDENCE_PATH,
+  WP7_CURATED_EVIDENCE_DIR,
   WP7_SCHEMA,
   stableJson,
-  validateWp7Report,
+  validateWp7Report as validateWp7ReportBase,
 } from '../../scripts/versegit-wp7-host-vertical.mts';
+
+const curatedEvidenceRoot = resolve(process.cwd(), WP7_CURATED_EVIDENCE_DIR);
+const validateWp7Report = (report: Record<string, unknown>) => validateWp7ReportBase(report, { evidenceRoot: curatedEvidenceRoot });
 
 function stored(): Record<string, unknown> {
   return JSON.parse(readFileSync(resolve(process.cwd(), WP7_EVIDENCE_PATH), 'utf8')) as Record<string, unknown>;

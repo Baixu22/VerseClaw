@@ -1140,7 +1140,7 @@ export async function buildWp7Report({
     const processPidsDuringQuery = queryAeProcesses();
     if (!processPidsDuringQuery.ok) throw new Error(`OS process inventory during run unavailable: ${processPidsDuringQuery.error}`);
     const processPidsDuring = processPidsDuringQuery.pids;
-    const managedBeforeShutdown = manager.list().map((health) => ({
+    const managedBeforeShutdown = (manager.list() as Array<{ key: string; pid?: number; state: string }>).map((health) => ({
       keyDigest: sha256(health.key),
       pid: health.pid,
       state: health.state,
@@ -1192,7 +1192,7 @@ export async function buildWp7Report({
       .filter((pid): pid is number => typeof pid === 'number' && Number.isInteger(pid) && pid > 0);
     const ownedPidChecks = managedPids.map((pid) => queryPidState(pid));
     const survivorPids = ownedPidChecks
-      .filter((entry): entry is Extract<PidState, { ok: true; exists: true }> => entry.ok && entry.exists === true)
+      .filter((entry): entry is { ok: true; pid: number; exists: true } => entry.ok && entry.exists === true)
       .map((entry) => entry.pid);
     const processInventoryClean = processAfterShutdownQuery.ok
       && ownedPidChecks.every((entry) => entry.ok)
@@ -1814,6 +1814,7 @@ export function validateWp7Report(
   const declaredManagedPids = managedBefore.map((entry) => entry.pid).filter((pid): pid is number => typeof pid === 'number');
   const ownedPidChecks = (processInventory?.ownedPidChecks ?? []) as Array<Record<string, unknown>>;
   const survivorPids = ownedPidChecks.filter((entry) => entry.ok === true && entry.exists === true).map((entry) => entry.pid);
+  const declaredSurvivorPids = Array.isArray(processInventory?.survivorPids) ? processInventory.survivorPids : null;
   add(stableJson(cleanupRecord) === stableJson(cleanup), 'report cleanup differs from host-recorded cleanup evidence');
   add(cleanup?.status === 'clean' && cleanup?.processesDeleted === true && cleanup?.processSurvivors === 0 && cleanup?.managerProcessSurvivors === 0 && cleanup?.worktreeSurvivors === 0 && cleanup?.tempRootRemoved === true && cleanup?.hostWorktreesDeleted === 0 && cleanup?.worktreesDeleted === 3 && Array.isArray(cleanup?.deletionErrors) && cleanup.deletionErrors.length === 0, 'cleanup boundary failed');
   add(processInventory?.queryOk === true && processInventory?.queryError === null, 'OS process inventory was not available after cleanup');
@@ -1830,8 +1831,8 @@ export function validateWp7Report(
   add(managedPids.every((pid) => !baselinePids.includes(pid)), 'managed VerseShell PIDs overlap the baseline inventory');
   add(managedPids.every((pid) => !afterPids.includes(pid)), 'managed VerseShell PID survived cleanup');
   add(Array.isArray(processInventory?.managedAfterShutdown) && processInventory.managedAfterShutdown.length === 0, 'VerseShell manager retained managed processes');
-  add(processInventory?.survivorPids?.length === 0 && survivorPids.length === 0, 'nonzero OS process survivor evidence was retained');
-  add(JSON.stringify(survivorPids) === JSON.stringify(processInventory?.survivorPids), 'owned OS process survivor inventory is inconsistent');
+  add(declaredSurvivorPids?.length === 0 && survivorPids.length === 0, 'nonzero OS process survivor evidence was retained');
+  add(JSON.stringify(survivorPids) === JSON.stringify(declaredSurvivorPids), 'owned OS process survivor inventory is inconsistent');
   add(cleanup?.processSurvivors === survivorPids.length, 'cleanup survivor count differs from owned PID exit checks');
 
   const boundaries = report.boundaries as Record<string, unknown> | undefined;

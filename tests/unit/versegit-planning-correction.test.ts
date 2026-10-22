@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -11,9 +11,29 @@ afterEach(() => {
 function cloneRoot() {
   const root = mkdtempSync(join(tmpdir(), 'versegit-planning-'));
   roots.push(root);
-  for (const dir of ['harness/specs/fixtures/versegit-planning-correction', '.agent-workbench/task-forest/graph']) {
+  for (const dir of ['harness/specs/fixtures/versegit-planning-correction']) {
     cpSync(dir, join(root, dir), { recursive: true });
   }
+  const graphDir = join(root, '.agent-workbench/task-forest/graph');
+  mkdirSync(graphDir, { recursive: true });
+  const implementationIds = [
+    'TF-0466','TF-0467','TF-0468','TF-0469','TF-0470','TF-0471','TF-0472',
+    'TF-0473','TF-0474','TF-0475','TF-0476','TF-0477','TF-0478','TF-0479',
+  ];
+  const nodes = Object.fromEntries(implementationIds.map((id) => [id, { id, status: id === 'TF-0479' ? 'proposed' : 'done' }]));
+  Object.assign(nodes, {
+    'TF-0465': { id: 'TF-0465', status: 'in_progress' },
+    'TF-0480': { id: 'TF-0480', status: 'deprecated' },
+    'TF-0481': { id: 'TF-0481', status: 'done' },
+  });
+  const requiredEdges = [
+    ['TF-0466','TF-0476'], ['TF-0478','TF-0466'], ['TF-0477','TF-0478'],
+    ['TF-0467','TF-0477'], ['TF-0468','TF-0477'], ['TF-0469','TF-0477'],
+  ];
+  const edges = Object.fromEntries(requiredEdges.map(([from, to], index) => [`synthetic-${index}`, {
+    id: `synthetic-${index}`, from, to, type: 'depends_on',
+  }]));
+  writeFileSync(join(graphDir, 'forest.json'), `${JSON.stringify({ nodes, edges, status_queues: { ready: [] } }, null, 2)}\n`, 'utf8');
   return root;
 }
 function rewrite(root: string, relative: string, edit: (value: any) => void) {
@@ -25,7 +45,7 @@ function rewrite(root: string, relative: string, edit: (value: any) => void) {
 
 describe('verseGit planning correction contract', () => {
   it('accepts the checked-in bundle and live graph', () => {
-    expect(validateVerseGitPlanningCorrection()).toMatchObject({ ok: true, issues: [] });
+    expect(validateVerseGitPlanningCorrection({ root: cloneRoot() })).toMatchObject({ ok: true, issues: [] });
   });
   it('rejects a live-graph bypass edge', () => {
     const root = cloneRoot();
