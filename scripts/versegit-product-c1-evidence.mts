@@ -52,8 +52,10 @@ const eventLines = readFileSync(eventsSource, 'utf8').split(/\r?\n/u).filter(Boo
 const events = eventLines.map((line) => JSON.parse(line) as Record<string, any>);
 const kinds = ['bind_requested', 'bound', 'bind_rejected', 'attach_requested', 'attached', 'attach_rejected', 'end_requested', 'ended', 'end_rejected'];
 const counts = Object.fromEntries(kinds.map((kind) => [kind, events.filter((event) => event.kind === kind).length]));
-const repoIds = [...new Set(events.filter((event) => typeof event.repoId === 'string').map((event) => event.repoId as string))];
-const worktreeIds = [...new Set(events.filter((event) => typeof event.worktreeId === 'string').map((event) => event.worktreeId as string))];
+const boundEvents = events.filter((event) => event.kind === 'bound' && typeof event.bindingId === 'string');
+const boundIds = new Set(boundEvents.map((event) => event.bindingId as string));
+const repoIds = [...new Set(boundEvents.filter((event) => typeof event.repoId === 'string').map((event) => event.repoId as string))];
+const worktreeIds = [...new Set(boundEvents.filter((event) => typeof event.worktreeId === 'string').map((event) => event.worktreeId as string))];
 const eventIdentityClean = events.every((event) => event.driven_by === 'agent' && event.actor === 'electron-main');
 const eventPathLeaks = events.filter((event) => /[A-Za-z]:[\\/]/u.test(JSON.stringify(event))).length;
 const positiveLifecycle =
@@ -69,6 +71,7 @@ const positiveLifecycle =
   report.retry?.sameBinding === true;
 const passed = positiveLifecycle &&
   counts.bind_requested >= 2 &&
+  boundIds.size >= 2 &&
   counts.bound >= 2 &&
   counts.attach_requested >= counts.attached &&
   counts.attached >= 2 &&
