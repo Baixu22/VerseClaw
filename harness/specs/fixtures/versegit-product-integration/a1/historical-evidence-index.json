@@ -1,0 +1,192 @@
+{
+  "schema": "clawx.versegit.product-a1-historical-index/v1",
+  "generated_at": "2026-10-22T12:14:31.295Z",
+  "task": "TF-0524",
+  "driven_by": "agent",
+  "actor": "codex",
+  "current_candidate_id": "4045788720d23bd59e72b48407034dbf2beea16ddc6a02d87ab20cf716911e74",
+  "old_evidence_reused_as_current": false,
+  "same_candidate_as_current": false,
+  "mapping_policy": "Old verdicts, candidate identities, digests and SHA256SUMS remain bound to their original bytes; stale replay is recorded, never rewritten or promoted.",
+  "historical_inputs_digest": "c81dffe969b5cca47231d2f200e2975860eab6370ef35fc21ce76ab9eaec89a3",
+  "entries": [
+    {
+      "id": "wp6-engineering-closeout",
+      "source_task": "TF-0472",
+      "kind": "engineering-closeout",
+      "driven_by": "agent",
+      "actor": "codex",
+      "original_verdict": "PASS",
+      "candidate": {
+        "candidate_id": null,
+        "commit": null,
+        "tree": null
+      },
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json",
+          "sha256": "27350249f602093eb055be9bb34ad56acca64b0c51a4e6aa05b19d5dd3f5e698",
+          "bytes": 53384
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/manifest.json",
+          "sha256": "22a548951fd34131e76f86554c8cea36343c860d01f3ff72c9ee29ec76517316",
+          "bytes": 19515
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/SHA256SUMS",
+          "sha256": "261d5ab61a42268790e9a23e0a4c5acc53c8ee8492bc267e57607b1d29190906",
+          "bytes": 861
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
+          "sha256": "9b39c1f3318be3ddf42e764d783ca1527ebad6f8c6170ab3ec1be9fd7f5152f4",
+          "bytes": 3413
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/SHA256SUMS",
+          "sha256": "910d77a7f1163f5055d61e772fec70d0892b700460d57f99571cc6a9ec897c09",
+          "bytes": 727
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc0-evidence/baseline.json",
+          "sha256": "59197644d7a95a36fc7319d358b3673761f4be80a59c3380b942c5c29cdcf89e",
+          "bytes": 18505
+        }
+      ],
+      "classification": "historical-stale",
+      "verifier_issues": [
+        "stored report digest differs from the live closeout replay",
+        "wp6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/wp6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual ccc1e1b9c5cf",
+        "mc6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/mc6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual ccc1e1b9c5cf"
+      ],
+      "current_candidate_reuse": false
+    },
+    {
+      "id": "wp7-host-vertical-slice",
+      "source_task": "TF-0513",
+      "kind": "bounded-host-vertical",
+      "driven_by": "agent",
+      "actor": "codex",
+      "original_verdict": "PASS",
+      "candidate": {
+        "candidate_id": "a28a717274b46097262ed42d128bbba15881a5b91ecb214ebdb522bed44d8f67",
+        "commit": "dc836924dde0b685503d92e5c879b7f1091b93f2",
+        "tree": "195c0d9ebf701b840d8f4fa32098b58ec9bcf45a"
+      },
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/report.json",
+          "sha256": "44617536f879941ab082a308f738984c2a3cb0f88cf57f5da24a93f011d6698d",
+          "bytes": 172182
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/SHA256SUMS",
+          "sha256": "2782ff13f9c8b87c5687ffcdf6dee0665a4db041cad64a7da17c7b469ba12da8",
+          "bytes": 12018
+        }
+      ],
+      "classification": "historical-replayable-under-curated-evidence",
+      "verifier_issues": [],
+      "current_candidate_reuse": false,
+      "unit_test_replay": "tests/unit/versegit-wp7-host-vertical.test.ts"
+    },
+    {
+      "id": "wp8-independent-review",
+      "source_task": "TF-0514",
+      "kind": "independent-review",
+      "driven_by": "agent",
+      "actor": "codex",
+      "original_verdict": "PASS_WITH_GAPS",
+      "candidate": {
+        "candidate_id": null,
+        "commit": "5d313871c0b6f612b000db2041c9670d571c97a4",
+        "tree": "b3856199f4458a8ce23ec22325899a42efe00867"
+      },
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/review-report.json",
+          "sha256": "15a018e4556dd5e1e7aa4621df20a8721d9af335664495382407f201373b1899",
+          "bytes": 15898
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/SHA256SUMS",
+          "sha256": "c8b7f4de4c92a874124a8c5ea6678694b2fc67b407dabcf1b0d36f7846eb95e0",
+          "bytes": 5064
+        }
+      ],
+      "classification": "historical-stale",
+      "verifier_issues": [
+        "input digest mismatch: scripts/versegit-wp7-host-vertical.mts",
+        "input digest mismatch: tests/unit/versegit-wp7-host-vertical.test.ts",
+        "input digest mismatch: tests/unit/versegit-receipt-authority.test.ts",
+        "SHA256SUMS mismatch: scripts/versegit-wp7-host-vertical.mts",
+        "SHA256SUMS mismatch: tests/unit/versegit-receipt-authority.test.ts",
+        "SHA256SUMS mismatch: tests/unit/versegit-wp7-host-vertical.test.ts",
+        "SHA256SUMS mismatch: tests/unit/versegit-wp8-review.test.ts"
+      ],
+      "current_candidate_reuse": false
+    },
+    {
+      "id": "wp9-global-acceptance",
+      "source_task": "TF-0515",
+      "kind": "global-acceptance",
+      "driven_by": "agent",
+      "actor": "codex",
+      "original_verdict": "PASS_WITH_GAPS",
+      "candidate": {
+        "candidate_id": null,
+        "commit": "5d313871c0b6f612b000db2041c9670d571c97a4",
+        "tree": "b3856199f4458a8ce23ec22325899a42efe00867"
+      },
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/global-report.json",
+          "sha256": "08d5b76de7704300cd642cfc2c3c8f8383ebafb49633326f16890db66950e311",
+          "bytes": 36760
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/manifest.json",
+          "sha256": "15732970208dfa68928a4a70a7a50bc0f26c94a48c20172bb1f64e159246582b",
+          "bytes": 2085
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/independent-review-report.json",
+          "sha256": "33d00d0f5974aa8c8b7effe59c96aa9e5d833477c6a3ac8b0a650baf815dbf9a",
+          "bytes": 3398
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/independent-review-response.md",
+          "sha256": "53d8fe4262b17da5c6dec3f4865364899c6929ec7f19d7545dea21360e503aa6",
+          "bytes": 1688
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/primary-reviewer-provider-failure.md",
+          "sha256": "6c3d992807cb4b642bcdd71f92eccaafa9d30d96a53e7e24a90c753233657d22",
+          "bytes": 640
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/SHA256SUMS",
+          "sha256": "70d8363092fd2ab4dc4c51a2bc07db85b120e23a98ed71eac581dd81531ae0e5",
+          "bytes": 1628
+        }
+      ],
+      "classification": "historical-stale",
+      "verifier_issues": [
+        "WP6 verifier: stored report digest differs from the live closeout replay",
+        "WP6 verifier: wp6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/wp6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual ccc1e1b9c5cf",
+        "WP6 verifier: mc6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/mc6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual ccc1e1b9c5cf",
+        "WP8 verifier: input digest mismatch: scripts/versegit-wp7-host-vertical.mts",
+        "WP8 verifier: input digest mismatch: tests/unit/versegit-wp7-host-vertical.test.ts",
+        "WP8 verifier: input digest mismatch: tests/unit/versegit-receipt-authority.test.ts",
+        "WP8 verifier: SHA256SUMS mismatch: scripts/versegit-wp7-host-vertical.mts",
+        "WP8 verifier: SHA256SUMS mismatch: tests/unit/versegit-receipt-authority.test.ts",
+        "WP8 verifier: SHA256SUMS mismatch: tests/unit/versegit-wp7-host-vertical.test.ts",
+        "WP8 verifier: SHA256SUMS mismatch: tests/unit/versegit-wp8-review.test.ts",
+        "curated: SHA256SUMS mismatch: tests/unit/versegit-wp9-global-acceptance.test.ts"
+      ],
+      "current_candidate_reuse": false
+    }
+  ],
+  "digest": "c4dd8a84cd121f4c6bae2c7b2180dfe257a847f7d936f9a3a1df0717a6c12b63"
+}

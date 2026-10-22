@@ -1,0 +1,5 @@
+1f5bb9e03d5598ab5134009525a75cce458cfe4ae9cceea7326bd62bdf2ddb76  harness/specs/fixtures/versegit-product-integration/a1/historical-evidence-index.json
+3bc8fb6b86acbb0348b31fff5a8bf4f1264852c853e7cf6a5e91893eee81cf1b  harness/specs/fixtures/versegit-product-integration/a1/current-verification.json
+8fa3d38f39963567c26b16b7e8a0a9bc2f20ad09745060ad54e8e531a38f34ee  harness/specs/fixtures/versegit-product-integration/a1/current-input-manifest.json
+8fe8e4b491d5cebde547408a5572cfc59cc8fbe98c71a16d7419a2e105791533  harness/specs/fixtures/versegit-product-integration/a1/independent-review.json
+bb6a383bfa335b2fce4a40640b6ccf9f35df2be5735daea35207d2f6a40c410f  harness/specs/fixtures/versegit-product-integration/a1/negative-checks.json

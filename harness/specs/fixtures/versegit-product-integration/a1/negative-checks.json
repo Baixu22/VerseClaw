@@ -1,0 +1,50 @@
+{
+  "schema": "clawx.versegit.product-a1-negative-checks/v1",
+  "generated_at": "2026-10-22T12:14:31.519Z",
+  "task": "TF-0524",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "cases": [
+    {
+      "id": "input-byte-hash",
+      "mutation": "replace one bound input digest and re-sign candidate identity",
+      "expected": "input digest mismatch",
+      "rejected": true,
+      "issues": [
+        "input digest mismatch: harness/specs/fixtures/versegit-planning-correction/evidence-retention-contract.json"
+      ]
+    },
+    {
+      "id": "candidate-id",
+      "mutation": "replace candidate identity and re-sign document digest",
+      "expected": "candidate identity mismatch",
+      "rejected": true,
+      "issues": [
+        "candidate identity is not reproducible"
+      ]
+    },
+    {
+      "id": "historical-promotion",
+      "mutation": "promote old task evidence as current candidate evidence",
+      "expected": "historical evidence must stay historical",
+      "rejected": true,
+      "issues": [
+        "historical evidence promoted as current"
+      ]
+    },
+    {
+      "id": "absolute-path",
+      "mutation": "add a machine-absolute input path",
+      "expected": "relative inputs only",
+      "rejected": true,
+      "issues": [
+        "input path is not relative: <absolute-path-probe>",
+        "path escapes root: <absolute-path-probe>",
+        "candidate identity is not reproducible",
+        "absolute path leak in manifest"
+      ]
+    }
+  ],
+  "digest": "ba156469de382747ab458884548305f13d61b0f2b4a1e780ebab5916bfd3d91c"
+}
