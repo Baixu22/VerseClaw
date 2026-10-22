@@ -108,7 +108,8 @@ describe('persistent host completion lifecycle', () => {
     store.record({ identity: identity({ sessionId: 'applied' }), hostOutcome: 'applied', idempotencyKey: 'a', actor: 'codex' });
     store.record({ identity: identity({ sessionId: 'failed' }), hostOutcome: 'not_applied', idempotencyKey: 'f', actor: 'codex' });
     store.record({ identity: identity({ sessionId: 'unknown' }), hostOutcome: 'unknown', idempotencyKey: 'u', actor: 'codex' });
-    expect(store.activeRiskSessions(['active', 'applied', 'failed', 'unknown'])).toEqual(['active']);
+    store.writeLegacyRecord({ schema: VG_LEGACY_COMPLETION_SCHEMA, sessionId: 'legacy-success', outcome: 'success' });
+    expect(store.activeRiskSessions(['active', 'applied', 'failed', 'unknown', 'legacy-success'])).toEqual(['active']);
   });
 
   it('reads legacy sessions and refuses to promote success without exact candidate/effect identity', () => {

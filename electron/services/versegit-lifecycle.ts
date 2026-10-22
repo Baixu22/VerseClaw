@@ -178,12 +178,13 @@ export class FileVerseGitCompletionStore implements VerseGitCompletionSink {
   }
 
   projectProviderState(sessionId: string): 'active' | 'abandoned' | 'host-completed' {
-    return this.read(sessionId)?.current.providerProjection ?? 'active';
+    return this.read(sessionId)?.current.providerProjection ?? this.readLegacy(sessionId)?.providerProjection ?? 'active';
   }
 
   activeSessionRisk(sessionId: string): boolean {
     const record = this.read(sessionId);
-    return record ? record.current.activeSessionRisk : true;
+    if (record) return record.current.activeSessionRisk;
+    return this.readLegacy(sessionId)?.activeSessionRisk ?? true;
   }
 
   activeRiskSessions(sessionIds: Iterable<string>): string[] {
