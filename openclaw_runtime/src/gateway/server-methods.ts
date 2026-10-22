@@ -498,6 +498,7 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "sessions.stop",
       "sessions.archive",
       "sessions.restore",
+      "sessions.effectivePolicy",
       "sessions.patch",
       "sessions.pluginPatch",
       "sessions.reset",

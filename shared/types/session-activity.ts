@@ -1,4 +1,5 @@
 import type { GitRepositoryStatus } from './git';
+import type { SessionEffectivePolicy } from './session-effective-policy';
 
 export type SessionActivityRunStatus = 'idle' | 'running' | 'waiting_approval' | 'completed' | 'failed' | 'aborted';
 export type SessionActivityTaskKind = 'mission' | 'taskLoop' | 'clawGraph' | 'taskLedger';
@@ -156,6 +157,8 @@ export type SessionActivityTerminal = {
 };
 
 export type SessionActivitySnapshot = {
+  /** Current read-only effective policy projection; null means no verified answer. */
+  policy?: SessionEffectivePolicy | null;
   session: {
     sessionKey: string;
     runId?: string | null;
@@ -185,6 +188,7 @@ export type SessionActivitySnapshot = {
     subagents: boolean;
     terminals: boolean;
     continuity: boolean;
+    policy?: boolean;
   };
   /** Source state of the background owner read; see `SessionActivityBackgroundRead`. */
   backgroundRead: SessionActivityBackgroundRead;

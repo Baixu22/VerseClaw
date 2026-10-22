@@ -517,6 +517,21 @@ export const SessionsMutationReceiptSchema = Type.Object(
   { additionalProperties: true },
 );
 
+/** Reads the current session-level effective policy projection. */
+export const SessionsEffectivePolicyParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    workspaceId: NonEmptyString,
+    permissionMode: Type.Union([
+      Type.Literal("readOnly"),
+      Type.Literal("acceptEdits"),
+      Type.Literal("plan"),
+      Type.Literal("fullAccess"),
+    ]),
+  },
+  { additionalProperties: false },
+);
+
 /** Requests manual compaction for a session transcript. */
 export const SessionsCompactParamsSchema = Type.Object(
   {

@@ -157,6 +157,7 @@ const VERSE_CLAW_REQUIRED_GATEWAY_METHODS = [
   'sessions.stop',
   'sessions.archive',
   'sessions.restore',
+  'sessions.effectivePolicy',
   'sessions.delete',
   'cron.list',
   'cron.add',

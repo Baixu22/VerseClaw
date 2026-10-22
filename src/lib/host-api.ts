@@ -332,6 +332,8 @@ import type {
   SessionLongTaskControlHistoryResult,
   SessionLongTaskControlPayload,
   SessionPermanentDeletePayload,
+  SessionEffectivePolicyPayload,
+  SessionEffectivePolicyResult,
   SessionRestorePayload,
   SessionLongTaskControlStatusResult,
   SessionManualCompactPayload,
@@ -1473,6 +1475,9 @@ export const hostApi = {
     ),
     archive: (input: SessionArchivePayload) => invokeHost('sessions', 'archive', input),
     restore: (input: SessionRestorePayload) => invokeHost('sessions', 'restore', input),
+    effectivePolicy: (
+      input: SessionEffectivePolicyPayload,
+    ): Promise<SessionEffectivePolicyResult> => invokeHost('sessions', 'effectivePolicy', input),
     permanentDelete: (input: SessionPermanentDeletePayload) => (
       invokeHost('sessions', 'permanentDelete', input)
     ),

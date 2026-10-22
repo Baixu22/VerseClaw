@@ -33,13 +33,14 @@ import type {
   CompressionSemanticAtom,
   SessionCompactionResult,
   SessionDeleteResult,
+  SessionEffectivePolicy,
   SessionExpandSelectorResult,
   SessionHandoffSource,
   SessionRecallDiagnostic,
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
 import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
-import { createWorkspacesApi } from './workspaces-api';
+import { createWorkspacesApi, getActiveWorkspaceProfile } from './workspaces-api';
 import { evaluateHandoffDerivation } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
 import { getResourceTracker } from './resource-tracker';
@@ -2778,6 +2779,37 @@ export function createSessionsApi(ctx: {
       return result;
     },
     restore: async (payload) => restoreSession({ id: getSessionKey(payload) }, ctx.gatewayManager),
+    effectivePolicy: async (payload) => {
+      const sessionKey = typeof payload.sessionKey === 'string' ? payload.sessionKey.trim() : '';
+      if (!sessionKey) return { success: false, error: 'sessionKey is required' };
+      const active = await getActiveWorkspaceProfile();
+      if (!active) return { success: false, error: 'No active workspace is available for effective policy.' };
+      const requestedWorkspaceId = typeof payload.workspaceId === 'string' ? payload.workspaceId.trim() : '';
+      if (requestedWorkspaceId && requestedWorkspaceId !== active.id) {
+        return { success: false, error: 'Requested workspace does not match the active workspace.' };
+      }
+      if (!ctx.gatewayManager) return { success: false, error: 'Gateway manager unavailable' };
+      try {
+        const result = await ctx.gatewayManager.rpc<{ ok?: boolean; policy?: unknown }>(
+          'sessions.effectivePolicy',
+          {
+            key: sessionKey,
+            workspaceId: active.id,
+            permissionMode: active.permissionMode,
+          },
+          15_000,
+        );
+        if (result?.ok !== true || !isRecord(result.policy)) {
+          return { success: false, error: 'Gateway returned no effective policy snapshot.' };
+        }
+        return { success: true, policy: result.policy as SessionEffectivePolicy };
+      } catch (error) {
+        return {
+          success: false,
+          error: `Effective policy read failed: ${error instanceof Error ? error.message : String(error)}`,
+        };
+      }
+    },
     permanentDelete: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const result = await permanentDeleteSession({ id: sessionKey });

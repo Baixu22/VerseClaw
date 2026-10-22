@@ -131,6 +131,7 @@ export type SessionsResetParams = SchemaType<"SessionsResetParams">;
 export type SessionsDeleteParams = SchemaType<"SessionsDeleteParams">;
 export type SessionsArchiveParams = SchemaType<"SessionsArchiveParams">;
 export type SessionsRestoreParams = SchemaType<"SessionsRestoreParams">;
+export type SessionsEffectivePolicyParams = SchemaType<"SessionsEffectivePolicyParams">;
 export type SessionsMutationReceipt = SchemaType<"SessionsMutationReceipt">;
 export type SessionsCompactParams = SchemaType<"SessionsCompactParams">;
 export type SessionsCompactRangeParams = SchemaType<"SessionsCompactRangeParams">;

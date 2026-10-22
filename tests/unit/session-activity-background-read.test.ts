@@ -38,6 +38,10 @@ vi.mock('@/lib/host-api', () => ({
 vi.mock('@electron/services/git-api', () => ({
   createGitApi: () => ({ status: async () => ({ success: false }) }),
 }));
+vi.mock('@electron/services/workspaces-api', () => ({
+  getActiveWorkspaceProfile: async () => ({ id: 'workspace-policy', permissionMode: 'acceptEdits' }),
+}));
+
 vi.mock('@electron/services/task-ledger-api', () => ({
   createTaskLedgerApi: () => ({ snapshot: async () => ({ success: false }) }),
 }));
@@ -223,6 +227,34 @@ describe('session activity background read (Main service)', () => {
     expect(result.snapshot.lineage).toEqual([]);
     /* The normal empty state must not raise the unknown warning. */
     expect(backgroundReadFailed(result.snapshot.backgroundRead)).toBe(false);
+  });
+
+
+  it('carries the effective policy from the same scoped RPC read and keeps it unknown on failure', async () => {
+    const policy = {
+      schemaVersion: 'SessionEffectivePolicy/v1',
+      generatedAt: '2026-10-23T02:00:00.000Z',
+      scope: { workspaceId: 'workspace-policy', sessionKey: SESSION_KEY, sessionId: 's', agentId: 'main', permissionMode: 'acceptEdits' },
+      generation: { state: 'current', runtimeGeneration: 'gateway-b1', runId: null, profileObservedAt: '2026-10-23T02:00:00.000Z' },
+      backend: { configured: { state: 'configured', value: 'openclaw', source: 'session', reason: null, observedAt: null }, effective: { state: 'effective', value: { id: 'openclaw-embedded', kind: 'openclaw-embedded', modelProvider: 'openai', model: 'gpt-5.4', nativeThreadId: null, nativeSessionId: null }, source: 'runtime', reason: null, observedAt: null }, binding: { state: 'effective', value: { kind: 'session', id: 's' }, source: 'runtime', reason: null, observedAt: null }, compatibility: { nativeCompactionOwner: 'openclaw', parameters: [] } },
+      model: { configured: { state: 'unknown', value: null, source: 'session', reason: null, observedAt: null }, effective: { state: 'unknown', value: null, source: 'session', reason: null, observedAt: null }, effort: { state: 'unknown', value: null, source: 'session', reason: null, observedAt: null } },
+      grant: { mode: { state: 'effective', value: 'acceptEdits', source: 'main', reason: null, observedAt: null }, effectiveActions: { state: 'unknown', value: null, source: 'runtime', reason: null, observedAt: null } },
+      limits: { context: { state: 'unknown', value: null, source: 'session', reason: null, observedAt: null }, queue: { state: 'unknown', value: null, source: 'session', reason: null, observedAt: null }, resources: { state: 'unknown', value: null, source: 'session', reason: null, observedAt: null }, schedule: { state: 'unsupported', value: null, source: 'owner', reason: null, observedAt: null } },
+      diagnostics: [],
+    } as SessionActivitySnapshot['policy'];
+    const loaded = await apiWithRpc(async (method) => {
+      if (method === 'sessions.effectivePolicy') return { ok: true, policy };
+      return { snapshot: runtimeSnapshot() };
+    }).snapshot({ sessionKey: SESSION_KEY });
+    expect(loaded.snapshot.policy).toEqual(policy);
+    expect(loaded.snapshot.availability.policy).toBe(true);
+
+    const failed = await apiWithRpc(async (method) => {
+      if (method === 'sessions.effectivePolicy') throw new Error('policy timeout');
+      return { snapshot: runtimeSnapshot() };
+    }).snapshot({ sessionKey: SESSION_KEY });
+    expect(failed.snapshot.policy).toBeNull();
+    expect(failed.snapshot.availability.policy).toBe(false);
   });
 
   it('keeps background activity after the main run ended', async () => {

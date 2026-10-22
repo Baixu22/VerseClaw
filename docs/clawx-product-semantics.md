@@ -106,6 +106,27 @@ resource authority. Permanent deletion of an already archived conversation still
 uses the archive index as its retry locator and must not report success while an
 owned derivative remains.
 
+## Effective session policy
+
+`SessionEffectivePolicy/v1` is a read-only projection of the current session
+owner facts. It keeps configured values, effective values, unverified values,
+unsupported capabilities and ignored overrides in separate states. Effective
+facts come from the bounded TF-0512 `ModelCapabilityProfile/v1` observation for
+the same workspace/session and a matching runtime generation; a missing, stale or
+mismatched observation leaves effective values unknown. The projection never
+substitutes a JSON file, an `enabled` flag, a provider label or a stale receipt
+for runtime evidence.
+
+The policy reports backend, native binding, model/effort, workspace grant,
+action authorization, context/queue/resource/schedule limits and their sources.
+Codex app-server and Claude CLI own native compaction; their compatibility rows
+mark OpenClaw compaction overrides as ignored with a reason. OpenClaw embedded
+sessions retain OpenClaw-owned compaction. Resource and schedule owners are not
+copied into a second registry, and the policy contains no credentials, auth
+profile IDs, raw prompts or transcript text. Reading it performs no execution,
+config write or grant expansion. Executable fixtures are under
+[`long-session-development/b1/`](../harness/specs/fixtures/long-session-development/b1/).
+
 ## Windows x64 Controlled Preview
 
 The current first-product validation target is **Verse Claw Windows x64 - DCS Coding Controlled Preview**. It is an internal, single-workspace path with explicit opt-in, runtime acknowledgement, controlled writes, undo, restart recovery, kill/rollback, and a redacted support bundle. FP-P1 evidence is engineering and real-process evidence; release approval remains pending, and no real-human evidence is claimed.

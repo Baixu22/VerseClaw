@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-effective-policy
 title: 生成会话生效配置快照并区分原生后端
 program: long-session-development-20261022
@@ -12,20 +12,35 @@ contractIndex: harness/specs/tasks/long-session-development-plan.md
 dependsOnTasks:
   - A2
   - TF-0512
+diffBase: 8459bbf67
 touchedAreas:
   - harness/specs/tasks/long-session-effective-policy.md
   - harness/specs/tasks/long-session-development-plan.md
+  - docs/clawx-product-semantics.md
+  - shared/types/session-effective-policy.ts
+  - shared/types/session-activity.ts
+  - openclaw_runtime/packages/gateway-protocol/src/index.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/protocol-schemas.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/types.ts
   - shared/host-api/contract.ts
   - src/lib/host-api.ts
+  - electron/gateway/manager.ts
   - electron/services/sessions-api.ts
   - electron/services/session-activity-api.ts
   - openclaw_runtime/src/agents/runtime-effective-capability.ts
+  - openclaw_runtime/src/agents/session-effective-policy.ts
+  - openclaw_runtime/src/gateway/methods/core-descriptors.ts
+  - openclaw_runtime/src/gateway/server-methods.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.read.ts
   - openclaw_runtime/src/agents/session-runtime-compat.ts
   - openclaw_runtime/extensions/codex/src/app-server/session-binding.ts
   - openclaw_runtime/extensions/codex/src/app-server/compact.ts
   - openclaw_runtime/extensions/anthropic/cli-backend.ts
   - tests/unit/runtime-effective-capability.test.ts
+  - openclaw_runtime/src/gateway/session-ecosystem-lifecycle-reachability.test.ts
   - tests/unit/long-session-effective-policy.test.ts
+  - tests/unit/session-activity-background-read.test.ts
   - harness/specs/fixtures/long-session-development/b1/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -68,9 +83,15 @@ docs:
 
 把配置文件、静态目录、实际可执行能力和动作授权分开，复用 ModelCapabilityProfile 的 current-run 事实。
 
-本规格为待执行合同。任务状态、前置与下一 ready 由 repo-local Task Forest 管理。节点创建、文件存在、静态 validate 或 dry-run 不是功能证据。只有前置任务/阶段的盘上验收完整后才开始。
+本规格已执行：TF-0512 的 ModelCapabilityProfile 以有界 last-observed snapshot 供 SessionEffectivePolicy 生成只读投影；configured/effective/unknown/stale/mismatch/unsupported/ignored 分开，Host/Gateway 只读路径已接线。
 
 所属阶段二：让会话配置与实际运行状态可见。统一边界见[规划合同索引](./long-session-development-plan.md)。
+**B1 交付**
+
+- TF-0512 runtime profile 现在保留同进程、按 workspace/session 限界且 30s 过期的 last-observed snapshot；该缓存不是第二 capability inventory。
+- `SessionEffectivePolicy/v1` 区分 configured、effective、unverified、stale、mismatch、unsupported 与 ignored，并输出 backend/binding、model/effort、grant/action、context/queue/resource/schedule 字段和来源。
+- Codex app-server、Claude CLI 与 OpenClaw embedded 的 native compaction ownership 和 ignored parameter reasons 已进入兼容表。
+- `sessions.effectivePolicy` Gateway read method、Main Host facade 与 SessionActivity snapshot 共用同一只读 projection；输出不含 credentials、auth profile ID、prompt 或 transcript 文本。
 
 **前置与读入**
 

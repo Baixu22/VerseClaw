@@ -52,6 +52,8 @@ import type {
   MemoryProposalRecord,
 } from '../types/memory';
 import type { SessionActivitySnapshot } from '../types/session-activity';
+import type { SessionEffectivePolicy } from '../types/session-effective-policy';
+export type { SessionEffectivePolicy } from '../types/session-effective-policy';
 import type {
   GitBranch,
   GitCapabilities,
@@ -2804,6 +2806,13 @@ export type SessionArchivePayload = {
   originalFolderId?: string | null;
 };
 export type SessionRestorePayload = { id: string };
+export type SessionEffectivePolicyPayload = {
+  sessionKey: string;
+  workspaceId?: string;
+};
+export type SessionEffectivePolicyResult = HostSuccess & {
+  policy?: SessionEffectivePolicy;
+};
 export type SessionPermanentDeletePayload = { id: string };
 export type SessionListArchivedPayload = { agentId?: string };
 export type SessionListArchivedResult = HostSuccess & {
@@ -5715,6 +5724,7 @@ export type HostApiContract = {
     truncate: (payload: SessionTruncatePayload) => SessionTruncateResult;
     archive: (payload: SessionArchivePayload) => HostSuccess;
     restore: (payload: SessionRestorePayload) => HostSuccess;
+    effectivePolicy: (payload: SessionEffectivePolicyPayload) => SessionEffectivePolicyResult;
     permanentDelete: (payload: SessionPermanentDeletePayload) => HostSuccess;
     listArchived: (payload?: SessionListArchivedPayload) => SessionListArchivedResult;
     emptyArchive: (payload: SessionEmptyArchivePayload) => HostSuccess;
