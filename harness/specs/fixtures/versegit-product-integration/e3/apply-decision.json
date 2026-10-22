@@ -1,0 +1,261 @@
+{
+  "schema": "clawx.versegit.e3-apply-decision/v1",
+  "generated_at": "2026-10-22T21:38:44.158Z",
+  "task": "TF-0534",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "31cbfa08a6379d32af4907d1f97416f10b64fc97",
+    "tree": "f7039a70cf327f2d2e4b3e187ab6b8d947e55cb0",
+    "dirty": false
+  },
+  "raw_report_digest": "a781a9d78d2a677903fac6f6b84db2427671db63140c994136775c931afbcfe3",
+  "individual_workers": [
+    {
+      "worker": "worker-a",
+      "verdict": "passed",
+      "exitCode": 0,
+      "receiptAccepted": "accepted",
+      "authorityOk": true,
+      "candidateId": "vgpatch_b8ee2069cf4f5e1eb0923a27",
+      "candidateTreeOid": "18986ba2e02a4609e22fdca6c3b17873c125147c",
+      "cleanupOk": true
+    },
+    {
+      "worker": "worker-b",
+      "verdict": "passed",
+      "exitCode": 0,
+      "receiptAccepted": "accepted",
+      "authorityOk": true,
+      "candidateId": "vgpatch_226ab561ed5953de9cc03280",
+      "candidateTreeOid": "4f4ce187a111e728d07b74facddead5c2b6f65fa",
+      "cleanupOk": true
+    }
+  ],
+  "combined_failure": {
+    "status": "verification-failed",
+    "error": "verseshell-exit:1",
+    "candidate": {
+      "schema": "clawx.versegit.patch-candidate/v1",
+      "candidateId": "vgpatch_54e786f4932b3bdd91dd8714",
+      "baseOid": "b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "candidateCommitOid": "e3cb9b3911b56e2792be51d195209f3eb6352779",
+      "candidateTreeOid": "e68420aa7c6f64f4884bd68ba2b42d0d5a3616a2",
+      "candidateInputDigest": "1e70af54dc55cee00fc44f469bc1a30920318d899fa27580f2a67e8b9e1201da",
+      "proposalsDigest": "b1612871f5f67b4fad755ffad636f8da310f7d6acd8c050ab257d2ca4f97401b",
+      "workerIds": [
+        "run-worker-a",
+        "run-worker-b"
+      ],
+      "changedFiles": [
+        "src/consumer-b.cjs",
+        "src/producer.cjs"
+      ],
+      "targetDigests": {
+        "src/consumer-b.cjs": "20a5b35c807059e65cee81846ac542e5cdb3f057030f96416370e1ffb304f42f",
+        "src/producer.cjs": "92d7b0cb02212b1a0a1b632d63f370f6548a4d4dde30fbcf97e3e268983e5809"
+      },
+      "candidateRootRole": "host-disposable-candidate"
+    },
+    "verification": {
+      "status": "failed",
+      "candidateId": "vgpatch_54e786f4932b3bdd91dd8714",
+      "baseOid": "b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "candidateTreeOid": "e68420aa7c6f64f4884bd68ba2b42d0d5a3616a2",
+      "candidateInputDigest": "1e70af54dc55cee00fc44f469bc1a30920318d899fa27580f2a67e8b9e1201da",
+      "receiptDigest": "9930dc8a8aa3204eab89b498374b0c9b2d0ee63dcb584fb6e79a644cb43c3fb0",
+      "planDigest": "b1285b6310ee287736b3cbc75d5c9b0a7c9979ae964899b3c60aff635c6340f6",
+      "checkId": "candidate-full-required-tests",
+      "ownerId": "owner-e3-probe",
+      "epoch": 5,
+      "authorizationId": "auth-e3-probe-run-e3-combined-failure",
+      "issues": [
+        "verseshell-exit:1",
+        "receipt-result:accepted",
+        "authority:ok"
+      ]
+    },
+    "trace": [
+      {
+        "seq": 1,
+        "at": 1792705031265,
+        "kind": "candidate-frozen",
+        "details": {
+          "candidateId": "vgpatch_54e786f4932b3bdd91dd8714",
+          "baseOid": "b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+          "candidateTreeOid": "e68420aa7c6f64f4884bd68ba2b42d0d5a3616a2",
+          "candidateInputDigest": "1e70af54dc55cee00fc44f469bc1a30920318d899fa27580f2a67e8b9e1201da"
+        }
+      },
+      {
+        "seq": 2,
+        "at": 1792705031444,
+        "kind": "verification-start",
+        "details": {
+          "candidateId": "vgpatch_54e786f4932b3bdd91dd8714"
+        }
+      },
+      {
+        "seq": 3,
+        "at": 1792705032689,
+        "kind": "verification-failed",
+        "details": {
+          "receiptDigest": "9930dc8a8aa3204eab89b498374b0c9b2d0ee63dcb584fb6e79a644cb43c3fb0",
+          "planDigest": "b1285b6310ee287736b3cbc75d5c9b0a7c9979ae964899b3c60aff635c6340f6",
+          "issues": [
+            "verseshell-exit:1",
+            "receipt-result:accepted",
+            "authority:ok"
+          ]
+        }
+      },
+      {
+        "seq": 4,
+        "at": 1792705032729,
+        "kind": "candidate-cleaned",
+        "details": {
+          "ok": true,
+          "issues": []
+        }
+      }
+    ],
+    "cleanup": {
+      "ok": true,
+      "issues": []
+    },
+    "main_before": {
+      "head": "b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "refs": "refs/heads/main b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "status": ""
+    },
+    "main_after": {
+      "head": "b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "refs": "refs/heads/main b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "status": ""
+    },
+    "main_unchanged": true,
+    "first_write_started": false,
+    "passed": true
+  },
+  "combined_success": {
+    "status": "applied",
+    "candidate": {
+      "schema": "clawx.versegit.patch-candidate/v1",
+      "candidateId": "vgpatch_9b6cac2323c6dcdd9a0e8132",
+      "baseOid": "b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "candidateCommitOid": "d304406d0a6f1b9432f338bd8bca04b1023049a0",
+      "candidateTreeOid": "765e0bb064002e26991ad2c90b7831e2f2ed2a1b",
+      "candidateInputDigest": "46bcd88a8136bd2ee766cea085ae64a2fce917637556f1a9e228e0dc118e5364",
+      "proposalsDigest": "06e42de872cf91379c262f34c9a60032bfd76dcb8b41143096d08f69c94c29dd",
+      "workerIds": [
+        "run-worker-a",
+        "run-worker-b"
+      ],
+      "changedFiles": [
+        "src/consumer-b.cjs",
+        "src/producer.cjs"
+      ],
+      "targetDigests": {
+        "src/consumer-b.cjs": "6c479d1b7ba864cae390ac0c7b8f2edc85459dced6fafe7a49493c3c716d270c",
+        "src/producer.cjs": "92d7b0cb02212b1a0a1b632d63f370f6548a4d4dde30fbcf97e3e268983e5809"
+      },
+      "candidateRootRole": "host-disposable-candidate"
+    },
+    "verification": {
+      "status": "passed",
+      "candidateId": "vgpatch_9b6cac2323c6dcdd9a0e8132",
+      "baseOid": "b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "candidateTreeOid": "765e0bb064002e26991ad2c90b7831e2f2ed2a1b",
+      "candidateInputDigest": "46bcd88a8136bd2ee766cea085ae64a2fce917637556f1a9e228e0dc118e5364",
+      "receiptDigest": "ef9eb23449583d7f8b714c1aeb53e1dc388db141f7b9f36aeb98613bb22087ea",
+      "planDigest": "ea3b7460aa1d552ac5345fe16ffb78800e7d25e1423d48d0b735124b4464cdc2",
+      "checkId": "candidate-full-required-tests",
+      "ownerId": "owner-e3-probe",
+      "epoch": 5,
+      "authorizationId": "auth-e3-probe-run-e3-combined-success",
+      "issues": []
+    },
+    "permit": {
+      "allowed": true,
+      "permitId": "permit-e3",
+      "reason": null,
+      "candidateId": "vgpatch_9b6cac2323c6dcdd9a0e8132",
+      "candidateTreeOid": "765e0bb064002e26991ad2c90b7831e2f2ed2a1b",
+      "candidateInputDigest": "46bcd88a8136bd2ee766cea085ae64a2fce917637556f1a9e228e0dc118e5364",
+      "receiptDigest": "ef9eb23449583d7f8b714c1aeb53e1dc388db141f7b9f36aeb98613bb22087ea",
+      "ownerId": "owner-e3-probe",
+      "epoch": 5,
+      "authorizationId": "auth-e3-probe-run-e3-combined-success",
+      "grantId": "grant-vgpatch_9b6cac2323c6dcdd9a0e8132",
+      "expectedSnapshotDigest": "4b0cee6bfda515d41b191e239fde44c16d78aee80d804175d2d0c945d3a7f9d4"
+    },
+    "decision": {
+      "allowed": true,
+      "reason": null,
+      "issues": [],
+      "verifiedSnapshotDigest": "4b0cee6bfda515d41b191e239fde44c16d78aee80d804175d2d0c945d3a7f9d4",
+      "finalSnapshotDigest": "4b0cee6bfda515d41b191e239fde44c16d78aee80d804175d2d0c945d3a7f9d4"
+    },
+    "cleanup": {
+      "ok": true,
+      "issues": []
+    },
+    "main_before": {
+      "head": "b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "refs": "refs/heads/main b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "status": ""
+    },
+    "main_after_apply": {
+      "head": "b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "refs": "refs/heads/main b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "status": "M src/consumer-b.cjs\n M src/producer.cjs"
+    },
+    "main_after_undo": {
+      "head": "b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "refs": "refs/heads/main b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+      "status": ""
+    },
+    "head_unchanged": true,
+    "refs_unchanged": true,
+    "applied_contents": {
+      "producer": "module.exports = { api: () => 'one' };\n",
+      "consumerB": "const { api } = require('./producer.cjs');\nconst value = api();\nmodule.exports = { value: typeof value === 'string' ? 2 : value + 1, implementation: 'b-v2' };\n"
+    },
+    "passed": true
+  },
+  "permission_checkpoint": {
+    "permit": {
+      "allowed": true,
+      "permitId": "permit-e3",
+      "reason": null,
+      "candidateId": "vgpatch_9b6cac2323c6dcdd9a0e8132",
+      "candidateTreeOid": "765e0bb064002e26991ad2c90b7831e2f2ed2a1b",
+      "candidateInputDigest": "46bcd88a8136bd2ee766cea085ae64a2fce917637556f1a9e228e0dc118e5364",
+      "receiptDigest": "ef9eb23449583d7f8b714c1aeb53e1dc388db141f7b9f36aeb98613bb22087ea",
+      "ownerId": "owner-e3-probe",
+      "epoch": 5,
+      "authorizationId": "auth-e3-probe-run-e3-combined-success",
+      "grantId": "grant-vgpatch_9b6cac2323c6dcdd9a0e8132",
+      "expectedSnapshotDigest": "4b0cee6bfda515d41b191e239fde44c16d78aee80d804175d2d0c945d3a7f9d4"
+    },
+    "decision": {
+      "allowed": true,
+      "reason": null,
+      "issues": [],
+      "verifiedSnapshotDigest": "4b0cee6bfda515d41b191e239fde44c16d78aee80d804175d2d0c945d3a7f9d4",
+      "finalSnapshotDigest": "4b0cee6bfda515d41b191e239fde44c16d78aee80d804175d2d0c945d3a7f9d4"
+    },
+    "grant_status": "active",
+    "final_authority_owner": "openclaw_runtime.agents.stage4-capability-grant"
+  },
+  "boundaries": {
+    "real_human_evidence": false,
+    "default_off": true,
+    "m4_authorized": false,
+    "host_authority": "ClawX",
+    "vg_landing_authority": false
+  },
+  "passed": true,
+  "digest": "04e73024ac5847efe4240af343effe8881384ff823df8b3afc2445e7ebe24534"
+}

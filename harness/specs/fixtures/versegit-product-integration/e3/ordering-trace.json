@@ -1,0 +1,128 @@
+{
+  "schema": "clawx.versegit.e3-ordering-trace/v1",
+  "generated_at": "2026-10-22T21:38:44.158Z",
+  "task": "TF-0534",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "31cbfa08a6379d32af4907d1f97416f10b64fc97",
+    "tree": "f7039a70cf327f2d2e4b3e187ab6b8d947e55cb0",
+    "dirty": false
+  },
+  "raw_report_digest": "a781a9d78d2a677903fac6f6b84db2427671db63140c994136775c931afbcfe3",
+  "events": [
+    {
+      "seq": 1,
+      "at": 1792705033307,
+      "kind": "candidate-frozen",
+      "details": {
+        "candidateId": "vgpatch_9b6cac2323c6dcdd9a0e8132",
+        "baseOid": "b16b5e2bfcfe1f4b7fcc323f717948732f2dccc2",
+        "candidateTreeOid": "765e0bb064002e26991ad2c90b7831e2f2ed2a1b",
+        "candidateInputDigest": "46bcd88a8136bd2ee766cea085ae64a2fce917637556f1a9e228e0dc118e5364"
+      }
+    },
+    {
+      "seq": 2,
+      "at": 1792705033504,
+      "kind": "verification-start",
+      "details": {
+        "candidateId": "vgpatch_9b6cac2323c6dcdd9a0e8132"
+      }
+    },
+    {
+      "seq": 3,
+      "at": 1792705034776,
+      "kind": "verification-passed",
+      "details": {
+        "receiptDigest": "ef9eb23449583d7f8b714c1aeb53e1dc388db141f7b9f36aeb98613bb22087ea",
+        "planDigest": "ea3b7460aa1d552ac5345fe16ffb78800e7d25e1423d48d0b735124b4464cdc2",
+        "issues": []
+      }
+    },
+    {
+      "seq": 4,
+      "at": 1792705034985,
+      "kind": "permit-granted",
+      "details": {
+        "permitId": "permit-e3",
+        "reason": null,
+        "expectedSnapshotDigest": "4b0cee6bfda515d41b191e239fde44c16d78aee80d804175d2d0c945d3a7f9d4"
+      }
+    },
+    {
+      "seq": 5,
+      "at": 1792705035201,
+      "kind": "preflight-checked",
+      "details": {
+        "allowed": true,
+        "reason": null,
+        "issues": [],
+        "verifiedSnapshotDigest": "4b0cee6bfda515d41b191e239fde44c16d78aee80d804175d2d0c945d3a7f9d4",
+        "finalSnapshotDigest": "4b0cee6bfda515d41b191e239fde44c16d78aee80d804175d2d0c945d3a7f9d4"
+      }
+    },
+    {
+      "seq": 6,
+      "at": 1792705035201,
+      "kind": "first-write-started",
+      "details": {
+        "journalSessionId": "session-e3-success",
+        "journalRequestId": "batch-e3-success",
+        "proposalCount": 2
+      }
+    },
+    {
+      "seq": 7,
+      "at": 1792705036015,
+      "kind": "write-completed",
+      "details": {
+        "resultCount": 2,
+        "okCount": 2,
+        "journalBatchIds": [
+          "batch-e3-success:run-worker-a",
+          "batch-e3-success:run-worker-b"
+        ]
+      }
+    },
+    {
+      "seq": 8,
+      "at": 1792705036221,
+      "kind": "post-apply-verified",
+      "details": {
+        "changedFiles": [
+          "src/consumer-b.cjs",
+          "src/producer.cjs"
+        ],
+        "targetDigests": {
+          "src/consumer-b.cjs": "6c479d1b7ba864cae390ac0c7b8f2edc85459dced6fafe7a49493c3c716d270c",
+          "src/producer.cjs": "92d7b0cb02212b1a0a1b632d63f370f6548a4d4dde30fbcf97e3e268983e5809"
+        }
+      }
+    },
+    {
+      "seq": 9,
+      "at": 1792705036276,
+      "kind": "candidate-cleaned",
+      "details": {
+        "ok": true,
+        "issues": []
+      }
+    }
+  ],
+  "verification_index": 1,
+  "first_write_index": 5,
+  "post_apply_index": 7,
+  "verification_before_first_write": true,
+  "journal_batch_ids": [
+    "batch-e3-success:run-worker-a",
+    "batch-e3-success:run-worker-b"
+  ],
+  "journal_snapshot_ids": [
+    "write-journal:session-e3-success:1",
+    "write-journal:session-e3-success:2"
+  ],
+  "passed": true,
+  "digest": "de7e037bc4fcbc75b3a8172332596391d74340345b9df6d146fcebcffb9af5eb"
+}
