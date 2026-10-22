@@ -115,6 +115,8 @@ export type RunEmbeddedAgentParams = {
   allowGatewaySubagentBinding?: boolean;
   sessionFile: string;
   workspaceDir: string;
+  /** Canonical workspace identity supplied by the chat host, distinct from its root path. */
+  workspaceId?: string;
   /** Task working directory for tool/runtime execution. Defaults to workspaceDir. */
   cwd?: string;
   /**

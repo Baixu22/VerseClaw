@@ -108,6 +108,8 @@ export type FollowupRun = {
     workspaceDir: string;
     /** Task working directory for runtime execution. Defaults to workspaceDir. */
     cwd?: string;
+    /** Canonical workspace identity forwarded by Gateway chat.send. */
+    workspaceId?: string;
     /**
      * Trusted workspace authority fingerprint forwarded by Gateway chat.send
      * (produced by Main from the workspace's normalized rootPath). Embedded

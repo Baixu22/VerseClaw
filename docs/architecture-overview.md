@@ -54,6 +54,8 @@ sequenceDiagram
 
 An RPC acknowledgement, a rendered tool card and a successfully completed tool effect are different facts. Streaming and multiple tool iterations are simplified in the diagram. It does not imply every chat becomes a Task Loop or a multi-agent run.
 
+Before provider submission, the embedded runner refreshes `ModelCapabilityProfile/v1` from the current tool inventory, driver, authorization grants, runtime acknowledgement, quarantine, memory and knowledge facts. The bounded capability-positioning addendum is composed after prompt hooks and runtime context, so the model sees the run's effective state rather than a static catalog claim. Missing acknowledgement or a generation mismatch remains `unknown`; static disposition and configuration never prove that an operation is executable. A run-local generation guard prevents a late refresh from replacing a newer model call's state.
+
 ## Three forms of task state
 
 | Concept | What it represents | What it does not imply |

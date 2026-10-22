@@ -108,6 +108,12 @@ import {
   toClientToolDefinitions,
 } from "../../agent-tool-definition-adapter.js";
 import {
+  buildRuntimeEffectiveCapabilityProfile,
+  composeRuntimeEffectiveCapabilitySystemPrompt,
+  createRuntimeCapabilityStateGenerationGuard,
+} from "../../runtime-effective-capability.js";
+
+import {
   createOpenClawCodingTools,
   resolveProcessToolScopeKey,
   resolveToolLoopDetectionConfig,
@@ -4476,6 +4482,27 @@ export async function runEmbeddedAttempt(
                 ? (runtimeSystemContext?.length ?? 0)
                 : (runtimeContextForHook?.length ?? 0),
             };
+          }
+          const capabilityStateGuard = createRuntimeCapabilityStateGenerationGuard(params.runId);
+          const runtimeEffectiveCapability = isRawModelRun
+            ? null
+            : await buildRuntimeEffectiveCapabilityProfile({
+                workspaceId: params.workspaceId ?? effectiveWorkspace,
+                workspaceDir: effectiveWorkspace,
+                sessionKey: params.sessionKey ?? params.sessionId,
+                tools: effectiveTools,
+                cfg: params.config ?? getRuntimeConfig(),
+                env: process.env,
+                generationGuard: capabilityStateGuard,
+              });
+          if (runtimeEffectiveCapability) {
+            const capabilityAwareSystemPrompt = composeRuntimeEffectiveCapabilitySystemPrompt(
+              systemPromptText,
+              runtimeEffectiveCapability,
+            );
+            if (capabilityAwareSystemPrompt !== systemPromptText) {
+              setActiveSessionSystemPrompt(capabilityAwareSystemPrompt);
+            }
           }
           const systemPromptForHook = preparedProjection?.systemPromptAddition
             ? `${systemPromptText}
