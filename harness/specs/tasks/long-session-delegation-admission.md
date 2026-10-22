@@ -85,7 +85,7 @@ docs:
 - Runtime receipt 绑定 coordinator generation、task ref、child session/run、实际 `openclaw-embedded` backend、role-clamped tool allow/deny 和 isolation backend；`accepted` 明确是 admission，不是 running/completed。
 - shared inprocess 写路径按单 worker 串行；显式 worktree 使用实际 `git`/`inprocess` backend 并记录 write set。unknown role、unsupported backend、无效授权/生成变化不产生 phantom child completion。
 - reset/archive/delete 失效旧 binding；admission 前后 generation 校验阻止 stale grant。pre-spawn crash 保留 `submitting`/`unknown` recovery receipt，同 owner 重启重试不会再次 spawn。
-- clean candidate/evidence 与真实 Electron/Host/Gateway 旅程将在 evidence commit 中登记。
+- Clean candidate `57b82e740da022bd3a74c9f996a11d766e1cc84d` / tree `5b30b73c9146cfa5238074778f30ce812abbec3d`：12 commands、96/96 unit tests、1/1 real Electron/Host/Gateway journey、runtime+vite builds、typecheck、contract、comms、harness、diff-check 与凭证扫描通过；真实 receipt 见 `harness/specs/fixtures/long-session-development/c2/`。
 
 所属阶段三：交付单工作区长期协调入口。统一边界见[规划合同索引](./long-session-development-plan.md)。
 
