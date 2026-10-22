@@ -2,6 +2,7 @@ import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { VerseGitDiagnosticBinding, VerseGitDiagnosticStatus } from '@shared/host-api/contract';
 import { VerseGitFactAdapter, type VerseGitFactGrant, type VerseGitFactIdentity, type VerseGitFactResult, type VerseGitFactTrigger } from './versegit-fact-adapter';
 import { VerseGitModule } from './versegit-module';
+import { createVerseGitCompletionStore } from './versegit-lifecycle';
 
 export const VG_HOST_DIAGNOSTIC_SCHEMA = 'clawx.versegit.host-diagnostics/v1';
 export const VG_HOST_DECLARED_COVERAGE = ['version', 'capabilities'] as const;
@@ -229,4 +230,8 @@ export function createVerseGitApi(options: VerseGitApiOptions = {}): CompleteHos
       };
     },
   };
+}
+
+export function createVerseGitLifecycleStore(root: string) {
+  return createVerseGitCompletionStore(root);
 }

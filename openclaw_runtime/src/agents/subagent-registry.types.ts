@@ -109,6 +109,11 @@ export type TeamOrchestrationMetadata = {
   patchFlowCandidateInputDigest?: string;
   patchFlowTraceDigest?: string;
   patchFlowJournalRefs?: string[];
+  completionFactId?: string;
+  completionFactStatus?: "recorded" | "duplicate" | "rejected" | "unavailable" | "not_configured";
+  completionHostOutcome?: "applied" | "not_applied" | "unknown";
+  completionProviderProjection?: "active" | "abandoned" | "host-completed";
+  completionActiveSessionRisk?: boolean;
 };
 
 export type PendingFinalDeliveryPayload = {

@@ -17,6 +17,7 @@ import { createLazyImportLoader, createLazyPromiseLoader } from "../shared/lazy-
 import { buildSessionDeleteOperationId } from "../sessions/session-delete-operation-id.js";
 import { importRuntimeModule } from "../shared/runtime-import.js";
 import { normalizeDeliveryContext } from "../utils/delivery-context.shared.js";
+import type { VerseGitCompletionSink } from "../../../shared/types/versegit.js";
 import type { DeliveryContext } from "../utils/delivery-context.types.js";
 import {
   ackLeasedAgentSteeringItemsFromSubagentRuns,
@@ -58,7 +59,7 @@ import {
 } from "./subagent-registry-helpers.js";
 import { createSubagentRegistryLifecycleController } from "./subagent-registry-lifecycle.js";
 import type { CandidateApplyHost } from "./orchestration-candidate-apply.js";
-import { applyDeferredPatchFlow } from "./orchestration-patch-flow.js";
+import { applyDeferredPatchFlow, recordDeferredPatchFlowCompletion } from "./orchestration-patch-flow.js";
 import { subagentRuns } from "./subagent-registry-memory.js";
 import {
   countActiveDescendantRunsFromRuns,
@@ -129,6 +130,7 @@ type SubagentRegistryDeps = {
   restoreSubagentRunsFromDisk: typeof restoreSubagentRunsFromDisk;
   runSubagentAnnounceFlow: SubagentAnnounceModule["runSubagentAnnounceFlow"];
   candidateApplyHost?: CandidateApplyHost;
+  completionFactSink?: VerseGitCompletionSink;
   ensureContextEnginesInitialized?: () => void;
   ensureRuntimePluginsLoaded?: typeof ensureRuntimePluginsLoadedFn;
   resolveContextEngine?: (
@@ -662,6 +664,14 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
         const journalRefs = (outcome.results ?? []).flatMap((result) =>
           result.journal?.snapshotIds ?? []
         );
+        const completionSink = subagentRegistryDeps.completionFactSink;
+        const completionFactRecord = recordDeferredPatchFlowCompletion({
+          outcome,
+          sink: completionSink,
+          sessionId: completed.requesterSessionKey,
+          runId: orchestrationRunId,
+          actor: "codex",
+        });
         markOrchestrationWorkers({
           workers: expectedWorkers,
           patch: {
@@ -678,6 +688,17 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
               : {}),
             patchFlowTraceDigest: traceDigest,
             patchFlowJournalRefs: [...new Set(journalRefs)],
+            ...(completionFactRecord?.fact
+              ? {
+                  completionFactId: completionFactRecord.fact.factId,
+                  completionFactStatus: completionFactRecord.status,
+                  completionHostOutcome: completionFactRecord.fact.hostOutcome,
+                  completionProviderProjection: completionFactRecord.fact.providerProjection,
+                  completionActiveSessionRisk: completionFactRecord.fact.activeSessionRisk,
+                }
+              : {
+                  completionFactStatus: completionSink ? "unavailable" : "not_configured",
+                }),
           },
         });
       } finally {
@@ -1648,6 +1669,12 @@ export function updateSubagentRunOrchestrationMetadata(
   }
   persistSubagentRuns();
   return true;
+}
+
+export function configureSubagentRegistryCompletionFactSink(
+  sink: VerseGitCompletionSink | undefined,
+): void {
+  subagentRegistryDeps = { ...subagentRegistryDeps, completionFactSink: sink };
 }
 
 export function configureSubagentRegistryCandidateApplyHost(

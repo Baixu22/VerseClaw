@@ -7,6 +7,7 @@
  * apply remains available only when no candidate-apply host is supplied.
  */
 import type { ApplyPatchJournalOptions } from "./apply-patch-types.js";
+import type { VerseGitCompletionSink, VerseGitHostCompletionOutcome } from "../../../shared/types/versegit.js";
 import {
   applyCandidateAfterVerification,
   materializePatchCandidate,
@@ -47,6 +48,50 @@ export type DeferredPatchFlowOutcome = {
   trace?: CandidateApplyTraceEvent[];
   cleanup?: { ok: boolean; issues: string[] };
 };
+
+export function patchFlowHostOutcome(status: TeamPatchFlowStatus): VerseGitHostCompletionOutcome {
+  if (status === "applied") return "applied";
+  if (status === "unknown" || status === "partial") return "unknown";
+  return "not_applied";
+}
+
+export function recordDeferredPatchFlowCompletion(input: {
+  outcome: DeferredPatchFlowOutcome;
+  sink: VerseGitCompletionSink | undefined;
+  sessionId: string;
+  runId: string;
+  actor: string;
+}): ReturnType<VerseGitCompletionSink["record"]> | {
+  status: "unavailable" | "not_configured";
+  reason: string;
+  fact: null;
+} {
+  if (!input.sink) return { status: "not_configured", reason: "completion_sink_not_configured", fact: null };
+  if (!input.outcome.candidate || !input.outcome.verification) {
+    return { status: "unavailable", reason: "completion_identity_unavailable", fact: null };
+  }
+  const hostOutcome = patchFlowHostOutcome(input.outcome.status);
+  return input.sink.record({
+    identity: {
+      ownerId: input.outcome.verification.ownerId,
+      epoch: input.outcome.verification.epoch,
+      authorizationId: input.outcome.verification.authorizationId,
+      sessionId: input.sessionId,
+      runId: input.runId,
+      candidateId: input.outcome.candidate.candidateId,
+      candidateTreeOid: input.outcome.candidate.candidateTreeOid,
+      candidateInputDigest: input.outcome.candidate.candidateInputDigest,
+      receiptDigest: input.outcome.verification.receiptDigest,
+      effectId: input.runId + ":" + input.outcome.candidate.candidateId,
+    },
+    hostOutcome,
+    idempotencyKey:
+      input.runId + ":" + input.outcome.candidate.candidateId + ":" +
+      input.outcome.verification.receiptDigest + ":" + hostOutcome,
+    actor: input.actor,
+    reason: input.outcome.error ?? null,
+  });
+}
 
 function frozenWorkerResult(worker: SubagentRunRecord): string | undefined {
   return (
