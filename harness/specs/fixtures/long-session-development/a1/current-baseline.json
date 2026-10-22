@@ -12,8 +12,10 @@
     "sourceTree": "d06b8c75cbf44d3fbba6dff4f4d801f00a1e8b24",
     "branch": "codex/long-session-implementation-20261022",
     "worktree": "D:/ClawX-work/worktrees/long-session-program",
-    "cleanCandidateObserved": false,
-    "dirtyScopeAtCapture": "A1 tracked fixtures, regression test and product-semantics documentation only"
+    "cleanCandidateObserved": true,
+    "dirtyScopeAtCapture": "A1 tracked fixtures, regression test and product-semantics documentation only",
+    "evidenceCandidateCommit": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
+    "evidenceCandidateTree": "1afe659a91a2af3b7c3b9ee6fec5ba6e84a4dd59"
   },
   "environment": {
     "platform": "win32",
@@ -181,5 +183,6 @@
     "No Project store, second task/goal authority, universal resource table or scheduler is introduced.",
     "Archive/restore remain partial until TF-0549 lands the lifecycle barrier.",
     "All evidence is agent-driven; no real-human claim is made."
-  ]
+  ],
+  "verificationReceipt": "harness/specs/fixtures/long-session-development/a1/verification-receipt.json"
 }

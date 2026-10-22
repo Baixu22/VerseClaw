@@ -57,6 +57,21 @@ type NegativeIndex = {
   statusLegend: Record<string, string>;
   cases: NegativeScenario[];
 };
+type Verification = {
+  schema: string;
+  driven_by: string;
+  actor: string;
+  task: string;
+  verdict: string;
+  featureClaim: string;
+  candidate: { commit: string; tree: string; dirtyBefore: boolean; dirtyAfter: boolean };
+  commands: { id: string; exitCode: number }[];
+  counts: { tests: number; passed: number; failed: number; skipped: number; failedCommands: number };
+  acceptance: { criterion: string; result: string }[];
+  deferredGaps: { id: string; owner: string }[];
+  unmeasured: string[];
+  limitations: string[];
+};
 type Baseline = {
   schema: string;
   driven_by: string;
@@ -67,6 +82,7 @@ type Baseline = {
     baseCommit: string;
     branch: string;
     evidenceCandidateCommit?: string;
+    evidenceCandidateTree?: string;
     cleanCandidateObserved?: boolean;
   };
   environment: Record<string, string>;
@@ -93,6 +109,7 @@ const readJson = <T,>(relativePath: string): T => JSON.parse(
 const contract = readJson<ActionContract>(path.join(fixtureDir, 'action-and-inheritance-contract.json'));
 const negative = readJson<NegativeIndex>(path.join(fixtureDir, 'negative-scenario-index.json'));
 const baseline = readJson<Baseline>(path.join(fixtureDir, 'current-baseline.json'));
+const verification = readJson<Verification>(path.join(fixtureDir, 'verification-receipt.json'));
 
 function expectSourceRef(ref: SourceRef, label: string): void {
   const absolute = path.join(root, ref.path);
@@ -260,6 +277,38 @@ describe('long-session A1 action and identity contract', () => {
       expect(existsSync(path.join(root, input.path))).toBe(true);
       expect(input.sha256).toMatch(/^[a-f0-9]{64}$/);
     }
+  });
+
+
+  it('binds the fresh gate receipt to the clean source candidate', () => {
+    expect(verification.schema).toBe('clawx.long-session.a1-verification/v1');
+    expect(verification.driven_by).toBe('agent');
+    expect(verification.actor).toMatch(/^codex/);
+    expect(verification.task).toBe('TF-0548');
+    expect(verification.verdict).toBe('pass-with-deferred-gaps');
+    expect(verification.featureClaim).toMatch(/^baseline-only/);
+    expect(verification.candidate).toMatchObject({
+      commit: baseline.candidate.evidenceCandidateCommit,
+      tree: baseline.candidate.evidenceCandidateTree,
+      dirtyBefore: false,
+      dirtyAfter: false,
+    });
+    expect(baseline.candidate.cleanCandidateObserved).toBe(true);
+    expect(verification.commands).toHaveLength(9);
+    expect(verification.commands.every((command) => command.exitCode === 0)).toBe(true);
+    expect(verification.counts.failedCommands).toBe(0);
+    expect(verification.counts.tests).toBeGreaterThanOrEqual(31);
+    expect(verification.counts.passed).toBe(
+      verification.counts.tests - verification.counts.failed - verification.counts.skipped,
+    );
+    expect(verification.acceptance).toHaveLength(4);
+    expect(verification.acceptance.every((entry) => entry.result === 'pass')).toBe(true);
+    expect(verification.deferredGaps.map((gap) => gap.id)).toEqual(expect.arrayContaining([
+      'archive-active-run-not-fenced',
+      'restore-index-removed-before-transcript-rename',
+    ]));
+    expect(verification.unmeasured.length).toBeGreaterThan(0);
+    expect(verification.limitations.join(' ')).toMatch(/CodeGraph is retired/);
   });
 
   it('keeps product semantics linked to the executable action contract', () => {
