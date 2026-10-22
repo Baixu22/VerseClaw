@@ -1,0 +1,115 @@
+{
+  "schema": "clawx.versegit.e2-execution-cleanup/v1",
+  "generated_at": "2026-10-22T21:04:42.509Z",
+  "task": "TF-0533",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "d929fdc94e6e099d0b1984cb30ec37ed28ad8996",
+    "tree": "192a13159ec5177f24a5d1f849ada7d2247b1f06",
+    "dirty": false
+  },
+  "runs": [
+    {
+      "run_id": "run-e2-candidate-failure",
+      "cleanup": {
+        "schema": "clawx.versegit.verification-cleanup/v2",
+        "status": "clean",
+        "processesDeleted": true,
+        "processSurvivors": 0,
+        "survivorPids": [],
+        "managerProcessSurvivors": 0,
+        "managedAfterShutdown": [],
+        "worktreesDeleted": 1,
+        "worktreeSurvivors": 0,
+        "candidateWorktreeSurvivors": 0,
+        "verificationRootRemoved": true,
+        "baseRootPreserved": true,
+        "tempRootRemoved": true,
+        "hostWorktreesDeleted": 0,
+        "deletionErrors": [],
+        "processInventory": {
+          "baselinePids": [],
+          "duringPids": [
+            19988
+          ],
+          "afterPids": [],
+          "newProcessPids": [
+            19988
+          ],
+          "managedPids": [
+            19988
+          ],
+          "managedAfterShutdown": [],
+          "survivorPids": [],
+          "ownedPidChecks": [
+            {
+              "ok": true,
+              "pid": 19988,
+              "exists": false
+            }
+          ]
+        }
+      },
+      "managed_processes_exited": true,
+      "candidate_worktree_removed": true,
+      "manager_process_survivors": 0,
+      "deletion_errors": []
+    },
+    {
+      "run_id": "run-e2-candidate-continuation",
+      "cleanup": {
+        "schema": "clawx.versegit.verification-cleanup/v2",
+        "status": "clean",
+        "processesDeleted": true,
+        "processSurvivors": 0,
+        "survivorPids": [],
+        "managerProcessSurvivors": 0,
+        "managedAfterShutdown": [],
+        "worktreesDeleted": 1,
+        "worktreeSurvivors": 0,
+        "candidateWorktreeSurvivors": 0,
+        "verificationRootRemoved": true,
+        "baseRootPreserved": true,
+        "tempRootRemoved": true,
+        "hostWorktreesDeleted": 0,
+        "deletionErrors": [],
+        "processInventory": {
+          "baselinePids": [],
+          "duringPids": [
+            42096
+          ],
+          "afterPids": [],
+          "newProcessPids": [
+            42096
+          ],
+          "managedPids": [
+            42096
+          ],
+          "managedAfterShutdown": [],
+          "survivorPids": [],
+          "ownedPidChecks": [
+            {
+              "ok": true,
+              "pid": 42096,
+              "exists": false
+            }
+          ]
+        }
+      },
+      "managed_processes_exited": true,
+      "candidate_worktree_removed": true,
+      "manager_process_survivors": 0,
+      "deletion_errors": []
+    }
+  ],
+  "main_workspace": {
+    "head": "7fd8913014b47f9990c8740e6f4381746e0d3752",
+    "refs": "refs/heads/main 7fd8913014b47f9990c8740e6f4381746e0d3752",
+    "status": "",
+    "unchanged": true
+  },
+  "passed": true,
+  "digest": "d58177ca186aa0961085f36ace52cc791e05647d404371557c21f13db01be57f"
+}

@@ -1,0 +1,141 @@
+{
+  "schema": "clawx.versegit.e2-receipt-negative/v1",
+  "generated_at": "2026-10-22T21:04:42.509Z",
+  "task": "TF-0533",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "d929fdc94e6e099d0b1984cb30ec37ed28ad8996",
+    "tree": "192a13159ec5177f24a5d1f849ada7d2247b1f06",
+    "dirty": false
+  },
+  "cases": [
+    {
+      "id": "fake-self-reported",
+      "mutation": "caller-sealed receipt claims realVerseShell without host evidence authority",
+      "expected": "rejected_by_policy",
+      "actual": {
+        "status": "rejected_by_policy",
+        "reason": "host_evidence_authority_missing",
+        "issues": [
+          "live receipt requires host-retained observation and artifact authority"
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "wrong-candidate",
+      "mutation": "receipt candidateId changed",
+      "expected": "rejected_by_policy",
+      "actual": {
+        "status": "rejected_by_policy",
+        "reason": "receipt candidateId mismatch",
+        "issues": [
+          "receipt candidateId mismatch"
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "old-epoch",
+      "mutation": "receipt epoch changed",
+      "expected": "rejected_by_policy",
+      "actual": {
+        "status": "rejected_by_policy",
+        "reason": "receipt epoch mismatch",
+        "issues": [
+          "receipt epoch mismatch"
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "partial-scope",
+      "mutation": "selected plan attempts to present a full-scope receipt",
+      "expected": "rejected_by_policy",
+      "actual": {
+        "status": "rejected_by_policy",
+        "reason": "plan scope is not full",
+        "issues": [
+          "plan scope is not full",
+          "receipt authorization digest mismatch"
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "missing-observation",
+      "mutation": "host observation wrapper deleted",
+      "expected": "authority_rejected",
+      "actual": {
+        "ok": false,
+        "reason": "host observation record is missing",
+        "issues": [
+          "host observation record is missing",
+          "receipt observation process pid is missing",
+          "cleanup managed PIDs do not contain the receipt observation PID",
+          "owned PID checks do not contain the receipt observation PID",
+          "during-run PIDs do not contain the receipt observation PID",
+          "receipt observation PID overlaps the baseline",
+          "receipt observation PID survived cleanup"
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "input-drift",
+      "mutation": "retained candidate input manifest bytes changed after receipt creation",
+      "expected": "authority_rejected",
+      "actual": {
+        "ok": false,
+        "reason": "candidate input manifest evidence digest mismatch",
+        "issues": [
+          "candidate input manifest evidence digest mismatch"
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "tampered-artifact",
+      "mutation": "stdout artifact bytes changed after receipt creation",
+      "expected": "authority_rejected",
+      "actual": {
+        "ok": false,
+        "reason": "stdout artifact bytes differ from observation",
+        "issues": [
+          "stdout artifact bytes differ from observation",
+          "artifact 569dcd1bffd9116b18fa6c4cc5355fcd7dfc763c1e8ecb4afa4537a64c9f72d7 evidence digest mismatch",
+          "receipt artifact digest mismatch: 569dcd1bffd9116b18fa6c4cc5355fcd7dfc763c1e8ecb4afa4537a64c9f72d7"
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "revoked-grant",
+      "mutation": "active receipt paired with a host-recorded revoked grant",
+      "expected": "rejected_by_policy",
+      "actual": {
+        "status": "rejected_by_policy",
+        "reason": "host_evidence_authority_rejected",
+        "issues": [
+          "authorization is revoked",
+          "authorization carries revocation metadata"
+        ]
+      },
+      "passed": true
+    }
+  ],
+  "required_cases": [
+    "missing-observation",
+    "fake-self-reported",
+    "wrong-candidate",
+    "old-epoch",
+    "input-drift",
+    "revoked-grant",
+    "partial-scope",
+    "tampered-artifact"
+  ],
+  "passed": true,
+  "digest": "29f2eefc419a20d842cd764a29a0806ecc94409429db59fe150b381c0ffb087f"
+}
