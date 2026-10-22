@@ -1,0 +1,5 @@
+$ node scripts/comms/replay.mjs
+Wrote comms replay metrics to D:\ClawX-worktrees\tf0512-effective-state-20261022\artifacts\comms\current-metrics.json
+
+EXIT_CODE=0
+DURATION_MS=961

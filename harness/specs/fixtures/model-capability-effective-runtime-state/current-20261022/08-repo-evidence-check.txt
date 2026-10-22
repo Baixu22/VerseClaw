@@ -1,0 +1,5 @@
+$ node scripts/check-evidence-refs.mjs
+[evidence-refs] PASS 171 referenced path(s)
+
+EXIT_CODE=0
+DURATION_MS=786

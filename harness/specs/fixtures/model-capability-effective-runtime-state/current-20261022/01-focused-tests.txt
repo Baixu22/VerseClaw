@@ -1,0 +1,37 @@
+
+ RUN  v4.1.1 D:/ClawX-worktrees/tf0512-effective-state-20261022
+
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > builds a deterministic schema with one static disposition record for every user-visible capability 16ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > keeps static disposition, runtime availability, action authorization, memory and knowledge as separate axes 9ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > covers enabled/disabled/partial/degraded/quarantined/requires-approval/internal/retired with disk fixtures 4ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > keeps the static digest stable across effective facts and changes it only with static configuration 7ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > normalizes effective digest inputs and ignores observation/generation timestamps 10ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > bounds prompt addition to a reserved system-prompt budget without using working-context characters 6ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > rejects invalid effective state inputs with explicit negative issue codes 4ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > rejects duplicate static records and internal names in user-facing capabilities 1ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > rejects axis conflation and digest tampering in an already-generated profile 6ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > reports the actual tool, ready driver, effective ack, grants, memory and knowledge 1383ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > keeps runtime availability and drivers unknown when acknowledgement is absent 595ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > does not trust an unknown gateway generation from a local ack 615ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > accepts a process-owned ack even when it is observed after the initial clock read 681ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > expires grants and denies revoked grants at refresh time 1334ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > fails closed when the coding backend is quarantined 630ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > reports loading, unavailable and degraded runtime states without promoting them 1349ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > fails closed when the ack generation does not match the runtime generation 655ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > refreshes a config switch into runtime state while keeping the static digest stable 1305ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > keeps the effective digest stable for observation-only changes 1267ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > changes the effective digest when tool, ack or driver facts change 2676ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > rejects an older refresh after a newer run generation starts 617ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > keeps fallback facts unknown instead of promoting static dispositions 206ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > composes the profile into the final model system prompt and wires it before prompt submission 3ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > preserves canonical workspace identity from chat.send through the embedded run 4ms
+ ✓ tests/unit/runtime-effective-capability.test.ts > runtime effective capability adapter > appends only a non-empty profile addition to the provider system prompt 700ms
+
+ Test Files  2 passed (2)
+      Tests  25 passed (25)
+   Start at  18:32:53
+   Duration  22.84s (transform 5.39s, setup 497ms, import 8.45s, tests 14.09s, environment 0ms)
+
+
+EXIT_CODE=0
+DURATION_MS=25470

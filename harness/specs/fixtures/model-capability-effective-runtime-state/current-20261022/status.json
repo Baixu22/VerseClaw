@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "ModelCapabilityEffectiveRuntimeStatus/v1",
+  "taskId": "TF-0512",
+  "generatedAt": "2026-10-22T11:01:24Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "claimScope": "required TF-0512 gates only",
+  "baseCommit": "857baf3ece4cd223c4ca8a13816b486cb8e575eb",
+  "implementationCommit": "686ea945296d321f0983abbdf5e313b79e7a42b6",
+  "cleanCheckout": true,
+  "workspaceIdPipeline": "passed",
+  "promptBoundaryWiring": "passed",
+  "ackGenerationFailClosed": "passed",
+  "runtimeStatePropagation": [
+    "disabled",
+    "degraded",
+    "loading",
+    "unavailable",
+    "quarantined",
+    "unknown"
+  ],
+  "grantLifecycle": [
+    "active",
+    "expired",
+    "revoked"
+  ],
+  "digestAudit": {
+    "staticStable": true,
+    "effectiveChangesWithFacts": true,
+    "observationOnlyStable": true
+  },
+  "staleGenerationRejected": true,
+  "fallbackPromotesStaticDisposition": false,
+  "requiredGateStatus": "passed",
+  "supplementalFullSuiteStatus": "failed-outside-task-scope",
+  "humanEvidenceClaimed": false,
+  "harnessValidate": {
+    "status": "passed",
+    "realDiff": true,
+    "baseCommit": "857baf3ece4cd223c4ca8a13816b486cb8e575eb"
+  },
+  "repositoryEvidenceReferences": {
+    "status": "passed",
+    "referencedPaths": 171
+  }
+}
