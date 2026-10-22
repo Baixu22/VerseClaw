@@ -1,0 +1,35 @@
+{
+  "schema": "clawx.versegit.c1-independent-review/v1",
+  "generated_at": "2026-10-22T18:33:05.114Z",
+  "task": "TF-0528",
+  "driven_by": "agent",
+  "actor": "codex",
+  "reviewer_role": "independent-c1-verifier-process",
+  "status": "passed",
+  "checks": [
+    {
+      "id": "runtime-bindings",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "binding-negative",
+      "passed": true,
+      "issues": []
+    }
+  ],
+  "evidence_digests": {
+    "harness/specs/fixtures/versegit-product-integration/c1/runtime-bindings.json": "2ff2e9a01af864469b2494356169e35e8f96db34676984eca62b1a09ca60580b",
+    "harness/specs/fixtures/versegit-product-integration/c1/bridge-events.jsonl": "88e5f6dcbbbfa9ec3640b585ee389fee88ca83bcbd7abc3f3f94b63465a93fe3",
+    "harness/specs/fixtures/versegit-product-integration/c1/binding-negative.json": "d5c3552ca2779f5cb1a005c65b985bf1eca88db1bc0ce6a21b098c1440492daf"
+  },
+  "boundaries": {
+    "real_human_evidence": false,
+    "default_off": true,
+    "m4_authorized": false,
+    "host_authority": "unchanged",
+    "public_release_authorized": false
+  },
+  "passed": true,
+  "digest": "fd834c0f7c654885cc56c7a17bc4c93b69c67259302272cf3856a1bbe50786bd"
+}

@@ -1,0 +1,4 @@
+2ff2e9a01af864469b2494356169e35e8f96db34676984eca62b1a09ca60580b  harness/specs/fixtures/versegit-product-integration/c1/runtime-bindings.json
+4a484575346941cfd6298a37c7a873a382a34222ff84d91c9101a24a91080cf6  harness/specs/fixtures/versegit-product-integration/c1/independent-review.json
+88e5f6dcbbbfa9ec3640b585ee389fee88ca83bcbd7abc3f3f94b63465a93fe3  harness/specs/fixtures/versegit-product-integration/c1/bridge-events.jsonl
+d5c3552ca2779f5cb1a005c65b985bf1eca88db1bc0ce6a21b098c1440492daf  harness/specs/fixtures/versegit-product-integration/c1/binding-negative.json
