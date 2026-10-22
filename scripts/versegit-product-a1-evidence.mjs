@@ -337,6 +337,10 @@ function main() {
   else if (mode === 'independent') { const manifest = readJson(root, A1_MANIFEST_PATH); const historical = readJson(root, A1_HISTORICAL_PATH); const negative = readJson(root, A1_NEGATIVE_PATH); const verification = readJson(root, A1_VERIFICATION_PATH); const review = buildIndependentReview(root, manifest, historical, verification, negative); if (review.status !== 'passed') throw new Error(`A1 independent review failed: ${review.issues.join('; ')}`); writeJson(root, A1_INDEPENDENT_PATH, review); }
   else if (mode === 'seal') writeShaManifest(root, A1_SUMS_PATH, A1_EVIDENCE_PATHS);
   else if (mode !== 'check') throw new Error('usage: versegit-product-a1-evidence.mjs <manifest|historical|negative|verify|independent|seal|check> [--unit-results path]');
+  if (mode !== 'check') {
+    console.log(`[versegit-a1] wrote ${mode}`);
+    return;
+  }
   const result = checkEvidence(root);
   if (!result.ok) { for (const issue of result.issues) console.error(`[versegit-a1] FAIL: ${issue}`); process.exitCode = 1; return; }
   console.log(`[versegit-a1] OK candidate=${result.manifest.candidate_id.slice(0, 12)} tests=${result.verification.unit_tests.counts.passed}/${result.verification.unit_tests.counts.tests} historical=${result.historical.entries.filter((entry) => entry.classification === 'historical-stale').length} stale`);
