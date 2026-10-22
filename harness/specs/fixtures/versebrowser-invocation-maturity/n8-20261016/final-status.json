@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-n8-final-status",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "candidateCommit": "d4c3f1021a0faf928a36a3299f54eea6bfd29fae",
+  "historicalFailure": "HISTORICAL-FAILURE-20261016.md",
+  "finalSummary": "SUMMARY.md",
+  "acceptance": "gates-after-fix.json",
+  "packagedFlow": "packaged-flow-verify-after-fix.json",
+  "currentCandidateScope": "Historical N8 candidate; current evidence lives in ../current-20261022/",
+  "limitations": [
+    "Windows x64 only",
+    "NSIS installer/uninstaller bodies not executed",
+    "No real-human evidence claimed"
+  ]
+}

@@ -13,6 +13,7 @@
     "dev": "vite",
     "dev:mock": "vite --open \"/?mock=1#/\"",
     "versebrowser:build": "pnpm --filter @verse-claw/versebrowser build",
+    "versebrowser:evidence:verify": "node scripts/versebrowser-evidence-verify.mjs",
     "build:runtime": "node scripts/build-openclaw-runtime.mjs",
     "provider:deepseek:configure": "node scripts/configure-deepseek-runtime.mjs",
     "runtime:event-log:inspect": "node openclaw_runtime/scripts/inspect-runtime-event-log.mjs",

@@ -751,4 +751,82 @@ describe('agent browser service', () => {
     expect(service.validate).toHaveBeenCalledWith({ url: 'https://example.com' });
     expect(service.close).toHaveBeenCalledWith('s1');
   });
-});
+
+  it('binds an injected CLI runner to the CLI engine at construction', async () => {
+    const cliRunner = {
+      isAvailable: vi.fn(() => true),
+      open: vi.fn(async () => ({ url: 'https://example.com/', title: 'CLI page' })),
+      textSample: vi.fn(async () => 'cli text'),
+      close: vi.fn(async () => undefined),
+    };
+    const windows: FakeWindow[] = [];
+    const service = new AgentBrowserService({
+      cliRunner: cliRunner as never,
+      createWindow: () => {
+        const win = new FakeWindow();
+        windows.push(win);
+        return win as never;
+      },
+    });
+
+    const opened = await service.open({ url: 'https://example.com/' });
+
+    expect(cliRunner.open).toHaveBeenCalledTimes(1);
+    expect(cliRunner.textSample).toHaveBeenCalledTimes(1);
+    expect(windows).toHaveLength(0);
+    expect(opened.textSample).toBe('cli text');
+    service.close(opened.session.id);
+    expect(cliRunner.close).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps browser-window authoritative even when a CLI runner exists', async () => {
+    const cliRunner = {
+      isAvailable: vi.fn(() => true),
+      open: vi.fn(async () => ({ url: 'https://example.com/' })),
+      textSample: vi.fn(async () => 'cli text'),
+      close: vi.fn(async () => undefined),
+    };
+    const windows: FakeWindow[] = [];
+    const service = new AgentBrowserService({
+      managedEngine: 'browser-window',
+      cliRunner: cliRunner as never,
+      createWindow: () => {
+        const win = new FakeWindow();
+        windows.push(win);
+        return win as never;
+      },
+    });
+
+    const opened = await service.open({ url: 'https://example.com/' });
+
+    expect(cliRunner.open).not.toHaveBeenCalled();
+    expect(windows).toHaveLength(1);
+    expect(opened.session.url).toBe('https://example.com/');
+    service.close(opened.session.id);
+  });
+
+  it('fails closed instead of falling back when the CLI engine is unavailable', async () => {
+    const cliRunner = {
+      isAvailable: vi.fn(() => false),
+      open: vi.fn(async () => ({ url: 'https://example.com/' })),
+      textSample: vi.fn(async () => 'cli text'),
+      close: vi.fn(async () => undefined),
+    };
+    const windows: FakeWindow[] = [];
+    const service = new AgentBrowserService({
+      managedEngine: 'agent-browser-cli',
+      cliRunner: cliRunner as never,
+      createWindow: () => {
+        const win = new FakeWindow();
+        windows.push(win);
+        return win as never;
+      },
+    });
+
+    await expect(service.open({ url: 'https://example.com/' })).rejects.toMatchObject({
+      code: 'E_CLI_UNAVAILABLE',
+    });
+    expect(cliRunner.open).not.toHaveBeenCalled();
+    expect(windows).toHaveLength(0);
+    expect(service.list()).toHaveLength(0);
+  });});

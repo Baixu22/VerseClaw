@@ -129,7 +129,7 @@ export function getDefaultAgentBrowserService(): ModuleAgentBrowserService {
   // serve takeSnapshot/clickByUid/fillByUid/pressKey, so the packaged app silently
   // lost the observation half of the model loop while status still advertised those
   // actions (N8 F1). Keep this service CLI-free.
-  defaultAgentBrowserService ??= new HostAgentBrowserService();
+  defaultAgentBrowserService ??= new HostAgentBrowserService({ managedEngine: 'browser-window' });
   return defaultAgentBrowserService;
 }
 

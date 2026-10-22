@@ -27,6 +27,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/openclaw-tools.ts
   - openclaw_runtime/src/gateway/server-methods/agent-browser.ts
   - scripts/versebrowser-*.mjs
+  - scripts/versebrowser-evidence-verify.mjs
   - scripts/windows-test-node.mjs
   - scripts/copy-runtime-package.mjs
   - scripts/bundle-main-runtime.mjs
@@ -62,6 +63,8 @@ requiredProfiles:
 requiredTests:
   - node --test scripts/versebrowser-build-wiring.test.mjs
   - pnpm exec vitest run tests/unit/versebrowser-host-adapter.test.ts tests/unit/versebrowser-driver-capabilities.test.ts tests/unit/versebrowser-task-session-conservation.test.ts tests/unit/agent-browser-gateway-bridge.test.ts tests/unit/agent-browser-tool.test.ts
+  - pnpm --dir packages/versebrowser exec vitest run tests/agent-browser-service.test.ts
+  - node scripts/versebrowser-evidence-verify.mjs
   - pnpm contract:check
   - pnpm run typecheck
   - pnpm run comms:replay
@@ -192,3 +195,15 @@ Task Forest 只保存本地进度与依赖；本规格拥有稳定设计和验�
 N1 允许并必须披露依赖复用：根 workspace 按冻结 pnpm lock 安装，运行时第三方依赖可只读复用，但 runtime workspace 的源码链接必须重绑到对应隔离检出，不能指回原混合工作区。执行用 Node/Electron 可作为固定二进制输入复制；这不等于干净下载或发行安装态验收。
 
 N1 启动探针必须等待实际 file 页面、DOMContentLoaded 和隔离配置对应的 setup-page 可见，再调用只读 status；仅出现 preload bridge 不算 renderer ready。早期仅检查 bridge 的探针结果只能作诊断，不能作为最终启动验收。
+
+## 2026-10-22 当前证据重绑定与引擎策略
+
+历史 N8/N9 收据仍然有效，但不能替代后续源码变更后的当前候选证明。当前证据目录固定为 `harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/`，必须同时满足：
+
+- N8 原始失败摘要保留为 `HISTORICAL-FAILURE-20261016.md`，最终通过与历史失败分开表述；
+- N8/N9 的 `SHA256SUMS` 覆盖目录内全部保留文件，重算零 mismatch；
+- 当前候选记录干净 commit/tree、构建产物 digest、N8 packaged-flow 与 N9 46 轮结果；
+- `node scripts/versebrowser-evidence-verify.mjs` 同时校验 manifest、attribution、当前源码未漂移和凭据扫描；
+- managed-session engine 在构造时锁定为 `browser-window` 或 `agent-browser-cli`，不得在 `open()` 时按 CLI 二进制是否出现再次选择；选中的 CLI 不可用时返回 `E_CLI_UNAVAILABLE`，不得静默回退到另一个引擎。
+
+该重绑定只维持既有“受控基础可用”声明，不增加 ego-lite 交互能力、不改变默认值、不发布、不声称全量成熟。

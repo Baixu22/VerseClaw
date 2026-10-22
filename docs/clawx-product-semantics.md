@@ -54,10 +54,10 @@ the matching owner-specific field, and rejects bare or mixed task keys.
 
 The executable boundary is opt-in for new callers: branded type checks and negative
 normalization tests guard against new identity confusion. Existing raw host-api
-payloads remain compatibility surfaces. In particular,
-`electron/services/agent-browser-api.ts` still has a legacy session-based
-resource-envelope workspace fallback; this slice records it rather than claiming
-it is migrated. The program's later migration work must remove it before claiming
+payloads remain compatibility surfaces. The browser resource-envelope fallback was
+removed: `electron/services/agent-browser-api.ts` now records only the explicit
+`workspaceId` and no longer aliases session keys into workspace identity. Other raw
+compatibility payloads still require migration before the project may claim
 whole-system identity convergence.
 
 TF-0372 supplies no Project store, new Task/Run/Trace/Goal/Memory authority, execution

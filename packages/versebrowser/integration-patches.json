@@ -192,6 +192,20 @@
       "patchPath": "packages/versebrowser/patches/tf0372-lint__src__openclaw__gateway__types.ts.patch",
       "patchSha256": "3c7b5ec21ebe98127d771464dfc68f7022d722d0acbe4cd79c90c2afbe2d3781",
       "reason": "Align the frozen import with the existing host lint rules: remove dead declarations/assignments, use explicit test types and preserve error causes without changing permissions or ID formats."
+    },
+    {
+      "id": "vb-engine-policy-src-engine-service-ts",
+      "driven_by": "agent",
+      "actor": "codex-verse-browser-absorption-20261022",
+      "sourcePath": "src/engine/service.ts",
+      "targetPath": "packages/versebrowser/src/engine/service.ts",
+      "sourceNormalization": "lf",
+      "originalRawSha256": "081b80a0524834f6571c4bf5da812471789aa698f38b732d512ace38812b1424",
+      "originalLfSha256": "f8382356e892f130d99310ab73a97560485033c306af0b405ddc12b95bb3ebfc",
+      "patchedSha256": "bea083e0072337d10e64dee78c64ba8dfa2f69451663436b0f53c683cfd183be",
+      "patchPath": "packages/versebrowser/patches/vb-engine-policy__src__engine__service.ts.patch",
+      "patchSha256": "53794a1402ca0567d2989d1023e88e9e65c5cfae7289d2d5715909e88d516ec8",
+      "reason": "Make managed-session engine selection explicit and immutable at construction. A desktop surface can remain browser-window even when a CLI runner exists, and an unavailable CLI engine now fails closed instead of being re-selected from runtime binary presence."
     }
   ]
 }
