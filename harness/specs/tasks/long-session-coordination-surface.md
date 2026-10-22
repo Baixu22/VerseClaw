@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-coordination-surface
 title: 把长期协作入口接到现有会话、任务与活动界面
 program: long-session-development-20261022

@@ -1,0 +1,274 @@
+{
+  "schema": "clawx.long-session.c4-verification/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-c4",
+  "program": "long-session-development-20261022",
+  "task": "TF-0555",
+  "taskKey": "C4",
+  "candidate": {
+    "commit": "4a4f53f37749d95d85f4990c85e196a5f1f11d0d",
+    "tree": "da7e5abe5abc5b1820cee52e4a946d12a5ec3f33",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "rawRun": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\gate-run.json"
+  },
+  "title": "C4 long-session coordination surface and source navigation",
+  "verdict": "pass",
+  "featureClaim": "an explicitly bound long session is reachable and auditable through the existing Sidebar, Chat activity rail, worker transcript and Task Ledger",
+  "commands": [
+    {
+      "id": "unit-focused",
+      "command": "pnpm exec vitest run tests/unit/sidebar-session-context-menu.test.tsx tests/unit/session-activity-panel.test.tsx tests/unit/long-session-coordination-surface.test.ts tests/unit/role-orchestration-methods.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 23765,
+      "rawLog": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\unit-focused.log",
+      "rawLogSha256": "cfacf79a67a7015975fabfe7f5caa7cae55ea466b023e260d1e6b63d224751fe",
+      "tests": 74,
+      "passed": 74,
+      "failed": 0,
+      "files": 4
+    },
+    {
+      "id": "i18n-lint",
+      "command": "pnpm run i18n:lint",
+      "exitCode": 0,
+      "durationMs": 865,
+      "rawLog": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\i18n-lint.log",
+      "rawLogSha256": "abcc50aa570dba0c3e2a8d438ea2714d1c5175eeb9944f13f40d0292151b0831",
+      "result": "pass"
+    },
+    {
+      "id": "build-vite",
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "durationMs": 48261,
+      "rawLog": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\build-vite.log",
+      "rawLogSha256": "00356516e7ce4a5ee43c2e2b6c007396da17fe9e256b073d9d0d99a64430e6c2",
+      "success": true
+    },
+    {
+      "id": "electron-e2e",
+      "command": "pnpm run test:e2e:run tests/e2e/chat-session-handoff.spec.ts tests/e2e/chat-session-fork.spec.ts tests/e2e/long-session-coordination.spec.ts",
+      "exitCode": 0,
+      "durationMs": 93288,
+      "rawLog": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\electron-e2e.log",
+      "rawLogSha256": "3dd1a3f270142795bfc55d0a81de339ae2534aa008ae464be958c6eddafb67f9",
+      "files": 3,
+      "tests": 9,
+      "passed": 9,
+      "failed": 0,
+      "realHostGateway": true,
+      "fourLocales": true,
+      "narrowViewport": true
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 25872,
+      "rawLog": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\typecheck.log",
+      "rawLogSha256": "af0c473a6423271c4a78fbb7e3f676631b831ae53e0e0d8c6e75949dcf6ba3db",
+      "projects": 3,
+      "errors": 0,
+      "success": true
+    },
+    {
+      "id": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "durationMs": 1008,
+      "rawLog": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\contract-check.log",
+      "rawLogSha256": "81d18a4ca335c721b9567fc4d94482781ef54aebc18a6959042cf816bc899414",
+      "result": "pass"
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 814,
+      "rawLog": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\comms-replay.log",
+      "rawLogSha256": "b220bc5c91a973beae1d995bd036866d0330a67027d47dd5080cd2dd84675f6e",
+      "success": true
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 710,
+      "rawLog": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\comms-compare.log",
+      "rawLogSha256": "b5f97bb6ec50e4fa8fa98b1ee60b7792a9fcd02783b4361617725cad129ab10f",
+      "result": "PASS",
+      "comparisonRows": 44,
+      "passedRows": 44,
+      "failedRows": 0
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/long-session-coordination-surface.md",
+      "exitCode": 0,
+      "durationMs": 1486,
+      "rawLog": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\harness-validate.log",
+      "rawLogSha256": "e20a3a747a09ed74291ece3a70282ec3ab869814436c96724e33f7d6b17e13c5",
+      "result": "pass"
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationMs": 56,
+      "rawLog": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\git-diff-check.log",
+      "rawLogSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+      "whitespaceErrors": 0
+    },
+    {
+      "id": "changed-eslint",
+      "command": "pnpm exec eslint src/components/layout/Sidebar.tsx src/pages/Chat/SessionActivityPanel.tsx src/pages/Chat/index.tsx src/pages/Chat/long-session-coordination.ts tests/unit/session-activity-panel.test.tsx tests/unit/long-session-coordination-surface.test.ts tests/e2e/long-session-coordination.spec.ts",
+      "exitCode": 0,
+      "durationMs": 5360,
+      "rawLog": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\changed-eslint.log",
+      "rawLogSha256": "653c169c92dcfa5aedf47e226067d2aa1c2d88b1a565828d7bc0aaadb2c3b42f",
+      "errors": 0,
+      "warnings": 3
+    }
+  ],
+  "counts": {
+    "unitFiles": 4,
+    "unitTests": 74,
+    "unitPassed": 74,
+    "e2eFiles": 3,
+    "e2eTests": 9,
+    "e2ePassed": 9,
+    "totalTests": 83,
+    "commands": 11,
+    "failedCommands": 0,
+    "builds": 1,
+    "typecheckProjects": 3,
+    "typecheckErrors": 0,
+    "commsRows": 44,
+    "commsPassed": 44,
+    "locales": 4
+  },
+  "acceptance": [
+    {
+      "criterion": "Open a stable main session through existing Sidebar/Chat and show task/worker/result references plus necessary pause/resume without a second task authority.",
+      "result": "pass",
+      "evidence": [
+        "coordination-ui-journeys.json",
+        "coordination-ui-screenshots.json",
+        "tests/unit/session-activity-panel.test.tsx"
+      ]
+    },
+    {
+      "criterion": "Represent draft, accepted, running, waiting, failed/cancelled, reported and accepted-by-task from actual receipts; locate worker transcript, Task Ledger and evidence sources.",
+      "result": "pass",
+      "evidence": [
+        "coordination-ui-journeys.json",
+        "tests/unit/long-session-coordination-surface.test.ts"
+      ]
+    },
+    {
+      "criterion": "Pass switching, minimize/restore, background work, keyboard, four languages, narrow layout and completion visibility in real Electron; preserve ordinary handoff/fork behavior.",
+      "result": "pass",
+      "evidence": [
+        "coordination-ui-journeys.json",
+        "coordination-ui-screenshots.json",
+        "tests/e2e/long-session-coordination.spec.ts",
+        "tests/e2e/chat-session-handoff.spec.ts",
+        "tests/e2e/chat-session-fork.spec.ts"
+      ]
+    },
+    {
+      "criterion": "Show real pause/delete/backend limits; stay quiet without new results; renderer uses only typed host-api.",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/session-activity-panel.test.tsx",
+        "tests/unit/long-session-coordination-surface.test.ts",
+        "src/pages/Chat/index.tsx"
+      ]
+    }
+  ],
+  "sourceInputs": [
+    "src/components/layout/Sidebar.tsx",
+    "src/pages/Chat/index.tsx",
+    "src/pages/Chat/SessionActivityPanel.tsx",
+    "src/pages/Chat/long-session-coordination.ts",
+    "shared/i18n/locales/en/chat.json",
+    "shared/i18n/locales/zh/chat.json",
+    "shared/i18n/locales/ja/chat.json",
+    "shared/i18n/locales/ru/chat.json",
+    "tests/unit/session-activity-panel.test.tsx",
+    "tests/unit/long-session-coordination-surface.test.ts",
+    "tests/e2e/long-session-coordination.spec.ts",
+    "tests/e2e/chat-session-handoff.spec.ts",
+    "tests/e2e/chat-session-fork.spec.ts"
+  ],
+  "stateCoverage": [
+    {
+      "state": "draft",
+      "evidence": "tests/unit/long-session-coordination-surface.test.ts#maps durable receipts and live owner records without inventing task acceptance"
+    },
+    {
+      "state": "accepted",
+      "evidence": "tests/unit/long-session-coordination-surface.test.ts#keeps accepted and unknown receipt facts distinct when no worker result exists"
+    },
+    {
+      "state": "running",
+      "evidence": "tests/unit/long-session-coordination-surface.test.ts#maps durable receipts and live owner records without inventing task acceptance"
+    },
+    {
+      "state": "waiting",
+      "evidence": "tests/unit/long-session-coordination-surface.test.ts#lets Task Ledger acceptance outrank worker delivery, while invalidated bindings keep their actual reason"
+    },
+    {
+      "state": "failed",
+      "evidence": "tests/e2e/long-session-coordination.spec.ts + completed worker batch with failed count shown as Failed"
+    },
+    {
+      "state": "cancelled",
+      "evidence": "tests/unit/long-session-coordination-surface.test.ts#maps durable receipts and live owner records without inventing task acceptance"
+    },
+    {
+      "state": "reported",
+      "evidence": "tests/unit/long-session-coordination-surface.test.ts#maps durable receipts and live owner records without inventing task acceptance"
+    },
+    {
+      "state": "accepted-by-task",
+      "evidence": "tests/unit/long-session-coordination-surface.test.ts#lets Task Ledger acceptance outrank worker delivery, while invalidated bindings keep their actual reason"
+    },
+    {
+      "state": "unknown",
+      "evidence": "tests/unit/long-session-coordination-surface.test.ts#keeps accepted and unknown receipt states distinct when no worker result exists"
+    }
+  ],
+  "unmeasured": [
+    "successful live-provider multi-worker synthesis quality",
+    "screen-reader matrix beyond keyboard/aria checks",
+    "non-Windows runtime behavior"
+  ],
+  "limitations": [
+    "The real journey stops one child worker; Task Ledger acceptance remains a separate owner and is covered by projection tests rather than a synthetic completion write.",
+    "Pause/resume controls reuse the existing composer controls and are covered at component level; the stopped worker journey has no active parent turn to pause.",
+    "The C4 surface projects existing owners only and does not introduce a second task store, scheduler or completion authority.",
+    "All evidence is agent-driven; no real-human evidence is claimed."
+  ],
+  "cleanup": {
+    "startedProcesses": true,
+    "startedGateway": true,
+    "electronProcessesClosed": true,
+    "gatewayProcessesClosed": true,
+    "temporaryRoot": "D:/tmp/long-session-c4/4a4f53f37749d95d85f4990c85e196a5f1f11d0d",
+    "recoveryRequired": false
+  },
+  "credentialScan": {
+    "command": "node scan of C4 JSON artifacts for sk-/AIza/gh* private-key, password/secret/api-key and Authorization patterns",
+    "matches": 0,
+    "result": "pass",
+    "scannedFiles": [
+      "coordination-ui-journeys.json",
+      "coordination-ui-screenshots.json",
+      "verification-receipt.json"
+    ]
+  },
+  "rawRun": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\gate-run.json"
+}
