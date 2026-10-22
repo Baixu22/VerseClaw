@@ -19,10 +19,16 @@ import {
   stage4GovernancePolicyDigest,
   Stage4GrantAuthority,
   STAGE4_GRANT_TTL_MS,
+  STAGE4_REVOCATION_EPOCH,
   type Stage4GrantActor,
   type Stage4GrantCall,
   type Stage4GrantDenyReason,
 } from "./stage4-capability-grant.js";
+import {
+  PermissionEffectDeniedError,
+  assertPermissionEffectAtFinalCheckpoint,
+  permissionEffectBindingFor,
+} from "../../../shared/permission-effect-contract.js";
 
 export const STAGE4_WRITE_POLICY_RULE = "stage4-golden-write-under-owner-policy:v1";
 export const STAGE4_WRITE_POLICY_ACTOR = "owner:stage4-golden-write-policy";
@@ -40,6 +46,7 @@ export type Stage4ToolGuardOptions = {
   };
   actorKind?: "principal" | "delegate";
   workspaceRoot: string;
+  workspaceId?: string;
   sessionId?: string;
   /** Stable test clock. */
   nowMs?: () => number;
@@ -218,6 +225,58 @@ export function wrapToolWithStage4ToolGuard(
       const verdict = authority.verify(issued.grant, call, now);
       if (!verdict.allow) {
         return deny(verdict.reason, undefined, issued.grant.grantId);
+      }
+
+      const permissionBinding = permissionEffectBindingFor("coding-control");
+      if (!permissionBinding) {
+        return deny("grant-verification-failed", "permission-binding-missing", issued.grant.grantId);
+      }
+      const workspaceId = options.workspaceId ?? options.workspaceRoot;
+      try {
+        assertPermissionEffectAtFinalCheckpoint({
+          subject: {
+            sessionKey: actor.sessionKey,
+            runId: actor.runId,
+            attemptIndex: actor.attemptIndex,
+            modelCallIndex: actor.modelCallIndex,
+            actorKind: actor.actorKind,
+            workspaceId,
+            taskBranchId: actor.runId,
+          },
+          request: {
+            requestId: toolCallId,
+            componentId: "coding-control",
+            action,
+            resource,
+            purpose,
+            idempotencyKey: issued.grant.effectIdempotency.key,
+          },
+          snapshot: {
+            grant: issued.grant,
+            authorityOwner: permissionBinding.finalAuthorityOwner,
+            ownerDecision: "allowed",
+            ownerPolicyDigest: approvalPolicyDigest,
+            workspaceId,
+            revocationEpoch: STAGE4_REVOCATION_EPOCH,
+            revokedGrantIds: [],
+            policyEpoch: approvalPolicyDigest,
+            catalogEpoch: approvalPolicyDigest,
+            capturedAtMs: now,
+          },
+          current: {
+            nowMs: now,
+            revocationEpoch: STAGE4_REVOCATION_EPOCH,
+            revokedGrantIds: [],
+            policyEpoch: approvalPolicyDigest,
+            catalogEpoch: approvalPolicyDigest,
+          },
+        });
+      } catch (error) {
+        return deny(
+          "grant-verification-failed",
+          error instanceof PermissionEffectDeniedError ? error.reason : "permission-effect-check-failed",
+          issued.grant.grantId,
+        );
       }
 
       try {
