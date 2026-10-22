@@ -118,9 +118,9 @@ export function candidateIdentity(inputs, binary) {
   return sha256(JSON.stringify(stable({ inputs: inputs.map(({ role, path, sha256: digest, bytes }) => ({ role, path, sha256: digest, bytes })), binary: { role: binary.role, sha256: binary.sha256, bytes: binary.bytes, version: binary.version, capabilities_schema: binary.capabilities?.schema, capabilities_sha256: binary.capabilities_sha256 } })));
 }
 
-export function buildInputManifest({ root = repositoryRoot, generatedAt = new Date().toISOString(), actor = 'codex' } = {}) {
+export function buildInputManifest({ root = repositoryRoot, generatedAt = new Date().toISOString(), actor = 'codex', requireClean = true } = {}) {
   const source = repoIdentity(root);
-  if (source.dirty) throw new Error('A1 input manifest must be generated from a clean source candidate');
+  if (requireClean && source.dirty) throw new Error('A1 input manifest must be generated from a clean source candidate');
   const inputs = trackedInputs(root); const binary = providerBinaryIdentity(root);
   const counts = Object.fromEntries(['source', 'test', 'contract', 'dependency'].map((role) => [role, inputs.filter((entry) => entry.role === role).length]));
   const manifest = {
@@ -301,7 +301,7 @@ export function validateCurrentVerification(document, { root = repositoryRoot, m
   return { ok: issues.length === 0, issues };
 }
 function buildIndependentReview(root, manifest, historical, verification, negative) {
-  const replay = validateInputManifest(manifest, { root, verifyBinary: true }); const history = validateHistoricalIndex(historical, { root, manifest }); const current = validateCurrentVerification(verification, { root, manifest, historical, negative }); const negatives = validateNegativeChecks(negative); const recomputed = buildInputManifest({ root, generatedAt: manifest.generated_at, actor: manifest.actor });
+  const replay = validateInputManifest(manifest, { root, verifyBinary: true }); const history = validateHistoricalIndex(historical, { root, manifest }); const current = validateCurrentVerification(verification, { root, manifest, historical, negative }); const negatives = validateNegativeChecks(negative); const recomputed = buildInputManifest({ root, generatedAt: manifest.generated_at, actor: manifest.actor, requireClean: false });
   const issues = [...replay.issues, ...history.issues, ...current.issues, ...negatives.issues];
   if (recomputed.candidate_id !== manifest.candidate_id) issues.push('recomputed current candidate id drifted');
   if (JSON.stringify(stable(recomputed.inputs)) !== JSON.stringify(stable(manifest.inputs))) issues.push('recomputed input set drifted');
