@@ -25,15 +25,21 @@ residualPaths:
   - harness/specs/tasks/model-capability-effective-runtime-state.md
   - openclaw_runtime/src/agents/runtime-effective-capability.ts
   - tests/unit/runtime-effective-capability.test.ts
+  - scripts/versegit-product-c2-evidence.mts
+  - scripts/verify-versegit-product-c2-evidence.mts
 touchedAreas:
   - harness/specs/tasks/versegit-product-c2-observation-basis.md
   - electron/services/versegit-observation.ts
   - electron/services/versegit-fact-adapter.ts
+  - electron/gateway/versegit-bridge.ts
   - shared/versegit-runtime-contract.ts
   - openclaw_runtime/src/agents/harness/tool-result-middleware.ts
+  - openclaw_runtime/src/agents/harness/versegit-tool-observation.ts
+  - openclaw_runtime/src/plugin-sdk/versegit-observation-port.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts
   - openclaw_runtime/src/agents/sessions/tools/**
   - tests/unit/versegit-observation-basis.test.ts
+  - openclaw_runtime/src/agents/sessions/tools/read.test.ts
   - harness/specs/fixtures/versegit-product-integration/c2/**
   - harness/specs/tasks/versegit-product-integration-node-contracts.md
   - harness/specs/tasks/versegit-product-a1-evidence-baseline.md

@@ -27,6 +27,7 @@ import {
 } from "./render-utils.js";
 import { wrapToolDefinition } from "./tool-definition-wrapper.js";
 import type { WriteToolDetails } from "./tool-contracts.js";
+import { createVerseGitWriteBasis, verseGitSha256 } from "./versegit-tool-basis.js";
 
 const writeSchema = Type.Object({
   path: Type.String({ description: "Path to the file to write (relative or absolute)" }),
@@ -89,6 +90,7 @@ type WriteToolFileStat = {
 type WriteToolPrecheck = {
   state: "different" | "same" | "unknown";
   beforeStat?: WriteToolFileStat | null;
+  beforeSha256?: string | null;
 };
 
 const WRITE_PRECHECK_READ_LIMIT_BYTES = 1024 * 1024;
@@ -281,29 +283,40 @@ async function readOriginalWriteState(
     return { state: isMissingFileError(error) ? "different" : "unknown" };
   }
   if (!stat) {
-    return { state: "different", beforeStat: stat };
+    return { state: "different", beforeStat: stat, beforeSha256: null };
   }
   if (stat.type !== "file") {
     return { state: "unknown", beforeStat: stat };
   }
-  if (stat.size !== Buffer.byteLength(content, "utf8")) {
-    return { state: "different", beforeStat: stat };
-  }
-  if (!ops.readFile || stat.size > WRITE_PRECHECK_READ_LIMIT_BYTES) {
-    return { state: "unknown", beforeStat: stat };
+
+  let originalText: string | undefined;
+  let beforeSha256: string | null = null;
+  if (ops.readFile && stat.size <= WRITE_PRECHECK_READ_LIMIT_BYTES) {
+    try {
+      const originalContent = await ops.readFile(absolutePath);
+      const originalBuffer = Buffer.isBuffer(originalContent)
+        ? originalContent
+        : Buffer.from(originalContent, "utf8");
+      originalText = originalBuffer.toString("utf8");
+      beforeSha256 = verseGitSha256(originalBuffer);
+    } catch {
+      // Keep the state unknown; the write itself still uses the owning mutations path.
+    }
   }
 
-  try {
-    const originalContent = await ops.readFile(absolutePath);
-    const originalText = Buffer.isBuffer(originalContent)
-      ? originalContent.toString("utf8")
-      : originalContent;
-    return { state: originalText === content ? "same" : "different", beforeStat: stat };
-  } catch {
-    return { state: "unknown", beforeStat: stat };
+  if (originalText !== undefined) {
+    return {
+      state: originalText === content ? "same" : "different",
+      beforeStat: stat,
+      beforeSha256,
+    };
   }
+  return {
+    state: stat.size === Buffer.byteLength(content, "utf8") ? "unknown" : "different",
+    beforeStat: stat,
+    beforeSha256,
+  };
 }
-
 async function didWriteMetadataChange(
   absolutePath: string,
   beforeStat: WriteToolFileStat | null | undefined,
@@ -419,6 +432,11 @@ export function createWriteToolDefinition(
               },
             ],
             details: {
+              versegit_basis: createVerseGitWriteBasis({
+                path,
+                content,
+                beforeSha256: precheck.beforeSha256 ?? null,
+              }),
               working_memory: {
                 result_summary: `Wrote ${path}: ${byteLength} bytes`.slice(0, 100),
                 significance: "high",

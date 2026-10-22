@@ -32,6 +32,7 @@ import { getTextOutput, invalidArgText, replaceTabs, shortenPath, str } from "./
 import type { ReadToolDetails } from "./tool-contracts.js";
 import { wrapToolDefinition } from "./tool-definition-wrapper.js";
 import { decodeTextFile } from "./text-file-codec.js";
+import { createVerseGitReadBasis } from "./versegit-tool-basis.js";
 import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES, formatSize, truncateHead } from "./truncate.js";
 
 const readSchema = Type.Object({
@@ -440,8 +441,27 @@ export function createReadToolDefinition(
                 // No truncation and no remaining user-limited content.
                 outputText = truncation.content;
               }
-              content = [{ type: "text", text: outputText }];
-            }
+              const receivedLineCount = truncation.firstLineExceedsLimit
+                ? 1
+                : truncation.outputLines > 0
+                  ? truncation.outputLines
+                  : (userLimitedLines ?? allLines.length - startLine);
+              const actualEndLineDisplay = Math.min(
+                totalFileLines,
+                startLineDisplay + Math.max(1, receivedLineCount) - 1,
+              );
+              details = {
+                ...(details ?? {}),
+                versegit_basis: createVerseGitReadBasis({
+                  path,
+                  lineStart: startLineDisplay,
+                  lineEnd: actualEndLineDisplay,
+                  fileBuffer: buffer,
+                  rangeContent: truncation.firstLineExceedsLimit ? allLines[startLine] ?? "" : truncation.content,
+                  truncated: truncation.truncated || truncation.firstLineExceedsLimit,
+                }),
+              };
+              content = [{ type: "text", text: outputText }];            }
 
             if (aborted) {
               return;

@@ -22,6 +22,9 @@ export function registerVerseGitRuntimeBinding(
   bindingsByRunId.set(runId, { binding, port });
 }
 
+export function getVerseGitRuntimeBindingForRun(runId: string): VerseGitBindingRecord | null {
+  return bindingsByRunId.get(runId)?.binding ?? null;
+}
 export async function endVerseGitRuntimeBindingForRun(
   runId: string,
   reason: VerseGitBindingEndRequest["reason"],

@@ -6,6 +6,7 @@
 import type { Edit } from "./edit-diff.js";
 import type { TruncationResult } from "./truncate.js";
 import type { GitPatchArtifactV1, RemoteForgeErrorV1 } from "../../../../../shared/types/remote-forge.js";
+import type { VerseGitToolBasis } from "../../../../../shared/versegit-runtime-contract.js";
 
 /**
  * DCS working-memory producer envelope.
@@ -38,6 +39,8 @@ export interface EditToolInput {
 }
 
 export interface EditToolDetails {
+  /** Read-time/after-effect basis recorded by the host tool boundary. */
+  versegit_basis?: VerseGitToolBasis;
   /** Display-oriented diff of the changes made */
   diff: string;
   /** Standard unified patch of the changes made */
@@ -95,6 +98,7 @@ export interface ReadToolInput {
 }
 
 export interface ReadToolDetails {
+  versegit_basis?: VerseGitToolBasis;
   truncation?: TruncationResult;
 }
 
@@ -104,6 +108,7 @@ export interface WriteToolInput {
 }
 
 export interface WriteToolDetails {
+  versegit_basis?: VerseGitToolBasis;
   /** Standard unified patch generated from the journal-owned before snapshot. */
   patch?: string;
   /** Shared read-only patch projection; mutation ownership stays with the tool and journal. */

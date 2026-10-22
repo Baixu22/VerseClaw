@@ -79,7 +79,12 @@ export type VerseGitBridgeEvent = {
     | 'attach_rejected'
     | 'end_requested'
     | 'ended'
-    | 'end_rejected';
+    | 'end_rejected'
+    | 'observation_bound'
+    | 'observation_bind_rejected'
+    | 'observed'
+    | 'observation_rejected'
+    | 'observation_sealed';
   requestId?: string;
   bindingId?: string;
   runId?: string;
@@ -112,4 +117,82 @@ export type VerseGitRuntimeBindingPort = {
   bind: (request: Omit<VerseGitBindingRequest, 'schema' | 'ownerId' | 'epoch'> & Partial<Pick<VerseGitBindingRequest, 'ownerId' | 'epoch'>>) => Promise<VerseGitBindingRecord>;
   attach: (request: Pick<VerseGitBindingAttachRequest, 'bindingId' | 'childSessionKey' | 'childRunId'>) => Promise<VerseGitBindingRecord>;
   end: (request: Pick<VerseGitBindingEndRequest, 'bindingId' | 'reason'>) => Promise<{ bindingId: string; endedAt: string; reason: string }>;
+};
+
+export const VG_TOOL_BASIS_SCHEMA = 'clawx.versegit.tool-basis/v1';
+export const VG_TOOL_OBSERVATION_SCHEMA = 'clawx.versegit.tool-observation-request/v1';
+export const VG_TOOL_OBSERVATION_RESULT_SCHEMA = 'clawx.versegit.tool-observation-result/v1';
+
+export type VerseGitToolBasis = {
+  schema: typeof VG_TOOL_BASIS_SCHEMA;
+  kind: 'read' | 'write' | 'edit';
+  path: string;
+  lineStart: number;
+  lineEnd: number;
+  fileSha256?: string | null;
+  rangeSha256?: string | null;
+  beforeSha256?: string | null;
+  afterSha256?: string | null;
+  truncated?: boolean;
+};
+
+export type VerseGitToolObservationStatus = 'succeeded' | 'failed' | 'cancelled' | 'timed-out' | 'unknown';
+
+export type VerseGitToolObservationRequest = {
+  schema: typeof VG_TOOL_OBSERVATION_SCHEMA;
+  bindingId: string;
+  childRunId: string;
+  toolCallId: string;
+  toolName: string;
+  status: VerseGitToolObservationStatus;
+  args: Record<string, unknown>;
+  cwd: string;
+  inputDigest: string;
+  outputDigest: string;
+  basis?: VerseGitToolBasis;
+  observedAt: string;
+  ownerId: string;
+  epoch: number;
+};
+
+export type VerseGitToolObservationRecord = {
+  schema: typeof VG_TOOL_OBSERVATION_RESULT_SCHEMA;
+  status: 'observed' | 'partial' | 'duplicate' | 'stale' | 'rejected_by_policy';
+  why: string;
+  issues: string[];
+  binding: {
+    runId: string;
+    repoId: string;
+    worktreeId: string;
+    agentSessionId: string;
+    epoch: number;
+  } | null;
+  event: {
+    eventId: string;
+    runId: string;
+    traceId: string;
+    agentSessionId: string;
+    vgSessionId: string;
+    repoId: string;
+    worktreeId: string;
+    ownerId: string;
+    epoch: number;
+    surface: string;
+    operation: string;
+    effect: string;
+    status: string;
+    coverage: string;
+    path: string | null;
+    lineStart: number | null;
+    lineEnd: number | null;
+    basisDigest: string | null;
+    inputDigest: string;
+    outputDigest: string;
+    observedAt: string;
+  } | null;
+  host_verdict: 'unchanged';
+};
+
+export type VerseGitRuntimeObservationPort = {
+  observe: (request: Omit<VerseGitToolObservationRequest, 'schema' | 'ownerId' | 'epoch'>) => Promise<VerseGitToolObservationRecord>;
 };

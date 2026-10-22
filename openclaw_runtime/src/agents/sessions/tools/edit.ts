@@ -34,6 +34,7 @@ import { withFileMutationQueue } from "./file-mutation-queue.js";
 import { resolveToCwd } from "./path-utils.js";
 import { invalidArgText, shortenPath, str } from "./render-utils.js";
 import type { EditToolDetails, EditToolInput } from "./tool-contracts.js";
+import { createVerseGitEditBasis } from "./versegit-tool-basis.js";
 import { wrapToolDefinition } from "./tool-definition-wrapper.js";
 import { decodeTextFile, encodeTextFile } from "./text-file-codec.js";
 
@@ -461,6 +462,12 @@ export function createEditToolDefinition(
               },
             ],
             details: {
+              versegit_basis: createVerseGitEditBasis({
+                path,
+                beforeBuffer: buffer,
+                afterContent: encoded,
+                firstChangedLine: diffResult.firstChangedLine,
+              }),
               diff: diffResult.diff,
               patch,
               patchArtifacts: projection.artifacts,

@@ -7,7 +7,10 @@
  * harness verdict. Unbound, stale, duplicate and partial observations remain explicit.
  */
 import type { ChatRuntimeEvent } from '../../shared/chat-runtime-events';
+import type { VerseGitToolBasis, VerseGitToolObservationRequest } from '../../shared/versegit-runtime-contract';
 import { createHash } from 'node:crypto';
+import { existsSync, realpathSync } from 'node:fs';
+import { basename, dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 
 export const VG_OBSERVATION_SCHEMA = 'clawx.versegit.behavior-event/v1';
 export const VG_OBSERVATION_RESULT_SCHEMA = 'clawx.versegit.observation-result/v1';
@@ -40,6 +43,8 @@ export type ObservationBinding = {
   ownerId: string;
   actor: string;
   epoch: number;
+  bindingId?: string;
+  worktreePath?: string;
   boundAt?: number;
 };
 
@@ -81,6 +86,8 @@ export type ObservationCoverageSnapshot = {
   staleCount: number;
   rejectedCount: number;
   surfaceCounts: Record<BehaviorSurface, number>;
+  toolEventCount: number;
+  droppedCount: number;
 };
 
 export type VerseGitBehaviorEvent = {
@@ -96,7 +103,7 @@ export type VerseGitBehaviorEvent = {
   ownerId: string;
   actor: string;
   epoch: number;
-  source: 'chat-runtime';
+  source: 'chat-runtime' | 'tool-middleware';
   sourceEventType: string;
   surface: BehaviorSurface;
   operation: string;
@@ -113,6 +120,10 @@ export type VerseGitBehaviorEvent = {
   endedAt: string | null;
   durationMs: number | null;
   reason: string | null;
+  path?: string | null;
+  lineStart?: number | null;
+  lineEnd?: number | null;
+  basis?: VerseGitToolBasis;
 };
 
 export type ObservationIngestResult = {
@@ -173,6 +184,32 @@ type MappedRuntimeEvent = {
   reason: string | null;
 };
 
+type ActiveToolObservation = {
+  event: VerseGitBehaviorEvent;
+  toolCallId: string;
+  toolName: string;
+  observedAtMs: number;
+  basis: VerseGitToolBasis | null;
+};
+
+export type VerseGitStaleReadFinding = {
+  schema: 'clawx.versegit.stale-read-finding/v1';
+  findingId: string;
+  kind: 'stale-read' | 'api-drift';
+  path: string;
+  readEventId: string;
+  writeEventId: string;
+  readerSessionId: string;
+  writerSessionId: string;
+  readRange: { lineStart: number; lineEnd: number };
+  writeRange: { lineStart: number; lineEnd: number };
+  readBasisSha256: string;
+  writeBeforeSha256: string | null;
+  writeAfterSha256: string;
+  observedAt: string;
+  host_verdict: 'unchanged';
+};
+
 type ActiveSession = {
   binding: ObservationBinding;
   coverage: ObservationCoverageVector;
@@ -184,6 +221,9 @@ type ActiveSession = {
   rejectedCount: number;
   seen: BoundedKeySet;
   activeCalls: Map<string, ToolCallState>;
+  toolObservations: ActiveToolObservation[];
+  toolEventCount: number;
+  droppedCount: number;
 };
 
 type Tombstone = {
@@ -422,6 +462,8 @@ function toSnapshot(session: ActiveSession): ObservationCoverageSnapshot {
     staleCount: session.staleCount,
     rejectedCount: session.rejectedCount,
     surfaceCounts: { ...session.surfaceCounts },
+    toolEventCount: session.toolEventCount,
+    droppedCount: session.droppedCount,
   };
 }
 
@@ -465,6 +507,45 @@ function eventKey(event: ChatRuntimeEvent, context: ObservationContext): string 
   return `${event.runId}:${event.type}:${event.seq ?? digestOf(event)}`;
 }
 
+function isSha256(value: unknown): value is string {
+  return typeof value === 'string' && /^[a-f0-9]{64}$/u.test(value);
+}
+
+function isWithinRoot(root: string, candidate: string): boolean {
+  const rel = relative(root, candidate);
+  return rel === '' || (!isAbsolute(rel) && rel !== '..' && !rel.startsWith(`..${sep}`));
+}
+
+function normalizeObservedPath(rootPath: string, cwd: string, observedPath: string): string | null {
+  try {
+    const root = realpathSync(rootPath);
+    const canonicalCwd = realpathSync(cwd);
+    if (!isWithinRoot(root, canonicalCwd)) return null;
+    const candidate = resolve(canonicalCwd, observedPath);
+    const existing = existsSync(candidate) ? candidate : null;
+    const canonicalCandidate = existing
+      ? realpathSync(existing)
+      : resolve(realpathSync(dirname(candidate)), basename(candidate));
+    if (!isWithinRoot(root, canonicalCandidate)) return null;
+    const rel = relative(root, canonicalCandidate);
+    if (!rel) return null;
+    return rel.replaceAll('\\', '/');
+  } catch {
+    return null;
+  }
+}
+
+function rangesOverlap(
+  left: { lineStart: number; lineEnd: number },
+  right: { lineStart: number; lineEnd: number },
+): boolean {
+  return left.lineStart <= right.lineEnd && right.lineStart <= left.lineEnd;
+}
+
+function isApiDriftPath(path: string): boolean {
+  return /\.(?:ts|tsx|js|jsx|mjs|cjs|py)$/u.test(path.toLowerCase());
+}
+
 function validateBinding(binding: ObservationBinding): string[] {
   const issues: string[] = [];
   for (const [field, value] of Object.entries({
@@ -476,6 +557,8 @@ function validateBinding(binding: ObservationBinding): string[] {
   if (!Number.isInteger(binding.epoch) || binding.epoch < 1) issues.push('epoch must be a positive integer');
   if (binding.sessionKey !== undefined && !isOpaqueId(binding.sessionKey)) issues.push('sessionKey must be a non-empty opaque identifier');
   if (binding.requestId !== undefined && !isOpaqueId(binding.requestId)) issues.push('requestId must be a non-empty opaque identifier');
+  if (binding.bindingId !== undefined && !isOpaqueId(binding.bindingId)) issues.push('bindingId must be a non-empty opaque identifier');
+  if (binding.worktreePath !== undefined && !isAbsolute(binding.worktreePath)) issues.push('worktreePath must be an absolute host path when present');
   return issues;
 }
 
@@ -483,9 +566,9 @@ export class VerseGitObservationBridge {
   private readonly sessions = new Map<string, ActiveSession>();
   private readonly tombstones = new Map<string, Tombstone>();
   private readonly tombstoneOrder: string[] = [];
-  private readonly options: { maxSeenKeys?: number; maxTombstones?: number };
+  private readonly options: { maxSeenKeys?: number; maxTombstones?: number; maxToolRecords?: number };
 
-  constructor(options: { maxSeenKeys?: number; maxTombstones?: number } = {}) {
+  constructor(options: { maxSeenKeys?: number; maxTombstones?: number; maxToolRecords?: number } = {}) {
     this.options = options;
   }
 
@@ -519,6 +602,9 @@ export class VerseGitObservationBridge {
       rejectedCount: 0,
       seen: new BoundedKeySet(this.options.maxSeenKeys),
       activeCalls: new Map(),
+      toolObservations: [],
+      toolEventCount: 0,
+      droppedCount: 0,
     };
     this.sessions.set(binding.runId, session);
     return {
@@ -634,6 +720,272 @@ export class VerseGitObservationBridge {
         ? 'partial'
         : 'observed';
     return resultFor(status, issues.length > 0 ? 'event emitted with declared coverage gaps' : 'event emitted', issues, session, behaviorEvent, key);
+  }
+
+  ingestToolObservation(
+    request: VerseGitToolObservationRequest,
+    context: ObservationContext = {},
+  ): ObservationIngestResult {
+    if (request.schema !== 'clawx.versegit.tool-observation-request/v1') {
+      return resultFor('rejected_by_policy', 'tool observation schema mismatch', ['schema_mismatch']);
+    }
+    const runId = optionalString(request.childRunId);
+    if (!runId) return resultFor('rejected_by_policy', 'tool observation has no childRunId', ['missing_run_id']);
+    const session = this.sessions.get(runId);
+    if (!session) {
+      const tombstone = this.tombstones.get(runId);
+      if (tombstone) {
+        return context.epoch === undefined || context.epoch <= tombstone.binding.epoch
+          ? resultFor('stale', 'tool observation arrived after session detach', ['late_tool_observation_after_detach'])
+          : resultFor('rejected_by_policy', 'tool observation epoch has no active binding', ['unknown_session_epoch']);
+      }
+      return resultFor('rejected_by_policy', 'tool observation run is not bound', ['unknown_owner']);
+    }
+    if (context.epoch !== undefined && context.epoch < session.binding.epoch) {
+      session.staleCount += 1;
+      return resultFor('stale', 'tool observation epoch is older than the active session', ['stale_epoch'], session);
+    }
+    if ((context.epoch !== undefined && context.epoch !== session.binding.epoch)
+      || request.epoch !== session.binding.epoch) {
+      session.rejectedCount += 1;
+      return resultFor('rejected_by_policy', 'tool observation epoch does not match the active session', ['identity_mismatch'], session);
+    }
+    if ((context.ownerId !== undefined && context.ownerId !== session.binding.ownerId)
+      || request.ownerId !== session.binding.ownerId) {
+      session.rejectedCount += 1;
+      return resultFor('rejected_by_policy', 'tool observation owner does not match the active session', ['identity_mismatch'], session);
+    }
+    if (!session.binding.bindingId || request.bindingId !== session.binding.bindingId) {
+      session.rejectedCount += 1;
+      return resultFor('rejected_by_policy', 'tool observation binding does not match the active session', ['binding_mismatch'], session);
+    }
+    if (!isOpaqueId(request.toolCallId) || !isOpaqueId(request.toolName)) {
+      session.rejectedCount += 1;
+      return resultFor('rejected_by_policy', 'tool call identity is invalid', ['invalid_tool_identity'], session);
+    }
+    if (!isSha256(request.inputDigest.replace(/^sha256:/u, '')) || !isSha256(request.outputDigest.replace(/^sha256:/u, ''))) {
+      session.rejectedCount += 1;
+      return resultFor('rejected_by_policy', 'tool observation digest is invalid', ['invalid_digest'], session);
+    }
+
+    const key = `tool:${request.toolCallId}:${request.inputDigest}:${request.outputDigest}`;
+    if (!session.seen.add(key)) {
+      session.duplicateCount += 1;
+      return resultFor('duplicate', 'tool observation was already applied', ['duplicate_tool_observation'], session, null, key);
+    }
+
+    const descriptor = classifyToolSurface(request.toolName, request.args);
+    const observedAtMsRaw = Date.parse(request.observedAt);
+    const observedAtMs = Number.isFinite(observedAtMsRaw) ? observedAtMsRaw : context.observedAt ?? Date.now();
+    const issues: string[] = [];
+    let coverage = descriptor.coverage;
+    let path: string | null = null;
+    let lineStart: number | null = null;
+    let lineEnd: number | null = null;
+    const basis = request.basis ?? null;
+
+    if (descriptor.surface === 'file.read' || descriptor.surface === 'file.write') {
+      if (!session.binding.worktreePath) {
+        issues.push('worktree_path_unavailable');
+        coverage = 'partial';
+      } else {
+        const argPath = optionalString(request.args.path ?? request.args.file_path);
+        const basisPath = basis ? optionalString(basis.path) : null;
+        const normalizedArgPath = argPath
+          ? normalizeObservedPath(session.binding.worktreePath, request.cwd, argPath)
+          : null;
+        const normalizedBasisPath = basisPath
+          ? normalizeObservedPath(session.binding.worktreePath, request.cwd, basisPath)
+          : null;
+        path = normalizedBasisPath ?? normalizedArgPath;
+        if (!path) {
+          issues.push('path_outside_bound_worktree');
+          coverage = 'partial';
+        }
+        if (normalizedArgPath && normalizedBasisPath && normalizedArgPath !== normalizedBasisPath) {
+          issues.push('path_scope_mismatch');
+          coverage = 'partial';
+        }
+      }
+      if (!basis) {
+        issues.push('basis_missing');
+        coverage = 'partial';
+      } else {
+        const expectedKind = descriptor.surface === 'file.read' ? 'read' : ['write', 'edit'];
+        if (expectedKind === 'read' ? basis.kind !== 'read' : !expectedKind.includes(basis.kind)) {
+          issues.push('basis_kind_mismatch');
+          coverage = 'partial';
+        }
+        if (!Number.isInteger(basis.lineStart) || !Number.isInteger(basis.lineEnd)
+          || basis.lineStart < 1 || basis.lineEnd < basis.lineStart) {
+          issues.push('basis_range_invalid');
+          coverage = 'partial';
+        } else {
+          lineStart = basis.lineStart;
+          lineEnd = basis.lineEnd;
+        }
+        if (basis.kind === 'read') {
+          if (!isSha256(basis.fileSha256) || !isSha256(basis.rangeSha256)) {
+            issues.push('read_basis_digest_missing');
+            coverage = 'partial';
+          }
+        } else if (!isSha256(basis.afterSha256)) {
+          issues.push('write_basis_digest_missing');
+          coverage = 'partial';
+        }
+      }
+      if (request.status !== 'succeeded') {
+        issues.push('tool_not_succeeded');
+        coverage = 'partial';
+      } else if (issues.length === 0 && basis && path) {
+        coverage = 'direct';
+      }
+    } else if (basis) {
+      issues.push('basis_on_non_file_tool');
+      coverage = 'partial';
+    }
+
+    const dedupeHash = sha256(key);
+    const behaviorEvent: VerseGitBehaviorEvent = {
+      schema: VG_OBSERVATION_SCHEMA,
+      eventId: `vge_${dedupeHash.slice(0, 24)}`,
+      runId,
+      traceId: context.traceId ?? session.binding.traceId,
+      requestId: context.requestId ?? session.binding.requestId ?? null,
+      agentSessionId: session.binding.agentSessionId,
+      vgSessionId: session.binding.vgSessionId,
+      repoId: session.binding.repoId,
+      worktreeId: session.binding.worktreeId,
+      ownerId: session.binding.ownerId,
+      actor: session.binding.actor,
+      epoch: session.binding.epoch,
+      source: 'tool-middleware',
+      sourceEventType: 'tool.result',
+      surface: descriptor.surface,
+      operation: descriptor.operation,
+      effect: descriptor.effect,
+      status: request.status,
+      coverage,
+      evidence: { grade: basis ? 'direct-receipt' : 'normalized-event', ref: null },
+      inputDigest: request.inputDigest,
+      outputDigest: request.outputDigest,
+      startedAt: toIso(observedAtMs),
+      endedAt: toIso(observedAtMs),
+      durationMs: 0,
+      reason: issues[0] ?? descriptor.reason,
+      ...(path ? { path } : {}),
+      ...(lineStart !== null ? { lineStart } : {}),
+      ...(lineEnd !== null ? { lineEnd } : {}),
+      ...(basis ? { basis } : {}),
+    };
+
+    session.eventCount += 1;
+    session.toolEventCount += 1;
+    session.surfaceCounts[descriptor.surface] += 1;
+    if (request.status === 'succeeded') {
+      applyCoverage(session.coverage, { ...descriptor, coverage });
+    }
+    session.toolObservations.push({
+      event: behaviorEvent,
+      toolCallId: request.toolCallId,
+      toolName: request.toolName,
+      observedAtMs,
+      basis,
+    });
+    const maxToolRecords = this.options.maxToolRecords ?? 2_000;
+    while (session.toolObservations.length > maxToolRecords) {
+      session.toolObservations.shift();
+      session.droppedCount += 1;
+    }
+    if (session.droppedCount > 0) {
+      const gap = `bounded_tool_observation_queue_dropped:${session.droppedCount}`;
+      if (!session.knownGaps.includes(gap)) session.knownGaps.push(gap);
+    }
+    const status = coverage === 'unobserved'
+      ? 'unobserved'
+      : coverage === 'partial' || issues.length > 0
+        ? 'partial'
+        : 'observed';
+    return resultFor(
+      status,
+      issues.length > 0 ? 'tool observation emitted with declared basis gaps' : 'tool observation emitted',
+      issues,
+      session,
+      behaviorEvent,
+      key,
+    );
+  }
+
+  recentToolObservations(runId?: string, limit = 200): Array<{
+    runId: string;
+    event: VerseGitBehaviorEvent;
+    toolCallId: string;
+    toolName: string;
+    basis: VerseGitToolBasis | null;
+  }> {
+    const sessions = runId ? [this.sessions.get(runId)].filter(Boolean) as ActiveSession[] : [...this.sessions.values()];
+    return sessions
+      .flatMap((session) => session.toolObservations.map((record) => ({
+        runId: session.binding.runId,
+        event: { ...record.event },
+        toolCallId: record.toolCallId,
+        toolName: record.toolName,
+        basis: record.basis ? { ...record.basis } : null,
+      })))
+      .sort((left, right) => left.event.startedAt.localeCompare(right.event.startedAt))
+      .slice(-Math.max(1, limit));
+  }
+
+  staleReadFindings(limit = 200): VerseGitStaleReadFinding[] {
+    const records = [...this.sessions.values()].flatMap((session) => session.toolObservations);
+    const findings: VerseGitStaleReadFinding[] = [];
+    for (const read of records) {
+      if (read.event.surface !== 'file.read' || read.event.status !== 'succeeded') continue;
+      const readBasis = read.basis;
+      if (!readBasis || !isSha256(readBasis.fileSha256) || !read.event.path
+        || typeof read.event.lineStart !== 'number' || typeof read.event.lineEnd !== 'number') continue;
+      for (const write of records) {
+        if (write.event.surface !== 'file.write' || write.event.status !== 'succeeded') continue;
+        if (write.event.path !== read.event.path || write.observedAtMs <= read.observedAtMs) continue;
+        if (write.event.agentSessionId === read.event.agentSessionId) continue;
+        const writeBasis = write.basis;
+        if (!writeBasis || !isSha256(writeBasis.afterSha256)) continue;
+        if (typeof write.event.lineStart !== 'number' || typeof write.event.lineEnd !== 'number') continue;
+        if (!rangesOverlap(
+          { lineStart: read.event.lineStart, lineEnd: read.event.lineEnd },
+          { lineStart: write.event.lineStart, lineEnd: write.event.lineEnd },
+        )) continue;
+        const refreshed = records.some((candidate) =>
+          candidate.event.surface === 'file.read'
+          && candidate.event.status === 'succeeded'
+          && candidate.event.agentSessionId === read.event.agentSessionId
+          && candidate.event.path === read.event.path
+          && candidate.observedAtMs > write.observedAtMs
+          && candidate.basis?.fileSha256 === writeBasis.afterSha256
+        );
+        if (refreshed) continue;
+        findings.push({
+          schema: 'clawx.versegit.stale-read-finding/v1',
+          findingId: `vgf_${sha256(`${read.event.eventId}:${write.event.eventId}`).slice(0, 24)}`,
+          kind: isApiDriftPath(read.event.path) ? 'api-drift' : 'stale-read',
+          path: read.event.path,
+          readEventId: read.event.eventId,
+          writeEventId: write.event.eventId,
+          readerSessionId: read.event.agentSessionId,
+          writerSessionId: write.event.agentSessionId,
+          readRange: { lineStart: read.event.lineStart, lineEnd: read.event.lineEnd },
+          writeRange: { lineStart: write.event.lineStart, lineEnd: write.event.lineEnd },
+          readBasisSha256: readBasis.fileSha256,
+          writeBeforeSha256: writeBasis.beforeSha256 ?? null,
+          writeAfterSha256: writeBasis.afterSha256,
+          observedAt: write.event.endedAt ?? write.event.startedAt,
+          host_verdict: 'unchanged',
+        });
+      }
+    }
+    return [...new Map(findings.map((finding) => [finding.findingId, finding])).values()]
+      .sort((left, right) => right.observedAt.localeCompare(left.observedAt))
+      .slice(0, Math.max(1, limit));
   }
 
   snapshot(runId: string): ObservationCoverageSnapshot | null {

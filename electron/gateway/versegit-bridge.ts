@@ -5,6 +5,8 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import { dirname, resolve } from 'node:path';
 import {
   VG_RUNTIME_BINDING_SCHEMA,
+  type VerseGitToolObservationRecord,
+  type VerseGitToolObservationRequest,
   type VerseGitBindingAttachRequest,
   type VerseGitBindingEndReason,
   type VerseGitBindingEndRequest,
@@ -13,6 +15,7 @@ import {
   type VerseGitBridgeEvent,
   type VerseGitRuntimeMode,
 } from '../../shared/versegit-runtime-contract';
+import { VerseGitObservationBridge, type ObservationIngestResult } from '../services/versegit-observation';
 
 export type VerseGitBindingBridgeConfig = {
   enabled: boolean;
@@ -22,6 +25,8 @@ export type VerseGitBindingBridgeConfig = {
   epoch: number;
   repoRoot: string | null;
   eventsPath: string | null;
+  observationsPath?: string | null;
+  observationBridge?: VerseGitObservationBridge;
 };
 
 const END_REASONS = new Set<VerseGitBindingEndReason>([
@@ -44,6 +49,7 @@ export function loadVerseGitBindingBridgeConfig(env: NodeJS.ProcessEnv = process
     epoch: Number(env.CLAWX_VERSGIT_EPOCH ?? 0),
     repoRoot: env.CLAWX_VERSGIT_ALLOWED_REPO_ROOT ?? null,
     eventsPath: env.CLAWX_VERSGIT_BINDING_EVENTS_PATH ?? null,
+    observationsPath: env.CLAWX_VERSGIT_OBSERVATION_EVENTS_PATH ?? null,
   };
 }
 
@@ -106,6 +112,41 @@ function reject(
   writeJson(res, status, { ok: false, error: { code, message } });
 }
 
+function toToolObservationRecord(result: ObservationIngestResult): VerseGitToolObservationRecord {
+  const event = result.event;
+  return {
+    schema: 'clawx.versegit.tool-observation-result/v1',
+    status: result.status === 'unobserved' ? 'partial' : result.status,
+    why: result.why,
+    issues: result.issues,
+    binding: result.binding,
+    event: event ? {
+      eventId: event.eventId,
+      runId: event.runId,
+      traceId: event.traceId,
+      agentSessionId: event.agentSessionId,
+      vgSessionId: event.vgSessionId,
+      repoId: event.repoId,
+      worktreeId: event.worktreeId,
+      ownerId: event.ownerId,
+      epoch: event.epoch,
+      surface: event.surface,
+      operation: event.operation,
+      effect: event.effect,
+      status: event.status,
+      coverage: event.coverage,
+      path: event.path ?? null,
+      lineStart: event.lineStart ?? null,
+      lineEnd: event.lineEnd ?? null,
+      basisDigest: event.basis ? `sha256:${sha(JSON.stringify(event.basis))}` : null,
+      inputDigest: event.inputDigest,
+      outputDigest: event.outputDigest,
+      observedAt: event.endedAt ?? event.startedAt,
+    } : null,
+    host_verdict: 'unchanged',
+  };
+}
+
 export class VerseGitBindingBridge {
   private readonly config: VerseGitBindingBridgeConfig;
   private readonly allowedRepoId: string | null;
@@ -113,10 +154,12 @@ export class VerseGitBindingBridge {
   private readonly bindings = new Map<string, VerseGitBindingRecord>();
   private readonly requestBindings = new Map<string, string>();
   private readonly activeSessions = new Map<string, string>();
+  private readonly observationBridge: VerseGitObservationBridge;
 
   constructor(config: VerseGitBindingBridgeConfig) {
     this.config = config;
     this.allowedRepoId = config.repoRoot ? resolveVerseGitRepoIdentity(config.repoRoot).repoId : null;
+    this.observationBridge = config.observationBridge ?? new VerseGitObservationBridge();
   }
 
   get address(): string | null {
@@ -191,7 +234,7 @@ export class VerseGitBindingBridge {
       return;
     }
     if (req.method === 'GET' && req.url === '/health') {
-      writeJson(res, 200, { ok: true, data: { enabled: true, ownerId: this.config.ownerId, epoch: this.config.epoch } });
+      writeJson(res, 200, { ok: true, data: { enabled: true, ownerId: this.config.ownerId, epoch: this.config.epoch, observationEnabled: Boolean(this.config.observationsPath) } });
       return;
     }
     if (req.method !== 'POST') {
@@ -202,6 +245,7 @@ export class VerseGitBindingBridge {
     if (req.url === '/bind') return this.handleBind(body, res);
     if (req.url === '/attach') return this.handleAttach(body, res);
     if (req.url === '/end') return this.handleEnd(body, res);
+    if (req.url === '/observe') return this.handleObserve(body, res);
     writeJson(res, 404, { ok: false, error: { code: 'NOT_FOUND', message: 'unknown binding endpoint' } });
   }
 
@@ -412,6 +456,29 @@ export class VerseGitBindingBridge {
     record.childRunId = request.childRunId;
     record.phase = 'attached';
     this.bindings.set(record.bindingId, record);
+    const observationBinding = this.observationBridge.bind({
+      bindingId: record.bindingId,
+      runId: record.childRunId,
+      sessionKey: record.childSessionKey,
+      traceId: record.traceId,
+      requestId: record.requestId,
+      repoId: record.repoId,
+      worktreeId: record.worktreeId,
+      worktreePath: record.worktreePath,
+      agentSessionId: record.agentSessionId,
+      vgSessionId: record.vgSessionId,
+      ownerId: record.ownerId,
+      actor: 'codex',
+      epoch: record.epoch,
+      boundAt: Date.now(),
+    });
+    this.event(observationBinding.status === 'attached' ? 'observation_bound' : 'observation_bind_rejected', {
+      bindingId: record.bindingId,
+      childRunId: record.childRunId,
+      ownerId: record.ownerId,
+      epoch: record.epoch,
+      error: observationBinding.status === 'attached' ? undefined : observationBinding.issues.join(','),
+    });
     this.event('attached', {
       requestId: record.requestId,
       bindingId: record.bindingId,
@@ -423,6 +490,51 @@ export class VerseGitBindingBridge {
       reason: 'worker-spawned',
     });
     writeJson(res, 200, { ok: true, data: record });
+  }
+
+  private appendObservation(value: unknown): void {
+    if (!this.config.observationsPath) return;
+    mkdirSync(dirname(this.config.observationsPath), { recursive: true });
+    appendFileSync(this.config.observationsPath, `${JSON.stringify(value)}\n`, 'utf8');
+  }
+
+  private handleObserve(raw: unknown, res: ServerResponse): void {
+    const request = raw && typeof raw === 'object' && !Array.isArray(raw)
+      ? raw as VerseGitToolObservationRequest
+      : null;
+    const record = request ? this.bindings.get(request.bindingId) : undefined;
+    if (!request || !record || request.ownerId !== record.ownerId
+      || request.epoch !== record.epoch || request.childRunId !== record.childRunId
+      || !record.childSessionKey) {
+      this.event('observation_rejected', {
+        bindingId: request?.bindingId,
+        childRunId: request?.childRunId,
+        ownerId: request?.ownerId,
+        epoch: request?.epoch,
+        error: 'binding/owner/epoch mismatch',
+      });
+      writeJson(res, 403, { ok: false, error: { code: 'BINDING_MISMATCH', message: 'binding/owner/epoch mismatch' } });
+      return;
+    }
+    const result = this.observationBridge.ingestToolObservation(request, {
+      epoch: request.epoch,
+      ownerId: request.ownerId,
+      requestId: record.requestId,
+      traceId: record.traceId,
+      observedAt: Date.parse(request.observedAt),
+    });
+    const data = toToolObservationRecord(result);
+    this.appendObservation({ kind: 'tool-observation', data });
+    this.event(result.status === 'observed' || result.status === 'partial' ? 'observed' : 'observation_rejected', {
+      bindingId: record.bindingId,
+      childRunId: record.childRunId,
+      requestId: record.requestId,
+      ownerId: record.ownerId,
+      epoch: record.epoch,
+      reason: result.status,
+      error: result.issues.join(',') || undefined,
+    });
+    writeJson(res, 200, { ok: true, data });
   }
 
   private handleEnd(raw: unknown, res: ServerResponse): void {
@@ -464,6 +576,23 @@ export class VerseGitBindingBridge {
     record.endReason = request.reason;
     this.bindings.set(record.bindingId, record);
     this.activeSessions.delete(record.agentSessionId);
+    if (record.childRunId) {
+      const seal = this.observationBridge.detach(record.childRunId, {
+        epoch: record.epoch,
+        ownerId: record.ownerId,
+        reason: request.reason,
+        at: Date.parse(endedAt),
+      });
+      this.appendObservation({ kind: 'session-seal', ...seal });
+      this.event('observation_sealed', {
+        bindingId: record.bindingId,
+        childRunId: record.childRunId,
+        ownerId: record.ownerId,
+        epoch: record.epoch,
+        reason: request.reason,
+        error: seal.status === 'detached' ? undefined : seal.issues.join(','),
+      });
+    }
     this.event('ended', {
       requestId: record.requestId,
       bindingId: record.bindingId,
