@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0476",
+  "role": "MC3",
+  "fixturePurpose": "Frozen planning input for MC3; replace with execution fixture in the implementation node.",
+  "expectedOutputs": [
+    "artifacts/versegit/mc3/package-manifest.json"
+  ],
+  "oracle": "Digest-addressed sidecar package verified"
+}

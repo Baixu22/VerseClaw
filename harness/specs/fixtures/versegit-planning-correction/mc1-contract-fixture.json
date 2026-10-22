@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0474",
+  "role": "MC1",
+  "fixturePurpose": "Frozen planning input for MC1; replace with execution fixture in the implementation node.",
+  "expectedOutputs": [
+    "artifacts/versegit/mc1/contract.json"
+  ],
+  "oracle": "Consumer contract tests pass"
+}

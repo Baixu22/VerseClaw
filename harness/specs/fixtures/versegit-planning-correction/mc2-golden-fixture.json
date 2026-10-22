@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0475",
+  "role": "MC2",
+  "fixturePurpose": "Frozen planning input for MC2; replace with execution fixture in the implementation node.",
+  "expectedOutputs": [
+    "artifacts/versegit/mc2/golden.json"
+  ],
+  "oracle": "Behavior fingerprint recorded and reviewable"
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0472",
+  "role": "WP6",
+  "fixturePurpose": "Frozen planning input for WP6; replace with execution fixture in the implementation node.",
+  "expectedOutputs": [
+    "artifacts/versegit/wp6/final-report.json"
+  ],
+  "oracle": "Merged migration closeout and M4 decision boundary recorded"
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0470",
+  "role": "WP4",
+  "fixturePurpose": "Frozen planning input for WP4; replace with execution fixture in the implementation node.",
+  "expectedOutputs": [
+    "artifacts/versegit/wp4/coverage.json"
+  ],
+  "oracle": "Coverage vector and feedback tiers pass"
+}
