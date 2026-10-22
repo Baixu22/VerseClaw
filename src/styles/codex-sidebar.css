@@ -85,6 +85,8 @@
   flex: none;
 }
 .codex-sidebar .sidebar-heading > .icon-button { margin-left: auto; }
+.codex-sidebar .sidebar-heading--collapsed { padding: 4px 2px 0; gap: 2px; }
+.codex-sidebar .sidebar-heading--collapsed .rare-notification-bell { width: 28px; height: 28px; }
 
 /* styles.css:206-207 */
 .codex-sidebar .icon-button {

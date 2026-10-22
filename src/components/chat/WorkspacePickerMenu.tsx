@@ -4,6 +4,7 @@ import { basenameFromPath } from '@/lib/git-ui';
 import { cn } from '@/lib/utils';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 import type { ReactNode } from 'react';
+import { HookSidebar } from '@/components/rareui/HookSidebar';
 
 export type WorkspacePickerMenuProps = {
   profiles: Array<Pick<WorkspaceProfile, 'id' | 'name' | 'rootPath'> & { lastOpenedAt?: number }>;
@@ -36,6 +37,7 @@ export function WorkspacePickerMenu({
   return (
     <div className={cn('codex-header-menu', className)} data-testid={menuTestId} role="menu">
       <div className="codex-header-menu__label">{t('workspace.recent')}</div>
+      <HookSidebar activeKey={activeWorkspaceId}>
       {sortedProfiles.length > 0 ? sortedProfiles.map((profile) => {
         const name = profile.name || basenameFromPath(profile.rootPath);
         const selected = profile.id === activeWorkspaceId;
@@ -48,6 +50,7 @@ export function WorkspacePickerMenu({
             className="codex-header-menu__item"
             data-testid={rowTestId}
             data-selected={selected ? 'true' : undefined}
+            data-hook-key={profile.id}
             onClick={() => void onSelect(profile.id)}
           >
             <span className="codex-header-menu__icon"><Folder className="h-4 w-4" /></span>
@@ -63,6 +66,7 @@ export function WorkspacePickerMenu({
       }) : (
         <div className="codex-header-menu__label" data-testid={emptyTestId}>{t('workspace.noRecent')}</div>
       )}
+      </HookSidebar>
 
       {(extraActions || onPickFolder) && <hr className="codex-header-menu__sep" />}
       {extraActions}

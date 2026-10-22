@@ -210,5 +210,13 @@
       "responsibility": "The cause could not be identified locally.",
       "nextStep": "Retry once; if it happens again, share the error reference with support."
     }
+  },
+  "rareui": {
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "hoursShort": "hr",
+    "minutesShort": "min",
+    "editTime": "Edit time",
+    "confirmTime": "Confirm time"
   }
 }

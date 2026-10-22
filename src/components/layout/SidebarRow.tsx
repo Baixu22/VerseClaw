@@ -28,6 +28,7 @@ export type SidebarRowProps = {
   /** Extra class for the actions container (`task-hover-actions`, …). */
   actionsClassName?: string;
   rowRef?: Ref<HTMLDivElement>;
+  hookKey?: string;
   children: ReactNode;
 } & Omit<HTMLAttributes<HTMLDivElement>, 'className'>;
 
@@ -37,11 +38,12 @@ export function SidebarRow({
   actions,
   actionsClassName,
   rowRef,
+  hookKey,
   children,
   ...rest
 }: SidebarRowProps) {
   return (
-    <div ref={rowRef} className={cn('sidebar-row', selected && 'selected', className)} {...rest}>
+    <div ref={rowRef} data-hook-key={hookKey} data-hook-selected={selected ? 'true' : undefined} className={cn('sidebar-row', selected && 'selected', className)} {...rest}>
       {children}
       {actions != null && (
         <div className={cn('sidebar-row__actions', actionsClassName)}>{actions}</div>
