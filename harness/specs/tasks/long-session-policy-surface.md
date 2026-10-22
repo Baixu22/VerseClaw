@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-policy-surface
 title: 在现有会话入口展示配置来源和运行限制
 program: long-session-development-20261022
@@ -11,13 +11,17 @@ intent: 让用户能看到当前会话为什么采用这些配置、哪些动作
 contractIndex: harness/specs/tasks/long-session-development-plan.md
 dependsOnTasks:
   - B1
+diffBase: e2b9900f35414f03b181af61c8f3648dfad1e84e
 touchedAreas:
   - harness/specs/tasks/long-session-policy-surface.md
   - harness/specs/tasks/long-session-development-plan.md
   - src/pages/Chat/index.tsx
   - src/pages/Chat/SessionActivityPanel.tsx
+  - src/pages/Chat/SessionEffectivePolicyPanel.tsx
   - src/pages/Settings/sections/RecoverySettingsSection.tsx
   - src/pages/Chat/session-continuity.ts
+  - src/stores/session-activity.ts
+  - src/styles/codex-session-activity.css
   - src/lib/host-api.ts
   - shared/i18n/locales/en/chat.json
   - shared/i18n/locales/zh/chat.json
@@ -25,6 +29,8 @@ touchedAreas:
   - shared/i18n/locales/ru/chat.json
   - src/styles/globals.css
   - tests/e2e/long-session-policy-surface.spec.ts
+  - tests/unit/session-activity-panel.test.tsx
+  - tests/unit/session-activity-background-read.test.ts
   - tests/e2e/chat-session-derived.spec.ts
   - tests/e2e/session-activity-background-read.spec.ts
   - harness/specs/fixtures/long-session-development/b2/**
@@ -45,7 +51,7 @@ expectedUserBehavior:
   - 让用户能看到当前会话为什么采用这些配置、哪些动作可用以及如何恢复，不增加一套复杂管理页面。
   - 创建本合同不代表功能已实现；结果、配置、授权和任务完成仍归现有 owner，未知状态如实保留。
 requiredTests:
-  - pnpm exec vitest run tests/unit/session-activity-panel.test.tsx tests/unit/chat-session-continuity.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/session-activity-panel.test.tsx tests/unit/session-activity-background-read.test.ts tests/unit/chat-session-continuity.test.ts --maxWorkers=1
   - pnpm run i18n:lint
   - pnpm run build:vite
   - pnpm run test:e2e:run tests/e2e/chat-session-derived.spec.ts tests/e2e/session-activity-background-read.spec.ts tests/e2e/long-session-policy-surface.spec.ts
@@ -57,6 +63,8 @@ requiredTests:
   - git diff --check
 plannedTests:
   - tests/e2e/long-session-policy-surface.spec.ts
+  - tests/unit/session-activity-panel.test.tsx
+  - tests/unit/session-activity-background-read.test.ts
 acceptance:
   - 复用 Composer/活动/Recovery 的同一入口展示 backend、生效值、配置来源和覆盖/忽略原因，unknown 以真实状态呈现。
   - 清楚区分 abort 与 session stop、UI 活动保留窗口与 transcript/资源 TTL、会话分叉与工作树隔离。
@@ -72,7 +80,14 @@ docs:
 
 让用户能看到当前会话为什么采用这些配置、哪些动作可用以及如何恢复，不增加一套复杂管理页面。
 
-本规格为待执行合同。任务状态、前置与下一 ready 由 repo-local Task Forest 管理。节点创建、文件存在、静态 validate 或 dry-run 不是功能证据。只有前置任务/阶段的盘上验收完整后才开始。
+本规格已执行。Chat 活动栏与 Settings > Recovery 复用同一个只读 policy projection；quiet session 即使没有 Git、plan、process 或 goal 行，也能从现有入口查看 policy。任务状态、前置与下一 ready 仍由 repo-local Task Forest 管理。
+
+**B2 交付**
+
+- `SessionEffectivePolicyPanel` 展示 backend/binding、model/effort、grant、limits、compaction 归属、fact source、ignore reason 与真实 unknown/stale 状态，不新增第二设置页或 policy authority。
+- abort/session stop、UI 活动保留/transcript 与资源 TTL、fork/工作树隔离在现有入口内明确区分。
+- Chat 与 Recovery 会随 workspace、session、permission mode、模型/agent backend 或 Gateway 世代变化重读；重新读取开始时立即清除旧 scope policy，旧请求由 per-session generation 拦截，错误 workspace/session scope 的返回值被丢弃。
+- `en/zh/ja/ru` 四语、现有 design tokens、960px activity rail 键盘焦点/边界检查，以及真实 built Electron Host/Gateway 权限切换和重启刷新 E2E 已交付。
 
 所属阶段二：让会话配置与实际运行状态可见。统一边界见[规划合同索引](./long-session-development-plan.md)。
 
@@ -117,7 +132,7 @@ docs:
 - `pnpm harness validate --spec harness/specs/tasks/long-session-policy-surface.md`
 - `git diff --check`
 
-plannedTests 尚未实现；上述命令只有在交付对应测试后才构成验收，测试选择未命中必须失败。
+plannedTests 与 scope/negative 回归已实现；测试选择未命中必须失败，host mock 只计交互证据。
 
 E2E 要求真实 built Electron 与隔离 userData/run root。界面 host mocks 仅证明交互，功能接线必须回读 actual Host/Gateway/owner receipts。所有通信改动运行 comms replay/compare，cached typecheck 不替代 uncached 全门。
 

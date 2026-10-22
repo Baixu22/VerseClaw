@@ -48,6 +48,7 @@ import type { RunPlanSurface } from '@/pages/Chat/run-surface-promotion';
 import { cn } from '@/lib/utils';
 import { subagentIdentity } from '@shared/subagent-identity';
 import { backgroundReadFailed } from '@shared/types/session-activity';
+import { SessionEffectivePolicyPanel } from './SessionEffectivePolicyPanel';
 import type {
   SessionActivitySnapshot,
   SessionActivitySubagent,
@@ -246,6 +247,7 @@ export function SessionActivityPanel({
   const git = showGit ? snapshot.git : null;
   const hasGit = Boolean(git && git.isRepository);
   const hasPlan = (plan?.todos.length ?? 0) > 0;
+  const hasPolicyStatus = snapshot.policy !== undefined || snapshot.availability.policy !== undefined;
   const hasSubagents = snapshot.subagents.length > 0;
   const visibleProcesses = useMemo(
     () => (showCommands ? processes : []),
@@ -305,7 +307,7 @@ export function SessionActivityPanel({
   const runningSubagents = snapshot.subagents.filter((agent) => agent.status === 'started').length;
   const runningProcesses = visibleProcesses.filter((entry) => entry.status === 'running').length;
 
-  if (!hasGit && !hasPlan && !hasSubagents && !hasProcesses
+  if (!hasGit && !hasPlan && !hasPolicyStatus && !hasSubagents && !hasProcesses
     && snapshot.goals.length === 0 && snapshot.lineage.length === 0 && !alert && !backgroundUnknown) return null;
 
   return (
@@ -372,6 +374,10 @@ export function SessionActivityPanel({
               />
             ) : null}
           </Section>
+        ) : null}
+
+        {hasPolicyStatus ? (
+          <SessionEffectivePolicyPanel policy={snapshot.policy ?? null} />
         ) : null}
 
         {/* ── 开发任务 ─────────────────────────────────────────────────── */}

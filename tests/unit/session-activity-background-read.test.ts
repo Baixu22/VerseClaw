@@ -309,26 +309,81 @@ describe('session activity background read (renderer store)', () => {
     expect(classifySessionActivity(snapshot)).toBe('attention');
   });
 
-  it('retains live background facts when a re-read fails and marks them stale', async () => {
+  it('retains live background facts when a re-read fails, but clears stale policy', async () => {
+    const firstSnapshot = liveSnapshot(5_000);
+    firstSnapshot.policy = {
+      scope: { workspaceId: 'workspace-a', sessionKey: SESSION_KEY },
+      generation: { state: 'current' },
+    } as SessionActivitySnapshot['policy'];
+    firstSnapshot.availability.policy = true;
     sessionActivitySnapshotMock.mockResolvedValueOnce({
       success: true,
       runtimeAvailable: true,
-      snapshot: liveSnapshot(5_000),
+      snapshot: firstSnapshot,
     });
-    const first = await useSessionActivityStore.getState().load({ sessionKey: SESSION_KEY });
+    const first = await useSessionActivityStore.getState().load({
+      workspaceId: 'workspace-a',
+      sessionKey: SESSION_KEY,
+    });
     expect(first.backgroundRead).toEqual({ state: 'known', readAt: 5_000, failedAt: null });
+    expect(first.policy).not.toBeNull();
 
     sessionActivitySnapshotMock.mockRejectedValueOnce(new Error('gateway RPC timed out'));
-    const failed = await useSessionActivityStore.getState().load({ sessionKey: SESSION_KEY });
+    const failed = await useSessionActivityStore.getState().load({
+      workspaceId: 'workspace-a',
+      sessionKey: SESSION_KEY,
+    });
 
     /* The read failed ... */
     expect(failed.backgroundRead.state).toBe('unknown');
     expect(backgroundReadFailed(failed.backgroundRead)).toBe(true);
-    /* ... but the facts stay, dated at the last success so they read as stale. */
+    /* ... but the activity facts stay, dated at the last success so they read as stale. */
     expect(failed.backgroundRead.readAt).toBe(5_000);
     expect(failed.subagents.map((agent) => agent.id)).toEqual(['child-1']);
     expect(failed.processes.map((process) => process.id)).toEqual(['proc-1']);
     expect(failed.session.status).toBe('completed');
+    /* Policy is runtime-scoped, not a transcript fact: it must not survive an
+       interrupted Gateway rewrite as though it still described the current run. */
+    expect(failed.policy).toBeNull();
+    expect(failed.availability.policy).toBe(false);
+  });
+
+  it('rejects a policy projection returned for another workspace or session', async () => {
+    const wrongWorkspace = liveSnapshot(6_000);
+    wrongWorkspace.policy = {
+      scope: { workspaceId: 'workspace-b', sessionKey: SESSION_KEY },
+      generation: { state: 'current' },
+    } as SessionActivitySnapshot['policy'];
+    wrongWorkspace.availability.policy = true;
+    sessionActivitySnapshotMock.mockResolvedValueOnce({
+      success: true,
+      runtimeAvailable: true,
+      snapshot: wrongWorkspace,
+    });
+    const workspaceResult = await useSessionActivityStore.getState().load({
+      workspaceId: 'workspace-a',
+      sessionKey: SESSION_KEY,
+    });
+    expect(workspaceResult.policy).toBeNull();
+    expect(workspaceResult.availability.policy).toBe(false);
+
+    const wrongSession = liveSnapshot(7_000);
+    wrongSession.policy = {
+      scope: { workspaceId: 'workspace-a', sessionKey: 'agent:main:other' },
+      generation: { state: 'current' },
+    } as SessionActivitySnapshot['policy'];
+    wrongSession.availability.policy = true;
+    sessionActivitySnapshotMock.mockResolvedValueOnce({
+      success: true,
+      runtimeAvailable: true,
+      snapshot: wrongSession,
+    });
+    const sessionResult = await useSessionActivityStore.getState().load({
+      workspaceId: 'workspace-a',
+      sessionKey: SESSION_KEY,
+    });
+    expect(sessionResult.policy).toBeNull();
+    expect(sessionResult.availability.policy).toBe(false);
   });
 
   it('marks a host-reported unknown read without inventing a failure for an unsupported host', async () => {
@@ -345,6 +400,74 @@ describe('session activity background read (renderer store)', () => {
 
     expect(result.backgroundRead).toEqual({ state: 'unknown', readAt: 5_000, failedAt: null });
     expect(backgroundReadFailed(result.backgroundRead)).toBe(false);
+  });
+
+
+  it('clears the prior policy as soon as a scoped re-read starts', async () => {
+    const firstSnapshot = liveSnapshot(5_000);
+    firstSnapshot.policy = {
+      scope: { workspaceId: 'workspace-a', sessionKey: SESSION_KEY, sessionId: 'session-old' },
+      generation: { state: 'current' },
+    } as SessionActivitySnapshot['policy'];
+    firstSnapshot.availability.policy = true;
+    sessionActivitySnapshotMock.mockResolvedValueOnce({
+      success: true,
+      runtimeAvailable: true,
+      snapshot: firstSnapshot,
+    });
+    await useSessionActivityStore.getState().load({ workspaceId: 'workspace-a', sessionKey: SESSION_KEY });
+
+    let resolveRefresh!: (value: unknown) => void;
+    const refresh = new Promise((resolve) => { resolveRefresh = resolve; });
+    sessionActivitySnapshotMock.mockImplementationOnce(() => refresh);
+    const refreshing = useSessionActivityStore.getState().load({ workspaceId: 'workspace-a', sessionKey: SESSION_KEY });
+
+    const whileLoading = useSessionActivityStore.getState().snapshots[SESSION_KEY];
+    expect(whileLoading.policy).toBeNull();
+    expect(whileLoading.availability.policy).toBe(false);
+
+    const nextSnapshot = liveSnapshot(6_000);
+    nextSnapshot.policy = {
+      scope: { workspaceId: 'workspace-a', sessionKey: SESSION_KEY, sessionId: 'session-new' },
+      generation: { state: 'current' },
+    } as SessionActivitySnapshot['policy'];
+    nextSnapshot.availability.policy = true;
+    resolveRefresh({ success: true, runtimeAvailable: true, snapshot: nextSnapshot });
+    const refreshed = await refreshing;
+    expect((refreshed.policy as { scope?: { sessionId?: string } } | null)?.scope?.sessionId).toBe('session-new');
+  });
+
+  it('ignores an older response after a newer read for the same session starts', async () => {
+    let resolveOlder!: (value: unknown) => void;
+    const older = new Promise((resolve) => { resolveOlder = resolve; });
+    sessionActivitySnapshotMock
+      .mockImplementationOnce(() => older)
+      .mockResolvedValueOnce({
+        success: true,
+        runtimeAvailable: true,
+        snapshot: {
+          ...liveSnapshot(8_000),
+          policy: { scope: { workspaceId: 'workspace-a', sessionKey: SESSION_KEY, sessionId: 'new-generation' }, generation: { state: 'current' } },
+          availability: { ...liveSnapshot(8_000).availability, policy: true },
+        },
+      });
+
+    const firstLoad = useSessionActivityStore.getState().load({ sessionKey: SESSION_KEY });
+    const secondLoad = useSessionActivityStore.getState().load({ sessionKey: SESSION_KEY });
+    const newest = await secondLoad;
+    expect((newest.policy as { scope?: { sessionId?: string } } | null)?.scope?.sessionId).toBe('new-generation');
+
+    resolveOlder({
+      success: true,
+      runtimeAvailable: true,
+      snapshot: {
+        ...liveSnapshot(2_000),
+        policy: { scope: { workspaceId: 'workspace-a', sessionKey: SESSION_KEY, sessionId: 'old-generation' }, generation: { state: 'stale' } },
+        availability: { ...liveSnapshot(2_000).availability, policy: true },
+      },
+    });
+    const olderResult = await firstLoad;
+    expect((olderResult.policy as { scope?: { sessionId?: string } } | null)?.scope?.sessionId).toBe('new-generation');
   });
 
   it('returns to known/current after a successful re-read', async () => {

@@ -962,6 +962,7 @@ export function Chat() {
   const workspaceProfiles = useWorkspacesStore((s) => s.profiles);
   const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
   const activeWorkspaceId = activeWorkspace?.id;
+  const activeWorkspacePermissionMode = activeWorkspace?.permissionMode;
   const switchWorkspace = useWorkspacesStore((s) => s.switchWorkspace);
   const createWorkspace = useWorkspacesStore((s) => s.createWorkspace);
   const saveWorkspaceState = useWorkspacesStore((s) => s.saveWorkspaceState);
@@ -987,18 +988,6 @@ export function Chat() {
   const sessionActivityShowCommands = useSettingsStore((state) => state.sessionActivityShowCommands);
   const sessionActivityRetentionMinutes = useSettingsStore((state) => state.sessionActivityRetentionMinutes);
   const runActivityKeepExpandedOnComplete = useSettingsStore((state) => state.runActivityKeepExpandedOnComplete);
-
-  useEffect(() => {
-    if (!currentSessionKey) return;
-    void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
-  }, [activeWorkspaceId, currentSessionKey, loadSessionActivity]);
-
-  // Refresh Task Ledger snapshot when workspace changes
-  const refreshTaskLedger = useChatStore((s) => s.refreshTaskLedger);
-  useEffect(() => {
-    void refreshTaskLedger();
-  }, [activeWorkspaceId, refreshTaskLedger]);
-
   const agentsList = useAgentsStore((s) => s.agents);
   const currentAgent = useMemo(
     () => (agentsList ?? []).find((a) => a.id === currentAgentId) ?? null,
@@ -1010,6 +999,31 @@ export function Chat() {
   );
   const currentModelRef = sessions.find((session) => session.key === currentSessionKey)?.modelRefOverride
     || currentAgent?.modelRef || defaultModelRef || fallbackModelRef || null;
+
+  useEffect(() => {
+    if (!currentSessionKey) return;
+    void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
+  }, [
+    activeWorkspaceId,
+    activeWorkspacePermissionMode,
+    currentAgentId,
+    currentModelRef,
+    currentSessionKey,
+    gatewayStatus.connectedAt,
+    gatewayStatus.gatewayReady,
+    gatewayStatus.pid,
+    gatewayStatus.port,
+    gatewayStatus.state,
+    loadSessionActivity,
+  ]);
+
+  // Refresh Task Ledger snapshot when workspace changes
+  const refreshTaskLedger = useChatStore((s) => s.refreshTaskLedger);
+  useEffect(() => {
+    void refreshTaskLedger();
+  }, [activeWorkspaceId, refreshTaskLedger]);
+
+
   const panelOpen = useArtifactPanel((s) => s.open);
   const panelExpanded = useArtifactPanel((s) => s.expanded);
   const panelWidthPct = useArtifactPanel((s) => s.widthPct);
@@ -2847,7 +2861,11 @@ export function Chat() {
   const sessionActivityHasContent = sessionActivityLevel !== 'none'
     || Boolean(sessionActivityShowGit && visibleSessionActivitySnapshot?.git?.isRepository)
     || (sessionActivityPlan?.todos.length ?? 0) > 0
-    || (sessionActivityShowCommands && sessionActivityProcesses.length > 0);
+    || (sessionActivityShowCommands && sessionActivityProcesses.length > 0)
+    /* The policy projection is a user-visible read even when a quiet session
+       has no Git, plan, process or goal rows to classify. */
+    || visibleSessionActivitySnapshot?.policy !== undefined
+    || visibleSessionActivitySnapshot?.availability.policy !== undefined;
   const hasSessionActivityEntry = canShowChatSideRail
     && sessionActivityPanelEnabled
     && Boolean(visibleSessionActivitySnapshot)
