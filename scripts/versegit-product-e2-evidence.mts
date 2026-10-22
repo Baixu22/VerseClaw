@@ -7,7 +7,6 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
-  renameSync,
   rmSync,
   writeFileSync,
 } from 'node:fs';
@@ -209,31 +208,18 @@ async function cleanupEvidence(input: {
   const ownedPidChecks = managedPids.map((pid) => ({ ok: true, pid, exists: pidExists(pid) }));
   const survivorPids = ownedPidChecks.filter((entry) => entry.exists).map((entry) => entry.pid);
   const deletionErrors: string[] = [];
-  let quarantinedPath: string | undefined;
   let lastError: unknown;
-  for (let attempt = 0; attempt < 100 && existsSync(input.candidatePath); attempt += 1) {
-    const quarantine = `${input.candidatePath}.cleanup-${process.pid}`;
+  for (let attempt = 0; attempt < 120 && existsSync(input.candidatePath); attempt += 1) {
     try {
-      renameSync(input.candidatePath, quarantine);
-      quarantinedPath = quarantine;
-      break;
+      rmSync(input.candidatePath, { recursive: true, force: true, maxRetries: 1, retryDelay: 100 });
     } catch (error) {
       lastError = error;
       await new Promise((resolveDelay) => setTimeout(resolveDelay, 100));
     }
   }
-  if (quarantinedPath) {
-    try {
-      git(input.baseRoot, ['worktree', 'prune']);
-      rmSync(quarantinedPath, { recursive: true, force: true, maxRetries: 40, retryDelay: 100 });
-    } catch (error) {
-      lastError = error;
-    }
-  }
-  if (existsSync(input.candidatePath) || (quarantinedPath && existsSync(quarantinedPath))) {
-    deletionErrors.push(String((lastError as Error)?.message ?? lastError ?? 'candidate worktree removal failed').slice(0, 300));
-  }
-  const candidateWorktreeSurvivors = existsSync(input.candidatePath) || Boolean(quarantinedPath && existsSync(quarantinedPath)) ? 1 : 0;
+  try { git(input.baseRoot, ['worktree', 'prune']); } catch {}
+  if (existsSync(input.candidatePath)) deletionErrors.push(String((lastError as Error)?.message ?? lastError ?? 'candidate worktree removal failed').slice(0, 300));
+  const candidateWorktreeSurvivors = existsSync(input.candidatePath) ? 1 : 0;
   return {
     schema: VG_VERIFICATION_CLEANUP_SCHEMA,
     status: deletionErrors.length === 0 && survivorPids.length === 0 && candidateWorktreeSurvivors === 0 ? 'clean' : 'recovery_required',
