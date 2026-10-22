@@ -298,6 +298,8 @@ async function runCandidate(input: {
     manager: input.manager,
     traceId: plan.runId,
   });
+  await input.manager.shutdownAll();
+  await new Promise((resolveDelay) => setTimeout(resolveDelay, 500));
   const cleanup = await cleanupEvidence({
     result: execution,
     baseRoot: input.baseRoot,
