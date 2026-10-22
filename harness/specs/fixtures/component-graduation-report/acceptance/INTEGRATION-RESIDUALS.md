@@ -17,7 +17,10 @@ integration does not implement TF-0493 or change a product default.
 - `contract:check`: pass;
 - TF-0490 and TF-0492 graduation gates: pass;
 - scoped Task Forest validation: pass;
-- all evidence paths listed by TF-0488 through TF-0492 exist on disk.
+- node-specific source and fixture evidence paths exist on disk;
+- 11 stale TF-0490 log references were replaced by
+  `integration-verification.json`, which records the actual 46/46 focused tests,
+  full typecheck, catalogs, contract, graduation gate and structural harness checks.
 
 ## Historical checksum drift retained
 
@@ -33,6 +36,10 @@ The five node checksum manifests contain 123 entries. 114 entries match current 
 These manifests are retained as historical evidence and are not presented as a current
 all-green checksum surface. The source fingerprints and artifact hashes that bind the
 implemented code and node-specific fixtures continue to match.
+
+The missing TF-0490 log references are retained in the consolidated readback as
+`replacedMissingHistoricalRefs`. They are not rewritten into synthetic logs and no
+real-human evidence is claimed.
 
 ## Authority boundary
 

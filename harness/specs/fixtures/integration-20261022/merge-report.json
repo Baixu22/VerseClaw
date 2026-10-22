@@ -50,6 +50,7 @@
   "retainedBoundaries": [
     "WP9 remains PASS_WITH_GAPS, P0=0, P1=0, P2=3 and non-GA.",
     "Component graduation source evidence retains 9 historical mutable-file checksum drift; see INTEGRATION-RESIDUALS.md.",
+    "Eleven stale TF-0490 log references are replaced by a consolidated agent readback rather than synthesized logs.",
     "TF-0493 remains the next ready component leaf and was not implemented by this merge.",
     "No product default, release, GA, liveReady, M4 or real-human evidence is promoted.",
     "The pre-existing Knowledge worktree changes were not included or modified by this integration branch."
