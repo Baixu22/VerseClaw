@@ -109,6 +109,7 @@ docs:
 - archive 先写 archive index、再移动 transcript、最后事务移除 store row 并标记 tombstone；restore 插入新的物理 sessionId，再把 archived transcript 移回并清理索引。
 - Gateway sessions.list 过滤仍由 archive index 标记的 key，覆盖 crash 后 store/file 尚未完全收口的窗口。
 - 真实 Electron/Host/Gateway E2E 证明 archive 从 live list 消失、archive index 可读、restore 使用新 generation；runtime fault/retry 由 gateway-core 单测覆盖。
+- Clean candidate `5daef609dccffc96c62af8c27854934ba4381bb3` / tree `b5f7699569f21599b8071240095102735956ce8d`：13 commands、81/81 tests、build runtime/vite、typecheck、contract、comms、harness 与 diff-check 全部 exit 0；回执见 `harness/specs/fixtures/long-session-development/a2/`。
 
 **前置与读入**
 
