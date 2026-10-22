@@ -453,7 +453,7 @@ function permissionCheckpoint(input: {
     },
     authorityOwner: binding.finalAuthorityOwner,
     decisionRef: 'grant-' + input.verification.candidateId,
-    policyDigest: sha('policy-e3'),
+    policyDigest: 'sha256:' + sha('policy-e3'),
     issuedAtMs: Date.now() - 1_000,
     expiresAtMs: Date.now() + 60 * 60_000,
     nowMs: input.current.nowMs,
