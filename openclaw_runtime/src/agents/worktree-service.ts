@@ -49,6 +49,7 @@ export type WorktreeRecord = {
   writeSet?: string[];
   backend: WorktreeBackend;
   gitBranch?: string;
+  baseOid?: string;
 };
 
 export type MergeQueueItem = {
@@ -183,6 +184,10 @@ function git(args: string[], cwd: string): string {
   });
 }
 
+function backendSupportsOid(baseRoot: string): boolean {
+  return isGitRepo(baseRoot);
+}
+
 function resolveBackend(baseRoot: string, requested: WorktreeBackend): WorktreeBackend {
   if (requested !== "git") return "inprocess";
   return isGitRepo(baseRoot) ? "git" : "inprocess";
@@ -291,6 +296,7 @@ export function createWorktreeService(
 ): WorktreeService {
   const resolved = path.resolve(baseRoot);
   const requested = options?.backend ?? "inprocess";
+  const baseOid = backendSupportsOid(resolved) ? git(["rev-parse", "HEAD"], resolved).trim() : undefined;
   const backend = resolveBackend(resolved, requested);
   const defaultConflictPolicy: MergeConflictPolicy = options?.conflictPolicy ?? "mark_conflict";
   const rootDir = path.join(resolved, ".openclaw", "worktrees");
@@ -352,6 +358,7 @@ export function createWorktreeService(
         writeSet: createOptions?.writeSet?.map((p) => normalizeWorktreeRelPath(p)),
         backend: recBackend,
         gitBranch,
+        ...(baseOid ? { baseOid } : {}),
       };
       s.records.set(safeId, rec);
       if (safeId !== id) s.records.set(id, rec);

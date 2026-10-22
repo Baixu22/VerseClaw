@@ -25,6 +25,8 @@ residualPaths:
   - harness/specs/tasks/model-capability-effective-runtime-state.md
   - openclaw_runtime/src/agents/runtime-effective-capability.ts
   - tests/unit/runtime-effective-capability.test.ts
+  - scripts/versegit-product-e1-evidence.mts
+  - scripts/verify-versegit-product-e1-evidence.mts
 touchedAreas:
   - harness/specs/tasks/versegit-product-e1-candidate-freeze.md
   - openclaw_runtime/src/agents/orchestration-worktree-merge.ts
