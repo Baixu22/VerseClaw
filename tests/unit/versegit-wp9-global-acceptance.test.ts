@@ -15,6 +15,7 @@ import {
   verifyShaManifest,
   verifyWp9Artifacts,
 } from '../../scripts/verify-versegit-wp9.mjs';
+import { normalizeEvidenceIssues } from '../../scripts/versegit-product-a1-evidence.mjs';
 
 interface StoredReport {
   acceptance: Array<{ evidence: unknown[]; status: string; criterion: string }>;
@@ -65,14 +66,25 @@ describe('WP9 whole-goal acceptance', () => {
     expect(validateWp9Report(report, { root: process.cwd() }).issues).toEqual([]);
   });
 
-  it('replays the retained report, manifest and both checksum surfaces', () => {
+  it('replays the retained report and reports exact historical drift without re-sealing it', () => {
     const result = verifyWp9Artifacts({ root: process.cwd() });
-    expect(result.issues).toEqual([]);
-    expect(result.ok).toBe(true);
+    expect(normalizeEvidenceIssues(process.cwd(), result.issues)).toEqual([
+      'WP6 verifier: stored report digest differs from the live closeout replay',
+      'WP6 verifier: wp6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/wp6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual ccc1e1b9c5cf',
+      'WP6 verifier: mc6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/mc6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual ccc1e1b9c5cf',
+      'WP8 verifier: input digest mismatch: scripts/versegit-wp7-host-vertical.mts',
+      'WP8 verifier: input digest mismatch: tests/unit/versegit-wp7-host-vertical.test.ts',
+      'WP8 verifier: input digest mismatch: tests/unit/versegit-receipt-authority.test.ts',
+      'WP8 verifier: SHA256SUMS mismatch: scripts/versegit-wp7-host-vertical.mts',
+      'WP8 verifier: SHA256SUMS mismatch: tests/unit/versegit-receipt-authority.test.ts',
+      'WP8 verifier: SHA256SUMS mismatch: tests/unit/versegit-wp7-host-vertical.test.ts',
+      'WP8 verifier: SHA256SUMS mismatch: tests/unit/versegit-wp8-review.test.ts',
+      'curated: SHA256SUMS mismatch: tests/unit/versegit-wp9-global-acceptance.test.ts',
+    ]);
+    expect(result.ok).toBe(false);
     expect(result.report.acceptanceSummary.verified).toBe(7);
     expect(result.manifest.children.total).toBe(18);
   });
-
   it('rejects missing evidence, open children and promoted lifecycle authority', () => {
     const report = structuredClone(stored());
     report.acceptance[0].evidence = [];

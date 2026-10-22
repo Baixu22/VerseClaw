@@ -25,6 +25,7 @@ residualPaths:
   - tests/unit/runtime-effective-capability.test.ts
 touchedAreas:
   - harness/specs/tasks/versegit-product-a1-evidence-baseline.md
+  - scripts/versegit-product-a1-evidence.mjs
   - scripts/versegit-wp6-closeout.mjs
   - scripts/verify-versegit-wp6.mjs
   - scripts/versegit-wp7-host-vertical.mts
@@ -33,6 +34,7 @@ touchedAreas:
   - scripts/versegit-wp9-global-acceptance.mjs
   - scripts/verify-versegit-wp9.mjs
   - tests/unit/versegit*.test.ts
+  - tests/unit/versegit-product-a1-evidence.test.ts
   - harness/specs/fixtures/versegit-product-integration/a1/**
   - harness/specs/tasks/versegit-product-integration-node-contracts.md
   - harness/specs/tasks/versegit-product-a2-runtime-baseline.md

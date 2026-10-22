@@ -8,9 +8,13 @@ function stored(): Record<string, unknown> {
 }
 
 describe('WP8 independent review', () => {
-  it('accepts the independent verdict and preserves historical evidence boundaries', () => {
+  it('keeps the independent verdict and reports exact historical input drift', () => {
     const report = stored();
-    expect(validateWp8Report(report).issues).toEqual([]);
+    expect(validateWp8Report(report).issues).toEqual([
+      'input digest mismatch: scripts/versegit-wp7-host-vertical.mts',
+      'input digest mismatch: tests/unit/versegit-wp7-host-vertical.test.ts',
+      'input digest mismatch: tests/unit/versegit-receipt-authority.test.ts',
+    ]);
     expect(report.p0).toEqual([]);
     expect(report.p1).toEqual([]);
     expect((report.p2 as unknown[]).length).toBeGreaterThan(0);

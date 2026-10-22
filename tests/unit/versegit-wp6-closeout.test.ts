@@ -13,13 +13,26 @@ import {
 describe('WP6 merged closeout', () => {
   const generatedAt = '2026-10-21T18:00:00.000Z';
 
-  it('aggregates every gate while preserving the non-GA and MC6 sidecar-only boundary', () => {
+  it('preserves exact historical stale inputs while retaining the non-GA and MC6 sidecar-only boundary', () => {
     const built = buildWp6Closeout({ generatedAt });
     expect(built.report.gateSummary).toMatchObject({ required: 12, verified: 12, failed: 0, deprecated: 1, optionalDecision: 1 });
     expect(built.report.requiredGates.map((gate: { role: string }) => gate.role)).toEqual(expect.arrayContaining(['MC0', 'MC1', 'MC2', 'MC3', 'MC4', 'MC5', 'WP0', 'WP1', 'WP2', 'WP3', 'WP4', 'WP5']));
-    expect(built.report.evidenceManifests).toMatchObject({ count: 12, reproducible: true });
+    expect(built.report.evidenceManifests).toMatchObject({ count: 12, reproducible: false });
     expect(built.report.evidenceManifests.entryCount).toBe(78);
     expect(built.report.evidenceManifests.uniqueFileCount).toBe(77);
+    expect(built.report.evidenceManifests.items
+      .filter((manifest: { mismatches: string[] }) => manifest.mismatches.length > 0)
+      .map((manifest: { path: string; mismatches: string[] }) => ({ path: manifest.path, mismatches: manifest.mismatches })))
+      .toEqual([
+        {
+          path: 'harness/specs/fixtures/versegit-planning-correction/mc3-evidence/SHA256SUMS',
+          mismatches: ['tests/unit/versegit-mc3-delivery.test.ts: expected 2b43c7c54523 actual 00d5b3c81ff3'],
+        },
+        {
+          path: 'harness/specs/fixtures/versegit-planning-correction/wp0-evidence/SHA256SUMS',
+          mismatches: ['tests/unit/versegit-wp0-contract.test.ts: expected 0e896877a9ff actual fabc979db93a'],
+        },
+      ]);
     expect(built.report.authority).toMatchObject({ hostVerdict: 'unchanged', singleGreenLight: false, liveVerseShellReceiptExecuted: false, m4Authorized: false });
     expect(built.report.release).toMatchObject({ defaultOn: false, ga: false, releaseEligible: false, packageStatus: 'rejected', binaryProfile: 'debug' });
     expect(built.report.coverage.coverageVector).toMatchObject({ shellRead: 'unobserved', directFs: 'unobserved', mcpWrite: 'unobserved', browser: 'unobserved' });
@@ -30,9 +43,17 @@ describe('WP6 merged closeout', () => {
     expect(built.mc6Decision).toMatchObject({ decision: 'sidecar-only', sourceExtractionTriggered: false, passed: true });
     expect(built.mc6Decision.migrationFiles).toEqual([]);
     expect(built.mc6Decision.triggerAssessment.find((entry: { id: string }) => entry.id === 'public-contract-stable')?.evidence).toHaveLength(2);
-    expect(built.report.passed).toBe(true);
-    expect(built.report.issues).toEqual([]);
-    expect(validateWp6Report(built.report).issues).toEqual([]);
+    expect(built.report.passed).toBe(false);
+    expect(built.report.issues).toEqual(expect.arrayContaining([
+      'harness/specs/fixtures/versegit-planning-correction/mc3-evidence/SHA256SUMS: 1 digest mismatch(es)',
+      'harness/specs/fixtures/versegit-planning-correction/wp0-evidence/SHA256SUMS: 1 digest mismatch(es)',
+      'tracked pre-closeout evidence manifests are not reproducible',
+    ]));
+    expect(validateWp6Report(built.report).issues).toEqual(expect.arrayContaining([
+      'tracked pre-closeout evidence manifests are not reproducible',
+      'an evidence manifest contains missing or stale files',
+      'closeout did not pass or retained issues',
+    ]));
     expect(validateMc6Decision(built.mc6Decision).issues).toEqual([]);
   });
 
