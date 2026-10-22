@@ -376,7 +376,7 @@ test.describe('Knowledge Hub UX', () => {
     await page.keyboard.press('Escape');
   });
 
-  test('markdown workspace supports explicit editing, preview, and Chat knowledge mode', async ({ page }) => {
+  test('markdown workspace supports explicit editing, preview, and a compact knowledge conversation', async ({ page }) => {
     await page.getByTestId('knowledge-tab-library').click();
     await page.getByTestId('knowledge-new-note').click();
     await page.getByTestId('knowledge-editor-title').fill('Local operating notes');
@@ -388,7 +388,11 @@ test.describe('Knowledge Hub UX', () => {
     await expect(page.getByTestId('knowledge-chat-page')).toBeVisible();
     await expect(page.getByTestId('knowledge-librarian-thread')).toBeVisible();
     await expect(page.getByTestId('knowledge-librarian-composer')).toBeVisible();
+    await expect(page.getByTestId('knowledge-librarian-suggestions')).toHaveCount(0);
+    await page.getByTestId('knowledge-bot-prompts').click();
     await expect(page.getByTestId('knowledge-librarian-suggestions')).toContainText('Summarize');
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('knowledge-bot-window')).toBeVisible();
     await page.getByTestId('knowledge-librarian-question').fill('What is this note about?');
     await expect(page.getByTestId('knowledge-librarian-ask')).toBeEnabled();
     await page.getByTestId('knowledge-librarian-ask').click();

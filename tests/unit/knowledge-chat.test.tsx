@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { KnowledgeChat, type KnowledgeChatContext } from '@/pages/Chat/KnowledgeChat';
 
@@ -77,5 +77,62 @@ describe('Chat knowledge mode', () => {
     expect(knowledge.applyDraft).not.toHaveBeenCalled();
     expect(knowledge.applyReviewedChange).not.toHaveBeenCalled();
     await waitFor(() => expect(localStorage.getItem(storageKey)).toContain('What was decided?'));
+  });
+
+  it('follows pending search and page reads, then an actual failure and retry outcome', async () => {
+    let resolveSearch!: (value: unknown) => void;
+    let resolvePage!: (value: unknown) => void;
+    knowledge.search.mockReturnValueOnce(new Promise((resolve) => { resolveSearch = resolve; }));
+    knowledge.get.mockReturnValueOnce(new Promise((resolve) => { resolvePage = resolve; }));
+    renderChat();
+    const page = screen.getByTestId('knowledge-chat-page');
+    fireEvent.focus(screen.getByTestId('knowledge-librarian-question'));
+    expect(page).toHaveAttribute('data-bot-state', 'listening');
+    fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Find the decision' } });
+    fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
+    expect(page).toHaveAttribute('data-bot-state', 'searching');
+    await act(async () => resolveSearch({ success: true, results: [{ lookup: 'decision.md', title: 'Decision', snippet: 'Keep sources.' }] }));
+    expect(page).toHaveAttribute('data-bot-state', 'reading');
+    await act(async () => resolvePage({ success: true, content: '# Decision\nKeep sources.' }));
+    expect(page).toHaveAttribute('data-bot-state', 'finished');
+    expect(screen.getByTestId('knowledge-librarian-answer-section').querySelector('.codex-markdown')).not.toBeNull();
+    knowledge.search.mockRejectedValueOnce(new Error('Search unavailable'));
+    fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Retry this question' } });
+    fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
+    expect(await screen.findByTestId('knowledge-librarian-error')).toHaveTextContent('Search unavailable');
+    expect(page).toHaveAttribute('data-bot-state', 'failed');
+    knowledge.search.mockResolvedValueOnce({ success: true, results: [] });
+    fireEvent.click(screen.getByTestId('knowledge-librarian-retry'));
+    await waitFor(() => expect(page).toHaveAttribute('data-bot-state', 'confused'));
+    expect(knowledge.search).toHaveBeenLastCalledWith(expect.objectContaining({ query: 'Retry this question' }));
+    expect(knowledge.applyDraft).not.toHaveBeenCalled();
+  });
+
+  it('reflects source-set waiting and the actual draft/review phases before opening governed review', async () => {
+    let finishAnswer!: (value: unknown) => void;
+    let finishDraft!: (value: unknown) => void;
+    let finishReview!: (value: unknown) => void;
+    const refs = [{ id: 'decision.md', kind: 'wiki' as const }];
+    knowledge.answerFromSourceSet.mockReturnValueOnce(new Promise((resolve) => { finishAnswer = resolve; }));
+    renderChat({ sourceRefs: refs });
+    const page = screen.getByTestId('knowledge-chat-page');
+    fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Review this decision' } });
+    fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
+    expect(page).toHaveAttribute('data-bot-state', 'waiting');
+    await act(async () => finishAnswer({ success: true, answer: 'Cited decision.', sources: [{ id: 'decision.md', lookup: 'decision.md', title: 'Decision', excerpt: 'Keep sources.' }], unknowns: [], suggestedNextActions: [], confidence: .8, groundingStatus: 'grounded', retrievalDiagnostics: { query: 'Review this decision', corpus: 'wiki', resultCount: 1 } }));
+    expect(page).toHaveAttribute('data-bot-state', 'finished');
+    knowledge.createDraft.mockReturnValueOnce(new Promise((resolve) => { finishDraft = resolve; }));
+    knowledge.stewardReview.mockReturnValueOnce(new Promise((resolve) => { finishReview = resolve; }));
+    fireEvent.click(screen.getByTestId('knowledge-librarian-send-steward'));
+    expect(page).toHaveAttribute('data-bot-state', 'writing');
+    expect(knowledge.stewardReview).not.toHaveBeenCalled();
+    await act(async () => finishDraft({ success: true, draft: { id: 'governed-draft' } }));
+    expect(page).toHaveAttribute('data-bot-state', 'working');
+    expect(knowledge.stewardReview).toHaveBeenCalledWith({ draftId: 'governed-draft' });
+    await act(async () => finishReview({ success: true }));
+    const target = JSON.parse((await screen.findByTestId('destination')).textContent!);
+    expect(new URLSearchParams(target.search).get('id')).toBe('governed-draft');
+    expect(knowledge.applyDraft).not.toHaveBeenCalled();
+    expect(knowledge.applyReviewedChange).not.toHaveBeenCalled();
   });
 });

@@ -235,7 +235,31 @@
       "submitDraft": "提交草稿"
     },
     "chatTitle": "问知识库",
-    "backToChat": "返回对话"
+    "backToChat": "返回对话",
+    "bot": {
+      "dragHint": "点击提问 · 拖动换位置",
+      "states": {
+        "idle": "随时为你查找知识",
+        "listening": "正在听你的问题",
+        "searching": "正在检索知识库",
+        "reading": "正在阅读来源页面",
+        "thinking": "正在组织回答",
+        "waiting": "正在等待资料集回答",
+        "writing": "正在创建草稿",
+        "working": "正在审阅草稿",
+        "finished": "回答已就绪",
+        "confused": "还需要更多来源",
+        "failed": "请求失败，可以重试",
+        "curious": "有什么想问的？",
+        "dragging": "正在移动"
+      },
+      "more": "对话选项",
+      "collapse": "收起到小助手",
+      "details": "详情与操作",
+      "prompts": "提问建议",
+      "empty": "有什么想找的知识？",
+      "placeholder": "向知识库提问…"
+    }
   },
   "inbox": {
     "title": "知识收件箱",

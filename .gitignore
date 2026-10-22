@@ -102,6 +102,9 @@ public/lobe-icons/
 # Local playground artifacts
 playground/
 
+# Knowledge librarian bot character lab (experimental, not product source yet)
+/experiments/knowledge-bot/
+
 # ClawX-biz bridge workspace artifacts
 resources/enterprise-skills/
 resources/openclaw-plugins/skillshub/
@@ -2020,6 +2023,18 @@ openclaw_runtime/_tmp_*
 !/docs/dev/network-protocol-reliability/provider-health.md
 !/docs/dev/network-protocol-reliability/retry-budget.md
 !/docs/dev/network-protocol-reliability/stream-failure.md
+!/docs/dev/knowledge-bot.md
+!/docs/dev/evidence/knowledge-bot/drag.png
+!/docs/dev/evidence/knowledge-bot/searching-light.png
+!/docs/dev/evidence/knowledge-bot/answer-light.png
+!/docs/dev/evidence/knowledge-bot/markdown-light.png
+!/docs/dev/evidence/knowledge-bot/failed.png
+!/docs/dev/evidence/knowledge-bot/narrow-reduced.png
+!/docs/dev/evidence/knowledge-bot/markdown-dark-narrow.png
+!/docs/dev/evidence/knowledge-bot/launcher-dark.png
+!/docs/dev/evidence/knowledge-bot/interaction-results.json
+!/docs/dev/evidence/knowledge-bot/validation.json
+!/docs/dev/evidence/knowledge-bot/SHA256SUMS
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
@@ -2041,3 +2056,6 @@ openclaw_runtime/_tmp_*
 # They are registered as local-only inputs in scripts/repository-artifacts.json.
 /artifacts/chain-audit/
 /artifacts/real-runtime-validation/
+
+# kb-bot character lab (v2, silhouette measured from icon.png)
+/experiments/kb-bot/

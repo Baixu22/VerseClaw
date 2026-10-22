@@ -79,6 +79,8 @@ Wiki operations require the loaded `memory-wiki` extension. The page is accessib
 
 Knowledge read scope and write permission are managed separately. Selecting Memory, Wiki or a reference does not authorize automatic writeback. The review surface keeps the relationship between sources, drafts, proposals and application results visible.
 
+The Knowledge corner character opens a compact floating conversation on click and minimizes back to the assistant. Suggestions and draft actions are available on demand. Drag stays near its dock and returns when released out of range. Its procedural Ginger avatar follows actual retrieval, reading, draft and review requests; replies share the main Chat Markdown renderer. See [Knowledge character integration](docs/dev/knowledge-bot.md).
+
 ### Move from collaboration to task execution
 
 Ordinary Chat handles immediate collaboration. Task Ledger stores goals, task nodes, checkpoints and evidence facts. Task Loop is an explicitly started, constrained execution flow. Chat can suggest an upgrade without automatically becoming a Task Loop.

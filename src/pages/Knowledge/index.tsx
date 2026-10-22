@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import './knowledge.css';
 import type { KnowledgeChatContext } from '@/pages/Chat/KnowledgeChat';
+import { KnowledgeBotLauncher } from '@/components/knowledge-bot/KnowledgeBotLauncher';
+import { KnowledgeBotWindow } from '@/components/knowledge-bot/KnowledgeBotWindow';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { AlertTriangle, ArrowRight, BookOpen, Bot, Check, Columns3, Database, Edit3, Ellipsis, Eye, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, Link2, ListTodo, Loader2, Plus, Puzzle, RefreshCw, RotateCcw, Ruler, Save, Search, ShieldCheck, Sparkles, Tags, Upload, Wrench, X } from 'lucide-react';
+import { AlertTriangle, ArrowRight, BookOpen, Check, Columns3, Database, Edit3, Ellipsis, Eye, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, Link2, ListTodo, Loader2, Plus, Puzzle, RefreshCw, RotateCcw, Ruler, Save, Search, ShieldCheck, Sparkles, Tags, Upload, Wrench, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
 import { useDelayedVisibility } from '@/components/loading/use-delayed-visibility';
@@ -328,7 +330,7 @@ function runtimeLineageBadges(lineage: KnowledgeRuntimeLineage | undefined, t: (
     ...(lineage.taskLedgerRootId ? [[t('runtime.lineageLedger'), lineage.taskLedgerRootId] as [string, string]] : []),
   ];
   return fields.map(([label, value]) => (
-    <Badge key={`${label}:${value}`} variant="outline" className="max-w-full border-border/60 bg-transparent text-[10px]">
+    <Badge key={`${label}:${value}`} variant="outline" className="max-w-full border-border/60 bg-transparent text-2xs">
       <span className="mr-1 text-muted-foreground">{label}:</span><span className="max-w-[18rem] truncate font-mono">{value}</span>
     </Badge>
   ));
@@ -336,7 +338,6 @@ function runtimeLineageBadges(lineage: KnowledgeRuntimeLineage | undefined, t: (
 
 export function Knowledge() {
   const { t } = useTranslation(['knowledge', 'common']);
-  const navigate = useNavigate();
   const location = useLocation();
   const [status, setStatus] = useState<KnowledgeStatusResult['status'] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -371,6 +372,15 @@ export function Knowledge() {
   const [reviewQueueFilter, setReviewQueueFilter] = useState<KnowledgeReviewFilter>('all');
   const [reviewQueueQuery, setReviewQueueQuery] = useState('');
   const [utilityPanel, setUtilityPanel] = useState<KnowledgeUtilityPanel>(null);
+  const [assistantOpen, setAssistantOpen] = useState(false);
+  const [assistantPresent, setAssistantPresent] = useState(false);
+  const [assistantContext, setAssistantContext] = useState<KnowledgeChatContext | null>(null);
+  const closeAssistant = useCallback(() => {
+    setAssistantOpen(false);
+  }, []);
+  const afterAssistantClose = useCallback(() => {
+    setAssistantPresent(false);
+  }, []);
   const [drafts, setDrafts] = useState<KnowledgeDraft[]>([]);
   const [inboxItems, setInboxItems] = useState<KnowledgeInboxItem[]>([]);
   const [proposals, setProposals] = useState<KnowledgeChangeProposal[]>([]);
@@ -438,6 +448,13 @@ export function Knowledge() {
   const warnings = status?.warnings ?? [];
   const selectedPageBody = useMemo(() => getPageBody(selectedPage), [selectedPage]);
   const ready = Boolean(status?.vaultExists);
+  // The header only raises its voice on an exception; a healthy vault is a quiet
+  // database icon whose tooltip carries the state, not a standing "Ready" badge.
+  const statusLabel = !ready
+    ? `${t('status.title')}: ${t('status.missing')}`
+    : warnings.length > 0
+      ? `${t('status.title')}: ${t('inbox.warningCount', { count: warnings.length })}`
+      : `${t('status.title')}: ${t('status.ready')}`;
   const groupedInboxItems = useMemo(() => {
     const groups: Record<InboxTriageGroup, KnowledgeInboxItem[]> = INBOX_TRIAGE_ORDER.reduce((acc, action) => {
       acc[action] = [];
@@ -1413,9 +1430,14 @@ export function Knowledge() {
   const busy = running != null || loading;
 
   return (
-    <div data-testid="knowledge-page" className="-m-5 flex h-[calc(100%+2.5rem)] min-h-0 flex-col overflow-hidden bg-background">
+    <div
+      data-testid="knowledge-page"
+      className="-m-5 flex h-[calc(100%+2.5rem)] min-h-0 flex-col overflow-hidden bg-surface-sidebar"
+    >
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-tl-xl bg-material-canvas shadow-[inset_1px_0_0_hsl(var(--border)/0.65)]">
+      <h1 className="sr-only">{t('title')}</h1>
       <TooltipProvider delayDuration={250}>
-      <header className="shrink-0 border-b border-border/50 bg-surface-modal px-3 md:px-5">
+      <header className="shrink-0 border-b border-border/40 bg-material-canvas px-3 md:px-5">
         <div className="flex min-w-0 items-center justify-between gap-3">
           <nav className="flex h-12 min-w-0 items-center gap-0.5 overflow-x-auto" data-testid="knowledge-workbench-tabs" aria-label={t('tabs.navigation')}>
             {PRIMARY_WORKBENCH_TABS.map((tab) => {
@@ -1427,10 +1449,10 @@ export function Knowledge() {
                   key={tab}
                   type="button"
                   className={cn(
-                    'flex h-8 shrink-0 items-center gap-1.5 rounded-lg border-b-2 px-2.5 text-[13px] font-medium transition-colors',
+                    'flex h-9 shrink-0 items-center gap-1.5 border-b-2 px-2 text-meta font-medium transition-colors',
                     isActive
-                      ? 'border-foreground bg-foreground/[0.045] text-foreground'
-                      : 'border-transparent text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground',
+                      ? 'border-foreground text-foreground'
+                      : 'border-transparent text-muted-foreground hover:text-foreground',
                   )}
                   onClick={() => setWorkbenchTab(tab)}
                   data-testid={`knowledge-tab-${tab}`}
@@ -1438,23 +1460,33 @@ export function Knowledge() {
                 >
                   <TabIcon className="h-3.5 w-3.5" />
                   {t(tab === 'library' ? 'tabs.library' : 'tabs.reviewQueue')}
-                  {count > 0 ? <span className="rounded-full bg-foreground/[0.07] px-1.5 text-[10px] tabular-nums text-muted-foreground">{count}</span> : null}
+                  {count > 0 ? <span className="text-2xs tabular-nums text-muted-foreground">{count}</span> : null}
                 </button>
               );
             })}
           </nav>
 
           <div className="flex shrink-0 items-center gap-1.5">
-            <button
-              type="button"
-              className="knowledge-press flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2 text-xs text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground"
-              onClick={() => setUtilityPanel('status')}
-              data-testid="knowledge-status-trigger"
-              aria-label={ready ? t('status.ready') : t('status.missing')}
-            >
-              <span className={cn('h-1.5 w-1.5 rounded-full', ready ? 'bg-emerald-500' : 'bg-amber-500')} />
-              <span className="hidden sm:inline">{ready ? t('status.ready') : t('status.missing')}</span>
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(
+                    'knowledge-press relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
+                    !ready && 'text-amber-700 dark:text-amber-400',
+                  )}
+                  onClick={() => setUtilityPanel('status')}
+                  data-testid="knowledge-status-trigger"
+                  aria-label={statusLabel}
+                >
+                  <Database className="h-4 w-4" />
+                  {(warnings.length > 0 || !ready) && (
+                    <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-amber-500" />
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>{statusLabel}</TooltipContent>
+            </Tooltip>
             {!ready ? (
               <Button type="button" size="sm" className="h-8 rounded-lg px-2.5 text-xs" onClick={() => void runAction('init', () => hostApi.knowledge.init())} disabled={busy} data-testid="knowledge-init-trigger">
                 {running === 'init' ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin motion-reduce:animate-none" /> : <Check className="mr-1.5 h-3.5 w-3.5" />}
@@ -1542,7 +1574,7 @@ export function Knowledge() {
 
       <main className="flex min-h-0 flex-1 flex-col overflow-hidden px-5 pb-5 pt-4 md:px-6">
         {error && (
-          <div data-testid="knowledge-error" className="mb-3 rounded-xl bg-destructive/[0.07] px-3 py-2 text-xs text-destructive">
+          <div data-testid="knowledge-error" className="mb-3 rounded-xl bg-destructive/10 px-3 py-2 text-xs text-destructive">
             {error}
           </div>
         )}
@@ -1613,7 +1645,7 @@ export function Knowledge() {
                     </div>
                   </div>
                   <div className="min-h-0 flex-1 overflow-auto p-2">
-                    <div className="mb-1 flex items-center justify-between px-2 font-mono text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                    <div className="mb-1 flex items-center justify-between px-2 font-mono text-2xs uppercase tracking-[0.08em] text-muted-foreground">
                       <span>{t('workspace.documents')}</span>
                       {rows.length > 0 ? <span className="tabular-nums">{rows.length}</span> : null}
                     </div>
@@ -1644,21 +1676,21 @@ export function Knowledge() {
                             className={cn(
                               'group flex items-center gap-1 rounded-lg pr-1 transition-colors',
                               selected
-                                ? 'bg-foreground/[0.07] text-foreground'
-                                : 'hover:bg-foreground/[0.045]',
+                                ? 'bg-black/5 text-foreground dark:bg-white/10'
+                                : 'hover:bg-black/5 dark:hover:bg-white/5',
                             )}
                             data-testid="knowledge-document-row"
                           >
                             <button type="button" className="flex min-w-0 flex-1 items-start gap-2 px-2 py-1.5 text-left" onClick={() => void openResult(row)} data-testid="knowledge-search-result">
                               <FileText className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                               <span className="min-w-0 flex-1">
-                                <span className="block truncate text-[12.5px] leading-5">{getTitle(row)}</span>
-                                <span className="block truncate font-mono text-[10px] text-muted-foreground">{lookup || t('workspace.localDraft')}</span>
+                                <span className="block truncate text-meta leading-5">{getTitle(row)}</span>
+                                <span className="block truncate font-mono text-2xs text-muted-foreground">{lookup || t('workspace.localDraft')}</span>
                               </span>
                             </button>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button type="button" variant="ghost" size="icon" className="h-6 w-6 shrink-0 rounded-[4px] text-muted-foreground opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100" data-testid="knowledge-source-set-add-result" onClick={() => addSourceToCurrentSet(sourceRefFromSearchRow(row))} disabled={!lookup} aria-label={t('sourceSet.addResult')}>
+                                <Button type="button" variant="ghost" size="icon" className="h-6 w-6 shrink-0 rounded-xs text-muted-foreground opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100" data-testid="knowledge-source-set-add-result" onClick={() => addSourceToCurrentSet(sourceRefFromSearchRow(row))} disabled={!lookup} aria-label={t('sourceSet.addResult')}>
                                   <Plus className="h-3.5 w-3.5" />
                                 </Button>
                               </TooltipTrigger>
@@ -1676,24 +1708,24 @@ export function Knowledge() {
                       {effectiveEditorMode === 'preview'
                         ? <h2 className="truncate font-serif text-xl font-normal tracking-tight" data-testid="knowledge-editor-title">{editorTitle || t('workspace.untitled')}</h2>
                         : <Input value={editorTitle} onChange={(event) => setEditorTitle(event.target.value)} className="h-8 border-transparent bg-transparent px-0 font-serif text-xl tracking-tight shadow-none focus-visible:ring-0" data-testid="knowledge-editor-title" />}
-                      <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-tiny text-muted-foreground">
                         <span className="max-w-72 truncate font-mono">{editorSource || t('workspace.localDraft')}</span>
                         {selectedProvenance ? <span>{t('provenance.references', { count: selectedProvenance.references.length })}</span> : null}
                         <span>{editorBody.length} {t('workspace.characters')}</span>
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-1.5">
-                      <Button type="button" variant="ghost" className="h-8 rounded-lg px-2.5 text-xs" data-testid="knowledge-use-result-draft" onClick={useSelectedResultInDraft} disabled={!selectedRow || !selectedPageBody.trim()}>
-                        <Edit3 className="mr-1.5 h-3.5 w-3.5" />{t('search.useInDraft')}
+                      <Button type="button" variant="ghost" className="h-8 rounded-lg px-2 text-xs lg:px-2.5" data-testid="knowledge-use-result-draft" onClick={useSelectedResultInDraft} disabled={!selectedRow || !selectedPageBody.trim()}>
+                        <Edit3 className="mr-0 h-3.5 w-3.5 lg:mr-1.5" /><span className="hidden lg:inline">{t('search.useInDraft')}</span>
                       </Button>
-                      <Button type="button" variant="ghost" className="h-8 rounded-lg px-2.5 text-xs" onClick={() => setUtilityPanel('sources')} data-testid="knowledge-source-tools">
-                        <Layers className="mr-1.5 h-3.5 w-3.5" />{t('workspace.sourceTools')}
+                      <Button type="button" variant="ghost" className="h-8 rounded-lg px-2 text-xs lg:px-2.5" onClick={() => setUtilityPanel('sources')} data-testid="knowledge-source-tools">
+                        <Layers className="mr-0 h-3.5 w-3.5 lg:mr-1.5" /><span className="hidden lg:inline">{t('workspace.sourceTools')}</span>
                       </Button>
-                      <div className="flex items-center gap-0.5 rounded-lg bg-foreground/[0.05] p-0.5">
+                      <div className="flex items-center gap-0.5 rounded-lg bg-black/5 p-0.5 dark:bg-white/10">
                         {((narrowEditor ? ['edit', 'preview'] : ['edit', 'preview', 'split']) as MarkdownEditorMode[]).map((mode) => {
                           const ModeIcon = mode === 'edit' ? Edit3 : mode === 'preview' ? Eye : Columns3;
                           return (
-                            <button key={mode} type="button" className={cn('flex h-7 w-8 items-center justify-center rounded-[7px] transition-colors', effectiveEditorMode === mode ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5')} onClick={() => setEditorMode(mode)} title={t(`workspace.modes.${mode}`)} aria-label={t(`workspace.modes.${mode}`)} aria-pressed={effectiveEditorMode === mode} data-testid={`knowledge-editor-mode-${mode}`}>
+                            <button key={mode} type="button" className={cn('flex h-7 w-8 items-center justify-center rounded-sm transition-colors', effectiveEditorMode === mode ? 'bg-surface-modal text-foreground shadow-none' : 'text-muted-foreground hover:text-foreground')} onClick={() => setEditorMode(mode)} title={t(`workspace.modes.${mode}`)} aria-label={t(`workspace.modes.${mode}`)} aria-pressed={effectiveEditorMode === mode} data-testid={`knowledge-editor-mode-${mode}`}>
                               <ModeIcon className="h-3.5 w-3.5" />
                             </button>
                           );
@@ -1701,7 +1733,7 @@ export function Knowledge() {
                       </div>
                     </div>
                   </div>
-                  {effectiveEditorMode !== 'preview' && <div className="grid shrink-0 gap-2 border-b border-border/40 bg-surface-input/40 p-2.5 md:grid-cols-[160px_minmax(0,1fr)_150px]">
+                  {effectiveEditorMode !== 'preview' && <div className="grid shrink-0 gap-2 border-b border-border/40 p-2.5 md:grid-cols-[160px_minmax(0,1fr)_150px]">
                     <select value={editorType} onChange={(event) => setEditorType(event.target.value as KnowledgeDraftType)} className="h-9 rounded-lg border border-border/60 bg-surface-input px-3 text-sm shadow-none" data-testid="knowledge-editor-type" aria-label={t('draft.typeLabel')}>
                       {KNOWLEDGE_TYPES.map((type) => <option key={type} value={type}>{t(`types.${type}`)}</option>)}
                     </select>
@@ -1729,7 +1761,7 @@ export function Knowledge() {
               <div className="grid gap-4 lg:grid-cols-[340px_minmax(0,1fr)]" data-testid="knowledge-inbox">
                 <div className="space-y-3">
                   {keReviewQueueEnabled === false && (
-                    <div className="flex items-start gap-2 rounded-xl bg-amber-500/[0.07] px-3 py-2 text-xs leading-5 text-amber-700 dark:text-amber-400" data-testid="knowledge-inbox-ke-unavailable">
+                    <div className="flex items-start gap-2 rounded-xl bg-amber-500/10 px-3 py-2 text-xs leading-5 text-amber-700 dark:text-amber-400" data-testid="knowledge-inbox-ke-unavailable">
                       <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
                       {t('inbox.keUnavailable')}
                     </div>
@@ -1742,7 +1774,7 @@ export function Knowledge() {
                       if (group.length === 0) return null;
                       return (
                         <div key={triageAction} className="space-y-1.5" data-testid={`knowledge-inbox-group-${triageAction}`}>
-                          <div className="flex items-center justify-between px-1 pt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                          <div className="flex items-center justify-between px-1 pt-1 text-tiny font-semibold uppercase tracking-wide text-muted-foreground">
                             <span>{t(`inbox.triage.groups.${triageAction}`)}</span>
                             <span className="tabular-nums">{group.length}</span>
                           </div>
@@ -1758,8 +1790,8 @@ export function Knowledge() {
                                 className={cn(
                                   'knowledge-press w-full rounded-xl px-3 py-2.5 text-left',
                                   isSelected
-                                    ? 'bg-foreground/[0.055]'
-                                    : 'hover:bg-foreground/[0.04]',
+                                    ? 'bg-black/5 dark:bg-white/10'
+                                    : 'hover:bg-black/5 dark:hover:bg-white/5',
                                 )}
                                 onClick={() => setSelectedInboxId(item.id)}
                                 data-testid="knowledge-inbox-row"
@@ -1770,8 +1802,8 @@ export function Knowledge() {
                                   )}
                                   <span className="truncate text-sm font-semibold">{item.title}</span>
                                 </div>
-                                <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
-                                  <Badge variant="outline" className={cn('border text-[10px] font-medium', inboxTriageClass(triage.action))} data-testid="knowledge-inbox-triage-badge">
+                                <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5 text-tiny text-muted-foreground">
+                                  <Badge variant="outline" className={cn('border text-2xs font-medium', inboxTriageClass(triage.action))} data-testid="knowledge-inbox-triage-badge">
                                     {t(`inbox.triage.actions.${triage.action}`)}
                                   </Badge>
                                   <span className="font-medium">{t(`types.${item.type}`)}</span>
@@ -1810,7 +1842,7 @@ export function Knowledge() {
                               {t('inbox.boundary')}
                             </Badge>
                             {keReviewQueueEnabled === true && (
-                              <Badge variant="outline" className={cn('border text-[10px]', inboxSensitivityClass(inboxSensitivity(selectedInboxItem)))} data-testid="knowledge-inbox-sensitivity">
+                              <Badge variant="outline" className={cn('border text-2xs', inboxSensitivityClass(inboxSensitivity(selectedInboxItem)))} data-testid="knowledge-inbox-sensitivity">
                                 {t('inbox.sensitivityLabel', { level: t(`inbox.sensitivity.${inboxSensitivity(selectedInboxItem)}`) })}
                               </Badge>
                             )}
@@ -1860,7 +1892,7 @@ export function Knowledge() {
                       <div className="p-0" data-testid="knowledge-inbox-recommendation">
                         <div className="flex items-center justify-between gap-2">
                           <div className="text-xs font-medium text-muted-foreground">{t('inbox.triage.title')}</div>
-                          <div className="flex shrink-0 items-center gap-2 text-[11px] tabular-nums text-muted-foreground">
+                          <div className="flex shrink-0 items-center gap-2 text-tiny tabular-nums text-muted-foreground">
                             <span>{t('inbox.triage.confidence', { confidence: Math.round(inboxTriage(selectedInboxItem).confidence * 100) })}</span>
                             {inboxOverallScore(selectedInboxItem) != null && (
                               <span>{t('inbox.score', { score: Math.round((inboxOverallScore(selectedInboxItem) ?? 0) * 100) })}</span>
@@ -1877,13 +1909,13 @@ export function Knowledge() {
                             {inboxTriage(selectedInboxItem).duplicateOf && (
                               <div className="rounded-lg bg-background/70 p-2">
                                 <span className="font-medium text-foreground/80">{t('inbox.triage.duplicateOf')}: </span>
-                                <span className="font-mono text-[11px] text-muted-foreground">{inboxTriage(selectedInboxItem).duplicateOf}</span>
+                                <span className="font-mono text-tiny text-muted-foreground">{inboxTriage(selectedInboxItem).duplicateOf}</span>
                               </div>
                             )}
                             {(inboxTriage(selectedInboxItem).conflictWith ?? []).length > 0 && (
                               <div className="rounded-lg bg-background/70 p-2">
                                 <span className="font-medium text-foreground/80">{t('inbox.triage.conflictWith')}: </span>
-                                <span className="font-mono text-[11px] text-muted-foreground">{(inboxTriage(selectedInboxItem).conflictWith ?? []).join(', ')}</span>
+                                <span className="font-mono text-tiny text-muted-foreground">{(inboxTriage(selectedInboxItem).conflictWith ?? []).join(', ')}</span>
                               </div>
                             )}
                             {(inboxTriage(selectedInboxItem).suggestedEdits ?? []).length > 0 && (
@@ -1904,7 +1936,7 @@ export function Knowledge() {
                             const percent = inboxScorePercent(selectedInboxItem, dimension);
                             return (
                               <div key={dimension} className="rounded-lg bg-background/60 p-2">
-                                <div className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">{t(`inbox.scoreDimensions.${dimension}`)}</div>
+                                <div className="text-2xs font-medium uppercase tracking-wide text-muted-foreground">{t(`inbox.scoreDimensions.${dimension}`)}</div>
                                 <div className="mt-1 text-sm font-semibold tabular-nums">{percent == null ? t('inbox.notAvailable') : t('inbox.percentValue', { percent })}</div>
                               </div>
                             );
@@ -1924,7 +1956,7 @@ export function Knowledge() {
                           {inboxMetadataString(selectedInboxItem, 'missionId') && (
                             <div className="flex items-center justify-between gap-2">
                               <dt className="text-muted-foreground">{t('inbox.missionId')}</dt>
-                              <dd className="min-w-0 truncate font-mono text-[11px]">{inboxMetadataString(selectedInboxItem, 'missionId')}</dd>
+                              <dd className="min-w-0 truncate font-mono text-tiny">{inboxMetadataString(selectedInboxItem, 'missionId')}</dd>
                             </div>
                           )}
                           {inboxMetadataNumber(selectedInboxItem, 'tick') != null && (
@@ -1953,7 +1985,7 @@ export function Knowledge() {
                         {inboxMetadataString(selectedInboxItem, 'captureKey') && (
                           <details className="mt-3 rounded-lg bg-background/70 p-2 text-xs" data-testid="knowledge-inbox-audit">
                             <summary className="cursor-pointer select-none font-medium text-muted-foreground">{t('inbox.auditDetails')}</summary>
-                            <div className="mt-2 min-w-0 break-all font-mono text-[11px] text-muted-foreground">
+                            <div className="mt-2 min-w-0 break-all font-mono text-tiny text-muted-foreground">
                               <span className="font-sans text-muted-foreground">{t('inbox.captureKey')}: </span>
                               {inboxMetadataString(selectedInboxItem, 'captureKey')}
                             </div>
@@ -1967,13 +1999,13 @@ export function Knowledge() {
                           {inboxSourceDisplays(selectedInboxItem).map((ref) => (
                             <div key={ref.id} className="rounded-lg bg-background/60 px-2 py-1.5" data-testid="knowledge-inbox-source">
                               <div className="flex min-w-0 items-center gap-2">
-                                <Badge variant="outline" className="shrink-0 border-border/60 bg-transparent text-[10px] font-medium">
+                                <Badge variant="outline" className="shrink-0 border-border/60 bg-transparent text-2xs font-medium">
                                   {t(inboxSourceKindLabel(ref.kind))}
                                 </Badge>
                                 <span className="min-w-0 truncate text-xs font-medium">{ref.label ?? ref.path ?? ref.id}</span>
                               </div>
                               {(ref.path || ref.id) && (
-                                <div className="mt-1 truncate font-mono text-[11px] text-muted-foreground">{ref.path ?? ref.id}</div>
+                                <div className="mt-1 truncate font-mono text-tiny text-muted-foreground">{ref.path ?? ref.id}</div>
                               )}
                             </div>
                           ))}
@@ -2003,7 +2035,7 @@ export function Knowledge() {
                     {(['draft', 'steward_reviewed', 'approved'] as const).map((statusKey) => (
                       <div key={statusKey} className="rounded-lg bg-surface-input p-3">
                         <div className="text-xl font-semibold tabular-nums tracking-tight">{draftCounts[statusKey] ?? 0}</div>
-                        <div className="mt-0.5 truncate text-[11px] font-medium text-muted-foreground">{t(`draft.status.${statusKey}`)}</div>
+                        <div className="mt-0.5 truncate text-tiny font-medium text-muted-foreground">{t(`draft.status.${statusKey}`)}</div>
                       </div>
                     ))}
                   </div>
@@ -2030,7 +2062,7 @@ export function Knowledge() {
                           <TypeIcon className={cn('h-3.5 w-3.5 shrink-0', accent)} />
                           <span className="truncate text-sm font-semibold">{draft.title}</span>
                         </div>
-                        <div className="mt-1.5 flex items-center gap-2 text-[11px] text-muted-foreground">
+                        <div className="mt-1.5 flex items-center gap-2 text-tiny text-muted-foreground">
                           <span className="font-medium">{t(`types.${draft.type}`)}</span>
                           <span className="text-muted-foreground/50">·</span>
                           <span>{t(`draft.status.${draft.status}`)}</span>
@@ -2127,7 +2159,7 @@ export function Knowledge() {
                   </div>
                   {/* The apply boundary still has to be stated, but it belongs next to
                       the button that crosses it — not as a standing yellow banner. */}
-                  <p className="text-[11px] leading-4 text-muted-foreground">{t('review.confirmationBoundary')}</p>
+                  <p className="text-tiny leading-4 text-muted-foreground">{t('review.confirmationBoundary')}</p>
 
                   {/* Area 5 §3.5 — Steward review result for the current draft */}
                   <div className="rounded-xl bg-surface-input p-3" data-testid="knowledge-steward-review-result">
@@ -2257,7 +2289,7 @@ export function Knowledge() {
                         {running === 'lifecyclePropose' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FilePlus2 className="mr-2 h-4 w-4" />}
                         {t('lifecycle.propose')}
                       </Button>
-                      <p className="text-[11px] leading-4 text-muted-foreground">{t('lifecycle.policyBoundary')}</p>
+                      <p className="text-tiny leading-4 text-muted-foreground">{t('lifecycle.policyBoundary')}</p>
                     </div>
                   </div>
                 </div>
@@ -2304,7 +2336,7 @@ export function Knowledge() {
                               <span className="text-muted-foreground">{receipt.status}</span>
                               {receipt.compensation?.status === 'unrecoverable' ? <Badge variant="outline" className="border-red-500/30 bg-red-500/5 text-red-700 dark:text-red-400">{t('lifecycle.compensation.unrecoverable')}</Badge> : null}
                             </div>
-                            <div className="mt-1 truncate font-mono text-[10px] text-muted-foreground">{receipt.receiptId} · {receipt.idempotencyKey}</div>
+                            <div className="mt-1 truncate font-mono text-2xs text-muted-foreground">{receipt.receiptId} · {receipt.idempotencyKey}</div>
                             {receipt.compensation?.reason ? <div className="mt-1 text-amber-700 dark:text-amber-400">{receipt.compensation.reason}</div> : null}
                           </li>
                         ))}
@@ -2324,7 +2356,7 @@ export function Knowledge() {
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="text-sm font-semibold">{t('runtime.title')}</h3>
-                      <Badge variant="outline" className="border-border/60 bg-black/5 text-[10px] font-medium text-muted-foreground dark:bg-white/10">
+                      <Badge variant="outline" className="border-border/60 bg-black/5 text-2xs font-medium text-muted-foreground dark:bg-white/10">
                         {t('runtime.reviewOnlyBadge')}
                       </Badge>
                     </div>
@@ -2391,12 +2423,12 @@ export function Knowledge() {
                             <div key={entry.trajectory_id} className="rounded-xl bg-surface-input p-3">
                               <div className="flex flex-wrap items-start justify-between gap-2">
                                 <span className="text-sm font-medium">{entry.task_intent}</span>
-                                <Badge variant="outline" className="border-border/60 bg-black/5 text-[10px] dark:bg-white/10">{entry.outcome}</Badge>
+                                <Badge variant="outline" className="border-border/60 bg-black/5 text-2xs dark:bg-white/10">{entry.outcome}</Badge>
                               </div>
                               <div className="mt-2 flex flex-wrap gap-1">
-                                <Badge variant="outline" className="border-border/60 bg-transparent font-mono text-[10px]">{entry.trajectory_id}</Badge>
-                                <Badge variant="outline" className="border-border/60 bg-transparent text-[10px]">{t('runtime.taskType')}: {entry.task_type}</Badge>
-                                {entry.context_fingerprint.map((tag) => <Badge key={tag} variant="outline" className="border-border/60 bg-transparent text-[10px]">{tag}</Badge>)}
+                                <Badge variant="outline" className="border-border/60 bg-transparent font-mono text-2xs">{entry.trajectory_id}</Badge>
+                                <Badge variant="outline" className="border-border/60 bg-transparent text-2xs">{t('runtime.taskType')}: {entry.task_type}</Badge>
+                                {entry.context_fingerprint.map((tag) => <Badge key={tag} variant="outline" className="border-border/60 bg-transparent text-2xs">{tag}</Badge>)}
                               </div>
                               {entry.lineage ? (
                                 <div className="mt-2 flex flex-wrap gap-1" data-testid={`knowledge-runtime-lineage-${entry.trajectory_id}`}>
@@ -2419,10 +2451,10 @@ export function Knowledge() {
                                 <span className="text-sm font-medium">{principle.title}</span>
                                 <Badge variant="outline" className="border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400">{principle.criticality}</Badge>
                               </div>
-                              <p className="mt-1 truncate font-mono text-[10px] text-muted-foreground">{principle.principle_id}</p>
+                              <p className="mt-1 truncate font-mono text-2xs text-muted-foreground">{principle.principle_id}</p>
                               <div className="mt-2 flex flex-wrap gap-1">
-                                {principle.task_types.map((type) => <Badge key={`type:${type}`} variant="outline" className="border-border/60 bg-transparent text-[10px]">{type}</Badge>)}
-                                {principle.context_tags.map((tag) => <Badge key={`tag:${tag}`} variant="outline" className="border-border/60 bg-transparent text-[10px]">{tag}</Badge>)}
+                                {principle.task_types.map((type) => <Badge key={`type:${type}`} variant="outline" className="border-border/60 bg-transparent text-2xs">{type}</Badge>)}
+                                {principle.context_tags.map((tag) => <Badge key={`tag:${tag}`} variant="outline" className="border-border/60 bg-transparent text-2xs">{tag}</Badge>)}
                               </div>
                               {principle.lineage ? (
                                 <div className="mt-2 flex flex-wrap gap-1" data-testid={`knowledge-runtime-principle-lineage-${principle.principle_id}`}>
@@ -2430,7 +2462,7 @@ export function Knowledge() {
                                 </div>
                               ) : null}
                               {(principle.source_trajectories?.length ?? 0) > 0 ? (
-                                <p className="mt-2 break-words text-[10px] text-muted-foreground">
+                                <p className="mt-2 break-words text-2xs text-muted-foreground">
                                   {t('runtime.sourceTrajectories')}: {principle.source_trajectories?.join(', ')}
                                 </p>
                               ) : null}
@@ -2470,7 +2502,7 @@ export function Knowledge() {
                               >
                                 <span className="block text-sm font-medium">{runtimePrincipleField(suggestion, 'title') || suggestion.cluster_summary}</span>
                                 <span className="mt-1 block line-clamp-2 text-xs text-muted-foreground">{suggestion.cluster_summary}</span>
-                                <span className="mt-2 block text-[10px] font-medium text-primary">{t('runtime.confidence')}: {Math.round(suggestion.confidence * 100)}%</span>
+                                <span className="mt-2 block text-2xs font-medium text-primary">{t('runtime.confidence')}: {Math.round(suggestion.confidence * 100)}%</span>
                               </button>
                             ))}
                           </div>
@@ -2488,7 +2520,7 @@ export function Knowledge() {
                                     const source = runtimeLessons.undistilled.find((entry) => entry.trajectory_id === id);
                                     return (
                                       <div key={id} className="flex flex-wrap gap-1" data-testid={`knowledge-runtime-review-lineage-${id}`}>
-                                        <Badge variant="outline" className="border-border/60 bg-transparent font-mono text-[10px]">{id}</Badge>
+                                        <Badge variant="outline" className="border-border/60 bg-transparent font-mono text-2xs">{id}</Badge>
                                         {runtimeLineageBadges(source?.lineage, t)}
                                       </div>
                                     );
@@ -2499,7 +2531,7 @@ export function Knowledge() {
                                 const value = runtimePrincipleField(selectedRuntimeSuggestion, field);
                                 return value ? (
                                   <div key={field}>
-                                    <div className="text-[11px] font-medium text-muted-foreground">{t(`runtime.fields.${field}`)}</div>
+                                    <div className="text-tiny font-medium text-muted-foreground">{t(`runtime.fields.${field}`)}</div>
                                     <p className="mt-1 text-sm leading-5">{value}</p>
                                   </div>
                                 ) : null;
@@ -2751,7 +2783,7 @@ export function Knowledge() {
                       </div>
                       <div>
                         <div className="text-xl font-semibold tabular-nums tracking-tight">{governanceContradictions}</div>
-                        <div className="text-[11px] text-muted-foreground">{t('governance.contradictions')}</div>
+                        <div className="text-tiny text-muted-foreground">{t('governance.contradictions')}</div>
                       </div>
                     </div>
                     {governanceContradictions > 0 && governanceIssues.length > 0 && (
@@ -2776,7 +2808,7 @@ export function Knowledge() {
                       </div>
                     )}
                     {governanceContradictions === 0 && (
-                      <p className="mt-2 text-[11px] text-muted-foreground">{t('governance.noIssues')}</p>
+                      <p className="mt-2 text-tiny text-muted-foreground">{t('governance.noIssues')}</p>
                     )}
                   </div>
 
@@ -2800,7 +2832,7 @@ export function Knowledge() {
                       </div>
                       <div>
                         <div className="text-xl font-semibold tabular-nums tracking-tight">{governanceStale}</div>
-                        <div className="text-[11px] text-muted-foreground">{t('governance.stale')}</div>
+                        <div className="text-tiny text-muted-foreground">{t('governance.stale')}</div>
                       </div>
                     </div>
                     {governanceStale > 0 && governanceIssues.length > 0 && (
@@ -2825,7 +2857,7 @@ export function Knowledge() {
                       </div>
                     )}
                     {governanceStale === 0 && (
-                      <p className="mt-2 text-[11px] text-muted-foreground">{t('governance.noIssues')}</p>
+                      <p className="mt-2 text-tiny text-muted-foreground">{t('governance.noIssues')}</p>
                     )}
                   </div>
 
@@ -2849,7 +2881,7 @@ export function Knowledge() {
                       </div>
                       <div>
                         <div className="text-xl font-semibold tabular-nums tracking-tight">{governanceDangling}</div>
-                        <div className="text-[11px] text-muted-foreground">{t('governance.dangling')}</div>
+                        <div className="text-tiny text-muted-foreground">{t('governance.dangling')}</div>
                       </div>
                     </div>
                     {governanceDangling > 0 && governanceIssues.length > 0 && (
@@ -2874,7 +2906,7 @@ export function Knowledge() {
                       </div>
                     )}
                     {governanceDangling === 0 && (
-                      <p className="mt-2 text-[11px] text-muted-foreground">{t('governance.noIssues')}</p>
+                      <p className="mt-2 text-tiny text-muted-foreground">{t('governance.noIssues')}</p>
                     )}
                   </div>
                 </div>
@@ -2899,7 +2931,7 @@ export function Knowledge() {
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <div className="truncate text-xs font-semibold text-foreground">{label}</div>
-                            <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{hint}</p>
+                            <p className="mt-1 line-clamp-2 text-tiny leading-5 text-muted-foreground">{hint}</p>
                           </div>
                           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-current/20 bg-background">
                             <MetricIcon className="h-4 w-4" />
@@ -2907,12 +2939,12 @@ export function Knowledge() {
                         </div>
                         <div className="mt-3 flex items-center justify-between gap-2">
                           <span className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">{count}</span>
-                          <span className="rounded-md border border-current/20 bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase">
+                          <span className="rounded-md border border-current/20 bg-background px-1.5 py-0.5 text-2xs font-medium uppercase">
                             {t(`governance.qualityMetrics.severity.${severity}`)}
                           </span>
                         </div>
                         {affectedIds.length > 0 ? (
-                          <div className="mt-2 truncate text-[10px] text-muted-foreground" title={affectedIds.join(', ')}>
+                          <div className="mt-2 truncate text-2xs text-muted-foreground" title={affectedIds.join(', ')}>
                             {t('governance.qualityMetrics.affected', { count: affectedIds.length })}
                           </div>
                         ) : null}
@@ -2948,9 +2980,9 @@ export function Knowledge() {
                             </span>
                             <div className="min-w-0">
                               <div className="truncate text-xs font-semibold text-foreground">{issue.title}</div>
-                              <div className="truncate text-[11px] text-muted-foreground">{issue.description}</div>
+                              <div className="truncate text-tiny text-muted-foreground">{issue.description}</div>
                               {issue.affectedPageIds.length > 0 && (
-                                <div className="mt-1 text-[10px] text-muted-foreground/60">
+                                <div className="mt-1 text-2xs text-muted-foreground/60">
                                   {issue.category} — {issue.affectedPageIds.length} page(s)
                                 </div>
                               )}
@@ -2960,7 +2992,7 @@ export function Knowledge() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-7 gap-1 rounded-md px-2 text-[11px] font-medium text-foreground/60 hover:text-foreground"
+                              className="h-7 gap-1 rounded-md px-2 text-tiny font-medium text-foreground/60 hover:text-foreground"
                               onClick={() => dismissGovernanceIssue(issue.id)}
                               data-testid={`governance-dismiss-${issue.id}`}
                             >
@@ -2971,11 +3003,11 @@ export function Knowledge() {
                       ))}
                     </div>
                     <div className="mt-3 flex items-center justify-between border-t border-black/5 pt-3 dark:border-white/5">
-                      <span className="text-[11px] text-muted-foreground">{t('governance.lastCheck', { time: governanceLastChecked ? new Date(governanceLastChecked).toLocaleString() : '-' })}</span>
+                      <span className="text-tiny text-muted-foreground">{t('governance.lastCheck', { time: governanceLastChecked ? new Date(governanceLastChecked).toLocaleString() : '-' })}</span>
                       <Button
                         variant="outline"
                         size="sm"
-                        className="h-7 gap-1 rounded-md border-border/60 px-2 text-[11px] font-medium shadow-none"
+                        className="h-7 gap-1 rounded-md border-border/60 px-2 text-tiny font-medium shadow-none"
                         onClick={() => setGovernanceIssues([])}
                         data-testid="knowledge-governance-dismiss-all"
                       >
@@ -3003,27 +3035,18 @@ export function Knowledge() {
         </Card>
       </main>
 
-      {/* The librarian is a quiet corner action, not a tab: it opens the same
-          knowledge-aware Chat surface and carries the draft context with it. */}
-      <button
-        type="button"
-        onClick={() => {
+      <KnowledgeBotLauncher hidden={assistantPresent}
+        onOpen={() => {
           const knowledgeContext: KnowledgeChatContext = { editorTitle, editorBody, editorSource, editorTags, editorType, editorMode, query, sourceRefs: currentSourceRefs, sourceSetId: currentSourceSetId, sourceSetTitle, searchResult, selectedRow, selectedPage };
-          navigate({ pathname: location.pathname, search: location.search }, { replace: true, state: { knowledgeContext } });
-          const search = new URLSearchParams(location.search);
-          for (const key of ['view', 'kind', 'id', 'lookup']) search.delete(key);
-          search.set('knowledge', 'ask');
-          navigate({ pathname: '/', search: search.toString() }, { state: { knowledgeContext } });
+          setAssistantContext(knowledgeContext);
+          setAssistantPresent(true);
+          setAssistantOpen(true);
         }}
-        aria-label={t('librarian.openAssistant')}
-        data-testid="knowledge-librarian-open"
-        className="knowledge-press fixed bottom-6 right-6 z-30 flex h-9 items-center gap-2 rounded-full border border-border/60 bg-surface-modal pl-1.5 pr-3.5 text-xs font-medium text-foreground shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)] hover:bg-foreground/[0.04]"
-      >
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-background">
-          <Bot className="h-3.5 w-3.5" />
-        </span>
-        {t('librarian.openAssistant')}
-      </button>
+      />
+      {assistantContext && <KnowledgeBotWindow open={assistantOpen} context={assistantContext}
+        onClose={closeAssistant}
+        onAfterClose={afterAssistantClose}
+        onOpenCitation={(citation) => { void openResult({ title: citation.title, pagePath: citation.lookup }); }} />}
 
       <Sheet open={utilityPanel !== null} onOpenChange={(open) => { if (!open) setUtilityPanel(null); }}>
         <SheetContent side="right" className="bottom-0 top-10 flex h-auto w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-lg" data-testid="knowledge-utility-sheet">
@@ -3115,8 +3138,8 @@ export function Knowledge() {
                               <Badge variant="outline" className="shrink-0 border-border/60 bg-black/5 dark:bg-white/10">{concept.frontmatter.type}</Badge>
                             </div>
                             <div className="flex flex-wrap gap-1 pl-6">
-                              <Badge variant="outline" className="max-w-full truncate border-border/60 bg-transparent font-mono text-[10px]">{concept.conceptId}</Badge>
-                              {concept.frontmatter.resource ? <Badge variant="outline" className="max-w-full truncate border-border/60 bg-transparent text-[10px]">{concept.frontmatter.resource}</Badge> : null}
+                              <Badge variant="outline" className="max-w-full truncate border-border/60 bg-transparent font-mono text-2xs">{concept.conceptId}</Badge>
+                              {concept.frontmatter.resource ? <Badge variant="outline" className="max-w-full truncate border-border/60 bg-transparent text-2xs">{concept.frontmatter.resource}</Badge> : null}
                             </div>
                             {concept.bodyPreview ? <p className="line-clamp-2 pl-6 text-xs leading-5 text-muted-foreground">{concept.bodyPreview}</p> : null}
                             {concept.warnings.length > 0 ? <p className="pl-6 text-xs text-yellow-700 dark:text-yellow-400">{concept.warnings[0].message}</p> : null}
@@ -3162,7 +3185,7 @@ export function Knowledge() {
                     {relatedRows.map((row, index) => (
                       <button key={`${getLookup(row) || index}:related`} type="button" className="block w-full rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/5" onClick={() => { void openResult(row); setUtilityPanel(null); }} data-testid="knowledge-related-row">
                         <span className="block truncate font-medium">{getTitle(row)}</span>
-                        <span className="block truncate font-mono text-[10px] text-muted-foreground">{getLookup(row)}</span>
+                        <span className="block truncate font-mono text-2xs text-muted-foreground">{getLookup(row)}</span>
                       </button>
                     ))}
                   </section>
@@ -3256,6 +3279,7 @@ export function Knowledge() {
         </div>
       ) : null}
       </TooltipProvider>
+      </div>
     </div>
   );
 }

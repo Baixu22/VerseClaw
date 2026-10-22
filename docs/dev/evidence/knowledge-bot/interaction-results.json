@@ -1,0 +1,198 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "evidence_kind": "real-electron-with-controlled-host-responses",
+  "floating": {
+    "floatBox": {
+      "x": 841.3333740234375,
+      "y": 241.33334350585938,
+      "width": 400,
+      "height": 520.0000305175781
+    },
+    "edgeSpacing": {
+      "viewportRight": 39.6666259765625,
+      "viewportBottom": 39.666656494140625,
+      "surfaceRightGap": 15.33331298828125,
+      "composerLeft": 16.6666259765625,
+      "composerRight": 16.66668701171875,
+      "composerBottom": 16.66663360595703,
+      "closeWidth": 32,
+      "closeInset": 14.6666259765625,
+      "closeBackground": "oklab(0.22559 -0.00131416 -0.00642684 / 0.05)"
+    },
+    "backgroundMounted": true,
+    "routeUnchanged": true,
+    "draftRetained": true,
+    "pendingRequestRetained": true,
+    "escapeClosed": true,
+    "compactMetadata": true,
+    "promptsInMenu": true,
+    "candidateActionsInDetails": true,
+    "minimizeControl": true,
+    "focusRestored": true,
+    "animation": {
+      "openMs": 180,
+      "closeMs": 140,
+      "reducedMs": 80
+    }
+  },
+  "drag": {
+    "before": {
+      "x": 1169.3333740234375,
+      "y": 695.185546875,
+      "width": 88,
+      "height": 88
+    },
+    "constrained": {
+      "x": 1068.83,
+      "y": 610.136
+    },
+    "after": {
+      "x": 1068.822998046875,
+      "y": 610.1354370117188,
+      "width": 88,
+      "height": 88
+    },
+    "snapped": {
+      "x": 1169,
+      "y": 693,
+      "width": 88,
+      "height": 88
+    },
+    "withinRange": {
+      "x": 1125,
+      "y": 659,
+      "width": 88,
+      "height": 88
+    },
+    "storedPosition": {
+      "x": 1169,
+      "y": 693
+    },
+    "restored": {
+      "x": 849.3333740234375,
+      "y": 653.3333740234375,
+      "width": 88,
+      "height": 88
+    },
+    "radius": 112,
+    "openedOnDrag": false,
+    "keyboardOpened": true
+  },
+  "observedStates": [
+    "idle",
+    "listening",
+    "searching",
+    "reading",
+    "finished",
+    "failed",
+    "searching",
+    "finished"
+  ],
+  "sharedMarkdown": {
+    "table": true,
+    "codeHeader": true,
+    "composerShell": true
+  },
+  "reducedMotionStable": true,
+  "searchBodyPathPresent": true,
+  "animatedFrameChanges": true,
+  "errors": [],
+  "requests": [
+    {
+      "id": "1cd0061a-0bd3-49b7-bcdb-d53ce9c6111e",
+      "module": "knowledge",
+      "action": "search",
+      "payload": {
+        "query": "Explain the decision",
+        "maxResults": 4,
+        "corpus": "wiki",
+        "roleTag": "knowledge-librarian"
+      },
+      "deadline": {
+        "deadlineAtMs": 1792631745464,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "1cd0061a-0bd3-49b7-bcdb-d53ce9c6111e"
+      }
+    },
+    {
+      "id": "ea53d51f-aca6-450b-a86a-d1c8cb9adccd",
+      "module": "knowledge",
+      "action": "get",
+      "payload": {
+        "lookup": "notes/decision.md",
+        "lineCount": 80,
+        "corpus": "wiki"
+      },
+      "deadline": {
+        "deadlineAtMs": 1792631745787,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "ea53d51f-aca6-450b-a86a-d1c8cb9adccd"
+      }
+    },
+    {
+      "id": "25b7263f-c787-44d3-8d8f-471c15b3dbbe",
+      "module": "knowledge",
+      "action": "recordKnowledgeReference",
+      "payload": {
+        "targetId": "notes/decision.md",
+        "targetKind": "wiki-page",
+        "title": "Decision",
+        "sourceRefs": [
+          {
+            "id": "notes/decision.md",
+            "kind": "wiki",
+            "path": "notes/decision.md"
+          }
+        ],
+        "reference": {
+          "kind": "search",
+          "lookup": "notes/decision.md",
+          "query": "Explain the decision"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1792631745799,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "25b7263f-c787-44d3-8d8f-471c15b3dbbe"
+      }
+    },
+    {
+      "id": "a612d20b-5791-4fa5-81c5-7bc2e17ec5fb",
+      "module": "knowledge",
+      "action": "search",
+      "payload": {
+        "query": "Try again",
+        "maxResults": 4,
+        "corpus": "wiki",
+        "roleTag": "knowledge-librarian"
+      },
+      "deadline": {
+        "deadlineAtMs": 1792631747020,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "a612d20b-5791-4fa5-81c5-7bc2e17ec5fb"
+      }
+    },
+    {
+      "id": "1bc197dd-fc81-4f0a-b2c1-5ce9b5b5c3a3",
+      "module": "knowledge",
+      "action": "search",
+      "payload": {
+        "query": "Try again",
+        "maxResults": 4,
+        "corpus": "wiki",
+        "roleTag": "knowledge-librarian"
+      },
+      "deadline": {
+        "deadlineAtMs": 1792631747750,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "1bc197dd-fc81-4f0a-b2c1-5ce9b5b5c3a3"
+      }
+    }
+  ]
+}

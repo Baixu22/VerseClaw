@@ -263,7 +263,31 @@
       "submitDraft": "Submit draft"
     },
     "chatTitle": "Ask the knowledge base",
-    "backToChat": "Back to chat"
+    "backToChat": "Back to chat",
+    "bot": {
+      "dragHint": "Click to ask · drag to move",
+      "states": {
+        "idle": "Ready to help",
+        "listening": "Listening to your question",
+        "searching": "Searching the knowledge base",
+        "reading": "Reading source pages",
+        "thinking": "Organizing the answer",
+        "waiting": "Waiting for the source-set answer",
+        "writing": "Creating a draft",
+        "working": "Reviewing the draft",
+        "finished": "Answer ready",
+        "confused": "More sources are needed",
+        "failed": "Request failed — you can retry",
+        "curious": "How can I help?",
+        "dragging": "Moving"
+      },
+      "more": "Conversation options",
+      "collapse": "Minimize to assistant",
+      "details": "Details & actions",
+      "prompts": "Suggested questions",
+      "empty": "What would you like to find?",
+      "placeholder": "Ask your knowledge base…"
+    }
   },
   "inbox": {
     "title": "Knowledge Inbox",

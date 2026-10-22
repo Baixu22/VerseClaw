@@ -235,7 +235,31 @@
       "submitDraft": "ドラフト送信"
     },
     "chatTitle": "ナレッジベースに質問",
-    "backToChat": "チャットに戻る"
+    "backToChat": "チャットに戻る",
+    "bot": {
+      "dragHint": "クリックで質問 · ドラッグで移動",
+      "states": {
+        "idle": "質問をお待ちしています",
+        "listening": "質問を受け付けています",
+        "searching": "ナレッジベースを検索中",
+        "reading": "参照ページを読んでいます",
+        "thinking": "回答を整理中",
+        "waiting": "ソースセットの回答を待っています",
+        "writing": "下書きを作成中",
+        "working": "下書きをレビュー中",
+        "finished": "回答できました",
+        "confused": "追加の情報源が必要です",
+        "failed": "リクエスト失敗 — 再試行できます",
+        "curious": "何をお手伝いしましょう？",
+        "dragging": "移動中"
+      },
+      "more": "会話のオプション",
+      "collapse": "アシスタントに戻す",
+      "details": "詳細と操作",
+      "prompts": "質問の候補",
+      "empty": "何を調べましょうか？",
+      "placeholder": "ナレッジベースに質問…"
+    }
   },
   "inbox": {
     "title": "Knowledge Inbox",

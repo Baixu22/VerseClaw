@@ -1299,7 +1299,10 @@ describe('Knowledge page', () => {
     fireEvent.click(screen.getByTestId('knowledge-librarian-open'));
     await screen.findByTestId('knowledge-chat-page');
     expect(screen.getByTestId('knowledge-librarian-composer')).toBeInTheDocument();
-    expect(screen.getByTestId('knowledge-librarian-suggestions')).toHaveTextContent('Summarize current note');
+    expect(screen.queryByTestId('knowledge-librarian-suggestions')).not.toBeInTheDocument();
+    fireEvent.keyDown(screen.getByTestId('knowledge-bot-prompts'), { key: 'Enter' });
+    expect(await screen.findByTestId('knowledge-librarian-suggestions')).toHaveTextContent('Summarize current note');
+    fireEvent.keyDown(screen.getByTestId('knowledge-librarian-suggestions'), { key: 'Escape' });
 
     fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Why use native wiki?' } });
     await waitFor(() => expect(screen.getByTestId('knowledge-librarian-ask')).not.toBeDisabled());
@@ -1314,7 +1317,8 @@ describe('Knowledge page', () => {
     await waitFor(() => expect(hostApiMock.get).toHaveBeenCalledWith({ lookup: 'notes/decision.md', lineCount: 80, corpus: 'wiki' }));
     await screen.findByText(/I searched the vault/);
     expect(screen.getByTestId('knowledge-librarian-message-assistant')).toHaveTextContent('Decision');
-    expect(screen.getByTestId('knowledge-librarian-answer-section')).toHaveTextContent('I searched the vault');
+    expect(screen.getByTestId('knowledge-librarian-answer-section')).not.toHaveTextContent('I searched the vault');
+    expect(screen.getByTestId('knowledge-librarian-retrieval-inspector')).toHaveTextContent('I searched the vault');
     expect(screen.getByTestId('knowledge-librarian-sources-section')).toHaveTextContent('Decision');
     expect(screen.getByTestId('knowledge-librarian-unknowns-section')).toHaveTextContent('Grounding is page/snippet level.');
     expect(screen.getByTestId('knowledge-librarian-next-action-section')).toHaveTextContent('Save the grounded answer');
@@ -1325,6 +1329,8 @@ describe('Knowledge page', () => {
     expect(screen.getByTestId('knowledge-librarian-sources-section')).toHaveTextContent('notes/decision.md');
     expect(screen.queryByTestId('knowledge-librarian-citations')).toBeNull();
 
+    expect(screen.getByTestId('knowledge-librarian-save-draft')).not.toBeVisible();
+    fireEvent.click(screen.getByTestId('knowledge-librarian-retrieval-inspector').querySelector('summary')!);
     fireEvent.click(screen.getByTestId('knowledge-librarian-save-draft'));
     await waitFor(() => expect(hostApiMock.createDraft).toHaveBeenCalledWith(expect.objectContaining({
       title: expect.stringContaining('Librarian answer: Why use native wiki?'),
@@ -1386,7 +1392,7 @@ describe('Knowledge page', () => {
     expect(screen.queryByTestId('knowledge-librarian-error')).not.toBeInTheDocument();
   });
 
-  it('preserves an unfinished note when visiting Chat knowledge mode and returning', async () => {
+  it('keeps an unfinished note mounted while opening and closing the knowledge floating window', async () => {
     renderKnowledge('/knowledge?uiVersion=legacy');
     await screen.findByTestId('knowledge-markdown-preview');
     fireEvent.click(screen.getByTestId('knowledge-new-note'));
@@ -1395,8 +1401,10 @@ describe('Knowledge page', () => {
     fireEvent.change(screen.getByTestId('knowledge-search-input'), { target: { value: 'research context' } });
     fireEvent.click(screen.getByTestId('knowledge-librarian-open'));
     await screen.findByTestId('knowledge-chat-page');
-    expect(screen.queryByTestId('knowledge-page')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByTestId('knowledge-chat-library'));
+    expect(screen.getByTestId('knowledge-page')).toBeInTheDocument();
+    expect(screen.getByTestId('knowledge-bot-window')).toBeVisible();
+    fireEvent.click(screen.getByTestId('knowledge-bot-close'));
+    expect(screen.getByTestId('knowledge-bot-window')).not.toBeVisible();
     await waitFor(() => expect(screen.getByTestId('knowledge-editor-title')).toHaveValue('Unfinished note'));
     expect(screen.getByTestId('knowledge-markdown-editor')).toHaveValue('# Still editing\nUnsaved details.');
     expect(screen.getByTestId('knowledge-search-input')).toHaveValue('research context');

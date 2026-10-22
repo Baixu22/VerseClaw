@@ -1941,7 +1941,19 @@
     "docs/dev/network-protocol-reliability/owner-matrix.md",
     "docs/dev/network-protocol-reliability/provider-health.md",
     "docs/dev/network-protocol-reliability/retry-budget.md",
-    "docs/dev/network-protocol-reliability/stream-failure.md"
+    "docs/dev/network-protocol-reliability/stream-failure.md",
+    "docs/dev/knowledge-bot.md",
+    "docs/dev/evidence/knowledge-bot/drag.png",
+    "docs/dev/evidence/knowledge-bot/searching-light.png",
+    "docs/dev/evidence/knowledge-bot/answer-light.png",
+    "docs/dev/evidence/knowledge-bot/markdown-light.png",
+    "docs/dev/evidence/knowledge-bot/failed.png",
+    "docs/dev/evidence/knowledge-bot/narrow-reduced.png",
+    "docs/dev/evidence/knowledge-bot/markdown-dark-narrow.png",
+    "docs/dev/evidence/knowledge-bot/launcher-dark.png",
+    "docs/dev/evidence/knowledge-bot/interaction-results.json",
+    "docs/dev/evidence/knowledge-bot/validation.json",
+    "docs/dev/evidence/knowledge-bot/SHA256SUMS"
   ],
   "artifactBatches": {}
 }
