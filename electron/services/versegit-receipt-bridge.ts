@@ -10,6 +10,7 @@ export const VG_COMMAND_PLAN_SCHEMA = 'clawx.versegit.command-plan/v1' as const;
 
 export const VG_RECEIPT_SCHEMA = 'clawx.verseshell.execution-receipt/v2';
 export const VG_VERDICT_SCHEMA = 'clawx.versegit.receipt-verdict/v1';
+export const VG_AUTHORIZATION_SCHEMA = 'clawx.versegit.verification-authorization/v1';
 export const VG_RECEIPT_REQUIRED_BINDINGS = [
   'planId', 'planDigest', 'candidateId', 'checkId', 'ownerId', 'epoch', 'authorizationId',
   'argvDigest', 'cwdDigest', 'envDigest', 'executionInputDigest', 'requiredScope',
@@ -26,6 +27,14 @@ export type VerificationPlan = {
   owner: string;
   epoch: number;
   authorizationId: string;
+  /** Digest of the host-recorded active grant. Required for evidenceVersion 2. */
+  authorizationDigest?: string;
+  /** Explicit host-evidence generation version. Version 2 requires authorization and per-receipt cleanup evidence. */
+  evidenceVersion?: 1 | 2;
+  /** Absolute host deadline used for every command in this plan. */
+  deadlineAt?: number;
+  /** Complete set of checks represented by this plan. Required for evidenceVersion 2. */
+  requiredChecks?: string[];
   commands: Array<{
     argv: string[];
     cwd: string;
@@ -33,9 +42,28 @@ export type VerificationPlan = {
     effect: 'none' | 'read' | 'write' | 'process' | 'network' | 'execute';
     retry: 'never' | 'once';
     expectedArtifacts: string[];
+    timeoutMs?: number;
+    maxOutputBytes?: number;
   }>;
   requiredScope: 'full' | 'selected';
   planDigest?: string;
+};
+
+/** Host-owned grant snapshot consulted immediately before receipt promotion. */
+export type VerificationAuthorization = {
+  schema: typeof VG_AUTHORIZATION_SCHEMA;
+  authorizationId: string;
+  runId: string;
+  ownerId: string;
+  candidateId: string;
+  checkId: string;
+  epoch: number;
+  requiredScope: 'full' | 'selected';
+  status: 'active' | 'revoked';
+  issuedAt: string;
+  expiresAt: string;
+  revokedAt?: string;
+  revocationReason?: string;
 };
 
 export type VerseShellReceipt = {
@@ -70,6 +98,9 @@ export type VerseShellReceipt = {
   observationDigest?: string;
   planFileDigest?: string;
   inputManifestDigest?: string;
+  /** Evidence-version-2 bindings for active authorization and this receipt's exact cleanup record. */
+  authorizationDigest?: string;
+  cleanupEvidenceDigest?: string;
 };
 
 export type ReceiptAuthorityCheck = {
@@ -135,14 +166,24 @@ export function createVerificationPlan(input: Omit<VerificationPlan, 'schema' | 
   const issues: string[] = [];
   if (!nonEmpty(plan.runId) || !nonEmpty(plan.candidateId) || !nonEmpty(plan.checkId) || !nonEmpty(plan.owner)) issues.push('plan identity fields are invalid');
   if (plan.candidateInputDigest !== undefined && !isDigest(plan.candidateInputDigest)) issues.push('plan candidateInputDigest is invalid');
+  if (plan.authorizationDigest !== undefined && !isDigest(plan.authorizationDigest)) issues.push('plan authorizationDigest is invalid');
+  if (plan.evidenceVersion !== undefined && ![1, 2].includes(plan.evidenceVersion)) issues.push('plan evidenceVersion is invalid');
+  if (plan.deadlineAt !== undefined && (!Number.isSafeInteger(plan.deadlineAt) || plan.deadlineAt <= 0)) issues.push('plan deadlineAt is invalid');
   if (!Number.isInteger(plan.epoch) || plan.epoch < 1 || !nonEmpty(plan.authorizationId)) issues.push('plan authorization fields are invalid');
   if (!['full', 'selected'].includes(plan.requiredScope)) issues.push('plan requiredScope is invalid');
   if (!Array.isArray(plan.commands) || plan.commands.length === 0) issues.push('plan commands must be non-empty');
+  if (plan.evidenceVersion === 2) {
+    if (!isDigest(plan.authorizationDigest)) issues.push('version 2 plan requires authorizationDigest');
+    if (!Number.isSafeInteger(plan.deadlineAt)) issues.push('version 2 plan requires deadlineAt');
+    if (!Array.isArray(plan.requiredChecks) || plan.requiredChecks.length === 0 || plan.requiredChecks.some((check) => !nonEmpty(check))) issues.push('version 2 plan requires non-empty requiredChecks');
+  }
   for (const command of plan.commands ?? []) {
     if (!Array.isArray(command.argv) || command.argv.length === 0 || command.argv.some((arg) => typeof arg !== 'string')) issues.push('plan command argv is invalid');
     if (!['none', 'read', 'write', 'process', 'network', 'execute'].includes(command.effect)) issues.push('plan command effect is invalid');
     if (!['never', 'once'].includes(command.retry)) issues.push('plan command retry is invalid');
     if (!nonEmpty(command.cwd)) issues.push('plan command cwd is invalid');
+    if (command.timeoutMs !== undefined && (!Number.isSafeInteger(command.timeoutMs) || command.timeoutMs <= 0)) issues.push('plan command timeoutMs is invalid');
+    if (command.maxOutputBytes !== undefined && (!Number.isSafeInteger(command.maxOutputBytes) || command.maxOutputBytes <= 0)) issues.push('plan command maxOutputBytes is invalid');
   }
   if (issues.length > 0) return { plan: null, issues };
   plan.planDigest = planDigest(plan);
@@ -165,10 +206,17 @@ export function validateReceipt(plan: VerificationPlan, receipt: unknown): Recei
   if (value.ownerId !== plan.owner) issues.push('receipt ownerId mismatch');
   if (value.epoch !== plan.epoch) issues.push('receipt epoch mismatch');
   if (value.authorizationId !== plan.authorizationId) issues.push('receipt authorizationId mismatch');
+  if (plan.requiredScope !== 'full') issues.push('plan scope is not full');
   if (value.requiredScope !== 'full') issues.push('receipt scope is not full');
   if (value.selected_scope === 'full') issues.push('receipt may not self-claim selected scope as full');
   if (!Array.isArray(value.artifactDigests) || value.artifactDigests.length === 0 || !value.artifactDigests.every(isDigest)) issues.push('receipt artifact digests are missing or invalid');
   const artifactDigests = Array.isArray(value.artifactDigests) ? value.artifactDigests.filter(isDigest) : [];
+  if (plan.evidenceVersion === 2) {
+    if (!isDigest(value.authorizationDigest) || value.authorizationDigest !== plan.authorizationDigest) issues.push('receipt authorization digest mismatch');
+    if (!isDigest(value.cleanupEvidenceDigest)) issues.push('receipt cleanup evidence digest is invalid');
+    if (isDigest(value.authorizationDigest) && !artifactDigests.includes(value.authorizationDigest)) issues.push('receipt authorization evidence is not bound');
+    if (isDigest(value.cleanupEvidenceDigest) && !artifactDigests.includes(value.cleanupEvidenceDigest)) issues.push('receipt cleanup evidence is not bound');
+  }
   if (value.cleanupStatus !== 'clean') issues.push('receipt cleanup is not clean');
   if (!['exited', 'timed-out', 'cancelled', 'lost'].includes(String(value.status))) issues.push('receipt status is invalid');
   const command = plan.commands[0];

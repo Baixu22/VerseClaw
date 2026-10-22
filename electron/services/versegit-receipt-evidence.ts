@@ -1,4 +1,5 @@
 /** Host-owned filesystem evidence used to verify live VerseShell receipts. */
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
   existsSync,
@@ -10,10 +11,12 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
+import type { VerseGitCandidateManifest } from '../../shared/types/versegit.ts';
 import type { Observation } from '../../shared/verseshell/types.ts';
-import { executionInputDigest } from './versegit-receipt-bridge.ts';
+import { executionInputDigest, VerseGitReceiptBridge } from './versegit-receipt-bridge.ts';
 import type {
   ReceiptAuthorityCheck,
+  VerificationAuthorization,
   VerificationPlan,
   VerseShellReceipt,
   VerseShellReceiptAuthority,
@@ -30,6 +33,10 @@ export type HostObservationCommandBinding = {
   planDigest: string;
   candidateId: string;
   checkId: string;
+  ownerId?: string;
+  epoch?: number;
+  authorizationId?: string;
+  authorizationDigest?: string;
   argvDigest: string;
   cwdDigest: string;
   envDigest: string;
@@ -137,6 +144,231 @@ function assertInside(root: string, candidate: string): string {
   return resolved;
 }
 
+export const VG_CANDIDATE_INPUT_SCHEMA = 'clawx.versegit.candidate-input/v2' as const;
+export const VG_VERIFICATION_CLEANUP_SCHEMA = 'clawx.versegit.verification-cleanup/v2' as const;
+
+export type CandidateInputManifest = {
+  schema: typeof VG_CANDIDATE_INPUT_SCHEMA;
+  sourceCandidateId: string;
+  baseOid: string;
+  candidateCommitOid: string;
+  candidateTreeOid: string;
+  verificationCwdRole: 'host-disposable-candidate';
+  allowedRuntimeIgnorePaths: string[];
+  files: Array<{ path: string; sha256: string; bytes: number }>;
+  inputDigest: string;
+};
+
+export type HostVerseShellExecutionEvidence = {
+  observation: Observation;
+  stdout: string;
+  stderr: string;
+  processKey: string;
+  processPid: number | null;
+  managerKey: string;
+  approvalRequired: boolean;
+  approvedByHost: boolean;
+};
+
+export type PreparedCandidateVerificationEvidence = {
+  plan: VerificationPlan;
+  planRef: EvidenceRef;
+  inputRef: EvidenceRef;
+  authorizationRef: EvidenceRef;
+};
+
+export type CompletedCandidateVerificationEvidence = {
+  receiptId: string;
+  receipt: VerseShellReceipt;
+  receiptRef: EvidenceRef;
+  observationRef: HostObservationEvidence;
+  cleanupRef: EvidenceRef;
+  receiptResult: ReturnType<VerseGitReceiptBridge['receive']>;
+  verdict: ReturnType<VerseGitReceiptBridge['verdict']>;
+};
+
+/** Hash only Git-tracked candidate inputs, excluding host runtime evidence paths. */
+export function createCandidateInputManifest(
+  candidateRoot: string,
+  candidate: VerseGitCandidateManifest,
+): { candidateId: string; manifest: CandidateInputManifest } {
+  const runtimeIgnorePaths = [...new Set([...candidate.allowedRuntimeIgnorePaths, '.ae/'])].sort();
+  const ignoredPrefixes = runtimeIgnorePaths
+    .map((value) => value.replace(/\/\*\*?$/u, '').replace(/\/$/u, ''))
+    .filter(Boolean);
+  const paths = execFileSync('git', ['ls-files', '-z'], {
+    cwd: candidateRoot,
+    encoding: 'utf8',
+    windowsHide: true,
+    timeout: 20_000,
+  })
+    .split('\0')
+    .filter(Boolean)
+    .map((value) => normalizeRelativePath(value))
+    .filter((value) => !ignoredPrefixes.some((prefix) => value === prefix || value.startsWith(`${prefix}/`)))
+    .sort();
+  const files = paths.map((path) => {
+    const bytes = readFileSync(join(candidateRoot, ...path.split('/')));
+    return { path, sha256: sha256(bytes), bytes: bytes.byteLength };
+  });
+  const inputDigest = sha256(stableJson(files));
+  const manifest: CandidateInputManifest = {
+    schema: VG_CANDIDATE_INPUT_SCHEMA,
+    sourceCandidateId: candidate.candidateId,
+    baseOid: candidate.baseOid,
+    candidateCommitOid: candidate.candidateCommitOid,
+    candidateTreeOid: candidate.candidateTreeOid,
+    verificationCwdRole: candidate.verificationCwdRole,
+    allowedRuntimeIgnorePaths: runtimeIgnorePaths,
+    files,
+    inputDigest,
+  };
+  return { candidateId: sha256(stableJson(manifest)), manifest };
+}
+function assertAuthorizationMatchesPlan(
+  authorization: VerificationAuthorization,
+  plan: VerificationPlan,
+): void {
+  if (authorization.schema !== 'clawx.versegit.verification-authorization/v1') throw new Error('authorization schema mismatch');
+  if (authorization.authorizationId !== plan.authorizationId || authorization.runId !== plan.runId) throw new Error('authorization identity differs from plan');
+  if (authorization.ownerId !== plan.owner || authorization.epoch !== plan.epoch) throw new Error('authorization owner or epoch differs from plan');
+  if (authorization.candidateId !== plan.candidateId || authorization.checkId !== plan.checkId) throw new Error('authorization candidate or check differs from plan');
+  if (authorization.requiredScope !== plan.requiredScope) throw new Error('authorization scope differs from plan');
+  if (authorization.status !== 'active' || authorization.revokedAt) throw new Error(authorization.status === 'revoked' ? 'authorization is revoked' : 'authorization is not active');
+  if (!Number.isFinite(Date.parse(authorization.issuedAt)) || !Number.isFinite(Date.parse(authorization.expiresAt))) throw new Error('authorization timestamps are invalid');
+  if (Date.parse(authorization.expiresAt) <= Date.parse(authorization.issuedAt)) throw new Error('authorization expiry is invalid');
+}
+
+/** Record immutable plan, candidate input and active grant before any candidate execution starts. */
+export function prepareCandidateVerificationEvidence(input: {
+  authority: FileVerseShellReceiptAuthority;
+  bridge: VerseGitReceiptBridge;
+  plan: VerificationPlan;
+  authorization: VerificationAuthorization;
+  candidateManifest: CandidateInputManifest;
+}): PreparedCandidateVerificationEvidence {
+  const { authority, bridge, plan, authorization, candidateManifest } = input;
+  if (plan.evidenceVersion !== 2) throw new Error('candidate verification requires evidenceVersion 2');
+  if (plan.requiredScope !== 'full') throw new Error('candidate verification requires full scope');
+  if (!plan.candidateInputDigest || plan.candidateInputDigest !== candidateManifest.inputDigest) throw new Error('candidate input digest differs from plan');
+  if (sha256(stableJson(candidateManifest)) !== plan.candidateId) throw new Error('candidate input manifest does not reproduce plan candidateId');
+  if (!plan.authorizationDigest) throw new Error('candidate verification authorization digest is missing');
+  assertAuthorizationMatchesPlan(authorization, plan);
+  const authorizationRef = authority.recordAuthorization(authorization);
+  if (authorizationRef.digest !== plan.authorizationDigest) throw new Error('authorization digest differs from plan');
+  const inputRef = authority.recordCandidateInput(plan.candidateId, candidateManifest);
+  const planRef = authority.recordPlan(plan);
+  const registered = bridge.registerPlan(plan);
+  if (registered.status !== 'accepted') throw new Error(`candidate verification plan was not registered: ${registered.reason}`);
+  return { plan, planRef, inputRef, authorizationRef };
+}
+
+/** Build and persist a receipt only from the host execution and its exact cleanup record. */
+export function completeCandidateVerificationEvidence(input: {
+  authority: FileVerseShellReceiptAuthority;
+  bridge: VerseGitReceiptBridge;
+  prepared: PreparedCandidateVerificationEvidence;
+  execution: HostVerseShellExecutionEvidence;
+  cleanup: Record<string, unknown>;
+  receiptId: string;
+}): CompletedCandidateVerificationEvidence {
+  const { authority, bridge, prepared, execution, cleanup, receiptId } = input;
+  if (!receiptId.trim()) throw new Error('receiptId is required');
+  if (!execution.approvedByHost) throw new Error('host policy did not approve candidate execution');
+  const capabilities = Array.isArray(execution.observation.meta?.capabilities_used)
+    ? execution.observation.meta.capabilities_used.filter((value): value is string => typeof value === 'string')
+    : [];
+  if (execution.observation.schema !== 'verseshell.observation/v1'
+    || !['exec.run', 'process.start'].includes(execution.observation.op)
+    || !capabilities.includes('shell.exec')) {
+    throw new Error('host execution is not a VerseShell shell.exec observation');
+  }
+  const data = execution.observation.data && typeof execution.observation.data === 'object' && !Array.isArray(execution.observation.data)
+    ? execution.observation.data as Record<string, unknown>
+    : {};
+  const exitCode = typeof data.exit_code === 'number' && Number.isInteger(data.exit_code) ? data.exit_code : null;
+  if (exitCode === null && data.timed_out !== true) throw new Error('host execution has no terminal exit code');
+  const timedOut = data.timed_out === true || execution.observation.error?.code === 'E_TIMEOUT';
+  const cleanupStatus = cleanup.status === 'clean' ? 'clean' : cleanup.status === 'recovery_required' ? 'recovery_required' : 'failed';
+  const cleanupRef = authority.recordCleanupFor(receiptId, cleanup);
+  const observationRef = authority.recordObservation({
+    observation: execution.observation,
+    stdout: execution.stdout,
+    stderr: execution.stderr,
+    processKeyDigest: sha256(execution.processKey),
+    processPid: execution.processPid,
+    managerKeyDigest: sha256(execution.managerKey),
+    binding: {
+      planId: prepared.plan.runId,
+      planDigest: String(prepared.plan.planDigest ?? ''),
+      candidateId: prepared.plan.candidateId,
+      checkId: prepared.plan.checkId,
+      ownerId: prepared.plan.owner,
+      epoch: prepared.plan.epoch,
+      authorizationId: prepared.plan.authorizationId,
+      authorizationDigest: prepared.plan.authorizationDigest,
+      argvDigest: sha256(JSON.stringify(prepared.plan.commands[0]?.argv ?? [])),
+      cwdDigest: sha256(JSON.stringify(prepared.plan.commands[0]?.cwd ?? '')),
+      envDigest: sha256(JSON.stringify(prepared.plan.commands[0]?.env ?? {})),
+      executionInputDigest: executionInputDigest(prepared.plan),
+    },
+  });
+  const artifactDigests = [...new Set([
+    ...observationRef.artifactDigests,
+    observationRef.observationDigest,
+    observationRef.stdoutDigest,
+    observationRef.stderrDigest,
+    prepared.planRef.digest,
+    prepared.inputRef.digest,
+    prepared.authorizationRef.digest,
+    cleanupRef.digest,
+  ])].sort();
+  const receipt: VerseShellReceipt = {
+    schema: 'clawx.verseshell.execution-receipt/v2',
+    receiptId,
+    planId: prepared.plan.runId,
+    planDigest: String(prepared.plan.planDigest ?? ''),
+    candidateId: prepared.plan.candidateId,
+    checkId: prepared.plan.checkId,
+    ownerId: prepared.plan.owner,
+    epoch: prepared.plan.epoch,
+    authorizationId: prepared.plan.authorizationId,
+    argvDigest: sha256(JSON.stringify(prepared.plan.commands[0]?.argv ?? [])),
+    cwdDigest: sha256(JSON.stringify(prepared.plan.commands[0]?.cwd ?? '')),
+    envDigest: sha256(JSON.stringify(prepared.plan.commands[0]?.env ?? {})),
+    executionInputDigest: executionInputDigest(prepared.plan),
+    requiredScope: prepared.plan.requiredScope,
+    artifactDigests,
+    cleanupStatus,
+    status: timedOut ? 'timed-out' : 'exited',
+    exitCode,
+    signal: null,
+    durationMs: typeof execution.observation.meta?.elapsed_ms === 'number' ? execution.observation.meta.elapsed_ms : 0,
+    stdoutDigest: observationRef.stdoutDigest,
+    stderrDigest: observationRef.stderrDigest,
+    processKey: sha256(execution.processKey),
+    authority: { writer: 'verseshell', trusted_source: 'clawx-host-process-artifact-authority' },
+    origin: 'verseshell',
+    realVerseshell: true,
+    observationId: execution.observation.id,
+    observationDigest: observationRef.observationDigest,
+    planFileDigest: prepared.planRef.digest,
+    inputManifestDigest: prepared.inputRef.digest,
+    authorizationDigest: prepared.authorizationRef.digest,
+    cleanupEvidenceDigest: cleanupRef.digest,
+  };
+  const receiptRef = authority.recordReceipt(receipt);
+  const receiptResult = bridge.receive(prepared.plan.runId, receipt);
+  return {
+    receiptId,
+    receipt,
+    receiptRef,
+    observationRef,
+    cleanupRef,
+    receiptResult,
+    verdict: bridge.verdict(prepared.plan.runId),
+  };
+}
 export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthority {
   readonly root: string;
 
@@ -191,6 +423,12 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
     const bytes = `${stableJson({ candidateId, manifest })}\n`;
     this.writeArtifactBytes(bytes);
     return this.writeBytes(join('inputs', idFile(candidateId)), bytes);
+  }
+
+  recordAuthorization(authorization: VerificationAuthorization): EvidenceRef {
+    const bytes = `${stableJson(authorization)}\n`;
+    this.writeArtifactBytes(bytes);
+    return this.writeBytes(join('authorizations', idFile(authorization.authorizationId)), bytes);
   }
 
   recordObservation(input: HostObservationEvidenceInput): HostObservationEvidence {
@@ -262,6 +500,13 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
     return this.writeCanonical('cleanup.json', cleanup);
   }
 
+  /** Persist cleanup bytes by receipt identity so failed and continuation receipts cannot overwrite each other. */
+  recordCleanupFor(receiptId: string, cleanup: unknown): EvidenceRef {
+    const bytes = `${stableJson(cleanup)}\n`;
+    this.writeArtifactBytes(bytes);
+    return this.writeBytes(join('cleanup', idFile(receiptId)), bytes);
+  }
+
   fileDigest(path: string): string {
     return sha256(readFileSync(this.absolute(path)));
   }
@@ -320,6 +565,31 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       add(sha256(stableJson(manifest)) === plan.candidateId, 'candidate input manifest does not reproduce candidateId');
     }
 
+    const authorizationPath = join('authorizations', idFile(plan.authorizationId));
+    if (plan.evidenceVersion === 2) {
+      add(Boolean(receipt.authorizationDigest), 'version 2 receipt authorization evidence is missing');
+      add(receipt.authorizationDigest === plan.authorizationDigest, 'version 2 receipt authorization differs from plan');
+    }
+    if (receipt.authorizationDigest) {
+      requireFileDigest(authorizationPath, receipt.authorizationDigest, 'authorization');
+      add(receipt.artifactDigests.includes(receipt.authorizationDigest), 'authorization artifact is not bound');
+      if (existsSync(this.absolute(authorizationPath))) {
+        const authorization = this.readJson<VerificationAuthorization>(authorizationPath);
+        add(authorization.schema === 'clawx.versegit.verification-authorization/v1', 'authorization schema mismatch');
+        add(authorization.authorizationId === plan.authorizationId, 'authorization identity differs from plan');
+        add(authorization.runId === plan.runId, 'authorization run differs from plan');
+        add(authorization.ownerId === plan.owner, 'authorization owner differs from plan');
+        add(authorization.candidateId === plan.candidateId, 'authorization candidate differs from plan');
+        add(authorization.checkId === plan.checkId, 'authorization check differs from plan');
+        add(authorization.epoch === plan.epoch, 'authorization epoch differs from plan');
+        add(authorization.requiredScope === plan.requiredScope, 'authorization scope differs from plan');
+        add(authorization.status === 'active', authorization.status === 'revoked' ? 'authorization is revoked' : 'authorization is not active');
+        add(!authorization.revokedAt, 'authorization carries revocation metadata');
+        add(Number.isFinite(Date.parse(authorization.issuedAt)), 'authorization issuedAt is invalid');
+        add(Number.isFinite(Date.parse(authorization.expiresAt)) && Date.parse(authorization.expiresAt) > Date.parse(authorization.issuedAt), 'authorization expiry is invalid');
+      }
+    }
+
     const observationPath = join('observations', idFile(String(receipt.observationId ?? '')));
     add(existsSync(this.absolute(observationPath)), 'host observation record is missing');
     if (existsSync(this.absolute(observationPath))) {
@@ -336,6 +606,12 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
         planDigest: String(plan.planDigest ?? ''),
         candidateId: plan.candidateId,
         checkId: plan.checkId,
+        ...(plan.evidenceVersion === 2 ? {
+          ownerId: plan.owner,
+          epoch: plan.epoch,
+          authorizationId: plan.authorizationId,
+          authorizationDigest: plan.authorizationDigest,
+        } : {}),
         argvDigest: sha256(JSON.stringify(command?.argv ?? [])),
         cwdDigest: sha256(JSON.stringify(command?.cwd ?? '')),
         envDigest: sha256(JSON.stringify(command?.env ?? {})),
@@ -349,6 +625,12 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       add(receipt.planDigest === stored.binding?.planDigest, 'receipt planDigest differs from observation binding');
       add(receipt.candidateId === stored.binding?.candidateId, 'receipt candidateId differs from observation binding');
       add(receipt.checkId === stored.binding?.checkId, 'receipt checkId differs from observation binding');
+      if (plan.evidenceVersion === 2) {
+        add(receipt.ownerId === stored.binding?.ownerId, 'receipt ownerId differs from observation binding');
+        add(receipt.epoch === stored.binding?.epoch, 'receipt epoch differs from observation binding');
+        add(receipt.authorizationId === stored.binding?.authorizationId, 'receipt authorizationId differs from observation binding');
+        add(receipt.authorizationDigest === stored.binding?.authorizationDigest, 'receipt authorizationDigest differs from observation binding');
+      }
       add(receipt.argvDigest === stored.binding?.argvDigest, 'receipt argvDigest differs from observation binding');
       add(receipt.cwdDigest === stored.binding?.cwdDigest, 'receipt cwdDigest differs from observation binding');
       add(receipt.envDigest === stored.binding?.envDigest, 'receipt envDigest differs from observation binding');
@@ -381,6 +663,8 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       receipt.stderrDigest,
       receipt.planFileDigest,
       receipt.inputManifestDigest,
+      receipt.authorizationDigest,
+      receipt.cleanupEvidenceDigest,
     ].filter((value): value is string => typeof value === 'string');
     for (const digest of expected) {
       add(receipt.artifactDigests.includes(digest), `required artifact is not bound: ${digest}`);
@@ -393,7 +677,14 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       if (existsSync(this.absolute(artifactPath))) add(sha256(readFileSync(this.absolute(artifactPath))) === digest, `receipt artifact digest mismatch: ${digest}`);
     }
 
-    const cleanupPath = 'cleanup.json';
+    const cleanupPath = receipt.cleanupEvidenceDigest
+      ? join('cleanup', idFile(receipt.receiptId))
+      : 'cleanup.json';
+    if (plan.evidenceVersion === 2) add(Boolean(receipt.cleanupEvidenceDigest), 'version 2 receipt cleanup evidence is missing');
+    if (receipt.cleanupEvidenceDigest) {
+      requireFileDigest(cleanupPath, receipt.cleanupEvidenceDigest, 'receipt cleanup');
+      add(receipt.artifactDigests.includes(receipt.cleanupEvidenceDigest), 'receipt cleanup artifact is not bound');
+    }
     add(existsSync(this.absolute(cleanupPath)), 'cleanup evidence is missing');
     if (existsSync(this.absolute(cleanupPath))) {
       const cleanup = this.readJson<Record<string, unknown>>(cleanupPath);
@@ -401,7 +692,13 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       add(cleanup.processesDeleted === true, 'cleanup does not prove process deletion');
       add(cleanup.managerProcessSurvivors === 0, 'cleanup retained manager processes');
       add(cleanup.worktreeSurvivors === 0, 'cleanup retained worktrees');
-      add(cleanup.tempRootRemoved === true, 'cleanup retained the temporary root');
+      if (cleanup.schema === 'clawx.versegit.verification-cleanup/v2') {
+        add(cleanup.verificationRootRemoved === true, 'cleanup retained the verification root');
+        add(cleanup.candidateWorktreeSurvivors === 0, 'cleanup retained the candidate worktree');
+        add(cleanup.baseRootPreserved === true, 'cleanup did not preserve the base workspace');
+      } else {
+        add(cleanup.tempRootRemoved === true, 'cleanup retained the temporary root');
+      }
       add(cleanup.hostWorktreesDeleted === 0, 'cleanup deleted a host worktree');
       add(Array.isArray(cleanup.deletionErrors) && cleanup.deletionErrors.length === 0, 'cleanup retained deletion errors');
       add(!Array.isArray(cleanup.survivorPids) || cleanup.survivorPids.length === 0, 'cleanup retained process survivors');
