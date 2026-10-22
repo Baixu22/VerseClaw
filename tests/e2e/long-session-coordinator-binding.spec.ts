@@ -126,6 +126,28 @@ test('real Host/Gateway coordinator binding survives app restart and invalidates
 
     await expect(hostInvoke<CoordinatorRead>(first, 'sessions', 'coordinatorBinding', { workspaceId }))
       .resolves.toMatchObject({ validation: 'current', binding: { sessionId: physicalSessionId, revision: 1 } });
+
+    /* A handoff/new active session does not silently repoint the stable master.
+       The explicit binding remains on the source generation until the user
+       deliberately rebinds with the current revision. */
+    const derivedSessionKey = await createCoordinatorSession(first);
+    await hostInvoke(first, 'workspaces', 'update', {
+      id: workspaceId,
+      agentId: 'main',
+      activeSessionKey: derivedSessionKey,
+      sessionKey: derivedSessionKey,
+    });
+    await expect(hostInvoke<CoordinatorRead>(first, 'sessions', 'coordinatorBinding', { workspaceId }))
+      .resolves.toMatchObject({
+        validation: 'current',
+        binding: { sessionKey, sessionId: physicalSessionId, revision: 1 },
+      });
+    await hostInvoke(first, 'workspaces', 'update', {
+      id: workspaceId,
+      agentId: 'main',
+      activeSessionKey: sessionKey,
+      sessionKey,
+    });
     await page.getByTestId('chat-page').waitFor({ state: 'visible' });
   } finally {
     await closeElectronApp(first);
