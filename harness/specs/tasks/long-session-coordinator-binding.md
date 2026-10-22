@@ -77,7 +77,9 @@ docs:
 - `sessions.bindCoordinator` 由用户显式调用，校验 active Workspace、selected Assistant、runtime session、physical sessionId、Task Ledger refs 和 `expectedRevision` 后才写入；普通 Chat 与新建会话不会自动建立绑定。
 - `sessions.coordinatorBinding` 从现有 Workspace store 恢复绑定，并在 Gateway 不可用时保持 unverified；物理 generation 变化会持久化为 reset invalidation，archive/delete 路径会使 active binding 失效。
 - binding 只引用 Task Ledger 节点，不创建或更新任务状态；任务完成仍必须走既有 Task Ledger 写入接口。
-- 单元测试覆盖跨 Workspace、缺 owner、错误 Assistant、已删会话、缺失 Task Ledger ref、revision 冲突、reset/archive/delete invalidation；真实 built Electron/Gateway 测试覆盖显式绑定、应用重启恢复、rename-safe logical key 语义与 reset/archive 失效。
+- 单元测试覆盖跨 Workspace、缺 owner、错误 Assistant、已删会话、缺失 Task Ledger ref、revision 冲突与 reset/archive/delete invalidation helper；真实 built Electron/Gateway 测试覆盖显式绑定、应用重启恢复、active-session/handoff 切换不自动改绑、reset 失效和 archive 后持久失效。
+- binding identity 只使用逻辑 `sessionKey` 与物理 `sessionId`，不含可变的显示 label，因此 label-only rename 不是绑定输入；可见重命名/长期入口仍由 C4 提供。
+- Clean candidate `09dcda17683369e12b60609ec055156052082260` / tree `876c9f4e0e98efc86ca8fe82e1d88f57c3b76dfc`：11 commands、68/68 unit tests、1/1 real Electron/Gateway journey、build、typecheck、contract、comms、harness、diff-check 与凭证扫描通过；回执见 `harness/specs/fixtures/long-session-development/c1/`。
 
 所属阶段三：交付单工作区长期协调入口。统一边界见[规划合同索引](./long-session-development-plan.md)。
 
