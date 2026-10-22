@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-coordinator-binding
 title: 绑定稳定主会话、任务引用与长期工作范围
 program: long-session-development-20261022
@@ -11,19 +11,20 @@ intent: 让一个明确 Workspace/Assistant 的长期对话承接后续工作，
 contractIndex: harness/specs/tasks/long-session-development-plan.md
 dependsOnTasks:
   - B2
+diffBase: 7a9173498
 touchedAreas:
   - harness/specs/tasks/long-session-coordinator-binding.md
   - harness/specs/tasks/long-session-development-plan.md
   - shared/types/workspace.ts
-  - shared/types/project.ts
-  - shared/types/task-ledger.ts
-  - electron/services/workspaces-api.ts
-  - electron/services/task-ledger-api.ts
-  - electron/services/sessions-api.ts
-  - src/lib/workspace-session.ts
   - shared/host-api/contract.ts
   - src/lib/host-api.ts
+  - src/lib/workspace-session.ts
+  - src/stores/workspaces.ts
+  - electron/services/workspaces-api.ts
+  - electron/services/sessions-api.ts
+  - tests/unit/workspace-session.test.ts
   - tests/unit/long-session-coordinator-binding.test.ts
+  - tests/e2e/long-session-coordinator-binding.spec.ts
   - harness/specs/fixtures/long-session-development/c1/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -42,7 +43,9 @@ expectedUserBehavior:
   - 创建本合同不代表功能已实现；结果、配置、授权和任务完成仍归现有 owner，未知状态如实保留。
 requiredTests:
   - pnpm exec vitest run tests/unit/workspace-session.test.ts tests/unit/project-projection.test.ts tests/unit/identity-scope.test.ts --maxWorkers=1
-  - pnpm exec vitest run tests/unit/long-session-coordinator-binding.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/long-session-coordinator-binding.test.ts tests/unit/workspaces-api.test.ts tests/unit/workspaces-store.test.ts --maxWorkers=1
+  - pnpm run build:vite
+  - pnpm run test:e2e:run tests/e2e/long-session-coordinator-binding.spec.ts
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run comms:replay
@@ -51,6 +54,7 @@ requiredTests:
   - git diff --check
 plannedTests:
   - tests/unit/long-session-coordinator-binding.test.ts
+  - tests/e2e/long-session-coordinator-binding.spec.ts
 acceptance:
   - 稳定协调入口绑定一个真实 Workspace、Assistant 与 SessionKey，关联 existing Task Ledger refs；最小 binding metadata 由现有 owner 持久化，不建立新 Project/task/goal store。
   - UI 关闭、应用重启、会话重命名/交接后绑定可从盘上恢复；删除/reset/归档使旧 generation 的协调绑定明确失效或暂停。
@@ -66,7 +70,14 @@ docs:
 
 让一个明确 Workspace/Assistant 的长期对话承接后续工作，同时保留 Task Ledger 对任务事实的唯一权威。
 
-本规格为待执行合同。任务状态、前置与下一 ready 由 repo-local Task Forest 管理。节点创建、文件存在、静态 validate 或 dry-run 不是功能证据。只有前置任务/阶段的盘上验收完整后才开始。
+本规格已执行。`WorkspaceProfile.coordinatorBinding` 作为现有 Workspace store 内的最小 metadata，只保存已选 Workspace/Assistant、逻辑 SessionKey、物理 sessionId、Task Ledger 引用、revision 和失效状态；它不复制任务、会话或 Project authority。C1 只建立能力，可见长期协作入口仍由 C4 交付。
+
+**C1 交付**
+
+- `sessions.bindCoordinator` 由用户显式调用，校验 active Workspace、selected Assistant、runtime session、physical sessionId、Task Ledger refs 和 `expectedRevision` 后才写入；普通 Chat 与新建会话不会自动建立绑定。
+- `sessions.coordinatorBinding` 从现有 Workspace store 恢复绑定，并在 Gateway 不可用时保持 unverified；物理 generation 变化会持久化为 reset invalidation，archive/delete 路径会使 active binding 失效。
+- binding 只引用 Task Ledger 节点，不创建或更新任务状态；任务完成仍必须走既有 Task Ledger 写入接口。
+- 单元测试覆盖跨 Workspace、缺 owner、错误 Assistant、已删会话、缺失 Task Ledger ref、revision 冲突、reset/archive/delete invalidation；真实 built Electron/Gateway 测试覆盖显式绑定、应用重启恢复、rename-safe logical key 语义与 reset/archive 失效。
 
 所属阶段三：交付单工作区长期协调入口。统一边界见[规划合同索引](./long-session-development-plan.md)。
 
@@ -108,7 +119,7 @@ docs:
 - `pnpm harness validate --spec harness/specs/tasks/long-session-coordinator-binding.md`
 - `git diff --check`
 
-plannedTests 尚未实现；上述命令只有在交付对应测试后才构成验收，测试选择未命中必须失败。
+plannedTests 已实现；上述命令等同于本节点验收门禁，测试选择未命中必须失败。host mock 只证明服务/交互路径，重启与 reset/archive 由真实 built Electron/Gateway journey 覆盖。
 
 E2E 要求真实 built Electron 与隔离 userData/run root。界面 host mocks 仅证明交互，功能接线必须回读 actual Host/Gateway/owner receipts。所有通信改动运行 comms replay/compare，cached typecheck 不替代 uncached 全门。
 

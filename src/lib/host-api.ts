@@ -334,6 +334,10 @@ import type {
   SessionPermanentDeletePayload,
   SessionEffectivePolicyPayload,
   SessionEffectivePolicyResult,
+  SessionBindCoordinatorPayload,
+  SessionBindCoordinatorResult,
+  SessionCoordinatorBindingReadPayload,
+  SessionCoordinatorBindingResult,
   SessionRestorePayload,
   SessionLongTaskControlStatusResult,
   SessionManualCompactPayload,
@@ -1478,6 +1482,12 @@ export const hostApi = {
     effectivePolicy: (
       input: SessionEffectivePolicyPayload,
     ): Promise<SessionEffectivePolicyResult> => invokeHost('sessions', 'effectivePolicy', input),
+    coordinatorBinding: (
+      input?: SessionCoordinatorBindingReadPayload,
+    ): Promise<SessionCoordinatorBindingResult> => invokeHost('sessions', 'coordinatorBinding', input),
+    bindCoordinator: (
+      input: SessionBindCoordinatorPayload,
+    ): Promise<SessionBindCoordinatorResult> => invokeHost('sessions', 'bindCoordinator', input),
     permanentDelete: (input: SessionPermanentDeletePayload) => (
       invokeHost('sessions', 'permanentDelete', input)
     ),

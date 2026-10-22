@@ -120,6 +120,8 @@ import type {
   PromptCacheRiskSeverity,
   PromptCacheStatus,
   WorkspaceContextRange,
+  WorkspaceCoordinatorBinding,
+  WorkspaceCoordinatorTaskRef,
   KnowledgeInvocationMode,
   SessionArchiveEntry,
   SessionFolder,
@@ -2812,6 +2814,30 @@ export type SessionEffectivePolicyPayload = {
 };
 export type SessionEffectivePolicyResult = HostSuccess & {
   policy?: SessionEffectivePolicy;
+};
+export type SessionCoordinatorBindingReadPayload = {
+  workspaceId?: string;
+};
+export type SessionCoordinatorBindingValidation =
+  | 'current'
+  | 'unverified'
+  | 'invalidated'
+  | 'missing';
+export type SessionCoordinatorBindingResult = HostSuccess & {
+  binding: WorkspaceCoordinatorBinding | null;
+  validation: SessionCoordinatorBindingValidation;
+  reason?: string | null;
+};
+export type SessionBindCoordinatorPayload = {
+  workspaceId: string;
+  agentId: string;
+  sessionKey: string;
+  expectedRevision: number;
+  taskRefs: WorkspaceCoordinatorTaskRef[];
+};
+export type SessionBindCoordinatorResult = HostSuccess & {
+  binding?: WorkspaceCoordinatorBinding;
+  validation?: SessionCoordinatorBindingValidation;
 };
 export type SessionPermanentDeletePayload = { id: string };
 export type SessionListArchivedPayload = { agentId?: string };
@@ -5725,6 +5751,8 @@ export type HostApiContract = {
     archive: (payload: SessionArchivePayload) => HostSuccess;
     restore: (payload: SessionRestorePayload) => HostSuccess;
     effectivePolicy: (payload: SessionEffectivePolicyPayload) => SessionEffectivePolicyResult;
+    coordinatorBinding: (payload?: SessionCoordinatorBindingReadPayload) => SessionCoordinatorBindingResult;
+    bindCoordinator: (payload: SessionBindCoordinatorPayload) => SessionBindCoordinatorResult;
     permanentDelete: (payload: SessionPermanentDeletePayload) => HostSuccess;
     listArchived: (payload?: SessionListArchivedPayload) => SessionListArchivedResult;
     emptyArchive: (payload: SessionEmptyArchivePayload) => HostSuccess;

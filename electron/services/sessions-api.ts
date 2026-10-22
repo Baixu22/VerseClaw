@@ -32,6 +32,9 @@ import type {
   CompressionArtifactQuality,
   CompressionSemanticAtom,
   SessionCompactionResult,
+  SessionBindCoordinatorPayload,
+  SessionBindCoordinatorResult,
+  SessionCoordinatorBindingReadPayload,
   SessionDeleteResult,
   SessionEffectivePolicy,
   SessionExpandSelectorResult,
@@ -40,7 +43,13 @@ import type {
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
 import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
-import { createWorkspacesApi, getActiveWorkspaceProfile } from './workspaces-api';
+import {
+  createWorkspacesApi,
+  getActiveWorkspaceProfile,
+  invalidateWorkspaceCoordinatorBindingsForSession,
+  readWorkspaceCoordinatorBinding,
+  saveWorkspaceCoordinatorBinding,
+} from './workspaces-api';
 import { evaluateHandoffDerivation } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
 import { getResourceTracker } from './resource-tracker';
@@ -56,7 +65,12 @@ import {
   writeArchiveIndex,
 } from '../utils/session-files';
 import { isRecord } from './payload-utils';
-import type { SessionArchiveEntry } from '@shared/types/workspace';
+import type {
+  SessionArchiveEntry,
+  WorkspaceCoordinatorBinding,
+  WorkspaceCoordinatorInvalidationReason,
+  WorkspaceCoordinatorTaskRef,
+} from '@shared/types/workspace';
 
 // ponytail: serialize desktop handoff writes; use per-workspace queues if throughput requires it.
 let handoffCreationTail: Promise<unknown> = Promise.resolve();
@@ -1811,6 +1825,63 @@ async function deleteSessionViaRuntimeSerialized(
   return current;
 }
 
+type LiveSessionIdentity = {
+  agentId: string;
+  sessionId: string;
+};
+
+async function resolveLiveSessionIdentity(
+  gatewayManager: GatewayManager,
+  sessionKey: string,
+  expectedAgentId?: string,
+): Promise<LiveSessionIdentity | null> {
+  const parsed = parseSessionKey(sessionKey);
+  if (!parsed || (expectedAgentId && parsed.agentId !== expectedAgentId)) return null;
+  const listed = await gatewayManager.rpc<{ sessions?: Array<Record<string, unknown>> }>(
+    'sessions.list',
+    { agentId: parsed.agentId },
+    10_000,
+  );
+  const entry = (listed?.sessions ?? []).find((session) => (
+    session.key === sessionKey || session.sessionKey === sessionKey
+  ));
+  if (!entry) return null;
+  const physicalId = typeof entry.sessionId === 'string'
+    ? entry.sessionId.trim()
+    : typeof entry.id === 'string'
+      ? entry.id.trim()
+      : '';
+  if (!physicalId) return null;
+  return { agentId: parsed.agentId, sessionId: physicalId };
+}
+
+function normalizeCoordinatorTaskRefs(value: unknown): WorkspaceCoordinatorTaskRef[] {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new Error('At least one Task Ledger reference is required');
+  }
+  const seen = new Set<string>();
+  return value.map((entry, index) => {
+    if (!isRecord(entry) || entry.kind !== 'task-ledger' || typeof entry.nodeId !== 'string') {
+      throw new Error(`taskRefs[${index}] must name a Task Ledger node`);
+    }
+    const nodeId = entry.nodeId.trim();
+    if (!nodeId) throw new Error(`taskRefs[${index}].nodeId is required`);
+    if (seen.has(nodeId)) throw new Error(`Duplicate Task Ledger reference: ${nodeId}`);
+    seen.add(nodeId);
+    return { kind: 'task-ledger' as const, nodeId };
+  });
+}
+
+async function invalidateBindingAndRead(
+  workspaceId: string,
+  sessionKey: string,
+  reason: WorkspaceCoordinatorInvalidationReason,
+): Promise<WorkspaceCoordinatorBinding | null> {
+  await invalidateWorkspaceCoordinatorBindingsForSession(sessionKey, reason, { workspaceId });
+  const reread = await readWorkspaceCoordinatorBinding(workspaceId);
+  return reread?.binding ?? null;
+}
+
 export function createSessionsApi(ctx: {
   gatewayManager?: GatewayManager;
   terminalManager?: TerminalSessionManager;
@@ -1822,6 +1893,9 @@ export function createSessionsApi(ctx: {
         ? await deleteSessionViaRuntimeSerialized(sessionKey, ctx.gatewayManager, ctx.terminalManager)
         : await deleteSession(sessionKey);
       if (result.success) {
+        await invalidateWorkspaceCoordinatorBindingsForSession(sessionKey, 'deleted').catch((error) => {
+          logger.warn('[coordinator-binding] failed to invalidate after delete', error);
+        });
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
       }
       return result;
@@ -2774,6 +2848,11 @@ export function createSessionsApi(ctx: {
         originalFolderId: body.originalFolderId,
       }, ctx.gatewayManager);
       if (result.success) {
+        await invalidateWorkspaceCoordinatorBindingsForSession(sessionKey, 'archived', {
+          workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : undefined,
+        }).catch((error) => {
+          logger.warn('[coordinator-binding] failed to invalidate after archive', error);
+        });
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
       }
       return result;
@@ -2810,10 +2889,132 @@ export function createSessionsApi(ctx: {
         };
       }
     },
+    coordinatorBinding: async (payload: SessionCoordinatorBindingReadPayload = {}) => {
+      const active = await getActiveWorkspaceProfile();
+      if (!active) {
+        return { success: false, binding: null, validation: 'missing' as const, error: 'No active workspace is available.' };
+      }
+      const requestedWorkspaceId = typeof payload.workspaceId === 'string' ? payload.workspaceId.trim() : '';
+      if (requestedWorkspaceId && requestedWorkspaceId !== active.id) {
+        return { success: false, binding: null, validation: 'missing' as const, error: 'Requested workspace does not match the active workspace.' };
+      }
+      const stored = await readWorkspaceCoordinatorBinding(active.id);
+      const binding = stored?.binding ?? null;
+      if (!binding) {
+        return { success: true, binding: null, validation: 'missing' as const, reason: null };
+      }
+      if (binding.state === 'invalidated') {
+        return { success: true, binding, validation: 'invalidated' as const, reason: binding.invalidationReason };
+      }
+      if (!ctx.gatewayManager) {
+        return { success: true, binding, validation: 'unverified' as const, reason: 'Gateway manager unavailable' };
+      }
+      let live: LiveSessionIdentity | null;
+      try {
+        live = await resolveLiveSessionIdentity(ctx.gatewayManager, binding.sessionKey, binding.agentId);
+      } catch (error) {
+        return {
+          success: true,
+          binding,
+          validation: 'unverified' as const,
+          reason: `Session owner unavailable: ${error instanceof Error ? error.message : String(error)}`,
+        };
+      }
+      if (!live) {
+        const invalidated = await invalidateBindingAndRead(active.id, binding.sessionKey, 'session_missing');
+        return {
+          success: true,
+          binding: invalidated,
+          validation: 'invalidated' as const,
+          reason: 'session_missing',
+        };
+      }
+      if (live.sessionId !== binding.sessionId || live.agentId !== binding.agentId) {
+        const invalidated = await invalidateBindingAndRead(active.id, binding.sessionKey, 'reset');
+        return {
+          success: true,
+          binding: invalidated,
+          validation: 'invalidated' as const,
+          reason: 'reset',
+        };
+      }
+      return { success: true, binding, validation: 'current' as const, reason: null };
+    },
+    bindCoordinator: async (payload: SessionBindCoordinatorPayload): Promise<SessionBindCoordinatorResult> => {
+      const workspaceId = typeof payload.workspaceId === 'string' ? payload.workspaceId.trim() : '';
+      const agentId = typeof payload.agentId === 'string' ? payload.agentId.trim() : '';
+      const sessionKey = typeof payload.sessionKey === 'string' ? payload.sessionKey.trim() : '';
+      const active = await getActiveWorkspaceProfile();
+      if (!active) return { success: false, error: 'No active workspace is available.' };
+      if (!workspaceId || workspaceId !== active.id) {
+        return { success: false, error: 'Coordinator binding cannot cross the active workspace.' };
+      }
+      if (!agentId || !sessionKey) {
+        return { success: false, error: 'agentId and sessionKey are required' };
+      }
+      const parsed = parseSessionKey(sessionKey);
+      if (!parsed || parsed.agentId !== agentId) {
+        return { success: false, error: 'sessionKey belongs to a different assistant' };
+      }
+      if (active.selectedAgentId !== agentId || active.activeSessionKey !== sessionKey) {
+        return { success: false, error: 'Coordinator binding must target the selected workspace assistant and session' };
+      }
+      if (!Number.isInteger(payload.expectedRevision) || payload.expectedRevision < 0) {
+        return { success: false, error: 'expectedRevision must be a non-negative integer' };
+      }
+      if (!ctx.gatewayManager) return { success: false, error: 'Gateway manager unavailable' };
+      try {
+        const live = await resolveLiveSessionIdentity(ctx.gatewayManager, sessionKey, agentId);
+        if (!live) return { success: false, error: 'The selected session does not exist in the runtime owner' };
+        const taskRefs = normalizeCoordinatorTaskRefs(payload.taskRefs);
+        const ledger = await loadTaskLedgerSnapshot(workspaceId);
+        const existingNodeIds = new Set(ledger.nodes.map((node) => node.id));
+        const missing = taskRefs.filter((ref) => !existingNodeIds.has(ref.nodeId)).map((ref) => ref.nodeId);
+        if (missing.length > 0) {
+          return { success: false, error: `Task Ledger references do not exist: ${missing.join(', ')}` };
+        }
+        const currentRevision = active.coordinatorBinding?.revision ?? 0;
+        if (payload.expectedRevision !== currentRevision) {
+          return {
+            success: false,
+            error: `Coordinator binding revision conflict: expected ${currentRevision}, received ${payload.expectedRevision}`,
+          };
+        }
+        const now = new Date().toISOString();
+        const binding: WorkspaceCoordinatorBinding = {
+          schemaVersion: 'WorkspaceCoordinatorBinding/v1',
+          workspaceId,
+          agentId,
+          sessionKey,
+          sessionId: live.sessionId,
+          taskRefs,
+          state: 'active',
+          revision: currentRevision + 1,
+          createdAt: active.coordinatorBinding?.createdAt ?? now,
+          updatedAt: now,
+          invalidatedAt: null,
+          invalidationReason: null,
+        };
+        const saved = await saveWorkspaceCoordinatorBinding({
+          workspaceId,
+          expectedRevision: payload.expectedRevision,
+          binding,
+        });
+        return { success: true, binding: saved, validation: 'current' as const };
+      } catch (error) {
+        return {
+          success: false,
+          error: `Coordinator binding failed: ${error instanceof Error ? error.message : String(error)}`,
+        };
+      }
+    },
     permanentDelete: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const result = await permanentDeleteSession({ id: sessionKey });
       if (result.success) {
+        await invalidateWorkspaceCoordinatorBindingsForSession(sessionKey, 'deleted').catch((error) => {
+          logger.warn('[coordinator-binding] failed to invalidate after permanent delete', error);
+        });
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
       }
       return result;
