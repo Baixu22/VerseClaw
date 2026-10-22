@@ -1,0 +1,139 @@
+{
+  "schema": "clawx.versegit.b2-diagnostic-contract/v1",
+  "generated_at": "2026-10-22T16:08:40.966Z",
+  "task": "TF-0527",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "3daaf0e7ac0046b5f616ad62a958b151ebbf9283",
+    "tree": "cef6b93596644103ba7039575e45cf9815893612",
+    "dirty": false
+  },
+  "contract_module": "versegit",
+  "contract_action": "status",
+  "public_payload": [
+    "workspaceId",
+    "sessionId",
+    "worktreeId",
+    "ownerId",
+    "epoch",
+    "mode"
+  ],
+  "public_result_schema": "clawx.versegit.host-diagnostics/v1",
+  "service_entry": "createVerseGitApi",
+  "fact_adapter_schema": "clawx.versegit.fact-result/v1",
+  "frozen_identity": {
+    "binarySha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+    "version": "vg 0.1.0",
+    "capabilitiesSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+    "contractDigest": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749"
+  },
+  "coverage": {
+    "declared": [
+      "version",
+      "capabilities"
+    ],
+    "unobserved": [
+      "doctor",
+      "session",
+      "observe",
+      "conflicts",
+      "shell",
+      "direct-fs",
+      "network",
+      "mcp"
+    ]
+  },
+  "statuses": [
+    "not_applicable",
+    "unavailable",
+    "partial",
+    "observed",
+    "degraded",
+    "rejected_by_policy"
+  ],
+  "observed": {
+    "schema": "clawx.versegit.host-diagnostics/v1",
+    "generatedAt": "2026-10-22T16:08:39.313Z",
+    "enabled": true,
+    "mode": "M1",
+    "status": "observed",
+    "identity": {
+      "repoId": "repo-b2-evidence",
+      "binarySha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+      "version": "vg 0.1.0",
+      "capabilitiesSchema": "versegit.capabilities/v1"
+    },
+    "coverage": {
+      "declared": [
+        "version",
+        "capabilities"
+      ],
+      "unobserved": [
+        "doctor",
+        "session",
+        "observe",
+        "conflicts",
+        "shell",
+        "direct-fs",
+        "network",
+        "mcp"
+      ]
+    },
+    "capabilities": {
+      "schema": "versegit.capabilities/v1",
+      "safety": {
+        "default_enable": false,
+        "managed_opt_in": true,
+        "strict_admission_present": true
+      },
+      "verdict": {
+        "single_green_light": false,
+        "dimensions": [
+          "candidate",
+          "execution",
+          "evidence",
+          "freshness",
+          "risk",
+          "trial"
+        ],
+        "read_surface": {
+          "observed_channels": [
+            "read",
+            "grep",
+            "glob",
+            "write",
+            "edit"
+          ],
+          "unobserved_channels": [
+            "bash",
+            "other-mcp",
+            "network",
+            "direct-fs"
+          ]
+        }
+      }
+    },
+    "observation": {
+      "processStarted": true,
+      "exitCode": 0,
+      "deadlineMs": 30000,
+      "timedOut": false,
+      "cancelled": false,
+      "stdoutSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "issues": [],
+    "hostVerdict": "unchanged"
+  },
+  "boundaries": {
+    "default_off": true,
+    "protocol_switch_ui": false,
+    "automatic_enable": false,
+    "m4_authorized": false,
+    "host_verdict": "unchanged"
+  },
+  "passed": true,
+  "digest": "1c4d32ed8bedd08329690b4d1f65c90bda3f90f923ec3603370eb393e4b21ae6"
+}

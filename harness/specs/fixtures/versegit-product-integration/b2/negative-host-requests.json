@@ -1,0 +1,74 @@
+{
+  "schema": "clawx.versegit.b2-negative-host-requests/v1",
+  "generated_at": "2026-10-22T16:08:41.244Z",
+  "task": "TF-0527",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "3daaf0e7ac0046b5f616ad62a958b151ebbf9283",
+    "tree": "cef6b93596644103ba7039575e45cf9815893612",
+    "dirty": false
+  },
+  "cases": [
+    {
+      "id": "workspace-mismatch",
+      "status": "rejected_by_policy",
+      "reason": "identity_mismatch",
+      "processStarted": false,
+      "issues": [
+        "workspace binding is not authorized"
+      ]
+    },
+    {
+      "id": "session-mismatch",
+      "status": "rejected_by_policy",
+      "reason": "identity_mismatch",
+      "processStarted": false,
+      "issues": [
+        "session binding is not authorized"
+      ]
+    },
+    {
+      "id": "disabled",
+      "status": "not_applicable",
+      "reason": "disabled",
+      "processStarted": false,
+      "issues": [
+        "VerseGit diagnostics are disabled by host configuration"
+      ]
+    },
+    {
+      "id": "binary-mismatch",
+      "status": "rejected_by_policy",
+      "reason": "authority_rejected",
+      "processStarted": false,
+      "issues": [
+        "provider binary digest differs from the frozen identity",
+        "provider binary digest differs from the frozen identity"
+      ]
+    },
+    {
+      "id": "revoked-grant",
+      "status": "rejected_by_policy",
+      "reason": "authority_rejected",
+      "processStarted": false,
+      "issues": [
+        "grant is revoked or revocation state is unknown",
+        "grant is revoked or revocation state is unknown"
+      ]
+    }
+  ],
+  "illegal_sender": {
+    "ok": false,
+    "error_code": "VALIDATION",
+    "message": "Host request sender is not authorized"
+  },
+  "boundaries": {
+    "no_process_on_rejection": true,
+    "no_mutation": true,
+    "host_verdict": "unchanged"
+  },
+  "passed": true,
+  "digest": "7ffee3c34f7f5dadfc2ece538a96f37dccf69a208a587d4f4b254891b45e5f1b"
+}
