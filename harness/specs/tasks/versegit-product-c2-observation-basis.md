@@ -27,6 +27,68 @@ residualPaths:
   - tests/unit/runtime-effective-capability.test.ts
   - scripts/versegit-product-c2-evidence.mts
   - scripts/verify-versegit-product-c2-evidence.mts
+  - electron/main/ipc-handlers.ts
+  - electron/services/versegit-api.ts
+  - electron/services/versegit-module.ts
+  - harness/specs/fixtures/versegit-product-integration/a1/SHA256SUMS
+  - harness/specs/fixtures/versegit-product-integration/a1/current-input-manifest.json
+  - harness/specs/fixtures/versegit-product-integration/a1/current-verification.json
+  - harness/specs/fixtures/versegit-product-integration/a1/historical-evidence-index.json
+  - harness/specs/fixtures/versegit-product-integration/a1/independent-review.json
+  - harness/specs/fixtures/versegit-product-integration/a1/negative-checks.json
+  - harness/specs/fixtures/versegit-product-integration/a2/SHA256SUMS
+  - harness/specs/fixtures/versegit-product-integration/a2/build-identity.json
+  - harness/specs/fixtures/versegit-product-integration/a2/cleanup.json
+  - harness/specs/fixtures/versegit-product-integration/a2/electron-startup.json
+  - harness/specs/fixtures/versegit-product-integration/a2/independent-review.json
+  - harness/specs/fixtures/versegit-product-integration/a2/negative-checks.json
+  - harness/specs/fixtures/versegit-product-integration/a2/smoke-results.json
+  - harness/specs/fixtures/versegit-product-integration/b1/SHA256SUMS
+  - harness/specs/fixtures/versegit-product-integration/b1/adapter-differential.json
+  - harness/specs/fixtures/versegit-product-integration/b1/authority-negative.json
+  - harness/specs/fixtures/versegit-product-integration/b1/independent-review.json
+  - harness/specs/fixtures/versegit-product-integration/b1/mode-effect-matrix.json
+  - harness/specs/fixtures/versegit-product-integration/b2/SHA256SUMS
+  - harness/specs/fixtures/versegit-product-integration/b2/diagnostic-contract.json
+  - harness/specs/fixtures/versegit-product-integration/b2/host-invoke.json
+  - harness/specs/fixtures/versegit-product-integration/b2/independent-review.json
+  - harness/specs/fixtures/versegit-product-integration/b2/negative-host-requests.json
+  - harness/specs/fixtures/versegit-product-integration/c1/SHA256SUMS
+  - harness/specs/fixtures/versegit-product-integration/c1/binding-negative.json
+  - harness/specs/fixtures/versegit-product-integration/c1/bridge-events.jsonl
+  - harness/specs/fixtures/versegit-product-integration/c1/independent-review.json
+  - harness/specs/fixtures/versegit-product-integration/c1/runtime-bindings.json
+  - harness/specs/tasks/versegit-product-a1-evidence-baseline.md
+  - harness/specs/tasks/versegit-product-a2-runtime-baseline.md
+  - harness/specs/tasks/versegit-product-b1-fact-adapter.md
+  - harness/specs/tasks/versegit-product-b2-host-diagnostics.md
+  - harness/specs/tasks/versegit-product-c1-runtime-bindings.md
+  - openclaw_runtime/src/agents/orchestrator-run-observed.ts
+  - openclaw_runtime/src/agents/subagent-registry.ts
+  - openclaw_runtime/src/plugin-sdk/versegit-binding-port.ts
+  - openclaw_runtime/src/plugin-sdk/versegit-binding-registry.ts
+  - scripts/verify-versegit-product-c1-evidence.mts
+  - scripts/versegit-product-a1-evidence.d.mts
+  - scripts/versegit-product-a1-evidence.mjs
+  - scripts/versegit-product-a2-evidence.d.mts
+  - scripts/versegit-product-a2-evidence.mjs
+  - scripts/versegit-product-b1-evidence.mts
+  - scripts/versegit-product-b2-evidence.mts
+  - scripts/versegit-product-c1-evidence.mts
+  - scripts/versegit-runtime-bindings-probe.mts
+  - shared/host-api/contract.ts
+  - src/lib/host-api.ts
+  - tests/e2e/app-smoke.spec.ts
+  - tests/e2e/versegit-diagnostics.spec.ts
+  - tests/e2e/versegit-runtime-bindings.spec.ts
+  - tests/unit/versegit-fact-adapter.test.ts
+  - tests/unit/versegit-host-api.test.ts
+  - tests/unit/versegit-product-a1-evidence.test.ts
+  - tests/unit/versegit-product-a2-evidence.test.ts
+  - tests/unit/versegit-runtime-bindings.test.ts
+  - tests/unit/versegit-wp6-closeout.test.ts
+  - tests/unit/versegit-wp8-review.test.ts
+  - tests/unit/versegit-wp9-global-acceptance.test.ts
 touchedAreas:
   - harness/specs/tasks/versegit-product-c2-observation-basis.md
   - electron/services/versegit-observation.ts
