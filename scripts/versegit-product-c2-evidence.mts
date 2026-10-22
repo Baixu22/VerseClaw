@@ -361,7 +361,7 @@ const observationLinks = sign({
   passed: links.length >= 4 && links.every((link) => link.replay.path_recomputed && link.replay.input_digest_well_formed && link.replay.output_digest_well_formed),
 });
 
-if (!observationLinks.passed || !cases.passed || !coverage.passed) throw new Error("C2 evidence generation failed");
+if (!observationLinks.passed || !cases.passed || !coverage.passed) {`n  console.error(JSON.stringify({ linksPassed: observationLinks.passed, casesPassed: cases.passed, coveragePassed: coverage.passed, cases: cases.cases, linkSummaries: links.map((link) => ({ id: link.link_id, path: link.normalized_event.path, replay: link.replay })), findings: findingsBeforeDetach, snapshotA, snapshotB, queueSnapshot, apiReadReceipt, apiWriteReceipt, cancelledReceipt, lateReceipt }, null, 2));`n  throw new Error("C2 evidence generation failed");`n}
 writeJson(PATHS.links, observationLinks);
 writeJson(PATHS.cases, cases);
 writeJson(PATHS.coverage, coverage);
