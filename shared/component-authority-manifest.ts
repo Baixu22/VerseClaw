@@ -269,7 +269,7 @@ export const AUTHORITY_COMPONENTS: readonly ComponentAuthorityDefinition[] = [
     effects: ['propose'],
     forbiddenActions: ['accept-context-candidates', 'own-prompt-plan'],
     runtimeAvailabilitySource: 'DCS_PROD_FLAGS:context-ladder',
-    defaultMode: 'opt-in',
+    defaultMode: 'internal',
     authorizationRole: 'none',
     catalogFlagIds: catalog('context-ladder'),
     sourceAnchors: [anchor('openclaw_runtime/src/context-engine/context-ladder.ts', 'export function applyContextLadder')],

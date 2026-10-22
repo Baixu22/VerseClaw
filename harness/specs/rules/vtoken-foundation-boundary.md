@@ -59,7 +59,7 @@ Diagnostics path (host-api, **default OFF — opt-in**):
 - Enable: `VERSE_VTOKEN_BRIDGE_ENABLED=1` or `hostApi.vtoken.setEnabled({ enabled: true })`.
 - Kill-switch: `VERSE_VTOKEN_BRIDGE_ENABLED=0`, assembly env kill, or enhancement kill switch.
 
-Settings > Developer may expose VtokenBridgePanel for status/toggle/smoke only.
+The renderer must not expose a VToken bridge control or independent VToken product panel. Host-api bridge methods remain internal diagnostics/test surfaces only.
 
 The stateful `vt.open` / `vt.ingest_*` / `vt.assemble` methods belong to package
 and diagnostics use. Their persistence capability must not leak back into the

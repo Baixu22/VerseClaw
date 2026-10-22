@@ -259,7 +259,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     enable:
       'Pass AssembleRequest contextLadder={ enabled: true, tokenBudget, mode?, heatThreshold? }. The assembler queries session blocks, calls applyContextLadder with the explicit tokenBudget, and uses only active blocks for DCS injections.',
     rollback: 'Omit request.contextLadder or leave enabled unset/false; ordinary per-channel BlockStore queries and defaults resume unchanged.',
-    riskNote: 'C6-H agent-driven live corpus evidence is harness/specs/fixtures/context-ladder-live-corpus/evidence.json (104,607 raw chars, driven_by=agent). L4 embedding remains deferred; no assembler default is flipped.',
+    riskNote: 'Internal API only: the Context Orchestrator/Assembler may pass the ladder request explicitly; no user product toggle or default flip exists. Evidence remains harness/specs/fixtures/context-ladder-live-corpus/evidence.json (104,607 raw chars, driven_by=agent); L4 embedding remains deferred.',
     executor: {
       status: 'wired',
       sites: [

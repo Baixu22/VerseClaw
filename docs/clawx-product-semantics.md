@@ -170,9 +170,9 @@ The table below is the canonical component classification for this preview. Each
 | --- | --- | --- |
 | DCS coding loop | `opt-in` | The first-product switch is off by default and requires verified provider, model, workspace, and permission prerequisites. |
 | DCS Fact view and tool registry | `opt-in` | Available only after explicit flags and runtime acknowledgement; not part of the baseline tool catalog. |
-| VToken turn assembly | `opt-in` | Explicit Developer/config enable only; the enhancement kill switch wins. |
+| VToken turn assembly | `internal` | Internal config/env canary only; no renderer bridge switch or independent product panel. The enhancement kill switch wins. |
 | SEKB automatic writeback | `deferred` | Human-confirmed review remains the only allowed write path. |
-| C6 automatic context ladder | `deferred` | No automatic assembler activation in this preview. |
+| C6 automatic context ladder | `internal` | Explicit internal assembler request API for tests/diagnostics; no automatic or user-level activation in this preview. |
 | C7 knowledge/routing cutover | `deferred` | Shadow evidence does not grant routing authority. |
 | Coding WAL | `deferred` | Write journal remains the recovery authority for this preview. |
 | Browser supervised workflows | `experimental` | Supervised use only; unsupervised and private-network expansion are excluded. |

@@ -141,17 +141,16 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
   }),
   entry({
     id: 'component.vtoken-context', label: 'VToken context source', disposition: 'experiment', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'opt-in', targetDefaultMode: 'internal',
-    ...internal('Unexpired VToken experiment; hidden from ordinary product surfaces while value is measured.'),
-    currentConsumers: ['Context Orchestrator', 'VToken assembly', 'VToken bridge'], evidenceRefs: CONTEXT_EVIDENCE,
+    ...internal('VToken remains an internal Context Orchestrator packing strategy; it has no user bridge toggle or product control.'),
+    currentConsumers: ['Context Orchestrator', 'VToken assembly'], evidenceRefs: CONTEXT_EVIDENCE,
     coverage: { authorityComponentIds: ['vtoken-context-source'], runtimeLeafPatterns: ['vtoken.assembly.*'] },
-    experimentOwner: 'TF-0496', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Graduate only if real provider usage proves token benefit with rollback; otherwise retire by TF-0496.',
+    experimentOwner: 'TF-0496', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Keep only if VToken graduation succeeds; otherwise retire the internal context source by TF-0496.',
   }),
   entry({
-    id: 'component.vtoken-bridge', label: 'VToken bridge', disposition: 'experiment', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'opt-in', targetDefaultMode: 'internal',
-    ...internal('VToken host bridge experiment; no normal-user entry.'),
-    currentConsumers: ['VToken assembly', 'Developer VToken controls'], evidenceRefs: [...CONTEXT_EVIDENCE, SETTINGS],
+    id: 'component.vtoken-bridge', label: 'VToken internal host bridge', disposition: 'internal', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'opt-in', targetDefaultMode: 'internal',
+    ...internal('Internal diagnostics boundary only; the renderer has no VToken bridge switch or independent product panel.'),
+    currentConsumers: ['internal diagnostics', 'vtoken package tests'], evidenceRefs: CONTEXT_EVIDENCE,
     coverage: { authorityComponentIds: ['vtoken-bridge'] },
-    experimentOwner: 'TF-0496', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Keep only if VToken graduation succeeds; otherwise remove bridge and panel wiring by TF-0496.',
   }),
   entry({
     id: 'component.compass-context', label: 'COMPASS context source', disposition: 'experiment', owner: 'TF-0511', implementationNodeId: 'TF-0511', currentMode: 'opt-in', targetDefaultMode: 'internal',
@@ -161,11 +160,10 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     experimentOwner: 'TF-0511', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Retain only if COMPASS candidates improve measured coding outcomes and remain DCS-only; otherwise retire by TF-0511.',
   }),
   entry({
-    id: 'component.c6-context-ladder', label: 'C6 context ladder source', disposition: 'experiment', owner: 'TF-0493', implementationNodeId: 'TF-0493', currentMode: 'opt-in', targetDefaultMode: 'internal',
-    ...internal('C6 pressure ladder is an expiring context experiment until the single-assembly convergence decision.'),
-    currentConsumers: ['Context Orchestrator', 'turn injection budget'], evidenceRefs: CONTEXT_EVIDENCE,
+    id: 'component.c6-context-ladder', label: 'C6 context ladder source (internal API)', disposition: 'internal', owner: 'TF-0493', implementationNodeId: 'TF-0493', currentMode: 'opt-in', targetDefaultMode: 'internal',
+    ...internal('Explicit internal assembler request API for bounded lifecycle/pressure selection; it is not an ordinary product toggle.'),
+    currentConsumers: ['DCS Assembler internal request API', 'context-ladder unit/live-corpus tests'], evidenceRefs: CONTEXT_EVIDENCE,
     coverage: { authorityComponentIds: ['c6-context-ladder-source'], dcsFlagIds: ['context-ladder'] },
-    experimentOwner: 'TF-0493', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Keep only as a DCS-owned policy if measured context quality improves; otherwise merge or retire by TF-0493.',
   }),
   entry({
     id: 'component.dcs-context-tools', label: 'DCS fact views and context tools', disposition: 'default', owner: 'dcs-fact-view-and-tools', implementationNodeId: 'TF-0495', currentMode: 'opt-in', targetDefaultMode: 'baseline',
@@ -411,7 +409,7 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     id: 'settings.developer-advanced', label: 'Developer Settings advanced controls', disposition: 'advanced', owner: 'renderer-ui-surface', implementationNodeId: 'TF-0505', currentMode: 'mixed', targetDefaultMode: 'opt-in',
     ...user('Settings > Developer'),
     currentConsumers: ['Developer Settings section', 'context/coding/agent-dev/browser diagnostics'], evidenceRefs: [...UI_EVIDENCE, RUNTIME],
-    coverage: { settingsSectionIds: ['developer'], settingsPanelIds: ['AgentDevWorkbenchPanel', 'ContextControlPlanePanel', 'RemoteTaskDeveloperPanel', 'DcsProdFlagsPanel', 'VtokenBridgePanel', 'ContextLayersExplainer', 'EfficiencySamplingPanel', 'HooksTrustPanel', 'ProjectRulesCenter'] },
+    coverage: { settingsSectionIds: ['developer'], settingsPanelIds: ['AgentDevWorkbenchPanel', 'ContextControlPlanePanel', 'RemoteTaskDeveloperPanel', 'DcsProdFlagsPanel', 'ContextLayersExplainer', 'EfficiencySamplingPanel', 'HooksTrustPanel', 'ProjectRulesCenter'] },
   }),
   entry({
     id: 'settings.billing', label: 'Billing Settings', disposition: 'advanced', owner: 'renderer-ui-surface', implementationNodeId: 'TF-0505', currentMode: 'mixed', targetDefaultMode: 'baseline',
