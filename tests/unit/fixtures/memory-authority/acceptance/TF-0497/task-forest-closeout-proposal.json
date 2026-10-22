@@ -1,0 +1,66 @@
+{
+  "proposal_id": "TFP-TF-0497-memory-authority-closeout-20261022",
+  "session_id": "tf-0497-memory-authority-20261022",
+  "rationale": "TF-0497 的 4 条 acceptance_criteria 已由磁盘证据逐条证明：MemoryAuthorityManifest/v1 覆盖 8 个数据域，duplicateAcceptedAuthorities=0、duplicateUpdateAuthorities=0、parallelPromptInjectionPaths=0；Role Memory、Runtime fact/timeline/episode、Embedding、native retrieval、candidate 与 SEKB 的 scope/retention/delete/invalidation/retrieval 语义已统一；8 条 migration/compat mapping 全部 removesSource=false，role-memory.sqlite 与 openclaw-state.sqlite 保持共存；MemoryProductProfile/v1 只暴露一个 memory 概念，automatic acceptance/writeback 与模型直接接受/删除记忆均为 false。runtime fixture 证明 candidate 默认不可检索、不可注入，单 memory writer 且 SEKB auto-writeback=0。contract 3 files、memory regression 9 files/66 tests、runtime memory 6 files/78 tests、full typecheck、lint、catalogs、contract、build、no-BOM、diff、ComponentGraduationReport、SHA256 与 Task Forest validate 均通过。证据为 driven_by=agent、actor=codex；未改产品默认值、未合并数据库、未声称 GA/public release。应用后仅激活依赖满足且 display_order 最低的 TF-0509，不执行它。",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0497",
+      "fields": {
+        "evidence": [
+          "openclaw_runtime/src/memory/memory-authority.ts",
+          "openclaw_runtime/src/memory/memory-card.ts",
+          "openclaw_runtime/src/memory/memory-policy.ts",
+          "openclaw_runtime/src/memory/memory-store.ts",
+          "openclaw_runtime/src/runtime-core/memory-context.ts",
+          "openclaw_runtime/src/runtime-core/memory-store.ts",
+          "openclaw_runtime/src/runtime-core/memory-persistence.ts",
+          "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts",
+          "openclaw_runtime/src/runtime-core/memory-embedding-provider.ts",
+          "openclaw_runtime/src/agents/slot-convergence.ts",
+          "shared/component-authority-manifest.ts",
+          "shared/dcs/prod-flags-catalog.ts",
+          "tests/unit/memory-authority-contract.test.ts",
+          "tests/unit/rc07-memory-context-slot-convergence.test.ts",
+          "tests/unit/r3-2-memory-settings-switches.test.ts",
+          "tests/unit/runtime-memory-store.test.ts",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/README.md",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/component-graduation-report.json",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/SHA256SUMS",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/verification.json",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/task-forest-shared-catalog-authority-proposal.json",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/01-contract-tests.txt",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/02-memory-regression.txt",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/03-runtime-memory-tests.txt",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/04-typecheck.txt",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/05-lint-check.txt",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/06-catalogs-check.txt",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/07-contract-check.txt",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/08-no-bom.txt",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/09-diff-check.txt",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/10-build-vite.txt",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/11-component-graduation-gate.txt",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/12-sha256sums-check.txt",
+          "tests/unit/fixtures/memory-authority/acceptance/TF-0497/13-task-forest-validate-preapply.txt"
+        ],
+        "next_action": "TF-0497 已收口；TF-0509 是唯一依赖满足且 display_order 最低的 ready 节点，未执行。",
+        "summary": "Memory 已收敛为一个产品控制面而不强制单库：MemoryAuthorityManifest/v1 对 Role Card、Runtime Fact/Timeline/Episode、Candidate、Embedding、Native retrieval 与 SEKB 逐域指定唯一 accepting/update authority；candidate 默认不可检索/不可注入；migration 全部保留源数据；MemoryProductProfile/v1 只描述一个 memory 概念且自动接受、自动写回、模型直接接受/删除均为 false。未改产品默认值、未合并数据库、未处理 VerseGit。"
+      }
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0497",
+      "status": "done",
+      "progress": 100
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0509",
+      "status": "ready",
+      "progress": 0
+    }
+  ]
+}

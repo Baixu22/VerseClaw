@@ -503,8 +503,6 @@ export function listEnhancementFlagsDefaultOff(): DcsProdFlagEntry[] {
 export function assertCatalogDefaultHonesty(): { ok: true } {
   const mustStayOff = [
     'context-view-tools',
-    'working-memory',
-    'tool-registry',
     'stale-write-guard',
     'symbol-lease',
     'patch-flow',

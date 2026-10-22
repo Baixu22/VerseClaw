@@ -1,0 +1,33 @@
+{
+  "proposal_id": "TFP-TF-0497-shared-catalog-authority-20261022",
+  "session_id": "tf-0497-memory-authority-20261022",
+  "rationale": "TF-0497 memory-authority validation depends on the DCS catalog memory flags. The catalog default-honesty helper still hard-codes the pre-TF0494 working-memory/tool-registry false lock, so the memory contract cannot be accepted without correcting that stale guard. This proposal records the one exact shared path and the correction; it changes no product defaults, node status, or later node.",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0497",
+      "fields": {
+        "execution_hints": [
+          "读取 src/memory、runtime-core/memory-*、plugins/memory-runtime、Dreams、memory quality gates",
+          "authorityDeltaPaths=shared/dcs/prod-flags-catalog.ts",
+          "authorityDeltaReason=the memory-authority contract validates the DCS memory flag cohort; the catalog default-honesty helper must reflect the TF-0494 baseline-on graduation rather than the pre-graduation mustStayOff list"
+        ]
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "id": "TFD-tf0497-stale-catalog-memory-default-guard-20261022",
+        "kind": "stale_contract_guard",
+        "summary": "The shared DCS default-honesty helper still asserted working-memory and tool-registry must be false after TF-0494 graduated those flags to baseline-on.",
+        "reason": "The helper predated TF-0494 and was not updated in that change set; it is consumed by both catalog tests and the coding packaging script.",
+        "correction": "Add shared/dcs/prod-flags-catalog.ts to TF-0497 authority and update the helper to assert the two graduated flags are true while keeping the remaining opt-in cohort false. No product default is changed.",
+        "related_task_ids": [
+          "TF-0494",
+          "TF-0497"
+        ],
+        "created_at": "2026-10-22T09:30:00Z"
+      }
+    }
+  ]
+}

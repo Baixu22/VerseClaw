@@ -1,0 +1,28 @@
+{
+  "validation": {
+    "ok": true,
+    "issues": [],
+    "requiredEvidence": [
+      "contract"
+    ],
+    "missingEvidence": [],
+    "graduationPass": true,
+    "countsAsGraduated": false,
+    "recomputedVerdict": "pass",
+    "defaultChangedAgainstAuthority": false,
+    "evidenceGradeDetected": "unit-test"
+  },
+  "defaultChange": {
+    "ok": true,
+    "defaultChanged": false,
+    "reason": "default mode is unchanged"
+  },
+  "taskForestDone": null,
+  "ok": true,
+  "reportPath": "D:\\ClawX-work\\component-graduation-20261021\\tests\\unit\\fixtures\\permission-authority\\acceptance\\TF-0509\\component-graduation-report.json",
+  "expected": {
+    "recomputeInputDigest": "657fda60d7cd9228054ae8064f357f5d83e6f1ad88ac8a44139c0903503754e1"
+  },
+  "currentDefaultMode": "baseline",
+  "requireGraduation": true
+}

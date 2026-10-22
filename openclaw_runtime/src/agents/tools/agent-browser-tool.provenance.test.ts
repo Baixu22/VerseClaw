@@ -61,7 +61,7 @@ describe("agent_browser external-access provenance boundary", () => {
   });
 
   it("keeps managed browsing usable even when allowExternalBrowser is present", async () => {
-    const invoke = vi.fn(async (action, payload) => ({ action, payload }));
+    const invoke = vi.fn(async (action, payload, _correlation) => ({ action, payload }));
     const tool = createAgentBrowserTool({
       contentProvenanceContext: { provenance: external },
       invoke,
@@ -85,7 +85,7 @@ describe("agent_browser external-access provenance boundary", () => {
   });
 
   it("preserves direct operator external browser selection", async () => {
-    const invoke = vi.fn(async (action, payload) => ({ action, payload }));
+    const invoke = vi.fn(async (action, payload, _correlation) => ({ action, payload }));
     const tool = createAgentBrowserTool({
       contentProvenanceContext: {
         provenance: createTrustedProvenance({
@@ -104,17 +104,17 @@ describe("agent_browser external-access provenance boundary", () => {
       allowExternalBrowser: true,
     });
 
-    expect(invoke).toHaveBeenCalledWith("open", {
-      connectionMode: "cdp",
-      cdpEndpoint: "9222",
-      allowExternalBrowser: true,
-    });
+    expect(invoke).toHaveBeenCalledWith(
+      "open",
+      { connectionMode: "cdp", cdpEndpoint: "9222", allowExternalBrowser: true },
+      { gatewayRequestId: undefined, toolCallId: "call-1" },
+    );
   });
 });
 
 describe("agent_browser existing-session effect provenance boundary", () => {
   it("allows external content to click a Main-verified managed session", async () => {
-    const invoke = vi.fn(async (action, payload) =>
+    const invoke = vi.fn(async (action, payload, _correlation) =>
       action === "status"
         ? { success: true, sessions: [{ id: "s1", connection: { mode: "managed" } }] }
         : { success: true, action, payload },
@@ -132,7 +132,7 @@ describe("agent_browser existing-session effect provenance boundary", () => {
 
     expect(invoke.mock.calls).toEqual([
       ["status", {}],
-      ["click", { sessionId: "s1", selector: "#next" }],
+      ["click", { sessionId: "s1", selector: "#next" }, { gatewayRequestId: undefined, toolCallId: "call-1" }],
     ]);
   });
 
@@ -221,11 +221,13 @@ describe("agent_browser existing-session effect provenance boundary", () => {
       selector: "#publish",
     });
 
-    expect(invoke.mock.calls).toEqual([["click", { sessionId: "s1", selector: "#publish" }]]);
+    expect(invoke.mock.calls).toEqual([
+      ["click", { sessionId: "s1", selector: "#publish" }, { gatewayRequestId: undefined, toolCallId: "call-1" }],
+    ]);
   });
 
   it("allows external content to type into a Main-verified managed session without exposing text to status", async () => {
-    const invoke = vi.fn(async (action, payload) =>
+    const invoke = vi.fn(async (action, payload, _correlation) =>
       action === "status"
         ? { success: true, sessions: [{ id: "s-type", connection: { mode: "managed" } }] }
         : { success: true, action, payload },
@@ -248,6 +250,7 @@ describe("agent_browser existing-session effect provenance boundary", () => {
       [
         "type",
         { sessionId: "s-type", selector: "#search", text: "secret-looking text", clear: true },
+        { gatewayRequestId: undefined, toolCallId: "call-1" },
       ],
     ]);
   });

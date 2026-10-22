@@ -1,0 +1,207 @@
+[
+    {
+        "file":  "electron/services/agent-browser-api.ts",
+        "expected":  "8d7b1af3da9e3aa44611abf29a4176450e1b4cd00ee23e6df23a746df3f06d89",
+        "actual":  "8d7b1af3da9e3aa44611abf29a4176450e1b4cd00ee23e6df23a746df3f06d89",
+        "status":  "pass"
+    },
+    {
+        "file":  "electron/services/knowledge-api.ts",
+        "expected":  "ef2b0912b5a585d24cc63f05ea016997c7fef160866444d40d62e5ba2ac052a9",
+        "actual":  "ef2b0912b5a585d24cc63f05ea016997c7fef160866444d40d62e5ba2ac052a9",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts",
+        "expected":  "90f2056d7a378299cd5fa428f3739ca1346855dea606a9ed47702c2134d1f1e2",
+        "actual":  "90f2056d7a378299cd5fa428f3739ca1346855dea606a9ed47702c2134d1f1e2",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/approval-ledger.ts",
+        "expected":  "4d00fcb3e02da7c2bb5d5d58355a987c7ce63a826ef6ced0cc106692a8050ec1",
+        "actual":  "4d00fcb3e02da7c2bb5d5d58355a987c7ce63a826ef6ced0cc106692a8050ec1",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/permission-contract.ts",
+        "expected":  "6521a58515eac227ac260a6790977835bff23814aa1e15094dcbcb734994008a",
+        "actual":  "6521a58515eac227ac260a6790977835bff23814aa1e15094dcbcb734994008a",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/rc04-durable-approval.test.ts",
+        "expected":  "f7bfeb35b072107a7f2779735e08e8f3ac9be2dc99b0738385febeadec60335d",
+        "actual":  "f7bfeb35b072107a7f2779735e08e8f3ac9be2dc99b0738385febeadec60335d",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/rc04-exec-approval-wiring.test.ts",
+        "expected":  "58e0ffd2df610ed7b11e889f6e03ebfcae87ea930f1bc06df3a03cfcb253c68d",
+        "actual":  "58e0ffd2df610ed7b11e889f6e03ebfcae87ea930f1bc06df3a03cfcb253c68d",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/stage1-minimal-grant.test.ts",
+        "expected":  "e0a363b34534260364f9be7db87b04d60f11eb85b4345bf866bd410e959bf4e6",
+        "actual":  "e0a363b34534260364f9be7db87b04d60f11eb85b4345bf866bd410e959bf4e6",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/stage1-tool-guard.test.ts",
+        "expected":  "03a437e7fb1b4a2e5fce1e7da47066c31a4ce0c65e02ede160920c4a2e80260e",
+        "actual":  "03a437e7fb1b4a2e5fce1e7da47066c31a4ce0c65e02ede160920c4a2e80260e",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/stage4-capability-grant.test.ts",
+        "expected":  "d1d236fbdbe0b2fa47e0a82f8c06abb0f9eef79724d4f25376bd0f8826e2711b",
+        "actual":  "d1d236fbdbe0b2fa47e0a82f8c06abb0f9eef79724d4f25376bd0f8826e2711b",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/stage4-capability-grant.ts",
+        "expected":  "cbbf84ec6fbbb0170436c8c830092771be3b0c1649faff57a833ba0641e5adb7",
+        "actual":  "cbbf84ec6fbbb0170436c8c830092771be3b0c1649faff57a833ba0641e5adb7",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/stage4-tool-guard.test.ts",
+        "expected":  "ebc747f8f98f2b54e34a67cd5aa8b2ad746ba8841afe856b1784020721719107",
+        "actual":  "ebc747f8f98f2b54e34a67cd5aa8b2ad746ba8841afe856b1784020721719107",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/stage4-tool-guard.ts",
+        "expected":  "b006add1f1ae873d927e4bc562fdc7d5b823c8d43c8fe6cd2e3fb82bd43e668f",
+        "actual":  "b006add1f1ae873d927e4bc562fdc7d5b823c8d43c8fe6cd2e3fb82bd43e668f",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts",
+        "expected":  "f6fd297b0d31960fd0236f0ac97ff776cef497ccdc5de7755f2c31476260a5c4",
+        "actual":  "f6fd297b0d31960fd0236f0ac97ff776cef497ccdc5de7755f2c31476260a5c4",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+        "expected":  "d6c737e271707322b7fc8e22018c38b4865b3d506da2d24405bb0fa489f3073e",
+        "actual":  "d6c737e271707322b7fc8e22018c38b4865b3d506da2d24405bb0fa489f3073e",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/verseshell/governed-exec.ts",
+        "expected":  "1f0bb3ca864eb9602c037c2cd62b069fee77c3b7dd0d11f1e3d25c2832c558fe",
+        "actual":  "1f0bb3ca864eb9602c037c2cd62b069fee77c3b7dd0d11f1e3d25c2832c558fe",
+        "status":  "pass"
+    },
+    {
+        "file":  "shared/component-authority-manifest.ts",
+        "expected":  "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+        "actual":  "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/approval-redaction-contract.test.ts",
+        "expected":  "d753a684cdc75a9499af0767516bd45adb0827ddc6e25df58050e7aa7eb9fa80",
+        "actual":  "d753a684cdc75a9499af0767516bd45adb0827ddc6e25df58050e7aa7eb9fa80",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/context-control-plane-stage4-contracts.test.ts",
+        "expected":  "144c9fc5fd14abc4c8cde729af7cfa7ef57beff60f6363a3f84b6f6cac55669d",
+        "actual":  "144c9fc5fd14abc4c8cde729af7cfa7ef57beff60f6363a3f84b6f6cac55669d",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/files-permissions-api.test.ts",
+        "expected":  "74e2fd8b92ec8b09be031292f556e52d05a2dc8406b156cdff771de5d550ded0",
+        "actual":  "74e2fd8b92ec8b09be031292f556e52d05a2dc8406b156cdff771de5d550ded0",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/README.md",
+        "expected":  "39fd7419e08401c39c5aee1544f24f1f414151db041033f6e4a82a334f0f5c42",
+        "actual":  "39fd7419e08401c39c5aee1544f24f1f414151db041033f6e4a82a334f0f5c42",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/component-graduation-report.json",
+        "expected":  "93eb3539024029c17eed0b962ec85939e94dc45b6ccd91d80c37d049b5bbf07b",
+        "actual":  "93eb3539024029c17eed0b962ec85939e94dc45b6ccd91d80c37d049b5bbf07b",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/generate-acceptance.mts",
+        "expected":  "968b1dbf64407169a885b302ee603693f3b55c101f5a271b2894aa7b95a49855",
+        "actual":  "968b1dbf64407169a885b302ee603693f3b55c101f5a271b2894aa7b95a49855",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/raw-evidence.json",
+        "expected":  "a29a34230e7c123974017aa95454dffaf3f62c35f70257ddb8c99d874abec098",
+        "actual":  "a29a34230e7c123974017aa95454dffaf3f62c35f70257ddb8c99d874abec098",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/run-verification.ps1",
+        "expected":  "111e971f6bb9acb7b0800a3c69b69088a9ec4493528bbbde98f3b804578e4d38",
+        "actual":  "111e971f6bb9acb7b0800a3c69b69088a9ec4493528bbbde98f3b804578e4d38",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/gateway-permissions-api.test.ts",
+        "expected":  "18cb68044b0808b22e5f55a7b5dd4653a0a0b0705e97adfff9dc88d8f4142a61",
+        "actual":  "18cb68044b0808b22e5f55a7b5dd4653a0a0b0705e97adfff9dc88d8f4142a61",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/knowledge-lifecycle.test.ts",
+        "expected":  "35fc5f77f96366892a2341b72edc449336827f0d79403238c7fe7ef800d63f9b",
+        "actual":  "35fc5f77f96366892a2341b72edc449336827f0d79403238c7fe7ef800d63f9b",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/pending-run-approvals.test.tsx",
+        "expected":  "06b2ca7b86ceded79226ae6a916828abbf260fa3ed96ba14c0d501f48036ad91",
+        "actual":  "06b2ca7b86ceded79226ae6a916828abbf260fa3ed96ba14c0d501f48036ad91",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/permission-contract-tf0509.test.ts",
+        "expected":  "b13b4f249522fd75ddc85902e86cb7b40891934400d5f41ffafbd84fc6e9fe3c",
+        "actual":  "b13b4f249522fd75ddc85902e86cb7b40891934400d5f41ffafbd84fc6e9fe3c",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/permission-decision-audit.test.ts",
+        "expected":  "c2c4e23bc45dcd68c55c2a79fc7560966770c390c6731122f9c83eb54672cdeb",
+        "actual":  "c2c4e23bc45dcd68c55c2a79fc7560966770c390c6731122f9c83eb54672cdeb",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/run-approval-attribution.test.ts",
+        "expected":  "b24310baf8a5f0ee981427aa7be1485f41fb5d76282111297778a3252d57094d",
+        "actual":  "b24310baf8a5f0ee981427aa7be1485f41fb5d76282111297778a3252d57094d",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/runtime-approval-bridge.test.ts",
+        "expected":  "cee46e24c802d32276e62cb1f1f148fddfca34727b1e969363e44ee7b7e59007",
+        "actual":  "cee46e24c802d32276e62cb1f1f148fddfca34727b1e969363e44ee7b7e59007",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/versebrowser-capability-gating.test.ts",
+        "expected":  "7ec30de3b6896b2c80e3bf0fe0b997144a5c27aeed00a4480db59cf3a896bd1e",
+        "actual":  "7ec30de3b6896b2c80e3bf0fe0b997144a5c27aeed00a4480db59cf3a896bd1e",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/workspace-permissions.test.ts",
+        "expected":  "fa460e8861569b299314682d7b057ed9c35f41f289d17a254570814b088f8456",
+        "actual":  "fa460e8861569b299314682d7b057ed9c35f41f289d17a254570814b088f8456",
+        "status":  "pass"
+    }
+]
+SHA256SUMS_STATUS=pass

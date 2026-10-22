@@ -1,0 +1,217 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "tf-0509-permission-authority-contract",
+  "reportKind": "contract",
+  "componentId": "permission-approval-authority",
+  "taskForestNodeId": "TF-0509",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "TF-0509",
+  "entryPoint": "openclaw_runtime/src/agents/permission-contract.ts",
+  "defaultMode": "baseline",
+  "benefitEvidence": "All six side-effect surfaces resolve to the same permission owner and final checkpoint while manifest descriptors, execution backends and candidate producers cannot grant themselves authority.",
+  "rollback": "Remove the contract projection and use the existing ApprovalLedger/checkpoint behavior; no grant or approval store is migrated or deleted.",
+  "modelEffectiveState": "The model may observe a permission contract but cannot mint, widen or revive a grant; actor/session/task/resource/action and current expiry/revocation are rechecked at final execution.",
+  "evidenceGrade": "unit-test",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "f5ac5259f08b5e4ca44c4bffbd9d284c84259c9a",
+    "tree": "c2d5479ca1e963fb9030fa3459f48ef04c57caa8",
+    "buildHash": "fa0438dbe6936f679eaa784f17cd821cb3cdafe6f7fbd014b0e7cdc8b6b7bd1c",
+    "runtimeGeneration": "permission-authority-tf0509",
+    "provider": "fixture-provider",
+    "model": "fixture-model",
+    "inputSet": "tf0509-permission-authority-contract",
+    "scope": "workspace:component-graduation/session:tf-0509",
+    "artifacts": [
+      {
+        "path": "openclaw_runtime/src/agents/permission-contract.ts",
+        "sha256": "6521a58515eac227ac260a6790977835bff23814aa1e15094dcbcb734994008a",
+        "bytes": 11641
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage4-capability-grant.ts",
+        "sha256": "cbbf84ec6fbbb0170436c8c830092771be3b0c1649faff57a833ba0641e5adb7",
+        "bytes": 30753
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage4-tool-guard.ts",
+        "sha256": "b006add1f1ae873d927e4bc562fdc7d5b823c8d43c8fe6cd2e3fb82bd43e668f",
+        "bytes": 10890
+      },
+      {
+        "path": "openclaw_runtime/src/agents/approval-ledger.ts",
+        "sha256": "4d00fcb3e02da7c2bb5d5d58355a987c7ce63a826ef6ced0cc106692a8050ec1",
+        "bytes": 22928
+      },
+      {
+        "path": "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts",
+        "sha256": "90f2056d7a378299cd5fa428f3739ca1346855dea606a9ed47702c2134d1f1e2",
+        "bytes": 52708
+      },
+      {
+        "path": "openclaw_runtime/src/agents/verseshell/governed-exec.ts",
+        "sha256": "1f0bb3ca864eb9602c037c2cd62b069fee77c3b7dd0d11f1e3d25c2832c558fe",
+        "bytes": 20167
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+        "sha256": "d6c737e271707322b7fc8e22018c38b4865b3d506da2d24405bb0fa489f3073e",
+        "bytes": 28626
+      },
+      {
+        "path": "electron/services/agent-browser-api.ts",
+        "sha256": "8d7b1af3da9e3aa44611abf29a4176450e1b4cd00ee23e6df23a746df3f06d89",
+        "bytes": 15714
+      },
+      {
+        "path": "electron/services/knowledge-api.ts",
+        "sha256": "ef2b0912b5a585d24cc63f05ea016997c7fef160866444d40d62e5ba2ac052a9",
+        "bytes": 243798
+      },
+      {
+        "path": "shared/component-authority-manifest.ts",
+        "sha256": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+        "bytes": 59578
+      },
+      {
+        "path": "tests/unit/permission-contract-tf0509.test.ts",
+        "sha256": "b13b4f249522fd75ddc85902e86cb7b40891934400d5f41ffafbd84fc6e9fe3c",
+        "bytes": 9390
+      },
+      {
+        "path": "tests/unit/context-control-plane-stage4-contracts.test.ts",
+        "sha256": "144c9fc5fd14abc4c8cde729af7cfa7ef57beff60f6363a3f84b6f6cac55669d",
+        "bytes": 26461
+      },
+      {
+        "path": "tests/unit/knowledge-lifecycle.test.ts",
+        "sha256": "35fc5f77f96366892a2341b72edc449336827f0d79403238c7fe7ef800d63f9b",
+        "bytes": 7595
+      },
+      {
+        "path": "tests/unit/versebrowser-capability-gating.test.ts",
+        "sha256": "7ec30de3b6896b2c80e3bf0fe0b997144a5c27aeed00a4480db59cf3a896bd1e",
+        "bytes": 7218
+      },
+      {
+        "path": "tests/unit/permission-decision-audit.test.ts",
+        "sha256": "c2c4e23bc45dcd68c55c2a79fc7560966770c390c6731122f9c83eb54672cdeb",
+        "bytes": 5517
+      },
+      {
+        "path": "tests/unit/workspace-permissions.test.ts",
+        "sha256": "fa460e8861569b299314682d7b057ed9c35f41f289d17a254570814b088f8456",
+        "bytes": 13820
+      },
+      {
+        "path": "tests/unit/gateway-permissions-api.test.ts",
+        "sha256": "18cb68044b0808b22e5f55a7b5dd4653a0a0b0705e97adfff9dc88d8f4142a61",
+        "bytes": 12386
+      },
+      {
+        "path": "tests/unit/files-permissions-api.test.ts",
+        "sha256": "74e2fd8b92ec8b09be031292f556e52d05a2dc8406b156cdff771de5d550ded0",
+        "bytes": 8002
+      },
+      {
+        "path": "tests/unit/runtime-approval-bridge.test.ts",
+        "sha256": "cee46e24c802d32276e62cb1f1f148fddfca34727b1e969363e44ee7b7e59007",
+        "bytes": 5852
+      },
+      {
+        "path": "tests/unit/run-approval-attribution.test.ts",
+        "sha256": "b24310baf8a5f0ee981427aa7be1485f41fb5d76282111297778a3252d57094d",
+        "bytes": 5289
+      },
+      {
+        "path": "tests/unit/pending-run-approvals.test.tsx",
+        "sha256": "06b2ca7b86ceded79226ae6a916828abbf260fa3ed96ba14c0d501f48036ad91",
+        "bytes": 7158
+      },
+      {
+        "path": "tests/unit/approval-redaction-contract.test.ts",
+        "sha256": "d753a684cdc75a9499af0767516bd45adb0827ddc6e25df58050e7aa7eb9fa80",
+        "bytes": 5922
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage4-capability-grant.test.ts",
+        "sha256": "d1d236fbdbe0b2fa47e0a82f8c06abb0f9eef79724d4f25376bd0f8826e2711b",
+        "bytes": 5813
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage4-tool-guard.test.ts",
+        "sha256": "ebc747f8f98f2b54e34a67cd5aa8b2ad746ba8841afe856b1784020721719107",
+        "bytes": 5642
+      },
+      {
+        "path": "openclaw_runtime/src/agents/rc04-durable-approval.test.ts",
+        "sha256": "f7bfeb35b072107a7f2779735e08e8f3ac9be2dc99b0738385febeadec60335d",
+        "bytes": 23876
+      },
+      {
+        "path": "openclaw_runtime/src/agents/rc04-exec-approval-wiring.test.ts",
+        "sha256": "58e0ffd2df610ed7b11e889f6e03ebfcae87ea930f1bc06df3a03cfcb253c68d",
+        "bytes": 10667
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage1-minimal-grant.test.ts",
+        "sha256": "e0a363b34534260364f9be7db87b04d60f11eb85b4345bf866bd410e959bf4e6",
+        "bytes": 6475
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage1-tool-guard.test.ts",
+        "sha256": "03a437e7fb1b4a2e5fce1e7da47066c31a4ce0c65e02ede160920c4a2e80260e",
+        "bytes": 6295
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts",
+        "sha256": "f6fd297b0d31960fd0236f0ac97ff776cef497ccdc5de7755f2c31476260a5c4",
+        "bytes": 10522
+      },
+      {
+        "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/README.md",
+        "sha256": "39fd7419e08401c39c5aee1544f24f1f414151db041033f6e4a82a334f0f5c42",
+        "bytes": 2542
+      },
+      {
+        "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/generate-acceptance.mts",
+        "sha256": "968b1dbf64407169a885b302ee603693f3b55c101f5a271b2894aa7b95a49855",
+        "bytes": 10465
+      },
+      {
+        "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/run-verification.ps1",
+        "sha256": "111e971f6bb9acb7b0800a3c69b69088a9ec4493528bbbde98f3b804578e4d38",
+        "bytes": 6150
+      },
+      {
+        "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/raw-evidence.json",
+        "sha256": "a29a34230e7c123974017aa95454dffaf3f62c35f70257ddb8c99d874abec098",
+        "bytes": 10952
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "contract",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "Permission uniqueness, manifest non-granting, final checkpoint negatives, expiry/revocation/restart fail-closed and cross-component surface mapping pass.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/raw-evidence.json",
+          "sha256": "a29a34230e7c123974017aa95454dffaf3f62c35f70257ddb8c99d874abec098",
+          "bytes": 10952,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "657fda60d7cd9228054ae8064f357f5d83e6f1ad88ac8a44139c0903503754e1",
+    "command": "& .\\openclaw_runtime\\node_modules\\.bin\\tsx.CMD tests/unit/fixtures/permission-authority/acceptance/TF-0509/generate-acceptance.mts"
+  }
+}
