@@ -93,6 +93,8 @@ import {
   type SubagentSessionStoreCache,
 } from "./subagent-session-reconciliation.js";
 import { resolveAgentTimeoutMs } from "./timeout.js";
+import { endVerseGitRuntimeBindingForRun } from "../plugin-sdk/versegit-binding-registry.js";
+import type { VerseGitBindingEndReason } from "../../../shared/versegit-runtime-contract.js";
 
 export type { SubagentRunRecord } from "./subagent-registry.types.js";
 export {
@@ -358,6 +360,12 @@ function clearAllPendingLifecycleTimeouts() {
   pendingLifecycleTimeoutByRunId.clear();
 }
 
+function resolveVerseGitBindingEndReason(params: CompleteSubagentRunParams): VerseGitBindingEndReason {
+  if (params.reason === SUBAGENT_ENDED_REASON_KILLED) return "cancelled";
+  if (params.outcome.status === "timeout") return "timeout";
+  if (params.reason === SUBAGENT_ENDED_REASON_COMPLETE && params.outcome.status === "ok") return "completed";
+  return "failed";
+}
 type CompleteSubagentRunParams = {
   runId: string;
   endedAt?: number;
@@ -370,6 +378,10 @@ type CompleteSubagentRunParams = {
 };
 
 async function completeSubagentRunWithRecovery(params: CompleteSubagentRunParams, source: string) {
+  const bindingEndError = await endVerseGitRuntimeBindingForRun(params.runId, resolveVerseGitBindingEndReason(params));
+  if (bindingEndError) {
+    log.warn("failed to end VerseGit runtime binding", { source, runId: params.runId, error: bindingEndError });
+  }
   try {
     await completeSubagentRun(params);
     await maybeStartDeferredOrchestrationVerifier(params.runId);

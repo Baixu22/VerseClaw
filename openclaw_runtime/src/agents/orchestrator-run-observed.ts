@@ -75,6 +75,9 @@ import {
 import type { BlackboardSynthesisSummary } from "./orchestration-synthesizer.js";
 import { createWorktreeService } from "./worktree-service.js";
 import { PATCH_FLOW_PROPOSAL_ONLY_DENIED_TOOLS } from "./orchestration-patch-flow.js";
+import { createVerseGitRuntimeBindingPortFromEnv } from "../plugin-sdk/versegit-binding-port.js";
+import { registerVerseGitRuntimeBinding } from "../plugin-sdk/versegit-binding-registry.js";
+import type { VerseGitBindingEndReason, VerseGitBindingRecord, VerseGitRuntimeBindingPort } from "../../../shared/versegit-runtime-contract.ts";
 
 export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
   cfg?: RoleRegistryConfigCarrier;
@@ -91,6 +94,7 @@ export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
    * patch-flow before workers switch to proposal-only mode.
    */
   patchFlowExecution?: true;
+  verseGitBindingPort?: VerseGitRuntimeBindingPort;
 };
 
 export type OrchestrationWorkerOutcome = {
@@ -100,6 +104,7 @@ export type OrchestrationWorkerOutcome = {
   isVerifier: boolean;
   ledger: OrchestrationTaskLedgerEntry;
   spawn: RoleSpawnResult;
+  verseGitBinding?: VerseGitBindingRecord;
 };
 
 export type OrchestrationRunResult = {
@@ -370,6 +375,22 @@ export async function runOrchestrationWithRecorder(
   const failures: OrchestrationRunResult["failures"] = [];
   const handoffArtifacts: WorkerOutputHandoffArtifact[] = [];
   const orchestrationRunId = request.orchestrationRunId ?? `orch_${Date.now().toString(36)}`;
+  const verseGitBindingPort = request.verseGitBindingPort ?? createVerseGitRuntimeBindingPortFromEnv();
+  const pendingVerseGitBindings = new Set<string>();
+  const endPendingVerseGitBinding = async (bindingId: string, reason: VerseGitBindingEndReason): Promise<void> => {
+    if (!verseGitBindingPort) return;
+    try {
+      await verseGitBindingPort.end({ bindingId, reason });
+      pendingVerseGitBindings.delete(bindingId);
+      recorder.recordEvent("versegit.binding.ended", "VerseGit binding ended", {
+        attributes: { bindingId, reason, orchestrationRunId },
+      });
+    } catch (error) {
+      recorder.recordEvent("versegit.binding.end_failed", "VerseGit binding end failed", {
+        attributes: { bindingId, reason, orchestrationRunId, error: String(error).slice(0, 240) },
+      });
+    }
+  };
   const handoffMode = resolveHandoffArtifactsPilotMode(request.cfg);
   const rawOwnerSessionKey = handoffMode === "on"
     ? (ctx.completionOwnerKey ?? ctx.agentSessionKey)?.trim()
@@ -470,6 +491,7 @@ export async function runOrchestrationWithRecorder(
       status: "planned",
       startedAt: Date.now(),
     });
+    let verseGitBinding: VerseGitBindingRecord | null = null;
     const handoffPrompt = handoffMode === "on"
       ? resolveHandoffArtifactPrompt({
           node,
@@ -571,6 +593,30 @@ export async function runOrchestrationWithRecorder(
               };
             })()
           : undefined;
+      if (verseGitBindingPort) {
+        const worktreePath = worktree?.root ?? ctx.workspaceDir;
+        if (worktreePath) {
+          try {
+            verseGitBinding = await verseGitBindingPort.bind({
+              requestId: `${orchestrationRunId}:${ledger.roleInstanceId}:${ledger.attempt}`,
+              runId: orchestrationRunId,
+              traceId: orchestrationRunId,
+              worktreePath,
+              agentSessionId: ledger.roleInstanceId,
+              mode: "M1",
+              ...(ledger.taskNodeId ? { taskNodeId: ledger.taskNodeId } : {}),
+            });
+            pendingVerseGitBindings.add(verseGitBinding.bindingId);
+            recorder.recordEvent("versegit.binding.bound", "VerseGit binding acquired", {
+              attributes: { bindingId: verseGitBinding.bindingId, repoId: verseGitBinding.repoId, worktreeId: verseGitBinding.worktreeId, roleName, attempt: ledger.attempt },
+            });
+          } catch (error) {
+            recorder.recordEvent("versegit.binding.unavailable", "VerseGit binding unavailable", {
+              attributes: { roleName, attempt: ledger.attempt, error: String(error).slice(0, 240) },
+            });
+          }
+        }
+      }
       const spawn = await spawnRoleSubagent(
         {
           role: roleName,
@@ -641,12 +687,33 @@ export async function runOrchestrationWithRecorder(
         spawnCtx,
         deps,
       );
+      if (verseGitBinding && verseGitBindingPort) {
+        const childRunId = spawn.result?.runId;
+        const childSessionKey = spawn.result?.childSessionKey;
+        if (spawn.status === "accepted" && childRunId && childSessionKey) {
+          try {
+            verseGitBinding = await verseGitBindingPort.attach({ bindingId: verseGitBinding.bindingId, childSessionKey, childRunId });
+            registerVerseGitRuntimeBinding(childRunId, verseGitBinding, verseGitBindingPort);
+            pendingVerseGitBindings.delete(verseGitBinding.bindingId);
+            recorder.recordEvent("versegit.binding.attached", "VerseGit binding attached to worker", {
+              attributes: { bindingId: verseGitBinding.bindingId, childSessionKey, childRunId, roleName },
+            });
+          } catch (error) {
+            recorder.recordEvent("versegit.binding.attach_failed", "VerseGit binding attach failed", {
+              attributes: { bindingId: verseGitBinding.bindingId, roleName, error: String(error).slice(0, 240) },
+            });
+            await endPendingVerseGitBinding(verseGitBinding.bindingId, "failed");
+          }
+        } else {
+          await endPendingVerseGitBinding(verseGitBinding.bindingId, "failed");
+        }
+      }
       const endedLedger: OrchestrationTaskLedgerEntry = {
         ...ledger,
         status: spawn.status === "accepted" ? "accepted" : "failed",
         endedAt: Date.now(),
       };
-      outcomes.push({ roleName, agentId: request.agentId, task, isVerifier, ledger: endedLedger, spawn });
+      outcomes.push({ roleName, agentId: request.agentId, task, isVerifier, ledger: endedLedger, spawn, ...(verseGitBinding ? { verseGitBinding } : {}) });
       const runId = spawn.result?.runId;
       const childSessionKey = spawn.result?.childSessionKey;
       if (spawn.status === "accepted" && runId) {
@@ -708,6 +775,9 @@ export async function runOrchestrationWithRecorder(
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
+      if (verseGitBinding) {
+        await endPendingVerseGitBinding(verseGitBinding.bindingId, "failed");
+      }
       failures.push({ roleName, status: "error", error: message });
       recorder.endSpan(span.id, { status: "error", error: message });
       try {
@@ -961,6 +1031,12 @@ export async function runOrchestrationWithRecorder(
   const handoffState = failures.some((failure) => failure.status === "handoff-blocked")
     ? "blocked"
     : resolvedHandoffState;
+  if (verseGitBindingPort) {
+    const reason = failures.length > 0 ? "orchestration_error" : "orchestration_completed";
+    for (const bindingId of [...pendingVerseGitBindings]) {
+      await endPendingVerseGitBinding(bindingId, reason);
+    }
+  }
   return {
     plan,
     outcomes,
