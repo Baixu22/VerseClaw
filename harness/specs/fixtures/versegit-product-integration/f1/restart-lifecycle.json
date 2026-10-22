@@ -1,0 +1,77 @@
+{
+  "schema": "clawx.versegit.f1-restart-lifecycle/v1",
+  "generated_at": "2026-10-22T21:58:17.344Z",
+  "task": "TF-0535",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "d06808b0e2286d2a3bc7ea2f730d285018c8e355",
+    "tree": "bd6eadb7966a2bbc64ed45c41b32577662e987fe",
+    "dirty": false
+  },
+  "persisted_fact_id": "e56b996aa1ae8f4bafc5d66fb2d07e65518f728ed5c0c6c2a9b3bc7ac09f246c",
+  "restarted_fact_id": "e56b996aa1ae8f4bafc5d66fb2d07e65518f728ed5c0c6c2a9b3bc7ac09f246c",
+  "restart_matched": true,
+  "duplicate_status": "duplicate",
+  "implicit_recovery": {
+    "status": "rejected",
+    "reason": "recovery_required"
+  },
+  "explicit_recovery": {
+    "fact_id": "4b316c8244b857c5247c3a0f73c5de36a6dad2813e37b688606676001aee8fa1",
+    "idempotency_key": "completion-explicit",
+    "host_outcome": "applied",
+    "provider_projection": "host-completed",
+    "active_session_risk": false,
+    "recovery_required": false,
+    "provider_landed": false,
+    "identity": {
+      "ownerId": "owner-f1",
+      "epoch": 12,
+      "authorizationId": "auth-f1",
+      "sessionId": "session-unknown",
+      "runId": "run-f1",
+      "candidateId": "vgc_f1_verified",
+      "candidateTreeOid": "d078837f10230f2d21be9abc04ee4bff6fe22e9b",
+      "candidateInputDigest": "ea92d00cd1504eb5dffef4482ac1cb2c68a60aa40792251bb83b2a1b4150500d",
+      "receiptDigest": "6c13a3d2db842956ecd8bd4127d00ebcadc5f123f823ee97ed54524ef9a972f5",
+      "effectId": "effect:session-unknown"
+    }
+  },
+  "production_seam": {
+    "schema": "clawx.versegit.host-completion/v1",
+    "contractVersion": "clawx.versegit.completion-contract/v1",
+    "factId": "6cfbd936e352c8f672260799831594200a0ce9a82b1d49810e6f7306338d22a1",
+    "idempotencyKey": "production-run:vgpatch-f1-production:f66ce52d0fd00190ede0de1413999b852912bd97af948db4c7943763e2383534:applied",
+    "recordedAt": "2026-10-22T21:58:17.344Z",
+    "actor": "codex",
+    "drivenBy": "agent",
+    "identity": {
+      "ownerId": "owner-production",
+      "epoch": 13,
+      "authorizationId": "auth-production",
+      "sessionId": "production-session",
+      "runId": "production-run",
+      "candidateId": "vgpatch-f1-production",
+      "candidateTreeOid": "d078837f10230f2d21be9abc04ee4bff6fe22e9b",
+      "candidateInputDigest": "ea92d00cd1504eb5dffef4482ac1cb2c68a60aa40792251bb83b2a1b4150500d",
+      "receiptDigest": "f66ce52d0fd00190ede0de1413999b852912bd97af948db4c7943763e2383534",
+      "effectId": "production-run:vgpatch-f1-production"
+    },
+    "hostOutcome": "applied",
+    "providerProjection": "host-completed",
+    "providerProjectionSource": "host-completion-fact",
+    "providerLanded": false,
+    "activeSessionRisk": false,
+    "recoveryRequired": false,
+    "reason": null,
+    "legacyUnbound": false,
+    "recoveryOf": null
+  },
+  "provider_projection_after_restart": "host-completed",
+  "provider_landed": false,
+  "active_risk_after_restart": false,
+  "passed": true,
+  "digest": "14e5b963615db90456cb73f311e9503c1ae6760e689bd5c10b53cccfa6f651cb"
+}

@@ -167,6 +167,13 @@ residualPaths:
   - harness/specs/fixtures/versegit-product-integration/e2/receipt-negative.json
   - scripts/versegit-product-f1-evidence.mts
   - scripts/verify-versegit-product-f1-evidence.mts
+  - openclaw_runtime/src/agents/orchestration-patch-flow.ts
+  - harness/specs/fixtures/versegit-product-integration/e3/SHA256SUMS
+  - harness/specs/fixtures/versegit-product-integration/e3/apply-decision.json
+  - harness/specs/fixtures/versegit-product-integration/e3/independent-review.json
+  - harness/specs/fixtures/versegit-product-integration/e3/ordering-trace.json
+  - harness/specs/fixtures/versegit-product-integration/e3/toctou-negative.json
+  - harness/specs/fixtures/versegit-product-integration/e3/write-journal-index.json
 touchedAreas:
   - harness/specs/tasks/versegit-product-f1-completion-contract.md
   - shared/types/versegit.ts

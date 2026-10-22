@@ -1,0 +1,162 @@
+{
+  "schema": "clawx.versegit.f1-persisted-outcomes/v1",
+  "generated_at": "2026-10-22T21:58:17.344Z",
+  "task": "TF-0535",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "d06808b0e2286d2a3bc7ea2f730d285018c8e355",
+    "tree": "bd6eadb7966a2bbc64ed45c41b32577662e987fe",
+    "dirty": false
+  },
+  "real_git_repo": {
+    "candidateTreeOid": "d078837f10230f2d21be9abc04ee4bff6fe22e9b",
+    "candidateInputDigest": "ea92d00cd1504eb5dffef4482ac1cb2c68a60aa40792251bb83b2a1b4150500d"
+  },
+  "outcomes": {
+    "applied": {
+      "fact_id": "e56b996aa1ae8f4bafc5d66fb2d07e65518f728ed5c0c6c2a9b3bc7ac09f246c",
+      "idempotency_key": "completion-applied",
+      "host_outcome": "applied",
+      "provider_projection": "host-completed",
+      "active_session_risk": false,
+      "recovery_required": false,
+      "provider_landed": false,
+      "identity": {
+        "ownerId": "owner-f1",
+        "epoch": 11,
+        "authorizationId": "auth-f1",
+        "sessionId": "session-applied",
+        "runId": "run-f1",
+        "candidateId": "vgc_f1_verified",
+        "candidateTreeOid": "d078837f10230f2d21be9abc04ee4bff6fe22e9b",
+        "candidateInputDigest": "ea92d00cd1504eb5dffef4482ac1cb2c68a60aa40792251bb83b2a1b4150500d",
+        "receiptDigest": "514299d4113a13f567e84f571a850ceddc85074c7ec8af40888f6ff64f704a41",
+        "effectId": "effect:session-applied"
+      }
+    },
+    "cancelled": {
+      "fact_id": "f97b10c2e41abf7b3dfb1250ee9883665016dbeb1b0a67aef82bfa47abb45082",
+      "idempotency_key": "completion-cancelled",
+      "host_outcome": "not_applied",
+      "provider_projection": "abandoned",
+      "active_session_risk": false,
+      "recovery_required": false,
+      "provider_landed": false,
+      "identity": {
+        "ownerId": "owner-f1",
+        "epoch": 11,
+        "authorizationId": "auth-f1",
+        "sessionId": "session-cancelled",
+        "runId": "run-f1",
+        "candidateId": "vgc_f1_verified",
+        "candidateTreeOid": "d078837f10230f2d21be9abc04ee4bff6fe22e9b",
+        "candidateInputDigest": "ea92d00cd1504eb5dffef4482ac1cb2c68a60aa40792251bb83b2a1b4150500d",
+        "receiptDigest": "5d39b28e04dceb843df85cd6316ca0db584dbdf8be7a8e862788660cc74d0c83",
+        "effectId": "effect:session-cancelled"
+      }
+    },
+    "unknown": {
+      "fact_id": "a679f3d532af96688069ea0163e8d2fb02a1a063c82defa7f6accb1a00e2e464",
+      "idempotency_key": "completion-unknown",
+      "host_outcome": "unknown",
+      "provider_projection": "abandoned",
+      "active_session_risk": false,
+      "recovery_required": true,
+      "provider_landed": false,
+      "identity": {
+        "ownerId": "owner-f1",
+        "epoch": 11,
+        "authorizationId": "auth-f1",
+        "sessionId": "session-unknown",
+        "runId": "run-f1",
+        "candidateId": "vgc_f1_verified",
+        "candidateTreeOid": "d078837f10230f2d21be9abc04ee4bff6fe22e9b",
+        "candidateInputDigest": "ea92d00cd1504eb5dffef4482ac1cb2c68a60aa40792251bb83b2a1b4150500d",
+        "receiptDigest": "6c13a3d2db842956ecd8bd4127d00ebcadc5f123f823ee97ed54524ef9a972f5",
+        "effectId": "effect:session-unknown"
+      }
+    }
+  },
+  "duplicate": {
+    "status": "duplicate",
+    "reason": "duplicate_completion",
+    "revision": 1
+  },
+  "late_epoch": {
+    "status": "rejected",
+    "reason": "late_epoch"
+  },
+  "terminal_completion": {
+    "status": "rejected",
+    "reason": "completion_terminal"
+  },
+  "legacy": {
+    "success": {
+      "schema": "clawx.versegit.host-completion/v1",
+      "contractVersion": "clawx.versegit.completion-contract/v1",
+      "factId": "c03f51320d2dc1f31bf86101bbefbdd2cbf23c2ce6aa74554484ede5aff171a6",
+      "idempotencyKey": "legacy:legacy-success",
+      "recordedAt": "2026-01-01T00:00:00.000Z",
+      "actor": "legacy-host",
+      "drivenBy": "agent",
+      "identity": {
+        "ownerId": "legacy-unbound",
+        "epoch": 0,
+        "authorizationId": "legacy-unbound",
+        "sessionId": "legacy-success",
+        "runId": "legacy-unbound",
+        "candidateId": "legacy-unbound",
+        "candidateTreeOid": "0000000000000000000000000000000000000000",
+        "candidateInputDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "receiptDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "effectId": "legacy-unbound"
+      },
+      "hostOutcome": "unknown",
+      "providerProjection": "abandoned",
+      "providerProjectionSource": "host-completion-fact",
+      "providerLanded": false,
+      "activeSessionRisk": false,
+      "recoveryRequired": true,
+      "reason": "legacy_completion_identity_missing",
+      "legacyUnbound": true,
+      "recoveryOf": null
+    },
+    "cancelled": {
+      "schema": "clawx.versegit.host-completion/v1",
+      "contractVersion": "clawx.versegit.completion-contract/v1",
+      "factId": "6fe7ddf204229d92d94339e00a90cd9397550d413d770543fe384d216637ff49",
+      "idempotencyKey": "legacy:legacy-cancelled",
+      "recordedAt": "2026-01-01T00:00:00.000Z",
+      "actor": "legacy-host",
+      "drivenBy": "agent",
+      "identity": {
+        "ownerId": "legacy-unbound",
+        "epoch": 0,
+        "authorizationId": "legacy-unbound",
+        "sessionId": "legacy-cancelled",
+        "runId": "legacy-unbound",
+        "candidateId": "legacy-unbound",
+        "candidateTreeOid": "0000000000000000000000000000000000000000",
+        "candidateInputDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "receiptDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "effectId": "legacy-unbound"
+      },
+      "hostOutcome": "not_applied",
+      "providerProjection": "abandoned",
+      "providerProjectionSource": "host-completion-fact",
+      "providerLanded": false,
+      "activeSessionRisk": false,
+      "recoveryRequired": false,
+      "reason": "legacy_terminal_outcome",
+      "legacyUnbound": false,
+      "recoveryOf": null
+    }
+  },
+  "active_risk_sessions": [
+    "active-session"
+  ],
+  "passed": true,
+  "digest": "9844749f6bca07bbfcbb79e508f90df3c953300ea0af3dc6fbaa7a8af120bf10"
+}
