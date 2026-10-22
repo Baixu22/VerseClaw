@@ -163,3 +163,91 @@ export type VerseGitCompletionSink = {
     fact: VerseGitHostCompletionFact | null;
   };
 };
+
+export const VG_CLEANUP_BARRIER_SCHEMA = 'clawx.versegit.cleanup-barrier/v1' as const;
+export const VG_CLEANUP_RESOURCE_KINDS = ['process', 'manager', 'worktree', 'temp'] as const;
+export type VerseGitCleanupResourceKind = (typeof VG_CLEANUP_RESOURCE_KINDS)[number];
+export type VerseGitCleanupStage =
+  | 'stop_accepting'
+  | 'drain_cancel'
+  | 'seal_evidence'
+  | 'detach_vg'
+  | 'verify_owner_epoch_ref'
+  | 'delete_disposable';
+export type VerseGitCleanupIdentity = {
+  ownerId: string;
+  epoch: number;
+  authorizationId: string;
+  baseOid: string;
+  refsDigest: string;
+};
+export type VerseGitCleanupInventory = {
+  observed: boolean;
+  processes: number | null;
+  managers: number | null;
+  worktrees: number | null;
+  tempRoots: number | null;
+  survivors?: string[];
+};
+export type VerseGitCleanupResource = {
+  kind: VerseGitCleanupResourceKind;
+  id: string;
+  target?: string;
+  owned: boolean;
+  preserve: boolean;
+};
+export type VerseGitCleanupBarrierRecord = {
+  schema: typeof VG_CLEANUP_BARRIER_SCHEMA;
+  sealId: string;
+  runId: string;
+  sessionId: string;
+  bindingId: string;
+  actor: string;
+  driven_by: 'agent';
+  sealedAt: string;
+  deletedAt: string | null;
+  status: 'sealed' | 'detached' | 'deleted' | 'recovery_required' | 'rejected';
+  stages: Partial<Record<VerseGitCleanupStage, string>>;
+  expected: VerseGitCleanupIdentity;
+  current: VerseGitCleanupIdentity;
+  references: string[];
+  evidenceDigests: string[];
+  inventoryBefore: VerseGitCleanupInventory;
+  inventoryAfter: VerseGitCleanupInventory | null;
+  resources: VerseGitCleanupResource[];
+  deletedKinds: VerseGitCleanupResourceKind[];
+  issues: string[];
+  lateEvents: Array<{ event: string; epoch: number; at: string; accepted: false }>;
+};
+export type VerseGitCleanupSealInput = {
+  runId: string;
+  sessionId: string;
+  bindingId: string;
+  actor: string;
+  expected: VerseGitCleanupIdentity;
+  current: VerseGitCleanupIdentity;
+  references: readonly string[];
+  evidenceDigests: readonly string[];
+  inventoryBefore: VerseGitCleanupInventory;
+  resources: readonly VerseGitCleanupResource[];
+  deletedKinds: readonly VerseGitCleanupResourceKind[];
+  stopAccepting: boolean;
+  drain: { ok: boolean; issues: readonly string[] };
+};
+export type VerseGitCleanupDeletionAuthorization = {
+  barrierRoot: string;
+  runId: string;
+  sealId: string;
+  resourceKind: VerseGitCleanupResourceKind;
+  resourceId: string;
+  expected: VerseGitCleanupIdentity;
+};
+export type VerseGitCleanupBarrierPort = {
+  read(runId: string): VerseGitCleanupBarrierRecord | null;
+  seal(input: VerseGitCleanupSealInput): { ok: boolean; sealId: string | null; issues: string[]; record: VerseGitCleanupBarrierRecord | null };
+  markDetached(input: { runId: string; sealId: string; current: VerseGitCleanupIdentity; vgDetached: boolean }): { ok: boolean; issues: string[]; record: VerseGitCleanupBarrierRecord | null };
+  complete(input: { runId: string; sealId: string; inventoryAfter: VerseGitCleanupInventory }): { ok: boolean; issues: string[]; record: VerseGitCleanupBarrierRecord | null };
+  recoveryRequired(input: { runId: string; sealId?: string | null; issues: readonly string[]; inventoryAfter: VerseGitCleanupInventory | null }): { ok: boolean; record: VerseGitCleanupBarrierRecord | null };
+  observeLateEvent(input: { runId: string; event: string; epoch: number }): { accepted: boolean; record: VerseGitCleanupBarrierRecord | null };
+  authorizeDeletion(input: Omit<VerseGitCleanupDeletionAuthorization, 'barrierRoot'>): { ok: boolean; issues: string[]; record: VerseGitCleanupBarrierRecord | null };
+};

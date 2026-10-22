@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { appendFileSync, mkdirSync, realpathSync } from 'node:fs';
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
-import { dirname, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import {
   VG_RUNTIME_BINDING_SCHEMA,
   type VerseGitFeedbackDeliveryRequest,
@@ -28,6 +28,7 @@ export type VerseGitBindingBridgeConfig = {
   repoRoot: string | null;
   eventsPath: string | null;
   observationsPath?: string | null;
+  cleanupRoot?: string | null;
   feedbackTtlMs?: number;
   observationBridge?: VerseGitObservationBridge;
 };
@@ -53,6 +54,7 @@ export function loadVerseGitBindingBridgeConfig(env: NodeJS.ProcessEnv = process
     repoRoot: env.CLAWX_VERSGIT_ALLOWED_REPO_ROOT ?? null,
     eventsPath: env.CLAWX_VERSGIT_BINDING_EVENTS_PATH ?? null,
     observationsPath: env.CLAWX_VERSGIT_OBSERVATION_EVENTS_PATH ?? null,
+    cleanupRoot: env.CLAWX_VERSGIT_CLEANUP_ROOT?.trim() || null,
   };
 }
 
@@ -64,18 +66,33 @@ export function resolveVerseGitRepoIdentity(worktreePath: string): {
   repoId: string;
   worktreeId: string;
   canonicalWorktreePath: string;
+  baseOid: string;
+  refsDigest: string;
 } {
   const canonicalWorktreePath = realpathSync(worktreePath);
-  const commonRaw = execFileSync(
-    'git',
-    ['-C', canonicalWorktreePath, 'rev-parse', '--git-common-dir'],
-    { encoding: 'utf8', windowsHide: true, timeout: 10_000 },
-  ).trim();
+  const git = (args: string[]): string =>
+    execFileSync('git', ['-C', canonicalWorktreePath, ...args], {
+      encoding: 'utf8',
+      windowsHide: true,
+      timeout: 10_000,
+    }).trim();
+  const commonRaw = git(['rev-parse', '--git-common-dir']);
+  const baseOid = git(['rev-parse', 'HEAD']);
+  let headRef = 'HEAD';
+  try {
+    headRef = git(['symbolic-ref', '-q', 'HEAD']) || 'HEAD';
+  } catch {
+    // Detached worktrees still bind the exact HEAD oid.
+  }
   const commonPath = realpathSync(resolve(canonicalWorktreePath, commonRaw));
+  const repoId = sha(commonPath.replaceAll('\\', '/').toLowerCase());
+  const worktreeId = sha(canonicalWorktreePath.replaceAll('\\', '/').toLowerCase());
   return {
-    repoId: sha(commonPath.replaceAll('\\', '/').toLowerCase()),
-    worktreeId: sha(canonicalWorktreePath.replaceAll('\\', '/').toLowerCase()),
+    repoId,
+    worktreeId,
     canonicalWorktreePath,
+    baseOid,
+    refsDigest: `sha256:${sha(`${repoId}\0${worktreeId}\0${headRef}\0${baseOid}`)}`,
   };
 }
 
@@ -371,6 +388,9 @@ export class VerseGitBindingBridge {
     const record: VerseGitBindingRecord = {
       schema: VG_RUNTIME_BINDING_SCHEMA,
       bindingId,
+      authorizationId: bindingId,
+      baseOid: repo.baseOid,
+      refsDigest: repo.refsDigest,
       requestId: identity.requestId,
       runId: identity.runId,
       traceId: identity.traceId,
@@ -705,11 +725,14 @@ let bridge: VerseGitBindingBridge | null = null;
 
 export async function ensureVerseGitBindingBridge(): Promise<VerseGitBindingBridge | null> {
   if (!bridge) {
+    const { app } = await import('electron');
+    if (process.env.CLAWX_VERSGIT_BINDING_ENABLED === '1') {
+      process.env.CLAWX_VERSGIT_CLEANUP_ROOT ??= join(app.getPath('userData'), 'versegit', 'cleanup');
+    }
     const config = loadVerseGitBindingBridgeConfig();
     bridge = new VerseGitBindingBridge(config);
     const address = await bridge.start();
     if (address) process.env.CLAWX_VERSGIT_RUNTIME_BINDING_URL = address;
-    const { app } = await import('electron');
     app.once('before-quit', () => { void bridge?.stop(); });
   }
   return bridge;

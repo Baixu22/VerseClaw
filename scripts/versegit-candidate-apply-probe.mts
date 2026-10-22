@@ -18,6 +18,7 @@ import {
   type PatchCandidateManifest,
 } from '../openclaw_runtime/src/agents/orchestration-candidate-apply';
 import { applyDeferredPatchFlow } from '../openclaw_runtime/src/agents/orchestration-patch-flow';
+import { attachCompletedCleanupBarrier } from './versegit-product-cleanup-barrier-evidence';
 import type { PatchProposal } from '../openclaw_runtime/src/agents/patch-flow';
 import type { SubagentRunRecord } from '../openclaw_runtime/src/agents/subagent-registry.types';
 import { executeGovernedVerseShellProcessObserved } from '../openclaw_runtime/src/agents/verseshell/governed-process';
@@ -358,6 +359,13 @@ async function runVerseShellVerification(input: {
       ownedPidChecks: [{ ok: true, pid: execution.processPid, exists: existsAfter }],
     },
   };
+  const cleanupBarrierRoot = attachCompletedCleanupBarrier({
+    root: runEvidenceRoot,
+    plan: created.plan,
+    cleanup,
+    baseOid: input.candidate.baseOid,
+    refsDigest: `sha256:${sha(`${input.candidate.baseOid}\0${input.candidate.candidateTreeOid}`)}`,
+  });
   const completed = completeCandidateVerificationEvidence({
     authority,
     bridge,
@@ -373,6 +381,7 @@ async function runVerseShellVerification(input: {
       approvedByHost: execution.approvedByHost,
     },
     cleanup,
+    cleanupBarrierRoot,
     receiptId: 'receipt-' + input.runId,
   });
   const authorityCheck = authority.verifyReceipt({ plan: created.plan, receipt: completed.receipt });

@@ -241,3 +241,6 @@ export class FileVerseGitCompletionStore implements VerseGitCompletionSink {
 export function createVerseGitCompletionStore(root: string): FileVerseGitCompletionStore {
   return new FileVerseGitCompletionStore(root);
 }
+
+
+export { FileVerseGitCleanupBarrier, createVerseGitCleanupBarrier } from '../../shared/versegit-cleanup-barrier.ts';

@@ -314,6 +314,22 @@ export function reconcileOrphanedRun(params: {
     params.entry.endedReason = SUBAGENT_ENDED_REASON_ERROR;
     changed = true;
   }
+  // VerseGit worktree ownership must be reconstructed by the durable cleanup
+  // barrier. Never prune it from the restore-time orphan sweep.
+  if (params.entry.orchestration?.worktreeId || params.entry.orchestration?.verseGitCleanup) {
+    if (params.entry.cleanupHandled !== false) {
+      params.entry.cleanupHandled = false;
+      changed = true;
+    }
+    if (params.entry.cleanupCompletedAt !== undefined) {
+      params.entry.cleanupCompletedAt = undefined;
+      changed = true;
+    }
+    defaultRuntime.log(
+      `[warn] VerseGit orphan retained for barrier recovery run=${params.runId} child=${params.entry.childSessionKey} reason=${params.reason}`,
+    );
+    return changed;
+  }
   if (params.entry.cleanupHandled !== true) {
     params.entry.cleanupHandled = true;
     changed = true;

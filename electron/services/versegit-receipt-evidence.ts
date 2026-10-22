@@ -12,6 +12,8 @@ import {
 } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import type { VerseGitCandidateManifest } from '../../shared/types/versegit.ts';
+import { FileVerseGitCleanupBarrier } from '../../shared/versegit-cleanup-barrier.ts';
+import type { VerseGitCleanupBarrierRecord } from '../../shared/types/versegit.ts';
 import type { Observation } from '../../shared/verseshell/types.ts';
 import { executionInputDigest, VerseGitReceiptBridge } from './versegit-receipt-bridge.ts';
 import type {
@@ -263,6 +265,62 @@ export function prepareCandidateVerificationEvidence(input: {
   return { plan, planRef, inputRef, authorizationRef };
 }
 
+export type VerseGitCleanupBarrierEvidence = {
+  schema: 'clawx.versegit.cleanup-barrier-evidence/v1';
+  runId: string;
+  sealId: string;
+  recordDigest: string;
+  ownerId: string;
+  epoch: number;
+  authorizationId: string;
+  baseOid: string;
+  refsDigest: string;
+};
+
+export function cleanupBarrierEvidenceFromRecord(
+  record: VerseGitCleanupBarrierRecord,
+): VerseGitCleanupBarrierEvidence {
+  return {
+    schema: 'clawx.versegit.cleanup-barrier-evidence/v1',
+    runId: record.runId,
+    sealId: record.sealId,
+    recordDigest: sha256(stableJson(record)),
+    ownerId: record.expected.ownerId,
+    epoch: record.expected.epoch,
+    authorizationId: record.expected.authorizationId,
+    baseOid: record.expected.baseOid,
+    refsDigest: record.expected.refsDigest,
+  };
+}
+
+function verifyCleanupBarrierEvidence(input: {
+  cleanup: Record<string, unknown>;
+  cleanupBarrierRoot: string;
+  plan: VerificationPlan;
+}): VerseGitCleanupBarrierEvidence {
+  const evidence = input.cleanup.cleanupBarrier && typeof input.cleanup.cleanupBarrier === 'object' && !Array.isArray(input.cleanup.cleanupBarrier)
+    ? input.cleanup.cleanupBarrier as VerseGitCleanupBarrierEvidence
+    : null;
+  if (!evidence || evidence.schema !== 'clawx.versegit.cleanup-barrier-evidence/v1') {
+    throw new Error('cleanup barrier evidence is missing');
+  }
+  const record = new FileVerseGitCleanupBarrier(input.cleanupBarrierRoot).read(evidence.runId);
+  if (!record) throw new Error('cleanup barrier record is missing');
+  if (record.sealId !== evidence.sealId) throw new Error('cleanup barrier seal differs from receipt evidence');
+  if (sha256(stableJson(record)) !== evidence.recordDigest) throw new Error('cleanup barrier record digest mismatch');
+  if (record.status !== 'deleted') throw new Error('cleanup barrier did not complete deletion');
+  if (record.expected.ownerId !== input.plan.owner || record.expected.epoch !== input.plan.epoch
+    || record.expected.authorizationId !== input.plan.authorizationId) {
+    throw new Error('cleanup barrier identity differs from verification plan');
+  }
+  const inventory = record.inventoryAfter;
+  if (!inventory?.observed || inventory.processes !== 0 || inventory.managers !== 0
+    || inventory.worktrees !== 0 || inventory.tempRoots !== 0 || (inventory.survivors?.length ?? 0) > 0) {
+    throw new Error('cleanup barrier inventory is not zero');
+  }
+  if (record.issues.length > 0) throw new Error('cleanup barrier retained issues');
+  return evidence;
+}
 /** Build and persist a receipt only from the host execution and its exact cleanup record. */
 export function completeCandidateVerificationEvidence(input: {
   authority: FileVerseShellReceiptAuthority;
@@ -270,9 +328,10 @@ export function completeCandidateVerificationEvidence(input: {
   prepared: PreparedCandidateVerificationEvidence;
   execution: HostVerseShellExecutionEvidence;
   cleanup: Record<string, unknown>;
+  cleanupBarrierRoot: string;
   receiptId: string;
 }): CompletedCandidateVerificationEvidence {
-  const { authority, bridge, prepared, execution, cleanup, receiptId } = input;
+  const { authority, bridge, prepared, execution, cleanup, cleanupBarrierRoot, receiptId } = input;
   if (!receiptId.trim()) throw new Error('receiptId is required');
   if (!execution.approvedByHost) throw new Error('host policy did not approve candidate execution');
   const capabilities = Array.isArray(execution.observation.meta?.capabilities_used)
@@ -290,6 +349,9 @@ export function completeCandidateVerificationEvidence(input: {
   if (exitCode === null && data.timed_out !== true) throw new Error('host execution has no terminal exit code');
   const timedOut = data.timed_out === true || execution.observation.error?.code === 'E_TIMEOUT';
   const cleanupStatus = cleanup.status === 'clean' ? 'clean' : cleanup.status === 'recovery_required' ? 'recovery_required' : 'failed';
+  if (cleanupStatus === 'clean') {
+    verifyCleanupBarrierEvidence({ cleanup, cleanupBarrierRoot, plan: prepared.plan });
+  }
   const cleanupRef = authority.recordCleanupFor(receiptId, cleanup);
   const observationRef = authority.recordObservation({
     observation: execution.observation,

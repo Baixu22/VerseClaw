@@ -17,6 +17,7 @@ import { freezeOrchestrationCandidate, type CreateCandidateWorker } from '../ope
 import { createWorktreeService, writeWorktreeFile } from '../openclaw_runtime/src/agents/worktree-service';
 import { VerseShellProcessManager } from '../openclaw_runtime/src/agents/verseshell/process-manager';
 import { executeGovernedVerseShellProcessObserved } from '../openclaw_runtime/src/agents/verseshell/governed-process';
+import { attachCompletedCleanupBarrier } from './versegit-product-cleanup-barrier-evidence';
 import {
   VerseGitReceiptBridge,
   createVerificationPlan,
@@ -305,6 +306,13 @@ async function runCandidate(input: {
     baseRoot: input.baseRoot,
     candidatePath: input.candidateRoot,
   });
+  const cleanupBarrierRoot = attachCompletedCleanupBarrier({
+    root: input.evidenceRoot,
+    plan,
+    cleanup,
+    baseOid: git(input.baseRoot, ['rev-parse', 'HEAD']),
+    refsDigest: `sha256:${sha(`${plan.candidateId}\0${plan.candidateInputDigest}`)}`,
+  });
   const completed = completeCandidateVerificationEvidence({
     authority,
     bridge,
@@ -320,6 +328,7 @@ async function runCandidate(input: {
       approvedByHost: execution.approvedByHost,
     },
     cleanup,
+    cleanupBarrierRoot,
     receiptId: `receipt-${input.runId}`,
   });
   const afterCheck = authority.verifyReceipt({ plan, receipt: completed.receipt });
@@ -332,6 +341,7 @@ async function runCandidate(input: {
   }
   return {
     runId: input.runId,
+    baseOid: git(input.baseRoot, ['rev-parse', 'HEAD']),
     candidateIdentity: input.candidateIdentity,
     candidateManifest: input.candidateManifest,
     manifest: input.manifest,
@@ -533,6 +543,14 @@ function runNegativeMatrix(input: {
   const revokedInputRef = revokedAuthority.recordCandidateInput(input.continuation.candidateIdentity, input.continuation.candidateManifest);
   const revokedPlanRef = revokedAuthority.recordPlan(revokedPlan);
   revokedBridge.registerPlan(revokedPlan);
+  const revokedCleanup = { ...input.continuation.cleanup };
+  const revokedCleanupBarrierRoot = attachCompletedCleanupBarrier({
+    root: revokedRoot,
+    plan: revokedPlan,
+    cleanup: revokedCleanup,
+    baseOid: input.continuation.baseOid,
+    refsDigest: `sha256:${sha(`${revokedPlan.candidateId}\0${revokedPlan.candidateInputDigest}`)}`,
+  });
   const revokedCompleted = completeCandidateVerificationEvidence({
     authority: revokedAuthority,
     bridge: revokedBridge,
@@ -547,7 +565,8 @@ function runNegativeMatrix(input: {
       approvalRequired: input.continuation.execution.approvalRequired,
       approvedByHost: input.continuation.execution.approvedByHost,
     },
-    cleanup: input.continuation.cleanup,
+    cleanup: revokedCleanup,
+    cleanupBarrierRoot: revokedCleanupBarrierRoot,
     receiptId: 'receipt-revoked-negative',
   });
   cases.push(caseFromBridge(

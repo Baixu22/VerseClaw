@@ -15,7 +15,7 @@ export async function deleteSubagentSessionForCleanup(params: {
   runId: string;
   spawnMode?: SpawnSubagentMode;
   onError?: (error: unknown) => void;
-}): Promise<void> {
+}): Promise<{ ok: boolean; error: unknown | null }> {
   try {
     await params.callGateway({
       method: "sessions.delete",
@@ -27,7 +27,9 @@ export async function deleteSubagentSessionForCleanup(params: {
       },
       timeoutMs: 10_000,
     });
+    return { ok: true, error: null };
   } catch (error) {
     params.onError?.(error);
+    return { ok: false, error };
   }
 }

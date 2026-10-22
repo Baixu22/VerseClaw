@@ -25,7 +25,9 @@ import {
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
-import { codingObservability } from "../context-engine/coding-observability.js";
+import { codingObservability } from '../context-engine/coding-observability.js';
+import { assertVerseGitCleanupDeletionAllowed, verseGitCleanupResourceId } from '../../../shared/versegit-cleanup-barrier.js';
+import type { VerseGitCleanupDeletionAuthorization } from '../../../shared/types/versegit.js';
 import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js";
 import { reviewDiff } from "../context-engine/views/verify/review-diff-view.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
@@ -79,7 +81,7 @@ export type WorktreeService = {
     factStore?: FactStore,
     options?: { conflictPolicy?: MergeConflictPolicy; worktreeIds?: readonly string[] },
   ): MergeQueueItem[];
-  cleanup(id: string): void;
+  cleanup(id: string, options?: { authorization?: VerseGitCleanupDeletionAuthorization }): void;
   getMergeQueue(): MergeQueueItem[];
 };
 
@@ -279,17 +281,57 @@ function seedFilesInto(wtRoot: string, baseRoot: string, seedFiles: string[] | u
 }
 
 function removePathWithRetries(target: string, attempts = 5): void {
+  let lastError: unknown;
   for (let i = 0; i < attempts; i++) {
     try {
       if (!existsSync(target)) return;
       rmSync(target, { recursive: true, force: true });
       return;
-    } catch {
+    } catch (error) {
+      lastError = error;
       sleepMs(20 * (i + 1));
     }
   }
+  throw lastError instanceof Error ? lastError : new Error(String(lastError ?? 'worktree_remove_failed'));
 }
 
+function requireCleanupAuthorization(input: {
+  rootDir: string;
+  baseRoot: string;
+  record: WorktreeRecord;
+  authorization?: VerseGitCleanupDeletionAuthorization;
+  changed: WorktreeChangedFiles;
+}): { root: string } {
+  const normalizeRoot = (value: string): string => path.resolve(value.replace(/^\\\\\?\\/u, ''));
+  const root = normalizeRoot(input.record.root);
+  const rootDir = normalizeRoot(input.rootDir);
+  const baseRoot = normalizeRoot(input.baseRoot);
+  if (root === baseRoot || root === rootDir || !root.startsWith(rootDir + path.sep)) {
+    throw new Error('worktree_cleanup_target_not_disposable');
+  }
+  if (input.record.status === 'cleaned') return { root };
+  const allowed = new Set((input.record.writeSet ?? []).map((value) => normalizeWorktreeRelPath(value)));
+  const unexpected = input.changed.files.filter((value) => !allowed.has(normalizeWorktreeRelPath(value)));
+  if (unexpected.length > 0) {
+    throw new Error('worktree_cleanup_user_content_present:' + unexpected.slice(0, 8).join(','));
+  }
+  const barrierRequired = Boolean(
+    process.env.CLAWX_VERSGIT_CLEANUP_ROOT?.trim() || process.env.CLAWX_VERSGIT_BINDING_ENABLED === '1',
+  );
+  if (barrierRequired) {
+    const authorization = input.authorization;
+    if (!authorization) throw new Error('worktree_cleanup_barrier_required');
+    if (authorization.resourceKind !== 'worktree') throw new Error('worktree_cleanup_barrier_resource_mismatch');
+    if (authorization.resourceId !== verseGitCleanupResourceId('worktree', root)) {
+      throw new Error('worktree_cleanup_barrier_resource_mismatch');
+    }
+    if (input.record.baseOid && authorization.expected.baseOid !== input.record.baseOid) {
+      throw new Error('worktree_cleanup_barrier_base_mismatch');
+    }
+    assertVerseGitCleanupDeletionAllowed(authorization);
+  }
+  return { root };
+}
 export function createWorktreeService(
   baseRoot: string,
   options?: CreateWorktreeServiceOptions,
@@ -490,16 +532,27 @@ export function createWorktreeService(
       });
       return results;
     },
-    cleanup(id) {
+    cleanup(id, cleanupOptions) {
       const s = scope(resolved);
       const rec = s.records.get(id);
       if (!rec) return;
       withWorktreeLock(resolved, () => {
+        const ownership = requireCleanupAuthorization({
+          rootDir,
+          baseRoot: resolved,
+          record: rec,
+          authorization: cleanupOptions?.authorization,
+          changed: this.listChangedFiles(id),
+        });
         if (rec.backend === "git") {
           try {
-            git(["worktree", "remove", "--force", path.resolve(rec.root)], resolved);
-          } catch {
-            removePathWithRetries(rec.root);
+            git(["worktree", "remove", "--force", ownership.root], resolved);
+          } catch (error) {
+            try {
+              removePathWithRetries(ownership.root);
+            } catch {
+              throw error;
+            }
             try {
               git(["worktree", "prune"], resolved);
             } catch {
@@ -507,7 +560,10 @@ export function createWorktreeService(
             }
           }
         } else {
-          removePathWithRetries(rec.root);
+          removePathWithRetries(ownership.root);
+        }
+        if (existsSync(ownership.root)) {
+          throw new Error('worktree_cleanup_survivor');
         }
         rec.status = "cleaned";
       });

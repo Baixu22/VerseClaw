@@ -14,10 +14,10 @@ import { getAgentRunContext, onAgentEvent } from "../infra/agent-events.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { formatBlockedLivenessError, isBlockedLivenessState } from "../shared/agent-liveness.js";
 import { createLazyImportLoader, createLazyPromiseLoader } from "../shared/lazy-promise.js";
-import { buildSessionDeleteOperationId } from "../sessions/session-delete-operation-id.js";
 import { importRuntimeModule } from "../shared/runtime-import.js";
 import { normalizeDeliveryContext } from "../utils/delivery-context.shared.js";
 import type { VerseGitCompletionSink } from "../../../shared/types/versegit.js";
+import { createVerseGitCleanupBarrier } from '../../../shared/versegit-cleanup-barrier.js';
 import type { DeliveryContext } from "../utils/delivery-context.types.js";
 import {
   ackLeasedAgentSteeringItemsFromSubagentRuns,
@@ -26,7 +26,6 @@ import {
   releaseLeasedAgentSteeringItemsFromSubagentRuns,
 } from "./agent-steering-queue.js";
 import { makeTaskLedgerEntry, taskGraphVerifierNode } from "./orchestration-protocol.js";
-import { removeInternalSessionEffectsTranscript } from "./internal-session-effects.js";
 import { isAbortedAgentStopReason } from "./run-termination.js";
 import type { ensureRuntimePluginsLoaded as ensureRuntimePluginsLoadedFn } from "./runtime-plugins.js";
 import type { SubagentRunOutcome } from "./subagent-announce-output.js";
@@ -55,7 +54,6 @@ import {
   reconcileOrphanedRun,
   resolveAnnounceRetryDelayMs,
   resolveSubagentRunOrphanReason,
-  safeRemoveAttachmentsDir,
 } from "./subagent-registry-helpers.js";
 import { createSubagentRegistryLifecycleController } from "./subagent-registry-lifecycle.js";
 import type { CandidateApplyHost } from "./orchestration-candidate-apply.js";
@@ -96,8 +94,6 @@ import {
   type SubagentSessionStoreCache,
 } from "./subagent-session-reconciliation.js";
 import { resolveAgentTimeoutMs } from "./timeout.js";
-import { endVerseGitRuntimeBindingForRun } from "../plugin-sdk/versegit-binding-registry.js";
-import type { VerseGitBindingEndReason } from "../../../shared/versegit-runtime-contract.js";
 
 export type { SubagentRunRecord } from "./subagent-registry.types.js";
 export {
@@ -365,12 +361,6 @@ function clearAllPendingLifecycleTimeouts() {
   pendingLifecycleTimeoutByRunId.clear();
 }
 
-function resolveVerseGitBindingEndReason(params: CompleteSubagentRunParams): VerseGitBindingEndReason {
-  if (params.reason === SUBAGENT_ENDED_REASON_KILLED) return "cancelled";
-  if (params.outcome.status === "timeout") return "timeout";
-  if (params.reason === SUBAGENT_ENDED_REASON_COMPLETE && params.outcome.status === "ok") return "completed";
-  return "failed";
-}
 type CompleteSubagentRunParams = {
   runId: string;
   endedAt?: number;
@@ -383,10 +373,6 @@ type CompleteSubagentRunParams = {
 };
 
 async function completeSubagentRunWithRecovery(params: CompleteSubagentRunParams, source: string) {
-  const bindingEndError = await endVerseGitRuntimeBindingForRun(params.runId, resolveVerseGitBindingEndReason(params));
-  if (bindingEndError) {
-    log.warn("failed to end VerseGit runtime binding", { source, runId: params.runId, error: bindingEndError });
-  }
   try {
     await completeSubagentRun(params);
     await maybeStartDeferredOrchestrationVerifier(params.runId);
@@ -1016,6 +1002,7 @@ const {
   completeSubagentRun,
   finalizeResumedAnnounceGiveUp,
   refreshFrozenResultFromSession,
+  runTerminalCleanup,
   startSubagentAnnounceCleanupFlow,
 } = subagentLifecycleController;
 
@@ -1240,12 +1227,10 @@ async function discardSuspendedPendingFinalDelivery(
     childSessionKey: entry.childSessionKey,
     requesterSessionKey: entry.requesterSessionKey,
   });
-  const shouldDeleteAttachments = entry.cleanup === "delete" || !entry.retainAttachmentsOnKeep;
-  if (shouldDeleteAttachments) {
-    await safeRemoveAttachmentsDir(entry);
-  }
-  await removeInternalSessionEffectsTranscript(entry.execution?.transcriptFile);
   const completionReason = entry.endedReason ?? SUBAGENT_ENDED_REASON_COMPLETE;
+  if (!(await runTerminalCleanup({ runId, entry, cleanup: entry.cleanup }))) {
+    return;
+  }
   completeCleanupBookkeeping({
     runId,
     entry,
@@ -1394,6 +1379,9 @@ async function sweepSubagentRuns() {
           now - entry.cleanupCompletedAt > SESSION_RUN_TTL_MS
         ) {
           clearPendingLifecycleError(runId);
+          if (!(await runTerminalCleanup({ runId, entry, cleanup: entry.cleanup }))) {
+            continue;
+          }
           void notifyContextEngineSubagentEnded({
             childSessionKey: entry.childSessionKey,
             reason: "swept",
@@ -1402,9 +1390,6 @@ async function sweepSubagentRuns() {
           });
           subagentRuns.delete(runId);
           mutated = true;
-          if (!entry.retainAttachmentsOnKeep) {
-            await safeRemoveAttachmentsDir(entry);
-          }
         }
         continue;
       }
@@ -1412,29 +1397,11 @@ async function sweepSubagentRuns() {
         continue;
       }
       clearPendingLifecycleError(runId);
-      try {
-        await subagentRegistryDeps.callGateway({
-          method: "sessions.delete",
-          params: {
-            key: entry.childSessionKey,
-            operationId: buildSessionDeleteOperationId("subagent-cleanup", runId),
-            deleteTranscript: true,
-            emitLifecycleHooks: false,
-          },
-          timeoutMs: 10_000,
-        });
-      } catch (err) {
-        log.warn("sessions.delete failed during subagent sweep; keeping run for retry", {
-          runId,
-          childSessionKey: entry.childSessionKey,
-          err,
-        });
+      if (!(await runTerminalCleanup({ runId, entry, cleanup: "delete" }))) {
         continue;
       }
       subagentRuns.delete(runId);
       mutated = true;
-      // Archive/purge is terminal for the run record; remove any retained attachments too.
-      await safeRemoveAttachmentsDir(entry);
       void notifyContextEngineSubagentEnded({
         childSessionKey: entry.childSessionKey,
         reason: "swept",
@@ -1476,6 +1443,19 @@ function ensureListener() {
         return;
       }
       const phase = evt.data?.phase;
+      const cleanupRoot = process.env.CLAWX_VERSGIT_CLEANUP_ROOT?.trim();
+      if (phase && cleanupRoot) {
+        const barrier = createVerseGitCleanupBarrier(cleanupRoot);
+        const sealed = barrier.read(evt.runId);
+        if (sealed) {
+          barrier.observeLateEvent({
+            runId: evt.runId,
+            event: String(phase),
+            epoch: Number(evt.data?.epoch ?? sealed.expected.epoch),
+          });
+          return;
+        }
+      }
       const entry = subagentRuns.get(evt.runId);
       if (!entry) {
         if (phase === "end" && typeof evt.sessionKey === "string") {

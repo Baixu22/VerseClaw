@@ -114,7 +114,18 @@ export type TeamOrchestrationMetadata = {
   completionHostOutcome?: "applied" | "not_applied" | "unknown";
   completionProviderProjection?: "active" | "abandoned" | "host-completed";
   completionActiveSessionRisk?: boolean;
-};
+  verseGitCleanup?: {
+    bindingId: string;
+    requestId: string;
+    repoId: string;
+    worktreeId: string;
+    worktreePath: string;
+    ownerId: string;
+    epoch: number;
+    authorizationId: string;
+    baseOid: string;
+    refsDigest: string;
+  };};
 
 export type PendingFinalDeliveryPayload = {
   requesterSessionKey: string;

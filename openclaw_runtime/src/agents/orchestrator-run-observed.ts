@@ -694,6 +694,26 @@ export async function runOrchestrationWithRecorder(
           try {
             verseGitBinding = await verseGitBindingPort.attach({ bindingId: verseGitBinding.bindingId, childSessionKey, childRunId });
             registerVerseGitRuntimeBinding(childRunId, verseGitBinding, verseGitBindingPort);
+            try {
+              const { updateSubagentRunOrchestrationMetadata } = await import("./subagent-registry.js");
+              updateSubagentRunOrchestrationMetadata(childRunId, {
+                verseGitCleanup: {
+                  bindingId: verseGitBinding.bindingId,
+                  requestId: verseGitBinding.requestId,
+                  repoId: verseGitBinding.repoId,
+                  worktreeId: verseGitBinding.worktreeId,
+                  worktreePath: verseGitBinding.worktreePath,
+                  ownerId: verseGitBinding.ownerId,
+                  epoch: verseGitBinding.epoch,
+                  authorizationId: verseGitBinding.authorizationId,
+                  baseOid: verseGitBinding.baseOid,
+                  refsDigest: verseGitBinding.refsDigest,
+                },
+              });
+            } catch {
+              // The in-memory binding remains authoritative for this process; a
+              // missing persisted copy only makes restart cleanup fail closed.
+            }
             pendingVerseGitBindings.delete(verseGitBinding.bindingId);
             recorder.recordEvent("versegit.binding.attached", "VerseGit binding attached to worker", {
               attributes: { bindingId: verseGitBinding.bindingId, childSessionKey, childRunId, roleName },

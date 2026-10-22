@@ -123,6 +123,7 @@ ClawX 保留 task/orchestration/approval/write journal/Git apply/harness verdict
 工具观察必须保留读取当时的相对路径/range/basis identity；单独的 inputDigest 无法还原这些内容，provider 后读已改变的文件也不能伪造读依据。反馈通过既有 tool-result middleware/prompt seam送达并记录真实 transcript/model-request 时序；generated/delivered/transcript-confirmed/behavior-shift 不混用。
 
 provider session end 的 abandoned 语义与 host success 分开。持久 completion fact 只记录宿主已发生结果，不转移 landing authority。全部清理路径共用 stop→drain→seal→detach→owner/epoch/reference check→delete barrier；任何失败保留资源与 recovery_required。
+F2 的 `clawx.versegit.cleanup-barrier/v1` 以 owner、epoch、authorization、base OID 与 refs digest 绑定每次删除；record 同时保存 agent-owned resource identity、阶段时间、evidence digests、late events 与 before/after inventory。只有 status=`detached` 的 exact resource 才能删除，只有实际观测到 process/manager/worktree/temp 均为零且无 survivor 才能进入 `deleted`；否则保持 `recovery_required`，未观测值不得写成零。
 
 **执行预算、代码与验收**
 

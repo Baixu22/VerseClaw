@@ -27,6 +27,9 @@ export type VerseGitBindingRequest = {
 export type VerseGitBindingRecord = {
   schema: typeof VG_RUNTIME_BINDING_SCHEMA;
   bindingId: string;
+  authorizationId: string;
+  baseOid: string;
+  refsDigest: string;
   requestId: string;
   runId: string;
   traceId: string;

@@ -68,6 +68,9 @@ function bindingRecord(value: ObservationBinding, childRunId: string): VerseGitB
   return {
     schema: "clawx.versegit.runtime-binding/v1",
     bindingId: value.bindingId!,
+    authorizationId: value.bindingId!,
+    baseOid: 'a'.repeat(40),
+    refsDigest: 'sha256:' + 'b'.repeat(64),
     requestId: value.requestId!,
     runId: value.runId,
     traceId: value.traceId,

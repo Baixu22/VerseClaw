@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { createVerseGitCleanupBarrier } from '../../shared/versegit-cleanup-barrier';
 import { afterEach, describe, expect, it } from 'vitest';
 import { VerseShellProcessManager } from '../../openclaw_runtime/src/agents/verseshell/process-manager';
 import {
@@ -32,6 +33,7 @@ import {
   completeCandidateVerificationEvidence,
   createCandidateInputManifest,
   prepareCandidateVerificationEvidence,
+  cleanupBarrierEvidenceFromRecord,
   stableJson,
   type CandidateInputManifest,
 } from '../../electron/services/versegit-receipt-evidence';
@@ -311,6 +313,8 @@ async function runCandidate(input: {
     baseRoot: input.baseRoot,
     deletedWorktrees: 1,
   });
+  const cleanupBarrier = syntheticCleanup(authority.root, plan);
+  cleanup.cleanupBarrier = cleanupBarrier.cleanup.cleanupBarrier;
   const completed = completeCandidateVerificationEvidence({
     authority,
     bridge,
@@ -326,6 +330,7 @@ async function runCandidate(input: {
       approvedByHost: execution.approvedByHost,
     },
     cleanup,
+    cleanupBarrierRoot: cleanupBarrier.cleanupBarrierRoot,
     receiptId: `receipt-${input.runId}`,
   });
   expect(completed.receiptResult.status).toBe('accepted');
@@ -356,8 +361,43 @@ function syntheticObservation(): Observation {
   };
 }
 
-function syntheticCleanup(): Record<string, unknown> {
+function syntheticCleanup(root: string, plan: VerificationPlan): { cleanup: Record<string, unknown>; cleanupBarrierRoot: string } {
+  const cleanupBarrierRoot = join(root, 'cleanup-barrier');
+  const barrier = createVerseGitCleanupBarrier(cleanupBarrierRoot);
+  const identity = {
+    ownerId: plan.owner,
+    epoch: plan.epoch,
+    authorizationId: plan.authorizationId,
+    baseOid: 'a'.repeat(40),
+    refsDigest: `sha256:${sha('refs-synthetic')}`,
+  };
+  const sealed = barrier.seal({
+    runId: plan.runId,
+    sessionId: 'session-synthetic',
+    bindingId: 'binding-synthetic',
+    actor: 'codex',
+    expected: identity,
+    current: identity,
+    references: [],
+    evidenceDigests: [`sha256:${sha('evidence-synthetic')}`],
+    inventoryBefore: { observed: true, processes: 0, managers: 1, worktrees: 0, tempRoots: 0, survivors: [] },
+    resources: [{ kind: 'manager', id: 'manager-synthetic', target: 'session-synthetic', owned: true, preserve: false }],
+    deletedKinds: ['manager'],
+    stopAccepting: true,
+    drain: { ok: true, issues: [] },
+  });
+  if (!sealed.sealId) throw new Error('synthetic cleanup barrier seal failed');
+  const detached = barrier.markDetached({ runId: plan.runId, sealId: sealed.sealId, current: identity, vgDetached: true });
+  if (!detached.record) throw new Error('synthetic cleanup barrier detach failed');
+  const completed = barrier.complete({
+    runId: plan.runId,
+    sealId: sealed.sealId,
+    inventoryAfter: { observed: true, processes: 0, managers: 0, worktrees: 0, tempRoots: 0, survivors: [] },
+  });
+  if (!completed.ok || !completed.record) throw new Error('synthetic cleanup barrier completion failed');
   return {
+    cleanupBarrierRoot,
+    cleanup: {
     schema: VG_VERIFICATION_CLEANUP_SCHEMA,
     status: 'clean',
     processesDeleted: true,
@@ -383,6 +423,8 @@ function syntheticCleanup(): Record<string, unknown> {
       survivorPids: [],
       ownedPidChecks: [{ ok: true, pid: 1234, exists: false }],
     },
+      cleanupBarrier: cleanupBarrierEvidenceFromRecord(completed.record),
+    },
   };
 }
 
@@ -396,6 +438,7 @@ function installSyntheticEvidence(root: string) {
   authority.reset();
   const bridge = new VerseGitReceiptBridge(authority);
   const prepared = prepareCandidateVerificationEvidence({ authority, bridge, plan, authorization, candidateManifest: manifest as never });
+  const cleanupEvidence = syntheticCleanup(root, plan);
   const completed = completeCandidateVerificationEvidence({
     authority,
     bridge,
@@ -410,7 +453,8 @@ function installSyntheticEvidence(root: string) {
       approvalRequired: true,
       approvedByHost: true,
     },
-    cleanup: syntheticCleanup(),
+    cleanup: cleanupEvidence.cleanup,
+    cleanupBarrierRoot: cleanupEvidence.cleanupBarrierRoot,
     receiptId: 'receipt-synthetic',
   });
   expect(completed.receiptResult.status).toBe('accepted');
@@ -508,6 +552,7 @@ describe('candidate receipt v2 host authority', () => {
     const inputRef = authority.recordCandidateInput(candidateId, manifest);
     const planRef = authority.recordPlan(plan);
     bridge.registerPlan(plan);
+    const cleanupEvidence = syntheticCleanup(root, plan);
     const completed = completeCandidateVerificationEvidence({
       authority,
       bridge,
@@ -517,7 +562,8 @@ describe('candidate receipt v2 host authority', () => {
         stdout: '{"ok":true}', stderr: '', processKey: 'process-revoked', processPid: 1234,
         managerKey: 'manager-revoked', approvalRequired: true, approvedByHost: true,
       },
-      cleanup: syntheticCleanup(),
+      cleanup: cleanupEvidence.cleanup,
+      cleanupBarrierRoot: cleanupEvidence.cleanupBarrierRoot,
       receiptId: 'receipt-revoked',
     });
     expect(completed.receiptResult.status).toBe('rejected_by_policy');
