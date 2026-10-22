@@ -1,0 +1,48 @@
+{
+  "schema": "clawx.versegit.provider-contracts/v1",
+  "state": {
+    "m1": "No provider state is created; missing state is unavailable, not initialized.",
+    "m2": "ClawX host explicitly creates provider state in a declared location after approval.",
+    "shared_sidecar": {
+      "instance_key": "repo_id + provider_version + host_run_scope",
+      "reference_counting": true,
+      "last_consumer_shutdown": "drain then stop; never delete evidence",
+      "standalone_state_reuse": "explicit opt-in only; default isolated"
+    },
+    "upgrade": ["stop_new_work", "drain", "seal_state", "verify_schema", "start_new_version"],
+    "rollback": ["stop_new_work", "drain", "verify_old_state_readable", "restore_previous_version", "revalidate_freshness"]
+  },
+  "delivery": {
+    "required_identity": [
+      "effective_source_commit",
+      "source_tree_digest",
+      "allowed_residual_patches",
+      "build_recipe_digest",
+      "lockfile_digest",
+      "platform",
+      "binary_sha256",
+      "capabilities_digest"
+    ],
+    "consumer_rule": "ClawX consumes a digest-addressed package, not a mutable checkout path.",
+    "build_must_be_reproducible": true,
+    "dirty_source_policy": "dirty or untracked provider source cannot produce an accepted package"
+  },
+  "cleanup_barrier": {
+    "owner": "ClawX host",
+    "order": [
+      "stop_accepting_work",
+      "drain_or_cancel_inflight",
+      "seal_evidence",
+      "detach_vg_session",
+      "verify_owner_epoch_reference",
+      "delete_disposable_worktree"
+    ],
+    "failure_state": "recovery_required",
+    "rules": [
+      "VG must not delete a host worktree",
+      "Host must not delete while VG references remain",
+      "Evidence retention has priority over directory cleanup",
+      "Any failed barrier step preserves the resource"
+    ]
+  }
+}

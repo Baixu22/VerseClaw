@@ -1,0 +1,69 @@
+{
+  "schema": "clawx.versegit.planning-correction/v1",
+  "date": "2026-10-21",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "active",
+  "purpose": "Machine-readable pre-implementation contract for introducing VerseGit into ClawX without source-tree pollution or LLM rewrite.",
+  "review_input": {
+    "path": "D:/tmp/versegit-plan-review-6.1-sol.md",
+    "verdict": "FAIL",
+    "reviewer_model": "ccs-agentrouter/gpt-6.1-sol",
+    "required_re_review_verdict": ["PASS", "PASS_WITH_GAPS"]
+  },
+  "contracts": {
+    "m1_effect": "m1-effect-matrix.json",
+    "execution_receipt": "execution-receipt-contract.json",
+    "provider": "provider-contracts.json",
+    "input_freeze": "input-freeze-contract.json",
+    "node_acceptance": "node-acceptance-matrix.json",
+    "resource_soak": "resource-soak-plan.json",
+    "evidence_retention": "evidence-retention-contract.json"
+  },
+  "p0": [
+    { "id": "P0-1", "correction": "Unified DAG gates WP0-WP3 behind MC0-MC3 and MC5." },
+    { "id": "P0-2", "correction": "Per-entry effect matrix and provider-only diagnostic seams; CLI name allowlists are prohibited." },
+    { "id": "P0-3", "correction": "Single host cleanup barrier with stop, drain, seal, detach, verify, delete order." }
+  ],
+  "p1": [
+    { "id": "P1-1", "correction": "Execution receipt binds plan, candidate, check, owner, epoch, inputs, scope, artifacts and cleanup." },
+    { "id": "P1-2", "correction": "Provider state contract defines M1 no-state, M2 host-created state, shared sidecar ownership, upgrade and rollback." },
+    { "id": "P1-3", "correction": "Provider delivery contract binds effective source, build recipe, lock inputs, platform and binary digest." },
+    { "id": "P1-4", "correction": "Input freeze contract covers Git and inprocess backends, dirty/untracked/ignored files and dependency inputs." },
+    { "id": "P1-5", "correction": "Every implementation node has a task-spec anchor, fixture, artifact, verifier and closure condition." },
+    { "id": "P1-6", "correction": "Evidence retention separates disposable resources from immutable evidence and defines atomic sealing." },
+    { "id": "P1-7", "correction": "Resource and soak contract defines bounded limits, three-way composition cases and performance tolerances." },
+    { "id": "P1-8", "correction": "TF-0481 is the sole ready node until planning correction and independent re-review close." }
+  ],
+  "dag": {
+    "planning_correction": "TF-0481",
+    "required_edges": [
+      { "from": "TF-0466", "to": "TF-0476" },
+      { "from": "TF-0478", "to": "TF-0466" },
+      { "from": "TF-0477", "to": "TF-0478" },
+      { "from": "TF-0467", "to": "TF-0477" },
+      { "from": "TF-0468", "to": "TF-0477" },
+      { "from": "TF-0469", "to": "TF-0477" }
+    ],
+    "forbidden_edges": [
+      { "from": "TF-0478", "to": "TF-0477" }
+    ],
+    "optional_nodes": ["TF-0479"],
+    "deprecated_nodes": [
+      { "id": "TF-0480", "reason": "Merged into TF-0472 to avoid duplicate closeout authority" }
+    ]
+  },
+  "non_goals": [
+    "implement VG adapter",
+    "implement harness profile",
+    "modify VerseGit source",
+    "run VG commands",
+    "change product defaults or release state"
+  ],
+  "completion": {
+    "all_p0_corrected": true,
+    "all_p1_corrected_or_bounded": true,
+    "independent_re_review_required": true,
+    "clean_tree_full_validation_required": true
+  }
+}

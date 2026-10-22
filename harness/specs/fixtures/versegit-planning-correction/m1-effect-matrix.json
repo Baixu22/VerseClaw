@@ -1,0 +1,35 @@
+{
+  "schema": "clawx.versegit.m1-effect-matrix/v1",
+  "policy": "M1 must be pure diagnostic; CLI names alone do not prove read-only.",
+  "entries": [
+    {
+      "entry": "capabilities",
+      "pure_diagnostic": true,
+      "effects": { "file_read": true, "file_write": false, "db_read": true, "db_write_or_create": false, "git_object_write": false, "materialize": false, "execute": false }
+    },
+    {
+      "entry": "doctor",
+      "pure_diagnostic": true,
+      "requires_existing_state": true,
+      "effects": { "file_read": true, "file_write": false, "db_read": true, "db_write_or_create": false, "git_object_write": false, "materialize": false, "execute": false }
+    },
+    {
+      "entry": "conflicts",
+      "pure_diagnostic": false,
+      "reason": "Current conflicts can open writable state, materialize trees and run registered checks.",
+      "effects": { "file_read": true, "file_write": false, "db_read": true, "db_write_or_create": true, "git_object_write": true, "materialize": true, "execute": true }
+    },
+    {
+      "entry": "session_show",
+      "pure_diagnostic": true,
+      "effects": { "file_read": true, "file_write": false, "db_read": true, "db_write_or_create": false, "git_object_write": false, "materialize": false, "execute": false }
+    },
+    {
+      "entry": "verdict_facts",
+      "pure_diagnostic": true,
+      "effects": { "file_read": true, "file_write": false, "db_read": true, "db_write_or_create": false, "git_object_write": false, "materialize": false, "execute": false }
+    }
+  ],
+  "provider_seams": ["provider.status", "provider.doctor", "provider.conflicts-plan", "provider.session-status"],
+  "forbidden_in_m1": ["initialize", "migrate", "materialize", "execute_check", "write_workspace", "write_domain_state"]
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "clawx.versegit.resource-soak/v1",
+  "limits": {
+    "max_active_sessions": 8,
+    "max_candidate_worktrees": 3,
+    "max_parallel_checks": 2,
+    "max_event_queue_bytes": 16777216,
+    "max_sidecar_memory_mb": 512,
+    "max_sidecar_cpu_percent": 50,
+    "max_log_bytes_per_run": 67108864,
+    "max_disk_bytes_per_run": 2147483648
+  },
+  "over_limit_action": "reject_new_work_and_report_degraded",
+  "soak_recipe": {
+    "iterations": 10,
+    "worktrees": 3,
+    "sessions": 3,
+    "duration_minutes": 30,
+    "producer_consumer_cases": 3,
+    "three_way_composition_cases": 2,
+    "failure_injection_cases": 8
+  },
+  "performance_tolerances": {
+    "profile_overhead_percent": 5,
+    "event_ingestion_p95_ms": 250,
+    "candidate_materialization_p95_ms": 3000,
+    "cleanup_survivors": 0
+  },
+  "calibration_rule": "Thresholds may be calibrated only by a new evidence-backed contract revision; a green run cannot silently relax them."
+}

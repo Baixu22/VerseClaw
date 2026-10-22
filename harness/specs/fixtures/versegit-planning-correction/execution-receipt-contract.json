@@ -1,0 +1,30 @@
+{
+  "schema": "clawx.verseshell.execution-receipt/v1",
+  "trusted_source": "ClawX host process/artifact authority",
+  "required_bindings": [
+    "planId",
+    "candidateId",
+    "checkId",
+    "ownerId",
+    "epoch",
+    "executionInputDigest",
+    "requiredScope",
+    "artifactDigests",
+    "cleanupStatus"
+  ],
+  "rejects": [
+    "wrong_candidate",
+    "stale_epoch",
+    "plan_check_mismatch",
+    "input_digest_drift",
+    "permission_revoked",
+    "missing_or_forged_artifact",
+    "selected_scope_claimed_as_full"
+  ],
+  "rules": [
+    "The host reads receipts from its own process and artifact authority; callers cannot self-report receipts.",
+    "A missing receipt is unmeasured, never passed.",
+    "Selected scope never satisfies a full required gate.",
+    "Effectful requests with unknown delivery are never replayed."
+  ]
+}

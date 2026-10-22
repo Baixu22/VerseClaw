@@ -1,0 +1,28 @@
+{
+  "schema": "clawx.versegit.input-freeze/v1",
+  "git_backend": {
+    "head": true,
+    "dirty_files": true,
+    "untracked_files": true,
+    "ignored_runtime_files": false,
+    "deletions_and_renames": true,
+    "dependency_inputs": true
+  },
+  "inprocess_backend": {
+    "supported": false,
+    "reason": "Directory simulation cannot provide a Git tree identity for VG semantic analysis.",
+    "action": "report unsupported rather than silently upgrading isolation mode"
+  },
+  "algorithm": [
+    "hash canonical path set",
+    "hash file content and mode",
+    "hash dependency manifests",
+    "rehash before and after verification",
+    "reject on drift"
+  ],
+  "rules": [
+    "HEAD, dirty tree and verification directory identities must not be mixed.",
+    "A frozen input that changes makes dependent evidence stale.",
+    "Unsupported backend is reported as unsupported, not as clean."
+  ]
+}
