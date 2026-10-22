@@ -1,3 +1,4 @@
+import { createHash, randomUUID } from 'node:crypto';
 import { assertSensitiveCaptureAllowed } from './sensitive-capture-gate';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
@@ -30,6 +31,68 @@ import {
   type DriverProfileLike,
   type ModelActionCapabilitySnapshot,
 } from './agent-browser-capabilities';
+import {
+  assertPermissionEffectOwnerCheckpoint,
+  permissionEffectBindingFor,
+} from '../../shared/permission-effect-contract';
+
+type AgentBrowserPermissionEffectInput = {
+  action: string;
+  requestId: string;
+  sessionKey?: string;
+  workspaceId?: string;
+  runId?: string;
+  taskId?: string;
+  sessionId?: string;
+};
+
+export function assertAgentBrowserPermissionEffect(
+  input: AgentBrowserPermissionEffectInput,
+): void {
+  const binding = permissionEffectBindingFor('browser');
+  if (!binding) throw new Error('permission-effect-binding-missing');
+  const nowMs = Date.now();
+  const sessionKey = input.sessionKey?.trim() || `browser:${input.requestId}`;
+  const workspaceId = input.workspaceId?.trim() || 'workspace-global';
+  const sessionId = input.sessionId?.trim();
+  const effectDigest = createHash('sha256')
+    .update([input.requestId, input.action, workspaceId, sessionKey, sessionId ?? ''].join('\0'))
+    .digest('hex');
+  const resource = sessionId
+    ? `browser-session:${effectDigest.slice(0, 24)}`
+    : `browser-action:${input.action}`;
+  const policyDigest = `sha256:${createHash('sha256')
+    .update([input.action, workspaceId, sessionKey, sessionId ?? ''].join('\0'))
+    .digest('hex')}`;
+  assertPermissionEffectOwnerCheckpoint({
+    componentId: 'browser',
+    subject: {
+      sessionKey,
+      runId: input.runId?.trim() || input.requestId,
+      attemptIndex: 0,
+      modelCallIndex: 0,
+      actorKind: 'principal',
+      workspaceId,
+      taskBranchId: input.taskId?.trim() || input.runId?.trim() || input.requestId,
+    },
+    request: {
+      requestId: `browser-request-${effectDigest.slice(0, 24)}`,
+      action: input.action,
+      resource,
+      purpose: `execute ${input.action} for the owning runtime session`,
+      idempotencyKey: `browser-effect-${effectDigest.slice(0, 32)}`,
+    },
+    authorityOwner: binding.finalAuthorityOwner,
+    decisionRef: `browser-decision-${effectDigest.slice(0, 24)}`,
+    policyDigest,
+    issuedAtMs: nowMs,
+    expiresAtMs: nowMs + 30_000,
+    nowMs,
+    revocationEpoch: 'browser-session-revocation:v1',
+    policyEpoch: policyDigest,
+    catalogEpoch: 'agent-browser-action-catalog:v1',
+  });
+}
 
 export async function assertBrowserAllowedUnderSandbox(action: string): Promise<void> {
   const actionClass = classifyAgentBrowserAction(action);
@@ -262,10 +325,35 @@ function withHostGuards<T extends object>(api: T): T {
       const value = Reflect.get(target, prop, receiver);
       if (typeof prop !== 'string' || typeof value !== 'function') return value;
       const bound = value.bind(target);
-      if (!classifyAgentBrowserAction(prop)) return bound;
+      if (prop === 'status') return bound;
+      const requiresSandboxCheck = classifyAgentBrowserAction(prop) !== null;
       return async (...args: unknown[]) => {
         await prepareHostContext();
-        await assertBrowserAllowedUnderSandbox(prop);
+        if (requiresSandboxCheck) {
+          await assertBrowserAllowedUnderSandbox(prop);
+        }
+        const payload = args[0] && typeof args[0] === 'object'
+          ? args[0] as Record<string, unknown>
+          : {};
+        const sessionKey = typeof payload.sessionKey === 'string'
+          ? payload.sessionKey
+          : typeof payload.agentSessionKey === 'string'
+            ? payload.agentSessionKey
+            : undefined;
+        const requestId = typeof payload.requestId === 'string'
+          ? payload.requestId
+          : `ipc-${randomUUID()}`;
+        if (prop !== 'status') {
+          assertAgentBrowserPermissionEffect({
+            action: prop,
+            requestId,
+            ...(sessionKey ? { sessionKey } : {}),
+            workspaceId: getWorkspaceRoot(),
+            ...(typeof payload.runId === 'string' ? { runId: payload.runId } : {}),
+            ...(typeof payload.taskId === 'string' ? { taskId: payload.taskId } : {}),
+            ...(typeof payload.sessionId === 'string' ? { sessionId: payload.sessionId } : {}),
+          });
+        }
         if (prop === 'screenshot') {
           await assertSensitiveCaptureAllowed('screenshot', (args[0] as { grantId?: string } | undefined)?.grantId);
         } else if (prop === 'command') {

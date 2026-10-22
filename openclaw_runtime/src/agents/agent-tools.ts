@@ -1117,6 +1117,7 @@ export function createOpenClawCodingTools(options?: {
     sessionId: options?.sessionId,
     runSessionKey: options?.runSessionKey,
     agentSessionKey: options?.sessionKey,
+    workspaceRoot: codingRoot,
     blockStore: options?.dcsBlockStore,
     contextBlockSink: options?.dcsContextBlockSink,
     role: options?.dcsContextRole,

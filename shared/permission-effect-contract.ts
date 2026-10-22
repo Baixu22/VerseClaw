@@ -43,14 +43,14 @@ export const PERMISSION_EFFECT_BINDINGS: readonly PermissionEffectBinding[] = Ob
     componentId: 'browser',
     label: 'Browser effect',
     effect: 'browser-effect',
-    finalAuthorityOwner: 'electron.gateway.agent-browser-bridge',
+    finalAuthorityOwner: 'electron.services.agent-browser-api',
     scopeKinds: ['workspace', 'session', 'task', 'action'],
   },
   {
     componentId: 'exec',
     label: 'Process exec',
     effect: 'process-exec',
-    finalAuthorityOwner: 'openclaw_runtime.agents.approval-ledger',
+    finalAuthorityOwner: 'openclaw_runtime.agents.exec-policy',
     scopeKinds: ['workspace', 'session', 'task', 'run', 'action'],
   },
   {
@@ -71,7 +71,7 @@ export const PERMISSION_EFFECT_BINDINGS: readonly PermissionEffectBinding[] = Ob
     componentId: 'memory-write',
     label: 'Memory write',
     effect: 'memory-write',
-    finalAuthorityOwner: 'openclaw_runtime.agents.role-permissions-policy',
+    finalAuthorityOwner: 'openclaw_runtime.memory.memory-dual-gate',
     scopeKinds: ['workspace', 'session', 'task', 'action'],
   },
   {
@@ -164,6 +164,111 @@ export type PermissionEffectFinalCheckInput = {
   snapshot: PermissionEffectSnapshot;
   current: PermissionEffectCurrentState;
 };
+
+/**
+ * Evidence supplied only after an existing owner has allowed the action.
+ *
+ * `decisionRef` must identify the owner's actual approval/policy decision and
+ * `idempotencyKey` must identify this effect. The helper derives a temporary,
+ * non-persisted CapabilityGrant for the final check; it is not an approval
+ * store and must never be called by a capability declaration itself.
+ */
+export type PermissionEffectOwnerCheckpointInput = {
+  componentId: PermissionEffectComponentId;
+  subject: PermissionEffectSubject;
+  request: Omit<PermissionEffectRequest, 'componentId' | 'idempotencyKey'> & {
+    idempotencyKey: string;
+  };
+  authorityOwner: string;
+  decisionRef: string;
+  policyDigest: string;
+  issuedAtMs: number;
+  expiresAtMs: number;
+  nowMs: number;
+  revocationEpoch: string;
+  revokedGrantIds?: readonly string[];
+  policyEpoch: string;
+  catalogEpoch: string;
+};
+
+export function buildPermissionEffectOwnerCheckpoint(
+  input: PermissionEffectOwnerCheckpointInput,
+): PermissionEffectFinalCheckInput {
+  const binding = permissionEffectBindingFor(input.componentId);
+  if (!binding) throw new PermissionEffectDeniedError('component-not-registered');
+  const request: PermissionEffectRequest = {
+    ...input.request,
+    componentId: input.componentId,
+  };
+  const grant: CapabilityGrant = {
+    schema: 'CapabilityGrant/v1',
+    grantId: input.decisionRef,
+    derivation: {
+      ruleId: 'permission-effect-owner-checkpoint/v1',
+      ruleVersion: '1',
+      policyDigest: input.policyDigest,
+      inputRefs: [input.decisionRef, input.request.requestId],
+    },
+    actor: {
+      sessionKey: input.subject.sessionKey,
+      runId: input.subject.runId,
+      attemptIndex: input.subject.attemptIndex,
+      modelCallIndex: input.subject.modelCallIndex,
+      actorKind: input.subject.actorKind,
+    },
+    scope: {
+      taskBranchId: input.subject.taskBranchId,
+      resource: input.request.resource,
+      action: input.request.action,
+      purpose: input.request.purpose,
+    },
+    approvalRef: {
+      approvalId: input.decisionRef,
+      decision: 'approved',
+      resolvedBy: input.authorityOwner,
+      policyDigest: input.policyDigest,
+    },
+    ttl: {
+      issuedAt: new Date(input.issuedAtMs).toISOString(),
+      expiresAt: new Date(input.expiresAtMs).toISOString(),
+    },
+    effectIdempotency: {
+      key: input.request.idempotencyKey,
+      namespace: binding.effect,
+    },
+    status: 'active',
+  };
+  return {
+    subject: input.subject,
+    request,
+    snapshot: {
+      grant: normalizeCapabilityGrant(grant),
+      authorityOwner: input.authorityOwner,
+      ownerDecision: 'allowed',
+      ownerPolicyDigest: input.policyDigest,
+      workspaceId: input.subject.workspaceId,
+      revocationEpoch: input.revocationEpoch,
+      revokedGrantIds: input.revokedGrantIds ?? [],
+      policyEpoch: input.policyEpoch,
+      catalogEpoch: input.catalogEpoch,
+      capturedAtMs: input.issuedAtMs,
+    },
+    current: {
+      nowMs: input.nowMs,
+      revocationEpoch: input.revocationEpoch,
+      revokedGrantIds: input.revokedGrantIds ?? [],
+      policyEpoch: input.policyEpoch,
+      catalogEpoch: input.catalogEpoch,
+    },
+  };
+}
+
+/** Verify a temporary grant immediately after the owning policy allowed it. */
+export function assertPermissionEffectOwnerCheckpoint(
+  input: PermissionEffectOwnerCheckpointInput,
+): PermissionEffectBinding {
+  return assertPermissionEffectAtFinalCheckpoint(buildPermissionEffectOwnerCheckpoint(input));
+}
 
 export type PermissionEffectDenyReason =
   | 'component-not-registered'

@@ -2,6 +2,7 @@ import type { JsonRpcNotification } from './protocol';
 import type { GatewayManager } from './manager';
 import { logger } from '../utils/logger';
 import {
+  assertAgentBrowserPermissionEffect,
   assertBrowserAllowedUnderSandbox,
   ensureAgentBrowserControlForOwnedSession,
   getAgentBrowserCapabilities,
@@ -212,6 +213,22 @@ async function invokeAgentBrowser(
   if (owner) {
     await ensureAgentBrowserControlForOwnedSession(service, owner, request.action, sessionIdForRequest(request.action, payload));
   }
+  if (request.action !== 'status') {
+    const payloadSessionKey = owner ?? readString(payload.sessionKey);
+    const payloadWorkspaceId =
+      request.correlation?.workspaceId ?? readString(payload.workspaceId);
+    const payloadSessionId = sessionIdForRequest(request.action, payload);
+    assertAgentBrowserPermissionEffect({
+      action: request.action,
+      requestId: request.requestId,
+      ...(payloadSessionKey ? { sessionKey: payloadSessionKey } : {}),
+      ...(payloadWorkspaceId ? { workspaceId: payloadWorkspaceId } : {}),
+      ...(request.correlation?.runId ? { runId: request.correlation.runId } : {}),
+      ...(request.correlation?.taskId ? { taskId: request.correlation.taskId } : {}),
+      ...(payloadSessionId ? { sessionId: payloadSessionId } : {}),
+    });
+  }
+
   if (api) {
     const method = api[request.action as keyof typeof api];
     if (typeof method !== 'function') throw new Error(`Unsupported agent browser action: ${request.action}`);

@@ -13,16 +13,20 @@ touchedAreas:
   - harness/specs/tasks/permission-effect-contract.md
   - shared/permission-effect-contract.ts
   - tests/unit/permission-effect-contract.test.ts
-  - shared/component-authority-manifest.ts
-  - tests/unit/component-authority-manifest.test.ts
+  - tests/unit/permission-effect-wiring.test.ts
   - electron/gateway/agent-browser-bridge.ts
   - electron/services/agent-browser-api.ts
   - electron/services/knowledge-api.ts
+  - openclaw_runtime/src/agents/agent-tools.ts
   - openclaw_runtime/src/agents/bash-tools.exec.ts
+  - openclaw_runtime/src/agents/bash-tools.exec-permission.ts
+  - openclaw_runtime/src/agents/bash-tools.exec-runtime.ts
+  - openclaw_runtime/src/agents/bash-tools.exec-host-gateway.ts
+  - openclaw_runtime/src/agents/bash-tools.exec-host-node.ts
   - openclaw_runtime/src/agents/stage4-tool-guard.ts
-  - openclaw_runtime/src/agents/stage4-capability-grant.ts
+  - openclaw_runtime/src/agents/verseshell/governed-exec-runtime.test.ts
   - openclaw_runtime/src/agents/tools/context-agent-tools.ts
-  - openclaw_runtime/src/runtime-core/memory-governance.ts
+  - openclaw_runtime/src/memory/memory-store.ts
 requiredRules:
   - runtime-authority-convergence-boundary
   - context-family-boundary
@@ -33,7 +37,14 @@ requiredProfiles:
   - comms
 requiredTests:
   - tests/unit/permission-effect-contract.test.ts
+  - tests/unit/permission-effect-wiring.test.ts
   - tests/unit/component-authority-manifest.test.ts
+  - tests/unit/agent-browser-gateway-bridge.test.ts
+  - tests/unit/knowledge-api.test.ts
+  - tests/unit/runtime-memory-store.test.ts
+  - openclaw_runtime/src/agents/tools/context-agent-tools.test.ts
+  - openclaw_runtime/src/agents/bash-tools.exec-host-node.abort.test.ts
+  - openclaw_runtime/src/agents/verseshell/governed-exec-runtime.test.ts
   - openclaw_runtime/src/agents/stage4-capability-grant.test.ts
   - openclaw_runtime/src/agents/stage4-tool-guard.test.ts
   - pnpm contract:check

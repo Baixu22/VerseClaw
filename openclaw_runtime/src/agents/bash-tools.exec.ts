@@ -66,6 +66,7 @@ import {
 } from "./goal-wake-helper-protocol.js";
 import { acquireSessionAdmissionPermit } from "../sessions/session-admission-registry.js";
 import { processGatewayAllowlist } from "./bash-tools.exec-host-gateway.js";
+import { createExecPermissionEffect } from "./bash-tools.exec-permission.js";
 import { resolveCommandExecProvenancePolicy } from "./exec-provenance-policy.js";
 import { executeNodeHostCommand } from "./bash-tools.exec-host-node.js";
 import { renderExecOutputText } from "./bash-tools.exec-output.js";
@@ -1520,7 +1521,7 @@ export function createExecTool(
         }
         return markResolveExecEnvPrepared(execParams, state);
       })(),
-    execute: async (_toolCallId, args, signal, onUpdate) => {
+    execute: async (toolCallId, args, signal, onUpdate) => {
       signal?.throwIfAborted();
       const params = isResolveExecEnvPrepared(args as ExecToolArgs)
         ? stripMalformedXmlArgValueSuffixFromKeys(
@@ -2065,6 +2066,18 @@ export function createExecTool(
         }
       }
 
+      const permissionEffect = createExecPermissionEffect({
+        ownerDecisionRef: toolCallId,
+        command: params.command,
+        ...(execCommandOverride ? { execCommand: execCommandOverride } : {}),
+        host,
+        workdir,
+        agentId,
+        ...(defaults?.sessionKey ? { sessionKey: defaults.sessionKey } : {}),
+        ...(defaults?.sessionId ? { expectedSessionId: defaults.sessionId } : {}),
+        ...(defaults?.trace?.traceId ? { traceId: defaults.trace.traceId } : {}),
+        ...(defaults?.scopeKey ? { scopeKey: defaults.scopeKey } : {}),
+      });
       let run: Awaited<ReturnType<typeof runExecProcess>>;
       try {
         // Async preflight/arming can finish after the caller has cancelled.
@@ -2075,6 +2088,7 @@ export function createExecTool(
           executionPlan: executionPlan ?? preResolvedVerseShellPlan,
           execHost: host,
           hostPolicyApproved,
+          permissionEffect,
           config: defaults?.config,
           workdir,
           env,

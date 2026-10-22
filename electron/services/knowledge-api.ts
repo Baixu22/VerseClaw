@@ -16,6 +16,10 @@ import { rotateLogIfNeeded } from '../utils/log-retention';
 // R2: main-side error returns must stay inside the sanitize boundary — the
 // renderer renders these strings directly in banners/toasts.
 import { sanitizeUiErrorText } from '../../shared/privacy/ui-error-sanitize';
+import {
+  assertPermissionEffectOwnerCheckpoint,
+  permissionEffectBindingFor,
+} from '../../shared/permission-effect-contract';
 // DCS Stage 5: real BlockStore-backed experience write-back. Electron imports
 // the runtime source directly (same pattern as agency-role-package-store), so
 // confirmed SEKB principles land in the same openclaw-state SQLite that
@@ -4748,6 +4752,59 @@ export function createKnowledgeApi({
       const subjectRevision = proposal.operation === 'create'
         ? String(draft.revision)
         : String(targetWikiRevision);
+      const permissionNowMs = Date.now();
+      const permissionBinding = permissionEffectBindingFor('knowledge-apply');
+      if (!permissionBinding) {
+        return { success: false, error: 'permission-effect-binding-missing', proposal, draft, reviewBundle: resolvedBundle };
+      }
+      const permissionPolicyDigest = `sha256:${createHash('sha256')
+        .update([
+          proposal.operation,
+          proposal.id,
+          proposal.reviewedDigest ?? '',
+          currentDigest,
+          draft.workspaceId ?? '',
+          String(proposal.expectedRevision ?? ''),
+        ].join('\0'))
+        .digest('hex')}`;
+      try {
+        assertPermissionEffectOwnerCheckpoint({
+          componentId: 'knowledge-apply',
+          subject: {
+            sessionKey: `knowledge:${draft.id}`,
+            runId: operationId,
+            attemptIndex: 0,
+            modelCallIndex: 0,
+            actorKind: 'principal',
+            workspaceId: draft.workspaceId || proposal.workspaceId || 'workspace-global',
+            taskBranchId: `knowledge-apply:${proposal.id}`,
+          },
+          request: {
+            requestId: `knowledge-apply-${operationId}`,
+            action: proposal.operation,
+            resource: `knowledge-page:${createHash('sha256').update(`${proposal.id}:${subjectId}`).digest('hex').slice(0, 24)}`,
+            purpose: 'apply an explicitly reviewed knowledge change',
+            idempotencyKey,
+          },
+          authorityOwner: permissionBinding.finalAuthorityOwner,
+          decisionRef: proposal.id,
+          policyDigest: permissionPolicyDigest,
+          issuedAtMs: permissionNowMs,
+          expiresAtMs: permissionNowMs + 30_000,
+          nowMs: permissionNowMs,
+          revocationEpoch: 'knowledge-apply-revocation:v1',
+          policyEpoch: permissionPolicyDigest,
+          catalogEpoch: 'knowledge-change-operations:v1',
+        });
+      } catch (error) {
+        return {
+          success: false,
+          error: sanitizeUiErrorText(error),
+          proposal,
+          draft,
+          reviewBundle: resolvedBundle,
+        };
+      }
       const baseEntry: GovernanceOperationJournalEntry = journal ?? {
         schema: 'knowledge-governance-operation.v1',
         operationId,

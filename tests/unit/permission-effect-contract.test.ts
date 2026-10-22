@@ -5,10 +5,13 @@ import {
   PERMISSION_EFFECT_COMPONENTS,
   PermissionEffectDeniedError,
   assertPermissionEffectAtFinalCheckpoint,
+  assertPermissionEffectOwnerCheckpoint,
+  buildPermissionEffectOwnerCheckpoint,
   permissionEffectBindingFor,
   validatePermissionEffectBindings,
   verifyPermissionEffectAtFinalCheckpoint,
   type PermissionEffectFinalCheckInput,
+  type PermissionEffectOwnerCheckpointInput,
 } from '@shared/permission-effect-contract';
 
 const POLICY_DIGEST = `sha256:${'a'.repeat(64)}`;
@@ -131,6 +134,71 @@ describe('permission/effect final contract', () => {
       reason: null,
       grantId: 'grant-1',
     });
+  });
+
+  it('derives the same scoped checkpoint for each registered owner', () => {
+    for (const componentId of PERMISSION_EFFECT_COMPONENTS) {
+      const base = makeInput(componentId);
+      const binding = permissionEffectBindingFor(componentId)!;
+      const ownerInput: PermissionEffectOwnerCheckpointInput = {
+        componentId,
+        subject: base.subject,
+        request: {
+          requestId: base.request.requestId,
+          action: base.request.action,
+          resource: base.request.resource,
+          purpose: base.request.purpose,
+          idempotencyKey: base.request.idempotencyKey!,
+        },
+        authorityOwner: binding.finalAuthorityOwner,
+        decisionRef: `decision-${componentId}`,
+        policyDigest: POLICY_DIGEST,
+        issuedAtMs: NOW - 1_000,
+        expiresAtMs: NOW + 30_000,
+        nowMs: NOW,
+        revocationEpoch: 'revocation-1',
+        policyEpoch: 'policy-1',
+        catalogEpoch: 'catalog-1',
+      };
+      expect(buildPermissionEffectOwnerCheckpoint(ownerInput).snapshot.grant).toMatchObject({
+        scope: {
+          taskBranchId: base.subject.taskBranchId,
+          resource: base.request.resource,
+          action: base.request.action,
+          purpose: base.request.purpose,
+        },
+        approvalRef: { resolvedBy: binding.finalAuthorityOwner },
+        effectIdempotency: {
+          key: base.request.idempotencyKey,
+          namespace: binding.effect,
+        },
+      });
+      expect(assertPermissionEffectOwnerCheckpoint(ownerInput)).toBe(binding);
+    }
+  });
+
+  it('rejects a component that tries to name itself as the owner', () => {
+    const base = makeInput('browser');
+    expect(() => assertPermissionEffectOwnerCheckpoint({
+      componentId: 'browser',
+      subject: base.subject,
+      request: {
+        requestId: base.request.requestId,
+        action: base.request.action,
+        resource: base.request.resource,
+        purpose: base.request.purpose,
+        idempotencyKey: base.request.idempotencyKey!,
+      },
+      authorityOwner: 'component.browser',
+      decisionRef: 'decision-browser-self',
+      policyDigest: POLICY_DIGEST,
+      issuedAtMs: NOW - 1_000,
+      expiresAtMs: NOW + 30_000,
+      nowMs: NOW,
+      revocationEpoch: 'revocation-1',
+      policyEpoch: 'policy-1',
+      catalogEpoch: 'catalog-1',
+    })).toThrow(expect.objectContaining({ reason: 'authority-owner-mismatch' }));
   });
 
   it('rejects an unregistered component or forged authority owner', () => {

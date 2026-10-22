@@ -7,7 +7,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { DatabaseSync, SQLInputValue } from "node:sqlite";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
+import {
+  assertPermissionEffectOwnerCheckpoint,
+  permissionEffectBindingFor,
+} from "../../../shared/permission-effect-contract.js";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import { resolveStateDir } from "../config/paths.js";
 import { redactSecrets } from "../logging/redact.js";
@@ -670,6 +674,56 @@ export function ensureMemoryCardsLoaded(): void {
 }
 
 export function storeMemoryCard(card: MemoryCard, options?: { actor?: MemoryAuditActor; reason?: string }): void {
+  const binding = permissionEffectBindingFor("memory-write");
+  if (!binding) throw new Error("permission-effect-binding-missing");
+  const nowMs = Date.now();
+  const effectDigest = createHash("sha256")
+    .update([
+      card.id,
+      String(card.version),
+      card.content,
+      card.status,
+      card.scope,
+      card.scopeKey ?? "",
+      options?.actor?.type ?? "system",
+      options?.actor?.id ?? "",
+      options?.reason ?? "",
+    ].join("\0"))
+    .digest("hex");
+  const policyDigest = `sha256:${createHash("sha256")
+    .update(`memory-write-policy:v1\0${card.scope}\0${card.status}\0${options?.actor?.type ?? "system"}`)
+    .digest("hex")}`;
+  const idempotencyKey = `memory-write-${effectDigest.slice(0, 32)}`;
+  assertPermissionEffectOwnerCheckpoint({
+    componentId: "memory-write",
+    subject: {
+      sessionKey: options?.actor?.id
+        ? `memory-actor-${createHash("sha256").update(options.actor.id).digest("hex").slice(0, 24)}`
+        : "memory-store",
+      runId: effectDigest,
+      attemptIndex: 0,
+      modelCallIndex: 0,
+      actorKind: options?.actor?.type === "role" ? "delegate" : "principal",
+      workspaceId: card.scope === "workspace" && card.scopeKey ? card.scopeKey : process.cwd(),
+      taskBranchId: `memory:${effectDigest.slice(0, 24)}`,
+    },
+    request: {
+      requestId: `memory-write-request-${effectDigest.slice(0, 24)}`,
+      action: "upsert",
+      resource: `memory-card:${createHash("sha256").update(card.id).digest("hex").slice(0, 24)}`,
+      purpose: "persist a policy-accepted role-memory card",
+      idempotencyKey,
+    },
+    authorityOwner: binding.finalAuthorityOwner,
+    decisionRef: `memory-decision-${effectDigest.slice(0, 24)}`,
+    policyDigest,
+    issuedAtMs: nowMs,
+    expiresAtMs: nowMs + 30_000,
+    nowMs,
+    revocationEpoch: "memory-write-revocation:v1",
+    policyEpoch: policyDigest,
+    catalogEpoch: "role-memory-policy:v1",
+  });
   const db = openDatabase();
   db.prepare(
     `INSERT INTO role_memory_cards (

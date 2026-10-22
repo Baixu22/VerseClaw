@@ -48,11 +48,31 @@ import {
 } from "./bash-tools.exec-runtime.js";
 import type { ExecToolDetails } from "./bash-tools.exec-types.js";
 import type { AgentToolResult } from "./runtime/index.js";
+import {
+  assertExecPermissionEffect,
+  createExecPermissionEffect,
+} from "./bash-tools.exec-permission.js";
 import { callGatewayTool } from "./tools/gateway.js";
 
 export type { ExecuteNodeHostCommandParams } from "./bash-tools.exec-host-node.types.js";
 
 const APPROVED_NODE_INVOKE_SCOPES = [WRITE_SCOPE, APPROVALS_SCOPE];
+
+function nodePermissionEffect(
+  params: ExecuteNodeHostCommandParams,
+  ownerDecisionRef: string,
+  workdir = params.workdir ?? process.cwd(),
+) {
+  return createExecPermissionEffect({
+    ownerDecisionRef,
+    command: params.command,
+    host: "node",
+    workdir,
+    ...(params.agentId ? { agentId: params.agentId } : {}),
+    ...(params.sessionKey ? { sessionKey: params.sessionKey } : {}),
+    ...(params.sessionId ? { expectedSessionId: params.sessionId } : {}),
+  });
+}
 
 function resolveNodeAutoReviewReason(params: {
   inlineEvalHit: InterpreterInlineEvalHit | null;
@@ -125,6 +145,9 @@ export async function executeNodeHostCommand(
     })
   ) {
     params.signal?.throwIfAborted();
+    assertExecPermissionEffect(
+      nodePermissionEffect(params, `node-direct-${randomUUID()}`),
+    );
     return await invokeNodeSystemRunDirect({ request: params, target });
   }
 
@@ -401,6 +424,10 @@ export async function executeNodeHostCommand(
             return;
           }
 
+          assertExecPermissionEffect(
+            nodePermissionEffect(params, approvalId, prepared.cwd),
+          );
+
           try {
             // Approved follow-up invocations need approval scopes because they mutate remote node state.
             const raw = await callGatewayTool(
@@ -474,6 +501,13 @@ export async function executeNodeHostCommand(
     }
   }
 
+  assertExecPermissionEffect(
+    nodePermissionEffect(
+      params,
+      inlineApprovalId ?? `node-policy-${randomUUID()}`,
+      prepared.cwd,
+    ),
+  );
   const startedAt = Date.now();
   const invoke = buildNodeSystemRunInvoke({
     target,
