@@ -1,0 +1,322 @@
+{
+  "schema": "clawx.versegit.b1-authority-negative/v1",
+  "generated_at": "2026-10-22T13:41:52.315Z",
+  "task": "TF-0526",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "dde49e5cce2b202bb0f71584b3a09043d5412276",
+    "tree": "1b512a4fc18fcb645cebd3587e7c065910631de4",
+    "dirty": false
+  },
+  "cases": [
+    {
+      "id": "missing-authorization",
+      "rejected": true,
+      "status": "rejected_by_policy",
+      "process_started": false,
+      "pid": null,
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "issues": [
+        "authorization id is missing"
+      ]
+    },
+    {
+      "id": "owner-mismatch",
+      "rejected": true,
+      "status": "rejected_by_policy",
+      "process_started": false,
+      "pid": null,
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "issues": [
+        "grant owner does not match host identity"
+      ]
+    },
+    {
+      "id": "epoch-mismatch",
+      "rejected": true,
+      "status": "rejected_by_policy",
+      "process_started": false,
+      "pid": null,
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "issues": [
+        "grant epoch does not match host identity"
+      ]
+    },
+    {
+      "id": "repo-mismatch",
+      "rejected": true,
+      "status": "rejected_by_policy",
+      "process_started": false,
+      "pid": null,
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "issues": [
+        "grant repository/worktree identity mismatch"
+      ]
+    },
+    {
+      "id": "worktree-mismatch",
+      "rejected": true,
+      "status": "rejected_by_policy",
+      "process_started": false,
+      "pid": null,
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "issues": [
+        "grant repository/worktree identity mismatch"
+      ]
+    },
+    {
+      "id": "expired-grant",
+      "rejected": true,
+      "status": "rejected_by_policy",
+      "process_started": false,
+      "pid": null,
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "issues": [
+        "grant is expired or has no valid expiry"
+      ]
+    },
+    {
+      "id": "revoked-grant",
+      "rejected": true,
+      "status": "rejected_by_policy",
+      "process_started": false,
+      "pid": null,
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "issues": [
+        "grant is revoked or revocation state is unknown"
+      ]
+    },
+    {
+      "id": "capability-mismatch",
+      "rejected": true,
+      "status": "rejected_by_policy",
+      "process_started": false,
+      "pid": null,
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "issues": [
+        "grant capability digest does not match the frozen identity"
+      ]
+    },
+    {
+      "id": "disabled",
+      "rejected": true,
+      "status": "not_applicable",
+      "process_started": false,
+      "pid": null,
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "issues": [
+        "adapter is disabled or opt-in trigger is absent"
+      ]
+    },
+    {
+      "id": "no-concurrency",
+      "rejected": true,
+      "status": "not_applicable",
+      "process_started": false,
+      "pid": null,
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "issues": [
+        "concurrent worktree/session trigger is absent"
+      ]
+    },
+    {
+      "id": "m2-operation-under-m1",
+      "rejected": true,
+      "status": "rejected_by_policy",
+      "process_started": false,
+      "pid": null,
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "issues": [
+        "operation doctor requires M2 or higher"
+      ]
+    },
+    {
+      "id": "binary-digest-mismatch",
+      "rejected": true,
+      "status": "rejected_by_policy",
+      "process_started": false,
+      "pid": null,
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "issues": [
+        "provider binary digest differs from the frozen identity"
+      ]
+    }
+  ],
+  "timeout": {
+    "status": "degraded",
+    "process_started": true,
+    "pid": 53372,
+    "exit_code": 1,
+    "deadline_ms": 1,
+    "timed_out": true,
+    "cancelled": false,
+    "pid_alive_after": false,
+    "argv": [
+      "capabilities",
+      "--json"
+    ],
+    "cwd_role": "provider-workspace",
+    "stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "truncated": false
+    },
+    "stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "truncated": false
+    },
+    "effects": {
+      "process": true,
+      "fileRead": true,
+      "domainStateWrite": false,
+      "workspaceWrite": false,
+      "gitObjectWrite": false,
+      "execute": false,
+      "network": false
+    },
+    "rejected": true
+  },
+  "cancellation": {
+    "status": "degraded",
+    "process_started": true,
+    "pid": 37792,
+    "exit_code": 1,
+    "deadline_ms": 30000,
+    "timed_out": false,
+    "cancelled": true,
+    "pid_alive_after": false,
+    "argv": [
+      "capabilities",
+      "--json"
+    ],
+    "cwd_role": "provider-workspace",
+    "stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "truncated": false
+    },
+    "stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "truncated": false
+    },
+    "effects": {
+      "process": true,
+      "fileRead": true,
+      "domainStateWrite": false,
+      "workspaceWrite": false,
+      "gitObjectWrite": false,
+      "execute": false,
+      "network": false
+    },
+    "rejected": true
+  },
+  "boundaries": {
+    "no_workspace_write": true,
+    "no_domain_state_write_before_grant": true,
+    "no_arbitrary_argv": true,
+    "no_m4": true,
+    "host_verdict": "unchanged"
+  },
+  "passed": true,
+  "digest": "91805f2812a9d00d7e20f967a4c778268674ac4000ea1ad71b163568e86ea69c"
+}

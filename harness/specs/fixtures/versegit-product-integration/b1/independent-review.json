@@ -1,0 +1,38 @@
+{
+  "schema": "clawx.versegit.b1-independent-review/v1",
+  "generated_at": "2026-10-22T13:41:52.513Z",
+  "task": "TF-0526",
+  "driven_by": "agent",
+  "actor": "codex",
+  "reviewer_role": "independent-b1-verifier-process",
+  "status": "passed",
+  "checks": [
+    {
+      "id": "adapter-differential",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "mode-effect-matrix",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "authority-negative",
+      "passed": true,
+      "issues": []
+    }
+  ],
+  "evidence_digests": {
+    "harness/specs/fixtures/versegit-product-integration/b1/adapter-differential.json": "84f8ac2cb748b1559348d58bcaf2900a6ae5f621747a555b2f5abca7e96aa7e3",
+    "harness/specs/fixtures/versegit-product-integration/b1/mode-effect-matrix.json": "0ecee1aa4504febbe9329760c2262d50196064c2f621a4295624c6e9d73eb388",
+    "harness/specs/fixtures/versegit-product-integration/b1/authority-negative.json": "0a7c078db61d78b4be0f91890a9ce4bde2ee53d4fcf03d9d40ac7103c5688c1e"
+  },
+  "boundaries": {
+    "real_human_evidence": false,
+    "default_on": false,
+    "ga": false,
+    "m4_authorized": false
+  },
+  "digest": "1e61f10d23f536c6a57dbd4e77ab2d92550660205fc2653727a6103a093865bd"
+}

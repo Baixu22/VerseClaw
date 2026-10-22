@@ -1,0 +1,185 @@
+{
+  "schema": "clawx.versegit.b1-mode-effect-matrix/v1",
+  "generated_at": "2026-10-22T13:41:51.337Z",
+  "task": "TF-0526",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "dde49e5cce2b202bb0f71584b3a09043d5412276",
+    "tree": "1b512a4fc18fcb645cebd3587e7c065910631de4",
+    "dirty": false
+  },
+  "modes": {
+    "M0": {
+      "process": false,
+      "stateRead": false,
+      "domainStateWrite": false,
+      "workspaceWrite": false,
+      "execute": false
+    },
+    "M1": {
+      "process": true,
+      "stateRead": true,
+      "domainStateWrite": false,
+      "workspaceWrite": false,
+      "execute": false
+    },
+    "M2": {
+      "process": true,
+      "stateRead": true,
+      "domainStateWrite": true,
+      "workspaceWrite": false,
+      "execute": false
+    },
+    "M3": {
+      "process": true,
+      "stateRead": true,
+      "domainStateWrite": true,
+      "workspaceWrite": false,
+      "execute": false
+    }
+  },
+  "operations": {
+    "version": {
+      "schema": "clawx.versegit.fact-operation/v1",
+      "operation": "version",
+      "minMode": "M1",
+      "effects": {
+        "process": true,
+        "fileRead": true,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "fixedArgv": [
+        "--version"
+      ]
+    },
+    "capabilities": {
+      "schema": "clawx.versegit.fact-operation/v1",
+      "operation": "capabilities",
+      "minMode": "M1",
+      "effects": {
+        "process": true,
+        "fileRead": true,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "fixedArgv": [
+        "capabilities",
+        "--json"
+      ]
+    },
+    "doctor": {
+      "schema": "clawx.versegit.fact-operation/v1",
+      "operation": "doctor",
+      "minMode": "M2",
+      "effects": {
+        "process": true,
+        "fileRead": true,
+        "domainStateWrite": true,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "fixedArgv": [
+        "doctor",
+        "--json"
+      ]
+    },
+    "sessionList": {
+      "schema": "clawx.versegit.fact-operation/v1",
+      "operation": "sessionList",
+      "minMode": "M2",
+      "effects": {
+        "process": true,
+        "fileRead": true,
+        "domainStateWrite": true,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "fixedArgv": [
+        "session",
+        "list",
+        "--json"
+      ]
+    },
+    "sessionShow": {
+      "schema": "clawx.versegit.fact-operation/v1",
+      "operation": "sessionShow",
+      "minMode": "M2",
+      "effects": {
+        "process": true,
+        "fileRead": true,
+        "domainStateWrite": true,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "fixedArgv": "typed-input-only"
+    },
+    "observeRead": {
+      "schema": "clawx.versegit.fact-operation/v1",
+      "operation": "observeRead",
+      "minMode": "M2",
+      "effects": {
+        "process": true,
+        "fileRead": true,
+        "domainStateWrite": true,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "fixedArgv": "typed-input-only"
+    },
+    "check": {
+      "schema": "clawx.versegit.fact-operation/v1",
+      "operation": "check",
+      "minMode": "M2",
+      "effects": {
+        "process": true,
+        "fileRead": true,
+        "domainStateWrite": true,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "fixedArgv": "typed-input-only"
+    }
+  },
+  "observed": {
+    "m0": {
+      "status": "rejected_by_policy",
+      "process_started": false,
+      "domain_state_write": false
+    },
+    "no_concurrency": {
+      "status": "not_applicable",
+      "process_started": false,
+      "domain_state_write": false
+    }
+  },
+  "boundaries": {
+    "fixed_argv": true,
+    "arbitrary_argv_allowed": false,
+    "shell_allowed": false,
+    "env_override_allowed": false,
+    "binary_override_allowed": false,
+    "host_verdict": "unchanged",
+    "m4_authorized": false
+  },
+  "passed": true,
+  "digest": "b477cdd8df3641a817d9c31471f582f068e920658110d2e4f13cd9fa24a337cb"
+}
