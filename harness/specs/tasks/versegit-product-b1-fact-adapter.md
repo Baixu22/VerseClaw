@@ -25,12 +25,34 @@ residualPaths:
   - harness/specs/tasks/model-capability-effective-runtime-state.md
   - openclaw_runtime/src/agents/runtime-effective-capability.ts
   - tests/unit/runtime-effective-capability.test.ts
+  - scripts/versegit-product-a1-evidence.d.mts
+  - scripts/versegit-product-a2-evidence.d.mts
+  - tests/unit/versegit-product-a1-evidence.test.ts
+  - tests/unit/versegit-product-a2-evidence.test.ts
+  - scripts/versegit-product-a1-evidence.mjs
+  - scripts/versegit-product-a2-evidence.mjs
+  - tests/e2e/app-smoke.spec.ts
+  - tests/unit/versegit-wp6-closeout.test.ts
+  - tests/unit/versegit-wp8-review.test.ts
+  - tests/unit/versegit-wp9-global-acceptance.test.ts
+  - harness/specs/fixtures/versegit-product-integration/a1/current-input-manifest.json
+  - harness/specs/fixtures/versegit-product-integration/a1/current-verification.json
+  - harness/specs/fixtures/versegit-product-integration/a1/historical-evidence-index.json
+  - harness/specs/fixtures/versegit-product-integration/a1/negative-checks.json
+  - harness/specs/fixtures/versegit-product-integration/a1/independent-review.json
+  - harness/specs/fixtures/versegit-product-integration/a1/SHA256SUMS
+  - harness/specs/fixtures/versegit-product-integration/a2/build-identity.json
+  - harness/specs/fixtures/versegit-product-integration/a2/electron-startup.json
+  - harness/specs/fixtures/versegit-product-integration/a2/smoke-results.json
+  - harness/specs/fixtures/versegit-product-integration/a2/cleanup.json
+  - harness/specs/fixtures/versegit-product-integration/a2/negative-checks.json
+  - harness/specs/fixtures/versegit-product-integration/a2/independent-review.json
+  - harness/specs/fixtures/versegit-product-integration/a2/SHA256SUMS
 touchedAreas:
   - harness/specs/tasks/versegit-product-b1-fact-adapter.md
   - electron/services/versegit-module.ts
   - electron/services/versegit-fact-adapter.ts
-  - electron/services/resource-tracker.ts
-  - shared/types/versegit.ts
+  - scripts/versegit-product-b1-evidence.mts
   - tests/unit/versegit-fact-adapter.test.ts
   - harness/specs/fixtures/versegit-product-integration/b1/**
   - harness/specs/tasks/versegit-product-integration-node-contracts.md

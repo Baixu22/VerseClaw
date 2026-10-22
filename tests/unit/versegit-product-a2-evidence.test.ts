@@ -6,9 +6,8 @@ import {
   validateSmokeResults,
 } from '../../scripts/versegit-product-a2-evidence.mjs';
 
-function sign(document: Record<string, unknown>) {
-  document.digest = documentDigest(document);
-  return document;
+function sign<T extends Record<string, unknown>>(document: T): T & { digest: string } {
+  return Object.assign(document, { digest: documentDigest(document) });
 }
 
 function smoke() {
@@ -71,7 +70,7 @@ describe('VerseGit A2 runtime baseline evidence', () => {
       task: 'TF-0525',
       driven_by: 'agent',
       actor: 'codex',
-      survivors: [],
+      survivors: [] as number[],
       pid_checks: [{ pid: 42, alive_after: false }],
       sweep: { status: 'ok', remaining: 0 },
       source_modified_by_cleanup: false,

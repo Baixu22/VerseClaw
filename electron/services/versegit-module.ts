@@ -9,6 +9,15 @@
  */
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import type {
+  VerseGitFactAdapter,
+  VerseGitFactGrant,
+  VerseGitFactIdentity,
+  VerseGitFactInput,
+  VerseGitFactOperation,
+  VerseGitFactResult,
+  VerseGitFactTrigger,
+} from './versegit-fact-adapter';
 
 export const VG_MODULE_REPORT_SCHEMA = 'clawx.versegit.module-report/v1';
 export const VG_COMMAND_PLAN_SCHEMA = 'clawx.versegit.command-plan/v1';
@@ -40,6 +49,7 @@ export type VerseGitModuleOptions = {
   expectedCapabilitiesDigest: string;
   timeoutMs?: number;
   run?: (argv: readonly string[], timeoutMs: number) => CommandResult;
+  factAdapter?: VerseGitFactAdapter;
 };
 
 export type VerseGitReportIdentity = {
@@ -434,6 +444,7 @@ function readFailure(error: unknown): Pick<EvidenceRead<never>, 'status' | 'reas
 export class VerseGitModule {
   private readonly run: NonNullable<VerseGitModuleOptions['run']>;
   private readonly expectedCapabilitiesDigest: string;
+  private readonly factAdapter?: VerseGitFactAdapter;
   private attached = false;
   private currentMode: VerseGitMode = 'M0';
   private processesStarted = 0;
@@ -445,6 +456,7 @@ export class VerseGitModule {
   constructor(options: VerseGitModuleOptions) {
     this.contractDigest = options.contractDigest;
     this.expectedCapabilitiesDigest = options.expectedCapabilitiesDigest;
+    this.factAdapter = options.factAdapter;
     this.timeoutMs = options.timeoutMs ?? 30_000;
     this.run = options.run ?? ((argv, timeout) => {
       try {
@@ -612,6 +624,23 @@ export class VerseGitModule {
     return { status: 'observed', document, issues, host_verdict: 'unchanged' };
   }
 
+  /**
+   * B1 production seam: execute a fixed provider fact through the bounded async
+   * adapter. Attachment and mode are checked before the adapter can spawn anything.
+   */
+  async readFact(
+    operation: VerseGitFactOperation,
+    identity: VerseGitFactIdentity,
+    grant: VerseGitFactGrant,
+    trigger: VerseGitFactTrigger,
+    input: VerseGitFactInput = {},
+    signal?: AbortSignal,
+  ): Promise<VerseGitFactResult> {
+    if (!this.attached) throw new Error('VerseGit module is not attached');
+    if (this.currentMode !== grant.mode) throw new Error('VerseGit module mode does not match fact grant');
+    if (!this.factAdapter) throw new Error('VerseGit fact adapter is not configured');
+    return this.factAdapter.execute(operation, identity, grant, trigger, input, signal);
+  }
   readDoctor(): EvidenceRead<Record<string, unknown>> {
     if (!this.attached) {
       return { status: 'unavailable', reason: 'not_attached', issues: ['module is not attached'], host_verdict: 'unchanged' };

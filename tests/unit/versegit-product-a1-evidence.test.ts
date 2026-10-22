@@ -23,9 +23,8 @@ function binary(overrides: Record<string, unknown> = {}) {
   };
 }
 
-function sign(document: Record<string, unknown>) {
-  document.digest = documentDigest(document);
-  return document;
+function sign<T extends Record<string, unknown>>(document: T): T & { digest: string } {
+  return Object.assign(document, { digest: documentDigest(document) });
 }
 
 function historicalFixture(root: string) {
