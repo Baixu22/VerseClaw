@@ -87,7 +87,8 @@ const passed =
   && negatives.duplicate_delivery_rejected === true
   && negatives.wrong_owner_rejected === true
   && negatives.old_epoch_rejected === true
-  && negatives.late_after_end_rejected === true
+  && negatives.revoked_after_end_rejected === true
+  && negatives.timeout_after_ttl_rejected === true
   && negatives.unavailable_original_preserved === true;
 const delivery = sign({
   schema: "clawx.versegit.d1-feedback-delivery/v1",

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
+import { createServer } from "node:net";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
@@ -14,6 +15,8 @@ import { guardSessionManager } from "../openclaw_runtime/src/agents/session-tool
 import { SessionManager } from "../openclaw_runtime/src/agents/sessions/session-manager";
 import { createVerseGitRuntimeBindingPortFromEnv } from "../openclaw_runtime/src/plugin-sdk/versegit-binding-port";
 import { createVerseGitRuntimeObservationPortFromEnv } from "../openclaw_runtime/src/plugin-sdk/versegit-observation-port";
+import { VerseGitBindingBridge } from "../electron/gateway/versegit-bridge";
+import { VerseGitObservationBridge } from "../electron/services/versegit-observation";
 
 const repoRoot = process.env.VERSEGIT_D1_REPO_ROOT!;
 const reportPath = process.env.VERSEGIT_D1_REPORT_PATH!;
@@ -21,6 +24,17 @@ const observationsPath = process.env.CLAWX_VERSGIT_OBSERVATION_EVENTS_PATH!;
 const bindingPort = createVerseGitRuntimeBindingPortFromEnv(process.env);
 const observationPort = createVerseGitRuntimeObservationPortFromEnv(process.env);
 if (!bindingPort || !observationPort) throw new Error("runtime VerseGit ports are unavailable");
+async function freePort(): Promise<number> {
+  return await new Promise((resolvePort, rejectPort) => {
+    const server = createServer();
+    server.once("error", rejectPort);
+    server.listen(0, "127.0.0.1", () => {
+      const address = server.address();
+      if (!address || typeof address === "string") return rejectPort(new Error("no port"));
+      server.close((error) => error ? rejectPort(error) : resolvePort(address.port));
+    });
+  });
+}
 function git(args: string[], cwd = repoRoot): string {
   return execFileSync("git", args, { cwd, encoding: "utf8", windowsHide: true }).trim();
 }
@@ -90,6 +104,49 @@ for (let attempt = 0; attempt < 100; attempt += 1) {
 }
 
 const duplicateObservation = await observationPort.observe(writeRequest);
+const timeoutPort = await freePort();
+const timeoutToken = `d1-timeout-${timeoutPort}`;
+const timeoutObservationPath = join(repoRoot, "timeout-observations.jsonl");
+const timeoutBridge = new VerseGitBindingBridge({
+  enabled: true,
+  port: timeoutPort,
+  token: timeoutToken,
+  ownerId: "agent:codex",
+  epoch: 4,
+  repoRoot,
+  eventsPath: join(repoRoot, "timeout-bridge-events.jsonl"),
+  observationsPath: timeoutObservationPath,
+  observationBridge: new VerseGitObservationBridge(),
+  feedbackTtlMs: 0,
+});
+const timeoutAddress = await timeoutBridge.start();
+const timeoutEnv = {
+  CLAWX_VERSGIT_BINDING_ENABLED: "1",
+  CLAWX_VERSGIT_RUNTIME_BINDING_URL: timeoutAddress!,
+  CLAWX_VERSGIT_BINDING_TOKEN: timeoutToken,
+  CLAWX_VERSGIT_OWNER_ID: "agent:codex",
+  CLAWX_VERSGIT_EPOCH: "4",
+};
+const timeoutBindingPort = createVerseGitRuntimeBindingPortFromEnv(timeoutEnv)!;
+const timeoutObservationPort = createVerseGitRuntimeObservationPortFromEnv(timeoutEnv)!;
+const timeoutReader = await timeoutBindingPort.bind({ requestId: "timeout-reader", runId: "timeout-reader", traceId: "timeout-reader", worktreePath: repoRoot, agentSessionId: "timeout-reader", mode: "M1" });
+const timeoutWriter = await timeoutBindingPort.bind({ requestId: "timeout-writer", runId: "timeout-writer", traceId: "timeout-writer", worktreePath: worktreeA, agentSessionId: "timeout-writer", mode: "M1" });
+const timeoutAttachedReader = await timeoutBindingPort.attach({ bindingId: timeoutReader.bindingId, childSessionKey: "timeout-reader", childRunId: "timeout-reader" });
+const timeoutAttachedWriter = await timeoutBindingPort.attach({ bindingId: timeoutWriter.bindingId, childSessionKey: "timeout-writer", childRunId: "timeout-writer" });
+const timeoutReadResult = await createReadToolDefinition(repoRoot).execute("timeout-read", { path: "base.txt" }, undefined, undefined, {} as ExtensionContext);
+await timeoutObservationPort.observe(deriveVerseGitToolObservationRequest({ event: toolEvent(repoRoot, "timeout-read", "read", { path: "base.txt" }, timeoutReadResult), binding: timeoutAttachedReader, cwd: repoRoot }));
+const timeoutWriteResult = await createWriteToolDefinition(worktreeA).execute("timeout-write", { path: "base.txt", content: "changed\n" }, undefined, undefined, {} as ExtensionContext);
+const timeoutWriteReceipt = await timeoutObservationPort.observe(deriveVerseGitToolObservationRequest({ event: toolEvent(worktreeA, "timeout-write", "write", { path: "base.txt" }, timeoutWriteResult), binding: timeoutAttachedWriter, cwd: worktreeA }));
+let timeoutAfterTtlRejected = false;
+if (timeoutWriteReceipt.feedback) {
+  await delay(5);
+  try {
+    await timeoutObservationPort.reportDelivery({ bindingId: timeoutAttachedWriter.bindingId, childRunId: "timeout-writer", toolCallId: "timeout-write", evidenceId: timeoutWriteReceipt.feedback.evidenceId, level: "host-delivered", observedAt: new Date().toISOString() });
+  } catch (error) {
+    timeoutAfterTtlRejected = (error as { code?: string }).code === "FEEDBACK_DELIVERY_REJECTED";
+  }
+}
+await timeoutBridge.stop();
 const original = { content: [{ type: "text" as const, text: "Original success" }], details: { status: "ok" } };
 const fallback = await enrichToolResultWithVerseGitFeedback({ result: original, observe: async () => { throw new Error("VG unavailable"); }, reportDelivery: async () => undefined });
 let lateAfterEndRejected = false;
@@ -123,6 +180,7 @@ const passed = Boolean(
   && wrongOwnerRejected
   && oldEpochRejected
   && lateAfterEndRejected
+  && timeoutAfterTtlRejected
   && originalToolResultPreserved
 );
 const report = {
@@ -162,7 +220,8 @@ const report = {
     duplicate_delivery_rejected: duplicateDeliveryRejected,
     wrong_owner_rejected: wrongOwnerRejected,
     old_epoch_rejected: oldEpochRejected,
-    late_after_end_rejected: lateAfterEndRejected,
+    revoked_after_end_rejected: lateAfterEndRejected,
+    timeout_after_ttl_rejected: timeoutAfterTtlRejected,
     unavailable_original_preserved: originalToolResultPreserved,
   },
   boundaries: {

@@ -23,7 +23,7 @@ function buildReview(generatedAt: string): Record<string, any> {
   if (leaks(delivery) > 0) deliveryIssues.push("delivery evidence contains an absolute path");
   if (delivery.levels?.produced !== 1 || delivery.levels?.host_delivered !== 1 || delivery.levels?.transcript_confirmed !== 1) deliveryIssues.push("delivery levels are not exactly one each");
   if (delivery.tool_result?.original_content_preserved !== true || delivery.tool_result?.original_details_preserved !== true || delivery.tool_result?.is_error !== false) deliveryIssues.push("original tool-result semantics were not preserved");
-  for (const key of ["duplicate_delivery_rejected", "wrong_owner_rejected", "old_epoch_rejected", "late_after_end_rejected", "unavailable_original_preserved"]) if (delivery.negatives?.[key] !== true) deliveryIssues.push(`negative case did not pass: ${key}`);
+  for (const key of ["duplicate_delivery_rejected", "wrong_owner_rejected", "old_epoch_rejected", "revoked_after_end_rejected", "timeout_after_ttl_rejected", "unavailable_original_preserved"]) if (delivery.negatives?.[key] !== true) deliveryIssues.push(`negative case did not pass: ${key}`);
   if (delivery.negatives?.duplicate_feedback_emitted !== false || delivery.negatives?.duplicate_observation !== "duplicate") deliveryIssues.push("duplicate feedback was not suppressed");
   checks.push({ id: "feedback-delivery", passed: deliveryIssues.length === 0, issues: deliveryIssues });
 
