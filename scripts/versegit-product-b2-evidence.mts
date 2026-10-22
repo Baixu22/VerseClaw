@@ -28,6 +28,8 @@ function sign<T extends Record<string, unknown>>(document: T): T & { digest: str
 function write(path: string, document: unknown) { const full = resolve(ROOT, path); mkdirSync(dirname(full), { recursive: true }); writeFileSync(full, `${JSON.stringify(document, null, 2)}\n`, 'utf8'); }
 function source() { const status = spawnSync('git', ['status', '--porcelain=v1', '--untracked-files=normal'], { cwd: ROOT, encoding: 'utf8', windowsHide: true }).stdout.trim(); return { branch: spawnSync('git', ['branch', '--show-current'], { cwd: ROOT, encoding: 'utf8', windowsHide: true }).stdout.trim() || 'detached', commit: spawnSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8', windowsHide: true }).stdout.trim(), tree: spawnSync('git', ['rev-parse', 'HEAD^{tree}'], { cwd: ROOT, encoding: 'utf8', windowsHide: true }).stdout.trim(), dirty: status.length > 0 }; }
 function flatten(suites: any[], output: any[] = []) { for (const suite of suites ?? []) { if (suite.specs) output.push(...suite.specs); flatten(suite.suites ?? [], output); } return output; }
+const candidateSource = source();
+if (candidateSource.dirty) throw new Error('B2 evidence source candidate is dirty before generation');
 const playwrightPath = process.argv[2];
 if (!playwrightPath) throw new Error('usage: versegit-product-b2-evidence.mts <playwright-json>');
 const playwright = JSON.parse(readFileSync(playwrightPath, 'utf8'));
@@ -52,5 +54,4 @@ const independent = sign({ schema: 'clawx.versegit.b2-independent-review/v1', ge
 write(paths.independent, independent);
 const all = [paths.hostInvoke, paths.contract, paths.negative, paths.independent];
 writeFileSync(resolve(ROOT, paths.sums), `${all.map((path) => `${sha(readFileSync(resolve(ROOT, path)))}  ${path}`).sort().join('\n')}\n`, 'utf8');
-if (source().dirty) throw new Error('B2 evidence source candidate is dirty');
 console.log(`[versegit-b2] OK e2e=${tests.length}/${tests.length} status=${observed.status} negative=${negativeCases.length} sender=${illegalSender.ok ? 'unexpected-ok' : 'denied'}`);
