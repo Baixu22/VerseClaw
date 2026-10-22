@@ -91,10 +91,19 @@ async function prepareHostContext(): Promise<void> {
 
 class HostAgentBrowserService extends ModuleAgentBrowserService {
   async open(payload: Parameters<ModuleAgentBrowserService['open']>[0] = {}) {
-    const result = await super.open(payload);
+    const workspace = await getActiveWorkspaceProfile().catch(() => null);
+    if (workspace && payload.workspaceId && payload.workspaceId !== workspace.id) {
+      const error = new Error('Browser session workspace does not match the active workspace') as Error & { code?: string };
+      error.code = 'E_WORKSPACE_MISMATCH';
+      throw error;
+    }
+    const workspaceId = workspace?.id ?? payload.workspaceId;
+    const result = await super.open(workspaceId ? { ...payload, workspaceId } : payload);
     recordResourceEnvelopeEntry({
       id: `main:browser-session:${result.session.id}`,
-      workspaceKey: result.session.workspaceId,
+      // Resource accounting needs an owner-resolved scope. A host-global browser
+      // opened before workspace selection is explicit; sessionKey is never an alias.
+      workspaceKey: result.session.workspaceId ?? 'global',
       kind: 'browser-session',
       priority: 'foreground',
       owner: 'main',
