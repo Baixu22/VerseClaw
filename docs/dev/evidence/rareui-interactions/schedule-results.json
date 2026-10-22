@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "dailyEdit": "30 10 * * 1",
+  "reopened": true,
+  "everyPreserved": true,
+  "deletesAfterCancel": 0,
+  "confirmedDeletion": true
+}

@@ -735,6 +735,10 @@
       "install": "OfficeCLI をインストール",
       "installing": "インストール中...",
       "retry": "再試行"
+    },
+    "toc": {
+      "title": "このページの目次",
+      "progress": "閲覧進捗 {{percent}}%。目次を開く"
     }
   },
   "workspace": {
@@ -2500,5 +2504,11 @@
     "deny": "拒否",
     "busy": "判断を送信中…",
     "resolveFailed": "ランタイムはこの判断を受け付けませんでした。"
+  },
+  "completionActivity": {
+    "label": "完了したアクティビティ、未読 {{count}} 件",
+    "title": "最近の完了",
+    "empty": "完了した回答と実行がここに表示されます。",
+    "completed": "実行が完了しました"
   }
 }

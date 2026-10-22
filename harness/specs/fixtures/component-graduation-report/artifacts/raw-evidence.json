@@ -1,0 +1,28 @@
+{
+  "fixture": "component-graduation-report/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "description": "Synthetic fixture output used only to test report schema, evidence-matrix and gate recomputation. It is not product or real-human evidence.",
+  "results": {
+    "production-call": {"status": "pass", "observed": "fixture production consumer invoked"},
+    "e2e": {"status": "pass", "observed": "fixture end-to-end path completed"},
+    "effective-state": {"status": "pass", "observed": "fixture effective state was enabled"},
+    "permission-negative": {"status": "pass", "observed": "fixture unauthorized path was denied"},
+    "canary": {"status": "pass", "observed": "fixture canary cohort completed"},
+    "rollback": {"status": "pass", "observed": "fixture rollback restored the prior state"},
+    "benefit": {"status": "pass", "observed": "fixture benefit threshold met"},
+    "necessity": {"status": "pass", "observed": "fixture necessity threshold met"},
+    "real-consumer": {"status": "pass", "observed": "fixture real consumer exists"},
+    "boundary": {"status": "pass", "observed": "fixture boundary assertions passed"},
+    "failure-recovery": {"status": "pass", "observed": "fixture crash/restart recovery passed"},
+    "not-product-claim": {"status": "pass", "observed": "fixture report makes no product claim"},
+    "caller-removal": {"status": "pass", "observed": "fixture caller was removed"},
+    "entrypoint-removal": {"status": "pass", "observed": "fixture entrypoint was removed"},
+    "migration": {"status": "pass", "observed": "fixture migration completed"},
+    "preservation-recovery": {"status": "pass", "observed": "fixture preservation path remains recoverable"},
+    "expiry": {"status": "pass", "observed": "fixture expiry recorded"},
+    "scope-observation": {"status": "pass", "observed": "fixture scope observation recorded"},
+    "kill-switch": {"status": "pass", "observed": "fixture kill switch stops the experiment"},
+    "contract": {"status": "pass", "observed": "fixture contract acceptance recorded"}
+  }
+}

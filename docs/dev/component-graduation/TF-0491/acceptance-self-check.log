@@ -1,0 +1,45 @@
+COMMAND=pnpm --dir openclaw_runtime exec tsx ../scripts/component-graduation-report.mts --report docs/dev/component-graduation/TF-0491/acceptance.json --expected-context docs/dev/component-graduation/TF-0491/expected-context.json --require-graduation
+Scope: all 155 workspace projects
+Lockfile is up to date, resolution step is skipped
+Already up to date
+[WARN] Failed to create bin at D:\ClawX-work\component-graduation-20261021\openclaw_runtime\extensions\verseconf-artifacts\node_modules\.bin\openclaw. ENOENT: no such file or directory, stat 'D:\ClawX-work\component-graduation-20261021\openclaw_runtime\openclaw.mjs.EXE'
+
+. preinstall$ node scripts/preinstall-package-manager-warning.mjs
+. preinstall: Done
+. postinstall$ node scripts/postinstall-bundled-plugins.mjs
+. postinstall: Done
+. prepare$ node scripts/prepare-git-hooks.mjs
+. prepare: Done
+Done in 2s using pnpm v11.2.2
+{
+  "validation": {
+    "ok": true,
+    "issues": [],
+    "requiredEvidence": [
+      "contract"
+    ],
+    "missingEvidence": [],
+    "graduationPass": true,
+    "countsAsGraduated": false,
+    "recomputedVerdict": "pass",
+    "defaultChangedAgainstAuthority": false,
+    "evidenceGradeDetected": "unit-test"
+  },
+  "defaultChange": null,
+  "taskForestDone": null,
+  "ok": true,
+  "reportPath": "D:\\ClawX-work\\component-graduation-20261021\\docs\\dev\\component-graduation\\TF-0491\\acceptance.json",
+  "expected": {
+    "scope": "worktree:component-graduation-20261021",
+    "actor": "codex",
+    "provider": "not-applicable",
+    "model": "not-applicable",
+    "commit": "d7fb59801ac570d1217656c71b60023128ff1d6c",
+    "tree": "b62dd37b6f22345de5dde0daacdb1806af67397f",
+    "buildHash": "c6b7608c493ad48ac912270b83552df39288603ec9f1faac5a45efde906f1cfa",
+    "recomputeInputDigest": "435a6db1946bb6de7306ec75cffddaa86f2cad92dd5c0332618fd5ee15b8ede6"
+  },
+  "currentDefaultMode": null,
+  "requireGraduation": true
+}
+EXIT_CODE=0

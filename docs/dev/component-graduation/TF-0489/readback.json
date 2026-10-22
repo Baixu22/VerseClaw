@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TF-0489",
+  "generatedAt": "2026-10-21T09:57:16.367Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "directDiskReadback": true,
+  "acceptanceSha256": "689d7d81be25eba7fc2c3fec8701ddfad9a1bcbb88749d9b8ec36c2e35b58b5c",
+  "validation": {
+    "ok": true,
+    "issues": []
+  },
+  "checks": [
+    {
+      "name": "scope-guard",
+      "status": "pass"
+    },
+    {
+      "name": "manifest-validation",
+      "status": "pass",
+      "observed": {
+        "componentCount": 34,
+        "authorityCount": 38,
+        "duplicateAuthorityKeys": []
+      }
+    },
+    {
+      "name": "domain-coverage",
+      "status": "pass"
+    },
+    {
+      "name": "catalog-binding",
+      "status": "pass",
+      "observed": {
+        "mapped": 22,
+        "expected": 22
+      }
+    },
+    {
+      "name": "permission-owner",
+      "status": "pass",
+      "observed": [
+        "permission-approval-authority"
+      ]
+    },
+    {
+      "name": "shared-module-unwired",
+      "status": "pass",
+      "observed": []
+    },
+    {
+      "name": "default-values-unchanged",
+      "status": "pass",
+      "observed": {
+        "baseline": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1",
+        "current": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1"
+      }
+    },
+    {
+      "name": "product-component-labels-unchanged",
+      "status": "pass",
+      "observed": {
+        "baseline": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc",
+        "current": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc"
+      }
+    },
+    {
+      "name": "scope-path-audit",
+      "status": "pass",
+      "observed": {
+        "statusPaths": [
+          "docs/clawx-product-semantics.md",
+          "docs/dev/adr/2026-08-16-context-authority-boundaries.md",
+          "docs/dev/default-config-matrix.md",
+          "docs/dev/runtime-control-planes.md",
+          "shared/component-authority-manifest.ts",
+          "tests/unit/component-authority-manifest.test.ts"
+        ],
+        "unexpectedStatusPaths": [],
+        "missingStatusPaths": []
+      }
+    },
+    {
+      "name": "unit-tests",
+      "status": "pass"
+    },
+    {
+      "name": "runtime-catalog-tests",
+      "status": "pass"
+    },
+    {
+      "name": "typecheck",
+      "status": "pass"
+    },
+    {
+      "name": "eslint",
+      "status": "pass"
+    },
+    {
+      "name": "catalogs-check",
+      "status": "pass"
+    },
+    {
+      "name": "contract-check",
+      "status": "pass"
+    },
+    {
+      "name": "git-diff-check",
+      "status": "pass"
+    },
+    {
+      "name": "profile-summary",
+      "status": "pass",
+      "observed": {
+        "profileEntries": 34
+      }
+    },
+    {
+      "name": "task-forest-validate-preapply",
+      "status": "pass"
+    },
+    {
+      "name": "task-forest-validate-postapply",
+      "status": "pass"
+    },
+    {
+      "name": "task-forest-export",
+      "status": "pass"
+    }
+  ],
+  "allChecksPass": true,
+  "statusPaths": [
+    "docs/clawx-product-semantics.md",
+    "docs/dev/adr/2026-08-16-context-authority-boundaries.md",
+    "docs/dev/default-config-matrix.md",
+    "docs/dev/runtime-control-planes.md",
+    "shared/component-authority-manifest.ts",
+    "tests/unit/component-authority-manifest.test.ts"
+  ],
+  "unexpectedStatusPaths": [],
+  "behaviorImports": [],
+  "defaultTable": {
+    "baseline": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1",
+    "current": "795d538a04796574e3852d003339a98836385ed0cad24edb7ef7f5f6d5dfcfc1",
+    "unchanged": true
+  },
+  "componentTable": {
+    "baseline": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc",
+    "current": "34260d30ab6fe95279eca294e1cea7894ff64795a5ddf71892aa824fa6781acc",
+    "unchanged": true
+  },
+  "taskForest": {
+    "taskId": "TF-0489",
+    "status": "done",
+    "progress": 100,
+    "evidenceCount": 18,
+    "nextNode": {
+      "id": "TF-0490",
+      "status": "ready",
+      "displayOrder": 30
+    },
+    "proposal": {
+      "id": "TFP-TF-0489-authority-manifest-20261021",
+      "status": "applied",
+      "baseGraphHash": "debf4947607ccd6c1ef78d274bb4edfae702d14123ad23b47ad67d0b2cbbaa7f"
+    },
+    "validatePostApply": "pass",
+    "export": "pass"
+  },
+  "artifacts": [
+    {
+      "path": "shared/component-authority-manifest.ts",
+      "sha256": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+      "bytes": 59578
+    },
+    {
+      "path": "tests/unit/component-authority-manifest.test.ts",
+      "sha256": "a15c21f68c125ae192626487bcbd4ee191903da00b2c4b91261122f999b8826e",
+      "bytes": 13008
+    },
+    {
+      "path": "docs/dev/runtime-control-planes.md",
+      "sha256": "a426aa62b28f5cc9cead92d1c04bdf58d63aeb60d411f8cdf3b0c8af842eb664",
+      "bytes": 20497
+    },
+    {
+      "path": "docs/clawx-product-semantics.md",
+      "sha256": "077ce6277672d03bdf36be118aa7cf7e67fa34bcece75d95461de7697f5bced5",
+      "bytes": 18007
+    },
+    {
+      "path": "docs/dev/default-config-matrix.md",
+      "sha256": "e6168119305acaa316ba12f969e5d1c273de54cfd79d9caf64d0fb0dfec16a0c",
+      "bytes": 5717
+    },
+    {
+      "path": "shared/dcs/prod-flags-catalog.ts",
+      "sha256": "acef3cfdf6ea60bc077485cdf243d47ce815cf4acc83e781d3d5a011140df2de",
+      "bytes": 21052
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/scope-guard.log",
+      "sha256": "bc92291ad8400b00dbc6c2fc08e5c733d6710c7487a7e7f46f6d46885ece5d65",
+      "bytes": 652
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/unit-tests.log",
+      "sha256": "ddc887600d13fa80865b435f772862b407d4046a0b3859b91e55283970a55f47",
+      "bytes": 8346
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/runtime-catalog-tests.log",
+      "sha256": "18932cf4166bc558ec66beafe8e92ad38a647ec6bce21d08e532f4e2016f93a9",
+      "bytes": 1712
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/typecheck.log",
+      "sha256": "5d5cb309168e416972ef739983670c2631efaa9858c709e502e882f297755c5e",
+      "bytes": 1733
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/eslint.log",
+      "sha256": "69a2b40228bd504c50f8136edfc414f66f34b55437e2c205f787ed3642459bb1",
+      "bytes": 126
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/catalogs-check.log",
+      "sha256": "67b9d49ff66702d7433d5d124870320f8de42a87867b9aa142a8b0fb879fb0aa",
+      "bytes": 208
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/contract-check.log",
+      "sha256": "08d0c7825bda3011230c5177e9d2778ec438254c0d34abcacd6953f7a58b3b97",
+      "bytes": 105
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/git-diff-check.log",
+      "sha256": "f0e099a9be7b67864764c22bbfb70859bac3445a816e605759acccabf728c046",
+      "bytes": 39
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/task-forest-validate-preapply.log",
+      "sha256": "9f894472065e362b123dfe4206128588861543e672c09aeb9720d283884a3732",
+      "bytes": 294
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/task-forest-validate.log",
+      "sha256": "9f894472065e362b123dfe4206128588861543e672c09aeb9720d283884a3732",
+      "bytes": 294
+    },
+    {
+      "path": "docs/dev/component-graduation/TF-0489/task-forest-export.log",
+      "sha256": "45f4a1463672cbdf15466a823e6a70f1bce37dbfddbe317dcc39c94f565d3a8a",
+      "bytes": 275
+    }
+  ]
+}

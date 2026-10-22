@@ -332,6 +332,7 @@ VerseBrowser：安装、开发和构建会自动编译内嵌模块。81 个契�
 | 知识、记忆与上下文设计 | [知识系统](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
 | Agent 与工作流 | [编排文档](docs/multi-agent-orchestration/README.md) · [角色包](docs/role-packs.md) |
 | 结构化文档 | [VerseConf 集成](docs/dev/verseconf-clawx-implementation-20261001.md) |
+| 会话与工作区交互 | [Rare UI 交互适配](docs/dev/rareui-interactions.md) |
 | 工程规则与持续开发 | [AGENTS.md](AGENTS.md) · [持续开发手册](docs/dev/Sustained-Development-Playbook.md) · [Agent Dev](docs/agent-dev-control-plane.md) |
 | 运行时与验收 | [运行时收敛](docs/dev/unified-agent-system/runtime-convergence/README.md) · [RC-09/RC-10 证据边界](docs/dev/windows-alpha-closeout-20261008.md) |
 | 资源、归档与源码恢复 | [保留规则](docs/dev/repository-artifact-retention.md) · [VerseShell 源码契约](resources/verseshell/SOURCE.md) |
@@ -342,7 +343,7 @@ VerseBrowser：安装、开发和构建会自动编译内嵌模块。81 个契�
 
 保持修改范围明确，提供对应验证，涉及行为变化时同步四份 README。遵循 [AGENTS.md](AGENTS.md) 的 API、i18n、规格与证据要求；源码、可复用夹具和精选最终证据一起跟踪，私有任务历史与原始生成日志留在本地。
 
-Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw)，并继承 ValueCell 团队的 ClawX 工作。仓库采用 [MIT 许可证](LICENSE)；内置组件保留各自许可证和源码义务，包括 [VerseShell 的声明](resources/verseshell/SOURCE.md)。
+Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw)，并继承 ValueCell 团队的 ClawX 工作。仓库采用 [MIT 许可证](LICENSE)；内置组件保留各自许可证和源码义务，包括 [VerseShell 的声明](resources/verseshell/SOURCE.md)。会话与工作区的紧凑交互改编自 Swami Malode 的 [Rare UI](https://rareui.com)，其许可证与署名要求保留在 `src/components/rareui`。
 
 ### Coding 诊断日志
 

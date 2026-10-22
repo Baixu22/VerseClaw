@@ -1,0 +1,10 @@
+{
+  "scope": "workspace:component-graduation-fixture",
+  "actor": "codex",
+  "provider": "fixture-provider",
+  "model": "fixture-model-v1",
+  "commit": "1111111111111111111111111111111111111111",
+  "tree": "2222222222222222222222222222222222222222",
+  "buildHash": "3333333333333333333333333333333333333333333333333333333333333333",
+  "recomputeInputDigest": "1e6c441a993f555d3760eb5a7cab08f831ef33389d2736a97a006cbd95befed4"
+}

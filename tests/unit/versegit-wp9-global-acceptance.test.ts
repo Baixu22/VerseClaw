@@ -17,7 +17,7 @@ import {
 } from '../../scripts/verify-versegit-wp9.mjs';
 
 interface StoredReport {
-  acceptance: Array<{ evidence: unknown[] }>;
+  acceptance: Array<{ evidence: unknown[]; status: string; criterion: string }>;
   taskForest: {
     children: Array<{ self?: boolean; status: string }>;
     self: { status: string };
@@ -76,9 +76,9 @@ describe('WP9 whole-goal acceptance', () => {
   it('rejects missing evidence, open children and promoted lifecycle authority', () => {
     const report = structuredClone(stored());
     report.acceptance[0].evidence = [];
-    const child = report.taskForest.children.find((entry: Record<string, unknown>) => entry.self !== true);
+    const child = report.taskForest.children.find((entry: Record<string, unknown>) => entry.self !== true)!;
     child.status = 'ready';
-    report.taskForest.children.find((entry: Record<string, unknown>) => entry.self === true).status = 'blocked';
+    report.taskForest.children.find((entry: Record<string, unknown>) => entry.self === true)!.status = 'blocked';
     report.taskForest.self.status = 'blocked';
     report.taskForest.parent.status = 'blocked';
     report.p1.push({ id: 'P1-open' });
@@ -120,7 +120,7 @@ describe('WP9 whole-goal acceptance', () => {
     report.acceptance[0].evidence = structuredClone(report.acceptance[1].evidence);
     report.acceptance[0].status = 'unverified';
     report.acceptance[0].criterion = 'replacement criterion';
-    report.taskForest.children.find((entry) => entry.self === true).status = 'done';
+    report.taskForest.children.find((entry) => entry.self === true)!.status = 'done';
     report.digest = documentDigest(report);
     const issues = validateWp9Report(report, { root: process.cwd() }).issues;
     expect(issues).toEqual(expect.arrayContaining([

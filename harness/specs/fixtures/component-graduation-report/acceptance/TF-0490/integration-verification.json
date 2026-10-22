@@ -1,0 +1,66 @@
+{
+  "schema": "clawx.component-graduation.integration-readback/v1",
+  "task": "TF-0490",
+  "date": "2026-10-22",
+  "driven_by": "agent",
+  "actor": "codex",
+  "sourceCommit": "5a1d251e9",
+  "evidenceCommitBase": "dbb82ff37",
+  "checks": [
+    {
+      "id": "focused-graduation-tests",
+      "command": "pnpm exec vitest run tests/unit/component-authority-manifest.test.ts tests/unit/component-graduation-report.test.ts tests/unit/component-disposition-catalog.test.ts tests/unit/model-capability-profile.test.ts",
+      "exitCode": 0,
+      "files": 4,
+      "tests": 46
+    },
+    {
+      "id": "full-typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "projects": ["node", "web", "test"]
+    },
+    {
+      "id": "catalogs-check",
+      "command": "pnpm run catalogs:check",
+      "exitCode": 0
+    },
+    {
+      "id": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0
+    },
+    {
+      "id": "graduation-gate",
+      "command": "pnpm --dir openclaw_runtime exec tsx ../scripts/component-graduation-report.mts --report harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/acceptance.json --expected-context harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/expected-context.json --require-graduation",
+      "exitCode": 0,
+      "validation": "pass",
+      "graduationPass": true
+    },
+    {
+      "id": "harness-structural",
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/component-graduation-report-v1.md --no-diff",
+      "exitCode": 0
+    }
+  ],
+  "replacedMissingHistoricalRefs": [
+    "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/unit-tests.log",
+    "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/cli-gate.log",
+    "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/typecheck.log",
+    "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/eslint.log",
+    "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/harness-context.log",
+    "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/harness-validate.log",
+    "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/catalogs-check.log",
+    "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/contract-check.log",
+    "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/git-diff-check.log",
+    "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/acceptance-self-check.log",
+    "harness/specs/fixtures/component-graduation-report/acceptance/TF-0490/task-forest-validate-preapply.log"
+  ],
+  "disposition": "replaced-by-consolidated-agent-readback",
+  "authority": {
+    "humanEvidence": false,
+    "productDefaultChanged": false,
+    "releaseEligible": false,
+    "ga": false
+  }
+}

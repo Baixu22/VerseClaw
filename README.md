@@ -332,6 +332,7 @@ Daily reports list outstanding full gates under `decision.requiredFullGates`. Ag
 | Knowledge, memory and context | [Knowledge system](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
 | Agents and workflows | [Orchestration](docs/multi-agent-orchestration/README.md) · [Role packs](docs/role-packs.md) |
 | Structured documents | [VerseConf integration](docs/dev/verseconf-clawx-implementation-20261001.md) |
+| Conversation and workspace interactions | [Rare UI interaction adaptations](docs/dev/rareui-interactions.md) |
 | Engineering rules and continuity | [AGENTS.md](AGENTS.md) · [Development playbook](docs/dev/Sustained-Development-Playbook.md) · [Agent Dev](docs/agent-dev-control-plane.md) |
 | Runtime and acceptance | [Runtime convergence](docs/dev/unified-agent-system/runtime-convergence/README.md) · [RC-09/RC-10 evidence boundaries](docs/dev/windows-alpha-closeout-20261008.md) |
 | Resources, archival and source recovery | [Retention policy](docs/dev/repository-artifact-retention.md) · [VerseShell source contract](resources/verseshell/SOURCE.md) |
@@ -342,7 +343,7 @@ Design plans and older acceptance snapshots have their own scope and dates. Curr
 
 Keep changes scoped, provide relevant validation and update all four READMEs when behavior changes. Follow [AGENTS.md](AGENTS.md) for API, i18n, specifications and evidence requirements. Track source, reusable fixtures and curated final evidence together; retain private task history and raw generated logs locally.
 
-Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the ClawX work by the ValueCell team. The repository uses the [MIT license](LICENSE). Bundled components retain their own licenses and source obligations, including the [VerseShell notices](resources/verseshell/SOURCE.md).
+Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the ClawX work by the ValueCell team. The repository uses the [MIT license](LICENSE). Bundled components retain their own licenses and source obligations, including the [VerseShell notices](resources/verseshell/SOURCE.md). Compact conversation and workspace interactions adapted from [Rare UI](https://rareui.com) by Swami Malode retain the source license and attribution under `src/components/rareui`.
 
 ### Coding diagnostic logs
 

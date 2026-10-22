@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "fixture-shadow",
+  "reportKind": "component",
+  "componentId": "sekb-candidate-provider",
+  "taskForestNodeId": "TF-TEST-SEKB-SHADOW",
+  "disposition": "shadow",
+  "maturity": "candidate",
+  "owner": "sekb-candidate-provider",
+  "entryPoint": "fixture-entrypoint",
+  "defaultMode": "shadow",
+  "benefitEvidence": "Fixture evidence shows a bounded component benefit; no product claim.",
+  "rollback": "Disable the component and restore the prior default/configuration.",
+  "modelEffectiveState": "Fixture model-visible state is derived from the same evidence bundle.",
+  "evidenceGrade": "unit-test",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": "2099-01-01T00:00:00.000Z",
+  "binding": {
+    "commit": "1111111111111111111111111111111111111111",
+    "tree": "2222222222222222222222222222222222222222",
+    "buildHash": "3333333333333333333333333333333333333333333333333333333333333333",
+    "runtimeGeneration": "fixture-runtime-generation-1",
+    "provider": "fixture-provider",
+    "model": "fixture-model-v1",
+    "inputSet": "fixture-input-set-v1",
+    "scope": "workspace:component-graduation-fixture",
+    "artifacts": [
+      {
+        "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+        "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+        "bytes": 2060
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "expiry",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "Fixture expiry evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "scope-observation",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "Fixture scope-observation evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "kill-switch",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "Fixture kill-switch evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "1e6c441a993f555d3760eb5a7cab08f831ef33389d2736a97a006cbd95befed4",
+    "command": "fixture recompute from raw-evidence.json"
+  }
+}

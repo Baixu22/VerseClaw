@@ -42,6 +42,26 @@ flowchart LR
 
 The diagram shows ownership relationships, not a promise that every edge is enabled in every run. ResourceFabric currently admits `workspaceExec` and `chat.history`; it is not a global process scheduler. Runtime Memory and enhancement paths are independently gated.
 
+## Component authority manifest
+
+Current component dispositions are recorded in [Component disposition matrix](component-disposition-matrix-20261021.md) and `shared/dcs/component-disposition-catalog.ts`; the latter is the machine-readable source for later ModelCapabilityProfile work.
+
+`shared/component-authority-manifest.ts` is the machine-readable `ComponentAuthorityManifest/v1` registry for component purpose, owned data types, scopes, allowed reads/writes, effects, forbidden actions, runtime availability source and source anchors. `tests/unit/component-authority-manifest.test.ts` is the static guard: it rejects duplicate accepting/update authorities, domain executors, unauthorized cross-domain writes and permission escalation, then cross-checks the registry against this document, the FP-P1 product table and the default-config matrix.
+
+| Domain | Canonical owner or owner group | Boundary |
+| --- | --- | --- |
+| context | Context Runtime Kit; DCS context authority; Provider request guard | CRK owns reference lifecycle, DCS owns candidate adjudication/PromptPlan, and Provider Guard owns the final RequestEnvelope |
+| memory | Role-memory card governance; Runtime memory store; native retrieval; candidate queue; embedding provider | Role cards, runtime facts/timelines/episodes, retrieval and candidate queues are separate data domains; a candidate is not accepted memory |
+| knowledge | Knowledge review authority; Knowledge retrieval source; SEKB candidate provider | Only the review authority can apply knowledge; SEKB supplies candidates/provenance |
+| capability | V3 capability catalog; Skills/MCP source registry; Tool Search | Sources publish manifests, Tool Search expands discovery/schema, and V3 descriptors never carry executor closures |
+| execution | Coding execution backend; VerseShell adapter | Execution performs effects but consumes permission decisions; VerseShell does not become a second executor |
+| permission | Permission and approval authority | This is the only component role allowed to authorize or approve |
+| task | Task Ledger | Task Ledger owns user-visible task facts and task-scoped working-context proposals/acceptance |
+| browser | Browser session owner; browser task projection owner | Session/action state, task projection and approval decisions have separate owners |
+| observability | Observability recorder; Routing Memo observation | Trace/receipt/log recording cannot grant execution or approval; Routing Memo remains shadow until scorecard-backed active authority exists |
+| ui-transport | Host API transport owner; renderer surface | Renderer uses typed host-api only and cannot call Gateway or read/write memory/knowledge directly |
+
+The manifest is static architecture evidence, not a runtime feature flag. It does not change a product default, enable a component or replace the authoritative implementation source. `buildComponentAuthorityProfile()` combines the static defaults with caller-supplied effective availability and produces a `ComponentAuthorityProfile/v1` summary suitable for a later model capability profile; TF-0489 does not wire that profile into live model behavior.
 ## One-turn lifecycle
 
 ```mermaid

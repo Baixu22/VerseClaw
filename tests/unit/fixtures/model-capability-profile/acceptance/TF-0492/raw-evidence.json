@@ -1,0 +1,211 @@
+{
+  "schemaVersion": "ModelCapabilityProfileAcceptanceEvidence/v1",
+  "reportId": "tf-0492-model-capability-profile-contract",
+  "taskForestNodeId": "TF-0492",
+  "generatedAt": "2026-10-21T14:00:01.000Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "profileSchema": "ModelCapabilityProfile/v1",
+    "dispositionManifestEntries": 52,
+    "profileSourcePath": "shared/model-capability-profile.ts",
+    "profileSourceSha256": "f821284baca4753b7b6f41220eb89177fc0ec7a6b616a3f853ffd47335299e6c",
+    "testPath": "tests/unit/model-capability-profile.test.ts",
+    "testSha256": "35072a6e0d9677304979f4a5508c9f5a04d952a6eac6b1f7b493c159bf0292ea",
+    "fixturePath": "tests/unit/fixtures/model-capability-profile/state-cases.json",
+    "fixtureSha256": "0ec9c3cfd8b4522e16593a73f061a9d9cb6ca53c6aa2b90a186c90f6e36e4ab2"
+  },
+  "acceptanceCriteria": [
+    {
+      "criterion": "profile schema 和纯生成器有负向测试",
+      "status": "pass"
+    },
+    {
+      "criterion": "所有用户可见能力在静态 disposition 中恰有一条记录，五条状态轴不混淆",
+      "status": "pass"
+    },
+    {
+      "criterion": "静态 digest 只随静态配置变化；effective digest 的输入字段有 fixture 并规范化",
+      "status": "pass"
+    },
+    {
+      "criterion": "状态 fixture 覆盖 enabled/disabled/partial/degraded/quarantined/requires-approval/internal/retired",
+      "status": "pass"
+    },
+    {
+      "criterion": "profile prompt addition 有明确字符预算，不挤占工作上下文",
+      "status": "pass"
+    }
+  ],
+  "measurements": {
+    "profileEntries": 52,
+    "userVisibleCapabilities": 25,
+    "uniqueUserVisibleCapabilities": 25,
+    "dispositionCounts": {
+      "default": 14,
+      "advanced": 11,
+      "internal": 15,
+      "experiment": 10,
+      "retired": 2
+    },
+    "staticDigest": "sha256:656b36a15bf97f9ec2848abdd722fdab8ddf7a02d6d8016479c65492d1c4c86c",
+    "effectiveDigest": "sha256:0e78a01d5d8f5e3f4cacdcb45f990d9caab0ff28a8e0531784167ec6e2cf4d25",
+    "runtimeGeneration": "gen-tf0492-fixture-1",
+    "scope": {
+      "workspaceId": "workspace:component-graduation",
+      "roleId": "role:product-acceptance",
+      "sessionKey": "session:tf-0492"
+    },
+    "prompt": {
+      "maxChars": 2000,
+      "usedChars": 1020,
+      "remainingChars": 980,
+      "workContextCharsUsed": 0,
+      "omittedCapabilityIds": []
+    }
+  },
+  "stateCoverage": [
+    {
+      "id": "enabled",
+      "capabilityId": "component.working-memory-context",
+      "staticDisposition": "default",
+      "axis": "runtimeAvailability",
+      "expected": "enabled",
+      "observed": "enabled",
+      "status": "pass"
+    },
+    {
+      "id": "disabled",
+      "capabilityId": "surface.cron",
+      "staticDisposition": "advanced",
+      "axis": "runtimeAvailability",
+      "expected": "disabled",
+      "observed": "disabled",
+      "status": "pass"
+    },
+    {
+      "id": "partial",
+      "capabilityId": "component.knowledge-retrieval-source",
+      "staticDisposition": "default",
+      "axis": "runtimeAvailability",
+      "expected": "partial",
+      "observed": "partial",
+      "status": "pass"
+    },
+    {
+      "id": "degraded",
+      "capabilityId": "component.browser-session-owner",
+      "staticDisposition": "advanced",
+      "axis": "runtimeAvailability",
+      "expected": "degraded",
+      "observed": "degraded",
+      "status": "pass"
+    },
+    {
+      "id": "quarantined",
+      "capabilityId": "component.coding-execution-backend",
+      "staticDisposition": "default",
+      "axis": "runtimeAvailability",
+      "expected": "quarantined",
+      "observed": "quarantined",
+      "status": "pass"
+    },
+    {
+      "id": "requires-approval",
+      "capabilityId": "component.permission-approval-authority",
+      "staticDisposition": "default",
+      "axis": "actionAuthorization",
+      "expected": "requires-approval",
+      "observed": "requires-approval",
+      "status": "pass"
+    },
+    {
+      "id": "internal",
+      "capabilityId": "component.dcs-context-authority",
+      "staticDisposition": "internal",
+      "axis": "runtimeAvailability",
+      "expected": "unknown",
+      "observed": "unknown",
+      "status": "pass"
+    },
+    {
+      "id": "retired",
+      "capabilityId": "surface.dreams",
+      "staticDisposition": "retired",
+      "axis": "runtimeAvailability",
+      "expected": "disabled",
+      "observed": "disabled",
+      "status": "pass"
+    }
+  ],
+  "digestNormalization": {
+    "staticStableAcrossEffectiveFacts": true,
+    "effectiveStableAcrossOrderingScopeWhitespaceAndObservationTime": true,
+    "effectiveChangesWithRuntimeFact": true,
+    "staticUnaffectedByRuntimeFact": true,
+    "status": "pass"
+  },
+  "negativeCases": [
+    {
+      "status": "pass",
+      "expectedCode": "duplicate_effective_capability",
+      "observed": "ModelCapabilityProfile/v1 input is invalid: duplicate_effective_capability"
+    },
+    {
+      "status": "pass",
+      "expectedCode": "unknown_effective_capability",
+      "observed": "ModelCapabilityProfile/v1 input is invalid: unknown_effective_capability"
+    },
+    {
+      "status": "pass",
+      "expectedCode": "static_runtime_axis_conflation",
+      "observed": "ModelCapabilityProfile/v1 input is invalid: static_runtime_axis_conflation"
+    },
+    {
+      "status": "pass",
+      "expectedCode": "approval_axis_conflation",
+      "observed": "ModelCapabilityProfile/v1 input is invalid: approval_axis_conflation"
+    },
+    {
+      "status": "pass",
+      "expectedCode": "applied_knowledge_version_missing",
+      "observed": "ModelCapabilityProfile/v1 input is invalid: applied_knowledge_version_missing"
+    },
+    {
+      "status": "pass",
+      "expectedCode": "quarantine_state_missing",
+      "observed": "ModelCapabilityProfile/v1 input is invalid: quarantine_state_missing"
+    },
+    {
+      "status": "pass",
+      "expectedCode": "build_prompt_budget_invalid",
+      "observed": "ModelCapabilityProfile/v1 input is invalid: build_prompt_budget_invalid"
+    },
+    {
+      "status": "pass",
+      "expectedCode": "duplicate_static_capability",
+      "observed": "duplicate_static_capability"
+    }
+  ],
+  "validation": {
+    "ok": true,
+    "userVisibleCapabilityCount": 25,
+    "staticDigestMatches": true,
+    "effectiveDigestMatches": true
+  },
+  "diskReadback": {
+    "status": "pass",
+    "profileValidated": true,
+    "rawEvidenceReadable": true,
+    "sha256sumsVerified": true
+  },
+  "results": {
+    "contract": {
+      "status": "pass",
+      "schema": "ModelCapabilityProfile/v1",
+      "promptBudgetMaxChars": 2000,
+      "staticDigest": "sha256:656b36a15bf97f9ec2848abdd722fdab8ddf7a02d6d8016479c65492d1c4c86c",
+      "effectiveDigest": "sha256:0e78a01d5d8f5e3f4cacdcb45f990d9caab0ff28a8e0531784167ec6e2cf4d25"
+    }
+  }
+}

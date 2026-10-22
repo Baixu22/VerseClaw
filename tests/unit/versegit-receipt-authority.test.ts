@@ -88,7 +88,7 @@ function cleanCleanup() {
   return {
     status: 'clean', processesDeleted: true, managerProcessSurvivors: 0,
     worktreeSurvivors: 0, tempRootRemoved: true, hostWorktreesDeleted: 0,
-    worktreesDeleted: 3, deletionErrors: [], processSurvivors: 0, survivorPids: [],
+    worktreesDeleted: 3, deletionErrors: [] as string[], processSurvivors: 0, survivorPids: [] as number[],
     processInventory: {
       baselinePids: [],
       duringPids: [1234],
@@ -96,7 +96,7 @@ function cleanCleanup() {
       newProcessPids: [1234],
       managedPids: [1234],
       managedAfterShutdown: [],
-      survivorPids: [],
+      survivorPids: [] as number[],
       ownedPidChecks: [{ ok: true, pid: 1234, exists: false }],
     },
   };

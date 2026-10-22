@@ -1,0 +1,4 @@
+COMMAND=pnpm run contract:check
+$ node scripts/contract-check.mjs
+Contract check passed.
+EXIT_CODE=0

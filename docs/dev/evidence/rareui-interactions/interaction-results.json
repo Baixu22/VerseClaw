@@ -1,0 +1,58 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "electron": true,
+  "threshold": {
+    "threeHidden": true,
+    "fiveVisible": true
+  },
+  "tooltip": {
+    "prompt": true,
+    "response": true
+  },
+  "completionTimes": [
+    1792560515000,
+    1792560395000,
+    1792560275000,
+    1792560155000,
+    1792560035000
+  ],
+  "markdown": {
+    "headings": 6,
+    "isolatedScroll": true,
+    "escape": true
+  },
+  "boundsWide": {
+    "rail": {
+      "x": 275,
+      "width": 28,
+      "right": 303
+    },
+    "conversation": {
+      "x": 291,
+      "width": 609.4896240234375
+    },
+    "sidebar": {
+      "right": 275
+    },
+    "bellInSidebar": true,
+    "overflow": false
+  },
+  "boundsNarrow": {
+    "rail": {
+      "x": 64,
+      "width": 28,
+      "right": 92
+    },
+    "conversation": {
+      "x": 80,
+      "width": 483.54168701171875
+    },
+    "sidebar": {
+      "right": 64
+    },
+    "bellInSidebar": true,
+    "overflow": false
+  },
+  "errors": []
+}

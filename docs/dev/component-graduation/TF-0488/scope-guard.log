@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "worktree": "D:\\ClawX-work\\component-graduation-20261021",
+  "branch": "codex/component-graduation-20261021",
+  "activeNode": {
+    "id": "TF-0488",
+    "title": "D9 决策：从能力展示收尾转为内部组件毕业（不改变发布边界）",
+    "status": "ready"
+  },
+  "allowedPaths": [
+    "docs/dev/",
+    "docs/clawx-product-semantics.md",
+    "docs/dev/default-config-matrix.md",
+    "docs/dev/adr/"
+  ],
+  "policy": "node-scoped: exactly one active leaf; ignore proposed nodes; never claim human evidence"
+}
+COMMAND=node .agent-workbench/component-graduation/check-scope.mjs --require-node TF-0488 --json
+EXIT_CODE=0

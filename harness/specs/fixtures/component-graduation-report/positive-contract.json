@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "fixture-internal",
+  "reportKind": "contract",
+  "componentId": "TF-0490",
+  "taskForestNodeId": "TF-TEST-CONTRACT",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "TF-0490",
+  "entryPoint": "harness/specs/tasks/component-graduation-report-v1.md",
+  "defaultMode": "internal",
+  "benefitEvidence": "Fixture evidence shows a bounded component benefit; no product claim.",
+  "rollback": "Disable the component and restore the prior default/configuration.",
+  "modelEffectiveState": "Fixture model-visible state is derived from the same evidence bundle.",
+  "evidenceGrade": "documented-boundary",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "1111111111111111111111111111111111111111",
+    "tree": "2222222222222222222222222222222222222222",
+    "buildHash": "3333333333333333333333333333333333333333333333333333333333333333",
+    "runtimeGeneration": "fixture-runtime-generation-1",
+    "provider": "fixture-provider",
+    "model": "fixture-model-v1",
+    "inputSet": "fixture-input-set-v1",
+    "scope": "workspace:component-graduation-fixture",
+    "artifacts": [
+      {
+        "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+        "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+        "bytes": 2060
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "contract",
+      "status": "pass",
+      "grade": "documented-boundary",
+      "summary": "Fixture contract evidence passed.",
+      "artifacts": [
+        {
+          "path": "harness/specs/fixtures/component-graduation-report/artifacts/raw-evidence.json",
+          "sha256": "6228d8626e3077e0a231f80fee4bfc418e64dab5f9a23a86e454c01b66cc6874",
+          "bytes": 2060,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "1e6c441a993f555d3760eb5a7cab08f831ef33389d2736a97a006cbd95befed4",
+    "command": "fixture recompute from raw-evidence.json"
+  }
+}

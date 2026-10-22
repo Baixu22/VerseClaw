@@ -1,0 +1,69 @@
+[
+    {
+        "file":  "shared/model-capability-profile.ts",
+        "expected":  "f821284baca4753b7b6f41220eb89177fc0ec7a6b616a3f853ffd47335299e6c",
+        "actual":  "f821284baca4753b7b6f41220eb89177fc0ec7a6b616a3f853ffd47335299e6c",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/10-task-forest-validate-preapply.txt",
+        "expected":  "2e0319f7432f5df95a21b522c0ef9f9b738a95ba259fd84a1ffbf53ea53930aa",
+        "actual":  "2e0319f7432f5df95a21b522c0ef9f9b738a95ba259fd84a1ffbf53ea53930aa",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/README.md",
+        "expected":  "e04c6963d7e08f86cda24717867cac251c96ab9b7c9d6d6c4312296b3dcc014f",
+        "actual":  "e04c6963d7e08f86cda24717867cac251c96ab9b7c9d6d6c4312296b3dcc014f",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/acceptance-check.json",
+        "expected":  "402ea1f65e3e728967df69a1b0bd0554c30b511d1c823fbb4f8f526c1fcdab15",
+        "actual":  "402ea1f65e3e728967df69a1b0bd0554c30b511d1c823fbb4f8f526c1fcdab15",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/component-graduation-report.json",
+        "expected":  "0774e5e8d464cb3981c8191c2f7492a0fe31a510faa0aefff509b226151555cb",
+        "actual":  "0774e5e8d464cb3981c8191c2f7492a0fe31a510faa0aefff509b226151555cb",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+        "expected":  "1c10dc803d101234b4eee76127aeb4fcca12a8eec6e576a19e7dc17e305c1434",
+        "actual":  "1c10dc803d101234b4eee76127aeb4fcca12a8eec6e576a19e7dc17e305c1434",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/profile.json",
+        "expected":  "c34a3d14bf877da4a6308a49eba76cf582e35e4e0af2682e0afa84e32a3d8f42",
+        "actual":  "c34a3d14bf877da4a6308a49eba76cf582e35e4e0af2682e0afa84e32a3d8f42",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/raw-evidence.json",
+        "expected":  "a76cba126247f799ab255075049c156e2545519992fde37eecfd5dae6f4e5be2",
+        "actual":  "a76cba126247f799ab255075049c156e2545519992fde37eecfd5dae6f4e5be2",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/run-verification.ps1",
+        "expected":  "44734351afab43ee7506b8b2f2f24b8961301158fccda8f5fdb20a748cf021cc",
+        "actual":  "44734351afab43ee7506b8b2f2f24b8961301158fccda8f5fdb20a748cf021cc",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/model-capability-profile/state-cases.json",
+        "expected":  "0ec9c3cfd8b4522e16593a73f061a9d9cb6ca53c6aa2b90a186c90f6e36e4ab2",
+        "actual":  "0ec9c3cfd8b4522e16593a73f061a9d9cb6ca53c6aa2b90a186c90f6e36e4ab2",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/model-capability-profile.test.ts",
+        "expected":  "35072a6e0d9677304979f4a5508c9f5a04d952a6eac6b1f7b493c159bf0292ea",
+        "actual":  "35072a6e0d9677304979f4a5508c9f5a04d952a6eac6b1f7b493c159bf0292ea",
+        "status":  "pass"
+    }
+]
+SHA256SUMS_STATUS=pass

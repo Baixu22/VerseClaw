@@ -53,6 +53,10 @@ import { ChatInput } from './ChatInput';
 import { ExecutionGraphCard } from './ExecutionGraphCard';
 import { TeamOrchestrationCard } from './TeamOrchestrationCard';
 import { ChatToolbar } from './ChatToolbar';
+import { MessageNavRail, type MessageNavRailItem } from './MessageNavRail';
+import { HookSidebar } from '@/components/rareui/HookSidebar';
+import { buildCompletionActivity } from '@/components/rareui/completion-activity';
+import { useCompletionActivityStore } from '@/components/rareui/completion-activity-store';
 import { SessionActivityPanel } from './SessionActivityPanel';
 import { useSessionActivityStore } from '@/stores/session-activity';
 import {
@@ -725,6 +729,7 @@ function ProjectSessionHeader({
               )}
             </button>
             <hr className="codex-header-menu__sep" />
+            <HookSidebar activeKey={currentSessionKey}>
             {recentSessions.map((session) => {
               const forkSourceSessionKey = session.forkedFromParent && session.parentSessionKey
                 ? session.parentSessionKey
@@ -745,6 +750,7 @@ function ProjectSessionHeader({
                   key={session.key}
                   type="button"
                   className="codex-header-menu__item"
+                  data-hook-key={session.key}
                   onClick={() => {
                     setOpen(null);
                     switchSession(session.key);
@@ -779,6 +785,7 @@ function ProjectSessionHeader({
                 </button>
               );
             })}
+            </HookSidebar>
             {derivedSessions.length > 0 && (
               <>
                 <hr className="codex-header-menu__sep" />
@@ -3016,6 +3023,43 @@ export function Chat() {
     const { start, end, windowed } = selectMessageRenderWindow(messageRenderRows.length, { maxDomNodes: maxDom });
     return { rows: messageRenderRows.slice(start, end), start, windowed, total: messageRenderRows.length };
   }, [messageRenderRows]);
+  const messageNavItems = useMemo<MessageNavRailItem[]>(() => {
+    const rows = windowedMessageRenderRows.rows;
+    const users = rows.filter((row) => !row.hidden && isRealUserMessage(row.message));
+    return users.map((row, ordinal) => {
+      const end = users[ordinal + 1]?.index ?? messages.length;
+      const reply = rows.findLast((candidate) => candidate.index > row.index && candidate.index < end && !candidate.hidden && candidate.message.role === 'assistant' && !candidate.suppressAssistantText);
+      const preview = (text: string, limit: number) => text.replace(/```[\s\S]*?```/g, '').replace(/<[^>]*>/g, '').replace(/[*#`]/g, '').replace(/\s+/g, ' ').trim().slice(0, limit);
+      return { index: row.index, ordinal: ordinal + 1, title: preview(extractText(row.message), 110) || t('messageNav.jumpTo', { ordinal: ordinal + 1 }), response: reply ? preview(projectMessageRender(reply.message, { isUser: false, suppressAssistantText: reply.suppressAssistantText, suppressToolCards: reply.suppressToolCards, suppressReasoning: reply.suppressReasoning, textOverride: reply.textOverride }).displayText, 180) : undefined, completedAt: reply?.message.timestamp };
+    });
+  }, [windowedMessageRenderRows, messages.length, t]);
+  const completedActivity = useMemo(() => buildCompletionActivity(
+    currentSessionKey,
+    userRunCards,
+    runtimeRuns,
+    new Map(messageNavItems.map((item) => [item.index, item.response || item.title])),
+    messageNavItems,
+    inputRunActive ? messageNavItems.at(-1)?.index : null,
+  ), [currentSessionKey, inputRunActive, userRunCards, runtimeRuns, messageNavItems]);
+  const setCompletionActivities = useCompletionActivityStore((state) => state.setActivities);
+  const pendingCompletionActivity = useCompletionActivityStore((state) => state.pendingNavigation);
+  const clearCompletionNavigation = useCompletionActivityStore((state) => state.clearNavigation);
+  useEffect(() => {
+    setCompletionActivities(completedActivity);
+  }, [completedActivity, setCompletionActivities]);
+  useEffect(() => {
+    if (!pendingCompletionActivity || pendingCompletionActivity.sessionKey !== currentSessionKey || loading) return;
+    const index = pendingCompletionActivity.index ?? userRunCards.find((card) => card.runId === pendingCompletionActivity.runId)?.triggerIndex;
+    const scroller = scrollElementRef.current;
+    const anchor = index == null ? null : scroller?.querySelector<HTMLElement>(`#chat-message-${index}`);
+    if (scroller && anchor) {
+      scroller.scrollTo({
+        top: anchor.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - 20,
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+      });
+    }
+    clearCompletionNavigation();
+  }, [clearCompletionNavigation, currentSessionKey, loading, pendingCompletionActivity, userRunCards]);
 
   const streamingToolsForMessage = useMemo(
     () => (streamingReplyText != null || hasActiveExecutionGraph ? [] : streamingTools),
@@ -3348,6 +3392,7 @@ export function Chat() {
           </div>
         )}
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
+        {canShowChatSideRail && <MessageNavRail items={messageNavItems} scrollRef={scrollElementRef} />}
         {/* One measure, always. The layout used to widen to `max-w-7xl` and turn
             into a row when the recovery rail appeared, so the transcript was
             re-centred AND re-wrapped in the same frame. The status rail is
@@ -3360,7 +3405,7 @@ export function Chat() {
         >
           <div
             ref={attachScrollElement}
-            className="codex-conversation-inset min-h-0 min-w-0 flex-1 overflow-y-auto"
+            className={cn('codex-conversation-inset min-h-0 min-w-0 flex-1 overflow-y-auto', messageNavItems.length > 3 && 'rareui-has-turn-rail')}
             /* Passive only: an overlay the user opened must not move the text. */
             data-rail={sessionActivityRailOpen && sessionActivityRailLayer === 'inline' ? 'expanded' : 'collapsed'}
             data-testid="chat-scroll-container"

@@ -1,0 +1,2 @@
+COMMAND=pnpm exec eslint shared/dcs/component-disposition-catalog.ts tests/unit/component-disposition-catalog.test.ts
+EXIT_CODE=0

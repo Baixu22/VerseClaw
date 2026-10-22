@@ -1,0 +1,45 @@
+
+ RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
+
+ ✓ tests/unit/vtoken-default-off-documentation.test.ts > FP-P4-06 VToken default-off documentation authority > keeps active specifications aligned on default-off opt-in behavior 3ms
+ ✓ tests/unit/vtoken-default-off-documentation.test.ts > FP-P4-06 VToken default-off documentation authority > preserves the historical P1 claims with an adjacent authoritative correction 1ms
+ ✓ tests/unit/vtoken-default-off-documentation.test.ts > FP-P4-06 VToken default-off documentation authority > does not leave the known developer-facing source comments claiming default-on 1ms
+ ✓ tests/unit/first-product-claims.test.ts > FP-P1-08 first-product claim boundary > keeps forbidden graduation terms out of every current product surface 41ms
+ ✓ tests/unit/first-product-claims.test.ts > FP-P1-08 first-product claim boundary > treats explicit enablement-negation lines and historical "GA hardening" references as non-claims 1ms
+ ✓ tests/unit/first-product-claims.test.ts > FP-P1-08 first-product claim boundary > recognizes translated non-authorization sentences without hiding adjacent claims 1ms
+ ✓ tests/unit/first-product-claims.test.ts > FP-P1-08 first-product claim boundary > assigns exactly one canonical label to every controlled-preview component 2ms
+ ✓ tests/unit/first-product-claims.test.ts > FP-P1-08 first-product claim boundary > shows the Windows x64 opt-in boundary in Setup and Settings for all locales 8ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > pins the seven product concepts to distinct responsibilities 3ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > uses explicit orchestration quality states instead of an empty array ambiguity 1ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > models Workboard to Task Ledger as a one-way reference 1ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > normalizes permission decisions without replacing existing permission systems 0ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > keeps ordinary Chat to Task Loop as an explicit user-confirmed upgrade suggestion 0ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > lists the product-positioning claims that public docs must not make 0ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > assigns every P0 and P1 planning item to an explicit semantic boundary 9ms
+ ✓ tests/unit/product-semantics.test.ts > ClawX product semantics > marks verified P0/P1 closures done while preserving product boundaries 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-03 md row coverage > every md row is registered in the fixture and still present in the md 4ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-03 md row coverage > every md table row has a fixture entry (no silently untested row) 2ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-03 md row coverage > every registered assertion group is actually exercised by a test in this file 2ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-07 md default-cell text lock (three-way parity) > every fixture row matches the md "Product default" cell byte-for-byte 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-07 md default-cell text lock (three-way parity) > the verbatim cell normalizes to the declaredDefault for every format variant 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-07 md default-cell text lock (three-way parity) > implementation defaults agree with declaredDefault for every row 42ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks VToken assembly default OFF (opt-in) [vtoken-assembly-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks working-memory and other DCS context-block flags default OFF [context-block-defaults] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Runtime Memory inject pilot default OFF [memory-inject-pilot-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Runtime Memory shadow/provider/persist default OFF [memory-shadow-provider-persist-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks SEKB master default OFF (no auto writeback graduation) [sekb-master-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > keeps SEKB auto writeback off with no enabling flag [sekb-auto-writeback-off] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks SEKB shadow evaluation default OFF and requires master [sekb-shadow-evaluation-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Browser private network default DENY and migrates unacked legacy allow [browser-private-network-default] 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks VToken bridge default OFF (opt-in) [vtoken-bridge-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks enhancement kill switch default OFF with env and config forms [enhancement-kill-switch-default] 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks coding auto verify default to auto-detect and bounds explicit opt-in [coding-auto-verify-default] 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > kill switch cuts VToken + memory inject fail-closed without requiring throw 0ms
+
+ Test Files  4 passed (4)
+      Tests  34 passed (34)
+   Start at  13:10:01
+   Duration  4.20s (transform 2.38s, setup 758ms, import 3.27s, tests 140ms, environment 967ms)
+
+COMMAND=pnpm exec vitest run tests/unit/default-config-matrix.test.ts tests/unit/first-product-claims.test.ts tests/unit/product-semantics.test.ts tests/unit/vtoken-default-off-documentation.test.ts --reporter=verbose
+EXIT_CODE=0

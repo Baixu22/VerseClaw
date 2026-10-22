@@ -1,0 +1,55 @@
+
+ RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
+
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > covers every authority component, DCS flag, runtime leaf, route, Settings section and Settings panel exactly once 8ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > records current consumer, owner, implementation/retirement node and evidence refs for every entry 101ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > covers every writable DCS control and keeps the product preview combo in default dispositions 0ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > keeps every registered authority component mapped to one disposition 2ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > requires owner, future expiry and graduate/retire criteria on every experiment 1ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > explicitly covers the required special surfaces 1ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > does not expose any shadow or experiment capability as a user surface 0ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > rejects an unclassified route 5ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > rejects a second disposition for the same authority component 4ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > rejects an experiment without expiry or owner 14ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > rejects an internal capability with a user entry 4ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > documents the single-page disposition table and links it from runtime control planes 2ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > projects the stable disposition index for a later ModelCapabilityProfile 0ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > keeps every component mapped to at least one domain and every domain owned 4ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > maps every existing DCS flag to exactly one component 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > preserves the Context, Memory, Knowledge, Capability, Execution, Browser and Observability separations 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > rejects a second accepted-memory writer 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > rejects a second context assembly owner 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > rejects a second domain executor 0ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > rejects permission escalation and unauthorized cross-domain writes 1ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > cross-checks the product semantic and default-config surfaces 3ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > keeps every declared source anchor present in the current tree with exact path case 47ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > documents the machine manifest in runtime-control-planes.md 0ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > guards renderer transport against direct Gateway, IPC and domain-store access 86ms
+ ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > builds a static and effective model-safe component profile 1ms
+ ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > defines a schema that all registered components can instantiate 3ms
+ ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > accepts the internal/default/advanced/retired/contract evidence matrices 10ms
+ ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > keeps experiment/shadow valid but non-graduating 1ms
+ ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > loads all positive fixtures from disk with their actual artifact hashes 6ms
+ ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > rejects every negative fixture with the expected issue code 15ms
+ ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > recomputes a deterministic input digest from raw artifact bindings 0ms
+ ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > does not let experiment/shadow close a Task Forest done node 1ms
+ ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > requires a passing report for a Task Forest done node 1ms
+ ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > fails the default-change gate when the report is not default/advanced and valid 1ms
+ ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > fails the default-change gate for an invalid default/advanced report 2ms
+ ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > fails the disk-backed gate when an internal report requests a default change 10ms
+ ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > runs the disk-backed CLI gate logic against the positive fixture 1ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > builds a deterministic schema with one static disposition record for every user-visible capability 14ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > keeps static disposition, runtime availability, action authorization, memory and knowledge as separate axes 7ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > covers enabled/disabled/partial/degraded/quarantined/requires-approval/internal/retired with disk fixtures 2ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > keeps the static digest stable across effective facts and changes it only with static configuration 4ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > normalizes effective digest inputs and ignores observation/generation timestamps 6ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > bounds prompt addition to a reserved system-prompt budget without using working-context characters 4ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > rejects invalid effective state inputs with explicit negative issue codes 2ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > rejects duplicate static records and internal names in user-facing capabilities 1ms
+ ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > rejects axis conflation and digest tampering in an already-generated profile 3ms
+
+ Test Files  4 passed (4)
+      Tests  46 passed (46)
+   Start at  23:51:17
+   Duration  1.75s (transform 193ms, setup 469ms, import 210ms, tests 387ms, environment 0ms)
+
