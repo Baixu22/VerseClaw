@@ -92,6 +92,7 @@ docs:
 - `SessionEffectivePolicy/v1` 区分 configured、effective、unverified、stale、mismatch、unsupported 与 ignored，并输出 backend/binding、model/effort、grant/action、context/queue/resource/schedule 字段和来源。
 - Codex app-server、Claude CLI 与 OpenClaw embedded 的 native compaction ownership 和 ignored parameter reasons 已进入兼容表。
 - `sessions.effectivePolicy` Gateway read method、Main Host facade 与 SessionActivity snapshot 共用同一只读 projection；输出不含 credentials、auth profile ID、prompt 或 transcript 文本。
+- Clean candidate `5eef970b9a6ff401bd92ff870a559cde751a1b8e` / tree `f3f8c32e74b280f0f05ad8053d4c08183b2a3bfc`：11 commands、81/81 tests、runtime build、typecheck、contract、comms、harness、diff-check 与凭证扫描全部通过；回执见 `harness/specs/fixtures/long-session-development/b1/`。
 
 **前置与读入**
 
