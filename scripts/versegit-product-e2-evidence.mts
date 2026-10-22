@@ -342,6 +342,7 @@ async function runCandidate(input: {
     completedAt: Date.now(),
     execution,
     cleanup,
+    prepared,
     completed: completed as CompletedCandidateVerificationEvidence,
     authority,
     bridge,
