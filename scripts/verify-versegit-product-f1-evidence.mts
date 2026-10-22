@@ -52,7 +52,7 @@ function buildReview(generatedAt: string): Record<string, any> {
   if (outcomes.outcomes?.unknown?.host_outcome !== 'unknown' || outcomes.outcomes?.unknown?.recovery_required !== true) outcomeIssues.push('unknown outcome missing');
   if (outcomes.duplicate?.status !== 'duplicate' || outcomes.duplicate?.reason !== 'duplicate_completion') outcomeIssues.push('duplicate completion was not idempotent');
   if (outcomes.late_epoch?.reason !== 'late_epoch' || outcomes.terminal_completion?.reason !== 'completion_terminal') outcomeIssues.push('late epoch or terminal completion drift was accepted');
-  if (outcomes.legacy?.success?.legacyUnbound !== true || outcomes.legacy?.success?.host_outcome !== 'unknown') outcomeIssues.push('legacy success was promoted without identity');
+  if (outcomes.legacy?.success?.legacyUnbound !== true || outcomes.legacy?.success?.hostOutcome !== 'unknown') outcomeIssues.push('legacy success was promoted without identity');
   if (JSON.stringify(outcomes.active_risk_sessions) !== JSON.stringify(['active-session'])) outcomeIssues.push('active risk projection is polluted');
   checks.push({ id: 'persisted-outcomes', passed: outcomeIssues.length === 0, issues: outcomeIssues });
 

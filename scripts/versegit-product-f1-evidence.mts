@@ -167,7 +167,7 @@ try {
       provider_landed: false,
       m4_authorized: false,
     },
-    boundaries: { default_off: true, live_ready: false, product_approved: false, real_human_evidence: false },
+    boundaries: { default_off: true, live_ready: false, product_approved: false, m4_authorized: false, real_human_evidence: false },
     passed: true,
   });
   const factSummary = (result: ReturnType<typeof store.record>) => result.fact ? {
