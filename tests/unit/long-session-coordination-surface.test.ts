@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { deriveCoordinationSurface } from '@/pages/Chat/long-session-coordination';
+import { deriveCoordinationSurface, deriveCoordinationWorkState } from '@/pages/Chat/long-session-coordination';
 import type { DelegationAdmissionReceipt } from '@shared/types/delegation-admission';
 import { createEmptySessionActivitySnapshot, type SessionCompletionBatch } from '@shared/types/session-activity';
 import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
@@ -195,6 +195,21 @@ describe('long-session coordination projection', () => {
     expect(surface.batches[0].state).toBe('waiting');
     expect(surface.bindingState).toBe('invalidated');
     expect(surface.invalidationReason).toBe('archived');
+  });
+
+  it('keeps accepted and unknown receipt facts distinct when no worker result exists', () => {
+    expect(deriveCoordinationWorkState({
+      receipt: receipt(1),
+      subagent: undefined,
+      batch: undefined,
+      taskStatus: null,
+    })).toBe('accepted');
+    expect(deriveCoordinationWorkState({
+      receipt: receipt(2, { state: 'unknown', childSessionKey: null, childRunId: null, orchestrationRunId: null }),
+      subagent: undefined,
+      batch: undefined,
+      taskStatus: null,
+    })).toBe('unknown');
   });
 
   it('bounds recent work and batch references without creating a second task authority', () => {
