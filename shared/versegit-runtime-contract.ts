@@ -84,7 +84,11 @@ export type VerseGitBridgeEvent = {
     | 'observation_bind_rejected'
     | 'observed'
     | 'observation_rejected'
-    | 'observation_sealed';
+    | 'observation_sealed'
+    | 'feedback_produced'
+    | 'feedback_delivered'
+    | 'feedback_confirmed'
+    | 'feedback_rejected';
   requestId?: string;
   bindingId?: string;
   runId?: string;
@@ -99,6 +103,9 @@ export type VerseGitBridgeEvent = {
   epoch?: number;
   reason?: string;
   error?: string;
+  evidenceId?: string;
+  toolCallId?: string;
+  level?: string;
 };
 
 export type VerseGitBindingResponse =
@@ -122,6 +129,8 @@ export type VerseGitRuntimeBindingPort = {
 export const VG_TOOL_BASIS_SCHEMA = 'clawx.versegit.tool-basis/v1';
 export const VG_TOOL_OBSERVATION_SCHEMA = 'clawx.versegit.tool-observation-request/v1';
 export const VG_TOOL_OBSERVATION_RESULT_SCHEMA = 'clawx.versegit.tool-observation-result/v1';
+export const VG_FEEDBACK_SCHEMA = 'clawx.versegit.feedback/v1';
+export const VG_FEEDBACK_DELIVERY_SCHEMA = 'clawx.versegit.feedback-delivery/v1';
 
 export type VerseGitToolBasis = {
   schema: typeof VG_TOOL_BASIS_SCHEMA;
@@ -153,6 +162,41 @@ export type VerseGitToolObservationRequest = {
   observedAt: string;
   ownerId: string;
   epoch: number;
+};
+
+export type VerseGitFeedbackDelivery = {
+  schema: typeof VG_FEEDBACK_SCHEMA;
+  evidenceId: string;
+  message: string;
+  coverage: string;
+  basisDigest: string;
+  candidateId: null;
+  path: string;
+  lineStart: number;
+  lineEnd: number;
+};
+
+export type VerseGitFeedbackDeliveryLevel = 'produced' | 'host-delivered' | 'transcript-confirmed';
+
+export type VerseGitFeedbackDeliveryRequest = {
+  schema: typeof VG_FEEDBACK_DELIVERY_SCHEMA;
+  bindingId: string;
+  childRunId: string;
+  toolCallId: string;
+  evidenceId: string;
+  level: VerseGitFeedbackDeliveryLevel;
+  observedAt: string;
+  ownerId: string;
+  epoch: number;
+};
+
+export type VerseGitFeedbackDeliveryResponse = {
+  schema: 'clawx.versegit.feedback-delivery-result/v1';
+  evidenceId: string;
+  level: VerseGitFeedbackDeliveryLevel;
+  accepted: boolean;
+  reason: string | null;
+  host_verdict: 'unchanged';
 };
 
 export type VerseGitToolObservationRecord = {
@@ -190,9 +234,11 @@ export type VerseGitToolObservationRecord = {
     outputDigest: string;
     observedAt: string;
   } | null;
+  feedback?: VerseGitFeedbackDelivery;
   host_verdict: 'unchanged';
 };
 
 export type VerseGitRuntimeObservationPort = {
   observe: (request: Omit<VerseGitToolObservationRequest, 'schema' | 'ownerId' | 'epoch'>) => Promise<VerseGitToolObservationRecord>;
+  reportDelivery: (request: Omit<VerseGitFeedbackDeliveryRequest, 'schema' | 'ownerId' | 'epoch'>) => Promise<VerseGitFeedbackDeliveryResponse>;
 };

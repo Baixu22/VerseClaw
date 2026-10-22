@@ -73,6 +73,7 @@ import { resolveContextWindowInfo } from "../context-window-guard.js";
 import { DEFAULT_CONTEXT_TOKENS } from "../defaults.js";
 import { createAgentToolResultMiddlewareRunner } from "../harness/tool-result-middleware.js";
 import { deriveVerseGitToolObservationRequest } from "../harness/versegit-tool-observation.js";
+import { enrichToolResultWithVerseGitFeedback } from "../harness/versegit-feedback-delivery.js";
 import { getVerseGitRuntimeBindingForRun } from "../../plugin-sdk/versegit-binding-registry.js";
 import { createVerseGitRuntimeObservationPortFromEnv } from "../../plugin-sdk/versegit-observation-port.js";
 import type { AgentMessage, AgentToolResult } from "../runtime/index.js";
@@ -138,6 +139,7 @@ function buildAgentToolResultMiddlewareFactory(params: { runId?: string }): Exte
       });
       const isError =
         event.isError === true || inputHadErrorStatus || hasErrorToolResultStatus(result);
+      let deliveredResult = result;
       if (observationPort && params.runId) {
         const binding = getVerseGitRuntimeBindingForRun(params.runId);
         if (binding) {
@@ -156,15 +158,30 @@ function buildAgentToolResultMiddlewareFactory(params: { runId?: string }): Exte
               binding,
               cwd: ctx.cwd ?? binding.worktreePath,
             });
-            await observationPort.observe(request);
+            const delivery = await enrichToolResultWithVerseGitFeedback({
+              result,
+              observe: () => observationPort.observe(request),
+              reportDelivery: (feedback) => observationPort.reportDelivery({
+                bindingId: binding.bindingId,
+                childRunId: params.runId!,
+                toolCallId,
+                evidenceId: feedback.evidenceId,
+                level: "host-delivered",
+                observedAt: new Date().toISOString(),
+              }),
+            });
+            deliveredResult = delivery.result;
+            if (delivery.error) {
+              log.warn(`VerseGit feedback unavailable; original tool result retained: ${delivery.error}`);
+            }
           } catch (error) {
             log.warn(`VerseGit tool observation unavailable: ${String(error).slice(0, 240)}`);
           }
         }
       }
       return {
-        content: result.content,
-        details: result.details,
+        content: deliveredResult.content,
+        details: deliveredResult.details,
         ...(isError ? { isError: true } : {}),
       };
     });

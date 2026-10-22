@@ -29,9 +29,15 @@ touchedAreas:
   - harness/specs/tasks/versegit-product-d1-feedback-delivery.md
   - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts
   - openclaw_runtime/src/agents/harness/tool-result-middleware.ts
+  - openclaw_runtime/src/agents/harness/versegit-feedback-delivery.ts
+  - openclaw_runtime/src/agents/harness/versegit-feedback-marker.ts
   - openclaw_runtime/src/agents/session-tool-result-guard-wrapper.ts
   - openclaw_runtime/src/plugins/agent-tool-result-middleware-types.ts
+  - openclaw_runtime/src/plugin-sdk/versegit-observation-port.ts
   - electron/gateway/versegit-bridge.ts
+  - electron/services/versegit-observation.ts
+  - shared/versegit-runtime-contract.ts
+  - scripts/versegit-feedback-delivery-probe.mts
   - tests/unit/versegit-feedback-delivery.test.ts
   - tests/e2e/versegit-feedback-delivery.spec.ts
   - harness/specs/fixtures/versegit-product-integration/d1/**

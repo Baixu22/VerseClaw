@@ -7,7 +7,7 @@
  * harness verdict. Unbound, stale, duplicate and partial observations remain explicit.
  */
 import type { ChatRuntimeEvent } from '../../shared/chat-runtime-events';
-import type { VerseGitToolBasis, VerseGitToolObservationRequest } from '../../shared/versegit-runtime-contract';
+import { VG_FEEDBACK_SCHEMA, type VerseGitFeedbackDelivery, type VerseGitToolBasis, type VerseGitToolObservationRequest } from '../../shared/versegit-runtime-contract';
 import { createHash } from 'node:crypto';
 import { existsSync, realpathSync } from 'node:fs';
 import { basename, dirname, isAbsolute, relative, resolve, sep } from 'node:path';
@@ -140,6 +140,7 @@ export type ObservationIngestResult = {
     agentSessionId: string;
     epoch: number;
   } | null;
+  feedback?: VerseGitFeedbackDelivery;
   host_verdict: 'unchanged';
 };
 
@@ -222,6 +223,7 @@ type ActiveSession = {
   seen: BoundedKeySet;
   activeCalls: Map<string, ToolCallState>;
   toolObservations: ActiveToolObservation[];
+  deliveredFeedback: Set<string>;
   toolEventCount: number;
   droppedCount: number;
 };
@@ -603,6 +605,7 @@ export class VerseGitObservationBridge {
       seen: new BoundedKeySet(this.options.maxSeenKeys),
       activeCalls: new Map(),
       toolObservations: [],
+      deliveredFeedback: new Set(),
       toolEventCount: 0,
       droppedCount: 0,
     };
@@ -906,7 +909,27 @@ export class VerseGitObservationBridge {
       : coverage === 'partial' || issues.length > 0
         ? 'partial'
         : 'observed';
-    return resultFor(
+    let feedback: VerseGitFeedbackDelivery | undefined;
+    if (request.status === 'succeeded' && descriptor.surface === 'file.write' && path) {
+      const finding = this.staleReadFindings().find(
+        (candidate) => candidate.writeEventId === behaviorEvent.eventId,
+      );
+      if (finding && !session.deliveredFeedback.has(finding.findingId)) {
+        session.deliveredFeedback.add(finding.findingId);
+        feedback = {
+          schema: VG_FEEDBACK_SCHEMA,
+          evidenceId: finding.findingId,
+          message: `[VerseGit risk evidence_id=${finding.findingId} binding_id=${session.binding.bindingId} child_run_id=${runId} tool_call_id=${request.toolCallId} coverage=${coverage} basis=sha256:${finding.readBasisSha256} candidate=none] ${finding.kind}: ${finding.path}:${finding.readRange.lineStart}-${finding.readRange.lineEnd} was read before a different session wrote ${finding.writeRange.lineStart}-${finding.writeRange.lineEnd}. Re-read current content before relying on the earlier basis. host_verdict=unchanged.`,
+          coverage,
+          basisDigest: `sha256:${finding.readBasisSha256}`,
+          candidateId: null,
+          path: finding.path,
+          lineStart: finding.readRange.lineStart,
+          lineEnd: finding.readRange.lineEnd,
+        };
+      }
+    }
+    const result = resultFor(
       status,
       issues.length > 0 ? 'tool observation emitted with declared basis gaps' : 'tool observation emitted',
       issues,
@@ -914,6 +937,7 @@ export class VerseGitObservationBridge {
       behaviorEvent,
       key,
     );
+    return feedback ? { ...result, feedback } : result;
   }
 
   recentToolObservations(runId?: string, limit = 200): Array<{

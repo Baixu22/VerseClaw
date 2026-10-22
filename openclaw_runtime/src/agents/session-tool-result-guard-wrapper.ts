@@ -18,6 +18,8 @@ import type { AgentMessage } from "./runtime/index.js";
 import { installSessionToolResultGuard } from "./session-tool-result-guard.js";
 import type { SessionManager } from "./sessions/index.js";
 import { redactTranscriptMessage } from "./transcript-redact.js";
+import { extractVerseGitFeedbackMarkers } from "./harness/versegit-feedback-marker.js";
+import { createVerseGitRuntimeObservationPortFromEnv } from "../plugin-sdk/versegit-observation-port.js";
 
 type GuardedSessionManager = SessionManager & {
   /** Flush any synthetic tool results for pending tool calls. Idempotent. */
@@ -63,6 +65,8 @@ export function guardSessionManager(
   }
 
   const hookRunner = getGlobalHookRunner();
+  const feedbackPort = createVerseGitRuntimeObservationPortFromEnv();
+  const confirmedFeedback = new Set<string>();
   let pendingPreparedUserTurnMessage = opts?.preparedUserTurnMessage;
   const beforeMessageWrite = (event: { message: AgentMessage }) => {
     let message = event.message;
@@ -143,7 +147,26 @@ export function guardSessionManager(
     suppressNextUserMessagePersistence: opts?.suppressNextUserMessagePersistence,
     suppressTranscriptOnlyAssistantPersistence: opts?.suppressTranscriptOnlyAssistantPersistence,
     suppressAssistantErrorPersistence: opts?.suppressAssistantErrorPersistence,
-    onMessagePersisted: opts?.onMessagePersisted,
+    onMessagePersisted: async (message) => {
+      await opts?.onMessagePersisted?.(message);
+      if (!feedbackPort) return;
+      for (const marker of extractVerseGitFeedbackMarkers(message)) {
+        if (confirmedFeedback.has(marker.evidenceId)) continue;
+        confirmedFeedback.add(marker.evidenceId);
+        try {
+          await feedbackPort.reportDelivery({
+            bindingId: marker.bindingId,
+            childRunId: marker.childRunId,
+            toolCallId: marker.toolCallId,
+            evidenceId: marker.evidenceId,
+            level: "transcript-confirmed",
+            observedAt: new Date().toISOString(),
+          });
+        } catch {
+          // Feedback confirmation is diagnostic; transcript persistence remains authoritative.
+        }
+      }
+    },
     withCompactionPersistence: opts?.withCompactionPersistence,
     onUserMessagePersisted: opts?.onUserMessagePersisted,
     onAssistantErrorMessagePersisted: opts?.onAssistantErrorMessagePersisted,

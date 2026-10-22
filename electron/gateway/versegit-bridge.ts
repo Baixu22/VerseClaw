@@ -5,6 +5,8 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import { dirname, resolve } from 'node:path';
 import {
   VG_RUNTIME_BINDING_SCHEMA,
+  type VerseGitFeedbackDeliveryRequest,
+  type VerseGitFeedbackDeliveryResponse,
   type VerseGitToolObservationRecord,
   type VerseGitToolObservationRequest,
   type VerseGitBindingAttachRequest,
@@ -26,6 +28,7 @@ export type VerseGitBindingBridgeConfig = {
   repoRoot: string | null;
   eventsPath: string | null;
   observationsPath?: string | null;
+  feedbackTtlMs?: number;
   observationBridge?: VerseGitObservationBridge;
 };
 
@@ -120,6 +123,7 @@ function toToolObservationRecord(result: ObservationIngestResult): VerseGitToolO
     why: result.why,
     issues: result.issues,
     binding: result.binding,
+    ...(result.feedback ? { feedback: result.feedback } : {}),
     event: event ? {
       eventId: event.eventId,
       runId: event.runId,
@@ -154,6 +158,7 @@ export class VerseGitBindingBridge {
   private readonly bindings = new Map<string, VerseGitBindingRecord>();
   private readonly requestBindings = new Map<string, string>();
   private readonly activeSessions = new Map<string, string>();
+  private readonly feedbackProofs = new Map<string, { bindingId: string; childRunId: string; toolCallId: string; level: 'produced' | 'host-delivered' | 'transcript-confirmed'; producedAt: number }>();
   private readonly observationBridge: VerseGitObservationBridge;
 
   constructor(config: VerseGitBindingBridgeConfig) {
@@ -246,6 +251,7 @@ export class VerseGitBindingBridge {
     if (req.url === '/attach') return this.handleAttach(body, res);
     if (req.url === '/end') return this.handleEnd(body, res);
     if (req.url === '/observe') return this.handleObserve(body, res);
+    if (req.url === '/feedback-delivery') return this.handleFeedbackDelivery(body, res);
     writeJson(res, 404, { ok: false, error: { code: 'NOT_FOUND', message: 'unknown binding endpoint' } });
   }
 
@@ -524,6 +530,23 @@ export class VerseGitBindingBridge {
       observedAt: Date.parse(request.observedAt),
     });
     const data = toToolObservationRecord(result);
+    if (data.feedback) {
+      this.feedbackProofs.set(data.feedback.evidenceId, {
+        bindingId: record.bindingId,
+        childRunId: record.childRunId!,
+        toolCallId: request.toolCallId,
+        level: 'produced',
+        producedAt: Date.now(),
+      });
+      this.event('feedback_produced', {
+        bindingId: record.bindingId,
+        childRunId: record.childRunId,
+        requestId: record.requestId,
+        evidenceId: data.feedback.evidenceId,
+        toolCallId: request.toolCallId,
+        level: 'produced',
+      });
+    }
     this.appendObservation({ kind: 'tool-observation', data });
     this.event(result.status === 'observed' || result.status === 'partial' ? 'observed' : 'observation_rejected', {
       bindingId: record.bindingId,
@@ -533,6 +556,77 @@ export class VerseGitBindingBridge {
       epoch: record.epoch,
       reason: result.status,
       error: result.issues.join(',') || undefined,
+    });
+    writeJson(res, 200, { ok: true, data });
+  }
+
+  private handleFeedbackDelivery(raw: unknown, res: ServerResponse): void {
+    const request = raw && typeof raw === 'object' && !Array.isArray(raw)
+      ? raw as VerseGitFeedbackDeliveryRequest
+      : null;
+    const proof = request ? this.feedbackProofs.get(request.evidenceId) : undefined;
+    const record = request ? this.bindings.get(request.bindingId) : undefined;
+    const reject = (reason: string): void => {
+      this.event('feedback_rejected', {
+        bindingId: request?.bindingId,
+        childRunId: request?.childRunId,
+        evidenceId: request?.evidenceId,
+        toolCallId: request?.toolCallId,
+        level: request?.level,
+        ownerId: request?.ownerId,
+        epoch: request?.epoch,
+        error: reason,
+      });
+      const data: VerseGitFeedbackDeliveryResponse = {
+        schema: 'clawx.versegit.feedback-delivery-result/v1',
+        evidenceId: request?.evidenceId ?? '',
+        level: request?.level ?? 'produced',
+        accepted: false,
+        reason,
+        host_verdict: 'unchanged',
+      };
+      writeJson(res, 403, { ok: false, data, error: { code: 'FEEDBACK_DELIVERY_REJECTED', message: reason } });
+    };
+    if (!request || !proof || !record || request.ownerId !== record.ownerId
+      || request.epoch !== record.epoch || record.phase === 'ended'
+      || request.childRunId !== proof.childRunId || request.bindingId !== proof.bindingId
+      || request.toolCallId !== proof.toolCallId) {
+      reject('binding/owner/epoch/proof mismatch');
+      return;
+    }
+    if (Date.now() - proof.producedAt > (this.config.feedbackTtlMs ?? 5 * 60_000)) {
+      reject('feedback delivery expired');
+      return;
+    }
+    const rank = { produced: 0, 'host-delivered': 1, 'transcript-confirmed': 2 } as const;
+    if (request.level === 'produced' || rank[request.level] <= rank[proof.level]) {
+      reject('feedback delivery is duplicate or regressed');
+      return;
+    }
+    if (request.level === 'transcript-confirmed' && proof.level !== 'host-delivered') {
+      reject('transcript confirmation requires host delivery');
+      return;
+    }
+    proof.level = request.level;
+    this.feedbackProofs.set(request.evidenceId, proof);
+    const data: VerseGitFeedbackDeliveryResponse = {
+      schema: 'clawx.versegit.feedback-delivery-result/v1',
+      evidenceId: request.evidenceId,
+      level: request.level,
+      accepted: true,
+      reason: null,
+      host_verdict: 'unchanged',
+    };
+    this.appendObservation({ kind: 'feedback-delivery', data: { ...data, observedAt: request.observedAt } });
+    this.event(request.level === 'transcript-confirmed' ? 'feedback_confirmed' : 'feedback_delivered', {
+      bindingId: record.bindingId,
+      childRunId: record.childRunId,
+      requestId: record.requestId,
+      evidenceId: request.evidenceId,
+      toolCallId: request.toolCallId,
+      level: request.level,
+      ownerId: record.ownerId,
+      epoch: record.epoch,
     });
     writeJson(res, 200, { ok: true, data });
   }
