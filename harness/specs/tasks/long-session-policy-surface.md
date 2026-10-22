@@ -87,7 +87,8 @@ docs:
 - `SessionEffectivePolicyPanel` 展示 backend/binding、model/effort、grant、limits、compaction 归属、fact source、ignore reason 与真实 unknown/stale 状态，不新增第二设置页或 policy authority。
 - abort/session stop、UI 活动保留/transcript 与资源 TTL、fork/工作树隔离在现有入口内明确区分。
 - Chat 与 Recovery 会随 workspace、session、permission mode、模型/agent backend 或 Gateway 世代变化重读；重新读取开始时立即清除旧 scope policy，旧请求由 per-session generation 拦截，错误 workspace/session scope 的返回值被丢弃。
-- `en/zh/ja/ru` 四语、现有 design tokens、960px activity rail 键盘焦点/边界检查，以及真实 built Electron Host/Gateway 权限切换和重启刷新 E2E 已交付。
+- `en/zh/ja/ru` 四语、现有 design tokens、900×760 activity rail 键盘焦点/边界检查，以及真实 built Electron Host/Gateway 权限切换和重启刷新 E2E 已交付。
+- Clean candidate `b7b090779f0eed283aa381932dd32c98e936e9c5` / tree `e1b79fcec15ca7ccce71e2dab4aa62a474bf5899`：11 commands、38/38 unit tests、5/5 Electron tests、build、i18n、typecheck、contract、comms、harness、diff-check 与凭证扫描通过；回执与窄屏截图见 `harness/specs/fixtures/long-session-development/b2/`。
 
 所属阶段二：让会话配置与实际运行状态可见。统一边界见[规划合同索引](./long-session-development-plan.md)。
 
