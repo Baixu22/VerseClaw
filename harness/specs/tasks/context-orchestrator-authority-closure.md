@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: context-orchestrator-authority-closure
 title: Close the context orchestrator, VToken and C6 authority boundary
 scenario: gateway-backend-communication

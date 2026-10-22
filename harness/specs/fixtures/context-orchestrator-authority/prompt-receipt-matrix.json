@@ -1,0 +1,104 @@
+{
+  "schema": "clawx.context-authority.tf0493-prompts/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0493",
+  "program": "component-graduation",
+  "task": "TF-0493",
+  "candidate": {
+    "commit": "5d2942b042c7d01130f2abb661762a0399875dad",
+    "tree": "039cb121e72f735806b1497690f07083284948fe",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "rawRun": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\gate-run.json"
+  },
+  "verdict": "pass",
+  "cases": [
+    {
+      "id": "plain-turn",
+      "result": "pass",
+      "evidence": [
+        "rc03-entry-matrix",
+        "context-runtime"
+      ],
+      "detail": "One sealed bundle and paired context/wire receipt."
+    },
+    {
+      "id": "tool-loop",
+      "result": "pass",
+      "evidence": [
+        "rc03-entry-matrix"
+      ],
+      "detail": "Each follow-up model call receives its own sealed snapshot; retained history is not charged twice."
+    },
+    {
+      "id": "same-provider-retry",
+      "result": "pass",
+      "evidence": [
+        "rc03-entry-matrix"
+      ],
+      "detail": "Retry has its own wire receipt bound to the correct model call."
+    },
+    {
+      "id": "provider-fallback",
+      "result": "pass",
+      "evidence": [
+        "rc03-entry-matrix"
+      ],
+      "detail": "Fallback starts a new attempt/model-call identity rather than reusing a sealed plan."
+    },
+    {
+      "id": "compact",
+      "result": "pass",
+      "evidence": [
+        "rc03-entry-matrix"
+      ],
+      "detail": "Compaction summarizer call is sealed and correlated."
+    },
+    {
+      "id": "fork",
+      "result": "pass",
+      "evidence": [
+        "rc03-entry-matrix"
+      ],
+      "detail": "Forked history receives its own attempt identity."
+    },
+    {
+      "id": "handoff",
+      "result": "pass",
+      "evidence": [
+        "rc03-entry-matrix"
+      ],
+      "detail": "Handoff creates a new sealed parent call."
+    },
+    {
+      "id": "kill-switch-off-parity",
+      "result": "pass",
+      "evidence": [
+        "context-runtime"
+      ],
+      "detail": "Legacy path remains byte-identical with zero candidates/receipts when disabled."
+    },
+    {
+      "id": "c6-internal-api",
+      "result": "pass",
+      "evidence": [
+        "context-authority-static"
+      ],
+      "detail": "Assembler accepts explicit contextLadder API only; disposition is internal and no permanent UI toggle exists."
+    },
+    {
+      "id": "vtoken-stateless",
+      "result": "pass",
+      "evidence": [
+        "context-runtime",
+        "vtoken-package"
+      ],
+      "detail": "Production sends one stateless vt.pack request and the renderer has no bridge panel/switch."
+    }
+  ],
+  "cleanup": {
+    "recoveryRequired": false,
+    "temporaryRoot": "D:/tmp/tf0493/5d2942b042c7d01130f2abb661762a0399875dad"
+  }
+}
