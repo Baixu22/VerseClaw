@@ -1725,6 +1725,7 @@ export function listSubagentRunsForRequester(
 
 export function leasePendingAgentSteeringItems(params: {
   requesterSessionKey: string;
+  requesterSessionId?: string;
   leaseId: string;
   now?: number;
 }) {
@@ -1732,6 +1733,7 @@ export function leasePendingAgentSteeringItems(params: {
   const leased = leasePendingAgentSteeringItemsFromSubagentRuns({
     runs: subagentRuns,
     requesterSessionKey: params.requesterSessionKey,
+    requesterSessionId: params.requesterSessionId,
     leaseId: params.leaseId,
     now: params.now,
   });

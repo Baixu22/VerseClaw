@@ -4218,6 +4218,7 @@ export async function runEmbeddedAttempt(
           const leaseId = `${params.runId}:agent-steering`;
           const leased = leasePendingAgentSteeringItems({
             requesterSessionKey: params.sessionKey,
+            requesterSessionId: params.sessionId,
             leaseId,
           });
           if (leased) {
