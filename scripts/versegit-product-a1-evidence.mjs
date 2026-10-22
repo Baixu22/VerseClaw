@@ -242,7 +242,7 @@ function checkShaFile(root, path, expectedPaths) {
 }
 function sign(document) { document.digest = documentDigest(document); return document; }
 export function buildNegativeChecks(root, manifest, historical) {
-  const cases = []; const record = (id, mutation, result, expected) => cases.push({ id, mutation, expected, rejected: result.issues.length > 0, issues: result.issues.slice(0, 8) });
+  const cases = []; const record = (id, mutation, result, expected) => cases.push({ id, mutation, expected, rejected: result.issues.length > 0, issues: normalizeEvidenceIssues(root, result.issues).map((issue) => issue.replaceAll('D:/outside/current/source.ts', '<absolute-path-probe>')).slice(0, 8) });
   const inputHash = structuredClone(manifest); inputHash.inputs[0].sha256 = '0'.repeat(64); inputHash.candidate_id = candidateIdentity(inputHash.inputs, inputHash.binary); sign(inputHash);
   record('input-byte-hash', 'replace one bound input digest and re-sign candidate identity', validateInputManifest(inputHash, { root }), 'input digest mismatch');
   const candidate = structuredClone(manifest); candidate.candidate_id = '0'.repeat(64); sign(candidate);
