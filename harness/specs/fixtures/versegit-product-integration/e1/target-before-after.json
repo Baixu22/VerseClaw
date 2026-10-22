@@ -1,0 +1,32 @@
+{
+  "schema": "clawx.versegit.e1-target-before-after/v1",
+  "generated_at": "2026-10-22T20:15:22.599Z",
+  "task": "TF-0532",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "d2de451ba5ff20658b00903b39e5b5e73db67ceb",
+    "tree": "5cc8900c98b1105262f19de9d9378644c12cc965",
+    "dirty": false
+  },
+  "before": {
+    "head": "748c9f05aa64e17c34cfecd595d4a3badaaa48ea",
+    "refs": "refs/heads/main 748c9f05aa64e17c34cfecd595d4a3badaaa48ea",
+    "status_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "target_file_sha256": "314879fe4de3ac706a6af7ef45ad186d31348c7fb68dd4f6a7a1c0c9865c6352"
+  },
+  "after": {
+    "head": "748c9f05aa64e17c34cfecd595d4a3badaaa48ea",
+    "refs": "refs/heads/main 748c9f05aa64e17c34cfecd595d4a3badaaa48ea",
+    "status_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "target_file_sha256": "314879fe4de3ac706a6af7ef45ad186d31348c7fb68dd4f6a7a1c0c9865c6352"
+  },
+  "main_unchanged": true,
+  "refs_unchanged": true,
+  "merge_performed": false,
+  "candidate_status": "frozen",
+  "refresh_created_new_candidate": true,
+  "passed": true,
+  "digest": "b66961c6545a125bcbe9b039c1b1d3ed72811545f09b5d7751583bacc4db24ae"
+}
