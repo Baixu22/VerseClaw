@@ -6,6 +6,8 @@
 import type { FactStore } from "../context-engine/factstore/store.js";
 import { reviewDiff } from "../context-engine/views/verify/review-diff-view.js";
 import { applyPatch } from "./apply-patch.js";
+import type { ApplyPatchJournalEvidence } from "./apply-patch-preflight.js";
+import type { ApplyPatchJournalOptions } from "./apply-patch-types.js";
 import {
   classifyWriteDestructiveTier,
   type DestructiveClassification,
@@ -24,6 +26,8 @@ export type PatchFlowApplyResult = {
   summary?: { added: string[]; modified: string[]; deleted: string[] };
   verify?: { relatedTests: string[]; riskLevel: string };
   destructive?: DestructiveClassification;
+  journal?: ApplyPatchJournalEvidence;
+  recoveryRef?: string;
 };
 
 /** Classify a worker proposal for the existing destructive approval surface (C2-10). */
@@ -56,6 +60,8 @@ export async function applyPatchProposalsSerial(params: {
    * Routine Update File proposals still apply serially without this flag.
    */
   applyDestructiveWithoutApproval?: boolean;
+  /** Reuse the existing write journal for host-side candidate apply. */
+  journal?: ApplyPatchJournalOptions;
 }): Promise<PatchFlowApplyResult[]> {
   const results: PatchFlowApplyResult[] = [];
   for (const proposal of params.proposals) {
@@ -73,6 +79,15 @@ export async function applyPatchProposalsSerial(params: {
       const applied = await applyPatch(proposal.patchText, {
         cwd: params.cwd,
         workspaceOnly: true,
+        ...(params.journal
+          ? {
+              journal: {
+                ...params.journal,
+                enabled: params.journal.enabled !== false,
+                requestId: `${params.journal.requestId ?? "candidate-apply"}:${proposal.workerId}`,
+              },
+            }
+          : {}),
       });
       let verify: PatchFlowApplyResult["verify"];
       if (params.factStore) {
@@ -90,13 +105,21 @@ export async function applyPatchProposalsSerial(params: {
         summary: applied.summary,
         verify,
         destructive,
+        ...(applied.journal ? { journal: applied.journal } : {}),
       });
     } catch (error) {
+      const failure = error as {
+        message?: string;
+        journal?: ApplyPatchJournalEvidence;
+        recoveryRef?: string;
+      };
       results.push({
         workerId: proposal.workerId,
         ok: false,
-        error: error instanceof Error ? error.message : String(error),
+        error: failure.message ?? String(error),
         destructive,
+        ...(failure.journal ? { journal: failure.journal } : {}),
+        ...(failure.recoveryRef ? { recoveryRef: failure.recoveryRef } : {}),
       });
     }
   }

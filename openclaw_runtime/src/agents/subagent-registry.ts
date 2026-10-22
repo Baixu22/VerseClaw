@@ -3,6 +3,7 @@
  *
  * Owns registration, lifecycle, delivery retry, steering, orphan recovery, persistence, and cleanup for child runs.
  */
+import { createHash } from "node:crypto";
 import type { cleanupBrowserSessionsForLifecycleEnd } from "../browser-lifecycle-cleanup.js";
 import { getRuntimeConfig } from "../config/config.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
@@ -56,6 +57,7 @@ import {
   safeRemoveAttachmentsDir,
 } from "./subagent-registry-helpers.js";
 import { createSubagentRegistryLifecycleController } from "./subagent-registry-lifecycle.js";
+import type { CandidateApplyHost } from "./orchestration-candidate-apply.js";
 import { applyDeferredPatchFlow } from "./orchestration-patch-flow.js";
 import { subagentRuns } from "./subagent-registry-memory.js";
 import {
@@ -126,6 +128,7 @@ type SubagentRegistryDeps = {
   resolveAgentTimeoutMs: typeof resolveAgentTimeoutMs;
   restoreSubagentRunsFromDisk: typeof restoreSubagentRunsFromDisk;
   runSubagentAnnounceFlow: SubagentAnnounceModule["runSubagentAnnounceFlow"];
+  candidateApplyHost?: CandidateApplyHost;
   ensureContextEnginesInitialized?: () => void;
   ensureRuntimePluginsLoaded?: typeof ensureRuntimePluginsLoadedFn;
   resolveContextEngine?: (
@@ -610,35 +613,95 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
   if (expectedWorkers.some((worker) => typeof worker.endedAt !== "number")) {
     return;
   }
-  await processCompletedOrchestrationWorktrees(expectedWorkers);
   let latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
   if (!latestMeta) {
     return;
   }
-  if (latestMeta.patchFlowExecution === true && latestMeta.patchFlowStatus === undefined) {
-    if (deferredPatchFlowRunsInProgress.has(orchestrationRunId)) {
+  if (latestMeta.patchFlowExecution === true) {
+    if (latestMeta.patchFlowStatus === undefined) {
+      if (deferredPatchFlowRunsInProgress.has(orchestrationRunId)) {
+        return;
+      }
+      const host = subagentRegistryDeps.candidateApplyHost;
+      const workspaceDir =
+        expectedWorkers.find((worker) => worker.workspaceDir)?.workspaceDir ??
+        completed.workspaceDir;
+      if (!host || !workspaceDir) {
+        markOrchestrationWorkers({
+          workers: expectedWorkers,
+          patch: {
+            patchFlowStatus: "blocked",
+            patchFlowAppliedAt: Date.now(),
+            patchFlowError: !host
+              ? "candidate_apply_host_missing"
+              : "patch_flow_workspace_missing",
+            verifierSkippedReason: "candidate-apply-host-missing",
+            verifierSkippedAt: Date.now(),
+          },
+        });
+        return;
+      }
+      deferredPatchFlowRunsInProgress.add(orchestrationRunId);
+      try {
+        const outcome = await applyDeferredPatchFlow({
+          workers: expectedWorkers,
+          workspaceDir,
+          candidateApply: {
+            host,
+            journal: {
+              workspaceRoot: workspaceDir,
+              sessionId: completed.requesterSessionKey,
+              requestId: `orchestration:${orchestrationRunId}:candidate-apply`,
+              enabled: true,
+            },
+          },
+        });
+        const traceDigest = createHash("sha256")
+          .update(JSON.stringify(outcome.trace ?? []))
+          .digest("hex");
+        const journalRefs = (outcome.results ?? []).flatMap((result) =>
+          result.journal?.snapshotIds ?? []
+        );
+        markOrchestrationWorkers({
+          workers: expectedWorkers,
+          patch: {
+            patchFlowStatus: outcome.status,
+            patchFlowResults: outcome.results,
+            patchFlowAppliedAt: outcome.appliedAt,
+            ...(outcome.error ? { patchFlowError: outcome.error } : {}),
+            ...(outcome.candidate
+              ? {
+                  patchFlowCandidateId: outcome.candidate.candidateId,
+                  patchFlowCandidateTreeOid: outcome.candidate.candidateTreeOid,
+                  patchFlowCandidateInputDigest: outcome.candidate.candidateInputDigest,
+                }
+              : {}),
+            patchFlowTraceDigest: traceDigest,
+            patchFlowJournalRefs: [...new Set(journalRefs)],
+          },
+        });
+      } finally {
+        deferredPatchFlowRunsInProgress.delete(orchestrationRunId);
+      }
+      latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
+      if (!latestMeta) {
+        return;
+      }
+    }
+    if (latestMeta.patchFlowStatus !== "applied") {
+      if (!latestMeta.verifierSkippedReason) {
+        markOrchestrationWorkers({
+          workers: expectedWorkers,
+          patch: {
+            verifierSkippedReason: "candidate-apply-not-complete",
+            verifierSkippedAt: Date.now(),
+          },
+        });
+      }
       return;
     }
-    deferredPatchFlowRunsInProgress.add(orchestrationRunId);
-    try {
-      const outcome = await applyDeferredPatchFlow({
-        workers: expectedWorkers,
-        workspaceDir:
-          expectedWorkers.find((worker) => worker.workspaceDir)?.workspaceDir ??
-          completed.workspaceDir,
-      });
-      markOrchestrationWorkers({
-        workers: expectedWorkers,
-        patch: {
-          patchFlowStatus: outcome.status,
-          patchFlowResults: outcome.results,
-          patchFlowAppliedAt: outcome.appliedAt,
-          ...(outcome.error ? { patchFlowError: outcome.error } : {}),
-        },
-      });
-    } finally {
-      deferredPatchFlowRunsInProgress.delete(orchestrationRunId);
-    }
+  } else {
+    await processCompletedOrchestrationWorktrees(expectedWorkers);
     latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
     if (!latestMeta) {
       return;
@@ -1585,6 +1648,12 @@ export function updateSubagentRunOrchestrationMetadata(
   }
   persistSubagentRuns();
   return true;
+}
+
+export function configureSubagentRegistryCandidateApplyHost(
+  host: CandidateApplyHost | undefined,
+): void {
+  subagentRegistryDeps = { ...subagentRegistryDeps, candidateApplyHost: host };
 }
 
 export function resetSubagentRegistryForTests(opts?: { persist?: boolean }) {

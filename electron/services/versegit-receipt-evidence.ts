@@ -694,7 +694,10 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
       add(cleanup.worktreeSurvivors === 0, 'cleanup retained worktrees');
       if (cleanup.schema === 'clawx.versegit.verification-cleanup/v2') {
         add(cleanup.verificationRootRemoved === true, 'cleanup retained the verification root');
-        add(cleanup.candidateWorktreeSurvivors === 0, 'cleanup retained the candidate worktree');
+        add(
+          (cleanup.verificationWorktreeSurvivors ?? cleanup.candidateWorktreeSurvivors) === 0,
+          'cleanup retained the verification worktree',
+        );
         add(cleanup.baseRootPreserved === true, 'cleanup did not preserve the base workspace');
       } else {
         add(cleanup.tempRootRemoved === true, 'cleanup retained the temporary root');
