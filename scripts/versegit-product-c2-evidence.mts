@@ -43,8 +43,8 @@ function git(cwd: string, args: string[]): string {
   return execFileSync("git", args, { cwd, encoding: "utf8", windowsHide: true }).trim();
 }
 function source() {
-  const dirty = git(["status", "--porcelain=v1", "--untracked-files=normal"]).length > 0;
-  return { branch: git(["branch", "--show-current"]) || "detached", commit: git(["rev-parse", "HEAD"]), tree: git(["rev-parse", "HEAD^{tree}"]), dirty };
+  const dirty = git(ROOT, ["status", "--porcelain=v1", "--untracked-files=normal"]).length > 0;
+  return { branch: git(ROOT, ["branch", "--show-current"]) || "detached", commit: git(ROOT, ["rev-parse", "HEAD"]), tree: git(ROOT, ["rev-parse", "HEAD^{tree}"]), dirty };
 }
 async function freePort(): Promise<number> {
   return await new Promise((resolvePort, rejectPort) => {
