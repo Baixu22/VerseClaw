@@ -11,6 +11,7 @@ import { syncActiveWorkspacePermissionToRuntime, syncActiveWorkspaceRootToRuntim
 import { runWorkspacePreflight } from './workspace-preflight';
 import type { TerminalSessionManager } from './terminal-session-manager';
 import type { WebPreviewManager } from './web-preview-manager';
+import type { DelegationAdmissionReceipt } from '@shared/types/delegation-admission';
 import type {
   WorkspacePermissionMode,
   WorkspaceAgentBinding,
@@ -189,6 +190,42 @@ function normalizeCoordinatorTaskRefs(value: unknown): WorkspaceCoordinatorTaskR
   });
 }
 
+function normalizeDelegationReceipt(
+  value: unknown,
+  expectedKey: string,
+): DelegationAdmissionReceipt | null {
+  if (!isRecord(value)
+    || value.schemaVersion !== 'DelegationAdmissionReceipt/v1'
+    || value.idempotencyKey !== expectedKey
+    || typeof value.receiptId !== 'string'
+    || typeof value.requestDigest !== 'string'
+    || typeof value.roleName !== 'string'
+    || typeof value.task !== 'string'
+    || !isRecord(value.coordinator)
+    || !isRecord(value.taskRef)
+    || !isRecord(value.backend)
+    || !isRecord(value.toolAuthorization)
+    || !isRecord(value.isolation)) {
+    return null;
+  }
+  const state = value.state;
+  if (state !== 'submitting' && state !== 'accepted' && state !== 'rejected' && state !== 'unknown') {
+    return null;
+  }
+  return value as unknown as DelegationAdmissionReceipt;
+}
+
+function normalizeDelegationReceipts(value: unknown): Record<string, DelegationAdmissionReceipt> {
+  if (!isRecord(value)) return {};
+  const entries = Object.entries(value).flatMap(([key, receipt]) => {
+    const normalized = normalizeDelegationReceipt(receipt, key);
+    return normalized ? [[key, normalized] as const] : [];
+  });
+  return Object.fromEntries(entries.sort((left, right) => (
+    right[1].updatedAt.localeCompare(left[1].updatedAt)
+  )).slice(0, 100));
+}
+
 function normalizeCoordinatorBinding(
   value: unknown,
   workspaceId: string,
@@ -256,6 +293,7 @@ function normalizeWorkspaceProfile(profile: WorkspaceProfile): WorkspaceProfile 
   const sessionFolders = normalizeSessionFolders(profile.sessionFolders);
   const sessionFolderAssignments = normalizeSessionFolderAssignments(profile.sessionFolderAssignments, sessionFolders);
   const coordinatorBinding = normalizeCoordinatorBinding(profile.coordinatorBinding, profile.id);
+  const delegationReceipts = normalizeDelegationReceipts(profile.delegationReceipts);
   return {
     ...profile,
     agentId: selectedAgentId,
@@ -268,6 +306,7 @@ function normalizeWorkspaceProfile(profile: WorkspaceProfile): WorkspaceProfile 
     sessionFolders,
     sessionFolderAssignments,
     ...(coordinatorBinding ? { coordinatorBinding } : {}),
+    ...(Object.keys(delegationReceipts).length > 0 ? { delegationReceipts } : {}),
   };
 }
 
@@ -556,6 +595,56 @@ export async function saveWorkspaceCoordinatorBinding(input: {
     };
     await writeDocument({ ...document, profiles });
     return input.binding;
+  });
+}
+
+export async function readWorkspaceDelegationReceipt(
+  workspaceId: string,
+  idempotencyKey: string,
+): Promise<DelegationAdmissionReceipt | null> {
+  const document = await readDocument();
+  const profile = document.profiles.find((candidate) => candidate.id === workspaceId);
+  return profile?.delegationReceipts?.[idempotencyKey] ?? null;
+}
+
+export async function listWorkspaceDelegationReceipts(
+  workspaceId?: string | null,
+): Promise<DelegationAdmissionReceipt[]> {
+  const document = await ensureDocumentWithDefault();
+  const id = workspaceId?.trim() || document.activeWorkspaceId;
+  const profile = document.profiles.find((candidate) => candidate.id === id);
+  return Object.values(profile?.delegationReceipts ?? {}).sort((left, right) => (
+    right.updatedAt.localeCompare(left.updatedAt)
+  ));
+}
+
+export async function saveWorkspaceDelegationReceipt(
+  workspaceId: string,
+  receipt: DelegationAdmissionReceipt,
+): Promise<DelegationAdmissionReceipt> {
+  return enqueueCoordinatorBindingMutation(async () => {
+    const document = await readDocument();
+    const index = document.profiles.findIndex((profile) => profile.id === workspaceId);
+    if (index === -1) throw new Error(`Workspace "${workspaceId}" not found`);
+    const profile = document.profiles[index];
+    const existing = profile.delegationReceipts?.[receipt.idempotencyKey] ?? null;
+    if (existing && existing.requestDigest !== receipt.requestDigest) {
+      throw new Error('Delegation admission idempotency key was reused with a different request');
+    }
+    if (existing?.state === 'accepted' && receipt.state === 'submitting') return existing;
+    if (existing?.state === 'rejected' && receipt.state !== 'rejected') return existing;
+    const nextReceipts = normalizeDelegationReceipts({
+      ...(profile.delegationReceipts ?? {}),
+      [receipt.idempotencyKey]: receipt,
+    });
+    const profiles = [...document.profiles];
+    profiles[index] = {
+      ...profile,
+      delegationReceipts: nextReceipts,
+      updatedAt: Date.now(),
+    };
+    await writeDocument({ ...document, profiles });
+    return nextReceipts[receipt.idempotencyKey] ?? receipt;
   });
 }
 

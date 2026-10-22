@@ -107,7 +107,7 @@ B1 消费 TF-0512 的 current runtime capability facts。B2 在 Chat 活动栏�
 
 新目标服务现有 TF-0001 全局目的，与 TF-0482 是分开的交付 lane；不重开 deprecated TF-0010，不改历史 TF-0077/TF-0370/TF-0424 的验收或默认值。只用非阻塞 related_to 记录横向关系；不能通过本规划给其它在途工作加新义务。
 
-C1 把协调绑定保存在现有 Workspace store 的 `WorkspaceProfile.coordinatorBinding`：只记录已选 Assistant、逻辑 SessionKey、物理 sessionId、Task Ledger node refs、revision 与失效原因。它不自动从普通 Chat 建立，也不拥有任务状态；删除/archive 直接失效，reset 在读取时通过 physical generation 差异失效。C4 才提供用户可见的长期协作入口，further delegation/completion 仍由现有 Session 与 Task Ledger owner 处理。
+C1 把协调绑定保存在现有 Workspace store 的 `WorkspaceProfile.coordinatorBinding`：只记录已选 Assistant、逻辑 SessionKey、物理 sessionId、Task Ledger node refs、revision 与失效原因。它不自动从普通 Chat 建立，也不拥有任务状态；删除/archive 直接失效，reset 在读取时通过 physical generation 差异失效。C2 在同一 Workspace store 的子项中保存 bounded `DelegationAdmissionReceipt/v1` journal，按 idempotency key/request digest 复用既有 `orchestrator.run`、role spawn、scheduler 与 worktree/inprocess isolation；accepted 仅是 admission，child run 完成和 Task Ledger 状态仍由各自 owner 维护。C4 才提供用户可见的长期协作入口。
 
 **已有实现与需要补的路径**
 

@@ -1,6 +1,6 @@
 import { existsSync, openSync, closeSync, fstatSync, readFileSync, readSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { RawMessage } from '@shared/chat/types';
 import type { AgentReasoningEffort } from '@shared/types/agent';
@@ -35,6 +35,10 @@ import type {
   SessionBindCoordinatorPayload,
   SessionBindCoordinatorResult,
   SessionCoordinatorBindingReadPayload,
+  SessionDelegateCoordinatorPayload,
+  SessionDelegateCoordinatorResult,
+  SessionDelegationAdmissionsPayload,
+  SessionDelegationAdmissionsResult,
   SessionDeleteResult,
   SessionEffectivePolicy,
   SessionExpandSelectorResult,
@@ -46,9 +50,13 @@ import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-se
 import {
   createWorkspacesApi,
   getActiveWorkspaceProfile,
+  getWorkspaceRootPathById,
   invalidateWorkspaceCoordinatorBindingsForSession,
+  listWorkspaceDelegationReceipts,
   readWorkspaceCoordinatorBinding,
+  readWorkspaceDelegationReceipt,
   saveWorkspaceCoordinatorBinding,
+  saveWorkspaceDelegationReceipt,
 } from './workspaces-api';
 import { evaluateHandoffDerivation } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
@@ -65,6 +73,11 @@ import {
   writeArchiveIndex,
 } from '../utils/session-files';
 import { isRecord } from './payload-utils';
+import type {
+  DelegationAdmissionReceipt,
+  DelegationCoordinatorScope,
+  DelegationTaskRef,
+} from '@shared/types/delegation-admission';
 import type {
   SessionArchiveEntry,
   WorkspaceCoordinatorBinding,
@@ -1882,6 +1895,121 @@ async function invalidateBindingAndRead(
   return reread?.binding ?? null;
 }
 
+function delegationRequestDigest(
+  payload: SessionDelegateCoordinatorPayload,
+  coordinator: DelegationCoordinatorScope,
+  taskRef: DelegationTaskRef,
+): string {
+  return createHash('sha256').update(JSON.stringify({
+    workspaceId: payload.workspaceId,
+    coordinator,
+    roleName: payload.roleName,
+    task: payload.task,
+    taskRef,
+    writeSet: [...(payload.writeSet ?? [])].sort(),
+    isolation: payload.isolation ?? 'shared',
+    modelRef: payload.modelRef ?? null,
+    backend: payload.backend ?? 'openclaw-embedded',
+  })).digest('hex');
+}
+
+async function resolveAdmissionCoordinator(params: {
+  gatewayManager: GatewayManager;
+  workspaceId: string;
+  taskRef: DelegationTaskRef;
+}): Promise<{ coordinator: DelegationCoordinatorScope } | { error: string }> {
+  const active = await getActiveWorkspaceProfile();
+  if (!active) return { error: 'No active workspace is available.' };
+  if (active.id !== params.workspaceId) return { error: 'Delegation cannot cross the active workspace.' };
+  const stored = await readWorkspaceCoordinatorBinding(active.id);
+  const binding = stored?.binding;
+  if (!binding) return { error: 'Coordinator binding is missing; long-session coordination was not started.' };
+  if (binding.state !== 'active') return { error: `Coordinator binding is ${binding.state}.` };
+  if (!binding.taskRefs.some((ref) => ref.kind === params.taskRef.kind && ref.nodeId === params.taskRef.nodeId)) {
+    return { error: 'Task reference is not part of the active coordinator binding.' };
+  }
+  let live: LiveSessionIdentity | null;
+  try {
+    live = await resolveLiveSessionIdentity(params.gatewayManager, binding.sessionKey, binding.agentId);
+  } catch (error) {
+    return { error: `Session owner unavailable: ${error instanceof Error ? error.message : String(error)}` };
+  }
+  if (!live) {
+    await invalidateBindingAndRead(active.id, binding.sessionKey, 'session_missing');
+    return { error: 'Coordinator session no longer exists.' };
+  }
+  if (live.sessionId !== binding.sessionId || live.agentId !== binding.agentId) {
+    await invalidateBindingAndRead(active.id, binding.sessionKey, 'reset');
+    return { error: 'Coordinator physical generation changed; delegation was not admitted.' };
+  }
+  return {
+    coordinator: {
+      workspaceId: binding.workspaceId,
+      agentId: binding.agentId,
+      sessionKey: binding.sessionKey,
+      sessionId: binding.sessionId,
+      bindingRevision: binding.revision,
+    },
+  };
+}
+
+function createSubmittingDelegationReceipt(params: {
+  payload: SessionDelegateCoordinatorPayload;
+  coordinator: DelegationCoordinatorScope;
+  taskRef: DelegationTaskRef;
+  requestDigest: string;
+  receiptId: string;
+  createdAt: string;
+}): DelegationAdmissionReceipt {
+  return {
+    schemaVersion: 'DelegationAdmissionReceipt/v1',
+    receiptId: params.receiptId,
+    idempotencyKey: params.payload.idempotencyKey,
+    requestDigest: params.requestDigest,
+    coordinator: params.coordinator,
+    taskRef: params.taskRef,
+    roleName: params.payload.roleName,
+    task: params.payload.task,
+    state: 'submitting',
+    acceptedIsNotCompletion: true,
+    orchestrationRunId: null,
+    taskNodeId: null,
+    taskId: null,
+    roleInstanceId: null,
+    childSessionKey: null,
+    childRunId: null,
+    backend: { kind: 'unknown', provider: null, model: null, evidence: 'admission-submitting' },
+    toolAuthorization: { allowlist: [], denylist: [], permissionDecisionCount: 0, source: 'unresolved' },
+    isolation: {
+      mode: 'unknown',
+      backend: 'unknown',
+      worktreeId: null,
+      writeSet: [...(params.payload.writeSet ?? [])],
+      parallelWritesAllowed: false,
+      writeSetBasis: 'unresolved',
+    },
+    reason: null,
+    createdAt: params.createdAt,
+    updatedAt: params.createdAt,
+    acceptedAt: null,
+    rejectedAt: null,
+  };
+}
+
+function rejectDelegationReceipt(
+  receipt: DelegationAdmissionReceipt,
+  reason: string,
+): DelegationAdmissionReceipt {
+  const now = new Date().toISOString();
+  return {
+    ...receipt,
+    state: 'rejected',
+    reason,
+    updatedAt: now,
+    rejectedAt: now,
+  };
+}
+
 export function createSessionsApi(ctx: {
   gatewayManager?: GatewayManager;
   terminalManager?: TerminalSessionManager;
@@ -3007,6 +3135,289 @@ export function createSessionsApi(ctx: {
           error: `Coordinator binding failed: ${error instanceof Error ? error.message : String(error)}`,
         };
       }
+    },
+    delegateCoordinator: async (
+      payload: SessionDelegateCoordinatorPayload,
+    ): Promise<SessionDelegateCoordinatorResult> => {
+      const workspaceId = typeof payload.workspaceId === 'string' ? payload.workspaceId.trim() : '';
+      const idempotencyKey = typeof payload.idempotencyKey === 'string' ? payload.idempotencyKey.trim() : '';
+      const roleName = typeof payload.roleName === 'string' ? payload.roleName.trim() : '';
+      const task = typeof payload.task === 'string' ? payload.task.trim() : '';
+      const taskRef = payload.taskRef;
+      if (!workspaceId || !idempotencyKey || !roleName || !task
+        || !taskRef || taskRef.kind !== 'task-ledger' || typeof taskRef.nodeId !== 'string' || !taskRef.nodeId.trim()) {
+        return {
+          success: false,
+          error: 'workspaceId, idempotencyKey, roleName, task and a Task Ledger taskRef are required',
+          receipt: createSubmittingDelegationReceipt({
+            payload,
+            coordinator: {
+              workspaceId, agentId: '', sessionKey: '', sessionId: '', bindingRevision: 0,
+            },
+            taskRef: taskRef ?? { kind: 'task-ledger', nodeId: '' },
+            requestDigest: '',
+            receiptId: `dar_${randomUUID()}`,
+            createdAt: new Date().toISOString(),
+          }),
+        };
+      }
+      if (!/^[A-Za-z0-9._:-]{1,200}$/.test(idempotencyKey)) {
+        return {
+          success: false,
+          error: 'idempotencyKey must be a bounded canonical identifier',
+          receipt: createSubmittingDelegationReceipt({
+            payload,
+            coordinator: { workspaceId, agentId: '', sessionKey: '', sessionId: '', bindingRevision: 0 },
+            taskRef,
+            requestDigest: '',
+            receiptId: `dar_${randomUUID()}`,
+            createdAt: new Date().toISOString(),
+          }),
+        };
+      }
+      const active = await getActiveWorkspaceProfile();
+      if (!active) {
+        return {
+          success: false,
+          error: 'No active workspace is available.',
+          receipt: createSubmittingDelegationReceipt({
+            payload,
+            coordinator: { workspaceId, agentId: '', sessionKey: '', sessionId: '', bindingRevision: 0 },
+            taskRef,
+            requestDigest: '',
+            receiptId: `dar_${randomUUID()}`,
+            createdAt: new Date().toISOString(),
+          }),
+        };
+      }
+      if (active.id !== workspaceId) {
+        return {
+          success: false,
+          error: 'Delegation cannot cross the active workspace.',
+          receipt: createSubmittingDelegationReceipt({
+            payload,
+            coordinator: { workspaceId, agentId: '', sessionKey: '', sessionId: '', bindingRevision: 0 },
+            taskRef,
+            requestDigest: '',
+            receiptId: `dar_${randomUUID()}`,
+            createdAt: new Date().toISOString(),
+          }),
+        };
+      }
+      const stored = await readWorkspaceCoordinatorBinding(workspaceId);
+      const binding = stored?.binding;
+      if (!binding || binding.state !== 'active') {
+        const reason = binding ? `Coordinator binding is ${binding.state}.` : 'Coordinator binding is missing.';
+        return {
+          success: false,
+          error: reason,
+          receipt: rejectDelegationReceipt(createSubmittingDelegationReceipt({
+            payload,
+            coordinator: {
+              workspaceId,
+              agentId: binding?.agentId ?? '',
+              sessionKey: binding?.sessionKey ?? '',
+              sessionId: binding?.sessionId ?? '',
+              bindingRevision: binding?.revision ?? 0,
+            },
+            taskRef,
+            requestDigest: '',
+            receiptId: `dar_${randomUUID()}`,
+            createdAt: new Date().toISOString(),
+          }), reason),
+        };
+      }
+      const coordinator: DelegationCoordinatorScope = {
+        workspaceId: binding.workspaceId,
+        agentId: binding.agentId,
+        sessionKey: binding.sessionKey,
+        sessionId: binding.sessionId,
+        bindingRevision: binding.revision,
+      };
+      const requestDigest = delegationRequestDigest(payload, coordinator, taskRef);
+      const existing = await readWorkspaceDelegationReceipt(workspaceId, idempotencyKey);
+      if (existing) {
+        if (existing.requestDigest !== requestDigest) {
+          return {
+            success: false,
+            error: 'Delegation admission idempotency key was reused with a different request',
+            receipt: existing,
+            duplicate: true,
+          };
+        }
+        return {
+          success: true,
+          receipt: existing,
+          duplicate: true,
+          recoveryRequired: existing.state === 'submitting' || existing.state === 'unknown',
+        };
+      }
+      const createdAt = new Date().toISOString();
+      let receipt = createSubmittingDelegationReceipt({
+        payload,
+        coordinator,
+        taskRef,
+        requestDigest,
+        receiptId: `dar_${randomUUID()}`,
+        createdAt,
+      });
+      await saveWorkspaceDelegationReceipt(workspaceId, receipt);
+
+      if (!ctx.gatewayManager) {
+        receipt = {
+          ...receipt,
+          state: 'rejected',
+          reason: 'Gateway manager unavailable',
+          updatedAt: new Date().toISOString(),
+          rejectedAt: new Date().toISOString(),
+        };
+        await saveWorkspaceDelegationReceipt(workspaceId, receipt);
+        return { success: false, error: receipt.reason ?? undefined, receipt };
+      }
+      if (payload.backend !== undefined && payload.backend !== 'openclaw-embedded') {
+        receipt = {
+          ...receipt,
+          state: 'rejected',
+          backend: { kind: 'unknown', provider: null, model: null, evidence: 'unsupported-backend' },
+          reason: `Unsupported delegation backend: ${String(payload.backend)}`,
+          updatedAt: new Date().toISOString(),
+          rejectedAt: new Date().toISOString(),
+        };
+        await saveWorkspaceDelegationReceipt(workspaceId, receipt);
+        return { success: false, error: receipt.reason ?? undefined, receipt };
+      }
+      const admissionCoordinator = await resolveAdmissionCoordinator({
+        gatewayManager: ctx.gatewayManager,
+        workspaceId,
+        taskRef,
+      });
+      if ('error' in admissionCoordinator) {
+        receipt = {
+          ...receipt,
+          state: 'rejected',
+          reason: admissionCoordinator.error,
+          updatedAt: new Date().toISOString(),
+          rejectedAt: new Date().toISOString(),
+        };
+        await saveWorkspaceDelegationReceipt(workspaceId, receipt);
+        return { success: false, error: receipt.reason ?? undefined, receipt };
+      }
+      const ledger = await loadTaskLedgerSnapshot(workspaceId);
+      if (!ledger.nodes.some((node) => node.id === taskRef.nodeId)) {
+        receipt = {
+          ...receipt,
+          state: 'rejected',
+          reason: 'Task Ledger reference does not exist',
+          updatedAt: new Date().toISOString(),
+          rejectedAt: new Date().toISOString(),
+        };
+        await saveWorkspaceDelegationReceipt(workspaceId, receipt);
+        return { success: false, error: receipt.reason ?? undefined, receipt };
+      }
+
+      const runtimeAdmission = {
+        receiptId: receipt.receiptId,
+        idempotencyKey: receipt.idempotencyKey,
+        requestDigest: receipt.requestDigest,
+        coordinator: receipt.coordinator,
+        taskRef: receipt.taskRef,
+        createdAt: receipt.createdAt,
+      };
+      try {
+        const response = await ctx.gatewayManager.rpc<{
+          admissionReceipts?: DelegationAdmissionReceipt[];
+          failures?: Array<{ roleName?: string; error?: string; status?: string }>;
+        }>('orchestrator.run', {
+          task,
+          sessionKey: binding.sessionKey,
+          agentId: binding.agentId,
+          workers: [{
+            roleName,
+            task,
+            ...(payload.modelRef ? { modelRef: payload.modelRef } : {}),
+            ...(payload.writeSet?.length ? { writeSet: payload.writeSet } : {}),
+            ...(payload.isolation ? { isolation: payload.isolation } : {}),
+          }],
+          maxWorkers: 1,
+          includeVerifier: false,
+          graphMode: 'dag',
+          workspaceDir: await getWorkspaceRootPathById(workspaceId),
+          delegationAdmission: runtimeAdmission,
+        }, 130_000);
+        const returned = response?.admissionReceipts?.[0];
+        if (returned
+          && returned.receiptId === receipt.receiptId
+          && returned.idempotencyKey === receipt.idempotencyKey
+          && returned.requestDigest === receipt.requestDigest
+          && returned.coordinator.sessionId === receipt.coordinator.sessionId
+          && returned.taskRef.nodeId === receipt.taskRef.nodeId) {
+          receipt = returned;
+        } else {
+          receipt = {
+            ...receipt,
+            state: 'rejected',
+            reason: response?.failures?.[0]?.error ?? 'Orchestrator returned no matching admission receipt',
+            updatedAt: new Date().toISOString(),
+            rejectedAt: new Date().toISOString(),
+          };
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        const knownRejection = /unknown role|forbidden|permission|max children|invalid request/i.test(message);
+        receipt = {
+          ...receipt,
+          state: knownRejection ? 'rejected' : 'unknown',
+          reason: message,
+          updatedAt: new Date().toISOString(),
+          rejectedAt: knownRejection ? new Date().toISOString() : null,
+        };
+      }
+
+      if (receipt.state === 'accepted') {
+        const current = await readWorkspaceCoordinatorBinding(workspaceId);
+        const currentBinding = current?.binding;
+        if (!currentBinding
+          || currentBinding.state !== 'active'
+          || currentBinding.revision !== receipt.coordinator.bindingRevision
+          || currentBinding.sessionId !== receipt.coordinator.sessionId) {
+          let childStopped = true;
+          if (receipt.childSessionKey) {
+            try {
+              await ctx.gatewayManager.rpc('sessions.stop', { key: receipt.childSessionKey }, 15_000);
+            } catch {
+              childStopped = false;
+            }
+          }
+          receipt = {
+            ...receipt,
+            state: childStopped ? 'rejected' : 'unknown',
+            reason: childStopped
+              ? 'Coordinator generation changed after admission; child stop was requested'
+              : 'Coordinator generation changed after admission; child stop outcome is unknown',
+            updatedAt: new Date().toISOString(),
+            rejectedAt: childStopped ? new Date().toISOString() : null,
+          };
+        }
+      }
+      receipt = await saveWorkspaceDelegationReceipt(workspaceId, receipt);
+      return {
+        success: receipt.state === 'accepted',
+        ...(receipt.state === 'accepted' ? {} : { error: receipt.reason ?? `Admission ${receipt.state}` }),
+        receipt,
+        duplicate: false,
+        recoveryRequired: receipt.state === 'unknown' || receipt.state === 'submitting',
+      };
+    },
+    delegationAdmissions: async (
+      payload: SessionDelegationAdmissionsPayload = {},
+    ): Promise<SessionDelegationAdmissionsResult> => {
+      const active = await getActiveWorkspaceProfile();
+      if (!active) return { success: false, error: 'No active workspace is available.', receipts: [] };
+      const requested = typeof payload.workspaceId === 'string' ? payload.workspaceId.trim() : '';
+      if (requested && requested !== active.id) {
+        return { success: false, error: 'Requested workspace does not match the active workspace.', receipts: [] };
+      }
+      return { success: true, receipts: await listWorkspaceDelegationReceipts(active.id) };
     },
     permanentDelete: async (payload) => {
       const sessionKey = getSessionKey(payload);

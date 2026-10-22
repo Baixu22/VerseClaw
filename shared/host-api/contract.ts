@@ -135,6 +135,10 @@ import type {
   WorkspaceWebPreviewStatus,
 } from '../types/workspace';
 import type {
+  DelegationAdmissionReceipt,
+  DelegationTaskRef,
+} from '../types/delegation-admission';
+import type {
   WorkProviderConfig,
   WorkProviderRunPayload,
   WorkProviderRunResult,
@@ -2838,6 +2842,29 @@ export type SessionBindCoordinatorPayload = {
 export type SessionBindCoordinatorResult = HostSuccess & {
   binding?: WorkspaceCoordinatorBinding;
   validation?: SessionCoordinatorBindingValidation;
+};
+export type SessionDelegateCoordinatorPayload = {
+  workspaceId: string;
+  idempotencyKey: string;
+  roleName: string;
+  task: string;
+  taskRef: DelegationTaskRef;
+  writeSet?: string[];
+  isolation?: 'shared' | 'worktree';
+  modelRef?: string | null;
+  /** The only supported execution backend for this route. */
+  backend?: 'openclaw-embedded';
+};
+export type SessionDelegateCoordinatorResult = HostSuccess & {
+  receipt: DelegationAdmissionReceipt;
+  duplicate?: boolean;
+  recoveryRequired?: boolean;
+};
+export type SessionDelegationAdmissionsPayload = {
+  workspaceId?: string;
+};
+export type SessionDelegationAdmissionsResult = HostSuccess & {
+  receipts: DelegationAdmissionReceipt[];
 };
 export type SessionPermanentDeletePayload = { id: string };
 export type SessionListArchivedPayload = { agentId?: string };
@@ -5753,6 +5780,8 @@ export type HostApiContract = {
     effectivePolicy: (payload: SessionEffectivePolicyPayload) => SessionEffectivePolicyResult;
     coordinatorBinding: (payload?: SessionCoordinatorBindingReadPayload) => SessionCoordinatorBindingResult;
     bindCoordinator: (payload: SessionBindCoordinatorPayload) => SessionBindCoordinatorResult;
+    delegateCoordinator: (payload: SessionDelegateCoordinatorPayload) => SessionDelegateCoordinatorResult;
+    delegationAdmissions: (payload?: SessionDelegationAdmissionsPayload) => SessionDelegationAdmissionsResult;
     permanentDelete: (payload: SessionPermanentDeletePayload) => HostSuccess;
     listArchived: (payload?: SessionListArchivedPayload) => SessionListArchivedResult;
     emptyArchive: (payload: SessionEmptyArchivePayload) => HostSuccess;

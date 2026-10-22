@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-delegation-admission
 title: 按授权和隔离规则委派独立会话并记录接收回执
 program: long-session-development-20261022
@@ -11,19 +11,26 @@ intent: 完成 coordinator 到 worker 的真实接线，使每项独立工作有
 contractIndex: harness/specs/tasks/long-session-development-plan.md
 dependsOnTasks:
   - C1
+diffBase: e007a8e82
 touchedAreas:
   - harness/specs/tasks/long-session-delegation-admission.md
   - harness/specs/tasks/long-session-development-plan.md
+  - docs/clawx-product-semantics.md
+  - shared/types/delegation-admission.ts
+  - shared/types/workspace.ts
+  - shared/host-api/contract.ts
+  - src/lib/host-api.ts
+  - src/lib/workspace-session.ts
+  - electron/services/workspaces-api.ts
+  - electron/services/sessions-api.ts
+  - openclaw_runtime/src/agents/delegation-admission.ts
   - openclaw_runtime/src/agents/role-spawn.ts
   - openclaw_runtime/src/agents/orchestrator-run-observed.ts
-  - openclaw_runtime/src/agents/orchestration-resource-scheduler.ts
-  - openclaw_runtime/src/agents/worktree-service.ts
-  - openclaw_runtime/src/agents/tools/sessions-spawn-tool.ts
   - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts
-  - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts
-  - electron/services/sessions-api.ts
-  - shared/host-api/contract.ts
   - tests/unit/long-session-delegation-admission.test.ts
+  - tests/unit/workspace-session.test.ts
+  - tests/unit/role-orchestration-methods.test.ts
+  - tests/e2e/long-session-delegation-admission.spec.ts
   - harness/specs/fixtures/long-session-development/c2/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -42,7 +49,10 @@ expectedUserBehavior:
   - 创建本合同不代表功能已实现；结果、配置、授权和任务完成仍归现有 owner，未知状态如实保留。
 requiredTests:
   - pnpm exec vitest run tests/unit/orchestration-resource-scheduler.test.ts tests/unit/role-orchestration-methods.test.ts tests/unit/workspace-session.test.ts --maxWorkers=1
-  - pnpm exec vitest run tests/unit/long-session-delegation-admission.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/long-session-delegation-admission.test.ts tests/unit/role-spawn.test.ts --maxWorkers=1
+  - pnpm run build:runtime
+  - pnpm run build:vite
+  - pnpm run test:e2e:run tests/e2e/long-session-delegation-admission.spec.ts
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run comms:replay
@@ -51,6 +61,7 @@ requiredTests:
   - git diff --check
 plannedTests:
   - tests/unit/long-session-delegation-admission.test.ts
+  - tests/e2e/long-session-delegation-admission.spec.ts
 acceptance:
   - 使用既有 session/role/orchestration 入口提交 worker，receipt 绑定 coordinator revision/generation、task ref、child session/run、backend 和工具授权；accepted 不等于 running/completed。
   - 不复用过期/撤销 grant，不允许 child 超过 parent 权限；未知 worker、不支持的 backend 与拒绝启动不产生 phantom completion。
@@ -66,7 +77,15 @@ docs:
 
 完成 coordinator 到 worker 的真实接线，使每项独立工作有 scope、role、checkout、权限和 accepted receipt。
 
-本规格为待执行合同。任务状态、前置与下一 ready 由 repo-local Task Forest 管理。节点创建、文件存在、静态 validate 或 dry-run 不是功能证据。只有前置任务/阶段的盘上验收完整后才开始。
+本规格已执行。C2 在既有 C1 coordinator binding 之上增加 `DelegationAdmissionReceipt/v1` 持久 journal；它复用现有 `orchestrator.run`、role spawn、scheduler 与 worktree/inprocess isolation，不新增 executor、并发默认或任务完成权威。
+
+**C2 交付**
+
+- `sessions.delegateCoordinator` 先校验 active Workspace、C1 binding revision/physical generation、Task Ledger ref 与 backend，再以 idempotency key + request digest 预写 `submitting` receipt，然后调用既有 `orchestrator.run`；重复提交返回同一 receipt，冲突/digest 不一致 fail closed。
+- Runtime receipt 绑定 coordinator generation、task ref、child session/run、实际 `openclaw-embedded` backend、role-clamped tool allow/deny 和 isolation backend；`accepted` 明确是 admission，不是 running/completed。
+- shared inprocess 写路径按单 worker 串行；显式 worktree 使用实际 `git`/`inprocess` backend 并记录 write set。unknown role、unsupported backend、无效授权/生成变化不产生 phantom child completion。
+- reset/archive/delete 失效旧 binding；admission 前后 generation 校验阻止 stale grant。pre-spawn crash 保留 `submitting`/`unknown` recovery receipt，同 owner 重启重试不会再次 spawn。
+- clean candidate/evidence 与真实 Electron/Host/Gateway 旅程将在 evidence commit 中登记。
 
 所属阶段三：交付单工作区长期协调入口。统一边界见[规划合同索引](./long-session-development-plan.md)。
 
@@ -109,7 +128,7 @@ docs:
 - `pnpm harness validate --spec harness/specs/tasks/long-session-delegation-admission.md`
 - `git diff --check`
 
-plannedTests 尚未实现；上述命令只有在交付对应测试后才构成验收，测试选择未命中必须失败。
+plannedTests 已实现；上述命令等同于本节点验收门禁，测试选择未命中必须失败。host mock 只证明服务路径，实际 Electron/Host/Gateway 旅程单独回读持久 receipt 与 Task Ledger 未完成状态。
 
 E2E 要求真实 built Electron 与隔离 userData/run root。界面 host mocks 仅证明交互，功能接线必须回读 actual Host/Gateway/owner receipts。所有通信改动运行 comms replay/compare，cached typecheck 不替代 uncached 全门。
 

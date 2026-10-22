@@ -14,6 +14,7 @@ import { buildRoleRegistry, listRoleContracts, resolveRoleContract, roleOrigin }
 import { getTeamTemplateSnapshot, resolveTeamTemplate } from "../../agents/team-template.js";
 import { createOrchestratorPlan, type OrchestratorWorkerPlan } from "../../agents/orchestrator.js";
 import { runOrchestrationObserved, type OrchestrationLifecycleEvent } from "../../agents/orchestrator-run-observed.js";
+import type { DelegationAdmissionContext } from "../../agents/delegation-admission.js";
 import { synthesizeOrchestrationResult } from "../../agents/orchestration-synthesizer.js";
 import {
   normalizeQualityPolicy,
@@ -276,6 +277,43 @@ function readWorkerCommunication(value: unknown): "none" | "lead_mediated" {
   return requested === "bounded_a2a" ? "none" : requested;
 }
 
+function readDelegationAdmission(value: unknown): DelegationAdmissionContext | undefined {
+  if (!isRecord(value)
+    || typeof value.receiptId !== "string"
+    || typeof value.idempotencyKey !== "string"
+    || typeof value.requestDigest !== "string"
+    || typeof value.createdAt !== "string"
+    || !isRecord(value.coordinator)
+    || !isRecord(value.taskRef)) {
+    return undefined;
+  }
+  const coordinator = value.coordinator;
+  if (typeof coordinator.workspaceId !== "string"
+    || typeof coordinator.agentId !== "string"
+    || typeof coordinator.sessionKey !== "string"
+    || typeof coordinator.sessionId !== "string"
+    || typeof coordinator.bindingRevision !== "number") {
+    return undefined;
+  }
+  if (value.taskRef.kind !== "task-ledger" || typeof value.taskRef.nodeId !== "string") {
+    return undefined;
+  }
+  return {
+    receiptId: value.receiptId,
+    idempotencyKey: value.idempotencyKey,
+    requestDigest: value.requestDigest,
+    createdAt: value.createdAt,
+    coordinator: {
+      workspaceId: coordinator.workspaceId,
+      agentId: coordinator.agentId,
+      sessionKey: coordinator.sessionKey,
+      sessionId: coordinator.sessionId,
+      bindingRevision: coordinator.bindingRevision,
+    },
+    taskRef: { kind: "task-ledger", nodeId: value.taskRef.nodeId },
+  };
+}
+
 function readExplicitWorkers(
   params: Record<string, unknown>,
   respond: RespondFn,
@@ -304,11 +342,19 @@ function readExplicitWorkers(
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `unknown role "${roleName}"`));
       return undefined;
     }
+    const writeSet = readStringArray(rawWorker.writeSet);
+    const isolation = rawWorker.isolation === "worktree"
+      ? "worktree"
+      : rawWorker.isolation === "shared"
+        ? "shared"
+        : undefined;
     workers.push({
       roleName,
       task,
       ...(readString(rawWorker.label) ? { label: readString(rawWorker.label) } : {}),
       ...(readString(rawWorker.modelRef) ? { modelRef: readString(rawWorker.modelRef) } : {}),
+      ...(writeSet.length > 0 ? { writeSet } : {}),
+      ...(isolation ? { isolation } : {}),
     });
   }
   return workers;
@@ -433,6 +479,11 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     if (Object.prototype.hasOwnProperty.call(params, "workers") && !workers) {
       return;
     }
+    const delegationAdmission = readDelegationAdmission(params.delegationAdmission);
+    if (params.delegationAdmission !== undefined && !delegationAdmission) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "delegationAdmission is malformed"));
+      return;
+    }
     const orchestrationRunId = `orch_${crypto.randomUUID()}`;
     // Capture actor identity for the audit log (enterprise: who/which/when).
     const actor = resolveControlPlaneActor(client ?? null);
@@ -475,6 +526,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           patchRegistryMetadata: true,
           workspaceDir: readString(params.workspaceDir),
           qualityAuthority: resolveQualityAuthority(params, sessionKey),
+          ...(delegationAdmission ? { delegationAdmission } : {}),
         },
         {
           agentSessionKey: sessionKey,
@@ -502,6 +554,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           orchestrationRunId,
           plan: result.plan,
           resultBundle: result.resultBundle,
+          admissionReceipts: result.admissionReceipts,
           handoffMode: result.handoffMode,
           handoffState: result.handoffState,
           handoffArtifacts: result.handoffArtifacts,

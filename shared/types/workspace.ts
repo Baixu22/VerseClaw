@@ -1,3 +1,4 @@
+import type { DelegationAdmissionReceipt } from './delegation-admission.js';
 import type { WorkModeId } from './work-mode.js';
 
 export type WorkspacePermissionMode = 'readOnly' | 'acceptEdits' | 'plan' | 'fullAccess';
@@ -266,6 +267,8 @@ export interface WorkspaceProfile {
   agentBindings?: Record<string, WorkspaceAgentBinding>;
   /** Present only after an explicit long-session coordination opt-in. */
   coordinatorBinding?: WorkspaceCoordinatorBinding | null;
+  /** Bounded durable admission journal owned by the Workspace store. */
+  delegationReceipts?: Record<string, DelegationAdmissionReceipt>;
   permissionMode: WorkspacePermissionMode;
   createdAt: number;
   updatedAt: number;

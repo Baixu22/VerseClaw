@@ -127,6 +127,34 @@ profile IDs, raw prompts or transcript text. Reading it performs no execution,
 config write or grant expansion. Executable fixtures are under
 [`long-session-development/b1/`](../harness/specs/fixtures/long-session-development/b1/).
 
+## Coordinator binding and delegation admission
+
+Long-session coordination is an explicit Workspace-owned capability, not an
+automatic mode of ordinary Chat. The current binding stores only the selected
+Workspace/Assistant, logical SessionKey, observed physical `sessionId`, existing
+Task Ledger node references and a monotonically increasing revision in the
+Workspace store. A reset changes the physical generation and invalidates the old
+binding; archive/delete invalidate it through the existing session lifecycle
+owners. The binding contains no Project store, Task/Goal status, raw transcript
+or execution authority.
+
+`DelegationAdmissionReceipt/v1` reuses the existing role orchestrator and child
+session runtime. Before invoking `orchestrator.run`, Main persists a bounded
+`submitting` receipt keyed by caller idempotency key and request digest. The final
+receipt binds the coordinator revision/physical generation, Task Ledger ref,
+role, child session/run, actual backend identity, role-clamped tool allow/deny
+facts and isolation backend. `accepted` means the runtime admitted the child; it
+is not `running`, `completed` or task completion. Unknown role, unsupported
+backend, stale coordinator generation and missing child identity remain rejected
+or unknown facts.
+
+Shared in-process writers run serially unless an explicit write-set path is
+provided; worktree isolation records whether the actual backend is `git` or the
+in-process fallback. A reset/stop racing admission is rechecked after spawn and
+the child stop is requested rather than projecting a phantom completion. The C4
+entry is still required before users can operate this capability from the main
+product surface.
+
 ## Windows x64 Controlled Preview
 
 The current first-product validation target is **Verse Claw Windows x64 - DCS Coding Controlled Preview**. It is an internal, single-workspace path with explicit opt-in, runtime acknowledgement, controlled writes, undo, restart recovery, kill/rollback, and a redacted support bundle. FP-P1 evidence is engineering and real-process evidence; release approval remains pending, and no real-human evidence is claimed.

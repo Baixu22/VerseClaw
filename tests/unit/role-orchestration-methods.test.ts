@@ -436,6 +436,67 @@ describe('orchestrator.run handler', () => {
     });
   });
 
+  it('returns a delegation admission receipt bound to the coordinator and child identity', { timeout: 15_000 }, async () => {
+    vi.mocked(spawnSubagentDirect).mockResolvedValue({
+      status: 'accepted',
+      runId: 'run_c2_child',
+      childSessionKey: 'agent:main:c2-child',
+      resolvedProvider: 'openai',
+      resolvedModel: 'gpt-test',
+    });
+    const admission = {
+      receiptId: 'dar_gateway_test',
+      idempotencyKey: 'gateway-delegation-key',
+      requestDigest: 'a'.repeat(64),
+      coordinator: {
+        workspaceId: 'workspace-a',
+        agentId: 'main',
+        sessionKey: 'agent:main:gateway',
+        sessionId: 'physical-gateway',
+        bindingRevision: 3,
+      },
+      taskRef: { kind: 'task-ledger', nodeId: 'ledger-c2' },
+      createdAt: '2026-10-23T00:00:00.000Z',
+    };
+    const res = await callHandler('orchestrator.run', {
+      task: 'Implement delegated slice',
+      sessionKey: 'agent:main:gateway',
+      agentId: 'main',
+      includeVerifier: false,
+      maxWorkers: 1,
+      workers: [{
+        roleName: 'implementer',
+        task: 'Implement delegated slice',
+        writeSet: ['src/a.ts'],
+        isolation: 'shared',
+      }],
+      delegationAdmission: admission,
+    });
+
+    expect(res?.ok).toBe(true);
+    expect(res?.payload).toMatchObject({
+      admissionReceipts: [{
+        schemaVersion: 'DelegationAdmissionReceipt/v1',
+        receiptId: 'dar_gateway_test',
+        idempotencyKey: 'gateway-delegation-key',
+        requestDigest: 'a'.repeat(64),
+        coordinator: admission.coordinator,
+        taskRef: admission.taskRef,
+        state: 'accepted',
+        acceptedIsNotCompletion: true,
+        childRunId: 'run_c2_child',
+        childSessionKey: 'agent:main:c2-child',
+        backend: { kind: 'openclaw-embedded', provider: 'openai', model: 'gpt-test' },
+        isolation: { mode: 'inprocess-shared', backend: 'inprocess', writeSet: ['src/a.ts'] },
+      }],
+      outcomes: [{
+        status: 'accepted',
+        runId: 'run_c2_child',
+        childSessionKey: 'agent:main:c2-child',
+      }],
+    });
+  });
+
   it('returns P2 metadata in gateway run payload alongside P0/P1 data', { timeout: 15_000 }, async () => {
     vi.mocked(spawnSubagentDirect).mockResolvedValue({
       status: 'accepted',

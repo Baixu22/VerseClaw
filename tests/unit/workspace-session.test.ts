@@ -46,6 +46,7 @@ const hostApiMock = vi.hoisted(() => ({
     fork: vi.fn(),
     bindCoordinator: vi.fn(),
     coordinatorBinding: vi.fn(),
+    delegateCoordinator: vi.fn(),
   },
   taskLedger: {
     linkSession: vi.fn(),
@@ -111,6 +112,10 @@ describe('workspace session helpers', () => {
       success: true,
       validation: 'current',
       binding: { revision: 1, state: 'active' },
+    });
+    hostApiMock.sessions.delegateCoordinator.mockResolvedValue({
+      success: true,
+      receipt: { state: 'accepted', acceptedIsNotCompletion: true },
     });
     hostApiMock.sessions.coordinatorBinding.mockResolvedValue({
       success: true,
@@ -275,6 +280,10 @@ describe('workspace session helpers', () => {
       validation: 'current',
       binding: { revision: 1, state: 'active' },
     });
+    hostApiMock.sessions.delegateCoordinator.mockResolvedValue({
+      success: true,
+      receipt: { state: 'accepted', acceptedIsNotCompletion: true },
+    });
     hostApiMock.sessions.coordinatorBinding.mockResolvedValue({
       success: true,
       validation: 'current',
@@ -316,6 +325,32 @@ describe('workspace session helpers', () => {
 
     await readActiveWorkspaceCoordinatorBinding();
     expect(hostApiMock.sessions.coordinatorBinding).toHaveBeenCalledWith({ workspaceId: 'workspace-a' });
+  });
+
+  it('delegates only through an explicit active-coordinator request', async () => {
+    const { delegateActiveWorkspaceCoordinator, createWorkspaceScopedNewSession } = await import('@/lib/workspace-session');
+    await createWorkspaceScopedNewSession();
+    expect(hostApiMock.sessions.delegateCoordinator).not.toHaveBeenCalled();
+
+    await delegateActiveWorkspaceCoordinator({
+      idempotencyKey: 'delegate-key-a',
+      roleName: 'implementer',
+      task: 'Implement the scoped change',
+      taskRef: { kind: 'task-ledger', nodeId: 'ledger-a' },
+      writeSet: ['src/a.ts'],
+      isolation: 'worktree',
+    });
+    expect(hostApiMock.sessions.delegateCoordinator).toHaveBeenCalledWith({
+      workspaceId: 'workspace-a',
+      idempotencyKey: 'delegate-key-a',
+      roleName: 'implementer',
+      task: 'Implement the scoped change',
+      taskRef: { kind: 'task-ledger', nodeId: 'ledger-a' },
+      writeSet: ['src/a.ts'],
+      isolation: 'worktree',
+      modelRef: undefined,
+      backend: 'openclaw-embedded',
+    });
   });
 
   it('keeps the current view when Main refuses handoff creation', async () => {

@@ -338,6 +338,10 @@ import type {
   SessionBindCoordinatorResult,
   SessionCoordinatorBindingReadPayload,
   SessionCoordinatorBindingResult,
+  SessionDelegateCoordinatorPayload,
+  SessionDelegateCoordinatorResult,
+  SessionDelegationAdmissionsPayload,
+  SessionDelegationAdmissionsResult,
   SessionRestorePayload,
   SessionLongTaskControlStatusResult,
   SessionManualCompactPayload,
@@ -1488,6 +1492,12 @@ export const hostApi = {
     bindCoordinator: (
       input: SessionBindCoordinatorPayload,
     ): Promise<SessionBindCoordinatorResult> => invokeHost('sessions', 'bindCoordinator', input),
+    delegateCoordinator: (
+      input: SessionDelegateCoordinatorPayload,
+    ): Promise<SessionDelegateCoordinatorResult> => invokeHost('sessions', 'delegateCoordinator', input),
+    delegationAdmissions: (
+      input?: SessionDelegationAdmissionsPayload,
+    ): Promise<SessionDelegationAdmissionsResult> => invokeHost('sessions', 'delegationAdmissions', input),
     permanentDelete: (input: SessionPermanentDeletePayload) => (
       invokeHost('sessions', 'permanentDelete', input)
     ),
