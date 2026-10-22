@@ -11,6 +11,10 @@ expectedUserBehavior:
   - Actor/session/task, resource/action, policy digest, expiry, revocation and stale-snapshot mismatches fail closed before effects.
 touchedAreas:
   - harness/specs/tasks/permission-effect-contract.md
+  - harness/specs/fixtures/permission-effect-contract/current-20261022/SHA256SUMS
+  - harness/specs/fixtures/permission-effect-contract/current-20261022/SUMMARY.md
+  - harness/specs/fixtures/permission-effect-contract/current-20261022/gates.json
+  - harness/specs/fixtures/permission-effect-contract/current-20261022/status.json
   - shared/permission-effect-contract.ts
   - tests/unit/permission-effect-contract.test.ts
   - tests/unit/permission-effect-wiring.test.ts
@@ -86,3 +90,7 @@ evidence required before an effect executes.
 
 Each binding names one final authority owner and one effect class. The pure contract tests reject
 missing, duplicate or component-invented authority.
+## Evidence
+
+The current agent-driven gate and wiring evidence is stored under
+`harness/specs/fixtures/permission-effect-contract/current-20261022/`.

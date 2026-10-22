@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "artifact": "permission-effect-contract-status",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "sourceCommit": "cbbd29c231e24a5e1de48b9d3a29fcfab2be479f",
+  "sourceTree": "120219f7a7c406c3934f827f7e51ba0c218c53b2",
+  "verifiedModules": 6,
+  "productLocksChanged": false,
+  "humanEvidenceClaimed": false,
+  "scope": "Windows x64 focused unit, type, harness and comms verification; runtime live-provider not required"
+}

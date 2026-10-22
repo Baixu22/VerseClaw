@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "artifact": "permission-effect-contract-gates",
+  "driven_by": "agent",
+  "actor": "codex",
+  "sourceCommit": "cbbd29c231e24a5e1de48b9d3a29fcfab2be479f",
+  "sourceTree": "120219f7a7c406c3934f827f7e51ba0c218c53b2",
+  "results": [
+    {
+      "command": "pnpm exec vitest run tests/unit/permission-effect-contract.test.ts tests/unit/permission-effect-wiring.test.ts tests/unit/agent-browser-gateway-bridge.test.ts tests/unit/versebrowser-host-adapter.test.ts tests/unit/knowledge-api.test.ts tests/unit/runtime-memory-store.test.ts tests/unit/role-spawn.test.ts",
+      "exit": 0,
+      "summary": "7 files, 98 tests passed"
+    },
+    {
+      "command": "openclaw_runtime vitest: agents, context tools and VerseShell focused suites",
+      "exit": 0,
+      "summary": "5 files, 38 tests passed; Node-host abort/approval, Stage4 capability/tool guard, fact tools and governed exec"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "summary": "node, web and test projects passed"
+    },
+    {
+      "command": "pnpm contract:check",
+      "exit": 0,
+      "summary": "Contract check passed"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/permission-effect-contract.md",
+      "exit": 0,
+      "summary": "Spec is valid"
+    },
+    {
+      "command": "pnpm exec eslint <changed TypeScript files>",
+      "exit": 0,
+      "summary": "0 errors; 29 pre-existing no-explicit-any warnings in knowledge-api.ts"
+    },
+    {
+      "command": "pnpm run comms:replay && pnpm run comms:compare",
+      "exit": 0,
+      "summary": "Comms comparison PASS; all metrics within thresholds"
+    }
+  ]
+}
