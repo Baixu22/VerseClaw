@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-current-candidate",
+  "driven_by": "agent",
+  "actor": "codex-verse-browser-absorption-20261022",
+  "sourceCommit": "39ce33a79e00d05d61bab693c32ed161bf27c5ec",
+  "sourceTree": "6a0b51833e8cdb8790c06c70b3bf422f92af27ec",
+  "dirty": false,
+  "branch": "codex/versebrowser-evidence-engine-policy-20261022",
+  "packageVersion": "0.4.9-alpha.0",
+  "platform": "win32",
+  "arch": "x64",
+  "toolchain": {
+    "node": "24.22.1",
+    "pnpm": "11.2.2",
+    "electron": "40.8.4",
+    "resourceNode": "24.16.0"
+  },
+  "artifacts": [
+    {
+      "path": "release/win-unpacked/Verse Claw.exe",
+      "bytes": 214315008,
+      "sha256": "f38c07c2109aecaba33516c1066b033c202c271a9ba52a5def6a312c0ea4ee4e"
+    },
+    {
+      "path": "release/win-unpacked/resources/app.asar",
+      "bytes": 307457342,
+      "sha256": "b6e8b465d5afe7032848aee9000f909b05cba97ac6d7f1a3e45bd028f4e3270f"
+    },
+    {
+      "path": "release/win-unpacked/resources/main-runtime.asar",
+      "bytes": 838220759,
+      "sha256": "b711d9221894dfe0bfd7dc7d3451b9267c125cdc5585aa232a1f3638d7a93394"
+    },
+    {
+      "path": "build/main-runtime-delivery/main-runtime.asar",
+      "bytes": 838220759,
+      "sha256": "b711d9221894dfe0bfd7dc7d3451b9267c125cdc5585aa232a1f3638d7a93394"
+    },
+    {
+      "path": "release/win-unpacked/resources/bin/ae.exe",
+      "bytes": 15144448,
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2"
+    },
+    {
+      "path": "release/win-unpacked/resources/bin/node.exe",
+      "bytes": 92279112,
+      "sha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3"
+    }
+  ],
+  "commands": [
+    "pnpm run package",
+    "node scripts/run-electron-builder.mjs --win --x64 --dir --publish never",
+    "node scripts/versebrowser-m10-package-verify.mjs --release",
+    "node scripts/versebrowser-m10-packaged-flow-verify.mjs",
+    "node scripts/versebrowser-n9-stability-probe.mjs"
+  ],
+  "boundaries": [
+    "Windows x64 only",
+    "win-unpacked layout; NSIS installer/uninstaller bodies not executed",
+    "No publication, publicness change or product-default change",
+    "No real-human evidence claimed"
+  ]
+}

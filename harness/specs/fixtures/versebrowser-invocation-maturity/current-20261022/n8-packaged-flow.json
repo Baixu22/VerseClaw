@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m10-packaged-flow",
+  "driven_by": "agent",
+  "actor": "codex",
+  "exe": "release/win-unpacked/Verse Claw.exe",
+  "fixtureUrl": "http://127.0.0.1:63400/",
+  "runId": "m10-mvj57xcq",
+  "pageTitle": "Verse Claw",
+  "hostBridgePresent": true,
+  "flow": {
+    "enabled": true,
+    "openOk": true,
+    "sessionId": "e935b24b-1483-48bd-8cf0-4b5261f3300c",
+    "blockedFailsClosed": true,
+    "upgradeOk": true,
+    "upgradeMode": "full_access",
+    "snapshotOk": true,
+    "snapshotHasFixture": true,
+    "ownedSessionCount": 1,
+    "closed": true
+  },
+  "checks": {
+    "host_bridge_present": true,
+    "real_session_opened": true,
+    "sandbox_fails_closed_without_upgrade": true,
+    "runtime_mode_upgrade_ok": true,
+    "snapshot_returns_fixture_content": true,
+    "session_owned_by_requested_key": true,
+    "session_closed": true
+  },
+  "status": "pass",
+  "issues": []
+}

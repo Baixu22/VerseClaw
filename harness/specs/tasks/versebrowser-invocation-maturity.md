@@ -15,6 +15,7 @@ touchedAreas:
   - harness/specs/rules/versebrowser-upstream-preservation.md
   - packages/versebrowser/**
   - packages/README.md
+  - docs/clawx-product-semantics.md
   - electron/services/agent-browser*.ts
   - electron/gateway/agent-browser-bridge.ts
   - electron/main/ipc-handlers.ts
@@ -82,6 +83,7 @@ docs:
   paths:
     - harness/specs/tasks/versebrowser-invocation-maturity.md
     - packages/README.md
+    - docs/clawx-product-semantics.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

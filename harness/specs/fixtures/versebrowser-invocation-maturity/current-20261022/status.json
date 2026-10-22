@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-current-evidence-status",
+  "driven_by": "agent",
+  "actor": "codex-verse-browser-absorption-20261022",
+  "status": "pass",
+  "sourceCommit": "39ce33a79e00d05d61bab693c32ed161bf27c5ec",
+  "sourceTree": "6a0b51833e8cdb8790c06c70b3bf422f92af27ec",
+  "dirty": false,
+  "n8": "pass",
+  "n9": "pass",
+  "scope": "Windows x64 packaged win-unpacked candidate; controlled-basic-use evidence only"
+}
