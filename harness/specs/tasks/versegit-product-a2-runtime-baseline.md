@@ -25,12 +25,25 @@ residualPaths:
   - harness/specs/tasks/model-capability-effective-runtime-state.md
   - openclaw_runtime/src/agents/runtime-effective-capability.ts
   - tests/unit/runtime-effective-capability.test.ts
+  - scripts/versegit-product-a1-evidence.mjs
+  - tests/unit/versegit-product-a1-evidence.test.ts
+  - tests/unit/versegit-wp6-closeout.test.ts
+  - tests/unit/versegit-wp8-review.test.ts
+  - tests/unit/versegit-wp9-global-acceptance.test.ts
+  - harness/specs/fixtures/versegit-product-integration/a1/current-input-manifest.json
+  - harness/specs/fixtures/versegit-product-integration/a1/current-verification.json
+  - harness/specs/fixtures/versegit-product-integration/a1/historical-evidence-index.json
+  - harness/specs/fixtures/versegit-product-integration/a1/negative-checks.json
+  - harness/specs/fixtures/versegit-product-integration/a1/independent-review.json
+  - harness/specs/fixtures/versegit-product-integration/a1/SHA256SUMS
 touchedAreas:
   - harness/specs/tasks/versegit-product-a2-runtime-baseline.md
+  - scripts/versegit-product-a2-evidence.mjs
   - scripts/build-openclaw-runtime.mjs
   - scripts/smoke-openclaw-runtime.mjs
   - tests/e2e/fixtures/electron.ts
   - tests/e2e/fixtures/electron-process-cleanup.ts
+  - tests/unit/versegit-product-a2-evidence.test.ts
   - tests/e2e/app-smoke.spec.ts
   - harness/specs/fixtures/versegit-product-integration/a2/**
   - harness/specs/tasks/versegit-product-integration-node-contracts.md
