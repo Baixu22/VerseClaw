@@ -31,17 +31,17 @@ export function createVerseGitRuntimeBindingPortFromEnv(env: RuntimeEnv = proces
   if (env.CLAWX_VERSGIT_BINDING_ENABLED !== '1' || !baseUrl || !token || !ownerId || !Number.isInteger(epoch) || epoch < 1) return null;
   return {
     async bind(request) {
-      const response = await post<VerseGitBindingResponse>(baseUrl, token, '/bind', { schema: VG_RUNTIME_BINDING_SCHEMA, ownerId, epoch, ...request });
+      const response = await post<VerseGitBindingResponse>(baseUrl, token, '/bind', { ...request, schema: VG_RUNTIME_BINDING_SCHEMA, ownerId, epoch });
       if (!response.ok) throw new Error(response.error.message);
       return response.data;
     },
     async attach(request) {
-      const response = await post<VerseGitBindingAttachResponse>(baseUrl, token, '/attach', { schema: VG_RUNTIME_BINDING_SCHEMA, ownerId, epoch, ...request });
+      const response = await post<VerseGitBindingAttachResponse>(baseUrl, token, '/attach', { ...request, schema: VG_RUNTIME_BINDING_SCHEMA, ownerId, epoch });
       if (!response.ok) throw new Error(response.error.message);
       return response.data;
     },
     async end(request) {
-      const response = await post<VerseGitBindingEndResponse>(baseUrl, token, '/end', { schema: VG_RUNTIME_BINDING_SCHEMA, ownerId, epoch, ...request });
+      const response = await post<VerseGitBindingEndResponse>(baseUrl, token, '/end', { ...request, schema: VG_RUNTIME_BINDING_SCHEMA, ownerId, epoch });
       if (!response.ok) throw new Error(response.error.message);
       return response.data;
     },

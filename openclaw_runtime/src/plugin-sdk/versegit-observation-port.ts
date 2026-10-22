@@ -19,7 +19,7 @@ export function createVerseGitRuntimeObservationPortFromEnv(env: RuntimeEnv = pr
       const response = await fetch(`${baseUrl.replace(/\/+$/u, "")}/observe`, {
         method: "POST",
         headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
-        body: JSON.stringify({ schema: VG_TOOL_OBSERVATION_SCHEMA, ownerId, epoch, ...request }),
+        body: JSON.stringify({ ...request, schema: VG_TOOL_OBSERVATION_SCHEMA, ownerId, epoch }),
         signal: AbortSignal.timeout(10_000),
       });
       const body = await response.json() as { ok?: boolean; data?: VerseGitToolObservationRecord; error?: { code?: string; message?: string } };
