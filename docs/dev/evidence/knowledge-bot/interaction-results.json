@@ -39,7 +39,7 @@
   "drag": {
     "before": {
       "x": 1169.3333740234375,
-      "y": 695.185546875,
+      "y": 699.3333740234375,
       "width": 88,
       "height": 88
     },
@@ -48,10 +48,10 @@
       "y": 610.136
     },
     "after": {
-      "x": 1068.822998046875,
-      "y": 610.1354370117188,
+      "x": 1076.948486328125,
+      "y": 616.856689453125,
       "width": 88,
-      "height": 88
+      "height": 87.99993896484375
     },
     "snapped": {
       "x": 1169,
@@ -100,7 +100,7 @@
   "errors": [],
   "requests": [
     {
-      "id": "1cd0061a-0bd3-49b7-bcdb-d53ce9c6111e",
+      "id": "fb407767-a8d3-42f0-917d-b1525d0da129",
       "module": "knowledge",
       "action": "search",
       "payload": {
@@ -110,14 +110,14 @@
         "roleTag": "knowledge-librarian"
       },
       "deadline": {
-        "deadlineAtMs": 1792631745464,
+        "deadlineAtMs": 1792633135828,
         "timeoutMs": 60000,
         "stage": "renderer",
-        "requestId": "1cd0061a-0bd3-49b7-bcdb-d53ce9c6111e"
+        "requestId": "fb407767-a8d3-42f0-917d-b1525d0da129"
       }
     },
     {
-      "id": "ea53d51f-aca6-450b-a86a-d1c8cb9adccd",
+      "id": "11413679-c4a4-4bce-b818-ec1d8434ff34",
       "module": "knowledge",
       "action": "get",
       "payload": {
@@ -126,14 +126,14 @@
         "corpus": "wiki"
       },
       "deadline": {
-        "deadlineAtMs": 1792631745787,
+        "deadlineAtMs": 1792633136146,
         "timeoutMs": 60000,
         "stage": "renderer",
-        "requestId": "ea53d51f-aca6-450b-a86a-d1c8cb9adccd"
+        "requestId": "11413679-c4a4-4bce-b818-ec1d8434ff34"
       }
     },
     {
-      "id": "25b7263f-c787-44d3-8d8f-471c15b3dbbe",
+      "id": "c588cf10-bc61-4064-bafc-1e98042d2e95",
       "module": "knowledge",
       "action": "recordKnowledgeReference",
       "payload": {
@@ -154,14 +154,14 @@
         }
       },
       "deadline": {
-        "deadlineAtMs": 1792631745799,
+        "deadlineAtMs": 1792633136155,
         "timeoutMs": 60000,
         "stage": "renderer",
-        "requestId": "25b7263f-c787-44d3-8d8f-471c15b3dbbe"
+        "requestId": "c588cf10-bc61-4064-bafc-1e98042d2e95"
       }
     },
     {
-      "id": "a612d20b-5791-4fa5-81c5-7bc2e17ec5fb",
+      "id": "29a04406-9160-4a13-99d6-9f3be4edb169",
       "module": "knowledge",
       "action": "search",
       "payload": {
@@ -171,14 +171,14 @@
         "roleTag": "knowledge-librarian"
       },
       "deadline": {
-        "deadlineAtMs": 1792631747020,
+        "deadlineAtMs": 1792633137355,
         "timeoutMs": 60000,
         "stage": "renderer",
-        "requestId": "a612d20b-5791-4fa5-81c5-7bc2e17ec5fb"
+        "requestId": "29a04406-9160-4a13-99d6-9f3be4edb169"
       }
     },
     {
-      "id": "1bc197dd-fc81-4f0a-b2c1-5ce9b5b5c3a3",
+      "id": "f5b49e5d-c151-4687-b4d7-0ba896a2ca76",
       "module": "knowledge",
       "action": "search",
       "payload": {
@@ -188,10 +188,10 @@
         "roleTag": "knowledge-librarian"
       },
       "deadline": {
-        "deadlineAtMs": 1792631747750,
+        "deadlineAtMs": 1792633138120,
         "timeoutMs": 60000,
         "stage": "renderer",
-        "requestId": "1bc197dd-fc81-4f0a-b2c1-5ce9b5b5c3a3"
+        "requestId": "f5b49e5d-c151-4687-b4d7-0ba896a2ca76"
       }
     }
   ]

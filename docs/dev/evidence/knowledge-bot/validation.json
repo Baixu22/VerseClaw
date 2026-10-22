@@ -2,10 +2,10 @@
   "schemaVersion": 2,
   "driven_by": "agent",
   "actor": "codex",
-  "generatedAt": "2026-10-22T01:19:07.790Z",
+  "generatedAt": "2026-10-22T01:38:50.379Z",
   "feature": "Knowledge assistant visual refinement and minimize interaction",
-  "status": "focused-development-verified",
-  "workingTreeHead": "6a7fc6c612f9d809d72e16ef2cda1b6e9a27eae8",
+  "status": "consolidation-verified",
+  "workingTreeHead": "73ac24856a682cbc25926dc8a296c9775db6e09b",
   "result": {
     "floatingWindow": {
       "maxWidth": 400,
@@ -193,7 +193,7 @@
     "generatedAt": "2026-10-22T01:19:06.329Z"
   },
   "toolchain": {
-    "controllerNode": "24.16.0",
+    "controllerNode": "24.19.0",
     "electron": "40.8.4",
     "electronSha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e",
     "electronDistReuse": "existing rareui-ui-interaction installed dependency",
@@ -245,5 +245,58 @@
       "lineEndingsNormalized": true,
       "hostAdapted": false
     }
-  ]
+  ],
+  "consolidationRerun": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "testedSourceHead": "73ac24856a682cbc25926dc8a296c9775db6e09b",
+    "commands": [
+      {
+        "command": "pnpm exec vitest run tests/unit/knowledge-chat.test.tsx tests/unit/knowledge-page.test.tsx tests/unit/knowledge-bot.test.tsx",
+        "exitCode": 0,
+        "summary": "3 files passed; 19 tests passed"
+      },
+      {
+        "command": "pnpm run typecheck",
+        "exitCode": 0,
+        "summary": "node, web and test projects passed; 0 errors"
+      },
+      {
+        "command": "pnpm run i18n:lint",
+        "exitCode": 0,
+        "summary": "i18n lint passed"
+      },
+      {
+        "command": "pnpm run build:vite",
+        "exitCode": 0,
+        "summary": "renderer, Electron main and preload builds passed"
+      },
+      {
+        "command": "node_modules/@playwright/test/cli.js test tests/e2e/knowledge-bot.spec.ts",
+        "exitCode": 0,
+        "summary": "1 real Electron test passed"
+      },
+      {
+        "command": "pnpm run comms:replay",
+        "exitCode": 0,
+        "summary": "replay metrics generated"
+      },
+      {
+        "command": "pnpm run comms:compare",
+        "exitCode": 0,
+        "summary": "regression comparison PASS"
+      },
+      {
+        "command": "pnpm harness validate --spec harness/specs/tasks/knowledge-bot-avatar.md",
+        "exitCode": 0,
+        "summary": "spec valid"
+      }
+    ],
+    "toolchain": {
+      "controllerNode": "24.19.0",
+      "electron": "40.8.4",
+      "electronSandboxDisabledForWindowsHarness": true,
+      "e2eRunRoot": "D:\\ClawX\\artifacts\\e2e-runs"
+    }
+  }
 }
