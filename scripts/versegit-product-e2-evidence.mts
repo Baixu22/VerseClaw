@@ -556,14 +556,7 @@ async function main(): Promise<void> {
   if (source.dirty) throw new Error('E2 evidence source candidate is dirty before generation');
   if (!existsSync(BINARY)) throw new Error('qualified ae.exe is missing');
   mkdirSync(TEMP_ROOT, { recursive: true });
-  const stamp = new Date().toISOString().replace(/[:.]/gu, '-');
-  const rawRoot = join(ROOT, 'artifacts/versegit/e2', `raw-${stamp}`);
-  mkdirSync(rawRoot, { recursive: true });
-  try {
-    execFileSync('git', ['check-ignore', '-q', rawRoot], { cwd: ROOT, windowsHide: true });
-  } catch {
-    throw new Error('E2 raw evidence root is not ignored by Git');
-  }
+  const rawRoot = mkdtempSync(join(TEMP_ROOT, 'versegit-e2-raw-'));
   const evidenceRoot = join(rawRoot, 'evidence');
   const baseRoot = makeRepo();
   const { service, workers } = makeWorkers(baseRoot);
