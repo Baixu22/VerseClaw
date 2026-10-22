@@ -86,6 +86,7 @@ test.describe('VerseGit runtime binding lifecycle', () => {
           attach: true,
           cancelled: true,
           childBindingsEnded: true,
+          authority: { vgUnavailableDegradesHost: true, degradationRecorded: true },
           negatives: { crossRepoRejected: true, wrongOwnerRejected: true, staleEpochRejected: true, sameRepoAcrossJunction: true },
         });
         expect(report.orchestration.spawned).toBeGreaterThanOrEqual(2);

@@ -68,6 +68,7 @@ function buildReview(generatedAt: string): Record<string, any> {
   if (bindings.passed !== true) bindingIssues.push('binding evidence is not passed');
   if (bindings.source?.dirty !== false) bindingIssues.push('binding source was not clean');
   if (bindings.authority?.host_verdict !== 'unchanged') bindingIssues.push('host verdict authority drifted');
+  if (bindings.authority?.vg_unavailable_does_not_block_host !== true) bindingIssues.push('VG unavailable host degradation was not observed');
   if (bindings.authority?.m4_authorized !== false) bindingIssues.push('M4 authority was claimed');
   if (bindings.authority?.second_executor !== false || bindings.authority?.second_message_bus !== false) bindingIssues.push('parallel control-plane ownership was claimed');
   if (bindings.repo_count !== 1 || bindings.worktree_count < 2) bindingIssues.push('repo/worktree cardinality is insufficient');

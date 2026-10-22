@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { runOrchestrationObserved } from '../openclaw_runtime/src/agents/orchestrator-run-observed';
 import { createVerseGitRuntimeBindingPortFromEnv } from '../openclaw_runtime/src/plugin-sdk/versegit-binding-port';
 import { endVerseGitRuntimeBindingForRun } from '../openclaw_runtime/src/plugin-sdk/versegit-binding-registry';
+import { getRuntimeTraceBuffer } from '../openclaw_runtime/src/observability/trace-buffer';
 import { resolveVerseGitRepoIdentity } from '../electron/gateway/versegit-bridge';
 
 const repoRoot = process.env.VERSEGIT_C1_REPO_ROOT!;
@@ -34,6 +35,28 @@ for (const binding of childBindings) {
   const error = await endVerseGitRuntimeBindingForRun(binding.childRunId!, 'completed');
   if (error) childBindingEndErrors.push(error.message);
 }
+
+const degradedSpawnedCwds: string[] = [];
+const unavailablePort = {
+  bind: async () => { throw new Error('binding bridge unavailable'); },
+  attach: async () => { throw new Error('binding bridge unavailable'); },
+  end: async () => { throw new Error('binding bridge unavailable'); },
+};
+const degradedResult = await runOrchestrationObserved(
+  { task: 'confirm host fallback when VerseGit is unavailable', templateId: 'quick-development', maxWorkers: 2, graphMode: 'auto', isolation: 'worktree', orchestrationRunId: 'orch_c1_degraded', verseGitBindingPort: unavailablePort },
+  { agentSessionKey: 'agent:main:c1-degraded', workspaceDir: repoRoot },
+  { spawn: (async (params: { cwd?: string }) => {
+    const cwd = String(params.cwd);
+    const child = spawnSync(process.execPath, ['-e', 'process.stdout.write(process.cwd())'], { cwd, encoding: 'utf8', windowsHide: true, timeout: 10_000 });
+    if (child.status !== 0) throw new Error(`degraded worker process failed in ${cwd}`);
+    degradedSpawnedCwds.push(cwd);
+    return { status: 'accepted', runId: `degraded_run_${degradedSpawnedCwds.length}`, childSessionKey: `degraded_child_${degradedSpawnedCwds.length}` };
+  }) as never },
+  { runId: 'trace_c1_degraded', sessionKey: 'agent:main:c1-degraded' },
+);
+const degradedTrace = getRuntimeTraceBuffer().find((trace) => trace.runId === 'trace_c1_degraded');
+const degradationRecorded = degradedTrace?.events.some((event) => event.type === 'versegit.binding.unavailable') === true;
+const vgUnavailableDegradesHost = degradedResult.failures.length === 0 && degradedSpawnedCwds.length >= 2 && degradationRecorded;
 
 const manualRequest = { requestId: 'manual-retry', runId: 'manual-run', traceId: 'manual-trace', worktreePath: repoRoot, agentSessionId: 'manual-session', mode: 'M1' as const };
 const manual = await runtime.bind(manualRequest);
@@ -70,8 +93,9 @@ const report = {
   schema: 'clawx.versegit.c1-runtime-probe/v1', generated_at: new Date().toISOString(), driven_by: 'agent', actor: 'codex',
   orchestration: { runId: 'orch_c1_e2e', failures: result.failures.length, outcomes: result.outcomes.length, spawned: spawnedCwds.length, bindings: result.outcomes.filter((outcome) => outcome.verseGitBinding).length },
   retry: { sameBinding: retry.bindingId === manual.bindingId }, duplicateSession, duplicateEndRejected, attach: attached.phase === 'attached', cancelled: ended.reason === 'cancelled', childBindingsEnded: childBindings.length >= 2 && childBindingEndErrors.length === 0,
+  authority: { vgUnavailableDegradesHost, degradedWorkers: degradedSpawnedCwds.length, degradationRecorded },
   negatives: { crossRepoRejected, wrongOwnerRejected, staleEpochRejected, unboundEndRejected, sameRepoAcrossJunction },
-  passed: result.failures.length === 0 && spawnedCwds.length >= 2 && result.outcomes.filter((outcome) => outcome.verseGitBinding).length >= 2 && childBindings.length >= 2 && childBindingEndErrors.length === 0 && retry.bindingId === manual.bindingId && duplicateSession && duplicateEndRejected && attached.phase === 'attached' && ended.reason === 'cancelled' && crossRepoRejected && wrongOwnerRejected && staleEpochRejected && unboundEndRejected && sameRepoAcrossJunction,
+  passed: result.failures.length === 0 && spawnedCwds.length >= 2 && result.outcomes.filter((outcome) => outcome.verseGitBinding).length >= 2 && childBindings.length >= 2 && childBindingEndErrors.length === 0 && vgUnavailableDegradesHost && retry.bindingId === manual.bindingId && duplicateSession && duplicateEndRejected && attached.phase === 'attached' && ended.reason === 'cancelled' && crossRepoRejected && wrongOwnerRejected && staleEpochRejected && unboundEndRejected && sameRepoAcrossJunction,
 };
 writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
 process.stdout.write(`${JSON.stringify(report)}\n`);

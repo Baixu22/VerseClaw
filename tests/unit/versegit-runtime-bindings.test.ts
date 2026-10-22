@@ -8,6 +8,7 @@ import { VerseGitBindingBridge, resolveVerseGitRepoIdentity } from '../../electr
 import { createVerseGitRuntimeBindingPortFromEnv } from '../../openclaw_runtime/src/plugin-sdk/versegit-binding-port';
 import { clearVerseGitRuntimeBindingsForTest, endVerseGitRuntimeBindingForRun } from '../../openclaw_runtime/src/plugin-sdk/versegit-binding-registry';
 import { runOrchestrationObserved } from '../../openclaw_runtime/src/agents/orchestrator-run-observed';
+import { getRuntimeTraceBuffer } from '../../openclaw_runtime/src/observability/trace-buffer';
 
 const cleanup: Array<() => Promise<void> | void> = [];
 afterEach(async () => { clearVerseGitRuntimeBindingsForTest(); while (cleanup.length) await cleanup.pop()!(); });
@@ -84,6 +85,26 @@ describe('C1 VerseGit runtime binding lifecycle', () => {
     expect(new Set(events.filter((event) => event.kind === 'bound').map((event) => event.repoId)).size).toBe(1);
   });
 
+  it('keeps the host flow running and records explicit degradation when VG is unavailable', async () => {
+    const { root } = makeRepo();
+    let spawned = 0;
+    const unavailablePort = {
+      bind: async () => { throw new Error('binding bridge unavailable'); },
+      attach: async () => { throw new Error('binding bridge unavailable'); },
+      end: async () => { throw new Error('binding bridge unavailable'); },
+    };
+    const result = await runOrchestrationObserved(
+      { task: 'implement two isolated changes', templateId: 'quick-development', maxWorkers: 2, graphMode: 'auto', isolation: 'worktree', orchestrationRunId: 'orch_c1_degraded', verseGitBindingPort: unavailablePort },
+      { agentSessionKey: 'agent:main:c1-degraded', workspaceDir: root },
+      { spawn: (async () => { spawned += 1; return { status: 'accepted', runId: `degraded_run_${spawned}`, childSessionKey: `degraded_child_${spawned}` }; }) as never },
+      { runId: 'trace_c1_degraded', sessionKey: 'agent:main:c1-degraded' },
+    );
+    expect(result.failures).toEqual([]);
+    expect(spawned).toBeGreaterThanOrEqual(2);
+    expect(result.outcomes.every((outcome) => outcome.verseGitBinding === undefined)).toBe(true);
+    const trace = getRuntimeTraceBuffer().find((candidate) => candidate.runId === 'trace_c1_degraded');
+    expect(trace?.events.some((event) => event.type === 'versegit.binding.unavailable')).toBe(true);
+  });
   it('is idempotent for retry and rejects duplicate session, wrong owner/epoch/repo before binding', async () => {
     const { root, worktrees } = makeRepo();
     const { runtime, eventsPath, address, token } = await startBridge(root);

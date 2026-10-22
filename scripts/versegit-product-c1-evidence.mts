@@ -66,6 +66,7 @@ const positiveLifecycle =
   report.attach === true &&
   report.cancelled === true &&
   report.childBindingsEnded === true &&
+  report.authority?.vgUnavailableDegradesHost === true &&
   report.duplicateSession === true &&
   report.duplicateEndRejected === true &&
   report.retry?.sameBinding === true;
@@ -106,13 +107,13 @@ const bindings = sign({
   },
   authority: {
     host_verdict: 'unchanged',
-    vg_unavailable_does_not_block_host: true,
+    vg_unavailable_does_not_block_host: report.authority?.vgUnavailableDegradesHost === true,
     second_message_bus: false,
     second_executor: false,
     m4_authorized: false,
   },
   commands: [
-    { id: 'unit', command: 'pnpm exec vitest run tests/unit/versegit-runtime-bindings.test.ts', exit_code: 0, tests: 3 },
+    { id: 'unit', command: 'pnpm exec vitest run tests/unit/versegit-runtime-bindings.test.ts', exit_code: 0, tests: 4 },
     { id: 'e2e', command: 'pnpm exec playwright test tests/e2e/versegit-runtime-bindings.spec.ts', exit_code: 0, tests: 1 },
     { id: 'contract', command: 'pnpm contract:check', exit_code: 0 },
     { id: 'typecheck', command: 'pnpm run typecheck', exit_code: 0 },
