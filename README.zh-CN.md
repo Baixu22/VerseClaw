@@ -95,6 +95,10 @@ ClawGraph 从工作区 YAML 加载流程，展示编译诊断、节点状态、�
 
 插件**默认关闭**，使用前需要显式配置。当前 PPTX 使用三页模板，超过三条记录会明确拒绝导出，可改用 Markdown 保留完整大纲。它尚不覆盖任意页数演示文稿与长文本排版。配置、交付和验证细节见 [VerseConf 集成说明](docs/dev/verseconf-clawx-implementation-20261001.md)。
 
+### VerseGit 有界编码闭环
+
+VerseGit 是一个内部、显式启用的仓库证据 sidecar，只用于一条有界的 Windows x64（`win32-x64`）/M1 编码闭环。它**默认关闭**且**非 GA**：`liveReady=false`、`productApproved=false`，M4 落地/准入权限未获授权。ClawX 仍是 executor、任务/编排、审批、write journal 与 Git apply 的宿主。Worker 候选必须先组合、冻结并验证，之后才由宿主写回。边界、证据和未测范围见[验证入口](docs/dev/versegit-validation-layer/README.md)；其他平台、更广的模型/语言覆盖及 M4 broker 仍未测量或不在范围内。
+
 ### 实验能力的范围
 
 上下文管理（DCS）、token 预算（VToken）、经验知识（SEKB）、Runtime Memory 和浏览器自动化分别受配置、审批或灰度门禁控制。诊断或 shadow 数据不代表已经参与模型上下文、自动写回或路由决策；安装应用不会自动启用全部增强能力。

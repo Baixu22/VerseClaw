@@ -95,6 +95,10 @@ The optional `verseconf-artifacts` plugin provides creation, inspection, revisio
 
 The plugin is **disabled by default** and requires explicit configuration. PPTX currently uses a three-slide template: outlines with more than three records are rejected, with Markdown available to preserve the full outline. Arbitrary slide counts and long-text layout are not covered. See the [VerseConf integration notes](docs/dev/verseconf-clawx-implementation-20261001.md) for configuration, delivery and validation details.
 
+### VerseGit bounded coding loop
+
+VerseGit is an internal, opt-in repository-evidence sidecar for one bounded Windows x64 (`win32-x64`)/M1 coding loop. It is **default-off** and **non-GA**; `liveReady=false` and `productApproved=false`, and M4 landing/admission authority is not authorized. ClawX remains the executor, task/orchestration, approval, write journal and Git apply host. Worker candidates are combined, frozen and verified before the host writes them back. See the [evidence-backed boundary](docs/dev/versegit-validation-layer/README.md); other platforms, broader model/language coverage and the M4 broker remain unmeasured or out of scope.
+
 ### Experimental feature boundaries
 
 Context management (DCS), token budgeting (VToken), experience knowledge (SEKB), Runtime Memory and browser automation have separate configuration, approval or rollout gates. Diagnostic or shadow data does not mean a feature affects model context, automatic writeback or routing. Installing the application does not activate every enhancement.

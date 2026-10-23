@@ -95,6 +95,10 @@ ClawGraph はワークスペースの YAML ワークフローを読み込み、�
 
 プラグインは**既定で無効**で、明示的な設定が必要です。PPTX は現在 3 枚のテンプレートを使用し、3 レコードを超える構成はエクスポートを拒否します。全内容を残すには Markdown を使用してください。任意のスライド数や長文のレイアウトは対象外です。設定・配布・検証の詳細は [VerseConf 統合ノート](docs/dev/verseconf-clawx-implementation-20261001.md)にあります。
 
+### VerseGit の境界付きコーディングループ
+
+VerseGit は、1 本の境界付き Windows x64（`win32-x64`）/M1 コーディングループに限定した、内部・明示オプトインのリポジトリ証拠 sidecar です。**既定で無効**かつ**非 GA**であり、`liveReady=false`、`productApproved=false`、M4 の landing/admission 権限は未承認です。ClawX が executor、タスク/オーケストレーション、承認、write journal、Git apply のホストであり続けます。Worker 候補は組み合わせ・凍結・検証された後にだけホストが書き戻します。境界、証拠、未測定範囲は[検証入口](docs/dev/versegit-validation-layer/README.md)を参照してください。他プラットフォーム、広範なモデル/言語、M4 broker は未測定または対象外です。
+
 ### 実験的機能の範囲
 
 コンテキスト管理（DCS）、トークン予算（VToken）、経験知識（SEKB）、Runtime Memory、ブラウザー自動化には、それぞれ設定・承認・段階導入の制約があります。診断や shadow データの存在だけでは、モデルのコンテキスト、自動書き戻し、ルーティングへの参加を意味しません。アプリのインストールだけで全機能が有効になることはありません。

@@ -151,6 +151,17 @@ discover -> eligible -> attach -> observe -> evaluate
 
 因此当前定位是：**host module 工程路径已闭合、产品未批准、默认未启用、发布不可用**。`passed` 只表示证据与边界可复现，不表示 GA。
 
+## 7.1 产品接入验收（F5，2026-10-23）
+
+A1-F4 已按 `harness/specs/fixtures/versegit-product-integration/` 下的逐节点证据完成当前候选重放。F5 的独立 verifier 进程（`driven_by: agent`，`actor: codex`）重新读取 source/tree、SHA256SUMS、独立 review、生产 caller、负向用例和原始 sample，结论为 `P0=0`、`P1=0`、`P2=6`：
+
+- 风险观察、agent 反馈、候选前置验证、host writeback、持久结果、cleanup、package 与有界稳定性共 8 条功能标准均有可重算映射；
+- 安装布局完成 3 次 cold start 和 10 次唯一 candidate/tool/receipt/apply 闭环，P50 `19651ms`、P95 `25452ms`、峰值 RSS `57.18MiB`、failureRate `0`、duplicateApply `0`，process/manager/worktree/temp survivor 均为 `0`；
+- 当前证据只覆盖 `win32-x64` 与 `M1`；非 Windows、更广模型/语言、provider byte-identical 复现、conflicts-plan、外部模型质量/成本及任意 crash-grade cleanup 仍为 P2/未测；
+- 产品状态保持 opt-in、defaultOff、non-GA、`liveReady=false`、`productApproved=false`，M4 未授权；ClawX 继续拥有 executor、task/orchestration、approval、write-journal 与 Git-apply 权威。VG provider 没有 land/admit 权限。
+
+盘上入口为 [`global-acceptance.json`](../../../harness/specs/fixtures/versegit-product-integration/f5/global-acceptance.json)，并由 [`verify-versegit-product-integration.mjs`](../../../scripts/verify-versegit-product-integration.mjs) 与 [`versegit-product-acceptance.test.ts`](../../../tests/unit/versegit-product-acceptance.test.ts) 重算。Task Forest 仍须在 `base_graph_hash` 匹配后通过 proposal-apply、validate、export 收口；本报告不把后续节点存在替代缺失功能。
+
 ## 8. 与 VerseShell 的关系
 
 VerseShell 是执行面，VG 是仓库语义与证据面：

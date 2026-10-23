@@ -84,6 +84,7 @@ The table below is the canonical component classification for this preview. Each
 | Coding WAL | `deferred` | Write journal remains the recovery authority for this preview. |
 | Browser supervised workflows | `experimental` | Supervised use only; unsupervised and private-network expansion are excluded. |
 | Runtime Memory injection | `diagnostics-only` | May expose diagnostics, but does not enter the first-product production injection path. |
+| VerseGit bounded coding loop | `opt-in` | Windows x64/M1 evidence only; default-off, non-GA, liveReady/productApproved=false and M4 unauthorized. ClawX retains executor, task, approval, write journal and Git apply authority. |
 | Surfaces listed in RETIRED-SURFACES.md | `retired` | Removed surfaces stay removed and cannot be used as current capability evidence. |
 <!-- FP-P1-08-COMPONENT-STATUS-END -->
 

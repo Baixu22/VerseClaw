@@ -12,43 +12,49 @@ contractIndex: harness/specs/tasks/versegit-product-integration-node-contracts.m
 dependsOnTasks:
   - F4
 residualPaths:
-  - docs/architecture-overview.md
-  - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
-  - openclaw_runtime/src/agents/embedded-agent-runner/run/params.ts
-  - openclaw_runtime/src/auto-reply/reply/agent-runner-utils.ts
-  - openclaw_runtime/src/auto-reply/reply/get-reply-run.ts
-  - openclaw_runtime/src/auto-reply/reply/queue/types.ts
-  - openclaw_runtime/src/auto-reply/templating.ts
-  - openclaw_runtime/src/gateway/server-methods/chat.ts
   - harness/specs/tasks/model-capability-effective-runtime-state.md
   - openclaw_runtime/src/agents/runtime-effective-capability.ts
   - tests/unit/runtime-effective-capability.test.ts
 touchedAreas:
-  - harness/specs/tasks/versegit-product-f5-global-acceptance.md
-  - scripts/verify-versegit-product-integration.mjs
-  - tests/unit/versegit-product-acceptance.test.ts
-  - harness/specs/fixtures/versegit-product-integration/f5/**
-  - docs/dev/versegit-validation-layer/README.md
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
-  - shared/types/component-authority-manifest.ts
+  - docs/clawx-product-semantics.md
+  - docs/dev/versegit-validation-layer/README.md
+  - electron-builder.yml
+  - electron/gateway/versegit-bridge.ts
+  - electron/main/ipc-handlers.ts
+  - electron/services/versegit-*.ts
+  - harness/specs/fixtures/versegit-product-integration/**
+  - harness/specs/tasks/versegit-product-*.md
   - harness/specs/tasks/versegit-product-integration-node-contracts.md
-  - harness/specs/tasks/versegit-product-a1-evidence-baseline.md
-  - harness/specs/tasks/versegit-product-a2-runtime-baseline.md
-  - harness/specs/tasks/versegit-product-b1-fact-adapter.md
-  - harness/specs/tasks/versegit-product-b2-host-diagnostics.md
-  - harness/specs/tasks/versegit-product-c1-runtime-bindings.md
-  - harness/specs/tasks/versegit-product-c2-observation-basis.md
-  - harness/specs/tasks/versegit-product-d1-feedback-delivery.md
-  - harness/specs/tasks/versegit-product-d2-paired-agent-evaluation.md
-  - harness/specs/tasks/versegit-product-e1-candidate-freeze.md
-  - harness/specs/tasks/versegit-product-e2-receipt-verification.md
-  - harness/specs/tasks/versegit-product-e3-host-apply.md
-  - harness/specs/tasks/versegit-product-f1-completion-contract.md
-  - harness/specs/tasks/versegit-product-f2-cleanup-barrier.md
-  - harness/specs/tasks/versegit-product-f3-sidecar-delivery.md
-  - harness/specs/tasks/versegit-product-f4-controlled-stability.md
+  - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts
+  - openclaw_runtime/src/agents/harness/versegit-*.ts
+  - openclaw_runtime/src/agents/orchestration-*.ts
+  - openclaw_runtime/src/agents/orchestrator-run-observed.ts
+  - openclaw_runtime/src/agents/patch-flow.ts
+  - openclaw_runtime/src/agents/session-tool-result-guard-wrapper.ts
+  - openclaw_runtime/src/agents/sessions/tools/*.ts
+  - openclaw_runtime/src/agents/subagent-*.ts
+  - openclaw_runtime/src/agents/verseshell/governed-process.ts
+  - openclaw_runtime/src/agents/worktree-service.ts
+  - openclaw_runtime/src/plugin-sdk/versegit-*.ts
+  - resources/versegit/**
+  - scripts/bundle-main-runtime.mjs
+  - scripts/verify-versegit-product-*.mts
+  - scripts/verify-versegit-product-integration.d.mts
+  - scripts/verify-versegit-product-integration.mjs
+  - scripts/versegit-*.mjs
+  - scripts/versegit-*.mts
+  - scripts/versegit-sidecar-package.mjs
+  - shared/component-authority-manifest.ts
+  - shared/host-api/contract.ts
+  - shared/types/versegit.ts
+  - shared/versegit-*.ts
+  - src/lib/host-api.ts
+  - tests/e2e/app-smoke.spec.ts
+  - tests/e2e/versegit-*.spec.ts
+  - tests/unit/versegit-*.test.ts
 expectedUserBehavior:
   - 让当前产品接线与成熟使用声明都由同一候选证据支持，防止局部通过代替完整闭环。
   - 每条目标 acceptance 绑定当前候选 source/binary/contract/build/trace/receipt/cleanup 证据，并由独立 verifier 回读；所有必需 leaf 已done或有明确且获授权的范围变更。
@@ -93,7 +99,7 @@ docs:
 - README.md
 - README.zh-CN.md
 - README.ja-JP.md
-- shared/types/component-authority-manifest.ts
+- shared/component-authority-manifest.ts
 
 实现前运行：
 

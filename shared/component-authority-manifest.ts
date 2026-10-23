@@ -664,6 +664,7 @@ export const PRODUCT_SURFACE_AUTHORITY_LINKS = {
   'C6 automatic context ladder': ['c6-context-ladder-source', 'dcs-context-authority'],
   'C7 knowledge/routing cutover': ['knowledge-review-authority', 'routing-memo-observation'],
   'Coding WAL': ['coding-execution-backend'],
+  'VerseGit bounded coding loop': ['coding-execution-backend', 'verseshell-execution-adapter', 'permission-approval-authority', 'task-ledger', 'observability-recorder'],
   'Browser supervised workflows': ['browser-session-owner', 'browser-task-projection-owner'],
   'Runtime Memory injection': ['runtime-memory-store', 'dcs-context-authority'],
   'Surfaces listed in RETIRED-SURFACES.md': ['retired-surface-registry'],
