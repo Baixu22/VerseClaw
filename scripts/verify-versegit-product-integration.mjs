@@ -773,10 +773,8 @@ export function buildAcceptanceState({ root = repositoryRoot, sourceCommit } = {
   const evidenceCommit = sourceCommit ?? head;
   const tree = String(git(root, ['rev-parse', `${evidenceCommit}^{tree}`])).trim();
   const branch = String(git(root, ['rev-parse', '--abbrev-ref', 'HEAD'])).trim();
-  const status = String(git(root, ['status', '--porcelain=v1', '--untracked-files=all']))
-    .trim()
-    .split(/\r?\n/u)
-    .filter(Boolean)
+  const statusText = String(git(root, ['status', '--porcelain=v1', '--untracked-files=all'])).replace(/\r?\n$/u, '');
+  const status = (statusText ? statusText.split(/\r?\n/u) : [])
     .filter((line) => !line.slice(3).split(' -> ').at(-1).startsWith(`${F5_EVIDENCE_ROOT}/`));
   const sourceIssues = status.map((line) => `source worktree is dirty outside F5 evidence: ${line}`);
   const inputs = [];
