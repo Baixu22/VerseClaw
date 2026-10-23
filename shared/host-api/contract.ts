@@ -279,6 +279,12 @@ export type SessionDeleteResult = HostSuccess & {
    * sessions.json update failed — the session entry is kept so the user can
    * retry instead of seeing a fake success. */
   partial?: boolean;
+  /**
+   * Set when the Gateway delete committed but the local mirror step had
+   * nothing to do (for example: this runtime keeps no legacy sessions.json).
+   * A skipped mirror is a success, and the reason stays auditable.
+   */
+  skipped?: string;
   /** Paths that could not be unlinked (only meaningful when partial). */
   remainingPaths?: string[];
 };

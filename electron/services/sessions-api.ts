@@ -1311,6 +1311,15 @@ async function deleteSession(sessionKey: string): Promise<SessionDeleteResult> {
     const raw = await fsP.readFile(sessionsJsonPath, 'utf8');
     sessionsJson = JSON.parse(raw) as Record<string, unknown>;
   } catch (error) {
+    const code = (error as NodeJS.ErrnoException | undefined)?.code;
+    if (code === 'ENOENT') {
+      // This runtime keeps sessions in its own store, not in a legacy
+      // per-agent sessions.json. There is no mirror index to sweep, so the
+      // absence of that file is already the desired end state — not a
+      // failure. The caller still records that the sweep was skipped.
+      logger.info('[session:delete] No legacy sessions.json mirror to sweep for ' + sessionKey);
+      return { success: true, skipped: 'legacy-sessions-json-absent' };
+    }
     logger.warn(`[session:delete] Could not read sessions.json: ${String(error)}`);
     return { success: false, error: `Could not read sessions.json: ${String(error)}` };
   }
@@ -1797,9 +1806,15 @@ async function deleteSessionViaRuntime(
       if (!sweepResult.success) {
         return sweepResult;
       }
-      await updateSessionDeleteGate(gate.operationId, {
+      // A committed Gateway delete is authoritative. Record the local mirror
+      // result, including the case where this runtime keeps no legacy
+      // sessions.json and there was nothing to sweep.
+      currentGate = await updateSessionDeleteGate(gate.operationId, {
         localSweepCommitted: true,
-      });
+        ...(sweepResult.success && (sweepResult as { skipped?: string }).skipped
+          ? { localSweepSkipped: (sweepResult as { skipped?: string }).skipped }
+          : {}),
+      }) ?? currentGate;
     }
 
     await clearSessionDeleteGate(gate.operationId);

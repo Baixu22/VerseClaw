@@ -16,6 +16,12 @@ export type SessionDeleteGateRecord = {
   expectedSessionId?: string;
   terminalClosed?: boolean;
   localSweepCommitted?: boolean;
+  /**
+   * Why the local mirror sweep was skipped even though the Gateway commit
+   * succeeded (for example: this runtime keeps no legacy sessions.json).
+   * A skipped sweep is not a failed delete, but it must stay auditable.
+   */
+  localSweepSkipped?: string;
   createdAt: number;
   updatedAt: number;
 };
@@ -199,7 +205,7 @@ export async function persistSessionDeleteGate(
 export async function updateSessionDeleteGate(
   operationId: string,
   patch: Partial<Pick<SessionDeleteGateRecord,
-    'expectedSessionId' | 'terminalClosed' | 'localSweepCommitted'>>,
+    'expectedSessionId' | 'terminalClosed' | 'localSweepCommitted' | 'localSweepSkipped'>>,
 ): Promise<SessionDeleteGateRecord | undefined> {
   return withGateFileLock(async () => {
     const file = await readGateFile();

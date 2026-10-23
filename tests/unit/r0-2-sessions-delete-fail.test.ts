@@ -150,6 +150,20 @@ describe('R0-2 sessions.delete partial failures', () => {
     expect(indexAfter['agent:main:abc123']).toBeUndefined();
   });
 
+  it('succeeds without a legacy sessions.json instead of failing the committed delete', async () => {
+    // The runtime keeps sessions in its own store, so this agent has no mirror
+    // index at all. The Gateway delete is authoritative: the local sweep must
+    // report success and must not fabricate an empty sessions.json.
+    await makeConfigDir();
+    const sessionsDir = join(state.configDir as string, 'agents', 'main', 'sessions');
+
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const result = await createSessionsApi().delete({ sessionKey: 'agent:main:abc123' } as never);
+
+    expect(result.success).toBe(true);
+    await expect(access(join(sessionsDir, 'sessions.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
   it('removes runtime .jsonl.deleted.<timestamp> transcripts during hard delete', async () => {
     const sessionsDir = await makeConfigDir();
     await writeFile(join(sessionsDir, 'sessions.json'), JSON.stringify({ 'agent:main:abc123': 'abc123.jsonl' }), 'utf8');
