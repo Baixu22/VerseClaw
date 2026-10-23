@@ -1,0 +1,53 @@
+
+ RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
+
+stdout | tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts > TF-0510 symbol-lease multi-process benchmark > serializes overlapping writers across real processes with zero duplicate side effects
+{
+ "workers": 4,
+ "roundsPerWorker": 12,
+ "durationMs": 674,
+ "throughputAcquiresPerSecond": 17.8,
+ "totals": {
+  "acquired": 12,
+  "denied": 36,
+  "effects": 12
+ },
+ "sideEffectLines": 12,
+ "duplicateMutationSideEffects": 0,
+ "contentionObserved": true,
+ "perWorker": [
+  {
+   "holderId": "worker-0",
+   "acquired": 12,
+   "denied": 0,
+   "effects": 12
+  },
+  {
+   "holderId": "worker-1",
+   "acquired": 0,
+   "denied": 12,
+   "effects": 0
+  },
+  {
+   "holderId": "worker-2",
+   "acquired": 0,
+   "denied": 12,
+   "effects": 0
+  },
+  {
+   "holderId": "worker-3",
+   "acquired": 0,
+   "denied": 12,
+   "effects": 0
+  }
+ ]
+}
+
+ ✓ tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts (1 test) 679ms
+     ✓ serializes overlapping writers across real processes with zero duplicate side effects  678ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  17:51:24
+   Duration  959ms (transform 40ms, setup 108ms, import 9ms, tests 679ms, environment 0ms)
+

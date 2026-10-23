@@ -45,6 +45,12 @@ $results += Invoke-CapturedGate -Id '03b-stale-false-block' -Arguments @(
   'src/agents/stale-write-guard.false-block.test.ts', '--maxWorkers=1', '--reporter=default'
 ) -DisplayCommand 'labelled stale-write false-block corpus'
 
+# Real multi-process (multi-writer) benchmark for symbol-lease WAL mode.
+$results += Invoke-CapturedGate -Id '03c-lease-multiprocess' -Arguments @(
+  $pnpm, 'exec', 'vitest', 'run', 'tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts',
+  '--maxWorkers=1', '--reporter=default'
+) -DisplayCommand '4-process symbol-lease contention benchmark'
+
 $results += Invoke-CapturedGate -Id '04-worktree-isolation' -Arguments @(
   $pnpm, '--dir', 'openclaw_runtime', 'exec', 'node', 'scripts/run-vitest.mjs', 'run',
   'src/agents/worktree-service.test.ts', 'src/agents/isolation-mode-matrix.test.ts',

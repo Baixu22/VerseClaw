@@ -72,6 +72,15 @@ const evidence = {
     staleGuardFalseBlockRate: 0,
     staleGuardCorpus: { genuineStale: 1, mustAllow: 4, falseBlocks: 0, missedBlocks: 0 },
     staleGuardFalseBlockRateMeasured: true,
+    // From tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts (real processes).
+    symbolLeaseMultiProcess: {
+      workers: 4,
+      roundsPerWorker: 12,
+      acquired: 12,
+      denied: 36,
+      duplicateMutationSideEffects: 0,
+      contentionObserved: true,
+    },
   },
 
   /** Explicit: a ledger with gaps cannot be presented as a completed closeout. */

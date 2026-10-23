@@ -1,8 +1,8 @@
 [
   {
     "file": "openclaw_runtime/src/agents/coding-control-dispositions.ts",
-    "expected": "4b67009e2b16eb65c42058d849d6861587422e98e7746a32678b9f2295521067",
-    "actual": "4b67009e2b16eb65c42058d849d6861587422e98e7746a32678b9f2295521067",
+    "expected": "4b6b4cbd23651f67e2852e7d831b48596924f122a180340f29f54f7d9a791c2b",
+    "actual": "4b6b4cbd23651f67e2852e7d831b48596924f122a180340f29f54f7d9a791c2b",
     "status": "pass"
   },
   {
@@ -30,6 +30,18 @@
     "status": "pass"
   },
   {
+    "file": "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+    "expected": "dba95c0ca48dcae988e1374e5cb327bf8ca12acc850915005871779d000b6a95",
+    "actual": "dba95c0ca48dcae988e1374e5cb327bf8ca12acc850915005871779d000b6a95",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/coding-controls-tf0510/symbol-lease-worker.mts",
+    "expected": "b1d095c3ba8f4bb6ccd032ffe5b689db6eb84a91cfbe3a614515b0b149a1f370",
+    "actual": "b1d095c3ba8f4bb6ccd032ffe5b689db6eb84a91cfbe3a614515b0b149a1f370",
+    "status": "pass"
+  },
+  {
     "file": "tests/unit/fixtures/coding-controls-tf0510/README.md",
     "expected": "b4d219415c4dea3b2a223602158164ac3befbb4a1520608167980f66e24df990",
     "actual": "b4d219415c4dea3b2a223602158164ac3befbb4a1520608167980f66e24df990",
@@ -37,20 +49,20 @@
   },
   {
     "file": "tests/unit/fixtures/coding-controls-tf0510/raw-evidence.json",
-    "expected": "2e76dc9fe64eaea98afb83c4ba2cb0dff83904ea4ea2c9d8560756943e6a7d29",
-    "actual": "2e76dc9fe64eaea98afb83c4ba2cb0dff83904ea4ea2c9d8560756943e6a7d29",
+    "expected": "3d20a9602531a26b017cb72c78ef85a9bf2cdddf357a0c61a6a6014540b2e7b5",
+    "actual": "3d20a9602531a26b017cb72c78ef85a9bf2cdddf357a0c61a6a6014540b2e7b5",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/coding-controls-tf0510/generate-acceptance.mts",
-    "expected": "1bd19398b5d24c1c36974131758d42c555f2f8b426c0403d6094a2a6fb8fd0c1",
-    "actual": "1bd19398b5d24c1c36974131758d42c555f2f8b426c0403d6094a2a6fb8fd0c1",
+    "expected": "5584f828c71687a9554ca9976316ab2c9987d031c8c20d607a1527fbefc4e14b",
+    "actual": "5584f828c71687a9554ca9976316ab2c9987d031c8c20d607a1527fbefc4e14b",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/coding-controls-tf0510/run-verification.ps1",
-    "expected": "743af14f246ad7fa69ac7aa8d63226587cb526915bc9e0c57caa0592fe7dab06",
-    "actual": "743af14f246ad7fa69ac7aa8d63226587cb526915bc9e0c57caa0592fe7dab06",
+    "expected": "84c0cf8f020058a55762c2aada3e6863a63f3b49130fe09998d9c775fc3e3584",
+    "actual": "84c0cf8f020058a55762c2aada3e6863a63f3b49130fe09998d9c775fc3e3584",
     "status": "pass"
   }
 ]

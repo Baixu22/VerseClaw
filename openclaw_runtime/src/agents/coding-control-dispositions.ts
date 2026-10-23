@@ -73,9 +73,10 @@ export const CODING_CONTROL_COMPONENTS: readonly CodingControlComponent[] = [
       "openclaw_runtime/src/agents/symbol-lease-guard.ts",
       "openclaw_runtime/src/context-engine/factstore/symbol-lease.ts",
       "openclaw_runtime/src/context-engine/factstore/symbol-lease.test.ts",
+      "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
     ],
     remainingGap: [
-      "Graduation is undefined by evidence: its own graduateOrRetireCriteria requires multi-writer benchmarks showing lower conflict/rework with reliable rollback, and no such benchmark exists in the repo. Single-process and multi-process correctness are proven; the benefit claim is not.",
+      "Graduation is still undefined by evidence: the multi-writer benchmark now exists (4 real processes x 12 rounds, 12 wins / 36 denials, zero duplicate side effects), but the criteria also require showing lower conflict/rework versus a baseline and reliable rollback, and no baseline comparison or rollback measurement exists yet.",
       "The owning record cannot be updated from here: feature.symbol-lease is experiment with a 2026-12-31 expiry in shared/dcs/component-disposition-catalog.ts, and shared/ is outside the TF-0510 write scope.",
     ],
     productEntry: "runtime.coding.symbolLease.enabled + .mode (operator config)",

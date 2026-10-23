@@ -51,7 +51,7 @@
       "writableTogglePresent": true,
       "productEntry": "runtime.coding.symbolLease.enabled + .mode (operator config)",
       "remainingGap": [
-        "Graduation is undefined by evidence: its own graduateOrRetireCriteria requires multi-writer benchmarks showing lower conflict/rework with reliable rollback, and no such benchmark exists in the repo. Single-process and multi-process correctness are proven; the benefit claim is not.",
+        "Graduation is still undefined by evidence: the multi-writer benchmark now exists (4 real processes x 12 rounds, 12 wins / 36 denials, zero duplicate side effects), but the criteria also require showing lower conflict/rework versus a baseline and reliable rollback, and no baseline comparison or rollback measurement exists yet.",
         "The owning record cannot be updated from here: feature.symbol-lease is experiment with a 2026-12-31 expiry in shared/dcs/component-disposition-catalog.ts, and shared/ is outside the TF-0510 write scope."
       ],
       "artifacts": [
@@ -78,6 +78,12 @@
           "exists": true,
           "sha256": "15913ef16618eb22a3f33165f758a7ce9c42891cf9c250d364a69876c24a0c96",
           "bytes": 5123
+        },
+        {
+          "path": "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+          "exists": true,
+          "sha256": "dba95c0ca48dcae988e1374e5cb327bf8ca12acc850915005871779d000b6a95",
+          "bytes": 4589
         }
       ]
     },
@@ -202,7 +208,15 @@
       "falseBlocks": 0,
       "missedBlocks": 0
     },
-    "staleGuardFalseBlockRateMeasured": true
+    "staleGuardFalseBlockRateMeasured": true,
+    "symbolLeaseMultiProcess": {
+      "workers": 4,
+      "roundsPerWorker": 12,
+      "acquired": 12,
+      "denied": 36,
+      "duplicateMutationSideEffects": 0,
+      "contentionObserved": true
+    }
   },
   "completionVerdict": "blocked-by-gaps"
 }
