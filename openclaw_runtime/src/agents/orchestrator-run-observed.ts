@@ -75,6 +75,7 @@ import {
 import type { BlackboardSynthesisSummary } from "./orchestration-synthesizer.js";
 import { createWorktreeService } from "./worktree-service.js";
 import { PATCH_FLOW_PROPOSAL_ONLY_DENIED_TOOLS } from "./orchestration-patch-flow.js";
+import type { DelegationWorkerExecution } from "./delegation-admission.js";
 
 export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
   cfg?: RoleRegistryConfigCarrier;
@@ -100,6 +101,8 @@ export type OrchestrationWorkerOutcome = {
   isVerifier: boolean;
   ledger: OrchestrationTaskLedgerEntry;
   spawn: RoleSpawnResult;
+  /** Actual execution owner facts used by long-session admission receipts. */
+  execution?: DelegationWorkerExecution;
 };
 
 export type OrchestrationRunResult = {
@@ -111,7 +114,7 @@ export type OrchestrationRunResult = {
   attempts: OrchestrationTaskLedgerEntry[];
   taskGraph: OrchestrationTaskGraph;
   graphStatus: OrchestrationTaskGraph["status"];
-  executionWaves: OrchestratorPlan["executionWaves"];
+  executionWaves: ReturnType<typeof scheduleResourceAwareWaves>["waves"];
   schedulerMetrics: ResourceSchedulerMetrics;
   pendingGraphNodes: OrchestrationTaskNode[];
   repairNodes: OrchestrationRepairNode[];
@@ -140,7 +143,7 @@ export type ObservedOrchestrationTraceAttrs = {
  * Consumed by the gateway broadcast path → renderer real-time UI.
  */
 export type OrchestrationLifecycleEvent = {
-  status: "started" | "completed" | "error" | "verified";
+  status: "started" | "accepted" | "completed" | "error" | "verified";
   orchestrationRunId?: string;
   taskNodeId?: string;
   roleInstanceId?: string;
@@ -160,6 +163,8 @@ export type OrchestrationLifecycleFn = (event: OrchestrationLifecycleEvent) => v
 type ObservedOrchestrationDeps = {
   spawn: SpawnFn;
   captureHandoffOutput?: CaptureRuntimeWorkerOutput;
+  /** Re-check the parent session generation immediately before a child starts. */
+  admissionGuard?: () => void | Promise<void>;
 };
 
 /** Build the orchestration-context system prompt fragment injected into each worker. */
@@ -401,7 +406,12 @@ export async function runOrchestrationWithRecorder(
     schedule = scheduleResourceAwareWaves({
       graph: plan.taskGraph,
       roles: resolvePlanRoles(plan, request),
-      options: { maxActiveRoles: request.maxWorkers },
+      options: {
+        maxActiveRoles: request.maxWorkers,
+        // A worktree request is intent, not proof. Until the worktree owner has
+        // returned a verified checkout, overlapping writers stay serialized.
+        verifiedWorktreeIsolation: false,
+      },
     });
     plan.executionWaves = schedule.waves;
     const { roleCostSummary, ...numericSchedulerMetrics } = schedule.metrics;
@@ -542,6 +552,7 @@ export async function runOrchestrationWithRecorder(
       const systemPrompt = proposalOnly
         ? `${framing}\n\n## Patch-Flow Proposal Contract\n- This worker is proposal-only; direct write and shell tools are denied.\n- Return exactly one fenced \`\`\`apply_patch block containing a complete patch from \`*** Begin Patch\` through \`*** End Patch\`.\n- Do not modify disk directly. The orchestration lead applies all proposals serially after every worker completes.`
         : framing;
+      await deps.admissionGuard?.();
       const spawnCtx = proposalOnly
         ? {
             ...ctx,
@@ -568,6 +579,7 @@ export async function runOrchestrationWithRecorder(
                 id: record.id,
                 root: record.root,
                 backend: record.backend,
+                gitBranch: record.gitBranch ?? null,
               };
             })()
           : undefined;
@@ -641,15 +653,54 @@ export async function runOrchestrationWithRecorder(
         spawnCtx,
         deps,
       );
+      const runId = spawn.result?.runId?.trim() || undefined;
+      const childSessionKey = spawn.result?.childSessionKey?.trim() || undefined;
+      const accepted = spawn.status === "accepted" && Boolean(runId) && Boolean(childSessionKey);
       const endedLedger: OrchestrationTaskLedgerEntry = {
         ...ledger,
-        status: spawn.status === "accepted" ? "accepted" : "failed",
+        status: accepted ? "accepted" : "failed",
         endedAt: Date.now(),
       };
-      outcomes.push({ roleName, agentId: request.agentId, task, isVerifier, ledger: endedLedger, spawn });
-      const runId = spawn.result?.runId;
-      const childSessionKey = spawn.result?.childSessionKey;
-      if (spawn.status === "accepted" && runId) {
+      const isolation = worktree
+        ? {
+            mode: "worktree" as const,
+            backend: worktree.backend === "git" ? "git-worktree" as const : "inprocess-worktree" as const,
+            canonicalRoot: worktree.root,
+            branch: worktree.gitBranch,
+            detachedHead: worktree.backend === "git" ? worktree.gitBranch === null : null,
+            verifiedCheckout: worktree.backend === "git",
+            worktreeId: worktree.id,
+          }
+        : {
+            mode: "shared" as const,
+            backend: "shared-inprocess" as const,
+            canonicalRoot: ctx.workspaceDir ?? "",
+            branch: null,
+            detachedHead: null,
+            verifiedCheckout: false,
+          };
+      outcomes.push({
+        roleName,
+        agentId: request.agentId,
+        task,
+        isVerifier,
+        ledger: endedLedger,
+        spawn,
+        execution: {
+          backend: "subagent",
+          isolation,
+          toolAuthorization: spawn.authorization ?? {
+            status: "runtime-inherited",
+            source: "role-contract+runtime-inheritance",
+            roleName,
+            effectiveRoleName: roleName,
+            parentRoleName: null,
+            allowlist: null,
+            denylist: [],
+          },
+        },
+      });
+      if (accepted && runId) {
         spawnedRunIds.push(runId);
         if (!isVerifier) {
           expectedWorkerRunIds.push(runId);
@@ -657,12 +708,12 @@ export async function runOrchestrationWithRecorder(
       } else {
         failures.push({
           roleName,
-          status: spawn.status,
-          error: spawn.error ?? spawn.result?.error,
+          status: spawn.status === "accepted" ? "incomplete-child-identity" : spawn.status,
+          error: spawn.error ?? spawn.result?.error ?? (spawn.status === "accepted" ? "Spawn accepted without both child session and run ids" : undefined),
         });
       }
       recorder.endSpan(span.id, {
-        status: spawn.status === "accepted" ? "completed" : "error",
+        status: accepted ? "completed" : "error",
         output: runId ?? spawn.status,
         attributes: {
           childSessionKey,
@@ -675,7 +726,7 @@ export async function runOrchestrationWithRecorder(
       try {
         if (spawn.status === "accepted") {
           lifecycle?.({
-            status: isVerifier ? "verified" : "completed",
+            status: "accepted",
             orchestrationRunId,
             taskNodeId: endedLedger.taskNodeId,
             roleInstanceId: endedLedger.roleInstanceId,

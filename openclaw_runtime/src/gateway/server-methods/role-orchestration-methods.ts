@@ -8,12 +8,14 @@
 // Params are parsed defensively here rather than via generated protocol
 // validators, so no change to the gateway-protocol package is required.
 import crypto from "node:crypto";
+import path from "node:path";
 import { ErrorCodes, errorShape } from "../../../packages/gateway-protocol/src/index.js";
 import { compileRoleContractToSoul } from "../../agents/role-contract.js";
 import { buildRoleRegistry, listRoleContracts, resolveRoleContract, roleOrigin } from "../../agents/role-registry.js";
 import { getTeamTemplateSnapshot, resolveTeamTemplate } from "../../agents/team-template.js";
 import { createOrchestratorPlan, type OrchestratorWorkerPlan } from "../../agents/orchestrator.js";
 import { runOrchestrationObserved, type OrchestrationLifecycleEvent } from "../../agents/orchestrator-run-observed.js";
+import { buildDelegationReceipt, parseDelegationAdmission } from "../../agents/delegation-admission.js";
 import { synthesizeOrchestrationResult } from "../../agents/orchestration-synthesizer.js";
 import {
   normalizeQualityPolicy,
@@ -33,6 +35,8 @@ import {
 import { spawnSubagentDirect } from "../../agents/subagent-spawn.js";
 import { getTaskLoopRun, runTaskLoop, type TaskLoopLifecycleEvent } from "../../agents/task-loop-controller.js";
 import { DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT } from "../../config/agent-limits.js";
+import { loadSessionEntry } from "../session-utils.js";
+import type { SessionDelegationAdmission } from "../../../../shared/types/session-delegation.js";
 import {
   storeRuntimeTrace,
   getRuntimeTraceBuffer,
@@ -204,6 +208,41 @@ const ROLE_MEMORY_DISABLED_MESSAGE = "Role memory is disabled in Settings.";
 const ORCHESTRATOR_RUN_QUALITY_STATE_REASON =
   "Ordinary orchestrator.run quality is scored from shadow evidence; Task Loop owns active repair quality semantics.";
 
+function sameCanonicalPath(left: string, right: string): boolean {
+  const normalize = (value: string) => {
+    const resolved = path.resolve(value);
+    return process.platform === "win32" ? resolved.toLowerCase() : resolved;
+  };
+  return normalize(left) === normalize(right);
+}
+
+function readCurrentParentGeneration(sessionKey: string): string | null {
+  const loaded = loadSessionEntry(sessionKey);
+  const sessionId = loaded.entry?.sessionId;
+  return typeof sessionId === "string" && sessionId.trim() ? sessionId.trim() : null;
+}
+
+function validateDelegationAdmissionScope(params: {
+  admission: SessionDelegationAdmission;
+  sessionKey: string;
+  agentId: string | undefined;
+  workspaceDir: string | undefined;
+}): string | null {
+  if (params.admission.coordinator.sessionKey !== params.sessionKey) {
+    return "delegationAdmission coordinator sessionKey does not match orchestrator.run sessionKey";
+  }
+  if (params.agentId && params.admission.coordinator.agentId !== params.agentId) {
+    return "delegationAdmission coordinator agentId does not match orchestrator.run agentId";
+  }
+  if (
+    !params.workspaceDir ||
+    !sameCanonicalPath(params.workspaceDir, params.admission.parentEnvironment.canonicalRoot)
+  ) {
+    return "delegationAdmission parentEnvironment canonicalRoot must match workspaceDir";
+  }
+  return null;
+}
+
 function resolveOrchestratorRunStatus(spawnedCount: number, failureCount: number): "accepted" | "partial" | "error" {
   if (spawnedCount > 0 && failureCount === 0) {
     return "accepted";
@@ -304,11 +343,33 @@ function readExplicitWorkers(
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `unknown role "${roleName}"`));
       return undefined;
     }
+    const rawIsolation = rawWorker.isolation;
+    if (
+      rawIsolation !== undefined &&
+      rawIsolation !== "shared" &&
+      rawIsolation !== "worktree"
+    ) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `orchestrator worker ${index + 1} has unsupported isolation`));
+      return undefined;
+    }
+    const rawWriteSet = rawWorker.writeSet;
+    if (
+      rawWriteSet !== undefined &&
+      (!Array.isArray(rawWriteSet) ||
+        rawWriteSet.some((entry) => typeof entry !== "string" || !entry.trim()))
+    ) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `orchestrator worker ${index + 1} writeSet must be a non-empty-path array`));
+      return undefined;
+    }
+    const worktreeId = readString(rawWorker.worktreeId);
     workers.push({
       roleName,
       task,
       ...(readString(rawWorker.label) ? { label: readString(rawWorker.label) } : {}),
       ...(readString(rawWorker.modelRef) ? { modelRef: readString(rawWorker.modelRef) } : {}),
+      ...(rawIsolation ? { isolation: rawIsolation } : {}),
+      ...(Array.isArray(rawWriteSet) ? { writeSet: rawWriteSet.map((entry) => entry.trim()) } : {}),
+      ...(worktreeId ? { worktreeId } : {}),
     });
   }
   return workers;
@@ -360,6 +421,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       return;
     }
     const cfg = context.getRuntimeConfig();
+
     const templateId = readTemplateId(params);
     if (!validateTemplateId(respond, cfg, templateId)) {
       return;
@@ -425,6 +487,44 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       return;
     }
     const cfg = context.getRuntimeConfig();
+    const requestedBackend = readString(params.backend);
+    if (requestedBackend && requestedBackend !== "subagent") {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, `unsupported orchestration backend "${requestedBackend}"`),
+      );
+      return;
+    }
+    let admission: SessionDelegationAdmission | null = null;
+    if (Object.prototype.hasOwnProperty.call(params, "delegationAdmission")) {
+      const parsed = parseDelegationAdmission(params.delegationAdmission);
+      if (!parsed.ok) {
+        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, parsed.error));
+        return;
+      }
+      const scopeError = validateDelegationAdmissionScope({
+        admission: parsed.admission,
+        sessionKey,
+        agentId: readString(params.agentId),
+        workspaceDir: readString(params.workspaceDir),
+      });
+      if (scopeError) {
+        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, scopeError));
+        return;
+      }
+      const currentGeneration = readCurrentParentGeneration(sessionKey);
+      if (currentGeneration !== parsed.admission.coordinator.sessionGeneration) {
+        respond(
+          false,
+          undefined,
+          errorShape(ErrorCodes.INVALID_REQUEST, "delegation admission parent session generation mismatch"),
+        );
+        return;
+      }
+      admission = parsed.admission;
+    }
+
     const templateId = readTemplateId(params);
     if (!validateTemplateId(respond, cfg, templateId)) {
       return;
@@ -480,10 +580,34 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           agentSessionKey: sessionKey,
           ...(readString(params.agentId) ? { requesterAgentIdOverride: readString(params.agentId) } : {}),
         },
-        { spawn: spawnSubagentDirect },
+        {
+          spawn: spawnSubagentDirect,
+          ...(admission
+            ? {
+                admissionGuard: () => {
+                  const currentGeneration = readCurrentParentGeneration(sessionKey);
+                  if (currentGeneration !== admission.coordinator.sessionGeneration) {
+                    throw new Error(
+                      `delegation admission parent generation changed (${currentGeneration ?? "missing"} != ${admission.coordinator.sessionGeneration})`,
+                    );
+                  }
+                },
+              }
+            : {}),
+        },
         { sessionKey, runId: orchestrationRunId },
         broadcastLifecycle,
       );
+      const delegationReceipt = admission
+        ? buildDelegationReceipt({
+            admission,
+            orchestrationRunId,
+            result,
+            maxWorkers: resolveMaxWorkers(params, cfg),
+            cfg,
+            parentGenerationAfterRun: readCurrentParentGeneration(sessionKey),
+          })
+        : null;
       const synthesis = synthesizeOrchestrationResult({
         bundle: result.resultBundle,
         blackboardSummary: result.blackboardSummary,
@@ -492,7 +616,13 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       context.logGateway.info(
         `[role-audit] orchestrator.run ${formatControlPlaneActor(actor)} lead=${leadRoleHint} mode=${result.plan.mode} workers=${result.spawnedRunIds.length} failures=${result.failures.length} sessionKey=${sessionKey}`,
       );
-      const status = resolveOrchestratorRunStatus(result.spawnedRunIds.length, result.failures.length);
+      const status = delegationReceipt
+        ? delegationReceipt.status === "accepted"
+          ? "accepted"
+          : delegationReceipt.status === "partial"
+            ? "partial"
+            : "error"
+        : resolveOrchestratorRunStatus(result.spawnedRunIds.length, result.failures.length);
       const qualityScorecard = result.qualityScorecard ?? null;
       const quality = qualityScorecard?.workerScores ?? [];
       respond(
@@ -555,9 +685,11 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
             status: outcome.spawn.status,
             runId: outcome.spawn.result?.runId,
             childSessionKey: outcome.spawn.result?.childSessionKey,
+            execution: outcome.execution ?? null,
             error: outcome.spawn.error ?? outcome.spawn.result?.error,
           })),
           failures: result.failures,
+          ...(delegationReceipt ? { delegationReceipt } : {}),
         },
         undefined,
       );

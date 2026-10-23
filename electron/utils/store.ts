@@ -8,6 +8,7 @@ import { app } from 'electron';
 import { OPENCLAW_GATEWAY_PORT } from '@shared/gateway-endpoint';
 import { resolveSupportedLanguage } from '@shared/language';
 import type { PromptCacheRiskEvent } from '@shared/types/workspace';
+import type { StoredSessionDelegationAdmission } from '../services/session-delegation-admission';
 import type { WorkProviderConfig } from '@shared/types/work-provider';
 import type { SensitiveCapturePolicy } from '@shared/privacy/sensitive-capture-policy';
 import { DEFAULT_SENSITIVE_CAPTURE_POLICY, normalizeSensitiveCapturePolicy } from '@shared/privacy/sensitive-capture-policy';
@@ -163,6 +164,7 @@ export interface AppSettings {
   sessionRecoveryNotificationsEnabled: boolean;
   sessionActivityRetentionMinutes: 0 | 5 | 15;
   promptCacheRiskLedger: PromptCacheRiskEvent[];
+  sessionDelegationAdmissions?: StoredSessionDelegationAdmission[];
   // Privacy / sensitive capture (P7-003)
   sensitiveCapturePolicy: SensitiveCapturePolicy;
 }

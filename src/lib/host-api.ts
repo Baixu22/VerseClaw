@@ -324,6 +324,8 @@ import type {
   SessionStopResult,
   SessionCreateHandoffPayload,
   SessionCreateHandoffResult,
+  SessionDelegationPayload,
+  SessionDelegationResult,
   SessionHandoffPayload,
   SessionHandoffResult,
   SessionListArchivedPayload,
@@ -1403,6 +1405,9 @@ export const hostApi = {
     ),
   },
   sessions: {
+    delegate: (input: SessionDelegationPayload): Promise<SessionDelegationResult> => (
+      invokeHost('sessions', 'delegate', input)
+    ),
     delete: (id: string) => invokeHost('sessions', 'delete', { id }),
     rename: (id: string, title: string) => (
       invokeHost('sessions', 'rename', { id, title })

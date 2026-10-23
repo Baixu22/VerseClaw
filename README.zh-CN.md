@@ -41,7 +41,9 @@ Verse Claw 是基于 OpenClaw 的 Electron 桌面应用：在对话中发起工�
 | 对话与会话 | 流式对话、附加文件和知识引用、查看工具结果；搜索、置顶、分组、归档和恢复会话 | 主界面与会话侧栏 |
 | 项目工作区 | 切换项目、浏览文件和预览内容，在对话旁使用终端、浏览器、Git 变更和代码审查 | 对话工具栏的工作区面板 |
 | 模型与提供商 | 管理提供商账户、默认模型和回退配置，查看 token 用量历史 | 设置 → 模型与提供商 |
-| Agent 与任务 | 配置 Agent 和角色，查看子 Agent 活动；用 Task Ledger 记录任务，用显式 Task Loop 或 ClawGraph 执行有约束的流程 | 设置 → Agents；侧栏更多菜单 |
+| Agent 与任务 | 配置 Agent 和角色，查看子 Agent 活动；用 Task Ledger 记录任务，用显式 Task Loop 或 委派 worker 必须经 typed `sessions.delegate` Host 入口，并由现有协调绑定、权限与 Gateway owner 接纳。回执会绑定协调 revision 与会话 generation、Task Ledger 引用、子会话/run、实际工具授权、真实隔离后端、checkout 事实和有界资源；`accepted` 只表示已接收，不代表子任务正在运行或已经完成。过期 generation、撤销的审批、不支持的后端和未证明安全的并行写入都会失败关闭或串行执行。详见[长期会话委派准入](docs/dev/long-session-delegation-admission.md)。
+
+ClawGraph 执行有约束的流程 | 设置 → Agents；侧栏更多菜单 |
 | 知识工作台 | 搜索资料、管理来源与引用，在待复核队列中处理收件项、草稿和提案 | 侧栏 → 知识 |
 | 收件箱 | 汇总权限申请、远程任务和浏览器任务中需要处理的事项，并查看历史结果 | 侧栏 → 收件箱 |
 | 定时任务与频道 | 创建和管理定时任务、查看运行记录；配置频道账户、连接状态和 Agent 绑定 | 侧栏 → 已安排；设置 → Channels |

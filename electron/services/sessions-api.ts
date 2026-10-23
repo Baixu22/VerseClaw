@@ -35,13 +35,25 @@ import type {
   CompressionSemanticAtom,
   SessionCompactionResult,
   SessionDeleteResult,
+  SessionDelegationPayload,
+  SessionDelegationResult,
   SessionExpandSelectorResult,
   SessionHandoffSource,
   SessionRecallDiagnostic,
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
 import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
-import { createWorkspacesApi, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
+import { createWorkspacesApi, getActiveWorkspaceProfile, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
+import {
+  executeSessionDelegation,
+  hashDelegationRequest,
+  validateSessionDelegationPayload,
+} from './session-delegation-admission';
+import {
+  claimSessionDelegationAdmission,
+  commitSessionDelegationAdmission,
+  readSessionDelegationAdmission,
+} from './session-delegation-store';
 import { evaluateHandoffDerivation } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
 import { getResourceTracker } from './resource-tracker';
@@ -1835,7 +1847,22 @@ export function createSessionsApi(ctx: {
   gatewayManager?: GatewayManager;
   terminalManager?: TerminalSessionManager;
   coordinatorLifecycle?: (event: WorkspaceCoordinatorLifecycleEvent) => Promise<void>;
+  resolveCoordinator?: CompleteHostServiceRegistry['workspaces']['resolveCoordinator'];
+  gatewayRpcForDelegation?: CompleteHostServiceRegistry['gateway']['rpc'];
+  getActiveWorkspaceId?: () => Promise<string | null>;
+  delegationStore?: {
+    readAdmission: typeof readSessionDelegationAdmission;
+    claimAdmission: typeof claimSessionDelegationAdmission;
+    commitAdmission: typeof commitSessionDelegationAdmission;
+  };
 } = {}): CompleteHostServiceRegistry['sessions'] {
+  const delegationStopEpochs = new Map<string, number>();
+  const delegationFlights = new Map<string, Promise<SessionDelegationResult>>();
+  const delegationStore = ctx.delegationStore ?? {
+    readAdmission: readSessionDelegationAdmission,
+    claimAdmission: claimSessionDelegationAdmission,
+    commitAdmission: commitSessionDelegationAdmission,
+  };
   const observeCoordinatorLifecycle = async (event: WorkspaceCoordinatorLifecycleEvent) => {
     if (!ctx.coordinatorLifecycle) return;
     try {
@@ -1845,6 +1872,40 @@ export function createSessionsApi(ctx: {
     }
   };
   return {
+    delegate: async (payload: SessionDelegationPayload): Promise<SessionDelegationResult> => {
+      const validated = validateSessionDelegationPayload(payload);
+      if (!validated.ok) return { success: false, status: 'rejected', error: validated.error };
+      if (!ctx.gatewayManager || !ctx.resolveCoordinator || !ctx.gatewayRpcForDelegation) {
+        return {
+          success: false,
+          status: 'rejected',
+          error: 'Delegation requires the active Gateway, Workspace owner, and permission owner',
+        };
+      }
+      const flightKey = `${validated.payload.idempotencyKey}:${hashDelegationRequest(validated.payload)}`;
+      const existingFlight = delegationFlights.get(flightKey);
+      if (existingFlight) return existingFlight;
+      const flight = executeSessionDelegation(validated.payload, {
+        readAdmission: delegationStore.readAdmission,
+        claimAdmission: delegationStore.claimAdmission,
+        commitAdmission: delegationStore.commitAdmission,
+        resolveCoordinator: ctx.resolveCoordinator,
+        getActiveWorkspaceId: ctx.getActiveWorkspaceId ?? (async () => (await getActiveWorkspaceProfile())?.id ?? null),
+        gatewayRpc: ctx.gatewayRpcForDelegation,
+        describeSessionGeneration: async (sessionKey) => {
+          const described = await ctx.gatewayManager!.rpc<{
+            session?: { sessionId?: string } | null;
+          }>('sessions.describe', { key: sessionKey }, 15_000);
+          const sessionId = described?.session?.sessionId;
+          return typeof sessionId === 'string' && sessionId.trim() ? sessionId.trim() : null;
+        },
+        stopEpoch: (sessionKey) => delegationStopEpochs.get(sessionKey) ?? 0,
+      }).finally(() => {
+        delegationFlights.delete(flightKey);
+      });
+      delegationFlights.set(flightKey, flight);
+      return flight;
+    },
     delete: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const workspaceId = getOptionalWorkspaceId(payload);
@@ -2269,7 +2330,9 @@ export function createSessionsApi(ctx: {
       }
       // Session-level stop runs the canonical stop front (queued state clear,
       // recursive subagent stop, process drain); turn-level abort stays on
-      // chat.abort.
+      // chat.abort. Advance this epoch before awaiting so a concurrent delegate
+      // can never report an accepted receipt after a stop crossed its boundary.
+      delegationStopEpochs.set(sessionKey, (delegationStopEpochs.get(sessionKey) ?? 0) + 1);
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.stop', {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),

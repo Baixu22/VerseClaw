@@ -282,7 +282,7 @@ describe('resource-aware orchestration scheduler', () => {
     expect(result.waves[0]?.reason).toContain('insufficient-writeSet-proof');
   });
 
-  it('allows overlapping writers to share a wave when both are worktree isolated', () => {
+  it('serializes worktree-intent writers until checkout isolation is verified', () => {
     const result = scheduleResourceAwareWaves({
       graph: graph([
         node({
@@ -303,7 +303,21 @@ describe('resource-aware orchestration scheduler', () => {
     });
 
     expect(result.waves.map((wave) => wave.taskNodeIds)).toEqual([
-      ['implementer-1', 'implementer-2'],
+      ['implementer-1'],
+      ['implementer-2'],
     ]);
+    expect(result.waves[0]?.deferredReasons).toContain('write-set-conflict');
+  });
+
+  it('allows overlapping writers in one wave only after verified checkout isolation', () => {
+    const result = scheduleResourceAwareWaves({
+      graph: graph([
+        node({ taskNodeId: 'implementer-1', roleName: 'implementer', writeSet: ['src/shared.ts'], isolation: 'worktree' }),
+        node({ taskNodeId: 'implementer-2', roleName: 'implementer', writeSet: ['src/shared.ts'], isolation: 'worktree' }),
+      ]),
+      roles: [role({ name: 'implementer', tools: ['read', 'write'] })],
+      options: { maxActiveRoles: 2, verifiedWorktreeIsolation: true },
+    });
+    expect(result.waves.map((wave) => wave.taskNodeIds)).toEqual([['implementer-1', 'implementer-2']]);
   });
 });

@@ -238,7 +238,7 @@ export function reduceSessionActivity(snapshot: SessionActivitySnapshot, event: 
       task: data.task,
       summary: data.summary,
       error: data.error,
-      status: data.status,
+      status: data.status === 'accepted' ? 'started' : data.status,
       childSessionKey: data.childSessionKey,
       agentId: data.agentId,
       updatedAt,

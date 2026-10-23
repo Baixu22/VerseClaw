@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: active
 id: long-session-delegation-admission
 title: 按授权和隔离规则委派独立会话并记录接收回执
 program: long-session-development-20261022
@@ -14,6 +14,7 @@ dependsOnTasks:
 touchedAreas:
   - harness/specs/tasks/long-session-delegation-admission.md
   - harness/specs/tasks/long-session-development-plan.md
+  - openclaw_runtime/src/agents/delegation-admission.ts
   - openclaw_runtime/src/agents/role-spawn.ts
   - openclaw_runtime/src/agents/orchestrator-run-observed.ts
   - openclaw_runtime/src/agents/orchestration-resource-scheduler.ts
@@ -22,8 +23,25 @@ touchedAreas:
   - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts
   - electron/services/sessions-api.ts
+  - electron/services/session-delegation-admission.ts
+  - electron/services/session-delegation-store.ts
+  - electron/main/ipc-handlers.ts
+  - electron/utils/store.ts
   - shared/host-api/contract.ts
+  - shared/host-events/contract.ts
+  - shared/types/session-delegation.ts
+  - src/lib/host-api.ts
+  - src/stores/session-activity.ts
+  - docs/dev/long-session-delegation-admission.md
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - README.ru-RU.md
+  - tests/unit/orchestration-resource-scheduler.test.ts
+  - tests/unit/role-orchestration-methods.test.ts
+  - tests/unit/workspace-session.test.ts
   - tests/unit/long-session-delegation-admission.test.ts
+  - tests/e2e/long-session-delegation-admission.spec.ts
   - harness/specs/fixtures/long-session-development/c2/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -47,10 +65,17 @@ requiredTests:
   - pnpm run contract:check
   - pnpm run comms:replay
   - pnpm run comms:compare
+  - pnpm run build:runtime
+  - pnpm run build:vite
+  - pnpm run test:e2e:run tests/e2e/long-session-delegation-admission.spec.ts
   - pnpm harness validate --spec harness/specs/tasks/long-session-delegation-admission.md
   - git diff --check
 plannedTests:
+  - tests/unit/orchestration-resource-scheduler.test.ts
+  - tests/unit/role-orchestration-methods.test.ts
+  - tests/unit/workspace-session.test.ts
   - tests/unit/long-session-delegation-admission.test.ts
+  - tests/e2e/long-session-delegation-admission.spec.ts
 acceptance:
   - 使用既有 session/role/orchestration 入口提交 worker，receipt 绑定 coordinator revision/generation、task ref、child session/run、backend、environment binding 和工具授权；accepted 不等于 running/completed。
   - 不复用过期/撤销 grant，不允许 child 超过 parent 权限；未知 worker、不支持的 backend 与拒绝启动不产生 phantom completion。
@@ -60,6 +85,7 @@ docs:
   required: true
   files:
     - harness/specs/tasks/long-session-development-plan.md
+    - docs/dev/long-session-delegation-admission.md
 ---
 
 **C2 · 按授权和隔离规则委派独立会话并记录接收回执**

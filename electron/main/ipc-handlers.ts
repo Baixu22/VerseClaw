@@ -208,6 +208,9 @@ function registerTypedHostHandlers(
   const traceDiagnostics = createHostTraceDiagnosticsService({
     onSummary: recordObservabilityHostDiagnostic,
   });
+  const gatewayApi = createGatewayApi(gatewayManager, resourceFabric, {
+    createKnowledgeInboxItem: knowledgeApi.createInboxItem,
+  });
 
   hostApiRegistry.registerCoreServices({
     app: createAppApi(),
@@ -231,9 +234,7 @@ function registerTypedHostHandlers(
     settings: createSettingsApi(gatewayManager),
     efficiency: createEfficiencyApi(),
     resourceEnvelope: createResourceEnvelopeApi(),
-    gateway: createGatewayApi(gatewayManager, resourceFabric, {
-      createKnowledgeInboxItem: knowledgeApi.createInboxItem,
-    }),
+    gateway: gatewayApi,
     localControlPlane: createLocalControlPlaneApi(gatewayManager),
     capabilities: createCapabilitiesApi({ gatewayManager }),
     agentDev: createAgentDevApi({ gatewayManager }),
@@ -253,6 +254,8 @@ function registerTypedHostHandlers(
       gatewayManager,
       terminalManager,
       coordinatorLifecycle: workspacesApi.coordinatorLifecycle,
+      resolveCoordinator: workspacesApi.resolveCoordinator,
+      gatewayRpcForDelegation: gatewayApi.rpc,
     }),
     chat: createChatApi({ gatewayManager }),
     codeReview: createCodeReviewApi({ gatewayManager }),

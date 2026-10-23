@@ -36,6 +36,7 @@ import { recordRc03SystemPromptContribution } from "../context-engine/rc03-seal-
 import type { MemoryCard } from "../memory/types.js";
 import type { TeamOrchestrationMetadata } from "./subagent-registry.types.js";
 import type { PermissionDecisionEvent } from "../../../shared/product-semantics.js";
+import type { SessionDelegationToolAuthorization } from "../../../shared/types/session-delegation.js";
 
 /** Minimal spawn-param set mapped from a role contract. */
 export type RoleSpawnParams = {
@@ -115,6 +116,7 @@ export type RoleSpawnResult = {
   status: RoleSpawnResultShape["status"] | "role-not-found";
   role?: RoleContract;
   result?: RoleSpawnResultShape;
+  authorization?: SessionDelegationToolAuthorization;
   error?: string;
 };
 
@@ -278,11 +280,13 @@ export function buildRoleSpawnParams(
   };
 }
 
-/** Build the spawn context for a role contract — hard tool allowlist + permission-derived deny. */
-export function buildRoleSpawnContext(
-  role: RoleContract,
-  ctx: RoleSpawnContext,
-): RoleSpawnContext {
+type RoleSpawnPolicy = {
+  context: RoleSpawnContext;
+  authorization: SessionDelegationToolAuthorization;
+};
+
+/** Build the hard child policy and the secret-free authorization facts used by receipts. */
+function buildRoleSpawnPolicy(role: RoleContract, ctx: RoleSpawnContext): RoleSpawnPolicy {
   // P2-003 / F-AUTH-002: child role privileges cannot exceed parent role/tool inheritance.
   const effectiveRole = clampRolePermissionsToParent(role, ctx.parentRole ?? null);
   const parentAllow = ctx.inheritedToolAllowlist;
@@ -301,11 +305,30 @@ export function buildRoleSpawnContext(
     })
     : undefined;
   return {
-    ...ctx,
-    ...(allowlist ? { inheritedToolAllowlist: allowlist } : {}),
-    ...permissionPatches,
-    ...(permissionDecisionEvents ? { permissionDecisionEvents } : {}),
+    context: {
+      ...ctx,
+      ...(allowlist ? { inheritedToolAllowlist: allowlist } : {}),
+      ...permissionPatches,
+      ...(permissionDecisionEvents ? { permissionDecisionEvents } : {}),
+    },
+    authorization: {
+      status: allowlist ? "effective" : "runtime-inherited",
+      source: allowlist ? "role-contract+parent-clamp" : "role-contract+runtime-inheritance",
+      roleName: role.name,
+      effectiveRoleName: effectiveRole.name,
+      parentRoleName: ctx.parentRole?.name ?? null,
+      allowlist: allowlist ? [...allowlist] : null,
+      denylist: [...deniedTools],
+    },
   };
+}
+
+/** Build the spawn context for a role contract — hard tool allowlist + permission-derived deny. */
+export function buildRoleSpawnContext(
+  role: RoleContract,
+  ctx: RoleSpawnContext,
+): RoleSpawnContext {
+  return buildRoleSpawnPolicy(role, ctx).context;
 }
 
 /** Resolve a role and spawn a subagent that adopts its contract. */
@@ -323,7 +346,7 @@ export async function spawnRoleSubagent(
     };
   }
   const params = buildRoleSpawnParams(role, request, ctx);
-  const roleCtx = buildRoleSpawnContext(role, ctx);
-  const result = await deps.spawn(params, roleCtx);
-  return { status: result.status, role, result };
+  const policy = buildRoleSpawnPolicy(role, ctx);
+  const result = await deps.spawn(params, policy.context);
+  return { status: result.status, role, result, authorization: policy.authorization };
 }

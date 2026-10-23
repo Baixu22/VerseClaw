@@ -391,6 +391,30 @@ describe('orchestrator.run handler', () => {
     expect(res?.error?.message).toMatch(/sessionKey/);
   });
 
+it('rejects an unsupported worker backend before spawn', async () => {
+    vi.mocked(spawnSubagentDirect).mockClear();
+    const res = await callHandler('orchestrator.run', {
+      task: 'do work',
+      sessionKey: 'agent:main:gateway',
+      backend: 'native-shell',
+    });
+    expect(res?.ok).toBe(false);
+    expect(res?.error?.message).toMatch(/unsupported orchestration backend/);
+    expect(spawnSubagentDirect).not.toHaveBeenCalled();
+  });
+
+  it('rejects an unknown explicit worker before spawn without a phantom completion', async () => {
+    vi.mocked(spawnSubagentDirect).mockClear();
+    const res = await callHandler('orchestrator.run', {
+      task: 'do work',
+      sessionKey: 'agent:main:gateway',
+      workers: [{ roleName: 'ghost-role', task: 'Do impossible work' }],
+    });
+    expect(res?.ok).toBe(false);
+    expect(res?.error?.message).toMatch(/unknown role/);
+    expect(spawnSubagentDirect).not.toHaveBeenCalled();
+  });
+
   it('returns scheduler metrics in the gateway run payload', { timeout: 15_000 }, async () => {
     vi.mocked(spawnSubagentDirect).mockResolvedValue({
       status: 'accepted',

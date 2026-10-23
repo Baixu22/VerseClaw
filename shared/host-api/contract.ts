@@ -53,6 +53,27 @@ import type {
 } from '../types/memory';
 import type { SessionActivitySnapshot } from '../types/session-activity';
 import type {
+  SessionDelegationPayload,
+  SessionDelegationResult,
+} from '../types/session-delegation';
+export type {
+  SessionDelegationAdmission,
+  SessionDelegationBackend,
+  SessionDelegationBudget,
+  SessionDelegationChildReceipt,
+  SessionDelegationCoordinator,
+  SessionDelegationIsolation,
+  SessionDelegationIsolationBackend,
+  SessionDelegationIsolationMode,
+  SessionDelegationPayload,
+  SessionDelegationReceipt,
+  SessionDelegationResult,
+  SessionDelegationSchedulerReceipt,
+  SessionDelegationStatus,
+  SessionDelegationToolAuthorization,
+  SessionDelegationWorkerPlan,
+} from '../types/session-delegation';
+import type {
   GitBranch,
   GitCapabilities,
   GitCommitInfo,
@@ -5724,6 +5745,7 @@ export type HostApiContract = {
     testImageGeneration: (payload: ImageGenerationTestPayload) => ImageGenerationTestResult;
   };
   sessions: {
+    delegate: (payload: SessionDelegationPayload) => SessionDelegationResult;
     delete: (payload: SessionDeletePayload) => SessionDeleteResult;
     rename: (payload: SessionRenamePayload) => HostSuccess;
     summaries: (payload?: SessionSummariesPayload) => SessionSummariesResult;
