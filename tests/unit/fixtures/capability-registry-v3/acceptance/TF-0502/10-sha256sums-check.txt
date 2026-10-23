@@ -1,0 +1,81 @@
+[
+  {
+    "file": "openclaw_runtime/src/agents/tool-search-capability-catalog.ts",
+    "expected": "a76b8d3377b28b39c36f2dc6b667ba05ef6c4e6afbf28540df075cf815ac0e29",
+    "actual": "a76b8d3377b28b39c36f2dc6b667ba05ef6c4e6afbf28540df075cf815ac0e29",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/tool-search-capability-catalog.test.ts",
+    "expected": "682323c2a75a9d633ece951c85c83cf6aeb34f65c0d239c3628c4ebe0936edc4",
+    "actual": "682323c2a75a9d633ece951c85c83cf6aeb34f65c0d239c3628c4ebe0936edc4",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/tool-search-capability-v3.ts",
+    "expected": "8e1c35a885986184e6a6e8fcdc8210c5c79e48784f0b2f06be3ca0ee117a0629",
+    "actual": "8e1c35a885986184e6a6e8fcdc8210c5c79e48784f0b2f06be3ca0ee117a0629",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/tool-search-capability-v3.test.ts",
+    "expected": "874f998b4d93019f91dcce4de959ef2cdf15bdad6df069149a8a831d5e6231f7",
+    "actual": "874f998b4d93019f91dcce4de959ef2cdf15bdad6df069149a8a831d5e6231f7",
+    "status": "pass"
+  },
+  {
+    "file": "shared/model-capability-profile.ts",
+    "expected": "175ef5b3dd3c5d0ee397fb218591efbae168ab7a996d06a0a1cb504b747ac8ac",
+    "actual": "175ef5b3dd3c5d0ee397fb218591efbae168ab7a996d06a0a1cb504b747ac8ac",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/model-capability-profile.test.ts",
+    "expected": "38990114516e3620689c012606fd926a257576549414c32675434a6de08d4e4f",
+    "actual": "38990114516e3620689c012606fd926a257576549414c32675434a6de08d4e4f",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/README.md",
+    "expected": "60ca973b20e7392a0920bf31f0c3afff8eae5f7b90d853ba7faad57ffc413a95",
+    "actual": "60ca973b20e7392a0920bf31f0c3afff8eae5f7b90d853ba7faad57ffc413a95",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-protocol.json",
+    "expected": "d7653f1c85201b54e73492e2387c1bc0f453a63b3cedd8995e573ecb1f6e01d4",
+    "actual": "d7653f1c85201b54e73492e2387c1bc0f453a63b3cedd8995e573ecb1f6e01d4",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-run-v1.json",
+    "expected": "2124ce3fb9ac1662a45cae52f6ada37dbf1c96c480fae3c3023cabbff0fe45a8",
+    "actual": "2124ce3fb9ac1662a45cae52f6ada37dbf1c96c480fae3c3023cabbff0fe45a8",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/raw-evidence.json",
+    "expected": "b87d4ba959f4c71e2625f64e182fac876780126fa7a072b3486db06a50051e5a",
+    "actual": "b87d4ba959f4c71e2625f64e182fac876780126fa7a072b3486db06a50051e5a",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/run-ab.mts",
+    "expected": "b39d078d528bf2f4857513e89a74dadc59da2ed27e5baa77f3a4c14974703f7c",
+    "actual": "b39d078d528bf2f4857513e89a74dadc59da2ed27e5baa77f3a4c14974703f7c",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/run-verification.ps1",
+    "expected": "90ef7fa9feba8bd8e1f498c616f41a0b1ccab9f468c8716005d86fe479c56787",
+    "actual": "90ef7fa9feba8bd8e1f498c616f41a0b1ccab9f468c8716005d86fe479c56787",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-v1-defect-note.md",
+    "expected": "241e833497eb281427e0dd0e6b15940e21b9a3289773fa045709bc2f168f66cb",
+    "actual": "241e833497eb281427e0dd0e6b15940e21b9a3289773fa045709bc2f168f66cb",
+    "status": "pass"
+  }
+]
+SHA256SUMS_STATUS=pass

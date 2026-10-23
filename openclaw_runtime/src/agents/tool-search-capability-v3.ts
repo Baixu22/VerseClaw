@@ -13,6 +13,10 @@ import type {
 } from "../capabilities/v3/unified-resolver.js";
 import type { TrustedCapabilityRegistrationInput } from "../capabilities/v3/trusted-catalog.js";
 import { ToolSearchRuntime } from "./tool-search.js";
+import {
+  buildCapabilityCatalogSnapshot,
+  type CapabilityCatalogSnapshot,
+} from "./tool-search-capability-catalog.js";
 
 export type ToolSearchCapabilityEntry = {
   id: string;
@@ -39,12 +43,14 @@ export type ToolSearchCapabilityBridge = {
   descriptors: CapabilityDescriptor[];
   registrations: TrustedCapabilityRegistrationInput[];
   fallback: CapabilityResolverToolFallback;
+  /** The same canonical snapshot consumed by model discovery and execution. */
+  catalogSnapshot: CapabilityCatalogSnapshot;
 };
 
 export type ToolSearchCapabilityBridgeResult =
   | ToolSearchCapabilityBridge
-  | { enabled: false; descriptors: []; registrations: []; diagnostics: [] }
-  | { enabled: true; descriptors: []; registrations: []; diagnostics: string[] };
+  | { enabled: false; descriptors: []; registrations: []; diagnostics: []; catalogSnapshot: null }
+  | { enabled: true; descriptors: []; registrations: []; diagnostics: string[]; catalogSnapshot: null };
 
 type BridgeEntry = {
   entry: ToolSearchCapabilityEntry;
@@ -81,7 +87,7 @@ export function buildToolSearchCapabilityBridge(params: {
   classify: (entry: ToolSearchCapabilityEntry) => ToolSearchCapabilityClassification;
 }): ToolSearchCapabilityBridgeResult {
   if (params.enabled !== true) {
-    return { enabled: false, descriptors: [], registrations: [], diagnostics: [] };
+    return { enabled: false, descriptors: [], registrations: [], diagnostics: [], catalogSnapshot: null };
   }
 
   const diagnostics: string[] = [];
@@ -135,8 +141,24 @@ export function buildToolSearchCapabilityBridge(params: {
       `duplicate Tool Search capability ids: ${[...new Set(duplicateCapabilityIds)].toSorted(compareStrings).join(", ")}`,
     );
   }
+  const catalogSnapshot = buildCapabilityCatalogSnapshot({
+    entries: entries.map((item) => item.entry),
+    classify: (entry) => {
+      const item = entries.find((candidate) => candidate.entry.id === entry.id);
+      if (!item) throw new Error(`missing bridge classification for ${entry.id}`);
+      return {
+        capabilityId: item.descriptor.capabilityId,
+        permissions: item.descriptor.permissions,
+        revision: item.descriptor.revision,
+      };
+    },
+    availability: () => ({ state: "available", reason: null }),
+  });
+  if (catalogSnapshot.diagnostics.length > 0) {
+    diagnostics.push(...catalogSnapshot.diagnostics);
+  }
   if (diagnostics.length > 0) {
-    return { enabled: true, descriptors: [], registrations: [], diagnostics };
+    return { enabled: true, descriptors: [], registrations: [], diagnostics, catalogSnapshot: null };
   }
 
   const ordered = entries.toSorted((left, right) =>
@@ -194,5 +216,6 @@ export function buildToolSearchCapabilityBridge(params: {
         }),
     })),
     fallback,
+    catalogSnapshot,
   };
 }

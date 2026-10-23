@@ -142,6 +142,11 @@ export type ModelCapabilityQuarantineFact = {
   since: string | null;
 };
 
+export type ModelCapabilityProfileCatalogIdentity = {
+  schemaVersion: string;
+  digest: string;
+};
+
 export type ModelCapabilityEffectiveFactInput = {
   capabilityId: string;
   tool: ModelCapabilityToolFact;
@@ -158,6 +163,7 @@ export type ModelCapabilityEffectiveFactsInput = {
   scope: ModelCapabilityScope;
   runtimeGeneration: string;
   observedAt: string;
+  catalogIdentity?: ModelCapabilityProfileCatalogIdentity;
   facts: readonly ModelCapabilityEffectiveFactInput[];
 };
 
@@ -204,6 +210,7 @@ export type ModelCapabilityProfile = {
   staticManifest: ModelCapabilityStaticManifest;
   staticDigest: string;
   effectiveDigest: string;
+  catalogIdentity?: ModelCapabilityProfileCatalogIdentity;
   entries: readonly ModelCapabilityProfileEntry[];
   promptAddition: ModelCapabilityPromptAddition;
   diagnostics: readonly ModelCapabilityProfileDiagnostic[];
@@ -257,6 +264,31 @@ export const MODEL_CAPABILITY_USER_DISPLAY_NAMES: Readonly<Record<string, string
 };
 const FORBIDDEN_USER_CAPABILITY_TERMS = /\b(?:DCS|VToken|C6|RC-03|V3)\b/iu;
 const SHA256_DIGEST = /^sha256:[a-f0-9]{64}$/u;
+
+function normalizeCatalogIdentity(
+  identity: ModelCapabilityProfileCatalogIdentity | undefined,
+): ModelCapabilityProfileCatalogIdentity | undefined {
+  if (identity === undefined) return undefined;
+  return {
+    schemaVersion: identity.schemaVersion.trim(),
+    digest: identity.digest.trim(),
+  };
+}
+
+function validateCatalogIdentity(
+  identity: ModelCapabilityProfileCatalogIdentity | undefined,
+  pathValue = 'catalogIdentity',
+): ModelCapabilityProfileIssue[] {
+  if (identity === undefined) return [];
+  const issues: ModelCapabilityProfileIssue[] = [];
+  if (!isNonEmptyString(identity.schemaVersion)) {
+    issues.push(issue('catalog_identity_schema_missing', 'catalogIdentity.schemaVersion is required', `${pathValue}.schemaVersion`));
+  }
+  if (!SHA256_DIGEST.test(identity.digest)) {
+    issues.push(issue('catalog_identity_digest_invalid', 'catalogIdentity.digest must be sha256:<64hex>', `${pathValue}.digest`));
+  }
+  return issues;
+}
 
 function canonicalize(value: unknown): unknown {
   if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
@@ -403,6 +435,7 @@ function validateEffectiveFactsInput(
   const issues = validateScope(input.scope);
   if (!isNonEmptyString(input.runtimeGeneration)) issues.push(issue('runtime_generation_missing', 'runtimeGeneration is required', 'runtimeGeneration'));
   if (!isIsoTimestamp(input.observedAt)) issues.push(issue('observed_at_invalid', 'observedAt must be an ISO timestamp', 'observedAt'));
+  issues.push(...validateCatalogIdentity(input.catalogIdentity));
   const staticById = new Map(staticManifest.entries.map((entry) => [entry.capabilityId, entry]));
   const seen = new Set<string>();
   for (const fact of input.facts) {
@@ -603,9 +636,11 @@ export function computeModelCapabilityEffectiveDigest(
   input: ModelCapabilityEffectiveFactsInput,
   staticManifest: ModelCapabilityStaticManifest = createModelCapabilityStaticManifest(),
 ): string {
+  const normalizedCatalogIdentity = normalizeCatalogIdentity(input.catalogIdentity);
   return digest({
     scope: normalizeScope(input.scope),
     runtimeGeneration: trimmed(input.runtimeGeneration),
+    ...(normalizedCatalogIdentity ? { catalogIdentity: normalizedCatalogIdentity } : {}),
     facts: resolvedEffectiveFacts(staticManifest, input).map(digestEffectiveFact),
   });
 }
@@ -712,6 +747,7 @@ function profileFacts(profile: ModelCapabilityProfile): ModelCapabilityEffective
     scope: profile.scope,
     runtimeGeneration: profile.runtimeGeneration,
     observedAt: profile.observedAt,
+    ...(profile.catalogIdentity ? { catalogIdentity: profile.catalogIdentity } : {}),
     facts: profile.entries.map((entry) => ({
       capabilityId: entry.capabilityId,
       tool: entry.tool,
@@ -736,6 +772,7 @@ export function validateModelCapabilityProfile(
   if (!isIsoTimestamp(profile.generatedAt)) issues.push(issue('generated_at_invalid', 'generatedAt must be an ISO timestamp', 'generatedAt'));
   if (!isIsoTimestamp(profile.observedAt)) issues.push(issue('profile_observed_at_invalid', 'observedAt must be an ISO timestamp', 'observedAt'));
   if (!isNonEmptyString(profile.runtimeGeneration)) issues.push(issue('profile_runtime_generation_missing', 'runtimeGeneration is required', 'runtimeGeneration'));
+  issues.push(...validateCatalogIdentity(profile.catalogIdentity));
   issues.push(...validateScope(profile.scope));
   issues.push(...validateModelCapabilityStaticManifest(profile.staticManifest));
 
@@ -866,6 +903,7 @@ export function buildModelCapabilityProfile(input: BuildModelCapabilityProfileIn
   if (issues.length > 0) throw new Error(`ModelCapabilityProfile/v1 input is invalid: ${issues.map((entry) => entry.code).join(',')}`);
 
   const facts = resolvedEffectiveFacts(staticManifest, input);
+  const normalizedCatalogIdentity = normalizeCatalogIdentity(input.catalogIdentity);
   const staticDigest = computeModelCapabilityStaticDigest(staticManifest);
   const effectiveDigest = computeModelCapabilityEffectiveDigest(input, staticManifest);
   const { promptAddition, diagnostics } = buildPromptAddition(staticManifest, facts, promptMaxChars);
@@ -880,6 +918,7 @@ export function buildModelCapabilityProfile(input: BuildModelCapabilityProfileIn
     staticManifest,
     staticDigest,
     effectiveDigest,
+    catalogIdentity: normalizedCatalogIdentity,
     entries: [...staticById.values()].map((staticEntry) => {
       const fact = factById.get(staticEntry.capabilityId)!;
       return {
