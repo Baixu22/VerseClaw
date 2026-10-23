@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-followup-scheduling
 title: 把定时跟进绑定到长期会话并统一取消规则
 program: long-session-development-20261022
@@ -9,11 +9,21 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 让已授权的跟进任务在合适条件继续，而不是依赖使用者重复提示或新增一套常驻调度器。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
+diffBase: 2a86ab761
 dependsOnTasks:
   - D3
 touchedAreas:
   - harness/specs/tasks/long-session-followup-scheduling.md
   - harness/specs/tasks/long-session-development-plan.md
+  - shared/long-session-followup-scope.ts
+  - scripts/long-session-followup-evidence.mjs
+  - package.json
+  - openclaw_runtime/src/cron/coordinator-scope.ts
+  - openclaw_runtime/src/cron/types-shared.ts
+  - openclaw_runtime/src/cron/service/state.ts
+  - openclaw_runtime/src/cron/service/timer.ts
+  - openclaw_runtime/src/cron/service/jobs.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/cron.ts
   - electron/services/cron-api.ts
   - electron/services/cron-maintenance.ts
   - openclaw_runtime/src/gateway/server-cron.ts
@@ -47,6 +57,8 @@ requiredTests:
   - pnpm exec vitest run tests/unit/long-session-followup-scheduling.test.ts --maxWorkers=1
   - pnpm run build:vite
   - pnpm run test:e2e:run tests/e2e/long-session-followup-scheduling.spec.ts
+  - pnpm run long-session:e1:evidence -- --observation <e2e observation>
+  - pnpm run long-session:e1:evidence:check
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run comms:replay

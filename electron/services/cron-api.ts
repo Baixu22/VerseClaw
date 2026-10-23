@@ -487,6 +487,53 @@ function buildCronUpdatePatch(input: Record<string, unknown>): Record<string, un
  * session still matches the live session, so a stale generation can never be
  * authorized in the first place.
  */
+/**
+ * E1: resolve the current fence verdict for one coordinator scope. Shared by
+ * the read-only projector here and by the maintenance reconciliation pass, so
+ * the UI and the suppression decision can never disagree.
+ */
+export async function resolveCronCoordinatorStatus(
+  gatewayManager: GatewayManager,
+  rawScope: unknown,
+): Promise<CronJobCoordinatorStatus> {
+  const scope = normalizeCronCoordinatorScope(rawScope);
+  let bindingState: 'active' | 'invalidated' = 'invalidated';
+  let liveSessionId: string | null | undefined;
+  try {
+    if (scope) {
+      const result = await readWorkspaceCoordinatorBinding(scope.workspaceId);
+      const binding = result?.binding ?? null;
+      if (
+        binding
+        && binding.state === 'active'
+        && binding.sessionKey === scope.coordinatorSessionKey
+        && binding.sessionId === scope.expectedSessionId
+      ) {
+        bindingState = 'active';
+      }
+      const live = await resolveLiveSessionIdentity(gatewayManager, scope.coordinatorSessionKey).catch(() => null);
+      liveSessionId = live?.sessionId ?? null;
+    } else {
+      liveSessionId = undefined;
+    }
+  } catch {
+    liveSessionId = undefined;
+  }
+  const verdict = evaluateCronCoordinatorScope({
+    scope: rawScope,
+    nowMs: Date.now(),
+    liveSessionId,
+    bindingState,
+  });
+  return {
+    state: verdict.state,
+    reason: verdict.reason,
+    checkedAt: new Date().toISOString(),
+    ...(verdict.expectedSessionId ? { expectedSessionId: verdict.expectedSessionId } : {}),
+    observedSessionId: verdict.observedSessionId ?? null,
+  };
+}
+
 async function assertCoordinatorBindingCurrent(
   gatewayManager: GatewayManager,
   rawScope: unknown,
@@ -497,32 +544,9 @@ async function assertCoordinatorBindingCurrent(
       'Coordinator follow-up requires workspaceId, coordinatorSessionKey, expectedSessionId, intent and notificationPolicy',
     );
   }
-  let bindingState: 'active' | 'invalidated' = 'invalidated';
-  try {
-    const result = await readWorkspaceCoordinatorBinding(scope.workspaceId);
-    const binding = result?.binding ?? null;
-    if (
-      binding
-      && binding.state === 'active'
-      && binding.sessionKey === scope.coordinatorSessionKey
-      && binding.sessionId === scope.expectedSessionId
-    ) {
-      bindingState = 'active';
-    }
-  } catch {
-    bindingState = 'invalidated';
-  }
-  const live = bindingState === 'active'
-    ? await resolveLiveSessionIdentity(gatewayManager, scope.coordinatorSessionKey).catch(() => null)
-    : null;
-  const verdict = evaluateCronCoordinatorScope({
-    scope,
-    nowMs: Date.now(),
-    liveSessionId: live ? live.sessionId : null,
-    bindingState,
-  });
-  if (!verdict.allowed) {
-    throw new Error(`Coordinator follow-up rejected (${verdict.state}: ${verdict.reason})`);
+  const status = await resolveCronCoordinatorStatus(gatewayManager, scope);
+  if (status.state !== 'allowed' && status.state !== 'unbound') {
+    throw new Error(`Coordinator follow-up rejected (${status.state}: ${status.reason})`);
   }
   return scope;
 }
@@ -537,40 +561,9 @@ async function annotateCoordinatorStatus(
 ): Promise<CronJob[]> {
   const bound = jobs.filter((job) => job.coordinator);
   if (bound.length === 0) return jobs;
-  const checkedAt = new Date().toISOString();
   const byId = new Map<string, CronJobCoordinatorStatus>();
   for (const job of bound) {
-    const scope = normalizeCronCoordinatorScope(job.coordinator);
-    let bindingState: 'active' | 'invalidated' = 'invalidated';
-    let liveSessionId: string | null | undefined;
-    try {
-      if (scope) {
-        const result = await readWorkspaceCoordinatorBinding(scope.workspaceId);
-        const binding = result?.binding ?? null;
-        if (binding && binding.state === 'active' && binding.sessionKey === scope.coordinatorSessionKey) {
-          bindingState = 'active';
-        }
-        const live = await resolveLiveSessionIdentity(gatewayManager, scope.coordinatorSessionKey).catch(() => null);
-        liveSessionId = live?.sessionId ?? null;
-      } else {
-        liveSessionId = undefined;
-      }
-    } catch {
-      liveSessionId = undefined;
-    }
-    const verdict = evaluateCronCoordinatorScope({
-      scope: job.coordinator,
-      nowMs: Date.now(),
-      liveSessionId,
-      bindingState,
-    });
-    byId.set(job.id, {
-      state: verdict.state,
-      reason: verdict.reason,
-      checkedAt,
-      ...(verdict.expectedSessionId ? { expectedSessionId: verdict.expectedSessionId } : {}),
-      observedSessionId: verdict.observedSessionId ?? null,
-    });
+    byId.set(job.id, await resolveCronCoordinatorStatus(gatewayManager, job.coordinator));
   }
   return jobs.map((job) => {
     const status = byId.get(job.id);

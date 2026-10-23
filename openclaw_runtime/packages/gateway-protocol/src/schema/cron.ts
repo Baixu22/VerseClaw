@@ -427,6 +427,36 @@ const CronJobStatePatchSchema = Type.Object(
   { additionalProperties: false },
 );
 
+/**
+ * E1: long-session coordinator binding + physical generation the follow-up was
+ * authorized against. The runtime refuses to run a bound job once this scope is
+ * stale, so the field must survive persistence and RPC validation.
+ */
+export const CronCoordinatorScopeSchema = Type.Object(
+  {
+    schemaVersion: Type.Optional(Type.Literal("CronCoordinatorScope/v1")),
+    workspaceId: NonEmptyString,
+    coordinatorSessionKey: NonEmptyString,
+    expectedSessionId: NonEmptyString,
+    taskRef: Type.Optional(
+      Type.Union([
+        Type.Null(),
+        Type.Object(
+          {
+            kind: Type.Literal("task-ledger"),
+            nodeId: NonEmptyString,
+          },
+          { additionalProperties: false },
+        ),
+      ]),
+    ),
+    intent: Type.Union([Type.Literal("follow-up"), Type.Literal("check-in"), Type.Literal("status")]),
+    expiresAtMs: Type.Optional(Type.Union([Type.Null(), Type.Integer({ minimum: 0 })])),
+    notificationPolicy: Type.Union([Type.Literal("silent-unless-result"), Type.Literal("errors-and-decisions")]),
+  },
+  { additionalProperties: false },
+);
+
 /** Persisted cron job definition returned by scheduler list/get APIs. */
 export const CronJobSchema = Type.Object(
   {
@@ -445,6 +475,7 @@ export const CronJobSchema = Type.Object(
     payload: CronPayloadSchema,
     delivery: Type.Optional(CronDeliverySchema),
     failureAlert: Type.Optional(Type.Union([Type.Literal(false), CronFailureAlertSchema])),
+    coordinator: Type.Optional(Type.Union([Type.Null(), CronCoordinatorScopeSchema])),
     state: CronJobStateSchema,
   },
   { additionalProperties: false },
@@ -484,6 +515,7 @@ export const CronAddParamsSchema = Type.Object(
     payload: CronPayloadSchema,
     delivery: Type.Optional(CronDeliverySchema),
     failureAlert: Type.Optional(Type.Union([Type.Literal(false), CronFailureAlertSchema])),
+    coordinator: Type.Optional(Type.Union([Type.Null(), CronCoordinatorScopeSchema])),
   },
   { additionalProperties: false },
 );
@@ -499,6 +531,7 @@ export const CronJobPatchSchema = Type.Object(
     payload: Type.Optional(CronPayloadPatchSchema),
     delivery: Type.Optional(CronDeliveryPatchSchema),
     failureAlert: Type.Optional(Type.Union([Type.Literal(false), CronFailureAlertSchema])),
+    coordinator: Type.Optional(Type.Union([Type.Null(), CronCoordinatorScopeSchema])),
     state: Type.Optional(CronJobStatePatchSchema),
   },
   { additionalProperties: false },
