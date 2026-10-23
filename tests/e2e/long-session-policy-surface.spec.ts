@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
@@ -31,6 +31,11 @@ const SECOND_SESSION_KEY = 'agent:main:policy-secondary';
 const READ_AT = 1_792_700_000_000;
 const PRIMARY_MARKER = 'Primary session policy surface';
 const SECONDARY_MARKER = 'Secondary session policy surface';
+
+function pngDimensions(bytes: Buffer): { width: number; height: number } {
+  if (bytes.subarray(1, 4).toString('ascii') !== 'PNG') throw new Error('screenshot is not a PNG');
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+}
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -343,9 +348,13 @@ test('policy surface explains provenance, lifecycle boundaries, narrow layout, a
     await page.screenshot({ path: narrowPath, fullPage: true });
     await testInfo.attach('policy-surface-narrow', { path: narrowPath, contentType: 'image/png' });
 
+    const wideBytes = await readFile(widePath);
+    const narrowBytes = await readFile(narrowPath);
+    const widePixels = pngDimensions(wideBytes);
+    const narrowPixels = pngDimensions(narrowBytes);
     const screenshots = [
-      { name: 'policy-surface-wide', path: widePath, width: 1280, height: 800, sha256: createHash('sha256').update(await (await import('node:fs/promises')).readFile(widePath)).digest('hex') },
-      { name: 'policy-surface-narrow', path: narrowPath, width: 680, height: 760, sha256: createHash('sha256').update(await (await import('node:fs/promises')).readFile(narrowPath)).digest('hex') },
+      { name: 'policy-surface-wide', path: widePath, viewport: { width: 1280, height: 800 }, pixels: widePixels, sha256: createHash('sha256').update(wideBytes).digest('hex') },
+      { name: 'policy-surface-narrow', path: narrowPath, viewport: { width: 680, height: 760 }, pixels: narrowPixels, sha256: createHash('sha256').update(narrowBytes).digest('hex') },
     ];
     const screenshotsOutput = testInfo.outputPath('policy-ui-screenshots.json');
     await writeFile(screenshotsOutput, `${JSON.stringify({ schema: 'clawx.long-session.policy-ui-screenshots/v1', driven_by: 'agent', actor: process.env.COMPASS_AGENT_NAME ?? 'clawx-e2e-agent', screenshots }, null, 2)}\n`);
