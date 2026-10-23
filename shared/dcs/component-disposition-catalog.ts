@@ -195,6 +195,12 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     coverage: { authorityComponentIds: ['memory-candidate-queue'], dcsFlagIds: ['runtime-memory-candidate-generation'], runtimeLeafPatterns: ['memory.candidateGeneration'] },
   }),
   entry({
+    id: 'component.dreaming-derived-cache', label: 'Dreaming derived cache', disposition: 'internal', owner: 'dreaming-derived-cache', implementationNodeId: 'TF-0497', currentMode: 'baseline', targetDefaultMode: 'internal',
+    ...internal('Rebuildable Dreaming signals are internal derived data; they never accept memory or inject prompt context.'),
+    currentConsumers: ['Dreams diagnostics', 'runtime memory maintenance'], evidenceRefs: MEMORY_EVIDENCE,
+    coverage: { authorityComponentIds: ['dreaming-derived-cache'] },
+  }),
+  entry({
     id: 'component.memory-embedding-provider', label: 'Memory embedding provider', disposition: 'internal', owner: 'memory-embedding-provider', implementationNodeId: 'TF-0497', currentMode: 'opt-in', targetDefaultMode: 'internal',
     ...internal('Embedding/index provider is retrieval infrastructure and cannot accept memory facts directly.'),
     currentConsumers: ['hybrid memory retrieval', 'memory candidate ranking'], evidenceRefs: MEMORY_EVIDENCE,

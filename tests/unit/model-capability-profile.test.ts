@@ -112,7 +112,7 @@ describe('ModelCapabilityProfile/v1', () => {
     expect(visibleEntries.map((candidate) => candidate.capabilityId).sort()).toEqual(expectedVisibleIds);
     expect(new Set(visibleEntries.map((candidate) => candidate.capabilityId)).size).toBe(visibleEntries.length);
     expect(visibleEntries).toHaveLength(25);
-    expect(COMPONENT_AUTHORITY_MANIFEST.components).toHaveLength(34);
+    expect(COMPONENT_AUTHORITY_MANIFEST.components).toHaveLength(35);
     expect(new Set(profile.entries.map((candidate) => candidate.capabilityId)).size).toBe(profile.entries.length);
 
     const result = validateModelCapabilityProfile(profile);
