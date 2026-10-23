@@ -204,6 +204,7 @@ residualPaths:
 touchedAreas:
   - harness/specs/tasks/versegit-product-f4-controlled-stability.md
   - scripts/versegit-product-stability.mts
+  - scripts/verify-versegit-product-f4-evidence.mts
   - tests/e2e/versegit-packaged-flow.spec.ts
   - tests/unit/versegit-stability-report.test.ts
   - scripts/versegit-product-e2-evidence.mts
