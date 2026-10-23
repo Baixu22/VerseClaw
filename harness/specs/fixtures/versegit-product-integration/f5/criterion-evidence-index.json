@@ -6,8 +6,8 @@
   "actor": "codex",
   "source": {
     "branch": "codex/versegit-product-integration-20261022",
-    "commit": "431f6e6b576c7bab73ff893745f2556cae0726b6",
-    "tree": "9846efe899e08da3c891ad40041e39cc0c1c53d3",
+    "commit": "fb57c050137b6bbabc0c77bd1660e01b31612f6a",
+    "tree": "0535ed5fc5a7f749c58e20401b5cd09a43007ded",
     "dirty": false
   },
   "candidate": {
@@ -1390,6 +1390,6 @@
     }
   ],
   "passed": true,
-  "generated_at": "2026-10-23T17:39:54.221Z",
-  "digest": "b1ac9f67db4c53c4a71b36c73f42ec0a19b7bc6d34879ac2e43f705acf6f8d76"
+  "generated_at": "2026-10-23T18:49:21.967Z",
+  "digest": "30570b34e768be411888cc339a4d5308ea461ff5c8b931c2d8a11050803ada14"
 }

@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.product-f5-global-acceptance/v1",
-  "generated_at": "2026-10-23T17:40:22.353Z",
+  "generated_at": "2026-10-23T18:52:26.165Z",
   "task": "TF-0539",
   "parentTask": "TF-0523",
   "driven_by": "agent",
@@ -9,8 +9,8 @@
   "passed": true,
   "source": {
     "branch": "codex/versegit-product-integration-20261022",
-    "commit": "431f6e6b576c7bab73ff893745f2556cae0726b6",
-    "tree": "9846efe899e08da3c891ad40041e39cc0c1c53d3",
+    "commit": "fb57c050137b6bbabc0c77bd1660e01b31612f6a",
+    "tree": "0535ed5fc5a7f749c58e20401b5cd09a43007ded",
     "dirty": false
   },
   "candidate": {
@@ -488,14 +488,14 @@
   },
   "independentReview": {
     "path": "harness/specs/fixtures/versegit-product-integration/f5/independent-verdict.json",
-    "digest": "8eb608e9081eb6ff3e094311a5b878234644cfed1b558e77706c36f7e3c35d10",
+    "digest": "2eed6b7d5bd5938ff4ab112c7fa143065e7c9bd62f1d4df4ab53103f6169e4b4",
     "actor": "codex",
     "reviewerRole": "independent-product-f5-verifier-process",
     "verdict": "pass",
     "p0": 0,
     "p1": 0,
     "p2": 6,
-    "indexDigest": "b1ac9f67db4c53c4a71b36c73f42ec0a19b7bc6d34879ac2e43f705acf6f8d76",
+    "indexDigest": "30570b34e768be411888cc339a4d5308ea461ff5c8b931c2d8a11050803ada14",
     "recomputed": true
   },
   "posture": {
@@ -576,7 +576,7 @@
       "id": "unit",
       "command": "pnpm exec vitest run tests/unit/versegit-product-acceptance.test.ts",
       "exitCode": 0,
-      "durationMs": 9062,
+      "durationMs": 15010,
       "counts": {
         "files": 1,
         "tests": 7,
@@ -589,7 +589,7 @@
       "id": "harness",
       "command": "pnpm harness validate --spec harness/specs/tasks/versegit-product-f5-global-acceptance.md",
       "exitCode": 0,
-      "durationMs": 1668,
+      "durationMs": 2380,
       "counts": {
         "specsValidated": 1,
         "errors": 0
@@ -600,7 +600,7 @@
       "id": "typecheck",
       "command": "pnpm run typecheck",
       "exitCode": 0,
-      "durationMs": 30656,
+      "durationMs": 51412,
       "counts": {
         "projects": 3,
         "passed": 3,
@@ -612,7 +612,7 @@
       "id": "comms-replay",
       "command": "pnpm run comms:replay",
       "exitCode": 0,
-      "durationMs": 1145,
+      "durationMs": 1215,
       "counts": {
         "scenarios": 6,
         "aggregateMetrics": 10
@@ -623,7 +623,7 @@
       "id": "comms-compare",
       "command": "pnpm run comms:compare",
       "exitCode": 0,
-      "durationMs": 803,
+      "durationMs": 887,
       "counts": {
         "passRows": 44,
         "failRows": 0
@@ -657,5 +657,5 @@
     "proposalApplyRequired": true,
     "validateExportRequired": true
   },
-  "digest": "56d150469ae70c67ebc2bddd5026543ca4eb780f0fc9a8455bc2b4c5bc53beda"
+  "digest": "491d1d1620a195f7a6ba54aa55586aae50a772042f1d77ca2012679ab774b56e"
 }
