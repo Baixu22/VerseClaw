@@ -1,0 +1,27 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\long-session-c2-final2\\verse-claw-e2e-run-ecfCwK",
+  "ledgerEntries": 2,
+  "reaped": [
+    {
+      "pid": 30484,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 3172,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "ok",
+    "runRoot": "D:\\tmp\\long-session-c2-final2\\verse-claw-e2e-run-ecfCwK\\",
+    "owned": [],
+    "remaining": []
+  }
+}

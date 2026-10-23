@@ -1,0 +1,149 @@
+{
+  "schema": "clawx.long-session.delegation-admission-evidence/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": {
+    "commit": "a2631e3a41afe740469661a006623e212d3835d5",
+    "tree": "cf0fe6018278cf89b9836b83850c7bcc25c2f75d",
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "dirty": false
+  },
+  "e2eCommandId": "c2-e2e",
+  "gatesPath": "harness/specs/fixtures/long-session-development/c2/gates.json",
+  "receipt": {
+    "schema": "clawx.long-session.delegation-admission-e2e/v1",
+    "driven_by": "agent",
+    "actor": "codex-long-session-r2",
+    "workspaceId": "default",
+    "rootPath": "D:\\tmp\\long-session-c2-final2\\verse-claw-e2e-run-ecfCwK\\verse-claw-e2e-home-Fac9RG\\.openclaw\\workspace",
+    "sessionKey": "agent:main:dashboard:871e2a1c-b332-4264-8639-697d86b02c17",
+    "sessionGeneration": "cf202ba1-ee78-4d33-b351-5aadc7b902a0",
+    "taskRef": "40e4411e-eb49-4f0b-97ad-9785a7ea9c79",
+    "taskLedgerStatusAfter": "todo",
+    "idempotencyKey": "delegation-admission-1792792293602",
+    "first": {
+      "status": "accepted",
+      "admissionId": "2efb52ac-6cea-41f2-ad5c-69882de60307",
+      "orchestrationRunId": "orch_0d0cfd70-4c75-41d6-8ad4-8d0b5eb5f1b0",
+      "bindingRevision": 1,
+      "parentEnvironmentRevision": 1,
+      "budget": {
+        "status": "observed",
+        "reason": null,
+        "maxWorkers": 5,
+        "process": {
+          "maxChildrenPerAgent": 5,
+          "maxSpawnDepth": 1,
+          "source": "agents.defaults.subagents"
+        },
+        "backgroundTerminal": {
+          "lane": "subagent",
+          "maxConcurrent": 8,
+          "activeCount": 0,
+          "queuedCount": 0,
+          "source": "process.command-queue.subagent"
+        }
+      },
+      "children": [
+        {
+          "roleName": "architect",
+          "taskNodeId": "architect-1",
+          "roleInstanceId": "orch_0d0cfd70-4c75-41d6-8ad4-8d0b5eb5f1b0:architect-1:architect:attempt-1",
+          "admissionStatus": "accepted",
+          "runState": "accepted-not-completed",
+          "completionObserved": false,
+          "backend": "subagent",
+          "childSessionKey": "agent:main:subagent:628856ca-50fa-4f3c-920b-5cf717c5aae1",
+          "childRunId": "b1795bdd-c9cc-440f-b757-6ac813efc403",
+          "toolAuthorization": {
+            "status": "effective",
+            "source": "role-contract+parent-clamp",
+            "roleName": "architect",
+            "effectiveRoleName": "architect",
+            "parentRoleName": null,
+            "allowlist": [
+              "read",
+              "glob",
+              "grep"
+            ],
+            "denylist": [
+              "write",
+              "edit",
+              "apply_patch",
+              "team_orchestrate",
+              "task_loop",
+              "mission_loop",
+              "exec",
+              "bash",
+              "__role_capability:mcp_write",
+              "web_search",
+              "web_fetch",
+              "x_search",
+              "code_execution",
+              "browser",
+              "__role_capability:mcp_network"
+            ]
+          },
+          "isolation": {
+            "mode": "shared",
+            "backend": "shared-inprocess",
+            "canonicalRoot": "D:\\tmp\\long-session-c2-final2\\verse-claw-e2e-run-ecfCwK\\verse-claw-e2e-home-Fac9RG\\.openclaw\\workspace",
+            "branch": null,
+            "detachedHead": false,
+            "verifiedCheckout": false
+          },
+          "schedulerWave": 1,
+          "error": null
+        }
+      ],
+      "completionObserved": false
+    },
+    "duplicate": {
+      "status": "accepted",
+      "replayed": true,
+      "orchestrationRunId": "orch_0d0cfd70-4c75-41d6-8ad4-8d0b5eb5f1b0"
+    },
+    "restartRetry": {
+      "status": "accepted",
+      "replayed": true,
+      "orchestrationRunId": "orch_0d0cfd70-4c75-41d6-8ad4-8d0b5eb5f1b0"
+    },
+    "staleGeneration": {
+      "status": "rejected",
+      "error": "Coordinator binding is generation-mismatch: session-generation-mismatch"
+    },
+    "unsupportedBackend": {
+      "status": "rejected",
+      "error": "Unsupported delegation backend: native-shell"
+    },
+    "unknownWorker": {
+      "status": "rejected",
+      "phantomChildCreated": false
+    },
+    "transport": "built Electron host:invoke sessions.delegate -> Main coordinator admission -> gateway.permission -> actual orchestrator.run -> role-spawn/subagent owner"
+  },
+  "negativeCases": [
+    "unsupported backend rejected before orchestrator spawn",
+    "unknown worker role rejected before spawn",
+    "parent generation reset rejected",
+    "child permission allowlist clamped to parent",
+    "expired or revoked approval did not become accepted evidence",
+    "stop/admission race became outcome-unknown",
+    "owner restart replayed terminal receipt without a second spawn",
+    "crashed in-flight admission became outcome-unknown without retry"
+  ],
+  "cleanup": {
+    "electronClosed": true,
+    "gatewayStopped": true,
+    "processSurvivors": 0,
+    "remaining": [],
+    "recoveryRequired": false,
+    "runRoot": "D:\\tmp\\long-session-c2-final2\\verse-claw-e2e-run-ecfCwK"
+  },
+  "limitations": [
+    "The built Electron journey used the canonical local checkout/shared inprocess path.",
+    "Real Git worktree creation is covered by the focused unit integration; managed-worktree coordinator E2E remains unmeasured.",
+    "No live-provider model completion quality verdict is claimed.",
+    "No external model review verdict is claimed."
+  ]
+}
