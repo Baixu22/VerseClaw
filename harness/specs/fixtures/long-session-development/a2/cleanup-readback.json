@@ -1,0 +1,30 @@
+{
+  "schema": "clawx.long-session.a2-cleanup-readback/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "task": "TF-0549",
+  "generatedAt": "2026-10-23T09:37:48.868Z",
+  "candidate": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+  "resources": {
+    "electronStarted": true,
+    "gatewayStarted": true,
+    "browserStarted": false,
+    "backgroundProcessStarted": false
+  },
+  "cleanup": {
+    "electronClosed": true,
+    "gatewayStopped": true,
+    "tempRootsRemoved": true,
+    "recoveryRequired": false,
+    "ledgerEntries": 9,
+    "survivors": [],
+    "remaining": [],
+    "lastRun": "passed"
+  },
+  "remaining": [],
+  "notes": "Read back from the clean-candidate Playwright Electron run. The fixture records process survivors, run-root sweep and lifecycle receipt; it does not claim browser or background-process coverage not exercised by this E2E.",
+  "evidence": [
+    "harness/specs/fixtures/long-session-development/a2/e2e-process-cleanup.json",
+    "harness/specs/fixtures/long-session-development/a2/e2e-lifecycle-receipt.json"
+  ]
+}

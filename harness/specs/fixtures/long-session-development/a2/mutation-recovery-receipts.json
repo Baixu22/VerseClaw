@@ -1,0 +1,250 @@
+{
+  "schema": "clawx.long-session.a2-mutation-recovery-receipts/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "program": "long-session-development-20261022",
+  "task": "TF-0549",
+  "generatedAt": "2026-10-23T09:37:48.868Z",
+  "candidate": {
+    "schema": "clawx.long-session.candidate/v1",
+    "driven_by": "agent",
+    "actor": "codex-long-session-r2",
+    "generatedAt": "2026-10-23T09:37:48.868Z",
+    "base": "f95530a0bdf37b05817c75efb78ff7cdffacd2d6",
+    "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+    "tree": "2a13761b9d20044296930c1e24461c936a1c21a7",
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "dirty": false,
+    "cleanCandidateObserved": true
+  },
+  "operationJournal": {
+    "owner": "openclaw_runtime/src/gateway/session-delete-operation-journal.ts + session-mutation-operation-journal.ts",
+    "storage": "existing session_delete_operation_journal SQLite table",
+    "operations": [
+      "session-delete",
+      "session-archive",
+      "session-restore"
+    ],
+    "states": [
+      "intent",
+      "store_committed",
+      "runtime_committed",
+      "partial_committed"
+    ],
+    "mainMirrorGate": "electron/services/session-delete-gate.ts; one pending operation per SessionKey with kind + identity digest"
+  },
+  "recoveryCases": [
+    {
+      "state": "archive-intent-before-store-commit",
+      "retryBehavior": "Same operationId reuses the exclusive fence and resumes index/transcript/store reconciliation."
+    },
+    {
+      "state": "archive-store-committed",
+      "retryBehavior": "Skip store mutation; finish index/transcript reconciliation and finalize."
+    },
+    {
+      "state": "archive-runtime-committed-unknown-response",
+      "retryBehavior": "Return the saved runtime_committed receipt; requested alias key is echoed for Main correlation."
+    },
+    {
+      "state": "restore-intent",
+      "retryBehavior": "Same operationId prepares the same fresh sessionId and inserts its store row with store_committed state."
+    },
+    {
+      "state": "restore-store-committed",
+      "retryBehavior": "Skip row insertion; restore the transcript, remove the archive index entry and finalize."
+    },
+    {
+      "state": "main-rpc-timeout",
+      "retryBehavior": "Retain the Main gate and operationId; reject different mutation kinds until the exact operation converges."
+    },
+    {
+      "state": "definitive-conflict-or-refusal",
+      "retryBehavior": "Release stale operation gate and any definitive-failure fence; unknown mutation outcomes remain locked."
+    }
+  ],
+  "commands": [
+    {
+      "id": "a2-root-tests",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 15147,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-root-tests.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-root-tests.stdout"
+    },
+    {
+      "id": "a2-runtime-tests",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 44971,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-runtime-tests.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-runtime-tests.stdout"
+    },
+    {
+      "id": "a2-typecheck",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 27245,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-typecheck.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-typecheck.stdout"
+    },
+    {
+      "id": "a2-contract",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 1301,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-contract.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-contract.stdout"
+    },
+    {
+      "id": "a2-comms-replay",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 1688,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-comms-replay.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-comms-replay.stdout"
+    },
+    {
+      "id": "a2-comms-compare",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 1247,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-comms-compare.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-comms-compare.stdout"
+    },
+    {
+      "id": "a2-build-runtime",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 41880,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-build-runtime.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-build-runtime.stdout"
+    },
+    {
+      "id": "a2-build-vite",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 52392,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-build-vite.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-build-vite.stdout"
+    },
+    {
+      "id": "a2-e2e",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 130378,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-e2e.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-e2e.stdout"
+    },
+    {
+      "id": "a2-validate",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 1757,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-validate.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-validate.stdout"
+    },
+    {
+      "id": "a2-validate-since",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 1581,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-validate-since.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-validate-since.stdout"
+    },
+    {
+      "id": "a2-harness-flow",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 1611,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-harness-flow.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-harness-flow.stdout"
+    },
+    {
+      "id": "a2-lint",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 5102,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-lint.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-lint.stdout"
+    },
+    {
+      "id": "a2-retention",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 3588,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-retention.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-retention.stdout"
+    },
+    {
+      "id": "a2-whitespace",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 261,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-whitespace.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-whitespace.stdout"
+    },
+    {
+      "id": "a2-credential",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+      "durationMs": 460,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\a2-credential.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\a2-credential.stdout"
+    }
+  ],
+  "counts": {
+    "rootFiles": 7,
+    "rootTests": 31,
+    "rootPassed": 30,
+    "rootPending": 1,
+    "runtimeFiles": 7,
+    "runtimeTests": 66,
+    "runtimePassed": 66,
+    "e2eTests": 9,
+    "e2eFailed": 0
+  },
+  "e2eReceipt": {
+    "path": "harness/specs/fixtures/long-session-development/a2/e2e-lifecycle-receipt.json",
+    "sessionKey": "agent:main:dashboard:9551e54a-198e-452a-92d4-93a2d9c40ac2",
+    "previousSessionId": "174af7d7-92ff-4cd6-88b0-eb797b2f3291",
+    "restoredSessionId": "1185fa26-22b4-4049-8577-fffb53956607",
+    "historyRetained": true,
+    "archiveIndexRemoved": true,
+    "transport": "built Electron host:invoke -> actual Gateway runtime"
+  },
+  "credentialScan": {
+    "path": "harness/specs/fixtures/long-session-development/a2/credential-scan.json",
+    "hits": 0
+  },
+  "unmeasured": [
+    "Per-syscall kill matrix",
+    "remote Gateway partition longer than the RPC timeout",
+    "multi-workspace concurrent archive/restore"
+  ],
+  "verdict": "passed",
+  "priorFailures": [
+    "Initial A2 development artifacts were placeholders and were not treated as passes.",
+    "Review iterations identified and corrected gate release, handler error correlation, alias-key receipt, unsafe-path handling, archive lease settlement, definitive restore conflict fencing, index permissions and test wiring.",
+    "A missing transcript during restore remains an unknown/retryable outcome by contract; it is not upgraded to success or definitive failure.",
+    "A duplicate-transcript evidence row initially lacked an executed assertion; a deterministic intent-journal test was added and the complete clean-candidate gate rerun.",
+    "Evidence tooling initially lived only under D:/tmp; exact scoped-lint and credential-scan scripts are now curated beside their receipts."
+  ]
+}

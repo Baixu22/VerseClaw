@@ -1,0 +1,17 @@
+{
+  "schema": "clawx.long-session.root-test-notes/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+  "platform": "win32",
+  "platformSkip": {
+    "testName": "session file helpers > writes the shared archive index with owner-only permissions",
+    "reason": "Mode bits are not meaningfully verifiable on Windows; the POSIX-only assertion is skipped while source and runtime index writers both set mode 0o600."
+  },
+  "counts": {
+    "total": 31,
+    "passed": 30,
+    "failed": 0,
+    "pending": 1
+  }
+}
