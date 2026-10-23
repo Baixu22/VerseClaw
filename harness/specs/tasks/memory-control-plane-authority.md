@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: memory-control-plane-authority
 title: Converge Memory into one product control plane with domain-specific stores
 scenario: gateway-backend-communication

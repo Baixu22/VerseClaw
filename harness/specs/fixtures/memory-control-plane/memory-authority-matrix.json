@@ -1,0 +1,338 @@
+{
+  "schema": "clawx.memory-control-plane.authority-matrix/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0497",
+  "program": "component-graduation",
+  "task": "TF-0497",
+  "candidate": {
+    "commit": "5681db3a516636965166e3fdd4f1229940ac5172",
+    "tree": "b331c6e1c912d0afb8513e7e8acee7434e00f7ca",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "rawRun": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\gate-run.json"
+  },
+  "verdict": "pass",
+  "productConcept": {
+    "id": "memory",
+    "label": "Memory",
+    "modelSafeDescription": "Memory is one reviewable product concept: accepted facts or cards with provenance, scope and lifecycle state. Runtime facts, role cards, embeddings and Dreaming caches are implementation data domains, not separate product memories.",
+    "approvalBoundary": "Candidates and derived signals never become accepted memory without the owning governance or runtime acceptance path. Only accepted memory may be retrieved or injected into model context.",
+    "acceptedOnlyForPrompt": true
+  },
+  "storagePolicy": {
+    "multipleDatabasesAllowed": true,
+    "forcedSingleStore": false,
+    "automaticWritebackEnabled": false,
+    "cloudMemoryIntroduced": false
+  },
+  "domains": [
+    {
+      "id": "role-memory-card",
+      "dataType": "memory.role-card",
+      "authorityComponentId": "role-memory-card-governance",
+      "scopes": [
+        "workspace"
+      ],
+      "acceptanceOperations": [
+        "accept"
+      ],
+      "writeBoundary": "review-required",
+      "retention": "Owner-managed role-memory card lifecycle; active/cold/archived/tombstone states remain explicit.",
+      "deletion": "Deletion and tombstoning are performed by role-memory card governance and remove retrievability.",
+      "invalidation": "Review, evidence, scope or version invalidation marks the card non-injectable until the owner re-accepts it.",
+      "migration": "Legacy role-memory SQLite cards remain in place; field normalization is applied without moving the store.",
+      "kind": "accepted",
+      "retrieval": "accepted-only",
+      "injectable": true,
+      "authorityAssignments": [
+        {
+          "scope": "workspace",
+          "operation": "accept",
+          "authorityComponentId": "role-memory-card-governance",
+          "candidateProviderIds": [
+            "memory-candidate-queue"
+          ],
+          "readerComponentIds": [
+            "knowledge-review-authority",
+            "dcs-context-authority",
+            "memory-embedding-provider"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "runtime-fact",
+      "dataType": "memory.runtime-fact",
+      "authorityComponentId": "runtime-memory-store",
+      "scopes": [
+        "session",
+        "run"
+      ],
+      "acceptanceOperations": [
+        "update"
+      ],
+      "writeBoundary": "owner-accepted",
+      "retention": "Runtime Memory owns fact TTL, session/run scope and eviction.",
+      "deletion": "Runtime Memory removes the fact and invalidates dependent usage/embedding entries.",
+      "invalidation": "Contradiction, stale evidence or scope mismatch invalidates the fact before retrieval.",
+      "migration": "Existing Runtime Memory state remains in its domain store; no forced single-database migration.",
+      "kind": "accepted",
+      "retrieval": "accepted-only",
+      "injectable": true,
+      "authorityAssignments": [
+        {
+          "scope": "session",
+          "operation": "update",
+          "authorityComponentId": "runtime-memory-store",
+          "candidateProviderIds": [
+            "memory-candidate-queue"
+          ],
+          "readerComponentIds": [
+            "dcs-context-authority",
+            "task-ledger"
+          ]
+        },
+        {
+          "scope": "run",
+          "operation": "update",
+          "authorityComponentId": "runtime-memory-store",
+          "candidateProviderIds": [
+            "memory-candidate-queue"
+          ],
+          "readerComponentIds": [
+            "dcs-context-authority",
+            "task-ledger"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "runtime-timeline",
+      "dataType": "memory.runtime-timeline",
+      "authorityComponentId": "runtime-memory-store",
+      "scopes": [
+        "session",
+        "run"
+      ],
+      "acceptanceOperations": [
+        "update"
+      ],
+      "writeBoundary": "owner-accepted",
+      "retention": "Timeline retention follows its owning session or run.",
+      "deletion": "Deleting the owning session/run removes or invalidates timeline state.",
+      "invalidation": "A replaced generation or invalidated episode makes the timeline stale.",
+      "migration": "Timeline records stay in Runtime Memory; schema changes are additive.",
+      "kind": "accepted",
+      "retrieval": "accepted-only",
+      "injectable": true,
+      "authorityAssignments": [
+        {
+          "scope": "session",
+          "operation": "update",
+          "authorityComponentId": "runtime-memory-store",
+          "candidateProviderIds": [
+            "memory-candidate-queue"
+          ],
+          "readerComponentIds": [
+            "task-ledger"
+          ]
+        },
+        {
+          "scope": "run",
+          "operation": "update",
+          "authorityComponentId": "runtime-memory-store",
+          "candidateProviderIds": [
+            "memory-candidate-queue"
+          ],
+          "readerComponentIds": [
+            "task-ledger"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "runtime-episode",
+      "dataType": "memory.runtime-episode",
+      "authorityComponentId": "runtime-memory-store",
+      "scopes": [
+        "session",
+        "run"
+      ],
+      "acceptanceOperations": [
+        "update"
+      ],
+      "writeBoundary": "owner-accepted",
+      "retention": "Episode retention is bounded by Runtime Memory lifecycle.",
+      "deletion": "Runtime Memory owns episode deletion and dependent index removal.",
+      "invalidation": "Lost execution context or contradiction invalidates the episode.",
+      "migration": "Episodes remain in Runtime Memory; retrieval indexes can be rebuilt from accepted evidence.",
+      "kind": "accepted",
+      "retrieval": "accepted-only",
+      "injectable": true,
+      "authorityAssignments": [
+        {
+          "scope": "session",
+          "operation": "update",
+          "authorityComponentId": "runtime-memory-store",
+          "candidateProviderIds": [
+            "memory-candidate-queue"
+          ],
+          "readerComponentIds": [
+            "task-ledger",
+            "dcs-context-authority"
+          ]
+        },
+        {
+          "scope": "run",
+          "operation": "update",
+          "authorityComponentId": "runtime-memory-store",
+          "candidateProviderIds": [
+            "memory-candidate-queue"
+          ],
+          "readerComponentIds": [
+            "task-ledger",
+            "dcs-context-authority"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "memory-candidate",
+      "dataType": "memory.candidate",
+      "authorityComponentId": "memory-candidate-queue",
+      "kind": "candidate",
+      "scopes": [
+        "workspace",
+        "session"
+      ],
+      "acceptanceOperations": [
+        "update"
+      ],
+      "writeBoundary": "review-required",
+      "retrieval": "none",
+      "injectable": false,
+      "retention": "Candidate queue may persist beyond a session but is bounded by owner policy.",
+      "deletion": "Reject/delete removes the candidate or leaves an audit tombstone without accepted content.",
+      "invalidation": "Rejected, superseded or stale candidates are never promoted into retrieval.",
+      "migration": "Candidate records remain in the queue store and reference an accepted-memory target by identity.",
+      "authorityAssignments": [
+        {
+          "scope": "session",
+          "operation": "update",
+          "authorityComponentId": "memory-candidate-queue",
+          "candidateProviderIds": [],
+          "readerComponentIds": [
+            "runtime-memory-store",
+            "role-memory-card-governance",
+            "dcs-context-authority"
+          ]
+        },
+        {
+          "scope": "workspace",
+          "operation": "update",
+          "authorityComponentId": "memory-candidate-queue",
+          "candidateProviderIds": [],
+          "readerComponentIds": [
+            "runtime-memory-store",
+            "role-memory-card-governance"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "embedding-index",
+      "dataType": "memory.embedding-index",
+      "authorityComponentId": "memory-embedding-provider",
+      "kind": "derived",
+      "scopes": [
+        "workspace"
+      ],
+      "acceptanceOperations": [
+        "update"
+      ],
+      "writeBoundary": "derived-only",
+      "retrieval": "internal-derived",
+      "injectable": false,
+      "retention": "Index lifetime follows the accepted source and embedding provider policy.",
+      "deletion": "Deleting an accepted source removes or rebuilds its vector entries.",
+      "invalidation": "Changed source digest, provider/model change or deleted source invalidates the index entry.",
+      "migration": "Embeddings are rebuildable derived data and are never the sole copy of memory.",
+      "authorityAssignments": [
+        {
+          "scope": "workspace",
+          "operation": "update",
+          "authorityComponentId": "memory-embedding-provider",
+          "candidateProviderIds": [],
+          "readerComponentIds": [
+            "native-file-memory-retrieval",
+            "runtime-memory-store",
+            "role-memory-card-governance"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "native-file-query",
+      "dataType": "memory.native-file-query",
+      "authorityComponentId": "native-file-memory-retrieval",
+      "kind": "query",
+      "scopes": [
+        "workspace"
+      ],
+      "acceptanceOperations": [
+        "update"
+      ],
+      "writeBoundary": "transient",
+      "retrieval": "transient",
+      "injectable": false,
+      "retention": "Query receipts are transient and bounded by the request.",
+      "deletion": "No durable memory is created; transient query records may be discarded.",
+      "invalidation": "A changed source file invalidates the query result.",
+      "migration": "Native memory files remain read-only sources; no migration into another database is required.",
+      "authorityAssignments": [
+        {
+          "scope": "workspace",
+          "operation": "update",
+          "authorityComponentId": "native-file-memory-retrieval",
+          "candidateProviderIds": [],
+          "readerComponentIds": []
+        }
+      ]
+    },
+    {
+      "id": "dreaming-derived-cache",
+      "dataType": "memory.dreaming-derived-signal",
+      "authorityComponentId": "dreaming-derived-cache",
+      "kind": "derived",
+      "scopes": [
+        "workspace"
+      ],
+      "acceptanceOperations": [
+        "update"
+      ],
+      "writeBoundary": "derived-only",
+      "retrieval": "internal-derived",
+      "injectable": false,
+      "retention": "Dreaming caches follow phase/storage policy and may be rebuilt from accepted sources.",
+      "deletion": "Reset/repair operations remove derived diary/cache artifacts without deleting accepted memory.",
+      "invalidation": "Cache input changes, duplicate repair or reset invalidates and rebuilds derived signals.",
+      "migration": "Dreaming remains a rebuildable derived cache; it is not migrated as accepted memory.",
+      "authorityAssignments": [
+        {
+          "scope": "workspace",
+          "operation": "update",
+          "authorityComponentId": "dreaming-derived-cache",
+          "candidateProviderIds": [],
+          "readerComponentIds": []
+        }
+      ]
+    }
+  ],
+  "validationIssues": [],
+  "unmeasured": [
+    "external-provider value of automatic Dreaming promotion",
+    "cross-machine memory migration",
+    "user-facing review/delete/export completion remains TF-0498"
+  ]
+}

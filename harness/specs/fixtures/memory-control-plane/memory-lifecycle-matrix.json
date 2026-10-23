@@ -1,0 +1,159 @@
+{
+  "schema": "clawx.memory-control-plane.lifecycle-matrix/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0497",
+  "program": "component-graduation",
+  "task": "TF-0497",
+  "candidate": {
+    "commit": "5681db3a516636965166e3fdd4f1229940ac5172",
+    "tree": "b331c6e1c912d0afb8513e7e8acee7434e00f7ca",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "rawRun": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\gate-run.json"
+  },
+  "verdict": "pass",
+  "productConceptId": "memory",
+  "cases": [
+    {
+      "id": "role-memory-card",
+      "kind": "accepted",
+      "authorityComponentId": "role-memory-card-governance",
+      "scopes": [
+        "workspace"
+      ],
+      "writeBoundary": "review-required",
+      "retrieval": "accepted-only",
+      "injectable": true,
+      "retention": "Owner-managed role-memory card lifecycle; active/cold/archived/tombstone states remain explicit.",
+      "deletion": "Deletion and tombstoning are performed by role-memory card governance and remove retrievability.",
+      "invalidation": "Review, evidence, scope or version invalidation marks the card non-injectable until the owner re-accepts it.",
+      "migration": "Legacy role-memory SQLite cards remain in place; field normalization is applied without moving the store."
+    },
+    {
+      "id": "runtime-fact",
+      "kind": "accepted",
+      "authorityComponentId": "runtime-memory-store",
+      "scopes": [
+        "session",
+        "run"
+      ],
+      "writeBoundary": "owner-accepted",
+      "retrieval": "accepted-only",
+      "injectable": true,
+      "retention": "Runtime Memory owns fact TTL, session/run scope and eviction.",
+      "deletion": "Runtime Memory removes the fact and invalidates dependent usage/embedding entries.",
+      "invalidation": "Contradiction, stale evidence or scope mismatch invalidates the fact before retrieval.",
+      "migration": "Existing Runtime Memory state remains in its domain store; no forced single-database migration."
+    },
+    {
+      "id": "runtime-timeline",
+      "kind": "accepted",
+      "authorityComponentId": "runtime-memory-store",
+      "scopes": [
+        "session",
+        "run"
+      ],
+      "writeBoundary": "owner-accepted",
+      "retrieval": "accepted-only",
+      "injectable": true,
+      "retention": "Timeline retention follows its owning session or run.",
+      "deletion": "Deleting the owning session/run removes or invalidates timeline state.",
+      "invalidation": "A replaced generation or invalidated episode makes the timeline stale.",
+      "migration": "Timeline records stay in Runtime Memory; schema changes are additive."
+    },
+    {
+      "id": "runtime-episode",
+      "kind": "accepted",
+      "authorityComponentId": "runtime-memory-store",
+      "scopes": [
+        "session",
+        "run"
+      ],
+      "writeBoundary": "owner-accepted",
+      "retrieval": "accepted-only",
+      "injectable": true,
+      "retention": "Episode retention is bounded by Runtime Memory lifecycle.",
+      "deletion": "Runtime Memory owns episode deletion and dependent index removal.",
+      "invalidation": "Lost execution context or contradiction invalidates the episode.",
+      "migration": "Episodes remain in Runtime Memory; retrieval indexes can be rebuilt from accepted evidence."
+    },
+    {
+      "id": "memory-candidate",
+      "kind": "candidate",
+      "authorityComponentId": "memory-candidate-queue",
+      "scopes": [
+        "workspace",
+        "session"
+      ],
+      "writeBoundary": "review-required",
+      "retrieval": "none",
+      "injectable": false,
+      "retention": "Candidate queue may persist beyond a session but is bounded by owner policy.",
+      "deletion": "Reject/delete removes the candidate or leaves an audit tombstone without accepted content.",
+      "invalidation": "Rejected, superseded or stale candidates are never promoted into retrieval.",
+      "migration": "Candidate records remain in the queue store and reference an accepted-memory target by identity.",
+      "candidateGate": "never retrievable or injectable before acceptance"
+    },
+    {
+      "id": "embedding-index",
+      "kind": "derived",
+      "authorityComponentId": "memory-embedding-provider",
+      "scopes": [
+        "workspace"
+      ],
+      "writeBoundary": "derived-only",
+      "retrieval": "internal-derived",
+      "injectable": false,
+      "retention": "Index lifetime follows the accepted source and embedding provider policy.",
+      "deletion": "Deleting an accepted source removes or rebuilds its vector entries.",
+      "invalidation": "Changed source digest, provider/model change or deleted source invalidates the index entry.",
+      "migration": "Embeddings are rebuildable derived data and are never the sole copy of memory."
+    },
+    {
+      "id": "native-file-query",
+      "kind": "query",
+      "authorityComponentId": "native-file-memory-retrieval",
+      "scopes": [
+        "workspace"
+      ],
+      "writeBoundary": "transient",
+      "retrieval": "transient",
+      "injectable": false,
+      "retention": "Query receipts are transient and bounded by the request.",
+      "deletion": "No durable memory is created; transient query records may be discarded.",
+      "invalidation": "A changed source file invalidates the query result.",
+      "migration": "Native memory files remain read-only sources; no migration into another database is required."
+    },
+    {
+      "id": "dreaming-derived-cache",
+      "kind": "derived",
+      "authorityComponentId": "dreaming-derived-cache",
+      "scopes": [
+        "workspace"
+      ],
+      "writeBoundary": "derived-only",
+      "retrieval": "internal-derived",
+      "injectable": false,
+      "retention": "Dreaming caches follow phase/storage policy and may be rebuilt from accepted sources.",
+      "deletion": "Reset/repair operations remove derived diary/cache artifacts without deleting accepted memory.",
+      "invalidation": "Cache input changes, duplicate repair or reset invalidates and rebuilds derived signals.",
+      "migration": "Dreaming remains a rebuildable derived cache; it is not migrated as accepted memory."
+    }
+  ],
+  "crossScopeEvidence": [
+    "openclaw_runtime/src/memory/memory-policy.test.ts",
+    "tests/unit/runtime-memory-store.test.ts",
+    "tests/unit/runtime-memory-relations.test.ts"
+  ],
+  "noDataLossMigration": [
+    "existing stores stay in place",
+    "embedding indexes and Dreaming caches are rebuildable",
+    "native files remain read-only sources",
+    "SEKB remains Knowledge-only"
+  ],
+  "unmeasured": [
+    "production multi-machine migration",
+    "user-visible delete/export workflow before TF-0498"
+  ]
+}
