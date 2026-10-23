@@ -375,3 +375,82 @@ export type MemoryHealthReport = {
     count?: number;
   }>;
 };
+
+export type MemorySurfaceSource = 'role-memory-card' | 'runtime-fact';
+export type MemorySurfaceEntryState = 'accepted' | 'candidate';
+
+export type MemorySurfaceEntry = {
+  key: string;
+  id: string;
+  source: MemorySurfaceSource;
+  state: MemorySurfaceEntryState;
+  stateLabel: string;
+  content: string;
+  subject?: string;
+  predicate?: string;
+  objectSummary?: string;
+  scope: string;
+  scopeKey?: string | null;
+  roleTags: string[];
+  sourceLabel: string;
+  createdAt: string;
+  updatedAt?: string | null;
+  sensitivity: string;
+  confidence?: number | null;
+  importance?: number | null;
+  evidenceCount: number;
+  provenance: string[];
+  injectable: boolean;
+  retrievable: boolean;
+  modelVisible: boolean;
+  deletable: boolean;
+  proposalId?: string;
+  reason?: string | null;
+  riskLevel?: string | null;
+};
+
+export type MemorySurfaceGate = {
+  enabled: boolean;
+  readGate: 'open' | 'closed';
+  writeGate: 'open' | 'closed';
+  candidateCapture: boolean;
+  candidatePersistence: boolean;
+  modelRetrieval: boolean;
+  reason?: string;
+};
+
+export type MemorySurfaceSnapshot = {
+  schemaVersion: 'MemorySurface/v1';
+  generatedAt: string;
+  accepted: MemorySurfaceEntry[];
+  candidates: MemorySurfaceEntry[];
+  status: {
+    roleMemory: MemorySurfaceGate & { owner: 'role-memory-card-governance' };
+    runtimeMemory: MemorySurfaceGate & {
+      owner: 'runtime-memory-store';
+      persist: boolean;
+      provider: boolean;
+      injectionPilotEnabled: boolean;
+      injectionProviders: string[];
+    };
+    legacySources: Array<{
+      id: 'native-openclaw-memory';
+      controlledHere: false;
+      mayAffectPrompt: true;
+      explanation: string;
+    }>;
+  };
+  model: {
+    acceptedOnly: true;
+    acceptedKeys: string[];
+    candidateKeysExcluded: string[];
+    candidateBoundary: string;
+    productDescription: string;
+    approvalBoundary: string;
+  };
+  counts: {
+    accepted: number;
+    candidates: number;
+    modelVisible: number;
+  };
+};

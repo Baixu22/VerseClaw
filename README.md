@@ -43,6 +43,7 @@ See [visual provenance](resources/readme/2026-10-05/README.md) for capture condi
 | Models and providers | Manage provider accounts, default models and fallback settings; inspect token usage history | Settings → Models & Providers |
 | Agents and tasks | Configure agents and roles, inspect subagent activity; record tasks in Task Ledger and start explicit Task Loop or ClawGraph workflows | Settings → Agents; sidebar's more menu |
 | Knowledge | Search the library, manage sources and references, review Inbox items, drafts and proposals | Sidebar → Knowledge |
+| Memory | Review accepted memory and persisted candidates, approve proposals, delete/tombstone records, export a hashed JSON snapshot, and propose “Remember this” | Sidebar → Memory |
 | Inbox | Handle permission requests, remote tasks and browser tasks that need attention; inspect their history | Sidebar → Inbox |
 | Schedules and channels | Manage scheduled jobs and run history; configure channel accounts, connection status and agent bindings | Sidebar → Scheduled; Settings → Channels |
 | Skills and MCP | Inspect and enable skills, manage skill packs, marketplace installation and MCP server configuration | Settings → Skills |
@@ -215,7 +216,7 @@ This map follows current source ownership rather than the older single-directory
 | System resources | `ResourceFabric` admits workspace execution and chat-history work; `BackgroundWorkGate` defers background work under queue, RSS or CPU pressure; `ResourceTracker` owns session-linked server discovery and cleanup | Cooperative Main-process admission, not a global OS scheduler; foreground work is never shed |
 | Context engineering | `ContextEngine` runs bootstrap, ingest, maintain, after-turn and assemble/compact; a shared 6,000-character turn budget applies precedence and a fail-closed enhancement kill switch; `ContextHealthMonitor` scores pressure, structure, goal alignment and novelty | Context enhancements are opt-in; target authority convergence is still separate design work |
 | Session lifecycle | `SessionManager` is a JSONL append-only tree with leaf branching, compaction, labels and context reconstruction; Host actions add checkpoints, handoff, archive/restore and cascade delete | A session is not a run, task, workspace or project; Task Ledger owns user-visible task facts |
-| Memory | Role Memory is a SQLite control plane with cards, gatekeeper review, conflict handling and a seven-bucket Context Pack; Runtime Memory has separate persistence, hydration and inject gates | Write/use gates and runtime-memory paths are default-off; no automatic writeback or un-gated production injection |
+| Memory | One `Memory` surface projects accepted role cards and Runtime facts plus persisted candidates from their existing stores; Owner-dispatched approve/delete/export and gatekeeper-reviewed “Remember this” share the `MemoryControlPlaneManifest/v1` boundary | Candidate queues are never model-visible; owner write/use gates and Runtime Memory injection paths remain independently configurable. Native OpenClaw memory sources stay outside this panel and are disclosed explicitly |
 | Problem perception | Per-trace issue detection feeds a cross-run Problem signature aggregator with a seven-day window, lifecycle state and redacted evidence artifacts | `pnpm observability:problems` is an agent batch, not a resident auto-remediation service |
 | Multi-agent and roles | `RoleContract`, eight built-in roles, `router`/`lead-workers`/`adversarial-review` modes, team templates, task graphs and resource-aware waves | Write-set proof, tool contention and concurrency caps bound execution; `bounded_a2a` remains disabled; Runtime V2 Kernel work is planned |
 
@@ -227,7 +228,7 @@ flowchart LR
   HOST --> GATEWAY["Gateway"]
   GATEWAY --> SESSION["SessionManager<br/>JSONL session tree"]
   GATEWAY --> CONTEXT["ContextEngine + Orchestrator"]
-  MEMORY["Role Memory / Runtime Memory"] --> CONTEXT
+  MEMORY["Memory panel<br/>accepted vs candidate"] --> CONTEXT
   SESSION --> CONTEXT
   CONTEXT --> BUDGET["Turn injection budget<br/>precedence + kill switch"]
   ROLE["Roles / teams"] --> ORCH["Orchestrator + task graph"]
@@ -248,10 +249,11 @@ See [runtime control planes](docs/dev/runtime-control-planes.md) for the sequenc
 | VerseShell | `openclaw_runtime/src/agents/verseshell/`, `verseshell-runtime.ts`, `shared/verseshell/`, `resources/verseshell/`, `resources/verseshell-mcp/` | Governed execution, typed ACI, artifact results and patch preview are independently default-off; the external MCP adapter is separate from the internal execution path |
 | VerseBrowser | `packages/versebrowser/`, `electron/services/agent-browser-*`, `electron/gateway/agent-browser-bridge.ts`, `shared/agent-browser/` | 81 contract methods are not 81 Electron capabilities: the driver implements 67, exposes 28 model actions and currently advertises 14 on the Windows desktop build |
 | Knowledge | `src/pages/Knowledge/`, `electron/services/knowledge-api.ts`, `memory-wiki`, `openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first and role-governed: agents read and propose; Inbox → Draft → Steward → Proposal → explicit apply is the durable write path. SEKB writeback remains default-off/shadow |
+| Memory | `src/pages/Memory/`, `electron/services/memory-api.ts`, `openclaw_runtime/src/gateway/server-methods/memory-surface.ts` | One review surface; Role cards, Runtime facts and candidates keep their owning stores and mutation paths. Approval, tombstone/invalidation, hashed export and explicit-remember proposals never create a second Memory authority |
 
 The detailed tool and knowledge flow is included in [runtime control planes](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces).
 
-`src/App.tsx` currently registers first-run Setup (`/setup/*`), Chat (`/`), Knowledge, Inbox, Scheduled, Task Ledger, ClawGraph, Observability and Settings surfaces; Models, Agents, Channels and Skills are Settings sections, while Code Review and Browser are compatibility entry points into workspace panels. Image Generation and Dreams require developer mode.
+`src/App.tsx` currently registers first-run Setup (`/setup/*`), Chat (`/`), Knowledge, Memory, Inbox, Scheduled, Task Ledger, ClawGraph, Observability and Settings surfaces; Models, Agents, Channels and Skills are Settings sections, while Code Review and Browser are compatibility entry points into workspace panels. Image Generation and Dreams require developer mode.
 
 Current pnpm workspace members are the root, `harness/`, `packages/versebrowser/` and `resources/verseshell-mcp/`. `packages/vtoken/` is a Python/uv sidecar. `openclaw_runtime/` is a vendored Git tree with its own dependency workspace, not a Git submodule or the packaged npm runtime.
 

@@ -618,7 +618,7 @@ function proposalReviewReason(proposal: MemoryProposalView): string | null {
   return proposal.reasonSummary || proposal.reviewReason || proposal.permissionReason || proposal.retentionReason || null;
 }
 
-export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[] }) {
+export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true }: { agents: AgentLike[]; showMemoryPanel?: boolean }) {
   const { t } = useTranslation('agents');
   const roleMemoryEnabled = useSettingsStore((state) => state.roleMemoryEnabled);
   const activeWorkspaceId = useWorkspacesStore((state) => state.activeWorkspaceId);
@@ -1983,6 +1983,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
             onMemoryProposed={() => void loadRoleMemory()}
           />
 
+          {showMemoryPanel && (
           <TooltipProvider>
             <div className="space-y-4 border-t border-border/60 pt-4" data-testid="role-memory-panel">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -2828,6 +2829,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
               )}
             </div>
           </TooltipProvider>
+          )}
 
           {/* Section B: orchestration task */}
           <div className="space-y-3 border-t border-border/60 pt-4">

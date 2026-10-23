@@ -1178,6 +1178,101 @@ describe('memory.* handlers (store/read round-trip with persistence)', () => {
     rmSync(tempDir, { recursive: true, force: true });
   });
 
+  it('projects accepted memory separately from candidates and tombstones accepted memory through memory.delete', async () => {
+    const cfg = {
+      runtime: { memory: { injectPilot: { enabled: true, providers: ['role-memory'] } } },
+    } as never;
+    const first = await callHandler('memory.propose', {
+      proposal: {
+        content: 'Memory surface accepted fact.',
+        type: 'fact',
+        scope: 'role',
+        roleTags: ['architect'],
+        confidence: 0.95,
+        importance: 0.8,
+        source: 'user',
+        evidenceRefs: [{ type: 'manual', ref: 'memory-surface-test' }],
+      },
+    }, cfg);
+    const firstPayload = first?.payload as {
+      accepted: boolean;
+      card: { id: string };
+    };
+    expect(firstPayload.accepted).toBe(true);
+
+    const duplicate = await callHandler('memory.propose', {
+      proposal: {
+        content: 'Memory surface accepted fact.',
+        type: 'fact',
+        scope: 'role',
+        roleTags: ['architect'],
+        confidence: 0.95,
+        source: 'user',
+      },
+    }, cfg);
+    const duplicatePayload = duplicate?.payload as {
+      accepted: boolean;
+      proposal: { id: string };
+    };
+    expect(duplicatePayload.accepted).toBe(false);
+    expect(duplicatePayload.proposal.id).toBeTruthy();
+
+    const surface = await callHandler('memory.surface', { limit: 20 }, cfg);
+    expect(surface?.ok).toBe(true);
+    const projection = surface?.payload as {
+      accepted: Array<{ key: string; id: string; modelVisible: boolean }>;
+      candidates: Array<{ key: string; modelVisible: boolean; injectable: boolean }>;
+      model: { acceptedOnly: boolean; acceptedKeys: string[]; candidateKeysExcluded: string[] };
+      status: { roleMemory: { enabled: boolean; modelRetrieval: boolean }; legacySources: unknown[] };
+    };
+    expect(projection.accepted).toHaveLength(1);
+    expect(projection.accepted[0]).toMatchObject({ id: firstPayload.card.id, modelVisible: true });
+    expect(projection.candidates).toHaveLength(1);
+    expect(projection.candidates[0]).toMatchObject({ modelVisible: false, injectable: false });
+    expect(projection.model.acceptedOnly).toBe(true);
+    expect(projection.model.acceptedKeys).toEqual([projection.accepted[0]?.key]);
+    expect(projection.model.candidateKeysExcluded).toEqual([projection.candidates[0]?.key]);
+    expect(projection.status.roleMemory).toMatchObject({ enabled: true, modelRetrieval: true });
+    expect(projection.status.legacySources).toHaveLength(1);
+
+    const deleted = await callHandler('memory.delete', {
+      source: 'role-memory-card',
+      id: firstPayload.card.id,
+      reason: 'TF-0498 test delete',
+    }, cfg);
+    expect(deleted?.ok).toBe(true);
+    expect(deleted?.payload).toMatchObject({ deleted: true, state: 'tombstone' });
+
+    const after = await callHandler('memory.surface', { limit: 20 }, cfg);
+    const afterPayload = after?.payload as { accepted: unknown[] };
+    expect(afterPayload.accepted).toHaveLength(0);
+
+    const all = await callHandler('memory.list', { status: 'all' }, cfg);
+    const cards = (all?.payload as { cards: Array<{ id: string; status: string }> }).cards;
+    expect(cards.find((card) => card.id === firstPayload.card.id)?.status).toBe('tombstone');
+  });
+
+  it('reports Role Memory as closed without reading or exposing its stored cards', async () => {
+    process.env.OPENCLAW_ROLE_MEMORY_ENABLED = '0';
+    const surface = await callHandler('memory.surface', {});
+    expect(surface?.ok).toBe(true);
+    const payload = surface?.payload as {
+      accepted: unknown[];
+      candidates: unknown[];
+      status: { roleMemory: { enabled: boolean; readGate: string; writeGate: string; reason?: string } };
+      model: { acceptedKeys: string[] };
+    };
+    expect(payload.accepted).toEqual([]);
+    expect(payload.candidates).toEqual([]);
+    expect(payload.model.acceptedKeys).toEqual([]);
+    expect(payload.status.roleMemory).toMatchObject({
+      enabled: false,
+      readGate: 'closed',
+      writeGate: 'closed',
+      reason: 'Role Memory is disabled in Settings.',
+    });
+  });
+
   it('returns disabled read state and blocks writes when Role Memory is off', async () => {
     process.env.OPENCLAW_ROLE_MEMORY_ENABLED = '0';
 

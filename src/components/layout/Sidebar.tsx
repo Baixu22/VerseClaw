@@ -20,6 +20,7 @@ import {
   X,
   Loader2,
   Activity,
+  Brain,
   GitCompare,
   ImagePlus,
   Moon,
@@ -1056,6 +1057,7 @@ export function Sidebar() {
     },
     { to: '/cron', icon: <CalendarDays className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.scheduled'), testId: 'sidebar-nav-cron' },
     { to: '/knowledge', icon: <FileText className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.knowledge'), testId: 'sidebar-nav-knowledge' },
+    { to: '/memory', icon: <Brain className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.memory'), testId: 'sidebar-nav-memory' },
   ];
 
   const navItems = coreNavItems.filter((item) => !hiddenRoutes.has(item.to));

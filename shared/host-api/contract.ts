@@ -50,6 +50,8 @@ import type {
   MemoryProposal,
   MemoryProposalPreview,
   MemoryProposalRecord,
+  MemorySurfaceSnapshot,
+  MemorySurfaceSource,
 } from '../types/memory';
 import type { SessionActivitySnapshot } from '../types/session-activity';
 import type { SessionEffectivePolicy } from '../types/session-effective-policy';
@@ -5282,6 +5284,69 @@ export type MemoryProposeFactsConfirmResult = HostSuccess & {
   factId?: string;
 };
 
+export type MemorySurfacePayload = {
+  limit?: number;
+};
+
+export type MemorySurfaceResult = HostSuccess & MemorySurfaceSnapshot;
+
+export type MemoryApproveCandidatePayload = {
+  source: MemorySurfaceSource;
+  id: string;
+};
+
+export type MemoryApproveCandidateResult = HostSuccess & {
+  approved: boolean;
+  acceptedId?: string;
+  reason?: string;
+};
+
+export type MemoryDeletePayload = {
+  source: MemorySurfaceSource;
+  id: string;
+  reason?: string;
+};
+
+export type MemoryDeleteResult = HostSuccess & {
+  deleted: boolean;
+  source: MemorySurfaceSource;
+  id: string;
+  state: string;
+};
+
+export type MemoryRememberPayload = {
+  content: string;
+  scope: MemoryCardScope;
+  scopeKey?: string | null;
+  roleTags?: string[];
+  type?: MemoryProposal['type'];
+  sensitivity?: MemoryProposal['sensitivity'];
+  expiresAt?: string | null;
+};
+
+export type MemoryRememberResult = HostSuccess & {
+  accepted: boolean;
+  reviewRequired: boolean;
+  cardId?: string;
+  proposalId?: string;
+  reason?: string;
+};
+
+export type MemoryExportPayload = {
+  format?: 'json';
+};
+
+export type MemoryExportResult = HostSuccess & {
+  path: string;
+  sha256: string;
+  generatedAt: string;
+  counts: {
+    accepted: number;
+    candidates: number;
+    redacted: number;
+  };
+};
+
 /**
  * Runtime exec-approval boundary (TF-0240). `list` reads the Gateway's pending
  * exec approvals; `resolve` answers exactly one of them with a decision the
@@ -5984,6 +6049,11 @@ export type HostApiContract = {
     injectionReceipts: (payload: MemoryInjectionReceiptsPayload) => MemoryInjectionReceiptsResult;
     proposeFactsList: (payload: MemoryProposeFactsListPayload) => MemoryProposeFactsListResult;
     proposeFactsConfirm: (payload: MemoryProposeFactsConfirmPayload) => MemoryProposeFactsConfirmResult;
+    surface: (payload?: MemorySurfacePayload) => MemorySurfaceResult;
+    approveCandidate: (payload: MemoryApproveCandidatePayload) => MemoryApproveCandidateResult;
+    delete: (payload: MemoryDeletePayload) => MemoryDeleteResult;
+    remember: (payload: MemoryRememberPayload) => MemoryRememberResult;
+    export: (payload?: MemoryExportPayload) => MemoryExportResult;
   };
 };
 

@@ -43,6 +43,7 @@ Verse Claw — приложение Electron на базе OpenClaw. Начни�
 | Модели и провайдеры | Управлять аккаунтами, моделями по умолчанию и резервными настройками, просматривать историю токенов | Настройки → Модели и провайдеры |
 | Агенты и задачи | Настраивать агентов и роли, следить за подагентами; вести Task Ledger и явно запускать Task Loop или ClawGraph | Настройки → Agents; дополнительное меню боковой панели |
 | Знания | Искать материалы, управлять источниками и ссылками, проверять входящие материалы, черновики и предложения | Боковая панель → Знания |
+| Память | Просматривать принятую память и сохранённых кандидатов, одобрять предложения, удалять/tombstone, экспортировать JSON с хэшем и создавать обычные предложения через «Запомнить это» | Боковая панель → Память |
 | Входящие | Обрабатывать запросы разрешений, удалённые и браузерные задачи, требующие внимания, просматривать историю | Боковая панель → Входящие |
 | Расписание и каналы | Управлять заданиями и историей запусков; настраивать аккаунты каналов, соединения и привязки агентов | Расписание на боковой панели; Настройки → Channels |
 | Skills и MCP | Просматривать и включать навыки, управлять наборами, установкой из каталога и настройками MCP-серверов | Настройки → Skills |
@@ -209,7 +210,7 @@ pnpm dev
 | Системные ресурсы | `ResourceFabric` управляет допуском выполнения в workspace и загрузки истории чата; `BackgroundWorkGate` откладывает фоновую работу при давлении очереди, RSS или CPU; `ResourceTracker` обнаруживает и очищает серверные ресурсы, связанные с сессией | Это кооперативный допуск внутри Main, а не глобальный планировщик ОС; пользовательская foreground-работа не вытесняется |
 | Контекстная инженерия | `ContextEngine` выполняет bootstrap, ingest, maintain, after-turn и assemble/compact; общий бюджет одного хода в 6 000 символов применяет приоритеты и fail-closed kill switch; `ContextHealthMonitor` оценивает давление, структуру, соответствие цели и новизну | Контекстные расширения включаются opt-in; целевая конвергенция authority остаётся отдельной работой |
 | Жизненный цикл сессии | `SessionManager` хранит JSONL append-only дерево с ветвлением по leaf, компактацией, метками и восстановлением контекста; Host добавляет checkpoint, handoff, архив/восстановление и каскадное удаление производных данных | Сессия не равна Run, Task, Workspace или Project; пользовательские факты задач принадлежат Task Ledger |
-| Память | Role Memory — SQLite control plane с Memory Card, проверкой Gatekeeper, конфликтами и семисекционным Context Pack; Runtime Memory имеет отдельные шлюзы persistence, hydration и injection | Шлюзы write/use и Runtime Memory по умолчанию выключены; автоматической записи опыта и неконтролируемой production-инъекции нет |
+| Память | Единая поверхность `Memory` проецирует принятые Role Card, Runtime facts и сохранённых кандидатов из существующих хранилищ; approve/delete/export делегируются owner, а «Запомнить это» проходит Gatekeeper review в границах `MemoryControlPlaneManifest/v1` | Кандидаты никогда не видны модели; write/use gates каждого owner и Runtime Memory injection настраиваются отдельно. Нативная память OpenClaw остаётся вне этой панели, и UI прямо это указывает |
 | Восприятие проблем | Обнаружение Issue в отдельном trace агрегируется в кросс-запусковые Problem по сигнатуре, семидневному окну, состоянию жизненного цикла и обезличенным артефактам доказательств | `pnpm observability:problems` — это agent batch, а не постоянный сервис автоматического исправления |
 | Мультиагентность и роли | `RoleContract`, восемь встроенных ролей, режимы `router`/`lead-workers`/`adversarial-review`, шаблоны команд, граф задач и ресурсно-осведомлённые волны | Write-set, конфликты инструментов и лимит параллелизма ограничивают выполнение; `bounded_a2a` отключён, Runtime V2 Kernel остаётся планом |
 
@@ -221,7 +222,7 @@ flowchart LR
   HOST --> GATEWAY["Gateway"]
   GATEWAY --> SESSION["SessionManager<br/>JSONL session tree"]
   GATEWAY --> CONTEXT["ContextEngine + Orchestrator"]
-  MEMORY["Role Memory / Runtime Memory"] --> CONTEXT
+  MEMORY["Memory panel<br/>accepted vs candidate"] --> CONTEXT
   SESSION --> CONTEXT
   CONTEXT --> BUDGET["Turn injection budget<br/>precedence + kill switch"]
   ROLE["Roles / teams"] --> ORCH["Orchestrator + task graph"]
@@ -242,10 +243,11 @@ flowchart LR
 | VerseShell | `openclaw_runtime/src/agents/verseshell/`, `verseshell-runtime.ts`, `shared/verseshell/`, `resources/verseshell/`, `resources/verseshell-mcp/` | Управляемое выполнение, typed ACI, artifact results и patch preview независимо отключены по умолчанию. Внешний MCP adapter не является внутренним execution path |
 | VerseBrowser | `packages/versebrowser/`, `electron/services/agent-browser-*`, `electron/gateway/agent-browser-bridge.ts`, `shared/agent-browser/` | 81 метод контракта не означает 81 возможность Electron: драйвер реализует 67, модельный слой содержит 28 actions, а текущая Windows-сборка рекламирует только 14 |
 | Знания | `src/pages/Knowledge/`, `electron/services/knowledge-api.ts`, `memory-wiki`, `openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first и ролевое управление: агенты читают и предлагают; Inbox → Draft → Steward → Proposal → явное подтверждение → apply является единственным путём durable-записи. Автоматический SEKB writeback остаётся default-off/shadow |
+| Память | `src/pages/Memory/`, `electron/services/memory-api.ts`, `openclaw_runtime/src/gateway/server-methods/memory-surface.ts` | Единая поверхность проверки; Role Card, Runtime facts и кандидаты сохраняют собственные хранилища и mutation paths. Approve, tombstone/invalidation, hashed export и explicit-remember proposal не создают вторую Memory authority |
 
 Подробный поток инструментов и знаний приведён в разделе [Плоскости управления средой выполнения](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces).
 
-`src/App.tsx` регистрирует первичную настройку через Setup (`/setup/*`), Chat (`/`), Knowledge, Inbox, Scheduled, Task Ledger, ClawGraph, Observability и Settings. Models, Agents, Channels и Skills являются разделами Settings; Code Review и Browser — совместимыми входами в панели рабочего пространства. Image Generation и Dreams требуют режима разработчика.
+`src/App.tsx` регистрирует первичную настройку через Setup (`/setup/*`), Chat (`/`), Knowledge, Memory, Inbox, Scheduled, Task Ledger, ClawGraph, Observability и Settings. Models, Agents, Channels и Skills являются разделами Settings; Code Review и Browser — совместимыми входами в панели рабочего пространства. Image Generation и Dreams требуют режима разработчика.
 
 Текущие члены pnpm workspace — корень, `harness/`, `packages/versebrowser/` и `resources/verseshell-mcp/`. `packages/vtoken/` является Python/uv sidecar. `openclaw_runtime/` — встроенное Git-дерево исходников с отдельным рабочим пространством зависимостей, а не Git submodule и не npm runtime, используемый при упаковке.
 

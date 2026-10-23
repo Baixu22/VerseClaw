@@ -29,4 +29,19 @@ Candidates may persist, but `memory-candidate` has `retrieval=none` and `injecta
 - Runtime facts/timelines/episodes use the Runtime Memory owner's acceptance and invalidation paths.
 - Embeddings and Dreaming consume accepted inputs and may be rebuilt; they cannot accept memory or inject prompt context.
 - SEKB remains a Knowledge Runtime Lessons source and does not own a memory store.
-- The model-safe product description is exposed by the manifest for later context/profile consumers; it must not describe Role/Runtime/Dreaming/Embedding as separate user memories.
+- The model-safe product description is exposed by the manifest and the Memory surface; it must not describe Role/Runtime/Dreaming/Embedding as separate user memories.
+
+## User surface and close semantics
+
+TF-0498 adds the single product destination `/memory`. It is a projection and command surface, not another store or accepting authority.
+
+- **Accepted** lists active/cold Role cards and accepted Runtime facts with scope, source, timestamps, sensitivity, evidence count and current model visibility.
+- **Candidates** lists persisted Role proposals and Runtime fact candidates. Every candidate has `retrievable=false`, `injectable=false` and `modelVisible=false`.
+- **Approve** delegates to Role Memory review or `memory.proposeFacts.confirm`; it does not write a card/fact directly.
+- **Delete** dispatches by owner: role cards are tombstoned; Runtime facts are invalidated with reason `retracted`.
+- **Export** reads the same surface projection and writes an owner-neutral JSON snapshot under Electron `userData/exports/memory`. Secret/secret-adjacent content is redacted and the returned SHA-256 covers the exact bytes written.
+- **Remember this** calls the existing `memory.propose` gatekeeper/policy/evidence/conflict path with source `user`. It may be accepted or become a persisted review candidate; the UI does not bypass review.
+
+Role Memory off closes Role read/write gates and stops Role prompt retrieval, but does not delete the on-disk cards. Runtime capture, persistence, provider and injection-pilot flags are reported separately. Native OpenClaw memory sources have separate read-only owners; the Memory UI states that disabling this surface's Role/Runtime gates does not claim to disable those sources.
+
+The model-facing projection contains accepted keys whose owner gate and injection-pilot configuration make them currently model-visible. Candidate keys are returned only as an explicit exclusion set for diagnostics/tests and never enter accepted/model-visible data.

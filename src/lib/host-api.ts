@@ -399,6 +399,11 @@ import type {
   MemoryProposalPreviewResult,
   MemoryProposeFactsConfirmPayload,
   MemoryProposeFactsListPayload,
+  MemorySurfacePayload,
+  MemoryApproveCandidatePayload,
+  MemoryDeletePayload,
+  MemoryRememberPayload,
+  MemoryExportPayload,
   MemorySearchPayload,
   MemoryUpdatePayload,
 } from '@shared/host-api/contract';
@@ -1145,6 +1150,12 @@ export const hostApi = {
       invokeHost('memory', 'proposeFactsList', input),
     proposeFactsConfirm: (input: MemoryProposeFactsConfirmPayload) =>
       invokeHost('memory', 'proposeFactsConfirm', input),
+    surface: (input: MemorySurfacePayload = {}) => invokeHost('memory', 'surface', input),
+    approveCandidate: (input: MemoryApproveCandidatePayload) =>
+      invokeHost('memory', 'approveCandidate', input),
+    delete: (input: MemoryDeletePayload) => invokeHost('memory', 'delete', input),
+    remember: (input: MemoryRememberPayload) => invokeHost('memory', 'remember', input),
+    export: (input: MemoryExportPayload = {}) => invokeHost('memory', 'export', input),
   },
   channels: {
     accounts: (options?: ChannelAccountsPayload) => (

@@ -77,6 +77,7 @@ import {
 import type { MemoryFeedbackOutcome, MemoryPhaseTag, MemoryProposal, MemoryRetentionAction, MemoryReviewAction, MemoryTaskSuccess } from "../../memory/types.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { resolveControlPlaneActor, formatControlPlaneActor } from "../control-plane-audit.js";
+import { buildMemorySurface, deleteMemorySurfaceEntry, type MemorySurfaceSource } from "./memory-surface.js";
 import type { GatewayRequestHandlers, RespondFn } from "./types.js";
 import {
   readTrajectoryPage,
@@ -849,6 +850,25 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     respond(true, { cards, count: cards.length }, undefined);
   },
 
+  "memory.surface": async ({ params, respond, context }) => {
+    try {
+      const projection = await buildMemorySurface({
+        limit: typeof params.limit === "number" ? params.limit : undefined,
+        getRuntimeConfig: () => context.getRuntimeConfig(),
+      });
+      respond(true, projection, undefined);
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `memory.surface failed: ${error instanceof Error ? error.message : String(error)}`,
+        ),
+      );
+    }
+  },
+
   "memory.propose": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const proposal = params.proposal as MemoryProposal | undefined;
@@ -930,6 +950,44 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     }
     const tombstone = readBoolean(params.tombstone) === true;
     respond(true, archiveMemoryCard(id, tombstone ? "tombstone" : "archived"), undefined);
+  },
+
+  "memory.delete": async ({ params, respond, context }) => {
+    const source = readString(params.source);
+    const id = readString(params.id);
+    if ((source !== "role-memory-card" && source !== "runtime-fact") || !id) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          'memory.delete requires source="role-memory-card"|"runtime-fact" and an "id" string',
+        ),
+      );
+      return;
+    }
+    try {
+      const outcome = await deleteMemorySurfaceEntry({
+        source: source as MemorySurfaceSource,
+        id,
+        reason: readString(params.reason),
+        getRuntimeConfig: () => context.getRuntimeConfig(),
+      });
+      if (!outcome.ok) {
+        respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, outcome.error));
+        return;
+      }
+      respond(true, outcome, undefined);
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `memory.delete failed: ${error instanceof Error ? error.message : String(error)}`,
+        ),
+      );
+    }
   },
 
   "memory.supersede": async ({ params, respond }) => {

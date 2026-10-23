@@ -57,9 +57,9 @@ const baseHostApi: Record<string, unknown> = {
 
 async function gotoAgents(app: Parameters<typeof getStableWindow>[0]) {
   const page = await getStableWindow(app);
-  await page.reload();
-  await page.getByTestId('sidebar-nav-settings').click();
-  await page.getByTestId('settings-nav-agents').click();
+  const url = new URL(page.url());
+  url.hash = '/settings/agents?advancedMemory=1';
+  await page.goto(url.toString());
   await expect(page.getByTestId('agents-page')).toBeVisible();
   await expect(page.getByTestId('propose-facts-confirm-queue')).toBeVisible();
   return page;
