@@ -745,7 +745,7 @@ export function createSubagentRegistryLifecycleController(params: {
       clearPendingFinalDelivery(entry);
       entry.wakeOnDescendantSettle = undefined;
     }
-    let sessionPresent = false;
+    let sessionPresent: boolean;
     try {
       sessionPresent = Boolean(loadSubagentSessionEntry({ childSessionKey: entry.childSessionKey }));
     } catch {

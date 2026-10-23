@@ -6,7 +6,6 @@ import { afterEach, describe, expect, it } from 'vitest';
 import {
   createVerseGitCleanupBarrier,
   cleanupInventoryFromResources,
-  verseGitCleanupResourceId,
 } from '../../shared/versegit-cleanup-barrier';
 import type {
   VerseGitCleanupIdentity,
@@ -108,7 +107,7 @@ function recordCompleteDelete(root: string, input = sealInput()) {
 function bindingIdentityFor(root: string): { baseOid: string; refsDigest: string; repoId: string; worktreeId: string } {
   const baseOid = git(root, ['rev-parse', 'HEAD']);
   let headRef = 'HEAD';
-  try { headRef = git(root, ['symbolic-ref', '-q', 'HEAD']) || 'HEAD'; } catch {}
+  try { headRef = git(root, ['symbolic-ref', '-q', 'HEAD']) || 'HEAD'; } catch { /* ignore */ }
   const normalized = root.replaceAll('\\', '/').toLowerCase();
   const repoId = sha(normalized + ':repo');
   const worktreeId = sha(normalized + ':worktree');
