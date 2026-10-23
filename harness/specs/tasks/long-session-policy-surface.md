@@ -19,14 +19,29 @@ touchedAreas:
   - src/pages/Settings/sections/RecoverySettingsSection.tsx
   - src/pages/Chat/session-continuity.ts
   - src/lib/host-api.ts
+  - src/stores/session-activity.ts
+  - electron/services/session-activity-api.ts
   - shared/i18n/locales/en/chat.json
   - shared/i18n/locales/zh/chat.json
   - shared/i18n/locales/ja/chat.json
   - shared/i18n/locales/ru/chat.json
+  - shared/i18n/locales/en/settings.json
+  - shared/i18n/locales/zh/settings.json
+  - shared/i18n/locales/ja/settings.json
+  - shared/i18n/locales/ru/settings.json
   - src/styles/globals.css
+  - src/styles/codex-responsive.css
+  - src/styles/codex-session-activity.css
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - docs/clawx-product-semantics.md
   - tests/e2e/long-session-policy-surface.spec.ts
   - tests/e2e/chat-session-derived.spec.ts
   - tests/e2e/session-activity-background-read.spec.ts
+  - tests/unit/session-activity-panel-sections.test.tsx
+  - tests/unit/session-activity-background-read.test.ts
+  - tests/unit/session-activity-store-scope.test.ts
   - harness/specs/fixtures/long-session-development/b2/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
