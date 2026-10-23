@@ -1,7 +1,7 @@
 {
   "schemaVersion": "CodingControlsDispositionVerification/v1",
   "taskForestNodeId": "TF-0510",
-  "generatedAt": "2026-10-23T09:14:06.2027414Z",
+  "generatedAt": "2026-10-23T09:33:08.4303936Z",
   "driven_by": "agent",
   "actor": "codex",
   "status": "pass",
@@ -20,7 +20,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/01-tf0510-acceptance.txt",
-      "outputSha256": "af0dc59f95da0e032b5d7bae24900494140fa14251fc44529d79b9b61e7fd3a4"
+      "outputSha256": "2be713410026d4c220d8a0ff95ff0fbc610b35b51b246ad86b61f9e05abf8f38"
     },
     {
       "id": "02-patch-flow",
@@ -28,7 +28,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/02-patch-flow.txt",
-      "outputSha256": "6c589edd294ecac0a778b88a22b2a49d33ffd111d1ec461f150de35902260e96"
+      "outputSha256": "55ae5fdaa4d9986f3af1d25e9270b12c589f176580ca5e29280f134eb27103a4"
     },
     {
       "id": "03-stale-and-lease",
@@ -36,7 +36,15 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/03-stale-and-lease.txt",
-      "outputSha256": "074a7db6925923acf56b1b0993b343937c7dca6d0285b7df5bb29531f00d452d"
+      "outputSha256": "3b7bd8896200071ec62ffb2781ecc6326739278e40d0c7d985264a287bb947a2"
+    },
+    {
+      "id": "03b-stale-false-block",
+      "command": "labelled stale-write false-block corpus",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/03b-stale-false-block.txt",
+      "outputSha256": "7fbc45dd6543797a0637748e7badeb84f8d57e7302c1dd1f29a53894d381f09d"
     },
     {
       "id": "04-worktree-isolation",
@@ -44,7 +52,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/04-worktree-isolation.txt",
-      "outputSha256": "4dde9e868a04176249de6ae7e8294f272e5e6e9b30adb04ae8d814954e70122f"
+      "outputSha256": "d14ec46a316dc3782e2ec2f50f0ed5d1382b22e7ee1d49ddc280de2ce2348f94"
     },
     {
       "id": "05-root-worktree-wal",
@@ -52,7 +60,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/05-root-worktree-wal.txt",
-      "outputSha256": "3a28bb7a8cab5bbf61e42ac7775bb30177ce06db5a4d5c57385ae2218c28bc42"
+      "outputSha256": "1b24d7df0c9124e947691a7e3799d596621c608070438166ec232c6fbb411a00"
     },
     {
       "id": "06-typecheck",
@@ -60,7 +68,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/06-typecheck.txt",
-      "outputSha256": "fc3aba241da74a015ba3c2047d58d024ee393839d7464b841e36f18d8fb2c795"
+      "outputSha256": "8446f005a20173426bc6ce7eb968b10179afc14a2de6d27ade92ee0b90461918"
     },
     {
       "id": "07-lint-check",
@@ -108,7 +116,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/12-scope-audit.txt",
-      "outputSha256": "02af99b5452a457339c7e37ce7b8c15dbb98d780e88038e63f2ed32246be5f9c"
+      "outputSha256": "d600d569fa06740fd2f67d0823e9d00c429b8846b1b5908a53dab9eb7345be96"
     },
     {
       "id": "13-sha256sums-check",
@@ -116,7 +124,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/13-sha256sums-check.txt",
-      "outputSha256": "a557e70106435ebec26029743bf0e506820e0c7f6d5b924a37139e5310a53994"
+      "outputSha256": "7bcc7d82f64ab5c09dc7cfdf6604b1f77649d456b1c76cfd26cf003e76a42153"
     }
   ]
 }

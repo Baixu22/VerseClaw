@@ -1,8 +1,14 @@
 [
   {
     "file": "openclaw_runtime/src/agents/coding-control-dispositions.ts",
-    "expected": "1c519199d69b65249c0dc39998194df30d840e7a955a01b844fc0f331c1bd809",
-    "actual": "1c519199d69b65249c0dc39998194df30d840e7a955a01b844fc0f331c1bd809",
+    "expected": "4b67009e2b16eb65c42058d849d6861587422e98e7746a32678b9f2295521067",
+    "actual": "4b67009e2b16eb65c42058d849d6861587422e98e7746a32678b9f2295521067",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/stale-write-guard.false-block.test.ts",
+    "expected": "11aaae40b2d424491467bc54bf47816c4b741b6e88a9f1447a910e22736a6f3b",
+    "actual": "11aaae40b2d424491467bc54bf47816c4b741b6e88a9f1447a910e22736a6f3b",
     "status": "pass"
   },
   {
@@ -31,20 +37,20 @@
   },
   {
     "file": "tests/unit/fixtures/coding-controls-tf0510/raw-evidence.json",
-    "expected": "ff32fcfdd1a2eece93d14ddcf038b37ca0f3d137a323c3181094de9bb8ce51d4",
-    "actual": "ff32fcfdd1a2eece93d14ddcf038b37ca0f3d137a323c3181094de9bb8ce51d4",
+    "expected": "2e76dc9fe64eaea98afb83c4ba2cb0dff83904ea4ea2c9d8560756943e6a7d29",
+    "actual": "2e76dc9fe64eaea98afb83c4ba2cb0dff83904ea4ea2c9d8560756943e6a7d29",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/coding-controls-tf0510/generate-acceptance.mts",
-    "expected": "35d504cc1a06cbd7a396446ecb9d92527106cf3637c03b9f323e8817b2ca886e",
-    "actual": "35d504cc1a06cbd7a396446ecb9d92527106cf3637c03b9f323e8817b2ca886e",
+    "expected": "1bd19398b5d24c1c36974131758d42c555f2f8b426c0403d6094a2a6fb8fd0c1",
+    "actual": "1bd19398b5d24c1c36974131758d42c555f2f8b426c0403d6094a2a6fb8fd0c1",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/coding-controls-tf0510/run-verification.ps1",
-    "expected": "278d4aec00f2f0cfa6cfad1c6d0e0ee3d323285b46d74463dae79ba5fac38337",
-    "actual": "278d4aec00f2f0cfa6cfad1c6d0e0ee3d323285b46d74463dae79ba5fac38337",
+    "expected": "743af14f246ad7fa69ac7aa8d63226587cb526915bc9e0c57caa0592fe7dab06",
+    "actual": "743af14f246ad7fa69ac7aa8d63226587cb526915bc9e0c57caa0592fe7dab06",
     "status": "pass"
   }
 ]

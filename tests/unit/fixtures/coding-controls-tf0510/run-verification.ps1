@@ -39,6 +39,12 @@ $results += Invoke-CapturedGate -Id '03-stale-and-lease' -Arguments @(
   '--maxWorkers=1', '--reporter=dot'
 ) -DisplayCommand 'stale-write-guard and symbol-lease/WAL suites'
 
+# False-block corpus: measures the stale guard false-block rate instead of asserting it.
+$results += Invoke-CapturedGate -Id '03b-stale-false-block' -Arguments @(
+  $pnpm, '--dir', 'openclaw_runtime', 'exec', 'node', 'scripts/run-vitest.mjs', 'run',
+  'src/agents/stale-write-guard.false-block.test.ts', '--maxWorkers=1', '--reporter=default'
+) -DisplayCommand 'labelled stale-write false-block corpus'
+
 $results += Invoke-CapturedGate -Id '04-worktree-isolation' -Arguments @(
   $pnpm, '--dir', 'openclaw_runtime', 'exec', 'node', 'scripts/run-vitest.mjs', 'run',
   'src/agents/worktree-service.test.ts', 'src/agents/isolation-mode-matrix.test.ts',

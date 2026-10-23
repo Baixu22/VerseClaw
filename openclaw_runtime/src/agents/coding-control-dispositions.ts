@@ -53,12 +53,13 @@ export const CODING_CONTROL_COMPONENTS: readonly CodingControlComponent[] = [
     implementationNode: "TF-0510",
     verificationArtifact: [
       "openclaw_runtime/src/agents/tools/stale-write-guard.test.ts",
+      "openclaw_runtime/src/agents/stale-write-guard.false-block.test.ts",
       "openclaw_runtime/src/agents/stale-write-guard.ts",
     ],
     remainingGap: [],
     productEntry: "runtime.coding.staleWriteGuard.enabled (operator config)",
     notes:
-      "Blocks only files this session has already read whose disk hash diverged; unread files and the edit tool are untouched. Six cases cover block, allow, unread, flag-off, explainable error and the recorded force/allowStaleWrite override. Default stays false: flipping it changes write behaviour for every user and is a product decision, not an implementation gap.",
+      "Blocks only files this session has already read whose disk hash diverged; unread files and the edit tool are untouched. Six cases cover block, allow, unread, flag-off, explainable error and the recorded force/allowStaleWrite override. The labelled false-block corpus (stale-write-guard.false-block.test.ts) measures 1/5 genuine stale blocks and 4/5 must-allow writes, with a measured false-block rate of 0. Default stays false: flipping it changes write behaviour for every user and is a product decision, not an implementation gap.",
   },
   {
     id: "symbol-lease",

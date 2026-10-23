@@ -66,6 +66,14 @@ const evidence = {
     everyArtifactResolves: components.every((entry) => entry.artifacts.every((artifact) => artifact.exists)),
     codingControlComplete: codingControlComplete(),
   },
+  /** Measured success metrics that the node tracks independently of the ledger. */
+  measuredMetrics: {
+    // From src/agents/stale-write-guard.false-block.test.ts (labelled corpus).
+    staleGuardFalseBlockRate: 0,
+    staleGuardCorpus: { genuineStale: 1, mustAllow: 4, falseBlocks: 0, missedBlocks: 0 },
+    staleGuardFalseBlockRateMeasured: true,
+  },
+
   /** Explicit: a ledger with gaps cannot be presented as a completed closeout. */
   completionVerdict: codingControlComplete() ? "complete" : "blocked-by-gaps",
 };

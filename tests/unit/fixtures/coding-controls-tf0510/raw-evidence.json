@@ -26,6 +26,12 @@
           "bytes": 5847
         },
         {
+          "path": "openclaw_runtime/src/agents/stale-write-guard.false-block.test.ts",
+          "exists": true,
+          "sha256": "11aaae40b2d424491467bc54bf47816c4b741b6e88a9f1447a910e22736a6f3b",
+          "bytes": 4791
+        },
+        {
           "path": "openclaw_runtime/src/agents/stale-write-guard.ts",
           "exists": true,
           "sha256": "49b49bd53d04848670a4034aa11db5b12c0bfd27f4f4c1854d8ffc49aa851572",
@@ -187,6 +193,16 @@
     ],
     "everyArtifactResolves": true,
     "codingControlComplete": false
+  },
+  "measuredMetrics": {
+    "staleGuardFalseBlockRate": 0,
+    "staleGuardCorpus": {
+      "genuineStale": 1,
+      "mustAllow": 4,
+      "falseBlocks": 0,
+      "missedBlocks": 0
+    },
+    "staleGuardFalseBlockRateMeasured": true
   },
   "completionVerdict": "blocked-by-gaps"
 }
