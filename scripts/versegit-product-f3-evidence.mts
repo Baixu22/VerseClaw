@@ -12,13 +12,14 @@ const commands: Array<Record<string, unknown>> = [];
 
 async function run(name: string, argv: string[]) {
   const started = Date.now();
+  const useShell = process.platform === 'win32' && argv[0]!.toLowerCase().endsWith('.cmd');
   try {
     const result = await execFileAsync(argv[0]!, argv.slice(1), {
       cwd: ROOT,
       env: { ...process.env, TEMP: 'D:\\tmp', TMP: 'D:\\tmp' },
       timeout: 300_000,
       windowsHide: true,
-      shell: process.platform === 'win32',
+      shell: useShell,
       maxBuffer: 24 * 1024 * 1024,
     });
     commands.push({ name, argv, exitCode: 0, durationMs: Date.now() - started, stdoutTail: result.stdout.slice(-4000), stderrTail: result.stderr.slice(-4000) });
