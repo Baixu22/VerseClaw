@@ -41,11 +41,16 @@ function writeJson(name: string, value: unknown): void {
 }
 
 function sourceState() {
+  const evidencePrefix = 'harness/specs/fixtures/versegit-product-integration/f2/';
+  const dirty = git(['status', '--porcelain=v1', '--untracked-files=all'])
+    .split(/\r?\n/u)
+    .filter(Boolean)
+    .some((line) => !line.slice(3).replaceAll('\\', '/').startsWith(evidencePrefix));
   return {
     branch: git(['branch', '--show-current']) || 'detached',
     commit: git(['rev-parse', 'HEAD']),
     tree: git(['rev-parse', 'HEAD^{tree}']),
-    dirty: git(['status', '--porcelain=v1', '--untracked-files=normal']).length > 0,
+    dirty,
   };
 }
 
