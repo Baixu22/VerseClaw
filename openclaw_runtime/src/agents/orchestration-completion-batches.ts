@@ -77,6 +77,7 @@ export function buildOrchestrationCompletionBatches(params: {
       if (!entry) return [];
       return [{
         runId,
+        childSessionKey: entry.childSessionKey,
         roleName: entry.orchestration?.roleName ?? entry.label ?? "worker",
         status: memberStatus(entry),
         deliveryStatus: deliveryStatus(entry),

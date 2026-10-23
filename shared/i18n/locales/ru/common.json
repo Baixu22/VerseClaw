@@ -133,7 +133,17 @@
     "pid": "pid {{pid}}",
     "fromSession": "из {{session}}",
     "stop": "Остановить",
-    "stopResource": "Остановить {{label}}"
+    "stopResource": "Остановить {{label}}",
+    "coordinator": {
+      "title": "Координатор долгой сессии",
+      "start": "Начать долгую сессию",
+      "pause": "Пауза",
+      "resume": "Продолжить",
+      "taskRequired": "Сначала выберите узел Task Ledger.",
+      "processes": "Процессов: {{count}}",
+      "slots": "Слотов: {{count}}",
+      "state": { "active": "активен", "paused": "на паузе", "invalid": "недействителен", "unbound": "не привязан" }
+    }
   },
   "errorBoundary": {
     "description": "Произошла непредвиденная ошибка. Перезагрузите, чтобы продолжить, или сообщите указанный ниже код ошибки в поддержку.",

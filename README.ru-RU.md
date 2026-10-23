@@ -349,3 +349,5 @@ Verse Claw основан на [OpenClaw](https://github.com/openclaw/openclaw) 
 **Согласие на телеметрию:** Отключение телеметрии в настройках действует немедленно: новые события прекращаются, очередь SDK отбрасывается локально и не оживает при повторном включении. Уже доставленный запрос нельзя отозвать. См. [жизненный цикл согласия](docs/dev/telemetry-consent-lifecycle.md).
 
 После завершения всех expected worker одного orchestration run session activity owner формирует одну consolidated completion-batch receipt и отдельно отражает durable delivery intent. После reset или handoff устаревший результат получает статус fenced и не направляется в новую generation.
+
+Индикатор ресурсов на панели Chat также показывает явно привязанную долгую сессию, canonical-окружение и revision, ссылки Task Ledger, batch завершений, наблюдаемые ресурсы и управление паузой.

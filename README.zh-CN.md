@@ -357,3 +357,5 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw)，并继承 V
 **遥测同意：** 在设置中关闭遥测立即生效：后续事件停止，SDK 队列在本地丢弃，重新开启不会复活旧事件；已发出的请求无法撤回。详见[同意生命周期](docs/dev/telemetry-consent-lifecycle.md)。
 
 同一次 orchestration run 的全部预期 worker 终态后，会话活动 owner 才会派生一个 consolidated completion-batch receipt，并把完成事实与持久 delivery intent 分开；reset 或 handoff 后只显示 fenced，不会把旧结果送入新 generation。
+
+Chat 工具栏的资源入口也会显示显式绑定的长期会话、canonical 环境与 revision、Task Ledger 引用、完成批次、观测资源水位以及暂停/继续操作。

@@ -357,3 +357,5 @@ Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell �
 **テレメトリーの同意:** 設定でテレメトリーをオフにすると即時反映されます。以降のイベントは停止し、SDK のキューはローカルで破棄され、再度有効化しても復活しません。送信済みのリクエストは取り消せません。[同意ライフサイクル](docs/dev/telemetry-consent-lifecycle.md)を参照してください。
 
 同じ orchestration run の全 expected worker が終端状態になった後だけ、session activity owner が一つの consolidated completion-batch receipt を導出し、完了事実と durable delivery intent を分けて扱います。reset や handoff 後の古い結果は fenced となり、新しい generation へ送られません。
+
+Chat ツールバーのリソース入口には、明示的にバインドした長期セッション、canonical 環境と revision、Task Ledger 参照、完了バッチ、観測リソース、一時停止・再開操作も表示されます。

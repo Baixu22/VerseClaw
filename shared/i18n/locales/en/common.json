@@ -133,7 +133,17 @@
     "pid": "pid {{pid}}",
     "fromSession": "from {{session}}",
     "stop": "Stop",
-    "stopResource": "Stop {{label}}"
+    "stopResource": "Stop {{label}}",
+    "coordinator": {
+      "title": "Long-session coordinator",
+      "start": "Start long session",
+      "pause": "Pause",
+      "resume": "Resume",
+      "taskRequired": "Select a Task Ledger node first.",
+      "processes": "{{count}} processes",
+      "slots": "{{count}} slots",
+      "state": { "active": "active", "paused": "paused", "invalid": "invalid", "unbound": "unbound" }
+    }
   },
   "errorBoundary": {
     "description": "An unexpected error occurred. Reload to continue, or share the error reference below with support.",

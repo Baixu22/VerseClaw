@@ -209,6 +209,7 @@ function formatTokenCountForToast(value: number): string {
 type SessionLineageOverride = {
   relation: 'forked_from';
   sourceSessionKey: string;
+  forkedFromTimestamp?: number;
 };
 
 const EMPTY_REASONING_ITEMS: AssistantReasoning[] = [];
@@ -771,14 +772,20 @@ function ProjectSessionHeader({
                         className="block truncate text-2xs text-muted-foreground"
                         data-testid="chat-session-lineage"
                       >
-                        {typeof session.forkedFromTimestamp === 'number'
-                          ? t('session.lineage.forkedFromAt', {
-                              session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
-                              time: formatLineageTimestamp(session.forkedFromTimestamp),
-                            })
-                          : t('session.lineage.forkedFrom', {
-                              session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
-                            })}
+                        {(() => {
+                          const override = sessionLineage?.[session.key]?.forkedFromTimestamp;
+                          const forkTimestamp = typeof session.forkedFromTimestamp === 'number'
+                            ? session.forkedFromTimestamp
+                            : override;
+                          return typeof forkTimestamp === 'number'
+                            ? t('session.lineage.forkedFromAt', {
+                                session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
+                                time: formatLineageTimestamp(forkTimestamp),
+                              })
+                            : t('session.lineage.forkedFrom', {
+                                session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
+                              });
+                        })()}
                       </span>
                     )}
                   </span>
@@ -2295,11 +2302,15 @@ export function Chat() {
       workspaceSessionRestoreTargetRef.current = activeWorkspace?.id
         ? { workspaceId: activeWorkspace.id, sessionKey: nextSessionKey }
         : null;
+      const lastMessageTimestamp = messages.at(-1)?.timestamp;
       setSessionLineage((current) => ({
         ...current,
         [nextSessionKey]: {
           relation: 'forked_from',
           sourceSessionKey,
+          ...(typeof lastMessageTimestamp === 'number' && Number.isFinite(lastMessageTimestamp)
+            ? { forkedFromTimestamp: lastMessageTimestamp < 1_000_000_000_000 ? lastMessageTimestamp * 1000 : lastMessageTimestamp }
+            : {}),
         },
       }));
       lastRestoredWorkspaceIdRef.current = activeWorkspace?.id ?? null;
@@ -2336,6 +2347,7 @@ export function Chat() {
     forkDisabled,
     loadHistory,
     loadSessions,
+    messages,
     persistCurrentContinuitySourceSession,
     resetSessionView,
     showContinuityFailureToast,

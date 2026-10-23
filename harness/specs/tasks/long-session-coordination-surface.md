@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: active
 id: long-session-coordination-surface
 title: 把长期协作入口接到现有会话、任务与活动界面
 program: long-session-development-20261022
@@ -14,6 +14,7 @@ dependsOnTasks:
 touchedAreas:
   - harness/specs/tasks/long-session-coordination-surface.md
   - harness/specs/tasks/long-session-development-plan.md
+  - openclaw_runtime/src/agents/orchestration-completion-batches.ts
   - src/pages/Chat/index.tsx
   - src/components/layout/Sidebar.tsx
   - src/pages/Chat/SessionActivityPanel.tsx
@@ -24,11 +25,21 @@ touchedAreas:
   - src/stores/resource-tracker.ts
   - src/components/chat/ResourceChip.tsx
   - src/lib/host-api.ts
+  - shared/types/session-activity.ts
   - shared/types/resource-tracker.ts
   - shared/i18n/locales/en/chat.json
+  - shared/i18n/locales/en/common.json
   - shared/i18n/locales/zh/chat.json
+  - shared/i18n/locales/zh/common.json
   - shared/i18n/locales/ja/chat.json
+  - shared/i18n/locales/ja/common.json
   - shared/i18n/locales/ru/chat.json
+  - shared/i18n/locales/ru/common.json
+  - harness/specs/guides/long-session-delegation-admission.md
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - README.ru-RU.md
   - tests/e2e/long-session-coordination.spec.ts
   - tests/e2e/chat-session-handoff.spec.ts
   - tests/e2e/chat-session-fork.spec.ts

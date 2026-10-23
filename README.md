@@ -357,3 +357,5 @@ Session handoff creation validates and persists its Task Ledger lineage in Main 
 **Telemetry consent:** Turning telemetry off in Settings takes effect immediately: new events stop, the SDK queue is discarded locally and is not revived by re-enabling. A request already delivered cannot be recalled. See [the consent lifecycle](docs/dev/telemetry-consent-lifecycle.md).
 
 Once all expected workers for one orchestration run are terminal, the session activity owner derives one consolidated completion-batch receipt with separate completion and durable delivery states. A reset or handoff fences stale results instead of steering the new generation.
+
+The Chat toolbar resource chip also exposes an explicitly bound long session, its canonical environment and revision, Task Ledger references, completion batches, observed resource levels, and pause/resume controls.

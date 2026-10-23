@@ -86,6 +86,7 @@ export type SessionActivityTask = {
 
 export type SessionActivityCompletionBatchMember = {
   runId: string;
+  childSessionKey: string;
   roleName: string;
   status: 'running' | 'completed' | 'failed' | 'cancelled' | 'unknown';
   deliveryStatus: 'not_required' | 'pending' | 'in_progress' | 'delivered' | 'failed' | 'suspended' | 'discarded';
