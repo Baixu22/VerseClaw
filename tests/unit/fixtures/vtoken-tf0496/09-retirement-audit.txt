@@ -1,0 +1,7 @@
+runtime_retired_flag=1
+host_retired_flag=1
+host_env_path_returns_false=1
+retirement_doc_present=1
+run_decision=retire-or-hold
+run_pairs=30
+run_provider_errors=0

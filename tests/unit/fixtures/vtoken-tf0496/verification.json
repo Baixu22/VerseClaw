@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "VTokenRetirementVerification/v1",
+  "taskForestNodeId": "TF-0496",
+  "generatedAt": "2026-10-23T07:18:14.1120943Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "graduationStatus": "decided-and-applied",
+  "decidingRun": "ab-run.json (protocol VTokenROIABProtocol/v1)",
+  "decision": "retire-or-hold",
+  "gates": [
+    {
+      "id": "01-decision-consistency",
+      "command": "A/B decision consistency and retirement invariants",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/vtoken-tf0496/01-decision-consistency.txt",
+      "outputSha256": "63c2e3cf5555c81ef9eaf5299f6e825e790403eac975e22ec4571ab30fa63828"
+    },
+    {
+      "id": "02-retirement-unit",
+      "command": "host bridge retirement suites",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/vtoken-tf0496/02-retirement-unit.txt",
+      "outputSha256": "f28ed1ea003b27849045b37f700ad2652dd94e96d329899133bc2a8c170cf88e"
+    },
+    {
+      "id": "03-runtime-injection",
+      "command": "runtime vtoken injection retirement suite",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/vtoken-tf0496/03-runtime-injection.txt",
+      "outputSha256": "10f535f525de8f8f2f1095cafd92f020a92c314653c9d6364eef61a43e9dd97e"
+    },
+    {
+      "id": "04-typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/vtoken-tf0496/04-typecheck.txt",
+      "outputSha256": "0fe0839fbe6948568e8743906efd840b4a2c7aad11f8421a681000b5b9e16a9e"
+    },
+    {
+      "id": "05-lint-check",
+      "command": "pnpm run lint:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/vtoken-tf0496/05-lint-check.txt",
+      "outputSha256": "ed91e5d05fd3c19c493f34bdd1a4db9b548d89c47a1495891b175826edf376d1"
+    },
+    {
+      "id": "06-contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/vtoken-tf0496/06-contract-check.txt",
+      "outputSha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0"
+    },
+    {
+      "id": "07-no-bom",
+      "command": "node scripts/check-no-bom.mjs",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/vtoken-tf0496/07-no-bom.txt",
+      "outputSha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4"
+    },
+    {
+      "id": "08-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/vtoken-tf0496/08-diff-check.txt",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "09-retirement-audit",
+      "command": "static audit: retirement applied and decision recorded",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/vtoken-tf0496/09-retirement-audit.txt",
+      "outputSha256": "a57f644ac5fb9183ba4e33c96659e80a99bc33a8ed24b78936820acb69befe3d"
+    },
+    {
+      "id": "10-scope-audit",
+      "command": "git scope audit against node allowed paths",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/vtoken-tf0496/10-scope-audit.txt",
+      "outputSha256": "389831220895fd8cda5f94fee8e711399955e69f4ede74a885b48e23238d0a1a"
+    },
+    {
+      "id": "11-sha256sums-check",
+      "command": "PowerShell SHA256 recompute",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/vtoken-tf0496/11-sha256sums-check.txt",
+      "outputSha256": "2be9a51ea29bb61a0b6addafc530f83ed534d805b3d21217932e2ff8c5fc45e4"
+    }
+  ]
+}

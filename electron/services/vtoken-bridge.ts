@@ -61,21 +61,18 @@ let lastWorkerError: string | undefined;
  * Also disabled when VERSE_VTOKEN_ASSEMBLY_ENABLED is explicitly 0/false/off,
  * or when VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH is engaged.
  */
+/**
+ * TF-0496 decision: the VToken bridge is RETIRED, so this is always false.
+ *
+ * The public enable flag (VERSE_VTOKEN_BRIDGE_ENABLED) no longer has any effect:
+ * the capability measured below the predeclared materiality bar on real provider
+ * usage and was retired instead of being kept as a permanent opt-in surface.
+ * See docs/dev/vtoken-retirement-decision.md.
+ */
+export const VTOKEN_BRIDGE_RETIRED = true;
+
 export function readVtokenBridgeEnabledFromEnv(): boolean {
-  const enhancement = (process.env.VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH ?? '').trim().toLowerCase();
-  if (enhancement === '1' || enhancement === 'true' || enhancement === 'yes' || enhancement === 'on') {
-    return false;
-  }
-  const assembly = (process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED ?? '').trim().toLowerCase();
-  if (assembly === '0' || assembly === 'false' || assembly === 'no' || assembly === 'off') {
-    return false;
-  }
-  const raw = (process.env.VERSE_VTOKEN_BRIDGE_ENABLED ?? '').trim().toLowerCase();
-  // Explicit disable
-  if (raw === '0' || raw === 'false' || raw === 'no' || raw === 'off') return false;
-  // Explicit enable (opt-in canary)
-  if (raw === '1' || raw === 'true' || raw === 'yes' || raw === 'on') return true;
-  // Product default: disabled (opt-in)
+  // Retired: no environment value can enable the sidecar any more.
   return false;
 }
 
@@ -85,7 +82,8 @@ export function isVtokenBridgeEnabled(): boolean {
 }
 
 export function setVtokenBridgeEnabled(enabled: boolean): void {
-  enabledOverride = enabled;
+  // Retired (TF-0496): enable requests are refused; a disable still stops the worker.
+  enabledOverride = false;
   if (!enabled) {
     void stopVtokenWorker();
   }

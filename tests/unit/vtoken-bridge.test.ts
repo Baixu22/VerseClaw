@@ -54,11 +54,12 @@ describe('vtoken-bridge', () => {
     expect(status.success).toBe(true);
   });
 
-  it('enables via env canary VERSE_VTOKEN_BRIDGE_ENABLED=1', async () => {
+  it('ignores env canary VERSE_VTOKEN_BRIDGE_ENABLED=1 because the bridge is retired', async () => {
     process.env.VERSE_VTOKEN_BRIDGE_ENABLED = '1';
     const mod = await import('../../electron/services/vtoken-bridge');
-    expect(mod.readVtokenBridgeEnabledFromEnv()).toBe(true);
-    expect(mod.isVtokenBridgeEnabled()).toBe(true);
+    expect(mod.VTOKEN_BRIDGE_RETIRED).toBe(true);
+    expect(mod.readVtokenBridgeEnabledFromEnv()).toBe(false);
+    expect(mod.isVtokenBridgeEnabled()).toBe(false);
   });
 
   it('reads kill-switch from env', async () => {
@@ -79,10 +80,10 @@ describe('vtoken-bridge', () => {
     expect(assemble.disabled).toBe(true);
   });
 
-  it('setEnabled toggles process-local flag', async () => {
+  it('refuses to enable because the bridge is retired', async () => {
     const mod = await import('../../electron/services/vtoken-bridge');
-    expect(mod.vtokenSetEnabled({ enabled: true })).toEqual({ success: true, enabled: true });
-    expect(mod.isVtokenBridgeEnabled()).toBe(true);
+    expect(mod.vtokenSetEnabled({ enabled: true })).toEqual({ success: true, enabled: false });
+    expect(mod.isVtokenBridgeEnabled()).toBe(false);
     expect(mod.vtokenSetEnabled({ enabled: false })).toEqual({ success: true, enabled: false });
     expect(mod.isVtokenBridgeEnabled()).toBe(false);
   });

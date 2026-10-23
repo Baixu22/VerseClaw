@@ -1,0 +1,85 @@
+{
+ "source": "packages/vtoken/benchmarks/p21_write_efficiency.py",
+ "cases": [
+  {
+   "id": "api_auth",
+   "title": "API 约束 — JWT 认证",
+   "raw": "# system/auth\n\n## API 约束 — JWT 认证\n\n- auth.overview (DEF): JWT 认证模块，负责 token 签发与验证\n- auth.overview (DESC): 支持 RS256 和 HS256 两种算法\n- auth.overview (DESC): 设计优先考虑安全性而非便利性\n- auth.token_ttl (RULE): access token 有效期不得超过 15 分钟\n- auth.refresh_ttl (RULE): refresh token 有效期不得超过 7 天\n- auth.storage (RULE): refresh token 必须存于 httpOnly cookie\n- auth.jwt_secret (VAR): env:JWT_SECRET_KEY type:string minlen:32\n- auth.algo (VAR): enum:RS256,HS256 default:RS256\n- auth.ex_1 (EX): 浏览器登录：access token 存内存，refresh token 存 cookie\n- auth.todo_1 (OPEN): 是否需要支持 JWKS endpoint 动态轮换密钥\n\n- auth.overview DEPENDS auth.token_ttl\n- auth.token_ttl ENFORCED-BY auth.refresh_ttl\n- auth.overview ~~ auth.ex_1\n",
+   "vt": "%vt 0.3.1\n%mode doc\n%id system/auth\n%lang zh\n\nDEF auth.overview JWT 认证模块，负责 token 签发与验证\nDESC auth.overview 支持 RS256 和 HS256 两种算法\nDESC auth.overview 设计优先考虑安全性而非便利性\nRULE auth.token_ttl access token 有效期不得超过 15 分钟\nRULE auth.refresh_ttl refresh token 有效期不得超过 7 天\nRULE auth.storage refresh token 必须存于 httpOnly cookie\nVAR auth.jwt_secret env:JWT_SECRET_KEY type:string minlen:32\nVAR auth.algo enum:RS256,HS256 default:RS256\nEX auth.ex_1 浏览器登录：access token 存内存，refresh token 存 cookie\nOPEN auth.todo_1 是否需要支持 JWKS endpoint 动态轮换密钥\nREF auth.overview --DEPENDS--> auth.token_ttl\nREF auth.token_ttl --ENFORCED-BY--> auth.refresh_ttl\nREF auth.overview ~~ auth.ex_1\n",
+   "rawBytes": 839,
+   "vtBytes": 805
+  },
+  {
+   "id": "arch_split",
+   "title": "架构决策 — 服务拆分",
+   "raw": "# arch/service-split\n\n## 架构决策 — 服务拆分\n\n- svc.context (DEF): 订单域从单体应用拆分为 4 个微服务\n- svc.context (DESC): 拆分动机：研发团队扩到 12 人，trunk-based 频繁冲突\n- svc.order (DEF): 订单服务：负责订单创建与状态流转\n- svc.payment (DEF): 支付服务：对接第三方渠道，幂等保证\n- svc.inventory (DEF): 库存服务：扣减、预占、回滚\n- svc.notify (DEF): 通知服务：短信、邮件、push 三通道\n- svc.boundary (RULE): 每个服务拥有独立数据库，禁止跨库 JOIN\n- svc.sync (RULE): 服务间同步调用超时统一 3s，重试 2 次后转异步补偿\n- svc.saga (EX): 下单流程：order.create → inventory.hold → payment.charge → notify.send\n\n- svc.context DEPENDS svc.order\n- svc.order DEPENDS svc.payment\n- svc.order DEPENDS svc.inventory\n- svc.order ~~ svc.notify\n",
+   "vt": "%vt 0.3.1\n%mode doc\n%id arch/service-split\n%lang zh\n\nDEF svc.context 订单域从单体应用拆分为 4 个微服务\nDESC svc.context 拆分动机：研发团队扩到 12 人，trunk-based 频繁冲突\nDEF svc.order 订单服务：负责订单创建与状态流转\nDEF svc.payment 支付服务：对接第三方渠道，幂等保证\nDEF svc.inventory 库存服务：扣减、预占、回滚\nDEF svc.notify 通知服务：短信、邮件、push 三通道\nRULE svc.boundary 每个服务拥有独立数据库，禁止跨库 JOIN\nRULE svc.sync 服务间同步调用超时统一 3s，重试 2 次后转异步补偿\nEX svc.saga 下单流程：order.create → inventory.hold → payment.charge → notify.send\nREF svc.context --DEPENDS--> svc.order\nREF svc.order --DEPENDS--> svc.payment\nREF svc.order --DEPENDS--> svc.inventory\nREF svc.order ~~ svc.notify\n",
+   "rawBytes": 878,
+   "vtBytes": 852
+  },
+  {
+   "id": "db_users",
+   "title": "DB schema — 用户表",
+   "raw": "# db/user\n\n## DB schema — 用户表\n\n- db.users (DEF): 用户主表，存储账号与基础资料\n- db.users (DESC): 引擎 InnoDB，字符集 utf8mb4，行格式 DYNAMIC\n- db.users.id (VAR): BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY\n- db.users.email (VAR): VARCHAR(255) NOT NULL UNIQUE\n- db.users.password_hash (VAR): CHAR(60) NOT NULL COMMENT bcrypt cost=12\n- db.users.created_at (VAR): TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n- db.idx_email (RULE): 索引必须覆盖 email 列以支持登录查询\n- db.no_pii (RULE): 不在主表存储手机号、身份证号等 PII\n- db.seed (EX): insert into users(email, password_hash) values('admin@x.com', '$2b$12$...')\n\n- db.users DEPENDS db.idx_email\n- db.users ~~ db.no_pii\n",
+   "vt": "%vt 0.3.1\n%mode doc\n%id db/user\n%lang zh\n\nDEF db.users 用户主表，存储账号与基础资料\nDESC db.users 引擎 InnoDB，字符集 utf8mb4，行格式 DYNAMIC\nVAR db.users.id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY\nVAR db.users.email VARCHAR(255) NOT NULL UNIQUE\nVAR db.users.password_hash CHAR(60) NOT NULL COMMENT bcrypt cost=12\nVAR db.users.created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\nRULE db.idx_email 索引必须覆盖 email 列以支持登录查询\nRULE db.no_pii 不在主表存储手机号、身份证号等 PII\nEX db.seed insert into users(email, password_hash) values('admin@x.com', '$2b$12$...')\nREF db.users --DEPENDS--> db.idx_email\nREF db.users ~~ db.no_pii\n",
+   "rawBytes": 720,
+   "vtBytes": 686
+  },
+  {
+   "id": "dep_runbook",
+   "title": "部署 runbook — v3.0 发布",
+   "raw": "# runbook/deploy-v3\n\n## 部署 runbook — v3.0 发布\n\n- dep.goal (DEF): 将 v3.0 发布到生产环境\n- dep.goal (DESC): 影响范围：网关、订单服务、库存服务\n- dep.step1 (DEF): 拉取最新 main 分支并构建镜像：docker build -t order:v3.0 .\n- dep.step2 (DEF): 推送镜像：docker push registry.cn-beijing.aliyuncs.com/prod/order:v3.0\n- dep.step3 (DEF): kubectl set image deployment/order order=registry.../order:v3.0\n- dep.step4 (DEF): 等待 rollout：kubectl rollout status deployment/order --timeout=300s\n- dep.canary (RULE): 先切 10% 流量观察 5 分钟再全量\n- dep.rollback (RULE): 若 5xx 错误率 >1% 持续 1 分钟，立即 kubectl rollout undo\n- dep.metrics (OPEN): 监控指标是否需要新增业务维度的看板\n\n- dep.goal DEPENDS dep.step1\n- dep.step1 DEPENDS dep.step2\n- dep.step2 DEPENDS dep.step3\n- dep.step3 DEPENDS dep.step4\n- dep.step4 ~~ dep.canary\n",
+   "vt": "%vt 0.3.1\n%mode doc\n%id runbook/deploy-v3\n%lang zh\n\nDEF dep.goal 将 v3.0 发布到生产环境\nDESC dep.goal 影响范围：网关、订单服务、库存服务\nDEF dep.step1 拉取最新 main 分支并构建镜像：docker build -t order:v3.0 .\nDEF dep.step2 推送镜像：docker push registry.cn-beijing.aliyuncs.com/prod/order:v3.0\nDEF dep.step3 kubectl set image deployment/order order=registry.../order:v3.0\nDEF dep.step4 等待 rollout：kubectl rollout status deployment/order --timeout=300s\nRULE dep.canary 先切 10% 流量观察 5 分钟再全量\nRULE dep.rollback 若 5xx 错误率 >1% 持续 1 分钟，立即 kubectl rollout undo\nOPEN dep.metrics 监控指标是否需要新增业务维度的看板\nREF dep.goal --DEPENDS--> dep.step1\nREF dep.step1 --DEPENDS--> dep.step2\nREF dep.step2 --DEPENDS--> dep.step3\nREF dep.step3 --DEPENDS--> dep.step4\nREF dep.step4 ~~ dep.canary\n",
+   "rawBytes": 909,
+   "vtBytes": 889
+  },
+  {
+   "id": "sec_rules",
+   "title": "安全规则 — 公网服务",
+   "raw": "# sec/rules\n\n## 安全规则 — 公网服务\n\n- sec.scope (DEF): 适用于所有面向公网的 API 与 Web 服务\n- sec.password (RULE): 密码至少 12 位，含大小写字母、数字、特殊字符\n- sec.bcrypt (RULE): 密码必须经 bcrypt cost=12 哈希后存储\n- sec.token (RULE): token 必须使用 RS256 签名，私钥仅 auth 服务持有\n- sec.cors (RULE): 跨域允许列表仅 *.example.com\n- sec.csp (RULE): Content-Security-Policy 必须禁用 unsafe-inline\n- sec.audit (RULE): 所有写操作必须记录审计日志，保留 180 天\n- sec.violation (EX): 反例：将 token 存于 localStorage 可被 XSS 窃取\n\n- sec.scope DEPENDS sec.password\n- sec.password ~~ sec.bcrypt\n- sec.scope ~~ sec.cors\n",
+   "vt": "%vt 0.3.1\n%mode doc\n%id sec/rules\n%lang zh\n\nDEF sec.scope 适用于所有面向公网的 API 与 Web 服务\nRULE sec.password 密码至少 12 位，含大小写字母、数字、特殊字符\nRULE sec.bcrypt 密码必须经 bcrypt cost=12 哈希后存储\nRULE sec.token token 必须使用 RS256 签名，私钥仅 auth 服务持有\nRULE sec.cors 跨域允许列表仅 *.example.com\nRULE sec.csp Content-Security-Policy 必须禁用 unsafe-inline\nRULE sec.audit 所有写操作必须记录审计日志，保留 180 天\nEX sec.violation 反例：将 token 存于 localStorage 可被 XSS 窃取\nREF sec.scope --DEPENDS--> sec.password\nREF sec.password ~~ sec.bcrypt\nREF sec.scope ~~ sec.cors\n",
+   "rawBytes": 721,
+   "vtBytes": 688
+  },
+  {
+   "id": "task_sprint",
+   "title": "任务清单 — Sprint 23",
+   "raw": "# task/sprint-23\n\n## 任务清单 — Sprint 23\n\n- task.goal (DEF): Sprint 23 目标：完成支付幂等性重构\n- task.t1 (DEF): 重构 PaymentService.charge 加幂等键\n- task.t2 (DEF): 编写幂等键冲突的单测，覆盖并发场景\n- task.t3 (DEF): 压测：1000 QPS 下幂等键缓存命中率 >99%\n- task.t4 (DEF): 文档：更新 API 规范加入 Idempotency-Key 头\n- task.dod (RULE): DoD = 代码合并 + 单测覆盖 >85% + 文档更新\n- task.t3_deps (OPEN): t3 依赖压测环境是否就绪\n\n- task.goal DEPENDS task.t1\n- task.t1 DEPENDS task.t2\n- task.t2 DEPENDS task.t3\n- task.t3 ~~ task.t3_deps\n- task.t1 ~~ task.t4\n",
+   "vt": "%vt 0.3.1\n%mode doc\n%id task/sprint-23\n%lang zh\n\nDEF task.goal Sprint 23 目标：完成支付幂等性重构\nDEF task.t1 重构 PaymentService.charge 加幂等键\nDEF task.t2 编写幂等键冲突的单测，覆盖并发场景\nDEF task.t3 压测：1000 QPS 下幂等键缓存命中率 >99%\nDEF task.t4 文档：更新 API 规范加入 Idempotency-Key 头\nRULE task.dod DoD = 代码合并 + 单测覆盖 >85% + 文档更新\nOPEN task.t3_deps t3 依赖压测环境是否就绪\nREF task.goal --DEPENDS--> task.t1\nREF task.t1 --DEPENDS--> task.t2\nREF task.t2 --DEPENDS--> task.t3\nREF task.t3 ~~ task.t3_deps\nREF task.t1 ~~ task.t4\n",
+   "rawBytes": 639,
+   "vtBytes": 628
+  },
+  {
+   "id": "res_queue",
+   "title": "研究笔记 — 队列选型",
+   "raw": "# research/queue\n\n## 研究笔记 — 队列选型\n\n- res.topic (DEF): 异步任务队列选型：Kafka vs RabbitMQ vs Redis Streams\n- res.topic (DESC): 评估维度：吞吐、延迟、可靠性、运维成本、客户端成熟度\n- res.kafka (DEF): Kafka：单分区 100k/s，延迟 5–50ms，依赖 KRaft\n- res.rabbit (DEF): RabbitMQ：经典 AMQP，吞吐 20k/s，延迟 <5ms，路由灵活\n- res.redis (DEF): Redis Streams：单实例 50k/s，延迟 <5ms，依赖持久化策略\n- res.choice (RULE): 吞吐 >50k/s 选 Kafka，否则选 RabbitMQ\n- res.ops (OPEN): 团队对 Kafka 运维经验缺位是否可接受\n- res.demo (EX): POC：用 RabbitMQ 跑了 3 天，死信队列处理符合预期\n\n- res.topic ~~ res.kafka\n- res.topic ~~ res.rabbit\n- res.topic ~~ res.redis\n- res.topic DEPENDS res.choice\n",
+   "vt": "%vt 0.3.1\n%mode doc\n%id research/queue\n%lang zh\n\nDEF res.topic 异步任务队列选型：Kafka vs RabbitMQ vs Redis Streams\nDESC res.topic 评估维度：吞吐、延迟、可靠性、运维成本、客户端成熟度\nDEF res.kafka Kafka：单分区 100k/s，延迟 5–50ms，依赖 KRaft\nDEF res.rabbit RabbitMQ：经典 AMQP，吞吐 20k/s，延迟 <5ms，路由灵活\nDEF res.redis Redis Streams：单实例 50k/s，延迟 <5ms，依赖持久化策略\nRULE res.choice 吞吐 >50k/s 选 Kafka，否则选 RabbitMQ\nOPEN res.ops 团队对 Kafka 运维经验缺位是否可接受\nEX res.demo POC：用 RabbitMQ 跑了 3 天，死信队列处理符合预期\nREF res.topic ~~ res.kafka\nREF res.topic ~~ res.rabbit\nREF res.topic ~~ res.redis\nREF res.topic --DEPENDS--> res.choice\n",
+   "rawBytes": 809,
+   "vtBytes": 778
+  },
+  {
+   "id": "pref_dev",
+   "title": "用户偏好 — 开发风格",
+   "raw": "# pref/dev-style\n\n## 用户偏好 — 开发风格\n\n- pref.context (DEF): 用户开发偏好，用于 agent 自我约束\n- pref.lang (RULE): 代码注释一律使用中文\n- pref.commit (RULE): 提交信息使用 Conventional Commits 风格\n- pref.test (RULE): 新增功能必须同时新增对应单测\n- pref.style (RULE): 优先函数式风格，避免 class 继承\n- pref.reply (EX): 回复风格：简洁直给，先答案后解释\n- pref.env (OPEN): 是否在断网环境下优先使用本地依赖\n\n- pref.context ~~ pref.lang\n- pref.context ~~ pref.commit\n- pref.context ~~ pref.test\n",
+   "vt": "%vt 0.3.1\n%mode doc\n%id pref/dev-style\n%lang zh\n\nDEF pref.context 用户开发偏好，用于 agent 自我约束\nRULE pref.lang 代码注释一律使用中文\nRULE pref.commit 提交信息使用 Conventional Commits 风格\nRULE pref.test 新增功能必须同时新增对应单测\nRULE pref.style 优先函数式风格，避免 class 继承\nEX pref.reply 回复风格：简洁直给，先答案后解释\nOPEN pref.env 是否在断网环境下优先使用本地依赖\nREF pref.context ~~ pref.lang\nREF pref.context ~~ pref.commit\nREF pref.context ~~ pref.test\n",
+   "rawBytes": 592,
+   "vtBytes": 559
+  },
+  {
+   "id": "err_codes",
+   "title": "错误码表 — 业务 API",
+   "raw": "# err/api\n\n## 错误码表 — 业务 API\n\n- err.range (DEF): 业务错误码区间 40000–49999\n- err.e40001 (DEF): 40001 用户不存在\n- err.e40002 (DEF): 40002 密码错误\n- err.e40003 (DEF): 40003 token 过期\n- err.e40004 (DEF): 40004 余额不足\n- err.e40005 (DEF): 40005 库存不足\n- err.format (RULE): 错误响应统一格式 {code, message, request_id}\n- err.i18n (RULE): message 字段必须支持 zh/en 两种语言\n- err.sample (EX): {\"code\":40001,\"message\":\"user not found\",\"request_id\":\"abc123\"}\n\n- err.range ~~ err.e40001\n- err.range ~~ err.e40002\n- err.range ~~ err.e40003\n- err.range ~~ err.e40004\n- err.range ~~ err.e40005\n",
+   "vt": "%vt 0.3.1\n%mode doc\n%id err/api\n%lang zh\n\nDEF err.range 业务错误码区间 40000–49999\nDEF err.e40001 40001 用户不存在\nDEF err.e40002 40002 密码错误\nDEF err.e40003 40003 token 过期\nDEF err.e40004 40004 余额不足\nDEF err.e40005 40005 库存不足\nRULE err.format 错误响应统一格式 {code, message, request_id}\nRULE err.i18n message 字段必须支持 zh/en 两种语言\nEX err.sample {\"code\":40001,\"message\":\"user not found\",\"request_id\":\"abc123\"}\nREF err.range ~~ err.e40001\nREF err.range ~~ err.e40002\nREF err.range ~~ err.e40003\nREF err.range ~~ err.e40004\nREF err.range ~~ err.e40005\n",
+   "rawBytes": 649,
+   "vtBytes": 612
+  },
+  {
+   "id": "log_v031",
+   "title": "变更日志 — v0.3.1",
+   "raw": "# changelog/v031\n\n## 变更日志 — v0.3.1\n\n- log.v031 (DEF): v0.3.1 发布于 2024-07-18\n- log.feat1 (DEF): 新增 .vt HIR 层与 .vtg SIR 层\n- log.feat2 (DEF): 新增 vt.resolve 双向 BFS 检索\n- log.feat3 (DEF): 新增 %mode mem 运行时与崩溃恢复\n- log.fix1 (DEF): 修复 doc 编译器在多 facet 节点上的 SHA 不稳定\n- log.break (DEF): 删除 vt lint --fix（规格 §8.3 永久删除）\n- log.compat (RULE): 兼容 Python 3.10+，未引入第三方运行时依赖\n- log.next (EX): 下个迭代：MCP 封装与 vt.render 工具\n\n- log.v031 ~~ log.feat1\n- log.v031 ~~ log.feat2\n- log.v031 ~~ log.feat3\n- log.v031 ~~ log.fix1\n- log.v031 ~~ log.break\n",
+   "vt": "%vt 0.3.1\n%mode doc\n%id changelog/v031\n%lang zh\n\nDEF log.v031 v0.3.1 发布于 2024-07-18\nDEF log.feat1 新增 .vt HIR 层与 .vtg SIR 层\nDEF log.feat2 新增 vt.resolve 双向 BFS 检索\nDEF log.feat3 新增 %mode mem 运行时与崩溃恢复\nDEF log.fix1 修复 doc 编译器在多 facet 节点上的 SHA 不稳定\nDEF log.break 删除 vt lint --fix（规格 §8.3 永久删除）\nRULE log.compat 兼容 Python 3.10+，未引入第三方运行时依赖\nEX log.next 下个迭代：MCP 封装与 vt.render 工具\nREF log.v031 ~~ log.feat1\nREF log.v031 ~~ log.feat2\nREF log.v031 ~~ log.feat3\nREF log.v031 ~~ log.fix1\nREF log.v031 ~~ log.break\n",
+   "rawBytes": 671,
+   "vtBytes": 643
+  }
+ ]
+}

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "VTokenROIABProtocol/v1",
+  "taskForestNodeId": "TF-0496",
+  "declaredAt": "2026-10-23T06:57:50.663Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "frozen-before-live-run",
+  "question": "Is VToken worth keeping as a product capability, judged only on real provider usage?",
+  "endpoint": "http://127.0.0.1:3065/v1/responses",
+  "provider": "space-bunny",
+  "model": "space-bunny",
+  "contextSource": "packages/vtoken/benchmarks/p21_write_efficiency.py (to_markdown / to_vt_full) - information-equivalent raw markdown vs real VToken packing of the same Scenario",
+  "arms": {
+    "control": "raw markdown rendering of the scenario, verbatim",
+    "treatment": "VToken (.vt) packing of the same scenario, verbatim"
+  },
+  "design": {
+    "paired": true,
+    "temperature": 0,
+    "maxOutputTokens": 64,
+    "strata": {
+      "short-en": {
+        "pairs": 10,
+        "meaning": "one scenario context, English question"
+      },
+      "short-zh": {
+        "pairs": 10,
+        "meaning": "one scenario context, Chinese question"
+      },
+      "long-en": {
+        "pairs": 5,
+        "meaning": "four concatenated scenario contexts, English question"
+      },
+      "long-zh": {
+        "pairs": 5,
+        "meaning": "four concatenated scenario contexts, Chinese question"
+      }
+    },
+    "totalPairs": 30,
+    "stoppingRule": "fixed n=30 pairs; no early stopping; exactly one completed live run after this protocol is written"
+  },
+  "metrics": {
+    "primary": "providerInputTokens",
+    "primaryDefinition": "provider-reported input tokens for the same question plus the arm context; reduction = control - treatment",
+    "costProxy": "providerPromptTokens",
+    "secondary": "quality",
+    "qualityDefinition": "the answer contains the expected numeric fact that exists in both arms; scored 0/1 per pair",
+    "latency": "wall-clock ms of the single provider call",
+    "cache": "cached input tokens if the provider reports them; otherwise recorded as null and not used in the decision"
+  },
+  "thresholds": {
+    "materiality": "mean per-pair input-token reduction > 0 AND its 95% bootstrap CI lower bound > 0 AND relative reduction >= 10% of control mean",
+    "qualityNonInferiority": "paired quality delta 95% CI lower bound >= -0.05",
+    "latencyNonRegression": "p95 treatment latency <= 1.25 x p95 control latency",
+    "providerErrors": "zero provider errors across all calls",
+    "decisionRule": "pass => keep (internalise as CRK policy, remove Bridge panel and public flag); otherwise => retire or deadline-bounded hold, never a permanent default-off"
+  },
+  "evidencePolicy": {
+    "humanEvidence": false,
+    "charEstimateNotAccepted": "characters divided by four is explicitly not accepted as a token measure",
+    "fixtureOnlyCannotPass": true
+  }
+}
