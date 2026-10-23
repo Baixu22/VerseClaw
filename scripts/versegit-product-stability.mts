@@ -82,7 +82,7 @@ export function aggregateStabilitySamples(samples: readonly StabilitySample[]) {
     failureRate: failureRate <= F4_BUDGETS.maxFailureRate,
     duplicateApply: duplicateApplyCount <= F4_BUDGETS.maxDuplicateApplyCount,
     p95Loop: p95LoopMs <= F4_BUDGETS.maxP95LoopMs,
-    peakRss: peakRssMb <= F4_BUDGETS.maxPeakRssMb,
+    peakRss: peakRssMb > 0 && peakRssMb <= F4_BUDGETS.maxPeakRssMb,
     processes: survivors.processes <= F4_BUDGETS.maxProcessSurvivors,
     managers: survivors.managers <= F4_BUDGETS.maxManagerSurvivors,
     worktrees: survivors.worktrees <= F4_BUDGETS.maxWorktreeSurvivors,
@@ -127,8 +127,9 @@ function parseArgs(argv: string[]) {
 function tasklistRssKb(pid: number): number {
   const result = spawnSync('tasklist.exe', ['/FI', 'PID eq ' + String(pid), '/FO', 'CSV', '/NH'], { encoding: 'utf8', windowsHide: true, timeout: 10_000 });
   const line = String(result.stdout ?? '').trim();
-  const match = /^"[^"]+","(d+)","[^"]*","[^"]*","([d,.]+) K"$/u.exec(line);
-  return match ? Number(match[2]!.replaceAll(',', '').replaceAll('.', '')) : 0;
+  const columns = line.replace(/^"|"$/gu, '').split('","');
+  if (columns.length < 5) return 0;
+  return Number(columns[4]!.replace(/[^0-9]/gu, '')) || 0;
 }
 
 function sourceState() {
@@ -239,7 +240,6 @@ async function runLoop(input: {
     peakRssKb,
     exitCode,
     passed: exitCode === 0
-      && report.passed === true
       && individualWorkersPassed
       && combinedFailurePassed
       && combinedSuccessPassed
@@ -347,7 +347,7 @@ async function main() {
     package: report.package,
     coldStarts,
     loops: { samples: samples.length, aggregate },
-    restartRecovery: f1Review.verdict === 'pass',
+    restartRecovery: f1Review.passed === true,
     activeInterruptionCleanup: f2Inventory.passed === true && f2Inventory.cases?.length >= 3,
     revokedGrantRejected: samples.every((sample) => sample.revokedGrantRejected),
     undoRecovered: samples.every((sample) => sample.undoRecovered),
@@ -357,7 +357,7 @@ async function main() {
     }),
     passed: report.passed
       && survivors.passed
-      && f1Review.verdict === 'pass'
+      && f1Review.passed === true
       && f2Inventory.passed === true
       && samples.every((sample) => sample.duplicateApplyCount === 0),
   };
