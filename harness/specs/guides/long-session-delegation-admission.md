@@ -1,3 +1,11 @@
+---
+id: long-session-delegation-admission
+title: Long-session delegation admission
+type: guide
+appliesTo:
+  - long-session
+  - gateway-backend-communication
+---
 # Long-session delegation admission
 
 This document describes the C2 runtime-bridge contract. It records the production owner path and the meaning of the receipt returned by `hostApi.sessions.delegate()`.
