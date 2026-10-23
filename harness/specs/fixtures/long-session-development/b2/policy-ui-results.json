@@ -1,0 +1,111 @@
+{
+  "schema": "clawx.long-session.policy-ui-results/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "workspaceId": "default",
+  "primarySessionKey": "agent:main:dashboard:bd9a7ec9-d3eb-4440-976a-a1fc5de394ba",
+  "secondarySessionKey": "agent:main:policy-secondary",
+  "actualHostGateway": {
+    "beforeRestart": {
+      "generationState": "missing",
+      "backend": {
+        "runtime": "openclaw",
+        "kind": "openclaw",
+        "ownsNativeCompaction": false,
+        "provider": "openai",
+        "model": "gpt-5.5"
+      },
+      "effectiveStatus": "unverified",
+      "sources": [
+        "session.entry",
+        "agents.defaults",
+        "model resolution",
+        "runtime-effective-capability.observation",
+        "long-task-control.queue",
+        "cron configuration"
+      ]
+    },
+    "afterRestart": {
+      "generationState": "missing",
+      "workspaceId": "default",
+      "sessionKey": "agent:main:dashboard:bd9a7ec9-d3eb-4440-976a-a1fc5de394ba"
+    }
+  },
+  "uiScenario": {
+    "primaryRuntime": "codex",
+    "secondaryRuntime": "openclaw",
+    "keyboardOpened": true,
+    "sourceDetailsOpened": true,
+    "actionDetailsOpened": true,
+    "narrowViewport": {
+      "width": 680,
+      "height": 760,
+      "panelBounded": true,
+      "toggleVisible": true
+    }
+  },
+  "transport": "built Electron host:invoke -> actual Gateway; renderer host replay for deterministic two-session UI",
+  "screenshots": [
+    {
+      "name": "policy-surface-wide",
+      "path": "policy-surface-wide.png",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "pixels": {
+        "width": 1922,
+        "height": 1202
+      },
+      "sha256": "a2f414df16f54c56f2cffadedef7d5eb7957c85dabc2ff8386f7fe38f69bf0be"
+    },
+    {
+      "name": "policy-surface-narrow",
+      "path": "policy-surface-narrow.png",
+      "viewport": {
+        "width": 680,
+        "height": 760
+      },
+      "pixels": {
+        "width": 680,
+        "height": 760
+      },
+      "sha256": "5a5523644fe202c980aabdc1b6a595978c57d7c61565250806e8487a388d8f8e"
+    }
+  ],
+  "generatedAt": "2026-10-23T19:18:32.708Z",
+  "candidate": "e2302cdaee166f29019d1a677f4ffbb645104b52",
+  "base": "7174660def1d740424d54f646b33733ca719a242",
+  "acceptanceChecks": [
+    {
+      "id": "configured-effective-provenance",
+      "status": "pass",
+      "evidence": "The built renderer shows configured backend/model, current-run status, sources, and compatibility/override reasons."
+    },
+    {
+      "id": "unknown-is-preserved",
+      "status": "pass",
+      "evidence": "The real host/Gateway policy remains unverified for current-run facts; the UI does not promote configured values."
+    },
+    {
+      "id": "action-permissions",
+      "status": "pass",
+      "evidence": "The UI scenario renders all three grant outcomes and normalized action names without grant identifiers."
+    },
+    {
+      "id": "lifecycle-boundaries",
+      "status": "pass",
+      "evidence": "Abort/stop, activity-view/transcript-resource TTL, and transcript-fork/Git-worktree boundaries are visible in the same activity entry."
+    },
+    {
+      "id": "scope-safety",
+      "status": "pass",
+      "evidence": "A workspace switch rejects stale responses; a two-session UI switch replaces codex with openclaw policy; Gateway restart returns the same canonical workspace/session scope."
+    },
+    {
+      "id": "localization-keyboard-narrow",
+      "status": "pass",
+      "evidence": "Four locales pass i18n lint; keyboard activation and a bounded 680px layout pass in built Electron."
+    }
+  ]
+}

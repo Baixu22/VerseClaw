@@ -1,0 +1,35 @@
+{
+  "schema": "clawx.long-session.policy-ui-screenshots/v1",
+  "generatedAt": "2026-10-23T19:18:32.708Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": "e2302cdaee166f29019d1a677f4ffbb645104b52",
+  "screenshots": [
+    {
+      "name": "policy-surface-wide",
+      "path": "policy-surface-wide.png",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "pixels": {
+        "width": 1922,
+        "height": 1202
+      },
+      "sha256": "a2f414df16f54c56f2cffadedef7d5eb7957c85dabc2ff8386f7fe38f69bf0be"
+    },
+    {
+      "name": "policy-surface-narrow",
+      "path": "policy-surface-narrow.png",
+      "viewport": {
+        "width": 680,
+        "height": 760
+      },
+      "pixels": {
+        "width": 680,
+        "height": 760
+      },
+      "sha256": "5a5523644fe202c980aabdc1b6a595978c57d7c61565250806e8487a388d8f8e"
+    }
+  ]
+}
