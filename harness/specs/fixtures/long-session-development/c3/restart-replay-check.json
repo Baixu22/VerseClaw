@@ -1,0 +1,75 @@
+{
+  "schema": "clawx.long-session.restart-replay-check/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": {
+    "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+    "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f"
+  },
+  "before": {
+    "batchId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2",
+    "status": "terminal",
+    "outcome": "failed",
+    "generationState": "matching",
+    "consolidatedReceiptId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2:consolidated:v1",
+    "counts": {
+      "expected": 1,
+      "settled": 1,
+      "completed": 0,
+      "failed": 1,
+      "cancelled": 0,
+      "unknown": 0
+    },
+    "delivery": {
+      "state": "pending",
+      "delivered": 0,
+      "pending": 1,
+      "suspended": 0,
+      "failed": 0,
+      "discarded": 0,
+      "waitingForRequesterTurn": false
+    },
+    "members": [
+      {
+        "runId": "f5d43a3e-da25-418e-9c1f-267bfbc77343",
+        "roleName": "architect",
+        "status": "failed",
+        "deliveryStatus": "pending"
+      }
+    ]
+  },
+  "afterRestart": {
+    "batchId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2",
+    "status": "terminal",
+    "consolidatedReceiptId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2:consolidated:v1",
+    "members": [
+      {
+        "runId": "f5d43a3e-da25-418e-9c1f-267bfbc77343",
+        "roleName": "architect",
+        "status": "failed",
+        "deliveryStatus": "pending"
+      }
+    ]
+  },
+  "sameBatchId": true,
+  "sameConsolidatedReceiptId": true,
+  "sameMembers": true,
+  "resetFence": {
+    "batchId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2",
+    "status": "fenced",
+    "outcome": "fenced",
+    "generationState": "mismatch",
+    "consolidatedReceiptId": null
+  },
+  "result": "PASS",
+  "cleanup": {
+    "electronClosed": true,
+    "gatewayStopped": true,
+    "processSurvivors": 0,
+    "remaining": [],
+    "recoveryRequired": false
+  },
+  "limitations": [
+    "Actual delivered completion text was not available without a live provider."
+  ]
+}

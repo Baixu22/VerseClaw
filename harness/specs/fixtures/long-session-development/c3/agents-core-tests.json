@@ -1,0 +1,14 @@
+{
+  "schema": "clawx.long-session.agents-core-test-count/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "commandId": "c3-unit-agents-core",
+  "files": 2,
+  "total": 8,
+  "passed": 8,
+  "failed": 0,
+  "tests": [
+    "src/agents/subagent-announce-generation-pin.test.ts",
+    "src/agents/subagent-announce-delivery.visible-reply.test.ts"
+  ]
+}

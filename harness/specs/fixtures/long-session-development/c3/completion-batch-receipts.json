@@ -1,0 +1,190 @@
+{
+  "schema": "clawx.long-session.completion-batch-receipts/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": {
+    "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+    "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "dirty": false
+  },
+  "e2eCommandId": "c3-e2e",
+  "receipt": {
+    "schema": "clawx.long-session.completion-continuation-e2e/v1",
+    "driven_by": "agent",
+    "actor": "codex-long-session-r2",
+    "workspaceId": "default",
+    "rootPath": "D:\\tmp\\long-session-c3-final\\verse-claw-e2e-run-GMZZ6A\\verse-claw-e2e-home-MS9tVA\\.openclaw\\workspace",
+    "sessionKey": "agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42",
+    "sessionGeneration": "9642f799-305c-45ac-9513-3cd4af85d3a2",
+    "taskRef": "a8b0de2f-ec66-464f-bb97-c2e767920d9a",
+    "taskLedgerStatusAfter": "todo",
+    "idempotencyKey": "delegation-admission-1792794171281",
+    "first": {
+      "status": "accepted",
+      "admissionId": "7433f574-6c04-4d26-9ba0-12541c0b5d64",
+      "orchestrationRunId": "orch_f25b7c36-8748-4e65-a606-543b4275f031",
+      "bindingRevision": 1,
+      "parentEnvironmentRevision": 1,
+      "budget": {
+        "status": "observed",
+        "reason": null,
+        "maxWorkers": 5,
+        "process": {
+          "maxChildrenPerAgent": 5,
+          "maxSpawnDepth": 1,
+          "source": "agents.defaults.subagents"
+        },
+        "backgroundTerminal": {
+          "lane": "subagent",
+          "maxConcurrent": 8,
+          "activeCount": 0,
+          "queuedCount": 0,
+          "source": "process.command-queue.subagent"
+        }
+      },
+      "children": [
+        {
+          "roleName": "architect",
+          "taskNodeId": "architect-1",
+          "roleInstanceId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:architect-1:architect:attempt-1",
+          "admissionStatus": "accepted",
+          "runState": "accepted-not-completed",
+          "completionObserved": false,
+          "backend": "subagent",
+          "childSessionKey": "agent:main:subagent:ca1c57eb-3f78-4fb1-9921-02e756fbf417",
+          "childRunId": "f5d43a3e-da25-418e-9c1f-267bfbc77343",
+          "toolAuthorization": {
+            "status": "effective",
+            "source": "role-contract+parent-clamp",
+            "roleName": "architect",
+            "effectiveRoleName": "architect",
+            "parentRoleName": null,
+            "allowlist": [
+              "read",
+              "glob",
+              "grep"
+            ],
+            "denylist": [
+              "write",
+              "edit",
+              "apply_patch",
+              "team_orchestrate",
+              "task_loop",
+              "mission_loop",
+              "exec",
+              "bash",
+              "__role_capability:mcp_write",
+              "web_search",
+              "web_fetch",
+              "x_search",
+              "code_execution",
+              "browser",
+              "__role_capability:mcp_network"
+            ]
+          },
+          "isolation": {
+            "mode": "shared",
+            "backend": "shared-inprocess",
+            "canonicalRoot": "D:\\tmp\\long-session-c3-final\\verse-claw-e2e-run-GMZZ6A\\verse-claw-e2e-home-MS9tVA\\.openclaw\\workspace",
+            "branch": null,
+            "detachedHead": false,
+            "verifiedCheckout": false
+          },
+          "schedulerWave": 1,
+          "error": null
+        }
+      ],
+      "completionObserved": false
+    },
+    "duplicate": {
+      "status": "accepted",
+      "replayed": true,
+      "orchestrationRunId": "orch_f25b7c36-8748-4e65-a606-543b4275f031"
+    },
+    "restartRetry": {
+      "status": "accepted",
+      "replayed": true,
+      "orchestrationRunId": "orch_f25b7c36-8748-4e65-a606-543b4275f031"
+    },
+    "staleGeneration": {
+      "status": "rejected",
+      "error": "Coordinator binding is generation-mismatch: session-generation-mismatch"
+    },
+    "unsupportedBackend": {
+      "status": "rejected",
+      "error": "Unsupported delegation backend: native-shell"
+    },
+    "unknownWorker": {
+      "status": "rejected",
+      "phantomChildCreated": false
+    },
+    "terminalBatch": {
+      "batchId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2",
+      "status": "terminal",
+      "outcome": "failed",
+      "generationState": "matching",
+      "consolidatedReceiptId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2:consolidated:v1",
+      "counts": {
+        "expected": 1,
+        "settled": 1,
+        "completed": 0,
+        "failed": 1,
+        "cancelled": 0,
+        "unknown": 0
+      },
+      "delivery": {
+        "state": "pending",
+        "delivered": 0,
+        "pending": 1,
+        "suspended": 0,
+        "failed": 0,
+        "discarded": 0,
+        "waitingForRequesterTurn": false
+      },
+      "members": [
+        {
+          "runId": "f5d43a3e-da25-418e-9c1f-267bfbc77343",
+          "roleName": "architect",
+          "status": "failed",
+          "deliveryStatus": "pending"
+        }
+      ]
+    },
+    "restartReplay": {
+      "batchId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2",
+      "status": "terminal",
+      "consolidatedReceiptId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2:consolidated:v1",
+      "members": [
+        {
+          "runId": "f5d43a3e-da25-418e-9c1f-267bfbc77343",
+          "roleName": "architect",
+          "status": "failed",
+          "deliveryStatus": "pending"
+        }
+      ]
+    },
+    "resetFence": {
+      "batchId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2",
+      "status": "fenced",
+      "outcome": "fenced",
+      "generationState": "mismatch",
+      "consolidatedReceiptId": null
+    },
+    "transport": "built Electron session.activitySnapshot -> persisted subagent registry batches -> existing generation-pinned delivery owner"
+  },
+  "boundedBatch": {
+    "expected": 1,
+    "settled": 1,
+    "members": 1
+  },
+  "separation": {
+    "taskAcceptance": "delegation receipt remained accepted-not-completed",
+    "completion": "terminal batch derived only after worker ended",
+    "delivery": "existing durable delivery state remained independent"
+  },
+  "limitations": [
+    "The no-provider worker terminated as failed; delivered completion text was therefore not observed.",
+    "Managed-worktree completion delivery and live-provider quality are unmeasured."
+  ]
+}

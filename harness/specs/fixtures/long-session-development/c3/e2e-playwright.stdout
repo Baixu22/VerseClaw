@@ -1,0 +1,9 @@
+
+Running 1 test using 1 worker
+
+
+
+
+
+[1A[2K[1/1] tests\e2e\long-session-completion-continuation.spec.ts:154:5 › consolidates deferred worker completion into one generation-fenced batch after restart
+[1A[2K  1 passed (41.4s)

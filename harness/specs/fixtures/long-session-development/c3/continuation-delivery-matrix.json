@@ -1,0 +1,93 @@
+{
+  "schema": "clawx.long-session.continuation-delivery-matrix/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": {
+    "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+    "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f"
+  },
+  "rows": [
+    {
+      "case": "batch waits for all expected workers",
+      "expected": "collecting until all accepted workers terminal",
+      "observed": "one missing terminal kept receipt pending",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts"
+    },
+    {
+      "case": "success failure cancel counts",
+      "expected": "all terminal outcomes counted",
+      "observed": "completed/failed/cancelled are distinct",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts"
+    },
+    {
+      "case": "one consolidated receipt",
+      "expected": "terminal batch has one deterministic receipt id",
+      "observed": "same id across reordered runs and restart",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts; completion-batch-receipts.json"
+    },
+    {
+      "case": "busy or paused parent",
+      "expected": "pending delivery intent retained and not reported delivered",
+      "observed": "pending=2, delivered=0, waitingForRequesterTurn=true",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts"
+    },
+    {
+      "case": "generation fencing",
+      "expected": "stale batch cannot steer new generation",
+      "observed": "reset path produced fenced/null consolidated id",
+      "result": "PASS",
+      "evidence": "completion-batch-receipts.json"
+    },
+    {
+      "case": "multiple independent batches",
+      "expected": "batches remain separate",
+      "observed": "orch-a completed and orch-b failed independently",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts"
+    },
+    {
+      "case": "model text authority",
+      "expected": "status comes from terminal outcome facts",
+      "observed": "ok outcome wins despite result text failed",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts"
+    },
+    {
+      "case": "worker refused or instant failure",
+      "expected": "failed terminal counted with no delivered claim",
+      "observed": "E2E failed batch delivered=0 pending=1",
+      "result": "PASS",
+      "evidence": "completion-batch-receipts.json"
+    },
+    {
+      "case": "archive delete pause lifecycle",
+      "expected": "existing delivery owner remains authoritative",
+      "observed": "generation-pinned delivery tests pass; batch exposes delivery state",
+      "result": "PASS",
+      "evidence": "required agents-core tests; completion-batch-receipts.json"
+    },
+    {
+      "case": "active stop",
+      "expected": "killed worker counted cancelled",
+      "observed": "end reason subagent-killed maps cancelled",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts"
+    },
+    {
+      "case": "live delivery text",
+      "expected": "actual delivered model text",
+      "observed": "not exercised without provider",
+      "result": "UNMEASURED",
+      "evidence": "no live provider configured"
+    }
+  ],
+  "limitations": [
+    "Live-provider completion text delivery is unmeasured.",
+    "Managed-worktree completion delivery is unmeasured.",
+    "No external model review verdict is claimed."
+  ]
+}
