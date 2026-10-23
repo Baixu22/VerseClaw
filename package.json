@@ -27,6 +27,8 @@
     "eval:runtime-memory:full": "node openclaw_runtime/scripts/run-runtime-memory-eval.mjs",
     "eval:role-memory:eval": "pnpm exec vitest run tests/unit/role-memory-eval-pack.test.ts --reporter=verbose",
     "eval:context-compression": "node scripts/context-compression-eval-runner.mjs",
+    "long-session:d2:evidence": "node --experimental-strip-types scripts/long-session-paired-evaluation.mjs",
+    "long-session:d2:evidence:check": "node --experimental-strip-types scripts/long-session-paired-evaluation.mjs --check",
     "eval:ast-readonly": "pnpm exec vitest run tests/unit/runtime-ast-readonly-deep-eval.test.ts --reporter=verbose",
     "eval:ast-investment": "pnpm exec vitest run tests/unit/runtime-ast-readonly-investment-eval.test.ts --reporter=verbose",
     "runtime:effectiveness": "node scripts/runtime-effectiveness.mjs",

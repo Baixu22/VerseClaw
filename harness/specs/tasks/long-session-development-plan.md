@@ -124,7 +124,7 @@ C1 把协调绑定保存在现有 Workspace store 的 `WorkspaceProfile.coordina
 
 **连续策略先评测后选择**
 
-D2 在评测前冻结不少于 30 对 agent 驱动场景、相同模型/输入和指标预算。目标为关键事实保真 100%、下一步正确率至少 95%、误报完成 0；推广门为费用或输入 token 净少至少 15%、P95 不超过 baseline 1.10 倍、安全零回归。记录 first-token、wall-clock、token/cache/cost 的真实样本，不用字符估算或 token 曲线代替实际收益。
+D2 在评测前冻结不少于 30 对 agent 驱动场景、相同模型/输入和指标预算。目标为关键事实保真 100%、下一步正确率至少 95%、误报完成 0；推广门为费用或输入 token 净少至少 15%、P95 不超过 baseline 1.10 倍、安全零回归。记录 first-token、wall-clock、token/cache/cost 的真实样本，不用字符估算或 token 曲线代替实际收益。D2 已把该契约落成 `shared/long-session-paired-evaluation.ts` + `scripts/long-session-paired-evaluation.mjs`：冻结 hash、五类各 6 对、负例重跑评分器；当前环境无获授权的 live provider，因此盘上报告为 `EVIDENCE_INSUFFICIENT`/keep-baseline，token、cost 与时延单元格为 null（未测），仅 structural projection 检查为 agent-derived。
 
 D3 可完成为 keep-baseline/NO-GO，核心闭环继续使用已实现的手动或原生 compaction。TF-0424 的 shadow/no-go 保留历史身份；最多选择一个初筛候选，若采用必须另写明确的实现范围、适用 backend、回滚和错误 fallback。规划与决策文本不激活新路径或翻冻结默认。
 
