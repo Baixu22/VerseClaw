@@ -163,4 +163,3 @@ export async function filterArchivedSessionStore(
     Object.entries(store).filter(([sessionKey]) => !archivedKeys.has(sessionKey)),
   );
 }
-
