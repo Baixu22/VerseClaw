@@ -233,6 +233,9 @@ describe('TF-0003 default configuration matrix', () => {
     });
   });
 
+  // TF-0496 retired VToken on measured provider usage (see
+  // docs/dev/vtoken-retirement-decision.md). The old opt-in lock is replaced by a
+  // lock on the retirement: neither the default nor an explicit config can enable it.
   it('locks VToken assembly default OFF (opt-in) [vtoken-assembly-default]', () => {
     expect(DEFAULT_VTOKEN_ASSEMBLY_CONFIG.enabled).toBe(false);
     expect(resolveVtokenAssemblyConfig({}).enabled).toBe(false);
@@ -240,7 +243,7 @@ describe('TF-0003 default configuration matrix', () => {
       resolveVtokenAssemblyConfig({
         runtime: { vtoken: { assembly: { enabled: true } } },
       }).enabled,
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('locks Workspace Context default ON and legacy DCS context flags default OFF [context-block-defaults]', () => {
@@ -390,14 +393,13 @@ describe('TF-0003 default configuration matrix', () => {
     ).toBe(false);
   });
 
-  // FP-P0-03: md row "VToken bridge" — default OFF, env=1 or Developer toggle to enable.
+  // TF-0496 retired the VToken bridge (see docs/dev/vtoken-retirement-decision.md), so
+  // the enable form no longer has any effect; only a disable remains meaningful.
   it('locks VToken bridge default OFF (opt-in) [vtoken-bridge-default]', async () => {
     const { readVtokenBridgeEnabledFromEnv } = await import('../../electron/services/vtoken-bridge');
-    // No env set (beforeEach deleted it) ⇒ off.
     expect(readVtokenBridgeEnabledFromEnv()).toBe(false);
     process.env.VERSE_VTOKEN_BRIDGE_ENABLED = '1';
-    expect(readVtokenBridgeEnabledFromEnv()).toBe(true);
-    // Explicit kill wins over the enable form.
+    expect(readVtokenBridgeEnabledFromEnv()).toBe(false);
     process.env.VERSE_VTOKEN_BRIDGE_ENABLED = '0';
     expect(readVtokenBridgeEnabledFromEnv()).toBe(false);
   });

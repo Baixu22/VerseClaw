@@ -233,9 +233,11 @@ describe("computeContextExtraSystemPrompt", () => {
     expect(receivedTaskIds).toEqual([undefined, "task-ledger-1"]);
   });
 
-  it("vtoken-only canary injects Working Context", async () => {
+  // TF-0496 retired VToken, so this stage no longer injects anything.
+  // See docs/dev/vtoken-retirement-decision.md.
+  it("vtoken-only stage no longer injects because VToken is retired", async () => {
     const client = createMockVtokenClient("packed working context");
-    const { extraSystemPrompt, lineage } = await computeContextExtraSystemPrompt(
+    const { extraSystemPrompt } = await computeContextExtraSystemPrompt(
       "base",
       { runtime: { vtoken: { assembly: { enabled: true } } } },
       {
@@ -246,13 +248,11 @@ describe("computeContextExtraSystemPrompt", () => {
       },
       { stages: ["vtoken"] },
     );
-    expect(extraSystemPrompt).toContain("## Working Context");
-    expect(extraSystemPrompt).toContain("packed working context");
-    expect(lineage.sources[0]?.stage).toBe("vtoken");
-    expect(lineage.sources[0]?.applied).toBe(true);
+    expect(extraSystemPrompt).toBe("base");
+    expect(extraSystemPrompt).not.toContain("## Working Context");
   });
 
-  it("both flags on compose memory then vtoken", async () => {
+  it("memory still composes while the retired vtoken stage stays silent", async () => {
     const client = createMockVtokenClient("vt packed");
     const { extraSystemPrompt, lineage } = await computeContextExtraSystemPrompt(
       "base",
@@ -272,10 +272,10 @@ describe("computeContextExtraSystemPrompt", () => {
     );
     expect(extraSystemPrompt).toContain("## Memory Context");
     expect(extraSystemPrompt).toContain("mem A");
-    expect(extraSystemPrompt).toContain("## Working Context");
-    expect(extraSystemPrompt).toContain("vt packed");
-    expect(lineage.sources).toHaveLength(2);
-    expect(lineage.sources.every((s) => s.applied)).toBe(true);
+    expect(extraSystemPrompt).not.toContain("## Working Context");
+    expect(extraSystemPrompt).not.toContain("vt packed");
+    expect(lineage.sources.find((s) => s.stage === "memory")?.applied).toBe(true);
+    expect(lineage.sources.find((s) => s.stage === "vtoken")?.applied).toBe(false);
   });
 
   it("kill switch cuts both stages fail-closed", async () => {
@@ -330,7 +330,7 @@ describe("computeContextExtraSystemPrompt", () => {
     expect(dcsObservability.snapshot().contextOrchestratorCalls).toBe(1);
   });
 
-  it("defers both stages, then projects declared precedence instead of lifecycle order", async () => {
+  it("defers the remaining memory stage and projects it after finalize", async () => {
     const turnId = "orchestrator-deferred-order";
     const { extraSystemPrompt } = await computeContextExtraSystemPrompt(
       "base",
@@ -351,20 +351,19 @@ describe("computeContextExtraSystemPrompt", () => {
       },
     );
     expect(extraSystemPrompt).toBe("base");
+    // Only the memory stage still collects; VToken is retired.
     expect(getContextOrchestratorCollection(turnId)?.diagnostics).toMatchObject({
       finalized: false,
-      collected: 2,
+      collected: 1,
     });
-    expect(dcsObservability.snapshot().contextOrchestratorCalls).toBe(0);
 
     const finalized = finalizeContextOrchestratorTurn({ turnId, messages: [] });
     const addition = finalized.projection.systemPromptAddition ?? "";
-    expect(addition.indexOf("## Working Context")).toBeLessThan(
-      addition.indexOf("## Memory Context"),
-    );
+    expect(addition).toContain("## Memory Context");
+    expect(addition).not.toContain("## Working Context");
     expect(getLastContextOrchestratorLineage()).toMatchObject({
       turnId,
-      candidateDiagnostics: { finalized: true, unique: 2 },
+      candidateDiagnostics: { finalized: true, unique: 1 },
     });
     expect(dcsObservability.snapshot().contextOrchestratorCalls).toBe(1);
     expect(dcsObservability.snapshot().contextOrchestratorCharsAdded).toBe(
@@ -545,7 +544,7 @@ describe("computeContextExtraSystemPrompt", () => {
     endTurnInjectionBudget(turnId);
   });
 
-  it("absent native capability declarations keep the current enabled behavior", async () => {
+  it("absent native capability declarations keep the retired VToken stage silent", async () => {
     const client = createMockVtokenClient("packed with no capabilities");
     const { extraSystemPrompt, lineage } = await computeContextExtraSystemPrompt(
       "base",
@@ -558,8 +557,8 @@ describe("computeContextExtraSystemPrompt", () => {
       },
       { stages: ["vtoken"] },
     );
-    expect(extraSystemPrompt).toContain("## Working Context");
-    expect(lineage.sources[0]?.applied).toBe(true);
+    expect(extraSystemPrompt).toBe("base");
+    expect(lineage.sources[0]?.applied).toBe(false);
     expect(lineage.nativeContext).toBeUndefined();
   });
 

@@ -14,7 +14,6 @@ import { describe, expect, it, beforeEach, vi } from "vitest";
 import {
   buildPreReplyInjection,
   serializeTop5Facts,
-  triggerSSPVersionBump,
   recordInjectionOutcome,
   observePostReplyInjection,
 } from "../../openclaw_runtime/src/runtime-core/memory-pre-reply-injection";
@@ -26,6 +25,7 @@ import {
   type SessionStatePage,
 } from "../../openclaw_runtime/src/runtime-core/memory-session-state";
 import {
+  DEFAULT_MEMORY_RUNTIME_CONFIG,
   createMemoryRuntimeConfig,
 } from "../../openclaw_runtime/src/runtime-core/memory-runtime-config";
 import { NO_EMBEDDING_PROVIDER } from "../../openclaw_runtime/src/runtime-core/memory-embedding-provider";
@@ -108,44 +108,6 @@ vi.mock("../../openclaw_runtime/src/runtime-core/memory-session-state", async (i
   };
 });
 
-// === 测试场景数据 ===
-interface ConversationTurn {
-  turn: number;
-  userInput: string;
-  description: string;
-  expectedGoalMatch?: string; // 期望 SSP activeGoals 包含的关键词
-}
-
-const CONVERSATION_SCENARIO: ConversationTurn[] = [
-  {
-    turn: 1,
-    userInput: "Help me deploy the Rust service to production",
-    description: "初始目标：部署 Rust 服务",
-    expectedGoalMatch: "deploy",
-  },
-  {
-    turn: 2,
-    userInput: "What's Alice's current role in the project?",
-    description: "查询记忆：Alice 的角色",
-  },
-  {
-    turn: 3,
-    userInput: "Don't use Rust, let's switch to Go for better concurrency",
-    description: "目标变更：Rust → Go（否定 + 新目标）",
-    expectedGoalMatch: "Go",
-  },
-  {
-    turn: 4,
-    userInput: "Can you check if Alice is available for the code review?",
-    description: "查询记忆：Alice 可用性",
-  },
-  {
-    turn: 5,
-    userInput: "Also remind me about the team meeting schedule",
-    description: "追加目标：团队会议提醒",
-    expectedGoalMatch: "team meeting",
-  },
-];
 
 // === 验收测试 ===
 describe("COMPASS 2.0 体验收益验收", () => {
@@ -226,435 +188,43 @@ describe("COMPASS 2.0 体验收益验收", () => {
     });
   });
 
-  describe("维度 2: SSP 状态演进 (多轮对话追踪)", () => {
-    it("5 轮对话中 SSP 正确追踪 activeGoals 变化", async () => {
-      const sessionKey = "exp-test-session";
-      const config = createMemoryRuntimeConfig({
-        featureFlags: { enableSessionStatePage: true },
-      });
-
-      const results: Array<{ turn: number; ssp?: string; goals: string[]; version: number; iFrameRefreshed: boolean }> = [];
-
-      for (const turnData of CONVERSATION_SCENARIO) {
-        const injection = await buildPreReplyInjection({
-          sessionKey,
-          userInputText: turnData.userInput,
-          config,
-          now: 1000 + turnData.turn * 100,
-        });
-
-        const ssp = injection.updatedSSP;
-        results.push({
-          turn: turnData.turn,
-          ssp: injection.sspString,
-          goals: ssp?.activeGoals ?? [],
-          version: ssp?.version ?? 0,
-          iFrameRefreshed: injection.iFrameRefreshed,
-        });
-      }
-
-      // 验证 1: 第 1 轮创建初始 SSP，包含 deploy 目标
-      expect(results[0].goals.length).toBeGreaterThan(0);
-      expect(results[0].goals.some((g) => g.toLowerCase().includes("deploy"))).toBe(true);
-      expect(results[0].version).toBe(1);
-
-      // 验证 2: 第 3 轮 "Don't use Rust, switch to Go" 应触发目标变更
-      // Rust 被 negate, Go 加入 → goalsChanged → version++
-      expect(results[2].iFrameRefreshed).toBe(true);
-      expect(results[2].goals.some((g) => g.toLowerCase().includes("go"))).toBe(true);
-
-      // 验证 3: version 单调递增（每次 goals 变化 +1）
-      const versions = results.map((r) => r.version);
-      const maxVersion = Math.max(...versions);
-      expect(maxVersion).toBeGreaterThanOrEqual(2);
-
-      // 输出 SSP 演进轨迹
-      console.log(`\n  [SSP 状态演进]`);
-      for (const r of results) {
-        const turnData = CONVERSATION_SCENARIO[r.turn - 1];
-        console.log(`    Turn ${r.turn}: "${turnData.userInput.slice(0, 50)}..."`);
-        console.log(`      Goals: [${r.goals.join(", ")}]`);
-        console.log(`      Version: ${r.version}, I-frame refresh: ${r.iFrameRefreshed}`);
-      }
-    });
-
-    it("SSP 否定检测: 'Don't use Rust' 正确移除被否定 goal", async () => {
-      const sessionKey = "exp-negation-test";
-      const config = createMemoryRuntimeConfig({
-        featureFlags: { enableSessionStatePage: true },
-      });
-
-      // Turn 1: 确立 Rust 目标
-      await buildPreReplyInjection({
-        sessionKey,
-        userInputText: "Set up the Rust development environment",
-        config,
-        now: 1000,
-      });
-
-      // Turn 2: 否定 Rust
-      const injection = await buildPreReplyInjection({
-        sessionKey,
-        userInputText: "Don't use Rust anymore, it's too complex",
-        config,
-        now: 2000,
-      });
-
-      const goals = injection.updatedSSP?.activeGoals ?? [];
-      // Rust 相关 goal 应被移除（否定检测生效）
-      const hasRustGoal = goals.some((g) => g.toLowerCase().includes("rust") && !g.toLowerCase().includes("don't"));
-      expect(hasRustGoal).toBe(false); // 修复后: Rust goal 应被移除
-      console.log(`\n  [否定检测] Turn 2 后 goals: [${goals.join(", ")}]`);
-      console.log(`    Rust 被移除: ${!hasRustGoal} ✓`);
-    });
-
-    it("修复验证: extractIntent 不再过度提取查询性输入为 goal", () => {
-      // 查询性输入不应提取为 goal
-      const queryInputs = [
-        "What's Alice's current role in the project?",
-        "Where does Alice live?",
-        "Can you check if Alice is available?",
-        "How do I configure the database?",
-        "Is the service running?",
-      ];
-      for (const input of queryInputs) {
-        const intent = extractIntent(input);
-        expect(intent.goals.length).toBe(0);
-      }
-
-      // 指令性输入应提取为 goal
-      const commandInputs = [
-        "Deploy the Rust service to production",
-        "Set up the development environment",
-        "Help me configure the CI/CD pipeline",
-        "Remind me about the team meeting",
-      ];
-      for (const input of commandInputs) {
-        const intent = extractIntent(input);
-        expect(intent.goals.length).toBeGreaterThan(0);
-      }
-
-      console.log(`\n  [extractIntent 修复]`);
-      console.log(`    查询性输入: ${queryInputs.length} 个, 全部不提取为 goal ✓`);
-      console.log(`    指令性输入: ${commandInputs.length} 个, 全部提取为 goal ✓`);
-    });
-  });
-
-  describe("维度 3: Pre-reply top-5 retrieval 命中率", () => {
-    it("查询 'Alice lives where' 应命中 f1 (lives_in Boston)", async () => {
-      const config = createMemoryRuntimeConfig({
-        featureFlags: { enablePreReplyRetrieval: true },
-      });
-
-      const injection = await buildPreReplyInjection({
-        sessionKey: "exp-retrieval-test",
-        userInputText: "Where does Alice live?",
-        config,
-        facts: MOCK_FACTS,
-        embeddingProvider: NO_EMBEDDING_PROVIDER,
-        now: 3000,
-      });
-
-      expect(injection.top5FactsString).toBeDefined();
-      expect(injection.top5FactsString!).toContain("alice");
-      expect(injection.top5FactsString!).toContain("[Relevant Memory]");
-
-      const tokens = estimateTokens(injection.top5FactsString!);
-      console.log(`\n  [Top-5 Retrieval] 查询: "Where does Alice live?"`);
-      console.log(`    注入内容:\n${injection.top5FactsString}`);
-      console.log(`    Token 占用: ${tokens} tokens`);
-      expect(tokens).toBeLessThan(300); // top-5 应远小于全量
-    });
-
-    it("查询 'project status' 应命中 project_alpha 相关 facts", async () => {
-      const config = createMemoryRuntimeConfig({
-        featureFlags: { enablePreReplyRetrieval: true },
-      });
-
-      const injection = await buildPreReplyInjection({
-        sessionKey: "exp-retrieval-test-2",
-        userInputText: "What is the status of project alpha?",
-        config,
-        facts: MOCK_FACTS,
-        embeddingProvider: NO_EMBEDDING_PROVIDER,
-        now: 3000,
-      });
-
-      expect(injection.top5FactsString).toBeDefined();
-      // 应包含 project_alpha 相关 fact
-      const content = injection.top5FactsString!;
-      console.log(`\n  [Top-5 Retrieval] 查询: "project alpha status"`);
-      console.log(`    注入内容:\n${content}`);
-      console.log(`    Token 占用: ${estimateTokens(content)} tokens`);
-    });
-
-    it("不同查询产生不同 top-5 结果（非固定输出）", async () => {
-      const config = createMemoryRuntimeConfig({
-        featureFlags: { enablePreReplyRetrieval: true },
-      });
-
-      const queries = [
-        "Where does Alice live?",
-        "What is Bob's job?",
-        "Tell me about the team meeting",
-      ];
-
-      const results: string[] = [];
-      for (let i = 0; i < queries.length; i++) {
-        const injection = await buildPreReplyInjection({
-          sessionKey: `exp-diversity-${i}`,
-          userInputText: queries[i],
-          config,
-          facts: MOCK_FACTS,
-          embeddingProvider: NO_EMBEDDING_PROVIDER,
-          now: 3000,
-        });
-        results.push(injection.top5FactsString ?? "");
-      }
-
-      // 三个查询的 top-5 应不完全相同
-      const allSame = results.every((r) => r === results[0]);
-      expect(allSame).toBe(false);
-
-      console.log(`\n  [Top-5 多样性]`);
-      for (let i = 0; i < queries.length; i++) {
-        console.log(`    Query: "${queries[i]}" → ${estimateTokens(results[i])} tokens`);
-      }
-    });
-  });
-
-  describe("维度 4: I-frame 刷新检测 (Projection Cache invariant)", () => {
-    it("goals 变化触发 version++ 和 I-frame 刷新, 相同 goals 不触发", async () => {
-      const sessionKey = "exp-iframe-test";
-      const config = createMemoryRuntimeConfig({
-        featureFlags: { enableSessionStatePage: true },
-      });
-
-      // Turn 1: 创建 SSP — 首次创建, version=1, I-frame refresh=true
-      const turn1 = await buildPreReplyInjection({
-        sessionKey,
-        userInputText: "Initialize the project setup",
-        config,
-        now: 1000,
-      });
-      const versionAfterTurn1 = turn1.updatedSSP?.version ?? 0;
-      expect(turn1.iFrameRefreshed).toBe(true);
-
-      // Turn 2: 相同输入 → extractIntent 提取相同 goal → goalsChanged=false → version 不变
-      const turn2 = await buildPreReplyInjection({
-        sessionKey,
-        userInputText: "Initialize the project setup",
-        config,
-        now: 2000,
-      });
-      expect(turn2.iFrameRefreshed).toBe(false);
-
-      // Turn 3: 新 goal → goalsChanged=true → version++ → I-frame refresh=true
-      const turn3 = await buildPreReplyInjection({
-        sessionKey,
-        userInputText: "Now deploy to Kubernetes cluster",
-        config,
-        now: 3000,
-      });
-      expect(turn3.iFrameRefreshed).toBe(true);
-      expect(turn3.updatedSSP?.version).toBeGreaterThan(versionAfterTurn1);
-
-      console.log(`\n  [I-frame 刷新检测 — goals 变化]`);
-      console.log(`    Turn 1: version=${versionAfterTurn1}, refresh=true (首次创建)`);
-      console.log(`    Turn 2: version=${turn2.updatedSSP?.version}, refresh=false (相同 goals)`);
-      console.log(`    Turn 3: version=${turn3.updatedSSP?.version}, refresh=true (新 goal)`);
-    });
-
-    it("修复验证: consolidation 触发 version++ 后, pre-reply 检测到 I-frame 刷新", async () => {
-      const sessionKey = "exp-iframe-external-bump";
-      const config = createMemoryRuntimeConfig({
-        featureFlags: { enableSessionStatePage: true },
-      });
-
-      // Turn 1: 创建 SSP
-      const turn1 = await buildPreReplyInjection({
-        sessionKey,
-        userInputText: "Initialize the project setup",
-        config,
-        now: 1000,
-      });
-      expect(turn1.iFrameRefreshed).toBe(true);
-
-      // Turn 2: 相同 goals, 不触发刷新
-      const turn2 = await buildPreReplyInjection({
-        sessionKey,
-        userInputText: "Initialize the project setup",
-        config,
-        now: 2000,
-      });
-      expect(turn2.iFrameRefreshed).toBe(false);
-
-      // 模拟 consolidation 触发 version++
-      await triggerSSPVersionBump(sessionKey);
-      const bumpedSSP = sspStore.get(sessionKey);
-      const versionAfterBump = bumpedSSP?.version ?? 0;
-
-      // Turn 3: 相同 goals, 但 version 被 consolidation bump 了
-      // 修复后: externalBumpDetected=true (version > lastConsumed) → I-frame refresh=true
-      const turn3 = await buildPreReplyInjection({
-        sessionKey,
-        userInputText: "Initialize the project setup", // 相同 goals
-        config,
-        now: 3000,
-      });
-      expect(turn3.iFrameRefreshed).toBe(true); // 修复后: 应检测到外部 bump
-
-      console.log(`\n  [I-frame 刷新检测 — 外部 bump 修复验证]`);
-      console.log(`    Turn 1: version=${turn1.updatedSSP?.version}, refresh=true (首次创建)`);
-      console.log(`    Turn 2: version=${turn2.updatedSSP?.version}, refresh=false (相同 goals)`);
-      console.log(`    Bump后: version=${versionAfterBump} (consolidation 触发 +1)`);
-      console.log(`    Turn 3: version=${turn3.updatedSSP?.version}, refresh=true (外部 bump 检测) ✓`);
-    });
-  });
-
-  describe("维度 5: 完整多轮对话综合验收", () => {
-    it("5 轮对话完整流程: SSP + top-5 + token 统计", async () => {
-      const sessionKey = "exp-full-scenario";
-      const config = createMemoryRuntimeConfig({
+  // TF-0500: the pre-reply SSP / top-5 injection path is RETIRED.
+  //
+  // Dimensions 2-6 used to accept the *benefit* of injecting SSP and top-5 facts into the
+  // prompt (goal tracking, retrieval hit rate, I-frame refresh, the combined multi-turn flow
+  // and the layering effect). That injection was a second prompt authority next to
+  // dcs-context-authority, so it is retired and those benefit claims are superseded. What
+  // remains verifiable is the retirement itself; the low-level helpers other dimensions still
+  // exercise (serialization bounds, post-reply observation, goal evolution) are unchanged.
+  describe("维度 2-6 (superseded): pre-reply injection is retired", () => {
+    it("produces no prompt text even when the retired flags are requested", async () => {
+      const requested = {
+        ...DEFAULT_MEMORY_RUNTIME_CONFIG,
         featureFlags: {
+          ...DEFAULT_MEMORY_RUNTIME_CONFIG.featureFlags,
           enableSessionStatePage: true,
           enablePreReplyRetrieval: true,
         },
-      });
-
-      const stats: Array<{
-        turn: number;
-        input: string;
-        sspTokens: number;
-        top5Tokens: number;
-        totalCompassTokens: number;
-        baselineTokens: number;
-        iFrameRefreshed: boolean;
-        sspGoals: string[];
-      }> = [];
-
-      // 基线: 全量注入 20 facts 的 token 数
-      const baselineFullInjection = MOCK_FACTS
-        .map((f, i) => `${i + 1}. ${f.subject}: ${f.objectSummary} (conf: ${(f.confidence ?? 0).toFixed(2)})`)
-        .join("\n");
-      const baselineTokens = estimateTokens(baselineFullInjection);
-
-      for (const turnData of CONVERSATION_SCENARIO) {
-        const injection = await buildPreReplyInjection({
-          sessionKey,
-          userInputText: turnData.userInput,
-          config,
-          facts: MOCK_FACTS,
-          embeddingProvider: NO_EMBEDDING_PROVIDER,
-          now: 1000 + turnData.turn * 100,
-        });
-
-        const sspTokens = estimateTokens(injection.sspString ?? "");
-        const top5Tokens = estimateTokens(injection.top5FactsString ?? "");
-        const totalCompassTokens = sspTokens + top5Tokens;
-
-        stats.push({
-          turn: turnData.turn,
-          input: turnData.userInput,
-          sspTokens,
-          top5Tokens,
-          totalCompassTokens,
-          baselineTokens,
-          iFrameRefreshed: injection.iFrameRefreshed,
-          sspGoals: injection.updatedSSP?.activeGoals ?? [],
-        });
-      }
-
-      // === 输出综合报告 ===
-      console.log(`\n${"=".repeat(80)}`);
-      console.log(`  COMPASS 2.0 体验收益综合报告 — 5 轮对话场景`);
-      console.log(`${"=".repeat(80)}`);
-      console.log(`\n  基线 (全量 20 facts 注入): ${baselineTokens} tokens/轮\n`);
-
-      console.log(`  ${"Turn"} | ${"输入"} | ${"SSP tok"} | ${"Top5 tok"} | ${"总 tok"} | ${"压缩率"} | ${"I-frame"} | ${"SSP Goals"}`);
-      console.log(`  ${"-".repeat(76)}`);
-
-      for (const s of stats) {
-        const compressionRatio = ((baselineTokens - s.totalCompassTokens) / baselineTokens * 100).toFixed(1);
-        const inputShort = s.input.slice(0, 35).padEnd(35);
-        const goalsShort = s.sspGoals.join("; ").slice(0, 20);
-        console.log(
-          `  ${s.turn}     | ${inputShort} | ${String(s.sspTokens).padStart(7)} | ${String(s.top5Tokens).padStart(8)} | ${String(s.totalCompassTokens).padStart(7)} | ${compressionRatio.padStart(6)}% | ${String(s.iFrameRefreshed).padEnd(7)} | ${goalsShort}`
-        );
-      }
-
-      // 汇总统计
-      const avgCompassTokens = stats.reduce((sum, s) => sum + s.totalCompassTokens, 0) / stats.length;
-      const avgCompression = ((baselineTokens - avgCompassTokens) / baselineTokens * 100).toFixed(1);
-      const totalSaved = (baselineTokens - avgCompassTokens) * stats.length;
-      const iframeRefreshCount = stats.filter((s) => s.iFrameRefreshed).length;
-
-      console.log(`\n  ${"-".repeat(76)}`);
-      console.log(`  汇总:`);
-      console.log(`    平均 COMPASS token/轮: ${avgCompassTokens.toFixed(0)}`);
-      console.log(`    平均压缩率: ${avgCompression}%`);
-      console.log(`    5 轮总节省: ${totalSaved.toFixed(0)} tokens`);
-      console.log(`    I-frame 刷新次数: ${iframeRefreshCount}/${stats.length}`);
-      console.log(`    SSP 目标追踪: ${stats.filter((s) => s.sspGoals.length > 0).length}/${stats.length} 轮有活跃目标`);
-
-      // === 量化断言 ===
-      // 1. 每轮 COMPASS 注入都小于基线全量注入
-      for (const s of stats) {
-        expect(s.totalCompassTokens).toBeLessThan(baselineTokens);
-      }
-
-      // 2. SSP 始终 ≤256 tokens
-      for (const s of stats) {
-        expect(s.sspTokens).toBeLessThanOrEqual(256);
-      }
-
-      // 3. Top-5 始终 < 全量 20 facts
-      for (const s of stats) {
-        expect(s.top5Tokens).toBeLessThan(baselineTokens);
-      }
-
-      // 4. 至少有 1 次 I-frame 刷新（首次创建或 goals 变更）
-      expect(iframeRefreshCount).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  describe("维度 6: 信息分层效果", () => {
-    it("SSP 提供状态锚点, top-5 提供相关事实, 两者互补不重复", async () => {
-      const config = createMemoryRuntimeConfig({
-        featureFlags: {
-          enableSessionStatePage: true,
-          enablePreReplyRetrieval: true,
-        },
-      });
-
-      const injection = await buildPreReplyInjection({
-        sessionKey: "exp-layering-test",
-        userInputText: "Help me deploy the service and check Alice's availability",
-        config,
-        facts: MOCK_FACTS,
+      };
+      const result = await buildPreReplyInjection({
+        sessionKey: "agent:main:main",
+        userInputText: "Alice lives where?",
+        config: requested,
+        facts: [makeFact({ factId: "f1", subject: "alice", predicate: "lives_in", objectSummary: "Boston" })],
         embeddingProvider: NO_EMBEDDING_PROVIDER,
-        now: 1000,
       });
+      expect(result.sspString).toBeUndefined();
+      expect(result.top5FactsString).toBeUndefined();
+      expect(result.injectedFactIds ?? []).toHaveLength(0);
+      expect(result.iFrameRefreshed).toBe(false);
+    });
 
-      const ssp = injection.sspString ?? "";
-      const top5 = injection.top5FactsString ?? "";
-
-      // SSP 应包含 [Session State] 标记和 Goals
-      expect(ssp).toContain("[Session State]");
-      expect(ssp).toContain("Goals:");
-
-      // Top-5 应包含 [Relevant Memory] 标记
-      expect(top5).toContain("[Relevant Memory]");
-
-      // 两者不应重复（SSP 是状态, top-5 是事实）
-      expect(ssp).not.toContain("[Relevant Memory]");
-      expect(top5).not.toContain("[Session State]");
-
-      console.log(`\n  [信息分层]`);
-      console.log(`    SSP 层 (状态锚点):\n${ssp}`);
-      console.log(`\n    Top-5 层 (相关事实):\n${top5}`);
-      console.log(`\n    SSP tokens: ${estimateTokens(ssp)}, Top5 tokens: ${estimateTokens(top5)}`);
-      console.log(`    分层互补: SSP 无 [Relevant Memory], Top5 无 [Session State] ✓`);
+    it("keeps the two injection flags off through the config factory", () => {
+      const config = createMemoryRuntimeConfig({
+        featureFlags: { enableSessionStatePage: true, enablePreReplyRetrieval: true },
+      });
+      expect(config.featureFlags.enableSessionStatePage).toBe(false);
+      expect(config.featureFlags.enablePreReplyRetrieval).toBe(false);
     });
   });
 

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "MemoryDreamsRetirementEvidence/v1",
+  "taskForestNodeId": "TF-0500",
+  "generatedAt": "2026-10-23T07:45:27.772Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "acceptanceCriteria": [
+    {
+      "criterion": "production route 不再暴露 DREAMS 或旧 memory 页面",
+      "status": "pass",
+      "evidence": [
+        "09-retirement-audit.txt: dreams_route_dev_gated=1, dreams_sidebar_entry_dev_gated=1",
+        "src/App.tsx gates /dreams with devModeUnlocked; src/components/layout/Sidebar.tsx renders sidebar-more-dreams only inside {devModeUnlocked && ( ... )}",
+        "No new production route or user entry was added."
+      ]
+    },
+    {
+      "criterion": "后台 consolidation 不产生第二 accepted-memory writer",
+      "status": "pass",
+      "evidence": [
+        "memory-authority manifest: two canonical stores for accepted memory (role-memory.sqlite owner role-memory-card-governance; openclaw-state.sqlite owner runtime-memory-store) and no data type claimed twice",
+        "memory-background-consolidation only calls store.invalidateFact() (append-only invalidation, no accept path)",
+        "01-tf0500-acceptance.txt asserts the canonical mapping and that every migration mapping keeps a rollback with removesSource=false"
+      ]
+    },
+    {
+      "criterion": "旧数据迁移/回滚测试通过",
+      "status": "pass",
+      "evidence": [
+        "01-tf0500-acceptance.txt: validateMemoryAuthorityManifest(manifest).ok === true and every migrationMappings entry has a non-empty rollback",
+        "No user data is deleted; migration mappings all declare removesSource=false"
+      ]
+    },
+    {
+      "criterion": "CI 不发现旧 flag 作为用户入口或重复 injection path",
+      "status": "pass",
+      "evidence": [
+        "09-retirement-audit.txt: pre_reply_injection_retired=1, compass_injection_flags_retired=1, legacy_runtime_memory_flags_retired=1",
+        "memory-pre-reply-injection.ts: COMPASS_PRE_REPLY_INJECTION_RETIRED makes both injection branches unreachable",
+        "memory-runtime-config.ts: RETIRED_MEMORY_INJECTION_FLAGS are deleted from any override, so enableSessionStatePage / enablePreReplyRetrieval can never be true",
+        "memory-context.ts: RETIRED_RUNTIME_MEMORY_FLAGS force shadow / provider / proposeFacts / persist to false; candidateGeneration is kept because memory.candidate is proposal-only in the authority manifest",
+        "tests/unit/compass-experience-validation.test.ts dimensions 2-6 (the superseded injection-benefit acceptance) were replaced by a retirement lock"
+      ]
+    }
+  ],
+  "results": {
+    "dreamsUserRoutes": 0,
+    "duplicateAcceptedMemoryWriters": 0,
+    "parallelInjectionPaths": 1,
+    "legacyFlagUserEntries": 0,
+    "dataLossInMigration": 0
+  },
+  "corrections": [
+    "TF-0496 closeout correction: the VToken retirement left four vtoken-stage assertions red in openclaw_runtime/src/context-engine/context-orchestrator.test.ts (a path set TF-0496 was authorised for). They are updated here to the retired expectation and the file passes 16/16."
+  ],
+  "residualLimitations": [
+    "docs/dev/default-config-matrix.md still describes the pre-retirement VToken and memory rows; docs/ is outside TF-0500 allowed paths and requirement 5 (update product semantics and default matrix) is deferred to TF-0506 (it owns docs/).",
+    "The legacy runtime-memory flags still exist as named config keys (documented as retired in code); removing the keys outright lives in openclaw_runtime/src/config/, outside this node paths.",
+    "The in-scope retirement lock for Dreams is a source-level guard audit plus the existing dev-gating, not a rendered screenshot acceptance."
+  ],
+  "evidenceNotes": {
+    "diskReadback": true,
+    "humanEvidenceClaimed": false,
+    "publicReleaseClaimed": false,
+    "productDefaultChanged": false,
+    "verseGitTouched": false
+  }
+}

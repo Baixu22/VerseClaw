@@ -365,6 +365,17 @@ export async function buildTop5FactsInjection(params: {
  *
  * 当两个 flag 都关闭时返回空结果 (零风险部署).
  */
+/**
+ * TF-0500: this pre-reply injection path is RETIRED.
+ *
+ * It unshifted SSP + hybrid-retrieval text straight into extraSystemPromptParts,
+ * which was a second injection authority next to dcs-context-authority (the authority
+ * declared in memory-authority.ts with lifecycle.injection "accepted-only"). The two
+ * COMPASS injection branches can therefore never produce prompt text again; the
+ * pressure / page-fault diagnostics are still computed so existing traces keep meaning.
+ */
+export const COMPASS_PRE_REPLY_INJECTION_RETIRED = true;
+
 export async function buildPreReplyInjection(params: {
   sessionKey: string;
   userInputText: string;
@@ -377,10 +388,12 @@ export async function buildPreReplyInjection(params: {
 }): Promise<PreReplyInjection> {
   const config = params.config ?? DEFAULT_MEMORY_RUNTIME_CONFIG;
   const flags = config.featureFlags;
+  // Retired: never inject, whatever the caller passes in.
+  const injectionRetired = COMPASS_PRE_REPLY_INJECTION_RETIRED;
   const result: PreReplyInjection = { iFrameRefreshed: false };
 
-  // SSP 注入
-  if (flags.enableSessionStatePage) {
+  // SSP 注入 — retired, branch unreachable
+  if (!injectionRetired && flags.enableSessionStatePage) {
     try {
       const sspResult = await buildSSPInjection({
         sessionKey: params.sessionKey,
@@ -413,6 +426,7 @@ export async function buildPreReplyInjection(params: {
   // Hybrid retrieval 注入: 仅在 page fault + pressure 允许 + flag 开启时触发
   const topK = PRESSURE_TOP_K[pressureLevel];
   if (
+    !injectionRetired &&
     flags.enablePreReplyRetrieval &&
     pageFaultTriggered &&
     topK > 0 &&
