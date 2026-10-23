@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "MemoryExport/v1",
+  "snapshot": {
+    "schemaVersion": "MemorySurface/v1",
+    "generatedAt": "2026-10-23T05:13:05.369Z",
+    "accepted": [
+      {
+        "key": "role-memory-card:mem_2ea96861-42d6-46be-9112-8cbc62ea67fb",
+        "id": "mem_2ea96861-42d6-46be-9112-8cbc62ea67fb",
+        "source": "role-memory-card",
+        "state": "accepted",
+        "stateLabel": "active",
+        "content": "Workspace memory mvkikjuo: use pnpm for package scripts.",
+        "scope": "workspace",
+        "scopeKey": "D:\\tmp\\verse-claw-e2e-run-GTDocv\\verse-claw-e2e-home-nUcj7k\\.openclaw\\workspace",
+        "roleTags": [],
+        "sourceLabel": "user",
+        "createdAt": "2026-10-23T05:13:00.670Z",
+        "updatedAt": "2026-10-23T05:13:00.670Z",
+        "sensitivity": "normal",
+        "confidence": 0.9,
+        "importance": 0.7,
+        "evidenceCount": 1,
+        "provenance": [
+          "manual:memory-surface:explicit-remember"
+        ],
+        "injectable": true,
+        "retrievable": true,
+        "modelVisible": false,
+        "deletable": true
+      }
+    ],
+    "candidates": [],
+    "status": {
+      "roleMemory": {
+        "owner": "role-memory-card-governance",
+        "enabled": true,
+        "readGate": "open",
+        "writeGate": "open",
+        "candidateCapture": true,
+        "candidatePersistence": true,
+        "modelRetrieval": false
+      },
+      "runtimeMemory": {
+        "owner": "runtime-memory-store",
+        "enabled": false,
+        "readGate": "closed",
+        "writeGate": "closed",
+        "candidateCapture": false,
+        "candidatePersistence": false,
+        "modelRetrieval": false,
+        "persist": false,
+        "provider": false,
+        "injectionPilotEnabled": false,
+        "injectionProviders": [
+          "role-memory"
+        ]
+      },
+      "legacySources": [
+        {
+          "id": "native-openclaw-memory",
+          "controlledHere": false,
+          "mayAffectPrompt": true,
+          "explanation": "Native OpenClaw memory sources have separate read-only owners; this Memory panel does not disable or claim control over them."
+        }
+      ]
+    },
+    "model": {
+      "acceptedOnly": true,
+      "acceptedKeys": [],
+      "candidateKeysExcluded": [],
+      "candidateBoundary": "Candidates are persisted review-queue records. They are not retrievable, injectable, or model-visible until an owning approval path accepts them.",
+      "productDescription": "Memory is one reviewable product concept: accepted facts or cards with provenance, scope and lifecycle state. Runtime facts, role cards, embeddings and Dreaming caches are implementation data domains, not separate product memories.",
+      "approvalBoundary": "Candidates and derived signals never become accepted memory without the owning governance or runtime acceptance path. Only accepted memory may be retrieved or injected into model context."
+    },
+    "counts": {
+      "accepted": 1,
+      "candidates": 0,
+      "modelVisible": 0
+    }
+  }
+}

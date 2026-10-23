@@ -1,0 +1,68 @@
+{
+  "schema": "clawx.memory-user-surface.visibility-matrix/v1",
+  "generated_at": "2026-10-23T05:19:10.464Z",
+  "driven_by": "agent",
+  "actor": "codex-memory-user-surface",
+  "invariant": "Only currently model-eligible accepted records may appear in model.acceptedKeys; candidate keys are diagnostics only.",
+  "rows": [
+    {
+      "domain": "role-memory-card",
+      "state": "accepted",
+      "owner_gate": "open with injection pilot enabled",
+      "injectable": true,
+      "retrievable": true,
+      "model_visible": true,
+      "evidence": "tests/unit/role-orchestration-methods.test.ts memory.surface accepted/candidate projection"
+    },
+    {
+      "domain": "role-memory-card",
+      "state": "candidate",
+      "owner_gate": "review required",
+      "injectable": false,
+      "retrievable": false,
+      "model_visible": false,
+      "evidence": "tests/unit/role-orchestration-methods.test.ts and tests/e2e/memory-surface.spec.ts"
+    },
+    {
+      "domain": "runtime-fact",
+      "state": "accepted",
+      "owner_gate": "persist + provider + runtime-memory injection pilot",
+      "injectable": true,
+      "retrievable": true,
+      "model_visible": true,
+      "evidence": "tests/unit/memory-surface-runtime.test.ts"
+    },
+    {
+      "domain": "runtime-fact",
+      "state": "candidate",
+      "owner_gate": "shadow + proposeFacts",
+      "injectable": false,
+      "retrievable": false,
+      "model_visible": false,
+      "evidence": "tests/unit/memory-surface-runtime.test.ts"
+    },
+    {
+      "domain": "runtime-fact",
+      "state": "accepted secret",
+      "owner_gate": "owner accepted but sensitivity is secret",
+      "injectable": false,
+      "retrievable": false,
+      "model_visible": false,
+      "evidence": "tests/unit/memory-surface-runtime.test.ts secret redaction/deletability case"
+    },
+    {
+      "domain": "accepted memory",
+      "state": "injection pilot off",
+      "owner_gate": "stored but no prompt route",
+      "injectable": true,
+      "retrievable": true,
+      "model_visible": false,
+      "evidence": "tests/e2e/memory-surface.spec.ts retained export with modelVisible=0 and acceptedOnly=true"
+    }
+  ],
+  "counts": {
+    "unapproved_candidates_injected": 0,
+    "unapproved_candidates_marked_accepted": 0,
+    "cross_scope_leaks": "not measured in TF-0498 prompt-time selection; scope filtering remains D1/F-stage work"
+  }
+}

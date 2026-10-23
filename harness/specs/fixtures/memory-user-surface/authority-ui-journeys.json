@@ -1,0 +1,45 @@
+{
+  "schema": "clawx.memory-user-surface.authority-ui-journeys/v1",
+  "generated_at": "2026-10-23T05:19:10.464Z",
+  "driven_by": "agent",
+  "actor": "codex-memory-user-surface",
+  "source_commit": "69b1f15864e001ec1d8b06cadfd99cd24e51aad8",
+  "reads": [
+    "src/pages/Memory/index.tsx MemoryPage -> hostApi.memory.surface",
+    "electron/services/memory-api.ts surface -> Gateway memory.surface",
+    "openclaw_runtime/src/gateway/server-methods/memory-surface.ts buildMemorySurface projects existing Role/Runtime stores only"
+  ],
+  "mutations": [
+    {
+      "ui_action": "Approve",
+      "host_action": "memory.approveCandidate",
+      "owner_rpc": "memory.review or memory.proposeFacts.confirm"
+    },
+    {
+      "ui_action": "Delete",
+      "host_action": "memory.delete",
+      "owner_path": "archiveMemoryCard(tombstone) or Runtime Memory invalidateFact(retracted)"
+    },
+    {
+      "ui_action": "Remember this",
+      "host_action": "memory.remember",
+      "owner_rpc": "memory.propose"
+    },
+    {
+      "ui_action": "Export",
+      "host_action": "memory.export",
+      "source": "same memory.surface projection, no second writer"
+    }
+  ],
+  "exclusivity": {
+    "product_navigation": "Sidebar -> Memory (/memory)",
+    "settings_agents_default": "shows a link to /memory and hides duplicate Role Memory/proposeFacts review panels",
+    "advanced_diagnostics": "available only with explicit Settings Agents hash query advancedMemory=1 and does not own canonical navigation"
+  },
+  "real_electron": {
+    "host_gateway": true,
+    "isolated_user_data": true,
+    "exact_test": "pnpm run test:e2e:run tests/e2e/memory-surface.spec.ts tests/e2e/role-memory-panel.spec.ts tests/e2e/agents-propose-facts-confirm.spec.ts",
+    "result": "6/6 passed"
+  }
+}
