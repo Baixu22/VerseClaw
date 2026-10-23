@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { createRequire, isBuiltin } from 'node:module';
 import { fileURLToPath } from 'node:url';
@@ -8,6 +9,21 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = path.join(root, 'build', 'main-runtime');
 const delivery = path.join(root, 'build', 'main-runtime-delivery');
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+const sidecarManifestPath = path.join(root, 'resources', 'versegit', 'manifest.json');
+const sidecarManifest = JSON.parse(fs.readFileSync(sidecarManifestPath, 'utf8'));
+if (sidecarManifest.schema !== 'clawx.versegit.sidecar-package/v1') {
+  throw new Error('VerseGit sidecar manifest schema is unsupported');
+}
+const sidecarBinaryPath = path.join(root, sidecarManifest.artifact.devPath);
+const sidecarBinary = fs.readFileSync(sidecarBinaryPath);
+const sidecarDigest = createHash('sha256').update(sidecarBinary).digest('hex');
+if (sidecarDigest !== sidecarManifest.artifact.sha256 || sidecarBinary.byteLength !== sidecarManifest.artifact.bytes) {
+  throw new Error('VerseGit sidecar artifact does not match the frozen package manifest');
+}
+const sidecarLicense = fs.readFileSync(path.join(root, sidecarManifest.license.path));
+if (createHash('sha256').update(sidecarLicense).digest('hex') !== sidecarManifest.license.sha256) {
+  throw new Error('VerseGit sidecar license does not match the frozen package manifest');
+}
 const mainDir = path.join(root, 'dist-electron', 'main');
 for (const file of fs.readdirSync(mainDir, { recursive: true }).filter((file) => file.endsWith('.js'))) {
   const code = fs.readFileSync(path.join(mainDir, file), 'utf8');
@@ -41,4 +57,5 @@ for (const file of nativeFiles) {
     throw new Error(`Native Main dependency was not unpacked: ${relative}`);
   }
 }
+console.log(`VerseGit sidecar: ${sidecarManifest.packageId} ${sidecarDigest.slice(0, 16)} verified.`);
 console.log(`Main runtime archive: ${copied} installed packages, ${nativeFiles.length} verified native companions.`);

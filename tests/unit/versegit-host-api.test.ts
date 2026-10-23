@@ -1,14 +1,14 @@
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createHostInvokeDispatcher } from '../../electron/main/ipc/host-invoke';
 import { createVerseGitApi } from '../../electron/services/versegit-api';
-import { contractDigestOf } from '../../electron/services/versegit-module';
 
-const binaryPath = process.env.VERSEGIT_BINARY ?? 'D:/Projects/VerseGit/target/debug/vg.exe';
-const workspacePath = process.env.VERSEGIT_PROVIDER_ROOT ?? 'D:/Projects/VerseGit';
-const contract = JSON.parse(readFileSync('harness/specs/fixtures/versegit-planning-correction/mc1-evidence/contract.json', 'utf8'));
+const binaryPath = process.env.VERSEGIT_BINARY ?? join(process.cwd(), 'resources/bin/win32-x64/vg.exe');
+const workspacePath = process.env.VERSEGIT_PROVIDER_ROOT ?? process.cwd();
+const sidecarManifest = JSON.parse(readFileSync(join(process.cwd(), 'resources/versegit/manifest.json'), 'utf8'));
 const binaryDigest = createHash('sha256').update(readFileSync(binaryPath)).digest('hex');
 const version = spawnSync(binaryPath, ['--version'], { cwd: workspacePath, encoding: 'utf8', windowsHide: true });
 const caps = spawnSync(binaryPath, ['capabilities', '--json'], { cwd: workspacePath, encoding: 'buffer', windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
@@ -22,7 +22,7 @@ const baseConfig = {
   expectedBinarySha256: binaryDigest,
   expectedVersion: version.stdout.trim(),
   expectedCapabilitiesDigest: capabilitiesDigest,
-  contractDigest: contractDigestOf(contract),
+  contractDigest: sidecarManifest.provider.contractDigest,
   allowed: { ...binding, repoId: 'repo-b2', authorizationId: 'grant-b2', expiresAt: '2099-01-01T00:00:00.000Z', revoked: false },
   worktreeCount: 2,
   activeSessionCount: 1,

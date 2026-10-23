@@ -3,6 +3,7 @@ import type { VerseGitDiagnosticBinding, VerseGitDiagnosticStatus } from '@share
 import { VerseGitFactAdapter, type VerseGitFactGrant, type VerseGitFactIdentity, type VerseGitFactResult, type VerseGitFactTrigger } from './versegit-fact-adapter';
 import { VerseGitModule } from './versegit-module';
 import { createVerseGitCompletionStore } from './versegit-lifecycle';
+import { resolveVerseGitSidecar } from './versegit-binary-resolver';
 
 export const VG_HOST_DIAGNOSTIC_SCHEMA = 'clawx.versegit.host-diagnostics/v1';
 export const VG_HOST_DECLARED_COVERAGE = ['version', 'capabilities'] as const;
@@ -24,6 +25,7 @@ export type VerseGitHostDiagnosticConfig = {
   }) | null;
   worktreeCount: number;
   activeSessionCount: number;
+  binaryResolution?: { ok: boolean; code: string; issues: string[] } | null;
 };
 
 type VerseGitHostDiagnosticConfigInput = Partial<Omit<VerseGitHostDiagnosticConfig, 'allowed'>> & {
@@ -32,6 +34,15 @@ type VerseGitHostDiagnosticConfigInput = Partial<Omit<VerseGitHostDiagnosticConf
 
 export function loadVerseGitHostDiagnosticConfig(env: NodeJS.ProcessEnv = process.env): VerseGitHostDiagnosticConfig {
   const enabled = env.CLAWX_VERSGIT_DIAGNOSTICS === '1';
+  const sidecar = enabled && !env.CLAWX_VERSGIT_BINARY
+    ? resolveVerseGitSidecar({
+        appPath: env.CLAWX_VERSGIT_APP_PATH ?? process.cwd(),
+        resourcesPath: env.CLAWX_VERSGIT_RESOURCES_PATH,
+        platform: process.platform,
+        arch: process.arch,
+        profile: 'M1',
+      })
+    : null;
   const allowed = {
     workspaceId: env.CLAWX_VERSGIT_ALLOWED_WORKSPACE_ID ?? '',
     sessionId: env.CLAWX_VERSGIT_ALLOWED_SESSION_ID ?? '',
@@ -46,15 +57,16 @@ export function loadVerseGitHostDiagnosticConfig(env: NodeJS.ProcessEnv = proces
   };
   return {
     enabled,
-    binaryPath: env.CLAWX_VERSGIT_BINARY ?? null,
+    binaryPath: env.CLAWX_VERSGIT_BINARY ?? (sidecar?.ok ? sidecar.binaryPath : null),
     workspacePath: env.CLAWX_VERSGIT_PROVIDER_ROOT ?? null,
-    expectedBinarySha256: env.CLAWX_VERSGIT_EXPECTED_BINARY_SHA256 ?? null,
-    expectedVersion: env.CLAWX_VERSGIT_EXPECTED_VERSION ?? null,
-    expectedCapabilitiesDigest: env.CLAWX_VERSGIT_EXPECTED_CAPABILITIES_SHA256 ?? null,
-    contractDigest: env.CLAWX_VERSGIT_CONTRACT_DIGEST ?? null,
+    expectedBinarySha256: env.CLAWX_VERSGIT_EXPECTED_BINARY_SHA256 ?? (sidecar?.ok ? sidecar.manifest.artifact.sha256 : null),
+    expectedVersion: env.CLAWX_VERSGIT_EXPECTED_VERSION ?? (sidecar?.ok ? sidecar.version : null),
+    expectedCapabilitiesDigest: env.CLAWX_VERSGIT_EXPECTED_CAPABILITIES_SHA256 ?? (sidecar?.ok ? sidecar.manifest.provider.capabilitiesSha256 : null),
+    contractDigest: env.CLAWX_VERSGIT_CONTRACT_DIGEST ?? (sidecar?.ok ? sidecar.manifest.provider.contractDigest : null),
     allowed: enabled ? allowed : null,
     worktreeCount: Number(env.CLAWX_VERSGIT_WORKTREE_COUNT ?? 0),
     activeSessionCount: Number(env.CLAWX_VERSGIT_ACTIVE_SESSION_COUNT ?? 0),
+    binaryResolution: sidecar ? { ok: sidecar.ok, code: sidecar.code, issues: sidecar.ok ? [] : sidecar.issues } : null,
   };
 }
 
@@ -82,6 +94,7 @@ function normalizeConfig(input: VerseGitHostDiagnosticConfigInput | VerseGitHost
     allowed,
     worktreeCount: Number(input.worktreeCount ?? 0),
     activeSessionCount: Number(input.activeSessionCount ?? 0),
+    binaryResolution: input.binaryResolution ?? null,
   };
 }
 
@@ -170,6 +183,9 @@ export function createVerseGitApi(options: VerseGitApiOptions = {}): CompleteHos
       if (!config.allowed) return { ...base, status: 'rejected_by_policy', reason: 'identity_configuration_missing', issues: ['allowed host/provider identity is missing'] };
       const binding = bindingIssues(payload, config.allowed);
       if (binding.length > 0) return { ...base, status: 'rejected_by_policy', reason: 'identity_mismatch', issues: binding };
+      if (config.binaryResolution && !config.binaryResolution.ok) {
+        return { ...base, status: 'unavailable', reason: 'binary_identity_unavailable', issues: [...config.binaryResolution.issues] };
+      }
       const issues: string[] = [];
       if (!config.binaryPath || !config.workspacePath) issues.push('binary or provider workspace path is not configured');
       if (!config.expectedBinarySha256 || !config.expectedCapabilitiesDigest || !config.contractDigest) issues.push('frozen digest configuration is incomplete');
