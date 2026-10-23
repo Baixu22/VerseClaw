@@ -1,0 +1,109 @@
+{
+  "schema": "clawx.long-session.backend-parity/v1",
+  "generatedAt": "2026-10-23T16:59:58.819Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "backends": [
+    {
+      "backend": "codex",
+      "kind": "native",
+      "ownsNativeCompaction": true,
+      "rows": [
+        {
+          "parameter": "automatic-compaction",
+          "status": "ignored",
+          "reason": "native backend owns compaction"
+        },
+        {
+          "parameter": "manual-compaction",
+          "status": "effective",
+          "reason": "routes through native backend"
+        },
+        {
+          "parameter": "compaction.provider",
+          "status": "ignored",
+          "reason": "native backend owns provider"
+        },
+        {
+          "parameter": "compaction.model",
+          "status": "ignored",
+          "reason": "native backend owns model"
+        },
+        {
+          "parameter": "compaction.reserveTokens",
+          "status": "unsupported",
+          "reason": "not consumed by native compaction"
+        }
+      ]
+    },
+    {
+      "backend": "claude-cli",
+      "kind": "cli",
+      "ownsNativeCompaction": true,
+      "rows": [
+        {
+          "parameter": "automatic-compaction",
+          "status": "ignored",
+          "reason": "Claude owns native compaction"
+        },
+        {
+          "parameter": "manual-compaction",
+          "status": "effective",
+          "reason": "CLI backend executes manual compaction"
+        },
+        {
+          "parameter": "compaction.provider",
+          "status": "ignored",
+          "reason": "CLI provider owns provider"
+        },
+        {
+          "parameter": "compaction.model",
+          "status": "ignored",
+          "reason": "CLI provider owns model"
+        },
+        {
+          "parameter": "compaction.reserveTokens",
+          "status": "unsupported",
+          "reason": "not consumed by native compaction"
+        }
+      ]
+    },
+    {
+      "backend": "openclaw",
+      "kind": "openclaw",
+      "ownsNativeCompaction": false,
+      "rows": [
+        {
+          "parameter": "automatic-compaction",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "parameter": "manual-compaction",
+          "status": "effective",
+          "reason": null
+        },
+        {
+          "parameter": "compaction.provider",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "parameter": "compaction.model",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "parameter": "compaction.reserveTokens",
+          "status": "configured",
+          "reason": null
+        }
+      ]
+    }
+  ],
+  "sourceContracts": [
+    "openclaw_runtime/extensions/anthropic/cli-backend.ts",
+    "openclaw_runtime/extensions/codex/src/app-server/compact.ts",
+    "openclaw_runtime/src/agents/cli-backends.ts"
+  ]
+}

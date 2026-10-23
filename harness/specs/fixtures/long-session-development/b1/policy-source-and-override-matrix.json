@@ -1,0 +1,56 @@
+{
+  "schema": "clawx.long-session.policy-source-and-override-matrix/v1",
+  "generatedAt": "2026-10-23T16:59:58.819Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "rows": [
+    {
+      "axis": "backend",
+      "configuredSource": "session.entry.agentRuntimeOverride|agentHarnessId -> session-runtime-compat",
+      "effectiveSource": "runtime-effective-capability observation.backendId",
+      "rule": "must match resolved session runtime"
+    },
+    {
+      "axis": "provider/model",
+      "configuredSource": "session model override -> resolveSessionModelRef",
+      "effectiveSource": "runtime-effective-capability observation.provider/model",
+      "rule": "configured never crosses into effective without a fresh matching observation"
+    },
+    {
+      "axis": "effort",
+      "configuredSource": "entry thinkingLevel -> agent.thinkingDefault -> agents.defaults.thinkingDefault -> model default",
+      "effectiveSource": "runtime-effective-capability observation.effort",
+      "rule": "configured effort remains labelled configured when no current-run observation"
+    },
+    {
+      "axis": "grants",
+      "configuredSource": "none (authority owner holds current facts)",
+      "effectiveSource": "ModelCapabilityProfile actionAuthorization",
+      "rule": "counts only; grant ids are omitted"
+    },
+    {
+      "axis": "context",
+      "configuredSource": "entry.contextTokens -> agent.contextTokens -> agents.defaults.contextTokens",
+      "effectiveSource": "entry.contextBudgetStatus for the active run sessionId and resolved provider/model",
+      "rule": "unverified unless updatedAt is at or after the active run start; pre-run, wrong-session, and wrong-model budgets never become effective"
+    },
+    {
+      "axis": "queue",
+      "configuredSource": "entry.queueMode/Cap/Drop/DebounceMs",
+      "effectiveSource": "queue owner queuedCount",
+      "rule": "counts configured queue; no scheduler admission is invented"
+    },
+    {
+      "axis": "resources",
+      "configuredSource": "agents.defaults.maxConcurrent and subagents limits",
+      "effectiveSource": "not read on this snapshot",
+      "rule": "current admission remains unverified"
+    },
+    {
+      "axis": "schedule",
+      "configuredSource": "cron.enabled/maxConcurrentRuns/sessionRetention",
+      "effectiveSource": "not read on this snapshot",
+      "rule": "configured schedule does not prove a scheduled job or current execution"
+    }
+  ]
+}

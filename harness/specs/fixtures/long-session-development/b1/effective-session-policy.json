@@ -1,0 +1,91 @@
+{
+  "schema": "clawx.long-session.effective-policy/v1",
+  "generatedAt": "2026-10-23T16:59:58.819Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "sourceTask": "TF-0512",
+  "wire": "ModelCapabilityProfile/v1 -> bounded current-run observation and active-run context budget -> SessionEffectivePolicy/v1",
+  "transport": "built Electron host:invoke sessionActivity.snapshot -> actual Gateway session.activitySnapshot",
+  "receipt": {
+    "schema": "clawx.long-session.effective-policy/v1",
+    "driven_by": "agent",
+    "actor": "codex-long-session-r2",
+    "sessionKey": "agent:main:dashboard:912a4e80-deb6-49e1-b7b0-cd9a9f7663a2",
+    "workspaceId": "default",
+    "generationState": "missing",
+    "configuredBackend": {
+      "runtime": "openclaw",
+      "kind": "openclaw",
+      "ownsNativeCompaction": false,
+      "provider": "openai",
+      "model": "gpt-5.5"
+    },
+    "effectiveBackend": {
+      "value": null,
+      "status": "unverified",
+      "source": "runtime-effective-capability.observation",
+      "reason": "no-current-run-capability-profile"
+    },
+    "compatibilityRows": [
+      {
+        "backend": "openclaw",
+        "parameter": "automatic-compaction",
+        "status": "configured",
+        "reason": null
+      },
+      {
+        "backend": "openclaw",
+        "parameter": "compaction.provider",
+        "status": "configured",
+        "reason": null
+      },
+      {
+        "backend": "openclaw",
+        "parameter": "compaction.model",
+        "status": "configured",
+        "reason": null
+      },
+      {
+        "backend": "openclaw",
+        "parameter": "compaction.reserveTokens",
+        "status": "configured",
+        "reason": null
+      },
+      {
+        "backend": "openclaw",
+        "parameter": "manual-compaction",
+        "status": "effective",
+        "reason": null
+      }
+    ],
+    "transport": "built Electron host:invoke sessionActivity.snapshot -> actual Gateway session.activitySnapshot"
+  },
+  "fields": {
+    "scope": "workspaceId/sessionKey/agentId/sessionId/runId",
+    "generation": "effective|stale|mismatch|missing|unverified with runtime and profile generation",
+    "backend": "configured|effective|unverified plus runtime kind and native compaction ownership",
+    "model": "provider/model/effort",
+    "grants": "aggregated owner action authorization without grant ids",
+    "context": "configured token limit plus active-run effective budget only when session, provider/model, and run-start facts match",
+    "queue": "session queue settings plus owner queued count",
+    "resources": "configured concurrency/depth limits and explicit effective unverified",
+    "schedule": "configured cron limits and explicit current-state unverified"
+  },
+  "redaction": {
+    "forbiddenPromptIncluded": false,
+    "credentialValuesIncluded": false,
+    "grantIdsIncluded": false,
+    "transportTruncatesOutputs": true
+  },
+  "negativeCases": [
+    "no current-run observation stays missing",
+    "configured does not imply effective",
+    "a context budget from before the active run remains configured-only",
+    "a context budget for another session, provider, or model remains unverified",
+    "current context-budget and capability generation mismatches stay unverified",
+    "invalid capability observation does not promote runtime/model/grant facts"
+  ],
+  "limitations": [
+    "The real journey observes configured policy before a model turn; effective runtime backend/model/grants and active-run context promotion are additionally covered by unit owner facts, not claimed from configuration."
+  ]
+}

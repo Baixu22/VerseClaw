@@ -1,0 +1,50 @@
+{
+  "schema": "clawx.long-session.review-disposition/v1",
+  "generatedAt": "2026-10-23T16:59:58.819Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": "803e945a7a9370d8d25c2a76ce4c5dfe850fb8e1",
+  "sourceReview": "Direct-source review plus focused tests, repository gates, and real Host/Electron execution",
+  "findings": [
+    {
+      "issue": "Session activity asked the capability cache with an absent workspaceId after a queued turn.",
+      "status": "fixed",
+      "evidence": "chat.send propagates canonical workspaceId into ChatAbortControllerEntry; the handler falls back to that owner fact."
+    },
+    {
+      "issue": "A partial current-run observation could copy configured provider/model into effective backend facts.",
+      "status": "fixed",
+      "evidence": "backend and model require observed runtime/provider/model to match; tests cover missing observed identity."
+    },
+    {
+      "issue": "A provider-incompatible pinned harness could leak across a resolved model route.",
+      "status": "fixed",
+      "evidence": "persisted runtime is revalidated for the resolved provider; an incompatible codex harness on Anthropic falls back to openclaw."
+    },
+    {
+      "issue": "Legacy gateway-methods handling could bypass the new owner dependencies.",
+      "status": "fixed",
+      "evidence": "session-activity.test.ts mocks a fresh observation and session owner and passes in the gateway-methods config."
+    },
+    {
+      "issue": "Raw status labels violated i18n conventions.",
+      "status": "fixed",
+      "evidence": "configured/effective status text uses four-locale policy.status keys; i18n lint passed."
+    },
+    {
+      "issue": "A previous run context budget could remain effective for a newer run when session, provider, and model were unchanged.",
+      "status": "fixed",
+      "evidence": "context promotion now requires an active run plus matching session/provider/model and updatedAt at or after activeRun.startedAtMs; a pre-run regression test passes."
+    },
+    {
+      "issue": "External local-model reviewer exceeded its execution window during cross-process identifier analysis.",
+      "status": "unmeasured",
+      "evidence": "Terminated without a verdict; no unsupported review PASS is claimed."
+    }
+  ],
+  "verdict": "no-known-blocking-defect; external review unmeasured",
+  "limits": [
+    "No live-provider turn was executed in the E2E; effective current-run promotion is proven by owner-boundary tests.",
+    "No claim about provider-specific response quality."
+  ]
+}
