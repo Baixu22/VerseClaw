@@ -97,10 +97,9 @@
       "family": "patch-flow",
       "catalogEntryPresent": true,
       "writableTogglePresent": false,
-      "productEntry": "team_orchestrate patchFlowExecution=true (model tool parameter)",
+      "productEntry": "team_orchestrate patchFlowExecution=true, or runtime.coding.patchFlow.default=true with a patch-flow concurrency recommendation",
       "remainingGap": [
-        "Graduation is undefined by evidence: its own graduateOrRetireCriteria requires patch execution to improve verified coding outcomes while preserving write-journal authority, and no outcome comparison exists in the repo.",
-        "The only product entries are the model tool parameter patchFlowExecution=true and an operator config flag; no natural task action or explicit concurrent workflow selects it, so it remains an opt-in path.",
+        "Graduation is undefined by evidence: its own graduateOrRetireCriteria requires patch execution to improve verified coding outcomes while preserving write-journal authority, and no outcome comparison exists in the repo. The trigger is now reachable (request opt-in OR the operator config default, gated on the concurrency advisory), so what is missing is the outcome comparison, not the entry point.",
         "The owning record cannot be updated from here: feature.patch-flow is experiment with a 2026-12-31 expiry in shared/dcs/component-disposition-catalog.ts, and shared/ is outside the TF-0510 write scope."
       ],
       "artifacts": [
@@ -121,6 +120,12 @@
           "exists": true,
           "sha256": "92a34e99a75e7aedc40c73e376697f267a3bef21e62a4b8cc4d932a03448e11a",
           "bytes": 5244
+        },
+        {
+          "path": "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
+          "exists": true,
+          "sha256": "2599ebd7df5d267ce75fb2d51c279de6b5089a019c63e0e0034398756ce17286",
+          "bytes": 3650
         }
       ]
     },

@@ -1,8 +1,14 @@
 [
   {
     "file": "openclaw_runtime/src/agents/coding-control-dispositions.ts",
-    "expected": "4b6b4cbd23651f67e2852e7d831b48596924f122a180340f29f54f7d9a791c2b",
-    "actual": "4b6b4cbd23651f67e2852e7d831b48596924f122a180340f29f54f7d9a791c2b",
+    "expected": "89e6bb2c6a7d4218613a4031a82731277054ae879b4ea42c7ea7e91e5b5a5f81",
+    "actual": "89e6bb2c6a7d4218613a4031a82731277054ae879b4ea42c7ea7e91e5b5a5f81",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+    "expected": "ee4d8239073a69fc47213d28f57df29d80b3aef57af16c9dfd1bd382373d7cb7",
+    "actual": "ee4d8239073a69fc47213d28f57df29d80b3aef57af16c9dfd1bd382373d7cb7",
     "status": "pass"
   },
   {
@@ -30,6 +36,12 @@
     "status": "pass"
   },
   {
+    "file": "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
+    "expected": "2599ebd7df5d267ce75fb2d51c279de6b5089a019c63e0e0034398756ce17286",
+    "actual": "2599ebd7df5d267ce75fb2d51c279de6b5089a019c63e0e0034398756ce17286",
+    "status": "pass"
+  },
+  {
     "file": "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
     "expected": "dba95c0ca48dcae988e1374e5cb327bf8ca12acc850915005871779d000b6a95",
     "actual": "dba95c0ca48dcae988e1374e5cb327bf8ca12acc850915005871779d000b6a95",
@@ -49,8 +61,8 @@
   },
   {
     "file": "tests/unit/fixtures/coding-controls-tf0510/raw-evidence.json",
-    "expected": "3d20a9602531a26b017cb72c78ef85a9bf2cdddf357a0c61a6a6014540b2e7b5",
-    "actual": "3d20a9602531a26b017cb72c78ef85a9bf2cdddf357a0c61a6a6014540b2e7b5",
+    "expected": "2454d5fff53dbe8e0884f4f226648316d2c617b2b01a9289753749c63ec14f84",
+    "actual": "2454d5fff53dbe8e0884f4f226648316d2c617b2b01a9289753749c63ec14f84",
     "status": "pass"
   },
   {
@@ -61,8 +73,8 @@
   },
   {
     "file": "tests/unit/fixtures/coding-controls-tf0510/run-verification.ps1",
-    "expected": "84c0cf8f020058a55762c2aada3e6863a63f3b49130fe09998d9c775fc3e3584",
-    "actual": "84c0cf8f020058a55762c2aada3e6863a63f3b49130fe09998d9c775fc3e3584",
+    "expected": "4879dbb5337b616e49e4836a809e5e51c5768166515fc82038bf75fa985946c5",
+    "actual": "4879dbb5337b616e49e4836a809e5e51c5768166515fc82038bf75fa985946c5",
     "status": "pass"
   }
 ]

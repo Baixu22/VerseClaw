@@ -5,8 +5,8 @@ stdout | tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts > TF-0
 {
  "workers": 4,
  "roundsPerWorker": 12,
- "durationMs": 674,
- "throughputAcquiresPerSecond": 17.8,
+ "durationMs": 819,
+ "throughputAcquiresPerSecond": 14.65,
  "totals": {
   "acquired": 12,
   "denied": 36,
@@ -18,15 +18,15 @@ stdout | tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts > TF-0
  "perWorker": [
   {
    "holderId": "worker-0",
-   "acquired": 12,
-   "denied": 0,
-   "effects": 12
-  },
-  {
-   "holderId": "worker-1",
    "acquired": 0,
    "denied": 12,
    "effects": 0
+  },
+  {
+   "holderId": "worker-1",
+   "acquired": 12,
+   "denied": 0,
+   "effects": 12
   },
   {
    "holderId": "worker-2",
@@ -43,11 +43,11 @@ stdout | tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts > TF-0
  ]
 }
 
- ✓ tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts (1 test) 679ms
-     ✓ serializes overlapping writers across real processes with zero duplicate side effects  678ms
+ ✓ tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts (1 test) 825ms
+     ✓ serializes overlapping writers across real processes with zero duplicate side effects  824ms
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  17:51:24
-   Duration  959ms (transform 40ms, setup 108ms, import 9ms, tests 679ms, environment 0ms)
+   Start at  18:11:51
+   Duration  1.10s (transform 39ms, setup 108ms, import 10ms, tests 825ms, environment 0ms)
 

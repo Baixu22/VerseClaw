@@ -94,13 +94,14 @@ export const CODING_CONTROL_COMPONENTS: readonly CodingControlComponent[] = [
       "openclaw_runtime/src/agents/orchestration-patch-flow.test.ts",
       "openclaw_runtime/src/agents/patch-flow.ts",
       "openclaw_runtime/src/agents/patch-flow-graduation.ts",
+      "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
     ],
     remainingGap: [
-      "Graduation is undefined by evidence: its own graduateOrRetireCriteria requires patch execution to improve verified coding outcomes while preserving write-journal authority, and no outcome comparison exists in the repo.",
-      "The only product entries are the model tool parameter patchFlowExecution=true and an operator config flag; no natural task action or explicit concurrent workflow selects it, so it remains an opt-in path.",
+      "Graduation is undefined by evidence: its own graduateOrRetireCriteria requires patch execution to improve verified coding outcomes while preserving write-journal authority, and no outcome comparison exists in the repo. The trigger is now reachable (request opt-in OR the operator config default, gated on the concurrency advisory), so what is missing is the outcome comparison, not the entry point.",
       "The owning record cannot be updated from here: feature.patch-flow is experiment with a 2026-12-31 expiry in shared/dcs/component-disposition-catalog.ts, and shared/ is outside the TF-0510 write scope.",
     ],
-    productEntry: "team_orchestrate patchFlowExecution=true (model tool parameter)",
+    productEntry:
+      "team_orchestrate patchFlowExecution=true, or runtime.coding.patchFlow.default=true with a patch-flow concurrency recommendation",
     notes:
       "Serial fenced apply, destructive holds, a 10-cycle agent-driven soak and fail-closed missing-workspace behaviour are all tested. What is missing is a product decision plus a non-vacuous graduation gate, not more code.",
   },

@@ -31,6 +31,12 @@ $results += Invoke-CapturedGate -Id '02-patch-flow' -Arguments @(
   'src/agents/orchestration-patch-flow.test.ts', '--maxWorkers=1', '--reporter=dot'
 ) -DisplayCommand 'patch-flow gate, serial apply and orchestration suites'
 
+# patch-flow product trigger: config default OR explicit opt-in, gated on the advisory.
+$results += Invoke-CapturedGate -Id '02b-patchflow-trigger' -Arguments @(
+  $pnpm, 'exec', 'vitest', 'run', 'tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts',
+  '--maxWorkers=1', '--reporter=dot'
+) -DisplayCommand 'patch-flow product trigger suite'
+
 $results += Invoke-CapturedGate -Id '03-stale-and-lease' -Arguments @(
   $pnpm, '--dir', 'openclaw_runtime', 'exec', 'node', 'scripts/run-vitest.mjs', 'run',
   'src/agents/tools/stale-write-guard.test.ts',
