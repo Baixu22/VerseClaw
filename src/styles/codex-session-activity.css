@@ -275,6 +275,46 @@
   outline: none;
 }
 
+/* Policy facts stack their value under the label so long source and model
+ * identifiers never collapse the label to an unreadable ellipsis. */
+.codex-session-activity .codex-session-activity__row.is-stacked {
+  grid-template-columns: var(--csa-icon-size) minmax(0, 1fr) var(--csa-trail-size);
+  align-items: start;
+  row-gap: 2px;
+  padding-block: 4px;
+}
+
+.codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-icon,
+.codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-stack,
+.codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-label {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-icon {
+  grid-column: 1;
+}
+
+.codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-label {
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
+
+.codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-value {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-trail {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+}
+
 /* Taller variant: a 24px avatar cannot breathe in a 30px row. */
 .codex-session-activity .codex-session-activity__row.is-tall {
   min-height: 38px;

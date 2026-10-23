@@ -144,6 +144,7 @@ function Row({
   value,
   state,
   tall,
+  stacked,
   title,
   onOpen,
   testId,
@@ -154,6 +155,7 @@ function Row({
   value?: React.ReactNode;
   state?: RowState;
   tall?: boolean;
+  stacked?: boolean;
   title?: string;
   onOpen?: () => void;
   testId?: string;
@@ -178,6 +180,7 @@ function Row({
   const className = cn(
     'codex-session-activity__row',
     tall && 'is-tall',
+    stacked && 'is-stacked',
     onOpen && 'is-interactive',
   );
   if (!onOpen) {
@@ -579,6 +582,7 @@ export function SessionActivityPanel({
           >
             <Row
               testId="session-activity-policy-backend"
+              stacked
               label={t('sessionActivity.policy.backend')}
               sublabel={`${t(`sessionActivity.policy.status.${configuredBackend?.status ?? 'unverified'}`)} · ${configuredBackend?.source ?? t('sessionActivity.policy.notReported')}`}
               value={configuredBackend?.value
@@ -588,6 +592,7 @@ export function SessionActivityPanel({
             />
             <Row
               testId="session-activity-policy-effective"
+              stacked
               label={t('sessionActivity.policy.effectiveBackend')}
               sublabel={policyReason(effectiveBackend?.reason ?? null) ?? t('sessionActivity.policy.currentRunObservation')}
               value={effectiveBackend?.value
@@ -597,6 +602,7 @@ export function SessionActivityPanel({
             />
             <Row
               testId="session-activity-policy-effort"
+              stacked
               label={t('sessionActivity.policy.effort')}
               sublabel={[configuredModel?.source, policyReason(effectiveModel?.reason ?? null)].filter(Boolean).join(' · ')}
               value={[configuredModel?.value?.effort, effectiveModel?.value?.effort].filter(Boolean).join(' → ') || t('sessionActivity.policy.notReported')}
@@ -604,6 +610,7 @@ export function SessionActivityPanel({
             />
             <Row
               testId="session-activity-policy-context"
+              stacked
               label={t('sessionActivity.policy.context')}
               sublabel={[policy.context.configured.source, policy.context.effective.source, policyReason(policy.context.effective.reason)].filter(Boolean).join(' · ')}
               value={`${configuredContextValue} → ${effectiveContextValue}`}
@@ -611,6 +618,7 @@ export function SessionActivityPanel({
             />
             <Row
               testId="session-activity-policy-actions"
+              stacked
               label={t('sessionActivity.policy.actions')}
               sublabel={policy.grants.effective.reason
                 ? policyReason(policy.grants.effective.reason)
@@ -648,6 +656,7 @@ export function SessionActivityPanel({
             ) : null}
             <Row
               testId="session-activity-policy-queue"
+              stacked
               label={t('sessionActivity.policy.queue')}
               sublabel={policyReason(policy.queue.effective.reason) ?? policy.queue.effective.source}
               value={`${configuredQueueValue} → ${effectiveQueueValue}`}
@@ -655,6 +664,7 @@ export function SessionActivityPanel({
             />
             <Row
               testId="session-activity-policy-resources"
+              stacked
               label={t('sessionActivity.policy.resources')}
               sublabel={policyReason(policy.resources.effective.reason)}
               value={t(`sessionActivity.policy.status.${policy.resources.effective.status}`)}
@@ -662,6 +672,7 @@ export function SessionActivityPanel({
             />
             <Row
               testId="session-activity-policy-schedule"
+              stacked
               label={t('sessionActivity.policy.schedule')}
               sublabel={policyReason(policy.schedule.effective.reason)}
               value={t(`sessionActivity.policy.status.${policy.schedule.effective.status}`)}
