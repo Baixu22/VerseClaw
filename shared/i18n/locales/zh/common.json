@@ -142,6 +142,9 @@
       "taskRequired": "请先选择 Task Ledger 节点。",
       "processes": "{{count}} 个进程",
       "slots": "{{count}} 个资源槽",
+      "recovery": "恢复状态：{{state}}",
+      "backgroundTerminals": "{{count}} 个后台终端",
+      "queued": "{{count}} 个排队",
       "state": { "active": "已启用", "paused": "已暂停", "invalid": "已失效", "unbound": "未绑定" }
     }
   },

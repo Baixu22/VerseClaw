@@ -142,6 +142,9 @@
       "taskRequired": "Сначала выберите узел Task Ledger.",
       "processes": "Процессов: {{count}}",
       "slots": "Слотов: {{count}}",
+      "recovery": "Состояние восстановления: {{state}}",
+      "backgroundTerminals": "Фоновых терминалов: {{count}}",
+      "queued": "В очереди: {{count}}",
       "state": { "active": "активен", "paused": "на паузе", "invalid": "недействителен", "unbound": "не привязан" }
     }
   },

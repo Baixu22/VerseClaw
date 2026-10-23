@@ -15,6 +15,7 @@ touchedAreas:
   - harness/specs/tasks/long-session-coordination-surface.md
   - harness/specs/tasks/long-session-development-plan.md
   - openclaw_runtime/src/agents/orchestration-completion-batches.ts
+  - electron/services/session-activity-api.ts
   - src/pages/Chat/index.tsx
   - src/components/layout/Sidebar.tsx
   - src/pages/Chat/SessionActivityPanel.tsx
@@ -43,6 +44,7 @@ touchedAreas:
   - tests/e2e/long-session-coordination.spec.ts
   - tests/e2e/chat-session-handoff.spec.ts
   - tests/e2e/chat-session-fork.spec.ts
+  - tests/unit/session-activity-background-read.test.ts
   - harness/specs/fixtures/long-session-development/c4/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -61,7 +63,7 @@ expectedUserBehavior:
   - 交付可使用的长期入口，减少跨 session 的手工协调，同时保持源记录和任务状态可打开审查。
   - 创建本合同不代表功能已实现；结果、配置、授权和任务完成仍归现有 owner，未知状态如实保留。
 requiredTests:
-  - pnpm exec vitest run tests/unit/sidebar-session-context-menu.test.tsx tests/unit/session-activity-panel.test.tsx tests/unit/role-orchestration-methods.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/sidebar-session-context-menu.test.tsx tests/unit/session-activity-panel.test.tsx tests/unit/role-orchestration-methods.test.ts tests/unit/session-activity-background-read.test.ts --maxWorkers=1
   - pnpm run i18n:lint
   - pnpm run build:vite
   - pnpm run test:e2e:run tests/e2e/chat-session-handoff.spec.ts tests/e2e/chat-session-fork.spec.ts tests/e2e/long-session-coordination.spec.ts
@@ -126,7 +128,7 @@ docs:
 
 **门禁与待交付检查**
 
-- `pnpm exec vitest run tests/unit/sidebar-session-context-menu.test.tsx tests/unit/session-activity-panel.test.tsx tests/unit/role-orchestration-methods.test.ts --maxWorkers=1`
+- `pnpm exec vitest run tests/unit/sidebar-session-context-menu.test.tsx tests/unit/session-activity-panel.test.tsx tests/unit/role-orchestration-methods.test.ts tests/unit/session-activity-background-read.test.ts --maxWorkers=1`
 - `pnpm run i18n:lint`
 - `pnpm run build:vite`
 - `pnpm run test:e2e:run tests/e2e/chat-session-handoff.spec.ts tests/e2e/chat-session-fork.spec.ts tests/e2e/long-session-coordination.spec.ts`

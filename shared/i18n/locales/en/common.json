@@ -142,6 +142,9 @@
       "taskRequired": "Select a Task Ledger node first.",
       "processes": "{{count}} processes",
       "slots": "{{count}} slots",
+      "recovery": "Recovery: {{state}}",
+      "backgroundTerminals": "{{count}} background terminals",
+      "queued": "{{count}} queued",
       "state": { "active": "active", "paused": "paused", "invalid": "invalid", "unbound": "unbound" }
     }
   },

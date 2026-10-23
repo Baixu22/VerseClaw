@@ -196,6 +196,36 @@ const MAIN_CASES: MainCase[] = [
           { id: 'proc-1', kind: 'bash', label: 'Process proc-1', status: 'running', updatedAt: 900 },
         ],
         goals: [{ id: 'goal-1', kind: 'flow', label: 'Goal wait goal-1', status: 'waiting', updatedAt: 900 }],
+        completionBatches: [{
+          schemaVersion: 'clawx.orchestration-completion-batch/v1',
+          batchId: 'batch-1',
+          orchestrationRunId: 'orch-1',
+          requesterSessionKey: SESSION_KEY,
+          requesterSessionGeneration: 'generation-1',
+          generationState: 'matching',
+          status: 'terminal',
+          outcome: 'completed',
+          consolidatedReceiptId: 'receipt-1',
+          acceptedAt: 900,
+          terminalAt: 1_000,
+          counts: { expected: 1, settled: 1, completed: 1, failed: 0, cancelled: 0, unknown: 0 },
+          delivery: {
+            state: 'delivered',
+            delivered: 1,
+            pending: 0,
+            suspended: 0,
+            failed: 0,
+            discarded: 0,
+            waitingForRequesterTurn: false,
+          },
+          members: [{
+            runId: 'run-child-1',
+            childSessionKey: 'agent:explorer:child-1',
+            roleName: 'explorer',
+            status: 'completed',
+            deliveryStatus: 'delivered',
+          }],
+        }],
       }),
     }),
     state: 'known',
@@ -233,6 +263,7 @@ describe('session activity background read (Main service)', () => {
     expect(result.snapshot.subagents.map((agent) => agent.id)).toEqual(['child-1']);
     expect(result.snapshot.processes.map((process) => process.id)).toEqual(['proc-1']);
     expect(result.snapshot.goals.map((goal) => goal.id)).toEqual(['goal-1']);
+    expect(result.snapshot.completionBatches.map((batch) => batch.batchId)).toEqual(['batch-1']);
     /* Live background work must still reach the panel after the run closed. */
     expect(classifySessionActivity(result.snapshot)).not.toBe('none');
   });

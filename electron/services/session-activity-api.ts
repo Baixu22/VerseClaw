@@ -96,6 +96,9 @@ function mergeRuntimeSnapshot(
     session: { ...snapshot.session, ...(runtime.session ?? {}), sessionKey },
     tasks: [...snapshot.tasks, ...(Array.isArray(runtime.tasks) ? runtime.tasks : [])],
     subagents: Array.isArray(runtime.subagents) ? runtime.subagents : snapshot.subagents,
+    completionBatches: Array.isArray(runtime.completionBatches)
+      ? runtime.completionBatches
+      : snapshot.completionBatches,
     goals: Array.isArray(runtime.goals) ? runtime.goals : snapshot.goals,
     processes: Array.isArray(runtime.processes) ? runtime.processes : snapshot.processes,
     lineage: Array.isArray(runtime.lineage) ? runtime.lineage : snapshot.lineage,

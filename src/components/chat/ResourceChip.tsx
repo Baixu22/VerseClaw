@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { useResourceStore } from '@/stores/resource-tracker';
 import { useTranslation } from 'react-i18next';
 import type { TrackedResource } from '@shared/types/resource-tracker';
-import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
+import type { WorkspaceCoordinatorBinding, WorkspaceCoordinatorRecovery } from '@shared/types/workspace';
 import type { RuntimeResourceEnvelopeState } from '@shared/host-api/contract';
 import { hostApi } from '@/lib/host-api';
 import { getWorkspaceCoordinatorBinding } from '@/lib/workspace-session';
@@ -40,6 +40,7 @@ export function ResourceChip() {
   const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
   const activitySnapshot = useSessionActivityStore((state) => state.snapshots[currentSessionKey]);
   const [coordinatorBinding, setCoordinatorBinding] = useState<WorkspaceCoordinatorBinding | null>(null);
+  const [coordinatorRecovery, setCoordinatorRecovery] = useState<WorkspaceCoordinatorRecovery | null>(null);
   const [resourceEnvelope, setResourceEnvelope] = useState<RuntimeResourceEnvelopeState | null>(null);
   const [coordinatorBusy, setCoordinatorBusy] = useState(false);
   const [coordinatorError, setCoordinatorError] = useState<string | null>(null);
@@ -48,6 +49,7 @@ export function ResourceChip() {
     ? getWorkspaceCoordinatorBinding(activeWorkspace, agentId, currentSessionKey)
     : null;
   const completionBatches = activitySnapshot?.completionBatches ?? [];
+  const activeBackgroundTerminalCount = activitySnapshot?.terminals.filter((terminal) => ['starting', 'running', 'idle', 'blocked'].includes(terminal.status)).length ?? 0;
   const loadCoordinator = useCallback(async () => {
     if (!activeWorkspace || !agentId || !currentSessionKey) {
       setCoordinatorBinding(null);
@@ -57,8 +59,12 @@ export function ResourceChip() {
       hostApi.workspaces.resolveCoordinator({ workspaceId: activeWorkspace.id, agentId, sessionKey: currentSessionKey }),
       hostApi.resourceEnvelope.getState(),
     ]);
-    if (resolved.status === 'fulfilled') setCoordinatorBinding(resolved.value.binding ?? null);
-    else setCoordinatorBinding(cachedBinding);
+    if (resolved.status === 'fulfilled') {
+      setCoordinatorBinding(resolved.value.binding ?? null);
+      setCoordinatorRecovery(resolved.value.recovery);
+    } else {
+      setCoordinatorBinding(cachedBinding);
+    }
     if (envelope.status === 'fulfilled') setResourceEnvelope(envelope.value);
   }, [activeWorkspace, agentId, cachedBinding, currentSessionKey]);
   const binding = coordinatorBinding ?? cachedBinding;
@@ -134,7 +140,7 @@ export function ResourceChip() {
   const warningCount = idleCount + unreachableCount;
 
   if (!isInitialized) return null;
-  const coordinatorVisible = Boolean(binding || activeTaskNodeId || resourceEnvelope?.measured);
+  const coordinatorVisible = Boolean(binding || activeTaskNodeId || resourceEnvelope?.measured || completionBatches.length > 0);
   if (totalCount === 0 && !coordinatorVisible && !popoverOpen) return null;
 
   const handleStop = async (resourceId: string) => {
@@ -246,6 +252,9 @@ export function ResourceChip() {
                       {binding.environment.backend} / {binding.environment.kind} / r{binding.bindingRevision}
                     </div>
                     <div className="truncate">{binding.environment.canonicalRoot}</div>
+                    <div data-testid="coordinator-recovery">
+                      {t('resourceTracker.coordinator.recovery', { state: coordinatorRecovery?.state ?? 'unknown' })}
+                    </div>
                     {binding.invalidationReason && (
                       <div className="flex items-start gap-1 text-amber-700 dark:text-amber-400">
                         <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
@@ -256,6 +265,7 @@ export function ResourceChip() {
                       {binding.taskLedgerReferences.slice(0, 3).map((reference) => (
                         <Link
                           key={reference.taskLedgerNodeId}
+                          data-testid={`coordinator-task-ledger-${reference.taskLedgerNodeId}`}
                           to={'/task-ledger?nodeId=' + encodeURIComponent(reference.taskLedgerNodeId)}
                           className="inline-flex max-w-full items-center gap-0.5 rounded bg-foreground/5 px-1.5 py-0.5 text-foreground hover:bg-foreground/10"
                         >
@@ -268,7 +278,7 @@ export function ResourceChip() {
                       <div className="space-y-0.5">
                         {completionBatches.slice(-3).map((batch) => (
                           <div key={batch.batchId} className="flex items-center justify-between gap-2">
-                            <button type="button" onClick={() => { const child = batch.members[0]?.childSessionKey; if (child) switchSession(child); }} className="truncate text-left hover:text-foreground">{batch.members.map((member) => member.roleName).join(', ')}</button>
+                            <button type="button" data-testid={`coordinator-worker-${batch.batchId}`} onClick={() => { const child = batch.members[0]?.childSessionKey; if (child) switchSession(child); }} className="truncate text-left hover:text-foreground">{batch.members.map((member) => member.roleName).join(', ')}</button>
                             <span className="shrink-0 rounded bg-foreground/5 px-1 py-0.5 font-medium text-foreground">
                               {batch.outcome} / {batch.delivery.state}
                             </span>
@@ -306,6 +316,8 @@ export function ResourceChip() {
                     <span>RSS {Math.round(resourceEnvelope.snapshot.totals.treeRssBytes / 1024 / 1024)} MB</span>
                     <span>{t('resourceTracker.coordinator.processes', { count: resourceEnvelope.snapshot.totals.processCount })}</span>
                     <span>{t('resourceTracker.coordinator.slots', { count: resourceEnvelope.snapshot.totals.activeSlots })}</span>
+                    <span>{t('resourceTracker.coordinator.backgroundTerminals', { count: activeBackgroundTerminalCount })}</span>
+                    <span>{t('resourceTracker.coordinator.queued', { count: resourceEnvelope.snapshot.totals.queuedCount })}</span>
                   </div>
                 )}
               </section>
