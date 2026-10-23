@@ -198,6 +198,68 @@ describe("runtime session archive/restore lifecycle", () => {
     expect(sessionAdmissionRegistry.isFenced(identity)).toBe(false);
   });
 
+  it("releases the new-generation fence when both live and archived transcripts exist", async () => {
+    await archiveSessionWithLifecycle({
+      cfg,
+      key: SESSION_KEY,
+      operationId: "restore-duplicate-source",
+      target,
+      entry,
+      canonicalKey: SESSION_KEY,
+    });
+    const archiveEntry = (await readSessionArchiveIndex(
+      resolveSessionArchiveIndexPath(storePath),
+    )).entries[0];
+    if (!archiveEntry) throw new Error("archive entry missing");
+    const restoredSessionId = "session-restored-duplicate";
+    const liveTranscriptPath = path.join(tmpDir, `${restoredSessionId}.jsonl`);
+    fs.copyFileSync(archiveEntry.transcriptPath, liveTranscriptPath);
+    const manifest: SessionRestoreOperationManifest = {
+      version: "1",
+      operation: "session-restore",
+      agentId: "agent-a",
+      storeIdentity: "agent-a",
+      canonicalKey: SESSION_KEY,
+      previousSessionId: "session-1",
+      archivedTranscriptPath: archiveEntry.transcriptPath,
+      liveTranscriptPath,
+      archiveIndexPath: resolveSessionArchiveIndexPath(storePath),
+      archiveEntry,
+      restoredEntry: {
+        ...(archiveEntry.sessionsJsonSnapshot as SessionEntry),
+        sessionId: restoredSessionId,
+        sessionFile: path.basename(liveTranscriptPath),
+        updatedAt: Date.now(),
+      },
+    };
+    writeSessionMutationOperationIntent({
+      storePath,
+      operationId: "restore-duplicate-transcript",
+      manifest,
+    });
+    expect(fs.existsSync(archiveEntry.transcriptPath)).toBe(true);
+    expect(fs.existsSync(liveTranscriptPath)).toBe(true);
+    const result = await restoreSessionWithLifecycle({
+      cfg,
+      key: SESSION_KEY,
+      operationId: "restore-duplicate-transcript",
+      target,
+      canonicalKey: SESSION_KEY,
+    });
+    expect(result, JSON.stringify({
+      result,
+      archivedPath: archiveEntry.transcriptPath,
+      livePath: liveTranscriptPath,
+      archivedExists: fs.existsSync(archiveEntry.transcriptPath),
+      liveExists: fs.existsSync(liveTranscriptPath),
+    })).toMatchObject({ ok: false, code: "conflict", retryable: false });
+    expect(sessionAdmissionRegistry.isFenced({
+      agentId: "agent-a",
+      canonicalSessionKey: SESSION_KEY,
+      expectedSessionId: restoredSessionId,
+    })).toBe(false);
+  });
+
   it("archives through the admission finalizer and commits a restart-safe receipt", async () => {
     const result = await archiveSessionWithLifecycle({
       cfg,
