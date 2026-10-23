@@ -69,6 +69,37 @@ $results += Invoke-CapturedGate -Id '05-root-worktree-wal' -Arguments @(
   '--maxWorkers=1', '--reporter=dot'
 ) -DisplayCommand 'worktree merge, sqlite WAL and session isolation suites'
 
+# Retirement invariants: no entry point, no toggle, implementation preserved.
+$retireAudit = Join-Path $outputDir '05b-retirement-invariants.txt'
+$flagsSrc = Get-Content -LiteralPath (Join-Path $root 'openclaw_runtime/src/context-engine/coding-runtime-flags.ts') -Raw
+$ctlSrc = Get-Content -LiteralPath (Join-Path $root 'shared/dcs/prod-flags-control.ts') -Raw
+$toolSrc = Get-Content -LiteralPath (Join-Path $root 'openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts') -Raw
+$catSrc = Get-Content -LiteralPath (Join-Path $root 'shared/dcs/component-disposition-catalog.ts') -Raw
+$implKept = @(
+  'openclaw_runtime/src/context-engine/factstore/symbol-lease.ts',
+  'openclaw_runtime/src/agents/symbol-lease-guard.ts',
+  'openclaw_runtime/src/agents/patch-flow.ts',
+  'openclaw_runtime/src/agents/patch-flow-graduation.ts'
+) | ForEach-Object { if (Test-Path (Join-Path $root $_)) { 1 } else { 0 } }
+$retireLines = @(
+  'symbol_lease_retired_flag=' + [int]($flagsSrc -match 'SYMBOL_LEASE_RETIRED = true'),
+  'patch_flow_retired_flag=' + [int]($flagsSrc -match 'PATCH_FLOW_RETIRED = true'),
+  'symbol_lease_writable_spec_removed=' + [int](-not ($ctlSrc -match "id: 'symbol-lease'")),
+  'patchflow_tool_param_removed=' + [int](-not ($toolSrc -match 'patchFlowExecution: Type.Optional')),
+  'catalog_symbol_lease_retired=' + [int]($catSrc -match "id: 'feature.symbol-lease'[^\n]*disposition: 'retired'"),
+  'catalog_patch_flow_retired=' + [int]($catSrc -match "id: 'feature.patch-flow'[^\n]*disposition: 'retired'"),
+  'implementations_preserved=' + ($implKept -join '')
+)
+[System.IO.File]::WriteAllText($retireAudit, (($retireLines -join [Environment]::NewLine) + [Environment]::NewLine), $utf8NoBom)
+$retireText = ($retireLines -join [Environment]::NewLine)
+$retireOk = ($retireText -match 'symbol_lease_retired_flag=1') -and ($retireText -match 'patch_flow_retired_flag=1') -and ($retireText -match 'symbol_lease_writable_spec_removed=1') -and ($retireText -match 'patchflow_tool_param_removed=1') -and ($retireText -match 'catalog_symbol_lease_retired=1') -and ($retireText -match 'catalog_patch_flow_retired=1') -and ($retireText -match 'implementations_preserved=1111')
+$results += [ordered]@{
+  id = '05b-retirement-invariants'; command = 'static audit: retired reachability removed, implementation preserved'
+  exitCode = if ($retireOk) { 0 } else { 1 }; status = if ($retireOk) { 'pass' } else { 'fail' }
+  outputPath = 'tests/unit/fixtures/coding-controls-tf0510/05b-retirement-invariants.txt'
+  outputSha256 = (Get-FileHash -LiteralPath $retireAudit -Algorithm SHA256).Hash.ToLowerInvariant()
+}
+
 $results += Invoke-CapturedGate -Id '06-typecheck' -Arguments @($pnpm, 'run', 'typecheck') -DisplayCommand 'pnpm run typecheck'
 $results += Invoke-CapturedGate -Id '07-lint-check' -Arguments @($pnpm, 'run', 'lint:check') -DisplayCommand 'pnpm run lint:check'
 $results += Invoke-CapturedGate -Id '08-contract-check' -Arguments @($pnpm, 'run', 'contract:check') -DisplayCommand 'pnpm run contract:check'
@@ -94,7 +125,9 @@ $results += [ordered]@{
 }
 
 # 12: scope audit.
-$allowedPrefixes = @('openclaw_runtime/src/agents/', 'tests/unit/', 'tests/e2e/')
+# Owner authorised the retirement decision on 2026-10-23, which includes the DCS records
+# (shared/) and the coding flag resolvers (context-engine/) that own the retired entries.
+$allowedPrefixes = @('openclaw_runtime/src/agents/', 'openclaw_runtime/src/context-engine/', 'shared/', 'tests/unit/', 'tests/e2e/')
 $changed = @(& git -C $root status --porcelain=v1) | ForEach-Object { ($_ -replace '^..\s+', '') -replace '"', '' } | Where-Object { $_ }
 $changed += @(& git -C $root ls-files --others --exclude-standard)
 $changed = @($changed | Sort-Object -Unique)

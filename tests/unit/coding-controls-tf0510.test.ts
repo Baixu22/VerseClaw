@@ -7,6 +7,7 @@ import {
   codingControlComplete,
   codingControlGaps,
 } from '../../openclaw_runtime/src/agents/coding-control-dispositions';
+import { COMPONENT_DISPOSITION_ENTRIES } from '../../shared/dcs/component-disposition-catalog';
 
 const root = process.cwd();
 const read = (rel: string) => fs.readFileSync(path.join(root, rel), 'utf8');
@@ -62,13 +63,11 @@ describe('TF-0510 coding control dispositions', () => {
     expect(source).toContain('patchFlowDefault: false');
   });
 
-  it('keeps patch-flow reachable from a model tool parameter, not only an env flag', () => {
+  it('removes the retired patch-flow entry point from the model tool surface', () => {
     const schema = read('openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts');
-    expect(schema).toContain('patchFlowExecution: Type.Optional(Type.Boolean())');
-    const orchestrator = read('openclaw_runtime/src/agents/orchestrator-run-observed.ts');
-    expect(orchestrator).toContain('patchFlowExecution === true');
+    // TF-0510 retired patch-flow, so the model can no longer request it by parameter.
+    expect(schema).not.toContain('patchFlowExecution: Type.Optional(Type.Boolean())');
   });
-
   it('keeps isolation defaults shared and worktree as an explicit request', () => {
     const source = read('openclaw_runtime/src/agents/isolation-mode-matrix.ts');
     expect(source).toMatch(/shared/u);
@@ -78,9 +77,10 @@ describe('TF-0510 coding control dispositions', () => {
 
   it('keeps the coding controls on the operator/developer plane only', () => {
     const control = read('shared/dcs/prod-flags-control.ts');
-    // stale-write-guard and symbol-lease are developer-plane writable switches (default off).
+    // stale-write-guard remains a developer-plane writable switch (default off).
     expect(control.includes("id: 'stale-write-guard'")).toBe(true);
-    expect(control.includes("id: 'symbol-lease'")).toBe(true);
+    // TF-0510 retired symbol-lease: its writable switch is gone.
+    expect(control.includes("id: 'symbol-lease'")).toBe(false);
     // patch-flow has no writable control-plane entry: it is reached through the model
     // tool parameter / operator config, so it can never become a hidden product toggle.
     expect(control.includes("id: 'patch-flow'")).toBe(false);
@@ -89,16 +89,27 @@ describe('TF-0510 coding control dispositions', () => {
     expect(control.includes("id: 'rc03'")).toBe(false);
   });
 
-  it('records the honest remaining gaps instead of claiming completion', () => {
+  it('closes with zero gaps and both experiments retired, not merely reclassified', () => {
     const gaps = codingControlGaps();
-    const blocked = gaps.map((entry) => entry.id).sort();
-    // Both remaining components are blocked on evidence that does not exist yet and on
-    // an owning record outside this node's write scope (shared/dcs/**).
-    expect(blocked).toEqual(['patch-flow', 'symbol-lease']);
-    for (const gap of gaps) {
-      expect(gap.remainingGap.length).toBeGreaterThan(0);
-      expect(gap.remainingGap.join(' ')).toMatch(/experiment|evidence|shared\//u);
+    expect(gaps).toEqual([]);
+    expect(codingControlComplete()).toBe(true);
+
+    // Retirement must be a real disposition change with a retirement node and no
+    // product entry - not an "internal" relabel that keeps the surface alive.
+    for (const id of ['feature.symbol-lease', 'feature.patch-flow']) {
+      const entry = COMPONENT_DISPOSITION_ENTRIES.find((candidate) => candidate.id === id);
+      expect(entry, id).toBeTruthy();
+      expect(entry!.disposition, id).toBe('retired');
+      expect(entry!.retirementNodeId, id).toBe('TF-0510');
+      expect(entry!.implementationNodeId, id).toBeNull();
+      expect(entry!.userEntry, id).toBeNull();
+      expect(entry!.visibility, id).toBe('retired');
+      // The experiment window must no longer apply to a retired record.
+      expect(entry!.expiry, id).toBeUndefined();
     }
-    expect(codingControlComplete()).toBe(false);
-  });
-});
+
+    // And the retired components must not be re-enablable from any entry point.
+    const flags = read('openclaw_runtime/src/context-engine/coding-runtime-flags.ts');
+    expect(flags).toContain('SYMBOL_LEASE_RETIRED = true');
+    expect(flags).toContain('PATCH_FLOW_RETIRED = true');
+  });});

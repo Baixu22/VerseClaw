@@ -43,17 +43,14 @@
       "id": "symbol-lease",
       "label": "Symbol lease / WAL",
       "currentConsumer": "edit / write / apply_patch concurrency guard",
-      "disposition": "experiment",
+      "disposition": "retired",
       "implementationState": "implemented-opt-in",
       "implementationNode": "TF-0510",
       "family": "symbol-lease",
       "catalogEntryPresent": true,
-      "writableTogglePresent": true,
-      "productEntry": "runtime.coding.symbolLease.enabled + .mode (operator config)",
-      "remainingGap": [
-        "Graduation is still undefined by evidence: the multi-writer benchmark now exists (4 real processes x 12 rounds, 12 wins / 36 denials, zero duplicate side effects), but the criteria also require showing lower conflict/rework versus a baseline and reliable rollback, and no baseline comparison or rollback measurement exists yet.",
-        "The owning record cannot be updated from here: feature.symbol-lease is experiment with a 2026-12-31 expiry in shared/dcs/component-disposition-catalog.ts, and shared/ is outside the TF-0510 write scope."
-      ],
+      "writableTogglePresent": false,
+      "productEntry": null,
+      "remainingGap": [],
       "artifacts": [
         {
           "path": "openclaw_runtime/src/agents/symbol-lease-guard.test.ts",
@@ -91,17 +88,14 @@
       "id": "patch-flow",
       "label": "Patch flow (serial fenced apply)",
       "currentConsumer": "team_orchestrate patchFlowExecution + orchestrator serial apply",
-      "disposition": "experiment",
+      "disposition": "retired",
       "implementationState": "implemented-opt-in",
       "implementationNode": "TF-0510",
       "family": "patch-flow",
       "catalogEntryPresent": true,
       "writableTogglePresent": false,
-      "productEntry": "team_orchestrate patchFlowExecution=true, or runtime.coding.patchFlow.default=true with a patch-flow concurrency recommendation",
-      "remainingGap": [
-        "Graduation is undefined by evidence: its own graduateOrRetireCriteria requires patch execution to improve verified coding outcomes while preserving write-journal authority, and no outcome comparison exists in the repo. The trigger is now reachable (request opt-in OR the operator config default, gated on the concurrency advisory), so what is missing is the outcome comparison, not the entry point.",
-        "The owning record cannot be updated from here: feature.patch-flow is experiment with a 2026-12-31 expiry in shared/dcs/component-disposition-catalog.ts, and shared/ is outside the TF-0510 write scope."
-      ],
+      "productEntry": null,
+      "remainingGap": [],
       "artifacts": [
         {
           "path": "openclaw_runtime/src/agents/orchestration-patch-flow.test.ts",
@@ -124,8 +118,8 @@
         {
           "path": "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
           "exists": true,
-          "sha256": "2599ebd7df5d267ce75fb2d51c279de6b5089a019c63e0e0034398756ce17286",
-          "bytes": 3650
+          "sha256": "27cf6f3675d39ac51356c88597f070b400c6807a9906a26ec92ac9d161108157",
+          "bytes": 3270
         }
       ]
     },
@@ -198,12 +192,9 @@
       "worktree-backend",
       "isolation-request"
     ],
-    "componentsWithGaps": [
-      "symbol-lease",
-      "patch-flow"
-    ],
+    "componentsWithGaps": [],
     "everyArtifactResolves": true,
-    "codingControlComplete": false
+    "codingControlComplete": true
   },
   "measuredMetrics": {
     "staleGuardFalseBlockRate": 0,
@@ -223,5 +214,5 @@
       "contentionObserved": true
     }
   },
-  "completionVerdict": "blocked-by-gaps"
+  "completionVerdict": "complete"
 }

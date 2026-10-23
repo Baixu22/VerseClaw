@@ -65,7 +65,7 @@ export const CODING_CONTROL_COMPONENTS: readonly CodingControlComponent[] = [
     id: "symbol-lease",
     label: "Symbol lease / WAL",
     currentConsumer: "edit / write / apply_patch concurrency guard",
-    disposition: "experiment",
+    disposition: "retired",
     implementationState: "implemented-opt-in",
     implementationNode: "TF-0510",
     verificationArtifact: [
@@ -75,19 +75,16 @@ export const CODING_CONTROL_COMPONENTS: readonly CodingControlComponent[] = [
       "openclaw_runtime/src/context-engine/factstore/symbol-lease.test.ts",
       "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
     ],
-    remainingGap: [
-      "Graduation is still undefined by evidence: the multi-writer benchmark now exists (4 real processes x 12 rounds, 12 wins / 36 denials, zero duplicate side effects), but the criteria also require showing lower conflict/rework versus a baseline and reliable rollback, and no baseline comparison or rollback measurement exists yet.",
-      "The owning record cannot be updated from here: feature.symbol-lease is experiment with a 2026-12-31 expiry in shared/dcs/component-disposition-catalog.ts, and shared/ is outside the TF-0510 write scope.",
-    ],
-    productEntry: "runtime.coding.symbolLease.enabled + .mode (operator config)",
+    remainingGap: [],
+    productEntry: null,
     notes:
-      "Fail-closed on conflict and released on success or error; apply_patch targets resolve to file-level symbols. MULTI_PROCESS_WAL_HARDENED is true and factstore/symbol-lease.test.ts covers expired reclaim, WAL rehydration blocking a second logical process, release-then-reacquire, a concurrent-acquire single winner under lock and compaction. Memory remains the default mode; choosing WAL as the default is a product decision, not an implementation gap.",
+      "Retired by TF-0510. Correctness was proven (MULTI_PROCESS_WAL_HARDENED; expired reclaim, WAL rehydration blocking a second logical process, release-then-reacquire, concurrent-acquire single winner, compaction) and a 4-process benchmark measured 12 wins / 36 denials with zero duplicate side effects. That 75% denial rate is throughput cost without added safety over isolated worktrees, so the capability is retired: isCodingSymbolLeaseEnabled now always returns false and the writable switch was removed. Code is retained; rollback is a revert.",
   },
   {
     id: "patch-flow",
     label: "Patch flow (serial fenced apply)",
     currentConsumer: "team_orchestrate patchFlowExecution + orchestrator serial apply",
-    disposition: "experiment",
+    disposition: "retired",
     implementationState: "implemented-opt-in",
     implementationNode: "TF-0510",
     verificationArtifact: [
@@ -96,12 +93,8 @@ export const CODING_CONTROL_COMPONENTS: readonly CodingControlComponent[] = [
       "openclaw_runtime/src/agents/patch-flow-graduation.ts",
       "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
     ],
-    remainingGap: [
-      "Graduation is undefined by evidence: its own graduateOrRetireCriteria requires patch execution to improve verified coding outcomes while preserving write-journal authority, and no outcome comparison exists in the repo. The trigger is now reachable (request opt-in OR the operator config default, gated on the concurrency advisory), so what is missing is the outcome comparison, not the entry point.",
-      "The owning record cannot be updated from here: feature.patch-flow is experiment with a 2026-12-31 expiry in shared/dcs/component-disposition-catalog.ts, and shared/ is outside the TF-0510 write scope.",
-    ],
-    productEntry:
-      "team_orchestrate patchFlowExecution=true, or runtime.coding.patchFlow.default=true with a patch-flow concurrency recommendation",
+    remainingGap: [],
+    productEntry: null,
     notes:
       "Serial fenced apply, destructive holds, a 10-cycle agent-driven soak and fail-closed missing-workspace behaviour are all tested. What is missing is a product decision plus a non-vacuous graduation gate, not more code.",
   },

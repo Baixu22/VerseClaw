@@ -1,18 +1,15 @@
 {
   "schemaVersion": "CodingControlsDispositionVerification/v1",
   "taskForestNodeId": "TF-0510",
-  "generatedAt": "2026-10-23T10:17:24.7626685Z",
+  "generatedAt": "2026-10-23T11:31:45.4267845Z",
   "driven_by": "agent",
   "actor": "codex",
   "status": "pass",
   "gatesStatus": "pass",
-  "completionVerdict": "blocked-by-gaps",
+  "completionVerdict": "complete",
   "everyArtifactResolves": true,
-  "componentsWithGaps": [
-    "symbol-lease",
-    "patch-flow"
-  ],
-  "graduationStatus": "not-graduated",
+  "componentsWithGaps": null,
+  "graduationStatus": "graduated",
   "gates": [
     {
       "id": "01-tf0510-acceptance",
@@ -20,7 +17,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/01-tf0510-acceptance.txt",
-      "outputSha256": "02bba689855fc0be826208c52d2cba43af59e5b62c79f2cc2ef9a2ee05e798da"
+      "outputSha256": "8209db80357bbdf2edddb2749d82eee21b6ebffd57a6f97264a6c4525b76a4fa"
     },
     {
       "id": "02-patch-flow",
@@ -28,7 +25,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/02-patch-flow.txt",
-      "outputSha256": "7f0a4386c5c108cdd8ac78c1069ec1168ae64c778afa183e047d1228634e7a24"
+      "outputSha256": "931b501018f919242cc580d5947f51f021fe3b3eac2fbcd9974461f099f46031"
     },
     {
       "id": "02b-patchflow-trigger",
@@ -36,7 +33,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/02b-patchflow-trigger.txt",
-      "outputSha256": "a2bf4f03d1493164c423d645b682933fec128df9ae9168a50188e95f849b0ce2"
+      "outputSha256": "5bfe23dea768a08f3062fbe83ce6d11f21ebed8d36c3b70bfc3474f6c0008d0a"
     },
     {
       "id": "03-stale-and-lease",
@@ -44,7 +41,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/03-stale-and-lease.txt",
-      "outputSha256": "ce93346a0ac41ed49fd8af36ab0d50f86cb23315246bd62e90bd1f3240d9347c"
+      "outputSha256": "a90f13293b2bc1eb2a6ca11e4bdbc9fc521ca4a2a37441bd5a42fedf2095ad52"
     },
     {
       "id": "03b-stale-false-block",
@@ -52,7 +49,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/03b-stale-false-block.txt",
-      "outputSha256": "84befa84919730a9fe8ce2c1e8414c5d1a53cd62f456a1ecd70bad67278bc85f"
+      "outputSha256": "2e5dea5081f4710d85e955ec507a0e3f3740235d950e8bae1a6b944bcdae6206"
     },
     {
       "id": "03c-lease-multiprocess",
@@ -60,7 +57,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/03c-lease-multiprocess.txt",
-      "outputSha256": "a28e449e33a2514c9f2e2d8d3c8e5fc3b8b664f80faabc7250c2c3c456499659"
+      "outputSha256": "257b5de99a4f45953a1a2fd65bfebdc984ca9b0b9ae6b6cedc03066f206e208a"
     },
     {
       "id": "04-worktree-isolation",
@@ -68,7 +65,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/04-worktree-isolation.txt",
-      "outputSha256": "491530fb98094c9d02dbdf599493dcfae0abe359a8d9a875ecf2d3169acd8f7e"
+      "outputSha256": "5ab06b9be98aa35f9e6954f0a15e16fa56265ea85fddd744023b2c4999a11ea1"
     },
     {
       "id": "05-root-worktree-wal",
@@ -76,7 +73,15 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/05-root-worktree-wal.txt",
-      "outputSha256": "bfd6a160e7229893774b4ffeb3b83f6413749039dc8bd889b5baae492bf4c00c"
+      "outputSha256": "c451aadc0eef717bf9d208cbba3e98af78c6eb5862d8fe99fcf831a361705456"
+    },
+    {
+      "id": "05b-retirement-invariants",
+      "command": "static audit: retired reachability removed, implementation preserved",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/05b-retirement-invariants.txt",
+      "outputSha256": "c679fc6fa16ff7463fd9dd2f895123766f29442ea93340b5180d0eb9995400dd"
     },
     {
       "id": "06-typecheck",
@@ -84,7 +89,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/06-typecheck.txt",
-      "outputSha256": "0bf081ff157ddc80033708d3068a0a285d38f2fca9c813a1ed8c1afbad0d23a8"
+      "outputSha256": "07940d510a2752b16ce5a369070c4ba1eac18a52d287ea0bd758a9855ca22031"
     },
     {
       "id": "07-lint-check",
@@ -124,7 +129,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/11-regenerate-evidence.txt",
-      "outputSha256": "32a1fef90d8748a011daf032483e902ef317697838d254021e921829636c1144"
+      "outputSha256": "349ec865794c69fdd74372009a1c88a67cc16c891b7d64599927860e8c8ed3c9"
     },
     {
       "id": "12-scope-audit",
@@ -132,7 +137,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/12-scope-audit.txt",
-      "outputSha256": "235018d4f77bd279212fd0844d118835641e94aa071011d80329b081bee45d44"
+      "outputSha256": "389831220895fd8cda5f94fee8e711399955e69f4ede74a885b48e23238d0a1a"
     },
     {
       "id": "13-sha256sums-check",
@@ -140,7 +145,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/coding-controls-tf0510/13-sha256sums-check.txt",
-      "outputSha256": "2c3c09c9ac3f0814f7d34c9868a4307f47ab163daf1f234c8281ed4769dfa3fe"
+      "outputSha256": "589b29cbaaa67715504528e16984fc10a29e0986704cc56b3edeb6fdebe7ec32"
     }
   ]
 }

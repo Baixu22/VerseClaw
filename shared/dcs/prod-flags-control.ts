@@ -185,14 +185,6 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     defaultEnabled: false,
   },
   {
-    id: 'symbol-lease',
-    catalog: mustFlag('symbol-lease'),
-    controlKind: 'config',
-    storeKey: 'dcsSymbolLeaseEnabled',
-    targetKey: 'runtime.coding.symbolLease.enabled',
-    defaultEnabled: false,
-  },
-  {
     id: 'routing-memo-shadow',
     catalog: mustFlag('routing-memo-shadow'),
     controlKind: 'config',

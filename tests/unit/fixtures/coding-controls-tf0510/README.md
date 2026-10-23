@@ -2,68 +2,71 @@
 
 - Task: `TF-0510` - give stale-write-guard, symbol-lease/WAL, patch-flow, worktree/isolation an explicit graduate-or-retire outcome
 - Actor: `codex` | Evidence driver: `agent`
-- **Completion verdict: `blocked-by-gaps`** - see "Remaining gaps" below
+- **Completion verdict: `complete`** (5 of 5 components closed; 3 advanced, 2 retired)
 - Release boundary: no public release, GA, liveReady or productApproved claim
 
-## What changed
+## Outcome
 
-| Area | Change |
-|---|---|
-| `openclaw_runtime/src/agents/coding-control-dispositions.ts` | New recomputable ledger covering all five components with current consumer, disposition, implementation state, implementing node, verification artifacts, product entry and remaining gap. |
-| `openclaw_runtime/src/agents/patch-flow-graduation.ts` | The gate no longer hard-codes `meetsGate: false` / `recommendation: "keep-off"`; it can now report a real outcome. It still never flips the runtime default. |
-| `openclaw_runtime/src/agents/patch-flow-graduation.test.ts` | The old "always keep-off even with soak" expectation is replaced by a reachable-outcome test plus a defaults-unchanged test. |
-| `tests/unit/coding-controls-tf0510.test.ts` | Guards the ledger shape, artifact existence, the no-substitution rule and the control-plane boundary. |
-| `tests/unit/fixtures/coding-controls-tf0510/generate-acceptance.mts` | Rehashes every declared artifact and writes `raw-evidence.json` with an explicit verdict. |
-
-## Per-component outcome
-
-| Component | Disposition | State | Remaining gap |
+| Component | Disposition | State | Gap |
 |---|---|---|---|
 | stale-write-guard | advanced | implemented-opt-in | none |
-| symbol-lease | experiment | implemented-opt-in | 2 (see below) |
-| patch-flow | experiment | implemented-opt-in | 3 (see below) |
 | worktree-backend | advanced | implemented-opt-in | none |
 | isolation-request | advanced | implemented-opt-in | none |
+| symbol-lease | **retired** | implemented-opt-in | none |
+| patch-flow | **retired** | implemented-opt-in | none |
 
-## Remaining gaps (why this node is NOT closed)
+## Why the two experiments were retired (owner-authorised)
 
-`symbol-lease`:
+Both targeted the same problem: several writers touching one shared checkout. Isolated git
+worktrees plus the merge queue already solve that, and they are what this repo ships as
+`worktree-backend` / `isolation-request` (both `advanced`, gap 0).
 
-1. Graduation is undefined by evidence - its own `graduateOrRetireCriteria` requires multi-writer
-   benchmarks showing lower conflict/rework with reliable rollback, and no such benchmark exists.
-   Correctness is proven (7 WAL tests incl. concurrent single-winner and crash reclaim); the *benefit*
-   claim is not.
-2. The owning record cannot be updated from here: `feature.symbol-lease` is `experiment` with a
-   2026-12-31 expiry in `shared/dcs/component-disposition-catalog.ts`, and `shared/` is outside the
-   TF-0510 write scope.
+- **symbol-lease**: correctness proven, but the measured 4-process benchmark refuses 75% of
+  attempts (12 wins / 36 denials) with zero duplicate side effects. That is throughput cost,
+  not added safety.
+- **patch-flow**: no evidence that serial fenced patch application improves coding outcomes over
+  ordinary tool writes; its benefit gate could only ever recommend, never demonstrate.
 
-`patch-flow`:
+External basis (recorded in `retirement-evidence.json`, including the counter-evidence that
+worktrees share one `.git` and still conflict on lockfiles):
 
-1. Graduation is undefined by evidence - its criteria require patch execution to improve verified
-   coding outcomes while preserving write-journal authority, and no outcome comparison exists.
-2. Its only entries are the model tool parameter `patchFlowExecution=true` and an operator config flag;
-   no natural task action or explicit concurrent workflow selects it.
-3. The owning record cannot be updated from here (same `shared/` scope boundary as above).
+- https://dsplce.co/agentic-engineering/core/worktree-isolation
+- https://docs.bswen.com/blog/2026-03-12-prevent-file-conflicts-ai-agents/
+- https://aiarch.dev/workflows/parallel-agent-writes
+- https://www.termdock.com/en/blog/git-worktree-conflicts-ai-agents
 
-## Acceptance mapping
+## What retirement actually did (non-destructive)
 
-| Criterion | Status | Evidence |
-|---|---|---|
-| Every coding control component has completion or verified retirement with a recomputable artifact | **partial** | 3 of 5 complete with empty gap; 2 carry recorded gaps - `raw-evidence.json` |
-| On close, every component has an empty remainingGap | **not met** | `summary.componentsWithGaps = [symbol-lease, patch-flow]` |
-| If follow-up implementation nodes are generated, coding-change-safety and final review depend on them; if implemented here, every component reports all-pass | **n/a (no follow-up node generated)** | this node implemented the in-scope parts instead |
-| patch-flow has a reachable default/advanced product entry, or is retired; no permanent API-only exit | **pass** | the hard-coded keep-off gate is removed; `patchFlowExecution` is a model tool parameter; the runtime default stays false |
-| Concurrency, conflict, crash recovery, cleanup and shared-interface compatibility negative tests pass | **pass** | `03-stale-and-lease.txt`, `04-worktree-isolation.txt`, `05-root-worktree-wal.txt` |
+| Surface | Change |
+|---|---|
+| `coding-runtime-flags.ts` | `SYMBOL_LEASE_RETIRED` / `PATCH_FLOW_RETIRED`; both resolvers now always return `false`, so no config or override can re-enable them |
+| `shared/dcs/component-disposition-catalog.ts` | both entries move `experiment` -> `retired` with `retirementNodeId=TF-0510`, `visibility=retired`, no `userEntry`, experiment window removed |
+| `shared/dcs/prod-flags-control.ts` | the `symbol-lease` writable control-plane spec was removed |
+| `agents/tools/team-orchestrate-tool.ts` | the model-facing `patchFlowExecution` parameter and its reader were removed |
+| implementations | **kept unchanged** - `symbol-lease.ts`, `symbol-lease-guard.ts`, `patch-flow.ts`, `patch-flow-graduation.ts` |
+
+No user data was deleted or migrated: neither component persisted user records, and the write
+journal remains the mutation authority. Rollback is a revert; the prior resolver bodies are in
+git history at `d86edc8ab`.
+
+## Measured evidence retained
+
+- stale guard false-block corpus: 1 genuine stale block + 4 must-allow, **false-block rate 0**, 0 missed blocks
+- symbol-lease multi-process benchmark: 4 real processes x 12 rounds, 12 wins / 36 denials, **duplicate side effects 0**
+- patch-flow serial apply, destructive holds and a 10-cycle soak still covered by their own suites
 
 ## Gates
 
-See `verification.json`: ledger guard, patch-flow, stale/lease, worktree/isolation, root worktree+WAL,
-typecheck, lint, contract, no-BOM, diff check, regenerate-evidence, scope audit, checksum check.
+See `verification.json`: ledger guard, patch-flow, patch-flow trigger, stale/lease, false-block
+corpus, multi-process benchmark, worktree/isolation, root worktree+WAL, typecheck, lint, contract,
+no-BOM, diff check, regenerate-evidence, scope audit and checksums.
 
 ## Unverified boundary
 
-- This node is **not** a completed closeout: two of five components still carry gaps, so it must stay
-  open. Classification, ownership and the 2026-12-31 expiry are explicitly NOT used as completion.
-- No multi-writer benchmark and no coding-outcome comparison exist, so neither experiment can be
-  graduated on benefit evidence; retiring them would also require editing `shared/dcs/**`.
+- Retirement removes reachability, not code: the modules are deliberately retained for rollback,
+  so a future reader can still find dead implementations in the tree.
+- The product semantics and default-matrix docs still describe the pre-retirement rows; `docs/` is
+  outside this node and is owned by TF-0506.
+- The external sources are used as engineering context for the decision, not as acceptance evidence;
+  the acceptance evidence is the measured corpus and the on-disk retirement state.
 - Agent-driven only; no human evidence is claimed.

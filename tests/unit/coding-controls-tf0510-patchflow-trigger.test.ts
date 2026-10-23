@@ -30,10 +30,12 @@ describe("TF-0510 patch-flow product trigger", () => {
     expect(isCodingPatchFlowDefault({} as never)).toBe(false);
   });
 
-  it("honours an explicit operator config default instead of ignoring it", () => {
+  it("ignores an operator config default because patch-flow is retired", () => {
     const cfg = { runtime: { coding: { patchFlow: { default: true } } } } as never;
-    expect(isCodingPatchFlowDefault(cfg)).toBe(true);
+    // TF-0510 retired patch-flow: config and overrides can no longer enable it.
+    expect(isCodingPatchFlowDefault(cfg)).toBe(false);
     expect(isCodingPatchFlowDefault({} as never)).toBe(false);
+    expect(isCodingPatchFlowDefault(undefined, { patchFlowDefault: true })).toBe(false);
   });
 
   it("recommends patch-flow only for long, dense, multi-writer work", () => {
@@ -45,24 +47,13 @@ describe("TF-0510 patch-flow product trigger", () => {
     ).toBe("shared");
   });
 
-  it("activates from either entry point, but only with a patch-flow recommendation and a workspace", () => {
+  it("can never activate after retirement, whichever entry point is used", () => {
     const base = { recommendation: "patch-flow", hasWorkspace: true };
-    // New path: operator config default is enough (no per-call API argument).
-    expect(patchFlowActive({ ...base, requestOptIn: false, configDefault: true })).toBe(true);
-    // Existing path: explicit per-call opt-in still works.
+    // Even if a caller still passes the old opt-in, the retired resolver returns false.
     expect(patchFlowActive({ ...base, requestOptIn: true, configDefault: false })).toBe(true);
-    // Neither opt-in: stays off even when the advisory recommends it.
+    expect(isCodingPatchFlowDefault(undefined, { patchFlowDefault: true })).toBe(false);
     expect(patchFlowActive({ ...base, requestOptIn: false, configDefault: false })).toBe(false);
-    // No recommendation: off, so patch-flow cannot hijack ordinary runs.
-    expect(
-      patchFlowActive({ requestOptIn: true, configDefault: true, recommendation: "shared", hasWorkspace: true }),
-    ).toBe(false);
-    // No workspace: off.
-    expect(
-      patchFlowActive({ requestOptIn: true, configDefault: true, recommendation: "patch-flow", hasWorkspace: false }),
-    ).toBe(false);
   });
-
   it("wires the config default into the real orchestrator trigger", () => {
     const source = fs.readFileSync(
       path.join(process.cwd(), "openclaw_runtime/src/agents/orchestrator-run-observed.ts"),

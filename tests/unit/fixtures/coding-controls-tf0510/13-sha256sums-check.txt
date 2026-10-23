@@ -1,14 +1,38 @@
 [
   {
     "file": "openclaw_runtime/src/agents/coding-control-dispositions.ts",
-    "expected": "89e6bb2c6a7d4218613a4031a82731277054ae879b4ea42c7ea7e91e5b5a5f81",
-    "actual": "89e6bb2c6a7d4218613a4031a82731277054ae879b4ea42c7ea7e91e5b5a5f81",
+    "expected": "217f326471f3e1538d27421b6ebed3ca66887ea4419228b8ad4c5856c185ea73",
+    "actual": "217f326471f3e1538d27421b6ebed3ca66887ea4419228b8ad4c5856c185ea73",
     "status": "pass"
   },
   {
     "file": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
     "expected": "ee4d8239073a69fc47213d28f57df29d80b3aef57af16c9dfd1bd382373d7cb7",
     "actual": "ee4d8239073a69fc47213d28f57df29d80b3aef57af16c9dfd1bd382373d7cb7",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts",
+    "expected": "1c1f9d6546b421f5ec1dc3d70f5dcfbc138ead7fa282e71e85eb984ef58f6cb5",
+    "actual": "1c1f9d6546b421f5ec1dc3d70f5dcfbc138ead7fa282e71e85eb984ef58f6cb5",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/context-engine/coding-runtime-flags.ts",
+    "expected": "bb85b3045648c7839fc904369c9838355f0a4457046b6891c306c399441e5701",
+    "actual": "bb85b3045648c7839fc904369c9838355f0a4457046b6891c306c399441e5701",
+    "status": "pass"
+  },
+  {
+    "file": "shared/dcs/component-disposition-catalog.ts",
+    "expected": "5436ab0da7c8089bed38e9626d36e6c974d4a6c8e69f94c2452a76647b9de249",
+    "actual": "5436ab0da7c8089bed38e9626d36e6c974d4a6c8e69f94c2452a76647b9de249",
+    "status": "pass"
+  },
+  {
+    "file": "shared/dcs/prod-flags-control.ts",
+    "expected": "84c5b2631036259762fdac2239c9b971b803ddd5c34762b2002e5db402c16e10",
+    "actual": "84c5b2631036259762fdac2239c9b971b803ddd5c34762b2002e5db402c16e10",
     "status": "pass"
   },
   {
@@ -31,14 +55,14 @@
   },
   {
     "file": "tests/unit/coding-controls-tf0510.test.ts",
-    "expected": "4e75186768c0c6fb5babe7940745eb70fdd106fcd6fcd2777f3b209b52b84faf",
-    "actual": "4e75186768c0c6fb5babe7940745eb70fdd106fcd6fcd2777f3b209b52b84faf",
+    "expected": "e1b41a8ad885df7cedd156e5eeeab4c979a8ba7ddf03605e83dd2c73e35f599d",
+    "actual": "e1b41a8ad885df7cedd156e5eeeab4c979a8ba7ddf03605e83dd2c73e35f599d",
     "status": "pass"
   },
   {
     "file": "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
-    "expected": "2599ebd7df5d267ce75fb2d51c279de6b5089a019c63e0e0034398756ce17286",
-    "actual": "2599ebd7df5d267ce75fb2d51c279de6b5089a019c63e0e0034398756ce17286",
+    "expected": "27cf6f3675d39ac51356c88597f070b400c6807a9906a26ec92ac9d161108157",
+    "actual": "27cf6f3675d39ac51356c88597f070b400c6807a9906a26ec92ac9d161108157",
     "status": "pass"
   },
   {
@@ -55,14 +79,20 @@
   },
   {
     "file": "tests/unit/fixtures/coding-controls-tf0510/README.md",
-    "expected": "b4d219415c4dea3b2a223602158164ac3befbb4a1520608167980f66e24df990",
-    "actual": "b4d219415c4dea3b2a223602158164ac3befbb4a1520608167980f66e24df990",
+    "expected": "8f094c61d6faf791bc9ab242e9ee88296961209b3f6befdfe10b5d4db9b2cfe4",
+    "actual": "8f094c61d6faf791bc9ab242e9ee88296961209b3f6befdfe10b5d4db9b2cfe4",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/coding-controls-tf0510/retirement-evidence.json",
+    "expected": "c571f1b772533bb2b7dcf648a4db1af8733f5d4f12cf5221ac6d6abdec88b9d2",
+    "actual": "c571f1b772533bb2b7dcf648a4db1af8733f5d4f12cf5221ac6d6abdec88b9d2",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/coding-controls-tf0510/raw-evidence.json",
-    "expected": "2454d5fff53dbe8e0884f4f226648316d2c617b2b01a9289753749c63ec14f84",
-    "actual": "2454d5fff53dbe8e0884f4f226648316d2c617b2b01a9289753749c63ec14f84",
+    "expected": "534a94174bd497fa2ebb4574b916eec729aab60dcc0eaa89764fc5a357c1dafa",
+    "actual": "534a94174bd497fa2ebb4574b916eec729aab60dcc0eaa89764fc5a357c1dafa",
     "status": "pass"
   },
   {
@@ -73,8 +103,8 @@
   },
   {
     "file": "tests/unit/fixtures/coding-controls-tf0510/run-verification.ps1",
-    "expected": "4879dbb5337b616e49e4836a809e5e51c5768166515fc82038bf75fa985946c5",
-    "actual": "4879dbb5337b616e49e4836a809e5e51c5768166515fc82038bf75fa985946c5",
+    "expected": "6f0826d3d2c7294cf5c8ba17500621868ef5d3934f101a67a78848a28c68b30c",
+    "actual": "6f0826d3d2c7294cf5c8ba17500621868ef5d3934f101a67a78848a28c68b30c",
     "status": "pass"
   }
 ]

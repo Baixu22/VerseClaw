@@ -1,2 +1,2 @@
-changed_files=15
+changed_files=26
 outside_allowed_paths=0
