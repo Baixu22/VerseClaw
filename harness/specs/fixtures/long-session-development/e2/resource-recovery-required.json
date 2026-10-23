@@ -1,0 +1,113 @@
+{
+  "schema": "clawx.long-session.e2-recovery-required/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-e2",
+  "generatedAt": "2026-10-23T17:48:58.388Z",
+  "cases": [
+    {
+      "id": "browser-close-throws",
+      "owner": "browser",
+      "injected": "HostAgentBrowserService.close() threw for the owned session",
+      "receipt": {
+        "schema": "LongSessionResourceReclamation/v1",
+        "action": "session-delete",
+        "scope": {
+          "workspaceId": "workspace-a",
+          "sessionKey": "agent:architect:e2-long-session",
+          "expectedSessionId": "session-generation-1",
+          "rootPath": "D:/workspace-a"
+        },
+        "generatedAt": "2026-10-24T06:00:00.000Z",
+        "owners": [
+          {
+            "kind": "browser",
+            "owner": "HostAgentBrowserService",
+            "outcome": "failed",
+            "attempted": 1,
+            "reclaimed": 0,
+            "kept": 0,
+            "detail": "close threw"
+          }
+        ],
+        "activeResidue": 1,
+        "keptOnLeave": 0,
+        "recoveryRequired": true,
+        "recoveryId": "recovery:session-delete:agent:architect:e2-long-session",
+        "retryable": true
+      },
+      "expectation": "recovery_required=true with a retry identity; no agent-wide kill, no user-directory delete"
+    },
+    {
+      "id": "managed-port-still-reachable",
+      "owner": "background-port",
+      "injected": "process exited but TCP port remained reachable",
+      "receipt": {
+        "schema": "LongSessionResourceReclamation/v1",
+        "action": "session-delete",
+        "scope": {
+          "workspaceId": "workspace-a",
+          "sessionKey": "agent:architect:e2-long-session",
+          "expectedSessionId": "session-generation-1",
+          "rootPath": "D:/workspace-a"
+        },
+        "generatedAt": "2026-10-24T06:00:00.000Z",
+        "owners": [
+          {
+            "kind": "background-port",
+            "owner": "ResourceTracker",
+            "outcome": "failed",
+            "attempted": 1,
+            "reclaimed": 0,
+            "kept": 0,
+            "detail": "port still reachable"
+          }
+        ],
+        "activeResidue": 1,
+        "keptOnLeave": 0,
+        "recoveryRequired": true,
+        "recoveryId": "recovery:session-delete:agent:architect:e2-long-session",
+        "retryable": true
+      },
+      "expectation": "receipt keeps the residue and offers the same recoveryId for a retry"
+    },
+    {
+      "id": "worktree-unresolvable",
+      "owner": "worktree",
+      "injected": "worktree id cannot be proven to belong to this session",
+      "receipt": {
+        "schema": "LongSessionResourceReclamation/v1",
+        "action": "workspace-delete",
+        "scope": {
+          "workspaceId": "workspace-a",
+          "sessionKey": "agent:architect:e2-long-session",
+          "expectedSessionId": "session-generation-1",
+          "rootPath": "D:/workspace-a"
+        },
+        "generatedAt": "2026-10-24T06:00:00.000Z",
+        "owners": [
+          {
+            "kind": "worktree",
+            "owner": "WorktreeService",
+            "outcome": "unknown",
+            "attempted": 1,
+            "reclaimed": 0,
+            "kept": 0,
+            "detail": "ownership unresolved"
+          }
+        ],
+        "activeResidue": 1,
+        "keptOnLeave": 0,
+        "recoveryRequired": true,
+        "recoveryId": "recovery:workspace-delete:agent:architect:e2-long-session",
+        "retryable": true
+      },
+      "expectation": "never guessed and never deleted; unknown owner is surfaced for explicit review"
+    }
+  ],
+  "guarantees": {
+    "agentWideKill": false,
+    "deletesOtherWorktrees": false,
+    "deletesUserDirectories": false,
+    "keepsRetryIdentity": true
+  }
+}
