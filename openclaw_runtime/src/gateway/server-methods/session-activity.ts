@@ -1,4 +1,8 @@
 import { listClawGraphRunSnapshots } from "../../agents/clawgraph/runtime.js";
+import {
+  readRuntimeEffectiveCapabilityObservation,
+  resolveCurrentRuntimeGeneration,
+} from "../../agents/runtime-effective-capability.js";
 import { getLatestMissionForSession } from "../../agents/mission-control/store.js";
 import { listSubagentRunsForRequester } from "../../agents/subagent-registry.js";
 import { listTaskLoopRunsForSession } from "../../agents/task-loop-controller.js";
@@ -6,11 +10,18 @@ import {
   countLongTaskQueuedMessages,
   getLatestLongTaskCheckpoint,
 } from "../../agents/long-task-control/store.js";
+import { buildSessionEffectivePolicy } from "../session-effective-policy.js";
+import { loadSessionEntry } from "../session-utils.js";
 import { collectSessionActivityReadProjection } from "./session-activity-projection.js";
 import type { GatewayRequestHandlers } from "./types.js";
 
 function readSessionKey(params: Record<string, unknown>): string | null {
   const value = params.sessionKey ?? params.key;
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function readWorkspaceId(params: Record<string, unknown>): string | null {
+  const value = params.workspaceId;
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
@@ -97,6 +108,36 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
     const checkpoint = getLatestLongTaskCheckpoint(sessionKey);
     const readProjection = collectSessionActivityReadProjection(sessionKey, mission);
     const now = Date.now();
+    const cfg = context.getRuntimeConfig();
+    const loaded = loadSessionEntry(sessionKey, {
+      ...(activeRun?.[1].agentId ? { agentId: activeRun[1].agentId } : {}),
+    });
+    const workspaceId =
+      readWorkspaceId(params) ??
+      activeRun?.[1].workspaceId?.trim() ??
+      loaded.entry?.workspaceDir?.trim() ??
+      "unknown";
+    const capabilityObservation = readRuntimeEffectiveCapabilityObservation({
+      workspaceId,
+      sessionKey,
+      sessionId: activeRun?.[1].sessionId ?? loaded.entry?.sessionId ?? null,
+      runId: activeRun?.[0] ?? null,
+      runtimeGeneration: resolveCurrentRuntimeGeneration(),
+      nowMs: now,
+    });
+    const policy = buildSessionEffectivePolicy({
+      cfg,
+      workspaceId,
+      sessionKey,
+      agentId: activeRun?.[1].agentId,
+      entry: loaded.entry,
+      activeRun: activeRun
+        ? { runId: activeRun[0], sessionId: activeRun[1].sessionId }
+        : null,
+      capabilityObservation,
+      queuedCount: queueCount,
+      nowMs: now,
+    });
 
     respond(true, {
       snapshot: {
@@ -115,6 +156,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
         goals: readProjection.goals,
         processes: readProjection.processes,
         lineage: readProjection.lineage,
+        policy,
         // The goal-wake owner read can fail and degrade to empty arrays; the
         // read state travels with the snapshot so Main cannot report a failed
         // owner read as a session with no background activity (#121).

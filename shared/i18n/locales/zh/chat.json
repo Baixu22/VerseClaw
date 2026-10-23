@@ -50,7 +50,8 @@
       "terminals": "终端",
       "continuity": "连续性",
       "environment": "环境",
-      "plan": "开发任务"
+      "plan": "开发任务",
+      "policy": "运行策略"
     },
     "status": {
       "idle": "空闲",
@@ -162,6 +163,24 @@
     "runningCount": "{{count}} 个运行中",
     "processes": {
       "openOutput": "查看 {{command}} 的输出"
+    },
+    "policy": {
+      "backend": "后端与模型",
+      "effort": "推理强度",
+      "generation": {
+        "effective": "已生效",
+        "unverified": "未验证",
+        "stale": "已过期",
+        "mismatch": "代次不匹配",
+        "missing": "尚无运行观测"
+      },
+      "status": {
+        "configured": "已配置",
+        "effective": "已生效",
+        "unverified": "未验证",
+        "unsupported": "不支持",
+        "ignored": "已忽略"
+      }
     }
   },
   "noLogs": "（暂无日志）",

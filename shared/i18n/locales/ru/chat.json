@@ -50,7 +50,8 @@
       "terminals": "Терминалы",
       "continuity": "Непрерывность",
       "environment": "Окружение",
-      "plan": "Задачи разработки"
+      "plan": "Задачи разработки",
+      "policy": "Политика выполнения"
     },
     "status": {
       "idle": "Ожидание",
@@ -162,6 +163,24 @@
     "runningCount": "Выполняется: {{count}}",
     "processes": {
       "openOutput": "Открыть вывод {{command}}"
+    },
+    "policy": {
+      "backend": "Бэкенд и модель",
+      "effort": "Усилие",
+      "generation": {
+        "effective": "Действует",
+        "unverified": "Не проверено",
+        "stale": "Устарело",
+        "mismatch": "Поколение не совпадает",
+        "missing": "Нет наблюдения"
+      },
+      "status": {
+        "configured": "настроено",
+        "effective": "действует",
+        "unverified": "не проверено",
+        "unsupported": "не поддерживается",
+        "ignored": "игнорируется"
+      }
     }
   },
   "noLogs": "(Журналы ещё недоступны)",

@@ -50,7 +50,8 @@
       "terminals": "Terminals",
       "continuity": "Continuity",
       "environment": "Environment",
-      "plan": "Development tasks"
+      "plan": "Development tasks",
+      "policy": "Runtime policy"
     },
     "status": {
       "idle": "Idle",
@@ -162,6 +163,24 @@
     "runningCount": "{{count}} running",
     "processes": {
       "openOutput": "Open the output of {{command}}"
+    },
+    "policy": {
+      "backend": "Backend and model",
+      "effort": "Effort",
+      "generation": {
+        "effective": "Effective",
+        "unverified": "Unverified",
+        "stale": "Stale",
+        "mismatch": "Mismatch",
+        "missing": "Not observed"
+      },
+      "status": {
+        "configured": "configured",
+        "effective": "effective",
+        "unverified": "unverified",
+        "unsupported": "unsupported",
+        "ignored": "ignored"
+      }
     }
   },
   "noLogs": "(No logs available yet)",

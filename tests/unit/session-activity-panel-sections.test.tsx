@@ -45,6 +45,94 @@ const RUNTIME_PROCESS: RunProcessSurface = {
 };
 
 describe('SessionActivityPanel', () => {
+  it('renders configured policy without dressing it up as effective', () => {
+    render(
+      <SessionActivityPanel
+        snapshot={snapshotWith({
+          policy: {
+            schemaVersion: 'SessionEffectivePolicy/v1',
+            generatedAt: '2026-10-23T08:00:00.000Z',
+            scope: {
+              workspaceId: 'workspace-a',
+              sessionKey: 'agent:main:main',
+              agentId: 'main',
+              sessionId: 'session-1',
+              runId: null,
+            },
+            generation: {
+              state: 'missing',
+              runtimeGeneration: null,
+              capabilityProfileGeneration: null,
+              observedAt: null,
+              reason: 'no-current-run-capability-profile',
+            },
+            backend: {
+              configured: {
+                value: {
+                  runtime: 'codex',
+                  kind: 'native',
+                  ownsNativeCompaction: true,
+                  provider: 'openai',
+                  model: 'gpt-5.4',
+                },
+                status: 'configured',
+                source: 'session.runtime',
+                reason: null,
+              },
+              effective: {
+                value: null,
+                status: 'unverified',
+                source: 'runtime.observation',
+                reason: 'no-current-run-capability-profile',
+              },
+            },
+            model: {
+              configured: {
+                value: { provider: 'openai', model: 'gpt-5.4', effort: 'high' },
+                status: 'configured',
+                source: 'session.model',
+                reason: null,
+              },
+              effective: {
+                value: null,
+                status: 'unverified',
+                source: 'runtime.observation',
+                reason: 'no-current-run-capability-profile',
+              },
+            },
+            grants: {
+              configured: { value: null, status: 'unverified', source: 'runtime', reason: null },
+              effective: { value: null, status: 'unverified', source: 'runtime', reason: null },
+            },
+            context: {
+              configured: { value: { contextTokens: null, contextPressure: null }, status: 'unverified', source: 'config', reason: null },
+              effective: { value: null, status: 'unverified', source: 'session', reason: null },
+            },
+            queue: {
+              configured: { value: { mode: null, cap: null, drop: null, debounceMs: null, queuedCount: 0 }, status: 'unverified', source: 'session', reason: null },
+              effective: { value: { mode: null, cap: null, drop: null, debounceMs: null, queuedCount: 0 }, status: 'effective', source: 'session', reason: null },
+            },
+            resources: {
+              configured: { value: { maxConcurrentRuns: null, maxConcurrentSubagents: null, maxSpawnDepth: null, maxChildrenPerAgent: null }, status: 'unverified', source: 'config', reason: null },
+              effective: { value: null, status: 'unverified', source: 'runtime', reason: null },
+            },
+            schedule: {
+              configured: { value: { cronEnabled: null, cronMaxConcurrentRuns: null, sessionRetention: null }, status: 'unverified', source: 'config', reason: null },
+              effective: { value: null, status: 'unverified', source: 'runtime', reason: null },
+            },
+            compatibility: [],
+            sources: ['session.entry', 'runtime-effective-capability.observation'],
+          },
+        })}
+      />,
+    );
+
+    expect(screen.getByTestId('session-activity-policy')).toBeTruthy();
+    expect(screen.getByTestId('session-activity-policy-backend').textContent).toContain('configured');
+    expect(screen.getByTestId('session-activity-policy-effort').textContent).toContain('high');
+    expect(screen.getByTestId('session-activity-policy').textContent).not.toContain('effective');
+  });
+
   it('orders the four sections: environment, plan, sub-agents, processes', () => {
     render(
       <SessionActivityPanel

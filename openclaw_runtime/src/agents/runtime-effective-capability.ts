@@ -63,6 +63,12 @@ export type RuntimeEffectiveCapabilityInput = {
   workspaceId: string;
   workspaceDir: string;
   sessionKey: string;
+  sessionId?: string;
+  runId?: string;
+  backendId?: string;
+  provider?: string;
+  model?: string;
+  effort?: string | null;
   /** Gateway restart generation. Defaults to the generation stamped into this process. */
   runtimeGeneration?: string;
   tools: readonly AnyAgentTool[];
@@ -87,6 +93,116 @@ export type RuntimeEffectiveCapabilityResult = {
   effectiveToolNames: readonly string[];
   effectiveDigest: string;
 };
+
+export type RuntimeEffectiveCapabilityObservation = {
+  workspaceId: string;
+  sessionKey: string;
+  sessionId: string | null;
+  runId: string | null;
+  backendId: string | null;
+  provider: string | null;
+  model: string | null;
+  effort: string | null;
+  result: RuntimeEffectiveCapabilityResult;
+  observedAtMs: number;
+};
+
+export type RuntimeEffectiveCapabilityObservationRead = {
+  state: "available" | "unverified" | "stale" | "mismatch" | "missing";
+  reason: string | null;
+  observation: RuntimeEffectiveCapabilityObservation | null;
+};
+
+const runtimeCapabilityObservations = new Map<string, RuntimeEffectiveCapabilityObservation>();
+const RUNTIME_CAPABILITY_OBSERVATION_MAX_ENTRIES = 256;
+const RUNTIME_CAPABILITY_OBSERVATION_RETENTION_MS = 5 * 60_000;
+
+function observationKey(workspaceId: string, sessionKey: string): string {
+  return `${workspaceId.trim()}\u0000${sessionKey.trim()}`;
+}
+
+function trimOptional(value: string | undefined | null): string | null {
+  const normalized = value?.trim();
+  return normalized || null;
+}
+
+function recordRuntimeCapabilityObservation(
+  input: RuntimeEffectiveCapabilityInput,
+  result: RuntimeEffectiveCapabilityResult,
+  observedAtMs: number,
+): void {
+  const now = Date.now();
+  for (const [key, observation] of runtimeCapabilityObservations) {
+    if (now - observation.observedAtMs > RUNTIME_CAPABILITY_OBSERVATION_RETENTION_MS) {
+      runtimeCapabilityObservations.delete(key);
+    }
+  }
+  const key = observationKey(input.workspaceId, input.sessionKey);
+  runtimeCapabilityObservations.set(key, {
+    workspaceId: input.workspaceId.trim(),
+    sessionKey: input.sessionKey.trim(),
+    sessionId: trimOptional(input.sessionId),
+    runId: trimOptional(input.runId ?? input.generationGuard?.runId),
+    backendId: trimOptional(input.backendId),
+    provider: trimOptional(input.provider),
+    model: trimOptional(input.model),
+    effort: trimOptional(input.effort),
+    result,
+    observedAtMs,
+  });
+  if (runtimeCapabilityObservations.size > RUNTIME_CAPABILITY_OBSERVATION_MAX_ENTRIES) {
+    const oldest = [...runtimeCapabilityObservations.entries()].sort(
+      (left, right) => left[1].observedAtMs - right[1].observedAtMs,
+    )[0];
+    if (oldest) runtimeCapabilityObservations.delete(oldest[0]);
+  }
+}
+
+export function readRuntimeEffectiveCapabilityObservation(params: {
+  workspaceId: string;
+  sessionKey: string;
+  sessionId?: string | null;
+  runId?: string | null;
+  runtimeGeneration?: string | null;
+  nowMs?: number;
+  ttlMs?: number;
+}): RuntimeEffectiveCapabilityObservationRead {
+  const observation = runtimeCapabilityObservations.get(
+    observationKey(params.workspaceId, params.sessionKey),
+  );
+  if (!observation) {
+    return { state: "missing", reason: "no-current-run-capability-profile", observation: null };
+  }
+  const nowMs = params.nowMs ?? Date.now();
+  const ttlMs = params.ttlMs ?? DEFAULT_RUNTIME_FACT_TTL_MS;
+  if (nowMs - observation.observedAtMs > ttlMs || observation.observedAtMs > nowMs) {
+    return { state: "stale", reason: "capability-profile-outside-observation-ttl", observation };
+  }
+  const requestedSessionId = trimOptional(params.sessionId);
+  if (requestedSessionId && observation.sessionId && requestedSessionId !== observation.sessionId) {
+    return { state: "mismatch", reason: "session-generation-mismatch", observation };
+  }
+  const requestedRunId = trimOptional(params.runId);
+  if (requestedRunId && observation.runId && requestedRunId !== observation.runId) {
+    return { state: "mismatch", reason: "run-generation-mismatch", observation };
+  }
+  const expectedGeneration = trimOptional(params.runtimeGeneration);
+  if (!expectedGeneration) {
+    return { state: "unverified", reason: "runtime-generation-unknown", observation };
+  }
+  if (observation.result.profile.runtimeGeneration !== expectedGeneration) {
+    return { state: "mismatch", reason: "gateway-generation-mismatch", observation };
+  }
+  if (observation.result.source !== "runtime") {
+    return { state: "unverified", reason: "capability-profile-fallback", observation };
+  }
+  return { state: "available", reason: null, observation };
+}
+
+/** Test-only reset for the bounded observation cache. */
+export function clearRuntimeEffectiveCapabilityObservationsForTest(): void {
+  runtimeCapabilityObservations.clear();
+}
 
 export function composeRuntimeEffectiveCapabilitySystemPrompt(
   systemPrompt: string,
@@ -200,6 +316,12 @@ function resolveRuntimeGeneration(input: RuntimeEffectiveCapabilityInput): strin
   const explicit = input.runtimeGeneration?.trim();
   if (explicit) return explicit;
   return (input.env ?? process.env)[RUNTIME_FLAG_ACK_GENERATION_ENV]?.trim() || "unknown";
+}
+
+/** Returns the current process generation, or null when it is not trustworthy. */
+export function resolveCurrentRuntimeGeneration(env: NodeJS.ProcessEnv = process.env): string | null {
+  const generation = env[RUNTIME_FLAG_ACK_GENERATION_ENV]?.trim();
+  return hasTrustedRuntimeGeneration(generation) ? generation : null;
 }
 
 function capabilityRelevantToolNames(names: readonly string[]): string[] {
@@ -475,5 +597,6 @@ export async function buildRuntimeEffectiveCapabilityProfile(
   ) {
     throw new Error("stale runtime capability generation");
   }
+  recordRuntimeCapabilityObservation(input, result, nowMs);
   return result;
 }

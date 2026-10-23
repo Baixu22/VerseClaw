@@ -264,6 +264,15 @@ export function SessionActivityPanel({
     return snapshot.processes.filter((entry) => !runtimeIds.has(entry.id));
   }, [showCommands, snapshot.processes, visibleProcesses]);
   const hasProcesses = visibleProcesses.length > 0 || snapshotOnlyProcesses.length > 0;
+  const policy = snapshot.policy;
+  const policyBackend = policy?.backend.effective.value ?? policy?.backend.configured.value;
+  const policyModel = policy?.model.effective.value ?? policy?.model.configured.value;
+  const policyFactStatus =
+    policy?.backend.effective.status === 'effective'
+      ? 'effective'
+      : policy?.backend.configured.status === 'configured'
+        ? 'configured'
+        : 'unverified';
 
   /* The recovery affordance is not a section — it is an action on the card. It
    * appears only when there is something to recover, which is the same signal
@@ -305,7 +314,7 @@ export function SessionActivityPanel({
   const runningSubagents = snapshot.subagents.filter((agent) => agent.status === 'started').length;
   const runningProcesses = visibleProcesses.filter((entry) => entry.status === 'running').length;
 
-  if (!hasGit && !hasPlan && !hasSubagents && !hasProcesses
+  if (!hasGit && !hasPlan && !hasSubagents && !hasProcesses && !policy
     && snapshot.goals.length === 0 && snapshot.lineage.length === 0 && !alert && !backgroundUnknown) return null;
 
   return (
@@ -435,6 +444,32 @@ export function SessionActivityPanel({
                 />
               );
             })}
+          </Section>
+        ) : null}
+
+        {/* ── 运行策略 ─────────────────────────────────────────────────── */}
+        {policy && policyBackend ? (
+          <Section
+            title={t('sessionActivity.sections.policy')}
+            testId="session-activity-policy"
+            summary={t(`sessionActivity.policy.generation.${policy.generation.state}`, {
+              defaultValue: policy.generation.state,
+            })}
+          >
+            <Row
+              testId="session-activity-policy-backend"
+              label={t('sessionActivity.policy.backend')}
+              sublabel={`${policyBackend.runtime} · ${t(`sessionActivity.policy.status.${policyFactStatus}`)}`}
+              value={[policyBackend.provider, policyBackend.model].filter(Boolean).join(' / ')}
+              state={policyFactStatus === 'effective' ? 'ok' : 'warn'}
+            />
+            <Row
+              testId="session-activity-policy-effort"
+              label={t('sessionActivity.policy.effort')}
+              sublabel={t(`sessionActivity.policy.status.${policy.model.effective.status === 'effective' ? 'effective' : 'configured'}`)}
+              value={policyModel?.effort ?? t('sessionActivity.notAvailable')}
+              state={policy.model.effective.status === 'effective' ? 'ok' : 'warn'}
+            />
           </Section>
         ) : null}
 

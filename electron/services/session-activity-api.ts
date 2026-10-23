@@ -99,6 +99,7 @@ function mergeRuntimeSnapshot(
     goals: Array.isArray(runtime.goals) ? runtime.goals : snapshot.goals,
     processes: Array.isArray(runtime.processes) ? runtime.processes : snapshot.processes,
     lineage: Array.isArray(runtime.lineage) ? runtime.lineage : snapshot.lineage,
+    ...(runtime.policy ? { policy: runtime.policy } : {}),
     continuity: { ...snapshot.continuity, ...(runtime.continuity ?? {}) },
     availability: { ...snapshot.availability, ...(runtime.availability ?? {}) },
     capturedAt: Math.max(snapshot.capturedAt, runtime.capturedAt ?? 0),

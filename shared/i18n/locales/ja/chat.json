@@ -50,7 +50,8 @@
       "terminals": "ターミナル",
       "continuity": "継続性",
       "environment": "環境",
-      "plan": "開発タスク"
+      "plan": "開発タスク",
+      "policy": "実行ポリシー"
     },
     "status": {
       "idle": "待機中",
@@ -162,6 +163,24 @@
     "runningCount": "実行中 {{count}} 件",
     "processes": {
       "openOutput": "{{command}} の出力を開く"
+    },
+    "policy": {
+      "backend": "バックエンドとモデル",
+      "effort": "推論強度",
+      "generation": {
+        "effective": "有効",
+        "unverified": "未検証",
+        "stale": "期限切れ",
+        "mismatch": "世代不一致",
+        "missing": "実行時観測なし"
+      },
+      "status": {
+        "configured": "設定済み",
+        "effective": "有効",
+        "unverified": "未検証",
+        "unsupported": "未対応",
+        "ignored": "無視"
+      }
     }
   },
   "noLogs": "（ログはまだありません）",

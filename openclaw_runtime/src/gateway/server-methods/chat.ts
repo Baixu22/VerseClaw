@@ -3960,6 +3960,7 @@ export const chatHandlers: GatewayRequestHandlers = {
         now,
         ownerConnId: normalizeOptionalText(client?.connId),
         ownerDeviceId: normalizeOptionalText(client?.connect?.device?.id),
+        workspaceId,
         providerId: resolvedSessionModel.provider,
         authProviderId: resolvedSessionAuthProvider,
         kind: "chat-send",

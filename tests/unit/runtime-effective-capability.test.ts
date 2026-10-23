@@ -1,6 +1,6 @@
 // @vitest-environment node
 import fs from "node:fs";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { OpenClawConfig } from "../../openclaw_runtime/src/config/types.openclaw.js";
 import {
   buildRuntimeFlagAck,
@@ -8,8 +8,10 @@ import {
 } from "../../openclaw_runtime/src/context-engine/runtime-flag-ack.js";
 import {
   buildRuntimeEffectiveCapabilityProfile,
+  clearRuntimeEffectiveCapabilityObservationsForTest,
   composeRuntimeEffectiveCapabilitySystemPrompt,
   createRuntimeCapabilityStateGenerationGuard,
+  readRuntimeEffectiveCapabilityObservation,
   type RuntimeEffectiveCapabilityInput,
 } from "../../openclaw_runtime/src/agents/runtime-effective-capability.js";
 import type { AnyAgentTool } from "../../openclaw_runtime/src/agents/tools/common.js";
@@ -69,6 +71,14 @@ function codingEntry(result: Awaited<ReturnType<typeof buildRuntimeEffectiveCapa
 }
 
 describe("runtime effective capability adapter", () => {
+  beforeEach(() => {
+    clearRuntimeEffectiveCapabilityObservationsForTest();
+  });
+
+  afterEach(() => {
+    clearRuntimeEffectiveCapabilityObservationsForTest();
+  });
+
   it("reports the actual tool, ready driver, effective ack, grants, memory and knowledge", async () => {
     const result = await buildRuntimeEffectiveCapabilityProfile(
       input({
@@ -328,6 +338,78 @@ describe("runtime effective capability adapter", () => {
     expect(result.profile.entries.find((entry) => entry.capabilityId === CAPABILITY_ID)?.static.disposition).toBe("default");
   });
 
+  it("exposes the current-run observation only for the matching session, run and gateway generation", async () => {
+    await buildRuntimeEffectiveCapabilityProfile(input({
+      sessionId: "session-1",
+      runId: "run-1",
+      backendId: "codex",
+      provider: "openai",
+      model: "gpt-5.4",
+      effort: "high",
+    }));
+
+    expect(readRuntimeEffectiveCapabilityObservation({
+      workspaceId: "workspace:fixture",
+      sessionKey: "agent:main:fixture",
+      sessionId: "session-1",
+      runId: "run-1",
+      runtimeGeneration: "gateway-17",
+      nowMs: NOW + 1_000,
+    })).toMatchObject({ state: "available", reason: null });
+    expect(readRuntimeEffectiveCapabilityObservation({
+      workspaceId: "workspace:fixture",
+      sessionKey: "agent:main:fixture",
+      sessionId: "session-2",
+      runId: "run-1",
+      runtimeGeneration: "gateway-17",
+      nowMs: NOW + 1_000,
+    })).toMatchObject({ state: "mismatch", reason: "session-generation-mismatch" });
+    expect(readRuntimeEffectiveCapabilityObservation({
+      workspaceId: "workspace:fixture",
+      sessionKey: "agent:main:fixture",
+      sessionId: "session-1",
+      runId: "run-2",
+      runtimeGeneration: "gateway-17",
+      nowMs: NOW + 1_000,
+    })).toMatchObject({ state: "mismatch", reason: "run-generation-mismatch" });
+    expect(readRuntimeEffectiveCapabilityObservation({
+      workspaceId: "workspace:fixture",
+      sessionKey: "agent:main:fixture",
+      sessionId: "session-1",
+      runId: "run-1",
+      runtimeGeneration: "gateway-18",
+      nowMs: NOW + 1_000,
+    })).toMatchObject({ state: "mismatch", reason: "gateway-generation-mismatch" });
+    expect(readRuntimeEffectiveCapabilityObservation({
+      workspaceId: "workspace:fixture",
+      sessionKey: "agent:main:fixture",
+      sessionId: "session-1",
+      runId: "run-1",
+      runtimeGeneration: "gateway-17",
+      nowMs: NOW + 60_000,
+    })).toMatchObject({ state: "stale", reason: "capability-profile-outside-observation-ttl" });
+  });
+
+  it("does not publish an observation from a stale capability refresh", async () => {
+    const guard = createRuntimeCapabilityStateGenerationGuard("run-stale-observation");
+    const pending = buildRuntimeEffectiveCapabilityProfile(input({
+      sessionKey: "agent:main:stale-observation",
+      sessionId: "session-stale",
+      runId: "run-stale-observation",
+      generationGuard: guard,
+    }));
+    guard.next();
+    await expect(pending).rejects.toThrow("stale runtime capability generation");
+    expect(readRuntimeEffectiveCapabilityObservation({
+      workspaceId: "workspace:fixture",
+      sessionKey: "agent:main:stale-observation",
+      sessionId: "session-stale",
+      runId: "run-stale-observation",
+      runtimeGeneration: "gateway-17",
+      nowMs: NOW + 1_000,
+    })).toMatchObject({ state: "missing" });
+  });
+
   it("composes the profile into the final model system prompt and wires it before prompt submission", () => {
     const attemptSource = fs.readFileSync(
       "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
@@ -348,6 +430,9 @@ describe("runtime effective capability adapter", () => {
     expect(composerIndex).toBeGreaterThan(refreshIndex);
     expect(promptIndex).toBeGreaterThan(composerIndex);
     expect(attemptSource.slice(refreshIndex, promptIndex)).toContain("setActiveSessionSystemPrompt");
+    expect(attemptSource.slice(refreshIndex, promptIndex)).toContain("sessionId: params.sessionId");
+    expect(attemptSource.slice(refreshIndex, promptIndex)).toContain("runId: params.runId");
+    expect(attemptSource.slice(refreshIndex, promptIndex)).toContain("model: params.modelId");
     expect(adapterSource).not.toMatch(/staticManifest[\s\S]{0,120}runtimeAvailability\.state\s*=\s*['"]enabled/);
   });
 

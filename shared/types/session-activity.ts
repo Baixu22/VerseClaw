@@ -1,4 +1,5 @@
 import type { GitRepositoryStatus } from './git';
+import type { SessionEffectivePolicy } from './session-effective-policy';
 
 export type SessionActivityRunStatus = 'idle' | 'running' | 'waiting_approval' | 'completed' | 'failed' | 'aborted';
 export type SessionActivityTaskKind = 'mission' | 'taskLoop' | 'clawGraph' | 'taskLedger';
@@ -173,6 +174,8 @@ export type SessionActivitySnapshot = {
   goals: SessionActivityGoal[];
   processes: SessionActivityProcess[];
   lineage: SessionActivityLineage[];
+  /** Secret-free projection from TF-0512 facts and the current session policy. */
+  policy?: SessionEffectivePolicy;
   continuity: {
     queueCount: number;
     contextPressure?: 'low' | 'medium' | 'high' | null;
