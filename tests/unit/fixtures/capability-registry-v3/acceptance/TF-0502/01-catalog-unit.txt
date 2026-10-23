@@ -9,7 +9,7 @@ Already up to date
 . postinstall: Done
 . prepare$ node scripts/prepare-git-hooks.mjs
 . prepare: Done
-Done in 2.6s using pnpm v11.2.2
+Done in 2.5s using pnpm v11.2.2
 
  RUN  v4.1.7 D:/ClawX-work/component-graduation-20261021/openclaw_runtime
 
@@ -17,6 +17,6 @@ Done in 2.6s using pnpm v11.2.2
 
  Test Files  1 passed (1)
       Tests  6 passed (6)
-   Start at  09:14:12
-   Duration  1.05s (transform 689ms, setup 578ms, import 35ms, tests 126ms, environment 0ms)
+   Start at  09:26:48
+   Duration  370ms (transform 49ms, setup 0ms, import 80ms, tests 8ms, environment 0ms)
 

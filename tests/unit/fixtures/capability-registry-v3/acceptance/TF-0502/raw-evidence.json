@@ -118,7 +118,8 @@
     "productDefaultChanged": false,
     "verseGitTouched": false,
     "graduated": false,
-    "v1AnalysisDefectRecorded": true
+    "v1AnalysisDefectRecorded": true,
+    "v2FrozenNotExecuted": true
   },
   "v1AnalysisDefect": {
     "recordedAt": "2026-10-23T01:05:11.412Z",
@@ -139,5 +140,21 @@
     "standing": "v1 decision.status remains fail as recorded and is not valid evidence of non-inferiority failure; TF-0502 stays non-graduated until a predeclared v2 protocol is run",
     "v1RunnerSha256": "46520dddaeebc32fddc445ab6d214b091a3fd0b4a94d80fa82cb0c8417b212fd",
     "runnerChangeAfterRun": "type annotations only (no runtime change), for repo typecheck compliance"
+  },
+  "abV2": {
+    "protocol": "CapabilityCatalogABProtocol/v2",
+    "protocolPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-protocol-v2.json",
+    "protocolSha256": "4d9d01faf8812ac4bc4c6e0835062b9623a0b53dc4c15c2be21da8bb9bae9a35",
+    "runnerPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/run-ab-v2.mts",
+    "runnerSha256": "cad27ef6369b22083bf7af165cc32ce92c762940f131afdf31869194091f01e0",
+    "runnerTypecheck": {
+      "command": "tsc --noEmit --strict (isolated)",
+      "exitCode": 0
+    },
+    "frozenBeforeRun": true,
+    "executed": false,
+    "executionBlocker": "TF0502_API_KEY absent from process/User/Machine environment; endpoint probe returned HTTP 401",
+    "verdict": null,
+    "graduationAllowed": false
   }
 }

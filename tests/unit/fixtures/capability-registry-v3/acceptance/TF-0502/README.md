@@ -46,6 +46,32 @@ fixture favors control, regardless of the aggregate. The v1 verdict therefore
 records the behaviour of the implemented statistic, not a measured
 non-inferiority failure. Details: `ab-v1-defect-note.md`.
 
+## A/B v2 (frozen, not yet executed)
+
+`ab-protocol-v2.json` was frozen before any v2 call. It fixes, before the run:
+
+- paired design, n=40, two strata (20 tool-selection + 20 schema-expansion pairs)
+- fixed seed `20261023`, 10000 paired bootstrap resamples, percentile method
+- `firstCallNonInferiority`: paired 95% CI lower bound of the treatment-minus-control
+  success rate >= -0.05
+- `schemaTokenReduction`: **provider-reported input tokens**, mean reduction > 0 and
+  CI lower bound > 0 (the v1 character proxy is retained only as a diagnostic)
+- zero provider errors across all calls; insufficient or neutral evidence fails
+
+`run-ab-v2.mts` implements that protocol and refuses to rerun once
+`ab-run-v2.json` exists. It is type-checked (`tsc --noEmit --strict`, exit 0).
+
+**Execution status: not executed.** The endpoint `http://127.0.0.1:3065/v1/responses`
+returns `401 Unauthorized` because `TF0502_API_KEY` is not present in the agent
+environment (verified: process, User and Machine scopes all unset). No v2 call has
+been made, so there is no v2 verdict and TF-0502 stays non-graduated.
+
+To execute (one run only):
+
+```powershell
+$env:TF0502_API_KEY = '<provided out-of-band>'; pnpm exec tsx 'tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/run-ab-v2.mts'
+```
+
 ## Acceptance mapping
 
 | Criterion | Status | Evidence |
@@ -69,5 +95,6 @@ non-inferiority failure. Details: `ab-v1-defect-note.md`.
 - The A/B result is agent-driven; it is not human evidence.
 - Since the A/B gate failed, this node cannot claim graduation, default-on or
   product approval.
-- The v1 non-inferiority check is defective (min/max pseudo-CI); the threshold
-  remains unresolved until a v2 protocol is frozen and run once.
+- The v1 non-inferiority check is defective (min/max pseudo-CI). v2 is frozen
+  but has not been executed (missing provider credential), so the threshold is
+  still unresolved.

@@ -49,7 +49,7 @@ documents the implemented statistic, not a measured non-inferiority failure.
 - TF-0502 remains **non-graduated**; acceptance criterion 5 is not satisfied by
   v1 evidence (the verdict is void as a non-inferiority measurement; the frozen
   files are preserved as historical record).
-- Resolution requires a **newly frozen v2 protocol** that predeclares, before
+- Resolution requires a **newly frozen v2 protocol** (now frozen as
   the run: the paired CI method (e.g. exact / McNemar-based, or a paired
   bootstrap with fixed seed and resample count), the same n=40 strata, the same
   thresholds, and the stopping rule; then exactly one live run.

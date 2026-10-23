@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "CapabilityCatalogABProtocol/v2",
+  "taskForestNodeId": "TF-0502",
+  "supersedes": {
+    "protocol": "ab-protocol.json",
+    "protocolSha256": "d7653f1c85201b54e73492e2387c1bc0f453a63b3cedd8995e573ecb1f6e01d4",
+    "run": "ab-run-v1.json",
+    "runSha256": "2124ce3fb9ac1662a45cae52f6ada37dbf1c96c480fae3c3023cabbff0fe45a8",
+    "reason": "v1 computed firstCallDeltaCi95 as the min/max range of observed paired differences (quantile of the diff sample), not a 95% CI of the paired mean; see ab-v1-defect-note.md"
+  },
+  "declaredAt": "2026-10-23T01:25:55.534Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "frozen-before-live-run",
+  "design": {
+    "pairs": 40,
+    "arms": [
+      "control",
+      "treatment"
+    ],
+    "paired": true,
+    "temperature": 0,
+    "maxOutputTokens": 200,
+    "endpoint": "http://127.0.0.1:3065/v1/responses",
+    "model": "space-bunny",
+    "stoppingRule": "fixed n=40 pairs; no early stopping; exactly one live run after this protocol is written"
+  },
+  "strata": {
+    "toolSelection": {
+      "pairs": 20,
+      "fixtureCount": 40,
+      "meaning": "a query asks for an action; control exposes full schemas, treatment exposes summaries only",
+      "expected": "the expected tool is the only tool whose description fits the query"
+    },
+    "schemaExpansion": {
+      "pairs": 20,
+      "fixtureCount": 40,
+      "meaning": "a query asks for the full schema of a tool that exists in the catalog",
+      "expected": "control selects it directly; treatment must request it through tool_describe first"
+    }
+  },
+  "metrics": {
+    "primary": "firstCallSuccess",
+    "primaryDefinition": "control: first model turn returns {\"tool\":<expected>}; treatment: first model turn returns {\"call\":\"tool_describe\",\"tool\":<expected>}; either arm may use up to maxToolTurns=2; success requires the correct tool before any other tool is chosen or any non-tool action is taken",
+    "secondary": "schemaTokenReduction",
+    "secondaryDefinition": "provider-reported input_tokens(control) - input_tokens(treatment) over the same 40 fixtures; reduction = control - treatment; positive means fewer input tokens",
+    "diagnosticOnly": "character-count delta, recorded but never used to decide the gate"
+  },
+  "thresholds": {
+    "firstCallNonInferiority": "paired bootstrap 95% CI of (treatment success rate - control success rate), fixed seed 20261023, 10000 resamples, percentile method; lower bound >= -0.05",
+    "schemaTokenReduction": "mean per-pair provider input-token reduction > 0 AND its paired bootstrap 95% CI (same seed/resamples) lower bound > 0",
+    "noProviderErrors": "provider errors must be 0 of 80 calls",
+    "insufficientOrNeutral": "if any threshold fails, TF-0502 must not graduate"
+  },
+  "evidencePolicy": {
+    "humanEvidence": false,
+    "fixtureOnlyCannotPass": true,
+    "tokenAccounting": "provider usage only; no local tokenizer"
+  }
+}

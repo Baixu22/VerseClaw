@@ -37,8 +37,8 @@
   },
   {
     "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/README.md",
-    "expected": "60ca973b20e7392a0920bf31f0c3afff8eae5f7b90d853ba7faad57ffc413a95",
-    "actual": "60ca973b20e7392a0920bf31f0c3afff8eae5f7b90d853ba7faad57ffc413a95",
+    "expected": "ff5518528b728fa095aa8a7d25aea3423bbfbf5264f6efc38c3a8ab89548033e",
+    "actual": "ff5518528b728fa095aa8a7d25aea3423bbfbf5264f6efc38c3a8ab89548033e",
     "status": "pass"
   },
   {
@@ -55,8 +55,8 @@
   },
   {
     "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/raw-evidence.json",
-    "expected": "b87d4ba959f4c71e2625f64e182fac876780126fa7a072b3486db06a50051e5a",
-    "actual": "b87d4ba959f4c71e2625f64e182fac876780126fa7a072b3486db06a50051e5a",
+    "expected": "59be1497c5550244568621606d07edef9063908ff7da4d918ac54bd0f3d78f8e",
+    "actual": "59be1497c5550244568621606d07edef9063908ff7da4d918ac54bd0f3d78f8e",
     "status": "pass"
   },
   {
@@ -73,8 +73,20 @@
   },
   {
     "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-v1-defect-note.md",
-    "expected": "241e833497eb281427e0dd0e6b15940e21b9a3289773fa045709bc2f168f66cb",
-    "actual": "241e833497eb281427e0dd0e6b15940e21b9a3289773fa045709bc2f168f66cb",
+    "expected": "51500748bf14ed3d0236357c81130c6d151f4c804adf0d50d053d5777126238a",
+    "actual": "51500748bf14ed3d0236357c81130c6d151f4c804adf0d50d053d5777126238a",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-protocol-v2.json",
+    "expected": "4d9d01faf8812ac4bc4c6e0835062b9623a0b53dc4c15c2be21da8bb9bae9a35",
+    "actual": "4d9d01faf8812ac4bc4c6e0835062b9623a0b53dc4c15c2be21da8bb9bae9a35",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/run-ab-v2.mts",
+    "expected": "cad27ef6369b22083bf7af165cc32ce92c762940f131afdf31869194091f01e0",
+    "actual": "cad27ef6369b22083bf7af165cc32ce92c762940f131afdf31869194091f01e0",
     "status": "pass"
   }
 ]
