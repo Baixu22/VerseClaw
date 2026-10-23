@@ -15,6 +15,7 @@ import type {
   CronJobCreateInput,
   CronJobSource,
   CronJobUpdateInput,
+  CronJobCoordinatorStatus,
   CronSchedule,
 } from '@shared/types/cron';
 import type { GatewayManager } from '../gateway/manager';
@@ -32,7 +33,10 @@ import {
   recordPermissionDecisionEvent,
 } from './permissions-api';
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
-import { getActiveWorkspaceProfile } from './workspaces-api';
+import { getActiveWorkspaceProfile, readWorkspaceCoordinatorBinding } from './workspaces-api';
+import { resolveLiveSessionIdentity } from './sessions-api';
+import { evaluateCronCoordinatorScope, normalizeCronCoordinatorScope } from '@shared/long-session-followup-scope';
+import type { CronCoordinatorScope } from '@shared/long-session-followup-scope';
 import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
 import { SandboxDenialError } from '@shared/sandbox/errors';
 
@@ -84,6 +88,7 @@ interface GatewayCronJob {
   };
   /** Set when an auto-repair (delivery/agentId) RPC failed — the gateway copy is unchanged. */
   repairDegraded?: boolean;
+  coordinator?: CronCoordinatorScope | null;
 }
 
 interface CronRunLogEntry {
@@ -476,6 +481,104 @@ function buildCronUpdatePatch(input: Record<string, unknown>): Record<string, un
   return patch;
 }
 
+/**
+ * E1: authorize a follow-up against the *current* coordinator generation.
+ * A schedule may only be bound to an active binding whose recorded physical
+ * session still matches the live session, so a stale generation can never be
+ * authorized in the first place.
+ */
+async function assertCoordinatorBindingCurrent(
+  gatewayManager: GatewayManager,
+  rawScope: unknown,
+): Promise<CronCoordinatorScope> {
+  const scope = normalizeCronCoordinatorScope(rawScope);
+  if (!scope) {
+    throw new Error(
+      'Coordinator follow-up requires workspaceId, coordinatorSessionKey, expectedSessionId, intent and notificationPolicy',
+    );
+  }
+  let bindingState: 'active' | 'invalidated' = 'invalidated';
+  try {
+    const result = await readWorkspaceCoordinatorBinding(scope.workspaceId);
+    const binding = result?.binding ?? null;
+    if (
+      binding
+      && binding.state === 'active'
+      && binding.sessionKey === scope.coordinatorSessionKey
+      && binding.sessionId === scope.expectedSessionId
+    ) {
+      bindingState = 'active';
+    }
+  } catch {
+    bindingState = 'invalidated';
+  }
+  const live = bindingState === 'active'
+    ? await resolveLiveSessionIdentity(gatewayManager, scope.coordinatorSessionKey).catch(() => null)
+    : null;
+  const verdict = evaluateCronCoordinatorScope({
+    scope,
+    nowMs: Date.now(),
+    liveSessionId: live ? live.sessionId : null,
+    bindingState,
+  });
+  if (!verdict.allowed) {
+    throw new Error(`Coordinator follow-up rejected (${verdict.state}: ${verdict.reason})`);
+  }
+  return scope;
+}
+
+/**
+ * E1: read-only projection of the fence for scheduled jobs. It suppresses
+ * nothing by itself; the maintenance pass owns suppression.
+ */
+async function annotateCoordinatorStatus(
+  gatewayManager: GatewayManager,
+  jobs: CronJob[],
+): Promise<CronJob[]> {
+  const bound = jobs.filter((job) => job.coordinator);
+  if (bound.length === 0) return jobs;
+  const checkedAt = new Date().toISOString();
+  const byId = new Map<string, CronJobCoordinatorStatus>();
+  for (const job of bound) {
+    const scope = normalizeCronCoordinatorScope(job.coordinator);
+    let bindingState: 'active' | 'invalidated' = 'invalidated';
+    let liveSessionId: string | null | undefined;
+    try {
+      if (scope) {
+        const result = await readWorkspaceCoordinatorBinding(scope.workspaceId);
+        const binding = result?.binding ?? null;
+        if (binding && binding.state === 'active' && binding.sessionKey === scope.coordinatorSessionKey) {
+          bindingState = 'active';
+        }
+        const live = await resolveLiveSessionIdentity(gatewayManager, scope.coordinatorSessionKey).catch(() => null);
+        liveSessionId = live?.sessionId ?? null;
+      } else {
+        liveSessionId = undefined;
+      }
+    } catch {
+      liveSessionId = undefined;
+    }
+    const verdict = evaluateCronCoordinatorScope({
+      scope: job.coordinator,
+      nowMs: Date.now(),
+      liveSessionId,
+      bindingState,
+    });
+    byId.set(job.id, {
+      state: verdict.state,
+      reason: verdict.reason,
+      checkedAt,
+      ...(verdict.expectedSessionId ? { expectedSessionId: verdict.expectedSessionId } : {}),
+      observedSessionId: verdict.observedSessionId ?? null,
+    });
+  }
+  return jobs.map((job) => {
+    const status = byId.get(job.id);
+    if (!status) return job;
+    return { ...job, coordinatorStatus: status, coordinatorSuppressed: job.enabled === false };
+  });
+}
+
 function transformCronJob(job: GatewayCronJob, source: CronJobSource = 'gateway'): CronJob {
   const message = job.payload?.message || job.payload?.text || '';
   const browserAutomation = parseCronBrowserAutomationPrompt(message);
@@ -525,6 +628,7 @@ function transformCronJob(job: GatewayCronJob, source: CronJobSource = 'gateway'
     nextRun,
     agentId,
     ...(job.repairDegraded ? { repairDegraded: true } : {}),
+    ...(job.coordinator ? { coordinator: job.coordinator } : {}),
   };
 }
 
@@ -552,7 +656,8 @@ async function listCronJobs(gatewayManager: GatewayManager): Promise<CronJob[]> 
     await repairCronJobs(gatewayManager, jobs);
   }
 
-  return jobs.map((job) => transformCronJob(job, usedFallback ? 'config-fallback' : 'gateway'));
+  const projected = jobs.map((job) => transformCronJob(job, usedFallback ? 'config-fallback' : 'gateway'));
+  return annotateCoordinatorStatus(gatewayManager, projected);
 }
 
 /**
@@ -647,15 +752,19 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
       if (!agentPayload) {
         throw new Error('Cron create requires a message or browser automation task');
       }
+      const coordinator = input.coordinator
+        ? await assertCoordinatorBindingCurrent(gatewayManager, input.coordinator)
+        : undefined;
       const result = await gatewayManager.rpc('cron.add', {
         name: input.name,
         schedule: { kind: 'cron', expr: input.schedule },
         payload: agentPayload,
         enabled: typeof input.enabled === 'boolean' ? input.enabled : true,
         wakeMode: 'next-heartbeat',
-        sessionTarget: 'isolated',
+        sessionTarget: coordinator ? `session:${coordinator.coordinatorSessionKey}` : 'isolated',
         agentId,
         delivery,
+        ...(coordinator ? { coordinator } : {}),
       });
       if (!result || typeof result !== 'object') {
         throw new Error('Cron create returned an invalid job');
@@ -682,6 +791,10 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
       const unsupportedDeliveryError = getUnsupportedCronDeliveryError(deliveryChannel);
       if (unsupportedDeliveryError && deliveryMode !== 'none') {
         throw new Error(unsupportedDeliveryError);
+      }
+      if ('coordinator' in patch && patch.coordinator !== null) {
+        patch.coordinator = await assertCoordinatorBindingCurrent(gatewayManager, patch.coordinator);
+        patch.sessionTarget = `session:${(patch.coordinator as CronCoordinatorScope).coordinatorSessionKey}`;
       }
       const result = await gatewayManager.rpc('cron.update', { id, patch });
       if (!result || typeof result !== 'object') {
