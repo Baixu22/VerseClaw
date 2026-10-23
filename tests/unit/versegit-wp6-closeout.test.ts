@@ -25,6 +25,10 @@ describe('WP6 merged closeout', () => {
       .map((manifest: { path: string; mismatches: string[] }) => ({ path: manifest.path, mismatches: manifest.mismatches })))
       .toEqual([
         {
+          path: 'harness/specs/fixtures/versegit-planning-correction/mc0-evidence/SHA256SUMS',
+          mismatches: ['tests/unit/versegit-mc0-baseline.test.ts: expected d31b01207e07 actual b5e3538cd0d1'],
+        },
+        {
           path: 'harness/specs/fixtures/versegit-planning-correction/mc3-evidence/SHA256SUMS',
           mismatches: ['tests/unit/versegit-mc3-delivery.test.ts: expected 2b43c7c54523 actual 00d5b3c81ff3'],
         },
