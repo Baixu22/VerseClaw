@@ -355,3 +355,5 @@ Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell �
 
 セッションの Handoff は Main で Task Ledger の系譜を検証・保存してから新しい会話を有効化します。循環や読み取れない履歴は拒否します。`openclaw.json` の `runtime.handoff.enabled=true` で深さ制限を有効化できます（`maxDepth`: 1–64、省略時は 3）。制限は既定で無効で、フォークは Handoff の系譜を保持します。
 **テレメトリーの同意:** 設定でテレメトリーをオフにすると即時反映されます。以降のイベントは停止し、SDK のキューはローカルで破棄され、再度有効化しても復活しません。送信済みのリクエストは取り消せません。[同意ライフサイクル](docs/dev/telemetry-consent-lifecycle.md)を参照してください。
+
+同じ orchestration run の全 expected worker が終端状態になった後だけ、session activity owner が一つの consolidated completion-batch receipt を導出し、完了事実と durable delivery intent を分けて扱います。reset や handoff 後の古い結果は fenced となり、新しい generation へ送られません。

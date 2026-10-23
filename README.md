@@ -355,3 +355,5 @@ With runtime `diagnostics.otel.enabled` and the `trace.cost-sampling` diagnostic
 
 Session handoff creation validates and persists its Task Ledger lineage in Main before activating the new conversation; cycles or unreadable history are rejected. To enable the relay depth limit, set `runtime.handoff.enabled=true` in `openclaw.json` (`maxDepth`: 1–64, implicit limit 3). The limit defaults off, and forks retain relay ancestry.
 **Telemetry consent:** Turning telemetry off in Settings takes effect immediately: new events stop, the SDK queue is discarded locally and is not revived by re-enabling. A request already delivered cannot be recalled. See [the consent lifecycle](docs/dev/telemetry-consent-lifecycle.md).
+
+Once all expected workers for one orchestration run are terminal, the session activity owner derives one consolidated completion-batch receipt with separate completion and durable delivery states. A reset or handoff fences stale results instead of steering the new generation.

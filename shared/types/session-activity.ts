@@ -84,6 +84,44 @@ export type SessionActivityTask = {
   source: 'event' | 'snapshot' | 'task-ledger';
 };
 
+export type SessionActivityCompletionBatchMember = {
+  runId: string;
+  roleName: string;
+  status: 'running' | 'completed' | 'failed' | 'cancelled' | 'unknown';
+  deliveryStatus: 'not_required' | 'pending' | 'in_progress' | 'delivered' | 'failed' | 'suspended' | 'discarded';
+};
+
+export type SessionActivityCompletionBatch = {
+  schemaVersion: 'clawx.orchestration-completion-batch/v1';
+  batchId: string;
+  orchestrationRunId: string;
+  requesterSessionKey: string;
+  requesterSessionGeneration: string | null;
+  generationState: 'matching' | 'mismatch' | 'unverified';
+  status: 'collecting' | 'terminal' | 'fenced';
+  outcome: 'incomplete' | 'completed' | 'partial' | 'failed' | 'cancelled' | 'fenced';
+  consolidatedReceiptId: string | null;
+  acceptedAt: number;
+  terminalAt: number | null;
+  counts: {
+    expected: number;
+    settled: number;
+    completed: number;
+    failed: number;
+    cancelled: number;
+    unknown: number;
+  };
+  delivery: {
+    state: 'not_required' | 'pending' | 'in_progress' | 'delivered' | 'failed' | 'suspended' | 'discarded';
+    delivered: number;
+    pending: number;
+    suspended: number;
+    failed: number;
+    discarded: number;
+    waitingForRequesterTurn: boolean;
+  };
+  members: SessionActivityCompletionBatchMember[];
+};
 export type SessionActivitySubagent = {
   id: string;
   role?: string;
@@ -170,6 +208,7 @@ export type SessionActivitySnapshot = {
   git?: GitRepositoryStatus | null;
   tasks: SessionActivityTask[];
   subagents: SessionActivitySubagent[];
+  completionBatches: SessionActivityCompletionBatch[];
   terminals: SessionActivityTerminal[];
   goals: SessionActivityGoal[];
   processes: SessionActivityProcess[];
@@ -209,6 +248,7 @@ export function createEmptySessionActivitySnapshot(sessionKey: string, capturedA
     git: null,
     tasks: [],
     subagents: [],
+    completionBatches: [],
     terminals: [],
     goals: [],
     processes: [],

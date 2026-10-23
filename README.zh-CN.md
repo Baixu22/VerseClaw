@@ -355,3 +355,5 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw)，并继承 V
 
 会话接力在 Main 中核验并持久化 Task Ledger 血缘后才激活新会话；环路或无法读取的历史会被拒绝。可在 `openclaw.json` 设置 `runtime.handoff.enabled=true` 启用接力深度限制（`maxDepth` 为 1–64，省略时为 3）。限制默认关闭，分叉保留接力血缘。
 **遥测同意：** 在设置中关闭遥测立即生效：后续事件停止，SDK 队列在本地丢弃，重新开启不会复活旧事件；已发出的请求无法撤回。详见[同意生命周期](docs/dev/telemetry-consent-lifecycle.md)。
+
+同一次 orchestration run 的全部预期 worker 终态后，会话活动 owner 才会派生一个 consolidated completion-batch receipt，并把完成事实与持久 delivery intent 分开；reset 或 handoff 后只显示 fenced，不会把旧结果送入新 generation。

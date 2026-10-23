@@ -23,6 +23,7 @@ import {
   prependAgentSteeringPrompt,
   releaseLeasedAgentSteeringItemsFromSubagentRuns,
 } from "./agent-steering-queue.js";
+import { buildOrchestrationCompletionBatches } from "./orchestration-completion-batches.js";
 import { makeTaskLedgerEntry, taskGraphVerifierNode } from "./orchestration-protocol.js";
 import { removeInternalSessionEffectsTranscript } from "./internal-session-effects.js";
 import { isAbortedAgentStopReason } from "./run-termination.js";
@@ -1716,6 +1717,16 @@ export function markSubagentRunTerminated(params: {
   return subagentRunManager.markSubagentRunTerminated(params);
 }
 
+export function listOrchestrationCompletionBatchesForRequester(
+  requesterSessionKey: string,
+  currentRequesterSessionId?: string | null,
+) {
+  return buildOrchestrationCompletionBatches({
+    runs: [...subagentRegistryDeps.getSubagentRunsSnapshotForRead(subagentRuns).values()],
+    requesterSessionKey,
+    currentRequesterSessionId,
+  });
+}
 export function listSubagentRunsForRequester(
   requesterSessionKey: string,
   options?: { requesterRunId?: string },

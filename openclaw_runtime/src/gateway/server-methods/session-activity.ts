@@ -4,7 +4,7 @@ import {
   resolveCurrentRuntimeGeneration,
 } from "../../agents/runtime-effective-capability.js";
 import { getLatestMissionForSession } from "../../agents/mission-control/store.js";
-import { listSubagentRunsForRequester } from "../../agents/subagent-registry.js";
+import { listOrchestrationCompletionBatchesForRequester, listSubagentRunsForRequester } from "../../agents/subagent-registry.js";
 import { listTaskLoopRunsForSession } from "../../agents/task-loop-controller.js";
 import {
   countLongTaskQueuedMessages,
@@ -117,6 +117,10 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       activeRun?.[1].workspaceId?.trim() ??
       loaded.entry?.workspaceDir?.trim() ??
       "unknown";
+    const completionBatches = listOrchestrationCompletionBatchesForRequester(
+      sessionKey,
+      activeRun?.[1].sessionId ?? loaded.entry?.sessionId ?? null,
+    );
     const capabilityObservation = readRuntimeEffectiveCapabilityObservation({
       workspaceId,
       sessionKey,
@@ -157,6 +161,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
         },
         tasks,
         subagents,
+        completionBatches,
         goals: readProjection.goals,
         processes: readProjection.processes,
         lineage: readProjection.lineage,
