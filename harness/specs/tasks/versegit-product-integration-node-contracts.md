@@ -123,6 +123,8 @@ ClawX 保留 task/orchestration/approval/write journal/Git apply/harness verdict
 工具观察必须保留读取当时的相对路径/range/basis identity；单独的 inputDigest 无法还原这些内容，provider 后读已改变的文件也不能伪造读依据。反馈通过既有 tool-result middleware/prompt seam送达并记录真实 transcript/model-request 时序；generated/delivered/transcript-confirmed/behavior-shift 不混用。
 
 provider session end 的 abandoned 语义与 host success 分开。持久 completion fact 只记录宿主已发生结果，不转移 landing authority。全部清理路径共用 stop→drain→seal→detach→owner/epoch/reference check→delete barrier；任何失败保留资源与 recovery_required。
+F4 的稳定性报告把 3 次 cold start、10 次 packaged candidate/tool/receipt/apply 闭环、restart/revocation/undo 与资源清理绑定到同一 package/source identity；预算在运行前冻结，P50/P95、峰值 RSS、失败率、重复 apply 和 process/manager/worktree/temp survivor 只接受原始 samples 重算，未测平台/模型/语言显式保留为 unmeasured。
+
 F3 的 `clawx.versegit.sidecar-package/v1` 把 provider source commit/tree/archive、lockfile/build recipe、release binary sha/size/version/platform、capabilities/contract/golden identity、Apache-2.0 license 与 retention 绑定为单一可校验 package。Resolver 只消费该 package，artifact/schema/profile/platform/identity 任一不符均拒绝；double build 若仅 semantic identity 相同但 PE hash 不同，必须记录 `semantic-identity-only` 且不得宣称 byte-identical。
 
 F2 的 `clawx.versegit.cleanup-barrier/v1` 以 owner、epoch、authorization、base OID 与 refs digest 绑定每次删除；record 同时保存 agent-owned resource identity、阶段时间、evidence digests、late events 与 before/after inventory。只有 status=`detached` 的 exact resource 才能删除，只有实际观测到 process/manager/worktree/temp 均为零且无 survivor 才能进入 `deleted`；否则保持 `recovery_required`，未观测值不得写成零。

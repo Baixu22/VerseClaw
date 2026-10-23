@@ -17,7 +17,7 @@ import { freezeOrchestrationCandidate, type CreateCandidateWorker } from '../ope
 import { createWorktreeService, writeWorktreeFile } from '../openclaw_runtime/src/agents/worktree-service';
 import { VerseShellProcessManager } from '../openclaw_runtime/src/agents/verseshell/process-manager';
 import { executeGovernedVerseShellProcessObserved } from '../openclaw_runtime/src/agents/verseshell/governed-process';
-import { attachCompletedCleanupBarrier } from './versegit-product-cleanup-barrier-evidence';
+import { attachCompletedCleanupBarrier } from './versegit-product-cleanup-barrier-evidence.mts';
 import {
   VerseGitReceiptBridge,
   createVerificationPlan,
