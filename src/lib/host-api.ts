@@ -363,6 +363,10 @@ import type {
   WorkProviderStatusSnapshot,
   WorkProviderValidateArtifactPayload,
   WorkProviderValidateArtifactResult,
+  WorkspaceCoordinatorBindPayload,
+  WorkspaceCoordinatorBindingResult,
+  WorkspaceCoordinatorPausePayload,
+  WorkspaceCoordinatorResolvePayload,
   WorkspaceCreatePayload,
   WorkspaceFolderCreatePayload,
   WorkspaceFolderDeletePayload,
@@ -776,6 +780,15 @@ export const hostApi = {
     ),
     moveSessionToFolder: (input: WorkspaceFolderMoveSessionPayload) => (
       invokeHost('workspaces', 'moveSessionToFolder', input)
+    ),
+    bindCoordinator: (input: WorkspaceCoordinatorBindPayload): Promise<WorkspaceCoordinatorBindingResult> => (
+      invokeHost('workspaces', 'bindCoordinator', input)
+    ),
+    resolveCoordinator: (input: WorkspaceCoordinatorResolvePayload): Promise<WorkspaceCoordinatorBindingResult> => (
+      invokeHost('workspaces', 'resolveCoordinator', input)
+    ),
+    pauseCoordinator: (input: WorkspaceCoordinatorPausePayload): Promise<WorkspaceCoordinatorBindingResult> => (
+      invokeHost('workspaces', 'pauseCoordinator', input)
     ),
   },
   projectRules: {

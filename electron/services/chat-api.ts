@@ -1,3 +1,4 @@
+import { access } from 'node:fs/promises';
 import type { GatewayManager } from '../gateway/manager';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { logger } from '../utils/logger';
@@ -10,7 +11,12 @@ import { evaluateTurnBudget } from '../../shared/agent-resource-limits';
 import { LONG_TASK_INPUT_MODES } from '../../shared/types/long-task-control';
 import { getSessionTokenUsageSummary } from '../utils/token-usage';
 import { computeWorkspaceFingerprint } from '@shared/workspace-fingerprint';
-import { getWorkspaceRootPathById } from './workspaces-api';
+import {
+  getPersistedCoordinatorBinding,
+  getWorkspaceRootPathById,
+  materializeCoordinatorSessionGeneration,
+} from './workspaces-api';
+import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
 import { getHostDeadline } from '../utils/host-deadline-context';
 
 const VISION_MIME_TYPES = new Set([
@@ -310,9 +316,42 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         // still forwarded for Task Ledger continuity, but no fingerprint is
         // produced (agent-config fallback path, no false invalidation).
         const workspaceId = typeof body.workspaceId === 'string' ? body.workspaceId.trim() : '';
+        let pendingCoordinatorBinding: WorkspaceCoordinatorBinding | null = null;
         if (workspaceId) {
           rpcParams.workspaceId = workspaceId;
-          const rootPath = await getWorkspaceRootPathById(workspaceId);
+          const coordinatorBinding = await getPersistedCoordinatorBinding(workspaceId, sessionKey);
+          let rootPath: string | undefined;
+          if (coordinatorBinding) {
+            if (coordinatorBinding.agentId !== agentIdFromSessionKey(sessionKey)) {
+              throw new Error('COORDINATOR_AGENT_SCOPE_MISMATCH: The bound Assistant does not own this session.');
+            }
+            if (coordinatorBinding.state !== 'active') {
+              throw new Error(`COORDINATOR_BINDING_${coordinatorBinding.state.toUpperCase()}: The long-session environment is not active.`);
+            }
+            try {
+              await access(coordinatorBinding.environment.canonicalRoot);
+            } catch {
+              throw new Error('COORDINATOR_ENVIRONMENT_MISSING: The bound checkout or worktree is unavailable.');
+            }
+            if (coordinatorBinding.sessionGeneration) {
+              const described = await gatewayManager.rpc<{ session?: { sessionId?: string } | null }>(
+                'sessions.describe',
+                { key: sessionKey },
+                15_000,
+              );
+              if (!described?.session?.sessionId) {
+                throw new Error('COORDINATOR_SESSION_MISSING: The bound session generation is unavailable.');
+              }
+              if (described.session.sessionId !== coordinatorBinding.sessionGeneration) {
+                throw new Error('COORDINATOR_GENERATION_MISMATCH: The session was reset after the coordinator binding was created.');
+              }
+            } else {
+              pendingCoordinatorBinding = coordinatorBinding;
+            }
+            rootPath = coordinatorBinding.environment.canonicalRoot;
+          } else {
+            rootPath = await getWorkspaceRootPathById(workspaceId);
+          }
           if (rootPath) {
             rpcParams.workspaceDir = rootPath;
             const workspaceFingerprint = computeWorkspaceFingerprint(rootPath);
@@ -366,6 +405,27 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
           `[chat:sendWithMedia] Sending: message="${message.substring(0, 100)}", attachments=${imageAttachments.length}, fileRefs=${fileReferences.length}`,
         );
         const result = await gatewayManager.rpc('chat.send', rpcParams, 120000);
+        if (pendingCoordinatorBinding && workspaceId) {
+          try {
+            const described = await gatewayManager.rpc<{ session?: { sessionId?: string } | null }>(
+              'sessions.describe',
+              { key: sessionKey },
+              15_000,
+            );
+            if (described?.session?.sessionId) {
+              await materializeCoordinatorSessionGeneration({
+                workspaceId,
+                sessionKey,
+                sessionId: described.session.sessionId,
+              });
+            }
+          } catch (error) {
+            logger.warn('[chat:sendWithMedia] coordinator generation materialization delayed', {
+              sessionKey,
+              error: String(error),
+            });
+          }
+        }
         tracker.watchNewListeningPorts({
           before: portBaseline,
           sessionKey,

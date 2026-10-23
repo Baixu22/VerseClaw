@@ -40,6 +40,8 @@ const hostApiMock = vi.hoisted(() => ({
     update: vi.fn(),
     getActive: vi.fn(),
     moveSessionToFolder: vi.fn(),
+    bindCoordinator: vi.fn(),
+    resolveCoordinator: vi.fn(),
   },
   sessions: {
     createHandoff: vi.fn(),
@@ -104,6 +106,8 @@ describe('workspace session helpers', () => {
     hostApiMock.files.writeText.mockResolvedValue({ success: true });
     hostApiMock.workspaces.update.mockResolvedValue({ success: true });
     hostApiMock.workspaces.moveSessionToFolder.mockResolvedValue({ success: true });
+    hostApiMock.workspaces.bindCoordinator.mockResolvedValue({ success: true, binding: null, recovery: { state: 'missing', reason: null, bindingRevision: null } });
+    hostApiMock.workspaces.resolveCoordinator.mockResolvedValue({ success: true, binding: null, recovery: { state: 'missing', reason: null, bindingRevision: null } });
     hostApiMock.sessions.createHandoff.mockResolvedValue({ success: true, sessionKey: 'agent:reviewer:session-1711111111111-4fzyo8' });
     hostApiMock.sessions.fork.mockResolvedValue({
       success: true,
@@ -112,6 +116,48 @@ describe('workspace session helpers', () => {
       forkedFromParent: true,
     });
     hostApiMock.taskLedger.linkSession.mockResolvedValue({ success: true, snapshot: {} });
+  });
+
+  it('exposes only the coordinator binding that matches the active Workspace, Assistant and SessionKey', async () => {
+    const binding = {
+      schemaVersion: 1 as const,
+      workspaceId: 'workspace-a',
+      agentId: 'reviewer',
+      sessionKey: 'agent:reviewer:old',
+      sessionGeneration: 'generation-1',
+      taskLedgerReferences: [{ direction: 'workboard-to-task-ledger' as const, taskLedgerNodeId: 'TF-1', source: 'runtime' as const }],
+      environment: { kind: 'local' as const, canonicalRoot: 'C:/a', backend: 'git' as const, branch: 'main', detachedHead: false, setupProfile: null },
+      archiveRestorePolicy: 'restore' as const,
+      state: 'active' as const,
+      bindingRevision: 1,
+      invalidationReason: null,
+      createdAt: new Date(0).toISOString(),
+      updatedAt: new Date(0).toISOString(),
+    };
+    workspaceState.activeWorkspace = {
+      ...baseWorkspace,
+      coordinatorBindings: { [binding.sessionKey]: binding },
+    } as never;
+    const {
+      bindWorkspaceCoordinator,
+      getWorkspaceCoordinatorBinding,
+      resolveWorkspaceCoordinatorBinding,
+    } = await import('@/lib/workspace-session');
+
+    expect(getWorkspaceCoordinatorBinding(workspaceState.activeWorkspace as never, 'reviewer', 'agent:reviewer:old')).toEqual(binding);
+    expect(getWorkspaceCoordinatorBinding(workspaceState.activeWorkspace as never, 'main', 'agent:reviewer:old')).toBeNull();
+    await resolveWorkspaceCoordinatorBinding(workspaceState.activeWorkspace as never, 'reviewer', 'agent:reviewer:old');
+    expect(hostApiMock.workspaces.resolveCoordinator).toHaveBeenCalledWith({
+      workspaceId: 'workspace-a',
+      agentId: 'reviewer',
+      sessionKey: 'agent:reviewer:old',
+    });
+    const input = {
+      workspaceId: 'workspace-a', agentId: 'reviewer', sessionKey: 'agent:reviewer:old', expectedRevision: 1,
+      taskLedgerNodeIds: ['TF-1'], environment: { kind: 'local' as const, rootPath: 'C:/a' }, archiveRestorePolicy: 'restore' as const,
+    };
+    await bindWorkspaceCoordinator(input);
+    expect(hostApiMock.workspaces.bindCoordinator).toHaveBeenCalledWith(input);
   });
 
   it('creates new sessions inside the active workspace and current agent binding', async () => {

@@ -121,6 +121,10 @@ import type {
   KnowledgeInvocationMode,
   SessionArchiveEntry,
   SessionFolder,
+  WorkspaceCoordinatorArchiveRestorePolicy,
+  WorkspaceCoordinatorBinding,
+  WorkspaceCoordinatorEnvironmentBinding,
+  WorkspaceCoordinatorRecovery,
   WorkspaceKnowledgeScope,
   WorkspacePermissionMode,
   WorkspacePreviewMode,
@@ -598,6 +602,35 @@ export type WorkspaceSaveStatePayload = {
   activeSessionKey?: string;
   state?: WorkspaceUiState;
   sessionKey?: string;
+};
+export type WorkspaceCoordinatorEnvironmentSelection = {
+  kind: WorkspaceCoordinatorEnvironmentBinding['kind'];
+  rootPath: string;
+  setupProfile?: string | null;
+};
+export type WorkspaceCoordinatorBindPayload = {
+  workspaceId: string;
+  agentId: string;
+  sessionKey: string;
+  expectedRevision?: number;
+  taskLedgerNodeIds: string[];
+  environment: WorkspaceCoordinatorEnvironmentSelection;
+  archiveRestorePolicy: WorkspaceCoordinatorArchiveRestorePolicy;
+};
+export type WorkspaceCoordinatorResolvePayload = {
+  workspaceId: string;
+  agentId: string;
+  sessionKey: string;
+};
+export type WorkspaceCoordinatorPausePayload = {
+  workspaceId: string;
+  agentId: string;
+  sessionKey: string;
+  expectedRevision: number;
+};
+export type WorkspaceCoordinatorBindingResult = HostSuccess & {
+  binding: WorkspaceCoordinatorBinding | null;
+  recovery: WorkspaceCoordinatorRecovery;
 };
 export type WorkspaceActiveResult = HostSuccess & {
   activeWorkspaceId: string | null;
@@ -5336,6 +5369,9 @@ export type HostApiContract = {
     renameFolder: (payload: WorkspaceFolderRenamePayload) => WorkspaceSnapshotResult;
     deleteFolder: (payload: WorkspaceFolderDeletePayload) => WorkspaceSnapshotResult;
     moveSessionToFolder: (payload: WorkspaceFolderMoveSessionPayload) => WorkspaceSnapshotResult;
+    bindCoordinator: (payload: WorkspaceCoordinatorBindPayload) => WorkspaceCoordinatorBindingResult;
+    resolveCoordinator: (payload: WorkspaceCoordinatorResolvePayload) => WorkspaceCoordinatorBindingResult;
+    pauseCoordinator: (payload: WorkspaceCoordinatorPausePayload) => WorkspaceCoordinatorBindingResult;
   };
   projectRules: {
     snapshot: () => ProjectRulesSnapshotResult;

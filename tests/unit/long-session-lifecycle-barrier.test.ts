@@ -52,8 +52,9 @@ describe('long-session Main lifecycle barrier', () => {
       journalState: 'runtime_committed',
       archived: true,
     }));
+    const coordinatorLifecycle = vi.fn(async () => undefined);
     const { createSessionsApi } = await import('@electron/services/sessions-api');
-    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    const api = createSessionsApi({ gatewayManager: { rpc } as never, coordinatorLifecycle });
     const result = await api.archive({
       id: 'agent:main:main',
       originalWorkspaceId: 'workspace-a',
@@ -70,6 +71,7 @@ describe('long-session Main lifecycle barrier', () => {
     );
     expect(await readGates()).toEqual({});
     expect(state.unregister).toHaveBeenCalledWith('agent:main:main');
+    expect(coordinatorLifecycle).toHaveBeenCalledWith({ type: 'archive', workspaceId: 'workspace-a', sessionKey: 'agent:main:main' });
   });
 
   it('keeps the same operationId open after an unknown archive RPC and resumes on retry', async () => {

@@ -1,4 +1,9 @@
-import type { WorkspaceProfile, WorkspaceUiState } from '@shared/types/workspace';
+import type {
+  WorkspaceCoordinatorBinding,
+  WorkspaceProfile,
+  WorkspaceUiState,
+} from '@shared/types/workspace';
+import type { WorkspaceCoordinatorBindPayload } from '@shared/host-api/contract';
 import { hostApi } from '@/lib/host-api';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
@@ -7,6 +12,33 @@ export function getAgentIdFromSessionKey(sessionKey: string): string {
   if (!sessionKey.startsWith('agent:')) return 'main';
   const [, agentId] = sessionKey.split(':');
   return agentId || 'main';
+}
+
+export function getWorkspaceCoordinatorBinding(
+  workspace: WorkspaceProfile,
+  agentId: string,
+  sessionKey: string,
+): WorkspaceCoordinatorBinding | null {
+  const binding = workspace.coordinatorBindings?.[sessionKey];
+  return binding?.workspaceId === workspace.id && binding.agentId === agentId && binding.sessionKey === sessionKey
+    ? binding
+    : null;
+}
+
+export async function resolveWorkspaceCoordinatorBinding(
+  workspace: WorkspaceProfile,
+  agentId: string,
+  sessionKey: string,
+) {
+  return hostApi.workspaces.resolveCoordinator({
+    workspaceId: workspace.id,
+    agentId,
+    sessionKey,
+  });
+}
+
+export async function bindWorkspaceCoordinator(input: WorkspaceCoordinatorBindPayload) {
+  return hostApi.workspaces.bindCoordinator(input);
 }
 
 export function createFreshWorkspaceSessionKey(agentId: string): string {

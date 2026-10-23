@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: active
 id: long-session-coordinator-binding
 title: 绑定稳定主会话、任务引用与长期工作范围
 program: long-session-development-20261022
@@ -20,6 +20,8 @@ touchedAreas:
   - electron/services/workspaces-api.ts
   - electron/services/task-ledger-api.ts
   - electron/services/sessions-api.ts
+  - electron/services/chat-api.ts
+  - electron/main/ipc-handlers.ts
   - electron/services/terminal-session-manager.ts
   - openclaw_runtime/src/agents/worktree-service.ts
   - src/lib/workspace-session.ts
@@ -27,6 +29,14 @@ touchedAreas:
   - shared/host-api/contract.ts
   - src/lib/host-api.ts
   - tests/unit/long-session-coordinator-binding.test.ts
+  - tests/unit/workspace-session.test.ts
+  - tests/unit/chat-api-workspace-fingerprint.test.ts
+  - tests/unit/long-session-lifecycle-barrier.test.ts
+  - tests/e2e/long-session-coordinator-binding.spec.ts
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - docs/clawx-product-semantics.md
   - harness/specs/fixtures/long-session-development/c1/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -50,6 +60,8 @@ requiredTests:
   - pnpm run contract:check
   - pnpm run comms:replay
   - pnpm run comms:compare
+  - pnpm run build:vite
+  - pnpm run test:e2e:run tests/e2e/long-session-coordinator-binding.spec.ts
   - pnpm harness validate --spec harness/specs/tasks/long-session-coordinator-binding.md
   - git diff --check
 plannedTests:
@@ -117,7 +129,7 @@ docs:
 - `pnpm harness validate --spec harness/specs/tasks/long-session-coordinator-binding.md`
 - `git diff --check`
 
-plannedTests 尚未实现；上述命令只有在交付对应测试后才构成验收，测试选择未命中必须失败。
+`tests/unit/long-session-coordinator-binding.test.ts` 与 `tests/e2e/long-session-coordinator-binding.spec.ts` 已由本节点交付；测试选择未命中必须失败。
 
 E2E 要求真实 built Electron 与隔离 userData/run root。界面 host mocks 仅证明交互，功能接线必须回读 actual Host/Gateway/owner receipts。所有通信改动运行 comms replay/compare，cached typecheck 不替代 uncached 全门。
 
@@ -136,4 +148,3 @@ E2E 要求真实 built Electron 与隔离 userData/run root。界面 host mocks 
 - 验收条目全满足且证据一致后保存 proposal，base_graph_hash 匹配再 apply/validate/export；缺技术证据保持未完成并记录具体 gap。
 - 不要求所有者真人操作、真人数据或 verdict；自动模拟/独立 agent 审查如实标记。没有 live-provider 数据不能包装为质量推广证据。
 - 产品锁、冻结默认值、公开发布、重大独立 Project/执行环境范围决定不由本节点自动生效。
-

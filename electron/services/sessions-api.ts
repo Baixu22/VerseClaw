@@ -41,7 +41,7 @@ import type {
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
 import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
-import { createWorkspacesApi } from './workspaces-api';
+import { createWorkspacesApi, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import { evaluateHandoffDerivation } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
 import { getResourceTracker } from './resource-tracker';
@@ -1834,15 +1834,26 @@ async function deleteSessionViaRuntimeSerialized(
 export function createSessionsApi(ctx: {
   gatewayManager?: GatewayManager;
   terminalManager?: TerminalSessionManager;
+  coordinatorLifecycle?: (event: WorkspaceCoordinatorLifecycleEvent) => Promise<void>;
 } = {}): CompleteHostServiceRegistry['sessions'] {
+  const observeCoordinatorLifecycle = async (event: WorkspaceCoordinatorLifecycleEvent) => {
+    if (!ctx.coordinatorLifecycle) return;
+    try {
+      await ctx.coordinatorLifecycle(event);
+    } catch (error) {
+      logger.warn('[session:coordinator-lifecycle]', { event: event.type, sessionKey: event.sessionKey, error: String(error) });
+    }
+  };
   return {
     delete: async (payload) => {
       const sessionKey = getSessionKey(payload);
+      const workspaceId = getOptionalWorkspaceId(payload);
       const result = ctx.gatewayManager
         ? await deleteSessionViaRuntimeSerialized(sessionKey, ctx.gatewayManager, ctx.terminalManager)
         : await deleteSession(sessionKey);
       if (result.success) {
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
+        await observeCoordinatorLifecycle({ type: 'delete', workspaceId, sessionKey });
       }
       return result;
     },
@@ -2716,6 +2727,13 @@ export function createSessionsApi(ctx: {
             id: workspaceId, agentId, activeSessionKey: sessionKey, sessionKey,
             state: { activeTopicId: null, draftInput: payload.draftInput },
           });
+          await observeCoordinatorLifecycle({
+            type: 'handoff',
+            workspaceId,
+            sourceSessionKey,
+            sessionKey,
+            agentId,
+          });
         }
         return { success: true, sessionKey, ...lineage };
       });
@@ -2796,19 +2814,31 @@ export function createSessionsApi(ctx: {
       }, ctx.gatewayManager);
       if (result.success) {
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
+        await observeCoordinatorLifecycle({
+          type: 'archive',
+          workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : null,
+          sessionKey,
+        });
       }
       return result;
       });
     },
-    restore: async (payload) => withSessionDeleteGateLock(getSessionKey(payload), () => restoreSession({ id: getSessionKey(payload) }, ctx.gatewayManager)),
+    restore: async (payload) => withSessionDeleteGateLock(getSessionKey(payload), async () => {
+      const sessionKey = getSessionKey(payload);
+      const result = await restoreSession({ id: sessionKey }, ctx.gatewayManager);
+      if (result.success) await observeCoordinatorLifecycle({ type: 'restore', workspaceId: getOptionalWorkspaceId(payload), sessionKey });
+      return result;
+    }),
     permanentDelete: async (payload) => {
       const sessionKey = getSessionKey(payload);
+      const workspaceId = getOptionalWorkspaceId(payload);
       return withSessionDeleteGateLock(sessionKey, async () => {
       const pending = await findSessionDeleteGateBySession(sessionKey);
       if (pending) return { success: false, error: 'Session has a pending lifecycle mutation' };
       const result = await permanentDeleteSession({ id: sessionKey });
       if (result.success) {
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
+        await observeCoordinatorLifecycle({ type: 'delete', workspaceId, sessionKey });
       }
       return result;
       });

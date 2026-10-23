@@ -1,3 +1,4 @@
+import type { TaskLedgerReference } from './task-ledger-reference.js';
 import type { WorkModeId } from './work-mode.js';
 
 export type WorkspacePermissionMode = 'readOnly' | 'acceptEdits' | 'plan' | 'fullAccess';
@@ -141,6 +142,56 @@ export interface WorkspaceAgentBinding {
   bootstrapOverrides?: Record<string, string>;
 }
 
+export type WorkspaceCoordinatorBindingState = 'active' | 'paused' | 'invalid';
+export type WorkspaceCoordinatorArchiveRestorePolicy = 'restore' | 'none';
+
+/** Facts resolved from the existing workspace and Git/worktree owners. */
+export interface WorkspaceCoordinatorEnvironmentBinding {
+  kind: 'local' | 'managed-worktree';
+  canonicalRoot: string;
+  backend: 'local-workspace' | 'git';
+  branch: string | null;
+  detachedHead: boolean;
+  setupProfile: string | null;
+}
+
+/**
+ * Minimal explicit long-collaboration metadata. Task status and completion stay
+ * in Task Ledger; this record carries only a one-way reference list.
+ */
+export interface WorkspaceCoordinatorBinding {
+  schemaVersion: 1;
+  workspaceId: string;
+  agentId: string;
+  sessionKey: string;
+  sessionGeneration: string | null;
+  taskLedgerReferences: TaskLedgerReference[];
+  environment: WorkspaceCoordinatorEnvironmentBinding;
+  archiveRestorePolicy: WorkspaceCoordinatorArchiveRestorePolicy;
+  state: WorkspaceCoordinatorBindingState;
+  bindingRevision: number;
+  invalidationReason: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type WorkspaceCoordinatorRecoveryState =
+  | 'ready'
+  | 'paused'
+  | 'invalid'
+  | 'missing'
+  | 'unavailable'
+  | 'environment-missing'
+  | 'session-missing'
+  | 'session-pending'
+  | 'generation-mismatch';
+
+export interface WorkspaceCoordinatorRecovery {
+  state: WorkspaceCoordinatorRecoveryState;
+  reason: string | null;
+  bindingRevision: number | null;
+}
+
 export interface WorkspaceChatFooterState {
   contextRangeVisible?: boolean;
   tokenUsageVisible?: boolean;
@@ -236,6 +287,8 @@ export interface WorkspaceProfile {
   sessionFolders?: SessionFolder[];
   sessionFolderAssignments?: Record<string, string>;
   archivedSessionKeys?: string[];
+  /** Explicit long-collaboration metadata, keyed by stable SessionKey. */
+  coordinatorBindings?: Record<string, WorkspaceCoordinatorBinding>;
 }
 
 export interface SessionArchiveEntry {

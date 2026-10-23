@@ -85,7 +85,7 @@ The Knowledge corner character opens a compact floating conversation on click an
 
 Ordinary Chat handles immediate collaboration. Task Ledger stores goals, task nodes, checkpoints and evidence facts. Task Loop is an explicitly started, constrained execution flow. Chat can suggest an upgrade without automatically becoming a Task Loop.
 
-Workspace identifies the local execution root, agent binding and permission context. Project denotes a long-term work container; the shared identity contract currently supports a compatibility mapping, not independent Project management. Run identifies an execution attempt, while Task Ledger remains the source of user-visible task facts. See the [identity vocabulary](docs/clawx-product-semantics.md#identity-and-scope-vocabulary).
+Workspace identifies the local execution root, agent binding and permission context. Project denotes a long-term work container; the shared identity contract currently supports a compatibility mapping, not independent Project management. Run identifies an execution attempt, while Task Ledger remains the source of user-visible task facts. An explicit coordinator binding may pin one Workspace/Assistant/Session to existing Task Ledger references and a canonical local checkout or managed worktree; ordinary Chat does not enter that scope automatically. See the [identity vocabulary](docs/clawx-product-semantics.md#identity-and-scope-vocabulary).
 
 ClawGraph loads workspace YAML workflows and displays compilation diagnostics, node state, events and review items. Runtime Workboard owns scheduling separately from the user-facing Task Ledger. See [agent orchestration](docs/multi-agent-orchestration/README.md) and [concept boundaries](docs/clawx-product-semantics.md).
 
