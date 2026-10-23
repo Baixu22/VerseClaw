@@ -1,0 +1,77 @@
+{
+  "schema": "clawx.versegit.f3-independent-review/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "reviewedAt": "2026-10-23T13:25:52.234Z",
+  "clawxSource": {
+    "commit": "95a34cca793ff07f167b2b87f182ecf82985ae4e",
+    "tree": "a69d3752e68f737d2135ff9c2380d3b539e61b3f"
+  },
+  "providerSource": {
+    "repository": "https://github.com/Baixu22/VerseGit",
+    "commit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "tree": "7eb600c43556f9423cc9c5667c83652ba92a31a6",
+    "archiveSha256": "33733bff0c50124e957edba151c4a1d5945b015a58e17e6cc573879761097f76",
+    "archiveBytes": 91997207,
+    "sourceInputsDigest": "52a807b0a75304af82347d2e7b3b0e7314c9063f809ba125d88c16cb12251563",
+    "effectivePatchSet": []
+  },
+  "verdict": "pass",
+  "priority": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0
+  },
+  "issues": [],
+  "reproducibility": {
+    "status": "semantic-identity-only",
+    "claimable": false,
+    "limitation": "Two independent source/target roots produced different PE hashes; the delivered artifact is digest-pinned but byte-identical reproducibility is not claimed."
+  },
+  "criteria": [
+    {
+      "id": "independent-build-and-consumption-identity",
+      "passed": true,
+      "evidence": [
+        "build-provenance.json",
+        "sidecar-package-manifest.json"
+      ]
+    },
+    {
+      "id": "byte-identical-claim-honest",
+      "passed": true,
+      "evidence": [
+        "build-provenance.json"
+      ]
+    },
+    {
+      "id": "artifact-negative-resolution",
+      "passed": true,
+      "evidence": [
+        "package-negative.json"
+      ]
+    },
+    {
+      "id": "supported-targets-exact",
+      "passed": true,
+      "evidence": [
+        "sidecar-package-manifest.json"
+      ]
+    },
+    {
+      "id": "license-provenance-retention",
+      "passed": true,
+      "evidence": [
+        "sidecar-package-manifest.json",
+        "build-provenance.json"
+      ]
+    },
+    {
+      "id": "product-locks-unchanged",
+      "passed": true,
+      "evidence": [
+        "build-provenance.json"
+      ]
+    }
+  ]
+}

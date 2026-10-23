@@ -1,0 +1,46 @@
+{
+  "schema": "clawx.versegit.f3-package-negative/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "clawxSource": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "95a34cca793ff07f167b2b87f182ecf82985ae4e",
+    "tree": "a69d3752e68f737d2135ff9c2380d3b539e61b3f",
+    "dirty": false
+  },
+  "cases": [
+    {
+      "id": "missing",
+      "rejected": true,
+      "code": "artifact_missing",
+      "issues": [
+        "artifact_missing"
+      ]
+    },
+    {
+      "id": "hash_mismatch",
+      "rejected": true,
+      "code": "artifact_mismatch",
+      "issues": [
+        "artifact_sha256_mismatch"
+      ]
+    },
+    {
+      "id": "unsupported_schema",
+      "rejected": true,
+      "code": "schema_unsupported",
+      "issues": [
+        "unsupported_package_schema"
+      ]
+    },
+    {
+      "id": "unauthorized_profile",
+      "rejected": true,
+      "code": "profile_unauthorized",
+      "issues": [
+        "profile_unauthorized"
+      ]
+    }
+  ],
+  "passed": true
+}
