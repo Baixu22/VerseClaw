@@ -29,6 +29,8 @@
     "eval:context-compression": "node scripts/context-compression-eval-runner.mjs",
     "long-session:d2:evidence": "node --experimental-strip-types scripts/long-session-paired-evaluation.mjs",
     "long-session:d2:evidence:check": "node --experimental-strip-types scripts/long-session-paired-evaluation.mjs --check",
+    "long-session:d3:decision": "node scripts/long-session-continuity-decision.mjs",
+    "long-session:d3:decision:check": "node scripts/long-session-continuity-decision.mjs --check",
     "eval:ast-readonly": "pnpm exec vitest run tests/unit/runtime-ast-readonly-deep-eval.test.ts --reporter=verbose",
     "eval:ast-investment": "pnpm exec vitest run tests/unit/runtime-ast-readonly-investment-eval.test.ts --reporter=verbose",
     "runtime:effectiveness": "node scripts/runtime-effectiveness.mjs",
