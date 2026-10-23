@@ -140,9 +140,13 @@ function stableManifestJson(value: unknown): string {
 }
 
 /** Stable digest for content-sensitive idempotency (same id + same digest). */
-export function buildSessionDeleteManifestDigest(manifest: SessionDeleteOperationManifest): string {
+export function buildSessionOperationManifestDigest(manifest: unknown): string {
   const canonical = stableManifestJson(manifest);
   return createHash("sha256").update(canonical).digest("hex");
+}
+
+export function buildSessionDeleteManifestDigest(manifest: SessionDeleteOperationManifest): string {
+  return buildSessionOperationManifestDigest(manifest);
 }
 
 /**
@@ -206,6 +210,29 @@ export function createSessionDeleteJournalEvent(input: {
   };
 }
 
+export function buildSessionOperationJournalRow(input: {
+  operationId: string;
+  manifest: unknown;
+  state: SessionDeleteOperationJournalState;
+  receiptJson?: string | null;
+  createdAt?: number;
+}): SessionDeleteOperationJournalRow {
+  const operationId = input.operationId.trim();
+  if (!operationId) {
+    throw new Error("operationId must be non-empty");
+  }
+  const createdAt = input.createdAt ?? Date.now();
+  return {
+    operation_id: operationId,
+    manifest_json: JSON.stringify(input.manifest),
+    manifest_digest: buildSessionOperationManifestDigest(input.manifest),
+    state: input.state,
+    receipt_json: input.receiptJson ?? null,
+    created_at: createdAt,
+    updated_at: createdAt,
+  };
+}
+
 export function buildSessionDeleteOperationJournalRow(input: {
   operationId: string;
   manifest: SessionDeleteOperationManifest;
@@ -213,16 +240,7 @@ export function buildSessionDeleteOperationJournalRow(input: {
   receiptJson?: string | null;
   createdAt?: number;
 }): SessionDeleteOperationJournalRow {
-  const event = createSessionDeleteJournalEvent(input);
-  return {
-    operation_id: event.operationId,
-    manifest_json: JSON.stringify(input.manifest),
-    manifest_digest: event.manifestDigest,
-    state: event.state,
-    receipt_json: event.receiptJson ?? null,
-    created_at: event.createdAt,
-    updated_at: event.createdAt,
-  };
+  return buildSessionOperationJournalRow(input);
 }
 
 function parseManifestJson(raw: string): SessionDeleteOperationManifest {

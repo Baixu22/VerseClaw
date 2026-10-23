@@ -11,6 +11,8 @@ import {
   errorShape,
   validateSessionsCreateParams,
   validateSessionsDeleteParams,
+  validateSessionsArchiveParams,
+  validateSessionsRestoreParams,
   validateSessionsForkParams,
   validateSessionsPatchParams,
   validateSessionsPluginPatchParams,
@@ -57,6 +59,11 @@ import {
 } from "../session-delete-operation-journal.js";
 import { resolveSessionStoreAgentId, resolveSessionStoreKey } from "../session-store-key.js";
 import {
+  archiveSessionWithLifecycle,
+  restoreSessionWithLifecycle,
+  type LifecycleMutationFailure,
+} from "../session-archive-service.js";
+import {
   loadSessionEntry,
   migrateAndPruneGatewaySessionStoreKey,
   readSessionMessageCountAsync,
@@ -83,6 +90,29 @@ import {
   resolveRequestedGlobalAgentId,
   isSessionBusyForManualCompaction,
 } from "./sessions.shared.js";
+
+
+function respondLifecycleMutationFailure(
+  respond: Parameters<GatewayRequestHandlers[string]>[0]["respond"],
+  failure: LifecycleMutationFailure,
+  identity: { key: string; operationId: string },
+): void {
+  const code = failure.code === "unavailable" ? ErrorCodes.UNAVAILABLE : ErrorCodes.INVALID_REQUEST;
+  respond(
+    false,
+    undefined,
+    errorShape(code, failure.error, {
+      retryable: failure.retryable,
+      details: {
+        kind: "lifecycle-mutation-failure",
+        ...failure,
+        key: identity.key,
+        canonicalKey: failure.key,
+        operationId: failure.operationId ?? identity.operationId,
+      },
+    }),
+  );
+}
 
 export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
   "sessions.create": async ({ req, params, respond, context, client, isWebchatConnect }) => {
@@ -758,6 +788,82 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
     emitSessionsChanged(context, {
       sessionKey: patched.key,
       reason: "plugin-patch",
+    });
+  },
+
+  "sessions.archive": async ({ params, respond, context }) => {
+    if (!assertValidParams(params, validateSessionsArchiveParams, "sessions.archive", respond)) {
+      return;
+    }
+    const p = params;
+    const key = requireSessionKey(p.key, respond);
+    if (!key) return;
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
+    const { target } = resolveGatewaySessionTargetFromKey(key, cfg, {
+      agentId: requestedAgent.agentId,
+    });
+    const loaded = loadSessionEntry(key, {
+      agentId: requestedAgent.agentId,
+    });
+    const result = await archiveSessionWithLifecycle({
+      cfg,
+      key,
+      operationId: p.operationId,
+      target,
+      entry: loaded.entry,
+      legacyKey: loaded.legacyKey,
+      canonicalKey: loaded.canonicalKey,
+      label: p.label,
+      originalWorkspaceId: p.originalWorkspaceId ?? null,
+      originalFolderId: p.originalFolderId ?? null,
+    });
+    if (!result.ok) {
+      respondLifecycleMutationFailure(respond, result, { key, operationId: p.operationId });
+      return;
+    }
+    respond(true, { ...result, key }, undefined);
+    emitSessionsChanged(context, {
+      sessionKey: key,
+      reason: "archive",
+    });
+  },
+  "sessions.restore": async ({ params, respond, context }) => {
+    if (!assertValidParams(params, validateSessionsRestoreParams, "sessions.restore", respond)) {
+      return;
+    }
+    const p = params;
+    const key = requireSessionKey(p.key, respond);
+    if (!key) return;
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
+    const { target } = resolveGatewaySessionTargetFromKey(key, cfg, {
+      agentId: requestedAgent.agentId,
+    });
+    const loaded = loadSessionEntry(key, { agentId: requestedAgent.agentId });
+    const result = await restoreSessionWithLifecycle({
+      cfg,
+      key,
+      operationId: p.operationId,
+      target,
+      canonicalKey: loaded.canonicalKey,
+    });
+    if (!result.ok) {
+      respondLifecycleMutationFailure(respond, result, { key, operationId: p.operationId });
+      return;
+    }
+    respond(true, { ...result, key }, undefined);
+    emitSessionsChanged(context, {
+      sessionKey: key,
+      reason: "restore",
     });
   },
   "sessions.reset": async ({ params, respond, context }) => {

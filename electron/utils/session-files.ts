@@ -43,6 +43,7 @@ import { promises as fsP } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import type { SessionArchiveEntry, SessionArchiveIndex } from '@shared/types/workspace';
+import { withFileLock } from './atomic-write';
 
 export type SessionResolutionFailure =
   | { kind: 'not-found' }
@@ -487,13 +488,22 @@ export async function readArchiveIndex(
  * index is the only record of which `.archived.jsonl` files exist on disk,
  * so losing it would orphan archived transcripts in the recycle bin.
  */
-export async function writeArchiveIndex(
+async function writeArchiveIndexUnlocked(
   archiveIndexPath: string,
   index: SessionArchiveIndex,
 ): Promise<void> {
   const tmpPath = `${archiveIndexPath}.tmp`;
-  await fsP.writeFile(tmpPath, JSON.stringify(index, null, 2), 'utf8');
+  await fsP.mkdir(path.dirname(archiveIndexPath), { recursive: true, mode: 0o700 });
+  await fsP.writeFile(tmpPath, JSON.stringify(index, null, 2), {
+    encoding: 'utf8',
+    mode: 0o600,
+  });
+  await fsP.chmod(tmpPath, 0o600);
   await fsP.rename(tmpPath, archiveIndexPath);
+}
+
+export function writeArchiveIndex(archiveIndexPath: string, index: SessionArchiveIndex): Promise<void> {
+  return withFileLock(archiveIndexPath, () => writeArchiveIndexUnlocked(archiveIndexPath, index));
 }
 
 /**
@@ -504,12 +514,14 @@ export async function upsertArchiveEntry(
   archiveIndexPath: string,
   entry: SessionArchiveEntry,
 ): Promise<SessionArchiveIndex> {
+  return withFileLock(archiveIndexPath, async () => {
   const index = await readArchiveIndex(archiveIndexPath);
   const without = index.entries.filter((existing) => existing.sessionKey !== entry.sessionKey);
   without.push(entry);
   const next: SessionArchiveIndex = { version: 1, entries: without };
-  await writeArchiveIndex(archiveIndexPath, next);
+  await writeArchiveIndexUnlocked(archiveIndexPath, next);
   return next;
+  });
 }
 
 /**
@@ -520,17 +532,20 @@ export async function upsertArchiveEntry(
 export async function removeArchiveEntry(
   archiveIndexPath: string,
   sessionKey: string,
+  expectedTranscriptPath?: string,
 ): Promise<{ index: SessionArchiveIndex; removed: SessionArchiveEntry | null }> {
+  return withFileLock(archiveIndexPath, async () => {
   const index = await readArchiveIndex(archiveIndexPath);
   let removed: SessionArchiveEntry | null = null;
   const entries = index.entries.filter((existing) => {
-    if (existing.sessionKey === sessionKey) {
+    if (existing.sessionKey === sessionKey && (!expectedTranscriptPath || existing.transcriptPath === expectedTranscriptPath)) {
       removed = existing;
       return false;
     }
     return true;
   });
   const next: SessionArchiveIndex = { version: 1, entries };
-  await writeArchiveIndex(archiveIndexPath, next);
+  await writeArchiveIndexUnlocked(archiveIndexPath, next);
   return { index: next, removed };
+  });
 }

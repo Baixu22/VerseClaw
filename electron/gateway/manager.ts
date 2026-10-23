@@ -8,7 +8,7 @@ import { EventEmitter } from 'events';
 import WebSocket from 'ws';
 import { PORTS } from '../utils/config';
 import { getSetting } from '../utils/store';
-import { JsonRpcNotification, isNotification, isResponse } from './protocol';
+import { GatewayRpcError, JsonRpcNotification, isNotification, isResponse } from './protocol';
 import { logger } from '../utils/logger';
 import { clampHostTimeoutToDeadline } from '@shared/host-api/host-deadline';
 import { getHostDeadline } from '../utils/host-deadline-context';
@@ -155,6 +155,8 @@ const VERSE_CLAW_REQUIRED_GATEWAY_METHODS = [
   'sessions.patch',
   'sessions.fork',
   'sessions.stop',
+  'sessions.archive',
+  'sessions.restore',
   'sessions.delete',
   'cron.list',
   'cron.add',
@@ -1437,9 +1439,16 @@ export class GatewayManager extends EventEmitter {
     // Handle OpenClaw protocol response format: { type: "res", id: "...", ok: true/false, ... }
     if (msg.type === 'res' && typeof msg.id === 'string') {
       if (msg.ok === false || msg.error) {
-        const errorObj = msg.error as { message?: string; code?: number } | undefined;
+        const errorObj =
+          typeof msg.error === 'object' && msg.error !== null
+            ? (msg.error as { message?: string; [key: string]: unknown })
+            : undefined;
         const errorMsg = errorObj?.message || JSON.stringify(msg.error) || 'Unknown error';
-        if (rejectPendingGatewayRequest(this.pendingRequests, msg.id, new Error(errorMsg))) {
+        if (rejectPendingGatewayRequest(
+          this.pendingRequests,
+          msg.id,
+          new GatewayRpcError({ ...(errorObj ?? {}), message: errorMsg }),
+        )) {
           return;
         }
       } else if (resolvePendingGatewayRequest(this.pendingRequests, msg.id, msg.payload ?? msg)) {
@@ -1456,10 +1465,15 @@ export class GatewayManager extends EventEmitter {
     // Fallback: Check if this is a JSON-RPC 2.0 response (legacy support)
     if (isResponse(message) && message.id && this.pendingRequests.has(String(message.id))) {
       if (message.error) {
-        const errorMsg = typeof message.error === 'object'
-          ? (message.error as { message?: string }).message || JSON.stringify(message.error)
-          : String(message.error);
-        rejectPendingGatewayRequest(this.pendingRequests, String(message.id), new Error(errorMsg));
+        const errorObj = typeof message.error === 'object' && message.error !== null
+          ? (message.error as unknown as { message?: string; [key: string]: unknown })
+          : undefined;
+        const errorMsg = errorObj?.message || JSON.stringify(message.error);
+        rejectPendingGatewayRequest(
+          this.pendingRequests,
+          String(message.id),
+          new GatewayRpcError({ ...(errorObj ?? {}), message: errorMsg }),
+        );
       } else {
         resolvePendingGatewayRequest(this.pendingRequests, String(message.id), message.result);
       }

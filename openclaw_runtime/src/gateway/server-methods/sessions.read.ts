@@ -41,6 +41,7 @@ import { resolveSessionKeyFromResolveParams } from "../sessions-resolve.js";
 import { loadOptionalServerMethodModelCatalog } from "./optional-model-catalog.js";
 import { hasTrackedActiveSessionRun } from "./session-active-runs.js";
 import { emitSessionsChanged } from "./session-change-event.js";
+import { filterArchivedSessionStore } from "../session-archive-index.js";
 import { assertValidParams } from "./validation.js";
 import {
   filterSessionStoreToConfiguredAgents,
@@ -76,9 +77,12 @@ export const sessionsReadHandlers: GatewayRequestHandlers = {
             },
           },
         );
-        const listStore = configuredAgentsOnly
+        const visibleStore = configuredAgentsOnly
           ? filterSessionStoreToConfiguredAgents(cfg, store)
           : store;
+        // Archive intent is visible before the store row disappears; filtering
+        // here keeps a partially recovered archive from reappearing as a live chat.
+        const listStore = await filterArchivedSessionStore(cfg, visibleStore);
         const modelCatalog = await measureDiagnosticsTimelineSpan(
           "gateway.sessions.list.model_catalog",
           () => loadOptionalServerMethodModelCatalog(context, "sessions.list"),

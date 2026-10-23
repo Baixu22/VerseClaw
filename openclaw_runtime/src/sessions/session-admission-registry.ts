@@ -355,6 +355,11 @@ export class SessionAdmissionRegistry {
     return this.#entries.get(key)?.fenced === true;
   }
 
+  ownsFence(handle: SessionAdmissionFenceHandle): boolean {
+    const entry = this.#entries.get(identityKey(handle.identity));
+    return entry?.fenced === true && entry.fenceToken === handle.token && entry.active === 0;
+  }
+
   removeFence(identity: SessionAdmissionIdentity): void {
     const key = identityKey(identity);
     const entry = this.#entries.get(key);
