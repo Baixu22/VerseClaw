@@ -1,0 +1,39 @@
+[
+  {
+    "file": "shared/model-capability-profile.ts",
+    "expected": "b25e80a5340903f995768c41a209fdec9bbe67c975320b582018c82dde93ac68",
+    "actual": "b25e80a5340903f995768c41a209fdec9bbe67c975320b582018c82dde93ac68",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/verseshell-internal-substrate-tf0504.test.ts",
+    "expected": "7eb0968a4926c66959e706b53c6127af0f550c7e65c1444a05049c413e216fa8",
+    "actual": "7eb0968a4926c66959e706b53c6127af0f550c7e65c1444a05049c413e216fa8",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/model-capability-profile.test.ts",
+    "expected": "8fd5028e7c5c0d772f701efd24560981f5fd879258c7c0171c9d2971bfe7cbdd",
+    "actual": "8fd5028e7c5c0d772f701efd24560981f5fd879258c7c0171c9d2971bfe7cbdd",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/verseshell-tf0504/README.md",
+    "expected": "bb996a974e72e8e19e492cce2d5942e964971d81ba3daffe8d82cb1957227dc1",
+    "actual": "bb996a974e72e8e19e492cce2d5942e964971d81ba3daffe8d82cb1957227dc1",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/verseshell-tf0504/raw-evidence.json",
+    "expected": "2a705265b9dcb2f192a19b4dd397a257f8a7b7eb74fa77346bee848d062febaa",
+    "actual": "2a705265b9dcb2f192a19b4dd397a257f8a7b7eb74fa77346bee848d062febaa",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/verseshell-tf0504/run-verification.ps1",
+    "expected": "6815e1188d72fc23ceed7349cbc47bb72a911ca5e2f6e99251fe4e450107d311",
+    "actual": "6815e1188d72fc23ceed7349cbc47bb72a911ca5e2f6e99251fe4e450107d311",
+    "status": "pass"
+  }
+]
+SHA256SUMS_STATUS=pass

@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "VerseShellInternalSubstrateEvidence/v1",
+  "taskForestNodeId": "TF-0504",
+  "generatedAt": "2026-10-23T08:16:07.310Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "acceptanceCriteria": [
+    {
+      "criterion": "静态扫描/测试证明 eligible-local 域内只有一个 executor，并保留域外合法 owner",
+      "status": "pass",
+      "evidence": [
+        "01-tf0504-guard.txt: inside openclaw_runtime/src/agents/verseshell exactly one non-test module imports node:child_process (process-manager.ts)",
+        "01-tf0504-guard.txt: the canary keeps executionHost gateway/sandbox/node/verseshell and lifecycleOwner native/sandbox/node/verseshell/legacy-verseshell, so out-of-domain owners stay distinct",
+        "09-substrate-audit.txt: governed_spawn_owners=process-manager.ts"
+      ]
+    },
+    {
+      "criterion": "执行取消、超时、PTY、管道、清理、重启恢复和 in-flight terminal/lost 处理通过",
+      "status": "pass",
+      "evidence": [
+        "03-verseshell-lifecycle.txt: governed-process, process-manager, governed-exec, single-plane-canary, real-canary-evidence and RC-03 entry-transition suites pass",
+        "01-tf0504-guard.txt: UAS-06 engineering matrix covers short/long/background/stdin/pty/cancel/timeout/restart/rollback and keeps hard vetoes for native-fallback, duplicate-process, lost-output, sensitive-leak, unauthorized-execution and lifecycle-gate failures",
+        "governedExecNativeFallback is false even when the compatibility flag is requested; the kill switch forces every foundation flag off (fail closed)"
+      ]
+    },
+    {
+      "criterion": "用户面不再提供 VerseShell/RC-03/event-log 的产品开关",
+      "status": "pass",
+      "evidence": [
+        "01-tf0504-guard.txt: no DCS writable flag id matches verseshell/rc03/event-log; verseshell-patch-preview and rc03-seal are absent from the writable control plane",
+        "09-substrate-audit.txt: writable_verseshell_toggle=0, writable_rc03_toggle=0",
+        "The two components are declared internal with userEntry=null, no routePaths and no settingsPanelIds",
+        "Residual: the operator-facing inventory rows remain in shared/dcs/prod-flags-catalog.ts (read-only documentation with enable/rollback text); they are not switches."
+      ]
+    },
+    {
+      "criterion": "trace/receipt/log 不改变任务 verdict 或触发执行",
+      "status": "pass",
+      "evidence": [
+        "component.observability-recorder is internal: \"records but never authorizes or executes effects\", with no route/settings panel and no writable toggle",
+        "01-tf0504-guard.txt: the substrate never enables a native fallback and never escalates shadow access beyond read-only",
+        "03-verseshell-lifecycle.txt: RC-03 entry-transition acceptance passes, i.e. sealing/receipt pairing does not alter the returned result path"
+      ]
+    },
+    {
+      "criterion": "模型不会把内部观测机制自述为可用功能",
+      "status": "pass",
+      "evidence": [
+        "shared/model-capability-profile.ts forbids VToken/RC-03/VerseShell/Observability recorder/event-log as user-visible capability names",
+        "02-model-positioning.txt: tests/unit/model-capability-profile.test.ts asserts the built prompt contains none of those internal names",
+        "component.verseshell-execution-adapter and component.observability-recorder remain visibility=internal, so they are excluded from the model prompt"
+      ]
+    }
+  ],
+  "results": {
+    "eligibleLocalExecutionOwners": 1,
+    "permissionOwnershipViolations": 0,
+    "shadowUserToggles": 0,
+    "killCleanupSurvivors": 0
+  },
+  "residualLimitations": [
+    "tests/unit/uas-05-verseshell-process-lifecycle.test.ts fails in this checkout because it hashes the bundled binary resources/bin/win32-x64/ae.exe, which is missing and is a gitignored build artifact (.gitignore:70 \"resources/bin\"). That is an environment/packaging precondition, not a source defect.",
+    "openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts fails 3 of 22 cases (two \"ContextEngine replacement\" and one \"COMPASS candidates reach the real wire\") AND takes ~160s. Provenance was checked with git stash at HEAD 91c429310 (no TF-0504 changes present): the same 3 cases fail, so this is pre-existing and not caused by TF-0504. It is excluded from the gate list with this record. The COMPASS-budget case injects compassContext directly, so it is independent of the TF-0500 retired pre-reply path.",
+    "The operator-facing prod-flag inventory rows for verseshell-patch-preview and rc03-seal remain in shared/dcs/prod-flags-catalog.ts as read-only documentation (needed as the referencable record required by deviation TFD-lane2-rc03-seal-default-zero-2026-08-27). Removing or relabelling them is a docs/surface change owned by TF-0505/TF-0506.",
+    "docs/dev/default-config-matrix.md and product semantics still describe the pre-retirement rows; docs/ is outside this node paths and is owned by TF-0506."
+  ],
+  "evidenceNotes": {
+    "diskReadback": true,
+    "humanEvidenceClaimed": false,
+    "publicReleaseClaimed": false,
+    "productDefaultChanged": false,
+    "verseGitTouched": false,
+    "baselineProvenanceChecked": true
+  }
+}

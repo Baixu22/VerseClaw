@@ -245,7 +245,9 @@ describe('ModelCapabilityProfile/v1', () => {
     expect(prompt.text).toContain('Advanced:');
     expect(prompt.text).toContain('requires-approval');
     expect(prompt.text).toContain('quarantined');
-    expect(prompt.text).not.toMatch(/\b(?:DCS|VToken|C6|RC-03|V3)\b/u);
+        // TF-0504: the internal execution/evidence substrate must not be self-described
+    // as a user-visible capability either.
+    expect(prompt.text).not.toMatch(/\b(?:DCS|VToken|C6|RC-03|V3|VerseShell|Observability recorder|event[- ]log)\b/u);
     for (const candidate of profile.entries.filter((record) => record.static.disposition === 'internal' || record.static.disposition === 'retired')) {
       expect(prompt.text).not.toContain(candidate.static.displayName);
     }

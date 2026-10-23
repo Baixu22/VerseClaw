@@ -262,7 +262,14 @@ export const MODEL_CAPABILITY_USER_DISPLAY_NAMES: Readonly<Record<string, string
   'settings.developer-advanced': 'Developer settings',
   'settings.billing': 'Billing and usage',
 };
-const FORBIDDEN_USER_CAPABILITY_TERMS = /\b(?:DCS|VToken|C6|RC-03|V3)\b/iu;
+/**
+ * Internal implementation names that must never reach the model as a user-visible
+ * capability. TF-0504 added the execution/evidence substrate names: VerseShell is the
+ * internal local executor, the Observability recorder only records, and the event log
+ * is not a feature. Bare "Observability" stays allowed because surface.observability is
+ * a real user-visible surface.
+ */
+const FORBIDDEN_USER_CAPABILITY_TERMS = /\b(?:DCS|VToken|C6|RC-03|V3|VerseShell|Observability recorder|event[- ]log)\b/iu;
 const SHA256_DIGEST = /^sha256:[a-f0-9]{64}$/u;
 
 function normalizeCatalogIdentity(
