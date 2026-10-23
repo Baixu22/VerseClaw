@@ -131,6 +131,35 @@ function shouldProcessGatewayEvent(event: Record<string, unknown>): boolean {
   return true;
 }
 
+/**
+ * Identity for one runtime event. The gateway dispatcher can hand the same
+ * normalized event to Main twice (WS frame and JSON-RPC notification), so a
+ * refresh triggered by a replay would repeat the same background read. The
+ * event type is part of the identity because run.started and run.ended
+ * legitimately share runId and sessionKey.
+ */
+function buildChatRuntimeEventDedupeKey(event: ChatRuntimeEvent): string | null {
+  const runId = event.runId != null ? String(event.runId) : '';
+  const sessionKey = event.sessionKey != null ? String(event.sessionKey) : '';
+  if (!runId && !sessionKey) return null;
+  // Terminal events carry their own timestamp and the union does not expose
+  // every field on every member, so the ordering identity is read structurally.
+  const record = event as unknown as Record<string, unknown>;
+  const ordering = record.seq ?? record.endedAt ?? record.startedAt ?? record.ts ?? 'none';
+  return ['runtime', event.type, runId, sessionKey, String(ordering)].join('|');
+}
+
+/** True when this runtime event has not been seen inside the dedupe window. */
+function shouldRefreshForChatRuntimeEvent(event: ChatRuntimeEvent): boolean {
+  const key = buildChatRuntimeEventDedupeKey(event);
+  if (!key) return true;
+  const now = Date.now();
+  pruneGatewayEventDedupe(now);
+  if (gatewayEventDedupe.has(key)) return false;
+  gatewayEventDedupe.set(key, now);
+  return true;
+}
+
 function maybeLoadSessions(
   state: { loadSessions: () => Promise<void> },
   force = false,
@@ -220,7 +249,12 @@ function handleGatewayNotification(notification: GatewayNotification | undefined
 
 function handleChatRuntimeEvent(event: ChatRuntimeEvent): void {
   const resolvedSessionKey = event.sessionKey ?? null;
-  if (resolvedSessionKey) {
+  // A replayed copy of an event already folded into the refresh path must not
+  // schedule the same background read again (F2: a duplicate completion may
+  // not create duplicate background work). Runtime-event retention is
+  // unchanged: the chat store still receives every copy.
+  const isReplay = !shouldRefreshForChatRuntimeEvent(event);
+  if (resolvedSessionKey && !isReplay) {
     touchSessionActivity(resolvedSessionKey, typeof event.ts === 'number' ? event.ts : Date.now());
   }
 
@@ -228,6 +262,7 @@ function handleChatRuntimeEvent(event: ChatRuntimeEvent): void {
     .then(({ useChatStore, syncCachedSessionRunIdle }) => {
       const state = useChatStore.getState();
       state.handleRuntimeEvent(event);
+      if (isReplay) return;
 
       const shouldRefreshSessions = resolvedSessionKey != null && (
         resolvedSessionKey !== state.currentSessionKey

@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-long-use-budget
 title: 测量长会话加载、常驻资源与通知预算
 program: long-session-development-20261022
@@ -9,20 +9,17 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 防止长期入口越用越慢、后台消息越积越多，用新样本测量预算而非复用旧性能 PASS。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
+diffBase: 0bd400d43
 dependsOnTasks:
   - F1
 touchedAreas:
   - harness/specs/tasks/long-session-long-use-budget.md
   - harness/specs/tasks/long-session-development-plan.md
-  - src/stores/chat.ts
-  - src/stores/chat/session-label-hydration.ts
-  - src/components/layout/Sidebar.tsx
-  - electron/services/sessions-api.ts
-  - openclaw_runtime/src/sessions/session-admission-registry.ts
-  - tests/unit/chat-session-label-budget.test.ts
-  - tests/unit/session-summary-bounded-read.test.ts
-  - harness/specs/fixtures/tf0423-session-loading/probe.mjs
+  - package.json
+  - shared/long-session-budget.ts
+  - src/stores/gateway.ts
   - tests/unit/long-session-long-use-budget.test.ts
+  - scripts/long-session-f2-evidence.mjs
   - harness/specs/fixtures/long-session-development/f2/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -42,6 +39,10 @@ expectedUserBehavior:
 requiredTests:
   - pnpm exec vitest run tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts tests/unit/session-search-modal-performance.test.tsx --maxWorkers=1
   - pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts --maxWorkers=1
+  - pnpm run build:vite
+  - node harness/specs/fixtures/tf0423-session-loading/probe.mjs <repo-root> D:/tmp/long-session-f2/probe-current.json D:/tmp/long-session-f2/probe-run
+  - pnpm long-session:f2:evidence -- --probe D:/tmp/long-session-f2/probe-current.json --observation D:/tmp/long-session-f2/observation.json --gates <gate receipt>
+  - pnpm long-session:f2:evidence:check
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run comms:replay
@@ -106,7 +107,7 @@ docs:
 - `pnpm harness validate --spec harness/specs/tasks/long-session-long-use-budget.md`
 - `git diff --check`
 
-plannedTests 尚未实现；上述命令只有在交付对应测试后才构成验收，测试选择未命中必须失败。
+plannedTests 已交付；`tests/unit/long-session-long-use-budget.test.ts` 在没有盘上测量源时直接失败，测试选择未命中必须失败。built-Electron 样本的读取顺序是：`LONG_SESSION_F2_PROBE` 指向的原始探针报告（并与精选 artifact 记录的 `rawSha256` 逐字节对齐），否则读取 `harness/specs/fixtures/long-session-development/f2/long-use-before-after.json`。
 
 E2E 要求真实 built Electron 与隔离 userData/run root。界面 host mocks 仅证明交互，功能接线必须回读 actual Host/Gateway/owner receipts。所有通信改动运行 comms replay/compare，cached typecheck 不替代 uncached 全门。
 
