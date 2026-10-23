@@ -24,7 +24,19 @@ import {
   type DistillationSuggestion,
   type Principle,
   type PrincipleCriticality,
+  type PrincipleCreatedBy,
 } from "./types.js";
+
+/**
+ * SEKB experience is distilled and confirmed by an agent, never by a human.
+ * Only an explicit drivenBy: "human" may author a human record; an agent
+ * confirm records created_by = "agent" so identity stays truthful.
+ */
+export function resolvePrincipleCreatedBy(options: ConfirmAndSaveOptions = {}): PrincipleCreatedBy {
+  if (options.drivenBy === "agent") return "agent";
+  if (options.drivenBy === "human") return "human";
+  return "human";
+}
 
 export type DistillationToolOptions = {
   store: KnowledgeStore;
@@ -48,6 +60,14 @@ export type ConfirmAndSaveOptions = {
    * Defaults false for internal SEKB unit callers that only persist principles.
    */
   requireSession?: boolean;
+  /**
+   * Who drove this confirm. Agent confirms must never be persisted as a human
+   * author. Omitting it keeps the legacy advisory default ("human") so older
+   * internal callers behave unchanged; every automated path must pass "agent".
+   */
+  drivenBy?: "agent" | "human";
+  /** Concrete actor name recorded alongside drivenBy (for example "codex"). */
+  actor?: string;
   /** C7-2: opt-in experience shadow journal (default off / omitted). */
   experienceShadow?: {
     workspaceRoot: string;
@@ -197,7 +217,7 @@ export class DistillationTool {
       context_tags: normalizeTags(suggested.context_tags),
       embedding: Array.isArray(suggested.embedding) ? suggested.embedding : null,
       source_trajectories: sourceIds,
-      created_by: "human",
+      created_by: resolvePrincipleCreatedBy(options),
       status: "active",
       retrieval_count: suggested.retrieval_count ?? 0,
       adoption_count: suggested.adoption_count ?? 0,
@@ -207,6 +227,8 @@ export class DistillationTool {
       metadata: {
         ...suggested.metadata,
         distillation_confidence: suggestion.confidence,
+        ...(options.drivenBy ? { drivenBy: options.drivenBy } : {}),
+        ...(options.actor?.trim() ? { actor: options.actor.trim() } : {}),
         cluster_summary: suggestion.cluster_summary,
         ...(sourceLineage ? { runtimeLineage: sourceLineage } : {}),
       },

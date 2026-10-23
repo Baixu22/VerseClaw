@@ -1,0 +1,3 @@
+hardcoded_created_by_human=0
+auto_writeback_off=True
+agent_driven_confirm=True

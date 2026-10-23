@@ -143,7 +143,9 @@ const DEFAULT_SCENARIOS: NonNullable<SekbGoldenPathOptions["scenarios"]> = [
 
 /**
  * Run the semi-automatic SEKB golden path end-to-end against a KnowledgeStore.
- * Human confirm is simulated by an explicit confirm_and_save_with_lineage call (never auto).
+ * The confirm is agent-driven (driven_by=agent, actor=codex) and is simulated by an
+ * explicit confirm_and_save_with_lineage call; it is never auto-written and never
+ * recorded as a human identity.
  */
 export async function runSekbGoldenPath(
   options: SekbGoldenPathOptions,
@@ -251,6 +253,8 @@ export async function runSekbGoldenPath(
       sessionId: options.sessionId,
       requireSession: true,
       sourceSystem: options.sourceSystem ?? "ui-confirm",
+      drivenBy: "agent",
+      actor: "codex",
       integrityClaim: options.integrityClaim ?? "confirmed",
       ...(options.contextBlockSink ? { contextBlockSink: options.contextBlockSink } : {}),
     });

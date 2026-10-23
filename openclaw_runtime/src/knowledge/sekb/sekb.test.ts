@@ -498,6 +498,39 @@ describe("SEKB-MVP", () => {
     expect(store.list_distillation_rejections()).toHaveLength(1);
   });
 
+  it("never records an agent-driven confirm as a human author", () => {
+    const store = createStore();
+    const capture = new TrajectoryCapture({ store, now: fixedClock() });
+    const trajectoryId = capture.start_trajectory("connect PostgreSQL", "config/db", ["postgresql"]);
+    capture.log_step(trajectoryId, "tool.call", "psql", "connection refused");
+    capture.finish_trajectory(trajectoryId, "failure", "could not connect to server: Connection refused (port 5432)");
+    const distiller = new DistillationTool({ store, now: fixedClock(new Date("2026-07-06T08:00:00.000Z")) });
+    const agentPrincipleId = distiller.confirm_and_save({
+      cluster_summary: "PostgreSQL connection refused failures",
+      source_trajectory_ids: [trajectoryId],
+      suggested_principle: {
+        title: "Check PG access (agent)",
+        condition: "When PostgreSQL reports Connection refused",
+        action: "Check pg_hba.conf and firewall rules, then verify the service is running",
+        reason: "Most connection refusals are environment or configuration issues before code issues",
+        task_types: ["config/db"],
+        context_tags: ["postgresql"],
+        criticality: "high",
+      },
+      confidence: 0.8,
+    }, null, {
+      drivenBy: "agent",
+      actor: "codex",
+      sessionId: "session:sekb:identity-negative",
+    });
+    const agentPrinciple = store.get_principle(agentPrincipleId);
+    // Negative identity check: an agent confirm must never read back as human.
+    expect(agentPrinciple.created_by).toBe("agent");
+    expect(agentPrinciple.created_by).not.toBe("human");
+    expect(agentPrinciple.metadata.drivenBy).toBe("agent");
+    expect(agentPrinciple.metadata.actor).toBe("codex");
+  });
+
   it("carries common runtime lineage into confirmed principles and rejects mismatched sessions", async () => {
     const store = createStore();
     const capture = new TrajectoryCapture({ store, now: fixedClock() });
