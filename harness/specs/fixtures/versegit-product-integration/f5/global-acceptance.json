@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.product-f5-global-acceptance/v1",
-  "generated_at": "2026-10-23T14:39:08.076Z",
+  "generated_at": "2026-10-23T17:40:22.353Z",
   "task": "TF-0539",
   "parentTask": "TF-0523",
   "driven_by": "agent",
@@ -9,33 +9,33 @@
   "passed": true,
   "source": {
     "branch": "codex/versegit-product-integration-20261022",
-    "commit": "af30b12752812af216d710876e702e0d02f395aa",
-    "tree": "272042450374a5d50eeb827b1097eb8b7bac99e8",
+    "commit": "431f6e6b576c7bab73ff893745f2556cae0726b6",
+    "tree": "9846efe899e08da3c891ad40041e39cc0c1c53d3",
     "dirty": false
   },
   "candidate": {
-    "id": "9a1ce7c066b2414c4ac5b393096165ca537a726eaf439977be2d898e28493618",
-    "sourceInputDigest": "d7e0cafaca5aa42fe82924ec21700f0455dd236431684c617d08cf468bc6bc40",
+    "id": "4027d7f25783ad66ee437cd356db8f328e8ffc5bf08b319ba585e2c6b3da6135",
+    "sourceInputDigest": "d584183378984546850b2749691662e8e1a430d223a23dcbb8d4b6ae6fd9e9ec",
     "inputs": [
       {
         "path": "README.ja-JP.md",
-        "sha256": "1d3f90a13695f14d39da333999c2cb78ef58a49b913f0c1a0037ce714fc7b228",
-        "bytes": 42938
+        "sha256": "1da56e75a659f3de0280d3871a177ca1db11d1b6b0ed41bd8ef96bc8efa4d324",
+        "bytes": 42956
       },
       {
         "path": "README.md",
-        "sha256": "c7b93a2c6e909104d56a0311f249990728964b5c3c4c7747cb9f6ed5a4a9f7e7",
-        "bytes": 35625
+        "sha256": "eba0d4051402781ca1c04cf825dbee55463a2722c20c3bcf11aba0f0a00befb7",
+        "bytes": 35656
       },
       {
         "path": "README.zh-CN.md",
-        "sha256": "96ce911167273d3c6fedf9effc6667b044c67fd7c178c9214d63a125b9bd1b88",
-        "bytes": 32989
+        "sha256": "db65abc2da6b09a4ee83368940fd595708c2ba538104d526d3297488fe7c5fae",
+        "bytes": 33007
       },
       {
         "path": "docs/clawx-product-semantics.md",
-        "sha256": "429b849ff771b712e7f717af73c3f8dd5f1dab877433e7a589d6e8bd4a479e25",
-        "bytes": 18350
+        "sha256": "c3c4b7ad7708608c25649016cccc5f33cda5c26e408c125cd31ff289713f8cad",
+        "bytes": 18121
       },
       {
         "path": "docs/dev/versegit-validation-layer/README.md",
@@ -68,9 +68,89 @@
         "bytes": 6470
       },
       {
+        "path": "harness/specs/tasks/versegit-module-implementation-contracts.md",
+        "sha256": "8806acacd43895a8aaa38ec1e0eaab486f8f9f7a92f66843664382ef35760243",
+        "bytes": 6342
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-a1-evidence-baseline.md",
+        "sha256": "b0613cf709328c4b2b47bf5bee6119480d5d63d9d38b2fd8ddd7f5a6296f8986",
+        "bytes": 7612
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-a2-runtime-baseline.md",
+        "sha256": "ca7ce0f14677a4e454528e7e65fa893d29df27dea86f18f1779941db339d68f6",
+        "bytes": 8311
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-b1-fact-adapter.md",
+        "sha256": "2c8ed9b39e283105bab3b6c9858c23952219dbd4e81e974d295b272fff889a75",
+        "bytes": 9035
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-b2-host-diagnostics.md",
+        "sha256": "81d9571defe5598f2de7a76ad1096b47554b4be988b68796bd4c3ce0c7208d50",
+        "bytes": 9688
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-c1-runtime-bindings.md",
+        "sha256": "e711ea0fd7b36330d8b3b378c8b761047ad9b1183f6dceaafcfe7f59f04f679e",
+        "bytes": 10682
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-c2-observation-basis.md",
+        "sha256": "c1d12341f3ac173648d114228f9bf1adf0bffeb965c7c0764588cbdf9e159bf7",
+        "bytes": 12373
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-d1-feedback-delivery.md",
+        "sha256": "52b647d035d9cf6455811bfb5f2ba191b16f19fdddad698d9460b0340665447f",
+        "bytes": 13752
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-d2-paired-agent-evaluation.md",
+        "sha256": "3947240c346bb11548badae87dcb40514cba69495e734ca3f1b3e358e4a7140d",
+        "bytes": 13843
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-e1-candidate-freeze.md",
+        "sha256": "2cff8256319f94de3a57224510c59ea12eb98f62390036fd9dfb1e5fff14b4b2",
+        "bytes": 14821
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-e2-receipt-verification.md",
+        "sha256": "ffd2e805991062d46de7b3bc02ead34414684f0ca894ef5b4a77f9d6ddc8213b",
+        "bytes": 15627
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-e3-host-apply.md",
+        "sha256": "09868f372a956ae7cd5bf9eacf3531478d64db42678dc95ef114315d1cfdc836",
+        "bytes": 16994
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f1-completion-contract.md",
+        "sha256": "2e3b4a2443402d84730424f542d1b6cf93233a6fccf662315e2aa3bf030fcbc8",
+        "bytes": 17060
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f2-cleanup-barrier.md",
+        "sha256": "579e71c832d7a96396c04af3eca4271a83299c47e8f938a0fa9b4a0d31caa85d",
+        "bytes": 17507
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f3-sidecar-delivery.md",
+        "sha256": "f6a3661bfc87427fdc3af5a6964a8816713cc2415d1e5ed40fc0820f314e8581",
+        "bytes": 18177
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f4-controlled-stability.md",
+        "sha256": "0853fe2a97b75e559dfac4f6b7f1638ff0dd61245dc4bcd2d3deaed6095aeb92",
+        "bytes": 18754
+      },
+      {
         "path": "harness/specs/tasks/versegit-product-f5-global-acceptance.md",
-        "sha256": "d417a147606e033d50de23a022c7497feba0a7a4b83814f14cf581069dbe32db",
-        "bytes": 7593
+        "sha256": "ccb1711ea5b1086cf2c5a1432c585c23ce521148fade50315896091f34a659d8",
+        "bytes": 7519
       },
       {
         "path": "openclaw_runtime/src/agents/harness/versegit-feedback-delivery.ts",
@@ -134,8 +214,8 @@
       },
       {
         "path": "scripts/verify-versegit-product-integration.mjs",
-        "sha256": "1e3877503147a20e314188cd7d21954bae97deb53b2b18dbb8625659e464f40c",
-        "bytes": 67652
+        "sha256": "305e9ca4bbb3c42431c81eda5df9db5c73d9ab7b768bcb7444b18a381d4409ba",
+        "bytes": 69358
       },
       {
         "path": "shared/capability-claims.ts",
@@ -144,8 +224,8 @@
       },
       {
         "path": "shared/component-authority-manifest.ts",
-        "sha256": "c7aaca0065a41d8bc3f46169373dede113560c2eba05376b15fb5463dd99180d",
-        "bytes": 59748
+        "sha256": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+        "bytes": 59578
       },
       {
         "path": "shared/dcs/component-disposition-catalog.ts",
@@ -168,9 +248,29 @@
         "bytes": 6949
       },
       {
+        "path": "tests/unit/orchestration-worktree-merge.test.ts",
+        "sha256": "02090888cc1ac75c7d81e179d7bd21a49fc3578698ba3e207169aedc4add3536",
+        "bytes": 3591
+      },
+      {
         "path": "tests/unit/versegit-product-acceptance.test.ts",
-        "sha256": "cb2abde5402888371816759bd416dcd128055f14cc2dd3b4237caa871c6fa162",
-        "bytes": 9306
+        "sha256": "21961cc43c9474e0ce219cf4eb1d22bf9e4a6d623e2ee41972c792424174564b",
+        "bytes": 10892
+      },
+      {
+        "path": "tests/unit/versegit-wp6-closeout.test.ts",
+        "sha256": "97b3745e04a3df82c96f3f88bceb05be6186028cd5d2e23f174b7c56b9ca4528",
+        "bytes": 7478
+      },
+      {
+        "path": "tests/unit/versegit-wp8-review.test.ts",
+        "sha256": "39e8ca9c3a47cf3168fe46bb244e7a27cd009165069ab60aac63ce9b01980f8d",
+        "bytes": 2165
+      },
+      {
+        "path": "tests/unit/versegit-wp9-global-acceptance.test.ts",
+        "sha256": "872e6bce5576d193afa4d4fb786b8a0fa683baf08abdc366a7cb3d19979344fa",
+        "bytes": 10142
       }
     ],
     "packageId": "vg-0.1.0-win32-x64-release-6b8330354da59118",
@@ -375,7 +475,7 @@
         "README.ja-JP.md",
         "harness/specs/rules/task-forest-autoclose-and-roles.md"
       ],
-      "recompute": "Scans READMEs, product semantics, authority/manifest and Task Forest closeout rule for current claim agreement."
+      "recompute": "Scans READMEs, controlled-preview lock, host authority/manifest and Task Forest closeout rule for current claim agreement."
     }
   ],
   "evidence": {
@@ -388,14 +488,14 @@
   },
   "independentReview": {
     "path": "harness/specs/fixtures/versegit-product-integration/f5/independent-verdict.json",
-    "digest": "9ed7e1da28742cfcdc799c03db03ed94064fbbee35ab91cac1078cfcacf9aad2",
+    "digest": "8eb608e9081eb6ff3e094311a5b878234644cfed1b558e77706c36f7e3c35d10",
     "actor": "codex",
     "reviewerRole": "independent-product-f5-verifier-process",
     "verdict": "pass",
     "p0": 0,
     "p1": 0,
     "p2": 6,
-    "indexDigest": "a5105fd2411af316785196c8f7abf584765c51a7106753615a0b9e7d46e22164",
+    "indexDigest": "b1ac9f67db4c53c4a71b36c73f42ec0a19b7bc6d34879ac2e43f705acf6f8d76",
     "recomputed": true
   },
   "posture": {
@@ -476,20 +576,20 @@
       "id": "unit",
       "command": "pnpm exec vitest run tests/unit/versegit-product-acceptance.test.ts",
       "exitCode": 0,
-      "durationMs": 6600,
+      "durationMs": 9062,
       "counts": {
         "files": 1,
         "tests": 7,
         "passed": 7,
         "failed": 0
       },
-      "summary": "1 test file and 7 acceptance tests passed"
+      "summary": "acceptance suite passed"
     },
     {
       "id": "harness",
       "command": "pnpm harness validate --spec harness/specs/tasks/versegit-product-f5-global-acceptance.md",
       "exitCode": 0,
-      "durationMs": 1686,
+      "durationMs": 1668,
       "counts": {
         "specsValidated": 1,
         "errors": 0
@@ -500,7 +600,7 @@
       "id": "typecheck",
       "command": "pnpm run typecheck",
       "exitCode": 0,
-      "durationMs": 40512,
+      "durationMs": 30656,
       "counts": {
         "projects": 3,
         "passed": 3,
@@ -512,7 +612,7 @@
       "id": "comms-replay",
       "command": "pnpm run comms:replay",
       "exitCode": 0,
-      "durationMs": 1172,
+      "durationMs": 1145,
       "counts": {
         "scenarios": 6,
         "aggregateMetrics": 10
@@ -523,7 +623,7 @@
       "id": "comms-compare",
       "command": "pnpm run comms:compare",
       "exitCode": 0,
-      "durationMs": 923,
+      "durationMs": 803,
       "counts": {
         "passRows": 44,
         "failRows": 0
@@ -557,5 +657,5 @@
     "proposalApplyRequired": true,
     "validateExportRequired": true
   },
-  "digest": "6c8993c6612abad975b2c04798287fee4b00af913e7057862ce201e219999602"
+  "digest": "56d150469ae70c67ebc2bddd5026543ca4eb780f0fc9a8455bc2b4c5bc53beda"
 }

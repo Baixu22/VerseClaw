@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.product-f5-independent-verdict/v1",
-  "generated_at": "2026-10-23T14:36:05.692Z",
+  "generated_at": "2026-10-23T17:39:57.344Z",
   "task": "TF-0539",
   "parentTask": "TF-0523",
   "driven_by": "agent",
@@ -14,12 +14,12 @@
   },
   "source": {
     "branch": "codex/versegit-product-integration-20261022",
-    "commit": "af30b12752812af216d710876e702e0d02f395aa",
-    "tree": "272042450374a5d50eeb827b1097eb8b7bac99e8",
+    "commit": "431f6e6b576c7bab73ff893745f2556cae0726b6",
+    "tree": "9846efe899e08da3c891ad40041e39cc0c1c53d3",
     "dirty": false
   },
-  "candidateId": "9a1ce7c066b2414c4ac5b393096165ca537a726eaf439977be2d898e28493618",
-  "indexDigest": "a5105fd2411af316785196c8f7abf584765c51a7106753615a0b9e7d46e22164",
+  "candidateId": "4027d7f25783ad66ee437cd356db8f328e8ffc5bf08b319ba585e2c6b3da6135",
+  "indexDigest": "b1ac9f67db4c53c4a71b36c73f42ec0a19b7bc6d34879ac2e43f705acf6f8d76",
   "evidence": {
     "groups": 15,
     "files": 66,
@@ -112,5 +112,5 @@
   "taskForestCloseoutEligible": true,
   "issues": [],
   "recomputed": true,
-  "digest": "9ed7e1da28742cfcdc799c03db03ed94064fbbee35ab91cac1078cfcacf9aad2"
+  "digest": "8eb608e9081eb6ff3e094311a5b878234644cfed1b558e77706c36f7e3c35d10"
 }
