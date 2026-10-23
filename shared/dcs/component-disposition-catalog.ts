@@ -222,10 +222,10 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     experimentOwner: 'TF-0499', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Keep only if SEKB candidates improve Knowledge review and preserve one applied-knowledge authority; otherwise retire by TF-0499.',
   }),
   entry({
-    id: 'component.v3-capability-catalog', label: 'V3 capability catalog', disposition: 'default', owner: 'v3-capability-catalog', implementationNodeId: 'TF-0502', currentMode: 'mixed', targetDefaultMode: 'baseline',
-    ...user('model capability discovery and Settings > Models'),
+    id: 'component.v3-capability-catalog', label: 'V3 capability catalog', disposition: 'internal', owner: 'v3-capability-catalog', implementationNodeId: 'TF-0501', currentMode: 'shadow', targetDefaultMode: 'internal',
+    ...internal('Internal capability-descriptor adapter consumed by Tool Search; no separate user-visible capability registry or route.'),
     currentConsumers: ['Tool Search', 'Skills/MCP source registry', 'model capability self-description'], evidenceRefs: CAPABILITY_EVIDENCE,
-    coverage: { authorityComponentIds: ['v3-capability-catalog'], settingsSectionIds: ['models'], settingsPanelIds: ['ProvidersSettings'], routePaths: ['/models'] },
+    coverage: { authorityComponentIds: ['v3-capability-catalog'] },
   }),
   entry({
     id: 'component.skills-mcp-source-registry', label: 'Skills and MCP source registry', disposition: 'default', owner: 'skills-mcp-source-registry', implementationNodeId: 'TF-0502', currentMode: 'mixed', targetDefaultMode: 'baseline',
@@ -299,7 +299,7 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     id: 'component.renderer-ui-surface', label: 'Renderer UI surface', disposition: 'default', owner: 'renderer-ui-surface', implementationNodeId: 'TF-0505', currentMode: 'mixed', targetDefaultMode: 'baseline',
     ...user('application shell and Settings'),
     currentConsumers: ['Chat shell', 'Settings', 'workspace panels'], evidenceRefs: UI_EVIDENCE,
-    coverage: { authorityComponentIds: ['renderer-ui-surface'], settingsSectionIds: ['overview', 'general', 'system', 'archived'], routePaths: ['/setup/*', '/', '/settings', '/settings/*'] },
+    coverage: { authorityComponentIds: ['renderer-ui-surface'], settingsSectionIds: ['overview', 'general', 'system', 'archived', 'models'], settingsPanelIds: ['ProvidersSettings'], routePaths: ['/setup/*', '/', '/settings', '/settings/*', '/models'] },
   }),
   entry({
     id: 'component.retired-surface-registry', label: 'Retired surface registry', disposition: 'internal', owner: 'retired-surface-registry', implementationNodeId: 'TF-0505', currentMode: 'baseline', targetDefaultMode: 'retired',

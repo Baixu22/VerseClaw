@@ -1412,6 +1412,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/adr/2026-08-16-context-authority-boundaries.md
 !/docs/dev/adr/2026-08-16-session-lifecycle-authority.md
 !/docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md
+!/docs/dev/adr/2026-10-23-capability-catalog-authority.md
 !/docs/dev/agent-engineering-acceptance.md
 !/docs/dev/browser-security-recovery.md
 !/docs/dev/capability-registry-v3-code-mode-acceptance.md

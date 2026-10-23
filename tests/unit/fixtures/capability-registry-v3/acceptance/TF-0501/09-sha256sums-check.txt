@@ -1,0 +1,141 @@
+[
+    {
+        "file":  "docs/dev/adr/2026-10-23-capability-catalog-authority.md",
+        "expected":  "4de61dd261492cb3cc9647292adcef0311e08a75ad8182315d5bf01397c78560",
+        "actual":  "4de61dd261492cb3cc9647292adcef0311e08a75ad8182315d5bf01397c78560",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/agent-bundle-mcp-runtime.ts",
+        "expected":  "3b9ba86288d7bcff86da94d536a57ddef46dce094d2abdb0ba92d1f0e8fa5761",
+        "actual":  "3b9ba86288d7bcff86da94d536a57ddef46dce094d2abdb0ba92d1f0e8fa5761",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/stage2-golden-run.ts",
+        "expected":  "cfd5a1050a485f6fa179daaf22c33509ce1cc8b8a3d067675fc89a73ccaac4dc",
+        "actual":  "cfd5a1050a485f6fa179daaf22c33509ce1cc8b8a3d067675fc89a73ccaac4dc",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/tool-search-capability-v3.ts",
+        "expected":  "defd3e2f60dc89cd36848075e2310e7f146bab2891246903f437382fae1860f5",
+        "actual":  "defd3e2f60dc89cd36848075e2310e7f146bab2891246903f437382fae1860f5",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/tool-search.ts",
+        "expected":  "1e064c34f0e0c6e89328c6d81ee70ca10ff38c52ccb0f4be6c7919430fb62f64",
+        "actual":  "1e064c34f0e0c6e89328c6d81ee70ca10ff38c52ccb0f4be6c7919430fb62f64",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/capabilities/v3/adapters.ts",
+        "expected":  "0c0ed5aacf214a284b6f641a638862d726cfa345a059a6ed0ecd515012edb051",
+        "actual":  "0c0ed5aacf214a284b6f641a638862d726cfa345a059a6ed0ecd515012edb051",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/capabilities/v3/capability-descriptor.ts",
+        "expected":  "e11dba9d9410425a3fedcdfa10c644b359a2cd2368ffaa54236c4169a2473df9",
+        "actual":  "e11dba9d9410425a3fedcdfa10c644b359a2cd2368ffaa54236c4169a2473df9",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/capabilities/v3/evaluation-baseline.ts",
+        "expected":  "19320ef578a7b62b553949179fc253255a2e0af1f2ce77f080da9be03f2b8fa7",
+        "actual":  "19320ef578a7b62b553949179fc253255a2e0af1f2ce77f080da9be03f2b8fa7",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/capabilities/v3/shadow-catalog.ts",
+        "expected":  "04c682579d1ff3d7d9fee968b70266979b67317acdce0dfaa482febb38c878cb",
+        "actual":  "04c682579d1ff3d7d9fee968b70266979b67317acdce0dfaa482febb38c878cb",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/capabilities/v3/trusted-catalog.ts",
+        "expected":  "bf107b5d58ca0a7cbc270edaeb56f0bdd59ab389852af92405ae64feb6471107",
+        "actual":  "bf107b5d58ca0a7cbc270edaeb56f0bdd59ab389852af92405ae64feb6471107",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/capabilities/v3/unified-resolver.ts",
+        "expected":  "db1ba6ff25328780bf7028e0b59aa479f05ab6402907781135d25a18e1bcafa8",
+        "actual":  "db1ba6ff25328780bf7028e0b59aa479f05ab6402907781135d25a18e1bcafa8",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/skills/loading/workspace.ts",
+        "expected":  "472e8f597dfba7c9351f40346439598775950fa57c01ae05805687fac2327092",
+        "actual":  "472e8f597dfba7c9351f40346439598775950fa57c01ae05805687fac2327092",
+        "status":  "pass"
+    },
+    {
+        "file":  "shared/component-authority-manifest.ts",
+        "expected":  "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+        "actual":  "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+        "status":  "pass"
+    },
+    {
+        "file":  "shared/dcs/component-disposition-catalog.ts",
+        "expected":  "8a088941802935de2c8ba7819e536d0a4664c20d19369b95fd62af9ad231b49a",
+        "actual":  "8a088941802935de2c8ba7819e536d0a4664c20d19369b95fd62af9ad231b49a",
+        "status":  "pass"
+    },
+    {
+        "file":  "shared/model-capability-profile.ts",
+        "expected":  "f821284baca4753b7b6f41220eb89177fc0ec7a6b616a3f853ffd47335299e6c",
+        "actual":  "f821284baca4753b7b6f41220eb89177fc0ec7a6b616a3f853ffd47335299e6c",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/capability-catalog-authority.test.ts",
+        "expected":  "9d8422ef8d42f3bce6830a01e6e35027bd0dcd3b6338d0e5d5218d1abf52f409",
+        "actual":  "9d8422ef8d42f3bce6830a01e6e35027bd0dcd3b6338d0e5d5218d1abf52f409",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/README.md",
+        "expected":  "f12ab49243074dca229e511925157ea61c7892cc4dd74505b54e10ee841dae66",
+        "actual":  "f12ab49243074dca229e511925157ea61c7892cc4dd74505b54e10ee841dae66",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/ab-protocol.json",
+        "expected":  "213388d3bbfafa23968505fff488adf1f97cdedd1f6bbca561cf44b302b5a0fe",
+        "actual":  "213388d3bbfafa23968505fff488adf1f97cdedd1f6bbca561cf44b302b5a0fe",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/ab-report.json",
+        "expected":  "f6dcdb1e39ea9314a689a5ded39abbe161f481edfa2634242c3e34d52a386b39",
+        "actual":  "f6dcdb1e39ea9314a689a5ded39abbe161f481edfa2634242c3e34d52a386b39",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/component-graduation-report.json",
+        "expected":  "be9a393f5e4ba02ee6627c19c2522b926d516f81bd59109973bfe9747737ec3c",
+        "actual":  "be9a393f5e4ba02ee6627c19c2522b926d516f81bd59109973bfe9747737ec3c",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/generate-acceptance.mts",
+        "expected":  "47d72807ded23c921529cf5dbb515c0e73ad01c51b7b7b3fc2561defd83976f4",
+        "actual":  "47d72807ded23c921529cf5dbb515c0e73ad01c51b7b7b3fc2561defd83976f4",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/raw-evidence.json",
+        "expected":  "b5884f7d3a174537a0ab8ef7c5c4bb1ba916f7a2d7fb9ed490674e40c324beec",
+        "actual":  "b5884f7d3a174537a0ab8ef7c5c4bb1ba916f7a2d7fb9ed490674e40c324beec",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/run-verification.ps1",
+        "expected":  "65ad0c0ebfee2f03af2a8f496d7ccd2f0e372663f87522f88bacde54f7ec6c28",
+        "actual":  "65ad0c0ebfee2f03af2a8f496d7ccd2f0e372663f87522f88bacde54f7ec6c28",
+        "status":  "pass"
+    }
+]
+SHA256SUMS_STATUS=pass

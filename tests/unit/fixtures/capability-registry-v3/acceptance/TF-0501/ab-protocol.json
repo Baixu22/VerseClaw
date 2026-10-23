@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "CapabilityRegistryV3ABProtocol/v1",
+  "taskForestNodeId": "TF-0501",
+  "declaredAt": "2026-10-22T16:54:33.478Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "frozen-before-live-run",
+  "comparison": {
+    "control": "existing Tool Search + native schema discovery",
+    "treatment": "V3 capability descriptor metadata adapter over the same Tool Search owner"
+  },
+  "sampleSize": {
+    "perArm": 40,
+    "total": 80,
+    "strata": {
+      "toolSelection": 20,
+      "schemaExpansion": 20
+    }
+  },
+  "measurements": [
+    "tool_discovery_success",
+    "first_call_success",
+    "schema_retry_count",
+    "fallback_rate",
+    "policy_denial_rate",
+    "input_tokens",
+    "ttft_ms",
+    "catalog_digest_match",
+    "permission_annotation_match"
+  ],
+  "nonInferiority": {
+    "firstCallSuccess": "treatment lower CI >= control - 0.05",
+    "schemaRetryCount": "treatment upper CI <= control + 0.05",
+    "p95TtftMs": "treatment ratio upper CI <= 1.10"
+  },
+  "decisionRules": {
+    "insufficientEvidence": "fewer than 40 live runs per arm or any provider/parse failure rate > 5%",
+    "neutralEvidence": "CI includes zero and no noninferiority guard fails; do not claim benefit",
+    "pass": "all noninferiority guards pass and at least one primary metric has a positive lower CI"
+  },
+  "stoppingRule": "fixed n=80 (40 per arm); no early stopping",
+  "evidencePolicy": {
+    "providerAndModel": "space-bunny only for any live run; fixture/replay never passes",
+    "fixtureEvidence": "inventory only, never a benefit or graduation claim",
+    "humanEvidence": false
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "CapabilityCatalogAuthorityEvidence/v1",
+  "taskForestNodeId": "TF-0501",
+  "generatedAt": "2026-10-23T00:09:14.094Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "decision": {
+    "disposition": "keep-internal-adapter",
+    "primaryCatalogAuthority": "v3-capability-catalog",
+    "sourceManifestOwner": "skills-mcp-source-registry",
+    "discoveryAndExecutionOwner": "tool-search-schema-expander",
+    "v3AuthorityDefaultMode": "internal",
+    "v3DispositionRow": "internal",
+    "v3ImplementationNodeId": "TF-0501",
+    "v3UserVisibleEntry": null,
+    "v3Visibility": "internal",
+    "modelsSurfaceOwner": "renderer-ui-surface",
+    "secondProductCatalog": false,
+    "secondExecutor": false
+  },
+  "catalogAuthority": {
+    "componentIds": [
+      "v3-capability-catalog",
+      "skills-mcp-source-registry",
+      "tool-search-schema-expander"
+    ],
+    "v3ForbiddenActions": [
+      "own-executor-closure",
+      "execute-tool-effect",
+      "grant-permissions",
+      "own-context-candidates"
+    ],
+    "toolSearchForbiddenActions": [
+      "own-executor-closure",
+      "accept-capability-descriptor",
+      "authorize-tool-use",
+      "write-memory-or-knowledge"
+    ],
+    "sourceRegistryForbiddenActions": [
+      "execute-tool-effect",
+      "own-discovery-view",
+      "grant-permissions"
+    ],
+    "toolSearchOwnsExecution": true,
+    "v3CallerBoundary": "explicit-stage2-golden-run-only",
+    "nativeSchemaOwner": "openclaw_runtime native tool schema",
+    "toolRegistryProjection": "summary projection over the same effective tool list"
+  },
+  "v3Disposition": {
+    "authorityDefaultMode": "internal",
+    "dispositionRow": "internal",
+    "visibility": "internal",
+    "userEntry": null,
+    "implementationNodeId": "TF-0501",
+    "targetDefaultMode": "internal",
+    "rationale": "Unique metadata adapter responsibilities remain, but V3 has no default production caller and cannot become a second executor/catalog."
+  },
+  "digestAndSchema": {
+    "descriptorSchemaVersion": "capability-descriptor/v1",
+    "shadowCatalogSchemaVersion": "capability-shadow-catalog/v1",
+    "unifiedResolverSchemaVersion": "capability-unified-resolver/v1",
+    "canonicalSchemaHash": "sha256:53582d9d7229826e75097ac478787ca403c94ce74e4611571be1b03c706952cc",
+    "schemaHashOrderIndependent": true,
+    "descriptorDigest": "sha256:da71cfacbf1d960a44088fba1ec214823a3d4312cf4e081d5a0d435ade77d4c9",
+    "descriptorDigestOrderIndependent": true,
+    "permissionAnnotation": [],
+    "catalogSnapshotHash": "sha256:dc2543f29e9dbbbfa5bf498db602f80bdf4f424e66d86f1019edbe38baf1bd0e",
+    "acceptedUniqueCapabilityIds": [
+      "tool:fixture:workspace-read",
+      "tool:fixture:workspace-search",
+      "skill:fixture:code-review",
+      "context:fixture:knowledge-index",
+      "skill:fixture:incident-response",
+      "context:fixture:run-receipt",
+      "tool:fixture:session-status",
+      "context:fixture:task-state"
+    ],
+    "duplicateCapabilityIdDiagnostics": 1,
+    "duplicateCapabilityEvidence": [
+      {
+        "code": "duplicate-capability-id",
+        "severity": "error",
+        "capabilityId": "skill:fixture:release-notes",
+        "message": "duplicate capability ids are excluded from the shadow catalog",
+        "details": {
+          "owners": [
+            "fixture:static:capability-registry-v3-v3-00",
+            "fixture:static:duplicate-test"
+          ]
+        }
+      }
+    ]
+  },
+  "modelProfileDigest": {
+    "schemaVersion": "ModelCapabilityProfile/v1",
+    "capabilityIdentity": "component.v3-capability-catalog",
+    "usesComponentAuthorityManifest": true,
+    "staticDigestFunction": true,
+    "sharedCapabilityIdentity": true
+  },
+  "abEvidence": {
+    "protocolStatus": "frozen-before-live-run",
+    "evidenceClass": "fixture",
+    "liveSamples": {
+      "control": 0,
+      "treatment": 0
+    },
+    "reportStatus": "insufficient-evidence",
+    "reportReasons": [
+      "no-live-samples",
+      "protocol-frozen-but-not-executed"
+    ],
+    "benefitClaim": false,
+    "nonInferiorityClaim": false,
+    "defaultChangeClaim": false,
+    "conclusion": "insufficient or neutral evidence must not pass"
+  },
+  "results": {
+    "contract": {
+      "status": "pass"
+    },
+    "boundary": {
+      "status": "pass"
+    },
+    "not-product-claim": {
+      "status": "pass"
+    }
+  },
+  "acceptanceCriteria": [
+    {
+      "criterion": "存在唯一 capability catalog authority，所有工具来源可追溯到 Skills/MCP/Tool Search",
+      "status": "pass",
+      "evidence": [
+        "catalogAuthority",
+        "source-anchor audit"
+      ]
+    },
+    {
+      "criterion": "V3 若无独特价值，标记 retired 并移除生产 caller/UI；若保留，只作为内部 adapter",
+      "status": "pass",
+      "evidence": [
+        "v3Disposition"
+      ]
+    },
+    {
+      "criterion": "tool digest、schema hash 和 permission annotation 有一份真源",
+      "status": "pass",
+      "evidence": [
+        "digestAndSchema"
+      ]
+    },
+    {
+      "criterion": "模型 profile 使用同一 catalog digest",
+      "status": "pass",
+      "evidence": [
+        "modelProfileDigest"
+      ]
+    }
+  ],
+  "evidenceNotes": {
+    "diskReadback": true,
+    "humanEvidenceClaimed": false,
+    "publicReleaseClaimed": false,
+    "productDefaultChanged": false,
+    "verseGitTouched": false,
+    "liveABClaimed": false
+  }
+}
