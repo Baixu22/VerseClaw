@@ -1843,7 +1843,7 @@ type LiveSessionIdentity = {
   sessionId: string;
 };
 
-async function resolveLiveSessionIdentity(
+export async function resolveLiveSessionIdentity(
   gatewayManager: GatewayManager,
   sessionKey: string,
   expectedAgentId?: string,

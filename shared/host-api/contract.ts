@@ -54,6 +54,7 @@ import type {
   MemorySurfaceSource,
 } from '../types/memory';
 import type { SessionActivitySnapshot } from '../types/session-activity';
+import type { LongSessionContinuityContextPack } from '../long-session-continuity';
 import type { SessionEffectivePolicy } from '../types/session-effective-policy';
 export type { SessionEffectivePolicy } from '../types/session-effective-policy';
 import type {
@@ -3434,6 +3435,20 @@ export type ChatSendWithMediaResult = HostSuccess & {
   knowledgeDenials?: ChatKnowledgeDenial[];
 };
 
+export type ChatContinuityPreviewPayload = {
+  sessionKey: string;
+  workspaceId: string;
+  activeTaskNodeId?: string | null;
+  knowledgeReferences?: ChatKnowledgeReference[];
+};
+
+export type ChatContinuityPreviewResult = HostSuccess & {
+  validation: 'current' | 'missing' | 'invalidated' | 'unavailable';
+  pack?: LongSessionContinuityContextPack;
+  rendered?: string;
+  reason?: string;
+};
+
 export type ChatKnowledgeDenial = {
   id: string;
   title: string;
@@ -5853,6 +5868,7 @@ export type HostApiContract = {
   };
   chat: {
     sendWithMedia: (payload: ChatSendWithMediaPayload) => ChatSendWithMediaResult;
+    continuityPreview: (payload: ChatContinuityPreviewPayload) => ChatContinuityPreviewResult;
   };
   workProviders: {
     status: () => WorkProviderStatusSnapshot;
