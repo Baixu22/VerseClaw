@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "CodingControlDisposition/v1",
+  "taskForestNodeId": "TF-0510",
+  "generatedAt": "2026-10-23T00:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "componentCount": 5,
+  "components": [
+    {
+      "id": "stale-write-guard",
+      "label": "Stale write guard",
+      "currentConsumer": "agent-tools write / apply_patch wrap",
+      "disposition": "advanced",
+      "implementationState": "implemented-opt-in",
+      "implementationNode": "TF-0510",
+      "family": "stale-write-guard",
+      "catalogEntryPresent": true,
+      "writableTogglePresent": true,
+      "productEntry": "runtime.coding.staleWriteGuard.enabled (operator config)",
+      "remainingGap": [],
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/agents/tools/stale-write-guard.test.ts",
+          "exists": true,
+          "sha256": "e9e7221fd2e7591daa49cd7d99e67f2c3bc55ef8494cac8c7ee445c3b9cda546",
+          "bytes": 5847
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stale-write-guard.ts",
+          "exists": true,
+          "sha256": "49b49bd53d04848670a4034aa11db5b12c0bfd27f4f4c1854d8ffc49aa851572",
+          "bytes": 4869
+        }
+      ]
+    },
+    {
+      "id": "symbol-lease",
+      "label": "Symbol lease / WAL",
+      "currentConsumer": "edit / write / apply_patch concurrency guard",
+      "disposition": "experiment",
+      "implementationState": "implemented-opt-in",
+      "implementationNode": "TF-0510",
+      "family": "symbol-lease",
+      "catalogEntryPresent": true,
+      "writableTogglePresent": true,
+      "productEntry": "runtime.coding.symbolLease.enabled + .mode (operator config)",
+      "remainingGap": [
+        "Graduation is undefined by evidence: its own graduateOrRetireCriteria requires multi-writer benchmarks showing lower conflict/rework with reliable rollback, and no such benchmark exists in the repo. Single-process and multi-process correctness are proven; the benefit claim is not.",
+        "The owning record cannot be updated from here: feature.symbol-lease is experiment with a 2026-12-31 expiry in shared/dcs/component-disposition-catalog.ts, and shared/ is outside the TF-0510 write scope."
+      ],
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/agents/symbol-lease-guard.test.ts",
+          "exists": true,
+          "sha256": "2e31bdf9d0277bd9cb022f91b1921fedc850452891997aa4ab4b2f261ae0159f",
+          "bytes": 2867
+        },
+        {
+          "path": "openclaw_runtime/src/agents/symbol-lease-guard.ts",
+          "exists": true,
+          "sha256": "0d639b8333e9fb331523d909ee55c689b2044783bc714b99a2769f6be632cda2",
+          "bytes": 4179
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/factstore/symbol-lease.ts",
+          "exists": true,
+          "sha256": "2bcbd04cb19747b187951267e129cac8858257c2bab221faffccc6761120af37",
+          "bytes": 8206
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/factstore/symbol-lease.test.ts",
+          "exists": true,
+          "sha256": "15913ef16618eb22a3f33165f758a7ce9c42891cf9c250d364a69876c24a0c96",
+          "bytes": 5123
+        }
+      ]
+    },
+    {
+      "id": "patch-flow",
+      "label": "Patch flow (serial fenced apply)",
+      "currentConsumer": "team_orchestrate patchFlowExecution + orchestrator serial apply",
+      "disposition": "experiment",
+      "implementationState": "implemented-opt-in",
+      "implementationNode": "TF-0510",
+      "family": "patch-flow",
+      "catalogEntryPresent": true,
+      "writableTogglePresent": false,
+      "productEntry": "team_orchestrate patchFlowExecution=true (model tool parameter)",
+      "remainingGap": [
+        "Graduation is undefined by evidence: its own graduateOrRetireCriteria requires patch execution to improve verified coding outcomes while preserving write-journal authority, and no outcome comparison exists in the repo.",
+        "The only product entries are the model tool parameter patchFlowExecution=true and an operator config flag; no natural task action or explicit concurrent workflow selects it, so it remains an opt-in path.",
+        "The owning record cannot be updated from here: feature.patch-flow is experiment with a 2026-12-31 expiry in shared/dcs/component-disposition-catalog.ts, and shared/ is outside the TF-0510 write scope."
+      ],
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/agents/orchestration-patch-flow.test.ts",
+          "exists": true,
+          "sha256": "0ad26e2a3f0227b65e24d03e79a7e6047e04cb468664a9588635e3b4a81662d1",
+          "bytes": 9794
+        },
+        {
+          "path": "openclaw_runtime/src/agents/patch-flow.ts",
+          "exists": true,
+          "sha256": "d84e15dff7a38447865c8ff7badcbb55b52c02f6f2d47216647ee40d09554f1a",
+          "bytes": 3541
+        },
+        {
+          "path": "openclaw_runtime/src/agents/patch-flow-graduation.ts",
+          "exists": true,
+          "sha256": "92a34e99a75e7aedc40c73e376697f267a3bef21e62a4b8cc4d932a03448e11a",
+          "bytes": 5244
+        }
+      ]
+    },
+    {
+      "id": "worktree-backend",
+      "label": "Worktree backend",
+      "currentConsumer": "orchestrator isolation=worktree -> createWorktreeService",
+      "disposition": "advanced",
+      "implementationState": "implemented-opt-in",
+      "implementationNode": "TF-0510",
+      "family": "worktree-backend",
+      "catalogEntryPresent": true,
+      "writableTogglePresent": false,
+      "productEntry": "isolation=worktree on an orchestrator request/plan",
+      "remainingGap": [],
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/agents/worktree-service.test.ts",
+          "exists": true,
+          "sha256": "eb9b728f8ab50432723c0c3308640fa5d73b5f2b815aa7fc63b67ac108d4657d",
+          "bytes": 13171
+        },
+        {
+          "path": "openclaw_runtime/src/agents/worktree-service.ts",
+          "exists": true,
+          "sha256": "36e0680491e119b39a029f75dfc7200a361f9f6566236cac59b12a0923dadd28",
+          "bytes": 17424
+        }
+      ]
+    },
+    {
+      "id": "isolation-request",
+      "label": "Isolation request",
+      "currentConsumer": "orchestrator normalizeIsolationMode",
+      "disposition": "advanced",
+      "implementationState": "implemented-opt-in",
+      "implementationNode": "TF-0510",
+      "family": "isolation-request",
+      "catalogEntryPresent": true,
+      "writableTogglePresent": false,
+      "productEntry": "isolation: \"worktree\" | \"shared\" on a request/plan",
+      "remainingGap": [],
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/agents/isolation-mode-matrix.test.ts",
+          "exists": true,
+          "sha256": "2e98aa1a44cab1ff06439046adb07b96ca9947b398fa2d61ac6842eb4c013969",
+          "bytes": 1313
+        },
+        {
+          "path": "openclaw_runtime/src/agents/isolation-mode-matrix.ts",
+          "exists": true,
+          "sha256": "460c1a419131b15219baf28193c736ad5c26cd0e3975bba08a6ba192f45b8bde",
+          "bytes": 1963
+        },
+        {
+          "path": "openclaw_runtime/src/agents/worktree-service.test.ts",
+          "exists": true,
+          "sha256": "eb9b728f8ab50432723c0c3308640fa5d73b5f2b815aa7fc63b67ac108d4657d",
+          "bytes": 13171
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "retrofittedFamilies": [
+      "stale-write-guard",
+      "symbol-lease",
+      "patch-flow",
+      "worktree-backend",
+      "isolation-request"
+    ],
+    "componentsWithGaps": [
+      "symbol-lease",
+      "patch-flow"
+    ],
+    "everyArtifactResolves": true,
+    "codingControlComplete": false
+  },
+  "completionVerdict": "blocked-by-gaps"
+}

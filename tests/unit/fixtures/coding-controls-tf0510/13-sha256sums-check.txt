@@ -1,0 +1,51 @@
+[
+  {
+    "file": "openclaw_runtime/src/agents/coding-control-dispositions.ts",
+    "expected": "1c519199d69b65249c0dc39998194df30d840e7a955a01b844fc0f331c1bd809",
+    "actual": "1c519199d69b65249c0dc39998194df30d840e7a955a01b844fc0f331c1bd809",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/patch-flow-graduation.ts",
+    "expected": "92a34e99a75e7aedc40c73e376697f267a3bef21e62a4b8cc4d932a03448e11a",
+    "actual": "92a34e99a75e7aedc40c73e376697f267a3bef21e62a4b8cc4d932a03448e11a",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/patch-flow-graduation.test.ts",
+    "expected": "000946e09bf821173b72d2a8e3fad02fb3466028b7e3188494d66535bb455378",
+    "actual": "000946e09bf821173b72d2a8e3fad02fb3466028b7e3188494d66535bb455378",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/coding-controls-tf0510.test.ts",
+    "expected": "4e75186768c0c6fb5babe7940745eb70fdd106fcd6fcd2777f3b209b52b84faf",
+    "actual": "4e75186768c0c6fb5babe7940745eb70fdd106fcd6fcd2777f3b209b52b84faf",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/coding-controls-tf0510/README.md",
+    "expected": "b4d219415c4dea3b2a223602158164ac3befbb4a1520608167980f66e24df990",
+    "actual": "b4d219415c4dea3b2a223602158164ac3befbb4a1520608167980f66e24df990",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/coding-controls-tf0510/raw-evidence.json",
+    "expected": "ff32fcfdd1a2eece93d14ddcf038b37ca0f3d137a323c3181094de9bb8ce51d4",
+    "actual": "ff32fcfdd1a2eece93d14ddcf038b37ca0f3d137a323c3181094de9bb8ce51d4",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/coding-controls-tf0510/generate-acceptance.mts",
+    "expected": "35d504cc1a06cbd7a396446ecb9d92527106cf3637c03b9f323e8817b2ca886e",
+    "actual": "35d504cc1a06cbd7a396446ecb9d92527106cf3637c03b9f323e8817b2ca886e",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/coding-controls-tf0510/run-verification.ps1",
+    "expected": "278d4aec00f2f0cfa6cfad1c6d0e0ee3d323285b46d74463dae79ba5fac38337",
+    "actual": "278d4aec00f2f0cfa6cfad1c6d0e0ee3d323285b46d74463dae79ba5fac38337",
+    "status": "pass"
+  }
+]
+SHA256SUMS_STATUS=pass

@@ -108,8 +108,11 @@ export async function assessPatchFlowDefaultGraduation(
       ? "done (hard-gates+keep-off)"
       : "done (partial+keep-off)",
     patchFlowDefault: false,
-    meetsGate: false, // hard: packaging always reports meetsGate false for auto default flip
-    recommendation: "keep-off", // packaging hard-keeps off; consider path is advisory via notes only
+    // TF-0510: the gate must be able to report a real outcome. It is still false unless
+    // the capability smoke passed AND an explicit product soak was approved, but it is no
+    // longer hard-coded to false - a permanent keep-off is an API-only exit.
+    meetsGate,
+    recommendation,
     defaultsUnchanged: true,
     capabilityReady,
     residual,

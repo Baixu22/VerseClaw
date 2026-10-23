@@ -1,0 +1,9 @@
+{
+  "componentCount": 5,
+  "withGaps": [
+    "symbol-lease",
+    "patch-flow"
+  ],
+  "everyArtifactResolves": true,
+  "completionVerdict": "blocked-by-gaps"
+}
