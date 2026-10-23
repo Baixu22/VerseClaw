@@ -1,0 +1,23 @@
+{
+  "proposal_id": "TFP-TF-0511-scope-conflict-guard-20261023",
+  "session_id": "tf-0511-shadow-control-inventory-20261023",
+  "rationale": "Add the executable scope-conflict guard to TF-0511 evidence so the blocked state, single-source catalog entries and TF-0510 residual are mechanically checked. This does not close the node.",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0511",
+      "fields": {
+        "evidence": [
+          "tests/unit/shadow-controls-tf0511-scope-conflict.test.ts",
+          "tests/unit/fixtures/shadow-controls-tf0511/README.md",
+          "tests/unit/fixtures/shadow-controls-tf0511/scope-conflict.json",
+          "tests/unit/fixtures/shadow-controls-tf0511/scope-guard.json",
+          "tests/unit/fixtures/shadow-controls-tf0511/feature-leaf-consumer.json",
+          "tests/unit/fixtures/shadow-controls-tf0511/compass-retirement-focused.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/diff-check.txt",
+          "openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts"
+        ]
+      }
+    }
+  ]
+}

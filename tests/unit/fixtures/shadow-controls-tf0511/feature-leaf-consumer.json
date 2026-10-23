@@ -1,0 +1,19 @@
+{
+  "ok": false,
+  "leafCount": 112,
+  "consumerFileCount": 5381,
+  "unpinnedZeroConsumerLeaves": [
+    "coding.patchFlow.enabled"
+  ],
+  "pinnedZeroConsumerLeaves": [
+    "coding.verifier.noSelfRepair",
+    "contextFamily.observationMasking.preserveNewestObservationCount"
+  ],
+  "baselineLeavesNowConsumed": [],
+  "staleBaselineEntries": [],
+  "errors": [
+    "runtime feature leaf 'coding.patchFlow.enabled' has no visible consumer; wire it to a runtime reader, or pin it in FEATURE_LEAF_CONSUMER_BASELINE with its owning issue"
+  ],
+  "check": "feature-leaf-consumers",
+  "driven_by": "agent"
+}

@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "worktree": "D:\\ClawX-work\\component-graduation-20261021",
+  "branch": "codex/component-graduation-20261021",
+  "activeNode": {
+    "id": "TF-0511",
+    "title": "清点并处置其余 COMPASS、Routing Memo、AgentMap 与控制面 shadow",
+    "status": "ready"
+  },
+  "allowedPaths": [
+    "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+    "openclaw_runtime/src/context-engine/",
+    "openclaw_runtime/src/agents/",
+    "docs/dev/",
+    "tests/unit/"
+  ],
+  "policy": "node-scoped: exactly one active leaf; ignore proposed nodes; never claim human evidence"
+}
