@@ -1,0 +1,191 @@
+{
+  "schema": "clawx.long-session.d3-strategy-decision/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-d3",
+  "taskForestNode": "TF-0558",
+  "taskKey": "D3",
+  "program": "long-session-development-20261022",
+  "generatedAt": "2026-10-23T16:29:18.557Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261022",
+    "commit": "beae6d396a7003c50ecc7b9c27c6379eac55e9a4",
+    "tree": "3cdb40fe0d1a0acd9b8fae3844b98e9ffd733bd9",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+  },
+  "decision": "keep-baseline",
+  "decisionReason": "no authorized live-provider sample: quality, cost and P95 gates are unmeasured or vetoed, so no strategy may be promoted",
+  "alternativesConsidered": [
+    {
+      "option": "keep-baseline",
+      "selected": true,
+      "basis": "D2 recorded EVIDENCE_INSUFFICIENT with no authorized live-provider sample; every quality, cost and latency gate is unmeasured or vetoed.",
+      "effect": "the long-session loop keeps the existing manual/native compaction and the already-landed continuity surface; no new compression path is activated."
+    },
+    {
+      "option": "retain-experiment",
+      "selected": false,
+      "basis": "There is no retained live evidence to retain: D2 measured zero live pairs, so retain-experiment would imply an active candidate that does not exist.",
+      "reconsiderIf": "a live-provider sample clears fidelity/next-action/safety gates but fails the cost or P95 gate."
+    },
+    {
+      "option": "scoped-opt-in",
+      "selected": false,
+      "basis": "No live-provider evidence, no cost/token reduction measurement and no P95 measurement; promoting on simulated or structural data is forbidden by the D2 contract.",
+      "reconsiderIf": "D2-style evidence clears every gate on a new authorized live-provider run, and a separate implementation spec names backend scope, rollback and failure fallback."
+    }
+  ],
+  "evidenceReadback": {
+    "d2Status": "EVIDENCE_INSUFFICIENT",
+    "d2Disposition": "NO-GO",
+    "d2MetricsBasis": "agent-derived-structural",
+    "d2SamplePairs": 30,
+    "d2RequiredPairs": 30,
+    "d2LiveProviderEvidence": false,
+    "d2QualityClaimAllowed": false,
+    "d2KeepBaseline": true,
+    "d2PromotionCandidateEligible": false,
+    "d2Blockers": [
+      "no live-provider evidence: agent-derived or synthetic measurements cannot promote a candidate",
+      "token and cost reduction are unmeasured for the current sample",
+      "first-token and wall-clock P95 are unmeasured for the current sample"
+    ],
+    "d2Unmeasured": [
+      "live-provider fidelity, next-action, token/cache/cost and first-token/wall-clock P50/P95",
+      "cost or input-token net reduction of at least 15%",
+      "first-token and wall-clock P95 within 1.10x of baseline"
+    ],
+    "d2Metrics": {
+      "baselineFidelity": 1,
+      "candidateFidelity": 1,
+      "baselineNextActionAccuracy": 1,
+      "candidateNextActionAccuracy": 1,
+      "baselineFalseCompletions": 0,
+      "candidateFalseCompletions": 0,
+      "baselineRevokedLeaks": 72,
+      "candidateRevokedLeaks": 0,
+      "baselineInputTokens": null,
+      "candidateInputTokens": null,
+      "inputTokenReduction": null,
+      "baselineCostUsd": null,
+      "candidateCostUsd": null,
+      "costReduction": null,
+      "baselineFirstTokenP50Ms": null,
+      "candidateFirstTokenP50Ms": null,
+      "baselineFirstTokenP95Ms": null,
+      "candidateFirstTokenP95Ms": null,
+      "baselineWallClockP50Ms": null,
+      "candidateWallClockP50Ms": null,
+      "baselineWallClockP95Ms": null,
+      "candidateWallClockP95Ms": null,
+      "unmeasuredTokenCells": 120,
+      "unmeasuredLatencyCells": 120,
+      "characterEstimatedCostCells": 0
+    },
+    "d2WorkloadHash": "33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e",
+    "d2ChecksumVerification": {
+      "ok": true,
+      "results": [
+        {
+          "name": "README.md",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "candidate-decision-inputs.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "fidelity-latency-cost-report.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "paired-workload-manifest.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "verification-receipt.json",
+          "ok": true,
+          "reason": "matched"
+        }
+      ]
+    },
+    "d2ArtifactHashes": {
+      "harness/specs/fixtures/long-session-development/d2/paired-workload-manifest.json": "5754c0908073bc65068319afb33ac9415a5a3ce68a13bdb0381eb3b7e4fa70c9",
+      "harness/specs/fixtures/long-session-development/d2/fidelity-latency-cost-report.json": "0ddbf27a46e544236ca6be068071840d9d6f21c5fcf0440554e22e16675f9324",
+      "harness/specs/fixtures/long-session-development/d2/candidate-decision-inputs.json": "6b4b857f10eeef62f59c80077598a46e9c4fae49ac94e42b2f1e60335e1933af",
+      "harness/specs/fixtures/long-session-development/d2/verification-receipt.json": "677a1f652be1d529c8029c364e55e5c466f0771fbcf5682e8f631beec09495b7",
+      "harness/specs/fixtures/long-session-development/d2/SHA256SUMS": "68f3561110a2897d73717fad3c3d868df7e7078834a305d8ca0d90db526dcb8f"
+    }
+  },
+  "frozenStateAssertions": {
+    "productDefaultsUnchanged": true,
+    "productDefaultSource": "docs/dev/default-config-matrix.md",
+    "productDefaultSourceHash": "682506278d6e98a4290abb2f6bd78a5e9d1109b7067b1d545662b82463757ef8",
+    "configMatrixTest": "tests/unit/default-config-matrix.test.ts",
+    "tf0424VerdictPreserved": true,
+    "tf0424Spec": "harness/specs/tasks/context-lifecycle-exploration.md",
+    "tf0424SpecHash": "903c1021536c9f58b8d02e586d59a0ee072b783747a216a30d335d9e4c754a2a",
+    "tf0424StillShadowOnly": true,
+    "newInjectionChainIntroduced": false,
+    "newSchedulerIntroduced": false,
+    "independenceProjectOrCloudScopeRequested": false,
+    "productSemanticsHash": "27ce7dbc47349cc69698c97c68471b2bbc549b43569c6cdecf6e6d1a05858ae3",
+    "note": "D3 decides only; it does not change a default, a frozen lock, a prompt path, a provider call or a storage layout."
+  },
+  "negativeCases": [
+    {
+      "id": "gate-clearing-evidence-would-select-scoped-opt-in",
+      "input": "in-memory copy of the D2 report with PASS / live-provider evidence / gate-clearing metrics",
+      "expected": "the decision rule selects scoped-opt-in rather than a hardcoded keep-baseline",
+      "observed": "scoped-opt-in",
+      "result": "pass"
+    },
+    {
+      "id": "live-but-failing-evidence-retains-experiment",
+      "input": "in-memory copy with live-provider evidence but a failed safety or cost gate",
+      "expected": "retain-experiment, never promote",
+      "observed": "retain-experiment",
+      "result": "pass"
+    },
+    {
+      "id": "tampered-workload-hash-is-not-accepted",
+      "input": "in-memory copy of the D2 manifest with a rewritten workload hash",
+      "expected": "the copied hash differs from the recorded evidence hash and is not accepted",
+      "observed": "rewritten (not accepted as evidence)",
+      "result": "pass"
+    },
+    {
+      "id": "character-estimated-cost-never-satisfies-the-cost-gate",
+      "input": "D2 report as recorded on disk",
+      "expected": "zero character-estimated cost cells, otherwise the cost gate is void",
+      "observed": "characterEstimatedCostCells=0",
+      "result": "pass"
+    }
+  ],
+  "unmeasured": [
+    "live-provider fidelity, next-action, token/cache/cost and first-token/wall-clock P50/P95 for the candidate continuity projection",
+    "behaviour of any continuous-compression strategy under a real long-running session"
+  ],
+  "cleanup": {
+    "startedProcesses": false,
+    "startedGateway": false,
+    "startedElectron": false,
+    "providerRequests": 0,
+    "recoveryRequired": false,
+    "notes": "Read-only disk readback and local artifact generation; nothing was launched and no provider was contacted."
+  },
+  "limitations": [
+    "This node records a decision only; it does not activate, wire or default-enable any compression strategy.",
+    "Keep-baseline/NO-GO is a complete and valid D3 outcome under the D2 contract.",
+    "All evidence is agent-driven; no real-human verdict or human data is claimed."
+  ],
+  "nextNode": {
+    "id": "TF-0559",
+    "taskKey": "E1",
+    "contract": "harness/specs/tasks/long-session-followup-scheduling.md",
+    "guidance": "E1 may proceed because keep-baseline unblocks the core loop: follow-up scheduling binds to the existing long-session coordinator, not to a compression strategy."
+  }
+}
