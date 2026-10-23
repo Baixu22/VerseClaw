@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { runOrchestrationObserved } from '../openclaw_runtime/src/agents/orchestrator-run-observed';
@@ -75,6 +75,11 @@ const otherRepo = mkdtempSync(join(tmpdir(), 'versegit-c1-other-'));
 let crossRepoRejected = false;
 try {
   execFileSync('git', ['init', '--initial-branch=main'], { cwd: otherRepo, windowsHide: true });
+  writeFileSync(join(otherRepo, 'README.md'), 'other repo\n', 'utf8');
+  execFileSync('git', ['config', 'user.email', 'agent@example.invalid'], { cwd: otherRepo, windowsHide: true });
+  execFileSync('git', ['config', 'user.name', 'Agent'], { cwd: otherRepo, windowsHide: true });
+  execFileSync('git', ['add', '.'], { cwd: otherRepo, windowsHide: true });
+  execFileSync('git', ['commit', '-m', 'other repo'], { cwd: otherRepo, windowsHide: true });
   await runtime.bind({ ...manualRequest, requestId: 'cross-repo', worktreePath: otherRepo, agentSessionId: 'cross-repo-session' });
 } catch (error) { crossRepoRejected = (error as { code?: string }).code === 'WORKSPACE_MISMATCH'; }
 finally { rmSync(otherRepo, { recursive: true, force: true }); }
@@ -86,9 +91,17 @@ const wrongEpoch = createVerseGitRuntimeBindingPortFromEnv({ ...process.env, CLA
 let staleEpochRejected = false;
 try { await wrongEpoch.bind({ ...manualRequest, requestId: 'wrong-epoch', agentSessionId: 'wrong-epoch-session' }); } catch (error) { staleEpochRejected = (error as { code?: string }).code === 'IDENTITY_MISMATCH'; }
 
-const c = 'C:/Users/27933/Desktop/clawx/ClawX';
-const d = 'D:/ClawX';
-const sameRepoAcrossJunction = process.platform === 'win32' && existsSync(c) && existsSync(d) ? resolveVerseGitRepoIdentity(c).repoId === resolveVerseGitRepoIdentity(d).repoId : false;
+const junctionRoot = mkdtempSync(join(tmpdir(), 'versegit-c1-junction-'));
+const junctionPath = join(junctionRoot, 'repo-alias');
+let sameRepoAcrossJunction = false;
+try {
+  if (process.platform === 'win32') {
+    execFileSync('cmd', ['/d', '/c', 'mklink', '/J', junctionPath, repoRoot], { cwd: junctionRoot, windowsHide: true });
+    sameRepoAcrossJunction = resolveVerseGitRepoIdentity(junctionPath).repoId === resolveVerseGitRepoIdentity(repoRoot).repoId;
+  }
+} finally {
+  rmSync(junctionRoot, { recursive: true, force: true });
+}
 const report = {
   schema: 'clawx.versegit.c1-runtime-probe/v1', generated_at: new Date().toISOString(), driven_by: 'agent', actor: 'codex',
   orchestration: { runId: 'orch_c1_e2e', failures: result.failures.length, outcomes: result.outcomes.length, spawned: spawnedCwds.length, bindings: result.outcomes.filter((outcome) => outcome.verseGitBinding).length },
