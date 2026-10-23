@@ -130,7 +130,10 @@ export function createSessionActivityApi({
       const [gitResult, ledgerResult, runtimeResult] = await Promise.allSettled([
         gitApi.status(),
         taskLedgerApi.snapshot({ workspaceId: payload.workspaceId ?? undefined }),
-        gatewayManager.rpc<RuntimeActivityResponse>('session.activitySnapshot', { sessionKey }),
+        gatewayManager.rpc<RuntimeActivityResponse>('session.activitySnapshot', {
+          sessionKey,
+          ...(payload.workspaceId?.trim() ? { workspaceId: payload.workspaceId.trim() } : {}),
+        }),
       ]);
 
       if (gitResult.status === 'fulfilled' && gitResult.value.success) {

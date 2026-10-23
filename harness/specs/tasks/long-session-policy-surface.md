@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: active
 id: long-session-policy-surface
 title: 在现有会话入口展示配置来源和运行限制
 program: long-session-development-20261022
@@ -135,4 +135,3 @@ E2E 要求真实 built Electron 与隔离 userData/run root。界面 host mocks 
 - 验收条目全满足且证据一致后保存 proposal，base_graph_hash 匹配再 apply/validate/export；缺技术证据保持未完成并记录具体 gap。
 - 不要求所有者真人操作、真人数据或 verdict；自动模拟/独立 agent 审查如实标记。没有 live-provider 数据不能包装为质量推广证据。
 - 产品锁、冻结默认值、公开发布、重大独立 Project/执行环境范围决定不由本节点自动生效。
-

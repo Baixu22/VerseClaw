@@ -63,7 +63,7 @@ Choose a workspace and model → describe the task and attach relevant files →
 
 *AI-generated concept illustration using the project’s flame logo: task → workspace tools → review and verification. It is not an app screenshot or a promise that verification passes automatically.*
 
-The panel supports file, terminal, browser, review, artifact and activity tabs. Terminals can sit beside or below the conversation. The browser opens local previews or web pages, while the review surface brings together Git changes and related actions. Session activity shows run and command status plus the configured runtime, model and limits; current-run effective facts stay marked unverified until the runtime supplies a matching fresh observation.
+The panel supports file, terminal, browser, review, artifact and activity tabs. Terminals can sit beside or below the conversation. The browser opens local previews or web pages, while the review surface brings together Git changes and related actions. Session activity shows run and command status plus the configured runtime, model and limits; current-run effective facts stay marked unverified until the runtime supplies a matching fresh observation. Its policy disclosure exposes configuration sources, compatibility and override reasons, and action permissions. The same surface distinguishes run abort from session stop, the view-only activity retention window from transcript/resource TTLs, and transcript forks from Git worktree isolation.
 
 The permission selector includes Read-only, Plan, Accept edits and Full access. Plan mode restricts user-file changes, while runtime metadata may still be written. See [workspace permission semantics](docs/clawx-product-semantics.md) for the precise boundary.
 

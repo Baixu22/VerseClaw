@@ -141,6 +141,14 @@
   .codex-conversation-inset[data-rail='expanded'] { padding-right: 0; }
 }
 
+@media (max-width: 560px) {
+  .codex-session-activity-rail {
+    right: 8px;
+    width: min(300px, calc(100% - 16px));
+    max-height: calc(100% - 60px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .codex-session-activity-rail { animation: none; }
   .codex-conversation-inset { transition: none; }
@@ -414,6 +422,121 @@
 .codex-session-activity .codex-session-activity__retry:hover {
   background: var(--csa-row-hover);
   color: var(--csa-text-strong);
+}
+
+/* ── Policy provenance and lifecycle boundaries ─────────────────────────── */
+
+.codex-session-activity .codex-session-activity__policy-details {
+  margin: 2px var(--csa-gutter) 4px;
+  border: 0.5px solid var(--csa-border);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--csa-row-hover) 42%, transparent);
+  overflow: hidden;
+}
+
+.codex-session-activity .codex-session-activity__policy-details > summary {
+  padding: 6px 8px;
+  color: var(--csa-text-secondary);
+  font-size: 11px;
+  line-height: 15px;
+  cursor: pointer;
+  list-style-position: inside;
+}
+
+.codex-session-activity .codex-session-activity__policy-details > summary:hover {
+  color: var(--csa-text-strong);
+}
+
+.codex-session-activity .codex-session-activity__policy-details > summary:focus-visible {
+  outline: 1px solid var(--csa-accent);
+  outline-offset: -2px;
+}
+
+.codex-session-activity .codex-session-activity__policy-detail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 4px 8px 8px;
+  border-top: 0.5px solid var(--csa-border);
+}
+
+.codex-session-activity .codex-session-activity__policy-detail-heading {
+  margin-top: 2px;
+  color: var(--csa-text-tertiary);
+  font-size: 10px;
+  line-height: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.codex-session-activity .codex-session-activity__policy-source-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+  padding: 0 0 0 16px;
+  color: var(--csa-text-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  line-height: 14px;
+  overflow-wrap: anywhere;
+}
+
+.codex-session-activity .codex-session-activity__policy-detail-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: baseline;
+  color: var(--csa-text-secondary);
+  font-size: 11px;
+  line-height: 15px;
+}
+
+.codex-session-activity .codex-session-activity__policy-detail-row > span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.codex-session-activity .codex-session-activity__policy-detail-row > span:last-child {
+  text-align: right;
+}
+
+.codex-session-activity .codex-session-activity__policy-detail-row.is-multiline {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.codex-session-activity .codex-session-activity__policy-detail-row.is-multiline > p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--csa-text-tertiary);
+  font-size: 10px;
+  line-height: 14px;
+  overflow-wrap: anywhere;
+}
+
+.codex-session-activity .codex-session-activity__policy-note {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 5px var(--csa-gutter);
+  color: var(--csa-text-secondary);
+}
+
+.codex-session-activity .codex-session-activity__policy-note-title {
+  color: var(--csa-text-strong);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+.codex-session-activity .codex-session-activity__policy-note-body {
+  color: var(--csa-text-tertiary);
+  font-size: 11px;
+  line-height: 16px;
+  overflow-wrap: anywhere;
 }
 
 /* ── Scroll body ────────────────────────────────────────────────────────── */

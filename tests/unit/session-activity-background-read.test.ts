@@ -236,6 +236,14 @@ describe('session activity background read (Main service)', () => {
     /* Live background work must still reach the panel after the run closed. */
     expect(classifySessionActivity(result.snapshot)).not.toBe('none');
   });
+  it('forwards the canonical workspace id into the runtime policy read', async () => {
+    const rpc = vi.fn(async () => ({ snapshot: runtimeSnapshot() }));
+    await apiWithRpc(rpc).snapshot({ workspaceId: 'workspace-a', sessionKey: SESSION_KEY });
+    expect(rpc).toHaveBeenCalledWith('session.activitySnapshot', {
+      sessionKey: SESSION_KEY,
+      workspaceId: 'workspace-a',
+    });
+  });
 });
 
 describe('session activity background read (renderer store)', () => {

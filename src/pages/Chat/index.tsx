@@ -988,11 +988,6 @@ export function Chat() {
   const sessionActivityRetentionMinutes = useSettingsStore((state) => state.sessionActivityRetentionMinutes);
   const runActivityKeepExpandedOnComplete = useSettingsStore((state) => state.runActivityKeepExpandedOnComplete);
 
-  useEffect(() => {
-    if (!currentSessionKey) return;
-    void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
-  }, [activeWorkspaceId, currentSessionKey, loadSessionActivity]);
-
   // Refresh Task Ledger snapshot when workspace changes
   const refreshTaskLedger = useChatStore((s) => s.refreshTaskLedger);
   useEffect(() => {
@@ -1010,6 +1005,26 @@ export function Chat() {
   );
   const currentModelRef = sessions.find((session) => session.key === currentSessionKey)?.modelRefOverride
     || currentAgent?.modelRef || defaultModelRef || fallbackModelRef || null;
+  const sessionPolicyRefreshKey = useMemo(() => JSON.stringify({
+    agentId: currentAgentId,
+    modelRef: currentModelRef,
+    providerDefaultAccountId,
+    providerStatuses,
+  }), [currentAgentId, currentModelRef, providerDefaultAccountId, providerStatuses]);
+  useEffect(() => {
+    if (!currentSessionKey) return;
+    void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
+  }, [
+    activeWorkspaceId,
+    currentSessionKey,
+    gatewayStatus.connectedAt,
+    gatewayStatus.gatewayReady,
+    gatewayStatus.pid,
+    gatewayStatus.port,
+    gatewayStatus.state,
+    loadSessionActivity,
+    sessionPolicyRefreshKey,
+  ]);
   const panelOpen = useArtifactPanel((s) => s.open);
   const panelExpanded = useArtifactPanel((s) => s.expanded);
   const panelWidthPct = useArtifactPanel((s) => s.widthPct);
@@ -1053,13 +1068,6 @@ export function Chat() {
       const compact = width > 0 && width < 900;
       const toolbarCompact = toolbarWidth > 0 && toolbarWidth < 720;
       setCompactToolbarLayout(toolbarCompact);
-      if (toolbarCompact) {
-        setSessionActivityOpenOverrides((current) => (
-          current[currentSessionKey]
-            ? { ...current, [currentSessionKey]: false }
-            : current
-        ));
-      }
       const state = useArtifactPanel.getState();
       const activeTab = state.tabs.find((tab) => tab.id === state.activeTabId);
 
@@ -2823,12 +2831,23 @@ export function Chat() {
     return activeCard ? isTurnSummaryExpanded(activeCard) : false;
   }, [isTurnSummaryExpanded, userRunCards]);
 
-  const visibleSessionActivitySnapshot = useMemo(
-    () => sessionActivitySnapshot
-      ? retainRecentSessionActivity(sessionActivitySnapshot, sessionActivityRetentionMinutes, sessionActivityRetentionClock)
-      : undefined,
-    [sessionActivityRetentionClock, sessionActivityRetentionMinutes, sessionActivitySnapshot],
-  );
+  const visibleSessionActivitySnapshot = useMemo(() => {
+    if (!sessionActivitySnapshot) return undefined;
+    const policyScope = sessionActivitySnapshot.policy?.scope;
+    if (policyScope && (
+      policyScope.sessionKey !== currentSessionKey
+      || (activeWorkspaceId != null && policyScope.workspaceId !== activeWorkspaceId)
+    )) {
+      return undefined;
+    }
+    return retainRecentSessionActivity(sessionActivitySnapshot, sessionActivityRetentionMinutes, sessionActivityRetentionClock);
+  }, [
+    activeWorkspaceId,
+    currentSessionKey,
+    sessionActivityRetentionClock,
+    sessionActivityRetentionMinutes,
+    sessionActivitySnapshot,
+  ]);
   const sessionActivityLevel = visibleSessionActivitySnapshot
     ? classifySessionActivity(visibleSessionActivitySnapshot, {
       showGit: sessionActivityShowGit,
@@ -2845,6 +2864,7 @@ export function Chat() {
    * plan to show, and offered a toggle onto a card that rendered nothing.
    */
   const sessionActivityHasContent = sessionActivityLevel !== 'none'
+    || Boolean(visibleSessionActivitySnapshot?.policy)
     || Boolean(sessionActivityShowGit && visibleSessionActivitySnapshot?.git?.isRepository)
     || (sessionActivityPlan?.todos.length ?? 0) > 0
     || (sessionActivityShowCommands && sessionActivityProcesses.length > 0);
@@ -2886,7 +2906,6 @@ export function Chat() {
   const sessionActivityRailOpen = (sessionActivityOverride ?? sessionActivityPassive)
     && Boolean(visibleSessionActivitySnapshot)
     && sessionActivityPanelEnabled
-    && !compactToolbarLayout
     && !isEmpty;
   const sessionActivityRailLayer = sessionActivityOverride === true ? 'overlay' : 'inline';
   /**
@@ -2897,11 +2916,21 @@ export function Chat() {
    * user-overlay instead of closing it — one click, two surfaces, nothing shut.
    */
   const handleToggleSessionActivity = useCallback(() => {
+    const opening = !(sessionActivityOpenOverrides[currentSessionKey] ?? sessionActivityPassive);
+    if (opening) {
+      void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
+    }
     setSessionActivityOpenOverrides((current) => ({
       ...current,
       [currentSessionKey]: !(current[currentSessionKey] ?? sessionActivityPassive),
     }));
-  }, [currentSessionKey, sessionActivityPassive]);
+  }, [
+    activeWorkspaceId,
+    currentSessionKey,
+    loadSessionActivity,
+    sessionActivityOpenOverrides,
+    sessionActivityPassive,
+  ]);
 
   useEffect(() => {
     if (!shouldClearStoreLifecycleFromHistory) return;
@@ -3334,7 +3363,7 @@ export function Chat() {
             * only that layer takes width from the transcript. */}
           <ChatToolbar
             promptCacheStatus={promptCacheStatus}
-            sessionActivityAvailable={hasSessionActivityEntry && !compactToolbarLayout}
+            sessionActivityAvailable={hasSessionActivityEntry}
             sessionActivityOpen={sessionActivityRailOpen}
             sessionActivityNeedsAttention={sessionActivityLevel === 'attention'}
             onToggleSessionActivity={handleToggleSessionActivity}
@@ -3366,6 +3395,7 @@ export function Chat() {
             className="!w-full"
             showGit={sessionActivityShowGit}
             showCommands={sessionActivityShowCommands}
+            activityRetentionMinutes={sessionActivityRetentionMinutes}
             onOpenRecovery={() => navigate(`/settings/recovery?sessionKey=${encodeURIComponent(currentSessionKey)}`)}
             onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
             onOpenEnvironment={handleOpenEnvironment}

@@ -165,8 +165,27 @@
       "openOutput": "查看 {{command}} 的输出"
     },
     "policy": {
-      "backend": "后端与模型",
+      "backend": "配置的后端",
+      "effectiveBackend": "实际生效后端",
       "effort": "推理强度",
+      "context": "上下文窗口",
+      "actions": "操作权限",
+      "queue": "消息队列",
+      "resources": "并发限制",
+      "schedule": "计划任务",
+      "currentRunObservation": "当前运行观测",
+      "notReported": "未上报",
+      "configuredValue": "配置值",
+      "tokens": "{{count}} 个 token",
+      "queueCap": "上限 {{count}}",
+      "queueValue": "{{mode}} · 队列 {{count}} 条",
+      "actionCount": "{{count}} 项权限",
+      "actionSummary": "{{allowed}} 允许 · {{approval}} 待批准 · {{denied}} 拒绝 · {{unknown}} 未知",
+      "showActions": "查看操作权限",
+      "showDetails": "查看来源与兼容性",
+      "sources": "配置来源",
+      "generationReason": "观测状态",
+      "compatibility": "兼容性与覆盖结果",
       "generation": {
         "effective": "已生效",
         "unverified": "未验证",
@@ -180,7 +199,72 @@
         "unverified": "未验证",
         "unsupported": "不支持",
         "ignored": "已忽略"
-      }
+      },
+      "retention": {
+        "0": "不保留",
+        "5": "5 分钟",
+        "15": "15 分钟"
+      },
+      "parameters": {
+        "automaticCompaction": "自动压缩",
+        "manualCompaction": "手动压缩",
+        "provider": "压缩提供方",
+        "model": "压缩模型",
+        "reserveTokens": "预留 token"
+      },
+      "reasons": {
+        "missingProfile": "当前运行尚无能力观测。",
+        "staleProfile": "能力观测已超出有效时间。",
+        "sessionMismatch": "观测属于其他会话代次。",
+        "runMismatch": "观测属于其他运行。",
+        "runtimeUnknown": "当前运行时代次不可用。",
+        "gatewayMismatch": "观测属于其他 Gateway 代次。",
+        "profileFallback": "回退配置无法证明当前运行事实。",
+        "grantsUnavailable": "当前运行时所有者未提供操作权限。",
+        "contextUnavailable": "当前运行没有新的上下文预算观测。",
+        "resourcesUnavailable": "此快照未读取当前并发准入状态。",
+        "scheduleUnavailable": "此快照未读取当前计划任务状态。",
+        "noQueueOverride": "未找到持久化的队列覆盖配置。",
+        "nativeAutomaticCompaction": "自动压缩由原生后端管理。",
+        "nativeProvider": "提供方选择由原生会话后端管理。",
+        "nativeModel": "模型选择由原生会话后端管理。",
+        "nativeManualCompaction": "手动压缩通过原生后端执行。",
+        "nativeReserveTokens": "原生后端不读取 OpenClaw 的预留 token 参数。",
+        "runtimeCompactionUnknown": "运行时未注册或其压缩归属未知。"
+      },
+      "authorization": {
+        "allowed": "允许",
+        "requiresApproval": "需要批准",
+        "denied": "已拒绝",
+        "notApplicable": "不适用",
+        "unknown": "未知"
+      },
+      "grantActions": {
+        "exec": "运行命令",
+        "read": "读取文件",
+        "write": "写入文件",
+        "browser": "使用浏览器"
+      },
+      "boundaries": {
+        "title": "控制边界",
+        "abort": {
+          "title": "中止运行",
+          "description": "仅停止当前运行并重载会话记录；会话、已保存的 transcript、任务、资源和 Git 工作树都会保留。"
+        },
+        "stop": {
+          "title": "停止会话",
+          "description": "排空队列和运行时活动，同时保留会话、transcript、任务记录与资源记录。"
+        },
+        "activity": {
+          "title": "活动展示窗口",
+          "description": "已完成活动在界面中保留 {{retention}}。这只是展示窗口；transcript 和运行时资源由各自所有者的 TTL 管理。"
+        },
+        "fork": {
+          "title": "分叉会话",
+          "description": "将 transcript 复制到子会话；不会创建 Git 分支或工作树，也不会完成任务或接管运行中的资源。"
+        }
+      },
+      "unverifiedFacts": "未验证事实"
     }
   },
   "noLogs": "（暂无日志）",

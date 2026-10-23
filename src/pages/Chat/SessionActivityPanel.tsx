@@ -52,6 +52,7 @@ import type {
   SessionActivitySnapshot,
   SessionActivitySubagent,
 } from '@shared/types/session-activity';
+import type { SessionPolicyFactStatus } from '@shared/types/session-effective-policy';
 
 type SessionActivityPanelProps = {
   snapshot: SessionActivitySnapshot;
@@ -73,6 +74,8 @@ type SessionActivityPanelProps = {
   onRetryStatus?: () => void;
   showGit?: boolean;
   showCommands?: boolean;
+  /** View-only row retention; transcript/resource TTLs remain owner facts. */
+  activityRetentionMinutes?: 0 | 5 | 15;
 };
 
 /**
@@ -216,6 +219,23 @@ function HeaderAction({
   );
 }
 
+function PolicyNote({
+  title,
+  body,
+  testId,
+}: {
+  title: string;
+  body: string;
+  testId: string;
+}) {
+  return (
+    <div className="codex-session-activity__policy-note" data-testid={testId}>
+      <span className="codex-session-activity__policy-note-title">{title}</span>
+      <span className="codex-session-activity__policy-note-body">{body}</span>
+    </div>
+  );
+}
+
 function subagentTestId(agent: SessionActivitySubagent): string {
   return `session-activity-subagent-${agent.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
 }
@@ -225,6 +245,57 @@ function commandDigest(command: string): string {
   const compact = command.replace(/\s+/g, ' ').trim();
   return compact.length <= 42 ? compact : `${compact.slice(0, 41)}…`;
 }
+
+function policyState(status: SessionPolicyFactStatus): RowState {
+  if (status === 'effective') return 'ok';
+  if (status === 'configured' || status === 'ignored' || status === 'unsupported') return 'warn';
+  return 'idle';
+}
+
+const POLICY_REASON_KEY_BY_VALUE: Readonly<Record<string, string>> = {
+  'no-current-run-capability-profile': 'missingProfile',
+  'capability-profile-outside-observation-ttl': 'staleProfile',
+  'session-generation-mismatch': 'sessionMismatch',
+  'run-generation-mismatch': 'runMismatch',
+  'runtime-generation-unknown': 'runtimeUnknown',
+  'gateway-generation-mismatch': 'gatewayMismatch',
+  'capability-profile-fallback': 'profileFallback',
+  'grants are owned by runtime facts': 'grantsUnavailable',
+  'grants unavailable': 'grantsUnavailable',
+  'no fresh context-budget observation for the current generation': 'contextUnavailable',
+  'current scheduler admission was not read by this snapshot': 'resourcesUnavailable',
+  'current schedule state is not part of this read': 'scheduleUnavailable',
+  'no persisted queue override': 'noQueueOverride',
+  'the native backend owns automatic compaction': 'nativeAutomaticCompaction',
+  'provider selection belongs to the native transcript backend': 'nativeProvider',
+  'model selection belongs to the native transcript backend': 'nativeModel',
+  'manual compaction routes through the native backend': 'nativeManualCompaction',
+  'native compaction does not consume OpenClaw reserve-token arguments': 'nativeReserveTokens',
+  'runtime backend is not registered or its compaction ownership is unknown': 'runtimeCompactionUnknown',
+};
+
+const POLICY_PARAMETER_KEY_BY_VALUE: Readonly<Record<string, string>> = {
+  'automatic-compaction': 'automaticCompaction',
+  'manual-compaction': 'manualCompaction',
+  'compaction.provider': 'provider',
+  'compaction.model': 'model',
+  'compaction.reserveTokens': 'reserveTokens',
+};
+
+const POLICY_ACTION_KEY_BY_VALUE: Readonly<Record<string, string>> = {
+  exec: 'exec',
+  read: 'read',
+  write: 'write',
+  browser: 'browser',
+};
+
+const POLICY_AUTHORIZATION_KEY_BY_VALUE: Readonly<Record<string, string>> = {
+  allowed: 'allowed',
+  'requires-approval': 'requiresApproval',
+  denied: 'denied',
+  'not-applicable': 'notApplicable',
+  unknown: 'unknown',
+};
 
 export function SessionActivityPanel({
   snapshot,
@@ -240,6 +311,7 @@ export function SessionActivityPanel({
   onRetryStatus,
   showGit = true,
   showCommands = true,
+  activityRetentionMinutes = 5,
 }: SessionActivityPanelProps) {
   const { t } = useTranslation('chat');
 
@@ -265,14 +337,63 @@ export function SessionActivityPanel({
   }, [showCommands, snapshot.processes, visibleProcesses]);
   const hasProcesses = visibleProcesses.length > 0 || snapshotOnlyProcesses.length > 0;
   const policy = snapshot.policy;
-  const policyBackend = policy?.backend.effective.value ?? policy?.backend.configured.value;
-  const policyModel = policy?.model.effective.value ?? policy?.model.configured.value;
-  const policyFactStatus =
-    policy?.backend.effective.status === 'effective'
-      ? 'effective'
-      : policy?.backend.configured.status === 'configured'
-        ? 'configured'
-        : 'unverified';
+  const configuredBackend = policy?.backend.configured;
+  const effectiveBackend = policy?.backend.effective;
+  const configuredModel = policy?.model.configured;
+  const effectiveModel = policy?.model.effective;
+  const grantSummary = policy?.grants.effective.value;
+  const grantActions = grantSummary?.actions ?? [];
+  const retentionLabel = t(`sessionActivity.policy.retention.${activityRetentionMinutes}`);
+  const policyReason = (reason: string | null | undefined): string | null => {
+    if (!reason) return null;
+    const key = POLICY_REASON_KEY_BY_VALUE[reason];
+    return key
+      ? t(`sessionActivity.policy.reasons.${key}`, { defaultValue: reason })
+      : reason;
+  };
+  const policyParameter = (parameter: string): string => {
+    const key = POLICY_PARAMETER_KEY_BY_VALUE[parameter];
+    return key
+      ? t(`sessionActivity.policy.parameters.${key}`, { defaultValue: parameter })
+      : parameter;
+  };
+  const grantActionLabel = (actionId: string): string => {
+    const key = POLICY_ACTION_KEY_BY_VALUE[actionId];
+    return key
+      ? t(`sessionActivity.policy.grantActions.${key}`, { defaultValue: actionId })
+      : actionId;
+  };
+  const authorizationLabel = (authorization: string): string => {
+    const key = POLICY_AUTHORIZATION_KEY_BY_VALUE[authorization];
+    return key
+      ? t(`sessionActivity.policy.authorization.${key}`, { defaultValue: authorization })
+      : authorization;
+  };
+  const configuredContextValue = policy?.context.configured.value?.contextTokens
+    ? t('sessionActivity.policy.tokens', { count: policy.context.configured.value.contextTokens })
+    : t(`sessionActivity.policy.status.${policy?.context.configured.status ?? 'unverified'}`);
+  const effectiveContextValue = policy?.context.effective.value?.contextTokens
+    ? t('sessionActivity.policy.tokens', { count: policy.context.effective.value.contextTokens })
+    : t(`sessionActivity.policy.status.${policy?.context.effective.status ?? 'unverified'}`);
+  const configuredQueueValue = [
+    policy?.queue.configured.value?.mode,
+    policy?.queue.configured.value?.cap != null
+      ? t('sessionActivity.policy.queueCap', { count: policy.queue.configured.value.cap })
+      : null,
+  ].filter(Boolean).join(' · ') || t('sessionActivity.policy.notReported');
+  const effectiveQueueValue = t('sessionActivity.policy.queueValue', {
+    mode: policy?.queue.effective.value?.mode ?? t('sessionActivity.policy.notReported'),
+    count: policy?.queue.effective.value?.queuedCount ?? 0,
+  });
+  const unverifiedFacts = policy ? [
+    { label: t('sessionActivity.policy.effectiveBackend'), reason: effectiveBackend?.reason },
+    { label: t('sessionActivity.policy.effort'), reason: effectiveModel?.reason },
+    { label: t('sessionActivity.policy.context'), reason: policy.context.effective.reason },
+    { label: t('sessionActivity.policy.actions'), reason: policy.grants.effective.reason },
+    { label: t('sessionActivity.policy.queue'), reason: policy.queue.effective.reason },
+    { label: t('sessionActivity.policy.resources'), reason: policy.resources.effective.reason },
+    { label: t('sessionActivity.policy.schedule'), reason: policy.schedule.effective.reason },
+  ].filter((fact) => Boolean(fact.reason)) : [];
 
   /* The recovery affordance is not a section — it is an action on the card. It
    * appears only when there is something to recover, which is the same signal
@@ -448,7 +569,7 @@ export function SessionActivityPanel({
         ) : null}
 
         {/* ── 运行策略 ─────────────────────────────────────────────────── */}
-        {policy && policyBackend ? (
+        {policy ? (
           <Section
             title={t('sessionActivity.sections.policy')}
             testId="session-activity-policy"
@@ -459,16 +580,159 @@ export function SessionActivityPanel({
             <Row
               testId="session-activity-policy-backend"
               label={t('sessionActivity.policy.backend')}
-              sublabel={`${policyBackend.runtime} · ${t(`sessionActivity.policy.status.${policyFactStatus}`)}`}
-              value={[policyBackend.provider, policyBackend.model].filter(Boolean).join(' / ')}
-              state={policyFactStatus === 'effective' ? 'ok' : 'warn'}
+              sublabel={`${t(`sessionActivity.policy.status.${configuredBackend?.status ?? 'unverified'}`)} · ${configuredBackend?.source ?? t('sessionActivity.policy.notReported')}`}
+              value={configuredBackend?.value
+                ? [configuredBackend.value.runtime, configuredBackend.value.provider, configuredBackend.value.model].filter(Boolean).join(' · ')
+                : t('sessionActivity.policy.notReported')}
+              state={configuredBackend ? policyState(configuredBackend.status) : 'idle'}
+            />
+            <Row
+              testId="session-activity-policy-effective"
+              label={t('sessionActivity.policy.effectiveBackend')}
+              sublabel={policyReason(effectiveBackend?.reason ?? null) ?? t('sessionActivity.policy.currentRunObservation')}
+              value={effectiveBackend?.value
+                ? [effectiveBackend.value.runtime, effectiveBackend.value.provider, effectiveBackend.value.model].filter(Boolean).join(' · ')
+                : t(`sessionActivity.policy.status.${effectiveBackend?.status ?? 'unverified'}`)}
+              state={effectiveBackend ? policyState(effectiveBackend.status) : 'idle'}
             />
             <Row
               testId="session-activity-policy-effort"
               label={t('sessionActivity.policy.effort')}
-              sublabel={t(`sessionActivity.policy.status.${policy.model.effective.status === 'effective' ? 'effective' : 'configured'}`)}
-              value={policyModel?.effort ?? t('sessionActivity.notAvailable')}
-              state={policy.model.effective.status === 'effective' ? 'ok' : 'warn'}
+              sublabel={[configuredModel?.source, policyReason(effectiveModel?.reason ?? null)].filter(Boolean).join(' · ')}
+              value={[configuredModel?.value?.effort, effectiveModel?.value?.effort].filter(Boolean).join(' → ') || t('sessionActivity.policy.notReported')}
+              state={effectiveModel?.status === 'effective' ? 'ok' : 'warn'}
+            />
+            <Row
+              testId="session-activity-policy-context"
+              label={t('sessionActivity.policy.context')}
+              sublabel={[policy.context.configured.source, policy.context.effective.source, policyReason(policy.context.effective.reason)].filter(Boolean).join(' · ')}
+              value={`${configuredContextValue} → ${effectiveContextValue}`}
+              state={policyState(policy.context.effective.status)}
+            />
+            <Row
+              testId="session-activity-policy-actions"
+              label={t('sessionActivity.policy.actions')}
+              sublabel={policy.grants.effective.reason
+                ? policyReason(policy.grants.effective.reason)
+                : t('sessionActivity.policy.actionCount', { count: grantSummary?.total ?? 0 })}
+              value={grantSummary
+                ? t('sessionActivity.policy.actionSummary', {
+                    allowed: grantSummary.allowed,
+                    approval: grantSummary.requiresApproval,
+                    denied: grantSummary.denied,
+                    unknown: grantSummary.unknown,
+                  })
+                : t(`sessionActivity.policy.status.${policy.grants.effective.status}`)}
+              state={policyState(policy.grants.effective.status)}
+            />
+            {grantActions.length > 0 ? (
+              <details className="codex-session-activity__policy-details" data-testid="session-activity-policy-action-details">
+                <summary>{t('sessionActivity.policy.showActions')}</summary>
+                <div className="codex-session-activity__policy-detail-body">
+                  {grantActions.map((action) => (
+                    <div className="codex-session-activity__policy-detail-row" key={action.actionId}>
+                      <span>{grantActionLabel(action.actionId)}</span>
+                      <span data-state={action.authorization === 'allowed'
+                        ? 'ok'
+                        : action.authorization === 'denied'
+                          ? 'error'
+                          : action.authorization === 'unknown'
+                            ? 'idle'
+                            : 'warn'}>
+                        {authorizationLabel(action.authorization)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            ) : null}
+            <Row
+              testId="session-activity-policy-queue"
+              label={t('sessionActivity.policy.queue')}
+              sublabel={policyReason(policy.queue.effective.reason) ?? policy.queue.effective.source}
+              value={`${configuredQueueValue} → ${effectiveQueueValue}`}
+              state={policyState(policy.queue.effective.status)}
+            />
+            <Row
+              testId="session-activity-policy-resources"
+              label={t('sessionActivity.policy.resources')}
+              sublabel={policyReason(policy.resources.effective.reason)}
+              value={t(`sessionActivity.policy.status.${policy.resources.effective.status}`)}
+              state={policyState(policy.resources.effective.status)}
+            />
+            <Row
+              testId="session-activity-policy-schedule"
+              label={t('sessionActivity.policy.schedule')}
+              sublabel={policyReason(policy.schedule.effective.reason)}
+              value={t(`sessionActivity.policy.status.${policy.schedule.effective.status}`)}
+              state={policyState(policy.schedule.effective.status)}
+            />
+            <details className="codex-session-activity__policy-details" data-testid="session-activity-policy-details">
+              <summary>{t('sessionActivity.policy.showDetails')}</summary>
+              <div className="codex-session-activity__policy-detail-body">
+                <div className="codex-session-activity__policy-detail-heading">{t('sessionActivity.policy.sources')}</div>
+                <ul className="codex-session-activity__policy-source-list" data-testid="session-activity-policy-sources">
+                  {policy.sources.map((source) => <li key={source}>{source}</li>)}
+                </ul>
+                {policy.generation.reason ? (
+                  <div className="codex-session-activity__policy-detail-row">
+                    <span>{t('sessionActivity.policy.generationReason')}</span>
+                    <span>{policyReason(policy.generation.reason)}</span>
+                  </div>
+                ) : null}
+                {unverifiedFacts.length > 0 ? (
+                  <>
+                    <div className="codex-session-activity__policy-detail-heading">{t('sessionActivity.policy.unverifiedFacts')}</div>
+                    <div data-testid="session-activity-policy-unverified-facts">
+                      {unverifiedFacts.map((fact) => (
+                        <div className="codex-session-activity__policy-detail-row is-multiline" key={fact.label}>
+                          <span>{fact.label}</span>
+                          <span data-state="idle">{t('sessionActivity.policy.status.unverified')}</span>
+                          <p>{policyReason(fact.reason)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : null}
+                <div className="codex-session-activity__policy-detail-heading">{t('sessionActivity.policy.compatibility')}</div>
+                <div data-testid="session-activity-policy-compatibility">
+                  {policy.compatibility.map((row) => (
+                    <div className="codex-session-activity__policy-detail-row is-multiline" key={`${row.backend}:${row.parameter}`}>
+                      <span>{policyParameter(row.parameter)}</span>
+                      <span data-state={policyState(row.status)}>{t(`sessionActivity.policy.status.${row.status}`)}</span>
+                      {policyReason(row.reason) ? <p>{policyReason(row.reason)}</p> : null}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </details>
+          </Section>
+        ) : null}
+
+        {policy ? (
+          <Section
+            title={t('sessionActivity.policy.boundaries.title')}
+            testId="session-activity-policy-boundaries"
+          >
+            <PolicyNote
+              title={t('sessionActivity.policy.boundaries.abort.title')}
+              body={t('sessionActivity.policy.boundaries.abort.description')}
+              testId="session-activity-boundary-abort"
+            />
+            <PolicyNote
+              title={t('sessionActivity.policy.boundaries.stop.title')}
+              body={t('sessionActivity.policy.boundaries.stop.description')}
+              testId="session-activity-boundary-stop"
+            />
+            <PolicyNote
+              title={t('sessionActivity.policy.boundaries.activity.title')}
+              body={t('sessionActivity.policy.boundaries.activity.description', { retention: retentionLabel })}
+              testId="session-activity-boundary-activity"
+            />
+            <PolicyNote
+              title={t('sessionActivity.policy.boundaries.fork.title')}
+              body={t('sessionActivity.policy.boundaries.fork.description')}
+              testId="session-activity-boundary-fork"
             />
           </Section>
         ) : null}

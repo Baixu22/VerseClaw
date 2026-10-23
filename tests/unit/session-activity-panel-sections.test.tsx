@@ -102,7 +102,23 @@ describe('SessionActivityPanel', () => {
             },
             grants: {
               configured: { value: null, status: 'unverified', source: 'runtime', reason: null },
-              effective: { value: null, status: 'unverified', source: 'runtime', reason: null },
+              effective: {
+                value: {
+                  total: 3,
+                  allowed: 1,
+                  requiresApproval: 1,
+                  denied: 1,
+                  unknown: 0,
+                  actions: [
+                    { actionId: 'exec', authorization: 'allowed', grantState: 'active' },
+                    { actionId: 'write', authorization: 'requires-approval', grantState: null },
+                    { actionId: 'browser', authorization: 'denied', grantState: 'revoked' },
+                  ],
+                },
+                status: 'effective',
+                source: 'runtime-effective-capability.observation',
+                reason: null,
+              },
             },
             context: {
               configured: { value: { contextTokens: null, contextPressure: null }, status: 'unverified', source: 'config', reason: null },
@@ -120,7 +136,14 @@ describe('SessionActivityPanel', () => {
               configured: { value: { cronEnabled: null, cronMaxConcurrentRuns: null, sessionRetention: null }, status: 'unverified', source: 'config', reason: null },
               effective: { value: null, status: 'unverified', source: 'runtime', reason: null },
             },
-            compatibility: [],
+            compatibility: [
+              {
+                backend: 'codex',
+                parameter: 'compaction.reserveTokens',
+                status: 'unsupported',
+                reason: 'native compaction does not consume OpenClaw reserve-token arguments',
+              },
+            ],
             sources: ['session.entry', 'runtime-effective-capability.observation'],
           },
         })}
@@ -129,8 +152,16 @@ describe('SessionActivityPanel', () => {
 
     expect(screen.getByTestId('session-activity-policy')).toBeTruthy();
     expect(screen.getByTestId('session-activity-policy-backend').textContent).toContain('configured');
+    expect(screen.getByTestId('session-activity-policy-backend').textContent).toContain('session.runtime');
+    expect(screen.getByTestId('session-activity-policy-effective').textContent).toContain('unverified');
     expect(screen.getByTestId('session-activity-policy-effort').textContent).toContain('high');
-    expect(screen.getByTestId('session-activity-policy').textContent).not.toContain('effective');
+    expect(screen.getByTestId('session-activity-policy-actions').textContent).toContain('actionSummary');
+    expect(screen.getByTestId('session-activity-policy-sources').textContent).toContain('runtime-effective-capability.observation');
+    expect(screen.getByTestId('session-activity-policy-compatibility').textContent).toContain('unsupported');
+    expect(screen.getByTestId('session-activity-policy-compatibility').textContent).toContain('reasons.nativeReserveTokens');
+    expect(screen.getByTestId('session-activity-policy-action-details').textContent).toContain('requiresApproval');
+    expect(screen.getByTestId('session-activity-policy-boundaries').textContent).toContain('boundaries.abort.title');
+    expect(screen.getByTestId('session-activity-policy-boundaries').textContent).toContain('boundaries.fork.description');
   });
 
   it('orders the four sections: environment, plan, sub-agents, processes', () => {
