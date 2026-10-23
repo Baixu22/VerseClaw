@@ -33,6 +33,7 @@ touchedAreas:
   - src/lib/host-api.ts
   - src/stores/session-activity.ts
   - docs/dev/long-session-delegation-admission.md
+  - harness/specs/guides/long-session-delegation-admission.md
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
@@ -85,7 +86,7 @@ docs:
   required: true
   files:
     - harness/specs/tasks/long-session-development-plan.md
-    - docs/dev/long-session-delegation-admission.md
+    - harness/specs/guides/long-session-delegation-admission.md
 ---
 
 **C2 · 按授权和隔离规则委派独立会话并记录接收回执**

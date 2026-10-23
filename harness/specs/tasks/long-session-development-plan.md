@@ -103,7 +103,7 @@ docs:
 
 每个后续 leaf 依赖前一个 leaf；阶段首次任务另依赖上一阶段验收。一次只执行当前 lane 的一个 ready leaf，阶段标准全满足并读盘后才收口其 milestone，不以局部绿灯自动开始下一阶段。
 
-C2 的 typed admission 已接入现有 sessions.delegate -> Main coordinator/permission -> Gateway orchestrator.run -> role-spawn owner 链。回执只表达 child session/run 已被接收，不表达运行完成；实际 worktree backend、工具授权、写入调度与父 generation 校验以回执和 [委派准入边界](../../../docs/dev/long-session-delegation-admission.md) 为准。
+C2 的 typed admission 已接入现有 sessions.delegate -> Main coordinator/permission -> Gateway orchestrator.run -> role-spawn owner 链。回执只表达 child session/run 已被接收，不表达运行完成；实际 worktree backend、工具授权、写入调度与父 generation 校验以回执和 [委派准入边界](../../../harness/specs/guides/long-session-delegation-admission.md) 为准。
 
 B1 消费 TF-0512 的 current runtime capability facts；C2/E2 以真实 Git checkout/写集隔离或明确安全串行完成自有边界；TF-0510 的明确 unavailable、internal 或 retired 处置可作为非阻塞依据，但不形成硬依赖；D1 消费 TF-0493/TF-0497/TF-0498 的唯一 context/memory 控制面。已有节点的内部化、退役或 explicit unavailable 也是有效结果，后续应做真实 fallback，不复活被退休模块，不再造同一 owner。
 
