@@ -45,15 +45,15 @@ $results += Invoke-CapturedGate -Id '06-contract-check' -Arguments @($pnpm, 'run
 $results += Invoke-CapturedGate -Id '07-no-bom' -Arguments @('node', 'scripts/check-no-bom.mjs') -DisplayCommand 'node scripts/check-no-bom.mjs'
 $results += Invoke-CapturedGate -Id '08-diff-check' -Arguments @('git', 'diff', '--check') -DisplayCommand 'git diff --check'
 
-$abPath = Join-Path $outputDir 'ab-run-v1.json'
+$abPath = Join-Path $outputDir 'ab-run-v2.json'
 $ab = Get-Content -LiteralPath $abPath -Raw | ConvertFrom-Json
 $abStatus = if ($ab.decision.status -eq 'pass') { 'pass' } else { 'fail' }
 $results += [ordered]@{
   id = '09-ab-readback'
-  command = 'read ab-run-v1.json decision'
+  command = 'read ab-run-v2.json decision (deciding run)'
   exitCode = if ($abStatus -eq 'pass') { 0 } else { 1 }
   status = $abStatus
-  outputPath = 'tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-run-v1.json'
+  outputPath = 'tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-run-v2.json'
   outputSha256 = (Get-FileHash -LiteralPath $abPath -Algorithm SHA256).Hash.ToLowerInvariant()
 }
 
@@ -81,6 +81,24 @@ $results += [ordered]@{
   outputSha256 = (Get-FileHash -LiteralPath $sumPath -Algorithm SHA256).Hash.ToLowerInvariant()
 }
 
+$v1Path = Join-Path $outputDir 'ab-run-v1.json'
+$v1 = Get-Content -LiteralPath $v1Path -Raw | ConvertFrom-Json
+$v2ProtocolSha = (Get-FileHash -LiteralPath (Join-Path $outputDir 'ab-protocol-v2.json') -Algorithm SHA256).Hash.ToLowerInvariant()
+$v2Run = Get-Content -LiteralPath (Join-Path $outputDir 'ab-run-v2.json') -Raw | ConvertFrom-Json
+$v1Preserved = ($v1.schemaVersion -eq 'CapabilityCatalogABRun/v1') -and ($v1.decision.status -eq 'fail')
+$v2Bound = ($v2Run.protocolSha256 -eq $v2ProtocolSha) -and ($v2Run.decision.status -eq 'pass')
+$preserveStatus = if ($v1Preserved -and $v2Bound) { 'pass' } else { 'fail' }
+$preservePath = Join-Path $outputDir '11-historical-preservation.txt'
+[System.IO.File]::WriteAllText($preservePath, ("v1_schema=" + $v1.schemaVersion + [Environment]::NewLine + "v1_decision=" + $v1.decision.status + [Environment]::NewLine + "v2_schema=" + $v2Run.schemaVersion + [Environment]::NewLine + "v2_decision=" + $v2Run.decision.status + [Environment]::NewLine + "v2_protocol_sha_matches=" + ($v2Run.protocolSha256 -eq $v2ProtocolSha) + [Environment]::NewLine), $utf8NoBom)
+$results += [ordered]@{
+  id = '11-historical-preservation'
+  command = 'assert v1 verdict preserved and v2 bound to frozen protocol'
+  exitCode = if ($preserveStatus -eq 'pass') { 0 } else { 1 }
+  status = $preserveStatus
+  outputPath = 'tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/11-historical-preservation.txt'
+  outputSha256 = (Get-FileHash -LiteralPath $preservePath -Algorithm SHA256).Hash.ToLowerInvariant()
+}
+
 $status = if (@($results | Where-Object { $_.status -ne 'pass' }).Count -eq 0) { 'pass' } else { 'fail' }
 $ledger = [ordered]@{
   schemaVersion = 'CapabilityCatalogImplementationVerification/v1'
@@ -89,7 +107,10 @@ $ledger = [ordered]@{
   driven_by = 'agent'
   actor = 'codex'
   status = $status
-  graduationStatus = 'not-graduated'
+  graduationStatus = if ($status -eq 'pass') { 'graduated-per-implementation-gates' } else { 'not-graduated' }
+  decidingRun = 'ab-run-v2.json (protocol v2.1)'
+  historicalRun = 'ab-run-v1.json (verdict fail, preserved)'
+  credentialHandling = 'TF0502_API_KEY supplied out-of-band by the repository owner for one run; not written to any file'
   gates = $results
   sha256sums = $sumChecks
 }

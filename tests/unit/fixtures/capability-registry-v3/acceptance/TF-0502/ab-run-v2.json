@@ -1,0 +1,1006 @@
+{
+  "schemaVersion": "CapabilityCatalogABRun/v2.1",
+  "taskForestNodeId": "TF-0502",
+  "driven_by": "agent",
+  "actor": "codex",
+  "startedAt": "2026-10-23T01:25:55.534Z",
+  "amendedAt": "2026-10-23T01:35:34.296Z",
+  "endedAt": "2026-10-23T01:40:14.762Z",
+  "protocolSha256": "3aec40d7255b56efea481facf6d8896392557b1a059df947863bc911f4eca4cb",
+  "endpoint": "http://127.0.0.1:3065/v1/responses",
+  "model": "space-bunny",
+  "summary": {
+    "totalCalls": 80,
+    "providerErrors": 0,
+    "controlPass": 4,
+    "treatmentPass": 12,
+    "controlPassRate": 0.1,
+    "treatmentPassRate": 0.3,
+    "successDeltaMean": 0.2,
+    "successDeltaCi95": {
+      "lower": 0.075,
+      "upper": 0.325
+    },
+    "inputTokenReductionMean": 47,
+    "inputTokenReductionCi95": {
+      "lower": 47,
+      "upper": 47
+    },
+    "controlInputTokens": 12497,
+    "treatmentInputTokens": 10617,
+    "treatmentDescribeTurns": 0,
+    "diagnosticCharDelta": -106
+  },
+  "checks": {
+    "pairs": true,
+    "providerErrorsOk": true,
+    "firstCallNonInferior": true,
+    "schemaTokenReductionPositive": true
+  },
+  "decision": {
+    "status": "pass",
+    "reasons": []
+  },
+  "pairs": [
+    {
+      "fixtureId": "select-0",
+      "stratum": "toolSelection",
+      "query": "read the workspace file at src/index.ts",
+      "expected": "workspace_read",
+      "control": {
+        "pass": true,
+        "chosen": "openclaw:workspace-read",
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"openclaw:workspace-read\",\"arguments\":{\"path\":\"src/index.ts\"}}"
+      },
+      "treatment": {
+        "pass": true,
+        "chosen": "workspace_read",
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"workspace_read\",\"arguments\":{\"path\":\"src/index.ts\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-1",
+      "stratum": "toolSelection",
+      "query": "search GitHub issues for open bugs",
+      "expected": "search_issues",
+      "control": {
+        "pass": true,
+        "chosen": "mcp:github-search",
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"mcp:github-search\",\"arguments\":{\"query\":\"is:issue is:open label:bug\"}}"
+      },
+      "treatment": {
+        "pass": true,
+        "chosen": "mcp:github-search",
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"mcp:github-search\",\"arguments\":{\"query\":\"is:issue is:open bug\",\"per_page\":30}}"
+      }
+    },
+    {
+      "fixtureId": "select-2",
+      "stratum": "toolSelection",
+      "query": "run a shell command to list files",
+      "expected": "exec",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:exec\",\"name\":\"exec\",\"parameters\":{\"command\":\"ls\"}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:exec\",\"name\":\"exec\",\"arguments\":{\"command\":\"ls -la\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-3",
+      "stratum": "toolSelection",
+      "query": "read the workspace file at src/index.ts",
+      "expected": "workspace_read",
+      "control": {
+        "pass": true,
+        "chosen": "openclaw:workspace-read",
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"openclaw:workspace-read\",\"arguments\":{\"path\":\"src/index.ts\"}}"
+      },
+      "treatment": {
+        "pass": true,
+        "chosen": "openclaw:workspace-read",
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"openclaw:workspace-read\",\"arguments\":{\"path\":\"src/index.ts\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-4",
+      "stratum": "toolSelection",
+      "query": "search GitHub issues for open bugs",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"parameters\":{\"query\":\"is:issue is:open label:bug\"}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"arguments\":{\"query\":\"is:issue is:open label:bug\",\"per_page\":100}}"
+      }
+    },
+    {
+      "fixtureId": "select-5",
+      "stratum": "toolSelection",
+      "query": "run a shell command to list files",
+      "expected": "exec",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:exec\",\"name\":\"exec\",\"parameters\":{\"command\":\"ls\"}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:exec\",\"name\":\"exec\",\"arguments\":{\"command\":\"ls -la\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-6",
+      "stratum": "toolSelection",
+      "query": "read the workspace file at src/index.ts",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"path\":\"src/index.ts\"}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"path\":\"src/index.ts\"}"
+      }
+    },
+    {
+      "fixtureId": "select-7",
+      "stratum": "toolSelection",
+      "query": "search GitHub issues for open bugs",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"input\":{\"query\":\"is:issue is:open label:bug\"}}"
+      },
+      "treatment": {
+        "pass": true,
+        "chosen": "mcp:github-search",
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"mcp:github-search\",\"name\":\"search_issues\",\"arguments\":{\"query\":\"is:issue is:open\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-8",
+      "stratum": "toolSelection",
+      "query": "run a shell command to list files",
+      "expected": "exec",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:exec\",\"name\":\"exec\",\"parameters\":{\"command\":\"ls\"}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:exec\",\"name\":\"exec\",\"arguments\":{\"command\":\"ls\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-9",
+      "stratum": "toolSelection",
+      "query": "read the workspace file at src/index.ts",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"name\":\"workspace_read\",\"parameters\":{\"path\":\"src/index.ts\"}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"name\":\"workspace_read\",\"arguments\":{\"path\":\"src/index.ts\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-10",
+      "stratum": "toolSelection",
+      "query": "search GitHub issues for open bugs",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"input\":{\"query\":\"is:open is:issue label:bug\"}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"input\":{\"query\":\"is:issue is:open label:bug\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-11",
+      "stratum": "toolSelection",
+      "query": "run a shell command to list files",
+      "expected": "exec",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:exec\",\"name\":\"exec\",\"parameters\":{\"command\":\"ls\"}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:exec\",\"name\":\"exec\",\"arguments\":{\"command\":\"ls\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-12",
+      "stratum": "toolSelection",
+      "query": "read the workspace file at src/index.ts",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"name\":\"workspace_read\",\"parameters\":{\"path\":\"src/index.ts\"}}"
+      },
+      "treatment": {
+        "pass": true,
+        "chosen": "openclaw:workspace-read",
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"openclaw:workspace-read\",\"arguments\":{\"path\":\"src/index.ts\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-13",
+      "stratum": "toolSelection",
+      "query": "search GitHub issues for open bugs",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"parameters\":{\"query\":\"is:issue is:open label:bug\"}}"
+      },
+      "treatment": {
+        "pass": true,
+        "chosen": "mcp:github-search",
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"mcp:github-search\",\"name\":\"search_issues\",\"arguments\":{\"query\":\"is:issue is:open bug\",\"limit\":10}}"
+      }
+    },
+    {
+      "fixtureId": "select-14",
+      "stratum": "toolSelection",
+      "query": "run a shell command to list files",
+      "expected": "exec",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:exec\",\"name\":\"exec\",\"parameters\":{\"type\":\"object\",\"properties\":{\"command\":{\"type\":\"string\"},\"required\":[\"command\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:exec\",\"command\":\"ls -la\"}"
+      }
+    },
+    {
+      "fixtureId": "select-15",
+      "stratum": "toolSelection",
+      "query": "read the workspace file at src/index.ts",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"name\":\"workspace_read\",\"arguments\":{\"path\":\"src/index.ts\"}}"
+      },
+      "treatment": {
+        "pass": true,
+        "chosen": "openclaw:workspace-read",
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"openclaw:workspace-read\",\"args\":{\"path\":\"src/index.ts\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-16",
+      "stratum": "toolSelection",
+      "query": "search GitHub issues for open bugs",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"query\":\"is:issue is:open label:bug\"}"
+      },
+      "treatment": {
+        "pass": true,
+        "chosen": "mcp:github-search",
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"mcp:github-search\",\"arguments\":{\"query\":\"is:issue is:open label:bug\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-17",
+      "stratum": "toolSelection",
+      "query": "run a shell command to list files",
+      "expected": "exec",
+      "control": {
+        "pass": true,
+        "chosen": "openclaw:exec",
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"openclaw:exec\",\"arguments\":{\"command\":\"ls\"}}"
+      },
+      "treatment": {
+        "pass": true,
+        "chosen": "openclaw:exec",
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"openclaw:exec\",\"arguments\":{\"command\":\"ls\"}}"
+      }
+    },
+    {
+      "fixtureId": "select-18",
+      "stratum": "toolSelection",
+      "query": "read the workspace file at src/index.ts",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"name\":\"workspace_read\",\"parameters\":{\"path\":\"src/index.ts\"}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"path\":\"src/index.ts\"}"
+      }
+    },
+    {
+      "fixtureId": "select-19",
+      "stratum": "toolSelection",
+      "query": "search GitHub issues for open bugs",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"parameters\":{\"query\":\"is:issue is:open label:bug\"}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"arguments\":{\"query\":\"is:issue is:open label:bug\"}}"
+      }
+    },
+    {
+      "fixtureId": "expand-0",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of workspace_read",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": ""
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": "tool_describe",
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"tool_describe\",\"arguments\":{\"tool_name\":\"workspace_read\"}}"
+      }
+    },
+    {
+      "fixtureId": "expand-1",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of search_issues",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"description\":\"Search GitHub issues.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"}},\"required\":[\"query\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\"}"
+      }
+    },
+    {
+      "fixtureId": "expand-2",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of workspace_read",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"parameters\":{\"path\":\"openclaw:workspace-read\"}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": ""
+      }
+    },
+    {
+      "fixtureId": "expand-3",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of search_issues",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": ""
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": ""
+      }
+    },
+    {
+      "fixtureId": "expand-4",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of workspace_read",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": ""
+      },
+      "treatment": {
+        "pass": true,
+        "chosen": "workspace_read",
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"workspace_read\",\"name\":\"openclaw:workspace-read\",\"description\":\"Read one workspace file.\"}"
+      }
+    },
+    {
+      "fixtureId": "expand-5",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of search_issues",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"description\":\"Search GitHub issues.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"}},\"required\":[\"query\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"mcp:github-search\",\"name\":\"search_issues\",\"description\":\"Search GitHub issues.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"query"
+      }
+    },
+    {
+      "fixtureId": "expand-6",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of workspace_read",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"name\":\"workspace_read\",\"description\":\"Read one workspace file.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\"}},\"required\":[\"path\"]}}"
+      },
+      "treatment": {
+        "pass": true,
+        "chosen": "workspace_read",
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"workspace_read\"}"
+      }
+    },
+    {
+      "fixtureId": "expand-7",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of search_issues",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"description\":\"Search GitHub issues.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"}},\"required\":[\"query\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": ""
+      }
+    },
+    {
+      "fixtureId": "expand-8",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of workspace_read",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"name\":\"workspace_read\",\"description\":\"Read one workspace file.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\"}},\"required\":[\"path\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": ""
+      }
+    },
+    {
+      "fixtureId": "expand-9",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of search_issues",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"description\":\"Search GitHub issues.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"}},\"required\":[\"query\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": ""
+      }
+    },
+    {
+      "fixtureId": "expand-10",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of workspace_read",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"name\":\"workspace_read\",\"description\":\"Read one workspace file.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\"}},\"required\":[\"path\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": ""
+      }
+    },
+    {
+      "fixtureId": "expand-11",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of search_issues",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"description\":\"Search GitHub issues.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"}},\"required\":[\"query\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\"}"
+      }
+    },
+    {
+      "fixtureId": "expand-12",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of workspace_read",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"name\":\"workspace_read\",\"description\":\"Read one workspace file.\",\"parameters\":{\"type"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": "tool_describe",
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"tool_describe\",\"arguments\":{\"tool_name\":\"openclaw:workspace-read\"}}"
+      }
+    },
+    {
+      "fixtureId": "expand-13",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of search_issues",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"description\":\"Search GitHub issues.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"}},\"required\":[\"query\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": ""
+      }
+    },
+    {
+      "fixtureId": "expand-14",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of workspace_read",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"name\":\"workspace_read\",\"description\":\"Read one workspace file.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\"}},\"required\":[\"path\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\"}"
+      }
+    },
+    {
+      "fixtureId": "expand-15",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of search_issues",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"description\":\"Search GitHub issues.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"}},\"required\":[\"query\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": ""
+      }
+    },
+    {
+      "fixtureId": "expand-16",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of workspace_read",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"name\":\"workspace_read\",\"description\":\"Read one workspace file.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\"}},\"required\":[\"path\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": "tool_describe",
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"tool_describe\",\"arguments\":{\"tool_id\":\"openclaw:workspace-read\"}}"
+      }
+    },
+    {
+      "fixtureId": "expand-17",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of search_issues",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"description\":\"Search GitHub issues.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"}},\"required\":[\"query\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": "tool_describe",
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"tool_describe\",\"arguments\":{\"tool_name\":\"mcp:github-search\"}}"
+      }
+    },
+    {
+      "fixtureId": "expand-18",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of workspace_read",
+      "expected": "workspace_read",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 312,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"openclaw:workspace-read\",\"name\":\"workspace_read\",\"description\":\"Read one workspace file.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\"}},\"required\":[\"path\"]}}"
+      },
+      "treatment": {
+        "pass": false,
+        "chosen": "tool_describe",
+        "inputTokens": 265,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"tool_describe\",\"arguments\":{\"tool\":\"openclaw:workspace-read\"}}"
+      }
+    },
+    {
+      "fixtureId": "expand-19",
+      "stratum": "schemaExpansion",
+      "query": "describe the full schema of search_issues",
+      "expected": "search_issues",
+      "control": {
+        "pass": false,
+        "chosen": null,
+        "inputTokens": 313,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"id\":\"mcp:github-search\",\"name\":\"search_issues\",\"description\":\"Search GitHub issues.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"}},\"required\":[\"query\"]}}"
+      },
+      "treatment": {
+        "pass": true,
+        "chosen": "mcp:github-search",
+        "inputTokens": 266,
+        "turns": 1,
+        "ok": true,
+        "usedDescribe": false,
+        "responseText": "{\"tool\":\"mcp:github-search\",\"action\":\"describe\",\"name\":\"search_issues\"}"
+      }
+    }
+  ]
+}

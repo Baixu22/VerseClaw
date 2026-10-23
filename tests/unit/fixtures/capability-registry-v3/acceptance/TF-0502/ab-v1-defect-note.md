@@ -63,6 +63,17 @@ documents the implemented statistic, not a measured non-inferiority failure.
   holds the flat 80-call list, not paired records; pairing must be reconstructed
   via `fixtureId` + `arm`. v2 should emit true pairs.
 
+## Resolution
+
+- v2.1 was frozen (amended from v2 before any completed run, with the aborted
+  attempt recorded inside `ab-protocol-v2.json`), executed exactly once, and
+  decided `pass` on the predeclared thresholds.
+- The v1 artifacts remain byte-identical and their `fail` verdict is preserved as
+  historical record; v1 is not the deciding evidence.
+- Residual limitation recorded in `README.md`: invocation-form answers were
+  scored as failures in both arms and were deliberately not re-scored after the
+  verdict was observed.
+
 ## Non-claims
 
 No human evidence; no public release, GA, liveReady or productApproved claim; no

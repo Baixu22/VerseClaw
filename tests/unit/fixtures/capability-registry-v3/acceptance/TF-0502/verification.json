@@ -1,11 +1,14 @@
 {
   "schemaVersion": "CapabilityCatalogImplementationVerification/v1",
   "taskForestNodeId": "TF-0502",
-  "generatedAt": "2026-10-23T01:32:33.1338862Z",
+  "generatedAt": "2026-10-23T01:50:37.0884424Z",
   "driven_by": "agent",
   "actor": "codex",
-  "status": "fail",
-  "graduationStatus": "not-graduated",
+  "status": "pass",
+  "graduationStatus": "graduated-per-implementation-gates",
+  "decidingRun": "ab-run-v2.json (protocol v2.1)",
+  "historicalRun": "ab-run-v1.json (verdict fail, preserved)",
+  "credentialHandling": "TF0502_API_KEY supplied out-of-band by the repository owner for one run; not written to any file",
   "gates": [
     {
       "id": "01-catalog-unit",
@@ -13,7 +16,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/01-catalog-unit.txt",
-      "outputSha256": "80ac384d46ea1317bd9cbf94aa0622a160efdb378ffbb94bbf0781bdfe8c573c"
+      "outputSha256": "5b71a9b39ca9ac5b847b75da833a650e9076f63d6e9639ee40409b1994bf31e7"
     },
     {
       "id": "02-v3-bridge",
@@ -21,7 +24,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/02-v3-bridge.txt",
-      "outputSha256": "7e058429c344e2dd8407104f1e8de1dc5bc298d2b8eee2a607a0c6f0300b8aa8"
+      "outputSha256": "e688013faa74e04c200941e8b5f5ecf0204347823702cf37f645984e0746857f"
     },
     {
       "id": "03-profile",
@@ -29,7 +32,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/03-profile.txt",
-      "outputSha256": "6044373f116a8488502e53391bc2dc7276ea5dc7b4eee1ff559dce979e02b295"
+      "outputSha256": "a6c70425c6dd2868bef360b78829c73ce96bac2654049973178c24d56a53bafa"
     },
     {
       "id": "04-typecheck",
@@ -37,7 +40,7 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/04-typecheck.txt",
-      "outputSha256": "b401b2c1410755ec53439cce1cf0af59e8b17ebc89c0b51ab1741c4ad96e31d2"
+      "outputSha256": "c997ac2d338fd3f523346b2f49f6a15ae4b9d09fc437ef5086ed66144613d222"
     },
     {
       "id": "05-lint-check",
@@ -73,11 +76,11 @@
     },
     {
       "id": "09-ab-readback",
-      "command": "read ab-run-v1.json decision",
-      "exitCode": 1,
-      "status": "fail",
-      "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-run-v1.json",
-      "outputSha256": "2124ce3fb9ac1662a45cae52f6ada37dbf1c96c480fae3c3023cabbff0fe45a8"
+      "command": "read ab-run-v2.json decision (deciding run)",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-run-v2.json",
+      "outputSha256": "a0b2f22203559523197a5bc51ec4f7c697c23f900c02bdbe75246c2a3266ba79"
     },
     {
       "id": "10-sha256sums-check",
@@ -85,7 +88,15 @@
       "exitCode": 0,
       "status": "pass",
       "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/10-sha256sums-check.txt",
-      "outputSha256": "98e816f5dea8ed0879c2d8126383ba16643c98ac6ab3bd1af3c8c44ddbbc545f"
+      "outputSha256": "a4b0dce25653767b2afae0822acb0c04cf63c9a30a3c2b509b2118b19ef3e2b3"
+    },
+    {
+      "id": "11-historical-preservation",
+      "command": "assert v1 verdict preserved and v2 bound to frozen protocol",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/11-historical-preservation.txt",
+      "outputSha256": "b2a2fb8129ce99d9c5b8e41296b54def28fe1cb898500323017380a4f491adcb"
     }
   ],
   "sha256sums": [
@@ -127,8 +138,8 @@
     },
     {
       "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/README.md",
-      "expected": "ff5518528b728fa095aa8a7d25aea3423bbfbf5264f6efc38c3a8ab89548033e",
-      "actual": "ff5518528b728fa095aa8a7d25aea3423bbfbf5264f6efc38c3a8ab89548033e",
+      "expected": "131647de0629524a9f70e99b3c2b1317af898cc455fa51368e20e1627b941efb",
+      "actual": "131647de0629524a9f70e99b3c2b1317af898cc455fa51368e20e1627b941efb",
       "status": "pass"
     },
     {
@@ -138,15 +149,27 @@
       "status": "pass"
     },
     {
+      "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-protocol-v2.json",
+      "expected": "3aec40d7255b56efea481facf6d8896392557b1a059df947863bc911f4eca4cb",
+      "actual": "3aec40d7255b56efea481facf6d8896392557b1a059df947863bc911f4eca4cb",
+      "status": "pass"
+    },
+    {
       "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-run-v1.json",
       "expected": "2124ce3fb9ac1662a45cae52f6ada37dbf1c96c480fae3c3023cabbff0fe45a8",
       "actual": "2124ce3fb9ac1662a45cae52f6ada37dbf1c96c480fae3c3023cabbff0fe45a8",
       "status": "pass"
     },
     {
+      "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-run-v2.json",
+      "expected": "a0b2f22203559523197a5bc51ec4f7c697c23f900c02bdbe75246c2a3266ba79",
+      "actual": "a0b2f22203559523197a5bc51ec4f7c697c23f900c02bdbe75246c2a3266ba79",
+      "status": "pass"
+    },
+    {
       "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/raw-evidence.json",
-      "expected": "59be1497c5550244568621606d07edef9063908ff7da4d918ac54bd0f3d78f8e",
-      "actual": "59be1497c5550244568621606d07edef9063908ff7da4d918ac54bd0f3d78f8e",
+      "expected": "54b08cf31f5e59f44476cc6636bf7adba15c2f9df173de8726e5e4da1d7a8a1e",
+      "actual": "54b08cf31f5e59f44476cc6636bf7adba15c2f9df173de8726e5e4da1d7a8a1e",
       "status": "pass"
     },
     {
@@ -156,27 +179,21 @@
       "status": "pass"
     },
     {
+      "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/run-ab-v2.mts",
+      "expected": "9881a3fd517ea18d5e36c5bc33479f899323f7035318d88ff52cac8bc8568277",
+      "actual": "9881a3fd517ea18d5e36c5bc33479f899323f7035318d88ff52cac8bc8568277",
+      "status": "pass"
+    },
+    {
       "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/run-verification.ps1",
-      "expected": "90ef7fa9feba8bd8e1f498c616f41a0b1ccab9f468c8716005d86fe479c56787",
-      "actual": "90ef7fa9feba8bd8e1f498c616f41a0b1ccab9f468c8716005d86fe479c56787",
+      "expected": "7a7dc8ede42d3222a46893311cbbe514ebc258df60d6816fd145ca023831ddfa",
+      "actual": "7a7dc8ede42d3222a46893311cbbe514ebc258df60d6816fd145ca023831ddfa",
       "status": "pass"
     },
     {
       "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-v1-defect-note.md",
-      "expected": "51500748bf14ed3d0236357c81130c6d151f4c804adf0d50d053d5777126238a",
-      "actual": "51500748bf14ed3d0236357c81130c6d151f4c804adf0d50d053d5777126238a",
-      "status": "pass"
-    },
-    {
-      "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-protocol-v2.json",
-      "expected": "4d9d01faf8812ac4bc4c6e0835062b9623a0b53dc4c15c2be21da8bb9bae9a35",
-      "actual": "4d9d01faf8812ac4bc4c6e0835062b9623a0b53dc4c15c2be21da8bb9bae9a35",
-      "status": "pass"
-    },
-    {
-      "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/run-ab-v2.mts",
-      "expected": "cad27ef6369b22083bf7af165cc32ce92c762940f131afdf31869194091f01e0",
-      "actual": "cad27ef6369b22083bf7af165cc32ce92c762940f131afdf31869194091f01e0",
+      "expected": "74a95118b52b16492287c108393b9ed8574f10ff47394decc7b1a98107391efa",
+      "actual": "74a95118b52b16492287c108393b9ed8574f10ff47394decc7b1a98107391efa",
       "status": "pass"
     }
   ]

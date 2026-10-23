@@ -46,7 +46,7 @@ fixture favors control, regardless of the aggregate. The v1 verdict therefore
 records the behaviour of the implemented statistic, not a measured
 non-inferiority failure. Details: `ab-v1-defect-note.md`.
 
-## A/B v2 (frozen, not yet executed)
+## A/B v2.1 (executed once, deciding run)
 
 `ab-protocol-v2.json` was frozen before any v2 call. It fixes, before the run:
 
@@ -61,7 +61,48 @@ non-inferiority failure. Details: `ab-v1-defect-note.md`.
 `run-ab-v2.mts` implements that protocol and refuses to rerun once
 `ab-run-v2.json` exists. It is type-checked (`tsc --noEmit --strict`, exit 0).
 
-**Execution status: not executed.** The endpoint `http://127.0.0.1:3065/v1/responses`
+An aborted first attempt (3 fixtures, no artifact written) exposed a matcher defect: the
+runner compared the model answer (canonical id `openclaw:workspace-read`) against the
+display name (`workspace_read`) and scored correct answers as failures. The protocol was
+amended to v2.1 **before any completed run** (`amendments[0]` in `ab-protocol-v2.json`):
+identity matches by display name or catalog id, `tool_describe` usage is a diagnostic
+rather than a requirement, and no threshold changed.
+
+**Execution status: executed once (v2.1).** `ab-run-v2.json` exists; the runner refuses
+to rerun.
+
+### v2.1 result
+
+| quantity | value |
+|---|---|
+| calls | 80 (0 provider errors) |
+| first-call success | control 4/40 (10.0%) vs treatment 12/40 (30.0%) |
+| paired success delta 95% CI | [0.075, 0.325] (lower bound >= -0.05 required) |
+| provider input tokens | control 12497 vs treatment 10617 |
+| per-pair token reduction | 47 (CI [47, 47]; mean > 0 and CI lower > 0 required) |
+| decision | **pass** |
+
+Both thresholds are met without changing any threshold value.
+
+### Residual measurement limitation (recorded, not repaired)
+
+The matcher only recognises an explicit `{"tool": ...}` selection. In 40 pairs the
+model instead answered in invocation form (`{"id": ..., "name": ..., "parameters": ...}`),
+which the runner scored as a failure in **both** arms (23 pairs scored fail in both arms).
+This depresses the absolute success rates symmetrically and was deliberately **not**
+repaired after seeing the completed run, because amending a matcher after a verdict is
+observed would invalidate the predeclaration. Absolute rates must therefore be read as a
+lower bound; the arm comparison is the quantity the protocol predeclares.
+
+The earlier connection problem is resolved: the credential was supplied by the repository
+owner and passed as `TF0502_API_KEY` for this single run only; it is not written to any
+file in this repository.
+
+Superseded note: the endpoint was previously unreachable from the agent shell (HTTP 401,
+`TF0502_API_KEY` unset). That probe and the aborted attempt produced no verdict; the
+blocker was cleared by the owner-supplied credential.
+
+## Acceptance mapping
 returns `401 Unauthorized` because `TF0502_API_KEY` is not present in the agent
 environment (verified: process, User and Machine scopes all unset). No v2 call has
 been made, so there is no v2 verdict and TF-0502 stays non-graduated.
@@ -80,7 +121,7 @@ $env:TF0502_API_KEY = '<provided out-of-band>'; pnpm exec tsx 'tests/unit/fixtur
 | Discovery fails closed with a reason | pass | `raw-evidence.json#failClosed`; adapter tests |
 | No second registry UI/flag/route | pass | `raw-evidence.json#surfaceBoundary`; static audit |
 | Default vs disabled/advanced self-description is accurate | pass | `raw-evidence.json#modelView`; profile tests |
-| A/B first-call noninferiority + schema-token positive CI | **fail** (v1 verdict; defect documented in `ab-v1-defect-note.md`; v2 predeclared rerun required before any graduation) | `ab-run-v1.json`; `raw-evidence.json#ab` |
+| A/B first-call noninferiority + schema-token positive CI | **pass** (deciding run v2.1; v1 verdict retained as historical) | `ab-run-v2.json`; `ab-protocol-v2.json`; `raw-evidence.json#abV2` |
 
 ## Reproduction
 
@@ -95,6 +136,7 @@ $env:TF0502_API_KEY = '<provided out-of-band>'; pnpm exec tsx 'tests/unit/fixtur
 - The A/B result is agent-driven; it is not human evidence.
 - Since the A/B gate failed, this node cannot claim graduation, default-on or
   product approval.
-- The v1 non-inferiority check is defective (min/max pseudo-CI). v2 is frozen
-  but has not been executed (missing provider credential), so the threshold is
-  still unresolved.
+- The v1 non-inferiority check is defective (min/max pseudo-CI); its `fail`
+  verdict is preserved unchanged as historical record and superseded by v2.1.
+- v2.1 ignores invocation-form answers, so absolute success rates are a lower
+  bound; the predeclared arm comparison is unaffected.
