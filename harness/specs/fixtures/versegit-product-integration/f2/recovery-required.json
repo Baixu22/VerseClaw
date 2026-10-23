@@ -1,0 +1,120 @@
+{
+  "schema": "clawx.versegit.f2-recovery-required/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "e3d9ee474ae8f31ff52b44bf3a70a1b7e74a1c28",
+    "tree": "7aa5cd5c72efade31f8261c46f34dac5f1e40798",
+    "dirty": false
+  },
+  "cases": [
+    {
+      "case": "identity_mismatch_ownerId",
+      "rejected": true,
+      "status": "rejected",
+      "issues": [
+        "identity_mismatch:ownerId"
+      ],
+      "deletionNotAttempted": true
+    },
+    {
+      "case": "identity_mismatch_epoch",
+      "rejected": true,
+      "status": "rejected",
+      "issues": [
+        "identity_mismatch:epoch"
+      ],
+      "deletionNotAttempted": true
+    },
+    {
+      "case": "identity_mismatch_authorizationId",
+      "rejected": true,
+      "status": "rejected",
+      "issues": [
+        "identity_mismatch:authorizationId"
+      ],
+      "deletionNotAttempted": true
+    },
+    {
+      "case": "identity_mismatch_baseOid",
+      "rejected": true,
+      "status": "rejected",
+      "issues": [
+        "identity_base_oid_invalid",
+        "identity_mismatch:baseOid"
+      ],
+      "deletionNotAttempted": true
+    },
+    {
+      "case": "identity_mismatch_refsDigest",
+      "rejected": true,
+      "status": "rejected",
+      "issues": [
+        "identity_refs_digest_invalid",
+        "identity_mismatch:refsDigest"
+      ],
+      "deletionNotAttempted": true
+    },
+    {
+      "case": "stage_failure_stop_accepting",
+      "rejected": true,
+      "status": "rejected",
+      "issues": [
+        "stop_accepting_not_confirmed"
+      ]
+    },
+    {
+      "case": "stage_failure_drain_cancel",
+      "rejected": true,
+      "status": "rejected",
+      "issues": [
+        "drain_not_confirmed",
+        "drain-timeout"
+      ]
+    },
+    {
+      "case": "stage_failure_evidence",
+      "rejected": true,
+      "status": "rejected",
+      "issues": [
+        "evidence_not_sealed"
+      ]
+    },
+    {
+      "case": "stage_failure_inventory",
+      "rejected": true,
+      "status": "rejected",
+      "issues": [
+        "resource_inventory_unobserved"
+      ]
+    },
+    {
+      "case": "survivor_recovery_required",
+      "recovered": true,
+      "status": "recovery_required",
+      "inventoryAfter": {
+        "observed": true,
+        "processes": 0,
+        "managers": 1,
+        "worktrees": 0,
+        "tempRoots": 0,
+        "survivors": [
+          "manager:session-f2-evidence"
+        ]
+      },
+      "issues": [
+        "survivor:managers",
+        "survivors_reported"
+      ]
+    },
+    {
+      "case": "late_event_after_delete",
+      "accepted": false,
+      "status": "deleted",
+      "lateEvents": 1,
+      "sealStable": true
+    }
+  ],
+  "passed": true
+}
