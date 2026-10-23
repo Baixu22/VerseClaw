@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: active
 id: long-session-baseline-contract
 title: 固定长期会话身份、动作合同与故障基线
 program: long-session-development-20261022
@@ -12,6 +12,7 @@ contractIndex: harness/specs/tasks/long-session-development-plan.md
 dependsOnTasks:
 
 touchedAreas:
+  - .gitignore
   - harness/specs/tasks/long-session-baseline-contract.md
   - harness/specs/tasks/long-session-development-plan.md
   - docs/clawx-product-semantics.md
@@ -24,10 +25,6 @@ touchedAreas:
   - openclaw_runtime/extensions/anthropic/cli-backend.ts
   - tests/unit/workspace-session.test.ts
   - tests/unit/chat-session-continuity.test.ts
-- electron/services/resource-tracker.ts
-- openclaw_runtime/src/sessions/session-admission-registry.ts
-- openclaw_runtime/src/gateway/session-drain-service.ts
-- openclaw_runtime/src/agents/tools/sessions-spawn-tool.ts
   - electron/services/resource-tracker.ts
   - openclaw_runtime/src/sessions/session-admission-registry.ts
   - openclaw_runtime/src/gateway/session-drain-service.ts

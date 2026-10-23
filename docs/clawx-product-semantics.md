@@ -1,6 +1,6 @@
 # ClawX Product Semantics
 
-Last updated: 2026-10-21
+Last updated: 2026-10-22
 
 Evidence boundary: this document is a product-semantics guardrail that complements `shared/capability-claims.ts` and `artifacts/capability-claims/status-table.json`.
 
@@ -65,6 +65,38 @@ TF-0372 supplies no Project store, new Task/Run/Trace/Goal/Memory authority, exe
 protocol, permission provider or full OS sandbox. Frozen boundaries remain
 `liveReady=false`, `productApproved=false`, `defaultOn=false`, C1 keep-off,
 Runtime Memory diagnostics-only and SEKB auto-writeback disabled.
+
+## Session lifecycle action boundary
+
+Session lifecycle actions are separate facts. An abort is not a stop, stop is not
+archive, archive is not delete, and reset changes the physical generation without
+creating a new logical conversation by string inference. The current source
+anchors, inheritance rules, failure states and known gaps are recorded in
+[`long-session-development/a1/action-and-inheritance-contract.json`](../harness/specs/fixtures/long-session-development/a1/action-and-inheritance-contract.json).
+The corresponding negative cases are fixed in
+[`negative-scenario-index.json`](../harness/specs/fixtures/long-session-development/a1/negative-scenario-index.json).
+That fixture is a current fault baseline, not evidence that every lifecycle path
+is already protected.
+
+| Action | Visible behavior | Inherits | Does not inherit / required boundary |
+| --- | --- | --- | --- |
+| Turn/run abort | Stops the active turn/run and reloads transcript state. | SessionKey, transcript, current physical session until a separate reset. | Task/goal completion or resource deletion. |
+| Session stop | Clears queued work and drains runtime activity while retaining the session. | SessionKey, session store, transcript and task/resource records. | Archive/delete mutation or task completion. |
+| Archive | Hides a conversation from the live list while retaining it for restore. | Transcript, original session-entry snapshot and original workspace/folder hints. | Running process ownership, task completion or a new SessionKey. |
+| Restore | Restores an archive-indexed conversation to the live list. | Snapshot metadata and transcript. | A restored task/goal status or running resource ownership. |
+| Reset | Rotates the physical sessionId/generation under the same SessionKey. | Agent/workspace scope, label/origin preferences and Task Ledger references. | Old run/generation authority, ordinary-session CLI bindings and token counters. |
+| Delete | Permanently removes a live or archived conversation after owner cleanup. | No restore entitlement after a committed delete. | Late run authority, task completion or a second deletion owner. |
+| Fork | Creates a new child session from a source transcript. | Transcript/model/workspace preferences and explicit fork lineage. | Task/goal completion or running resources. |
+| Handoff | Builds a bounded draft and creates a child session without mutating the source. | Bounded handoff context and explicit parent/root lineage. | Goal transfer, source mutation or resource drain. |
+| Schedule pause | Disables future Cron/Workboard triggers. | Existing session/history and current-run state. | Session stop, abort, archive/delete or task completion. |
+
+The archive/restore rows are currently marked `partial` in the contract: the
+production archive path does not yet acquire the canonical runtime lifecycle
+fence, and restore removes its archive-index locator before the transcript rename.
+A2/TF-0549 owns closing those gaps; until then, no archive/restore success claim may
+be extended to running sessions or crash recovery. No new Project, Task/Goal,
+Context/Memory, Scheduler or universal resource authority is introduced by this
+boundary.
 
 ## Windows x64 Controlled Preview
 
@@ -174,3 +206,5 @@ Implementation status is not the same as semantic status:
 5. Add explicit Chat to Task Loop upgrade UX before any automatic state-machine behavior.
 6. Normalize permission decision audit events.
 7. Limit plan editing to lightweight controls; do not build a full DAG editor.
+
+The long-session control plane separates human UI/CLI intent, typed host lifecycle calls and scoped model tools. Resume, fork, archive, delete, environment/worktree selection and handoff use the existing host owners. A model shell command does not create lifecycle authority. The fixed A1 baseline is an observation of program source, with archive/restore gaps reserved for A2.
