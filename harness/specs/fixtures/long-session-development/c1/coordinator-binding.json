@@ -1,0 +1,85 @@
+{
+  "schema": "clawx.long-session.coordinator-binding/v1",
+  "generatedAt": "2026-10-23T20:49:19.713Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": "4432d6a9105c50c3c04896ce2542da57181b5f3b",
+  "transport": "built Electron host:invoke workspaces.bindCoordinator -> actual Main/Gateway/Git/TaskLedger owners",
+  "actualJourney": {
+    "schema": "clawx.long-session.coordinator-binding-e2e/v1",
+    "driven_by": "agent",
+    "actor": "codex-long-session-r2",
+    "workspaceId": "default",
+    "sessionKey": "agent:main:dashboard:6d1cf83f-adfd-4fb0-8080-5c684c4ce714",
+    "childSessionKey": "agent:main:session-1792788482266-894cfdc6",
+    "taskLedgerNodeId": "d2aa777d-0527-4882-b66f-079b85fe4e1b",
+    "firstGeneration": "7a03d1e7-6562-4f85-9324-138127483dbc",
+    "restoredGeneration": "3d3be5fa-a559-4027-8afa-09716d93b836",
+    "states": {
+      "persisted": "ready",
+      "renamed": "ready",
+      "handoffPending": "session-pending",
+      "handoffActive": "ready",
+      "archived": "paused",
+      "restored": "ready",
+      "manuallyPaused": "paused"
+    },
+    "environmentRetainedAfterArchiveAndPause": true,
+    "taskLedgerStatusAfterLifecycle": "todo",
+    "transport": "built Electron host:invoke workspaces.bindCoordinator -> actual Main/Gateway/Git/TaskLedger owners"
+  },
+  "schemaContract": {
+    "ownerStore": "WorkspaceProfile.agentBindings + WorkspaceProfile.coordinatorBindings",
+    "taskAuthority": "TaskLedgerSnapshot.nodes and one-way TaskLedgerReference entries",
+    "environmentFacts": [
+      "kind",
+      "canonicalRoot",
+      "backend",
+      "branch",
+      "detachedHead",
+      "setupProfile"
+    ],
+    "bindingFacts": [
+      "sessionKey",
+      "sessionGeneration",
+      "bindingRevision",
+      "archiveRestorePolicy",
+      "state"
+    ],
+    "forbiddenWriters": [
+      "project store",
+      "new task/goal store",
+      "renderer cwd inference"
+    ]
+  },
+  "observed": {
+    "workspaceId": "default",
+    "sessionKey": "agent:main:dashboard:6d1cf83f-adfd-4fb0-8080-5c684c4ce714",
+    "childSessionKey": "agent:main:session-1792788482266-894cfdc6",
+    "taskLedgerNodeId": "d2aa777d-0527-4882-b66f-079b85fe4e1b",
+    "firstGeneration": "7a03d1e7-6562-4f85-9324-138127483dbc",
+    "restoredGeneration": "3d3be5fa-a559-4027-8afa-09716d93b836",
+    "states": {
+      "persisted": "ready",
+      "renamed": "ready",
+      "handoffPending": "session-pending",
+      "handoffActive": "ready",
+      "archived": "paused",
+      "restored": "ready",
+      "manuallyPaused": "paused"
+    },
+    "environmentRetained": true,
+    "taskLedgerStatus": "todo"
+  },
+  "recoveryStates": [
+    "ready",
+    "paused",
+    "invalid",
+    "missing",
+    "unavailable",
+    "environment-missing",
+    "session-missing",
+    "session-pending",
+    "generation-mismatch"
+  ]
+}

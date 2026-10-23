@@ -1,0 +1,12 @@
+{
+  "schema": "clawx.long-session.candidate/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "generatedAt": "2026-10-23T20:49:19.713Z",
+  "base": "c3aab743b626e8792db5c0480c9de8bcc9cc549c",
+  "commit": "4432d6a9105c50c3c04896ce2542da57181b5f3b",
+  "tree": "8356f8acd3c200f0e9302318fdfe3489b5bb32dd",
+  "branch": "codex/long-session-implementation-20261023-r2",
+  "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+  "dirty": false
+}

@@ -1,0 +1,114 @@
+{
+  "schema": "clawx.long-session.scope-recovery-matrix/v1",
+  "generatedAt": "2026-10-23T20:49:19.713Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": "4432d6a9105c50c3c04896ce2542da57181b5f3b",
+  "rows": [
+    {
+      "case": "workspace-assistant-session-binding",
+      "result": "pass",
+      "evidence": "unit-binding.vitest.json; coordinator-binding-e2e.json"
+    },
+    {
+      "case": "existing-task-ledger-references-only",
+      "result": "pass",
+      "evidence": "Task Ledger node remained todo through archive/restore/pause"
+    },
+    {
+      "case": "canonical-local-environment",
+      "result": "pass",
+      "evidence": "local root and branch observed by Git owner"
+    },
+    {
+      "case": "managed-worktree-and-branch-uniqueness",
+      "result": "pass",
+      "evidence": "long-session-coordinator-binding.test.ts"
+    },
+    {
+      "case": "app-restart-persistence",
+      "result": "pass",
+      "evidence": "coordinator-binding-e2e.json states.persisted=ready"
+    },
+    {
+      "case": "session-rename",
+      "result": "pass",
+      "evidence": "coordinator-binding-e2e.json states.renamed=ready"
+    },
+    {
+      "case": "handoff-pending-then-materialized",
+      "result": "pass",
+      "evidence": "session-pending -> handoffActive=ready"
+    },
+    {
+      "case": "archive-policy-restore",
+      "result": "pass",
+      "evidence": "paused -> restored=ready with new generation"
+    },
+    {
+      "case": "archive-retention-none",
+      "result": "pass",
+      "evidence": "unit-binding.vitest.json; invalid without environment deletion"
+    },
+    {
+      "case": "manual-pause",
+      "result": "pass",
+      "evidence": "coordinator-binding-e2e.json states.manuallyPaused=paused"
+    },
+    {
+      "case": "delete-invalidation",
+      "result": "pass",
+      "evidence": "long-session-coordinator-binding.test.ts lifecycle delete"
+    },
+    {
+      "case": "reset-generation-mismatch",
+      "result": "pass",
+      "evidence": "unit-binding.vitest.json; explicit rebind increments revision"
+    },
+    {
+      "case": "active-run-environment-switch",
+      "result": "pass",
+      "evidence": "COORDINATOR_BINDING_SWITCH_BLOCKED test"
+    },
+    {
+      "case": "cross-workspace-and-missing-owner",
+      "result": "pass",
+      "evidence": "COORDINATOR_WORKSPACE_SCOPE_MISMATCH and COORDINATOR_OWNER_MISSING tests"
+    },
+    {
+      "case": "revision-conflict-and-concurrency",
+      "result": "pass",
+      "evidence": "serialized concurrent revision-zero binds; exactly one wins"
+    },
+    {
+      "case": "deleted-session-or-missing-task-ref",
+      "result": "pass",
+      "evidence": "COORDINATOR_SESSION_MISSING and COORDINATOR_TASK_REF_MISSING tests"
+    },
+    {
+      "case": "chat-enforces-bound-environment",
+      "result": "pass",
+      "evidence": "chat-api-workspace-fingerprint.test.ts active, paused, mismatch, and pending generation cases"
+    },
+    {
+      "case": "ordinary-chat-does-not-auto-enter",
+      "result": "pass",
+      "evidence": "binding exists only through explicit workspaces.bindCoordinator host call"
+    }
+  ],
+  "negativeCases": [
+    "cross-workspace request",
+    "missing Workspace/Assistant owner",
+    "deleted session",
+    "missing Task Ledger node",
+    "stale binding revision",
+    "concurrent revision-zero writes",
+    "managed worktree absent from Git owner",
+    "duplicate branch checkout",
+    "active-run environment switch",
+    "paused binding",
+    "generation mismatch",
+    "missing environment root",
+    "missing task completion write path"
+  ]
+}
