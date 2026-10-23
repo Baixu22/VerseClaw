@@ -123,7 +123,7 @@ function build(overrides: Partial<Parameters<typeof buildSessionEffectivePolicy>
     sessionKey: "agent:main:main",
     agentId: "main",
     entry: entry(),
-    activeRun: { runId: "run-42", sessionId: "session-42" },
+    activeRun: { runId: "run-42", sessionId: "session-42", startedAtMs: NOW },
     capabilityObservation: observation(),
     queuedCount: 2,
     nowMs: NOW,
@@ -240,6 +240,23 @@ describe("session effective policy", () => {
     expect(policy.backend.effective.status).toBe("unverified");
     expect(policy.model.effective.status).toBe("unverified");
     expect(policy.grants.effective.status).toBe("unverified");
+  });
+
+  it("keeps a pre-run context budget unverified for a newer active run", () => {
+    const policy = build({
+      capabilityObservation: observation("missing"),
+      activeRun: {
+        runId: "run-new",
+        sessionId: "session-42",
+        startedAtMs: NOW + 1,
+      },
+    });
+
+    expect(policy.context.configured.value?.contextTokens).toBe(160_000);
+    expect(policy.context.effective).toMatchObject({
+      value: null,
+      status: "unverified",
+    });
   });
 
   it("does not fill missing observed backend identity from configured values", () => {

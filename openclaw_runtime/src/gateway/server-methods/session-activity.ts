@@ -132,7 +132,11 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       agentId: activeRun?.[1].agentId,
       entry: loaded.entry,
       activeRun: activeRun
-        ? { runId: activeRun[0], sessionId: activeRun[1].sessionId }
+        ? {
+            runId: activeRun[0],
+            sessionId: activeRun[1].sessionId,
+            startedAtMs: activeRun[1].startedAtMs,
+          }
         : null,
       capabilityObservation,
       queuedCount: queueCount,

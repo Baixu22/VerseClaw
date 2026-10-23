@@ -34,7 +34,7 @@ export type BuildSessionEffectivePolicyInput = {
   sessionKey: string;
   agentId?: string;
   entry?: SessionEntry;
-  activeRun?: { runId: string; sessionId: string } | null;
+  activeRun?: { runId: string; sessionId: string; startedAtMs: number } | null;
   capabilityObservation: RuntimeEffectiveCapabilityObservationRead;
   queuedCount: number;
   nowMs?: number;
@@ -321,8 +321,13 @@ export function buildSessionEffectivePolicy(
   };
   const budget = input.entry?.contextBudgetStatus;
   const budgetCurrent =
+    input.activeRun !== null &&
+    input.activeRun !== undefined &&
     budget !== undefined &&
-    budget.sessionId === input.entry?.sessionId &&
+    budget.sessionId === input.activeRun.sessionId &&
+    budget.provider === configuredModel.provider &&
+    budget.model === configuredModel.model &&
+    budget.updatedAt >= input.activeRun.startedAtMs &&
     budget.contextTokenBudget > 0;
   const effectiveContext = budgetCurrent && budget
     ? fact<SessionPolicyContextLimits>(
