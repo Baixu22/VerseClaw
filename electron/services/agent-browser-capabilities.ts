@@ -109,6 +109,8 @@ export type ModelActionCapability = {
   readonly available: boolean;
   /** Present only when `available` is false. */
   readonly reason?: string;
+  /** True when this action leaves the sandbox and needs supervised permission. */
+  readonly supervised: boolean;
 };
 
 export type ModelActionCapabilitySnapshot = {
@@ -116,6 +118,10 @@ export type ModelActionCapabilitySnapshot = {
   readonly driverKind: string;
   readonly cliAvailable: boolean;
   readonly actions: readonly ModelActionCapability[];
+  /** TF-0503: browser is supervised; risky actions need a live approval, not just a driver. */
+  readonly supervision: "required";
+  /** Actions that stay inside the sandbox and need no approval. */
+  readonly unsupervisedActions: readonly ModelActionName[];
 };
 
 export function driverProfileSupports(profile: DriverProfileLike, method: string): boolean {
@@ -128,12 +134,13 @@ export function modelActionCapability(
   env: { cliAvailable: boolean },
 ): ModelActionCapability {
   const requirement = MODEL_ACTION_REQUIREMENTS[action];
+  const supervised = modelActionRequiresSupervision(action);
   if (requirement.requiresCli && !env.cliAvailable) {
-    return { action, available: false, reason: 'bundled agent-browser CLI is not available' };
+    return { action, available: false, supervised, reason: 'bundled agent-browser CLI is not available' };
   }
-  if (requirement.facadeLocal) return { action, available: true };
+  if (requirement.facadeLocal) return { action, available: true, supervised };
   if (profile.kind === 'none') {
-    return { action, available: false, reason: 'driver "none" is active; no browser session' };
+    return { action, available: false, supervised, reason: 'driver "none" is active; no browser session' };
   }
   // `methods === null` means "assume the contract", but the profile may still
   // declare methods it refuses; driverProfileSupports checks that first.
@@ -143,12 +150,13 @@ export function modelActionCapability(
     return {
       action,
       available: false,
+      supervised,
       reason: stub.length > 0
         ? `driver "${profile.kind}" declares ${stub.join(', ')} but refuses them (E_NOT_IMPLEMENTED)`
         : `driver "${profile.kind}" does not serve ${missing.join(', ')}`,
     };
   }
-  return { action, available: true };
+  return { action, available: true, supervised };
 }
 
 export function modelActionCapabilities(
@@ -159,14 +167,37 @@ export function modelActionCapabilities(
   const canonical = JSON.stringify({
     driverKind: profile.kind,
     cliAvailable: env.cliAvailable,
-    actions: actions.map((entry) => [entry.action, entry.available, entry.reason ?? '']),
+    actions: actions.map((entry) => [entry.action, entry.available, entry.supervised, entry.reason ?? '']),
   });
   return {
     version: createHash('sha256').update(canonical).digest('hex'),
     driverKind: profile.kind,
     cliAvailable: env.cliAvailable,
     actions,
+    supervision: 'required',
+    unsupervisedActions: [...UNSUPERVISED_ACTIONS].sort(),
   };
+}
+
+/**
+ * TF-0503: a browser action is supervised when it can cause an external,
+ * irreversible or credentialed effect. Pure reads stay unsupervised.
+ */
+const UNSUPERVISED_ACTIONS: ReadonlySet<ModelActionName> = new Set<ModelActionName>([
+  "status",
+  "getConsoleMessages",
+  "takeSnapshot",
+  "extractPageText",
+  "findElement",
+  "semanticRead",
+  "readForms",
+  "readDialogs",
+  "screenshot",
+]);
+
+export function modelActionRequiresSupervision(action: string): boolean {
+  if (!(MODEL_ACTION_NAMES as readonly string[]).includes(action)) return true;
+  return !UNSUPERVISED_ACTIONS.has(action as ModelActionName);
 }
 
 export function modelActionRequiresControl(action: string): boolean {

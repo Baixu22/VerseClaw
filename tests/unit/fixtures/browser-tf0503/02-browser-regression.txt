@@ -1,0 +1,78 @@
+
+ RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
+
+···stdout | tests/unit/agent-browser-gateway-bridge.test.ts > agent browser gateway bridge > binds the returned gateway request and owner key to the real bridge response
+[2026-10-23T06:46:47.387Z] [DEBUG] [agent-browser-bridge] Received invoke request: agentBrowser.invoke.request
+[2026-10-23T06:46:47.388Z] [DEBUG] [agent-browser-bridge] Dispatching action=open requestId=req-owner
+
+stdout | tests/unit/agent-browser-gateway-bridge.test.ts > agent browser gateway bridge > binds the returned gateway request and owner key to the real bridge response
+[2026-10-23T06:46:47.391Z] [DEBUG] [agent-browser-bridge] Action completed requestId=req-owner
+
+stdout | tests/unit/agent-browser-gateway-bridge.test.ts > agent browser gateway bridge > rejects a session owned by another runtime session before touching the module
+[2026-10-23T06:46:47.451Z] [DEBUG] [agent-browser-bridge] Received invoke request: agentBrowser.invoke.request
+
+stdout | tests/unit/agent-browser-gateway-bridge.test.ts > agent browser gateway bridge > executes Electron Main service calls and reports the bridge result
+[2026-10-23T06:46:47.457Z] [DEBUG] [agent-browser-bridge] Received invoke request: agentBrowser.invoke.request
+[2026-10-23T06:46:47.457Z] [DEBUG] [agent-browser-bridge] Dispatching action=open requestId=req-1
+
+stderr | tests/unit/agent-browser-gateway-bridge.test.ts > agent browser gateway bridge > rejects a session owned by another runtime session before touching the module
+[2026-10-23T06:46:47.451Z] [WARN] [agent-browser-bridge] Invoke failed: AgentBrowserOwnershipError: Agent browser session s1 belongs to a different runtime session
+AgentBrowserOwnershipError: Agent browser session s1 belongs to a different runtime session
+    at ownershipError (D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:117:17)
+    at assertRequestOwnership (D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:140:11)
+    at D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:280:9
+    at EventEmitter.onNotification (D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:312:5)
+    at EventEmitter.emit (node:events:514:28)
+    at D:/ClawX-work/component-graduation-20261021/tests/unit/agent-browser-gateway-bridge.test.ts:151:22
+    at file:///D:/ClawX-work/component-graduation-20261021/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+    at file:///D:/ClawX-work/component-graduation-20261021/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26
+    at file:///D:/ClawX-work/component-graduation-20261021/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20
+    at new Promise (<anonymous>)
+
+stdout | tests/unit/agent-browser-gateway-bridge.test.ts > agent browser gateway bridge > executes Electron Main service calls and reports the bridge result
+[2026-10-23T06:46:47.457Z] [DEBUG] [agent-browser-bridge] Action completed requestId=req-1
+
+···stdout | tests/unit/agent-browser-gateway-bridge.test.ts > agent browser gateway bridge > routes new facade actions through the complete host API when available
+[2026-10-23T06:46:47.515Z] [DEBUG] [agent-browser-bridge] Received invoke request: agentBrowser.invoke.request
+[2026-10-23T06:46:47.515Z] [DEBUG] [agent-browser-bridge] Dispatching action=downloadFile requestId=req-download
+
+stdout | tests/unit/agent-browser-gateway-bridge.test.ts > agent browser gateway bridge > routes new facade actions through the complete host API when available
+[2026-10-23T06:46:47.515Z] [DEBUG] [agent-browser-bridge] Action completed requestId=req-download
+
+stdout | tests/unit/agent-browser-gateway-bridge.test.ts > agent browser gateway bridge > passes advanced CLI command requests to Electron Main
+[2026-10-23T06:46:47.576Z] [DEBUG] [agent-browser-bridge] Received invoke request: agentBrowser.invoke.request
+[2026-10-23T06:46:47.576Z] [DEBUG] [agent-browser-bridge] Dispatching action=command requestId=req-2
+
+stdout | tests/unit/agent-browser-gateway-bridge.test.ts > agent browser gateway bridge > passes advanced CLI command requests to Electron Main
+[2026-10-23T06:46:47.576Z] [DEBUG] [agent-browser-bridge] Action completed requestId=req-2
+
+····stdout | tests/unit/versebrowser-capability-gating.test.ts > agent browser capability gating (spec N3) > grants the browser-control run-state for an OWNED session, never from a model argument
+[2026-10-23T06:46:48.966Z] [DEBUG] [agent-browser-bridge] Received invoke request: agentBrowser.invoke.request
+[2026-10-23T06:46:48.967Z] [DEBUG] [agent-browser-bridge] Dispatching action=takeSnapshot requestId=r-owned
+
+stderr | tests/unit/versebrowser-capability-gating.test.ts > agent browser capability gating (spec N3) > grants the browser-control run-state for an OWNED session, never from a model argument
+[2026-10-23T06:46:48.970Z] [WARN] [agent-browser-bridge] Invoke failed: Error: Unsupported agent browser action: takeSnapshot
+Error: Unsupported agent browser action: takeSnapshot
+    at invokeAgentBrowser (D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:245:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:284:13
+
+stdout | tests/unit/versebrowser-capability-gating.test.ts > agent browser capability gating (spec N3) > rejects an unavailable action at the Main bridge before any service call
+[2026-10-23T06:46:49.023Z] [DEBUG] [agent-browser-bridge] Received invoke request: agentBrowser.invoke.request
+[2026-10-23T06:46:49.023Z] [DEBUG] [agent-browser-bridge] Dispatching action=downloadFile requestId=r1
+
+stderr | tests/unit/versebrowser-capability-gating.test.ts > agent browser capability gating (spec N3) > rejects an unavailable action at the Main bridge before any service call
+[2026-10-23T06:46:49.024Z] [WARN] [agent-browser-bridge] Invoke failed: AgentBrowserCapabilityError: Agent browser action "downloadFile" is not available in this session: driver "injected" declares downloadFile but refuses them (E_NOT_IMPLEMENTED)
+AgentBrowserCapabilityError: Agent browser action "downloadFile" is not available in this session: driver "injected" declares downloadFile but refuses them (E_NOT_IMPLEMENTED)
+    at capabilityError (D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:168:17)
+    at assertActionAvailable (D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:181:31)
+    at invokeAgentBrowser (D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:210:3)
+    at D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:284:13
+
+··································
+
+ Test Files  6 passed (6)
+      Tests  44 passed (44)
+   Start at  14:46:42
+   Duration  11.80s (transform 2.51s, setup 453ms, import 6.26s, tests 850ms, environment 3.23s)
+

@@ -1,3 +1,4 @@
+import { app } from 'electron';
 import { assertSensitiveCaptureAllowed } from './sensitive-capture-gate';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
@@ -30,6 +31,146 @@ import {
   type DriverProfileLike,
   type ModelActionCapabilitySnapshot,
 } from './agent-browser-capabilities';
+import {
+  browserOriginOf,
+  createBrowserPrivateNetworkApproval,
+  decideBrowserNavigation,
+  type BrowserPrivateNetworkApproval,
+} from '@shared/agent-browser/private-network-policy';
+
+/**
+ * TF-0503: approvals for private-network navigation, bounded per supervised session+origin.
+ * There is no global switch and no implicit bypass; the grant itself is agent-driven
+ * (driven_by=agent) and recorded so evidence can prove where it came from.
+ */
+const privateNetworkApprovals = new Map<string, BrowserPrivateNetworkApproval>();
+
+/** Actions whose payload carries a navigation target subject to the private-network guard. */
+const NAVIGATION_ACTIONS = new Set<string>(['navigate', 'open', 'createTask']);
+
+function navigationTarget(payload: unknown): string | undefined {
+  if (!payload || typeof payload !== 'object') return undefined;
+  const record = payload as Record<string, unknown>;
+  const value = record.url;
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+function sessionIdOf(payload: unknown): string {
+  if (!payload || typeof payload !== 'object') return 'unbound';
+  const record = payload as Record<string, unknown>;
+  const value = record.sessionId;
+  return typeof value === 'string' && value.trim() ? value.trim() : 'unbound';
+}
+
+/**
+ * Origins the host itself owns for the active workspace: the preview the user
+ * already started. Read from Main-side persisted workspace state, never from the
+ * caller payload, so a model cannot widen its own network reach just by naming a
+ * localhost URL. A wrong workspace id, missing state or any read failure yields an
+ * empty allowlist (fail closed).
+ */
+export type BrowserFirstPartyOriginContext = {
+  workspaceId?: string;
+  sessionKey?: string;
+  profile: {
+    id: string;
+    state?: { webPreview?: { targetUrl?: string | null; previewUrl?: string | null; url?: string | null } };
+    sessionStates?: Record<
+      string,
+      { webPreview?: { targetUrl?: string | null; previewUrl?: string | null; url?: string | null } }
+    >;
+  } | null;
+};
+
+export type BrowserFirstPartyOriginProvider = (
+  context: BrowserFirstPartyOriginContext,
+) => Promise<string[]> | string[];
+
+/**
+ * Default provider: the active workspace's own preview origins, matched strictly
+ * by workspace id. Sensitive to host state only, so the caller payload cannot
+ * manufacture an exception for an arbitrary private address.
+ */
+const defaultFirstPartyOriginProvider: BrowserFirstPartyOriginProvider = (context) => {
+  const { workspaceId, sessionKey, profile } = context;
+  if (!profile) return [];
+  if (workspaceId && profile.id !== workspaceId) return [];
+  const states = [profile.state, sessionKey ? profile.sessionStates?.[sessionKey] : undefined];
+  const origins = new Set<string>();
+  for (const state of states) {
+    const preview = state?.webPreview;
+    if (!preview) continue;
+    for (const candidate of [preview.targetUrl, preview.previewUrl, preview.url]) {
+      const origin = typeof candidate === 'string' ? browserOriginOf(candidate) : undefined;
+      if (origin) origins.add(origin);
+    }
+  }
+  return [...origins];
+};
+
+let firstPartyOriginProvider: BrowserFirstPartyOriginProvider = defaultFirstPartyOriginProvider;
+
+/** Test/diagnostic seam, mirroring the setActiveWorkspaceProfileProvider pattern. */
+export function setBrowserFirstPartyOriginProvider(
+  provider: BrowserFirstPartyOriginProvider | null,
+): void {
+  firstPartyOriginProvider = provider ?? defaultFirstPartyOriginProvider;
+}
+
+async function resolveFirstPartyOrigins(payload: unknown): Promise<string[]> {
+  if (!payload || typeof payload !== 'object') return [];
+  const record = payload as Record<string, unknown>;
+  const workspaceId = typeof record.workspaceId === 'string' ? record.workspaceId.trim() : '';
+  const sessionKey = typeof record.sessionKey === 'string' ? record.sessionKey.trim() : '';
+  try {
+    const profile = await getActiveWorkspaceProfile();
+    return await firstPartyOriginProvider({ workspaceId, sessionKey, profile });
+  } catch {
+    // Fail closed: no provider result means no private exception.
+    return [];
+  }
+}
+
+/**
+ * Default-deny gate for private-network navigation. Public URLs pass untouched;
+ * a private target is allowed only when it is the host's own running preview
+ * (loopback only) or a bounded approval exists for this session and origin.
+ */
+export async function assertBrowserNavigationAllowed(
+  action: string,
+  payload: unknown,
+): Promise<void> {
+  if (!NAVIGATION_ACTIONS.has(action)) return;
+  const url = navigationTarget(payload);
+  if (!url) return;
+  const sessionId = sessionIdOf(payload);
+  const firstPartyOrigins = await resolveFirstPartyOrigins(payload);
+  const decision = decideBrowserNavigation({
+    url,
+    sessionId,
+    approvals: [...privateNetworkApprovals.values()],
+    firstPartyOrigins,
+  });
+  if (decision.allowed) return;
+  const error = new Error(
+    `Agent browser ${action} blocked: ${decision.reason} (address class ${decision.addressClass})`,
+  ) as Error & { code?: string };
+  error.name = 'BrowserPrivateNetworkError';
+  error.code = 'E_BROWSER_PRIVATE_NETWORK_DENIED';
+  throw error;
+}
+
+/** Approve one private origin for one supervised session (bounded, never global). */
+export function approveBrowserPrivateNetwork(input: { sessionId: string; origin: string; ttlMs?: number }): BrowserPrivateNetworkApproval {
+  const approval = createBrowserPrivateNetworkApproval({
+    sessionId: input.sessionId,
+    origin: input.origin,
+    grantedBy: 'agent',
+    ...(input.ttlMs !== undefined ? { ttlMs: input.ttlMs } : {}),
+  });
+  privateNetworkApprovals.set(`${approval.sessionId}|${approval.origin}`, approval);
+  return approval;
+}
 
 export async function assertBrowserAllowedUnderSandbox(action: string): Promise<void> {
   const actionClass = classifyAgentBrowserAction(action);
@@ -142,6 +283,66 @@ export function getDefaultAgentBrowserService(): ModuleAgentBrowserService {
  * `createAgentBrowserApi` are deliberately not used as the source: they exist for all 13
  * additions even when the driver refuses them.
  */
+/**
+ * TF-0503: close every live host Browser session so a cancel, timeout or
+ * restart cannot leave an orphan session (and its resource-envelope entry)
+ * behind. Returns the ids it closed. Never throws: a session that refuses to
+ * close is reported in `failed` so the caller can surface it.
+ */
+type AgentBrowserSessionHost = {
+  list?: () => Array<{ id?: string }>;
+  close?: (sessionId: string) => void;
+};
+
+export function closeAllAgentBrowserSessions(
+  service: AgentBrowserSessionHost = getDefaultAgentBrowserService() as unknown as AgentBrowserSessionHost,
+): { closed: string[]; failed: string[] } {
+  const closed: string[] = [];
+  const failed: string[] = [];
+  let sessions: Array<{ id?: string }>;
+  try {
+    sessions = service.list?.() ?? [];
+  } catch {
+    return { closed, failed };
+  }
+  for (const session of sessions) {
+    const id = typeof session?.id === 'string' ? session.id : '';
+    if (!id) continue;
+    try {
+      // Close through the same service that listed the session, so the reaper is
+      // coherent and testable: never list from one owner and close through another.
+      service.close?.(id);
+      removeResourceEnvelopeEntry(`main:browser-session:${id}`);
+      closed.push(id);
+    } catch {
+      failed.push(id);
+    }
+  }
+  return { closed, failed };
+}
+
+/**
+ * Register the shutdown reaper on Electron's quit lifecycle. Called from the
+ * Main process; kept lazy and opt-in so importing this module outside Electron
+ * (unit tests, tooling) never touches the `electron` runtime.
+ */
+let shutdownReaperRegistered = false;
+
+export function registerAgentBrowserShutdownReaper(): void {
+  // Outside the Electron main process (unit tests, tooling) `app` is undefined, so
+  // registration is a no-op instead of a crash.
+  if (!app || typeof app.on !== 'function') return;
+  if (shutdownReaperRegistered) return;
+  shutdownReaperRegistered = true;
+  app.on('will-quit', () => {
+    try {
+      closeAllAgentBrowserSessions();
+    } catch {
+      // best effort: quitting must never block on a browser session
+    }
+  });
+}
+
 export function getAgentBrowserCapabilitiesFor(
   driverApi: AgentBrowserHostApi,
 ): ModelActionCapabilitySnapshot {
@@ -256,6 +457,7 @@ function withHostGuards<T extends object>(api: T): T {
       if (!classifyAgentBrowserAction(prop)) return bound;
       return async (...args: unknown[]) => {
         await prepareHostContext();
+        await assertBrowserNavigationAllowed(prop, args[0]);
         await assertBrowserAllowedUnderSandbox(prop);
         if (prop === 'screenshot') {
           await assertSensitiveCaptureAllowed('screenshot', (args[0] as { grantId?: string } | undefined)?.grantId);
@@ -319,5 +521,8 @@ export function createAgentBrowserApi(
   // The gate reads the REAL module driver api (not the facade wrappers) so the 13
   // additions stay unavailable even though `extendedApi` defines a wrapper for each.
   const capabilities = getAgentBrowserCapabilitiesFor(api as unknown as AgentBrowserHostApi);
+  // Build the adapter once per Main process: hook the shutdown reaper so live
+  // sessions cannot outlive the app (TF-0503: cancel / timeout / restart clean-up).
+  registerAgentBrowserShutdownReaper();
   return withHostGuards(withCapabilityGate(extendedApi, capabilities));
 }

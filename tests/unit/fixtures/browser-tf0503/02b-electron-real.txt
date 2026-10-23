@@ -1,0 +1,13 @@
+
+Running 1 test using 1 worker
+
+
+[1A[2K(node:49188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:49188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[1/1] tests\e2e\browser-supervised-task-tf0503.spec.ts:69:7 › Browser supervised task capability (TF-0503) › real Main path: supervised self-description and private-network default deny
+[1A[2K  1 passed (11.3s)
