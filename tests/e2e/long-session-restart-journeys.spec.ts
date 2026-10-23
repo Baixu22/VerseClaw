@@ -119,9 +119,9 @@ test('F1 six real long-session restart journeys across two workspaces', async ({
 
   let app = await launchElectronApp({ skipSetup: true });
   let workspaceA = '';
-  let coordinatorA = '';
+  let coordinatorA!: string;
   let taskA = '';
-  let firstGeneration = '';
+  let firstGeneration!: string;
   try {
     await ensureGatewayReady(app);
     workspaceA = await createWorkspace(app, workspaceRootA, 'F1 workspace A');
@@ -200,8 +200,8 @@ test('F1 six real long-session restart journeys across two workspaces', async ({
 
   app = await launchElectronApp({ skipSetup: true });
   let workspaceB = '';
-  let coordinatorB = '';
-  let taskB = '';
+  let coordinatorB!: string;
+  let taskB!: string;
   try {
     await ensureGatewayReady(app);
     workspaceB = await createWorkspace(app, workspaceRootB, 'F1 workspace B');

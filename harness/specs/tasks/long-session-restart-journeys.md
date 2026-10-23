@@ -15,6 +15,7 @@ dependsOnTasks:
 touchedAreas:
   - harness/specs/tasks/long-session-restart-journeys.md
   - harness/specs/tasks/long-session-development-plan.md
+  - package.json
   - tests/e2e/long-session-restart-journeys.spec.ts
   - scripts/long-session-restart-evidence.mjs
   - electron/services/sessions-api.ts
