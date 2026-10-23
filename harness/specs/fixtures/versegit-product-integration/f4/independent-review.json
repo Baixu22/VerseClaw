@@ -1,0 +1,71 @@
+{
+  "schema": "clawx.versegit.f4-independent-review/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "reviewedAt": "2026-10-23T14:02:30.738Z",
+  "source": {
+    "commit": "0fc24862ff172ac0c36136255a7b4e39f28a9a75",
+    "tree": "f6cc58007ad3a4a675ee688a0674dac860b641cc"
+  },
+  "verdict": "pass",
+  "priority": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0
+  },
+  "issues": [],
+  "criteria": [
+    {
+      "id": "packaged-layout-no-provider-source",
+      "passed": true,
+      "evidence": [
+        "packaged-flow.json"
+      ]
+    },
+    {
+      "id": "ten-closed-task-loops",
+      "passed": true,
+      "evidence": [
+        "stability-samples.jsonl",
+        "stability-report.json"
+      ]
+    },
+    {
+      "id": "restart-and-interruption",
+      "passed": true,
+      "evidence": [
+        "packaged-flow.json"
+      ]
+    },
+    {
+      "id": "revoked-and-undo",
+      "passed": true,
+      "evidence": [
+        "packaged-flow.json",
+        "stability-samples.jsonl"
+      ]
+    },
+    {
+      "id": "resource-cleanup",
+      "passed": true,
+      "evidence": [
+        "resource-survivors.json"
+      ]
+    },
+    {
+      "id": "raw-metric-recomputation",
+      "passed": true,
+      "evidence": [
+        "stability-report.json",
+        "stability-samples.jsonl"
+      ]
+    },
+    {
+      "id": "unmeasured-explicit",
+      "passed": true,
+      "evidence": [
+        "stability-report.json"
+      ]
+    }
+  ]
+}

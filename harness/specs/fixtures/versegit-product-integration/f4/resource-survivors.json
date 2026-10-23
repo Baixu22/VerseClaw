@@ -1,0 +1,105 @@
+{
+  "schema": "clawx.versegit.f4-resource-survivors/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "0fc24862ff172ac0c36136255a7b4e39f28a9a75",
+    "tree": "f6cc58007ad3a4a675ee688a0674dac860b641cc",
+    "dirty": false
+  },
+  "observed": true,
+  "totals": {
+    "processes": 0,
+    "managers": 0,
+    "worktrees": 0,
+    "tempRoots": 0
+  },
+  "loops": [
+    {
+      "loopId": "f4-loop-01",
+      "processSurvivors": 0,
+      "managerSurvivors": 0,
+      "worktreeSurvivors": 0,
+      "tempSurvivors": 0,
+      "cleanupObserved": true
+    },
+    {
+      "loopId": "f4-loop-02",
+      "processSurvivors": 0,
+      "managerSurvivors": 0,
+      "worktreeSurvivors": 0,
+      "tempSurvivors": 0,
+      "cleanupObserved": true
+    },
+    {
+      "loopId": "f4-loop-03",
+      "processSurvivors": 0,
+      "managerSurvivors": 0,
+      "worktreeSurvivors": 0,
+      "tempSurvivors": 0,
+      "cleanupObserved": true
+    },
+    {
+      "loopId": "f4-loop-04",
+      "processSurvivors": 0,
+      "managerSurvivors": 0,
+      "worktreeSurvivors": 0,
+      "tempSurvivors": 0,
+      "cleanupObserved": true
+    },
+    {
+      "loopId": "f4-loop-05",
+      "processSurvivors": 0,
+      "managerSurvivors": 0,
+      "worktreeSurvivors": 0,
+      "tempSurvivors": 0,
+      "cleanupObserved": true
+    },
+    {
+      "loopId": "f4-loop-06",
+      "processSurvivors": 0,
+      "managerSurvivors": 0,
+      "worktreeSurvivors": 0,
+      "tempSurvivors": 0,
+      "cleanupObserved": true
+    },
+    {
+      "loopId": "f4-loop-07",
+      "processSurvivors": 0,
+      "managerSurvivors": 0,
+      "worktreeSurvivors": 0,
+      "tempSurvivors": 0,
+      "cleanupObserved": true
+    },
+    {
+      "loopId": "f4-loop-08",
+      "processSurvivors": 0,
+      "managerSurvivors": 0,
+      "worktreeSurvivors": 0,
+      "tempSurvivors": 0,
+      "cleanupObserved": true
+    },
+    {
+      "loopId": "f4-loop-09",
+      "processSurvivors": 0,
+      "managerSurvivors": 0,
+      "worktreeSurvivors": 0,
+      "tempSurvivors": 0,
+      "cleanupObserved": true
+    },
+    {
+      "loopId": "f4-loop-10",
+      "processSurvivors": 0,
+      "managerSurvivors": 0,
+      "worktreeSurvivors": 0,
+      "tempSurvivors": 0,
+      "cleanupObserved": true
+    }
+  ],
+  "upstreamEvidence": [
+    "harness/specs/fixtures/versegit-product-integration/f2/resource-inventory.json",
+    "harness/specs/fixtures/versegit-product-integration/f3/sidecar-package-manifest.json"
+  ],
+  "passed": true
+}

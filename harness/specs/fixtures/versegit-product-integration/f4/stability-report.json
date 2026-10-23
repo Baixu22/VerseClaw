@@ -1,0 +1,79 @@
+{
+  "schema": "clawx.versegit.f4-stability-report/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "generatedAt": "2026-10-23T14:02:18.246Z",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "0fc24862ff172ac0c36136255a7b4e39f28a9a75",
+    "tree": "f6cc58007ad3a4a675ee688a0674dac860b641cc",
+    "dirty": false
+  },
+  "package": {
+    "packageId": "vg-0.1.0-win32-x64-release-6b8330354da59118",
+    "artifactSha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+    "capabilitiesSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26"
+  },
+  "budgets": {
+    "completeLoops": 10,
+    "maxFailureRate": 0,
+    "maxDuplicateApplyCount": 0,
+    "maxP95LoopMs": 180000,
+    "maxPeakRssMb": 2048,
+    "maxProcessSurvivors": 0,
+    "maxManagerSurvivors": 0,
+    "maxWorktreeSurvivors": 0,
+    "maxTempSurvivors": 0
+  },
+  "aggregate": {
+    "sampleCount": 10,
+    "successes": 10,
+    "failures": 0,
+    "failureRate": 0,
+    "p50LoopMs": 19651,
+    "p95LoopMs": 25452,
+    "peakRssMb": 57.1796875,
+    "duplicateApplyCount": 0,
+    "survivors": {
+      "processes": 0,
+      "managers": 0,
+      "worktrees": 0,
+      "tempRoots": 0
+    },
+    "uniqueCandidateCount": 10,
+    "revokedGrantRejected": true,
+    "undoRecovered": true,
+    "checks": {
+      "completeLoops": true,
+      "failureRate": true,
+      "duplicateApply": true,
+      "p95Loop": true,
+      "peakRss": true,
+      "processes": true,
+      "managers": true,
+      "worktrees": true,
+      "tempRoots": true,
+      "allLoopsPassed": true
+    },
+    "passed": true
+  },
+  "coverage": {
+    "observedPlatforms": [
+      "win32-x64"
+    ],
+    "observedModes": [
+      "M1"
+    ],
+    "closedLoops": 10,
+    "coldStarts": 3,
+    "realRendererHost": true,
+    "actualRuntimeToolReceiptApply": true,
+    "unmeasured": [
+      "non-Windows platforms",
+      "models not exercised by deterministic probe",
+      "languages not present in the fixture repo"
+    ]
+  },
+  "samplesPath": "D:\\ClawX-work\\versegit-product-integration-20261022\\harness\\specs\\fixtures\\versegit-product-integration\\f4\\stability-samples.jsonl",
+  "passed": true
+}
