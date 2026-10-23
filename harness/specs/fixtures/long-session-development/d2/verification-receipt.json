@@ -1,0 +1,308 @@
+{
+  "schema": "clawx.long-session.d2-verification/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-d2",
+  "taskForestNode": "TF-0557",
+  "taskKey": "D2",
+  "program": "long-session-development-20261022",
+  "contract": "harness/specs/tasks/long-session-paired-evaluation.md",
+  "generatedAt": "2026-10-23T16:16:09.882Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261022",
+    "commit": "6d8d9d97d949dda8ccefc2677b47ebecfdaa92ab",
+    "tree": "874a1e5ba31fd52fc329176b2cb3f10daf960076",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+  },
+  "workloadHash": "33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e",
+  "providerProbe": {
+    "probedEnvNames": [
+      "COMPACTION_API_KEY",
+      "COMPACTION_BASE_URL",
+      "COMPACTION_PROVIDER",
+      "DEEPSEEK_API_KEY",
+      "OPENAI_API_KEY",
+      "ANTHROPIC_API_KEY"
+    ],
+    "configured": [],
+    "liveProviderAuthorized": false,
+    "note": "Env presence is only probed; no credential value is read, hashed or persisted by this driver."
+  },
+  "gateReceipt": {
+    "provided": true,
+    "source": "D:/tmp/long-session-d2/gates-6d8d9d97d/gates.json",
+    "candidate": {
+      "commit": "6d8d9d97d949dda8ccefc2677b47ebecfdaa92ab",
+      "tree": "874a1e5ba31fd52fc329176b2cb3f10daf960076",
+      "dirtyBefore": "",
+      "dirtyAfter": "?? harness/specs/fixtures/long-session-development/d2/"
+    },
+    "allPassed": true,
+    "gates": [
+      {
+        "name": "focused-unit",
+        "command": "pnpm exec vitest run tests/unit/context-lifecycle-boundary.test.ts tests/unit/context-lifecycle-soft-threshold.test.ts tests/unit/context-lifecycle-value-pruning.test.ts tests/unit/context-lifecycle-segment-ledger.test.ts tests/unit/long-session-paired-evaluation.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "durationMs": 20492,
+        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\focused-unit.log",
+        "summary": "  Test Files  5 passed (5)       Tests  25 passed (25)    Start at  00:14:54    Duration  15.31s (transform 4.52s, setup 682ms, import 9.37s, tests 2.04s, environment 2.20s) "
+      },
+      {
+        "name": "d2-evidence-generate",
+        "command": "pnpm run long-session:d2:evidence",
+        "exitCode": 0,
+        "durationMs": 1118,
+        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\d2-evidence-generate.log",
+        "summary": "      \"paired-workload-manifest.json\",       \"verification-receipt.json\"     ],     \"policy\": \"Exact curated D2 evidence only. Raw gate logs stay under D:/tmp and are referenced, never committed.\"   } }"
+      },
+      {
+        "name": "d2-evidence-check",
+        "command": "pnpm run long-session:d2:evidence:check",
+        "exitCode": 0,
+        "durationMs": 1245,
+        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\d2-evidence-check.log",
+        "summary": "{   \"checkOnly\": true,   \"ok\": true,   \"failures\": [],   \"workloadHash\": \"33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e\" }"
+      },
+      {
+        "name": "typecheck",
+        "command": "pnpm run typecheck",
+        "exitCode": 0,
+        "durationMs": 37801,
+        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\typecheck.log",
+        "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+      },
+      {
+        "name": "contract-check",
+        "command": "pnpm run contract:check",
+        "exitCode": 0,
+        "durationMs": 983,
+        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\contract-check.log",
+        "summary": "$ node scripts/contract-check.mjs Contract check passed."
+      },
+      {
+        "name": "comms-replay",
+        "command": "pnpm run comms:replay",
+        "exitCode": 0,
+        "durationMs": 966,
+        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\comms-replay.log",
+        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
+      },
+      {
+        "name": "comms-compare",
+        "command": "pnpm run comms:compare",
+        "exitCode": 0,
+        "durationMs": 799,
+        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\comms-compare.log",
+        "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
+      },
+      {
+        "name": "harness-validate",
+        "command": "pnpm harness validate --spec harness/specs/tasks/long-session-paired-evaluation.md",
+        "exitCode": 0,
+        "durationMs": 1637,
+        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\harness-validate.log",
+        "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-paired-evaluation.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-paired-evaluation.md\" Spec is valid: harness\\specs\\tasks\\long-session-paired-evaluation.md"
+      },
+      {
+        "name": "git-diff-check",
+        "command": "git diff --check",
+        "exitCode": 0,
+        "durationMs": 65,
+        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\git-diff-check.log",
+        "summary": ""
+      },
+      {
+        "name": "eslint-changed",
+        "command": "pnpm exec eslint shared/long-session-paired-evaluation.ts tests/unit/long-session-paired-evaluation.test.ts scripts/long-session-paired-evaluation.mjs",
+        "exitCode": 0,
+        "durationMs": 4446,
+        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\eslint-changed.log",
+        "summary": ""
+      }
+    ]
+  },
+  "verdict": "EVIDENCE_INSUFFICIENT",
+  "featureClaim": "a frozen 30-pair agent-driven evaluation harness with fail-closed promotion gates exists; no continuity-strategy benefit is claimed",
+  "acceptance": [
+    {
+      "criterion": "freeze >=30 agent-driven pairs with must-preserve facts and metric budget before measurement, covering compression/handoff/fork/restart/revocation, one shared model parameter block",
+      "result": "pass",
+      "evidence": [
+        "paired-workload-manifest.json"
+      ]
+    },
+    {
+      "criterion": "fidelity 100%, false completions 0, next-action >= 95%, real token/cache/cost and first-token/wall-clock P50/P95 recorded without character estimates",
+      "result": "not-measurable",
+      "evidence": [
+        "fidelity-latency-cost-report.json"
+      ],
+      "note": "no authorized live-provider endpoint: cells stay null and the candidate is not eligible"
+    },
+    {
+      "criterion": "promotion gate: >=15% cost or input-token reduction, P95 within 1.10x baseline, zero safety regression; thresholds only movable by a pre-measurement proposal",
+      "result": "pass",
+      "evidence": [
+        "paired-workload-manifest.json",
+        "fidelity-latency-cost-report.json"
+      ],
+      "note": "thresholds are validated inside the frozen workload hash; any edit invalidates the hash"
+    },
+    {
+      "criterion": "without authorized live provider or sufficient quality/cost samples, output evidenceInsufficient/NO-GO and complete decision inputs; never promote on simulated data",
+      "result": "pass",
+      "evidence": [
+        "candidate-decision-inputs.json"
+      ]
+    }
+  ],
+  "results": {
+    "status": "EVIDENCE_INSUFFICIENT",
+    "samplePairs": 30,
+    "requiredPairs": 30,
+    "liveProviderEvidence": false,
+    "metricsBasis": "agent-derived-structural",
+    "qualityClaimAllowed": false,
+    "blockers": [
+      "no live-provider evidence: agent-derived or synthetic measurements cannot promote a candidate",
+      "token and cost reduction are unmeasured for the current sample",
+      "first-token and wall-clock P95 are unmeasured for the current sample"
+    ],
+    "unmeasured": [
+      "live-provider fidelity, next-action, token/cache/cost and first-token/wall-clock P50/P95",
+      "cost or input-token net reduction of at least 15%",
+      "first-token and wall-clock P95 within 1.10x of baseline"
+    ],
+    "metrics": {
+      "baselineFidelity": 1,
+      "candidateFidelity": 1,
+      "baselineNextActionAccuracy": 1,
+      "candidateNextActionAccuracy": 1,
+      "baselineFalseCompletions": 0,
+      "candidateFalseCompletions": 0,
+      "baselineRevokedLeaks": 72,
+      "candidateRevokedLeaks": 0,
+      "baselineInputTokens": null,
+      "candidateInputTokens": null,
+      "inputTokenReduction": null,
+      "baselineCostUsd": null,
+      "candidateCostUsd": null,
+      "costReduction": null,
+      "baselineFirstTokenP50Ms": null,
+      "candidateFirstTokenP50Ms": null,
+      "baselineFirstTokenP95Ms": null,
+      "candidateFirstTokenP95Ms": null,
+      "baselineWallClockP50Ms": null,
+      "candidateWallClockP50Ms": null,
+      "baselineWallClockP95Ms": null,
+      "candidateWallClockP95Ms": null,
+      "unmeasuredTokenCells": 120,
+      "unmeasuredLatencyCells": 120,
+      "characterEstimatedCostCells": 0
+    },
+    "negativeCaseCounts": {
+      "total": 80,
+      "failed": 0
+    }
+  },
+  "commands": [
+    {
+      "name": "focused-unit",
+      "exitCode": 0,
+      "durationMs": 20492,
+      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\focused-unit.log",
+      "summary": "  Test Files  5 passed (5)       Tests  25 passed (25)    Start at  00:14:54    Duration  15.31s (transform 4.52s, setup 682ms, import 9.37s, tests 2.04s, environment 2.20s) "
+    },
+    {
+      "name": "d2-evidence-generate",
+      "exitCode": 0,
+      "durationMs": 1118,
+      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\d2-evidence-generate.log",
+      "summary": "      \"paired-workload-manifest.json\",       \"verification-receipt.json\"     ],     \"policy\": \"Exact curated D2 evidence only. Raw gate logs stay under D:/tmp and are referenced, never committed.\"   } }"
+    },
+    {
+      "name": "d2-evidence-check",
+      "exitCode": 0,
+      "durationMs": 1245,
+      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\d2-evidence-check.log",
+      "summary": "{   \"checkOnly\": true,   \"ok\": true,   \"failures\": [],   \"workloadHash\": \"33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e\" }"
+    },
+    {
+      "name": "typecheck",
+      "exitCode": 0,
+      "durationMs": 37801,
+      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\typecheck.log",
+      "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+    },
+    {
+      "name": "contract-check",
+      "exitCode": 0,
+      "durationMs": 983,
+      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\contract-check.log",
+      "summary": "$ node scripts/contract-check.mjs Contract check passed."
+    },
+    {
+      "name": "comms-replay",
+      "exitCode": 0,
+      "durationMs": 966,
+      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\comms-replay.log",
+      "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
+    },
+    {
+      "name": "comms-compare",
+      "exitCode": 0,
+      "durationMs": 799,
+      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\comms-compare.log",
+      "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
+    },
+    {
+      "name": "harness-validate",
+      "exitCode": 0,
+      "durationMs": 1637,
+      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\harness-validate.log",
+      "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-paired-evaluation.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-paired-evaluation.md\" Spec is valid: harness\\specs\\tasks\\long-session-paired-evaluation.md"
+    },
+    {
+      "name": "git-diff-check",
+      "exitCode": 0,
+      "durationMs": 65,
+      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\git-diff-check.log",
+      "summary": ""
+    },
+    {
+      "name": "eslint-changed",
+      "exitCode": 0,
+      "durationMs": 4446,
+      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\eslint-changed.log",
+      "summary": ""
+    }
+  ],
+  "counts": {
+    "gates": 10,
+    "failedGates": 0,
+    "frozenPairs": 30,
+    "negativeCases": 80,
+    "failedNegativeCases": 0
+  },
+  "cleanup": {
+    "startedProcesses": false,
+    "startedGateway": false,
+    "startedElectron": false,
+    "providerRequests": 0,
+    "temporaryRoot": "D:/tmp",
+    "recoveryRequired": false,
+    "notes": "Local deterministic generation; raw gate logs live outside Git under D:/tmp and are referenced by path only."
+  },
+  "limitations": [
+    "D2 delivers the frozen evaluation harness and its honest NO-GO decision inputs; it does not run a live provider in this environment.",
+    "No product default, frozen lock, publication scope or independent Project decision is made or implied by this node.",
+    "All evidence is agent-driven; no real-human verdict or human data is claimed."
+  ],
+  "artifacts": [
+    "paired-workload-manifest.json",
+    "fidelity-latency-cost-report.json",
+    "candidate-decision-inputs.json",
+    "README.md",
+    "verification-receipt.json",
+    "SHA256SUMS"
+  ]
+}
