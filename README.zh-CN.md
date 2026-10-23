@@ -97,7 +97,7 @@ ClawGraph 从工作区 YAML 加载流程，展示编译诊断、节点状态、�
 
 ### VerseGit 有界编码闭环
 
-VerseGit 是一个内部、显式启用的仓库证据 sidecar，只用于一条有界的 Windows x64（`win32-x64`）/M1 编码闭环。它**默认关闭**且**非 GA**：`liveReady=false`、`productApproved=false`，M4 落地/准入权限未获授权。ClawX 仍是 executor、任务/编排、审批、write journal 与 Git apply 的宿主。Worker 候选必须先组合、冻结并验证，之后才由宿主写回。边界、证据和未测范围见[验证入口](docs/dev/versegit-validation-layer/README.md)；其他平台、更广的模型/语言覆盖及 M4 broker 仍未测量或不在范围内。
+VerseGit 是一个内部、显式启用的仓库证据 sidecar，只用于一条有界的 Windows x64（`win32-x64`）/M1 编码闭环。它**默认关闭**且**尚未批准全面可用**：`liveReady=false`、`productApproved=false`，M4 落地/准入权限未获授权。ClawX 仍是 executor、任务/编排、审批、write journal 与 Git apply 的宿主。Worker 候选必须先组合、冻结并验证，之后才由宿主写回。边界、证据和未测范围见[验证入口](docs/dev/versegit-validation-layer/README.md)；其他平台、更广的模型/语言覆盖及 M4 broker 仍未测量或不在范围内。
 
 ### 实验能力的范围
 

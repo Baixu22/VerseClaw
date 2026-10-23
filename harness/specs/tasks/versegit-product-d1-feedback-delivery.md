@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-d1-feedback-delivery
 title: 把 VG 风险经现有工具结果送入 agent 下一次上下文
 program: versegit-product-integration

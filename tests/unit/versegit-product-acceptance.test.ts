@@ -162,7 +162,7 @@ describe('VerseGit product integration acceptance', () => {
     expect(build.reproducibility).toEqual(expect.objectContaining({ status: 'semantic-identity-only', claimable: false }));
   });
 
-  it('requires all three README languages, the product authority link and explicit non-GA/M4 boundaries', () => {
+  it('requires all three README languages, the controlled-preview lock and explicit M4 boundaries', () => {
     for (const path of F5_README_PATHS) {
       const text = readFileSync(resolve(root, path), 'utf8');
       expect(text).toContain(F5_DOCS_PATH);
@@ -171,19 +171,25 @@ describe('VerseGit product integration acceptance', () => {
       expect(text).toContain('M4');
       expect(text).toContain('win32-x64');
       expect(text).toContain('M1');
+      expect(text).not.toMatch(/\bGA\b/u);
     }
     const semantics = readFileSync(resolve(root, F5_PRODUCT_SEMANTICS_PATH), 'utf8');
-    expect(semantics).toContain('| VerseGit bounded coding loop | `opt-in` |');
-    expect(semantics).toContain('write journal');
-    expect(semantics).toContain('Git apply');
+    const fpStart = semantics.indexOf('<!-- FP-P1-08-COMPONENT-STATUS-START -->');
+    const fpEnd = semantics.indexOf('<!-- FP-P1-08-COMPONENT-STATUS-END -->');
+    expect(fpStart).toBeGreaterThanOrEqual(0);
+    expect(fpEnd).toBeGreaterThan(fpStart);
+    const fpSection = semantics.slice(fpStart, fpEnd);
+    const fpRows = fpSection.split(/\r?\n/u).filter((line) => /^\| [^|-].*\| `[^`]+` \|/u.test(line));
+    expect(fpRows).toHaveLength(10);
+    expect(fpSection).not.toContain('VerseGit');
     const manifest = readFileSync(resolve(root, F5_MANIFEST_PATH), 'utf8');
     const block = manifest.slice(
       manifest.indexOf('export const PRODUCT_SURFACE_AUTHORITY_LINKS'),
       manifest.indexOf('export const DEFAULT_MATRIX_AUTHORITY_LINKS'),
     );
-    expect(block).toContain("'VerseGit bounded coding loop'");
+    expect(block).not.toContain('VerseGit');
     for (const owner of ['coding-execution-backend', 'verseshell-execution-adapter', 'permission-approval-authority', 'task-ledger', 'observability-recorder']) {
-      expect(block).toContain(owner);
+      expect(manifest).toContain(`id: '${owner}'`);
     }
     const docs = readFileSync(resolve(root, F5_DOCS_PATH), 'utf8');
     expect(docs).toContain('P0=0');

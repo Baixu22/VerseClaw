@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-f3-sidecar-delivery
 title: 固定可复建的 VG sidecar 交付与消费身份
 program: versegit-product-integration

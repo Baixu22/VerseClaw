@@ -78,6 +78,8 @@ describe("orchestration worktree merge evidence", () => {
     expect(results[0]?.changedFiles).toContain("src/actual.ts");
     expect(results[0]?.writeSetMismatch).toEqual(["src/actual.ts", "src/declared.ts"]);
     expect(results[0]?.reason).toContain("writeSet_mismatch:src/actual.ts,src/declared.ts");
+    expect(() => service.cleanup("wt-mismatch")).toThrow(/worktree_cleanup_user_content_present/);
+    rmSync(join(worktree.root, "src", "actual.ts"), { force: true });
     service.cleanup("wt-mismatch");
   });
 });

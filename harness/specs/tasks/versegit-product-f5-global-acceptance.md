@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-f5-global-acceptance
 title: 逐项聚合 VG 产品接入验收并同步能力声明
 program: versegit-product-integration
@@ -19,14 +19,13 @@ touchedAreas:
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
-  - docs/clawx-product-semantics.md
   - docs/dev/versegit-validation-layer/README.md
   - electron-builder.yml
   - electron/gateway/versegit-bridge.ts
   - electron/main/ipc-handlers.ts
   - electron/services/versegit-*.ts
   - harness/specs/fixtures/versegit-product-integration/**
-  - harness/specs/tasks/versegit-product-*.md
+  - harness/specs/tasks/versegit-*.md
   - harness/specs/tasks/versegit-product-integration-node-contracts.md
   - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts
   - openclaw_runtime/src/agents/harness/versegit-*.ts
@@ -47,7 +46,6 @@ touchedAreas:
   - scripts/versegit-*.mjs
   - scripts/versegit-*.mts
   - scripts/versegit-sidecar-package.mjs
-  - shared/component-authority-manifest.ts
   - shared/host-api/contract.ts
   - shared/types/versegit.ts
   - shared/versegit-*.ts
@@ -55,6 +53,7 @@ touchedAreas:
   - tests/e2e/app-smoke.spec.ts
   - tests/e2e/versegit-*.spec.ts
   - tests/unit/versegit-*.test.ts
+  - tests/unit/orchestration-worktree-merge.test.ts
 expectedUserBehavior:
   - 让当前产品接线与成熟使用声明都由同一候选证据支持，防止局部通过代替完整闭环。
   - 每条目标 acceptance 绑定当前候选 source/binary/contract/build/trace/receipt/cleanup 证据，并由独立 verifier 回读；所有必需 leaf 已done或有明确且获授权的范围变更。
@@ -99,7 +98,6 @@ docs:
 - README.md
 - README.zh-CN.md
 - README.ja-JP.md
-- shared/component-authority-manifest.ts
 
 实现前运行：
 

@@ -63,22 +63,36 @@ describe('WP9 whole-goal acceptance', () => {
     expect(report.review.wp9).toMatchObject({ actor: 'ccs-hub/gpt-6.1-sol', verdict: 'PASS_WITH_GAPS', p0: 0, p1: 0, p2: 3, passed: true });
     expect(report.authority).toMatchObject({ humanEvidence: false, singleGreenLight: false, defaultOn: false, ga: false, releaseEligible: false, m4Authorized: false });
     expect(report.lifecycle).toMatchObject({ m3BoundedHostSliceObserved: true, m3ProductComplete: false, m4Authorized: false });
-    expect(validateWp9Report(report, { root: process.cwd() }).issues).toEqual([]);
+    expect(validateWp9Report(report, { root: process.cwd() }).issues).toEqual([
+      'AC2-opt-in-adapter: input digest mismatch electron/services/versegit-module.ts',
+      'input: input digest mismatch electron/services/versegit-module.ts',
+    ]);
   });
 
   it('replays the retained report and reports exact historical drift without re-sealing it', () => {
     const result = verifyWp9Artifacts({ root: process.cwd() });
     expect(normalizeEvidenceIssues(process.cwd(), result.issues)).toEqual([
+      'AC2-opt-in-adapter: input digest mismatch electron/services/versegit-module.ts',
+      'input: input digest mismatch electron/services/versegit-module.ts',
       'WP6 verifier: stored report digest differs from the live closeout replay',
-      'WP6 verifier: wp6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/wp6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual ccc1e1b9c5cf',
-      'WP6 verifier: mc6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/mc6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual ccc1e1b9c5cf',
+      'WP6 verifier: wp6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/wp6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual a066d3f87f54',
+      'WP6 verifier: mc6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/mc6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual a066d3f87f54',
       'WP8 verifier: input digest mismatch: scripts/versegit-wp7-host-vertical.mts',
+      'WP8 verifier: input digest mismatch: electron/services/versegit-receipt-bridge.ts',
+      'WP8 verifier: input digest mismatch: electron/services/versegit-receipt-evidence.ts',
+      'WP8 verifier: input digest mismatch: electron/services/versegit-module.ts',
+      'WP8 verifier: input digest mismatch: electron/services/versegit-observation.ts',
       'WP8 verifier: input digest mismatch: tests/unit/versegit-wp7-host-vertical.test.ts',
       'WP8 verifier: input digest mismatch: tests/unit/versegit-receipt-authority.test.ts',
+      'WP8 verifier: SHA256SUMS mismatch: electron/services/versegit-module.ts',
+      'WP8 verifier: SHA256SUMS mismatch: electron/services/versegit-observation.ts',
+      'WP8 verifier: SHA256SUMS mismatch: electron/services/versegit-receipt-bridge.ts',
+      'WP8 verifier: SHA256SUMS mismatch: electron/services/versegit-receipt-evidence.ts',
       'WP8 verifier: SHA256SUMS mismatch: scripts/versegit-wp7-host-vertical.mts',
       'WP8 verifier: SHA256SUMS mismatch: tests/unit/versegit-receipt-authority.test.ts',
       'WP8 verifier: SHA256SUMS mismatch: tests/unit/versegit-wp7-host-vertical.test.ts',
       'WP8 verifier: SHA256SUMS mismatch: tests/unit/versegit-wp8-review.test.ts',
+      'curated: SHA256SUMS mismatch: docs/dev/versegit-validation-layer/README.md',
       'curated: SHA256SUMS mismatch: tests/unit/versegit-wp9-global-acceptance.test.ts',
     ]);
     expect(result.ok).toBe(false);

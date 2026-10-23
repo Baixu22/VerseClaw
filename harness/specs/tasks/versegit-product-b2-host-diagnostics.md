@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-b2-host-diagnostics
 title: 注册 VG 宿主服务并打通真实诊断读取
 program: versegit-product-integration

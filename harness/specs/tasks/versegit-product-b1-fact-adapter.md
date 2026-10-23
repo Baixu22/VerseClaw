@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-b1-fact-adapter
 title: 实现有界异步 VG 事实适配器与模式校验
 program: versegit-product-integration

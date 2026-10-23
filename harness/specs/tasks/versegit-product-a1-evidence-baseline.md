@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-a1-evidence-baseline
 title: 重建当前 VG 验证基线并保留历史候选证据
 program: versegit-product-integration

@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-e3-host-apply
 title: 把验证前置到写回入口并拒绝目标或授权漂移
 program: versegit-product-integration

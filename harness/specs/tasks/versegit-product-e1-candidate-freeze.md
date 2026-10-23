@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-e1-candidate-freeze
 title: 用宿主 Git 组合并冻结待验证候选
 program: versegit-product-integration

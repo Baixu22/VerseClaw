@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: archived
 id: versegit-module-implementation-contracts
 title: VerseGit module implementation node contracts
 scenario: versegit-validation-layer-extension

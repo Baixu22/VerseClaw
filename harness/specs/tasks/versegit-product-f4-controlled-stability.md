@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-f4-controlled-stability
 title: 验证安装布局中的并发闭环与有界稳定性
 program: versegit-product-integration

@@ -29,8 +29,24 @@ describe('WP6 merged closeout', () => {
           mismatches: ['tests/unit/versegit-mc3-delivery.test.ts: expected 2b43c7c54523 actual 00d5b3c81ff3'],
         },
         {
+          path: 'harness/specs/fixtures/versegit-planning-correction/mc4-evidence/SHA256SUMS',
+          mismatches: ['electron/services/versegit-module.ts: expected 15f36a1202e2 actual d7e32f30ee7f'],
+        },
+        {
           path: 'harness/specs/fixtures/versegit-planning-correction/wp0-evidence/SHA256SUMS',
           mismatches: ['tests/unit/versegit-wp0-contract.test.ts: expected 0e896877a9ff actual fabc979db93a'],
+        },
+        {
+          path: 'harness/specs/fixtures/versegit-planning-correction/wp1-evidence/SHA256SUMS',
+          mismatches: ['electron/services/versegit-observation.ts: expected 120fc546cfed actual b060dca0ba83'],
+        },
+        {
+          path: 'harness/specs/fixtures/versegit-planning-correction/wp2-evidence/SHA256SUMS',
+          mismatches: ['electron/services/versegit-module.ts: expected 15f36a1202e2 actual d7e32f30ee7f'],
+        },
+        {
+          path: 'harness/specs/fixtures/versegit-planning-correction/wp3-evidence/SHA256SUMS',
+          mismatches: ['electron/services/versegit-receipt-bridge.ts: expected af8aebd01759 actual a379784eab4c'],
         },
       ]);
     expect(built.report.authority).toMatchObject({ hostVerdict: 'unchanged', singleGreenLight: false, liveVerseShellReceiptExecuted: false, m4Authorized: false });

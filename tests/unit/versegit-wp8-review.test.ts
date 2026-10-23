@@ -12,6 +12,10 @@ describe('WP8 independent review', () => {
     const report = stored();
     expect(validateWp8Report(report).issues).toEqual([
       'input digest mismatch: scripts/versegit-wp7-host-vertical.mts',
+      'input digest mismatch: electron/services/versegit-receipt-bridge.ts',
+      'input digest mismatch: electron/services/versegit-receipt-evidence.ts',
+      'input digest mismatch: electron/services/versegit-module.ts',
+      'input digest mismatch: electron/services/versegit-observation.ts',
       'input digest mismatch: tests/unit/versegit-wp7-host-vertical.test.ts',
       'input digest mismatch: tests/unit/versegit-receipt-authority.test.ts',
     ]);

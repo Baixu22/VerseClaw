@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-f2-cleanup-barrier
 title: 把证据封存和解除 VG 引用接入所有清理路径
 program: versegit-product-integration

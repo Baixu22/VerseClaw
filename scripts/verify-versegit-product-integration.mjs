@@ -133,6 +133,26 @@ export const F5_SOURCE_INPUTS = [
   F5_MANIFEST_PATH,
   ...F5_README_PATHS,
   F5_AUTOCLOSE_RULE_PATH,
+  'harness/specs/tasks/versegit-module-implementation-contracts.md',
+  'harness/specs/tasks/versegit-product-a1-evidence-baseline.md',
+  'harness/specs/tasks/versegit-product-a2-runtime-baseline.md',
+  'harness/specs/tasks/versegit-product-b1-fact-adapter.md',
+  'harness/specs/tasks/versegit-product-b2-host-diagnostics.md',
+  'harness/specs/tasks/versegit-product-c1-runtime-bindings.md',
+  'harness/specs/tasks/versegit-product-c2-observation-basis.md',
+  'harness/specs/tasks/versegit-product-d1-feedback-delivery.md',
+  'harness/specs/tasks/versegit-product-d2-paired-agent-evaluation.md',
+  'harness/specs/tasks/versegit-product-e1-candidate-freeze.md',
+  'harness/specs/tasks/versegit-product-e2-receipt-verification.md',
+  'harness/specs/tasks/versegit-product-e3-host-apply.md',
+  'harness/specs/tasks/versegit-product-f1-completion-contract.md',
+  'harness/specs/tasks/versegit-product-f2-cleanup-barrier.md',
+  'harness/specs/tasks/versegit-product-f3-sidecar-delivery.md',
+  'harness/specs/tasks/versegit-product-f4-controlled-stability.md',
+  'tests/unit/orchestration-worktree-merge.test.ts',
+  'tests/unit/versegit-wp6-closeout.test.ts',
+  'tests/unit/versegit-wp8-review.test.ts',
+  'tests/unit/versegit-wp9-global-acceptance.test.ts',
   'shared/capability-claims.ts',
   'shared/dcs/component-disposition-catalog.ts',
   'shared/versegit-cleanup-barrier.ts',
@@ -159,7 +179,7 @@ const README_CLAIMS = {
   'README.md': [
     'VerseGit bounded coding loop',
     'default-off',
-    'non-GA',
+    'not approved for general availability',
     'liveReady=false',
     'productApproved=false',
     'M4',
@@ -171,7 +191,7 @@ const README_CLAIMS = {
   'README.zh-CN.md': [
     'VerseGit 有界编码闭环',
     '默认关闭',
-    '非 GA',
+    '尚未批准全面可用',
     'liveReady=false',
     'productApproved=false',
     'M4',
@@ -183,7 +203,7 @@ const README_CLAIMS = {
   'README.ja-JP.md': [
     'VerseGit の境界付きコーディングループ',
     '既定で無効',
-    '非 GA',
+    '一般提供は未承認',
     'liveReady=false',
     'productApproved=false',
     'M4',
@@ -722,29 +742,32 @@ function evaluateDocs(root) {
   const surfaceStart = manifest.indexOf('export const PRODUCT_SURFACE_AUTHORITY_LINKS');
   const surfaceEnd = manifest.indexOf('export const DEFAULT_MATRIX_AUTHORITY_LINKS', surfaceStart);
   const surfaceBlock = surfaceStart >= 0 && surfaceEnd > surfaceStart ? manifest.slice(surfaceStart, surfaceEnd) : '';
+  const fpStart = semantics.indexOf('<!-- FP-P1-08-COMPONENT-STATUS-START -->');
+  const fpEnd = semantics.indexOf('<!-- FP-P1-08-COMPONENT-STATUS-END -->');
+  const fpSection = fpStart >= 0 && fpEnd > fpStart ? semantics.slice(fpStart, fpEnd) : '';
+  const fpRows = fpSection.split(/\r?\n/u).filter((line) => /^\| [^|-].*\| `[^`]+` \|/u.test(line));
   const readmeChecks = F5_README_PATHS.map((path) => check(
     `readme-${path}`,
-    README_CLAIMS[path].every((token) => readmes[path].includes(token)) && readmes[path].includes(F5_DOCS_PATH),
-    `${path} carries the bounded product claim and links the VG validation layer`,
+    README_CLAIMS[path].every((token) => readmes[path].includes(token)) && readmes[path].includes(F5_DOCS_PATH) && !/\bGA\b/u.test(readmes[path]),
+    `${path} carries the bounded product claim, avoids the GA token on the product surface, and links the VG validation layer`,
   ));
   const requiredOwners = ['coding-execution-backend', 'verseshell-execution-adapter', 'permission-approval-authority', 'task-ledger', 'observability-recorder'];
   return criterion(
     'docs-capability-authority',
-    'Three-language READMEs, product semantics, host authority links and model-facing capability posture agree.',
+    'Three-language READMEs, controlled-preview lock, host authority links and model-facing capability posture agree.',
     [F5_TASK],
     [F5_DOCS_PATH, F5_PRODUCT_SEMANTICS_PATH, F5_MANIFEST_PATH, ...F5_README_PATHS, F5_AUTOCLOSE_RULE_PATH],
     [
       ...readmeChecks,
-      check('product-semantics-row', semantics.includes('| VerseGit bounded coding loop | `opt-in` |') && semantics.includes('M4') && semantics.includes('write journal') && semantics.includes('Git apply'), 'product semantics exposes the VG boundary as opt-in with host-owned write/apply authority'),
-      check('authority-link', surfaceBlock.includes("'VerseGit bounded coding loop'") && requiredOwners.every((owner) => surfaceBlock.includes(owner)), 'component authority surface links VG only to existing ClawX host owners'),
+      check('controlled-preview-lock', fpRows.length === 10 && !fpSection.includes('VerseGit'), 'VG remains outside the frozen 10-component controlled-preview table'),
+      check('host-authority-owners', !surfaceBlock.includes('VerseGit') && requiredOwners.every((owner) => manifest.includes(`id: '${owner}'`)), 'VG is not added to the controlled-preview surface map; host authority remains owned by existing ClawX components'),
       check('model-facing-internal', !/versegit|concurrency-aux/iu.test(disposition) && !/versegit|concurrency-aux/iu.test(capabilityClaims), 'VG remains an internal host sidecar rather than a broad user-visible model capability claim'),
       check('validation-doc', validationDoc.includes(F5_REPORT_PATH) && validationDoc.includes('P0=0') && validationDoc.includes('P1=0') && validationDoc.includes('P2') && validationDoc.includes('win32-x64') && validationDoc.includes('M1'), 'validation README links the F5 report and carries exact verdict/scope'),
       check('task-forest-gate', autocloseRule.includes('base_graph_hash') && autocloseRule.includes('proposal-apply --yes') && autocloseRule.includes('validate') && autocloseRule.includes('export'), 'Task Forest closure remains hash-gated with proposal-apply/validate/export'),
     ],
-    'Scans READMEs, product semantics, authority/manifest and Task Forest closeout rule for current claim agreement.',
+    'Scans READMEs, controlled-preview lock, host authority/manifest and Task Forest closeout rule for current claim agreement.',
   );
 }
-
 export function buildAcceptanceState({ root = repositoryRoot, sourceCommit } = {}) {
   const head = String(git(root, ['rev-parse', 'HEAD'])).trim();
   const evidenceCommit = sourceCommit ?? head;

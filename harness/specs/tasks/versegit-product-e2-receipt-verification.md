@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-e2-receipt-verification
 title: 在冻结候选上运行 VerseShell 验证并重建权威收据
 program: versegit-product-integration

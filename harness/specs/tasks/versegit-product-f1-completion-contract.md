@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-f1-completion-contract
 title: 持久化宿主完成事实并校正 VG 会话终态语义
 program: versegit-product-integration

@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-c1-runtime-bindings
 title: 接通 Gateway 与 Main 的 worktree/session 绑定生命周期
 program: versegit-product-integration

@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-d2-paired-agent-evaluation
 title: 用配对自动化任务验证风险反馈与重读返工行为
 program: versegit-product-integration

@@ -97,7 +97,7 @@ The plugin is **disabled by default** and requires explicit configuration. PPTX 
 
 ### VerseGit bounded coding loop
 
-VerseGit is an internal, opt-in repository-evidence sidecar for one bounded Windows x64 (`win32-x64`)/M1 coding loop. It is **default-off** and **non-GA**; `liveReady=false` and `productApproved=false`, and M4 landing/admission authority is not authorized. ClawX remains the executor, task/orchestration, approval, write journal and Git apply host. Worker candidates are combined, frozen and verified before the host writes them back. See the [evidence-backed boundary](docs/dev/versegit-validation-layer/README.md); other platforms, broader model/language coverage and the M4 broker remain unmeasured or out of scope.
+VerseGit is an internal, opt-in repository-evidence sidecar for one bounded Windows x64 (`win32-x64`)/M1 coding loop. It is **default-off** and **not approved for general availability**; `liveReady=false` and `productApproved=false`, and M4 landing/admission authority is not authorized. ClawX remains the executor, task/orchestration, approval, write journal and Git apply host. Worker candidates are combined, frozen and verified before the host writes them back. See the [evidence-backed boundary](docs/dev/versegit-validation-layer/README.md); other platforms, broader model/language coverage and the M4 broker remain unmeasured or out of scope.
 
 ### Experimental feature boundaries
 

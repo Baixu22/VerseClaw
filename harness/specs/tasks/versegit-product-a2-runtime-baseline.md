@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-a2-runtime-baseline
 title: 刷新运行时构建并通过真实 Electron 启动基线
 program: versegit-product-integration

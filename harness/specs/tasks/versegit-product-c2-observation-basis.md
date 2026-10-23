@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: versegit-product-c2-observation-basis
 title: 在实际工具边界记录读写范围与读取时的版本依据
 program: versegit-product-integration
