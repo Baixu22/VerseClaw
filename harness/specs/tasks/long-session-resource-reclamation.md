@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-resource-reclamation
 title: 治理长期会话的工作树、终端、浏览器与后台资源
 program: long-session-development-20261022
@@ -9,11 +9,22 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 让长期工作既能离开 UI 后继续，也能在取消和结束时按真实 owner 安全退出。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
+diffBase: f2dc2b240
 dependsOnTasks:
   - E1
 touchedAreas:
   - harness/specs/tasks/long-session-resource-reclamation.md
   - harness/specs/tasks/long-session-development-plan.md
+  - shared/long-session-resource-reclamation.ts
+  - electron/services/long-session-resource-reclamation.ts
+  - scripts/long-session-reclamation-evidence.mjs
+  - package.json
+  - openclaw_runtime/src/agents/worktree-service.ts
+  - shared/long-session-resource-reclamation.ts
+  - electron/services/long-session-resource-reclamation.ts
+  - scripts/long-session-reclamation-evidence.mjs
+  - package.json
+  - openclaw_runtime/src/agents/worktree-service.ts
   - electron/services/terminal-session-manager.ts
   - electron/services/session-activity-api.ts
   - electron/services/resource-tracker.ts
@@ -45,6 +56,8 @@ requiredTests:
   - pnpm exec vitest run tests/unit/terminal-session-manager.test.ts tests/unit/session-cascade-delete.test.ts tests/unit/session-delete-gate.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit-fast.config.ts src/sessions/session-admission-registry.test.ts src/sessions/session-admission-registry-reclamation.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/long-session-resource-reclamation.test.ts --maxWorkers=1
+  - pnpm run long-session:e2:evidence
+  - pnpm run long-session:e2:evidence:check
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run comms:replay

@@ -61,6 +61,7 @@ import {
 import { evaluateHandoffDerivation } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
 import { getResourceTracker } from './resource-tracker';
+import { reclaimLongSessionOwnerResources } from './long-session-resource-reclamation';
 import { getObservabilityTraceBuffer } from './observability-service';
 import {
   removeSessionEntry,
@@ -2025,6 +2026,16 @@ export function createSessionsApi(ctx: {
           logger.warn('[coordinator-binding] failed to invalidate after delete', error);
         });
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
+        await reclaimLongSessionOwnerResources({
+          action: 'session-delete',
+          scope: {
+            workspaceId: typeof (payload as { workspaceId?: unknown })?.workspaceId === 'string' ? String((payload as { workspaceId?: unknown }).workspaceId) : '',
+            sessionKey,
+          },
+          terminalManager: ctx.terminalManager,
+        }).catch((error) => {
+          logger.warn('[resource-reclamation] delete pass failed', error);
+        });
       }
       return result;
     },
@@ -2982,6 +2993,16 @@ export function createSessionsApi(ctx: {
           logger.warn('[coordinator-binding] failed to invalidate after archive', error);
         });
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
+        await reclaimLongSessionOwnerResources({
+          action: 'session-archive',
+          scope: {
+            workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : '',
+            sessionKey,
+          },
+          terminalManager: ctx.terminalManager,
+        }).catch((error) => {
+          logger.warn('[resource-reclamation] archive pass failed', error);
+        });
       }
       return result;
     },
