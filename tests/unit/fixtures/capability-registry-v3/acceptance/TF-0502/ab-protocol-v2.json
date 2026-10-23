@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "CapabilityCatalogABProtocol/v2",
+  "schemaVersion": "CapabilityCatalogABProtocol/v2.1",
   "taskForestNodeId": "TF-0502",
   "supersedes": {
     "protocol": "ab-protocol.json",
@@ -23,7 +23,7 @@
     "maxOutputTokens": 200,
     "endpoint": "http://127.0.0.1:3065/v1/responses",
     "model": "space-bunny",
-    "stoppingRule": "fixed n=40 pairs; no early stopping; exactly one live run after this protocol is written"
+    "stoppingRule": "fixed n=40 pairs; no early stopping; exactly one completed live run after this amended protocol is written; the aborted attempt above produced no artifact and no verdict and is not counted as the run"
   },
   "strata": {
     "toolSelection": {
@@ -56,5 +56,31 @@
     "humanEvidence": false,
     "fixtureOnlyCannotPass": true,
     "tokenAccounting": "provider usage only; no local tokenizer"
-  }
+  },
+  "amendedAt": "2026-10-23T01:35:34.296Z",
+  "amendments": [
+    {
+      "beforeAnyCompletedRun": true,
+      "abortedAttempt": {
+        "at": "2026-10-23T01:35:34.304Z",
+        "fixturesSeen": 3,
+        "callsMade": "partial",
+        "artifactWritten": false,
+        "observation": "both arms scored fail on select-0..select-2 although the model returned the canonical capability id (for example openclaw:workspace-read) for the expected capability workspace_read"
+      },
+      "changes": [
+        {
+          "field": "primaryDefinition",
+          "was": "control: first model turn returns {\"tool\":<expected>}; treatment: first model turn returns {\"call\":\"tool_describe\",\"tool\":<expected>}; either arm may use up to maxToolTurns=2",
+          "now": "control and treatment: the model names the expected capability, by display name or by catalog id, within maxToolTurns=2; tool_describe usage is recorded as a diagnostic and is not required for success",
+          "reason": "the metric predeclared by ab-protocol.json is \"model selects the expected callable tool on the first call\". Requiring tool_describe from the treatment arm measured a different behaviour, and comparing the model answer (canonical id) against the display name scored correct answers as failures. No threshold changed."
+        },
+        {
+          "field": "evidencePolicy",
+          "was": "humanEvidence: false; fixtureOnlyCannotPass: true; tokenAccounting: provider usage only",
+          "now": "same, plus matcherDefinedAs: \"capability identity matches when the model value equals the display name or the catalog id of the expected capability, case-insensitive and trimmed\""
+        }
+      ]
+    }
+  ]
 }
