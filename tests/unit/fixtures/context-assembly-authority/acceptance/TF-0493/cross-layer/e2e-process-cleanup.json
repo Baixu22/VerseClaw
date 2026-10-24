@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\tf0493-final-exit-e2e\\verse-claw-e2e-run-h4shnQ",
+  "ledgerEntries": 1,
+  "reaped": [
+    {
+      "pid": 9320,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "ok",
+    "runRoot": "D:\\tmp\\tf0493-final-exit-e2e\\verse-claw-e2e-run-h4shnQ\\",
+    "owned": [],
+    "remaining": []
+  }
+}
