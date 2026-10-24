@@ -460,12 +460,15 @@ function buildArtifacts() {
   const acceptance = [
     {
       criterion:
-        "all six phase criteria are read from disk; each of the 16 execution nodes has current candidate/input/command/exit/counts/artifact/negative proof, and history is not re-signed",
+        "all six phase criteria are read from disk; each of the 15 peer execution nodes (A1-F2) has current candidate/input/command/exit/counts/artifact/negative proof, and history is not re-signed",
       result: missingReceipts.length === 0
         && hashProblems.length === 0
         && phases.every((phase) => phase.allPresent && phase.allHashVerified && phase.allHaveCriteria)
         ? "pass" : "fail",
       observedExecutingNodes: peers.length,
+      // F3 is the sixteenth execution node and is this artifact; the peer set above
+      // is the fifteen nodes it aggregates.
+      observedProgramExecutingNodes: peers.length + 1,
       observedCriteria: criteriaTotal,
       criteriaWithoutEvidence,
       missingReceipts,
