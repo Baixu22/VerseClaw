@@ -71,14 +71,6 @@ $results += Invoke-CapturedGate -Id '11-component-graduation-gate' -Arguments @(
   '--root', '.', '--current-default-mode', 'opt-in', '--require-graduation'
 ) -DisplayCommand 'component-graduation-report.mts --report <TF-0497 report> --root . --current-default-mode opt-in --require-graduation'
 
-$evidencePath = Join-Path $outputDir 'raw-evidence.json'
-$evidence = Get-Content -Raw -LiteralPath $evidencePath -Encoding UTF8 | ConvertFrom-Json
-$evidence.diskReadback.status = 'pending-final-sha256-verification'
-$evidence.diskReadback.evidenceReadable = $true
-$evidence.diskReadback.sha256sumsVerified = $false
-$evidence.diskReadback | Add-Member -NotePropertyName verifiedBy -NotePropertyValue '12-sha256sums-check' -Force
-[System.IO.File]::WriteAllText($evidencePath, (($evidence | ConvertTo-Json -Depth 12) + [Environment]::NewLine), $utf8NoBom)
-
 $sumLines = Get-Content -LiteralPath (Join-Path $outputDir 'SHA256SUMS') -Encoding UTF8
 $sumChecks = foreach ($line in $sumLines) {
   if (-not $line.Trim()) { continue }
@@ -93,22 +85,11 @@ $sumOutput = ($sumChecks | ConvertTo-Json -Depth 5) + [Environment]::NewLine + '
 $sumPath = Join-Path $outputDir '12-sha256sums-check.txt'
 [System.IO.File]::WriteAllText($sumPath, $sumOutput, $utf8NoBom)
 
-$evidence.diskReadback.status = $sumStatus
-$evidence.diskReadback.sha256sumsVerified = ($sumStatus -eq 'pass')
-[System.IO.File]::WriteAllText($evidencePath, (($evidence | ConvertTo-Json -Depth 12) + [Environment]::NewLine), $utf8NoBom)
-$evidence = $null
-$evidence = Get-Content -Raw -LiteralPath $evidencePath -Encoding UTF8 | ConvertFrom-Json
-$readbackStatus = if (
-  $evidence.diskReadback.status -eq 'pass' -and
-  $evidence.diskReadback.evidenceReadable -eq $true -and
-  $evidence.diskReadback.sha256sumsVerified -eq $true
-) { 'pass' } else { 'fail' }
-
 $results += [ordered]@{
   id = '12-sha256sums-check'
-  command = 'PowerShell SHA256 recompute against SHA256SUMS plus raw-evidence readback'
-  exitCode = if ($sumStatus -eq 'pass' -and $readbackStatus -eq 'pass') { 0 } else { 1 }
-  status = if ($sumStatus -eq 'pass' -and $readbackStatus -eq 'pass') { 'pass' } else { 'fail' }
+  command = 'PowerShell SHA256 recompute against SHA256SUMS'
+  exitCode = if ($sumStatus -eq 'pass') { 0 } else { 1 }
+  status = $sumStatus
   outputPath = 'tests/unit/fixtures/memory-authority/acceptance/TF-0497/12-sha256sums-check.txt'
   outputSha256 = (Get-FileHash -LiteralPath $sumPath -Algorithm SHA256).Hash.ToLowerInvariant()
 }

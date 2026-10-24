@@ -28,7 +28,7 @@
 
 ## Evidence lifecycle
 
-`generate-acceptance.mts` writes the authority contract evidence with `diskReadback.status=pending-external-verification`. `run-verification.ps1` records every gate, verifies every entry in `SHA256SUMS`, writes `12-sha256sums-check.txt`, and only then marks the readback pass. The generated contract does not infer external readback success on its own.
+`generate-acceptance.mts` writes the authority contract evidence with `diskReadback.status=pending-external-verification`. `run-verification.ps1` records every gate, verifies every entry in `SHA256SUMS`, and writes the independent proof to `12-sha256sums-check.txt` and `verification.json`. The generated contract and its graduation report remain byte-stable; the external readback is not inferred inside the evidence generator.
 
 ## Reproduction
 
