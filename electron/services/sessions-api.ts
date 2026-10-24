@@ -1807,7 +1807,8 @@ async function deleteSessionViaRuntime(
     }
     if (currentGate.localSweepCommitted !== true) {
       const sweepResult = await deleteSession(sessionKey);
-      if (!sweepResult.success) {
+      const legacyStoreAbsent = !sweepResult.success && /Could not read sessions\.json:.*ENOENT/i.test(sweepResult.error ?? '');
+      if (!sweepResult.success && !legacyStoreAbsent) {
         return sweepResult;
       }
       await updateSessionDeleteGate(gate.operationId, {

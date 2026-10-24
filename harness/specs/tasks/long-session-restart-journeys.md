@@ -9,6 +9,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 证明使用者回到长期入口能继续同一件工作，实际 backend、任务和结果在重启后仍对应正确。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
+diffBase: 0a14f2dd4094f6178135d05ec7e8d112adddc944
 dependsOnTasks:
   - E2
 touchedAreas:
@@ -16,11 +17,14 @@ touchedAreas:
   - harness/specs/tasks/long-session-development-plan.md
   - tests/e2e/fixtures/electron.ts
   - tests/e2e/fixtures/electron-process-cleanup.ts
+  - electron/services/sessions-api.ts
   - tests/e2e/chat-session-handoff.spec.ts
   - tests/e2e/chat-session-fork.spec.ts
   - tests/e2e/chat-session-compact-range.spec.ts
   - tests/e2e/runtime-lifecycle-governance.spec.ts
   - tests/e2e/long-session-restart-journeys.spec.ts
+  - scripts/long-session-restart-evidence.mjs
+  - package.json
   - harness/specs/fixtures/long-session-development/f1/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
