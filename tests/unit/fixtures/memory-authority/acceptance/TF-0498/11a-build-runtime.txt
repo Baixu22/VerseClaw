@@ -1,0 +1,64 @@
+pnpm.cmd : $ node scripts/build-openclaw-runtime.mjs
+At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\memory-authority\acceptance\TF-0498\run-verifica
+tion.ps1:17 char:13
++   $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ node scripts/...law-runtime.mjs:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[canvas] build: node scripts/bundle-a2ui.mjs
+A2UI bundle up to date; skipping.
+[diffs] build: node ../../scripts/build-diffs-viewer-runtime.mjs curated
+[diffs-language-pack] build: node ../../scripts/build-diffs-viewer-runtime.mjs full
+[build-all] tsdown
+[build-all] tsdown done in 9.23s
+[build-all] check-cli-bootstrap-imports
+CLI bootstrap import guard passed.
+[build-all] check-cli-bootstrap-imports done in 436ms
+[build-all] runtime-postbuild
+runtime-postbuild: plugin SDK root alias completed in 1ms
+[bundled-plugin-metadata] skipping missing skill path D:\ClawX-work\worktrees\long-session-program-r2\openclaw_runtime\
+extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 381ms
+runtime-postbuild: official channel catalog completed in 18ms
+runtime-postbuild: bundled plugin runtime overlay completed in 540ms
+runtime-postbuild: static extension assets completed in 0ms
+runtime-postbuild: stable root runtime imports completed in 411ms
+runtime-postbuild: stable root runtime aliases completed in 65ms
+runtime-postbuild: legacy root runtime compat aliases completed in 107ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 1ms
+[build-all] runtime-postbuild done in 1.79s
+[build-all] build-stamp
+[build-all] build-stamp done in 73ms
+[build-all] runtime-postbuild-stamp
+[build-all] runtime-postbuild-stamp done in 72ms
+[build-all] write-cli-startup-metadata
+[cli-startup-metadata] skipped: CLI startup sources are unavailable in this pruned runtime.
+[build-all] write-cli-startup-metadata done in 96ms
+[build-all] write-cli-compat
+[cli-compat] skipped: legacy daemon CLI sources are unavailable in this pruned runtime.
+[build-all] write-cli-compat done in 71ms
+[build-all] phase timings: total 11.8s; slowest tsdown 9.23s; runtime-postbuild 1.79s; check-cli-bootstrap-imports 436m
+s; write-cli-startup-metadata 96ms; build-stamp 73ms; runtime-postbuild-stamp 72ms; write-cli-compat 71ms
+Building openclaw_runtime with esbuild...
+  Source: D:\ClawX-work\worktrees\long-session-program-r2\openclaw_runtime\src
+  Output: D:\ClawX-work\worktrees\long-session-program-r2\openclaw_runtime\dist
+  Found 1157 npm packages (will keep external)
+
+  openclaw_runtime\dist\knowledge\sekb\index.js  367.4kb
+
+Done in 33ms
+  Done in 0.0s
+runtime-postbuild: plugin SDK root alias completed in 0ms
+[bundled-plugin-metadata] skipping missing skill path D:\ClawX-work\worktrees\long-session-program-r2\openclaw_runtime\
+extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 337ms
+runtime-postbuild: official channel catalog completed in 20ms
+runtime-postbuild: bundled plugin runtime overlay completed in 682ms
+runtime-postbuild: static extension assets completed in 174ms
+runtime-postbuild: stable root runtime imports completed in 326ms
+runtime-postbuild: stable root runtime aliases completed in 31ms
+runtime-postbuild: legacy root runtime compat aliases completed in 101ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 0ms
+[canvas] copy: node scripts/copy-a2ui.mjs
+[runtime-build-smoke] gateway ready on port 53980

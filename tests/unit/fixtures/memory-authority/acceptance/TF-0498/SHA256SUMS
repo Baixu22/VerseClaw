@@ -10,10 +10,10 @@ ceba7fbe9cdc5864fd72f2040b37803dbbc8c432e1e0dffc7e9911d23df7a620  src/pages/Agen
 ce8c76a3875cb225656d619f6e131aeb6d70f93cc305d52b7433c869d1cc79f9  tests/e2e/memory-surface.spec.ts
 5fb54054a9fba4ddcc103181ce843cd1aebb2ff9ab5d7dc64100d97897e60728  tests/e2e/role-memory-panel.spec.ts
 93bd046968bade4b8bf5388c5aa925fb9a305a1e8feaee2dc65988fcd5e37940  tests/unit/fixtures/memory-authority/acceptance/TF-0498/README.md
-8a10e3ef6b9f78c6b40059bd960a8e9ec3b1a94e67fb5a4e29376b9669e43b1d  tests/unit/fixtures/memory-authority/acceptance/TF-0498/component-graduation-report.json
+0ca4e47c96384e74537b17c52213fd1c1eb713deb8b703f0c1161218651897a2  tests/unit/fixtures/memory-authority/acceptance/TF-0498/component-graduation-report.json
 a625eb43bc2582d58f0ca1044f2d10c01ee70da2a31285df5332c4ee9c46deaa  tests/unit/fixtures/memory-authority/acceptance/TF-0498/generate-acceptance.mts
-f84e82e7078517b06f8546073480dc7963c2367b80385cf07393aba99b6249bd  tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json
-63061aa65cab8188fbe491283dfbcd15c3f8096d7521473f60267a2dc20ac014  tests/unit/fixtures/memory-authority/acceptance/TF-0498/run-verification.ps1
+e239971acfb8e9d8284baeea6116809150305a614cf94771f1a0441d9c7806aa  tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json
+6129981736b022d7632ede7f2fca7e33bb1313fd60f9bd28d162fab23a2f7da8  tests/unit/fixtures/memory-authority/acceptance/TF-0498/run-verification.ps1
 8eaf6abdbc92aa034be69b15f42e3ec333665ab016ea8fb4d32077af62c5738e  tests/unit/memory-surface-contract.test.ts
 a11900c060e05553658fffd2569124f8f3ad1fb8441fcfcdfe3c58589deddbac  tests/unit/propose-facts-confirm-queue.test.tsx
 c0665eab06114213d6032c3cc19f28d394ad86e09b3b9c9abc036f33d5342404  tests/unit/role-memory-context-provider.test.ts
