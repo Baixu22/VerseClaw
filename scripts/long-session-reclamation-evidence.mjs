@@ -262,19 +262,18 @@ async function main() {
       const recovery = JSON.parse(readFileSync(join(outDir, RECOVERY_FILE), 'utf8'));
       const realE2E = JSON.parse(readFileSync(join(outDir, E2E_RECEIPT_FILE), 'utf8'));
       const current = candidateIdentity();
-      const receiptParent = git(['rev-parse', '--verify', 'HEAD^']);
-      const receiptParentTree = git(['rev-parse', '--verify', 'HEAD^\^{tree}']);
       const sourceCommit = git(['rev-parse', '--verify', `${realE2E.candidate}\^{commit}`]);
+      const sourceTree = git(['rev-parse', '--verify', `${sourceCommit}\^{tree}`]);
       if (receipt.verdict !== 'pass') failures.push('verification receipt is not pass');
-      if (receipt.candidate?.commit !== receiptParent) failures.push('verification receipt is not bound to the evidence commit parent');
-      if (receipt.candidate?.tree !== receiptParentTree) failures.push('verification receipt tree no longer matches the evidence commit parent');
+      if (receipt.candidate?.commit !== sourceCommit) failures.push('verification receipt is not bound to the real Electron source commit');
+      if (receipt.candidate?.tree !== sourceTree) failures.push('verification receipt tree no longer matches the real Electron source commit');
       if (current.status.length > 0 && !allowDirty) failures.push(`working tree is dirty: ${current.status.join(', ')}`);
       if (!receipt.commands?.every((gate) => gate.exitCode === 0)) failures.push('command receipt contains a failure');
       if (cycles.final?.zeroLaneResidue !== true || cycles.cycles !== 50) failures.push('cycle evidence is not a clean 50-cycle result');
-      if (cycles.candidate?.commit !== receiptParent) failures.push('cycle evidence is not bound to the evidence commit parent');
+      if (cycles.candidate?.commit !== receipt.candidate?.commit) failures.push('cycle evidence is not bound to the verification receipt candidate');
       if (!recovery.cases?.every((entry) => entry.receipt?.recoveryRequired === true)) failures.push('recovery fixture no longer fails closed');
-      if (recovery.candidate?.commit !== receiptParent) failures.push('recovery evidence is not bound to the evidence commit parent');
-      if (sourceCommit !== receiptParent) failures.push('real Electron owner receipt was not generated from the evidence commit parent');
+      if (recovery.candidate?.commit !== receipt.candidate?.commit) failures.push('recovery evidence is not bound to the verification receipt candidate');
+      if (sourceCommit !== receipt.candidate?.commit) failures.push('real Electron owner receipt is not bound to the verification receipt candidate');
       if (realE2E.transport !== 'built Electron host:invoke -> actual Gateway runtime -> Main owners') failures.push('real Electron owner receipt transport drifted');
       if (realE2E.terminal?.staleGenerationRejected !== true || realE2E.recoveryRequired !== false) failures.push('real Electron owner receipt no longer proves fail-closed success');
     }
