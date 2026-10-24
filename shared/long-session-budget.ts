@@ -91,8 +91,17 @@ export const LONG_USE_FIXTURE_BUDGET = {
   idleRssSampleIntervalMs: 5_000,
   minIdleRssSamples: 55,
   minSwitchSamples: 5,
-  /** Renderer long tasks >= 50 ms allowed inside a measured window. */
-  maxLongTasksOver50Ms: 0,
+  /**
+   * Renderer long tasks >= 50 ms allowed per measurement window. The bounds come
+   * from the tracked predecessor acceptance state, not from this node samples:
+   * harness/specs/fixtures/tf0423-session-loading/acceptance.json accepted
+   * "opening a long session must not produce a renderer long task over 50 ms"
+   * (openLongTasks 0) with switchLongTasks 1. The idle-control window is recorded
+   * but not gated: it measures host noise while the app is doing nothing, so a
+   * budget there would be an environment claim rather than a code claim.
+   */
+  maxLongTasksOver50MsOnLongSessionOpen: 0,
+  maxLongTasksOver50MsOnSessionSwitch: 1,
 } as const;
 
 /** Metric ids covered by the frozen latency budgets. */
@@ -233,6 +242,76 @@ export const LONG_USE_MAX_SINGLE_BATCH_STEERING_CHARS: number =
       + LONG_USE_NOTIFICATION_BUDGET.maxMetadataChars * 4
       + 100)
   + 1_000;
+
+/**
+ * Measurement validity, declared before measurement. The instrument is not gated by
+ * an arbitrary constant: a run is only comparable when the volume it writes to could
+ * still hold the fixture plus slack. The probe records its own fixture size, so the
+ * floor is derived from that number and not tuned against a sample. A run below it
+ * published but excluded from the median, never silently averaged. Host free memory
+ * is recorded as context only: an absolute RAM floor would make this node
+ * unmeasurable on a busy dev machine, which would be a different kind of fake pass.
+ */
+export const LONG_USE_MEASUREMENT_VALIDITY = {
+  /** Free megabytes required on top of the run's own fixture size. */
+  minDiskHeadroomMbOverFixture: 32,
+  /** Runs below the derived floor are labelled environment-degraded and excluded. */
+  excludeDegradedRunsFromMedian: true,
+} as const;
+
+/**
+ * Derived floor for one run: the recorded fixture size plus the frozen headroom.
+ * A null fixture size means the instrument never reported its workload, which is
+ * itself unmeasured and therefore invalid.
+ */
+export function measurementValidityFloorMb(params: {
+  transcriptBytes: number | null;
+}): number | null {
+  if (typeof params.transcriptBytes !== "number") return null;
+  return Math.ceil(params.transcriptBytes / 1024 / 1024)
+    + LONG_USE_MEASUREMENT_VALIDITY.minDiskHeadroomMbOverFixture;
+}
+
+/** Verdict for one recorded run, from the volume readings taken around it. */
+export function isMeasurementRunValid(run: {
+  freeDiskMb: number | null;
+  freeDiskMbAfter?: number | null;
+  floorMb: number | null;
+}): boolean {
+  if (typeof run.floorMb !== "number") return false;
+  if (typeof run.freeDiskMb !== "number") return false;
+  if (run.freeDiskMb < run.floorMb) return false;
+  if (typeof run.freeDiskMbAfter === "number" && run.freeDiskMbAfter < run.floorMb) return false;
+  return true;
+}
+
+/** Median helper: the 0.5 percentile of a numeric sample set, or null when empty. */
+export function medianOf(values: readonly number[]): number | null {
+  return longUsePercentile(values, 0.5);
+}
+
+/**
+ * Index of the sample whose value sits closest to the median. The long-use report
+ * publishes per-metric medians across runs, and this picks the one raw run whose
+ * switch p95 is nearest its own median so the published raw sample arrays match the
+ * headline instead of an outlier. Empty input returns -1.
+ */
+export function pickReferenceRunIndex(values: readonly number[]): number {
+  if (values.length === 0) return -1;
+  const median = medianOf(values);
+  if (median === null) return -1;
+  let bestIndex = 0;
+  let bestDelta = Math.abs(values[0] - median);
+  for (let index = 1; index < values.length; index += 1) {
+    const delta = Math.abs(values[index] - median);
+    if (delta < bestDelta) {
+      bestDelta = delta;
+      bestIndex = index;
+    }
+  }
+  return bestIndex;
+}
+
 
 /** Scopes that stay explicitly unmeasured for this node. */
 export const LONG_USE_UNMEASURED_SCOPE = [

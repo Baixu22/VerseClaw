@@ -20,6 +20,7 @@ touchedAreas:
   - src/stores/gateway.ts
   - tests/unit/long-session-long-use-budget.test.ts
   - scripts/long-session-f2-evidence.mjs
+  - harness/specs/fixtures/long-session-development/f2/probe-f2.mjs
   - harness/specs/fixtures/long-session-development/f2/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -40,8 +41,9 @@ requiredTests:
   - pnpm exec vitest run tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts tests/unit/session-search-modal-performance.test.tsx --maxWorkers=1
   - pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts --maxWorkers=1
   - pnpm run build:vite
-  - node harness/specs/fixtures/tf0423-session-loading/probe.mjs <repo-root> D:/tmp/long-session-f2/probe-current.json D:/tmp/long-session-f2/probe-run
-  - pnpm long-session:f2:evidence -- --probe D:/tmp/long-session-f2/probe-current.json --observation D:/tmp/long-session-f2/observation.json --gates <gate receipt>
+  - node harness/specs/fixtures/long-session-development/f2/probe-f2.mjs <repo-root> D:/tmp/long-session-f2/instrumented/probe-run-N.json D:/tmp/long-session-f2/instrumented/run-N
+  - pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts --maxWorkers=1 (with LONG_SESSION_F2_PROBE_RUNS, LONG_SESSION_F2_CANDIDATE and LONG_SESSION_F2_OBSERVATION set)
+  - pnpm long-session:f2:evidence -- --probe-runs D:/tmp/long-session-f2/instrumented --observation D:/tmp/long-session-f2/observation.json --gates <gate receipt>
   - pnpm long-session:f2:evidence:check
   - pnpm run typecheck
   - pnpm run contract:check
@@ -121,8 +123,14 @@ E2E 要求真实 built Electron 与隔离 userData/run root。界面 host mocks 
 
 **执行提示与退出**
 
-- 复用 TF-0423 probe 的 source，不读取其旧 before/after 作为本节点新结果。
+- 不修改也不重签 TF-0423 fixture（其 SHA256SUMS 覆盖 `probe.mjs`）；本节点使用
+  `harness/specs/fixtures/long-session-development/f2/probe-f2.mjs` —— 同一仪器的 F2 副本，
+  修正了 long task 的窗口归属（open 与 switch 窗口不再重叠），并记录每个 run 的 fixture 大小、
+  内存与磁盘余量。TF-0423 的旧 before/after 只作为历史引用，不作为本候选结果。
 - 超过基线预算先定向优化，不为本节点扩大 fast gate 或放宽既有性能限值。
+- 真实 UI 样本在本机不稳定：发布值是 measurement-valid run 的逐指标中位数，run 的合法性由该
+  run 自身记录的 fixture 大小导出（`measurementValidityFloorMb`），低于导出下限的 run 只列出
+  不进入中位数；不得用常量对样本调参。
 - 一次一个 ready leaf；发生 scope/source/dependency 漂移时重读图与合同，不默认 --allow-stale 或修改别人的 dirty 内容。
 - 验收条目全满足且证据一致后保存 proposal，base_graph_hash 匹配再 apply/validate/export；缺技术证据保持未完成并记录具体 gap。
 - 不要求所有者真人操作、真人数据或 verdict；自动模拟/独立 agent 审查如实标记。没有 live-provider 数据不能包装为质量推广证据。

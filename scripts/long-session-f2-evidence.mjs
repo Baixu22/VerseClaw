@@ -29,6 +29,10 @@ import {
   LONG_USE_RESIDENCY_BUDGET,
   LONG_USE_UNMEASURED_SCOPE,
   evaluateLongUseLatency,
+  isMeasurementRunValid,
+  measurementValidityFloorMb,
+  pickReferenceRunIndex,
+  LONG_USE_MEASUREMENT_VALIDITY,
   isPersistentRssGrowth,
   longUsePercentile,
   longestMonotonicRise,
@@ -131,6 +135,131 @@ function requirePath(flag) {
   return resolve(value);
 }
 
+/**
+ * The long-use instrument is a real UI, so run-to-run variance is material. The
+ * selection rule is declared here and frozen before measurement: publish the run
+ * whose sessionSwitch p95 is the MEDIAN of the collected runs, and list every run
+ * so a reviewer can see the spread instead of a cherry-picked sample.
+ */
+function selectProbeRuns() {
+  const single = argValue('--probe');
+  const dir = argValue('--probe-runs');
+  const files = [];
+  if (dir) {
+    const root = resolve(dir);
+    if (!existsSync(root)) throw new Error("F2 --probe-runs does not exist: " + toPosix(root));
+    for (const name of readdirSync(root).sort()) {
+      if (/^probe-run-\d+\.json$/.test(name)) files.push(join(root, name));
+    }
+  }
+  if (files.length === 0 && single) files.push(resolve(single));
+  if (files.length === 0) {
+    throw new Error('F2 evidence requires --probe <path> or --probe-runs <dir> from the current-candidate run');
+  }
+  const runs = files.map((file) => {
+    const text = readFileSync(file, 'utf8');
+    const json = JSON.parse(text);
+    const host = json?.hostConditions ?? {};
+    const readNumber = (value) => (typeof value === "number" ? value : null);
+    const minVolume = (snapshot) => {
+      const values = [readNumber(snapshot?.disk?.temp?.freeMb), readNumber(snapshot?.disk?.repoRoot?.freeMb)]
+        .filter((value) => typeof value === "number");
+      return values.length ? Math.min(...values) : null;
+    };
+    const freeRamMb = readNumber(host?.before?.freeRamMb);
+    const freeDiskMb = minVolume(host?.before);
+    const freeRamMbAfter = readNumber(host?.after?.freeRamMb);
+    const freeDiskMbAfter = minVolume(host?.after);
+    const floorMb = measurementValidityFloorMb({
+      transcriptBytes:
+        typeof json?.fixture?.transcriptBytes === "number" ? json.fixture.transcriptBytes : null,
+    });
+    const validityInput = { freeDiskMb, freeDiskMbAfter, floorMb };
+    return {
+      path: toPosix(file),
+      sha256: hashText(text),
+      json,
+      text,
+      hostConditions: { freeRamMb, freeDiskMb, freeRamMbAfter, freeDiskMbAfter },
+      floorMb,
+      valid: isMeasurementRunValid(validityInput),
+      exclusionReason:
+        floorMb === null
+          ? "the run did not record a fixture size, so no validity floor can be derived"
+          : freeDiskMb === null || freeDiskMbAfter === null
+            ? "host conditions were not recorded by this probe revision"
+            : !isMeasurementRunValid(validityInput)
+              ? "the measured volume could not hold the fixture plus the frozen headroom"
+              : null,
+    };
+  });
+  const validRuns = runs.filter((entry) => entry.valid);
+  if (validRuns.length === 0) {
+    throw new Error(
+      "F2 has no measurement-valid run: every collected run fell below the frozen floors",
+    );
+  }
+  // Published values are the per-metric MEDIAN across every measurement-valid run,
+  // not a hand-picked run: a single sample of a real UI is not stable on this host.
+  const numbers = (pick) => validRuns
+    .map((entry) => pick(entry.json))
+    .filter((value) => typeof value === "number" && Number.isFinite(value));
+  const metricMedians = {
+    loadSessionsMs: longUsePercentile(numbers((json) => json?.loadSessionsMs), 0.5),
+    sessionSwitchP50Ms: longUsePercentile(numbers((json) => json?.sessionSwitch?.p50Ms), 0.5),
+    sessionSwitchP95Ms: longUsePercentile(numbers((json) => json?.sessionSwitch?.p95Ms), 0.5),
+    longSessionOpenMs: longUsePercentile(numbers((json) => json?.longSessionOpen?.durationMs), 0.5),
+    summariesCallMs: longUsePercentile(
+      numbers((json) => json?.summariesHostCall?.durationMs),
+      0.5,
+    ),
+    idleLongTasksOver50Ms: longUsePercentile(
+      numbers((json) => (json?.idleLongTaskControl?.longTasksOver50Ms ?? []).length),
+      0.5,
+    ),
+    sessionSwitchLongTasksOver50Ms: longUsePercentile(
+      numbers((json) => (json?.sessionSwitch?.longTasksOver50Ms ?? []).length),
+      0.5,
+    ),
+    longSessionOpenLongTasksOver50Ms: longUsePercentile(
+      numbers((json) => (json?.longSessionOpen?.longTasksOver50Ms ?? []).length),
+      0.5,
+    ),
+  };
+  const spread = Object.fromEntries(
+    Object.entries({
+      loadSessionsMs: numbers((json) => json?.loadSessionsMs),
+      sessionSwitchP50Ms: numbers((json) => json?.sessionSwitch?.p50Ms),
+      sessionSwitchP95Ms: numbers((json) => json?.sessionSwitch?.p95Ms),
+      longSessionOpenMs: numbers((json) => json?.longSessionOpen?.durationMs),
+      idleLongTasksOver50Ms: numbers((json) => (json?.idleLongTaskControl?.longTasksOver50Ms ?? []).length),
+      sessionSwitchLongTasksOver50Ms: numbers((json) => (json?.sessionSwitch?.longTasksOver50Ms ?? []).length),
+      longSessionOpenLongTasksOver50Ms: numbers((json) => (json?.longSessionOpen?.longTasksOver50Ms ?? []).length),
+    }).map(([key, values]) => [key, {
+      values,
+      min: values.length ? Math.min(...values) : null,
+      max: values.length ? Math.max(...values) : null,
+    }]),
+  );
+  // The structural run (fixture identity and raw sample arrays) is the valid run whose
+  // switch p95 sits closest to the median, so the published arrays match the median
+  // headline instead of an outlier. The index rule lives in the shared contract module
+  // so the unit gate resolves the same reference run.
+  const referenceIndex = pickReferenceRunIndex(
+    validRuns.map((entry) => entry.json?.sessionSwitch?.p95Ms ?? Number.NaN),
+  );
+  const reference = validRuns[referenceIndex] ?? validRuns[0];
+  return {
+    selected: reference,
+    runs,
+    validRuns,
+    metricMedians,
+    spread,
+    selectionRule:
+      "per-metric median across measurement-valid runs; the published raw sample arrays come from the valid run whose switch p95 is closest to its median",
+  };
+}
+
 function assertSameCandidate(label, observed, current) {
   if (!observed || !current) return;
   if (observed === current) return;
@@ -144,11 +273,12 @@ function buildArtifacts() {
   const candidate = candidateIdentity();
   const budgets = frozenBudgetSnapshot();
   const gateReceipt = readGateReceipt();
-  const probeFile = requirePath("--probe");
+  const probeSelection = selectProbeRuns();
+  const probe = probeSelection.selected.json;
+  const probeText = probeSelection.selected.text;
+  const probeFile = probeSelection.selected.path;
   const observationFile = requirePath("--observation");
-  const probeText = readFileSync(probeFile, 'utf8');
   const observationText = readFileSync(observationFile, 'utf8');
-  const probe = JSON.parse(probeText);
   const observation = JSON.parse(observationText);
   assertSameCandidate("probe", probe.candidate, candidate.commit);
   assertSameCandidate("observation", observation.candidate, candidate.commit);
@@ -185,6 +315,7 @@ function buildArtifacts() {
     summaryCalls.map((call) => call?.durationMs).filter((value) => typeof value === "number" && Number.isFinite(value)),
     0.95,
   );
+  const medians = probeSelection.metricMedians;
   const latencyObservation = {
     "sidebar.loadSessions.p50": probe?.loadSessionsMs ?? null,
     "sidebar.loadSessions.p95": probe?.loadSessionsMs ?? null,
@@ -198,7 +329,35 @@ function buildArtifacts() {
     "continuation.build.p95": longUsePercentile(continuationSamples, 0.95),
   };
   const latencyVerdict = evaluateLongUseLatency(latencyObservation);
+  // The headline claim is the median across every measurement-valid run, so one
+  // slow sample cannot make the node pass or fail on its own.
+  const medianLatencyObservation = {
+    ...latencyObservation,
+    "sidebar.loadSessions.p50": medians.loadSessionsMs,
+    "sidebar.loadSessions.p95": medians.loadSessionsMs,
+    "sidebar.sessionSwitch.p50": medians.sessionSwitchP50Ms,
+    "sidebar.sessionSwitch.p95": medians.sessionSwitchP95Ms,
+    "sidebar.longSessionOpen.p95": medians.longSessionOpenMs,
+    "host.sessionsSummaries.p95": medians.summariesCallMs,
+  };
+  const medianLatencyVerdict = evaluateLongUseLatency(medianLatencyObservation);
 
+  const longTaskMedians = {
+    idleControl: medians.idleLongTasksOver50Ms,
+    sessionSwitch: medians.sessionSwitchLongTasksOver50Ms,
+    longSessionOpen: medians.longSessionOpenLongTasksOver50Ms,
+  };
+  // Per-window budgets inherited from the tracked predecessor acceptance state; the
+  // idle-control window is published but not gated (host noise, not a code path).
+  const longTaskBudgets = {
+    longSessionOpen: budgets.fixture.maxLongTasksOver50MsOnLongSessionOpen,
+    sessionSwitch: budgets.fixture.maxLongTasksOver50MsOnSessionSwitch,
+  };
+  const longTaskMediansWithinBudget =
+    typeof longTaskMedians.longSessionOpen === "number"
+    && typeof longTaskMedians.sessionSwitch === "number"
+    && longTaskMedians.longSessionOpen <= longTaskBudgets.longSessionOpen
+    && longTaskMedians.sessionSwitch <= longTaskBudgets.sessionSwitch;
   const generatedAt = new Date().toISOString();
   const beforeAfter = {
     schema: 'clawx.long-session.f2-long-use-before-after/v1',
@@ -212,7 +371,7 @@ function buildArtifacts() {
     candidate,
     measurementSource: {
       kind: "built-Electron 333-session probe run against the current candidate",
-      path: toPosix(probeFile),
+      path: probeFile,
       rawSha256: hashText(probeText),
       probeSchema: probe.schema ?? null,
       probeActor: probe.actor ?? null,
@@ -257,8 +416,18 @@ function buildArtifacts() {
       summaryCallCount: summaryCalls.length,
       summaryRequestedKeys: summaryCalls[0]?.keys ?? null,
       longTasksOver50Ms: longTasks,
+      longTasksOver50MsBudgets: longTaskBudgets,
+      longTasksOver50MsMedians: {
+        idleControl: medians.idleLongTasksOver50Ms,
+        sessionSwitch: medians.sessionSwitchLongTasksOver50Ms,
+        longSessionOpen: medians.longSessionOpenLongTasksOver50Ms,
+      },
       latencyObservation,
       latencyVerdict,
+      medianLatencyObservation,
+      medianLatencyVerdict,
+      metricMedians: medians,
+      runSpread: probeSelection.spread,
     },
     compactionAndContinuation: {
       note: "measured in-process against the shipped planners by tests/unit/long-session-long-use-budget.test.ts on this candidate",
@@ -271,6 +440,60 @@ function buildArtifacts() {
       continuationP50Ms: longUsePercentile(continuationSamples, 0.5),
       continuationP95Ms: longUsePercentile(continuationSamples, 0.95),
     },
+    runs: probeSelection.runs.map((entry) => ({
+      path: entry.path,
+      sha256: entry.sha256,
+      fixtureTranscriptBytes: entry.json?.fixture?.transcriptBytes ?? null,
+      loadSessionsMs: entry.json?.loadSessionsMs ?? null,
+      longSessionOpenMs: entry.json?.longSessionOpen?.durationMs ?? null,
+      longSessionOpenLongTasks:
+        (entry.json?.longSessionOpen?.longTasksOver50Ms ?? []).length,
+      summariesCallMs:
+        Array.isArray(entry.json?.summariesHostCall?.calls)
+          ? entry.json.summariesHostCall.calls.length === 1
+            ? entry.json.summariesHostCall.calls[0]?.durationMs ?? null
+            : null
+          : null,
+      switchP50Ms: entry.json?.sessionSwitch?.p50Ms ?? null,
+      switchP95Ms: entry.json?.sessionSwitch?.p95Ms ?? null,
+      switchLongTasks: (entry.json?.sessionSwitch?.longTasksOver50Ms ?? []).length,
+      idleLongTasks: (entry.json?.idleLongTaskControl?.longTasksOver50Ms ?? []).length,
+      idleRssSampleCount: (entry.json?.idleRss?.samples ?? []).length,
+      windowBoundaries: entry.json?.windowBoundaries ?? null,
+      hostConditions: entry.hostConditions,
+      measurementValid: entry.valid,
+      exclusionReason: entry.exclusionReason,
+    })),
+    measurementValidity: {
+      rule: LONG_USE_MEASUREMENT_VALIDITY,
+      derivedFloorMb: probeSelection.selected.floorMb ?? null,
+      perRunFloors: probeSelection.runs.map((entry) => ({
+        path: entry.path,
+        floorMb: entry.floorMb,
+        freeDiskMbBefore: entry.hostConditions.freeDiskMb,
+        freeDiskMbAfter: entry.hostConditions.freeDiskMbAfter,
+      })),
+      validRuns: probeSelection.runs.filter((entry) => entry.valid).length,
+      collectedRuns: probeSelection.runs.length,
+      excludedRuns: probeSelection.runs
+        .filter((entry) => !entry.valid)
+        .map((entry) => ({
+          path: entry.path,
+          hostConditions: entry.hostConditions,
+          exclusionReason: entry.exclusionReason,
+        })),
+      note: "validity is derived from the run's own recorded fixture size plus the frozen headroom, so it cannot be tuned against a sample; a run below that floor is listed here and excluded from the median, never silently averaged. Host free memory is recorded as context only",
+    },
+    runSelection: {
+      rule: probeSelection.selectionRule,
+      collected: probeSelection.runs.length,
+      measurementValid: probeSelection.runs.filter((entry) => entry.valid).length,
+      publishedPath: probeFile,
+      validityFloors: LONG_USE_MEASUREMENT_VALIDITY,
+      metricMedians: probeSelection.metricMedians,
+      note: "run-to-run variance on this host is material, so the published headline is the per-metric median across measurement-valid runs; every run is listed in runs[] above",
+    },
+    windowBoundaries: probe.windowBoundaries ?? null,
     historyReference: {
       note: "TF-0423 keeps the pre-change/post-change comparison for the sidebar fix. It is referenced only; none of its numbers are reused as this candidate result.",
       directory: 'harness/specs/fixtures/tf0423-session-loading/',
@@ -435,10 +658,14 @@ function buildArtifacts() {
         criterion: "freeze and run at least 333 sessions and long transcripts on the current candidate, recording load/switch/compaction/continuation P50/P95, actual bytes, summary calls/keys, long tasks and raw samples",
         result: sessionCount >= budgets.fixture.minSessionCount
           && transcriptBytes >= budgets.fixture.minTranscriptBytes
-          && latencyVerdict.passed && latencyVerdict.unmeasured.length === 0 ? "pass" : "fail",
+          && latencyVerdict.passed && latencyVerdict.unmeasured.length === 0
+          && medianLatencyVerdict.passed && medianLatencyVerdict.unmeasured.length === 0
+          && longTaskMediansWithinBudget ? "pass" : "fail",
         observedSessionCount: sessionCount,
         observedTranscriptBytes: transcriptBytes,
         observedLongTasksOver50Ms: longTasks,
+        longTaskMediansOver50Ms: longTaskMedians,
+        referenceRunPath: probeFile,
         evidence: [BEFORE_AFTER_FILE],
       },
       {
@@ -606,6 +833,81 @@ function checkArtifacts(outDir) {
   }
   if (rss?.explicitGcGate?.exposeGcAvailable !== true) {
     failures.push("the explicit GC gate was not available for the recorded rounds");
+  }
+
+  // cross-run aggregate: medians must be reproducible from the stored run records
+  const storedRuns = Array.isArray(beforeAfter?.runs) ? beforeAfter.runs : [];
+  const publishedSelection = beforeAfter?.runSelection ?? {};
+  if (storedRuns.length !== (publishedSelection.collected ?? storedRuns.length)) {
+    failures.push("the published run count does not match the stored run records");
+  }
+  // Re-derive validity from the stored numbers with the shipped helpers instead of
+  // trusting the published flag, and re-hash each raw run that is still on disk.
+  const revalidated = storedRuns.map((entry) => {
+    const floorMb = measurementValidityFloorMb({
+      transcriptBytes:
+        typeof entry.fixtureTranscriptBytes === "number" ? entry.fixtureTranscriptBytes : null,
+    });
+    const valid = isMeasurementRunValid({
+      freeDiskMb: entry.hostConditions?.freeDiskMb ?? null,
+      freeDiskMbAfter: entry.hostConditions?.freeDiskMbAfter ?? null,
+      floorMb,
+    });
+    if (entry.sha256 && existsSync(resolve(entry.path ?? ""))) {
+      if (hashText(readFileSync(resolve(entry.path), "utf8")) !== entry.sha256) {
+        failures.push("raw run changed after publication: " + entry.path);
+      }
+    }
+    return { entry, valid };
+  });
+  const storedValid = revalidated.filter((item) => item.valid).map((item) => item.entry);
+  if (revalidated.some((item) => item.valid !== (item.entry.measurementValid === true))) {
+    failures.push("a published run's validity flag disagrees with the stored host readings");
+  }
+  if (storedValid.length !== (publishedSelection.measurementValid ?? storedValid.length)) {
+    failures.push("the published valid-run count does not match the stored runs");
+  }
+  if (storedValid.length === 0) failures.push("no measurement-valid run is published");
+  const medianOf = (pick) => longUsePercentile(
+    storedValid.map(pick).filter((value) => typeof value === "number" && Number.isFinite(value)),
+    0.5,
+  );
+  const recomputedMedians = {
+    loadSessionsMs: medianOf((entry) => entry.loadSessionsMs),
+    sessionSwitchP50Ms: medianOf((entry) => entry.switchP50Ms),
+    sessionSwitchP95Ms: medianOf((entry) => entry.switchP95Ms),
+    longSessionOpenMs: medianOf((entry) => entry.longSessionOpenMs),
+    summariesCallMs: medianOf((entry) => entry.summariesCallMs),
+    idleLongTasksOver50Ms: medianOf((entry) => entry.idleLongTasks),
+    sessionSwitchLongTasksOver50Ms: medianOf((entry) => entry.switchLongTasks),
+    longSessionOpenLongTasksOver50Ms: medianOf((entry) => entry.longSessionOpenLongTasks),
+  };
+  if (JSON.stringify(recomputedMedians) !== JSON.stringify(publishedSelection.metricMedians ?? {})) {
+    failures.push("the published metric medians are not reproducible from the stored runs");
+  }
+  const medianVerdict = evaluateLongUseLatency({
+    "sidebar.loadSessions.p50": recomputedMedians.loadSessionsMs,
+    "sidebar.loadSessions.p95": recomputedMedians.loadSessionsMs,
+    "sidebar.sessionSwitch.p50": recomputedMedians.sessionSwitchP50Ms,
+    "sidebar.sessionSwitch.p95": recomputedMedians.sessionSwitchP95Ms,
+    "sidebar.longSessionOpen.p95": recomputedMedians.longSessionOpenMs,
+    "host.sessionsSummaries.p95": recomputedMedians.summariesCallMs,
+    "compaction.plan.p50": beforeAfter?.recomputed?.medianLatencyObservation?.["compaction.plan.p50"] ?? null,
+    "compaction.plan.p95": beforeAfter?.recomputed?.medianLatencyObservation?.["compaction.plan.p95"] ?? null,
+    "continuation.build.p50": beforeAfter?.recomputed?.medianLatencyObservation?.["continuation.build.p50"] ?? null,
+    "continuation.build.p95": beforeAfter?.recomputed?.medianLatencyObservation?.["continuation.build.p95"] ?? null,
+  });
+  if (!medianVerdict.passed) {
+    failures.push("the cross-run median observation exceeds a frozen budget");
+  }
+  if (medianVerdict.unmeasured.length !== 0) {
+    failures.push("the cross-run median observation has unmeasured cells: " + medianVerdict.unmeasured.join(", "));
+  }
+  if ((recomputedMedians.longSessionOpenLongTasksOver50Ms ?? 99)
+      > budgets.fixture.maxLongTasksOver50MsOnLongSessionOpen
+    || (recomputedMedians.sessionSwitchLongTasksOver50Ms ?? 99)
+      > budgets.fixture.maxLongTasksOver50MsOnSessionSwitch) {
+    failures.push("a cross-run long-task median exceeds the frozen per-window budget");
   }
 
   if (notification?.cases?.replayedNotification?.duplicateChatStoreDeliveries !== 0) {
