@@ -1,0 +1,83 @@
+{
+    "schemaVersion":  "SurfaceAccessInventory/v1",
+    "taskForestNodeId":  "TF-0505",
+    "generatedAt":  "2026-10-24T14:46:58.7072077Z",
+    "driven_by":  "agent",
+    "actor":  "codex",
+    "routes":  [
+                   {
+                       "path":  "/",
+                       "visibility":  "product",
+                       "access":  "always",
+                       "rollback":  "not-applicable",
+                       "productionMenu":  "Chat"
+                   },
+                   {
+                       "path":  "/dreams",
+                       "visibility":  "retired",
+                       "access":  "redirect",
+                       "redirectTo":  "/",
+                       "pageMounted":  false,
+                       "productionMenu":  false
+                   },
+                   {
+                       "path":  "/ui-v2-showcase",
+                       "visibility":  "dev-test",
+                       "access":  "dev-mode-or-dev-runtime",
+                       "sharedPolicy":  true,
+                       "productionMenu":  false
+                   },
+                   {
+                       "path":  "/image-generation",
+                       "visibility":  "advanced",
+                       "access":  "dev-mode",
+                       "productionMenu":  false,
+                       "rollback":  "direct URL access still avoids the page until dev mode is unlocked"
+                   },
+                   {
+                       "path":  "/settings/developer",
+                       "visibility":  "advanced",
+                       "access":  "local-dev-mode-unlock",
+                       "rawDiagnosticsHiddenUntilUnlock":  true,
+                       "rollback":  "disable the local Developer switch"
+                   },
+                   {
+                       "path":  "/settings/general",
+                       "visibility":  "product",
+                       "access":  "always",
+                       "rollback":  "not-applicable"
+                   }
+               ],
+    "navigation":  {
+                       "removed":  [
+                                       "sidebar-more-dreams",
+                                       "sidebar-more-image-generation"
+                                   ],
+                       "dreamsEntryPresent":  false,
+                       "imageGenerationEntryPresent":  false
+                   },
+    "settings":  {
+                     "developerSectionPresent":  true,
+                     "rawPanelsWrappedByDevMode":  true,
+                     "vtokenBridgeMounted":  false,
+                     "dcsFlagsMounted":  true
+                 },
+    "i18n":  {
+                 "removedCommonSidebarKeys":  [
+                                                  "openClawDreams",
+                                                  "imageGeneration"
+                                              ],
+                 "enDreamsKeyPresent":  false,
+                 "enImageGenerationSidebarKeyPresent":  false
+             },
+    "policy":  {
+                   "file":  "src/lib/surface-access.ts",
+                   "retiredPaths":  [
+                                        "/dreams"
+                                    ],
+                   "devOrTestPaths":  [
+                                          "/ui-v2-showcase"
+                                      ],
+                   "devRuntimeGate":  true
+               }
+}

@@ -1,0 +1,25 @@
+
+Running 6 tests using 1 worker
+
+
+
+pnpm.cmd : [1A[2K(node:12336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At D:\ClawX-work\component-graduation-20261021\tests\unit\fixtures\surface-cleanup-tf0505\run-verification.ps1:13 char:
+15
++     $output = & $argv[0] @($argv[1..($argv.Count - 1)]) 2>&1 | Out-St ...
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([1A[2K(node:1... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K(node:12336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/6] tests\e2e\developer-mode.spec.ts:5:7 › Verse Claw developer-mode gated UI › keeps raw diagnostics hidden until the local dev switch is enabled
+[1A[2K[2/6] tests\e2e\image-generation-settings.spec.ts:19:7 › Image generation settings page › shows image generation only as a developer-mode page after skipping setup
+[1A[2K[3/6] tests\e2e\image-generation-settings.spec.ts:48:7 › Image generation settings page › configures an independent OpenAI-compatible image endpoint
+[1A[2K[4/6] tests\e2e\image-generation-settings.spec.ts:66:7 › Image generation settings page › shows configured image API key like custom language model keys
+[1A[2K[5/6] tests\e2e\image-generation-settings.spec.ts:117:7 › Image generation settings page › clears configured image generation settings after confirmation
+[1A[2K[6/6] tests\e2e\vtoken-bridge-settings.spec.ts:4:7 › Verse Token internal-only positioning › does not expose a VT bridge switch or standalone panel in Settings > Developer
+[1A[2K  6 passed (44.7s)

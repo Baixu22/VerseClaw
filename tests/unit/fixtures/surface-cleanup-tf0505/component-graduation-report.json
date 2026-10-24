@@ -1,0 +1,82 @@
+{
+    "schemaVersion":  "ComponentGraduationReport/v1",
+    "reportId":  "tf-0505-user-surface-cleanup",
+    "reportKind":  "surface-cleanup",
+    "componentId":  "renderer-ui-surface",
+    "taskForestNodeId":  "TF-0505",
+    "disposition":  "advanced",
+    "maturity":  "verified",
+    "owner":  "TF-0505",
+    "entryPoint":  "src/lib/surface-access.ts",
+    "defaultMode":  "product-surfaces-only",
+    "benefitEvidence":  "Retired and dev/test pages are no longer discoverable as product capabilities; Developer diagnostics remain explicitly unlockable and hidden by default.",
+    "rollback":  "Keep or restore the prior route/menu entry behind the local Developer switch; no product default or data format changed.",
+    "modelEffectiveState":  "Normal product routing remains available; retired Dreams is redirect-only; dev/test showcase requires developer mode or a dev/test runtime.",
+    "evidenceGrade":  "e2e",
+    "actor":  "codex",
+    "driven_by":  "agent",
+    "expiry":  null,
+    "binding":  {
+                    "commit":  "e3913a6642ac1cb7547e7f5e5cc345c4d6e0f5b6",
+                    "tree":  "9030813625056ea3e1729c26dce7e2ac8aff9a6f",
+                    "buildHash":  "e3913a6642ac1cb7547e7f5e5cc345c4d6e0f5b6",
+                    "scope":  "worktree:component-graduation-20261021/TF-0505",
+                    "artifacts":  [
+                                      {
+                                          "path":  "src/App.tsx",
+                                          "sha256":  "0b0f27e2f20ea94400fccb03a32c3443800a15002b5dd097442ae596ea79882e",
+                                          "bytes":  16232
+                                      },
+                                      {
+                                          "path":  "src/components/layout/Sidebar.tsx",
+                                          "sha256":  "2c0bcb0b7c11062c04c7a8445123804f6f9d872dd53ff6003d1b47a9e8544cfc",
+                                          "bytes":  77934
+                                      },
+                                      {
+                                          "path":  "src/lib/surface-access.ts",
+                                          "sha256":  "dfc2b19573ed8be4eedb4d04d1ee861cd185b2c9d2f16091fc87c36a6c073e88",
+                                          "bytes":  2159
+                                      },
+                                      {
+                                          "path":  "src/pages/Settings/index.tsx",
+                                          "sha256":  "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+                                          "bytes":  104056
+                                      },
+                                      {
+                                          "path":  "tests/e2e/developer-mode.spec.ts",
+                                          "sha256":  "e5bdccb007accf9092ef3189e154776822f12dc980758cf9d979cc1af54d3ea8",
+                                          "bytes":  2058
+                                      },
+                                      {
+                                          "path":  "tests/e2e/image-generation-settings.spec.ts",
+                                          "sha256":  "b1ff4fb79083721709e93d3ad9773339fcc0e0d2f7c90d5e9976ddefc7579a42",
+                                          "bytes":  7632
+                                      },
+                                      {
+                                          "path":  "tests/e2e/vtoken-bridge-settings.spec.ts",
+                                          "sha256":  "3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5",
+                                          "bytes":  1135
+                                      }
+                                  ]
+                },
+    "evidence":  [
+                     {
+                         "kind":  "route-and-navigation",
+                         "status":  "pass",
+                         "grade":  "e2e",
+                         "summary":  "Unit and Electron E2E prove route denial and hidden Developer diagnostics.",
+                         "artifacts":  [
+                                           {
+                                               "path":  "tests/unit/fixtures/surface-cleanup-tf0505/surface-inventory.json",
+                                               "sha256":  "668fcf3fa2cd87f63d11dab09f9f60a02ecb1ac2e360162e0e60e7cb9c36325a",
+                                               "bytes":  3524
+                                           },
+                                           {
+                                               "path":  "tests/unit/fixtures/surface-cleanup-tf0505/acceptance.json",
+                                               "sha256":  "73b74d103edcca1236860c01b4586250f409d51fa21f27b060f0748dc313916e",
+                                               "bytes":  2146
+                                           }
+                                       ]
+                     }
+                 ]
+}
