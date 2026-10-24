@@ -16,6 +16,11 @@ import { resolveStorePath } from "../config/sessions/paths.js";
 import type { AgentDefaultsConfig } from "../config/types.agent-defaults.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { runCronCommandJob } from "../cron/command-runner.js";
+import {
+  evaluateCronCoordinatorScope,
+  normalizeCronCoordinatorScope,
+} from "../cron/coordinator-scope.js";
+import { readSessionEntry } from "../config/sessions/store-load.js";
 import { resolveCronDeliveryPlan, sendCronAnnouncePayloadStrict } from "../cron/delivery.js";
 import { runCronIsolatedAgentTurn } from "../cron/isolated-agent.js";
 import { appendCronRunLog, resolveCronRunLogPruneOptions } from "../cron/run-log.js";
@@ -444,6 +449,33 @@ export function buildGatewayCronService(params: {
           error: err instanceof Error ? err.message : String(err),
         };
       }
+    },
+    /**
+     * E1: long-session follow-up fence. The workspace binding itself stays in
+     * Electron; here the runtime verifies the only fact it owns — that the
+     * coordinator conversation still resolves to the physical generation the
+     * follow-up was authorized against.
+     */
+    evaluateCoordinatorScope: async ({ job }) => {
+      const scope = normalizeCronCoordinatorScope(job.coordinator);
+      if (scope === undefined) {
+        return { allowed: true, state: "unbound", reason: "job is not bound to a long-session coordinator" };
+      }
+      let liveSessionId: string | null | undefined;
+      try {
+        if (scope) {
+          const agentId = resolveAgentIdFromSessionKey(scope.coordinatorSessionKey);
+          const storePath = resolveSessionStorePath(agentId);
+          const entry = readSessionEntry(storePath, scope.coordinatorSessionKey) as
+            | { sessionId?: unknown }
+            | undefined;
+          liveSessionId =
+            typeof entry?.sessionId === "string" && entry.sessionId.trim() ? entry.sessionId.trim() : null;
+        }
+      } catch {
+        liveSessionId = undefined;
+      }
+      return evaluateCronCoordinatorScope({ scope: job.coordinator, nowMs: Date.now(), liveSessionId });
     },
     runCommandJob: async ({ job, abortSignal }) => {
       const result = await runCronCommandJob({

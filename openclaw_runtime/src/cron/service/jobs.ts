@@ -773,6 +773,7 @@ export function createJob(state: CronServiceState, input: CronJobCreate): CronJo
     payload: input.payload,
     delivery: resolveInitialCronDelivery(input),
     failureAlert: input.failureAlert,
+    coordinator: input.coordinator ?? undefined,
     state: {
       ...input.state,
     },
@@ -837,6 +838,9 @@ export function applyJobPatch(
   }
   if ("failureAlert" in patch) {
     job.failureAlert = mergeCronFailureAlert(job.failureAlert, patch.failureAlert);
+  }
+  if ("coordinator" in patch) {
+    job.coordinator = patch.coordinator ?? undefined;
   }
   if (
     job.sessionTarget === "main" &&

@@ -11,9 +11,13 @@ import { syncActiveWorkspacePermissionToRuntime, syncActiveWorkspaceRootToRuntim
 import { runWorkspacePreflight } from './workspace-preflight';
 import type { TerminalSessionManager } from './terminal-session-manager';
 import type { WebPreviewManager } from './web-preview-manager';
+import type { DelegationAdmissionReceipt } from '@shared/types/delegation-admission';
 import type {
   WorkspacePermissionMode,
   WorkspaceAgentBinding,
+  WorkspaceCoordinatorBinding,
+  WorkspaceCoordinatorInvalidationReason,
+  WorkspaceCoordinatorTaskRef,
   WorkspaceProfile,
   WorkspaceSnapshot,
   WorkspaceUiState,
@@ -174,6 +178,98 @@ function createAgentBinding(
   };
 }
 
+function normalizeCoordinatorTaskRefs(value: unknown): WorkspaceCoordinatorTaskRef[] {
+  if (!Array.isArray(value)) return [];
+  const seen = new Set<string>();
+  return value.flatMap((entry) => {
+    if (!isRecord(entry) || entry.kind !== 'task-ledger' || typeof entry.nodeId !== 'string') return [];
+    const nodeId = entry.nodeId.trim();
+    if (!nodeId || seen.has(nodeId)) return [];
+    seen.add(nodeId);
+    return [{ kind: 'task-ledger' as const, nodeId }];
+  });
+}
+
+function normalizeDelegationReceipt(
+  value: unknown,
+  expectedKey: string,
+): DelegationAdmissionReceipt | null {
+  if (!isRecord(value)
+    || value.schemaVersion !== 'DelegationAdmissionReceipt/v1'
+    || value.idempotencyKey !== expectedKey
+    || typeof value.receiptId !== 'string'
+    || typeof value.requestDigest !== 'string'
+    || typeof value.roleName !== 'string'
+    || typeof value.task !== 'string'
+    || !isRecord(value.coordinator)
+    || !isRecord(value.taskRef)
+    || !isRecord(value.backend)
+    || !isRecord(value.toolAuthorization)
+    || !isRecord(value.isolation)) {
+    return null;
+  }
+  const state = value.state;
+  if (state !== 'submitting' && state !== 'accepted' && state !== 'rejected' && state !== 'unknown') {
+    return null;
+  }
+  return value as unknown as DelegationAdmissionReceipt;
+}
+
+function normalizeDelegationReceipts(value: unknown): Record<string, DelegationAdmissionReceipt> {
+  if (!isRecord(value)) return {};
+  const entries = Object.entries(value).flatMap(([key, receipt]) => {
+    const normalized = normalizeDelegationReceipt(receipt, key);
+    return normalized ? [[key, normalized] as const] : [];
+  });
+  return Object.fromEntries(entries.sort((left, right) => (
+    right[1].updatedAt.localeCompare(left[1].updatedAt)
+  )).slice(0, 100));
+}
+
+function normalizeCoordinatorBinding(
+  value: unknown,
+  workspaceId: string,
+): WorkspaceCoordinatorBinding | null {
+  if (!isRecord(value)) return null;
+  const agentId = typeof value.agentId === 'string' ? value.agentId.trim() : '';
+  const sessionKey = typeof value.sessionKey === 'string' ? value.sessionKey.trim() : '';
+  const sessionId = typeof value.sessionId === 'string' ? value.sessionId.trim() : '';
+  const revision = typeof value.revision === 'number' && Number.isInteger(value.revision)
+    ? value.revision
+    : 0;
+  const state = value.state === 'invalidated' ? 'invalidated' : value.state === 'active' ? 'active' : null;
+  const createdAt = typeof value.createdAt === 'string' ? value.createdAt : '';
+  const updatedAt = typeof value.updatedAt === 'string' ? value.updatedAt : '';
+  const taskRefs = normalizeCoordinatorTaskRefs(value.taskRefs);
+  if (!agentId || !sessionKey || !sessionId || !state || revision < 1 || !createdAt || !updatedAt || taskRefs.length === 0) {
+    return null;
+  }
+  const allowedReasons = new Set<WorkspaceCoordinatorInvalidationReason>([
+    'archived',
+    'deleted',
+    'reset',
+    'session_missing',
+    'session_key_changed',
+  ]);
+  return {
+    schemaVersion: 'WorkspaceCoordinatorBinding/v1',
+    workspaceId,
+    agentId,
+    sessionKey,
+    sessionId,
+    taskRefs,
+    state,
+    revision,
+    createdAt,
+    updatedAt,
+    invalidatedAt: typeof value.invalidatedAt === 'string' ? value.invalidatedAt : null,
+    invalidationReason: typeof value.invalidationReason === 'string'
+      && allowedReasons.has(value.invalidationReason as WorkspaceCoordinatorInvalidationReason)
+      ? value.invalidationReason as WorkspaceCoordinatorInvalidationReason
+      : null,
+  };
+}
+
 function normalizeWorkspaceProfile(profile: WorkspaceProfile): WorkspaceProfile {
   const selectedAgentId = profile.selectedAgentId || profile.agentId || 'main';
   const activeSessionKey = normalizeSessionKey(profile.activeSessionKey, selectedAgentId);
@@ -196,6 +292,8 @@ function normalizeWorkspaceProfile(profile: WorkspaceProfile): WorkspaceProfile 
   const state = sessionStates[normalizedActiveSessionKey] ?? {};
   const sessionFolders = normalizeSessionFolders(profile.sessionFolders);
   const sessionFolderAssignments = normalizeSessionFolderAssignments(profile.sessionFolderAssignments, sessionFolders);
+  const coordinatorBinding = normalizeCoordinatorBinding(profile.coordinatorBinding, profile.id);
+  const delegationReceipts = normalizeDelegationReceipts(profile.delegationReceipts);
   return {
     ...profile,
     agentId: selectedAgentId,
@@ -207,6 +305,8 @@ function normalizeWorkspaceProfile(profile: WorkspaceProfile): WorkspaceProfile 
     sessionStates,
     sessionFolders,
     sessionFolderAssignments,
+    ...(coordinatorBinding ? { coordinatorBinding } : {}),
+    ...(Object.keys(delegationReceipts).length > 0 ? { delegationReceipts } : {}),
   };
 }
 
@@ -453,6 +553,146 @@ async function ensureDocumentWithDefault(): Promise<WorkspaceStoreDocument> {
 export async function getActiveWorkspaceProfile(): Promise<WorkspaceProfile | null> {
   const document = await ensureDocumentWithDefault();
   return document.profiles.find((profile) => profile.id === document.activeWorkspaceId) ?? null;
+}
+
+let coordinatorBindingMutationTail: Promise<void> = Promise.resolve();
+
+function enqueueCoordinatorBindingMutation<T>(work: () => Promise<T>): Promise<T> {
+  const run = coordinatorBindingMutationTail.then(work, work);
+  coordinatorBindingMutationTail = run.then(() => undefined, () => undefined);
+  return run;
+}
+
+/** Persist through the existing Workspace store with revision CAS. */
+export async function saveWorkspaceCoordinatorBinding(input: {
+  workspaceId: string;
+  expectedRevision: number;
+  binding: WorkspaceCoordinatorBinding;
+}): Promise<WorkspaceCoordinatorBinding> {
+  return enqueueCoordinatorBindingMutation(async () => {
+    const document = await readDocument();
+    const index = document.profiles.findIndex((profile) => profile.id === input.workspaceId);
+    if (index === -1) throw new Error(`Workspace "${input.workspaceId}" not found`);
+    const profile = document.profiles[index];
+    if (profile.selectedAgentId !== input.binding.agentId || profile.activeSessionKey !== input.binding.sessionKey) {
+      throw new Error('Coordinator binding must target the selected workspace assistant and session');
+    }
+    const currentRevision = profile.coordinatorBinding?.revision ?? 0;
+    if (input.expectedRevision !== currentRevision) {
+      throw new Error(`Coordinator binding revision conflict: expected ${currentRevision}, received ${input.expectedRevision}`);
+    }
+    if (input.binding.workspaceId !== profile.id
+      || input.binding.revision !== currentRevision + 1
+      || input.binding.taskRefs.length === 0
+      || new Set(input.binding.taskRefs.map((ref) => ref.nodeId)).size !== input.binding.taskRefs.length) {
+      throw new Error('Invalid coordinator binding revision or Task Ledger references');
+    }
+    const profiles = [...document.profiles];
+    profiles[index] = {
+      ...profile,
+      coordinatorBinding: input.binding,
+      updatedAt: Date.now(),
+    };
+    await writeDocument({ ...document, profiles });
+    return input.binding;
+  });
+}
+
+export async function readWorkspaceDelegationReceipt(
+  workspaceId: string,
+  idempotencyKey: string,
+): Promise<DelegationAdmissionReceipt | null> {
+  const document = await readDocument();
+  const profile = document.profiles.find((candidate) => candidate.id === workspaceId);
+  return profile?.delegationReceipts?.[idempotencyKey] ?? null;
+}
+
+export async function listWorkspaceDelegationReceipts(
+  workspaceId?: string | null,
+): Promise<DelegationAdmissionReceipt[]> {
+  const document = await ensureDocumentWithDefault();
+  const id = workspaceId?.trim() || document.activeWorkspaceId;
+  const profile = document.profiles.find((candidate) => candidate.id === id);
+  return Object.values(profile?.delegationReceipts ?? {}).sort((left, right) => (
+    right.updatedAt.localeCompare(left.updatedAt)
+  ));
+}
+
+export async function saveWorkspaceDelegationReceipt(
+  workspaceId: string,
+  receipt: DelegationAdmissionReceipt,
+): Promise<DelegationAdmissionReceipt> {
+  return enqueueCoordinatorBindingMutation(async () => {
+    const document = await readDocument();
+    const index = document.profiles.findIndex((profile) => profile.id === workspaceId);
+    if (index === -1) throw new Error(`Workspace "${workspaceId}" not found`);
+    const profile = document.profiles[index];
+    const existing = profile.delegationReceipts?.[receipt.idempotencyKey] ?? null;
+    if (existing && existing.requestDigest !== receipt.requestDigest) {
+      throw new Error('Delegation admission idempotency key was reused with a different request');
+    }
+    if (existing?.state === 'accepted' && receipt.state === 'submitting') return existing;
+    if (existing?.state === 'rejected' && receipt.state !== 'rejected') return existing;
+    const nextReceipts = normalizeDelegationReceipts({
+      ...(profile.delegationReceipts ?? {}),
+      [receipt.idempotencyKey]: receipt,
+    });
+    const profiles = [...document.profiles];
+    profiles[index] = {
+      ...profile,
+      delegationReceipts: nextReceipts,
+      updatedAt: Date.now(),
+    };
+    await writeDocument({ ...document, profiles });
+    return nextReceipts[receipt.idempotencyKey] ?? receipt;
+  });
+}
+
+export async function readWorkspaceCoordinatorBinding(
+  workspaceId?: string | null,
+): Promise<{ workspace: WorkspaceProfile; binding: WorkspaceCoordinatorBinding | null } | null> {
+  const document = await ensureDocumentWithDefault();
+  const id = workspaceId?.trim() || document.activeWorkspaceId;
+  if (!id) return null;
+  const workspace = document.profiles.find((profile) => profile.id === id);
+  return workspace ? { workspace, binding: workspace.coordinatorBinding ?? null } : null;
+}
+
+/**
+ * A session mutation that succeeded makes any active long-session binding for
+ * that logical key stale. Keep the metadata and increment its revision so the
+ * invalidation is durable and visible to later readers.
+ */
+export async function invalidateWorkspaceCoordinatorBindingsForSession(
+  sessionKey: string,
+  reason: WorkspaceCoordinatorInvalidationReason,
+  options: { workspaceId?: string | null } = {},
+): Promise<number> {
+  return enqueueCoordinatorBindingMutation(async () => {
+    const document = await readDocument();
+    const now = new Date().toISOString();
+    let invalidated = 0;
+    const profiles = document.profiles.map((profile) => {
+      if (options.workspaceId && profile.id !== options.workspaceId) return profile;
+      const binding = profile.coordinatorBinding;
+      if (!binding || binding.sessionKey !== sessionKey || binding.state !== 'active') return profile;
+      invalidated += 1;
+      return {
+        ...profile,
+        coordinatorBinding: {
+          ...binding,
+          state: 'invalidated' as const,
+          revision: binding.revision + 1,
+          updatedAt: now,
+          invalidatedAt: now,
+          invalidationReason: reason,
+        },
+        updatedAt: Date.now(),
+      };
+    });
+    if (invalidated > 0) await writeDocument({ ...document, profiles });
+    return invalidated;
+  });
 }
 
 /**

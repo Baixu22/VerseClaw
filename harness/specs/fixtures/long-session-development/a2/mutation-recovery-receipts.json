@@ -1,0 +1,238 @@
+{
+  "schema": "clawx.long-session.a2-mutation-recovery-receipts/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-a2",
+  "program": "long-session-development-20261022",
+  "task": "TF-0549",
+  "generatedAt": "2026-10-22T17:55:34.560Z",
+  "candidate": {
+    "sourceBase": "3b6a54598",
+    "candidateCommit": "5daef609dccffc96c62af8c27854934ba4381bb3",
+    "candidateTree": "b5f7699569f21599b8071240095102735956ce8d",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanCandidateObserved": true,
+    "dirtyBefore": false,
+    "dirtyAfter": false,
+    "verificationRun": "D:\\tmp\\long-session-a2\\5daef609d\\gate-run.json"
+  },
+  "operationJournal": {
+    "owner": "openclaw_runtime/src/gateway/session-delete-operation-journal.ts + session-mutation-operation-journal.ts",
+    "storage": "existing session_delete_operation_journal SQLite table",
+    "operations": [
+      "session-delete",
+      "session-archive",
+      "session-restore"
+    ],
+    "states": [
+      "intent",
+      "store_committed",
+      "runtime_committed",
+      "partial_committed"
+    ],
+    "mainMirrorGate": "electron/services/session-delete-gate.ts; one pending operation per SessionKey with kind + request digest"
+  },
+  "recoveryCases": [
+    {
+      "state": "archive-intent-before-store-commit",
+      "retryBehavior": "same operationId, reuse fence when present; re-upsert index, finish transcript rename, remove row and finalize"
+    },
+    {
+      "state": "archive-store-committed",
+      "retryBehavior": "skip cleanup/store mutation; finish index/transcript reconciliation and finalize"
+    },
+    {
+      "state": "archive-runtime-committed-unknown-response",
+      "retryBehavior": "return saved runtime_committed receipt and clear Main gate only after response"
+    },
+    {
+      "state": "restore-intent",
+      "retryBehavior": "same operationId prepares the same fresh sessionId and inserts its store row with store_committed journal"
+    },
+    {
+      "state": "restore-store-committed",
+      "retryBehavior": "skip row insert; rename transcript back, remove archive index and finalize"
+    },
+    {
+      "state": "main-rpc-timeout",
+      "retryBehavior": "retain Main gate and operationId; reject a different mutation kind until recovery"
+    }
+  ],
+  "commands": [
+    {
+      "id": "root-lifecycle-tests",
+      "command": "pnpm exec vitest run tests/unit/long-session-lifecycle-barrier.test.ts tests/unit/session-delete-gate.test.ts tests/unit/session-files.test.ts tests/unit/session-cascade-delete.test.ts tests/unit/terminal-session-manager.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 10489,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\root-lifecycle-tests.log",
+      "files": 5,
+      "tests": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "id": "root-delete-regressions",
+      "command": "pnpm exec vitest run tests/unit/r0-2-sessions-delete-fail.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 3187,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\root-delete-regressions.log",
+      "files": 1,
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "id": "gateway-core-tests",
+      "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-core.config.ts src/gateway/session-ecosystem-lifecycle-reachability.test.ts src/gateway/session-archive-service.test.ts src/gateway/session-mutation-operation-journal.test.ts src/gateway/session-delete-operation-journal.test.ts src/gateway/session-reset-service.stop.test.ts src/gateway/session-reset-service.subagent-stop.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 43830,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\gateway-core-tests.log",
+      "files": 6,
+      "tests": 50,
+      "passed": 50,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "id": "build-runtime",
+      "command": "pnpm run build:runtime",
+      "exitCode": 0,
+      "durationMs": 29598,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\build-runtime.log",
+      "success": true
+    },
+    {
+      "id": "build-vite",
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "durationMs": 47843,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\build-vite.log",
+      "success": true
+    },
+    {
+      "id": "e2e-lifecycle",
+      "command": "pnpm run test:e2e:run tests/e2e/sidebar-session-folders-archive.spec.ts tests/e2e/chat-slash-session-lifecycle.spec.ts tests/e2e/long-session-lifecycle-faults.spec.ts",
+      "exitCode": 0,
+      "durationMs": 68886,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\e2e-lifecycle.log",
+      "files": 3,
+      "tests": 9,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 24426,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\typecheck.log",
+      "projects": 3,
+      "errors": 0
+    },
+    {
+      "id": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "durationMs": 1080,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\contract-check.log",
+      "success": true
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 859,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\comms-replay.log",
+      "success": true
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 719,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\comms-compare.log",
+      "comparisonRows": 44,
+      "passedRows": 44,
+      "failedRows": 0,
+      "result": "PASS"
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/long-session-lifecycle-barrier.md",
+      "exitCode": 0,
+      "durationMs": 1462,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\harness-validate.log",
+      "result": "valid"
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationMs": 54,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\git-diff-check.log",
+      "whitespaceErrors": 0
+    },
+    {
+      "id": "changed-eslint",
+      "command": "pnpm exec eslint electron/gateway/manager.ts electron/services/session-delete-gate.ts electron/services/sessions-api.ts openclaw_runtime/packages/gateway-protocol/src/index.ts openclaw_runtime/packages/gateway-protocol/src/schema/protocol-schemas.ts openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts openclaw_runtime/packages/gateway-protocol/src/schema/types.ts openclaw_runtime/src/gateway/methods/core-descriptors.ts openclaw_runtime/src/gateway/server-methods.ts openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts openclaw_runtime/src/gateway/server-methods/sessions.read.ts openclaw_runtime/src/gateway/session-delete-operation-journal.ts openclaw_runtime/src/gateway/session-archive-service.ts openclaw_runtime/src/gateway/session-archive-service.test.ts openclaw_runtime/src/gateway/session-mutation-operation-journal.ts openclaw_runtime/src/gateway/session-mutation-operation-journal.test.ts openclaw_runtime/src/gateway/session-ecosystem-lifecycle-reachability.test.ts openclaw_runtime/src/gateway/session-reset-service.stop.test.ts openclaw_runtime/src/gateway/session-reset-service.ts tests/unit/r0-2-sessions-delete-fail.test.ts tests/unit/session-delete-gate.test.ts tests/unit/long-session-lifecycle-barrier.test.ts tests/e2e/long-session-lifecycle-faults.spec.ts",
+      "exitCode": 0,
+      "durationMs": 6333,
+      "rawLog": "D:\\tmp\\long-session-a2\\5daef609d\\changed-eslint.log",
+      "errors": 0
+    }
+  ],
+  "counts": {
+    "testFiles": 15,
+    "tests": 81,
+    "passed": 81,
+    "failed": 0,
+    "skipped": 0,
+    "realElectronE2ETests": 9,
+    "runtimeGatewayTests": 50,
+    "commands": 13,
+    "failedCommands": 0,
+    "builds": 2,
+    "staticGates": 7
+  },
+  "unmeasured": [
+    "process kill at every individual fs/DB syscall boundary (the covered crash windows are the journaled intent, store_committed and unknown-response phases)",
+    "cross-workspace concurrent archive/restore",
+    "remote Gateway transport partition longer than local RPC timeout"
+  ],
+  "verdict": "pass-with-residuals",
+  "trackedArtifacts": [
+    "lifecycle-fault-matrix.json",
+    "mutation-recovery-receipts.json",
+    "cleanup-readback.json"
+  ],
+  "supplementalChecks": [
+    {
+      "id": "docs-policy-validate",
+      "command": "pnpm run docs:policy:validate",
+      "exitCode": 0,
+      "checks": 10,
+      "passed": 10,
+      "result": "pass"
+    },
+    {
+      "id": "repo-local-paths",
+      "command": "pnpm run repo:local-paths:check",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "id": "repo-artifacts",
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 1,
+      "result": "pre-existing-unrelated",
+      "detail": "Tracked path is ignored: harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/e2e.log"
+    }
+  ],
+  "knownResiduals": [
+    "repo:artifacts:check remains red on the pre-existing tracked-and-ignored VerseBrowser invocation-maturity e2e.log; A2 did not modify or re-sign that unrelated artifact.",
+    "Permanent deletion of an archived conversation still uses the existing Main archive-index/cascade path and was regression-tested but not moved into the runtime archive RPC.",
+    "The real E2E covers one isolated workspace/assistant; multi-workspace journeys remain F1 scope."
+  ]
+}

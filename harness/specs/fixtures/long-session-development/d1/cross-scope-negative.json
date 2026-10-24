@@ -1,0 +1,52 @@
+{
+  "schema": "clawx.long-session.d1-cross-scope-negative/v1",
+  "generated_at": "2026-10-23T13:07:29.296Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-d1",
+  "method": "real built Electron Host/Gateway continuityPreview with isolated userData",
+  "cases": [
+    {
+      "id": "ordinary-session-without-binding",
+      "expected": "missing",
+      "observed": "missing",
+      "pack_omitted": true,
+      "result": "pass"
+    },
+    {
+      "id": "deleted-coordinator-session",
+      "expected": "invalidated",
+      "observed": "invalidated",
+      "pack_omitted": true,
+      "result": "pass"
+    },
+    {
+      "id": "pending-working-context",
+      "candidate": "task-ledger-working-context:d1-pending-risk-mvkzhefg",
+      "expected": "excluded",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "out-of-scope-memory",
+      "expected": "excluded",
+      "observed": "covered by deterministic unit matrix",
+      "result": "pass",
+      "evidence": "tests/unit/long-session-continuity-context.test.ts"
+    },
+    {
+      "id": "out-of-scope-role/agent/session/task-and-superseded/expired",
+      "expected": "excluded",
+      "observed": "covered by buildLongSessionContinuityContext matrix",
+      "result": "pass",
+      "evidence": "tests/unit/long-session-continuity-context.test.ts"
+    }
+  ],
+  "counts": {
+    "workspace_leaks": 0,
+    "role_leaks": 0,
+    "agent_leaks": 0,
+    "unapproved_candidate_injections": 0,
+    "unverified_claims": 0
+  },
+  "evidence_file": "tests/unit/long-session-continuity-context.test.ts"
+}

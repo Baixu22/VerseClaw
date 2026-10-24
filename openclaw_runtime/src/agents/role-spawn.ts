@@ -36,6 +36,10 @@ import { recordRc03SystemPromptContribution } from "../context-engine/rc03-seal-
 import type { MemoryCard } from "../memory/types.js";
 import type { TeamOrchestrationMetadata } from "./subagent-registry.types.js";
 import type { PermissionDecisionEvent } from "../../../shared/product-semantics.js";
+import type {
+  DelegationBackend,
+  DelegationToolAuthorization,
+} from "../../../shared/types/delegation-admission.js";
 
 /** Minimal spawn-param set mapped from a role contract. */
 export type RoleSpawnParams = {
@@ -82,6 +86,8 @@ export type RoleSpawnResultShape = {
   mode?: "run" | "session";
   taskName?: string;
   note?: string;
+  resolvedModel?: string;
+  resolvedProvider?: string;
   error?: string;
 };
 
@@ -116,6 +122,8 @@ export type RoleSpawnResult = {
   role?: RoleContract;
   result?: RoleSpawnResultShape;
   error?: string;
+  backend?: DelegationBackend;
+  authorization?: DelegationToolAuthorization;
 };
 
 function resolveRole(
@@ -325,5 +333,21 @@ export async function spawnRoleSubagent(
   const params = buildRoleSpawnParams(role, request, ctx);
   const roleCtx = buildRoleSpawnContext(role, ctx);
   const result = await deps.spawn(params, roleCtx);
-  return { status: result.status, role, result };
+  return {
+    status: result.status,
+    role,
+    result,
+    backend: {
+      kind: "openclaw-embedded",
+      provider: result.resolvedProvider ?? null,
+      model: result.resolvedModel ?? params.model ?? null,
+      evidence: "role-spawn:spawnSubagentDirect",
+    },
+    authorization: {
+      allowlist: [...(roleCtx.inheritedToolAllowlist ?? [])],
+      denylist: [...(roleCtx.inheritedToolDenylist ?? [])],
+      permissionDecisionCount: roleCtx.permissionDecisionEvents?.length ?? 0,
+      source: "role-clamped-inherited",
+    },
+  };
 }

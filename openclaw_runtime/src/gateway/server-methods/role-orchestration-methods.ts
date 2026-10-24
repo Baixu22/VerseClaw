@@ -14,6 +14,7 @@ import { buildRoleRegistry, listRoleContracts, resolveRoleContract, roleOrigin }
 import { getTeamTemplateSnapshot, resolveTeamTemplate } from "../../agents/team-template.js";
 import { createOrchestratorPlan, type OrchestratorWorkerPlan } from "../../agents/orchestrator.js";
 import { runOrchestrationObserved, type OrchestrationLifecycleEvent } from "../../agents/orchestrator-run-observed.js";
+import type { DelegationAdmissionContext } from "../../agents/delegation-admission.js";
 import { synthesizeOrchestrationResult } from "../../agents/orchestration-synthesizer.js";
 import {
   normalizeQualityPolicy,
@@ -76,6 +77,7 @@ import {
 import type { MemoryFeedbackOutcome, MemoryPhaseTag, MemoryProposal, MemoryRetentionAction, MemoryReviewAction, MemoryTaskSuccess } from "../../memory/types.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { resolveControlPlaneActor, formatControlPlaneActor } from "../control-plane-audit.js";
+import { buildMemorySurface, deleteMemorySurfaceEntry, type MemorySurfaceSource } from "./memory-surface.js";
 import type { GatewayRequestHandlers, RespondFn } from "./types.js";
 import {
   readTrajectoryPage,
@@ -276,6 +278,43 @@ function readWorkerCommunication(value: unknown): "none" | "lead_mediated" {
   return requested === "bounded_a2a" ? "none" : requested;
 }
 
+function readDelegationAdmission(value: unknown): DelegationAdmissionContext | undefined {
+  if (!isRecord(value)
+    || typeof value.receiptId !== "string"
+    || typeof value.idempotencyKey !== "string"
+    || typeof value.requestDigest !== "string"
+    || typeof value.createdAt !== "string"
+    || !isRecord(value.coordinator)
+    || !isRecord(value.taskRef)) {
+    return undefined;
+  }
+  const coordinator = value.coordinator;
+  if (typeof coordinator.workspaceId !== "string"
+    || typeof coordinator.agentId !== "string"
+    || typeof coordinator.sessionKey !== "string"
+    || typeof coordinator.sessionId !== "string"
+    || typeof coordinator.bindingRevision !== "number") {
+    return undefined;
+  }
+  if (value.taskRef.kind !== "task-ledger" || typeof value.taskRef.nodeId !== "string") {
+    return undefined;
+  }
+  return {
+    receiptId: value.receiptId,
+    idempotencyKey: value.idempotencyKey,
+    requestDigest: value.requestDigest,
+    createdAt: value.createdAt,
+    coordinator: {
+      workspaceId: coordinator.workspaceId,
+      agentId: coordinator.agentId,
+      sessionKey: coordinator.sessionKey,
+      sessionId: coordinator.sessionId,
+      bindingRevision: coordinator.bindingRevision,
+    },
+    taskRef: { kind: "task-ledger", nodeId: value.taskRef.nodeId },
+  };
+}
+
 function readExplicitWorkers(
   params: Record<string, unknown>,
   respond: RespondFn,
@@ -304,11 +343,19 @@ function readExplicitWorkers(
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `unknown role "${roleName}"`));
       return undefined;
     }
+    const writeSet = readStringArray(rawWorker.writeSet);
+    const isolation = rawWorker.isolation === "worktree"
+      ? "worktree"
+      : rawWorker.isolation === "shared"
+        ? "shared"
+        : undefined;
     workers.push({
       roleName,
       task,
       ...(readString(rawWorker.label) ? { label: readString(rawWorker.label) } : {}),
       ...(readString(rawWorker.modelRef) ? { modelRef: readString(rawWorker.modelRef) } : {}),
+      ...(writeSet.length > 0 ? { writeSet } : {}),
+      ...(isolation ? { isolation } : {}),
     });
   }
   return workers;
@@ -433,6 +480,11 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     if (Object.prototype.hasOwnProperty.call(params, "workers") && !workers) {
       return;
     }
+    const delegationAdmission = readDelegationAdmission(params.delegationAdmission);
+    if (params.delegationAdmission !== undefined && !delegationAdmission) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "delegationAdmission is malformed"));
+      return;
+    }
     const orchestrationRunId = `orch_${crypto.randomUUID()}`;
     // Capture actor identity for the audit log (enterprise: who/which/when).
     const actor = resolveControlPlaneActor(client ?? null);
@@ -475,6 +527,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           patchRegistryMetadata: true,
           workspaceDir: readString(params.workspaceDir),
           qualityAuthority: resolveQualityAuthority(params, sessionKey),
+          ...(delegationAdmission ? { delegationAdmission } : {}),
         },
         {
           agentSessionKey: sessionKey,
@@ -502,6 +555,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           orchestrationRunId,
           plan: result.plan,
           resultBundle: result.resultBundle,
+          admissionReceipts: result.admissionReceipts,
           handoffMode: result.handoffMode,
           handoffState: result.handoffState,
           handoffArtifacts: result.handoffArtifacts,
@@ -796,6 +850,25 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     respond(true, { cards, count: cards.length }, undefined);
   },
 
+  "memory.surface": async ({ params, respond, context }) => {
+    try {
+      const projection = await buildMemorySurface({
+        limit: typeof params.limit === "number" ? params.limit : undefined,
+        getRuntimeConfig: () => context.getRuntimeConfig(),
+      });
+      respond(true, projection, undefined);
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `memory.surface failed: ${error instanceof Error ? error.message : String(error)}`,
+        ),
+      );
+    }
+  },
+
   "memory.propose": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const proposal = params.proposal as MemoryProposal | undefined;
@@ -877,6 +950,44 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     }
     const tombstone = readBoolean(params.tombstone) === true;
     respond(true, archiveMemoryCard(id, tombstone ? "tombstone" : "archived"), undefined);
+  },
+
+  "memory.delete": async ({ params, respond, context }) => {
+    const source = readString(params.source);
+    const id = readString(params.id);
+    if ((source !== "role-memory-card" && source !== "runtime-fact") || !id) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          'memory.delete requires source="role-memory-card"|"runtime-fact" and an "id" string',
+        ),
+      );
+      return;
+    }
+    try {
+      const outcome = await deleteMemorySurfaceEntry({
+        source: source as MemorySurfaceSource,
+        id,
+        reason: readString(params.reason),
+        getRuntimeConfig: () => context.getRuntimeConfig(),
+      });
+      if (!outcome.ok) {
+        respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, outcome.error));
+        return;
+      }
+      respond(true, outcome, undefined);
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `memory.delete failed: ${error instanceof Error ? error.message : String(error)}`,
+        ),
+      );
+    }
   },
 
   "memory.supersede": async ({ params, respond }) => {

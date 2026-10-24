@@ -1,0 +1,91 @@
+{
+  "schema": "clawx.long-session.d1-continuity-preview/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-d1",
+  "negatives": [
+    "ordinary session missing coordinator binding -> no pack",
+    "deleted coordinator session -> binding invalidated -> no pack"
+  ],
+  "primary": "D:\\ClawX-work\\worktrees\\long-session-program\\test-results\\long-session-continuity-co-5953e-losed-across-scope-rollback\\continuity-preview.json",
+  "status": "passed",
+  "packStatus": "partial",
+  "items": [
+    {
+      "kind": "constraint",
+      "source": "task-ledger-working-context",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "workspace",
+        "key": "default"
+      }
+    },
+    {
+      "kind": "next-action",
+      "source": "task-ledger-node",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "workspace",
+        "key": "default"
+      }
+    },
+    {
+      "kind": "next-action",
+      "source": "task-ledger-working-context",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "workspace",
+        "key": "default"
+      }
+    },
+    {
+      "kind": "memory-ref",
+      "source": "accepted-memory-ref",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "workspace",
+        "key": "D:\\tmp\\verse-claw-e2e-run-eO3g9A\\verse-claw-e2e-home-3Fn7zg\\.openclaw\\workspace"
+      }
+    },
+    {
+      "kind": "knowledge-ref",
+      "source": "knowledge-ref",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "workspace",
+        "key": "default"
+      }
+    }
+  ],
+  "sourceStates": [
+    {
+      "source": "task-ledger",
+      "status": "available",
+      "detail": "events=6; nodes=1"
+    },
+    {
+      "source": "working-context",
+      "status": "available"
+    },
+    {
+      "source": "compression-artifact",
+      "status": "unavailable",
+      "detail": "no compression artifact for this session"
+    },
+    {
+      "source": "memory",
+      "status": "available",
+      "detail": "accepted=1; modelVisible=1"
+    },
+    {
+      "source": "knowledge",
+      "status": "available",
+      "detail": "refs=1"
+    }
+  ],
+  "exclusions": [
+    {
+      "ref": "task-ledger-working-context:d1-pending-risk-mvkzhefg",
+      "reason": "pending-not-accepted"
+    }
+  ]
+}

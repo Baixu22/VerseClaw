@@ -1,0 +1,160 @@
+{
+  "schema": "clawx.long-session.d1-verification/v1",
+  "generated_at": "2026-10-23T13:07:29.297Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-d1",
+  "task_forest_node": "TF-0556",
+  "source_candidate": {
+    "branch": "codex/long-session-implementation-20261022",
+    "commit": "6f9532374aaf66e668cf9dc17ec3e20f852c23ad",
+    "worktree_clean_before_evidence": true
+  },
+  "gate_receipt": {
+    "schema": "clawx.long-session.d1-gates/v1",
+    "driven_by": "agent",
+    "actor": "codex-long-session-d1",
+    "commit": "6f9532374aaf66e668cf9dc17ec3e20f852c23ad",
+    "generatedAt": "2026-10-23T13:06:55.9947548Z",
+    "gates": [
+      {
+        "name": "focused-unit",
+        "exitCode": 0,
+        "durationMs": 41851,
+        "log": "D:\\tmp\\tf0556-6f9532374aaf66e668cf9dc17ec3e20f852c23ad\\focused-unit.log"
+      },
+      {
+        "name": "i18n-lint",
+        "exitCode": 0,
+        "durationMs": 2277,
+        "log": "D:\\tmp\\tf0556-6f9532374aaf66e668cf9dc17ec3e20f852c23ad\\i18n-lint.log"
+      },
+      {
+        "name": "typecheck",
+        "exitCode": 0,
+        "durationMs": 64437,
+        "log": "D:\\tmp\\tf0556-6f9532374aaf66e668cf9dc17ec3e20f852c23ad\\typecheck.log"
+      },
+      {
+        "name": "contract-check",
+        "exitCode": 0,
+        "durationMs": 1638,
+        "log": "D:\\tmp\\tf0556-6f9532374aaf66e668cf9dc17ec3e20f852c23ad\\contract-check.log"
+      },
+      {
+        "name": "runtime-build",
+        "exitCode": 0,
+        "durationMs": 36814,
+        "log": "D:\\tmp\\tf0556-6f9532374aaf66e668cf9dc17ec3e20f852c23ad\\runtime-build.log"
+      },
+      {
+        "name": "vite-build",
+        "exitCode": 0,
+        "durationMs": 78712,
+        "log": "D:\\tmp\\tf0556-6f9532374aaf66e668cf9dc17ec3e20f852c23ad\\vite-build.log"
+      },
+      {
+        "name": "d1-e2e",
+        "exitCode": 0,
+        "durationMs": 39478,
+        "log": "D:\\tmp\\tf0556-6f9532374aaf66e668cf9dc17ec3e20f852c23ad\\d1-e2e.log"
+      },
+      {
+        "name": "comms-replay",
+        "exitCode": 0,
+        "durationMs": 1040,
+        "log": "D:\\tmp\\tf0556-6f9532374aaf66e668cf9dc17ec3e20f852c23ad\\comms-replay.log"
+      },
+      {
+        "name": "comms-compare",
+        "exitCode": 0,
+        "durationMs": 974,
+        "log": "D:\\tmp\\tf0556-6f9532374aaf66e668cf9dc17ec3e20f852c23ad\\comms-compare.log"
+      },
+      {
+        "name": "eslint-changed",
+        "exitCode": 0,
+        "durationMs": 18907,
+        "log": "D:\\tmp\\tf0556-6f9532374aaf66e668cf9dc17ec3e20f852c23ad\\eslint-changed.log"
+      },
+      {
+        "name": "harness-validate",
+        "exitCode": 0,
+        "durationMs": 1746,
+        "log": "D:\\tmp\\tf0556-6f9532374aaf66e668cf9dc17ec3e20f852c23ad\\harness-validate.log"
+      },
+      {
+        "name": "git-diff-check",
+        "exitCode": 0,
+        "durationMs": 98,
+        "log": "D:\\tmp\\tf0556-6f9532374aaf66e668cf9dc17ec3e20f852c23ad\\git-diff-check.log"
+      }
+    ]
+  },
+  "results": {
+    "focused_unit": {
+      "status": "passed",
+      "files": 6,
+      "tests": 37,
+      "summary": " Test Files  6 passed (6)\n      Tests  37 passed (37)"
+    },
+    "electron": {
+      "status": "passed",
+      "tests": 1,
+      "summary": "{\"schema\":\"clawx.long-session.d1-continuity-preview/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-d1\",\"negatives\":[\"ordinary session missing coordinator binding -> no pack\",\"deleted coordinator session -> binding invalidated -> no pack\"],\"primary\":\"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\test-results\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\continuity-preview.json\",\"status\":\"passed\",\"packStatus\":\"partial\",\"items\":[{\"kind\":\"constraint\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-node\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\verse-claw-e2e-run-eO3g9A\\\\verse-claw-e2e-home-3Fn7zg\\\\.openclaw\\\\workspace\"}},{\"kind\":\"knowledge-ref\",\"source\":\"knowledge-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=6; nodes=1\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"available\",\"detail\":\"refs=1\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mvkzhefg\",\"reason\":\"pending-not-accepted\"}],\"observationPath\":\"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\test-results\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\continuity-observation.json\"}\n  1 passed (34.5s)"
+    },
+    "typecheck": {
+      "status": "passed"
+    },
+    "contract": {
+      "status": "passed"
+    },
+    "runtime_build": {
+      "status": "passed"
+    },
+    "vite_build": {
+      "status": "passed"
+    },
+    "comms": {
+      "status": "PASS",
+      "excerpt": "- Result: PASS\n| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |\n| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |"
+    }
+  },
+  "acceptance": [
+    {
+      "id": "owner-only-accepted-context",
+      "status": "passed",
+      "evidence": [
+        "continuity-context-pack.json",
+        "tests/unit/long-session-continuity-context.test.ts"
+      ]
+    },
+    {
+      "id": "provenance-freshness-scope-budget-unknown",
+      "status": "passed",
+      "evidence": [
+        "fact-provenance-and-revocation.json"
+      ]
+    },
+    {
+      "id": "deleted-expired-revoked-superseded-scope-safe",
+      "status": "passed",
+      "evidence": [
+        "cross-scope-negative.json",
+        "tests/unit/long-session-continuity-context.test.ts"
+      ]
+    },
+    {
+      "id": "fork-handoff-compact-restart-recovery-refs",
+      "status": "passed",
+      "evidence": [
+        "tests/unit/long-session-continuity-context.test.ts",
+        "continuity-context-pack.json originalHistory"
+      ]
+    }
+  ],
+  "limitations": [
+    "CompressionArtifact path is represented as unavailable when the isolated session has no checkpoint; no artifact was fabricated.",
+    "Memory prompt-time quality is not a live-model quality claim; the E2E proves owner projection and accepted/model-visible gating.",
+    "Cross-scope role/agent/task/expired/superseded matrix is deterministic unit evidence; built Electron exercised missing/invalidated binding and pending exclusion."
+  ]
+}

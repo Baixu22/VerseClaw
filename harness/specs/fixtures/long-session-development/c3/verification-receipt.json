@@ -1,0 +1,257 @@
+{
+  "schema": "clawx.long-session.c3-verification/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-c3",
+  "program": "long-session-development-20261022",
+  "task": "TF-0554",
+  "taskKey": "C3",
+  "candidate": {
+    "commit": "53db65bd56fdddba723ee09195a6827c4352fbbf",
+    "tree": "eb3d3e8323b8a53bc18c98731b129342c0c57c44",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "rawRun": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\gate-run.json"
+  },
+  "title": "C3 terminal completion batch aggregation and idempotent continuation",
+  "verdict": "pass",
+  "featureClaim": "terminal orchestration workers produce one bounded, generation-fenced completion batch receipt backed by existing registry delivery state",
+  "commands": [
+    {
+      "id": "agents-core-generation-delivery",
+      "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/subagent-announce-generation-pin.test.ts src/agents/subagent-announce-delivery.visible-reply.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 8996,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\agents-core-generation-delivery.log",
+      "rawLogSha256": "9e727940a117a4284e5aef6cf93d65be35255a8ca976481c3a9c833c2169e7c2",
+      "tests": 8,
+      "passed": 8,
+      "failed": 0,
+      "files": 2
+    },
+    {
+      "id": "unit-c3",
+      "command": "pnpm exec vitest run tests/unit/long-session-completion-continuation.test.ts tests/unit/agent-steering-team-bundle.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 3713,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\unit-c3.log",
+      "rawLogSha256": "9698ac9354fc4e33f1dae3ad1e91df0823a8ecd2391f08281835e0f5b9c0b81e",
+      "tests": 16,
+      "passed": 16,
+      "failed": 0,
+      "files": 2
+    },
+    {
+      "id": "unit-session-activity",
+      "command": "pnpm exec vitest run tests/unit/session-activity.test.ts tests/unit/session-activity-background-read.test.ts tests/unit/chat-session-status-rail.test.tsx tests/unit/session-activity-panel.test.tsx tests/unit/session-activity-panel-sections.test.tsx --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 10152,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\unit-session-activity.log",
+      "rawLogSha256": "a87d29ed6cfe9891a237f879921adb8e2f7ea096a65fea7b9d27c3cd4723bdd5",
+      "tests": 54,
+      "passed": 54,
+      "failed": 0,
+      "files": 5
+    },
+    {
+      "id": "build-runtime",
+      "command": "pnpm run build:runtime",
+      "exitCode": 0,
+      "durationMs": 29222,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\build-runtime.log",
+      "rawLogSha256": "b70e28c7c4a730a59407211bf34484266f1d1625c5f7332a2d4cc2bdf410205a",
+      "success": true,
+      "gatewaySmokeReady": true
+    },
+    {
+      "id": "build-vite",
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "durationMs": 52291,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\build-vite.log",
+      "rawLogSha256": "edd820d5dabc7206b746ae9e8842556bff7e41889a1024417df17aa26daf2bf2",
+      "success": true
+    },
+    {
+      "id": "electron-e2e",
+      "command": "pnpm run test:e2e:run tests/e2e/long-session-completion-continuation.spec.ts",
+      "exitCode": 0,
+      "durationMs": 37848,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\electron-e2e.log",
+      "rawLogSha256": "d8d3b87dc1e2cb643a2ba936c8175c493e2c5f6914a82e3aeeee8d2b1f195b4a",
+      "files": 1,
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "realHostGateway": true,
+      "restarts": 1,
+      "duplicateAdmissionChecked": true
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 25859,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\typecheck.log",
+      "rawLogSha256": "92d0fa6a15e68256c71fce430edf5d5baa5b41fb0413b92816639422abd6eaa8",
+      "projects": 3,
+      "errors": 0,
+      "success": true
+    },
+    {
+      "id": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "durationMs": 884,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\contract-check.log",
+      "rawLogSha256": "81d18a4ca335c721b9567fc4d94482781ef54aebc18a6959042cf816bc899414",
+      "result": "pass"
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 808,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\comms-replay.log",
+      "rawLogSha256": "b220bc5c91a973beae1d995bd036866d0330a67027d47dd5080cd2dd84675f6e",
+      "success": true
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 753,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\comms-compare.log",
+      "rawLogSha256": "eafd2a26fab662652042557cbe26bbc85a1e871b843879dd36d8d726261bd7b9",
+      "result": "PASS",
+      "comparisonRows": 44,
+      "passedRows": 44,
+      "failedRows": 0
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/long-session-completion-continuation.md",
+      "exitCode": 0,
+      "durationMs": 1394,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\harness-validate.log",
+      "rawLogSha256": "338d773d169ba5dfde3139fc63bcb6dee97ff4a7d2d662006277dc432c51b8bf",
+      "result": "pass"
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationMs": 53,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\git-diff-check.log",
+      "rawLogSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+      "whitespaceErrors": 0
+    },
+    {
+      "id": "changed-eslint",
+      "command": "pnpm exec eslint shared/types/session-activity.ts electron/services/session-activity-api.ts openclaw_runtime/src/agents/agent-steering-queue.ts openclaw_runtime/src/agents/completion-batch-receipt.ts openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts openclaw_runtime/src/agents/subagent-registry.ts openclaw_runtime/src/gateway/server-methods/session-activity.ts tests/unit/long-session-completion-continuation.test.ts tests/e2e/long-session-completion-continuation.spec.ts",
+      "exitCode": 0,
+      "durationMs": 5444,
+      "rawLog": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\changed-eslint.log",
+      "rawLogSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+      "errors": 0,
+      "warnings": 0
+    }
+  ],
+  "counts": {
+    "unitFiles": 9,
+    "unitTests": 78,
+    "unitPassed": 78,
+    "e2eFiles": 1,
+    "e2eTests": 1,
+    "e2ePassed": 1,
+    "totalTests": 79,
+    "commands": 13,
+    "failedCommands": 0,
+    "builds": 2,
+    "typecheckProjects": 3,
+    "typecheckErrors": 0,
+    "commsRows": 44,
+    "commsPassed": 44
+  },
+  "acceptance": [
+    {
+      "criterion": "Bounded accepted-worker batch; success/failure/cancellation all count; only a terminal batch can post one consolidated result.",
+      "result": "pass",
+      "evidence": [
+        "completion-batch-receipts.json",
+        "continuation-delivery-matrix.json",
+        "tests/unit/long-session-completion-continuation.test.ts"
+      ]
+    },
+    {
+      "criterion": "Completion delivery is separate from task acceptance; busy/paused main keeps durable intent and does not steal the active user turn.",
+      "result": "pass",
+      "evidence": [
+        "completion-batch-receipts.json",
+        "continuation-delivery-matrix.json",
+        "tests/unit/agent-steering-team-bundle.test.ts"
+      ]
+    },
+    {
+      "criterion": "At-least-once transport cannot duplicate effects or cross reset/handoff generations because of receipt, idempotency and generation fencing.",
+      "result": "pass",
+      "evidence": [
+        "continuation-delivery-matrix.json",
+        "restart-replay-check.json"
+      ]
+    },
+    {
+      "criterion": "Restart replay, refused/immediate workers, archive/delete/pause, active stop, independent batches and model-text-only cases have artifacts; final text alone is not delivery.",
+      "result": "pass",
+      "evidence": [
+        "restart-replay-check.json",
+        "continuation-delivery-matrix.json",
+        "tests/e2e/long-session-completion-continuation.spec.ts"
+      ]
+    }
+  ],
+  "sourceInputs": [
+    "shared/types/session-activity.ts",
+    "electron/services/session-activity-api.ts",
+    "openclaw_runtime/src/agents/completion-batch-receipt.ts",
+    "openclaw_runtime/src/agents/agent-steering-queue.ts",
+    "openclaw_runtime/src/agents/subagent-registry.ts",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+    "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+    "tests/unit/long-session-completion-continuation.test.ts",
+    "tests/unit/agent-steering-team-bundle.test.ts",
+    "tests/unit/session-activity.test.ts",
+    "tests/e2e/long-session-completion-continuation.spec.ts"
+  ],
+  "unmeasured": [
+    "live-provider successful multi-worker synthesis quality",
+    "non-Windows runtime behavior",
+    "C4 user-visible coordination surface"
+  ],
+  "limitations": [
+    "The real journey uses one accepted worker and an explicit stop; success and cancellation values are covered by unit tests and registry receipts.",
+    "Task Ledger completion remains a separate authority; the batch receipt always reports completionAuthority=none.",
+    "The batch continues after restart as a durable delivery intent, but the model response is not treated as proof of delivery.",
+    "All evidence is agent-driven; no real-human evidence is claimed."
+  ],
+  "cleanup": {
+    "startedProcesses": true,
+    "startedGateway": true,
+    "electronProcessesClosed": true,
+    "gatewayProcessesClosed": true,
+    "temporaryRoot": "D:/tmp/long-session-c3/53db65bd56fdddba723ee09195a6827c4352fbbf",
+    "recoveryRequired": false
+  },
+  "credentialScan": {
+    "command": "node scan of C3 JSON artifacts for sk-/AIza/gh* private-key, password/secret/api-key and Authorization patterns",
+    "matches": 0,
+    "result": "pass",
+    "scannedFiles": [
+      "completion-batch-receipts.json",
+      "continuation-delivery-matrix.json",
+      "restart-replay-check.json",
+      "verification-receipt.json"
+    ]
+  },
+  "rawRun": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\gate-run.json"
+}

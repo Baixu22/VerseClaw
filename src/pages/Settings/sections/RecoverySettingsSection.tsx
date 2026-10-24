@@ -8,10 +8,12 @@ import type { SessionCompactionStatus } from '@shared/host-api/contract';
 import { SettingsButton, SettingsRow, SettingsSection, SettingsSelect, SettingsSwitch } from '@/components/settings/primitives';
 import { hostApi } from '@/lib/host-api';
 import { useChatStore } from '@/stores/chat';
+import { useGatewayStore } from '@/stores/gateway';
 import { useSessionActivityStore } from '@/stores/session-activity';
 import { useSettingsStore, type SessionActivityAutoExpand, type SessionActivityRetentionMinutes } from '@/stores/settings';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { deriveRecoveryRecommendations } from '@/pages/Chat/rollback-plan';
+import { SessionEffectivePolicyPanel } from '@/pages/Chat/SessionEffectivePolicyPanel';
 
 export function RecoverySettingsSection() {
   const { t } = useTranslation(['settings', 'chat']);
@@ -20,6 +22,8 @@ export function RecoverySettingsSection() {
   const sessions = useChatStore((state) => state.sessions);
   const currentSessionKey = useChatStore((state) => state.currentSessionKey);
   const activeWorkspaceId = useWorkspacesStore((state) => state.activeWorkspaceId);
+  const activeWorkspacePermissionMode = useWorkspacesStore((state) => state.activeWorkspace?.permissionMode);
+  const gatewayStatus = useGatewayStore((state) => state.status);
   const settings = useSettingsStore();
   const snapshots = useSessionActivityStore((state) => state.snapshots);
   const loadActivity = useSessionActivityStore((state) => state.load);
@@ -39,9 +43,20 @@ export function RecoverySettingsSection() {
       setCompactionStatus(compaction.status === 'fulfilled' && compaction.value.success ? compaction.value : null);
       setLongTaskStatus(longTask.status === 'fulfilled' && longTask.value.success ? longTask.value : null);
     });
-  }, [activeWorkspaceId, loadActivity, selectedSessionKey]);
+  }, [
+    activeWorkspaceId,
+    activeWorkspacePermissionMode,
+    gatewayStatus.connectedAt,
+    gatewayStatus.gatewayReady,
+    gatewayStatus.pid,
+    gatewayStatus.port,
+    gatewayStatus.state,
+    loadActivity,
+    selectedSessionKey,
+  ]);
 
   const snapshot = snapshots[selectedSessionKey];
+  const hasPolicyStatus = snapshot?.policy !== undefined || snapshot?.availability.policy !== undefined;
   const recoveryPlan = useMemo(() => deriveRecoveryRecommendations({
     activeRun: snapshot?.session.status === 'running' || snapshot?.session.status === 'waiting_approval',
     gatewayAvailable: true,
@@ -156,6 +171,11 @@ export function RecoverySettingsSection() {
           description={t('settings:recovery.session.description')}
           control={<SettingsSelect ariaLabel={t('settings:recovery.session.title')} value={selectedSessionKey} onChange={setSelectedSessionKey} testId="settings-recovery-session" options={sessionOptions} />}
         />
+        {hasPolicyStatus ? (
+          <div className="px-4 pb-3">
+            <SessionEffectivePolicyPanel policy={snapshot?.policy ?? null} />
+          </div>
+        ) : null}
         {recoveryPlan.available ? recoveryPlan.actions.map((action) => (
           <SettingsRow
             key={action.kind}

@@ -14,7 +14,7 @@ This matrix is the single source of truth for **product defaults**. Values remai
 | Surface | Config / env key | Product default | How to enable (canary) | Instant kill / stop |
 |---|---|---|---|---|
 | **VToken assembly** | runtime.vtoken.assembly.enabled | **false** (opt-in) | enabled:true or VERSE_VTOKEN_ASSEMBLY_ENABLED=1 | env=0 or enhancement kill switch |
-| **VToken bridge** | VERSE_VTOKEN_BRIDGE_ENABLED / hostApi.vtoken.setEnabled | **false** | env=1 or Developer toggle | env=0 / setEnabled(false) / kill switch |
+| **VToken bridge** | VERSE_VTOKEN_BRIDGE_ENABLED / internal hostApi.vtoken.setEnabled | **false** | internal diagnostics env/host call only; no renderer toggle | env=0 / setEnabled(false) / kill switch |
 | **working-memory** | runtime.contextBlock.working_memory.enabled | **false** | explicit true | flag off or kill switch |
 | **Runtime Memory inject pilot** | runtime.memory.injectPilot.enabled | **false** | explicit true | flag off or kill switch |
 | **Runtime Memory shadow/provider/persist** | runtime.memory.shadow / .provider / .persist | **false** | explicit opt-in only | flag off |

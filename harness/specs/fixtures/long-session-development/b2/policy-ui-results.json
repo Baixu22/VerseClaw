@@ -1,0 +1,203 @@
+{
+  "schema": "clawx.long-session.b2-ui-results/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-b2",
+  "program": "long-session-development-20261022",
+  "task": "TF-0551",
+  "title": "B2 session policy visible at existing Chat and Recovery entries",
+  "verdict": "pass",
+  "candidate": {
+    "commit": "b7b090779f0eed283aa381932dd32c98e936e9c5",
+    "tree": "e1b79fcec15ca7ccce71e2dab4aa62a474bf5899",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "verificationRun": "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\gate-run.json"
+  },
+  "surfaces": [
+    {
+      "id": "chat-activity-rail",
+      "status": "pass",
+      "evidence": "renders provenance, limits and action boundaries through a narrow Electron activity rail",
+      "details": "policy-only quiet session remains reachable; keyboard toggle and lifecycle disclosure work at 900x760; no horizontal overflow"
+    },
+    {
+      "id": "settings-recovery",
+      "status": "pass",
+      "evidence": "real Host/Gateway policy reads stay scoped, refresh after permission and Gateway changes, and remain configuration-read-only",
+      "details": "Recovery reuses the same policy component for a quiet created session"
+    }
+  ],
+  "negativeCases": [
+    "older same-session response cannot overwrite a newer read",
+    "wrong workspace policy is discarded and becomes unknown",
+    "wrong session policy is discarded and becomes unknown",
+    "failed/interrupted re-read clears stale policy while retaining non-policy activity",
+    "permission change and Gateway restart trigger a scoped refresh",
+    "policy reads do not rewrite openclaw.json"
+  ],
+  "coverage": {
+    "locales": [
+      "en",
+      "zh",
+      "ja",
+      "ru"
+    ],
+    "i18nLint": "pass",
+    "designTokens": [
+      "--color-text-foreground",
+      "--color-text-foreground-secondary",
+      "--color-text-foreground-tertiary",
+      "--color-border",
+      "--color-background-elevated-secondary",
+      "--color-text-success",
+      "--color-text-warning",
+      "--color-text-error"
+    ],
+    "keyboard": true,
+    "narrowViewport": {
+      "width": 900,
+      "height": 760,
+      "horizontalOverflow": false
+    },
+    "realElectron": true,
+    "realHostGateway": true
+  },
+  "commands": [
+    {
+      "id": "unit-focused",
+      "command": "pnpm exec vitest run tests/unit/session-activity-panel.test.tsx tests/unit/session-activity-background-read.test.ts tests/unit/chat-session-continuity.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 4443,
+      "rawLog": "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\unit-focused.log",
+      "rawLogSha256": "1bfb7688b14f74689ec215754add09796d0887c121cb49c84d648c30e3c2d505",
+      "files": 3,
+      "tests": 38,
+      "passed": 38,
+      "failed": 0
+    },
+    {
+      "id": "i18n-lint",
+      "command": "pnpm run i18n:lint",
+      "exitCode": 0,
+      "durationMs": 813,
+      "rawLog": "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\i18n-lint.log",
+      "rawLogSha256": "a44627fc40fb515c45b7819842082ea74e5f5061b8cdb78885d78bbd57b568ba",
+      "result": "pass"
+    },
+    {
+      "id": "build-vite",
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "durationMs": 50652,
+      "rawLog": "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\build-vite.log",
+      "rawLogSha256": "4978528b809e51c4faf1f3adcd09f7c8647a9a7a7a76bbbed361e7a94c77a7a3",
+      "success": true
+    },
+    {
+      "id": "electron-e2e",
+      "command": "pnpm run test:e2e:run tests/e2e/chat-session-derived.spec.ts tests/e2e/session-activity-background-read.spec.ts tests/e2e/long-session-policy-surface.spec.ts",
+      "exitCode": 0,
+      "durationMs": 52162,
+      "rawLog": "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\electron-e2e.log",
+      "rawLogSha256": "b03e7c2db77489a071a1609e52e276bc8715d350db1ea52c219f5d08cd8ba2fa",
+      "files": 3,
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "realHostGatewayTests": 1,
+      "mockedUiTests": 1
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 21551,
+      "rawLog": "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\typecheck.log",
+      "rawLogSha256": "8117570de7608a2e58df5a3b9cd769609bcab4f1c98dafd70b044c7ee7be9325",
+      "projects": 3,
+      "errors": 0
+    },
+    {
+      "id": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "durationMs": 917,
+      "rawLog": "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\contract-check.log",
+      "rawLogSha256": "72bd3657c7bc5e83e34d6af24a18c5e3ba0c109584df333e5fc9631930a26329",
+      "result": "pass"
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 877,
+      "rawLog": "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\comms-replay.log",
+      "rawLogSha256": "fbc28bc00d7affce5550c2162eec1dd0ed5652d8dbfec2d78ea6285e73ee35fd",
+      "success": true
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 714,
+      "rawLog": "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\comms-compare.log",
+      "rawLogSha256": "fa20812f78e975a5340b81b924f386c240a9983827ec3d2e4d253470011ccad5",
+      "result": "PASS",
+      "comparisonRows": 44,
+      "passedRows": 44,
+      "failedRows": 0
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/long-session-policy-surface.md",
+      "exitCode": 0,
+      "durationMs": 1444,
+      "rawLog": "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\harness-validate.log",
+      "rawLogSha256": "c6ad9a9a1923172574146fb78592ac95b610c664bdd92d35cd7f6ebf394527e9",
+      "result": "valid"
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationMs": 67,
+      "rawLog": "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\git-diff-check.log",
+      "rawLogSha256": "f01a374e9c81e3db89b3a42940c4d6a5447684986a1296e42bf13f196eed6295",
+      "whitespaceErrors": 0
+    },
+    {
+      "id": "changed-eslint",
+      "command": "pnpm exec eslint src/pages/Chat/SessionEffectivePolicyPanel.tsx src/pages/Chat/SessionActivityPanel.tsx src/pages/Chat/index.tsx src/pages/Settings/sections/RecoverySettingsSection.tsx src/stores/session-activity.ts tests/unit/session-activity-panel.test.tsx tests/unit/session-activity-background-read.test.ts tests/e2e/long-session-policy-surface.spec.ts",
+      "exitCode": 0,
+      "durationMs": 4935,
+      "rawLog": "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\changed-eslint.log",
+      "rawLogSha256": "00e3d1cd7c6a60d25892975a9a1ec4c6409adb389409e5eb7fcb0c7e35255210",
+      "errors": 0,
+      "warnings": 3,
+      "warningScope": "pre-existing Chat page hook/fast-refresh warnings"
+    }
+  ],
+  "artifacts": {
+    "screenshot": "policy-activity-rail-960.png",
+    "screenshots": "policy-ui-screenshots.json",
+    "verificationReceipt": "verification-receipt.json",
+    "sha256Sums": "SHA256SUMS"
+  },
+  "unmeasured": [
+    "font/DPI variance beyond the captured 900x760 light-theme profile",
+    "live provider-backed model switch when no provider credential is configured",
+    "non-Windows runtime behavior"
+  ],
+  "cleanup": {
+    "startedProcesses": true,
+    "startedGateway": true,
+    "electronProcessesClosed": true,
+    "recoveryRequired": false,
+    "notes": "Playwright fixture closed the built Electron app and Gateway descendants; temporary user data remained under D:\\tmp only."
+  },
+  "limitations": [
+    "Host mocks prove UI interaction only; the same spec also covers actual Host/Gateway policy reads, permission refresh and Gateway restart.",
+    "No real-human evidence is claimed; all runs are agent-driven."
+  ]
+}

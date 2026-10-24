@@ -24,6 +24,7 @@ import { resolveRoleContract } from "./role-registry.js";
 import type { RoleContract } from "./role-contract.js";
 import {
   buildRepairNodes,
+  isWriterLikeRole,
   buildRerouteRecommendations,
   buildOrchestrationDiagnostics,
   makeTaskLedgerEntry,
@@ -78,8 +79,14 @@ import { PATCH_FLOW_PROPOSAL_ONLY_DENIED_TOOLS } from "./orchestration-patch-flo
 import { createVerseGitRuntimeBindingPortFromEnv } from "../plugin-sdk/versegit-binding-port.js";
 import { registerVerseGitRuntimeBinding } from "../plugin-sdk/versegit-binding-registry.js";
 import type { VerseGitBindingEndReason, VerseGitBindingRecord, VerseGitRuntimeBindingPort } from "../../../shared/versegit-runtime-contract.ts";
+import {
+  buildDelegationAdmissionReceipt,
+  type DelegationAdmissionContext,
+} from "./delegation-admission.js";
+import type { DelegationAdmissionReceipt } from "../../../shared/types/delegation-admission.js";
 
 export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
+  delegationAdmission?: DelegationAdmissionContext;
   cfg?: RoleRegistryConfigCarrier;
   /** Target agent id for spawned workers (defaults to caller agent). */
   agentId?: string;
@@ -105,6 +112,7 @@ export type OrchestrationWorkerOutcome = {
   ledger: OrchestrationTaskLedgerEntry;
   spawn: RoleSpawnResult;
   verseGitBinding?: VerseGitBindingRecord;
+  admissionReceipt?: DelegationAdmissionReceipt;
 };
 
 export type OrchestrationRunResult = {
@@ -129,6 +137,7 @@ export type OrchestrationRunResult = {
   handoffState: HandoffArtifactRuntimeState;
   handoffArtifacts: WorkerOutputHandoffArtifact[];
   resultBundle: OrchestrationResultBundle;
+  admissionReceipts: DelegationAdmissionReceipt[];
 
   blackboardState: BlackboardState;
   blackboardSummary: BlackboardSynthesisSummary;
@@ -155,6 +164,7 @@ export type OrchestrationLifecycleEvent = {
   isVerifier: boolean;
   childSessionKey?: string;
   childRunId?: string;
+  admissionReceipt?: DelegationAdmissionReceipt;
   error?: string;
   ts: number;
 };
@@ -374,6 +384,7 @@ export async function runOrchestrationWithRecorder(
   const expectedWorkerRunIds: string[] = [];
   const failures: OrchestrationRunResult["failures"] = [];
   const handoffArtifacts: WorkerOutputHandoffArtifact[] = [];
+  const admissionReceipts: DelegationAdmissionReceipt[] = [];
   const orchestrationRunId = request.orchestrationRunId ?? `orch_${Date.now().toString(36)}`;
   const verseGitBindingPort = request.verseGitBindingPort ?? createVerseGitRuntimeBindingPortFromEnv();
   const pendingVerseGitBindings = new Set<string>();
@@ -466,6 +477,7 @@ export async function runOrchestrationWithRecorder(
     node: OrchestrationTaskNode | undefined,
     executionWave: number,
     modelRef?: string | null,
+    parallelSiblingCount = 0,
   ): Promise<void> => {
     const kind: ObservabilitySpanKind = isVerifier ? "verifier" : "subagent";
     const span = recorder.startSpan({
@@ -529,7 +541,32 @@ export async function runOrchestrationWithRecorder(
           status: "failed",
           endedAt: Date.now(),
         };
-        outcomes.push({ roleName, agentId: request.agentId, task, isVerifier, ledger: endedLedger, spawn });
+        const admissionReceipt = request.delegationAdmission && !isVerifier
+          ? buildDelegationAdmissionReceipt({
+              admission: request.delegationAdmission,
+              roleName,
+              task,
+              orchestrationRunId,
+              taskNodeId: endedLedger.taskNodeId ?? null,
+              taskId: endedLedger.taskId,
+              roleInstanceId: endedLedger.roleInstanceId,
+              executionWave,
+              concurrentSiblings: parallelSiblingCount,
+              isWriter: isWriterLikeRole(roleName) || Boolean(node?.writeSet?.length),
+              writeSet: node?.writeSet ?? [],
+              spawn,
+            })
+          : undefined;
+        if (admissionReceipt) admissionReceipts.push(admissionReceipt);
+        outcomes.push({
+          roleName,
+          agentId: request.agentId,
+          task,
+          isVerifier,
+          ledger: endedLedger,
+          spawn,
+          ...(admissionReceipt ? { admissionReceipt } : {}),
+        });
         failures.push({ roleName, status: "handoff-blocked", error: message });
         recorder.endSpan(span.id, {
           status: "error",
@@ -550,6 +587,7 @@ export async function runOrchestrationWithRecorder(
             roleName,
             task,
             isVerifier,
+            ...(admissionReceipt ? { admissionReceipt } : {}),
             error: message,
             ts: Date.now(),
           });
@@ -733,7 +771,34 @@ export async function runOrchestrationWithRecorder(
         status: spawn.status === "accepted" ? "accepted" : "failed",
         endedAt: Date.now(),
       };
-      outcomes.push({ roleName, agentId: request.agentId, task, isVerifier, ledger: endedLedger, spawn, ...(verseGitBinding ? { verseGitBinding } : {}) });
+      const admissionReceipt = request.delegationAdmission && !isVerifier
+        ? buildDelegationAdmissionReceipt({
+            admission: request.delegationAdmission,
+            roleName,
+            task,
+            orchestrationRunId,
+            taskNodeId: endedLedger.taskNodeId ?? null,
+            taskId: endedLedger.taskId,
+            roleInstanceId: endedLedger.roleInstanceId,
+            executionWave,
+            concurrentSiblings: parallelSiblingCount,
+            isWriter: isWriterLikeRole(roleName) || Boolean(node?.writeSet?.length),
+            writeSet: node?.writeSet ?? [],
+            worktree,
+            spawn,
+          })
+        : undefined;
+      if (admissionReceipt) admissionReceipts.push(admissionReceipt);
+      outcomes.push({
+        roleName,
+        agentId: request.agentId,
+        task,
+        isVerifier,
+        ledger: endedLedger,
+        spawn,
+        ...(verseGitBinding ? { verseGitBinding } : {}),
+        ...(admissionReceipt ? { admissionReceipt } : {}),
+      });
       const runId = spawn.result?.runId;
       const childSessionKey = spawn.result?.childSessionKey;
       if (spawn.status === "accepted" && runId) {
@@ -772,6 +837,7 @@ export async function runOrchestrationWithRecorder(
             isVerifier,
             childSessionKey,
             childRunId: runId,
+            ...(admissionReceipt ? { admissionReceipt } : {}),
             ts: Date.now(),
           });
         } else {
@@ -800,6 +866,23 @@ export async function runOrchestrationWithRecorder(
       }
       failures.push({ roleName, status: "error", error: message });
       recorder.endSpan(span.id, { status: "error", error: message });
+      const admissionReceipt = request.delegationAdmission && !isVerifier
+        ? buildDelegationAdmissionReceipt({
+            admission: request.delegationAdmission,
+            roleName,
+            task,
+            orchestrationRunId,
+            taskNodeId: ledger.taskNodeId ?? null,
+            taskId: ledger.taskId,
+            roleInstanceId: ledger.roleInstanceId,
+            executionWave,
+            concurrentSiblings: parallelSiblingCount,
+            isWriter: isWriterLikeRole(roleName) || Boolean(node?.writeSet?.length),
+            writeSet: node?.writeSet ?? [],
+            spawn: { status: "error", error: message },
+          })
+        : undefined;
+      if (admissionReceipt) admissionReceipts.push(admissionReceipt);
       try {
         lifecycle?.({
           status: "error",
@@ -810,6 +893,7 @@ export async function runOrchestrationWithRecorder(
           roleName,
           task,
           isVerifier,
+          ...(admissionReceipt ? { admissionReceipt } : {}),
           error: message,
           ts: Date.now(),
         });
@@ -936,6 +1020,7 @@ export async function runOrchestrationWithRecorder(
             node,
             wave.wave,
             node.modelRef,
+            Math.max(0, nodes.length - 1),
           ),
           node.roleName,
           failures,
@@ -1078,6 +1163,7 @@ export async function runOrchestrationWithRecorder(
     handoffState,
     handoffArtifacts,
     resultBundle,
+    admissionReceipts,
 
     blackboardState: blackboard.state,
     blackboardSummary: blackboard.summary,

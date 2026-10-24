@@ -44,6 +44,9 @@ const hostApiMock = vi.hoisted(() => ({
   sessions: {
     createHandoff: vi.fn(),
     fork: vi.fn(),
+    bindCoordinator: vi.fn(),
+    coordinatorBinding: vi.fn(),
+    delegateCoordinator: vi.fn(),
   },
   taskLedger: {
     linkSession: vi.fn(),
@@ -105,6 +108,20 @@ describe('workspace session helpers', () => {
     hostApiMock.workspaces.update.mockResolvedValue({ success: true });
     hostApiMock.workspaces.moveSessionToFolder.mockResolvedValue({ success: true });
     hostApiMock.sessions.createHandoff.mockResolvedValue({ success: true, sessionKey: 'agent:reviewer:session-1711111111111-4fzyo8' });
+    hostApiMock.sessions.bindCoordinator.mockResolvedValue({
+      success: true,
+      validation: 'current',
+      binding: { revision: 1, state: 'active' },
+    });
+    hostApiMock.sessions.delegateCoordinator.mockResolvedValue({
+      success: true,
+      receipt: { state: 'accepted', acceptedIsNotCompletion: true },
+    });
+    hostApiMock.sessions.coordinatorBinding.mockResolvedValue({
+      success: true,
+      validation: 'current',
+      binding: { revision: 1, state: 'active' },
+    });
     hostApiMock.sessions.fork.mockResolvedValue({
       success: true,
       sessionKey: 'agent:reviewer:dashboard:fork',
@@ -258,6 +275,20 @@ describe('workspace session helpers', () => {
   });
 
   it('forwards an explicit fromLeafId when forking from a message (#180)', async () => {
+    hostApiMock.sessions.bindCoordinator.mockResolvedValue({
+      success: true,
+      validation: 'current',
+      binding: { revision: 1, state: 'active' },
+    });
+    hostApiMock.sessions.delegateCoordinator.mockResolvedValue({
+      success: true,
+      receipt: { state: 'accepted', acceptedIsNotCompletion: true },
+    });
+    hostApiMock.sessions.coordinatorBinding.mockResolvedValue({
+      success: true,
+      validation: 'current',
+      binding: { revision: 1, state: 'active' },
+    });
     hostApiMock.sessions.fork.mockResolvedValue({
       success: true,
       sessionKey: 'agent:reviewer:dashboard:fork',
@@ -270,6 +301,58 @@ describe('workspace session helpers', () => {
       expect.objectContaining({ fromLeafId: 'entry-42' }),
     );
   });
+  it('requires an explicit coordinator bind and proxies the selected workspace/session', async () => {
+    const {
+      bindActiveWorkspaceCoordinator,
+      createWorkspaceScopedNewSession,
+      readActiveWorkspaceCoordinatorBinding,
+    } = await import('@/lib/workspace-session');
+
+    await createWorkspaceScopedNewSession();
+    expect(hostApiMock.sessions.bindCoordinator).not.toHaveBeenCalled();
+
+    await bindActiveWorkspaceCoordinator({
+      expectedRevision: 0,
+      taskRefs: [{ kind: 'task-ledger', nodeId: 'ledger-a' }],
+    });
+    expect(hostApiMock.sessions.bindCoordinator).toHaveBeenCalledWith({
+      workspaceId: 'workspace-a',
+      agentId: 'reviewer',
+      sessionKey: 'agent:reviewer:old',
+      expectedRevision: 0,
+      taskRefs: [{ kind: 'task-ledger', nodeId: 'ledger-a' }],
+    });
+
+    await readActiveWorkspaceCoordinatorBinding();
+    expect(hostApiMock.sessions.coordinatorBinding).toHaveBeenCalledWith({ workspaceId: 'workspace-a' });
+  });
+
+  it('delegates only through an explicit active-coordinator request', async () => {
+    const { delegateActiveWorkspaceCoordinator, createWorkspaceScopedNewSession } = await import('@/lib/workspace-session');
+    await createWorkspaceScopedNewSession();
+    expect(hostApiMock.sessions.delegateCoordinator).not.toHaveBeenCalled();
+
+    await delegateActiveWorkspaceCoordinator({
+      idempotencyKey: 'delegate-key-a',
+      roleName: 'implementer',
+      task: 'Implement the scoped change',
+      taskRef: { kind: 'task-ledger', nodeId: 'ledger-a' },
+      writeSet: ['src/a.ts'],
+      isolation: 'worktree',
+    });
+    expect(hostApiMock.sessions.delegateCoordinator).toHaveBeenCalledWith({
+      workspaceId: 'workspace-a',
+      idempotencyKey: 'delegate-key-a',
+      roleName: 'implementer',
+      task: 'Implement the scoped change',
+      taskRef: { kind: 'task-ledger', nodeId: 'ledger-a' },
+      writeSet: ['src/a.ts'],
+      isolation: 'worktree',
+      modelRef: undefined,
+      backend: 'openclaw-embedded',
+    });
+  });
+
   it('keeps the current view when Main refuses handoff creation', async () => {
     hostApiMock.sessions.createHandoff.mockResolvedValueOnce({ success: false, error: 'Handoff depth 4 exceeds the configured maximum of 3.' });
     const { createWorkspaceScopedHandoffSession } = await import('@/lib/workspace-session');

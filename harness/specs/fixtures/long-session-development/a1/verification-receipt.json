@@ -1,0 +1,198 @@
+{
+  "schema": "clawx.long-session.a1-verification/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-a1",
+  "program": "long-session-development-20261022",
+  "task": "TF-0548",
+  "title": "A1 identity, action contract and fault baseline",
+  "verdict": "pass-with-deferred-gaps",
+  "featureClaim": "baseline-only; long-session runtime remains unaccepted until later nodes",
+  "candidate": {
+    "commit": "b088635108f4c40c77efcd9f46a1c421f405b8d9",
+    "tree": "91026b1f0bc14fccd77b09119775725b658493a1",
+    "branch": "codex/long-session-implementation-20261022",
+    "dirtyBefore": false,
+    "dirtyAfter": false
+  },
+  "environment": {
+    "platform": "win32",
+    "node": "v24.22.1",
+    "pnpm": "11.2.2",
+    "tempRoot": "D:/tmp",
+    "buildIdentity": "source/typecheck candidate; no Electron/Gateway build was used for A1 behavioral claims"
+  },
+  "commands": [
+    {
+      "id": "existing-unit",
+      "command": "pnpm exec vitest run tests/unit/workspace-session.test.ts tests/unit/chat-session-continuity.test.ts tests/unit/handoff-depth.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 7508,
+      "files": 3,
+      "tests": 24,
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0,
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\existing-unit.log"
+    },
+    {
+      "id": "action-contract",
+      "command": "pnpm exec vitest run tests/unit/long-session-action-contract.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 2623,
+      "files": 1,
+      "tests": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\action-contract.log"
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 67805,
+      "projects": 3,
+      "errors": 0,
+      "success": true,
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\typecheck.log"
+    },
+    {
+      "id": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "durationMs": 1017,
+      "success": true,
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\contract-check.log"
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 982,
+      "success": true,
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\comms-replay.log"
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 908,
+      "comparisonRows": 44,
+      "passedRows": 44,
+      "failedRows": 0,
+      "result": "PASS",
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\comms-compare.log"
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/long-session-baseline-contract.md",
+      "exitCode": 0,
+      "durationMs": 1850,
+      "result": "valid",
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\harness-validate.log"
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationMs": 67,
+      "whitespaceErrors": 0,
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\git-diff-check.log"
+    },
+    {
+      "id": "action-eslint",
+      "command": "pnpm exec eslint tests/unit/long-session-action-contract.test.ts",
+      "exitCode": 0,
+      "durationMs": 4743,
+      "errors": 0,
+      "rawLog": "D:\\tmp\\long-session-a1\\b08863510-r1\\action-eslint.log"
+    }
+  ],
+  "counts": {
+    "testFiles": 4,
+    "tests": 32,
+    "passed": 32,
+    "failed": 0,
+    "skipped": 0,
+    "commands": 9,
+    "failedCommands": 0,
+    "identityKinds": 10,
+    "lifecycleActions": 9,
+    "negativeScenarios": 14,
+    "knownGaps": 3,
+    "unmeasuredScenarios": 11
+  },
+  "acceptance": [
+    {
+      "criterion": "Distinguish Workspace, Project projection, Assistant, SessionKey, physical sessionId, native thread, Turn/Run/Task and resource owner without a second Project or task owner.",
+      "result": "pass",
+      "evidence": [
+        "action-and-inheritance-contract.json",
+        "current-baseline.json"
+      ]
+    },
+    {
+      "criterion": "Give every lifecycle action a visible behavior, inheritance boundary, prerequisites, failure/unknown state, recovery path and current source entry.",
+      "result": "pass",
+      "evidence": [
+        "action-and-inheritance-contract.json",
+        "tests/unit/long-session-action-contract.test.ts"
+      ]
+    },
+    {
+      "criterion": "Fix an isolated-agent negative matrix for active archive, duplicate/late completion, generation changes, backend switch, authorization revocation, cross-workspace and restart; leave unexecuted items unmeasured.",
+      "result": "pass",
+      "evidence": [
+        "negative-scenario-index.json",
+        "verification-receipt.json"
+      ]
+    },
+    {
+      "criterion": "Pin candidate, inputs, metric definition and future acceptance budget; generate a fresh current receipt rather than reusing old PASS/sample evidence.",
+      "result": "pass",
+      "evidence": [
+        "current-baseline.json",
+        "verification-receipt.json"
+      ]
+    }
+  ],
+  "rawRun": {
+    "manifest": "D:\\tmp\\long-session-a1\\b08863510-r1\\gate-run.json",
+    "runDirectory": "D:\\tmp\\long-session-a1\\b08863510-r1",
+    "retainedInGit": false,
+    "readback": "Commands, logs and candidate identity were read from disk after the clean-candidate run."
+  },
+  "deferredGaps": [
+    {
+      "id": "archive-active-run-not-fenced",
+      "owner": "TF-0549/A2",
+      "summary": "Active archive still bypasses the canonical runtime lifecycle fence."
+    },
+    {
+      "id": "restore-index-removed-before-transcript-rename",
+      "owner": "TF-0549/A2",
+      "summary": "Restore has a crash window before the transcript rename."
+    }
+  ],
+  "unmeasured": [
+    "live backend switch and actual-native-thread continuity",
+    "permission revocation across admission and follow-up",
+    "duplicate/late completion continuation against a running Gateway",
+    "restart with an unknown delete receipt",
+    "real Electron lifecycle E2E",
+    "long-running resource and paired D2 quality/cost measurement"
+  ],
+  "cleanup": {
+    "startedElectron": false,
+    "startedGateway": false,
+    "startedBrowser": false,
+    "recoveryRequired": false,
+    "notes": "No long-running process or browser was launched; only source checks, deterministic tests, typecheck and comms replay artifacts."
+  },
+  "limitations": [
+    "A1 is a baseline and contract node, not a functioning long-session acceptance result.",
+    "CodeGraph is retired in the current repository; direct source search and caller inspection were used, and historic CodeGraph indexes were not treated as current authority.",
+    "No real-human evidence is claimed; every result is agent-driven.",
+    "No product lock, default, publication boundary, independent Project or second scheduler was changed."
+  ]
+}

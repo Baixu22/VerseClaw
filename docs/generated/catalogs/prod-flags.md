@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-20T17:51:28.645Z
+Generated at: 2026-10-22T22:59:24.150Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -175,7 +175,7 @@ This file is generated — edit the source of truth instead.
 - rollback: Omit request.contextLadder or leave enabled unset/false; ordinary per-channel BlockStore queries and defaults resume unchanged.
 - executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:384`, `openclaw_runtime/src/context-engine/assembler.ts:393`
 
-> C6-H agent-driven live corpus evidence is harness/specs/fixtures/context-ladder-live-corpus/evidence.json (104,607 raw chars, driven_by=agent). L4 embedding remains deferred; no assembler default is flipped.
+> Internal API only: the Context Orchestrator/Assembler may pass the ladder request explicitly; no user product toggle or default flip exists. Evidence remains harness/specs/fixtures/context-ladder-live-corpus/evidence.json (104,607 raw chars, driven_by=agent); L4 embedding remains deferred.
 
 ## routing-memo-shadow
 

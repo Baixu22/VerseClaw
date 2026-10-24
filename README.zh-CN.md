@@ -43,11 +43,14 @@ Verse Claw 是基于 OpenClaw 的 Electron 桌面应用：在对话中发起工�
 | 模型与提供商 | 管理提供商账户、默认模型和回退配置，查看 token 用量历史 | 设置 → 模型与提供商 |
 | Agent 与任务 | 配置 Agent 和角色，查看子 Agent 活动；用 Task Ledger 记录任务，用显式 Task Loop 或 ClawGraph 执行有约束的流程 | 设置 → Agents；侧栏更多菜单 |
 | 知识工作台 | 搜索资料、管理来源与引用，在待复核队列中处理收件项、草稿和提案 | 侧栏 → 知识 |
+| 记忆 | 查看已批准记忆与持久化候选，批准提议，删除/tombstone，导出带哈希的 JSON 快照，并用“记住这个”创建普通提议 | 侧栏 → 记忆 |
 | 收件箱 | 汇总权限申请、远程任务和浏览器任务中需要处理的事项，并查看历史结果 | 侧栏 → 收件箱 |
 | 定时任务与频道 | 创建和管理定时任务、查看运行记录；配置频道账户、连接状态和 Agent 绑定 | 侧栏 → 已安排；设置 → Channels |
 | Skills 与 MCP | 查看、启停技能，管理技能包、市场安装和 MCP 服务配置 | 设置 → Skills |
 | 结构化文档 | 用 VerseConf 插件管理研究表格、幻灯片大纲、修订与导出 | 启用插件后的 Agent 工具与产物面板 |
 | 诊断与恢复 | 查看会话活动、进程、Trace、运行时状态、存储占用和恢复操作 | 工作区面板、可观测性、设置 |
+
+显式绑定的长期会话会在 Chat 活动栏展示稳定主会话、现有 Task Ledger 引用和终态完成批次，并可直接打开 worker transcript 与任务记录。绑定会话每轮只从已接受的 Task Ledger Working Context、CompressionArtifact 元数据、当前模型可见的 accepted memory refs 与 typed knowledge refs 组装有界 `ContinuityContextPack/v1`；pending、candidate、过期、撤销、被 supersede、跨 scope 和未验证模型叙述会被排除，原始历史仅保留按需读取的 owner refs。这些内容只投影现有 owner，不创建第二任务列表、记忆库或注入 authority。
 
 界面支持中文、英文、日文和俄文，提供浅色、深色和跟随系统主题。通用设置中的 Basic / Advanced 控制诊断信息的展示深度；解锁开发者模式后还可进入图像生成与梦境页面。
 
@@ -217,7 +220,7 @@ Renderer 请求入口是 `src/lib/host-api.ts` 与 `src/lib/host-api-client.ts`�
 | 系统资源调度 | `ResourceFabric` 对工作区执行与聊天历史做准入控制；`BackgroundWorkGate` 在队列、RSS 或 CPU 压力下延后后台任务；`ResourceTracker` 负责会话关联服务的发现与清理 | 这是 Main 进程内的协作式准入，不是全局 OS 调度器；前台工作不会被资源收缩策略丢弃 |
 | 上下文工程 | `ContextEngine` 覆盖 bootstrap、ingest、maintain、after-turn 与 assemble/compact；共享的 6,000 字符单轮注入预算按优先级记账并受 fail-closed kill switch 控制；`ContextHealthMonitor` 评估注入压力、结构保真、目标对齐和新颖度 | 上下文增强默认按 opt-in 使用；目标 authority 收敛仍是独立设计工作 |
 | 会话生命周期 | `SessionManager` 使用 JSONL append-only 树，支持 leaf 分支、压缩、标签和上下文重建；Host 侧增加 checkpoint、handoff、归档/恢复与级联删除 | 会话不等于 Run、Task、Workspace 或 Project；用户可见任务事实仍只归 Task Ledger |
-| 记忆系统 | Role Memory 是 SQLite 控制平面，包含 Memory Card、Gatekeeper 审核、冲突处理和七桶 Context Pack；Runtime Memory 有独立的持久化、hydrate 与 inject 门控 | write/use gate 与 Runtime Memory 路径默认关闭；没有自动经验回写，也不把未门控注入当作生产能力 |
+| 记忆系统 | 唯一 `Memory` 面板从既有存储投影已批准的 Role 卡片、Runtime facts 与持久化候选；批准、删除和导出按 owner 分派，“记住这个”走 gatekeeper 审阅，并统一受 `MemoryControlPlaneManifest/v1` 约束 | 候选永远不进入模型可见上下文；各 owner 的 write/use gate 与 Runtime Memory 注入路径仍独立配置。原生 OpenClaw memory 源不在此面板控制，界面会明确说明 |
 | 问题感知 | 先对单条 trace 检测 Issue，再按签名聚合成跨运行 Problem，保留 7 天窗口、生命周期状态和脱敏证据产物 | `pnpm observability:problems` 是 agent 批处理，不是常驻自动修复服务 |
 | 多智能体与角色 | `RoleContract`、8 个内置角色、`router`/`lead-workers`/`adversarial-review` 三种模式、团队模板、任务图和资源感知执行波次 | 写入集证明、工具争用与并发上限共同约束执行；`bounded_a2a` 仍禁用；Runtime V2 Kernel 仍是规划项 |
 
@@ -229,7 +232,7 @@ flowchart LR
   HOST --> GATEWAY["Gateway"]
   GATEWAY --> SESSION["SessionManager<br/>JSONL session tree"]
   GATEWAY --> CONTEXT["ContextEngine + Orchestrator"]
-  MEMORY["Role Memory / Runtime Memory"] --> CONTEXT
+  MEMORY["Memory 面板<br/>accepted vs candidate"] --> CONTEXT
   SESSION --> CONTEXT
   CONTEXT --> BUDGET["Turn injection budget<br/>precedence + kill switch"]
   ROLE["Roles / teams"] --> ORCH["Orchestrator + task graph"]
@@ -250,10 +253,11 @@ flowchart LR
 | VerseShell | `openclaw_runtime/src/agents/verseshell/`、`verseshell-runtime.ts`、`shared/verseshell/`、`resources/verseshell/`、`resources/verseshell-mcp/` | 受控执行、typed ACI、结果 artifact 和 patch preview 分别默认关闭；外部 MCP 适配器不等于内部执行路径 |
 | VerseBrowser | `packages/versebrowser/`、`electron/services/agent-browser-*`、`electron/gateway/agent-browser-bridge.ts`、`shared/agent-browser/` | 81 个契约方法不是 81 项 Electron 能力：驱动实现 67 个，模型层 28 个 action，当前 Windows 桌面只广告 14 个可用 action |
 | 知识库 | `src/pages/Knowledge/`、`electron/services/knowledge-api.ts`、`memory-wiki`、`openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first 且受角色治理：Agent 可读、可提议；Inbox → Draft → Steward → Proposal → 明确确认后 apply。SEKB 自动回写仍是默认关闭/影子阶段 |
+| 记忆 | `src/pages/Memory/`、`electron/services/memory-api.ts`、`openclaw_runtime/src/gateway/server-methods/memory-surface.ts` | 唯一审阅入口；Role 卡片、Runtime facts 与候选保留各自 owner 的存储和变更路径。批准、tombstone/invalidation、带哈希导出与显式记住提议都不会创建第二套记忆 authority |
 
 更完整的工具与知识流转图见[运行时控制平面](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces)。
 
-`src/App.tsx` 当前注册首次运行 Setup（`/setup/*`）、Chat（`/`）、Knowledge、Inbox、Scheduled、Task Ledger、ClawGraph、Observability 和 Settings 界面；Models、Agents、Channels、Skills 是 Settings 内的分区，Code Review 和 Browser 是进入工作区面板的兼容入口；Image Generation 与 Dreams 需要开发者模式。
+`src/App.tsx` 当前注册首次运行 Setup（`/setup/*`）、Chat（`/`）、Knowledge、Memory、Inbox、Scheduled、Task Ledger、ClawGraph、Observability 和 Settings 界面；Models、Agents、Channels、Skills 是 Settings 内的分区，Code Review 和 Browser 是进入工作区面板的兼容入口；Image Generation 与 Dreams 需要开发者模式。
 
 当前 pnpm workspace 成员是仓库根目录、`harness/`、`packages/versebrowser/` 和 `resources/verseshell-mcp/`。`packages/vtoken/` 是 Python/uv sidecar；`openclaw_runtime/` 是随仓内置的 Git 源码树，拥有独立依赖工作区，不是 Git submodule，也不是打包时使用的 npm 运行时。
 

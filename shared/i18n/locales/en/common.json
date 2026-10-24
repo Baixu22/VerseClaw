@@ -33,6 +33,7 @@
     "inbox": "Inbox",
     "scheduled": "Scheduled",
     "knowledge": "Knowledge",
+    "memory": "Memory",
     "cronTasks": "Cron Tasks",
     "skills": "Tools",
     "agents": "Agents",

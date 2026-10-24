@@ -1,17 +1,27 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { getOpenClawConfigDir } from "../utils/paths";
 import { logger } from "../utils/logger";
 import { withFileLock, writeFileAtomic } from "../utils/atomic-write";
 
+export type SessionLifecycleMutationKind = "delete" | "archive" | "restore";
+
 export type SessionDeleteGateRecord = {
   operationId: string;
+  operationKind: SessionLifecycleMutationKind;
+  requestDigest?: string;
   sessionKey: string;
   agentId: string;
   expectedSessionId?: string;
   terminalClosed?: boolean;
   localSweepCommitted?: boolean;
+  /**
+   * Why the local mirror sweep was skipped even though the Gateway commit
+   * succeeded (for example: this runtime keeps no legacy sessions.json).
+   * A skipped sweep is not a failed delete, but it must stay auditable.
+   */
+  localSweepSkipped?: string;
   createdAt: number;
   updatedAt: number;
 };
@@ -43,7 +53,11 @@ async function readGateFile(): Promise<SessionDeleteGateFile> {
       (parsed as { gates?: unknown }).gates &&
       typeof (parsed as { gates: unknown }).gates === "object"
     ) {
-      return parsed as SessionDeleteGateFile;
+      const file = parsed as SessionDeleteGateFile;
+      for (const gate of Object.values(file.gates)) {
+        gate.operationKind ??= "delete";
+      }
+      return file;
     }
     throw new Error(`Invalid session delete gate schema at ${filePath}`);
   } catch (error) {
@@ -109,6 +123,19 @@ export function tryWithSessionDeleteGateLock<T>(
   return withSessionDeleteGateLock(sessionKey, fn);
 }
 
+
+export function buildSessionMutationRequestDigest(
+  operationKind: SessionLifecycleMutationKind,
+  payload: Record<string, unknown>,
+): string {
+  const ordered = Object.fromEntries(
+    Object.entries({ operationKind, ...payload })
+      .filter(([, value]) => value !== undefined)
+      .sort(([left], [right]) => left.localeCompare(right)),
+  );
+  return createHash("sha256").update(JSON.stringify(ordered)).digest("hex");
+}
+
 /**
  * Electron mirror gate. The caller must persist an operationId before the
  * first sessions.delete RPC; on RPC unknown/failure the gate remains open and
@@ -123,33 +150,62 @@ export async function findSessionDeleteGateBySession(
   });
 }
 
-export async function persistSessionDeleteGate(
-  sessionKey: string,
-  agentId: string,
-): Promise<SessionDeleteGateRecord> {
+
+export async function persistSessionMutationGate(input: {
+  sessionKey: string;
+  agentId: string;
+  operationKind: SessionLifecycleMutationKind;
+  requestDigest: string;
+}): Promise<SessionDeleteGateRecord> {
   return withGateFileLock(async () => {
     const file = await readGateFile();
-    const existing = Object.values(file.gates).find((gate) => gate.sessionKey === sessionKey);
-    if (existing) return existing;
+    const existing = Object.values(file.gates).find((gate) => gate.sessionKey === input.sessionKey);
+    if (existing) {
+      if (
+        (existing.operationKind ?? "delete") !== input.operationKind ||
+        (existing.requestDigest && existing.requestDigest !== input.requestDigest)
+      ) {
+        throw new Error(
+          `Session ${input.sessionKey} has a pending ${existing.operationKind ?? "delete"} operation ${existing.operationId}`,
+        );
+      }
+      return existing;
+    }
     const now = Date.now();
     const gate: SessionDeleteGateRecord = {
       operationId: randomUUID(),
-      sessionKey,
-      agentId,
+      operationKind: input.operationKind,
+      requestDigest: input.requestDigest,
+      sessionKey: input.sessionKey,
+      agentId: input.agentId,
       createdAt: now,
       updatedAt: now,
     };
     file.gates[gate.operationId] = gate;
     await writeGateFile(file);
-    logger.info(`[session-delete-gate] Persisted operationId=${gate.operationId} sessionKey=${sessionKey}`);
+    logger.info(
+      `[session-delete-gate] Persisted kind=${gate.operationKind} operationId=${gate.operationId} sessionKey=${gate.sessionKey}`,
+    );
     return gate;
+  });
+}
+
+export async function persistSessionDeleteGate(
+  sessionKey: string,
+  agentId: string,
+): Promise<SessionDeleteGateRecord> {
+  return persistSessionMutationGate({
+    sessionKey,
+    agentId,
+    operationKind: "delete",
+    requestDigest: buildSessionMutationRequestDigest("delete", { sessionKey, agentId }),
   });
 }
 
 export async function updateSessionDeleteGate(
   operationId: string,
   patch: Partial<Pick<SessionDeleteGateRecord,
-    'expectedSessionId' | 'terminalClosed' | 'localSweepCommitted'>>,
+    'expectedSessionId' | 'terminalClosed' | 'localSweepCommitted' | 'localSweepSkipped'>>,
 ): Promise<SessionDeleteGateRecord | undefined> {
   return withGateFileLock(async () => {
     const file = await readGateFile();

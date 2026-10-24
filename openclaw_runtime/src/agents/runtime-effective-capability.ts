@@ -88,6 +88,87 @@ export type RuntimeEffectiveCapabilityResult = {
   effectiveDigest: string;
 };
 
+const MAX_RUNTIME_EFFECTIVE_SNAPSHOTS = 64;
+const DEFAULT_RUNTIME_SNAPSHOT_TTL_MS = 30_000;
+
+export type RuntimeEffectiveCapabilitySnapshot = {
+  workspaceId: string;
+  sessionKey: string;
+  runId: string | null;
+  runtimeGeneration: string;
+  observedAtMs: number;
+  profile: ModelCapabilityProfile;
+  source: RuntimeEffectiveCapabilityResult["source"];
+  ack: ModelCapabilityAckFact;
+  effectiveToolNames: readonly string[];
+  effectiveDigest: string;
+};
+
+const runtimeEffectiveCapabilitySnapshots = new Map<string, RuntimeEffectiveCapabilitySnapshot>();
+
+function snapshotKey(workspaceId: string, sessionKey: string): string {
+  return `${workspaceId.trim()}\u0000${sessionKey.trim()}`;
+}
+
+function rememberRuntimeEffectiveCapabilityResult(
+  input: RuntimeEffectiveCapabilityInput,
+  result: RuntimeEffectiveCapabilityResult,
+): void {
+  const observedAtMs = Date.parse(result.profile.observedAt);
+  if (!Number.isFinite(observedAtMs)) return;
+  const key = snapshotKey(input.workspaceId, input.sessionKey);
+  const previous = runtimeEffectiveCapabilitySnapshots.get(key);
+  if (previous && previous.observedAtMs > observedAtMs) return;
+  runtimeEffectiveCapabilitySnapshots.delete(key);
+  runtimeEffectiveCapabilitySnapshots.set(key, {
+    workspaceId: input.workspaceId.trim(),
+    sessionKey: input.sessionKey.trim(),
+    runId: input.generationGuard?.runId ?? null,
+    runtimeGeneration: result.profile.runtimeGeneration,
+    observedAtMs,
+    profile: result.profile,
+    source: result.source,
+    ack: result.ack,
+    effectiveToolNames: result.effectiveToolNames,
+    effectiveDigest: result.effectiveDigest,
+  });
+  while (runtimeEffectiveCapabilitySnapshots.size > MAX_RUNTIME_EFFECTIVE_SNAPSHOTS) {
+    const oldest = runtimeEffectiveCapabilitySnapshots.keys().next().value;
+    if (typeof oldest !== "string") break;
+    runtimeEffectiveCapabilitySnapshots.delete(oldest);
+  }
+}
+
+/** Reads only the latest TF-0512 observation; never reinterprets static config. */
+export function readRuntimeEffectiveCapabilitySnapshot(input: {
+  workspaceId: string;
+  sessionKey: string;
+  expectedRuntimeGeneration?: string | null;
+  nowMs?: number;
+  ttlMs?: number;
+}): RuntimeEffectiveCapabilitySnapshot | undefined {
+  const snapshot = runtimeEffectiveCapabilitySnapshots.get(
+    snapshotKey(input.workspaceId, input.sessionKey),
+  );
+  if (!snapshot) return undefined;
+  if (
+    input.expectedRuntimeGeneration != null &&
+    input.expectedRuntimeGeneration.trim() !== snapshot.runtimeGeneration
+  ) {
+    return undefined;
+  }
+  const nowMs = input.nowMs ?? Date.now();
+  const ttlMs = input.ttlMs ?? DEFAULT_RUNTIME_SNAPSHOT_TTL_MS;
+  if (!Number.isFinite(ttlMs) || ttlMs < 0 || nowMs - snapshot.observedAtMs > ttlMs) {
+    return undefined;
+  }
+  return snapshot;
+}
+
+export function clearRuntimeEffectiveCapabilitySnapshotsForTests(): void {
+  runtimeEffectiveCapabilitySnapshots.clear();
+}
+
 export function composeRuntimeEffectiveCapabilitySystemPrompt(
   systemPrompt: string,
   result: RuntimeEffectiveCapabilityResult,
@@ -475,5 +556,6 @@ export async function buildRuntimeEffectiveCapabilityProfile(
   ) {
     throw new Error("stale runtime capability generation");
   }
+  rememberRuntimeEffectiveCapabilityResult(input, result);
   return result;
 }

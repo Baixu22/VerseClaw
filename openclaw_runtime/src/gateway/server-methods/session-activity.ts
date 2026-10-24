@@ -1,6 +1,7 @@
 import { listClawGraphRunSnapshots } from "../../agents/clawgraph/runtime.js";
 import { getLatestMissionForSession } from "../../agents/mission-control/store.js";
 import { listSubagentRunsForRequester } from "../../agents/subagent-registry.js";
+import { buildCompletionBatchReceipts } from "../../agents/completion-batch-receipt.js";
 import { listTaskLoopRunsForSession } from "../../agents/task-loop-controller.js";
 import {
   countLongTaskQueuedMessages,
@@ -74,7 +75,8 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
           source: "snapshot",
         })),
     ];
-    const subagents = listSubagentRunsForRequester(sessionKey).slice(-8).map((run) => ({
+    const subagentRuns = listSubagentRunsForRequester(sessionKey);
+    const subagents = subagentRuns.slice(-8).map((run) => ({
       id: run.orchestration?.taskNodeId ?? run.orchestration?.roleInstanceId ?? run.runId,
       role: run.orchestration?.roleName ?? run.label,
       task: run.task,
@@ -93,6 +95,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       updatedAt: run.endedAt ?? run.startedAt ?? run.createdAt,
       source: "snapshot",
     }));
+    const completionBatches = buildCompletionBatchReceipts(subagentRuns, sessionKey).slice(0, 8);
     const queueCount = countLongTaskQueuedMessages(sessionKey);
     const checkpoint = getLatestLongTaskCheckpoint(sessionKey);
     const readProjection = collectSessionActivityReadProjection(sessionKey, mission);
@@ -112,6 +115,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
         },
         tasks,
         subagents,
+        completionBatches,
         goals: readProjection.goals,
         processes: readProjection.processes,
         lineage: readProjection.lineage,

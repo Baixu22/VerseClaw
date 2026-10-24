@@ -374,7 +374,7 @@ describe('TF-0003 default configuration matrix', () => {
     ).toBe(false);
   });
 
-  // FP-P0-03: md row "VToken bridge" — default OFF, env=1 or Developer toggle to enable.
+  // FP-P0-03: md row "VToken bridge" — internal diagnostics only, default OFF; no renderer toggle.
   it('locks VToken bridge default OFF (opt-in) [vtoken-bridge-default]', async () => {
     const { readVtokenBridgeEnabledFromEnv } = await import('../../electron/services/vtoken-bridge');
     // No env set (beforeEach deleted it) ⇒ off.

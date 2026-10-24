@@ -1,4 +1,5 @@
 import type { GitRepositoryStatus } from './git';
+import type { SessionEffectivePolicy } from './session-effective-policy';
 
 export type SessionActivityRunStatus = 'idle' | 'running' | 'waiting_approval' | 'completed' | 'failed' | 'aborted';
 export type SessionActivityTaskKind = 'mission' | 'taskLoop' | 'clawGraph' | 'taskLedger';
@@ -155,7 +156,65 @@ export type SessionActivityTerminal = {
   updatedAt: number;
 };
 
+export type SessionCompletionBatchWorkerStatus =
+  | 'pending'
+  | 'completed'
+  | 'failed'
+  | 'cancelled'
+  | 'missing'
+  | 'unknown';
+
+export type SessionCompletionBatchDeliveryState =
+  | 'none'
+  | 'pending'
+  | 'in_progress'
+  | 'delivered'
+  | 'failed'
+  | 'suspended'
+  | 'discarded';
+
+export type SessionCompletionBatch = {
+  id: string;
+  idempotencyKey: string;
+  orchestrationRunId: string;
+  requesterSessionKey: string;
+  requesterSessionId: string | null;
+  generationState: 'consistent' | 'mismatch' | 'unknown';
+  status: 'collecting' | 'delivery-pending' | 'delivered' | 'partial';
+  terminal: boolean;
+  expectedWorkerCount: number;
+  completedWorkerCount: number;
+  failedWorkerCount: number;
+  cancelledWorkerCount: number;
+  pendingWorkerCount: number;
+  workerRuns: Array<{
+    runId: string;
+    roleName: string | null;
+    taskNodeId: string | null;
+    childSessionKey: string | null;
+    status: SessionCompletionBatchWorkerStatus;
+  }>;
+  verifier: {
+    runId: string;
+    status: SessionCompletionBatchWorkerStatus;
+  } | null;
+  delivery: {
+    state: SessionCompletionBatchDeliveryState;
+    pendingCount: number;
+    inProgressCount: number;
+    deliveredCount: number;
+    failedCount: number;
+    suspendedCount: number;
+    discardedCount: number;
+  };
+  bounded: boolean;
+  completionAuthority: 'none';
+  updatedAt: number;
+};
+
 export type SessionActivitySnapshot = {
+  /** Current read-only effective policy projection; null means no verified answer. */
+  policy?: SessionEffectivePolicy | null;
   session: {
     sessionKey: string;
     runId?: string | null;
@@ -169,6 +228,7 @@ export type SessionActivitySnapshot = {
   git?: GitRepositoryStatus | null;
   tasks: SessionActivityTask[];
   subagents: SessionActivitySubagent[];
+  completionBatches: SessionCompletionBatch[];
   terminals: SessionActivityTerminal[];
   goals: SessionActivityGoal[];
   processes: SessionActivityProcess[];
@@ -185,6 +245,7 @@ export type SessionActivitySnapshot = {
     subagents: boolean;
     terminals: boolean;
     continuity: boolean;
+    policy?: boolean;
   };
   /** Source state of the background owner read; see `SessionActivityBackgroundRead`. */
   backgroundRead: SessionActivityBackgroundRead;
@@ -206,6 +267,7 @@ export function createEmptySessionActivitySnapshot(sessionKey: string, capturedA
     git: null,
     tasks: [],
     subagents: [],
+    completionBatches: [],
     terminals: [],
     goals: [],
     processes: [],
@@ -238,6 +300,9 @@ export function retainRecentSessionActivity(
     ...snapshot,
     tasks: snapshot.tasks.filter((task) => !COMPLETED_TASK_STATUSES.has(task.status) || keepCompleted(task.updatedAt)),
     subagents: snapshot.subagents.filter((agent) => !COMPLETED_SUBAGENT_STATUSES.has(agent.status) || keepCompleted(agent.updatedAt)),
+    completionBatches: (snapshot.completionBatches ?? []).filter(
+      (batch) => batch.status !== 'delivered' || keepCompleted(batch.updatedAt),
+    ),
     terminals: snapshot.terminals.filter((terminal) => !COMPLETED_TERMINAL_STATUSES.has(terminal.status) || keepCompleted(terminal.updatedAt)),
     goals: snapshot.goals.filter((goal) => !COMPLETED_GOAL_STATUSES.has(goal.status) || keepCompleted(goal.updatedAt)),
     processes: snapshot.processes.filter((process) => !COMPLETED_PROCESS_STATUSES.has(process.status) || keepCompleted(process.updatedAt)),
