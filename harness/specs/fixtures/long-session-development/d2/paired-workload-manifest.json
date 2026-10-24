@@ -6,11 +6,11 @@
   "program": "long-session-development-20261022",
   "contract": "harness/specs/tasks/long-session-paired-evaluation.md",
   "frozenAt": "2026-10-23T00:00:00.000Z",
-  "generatedAt": "2026-10-24T11:43:11.929Z",
+  "generatedAt": "2026-10-24T11:44:53.903Z",
   "candidate": {
     "branch": "codex/long-session-implementation-20261023-r2",
-    "commit": "333d7ca846ff116da9f7419059cc7ad38776dd17",
-    "tree": "c636da1d4e23fba1e20c75cafe9e33d62bc93f4f",
+    "commit": "133177a783f5140336d73d9c0fa98e32ec527bce",
+    "tree": "73d268e2f373e4c6edd27b859b18ac6415c42afc",
     "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
   },
   "workloadHash": "33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e",

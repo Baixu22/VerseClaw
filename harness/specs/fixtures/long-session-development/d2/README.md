@@ -1,6 +1,6 @@
 # D2 paired continuity evaluation evidence
 
-Source candidate: `333d7ca846ff116da9f7419059cc7ad38776dd17` (branch `codex/long-session-implementation-20261023-r2`, tree `c636da1d4e23fba1e20c75cafe9e33d62bc93f4f`).
+Source candidate: `133177a783f5140336d73d9c0fa98e32ec527bce` (branch `codex/long-session-implementation-20261023-r2`, tree `73d268e2f373e4c6edd27b859b18ac6415c42afc`).
 Frozen workload hash: `33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e`.
 
 - `paired-workload-manifest.json`: the pre-measurement frozen 30-pair agent-driven workload (6 pairs per family across compression, handoff, fork, restart, revocation), its must-preserve facts, forbidden facts, shared model parameters and metric budget, plus the freeze verification result.
