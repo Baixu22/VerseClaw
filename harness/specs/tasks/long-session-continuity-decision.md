@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-continuity-decision
 title: 依据配对证据选定连续策略并保持冻结默认
 program: long-session-development-20261022
@@ -9,11 +9,14 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 明确保留基线、继续实验还是提供一个显式策略，防止长期会话自动成为算法扩展工程。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
+diffBase: 56cb9ba1ee819fb053c13974026f5bfea5149e3f
 dependsOnTasks:
   - D2
 touchedAreas:
   - harness/specs/tasks/long-session-continuity-decision.md
   - harness/specs/tasks/long-session-development-plan.md
+  - scripts/long-session-continuity-decision.mjs
+  - package.json
   - harness/specs/tasks/context-lifecycle-exploration.md
   - docs/dev/default-config-matrix.md
   - docs/clawx-product-semantics.md
@@ -37,6 +40,8 @@ expectedUserBehavior:
   - 创建本合同不代表功能已实现；结果、配置、授权和任务完成仍归现有 owner，未知状态如实保留。
 requiredTests:
   - pnpm exec vitest run tests/unit/default-config-matrix.test.ts tests/unit/context-lifecycle-boundary.test.ts --maxWorkers=1
+  - pnpm long-session:d3:decision
+  - pnpm long-session:d3:decision:check
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run comms:replay

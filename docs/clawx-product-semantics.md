@@ -106,6 +106,63 @@ resource authority. Permanent deletion of an already archived conversation still
 uses the archive index as its retry locator and must not report success while an
 owned derivative remains.
 
+## Effective session policy
+
+`SessionEffectivePolicy/v1` is a read-only projection of the current session
+owner facts. It keeps configured values, effective values, unverified values,
+unsupported capabilities and ignored overrides in separate states. Effective
+facts come from the bounded TF-0512 `ModelCapabilityProfile/v1` observation for
+the same workspace/session and a matching runtime generation; a missing, stale or
+mismatched observation leaves effective values unknown. The projection never
+substitutes a JSON file, an `enabled` flag, a provider label or a stale receipt
+for runtime evidence.
+
+The policy reports backend, native binding, model/effort, workspace grant,
+action authorization, context/queue/resource/schedule limits and their sources.
+Codex app-server and Claude CLI own native compaction; their compatibility rows
+mark OpenClaw compaction overrides as ignored with a reason. OpenClaw embedded
+sessions retain OpenClaw-owned compaction. Resource and schedule owners are not
+copied into a second registry, and the policy contains no credentials, auth
+profile IDs, raw prompts or transcript text. Reading it performs no execution,
+config write or grant expansion. Executable fixtures are under
+[`long-session-development/b1/`](../harness/specs/fixtures/long-session-development/b1/).
+
+## Coordinator binding and delegation admission
+
+Long-session coordination is an explicit Workspace-owned capability, not an
+automatic mode of ordinary Chat. The current binding stores only the selected
+Workspace/Assistant, logical SessionKey, observed physical `sessionId`, existing
+Task Ledger node references and a monotonically increasing revision in the
+Workspace store. A reset changes the physical generation and invalidates the old
+binding; archive/delete invalidate it through the existing session lifecycle
+owners. The binding contains no Project store, Task/Goal status, raw transcript
+or execution authority.
+
+`DelegationAdmissionReceipt/v1` reuses the existing role orchestrator and child
+session runtime. Before invoking `orchestrator.run`, Main persists a bounded
+`submitting` receipt keyed by caller idempotency key and request digest. The final
+receipt binds the coordinator revision/physical generation, Task Ledger ref,
+role, child session/run, actual backend identity, role-clamped tool allow/deny
+facts and isolation backend. `accepted` means the runtime admitted the child; it
+is not `running`, `completed` or task completion. Unknown role, unsupported
+backend, stale coordinator generation and missing child identity remain rejected
+or unknown facts.
+
+Shared in-process writers run serially unless an explicit write-set path is
+provided; worktree isolation records whether the actual backend is `git` or the
+in-process fallback. A reset/stop racing admission is rechecked after spawn and
+the child stop is requested rather than projecting a phantom completion. The C4
+entry is still required before users can operate this capability from the main
+product surface.
+
+Completion continuation reads the existing subagent registry and delivery outbox rather than starting a second scheduler. Workers of one orchestration run form a bounded batch keyed by `completion-batch:<orchestrationRunId>:<requesterSessionKey>`; completed, failed, cancelled and missing workers remain distinct, and a deferred verifier must also become terminal before the team bundle can be exposed. Delivery remains at-least-once, but the deterministic key, per-run delivery state and requester physical-generation pin make replay idempotent and prevent a reset/handoff generation from accepting stale work. The batch receipt reports task completion authority as `none`; final model text alone is not delivery evidence. The user-visible C4 entry is still required before this runtime capability becomes an operable product surface.
+
+The C4 long-session surface reuses the existing Sidebar and Chat activity rail rather than creating a second task list. An explicitly bound coordinator conversation is marked in the Sidebar and remains openable even before its first message. The activity rail projects the Workspace binding revision and invalidation reason, existing Task Ledger references, durable delegation receipts, worker transcripts and completion-batch delivery state. Pause/resume actions delegate to the existing composer run controls and disappear once the binding is invalidated. Task acceptance still comes only from Task Ledger, and completion delivery remains at-least-once with the C3 generation fence.
+
+Long-session continuity strategy stays on the baseline: the paired evaluation contract froze a 30-pair agent-driven workload and measured only structural projection behaviour because no live provider was authorized, so no continuous-compression, value-pruning or summary-tree path is default-enabled, promoted or implied by the long-session surface. Any future promotion needs a live-provider sample that clears the published fidelity, safety, cost and P95 gates plus its own implementation spec, rollback and failure fallback; see [d3 decision evidence](../harness/specs/fixtures/long-session-development/d3/continuity-strategy-decision.json).
+
+Memory is one reviewable product concept. Role Memory cards, Runtime Memory facts/timelines/episodes, the candidate queue, embedding indexes, native-file retrieval and Dreaming caches have distinct implementation lifecycle and storage owners, but they are not separate product memories. Candidates and derived caches are never retrievable or injectable as accepted memory; role-card review or the owning Runtime Memory acceptance path must promote them first. The canonical domain matrix and migration boundary live in [memory-control-plane.md](dev/memory-control-plane.md). SEKB remains a Knowledge Runtime Lessons source and does not own a memory store.
+
 ## Windows x64 Controlled Preview
 
 The current first-product validation target is **Verse Claw Windows x64 - DCS Coding Controlled Preview**. It is an internal, single-workspace path with explicit opt-in, runtime acknowledgement, controlled writes, undo, restart recovery, kill/rollback, and a redacted support bundle. FP-P1 evidence is engineering and real-process evidence; release approval remains pending, and no real-human evidence is claimed.

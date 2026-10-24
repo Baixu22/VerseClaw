@@ -1,0 +1,53 @@
+{
+  "schema": "clawx.long-session.d3-promotion-boundary/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-d3",
+  "taskForestNode": "TF-0558",
+  "generatedAt": "2026-10-24T11:49:09.198Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "56cb9ba1ee819fb053c13974026f5bfea5149e3f",
+    "tree": "c885fdd32186598ddcceaeac9f9766c3b1b8fba8",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
+  },
+  "decision": "keep-baseline",
+  "adoptedStrategy": null,
+  "activePathChanged": false,
+  "promotionNotAuthorized": [
+    "default-on or automatic async soft-threshold compaction",
+    "always-on deterministic value pruning or provider-seam pruning",
+    "automatic incremental segment-summary trees",
+    "any change to CompressionArtifact v1 authority, prompt assembly order or provider call timing",
+    "any change to a frozen product default or a config-matrix lock row"
+  ],
+  "retentionBoundary": {
+    "candidateIdentity": "ContinuityContextPack/v1",
+    "workloadHash": "33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e",
+    "status": "EVIDENCE_INSUFFICIENT",
+    "experimentalCodeRetained": true,
+    "experimentalCodeActivated": false,
+    "note": "The TF-0424 exploration surface stays shadow/diagnostic: planners and diagnostics may be unit-tested, never default-activated."
+  },
+  "futurePromotionPreconditions": [
+    "A newly authorized live-provider run scores the frozen D2 workload (or a re-frozen successor) with >=30 complete pairs and an identical model/parameter block for both arms.",
+    "Candidate fidelity is 100%, false task-completion claims are 0, next-action accuracy is >=95%, and revoked/pending/unverified facts leak 0.",
+    "Either cost or input tokens net-decrease by >=15% from provider-reported usage (never a character estimate), and first-token and wall-clock P95 stay within 1.10x of baseline.",
+    "A separate implementation spec names the applicable backend(s), the rollback path, the error fallback and the fallback when continuity context is invalid or unavailable.",
+    "The product-lock/default change is approved as its own decision; D3 or D2 evidence alone never flips a default."
+  ],
+  "rollbackAndFallbackIfEverAdopted": {
+    "rollback": "Disable the strategy flag and fall back to the existing manual/native compaction path; the accepted Task Ledger, CompressionArtifact and session transcript owners stay untouched.",
+    "failureFallback": "On missing, stale or unverifiable continuity context the session behaves as today: bounded owner refs or plain transcript continuation, with the unknown state surfaced rather than silently rewritten.",
+    "dataRecovery": "No new durable store is introduced by any continuity strategy; recovery keeps reading the existing session transcript, Task Ledger and CompressionArtifact owners."
+  },
+  "explicitNonGoals": [
+    "No independent Project store, cloud execution platform or permanent daemon.",
+    "No second memory, task, scheduler, compression or injection authority.",
+    "No promotion based on structural, simulated or character-estimated data.",
+    "No reopening or re-signing of the historical TF-0424 verdict."
+  ],
+  "requiresPublisherDecision": [
+    "D3 must record keep-baseline/NO-GO: this evidence does not promote a continuous-compression default.",
+    "Any future promotion needs a new authorized live-provider sample set plus a separate product-lock decision."
+  ]
+}

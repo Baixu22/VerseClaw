@@ -1,0 +1,168 @@
+{
+  "schema": "clawx.long-session.d3-verification/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-d3",
+  "taskForestNode": "TF-0558",
+  "taskKey": "D3",
+  "contract": "harness/specs/tasks/long-session-continuity-decision.md",
+  "generatedAt": "2026-10-24T11:49:09.203Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "56cb9ba1ee819fb053c13974026f5bfea5149e3f",
+    "tree": "c885fdd32186598ddcceaeac9f9766c3b1b8fba8",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
+  },
+  "decision": "keep-baseline",
+  "d2Evidence": {
+    "d2Status": "EVIDENCE_INSUFFICIENT",
+    "d2Disposition": "NO-GO",
+    "d2MetricsBasis": "agent-derived-structural",
+    "d2SamplePairs": 30,
+    "d2RequiredPairs": 30,
+    "d2LiveProviderEvidence": false,
+    "d2QualityClaimAllowed": false,
+    "d2KeepBaseline": true,
+    "d2PromotionCandidateEligible": false,
+    "d2Blockers": [
+      "no live-provider evidence: agent-derived or synthetic measurements cannot promote a candidate",
+      "token and cost reduction are unmeasured for the current sample",
+      "first-token and wall-clock P95 are unmeasured for the current sample"
+    ],
+    "d2Unmeasured": [
+      "live-provider fidelity, next-action, token/cache/cost and first-token/wall-clock P50/P95",
+      "cost or input-token net reduction of at least 15%",
+      "first-token and wall-clock P95 within 1.10x of baseline"
+    ],
+    "d2Metrics": {
+      "baselineFidelity": 1,
+      "candidateFidelity": 1,
+      "baselineNextActionAccuracy": 1,
+      "candidateNextActionAccuracy": 1,
+      "baselineFalseCompletions": 0,
+      "candidateFalseCompletions": 0,
+      "baselineRevokedLeaks": 72,
+      "candidateRevokedLeaks": 0,
+      "baselineInputTokens": null,
+      "candidateInputTokens": null,
+      "inputTokenReduction": null,
+      "baselineCostUsd": null,
+      "candidateCostUsd": null,
+      "costReduction": null,
+      "baselineFirstTokenP50Ms": null,
+      "candidateFirstTokenP50Ms": null,
+      "baselineFirstTokenP95Ms": null,
+      "candidateFirstTokenP95Ms": null,
+      "baselineWallClockP50Ms": null,
+      "candidateWallClockP50Ms": null,
+      "baselineWallClockP95Ms": null,
+      "candidateWallClockP95Ms": null,
+      "unmeasuredTokenCells": 120,
+      "unmeasuredLatencyCells": 120,
+      "characterEstimatedCostCells": 0
+    },
+    "d2WorkloadHash": "33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e",
+    "d2ChecksumVerification": {
+      "ok": true,
+      "results": [
+        {
+          "name": "README.md",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "candidate-decision-inputs.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "e2e-last-run.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "e2e-process-cleanup.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "e2e-process-run.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "fidelity-latency-cost-report.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "paired-workload-manifest.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "verification-receipt.json",
+          "ok": true,
+          "reason": "matched"
+        }
+      ]
+    },
+    "d2ArtifactHashes": {
+      "harness/specs/fixtures/long-session-development/d2/paired-workload-manifest.json": "97c007dbdab7996974bfe9e47f8f1c9d20729202be013706ff768e1806fbc02a",
+      "harness/specs/fixtures/long-session-development/d2/fidelity-latency-cost-report.json": "78ce40c0f6f6710603b79c6a3b5bce8678db49c111686a958fdf48a3870644f4",
+      "harness/specs/fixtures/long-session-development/d2/candidate-decision-inputs.json": "6d7b8c0083b0f2e97a55bd5e26881b2e200e184458d2545a140091204d6aed6a",
+      "harness/specs/fixtures/long-session-development/d2/verification-receipt.json": "a327d3288d7700701a24a0e249f93fbbba1c477fd22f3c9d4cacd67b2cc50b65",
+      "harness/specs/fixtures/long-session-development/d2/SHA256SUMS": "eb4ec43f7d56bac95f2200cc722d38d36d043525d3a0db5a9661c22eb7580316"
+    }
+  },
+  "gateReceipt": {
+    "provided": true,
+    "source": "D:/tmp/tf0558-gates.json",
+    "allPassed": true,
+    "gates": [
+      {
+        "name": "d3-unit",
+        "command": "pnpm exec vitest run tests/unit/default-config-matrix.test.ts tests/unit/context-lifecycle-boundary.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "files": 2,
+        "tests": 19,
+        "log": "D:/tmp/tf0558-unit.log"
+      },
+      {
+        "name": "typecheck",
+        "command": "pnpm run typecheck",
+        "exitCode": 0,
+        "coverage": "uncached node + web + tests",
+        "log": "D:/tmp/tf0558-typecheck.log"
+      },
+      {
+        "name": "decision",
+        "command": "pnpm long-session:d3:decision",
+        "exitCode": 0,
+        "decision": "keep-baseline",
+        "d2ChecksumOk": true,
+        "negativeCases": 4,
+        "failedNegatives": 0,
+        "log": "D:/tmp/tf0558-decision.log"
+      },
+      {
+        "name": "decision-check",
+        "command": "pnpm long-session:d3:decision:check",
+        "exitCode": 0,
+        "result": "ok",
+        "log": "D:/tmp/tf0558-decision-check.log"
+      }
+    ]
+  },
+  "negativeCaseCounts": {
+    "total": 4,
+    "failed": 0
+  },
+  "cleanup": {
+    "startedProcesses": false,
+    "startedGateway": false,
+    "startedElectron": false,
+    "providerRequests": 0,
+    "recoveryRequired": false,
+    "notes": "Read-only disk readback and local artifact generation; nothing was launched and no provider was contacted."
+  }
+}
