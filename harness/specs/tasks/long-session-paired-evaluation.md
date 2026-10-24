@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-paired-evaluation
 title: 配对评测长期连续性的保真度、时延与费用
 program: long-session-development-20261022
@@ -9,12 +9,16 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 以固定任务证明长期策略的效益，避免只用 token 曲线或摘要看起来合理就推广。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
+diffBase: 333d7ca846ff116da9f7419059cc7ad38776dd17
 dependsOnTasks:
   - D1
 touchedAreas:
   - harness/specs/tasks/long-session-paired-evaluation.md
   - harness/specs/tasks/long-session-development-plan.md
   - scripts/context-compression-eval-runner.mjs
+  - scripts/long-session-paired-evaluation.mjs
+  - shared/long-session-paired-evaluation.ts
+  - package.json
   - openclaw_runtime/src/context-engine/exploration/soft-threshold.ts
   - openclaw_runtime/src/context-engine/exploration/segment-summary-ledger.ts
   - openclaw_runtime/src/context-engine/exploration/value-pruning.ts
@@ -23,6 +27,7 @@ touchedAreas:
   - tests/unit/context-lifecycle-value-pruning.test.ts
   - tests/unit/context-lifecycle-segment-ledger.test.ts
   - tests/unit/long-session-paired-evaluation.test.ts
+  - tests/e2e/long-session-paired-evaluation.spec.ts
   - harness/specs/fixtures/long-session-development/d2/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -42,16 +47,21 @@ expectedUserBehavior:
   - 以固定任务证明长期策略的效益，避免只用 token 曲线或摘要看起来合理就推广。
   - 创建本合同不代表功能已实现；结果、配置、授权和任务完成仍归现有 owner，未知状态如实保留。
 requiredTests:
+  - pnpm run build:vite
+  - pnpm run test:e2e:run tests/e2e/long-session-paired-evaluation.spec.ts
   - pnpm exec vitest run tests/unit/context-lifecycle-boundary.test.ts tests/unit/context-lifecycle-soft-threshold.test.ts tests/unit/context-lifecycle-value-pruning.test.ts tests/unit/context-lifecycle-segment-ledger.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/long-session-paired-evaluation.test.ts --maxWorkers=1
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run comms:replay
   - pnpm run comms:compare
+  - pnpm long-session:d2:evidence -- --out harness/specs/fixtures/long-session-development/d2
+  - pnpm long-session:d2:evidence:check
   - pnpm harness validate --spec harness/specs/tasks/long-session-paired-evaluation.md
   - git diff --check
 plannedTests:
   - tests/unit/long-session-paired-evaluation.test.ts
+  - tests/e2e/long-session-paired-evaluation.spec.ts
 acceptance:
   - 评测前冻结不少于 30 对 agent 驱动工作负载、must-preserve 事实和指标预算，覆盖压缩/交接/分叉/重启/撤销；baseline 与最多一个初筛候选使用相同输入和模型参数。
   - 关键事实保真目标 100%、错误任务完成声明 0、下一步正确率目标至少 95%；记录真实 token/cache/cost 与 first-token/wall-clock P50/P95，不用字符估算冒充费用。
@@ -118,7 +128,7 @@ E2E 要求真实 built Electron 与隔离 userData/run root。界面 host mocks 
 - harness/specs/fixtures/long-session-development/d2/fidelity-latency-cost-report.json
 - harness/specs/fixtures/long-session-development/d2/candidate-decision-inputs.json
 
-另生成同目录 SHA256SUMS。报告含 schema、driven_by: agent、actor、candidate/source/input identity、commands/exit/counts、原始结果引用、negative cases、cleanup/remaining/recovery_required 和未测范围。原始临时文件写 D 盘或已忽略目录；精选证据逐文件登记保留清单，不重签历史 artifacts。reviewer/agent 独立核验必须读原件，不能只读 stdout 或最终回答。
+另生成同目录 README.md 与 SHA256SUMS。报告含 schema、driven_by: agent、actor、candidate/source/input identity、commands/exit/counts、原始结果引用、negative cases、cleanup/remaining/recovery_required 和未测范围；无 live provider 时 token/cache/cost 与 P50/P95 必须为 null 并如实标注未测。原始临时文件写 D 盘或已忽略目录；精选证据逐文件登记保留清单，不重签历史 artifacts。reviewer/agent 独立核验必须读原件，不能只读 stdout 或最终回答。
 
 **执行提示与退出**
 

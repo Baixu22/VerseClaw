@@ -1,0 +1,228 @@
+{
+  "schema": "clawx.long-session.d2-verification/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-d2",
+  "taskForestNode": "TF-0557",
+  "taskKey": "D2",
+  "program": "long-session-development-20261022",
+  "contract": "harness/specs/tasks/long-session-paired-evaluation.md",
+  "generatedAt": "2026-10-24T11:43:12.034Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "333d7ca846ff116da9f7419059cc7ad38776dd17",
+    "tree": "c636da1d4e23fba1e20c75cafe9e33d62bc93f4f",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
+  },
+  "workloadHash": "33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e",
+  "providerProbe": {
+    "probedEnvNames": [
+      "COMPACTION_API_KEY",
+      "COMPACTION_BASE_URL",
+      "COMPACTION_PROVIDER",
+      "DEEPSEEK_API_KEY",
+      "OPENAI_API_KEY",
+      "ANTHROPIC_API_KEY"
+    ],
+    "configured": [],
+    "liveProviderAuthorized": false,
+    "note": "Env presence is only probed; no credential value is read, hashed or persisted by this driver."
+  },
+  "gateReceipt": {
+    "provided": true,
+    "source": "D:/tmp/tf0557-gates.json",
+    "candidate": {
+      "commit": "333d7ca846ff116da9f7419059cc7ad38776dd17"
+    },
+    "allPassed": true,
+    "gates": [
+      {
+        "name": "d2-eval-unit",
+        "command": "pnpm exec vitest run tests/unit/long-session-paired-evaluation.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "files": 1,
+        "tests": 12,
+        "log": "D:/tmp/tf0557-d2-unit.log"
+      },
+      {
+        "name": "lifecycle-regression",
+        "command": "pnpm exec vitest run tests/unit/context-lifecycle-boundary.test.ts tests/unit/context-lifecycle-soft-threshold.test.ts tests/unit/context-lifecycle-value-pruning.test.ts tests/unit/context-lifecycle-segment-ledger.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "files": 4,
+        "tests": 13,
+        "log": "D:/tmp/tf0557-lifecycle.log"
+      },
+      {
+        "name": "typecheck",
+        "command": "pnpm run typecheck",
+        "exitCode": 0,
+        "coverage": "uncached node + web + tests",
+        "log": "D:/tmp/tf0557-typecheck.log"
+      },
+      {
+        "name": "evidence-check",
+        "command": "pnpm long-session:d2:evidence:check",
+        "exitCode": 0,
+        "result": "ok",
+        "log": "D:/tmp/tf0557-evidence-check.log"
+      },
+      {
+        "name": "build-vite",
+        "command": "pnpm run build:vite",
+        "exitCode": 0,
+        "log": "D:/tmp/tf0557-build-vite.log"
+      },
+      {
+        "name": "e2e-built",
+        "command": "pnpm exec playwright test tests/e2e/long-session-paired-evaluation.spec.ts --output=D:/tmp/tf0557-e2e",
+        "exitCode": 0,
+        "tests": 1,
+        "log": "D:/tmp/tf0557-e2e/.last-run.json"
+      }
+    ]
+  },
+  "verdict": "EVIDENCE_INSUFFICIENT",
+  "featureClaim": "a frozen 30-pair agent-driven evaluation harness with fail-closed promotion gates exists; no continuity-strategy benefit is claimed",
+  "acceptance": [
+    {
+      "criterion": "freeze >=30 agent-driven pairs with must-preserve facts and metric budget before measurement, covering compression/handoff/fork/restart/revocation, one shared model parameter block",
+      "result": "pass",
+      "evidence": [
+        "paired-workload-manifest.json"
+      ]
+    },
+    {
+      "criterion": "fidelity 100%, false completions 0, next-action >= 95%, real token/cache/cost and first-token/wall-clock P50/P95 recorded without character estimates",
+      "result": "not-measurable",
+      "evidence": [
+        "fidelity-latency-cost-report.json"
+      ],
+      "note": "no authorized live-provider endpoint: cells stay null and the candidate is not eligible"
+    },
+    {
+      "criterion": "promotion gate: >=15% cost or input-token reduction, P95 within 1.10x baseline, zero safety regression; thresholds only movable by a pre-measurement proposal",
+      "result": "pass",
+      "evidence": [
+        "paired-workload-manifest.json",
+        "fidelity-latency-cost-report.json"
+      ],
+      "note": "thresholds are validated inside the frozen workload hash; any edit invalidates the hash"
+    },
+    {
+      "criterion": "without authorized live provider or sufficient quality/cost samples, output evidenceInsufficient/NO-GO and complete decision inputs; never promote on simulated data",
+      "result": "pass",
+      "evidence": [
+        "candidate-decision-inputs.json"
+      ]
+    }
+  ],
+  "results": {
+    "status": "EVIDENCE_INSUFFICIENT",
+    "samplePairs": 30,
+    "requiredPairs": 30,
+    "liveProviderEvidence": false,
+    "metricsBasis": "agent-derived-structural",
+    "qualityClaimAllowed": false,
+    "blockers": [
+      "no live-provider evidence: agent-derived or synthetic measurements cannot promote a candidate",
+      "token and cost reduction are unmeasured for the current sample",
+      "first-token and wall-clock P95 are unmeasured for the current sample"
+    ],
+    "unmeasured": [
+      "live-provider fidelity, next-action, token/cache/cost and first-token/wall-clock P50/P95",
+      "cost or input-token net reduction of at least 15%",
+      "first-token and wall-clock P95 within 1.10x of baseline"
+    ],
+    "metrics": {
+      "baselineFidelity": 1,
+      "candidateFidelity": 1,
+      "baselineNextActionAccuracy": 1,
+      "candidateNextActionAccuracy": 1,
+      "baselineFalseCompletions": 0,
+      "candidateFalseCompletions": 0,
+      "baselineRevokedLeaks": 72,
+      "candidateRevokedLeaks": 0,
+      "baselineInputTokens": null,
+      "candidateInputTokens": null,
+      "inputTokenReduction": null,
+      "baselineCostUsd": null,
+      "candidateCostUsd": null,
+      "costReduction": null,
+      "baselineFirstTokenP50Ms": null,
+      "candidateFirstTokenP50Ms": null,
+      "baselineFirstTokenP95Ms": null,
+      "candidateFirstTokenP95Ms": null,
+      "baselineWallClockP50Ms": null,
+      "candidateWallClockP50Ms": null,
+      "baselineWallClockP95Ms": null,
+      "candidateWallClockP95Ms": null,
+      "unmeasuredTokenCells": 120,
+      "unmeasuredLatencyCells": 120,
+      "characterEstimatedCostCells": 0
+    },
+    "negativeCaseCounts": {
+      "total": 80,
+      "failed": 0
+    }
+  },
+  "commands": [
+    {
+      "name": "d2-eval-unit",
+      "exitCode": 0,
+      "log": "D:/tmp/tf0557-d2-unit.log"
+    },
+    {
+      "name": "lifecycle-regression",
+      "exitCode": 0,
+      "log": "D:/tmp/tf0557-lifecycle.log"
+    },
+    {
+      "name": "typecheck",
+      "exitCode": 0,
+      "log": "D:/tmp/tf0557-typecheck.log"
+    },
+    {
+      "name": "evidence-check",
+      "exitCode": 0,
+      "log": "D:/tmp/tf0557-evidence-check.log"
+    },
+    {
+      "name": "build-vite",
+      "exitCode": 0,
+      "log": "D:/tmp/tf0557-build-vite.log"
+    },
+    {
+      "name": "e2e-built",
+      "exitCode": 0,
+      "log": "D:/tmp/tf0557-e2e/.last-run.json"
+    }
+  ],
+  "counts": {
+    "gates": 6,
+    "failedGates": 0,
+    "frozenPairs": 30,
+    "negativeCases": 80,
+    "failedNegativeCases": 0
+  },
+  "cleanup": {
+    "startedProcesses": false,
+    "startedGateway": false,
+    "startedElectron": false,
+    "providerRequests": 0,
+    "temporaryRoot": "D:/tmp",
+    "recoveryRequired": false,
+    "notes": "Local deterministic generation; raw gate logs live outside Git under D:/tmp and are referenced by path only."
+  },
+  "limitations": [
+    "D2 delivers the frozen evaluation harness and its honest NO-GO decision inputs; it does not run a live provider in this environment.",
+    "No product default, frozen lock, publication scope or independent Project decision is made or implied by this node.",
+    "All evidence is agent-driven; no real-human verdict or human data is claimed."
+  ],
+  "artifacts": [
+    "paired-workload-manifest.json",
+    "fidelity-latency-cost-report.json",
+    "candidate-decision-inputs.json",
+    "README.md",
+    "verification-receipt.json",
+    "SHA256SUMS"
+  ]
+}

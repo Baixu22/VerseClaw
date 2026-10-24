@@ -1,0 +1,631 @@
+{
+  "schema": "clawx.long-session.d2-decision-inputs/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-d2",
+  "taskForestNode": "TF-0557",
+  "generatedAt": "2026-10-24T11:43:11.929Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "333d7ca846ff116da9f7419059cc7ad38776dd17",
+    "tree": "c636da1d4e23fba1e20c75cafe9e33d62bc93f4f",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
+  },
+  "workloadHash": "33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e",
+  "candidateIdentity": "ContinuityContextPack/v1",
+  "status": "EVIDENCE_INSUFFICIENT",
+  "disposition": "NO-GO",
+  "metricsBasis": "agent-derived-structural",
+  "promotionCandidateEligible": false,
+  "keepBaseline": true,
+  "qualityClaimAllowed": false,
+  "productDefaultChanged": false,
+  "blockers": [
+    "no live-provider evidence: agent-derived or synthetic measurements cannot promote a candidate",
+    "token and cost reduction are unmeasured for the current sample",
+    "first-token and wall-clock P95 are unmeasured for the current sample"
+  ],
+  "unmeasured": [
+    "live-provider fidelity, next-action, token/cache/cost and first-token/wall-clock P50/P95",
+    "cost or input-token net reduction of at least 15%",
+    "first-token and wall-clock P95 within 1.10x of baseline"
+  ],
+  "requiresPublisherDecision": [
+    "D3 must record keep-baseline/NO-GO: this evidence does not promote a continuous-compression default.",
+    "Any future promotion needs a new authorized live-provider sample set plus a separate product-lock decision."
+  ],
+  "negativeCases": [
+    {
+      "id": "structural-exclusion:d2-compression-01:pending-not-accepted",
+      "input": "frozen case d2-compression-01 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-compression-01:unverified-claim",
+      "input": "frozen case d2-compression-01 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-handoff-01:pending-not-accepted",
+      "input": "frozen case d2-handoff-01 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-handoff-01:unverified-claim",
+      "input": "frozen case d2-handoff-01 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-fork-01:pending-not-accepted",
+      "input": "frozen case d2-fork-01 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-fork-01:unverified-claim",
+      "input": "frozen case d2-fork-01 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-restart-01:pending-not-accepted",
+      "input": "frozen case d2-restart-01 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-restart-01:unverified-claim",
+      "input": "frozen case d2-restart-01 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-01:pending-not-accepted",
+      "input": "frozen case d2-revocation-01 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-01:unverified-claim",
+      "input": "frozen case d2-revocation-01 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-01:revoked-or-superseded",
+      "input": "frozen case d2-revocation-01 carries a revoked-or-superseded fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-01:out-of-scope",
+      "input": "frozen case d2-revocation-01 carries a out-of-scope fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-compression-02:pending-not-accepted",
+      "input": "frozen case d2-compression-02 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-compression-02:unverified-claim",
+      "input": "frozen case d2-compression-02 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-handoff-02:pending-not-accepted",
+      "input": "frozen case d2-handoff-02 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-handoff-02:unverified-claim",
+      "input": "frozen case d2-handoff-02 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-fork-02:pending-not-accepted",
+      "input": "frozen case d2-fork-02 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-fork-02:unverified-claim",
+      "input": "frozen case d2-fork-02 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-restart-02:pending-not-accepted",
+      "input": "frozen case d2-restart-02 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-restart-02:unverified-claim",
+      "input": "frozen case d2-restart-02 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-02:pending-not-accepted",
+      "input": "frozen case d2-revocation-02 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-02:unverified-claim",
+      "input": "frozen case d2-revocation-02 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-02:revoked-or-superseded",
+      "input": "frozen case d2-revocation-02 carries a revoked-or-superseded fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-02:out-of-scope",
+      "input": "frozen case d2-revocation-02 carries a out-of-scope fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-compression-03:pending-not-accepted",
+      "input": "frozen case d2-compression-03 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-compression-03:unverified-claim",
+      "input": "frozen case d2-compression-03 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-handoff-03:pending-not-accepted",
+      "input": "frozen case d2-handoff-03 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-handoff-03:unverified-claim",
+      "input": "frozen case d2-handoff-03 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-fork-03:pending-not-accepted",
+      "input": "frozen case d2-fork-03 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-fork-03:unverified-claim",
+      "input": "frozen case d2-fork-03 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-restart-03:pending-not-accepted",
+      "input": "frozen case d2-restart-03 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-restart-03:unverified-claim",
+      "input": "frozen case d2-restart-03 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-03:pending-not-accepted",
+      "input": "frozen case d2-revocation-03 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-03:unverified-claim",
+      "input": "frozen case d2-revocation-03 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-03:revoked-or-superseded",
+      "input": "frozen case d2-revocation-03 carries a revoked-or-superseded fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-03:out-of-scope",
+      "input": "frozen case d2-revocation-03 carries a out-of-scope fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-compression-04:pending-not-accepted",
+      "input": "frozen case d2-compression-04 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-compression-04:unverified-claim",
+      "input": "frozen case d2-compression-04 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-handoff-04:pending-not-accepted",
+      "input": "frozen case d2-handoff-04 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-handoff-04:unverified-claim",
+      "input": "frozen case d2-handoff-04 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-fork-04:pending-not-accepted",
+      "input": "frozen case d2-fork-04 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-fork-04:unverified-claim",
+      "input": "frozen case d2-fork-04 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-restart-04:pending-not-accepted",
+      "input": "frozen case d2-restart-04 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-restart-04:unverified-claim",
+      "input": "frozen case d2-restart-04 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-04:pending-not-accepted",
+      "input": "frozen case d2-revocation-04 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-04:unverified-claim",
+      "input": "frozen case d2-revocation-04 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-04:revoked-or-superseded",
+      "input": "frozen case d2-revocation-04 carries a revoked-or-superseded fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-04:out-of-scope",
+      "input": "frozen case d2-revocation-04 carries a out-of-scope fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-compression-05:pending-not-accepted",
+      "input": "frozen case d2-compression-05 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-compression-05:unverified-claim",
+      "input": "frozen case d2-compression-05 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-handoff-05:pending-not-accepted",
+      "input": "frozen case d2-handoff-05 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-handoff-05:unverified-claim",
+      "input": "frozen case d2-handoff-05 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-fork-05:pending-not-accepted",
+      "input": "frozen case d2-fork-05 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-fork-05:unverified-claim",
+      "input": "frozen case d2-fork-05 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-restart-05:pending-not-accepted",
+      "input": "frozen case d2-restart-05 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-restart-05:unverified-claim",
+      "input": "frozen case d2-restart-05 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-05:pending-not-accepted",
+      "input": "frozen case d2-revocation-05 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-05:unverified-claim",
+      "input": "frozen case d2-revocation-05 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-05:revoked-or-superseded",
+      "input": "frozen case d2-revocation-05 carries a revoked-or-superseded fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-05:out-of-scope",
+      "input": "frozen case d2-revocation-05 carries a out-of-scope fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-compression-06:pending-not-accepted",
+      "input": "frozen case d2-compression-06 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-compression-06:unverified-claim",
+      "input": "frozen case d2-compression-06 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-handoff-06:pending-not-accepted",
+      "input": "frozen case d2-handoff-06 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-handoff-06:unverified-claim",
+      "input": "frozen case d2-handoff-06 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-fork-06:pending-not-accepted",
+      "input": "frozen case d2-fork-06 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-fork-06:unverified-claim",
+      "input": "frozen case d2-fork-06 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-restart-06:pending-not-accepted",
+      "input": "frozen case d2-restart-06 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-restart-06:unverified-claim",
+      "input": "frozen case d2-restart-06 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-06:pending-not-accepted",
+      "input": "frozen case d2-revocation-06 carries a pending-not-accepted fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-06:unverified-claim",
+      "input": "frozen case d2-revocation-06 carries a unverified-claim fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-06:revoked-or-superseded",
+      "input": "frozen case d2-revocation-06 carries a revoked-or-superseded fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "structural-exclusion:d2-revocation-06:out-of-scope",
+      "input": "frozen case d2-revocation-06 carries a out-of-scope fact",
+      "expected": "the accepted projection never contains it",
+      "observed": "excluded",
+      "result": "pass"
+    },
+    {
+      "id": "agent-derived-cannot-promote",
+      "input": "score all 30 frozen pairs from the agent-derived projection with no provider usage or timing",
+      "expected": "EVIDENCE_INSUFFICIENT, keepBaseline true, promotionCandidateEligible false",
+      "observed": "status=EVIDENCE_INSUFFICIENT, metricsBasis=agent-derived-structural, keepBaseline=true, eligible=false",
+      "result": "pass"
+    },
+    {
+      "id": "undersized-sample-blocked",
+      "input": "score only 29 of 30 frozen pairs",
+      "expected": "the sample-size gate blocks promotion",
+      "observed": "fewer than 30 measured pairs (29)",
+      "result": "pass"
+    },
+    {
+      "id": "post-freeze-case-edit-invalidates-hash",
+      "input": "drop one must-preserve fact from a frozen case after the hash was signed",
+      "expected": "workload hash mismatch and a per-case input hash mismatch",
+      "observed": "workload hash mismatch after freeze | case input hash mismatch: d2-compression-01",
+      "result": "pass"
+    },
+    {
+      "id": "post-freeze-threshold-edit-invalidated",
+      "input": "lower the next-action target after the freeze without a pre-measurement proposal",
+      "expected": "budget change reported and frozen hash no longer matching",
+      "observed": "workload hash mismatch after freeze | metric budget nextActionTarget changed",
+      "result": "pass"
+    },
+    {
+      "id": "character-estimate-is-not-cost-evidence",
+      "input": "report a plausible 20% saving while marking the cost source as a character estimate",
+      "expected": "the estimate is vetoed and the candidate stays ineligible",
+      "observed": "NO_GO; 30 pair(s) reported a character-estimated cost instead of a provider cost report",
+      "result": "pass"
+    },
+    {
+      "id": "forbidden-fact-reinjection-blocked",
+      "input": "a live-shaped candidate output re-injects a pending, unverified, revoked or out-of-scope fact",
+      "expected": "candidate leak count above zero and the safety gate blocking promotion",
+      "observed": "candidateLeaks=30, eligible=false",
+      "result": "pass"
+    },
+    {
+      "id": "false-completion-claim-blocked",
+      "input": "a live-shaped candidate output claims the long-session program is complete",
+      "expected": "false-completion count above zero and the safety gate blocking promotion",
+      "observed": "falseCompletions=30, eligible=false",
+      "result": "pass"
+    },
+    {
+      "id": "measurement-outside-frozen-workload",
+      "input": "submit a measurement row whose case id is not present in the frozen manifest",
+      "expected": "the row is excluded from the aggregates and the run is blocked",
+      "observed": "samplePairs=29, 1 measured row(s) outside the frozen workload",
+      "result": "pass"
+    }
+  ],
+  "counts": {
+    "pairs": 30,
+    "requiredPairs": 30,
+    "families": 5,
+    "negativeCases": 80,
+    "failedNegativeCases": 0,
+    "unmeasuredTokenCells": 120,
+    "unmeasuredLatencyCells": 120
+  },
+  "cleanup": {
+    "startedProcesses": false,
+    "startedGateway": false,
+    "startedElectron": false,
+    "providerRequests": 0,
+    "recoveryRequired": false,
+    "notes": "Deterministic local generation only; no provider request, browser, Gateway or Electron process was launched."
+  },
+  "historicalBoundary": {
+    "tf0424VerdictReused": false,
+    "tf0424Note": "TF-0424 keeps its own historical NO-GO identity; this D2 candidate has a new workload hash and is not a re-signing.",
+    "frozenDefaultsTouched": false
+  },
+  "nextNode": {
+    "id": "TF-0558",
+    "taskKey": "D3",
+    "contract": "harness/specs/tasks/long-session-continuity-decision.md",
+    "allowedDecisions": [
+      "keep-baseline",
+      "retain-experiment",
+      "scoped-opt-in"
+    ],
+    "guidance": "Read this artifact from disk; keep-baseline/NO-GO is a valid closure and does not require async compression."
+  }
+}

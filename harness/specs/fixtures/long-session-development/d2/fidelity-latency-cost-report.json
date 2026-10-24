@@ -1,0 +1,2517 @@
+{
+  "schema": "clawx.long-session.d2-report/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-d2",
+  "taskForestNode": "TF-0557",
+  "generatedAt": "2026-10-24T11:43:11.929Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "333d7ca846ff116da9f7419059cc7ad38776dd17",
+    "tree": "c636da1d4e23fba1e20c75cafe9e33d62bc93f4f",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
+  },
+  "providerProbe": {
+    "probedEnvNames": [
+      "COMPACTION_API_KEY",
+      "COMPACTION_BASE_URL",
+      "COMPACTION_PROVIDER",
+      "DEEPSEEK_API_KEY",
+      "OPENAI_API_KEY",
+      "ANTHROPIC_API_KEY"
+    ],
+    "configured": [],
+    "liveProviderAuthorized": false,
+    "note": "Env presence is only probed; no credential value is read, hashed or persisted by this driver."
+  },
+  "evaluation": {
+    "schema": "LongSessionPairedEvaluation/v1",
+    "generatedAt": "2026-10-24T11:43:11.891Z",
+    "drivenBy": "agent",
+    "actor": "codex-long-session-d2",
+    "workloadHash": "33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e",
+    "candidateIdentity": "ContinuityContextPack/v1",
+    "measurementIdentity": "33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e:30:d2-compression-01+d2-handoff-01+d2-fork-01+d2-restart-01+d2-revocation-01+d2-compression-02+d2-handoff-02+d2-fork-02+d2-restart-02+d2-revocation-02+d2-compression-03+d2-handoff-03+d2-fork-03+d2-restart-03+d2-revocation-03+d2-compression-04+d2-handoff-04+d2-fork-04+d2-restart-04+d2-revocation-04+d2-compression-05+d2-handoff-05+d2-fork-05+d2-restart-05+d2-revocation-05+d2-compression-06+d2-handoff-06+d2-fork-06+d2-restart-06+d2-revocation-06",
+    "status": "EVIDENCE_INSUFFICIENT",
+    "samplePairs": 30,
+    "requiredPairs": 30,
+    "liveProviderEvidence": false,
+    "qualityClaimAllowed": false,
+    "metricsBasis": "agent-derived-structural",
+    "metrics": {
+      "baselineFidelity": 1,
+      "candidateFidelity": 1,
+      "baselineNextActionAccuracy": 1,
+      "candidateNextActionAccuracy": 1,
+      "baselineFalseCompletions": 0,
+      "candidateFalseCompletions": 0,
+      "baselineRevokedLeaks": 72,
+      "candidateRevokedLeaks": 0,
+      "baselineInputTokens": null,
+      "candidateInputTokens": null,
+      "inputTokenReduction": null,
+      "baselineCostUsd": null,
+      "candidateCostUsd": null,
+      "costReduction": null,
+      "baselineFirstTokenP50Ms": null,
+      "candidateFirstTokenP50Ms": null,
+      "baselineFirstTokenP95Ms": null,
+      "candidateFirstTokenP95Ms": null,
+      "baselineWallClockP50Ms": null,
+      "candidateWallClockP50Ms": null,
+      "baselineWallClockP95Ms": null,
+      "candidateWallClockP95Ms": null,
+      "unmeasuredTokenCells": 120,
+      "unmeasuredLatencyCells": 120,
+      "characterEstimatedCostCells": 0
+    },
+    "targets": {
+      "minimumPairs": 30,
+      "fidelityTarget": 1,
+      "nextActionTarget": 0.95,
+      "falseCompletionTarget": 0,
+      "revokedLeakTarget": 0,
+      "costOrInputTokenReductionTarget": 0.15,
+      "p95LatencyRatioLimit": 1.1
+    },
+    "blockers": [
+      "no live-provider evidence: agent-derived or synthetic measurements cannot promote a candidate",
+      "token and cost reduction are unmeasured for the current sample",
+      "first-token and wall-clock P95 are unmeasured for the current sample"
+    ],
+    "unmeasured": [
+      "live-provider fidelity, next-action, token/cache/cost and first-token/wall-clock P50/P95",
+      "cost or input-token net reduction of at least 15%",
+      "first-token and wall-clock P95 within 1.10x of baseline"
+    ],
+    "negativeCases": [
+      {
+        "id": "structural-exclusion:d2-compression-01:pending-not-accepted",
+        "input": "frozen case d2-compression-01 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-compression-01:unverified-claim",
+        "input": "frozen case d2-compression-01 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-handoff-01:pending-not-accepted",
+        "input": "frozen case d2-handoff-01 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-handoff-01:unverified-claim",
+        "input": "frozen case d2-handoff-01 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-fork-01:pending-not-accepted",
+        "input": "frozen case d2-fork-01 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-fork-01:unverified-claim",
+        "input": "frozen case d2-fork-01 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-restart-01:pending-not-accepted",
+        "input": "frozen case d2-restart-01 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-restart-01:unverified-claim",
+        "input": "frozen case d2-restart-01 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-01:pending-not-accepted",
+        "input": "frozen case d2-revocation-01 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-01:unverified-claim",
+        "input": "frozen case d2-revocation-01 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-01:revoked-or-superseded",
+        "input": "frozen case d2-revocation-01 carries a revoked-or-superseded fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-01:out-of-scope",
+        "input": "frozen case d2-revocation-01 carries a out-of-scope fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-compression-02:pending-not-accepted",
+        "input": "frozen case d2-compression-02 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-compression-02:unverified-claim",
+        "input": "frozen case d2-compression-02 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-handoff-02:pending-not-accepted",
+        "input": "frozen case d2-handoff-02 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-handoff-02:unverified-claim",
+        "input": "frozen case d2-handoff-02 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-fork-02:pending-not-accepted",
+        "input": "frozen case d2-fork-02 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-fork-02:unverified-claim",
+        "input": "frozen case d2-fork-02 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-restart-02:pending-not-accepted",
+        "input": "frozen case d2-restart-02 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-restart-02:unverified-claim",
+        "input": "frozen case d2-restart-02 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-02:pending-not-accepted",
+        "input": "frozen case d2-revocation-02 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-02:unverified-claim",
+        "input": "frozen case d2-revocation-02 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-02:revoked-or-superseded",
+        "input": "frozen case d2-revocation-02 carries a revoked-or-superseded fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-02:out-of-scope",
+        "input": "frozen case d2-revocation-02 carries a out-of-scope fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-compression-03:pending-not-accepted",
+        "input": "frozen case d2-compression-03 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-compression-03:unverified-claim",
+        "input": "frozen case d2-compression-03 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-handoff-03:pending-not-accepted",
+        "input": "frozen case d2-handoff-03 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-handoff-03:unverified-claim",
+        "input": "frozen case d2-handoff-03 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-fork-03:pending-not-accepted",
+        "input": "frozen case d2-fork-03 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-fork-03:unverified-claim",
+        "input": "frozen case d2-fork-03 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-restart-03:pending-not-accepted",
+        "input": "frozen case d2-restart-03 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-restart-03:unverified-claim",
+        "input": "frozen case d2-restart-03 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-03:pending-not-accepted",
+        "input": "frozen case d2-revocation-03 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-03:unverified-claim",
+        "input": "frozen case d2-revocation-03 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-03:revoked-or-superseded",
+        "input": "frozen case d2-revocation-03 carries a revoked-or-superseded fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-03:out-of-scope",
+        "input": "frozen case d2-revocation-03 carries a out-of-scope fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-compression-04:pending-not-accepted",
+        "input": "frozen case d2-compression-04 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-compression-04:unverified-claim",
+        "input": "frozen case d2-compression-04 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-handoff-04:pending-not-accepted",
+        "input": "frozen case d2-handoff-04 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-handoff-04:unverified-claim",
+        "input": "frozen case d2-handoff-04 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-fork-04:pending-not-accepted",
+        "input": "frozen case d2-fork-04 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-fork-04:unverified-claim",
+        "input": "frozen case d2-fork-04 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-restart-04:pending-not-accepted",
+        "input": "frozen case d2-restart-04 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-restart-04:unverified-claim",
+        "input": "frozen case d2-restart-04 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-04:pending-not-accepted",
+        "input": "frozen case d2-revocation-04 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-04:unverified-claim",
+        "input": "frozen case d2-revocation-04 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-04:revoked-or-superseded",
+        "input": "frozen case d2-revocation-04 carries a revoked-or-superseded fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-04:out-of-scope",
+        "input": "frozen case d2-revocation-04 carries a out-of-scope fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-compression-05:pending-not-accepted",
+        "input": "frozen case d2-compression-05 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-compression-05:unverified-claim",
+        "input": "frozen case d2-compression-05 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-handoff-05:pending-not-accepted",
+        "input": "frozen case d2-handoff-05 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-handoff-05:unverified-claim",
+        "input": "frozen case d2-handoff-05 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-fork-05:pending-not-accepted",
+        "input": "frozen case d2-fork-05 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-fork-05:unverified-claim",
+        "input": "frozen case d2-fork-05 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-restart-05:pending-not-accepted",
+        "input": "frozen case d2-restart-05 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-restart-05:unverified-claim",
+        "input": "frozen case d2-restart-05 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-05:pending-not-accepted",
+        "input": "frozen case d2-revocation-05 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-05:unverified-claim",
+        "input": "frozen case d2-revocation-05 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-05:revoked-or-superseded",
+        "input": "frozen case d2-revocation-05 carries a revoked-or-superseded fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-05:out-of-scope",
+        "input": "frozen case d2-revocation-05 carries a out-of-scope fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-compression-06:pending-not-accepted",
+        "input": "frozen case d2-compression-06 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-compression-06:unverified-claim",
+        "input": "frozen case d2-compression-06 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-handoff-06:pending-not-accepted",
+        "input": "frozen case d2-handoff-06 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-handoff-06:unverified-claim",
+        "input": "frozen case d2-handoff-06 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-fork-06:pending-not-accepted",
+        "input": "frozen case d2-fork-06 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-fork-06:unverified-claim",
+        "input": "frozen case d2-fork-06 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-restart-06:pending-not-accepted",
+        "input": "frozen case d2-restart-06 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-restart-06:unverified-claim",
+        "input": "frozen case d2-restart-06 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-06:pending-not-accepted",
+        "input": "frozen case d2-revocation-06 carries a pending-not-accepted fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-06:unverified-claim",
+        "input": "frozen case d2-revocation-06 carries a unverified-claim fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-06:revoked-or-superseded",
+        "input": "frozen case d2-revocation-06 carries a revoked-or-superseded fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "structural-exclusion:d2-revocation-06:out-of-scope",
+        "input": "frozen case d2-revocation-06 carries a out-of-scope fact",
+        "expected": "the accepted projection never contains it",
+        "observed": "excluded",
+        "result": "pass"
+      },
+      {
+        "id": "agent-derived-cannot-promote",
+        "input": "score all 30 frozen pairs from the agent-derived projection with no provider usage or timing",
+        "expected": "EVIDENCE_INSUFFICIENT, keepBaseline true, promotionCandidateEligible false",
+        "observed": "status=EVIDENCE_INSUFFICIENT, metricsBasis=agent-derived-structural, keepBaseline=true, eligible=false",
+        "result": "pass"
+      },
+      {
+        "id": "undersized-sample-blocked",
+        "input": "score only 29 of 30 frozen pairs",
+        "expected": "the sample-size gate blocks promotion",
+        "observed": "fewer than 30 measured pairs (29)",
+        "result": "pass"
+      },
+      {
+        "id": "post-freeze-case-edit-invalidates-hash",
+        "input": "drop one must-preserve fact from a frozen case after the hash was signed",
+        "expected": "workload hash mismatch and a per-case input hash mismatch",
+        "observed": "workload hash mismatch after freeze | case input hash mismatch: d2-compression-01",
+        "result": "pass"
+      },
+      {
+        "id": "post-freeze-threshold-edit-invalidated",
+        "input": "lower the next-action target after the freeze without a pre-measurement proposal",
+        "expected": "budget change reported and frozen hash no longer matching",
+        "observed": "workload hash mismatch after freeze | metric budget nextActionTarget changed",
+        "result": "pass"
+      },
+      {
+        "id": "character-estimate-is-not-cost-evidence",
+        "input": "report a plausible 20% saving while marking the cost source as a character estimate",
+        "expected": "the estimate is vetoed and the candidate stays ineligible",
+        "observed": "NO_GO; 30 pair(s) reported a character-estimated cost instead of a provider cost report",
+        "result": "pass"
+      },
+      {
+        "id": "forbidden-fact-reinjection-blocked",
+        "input": "a live-shaped candidate output re-injects a pending, unverified, revoked or out-of-scope fact",
+        "expected": "candidate leak count above zero and the safety gate blocking promotion",
+        "observed": "candidateLeaks=30, eligible=false",
+        "result": "pass"
+      },
+      {
+        "id": "false-completion-claim-blocked",
+        "input": "a live-shaped candidate output claims the long-session program is complete",
+        "expected": "false-completion count above zero and the safety gate blocking promotion",
+        "observed": "falseCompletions=30, eligible=false",
+        "result": "pass"
+      },
+      {
+        "id": "measurement-outside-frozen-workload",
+        "input": "submit a measurement row whose case id is not present in the frozen manifest",
+        "expected": "the row is excluded from the aggregates and the run is blocked",
+        "observed": "samplePairs=29, 1 measured row(s) outside the frozen workload",
+        "result": "pass"
+      }
+    ],
+    "decisionInputs": {
+      "disposition": "NO-GO",
+      "promotionCandidateEligible": false,
+      "keepBaseline": true,
+      "productDefaultChanged": false,
+      "requiresPublisherDecision": [
+        "D3 must record keep-baseline/NO-GO: this evidence does not promote a continuous-compression default.",
+        "Any future promotion needs a new authorized live-provider sample set plus a separate product-lock decision."
+      ]
+    }
+  },
+  "rows": [
+    {
+      "caseId": "d2-compression-01",
+      "family": "compression",
+      "runIndex": 0,
+      "inputHash": "b3f8172914c182fabf42650bdfee1af15b65b2109e6cca6db9ad6cf35ca335af",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-compression-01 using accepted context only; report completion only from receipts.\nuser=Objective d2-compression-01: keep the bound workspace task recoverable through family=compression.\nassistant=Constraint d2-compression-01: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-compression-01: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-compression-01: the retry loop at step 1 failed and must not be repeated.\ntool=Open dependency d2-compression-01: step 1 waits for the owner receipt before completion.\nassistant=Pending proposal d2-compression-01: raise the context budget to 4096.\nassistant=Unverified narrative d2-compression-01: the long-session program is already released.\nassistant=Next action d2-compression-01: run step 1 against the owning API and read back the receipt.\nuser=Continue d2-compression-01 after compression: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-compression-01-objective",
+          "d2-compression-01-constraint",
+          "d2-compression-01-decision",
+          "d2-compression-01-blocker",
+          "d2-compression-01-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-compression-01-pending",
+          "d2-compression-01-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-compression-01: keep the bound workspace task recoverable through family=compression.\nstate=Family compression, pair 1; work still open.\nconstraint=Constraint d2-compression-01: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-compression-01: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-compression-01: step 1 waits for the owner receipt before completion.\ninProgress=Running compression continuity for d2-compression-01\ndone=Accepted evidence for d2-compression-01 step 0\nfile=shared/long-session-paired-evaluation.ts#d2-compression-01\ntest=vitest d2-compression-01\nfailure=Failed attempt d2-compression-01: the retry loop at step 1 failed and must not be repeated.\nnext=Next action d2-compression-01: run step 1 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:compression:d2-compression-01\natom:d2-compression-01-constraint=Constraint d2-compression-01: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-compression-01-decision=Decision d2-compression-01: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-compression-01-blocker=Failed attempt d2-compression-01: the retry loop at step 1 failed and must not be repeated.\natom:d2-compression-01-open=Open dependency d2-compression-01: step 1 waits for the owner receipt before completion.\natom:d2-compression-01-next=Next action d2-compression-01: run step 1 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-compression-01-objective",
+          "d2-compression-01-constraint",
+          "d2-compression-01-decision",
+          "d2-compression-01-blocker",
+          "d2-compression-01-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-handoff-01",
+      "family": "handoff",
+      "runIndex": 0,
+      "inputHash": "aad6721737ca7f4c2a8e27f722198150107094e7875f75cea7a757fb6425c364",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-handoff-01 using accepted context only; report completion only from receipts.\nuser=Objective d2-handoff-01: keep the bound workspace task recoverable through family=handoff.\nassistant=Constraint d2-handoff-01: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-handoff-01: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-handoff-01: the retry loop at step 1 failed and must not be repeated.\ntool=Open dependency d2-handoff-01: step 1 waits for the owner receipt before completion.\nassistant=Pending proposal d2-handoff-01: raise the context budget to 4096.\nassistant=Unverified narrative d2-handoff-01: the long-session program is already released.\nassistant=Next action d2-handoff-01: run step 1 against the owning API and read back the receipt.\nuser=Continue d2-handoff-01 after handoff: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-handoff-01-objective",
+          "d2-handoff-01-constraint",
+          "d2-handoff-01-decision",
+          "d2-handoff-01-blocker",
+          "d2-handoff-01-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-handoff-01-pending",
+          "d2-handoff-01-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-handoff-01: keep the bound workspace task recoverable through family=handoff.\nstate=Family handoff, pair 1; work still open.\nconstraint=Constraint d2-handoff-01: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-handoff-01: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-handoff-01: step 1 waits for the owner receipt before completion.\ninProgress=Running handoff continuity for d2-handoff-01\ndone=Accepted evidence for d2-handoff-01 step 0\nfile=shared/long-session-paired-evaluation.ts#d2-handoff-01\ntest=vitest d2-handoff-01\nfailure=Failed attempt d2-handoff-01: the retry loop at step 1 failed and must not be repeated.\nnext=Next action d2-handoff-01: run step 1 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:handoff:d2-handoff-01\natom:d2-handoff-01-constraint=Constraint d2-handoff-01: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-handoff-01-decision=Decision d2-handoff-01: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-handoff-01-blocker=Failed attempt d2-handoff-01: the retry loop at step 1 failed and must not be repeated.\natom:d2-handoff-01-open=Open dependency d2-handoff-01: step 1 waits for the owner receipt before completion.\natom:d2-handoff-01-next=Next action d2-handoff-01: run step 1 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-handoff-01-objective",
+          "d2-handoff-01-constraint",
+          "d2-handoff-01-decision",
+          "d2-handoff-01-blocker",
+          "d2-handoff-01-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-fork-01",
+      "family": "fork",
+      "runIndex": 0,
+      "inputHash": "016ac31d8ca1241ea55fb540668e63101546b6ef8e3f48cf6a8becfd5f3cb63e",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-fork-01 using accepted context only; report completion only from receipts.\nuser=Objective d2-fork-01: keep the bound workspace task recoverable through family=fork.\nassistant=Constraint d2-fork-01: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-fork-01: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-fork-01: the retry loop at step 1 failed and must not be repeated.\ntool=Open dependency d2-fork-01: step 1 waits for the owner receipt before completion.\nassistant=Pending proposal d2-fork-01: raise the context budget to 4096.\nassistant=Unverified narrative d2-fork-01: the long-session program is already released.\nassistant=Next action d2-fork-01: run step 1 against the owning API and read back the receipt.\nuser=Continue d2-fork-01 after fork: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-fork-01-objective",
+          "d2-fork-01-constraint",
+          "d2-fork-01-decision",
+          "d2-fork-01-blocker",
+          "d2-fork-01-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-fork-01-pending",
+          "d2-fork-01-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-fork-01: keep the bound workspace task recoverable through family=fork.\nstate=Family fork, pair 1; work still open.\nconstraint=Constraint d2-fork-01: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-fork-01: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-fork-01: step 1 waits for the owner receipt before completion.\ninProgress=Running fork continuity for d2-fork-01\ndone=Accepted evidence for d2-fork-01 step 0\nfile=shared/long-session-paired-evaluation.ts#d2-fork-01\ntest=vitest d2-fork-01\nfailure=Failed attempt d2-fork-01: the retry loop at step 1 failed and must not be repeated.\nnext=Next action d2-fork-01: run step 1 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:fork:d2-fork-01\natom:d2-fork-01-constraint=Constraint d2-fork-01: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-fork-01-decision=Decision d2-fork-01: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-fork-01-blocker=Failed attempt d2-fork-01: the retry loop at step 1 failed and must not be repeated.\natom:d2-fork-01-open=Open dependency d2-fork-01: step 1 waits for the owner receipt before completion.\natom:d2-fork-01-next=Next action d2-fork-01: run step 1 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-fork-01-objective",
+          "d2-fork-01-constraint",
+          "d2-fork-01-decision",
+          "d2-fork-01-blocker",
+          "d2-fork-01-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-restart-01",
+      "family": "restart",
+      "runIndex": 0,
+      "inputHash": "544131b878a16bd4ecda127565268fac0889820ee5b4c31a0570d5bf375f8c19",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-restart-01 using accepted context only; report completion only from receipts.\nuser=Objective d2-restart-01: keep the bound workspace task recoverable through family=restart.\nassistant=Constraint d2-restart-01: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-restart-01: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-restart-01: the retry loop at step 1 failed and must not be repeated.\ntool=Open dependency d2-restart-01: step 1 waits for the owner receipt before completion.\nassistant=Pending proposal d2-restart-01: raise the context budget to 4096.\nassistant=Unverified narrative d2-restart-01: the long-session program is already released.\nassistant=Next action d2-restart-01: run step 1 against the owning API and read back the receipt.\nuser=Continue d2-restart-01 after restart: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-restart-01-objective",
+          "d2-restart-01-constraint",
+          "d2-restart-01-decision",
+          "d2-restart-01-blocker",
+          "d2-restart-01-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-restart-01-pending",
+          "d2-restart-01-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-restart-01: keep the bound workspace task recoverable through family=restart.\nstate=Family restart, pair 1; work still open.\nconstraint=Constraint d2-restart-01: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-restart-01: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-restart-01: step 1 waits for the owner receipt before completion.\ninProgress=Running restart continuity for d2-restart-01\ndone=Accepted evidence for d2-restart-01 step 0\nfile=shared/long-session-paired-evaluation.ts#d2-restart-01\ntest=vitest d2-restart-01\nfailure=Failed attempt d2-restart-01: the retry loop at step 1 failed and must not be repeated.\nnext=Next action d2-restart-01: run step 1 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:restart:d2-restart-01\natom:d2-restart-01-constraint=Constraint d2-restart-01: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-restart-01-decision=Decision d2-restart-01: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-restart-01-blocker=Failed attempt d2-restart-01: the retry loop at step 1 failed and must not be repeated.\natom:d2-restart-01-open=Open dependency d2-restart-01: step 1 waits for the owner receipt before completion.\natom:d2-restart-01-next=Next action d2-restart-01: run step 1 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-restart-01-objective",
+          "d2-restart-01-constraint",
+          "d2-restart-01-decision",
+          "d2-restart-01-blocker",
+          "d2-restart-01-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-revocation-01",
+      "family": "revocation",
+      "runIndex": 0,
+      "inputHash": "8891594cb6ece9211834cd0c1bf42e7b3fe63a405c82738443f8103e4d757a55",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-revocation-01 using accepted context only; report completion only from receipts.\nuser=Objective d2-revocation-01: keep the bound workspace task recoverable through family=revocation.\nassistant=Constraint d2-revocation-01: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-revocation-01: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-revocation-01: the retry loop at step 1 failed and must not be repeated.\ntool=Open dependency d2-revocation-01: step 1 waits for the owner receipt before completion.\nassistant=Pending proposal d2-revocation-01: raise the context budget to 4096.\nassistant=Unverified narrative d2-revocation-01: the long-session program is already released.\nassistant=Revoked decision d2-revocation-01: archive the coordinator session and drop its binding.\nassistant=Foreign workspace note d2-revocation-01: reuse the binding of another workspace.\nassistant=Next action d2-revocation-01: run step 1 against the owning API and read back the receipt.\nuser=Continue d2-revocation-01 after revocation: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-revocation-01-objective",
+          "d2-revocation-01-constraint",
+          "d2-revocation-01-decision",
+          "d2-revocation-01-blocker",
+          "d2-revocation-01-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-revocation-01-pending",
+          "d2-revocation-01-unverified",
+          "d2-revocation-01-revoked",
+          "d2-revocation-01-cross-scope"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-revocation-01: keep the bound workspace task recoverable through family=revocation.\nstate=Family revocation, pair 1; work still open.\nconstraint=Constraint d2-revocation-01: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-revocation-01: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-revocation-01: step 1 waits for the owner receipt before completion.\ninProgress=Running revocation continuity for d2-revocation-01\ndone=Accepted evidence for d2-revocation-01 step 0\nfile=shared/long-session-paired-evaluation.ts#d2-revocation-01\ntest=vitest d2-revocation-01\nfailure=Failed attempt d2-revocation-01: the retry loop at step 1 failed and must not be repeated.\nnext=Next action d2-revocation-01: run step 1 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:revocation:d2-revocation-01\natom:d2-revocation-01-constraint=Constraint d2-revocation-01: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-revocation-01-decision=Decision d2-revocation-01: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-revocation-01-blocker=Failed attempt d2-revocation-01: the retry loop at step 1 failed and must not be repeated.\natom:d2-revocation-01-open=Open dependency d2-revocation-01: step 1 waits for the owner receipt before completion.\natom:d2-revocation-01-next=Next action d2-revocation-01: run step 1 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-revocation-01-objective",
+          "d2-revocation-01-constraint",
+          "d2-revocation-01-decision",
+          "d2-revocation-01-blocker",
+          "d2-revocation-01-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-compression-02",
+      "family": "compression",
+      "runIndex": 0,
+      "inputHash": "519f51b10a277567afc915484e2faccdf515a063cc005185c3ad1e733b5b7701",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-compression-02 using accepted context only; report completion only from receipts.\nuser=Objective d2-compression-02: keep the bound workspace task recoverable through family=compression.\nassistant=Constraint d2-compression-02: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-compression-02: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-compression-02: the retry loop at step 2 failed and must not be repeated.\ntool=Open dependency d2-compression-02: step 2 waits for the owner receipt before completion.\nassistant=Pending proposal d2-compression-02: raise the context budget to 8192.\nassistant=Unverified narrative d2-compression-02: the long-session program is already released.\nassistant=Next action d2-compression-02: run step 2 against the owning API and read back the receipt.\nuser=Continue d2-compression-02 after compression: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-compression-02-objective",
+          "d2-compression-02-constraint",
+          "d2-compression-02-decision",
+          "d2-compression-02-blocker",
+          "d2-compression-02-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-compression-02-pending",
+          "d2-compression-02-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-compression-02: keep the bound workspace task recoverable through family=compression.\nstate=Family compression, pair 2; work still open.\nconstraint=Constraint d2-compression-02: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-compression-02: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-compression-02: step 2 waits for the owner receipt before completion.\ninProgress=Running compression continuity for d2-compression-02\ndone=Accepted evidence for d2-compression-02 step 1\nfile=shared/long-session-paired-evaluation.ts#d2-compression-02\ntest=vitest d2-compression-02\nfailure=Failed attempt d2-compression-02: the retry loop at step 2 failed and must not be repeated.\nnext=Next action d2-compression-02: run step 2 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:compression:d2-compression-02\natom:d2-compression-02-constraint=Constraint d2-compression-02: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-compression-02-decision=Decision d2-compression-02: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-compression-02-blocker=Failed attempt d2-compression-02: the retry loop at step 2 failed and must not be repeated.\natom:d2-compression-02-open=Open dependency d2-compression-02: step 2 waits for the owner receipt before completion.\natom:d2-compression-02-next=Next action d2-compression-02: run step 2 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-compression-02-objective",
+          "d2-compression-02-constraint",
+          "d2-compression-02-decision",
+          "d2-compression-02-blocker",
+          "d2-compression-02-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-handoff-02",
+      "family": "handoff",
+      "runIndex": 0,
+      "inputHash": "33ab441b8e9304fe006e1e1f1ca17414cba588c7a961a23854ef3884c51cc118",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-handoff-02 using accepted context only; report completion only from receipts.\nuser=Objective d2-handoff-02: keep the bound workspace task recoverable through family=handoff.\nassistant=Constraint d2-handoff-02: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-handoff-02: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-handoff-02: the retry loop at step 2 failed and must not be repeated.\ntool=Open dependency d2-handoff-02: step 2 waits for the owner receipt before completion.\nassistant=Pending proposal d2-handoff-02: raise the context budget to 8192.\nassistant=Unverified narrative d2-handoff-02: the long-session program is already released.\nassistant=Next action d2-handoff-02: run step 2 against the owning API and read back the receipt.\nuser=Continue d2-handoff-02 after handoff: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-handoff-02-objective",
+          "d2-handoff-02-constraint",
+          "d2-handoff-02-decision",
+          "d2-handoff-02-blocker",
+          "d2-handoff-02-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-handoff-02-pending",
+          "d2-handoff-02-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-handoff-02: keep the bound workspace task recoverable through family=handoff.\nstate=Family handoff, pair 2; work still open.\nconstraint=Constraint d2-handoff-02: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-handoff-02: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-handoff-02: step 2 waits for the owner receipt before completion.\ninProgress=Running handoff continuity for d2-handoff-02\ndone=Accepted evidence for d2-handoff-02 step 1\nfile=shared/long-session-paired-evaluation.ts#d2-handoff-02\ntest=vitest d2-handoff-02\nfailure=Failed attempt d2-handoff-02: the retry loop at step 2 failed and must not be repeated.\nnext=Next action d2-handoff-02: run step 2 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:handoff:d2-handoff-02\natom:d2-handoff-02-constraint=Constraint d2-handoff-02: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-handoff-02-decision=Decision d2-handoff-02: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-handoff-02-blocker=Failed attempt d2-handoff-02: the retry loop at step 2 failed and must not be repeated.\natom:d2-handoff-02-open=Open dependency d2-handoff-02: step 2 waits for the owner receipt before completion.\natom:d2-handoff-02-next=Next action d2-handoff-02: run step 2 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-handoff-02-objective",
+          "d2-handoff-02-constraint",
+          "d2-handoff-02-decision",
+          "d2-handoff-02-blocker",
+          "d2-handoff-02-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-fork-02",
+      "family": "fork",
+      "runIndex": 0,
+      "inputHash": "2c99951a222cf81bff53ad9074daf14a515141bc1f57bd0b08a5723313e25079",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-fork-02 using accepted context only; report completion only from receipts.\nuser=Objective d2-fork-02: keep the bound workspace task recoverable through family=fork.\nassistant=Constraint d2-fork-02: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-fork-02: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-fork-02: the retry loop at step 2 failed and must not be repeated.\ntool=Open dependency d2-fork-02: step 2 waits for the owner receipt before completion.\nassistant=Pending proposal d2-fork-02: raise the context budget to 8192.\nassistant=Unverified narrative d2-fork-02: the long-session program is already released.\nassistant=Next action d2-fork-02: run step 2 against the owning API and read back the receipt.\nuser=Continue d2-fork-02 after fork: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-fork-02-objective",
+          "d2-fork-02-constraint",
+          "d2-fork-02-decision",
+          "d2-fork-02-blocker",
+          "d2-fork-02-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-fork-02-pending",
+          "d2-fork-02-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-fork-02: keep the bound workspace task recoverable through family=fork.\nstate=Family fork, pair 2; work still open.\nconstraint=Constraint d2-fork-02: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-fork-02: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-fork-02: step 2 waits for the owner receipt before completion.\ninProgress=Running fork continuity for d2-fork-02\ndone=Accepted evidence for d2-fork-02 step 1\nfile=shared/long-session-paired-evaluation.ts#d2-fork-02\ntest=vitest d2-fork-02\nfailure=Failed attempt d2-fork-02: the retry loop at step 2 failed and must not be repeated.\nnext=Next action d2-fork-02: run step 2 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:fork:d2-fork-02\natom:d2-fork-02-constraint=Constraint d2-fork-02: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-fork-02-decision=Decision d2-fork-02: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-fork-02-blocker=Failed attempt d2-fork-02: the retry loop at step 2 failed and must not be repeated.\natom:d2-fork-02-open=Open dependency d2-fork-02: step 2 waits for the owner receipt before completion.\natom:d2-fork-02-next=Next action d2-fork-02: run step 2 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-fork-02-objective",
+          "d2-fork-02-constraint",
+          "d2-fork-02-decision",
+          "d2-fork-02-blocker",
+          "d2-fork-02-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-restart-02",
+      "family": "restart",
+      "runIndex": 0,
+      "inputHash": "a959d36db4c3be6567eba8f3c031df44185ad81791d1af9076debc669140292c",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-restart-02 using accepted context only; report completion only from receipts.\nuser=Objective d2-restart-02: keep the bound workspace task recoverable through family=restart.\nassistant=Constraint d2-restart-02: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-restart-02: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-restart-02: the retry loop at step 2 failed and must not be repeated.\ntool=Open dependency d2-restart-02: step 2 waits for the owner receipt before completion.\nassistant=Pending proposal d2-restart-02: raise the context budget to 8192.\nassistant=Unverified narrative d2-restart-02: the long-session program is already released.\nassistant=Next action d2-restart-02: run step 2 against the owning API and read back the receipt.\nuser=Continue d2-restart-02 after restart: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-restart-02-objective",
+          "d2-restart-02-constraint",
+          "d2-restart-02-decision",
+          "d2-restart-02-blocker",
+          "d2-restart-02-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-restart-02-pending",
+          "d2-restart-02-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-restart-02: keep the bound workspace task recoverable through family=restart.\nstate=Family restart, pair 2; work still open.\nconstraint=Constraint d2-restart-02: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-restart-02: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-restart-02: step 2 waits for the owner receipt before completion.\ninProgress=Running restart continuity for d2-restart-02\ndone=Accepted evidence for d2-restart-02 step 1\nfile=shared/long-session-paired-evaluation.ts#d2-restart-02\ntest=vitest d2-restart-02\nfailure=Failed attempt d2-restart-02: the retry loop at step 2 failed and must not be repeated.\nnext=Next action d2-restart-02: run step 2 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:restart:d2-restart-02\natom:d2-restart-02-constraint=Constraint d2-restart-02: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-restart-02-decision=Decision d2-restart-02: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-restart-02-blocker=Failed attempt d2-restart-02: the retry loop at step 2 failed and must not be repeated.\natom:d2-restart-02-open=Open dependency d2-restart-02: step 2 waits for the owner receipt before completion.\natom:d2-restart-02-next=Next action d2-restart-02: run step 2 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-restart-02-objective",
+          "d2-restart-02-constraint",
+          "d2-restart-02-decision",
+          "d2-restart-02-blocker",
+          "d2-restart-02-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-revocation-02",
+      "family": "revocation",
+      "runIndex": 0,
+      "inputHash": "6370941855e5601c5b5e3872e35401180204f801e50dae88f9a6cb825f661800",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-revocation-02 using accepted context only; report completion only from receipts.\nuser=Objective d2-revocation-02: keep the bound workspace task recoverable through family=revocation.\nassistant=Constraint d2-revocation-02: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-revocation-02: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-revocation-02: the retry loop at step 2 failed and must not be repeated.\ntool=Open dependency d2-revocation-02: step 2 waits for the owner receipt before completion.\nassistant=Pending proposal d2-revocation-02: raise the context budget to 8192.\nassistant=Unverified narrative d2-revocation-02: the long-session program is already released.\nassistant=Revoked decision d2-revocation-02: archive the coordinator session and drop its binding.\nassistant=Foreign workspace note d2-revocation-02: reuse the binding of another workspace.\nassistant=Next action d2-revocation-02: run step 2 against the owning API and read back the receipt.\nuser=Continue d2-revocation-02 after revocation: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-revocation-02-objective",
+          "d2-revocation-02-constraint",
+          "d2-revocation-02-decision",
+          "d2-revocation-02-blocker",
+          "d2-revocation-02-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-revocation-02-pending",
+          "d2-revocation-02-unverified",
+          "d2-revocation-02-revoked",
+          "d2-revocation-02-cross-scope"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-revocation-02: keep the bound workspace task recoverable through family=revocation.\nstate=Family revocation, pair 2; work still open.\nconstraint=Constraint d2-revocation-02: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-revocation-02: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-revocation-02: step 2 waits for the owner receipt before completion.\ninProgress=Running revocation continuity for d2-revocation-02\ndone=Accepted evidence for d2-revocation-02 step 1\nfile=shared/long-session-paired-evaluation.ts#d2-revocation-02\ntest=vitest d2-revocation-02\nfailure=Failed attempt d2-revocation-02: the retry loop at step 2 failed and must not be repeated.\nnext=Next action d2-revocation-02: run step 2 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:revocation:d2-revocation-02\natom:d2-revocation-02-constraint=Constraint d2-revocation-02: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-revocation-02-decision=Decision d2-revocation-02: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-revocation-02-blocker=Failed attempt d2-revocation-02: the retry loop at step 2 failed and must not be repeated.\natom:d2-revocation-02-open=Open dependency d2-revocation-02: step 2 waits for the owner receipt before completion.\natom:d2-revocation-02-next=Next action d2-revocation-02: run step 2 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-revocation-02-objective",
+          "d2-revocation-02-constraint",
+          "d2-revocation-02-decision",
+          "d2-revocation-02-blocker",
+          "d2-revocation-02-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-compression-03",
+      "family": "compression",
+      "runIndex": 0,
+      "inputHash": "c1967357c4d0bfb0fd8a496078aa56250e9119ad4fb9af1642eea4013361b9c4",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-compression-03 using accepted context only; report completion only from receipts.\nuser=Objective d2-compression-03: keep the bound workspace task recoverable through family=compression.\nassistant=Constraint d2-compression-03: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-compression-03: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-compression-03: the retry loop at step 3 failed and must not be repeated.\ntool=Open dependency d2-compression-03: step 3 waits for the owner receipt before completion.\nassistant=Pending proposal d2-compression-03: raise the context budget to 12288.\nassistant=Unverified narrative d2-compression-03: the long-session program is already released.\nassistant=Next action d2-compression-03: run step 3 against the owning API and read back the receipt.\nuser=Continue d2-compression-03 after compression: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-compression-03-objective",
+          "d2-compression-03-constraint",
+          "d2-compression-03-decision",
+          "d2-compression-03-blocker",
+          "d2-compression-03-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-compression-03-pending",
+          "d2-compression-03-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-compression-03: keep the bound workspace task recoverable through family=compression.\nstate=Family compression, pair 3; work still open.\nconstraint=Constraint d2-compression-03: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-compression-03: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-compression-03: step 3 waits for the owner receipt before completion.\ninProgress=Running compression continuity for d2-compression-03\ndone=Accepted evidence for d2-compression-03 step 2\nfile=shared/long-session-paired-evaluation.ts#d2-compression-03\ntest=vitest d2-compression-03\nfailure=Failed attempt d2-compression-03: the retry loop at step 3 failed and must not be repeated.\nnext=Next action d2-compression-03: run step 3 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:compression:d2-compression-03\natom:d2-compression-03-constraint=Constraint d2-compression-03: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-compression-03-decision=Decision d2-compression-03: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-compression-03-blocker=Failed attempt d2-compression-03: the retry loop at step 3 failed and must not be repeated.\natom:d2-compression-03-open=Open dependency d2-compression-03: step 3 waits for the owner receipt before completion.\natom:d2-compression-03-next=Next action d2-compression-03: run step 3 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-compression-03-objective",
+          "d2-compression-03-constraint",
+          "d2-compression-03-decision",
+          "d2-compression-03-blocker",
+          "d2-compression-03-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-handoff-03",
+      "family": "handoff",
+      "runIndex": 0,
+      "inputHash": "afb207ccd2818bc8a425b2c5c8003048d0c87b9d10365936c7d63aaae33fd7d0",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-handoff-03 using accepted context only; report completion only from receipts.\nuser=Objective d2-handoff-03: keep the bound workspace task recoverable through family=handoff.\nassistant=Constraint d2-handoff-03: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-handoff-03: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-handoff-03: the retry loop at step 3 failed and must not be repeated.\ntool=Open dependency d2-handoff-03: step 3 waits for the owner receipt before completion.\nassistant=Pending proposal d2-handoff-03: raise the context budget to 12288.\nassistant=Unverified narrative d2-handoff-03: the long-session program is already released.\nassistant=Next action d2-handoff-03: run step 3 against the owning API and read back the receipt.\nuser=Continue d2-handoff-03 after handoff: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-handoff-03-objective",
+          "d2-handoff-03-constraint",
+          "d2-handoff-03-decision",
+          "d2-handoff-03-blocker",
+          "d2-handoff-03-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-handoff-03-pending",
+          "d2-handoff-03-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-handoff-03: keep the bound workspace task recoverable through family=handoff.\nstate=Family handoff, pair 3; work still open.\nconstraint=Constraint d2-handoff-03: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-handoff-03: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-handoff-03: step 3 waits for the owner receipt before completion.\ninProgress=Running handoff continuity for d2-handoff-03\ndone=Accepted evidence for d2-handoff-03 step 2\nfile=shared/long-session-paired-evaluation.ts#d2-handoff-03\ntest=vitest d2-handoff-03\nfailure=Failed attempt d2-handoff-03: the retry loop at step 3 failed and must not be repeated.\nnext=Next action d2-handoff-03: run step 3 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:handoff:d2-handoff-03\natom:d2-handoff-03-constraint=Constraint d2-handoff-03: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-handoff-03-decision=Decision d2-handoff-03: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-handoff-03-blocker=Failed attempt d2-handoff-03: the retry loop at step 3 failed and must not be repeated.\natom:d2-handoff-03-open=Open dependency d2-handoff-03: step 3 waits for the owner receipt before completion.\natom:d2-handoff-03-next=Next action d2-handoff-03: run step 3 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-handoff-03-objective",
+          "d2-handoff-03-constraint",
+          "d2-handoff-03-decision",
+          "d2-handoff-03-blocker",
+          "d2-handoff-03-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-fork-03",
+      "family": "fork",
+      "runIndex": 0,
+      "inputHash": "7ccdfdef52899be2a98d14be24a0fbab50535bf33d2e7d843f8e93870d2d7b38",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-fork-03 using accepted context only; report completion only from receipts.\nuser=Objective d2-fork-03: keep the bound workspace task recoverable through family=fork.\nassistant=Constraint d2-fork-03: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-fork-03: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-fork-03: the retry loop at step 3 failed and must not be repeated.\ntool=Open dependency d2-fork-03: step 3 waits for the owner receipt before completion.\nassistant=Pending proposal d2-fork-03: raise the context budget to 12288.\nassistant=Unverified narrative d2-fork-03: the long-session program is already released.\nassistant=Next action d2-fork-03: run step 3 against the owning API and read back the receipt.\nuser=Continue d2-fork-03 after fork: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-fork-03-objective",
+          "d2-fork-03-constraint",
+          "d2-fork-03-decision",
+          "d2-fork-03-blocker",
+          "d2-fork-03-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-fork-03-pending",
+          "d2-fork-03-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-fork-03: keep the bound workspace task recoverable through family=fork.\nstate=Family fork, pair 3; work still open.\nconstraint=Constraint d2-fork-03: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-fork-03: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-fork-03: step 3 waits for the owner receipt before completion.\ninProgress=Running fork continuity for d2-fork-03\ndone=Accepted evidence for d2-fork-03 step 2\nfile=shared/long-session-paired-evaluation.ts#d2-fork-03\ntest=vitest d2-fork-03\nfailure=Failed attempt d2-fork-03: the retry loop at step 3 failed and must not be repeated.\nnext=Next action d2-fork-03: run step 3 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:fork:d2-fork-03\natom:d2-fork-03-constraint=Constraint d2-fork-03: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-fork-03-decision=Decision d2-fork-03: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-fork-03-blocker=Failed attempt d2-fork-03: the retry loop at step 3 failed and must not be repeated.\natom:d2-fork-03-open=Open dependency d2-fork-03: step 3 waits for the owner receipt before completion.\natom:d2-fork-03-next=Next action d2-fork-03: run step 3 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-fork-03-objective",
+          "d2-fork-03-constraint",
+          "d2-fork-03-decision",
+          "d2-fork-03-blocker",
+          "d2-fork-03-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-restart-03",
+      "family": "restart",
+      "runIndex": 0,
+      "inputHash": "258583ea38e7ac70380bf1d811a91e615ddb86d72bedf1c58fb850bcf461d125",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-restart-03 using accepted context only; report completion only from receipts.\nuser=Objective d2-restart-03: keep the bound workspace task recoverable through family=restart.\nassistant=Constraint d2-restart-03: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-restart-03: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-restart-03: the retry loop at step 3 failed and must not be repeated.\ntool=Open dependency d2-restart-03: step 3 waits for the owner receipt before completion.\nassistant=Pending proposal d2-restart-03: raise the context budget to 12288.\nassistant=Unverified narrative d2-restart-03: the long-session program is already released.\nassistant=Next action d2-restart-03: run step 3 against the owning API and read back the receipt.\nuser=Continue d2-restart-03 after restart: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-restart-03-objective",
+          "d2-restart-03-constraint",
+          "d2-restart-03-decision",
+          "d2-restart-03-blocker",
+          "d2-restart-03-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-restart-03-pending",
+          "d2-restart-03-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-restart-03: keep the bound workspace task recoverable through family=restart.\nstate=Family restart, pair 3; work still open.\nconstraint=Constraint d2-restart-03: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-restart-03: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-restart-03: step 3 waits for the owner receipt before completion.\ninProgress=Running restart continuity for d2-restart-03\ndone=Accepted evidence for d2-restart-03 step 2\nfile=shared/long-session-paired-evaluation.ts#d2-restart-03\ntest=vitest d2-restart-03\nfailure=Failed attempt d2-restart-03: the retry loop at step 3 failed and must not be repeated.\nnext=Next action d2-restart-03: run step 3 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:restart:d2-restart-03\natom:d2-restart-03-constraint=Constraint d2-restart-03: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-restart-03-decision=Decision d2-restart-03: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-restart-03-blocker=Failed attempt d2-restart-03: the retry loop at step 3 failed and must not be repeated.\natom:d2-restart-03-open=Open dependency d2-restart-03: step 3 waits for the owner receipt before completion.\natom:d2-restart-03-next=Next action d2-restart-03: run step 3 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-restart-03-objective",
+          "d2-restart-03-constraint",
+          "d2-restart-03-decision",
+          "d2-restart-03-blocker",
+          "d2-restart-03-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-revocation-03",
+      "family": "revocation",
+      "runIndex": 0,
+      "inputHash": "0d00e2ba1b348e10e1db6ce1b25900cc533508478a89f43d0bc4c58a40518c9b",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-revocation-03 using accepted context only; report completion only from receipts.\nuser=Objective d2-revocation-03: keep the bound workspace task recoverable through family=revocation.\nassistant=Constraint d2-revocation-03: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-revocation-03: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-revocation-03: the retry loop at step 3 failed and must not be repeated.\ntool=Open dependency d2-revocation-03: step 3 waits for the owner receipt before completion.\nassistant=Pending proposal d2-revocation-03: raise the context budget to 12288.\nassistant=Unverified narrative d2-revocation-03: the long-session program is already released.\nassistant=Revoked decision d2-revocation-03: archive the coordinator session and drop its binding.\nassistant=Foreign workspace note d2-revocation-03: reuse the binding of another workspace.\nassistant=Next action d2-revocation-03: run step 3 against the owning API and read back the receipt.\nuser=Continue d2-revocation-03 after revocation: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-revocation-03-objective",
+          "d2-revocation-03-constraint",
+          "d2-revocation-03-decision",
+          "d2-revocation-03-blocker",
+          "d2-revocation-03-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-revocation-03-pending",
+          "d2-revocation-03-unverified",
+          "d2-revocation-03-revoked",
+          "d2-revocation-03-cross-scope"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-revocation-03: keep the bound workspace task recoverable through family=revocation.\nstate=Family revocation, pair 3; work still open.\nconstraint=Constraint d2-revocation-03: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-revocation-03: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-revocation-03: step 3 waits for the owner receipt before completion.\ninProgress=Running revocation continuity for d2-revocation-03\ndone=Accepted evidence for d2-revocation-03 step 2\nfile=shared/long-session-paired-evaluation.ts#d2-revocation-03\ntest=vitest d2-revocation-03\nfailure=Failed attempt d2-revocation-03: the retry loop at step 3 failed and must not be repeated.\nnext=Next action d2-revocation-03: run step 3 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:revocation:d2-revocation-03\natom:d2-revocation-03-constraint=Constraint d2-revocation-03: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-revocation-03-decision=Decision d2-revocation-03: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-revocation-03-blocker=Failed attempt d2-revocation-03: the retry loop at step 3 failed and must not be repeated.\natom:d2-revocation-03-open=Open dependency d2-revocation-03: step 3 waits for the owner receipt before completion.\natom:d2-revocation-03-next=Next action d2-revocation-03: run step 3 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-revocation-03-objective",
+          "d2-revocation-03-constraint",
+          "d2-revocation-03-decision",
+          "d2-revocation-03-blocker",
+          "d2-revocation-03-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-compression-04",
+      "family": "compression",
+      "runIndex": 0,
+      "inputHash": "1f0ecfc932d86f0b6f4db1eb6ce84d210e9cde90b154251b8ffefcbc8d385aa7",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-compression-04 using accepted context only; report completion only from receipts.\nuser=Objective d2-compression-04: keep the bound workspace task recoverable through family=compression.\nassistant=Constraint d2-compression-04: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-compression-04: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-compression-04: the retry loop at step 4 failed and must not be repeated.\ntool=Open dependency d2-compression-04: step 4 waits for the owner receipt before completion.\nassistant=Pending proposal d2-compression-04: raise the context budget to 16384.\nassistant=Unverified narrative d2-compression-04: the long-session program is already released.\nassistant=Next action d2-compression-04: run step 4 against the owning API and read back the receipt.\nuser=Continue d2-compression-04 after compression: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-compression-04-objective",
+          "d2-compression-04-constraint",
+          "d2-compression-04-decision",
+          "d2-compression-04-blocker",
+          "d2-compression-04-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-compression-04-pending",
+          "d2-compression-04-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-compression-04: keep the bound workspace task recoverable through family=compression.\nstate=Family compression, pair 4; work still open.\nconstraint=Constraint d2-compression-04: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-compression-04: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-compression-04: step 4 waits for the owner receipt before completion.\ninProgress=Running compression continuity for d2-compression-04\ndone=Accepted evidence for d2-compression-04 step 3\nfile=shared/long-session-paired-evaluation.ts#d2-compression-04\ntest=vitest d2-compression-04\nfailure=Failed attempt d2-compression-04: the retry loop at step 4 failed and must not be repeated.\nnext=Next action d2-compression-04: run step 4 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:compression:d2-compression-04\natom:d2-compression-04-constraint=Constraint d2-compression-04: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-compression-04-decision=Decision d2-compression-04: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-compression-04-blocker=Failed attempt d2-compression-04: the retry loop at step 4 failed and must not be repeated.\natom:d2-compression-04-open=Open dependency d2-compression-04: step 4 waits for the owner receipt before completion.\natom:d2-compression-04-next=Next action d2-compression-04: run step 4 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-compression-04-objective",
+          "d2-compression-04-constraint",
+          "d2-compression-04-decision",
+          "d2-compression-04-blocker",
+          "d2-compression-04-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-handoff-04",
+      "family": "handoff",
+      "runIndex": 0,
+      "inputHash": "4267f8b3ad1f9cc6e5cb5ad28fe0c270924034ae52840d0f7f1758c2aff55981",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-handoff-04 using accepted context only; report completion only from receipts.\nuser=Objective d2-handoff-04: keep the bound workspace task recoverable through family=handoff.\nassistant=Constraint d2-handoff-04: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-handoff-04: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-handoff-04: the retry loop at step 4 failed and must not be repeated.\ntool=Open dependency d2-handoff-04: step 4 waits for the owner receipt before completion.\nassistant=Pending proposal d2-handoff-04: raise the context budget to 16384.\nassistant=Unverified narrative d2-handoff-04: the long-session program is already released.\nassistant=Next action d2-handoff-04: run step 4 against the owning API and read back the receipt.\nuser=Continue d2-handoff-04 after handoff: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-handoff-04-objective",
+          "d2-handoff-04-constraint",
+          "d2-handoff-04-decision",
+          "d2-handoff-04-blocker",
+          "d2-handoff-04-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-handoff-04-pending",
+          "d2-handoff-04-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-handoff-04: keep the bound workspace task recoverable through family=handoff.\nstate=Family handoff, pair 4; work still open.\nconstraint=Constraint d2-handoff-04: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-handoff-04: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-handoff-04: step 4 waits for the owner receipt before completion.\ninProgress=Running handoff continuity for d2-handoff-04\ndone=Accepted evidence for d2-handoff-04 step 3\nfile=shared/long-session-paired-evaluation.ts#d2-handoff-04\ntest=vitest d2-handoff-04\nfailure=Failed attempt d2-handoff-04: the retry loop at step 4 failed and must not be repeated.\nnext=Next action d2-handoff-04: run step 4 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:handoff:d2-handoff-04\natom:d2-handoff-04-constraint=Constraint d2-handoff-04: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-handoff-04-decision=Decision d2-handoff-04: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-handoff-04-blocker=Failed attempt d2-handoff-04: the retry loop at step 4 failed and must not be repeated.\natom:d2-handoff-04-open=Open dependency d2-handoff-04: step 4 waits for the owner receipt before completion.\natom:d2-handoff-04-next=Next action d2-handoff-04: run step 4 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-handoff-04-objective",
+          "d2-handoff-04-constraint",
+          "d2-handoff-04-decision",
+          "d2-handoff-04-blocker",
+          "d2-handoff-04-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-fork-04",
+      "family": "fork",
+      "runIndex": 0,
+      "inputHash": "145f79bfa0fadd7de6822192ae6a6aee40f82ce1a7aa4bdcef82435015b1d9f0",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-fork-04 using accepted context only; report completion only from receipts.\nuser=Objective d2-fork-04: keep the bound workspace task recoverable through family=fork.\nassistant=Constraint d2-fork-04: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-fork-04: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-fork-04: the retry loop at step 4 failed and must not be repeated.\ntool=Open dependency d2-fork-04: step 4 waits for the owner receipt before completion.\nassistant=Pending proposal d2-fork-04: raise the context budget to 16384.\nassistant=Unverified narrative d2-fork-04: the long-session program is already released.\nassistant=Next action d2-fork-04: run step 4 against the owning API and read back the receipt.\nuser=Continue d2-fork-04 after fork: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-fork-04-objective",
+          "d2-fork-04-constraint",
+          "d2-fork-04-decision",
+          "d2-fork-04-blocker",
+          "d2-fork-04-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-fork-04-pending",
+          "d2-fork-04-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-fork-04: keep the bound workspace task recoverable through family=fork.\nstate=Family fork, pair 4; work still open.\nconstraint=Constraint d2-fork-04: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-fork-04: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-fork-04: step 4 waits for the owner receipt before completion.\ninProgress=Running fork continuity for d2-fork-04\ndone=Accepted evidence for d2-fork-04 step 3\nfile=shared/long-session-paired-evaluation.ts#d2-fork-04\ntest=vitest d2-fork-04\nfailure=Failed attempt d2-fork-04: the retry loop at step 4 failed and must not be repeated.\nnext=Next action d2-fork-04: run step 4 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:fork:d2-fork-04\natom:d2-fork-04-constraint=Constraint d2-fork-04: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-fork-04-decision=Decision d2-fork-04: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-fork-04-blocker=Failed attempt d2-fork-04: the retry loop at step 4 failed and must not be repeated.\natom:d2-fork-04-open=Open dependency d2-fork-04: step 4 waits for the owner receipt before completion.\natom:d2-fork-04-next=Next action d2-fork-04: run step 4 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-fork-04-objective",
+          "d2-fork-04-constraint",
+          "d2-fork-04-decision",
+          "d2-fork-04-blocker",
+          "d2-fork-04-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-restart-04",
+      "family": "restart",
+      "runIndex": 0,
+      "inputHash": "97aa8650c61b4168ba3711141a27539f946d0c1524ed17766997ca334693f441",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-restart-04 using accepted context only; report completion only from receipts.\nuser=Objective d2-restart-04: keep the bound workspace task recoverable through family=restart.\nassistant=Constraint d2-restart-04: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-restart-04: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-restart-04: the retry loop at step 4 failed and must not be repeated.\ntool=Open dependency d2-restart-04: step 4 waits for the owner receipt before completion.\nassistant=Pending proposal d2-restart-04: raise the context budget to 16384.\nassistant=Unverified narrative d2-restart-04: the long-session program is already released.\nassistant=Next action d2-restart-04: run step 4 against the owning API and read back the receipt.\nuser=Continue d2-restart-04 after restart: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-restart-04-objective",
+          "d2-restart-04-constraint",
+          "d2-restart-04-decision",
+          "d2-restart-04-blocker",
+          "d2-restart-04-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-restart-04-pending",
+          "d2-restart-04-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-restart-04: keep the bound workspace task recoverable through family=restart.\nstate=Family restart, pair 4; work still open.\nconstraint=Constraint d2-restart-04: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-restart-04: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-restart-04: step 4 waits for the owner receipt before completion.\ninProgress=Running restart continuity for d2-restart-04\ndone=Accepted evidence for d2-restart-04 step 3\nfile=shared/long-session-paired-evaluation.ts#d2-restart-04\ntest=vitest d2-restart-04\nfailure=Failed attempt d2-restart-04: the retry loop at step 4 failed and must not be repeated.\nnext=Next action d2-restart-04: run step 4 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:restart:d2-restart-04\natom:d2-restart-04-constraint=Constraint d2-restart-04: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-restart-04-decision=Decision d2-restart-04: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-restart-04-blocker=Failed attempt d2-restart-04: the retry loop at step 4 failed and must not be repeated.\natom:d2-restart-04-open=Open dependency d2-restart-04: step 4 waits for the owner receipt before completion.\natom:d2-restart-04-next=Next action d2-restart-04: run step 4 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-restart-04-objective",
+          "d2-restart-04-constraint",
+          "d2-restart-04-decision",
+          "d2-restart-04-blocker",
+          "d2-restart-04-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-revocation-04",
+      "family": "revocation",
+      "runIndex": 0,
+      "inputHash": "05cac3ac77dc8575a3f8ea079fcf421f60a12d7e9ac327d4c9eef4903df5a60b",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-revocation-04 using accepted context only; report completion only from receipts.\nuser=Objective d2-revocation-04: keep the bound workspace task recoverable through family=revocation.\nassistant=Constraint d2-revocation-04: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-revocation-04: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-revocation-04: the retry loop at step 4 failed and must not be repeated.\ntool=Open dependency d2-revocation-04: step 4 waits for the owner receipt before completion.\nassistant=Pending proposal d2-revocation-04: raise the context budget to 16384.\nassistant=Unverified narrative d2-revocation-04: the long-session program is already released.\nassistant=Revoked decision d2-revocation-04: archive the coordinator session and drop its binding.\nassistant=Foreign workspace note d2-revocation-04: reuse the binding of another workspace.\nassistant=Next action d2-revocation-04: run step 4 against the owning API and read back the receipt.\nuser=Continue d2-revocation-04 after revocation: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-revocation-04-objective",
+          "d2-revocation-04-constraint",
+          "d2-revocation-04-decision",
+          "d2-revocation-04-blocker",
+          "d2-revocation-04-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-revocation-04-pending",
+          "d2-revocation-04-unverified",
+          "d2-revocation-04-revoked",
+          "d2-revocation-04-cross-scope"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-revocation-04: keep the bound workspace task recoverable through family=revocation.\nstate=Family revocation, pair 4; work still open.\nconstraint=Constraint d2-revocation-04: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-revocation-04: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-revocation-04: step 4 waits for the owner receipt before completion.\ninProgress=Running revocation continuity for d2-revocation-04\ndone=Accepted evidence for d2-revocation-04 step 3\nfile=shared/long-session-paired-evaluation.ts#d2-revocation-04\ntest=vitest d2-revocation-04\nfailure=Failed attempt d2-revocation-04: the retry loop at step 4 failed and must not be repeated.\nnext=Next action d2-revocation-04: run step 4 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:revocation:d2-revocation-04\natom:d2-revocation-04-constraint=Constraint d2-revocation-04: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-revocation-04-decision=Decision d2-revocation-04: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-revocation-04-blocker=Failed attempt d2-revocation-04: the retry loop at step 4 failed and must not be repeated.\natom:d2-revocation-04-open=Open dependency d2-revocation-04: step 4 waits for the owner receipt before completion.\natom:d2-revocation-04-next=Next action d2-revocation-04: run step 4 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-revocation-04-objective",
+          "d2-revocation-04-constraint",
+          "d2-revocation-04-decision",
+          "d2-revocation-04-blocker",
+          "d2-revocation-04-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-compression-05",
+      "family": "compression",
+      "runIndex": 0,
+      "inputHash": "ecf190989f4d746bc1f0f454ea1f06a2fbf3bd8f5a53e2fd5fc91c08cb825cc1",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-compression-05 using accepted context only; report completion only from receipts.\nuser=Objective d2-compression-05: keep the bound workspace task recoverable through family=compression.\nassistant=Constraint d2-compression-05: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-compression-05: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-compression-05: the retry loop at step 5 failed and must not be repeated.\ntool=Open dependency d2-compression-05: step 5 waits for the owner receipt before completion.\nassistant=Pending proposal d2-compression-05: raise the context budget to 20480.\nassistant=Unverified narrative d2-compression-05: the long-session program is already released.\nassistant=Next action d2-compression-05: run step 5 against the owning API and read back the receipt.\nuser=Continue d2-compression-05 after compression: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-compression-05-objective",
+          "d2-compression-05-constraint",
+          "d2-compression-05-decision",
+          "d2-compression-05-blocker",
+          "d2-compression-05-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-compression-05-pending",
+          "d2-compression-05-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-compression-05: keep the bound workspace task recoverable through family=compression.\nstate=Family compression, pair 5; work still open.\nconstraint=Constraint d2-compression-05: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-compression-05: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-compression-05: step 5 waits for the owner receipt before completion.\ninProgress=Running compression continuity for d2-compression-05\ndone=Accepted evidence for d2-compression-05 step 4\nfile=shared/long-session-paired-evaluation.ts#d2-compression-05\ntest=vitest d2-compression-05\nfailure=Failed attempt d2-compression-05: the retry loop at step 5 failed and must not be repeated.\nnext=Next action d2-compression-05: run step 5 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:compression:d2-compression-05\natom:d2-compression-05-constraint=Constraint d2-compression-05: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-compression-05-decision=Decision d2-compression-05: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-compression-05-blocker=Failed attempt d2-compression-05: the retry loop at step 5 failed and must not be repeated.\natom:d2-compression-05-open=Open dependency d2-compression-05: step 5 waits for the owner receipt before completion.\natom:d2-compression-05-next=Next action d2-compression-05: run step 5 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-compression-05-objective",
+          "d2-compression-05-constraint",
+          "d2-compression-05-decision",
+          "d2-compression-05-blocker",
+          "d2-compression-05-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-handoff-05",
+      "family": "handoff",
+      "runIndex": 0,
+      "inputHash": "76213189d6efda813e7550b500b5a45de41b6c49e640da1c499e144f46599581",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-handoff-05 using accepted context only; report completion only from receipts.\nuser=Objective d2-handoff-05: keep the bound workspace task recoverable through family=handoff.\nassistant=Constraint d2-handoff-05: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-handoff-05: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-handoff-05: the retry loop at step 5 failed and must not be repeated.\ntool=Open dependency d2-handoff-05: step 5 waits for the owner receipt before completion.\nassistant=Pending proposal d2-handoff-05: raise the context budget to 20480.\nassistant=Unverified narrative d2-handoff-05: the long-session program is already released.\nassistant=Next action d2-handoff-05: run step 5 against the owning API and read back the receipt.\nuser=Continue d2-handoff-05 after handoff: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-handoff-05-objective",
+          "d2-handoff-05-constraint",
+          "d2-handoff-05-decision",
+          "d2-handoff-05-blocker",
+          "d2-handoff-05-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-handoff-05-pending",
+          "d2-handoff-05-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-handoff-05: keep the bound workspace task recoverable through family=handoff.\nstate=Family handoff, pair 5; work still open.\nconstraint=Constraint d2-handoff-05: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-handoff-05: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-handoff-05: step 5 waits for the owner receipt before completion.\ninProgress=Running handoff continuity for d2-handoff-05\ndone=Accepted evidence for d2-handoff-05 step 4\nfile=shared/long-session-paired-evaluation.ts#d2-handoff-05\ntest=vitest d2-handoff-05\nfailure=Failed attempt d2-handoff-05: the retry loop at step 5 failed and must not be repeated.\nnext=Next action d2-handoff-05: run step 5 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:handoff:d2-handoff-05\natom:d2-handoff-05-constraint=Constraint d2-handoff-05: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-handoff-05-decision=Decision d2-handoff-05: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-handoff-05-blocker=Failed attempt d2-handoff-05: the retry loop at step 5 failed and must not be repeated.\natom:d2-handoff-05-open=Open dependency d2-handoff-05: step 5 waits for the owner receipt before completion.\natom:d2-handoff-05-next=Next action d2-handoff-05: run step 5 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-handoff-05-objective",
+          "d2-handoff-05-constraint",
+          "d2-handoff-05-decision",
+          "d2-handoff-05-blocker",
+          "d2-handoff-05-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-fork-05",
+      "family": "fork",
+      "runIndex": 0,
+      "inputHash": "86b945d1d2710742358863e51a5d68b0d5a31d323d184eb7186464c3d4c6815f",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-fork-05 using accepted context only; report completion only from receipts.\nuser=Objective d2-fork-05: keep the bound workspace task recoverable through family=fork.\nassistant=Constraint d2-fork-05: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-fork-05: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-fork-05: the retry loop at step 5 failed and must not be repeated.\ntool=Open dependency d2-fork-05: step 5 waits for the owner receipt before completion.\nassistant=Pending proposal d2-fork-05: raise the context budget to 20480.\nassistant=Unverified narrative d2-fork-05: the long-session program is already released.\nassistant=Next action d2-fork-05: run step 5 against the owning API and read back the receipt.\nuser=Continue d2-fork-05 after fork: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-fork-05-objective",
+          "d2-fork-05-constraint",
+          "d2-fork-05-decision",
+          "d2-fork-05-blocker",
+          "d2-fork-05-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-fork-05-pending",
+          "d2-fork-05-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-fork-05: keep the bound workspace task recoverable through family=fork.\nstate=Family fork, pair 5; work still open.\nconstraint=Constraint d2-fork-05: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-fork-05: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-fork-05: step 5 waits for the owner receipt before completion.\ninProgress=Running fork continuity for d2-fork-05\ndone=Accepted evidence for d2-fork-05 step 4\nfile=shared/long-session-paired-evaluation.ts#d2-fork-05\ntest=vitest d2-fork-05\nfailure=Failed attempt d2-fork-05: the retry loop at step 5 failed and must not be repeated.\nnext=Next action d2-fork-05: run step 5 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:fork:d2-fork-05\natom:d2-fork-05-constraint=Constraint d2-fork-05: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-fork-05-decision=Decision d2-fork-05: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-fork-05-blocker=Failed attempt d2-fork-05: the retry loop at step 5 failed and must not be repeated.\natom:d2-fork-05-open=Open dependency d2-fork-05: step 5 waits for the owner receipt before completion.\natom:d2-fork-05-next=Next action d2-fork-05: run step 5 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-fork-05-objective",
+          "d2-fork-05-constraint",
+          "d2-fork-05-decision",
+          "d2-fork-05-blocker",
+          "d2-fork-05-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-restart-05",
+      "family": "restart",
+      "runIndex": 0,
+      "inputHash": "70064dfb2386fadd840a33dabd629bfacbd1612a6739fb353f6116074d2c50d1",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-restart-05 using accepted context only; report completion only from receipts.\nuser=Objective d2-restart-05: keep the bound workspace task recoverable through family=restart.\nassistant=Constraint d2-restart-05: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-restart-05: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-restart-05: the retry loop at step 5 failed and must not be repeated.\ntool=Open dependency d2-restart-05: step 5 waits for the owner receipt before completion.\nassistant=Pending proposal d2-restart-05: raise the context budget to 20480.\nassistant=Unverified narrative d2-restart-05: the long-session program is already released.\nassistant=Next action d2-restart-05: run step 5 against the owning API and read back the receipt.\nuser=Continue d2-restart-05 after restart: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-restart-05-objective",
+          "d2-restart-05-constraint",
+          "d2-restart-05-decision",
+          "d2-restart-05-blocker",
+          "d2-restart-05-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-restart-05-pending",
+          "d2-restart-05-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-restart-05: keep the bound workspace task recoverable through family=restart.\nstate=Family restart, pair 5; work still open.\nconstraint=Constraint d2-restart-05: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-restart-05: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-restart-05: step 5 waits for the owner receipt before completion.\ninProgress=Running restart continuity for d2-restart-05\ndone=Accepted evidence for d2-restart-05 step 4\nfile=shared/long-session-paired-evaluation.ts#d2-restart-05\ntest=vitest d2-restart-05\nfailure=Failed attempt d2-restart-05: the retry loop at step 5 failed and must not be repeated.\nnext=Next action d2-restart-05: run step 5 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:restart:d2-restart-05\natom:d2-restart-05-constraint=Constraint d2-restart-05: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-restart-05-decision=Decision d2-restart-05: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-restart-05-blocker=Failed attempt d2-restart-05: the retry loop at step 5 failed and must not be repeated.\natom:d2-restart-05-open=Open dependency d2-restart-05: step 5 waits for the owner receipt before completion.\natom:d2-restart-05-next=Next action d2-restart-05: run step 5 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-restart-05-objective",
+          "d2-restart-05-constraint",
+          "d2-restart-05-decision",
+          "d2-restart-05-blocker",
+          "d2-restart-05-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-revocation-05",
+      "family": "revocation",
+      "runIndex": 0,
+      "inputHash": "7f6b35e0fb37d8e0ff1cbdc32c4d232a4d67d2cb1871d54f26ea856e2a29910f",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-revocation-05 using accepted context only; report completion only from receipts.\nuser=Objective d2-revocation-05: keep the bound workspace task recoverable through family=revocation.\nassistant=Constraint d2-revocation-05: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-revocation-05: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-revocation-05: the retry loop at step 5 failed and must not be repeated.\ntool=Open dependency d2-revocation-05: step 5 waits for the owner receipt before completion.\nassistant=Pending proposal d2-revocation-05: raise the context budget to 20480.\nassistant=Unverified narrative d2-revocation-05: the long-session program is already released.\nassistant=Revoked decision d2-revocation-05: archive the coordinator session and drop its binding.\nassistant=Foreign workspace note d2-revocation-05: reuse the binding of another workspace.\nassistant=Next action d2-revocation-05: run step 5 against the owning API and read back the receipt.\nuser=Continue d2-revocation-05 after revocation: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-revocation-05-objective",
+          "d2-revocation-05-constraint",
+          "d2-revocation-05-decision",
+          "d2-revocation-05-blocker",
+          "d2-revocation-05-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-revocation-05-pending",
+          "d2-revocation-05-unverified",
+          "d2-revocation-05-revoked",
+          "d2-revocation-05-cross-scope"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-revocation-05: keep the bound workspace task recoverable through family=revocation.\nstate=Family revocation, pair 5; work still open.\nconstraint=Constraint d2-revocation-05: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-revocation-05: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-revocation-05: step 5 waits for the owner receipt before completion.\ninProgress=Running revocation continuity for d2-revocation-05\ndone=Accepted evidence for d2-revocation-05 step 4\nfile=shared/long-session-paired-evaluation.ts#d2-revocation-05\ntest=vitest d2-revocation-05\nfailure=Failed attempt d2-revocation-05: the retry loop at step 5 failed and must not be repeated.\nnext=Next action d2-revocation-05: run step 5 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:revocation:d2-revocation-05\natom:d2-revocation-05-constraint=Constraint d2-revocation-05: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-revocation-05-decision=Decision d2-revocation-05: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-revocation-05-blocker=Failed attempt d2-revocation-05: the retry loop at step 5 failed and must not be repeated.\natom:d2-revocation-05-open=Open dependency d2-revocation-05: step 5 waits for the owner receipt before completion.\natom:d2-revocation-05-next=Next action d2-revocation-05: run step 5 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-revocation-05-objective",
+          "d2-revocation-05-constraint",
+          "d2-revocation-05-decision",
+          "d2-revocation-05-blocker",
+          "d2-revocation-05-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-compression-06",
+      "family": "compression",
+      "runIndex": 0,
+      "inputHash": "7dfae2b57c4bbef10953d0c80728b0062e3a08ec7f9373f03940baf16af78559",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-compression-06 using accepted context only; report completion only from receipts.\nuser=Objective d2-compression-06: keep the bound workspace task recoverable through family=compression.\nassistant=Constraint d2-compression-06: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-compression-06: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-compression-06: the retry loop at step 6 failed and must not be repeated.\ntool=Open dependency d2-compression-06: step 6 waits for the owner receipt before completion.\nassistant=Pending proposal d2-compression-06: raise the context budget to 24576.\nassistant=Unverified narrative d2-compression-06: the long-session program is already released.\nassistant=Next action d2-compression-06: run step 6 against the owning API and read back the receipt.\nuser=Continue d2-compression-06 after compression: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-compression-06-objective",
+          "d2-compression-06-constraint",
+          "d2-compression-06-decision",
+          "d2-compression-06-blocker",
+          "d2-compression-06-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-compression-06-pending",
+          "d2-compression-06-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-compression-06: keep the bound workspace task recoverable through family=compression.\nstate=Family compression, pair 6; work still open.\nconstraint=Constraint d2-compression-06: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-compression-06: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-compression-06: step 6 waits for the owner receipt before completion.\ninProgress=Running compression continuity for d2-compression-06\ndone=Accepted evidence for d2-compression-06 step 5\nfile=shared/long-session-paired-evaluation.ts#d2-compression-06\ntest=vitest d2-compression-06\nfailure=Failed attempt d2-compression-06: the retry loop at step 6 failed and must not be repeated.\nnext=Next action d2-compression-06: run step 6 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:compression:d2-compression-06\natom:d2-compression-06-constraint=Constraint d2-compression-06: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-compression-06-decision=Decision d2-compression-06: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-compression-06-blocker=Failed attempt d2-compression-06: the retry loop at step 6 failed and must not be repeated.\natom:d2-compression-06-open=Open dependency d2-compression-06: step 6 waits for the owner receipt before completion.\natom:d2-compression-06-next=Next action d2-compression-06: run step 6 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-compression-06-objective",
+          "d2-compression-06-constraint",
+          "d2-compression-06-decision",
+          "d2-compression-06-blocker",
+          "d2-compression-06-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-handoff-06",
+      "family": "handoff",
+      "runIndex": 0,
+      "inputHash": "d257fd7e20f26f7ae9ca5cbef040710a7717465ad0ea5eb38ff50a4898c46c52",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-handoff-06 using accepted context only; report completion only from receipts.\nuser=Objective d2-handoff-06: keep the bound workspace task recoverable through family=handoff.\nassistant=Constraint d2-handoff-06: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-handoff-06: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-handoff-06: the retry loop at step 6 failed and must not be repeated.\ntool=Open dependency d2-handoff-06: step 6 waits for the owner receipt before completion.\nassistant=Pending proposal d2-handoff-06: raise the context budget to 24576.\nassistant=Unverified narrative d2-handoff-06: the long-session program is already released.\nassistant=Next action d2-handoff-06: run step 6 against the owning API and read back the receipt.\nuser=Continue d2-handoff-06 after handoff: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-handoff-06-objective",
+          "d2-handoff-06-constraint",
+          "d2-handoff-06-decision",
+          "d2-handoff-06-blocker",
+          "d2-handoff-06-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-handoff-06-pending",
+          "d2-handoff-06-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-handoff-06: keep the bound workspace task recoverable through family=handoff.\nstate=Family handoff, pair 6; work still open.\nconstraint=Constraint d2-handoff-06: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-handoff-06: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-handoff-06: step 6 waits for the owner receipt before completion.\ninProgress=Running handoff continuity for d2-handoff-06\ndone=Accepted evidence for d2-handoff-06 step 5\nfile=shared/long-session-paired-evaluation.ts#d2-handoff-06\ntest=vitest d2-handoff-06\nfailure=Failed attempt d2-handoff-06: the retry loop at step 6 failed and must not be repeated.\nnext=Next action d2-handoff-06: run step 6 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:handoff:d2-handoff-06\natom:d2-handoff-06-constraint=Constraint d2-handoff-06: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-handoff-06-decision=Decision d2-handoff-06: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-handoff-06-blocker=Failed attempt d2-handoff-06: the retry loop at step 6 failed and must not be repeated.\natom:d2-handoff-06-open=Open dependency d2-handoff-06: step 6 waits for the owner receipt before completion.\natom:d2-handoff-06-next=Next action d2-handoff-06: run step 6 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-handoff-06-objective",
+          "d2-handoff-06-constraint",
+          "d2-handoff-06-decision",
+          "d2-handoff-06-blocker",
+          "d2-handoff-06-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-fork-06",
+      "family": "fork",
+      "runIndex": 0,
+      "inputHash": "10701468009f76bc80efaac60fb57b4ab07453e9c954945c1e79f081be7c0782",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-fork-06 using accepted context only; report completion only from receipts.\nuser=Objective d2-fork-06: keep the bound workspace task recoverable through family=fork.\nassistant=Constraint d2-fork-06: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-fork-06: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-fork-06: the retry loop at step 6 failed and must not be repeated.\ntool=Open dependency d2-fork-06: step 6 waits for the owner receipt before completion.\nassistant=Pending proposal d2-fork-06: raise the context budget to 24576.\nassistant=Unverified narrative d2-fork-06: the long-session program is already released.\nassistant=Next action d2-fork-06: run step 6 against the owning API and read back the receipt.\nuser=Continue d2-fork-06 after fork: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-fork-06-objective",
+          "d2-fork-06-constraint",
+          "d2-fork-06-decision",
+          "d2-fork-06-blocker",
+          "d2-fork-06-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-fork-06-pending",
+          "d2-fork-06-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-fork-06: keep the bound workspace task recoverable through family=fork.\nstate=Family fork, pair 6; work still open.\nconstraint=Constraint d2-fork-06: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-fork-06: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-fork-06: step 6 waits for the owner receipt before completion.\ninProgress=Running fork continuity for d2-fork-06\ndone=Accepted evidence for d2-fork-06 step 5\nfile=shared/long-session-paired-evaluation.ts#d2-fork-06\ntest=vitest d2-fork-06\nfailure=Failed attempt d2-fork-06: the retry loop at step 6 failed and must not be repeated.\nnext=Next action d2-fork-06: run step 6 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:fork:d2-fork-06\natom:d2-fork-06-constraint=Constraint d2-fork-06: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-fork-06-decision=Decision d2-fork-06: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-fork-06-blocker=Failed attempt d2-fork-06: the retry loop at step 6 failed and must not be repeated.\natom:d2-fork-06-open=Open dependency d2-fork-06: step 6 waits for the owner receipt before completion.\natom:d2-fork-06-next=Next action d2-fork-06: run step 6 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-fork-06-objective",
+          "d2-fork-06-constraint",
+          "d2-fork-06-decision",
+          "d2-fork-06-blocker",
+          "d2-fork-06-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-restart-06",
+      "family": "restart",
+      "runIndex": 0,
+      "inputHash": "eca4e18e86d88fe807e657e1188a104700746da303a26420b46b9fb7ed921b46",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-restart-06 using accepted context only; report completion only from receipts.\nuser=Objective d2-restart-06: keep the bound workspace task recoverable through family=restart.\nassistant=Constraint d2-restart-06: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-restart-06: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-restart-06: the retry loop at step 6 failed and must not be repeated.\ntool=Open dependency d2-restart-06: step 6 waits for the owner receipt before completion.\nassistant=Pending proposal d2-restart-06: raise the context budget to 24576.\nassistant=Unverified narrative d2-restart-06: the long-session program is already released.\nassistant=Next action d2-restart-06: run step 6 against the owning API and read back the receipt.\nuser=Continue d2-restart-06 after restart: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-restart-06-objective",
+          "d2-restart-06-constraint",
+          "d2-restart-06-decision",
+          "d2-restart-06-blocker",
+          "d2-restart-06-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-restart-06-pending",
+          "d2-restart-06-unverified"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-restart-06: keep the bound workspace task recoverable through family=restart.\nstate=Family restart, pair 6; work still open.\nconstraint=Constraint d2-restart-06: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-restart-06: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-restart-06: step 6 waits for the owner receipt before completion.\ninProgress=Running restart continuity for d2-restart-06\ndone=Accepted evidence for d2-restart-06 step 5\nfile=shared/long-session-paired-evaluation.ts#d2-restart-06\ntest=vitest d2-restart-06\nfailure=Failed attempt d2-restart-06: the retry loop at step 6 failed and must not be repeated.\nnext=Next action d2-restart-06: run step 6 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:restart:d2-restart-06\natom:d2-restart-06-constraint=Constraint d2-restart-06: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-restart-06-decision=Decision d2-restart-06: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-restart-06-blocker=Failed attempt d2-restart-06: the retry loop at step 6 failed and must not be repeated.\natom:d2-restart-06-open=Open dependency d2-restart-06: step 6 waits for the owner receipt before completion.\natom:d2-restart-06-next=Next action d2-restart-06: run step 6 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-restart-06-objective",
+          "d2-restart-06-constraint",
+          "d2-restart-06-decision",
+          "d2-restart-06-blocker",
+          "d2-restart-06-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    },
+    {
+      "caseId": "d2-revocation-06",
+      "family": "revocation",
+      "runIndex": 0,
+      "inputHash": "3a8dbfcf02102160f2e69d4f43f2d6aaafdaac5bf0695d862e0ac681023a2d18",
+      "baseline": {
+        "arm": "baseline",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "prompt=Continue d2-revocation-06 using accepted context only; report completion only from receipts.\nuser=Objective d2-revocation-06: keep the bound workspace task recoverable through family=revocation.\nassistant=Constraint d2-revocation-06: never leave codex-long-session-d2 write scope of the bound workspace.\nassistant=Decision d2-revocation-06: reuse the existing ContextOrchestrator and Task Ledger owners.\ntool=Failed attempt d2-revocation-06: the retry loop at step 6 failed and must not be repeated.\ntool=Open dependency d2-revocation-06: step 6 waits for the owner receipt before completion.\nassistant=Pending proposal d2-revocation-06: raise the context budget to 24576.\nassistant=Unverified narrative d2-revocation-06: the long-session program is already released.\nassistant=Revoked decision d2-revocation-06: archive the coordinator session and drop its binding.\nassistant=Foreign workspace note d2-revocation-06: reuse the binding of another workspace.\nassistant=Next action d2-revocation-06: run step 6 against the owning API and read back the receipt.\nuser=Continue d2-revocation-06 after revocation: report status only from receipts.",
+        "matchedMustPreserve": [
+          "d2-revocation-06-objective",
+          "d2-revocation-06-constraint",
+          "d2-revocation-06-decision",
+          "d2-revocation-06-blocker",
+          "d2-revocation-06-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [
+          "d2-revocation-06-pending",
+          "d2-revocation-06-unverified",
+          "d2-revocation-06-revoked",
+          "d2-revocation-06-cross-scope"
+        ],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      },
+      "candidate": {
+        "arm": "candidate",
+        "provider": "synthetic",
+        "model": "frozen-paired-evaluation-model",
+        "measurementBasis": "agent-derived",
+        "outputText": "objective=Objective d2-revocation-06: keep the bound workspace task recoverable through family=revocation.\nstate=Family revocation, pair 6; work still open.\nconstraint=Constraint d2-revocation-06: never leave codex-long-session-d2 write scope of the bound workspace.\ndecision=Decision d2-revocation-06: reuse the existing ContextOrchestrator and Task Ledger owners.\nblocked=Open dependency d2-revocation-06: step 6 waits for the owner receipt before completion.\ninProgress=Running revocation continuity for d2-revocation-06\ndone=Accepted evidence for d2-revocation-06 step 5\nfile=shared/long-session-paired-evaluation.ts#d2-revocation-06\ntest=vitest d2-revocation-06\nfailure=Failed attempt d2-revocation-06: the retry loop at step 6 failed and must not be repeated.\nnext=Next action d2-revocation-06: run step 6 against the owning API and read back the receipt.\nref=manual:fixture:long-session-d2:revocation:d2-revocation-06\natom:d2-revocation-06-constraint=Constraint d2-revocation-06: never leave codex-long-session-d2 write scope of the bound workspace.\natom:d2-revocation-06-decision=Decision d2-revocation-06: reuse the existing ContextOrchestrator and Task Ledger owners.\natom:d2-revocation-06-blocker=Failed attempt d2-revocation-06: the retry loop at step 6 failed and must not be repeated.\natom:d2-revocation-06-open=Open dependency d2-revocation-06: step 6 waits for the owner receipt before completion.\natom:d2-revocation-06-next=Next action d2-revocation-06: run step 6 against the owning API and read back the receipt.",
+        "matchedMustPreserve": [
+          "d2-revocation-06-objective",
+          "d2-revocation-06-constraint",
+          "d2-revocation-06-decision",
+          "d2-revocation-06-blocker",
+          "d2-revocation-06-open"
+        ],
+        "missedMustPreserve": [],
+        "leakedForbiddenFacts": [],
+        "nextActionCorrect": true,
+        "falseCompletion": false,
+        "costSource": "unmeasured",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cacheReadTokens": null,
+        "cacheWriteTokens": null,
+        "totalCostUsd": null,
+        "firstTokenMs": null,
+        "wallClockMs": null
+      }
+    }
+  ],
+  "measurementSemantics": {
+    "nullMeaning": "a cell is null only when it was never measured; it is never zero and never a character estimate",
+    "costSources": [
+      "provider-report",
+      "character-estimate (rejected as evidence)",
+      "unmeasured"
+    ],
+    "agentDerivedScope": "structural projection boundary only: fidelity, next-action, false completion and forbidden-fact exclusion"
+  },
+  "limitations": [
+    "No authorized live-provider endpoint is configured in this environment, so token/cache/cost and latency cells are unmeasured.",
+    "Fidelity figures in this run are agent-derived structural checks, not model-quality measurements.",
+    "No promotion, default change or product-lock decision is taken here; D3 consumes these inputs."
+  ]
+}
