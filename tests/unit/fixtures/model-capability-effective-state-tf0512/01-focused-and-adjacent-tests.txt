@@ -1,7 +1,7 @@
 
  RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
 
-················stdout | tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > regenerates the acceptance pack from current disk facts
+·················stdout | tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > regenerates the acceptance pack from current disk facts
 {
   "status": "complete",
   "criteria": 5,
@@ -28,7 +28,7 @@ ining it for this process and falling back to default engine "legacy".
 ······························
 
  Test Files  6 passed (6)
-      Tests  46 passed (46)
-   Start at  17:19:47
-   Duration  40.02s (transform 10.00s, setup 509ms, import 13.84s, tests 22.91s, environment 1.73s)
+      Tests  47 passed (47)
+   Start at  18:35:22
+   Duration  51.60s (transform 10.39s, setup 600ms, import 16.85s, tests 30.74s, environment 2.30s)
 

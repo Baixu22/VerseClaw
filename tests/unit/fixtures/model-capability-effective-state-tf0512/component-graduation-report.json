@@ -9,7 +9,7 @@
   "owner": "TF-0512",
   "entryPoint": "openclaw_runtime/src/context-engine/model-capability-prompt.ts",
   "defaultMode": "internal",
-  "benefitEvidence": "Every default legacy context-engine assemble refreshes a bounded capability profile from the admitted tool surface, runtime ack, grants, quarantine, memory and knowledge inputs.",
+  "benefitEvidence": "Every default context-runtime-kit assemble refreshes a bounded capability profile from the admitted tool surface, runtime ack, grants, quarantine, memory and knowledge inputs.",
   "rollback": "Remove the capability prompt bridge call from LegacyContextEngine; the prior pass-through assembly remains available and no product default changes.",
   "modelEffectiveState": "Current tool inventory and runtime ack are read per assemble; missing/stale ack yields unknown availability, and grant expiry/revocation/config kill switch are reflected before prompt projection.",
   "evidenceGrade": "unit-test",
@@ -17,8 +17,8 @@
   "driven_by": "agent",
   "expiry": null,
   "binding": {
-    "commit": "3bfdbfa560b8f3f8777031b480486c54d29a6586",
-    "tree": "1676067d12e4062c190178b6abd57bc45dde4d1a",
+    "commit": "9a3226d41206fa66e12357279d34fe018aca2024",
+    "tree": "2445aa0dc47e39f0d42f1519f86fe00eb5639354",
     "runtimeGeneration": "gateway-tf0512",
     "provider": "not-applicable",
     "model": "not-applicable",
@@ -42,13 +42,13 @@
       },
       {
         "path": "tests/unit/model-capability-effective-state-tf0512.test.ts",
-        "sha256": "ab9db6b60a7f514520e00a82911e2762b60c59e52fbfbc31a584cd9da763c28e",
-        "bytes": 16474
+        "sha256": "5a77defcf270b6040374151b4f820e8eaccc03dc793a8fb6350b36eb8b41de7b",
+        "bytes": 18057
       },
       {
         "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
-        "sha256": "dd03e597289339ee87ec93d83d2b860c507d93f47a6d401ecf531f1a1b477ad7",
-        "bytes": 22896
+        "sha256": "83bb4ebebe67abdf03df2b43f1c18cb6d9c30b52a723989e4c34d77bab9afbca",
+        "bytes": 22924
       },
       {
         "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json",
@@ -66,8 +66,8 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
-          "sha256": "dd03e597289339ee87ec93d83d2b860c507d93f47a6d401ecf531f1a1b477ad7",
-          "bytes": 22896
+          "sha256": "83bb4ebebe67abdf03df2b43f1c18cb6d9c30b52a723989e4c34d77bab9afbca",
+          "bytes": 22924
         },
         {
           "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/acceptance.json",

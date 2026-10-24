@@ -8,10 +8,10 @@ stdout | tests/unit/model-capability-effective-state-tf0512.test.ts > runtime ef
   "profileEntries": 52
 }
 
------------------·
+------------------·
 
  Test Files  1 passed (1)
-      Tests  1 passed | 17 skipped (18)
-   Start at  17:27:27
-   Duration  20.16s (transform 6.23s, setup 316ms, import 9.90s, tests 9.69s, environment 0ms)
+      Tests  1 passed | 18 skipped (19)
+   Start at  18:41:35
+   Duration  16.69s (transform 4.86s, setup 175ms, import 7.77s, tests 8.56s, environment 0ms)
 

@@ -15,9 +15,9 @@ admitted tool inventory, process runtime acknowledgement, grants, quarantine,
 memory and knowledge observations into a fresh `ModelCapabilityProfile/v1`.
 
 `openclaw_runtime/src/context-engine/model-capability-prompt.ts` bridges that
-adapter into the active context-engine `assemble()` boundary. The built-in
-default context engine is `legacy`; its `assemble()` runs for each model call.
-The returned bounded capability text becomes the context engine's
+adapter into the active context-engine `assemble()` boundary. The repository default
+context engine resolves to `context-runtime-kit`; its `assemble()` runs for each model call. The explicit `legacy`
+rollback path is wired as well. The returned bounded capability text becomes the context engine's
 `systemPromptAddition`, after which the normal prompt/candidate projection runs.
 
 ## Safety rules

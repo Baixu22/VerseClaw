@@ -200,7 +200,7 @@ const rawEvidence = {
   actor: "codex",
   adapter: "openclaw_runtime/src/runtime-core/model-capability-effective-state.ts",
   promptBoundary: "openclaw_runtime/src/context-engine/model-capability-prompt.ts",
-  activeContextEngine: "legacy",
+  activeContextEngine: "context-runtime-kit",
   observations: {
     enabled: summary(enabled),
     loading: summary(loading),
@@ -240,7 +240,7 @@ const rawEvidence = {
   },
   boundaries: [
     "Fixture-driven runtime adapter evidence; no live provider or Electron E2E is claimed.",
-    "The default legacy context engine is the production assembly path wired to this adapter.",
+    "The default context-runtime-kit engine and the explicit legacy fallback are both wired to this adapter.",
     "No product default, public release, GA, liveReady, or productApproved value is changed.",
   ],
 };
@@ -307,7 +307,7 @@ const report = {
   owner: "TF-0512",
   entryPoint: "openclaw_runtime/src/context-engine/model-capability-prompt.ts",
   defaultMode: "internal",
-  benefitEvidence: "Every default legacy context-engine assemble refreshes a bounded capability profile from the admitted tool surface, runtime ack, grants, quarantine, memory and knowledge inputs.",
+  benefitEvidence: "Every default context-runtime-kit assemble refreshes a bounded capability profile from the admitted tool surface, runtime ack, grants, quarantine, memory and knowledge inputs.",
   rollback: "Remove the capability prompt bridge call from LegacyContextEngine; the prior pass-through assembly remains available and no product default changes.",
   modelEffectiveState: "Current tool inventory and runtime ack are read per assemble; missing/stale ack yields unknown availability, and grant expiry/revocation/config kill switch are reflected before prompt projection.",
   evidenceGrade: "unit-test",

@@ -5,7 +5,7 @@
   "activeNode": {
     "id": "TF-0512",
     "title": "把 ModelCapabilityProfile 接入真实 runtime effective state",
-    "status": "ready"
+    "status": "in_progress"
   },
   "allowedPaths": [
     "shared/",

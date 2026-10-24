@@ -1,7 +1,7 @@
 {
     "schemaVersion":  "ModelCapabilityEffectiveStateVerification/v1",
     "taskForestNodeId":  "TF-0512",
-    "generatedAt":  "2026-10-24T09:27:47.7338008Z",
+    "generatedAt":  "2026-10-24T10:41:52.2485620Z",
     "driven_by":  "agent",
     "actor":  "codex",
     "status":  "pass",
@@ -13,7 +13,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/01-focused-and-adjacent-tests.txt",
-                      "outputSha256":  "d452b32bca9edd42595e79b29c7e0575962fc515276f325146f70599a3afa8f9"
+                      "outputSha256":  "e9090af44b9f74a89c4cddfc27a747d2a4422ff6b9a0748e737100d2429093fb"
                   },
                   {
                       "id":  "02-typecheck",
@@ -21,7 +21,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/02-typecheck.txt",
-                      "outputSha256":  "33e0620c40471fa91ba5c46c25ea3eeaa62c376e0c4881def669169ac6d9171c"
+                      "outputSha256":  "c4f93d643e4524bcc333526c02f8b81c202ae4255ff7cddfdc84a39f799f64e9"
                   },
                   {
                       "id":  "03-lint-check",
@@ -61,7 +61,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/07-scope-guard.txt",
-                      "outputSha256":  "211ede1d058403ede1adfe61b52e94112d34c2a94f123dbaf47446d1ab84e123"
+                      "outputSha256":  "4440ec5ccb414042b014d126bcf22d83a626c3b91ffae8230a0b18dcba77fb83"
                   },
                   {
                       "id":  "08-regenerate-acceptance",
@@ -69,7 +69,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/08-regenerate-acceptance.txt",
-                      "outputSha256":  "342ba03d5f1dab95aec0d3cf32777ca4568ba76bd9b672c22be41f4992ce51cf"
+                      "outputSha256":  "f8fc88cb30dc8aa53b81a028919422ee8615951e1d420773c59782a875fe40fd"
                   }
               ]
 }
