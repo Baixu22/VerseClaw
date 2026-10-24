@@ -15,9 +15,9 @@
   "defaultChange": null,
   "taskForestDone": null,
   "ok": true,
-  "reportPath": "D:\\ClawX-work\\component-graduation-20261021\\tests\\unit\\fixtures\\context-assembly-authority\\acceptance\\TF-0493\\component-graduation-report.json",
+  "reportPath": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\tests\\unit\\fixtures\\context-assembly-authority\\acceptance\\TF-0493\\component-graduation-report.json",
   "expected": {
-    "recomputeInputDigest": "2177f62949acef1f504104a6f09b26a97bb98073b617e3fc24bfdfd74e94a3b9"
+    "recomputeInputDigest": "38818fcf75a08f646e17fc4bb67fe7247e6054c4ffb35352a6406bb5a1249ed7"
   },
   "currentDefaultMode": null,
   "requireGraduation": true

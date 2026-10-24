@@ -1,0 +1,24 @@
+tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/09-build-vite.txt:47: trailing whitespace.
++sPanel. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies
+tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/09-build-vite.txt:589: trailing whitespace.
++on/utils/openclaw-auth.ts, D:/ClawX-work/worktrees/long-session-program-r2/electron/utils/telemetry.ts, dynamic import
+tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt:21: trailing whitespace.
++  1) tests\e2e\dcs-prod-p0-settings.spec.ts:77:7 › DCS production P0 packaging surface › shows opt-in DCS production flags panel in Settings > Developer
+tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt:51: trailing whitespace.
++    tests\e2e\dcs-prod-p0-settings.spec.ts:77:7 › DCS production P0 packaging surface › shows opt-in DCS production flags panel in Settings > Developer
+tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt:73: trailing whitespace.
++  1) tests\e2e\dcs-prod-p0-settings.spec.ts:112:7 › DCS production P0 packaging surface › renders the DCS control surface in Japanese and Russian
+tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt:103: trailing whitespace.
++    tests\e2e\dcs-prod-p0-settings.spec.ts:112:7 › DCS production P0 packaging surface › renders the DCS control surface in Japanese and Russian
+tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt:125: trailing whitespace.
++  1) tests\e2e\dcs-prod-p0-settings.spec.ts:139:7 › DCS production P0 packaging surface › toggles writable flags, persists store, and restores baseline
+tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt:155: trailing whitespace.
++    tests\e2e\dcs-prod-p0-settings.spec.ts:139:7 › DCS production P0 packaging surface › toggles writable flags, persists store, and restores baseline
+tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt:177: trailing whitespace.
++  1) tests\e2e\dcs-prod-p0-settings.spec.ts:211:7 › DCS production P0 packaging surface › shows discoverability banner for hidden view tools and one-click enable
+tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt:207: trailing whitespace.
++    tests\e2e\dcs-prod-p0-settings.spec.ts:211:7 › DCS production P0 packaging surface › shows discoverability banner for hidden view tools and one-click enable
+tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt:229: trailing whitespace.
++  1) tests\e2e\vtoken-bridge-settings.spec.ts:4:7 › Verse Token internal-only positioning › does not expose a VT bridge switch or standalone panel in Settings > Developer
+tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt:259: trailing whitespace.
++    tests\e2e\vtoken-bridge-settings.spec.ts:4:7 › Verse Token internal-only positioning › does not expose a VT bridge switch or standalone panel in Settings > Developer
