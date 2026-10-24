@@ -1,6 +1,6 @@
 # Long-session final acceptance (F3)
 
-Source candidate: f93913775f2e6f360539eda43a30b692371d3bc5 (branch main, tree 5d9cab15ddc7e56fcb1381e3585ccb8e403e7c4d).
+Source candidate: 65ccf1aec862bec1ac982e6453b0c345c1d5ca96 (branch main, tree 566fe25ed3239baa667905bea22673772f641fd6).
 
 This is an agent-driven read-back of every peer node on disk. No real-human verdict or human data is claimed.
 

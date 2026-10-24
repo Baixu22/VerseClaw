@@ -6,11 +6,13 @@
   "taskKey": "F3",
   "program": "long-session-development-20261022",
   "contract": "harness/specs/tasks/long-session-final-acceptance.md",
-  "generatedAt": "2026-10-24T08:32:15.268Z",
+  "generatedAt": "2026-10-24T08:33:19.300Z",
   "candidate": {
     "branch": "main",
-    "commit": "f93913775f2e6f360539eda43a30b692371d3bc5",
-    "tree": "5d9cab15ddc7e56fcb1381e3585ccb8e403e7c4d",
+    "commit": "65ccf1aec862bec1ac982e6453b0c345c1d5ca96",
+    "tree": "566fe25ed3239baa667905bea22673772f641fd6",
+    "verifiedTree": "566fe25ed3239baa667905bea22673772f641fd6",
+    "bindingRule": "tree identity is authoritative; the commit recorded here is the commit that existed before the evidence-only commit",
     "worktree": "D:/ClawX"
   },
   "verificationBoundary": {

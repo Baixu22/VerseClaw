@@ -111,10 +111,17 @@ function git(args) {
 }
 
 function candidateIdentity() {
+  // Acceptance binds to the verified TREE, not to a commit hash. Publishing the
+  // bundle necessarily creates a new commit, so a commit-bound record could never
+  // equal HEAD in the same run; the tree hash stays stable across that commit and
+  // across later evidence-only commits.
   return {
     branch: git(['rev-parse', '--abbrev-ref', 'HEAD']),
     commit: git(['rev-parse', '--verify', 'HEAD']),
     tree: git(['rev-parse', '--verify', 'HEAD^{tree}']),
+    verifiedTree: git(['rev-parse', '--verify', 'HEAD^{tree}']),
+    bindingRule:
+      'tree identity is authoritative; the commit recorded here is the commit that existed before the evidence-only commit',
     worktree: toPosix(ROOT),
   };
 }
