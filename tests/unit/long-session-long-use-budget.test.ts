@@ -1389,6 +1389,9 @@ describe('F2 acceptance 3 - duplicate completion, no-change follow-up and hidden
       });
       await vi.advanceTimersByTimeAsync(5_000);
       expect(tasks).toBe(LONG_USE_NOTIFICATION_BUDGET.hiddenSurfaceMaxPollTasks);
+      // Capture the hidden-phase count BEFORE flipping visibility, or the recorded
+      // number would silently describe the visible phase instead of the hidden one.
+      const hiddenTasks = tasks;
 
       Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'visible' });
       await vi.advanceTimersByTimeAsync(1_000);
@@ -1399,7 +1402,7 @@ describe('F2 acceptance 3 - duplicate completion, no-change follow-up and hidden
       stop?.();
       stop = null;
       expect(vi.getTimerCount()).toBe(0);
-      recordNotificationFact('hiddenSurfacePollTasks', tasks);
+      recordNotificationFact('hiddenSurfacePollTasks', hiddenTasks);
       recordNotificationFact('visibleSurfacePollTasks', visibleTasks);
       recordNotificationFact('pollTimersAfterStop', vi.getTimerCount());
     } finally {
