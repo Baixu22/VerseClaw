@@ -1,7 +1,7 @@
 {
     "schemaVersion":  "ContextAssemblyAuthorityVerification/v1",
     "taskForestNodeId":  "TF-0493",
-    "generatedAt":  "2026-10-24T00:33:59.2163437Z",
+    "generatedAt":  "2026-10-24T00:47:02.4195627Z",
     "driven_by":  "agent",
     "actor":  "codex-long-session-r2",
     "status":  "fail",
@@ -12,7 +12,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/01-contract-tests.txt",
-                      "outputSha256":  "b2712691d83422fc9434c25578fd2df6604f71fee819a64a32ffe03f9d9b84fd"
+                      "outputSha256":  "73f39d7bddd0a4bfb51dfec4d6ed482b9c50861822cffcf32d60dca788872875"
                   },
                   {
                       "id":  "02-runtime-context-tests",
@@ -20,7 +20,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/02-runtime-context-tests.txt",
-                      "outputSha256":  "e89d0cf62c860afce052c1b065c57e73ebef4cdf6bdc1fb466d476ee3416926e"
+                      "outputSha256":  "9b06b29f75711feeaf87a5bc4dff54defe670faf1d68795b1758ce2c2bbff17a"
                   },
                   {
                       "id":  "03-typecheck",
@@ -28,7 +28,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/03-typecheck.txt",
-                      "outputSha256":  "294e9a2da4bb52c6576438c0d4e60decc930cb51c0749450e844882ab0397345"
+                      "outputSha256":  "04f93efec20f34bb5bc9facfa7a8b698a70543bde2b300f415281f1aade5b8ca"
                   },
                   {
                       "id":  "04-lint-check",
@@ -65,10 +65,10 @@
                   {
                       "id":  "08-diff-check",
                       "command":  "git diff --check",
-                      "exitCode":  2,
-                      "status":  "fail",
+                      "exitCode":  0,
+                      "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/08-diff-check.txt",
-                      "outputSha256":  "7df29326635939163a8970969da99d7d8a3aee3ec7e89fb72f596d39cf06ce4f"
+                      "outputSha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
                   },
                   {
                       "id":  "09-build-vite",
@@ -76,7 +76,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/09-build-vite.txt",
-                      "outputSha256":  "030760582fb91708738b5b5f7a587f08642e4aab859e873d8da715e77ed55024"
+                      "outputSha256":  "354a02912b9a3376c7ac305fecd0053e2f614fa833cf223b8db964a7049dfc26"
                   },
                   {
                       "id":  "09a-build-runtime",
@@ -84,15 +84,15 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/09a-build-runtime.txt",
-                      "outputSha256":  "66af0f89c51f9f59468a66a4fc801493b34b3e2cdb43df020bc6c30e9e969259"
+                      "outputSha256":  "61ffbf104b953010b8663f51e85e052bb5b376441f03388c16ce41e0a28dfe21"
                   },
                   {
                       "id":  "10-settings-e2e",
                       "command":  "playwright: each VToken absence + DCS Settings scenario in a fresh worker",
-                      "exitCode":  0,
-                      "status":  "pass",
+                      "exitCode":  1,
+                      "status":  "fail",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt",
-                      "outputSha256":  "a8c84626ed4c6a270a2b33184e6919cf9cd8cfa2d8e0e9214a2b33d3b9f7f681"
+                      "outputSha256":  "64161b84339f6ae511983c0deddd6bfb411f750f49ca6a1aa5a6b8866ea8f58c"
                   },
                   {
                       "id":  "11-component-graduation-gate",

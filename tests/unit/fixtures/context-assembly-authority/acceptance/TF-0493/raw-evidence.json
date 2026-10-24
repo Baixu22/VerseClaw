@@ -2,7 +2,7 @@
   "schemaVersion": "ContextAssemblyAuthorityAcceptanceEvidence/v1",
   "reportId": "tf-0493-context-assembly-authority-contract",
   "taskForestNodeId": "TF-0493",
-  "generatedAt": "2026-10-24T00:24:41.294Z",
+  "generatedAt": "2026-10-24T00:49:56.126Z",
   "driven_by": "agent",
   "actor": "codex",
   "acceptanceCriteria": [

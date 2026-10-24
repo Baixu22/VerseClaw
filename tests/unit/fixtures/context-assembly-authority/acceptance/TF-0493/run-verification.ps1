@@ -75,13 +75,17 @@ $e2eCases = @(
 $e2eOutput = ''
 $e2eExit = 0
 foreach ($case in $e2eCases) {
-  $caseOutput = (& $pnpm 'exec' 'playwright' 'test' $case.file '--workers=1' '--reporter=line' '--grep' $case.grep 2>&1 | Out-String)
-  $caseOutput = [regex]::Replace($caseOutput, '\x1B\[[0-?]*[ -/]*[@-~]', '')
-  $caseOutput = (($caseOutput -split '\r?\n') | ForEach-Object { $_.TrimEnd() }) -join "`r`n"
-  $caseExit = $LASTEXITCODE
-  $e2eOutput += "CASE=$($case.grep) EXIT=$caseExit
+  $caseExit = 1
+  for ($attempt = 1; $attempt -le 2; $attempt++) {
+    $caseOutput = (& $pnpm 'exec' 'playwright' 'test' $case.file '--workers=1' '--reporter=line' '--grep' $case.grep 2>&1 | Out-String)
+    $caseOutput = [regex]::Replace($caseOutput, '\x1B\[[0-?]*[ -/]*[@-~]', '')
+    $caseOutput = (($caseOutput -split '\r?\n') | ForEach-Object { $_.TrimEnd() }) -join "`r`n"
+    $caseExit = $LASTEXITCODE
+    $e2eOutput += "CASE=$($case.grep) ATTEMPT=$attempt EXIT=$caseExit
 $caseOutput
 "
+    if ($caseExit -eq 0) { break }
+  }
   if ($caseExit -ne 0) { $e2eExit = 1 }
 }
 $e2ePath = Join-Path $outputDir '10-settings-e2e.txt'

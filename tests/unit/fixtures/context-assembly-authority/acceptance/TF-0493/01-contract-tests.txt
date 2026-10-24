@@ -5,6 +5,6 @@
 
  Test Files  5 passed (5)
       Tests  22 passed (22)
-   Start at  08:24:53
-   Duration  9.22s (transform 2.85s, setup 592ms, import 4.14s, tests 737ms, environment 2.81s)
+   Start at  08:37:05
+   Duration  9.82s (transform 2.84s, setup 534ms, import 4.08s, tests 1.71s, environment 2.58s)
 
