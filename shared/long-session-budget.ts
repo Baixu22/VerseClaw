@@ -92,16 +92,16 @@ export const LONG_USE_FIXTURE_BUDGET = {
   minIdleRssSamples: 55,
   minSwitchSamples: 5,
   /**
-   * Renderer long tasks >= 50 ms allowed per measurement window. The bounds come
-   * from the tracked predecessor acceptance state, not from this node samples:
-   * harness/specs/fixtures/tf0423-session-loading/acceptance.json accepted
-   * "opening a long session must not produce a renderer long task over 50 ms"
-   * (openLongTasks 0) with switchLongTasks 1. The idle-control window is recorded
-   * but not gated: it measures host noise while the app is doing nothing, so a
-   * budget there would be an environment claim rather than a code claim.
+   * Renderer long tasks >= 50 ms allowed inside the measured open window. This is
+   * the only long-task bound the tracked predecessor state actually gated:
+   * harness/specs/fixtures/tf0423-session-loading/acceptance.json says
+   * "Opening a long session must not produce a renderer long task over 50 ms" and
+   * accepted 0. Its switch count (1) was recorded as context, not as a criterion,
+   * so F2 publishes the switch count and its median without inventing a switch
+   * budget. The idle-control window is likewise context only: it measures host
+   * noise while the app does nothing, and gating it would be an environment claim.
    */
   maxLongTasksOver50MsOnLongSessionOpen: 0,
-  maxLongTasksOver50MsOnSessionSwitch: 1,
 } as const;
 
 /** Metric ids covered by the frozen latency budgets. */
@@ -127,7 +127,9 @@ export const LONG_USE_LATENCY_BUDGET_MS: Record<LongUseLatencyMetric, number> = 
   'sidebar.loadSessions.p95': 1_500,
   // click -> two settled animation frames (the TF-0423 probe definition).
   'sidebar.sessionSwitch.p50': 260,
-  'sidebar.sessionSwitch.p95': 420,
+  // The predecessor's accepted switch P95 was 155.8 ms and every current run stayed
+  // under 280 ms, so the envelope is its accepted value plus headroom.
+  'sidebar.sessionSwitch.p95': 320,
   // opening the largest synthetic transcript in the fixture.
   'sidebar.longSessionOpen.p95': 600,
   // one bounded sessions.summaries host call for a sidebar sweep.
