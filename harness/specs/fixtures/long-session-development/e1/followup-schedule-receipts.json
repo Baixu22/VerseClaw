@@ -1,0 +1,161 @@
+{
+  "schema": "clawx.long-session.e1-followup-receipts/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-e1",
+  "taskForestNode": "TF-0559",
+  "taskKey": "E1",
+  "program": "long-session-development-20261022",
+  "generatedAt": "2026-10-24T13:03:17.564Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "41c0cbd9a138ab333c24a813fab85cc1591fafec",
+    "tree": "dbc52bf87976ca7dec7c1ff2abaa0eb4ce27687d",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
+  },
+  "contract": "harness/specs/tasks/long-session-followup-scheduling.md",
+  "journey": {
+    "source": "D:/tmp/tf0559-e2e-final3/long-session-followup-sche-587bc-ire-after-it-is-invalidated/followup-journey-observation.json",
+    "schema": "clawx.long-session.e1-followup-journey/v1",
+    "workspaceId": "default",
+    "coordinatorSessionKey": "agent:main:dashboard:c046b008-7725-488c-ba69-ab39bbe71b89",
+    "jobId": "dd97c17c-95af-47f9-9a60-b968f0d02b93",
+    "boundState": "allowed",
+    "expectedSessionId": "44b7c01f-5038-4c70-9acc-7515ad946f32",
+    "refuseEvidence": "Coordinator follow-up rejected (session-missing: coordinator session is archived, deleted or otherwise absent)",
+    "gatewayRunCount": 0,
+    "pausesKeptSchedule": true,
+    "cancelRemovedSchedule": true
+  },
+  "scopeInputs": {
+    "bindOnCreate": "workspaces.bindCoordinator -> workspace coordinator binding (active + sessionGeneration)",
+    "persistOnCreate": "cron.add payload.coordinator validated by CronAddParamsSchema, persisted on CronJobBase.coordinator",
+    "enforceOnDelivery": "openclaw_runtime cron service executeJobCore preflight -> deps.evaluateCoordinatorScope (server-cron reads the live session store)",
+    "suppressOnMaintenance": "electron cron-maintenance reconcile pass disables (never deletes) a stale coordinator schedule"
+  },
+  "matrix": [
+    {
+      "id": "unbound",
+      "expectedState": "unbound",
+      "allowed": true,
+      "reason": "job is not bound to a long-session coordinator",
+      "observedSessionId": null
+    },
+    {
+      "id": "malformed",
+      "expectedState": "malformed",
+      "allowed": false,
+      "reason": "coordinator scope is present but malformed",
+      "observedSessionId": null
+    },
+    {
+      "id": "expired",
+      "expectedState": "expired",
+      "allowed": false,
+      "reason": "follow-up deadline passed",
+      "observedSessionId": "session-generation-1",
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "archived-or-deleted",
+      "expectedState": "session-missing",
+      "allowed": false,
+      "reason": "coordinator session is archived, deleted or otherwise absent",
+      "observedSessionId": null,
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "reset-generation",
+      "expectedState": "generation-mismatch",
+      "allowed": false,
+      "reason": "coordinator session generation rotated after the follow-up was authorized",
+      "observedSessionId": "session-generation-2",
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "binding-invalidated",
+      "expectedState": "unverifiable",
+      "allowed": false,
+      "reason": "coordinator binding is invalidated",
+      "observedSessionId": "session-generation-1",
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "generation-unresolvable",
+      "expectedState": "unverifiable",
+      "allowed": false,
+      "reason": "live session generation could not be resolved",
+      "observedSessionId": null,
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "current",
+      "expectedState": "allowed",
+      "allowed": true,
+      "reason": "coordinator scope is current, unexpired and generation-matched",
+      "observedSessionId": "session-generation-1",
+      "expectedSessionId": "session-generation-1"
+    }
+  ],
+  "runtimeRefusalObserved": true,
+  "negatives": [
+    "deleted coordinator session -> binding invalidated -> cron fence state session-missing"
+  ],
+  "gateReceipt": {
+    "provided": true,
+    "source": "D:/tmp/tf0559-gates.json",
+    "allPassed": true,
+    "gates": [
+      {
+        "name": "e1-unit",
+        "command": "pnpm exec vitest run tests/unit/long-session-followup-scheduling.test.ts tests/unit/cron-delivery-targets.test.ts tests/unit/cron-api-run-log-replay.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "files": 3,
+        "tests": 17,
+        "log": "D:/tmp/tf0559-unit.log"
+      },
+      {
+        "name": "typecheck",
+        "command": "pnpm run typecheck",
+        "exitCode": 0,
+        "coverage": "uncached node + web + tests",
+        "log": "D:/tmp/tf0559-typecheck.log"
+      },
+      {
+        "name": "build-runtime",
+        "command": "pnpm run build:runtime",
+        "exitCode": 0,
+        "log": "D:/tmp/tf0559-build-runtime.log"
+      },
+      {
+        "name": "build-vite",
+        "command": "pnpm run build:vite",
+        "exitCode": 0,
+        "log": "D:/tmp/tf0559-build-vite-final2.log"
+      },
+      {
+        "name": "e2e-built",
+        "command": "pnpm exec playwright test tests/e2e/long-session-followup-scheduling.spec.ts --output=D:/tmp/tf0559-e2e-final3",
+        "exitCode": 0,
+        "tests": 1,
+        "log": "D:/tmp/tf0559-e2e-final3/.last-run.json"
+      }
+    ]
+  },
+  "unmeasured": [
+    "live-provider execution of the bound follow-up message itself (no provider credential in this environment)",
+    "multi-day drift of a real schedule across machine sleep/offline windows"
+  ],
+  "cleanup": {
+    "startedProcesses": true,
+    "startedGateway": true,
+    "startedElectron": true,
+    "providerRequests": 0,
+    "recoveryRequired": false,
+    "notes": "The Electron fixture closes the app and the Gateway it spawned; the schedule created by the journey is cancelled by the journey itself."
+  },
+  "limitations": [
+    "The journey proves binding, generation fencing, suppression semantics and pause/cancel separation; it does not claim model output quality.",
+    "The maintenance suppression interval is 60s; the delivery-time fence covers the window in between and is asserted by the runtime unit test and the E2E refusal receipt.",
+    "All evidence is agent-driven; no real-human verdict or data is claimed."
+  ]
+}

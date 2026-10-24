@@ -4,6 +4,7 @@
  */
 
 import type { ChannelType } from './channel';
+import type { CronCoordinatorGateState, CronCoordinatorScope } from '../long-session-followup-scope';
 
 export type CronJobDeliveryMode = 'none' | 'announce';
 export type CronJobSource = 'gateway' | 'config-fallback';
@@ -84,6 +85,15 @@ export type CronSchedule =
  * Cron job data structure
  * schedule can be a plain cron string or a Gateway CronSchedule object
  */
+/** Read-only projection of the coordinator fence for one scheduled job. */
+export interface CronJobCoordinatorStatus {
+  state: CronCoordinatorGateState;
+  reason: string;
+  checkedAt: string;
+  expectedSessionId?: string;
+  observedSessionId?: string | null;
+}
+
 export interface CronJob {
   id: string;
   name: string;
@@ -108,6 +118,9 @@ export interface CronJob {
    * pretending the repair succeeded.
    */
   repairDegraded?: boolean;
+  coordinator?: CronCoordinatorScope | null;
+  coordinatorStatus?: CronJobCoordinatorStatus;
+  coordinatorSuppressed?: boolean;
 }
 
 /**
@@ -123,6 +136,7 @@ export interface CronJobCreateInput {
   delivery?: CronJobDelivery;
   enabled?: boolean;
   agentId?: string;
+  coordinator?: CronCoordinatorScope | null;
 }
 
 /**
@@ -138,6 +152,7 @@ export interface CronJobUpdateInput {
   delivery?: CronJobDelivery;
   enabled?: boolean;
   agentId?: string;
+  coordinator?: CronCoordinatorScope | null;
 }
 
 /**

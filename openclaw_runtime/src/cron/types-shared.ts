@@ -16,4 +16,15 @@ export type CronJobBase<TSchedule, TSessionTarget, TWakeMode, TPayload, TDeliver
     payload: TPayload;
     delivery?: TDelivery;
     failureAlert?: TFailureAlert;
+    /** Long-session coordinator generation fence for scheduled follow-ups. */
+    coordinator?: {
+      schemaVersion?: "CronCoordinatorScope/v1";
+      workspaceId: string;
+      coordinatorSessionKey: string;
+      expectedSessionId: string;
+      taskRef?: { kind: "task-ledger"; nodeId: string } | null;
+      intent: "follow-up" | "check-in" | "status";
+      expiresAtMs?: number | null;
+      notificationPolicy: "silent-unless-result" | "errors-and-decisions";
+    };
   };

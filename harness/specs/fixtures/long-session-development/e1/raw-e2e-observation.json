@@ -1,0 +1,38 @@
+{
+  "schema": "clawx.long-session.e1-followup-journey/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-e1",
+  "steps": [
+    {
+      "step": "bound-follow-up-created",
+      "jobId": "dd97c17c-95af-47f9-9a60-b968f0d02b93",
+      "state": "allowed",
+      "expectedSessionId": "44b7c01f-5038-4c70-9acc-7515ad946f32"
+    },
+    {
+      "step": "stop-current-turn-is-independent-of-schedule",
+      "stopped": true,
+      "scheduleStillPresent": true
+    },
+    {
+      "step": "trigger-after-invalidation",
+      "refusedWith": "Coordinator follow-up rejected (session-missing: coordinator session is archived, deleted or otherwise absent)",
+      "gatewayRunCount": 0
+    },
+    {
+      "step": "pause-keeps-schedule",
+      "enabled": false
+    },
+    {
+      "step": "cancel-removes-schedule",
+      "removed": true
+    }
+  ],
+  "negatives": [
+    "deleted coordinator session -> binding invalidated -> cron fence state session-missing"
+  ],
+  "status": "passed",
+  "workspaceId": "default",
+  "coordinatorSessionKey": "agent:main:dashboard:c046b008-7725-488c-ba69-ab39bbe71b89",
+  "jobId": "dd97c17c-95af-47f9-9a60-b968f0d02b93"
+}

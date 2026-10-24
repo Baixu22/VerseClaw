@@ -1,0 +1,108 @@
+{
+  "schema": "clawx.long-session.e1-verification/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-e1",
+  "taskForestNode": "TF-0559",
+  "taskKey": "E1",
+  "generatedAt": "2026-10-24T13:03:17.565Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "41c0cbd9a138ab333c24a813fab85cc1591fafec",
+    "tree": "dbc52bf87976ca7dec7c1ff2abaa0eb4ce27687d",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
+  },
+  "contract": "harness/specs/tasks/long-session-followup-scheduling.md",
+  "verdict": "pass",
+  "featureClaim": "a follow-up schedule can be bound to one authorized long-session coordinator generation; stale generations are refused at delivery and suppressed (never silently deleted), while pause, cancel and stop stay distinct",
+  "acceptance": [
+    {
+      "criterion": "reuse the existing Cron/Workboard owner to persist an explicit schedule plus coordinator scope/intent (timezone, deadline, retry, missed-run handling, notification policy) without a new daemon",
+      "result": "pass",
+      "evidence": [
+        "followup-schedule-receipts.json",
+        "pause-cancel-expiry-matrix.json"
+      ]
+    },
+    {
+      "criterion": "pause, cancel and stop-current-turn are distinct; archive/reset/delete/revoke cannot deliver into a new generation or trigger an unauthorized worker",
+      "result": "pass",
+      "evidence": [
+        "followup-schedule-receipts.json",
+        "pause-cancel-expiry-matrix.json"
+      ]
+    },
+    {
+      "criterion": "restart/duplicate tick/offline recovery only runs currently-authorized, unexpired follow-ups; no replay of completed side effects; quiet unless there is a result",
+      "result": "pass",
+      "evidence": [
+        "pause-cancel-expiry-matrix.json",
+        "tests/unit/long-session-followup-scheduling.test.ts"
+      ]
+    },
+    {
+      "criterion": "goal-wake and durable-helper keep their frozen default-off and mission scope; a plain session goal does not impersonate a durable mission",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/long-session-followup-scheduling.test.ts",
+        "pause-cancel-expiry-matrix.json"
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "name": "e1-unit",
+      "exitCode": 0,
+      "log": "D:/tmp/tf0559-unit.log"
+    },
+    {
+      "name": "typecheck",
+      "exitCode": 0,
+      "log": "D:/tmp/tf0559-typecheck.log"
+    },
+    {
+      "name": "build-runtime",
+      "exitCode": 0,
+      "log": "D:/tmp/tf0559-build-runtime.log"
+    },
+    {
+      "name": "build-vite",
+      "exitCode": 0,
+      "log": "D:/tmp/tf0559-build-vite-final2.log"
+    },
+    {
+      "name": "e2e-built",
+      "exitCode": 0,
+      "log": "D:/tmp/tf0559-e2e-final3/.last-run.json"
+    }
+  ],
+  "counts": {
+    "gates": 5,
+    "failedGates": 0,
+    "scopeMatrixCases": 8,
+    "scopeMatrixAllowed": 2,
+    "scopeMatrixBlocked": 6,
+    "e2eJourneys": 1,
+    "e2ePassed": 1,
+    "runtimeRefusalObserved": true
+  },
+  "cleanup": {
+    "startedProcesses": true,
+    "startedGateway": true,
+    "startedElectron": true,
+    "providerRequests": 0,
+    "recoveryRequired": false,
+    "notes": "The Electron fixture closes the app and the Gateway it spawned; the schedule created by the journey is cancelled by the journey itself."
+  },
+  "limitations": [
+    "The journey proves binding, generation fencing, suppression semantics and pause/cancel separation; it does not claim model output quality.",
+    "The maintenance suppression interval is 60s; the delivery-time fence covers the window in between and is asserted by the runtime unit test and the E2E refusal receipt.",
+    "All evidence is agent-driven; no real-human verdict or data is claimed."
+  ],
+  "artifacts": [
+    "followup-schedule-receipts.json",
+    "pause-cancel-expiry-matrix.json",
+    "verification-receipt.json",
+    "README.md",
+    "SHA256SUMS"
+  ]
+}

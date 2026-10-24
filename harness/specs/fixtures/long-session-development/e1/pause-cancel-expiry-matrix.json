@@ -1,0 +1,169 @@
+{
+  "schema": "clawx.long-session.e1-pause-cancel-expiry-matrix/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-e1",
+  "taskForestNode": "TF-0559",
+  "generatedAt": "2026-10-24T13:03:17.564Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "41c0cbd9a138ab333c24a813fab85cc1591fafec",
+    "tree": "dbc52bf87976ca7dec7c1ff2abaa0eb4ce27687d",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
+  },
+  "scopeMatrix": [
+    {
+      "id": "unbound",
+      "expectedState": "unbound",
+      "allowed": true,
+      "reason": "job is not bound to a long-session coordinator",
+      "observedSessionId": null
+    },
+    {
+      "id": "malformed",
+      "expectedState": "malformed",
+      "allowed": false,
+      "reason": "coordinator scope is present but malformed",
+      "observedSessionId": null
+    },
+    {
+      "id": "expired",
+      "expectedState": "expired",
+      "allowed": false,
+      "reason": "follow-up deadline passed",
+      "observedSessionId": "session-generation-1",
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "archived-or-deleted",
+      "expectedState": "session-missing",
+      "allowed": false,
+      "reason": "coordinator session is archived, deleted or otherwise absent",
+      "observedSessionId": null,
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "reset-generation",
+      "expectedState": "generation-mismatch",
+      "allowed": false,
+      "reason": "coordinator session generation rotated after the follow-up was authorized",
+      "observedSessionId": "session-generation-2",
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "binding-invalidated",
+      "expectedState": "unverifiable",
+      "allowed": false,
+      "reason": "coordinator binding is invalidated",
+      "observedSessionId": "session-generation-1",
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "generation-unresolvable",
+      "expectedState": "unverifiable",
+      "allowed": false,
+      "reason": "live session generation could not be resolved",
+      "observedSessionId": null,
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "current",
+      "expectedState": "allowed",
+      "allowed": true,
+      "reason": "coordinator scope is current, unexpired and generation-matched",
+      "observedSessionId": "session-generation-1",
+      "expectedSessionId": "session-generation-1"
+    }
+  ],
+  "actionSemantics": [
+    {
+      "action": "pause-coordinator",
+      "mechanism": "cron.update {enabled:false} (or the composer pause control for the current turn)",
+      "effect": "the schedule and its coordinator scope stay persisted; no run is delivered while paused",
+      "doesNot": [
+        "delete the schedule",
+        "invalidate the coordinator binding",
+        "stop an unrelated active turn"
+      ]
+    },
+    {
+      "action": "cancel-schedule",
+      "mechanism": "cron.remove",
+      "effect": "the schedule is deleted; the coordinator session and its Task Ledger facts are untouched",
+      "doesNot": [
+        "archive or reset the session",
+        "revoke coordinator authorization"
+      ]
+    },
+    {
+      "action": "stop-current-turn",
+      "mechanism": "existing session run-control stop",
+      "effect": "the active turn is aborted",
+      "doesNot": [
+        "delete future schedules",
+        "invalidate the coordinator binding"
+      ]
+    },
+    {
+      "action": "coordinator-invalidated",
+      "mechanism": "archive/reset/delete/revoke -> runtime fence + maintenance suppression",
+      "effect": "delivery is refused (coordinator-scope-* refusal) and the stale schedule is disabled, not silently deleted",
+      "doesNot": [
+        "deliver into the new generation",
+        "trigger an unauthorized worker"
+      ]
+    }
+  ],
+  "expiryAndReplayRules": {
+    "expiresAt": "an expired scope is refused before any delivery attempt",
+    "duplicateTick": "the fence is evaluated per run; a refused run records a skipped receipt instead of replaying side effects",
+    "offlineRecovery": "only a currently authorized, unexpired scope may run after restart; stale schedules stay suppressed",
+    "quietByDefault": "silent-unless-result is the recorded notification policy; errors and decisions remain explicit"
+  },
+  "goalWakeBoundary": {
+    "goalWakeDefault": "off (RUNTIME_LIFECYCLE_GOAL_WAKE_ENABLED must be set explicitly)",
+    "durableHelperDefault": "off (RUNTIME_LIFECYCLE_DURABLE_HELPER_ENABLED must be set explicitly)",
+    "missionScope": "mission continuations stay owned by goal-wake task_runs; a plain session goal never impersonates a durable mission",
+    "assertedBy": "tests/unit/long-session-followup-scheduling.test.ts (frozen default-off assertions)"
+  },
+  "gateReceipt": {
+    "provided": true,
+    "source": "D:/tmp/tf0559-gates.json",
+    "allPassed": true,
+    "gates": [
+      {
+        "name": "e1-unit",
+        "command": "pnpm exec vitest run tests/unit/long-session-followup-scheduling.test.ts tests/unit/cron-delivery-targets.test.ts tests/unit/cron-api-run-log-replay.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "files": 3,
+        "tests": 17,
+        "log": "D:/tmp/tf0559-unit.log"
+      },
+      {
+        "name": "typecheck",
+        "command": "pnpm run typecheck",
+        "exitCode": 0,
+        "coverage": "uncached node + web + tests",
+        "log": "D:/tmp/tf0559-typecheck.log"
+      },
+      {
+        "name": "build-runtime",
+        "command": "pnpm run build:runtime",
+        "exitCode": 0,
+        "log": "D:/tmp/tf0559-build-runtime.log"
+      },
+      {
+        "name": "build-vite",
+        "command": "pnpm run build:vite",
+        "exitCode": 0,
+        "log": "D:/tmp/tf0559-build-vite-final2.log"
+      },
+      {
+        "name": "e2e-built",
+        "command": "pnpm exec playwright test tests/e2e/long-session-followup-scheduling.spec.ts --output=D:/tmp/tf0559-e2e-final3",
+        "exitCode": 0,
+        "tests": 1,
+        "log": "D:/tmp/tf0559-e2e-final3/.last-run.json"
+      }
+    ]
+  }
+}
