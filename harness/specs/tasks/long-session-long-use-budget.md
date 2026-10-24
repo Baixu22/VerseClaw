@@ -9,6 +9,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 防止长期入口越用越慢、后台消息越积越多，用新样本测量预算而非复用旧性能 PASS。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
+diffBase: 83d2ea79ac6a3b1ada018f3968609e69ae7ff236
 dependsOnTasks:
   - F1
 touchedAreas:
@@ -22,8 +23,12 @@ touchedAreas:
   - shared/types/resource-tracker.ts
   - openclaw_runtime/src/sessions/session-admission-registry.ts
   - tests/unit/chat-session-label-budget.test.ts
+  - tests/e2e/long-session-followup-scheduling.spec.ts
   - tests/unit/session-summary-bounded-read.test.ts
   - harness/specs/fixtures/tf0423-session-loading/probe.mjs
+  - shared/long-session-long-use-budget.ts
+  - scripts/long-session-long-use-budget-evidence.mjs
+  - package.json
   - tests/unit/long-session-long-use-budget.test.ts
   - harness/specs/fixtures/long-session-development/f2/**
 requiredRules:

@@ -230,7 +230,11 @@ test('real Host/Gateway long-session follow-up is bound to one coordinator gener
       refusedText = error instanceof Error ? error.message : String(error);
     }
     expect(refusedText).toContain('Coordinator follow-up rejected');
-    expect(refusedText).toContain('session-missing');
+    // Fail-closed refusal either way: the deleted session is reported missing,
+    // or its invalidated binding is no longer trusted. E2 invalidates the
+    // coordinator binding on lifecycle changes, so the binding verdict can
+    // legitimately fire before the live-session read.
+    expect(refusedText).toMatch(/session-missing|binding is invalidated/);
     const postRefusalRuns = await hostInvoke<Array<Record<string, unknown>> | { runs?: Array<Record<string, unknown>> }>(
       app,
       'gateway',
