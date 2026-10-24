@@ -2,6 +2,7 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { LegacyContextEngine } from "../../openclaw_runtime/src/context-engine/legacy.js";
+import { createContextRuntimeKitContextEngine } from "../../openclaw_runtime/src/context-engine/cvk/engine.js";
 import type { OpenClawConfig } from "../../openclaw_runtime/src/config/types.openclaw.js";
 import {
   buildRuntimeFlagAck,
@@ -399,6 +400,35 @@ describe("runtime effective capability adapter", () => {
 
     expect(composed.startsWith("Base system prompt\n\n")).toBe(true);
     expect(composed.endsWith(result.profile.promptAddition.text.trim())).toBe(true);
+  });
+  it("injects effective capability state through the default context-runtime-kit assembler", async () => {
+    const previousGeneration = process.env.VERSE_CLAW_GATEWAY_GENERATION;
+    process.env.VERSE_CLAW_GATEWAY_GENERATION = "gateway-17";
+    try {
+      const engine = createContextRuntimeKitContextEngine({
+        maxPromptAdditionChars: 4_000,
+        cfg: { tools: { exec: { mode: "full" } } } as OpenClawConfig,
+        workspaceDir: "D:/tmp/model-capability-fixture",
+        capabilityState: () => ({ runtimeAck: ack("gateway-17", new Date().toISOString()) }),
+      });
+      const result = await engine.assemble({
+        sessionId: "session-crk-default",
+        sessionKey: "agent:main:fixture",
+        messages: [{ role: "user", content: "check capability state", timestamp: Date.now() }],
+        activeTools: [{
+          name: "exec",
+          label: "exec",
+          description: "Run a command",
+          parameters: { type: "object", properties: {} },
+        }],
+      });
+      expect(result.systemPromptAddition).toContain("Context Runtime Kit");
+      expect(result.systemPromptAddition).toContain("Capability positioning");
+      expect(result.systemPromptAddition).toContain("Coding tools and file execution");
+    } finally {
+      if (previousGeneration === undefined) delete process.env.VERSE_CLAW_GATEWAY_GENERATION;
+      else process.env.VERSE_CLAW_GATEWAY_GENERATION = previousGeneration;
+    }
   });
   it("regenerates the acceptance pack from current disk facts", async () => {
     await import("./fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts");
