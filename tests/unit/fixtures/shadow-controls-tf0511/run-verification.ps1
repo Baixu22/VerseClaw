@@ -12,7 +12,7 @@ function Gate([string]$id, [string[]]$argv, [string]$display) {
   $path = Join-Path $out "$id.txt"
   $output = & $argv[0] @($argv[1..($argv.Count - 1)]) 2>&1 | Out-String
   $code = $LASTEXITCODE
-  [IO.File]::WriteAllText($path, $output, $utf8)
+  $clean = (($output -replace "`r`n", "`n") -split "`n" | ForEach-Object { $_.TrimEnd() }) -join "`n"`n  $clean = $clean -replace "(`n){2,}$", "`n"`n  [IO.File]::WriteAllText($path, $clean, $utf8)
   return [ordered]@{
     id = $id; command = $display; exitCode = $code
     status = if ($code -eq 0) { 'pass' } else { 'fail' }
@@ -50,8 +50,8 @@ $genOutput = & $tsx 'tests/unit/fixtures/shadow-controls-tf0511/generate-accepta
 $genCode = $LASTEXITCODE
 $genPath = Join-Path $out '10-regenerate-acceptance.txt'
 [IO.File]::WriteAllText($genPath, $genOutput, $utf8)
-$readback = if (Test-Path (Join-Path $out 'catalog-readback.json')) { Get-Content -LiteralPath (Join-Path $out 'catalog-readback.json') -Raw | ConvertFrom-Json } else { $null }
-$acceptance = if (Test-Path (Join-Path $out 'acceptance.json')) { Get-Content -LiteralPath (Join-Path $out 'acceptance.json') -Raw | ConvertFrom-Json } else { $null }
+$readback = if (Test-Path (Join-Path $out 'catalog-readback.json')) { Get-Content -LiteralPath (Join-Path $out 'catalog-readback.json') -Raw -Encoding UTF8 | ConvertFrom-Json } else { $null }
+$acceptance = if (Test-Path (Join-Path $out 'acceptance.json')) { Get-Content -LiteralPath (Join-Path $out 'acceptance.json') -Raw -Encoding UTF8 | ConvertFrom-Json } else { $null }
 $genPass = $genCode -eq 0 -and $readback -and $acceptance -and $readback.completionVerdict -eq 'complete' -and $acceptance.completionVerdict -eq 'complete'
 $results += [ordered]@{
   id = '10-regenerate-acceptance'; command = 'recompute catalog readback and TF-0511 acceptance from the single-source catalog'

@@ -1,0 +1,283 @@
+{
+  "schemaVersion": "ShadowControlDispositionReadback/v1",
+  "taskForestNodeId": "TF-0511",
+  "generatedAt": "2026-10-24T00:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": "shared/dcs/component-disposition-catalog.ts",
+  "componentCount": 6,
+  "components": [
+    {
+      "id": "component.compass-context",
+      "label": "COMPASS context source",
+      "currentConsumer": "Context Orchestrator; DCS Assembler; COMPASS context block",
+      "disposition": "internal",
+      "currentMode": "opt-in",
+      "targetDefaultMode": "internal",
+      "implementationState": "implemented-opt-in",
+      "implementationNode": "TF-0511",
+      "verificationArtifact": [
+        "openclaw_runtime/src/context-engine/compass-context.ts",
+        "openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts",
+        "openclaw_runtime/src/context-engine/assembler.test.ts",
+        "openclaw_runtime/src/config/runtime-context-block-compass.test.ts"
+      ],
+      "remainingGap": [],
+      "productEntry": null,
+      "expiry": null,
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/context-engine/compass-context.ts",
+          "exists": true,
+          "sha256": "2b5058181c97e5465c1aade454204e3aacb03ca989c44a7dd1b6553133d79a58",
+          "bytes": 4091
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts",
+          "exists": true,
+          "sha256": "c83861e8f00306fefdc57d4d2412faabcca0c6636e2bddb71e1d5aa27bf7c0c5",
+          "bytes": 7667
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/assembler.test.ts",
+          "exists": true,
+          "sha256": "6c4f50876f0c2821e7f8c6cfebf89ac5bbf897c225e41209986bd1265e233c38",
+          "bytes": 44845
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-context-block-compass.test.ts",
+          "exists": true,
+          "sha256": "20ba9ae3bdd1f9ea5ff98953a572040e527e13238ca45ad3324ce3ed6fa64673",
+          "bytes": 2169
+        }
+      ]
+    },
+    {
+      "id": "component.routing-memo-observation",
+      "label": "Routing Memo observation",
+      "currentConsumer": "ordinary orchestration diagnostics; routing memo JSONL; Task Loop scorecard projection",
+      "disposition": "internal",
+      "currentMode": "mixed",
+      "targetDefaultMode": "internal",
+      "implementationState": "implemented-diagnostic-only",
+      "implementationNode": "TF-0511",
+      "verificationArtifact": [
+        "openclaw_runtime/src/agents/routing-memo.ts",
+        "openclaw_runtime/src/knowledge/routing-memo-shadow.ts",
+        "tests/unit/routing-memo.test.ts"
+      ],
+      "remainingGap": [],
+      "productEntry": null,
+      "expiry": null,
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/agents/routing-memo.ts",
+          "exists": true,
+          "sha256": "93dd3fde6d1ce1145e5d22657a193974816f7578a0cbf2e279cf6cef3b0eb7ea",
+          "bytes": 21038
+        },
+        {
+          "path": "openclaw_runtime/src/knowledge/routing-memo-shadow.ts",
+          "exists": true,
+          "sha256": "c219ae5d2de1b48be405751b709c921deda12534164b77b6d9eef65fe2d897be",
+          "bytes": 2865
+        },
+        {
+          "path": "tests/unit/routing-memo.test.ts",
+          "exists": true,
+          "sha256": "e16840383a9302c478e467bece5708b0f8a4d14f9fe4b27691bb9ee1c72b068b",
+          "bytes": 22186
+        }
+      ]
+    },
+    {
+      "id": "feature.agent-map",
+      "label": "AgentMap",
+      "currentConsumer": "explicit context.agent-map provider; Task Loop prompt-candidate pilot",
+      "disposition": "internal",
+      "currentMode": "opt-in",
+      "targetDefaultMode": "internal",
+      "implementationState": "implemented-diagnostic-only",
+      "implementationNode": "TF-0511",
+      "verificationArtifact": [
+        "openclaw_runtime/src/context-engine/agent-map-context-provider.ts",
+        "openclaw_runtime/src/runtime-core/agent-map-prompt-candidate-runtime-shadow.ts",
+        "openclaw_runtime/src/runtime-core/agent-map-prompt-candidate-controlled-cutover-pilot.ts",
+        "openclaw_runtime/src/runtime-core/agent-map-prompt-candidate-taskloop-explicit-invocation-pilot.ts",
+        "tests/unit/runtime-agent-map-component-boundary-hardening.test.ts",
+        "tests/unit/runtime-agent-map-production-entry-readiness.test.ts"
+      ],
+      "remainingGap": [],
+      "productEntry": null,
+      "expiry": null,
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/context-engine/agent-map-context-provider.ts",
+          "exists": true,
+          "sha256": "3d6bf8452ca14344dcf6aaa4cfbeab0a627c15322688414901c9b86eccb8cc65",
+          "bytes": 21592
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/agent-map-prompt-candidate-runtime-shadow.ts",
+          "exists": true,
+          "sha256": "a1530c0175d1a331c984644a96de7d969b6ac8c48ae52493b8e25cf31e7d0a01",
+          "bytes": 11586
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/agent-map-prompt-candidate-controlled-cutover-pilot.ts",
+          "exists": true,
+          "sha256": "cc4f781f9c8cd2fc1856e7184a9f72f1544418b17454a058cdce43ad392657a7",
+          "bytes": 15206
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/agent-map-prompt-candidate-taskloop-explicit-invocation-pilot.ts",
+          "exists": true,
+          "sha256": "f4c6cf80ac5469d028e02c775c3fe78cc75c44bce87e419ec395ea498ec7c855",
+          "bytes": 18150
+        },
+        {
+          "path": "tests/unit/runtime-agent-map-component-boundary-hardening.test.ts",
+          "exists": true,
+          "sha256": "1359a75fbcf13b521f4df94e460b91dc9dc03246846b843c7b248b69aaa521bf",
+          "bytes": 13487
+        },
+        {
+          "path": "tests/unit/runtime-agent-map-production-entry-readiness.test.ts",
+          "exists": true,
+          "sha256": "f8279fce29108bbdb2311df4f5f3251ce93ef35d39002a3bf955f651489d1cf7",
+          "bytes": 5536
+        }
+      ]
+    },
+    {
+      "id": "feature.runtime-shadow-governance",
+      "label": "Runtime shadow/governance leaves",
+      "currentConsumer": "provider registry diagnostics; context provider pilots; tool protocol and evidence diagnostics",
+      "disposition": "internal",
+      "currentMode": "mixed",
+      "targetDefaultMode": "internal",
+      "implementationState": "implemented-diagnostic-only",
+      "implementationNode": "TF-0511",
+      "verificationArtifact": [
+        "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+        "tests/unit/runtime-provider-tool-registry.test.ts",
+        "tests/unit/runtime-evidence-verifier-contracts.test.ts",
+        "tests/unit/runtime-checkpoint-serializer.test.ts"
+      ],
+      "remainingGap": [],
+      "productEntry": null,
+      "expiry": null,
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "tests/unit/runtime-provider-tool-registry.test.ts",
+          "exists": true,
+          "sha256": "1802560ea8c2325869d0e345fd00ad03a1fcfac19cc2eaa690561b55e2c061cc",
+          "bytes": 9935
+        },
+        {
+          "path": "tests/unit/runtime-evidence-verifier-contracts.test.ts",
+          "exists": true,
+          "sha256": "84611a11606a721b8f79aa93c1544d0b07c44cd00a116618d8378fd5dcf23184",
+          "bytes": 8815
+        },
+        {
+          "path": "tests/unit/runtime-checkpoint-serializer.test.ts",
+          "exists": true,
+          "sha256": "d8be4daab97160e7c30d6e5f7054dd1d37630fca6c8dabac4f1b7196e50020de",
+          "bytes": 6357
+        }
+      ]
+    },
+    {
+      "id": "feature.local-control-plane",
+      "label": "Local control-plane reports",
+      "currentConsumer": "context Report; model router report; capability/evidence/mission reports",
+      "disposition": "internal",
+      "currentMode": "mixed",
+      "targetDefaultMode": "internal",
+      "implementationState": "implemented-diagnostic-only",
+      "implementationNode": "TF-0511",
+      "verificationArtifact": [
+        "openclaw_runtime/src/local-control-plane/index.ts",
+        "openclaw_runtime/src/gateway/server-methods/local-control-plane.ts",
+        "tests/unit/local-control-plane.test.ts"
+      ],
+      "remainingGap": [],
+      "productEntry": null,
+      "expiry": null,
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/local-control-plane/index.ts",
+          "exists": true,
+          "sha256": "d36728e3eb3344094a716cada3665180a1946e4891fec6c7bae6929feff0e298",
+          "bytes": 25755
+        },
+        {
+          "path": "openclaw_runtime/src/gateway/server-methods/local-control-plane.ts",
+          "exists": true,
+          "sha256": "84fe040861a91700d12082b08b24d66531d11f3b4d24fd4be83bacf1dbfe4400",
+          "bytes": 3910
+        },
+        {
+          "path": "tests/unit/local-control-plane.test.ts",
+          "exists": true,
+          "sha256": "4edda7b56c975a29576b7304801474640f0f3285778a43ee4045928c503212e7",
+          "bytes": 32096
+        }
+      ]
+    },
+    {
+      "id": "surface.observability",
+      "label": "Observability",
+      "currentConsumer": "Observability page; trace/issues/problems",
+      "disposition": "advanced",
+      "currentMode": "mixed",
+      "targetDefaultMode": "baseline",
+      "implementationState": "implemented-opt-in",
+      "implementationNode": "TF-0511",
+      "verificationArtifact": [
+        "src/App.tsx",
+        "src/pages/Observability/index.tsx",
+        "tests/unit/observability-service.test.ts"
+      ],
+      "remainingGap": [],
+      "productEntry": "/observability",
+      "expiry": null,
+      "artifacts": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "ac409bf1247ca5d020c7e51dbd892f071b39db7b641bb5db1996af2c14f80724",
+          "bytes": 16013
+        },
+        {
+          "path": "src/pages/Observability/index.tsx",
+          "exists": true,
+          "sha256": "e1238bdb9f43e802a8a74db2a4b5d59659cd59820dd16d738cfec6b845e1baec",
+          "bytes": 83611
+        },
+        {
+          "path": "tests/unit/observability-service.test.ts",
+          "exists": true,
+          "sha256": "c274ba5612ba1bdb7a33b71c6fc1c3770586d416932f6e59fad0749155723c75",
+          "bytes": 13121
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "unclassified": 0,
+    "openExperiments": 0,
+    "componentsWithGaps": 0,
+    "everyArtifactResolves": true,
+    "noSecondDispositionLedger": true,
+    "issues": []
+  },
+  "completionVerdict": "complete"
+}
