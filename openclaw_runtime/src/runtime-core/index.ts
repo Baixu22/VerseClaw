@@ -53,3 +53,4 @@ export * from "./failure-task-outcome-scorecard.js";
 export * from "./failure-tool-invocation-governance-advisory.js";
 export * from "./failure-tool-invocation-governance-destructive-operation-guard-preflight-pilot.js";
 export * from "./failure-tool-invocation-governance-destructive-operation-guard-internal-evaluation-scorecard.js";
+export * from "./model-capability-effective-state.js";

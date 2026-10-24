@@ -5,7 +5,7 @@ import { registerContextEngineForOwner } from "./registry.js";
 // Registers the built-in legacy context engine under the core owner. Refresh is
 // allowed so tests/bootstrap can re-register after module-state resets.
 export function registerLegacyContextEngine(): void {
-  registerContextEngineForOwner("legacy", async (ctx) => new LegacyContextEngine(ctx.config), "core", {
+  registerContextEngineForOwner("legacy", async (ctx) => new LegacyContextEngine(ctx.config, ctx.workspaceDir), "core", {
     allowSameOwnerRefresh: true,
   });
 }
