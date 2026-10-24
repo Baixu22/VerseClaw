@@ -1,2 +1,5 @@
-偏差账本：166 条 · 未结 12 条（其中无 status 字段 12 条）
+偏差账本：0 条 · 未结 0 条（其中无 status 字段 0 条）
 校验通过。
+EXIT_CODE=0
+DRIVER=agent
+ACTOR=codex-long-session-r2
