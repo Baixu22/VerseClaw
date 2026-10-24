@@ -77,7 +77,11 @@ function hashFile(file) {
 }
 
 function readJson(file) {
-  return JSON.parse(readFileSync(file, 'utf8'));
+  // Windows PowerShell's Out-File writes a UTF-8 BOM by default. A gate receipt
+  // produced by a real shell must stay readable, so strip a leading BOM before
+  // parsing instead of failing the whole evidence run.
+  const text = readFileSync(file, 'utf8').replace(/^\uFEFF/u, '');
+  return JSON.parse(text);
 }
 
 function git(args) {
