@@ -123,6 +123,7 @@ test.describe('Role memory panel', () => {
         if (request?.module === 'memory') {
           if (request.action === 'list') return respond(request.id, { success: true, cards: [] });
           if (request.action === 'health') return respond(request.id, { success: true, ok: true, checks: [] });
+          if (request.action === 'proposeFactsList') return respond(request.id, { success: true, enabled: false, candidates: [] });
         }
 
         return originalHostInvoke?.(event, request) ?? respond(request?.id, {});
@@ -499,6 +500,7 @@ test.describe('Role memory panel', () => {
         // & data, with health flattened).
         if (request?.module === 'memory') {
           const action = request.action;
+          if (action === 'proposeFactsList') return respond(request.id, { success: true, enabled: false, candidates: [] });
           const payload = request.payload ?? {};
 
           if (action === 'list') {

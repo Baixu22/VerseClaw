@@ -61,6 +61,7 @@ async function gotoAgents(app: Parameters<typeof getStableWindow>[0]) {
   await page.getByTestId('sidebar-nav-settings').click();
   await page.getByTestId('settings-nav-agents').click();
   await expect(page.getByTestId('agents-page')).toBeVisible();
+  await page.getByTestId('role-orchestration-toggle').click();
   await expect(page.getByTestId('propose-facts-confirm-queue')).toBeVisible();
   return page;
 }

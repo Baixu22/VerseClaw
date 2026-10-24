@@ -1,0 +1,222 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "tf-0498-unified-memory-surface",
+  "reportKind": "contract",
+  "componentId": "role-memory-card-governance",
+  "taskForestNodeId": "TF-0498",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "TF-0498",
+  "entryPoint": "src/components/agents/RolesOrchestrationPanel.tsx",
+  "defaultMode": "opt-in",
+  "benefitEvidence": "One Memory panel lets a user review candidates, approve accepted memory, delete by tombstone and export a scoped snapshot without a second review UI; candidates remain non-retrievable and non-injectable until approval.",
+  "rollback": "Remove the Memory surface contract and candidate-block UI additions; retain the existing Role/Runtime stores, approvals, default mode and native OpenClaw memory.",
+  "modelEffectiveState": "Only accepted memory is model-visible. Candidates are stored for review only and are neither retrievable nor injectable until approved; switching Memory off retains stored cards on disk but blocks read, write and injection, while native OpenClaw memory remains separate and unchanged.",
+  "evidenceGrade": "e2e",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+    "tree": "8a189b4f24d1b679c48cd78192df435ce1789f1e",
+    "buildHash": "b7d4856642346226363d89df7a3804d89e6ed2ab418ae7d71f0831582bab64b5",
+    "runtimeGeneration": "memory-surface-tf0498",
+    "provider": "fixture-provider",
+    "model": "fixture-model",
+    "inputSet": "tf0498-unified-memory-surface",
+    "scope": "workspace:component-graduation/session:tf-0498",
+    "artifacts": [
+      {
+        "path": "src/components/agents/memory-surface.ts",
+        "sha256": "8bcfbb82f474677da9fcc18c4f4acf4e17c4c702e4f2206b0702bae89ea511d2",
+        "bytes": 5854
+      },
+      {
+        "path": "src/components/agents/RolesOrchestrationPanel.tsx",
+        "sha256": "0b1d782f87eea121595daafa7e7630fb1d9c1ba91572d813dd6fd60b0fefb6c4",
+        "bytes": 202423
+      },
+      {
+        "path": "src/components/agents/ProposeFactsConfirmQueue.tsx",
+        "sha256": "c26b95d0cb2964248d3266b4600da16798cf0fbbc13733610cd04e4fe4567aa2",
+        "bytes": 7549
+      },
+      {
+        "path": "src/pages/Agents/index.tsx",
+        "sha256": "ceba7fbe9cdc5864fd72f2040b37803dbbc8c432e1e0dffc7e9911d23df7a620",
+        "bytes": 75755
+      },
+      {
+        "path": "shared/i18n/locales/en/agents.json",
+        "sha256": "4487d6f7678de7f100eaa7cd54a1fb3bbe80a1a65f74333745abc38b1690ca9d",
+        "bytes": 35514
+      },
+      {
+        "path": "shared/i18n/locales/zh/agents.json",
+        "sha256": "071b5c004ea2d934833593d11324f31dac770ea7b08a13cbc780f0dfb3c39463",
+        "bytes": 34717
+      },
+      {
+        "path": "shared/i18n/locales/ja/agents.json",
+        "sha256": "d4c385af6e26914b6d04d969cb1bf488f8ab6e8147c7b66bb28ff3b71a862bdd",
+        "bytes": 41388
+      },
+      {
+        "path": "shared/i18n/locales/ru/agents.json",
+        "sha256": "d787f5583c3a68375d0fce656974f55b3f3a6f2b47697951d980572205df2e4a",
+        "bytes": 50017
+      },
+      {
+        "path": "tests/unit/memory-surface-contract.test.ts",
+        "sha256": "8eaf6abdbc92aa034be69b15f42e3ec333665ab016ea8fb4d32077af62c5738e",
+        "bytes": 4231
+      },
+      {
+        "path": "tests/unit/roles-orchestration-panel.test.tsx",
+        "sha256": "e8824b8d955528fa46acc90372353124265acc01f5d154033bfb0f5019eb5ba8",
+        "bytes": 14432
+      },
+      {
+        "path": "tests/unit/propose-facts-confirm-queue.test.tsx",
+        "sha256": "a11900c060e05553658fffd2569124f8f3ad1fb8441fcfcdfe3c58589deddbac",
+        "bytes": 4263
+      },
+      {
+        "path": "tests/e2e/memory-surface.spec.ts",
+        "sha256": "ce8c76a3875cb225656d619f6e131aeb6d70f93cc305d52b7433c869d1cc79f9",
+        "bytes": 9126
+      },
+      {
+        "path": "tests/e2e/role-memory-panel.spec.ts",
+        "sha256": "e0aa1168027a7ee5fd24291ef6f4433a2a86d1e6c53b8391bb0391f4234a2c9c",
+        "bytes": 27300
+      },
+      {
+        "path": "tests/e2e/agents-propose-facts-confirm.spec.ts",
+        "sha256": "1f27c3af6745c02060ee8c40090eb3567169677bdc73fbc46b7655169936732b",
+        "bytes": 5382
+      },
+      {
+        "path": "tests/unit/role-orchestration-methods.test.ts",
+        "sha256": "71408519bb622eedad2686a2db92163da8851020f9993d71c89b79cf97b0a52a",
+        "bytes": 55152
+      },
+      {
+        "path": "tests/unit/role-memory-context-provider.test.ts",
+        "sha256": "c0665eab06114213d6032c3cc19f28d394ad86e09b3b9c9abc036f33d5342404",
+        "bytes": 7729
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/README.md",
+        "sha256": "93bd046968bade4b8bf5388c5aa925fb9a305a1e8feaee2dc65988fcd5e37940",
+        "bytes": 2735
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/generate-acceptance.mts",
+        "sha256": "bfb4a160041054e776d919ed863b733805539a95768fbae874a00081996001d1",
+        "bytes": 14800
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/run-verification.ps1",
+        "sha256": "ac78889839c7258a0b330f77ab2b9b269877a27b2b8c108824cf891558dfa4dd",
+        "bytes": 5790
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json",
+        "sha256": "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
+        "bytes": 4837
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "contract",
+      "status": "pass",
+      "grade": "e2e",
+      "summary": "The single Memory surface contract, candidate isolation, master-off semantics and export separation are all verified.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json",
+          "sha256": "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
+          "bytes": 4837,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "real-consumer",
+      "status": "pass",
+      "grade": "e2e",
+      "summary": "Existing Agent-page consumers use one panel and the candidate queue inside it.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json",
+          "sha256": "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
+          "bytes": 4837,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "boundary",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "Candidate statuses are excluded from accepted memory and export separation is explicit.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json",
+          "sha256": "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
+          "bytes": 4837,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "necessity",
+      "status": "pass",
+      "grade": "e2e",
+      "summary": "The single panel is required for review, approval, deletion and local export in one product surface.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json",
+          "sha256": "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
+          "bytes": 4837,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "failure-recovery",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "Master-off retains cards on disk while blocking reads/writes/injection, and tombstone preserves audit history.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json",
+          "sha256": "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
+          "bytes": 4837,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "not-product-claim",
+      "status": "pass",
+      "grade": "documented-boundary",
+      "summary": "No release, GA, liveReady, productApproved or default-lock claim is made.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json",
+          "sha256": "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
+          "bytes": 4837,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "21ee2b069e9567f52d52465e99fb7286c189b2f2d0368d7a890561e7cf8f4651",
+    "command": "& .\\openclaw_runtime\\node_modules\\.bin\\tsx.CMD tests/unit/fixtures/memory-authority/acceptance/TF-0498/generate-acceptance.mts"
+  }
+}
