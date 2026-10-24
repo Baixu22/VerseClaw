@@ -126,6 +126,8 @@ export const CORE_GATEWAY_METHOD_SPECS: readonly CoreGatewayMethodSpec[] = [
   { name: "verification.results.get", scope: "operator.read" },
   // Memory subsystem: read cards, store gatekeeper-reviewed proposals.
   { name: "memory.list", scope: "operator.read" },
+  { name: "memory.surface", scope: "operator.read" },
+  { name: "memory.deleteSurfaceEntry", scope: "operator.write" },
   { name: "memory.conflicts", scope: "operator.read" },
   { name: "memory.conflictDetail", scope: "operator.read" },
   { name: "memory.explainInjection", scope: "operator.read" },

@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-continuity-context
 title: 从唯一记忆控制面读取已接受事实与会话交接依据
 program: long-session-development-20261022
@@ -9,6 +9,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 让长期入口记住必要约束、决策与未完成依赖，消费既有记忆/知识 owner，不把全部历史再做一份记忆。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
+diffBase: faf92352eea9b516a3ed15c6ed58c8da9378185d
 dependsOnTasks:
   - C4
   - TF-0493
@@ -25,7 +26,22 @@ touchedAreas:
   - electron/services/knowledge-api.ts
   - shared/types/task-ledger.ts
   - shared/types/memory.ts
+  - openclaw_runtime/src/gateway/server-methods/memory-surface.ts
+  - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts
+  - openclaw_runtime/src/gateway/server-methods.ts
+  - openclaw_runtime/src/gateway/methods/core-descriptors.ts
+  - shared/long-session-continuity.ts
+  - shared/host-api/contract.ts
+  - src/lib/host-api.ts
+  - electron/services/chat-api.ts
+  - electron/services/workspace-permissions.ts
   - tests/unit/long-session-continuity-context.test.ts
+  - tests/unit/workspace-permissions.test.ts
+  - tests/e2e/long-session-continuity-context.spec.ts
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - README.ru-RU.md
   - harness/specs/fixtures/long-session-development/d1/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -47,6 +63,9 @@ expectedUserBehavior:
 requiredTests:
   - pnpm exec vitest run tests/unit/role-memory-context-provider.test.ts tests/unit/tf0018-cross-workspace-session-isolation.test.ts tests/unit/tf0018-correction-propagation.test.ts tests/unit/memory-dual-gate-p3-003.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/long-session-continuity-context.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/workspace-permissions.test.ts --maxWorkers=1
+  - pnpm run build:vite
+  - pnpm run test:e2e:run tests/e2e/long-session-continuity-context.spec.ts
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run comms:replay
@@ -55,6 +74,8 @@ requiredTests:
   - git diff --check
 plannedTests:
   - tests/unit/long-session-continuity-context.test.ts
+  - tests/unit/workspace-permissions.test.ts
+  - tests/e2e/long-session-continuity-context.spec.ts
 acceptance:
   - 消费 TF-0493/0497/0498 的唯一装配与 memory UI/owner 输出，复用 Task Ledger、accepted memory/knowledge refs 和 CompressionArtifact，不建新 memory database 或注入链。
   - 关键约束、否定决策、open dependencies、next action 与 evidence refs 有来源、freshness、scope、预算和未知状态；未验证模型叙述不升级为事实。
@@ -64,6 +85,10 @@ docs:
   required: true
   files:
     - harness/specs/tasks/long-session-development-plan.md
+    - README.md
+    - README.zh-CN.md
+    - README.ja-JP.md
+    - README.ru-RU.md
 ---
 
 **D1 · 从唯一记忆控制面读取已接受事实与会话交接依据**

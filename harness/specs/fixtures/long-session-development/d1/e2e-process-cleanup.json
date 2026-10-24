@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\verse-claw-e2e-run-QIO0LU",
+  "ledgerEntries": 1,
+  "reaped": [
+    {
+      "pid": 48860,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "ok",
+    "runRoot": "D:\\tmp\\verse-claw-e2e-run-QIO0LU\\",
+    "owned": [],
+    "remaining": []
+  }
+}

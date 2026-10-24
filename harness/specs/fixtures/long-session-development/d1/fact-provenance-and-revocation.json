@@ -1,0 +1,94 @@
+{
+  "schema": "clawx.long-session.d1-fact-provenance-and-revocation/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "source": "real built Electron Host/Gateway/owner readback plus current-candidate unit negatives",
+  "atomic_positives": [
+    {
+      "kind": "constraint",
+      "source": "task-ledger-working-context",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "workspace",
+        "key": "default"
+      },
+      "trust": "owner-accepted",
+      "evidenceRefs": [
+        "session:agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa"
+      ]
+    },
+    {
+      "kind": "memory-ref",
+      "source": "accepted-memory-ref",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "workspace",
+        "key": "D:\\tmp\\tf0556-e2e-output-2\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mvm9jim2"
+      },
+      "trust": "owner-accepted",
+      "evidenceRefs": [
+        "memory:role-memory-card:mem_18378bd3-1587-4034-adfa-9141f2c47b32"
+      ]
+    },
+    {
+      "kind": "knowledge-ref",
+      "source": "knowledge-ref",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "workspace",
+        "key": "default"
+      },
+      "trust": "owner-fact",
+      "evidenceRefs": [
+        "knowledge:wiki:d1:mvm9jim2"
+      ]
+    }
+  ],
+  "revocation_and_scope_negatives": [
+    {
+      "case": "pending working-context",
+      "reason": "pending-not-accepted",
+      "provenance": "unit + e2e current candidate"
+    },
+    {
+      "case": "candidate memory",
+      "reason": "candidate-not-accepted",
+      "provenance": "unit current candidate"
+    },
+    {
+      "case": "expired memory",
+      "reason": "expired",
+      "provenance": "unit current candidate"
+    },
+    {
+      "case": "tombstone/superseded memory",
+      "reason": "revoked-or-superseded",
+      "provenance": "unit current candidate"
+    },
+    {
+      "case": "roleMemoryEnabled=false",
+      "reason": "owner-gate-closed",
+      "provenance": "unit current candidate"
+    },
+    {
+      "case": "foreign agent/role/workspace",
+      "reason": "out-of-scope",
+      "provenance": "unit current candidate"
+    },
+    {
+      "case": "native backend compaction owner",
+      "reason": "source unavailable with native owner detail",
+      "provenance": "unit production read current candidate"
+    },
+    {
+      "case": "deleted session",
+      "reason": "generation invalidated -> no pack",
+      "provenance": "e2e current candidate"
+    }
+  ],
+  "unknown_state": [
+    "no CompressionArtifact on the fresh E2E session",
+    "native/CLI backend live model output not exercised",
+    "restart/kill of a live provider process not exercised"
+  ]
+}

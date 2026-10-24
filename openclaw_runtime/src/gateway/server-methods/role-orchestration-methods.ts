@@ -77,6 +77,7 @@ import {
   supersedeMemoryCard,
   updateMemoryCard,
 } from "../../memory/memory-store.js";
+import { buildMemorySurface, deleteMemorySurfaceEntry, type MemorySurfaceSource } from "./memory-surface.js";
 import type { MemoryFeedbackOutcome, MemoryPhaseTag, MemoryProposal, MemoryRetentionAction, MemoryReviewAction, MemoryTaskSuccess } from "../../memory/types.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { resolveControlPlaneActor, formatControlPlaneActor } from "../control-plane-audit.js";
@@ -928,6 +929,44 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     respond(true, { cards, count: cards.length }, undefined);
   },
 
+  "memory.surface": async ({ params, respond, context }) => {
+    try {
+      const projection = await buildMemorySurface({
+        limit: typeof params.limit === "number" ? params.limit : undefined,
+        getRuntimeConfig: () => context.getRuntimeConfig(),
+      });
+      respond(true, projection, undefined);
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `memory.surface failed: ${error instanceof Error ? error.message : String(error)}`,
+        ),
+      );
+    }
+  },
+
+  "memory.deleteSurfaceEntry": async ({ params, respond, context }) => {
+    const source = readString(params.source);
+    const id = readString(params.id);
+    if (!source || !id || (source !== "role-memory-card" && source !== "runtime-fact")) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "memory.deleteSurfaceEntry requires a valid source and id"));
+      return;
+    }
+    const outcome = await deleteMemorySurfaceEntry({
+      source: source as MemorySurfaceSource,
+      id,
+      reason: readString(params.reason),
+      getRuntimeConfig: () => context.getRuntimeConfig(),
+    });
+    if (!outcome.ok) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, outcome.error));
+      return;
+    }
+    respond(true, outcome, undefined);
+  },
   "memory.propose": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const proposal = params.proposal as MemoryProposal | undefined;

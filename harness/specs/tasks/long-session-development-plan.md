@@ -107,6 +107,8 @@ C2 的 typed admission 已接入现有 sessions.delegate -> Main coordinator/per
 
 B1 消费 TF-0512 的 current runtime capability facts；C2/E2 以真实 Git checkout/写集隔离或明确安全串行完成自有边界；TF-0510 的明确 unavailable、internal 或 retired 处置可作为非阻塞依据，但不形成硬依赖；D1 消费 TF-0493/TF-0497/TF-0498 的唯一 context/memory 控制面。已有节点的内部化、退役或 explicit unavailable 也是有效结果，后续应做真实 fallback，不复活被退休模块，不再造同一 owner。
 
+D1 只在 active coordinator binding 与当前物理 session generation 匹配时组装 `ContinuityContextPack/v1`：从 Task Ledger 已接受 Working Context、CompressionArtifact、MemorySurface accepted/model-visible refs 与 typed knowledge refs 读取有界摘要，记录 source/freshness/scope/budget/unknown，排除 pending、candidate、过期、撤销、supersede、跨 scope 与未验证模型叙述；原始 transcript/task/compression 只给 on-demand refs，不复制成第二 memory 或第二 injection chain。
+
 新目标服务现有 TF-0001 全局目的，与 TF-0482 是分开的交付 lane；不重开 deprecated TF-0010，不改历史 TF-0077/TF-0370/TF-0424 的验收或默认值。只用非阻塞 related_to 记录横向关系；不能通过本规划给其它在途工作加新义务。
 
 **已有实现与需要补的路径**

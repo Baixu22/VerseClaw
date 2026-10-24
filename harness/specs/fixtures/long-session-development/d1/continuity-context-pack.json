@@ -1,0 +1,163 @@
+{
+  "schema": "clawx.long-session.d1-pack/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "workspaceId": "default",
+  "coordinatorSessionKey": "agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa",
+  "taskNodeId": "4c0d8f1f-dd6c-4abb-9b11-51daff5723a0",
+  "memoryContent": "D1 accepted memory mvm9jim2: remain within the bound workspace.",
+  "preview": {
+    "success": true,
+    "validation": "current",
+    "pack": {
+      "schemaVersion": "ContinuityContextPack/v1",
+      "generatedAt": "2026-10-24T10:35:52.095Z",
+      "sessionKey": "agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa",
+      "workspaceId": "default",
+      "bindingRevision": 1,
+      "activeTaskNodeId": "4c0d8f1f-dd6c-4abb-9b11-51daff5723a0",
+      "status": "partial",
+      "complete": false,
+      "budget": {
+        "maxChars": 1800,
+        "usedChars": 539,
+        "truncated": false,
+        "droppedItems": 0
+      },
+      "items": [
+        {
+          "id": "working-context:Constraints:1",
+          "kind": "constraint",
+          "source": "task-ledger-working-context",
+          "text": "Stay inside workspace scope.; Never inject unapproved candidates.",
+          "owner": "task-ledger",
+          "scope": {
+            "kind": "workspace",
+            "key": "default"
+          },
+          "freshness": "fresh",
+          "acceptedAt": "2026-10-24T10:35:45.807Z",
+          "expiresAt": "2026-10-25T10:35:45.807Z",
+          "trust": "owner-accepted",
+          "evidenceRefs": [
+            "session:agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa"
+          ],
+          "chars": 65
+        },
+        {
+          "owner": "task-ledger",
+          "scope": {
+            "kind": "workspace",
+            "key": "default"
+          },
+          "freshness": "fresh",
+          "trust": "owner-fact",
+          "evidenceRefs": [],
+          "id": "task-node:4c0d8f1f-dd6c-4abb-9b11-51daff5723a0:next",
+          "kind": "next-action",
+          "source": "task-ledger-node",
+          "text": "Verify accepted continuity owners.",
+          "chars": 34
+        },
+        {
+          "id": "working-context:NextAction:1",
+          "kind": "next-action",
+          "source": "task-ledger-working-context",
+          "text": "Run the real continuity preview.",
+          "owner": "task-ledger",
+          "scope": {
+            "kind": "workspace",
+            "key": "default"
+          },
+          "freshness": "fresh",
+          "acceptedAt": "2026-10-24T10:35:45.807Z",
+          "expiresAt": "2026-10-25T10:35:45.807Z",
+          "trust": "owner-accepted",
+          "evidenceRefs": [
+            "session:agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa"
+          ],
+          "chars": 32
+        },
+        {
+          "id": "accepted-memory:role-memory-card:mem_18378bd3-1587-4034-adfa-9141f2c47b32",
+          "kind": "memory-ref",
+          "source": "accepted-memory-ref",
+          "owner": "memory",
+          "text": "role-memory-card:mem_18378bd3-1587-4034-adfa-9141f2c47b32 (user; workspace)",
+          "scope": {
+            "kind": "workspace",
+            "key": "D:\\tmp\\tf0556-e2e-output-2\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mvm9jim2"
+          },
+          "freshness": "fresh",
+          "acceptedAt": "2026-10-24T10:35:51.589Z",
+          "trust": "owner-accepted",
+          "evidenceRefs": [
+            "memory:role-memory-card:mem_18378bd3-1587-4034-adfa-9141f2c47b32"
+          ],
+          "chars": 75
+        },
+        {
+          "id": "knowledge:wiki:d1:mvm9jim2",
+          "kind": "knowledge-ref",
+          "source": "knowledge-ref",
+          "owner": "knowledge",
+          "text": "D1 owner decision (notes/d1.md)",
+          "scope": {
+            "kind": "workspace",
+            "key": "default"
+          },
+          "freshness": "fresh",
+          "trust": "owner-fact",
+          "evidenceRefs": [
+            "knowledge:wiki:d1:mvm9jim2"
+          ],
+          "chars": 31
+        }
+      ],
+      "sourceStates": [
+        {
+          "source": "task-ledger",
+          "status": "available",
+          "detail": "events=6; nodes=1"
+        },
+        {
+          "source": "working-context",
+          "status": "available"
+        },
+        {
+          "source": "compression-artifact",
+          "status": "unavailable",
+          "detail": "no compression artifact for this session"
+        },
+        {
+          "source": "memory",
+          "status": "available",
+          "detail": "accepted=1; modelVisible=1"
+        },
+        {
+          "source": "knowledge",
+          "status": "available",
+          "detail": "refs=1"
+        }
+      ],
+      "exclusions": [
+        {
+          "ref": "task-ledger-working-context:d1-pending-risk-mvm9jim2",
+          "reason": "pending-not-accepted"
+        }
+      ],
+      "originalHistory": {
+        "transcriptRef": "session:agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa",
+        "taskLedgerRef": "task-ledger:default",
+        "taskLedgerEventCount": 6,
+        "compressionAvailable": false
+      },
+      "evidenceRefs": [
+        "session:agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa",
+        "memory:role-memory-card:mem_18378bd3-1587-4034-adfa-9141f2c47b32",
+        "knowledge:wiki:d1:mvm9jim2"
+      ]
+    },
+    "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=partial; complete=false; bindingRevision=1; chars=539/1800; truncated=false\n- [constraint] Stay inside workspace scope.; Never inject unapproved candidates. (source=task-ledger-working-context; scope=workspace:default; freshness=fresh; trust=owner-accepted)\n- [next-action] Verify accepted continuity owners. (source=task-ledger-node; scope=workspace:default; freshness=fresh; trust=owner-fact)\n- [next-action] Run the real continuity preview. (source=task-ledger-working-context; scope=workspace:default; freshness=fresh; trust=owner-accepted)\n- [memory-ref] role-memory-card:mem_18378bd3-1587-4034-adfa-9141f2c47b32 (user; workspace) (source=accepted-memory-ref; scope=workspace:D:\\tmp\\tf0556-e2e-output-2\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mvm9jim2; freshness=fresh; trust=owner-accepted)\n- [knowledge-ref] D1 owner decision (notes/d1.md) (source=knowledge-ref; scope=workspace:default; freshness=fresh; trust=owner-fact)\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa; taskLedger=task-ledger:default; taskLedgerEvents=6; compression=unavailable. Recall old evidence on demand through the owning session/task APIs."
+  }
+}

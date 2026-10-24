@@ -1,0 +1,33 @@
+{
+  "schema": "clawx.long-session.d1-cross-scope-negative/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "source": "real built Electron Host/Gateway host-invoke; scope matrix in current-candidate unit tests",
+  "negative_cases": [
+    {
+      "case": "ordinary session without coordinator binding",
+      "expected": "missing",
+      "actual": "missing",
+      "packReturned": false,
+      "ownerReadCallsBlocked": true
+    },
+    {
+      "case": "coordinator session deleted",
+      "expected": "invalidated",
+      "actual": "invalidated",
+      "packReturned": false,
+      "ownerReadCallsBlocked": true
+    }
+  ],
+  "scope_assertions": {
+    "workspaceBinding": "workspaceId=default; scratch root isolated in Playwright output",
+    "crossWorkspaceLeakCount": 0,
+    "crossRoleLeakCount": 0,
+    "crossAgentLeakCount": 0
+  },
+  "raw_observation": "D:/tmp/tf0556-e2e-output-2/long-session-continuity-co-5953e-losed-across-scope-rollback/continuity-observation.json",
+  "process_cleanup": {
+    "survivors": 0,
+    "sweep": "ok"
+  }
+}

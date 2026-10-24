@@ -595,6 +595,8 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "observability.subscribe",
       "observability.unsubscribe",
       "memory.list",
+      "memory.surface",
+      "memory.deleteSurfaceEntry",
       "memory.conflicts",
       "memory.conflictDetail",
       "memory.explainInjection",

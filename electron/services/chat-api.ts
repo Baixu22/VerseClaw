@@ -6,17 +6,23 @@ import { handleMockChatSend } from './mock-provider';
 import { isRecord } from './payload-utils';
 import type { ChatKnowledgeDenial } from '../../shared/host-api/contract';
 import { loadTaskLedgerSnapshot } from './task-ledger-service';
+import { readTaskLedgerWorkingContext } from './task-ledger-working-context';
 import { getResourceTracker } from './resource-tracker';
 import { evaluateTurnBudget } from '../../shared/agent-resource-limits';
 import { LONG_TASK_INPUT_MODES } from '../../shared/types/long-task-control';
 import { getSessionTokenUsageSummary } from '../utils/token-usage';
 import { computeWorkspaceFingerprint } from '@shared/workspace-fingerprint';
-import {
-  getPersistedCoordinatorBinding,
-  getWorkspaceRootPathById,
-  materializeCoordinatorSessionGeneration,
-} from './workspaces-api';
+import { getPersistedCoordinatorBinding, getWorkspaceRootPathById, materializeCoordinatorSessionGeneration } from './workspaces-api';
 import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
+import {
+  buildLongSessionContinuityContext,
+  renderLongSessionContinuityContext,
+  type ContinuityCompressionInput,
+  type LongSessionContinuityContextPack,
+} from '../../shared/long-session-continuity';
+import type { MemorySurfaceSnapshot } from '../../shared/types/memory';
+import type { SessionEffectivePolicy } from '../../shared/types/session-effective-policy';
+import { getSetting } from '../utils/store';
 import { getHostDeadline } from '../utils/host-deadline-context';
 
 const VISION_MIME_TYPES = new Set([
@@ -28,6 +34,7 @@ const VISION_MIME_TYPES = new Set([
 
 const CONTEXT_FRAGMENT_LIMITS = {
   taskLedgerMetadataChars: 4_000,
+  continuityContextChars: 2_800,
   toolUiResponseContractChars: 2_000,
 } as const;
 
@@ -174,6 +181,165 @@ async function applyTaskLedgerContext(
   }
 }
 
+function readStringFacts(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry) => {
+    if (typeof entry === 'string' && entry.trim()) return [entry.trim()];
+    if (isRecord(entry) && typeof entry.text === 'string' && entry.text.trim()) return [entry.text.trim()];
+    return [];
+  });
+}
+
+function compressionInputFromRpc(raw: unknown): ContinuityCompressionInput | null {
+  if (!isRecord(raw)) return null;
+  const artifact = isRecord(raw.artifact) ? raw.artifact : undefined;
+  if (!artifact) return null;
+  return {
+    ...(typeof raw.checkpointId === 'string' ? { checkpointId: raw.checkpointId } : {}),
+    ...(typeof artifact.objective === 'string' ? { objective: artifact.objective } : {}),
+    constraints: readStringFacts(artifact.constraints),
+    decisions: readStringFacts(artifact.decisions),
+    blocked: readStringFacts(artifact.blocked),
+    inProgress: readStringFacts(artifact.inProgress),
+    ...(typeof artifact.nextAction === 'string' ? { nextAction: artifact.nextAction } : {}),
+    evidenceRefs: readStringFacts(artifact.evidenceRefs),
+    unverifiedClaims: readStringFacts(artifact.unverifiedClaims),
+  };
+}
+
+function memorySurfaceFromRpc(raw: unknown): MemorySurfaceSnapshot | null {
+  if (!isRecord(raw) || !Array.isArray(raw.accepted) || !Array.isArray(raw.candidates) || !isRecord(raw.counts)) {
+    return null;
+  }
+  return raw as unknown as MemorySurfaceSnapshot;
+}
+
+type LongSessionContinuityRead = {
+  validation: 'current' | 'missing' | 'invalidated' | 'unavailable';
+  pack?: LongSessionContinuityContextPack;
+  rendered?: string;
+  reason?: string;
+};
+
+async function readLongSessionContinuityContext(input: {
+  gatewayManager: GatewayManager;
+  sessionKey: string;
+  workspaceId: string;
+  activeTaskNodeId?: string;
+  knowledgeReferences: NormalizedKnowledgeReference[];
+}): Promise<LongSessionContinuityRead> {
+  if (!input.workspaceId || !input.sessionKey) {
+    return { validation: 'missing', reason: 'sessionKey and workspaceId are required' };
+  }
+  try {
+    const binding = await getPersistedCoordinatorBinding(input.workspaceId, input.sessionKey);
+    if (!binding) return { validation: 'missing', reason: 'no coordinator binding for this session' };
+    if (binding.state === 'invalid') {
+      return { validation: 'invalidated', reason: binding.invalidationReason ?? 'coordinator binding invalid' };
+    }
+    if (binding.state !== 'active') {
+      return { validation: 'missing', reason: `coordinator binding is ${binding.state}` };
+    }
+    if (binding.agentId !== agentIdFromSessionKey(input.sessionKey)) {
+      return { validation: 'missing', reason: 'coordinator binding targets a different agent' };
+    }
+    if (binding.sessionGeneration) {
+      try {
+        const described = await input.gatewayManager.rpc<{ session?: { sessionId?: string } | null }>(
+          'sessions.describe',
+          { key: input.sessionKey },
+          15_000,
+        );
+        const liveGeneration = described?.session?.sessionId;
+        if (!liveGeneration) return { validation: 'invalidated', reason: 'session_missing' };
+        if (liveGeneration !== binding.sessionGeneration) {
+          return { validation: 'invalidated', reason: 'generation_mismatch' };
+        }
+      } catch (error) {
+        return {
+          validation: 'unavailable',
+          reason: `session owner unavailable: ${error instanceof Error ? error.message : String(error)}`,
+        };
+      }
+    }
+    const workspaceRootPath = await getWorkspaceRootPathById(input.workspaceId);
+    const roleMemoryEnabled = (await getSetting('roleMemoryEnabled')) !== false;
+    const [ledgerResult, workingContextResult, compressionResult, memoryResult, policyResult] = await Promise.allSettled([
+      loadTaskLedgerSnapshot(input.workspaceId),
+      readTaskLedgerWorkingContext(input.workspaceId),
+      input.gatewayManager.rpc('sessions.compressionArtifact', { key: input.sessionKey }, 10_000),
+      input.gatewayManager.rpc('memory.surface', { limit: 100 }, 15_000),
+      input.gatewayManager.rpc<{ snapshot?: { policy?: SessionEffectivePolicy }; result?: { policy?: SessionEffectivePolicy } }>(
+        'session.activitySnapshot',
+        { workspaceId: input.workspaceId, sessionKey: input.sessionKey },
+        15_000,
+      ),
+    ]);
+    const compression = compressionResult.status === 'fulfilled'
+      ? compressionInputFromRpc(compressionResult.value)
+      : null;
+    const memorySurface = memoryResult.status === 'fulfilled'
+      ? memorySurfaceFromRpc(memoryResult.value)
+      : null;
+    const policyEnvelope = policyResult.status === 'fulfilled' ? policyResult.value : undefined;
+    const policy = policyEnvelope?.snapshot?.policy ?? (isRecord(policyEnvelope) && isRecord(policyEnvelope.result) ? (policyEnvelope.result as { policy?: SessionEffectivePolicy }).policy : undefined);
+    const nativeBackendOwnsCompaction = policy?.backend.effective.value?.ownsNativeCompaction === true;
+    const agentId = agentIdFromSessionKey(input.sessionKey) ?? binding.agentId;
+    const pack = buildLongSessionContinuityContext({
+      sessionKey: input.sessionKey,
+      workspaceId: input.workspaceId,
+      ...(workspaceRootPath ? { workspaceRootPath } : {}),
+      bindingRevision: binding.bindingRevision,
+      activeTaskNodeId: input.activeTaskNodeId ?? null,
+      taskRefs: binding.taskLedgerReferences.map((reference) => reference.taskLedgerNodeId),
+      taskLedger: ledgerResult.status === 'fulfilled' ? ledgerResult.value : null,
+      workingContext: workingContextResult.status === 'fulfilled' ? workingContextResult.value : null,
+      compression,
+      memorySurface,
+      roleMemoryEnabled,
+      nativeBackendOwnsCompaction,
+      agentId,
+      knowledgeReferences: input.knowledgeReferences.map((reference) => ({
+        id: reference.id,
+        title: reference.title,
+        lookup: reference.lookup,
+        ...(reference.corpus ? { corpus: reference.corpus } : {}),
+        ...(reference.freshnessLevel ? { freshnessLevel: reference.freshnessLevel } : {}),
+        ...(reference.matchedClaimStatus ? { matchedClaimStatus: reference.matchedClaimStatus } : {}),
+      })),
+      availability: {
+        taskLedger: ledgerResult.status === 'fulfilled',
+        workingContext: workingContextResult.status === 'fulfilled',
+        compression: compressionResult.status === 'fulfilled' && compression !== null,
+        memory: memoryResult.status === 'fulfilled' && memorySurface !== null,
+      },
+    });
+    const rendered = capContextText(
+      renderLongSessionContinuityContext(pack),
+      CONTEXT_FRAGMENT_LIMITS.continuityContextChars,
+    );
+    return { validation: 'current', pack, rendered };
+  } catch (error) {
+    logger.warn('[chat:continuity] context read failed; using legacy path', { error: String(error) });
+    return { validation: 'unavailable', reason: String(error) };
+  }
+}
+
+async function applyLongSessionContinuityContext(
+  message: string,
+  input: {
+    gatewayManager: GatewayManager;
+    sessionKey: string;
+    workspaceId: string;
+    activeTaskNodeId?: string;
+    knowledgeReferences: NormalizedKnowledgeReference[];
+  },
+): Promise<string | null> {
+  const read = await readLongSessionContinuityContext(input);
+  if (read.validation !== 'current' || !read.rendered) return null;
+  return message ? read.rendered + '\n\n' + message : read.rendered;
+}
+
 function applyToolUiResponseContract(message: string): string {
   if (!message.startsWith('Tool UI response:')) return message;
   const contract = [
@@ -208,6 +374,22 @@ function normalizeRuntimeIntensity(value: unknown): string | undefined {
 
 export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManager }): CompleteHostServiceRegistry['chat'] {
   return {
+    continuityPreview: async (payload) => {
+      const read = await readLongSessionContinuityContext({
+        gatewayManager,
+        sessionKey: typeof payload.sessionKey === 'string' ? payload.sessionKey.trim() : '',
+        workspaceId: typeof payload.workspaceId === 'string' ? payload.workspaceId.trim() : '',
+        activeTaskNodeId: typeof payload.activeTaskNodeId === 'string' ? payload.activeTaskNodeId : undefined,
+        knowledgeReferences: normalizeKnowledgeReferences(payload.knowledgeReferences),
+      });
+      return {
+        success: true,
+        validation: read.validation,
+        ...(read.pack ? { pack: read.pack } : {}),
+        ...(read.rendered ? { rendered: read.rendered } : {}),
+        ...(read.reason ? { reason: read.reason } : {}),
+      };
+    },
     sendWithMedia: async (payload) => {
       const body = isRecord(payload) ? payload as ChatSendWithMediaPayload : {};
       const sessionKey = typeof body.sessionKey === 'string' ? body.sessionKey : '';
@@ -266,7 +448,14 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         const knowledgeMode = normalizeKnowledgeMode(body.knowledgeMode);
         const knowledgeReferences = normalizeKnowledgeReferences(body.knowledgeReferences);
         let message = applyToolUiResponseContract(typeof body.message === 'string' ? body.message : '');
-        message = await applyTaskLedgerContext(message, body.workspaceId, body.activeTaskNodeId);
+        const continuityMessage = await applyLongSessionContinuityContext(message, {
+          gatewayManager,
+          sessionKey,
+          workspaceId: typeof body.workspaceId === 'string' ? body.workspaceId.trim() : '',
+          activeTaskNodeId: typeof body.activeTaskNodeId === 'string' ? body.activeTaskNodeId : undefined,
+          knowledgeReferences,
+        });
+        message = continuityMessage ?? await applyTaskLedgerContext(message, body.workspaceId, body.activeTaskNodeId);
         const imageAttachments: Array<Record<string, unknown>> = [];
         const fileReferences: string[] = [];
         const media = normalizeMedia(body.media);

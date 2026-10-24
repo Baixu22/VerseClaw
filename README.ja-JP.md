@@ -51,6 +51,8 @@ ClawGraph の実行 | 設定 → Agents、サイドバーのその他メニュ�
 | 構造化ドキュメント | VerseConf プラグインによる調査表・スライド構成・リビジョン・エクスポートの管理 | プラグイン有効化後の Agent ツールと成果物パネル |
 | 診断と復元 | セッション活動、プロセス、Trace、ランタイム状態、ストレージ使用量、復元操作の確認 | ワークスペースパネル、可観測性、設定 |
 
+明示的にバインドした長期セッションでは、Chat のアクティビティレールに安定したコーディネーター会話、既存の Task Ledger 参照、終端済みの完了バッチを表示し、worker の記録とタスクへ直接移動できます。バインド済みターンでは、受け入れ済み Task Ledger Working Context、CompressionArtifact メタデータ、現在モデル可視の accepted memory refs、typed knowledge refs から有界な `ContinuityContextPack/v1` を読み取ります。pending、candidate、期限切れ、取消、supersede、scope 外、未検証のモデル叙述は除外し、生の履歴は owner の on-demand refs に留めます。これらは既存 owner の投影であり、第二のタスク一覧、メモリストア、注入権限を作成しません。
+
 UI は日本語、英語、中国語、ロシア語に対応し、ライト・ダーク・システムテーマを選べます。一般設定の Basic / Advanced は診断情報の表示量を制御します。開発者モードを解除すると画像生成と Dreams の画面にもアクセスできます。
 
 <a id="workflows"></a>

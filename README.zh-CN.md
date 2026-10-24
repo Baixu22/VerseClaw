@@ -51,6 +51,8 @@ ClawGraph 执行有约束的流程 | 设置 → Agents；侧栏更多菜单 |
 | 结构化文档 | 用 VerseConf 插件管理研究表格、幻灯片大纲、修订与导出 | 启用插件后的 Agent 工具与产物面板 |
 | 诊断与恢复 | 查看会话活动、进程、Trace、运行时状态、存储占用和恢复操作 | 工作区面板、可观测性、设置 |
 
+显式绑定的长期会话会在 Chat 活动栏展示稳定主会话、现有 Task Ledger 引用和终态完成批次，并可直接打开 worker transcript 与任务记录。绑定会话每轮只从已接受的 Task Ledger Working Context、CompressionArtifact 元数据、当前模型可见的 accepted memory refs 与 typed knowledge refs 组装有界 `ContinuityContextPack/v1`；pending、candidate、过期、撤销、被 supersede、跨 scope 和未验证模型叙述会被排除，原始历史仅保留按需读取的 owner refs。这些内容只投影现有 owner，不创建第二任务列表、记忆库或注入 authority。
+
 界面支持中文、英文、日文和俄文，提供浅色、深色和跟随系统主题。通用设置中的 Basic / Advanced 控制诊断信息的展示深度；解锁开发者模式后还可进入图像生成与梦境页面。
 
 <a id="workflows"></a>

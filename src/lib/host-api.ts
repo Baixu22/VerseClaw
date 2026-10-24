@@ -153,6 +153,7 @@ import type {
   ChannelTargetsPayload,
   ChannelTypePayload,
   ChatSendWithMediaPayload,
+  ChatContinuityPreviewPayload,
   ClawGraphAbortPayload,
   ClawGraphCompileHostResult,
   ClawGraphCompilePayload,
@@ -1503,6 +1504,8 @@ export const hostApi = {
   },
   chat: {
     sendWithMedia: (input: ChatSendWithMediaPayload) => invokeHost('chat', 'sendWithMedia', input),
+    continuityPreview: (input: ChatContinuityPreviewPayload) =>
+      invokeHost('chat', 'continuityPreview', input),
   },
   codeReview: {
     run: (input: CodeReviewRunPayload): Promise<CodeReviewRunResult> => (
