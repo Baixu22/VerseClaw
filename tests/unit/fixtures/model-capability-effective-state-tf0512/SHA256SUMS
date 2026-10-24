@@ -1,0 +1,16 @@
+d452b32bca9edd42595e79b29c7e0575962fc515276f325146f70599a3afa8f9  tests/unit/fixtures/model-capability-effective-state-tf0512/01-focused-and-adjacent-tests.txt
+33e0620c40471fa91ba5c46c25ea3eeaa62c376e0c4881def669169ac6d9171c  tests/unit/fixtures/model-capability-effective-state-tf0512/02-typecheck.txt
+ea4407328b2988741a768c099b962358993d416dd1a1e99a8d074bfb2b285a81  tests/unit/fixtures/model-capability-effective-state-tf0512/03-lint-check.txt
+6e9c4fd5d3a5da6d723bca08db09b2be3e170bc322de7730732ab2e3d8afc6db  tests/unit/fixtures/model-capability-effective-state-tf0512/04-contract-check.txt
+37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa  tests/unit/fixtures/model-capability-effective-state-tf0512/05-no-bom.txt
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  tests/unit/fixtures/model-capability-effective-state-tf0512/06-diff-check.txt
+211ede1d058403ede1adfe61b52e94112d34c2a94f123dbaf47446d1ab84e123  tests/unit/fixtures/model-capability-effective-state-tf0512/07-scope-guard.txt
+342ba03d5f1dab95aec0d3cf32777ca4568ba76bd9b672c22be41f4992ce51cf  tests/unit/fixtures/model-capability-effective-state-tf0512/08-regenerate-acceptance.txt
+5ec8db90b511dbe4c02b6dda9ef1a9eeecdc04f354bfb754be942a1ca8559295  tests/unit/fixtures/model-capability-effective-state-tf0512/acceptance.json
+0e4a1a6f1f4b17b7d4771cd6700700a993f9ccf9afe1bac17e46d30ae83c36fc  tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json
+4c6dc4f4c874d9ace2fd91d1d556113c0f6a7a07c60271608135b47e910b238d  tests/unit/fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts
+d736905106f301a96ef08ec911d7ff9a5c2b4d52533c19ba382bb28835f8070d  tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json
+dd03e597289339ee87ec93d83d2b860c507d93f47a6d401ecf531f1a1b477ad7  tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json
+3265a4cf7112bd9d8d8c91150831b694420742cf051a9d95591db9506e67b91a  tests/unit/fixtures/model-capability-effective-state-tf0512/README.md
+16ba813ea78d9ff066d2b4f37f9c4947d55851cc222f8788b1b138c77b91a13b  tests/unit/fixtures/model-capability-effective-state-tf0512/run-verification.ps1
+279dd0def4ddc04fa8d22b57951027111b180538654c0af676497716c03d9774  tests/unit/fixtures/model-capability-effective-state-tf0512/verification.json

@@ -1,0 +1,75 @@
+{
+    "schemaVersion":  "ModelCapabilityEffectiveStateVerification/v1",
+    "taskForestNodeId":  "TF-0512",
+    "generatedAt":  "2026-10-24T09:27:47.7338008Z",
+    "driven_by":  "agent",
+    "actor":  "codex",
+    "status":  "pass",
+    "completionVerdict":  "complete",
+    "gates":  [
+                  {
+                      "id":  "01-focused-and-adjacent-tests",
+                      "command":  "TF-0512 plus model profile, context-engine and permission-contract suites",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/01-focused-and-adjacent-tests.txt",
+                      "outputSha256":  "d452b32bca9edd42595e79b29c7e0575962fc515276f325146f70599a3afa8f9"
+                  },
+                  {
+                      "id":  "02-typecheck",
+                      "command":  "pnpm run typecheck",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/02-typecheck.txt",
+                      "outputSha256":  "33e0620c40471fa91ba5c46c25ea3eeaa62c376e0c4881def669169ac6d9171c"
+                  },
+                  {
+                      "id":  "03-lint-check",
+                      "command":  "pnpm run lint:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/03-lint-check.txt",
+                      "outputSha256":  "ea4407328b2988741a768c099b962358993d416dd1a1e99a8d074bfb2b285a81"
+                  },
+                  {
+                      "id":  "04-contract-check",
+                      "command":  "pnpm run contract:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/04-contract-check.txt",
+                      "outputSha256":  "6e9c4fd5d3a5da6d723bca08db09b2be3e170bc322de7730732ab2e3d8afc6db"
+                  },
+                  {
+                      "id":  "05-no-bom",
+                      "command":  "node scripts/check-no-bom.mjs",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/05-no-bom.txt",
+                      "outputSha256":  "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa"
+                  },
+                  {
+                      "id":  "06-diff-check",
+                      "command":  "git diff --check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/06-diff-check.txt",
+                      "outputSha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  {
+                      "id":  "07-scope-guard",
+                      "command":  "TF-0512 scope guard",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/07-scope-guard.txt",
+                      "outputSha256":  "211ede1d058403ede1adfe61b52e94112d34c2a94f123dbaf47446d1ab84e123"
+                  },
+                  {
+                      "id":  "08-regenerate-acceptance",
+                      "command":  "regenerate acceptance from current disk facts",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/08-regenerate-acceptance.txt",
+                      "outputSha256":  "342ba03d5f1dab95aec0d3cf32777ca4568ba76bd9b672c22be41f4992ce51cf"
+                  }
+              ]
+}

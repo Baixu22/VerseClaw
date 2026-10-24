@@ -1,0 +1,3888 @@
+{
+  "schemaVersion": "ModelCapabilityProfile/v1",
+  "generatedAt": "2026-10-24T08:00:00.000Z",
+  "scope": {
+    "workspaceId": "workspace:component-graduation",
+    "roleId": null,
+    "sessionKey": "agent:main:tf0512"
+  },
+  "runtimeGeneration": "gateway-tf0512",
+  "observedAt": "2026-10-24T08:00:00.000Z",
+  "staticManifest": {
+    "schemaVersion": "ModelCapabilityStaticManifest/v1",
+    "sourceManifestVersion": "ComponentDispositionManifest/v1",
+    "sourceAuthorityManifestVersion": "ComponentAuthorityManifest/v1",
+    "generatedForDate": "2026-10-21",
+    "entries": [
+      {
+        "capabilityId": "component.context-runtime-kit",
+        "displayName": "Context Runtime Kit",
+        "owner": "context-runtime-kit",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.context-runtime-kit",
+          "label": "Context Runtime Kit",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.dcs-context-authority",
+        "displayName": "DCS context authority",
+        "owner": "dcs-context-authority",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.dcs-context-authority",
+          "label": "DCS context authority",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.dcs-assembler-adapter",
+        "displayName": "DCS Assembler compatibility adapter",
+        "owner": "dcs-assembler-compat-adapter",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.dcs-assembler-adapter",
+          "label": "DCS Assembler compatibility adapter",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.provider-request-guard",
+        "displayName": "Provider request guard",
+        "owner": "provider-request-guard",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.provider-request-guard",
+          "label": "Provider request guard",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.context-enhancement-gate",
+        "displayName": "Context enhancement gate",
+        "owner": "context-enhancement-gate",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.context-enhancement-gate",
+          "label": "Context enhancement gate",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.working-memory-context",
+        "displayName": "Workspace context",
+        "owner": "working-memory-context-source",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model context in ordinary Chat / task workspaces",
+        "toolIdentity": {
+          "id": "component.working-memory-context",
+          "label": "Workspace context",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.tool-registry-context",
+        "displayName": "Tool context",
+        "owner": "tool-registry-context-source",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model tool context in ordinary Chat / task workspaces",
+        "toolIdentity": {
+          "id": "component.tool-registry-context",
+          "label": "Tool context",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.vtoken-context",
+        "displayName": "VToken context source",
+        "owner": "TF-0496",
+        "disposition": "experiment",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.vtoken-context",
+          "label": "VToken context source",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.vtoken-bridge",
+        "displayName": "VToken bridge",
+        "owner": "TF-0496",
+        "disposition": "experiment",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.vtoken-bridge",
+          "label": "VToken bridge",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.compass-context",
+        "displayName": "COMPASS context source",
+        "owner": "TF-0511",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.compass-context",
+          "label": "COMPASS context source",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.c6-context-ladder",
+        "displayName": "C6 context ladder source",
+        "owner": "TF-0493",
+        "disposition": "experiment",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.c6-context-ladder",
+          "label": "C6 context ladder source",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.dcs-context-tools",
+        "displayName": "Context reading and search",
+        "owner": "dcs-fact-view-and-tools",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model context_read/search/understand tools in ordinary Chat",
+        "toolIdentity": {
+          "id": "component.dcs-context-tools",
+          "label": "Context reading and search",
+          "kind": "model-tool"
+        }
+      },
+      {
+        "capabilityId": "component.role-memory",
+        "displayName": "Agent memory cards",
+        "owner": "role-memory-card-governance",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "/agents memory cards",
+        "toolIdentity": {
+          "id": "component.role-memory",
+          "label": "Agent memory cards",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.native-file-memory-retrieval",
+        "displayName": "Native file memory retrieval",
+        "owner": "native-file-memory-retrieval",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.native-file-memory-retrieval",
+          "label": "Native file memory retrieval",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.runtime-memory-store",
+        "displayName": "Runtime Memory store",
+        "owner": "runtime-memory-store",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.runtime-memory-store",
+          "label": "Runtime Memory store",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.memory-candidate-queue",
+        "displayName": "Memory candidate queue",
+        "owner": "memory-candidate-queue",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.memory-candidate-queue",
+          "label": "Memory candidate queue",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.memory-embedding-provider",
+        "displayName": "Memory embedding provider",
+        "owner": "memory-embedding-provider",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.memory-embedding-provider",
+          "label": "Memory embedding provider",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.knowledge-review-authority",
+        "displayName": "Knowledge review",
+        "owner": "knowledge-review-authority",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "/knowledge review",
+        "toolIdentity": {
+          "id": "component.knowledge-review-authority",
+          "label": "Knowledge review",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.knowledge-retrieval-source",
+        "displayName": "Knowledge retrieval",
+        "owner": "knowledge-retrieval-source",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model knowledge context in ordinary Chat and Knowledge review",
+        "toolIdentity": {
+          "id": "component.knowledge-retrieval-source",
+          "label": "Knowledge retrieval",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.sekb-candidate-provider",
+        "displayName": "SEKB candidate provider",
+        "owner": "TF-0499",
+        "disposition": "experiment",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.sekb-candidate-provider",
+          "label": "SEKB candidate provider",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.v3-capability-catalog",
+        "displayName": "Capability discovery",
+        "owner": "v3-capability-catalog",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.v3-capability-catalog",
+          "label": "Capability discovery",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.skills-mcp-source-registry",
+        "displayName": "Skills and MCP connections",
+        "owner": "skills-mcp-source-registry",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "Skills and Channels settings, model MCP tools",
+        "toolIdentity": {
+          "id": "component.skills-mcp-source-registry",
+          "label": "Skills and MCP connections",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.tool-search-schema-expander",
+        "displayName": "Tool discovery",
+        "owner": "tool-search-schema-expander",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model tool discovery and schema expansion",
+        "toolIdentity": {
+          "id": "component.tool-search-schema-expander",
+          "label": "Tool discovery",
+          "kind": "model-tool"
+        }
+      },
+      {
+        "capabilityId": "component.coding-execution-backend",
+        "displayName": "Coding tools and file execution",
+        "owner": "coding-execution-backend",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model tool, shell and file execution",
+        "toolIdentity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.verseshell-execution-adapter",
+        "displayName": "VerseShell execution adapter",
+        "owner": "verseshell-execution-adapter",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.verseshell-execution-adapter",
+          "label": "VerseShell execution adapter",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.permission-approval-authority",
+        "displayName": "Approvals and action permissions",
+        "owner": "permission-approval-authority",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "tool approvals and host action permission decisions",
+        "toolIdentity": {
+          "id": "component.permission-approval-authority",
+          "label": "Approvals and action permissions",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.task-ledger",
+        "displayName": "Task ledger",
+        "owner": "task-ledger",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "/task-ledger",
+        "toolIdentity": {
+          "id": "component.task-ledger",
+          "label": "Task ledger",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.browser-session-owner",
+        "displayName": "Browser sessions",
+        "owner": "browser-session-owner",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/browser",
+        "toolIdentity": {
+          "id": "component.browser-session-owner",
+          "label": "Browser sessions",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.browser-task-projection",
+        "displayName": "Browser task projection owner",
+        "owner": "browser-task-projection-owner",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.browser-task-projection",
+          "label": "Browser task projection owner",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.observability-recorder",
+        "displayName": "Observability recorder",
+        "owner": "observability-recorder",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.observability-recorder",
+          "label": "Observability recorder",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.routing-memo-observation",
+        "displayName": "Routing Memo observation",
+        "owner": "TF-0511",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.routing-memo-observation",
+          "label": "Routing Memo observation",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.host-api-transport-owner",
+        "displayName": "Host API transport owner",
+        "owner": "host-api-transport-owner",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.host-api-transport-owner",
+          "label": "Host API transport owner",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.renderer-ui-surface",
+        "displayName": "Application shell and Settings",
+        "owner": "renderer-ui-surface",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "application shell and Settings",
+        "toolIdentity": {
+          "id": "component.renderer-ui-surface",
+          "label": "Application shell and Settings",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.retired-surface-registry",
+        "displayName": "Retired surface registry",
+        "owner": "retired-surface-registry",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.retired-surface-registry",
+          "label": "Retired surface registry",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "feature.coding-recovery",
+        "displayName": "Coding recovery and verification",
+        "owner": "coding-execution-backend",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model coding writes and auto verification",
+        "toolIdentity": {
+          "id": "feature.coding-recovery",
+          "label": "Coding recovery and verification",
+          "kind": "feature"
+        }
+      },
+      {
+        "capabilityId": "feature.symbol-lease",
+        "displayName": "Symbol lease",
+        "owner": "TF-0510",
+        "disposition": "retired",
+        "visibility": "retired",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "feature.symbol-lease",
+          "label": "Symbol lease",
+          "kind": "feature"
+        }
+      },
+      {
+        "capabilityId": "feature.patch-flow",
+        "displayName": "Patch flow",
+        "owner": "TF-0510",
+        "disposition": "retired",
+        "visibility": "retired",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "feature.patch-flow",
+          "label": "Patch flow",
+          "kind": "feature"
+        }
+      },
+      {
+        "capabilityId": "feature.worktree-isolation",
+        "displayName": "Worktree isolation",
+        "owner": "coding-execution-backend",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "advanced multi-agent coding isolation",
+        "toolIdentity": {
+          "id": "feature.worktree-isolation",
+          "label": "Worktree isolation",
+          "kind": "feature"
+        }
+      },
+      {
+        "capabilityId": "feature.agent-map",
+        "displayName": "AgentMap",
+        "owner": "TF-0511",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "feature.agent-map",
+          "label": "AgentMap",
+          "kind": "feature"
+        }
+      },
+      {
+        "capabilityId": "feature.runtime-shadow-governance",
+        "displayName": "Runtime shadow/governance leaves",
+        "owner": "TF-0511",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "feature.runtime-shadow-governance",
+          "label": "Runtime shadow/governance leaves",
+          "kind": "feature"
+        }
+      },
+      {
+        "capabilityId": "feature.local-control-plane",
+        "displayName": "Local control-plane reports",
+        "owner": "observability-recorder",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "feature.local-control-plane",
+          "label": "Local control-plane reports",
+          "kind": "feature"
+        }
+      },
+      {
+        "capabilityId": "surface.inbox",
+        "displayName": "Inbox",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/inbox",
+        "toolIdentity": {
+          "id": "surface.inbox",
+          "label": "Inbox",
+          "kind": "ui-route"
+        }
+      },
+      {
+        "capabilityId": "surface.cron",
+        "displayName": "Scheduled tasks and auto-approval",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/cron",
+        "toolIdentity": {
+          "id": "surface.cron",
+          "label": "Scheduled tasks and auto-approval",
+          "kind": "ui-route"
+        }
+      },
+      {
+        "capabilityId": "surface.remote-tasks",
+        "displayName": "Remote tasks",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/remote-tasks",
+        "toolIdentity": {
+          "id": "surface.remote-tasks",
+          "label": "Remote tasks",
+          "kind": "ui-route"
+        }
+      },
+      {
+        "capabilityId": "surface.clawgraph",
+        "displayName": "ClawGraph",
+        "owner": "coding-execution-backend",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/clawgraph",
+        "toolIdentity": {
+          "id": "surface.clawgraph",
+          "label": "ClawGraph",
+          "kind": "ui-route"
+        }
+      },
+      {
+        "capabilityId": "surface.code-review",
+        "displayName": "Code review",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/code-review",
+        "toolIdentity": {
+          "id": "surface.code-review",
+          "label": "Code review",
+          "kind": "ui-route"
+        }
+      },
+      {
+        "capabilityId": "surface.image-generation",
+        "displayName": "Image generation",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/image-generation",
+        "toolIdentity": {
+          "id": "surface.image-generation",
+          "label": "Image generation",
+          "kind": "ui-route"
+        }
+      },
+      {
+        "capabilityId": "surface.observability",
+        "displayName": "Observability",
+        "owner": "observability-recorder",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/observability",
+        "toolIdentity": {
+          "id": "surface.observability",
+          "label": "Observability",
+          "kind": "ui-route"
+        }
+      },
+      {
+        "capabilityId": "surface.dreams",
+        "displayName": "Dreams page",
+        "owner": "renderer-ui-surface",
+        "disposition": "retired",
+        "visibility": "retired",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "surface.dreams",
+          "label": "Dreams page",
+          "kind": "ui-route"
+        }
+      },
+      {
+        "capabilityId": "surface.ui-v2-showcase",
+        "displayName": "UI v2 showcase",
+        "owner": "renderer-ui-surface",
+        "disposition": "retired",
+        "visibility": "retired",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "surface.ui-v2-showcase",
+          "label": "UI v2 showcase",
+          "kind": "ui-route"
+        }
+      },
+      {
+        "capabilityId": "settings.developer-advanced",
+        "displayName": "Developer settings",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "Settings > Developer",
+        "toolIdentity": {
+          "id": "settings.developer-advanced",
+          "label": "Developer settings",
+          "kind": "setting"
+        }
+      },
+      {
+        "capabilityId": "settings.billing",
+        "displayName": "Billing and usage",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "Settings > Billing",
+        "toolIdentity": {
+          "id": "settings.billing",
+          "label": "Billing and usage",
+          "kind": "setting"
+        }
+      }
+    ]
+  },
+  "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
+  "effectiveDigest": "sha256:c3dc8964624f96c1d210beb972556cbf49f64c5b72a76a4c391d6a2a8a88acb0",
+  "entries": [
+    {
+      "capabilityId": "component.context-runtime-kit",
+      "static": {
+        "capabilityId": "component.context-runtime-kit",
+        "displayName": "Context Runtime Kit",
+        "owner": "context-runtime-kit",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.context-runtime-kit",
+          "label": "Context Runtime Kit",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.context-runtime-kit",
+          "label": "Context Runtime Kit",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.dcs-context-authority",
+      "static": {
+        "capabilityId": "component.dcs-context-authority",
+        "displayName": "DCS context authority",
+        "owner": "dcs-context-authority",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.dcs-context-authority",
+          "label": "DCS context authority",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.dcs-context-authority",
+          "label": "DCS context authority",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.dcs-assembler-adapter",
+      "static": {
+        "capabilityId": "component.dcs-assembler-adapter",
+        "displayName": "DCS Assembler compatibility adapter",
+        "owner": "dcs-assembler-compat-adapter",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.dcs-assembler-adapter",
+          "label": "DCS Assembler compatibility adapter",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.dcs-assembler-adapter",
+          "label": "DCS Assembler compatibility adapter",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.provider-request-guard",
+      "static": {
+        "capabilityId": "component.provider-request-guard",
+        "displayName": "Provider request guard",
+        "owner": "provider-request-guard",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.provider-request-guard",
+          "label": "Provider request guard",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.provider-request-guard",
+          "label": "Provider request guard",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.context-enhancement-gate",
+      "static": {
+        "capabilityId": "component.context-enhancement-gate",
+        "displayName": "Context enhancement gate",
+        "owner": "context-enhancement-gate",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.context-enhancement-gate",
+          "label": "Context enhancement gate",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.context-enhancement-gate",
+          "label": "Context enhancement gate",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.working-memory-context",
+      "static": {
+        "capabilityId": "component.working-memory-context",
+        "displayName": "Workspace context",
+        "owner": "working-memory-context-source",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model context in ordinary Chat / task workspaces",
+        "toolIdentity": {
+          "id": "component.working-memory-context",
+          "label": "Workspace context",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.working-memory-context",
+          "label": "Workspace context",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.tool-registry-context",
+      "static": {
+        "capabilityId": "component.tool-registry-context",
+        "displayName": "Tool context",
+        "owner": "tool-registry-context-source",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model tool context in ordinary Chat / task workspaces",
+        "toolIdentity": {
+          "id": "component.tool-registry-context",
+          "label": "Tool context",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.tool-registry-context",
+          "label": "Tool context",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.vtoken-context",
+      "static": {
+        "capabilityId": "component.vtoken-context",
+        "displayName": "VToken context source",
+        "owner": "TF-0496",
+        "disposition": "experiment",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.vtoken-context",
+          "label": "VToken context source",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.vtoken-context",
+          "label": "VToken context source",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.vtoken-bridge",
+      "static": {
+        "capabilityId": "component.vtoken-bridge",
+        "displayName": "VToken bridge",
+        "owner": "TF-0496",
+        "disposition": "experiment",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.vtoken-bridge",
+          "label": "VToken bridge",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.vtoken-bridge",
+          "label": "VToken bridge",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.compass-context",
+      "static": {
+        "capabilityId": "component.compass-context",
+        "displayName": "COMPASS context source",
+        "owner": "TF-0511",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.compass-context",
+          "label": "COMPASS context source",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.compass-context",
+          "label": "COMPASS context source",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.c6-context-ladder",
+      "static": {
+        "capabilityId": "component.c6-context-ladder",
+        "displayName": "C6 context ladder source",
+        "owner": "TF-0493",
+        "disposition": "experiment",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.c6-context-ladder",
+          "label": "C6 context ladder source",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.c6-context-ladder",
+          "label": "C6 context ladder source",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.dcs-context-tools",
+      "static": {
+        "capabilityId": "component.dcs-context-tools",
+        "displayName": "Context reading and search",
+        "owner": "dcs-fact-view-and-tools",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model context_read/search/understand tools in ordinary Chat",
+        "toolIdentity": {
+          "id": "component.dcs-context-tools",
+          "label": "Context reading and search",
+          "kind": "model-tool"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.dcs-context-tools",
+          "label": "Context reading and search",
+          "kind": "model-tool"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.role-memory",
+      "static": {
+        "capabilityId": "component.role-memory",
+        "displayName": "Agent memory cards",
+        "owner": "role-memory-card-governance",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "/agents memory cards",
+        "toolIdentity": {
+          "id": "component.role-memory",
+          "label": "Agent memory cards",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.role-memory",
+          "label": "Agent memory cards",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "propose",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "read",
+          "authorization": "requires-approval",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.native-file-memory-retrieval",
+      "static": {
+        "capabilityId": "component.native-file-memory-retrieval",
+        "displayName": "Native file memory retrieval",
+        "owner": "native-file-memory-retrieval",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.native-file-memory-retrieval",
+          "label": "Native file memory retrieval",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.native-file-memory-retrieval",
+          "label": "Native file memory retrieval",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.runtime-memory-store",
+      "static": {
+        "capabilityId": "component.runtime-memory-store",
+        "displayName": "Runtime Memory store",
+        "owner": "runtime-memory-store",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.runtime-memory-store",
+          "label": "Runtime Memory store",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.runtime-memory-store",
+          "label": "Runtime Memory store",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.memory-candidate-queue",
+      "static": {
+        "capabilityId": "component.memory-candidate-queue",
+        "displayName": "Memory candidate queue",
+        "owner": "memory-candidate-queue",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.memory-candidate-queue",
+          "label": "Memory candidate queue",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.memory-candidate-queue",
+          "label": "Memory candidate queue",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.memory-embedding-provider",
+      "static": {
+        "capabilityId": "component.memory-embedding-provider",
+        "displayName": "Memory embedding provider",
+        "owner": "memory-embedding-provider",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.memory-embedding-provider",
+          "label": "Memory embedding provider",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.memory-embedding-provider",
+          "label": "Memory embedding provider",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.knowledge-review-authority",
+      "static": {
+        "capabilityId": "component.knowledge-review-authority",
+        "displayName": "Knowledge review",
+        "owner": "knowledge-review-authority",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "/knowledge review",
+        "toolIdentity": {
+          "id": "component.knowledge-review-authority",
+          "label": "Knowledge review",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.knowledge-review-authority",
+          "label": "Knowledge review",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.knowledge-retrieval-source",
+      "static": {
+        "capabilityId": "component.knowledge-retrieval-source",
+        "displayName": "Knowledge retrieval",
+        "owner": "knowledge-retrieval-source",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model knowledge context in ordinary Chat and Knowledge review",
+        "toolIdentity": {
+          "id": "component.knowledge-retrieval-source",
+          "label": "Knowledge retrieval",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.knowledge-retrieval-source",
+          "label": "Knowledge retrieval",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.sekb-candidate-provider",
+      "static": {
+        "capabilityId": "component.sekb-candidate-provider",
+        "displayName": "SEKB candidate provider",
+        "owner": "TF-0499",
+        "disposition": "experiment",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.sekb-candidate-provider",
+          "label": "SEKB candidate provider",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.sekb-candidate-provider",
+          "label": "SEKB candidate provider",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.v3-capability-catalog",
+      "static": {
+        "capabilityId": "component.v3-capability-catalog",
+        "displayName": "Capability discovery",
+        "owner": "v3-capability-catalog",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.v3-capability-catalog",
+          "label": "Capability discovery",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.v3-capability-catalog",
+          "label": "Capability discovery",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.skills-mcp-source-registry",
+      "static": {
+        "capabilityId": "component.skills-mcp-source-registry",
+        "displayName": "Skills and MCP connections",
+        "owner": "skills-mcp-source-registry",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "Skills and Channels settings, model MCP tools",
+        "toolIdentity": {
+          "id": "component.skills-mcp-source-registry",
+          "label": "Skills and MCP connections",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.skills-mcp-source-registry",
+          "label": "Skills and MCP connections",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.tool-search-schema-expander",
+      "static": {
+        "capabilityId": "component.tool-search-schema-expander",
+        "displayName": "Tool discovery",
+        "owner": "tool-search-schema-expander",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model tool discovery and schema expansion",
+        "toolIdentity": {
+          "id": "component.tool-search-schema-expander",
+          "label": "Tool discovery",
+          "kind": "model-tool"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.tool-search-schema-expander",
+          "label": "Tool discovery",
+          "kind": "model-tool"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.coding-execution-backend",
+      "static": {
+        "capabilityId": "component.coding-execution-backend",
+        "displayName": "Coding tools and file execution",
+        "owner": "coding-execution-backend",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model tool, shell and file execution",
+        "toolIdentity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        },
+        "callableName": "exec"
+      },
+      "driver": {
+        "id": "openclaw-runtime",
+        "kind": "runtime",
+        "state": "ready",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "enabled",
+        "source": "runtime.tool-inventory",
+        "reason": null,
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "apply_patch",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "edit",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "exec",
+          "authorization": "allowed",
+          "grant": {
+            "grantId": "grant-tf0512-active",
+            "state": "active",
+            "expiresAt": "2026-10-24T08:05:00.000Z"
+          }
+        },
+        {
+          "actionId": "write",
+          "authorization": "requires-approval",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.verseshell-execution-adapter",
+      "static": {
+        "capabilityId": "component.verseshell-execution-adapter",
+        "displayName": "VerseShell execution adapter",
+        "owner": "verseshell-execution-adapter",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.verseshell-execution-adapter",
+          "label": "VerseShell execution adapter",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.verseshell-execution-adapter",
+          "label": "VerseShell execution adapter",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.permission-approval-authority",
+      "static": {
+        "capabilityId": "component.permission-approval-authority",
+        "displayName": "Approvals and action permissions",
+        "owner": "permission-approval-authority",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "tool approvals and host action permission decisions",
+        "toolIdentity": {
+          "id": "component.permission-approval-authority",
+          "label": "Approvals and action permissions",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.permission-approval-authority",
+          "label": "Approvals and action permissions",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.task-ledger",
+      "static": {
+        "capabilityId": "component.task-ledger",
+        "displayName": "Task ledger",
+        "owner": "task-ledger",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "/task-ledger",
+        "toolIdentity": {
+          "id": "component.task-ledger",
+          "label": "Task ledger",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.task-ledger",
+          "label": "Task ledger",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.browser-session-owner",
+      "static": {
+        "capabilityId": "component.browser-session-owner",
+        "displayName": "Browser sessions",
+        "owner": "browser-session-owner",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/browser",
+        "toolIdentity": {
+          "id": "component.browser-session-owner",
+          "label": "Browser sessions",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.browser-session-owner",
+          "label": "Browser sessions",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "click",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "navigate",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "screenshot",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "type",
+          "authorization": "requires-approval",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.browser-task-projection",
+      "static": {
+        "capabilityId": "component.browser-task-projection",
+        "displayName": "Browser task projection owner",
+        "owner": "browser-task-projection-owner",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.browser-task-projection",
+          "label": "Browser task projection owner",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.browser-task-projection",
+          "label": "Browser task projection owner",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.observability-recorder",
+      "static": {
+        "capabilityId": "component.observability-recorder",
+        "displayName": "Observability recorder",
+        "owner": "observability-recorder",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.observability-recorder",
+          "label": "Observability recorder",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.observability-recorder",
+          "label": "Observability recorder",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.routing-memo-observation",
+      "static": {
+        "capabilityId": "component.routing-memo-observation",
+        "displayName": "Routing Memo observation",
+        "owner": "TF-0511",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.routing-memo-observation",
+          "label": "Routing Memo observation",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.routing-memo-observation",
+          "label": "Routing Memo observation",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.host-api-transport-owner",
+      "static": {
+        "capabilityId": "component.host-api-transport-owner",
+        "displayName": "Host API transport owner",
+        "owner": "host-api-transport-owner",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.host-api-transport-owner",
+          "label": "Host API transport owner",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.host-api-transport-owner",
+          "label": "Host API transport owner",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.renderer-ui-surface",
+      "static": {
+        "capabilityId": "component.renderer-ui-surface",
+        "displayName": "Application shell and Settings",
+        "owner": "renderer-ui-surface",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "application shell and Settings",
+        "toolIdentity": {
+          "id": "component.renderer-ui-surface",
+          "label": "Application shell and Settings",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.renderer-ui-surface",
+          "label": "Application shell and Settings",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.retired-surface-registry",
+      "static": {
+        "capabilityId": "component.retired-surface-registry",
+        "displayName": "Retired surface registry",
+        "owner": "retired-surface-registry",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.retired-surface-registry",
+          "label": "Retired surface registry",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.retired-surface-registry",
+          "label": "Retired surface registry",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "feature.coding-recovery",
+      "static": {
+        "capabilityId": "feature.coding-recovery",
+        "displayName": "Coding recovery and verification",
+        "owner": "coding-execution-backend",
+        "disposition": "default",
+        "visibility": "user",
+        "userEntry": "model coding writes and auto verification",
+        "toolIdentity": {
+          "id": "feature.coding-recovery",
+          "label": "Coding recovery and verification",
+          "kind": "feature"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "feature.coding-recovery",
+          "label": "Coding recovery and verification",
+          "kind": "feature"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "feature.symbol-lease",
+      "static": {
+        "capabilityId": "feature.symbol-lease",
+        "displayName": "Symbol lease",
+        "owner": "TF-0510",
+        "disposition": "retired",
+        "visibility": "retired",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "feature.symbol-lease",
+          "label": "Symbol lease",
+          "kind": "feature"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "feature.symbol-lease",
+          "label": "Symbol lease",
+          "kind": "feature"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "feature.patch-flow",
+      "static": {
+        "capabilityId": "feature.patch-flow",
+        "displayName": "Patch flow",
+        "owner": "TF-0510",
+        "disposition": "retired",
+        "visibility": "retired",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "feature.patch-flow",
+          "label": "Patch flow",
+          "kind": "feature"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "feature.patch-flow",
+          "label": "Patch flow",
+          "kind": "feature"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "feature.worktree-isolation",
+      "static": {
+        "capabilityId": "feature.worktree-isolation",
+        "displayName": "Worktree isolation",
+        "owner": "coding-execution-backend",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "advanced multi-agent coding isolation",
+        "toolIdentity": {
+          "id": "feature.worktree-isolation",
+          "label": "Worktree isolation",
+          "kind": "feature"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "feature.worktree-isolation",
+          "label": "Worktree isolation",
+          "kind": "feature"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "feature.agent-map",
+      "static": {
+        "capabilityId": "feature.agent-map",
+        "displayName": "AgentMap",
+        "owner": "TF-0511",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "feature.agent-map",
+          "label": "AgentMap",
+          "kind": "feature"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "feature.agent-map",
+          "label": "AgentMap",
+          "kind": "feature"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "feature.runtime-shadow-governance",
+      "static": {
+        "capabilityId": "feature.runtime-shadow-governance",
+        "displayName": "Runtime shadow/governance leaves",
+        "owner": "TF-0511",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "feature.runtime-shadow-governance",
+          "label": "Runtime shadow/governance leaves",
+          "kind": "feature"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "feature.runtime-shadow-governance",
+          "label": "Runtime shadow/governance leaves",
+          "kind": "feature"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "feature.local-control-plane",
+      "static": {
+        "capabilityId": "feature.local-control-plane",
+        "displayName": "Local control-plane reports",
+        "owner": "observability-recorder",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "feature.local-control-plane",
+          "label": "Local control-plane reports",
+          "kind": "feature"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "feature.local-control-plane",
+          "label": "Local control-plane reports",
+          "kind": "feature"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "surface.inbox",
+      "static": {
+        "capabilityId": "surface.inbox",
+        "displayName": "Inbox",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/inbox",
+        "toolIdentity": {
+          "id": "surface.inbox",
+          "label": "Inbox",
+          "kind": "ui-route"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "surface.inbox",
+          "label": "Inbox",
+          "kind": "ui-route"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "surface.cron",
+      "static": {
+        "capabilityId": "surface.cron",
+        "displayName": "Scheduled tasks and auto-approval",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/cron",
+        "toolIdentity": {
+          "id": "surface.cron",
+          "label": "Scheduled tasks and auto-approval",
+          "kind": "ui-route"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "surface.cron",
+          "label": "Scheduled tasks and auto-approval",
+          "kind": "ui-route"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "surface.remote-tasks",
+      "static": {
+        "capabilityId": "surface.remote-tasks",
+        "displayName": "Remote tasks",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/remote-tasks",
+        "toolIdentity": {
+          "id": "surface.remote-tasks",
+          "label": "Remote tasks",
+          "kind": "ui-route"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "surface.remote-tasks",
+          "label": "Remote tasks",
+          "kind": "ui-route"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "surface.clawgraph",
+      "static": {
+        "capabilityId": "surface.clawgraph",
+        "displayName": "ClawGraph",
+        "owner": "coding-execution-backend",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/clawgraph",
+        "toolIdentity": {
+          "id": "surface.clawgraph",
+          "label": "ClawGraph",
+          "kind": "ui-route"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "surface.clawgraph",
+          "label": "ClawGraph",
+          "kind": "ui-route"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "surface.code-review",
+      "static": {
+        "capabilityId": "surface.code-review",
+        "displayName": "Code review",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/code-review",
+        "toolIdentity": {
+          "id": "surface.code-review",
+          "label": "Code review",
+          "kind": "ui-route"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "surface.code-review",
+          "label": "Code review",
+          "kind": "ui-route"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "surface.image-generation",
+      "static": {
+        "capabilityId": "surface.image-generation",
+        "displayName": "Image generation",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/image-generation",
+        "toolIdentity": {
+          "id": "surface.image-generation",
+          "label": "Image generation",
+          "kind": "ui-route"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "surface.image-generation",
+          "label": "Image generation",
+          "kind": "ui-route"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "surface.observability",
+      "static": {
+        "capabilityId": "surface.observability",
+        "displayName": "Observability",
+        "owner": "observability-recorder",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "/observability",
+        "toolIdentity": {
+          "id": "surface.observability",
+          "label": "Observability",
+          "kind": "ui-route"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "surface.observability",
+          "label": "Observability",
+          "kind": "ui-route"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "surface.dreams",
+      "static": {
+        "capabilityId": "surface.dreams",
+        "displayName": "Dreams page",
+        "owner": "renderer-ui-surface",
+        "disposition": "retired",
+        "visibility": "retired",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "surface.dreams",
+          "label": "Dreams page",
+          "kind": "ui-route"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "surface.dreams",
+          "label": "Dreams page",
+          "kind": "ui-route"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "surface.ui-v2-showcase",
+      "static": {
+        "capabilityId": "surface.ui-v2-showcase",
+        "displayName": "UI v2 showcase",
+        "owner": "renderer-ui-surface",
+        "disposition": "retired",
+        "visibility": "retired",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "surface.ui-v2-showcase",
+          "label": "UI v2 showcase",
+          "kind": "ui-route"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "surface.ui-v2-showcase",
+          "label": "UI v2 showcase",
+          "kind": "ui-route"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "settings.developer-advanced",
+      "static": {
+        "capabilityId": "settings.developer-advanced",
+        "displayName": "Developer settings",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "Settings > Developer",
+        "toolIdentity": {
+          "id": "settings.developer-advanced",
+          "label": "Developer settings",
+          "kind": "setting"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "settings.developer-advanced",
+          "label": "Developer settings",
+          "kind": "setting"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "settings.billing",
+      "static": {
+        "capabilityId": "settings.billing",
+        "displayName": "Billing and usage",
+        "owner": "renderer-ui-surface",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "Settings > Billing",
+        "toolIdentity": {
+          "id": "settings.billing",
+          "label": "Billing and usage",
+          "kind": "setting"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "settings.billing",
+          "label": "Billing and usage",
+          "kind": "setting"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    }
+  ],
+  "promptAddition": {
+    "text": "Capability positioning (authoritative):\nDefault: Agent memory cards, Application shell and Settings, Approvals and action permissions, Coding recovery and verification, Coding tools and file execution, Context reading and search, Knowledge retrieval, Knowledge review, Skills and MCP connections, Task ledger, Tool context, Tool discovery, Workspace context.\nAdvanced: Billing and usage, Browser sessions, ClawGraph, Code review, Developer settings, Image generation, Inbox, Observability, Remote tasks, Scheduled tasks and auto-approval, Worktree isolation.\nCurrent restrictions: Agent memory cards=disabled+requires-approval; Application shell and Settings=disabled; Approvals and action permissions=disabled; Billing and usage=disabled; Browser sessions=disabled+requires-approval; ClawGraph=disabled; Code review=disabled; Coding recovery and verification=disabled; Coding tools and file execution=requires-approval; Context reading and search=disabled; Developer settings=disabled; Image generation=disabled; Inbox=disabled; Knowledge retrieval=disabled; Knowledge review=disabled; Observability=disabled; Remote tasks=disabled; Scheduled tasks and auto-approval=disabled; Skills and MCP connections=disabled; Task ledger=disabled; Tool context=disabled; Tool discovery=disabled; Workspace context=disabled; Worktree isolation=disabled.\nInternal and retired capabilities are not user-facing promises. Do not claim a capability beyond these listed facts.",
+    "budget": {
+      "maxChars": 2000,
+      "usedChars": 1458,
+      "remainingChars": 542,
+      "chargedTo": "reserved-system-prompt",
+      "workContextCharsUsed": 0
+    },
+    "omittedCapabilityIds": []
+  },
+  "diagnostics": []
+}

@@ -1,4 +1,5 @@
 // @vitest-environment node
+import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { LegacyContextEngine } from "../../openclaw_runtime/src/context-engine/legacy.js";
 import type { OpenClawConfig } from "../../openclaw_runtime/src/config/types.openclaw.js";
@@ -398,5 +399,10 @@ describe("runtime effective capability adapter", () => {
 
     expect(composed.startsWith("Base system prompt\n\n")).toBe(true);
     expect(composed.endsWith(result.profile.promptAddition.text.trim())).toBe(true);
+  });
+  it("regenerates the acceptance pack from current disk facts", async () => {
+    await import("./fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts");
+    expect(fs.existsSync("tests/unit/fixtures/model-capability-effective-state-tf0512/acceptance.json")).toBe(true);
+    expect(fs.existsSync("tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json")).toBe(true);
   });
 });
