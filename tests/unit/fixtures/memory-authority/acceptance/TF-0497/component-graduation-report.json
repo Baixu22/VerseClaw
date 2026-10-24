@@ -17,9 +17,9 @@
   "driven_by": "agent",
   "expiry": null,
   "binding": {
-    "commit": "dd2bfeb83e9ebb3dc375e626f2fb34a0b573e2f2",
-    "tree": "e71677c37b60c9a0423d15338487fe1ac005450d",
-    "buildHash": "e3c7c8f1f3e6e2c3c331301c3e144abf57acb9958d6c1b49562eca23ea94902a",
+    "commit": "feb8c60fe4376cfe07f8e8c8d115a047793c12d7",
+    "tree": "78552b02b5d7217a4871b468548e5d1a44b52ab4",
+    "buildHash": "e8fe468870b19cf84f572443f8be7f4ec45775a32abda7df7e8082ae113eec1a",
     "runtimeGeneration": "memory-authority-tf0497",
     "provider": "fixture-provider",
     "model": "fixture-model",
@@ -133,7 +133,7 @@
       },
       {
         "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
-        "sha256": "60cc71475dba9beebf901df8986691fd78228db5e0d5f76fce84a0e5bce14e30",
+        "sha256": "cf838366d2ce0ba431131b92c43284fb67844dd780566381ad5423970179481f",
         "bytes": 18763
       }
     ]
@@ -147,7 +147,7 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
-          "sha256": "60cc71475dba9beebf901df8986691fd78228db5e0d5f76fce84a0e5bce14e30",
+          "sha256": "cf838366d2ce0ba431131b92c43284fb67844dd780566381ad5423970179481f",
           "bytes": 18763,
           "supportsVerdict": true
         }
@@ -156,7 +156,7 @@
   ],
   "recompute": {
     "verdict": "pass",
-    "inputDigest": "e3c7c8f1f3e6e2c3c331301c3e144abf57acb9958d6c1b49562eca23ea94902a",
+    "inputDigest": "e8fe468870b19cf84f572443f8be7f4ec45775a32abda7df7e8082ae113eec1a",
     "command": "& .\\openclaw_runtime\\node_modules\\.bin\\tsx.CMD tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts"
   }
 }
