@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "TemporaryArtifactPolicy/v1",
+  "taskForestNodeId": "TF-0497",
+  "tempRoot": "D:\\tmp",
+  "agentCreatedWorktree": "D:\\ClawX-work\\worktrees\\long-session-f67e-audit",
+  "action": "retained for audit provenance; no destructive cleanup performed",
+  "unrelatedWorktreesTouched": false,
+  "userDataTouched": false
+}
