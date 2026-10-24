@@ -1,6 +1,6 @@
 # E1 long-session follow-up scheduling evidence
 
-Source candidate: 41c0cbd9a138ab333c24a813fab85cc1591fafec (branch codex/long-session-implementation-20261023-r2).
+Source candidate: 5976c409fce7a107c82f994cd85d8f5a33ffc3de (branch codex/long-session-implementation-20261023-r2).
 
 - followup-schedule-receipts.json: the real Electron/Host/Gateway journey — bind a follow-up to one coordinator generation, watch the fence state, refuse a stale run, then separate pause from cancel.
 - pause-cancel-expiry-matrix.json: the scope matrix (unbound/malformed/expired/archived/deleted/reset/invalidated/unresolvable/current), pause vs cancel vs stop semantics, expiry/replay rules and the goal-wake/durable-helper default-off boundary.
