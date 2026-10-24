@@ -20,5 +20,5 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  tests/unit/fix
 0b6316e8014f369e8af4ebe1e772155b8d932acf215b7765c6cd0df53cd820eb  tests/unit/fixtures/shadow-controls-tf0511/run-verification.ps1
 f0e80439c080a798c71e77e548c1421f10dd7712bc75eef4c77dd45b6955e442  tests/unit/fixtures/shadow-controls-tf0511/scope-conflict.json
 210c0e8b5de1dc6a034c67c170e60853cb799b56a9be47778079c2bb6f991c92  tests/unit/fixtures/shadow-controls-tf0511/scope-guard.json
-faa70f8ccf05e5fdc0d23e2bc1c63226cae1d68898ded07ab4a05e25480fac5f  tests/unit/fixtures/shadow-controls-tf0511/task-forest-proposal.json
+8321413bbdb8ddd503dcf9c65b975b959305f438aa446149a93a13e78c0e6883  tests/unit/fixtures/shadow-controls-tf0511/task-forest-proposal.json
 63948786de237690d918e0da10ee3b1f4a1117374bd53f2f72bf3c6b23dee0be  tests/unit/fixtures/shadow-controls-tf0511/verification.json

@@ -133,8 +133,8 @@
   },
   {
     "file": "tests/unit/fixtures/shadow-controls-tf0511/task-forest-proposal.json",
-    "expected": "faa70f8ccf05e5fdc0d23e2bc1c63226cae1d68898ded07ab4a05e25480fac5f",
-    "actual": "faa70f8ccf05e5fdc0d23e2bc1c63226cae1d68898ded07ab4a05e25480fac5f",
+    "expected": "8321413bbdb8ddd503dcf9c65b975b959305f438aa446149a93a13e78c0e6883",
+    "actual": "8321413bbdb8ddd503dcf9c65b975b959305f438aa446149a93a13e78c0e6883",
     "status": "pass"
   },
   {
