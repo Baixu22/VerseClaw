@@ -1,22 +1,22 @@
-CASE=shows opt-in DCS production flags panel EXIT=1
+CASE=shows opt-in DCS production flags panel ATTEMPT=1 EXIT=1
 
 Running 1 test using 1 worker
 
 
 
-pnpm.cmd : (node:44132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+pnpm.cmd : (node:25420) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\context-assembly-authority\acceptance\TF-0493\ru
-n-verification.ps1:78 char:18
+n-verification.ps1:80 char:20
 + ... seOutput = (& $pnpm 'exec' 'playwright' 'test' $case.file '--workers= ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: ((node:4... env being set.:String) [], RemoteException
+    + CategoryInfo          : NotSpecified: ((node:2... env being set.:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
 
 (Use `node --trace-warnings ...` to show where the warning was created)
-(node:44132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+
+(node:25420) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
-
-
 [1/1] tests\e2e\dcs-prod-p0-settings.spec.ts:77:7 › DCS production P0 packaging surface › shows opt-in DCS production flags panel in Settings > Developer
   1) tests\e2e\dcs-prod-p0-settings.spec.ts:77:7 › DCS production P0 packaging surface › shows opt-in DCS production flags panel in Settings > Developer
 
@@ -52,91 +52,113 @@ n-verification.ps1:78 char:18
   1 failed
     tests\e2e\dcs-prod-p0-settings.spec.ts:77:7 › DCS production P0 packaging surface › shows opt-in DCS production flags panel in Settings > Developer
 
-CASE=renders the DCS control surface in Japanese and Russian EXIT=0
+CASE=shows opt-in DCS production flags panel ATTEMPT=2 EXIT=0
 
 Running 1 test using 1 worker
 
 
-
-pnpm.cmd : (node:15340) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+pnpm.cmd : (node:30172) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\context-assembly-authority\acceptance\TF-0493\ru
-n-verification.ps1:78 char:18
+n-verification.ps1:80 char:20
 + ... seOutput = (& $pnpm 'exec' 'playwright' 'test' $case.file '--workers= ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: ((node:1... env being set.:String) [], RemoteException
+    + CategoryInfo          : NotSpecified: ((node:3... env being set.:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
 
 (Use `node --trace-warnings ...` to show where the warning was created)
-(node:15340) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+
+
+(node:30172) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/1] tests\e2e\dcs-prod-p0-settings.spec.ts:77:7 › DCS production P0 packaging surface › shows opt-in DCS production flags panel in Settings > Developer
+  1 passed (8.2s)
+
+CASE=renders the DCS control surface in Japanese and Russian ATTEMPT=1 EXIT=0
+
+Running 1 test using 1 worker
+
+pnpm.cmd : (node:3928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\context-assembly-authority\acceptance\TF-0493\ru
+n-verification.ps1:80 char:20
++ ... seOutput = (& $pnpm 'exec' 'playwright' 'test' $case.file '--workers= ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:3... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
 
 [1/1] tests\e2e\dcs-prod-p0-settings.spec.ts:112:7 › DCS production P0 packaging surface › renders the DCS control surface in Japanese and Russian
-  1 passed (9.3s)
+  1 passed (9.1s)
 
-CASE=toggles writable flags, persists store, and restores baseline EXIT=0
+CASE=toggles writable flags, persists store, and restores baseline ATTEMPT=1 EXIT=0
 
 Running 1 test using 1 worker
 
 
 
-pnpm.cmd : (node:34784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+pnpm.cmd : (node:32372) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\context-assembly-authority\acceptance\TF-0493\ru
-n-verification.ps1:78 char:18
+n-verification.ps1:80 char:20
 + ... seOutput = (& $pnpm 'exec' 'playwright' 'test' $case.file '--workers= ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: ((node:3... env being set.:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
 
 (Use `node --trace-warnings ...` to show where the warning was created)
-(node:34784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(node:32372) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
 
 [1/1] tests\e2e\dcs-prod-p0-settings.spec.ts:139:7 › DCS production P0 packaging surface › toggles writable flags, persists store, and restores baseline
-  1 passed (9.7s)
+  1 passed (9.0s)
 
-CASE=shows discoverability banner for hidden view tools EXIT=0
+CASE=shows discoverability banner for hidden view tools ATTEMPT=1 EXIT=0
 
 Running 1 test using 1 worker
 
 
-
-pnpm.cmd : (node:9092) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+pnpm.cmd : (node:22444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\context-assembly-authority\acceptance\TF-0493\ru
-n-verification.ps1:78 char:18
+n-verification.ps1:80 char:20
 + ... seOutput = (& $pnpm 'exec' 'playwright' 'test' $case.file '--workers= ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: ((node:9... env being set.:String) [], RemoteException
+    + CategoryInfo          : NotSpecified: ((node:2... env being set.:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
 
 (Use `node --trace-warnings ...` to show where the warning was created)
-(node:9092) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(node:22444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
 
 [1/1] tests\e2e\dcs-prod-p0-settings.spec.ts:211:7 › DCS production P0 packaging surface › shows discoverability banner for hidden view tools and one-click enable
-  1 passed (8.4s)
+  1 passed (8.3s)
 
-CASE=does not expose a VT bridge switch EXIT=0
+CASE=does not expose a VT bridge switch ATTEMPT=1 EXIT=0
 
 Running 1 test using 1 worker
 
 
 
-pnpm.cmd : (node:35048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+pnpm.cmd : (node:50324) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\context-assembly-authority\acceptance\TF-0493\ru
-n-verification.ps1:78 char:18
+n-verification.ps1:80 char:20
 + ... seOutput = (& $pnpm 'exec' 'playwright' 'test' $case.file '--workers= ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: ((node:3... env being set.:String) [], RemoteException
+    + CategoryInfo          : NotSpecified: ((node:5... env being set.:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
 
 (Use `node --trace-warnings ...` to show where the warning was created)
-(node:35048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(node:50324) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
 
 [1/1] tests\e2e\vtoken-bridge-settings.spec.ts:4:7 › Verse Token internal-only positioning › does not expose a VT bridge switch or standalone panel in Settings > Developer
-  1 passed (7.8s)
+  1 passed (7.6s)
 

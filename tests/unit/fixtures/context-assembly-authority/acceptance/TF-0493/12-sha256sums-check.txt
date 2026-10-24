@@ -61,8 +61,8 @@
     },
     {
         "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/component-graduation-report.json",
-        "expected":  "a2741c787c01d901edf7f4a386f28bc7e5e9036a655d80625cf48f99fe0875d7",
-        "actual":  "a2741c787c01d901edf7f4a386f28bc7e5e9036a655d80625cf48f99fe0875d7",
+        "expected":  "c9126fe8d7507af3c70409148912d27d673abe53ee8f7d850b26f0d885629fd8",
+        "actual":  "c9126fe8d7507af3c70409148912d27d673abe53ee8f7d850b26f0d885629fd8",
         "status":  "pass"
     },
     {
@@ -73,14 +73,14 @@
     },
     {
         "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
-        "expected":  "78a567907e4f9d87b8d257bd388fd780a869df0838135068a7c643702d1f2cff",
-        "actual":  "78a567907e4f9d87b8d257bd388fd780a869df0838135068a7c643702d1f2cff",
+        "expected":  "e0ccf58e08e729726ab90ccf2c24e86df09be134e7c6b8e9ef31e7ebdd7cff41",
+        "actual":  "e0ccf58e08e729726ab90ccf2c24e86df09be134e7c6b8e9ef31e7ebdd7cff41",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
-        "expected":  "e80b6f929e988339a9c063cc5a2a82b80d4949619174821da4c5260711657f42",
-        "actual":  "e80b6f929e988339a9c063cc5a2a82b80d4949619174821da4c5260711657f42",
+        "expected":  "116dd3cf337e212dd4d11065cf100c54b5d65202ea06bc1785dec4a879ab4230",
+        "actual":  "116dd3cf337e212dd4d11065cf100c54b5d65202ea06bc1785dec4a879ab4230",
         "status":  "pass"
     },
     {

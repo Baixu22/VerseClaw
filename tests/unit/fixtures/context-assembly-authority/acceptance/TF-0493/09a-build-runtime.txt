@@ -11,35 +11,35 @@ A2UI bundle up to date; skipping.
 [diffs] build: node ../../scripts/build-diffs-viewer-runtime.mjs curated
 [diffs-language-pack] build: node ../../scripts/build-diffs-viewer-runtime.mjs full
 [build-all] tsdown
-[build-all] tsdown done in 8.76s
+[build-all] tsdown done in 8.56s
 [build-all] check-cli-bootstrap-imports
 CLI bootstrap import guard passed.
-[build-all] check-cli-bootstrap-imports done in 541ms
+[build-all] check-cli-bootstrap-imports done in 454ms
 [build-all] runtime-postbuild
 runtime-postbuild: plugin SDK root alias completed in 1ms
 [bundled-plugin-metadata] skipping missing skill path D:\ClawX-work\worktrees\long-session-program-r2\openclaw_runtime\
 extensions\acpx\skills (plugin acpx)
-runtime-postbuild: bundled plugin metadata completed in 415ms
-runtime-postbuild: official channel catalog completed in 18ms
-runtime-postbuild: bundled plugin runtime overlay completed in 701ms
+runtime-postbuild: bundled plugin metadata completed in 393ms
+runtime-postbuild: official channel catalog completed in 19ms
+runtime-postbuild: bundled plugin runtime overlay completed in 616ms
 runtime-postbuild: static extension assets completed in 0ms
-runtime-postbuild: stable root runtime imports completed in 379ms
-runtime-postbuild: stable root runtime aliases completed in 68ms
-runtime-postbuild: legacy root runtime compat aliases completed in 117ms
+runtime-postbuild: stable root runtime imports completed in 359ms
+runtime-postbuild: stable root runtime aliases completed in 61ms
+runtime-postbuild: legacy root runtime compat aliases completed in 111ms
 runtime-postbuild: legacy CLI exit compat chunks completed in 1ms
-[build-all] runtime-postbuild done in 1.89s
+[build-all] runtime-postbuild done in 1.77s
 [build-all] build-stamp
-[build-all] build-stamp done in 76ms
+[build-all] build-stamp done in 78ms
 [build-all] runtime-postbuild-stamp
-[build-all] runtime-postbuild-stamp done in 76ms
+[build-all] runtime-postbuild-stamp done in 88ms
 [build-all] write-cli-startup-metadata
 [cli-startup-metadata] skipped: CLI startup sources are unavailable in this pruned runtime.
-[build-all] write-cli-startup-metadata done in 304ms
+[build-all] write-cli-startup-metadata done in 92ms
 [build-all] write-cli-compat
 [cli-compat] skipped: legacy daemon CLI sources are unavailable in this pruned runtime.
-[build-all] write-cli-compat done in 77ms
-[build-all] phase timings: total 11.7s; slowest tsdown 8.76s; runtime-postbuild 1.89s; check-cli-bootstrap-imports 541m
-s; write-cli-startup-metadata 304ms; write-cli-compat 77ms; runtime-postbuild-stamp 76ms; build-stamp 76ms
+[build-all] write-cli-compat done in 81ms
+[build-all] phase timings: total 11.1s; slowest tsdown 8.56s; runtime-postbuild 1.77s; check-cli-bootstrap-imports 454m
+s; write-cli-startup-metadata 92ms; runtime-postbuild-stamp 88ms; write-cli-compat 81ms; build-stamp 78ms
 Building openclaw_runtime with esbuild...
   Source: D:\ClawX-work\worktrees\long-session-program-r2\openclaw_runtime\src
   Output: D:\ClawX-work\worktrees\long-session-program-r2\openclaw_runtime\dist
@@ -47,18 +47,18 @@ Building openclaw_runtime with esbuild...
 
   openclaw_runtime\dist\knowledge\sekb\index.js  367.4kb
 
-Done in 30ms
-  Done in 0.0s
+Done in 31ms
+  Done in 0.1s
 runtime-postbuild: plugin SDK root alias completed in 0ms
 [bundled-plugin-metadata] skipping missing skill path D:\ClawX-work\worktrees\long-session-program-r2\openclaw_runtime\
 extensions\acpx\skills (plugin acpx)
-runtime-postbuild: bundled plugin metadata completed in 380ms
-runtime-postbuild: official channel catalog completed in 19ms
-runtime-postbuild: bundled plugin runtime overlay completed in 812ms
-runtime-postbuild: static extension assets completed in 192ms
-runtime-postbuild: stable root runtime imports completed in 331ms
-runtime-postbuild: stable root runtime aliases completed in 32ms
-runtime-postbuild: legacy root runtime compat aliases completed in 103ms
+runtime-postbuild: bundled plugin metadata completed in 344ms
+runtime-postbuild: official channel catalog completed in 20ms
+runtime-postbuild: bundled plugin runtime overlay completed in 678ms
+runtime-postbuild: static extension assets completed in 182ms
+runtime-postbuild: stable root runtime imports completed in 327ms
+runtime-postbuild: stable root runtime aliases completed in 31ms
+runtime-postbuild: legacy root runtime compat aliases completed in 100ms
 runtime-postbuild: legacy CLI exit compat chunks completed in 0ms
 [canvas] copy: node scripts/copy-a2ui.mjs
-[runtime-build-smoke] gateway ready on port 65374
+[runtime-build-smoke] gateway ready on port 57022
