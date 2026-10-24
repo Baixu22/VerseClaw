@@ -1,10 +1,10 @@
 {
     "schemaVersion":  "MemoryAuthorityVerification/v1",
     "taskForestNodeId":  "TF-0497",
-    "generatedAt":  "2026-10-24T08:42:13.4657971Z",
+    "generatedAt":  "2026-10-24T08:51:21.8915634Z",
     "driven_by":  "agent",
     "actor":  "codex-long-session-r2",
-    "status":  "fail",
+    "status":  "pass",
     "gates":  [
                   {
                       "id":  "01-contract-tests",
@@ -12,7 +12,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/01-contract-tests.txt",
-                      "outputSha256":  "da5415ccfdb719448e8b1495e7c18fba939f5cc447569d3fc7754b0b4834bbf0"
+                      "outputSha256":  "9e4c2760303a0695673dcabb8d31ec4099a21345062ed9401a982d8c17814f51"
                   },
                   {
                       "id":  "02-memory-regression",
@@ -20,7 +20,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/02-memory-regression.txt",
-                      "outputSha256":  "321e0f451fae1d469d91d086a722ec092efb41d2ad00b5a6e751a3357c44fd49"
+                      "outputSha256":  "5b17f0711ca3151b2dd08e269ddd41ec9ce92da29243cb1b84bf5e681ad5fb1f"
                   },
                   {
                       "id":  "03-runtime-memory-tests",
@@ -28,7 +28,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/03-runtime-memory-tests.txt",
-                      "outputSha256":  "9718c1fc9f96afcd4977e3eb5bfbb514172d88a287a2b7fb883feee07257e917"
+                      "outputSha256":  "d6aa2df244af76e8de2f7f26b421bd6918b2933dab54b428d11e93b9def9c7a7"
                   },
                   {
                       "id":  "04-typecheck",
@@ -36,7 +36,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/04-typecheck.txt",
-                      "outputSha256":  "4998ee3a04e8ef7ffd6acd4e7f2e653042865b8c27b95f2f7383792a712a8bd3"
+                      "outputSha256":  "760a3e2474dc02c6c60906dff120502b352cde43a58fb56e75978daca3b40c14"
                   },
                   {
                       "id":  "05-lint-check",
@@ -84,23 +84,23 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/10-build-vite.txt",
-                      "outputSha256":  "4f8c07aaf1e07fee312f8ba00119171a23a58d79f1f0e4191743761d6e62448a"
+                      "outputSha256":  "10d986be6bbd4484a917fb04baa1f339bffe6661ba58199ac65e5325b2c9f289"
                   },
                   {
                       "id":  "11-component-graduation-gate",
                       "command":  "component-graduation-report.mts --report \u003cTF-0497 report\u003e --root . --current-default-mode opt-in --require-graduation",
-                      "exitCode":  1,
-                      "status":  "fail",
+                      "exitCode":  0,
+                      "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/11-component-graduation-gate.txt",
-                      "outputSha256":  "020bf335a293302de34ac9a0d27c6f95736e9156d475467d109d991ae565f6d5"
+                      "outputSha256":  "2b3d650a916654676f2721315017b987f5234bc6033f74a3db3bef9fedfe2e3f"
                   },
                   {
                       "id":  "12-sha256sums-check",
                       "command":  "PowerShell SHA256 recompute against SHA256SUMS",
-                      "exitCode":  1,
-                      "status":  "fail",
+                      "exitCode":  0,
+                      "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/12-sha256sums-check.txt",
-                      "outputSha256":  "77d9450a24a6627767957c95d965732c0909f19c46a7c089def2c5c8cc651c2f"
+                      "outputSha256":  "b0f9fda9d6c9388e6e22146e9d07e90f577a32de52840b988629883c4ff9d859"
                   }
               ],
     "sha256sums":  [
@@ -190,14 +190,14 @@
                        },
                        {
                            "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/README.md",
-                           "expected":  "09f91326af329acfb8333d03ee77f80e870d4eafaf6e6ec5c6e4c0157109ceef",
-                           "actual":  "09f91326af329acfb8333d03ee77f80e870d4eafaf6e6ec5c6e4c0157109ceef",
+                           "expected":  "eea998bb65dd548de307c32713e27242351c9af6be3538a4d347ed30c463d8fc",
+                           "actual":  "eea998bb65dd548de307c32713e27242351c9af6be3538a4d347ed30c463d8fc",
                            "status":  "pass"
                        },
                        {
                            "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/component-graduation-report.json",
-                           "expected":  "ecde158b594a3b004b6731dbf204260d01fbc8d99c3b6548dd4f34a5ef015bb4",
-                           "actual":  "ecde158b594a3b004b6731dbf204260d01fbc8d99c3b6548dd4f34a5ef015bb4",
+                           "expected":  "1596590f1578c690fd44c871b57930d24c3fbdc9fcbabb6a8b9622970536b582",
+                           "actual":  "1596590f1578c690fd44c871b57930d24c3fbdc9fcbabb6a8b9622970536b582",
                            "status":  "pass"
                        },
                        {
@@ -208,15 +208,15 @@
                        },
                        {
                            "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
-                           "expected":  "345ce63597be75aa970f04b0bef281af8a269804c445f41ddeba21e8fd930426",
-                           "actual":  "56e6c4b46f318ad5b40bd65b57f261d263fe3788b3a7a38b9978fee30423d048",
-                           "status":  "fail"
+                           "expected":  "60cc71475dba9beebf901df8986691fd78228db5e0d5f76fce84a0e5bce14e30",
+                           "actual":  "60cc71475dba9beebf901df8986691fd78228db5e0d5f76fce84a0e5bce14e30",
+                           "status":  "pass"
                        },
                        {
                            "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
-                           "expected":  "5bcd9f602e4f88668ef13f9c75d39a6c43537c0a6d566907bf8d3c9c89581441",
-                           "actual":  "ba002799f11d6e35c795b63b5e4cc784a3626d7b5067f4db9a0d36fee69c04fc",
-                           "status":  "fail"
+                           "expected":  "d652c5cc846cc80d7f40b2e1e483a5a1036c49c6218dd2ff0cdef68f34c7c9aa",
+                           "actual":  "d652c5cc846cc80d7f40b2e1e483a5a1036c49c6218dd2ff0cdef68f34c7c9aa",
+                           "status":  "pass"
                        },
                        {
                            "file":  "tests/unit/memory-authority-contract.test.ts",

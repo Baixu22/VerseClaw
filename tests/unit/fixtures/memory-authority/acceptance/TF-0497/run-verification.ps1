@@ -65,6 +65,8 @@ $results += Invoke-CapturedGate -Id '07-contract-check' -Arguments @($pnpm, 'run
 $results += Invoke-CapturedGate -Id '08-no-bom' -Arguments @('node', 'scripts/check-no-bom.mjs') -DisplayCommand 'node scripts/check-no-bom.mjs'
 $results += Invoke-CapturedGate -Id '09-diff-check' -Arguments @('git', 'diff', '--check', '--', 'openclaw_runtime/src/memory/memory-authority.ts', 'shared/dcs/prod-flags-catalog.ts', 'tests/unit/memory-authority-contract.test.ts', 'tests/unit/fixtures/memory-authority/acceptance/TF-0497/README.md', 'tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts', 'tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1') -DisplayCommand 'git diff --check -- <TF-0497 source and verifier paths>'
 $results += Invoke-CapturedGate -Id '10-build-vite' -Arguments @($pnpm, 'run', 'build:vite') -DisplayCommand 'pnpm run build:vite'
+& $tsx 'tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts' | Out-Null
+if ($LASTEXITCODE -ne 0) { throw 'TF-0497 evidence generation failed' }
 $results += Invoke-CapturedGate -Id '11-component-graduation-gate' -Arguments @(
   $tsx, 'scripts/component-graduation-report.mts',
   '--report', 'tests/unit/fixtures/memory-authority/acceptance/TF-0497/component-graduation-report.json',
@@ -84,7 +86,6 @@ $sumStatus = if ($sumChecks.Count -gt 0 -and @($sumChecks | Where-Object { $_.st
 $sumOutput = ($sumChecks | ConvertTo-Json -Depth 5) + [Environment]::NewLine + 'SHA256SUMS_STATUS=' + $sumStatus + [Environment]::NewLine
 $sumPath = Join-Path $outputDir '12-sha256sums-check.txt'
 [System.IO.File]::WriteAllText($sumPath, $sumOutput, $utf8NoBom)
-
 $results += [ordered]@{
   id = '12-sha256sums-check'
   command = 'PowerShell SHA256 recompute against SHA256SUMS'

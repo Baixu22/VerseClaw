@@ -85,14 +85,14 @@
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/README.md",
-        "expected":  "09f91326af329acfb8333d03ee77f80e870d4eafaf6e6ec5c6e4c0157109ceef",
-        "actual":  "09f91326af329acfb8333d03ee77f80e870d4eafaf6e6ec5c6e4c0157109ceef",
+        "expected":  "eea998bb65dd548de307c32713e27242351c9af6be3538a4d347ed30c463d8fc",
+        "actual":  "eea998bb65dd548de307c32713e27242351c9af6be3538a4d347ed30c463d8fc",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/component-graduation-report.json",
-        "expected":  "ecde158b594a3b004b6731dbf204260d01fbc8d99c3b6548dd4f34a5ef015bb4",
-        "actual":  "ecde158b594a3b004b6731dbf204260d01fbc8d99c3b6548dd4f34a5ef015bb4",
+        "expected":  "1596590f1578c690fd44c871b57930d24c3fbdc9fcbabb6a8b9622970536b582",
+        "actual":  "1596590f1578c690fd44c871b57930d24c3fbdc9fcbabb6a8b9622970536b582",
         "status":  "pass"
     },
     {
@@ -103,15 +103,15 @@
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
-        "expected":  "345ce63597be75aa970f04b0bef281af8a269804c445f41ddeba21e8fd930426",
-        "actual":  "56e6c4b46f318ad5b40bd65b57f261d263fe3788b3a7a38b9978fee30423d048",
-        "status":  "fail"
+        "expected":  "60cc71475dba9beebf901df8986691fd78228db5e0d5f76fce84a0e5bce14e30",
+        "actual":  "60cc71475dba9beebf901df8986691fd78228db5e0d5f76fce84a0e5bce14e30",
+        "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
-        "expected":  "5bcd9f602e4f88668ef13f9c75d39a6c43537c0a6d566907bf8d3c9c89581441",
-        "actual":  "ba002799f11d6e35c795b63b5e4cc784a3626d7b5067f4db9a0d36fee69c04fc",
-        "status":  "fail"
+        "expected":  "d652c5cc846cc80d7f40b2e1e483a5a1036c49c6218dd2ff0cdef68f34c7c9aa",
+        "actual":  "d652c5cc846cc80d7f40b2e1e483a5a1036c49c6218dd2ff0cdef68f34c7c9aa",
+        "status":  "pass"
     },
     {
         "file":  "tests/unit/memory-authority-contract.test.ts",
@@ -138,4 +138,4 @@
         "status":  "pass"
     }
 ]
-SHA256SUMS_STATUS=fail
+SHA256SUMS_STATUS=pass

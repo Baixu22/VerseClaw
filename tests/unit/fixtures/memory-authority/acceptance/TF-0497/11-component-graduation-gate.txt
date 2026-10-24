@@ -1,35 +1,14 @@
 {
   "validation": {
-    "ok": false,
-    "issues": [
-      {
-        "code": "artifact_hash_mismatch",
-        "message": "Artifact hash does not match report: tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
-        "path": "binding.artifacts[20]"
-      },
-      {
-        "code": "artifact_hash_mismatch",
-        "message": "Artifact hash does not match report: tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
-        "path": "binding.artifacts[21]"
-      },
-      {
-        "code": "artifact_hash_mismatch",
-        "message": "Artifact hash does not match report: tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
-        "path": "evidence[0].artifacts[0]"
-      },
-      {
-        "code": "recompute_verdict_mismatch",
-        "message": "Report declares pass; recomputed verdict is fail",
-        "path": "recompute.verdict"
-      }
-    ],
+    "ok": true,
+    "issues": [],
     "requiredEvidence": [
       "contract"
     ],
     "missingEvidence": [],
-    "graduationPass": false,
+    "graduationPass": true,
     "countsAsGraduated": false,
-    "recomputedVerdict": "fail",
+    "recomputedVerdict": "pass",
     "defaultChangedAgainstAuthority": false,
     "evidenceGradeDetected": "unit-test"
   },
@@ -39,10 +18,10 @@
     "reason": "default mode is unchanged"
   },
   "taskForestDone": null,
-  "ok": false,
+  "ok": true,
   "reportPath": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\tests\\unit\\fixtures\\memory-authority\\acceptance\\TF-0497\\component-graduation-report.json",
   "expected": {
-    "recomputeInputDigest": "9fe99b946bcd9b08e021295fc93ae102236f2a32115b5ae2dbb79833d81d0c2c"
+    "recomputeInputDigest": "e3c7c8f1f3e6e2c3c331301c3e144abf57acb9958d6c1b49562eca23ea94902a"
   },
   "currentDefaultMode": "opt-in",
   "requireGraduation": true
