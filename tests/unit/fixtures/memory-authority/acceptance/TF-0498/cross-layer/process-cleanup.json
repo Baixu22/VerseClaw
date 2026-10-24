@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "ProcessCleanupReceipt/v1",
+  "taskForestNodeId": "TF-0498",
+  "generatedAt": "2026-10-24T09:33:02.4182150Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "electronSurvivors": 0,
+  "playwrightSurvivors": 0,
+  "vitestSurvivors": 0,
+  "nodeSurvivors": 0
+}
