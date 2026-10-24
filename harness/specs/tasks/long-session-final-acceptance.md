@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-final-acceptance
 title: 聚合独立验收、能力声明与后续推广边界
 program: long-session-development-20261022
@@ -9,6 +9,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 以当前候选闭合长期会话开发，确保所有能力、后端范围、NO-GO 和未测边界与产品宣称一致。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
+diffBase: 20b92de01
 dependsOnTasks:
   - F2
 touchedAreas:
@@ -19,6 +20,10 @@ touchedAreas:
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
+  - README.ru-RU.md
+  - artifacts/capability-claims/status-table.json
+  - scripts/long-session-final-acceptance.mjs
+  - package.json
   - shared/capability-claims.ts
   - shared/product-semantics.ts
   - scripts/repository-artifacts.json
@@ -45,9 +50,13 @@ requiredTests:
   - pnpm run comms:compare
   - pnpm run repo:artifacts:check
   - pnpm run repo:evidence:check
+  - node scripts/check-capability-claims.mjs
+  - pnpm long-session:f3:acceptance -- --gates <gate receipt>
+  - pnpm long-session:f3:acceptance:check
   - pnpm harness validate --spec harness/specs/tasks/long-session-final-acceptance.md
   - git diff --check
 plannedTests:
+  - pnpm long-session:f3:acceptance:check
 
 acceptance:
   - 所有六阶段 criterion 逐项读盘；16 个执行节点各有 current candidate/input/command/exit/counts/artifact/negative proof，历史证据不重签。

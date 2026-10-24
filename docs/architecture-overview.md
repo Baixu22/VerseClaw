@@ -61,6 +61,7 @@ Before provider submission, the embedded runner refreshes `ModelCapabilityProfil
 | Concept | What it represents | What it does not imply |
 | --- | --- | --- |
 | Chat/session | Immediate conversation and its execution history | Automatic decomposition into a planned multi-role workflow |
+| Long-session coordinator | Explicitly bound session tree whose binding, Task Ledger refs and physical generation survive restart, plus a terminal completion batch rail | A second task/memory/scheduler owner, or automatic promotion of ordinary Chat into a project manager |
 | Task Ledger / explicit Task Loop | User-facing goals, dependencies, evidence and deliberately started bounded execution | The internal runtime scheduler or automatic promotion from every chat |
 | ClawGraph / runtime Workboard | YAML workflow inspection/execution surfaces and internal scheduling responsibilities | Interchangeability with the user-facing task ledger |
 

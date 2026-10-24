@@ -1376,6 +1376,57 @@ export const CAPABILITY_CLAIM_MATRIX = [
     ],
     relatedTaskIds: ['P1-05', 'P1-09'],
   }),
+  entry({
+    id: 'capability-45',
+    reportItem: 45,
+    title: 'Explicit long-session coordinator keeps one durable piece of work across configured lifecycle actions',
+    classification: 'TP-RUN + PARTIAL',
+    claim: {
+      safe: 'An explicitly bound coordinator session persists its Task Ledger references and physical generation across app/Gateway restart, exposes completion batches in the Chat activity rail, reads a bounded accepted-only ContinuityContextPack/v1 before a bound turn, reclaims owned terminals/browsers/managed ports on delete, and keeps scheduled follow-ups fenced to the bound generation.',
+      unsafe: 'Every chat becomes a durable project manager that resumes provider-native threads across vendors, compresses context without loss, or survives publication/default changes.',
+    },
+    evidence: [
+      evidence('real-runtime', 'Six built Electron/Host/Gateway restart journeys (bind, restart recovery, second-workspace isolation, handoff/fork/compact, revoke+archive+terminal reclaim, delete+late-event refusal) passed with 3 negatives and zero cross-scope leaks.', [
+        'harness/specs/fixtures/long-session-development/f1/restart-journey-results.json',
+        'harness/specs/fixtures/long-session-development/f1/host-runtime-receipts.json',
+      ]),
+      evidence('e2e', 'A 333-session / 57.16 MiB built Electron run kept load at 752 ms, switch P95 at 176.1 ms, long-session open at 137.3 ms with no long task over 50 ms, 60 flat idle-RSS samples and 50 owner-lifecycle rounds with zero scope residue.', [
+        'harness/specs/fixtures/long-session-development/f2/long-use-before-after.json',
+        'harness/specs/fixtures/long-session-development/f2/rss-and-owner-counts.json',
+      ]),
+      evidence('unit-test', 'Completion continuation delivers one meaningful prompt per batch, refuses a concurrent lease and issues no duplicate refresh on a replayed run.ended; hidden surfaces issue zero background polls.', [
+        'harness/specs/fixtures/long-session-development/f2/notification-budget.json',
+        'tests/unit/long-session-long-use-budget.test.ts',
+      ]),
+      evidence('documented-boundary', 'The product-semantics guardrail records the explicit-boundary, single-owner rules and the keep-baseline continuity decision.', [
+        'docs/clawx-product-semantics.md',
+        'harness/specs/fixtures/long-session-development/d3/continuity-strategy-decision.json',
+      ]),
+    ],
+    userPath: {
+      surface: 'Chat activity rail (explicitly bound coordinator session)',
+      entrypoint: 'Bind a coordinator session, send work, restart, and follow the completion batch',
+      boundary: 'Ordinary Chat is not auto-promoted; the C4 rail requires an explicit binding and the task facts stay in Task Ledger.',
+    },
+    runtimeProof: {
+      status: 'partial',
+      summary: 'The Windows x64 local loop is proven through real Electron/Host/Gateway journeys plus a long-use measurement; native-backend/provider continuity, macOS/Linux and the packaged build stay unmeasured.',
+      refs: [
+        'harness/specs/fixtures/long-session-development/f1/verification-receipt.json',
+        'harness/specs/fixtures/long-session-development/f2/verification-receipt.json',
+      ],
+      lastVerifiedAt: '2026-10-24',
+    },
+    knownExclusions: [
+      'No live-provider or native-backend thread continuity claim: no authorized provider credential was available.',
+      'No asynchronous compression promotion: D2/D3 stayed EVIDENCE_INSUFFICIENT and keep-baseline.',
+      'No macOS/Linux or packaged-build long-use measurement.',
+      'No real-human long-term use: every artifact is agent-driven and the fixture is synthetic; nothing here is human-usage evidence.',
+      'No universal resource cleanup: worktree ownership that cannot be resolved stays reported for review.',
+      'No cross-session/global automatic project management or independent Project lifecycle.',
+    ],
+    relatedTaskIds: ['TF-0548', 'TF-0563'],
+  }),
 ] satisfies CapabilityClaimMatrixEntry[];
 
 export function findCapabilityClaim(id: string): CapabilityClaimMatrixEntry | undefined {

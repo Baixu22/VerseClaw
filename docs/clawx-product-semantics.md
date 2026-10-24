@@ -152,8 +152,8 @@ Shared in-process writers run serially unless an explicit write-set path is
 provided; worktree isolation records whether the actual backend is `git` or the
 in-process fallback. A reset/stop racing admission is rechecked after spawn and
 the child stop is requested rather than projecting a phantom completion. The C4
-entry is still required before users can operate this capability from the main
-product surface.
+entry is the Chat activity rail projection plus completion batches; it decides no
+task status and cannot admit a second writer.
 
 Completion continuation reads the existing subagent registry and delivery outbox rather than starting a second scheduler. Workers of one orchestration run form a bounded batch keyed by `completion-batch:<orchestrationRunId>:<requesterSessionKey>`; completed, failed, cancelled and missing workers remain distinct, and a deferred verifier must also become terminal before the team bundle can be exposed. Delivery remains at-least-once, but the deterministic key, per-run delivery state and requester physical-generation pin make replay idempotent and prevent a reset/handoff generation from accepting stale work. The batch receipt reports task completion authority as `none`; final model text alone is not delivery evidence. The user-visible C4 entry is still required before this runtime capability becomes an operable product surface.
 
@@ -162,6 +162,55 @@ The C4 long-session surface reuses the existing Sidebar and Chat activity rail r
 Long-session continuity strategy stays on the baseline: the paired evaluation contract froze a 30-pair agent-driven workload and measured only structural projection behaviour because no live provider was authorized, so no continuous-compression, value-pruning or summary-tree path is default-enabled, promoted or implied by the long-session surface. Any future promotion needs a live-provider sample that clears the published fidelity, safety, cost and P95 gates plus its own implementation spec, rollback and failure fallback; see [d3 decision evidence](../harness/specs/fixtures/long-session-development/d3/continuity-strategy-decision.json).
 
 Memory is one reviewable product concept. Role Memory cards, Runtime Memory facts/timelines/episodes, the candidate queue, embedding indexes, native-file retrieval and Dreaming caches have distinct implementation lifecycle and storage owners, but they are not separate product memories. Candidates and derived caches are never retrievable or injectable as accepted memory; role-card review or the owning Runtime Memory acceptance path must promote them first. The canonical domain matrix and migration boundary live in [memory-control-plane.md](dev/memory-control-plane.md). SEKB remains a Knowledge Runtime Lessons source and does not own a memory store.
+
+## Final acceptance scope (F3)
+
+The long-session capability is accepted inside one explicit boundary on Windows x64:
+a single bound coordinator Workspace/Assistant/session tree, the existing Task Ledger
+as the only task-fact owner, and the existing completion, admission, resource and
+scheduler owners. The peer evidence is re-read from disk, not aggregated from
+summaries: `harness/specs/fixtures/long-session-development/f3/acceptance.json` and
+`acceptance.md` list every execution node with its candidate, commands, exit codes,
+counts, artifacts and negative proof.
+
+What the accepted boundary proves:
+
+- Lifecycle actions stay distinct (abort, stop, archive, restore, reset, delete, fork,
+  handoff, schedule pause); archive/restore run through the runtime lifecycle owner
+  with an operation journal and retry identity, and a late event cannot resurrect a
+  deleted or rotated generation.
+- Session effective policy reports configured, effective and actual backend as
+  separate facts, and unsupported or unknown combos stay visible instead of
+  degrading silently.
+- An explicitly bound coordinator keeps its binding, physical generation and Task
+  Ledger references across app/Gateway restart; delegation admission records
+  accepted only, and the C4 activity rail shows terminal completion batches without
+  creating a second task list.
+- Context for a bound turn is an accepted-only, bounded `ContinuityContextPack/v1`
+  that projects existing owners. No second memory store or injection authority.
+- Cron/Workboard follow-ups bound to a coordinator refuse an expired, missing,
+  unverifiable or generation-mismatched schedule before execution, and Main suppresses
+  a stale schedule as `enabled=false` rather than deleting it.
+- Read-only UI and diagnostic surfaces issue zero work while hidden; delete reclaims
+  owned terminals, browsers and managed ports through their existing owners, with
+  unresolved ownership reported for review rather than reported as success.
+
+What the accepted boundary explicitly does NOT claim:
+
+- **No live-provider or native-backend thread continuity.** D2 is
+  `EVIDENCE_INSUFFICIENT` and D3 is `keep-baseline`: with no authorized provider
+  credential the quality, cost and P95 promotion gates are unmeasured, so no
+  asynchronous compression strategy, scoped-opt-in, or cross-vendor thread resumption
+  is promoted. Manual/native compaction stays the default.
+- **No macOS, Linux or packaged-build long-use measurement.** The 333-session /
+  57.16 MiB fixture and its five-minute idle-RSS curve are a Windows x64
+  built-`dist-electron` sample.
+- **No real-human long use.** Every artifact is agent-driven and the fixture is
+  synthetic; nothing here is human-usage evidence.
+- **No publication, product-lock or default change, and no independent Project or
+  cloud/VPS/daemon execution scope.** Those remain separate owner decisions.
+- **No universal resource authority.** Worktree ownership that cannot be resolved
+  stays `kept`/failed with a recovery id; no second registry is created.
 
 ## Windows x64 Controlled Preview
 
