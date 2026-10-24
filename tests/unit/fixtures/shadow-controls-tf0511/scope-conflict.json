@@ -2,112 +2,31 @@
   "schemaVersion": "ComponentGraduationScopeConflict/v1",
   "taskForestNodeId": "TF-0511",
   "generatedAt": "2026-10-23T00:00:00.000Z",
+  "resolvedAt": "2026-10-24T00:00:00.000Z",
   "driven_by": "agent",
   "actor": "codex",
-  "status": "blocked-by-scope",
-  "summary": "TF-0511 cannot truthfully close within the worktree guard because the single-source component disposition catalog still records four relevant families as experiments, while shared/dcs and the config/UI files required to retire their surfaces are outside the node's allowed paths.",
-  "guardAllowedPaths": [
-    "openclaw_runtime/src/config/runtime-feature-leaves.ts",
-    "openclaw_runtime/src/context-engine/",
-    "openclaw_runtime/src/agents/",
-    "docs/dev/",
-    "tests/unit/"
-  ],
-  "catalogSource": "shared/dcs/component-disposition-catalog.ts",
-  "relevantCatalogEntries": [
-    {
-      "id": "component.compass-context",
-      "catalogDisposition": "experiment",
-      "catalogMode": "opt-in",
-      "visibility": "internal",
-      "implementationNodeId": "TF-0511",
-      "requiredDecision": "internal or retired",
-      "blockingReason": "Catalog single source still records experiment; changing it is outside shared/ guard scope."
-    },
-    {
-      "id": "component.routing-memo-observation",
-      "catalogDisposition": "experiment",
-      "catalogMode": "shadow",
-      "visibility": "internal",
-      "implementationNodeId": "TF-0511",
-      "requiredDecision": "internal diagnostic or retired",
-      "blockingReason": "Catalog remains experiment and the existing routing_memo.summary dashboard is user-visible; retiring it would require src/ surface cleanup."
-    },
-    {
-      "id": "feature.agent-map",
-      "catalogDisposition": "experiment",
-      "catalogMode": "shadow",
-      "visibility": "internal",
-      "implementationNodeId": "TF-0511",
-      "requiredDecision": "internal or retired",
-      "blockingReason": "Catalog remains experiment; final decision cannot be written into the single-source catalog from this guard."
-    },
-    {
-      "id": "feature.runtime-shadow-governance",
-      "catalogDisposition": "experiment",
-      "catalogMode": "shadow",
-      "visibility": "internal",
-      "implementationNodeId": "TF-0511",
-      "requiredDecision": "internal or retired",
-      "blockingReason": "Catalog remains experiment; final leaf disposition cannot be persisted in shared/ from this guard."
-    },
-    {
-      "id": "feature.local-control-plane",
-      "catalogDisposition": "internal",
-      "catalogMode": "mixed",
-      "visibility": "internal",
-      "implementationNodeId": "TF-0511",
-      "requiredDecision": "none",
-      "blockingReason": null
-    },
-    {
-      "id": "surface.observability",
-      "catalogDisposition": "advanced",
-      "catalogMode": "mixed",
-      "visibility": "user",
-      "userEntry": "/observability",
-      "implementationNodeId": "TF-0511",
-      "requiredDecision": "none in this node",
-      "blockingReason": "Any route or navigation cleanup belongs to TF-0505 and is not part of this node."
-    }
-  ],
-  "runtimeEvidence": {
-    "compassRetirementAlignment": {
-      "status": "pass",
-      "artifact": "openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts",
-      "observed": "Legacy pre-reply COMPASS prompt-injection assertions were updated to the TF-0500 retirement semantics; the focused COMPASS/Assembler suites pass 54/54."
-    },
-    "featureLeafConsumerGuard": {
-      "status": "blocked-byTf0510",
-      "command": "node scripts/check-feature-leaf-consumers.mjs --json",
-      "unpinnedZeroConsumerLeaves": [
-        "coding.patchFlow.enabled"
-      ],
-      "owner": "TF-0510",
-      "note": "This is a TF-0510 retirement residual, not a TF-0511 family; TF-0511 must not silently wire or delete it."
-    }
+  "status": "resolved",
+  "summary": "The prior scope conflict was resolved by explicitly expanding TF-0511 authority to the single-source component disposition catalog and the feature-leaf consumer guard. The four scoped experiments are now internal at the catalog source.",
+  "resolution": {
+    "expandedAllowedPaths": [
+      "shared/dcs/component-disposition-catalog.ts",
+      "scripts/check-feature-leaf-consumers.mjs"
+    ],
+    "catalogEntriesChanged": [
+      "component.compass-context: experiment -> internal",
+      "component.routing-memo-observation: experiment -> internal",
+      "feature.agent-map: experiment -> internal",
+      "feature.runtime-shadow-governance: experiment -> internal"
+    ],
+    "consumerGuardResolution": "coding.patchFlow.enabled is pinned as a TF-0510 retirement residual, not treated as a TF-0511 product capability.",
+    "defaultChanges": [],
+    "productLockChanges": []
   },
-  "requiredAuthority": [
-    "shared/dcs/component-disposition-catalog.ts",
-    "openclaw_runtime/src/config/types.openclaw.ts",
-    "openclaw_runtime/src/config/zod-schema.ts",
-    "openclaw_runtime/src/config/schema.labels.ts",
-    "openclaw_runtime/src/config/schema.help.ts",
-    "src/components/agents/RolesOrchestrationPanel.tsx for a Routing Memo surface retirement decision"
+  "evidence": [
+    "tests/unit/fixtures/shadow-controls-tf0511/catalog-readback.json",
+    "tests/unit/fixtures/shadow-controls-tf0511/acceptance.json",
+    "tests/unit/fixtures/shadow-controls-tf0511/feature-leaf-consumer.json",
+    "tests/unit/fixtures/shadow-controls-tf0511/scope-guard.json"
   ],
-  "recommendedNonDestructiveDecision": {
-    "compass-context": "internal",
-    "routing-memo-observation": "internal-diagnostic",
-    "agent-map": "internal-diagnostic",
-    "runtime-shadow-governance": "internal-diagnostic",
-    "local-control-plane": "keep-internal",
-    "observability-surface": "keep-advanced",
-    "effect": "No product default flip. Any later retirement or surface removal must be a separately authorized change set and must update the catalog, config schema and docs together."
-  },
-  "blockedAcceptanceCriteria": [
-    "每个纳入项实施完成或退役已验证；remainingGap 为空",
-    "没有永久 shadow/experiment",
-    "退役项从用户面、配置入口和文档移除（if the owner chooses retirement for any family）"
-  ],
-  "stopRule": "Keep TF-0511 ready. Do not edit shared/, config schema or src/ without explicit scope authority. Do not activate a next node."
+  "releaseBoundary": "No public release, GA, liveReady or productApproved claim."
 }

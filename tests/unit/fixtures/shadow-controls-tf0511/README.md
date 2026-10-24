@@ -1,54 +1,62 @@
-# TF-0511 scope conflict
+# TF-0511 shadow/control dispositions
 
 - Task: `TF-0511` — inventory and dispose the remaining COMPASS, Routing Memo, AgentMap and control-plane shadow leaves
 - Actor: `codex` | Evidence driver: `agent`
-- Status: **blocked-by-scope**; no node activation is performed
+- Status: **complete**
+- Release boundary: no public release, GA, liveReady or productApproved claim
+- Default boundary: no product default or product lock is changed by this node
 
-## Why the node is not closed
+## Decision summary
 
-The worktree guard allows only:
+| Component | Disposition | Implementation state | Product entry | Gap |
+|---|---|---|---|---|
+| `component.compass-context` | internal | implemented-opt-in / DCS-only | none | none |
+| `component.routing-memo-observation` | internal | implemented-diagnostic-only | none | none |
+| `feature.agent-map` | internal | implemented-diagnostic-only | none | none |
+| `feature.runtime-shadow-governance` | internal | implemented-diagnostic-only | none | none |
+| `feature.local-control-plane` | internal | implemented-diagnostic-only | none | none |
+| `surface.observability` | advanced | implemented-opt-in | `/observability` | none |
 
-- `openclaw_runtime/src/config/runtime-feature-leaves.ts`
-- `openclaw_runtime/src/context-engine/`
-- `openclaw_runtime/src/agents/`
-- `docs/dev/`
-- `tests/unit/`
+The single source of truth is
+`shared/dcs/component-disposition-catalog.ts`. The entries above are selected by
+`implementationNodeId === "TF-0511"`; this pack does not define a second disposition
+manifest.
 
-The single-source component disposition catalog still records four relevant families as `experiment`:
+## Important boundaries
 
-- `component.compass-context`
-- `component.routing-memo-observation`
-- `feature.agent-map`
-- `feature.runtime-shadow-governance`
+- COMPASS is a bounded, default-off DCS candidate source. Its old direct pre-reply
+  prompt injection was retired by TF-0500 and the orchestrator tests now assert that
+  retired behavior.
+- Routing Memo remains scorecard-gated. It is an internal observation/diagnostic
+  boundary; active routing still requires same-session, server-resolved Task Loop
+  quality authority.
+- AgentMap remains readonly. All prompt-candidate gates default off and require
+  explicit invocation plus a valid caller-owned result.
+- Runtime shadow/governance leaves and local control-plane reports are internal,
+  observe-only diagnostics and cannot authorize prompts, tools, provider ordering,
+  transport, completion or memory effects.
+- Observability remains an explicit advanced page; it records evidence but does not
+  grant execution or approval authority.
+- No additional family is retired by this node. The TF-0500 COMPASS pre-reply
+  injection retirement is preserved.
 
-Their final `internal`/`retired` decision must be written to
-`shared/dcs/component-disposition-catalog.ts` (and, for any retirement, the corresponding
-config and UI surfaces). `shared/` and `src/` are outside the TF-0511 guard, so this node
-must not change their statuses or pretend the catalog is already graduated.
+## Evidence
 
-A separate runtime-side ledger would violate the node's own instruction to merge with the
-component-disposition source rather than create a second list. It was therefore removed.
+- `catalog-readback.json` — current six-entry projection from the single-source catalog,
+  artifact hashes and zero-gap/completion checks.
+- `acceptance.json` — the five TF-0511 acceptance criteria with agent attribution.
+- `feature-leaf-consumer.json` — 112 leaves, zero unpinned zero-consumer leaves.
+  `coding.patchFlow.enabled` is explicitly pinned as a TF-0510 retirement residual.
+- `compass-retirement-focused.txt` — 3 files / 54 tests passed.
+- `scope-guard.json` — the expanded TF-0511 guard used for this closeout.
+- `diff-check.txt` — clean diff check.
+- `task-forest-proposal.json` — the final closeout proposal input.
 
-## Evidence on disk
+## Unverified boundary
 
-- `scope-guard.json` — the live TF-0511 guard and allowed paths.
-- `feature-leaf-consumer.json` — the current `feature-leaf-consumers` result: exit 1 on
-  `coding.patchFlow.enabled`, a TF-0510 retirement residual.
-- `compass-retirement-focused.txt` — 3 files / 54 tests passed after aligning the legacy
-  COMPASS orchestrator test with the TF-0500 retirement semantics.
-- `diff-check.txt` — no whitespace errors.
-- `scope-conflict.json` — machine-readable catalog entries, required authority and stop rule.
-
-## Recommended non-destructive decision
-
-Once scope authority is granted for the catalog and relevant surface files:
-
-- keep `compass-context` internal and DCS-only;
-- keep `routing-memo-observation` internal diagnostic / scorecard-gated, or explicitly retire
-  its dashboard in the surface-cleanup node;
-- keep `agent-map` and runtime shadow/governance internal diagnostics;
-- keep the local control plane internal;
-- keep Observability `advanced` with its explicit `/observability` entry.
-
-This recommendation does not flip a product default, does not authorize public release, GA,
-liveReady or productApproved, and does not claim human evidence.
+- This is data/contract disposition evidence, not a new live-provider or Electron E2E
+  run. The existing focused runtime suites and static checks are the evidence grade.
+- The Routing Memo dashboard remains user-visible; any physical surface removal is
+  future surface-cleanup work, not a claim made here.
+- No product default was flipped. No VerseGit node, worktree or file was touched.
+- Agent-driven only; no human evidence is claimed.

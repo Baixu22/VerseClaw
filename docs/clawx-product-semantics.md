@@ -6,7 +6,7 @@ Evidence boundary: this document is a product-semantics guardrail that complemen
 
 ## Positioning
 
-ClawX is an agent workbench, not an automatic project manager. Ordinary Chat is for immediate collaboration. Durable task facts belong to Task Ledger. High-constraint execution belongs to explicit Task Loop runs. Runtime/plugin scheduling belongs to Workboard. Routing Memo stays shadow until scorecard-backed quality input can safely affect routing.
+ClawX is an agent workbench, not an automatic project manager. Ordinary Chat is for immediate collaboration. Durable task facts belong to Task Ledger. High-constraint execution belongs to explicit Task Loop runs. Runtime/plugin scheduling belongs to Workboard. Routing Memo is an internal diagnostic; it cannot affect routing until same-session scorecard-backed quality input is available.
 
 ## Identity and scope vocabulary
 
@@ -154,7 +154,7 @@ Canonical task-level semantics live in `PRODUCT_SEMANTIC_TASK_BOUNDARIES` in `sh
 | Task Ledger / Workboard | P1-03 | Task Ledger owns user-visible task facts; Workboard owns runtime/plugin scheduling and references ledger nodes one-way through `TaskLedgerReference`. |
 | Orchestration quality | P1-04 | Ordinary `team_orchestrate` reports `qualityState=null` when unevaluated and `shadow` when scorecard evidence exists; active routing remains gated. |
 | Orchestration diagnostics | P1-05 | Ordinary orchestration now exposes diagnostics and recommended next steps; repair/blocked/checkpoint semantics still belong only to Task Loop. |
-| Routing Memo | P1-06, P1-07 | Routing Memo exposes shadow dashboard evidence, and active routing authority requires scorecard-backed quality. |
+| Routing Memo | P1-06, P1-07 | Routing Memo exposes internal diagnostic evidence; a shadow observation is non-routing and active routing authority requires same-session scorecard-backed quality. |
 | Chat to Task Loop | P1-08 | Ordinary Chat may suggest upgrade; user confirmation is required before root/run creation. |
 | Task Loop | P1-09 | Task Loop owns checkpoint, repair, blocked, and evidence-gate semantics. |
 | Sensitive boundary | P1-10, P1-11, P1-12, P1-13, P1-14 | File, transcript, trace, memory, compaction, and model echo surfaces have separate guarantees. |
