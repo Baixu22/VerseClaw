@@ -1,0 +1,440 @@
+{
+  "schemaVersion": "MemoryAuthorityAcceptanceEvidence/v1",
+  "reportId": "tf-0497-memory-authority-control-plane",
+  "taskForestNodeId": "TF-0497",
+  "generatedAt": "2026-10-22T09:35:46.158Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "acceptanceCriteria": [
+    {
+      "criterion": "authority manifest 对每类 memory data 指定唯一 accepting/update authority",
+      "status": "pass",
+      "evidence": [
+        "MemoryAuthorityManifest/v1",
+        "duplicateAcceptedAuthorities=0",
+        "duplicateUpdateAuthorities=0",
+        "store boundaries remain per data domain"
+      ]
+    },
+    {
+      "criterion": "Role/Runtime/Dreaming/Embedding 的 scope、retention、delete、invalidation、retrieval 语义一致",
+      "status": "pass",
+      "evidence": [
+        "role-card active/cold/archive/tombstone + supersededBy",
+        "runtime fact/timeline/episode append-only invalidation",
+        "embedding is rebuildable and accepts no memory",
+        "candidate injection=never until approval"
+      ]
+    },
+    {
+      "criterion": "迁移/兼容策略能在不丢数据前提下收敛重叠；无强制单库要求",
+      "status": "pass",
+      "evidence": [
+        "migration mappings=8",
+        "removesSource=false for every mapping",
+        "role-memory.sqlite and openclaw-state.sqlite remain separate",
+        "Dreaming/SEKB import only as proposals/candidates"
+      ]
+    },
+    {
+      "criterion": "模型 profile 只描述一个记忆产品概念和审批边界",
+      "status": "pass",
+      "evidence": [
+        "MemoryProductProfile/v1",
+        "conceptCount=1",
+        "automaticAcceptanceAllowed=false",
+        "automaticWritebackAllowed=false"
+      ]
+    }
+  ],
+  "authority": {
+    "schemaVersion": "MemoryAuthorityManifest/v1",
+    "entryCount": 8,
+    "duplicateAcceptedAuthorities": 0,
+    "duplicateUpdateAuthorities": 0,
+    "parallelPromptInjectionPaths": 0,
+    "databaseClusteringRequired": false,
+    "domains": [
+      {
+        "id": "memory-authority:memory.role-card",
+        "dataType": "memory.role-card",
+        "scopes": [
+          "workspace"
+        ],
+        "acceptedMemory": true,
+        "productControlPlane": true,
+        "acceptAuthority": "role-memory-card-governance",
+        "updateAuthority": "role-memory-card-governance",
+        "deleteAuthority": "role-memory-card-governance",
+        "retrievalAuthorities": [
+          "dcs-context-authority",
+          "memory-candidate-queue",
+          "memory-embedding-provider",
+          "knowledge-review-authority"
+        ],
+        "injectionAuthority": "dcs-context-authority",
+        "injectionPolicy": "accepted-only",
+        "retention": "active -> cold -> archived; expiresAt is honored before retrieval; retention proposes transitions but never mutates automatically.",
+        "deletePolicy": "governed archive/tombstone or supersede transition; hard delete is not an ordinary model operation.",
+        "invalidation": "supersededBy/correctionRef plus audit events; historical rows remain for review.",
+        "retrieval": "active, in-scope cards must pass the use gate and candidate review boundary.",
+        "storage": [
+          "role-memory.sqlite:role_memory_cards"
+        ],
+        "migration": "Keep role_memory_cards in role-memory.sqlite; no forced move into another database."
+      },
+      {
+        "id": "memory-authority:memory.candidate",
+        "dataType": "memory.candidate",
+        "scopes": [
+          "session"
+        ],
+        "acceptedMemory": false,
+        "productControlPlane": false,
+        "acceptAuthority": null,
+        "updateAuthority": "memory-candidate-queue",
+        "deleteAuthority": null,
+        "retrievalAuthorities": [
+          "dcs-context-authority",
+          "role-memory-card-governance",
+          "runtime-memory-store"
+        ],
+        "injectionAuthority": null,
+        "injectionPolicy": "never",
+        "retention": "Retained with its proposal/candidate status until reviewed, rejected, superseded, or its source expires.",
+        "deletePolicy": "Candidate status can be rejected or superseded; rejection never creates accepted memory.",
+        "invalidation": "Candidate decisions are explicit proposal/review transitions, not accepted-memory invalidations.",
+        "retrieval": "Review surfaces only; default model retrieval and prompt injection are disabled.",
+        "storage": [
+          "role-memory.sqlite:role_memory_proposals",
+          "openclaw-state.sqlite:runtime_memory_facts(record_kind=candidate)"
+        ],
+        "migration": "Import Dreaming/extraction output as candidates only; accepted memory is created later by its owning authority."
+      },
+      {
+        "id": "memory-authority:memory.runtime-fact",
+        "dataType": "memory.runtime-fact",
+        "scopes": [
+          "session"
+        ],
+        "acceptedMemory": true,
+        "productControlPlane": false,
+        "acceptAuthority": "runtime-memory-store",
+        "updateAuthority": "runtime-memory-store",
+        "deleteAuthority": "runtime-memory-store",
+        "retrievalAuthorities": [
+          "dcs-context-authority",
+          "memory-candidate-queue",
+          "memory-embedding-provider",
+          "task-ledger"
+        ],
+        "injectionAuthority": "dcs-context-authority",
+        "injectionPolicy": "accepted-only",
+        "retention": "Append-only with bounded in-memory/persistence trimming; acceptedAt orders promotion history.",
+        "deletePolicy": "Logical invalidation with reason; physical row deletion is not the normal API.",
+        "invalidation": "A separate runtime_memory_invalidations row references the fact and optional replacement.",
+        "retrieval": "Default fact queries return accepted verification statuses only; candidates require the review flag.",
+        "storage": [
+          "openclaw-state.sqlite:runtime_memory_facts"
+        ],
+        "migration": "Keep accepted facts and their invalidation history in openclaw-state.sqlite."
+      },
+      {
+        "id": "memory-authority:memory.runtime-timeline",
+        "dataType": "memory.runtime-timeline",
+        "scopes": [
+          "session"
+        ],
+        "acceptedMemory": true,
+        "productControlPlane": false,
+        "acceptAuthority": "runtime-memory-store",
+        "updateAuthority": "runtime-memory-store",
+        "deleteAuthority": "runtime-memory-store",
+        "retrievalAuthorities": [
+          "task-ledger"
+        ],
+        "injectionAuthority": null,
+        "injectionPolicy": "never",
+        "retention": "Derived from accepted facts, relations, invalidations and reference time.",
+        "deletePolicy": "Invalidation removes a timeline point from default retrieval without deleting its source fact.",
+        "invalidation": "Same append-only invalidation authority as runtime facts.",
+        "retrieval": "Internal temporal queries only; it is not a second accepted-fact writer.",
+        "storage": [
+          "openclaw-state.sqlite:runtime_memory_facts+relations+invalidations"
+        ],
+        "migration": "Project timeline from the canonical runtime fact store; do not materialize a second fact table."
+      },
+      {
+        "id": "memory-authority:memory.runtime-episode",
+        "dataType": "memory.runtime-episode",
+        "scopes": [
+          "session"
+        ],
+        "acceptedMemory": true,
+        "productControlPlane": false,
+        "acceptAuthority": "runtime-memory-store",
+        "updateAuthority": "runtime-memory-store",
+        "deleteAuthority": "runtime-memory-store",
+        "retrievalAuthorities": [
+          "dcs-context-authority",
+          "memory-candidate-queue",
+          "task-ledger"
+        ],
+        "injectionAuthority": null,
+        "injectionPolicy": "never",
+        "retention": "Idempotent bounded episode rows; accepted episodes support later fact promotion.",
+        "deletePolicy": "Episode retention is bounded by store limits; invalidation is expressed on derived facts.",
+        "invalidation": "Facts derived from an episode are invalidated through the runtime fact authority.",
+        "retrieval": "Inspection and provenance only; episodes are not directly projected as memory cards.",
+        "storage": [
+          "openclaw-state.sqlite:runtime_memory_episodes"
+        ],
+        "migration": "Retain episode rows as provenance; derived facts keep source episode references."
+      },
+      {
+        "id": "memory-authority:memory.embedding-index",
+        "dataType": "memory.embedding-index",
+        "scopes": [
+          "workspace"
+        ],
+        "acceptedMemory": false,
+        "productControlPlane": false,
+        "acceptAuthority": null,
+        "updateAuthority": "memory-embedding-provider",
+        "deleteAuthority": "memory-embedding-provider",
+        "retrievalAuthorities": [
+          "role-memory-card-governance",
+          "native-file-memory-retrieval",
+          "runtime-memory-store"
+        ],
+        "injectionAuthority": null,
+        "injectionPolicy": "never",
+        "retention": "Rebuildable retrieval index; it is never the source of truth for memory content.",
+        "deletePolicy": "Embedding rows are deleted or rebuilt when the accepted fact is invalidated or removed.",
+        "invalidation": "Index invalidation follows accepted-memory changes; it cannot invalidate a fact by itself.",
+        "retrieval": "May rank accepted content but has no authority to admit or inject it.",
+        "storage": [
+          "openclaw-state.sqlite:runtime_memory_embeddings"
+        ],
+        "migration": "Keep embeddings rebuildable in openclaw-state.sqlite; a provider/version change rebuilds without touching facts."
+      },
+      {
+        "id": "memory-authority:memory.native-file-query",
+        "dataType": "memory.native-file-query",
+        "scopes": [
+          "workspace"
+        ],
+        "acceptedMemory": false,
+        "productControlPlane": false,
+        "acceptAuthority": null,
+        "updateAuthority": null,
+        "deleteAuthority": null,
+        "retrievalAuthorities": [],
+        "injectionAuthority": null,
+        "injectionPolicy": "read-only-retrieval",
+        "retention": "Query results are ephemeral projections; source files retain their own lifecycle.",
+        "deletePolicy": "The query adapter cannot delete or rewrite native memory files.",
+        "invalidation": "Native source changes invalidate derived results on the next query.",
+        "retrieval": "Read-only retrieval adapter; it cannot accept memory or project candidates into prompts.",
+        "storage": [
+          "read-through:MEMORY.md|memory_search|qmd"
+        ],
+        "migration": "Keep native files in place and read them through the adapter; no data move is required."
+      },
+      {
+        "id": "memory-authority:knowledge.sekb-candidate",
+        "dataType": "knowledge.sekb-candidate",
+        "scopes": [
+          "workspace"
+        ],
+        "acceptedMemory": false,
+        "productControlPlane": false,
+        "acceptAuthority": null,
+        "updateAuthority": "sekb-candidate-provider",
+        "deleteAuthority": null,
+        "retrievalAuthorities": [
+          "knowledge-review-authority",
+          "observability-recorder"
+        ],
+        "injectionAuthority": null,
+        "injectionPolicy": "never",
+        "retention": "Knowledge-owned candidate lifetime and expiry; SEKB owns no memory store.",
+        "deletePolicy": "SEKB can reject or expire its candidate without affecting accepted memory.",
+        "invalidation": "Knowledge review owns applied knowledge; SEKB cannot invalidate memory.",
+        "retrieval": "Runtime Lessons are readable only through the Knowledge candidate/retrieval boundary.",
+        "storage": [],
+        "migration": "Never import SEKB candidates directly into memory; route them through Knowledge review or a memory proposal."
+      }
+    ]
+  },
+  "migration": {
+    "mappings": [
+      {
+        "id": "role-memory-cards-in-place",
+        "sourceStore": "role-memory.sqlite:role_memory_cards",
+        "targetDataType": "memory.role-card",
+        "strategy": "Map existing cards to the role-card authority contract in place; no table move.",
+        "removesSource": false,
+        "requiresApprovalBeforeAcceptance": false,
+        "rollback": "The source table is unchanged, so rollback is a code/config rollback only."
+      },
+      {
+        "id": "role-and-runtime-candidates-proposal-only",
+        "sourceStore": "role_memory_proposals|runtime_memory_facts(record_kind=candidate)",
+        "targetDataType": "memory.candidate",
+        "strategy": "Keep candidate projections in their owning stores and treat them as proposal-only until explicit acceptance.",
+        "removesSource": false,
+        "requiresApprovalBeforeAcceptance": true,
+        "rollback": "Candidate rows remain reviewable in their original store; no accepted-memory deletion is required."
+      },
+      {
+        "id": "runtime-facts-append-only",
+        "sourceStore": "openclaw-state.sqlite:runtime_memory_facts",
+        "targetDataType": "memory.runtime-fact",
+        "strategy": "Map existing facts and invalidations to the canonical runtime fact authority without rewriting history.",
+        "removesSource": false,
+        "requiresApprovalBeforeAcceptance": false,
+        "rollback": "Invalidation/relations remain append-only and the previous store version can still be read."
+      },
+      {
+        "id": "runtime-timeline-derived-from-facts",
+        "sourceStore": "openclaw-state.sqlite:runtime_memory_facts+relations+invalidations",
+        "targetDataType": "memory.runtime-timeline",
+        "strategy": "Derive timeline queries from canonical runtime facts; do not copy facts into a timeline store.",
+        "removesSource": false,
+        "requiresApprovalBeforeAcceptance": false,
+        "rollback": "Timeline projections are derived and can be dropped/rebuilt without touching canonical facts."
+      },
+      {
+        "id": "runtime-episodes-as-provenance",
+        "sourceStore": "openclaw-state.sqlite:runtime_memory_episodes",
+        "targetDataType": "memory.runtime-episode",
+        "strategy": "Retain episodes as provenance; derived facts keep source episode refs.",
+        "removesSource": false,
+        "requiresApprovalBeforeAcceptance": false,
+        "rollback": "Episode rows remain intact; rollback removes only derived reads/projections."
+      },
+      {
+        "id": "dreaming-imports-as-candidates",
+        "sourceStore": "memory-core-dreaming|MEMORY.md",
+        "targetDataType": "memory.candidate",
+        "strategy": "Import Dreaming output as candidates only, preserving the source file until a separate governed decision.",
+        "removesSource": false,
+        "requiresApprovalBeforeAcceptance": true,
+        "rollback": "Keep the source artifact untouched and discard only the proposal projection."
+      },
+      {
+        "id": "embeddings-rebuildable",
+        "sourceStore": "openclaw-state.sqlite:runtime_memory_embeddings",
+        "targetDataType": "memory.embedding-index",
+        "strategy": "Treat embeddings as rebuildable retrieval infrastructure, not migrated memory content.",
+        "removesSource": false,
+        "requiresApprovalBeforeAcceptance": false,
+        "rollback": "Drop and rebuild the embedding index from canonical accepted content."
+      },
+      {
+        "id": "sekb-never-direct-memory-import",
+        "sourceStore": "knowledge.sekb-candidate",
+        "targetDataType": "knowledge.sekb-candidate",
+        "strategy": "Keep SEKB candidates in Knowledge review; never import them directly as accepted memory.",
+        "removesSource": false,
+        "requiresApprovalBeforeAcceptance": true,
+        "rollback": "Knowledge candidate history is unchanged; no memory write occurred."
+      }
+    ],
+    "storeBoundaries": [
+      {
+        "id": "role-memory.sqlite",
+        "kind": "sqlite",
+        "owner": "role-memory-card-governance",
+        "dataTypes": [
+          "memory.role-card",
+          "memory.candidate"
+        ],
+        "canonicalForAcceptedMemory": true
+      },
+      {
+        "id": "openclaw-state.sqlite",
+        "kind": "sqlite",
+        "owner": "runtime-memory-store",
+        "dataTypes": [
+          "memory.candidate",
+          "memory.runtime-fact",
+          "memory.runtime-timeline",
+          "memory.runtime-episode",
+          "memory.embedding-index"
+        ],
+        "canonicalForAcceptedMemory": true
+      },
+      {
+        "id": "native-memory-files",
+        "kind": "read-through",
+        "owner": "native-file-memory-retrieval",
+        "dataTypes": [
+          "memory.native-file-query"
+        ],
+        "canonicalForAcceptedMemory": false
+      },
+      {
+        "id": "knowledge-store",
+        "kind": "knowledge-store",
+        "owner": "knowledge-review-authority",
+        "dataTypes": [
+          "knowledge.sekb-candidate"
+        ],
+        "canonicalForAcceptedMemory": false
+      }
+    ],
+    "sourceRemovalCount": 0,
+    "acceptedMemoryDatabaseCount": 2
+  },
+  "profile": {
+    "schemaVersion": "MemoryProductProfile/v1",
+    "profileId": "memory",
+    "concept": "memory",
+    "conceptCount": 1,
+    "modelSafeSummary": [
+      "Memory is governed context that can be proposed automatically but becomes active only after an explicit review or approval decision.",
+      "Proposals and derived context are not active memory and must not be claimed as remembered facts.",
+      "Accepted memory is scoped to its declared user, workspace, project, session or task boundary, and invalidation or deletion is honored before retrieval."
+    ],
+    "approvalBoundary": {
+      "automaticProposalAllowed": true,
+      "automaticAcceptanceAllowed": false,
+      "automaticWritebackAllowed": false,
+      "modelCanAcceptMemory": false,
+      "modelCanDeleteAcceptedMemory": false
+    }
+  },
+  "runtimeAssertions": {
+    "defaultFacts": [
+      "tf0497-accepted-fact"
+    ],
+    "reviewFacts": [
+      "tf0497-accepted-fact",
+      "tf0497-candidate-fact"
+    ],
+    "candidateIsolated": true,
+    "parallelMemoryWriters": 0,
+    "autoWritebackCount": 0,
+    "ownerConvergence": true
+  },
+  "diskReadback": {
+    "status": "pass",
+    "evidenceReadable": true,
+    "sha256sumsVerified": true
+  },
+  "evidenceNotes": {
+    "noProductDefaultChanged": true,
+    "noDataStoreClustering": true,
+    "noAutomaticWriteback": true,
+    "noUserSurfaceClaim": true,
+    "verseGitExcluded": true,
+    "publicReleaseClaimed": false
+  },
+  "results": {
+    "contract": {
+      "status": "pass"
+    }
+  }
+}

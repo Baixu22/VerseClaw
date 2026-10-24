@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "tf-0497-memory-authority-control-plane",
+  "reportKind": "contract",
+  "componentId": "role-memory-card-governance",
+  "taskForestNodeId": "TF-0497",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "TF-0497",
+  "entryPoint": "openclaw_runtime/src/memory/memory-authority.ts",
+  "defaultMode": "opt-in",
+  "benefitEvidence": "One memory authority contract assigns every Role/Runtime/Dreaming/Embedding/SEKB data domain to one accepting/update authority and prevents candidates from becoming retrievable or prompt-injectable accepted memory.",
+  "rollback": "Remove the contract projection and retain the existing stores; no source store, candidate, accepted memory, or default value is deleted or rewritten.",
+  "modelEffectiveState": "Memory is governed context that can be proposed automatically but becomes active only after an explicit review or approval decision. Proposals and derived context are not active memory and must not be claimed as remembered facts. Accepted memory is scoped to its declared user, workspace, project, session or task boundary, and invalidation or deletion is honored before retrieval.",
+  "evidenceGrade": "unit-test",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "f5ac5259f08b5e4ca44c4bffbd9d284c84259c9a",
+    "tree": "c2d5479ca1e963fb9030fa3459f48ef04c57caa8",
+    "buildHash": "880391c422179f08fcb7e6b8f9df9e0e53212b14ef513e83e6070b51d5b1a11d",
+    "runtimeGeneration": "memory-authority-tf0497",
+    "provider": "fixture-provider",
+    "model": "fixture-model",
+    "inputSet": "tf0497-memory-authority-contract",
+    "scope": "workspace:component-graduation/session:tf-0497",
+    "artifacts": [
+      {
+        "path": "openclaw_runtime/src/memory/memory-authority.ts",
+        "sha256": "b32a82f0b4bdb5d67e6380698660da97a844999af490a331856952547674b86d",
+        "bytes": 22756
+      },
+      {
+        "path": "openclaw_runtime/src/memory/memory-card.ts",
+        "sha256": "2e1d8195529fd4a5b154412cb546d0333164da012fe56c5f1622fe5e7e0e8e8b",
+        "bytes": 2033
+      },
+      {
+        "path": "openclaw_runtime/src/memory/memory-policy.ts",
+        "sha256": "3c838be80484e035e5a9cbe52c97fa98f9aee9a66246afb132a1a3e23f12fc02",
+        "bytes": 12318
+      },
+      {
+        "path": "openclaw_runtime/src/memory/memory-store.ts",
+        "sha256": "892e9fd72d1bdac262f3b8905af5dbc3549d7f315a6c9129b89c007b5fd1b1aa",
+        "bytes": 92808
+      },
+      {
+        "path": "openclaw_runtime/src/memory/root-memory-files.ts",
+        "sha256": "8aa455e4f9e923d42309683c716c1fa22ba041f42061fb5fb6f7cbf78875e2c1",
+        "bytes": 2681
+      },
+      {
+        "path": "openclaw_runtime/src/runtime-core/memory-context.ts",
+        "sha256": "3addc426252ed80c205af88512e8aab961c6bfa3053addf8384fa7bd65f2d05c",
+        "bytes": 52700
+      },
+      {
+        "path": "openclaw_runtime/src/runtime-core/memory-store.ts",
+        "sha256": "adec5d2ad67c02a0cfdc59f3ccccd2f9b14edaecb4fb7ead90cd2598d9060b7f",
+        "bytes": 34048
+      },
+      {
+        "path": "openclaw_runtime/src/runtime-core/memory-persistence.ts",
+        "sha256": "3f9526e0de7f1c1bb215bfcd0e4134e8d904a64c41301d7697d417b0ead4d861",
+        "bytes": 54802
+      },
+      {
+        "path": "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts",
+        "sha256": "17cd5d790ad7b19cd4e2379310a2eb8a792b1fc7e8a06bb170020db9a6136e8e",
+        "bytes": 14291
+      },
+      {
+        "path": "openclaw_runtime/src/runtime-core/memory-embedding-provider.ts",
+        "sha256": "982c4e09b19118a8549cb8428b34df48531e02842b272c946f5ed3c8cbfdeeca",
+        "bytes": 1671
+      },
+      {
+        "path": "openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts",
+        "sha256": "ce52a98a4fdb74bc8f32d9a94b48decccb77a3e08ceb85e7329a7b0e6a79256c",
+        "bytes": 46034
+      },
+      {
+        "path": "openclaw_runtime/src/agents/slot-convergence.ts",
+        "sha256": "dc5f8b35523b95ab041f6e49b1b5b32220e02ed74585af4052ec18bf5307b297",
+        "bytes": 15559
+      },
+      {
+        "path": "shared/component-authority-manifest.ts",
+        "sha256": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+        "bytes": 59578
+      },
+      {
+        "path": "shared/dcs/prod-flags-catalog.ts",
+        "sha256": "8ef09200bb126c826d67254e73b105177897d11df394b2a6829d6688790b27d3",
+        "bytes": 20978
+      },
+      {
+        "path": "tests/unit/memory-authority-contract.test.ts",
+        "sha256": "dbdfb656485f9c53441f2945f10765959e4308d366f6a7553a83615ddfb3af6b",
+        "bytes": 7512
+      },
+      {
+        "path": "tests/unit/rc07-memory-context-slot-convergence.test.ts",
+        "sha256": "b01ecf77d6fec51a11c71e8340ee63776b8c60abc62afefeb7dee3ef264e20b3",
+        "bytes": 9303
+      },
+      {
+        "path": "tests/unit/r3-2-memory-settings-switches.test.ts",
+        "sha256": "557e659d8b4fe88a3b98f5bdb47663e53cbe6ee22469f9633fb642314a812f4a",
+        "bytes": 1890
+      },
+      {
+        "path": "tests/unit/runtime-memory-store.test.ts",
+        "sha256": "b4a31a942148eff87c0ac35e3ccedac3bd09152582513b5b0a2e52cc5c8b1f0b",
+        "bytes": 17547
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/README.md",
+        "sha256": "57a80b3a859d8436cfad3a44ab550cfc3afff9182528719ff2843d494ff45f60",
+        "bytes": 2541
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts",
+        "sha256": "ba5599272fd6b5ca1d9a42563c3f9ff8e15638f673470056340d9e91bef64e78",
+        "bytes": 12090
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
+        "sha256": "8a502c7a7bc1613617dc275b7c5c07d28899fa8c611cc28d81ebaf30d92039c2",
+        "bytes": 5991
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
+        "sha256": "e333303433f13e211b0f3006f516265f3e3af88b099cee96cfe172bf0f61055f",
+        "bytes": 18619
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "contract",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "Authority uniqueness, lifecycle semantics, non-destructive migration mapping and the single product memory profile pass the contract fixtures.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
+          "sha256": "e333303433f13e211b0f3006f516265f3e3af88b099cee96cfe172bf0f61055f",
+          "bytes": 18619,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "a84035c0fdc9e7f9be151199c493478f4d12c8d7fa3e0513f3085fc48f4858fa",
+    "command": "& .\\openclaw_runtime\\node_modules\\.bin\\tsx.CMD tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts"
+  }
+}
