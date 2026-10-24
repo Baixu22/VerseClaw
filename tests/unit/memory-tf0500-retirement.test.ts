@@ -16,22 +16,17 @@ import {
 const read = (rel: string) => fs.readFileSync(path.join(process.cwd(), rel), 'utf8');
 
 describe('TF-0500 Dreams surface is not a production route', () => {
-  it('gates the /dreams route behind the developer-mode unlock', () => {
+  it('keeps the legacy /dreams route as a redirect-only retired surface', () => {
     const app = read('src/App.tsx');
-    const routeLine = app.split('\n').find((line) => line.includes('path="/dreams"'));
-    expect(routeLine, 'the /dreams route should still exist as a dev-gated route').toBeTruthy();
-    expect(String(routeLine)).toContain('devModeUnlocked');
+    expect(app).toContain('path="/dreams"');
+    expect(app).toContain('<Route path="/dreams" element={<Navigate to="/" replace />} />');
+    expect(app).not.toContain('pages/Dreams');
   });
 
-  it('renders the sidebar Dreams entry only inside the developer-mode block', () => {
-    const lines = read('src/components/layout/Sidebar.tsx').split('\n');
-    const dreamsIndex = lines.findIndex((line) => line.includes('sidebar-more-dreams'));
-    expect(dreamsIndex).toBeGreaterThan(-1);
-    const guardIndex = lines
-      .slice(0, dreamsIndex)
-      .map((line) => line.trim())
-      .lastIndexOf('{devModeUnlocked && (');
-    expect(guardIndex).toBeGreaterThan(-1);
+  it('does not render a Dreams sidebar entry in any mode', () => {
+    const sidebar = read('src/components/layout/Sidebar.tsx');
+    expect(sidebar).not.toContain('sidebar-more-dreams');
+    expect(sidebar).not.toContain('openClawDreams');
   });
 });
 

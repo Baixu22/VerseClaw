@@ -20,8 +20,6 @@ import {
   Loader2,
   Activity,
   GitCompare,
-  ImagePlus,
-  Moon,
   Workflow,
   Plus,
   FolderPlus,
@@ -552,12 +550,11 @@ function SidebarSettingsNavItem({ collapsed }: { collapsed: boolean }) {
 
 export function Sidebar() {
   const isMac = window.electron?.platform === 'darwin';
-  const { sidebarCollapsed, setSidebarCollapsed, sidebarWidth, setSidebarWidth, devModeUnlocked } = useSettingsStore(useShallow((state) => ({
+  const { sidebarCollapsed, setSidebarCollapsed, sidebarWidth, setSidebarWidth } = useSettingsStore(useShallow((state) => ({
     sidebarCollapsed: state.sidebarCollapsed,
     setSidebarCollapsed: state.setSidebarCollapsed,
     sidebarWidth: state.sidebarWidth,
     setSidebarWidth: state.setSidebarWidth,
-    devModeUnlocked: state.devModeUnlocked,
   })));
   const [isResizing, setIsResizing] = useState(false);
   const stopResizeRef = useRef<(() => void) | null>(null);
@@ -1729,30 +1726,6 @@ export function Sidebar() {
             <Activity className="h-4 w-4" />
             <span className="codex-dropdown__text">{t('common:sidebar.observability')}</span>
           </button>
-          {devModeUnlocked && (
-            <>
-              <button
-                type="button"
-                role="menuitem"
-                data-testid="sidebar-more-image-generation"
-                className="codex-dropdown__item"
-                onClick={() => { setFooterMenu(null); navigate('/image-generation'); }}
-              >
-                <ImagePlus className="h-4 w-4" />
-                <span className="codex-dropdown__text">{t('common:sidebar.imageGeneration')}</span>
-              </button>
-              <button
-                type="button"
-                role="menuitem"
-                data-testid="sidebar-more-dreams"
-                className="codex-dropdown__item"
-                onClick={() => { setFooterMenu(null); navigate('/dreams'); }}
-              >
-                <Moon className="h-4 w-4" />
-                <span className="codex-dropdown__text">{t('common:sidebar.openClawDreams')}</span>
-              </button>
-            </>
-          )}
         </div>,
         document.body,
       )}

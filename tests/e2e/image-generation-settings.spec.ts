@@ -13,9 +13,7 @@ test.describe('Image generation settings page', () => {
   }
 
   async function openImageGeneration(page: import('@playwright/test').Page) {
-    await page.getByTestId('settings-back-button').click();
-    await page.getByTestId('sidebar-footer-menu-trigger').click();
-    await page.getByTestId('sidebar-more-image-generation').click();
+    await page.evaluate(() => { window.location.hash = '#/image-generation'; });
   }
 
   test('shows image generation only as a developer-mode page after skipping setup', async ({ page }) => {
