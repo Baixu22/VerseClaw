@@ -27,6 +27,7 @@ import {
   type SessionPolicyResourceLimits,
   type SessionPolicyScheduleLimits,
 } from "../../../shared/types/session-effective-policy.js";
+import { resolveLongSessionCoordinationPolicy } from "../../../shared/long-session-resource-reclamation.js";
 
 export type BuildSessionEffectivePolicyInput = {
   cfg: OpenClawConfig;
@@ -368,11 +369,18 @@ export function buildSessionEffectivePolicy(
   );
 
   const defaults = input.cfg.agents?.defaults;
+  const longSessionPolicy = resolveLongSessionCoordinationPolicy();
   const configuredResources: SessionPolicyResourceLimits = {
     maxConcurrentRuns: nullableNumber(defaults?.maxConcurrent),
     maxConcurrentSubagents: nullableNumber(defaults?.subagents?.maxConcurrent),
     maxSpawnDepth: nullableNumber(defaults?.subagents?.maxSpawnDepth),
     maxChildrenPerAgent: nullableNumber(defaults?.subagents?.maxChildrenPerAgent),
+    maxProcesses: longSessionPolicy.maxProcesses,
+    maxRssMb: longSessionPolicy.maxRssMb,
+    maxBackgroundTerminals: longSessionPolicy.maxBackgroundTerminals,
+    maxWorktrees: longSessionPolicy.maxWorktrees,
+    idleTtlMs: longSessionPolicy.idleTtlMs,
+    keepOnLeave: longSessionPolicy.keepOnLeave,
   };
   const configuredSchedule: SessionPolicyScheduleLimits = {
     cronEnabled: typeof input.cfg.cron?.enabled === "boolean" ? input.cfg.cron.enabled : null,
@@ -440,8 +448,15 @@ export function buildSessionEffectivePolicy(
       effectiveQueue,
     ),
     resources: axis(
-      fact(configuredResources, Object.values(configuredResources).some((value) => value !== null) ? "configured" : "unverified", "agents.defaults concurrency and subagent limits"),
-      fact<SessionPolicyResourceLimits>(null, "unverified", "runtime.resource-owner", "current scheduler admission was not read by this snapshot"),
+      fact(configuredResources, Object.values(configuredResources).some((value) => value !== null) ? "configured" : "unverified", "agents.defaults concurrency/subagent limits + explicit long-session flags"),
+      fact<SessionPolicyResourceLimits>(
+        configuredResources,
+        Object.values(configuredResources).some((value) => value !== null) ? "effective" : "unverified",
+        "session coordination policy (explicit values only)",
+        Object.values(configuredResources).some((value) => value !== null)
+          ? null
+          : "no explicit long-session resource policy or agent.defaults limits are configured",
+      ),
     ),
     schedule: axis(
       fact(configuredSchedule, Object.values(configuredSchedule).some((value) => value !== null) ? "configured" : "unverified", "cron configuration"),

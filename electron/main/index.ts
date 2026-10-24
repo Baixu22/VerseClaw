@@ -13,6 +13,7 @@ import { getTerminalSessionManager, registerIpcHandlers } from './ipc-handlers';
 import { disposeCronMaintenance } from '../services/cron-maintenance';
 import { HostApiRegistry } from './ipc/host-invoke';
 import { getResourceTracker } from '../services/resource-tracker';
+import { closeAllOwnedBrowserSessions } from '../services/long-session-resource-reclamation';
 import { createTray, syncTrayIconWithSystemTheme } from './tray';
 import { createMenu } from './menu';
 import { registerZoomShortcuts } from './zoom-shortcuts';
@@ -1442,6 +1443,7 @@ if (gotTheLock) {
     // R0-3: reclaim every live pty session and stop tracked resources
     // (shutdown() = stop timers + kill tracked processes, best-effort).
     getTerminalSessionManager()?.shutdownAll();
+    closeAllOwnedBrowserSessions();
     void getResourceTracker().shutdown();
     disposeCronMaintenance();
     // Release the efficiency sampling timer so quit never waits on it.

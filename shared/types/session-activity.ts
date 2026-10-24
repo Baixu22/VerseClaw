@@ -1,5 +1,6 @@
 import type { GitRepositoryStatus } from './git';
 import type { SessionEffectivePolicy } from './session-effective-policy';
+import type { LongSessionResourceInventory } from '../long-session-resource-reclamation';
 
 export type SessionActivityRunStatus = 'idle' | 'running' | 'waiting_approval' | 'completed' | 'failed' | 'aborted';
 export type SessionActivityTaskKind = 'mission' | 'taskLoop' | 'clawGraph' | 'taskLedger';
@@ -198,6 +199,8 @@ export type SessionActivityTerminal = {
 export type SessionActivitySnapshot = {
   session: {
     sessionKey: string;
+    /** Physical generation used by lifecycle cleanup receipts. */
+    sessionId?: string | null;
     runId?: string | null;
     status: SessionActivityRunStatus;
     phase?: string;
@@ -216,6 +219,8 @@ export type SessionActivitySnapshot = {
   lineage: SessionActivityLineage[];
   /** Secret-free projection from TF-0512 facts and the current session policy. */
   policy?: SessionEffectivePolicy;
+  /** Owner-consolidated resource read model; absent snapshots are not a zero reading. */
+  resources?: LongSessionResourceInventory;
   continuity: {
     queueCount: number;
     contextPressure?: 'low' | 'medium' | 'high' | null;

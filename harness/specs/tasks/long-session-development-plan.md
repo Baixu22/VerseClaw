@@ -125,8 +125,7 @@ D1 只在 active coordinator binding 与当前物理 session generation 匹配�
 
 **连续策略先评测后选择**
 
-D2 在评测前冻结不少于 30 对 agent 驱动场景、相同模型/输入和指标预算。目标为关键事实保真 100%、下一步正确率至少 95%、误报完成 0；推广门为费用或输入 token 净少至少 15%、P95 不超过 baseline 1.10 倍、安全零回归。记录 first-token、wall-clock、token/cache/cost 的真实样本，不用字符估算或 token 曲线代替实际收益。D2 已冻结 30 对、五类各 6 对和 80 个负例门禁，报告为 EVIDENCE_INSUFFICIENT；D3 因此选择 keep-baseline。E1 正在按当前实现重验定时跟进的 coordinator scope、generation fence 与独立取消语义。
-
+D2 在评测前冻结不少于 30 对 agent 驱动场景、相同模型/输入和指标预算。D2 已冻结 30 对、五类各 6 对和 80 个负例门禁，报告为 `EVIDENCE_INSUFFICIENT`；D3 因此选择 keep-baseline。E1 已把定时跟进绑定到 coordinator generation，Main 在投递前拒绝 stale scope，pause/cancel/stop 相互独立。E2 已把资源回收收敛为 terminal、browser、managed-port、worktree 与 admission 五类现有 owner，并验证 50 次生命周期循环、keep-on-leave 和 recovery-required。`n
 D3 可完成为 keep-baseline/NO-GO，核心闭环继续使用已实现的手动或原生 compaction。TF-0424 的 shadow/no-go 保留历史身份；最多选择一个初筛候选，若采用必须另写明确的实现范围、适用 backend、回滚和错误 fallback。规划与决策文本不激活新路径或翻冻结默认。
 
 **后续执行与验收**

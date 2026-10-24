@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -79,5 +79,52 @@ describe("orchestration worktree merge evidence", () => {
     expect(results[0]?.writeSetMismatch).toEqual(["src/actual.ts", "src/declared.ts"]);
     expect(results[0]?.reason).toContain("writeSet_mismatch:src/actual.ts,src/declared.ts");
     service.cleanup("wt-mismatch");
+  });
+});
+describe("worktree long-session ownership", () => {
+  const owner = {
+    agentId: "agent-a",
+    sessionKey: "agent:agent-a:long",
+    expectedSessionId: "generation-1",
+  } as const;
+
+  it("cleans only explicit ephemeral worktrees for the exact generation", () => {
+    const root = makeRoot();
+    const service = createWorktreeService(root);
+    const kept = service.create("wt-keep", { owner: { ...owner, retention: "keep" } });
+    const cleaned = service.create("wt-delete", { owner: { ...owner, retention: "delete" } });
+
+    expect(service.listOwned(owner).map((record) => record.id).sort()).toEqual(["wt-delete", "wt-keep"]);
+    expect(service.cleanupOwned(owner)).toMatchObject({
+      attempted: 2,
+      reclaimed: 1,
+      kept: 1,
+      failed: 0,
+    });
+    expect(existsSync(kept.root)).toBe(true);
+    expect(existsSync(cleaned.root)).toBe(false);
+
+    expect(service.cleanupOwned({ ...owner, expectedSessionId: "generation-2" })).toMatchObject({
+      attempted: 0,
+      reclaimed: 0,
+      kept: 0,
+    });
+    expect(existsSync(kept.root)).toBe(true);
+  });
+
+  it("rejects a new owned worktree before filesystem creation when maxWorktrees is reached", () => {
+    const previous = process.env.OPENCLAW_LONG_SESSION_MAX_WORKTREES;
+    process.env.OPENCLAW_LONG_SESSION_MAX_WORKTREES = "1";
+    try {
+      const root = makeRoot();
+      const service = createWorktreeService(root);
+      service.create("wt-one", { owner: { ...owner, retention: "delete" } });
+      expect(() => service.create("wt-two", { owner: { ...owner, retention: "delete" } }))
+        .toThrow(/maxWorktrees:limit-exceeded/);
+      expect(existsSync(join(root, ".openclaw", "worktrees", "wt-two"))).toBe(false);
+    } finally {
+      if (previous === undefined) delete process.env.OPENCLAW_LONG_SESSION_MAX_WORKTREES;
+      else process.env.OPENCLAW_LONG_SESSION_MAX_WORKTREES = previous;
+    }
   });
 });

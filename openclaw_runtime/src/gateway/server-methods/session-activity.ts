@@ -12,7 +12,10 @@ import {
 } from "../../agents/long-task-control/store.js";
 import { buildSessionEffectivePolicy } from "../session-effective-policy.js";
 import { loadSessionEntry } from "../session-utils.js";
+import { resolveAgentWorkspaceDir } from "../../agents/agent-scope.js";
+import { parseAgentSessionKey } from "../../routing/session-key.js";
 import { collectSessionActivityReadProjection } from "./session-activity-projection.js";
+import { readRuntimeSessionResourceInventory } from "../session-resource-inventory.js";
 import type { GatewayRequestHandlers } from "./types.js";
 
 function readSessionKey(params: Record<string, unknown>): string | null {
@@ -36,7 +39,7 @@ function taskStatus(status: string) {
 }
 
 export const sessionActivityHandlers: GatewayRequestHandlers = {
-  "session.activitySnapshot": ({ params, respond, context }) => {
+  "session.activitySnapshot": async ({ params, respond, context }) => {
     const sessionKey = readSessionKey(params);
     if (!sessionKey) {
       respond(false, undefined, { code: "INVALID_REQUEST", message: "session.activitySnapshot requires sessionKey" });
@@ -146,11 +149,23 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       queuedCount: queueCount,
       nowMs: now,
     });
+    const expectedSessionId = activeRun?.[1].sessionId ?? loaded.entry?.sessionId ?? null;
+    const resourceAgentId = activeRun?.[1].agentId ?? parseAgentSessionKey(sessionKey)?.agentId;
+    const agentWorkspaceDir = resourceAgentId ? resolveAgentWorkspaceDir(cfg, resourceAgentId) : null;
+    const resources = await readRuntimeSessionResourceInventory({
+      sessionKey,
+      agentId: resourceAgentId,
+      expectedSessionId,
+      workspaceId,
+      rootPath: loaded.entry?.workspaceDir ?? loaded.entry?.spawnedWorkspaceDir ?? null,
+      agentWorkspaceDir,
+    });
 
     respond(true, {
       snapshot: {
         session: {
           sessionKey,
+          sessionId: expectedSessionId,
           runId: activeRun?.[0] ?? null,
           status: activeRun ? "running" : "idle",
           phase: activeRun ? "execute" : undefined,
@@ -166,6 +181,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
         processes: readProjection.processes,
         lineage: readProjection.lineage,
         policy,
+        resources,
         // The goal-wake owner read can fail and degrade to empty arrays; the
         // read state travels with the snapshot so Main cannot report a failed
         // owner read as a session with no background activity (#121).

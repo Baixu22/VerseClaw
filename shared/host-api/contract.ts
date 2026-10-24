@@ -282,6 +282,8 @@ export type {
 } from '../types/memory';
 
 export type JsonRecord = Record<string, unknown>;
+import type { ReclaimReceipt } from '../long-session-resource-reclamation';
+
 export type HostSuccess = { success: boolean; error?: string };
 export type ProviderDefaultSyncResult = HostSuccess & {
   /** True when the default was saved but the runtime model registry sync
@@ -291,6 +293,10 @@ export type ProviderDefaultSyncResult = HostSuccess & {
   reason?: string;
 };
 export type SessionDeleteResult = HostSuccess & {
+  /** Physical generation whose runtime finalizer produced the delete receipt. */
+  expectedSessionId?: string;
+  /** Owner-derived cleanup result, including recovery identity when incomplete. */
+  resourceReclamation?: ReclaimReceipt;
   /** True when the transcript was removed but side artefacts or the
    * sessions.json update failed — the session entry is kept so the user can
    * retry instead of seeing a fake success. */
@@ -686,12 +692,16 @@ export type WorkspaceTerminalRunResult = HostSuccess & {
 export type WorkspaceTerminalOpenPayload = {
   workspaceId?: string;
   sessionKey?: string;
+  /** Optional caller-provided physical generation; Main verifies it with Gateway when supplied. */
+  expectedSessionId?: string;
   cwd?: string;
   cols?: number;
   rows?: number;
   approvalId?: string;
   kind?: 'interactive' | 'webPreviewDevServer';
   command?: string;
+  /** Keep this terminal alive across renderer teardown; owner default is true. */
+  keepOnLeave?: boolean;
 };
 export type WorkspaceTerminalSessionPayload = {
   sessionId: string;
@@ -720,6 +730,7 @@ export type WorkspaceTerminalSessionResult = HostSuccess & {
   sessionId?: string | null;
   workspaceId?: string | null;
   sessionKey?: string | null;
+  expectedSessionId?: string | null;
   kind?: 'interactive' | 'webPreviewDevServer';
   cwd?: string | null;
   pid?: number | null;
@@ -3175,6 +3186,11 @@ export type SessionStopPayload = {
 export type SessionStopResult = HostSuccess & {
   key?: string;
   stopped?: boolean;
+  expectedSessionId?: string;
+  resourceReclamation?: ReclaimReceipt;
+};
+export type SessionArchiveResult = HostSuccess & {
+  resourceReclamation?: ReclaimReceipt;
 };
 export type SessionForkPayload = {
   sessionKey: string;
@@ -5787,7 +5803,7 @@ export type HostApiContract = {
     createHandoff: (payload: SessionCreateHandoffPayload) => SessionCreateHandoffResult;
     fork: (payload: SessionForkPayload) => SessionForkResult;
     truncate: (payload: SessionTruncatePayload) => SessionTruncateResult;
-    archive: (payload: SessionArchivePayload) => HostSuccess;
+    archive: (payload: SessionArchivePayload) => SessionArchiveResult;
     restore: (payload: SessionRestorePayload) => HostSuccess;
     permanentDelete: (payload: SessionPermanentDeletePayload) => HostSuccess;
     listArchived: (payload?: SessionListArchivedPayload) => SessionListArchivedResult;

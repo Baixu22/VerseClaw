@@ -76,7 +76,7 @@ function policy(workspaceId: string, runtime = 'openclaw', grantState: 'active' 
       effective: { value: { mode: 'followup', cap: 2, drop: 'old', debounceMs: null, queuedCount: 0 }, status: 'effective', source: 'session.entry.queue', reason: null },
     },
     resources: {
-      configured: { value: { maxConcurrentRuns: 2, maxConcurrentSubagents: 4, maxSpawnDepth: 2, maxChildrenPerAgent: 8 }, status: 'configured', source: 'agents.defaults', reason: null },
+      configured: { value: { maxConcurrentRuns: 2, maxConcurrentSubagents: 4, maxSpawnDepth: 2, maxChildrenPerAgent: 8, maxProcesses: null, maxRssMb: null, maxBackgroundTerminals: null, maxWorktrees: null, idleTtlMs: null, keepOnLeave: null }, status: 'configured', source: 'agents.defaults', reason: null },
       effective: { value: null, status: 'unverified', source: 'runtime.resource-owner', reason: 'current scheduler admission was not read by this snapshot' },
     },
     schedule: {

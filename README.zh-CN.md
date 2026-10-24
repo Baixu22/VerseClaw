@@ -360,4 +360,4 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw)，并继承 V
 
 同一次 orchestration run 的全部预期 worker 终态后，会话活动 owner 才会派生一个 consolidated completion-batch receipt，并把完成事实与持久 delivery intent 分开；reset 或 handoff 后只显示 fenced，不会把旧结果送入新 generation。
 
-Chat 工具栏的资源入口也会显示显式绑定的长期会话、canonical 环境与 revision、Task Ledger 引用、完成批次、观测资源水位以及暂停/继续操作。
+Chat 工具栏的资源入口也会显示显式绑定的长期会话、canonical 环境与 revision、Task Ledger 引用、完成批次以及暂停/继续操作。会话活动现在会合并按 generation 绑定、由既有 owner 派生的 terminal、browser、托管端口、runtime 进程、durable helper、worktree 与 admission permit 账本；无法测得的值保持 unknown，显式的 OPENCLAW_LONG_SESSION_* 上限可在创建进程、后台终端或工作树之前拒绝。切换工作区保留资源；会话删除、工作区删除和应用退出只关闭各自 owner 范围。

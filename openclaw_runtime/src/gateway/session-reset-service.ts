@@ -32,6 +32,7 @@ import {
 } from "../auto-reply/reply/session-hooks.js";
 import { clearSessionResetRuntimeState } from "../auto-reply/reply/session-reset-cleanup.js";
 import { cleanupBrowserSessionsForLifecycleEnd } from "../browser-lifecycle-cleanup.js";
+import { createWorktreeService } from "../agents/worktree-service.js";
 import { getRuntimeConfig } from "../config/io.js";
 import {
   snapshotSessionOrigin,
@@ -429,7 +430,7 @@ type SessionCleanupParams = {
 };
 
 export type StopSessionRuntimeResult =
-  | { ok: true; key: string }
+  | { ok: true; key: string; sessionId: string }
   | { ok: false; error: ReturnType<typeof errorShape> };
 
 export type SessionMutationCleanupOutcome = {
@@ -520,9 +521,33 @@ async function closeTrackedBrowserTabs(
   }
 }
 
+function cleanupSessionWorktrees(params: {
+  cleanup: SessionCleanupParams;
+  identity: SessionAdmissionIdentity;
+}): { attempted: number; reclaimed: number; failed: number; kept: number; worktreeIds: string[] } {
+  const workspaceDir =
+    params.cleanup.entry?.workspaceDir?.trim() ||
+    params.cleanup.entry?.spawnedWorkspaceDir?.trim();
+  if (!workspaceDir) {
+    return { attempted: 0, reclaimed: 0, failed: 0, kept: 0, worktreeIds: [] };
+  }
+  const result = createWorktreeService(workspaceDir).cleanupOwned({
+    agentId: params.identity.agentId,
+    sessionKey: params.identity.canonicalSessionKey,
+    expectedSessionId: params.identity.expectedSessionId,
+  });
+  return {
+    attempted: result.attempted,
+    reclaimed: result.reclaimed,
+    failed: result.failed,
+    kept: result.kept,
+    worktreeIds: result.worktreeIds,
+  };
+}
 async function runSessionStopFront(params: {
   cleanup: SessionCleanupParams;
   identity: SessionAdmissionIdentity;
+  reason: "session-stop" | "session-reset" | "session-delete" | "session-archive";
 }): Promise<ReturnType<typeof errorShape> | undefined> {
   const { cleanup } = params;
   const sessionId = cleanup.entry?.sessionId?.trim();
@@ -568,6 +593,15 @@ async function runSessionStopFront(params: {
       ErrorCodes.UNAVAILABLE,
       `Session ${cleanup.key} drain failed (${drain.reason}): ${drain.message}`,
     );
+  }
+  if (params.reason === "session-delete") {
+    const worktrees = cleanupSessionWorktrees(params);
+    if (worktrees.failed > 0) {
+      return errorShape(
+        ErrorCodes.UNAVAILABLE,
+        `Session ${cleanup.key} retained ${worktrees.failed} managed worktree(s) after cleanup failure: ${worktrees.worktreeIds.join(", ")}`,
+      );
+    }
   }
   return undefined;
 }
@@ -673,13 +707,13 @@ export async function stopSessionRuntime(
     throw error;
   }
   try {
-    const frontError = await runSessionStopFront({ cleanup: params, identity });
+    const frontError = await runSessionStopFront({ cleanup: params, identity, reason: "session-stop" });
     if (frontError) {
       fence.release();
       return { ok: false, error: frontError };
     }
     fence.release();
-    return { ok: true, key: params.target.canonicalKey ?? params.key };
+    return { ok: true, key: params.target.canonicalKey ?? params.key, sessionId: identity.expectedSessionId };
   } catch (error) {
     fence.release();
     throw error;
@@ -1006,7 +1040,7 @@ export async function cleanupSessionBeforeMutation(params: {
     }
     try {
       if (identity) {
-        const frontError = await runSessionStopFront({ cleanup: params, identity });
+        const frontError = await runSessionStopFront({ cleanup: params, identity, reason: params.reason });
         if (frontError) {
           return { error: frontError, settle, retry };
         }

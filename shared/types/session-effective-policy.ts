@@ -67,6 +67,12 @@ export type SessionPolicyResourceLimits = {
   maxConcurrentSubagents: number | null;
   maxSpawnDepth: number | null;
   maxChildrenPerAgent: number | null;
+  maxProcesses: number | null;
+  maxRssMb: number | null;
+  maxBackgroundTerminals: number | null;
+  maxWorktrees: number | null;
+  idleTtlMs: number | null;
+  keepOnLeave: boolean | null;
 };
 
 export type SessionPolicyScheduleLimits = {

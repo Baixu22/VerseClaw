@@ -14,6 +14,7 @@ import {
 import type { RoleRegistryConfigCarrier } from "./role-registry.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { resolveWorktreeBackend } from "../context-engine/coding-runtime-flags.js";
+import { parseAgentSessionKey } from "../routing/session-key.js";
 import {
   spawnRoleSubagent,
   type RoleSpawnContext,
@@ -571,9 +572,24 @@ export async function runOrchestrationWithRecorder(
                 throw new Error("worktree isolation requires a workspaceDir");
               }
               const worktreeId = node.worktreeId ?? `${orchestrationRunId}:${node.taskNodeId}`;
+              const ownerSessionKey = ctx.agentSessionKey?.trim();
+              const ownerAgentId =
+                request.agentId?.trim() ||
+                parseAgentSessionKey(ownerSessionKey ?? "")?.agentId?.trim();
+              const expectedSessionId = ctx.expectedSessionId?.trim();
               const record = worktreeService.create(worktreeId, {
                 writeSet: node.writeSet,
                 seedFiles: node.writeSet,
+                ...(ownerSessionKey && ownerAgentId && expectedSessionId
+                  ? {
+                      owner: {
+                        agentId: ownerAgentId,
+                        sessionKey: ownerSessionKey,
+                        expectedSessionId,
+                        retention: "delete" as const,
+                      },
+                    }
+                  : {}),
               });
               return {
                 id: record.id,

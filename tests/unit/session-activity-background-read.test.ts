@@ -42,6 +42,15 @@ vi.mock('@electron/services/task-ledger-api', () => ({
   createTaskLedgerApi: () => ({ snapshot: async () => ({ success: false }) }),
 }));
 
+vi.mock('@electron/services/long-session-resource-reclamation', () => ({
+  collectLongSessionResourceInventory: vi.fn(async ({ scope }) => ({
+    schema: 'LongSessionResourceInventory/v1',
+    scope,
+    capturedAt: new Date().toISOString(),
+    owners: [],
+  })),
+}));
+
 import { createSessionActivityApi } from '@electron/services/session-activity-api';
 import {
   disposeSessionActivitySubscriptions,

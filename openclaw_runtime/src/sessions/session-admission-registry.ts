@@ -175,6 +175,7 @@ type AdmissionEntry = {
 export type SessionAdmissionSnapshot = {
   active: number;
   fenced: boolean;
+  waiters: number;
   totalPermits: number;
   totalRejectedWhileFenced: number;
 };
@@ -375,6 +376,7 @@ export class SessionAdmissionRegistry {
     return {
       active: entry.active,
       fenced: entry.fenced,
+      waiters: entry.waiters.size,
       totalPermits: entry.totalPermits,
       totalRejectedWhileFenced: entry.totalRejectedWhileFenced,
     };

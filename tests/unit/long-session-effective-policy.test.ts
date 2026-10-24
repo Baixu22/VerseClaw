@@ -187,7 +187,19 @@ describe("session effective policy", () => {
       maxConcurrentSubagents: 3,
       maxSpawnDepth: 2,
       maxChildrenPerAgent: 5,
+      maxProcesses: null,
+      maxRssMb: null,
+      maxBackgroundTerminals: null,
+      maxWorktrees: null,
+      idleTtlMs: null,
+      keepOnLeave: null,
     });
+    expect(policy.resources.effective).toMatchObject({
+      status: "effective",
+      source: "session coordination policy (explicit values only)",
+      reason: null,
+    });
+    expect(policy.resources.effective.value).toEqual(policy.resources.configured.value);
     expect(policy.schedule.configured.value).toEqual({
       cronEnabled: true,
       cronMaxConcurrentRuns: 4,

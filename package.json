@@ -33,6 +33,8 @@
     "long-session:d3:decision:check": "node scripts/long-session-continuity-decision.mjs --check",
     "long-session:e1:evidence": "node --experimental-strip-types scripts/long-session-followup-evidence.mjs",
     "long-session:e1:evidence:check": "node --experimental-strip-types scripts/long-session-followup-evidence.mjs --check",
+    "long-session:e2:evidence": "node --experimental-strip-types scripts/long-session-reclamation-evidence.mjs",
+    "long-session:e2:evidence:check": "node --experimental-strip-types scripts/long-session-reclamation-evidence.mjs --check",
     "eval:ast-readonly": "pnpm exec vitest run tests/unit/runtime-ast-readonly-deep-eval.test.ts --reporter=verbose",
     "eval:ast-investment": "pnpm exec vitest run tests/unit/runtime-ast-readonly-investment-eval.test.ts --reporter=verbose",
     "runtime:effectiveness": "node scripts/runtime-effectiveness.mjs",

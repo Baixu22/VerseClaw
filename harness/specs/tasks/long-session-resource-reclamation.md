@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-resource-reclamation
 title: 治理长期会话的工作树、终端、浏览器与后台资源
 program: long-session-development-20261022
@@ -9,28 +9,54 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 让长期工作既能离开 UI 后继续，也能在取消和结束时按真实 owner 安全退出；将分散的资源 owner 汇聚为可解释、可施加预算的会话级资源账本。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
+diffBase: b2d1b39e0e000c6d635e506925506880fd049ce6
 dependsOnTasks:
   - E1
 touchedAreas:
   - harness/specs/tasks/long-session-resource-reclamation.md
   - harness/specs/tasks/long-session-development-plan.md
+  - shared/long-session-resource-reclamation.ts
+  - shared/types/session-activity.ts
+  - shared/types/session-effective-policy.ts
+  - shared/host-api/contract.ts
+  - electron/services/long-session-resource-reclamation.ts
   - electron/services/terminal-session-manager.ts
+  - electron/services/terminal-api.ts
   - electron/services/session-activity-api.ts
-  - electron/services/resource-tracker.ts
-- electron/services/resource-tracker-api.ts
-- shared/types/resource-tracker.ts
-- openclaw_runtime/src/resources/background-work-gate.ts
-  - electron/services/resource-tracker-api.ts
-  - shared/types/resource-tracker.ts
-  - openclaw_runtime/src/resources/background-work-gate.ts
-  - electron/services/workspaces-api.ts
   - electron/services/sessions-api.ts
-  - openclaw_runtime/src/gateway/session-reset-service.ts
-  - openclaw_runtime/src/gateway/session-drain-service.ts
-  - openclaw_runtime/src/sessions/session-admission-registry.ts
+  - electron/services/workspaces-api.ts
+  - electron/main/index.ts
   - openclaw_runtime/src/agents/worktree-service.ts
-  - openclaw_runtime/src/agents/goal-wake-durable-cleanup.ts
+  - openclaw_runtime/src/agents/orchestrator-run-observed.ts
+  - openclaw_runtime/src/agents/role-spawn.ts
+  - openclaw_runtime/src/process/supervisor/supervisor.ts
+  - openclaw_runtime/src/sessions/session-admission-registry.ts
+  - openclaw_runtime/src/gateway/session-resource-inventory.ts
+  - openclaw_runtime/src/gateway/session-reset-service.ts
+  - openclaw_runtime/src/gateway/server-methods/session-activity.ts
+  - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts
+  - openclaw_runtime/src/gateway/session-ecosystem-reclamation-cycle.test.ts
+  - tests/e2e/long-session-lifecycle-faults.spec.ts
+  - tests/unit/terminal-session-manager.test.ts
   - tests/unit/long-session-resource-reclamation.test.ts
+  - tests/unit/long-session-owner-reclamation-adapter.test.ts
+  - tests/unit/long-session-runtime-resource-inventory.test.ts
+  - tests/unit/orchestration-worktree-merge.test.ts
+  - tests/unit/workspaces-api.test.ts
+  - tests/unit/long-session-effective-policy.test.ts
+  - tests/unit/session-activity-background-read.test.ts
+  - openclaw_runtime/src/agents/verseshell/managed-process-capacity.ts
+  - openclaw_runtime/src/gateway/session-effective-policy.ts
+  - tests/unit/session-activity-panel-sections.test.tsx
+  - tests/unit/session-activity-store-scope.test.ts
+  - tests/unit/versebrowser-host-adapter.test.ts
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - README.ru-RU.md
+  - scripts/long-session-reclamation-evidence.mjs
+  - package.json
   - harness/specs/fixtures/long-session-development/e2/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -48,9 +74,13 @@ expectedUserBehavior:
   - 让长期工作既能离开 UI 后继续，也能在取消和结束时按真实 owner 安全退出。
   - 创建本合同不代表功能已实现；结果、配置、授权和任务完成仍归现有 owner，未知状态如实保留。
 requiredTests:
-  - pnpm exec vitest run tests/unit/terminal-session-manager.test.ts tests/unit/session-cascade-delete.test.ts tests/unit/session-delete-gate.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/terminal-session-manager.test.ts tests/unit/session-cascade-delete.test.ts tests/unit/session-delete-gate.test.ts tests/unit/session-activity-background-read.test.ts tests/unit/versebrowser-host-adapter.test.ts tests/unit/long-session-resource-reclamation.test.ts tests/unit/long-session-owner-reclamation-adapter.test.ts tests/unit/long-session-runtime-resource-inventory.test.ts tests/unit/orchestration-worktree-merge.test.ts tests/unit/workspaces-api.test.ts tests/unit/long-session-effective-policy.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit-fast.config.ts src/sessions/session-admission-registry.test.ts src/sessions/session-admission-registry-reclamation.test.ts --maxWorkers=1
-  - pnpm exec vitest run tests/unit/long-session-resource-reclamation.test.ts --maxWorkers=1
+  - pnpm --dir openclaw_runtime exec vitest run src/gateway/session-ecosystem-reclamation-cycle.test.ts --maxWorkers=1 --disableConsoleIntercept
+  - pnpm run build:runtime
+  - pnpm exec playwright test tests/e2e/long-session-lifecycle-faults.spec.ts --grep "owner receipts reclaim" --workers=1
+  - pnpm run long-session:e2:evidence
+  - pnpm run long-session:e2:evidence:check
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run comms:replay
@@ -59,6 +89,10 @@ requiredTests:
   - git diff --check
 plannedTests:
   - tests/unit/long-session-resource-reclamation.test.ts
+  - tests/unit/long-session-owner-reclamation-adapter.test.ts
+  - tests/unit/long-session-runtime-resource-inventory.test.ts
+  - openclaw_runtime/src/gateway/session-ecosystem-reclamation-cycle.test.ts
+  - tests/e2e/long-session-lifecycle-faults.spec.ts
 acceptance:
   - 资源通过 existing owner 关联 session/run/scope，不建 universal session_resources 表；UI unload、运行取消、metadata archive 与资源删除动作明确分开。新增 owner 汇聚读模型，而不是第二个资源数据库或执行器，至少表示 osPid、进程树、CPU%、RSS KB、子进程/后台终端数、worktree 占用、owner generation 与 observed/managed 权限。
   - 至少 50 次创建/停止/归档恢复循环回读 owner handles/permit/waiters/helper refs，退出后的本 lane 活跃残留为 0；必要 keep_on_leave 用户终端单独计数不误杀。

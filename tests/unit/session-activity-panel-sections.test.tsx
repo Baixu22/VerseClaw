@@ -129,7 +129,7 @@ describe('SessionActivityPanel', () => {
               effective: { value: { mode: null, cap: null, drop: null, debounceMs: null, queuedCount: 0 }, status: 'effective', source: 'session', reason: null },
             },
             resources: {
-              configured: { value: { maxConcurrentRuns: null, maxConcurrentSubagents: null, maxSpawnDepth: null, maxChildrenPerAgent: null }, status: 'unverified', source: 'config', reason: null },
+              configured: { value: { maxConcurrentRuns: null, maxConcurrentSubagents: null, maxSpawnDepth: null, maxChildrenPerAgent: null, maxProcesses: null, maxRssMb: null, maxBackgroundTerminals: null, maxWorktrees: null, idleTtlMs: null, keepOnLeave: null }, status: 'unverified', source: 'config', reason: null },
               effective: { value: null, status: 'unverified', source: 'runtime', reason: null },
             },
             schedule: {

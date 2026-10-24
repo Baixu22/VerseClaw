@@ -41,6 +41,10 @@ import {
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
 import { recordPermissionDecisionEvent } from './permissions-api';
 import { normalizeTaskLedgerWorkspaceId } from './task-ledger-service';
+import {
+  reclaimBrowserSessionsForWorkspace,
+  reclaimManagedPortsForWorkspace,
+} from './long-session-resource-reclamation';
 
 type WorkspaceStoreDocument = {
   activeWorkspaceId: string | null;
@@ -1241,6 +1245,13 @@ export function createWorkspacesApi(
       if (rootPathChanged) {
         ctx.terminalManager?.unregisterWorkspace(id, 'workspace-delete');
         await ctx.webPreviewManager?.stopForWorkspace(id, 'workspace-delete');
+        const browsers = reclaimBrowserSessionsForWorkspace(id);
+        const ports = await reclaimManagedPortsForWorkspace(id);
+        if (browsers.reclaimed !== browsers.attempted || ports.failed > 0) {
+          throw new Error(
+            `Workspace resource cleanup is incomplete (browser ${browsers.reclaimed}/${browsers.attempted}, managed ports ${ports.failed} failed)`,
+          );
+        }
         if (document.activeWorkspaceId === id) {
           ctx.terminalManager?.registerWorkspace(nextProfile);
           ctx.webPreviewManager?.registerWorkspace(nextProfile);
@@ -1276,6 +1287,13 @@ export function createWorkspacesApi(
       const nextDocument = { activeWorkspaceId, profiles };
       ctx.terminalManager?.unregisterWorkspace(id, 'workspace-delete');
       await ctx.webPreviewManager?.stopForWorkspace(id, 'workspace-delete');
+      const browsers = reclaimBrowserSessionsForWorkspace(id);
+      const ports = await reclaimManagedPortsForWorkspace(id);
+      if (browsers.reclaimed !== browsers.attempted || ports.failed > 0) {
+        throw new Error(
+          `Workspace resource cleanup is incomplete (browser ${browsers.reclaimed}/${browsers.attempted}, managed ports ${ports.failed} failed)`,
+        );
+      }
       await writeDocument(nextDocument);
       const nextActiveWorkspace = profiles.find((profile) => profile.id === activeWorkspaceId) ?? null;
       if (nextActiveWorkspace) {
@@ -1331,12 +1349,9 @@ export function createWorkspacesApi(
         lastOpenedAt: Date.now(),
         updatedAt: Date.now(),
       };
-      const previousActiveWorkspace = document.profiles.find((profile) => profile.id === document.activeWorkspaceId) ?? null;
       const nextDocument = { activeWorkspaceId: id, profiles };
-      if (previousActiveWorkspace?.id && previousActiveWorkspace.id !== id) {
-        ctx.terminalManager?.unregisterWorkspace(previousActiveWorkspace.id, 'workspace-switch');
-        await ctx.webPreviewManager?.stopForWorkspace(previousActiveWorkspace.id, 'workspace-switch');
-      }
+      // Workspace switching changes the active selection only. Long-lived
+      // terminals, browser sessions and managed ports remain with their owner.
       await writeDocument(nextDocument);
       await syncWorkspacePermissionBestEffort(ctx.gatewayManager);
       const activeWorkspace = profiles[index];

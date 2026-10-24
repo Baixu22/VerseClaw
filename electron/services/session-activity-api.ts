@@ -12,6 +12,7 @@ import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createGitApi } from './git-api';
 import { createTaskLedgerApi } from './task-ledger-api';
 import type { TerminalSessionManager } from './terminal-session-manager';
+import { collectLongSessionResourceInventory } from './long-session-resource-reclamation';
 
 type RuntimeActivityResponse = {
   snapshot?: Partial<SessionActivitySnapshot> & {
@@ -103,6 +104,7 @@ function mergeRuntimeSnapshot(
     processes: Array.isArray(runtime.processes) ? runtime.processes : snapshot.processes,
     lineage: Array.isArray(runtime.lineage) ? runtime.lineage : snapshot.lineage,
     ...(runtime.policy ? { policy: runtime.policy } : {}),
+    ...(runtime.resources ? { resources: runtime.resources } : {}),
     continuity: { ...snapshot.continuity, ...(runtime.continuity ?? {}) },
     availability: { ...snapshot.availability, ...(runtime.availability ?? {}) },
     capturedAt: Math.max(snapshot.capturedAt, runtime.capturedAt ?? 0),
@@ -198,6 +200,16 @@ export function createSessionActivityApi({
           updatedAt: snapshot.capturedAt,
         }));
       snapshot.availability.terminals = true;
+      snapshot.resources = await collectLongSessionResourceInventory({
+        scope: {
+          workspaceId: payload.workspaceId?.trim() || 'unknown',
+          sessionKey,
+          expectedSessionId: snapshot.session.sessionId ?? null,
+          rootPath: snapshot.resources?.scope.rootPath ?? null,
+        },
+        terminalManager,
+        runtimeInventory: snapshot.resources ?? null,
+      });
       snapshot.backgroundRead = backgroundRead;
       snapshot.capturedAt = Date.now();
 

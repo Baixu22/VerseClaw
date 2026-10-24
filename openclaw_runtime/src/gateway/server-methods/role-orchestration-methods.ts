@@ -579,6 +579,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         },
         {
           agentSessionKey: sessionKey,
+          expectedSessionId: admission?.coordinator.sessionGeneration ?? readCurrentParentGeneration(sessionKey) ?? undefined,
           ...(readString(params.agentId) ? { requesterAgentIdOverride: readString(params.agentId) } : {}),
         },
         {

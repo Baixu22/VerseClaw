@@ -57,6 +57,7 @@ import {
 import { evaluateHandoffDerivation } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
 import { getResourceTracker } from './resource-tracker';
+import { reclaimLongSessionOwnerResources } from './long-session-resource-reclamation';
 import { getObservabilityTraceBuffer } from './observability-service';
 import {
   removeSessionEntry,
@@ -1491,7 +1492,7 @@ function isDefinitiveLifecycleMutationFailure(
 async function archiveSession(
   payload: SessionPayload,
   gatewayManager?: GatewayManager,
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; sessionId?: string }> {
   const sessionKey = getSessionKey(payload);
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
@@ -1535,7 +1536,7 @@ async function archiveSession(
       };
     }
     await clearSessionDeleteGate(gate.operationId);
-    return { success: true };
+    return { success: true, sessionId: String(result.sessionId) };
   } catch (error) {
     // Definitive correlated refusals can release the mirror gate. Unknown or
     // retryable outcomes retain the same operationId for journal recovery.
@@ -1791,7 +1792,15 @@ async function deleteSessionViaRuntime(
       }) ?? currentGate;
     }
     if (currentGate.terminalClosed !== true) {
-      terminalManager?.closeForSessionKey(sessionKey, 'session-delete');
+      // Runtime cleanup already proved this exact generation. The Main pass
+      // closes keep_on_leave terminals only for an explicit session delete.
+      terminalManager?.reclaimForSession({
+        sessionKey,
+        workspaceId: (await getActiveWorkspaceProfile())?.id,
+        expectedSessionId: currentGate.expectedSessionId,
+        honorKeepOnLeave: false,
+        reason: 'session-delete',
+      });
       currentGate = await updateSessionDeleteGate(gate.operationId, {
         terminalClosed: true,
       }) ?? currentGate;
@@ -1807,7 +1816,10 @@ async function deleteSessionViaRuntime(
     }
 
     await clearSessionDeleteGate(gate.operationId);
-    return { success: true };
+    return {
+      success: true,
+      expectedSessionId: currentGate.expectedSessionId ?? result.sessionId,
+    };
   } catch (error) {
     // RPC unknown (timeout, socket drop, reconnect): do not sweep, do not
     // release the mirror gate. The persisted operationId makes the next delete
@@ -1912,11 +1924,28 @@ export function createSessionsApi(ctx: {
       const result = ctx.gatewayManager
         ? await deleteSessionViaRuntimeSerialized(sessionKey, ctx.gatewayManager, ctx.terminalManager)
         : await deleteSession(sessionKey);
-      if (result.success) {
-        await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
-        await observeCoordinatorLifecycle({ type: 'delete', workspaceId, sessionKey });
+      if (!result.success) return result;
+      await observeCoordinatorLifecycle({ type: 'delete', workspaceId, sessionKey });
+      const resourceReclamation = await reclaimLongSessionOwnerResources({
+        action: 'session-delete',
+        scope: {
+          workspaceId: workspaceId ?? '',
+          sessionKey,
+          expectedSessionId: result.expectedSessionId ?? null,
+        },
+        terminalManager: ctx.terminalManager,
+        runtimeCleanupSettled: Boolean(ctx.gatewayManager),
+      }).catch((error) => {
+        logger.warn('[resource-reclamation] delete pass failed', error);
+        return undefined;
+      });
+      if (resourceReclamation?.recoveryRequired) {
+        logger.warn('[resource-reclamation] delete recovery required', {
+          recoveryId: resourceReclamation.recoveryId,
+          activeResidue: resourceReclamation.activeResidue,
+        });
       }
-      return result;
+      return { ...result, ...(resourceReclamation ? { resourceReclamation } : {}) };
     },
     rename: async (payload) => {
       const body = isRecord(payload) ? payload as SessionPayload : {};
@@ -2337,10 +2366,36 @@ export function createSessionsApi(ctx: {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
       }, 30_000);
+      const expectedSessionId = typeof result.sessionId === 'string' && result.sessionId.trim()
+        ? result.sessionId.trim()
+        : null;
+      const resourceReclamation = result.ok === true
+        ? await reclaimLongSessionOwnerResources({
+            action: 'run-cancel',
+            scope: {
+              workspaceId: getOptionalWorkspaceId(payload) ?? '',
+              sessionKey,
+              expectedSessionId,
+            },
+            terminalManager: ctx.terminalManager,
+            runtimeCleanupSettled: true,
+          }).catch((error) => {
+            logger.warn('[resource-reclamation] stop pass failed', error);
+            return undefined;
+          })
+        : undefined;
+      if (resourceReclamation?.recoveryRequired) {
+        logger.warn('[resource-reclamation] stop recovery required', {
+          recoveryId: resourceReclamation.recoveryId,
+          activeResidue: resourceReclamation.activeResidue,
+        });
+      }
       return {
         success: true,
         key: typeof result.key === 'string' ? result.key : sessionKey,
         stopped: result.ok === true,
+        ...(expectedSessionId ? { expectedSessionId } : {}),
+        ...(resourceReclamation ? { resourceReclamation } : {}),
       };
     },
     restoreCheckpoint: async (payload) => {
@@ -2876,12 +2931,31 @@ export function createSessionsApi(ctx: {
         originalFolderId: body.originalFolderId,
       }, ctx.gatewayManager);
       if (result.success) {
-        await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
         await observeCoordinatorLifecycle({
           type: 'archive',
           workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : null,
           sessionKey,
         });
+        const resourceReclamation = await reclaimLongSessionOwnerResources({
+          action: 'session-archive',
+          scope: {
+            workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : '',
+            sessionKey,
+            expectedSessionId: result.sessionId ?? null,
+          },
+          terminalManager: ctx.terminalManager,
+          runtimeCleanupSettled: Boolean(ctx.gatewayManager),
+        }).catch((error) => {
+          logger.warn('[resource-reclamation] archive pass failed', error);
+          return undefined;
+        });
+        if (resourceReclamation?.recoveryRequired) {
+          logger.warn('[resource-reclamation] archive recovery required', {
+            recoveryId: resourceReclamation.recoveryId,
+            activeResidue: resourceReclamation.activeResidue,
+          });
+        }
+        return { ...result, ...(resourceReclamation ? { resourceReclamation } : {}) };
       }
       return result;
       });

@@ -57,6 +57,8 @@ export type RoleSpawnParams = {
 /** Minimal context for role-spawned workers (structurally compatible with SpawnSubagentContext). */
 export type RoleSpawnContext = {
   agentSessionKey?: string;
+  /** Physical generation used to attribute worktrees and cleanup. */
+  expectedSessionId?: string;
   agentChannel?: string;
   agentAccountId?: string;
   agentTo?: string;

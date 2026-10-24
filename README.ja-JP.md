@@ -360,4 +360,4 @@ Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell �
 
 同じ orchestration run の全 expected worker が終端状態になった後だけ、session activity owner が一つの consolidated completion-batch receipt を導出し、完了事実と durable delivery intent を分けて扱います。reset や handoff 後の古い結果は fenced となり、新しい generation へ送られません。
 
-Chat ツールバーのリソース入口には、明示的にバインドした長期セッション、canonical 環境と revision、Task Ledger 参照、完了バッチ、観測リソース、一時停止・再開操作も表示されます。
+Chat ツールバーのリソース入口には、明示的にバインドした長期セッション、canonical 環境と revision、Task Ledger 参照、完了バッチ、一時停止・再開操作も表示されます。Session activity は generation 単位で、既存 owner から導出した terminal、browser、管理ポート、runtime process、durable helper、worktree、admission permit の台帳を統合します。測定不能な値は unknown のままで、明示的な OPENCLAW_LONG_SESSION_* 上限は process、background terminal、worktree の作成前に拒否できます。Workspace switch はリソースを保持し、session delete、workspace delete、app quit はそれぞれの owner scope だけを閉じます。

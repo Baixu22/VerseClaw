@@ -5,6 +5,12 @@ import { resolve } from 'node:path';
 import * as pty from '@lydell/node-pty';
 import { HOST_EVENT_CHANNELS } from '@shared/host-events/contract';
 import type { WorkspaceProfile } from '@shared/types/workspace';
+import {
+  LongSessionCoordinationError,
+  decideLongSessionCoordination,
+  resolveLongSessionCoordinationPolicy,
+  type LongSessionCoordinationPolicy,
+} from '@shared/long-session-resource-reclamation';
 import { prependOfficeCliPathToEnv } from '../utils/officecli-path';
 import { isPathInsideWorkspace } from './workspace-permissions';
 
@@ -71,6 +77,7 @@ type TerminalSessionRecord = {
   id: string;
   workspaceId: string;
   sessionKey: string;
+  expectedSessionId: string | null;
   kind: TerminalSessionKind;
   cwd: string;
   ptyProcess: PtyProcess | null;
@@ -84,12 +91,15 @@ type TerminalSessionRecord = {
   closeReason: TerminalCloseReason | null;
   lastOutputAtMs: number | null;
   lastInteractionAtMs: number | null;
+  /** Whether renderer teardown keeps this terminal alive; defaults to true. */
+  keepOnLeave?: boolean;
 };
 
 type TerminalSessionSnapshot = {
   sessionId: string | null;
   workspaceId: string | null;
   sessionKey: string | null;
+  expectedSessionId?: string | null;
   kind?: TerminalSessionKind;
   cwd: string | null;
   pid: number | null;
@@ -99,23 +109,29 @@ type TerminalSessionSnapshot = {
   exitCode: number | null;
   scrollback?: string;
   idle?: TerminalIdleReport;
+  /** True when renderer teardown or a workspace switch preserves this terminal. */
+  keepOnLeave?: boolean;
 };
 
 type TerminalManagerContext = {
   mainWindow?: BrowserWindow | null;
   onData?: (event: { workspaceId: string; sessionKey: string; sessionId: string; kind: TerminalSessionKind; data: string; seq: number }) => void;
   idlePolicy?: Partial<TerminalIdlePolicy>;
+  coordinationPolicy?: LongSessionCoordinationPolicy;
   now?: () => number;
 };
 
 type OpenTerminalInput = {
   workspace: WorkspaceProfile;
   sessionKey?: string;
+  expectedSessionId?: string;
   cwd?: string;
   cols?: number;
   rows?: number;
   kind?: TerminalSessionKind;
   command?: string;
+  /** Whether renderer teardown keeps this terminal alive; defaults to true. */
+  keepOnLeave?: boolean;
 };
 
 const MAX_SCROLLBACK_CHARS = 120_000;
@@ -165,6 +181,7 @@ export class TerminalSessionManager {
   private readonly registeredWorkspaces = new Set<string>();
   private readonly idlePolicy: TerminalIdlePolicy;
   private readonly now: () => number;
+  private readonly coordinationPolicy: LongSessionCoordinationPolicy;
 
   constructor(ctx: TerminalManagerContext = {}) {
     this.mainWindow = ctx.mainWindow ?? null;
@@ -174,6 +191,7 @@ export class TerminalSessionManager {
       interactionIdleMs: resolveIdleThresholdMs(ctx.idlePolicy?.interactionIdleMs, 'CLAWX_TERMINAL_INTERACTION_IDLE_MS', DEFAULT_INTERACTION_IDLE_MS),
     };
     this.now = ctx.now ?? (() => Date.now());
+    this.coordinationPolicy = ctx.coordinationPolicy ?? resolveLongSessionCoordinationPolicy();
   }
 
   registerWorkspace(workspace: WorkspaceProfile): void {
@@ -199,6 +217,18 @@ export class TerminalSessionManager {
 
     if (existing) this.closeSession(existing, 'replaced');
 
+    const budget = decideLongSessionCoordination({
+      policy: this.coordinationPolicy,
+      usage: {
+        processCount: null,
+        rssKb: null,
+        backgroundTerminals: this.countForSession({ sessionKey, workspaceId: input.workspace.id }),
+        worktreeCount: null,
+      },
+      request: { backgroundTerminals: 1 },
+    });
+    if (!budget.allowed) throw new LongSessionCoordinationError(budget);
+
     const cwd = resolve(input.cwd || input.workspace.rootPath);
     if (!isPathInsideWorkspace(cwd, input.workspace.rootPath)) {
       throw new Error('Terminal cwd must be inside the active workspace');
@@ -222,6 +252,7 @@ export class TerminalSessionManager {
       id,
       workspaceId: input.workspace.id,
       sessionKey,
+      expectedSessionId: input.expectedSessionId?.trim() || null,
       kind,
       cwd,
       ptyProcess,
@@ -235,6 +266,7 @@ export class TerminalSessionManager {
       closeReason: null,
       lastOutputAtMs: null,
       lastInteractionAtMs: this.now(),
+      keepOnLeave: input.keepOnLeave !== false,
     };
 
     this.sessions.set(id, session);
@@ -329,6 +361,71 @@ export class TerminalSessionManager {
   }
 
   /**
+   * E2: reclaim terminals for one session scope while honoring keep_on_leave.
+   * Returns owner counts so the caller can build a receipt instead of assuming
+   * that calling close means the owner released it.
+   */
+  reclaimForSession(params: {
+    sessionKey: string;
+    reason: TerminalCloseReason;
+    honorKeepOnLeave?: boolean;
+    workspaceId?: string;
+    expectedSessionId?: string | null;
+  }): { attempted: number; reclaimed: number; kept: number } {
+    let attempted = 0;
+    let reclaimed = 0;
+    let kept = 0;
+    for (const session of Array.from(this.sessions.values())) {
+      if (session.sessionKey !== params.sessionKey) continue;
+      if (params.workspaceId && session.workspaceId !== params.workspaceId) continue;
+      if (params.expectedSessionId && session.expectedSessionId !== params.expectedSessionId) continue;
+      attempted += 1;
+      if (params.honorKeepOnLeave === true && session.keepOnLeave !== false) {
+        kept += 1;
+        continue;
+      }
+      this.closeSession(session, params.reason);
+      reclaimed += 1;
+    }
+    return { attempted, reclaimed, kept };
+  }
+
+  /** Count live terminals for a scope without mutating anything. */
+  countForSession(params: { sessionKey: string; workspaceId?: string }): number {
+    let count = 0;
+    for (const session of this.sessions.values()) {
+      if (session.sessionKey !== params.sessionKey) continue;
+      if (params.workspaceId && session.workspaceId !== params.workspaceId) continue;
+      count += 1;
+    }
+    return count;
+  }
+
+  /** keep_on_leave terminals for a scope, accounted separately and never killed. */
+  countKeepOnLeave(params: { sessionKey: string; workspaceId?: string }): number {
+    let count = 0;
+    for (const session of this.sessions.values()) {
+      if (session.sessionKey !== params.sessionKey) continue;
+      if (params.workspaceId && session.workspaceId !== params.workspaceId) continue;
+      if (session.keepOnLeave !== false) count += 1;
+    }
+    return count;
+  }
+  /** Read-model inventory for live terminals, derived from this owner only. */
+  listAll(): Array<{ sessionId: string; workspaceId: string; sessionKey: string; expectedSessionId: string | null; pid: number | null; keepOnLeave: boolean }> {
+    return Array.from(this.sessions.values())
+      .filter((session) => session.status !== 'exited')
+      .map((session) => ({
+        sessionId: session.id,
+        workspaceId: session.workspaceId,
+        sessionKey: session.sessionKey,
+        expectedSessionId: session.expectedSessionId,
+        pid: session.pid,
+        keepOnLeave: session.keepOnLeave !== false,
+      }));
+  }
+
+  /**
    * TF-0081 idle classification for one terminal. Returns null when the record
    * has already been reclaimed (exited terminals are removed, i.e. completed).
    */
@@ -420,6 +517,7 @@ export class TerminalSessionManager {
     return {
       workspaceId: session.workspaceId,
       sessionKey: session.sessionKey,
+      expectedSessionId: session.expectedSessionId,
       kind: session.kind,
       sessionId: session.id,
       cwd: session.cwd,
@@ -460,6 +558,7 @@ export class TerminalSessionManager {
       sessionId: session.id,
       workspaceId: session.workspaceId,
       sessionKey: session.sessionKey,
+      expectedSessionId: session.expectedSessionId,
       kind: session.kind,
       cwd: session.cwd,
       pid: session.pid,
@@ -469,6 +568,7 @@ export class TerminalSessionManager {
       exitCode: session.exitCode,
       scrollback: includeScrollback ? session.scrollback : undefined,
       idle: this.toIdleReport(session),
+      keepOnLeave: session.keepOnLeave !== false,
     };
   }
 

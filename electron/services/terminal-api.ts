@@ -251,6 +251,7 @@ function buildSessionResult(snapshot: ReturnType<TerminalSessionManager['status'
     sessionId: snapshot.sessionId,
     workspaceId: snapshot.workspaceId,
     sessionKey: snapshot.sessionKey,
+    expectedSessionId: snapshot.expectedSessionId ?? null,
     kind: snapshot.kind,
     cwd: snapshot.cwd,
     pid: snapshot.pid,
@@ -533,6 +534,31 @@ export function createTerminalApi({
         throw new Error('Terminal workspace must match the active workspace');
       }
       const sessionKey = normalizeString(body.sessionKey) ?? workspace.activeSessionKey;
+      let expectedSessionId = normalizeString(body.expectedSessionId);
+      try {
+        const described = await gatewayManager.rpc<{ session?: { sessionId?: string } | null }>(
+          'sessions.describe',
+          { key: sessionKey },
+          10_000,
+        );
+        const currentSessionId = described?.session?.sessionId?.trim();
+        if (expectedSessionId && currentSessionId && expectedSessionId !== currentSessionId) {
+          return {
+            success: false,
+            blocked: true,
+            reason: 'Terminal session generation changed before open',
+            workspaceId: workspace.id,
+            sessionKey,
+            expectedSessionId: currentSessionId,
+            cwd: normalizeString(body.cwd) ?? workspace.rootPath,
+            status: 'blocked',
+            exitCode: null,
+          };
+        }
+        expectedSessionId = currentSessionId ?? expectedSessionId;
+      } catch {
+        // Gateway availability must not erase a caller-pinned generation.
+      }
       const cwd = normalizeString(body.cwd) ?? workspace.rootPath;
       if (!isPathInsideWorkspace(cwd, workspace.rootPath)) {
         throw new Error('Terminal cwd must be inside the active workspace');
@@ -638,11 +664,13 @@ export function createTerminalApi({
         const snapshot = terminalManager.open({
           workspace,
           sessionKey,
+          expectedSessionId,
           cwd,
           cols: normalizeDimension(body.cols),
           rows: normalizeDimension(body.rows),
           kind: body.kind,
           command: body.command,
+          keepOnLeave: body.keepOnLeave,
         });
         return buildSessionResult(snapshot);
       });
