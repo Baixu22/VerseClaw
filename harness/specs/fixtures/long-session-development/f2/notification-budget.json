@@ -1,0 +1,164 @@
+{
+  "schema": "clawx.long-session.f2-notification-budget/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-f2",
+  "taskForestNode": "TF-0562",
+  "generatedAt": "2026-10-24T05:19:50.420Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261022",
+    "commit": "18982d5e6c8d66f96bc0c3ebbfc4cb44ba52b997",
+    "tree": "aa24137b2585e65e08f7d29139ccbc7ba71a8c84",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+  },
+  "observationSource": "D:/tmp/long-session-f2/observation-18982d5e6.json",
+  "observationSha256": "0df7f5671c1300f20686935566e58bfc97823f82ab556a23cfc2710a12896dc5",
+  "budgets": {
+    "maxMeaningfulPromptsPerBatch": 1,
+    "maxMergedSteeringChars": 24000,
+    "maxResultCharsPerItem": 6000,
+    "maxMetadataChars": 500,
+    "maxCompletionBatchWorkers": 64,
+    "maxCompletionBatchesPerSnapshot": 8,
+    "maxDuplicateNotificationDeliveries": 0,
+    "loadSessionsMinIntervalMs": 1200,
+    "loadHistoryMinIntervalMs": 800,
+    "gatewayEventDedupeTtlMs": 30000,
+    "maxSummaryKeysPerSweep": 40,
+    "hiddenSurfaceMaxPollTasks": 0,
+    "maxRefusedFollowUpExecutions": 0,
+    "maxGrowthPerRefusedFollowUpRound": 0
+  },
+  "cases": {
+    "duplicateCompletion": {
+      "meaningfulPromptsPerBatch": 1,
+      "secondLeaseOfSameBatch": "refused: leasePendingAgentSteeringItemsFromSubagentRuns returns undefined while the batch is in progress",
+      "duplicateQueueItemsAfterAck": 0,
+      "batchesPerOrchestration": 1
+    },
+    "overSizedSoloGroups": {
+      "mergedPromptChars": 18844,
+      "leasedItems": 3,
+      "deferredItems": 7,
+      "cap": 24000,
+      "note": "independent groups past the soft cap stay pending for a later turn instead of being crammed into one prompt"
+    },
+    "atomicMaximumTeamBatch": {
+      "mergedPromptChars": 52849,
+      "structuralCeiling": 519400,
+      "note": "the shipped owner keeps one Team Result Bundle atomic rather than truncating it, so the bound is the derived worker-cap times per-item clamp"
+    },
+    "replayedNotification": {
+      "duplicateChatStoreDeliveries": 0,
+      "note": "the shipped renderer dedupe owner drops exact replays before handleChatEvent"
+    },
+    "noChangeFollowUpBurst": {
+      "burstSize": 12,
+      "duplicateEventCopies": 11,
+      "historyReloads": 1,
+      "sessionReloads": 0,
+      "productionChange": "src/stores/gateway.ts folds a replayed chat:runtime-event before the refresh path, so a duplicate completion cannot schedule the same background read twice",
+      "measuredBefore": "12 identical run.ended events issued 12 forced history reloads",
+      "measuredAfter": "12 identical run.ended events issue 1 history reload and 0 sidebar reloads"
+    },
+    "hiddenSurface": {
+      "pollTasksWhileHidden": 0,
+      "pollTasksWhileVisible": 5,
+      "timersAfterStop": 0
+    },
+    "pausedOrExpiredFollowUps": {
+      "refusedRounds": 1000,
+      "executionsWhileRefused": 0,
+      "states": [
+        "expired",
+        "session-missing",
+        "generation-mismatch",
+        "unverifiable"
+      ],
+      "queueGrowthPerRound": 0,
+      "note": "the shipped coordinator gate refuses an expired, missing, unverifiable or generation-mismatched follow-up before it can run, so a paused or expired schedule adds no queue depth"
+    },
+    "rendererListeners": {
+      "sessionActivitySubscriptions": 8,
+      "afterDispose": 0
+    }
+  },
+  "gateReceipt": {
+    "provided": true,
+    "source": "D:/tmp/long-session-f2/gates-18982d5e6/gates.json",
+    "allPassed": true,
+    "gates": [
+      {
+        "name": "unit-label-summary-search-budget",
+        "command": "pnpm exec vitest run tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts tests/unit/session-search-modal-performance.test.tsx --maxWorkers=1",
+        "exitCode": 0,
+        "durationMs": 6949,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\unit-label-summary-search-budget.log",
+        "summary": "  Test Files  3 passed (3)       Tests  4 passed (4)    Start at  13:17:41    Duration  5.52s (transform 1.70s, setup 296ms, import 944ms, tests 2.60s, environment 1.16s) "
+      },
+      {
+        "name": "unit-long-use-budget",
+        "command": "set LONG_SESSION_F2_PROBE_RUNS=D:\\tmp\\long-session-f2\\runs-18982d5e6&& set LONG_SESSION_F2_CANDIDATE=18982d5e6c8d66f96bc0c3ebbfc4cb44ba52b997&& set LONG_SESSION_F2_OBSERVATION=D:\\tmp\\long-session-f2\\observation-18982d5e6.json&& pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "durationMs": 11654,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\unit-long-use-budget.log",
+        "summary": "  Test Files  1 passed (1)       Tests  24 passed (24)    Start at  13:17:48    Duration  10.21s (transform 4.38s, setup 124ms, import 4.87s, tests 4.45s, environment 580ms) "
+      },
+      {
+        "name": "typecheck",
+        "command": "pnpm run typecheck",
+        "exitCode": 0,
+        "durationMs": 30175,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\typecheck.log",
+        "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+      },
+      {
+        "name": "contract-check",
+        "command": "pnpm run contract:check",
+        "exitCode": 0,
+        "durationMs": 910,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\contract-check.log",
+        "summary": "$ node scripts/contract-check.mjs Contract check passed."
+      },
+      {
+        "name": "comms-replay",
+        "command": "pnpm run comms:replay",
+        "exitCode": 0,
+        "durationMs": 854,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\comms-replay.log",
+        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
+      },
+      {
+        "name": "comms-compare",
+        "command": "pnpm run comms:compare",
+        "exitCode": 0,
+        "durationMs": 744,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\comms-compare.log",
+        "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
+      },
+      {
+        "name": "harness-validate",
+        "command": "pnpm harness validate --spec harness/specs/tasks/long-session-long-use-budget.md",
+        "exitCode": 0,
+        "durationMs": 1543,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\harness-validate.log",
+        "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-long-use-budget.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-long-use-budget.md\" Spec is valid: harness\\specs\\tasks\\long-session-long-use-budget.md"
+      },
+      {
+        "name": "git-diff-check",
+        "command": "git diff --check",
+        "exitCode": 0,
+        "durationMs": 100,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\git-diff-check.log",
+        "summary": ""
+      },
+      {
+        "name": "eslint-changed",
+        "command": "pnpm exec eslint shared/long-session-budget.ts src/stores/gateway.ts tests/unit/long-session-long-use-budget.test.ts scripts/long-session-f2-evidence.mjs harness/specs/fixtures/long-session-development/f2/probe-f2.mjs",
+        "exitCode": 0,
+        "durationMs": 3780,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\eslint-changed.log",
+        "summary": ""
+      }
+    ]
+  }
+}
