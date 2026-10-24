@@ -15,7 +15,11 @@ function normalize(filePath) {
 }
 
 function listTrackedFiles() {
-  const output = execFileSync('git', ['ls-files', '-z'], { cwd: ROOT, encoding: 'utf8' });
+  const output = execFileSync('git', ['ls-files', '-z'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    maxBuffer: 32 * 1024 * 1024,
+  });
   return output.split('\0').filter(Boolean).map(normalize).sort();
 }
 

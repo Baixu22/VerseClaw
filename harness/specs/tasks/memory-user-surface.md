@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: in_progress
+lifecycleStatus: completed
 id: memory-user-surface
 title: Unify Memory into one governed user surface
 program: long-session-development-20261022

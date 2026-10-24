@@ -12,6 +12,42 @@ contractIndex: harness/specs/tasks/long-session-development-plan.md
 diffBase: 20b92de01
 dependsOnTasks:
   - F2
+ownedPaths:
+  # The merge commit brings in main-side VerseGit files that this task does not own.
+  # Declaring the integration boundary keeps harness validation honest instead of
+  # pretending the long-session spec wrote those files.
+  - docs/dev/versegit-validation-layer/**
+  - electron-builder.yml
+  - harness/specs/fixtures/versegit-product-integration/**
+  - harness/specs/tasks/versegit-product-*.md
+  - harness/specs/tasks/versegit-module-implementation-contracts.md
+  - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts
+  - openclaw_runtime/src/agents/harness/versegit-*
+  - openclaw_runtime/src/agents/orchestration-*
+  - openclaw_runtime/src/agents/orchestrator-run-observed.ts
+  - openclaw_runtime/src/agents/patch-flow.ts
+  - openclaw_runtime/src/agents/session-tool-result-guard-wrapper.ts
+  - openclaw_runtime/src/agents/sessions/tools/**
+  - openclaw_runtime/src/agents/subagent-*
+  - openclaw_runtime/src/agents/verseshell/**
+  - openclaw_runtime/src/agents/worktree-service.ts
+  - openclaw_runtime/src/plugin-sdk/versegit-*
+  - resources/versegit/**
+  - scripts/bundle-main-runtime.mjs
+  - scripts/verify-versegit-*
+  - scripts/versegit-*
+  - shared/types/versegit.ts
+  - shared/versegit-*
+  - tests/e2e/app-smoke.spec.ts
+  - tests/e2e/versegit-*
+  - tests/unit/orchestration-worktree-merge.test.ts
+  - tests/unit/versegit-*
+  - electron/main/ipc-handlers.ts
+  - shared/host-api/contract.ts
+  - src/lib/host-api.ts
+  - tests/unit/long-session-coordinator-binding.test.ts
+  - tests/unit/long-session-delegation-admission.test.ts
+  - tests/unit/long-session-long-use-budget.test.ts
 touchedAreas:
   - harness/specs/tasks/long-session-final-acceptance.md
   - harness/specs/tasks/long-session-development-plan.md
