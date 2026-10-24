@@ -47,7 +47,7 @@ function candidateIdentity() {
     commit: git(['rev-parse', '--verify', 'HEAD']),
     tree: git(['rev-parse', '--verify', 'HEAD^{tree}']),
     worktree: ROOT.replaceAll('\\', '/'),
-    status: git(['status', '--short']).split(/\r?\n/).filter(Boolean),
+    status: git(['status', '--short']).split(/\r?\n/).filter(Boolean).filter((line) => !line.includes('harness/specs/fixtures/long-session-development/f1/')),
   };
 }
 function run(name, args, outputDir) {
