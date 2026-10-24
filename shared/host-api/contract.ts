@@ -26,6 +26,9 @@ import type {
   DcsPreviewSetResult,
   DcsPreviewState,
   DcsProdFlagsSnapshot,
+  WorkspaceContextSetPayload,
+  WorkspaceContextSetResult,
+  WorkspaceContextState,
 } from '../dcs/prod-flags-control';
 import type { PermissionDecisionEvent } from '../product-semantics';
 import type { SandboxDenialDetails } from '../sandbox/errors';
@@ -5353,13 +5356,15 @@ export type HostApiContract = {
     setEnabled: (payload: VtokenSetEnabledPayload) => VtokenSetEnabledResult;
     ensureStarted: () => VtokenStatusResult;
   };
-  /** TASK-P0-01: writable DCS production flag control plane (opt-in, fail-closed defaults). */
+  /** DCS controls: Workspace Context default profile plus developer diagnostics. */
   dcsProdFlags: {
     getFlags: () => DcsProdFlagsSnapshot;
     setFlag: (payload: DcsProdFlagSetPayload) => DcsProdFlagSetResult;
     requeryAck: () => DcsProdFlagAckRequeryResult;
     getPreview: () => DcsPreviewState;
     setPreview: (payload: DcsPreviewSetPayload) => DcsPreviewSetResult;
+    getWorkspaceContext: () => WorkspaceContextState;
+    setWorkspaceContext: (payload: WorkspaceContextSetPayload) => WorkspaceContextSetResult;
   };
   settings: {
     getAll: () => SettingsSnapshot;

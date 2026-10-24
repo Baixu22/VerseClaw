@@ -12,6 +12,7 @@ import {
 import { closeOpenClawStateDatabase } from '../state/openclaw-state-db.js';
 import { resetSealRegistryForTests } from './seal-registry.js';
 import { registerRc03SealProducers } from './rc03-producers.js';
+import { resetContextFinalSnapshotsForTests } from './context-final-snapshot.js';
 import {
   finalizeContextOrchestratorTurn,
   resetContextOrchestratorLineageForTests,
@@ -46,6 +47,7 @@ beforeEach(() => {
   registerRc03SealProducers();
   resetContextOrchestratorLineageForTests();
   resetRc03SealPlansForTest();
+  resetContextFinalSnapshotsForTests();
   resetShadowCensusDiagnosticsForTest();
 });
 
@@ -54,6 +56,7 @@ afterEach(() => {
   resetSealRegistryForTests();
   resetContextOrchestratorLineageForTests();
   resetRc03SealPlansForTest();
+  resetContextFinalSnapshotsForTests();
   delete process.env.OPENCLAW_RC03_SEAL;
   delete process.env.OPENCLAW_HOME;
   delete process.env.OPENCLAW_STATE_DIR;

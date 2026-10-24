@@ -1,0 +1,19 @@
+{
+  "proposal_id": "TFP-TF-0493-authority-path-delta-20261022",
+  "session_id": "tf-0493-context-assembly-authority-20261022",
+  "rationale": "TF-0493 的验收明确禁止用户级 VToken Bridge 开关和独立产品文案。原初步路径仅覆盖 runtime context assembly；要满足该验收必须移除 Settings 中的用户入口并同步 UI E2E。通过此 proposal 把精确增量路径写入 TF-0493 authority，不改状态、不激活其他节点。",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0493",
+      "fields": {
+        "execution_hints": [
+          "baselineEvidence=TF-0462 C6 assembler wiring; context-orchestrator immutable bundles",
+          "implementationDelta=authority boundary + disposition; do not rebuild wired C6",
+          "authorityDeltaPaths=src/pages/Settings/index.tsx,tests/e2e/vtoken-bridge-settings.spec.ts,tests/e2e/dcs-prod-p0-settings.spec.ts",
+          "authorityDeltaReason=VToken must have no user-level Bridge switch or standalone product copy; runtime host API may remain internal"
+        ]
+      }
+    }
+  ]
+}

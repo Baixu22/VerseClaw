@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "WorkspaceContextCanaryProtocol/v1",
+  "taskForestNodeId": "TF-0494",
+  "createdAt": "2026-10-22T00:00:00.000+08:00",
+  "endpoint": "http://127.0.0.1:3065/v1/responses",
+  "model": "space-bunny",
+  "design": "paired A/B; A=workspace context off, B=workspace context on; fixture order alternates AB/BA by stratum index",
+  "sampleSize": 40,
+  "strata": {
+    "recent-action-reuse": 10,
+    "duplicate-read-avoidance": 10,
+    "constraint-retention": 10,
+    "tool-selection": 10
+  },
+  "primaryMetrics": [
+    "unnecessary_repeat_tool_call_rate",
+    "task_pass_rate",
+    "latency_ms"
+  ],
+  "decisionRules": {
+    "repeatCallReduction": "point estimate > 0 and paired-bootstrap 95% CI lower bound > 0",
+    "taskPassNonInferiority": "paired-bootstrap 95% CI lower bound for B-A >= -0.05",
+    "p95Latency": "paired-bootstrap 95% CI upper bound for B/A <= 1.10",
+    "providerErrors": "provider error rate < 0.05; any stratum with fewer than 8 complete pairs is inconclusive"
+  },
+  "ciMethod": "paired bootstrap, 10000 resamples, percentile 95%, deterministic seed 4942026",
+  "stoppingRule": "fixed n=40; no early stopping; run all fixtures once after harness validation",
+  "inconclusiveRule": "missing/extra/duplicate fixture responses, parse failures above 10%, or any incomplete stratum -> fail/inconclusive, never pass",
+  "outputContract": "{\"decision\":\"reuse_result|call_tool|answer\",\"tool\":string|null,\"answer\":string}"
+}

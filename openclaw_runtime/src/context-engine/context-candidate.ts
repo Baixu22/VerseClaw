@@ -127,7 +127,7 @@ export function createContextCandidate(input: {
   return {
     schema: CONTEXT_CANDIDATE_SCHEMA,
     candidateId: `context-candidate:${projectionIdentity}`,
-    dedupKey: `context-authority:${identity}`,
+    dedupKey: `context-authority:${identity}:${input.target}`,
     authority: {
       objectId: input.authorityObjectId,
       version: input.authorityVersion,
@@ -190,7 +190,7 @@ export function recordContextCandidateSkip(
   if (collection.diagnostics.finalized) {
     return {
       candidateId: `context-source:${identityPart(input.sourceId)}:${input.channel}:${input.target}`,
-      dedupKey: `context-source:${identityPart(input.sourceId)}`,
+      dedupKey: `context-source:${identityPart(input.sourceId)}:${input.target}`,
       sourceId: input.sourceId,
       channel: input.channel,
       target: input.target,

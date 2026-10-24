@@ -411,6 +411,9 @@ import type {
 import type {
   DcsProdFlagSetPayload,
   DcsProdFlagsSnapshot,
+  WorkspaceContextSetPayload,
+  WorkspaceContextSetResult,
+  WorkspaceContextState,
 } from '@shared/dcs/prod-flags-control';
 import type {
   ObservabilityDashboardSnapshot,
@@ -740,6 +743,12 @@ export const hostApi = {
     getPreview: () => invokeHost('dcsProdFlags', 'getPreview'),
     setPreview: (payload: { enabled: boolean; restartGateway?: boolean }) => (
       invokeHost('dcsProdFlags', 'setPreview', payload)
+    ),
+    getWorkspaceContext: (): Promise<WorkspaceContextState> => (
+      invokeHost('dcsProdFlags', 'getWorkspaceContext')
+    ),
+    setWorkspaceContext: (payload: WorkspaceContextSetPayload): Promise<WorkspaceContextSetResult> => (
+      invokeHost('dcsProdFlags', 'setWorkspaceContext', payload)
     ),
   },
   efficiency: {

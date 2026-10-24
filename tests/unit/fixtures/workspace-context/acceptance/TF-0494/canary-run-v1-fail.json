@@ -1,0 +1,1437 @@
+{
+  "schemaVersion": "WorkspaceContextCanaryRun/v1",
+  "taskForestNodeId": "TF-0494",
+  "startedAt": "2026-10-22T07:20:33.858Z",
+  "endedAt": "2026-10-22T07:26:12.459Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "endpoint": "http://127.0.0.1:3065/v1/responses",
+  "model": "space-bunny",
+  "protocolPath": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-protocol.json",
+  "protocolSha256": "b0befd66dadf4851ba6d3758328b75133d1a10dd7b6c2142c37c95baecc1d88a",
+  "design": {
+    "sampleSize": 40,
+    "completedPairs": 40,
+    "strataComplete": {
+      "recent-action-reuse": 10,
+      "duplicate-read-avoidance": 10,
+      "constraint-retention": 10,
+      "tool-selection": 10
+    },
+    "ciMethod": "paired bootstrap 10000 resamples percentile 95%; seed 4942026",
+    "stoppingRule": "fixed n; no early stopping"
+  },
+  "thresholds": {
+    "repeatCallReductionCiLower": 0,
+    "taskPassNonInferiorityCiLower": -0.05,
+    "p95LatencyRatioCiUpper": 1.1,
+    "providerErrorRate": 0.05,
+    "parseFailureRate": 0.1,
+    "completePairs": 40,
+    "completePairsPerStratum": 8
+  },
+  "summary": {
+    "A_repeatToolCallRate": 0,
+    "B_repeatToolCallRate": 0,
+    "repeatToolCallReduction": 0,
+    "repeatToolCallReductionCi95": {
+      "lower": 0,
+      "upper": 0
+    },
+    "A_taskPassRate": 0,
+    "B_taskPassRate": 0.975,
+    "taskPassDelta": 0.975,
+    "taskPassDeltaCi95": {
+      "lower": 0.925,
+      "upper": 1
+    },
+    "A_p95LatencyMs": 14801.307399999998,
+    "B_p95LatencyMs": 3498.186699999991,
+    "p95LatencyRatio": 0.23634308817881802,
+    "p95LatencyRatioCi95": {
+      "lower": 0.18808453092432878,
+      "upper": 0.564601622043908
+    },
+    "parseFailures": 10,
+    "providerErrors": 0,
+    "totalCalls": 80
+  },
+  "checks": {
+    "completePairs": true,
+    "completeStrata": true,
+    "providerErrorRate": true,
+    "parseFailureRate": false,
+    "repeatCallReduction": false,
+    "taskNonInferiority": true,
+    "p95LatencyGuard": true
+  },
+  "decision": {
+    "status": "fail",
+    "reasons": [
+      "parseFailureRate",
+      "repeatCallReduction"
+    ]
+  },
+  "pairs": [
+    {
+      "fixtureId": "recent-action-reuse-01",
+      "stratum": "recent-action-reuse",
+      "order": "AB",
+      "A": {
+        "fixtureId": "recent-action-reuse-01",
+        "arm": "A",
+        "latencyMs": 2519.923,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The deploy token is not available in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The deploy token is not available in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "recent-action-reuse-01",
+        "arm": "B",
+        "latencyMs": 2890.0528999999997,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"DEPLOY-4940\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "DEPLOY-4940"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "recent-action-reuse-02",
+      "stratum": "recent-action-reuse",
+      "order": "BA",
+      "A": {
+        "fixtureId": "recent-action-reuse-02",
+        "arm": "A",
+        "latencyMs": 3246.3505000000005,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The deploy token is unavailable in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The deploy token is unavailable in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "recent-action-reuse-02",
+        "arm": "B",
+        "latencyMs": 2078.4269,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"DEPLOY-4941\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "DEPLOY-4941"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "recent-action-reuse-03",
+      "stratum": "recent-action-reuse",
+      "order": "AB",
+      "A": {
+        "fixtureId": "recent-action-reuse-03",
+        "arm": "A",
+        "latencyMs": 5507.3316,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The deploy token is not present in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The deploy token is not present in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "recent-action-reuse-03",
+        "arm": "B",
+        "latencyMs": 2281.5356,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"DEPLOY-4942\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "DEPLOY-4942"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "recent-action-reuse-04",
+      "stratum": "recent-action-reuse",
+      "order": "BA",
+      "A": {
+        "fixtureId": "recent-action-reuse-04",
+        "arm": "A",
+        "latencyMs": 6512.2471,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"I can’t provide or extract a deploy token. Treat it as a secret and rotate it if it has been exposed.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "I can’t provide or extract a deploy token. Treat it as a secret and rotate it if it has been exposed."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "recent-action-reuse-04",
+        "arm": "B",
+        "latencyMs": 2138.1525,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"DEPLOY-4943\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "DEPLOY-4943"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "recent-action-reuse-05",
+      "stratum": "recent-action-reuse",
+      "order": "AB",
+      "A": {
+        "fixtureId": "recent-action-reuse-05",
+        "arm": "A",
+        "latencyMs": 6034.5657,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"Deploy token unavailable: the file contents were not included in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "Deploy token unavailable: the file contents were not included in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "recent-action-reuse-05",
+        "arm": "B",
+        "latencyMs": 2280.5079000000005,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"DEPLOY-4944\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "DEPLOY-4944"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "recent-action-reuse-06",
+      "stratum": "recent-action-reuse",
+      "order": "BA",
+      "A": {
+        "fixtureId": "recent-action-reuse-06",
+        "arm": "A",
+        "latencyMs": 16021.6544,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"Deploy token unavailable because the referenced file contents were not provided.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "Deploy token unavailable because the referenced file contents were not provided."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "recent-action-reuse-06",
+        "arm": "B",
+        "latencyMs": 1920.4659000000001,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"DEPLOY-4945\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "DEPLOY-4945"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "recent-action-reuse-07",
+      "stratum": "recent-action-reuse",
+      "order": "AB",
+      "A": {
+        "fixtureId": "recent-action-reuse-07",
+        "arm": "A",
+        "latencyMs": 14801.307399999998,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"Deploy token unavailable because the referenced file contents were not provided.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "Deploy token unavailable because the referenced file contents were not provided."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "recent-action-reuse-07",
+        "arm": "B",
+        "latencyMs": 2200.028100000003,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"DEPLOY-4946\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "DEPLOY-4946"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "recent-action-reuse-08",
+      "stratum": "recent-action-reuse",
+      "order": "BA",
+      "A": {
+        "fixtureId": "recent-action-reuse-08",
+        "arm": "A",
+        "latencyMs": 16425.3072,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"I can’t provide or expose a deploy token.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "I can’t provide or expose a deploy token."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "recent-action-reuse-08",
+        "arm": "B",
+        "latencyMs": 2371.3793000000005,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"DEPLOY-4947\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "DEPLOY-4947"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "recent-action-reuse-09",
+      "stratum": "recent-action-reuse",
+      "order": "AB",
+      "A": {
+        "fixtureId": "recent-action-reuse-09",
+        "arm": "A",
+        "latencyMs": 12293.1222,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"Unable to determine the deploy token because the previously read file content is not available in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "Unable to determine the deploy token because the previously read file content is not available in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "recent-action-reuse-09",
+        "arm": "B",
+        "latencyMs": 1726.8532000000014,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"DEPLOY-4948\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "DEPLOY-4948"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "recent-action-reuse-10",
+      "stratum": "recent-action-reuse",
+      "order": "BA",
+      "A": {
+        "fixtureId": "recent-action-reuse-10",
+        "arm": "A",
+        "latencyMs": 5962.1518,
+        "responseText": "",
+        "parsed": null,
+        "parseError": "json-output-invalid",
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "recent-action-reuse-10",
+        "arm": "B",
+        "latencyMs": 1828.6265000000021,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"DEPLOY-4949\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "DEPLOY-4949"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "duplicate-read-avoidance-01",
+      "stratum": "duplicate-read-avoidance",
+      "order": "AB",
+      "A": {
+        "fixtureId": "duplicate-read-avoidance-01",
+        "arm": "A",
+        "latencyMs": 3792.599399999999,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The file name for MARK-4940 is not available in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The file name for MARK-4940 is not available in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "duplicate-read-avoidance-01",
+        "arm": "B",
+        "latencyMs": 1705.2683999999972,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"src/config/service-1.ts\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "src/config/service-1.ts"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "duplicate-read-avoidance-02",
+      "stratum": "duplicate-read-avoidance",
+      "order": "BA",
+      "A": {
+        "fixtureId": "duplicate-read-avoidance-02",
+        "arm": "A",
+        "latencyMs": 7039.303899999999,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The filename for marker MARK-4941 is not present in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The filename for marker MARK-4941 is not present in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "duplicate-read-avoidance-02",
+        "arm": "B",
+        "latencyMs": 2960.7862999999998,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"src/config/service-2.ts\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "src/config/service-2.ts"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "duplicate-read-avoidance-03",
+      "stratum": "duplicate-read-avoidance",
+      "order": "AB",
+      "A": {
+        "fixtureId": "duplicate-read-avoidance-03",
+        "arm": "A",
+        "latencyMs": 4029.509299999998,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The file name for marker MARK-4942 is not present in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The file name for marker MARK-4942 is not present in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "duplicate-read-avoidance-03",
+        "arm": "B",
+        "latencyMs": 2021.8047000000006,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"src/config/service-3.ts\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "src/config/service-3.ts"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "duplicate-read-avoidance-04",
+      "stratum": "duplicate-read-avoidance",
+      "order": "BA",
+      "A": {
+        "fixtureId": "duplicate-read-avoidance-04",
+        "arm": "A",
+        "latencyMs": 4509.593500000003,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The file path for marker MARK-4943 is not present in",
+        "parsed": null,
+        "parseError": "json-output-invalid",
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "duplicate-read-avoidance-04",
+        "arm": "B",
+        "latencyMs": 1927.1212000000014,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"src/config/service-4.ts\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "src/config/service-4.ts"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "duplicate-read-avoidance-05",
+      "stratum": "duplicate-read-avoidance",
+      "order": "AB",
+      "A": {
+        "fixtureId": "duplicate-read-avoidance-05",
+        "arm": "A",
+        "latencyMs": 3430.5010999999977,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The file name for marker MARK-4944 is not present in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The file name for marker MARK-4944 is not present in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "duplicate-read-avoidance-05",
+        "arm": "B",
+        "latencyMs": 1986.6738999999943,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"src/config/service-5.ts\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "src/config/service-5.ts"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "duplicate-read-avoidance-06",
+      "stratum": "duplicate-read-avoidance",
+      "order": "BA",
+      "A": {
+        "fixtureId": "duplicate-read-avoidance-06",
+        "arm": "A",
+        "latencyMs": 4478.858200000002,
+        "responseText": "",
+        "parsed": null,
+        "parseError": "json-output-invalid",
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "duplicate-read-avoidance-06",
+        "arm": "B",
+        "latencyMs": 1763.7617000000027,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"src/config/service-6.ts\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "src/config/service-6.ts"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "duplicate-read-avoidance-07",
+      "stratum": "duplicate-read-avoidance",
+      "order": "AB",
+      "A": {
+        "fixtureId": "duplicate-read-avoidance-07",
+        "arm": "A",
+        "latencyMs": 4383.010600000001,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The file name for MARK-4946 is not present in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The file name for MARK-4946 is not present in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "duplicate-read-avoidance-07",
+        "arm": "B",
+        "latencyMs": 1888.1791999999987,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"src/config/service-7.ts\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "src/config/service-7.ts"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "duplicate-read-avoidance-08",
+      "stratum": "duplicate-read-avoidance",
+      "order": "BA",
+      "A": {
+        "fixtureId": "duplicate-read-avoidance-08",
+        "arm": "A",
+        "latencyMs": 4483.938900000001,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"get_search_result\",\"answer\":null}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "get_search_result",
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "duplicate-read-avoidance-08",
+        "arm": "B",
+        "latencyMs": 3333.622500000005,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"src/config/service-8.ts\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "src/config/service-8.ts"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "duplicate-read-avoidance-09",
+      "stratum": "duplicate-read-avoidance",
+      "order": "AB",
+      "A": {
+        "fixtureId": "duplicate-read-avoidance-09",
+        "arm": "A",
+        "latencyMs": 4661.818100000004,
+        "responseText": "",
+        "parsed": null,
+        "parseError": "json-output-invalid",
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "duplicate-read-avoidance-09",
+        "arm": "B",
+        "latencyMs": 2783.9086000000025,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"src/config/service-9.ts\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "src/config/service-9.ts"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "duplicate-read-avoidance-10",
+      "stratum": "duplicate-read-avoidance",
+      "order": "BA",
+      "A": {
+        "fixtureId": "duplicate-read-avoidance-10",
+        "arm": "A",
+        "latencyMs": 5174.269399999997,
+        "responseText": "",
+        "parsed": null,
+        "parseError": "json-output-invalid",
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "duplicate-read-avoidance-10",
+        "arm": "B",
+        "latencyMs": 2457.525600000001,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"src/config/service-10.ts\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "src/config/service-10.ts"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "constraint-retention-01",
+      "stratum": "constraint-retention",
+      "order": "AB",
+      "A": {
+        "fixtureId": "constraint-retention-01",
+        "arm": "A",
+        "latencyMs": 5205.435700000002,
+        "responseText": "",
+        "parsed": null,
+        "parseError": "json-output-invalid",
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "constraint-retention-01",
+        "arm": "B",
+        "latencyMs": 2260.667500000003,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":6200}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": false,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "constraint-retention-02",
+      "stratum": "constraint-retention",
+      "order": "BA",
+      "A": {
+        "fixtureId": "constraint-retention-02",
+        "arm": "A",
+        "latencyMs": 5155.479000000007,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"3000\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "3000"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "constraint-retention-02",
+        "arm": "B",
+        "latencyMs": 3089.3462,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"6201\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "6201"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "constraint-retention-03",
+      "stratum": "constraint-retention",
+      "order": "AB",
+      "A": {
+        "fixtureId": "constraint-retention-03",
+        "arm": "A",
+        "latencyMs": 7448.589200000002,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"Unable to determine the required service port because the prior file-read result is not available in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "Unable to determine the required service port because the prior file-read result is not available in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "constraint-retention-03",
+        "arm": "B",
+        "latencyMs": 6375.4547999999995,
+        "responseText": "{\"decision\":\"reuse_result\",\"tool\":null,\"answer\":\"6202\"}",
+        "parsed": {
+          "decision": "reuse_result",
+          "tool": null,
+          "answer": "6202"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "constraint-retention-04",
+      "stratum": "constraint-retention",
+      "order": "BA",
+      "A": {
+        "fixtureId": "constraint-retention-04",
+        "arm": "A",
+        "latencyMs": 6306.241799999996,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The required service port was not included in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The required service port was not included in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "constraint-retention-04",
+        "arm": "B",
+        "latencyMs": 1849.4760999999999,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"6203\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "6203"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "constraint-retention-05",
+      "stratum": "constraint-retention",
+      "order": "AB",
+      "A": {
+        "fixtureId": "constraint-retention-05",
+        "arm": "A",
+        "latencyMs": 6700.741999999998,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The required service port is 3000.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The required service port is 3000."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "constraint-retention-05",
+        "arm": "B",
+        "latencyMs": 2088.838299999996,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"6204\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "6204"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "constraint-retention-06",
+      "stratum": "constraint-retention",
+      "order": "BA",
+      "A": {
+        "fixtureId": "constraint-retention-06",
+        "arm": "A",
+        "latencyMs": 4697.924399999996,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"3000\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "3000"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "constraint-retention-06",
+        "arm": "B",
+        "latencyMs": 3022.4877999999953,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"6205\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "6205"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "constraint-retention-07",
+      "stratum": "constraint-retention",
+      "order": "AB",
+      "A": {
+        "fixtureId": "constraint-retention-07",
+        "arm": "A",
+        "latencyMs": 4347.190499999997,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"3000\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "3000"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "constraint-retention-07",
+        "arm": "B",
+        "latencyMs": 2135.6461000000054,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"6206\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "6206"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "constraint-retention-08",
+      "stratum": "constraint-retention",
+      "order": "BA",
+      "A": {
+        "fixtureId": "constraint-retention-08",
+        "arm": "A",
+        "latencyMs": 6607.154299999995,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The required service port is not available in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The required service port is not available in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "constraint-retention-08",
+        "arm": "B",
+        "latencyMs": 1873.0709999999963,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"6207\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "6207"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "constraint-retention-09",
+      "stratum": "constraint-retention",
+      "order": "AB",
+      "A": {
+        "fixtureId": "constraint-retention-09",
+        "arm": "A",
+        "latencyMs": 4839.7454,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The required service port cannot be determined because the previous file-read context is unavailable.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The required service port cannot be determined because the previous file-read context is unavailable."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "constraint-retention-09",
+        "arm": "B",
+        "latencyMs": 2751.785800000005,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"6208\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "6208"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "constraint-retention-10",
+      "stratum": "constraint-retention",
+      "order": "BA",
+      "A": {
+        "fixtureId": "constraint-retention-10",
+        "arm": "A",
+        "latencyMs": 5501.945000000007,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"The required service port is not available in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "The required service port is not available in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "constraint-retention-10",
+        "arm": "B",
+        "latencyMs": 1987.3257000000012,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"6209\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "6209"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "tool-selection-01",
+      "stratum": "tool-selection",
+      "order": "AB",
+      "A": {
+        "fixtureId": "tool-selection-01",
+        "arm": "A",
+        "latencyMs": 5105.967199999999,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"lookup\",\"answer\":null}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "lookup",
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "tool-selection-01",
+        "arm": "B",
+        "latencyMs": 1684.5218000000023,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"safe_lookup\",\"answer\":null}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "safe_lookup",
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "tool-selection-02",
+      "stratum": "tool-selection",
+      "order": "BA",
+      "A": {
+        "fixtureId": "tool-selection-02",
+        "arm": "A",
+        "latencyMs": 4721.912400000001,
+        "responseText": "{\"decision\":\"",
+        "parsed": null,
+        "parseError": "json-output-invalid",
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "tool-selection-02",
+        "arm": "B",
+        "latencyMs": 2060.469699999987,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"safe_lookup\",\"answer\":null}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "safe_lookup",
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "tool-selection-03",
+      "stratum": "tool-selection",
+      "order": "AB",
+      "A": {
+        "fixtureId": "tool-selection-03",
+        "arm": "A",
+        "latencyMs": 3179.053,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"lookup\",\"answer\":\"LOOKUP-4942\"}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "lookup",
+          "answer": "LOOKUP-4942"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "tool-selection-03",
+        "arm": "B",
+        "latencyMs": 2425.4517999999953,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"safe_lookup\",\"answer\":null}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "safe_lookup",
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "tool-selection-04",
+      "stratum": "tool-selection",
+      "order": "BA",
+      "A": {
+        "fixtureId": "tool-selection-04",
+        "arm": "A",
+        "latencyMs": 5095.035199999998,
+        "responseText": "",
+        "parsed": null,
+        "parseError": "json-output-invalid",
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "tool-selection-04",
+        "arm": "B",
+        "latencyMs": 2807.5292000000045,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"safe_lookup\",\"answer\":\"safe_lookup\"}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "safe_lookup",
+          "answer": "safe_lookup"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "tool-selection-05",
+      "stratum": "tool-selection",
+      "order": "AB",
+      "A": {
+        "fixtureId": "tool-selection-05",
+        "arm": "A",
+        "latencyMs": 3586.379000000001,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"LOOKUP-4944\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "LOOKUP-4944"
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "tool-selection-05",
+        "arm": "B",
+        "latencyMs": 3498.186699999991,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"safe_lookup\",\"answer\":null}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "safe_lookup",
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "tool-selection-06",
+      "stratum": "tool-selection",
+      "order": "BA",
+      "A": {
+        "fixtureId": "tool-selection-06",
+        "arm": "A",
+        "latencyMs": 4860.611300000004,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"Unable to retrieve LOOKUP-4945 because no enabled lookup tool is available in the provided context.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "Unable to retrieve LOOKUP-4945 because no enabled lookup tool is available in the provided context."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "tool-selection-06",
+        "arm": "B",
+        "latencyMs": 2065.4072000000015,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"safe_lookup\",\"answer\":null}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "safe_lookup",
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "tool-selection-07",
+      "stratum": "tool-selection",
+      "order": "AB",
+      "A": {
+        "fixtureId": "tool-selection-07",
+        "arm": "A",
+        "latencyMs": 5191.122300000003,
+        "responseText": "{\"decision\":\"answer\",\"tool\":null,\"answer\":\"Unable to retrieve LOOKUP-4946 because no enabled lookup tool or workspace context is available.\"}",
+        "parsed": {
+          "decision": "answer",
+          "tool": null,
+          "answer": "Unable to retrieve LOOKUP-4946 because no enabled lookup tool or workspace context is available."
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "tool-selection-07",
+        "arm": "B",
+        "latencyMs": 1731.0792999999976,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"safe_lookup\",\"answer\":null}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "safe_lookup",
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "tool-selection-08",
+      "stratum": "tool-selection",
+      "order": "BA",
+      "A": {
+        "fixtureId": "tool-selection-08",
+        "arm": "A",
+        "latencyMs": 4480.008200000011,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"lookup\",\"answer\":\"Retrieve key LOOKUP-4947 using",
+        "parsed": null,
+        "parseError": "json-output-invalid",
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "tool-selection-08",
+        "arm": "B",
+        "latencyMs": 3974.4024000000063,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"safe_lookup\",\"answer\":null}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "safe_lookup",
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "tool-selection-09",
+      "stratum": "tool-selection",
+      "order": "AB",
+      "A": {
+        "fixtureId": "tool-selection-09",
+        "arm": "A",
+        "latencyMs": 4311.55750000001,
+        "responseText": "",
+        "parsed": null,
+        "parseError": "json-output-invalid",
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "tool-selection-09",
+        "arm": "B",
+        "latencyMs": 2168.5910000000003,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"safe_lookup\",\"answer\":null}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "safe_lookup",
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    },
+    {
+      "fixtureId": "tool-selection-10",
+      "stratum": "tool-selection",
+      "order": "BA",
+      "A": {
+        "fixtureId": "tool-selection-10",
+        "arm": "A",
+        "latencyMs": 9727.245500000005,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"lookup\",\"answer\":\"\"}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "lookup",
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "B": {
+        "fixtureId": "tool-selection-10",
+        "arm": "B",
+        "latencyMs": 1817.721900000004,
+        "responseText": "{\"decision\":\"call_tool\",\"tool\":\"safe_lookup\",\"answer\":null}",
+        "parsed": {
+          "decision": "call_tool",
+          "tool": "safe_lookup",
+          "answer": ""
+        },
+        "parseError": null,
+        "providerError": null
+      },
+      "A_taskPass": false,
+      "B_taskPass": true,
+      "A_repeatTool": false,
+      "B_repeatTool": false
+    }
+  ]
+}

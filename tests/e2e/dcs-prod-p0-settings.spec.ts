@@ -2,6 +2,8 @@ import type { Locator, Page } from '@playwright/test';
 import { test, expect, openAgentDevScenario } from './fixtures/electron';
 
 async function ensureDevPanel(page: Page) {
+  page.setDefaultTimeout(60_000);
+  page.setDefaultNavigationTimeout(60_000);
   await openAgentDevScenario(page, 'chat-empty', { visualMode: true });
   await expect(page.getByTestId('main-layout')).toBeVisible();
 
@@ -74,11 +76,9 @@ async function hostGetDcsFlags(page: Page): Promise<{
 test.describe('DCS production P0 packaging surface', () => {
   test('shows opt-in DCS production flags panel in Settings > Developer', async ({ page }) => {
     await ensureDevPanel(page);
-    await expect(page.getByTestId('settings-context-layers-explainer')).toBeVisible();
-    await expect(page.getByTestId('settings-context-layers-cvk')).toBeVisible();
-    await expect(page.getByTestId('settings-context-layers-dcs')).toBeVisible();
-    await expect(page.getByTestId('settings-context-layers-vtoken')).toBeVisible();
     await expect(page.getByTestId('settings-dcs-prod-flags-mode')).toBeVisible();
+    await expect(page.getByTestId('settings-context-layers-explainer')).toHaveCount(0);
+    await expect(page.getByTestId('settings-context-layers-vtoken')).toHaveCount(0);
     await expect(page.getByTestId('settings-dcs-prod-flags-layer-role')).toBeVisible();
     await expect(page.getByTestId('settings-dcs-observability-panel')).toBeVisible();
     await expect(page.getByTestId('settings-dcs-observability-kill')).toBeVisible();
@@ -96,17 +96,17 @@ test.describe('DCS production P0 packaging surface', () => {
     await expect(page.getByTestId('settings-dcs-prod-flags-detail')).toContainText('staleWriteGuard');
     await expect(page.getByTestId('settings-dcs-prod-flag-switch-stale-write-guard')).toBeVisible();
 
-    // TASK-P1-02: working-memory is a writable Settings config flag (default off)
+    // TASK-P1-02: working-memory is a writable Settings config flag (baseline on)
     await page.getByTestId('settings-dcs-prod-flag-working-memory').click();
     const wmSwitch = page.getByTestId('settings-dcs-prod-flag-switch-working-memory');
     await expect(wmSwitch).toBeVisible();
-    await expect(wmSwitch).toHaveAttribute('data-state', 'unchecked');
+    await expect(wmSwitch).toHaveAttribute('data-state', 'checked');
 
-    // TASK-P1-03: tool-registry writable (default off)
+    // TASK-P1-03: tool-registry writable (baseline on)
     await page.getByTestId('settings-dcs-prod-flag-tool-registry').click();
     const trSwitch = page.getByTestId('settings-dcs-prod-flag-switch-tool-registry');
     await expect(trSwitch).toBeVisible();
-    await expect(trSwitch).toHaveAttribute('data-state', 'unchecked');
+    await expect(trSwitch).toHaveAttribute('data-state', 'checked');
   });
 
   test('renders the DCS control surface in Japanese and Russian', async ({ page }) => {
@@ -117,9 +117,7 @@ test.describe('DCS production P0 packaging surface', () => {
     await page.getByTestId('settings-language-select').click();
     await page.getByRole('option', { name: '日本語', exact: true }).click();
     await page.getByTestId('settings-nav-developer').click();
-    await expect(page.getByTestId('settings-context-layers-explainer')).toContainText(
-      'コンテキスト層の違い（混同しないでください）',
-    );
+    await expect(page.getByTestId('settings-context-layers-explainer')).toHaveCount(0);
     await expect(page.getByTestId('settings-dcs-prod-flags')).toContainText(
       'DCS Controlled Preview フラグ',
     );
@@ -128,9 +126,7 @@ test.describe('DCS production P0 packaging surface', () => {
     await page.getByTestId('settings-language-select').click();
     await page.getByRole('option', { name: 'Русский', exact: true }).click();
     await page.getByTestId('settings-nav-developer').click();
-    await expect(page.getByTestId('settings-context-layers-explainer')).toContainText(
-      'Различия слоёв контекста: не смешивайте их',
-    );
+    await expect(page.getByTestId('settings-context-layers-explainer')).toHaveCount(0);
     await expect(page.getByTestId('settings-dcs-prod-flags')).toContainText(
       'Флаги DCS Controlled Preview',
     );

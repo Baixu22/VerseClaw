@@ -122,6 +122,7 @@ describe("DCS Stage 4 knowledge extension wiring", () => {
     };
     const store: Pick<BlockStoreApi, "query" | "upsert"> = {
       query: vi.fn(async (params: { block_types?: string[]; source_systems?: string[] }) =>
+        !params.block_types ? [roleBlock] :
         params.block_types?.includes("knowledge") && params.source_systems?.includes("role-memory")
           ? [roleBlock]
           : [],
@@ -181,7 +182,7 @@ describe("DCS Stage 4 knowledge extension wiring", () => {
     const content = "objective: test the production projection path";
     const store: Pick<BlockStoreApi, "query" | "upsert"> = {
       query: vi.fn(async (params: { block_types?: string[]; source_systems?: string[] }) =>
-        params.block_types?.includes("knowledge") && params.source_systems?.includes("compass")
+        (!params.block_types || (params.block_types.includes("knowledge") && params.source_systems?.includes("compass")))
           ? [
               {
                 block_id: "knowledge:compass:agent:test:main",
@@ -461,7 +462,7 @@ describe("DCS Stage 4 knowledge extension wiring", () => {
         expect.stringContaining("## Tools"),
       ]);
       expect(projectedSystemPrompt).toBe(
-        "base\n\ncvk addition\n\nvtoken addition\n\nmemory addition",
+        "base\n\ncvk addition\n\nvtoken addition\n\n## Knowledge\nobjective: keep one context authority\n\nmemory addition",
       );
       // Tool-registry and compass are both real producers when their flags and
       // inputs are present; each writes through the shared sink once.
@@ -469,8 +470,8 @@ describe("DCS Stage 4 knowledge extension wiring", () => {
       expect(getContextOrchestratorCollection(turnId)?.diagnostics).toMatchObject({
         finalized: true,
         collected: 7,
-        unique: 6,
-        duplicates: 1,
+        unique: 7,
+        duplicates: 0,
       });
       const ledger = getTurnInjectionBudget(turnId);
       expect(ledger).toBeDefined();

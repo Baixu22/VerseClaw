@@ -1,0 +1,76 @@
+
+ RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
+
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > covers every authority component, DCS flag, runtime leaf, route, Settings section and Settings panel exactly once 10ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > records current consumer, owner, implementation/retirement node and evidence refs for every entry 99ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > covers every writable DCS control and keeps the product preview combo in default dispositions 0ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > keeps every registered authority component mapped to one disposition 2ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > requires owner, future expiry and graduate/retire criteria on every experiment 1ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > explicitly covers the required special surfaces 0ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > does not expose any shadow or experiment capability as a user surface 0ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > rejects an unclassified route 5ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > rejects a second disposition for the same authority component 5ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > rejects an experiment without expiry or owner 5ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > rejects an internal capability with a user entry 4ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > documents the single-page disposition table and links it from runtime control planes 1ms
+ ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > projects the stable disposition index for a later ModelCapabilityProfile 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-03 md row coverage > every md row is registered in the fixture and still present in the md 2ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-03 md row coverage > every md table row has a fixture entry (no silently untested row) 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-03 md row coverage > every registered assertion group is actually exercised by a test in this file 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-07 md default-cell text lock (three-way parity) > every fixture row matches the md "Product default" cell byte-for-byte 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-07 md default-cell text lock (three-way parity) > the verbatim cell normalizes to the declaredDefault for every format variant 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-07 md default-cell text lock (three-way parity) > implementation defaults agree with declaredDefault for every row 24ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks VToken assembly default OFF (opt-in) [vtoken-assembly-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Workspace Context default ON and legacy DCS context flags default OFF [context-block-defaults] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Runtime Memory inject pilot default OFF [memory-inject-pilot-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Runtime Memory shadow/provider/persist default OFF [memory-shadow-provider-persist-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks SEKB master default OFF (no auto writeback graduation) [sekb-master-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > keeps SEKB auto writeback off with no enabling flag [sekb-auto-writeback-off] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks SEKB shadow evaluation default OFF and requires master [sekb-shadow-evaluation-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Browser private network default DENY and migrates unacked legacy allow [browser-private-network-default] 1ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks VToken bridge default OFF (opt-in) [vtoken-bridge-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks enhancement kill switch default OFF with env and config forms [enhancement-kill-switch-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks coding auto verify default to auto-detect and bounds explicit opt-in [coding-auto-verify-default] 0ms
+ ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > kill switch cuts VToken + memory inject fail-closed without requiring throw 0ms
+ ✓ tests/unit/p0-production-acceptance.test.ts > P0 production acceptance gate (TF-0001..0005) > build:vite regenerates ignored extension bridges in a clean checkout 2ms
+ ✓ tests/unit/p0-production-acceptance.test.ts > P0 production acceptance gate (TF-0001..0005) > evidence pack exists for every P0 node 3ms
+ ✓ tests/unit/p0-production-acceptance.test.ts > P0 production acceptance gate (TF-0001..0005) > production attempt uses orchestrator only and gates CVK addition 1ms
+ ✓ tests/unit/p0-production-acceptance.test.ts > P0 production acceptance gate (TF-0001..0005) > advanced defaults remain fail-closed; Workspace Context is baseline-on 1ms
+ ✓ tests/unit/p0-production-acceptance.test.ts > P0 production acceptance gate (TF-0001..0005) > private-network legacy allow is migrated unless acknowledged 1ms
+ ✓ tests/unit/p0-production-acceptance.test.ts > P0 production acceptance gate (TF-0001..0005) > kill switch cuts enhancement resolution 0ms
+ ✓ tests/unit/p0-production-acceptance.test.ts > P0 production acceptance gate (TF-0001..0005) > close-out verdict remains non-GA 0ms
+ ✓ tests/unit/p0-production-acceptance.test.ts > P0 production acceptance gate (TF-0001..0005) > SEKB golden-path evidence forbids auto writeback 0ms
+ ✓ tests/unit/p0-production-acceptance.test.ts > P0 production acceptance gate (TF-0001..0005) > private-network allowPrivateNetwork alias is migrated without ack 0ms
+ ✓ tests/unit/p0-production-acceptance.test.ts > P0 production acceptance gate (TF-0001..0005) > p0 production pass evidence pack is present and non-GA 1ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > FP-P1-03 combo definition > is exactly the declared first-product set — exclusions stay excluded 2ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > FP-P1-03 prerequisites > clean install → all three missing 0ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > FP-P1-03 prerequisites > setup-verified provider + explicitly chosen workspace → none missing 0ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > FP-P1-03 prerequisites > the auto-created default workspace does NOT count as a user choice 0ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > FP-P1-03 prerequisites > a Settings-validated provider account also satisfies providerVerified 0ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > FP-P1-03 setDcsPreview > refuses to enable with missing prerequisites and writes NOTHING 1ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > FP-P1-03 setDcsPreview > enable writes all four combo flags (store + config + env) and nothing else 1ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > FP-P1-03 setDcsPreview > disable needs no prerequisites (kill path must never be blocked) 0ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > FP-P1-03 setDcsPreview > applied only via a complete current-generation child ack covering the combo 1ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > FP-P1-03 setDcsPreview > kill switch rejection reports failed/flag-rejected, never applied 0ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > R3-1 unavailable flag boundary > rejects runtime-memory persistence before any Settings/config write 0ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > FP-P1-03 getDcsPreviewState > off / partial / on are derived from the combo store keys 0ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > Workspace Context user profile > defaults on from the two underlying runtime flags 1ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > Workspace Context user profile > turns both capabilities off with one save/restart/ack sequence 1ms
+ ✓ tests/unit/dcs-preview-switch.test.ts > Workspace Context user profile > reports kill-switch rejection as failed, not active 0ms
+ ✓ tests/unit/dcs-prod-flags-control.test.ts > dcs prod flags control plane > lists only allowlisted writable specs with Workspace Context default on 2ms
+ ✓ tests/unit/dcs-prod-flags-control.test.ts > dcs prod flags control plane > setConfigPathValue can write working-memory kebab path 0ms
+ ✓ tests/unit/dcs-prod-flags-control.test.ts > dcs prod flags control plane > setConfigPathValue can write tool-registry kebab path 0ms
+ ✓ tests/unit/dcs-prod-flags-control.test.ts > dcs prod flags control plane > get/set config path does not mutate source and preserves siblings 1ms
+ ✓ tests/unit/dcs-prod-flags-control.test.ts > dcs prod flags control plane > asBooleanFlag parses common env forms 0ms
+ ✓ tests/unit/dcs-prod-flags-control.test.ts > dcs prod flags control plane > applyDcsProdFlagsToGatewayEnv injects view tools when settings enabled 0ms
+ ✓ tests/unit/dcs-prod-flags-control.test.ts > dcs prod flags control plane > applyDcsProdFlagsToGatewayEnv leaves view tools unset when disabled 0ms
+ ✓ tests/unit/dcs-prod-flags-control.test.ts > dcs prod flags control plane > explicit env kill wins over settings enable 0ms
+ ✓ tests/unit/dcs-prod-flags-control.test.ts > dcs prod flags control plane > P2-04 observability snapshot shape includes budget and write metric keys 0ms
+ ✓ tests/unit/workspace-context-profile.test.ts > WorkspaceContextProfile/v1 > reports one model-safe enabled profile without internal flag names 2ms
+ ✓ tests/unit/workspace-context-profile.test.ts > WorkspaceContextProfile/v1 > keeps partial, pending, failed, and disabled distinct 0ms
+
+ Test Files  6 passed (6)
+      Tests  67 passed (67)
+   Start at  16:59:01
+   Duration  6.39s (transform 1.70s, setup 638ms, import 3.04s, tests 199ms, environment 1.43s)
+

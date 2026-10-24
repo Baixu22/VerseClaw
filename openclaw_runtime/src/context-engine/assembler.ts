@@ -90,9 +90,10 @@ export interface AssembleRequest {
    */
   skipChannels?: TurnInjectionChannel[];
   /**
-   * Explicit context-ladder opt-in. Omitted keeps the assembler byte-identical
-   * to the pre-ladder path; enabled runs the ladder once over this session's
-   * blocks and uses only its active blocks for DCS injections.
+   * Internal context-ladder policy supplied by the production DCS factory.
+   * Omitted keeps the low-level assembler byte-identical for legacy callers;
+   * enabled runs the ladder once over this session's blocks and uses only its
+   * active blocks for DCS injections.
    */
   contextLadder?: {
     enabled: true;
@@ -105,6 +106,13 @@ export interface AssembleRequest {
 export type LegacyHandlerId = "compass" | "role_memory";
 
 export const DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS = {
+  "runtime.contextBlock.compass.enabled": false,
+  "runtime.contextBlock.role_memory.enabled": false,
+  "runtime.contextBlock.working_memory.enabled": true,
+  "runtime.contextBlock.tool_registry.enabled": true,
+} as const;
+
+export const DISABLED_CONTEXT_BLOCK_FEATURE_FLAGS = {
   "runtime.contextBlock.compass.enabled": false,
   "runtime.contextBlock.role_memory.enabled": false,
   "runtime.contextBlock.working_memory.enabled": false,
@@ -296,7 +304,7 @@ export class Assembler {
     const killCfg = resolveAssembleKillSwitchConfig(request);
     const killed = isContextEnhancementKillSwitchEngaged(killCfg);
     const resolvedFlags = killed
-      ? { ...DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS }
+      ? { ...DISABLED_CONTEXT_BLOCK_FEATURE_FLAGS }
       : {
           ...DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS,
           ...flags,

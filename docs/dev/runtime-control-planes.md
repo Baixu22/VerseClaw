@@ -1,6 +1,6 @@
 # Runtime control planes
 
-Status snapshot: **2026-10-20**. This page separates landed runtime mechanisms from opt-in, shadow and planned work. It is a navigation aid; source code, product semantics and validation gates remain authoritative.
+Status snapshot: **2026-10-22**. This page separates landed runtime mechanisms from opt-in, shadow and planned work. It is a navigation aid; source code, product semantics and validation gates remain authoritative.
 
 The repository is not only a chat UI around a model call. It contains several cooperating control planes:
 
@@ -93,7 +93,7 @@ sequenceDiagram
 | Plane | Landed mechanism | Current scheduling or limit | Boundary |
 | --- | --- | --- | --- |
 | System resources | `ResourceFabric`, `ResourceEnvelope`, `BackgroundWorkGate`, `ResourceTracker`, efficiency sampler and power policy | Main admission currently covers `workspaceExec` and `chat.history`; default account limits are 1–4 active slots with a 64-entry queue and 30s admission timeout. Background work defers at queue-depth/RSS/CPU high watermarks and resumes at lower watermarks after minimum dwell. ResourceTracker probes tracked servers every 30s; idle is 10m and auto-cleanup is 30m | Foreground work is never shed by the background gate. ResourceFabric is cooperative Main-process admission, not a container or OS scheduler |
-| Context engineering | `ContextEngine` lifecycle: bootstrap, ingest, maintain, afterTurn, assemble, compact; `ContextOrchestrator`; block/fact stores; `ContextHealthMonitor` | One 6,000-character turn injection ledger is shared by sources. Precedence is `knowledge`, `working_memory`, `tool_registry`, `cvk_addition`, `vtoken`, `memory_pilot`, `other`. Drops above 10% are alertable. Health scores injection pressure, structural fidelity, goal alignment and information novelty | Context enhancements are opt-in and fail closed under the enhancement kill switch. Target authority convergence and complete provider-guarding remain design work rather than current claims |
+| Context engineering | `ContextEngine` lifecycle: bootstrap, ingest, maintain, afterTurn, assemble, compact; `ContextOrchestrator`; block/fact stores; `ContextHealthMonitor` | One 6,000-character turn injection ledger is shared by sources. Precedence is `knowledge`, `working_memory`, `tool_registry`, `cvk_addition`, `vtoken`, `memory_pilot`, `other`. Drops above 10% are alertable. Health scores injection pressure, structural fidelity, goal alignment and information novelty | Workspace Context (working-memory + tool-registry) is baseline-on behind one user toggle and fails closed under the enhancement kill switch. VToken, memory pilot and other advanced context paths remain independently gated. Target authority convergence and provider guarding remain bounded current claims |
 | Session lifecycle | `SessionManager` JSONL append-only tree with leaf pointer, branch/fork, compaction entries, labels and context reconstruction; Host actions cover checkpoint restore, handoff, compact, archive, restore, permanent delete and derivative cascade | Session summaries use bounded read concurrency; handoff writes are serialized and enforce configured depth; session-linked resource cleanup runs on delete | A session is not a task, run, workspace or project. Task Ledger remains the only user-visible task-fact authority |
 | Memory | Role Memory control plane in `role-memory.sqlite`; Runtime Memory persistence/hydration; `memory-core`, `active-memory`, `memory-wiki`, `memory-lancedb`; gatekeeper, dual write/use gates, retention, conflict review and injection explain logs | Context Pack uses seven buckets and a 3,000-character default budget. Role Memory write/use gates default closed. Runtime Memory feature flags default off and product semantics classify injection as diagnostics-only. Background consolidation is designed to run outside the write path; memory-core dreaming is cron-driven | Presence of a memory module is not a claim of production injection. No automatic experience writeback or un-gated second memory authority |
 | Problem perception | `detectObservabilityIssues` over trace graphs; `buildObservabilityProblemSnapshot`; `pnpm observability:problems`; redacted manifests, evidence and resolution files | Per-trace issues are bounded and severity-ranked. Cross-run signatures use a seven-day window; a second occurrence or critical occurrence promotes a Problem to `open`; state is `pending`, `open`, `mitigated` or `closed` | This is an agent-driven batch over the sanitized trace index, not a resident governance service, auto-remediation loop or second runtime log database |
@@ -173,7 +173,7 @@ flowchart LR
 - The governed route includes typed ACI, command profiles, host-sanitized environment, workspace-relative cwd, bounded output, result artifacts, process management and patch preview.
 - Command profiles are `generic`, `test`, `build`, `lint`, `git` and `terminal-shell`. Profiles classify and bound execution; they do not grant write authority. The existing execution approval pipeline remains the authorization surface.
 - The bundled VerseShell runtime is provenance-checked and currently resolved for Windows x64. Development overrides are forbidden in packaged mode.
-- All foundation capabilities are independently default-off and have a kill switch. `liveReady`, product approval and default-on status are not implied by source presence.
+- Every foundation capability is independently governed and has a rollback/kill path. Workspace Context is the explicit TF-0494 baseline-on user profile; other advanced surfaces remain default-off. `liveReady`, product approval and release status are not implied by source presence or by one graduated default.
 - `resources/verseshell-mcp/` is an external MCP compatibility adapter with deny-by-default capabilities, no wildcard grants and compact protocol support. It is not the internal desktop execution path.
 
 ### VerseBrowser
@@ -207,10 +207,14 @@ flowchart LR
 - Trace issue detection and agent-driven cross-run Problem aggregation.
 - Role contracts, routing modes, team templates, task graphs and resource-aware execution waves.
 
+**Baseline-on user profile**
+
+- Workspace Context: one Settings > General toggle composes the working-memory window and compact tool registry under the shared turn budget.
+
 **Opt-in, shadow or default-off**
 
 - Runtime Memory persistence and injection pilot.
-- COMPASS, working-memory and tool-registry context blocks.
+- COMPASS and legacy role-memory context blocks.
 - VToken turn assembly and memory dual write/use gates.
 - `bounded_a2a` and routing memo authority.
 - Context enhancement paths when the kill switch is engaged.
