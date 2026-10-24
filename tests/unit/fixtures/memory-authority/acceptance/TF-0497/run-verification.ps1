@@ -1,9 +1,11 @@
 $ErrorActionPreference = 'Continue'
+$tmpRoot = 'D:\tmp'
+New-Item -ItemType Directory -Force -Path $tmpRoot | Out-Null
+$env:TEMP = $tmpRoot
+$env:TMP = $tmpRoot
 $root = (Get-Location).Path
 $outputDir = Join-Path $root 'tests/unit/fixtures/memory-authority/acceptance/TF-0497'
-$env:TEMP = 'D:\tmp'
-$env:TMP = 'D:\tmp'
-New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
+
 $pnpm = (Get-Command pnpm.cmd -ErrorAction Stop).Source
 $tsx = Join-Path $root 'openclaw_runtime\node_modules\.bin\tsx.CMD'
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
@@ -92,13 +94,21 @@ $results += [ordered]@{
   outputSha256 = (Get-FileHash -LiteralPath $sumPath -Algorithm SHA256).Hash.ToLowerInvariant()
 }
 
-$status = if (@($results | Where-Object { $_.status -ne 'pass' }).Count -eq 0) { 'pass' } else { 'fail' }
+$sumStatus = if (@($sumChecks | Where-Object { $_.status -eq 'pass' }).Count -eq $sumChecks.Count -and $sumChecks.Count -gt 0) { 'pass' } else { 'fail' }
+$status = if (@($results | Where-Object { $_.status -ne 'pass' }).Count -eq 0 -and $sumStatus -eq 'pass') { 'pass' } else { 'fail' }
+$evidencePath = Join-Path $outputDir 'raw-evidence.json'
+$evidence = Get-Content -Raw -LiteralPath $evidencePath -Encoding UTF8 | ConvertFrom-Json
+$evidence.diskReadback.status = if ($sumStatus -eq 'pass') { 'pass' } else { 'fail' }
+$evidence.diskReadback.evidenceReadable = $true
+$evidence.diskReadback.sha256sumsVerified = ($sumStatus -eq 'pass')
+$evidence.diskReadback | Add-Member -NotePropertyName verifiedBy -NotePropertyValue '12-sha256sums-check' -Force
+[System.IO.File]::WriteAllText($evidencePath, (($evidence | ConvertTo-Json -Depth 12) + [Environment]::NewLine), $utf8NoBom)
 $ledger = [ordered]@{
   schemaVersion = 'MemoryAuthorityVerification/v1'
   taskForestNodeId = 'TF-0497'
   generatedAt = (Get-Date).ToUniversalTime().ToString('o')
   driven_by = 'agent'
-  actor = 'codex'
+  actor = 'codex-long-session-r2'
   status = $status
   gates = $results
   sha256sums = $sumChecks

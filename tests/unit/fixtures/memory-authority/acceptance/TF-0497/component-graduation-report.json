@@ -13,18 +13,18 @@
   "rollback": "Remove the contract projection and retain the existing stores; no source store, candidate, accepted memory, or default value is deleted or rewritten.",
   "modelEffectiveState": "Memory is governed context that can be proposed automatically but becomes active only after an explicit review or approval decision. Proposals and derived context are not active memory and must not be claimed as remembered facts. Accepted memory is scoped to its declared user, workspace, project, session or task boundary, and invalidation or deletion is honored before retrieval.",
   "evidenceGrade": "unit-test",
-  "actor": "codex",
+  "actor": "codex-long-session-r2",
   "driven_by": "agent",
   "expiry": null,
   "binding": {
-    "commit": "f5ac5259f08b5e4ca44c4bffbd9d284c84259c9a",
-    "tree": "c2d5479ca1e963fb9030fa3459f48ef04c57caa8",
-    "buildHash": "880391c422179f08fcb7e6b8f9df9e0e53212b14ef513e83e6070b51d5b1a11d",
+    "commit": "1d105762214fbca239437fd06a5d3e0f35c906f2",
+    "tree": "d8f4cebd56dc3efc788bf5a9c8112bc4868199e5",
+    "buildHash": "1d8689650a83355a53d1fc6a5af72230bb362d260574e00d622c92d7b01eae19",
     "runtimeGeneration": "memory-authority-tf0497",
     "provider": "fixture-provider",
     "model": "fixture-model",
     "inputSet": "tf0497-memory-authority-contract",
-    "scope": "workspace:component-graduation/session:tf-0497",
+    "scope": "workspace:long-session-program-r2/session:tf-0497",
     "artifacts": [
       {
         "path": "openclaw_runtime/src/memory/memory-authority.ts",
@@ -43,8 +43,8 @@
       },
       {
         "path": "openclaw_runtime/src/memory/memory-store.ts",
-        "sha256": "892e9fd72d1bdac262f3b8905af5dbc3549d7f315a6c9129b89c007b5fd1b1aa",
-        "bytes": 92808
+        "sha256": "ac39f953e5c3694bb5cd049d2e99743fc651d1388aa5dc676e14c7385a036938",
+        "bytes": 94887
       },
       {
         "path": "openclaw_runtime/src/memory/root-memory-files.ts",
@@ -93,8 +93,8 @@
       },
       {
         "path": "shared/dcs/prod-flags-catalog.ts",
-        "sha256": "8ef09200bb126c826d67254e73b105177897d11df394b2a6829d6688790b27d3",
-        "bytes": 20978
+        "sha256": "df5054560beaad49592eafe0bc567c179b53d1bf11dc6a0f0a0426cb0f24659f",
+        "bytes": 21009
       },
       {
         "path": "tests/unit/memory-authority-contract.test.ts",
@@ -118,23 +118,23 @@
       },
       {
         "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/README.md",
-        "sha256": "57a80b3a859d8436cfad3a44ab550cfc3afff9182528719ff2843d494ff45f60",
-        "bytes": 2541
+        "sha256": "09f91326af329acfb8333d03ee77f80e870d4eafaf6e6ec5c6e4c0157109ceef",
+        "bytes": 2934
       },
       {
         "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts",
-        "sha256": "ba5599272fd6b5ca1d9a42563c3f9ff8e15638f673470056340d9e91bef64e78",
-        "bytes": 12090
+        "sha256": "dbe3ce884020252e5672dca283ebbf35793c6310e564eb44c7c53753d990dc29",
+        "bytes": 12588
       },
       {
         "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
-        "sha256": "8a502c7a7bc1613617dc275b7c5c07d28899fa8c611cc28d81ebaf30d92039c2",
-        "bytes": 5991
+        "sha256": "5bcd9f602e4f88668ef13f9c75d39a6c43537c0a6d566907bf8d3c9c89581441",
+        "bytes": 6795
       },
       {
         "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
-        "sha256": "e333303433f13e211b0f3006f516265f3e3af88b099cee96cfe172bf0f61055f",
-        "bytes": 18619
+        "sha256": "43bd155e752998da943a1326273439bca72faab1c618d1cb0628e31fcd3223ed",
+        "bytes": 18763
       }
     ]
   },
@@ -147,8 +147,8 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
-          "sha256": "e333303433f13e211b0f3006f516265f3e3af88b099cee96cfe172bf0f61055f",
-          "bytes": 18619,
+          "sha256": "43bd155e752998da943a1326273439bca72faab1c618d1cb0628e31fcd3223ed",
+          "bytes": 18763,
           "supportsVerdict": true
         }
       ]
@@ -156,7 +156,7 @@
   ],
   "recompute": {
     "verdict": "pass",
-    "inputDigest": "a84035c0fdc9e7f9be151199c493478f4d12c8d7fa3e0513f3085fc48f4858fa",
+    "inputDigest": "1d8689650a83355a53d1fc6a5af72230bb362d260574e00d622c92d7b01eae19",
     "command": "& .\\openclaw_runtime\\node_modules\\.bin\\tsx.CMD tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts"
   }
 }

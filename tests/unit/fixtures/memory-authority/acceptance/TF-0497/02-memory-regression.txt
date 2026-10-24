@@ -1,10 +1,10 @@
 
- RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
+ RUN  v4.1.1 D:/ClawX-work/worktrees/long-session-program-r2
 
 ·························································
 
  Test Files  7 passed (7)
       Tests  57 passed (57)
-   Start at  17:36:07
-   Duration  20.35s (transform 3.88s, setup 594ms, import 7.69s, tests 7.24s, environment 3.55s)
+   Start at  16:19:34
+   Duration  33.16s (transform 7.00s, setup 752ms, import 11.92s, tests 12.40s, environment 6.12s)
 

@@ -1,3 +1,5 @@
-ƫ���˱���166 �� �� δ�� 12 ���������� status �ֶ� 12 ����
-У��ͨ����
-
+偏差账本：0 条 · 未结 0 条（其中无 status 字段 0 条）
+校验通过。
+EXIT_CODE=0
+DRIVER=agent
+ACTOR=codex-long-session-r2

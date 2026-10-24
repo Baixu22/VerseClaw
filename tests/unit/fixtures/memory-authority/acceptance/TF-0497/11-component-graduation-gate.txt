@@ -1,14 +1,25 @@
 {
   "validation": {
-    "ok": true,
-    "issues": [],
+    "ok": false,
+    "issues": [
+      {
+        "code": "artifact_hash_mismatch",
+        "message": "Artifact hash does not match report: tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts",
+        "path": "binding.artifacts[19]"
+      },
+      {
+        "code": "recompute_verdict_mismatch",
+        "message": "Report declares pass; recomputed verdict is fail",
+        "path": "recompute.verdict"
+      }
+    ],
     "requiredEvidence": [
       "contract"
     ],
     "missingEvidence": [],
-    "graduationPass": true,
+    "graduationPass": false,
     "countsAsGraduated": false,
-    "recomputedVerdict": "pass",
+    "recomputedVerdict": "fail",
     "defaultChangedAgainstAuthority": false,
     "evidenceGradeDetected": "unit-test"
   },
@@ -18,10 +29,10 @@
     "reason": "default mode is unchanged"
   },
   "taskForestDone": null,
-  "ok": true,
-  "reportPath": "D:\\ClawX-work\\component-graduation-20261021\\tests\\unit\\fixtures\\memory-authority\\acceptance\\TF-0497\\component-graduation-report.json",
+  "ok": false,
+  "reportPath": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\tests\\unit\\fixtures\\memory-authority\\acceptance\\TF-0497\\component-graduation-report.json",
   "expected": {
-    "recomputeInputDigest": "a84035c0fdc9e7f9be151199c493478f4d12c8d7fa3e0513f3085fc48f4858fa"
+    "recomputeInputDigest": "39172321a87bc44af5a2bbf0f74820e363eca593182e637e5cfcaa1afedf51ba"
   },
   "currentDefaultMode": "opt-in",
   "requireGraduation": true

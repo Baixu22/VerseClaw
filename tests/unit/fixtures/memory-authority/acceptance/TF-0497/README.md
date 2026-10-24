@@ -1,7 +1,7 @@
 # TF-0497 acceptance evidence
 
 - Task: `TF-0497` — one product Memory control plane with per-data authority
-- Actor: `codex`
+- Actor: `codex-long-session-r2`
 - Evidence driver: `agent`
 - Product defaults changed: no
 - VerseGit scope: excluded
@@ -25,6 +25,10 @@
 | Role/Runtime/Dreaming/Embedding scope, retention, delete, invalidation and retrieval semantics align | `raw-evidence.json#domains`; `memory-authority-contract.test.ts` |
 | migration/compatibility preserves data and does not force one database | `raw-evidence.json#migration`; `memory-authority-contract.test.ts` |
 | model profile has exactly one memory concept and approval boundary | `raw-evidence.json#profile`; `MemoryProductProfile/v1` |
+
+## Evidence lifecycle
+
+`generate-acceptance.mts` writes the authority contract evidence with `diskReadback.status=pending-external-verification`. `run-verification.ps1` records every gate, verifies every entry in `SHA256SUMS`, writes `12-sha256sums-check.txt`, and only then marks the readback pass. The generated contract does not infer external readback success on its own.
 
 ## Reproduction
 

@@ -168,7 +168,7 @@ const evidence = {
   taskForestNodeId: "TF-0497",
   generatedAt: new Date().toISOString(),
   driven_by: "agent",
-  actor: "codex",
+  actor: "codex-long-session-r2",
   acceptanceCriteria: criteriaEvidence,
   authority: {
     schemaVersion: MEMORY_AUTHORITY_MANIFEST.schemaVersion,
@@ -195,9 +195,10 @@ const evidence = {
     ownerConvergence,
   },
   diskReadback: {
-    status: "pending",
+    status: "pending-external-verification",
     evidenceReadable: false,
     sha256sumsVerified: false,
+    receiptPath: outputDir + "/12-sha256sums-check.txt",
   },
   evidenceNotes: {
     noProductDefaultChanged: true,
@@ -213,12 +214,17 @@ const evidence = {
 };
 writeJson(evidencePath, evidence);
 const persisted = JSON.parse(fs.readFileSync(path.join(root, evidencePath), "utf8")) as typeof evidence;
-persisted.diskReadback.status = "pass";
 persisted.diskReadback.evidenceReadable = true;
-persisted.diskReadback.sha256sumsVerified = true;
 writeJson(evidencePath, persisted);
-if (persisted.results.contract.status !== "pass" || !persisted.runtimeAssertions.candidateIsolated) {
-  throw new Error("evidence readback failed");
+const reread = JSON.parse(fs.readFileSync(path.join(root, evidencePath), "utf8")) as typeof evidence;
+if (
+  reread.results.contract.status !== "pass" ||
+  !reread.runtimeAssertions.candidateIsolated ||
+  reread.diskReadback.status !== "pending-external-verification" ||
+  !reread.diskReadback.evidenceReadable ||
+  reread.diskReadback.sha256sumsVerified
+) {
+  throw new Error("evidence readback must remain pending until external SHA256 verification");
 }
 
 const rawArtifact = artifact(evidencePath);
@@ -230,7 +236,7 @@ const bindingArtifacts = [
   artifact(evidencePath),
 ];
 const inputDigest = sha256(bindingArtifacts.map((entry) => entry.path + "\0" + entry.sha256 + "\0" + entry.bytes).sort().join("\n"));
-const buildHash = sha256(JSON.stringify(bindingArtifacts));
+const buildHash = inputDigest;
 const commit = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
 const tree = execFileSync("git", ["rev-parse", "HEAD^{tree}"], { cwd: root, encoding: "utf8" }).trim();
 const report: ComponentGraduationReport = {
@@ -248,7 +254,7 @@ const report: ComponentGraduationReport = {
   rollback: "Remove the contract projection and retain the existing stores; no source store, candidate, accepted memory, or default value is deleted or rewritten.",
   modelEffectiveState: MEMORY_PRODUCT_PROFILE.modelSafeSummary.join(" "),
   evidenceGrade: "unit-test",
-  actor: "codex",
+  actor: "codex-long-session-r2",
   driven_by: "agent",
   expiry: null,
   binding: {
@@ -259,7 +265,7 @@ const report: ComponentGraduationReport = {
     provider: "fixture-provider",
     model: "fixture-model",
     inputSet: "tf0497-memory-authority-contract",
-    scope: "workspace:component-graduation/session:tf-0497",
+    scope: "workspace:long-session-program-r2/session:tf-0497",
     artifacts: bindingArtifacts,
   },
   evidence: [
@@ -289,9 +295,13 @@ const sumTargets = [
 ];
 const sums = sumTargets.sort().map((relativePath) => sha256(fs.readFileSync(path.join(root, relativePath))) + "  " + relativePath).join("\n");
 fs.writeFileSync(path.join(root, sumsPath), sums + "\n", "utf8");
-for (const line of sums.split("\n")) {
-  const [expected, fileName] = line.split("  ");
-  const actual = sha256(fs.readFileSync(path.join(root, fileName)));
-  if (actual !== expected) throw new Error("SHA256SUMS mismatch: " + fileName);
+if (!sums.split("\n").filter(Boolean).every((line) => {
+  const [expected, fileName] = line.split("  ", 2);
+  return Boolean(expected && fileName && sha256(fs.readFileSync(path.join(root, fileName))) === expected);
+})) {
+  throw new Error("SHA256SUMS verification failed");
+}
+if (persisted.diskReadback.receiptPath !== `${outputDir}/12-sha256sums-check.txt`) {
+  throw new Error("external SHA256 verification receipt path is missing");
 }
 console.log(JSON.stringify({ ok: true, reportId, evidencePath, reportPath, sumsPath, validation, candidateIsolated, ownerConvergence }, null, 2));
