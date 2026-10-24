@@ -92,6 +92,29 @@ appliesTo:
 - Global listing reuses `terminal.list({})`; terminal-api must not inject the active workspace when
   omitted.
 
+## Desktop Control Plane And Session Resources
+
+- Follow the same control-plane split as Codex desktop/CLI: a public human command surface (CLI,
+  slash commands), a typed host/app-server surface for rich clients, and a scoped model tool
+  surface. Resume, fork, archive, delete, environment selection, and handoff are host-owned
+  lifecycle operations; the model must not shell out to duplicate that authority.
+- A long-session environment binding is a projection/selection of the existing Workspace checkout
+  or managed worktree, not a second Project store. Persist canonical root, backend, branch or
+  detached HEAD, setup profile, revision/generation, and restore or retention policy through the
+  existing session/worktree owners.
+- A session resource ledger is an owner-consolidated read model, not a universal table or second
+  executor. Attribute process tree, pids, CPU, RSS, child/background terminals, worktree disk use,
+  queues/listeners, and observed versus managed ownership to the current session/run identity.
+- Quotas such as max processes, RSS, background terminals, and worktrees are session coordination
+  policy. Reject or queue before spawning; never silently exceed. Unavailable measurements stay
+  unknown, and incomplete cleanup stays recovery_required.
+- Archive, stop, delete, and worktree cleanup remain distinct operations. Cleanup may remove a
+  managed worktree only through its owner and only after snapshot/restore or an explicit
+  retention=none decision. Observed resources are never reported as safely terminated.
+- Keep ordinary Chat, product locks, and frozen defaults unchanged. These rules constrain long-term
+  collaboration and future consumers; they do not enable Codex-style cloud execution or a second
+  scheduling authority.
+
 ## Projections And Rollout Locks
 
 - `SessionActivity` is a read model only and may project goal/process/lineage.
