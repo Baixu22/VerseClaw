@@ -351,7 +351,7 @@
         "memorySelectRole": "Select a role to manage its active memory.",
         "memoryComposerTitle": "New memory proposal",
         "memoryComposerEditTitle": "Memory proposal draft",
-        "memoryComposerHint": "Low-risk proposals may be accepted by policy; conflicts and sensitive changes wait for review.",
+        "memoryComposerHint": "Candidates remain review-only. Explicit approval is required before any candidate can become memory.",
         "memoryType": "Type",
         "memoryScope": "Scope",
         "memorySensitivity": "Sensitivity",

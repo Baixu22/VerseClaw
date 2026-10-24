@@ -288,7 +288,7 @@
         "memoryMetricFeedback": "反馈",
         "memorySelectRole": "选择一个角色来管理它的活跃记忆。",
         "memoryComposerTitle": "新记忆提案",
-        "memoryComposerHint": "低风险提案可由策略接受；冲突和敏感变更会进入评审。",
+        "memoryComposerHint": "候选记忆只用于审阅；任何候选必须经明确批准后才能成为记忆。",
         "memoryPlaceholder": "添加一条供未来运行使用的角色记忆",
         "memorySave": "保存",
         "memoryEmptyTitle": "暂无可用角色记忆",
