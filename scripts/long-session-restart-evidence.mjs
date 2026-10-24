@@ -176,8 +176,12 @@ async function main() {
       }
       const f1 = JSON.parse(readFileSync(join(OUT_DIR, 'restart-journey-results.json'), 'utf8'));
       const runtime = JSON.parse(readFileSync(join(OUT_DIR, 'host-runtime-receipts.json'), 'utf8'));
-      if (f1.candidate?.commit !== candidate.commit && !allowDirty) failures.push('F1 receipt not bound to HEAD');
-      if (runtime.candidate?.commit !== candidate.commit && !allowDirty) failures.push('runtime receipt not bound to HEAD');
+      const evidencePath = relative(ROOT, join(OUT_DIR, 'restart-journey-results.json')).replaceAll('\\', '/');
+      const evidenceCommit = git(['log', '--diff-filter=A', '--follow', '--format=%H', '--', evidencePath]).split(/\r?\n/).filter(Boolean).at(-1);
+      const sourceCommit = evidenceCommit ? git(['rev-parse', '--verify', evidenceCommit + '^']) : null;
+      if (!sourceCommit) failures.push('F1 evidence has no source commit');
+      if (f1.candidate?.commit !== sourceCommit) failures.push('F1 receipt is not bound to the evidence source commit');
+      if (runtime.candidate?.commit !== sourceCommit) failures.push('runtime receipt is not bound to the evidence source commit');
       try { checkNormalized(f1, runtime.commandJourneys?.dualWorkerBatch ?? {}); } catch (error) { failures.push(String(error.message)); }
     }
     console.log(JSON.stringify({ checkOnly: true, ok: failures.length === 0, failures }, null, 2));

@@ -1,0 +1,108 @@
+{
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "c0948cd3dc226a51d35ddf8261f9d40fb8596bec",
+    "tree": "f0f4460647898a6d63f10dda38dd477a64e2a129",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "status": []
+  },
+  "schema": "clawx.long-session.restart-journeys.curated/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-f1",
+  "transport": "built Electron host:invoke -> actual Main -> actual Gateway -> local scripted OpenAI-compatible provider; lifecycle via existing transcript/archive/TaskLedger owners",
+  "rawReceiptSha256": "befd878001b54036b3b6af0dd905528e7558262d5dfa8ddc3b4312fcc8995a1b",
+  "evidenceLevels": {
+    "openclawRuntime": "real local scripted OpenAI-compatible provider; production Gateway/runner/transcript path",
+    "nativeBackend": "unverified: no native provider route exercised",
+    "workerBatch": "separate real Electron completion-continuation fixture required"
+  },
+  "journeys": {
+    "realProviderTurn": {
+      "requests": 1,
+      "transcriptReadback": true
+    },
+    "gatewayRestart": {
+      "beforePid": 45412,
+      "afterPid": 26316,
+      "transcriptReadback": true
+    },
+    "appRestart": {
+      "transcriptReadback": true,
+      "taskLedgerReadback": true
+    },
+    "forkCompactHandoff": {
+      "forkKey": "agent:main:dashboard:d7ee2114-5782-49a9-b242-4a28f509193e",
+      "handoffKey": "agent:main:session-1792875554787-956ecce9",
+      "compact": true,
+      "compacted": true
+    },
+    "archiveRestore": {
+      "archived": true,
+      "archivedSessionKey": "agent:main:dashboard:66236a5b-44ca-421b-a8df-cfe6104237c3",
+      "archivedGeneration": "adf021f9-f88c-43b8-be6d-aed5db6a004d",
+      "restoredGeneration": "e4bcf4f3-1b1b-49b1-bf56-2a43e669a76e",
+      "restoredHistory": true
+    },
+    "isolation": {
+      "workspaces": 2,
+      "ordinarySessions": 1,
+      "crossWorkspaceNodes": 0,
+      "taskLinksForOrdinarySession": 0
+    },
+    "lifecycleNegative": {
+      "duplicateRestoreRejected": true,
+      "ordinaryDeleteDidNotTouchSource": true,
+      "staleError": "Gateway restore did not return a committed receipt: Session is not in the archive index: agent:main:dashboard:66236a5b-44ca-421b-a8df-cfe6104237c3"
+    },
+    "dualWorkerBatch": {
+      "schemaVersion": "clawx.orchestration-completion-batch/v1",
+      "batchId": "orch_16dff34e-c956-4298-83ef-70698d52a7f1:agent:main:dashboard:66236a5b-44ca-421b-a8df-cfe6104237c3:e4bcf4f3-1b1b-49b1-bf56-2a43e669a76e",
+      "orchestrationRunId": "orch_16dff34e-c956-4298-83ef-70698d52a7f1",
+      "requesterSessionKey": "agent:main:dashboard:66236a5b-44ca-421b-a8df-cfe6104237c3",
+      "requesterSessionGeneration": "e4bcf4f3-1b1b-49b1-bf56-2a43e669a76e",
+      "generationState": "matching",
+      "status": "terminal",
+      "outcome": "failed",
+      "consolidatedReceiptId": "orch_16dff34e-c956-4298-83ef-70698d52a7f1:agent:main:dashboard:66236a5b-44ca-421b-a8df-cfe6104237c3:e4bcf4f3-1b1b-49b1-bf56-2a43e669a76e:consolidated:v1",
+      "acceptedAt": 1792875578326,
+      "terminalAt": 1792875581418,
+      "counts": {
+        "expected": 2,
+        "settled": 2,
+        "completed": 0,
+        "failed": 2,
+        "cancelled": 0,
+        "unknown": 0
+      },
+      "delivery": {
+        "state": "pending",
+        "delivered": 0,
+        "pending": 2,
+        "suspended": 0,
+        "failed": 0,
+        "discarded": 0,
+        "waitingForRequesterTurn": false
+      },
+      "members": [
+        {
+          "runId": "00c6bfc4-f1e4-4005-810e-2ee784b4aa68",
+          "childSessionKey": "agent:main:subagent:ec5d4705-a8b4-44d3-b1ef-fd755eefe63f",
+          "roleName": "architect",
+          "status": "failed",
+          "deliveryStatus": "pending"
+        },
+        {
+          "runId": "f6c4480a-9982-4b64-b179-beabbd5220c6",
+          "childSessionKey": "agent:main:subagent:b90da319-3133-48b2-b67e-d11749f5fa04",
+          "roleName": "tester",
+          "status": "failed",
+          "deliveryStatus": "pending"
+        }
+      ]
+    }
+  },
+  "unmeasured": [
+    "No live external model provider or model-quality comparison was run.",
+    "Native backend route was not exercised."
+  ]
+}

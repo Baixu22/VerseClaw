@@ -1,0 +1,194 @@
+{
+  "schema": "clawx.long-session.host-runtime-receipts/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-f1",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "c0948cd3dc226a51d35ddf8261f9d40fb8596bec",
+    "tree": "f0f4460647898a6d63f10dda38dd477a64e2a129",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "status": []
+  },
+  "commandJourneys": {
+    "dualWorkerBatch": {
+      "rawReceiptSha256": "4cbfb552d9c672b078401766e5d5b3570b9d6abfea1553979f04ff67ee6ad5c0",
+      "orchestrationRunId": "orch_149acf49-b797-4a03-b5a4-da77b5047f46",
+      "terminal": {
+        "batchId": "orch_149acf49-b797-4a03-b5a4-da77b5047f46:agent:main:dashboard:963d6f77-3b5c-4b2a-a418-33debd03b0ff:36eab52b-d249-49e1-b54d-30daacad7dad",
+        "status": "terminal",
+        "outcome": "failed",
+        "generationState": "matching",
+        "counts": {
+          "expected": 1,
+          "settled": 1,
+          "completed": 0,
+          "failed": 1,
+          "cancelled": 0,
+          "unknown": 0
+        },
+        "delivery": {
+          "state": "pending",
+          "delivered": 0,
+          "pending": 1,
+          "suspended": 0,
+          "failed": 0,
+          "discarded": 0,
+          "waitingForRequesterTurn": false
+        },
+        "members": [
+          {
+            "runId": "637d5e3f-86de-4c5c-b48b-1144d1fbe1fd",
+            "childSessionKey": "agent:main:subagent:3454f30c-2169-4a64-814d-9f2651db1a2d",
+            "roleName": "architect",
+            "status": "failed",
+            "deliveryStatus": "pending"
+          }
+        ],
+        "consolidatedReceiptId": "orch_149acf49-b797-4a03-b5a4-da77b5047f46:agent:main:dashboard:963d6f77-3b5c-4b2a-a418-33debd03b0ff:36eab52b-d249-49e1-b54d-30daacad7dad:consolidated:v1"
+      },
+      "duplicateReplay": {
+        "status": "accepted",
+        "replayed": true,
+        "orchestrationRunId": "orch_149acf49-b797-4a03-b5a4-da77b5047f46"
+      },
+      "restartReplay": {
+        "batchId": "orch_149acf49-b797-4a03-b5a4-da77b5047f46:agent:main:dashboard:963d6f77-3b5c-4b2a-a418-33debd03b0ff:36eab52b-d249-49e1-b54d-30daacad7dad",
+        "status": "terminal",
+        "consolidatedReceiptId": "orch_149acf49-b797-4a03-b5a4-da77b5047f46:agent:main:dashboard:963d6f77-3b5c-4b2a-a418-33debd03b0ff:36eab52b-d249-49e1-b54d-30daacad7dad:consolidated:v1",
+        "members": [
+          {
+            "runId": "637d5e3f-86de-4c5c-b48b-1144d1fbe1fd",
+            "childSessionKey": "agent:main:subagent:3454f30c-2169-4a64-814d-9f2651db1a2d",
+            "roleName": "architect",
+            "status": "failed",
+            "deliveryStatus": "pending"
+          }
+        ]
+      },
+      "staleFence": {
+        "batchId": "orch_149acf49-b797-4a03-b5a4-da77b5047f46:agent:main:dashboard:963d6f77-3b5c-4b2a-a418-33debd03b0ff:36eab52b-d249-49e1-b54d-30daacad7dad",
+        "status": "fenced",
+        "outcome": "fenced",
+        "generationState": "mismatch",
+        "consolidatedReceiptId": null
+      },
+      "unsupportedBackend": {
+        "status": "rejected",
+        "error": "Unsupported delegation backend: native-shell"
+      },
+      "unknownWorker": {
+        "status": "rejected",
+        "phantomChildCreated": false
+      },
+      "transport": "built Electron session.activitySnapshot -> persisted subagent registry batches -> existing generation-pinned delivery owner"
+    }
+  },
+  "uiOwnerRead": {
+    "windowLifecycle": {
+      "minimized": true,
+      "restored": true,
+      "visible": true
+    },
+    "ownerReads": {
+      "activityBackgroundRead": "known",
+      "activityCompletionBatchIds": [
+        "orch_1241fb36-f06a-4916-a8c1-caf9cc3eb083:agent:main:dashboard:4c2602d2-b92b-4152-ae01-49bb084e2439:d3055172-9d11-48a6-8a99-76269a978980"
+      ],
+      "recoveryState": "ready",
+      "resourceEnvelope": {
+        "schema": "openclaw.resource-envelope/v1",
+        "generatedAt": 1792875658902,
+        "mode": "shadow",
+        "entries": [
+          {
+            "id": "main:chat-history",
+            "workspaceKey": "main:chat-history",
+            "kind": "chat-history",
+            "priority": "foreground",
+            "owner": "main",
+            "activeSlots": 0,
+            "queuedCount": 0,
+            "queueWaitMs": 0,
+            "processCount": 0,
+            "treeRssBytes": 0,
+            "treeCpuPercent": 0,
+            "limits": {
+              "memoryBytes": 536870912,
+              "cpuPercent": 100,
+              "processCount": 16,
+              "concurrencySlots": 1,
+              "queueLength": 64
+            },
+            "limitHistory": [
+              {
+                "at": 1792875652579,
+                "from": 2,
+                "to": 1,
+                "reason": "gradient2 latency sample"
+              }
+            ],
+            "reason": "released",
+            "updatedAt": 1792875652579
+          },
+          {
+            "id": "main:process-tree",
+            "workspaceKey": "D:\\ClawX-work\\worktrees\\long-session-program-r2",
+            "kind": "agent-turn",
+            "priority": "foreground",
+            "owner": "main",
+            "activeSlots": 0,
+            "queuedCount": 0,
+            "queueWaitMs": 0,
+            "processCount": 9,
+            "treeRssBytes": 973488128,
+            "treeCpuPercent": 0,
+            "pids": [
+              33068
+            ],
+            "reason": "main process tree sample",
+            "limits": {
+              "memoryBytes": 2147483648,
+              "cpuPercent": 400,
+              "processCount": 64,
+              "concurrencySlots": 8,
+              "queueLength": 32
+            },
+            "updatedAt": 1792875658902
+          }
+        ],
+        "totals": {
+          "activeSlots": 0,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 9,
+          "treeRssBytes": 973488128,
+          "treeCpuPercent": 0
+        },
+        "exceeded": [],
+        "warnings": []
+      },
+      "activeBackgroundTerminalCount": 0
+    },
+    "quietWindow": {
+      "durationMs": 2500,
+      "completionBatchRowsBefore": 1,
+      "completionBatchRowsAfter": 1,
+      "completionBellUnreadBefore": 0,
+      "completionBellUnreadAfter": 0
+    },
+    "taskLedgerNavigation": {
+      "hash": "#/task-ledger?nodeId=0a34f4c5-008e-414f-a4f4-63484ace8ab7",
+      "includesNodeId": true
+    },
+    "workerNavigation": {
+      "childSessionKey": "agent:main:subagent:0a682434-04b8-4071-bbfb-72071137a0a0",
+      "sidebarSelected": true,
+      "returnedToCoordinator": true
+    }
+  },
+  "limitations": [
+    "No live-provider model-quality turn was issued; the actual worker receipt can settle through the runtime failure path without provider text.",
+    "Narrow content requests are clamped by the existing Electron minimum width; both requested and actual pixels are recorded.",
+    "Managed-worktree deletion and backend-unavailable UI recovery remain owner-boundary evidence from C1-C3 rather than an injected destructive C4 journey."
+  ]
+}

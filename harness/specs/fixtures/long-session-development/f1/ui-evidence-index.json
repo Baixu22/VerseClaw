@@ -1,0 +1,65 @@
+{
+  "schema": "clawx.long-session.ui-evidence-index/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-f1",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "c0948cd3dc226a51d35ddf8261f9d40fb8596bec",
+    "tree": "f0f4460647898a6d63f10dda38dd477a64e2a129",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "status": []
+  },
+  "sourceReceiptSha256": "3f34e396064f5b0cb8b899cd5ca978a4f7b406c9ec26920604eaa22d0e45ada1",
+  "screenshots": [
+    {
+      "id": "wide",
+      "path": "coordination-wide.png",
+      "requestedViewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "contentSize": {
+        "width": 1281,
+        "height": 801
+      },
+      "browserViewport": {
+        "innerWidth": 1281,
+        "innerHeight": 801,
+        "devicePixelRatio": 1.5
+      },
+      "pixels": {
+        "width": 1922,
+        "height": 1202
+      },
+      "bytes": 579366,
+      "sha256": "d8ef02f7621678c983b53b201d94b3ca03aef32269cfbfdf2d68b225516c0070"
+    },
+    {
+      "id": "narrow",
+      "path": "coordination-narrow.png",
+      "requestedViewport": {
+        "width": 680,
+        "height": 760
+      },
+      "contentSize": {
+        "width": 961,
+        "height": 761
+      },
+      "browserViewport": {
+        "innerWidth": 961,
+        "innerHeight": 761,
+        "devicePixelRatio": 1.5
+      },
+      "pixels": {
+        "width": 1442,
+        "height": 1142
+      },
+      "bytes": 453915,
+      "sha256": "ea4aeea2461b8954e610ab5af94b9af4a819f7def22bbffe021bf67af0c6ccd2"
+    }
+  ],
+  "evidenceLevel": "real built Electron Chat ResourceChip -> Host API -> actual Main owner",
+  "limitations": [
+    "visual rendering is supporting evidence; lifecycle assertions are host-owner readbacks"
+  ]
+}
