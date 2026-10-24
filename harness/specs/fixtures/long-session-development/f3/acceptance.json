@@ -6,12 +6,12 @@
   "taskKey": "F3",
   "program": "long-session-development-20261022",
   "contract": "harness/specs/tasks/long-session-final-acceptance.md",
-  "generatedAt": "2026-10-24T06:18:47.499Z",
+  "generatedAt": "2026-10-24T08:14:17.128Z",
   "candidate": {
-    "branch": "codex/long-session-implementation-20261022",
-    "commit": "eab126259d545c8b91965b577966cf1b20213525",
-    "tree": "c845592b11ad80674d0d7d7af829b70e8841046b",
-    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+    "branch": "codex/long-session-integration-20261024",
+    "commit": "4e993607f2192a3a809b1717daff5e50a9c60bc8",
+    "tree": "0f3d110a517bb734bc236b8fd6eae81a3f2e9e94",
+    "worktree": "D:/ClawX-work/worktrees/long-session-integration"
   },
   "verificationBoundary": {
     "kind": "agent-driven read-back; no real-human verdict or data",
@@ -1424,141 +1424,132 @@
       "result": "pass",
       "gateReceipt": {
         "provided": true,
-        "source": "D:/tmp/long-session-f3/gates-final/gates.json",
-        "allPassed": false,
+        "source": "D:/tmp/long-session-merge/gates-verified/gates.json",
+        "allPassed": true,
         "gates": [
-          {
-            "name": "build-vite",
-            "command": "pnpm run build:vite",
-            "exitCode": 0,
-            "durationMs": 66551,
-            "log": "D:\\tmp\\long-session-f3\\gates-final\\build-vite.log",
-            "summary": "dist-electron/main/index-C258I5zk.js                            1,866.19 kB ✓ built in 6.49s vite v7.3.1 building client environment for production... transforming... ✓ 2 modules transformed. rendering chunks... dist-electron/preload/index.js  3.39 kB ✓ built in 24ms"
-          },
-          {
-            "name": "e2e-long-session-scope",
-            "command": "pnpm run test:e2e:run tests/e2e/long-session-restart-journeys.spec.ts tests/e2e/long-session-lifecycle-faults.spec.ts tests/e2e/long-session-continuity-context.spec.ts tests/e2e/long-session-followup-scheduling.spec.ts",
-            "exitCode": 0,
-            "durationMs": 177435,
-            "log": "D:\\tmp\\long-session-f3\\gates-final\\e2e-long-session-scope.log",
-            "summary": "\":true,\"validationAfterArchive\":\"invalidated\",\"invalidationReason\":\"archived\",\"terminalsAfterArchive\":0},{\"id\":\"journey-6-delete-late-events\",\"status\":\"pass\",\"validationAfterDelete\":\"invalidated\",\"lateReadValidation\":\"invalidated\",\"workspaceARetained\":true,\"workspaceBRetained\":true}],\"negatives\":[\"cross-workspace binding readback stayed isolated (workspace A vs B)\",\"archive invalidated the coordinator binding instead of leaving a live pointer\",\"late coordinator read after delete could not resurrect the deleted generation\"],\"status\":\"passed\"}   ok 4 tests\\e2e\\long-session-restart-journeys.spec.ts:107:5 › F1 six real long-session restart journeys across two workspaces (1.8m)    4 passed (2.9m)"
-          },
           {
             "name": "typecheck",
             "command": "pnpm run typecheck",
             "exitCode": 0,
-            "durationMs": 51335,
-            "log": "D:\\tmp\\long-session-f3\\gates-final\\typecheck.log",
-            "summary": "      \"exitCode\": 0,       \"durationMs\": 40032,       \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+            "durationMs": 30851,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\typecheck.log",
+            "summary": "      \"exitCode\": 0,       \"durationMs\": 20709,       \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-integration\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
           },
           {
             "name": "contract-check",
             "command": "pnpm run contract:check",
             "exitCode": 0,
-            "durationMs": 1387,
-            "log": "D:\\tmp\\long-session-f3\\gates-final\\contract-check.log",
+            "durationMs": 1039,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\contract-check.log",
             "summary": "$ node scripts/contract-check.mjs Contract check passed."
           },
           {
             "name": "comms-replay",
             "command": "pnpm run comms:replay",
             "exitCode": 0,
-            "durationMs": 1194,
-            "log": "D:\\tmp\\long-session-f3\\gates-final\\comms-replay.log",
-            "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
+            "durationMs": 879,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\comms-replay.log",
+            "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-integration\\artifacts\\comms\\current-metrics.json"
           },
           {
             "name": "comms-compare",
             "command": "pnpm run comms:compare",
             "exitCode": 0,
-            "durationMs": 1067,
-            "log": "D:\\tmp\\long-session-f3\\gates-final\\comms-compare.log",
-            "summary": "| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS | | message_loss_count | 0.0000 | <= 0 | PASS | | message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
+            "durationMs": 815,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\comms-compare.log",
+            "summary": "| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS | | message_loss_count | 0.0000 | <= 0 | PASS | | message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-integration\\artifacts\\comms\\compare-report.md"
           },
           {
-            "name": "repo-artifacts-check",
-            "command": "pnpm run repo:artifacts:check",
-            "exitCode": 1,
-            "durationMs": 5007,
-            "log": "D:\\tmp\\long-session-f3\\gates-final\\repo-artifacts-check.log",
-            "summary": "$ node scripts/check-repository-artifacts.mjs Local artifact is still tracked: docs/dev/memory-control-plane.md Tracked path is ignored: docs/dev/memory-control-plane.md Tracked path is ignored: harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/e2e.log Spec requires local or missing documentation: harness/specs/tasks/memory-control-plane-authority.md: docs/dev/memory-control-plane.md Spec requires local or missing documentation: harness/specs/tasks/memory-user-surface.md: docs/dev/memory-control-plane.md [ELIFECYCLE] Command failed with exit code 1."
-          },
-          {
-            "name": "repo-evidence-check",
-            "command": "pnpm run repo:evidence:check",
+            "name": "unit-long-session",
+            "command": "pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts tests/unit/long-session-delegation-admission.test.ts tests/unit/long-session-coordinator-binding.test.ts tests/unit/long-session-completion-continuation.test.ts tests/unit/long-session-followup-scheduling.test.ts tests/unit/long-session-resource-reclamation.test.ts tests/unit/long-session-action-contract.test.ts tests/unit/long-session-effective-policy.test.ts tests/unit/long-session-paired-evaluation.test.ts tests/unit/long-session-lifecycle-barrier.test.ts tests/unit/long-session-coordination-surface.test.ts tests/unit/long-session-continuity-context.test.ts tests/unit/gateway-events.test.ts tests/unit/gateway-event-dispatch.test.ts tests/unit/session-delete-gate.test.ts tests/unit/r0-2-sessions-delete-fail.test.ts tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts --maxWorkers=1",
             "exitCode": 0,
-            "durationMs": 704,
-            "log": "D:\\tmp\\long-session-f3\\gates-final\\repo-evidence-check.log",
-            "summary": "$ node scripts/check-evidence-refs.mjs [evidence-refs] PASS 181 referenced path(s)"
+            "durationMs": 64415,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\unit-long-session.log",
+            "summary": " RUN  v4.1.1 D:/ClawX-work/worktrees/long-session-integration    Test Files  18 passed (18)       Tests  153 passed (153)    Start at  16:06:55    Duration  61.66s (transform 24.27s, setup 1.69s, import 32.26s, tests 16.13s, environment 8.08s) "
           },
           {
-            "name": "capability-claim-check",
-            "command": "node scripts/check-capability-claims.mjs",
+            "name": "build-vite",
+            "command": "pnpm run build:vite",
             "exitCode": 0,
-            "durationMs": 118,
-            "log": "D:\\tmp\\long-session-f3\\gates-final\\capability-claim-check.log",
-            "summary": "Capability claim check passed with 0 findings."
+            "durationMs": 52448,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\build-vite.log",
+            "summary": "dist-electron/main/index-CZ9VSB8z.js                            1,940.75 kB ✓ built in 4.09s vite v7.3.1 building client environment for production... transforming... ✓ 2 modules transformed. rendering chunks... dist-electron/preload/index.js  3.39 kB ✓ built in 15ms"
           },
           {
-            "name": "harness-validate",
+            "name": "e2e-long-session",
+            "command": "pnpm run test:e2e:run tests/e2e/long-session-restart-journeys.spec.ts tests/e2e/long-session-lifecycle-faults.spec.ts tests/e2e/long-session-continuity-context.spec.ts tests/e2e/long-session-followup-scheduling.spec.ts tests/e2e/long-session-delegation-admission.spec.ts tests/e2e/long-session-completion-continuation.spec.ts tests/e2e/long-session-coordination.spec.ts tests/e2e/long-session-coordinator-binding.spec.ts tests/e2e/long-session-policy-surface.spec.ts",
+            "exitCode": 0,
+            "durationMs": 294878,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\e2e-long-session.log",
+            "summary": "true,\"validationAfterArchive\":\"invalidated\",\"invalidationReason\":\"archived\",\"terminalsAfterArchive\":0},{\"id\":\"journey-6-delete-late-events\",\"status\":\"pass\",\"validationAfterDelete\":\"invalidated\",\"lateReadValidation\":\"invalidated\",\"workspaceARetained\":true,\"workspaceBRetained\":true}],\"negatives\":[\"cross-workspace binding readback stayed isolated (workspace A vs B)\",\"archive invalidated the coordinator binding instead of leaving a live pointer\",\"late coordinator read after delete could not resurrect the deleted generation\"],\"status\":\"passed\"}   ok 10 tests\\e2e\\long-session-restart-journeys.spec.ts:107:5 › F1 six real long-session restart journeys across two workspaces (1.5m)    10 passed (4.9m)"
+          },
+          {
+            "name": "harness-ci",
+            "command": "pnpm run harness:ci",
+            "exitCode": 0,
+            "durationMs": 18154,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\harness-ci.log",
+            "summary": "  \"output\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-integration\\\\artifacts\\\\agent-dev-audit\\\\report.json\",   \"markdown\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-integration\\\\artifacts\\\\agent-dev-audit\\\\report.md\",   \"disqualifiers\": [] } $ node scripts/check-evidence-refs.mjs [evidence-refs] PASS 181 referenced path(s) $ node scripts/check-test-coverage-baseline.mjs [test-coverage] gateway=27 services=105 meet baseline"
+          },
+          {
+            "name": "harness-validate-final",
             "command": "pnpm harness validate --spec harness/specs/tasks/long-session-final-acceptance.md",
             "exitCode": 0,
-            "durationMs": 1379,
-            "log": "D:\\tmp\\long-session-f3\\gates-final\\harness-validate.log",
+            "durationMs": 1496,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\harness-validate-final.log",
             "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-final-acceptance.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-final-acceptance.md\" Spec is valid: harness\\specs\\tasks\\long-session-final-acceptance.md"
+          },
+          {
+            "name": "f3-recheck",
+            "command": "pnpm long-session:f3:acceptance:check",
+            "exitCode": 0,
+            "durationMs": 726,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\f3-recheck.log",
+            "summary": "$ node --experimental-strip-types scripts/long-session-final-acceptance.mjs --check {   \"check\": \"ok\",   \"outDir\": \"D:/ClawX-work/worktrees/long-session-integration/harness/specs/fixtures/long-session-development/f3\" }"
+          },
+          {
+            "name": "f2-recheck",
+            "command": "pnpm long-session:f2:evidence:check",
+            "exitCode": 0,
+            "durationMs": 662,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\f2-recheck.log",
+            "summary": "$ node --experimental-strip-types scripts/long-session-f2-evidence.mjs --check {   \"check\": \"ok\",   \"outDir\": \"D:/ClawX-work/worktrees/long-session-integration/harness/specs/fixtures/long-session-development/f2\" }"
           },
           {
             "name": "git-diff-check",
             "command": "git diff --check",
             "exitCode": 0,
-            "durationMs": 96,
-            "log": "D:\\tmp\\long-session-f3\\gates-final\\git-diff-check.log",
+            "durationMs": 67,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\git-diff-check.log",
             "summary": ""
           },
           {
-            "name": "eslint-changed",
-            "command": "pnpm exec eslint scripts/long-session-final-acceptance.mjs shared/capability-claims.ts",
+            "name": "repo-artifacts-check",
+            "command": "pnpm run repo:artifacts:check",
             "exitCode": 0,
-            "durationMs": 3765,
-            "log": "D:\\tmp\\long-session-f3\\gates-final\\eslint-changed.log",
-            "summary": ""
+            "durationMs": 2228,
+            "log": "D:\\tmp\\long-session-merge\\gates-verified\\repo-artifacts-check.log",
+            "summary": "$ node scripts/check-repository-artifacts.mjs Repository artifact retention passed (18553 tracked paths)."
           }
         ]
       },
       "gateClassification": {
         "passed": [
-          "build-vite",
-          "e2e-long-session-scope",
           "typecheck",
           "contract-check",
           "comms-replay",
           "comms-compare",
-          "repo-evidence-check",
-          "capability-claim-check",
-          "harness-validate",
+          "unit-long-session",
+          "build-vite",
+          "e2e-long-session",
+          "harness-ci",
+          "harness-validate-final",
+          "f3-recheck",
+          "f2-recheck",
           "git-diff-check",
-          "eslint-changed"
+          "repo-artifacts-check"
         ],
-        "toleratedPreexisting": [
-          {
-            "name": "repo-artifacts-check",
-            "state": "tolerated-preexisting",
-            "gate": {
-              "name": "repo-artifacts-check",
-              "command": "pnpm run repo:artifacts:check",
-              "exitCode": 1,
-              "durationMs": 5007,
-              "log": "D:\\tmp\\long-session-f3\\gates-final\\repo-artifacts-check.log",
-              "summary": "$ node scripts/check-repository-artifacts.mjs Local artifact is still tracked: docs/dev/memory-control-plane.md Tracked path is ignored: docs/dev/memory-control-plane.md Tracked path is ignored: harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/e2e.log Spec requires local or missing documentation: harness/specs/tasks/memory-control-plane-authority.md: docs/dev/memory-control-plane.md Spec requires local or missing documentation: harness/specs/tasks/memory-user-surface.md: docs/dev/memory-control-plane.md [ELIFECYCLE] Command failed with exit code 1."
-            },
-            "tolerance": {
-              "reason": "tracked-and-ignored generated evidence from another lane (harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/e2e.log); origin/main at 382908c5a fails the same check, and repairing it means retiring another lane evidence asset",
-              "knownIssues": [
-                "Tracked path is ignored: harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/e2e.log"
-              ]
-            }
-          }
-        ],
+        "toleratedPreexisting": [],
         "failed": [],
         "note": "a tolerated pre-existing failure is listed with its exact output; a new failure with the same or any other gate name is never tolerated"
       },
@@ -1704,104 +1695,112 @@
   },
   "gateReceipt": {
     "provided": true,
-    "source": "D:/tmp/long-session-f3/gates-final/gates.json",
-    "allPassed": false,
+    "source": "D:/tmp/long-session-merge/gates-verified/gates.json",
+    "allPassed": true,
     "gates": [
-      {
-        "name": "build-vite",
-        "command": "pnpm run build:vite",
-        "exitCode": 0,
-        "durationMs": 66551,
-        "log": "D:\\tmp\\long-session-f3\\gates-final\\build-vite.log",
-        "summary": "dist-electron/main/index-C258I5zk.js                            1,866.19 kB ✓ built in 6.49s vite v7.3.1 building client environment for production... transforming... ✓ 2 modules transformed. rendering chunks... dist-electron/preload/index.js  3.39 kB ✓ built in 24ms"
-      },
-      {
-        "name": "e2e-long-session-scope",
-        "command": "pnpm run test:e2e:run tests/e2e/long-session-restart-journeys.spec.ts tests/e2e/long-session-lifecycle-faults.spec.ts tests/e2e/long-session-continuity-context.spec.ts tests/e2e/long-session-followup-scheduling.spec.ts",
-        "exitCode": 0,
-        "durationMs": 177435,
-        "log": "D:\\tmp\\long-session-f3\\gates-final\\e2e-long-session-scope.log",
-        "summary": "\":true,\"validationAfterArchive\":\"invalidated\",\"invalidationReason\":\"archived\",\"terminalsAfterArchive\":0},{\"id\":\"journey-6-delete-late-events\",\"status\":\"pass\",\"validationAfterDelete\":\"invalidated\",\"lateReadValidation\":\"invalidated\",\"workspaceARetained\":true,\"workspaceBRetained\":true}],\"negatives\":[\"cross-workspace binding readback stayed isolated (workspace A vs B)\",\"archive invalidated the coordinator binding instead of leaving a live pointer\",\"late coordinator read after delete could not resurrect the deleted generation\"],\"status\":\"passed\"}   ok 4 tests\\e2e\\long-session-restart-journeys.spec.ts:107:5 › F1 six real long-session restart journeys across two workspaces (1.8m)    4 passed (2.9m)"
-      },
       {
         "name": "typecheck",
         "command": "pnpm run typecheck",
         "exitCode": 0,
-        "durationMs": 51335,
-        "log": "D:\\tmp\\long-session-f3\\gates-final\\typecheck.log",
-        "summary": "      \"exitCode\": 0,       \"durationMs\": 40032,       \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+        "durationMs": 30851,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\typecheck.log",
+        "summary": "      \"exitCode\": 0,       \"durationMs\": 20709,       \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-integration\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
       },
       {
         "name": "contract-check",
         "command": "pnpm run contract:check",
         "exitCode": 0,
-        "durationMs": 1387,
-        "log": "D:\\tmp\\long-session-f3\\gates-final\\contract-check.log",
+        "durationMs": 1039,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\contract-check.log",
         "summary": "$ node scripts/contract-check.mjs Contract check passed."
       },
       {
         "name": "comms-replay",
         "command": "pnpm run comms:replay",
         "exitCode": 0,
-        "durationMs": 1194,
-        "log": "D:\\tmp\\long-session-f3\\gates-final\\comms-replay.log",
-        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
+        "durationMs": 879,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\comms-replay.log",
+        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-integration\\artifacts\\comms\\current-metrics.json"
       },
       {
         "name": "comms-compare",
         "command": "pnpm run comms:compare",
         "exitCode": 0,
-        "durationMs": 1067,
-        "log": "D:\\tmp\\long-session-f3\\gates-final\\comms-compare.log",
-        "summary": "| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS | | message_loss_count | 0.0000 | <= 0 | PASS | | message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
+        "durationMs": 815,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\comms-compare.log",
+        "summary": "| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS | | message_loss_count | 0.0000 | <= 0 | PASS | | message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-integration\\artifacts\\comms\\compare-report.md"
       },
       {
-        "name": "repo-artifacts-check",
-        "command": "pnpm run repo:artifacts:check",
-        "exitCode": 1,
-        "durationMs": 5007,
-        "log": "D:\\tmp\\long-session-f3\\gates-final\\repo-artifacts-check.log",
-        "summary": "$ node scripts/check-repository-artifacts.mjs Local artifact is still tracked: docs/dev/memory-control-plane.md Tracked path is ignored: docs/dev/memory-control-plane.md Tracked path is ignored: harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/e2e.log Spec requires local or missing documentation: harness/specs/tasks/memory-control-plane-authority.md: docs/dev/memory-control-plane.md Spec requires local or missing documentation: harness/specs/tasks/memory-user-surface.md: docs/dev/memory-control-plane.md [ELIFECYCLE] Command failed with exit code 1."
-      },
-      {
-        "name": "repo-evidence-check",
-        "command": "pnpm run repo:evidence:check",
+        "name": "unit-long-session",
+        "command": "pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts tests/unit/long-session-delegation-admission.test.ts tests/unit/long-session-coordinator-binding.test.ts tests/unit/long-session-completion-continuation.test.ts tests/unit/long-session-followup-scheduling.test.ts tests/unit/long-session-resource-reclamation.test.ts tests/unit/long-session-action-contract.test.ts tests/unit/long-session-effective-policy.test.ts tests/unit/long-session-paired-evaluation.test.ts tests/unit/long-session-lifecycle-barrier.test.ts tests/unit/long-session-coordination-surface.test.ts tests/unit/long-session-continuity-context.test.ts tests/unit/gateway-events.test.ts tests/unit/gateway-event-dispatch.test.ts tests/unit/session-delete-gate.test.ts tests/unit/r0-2-sessions-delete-fail.test.ts tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts --maxWorkers=1",
         "exitCode": 0,
-        "durationMs": 704,
-        "log": "D:\\tmp\\long-session-f3\\gates-final\\repo-evidence-check.log",
-        "summary": "$ node scripts/check-evidence-refs.mjs [evidence-refs] PASS 181 referenced path(s)"
+        "durationMs": 64415,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\unit-long-session.log",
+        "summary": " RUN  v4.1.1 D:/ClawX-work/worktrees/long-session-integration    Test Files  18 passed (18)       Tests  153 passed (153)    Start at  16:06:55    Duration  61.66s (transform 24.27s, setup 1.69s, import 32.26s, tests 16.13s, environment 8.08s) "
       },
       {
-        "name": "capability-claim-check",
-        "command": "node scripts/check-capability-claims.mjs",
+        "name": "build-vite",
+        "command": "pnpm run build:vite",
         "exitCode": 0,
-        "durationMs": 118,
-        "log": "D:\\tmp\\long-session-f3\\gates-final\\capability-claim-check.log",
-        "summary": "Capability claim check passed with 0 findings."
+        "durationMs": 52448,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\build-vite.log",
+        "summary": "dist-electron/main/index-CZ9VSB8z.js                            1,940.75 kB ✓ built in 4.09s vite v7.3.1 building client environment for production... transforming... ✓ 2 modules transformed. rendering chunks... dist-electron/preload/index.js  3.39 kB ✓ built in 15ms"
       },
       {
-        "name": "harness-validate",
+        "name": "e2e-long-session",
+        "command": "pnpm run test:e2e:run tests/e2e/long-session-restart-journeys.spec.ts tests/e2e/long-session-lifecycle-faults.spec.ts tests/e2e/long-session-continuity-context.spec.ts tests/e2e/long-session-followup-scheduling.spec.ts tests/e2e/long-session-delegation-admission.spec.ts tests/e2e/long-session-completion-continuation.spec.ts tests/e2e/long-session-coordination.spec.ts tests/e2e/long-session-coordinator-binding.spec.ts tests/e2e/long-session-policy-surface.spec.ts",
+        "exitCode": 0,
+        "durationMs": 294878,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\e2e-long-session.log",
+        "summary": "true,\"validationAfterArchive\":\"invalidated\",\"invalidationReason\":\"archived\",\"terminalsAfterArchive\":0},{\"id\":\"journey-6-delete-late-events\",\"status\":\"pass\",\"validationAfterDelete\":\"invalidated\",\"lateReadValidation\":\"invalidated\",\"workspaceARetained\":true,\"workspaceBRetained\":true}],\"negatives\":[\"cross-workspace binding readback stayed isolated (workspace A vs B)\",\"archive invalidated the coordinator binding instead of leaving a live pointer\",\"late coordinator read after delete could not resurrect the deleted generation\"],\"status\":\"passed\"}   ok 10 tests\\e2e\\long-session-restart-journeys.spec.ts:107:5 › F1 six real long-session restart journeys across two workspaces (1.5m)    10 passed (4.9m)"
+      },
+      {
+        "name": "harness-ci",
+        "command": "pnpm run harness:ci",
+        "exitCode": 0,
+        "durationMs": 18154,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\harness-ci.log",
+        "summary": "  \"output\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-integration\\\\artifacts\\\\agent-dev-audit\\\\report.json\",   \"markdown\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-integration\\\\artifacts\\\\agent-dev-audit\\\\report.md\",   \"disqualifiers\": [] } $ node scripts/check-evidence-refs.mjs [evidence-refs] PASS 181 referenced path(s) $ node scripts/check-test-coverage-baseline.mjs [test-coverage] gateway=27 services=105 meet baseline"
+      },
+      {
+        "name": "harness-validate-final",
         "command": "pnpm harness validate --spec harness/specs/tasks/long-session-final-acceptance.md",
         "exitCode": 0,
-        "durationMs": 1379,
-        "log": "D:\\tmp\\long-session-f3\\gates-final\\harness-validate.log",
+        "durationMs": 1496,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\harness-validate-final.log",
         "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-final-acceptance.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-final-acceptance.md\" Spec is valid: harness\\specs\\tasks\\long-session-final-acceptance.md"
+      },
+      {
+        "name": "f3-recheck",
+        "command": "pnpm long-session:f3:acceptance:check",
+        "exitCode": 0,
+        "durationMs": 726,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\f3-recheck.log",
+        "summary": "$ node --experimental-strip-types scripts/long-session-final-acceptance.mjs --check {   \"check\": \"ok\",   \"outDir\": \"D:/ClawX-work/worktrees/long-session-integration/harness/specs/fixtures/long-session-development/f3\" }"
+      },
+      {
+        "name": "f2-recheck",
+        "command": "pnpm long-session:f2:evidence:check",
+        "exitCode": 0,
+        "durationMs": 662,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\f2-recheck.log",
+        "summary": "$ node --experimental-strip-types scripts/long-session-f2-evidence.mjs --check {   \"check\": \"ok\",   \"outDir\": \"D:/ClawX-work/worktrees/long-session-integration/harness/specs/fixtures/long-session-development/f2\" }"
       },
       {
         "name": "git-diff-check",
         "command": "git diff --check",
         "exitCode": 0,
-        "durationMs": 96,
-        "log": "D:\\tmp\\long-session-f3\\gates-final\\git-diff-check.log",
+        "durationMs": 67,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\git-diff-check.log",
         "summary": ""
       },
       {
-        "name": "eslint-changed",
-        "command": "pnpm exec eslint scripts/long-session-final-acceptance.mjs shared/capability-claims.ts",
+        "name": "repo-artifacts-check",
+        "command": "pnpm run repo:artifacts:check",
         "exitCode": 0,
-        "durationMs": 3765,
-        "log": "D:\\tmp\\long-session-f3\\gates-final\\eslint-changed.log",
-        "summary": ""
+        "durationMs": 2228,
+        "log": "D:\\tmp\\long-session-merge\\gates-verified\\repo-artifacts-check.log",
+        "summary": "$ node scripts/check-repository-artifacts.mjs Repository artifact retention passed (18553 tracked paths)."
       }
     ]
   }
