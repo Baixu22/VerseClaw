@@ -9,6 +9,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 以当前候选闭合长期会话开发，确保所有能力、后端范围、NO-GO 和未测边界与产品宣称一致。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
+diffBase: 61aed73700b80498164ae29db2e7a64d31352262
 dependsOnTasks:
   - F2
 touchedAreas:
@@ -20,6 +21,8 @@ touchedAreas:
   - README.zh-CN.md
   - README.ja-JP.md
   - shared/capability-claims.ts
+  - scripts/long-session-final-acceptance-evidence.mjs
+  - package.json
   - shared/product-semantics.ts
   - scripts/repository-artifacts.json
   - harness/specs/fixtures/long-session-development/f3/**
