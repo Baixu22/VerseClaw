@@ -30,7 +30,6 @@ import {
 } from '@/components/ui/select';
 import RoleProfileEditor from '@/components/agents/RoleProfileEditor';
 import RolesOrchestrationPanel from '@/components/agents/RolesOrchestrationPanel';
-import { ProposeFactsConfirmQueue } from '@/components/agents/ProposeFactsConfirmQueue';
 import { AgentAvatarEditor } from '@/components/agents/AgentAvatarEditor';
 import type { AgentRoleProfile } from '@shared/types/agent';
 import { DEFAULT_ROLE_PROFILE } from '@shared/types/agent';
@@ -231,7 +230,6 @@ export function Agents({ embedded = false }: { embedded?: boolean } = {}) {
           {!showInitialLoading && (
             <>
               <RolesOrchestrationPanel agents={agents} />
-              <ProposeFactsConfirmQueue />
             </>
           )}
         </div>

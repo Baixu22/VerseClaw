@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "MemoryProductSurfaceAcceptanceEvidence/v1",
+  "reportId": "tf-0498-unified-memory-surface",
+  "taskForestNodeId": "TF-0498",
+  "generatedAt": "2026-10-24T09:11:57.467Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "acceptanceCriteria": [
+    {
+      "criterion": "用户仅通过一个 Memory 面板完成查看、批准、删除和导出",
+      "status": "pass",
+      "evidence": [
+        "MemoryProductSurface/v1",
+        "one Agents-page panel marker",
+        "candidate queue mounted inside the panel",
+        "export and tombstone delete actions"
+      ]
+    },
+    {
+      "criterion": "未经批准的 candidate 不进入检索、prompt 或模型可用记忆；候选队列自身可持久化",
+      "status": "pass",
+      "evidence": [
+        "candidate status excluded from accepted export",
+        "candidate queue persists",
+        "candidate is not retrievable or injectable"
+      ]
+    },
+    {
+      "criterion": "关闭语义与全部生产消费者一致；若 legacy 仍可注入，UI/模型必须明确说明",
+      "status": "pass",
+      "evidence": [
+        "master switch semantics",
+        "production consumer ancestry",
+        "native OpenClaw memory unchanged"
+      ]
+    },
+    {
+      "criterion": "模型中只展示已批准记忆，能正确解释 candidate 与 accepted memory 区别",
+      "status": "pass",
+      "evidence": [
+        "MemoryProductSurface/v1 modelVisibility",
+        "Agent panel model-visible copy"
+      ]
+    }
+  ],
+  "surface": {
+    "schemaVersion": "MemoryProductSurface/v1",
+    "surfaceId": "agents.memory",
+    "productConcept": "memory",
+    "actions": [
+      "view",
+      "review",
+      "approve",
+      "delete",
+      "export",
+      "remember"
+    ],
+    "assertions": {
+      "onePanelMarker": true,
+      "candidateQueueInsidePanel": true,
+      "noSecondAgentsPageQueue": true,
+      "exportEntryPresent": true,
+      "deleteEntryPresent": true,
+      "deleteUsesTombstone": true,
+      "candidateReviewUsesAuthority": true,
+      "modelVisibilityCopyPresent": true,
+      "masterOffCopyPresent": true
+    }
+  },
+  "masterSwitch": {
+    "id": "roleMemoryEnabled",
+    "offBlocksRead": true,
+    "offBlocksWrite": true,
+    "offBlocksInjection": true,
+    "deletesStoredMemory": false,
+    "productionConsumers": [
+      "gateway role-orchestration-methods read/write guards",
+      "role-memory-context-provider injection gate",
+      "role-spawn context gate",
+      "chat-knowledge-source-adapters retrieval gate"
+    ],
+    "legacyBehavior": {
+      "nativeOpenClawMemory": "unchanged-and-outside-this-surface",
+      "existingManagedCardsWhenOff": "retained-on-disk-not-injected",
+      "modelExplanation": "Only accepted memory is recalled or injected; candidates are review material and must not be described as remembered facts."
+    }
+  },
+  "candidateIsolation": {
+    "schemaVersion": "MemoryProductSurface/v1",
+    "candidateStatuses": [
+      "pending",
+      "needs_review"
+    ],
+    "acceptedStatuses": [
+      "active",
+      "cold"
+    ],
+    "candidateEvaluatedAsAccepted": false,
+    "candidateIsReviewCandidate": true,
+    "exportAcceptedIds": [
+      "accepted-memory"
+    ],
+    "exportCandidateIds": [
+      "candidate-memory"
+    ],
+    "acceptedOnly": true,
+    "unapprovedCandidateRetrievable": false,
+    "unapprovedCandidateInjectable": false
+  },
+  "modelVisibility": {
+    "productConcept": "memory",
+    "approvedOnly": true,
+    "candidateExplanation": "Candidate memory is stored for review only and is not accepted, retrievable, or injectable memory.",
+    "explicitRememberPolicy": "same-review-authority",
+    "automaticAcceptance": false
+  },
+  "export": {
+    "schemaVersion": "MemoryExport/v1",
+    "counts": {
+      "accepted": 1,
+      "candidates": 1,
+      "proposalHistory": 1,
+      "injections": 1
+    },
+    "acceptedOnly": true,
+    "candidateQueueSeparated": true,
+    "tombstoneExcludedFromAccepted": true
+  },
+  "deletion": {
+    "userAction": "delete",
+    "mechanism": "tombstone",
+    "hardDelete": false,
+    "auditHistoryRetained": true,
+    "retrievableOrInjectableAfterDelete": false
+  },
+  "evidenceNotes": {
+    "noProductDefaultChanged": true,
+    "noNewRoute": true,
+    "noSecondReviewUi": true,
+    "noExtractionAlgorithmChange": true,
+    "noVerseGitWork": true,
+    "noRealHumanEvidence": true,
+    "publicReleaseClaimed": false,
+    "gaClaimed": false,
+    "liveReadyClaimed": false,
+    "productApprovedClaimed": false
+  },
+  "results": {
+    "contract": {
+      "status": "pass"
+    },
+    "real-consumer": {
+      "status": "pass"
+    },
+    "boundary": {
+      "status": "pass"
+    },
+    "necessity": {
+      "status": "pass"
+    },
+    "failure-recovery": {
+      "status": "pass"
+    },
+    "not-product-claim": {
+      "status": "pass"
+    }
+  }
+}

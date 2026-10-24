@@ -1,0 +1,224 @@
+pnpm.cmd : $ node scripts/check-no-bom.mjs && eslint . --max-warnings 120 && pnpm run lint:dcs && pnpm run lint:artifac
+t-completion-class
+At D:\ClawX-work\component-graduation-20261021\tests\unit\fixtures\memory-authority\acceptance\TF-0498\run-verification
+.ps1:15 char:13
++   $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ node scripts/...ompletion-class:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+check-no-bom: ok
+
+D:\ClawX-work\component-graduation-20261021\electron\main\index.ts
+  1308:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\electron\services\knowledge-api.ts
+  5840:35   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5843:32   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5854:50   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5854:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5860:39   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5860:77   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5861:45   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5861:89   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5878:41   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5879:47   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5879:100  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5880:52   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5881:54   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5896:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5897:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5898:49   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5899:51   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5914:36   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5915:42   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5916:47   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5917:49   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5931:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5932:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5932:91   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5932:115  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5933:53   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5933:77   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5934:55   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5934:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\electron\services\orchestration-presets-api.ts
+  42:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\openclaw_runtime\extensions\browser\src\browser\server-context.test-harness.ts
+  66:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\openclaw_runtime\extensions\signal\src\monitor\event-handler.test-harness.ts
+  8:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\openclaw_runtime\extensions\whatsapp\src\auto-reply.test-harness.ts
+  26:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\openclaw_runtime\extensions\whatsapp\src\monitor-inbox.test-harness.ts
+  16:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\openclaw_runtime\src\agents\embedded-agent-runner\sekb-runtime.ts
+  113:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  113:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  113:59  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  114:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  114:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\openclaw_runtime\src\agents\openai-transport-stream.ts
+  927:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\openclaw_runtime\src\channels\plugins\types.plugin.ts
+  65:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\openclaw_runtime\src\test-utils\vitest-mock-fn.ts
+  5:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5:66  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5:76  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\packages\versebrowser\tests\semantic-browser.test.ts
+  110:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\packages\versebrowser\tests\upstream-files.test.ts
+  48:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:85  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\packages\versebrowser\tests\upstream-viewport.test.ts
+   47:77  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  264:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\src\components\ai-elements\stack-trace.tsx
+  50:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\assistant-render\GitHubCard.tsx
+  79:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  88:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\assistant-render\KnowledgeDirectiveChip.tsx
+  58:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  76:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\assistant-ui\attachment.tsx
+  26:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\assistant-ui\dot-matrix.tsx
+  366:21  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\chat\ChatAgentEffortPopover.tsx
+  40:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\chat\ChatContextPressure.tsx
+  40:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\file-preview\panel-tab-meta.tsx
+   30:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  106:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\layout\ui-overlay-context.tsx
+  29:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\magicui\dia-text-reveal.tsx
+  189:6  warning  React Hook useEffect has missing dependencies: 'isMulti' and 'texts'. Either include them or remove the dependency array                  react-hooks/exhaustive-deps
+  189:7  warning  React Hook useEffect has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked  react-hooks/exhaustive-deps
+
+D:\ClawX-work\component-graduation-20261021\src\components\runtime-approvals\RuntimeApprovalPrompt.tsx
+  26:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\settings\primitives\SettingsControls.tsx
+  496:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\tool-ui\approval-card\_adapter.tsx
+  1:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\tool-ui\code-diff\_adapter.tsx
+  1:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\tool-ui\code-diff\code-diff.tsx
+  145:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  289:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  342:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  392:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  427:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\tool-ui\progress-tracker\progress-tracker.tsx
+   91:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  143:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  165:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  239:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  342:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\tool-ui\shared\_adapter.tsx
+  1:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\tool-ui\terminal\_adapter.tsx
+  1:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\tool-ui\terminal\terminal.tsx
+   61:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  123:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  185:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  194:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\tool-ui\weather-widget\weather-data-overlay.tsx
+  118:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\components\ui\overlay-portal.tsx
+  21:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\component-graduation-20261021\src\pages\Agents\index.tsx
+  410:9  warning  The 'publications' logical expression could make the dependencies of useMemo Hook (at line 417) change on every render. To fix this, wrap the initialization of 'publications' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  432:7  warning  React Hook useMemo has a missing dependency: 'publications'. Either include it or remove the dependency array                                                                                             react-hooks/exhaustive-deps
+
+D:\ClawX-work\component-graduation-20261021\src\pages\Chat\ChatInput.tsx
+  1768:28  warning  The ref value 'sessionGenerationRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'sessionGenerationRef.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+  2892:6   warning  React Hook useCallback has missing dependencies: 'allReady', 'capabilityExecuting', 'inputDisabled', and 'sending'. Either include them or remove the dependency array                                                                                                                   react-hooks/exhaustive-deps
+
+D:\ClawX-work\component-graduation-20261021\src\pages\Chat\index.tsx
+   287:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                                                        react-refresh/only-export-components
+   330:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                                                        react-refresh/only-export-components
+  1376:9   warning  The 'graphStepCache' logical expression could make the dependencies of useMemo Hook (at line 2630) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'graphStepCache' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+D:\ClawX-work\component-graduation-20261021\src\pages\Knowledge\index.tsx
+  401:60  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  477:9   warning  The 'okfConcepts' logical expression could make the dependencies of useCallback Hook (at line 895) change on every render. To fix this, wrap the initialization of 'okfConcepts' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  763:35  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  764:38  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  770:45  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+
+D:\ClawX-work\component-graduation-20261021\src\pages\Observability\index.tsx
+  1201:6  warning  React Hook useMemo has a missing dependency: 'phaseOrder'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+✖ 100 problems (0 errors, 100 warnings)
+
+$ pnpm --dir openclaw_runtime exec oxlint --type-aware --type-check --tsconfig=tsconfig.json --deny-warnings src/contex
+t-engine/block.ts src/context-engine/block.test.ts src/context-engine/block-store.ts src/context-engine/block-store.tes
+t.ts src/context-engine/handlers/working-memory-handler.ts src/context-engine/handlers/working-memory-handler.test.ts s
+rc/context-engine/handlers/task-loop-handler.ts src/context-engine/handlers/task-loop-handler.test.ts src/context-engin
+e/handlers/tool-registry-handler.ts src/context-engine/handlers/tool-registry-handler.test.ts src/context-engine/handle
+rs/compass-handler.ts src/context-engine/handlers/compass-handler.test.ts src/context-engine/handlers/role-memory-handl
+er.ts src/context-engine/handlers/role-memory-handler.test.ts src/context-engine/assembler.ts src/context-engine/assemb
+ler.test.ts src/context-engine/dcs-observability.ts src/context-engine/dcs-observability.test.ts src/context-engine/wor
+kspace-fingerprint.ts src/context-engine/workspace-fingerprint.test.ts src/context-engine/tools/context-search-tool.ts 
+src/context-engine/tools/context-search-tool.test.ts src/context-engine/tools/context-write-tool.ts src/context-engine/
+tools/context-write-tool.test.ts src/context-engine/tools/context-read-tool.ts src/context-engine/tools/context-read-to
+ol.test.ts src/agents/tools/context-agent-tools.ts src/agents/tools/context-agent-tools.test.ts src/agents/agent-bundle
+-mcp-runtime.ts src/agents/agent-bundle-mcp-runtime.test.ts src/agents/agent-tools.ts src/agents/tool-catalog.ts src/ag
+ents/harness/dcs-stage0-hooks.test.ts src/agents/harness/hook-context.ts src/agents/harness/lifecycle-hook-helpers.ts s
+rc/agents/embedded-agent-runner/extensions.ts src/agents/embedded-agent-runner/extensions.working-memory.test.ts src/ag
+ents/embedded-agent-runner/extensions.task-state.test.ts src/agents/embedded-agent-runner/dcs-extension-deps.ts src/age
+nts/embedded-agent-runner/dcs-extension-deps.test.ts src/agents/task-loop-controller.ts src/agents/task-loop-controller
+.dcs-phase-producer.test.ts src/agents/embedded-agent-runner/extensions.tool-registry.test.ts src/agents/embedded-agent
+-runner/extensions.knowledge.test.ts src/agents/embedded-agent-runner/run/attempt.ts src/agents/dcs-producer-envelope.t
+est.ts src/agents/tools/context-agent-tools.test.ts src/agents/sessions/tools/edit.ts src/agents/sessions/tools/write.t
+s src/agents/sessions/tools/tool-contracts.ts src/agents/apply-patch.ts src/config/types.openclaw.ts src/config/zod-sch
+ema.ts src/config/runtime-feature-leaves.ts src/config/schema.labels.ts src/config/schema.help.ts src/config/runtime-co
+ntext-block-working-memory.test.ts src/config/runtime-context-block-tool-registry.test.ts src/config/runtime-context-bl
+ock-compass.test.ts src/config/runtime-context-block-role-memory.test.ts src/plugins/hook-types.ts src/plugins/hooks.ts
+ src/sessions/session-key-utils.ts src/knowledge/sekb/experience-block-bridge.ts src/knowledge/sekb/experience-block-br
+idge.test.ts src/knowledge/sekb/distillation-tool.ts src/knowledge/sekb/harness-integration.test.ts src/knowledge/sekb/
+harness-integration.ts src/agents/embedded-agent-runner/sekb-runtime.ts src/agents/embedded-agent-runner/sekb-runtime.t
+est.ts src/config/runtime-context-block-sekb.test.ts
+$ node scripts/lint-artifact-completion-class.mjs
+artifact completionClass lint: files=0 new=0 historicalIgnored=0
+artifact completionClass lint: OK
