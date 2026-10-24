@@ -1,6 +1,6 @@
 # D1 accepted continuity context evidence
 
-- Candidate source: `faf92352eea9b516a3ed15c6ed58c8da9378185d`; working-tree source hash `ea7b57dfab3e906a7637b47ac891912639c80cee`.
+- Candidate commit: `1b76fec74904ba875a5f7ecc6dae99e952c4b74c`. The final unit, typecheck, contract, comms and built Electron E2E receipts were generated from this clean HEAD.
 - This node uses the existing Task Ledger, accepted role-memory owner, typed knowledge refs and CompressionArtifact; it creates no second memory store, task list or injection chain.
 - The real built Electron journey exercised Host API -> Main -> Gateway -> owner reads. It found Task Ledger Working Context, accepted memory and a knowledge ref; the pending working-context item was excluded. The fresh session had no CompressionArtifact, so the pack honestly remained `partial`.
 - Unit coverage excludes candidates, expired items, tombstones, superseded items, closed role-memory gates, foreign workspace/role/agent scopes and unverified model claims. It also verifies fork, handoff, compact, restart refs, coordinator generation invalidation and native compaction ownership.
@@ -17,4 +17,4 @@
 - `gates.json`: current gate status.
 - `SHA256SUMS`: retained-file manifest.
 
-Raw Playwright output remains at `D:/tmp/tf0556-e2e-output-2`; only these selected artifacts are retained in source.
+Raw Playwright output remains at `D:/tmp/tf0556-e2e-clean-head`; only these selected artifacts are retained in source.

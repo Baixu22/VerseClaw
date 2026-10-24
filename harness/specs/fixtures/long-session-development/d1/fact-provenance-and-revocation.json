@@ -2,11 +2,11 @@
   "schema": "clawx.long-session.d1-fact-provenance-and-revocation/v1",
   "driven_by": "agent",
   "actor": "codex-long-session-r2",
-  "source": "real built Electron Host/Gateway/owner readback plus current-candidate unit negatives",
+  "source": "real built Electron Host/Gateway/owner readback at clean candidate 1b76fec74904ba875a5f7ecc6dae99e952c4b74c plus current-candidate unit negatives",
   "atomic_positives": [
     {
       "kind": "constraint",
-      "source": "task-ledger-working-context",
+      "source": "real built Electron Host/Gateway/owner readback at clean candidate 1b76fec74904ba875a5f7ecc6dae99e952c4b74c plus current-candidate unit negatives",
       "freshness": "fresh",
       "scope": {
         "kind": "workspace",
@@ -19,7 +19,7 @@
     },
     {
       "kind": "memory-ref",
-      "source": "accepted-memory-ref",
+      "source": "real built Electron Host/Gateway/owner readback at clean candidate 1b76fec74904ba875a5f7ecc6dae99e952c4b74c plus current-candidate unit negatives",
       "freshness": "fresh",
       "scope": {
         "kind": "workspace",
@@ -32,7 +32,7 @@
     },
     {
       "kind": "knowledge-ref",
-      "source": "knowledge-ref",
+      "source": "real built Electron Host/Gateway/owner readback at clean candidate 1b76fec74904ba875a5f7ecc6dae99e952c4b74c plus current-candidate unit negatives",
       "freshness": "fresh",
       "scope": {
         "kind": "workspace",

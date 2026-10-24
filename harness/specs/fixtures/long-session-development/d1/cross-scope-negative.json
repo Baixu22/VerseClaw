@@ -2,7 +2,7 @@
   "schema": "clawx.long-session.d1-cross-scope-negative/v1",
   "driven_by": "agent",
   "actor": "codex-long-session-r2",
-  "source": "real built Electron Host/Gateway host-invoke; scope matrix in current-candidate unit tests",
+  "source": "real built Electron Host/Gateway host-invoke at clean candidate 1b76fec74904ba875a5f7ecc6dae99e952c4b74c; scope matrix in current-candidate unit tests",
   "negative_cases": [
     {
       "case": "ordinary session without coordinator binding",
@@ -25,7 +25,7 @@
     "crossRoleLeakCount": 0,
     "crossAgentLeakCount": 0
   },
-  "raw_observation": "D:/tmp/tf0556-e2e-output-2/long-session-continuity-co-5953e-losed-across-scope-rollback/continuity-observation.json",
+  "raw_observation": "D:/tmp/tf0556-e2e-clean-head/long-session-continuity-co-5953e-losed-across-scope-rollback/continuity-observation.json",
   "process_cleanup": {
     "survivors": 0,
     "sweep": "ok"

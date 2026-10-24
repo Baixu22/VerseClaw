@@ -1,7 +1,7 @@
 # Comms Regression Report
 
-- Generated at: 2026-10-24T10:31:38.946Z
-- Candidate: faf92352eea9b516a3ed15c6ed58c8da9378185d (691a1d6c2d3618fad8a94b9fc7b7e2969d1b58fe)
+- Generated at: 2026-10-24T11:01:18.414Z
+- Candidate: 1b76fec74904ba875a5f7ecc6dae99e952c4b74c (07a52d721167da8625182878ca52ba080d6fc14e)
 - Result: PASS
 
 | Metric | Current | Threshold | Status |

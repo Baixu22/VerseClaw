@@ -2,8 +2,8 @@
   "schema": "clawx.long-session.d1-verification/v1",
   "driven_by": "agent",
   "actor": "codex-long-session-r2",
-  "source_commit": "faf92352eea9b516a3ed15c6ed58c8da9378185d",
-  "working_tree_patch_sha1": "ea7b57dfab3e906a7637b47ac891912639c80cee",
+  "source_commit": "1b76fec74904ba875a5f7ecc6dae99e952c4b74c",
+  "working_tree_patch_sha1": "clean HEAD 1b76fec74904ba875a5f7ecc6dae99e952c4b74c",
   "commands": [
     {
       "id": "d1-unit",
@@ -64,7 +64,7 @@
     },
     {
       "id": "e2e-built",
-      "command": "pnpm exec playwright test tests/e2e/long-session-continuity-context.spec.ts --output=D:/tmp/tf0556-e2e-output-2",
+      "command": "pnpm exec playwright test tests/e2e/long-session-continuity-context.spec.ts --output=D:/tmp/tf0556-e2e-clean-head",
       "exit_code": 0,
       "tests_passed": 1,
       "status": "passed"
@@ -127,7 +127,7 @@
     "live process kill during provider inference"
   ],
   "retention": {
-    "raw_e2e_output": "D:/tmp/tf0556-e2e-output-2",
+    "raw_e2e_output": "D:/tmp/tf0556-e2e-clean-head",
     "raw_is_temporary": true,
     "selected_files_retained": "this directory"
   }

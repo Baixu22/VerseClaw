@@ -3,19 +3,19 @@
   "driven_by": "agent",
   "actor": "codex-long-session-r2",
   "workspaceId": "default",
-  "coordinatorSessionKey": "agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa",
-  "taskNodeId": "4c0d8f1f-dd6c-4abb-9b11-51daff5723a0",
-  "memoryContent": "D1 accepted memory mvm9jim2: remain within the bound workspace.",
+  "coordinatorSessionKey": "agent:main:dashboard:599141f0-2386-460f-874c-65e4ec969104",
+  "taskNodeId": "57134d79-2d8f-4cef-badf-4c36e1bac159",
+  "memoryContent": "D1 accepted memory mvmah0nj: remain within the bound workspace.",
   "preview": {
     "success": true,
     "validation": "current",
     "pack": {
       "schemaVersion": "ContinuityContextPack/v1",
-      "generatedAt": "2026-10-24T10:35:52.095Z",
-      "sessionKey": "agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa",
+      "generatedAt": "2026-10-24T11:01:54.345Z",
+      "sessionKey": "agent:main:dashboard:599141f0-2386-460f-874c-65e4ec969104",
       "workspaceId": "default",
       "bindingRevision": 1,
-      "activeTaskNodeId": "4c0d8f1f-dd6c-4abb-9b11-51daff5723a0",
+      "activeTaskNodeId": "57134d79-2d8f-4cef-badf-4c36e1bac159",
       "status": "partial",
       "complete": false,
       "budget": {
@@ -36,11 +36,11 @@
             "key": "default"
           },
           "freshness": "fresh",
-          "acceptedAt": "2026-10-24T10:35:45.807Z",
-          "expiresAt": "2026-10-25T10:35:45.807Z",
+          "acceptedAt": "2026-10-24T11:01:48.989Z",
+          "expiresAt": "2026-10-25T11:01:48.988Z",
           "trust": "owner-accepted",
           "evidenceRefs": [
-            "session:agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa"
+            "session:agent:main:dashboard:599141f0-2386-460f-874c-65e4ec969104"
           ],
           "chars": 65
         },
@@ -53,7 +53,7 @@
           "freshness": "fresh",
           "trust": "owner-fact",
           "evidenceRefs": [],
-          "id": "task-node:4c0d8f1f-dd6c-4abb-9b11-51daff5723a0:next",
+          "id": "task-node:57134d79-2d8f-4cef-badf-4c36e1bac159:next",
           "kind": "next-action",
           "source": "task-ledger-node",
           "text": "Verify accepted continuity owners.",
@@ -70,34 +70,34 @@
             "key": "default"
           },
           "freshness": "fresh",
-          "acceptedAt": "2026-10-24T10:35:45.807Z",
-          "expiresAt": "2026-10-25T10:35:45.807Z",
+          "acceptedAt": "2026-10-24T11:01:48.989Z",
+          "expiresAt": "2026-10-25T11:01:48.989Z",
           "trust": "owner-accepted",
           "evidenceRefs": [
-            "session:agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa"
+            "session:agent:main:dashboard:599141f0-2386-460f-874c-65e4ec969104"
           ],
           "chars": 32
         },
         {
-          "id": "accepted-memory:role-memory-card:mem_18378bd3-1587-4034-adfa-9141f2c47b32",
+          "id": "accepted-memory:role-memory-card:mem_9dfd9e3b-8275-4ae0-ba9f-8972409db32b",
           "kind": "memory-ref",
           "source": "accepted-memory-ref",
           "owner": "memory",
-          "text": "role-memory-card:mem_18378bd3-1587-4034-adfa-9141f2c47b32 (user; workspace)",
+          "text": "role-memory-card:mem_9dfd9e3b-8275-4ae0-ba9f-8972409db32b (user; workspace)",
           "scope": {
             "kind": "workspace",
-            "key": "D:\\tmp\\tf0556-e2e-output-2\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mvm9jim2"
+            "key": "D:\\tmp\\tf0556-e2e-clean-head\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mvmah0nj"
           },
           "freshness": "fresh",
-          "acceptedAt": "2026-10-24T10:35:51.589Z",
+          "acceptedAt": "2026-10-24T11:01:53.906Z",
           "trust": "owner-accepted",
           "evidenceRefs": [
-            "memory:role-memory-card:mem_18378bd3-1587-4034-adfa-9141f2c47b32"
+            "memory:role-memory-card:mem_9dfd9e3b-8275-4ae0-ba9f-8972409db32b"
           ],
           "chars": 75
         },
         {
-          "id": "knowledge:wiki:d1:mvm9jim2",
+          "id": "knowledge:wiki:d1:mvmah0nj",
           "kind": "knowledge-ref",
           "source": "knowledge-ref",
           "owner": "knowledge",
@@ -109,7 +109,7 @@
           "freshness": "fresh",
           "trust": "owner-fact",
           "evidenceRefs": [
-            "knowledge:wiki:d1:mvm9jim2"
+            "knowledge:wiki:d1:mvmah0nj"
           ],
           "chars": 31
         }
@@ -142,22 +142,22 @@
       ],
       "exclusions": [
         {
-          "ref": "task-ledger-working-context:d1-pending-risk-mvm9jim2",
+          "ref": "task-ledger-working-context:d1-pending-risk-mvmah0nj",
           "reason": "pending-not-accepted"
         }
       ],
       "originalHistory": {
-        "transcriptRef": "session:agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa",
+        "transcriptRef": "session:agent:main:dashboard:599141f0-2386-460f-874c-65e4ec969104",
         "taskLedgerRef": "task-ledger:default",
         "taskLedgerEventCount": 6,
         "compressionAvailable": false
       },
       "evidenceRefs": [
-        "session:agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa",
-        "memory:role-memory-card:mem_18378bd3-1587-4034-adfa-9141f2c47b32",
-        "knowledge:wiki:d1:mvm9jim2"
+        "session:agent:main:dashboard:599141f0-2386-460f-874c-65e4ec969104",
+        "memory:role-memory-card:mem_9dfd9e3b-8275-4ae0-ba9f-8972409db32b",
+        "knowledge:wiki:d1:mvmah0nj"
       ]
     },
-    "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=partial; complete=false; bindingRevision=1; chars=539/1800; truncated=false\n- [constraint] Stay inside workspace scope.; Never inject unapproved candidates. (source=task-ledger-working-context; scope=workspace:default; freshness=fresh; trust=owner-accepted)\n- [next-action] Verify accepted continuity owners. (source=task-ledger-node; scope=workspace:default; freshness=fresh; trust=owner-fact)\n- [next-action] Run the real continuity preview. (source=task-ledger-working-context; scope=workspace:default; freshness=fresh; trust=owner-accepted)\n- [memory-ref] role-memory-card:mem_18378bd3-1587-4034-adfa-9141f2c47b32 (user; workspace) (source=accepted-memory-ref; scope=workspace:D:\\tmp\\tf0556-e2e-output-2\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mvm9jim2; freshness=fresh; trust=owner-accepted)\n- [knowledge-ref] D1 owner decision (notes/d1.md) (source=knowledge-ref; scope=workspace:default; freshness=fresh; trust=owner-fact)\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:dashboard:72664568-ca49-4361-985a-3f2236eafaaa; taskLedger=task-ledger:default; taskLedgerEvents=6; compression=unavailable. Recall old evidence on demand through the owning session/task APIs."
+    "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=partial; complete=false; bindingRevision=1; chars=539/1800; truncated=false\n- [constraint] Stay inside workspace scope.; Never inject unapproved candidates. (source=task-ledger-working-context; scope=workspace:default; freshness=fresh; trust=owner-accepted)\n- [next-action] Verify accepted continuity owners. (source=task-ledger-node; scope=workspace:default; freshness=fresh; trust=owner-fact)\n- [next-action] Run the real continuity preview. (source=task-ledger-working-context; scope=workspace:default; freshness=fresh; trust=owner-accepted)\n- [memory-ref] role-memory-card:mem_9dfd9e3b-8275-4ae0-ba9f-8972409db32b (user; workspace) (source=accepted-memory-ref; scope=workspace:D:\\tmp\\tf0556-e2e-clean-head\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mvmah0nj; freshness=fresh; trust=owner-accepted)\n- [knowledge-ref] D1 owner decision (notes/d1.md) (source=knowledge-ref; scope=workspace:default; freshness=fresh; trust=owner-fact)\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:dashboard:599141f0-2386-460f-874c-65e4ec969104; taskLedger=task-ledger:default; taskLedgerEvents=6; compression=unavailable. Recall old evidence on demand through the owning session/task APIs."
   }
 }
