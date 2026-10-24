@@ -60,6 +60,7 @@ $results += Invoke-CapturedGate -Id '08-i18n-lint' -Arguments @('node', 'scripts
 $results += Invoke-CapturedGate -Id '09-no-bom' -Arguments @('node', 'scripts/check-no-bom.mjs') -DisplayCommand 'node scripts/check-no-bom.mjs'
 $results += Invoke-CapturedGate -Id '10-diff-check' -Arguments @('git', 'diff', '--check', '--', 'src/components/agents/memory-surface.ts', 'src/components/agents/RolesOrchestrationPanel.tsx', 'src/pages/Agents/index.tsx', 'shared/i18n/locales', 'tests/unit/memory-surface-contract.test.ts', 'tests/unit/roles-orchestration-panel.test.tsx', 'tests/e2e/memory-surface.spec.ts', 'tests/e2e/role-memory-panel.spec.ts', 'tests/e2e/agents-propose-facts-confirm.spec.ts', 'tests/unit/fixtures/memory-authority/acceptance/TF-0498/generate-acceptance.mts', 'tests/unit/fixtures/memory-authority/acceptance/TF-0498/run-verification.ps1') -DisplayCommand 'git diff --check -- <TF-0498 source, tests, verifier paths>'
 $results += Invoke-CapturedGate -Id '11-build-vite' -Arguments @($pnpm, 'run', 'build:vite') -DisplayCommand 'pnpm run build:vite'
+$results += Invoke-CapturedGate -Id '11a-build-runtime' -Arguments @($pnpm, 'run', 'build:runtime') -DisplayCommand 'pnpm run build:runtime'
 & $tsx 'tests/unit/fixtures/memory-authority/acceptance/TF-0498/generate-acceptance.mts' | Out-Null
 if ($LASTEXITCODE -ne 0) { throw 'TF-0498 evidence generation failed' }
 $results += Invoke-CapturedGate -Id '12-component-graduation-gate' -Arguments @(
