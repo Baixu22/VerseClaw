@@ -1,0 +1,120 @@
+{
+  "schema": "clawx.long-session.e2-recovery-required/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-e2",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "3100f8a6ac6393741f6d14ff2091c14d6d9748b2",
+    "tree": "b996695f6aa3a230d1c9f785df65c27bbb95dfbe",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "status": []
+  },
+  "generatedAt": "2026-10-24T19:15:55.070Z",
+  "cases": [
+    {
+      "id": "browser-close-failed",
+      "owner": "browser",
+      "receipt": {
+        "schema": "LongSessionResourceReclamation/v1",
+        "action": "session-delete",
+        "scope": {
+          "workspaceId": "workspace-e2",
+          "sessionKey": "agent:agent-e2:long-session",
+          "expectedSessionId": "generation-e2",
+          "rootPath": "D:/workspace-e2"
+        },
+        "generatedAt": "2026-10-25T00:00:00.000Z",
+        "owners": [
+          {
+            "kind": "browser",
+            "owner": "HostAgentBrowserService",
+            "outcome": "failed",
+            "authority": "managed",
+            "generation": "generation-e2",
+            "attempted": 1,
+            "reclaimed": 0,
+            "kept": 0,
+            "detail": "close threw"
+          }
+        ],
+        "activeResidue": 1,
+        "keptOnLeave": 0,
+        "recoveryRequired": true,
+        "recoveryId": "recovery:session-delete:agent:agent-e2:long-session",
+        "retryable": true
+      }
+    },
+    {
+      "id": "managed-port-still-reachable",
+      "owner": "background-port",
+      "receipt": {
+        "schema": "LongSessionResourceReclamation/v1",
+        "action": "session-delete",
+        "scope": {
+          "workspaceId": "workspace-e2",
+          "sessionKey": "agent:agent-e2:long-session",
+          "expectedSessionId": "generation-e2",
+          "rootPath": "D:/workspace-e2"
+        },
+        "generatedAt": "2026-10-25T00:00:00.000Z",
+        "owners": [
+          {
+            "kind": "background-port",
+            "owner": "ResourceTracker",
+            "outcome": "failed",
+            "authority": "managed",
+            "generation": "generation-e2",
+            "attempted": 1,
+            "reclaimed": 0,
+            "kept": 0,
+            "detail": "port still reachable"
+          }
+        ],
+        "activeResidue": 1,
+        "keptOnLeave": 0,
+        "recoveryRequired": true,
+        "recoveryId": "recovery:session-delete:agent:agent-e2:long-session",
+        "retryable": true
+      }
+    },
+    {
+      "id": "worktree-owner-unknown",
+      "owner": "worktree",
+      "receipt": {
+        "schema": "LongSessionResourceReclamation/v1",
+        "action": "session-delete",
+        "scope": {
+          "workspaceId": "workspace-e2",
+          "sessionKey": "agent:agent-e2:long-session",
+          "expectedSessionId": "generation-e2",
+          "rootPath": "D:/workspace-e2"
+        },
+        "generatedAt": "2026-10-25T00:00:00.000Z",
+        "owners": [
+          {
+            "kind": "worktree",
+            "owner": "WorktreeService",
+            "outcome": "unknown",
+            "authority": "unknown",
+            "generation": "generation-e2",
+            "attempted": 1,
+            "reclaimed": 0,
+            "kept": 0,
+            "detail": "ownership unresolved; directory retained"
+          }
+        ],
+        "activeResidue": 1,
+        "keptOnLeave": 0,
+        "recoveryRequired": true,
+        "recoveryId": "recovery:session-delete:agent:agent-e2:long-session",
+        "retryable": true
+      }
+    }
+  ],
+  "guarantees": {
+    "agentWideKill": false,
+    "deletesOtherWorktrees": false,
+    "deletesUserDirectories": false,
+    "preservesRetryIdentity": true
+  }
+}

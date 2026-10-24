@@ -1,0 +1,57 @@
+{
+  "schema": "clawx.long-session.e2-cycle-results/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-e2",
+  "taskForestNode": "TF-0560",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "3100f8a6ac6393741f6d14ff2091c14d6d9748b2",
+    "tree": "b996695f6aa3a230d1c9f785df65c27bbb95dfbe",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "status": []
+  },
+  "generatedAt": "2026-10-24T19:15:55.068Z",
+  "cycles": 50,
+  "scope": {
+    "workspaceId": "workspace-e2",
+    "sessionKey": "agent:agent-e2:long-session",
+    "expectedSessionId": "generation-e2",
+    "rootPath": "D:/workspace-e2"
+  },
+  "runtime": {
+    "line": "[reclamation-audit] cycles=50 activeRecordResidual=0 ownedPidResidual=0 finishedResidual=0 helperResidual=0 waiterResidual=0 worktreeResidual=0 sweeperActive=false exitedDiagnosticsRecords=50",
+    "values": {
+      "cycles": 50,
+      "activeRecordResidual": 0,
+      "ownedPidResidual": 0,
+      "finishedResidual": 0,
+      "helperResidual": 0,
+      "waiterResidual": 0,
+      "worktreeResidual": 0,
+      "exitedDiagnosticsRecords": 50
+    }
+  },
+  "terminal": {
+    "line": "[terminal-reclamation-audit] cycles=50 archivedKeepOnLeave=50 activeResidual=0",
+    "values": {
+      "cycles": 50,
+      "archivedKeepOnLeave": 50,
+      "activeResidual": 0
+    }
+  },
+  "final": {
+    "zeroLaneResidue": true,
+    "activeProcessResidue": 0,
+    "ownedPidResidue": 0,
+    "finishedRecordResidue": 0,
+    "helperResidue": 0,
+    "waiterResidue": 0,
+    "worktreeResidue": 0,
+    "terminalActiveResidue": 0,
+    "archivedKeepOnLeaveObserved": 50
+  },
+  "semantics": {
+    "cycle": "admission waiter + real supervisor child tree + bash owner + helper read + owned worktree + terminal archive/delete",
+    "keepOnLeave": "counted separately while archived, then closed only by explicit session delete"
+  }
+}

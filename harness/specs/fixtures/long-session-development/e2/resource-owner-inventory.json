@@ -1,0 +1,215 @@
+{
+  "schema": "clawx.long-session.e2-owner-inventory/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-e2",
+  "taskForestNode": "TF-0560",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "3100f8a6ac6393741f6d14ff2091c14d6d9748b2",
+    "tree": "b996695f6aa3a230d1c9f785df65c27bbb95dfbe",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "status": []
+  },
+  "contract": "harness/specs/tasks/long-session-resource-reclamation.md",
+  "owners": [
+    {
+      "kind": "terminal",
+      "owner": "TerminalSessionManager",
+      "supportsKeepOnLeave": true
+    },
+    {
+      "kind": "browser",
+      "owner": "HostAgentBrowserService",
+      "supportsKeepOnLeave": false
+    },
+    {
+      "kind": "background-port",
+      "owner": "ResourceTracker",
+      "supportsKeepOnLeave": false
+    },
+    {
+      "kind": "worktree",
+      "owner": "WorktreeService",
+      "supportsKeepOnLeave": false
+    },
+    {
+      "kind": "admission-permit",
+      "owner": "SessionAdmissionRegistry",
+      "supportsKeepOnLeave": false
+    }
+  ],
+  "actionContracts": [
+    {
+      "action": "ui-unload",
+      "closesTerminals": false,
+      "closesBrowsers": false,
+      "stopsManagedPorts": false,
+      "cleansWorktrees": false,
+      "releasesAdmission": false,
+      "invalidatesBinding": false,
+      "description": "Renderer teardown only. Every owner keeps its handles; terminals flagged keep_on_leave stay alive."
+    },
+    {
+      "action": "run-cancel",
+      "closesTerminals": false,
+      "closesBrowsers": false,
+      "stopsManagedPorts": false,
+      "cleansWorktrees": false,
+      "releasesAdmission": true,
+      "invalidatesBinding": false,
+      "description": "Aborts the current run and releases its admission permit; schedules and sessions are untouched."
+    },
+    {
+      "action": "session-archive",
+      "closesTerminals": false,
+      "closesBrowsers": false,
+      "stopsManagedPorts": false,
+      "cleansWorktrees": false,
+      "releasesAdmission": true,
+      "invalidatesBinding": true,
+      "description": "Metadata archive invalidates the coordinator binding and releases run permits; it does not kill user resources."
+    },
+    {
+      "action": "session-delete",
+      "closesTerminals": true,
+      "closesBrowsers": true,
+      "stopsManagedPorts": true,
+      "cleansWorktrees": true,
+      "releasesAdmission": true,
+      "invalidatesBinding": true,
+      "description": "Deletes the session and reclaims every managed resource owned by that session key."
+    },
+    {
+      "action": "workspace-delete",
+      "closesTerminals": true,
+      "closesBrowsers": true,
+      "stopsManagedPorts": true,
+      "cleansWorktrees": false,
+      "releasesAdmission": true,
+      "invalidatesBinding": true,
+      "description": "Removes the workspace; managed worktrees are reported for explicit pruning instead of blind deletion."
+    },
+    {
+      "action": "workspace-switch",
+      "closesTerminals": false,
+      "closesBrowsers": false,
+      "stopsManagedPorts": false,
+      "cleansWorktrees": false,
+      "releasesAdmission": false,
+      "invalidatesBinding": false,
+      "description": "Changes the active workspace only. No handle of the previous workspace is touched."
+    },
+    {
+      "action": "app-quit",
+      "closesTerminals": true,
+      "closesBrowsers": true,
+      "stopsManagedPorts": true,
+      "cleansWorktrees": false,
+      "releasesAdmission": true,
+      "invalidatesBinding": false,
+      "description": "Releases process-scoped handles on quit; durable worktrees and user directories are preserved."
+    }
+  ],
+  "readModel": {
+    "schema": "LongSessionResourceInventory/v1",
+    "representedFields": [
+      "owner",
+      "authority",
+      "generation",
+      "count",
+      "osPids",
+      "processTreePids",
+      "rssKb",
+      "cpuPercent",
+      "activePermits",
+      "waiters",
+      "helperRefs",
+      "worktreeIds",
+      "sessionIds",
+      "known/unknown state"
+    ],
+    "liveRuntimeSample": {
+      "schema": "LongSessionResourceInventory/v1",
+      "scope": {
+        "workspaceId": "workspace-e2",
+        "sessionKey": "agent:agent-e2:long-session",
+        "expectedSessionId": "generation-e2",
+        "rootPath": "D:\\tmp\\clawx-e2-inventory-77HYUs"
+      },
+      "owners": [
+        {
+          "kind": "process",
+          "owner": "ProcessSupervisor+BashProcessRegistry",
+          "authority": "managed",
+          "generation": "generation-e2",
+          "state": "known",
+          "count": 0,
+          "pids": [],
+          "processTreePids": [],
+          "rssKb": 0,
+          "cpuPercent": 0,
+          "activePermits": null,
+          "waiters": null,
+          "helperRefs": 0,
+          "worktreeIds": null,
+          "sessionIds": null
+        },
+        {
+          "kind": "admission-permit",
+          "owner": "SessionAdmissionRegistry",
+          "authority": "managed",
+          "generation": "generation-e2",
+          "state": "known",
+          "count": 1,
+          "pids": null,
+          "processTreePids": null,
+          "rssKb": null,
+          "cpuPercent": null,
+          "activePermits": 1,
+          "waiters": 0,
+          "helperRefs": null,
+          "worktreeIds": null,
+          "sessionIds": null
+        },
+        {
+          "kind": "worktree",
+          "owner": "WorktreeService",
+          "authority": "managed",
+          "generation": "generation-e2",
+          "state": "known",
+          "count": 1,
+          "pids": null,
+          "processTreePids": null,
+          "rssKb": null,
+          "cpuPercent": null,
+          "activePermits": null,
+          "waiters": null,
+          "helperRefs": null,
+          "worktreeIds": [
+            "wt-e2"
+          ],
+          "sessionIds": null
+        }
+      ]
+    },
+    "universalSessionResourcesTable": false
+  },
+  "policyEnv": [
+    "OPENCLAW_LONG_SESSION_MAX_PROCESSES",
+    "OPENCLAW_LONG_SESSION_MAX_RSS_MB",
+    "OPENCLAW_LONG_SESSION_MAX_BACKGROUND_TERMINALS",
+    "OPENCLAW_LONG_SESSION_MAX_WORKTREES",
+    "OPENCLAW_LONG_SESSION_IDLE_TTL_MS",
+    "OPENCLAW_LONG_SESSION_KEEP_ON_LEAVE"
+  ],
+  "boundaries": {
+    "uiUnloadKeepsHandles": true,
+    "runCancelReleasesAdmissionOnly": true,
+    "archiveInvalidatesBindingWithoutKillingResources": true,
+    "deleteReclaimsOwnedResources": true,
+    "workspaceSwitchKeepsResources": true,
+    "workspaceDeleteReclaimsDesktopResources": true,
+    "appQuitReleasesProcessScopedDesktopResources": true,
+    "worktreesPreservedOnQuitAndWorkspaceDelete": true
+  }
+}
