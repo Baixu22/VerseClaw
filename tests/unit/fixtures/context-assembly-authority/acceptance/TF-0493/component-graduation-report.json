@@ -17,9 +17,9 @@
   "driven_by": "agent",
   "expiry": null,
   "binding": {
-    "commit": "b9fba1a5171e8947fd8298822a7f036d72055633",
-    "tree": "a600ff3594865aa57b823064689104141e5155e4",
-    "buildHash": "bdeefa87b1429fed1e75ef0fdc71cf9b978d81200388b0a916307fad53c6eb49",
+    "commit": "4d6851c493cb2b909af32960b77a7a577bff17f9",
+    "tree": "52a99c7ed82d6401c037bc960713b49a9a189467",
+    "buildHash": "9105ab739982db068566d9b41575746c1e54dbbf2f000bea49bc96ae1faaea9c",
     "runtimeGeneration": "fixture-context-assembly-contract",
     "provider": "fixture-provider",
     "model": "fixture-model",
@@ -88,12 +88,12 @@
       },
       {
         "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
-        "sha256": "e9ff634a37caf70ef3fd6feb17cd9c61e7dfdda7a2264e254deb8bf06ab89aed",
-        "bytes": 7829
+        "sha256": "164cabac232ad7944c1497b9c5628fccabe30d30ce39fcfa15d26ebf604d4eb9",
+        "bytes": 7783
       },
       {
         "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
-        "sha256": "6709b0d81163c1569293fefbf54f31f087ba753eecad1e85862f9347cad4b3ef",
+        "sha256": "739515c4eb6d86edb47ac5958e5c82412c35c1c9ba514318d351124a90f48ceb",
         "bytes": 2370
       }
     ]
@@ -107,7 +107,7 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
-          "sha256": "6709b0d81163c1569293fefbf54f31f087ba753eecad1e85862f9347cad4b3ef",
+          "sha256": "739515c4eb6d86edb47ac5958e5c82412c35c1c9ba514318d351124a90f48ceb",
           "bytes": 2370,
           "supportsVerdict": true
         }
@@ -116,7 +116,7 @@
   ],
   "recompute": {
     "verdict": "pass",
-    "inputDigest": "425c855c6e7f43b9288499d1bb306b9e6fbbafc9ef8ac5d93965cbdeb71b7f41",
+    "inputDigest": "4674849e5ea23c45bee2d5f0c4bb5914d14acf01931559d6671957f4cc20f014",
     "command": "pnpm --dir openclaw_runtime exec tsx tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/generate-acceptance.mts"
   }
 }

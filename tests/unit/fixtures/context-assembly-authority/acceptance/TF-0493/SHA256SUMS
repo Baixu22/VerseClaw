@@ -8,8 +8,8 @@ fa5f9dfa04eb709090307c53549fa5626eac8f538e9b998ad3482fa6ac44d146  tests/e2e/dcs-
 3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5  tests/e2e/vtoken-bridge-settings.spec.ts
 11bc28bf7d88e9e14d3a26a75cfcf64b852daba9e13093e743e1b53f0f45b590  tests/unit/context-assembly-authority-tf0493.test.ts
 93ab603bdd32cdf2cca77482c7b98c6884bfcb3207fffd13cc0b8a5ba222d456  tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/README.md
-9ff711666cdd9535053f628a0a0e3ab7d72a9ab794286826cbb5d9e2160481d9  tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/component-graduation-report.json
+e987ac43969ef314d3e705e91ff73d2268c30a22601afe47f33b718feec6a800  tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/component-graduation-report.json
 1e1801a4c0e65fefc870404d69766add516106041c61be7b9a1c5d314c26402a  tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/generate-acceptance.mts
-6709b0d81163c1569293fefbf54f31f087ba753eecad1e85862f9347cad4b3ef  tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json
-e9ff634a37caf70ef3fd6feb17cd9c61e7dfdda7a2264e254deb8bf06ab89aed  tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1
+739515c4eb6d86edb47ac5958e5c82412c35c1c9ba514318d351124a90f48ceb  tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json
+164cabac232ad7944c1497b9c5628fccabe30d30ce39fcfa15d26ebf604d4eb9  tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1
 93b883c0f2ae525b832c08025decd24220f2c4aaceee070b32f762b1ecfb9942  tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/task-forest-scope-proposal.json

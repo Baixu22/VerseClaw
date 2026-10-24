@@ -69,14 +69,14 @@ $e2eCases = @(
   @{ file = 'tests/e2e/vtoken-bridge-settings.spec.ts'; grep = 'does not expose a VT bridge switch' }
 )
 $e2eOutput = ''
+$e2eExit = 0
 foreach ($case in $e2eCases) {
   $caseExit = 1
   for ($attempt = 1; $attempt -le 2; $attempt++) {
     $caseOutput = (& $pnpm 'exec' 'playwright' 'test' $case.file '--workers=1' '--reporter=line' '--grep' $case.grep 2>&1 | Out-String)
     $caseOutput = [regex]::Replace($caseOutput, '\x1B\[[0-?]*[ -/]*[@-~]', '')
     $caseOutput = (($caseOutput -split '\r?\n') | ForEach-Object { $_.TrimEnd() }) -join "`r`n"
-    $lastExitCode = $LASTEXITCODE
-    $caseExit = if ($null -eq $lastExitCode) { 1 } else { [int]$lastExitCode }
+    $caseExit = $LASTEXITCODE
     $e2eOutput += "CASE=$($case.grep) ATTEMPT=$attempt EXIT=$caseExit
 $caseOutput
 "
@@ -88,7 +88,7 @@ $e2ePath = Join-Path $outputDir '10-settings-e2e.txt'
 [System.IO.File]::WriteAllText($e2ePath, $e2eOutput, $utf8NoBom)
 $results += [ordered]@{
   id = '10-settings-e2e'
-  command = 'playwright: VToken absence in Settings > Developer'
+  command = 'playwright: each VToken absence + DCS Settings scenario in a fresh worker'
   exitCode = $e2eExit
   status = if ($e2eExit -eq 0) { 'pass' } else { 'fail' }
   outputPath = 'tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt'

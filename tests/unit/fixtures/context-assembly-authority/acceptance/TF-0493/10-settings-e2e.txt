@@ -2,21 +2,21 @@ CASE=does not expose a VT bridge switch ATTEMPT=1 EXIT=0
 
 Running 1 test using 1 worker
 
-
-
-pnpm.cmd : (node:4432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+pnpm.cmd : (node:46616) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\context-assembly-authority\acceptance\TF-0493\ru
-n-verification.ps1:75 char:20
+n-verification.ps1:76 char:20
 + ... seOutput = (& $pnpm 'exec' 'playwright' 'test' $case.file '--workers= ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: ((node:4... env being set.:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
 
 (Use `node --trace-warnings ...` to show where the warning was created)
-(node:4432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+
+
+
+(node:46616) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
-
-
 [1/1] tests\e2e\vtoken-bridge-settings.spec.ts:4:7 › Verse Token internal-only positioning › does not expose a VT bridge switch or standalone panel in Settings > Developer
-  1 passed (10.4s)
+  1 passed (11.8s)
 

@@ -17,7 +17,7 @@
   "ok": true,
   "reportPath": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\tests\\unit\\fixtures\\context-assembly-authority\\acceptance\\TF-0493\\component-graduation-report.json",
   "expected": {
-    "recomputeInputDigest": "29c6a1fb1cfa96e34187db08baeef49d3ba1a5048e8238fa08c74c3ff6bea7eb"
+    "recomputeInputDigest": "4674849e5ea23c45bee2d5f0c4bb5914d14acf01931559d6671957f4cc20f014"
   },
   "currentDefaultMode": null,
   "requireGraduation": true
