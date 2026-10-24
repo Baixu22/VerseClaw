@@ -653,7 +653,7 @@
         "detailDisabled": "启用前这些工具不会出现在默认工具表：{{tools}}。",
         "detailEnabled": "本机已开启视图工具。仍需具备 FactService 的 coding 工作区。"
       },
-      "layerRole": "DCS — 开发者诊断 — 高级 BlockStore 控制。工作区上下文（最近操作 + 工具目录）是 Settings > General 中默认启用的普通用户配置；底层开关与实验门仍仅用于诊断。",
+      "layerRole": "DCS — 工作记忆与 Context Blocks — 可选的 BlockStore 脊柱：working-memory 注入、tool_registry 摘要、knowledge 块与 context_* 工具。默认 fail-closed，需在本面板显式开启。这是真实记忆/内容管线，不是 C…",
       "taskLoopNote": "task_state / phase / SEKB 轨迹类能力需要 TaskLoop（多步任务）路径，不能仅靠单轮聊天。见 docs/dev/dcs-visible-production/TASKLOOP-ACCEPTANCE.md。",
       "observability": {
         "title": "DCS 观测（产品键）",
@@ -926,22 +926,5 @@
     "success": "诊断支持包已导出",
     "failed": "诊断包导出失败：{{error}}",
     "savedTo": "已保存到 {{path}} · 脱敏命中：{{hits}}"
-  },
-  "workspaceContext": {
-    "title": "工作区上下文",
-    "label": "启用工作区上下文",
-    "description": "在工具循环中保留最近操作和可用工具目录。",
-    "refresh": "刷新",
-    "loading": "正在读取有效状态…",
-    "loadFailed": "无法读取工作区上下文",
-    "setFailed": "无法修改工作区上下文",
-    "status": {
-      "applied": "已开启",
-      "acknowledged": "已确认",
-      "pending": "等待重启",
-      "failed": "需要处理",
-      "partial": "部分状态",
-      "off": "已关闭"
-    }
   }
 }

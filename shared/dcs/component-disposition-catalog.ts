@@ -128,13 +128,13 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     coverage: { authorityComponentIds: ['context-enhancement-gate'], runtimeLeafPatterns: ['contextEnhancement.killSwitch'] },
   }),
   entry({
-    id: 'component.working-memory-context', label: 'Working-memory Workspace Context', disposition: 'default', owner: 'working-memory-context-source', implementationNodeId: 'TF-0494', currentMode: 'baseline', targetDefaultMode: 'baseline',
+    id: 'component.working-memory-context', label: 'Working-memory Workspace Context', disposition: 'default', owner: 'working-memory-context-source', implementationNodeId: 'TF-0494', currentMode: 'opt-in', targetDefaultMode: 'baseline',
     ...user('model context in ordinary Chat / task workspaces'),
-    currentConsumers: ['DCS Assembler', 'Context Orchestrator', 'Task Ledger working context', 'Settings > General Workspace Context'], evidenceRefs: CONTEXT_EVIDENCE,
-    coverage: { authorityComponentIds: ['working-memory-context-source'], dcsFlagIds: ['working-memory'], runtimeLeafPatterns: ['contextBlock.working-memory.*'], settingsPanelIds: ['WorkspaceContextPanel'] },
+    currentConsumers: ['DCS Assembler', 'Context Orchestrator', 'Task Ledger working context'], evidenceRefs: CONTEXT_EVIDENCE,
+    coverage: { authorityComponentIds: ['working-memory-context-source'], dcsFlagIds: ['working-memory'], runtimeLeafPatterns: ['contextBlock.working-memory.*'] },
   }),
   entry({
-    id: 'component.tool-registry-context', label: 'Tool-registry Workspace Context', disposition: 'default', owner: 'tool-registry-context-source', implementationNodeId: 'TF-0494', currentMode: 'baseline', targetDefaultMode: 'baseline',
+    id: 'component.tool-registry-context', label: 'Tool-registry Workspace Context', disposition: 'default', owner: 'tool-registry-context-source', implementationNodeId: 'TF-0494', currentMode: 'opt-in', targetDefaultMode: 'baseline',
     ...user('model tool context in ordinary Chat / task workspaces'),
     currentConsumers: ['DCS Assembler', 'Context Orchestrator', 'tool registry'], evidenceRefs: CAPABILITY_EVIDENCE,
     coverage: { authorityComponentIds: ['tool-registry-context-source'], dcsFlagIds: ['tool-registry'], runtimeLeafPatterns: ['contextBlock.tool-registry.*'] },

@@ -63,14 +63,14 @@ describe('P0 production acceptance gate (TF-0001..0005)', () => {
     expect(src).toMatch(/isContextEnhancementKillSwitchEngaged/);
   });
 
-  it('advanced defaults remain fail-closed; Workspace Context is baseline-on', () => {
+  it('defaults remain fail-closed / opt-in', () => {
     expect(DEFAULT_VTOKEN_ASSEMBLY_CONFIG.enabled).toBe(false);
     expect(resolveVtokenAssemblyConfig({}).enabled).toBe(false);
     expect(DEFAULT_MEMORY_INJECT_PILOT_CONFIG.enabled).toBe(false);
     expect(resolveMemoryInjectPilotConfig({}).enabled).toBe(false);
     expect(isSekbEnabled({})).toBe(false);
-    expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.working_memory.enabled']).toBe(true);
-    expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.tool_registry.enabled']).toBe(true);
+    expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.working_memory.enabled']).toBe(false);
+    expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.tool_registry.enabled']).toBe(false);
   });
 
   it('private-network legacy allow is migrated unless acknowledged', () => {

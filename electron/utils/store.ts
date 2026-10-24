@@ -133,7 +133,7 @@ export interface AppSettings {
   };
 
   /**
-   * DCS production controls. Workspace Context is baseline-on; other advanced flags remain opt-in.
+   * DCS production opt-in flags (TASK-P0-01). Product defaults remain false.
    * Env-class flags are injected into gateway forkEnv; config-class flags also
    * write ~/.openclaw/openclaw.json and rely on config-sync whole-key runtime.
    */
@@ -215,10 +215,10 @@ function createDefaultSettings(): AppSettings {
     efficiencySamplingEnabled: true,
     setupProviderVerification: { status: 'unverified' },
 
-    // DCS controls (Workspace Context is baseline-on; advanced flags fail closed)
+    // DCS production opt-in (default off / fail-closed)
     dcsContextViewToolsEnabled: false,
-    dcsWorkingMemoryEnabled: true,
-    dcsToolRegistryEnabled: true,
+    dcsWorkingMemoryEnabled: false,
+    dcsToolRegistryEnabled: false,
     dcsStaleWriteGuardEnabled: false,
     dcsSymbolLeaseEnabled: false,
     dcsRoutingMemoShadowEnabled: false,

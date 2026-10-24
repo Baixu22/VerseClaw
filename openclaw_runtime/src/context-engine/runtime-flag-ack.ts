@@ -252,10 +252,7 @@ export function resolveEffectiveRuntimeFlagsWithSources(
   for (const name of Object.keys(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS)) {
     const key = name as keyof typeof DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS;
     const configured = readContextBlockFlagConfigured(cfg, key);
-    const defaultValue = (DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS as Record<string, boolean>)[
-      key
-    ];
-    const value = killed ? false : (configured ?? defaultValue);
+    const value = killed ? false : (configured ?? DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS[key]);
     contextBlock[name] = value;
     // Kill wins over everything, and saying so is the point: an operator who
     // set `true` needs to see `kill`, not a bare `false`.
@@ -472,7 +469,7 @@ export function buildRuntimeFlagAck(params: {
         id: requestedId,
         requested,
         effective,
-        reason: killSwitchEngaged ? "kill-switch" : "not-adopted-by-runtime",
+        reason: killSwitchEngaged ? "kill-switch-engaged" : "not-adopted-by-runtime",
       });
     }
   }

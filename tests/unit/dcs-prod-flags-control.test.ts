@@ -53,14 +53,10 @@ function baseSettings(over: Partial<AppSettings> = {}): AppSettings {
 }
 
 describe('dcs prod flags control plane', () => {
-  it('lists only allowlisted writable specs with Workspace Context default on', () => {
+  it('lists only allowlisted writable specs with default off', () => {
     const specs = listWritableFlagSpecs();
     expect(specs.length).toBeGreaterThanOrEqual(1);
-    expect(getWritableFlagSpec('working-memory')?.defaultEnabled).toBe(true);
-    expect(getWritableFlagSpec('tool-registry')?.defaultEnabled).toBe(true);
-    for (const spec of specs.filter((candidate) => !['working-memory', 'tool-registry'].includes(candidate.id))) {
-      expect(spec.defaultEnabled).toBe(false);
-    }
+    expect(specs.every((s) => s.defaultEnabled === false)).toBe(true);
     expect(isWritableFlagId('context-view-tools')).toBe(true);
     expect(isWritableFlagId('working-memory')).toBe(true);
     expect(isWritableFlagId('tool-registry')).toBe(true);
