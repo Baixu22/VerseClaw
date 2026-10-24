@@ -156,7 +156,7 @@ export type MdMatrixRow = {
    */
   mdDefaultCell: string;
   /** The product default the md declares, normalized. */
-  declaredDefault: 'true' | 'false' | 'off' | 'deny' | 'auto';
+  declaredDefault: 'false' | 'off' | 'deny' | 'auto';
   /** Which assertion group in the test owns this row. */
   assertedBy: string;
 };
@@ -175,21 +175,15 @@ export const MD_MATRIX_ROWS: readonly MdMatrixRow[] = [
     assertedBy: 'vtoken-bridge-default',
   },
   {
-    mdLabel: 'Workspace Context',
-    mdDefaultCell: '**true**',
-    declaredDefault: 'true',
-    assertedBy: 'context-block-defaults',
-  },
-  {
     mdLabel: 'working-memory',
-    mdDefaultCell: '**true**',
-    declaredDefault: 'true',
+    mdDefaultCell: '**false**',
+    declaredDefault: 'false',
     assertedBy: 'context-block-defaults',
   },
   {
     mdLabel: 'tool-registry',
-    mdDefaultCell: '**true**',
-    declaredDefault: 'true',
+    mdDefaultCell: '**false**',
+    declaredDefault: 'false',
     assertedBy: 'context-block-defaults',
   },
   {

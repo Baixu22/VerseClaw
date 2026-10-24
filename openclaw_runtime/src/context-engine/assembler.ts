@@ -108,13 +108,6 @@ export type LegacyHandlerId = "compass" | "role_memory";
 export const DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS = {
   "runtime.contextBlock.compass.enabled": false,
   "runtime.contextBlock.role_memory.enabled": false,
-  "runtime.contextBlock.working_memory.enabled": true,
-  "runtime.contextBlock.tool_registry.enabled": true,
-} as const;
-
-export const DISABLED_CONTEXT_BLOCK_FEATURE_FLAGS = {
-  "runtime.contextBlock.compass.enabled": false,
-  "runtime.contextBlock.role_memory.enabled": false,
   "runtime.contextBlock.working_memory.enabled": false,
   "runtime.contextBlock.tool_registry.enabled": false,
 } as const;
@@ -304,7 +297,7 @@ export class Assembler {
     const killCfg = resolveAssembleKillSwitchConfig(request);
     const killed = isContextEnhancementKillSwitchEngaged(killCfg);
     const resolvedFlags = killed
-      ? { ...DISABLED_CONTEXT_BLOCK_FEATURE_FLAGS }
+      ? { ...DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS }
       : {
           ...DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS,
           ...flags,

@@ -55,7 +55,6 @@ import { toast } from 'sonner';
 import { useSettingsStore } from '@/stores/settings';
 import { useGatewayStore } from '@/stores/gateway';
 import { SettingsSectionLoading } from './sections/SettingsSectionLoading';
-import { WorkspaceContextPanel } from '@/components/settings/WorkspaceContextPanel';
 import { toUserMessage } from '@/lib/error-message';
 import {
   clearUiTelemetry,
@@ -1508,8 +1507,6 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
             </SettingsSection>
           )}
 
-
-          {currentSection === 'general' && <WorkspaceContextPanel />}
 
           {currentSection === 'models' && (
             <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} variant="generic" />}>

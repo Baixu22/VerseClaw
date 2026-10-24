@@ -116,8 +116,6 @@ The table below is the canonical component classification for this preview. Each
 | Component | Canonical label | Boundary |
 | --- | --- | --- |
 | DCS coding loop | `opt-in` | The first-product switch is off by default and requires verified provider, model, workspace, and permission prerequisites. |
-| Workspace Context | `default` | One user-level profile in Settings > General composes a bounded recent-action working window and compact tool/resource registry. It defaults on, follows the shared turn budget, and is controlled by one toggle; it is not long-term knowledge or approved memory. |
-| DCS Fact view tools | `opt-in` | Context read/search/understand tools remain a separately graduated tool surface; the baseline Workspace Context profile does not register them as side-effecting product tools. |
 | VToken turn assembly | `opt-in` | Explicit Developer/config enable only; the enhancement kill switch wins. |
 | SEKB automatic writeback | `deferred` | Human-confirmed review remains the only allowed write path. |
 | C6 automatic context ladder | `deferred` | No automatic assembler activation in this preview. |
@@ -128,7 +126,7 @@ The table below is the canonical component classification for this preview. Each
 | Surfaces listed in RETIRED-SURFACES.md | `retired` | Removed surfaces stay removed and cannot be used as current capability evidence. |
 <!-- FP-P1-08-COMPONENT-STATUS-END -->
 
-The table above is the controlled-preview baseline snapshot. Its labels remain the current runtime baseline until a component-specific graduation decision changes both behavior and documentation. TF-0488 changed no value; TF-0494 graduated only the Workspace Context pair and recorded its agent-driven canary, effective-state and rollback evidence in the owning node. Under the 2026-09-27 owner policy, real-human evidence is no longer a prerequisite; agent-driven evidence may support a later decision only when it records `driven_by: agent` with a concrete actor and is backed by the current production path, rollback, and model-effective-state evidence. The excluded and default-off details remain locked by `docs/dev/default-config-matrix.md`, `docs/dev/first-product-controlled-preview/STATUS.md`, and the [D9 scope ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md).
+The table above is the controlled-preview baseline snapshot. Its labels remain the current runtime baseline until a component-specific graduation decision changes both behavior and documentation; TF-0488 changes neither. Under the 2026-09-27 owner policy, real-human evidence is no longer a prerequisite; agent-driven evidence may support a later decision only when it records `driven_by: agent` with a concrete actor and is backed by the current production path, rollback, and model-effective-state evidence. The excluded and default-off details remain locked by `docs/dev/default-config-matrix.md`, `docs/dev/first-product-controlled-preview/STATUS.md`, and the [D9 scope ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md).
 
 ## Component Graduation Scope (D9)
 

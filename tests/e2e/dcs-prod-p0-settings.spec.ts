@@ -96,17 +96,17 @@ test.describe('DCS production P0 packaging surface', () => {
     await expect(page.getByTestId('settings-dcs-prod-flags-detail')).toContainText('staleWriteGuard');
     await expect(page.getByTestId('settings-dcs-prod-flag-switch-stale-write-guard')).toBeVisible();
 
-    // TASK-P1-02: working-memory is a writable Settings config flag (baseline on)
+    // TASK-P1-02: working-memory is a writable Settings config flag (default off)
     await page.getByTestId('settings-dcs-prod-flag-working-memory').click();
     const wmSwitch = page.getByTestId('settings-dcs-prod-flag-switch-working-memory');
     await expect(wmSwitch).toBeVisible();
-    await expect(wmSwitch).toHaveAttribute('data-state', 'checked');
+    await expect(wmSwitch).toHaveAttribute('data-state', 'unchecked');
 
-    // TASK-P1-03: tool-registry writable (baseline on)
+    // TASK-P1-03: tool-registry writable (default off)
     await page.getByTestId('settings-dcs-prod-flag-tool-registry').click();
     const trSwitch = page.getByTestId('settings-dcs-prod-flag-switch-tool-registry');
     await expect(trSwitch).toBeVisible();
-    await expect(trSwitch).toHaveAttribute('data-state', 'checked');
+    await expect(trSwitch).toHaveAttribute('data-state', 'unchecked');
   });
 
   test('renders the DCS control surface in Japanese and Russian', async ({ page }) => {

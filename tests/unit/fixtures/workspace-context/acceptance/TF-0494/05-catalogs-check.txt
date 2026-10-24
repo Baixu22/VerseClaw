@@ -1,9 +1,0 @@
-pnpm.cmd : $ pnpm --dir openclaw_runtime exec tsx ../scripts/generate-catalogs.mjs --check
-At D:\ClawX-work\component-graduation-20261021\tests\unit\fixtures\workspace-context\acceptance\TF-0494\run-verificatio
-n.ps1:15 char:13
-+   $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
-+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: ($ pnpm --dir op...ogs.mjs --check:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-catalogs:check passed — generated catalogs are fresh and match their sources.
