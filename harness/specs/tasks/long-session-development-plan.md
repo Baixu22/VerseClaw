@@ -128,6 +128,8 @@ D2 在评测前冻结不少于 30 对 agent 驱动场景、相同模型/输入�
 
 F2 用同一仪器的 F2 副本（`harness/specs/fixtures/long-session-development/f2/probe-f2.mjs`，修正了 open/switch 窗口重叠，且不重签 TF-0423 的 `probe.mjs`）在候选 `18982d5e6` 采集 3 个 measurement-valid run：333 会话 / 57.16 MiB，load 中位 752 ms，switch P50/P95 中位 152.7/176.1 ms，长会话打开 137.3 ms 且 0 个 ≥50 ms long task（predecessor 唯一 gated 的 long-task 条件），`sessions.summaries` 1 次/40 keys，五分钟 idle RSS 60 样本无持续增长，50 轮 owner lifecycle 在显式 `--expose-gc` 门后 scope residue 为 0。发布值是逐指标中位数，run 合法性由其自身 fixture 大小导出（fixture + 32 MB headroom），低于下限的 run 只列不算；真实 UI 单样本不稳定，按中位数汇报。通知侧发现并修复一个真实缺陷：12 条重复 `run.ended` 曾触发 12 次强制 history 重读，修复后为 1 次且 sidebar 0 次；重复 completion、无变化跟进、隐藏 UI（0 次轮询）与 paused/expired/错代跟进（0 次执行）均有盘上计数。macOS/Linux、live provider、packaged 与真人长期使用仍是 unmeasured。
 
+F3 在候选 `eab126259` 上逐项读盘聚合 15 个 peer 执行节点（A1–F2）与 65 个校验和文件：6 个阶段、52 条 criterion 全部有盘上结果，历史 artifact 未重签；F2 的跨 run 中位数由其保存的逐 run 数据重新推导。同范围真实 built Electron E2E（restart journeys、lifecycle faults、continuity context、followup scheduling）、uncached typecheck、contract、comms replay/compare 与 capability claim check 均通过。产品语义新增 F3 验收边界章节，修正了“C4 尚不可用”的过期表述；`README.ru-RU.md` 补齐了此前缺失的长期会话段落（英/中/日已有）；capability matrix 新增 `capability-45`，明确 Windows x64 单 worktree/显式绑定范围、keep-baseline 压缩策略与 live-provider/macOS/packaged/真人使用未测。唯一失败的 gate 是 `repo:artifacts:check`：它在本分支与 `origin/main 382908c5a` 上同样因 VerseBrowser lane 既有的 tracked-and-ignored 生成 log 失败，本节点按门禁名与原始输出完整记录为 tolerated pre-existing，不冒充通过、也不代另一 lane 退役其证据。公开发布、全量默认、产品锁、独立 Project 与云执行仍未授权。
+
 D3 可完成为 keep-baseline/NO-GO，核心闭环继续使用已实现的手动或原生 compaction。TF-0424 的 shadow/no-go 保留历史身份；最多选择一个初筛候选，若采用必须另写明确的实现范围、适用 backend、回滚和错误 fallback。规划与决策文本不激活新路径或翻冻结默认。
 
 **后续执行与验收**
