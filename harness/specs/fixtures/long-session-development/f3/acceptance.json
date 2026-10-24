@@ -6,12 +6,12 @@
   "taskKey": "F3",
   "program": "long-session-development-20261022",
   "contract": "harness/specs/tasks/long-session-final-acceptance.md",
-  "generatedAt": "2026-10-24T08:14:17.128Z",
+  "generatedAt": "2026-10-24T08:32:15.268Z",
   "candidate": {
-    "branch": "codex/long-session-integration-20261024",
-    "commit": "4e993607f2192a3a809b1717daff5e50a9c60bc8",
-    "tree": "0f3d110a517bb734bc236b8fd6eae81a3f2e9e94",
-    "worktree": "D:/ClawX-work/worktrees/long-session-integration"
+    "branch": "main",
+    "commit": "f93913775f2e6f360539eda43a30b692371d3bc5",
+    "tree": "5d9cab15ddc7e56fcb1381e3585ccb8e403e7c4d",
+    "worktree": "D:/ClawX"
   },
   "verificationBoundary": {
     "kind": "agent-driven read-back; no real-human verdict or data",

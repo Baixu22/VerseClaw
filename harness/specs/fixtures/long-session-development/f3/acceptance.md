@@ -1,6 +1,6 @@
 # Long-session final acceptance (F3)
 
-Source candidate: 4e993607f2192a3a809b1717daff5e50a9c60bc8 (branch codex/long-session-integration-20261024, tree 0f3d110a517bb734bc236b8fd6eae81a3f2e9e94).
+Source candidate: f93913775f2e6f360539eda43a30b692371d3bc5 (branch main, tree 5d9cab15ddc7e56fcb1381e3585ccb8e403e7c4d).
 
 This is an agent-driven read-back of every peer node on disk. No real-human verdict or human data is claimed.
 
