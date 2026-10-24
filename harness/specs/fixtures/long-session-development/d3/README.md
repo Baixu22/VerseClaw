@@ -1,6 +1,6 @@
 # D3 continuity-strategy decision evidence
 
-Source candidate: 56cb9ba1ee819fb053c13974026f5bfea5149e3f (branch codex/long-session-implementation-20261023-r2, tree c885fdd32186598ddcceaeac9f9766c3b1b8fba8).
+Source candidate: f25c03a13eb5005d8cb265a4ae7b34da427bcf5b (branch codex/long-session-implementation-20261023-r2, tree 559a460ee6156241c77870519d7be02ee8edf5cf).
 Decision: keep-baseline - no authorized live-provider sample: quality, cost and P95 gates are unmeasured or vetoed, so no strategy may be promoted
 
 - continuity-strategy-decision.json: renders the decision after reading the frozen D2 artifacts from disk, lists the three candidate options with the evidence that selects and rejects each, records the D2 checksum verification, and asserts that no frozen product default or historical TF-0424 verdict moved.

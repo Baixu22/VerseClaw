@@ -5,11 +5,11 @@
   "taskForestNode": "TF-0558",
   "taskKey": "D3",
   "contract": "harness/specs/tasks/long-session-continuity-decision.md",
-  "generatedAt": "2026-10-24T11:49:09.203Z",
+  "generatedAt": "2026-10-24T11:49:49.722Z",
   "candidate": {
     "branch": "codex/long-session-implementation-20261023-r2",
-    "commit": "56cb9ba1ee819fb053c13974026f5bfea5149e3f",
-    "tree": "c885fdd32186598ddcceaeac9f9766c3b1b8fba8",
+    "commit": "f25c03a13eb5005d8cb265a4ae7b34da427bcf5b",
+    "tree": "559a460ee6156241c77870519d7be02ee8edf5cf",
     "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
   },
   "decision": "keep-baseline",
