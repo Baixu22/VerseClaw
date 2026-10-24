@@ -1,13 +1,5 @@
 import { completeSetup, expect, test } from './fixtures/electron';
 
-async function expectSiliconFlowDefaultModel(page: import('@playwright/test').Page) {
-  const modelInput = page.getByTestId('add-provider-model-id-input');
-  const modelValue = page.getByText('deepseek-ai/DeepSeek-V3', { exact: true }).first();
-  await expect(modelInput.or(modelValue)).toBeVisible();
-  if (await modelInput.isVisible().catch(() => false)) {
-    await expect(modelInput).toHaveValue('deepseek-ai/DeepSeek-V3');
-  }
-}
 
 test.describe('Verse Claw developer-mode gated UI', () => {
   test('keeps raw diagnostics hidden until the local dev switch is enabled', async ({ page }, testInfo) => {
