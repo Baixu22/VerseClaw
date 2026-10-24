@@ -156,7 +156,7 @@ const evidence = {
   taskForestNodeId: 'TF-0498',
   generatedAt: new Date().toISOString(),
   driven_by: 'agent',
-  actor: 'codex',
+  actor: 'codex-long-session-r2',
   acceptanceCriteria: [
     {
       criterion: criteria[0],
@@ -234,7 +234,7 @@ const bindingArtifacts = [
   artifact(evidencePath),
 ];
 const inputDigest = sha256(bindingArtifacts.map((entry) => entry.path + '\0' + entry.sha256 + '\0' + entry.bytes).sort().join('\n'));
-const buildHash = sha256(JSON.stringify(bindingArtifacts));
+const buildHash = inputDigest;
 const commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
 const tree = execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { cwd: root, encoding: 'utf8' }).trim();
 const report: ComponentGraduationReport = {
@@ -252,7 +252,7 @@ const report: ComponentGraduationReport = {
   rollback: 'Remove the Memory surface contract and candidate-block UI additions; retain the existing Role/Runtime stores, approvals, default mode and native OpenClaw memory.',
   modelEffectiveState: 'Only accepted memory is model-visible. Candidates are stored for review only and are neither retrievable nor injectable until approved; switching Memory off retains stored cards on disk but blocks read, write and injection, while native OpenClaw memory remains separate and unchanged.',
   evidenceGrade: 'e2e',
-  actor: 'codex',
+  actor: 'codex-long-session-r2',
   driven_by: 'agent',
   expiry: null,
   binding: {
@@ -263,7 +263,7 @@ const report: ComponentGraduationReport = {
     provider: 'fixture-provider',
     model: 'fixture-model',
     inputSet: 'tf0498-unified-memory-surface',
-    scope: 'workspace:component-graduation/session:tf-0498',
+    scope: 'workspace:long-session-program-r2/session:tf-0498',
     artifacts: bindingArtifacts,
   },
   evidence: [
