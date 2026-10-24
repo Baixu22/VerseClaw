@@ -19,6 +19,7 @@ ownedPaths:
   - artifacts/agent-dev-workbench/**
   - harness/specs/tasks/memory-user-surface.md
   - scripts/check-duplicate-assets.mjs
+  - tests/unit/long-session-continuity-context.test.ts
   # The merge commit brings in main-side VerseGit files that this task does not own.
   # Declaring the integration boundary keeps harness validation honest instead of
   # pretending the long-session spec wrote those files.

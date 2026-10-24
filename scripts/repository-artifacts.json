@@ -115,7 +115,10 @@
     "scripts/rc10/irc-server.mjs",
     "scripts/rc10/operator-driver.mjs",
     "tests/integration/channel-startup.integration.test.ts",
-    "tests/unit/rc10-driver-entrypoint.test.ts"
+    "tests/unit/rc10-driver-entrypoint.test.ts",
+    "docs/dev/memory-control-plane.md",
+    "harness/specs/tasks/memory-control-plane-authority.md",
+    "harness/specs/tasks/memory-user-surface.md"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
@@ -2006,7 +2009,8 @@
     "docs/dev/component-graduation/TF-0491/task-forest-validate-preapply.log",
     "docs/dev/component-graduation/TF-0491/task-forest-validate.log",
     "docs/dev/component-graduation/TF-0491/typecheck.log",
-    "docs/dev/component-graduation/TF-0491/unit-tests.log"
+    "docs/dev/component-graduation/TF-0491/unit-tests.log",
+    "docs/dev/memory-control-plane.md"
   ],
   "artifactBatches": {}
 }

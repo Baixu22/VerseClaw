@@ -2088,6 +2088,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/component-graduation/TF-0491/task-forest-validate.log
 !/docs/dev/component-graduation/TF-0491/typecheck.log
 !/docs/dev/component-graduation/TF-0491/unit-tests.log
+!/docs/dev/memory-control-plane.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
