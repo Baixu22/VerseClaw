@@ -31,14 +31,14 @@
     },
     {
         "file":  "src/pages/Settings/index.tsx",
-        "expected":  "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
-        "actual":  "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+        "expected":  "df1d9c82ff7a74cc0f8441aca980b09ec3fec82d6545b99e1d5185c2975d17e4",
+        "actual":  "df1d9c82ff7a74cc0f8441aca980b09ec3fec82d6545b99e1d5185c2975d17e4",
         "status":  "pass"
     },
     {
         "file":  "tests/e2e/dcs-prod-p0-settings.spec.ts",
-        "expected":  "40332b1573c241581cce057e3cfd073df5be7dc41d62c6a802789c2ea24b82c3",
-        "actual":  "40332b1573c241581cce057e3cfd073df5be7dc41d62c6a802789c2ea24b82c3",
+        "expected":  "fa5f9dfa04eb709090307c53549fa5626eac8f538e9b998ad3482fa6ac44d146",
+        "actual":  "fa5f9dfa04eb709090307c53549fa5626eac8f538e9b998ad3482fa6ac44d146",
         "status":  "pass"
     },
     {
@@ -61,8 +61,8 @@
     },
     {
         "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/component-graduation-report.json",
-        "expected":  "c9126fe8d7507af3c70409148912d27d673abe53ee8f7d850b26f0d885629fd8",
-        "actual":  "c9126fe8d7507af3c70409148912d27d673abe53ee8f7d850b26f0d885629fd8",
+        "expected":  "3f0208b90d81fc9b026055ec72e5ad33e31b9b7c6c3c685f70b5bb8d5da9d76b",
+        "actual":  "3f0208b90d81fc9b026055ec72e5ad33e31b9b7c6c3c685f70b5bb8d5da9d76b",
         "status":  "pass"
     },
     {
@@ -73,14 +73,14 @@
     },
     {
         "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
-        "expected":  "e0ccf58e08e729726ab90ccf2c24e86df09be134e7c6b8e9ef31e7ebdd7cff41",
-        "actual":  "e0ccf58e08e729726ab90ccf2c24e86df09be134e7c6b8e9ef31e7ebdd7cff41",
+        "expected":  "a3e0b6f5bcdc449318d8bc9e3f85f020067967e168b2fbe57377845e94835a6e",
+        "actual":  "a3e0b6f5bcdc449318d8bc9e3f85f020067967e168b2fbe57377845e94835a6e",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
-        "expected":  "116dd3cf337e212dd4d11065cf100c54b5d65202ea06bc1785dec4a879ab4230",
-        "actual":  "116dd3cf337e212dd4d11065cf100c54b5d65202ea06bc1785dec4a879ab4230",
+        "expected":  "0bb253ca82fc8d948f667a03e05716c3ecb10a2e99cc0282d21d23514d5d3d75",
+        "actual":  "0bb253ca82fc8d948f667a03e05716c3ecb10a2e99cc0282d21d23514d5d3d75",
         "status":  "pass"
     },
     {

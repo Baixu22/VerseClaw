@@ -653,7 +653,7 @@
         "detailDisabled": "有効化するまで、次のツールは既定のツール一覧に含まれません: {{tools}}。",
         "detailEnabled": "このインストールではビューツールが有効です。利用には FactService を備えたコーディング workspace が引き続き必要です。"
       },
-      "layerRole": "DCS — working memory と context blocks — オプトインの BlockStore 基盤です。working-memory 注入、tool_registry 要約、knowledge blocks、context_* tools を扱います。既定値は閉じたままです。",
+            "layerRole": "DCS — 開発者向け診断 — 高度なオプトイン BlockStore 制御。既定値は引き続きフェイルクローズで、低レベル フラグと実験ゲートは高度な診断項目です。",
       "taskLoopNote": "タスク状態、phase、SEKB trajectory 機能には TaskLoop（複数ステップのタスク）経路が必要で、単一ターンのチャットだけでは動作しません。docs/dev/dcs-visible-production/TASKLOOP-ACCEPTANCE.md を確認してください。",
       "observability": {
         "title": "DCS オブザーバビリティ（製品キー）",

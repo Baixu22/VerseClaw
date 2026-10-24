@@ -1,10 +1,10 @@
 {
     "schemaVersion":  "ContextAssemblyAuthorityVerification/v1",
     "taskForestNodeId":  "TF-0493",
-    "generatedAt":  "2026-10-24T01:02:02.0661744Z",
+    "generatedAt":  "2026-10-24T07:16:15.1626549Z",
     "driven_by":  "agent",
     "actor":  "codex-long-session-r2",
-    "status":  "pass",
+    "status":  "fail",
     "gates":  [
                   {
                       "id":  "01-contract-tests",
@@ -12,7 +12,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/01-contract-tests.txt",
-                      "outputSha256":  "9b58955ad803420ba1dc3d33e46f4f87daa29857cfcb453355bf359664521242"
+                      "outputSha256":  "a283eb614698c318221c81c49d034d564ce6230fa30e52a6893346544af4b5a1"
                   },
                   {
                       "id":  "02-runtime-context-tests",
@@ -20,7 +20,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/02-runtime-context-tests.txt",
-                      "outputSha256":  "53c5373c8d5832a4750f39bdf491c89874a5358c25a196a740ecff3b032f6327"
+                      "outputSha256":  "ee86ae0cf5497c04c620b989acaf9db7103e2443335e7d631d7f4f4c35045ff9"
                   },
                   {
                       "id":  "03-typecheck",
@@ -28,7 +28,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/03-typecheck.txt",
-                      "outputSha256":  "48823fc927b094e2fe21ec98a31d0f9ca45d40a2abb652fd6007beff4fa41a3e"
+                      "outputSha256":  "03f768ff465d1c3a9852f117b985e2640234b2a000a8060baa35d2c32093ebc0"
                   },
                   {
                       "id":  "04-lint-check",
@@ -76,7 +76,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/09-build-vite.txt",
-                      "outputSha256":  "db2ce2786e45e8737fdbe79eeb534395833e589ff2f840cb37e6a707ddfe77ac"
+                      "outputSha256":  "cf5725b99b7f624faccd57e9896e0b89b1c10e5de88dad49fc66ed1a13699de6"
                   },
                   {
                       "id":  "09a-build-runtime",
@@ -84,15 +84,15 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/09a-build-runtime.txt",
-                      "outputSha256":  "0270d8727d720d384fe5a157ee424eebece289f39de766c65f081408baa12c04"
+                      "outputSha256":  "0e5b72ec640f502445dd09643144f63652e3086aaff6e1777500c9618b751009"
                   },
                   {
                       "id":  "10-settings-e2e",
-                      "command":  "playwright: each VToken absence + DCS Settings scenario in a fresh worker",
-                      "exitCode":  0,
-                      "status":  "pass",
+                      "command":  "playwright: VToken absence in Settings \u003e Developer",
+                      "exitCode":  null,
+                      "status":  "fail",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt",
-                      "outputSha256":  "df51a0a5edda1ce195b8d7ad675cb11d35693c2440268e9d88e1469513b85083"
+                      "outputSha256":  "08fff4b05e8648f67f91d3aeb2b229342cb553a0c5bb480a07532f6724d0326b"
                   },
                   {
                       "id":  "11-component-graduation-gate",
@@ -100,7 +100,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/11-component-graduation-gate.txt",
-                      "outputSha256":  "e5e037d66afed05eb0e135645ccac5d6cd21f9989d62b956bd8b1d81ecab05c5"
+                      "outputSha256":  "1810dbec145ec69ed9a2a27a47bb58a64482137b5315d9792cf9b6cf7b70bc77"
                   },
                   {
                       "id":  "12-sha256sums-check",
@@ -108,7 +108,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/12-sha256sums-check.txt",
-                      "outputSha256":  "0314daeadc64572bc374dcf4ee6fd37588be053a9a6525825c033c1b224e91f9"
+                      "outputSha256":  "a20a81932fdfe15ba33f12aad7abaf72d09b90007a64b615062cb2f6895906ff"
                   }
               ],
     "sha256sums":  [
@@ -144,14 +144,14 @@
                        },
                        {
                            "file":  "src/pages/Settings/index.tsx",
-                           "expected":  "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
-                           "actual":  "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+                           "expected":  "df1d9c82ff7a74cc0f8441aca980b09ec3fec82d6545b99e1d5185c2975d17e4",
+                           "actual":  "df1d9c82ff7a74cc0f8441aca980b09ec3fec82d6545b99e1d5185c2975d17e4",
                            "status":  "pass"
                        },
                        {
                            "file":  "tests/e2e/dcs-prod-p0-settings.spec.ts",
-                           "expected":  "40332b1573c241581cce057e3cfd073df5be7dc41d62c6a802789c2ea24b82c3",
-                           "actual":  "40332b1573c241581cce057e3cfd073df5be7dc41d62c6a802789c2ea24b82c3",
+                           "expected":  "fa5f9dfa04eb709090307c53549fa5626eac8f538e9b998ad3482fa6ac44d146",
+                           "actual":  "fa5f9dfa04eb709090307c53549fa5626eac8f538e9b998ad3482fa6ac44d146",
                            "status":  "pass"
                        },
                        {
@@ -174,8 +174,8 @@
                        },
                        {
                            "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/component-graduation-report.json",
-                           "expected":  "c9126fe8d7507af3c70409148912d27d673abe53ee8f7d850b26f0d885629fd8",
-                           "actual":  "c9126fe8d7507af3c70409148912d27d673abe53ee8f7d850b26f0d885629fd8",
+                           "expected":  "3f0208b90d81fc9b026055ec72e5ad33e31b9b7c6c3c685f70b5bb8d5da9d76b",
+                           "actual":  "3f0208b90d81fc9b026055ec72e5ad33e31b9b7c6c3c685f70b5bb8d5da9d76b",
                            "status":  "pass"
                        },
                        {
@@ -186,14 +186,14 @@
                        },
                        {
                            "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
-                           "expected":  "e0ccf58e08e729726ab90ccf2c24e86df09be134e7c6b8e9ef31e7ebdd7cff41",
-                           "actual":  "e0ccf58e08e729726ab90ccf2c24e86df09be134e7c6b8e9ef31e7ebdd7cff41",
+                           "expected":  "a3e0b6f5bcdc449318d8bc9e3f85f020067967e168b2fbe57377845e94835a6e",
+                           "actual":  "a3e0b6f5bcdc449318d8bc9e3f85f020067967e168b2fbe57377845e94835a6e",
                            "status":  "pass"
                        },
                        {
                            "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
-                           "expected":  "116dd3cf337e212dd4d11065cf100c54b5d65202ea06bc1785dec4a879ab4230",
-                           "actual":  "116dd3cf337e212dd4d11065cf100c54b5d65202ea06bc1785dec4a879ab4230",
+                           "expected":  "0bb253ca82fc8d948f667a03e05716c3ecb10a2e99cc0282d21d23514d5d3d75",
+                           "actual":  "0bb253ca82fc8d948f667a03e05716c3ecb10a2e99cc0282d21d23514d5d3d75",
                            "status":  "pass"
                        },
                        {

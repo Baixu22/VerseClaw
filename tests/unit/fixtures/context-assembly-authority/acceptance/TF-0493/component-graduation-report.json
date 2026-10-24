@@ -17,9 +17,9 @@
   "driven_by": "agent",
   "expiry": null,
   "binding": {
-    "commit": "c72bb63376cc1ff0d84d141341cd3153f48eeec9",
-    "tree": "aed057d73845f63dce7ecaa423bb885677598ba4",
-    "buildHash": "650dea212c587db7c63eeeca5afffc1e985c0c50de3bf8dc509afa497a44606d",
+    "commit": "b9fba1a5171e8947fd8298822a7f036d72055633",
+    "tree": "a600ff3594865aa57b823064689104141e5155e4",
+    "buildHash": "bdeefa87b1429fed1e75ef0fdc71cf9b978d81200388b0a916307fad53c6eb49",
     "runtimeGeneration": "fixture-context-assembly-contract",
     "provider": "fixture-provider",
     "model": "fixture-model",
@@ -53,8 +53,8 @@
       },
       {
         "path": "src/pages/Settings/index.tsx",
-        "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
-        "bytes": 104056
+        "sha256": "df1d9c82ff7a74cc0f8441aca980b09ec3fec82d6545b99e1d5185c2975d17e4",
+        "bytes": 103900
       },
       {
         "path": "tests/unit/context-assembly-authority-tf0493.test.ts",
@@ -73,8 +73,8 @@
       },
       {
         "path": "tests/e2e/dcs-prod-p0-settings.spec.ts",
-        "sha256": "40332b1573c241581cce057e3cfd073df5be7dc41d62c6a802789c2ea24b82c3",
-        "bytes": 10910
+        "sha256": "fa5f9dfa04eb709090307c53549fa5626eac8f538e9b998ad3482fa6ac44d146",
+        "bytes": 10914
       },
       {
         "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/README.md",
@@ -88,12 +88,12 @@
       },
       {
         "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
-        "sha256": "116dd3cf337e212dd4d11065cf100c54b5d65202ea06bc1785dec4a879ab4230",
-        "bytes": 8260
+        "sha256": "e9ff634a37caf70ef3fd6feb17cd9c61e7dfdda7a2264e254deb8bf06ab89aed",
+        "bytes": 7829
       },
       {
         "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
-        "sha256": "e0ccf58e08e729726ab90ccf2c24e86df09be134e7c6b8e9ef31e7ebdd7cff41",
+        "sha256": "6709b0d81163c1569293fefbf54f31f087ba753eecad1e85862f9347cad4b3ef",
         "bytes": 2370
       }
     ]
@@ -107,7 +107,7 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
-          "sha256": "e0ccf58e08e729726ab90ccf2c24e86df09be134e7c6b8e9ef31e7ebdd7cff41",
+          "sha256": "6709b0d81163c1569293fefbf54f31f087ba753eecad1e85862f9347cad4b3ef",
           "bytes": 2370,
           "supportsVerdict": true
         }
@@ -116,7 +116,7 @@
   ],
   "recompute": {
     "verdict": "pass",
-    "inputDigest": "0c1895e15e6dd90131232c1a3ba9e02b24a7dd5e5820ef540ac795c7eeb64c7a",
+    "inputDigest": "425c855c6e7f43b9288499d1bb306b9e6fbbafc9ef8ac5d93965cbdeb71b7f41",
     "command": "pnpm --dir openclaw_runtime exec tsx tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/generate-acceptance.mts"
   }
 }

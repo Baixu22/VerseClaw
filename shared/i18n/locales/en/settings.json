@@ -653,7 +653,7 @@
         "detailDisabled": "These tools stay out of the default tool list until enabled: {{tools}}.",
         "detailEnabled": "View tools are on for this install. They still require a coding workspace with FactService."
       },
-      "layerRole": "DCS — working memory & context blocks — Opt-in BlockStore spine: working-memory injection, tool_registry summary, knowledge blocks, and context_* tools. Default…",
+            "layerRole": "DCS — developer diagnostics — advanced opt-in BlockStore controls. Defaults remain fail-closed; low-level flags and experimental gates are advanced diagnostics.",
       "taskLoopNote": "Task state / phase / SEKB trajectory features require a TaskLoop (multi-step task) path — not single-turn chat alone. See docs/dev/dcs-visible-production/TASKLOOP-ACCEPTANCE.md.",
       "observability": {
         "title": "DCS observability (product keys)",

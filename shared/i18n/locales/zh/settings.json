@@ -653,7 +653,7 @@
         "detailDisabled": "启用前这些工具不会出现在默认工具表：{{tools}}。",
         "detailEnabled": "本机已开启视图工具。仍需具备 FactService 的 coding 工作区。"
       },
-      "layerRole": "DCS — 工作记忆与 Context Blocks — 可选的 BlockStore 脊柱：working-memory 注入、tool_registry 摘要、knowledge 块与 context_* 工具。默认 fail-closed，需在本面板显式开启。这是真实记忆/内容管线，不是 C…",
+            "layerRole": "DCS — 开发者诊断 — 高级 opt-in BlockStore 控制。默认仍失败关闭；底层开关与实验门属于高级诊断项。",
       "taskLoopNote": "task_state / phase / SEKB 轨迹类能力需要 TaskLoop（多步任务）路径，不能仅靠单轮聊天。见 docs/dev/dcs-visible-production/TASKLOOP-ACCEPTANCE.md。",
       "observability": {
         "title": "DCS 观测（产品键）",

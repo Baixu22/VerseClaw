@@ -7,15 +7,15 @@ n-verification.ps1:15 char:14
     + FullyQualifiedErrorId : NativeCommandError
 
 [ext-bridge] No external extensions configured — empty stubs up to date.
-$ tsgo --noEmit -p tsconfig.web.json --composite false
 $ tsgo --noEmit -p tsconfig.node.json --composite false
+$ tsgo --noEmit -p tsconfig.web.json --composite false
 {
   "success": true,
   "mode": "parallel",
   "testTypes": {
     "commandLine": "pnpm run typecheck:test",
     "exitCode": 0,
-    "durationMs": 24217,
+    "durationMs": 24821,
     "observationMode": false,
     "errorCount": 0,
     "errorLog": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
@@ -23,32 +23,32 @@ $ tsgo --noEmit -p tsconfig.node.json --composite false
   "cache": {
     "enabled": false,
     "status": "disabled",
-    "key": "bebf65b98c43450a7b32edfd53bc3c218f5741c1a60f1adc76498e956a8be402",
-    "inputCount": 12506,
+    "key": "4dba9d72d87fda17207857f70638ee7a3917fc4fc6e2ea616e64d6b44cf5e857",
+    "inputCount": 12485,
     "report": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\typecheck-cache\\report.json"
   },
-  "totalDurationMs": 26255,
+  "totalDurationMs": 29481,
   "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
   "results": [
     {
       "commandLine": "node scripts/generate-ext-bridge.mjs",
       "exitCode": 0,
-      "durationMs": 47
+      "durationMs": 46
     },
     {
       "commandLine": "pnpm run typecheck:node",
       "exitCode": 0,
-      "durationMs": 17101
+      "durationMs": 22503
     },
     {
       "commandLine": "pnpm run typecheck:web",
       "exitCode": 0,
-      "durationMs": 7439
+      "durationMs": 8794
     },
     {
       "commandLine": "pnpm run typecheck:test",
       "exitCode": 0,
-      "durationMs": 24217,
+      "durationMs": 24821,
       "observationMode": false,
       "errorCount": 0,
       "errorLog": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
