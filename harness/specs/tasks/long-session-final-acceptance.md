@@ -13,6 +13,12 @@ diffBase: 20b92de01
 dependsOnTasks:
   - F2
 ownedPaths:
+  # Integration-repair files created by the merge, owned by this task.
+  - artifacts/agent-dev-deep-test/**
+  - artifacts/agent-dev-quality/**
+  - artifacts/agent-dev-workbench/**
+  - harness/specs/tasks/memory-user-surface.md
+  - scripts/check-duplicate-assets.mjs
   # The merge commit brings in main-side VerseGit files that this task does not own.
   # Declaring the integration boundary keeps harness validation honest instead of
   # pretending the long-session spec wrote those files.
