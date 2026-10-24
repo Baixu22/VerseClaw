@@ -61,7 +61,7 @@ function acceptedWorkingContextRecord(
     version: 1,
     actor: 'assistant',
     evidenceRefs: [{ type: 'session', ref: SESSION_KEY }],
-    ttl: { issuedAt: '2026-10-23T05:00:00.000Z', expiresAt: '2026-10-24T05:00:00.000Z' },
+    ttl: { issuedAt: '2026-10-23T05:00:00.000Z', expiresAt: '2099-01-01T00:00:00.000Z' },
     sensitivity: 'workspace',
     trust: 'confirmed',
     taskId: 'task-1',
@@ -85,7 +85,7 @@ function pendingWorkingContextRecord(
     version: 1,
     actor: 'assistant',
     evidenceRefs: [{ type: 'session', ref: SESSION_KEY }],
-    ttl: { issuedAt: '2026-10-23T05:00:00.000Z', expiresAt: '2026-10-24T05:00:00.000Z' },
+    ttl: { issuedAt: '2026-10-23T05:00:00.000Z', expiresAt: '2099-01-01T00:00:00.000Z' },
     sensitivity: 'workspace',
     trust: 'proposed',
     taskId: 'task-1',
@@ -396,6 +396,32 @@ describe('long-session continuity context', () => {
     expect(forked.items).not.toEqual(expect.arrayContaining([
       expect.objectContaining({ source: 'compression-artifact' }),
     ]));
+  });
+
+  it('keeps the accepted working-context fixture unexpired so the pack assertion cannot rot', () => {
+    // A hard-coded expiresAt in the past made the pack correctly exclude the record,
+    // so the production-path assertion failed for a fixture reason rather than a code
+    // reason. Guard the fixture itself: a future TTL is what this suite needs.
+    const snapshot = workingContextSnapshot();
+    for (const [field, projection] of Object.entries(snapshot.fields)) {
+      const current = (projection as { current?: { ttl?: { expiresAt?: string } } }).current;
+      if (!current?.ttl?.expiresAt) continue;
+      expect(Date.parse(current.ttl.expiresAt), 'expired working-context fixture: ' + field)
+        .toBeGreaterThan(Date.now());
+    }
+  });
+
+  it('keeps the accepted working-context fixture unexpired so the pack assertion cannot rot', () => {
+    // A hard-coded expiresAt in the past made the pack correctly exclude the record,
+    // so the production-path assertion failed for a fixture reason rather than a code
+    // reason. Guard the fixture itself: a future TTL is what this suite needs.
+    const snapshot = workingContextSnapshot();
+    for (const [field, projection] of Object.entries(snapshot.fields)) {
+      const current = (projection as { current?: { ttl?: { expiresAt?: string } } }).current;
+      if (!current?.ttl?.expiresAt) continue;
+      expect(Date.parse(current.ttl.expiresAt), 'expired working-context fixture: ' + field)
+        .toBeGreaterThan(Date.now());
+    }
   });
 
   it('routes the explicit coordinator production path through the continuity block and falls back when the binding is invalidated', async () => {
