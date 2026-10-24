@@ -85,33 +85,33 @@
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/README.md",
-        "expected":  "57a80b3a859d8436cfad3a44ab550cfc3afff9182528719ff2843d494ff45f60",
-        "actual":  "57a80b3a859d8436cfad3a44ab550cfc3afff9182528719ff2843d494ff45f60",
+        "expected":  "09f91326af329acfb8333d03ee77f80e870d4eafaf6e6ec5c6e4c0157109ceef",
+        "actual":  "09f91326af329acfb8333d03ee77f80e870d4eafaf6e6ec5c6e4c0157109ceef",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/component-graduation-report.json",
-        "expected":  "d06af9261950eaba4e08f47aa1cf1fa436be11be7618c3684efaa1a775483fef",
-        "actual":  "d06af9261950eaba4e08f47aa1cf1fa436be11be7618c3684efaa1a775483fef",
+        "expected":  "ecde158b594a3b004b6731dbf204260d01fbc8d99c3b6548dd4f34a5ef015bb4",
+        "actual":  "ecde158b594a3b004b6731dbf204260d01fbc8d99c3b6548dd4f34a5ef015bb4",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts",
-        "expected":  "ffa1b7c49f1a397ab4bb65fcbf067c1621fcd78ac817e72b5b2b6584096d7378",
+        "expected":  "dbe3ce884020252e5672dca283ebbf35793c6310e564eb44c7c53753d990dc29",
         "actual":  "dbe3ce884020252e5672dca283ebbf35793c6310e564eb44c7c53753d990dc29",
-        "status":  "fail"
+        "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
-        "expected":  "96d0958aa0c9edf95d0b09cd7bfcea41f09e759117be8025928586b68dd5511d",
-        "actual":  "96d0958aa0c9edf95d0b09cd7bfcea41f09e759117be8025928586b68dd5511d",
-        "status":  "pass"
+        "expected":  "345ce63597be75aa970f04b0bef281af8a269804c445f41ddeba21e8fd930426",
+        "actual":  "56e6c4b46f318ad5b40bd65b57f261d263fe3788b3a7a38b9978fee30423d048",
+        "status":  "fail"
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
-        "expected":  "ddb8ee7125965897d3b21e7e84e789cd054934fb3e2ace730f890fd44ee4ba79",
-        "actual":  "ddb8ee7125965897d3b21e7e84e789cd054934fb3e2ace730f890fd44ee4ba79",
-        "status":  "pass"
+        "expected":  "5bcd9f602e4f88668ef13f9c75d39a6c43537c0a6d566907bf8d3c9c89581441",
+        "actual":  "ba002799f11d6e35c795b63b5e4cc784a3626d7b5067f4db9a0d36fee69c04fc",
+        "status":  "fail"
     },
     {
         "file":  "tests/unit/memory-authority-contract.test.ts",

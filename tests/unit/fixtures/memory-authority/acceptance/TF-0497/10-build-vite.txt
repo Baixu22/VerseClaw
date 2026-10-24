@@ -1,6 +1,6 @@
 pnpm.cmd : $ pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs
 At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\memory-authority\acceptance\TF-0497\run-verifica
-tion.ps1:15 char:13
+tion.ps1:17 char:13
 +   $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
 +             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: ($ pnpm run vers...-lobe-icons.mjs:String) [], RemoteException
@@ -448,7 +448,6 @@ dist/assets/razor-BjBPvh-w.js                                    27.51 kB
 dist/assets/scala-C151Ov-r.js                                    28.88 kB
 dist/assets/night-owl-C39BiMTA.js                                28.91 kB
 dist/assets/KnowledgeChat-lipVpePS.js                            29.28 kB
-
 dist/assets/crystal-DGywbUpC.js                                  29.39 kB
 dist/assets/mermaid-mWjccvbQ.js                                  29.51 kB
 dist/assets/applescript-Co6uUVPk.js                              29.57 kB
@@ -556,12 +555,13 @@ dist/assets/App-BcSCkCUa.js                                     645.56 kB
 dist/assets/emacs-lisp-CXvaQtF9.js                              779.88 kB
 dist/assets/GeneratedFilesPanel-B6p-Z_Rh.js                   1,511.61 kB
 dist/assets/editor-BC560OPB.js                                3,750.05 kB
-✓ built in 40.00s
+
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-m
 anualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 36.03s
 vite v7.3.1 building client environment for production...
 transforming...
 "default" is imported from external module "@shikijs/engine-oniguruma/wasm-inlined" but never used in "node_modules/.pn
@@ -607,10 +607,10 @@ dist-electron/main/index.js                                         1.24 kB
 dist-electron/main/active-sandbox-high-risk-policy-lZsbRkTf.js      2.26 kB
 dist-electron/main/session-cascade-delete-DS41TFTd.js               3.77 kB
 dist-electron/main/index-CE0-bDdd.js                            1,787.42 kB
-✓ built in 7.14s
+✓ built in 3.30s
 vite v7.3.1 building client environment for production...
 transforming...
 ✓ 2 modules transformed.
 rendering chunks...
 dist-electron/preload/index.js  3.39 kB
-✓ built in 22ms
+✓ built in 15ms

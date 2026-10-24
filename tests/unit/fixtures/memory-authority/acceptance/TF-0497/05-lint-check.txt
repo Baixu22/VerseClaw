@@ -1,7 +1,7 @@
 pnpm.cmd : $ node scripts/check-no-bom.mjs && eslint . --max-warnings 120 && pnpm run lint:dcs && pnpm run lint:artifac
 t-completion-class
 At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\memory-authority\acceptance\TF-0497\run-verifica
-tion.ps1:15 char:13
+tion.ps1:17 char:13
 +   $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
 +             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: ($ node scripts/...ompletion-class:String) [], RemoteException

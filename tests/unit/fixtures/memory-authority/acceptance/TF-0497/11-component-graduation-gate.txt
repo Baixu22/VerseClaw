@@ -4,8 +4,18 @@
     "issues": [
       {
         "code": "artifact_hash_mismatch",
-        "message": "Artifact hash does not match report: tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts",
-        "path": "binding.artifacts[19]"
+        "message": "Artifact hash does not match report: tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
+        "path": "binding.artifacts[20]"
+      },
+      {
+        "code": "artifact_hash_mismatch",
+        "message": "Artifact hash does not match report: tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
+        "path": "binding.artifacts[21]"
+      },
+      {
+        "code": "artifact_hash_mismatch",
+        "message": "Artifact hash does not match report: tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
+        "path": "evidence[0].artifacts[0]"
       },
       {
         "code": "recompute_verdict_mismatch",
@@ -32,7 +42,7 @@
   "ok": false,
   "reportPath": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\tests\\unit\\fixtures\\memory-authority\\acceptance\\TF-0497\\component-graduation-report.json",
   "expected": {
-    "recomputeInputDigest": "39172321a87bc44af5a2bbf0f74820e363eca593182e637e5cfcaa1afedf51ba"
+    "recomputeInputDigest": "9fe99b946bcd9b08e021295fc93ae102236f2a32115b5ae2dbb79833d81d0c2c"
   },
   "currentDefaultMode": "opt-in",
   "requireGraduation": true

@@ -17,9 +17,9 @@
   "driven_by": "agent",
   "expiry": null,
   "binding": {
-    "commit": "1d105762214fbca239437fd06a5d3e0f35c906f2",
-    "tree": "d8f4cebd56dc3efc788bf5a9c8112bc4868199e5",
-    "buildHash": "1d8689650a83355a53d1fc6a5af72230bb362d260574e00d622c92d7b01eae19",
+    "commit": "7df0b5580a734fa1c26b25f7a554b3e1fe632bec",
+    "tree": "8b0de68dbb4931fcf21f7b7fe59c5d26361d756a",
+    "buildHash": "5b4b395e3be7babe9bf3a1f8c6dd4911ba7248ef17f4d4d3d7559559a7054efd",
     "runtimeGeneration": "memory-authority-tf0497",
     "provider": "fixture-provider",
     "model": "fixture-model",
@@ -128,12 +128,12 @@
       },
       {
         "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
-        "sha256": "5bcd9f602e4f88668ef13f9c75d39a6c43537c0a6d566907bf8d3c9c89581441",
-        "bytes": 6795
+        "sha256": "d4447b00632308c5fbc07658859787594cb4f3afd46fd76293e641533dabf632",
+        "bytes": 7794
       },
       {
         "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
-        "sha256": "43bd155e752998da943a1326273439bca72faab1c618d1cb0628e31fcd3223ed",
+        "sha256": "24e3569e38471b41d9cfd21017f05a553c922bc34e7f9b28e90697da095a760f",
         "bytes": 18763
       }
     ]
@@ -147,7 +147,7 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
-          "sha256": "43bd155e752998da943a1326273439bca72faab1c618d1cb0628e31fcd3223ed",
+          "sha256": "24e3569e38471b41d9cfd21017f05a553c922bc34e7f9b28e90697da095a760f",
           "bytes": 18763,
           "supportsVerdict": true
         }
@@ -156,7 +156,7 @@
   ],
   "recompute": {
     "verdict": "pass",
-    "inputDigest": "1d8689650a83355a53d1fc6a5af72230bb362d260574e00d622c92d7b01eae19",
+    "inputDigest": "5b4b395e3be7babe9bf3a1f8c6dd4911ba7248ef17f4d4d3d7559559a7054efd",
     "command": "& .\\openclaw_runtime\\node_modules\\.bin\\tsx.CMD tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts"
   }
 }
