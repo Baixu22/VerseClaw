@@ -23,6 +23,7 @@ ownedPaths:
   - scripts/repository-artifacts.json
   - .gitignore
   - harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/e2e.log
+  - harness/specs/rules/runtime-lifecycle-governance-boundary.md
   # The merge commit brings in main-side VerseGit files that this task does not own.
   # Declaring the integration boundary keeps harness validation honest instead of
   # pretending the long-session spec wrote those files.
