@@ -251,6 +251,7 @@ export const MODEL_CAPABILITY_USER_DISPLAY_NAMES: Readonly<Record<string, string
   'component.browser-session-owner': 'Browser sessions',
   'component.renderer-ui-surface': 'Application shell and Settings',
   'feature.coding-recovery': 'Coding recovery and verification',
+  'feature.stale-write-guard': 'Stale-write protection',
   'feature.worktree-isolation': 'Worktree isolation',
   'surface.inbox': 'Inbox',
   'surface.cron': 'Scheduled tasks and auto-approval',
@@ -651,6 +652,16 @@ export function computeModelCapabilityEffectiveDigest(
     facts: resolvedEffectiveFacts(staticManifest, input).map(digestEffectiveFact),
   });
 }
+function runtimeRestrictionLabel(fact: ModelCapabilityEffectiveFactInput): string | null {
+  const parts: string[] = [];
+  if (fact.driver.state !== 'ready' && fact.driver.state !== 'unknown') parts.push(`driver:${fact.driver.state}`);
+  if (fact.memory.read !== 'not-applicable' && fact.memory.read !== 'unknown') parts.push(`memory-read:${fact.memory.read}`);
+  if (fact.memory.write !== 'not-applicable' && fact.memory.write !== 'unknown') parts.push(`memory-write:${fact.memory.write}`);
+  if (fact.memory.candidate !== 'not-applicable' && fact.memory.candidate !== 'unknown') parts.push(`memory-candidates:${fact.memory.candidate}`);
+  if (fact.knowledge.appliedState !== 'not-applied' && fact.knowledge.appliedState !== 'unknown') parts.push(`knowledge:${fact.knowledge.appliedState}`);
+  return parts.join('+') || null;
+}
+
 function buildPromptAddition(
   staticManifest: ModelCapabilityStaticManifest,
   facts: readonly ModelCapabilityEffectiveFactInput[],
@@ -675,6 +686,11 @@ function buildPromptAddition(
     const lines = ['Capability positioning (authoritative):'];
     if (defaultNames.length > 0) lines.push(`Default: ${states(defaultNames)}.`);
     if (advancedNames.length > 0) lines.push(`Advanced: ${states(advancedNames)}.`);
+    const restrictions = included.flatMap((entry) => {
+      const label = runtimeRestrictionLabel(factById.get(entry.capabilityId)!);
+      return label ? [`${entry.displayName}=${label}`] : [];
+    });
+    if (restrictions.length > 0) lines.push(`Current facts: ${restrictions.join('; ')}.`);
     if (included.length > 0) {
       const memory = factById.get('component.role-memory')?.memory ?? facts[0]?.memory;
       const knowledge = factById.get('component.knowledge-retrieval-source')?.knowledge ?? facts[0]?.knowledge;

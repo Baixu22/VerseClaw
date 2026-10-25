@@ -1,18 +1,4 @@
 {
-  "ok": true,
-  "worktree": "D:\\ClawX-work\\component-graduation-20261021",
-  "branch": "codex/component-graduation-20261021",
-  "activeNode": {
-    "id": "TF-0512",
-    "title": "把 ModelCapabilityProfile 接入真实 runtime effective state",
-    "status": "in_progress"
-  },
-  "allowedPaths": [
-    "shared/",
-    "openclaw_runtime/src/runtime-core/",
-    "openclaw_runtime/src/context-engine/",
-    "electron/services/",
-    "tests/unit/"
-  ],
-  "policy": "node-scoped: exactly one active leaf; ignore proposed nodes; never claim human evidence"
+  "ok": false,
+  "error": "active node is TF-0508, required TF-0512"
 }

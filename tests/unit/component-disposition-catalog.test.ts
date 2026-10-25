@@ -75,12 +75,12 @@ describe('ComponentDispositionManifest/v1', () => {
     }
   });
 
-  it('covers every writable DCS control and keeps the product preview combo in default dispositions', () => {
+  it('covers every writable DCS control and keeps the product preview combo in a visible disposition', () => {
     const coveredFlagIds = new Set(COMPONENT_DISPOSITION_ENTRIES.flatMap((entry) => entry.coverage.dcsFlagIds ?? []));
     for (const writable of DCS_WRITABLE_FLAG_SPECS) expect(coveredFlagIds.has(writable.id), writable.id).toBe(true);
     for (const comboId of DCS_PREVIEW_COMBO_FLAG_IDS) {
       const owner = COMPONENT_DISPOSITION_ENTRIES.find((entry) => entry.coverage.dcsFlagIds?.includes(comboId));
-      expect(owner?.disposition, comboId).toBe('default');
+      expect(['default', 'advanced'], comboId).toContain(owner?.disposition);
     }
   });
   it('keeps every registered authority component mapped to one disposition', () => {

@@ -12,7 +12,7 @@
 
 Verse Claw is an Electron desktop application built on OpenClaw. Start work in a conversation, inspect files, terminals, browser previews, code changes and generated artifacts in the same workspace, then turn useful material into reviewable project knowledge. The app also provides model and agent configuration, messaging channels, scheduled tasks and runtime diagnostics.
 
-The desktop uses React, TypeScript and Vite. It is more than a renderer wrapper: the repository also contains the Electron Main host, typed shared contracts, a vendored OpenClaw runtime and extension catalogue, the embedded VerseBrowser and VToken components, the VerseShell MCP adapter, executable Harness specs, and the build/release/evidence pipeline. See [package.json](package.json) for the current version and dependencies. Some source, configuration and historical documents retain the ClawX name.
+The desktop uses React, TypeScript and Vite. It is more than a renderer wrapper: the repository also contains the Electron Main host, typed shared contracts, a vendored OpenClaw runtime and extension catalogue, the embedded VerseBrowser, retained-but-retired VToken source, the VerseShell MCP adapter, executable Harness specs, and the build/release/evidence pipeline. See [package.json](package.json) for the current version and dependencies. Some source, configuration and historical documents retain the ClawX name.
 
 > **Current status:** this is an alpha project. Controlled Windows x64 workflows are the primary local acceptance target. macOS and Linux have build targets, with validation coverage specific to each platform and capability. Experimental features retain the activation conditions described below, in the [product semantics](docs/clawx-product-semantics.md) and in the [capability matrix](shared/capability-claims.ts).
 
@@ -52,7 +52,7 @@ See [visual provenance](resources/readme/2026-10-05/README.md) for capture condi
 
 For an explicitly bound long session, the Chat activity rail also shows the stable coordinator conversation, its existing Task Ledger references and terminal completion batches, with direct links to the worker transcript and task record. Before a bound turn, ClawX reads a bounded `ContinuityContextPack/v1` from accepted Task Ledger Working Context, CompressionArtifact metadata, currently model-visible accepted memory refs and typed knowledge refs. Pending, candidate, expired, revoked, superseded, out-of-scope and unverified model claims are excluded; raw history stays behind on-demand owner refs. These rows and the pack project existing owners and do not create a second task list, memory store or injection authority.
 
-The interface supports English, Chinese, Japanese and Russian, with light, dark and system themes. Basic / Advanced in General settings controls diagnostic detail. Image generation and Dreams pages are also available after unlocking developer mode.
+The interface supports English, Chinese, Japanese and Russian, with light, dark and system themes. Basic / Advanced in General settings controls diagnostic detail. Developer mode exposes diagnostic and test-only settings. Dreams is retired; Image Generation remains developer/test-only and is not product navigation.
 
 <a id="workflows"></a>
 
@@ -104,7 +104,7 @@ VerseGit is an internal, opt-in repository-evidence sidecar for one bounded Wind
 
 ### Experimental feature boundaries
 
-Context management (DCS), token budgeting (VToken), experience knowledge (SEKB), Runtime Memory and browser automation have separate configuration, approval or rollout gates. Diagnostic or shadow data does not mean a feature affects model context, automatic writeback or routing. Installing the application does not activate every enhancement.
+Workspace Context and the read-only context view tools are enabled by default under their declared health and permission gates. VToken is retired. SEKB automatic writeback, Runtime Memory injection and browser private-network access retain separate review or approval gates; diagnostic or shadow data does not prove model-context participation, automatic writeback or routing. Installing the application still does not authorize every optional expansion.
 
 Consult the [capability matrix](shared/capability-claims.ts), [default configuration matrix](docs/dev/default-config-matrix.md) and feature-specific validation records. Scripted or agent-executed acceptance simulations must be labeled as agent-driven. Focused test success does not establish release acceptance for the entire product or every platform.
 
@@ -218,7 +218,7 @@ This map follows current source ownership rather than the older single-directory
 | Plane | Current mechanism | Boundary |
 | --- | --- | --- |
 | System resources | `ResourceFabric` admits workspace execution and chat-history work; `BackgroundWorkGate` defers background work under queue, RSS or CPU pressure; `ResourceTracker` owns session-linked server discovery and cleanup | Cooperative Main-process admission, not a global OS scheduler; foreground work is never shed |
-| Context engineering | `ContextEngine` runs bootstrap, ingest, maintain, after-turn and assemble/compact; a shared 6,000-character turn budget applies precedence and a fail-closed enhancement kill switch; `ContextHealthMonitor` scores pressure, structure, goal alignment and novelty | Accepted context sources share the runtime assembly entry; optional enhancements remain opt-in |
+| Context engineering | `ContextEngine` runs bootstrap, ingest, maintain, after-turn and assemble/compact; a shared 6,000-character turn budget applies precedence and a fail-closed enhancement kill switch; `ContextHealthMonitor` scores pressure, structure, goal alignment and novelty | Workspace Context and context view tools default on under their declared gates; VToken is retired and other enhancement paths keep explicit rollback boundaries |
 | Model capability positioning | The reserved system-prompt addition describes scoped memory access, applied knowledge, runtime availability and action permissions | Missing or stale facts remain unknown; tool presence never grants approval. Acceptance is limited to the declared model and agent-driven scenarios |
 | Session lifecycle | `SessionManager` is a JSONL append-only tree with leaf branching, compaction, labels and context reconstruction; Host actions add checkpoints, handoff, archive/restore and cascade delete | A session is not a run, task, workspace or project; Task Ledger owns user-visible task facts |
 | Memory | One `Memory` surface projects accepted role cards and Runtime facts plus persisted candidates from their existing stores; Owner-dispatched approve/delete/export and gatekeeper-reviewed “Remember this” share the `MemoryControlPlaneManifest/v1` boundary | Candidate queues are never model-visible; owner write/use gates and Runtime Memory injection paths remain independently configurable. Native OpenClaw memory sources stay outside this panel and are disclosed explicitly |
@@ -251,16 +251,16 @@ See [runtime control planes](docs/dev/runtime-control-planes.md) for the sequenc
 | Surface | Current source and entry points | Boundary |
 | --- | --- | --- |
 | Coding and review | `src/pages/CodeReview/`, `electron/services/code-review-api.ts`, `git-api.ts`, `shared/types/coding-run.ts`, Task Loop and Task Ledger | Code review is explicitly read-only; CodingRun is an association/projection view, not a second task state machine. Task Ledger remains the user-visible task authority |
-| VerseShell | `openclaw_runtime/src/agents/verseshell/`, `verseshell-runtime.ts`, `shared/verseshell/`, `resources/verseshell/`, `resources/verseshell-mcp/` | Governed execution, typed ACI, artifact results and patch preview are independently default-off; the external MCP adapter is separate from the internal execution path |
+| VerseShell | `openclaw_runtime/src/agents/verseshell/`, `verseshell-runtime.ts`, `shared/verseshell/`, `resources/verseshell/`, `resources/verseshell-mcp/` | VerseShell and the observability recorder are internal execution/evidence substrate with no second user-visible executor; legacy patch preview and symbol lease are retired, and the external MCP adapter is separate from the internal execution path |
 | VerseBrowser | `packages/versebrowser/`, `electron/services/agent-browser-*`, `electron/gateway/agent-browser-bridge.ts`, `shared/agent-browser/` | 81 contract methods are not 81 Electron capabilities: the driver implements 67, exposes 28 model actions and currently advertises 14 on the Windows desktop build |
 | Knowledge | `src/pages/Knowledge/`, `electron/services/knowledge-api.ts`, `memory-wiki`, `openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first and role-governed: agents read and propose; Inbox → Draft → Steward → Proposal → explicit apply is the durable write path. SEKB writeback remains default-off/shadow |
 | Memory | `src/pages/Memory/`, `electron/services/memory-api.ts`, `openclaw_runtime/src/gateway/server-methods/memory-surface.ts` | One review surface; Role cards, Runtime facts and candidates keep their owning stores and mutation paths. Approval, tombstone/invalidation, hashed export and explicit-remember proposals never create a second Memory authority |
 
 The detailed tool and knowledge flow is included in [runtime control planes](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces).
 
-`src/App.tsx` currently registers first-run Setup (`/setup/*`), Chat (`/`), Knowledge, Memory, Inbox, Scheduled, Task Ledger, ClawGraph, Observability and Settings surfaces; Models, Agents, Channels and Skills are Settings sections, while Code Review and Browser are compatibility entry points into workspace panels. Image Generation and Dreams require developer mode.
+`src/App.tsx` currently registers first-run Setup (`/setup/*`), Chat (`/`), Knowledge, Memory, Inbox, Scheduled, Task Ledger, ClawGraph, Observability and Settings surfaces; Models, Agents, Channels and Skills are Settings sections, while Code Review and Browser are compatibility entry points into workspace panels. Image Generation remains developer/test-gated and is not product navigation; Dreams is retired.
 
-Current pnpm workspace members are the root, `harness/`, `packages/versebrowser/` and `resources/verseshell-mcp/`. `packages/vtoken/` is a Python/uv sidecar. `openclaw_runtime/` is a vendored Git tree with its own dependency workspace, not a Git submodule or the packaged npm runtime.
+Current pnpm workspace members are the root, `harness/`, `packages/versebrowser/` and `resources/verseshell-mcp/`. `packages/vtoken/` is a retained Python/uv sidecar kept for provenance and rollback inspection; the production assembly and bridge are retired. `openclaw_runtime/` is a vendored Git tree with its own dependency workspace, not a Git submodule or the packaged npm runtime.
 
 VerseBrowser: install/dev/build compile the embedded module automatically. The 81-method contract is not 81 implemented Electron capabilities; see [invocation and driver limits](packages/README.md#versebrowser-integration-and-invocation).
 

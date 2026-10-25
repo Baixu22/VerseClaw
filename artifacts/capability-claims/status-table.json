@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "shared/capability-claims.ts",
-  "generatedAt": "2026-10-24T05:36:49.698Z",
+  "generatedAt": "2026-10-24T17:58:06.217Z",
   "matrixReport": "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md",
   "total": 45,
   "items": [
@@ -1023,32 +1023,40 @@
       "id": "capability-33",
       "reportItem": 33,
       "title": "Memory confidence, conflict, and overwrite policy",
-      "classification": "TP-TEST",
-      "status": "test-verified",
+      "classification": "TP-RUN + PARTIAL",
+      "status": "real-runtime-verified",
       "evidenceLevels": [
+        "real-runtime",
         "unit-test",
         "documented-boundary"
       ],
-      "lastVerifiedAt": "2026-07-04",
+      "lastVerifiedAt": "2026-10-24",
       "evidenceRefs": [
-        "tests/unit/memory-api.test.ts",
-        "tests/unit/runtime-memory-store.test.ts",
-        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+        "tests/e2e/memory-surface.spec.ts",
+        "openclaw_runtime/src/memory/memory-authority.ts",
+        "tests/unit/memory-control-plane-authority.test.ts",
+        "tests/unit/memory-surface-runtime.test.ts",
+        "docs/clawx-product-semantics.md",
+        "docs/dev/default-config-matrix.md"
       ],
       "runtimeProofRefs": [
-        "tests/unit/memory-api.test.ts",
-        "tests/unit/runtime-memory-store.test.ts"
+        "tests/e2e/memory-surface.spec.ts",
+        "tests/unit/fixtures/memory-authority/acceptance/TF-0498/verification.json"
       ],
       "userPath": {
-        "surface": "Memory management",
-        "entrypoint": "Propose, review, approve, or reject memory entries",
-        "boundary": "Reviewed proposal flow is not automatic overwrite."
+        "surface": "Memory",
+        "entrypoint": "Sidebar → Memory: remember, review, approve, export or delete",
+        "boundary": "One review surface is not a second Memory authority and does not authorize automatic overwrite or prompt injection."
       },
       "knownExclusions": [
         "No automatic overwrite guarantee.",
-        "No claim that every session summary is instantly committed to long-term memory."
+        "No claim that every session summary becomes durable memory.",
+        "No universal memory-quality score across providers or languages."
       ],
-      "relatedTaskIds": []
+      "relatedTaskIds": [
+        "TF-0497",
+        "TF-0498"
+      ]
     },
     {
       "id": "capability-34",

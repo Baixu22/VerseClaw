@@ -14,6 +14,7 @@ import {
   DEFAULT_MEMORY_INJECT_PILOT_CONFIG,
   resolveMemoryInjectPilotConfig,
 } from '../../openclaw_runtime/src/context-engine/chat-turn-memory-injection';
+import { resolveContextViewToolSurfaceState } from '../../openclaw_runtime/src/agents/tools/context-view-tool-surface';
 import {
   DEFAULT_VTOKEN_ASSEMBLY_CONFIG,
   resolveVtokenAssemblyConfig,
@@ -123,6 +124,7 @@ describe('TF-0003 default configuration matrix', () => {
       if (!match) return `<unparseable: ${cell}>`;
       const [, bold, annotation] = match;
       if (annotation === 'deny') return 'deny';
+      if (bold === 'retired' && annotation === 'always off') return 'retired';
       return bold;
     }
 
@@ -163,12 +165,22 @@ describe('TF-0003 default configuration matrix', () => {
       );
       // Each probe returns the implementation's default in fixture-normalized form.
       const implProbes: Record<string, () => string> = {
+        'DCS Fact view tools': () =>
+          resolveContextViewToolSurfaceState({
+            env: {},
+            factService: {} as never,
+            workspaceHealthy: true,
+            contextStoreHealthy: true,
+            permissionAllowed: true,
+          }).mode === 'healthy'
+            ? 'auto'
+            : 'off',
         'VToken assembly': () =>
           DEFAULT_VTOKEN_ASSEMBLY_CONFIG.enabled === false &&
           resolveVtokenAssemblyConfig({}).enabled === false
-            ? 'false'
+            ? 'retired'
             : 'true',
-        'VToken bridge': () => (readVtokenBridgeEnabledFromEnv() === false ? 'false' : 'true'),
+        'VToken bridge': () => (readVtokenBridgeEnabledFromEnv() === false ? 'retired' : 'true'),
         'Workspace Context': () =>
           (DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS as Record<string, boolean>)[
             'runtime.contextBlock.working_memory.enabled'
@@ -233,10 +245,31 @@ describe('TF-0003 default configuration matrix', () => {
     });
   });
 
+  it('locks automatic healthy context view tools with an explicit rollback [dcs-context-view-tools-default]', () => {
+    const healthy = resolveContextViewToolSurfaceState({
+      env: {},
+      factService: {} as never,
+      workspaceHealthy: true,
+      contextStoreHealthy: true,
+      permissionAllowed: true,
+    });
+    expect(healthy.mode).toBe('healthy');
+    expect(healthy.enabled).toBe(true);
+    expect(healthy.activeToolNames).toHaveLength(4);
+    const disabled = resolveContextViewToolSurfaceState({
+      env: { OPENCLAW_DCS_CONTEXT_VIEW_TOOLS: '0' },
+      factService: {} as never,
+      workspaceHealthy: true,
+      contextStoreHealthy: true,
+      permissionAllowed: true,
+    });
+    expect(disabled.mode).toBe('explicitly-disabled');
+    expect(disabled.enabled).toBe(false);
+  });
   // TF-0496 retired VToken on measured provider usage (see
   // docs/dev/vtoken-retirement-decision.md). The old opt-in lock is replaced by a
   // lock on the retirement: neither the default nor an explicit config can enable it.
-  it('locks VToken assembly default OFF (opt-in) [vtoken-assembly-default]', () => {
+  it('locks VToken assembly retired and not re-enableable [vtoken-assembly-default]', () => {
     expect(DEFAULT_VTOKEN_ASSEMBLY_CONFIG.enabled).toBe(false);
     expect(resolveVtokenAssemblyConfig({}).enabled).toBe(false);
     expect(

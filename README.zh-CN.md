@@ -12,7 +12,7 @@
 
 Verse Claw 是基于 OpenClaw 的 Electron 桌面应用：在对话中发起工作，在同一工作区查看文件、终端、浏览器、代码改动和生成产物，再将有价值的内容整理为可复核的项目知识。它也提供模型与 Agent 配置、消息频道、定时任务和运行诊断。
 
-桌面端使用 React、TypeScript 和 Vite。这不是只包含 Renderer 的外壳：仓库同时包含 Electron Main Host、类型化共享契约、随仓内置的 OpenClaw 运行时与扩展目录、内嵌 VerseBrowser 与 VToken 组件、VerseShell MCP 适配器、可执行 Harness 规格，以及构建、发布与证据流水线。当前版本和依赖以 [package.json](package.json) 为准。部分源码、配置和历史文档仍使用 ClawX 名称。
+桌面端使用 React、TypeScript 和 Vite。这不是只包含 Renderer 的外壳：仓库同时包含 Electron Main Host、类型化共享契约、随仓内置的 OpenClaw 运行时与扩展目录、内嵌 VerseBrowser、保留但已退役的 VToken 源码、VerseShell MCP 适配器、可执行 Harness 规格，以及构建、发布与证据流水线。当前版本和依赖以 [package.json](package.json) 为准。部分源码、配置和历史文档仍使用 ClawX 名称。
 
 > **当前状态：** 项目处于 alpha 阶段，本地验收重点是受控的 Windows x64 工作流。macOS、Linux 有构建目标，验证覆盖按具体平台和能力区分。实验能力的启用条件见下文，以及[产品语义](docs/clawx-product-semantics.md)和[能力矩阵](shared/capability-claims.ts)。
 
@@ -52,7 +52,7 @@ Verse Claw 是基于 OpenClaw 的 Electron 桌面应用：在对话中发起工�
 
 显式绑定的长期会话会在 Chat 活动栏展示稳定主会话、现有 Task Ledger 引用和终态完成批次，并可直接打开 worker transcript 与任务记录。绑定会话每轮只从已接受的 Task Ledger Working Context、CompressionArtifact 元数据、当前模型可见的 accepted memory refs 与 typed knowledge refs 组装有界 `ContinuityContextPack/v1`；pending、candidate、过期、撤销、被 supersede、跨 scope 和未验证模型叙述会被排除，原始历史仅保留按需读取的 owner refs。这些内容只投影现有 owner，不创建第二任务列表、记忆库或注入 authority。
 
-界面支持中文、英文、日文和俄文，提供浅色、深色和跟随系统主题。通用设置中的 Basic / Advanced 控制诊断信息的展示深度；解锁开发者模式后还可进入图像生成与梦境页面。
+界面支持中文、英文、日文和俄文，提供浅色、深色和跟随系统主题。通用设置中的 Basic / Advanced 控制诊断信息的展示深度。开发者模式只开放诊断与测试入口；Dreams 已退役，图像生成仍仅限开发者/测试，不再作为产品导航入口。
 
 <a id="workflows"></a>
 
@@ -104,7 +104,7 @@ VerseGit 是一个内部、显式启用的仓库证据 sidecar，只用于一条
 
 ### 实验能力的范围
 
-上下文管理（DCS）、token 预算（VToken）、经验知识（SEKB）、Runtime Memory 和浏览器自动化分别受配置、审批或灰度门禁控制。诊断或 shadow 数据不代表已经参与模型上下文、自动写回或路由决策；安装应用不会自动启用全部增强能力。
+Workspace Context 与只读上下文查看工具在声明的健康/权限条件下默认开启；VToken 已退役。SEKB 自动回写、Runtime Memory 注入与浏览器私有网络访问仍分别受审阅或审批门禁控制。诊断或 shadow 数据不代表已经参与模型上下文、自动写回或路由决策；安装应用也不会授权所有可选扩展。
 
 能力状态以[能力矩阵](shared/capability-claims.ts)、[默认配置矩阵](docs/dev/default-config-matrix.md)和各自验证记录为准。验收模拟由脚本或 Agent 执行时必须标记为 agent 驱动；局部测试通过不代表完整产品或所有平台已通过发布验收。
 
@@ -218,7 +218,7 @@ Renderer 请求入口是 `src/lib/host-api.ts` 与 `src/lib/host-api-client.ts`�
 | 平面 | 当前机制 | 边界 |
 | --- | --- | --- |
 | 系统资源调度 | `ResourceFabric` 对工作区执行与聊天历史做准入控制；`BackgroundWorkGate` 在队列、RSS 或 CPU 压力下延后后台任务；`ResourceTracker` 负责会话关联服务的发现与清理 | 这是 Main 进程内的协作式准入，不是全局 OS 调度器；前台工作不会被资源收缩策略丢弃 |
-| 上下文工程 | `ContextEngine` 覆盖 bootstrap、ingest、maintain、after-turn 与 assemble/compact；共享的 6,000 字符单轮注入预算按优先级记账并受 fail-closed kill switch 控制；`ContextHealthMonitor` 评估注入压力、结构保真、目标对齐和新颖度 | 已接受的上下文来源共用运行时装配入口；可选增强仍按 opt-in 使用 |
+| 上下文工程 | `ContextEngine` 覆盖 bootstrap、ingest、maintain、after-turn 与 assemble/compact；共享的 6,000 字符单轮注入预算按优先级记账并受 fail-closed kill switch 控制；`ContextHealthMonitor` 评估注入压力、结构保真、目标对齐和新颖度 | Workspace Context 与上下文查看工具在各自门禁下默认开启；VToken 已退役，其他增强路径保留显式回滚边界 |
 | 模型能力定位 | 保留的系统提示词增量说明当前 scope 的记忆权限、知识应用状态、运行可用性与动作权限 | 缺失或过期事实保持 unknown；工具存在不代表已获批准。验收仅覆盖声明的模型与 agent 驱动场景 |
 | 会话生命周期 | `SessionManager` 使用 JSONL append-only 树，支持 leaf 分支、压缩、标签和上下文重建；Host 侧增加 checkpoint、handoff、归档/恢复与级联删除 | 会话不等于 Run、Task、Workspace 或 Project；用户可见任务事实仍只归 Task Ledger |
 | 记忆系统 | 唯一 `Memory` 面板从既有存储投影已批准的 Role 卡片、Runtime facts 与持久化候选；批准、删除和导出按 owner 分派，“记住这个”走 gatekeeper 审阅，并统一受 `MemoryControlPlaneManifest/v1` 约束 | 候选永远不进入模型可见上下文；各 owner 的 write/use gate 与 Runtime Memory 注入路径仍独立配置。原生 OpenClaw memory 源不在此面板控制，界面会明确说明 |
@@ -251,16 +251,16 @@ flowchart LR
 | 表面 | 当前源码与入口 | 边界 |
 | --- | --- | --- |
 | 编码与代码审查 | `src/pages/CodeReview/`、`electron/services/code-review-api.ts`、`git-api.ts`、`shared/types/coding-run.ts`、Task Loop 与 Task Ledger | Code Review 明确只读；CodingRun 是关联/投影视图，不是第二套任务状态机。用户可见任务事实仍由 Task Ledger 拥有 |
-| VerseShell | `openclaw_runtime/src/agents/verseshell/`、`verseshell-runtime.ts`、`shared/verseshell/`、`resources/verseshell/`、`resources/verseshell-mcp/` | 受控执行、typed ACI、结果 artifact 和 patch preview 分别默认关闭；外部 MCP 适配器不等于内部执行路径 |
+| VerseShell | `openclaw_runtime/src/agents/verseshell/`、`verseshell-runtime.ts`、`shared/verseshell/`、`resources/verseshell/`、`resources/verseshell-mcp/` | VerseShell 与观测记录器是内部执行/证据底座，不提供第二个用户可见执行器；旧 patch preview 与 symbol lease 已退役，外部 MCP 适配器仍不等于内部执行路径 |
 | VerseBrowser | `packages/versebrowser/`、`electron/services/agent-browser-*`、`electron/gateway/agent-browser-bridge.ts`、`shared/agent-browser/` | 81 个契约方法不是 81 项 Electron 能力：驱动实现 67 个，模型层 28 个 action，当前 Windows 桌面只广告 14 个可用 action |
 | 知识库 | `src/pages/Knowledge/`、`electron/services/knowledge-api.ts`、`memory-wiki`、`openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first 且受角色治理：Agent 可读、可提议；Inbox → Draft → Steward → Proposal → 明确确认后 apply。SEKB 自动回写仍是默认关闭/影子阶段 |
 | 记忆 | `src/pages/Memory/`、`electron/services/memory-api.ts`、`openclaw_runtime/src/gateway/server-methods/memory-surface.ts` | 唯一审阅入口；Role 卡片、Runtime facts 与候选保留各自 owner 的存储和变更路径。批准、tombstone/invalidation、带哈希导出与显式记住提议都不会创建第二套记忆 authority |
 
 更完整的工具与知识流转图见[运行时控制平面](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces)。
 
-`src/App.tsx` 当前注册首次运行 Setup（`/setup/*`）、Chat（`/`）、Knowledge、Memory、Inbox、Scheduled、Task Ledger、ClawGraph、Observability 和 Settings 界面；Models、Agents、Channels、Skills 是 Settings 内的分区，Code Review 和 Browser 是进入工作区面板的兼容入口；Image Generation 与 Dreams 需要开发者模式。
+`src/App.tsx` 当前注册首次运行 Setup（`/setup/*`）、Chat（`/`）、Knowledge、Memory、Inbox、Scheduled、Task Ledger、ClawGraph、Observability 和 Settings 界面；Models、Agents、Channels、Skills 是 Settings 内的分区，Code Review 和 Browser 是进入工作区面板的兼容入口；图像生成仅限开发者/测试，且不是产品导航；Dreams 已退役。
 
-当前 pnpm workspace 成员是仓库根目录、`harness/`、`packages/versebrowser/` 和 `resources/verseshell-mcp/`。`packages/vtoken/` 是 Python/uv sidecar；`openclaw_runtime/` 是随仓内置的 Git 源码树，拥有独立依赖工作区，不是 Git submodule，也不是打包时使用的 npm 运行时。
+当前 pnpm workspace 成员是仓库根目录、`harness/`、`packages/versebrowser/` 和 `resources/verseshell-mcp/`。`packages/vtoken/` 是保留用于来源审计与回滚检查的 Python/uv sidecar；`openclaw_runtime/` 是随仓内置的 Git 源码树，拥有独立依赖工作区，不是 Git submodule，也不是打包时使用的 npm 运行时。
 
 VerseBrowser：安装、开发和构建会自动编译内嵌模块。81 个契约方法不代表 Electron 已实现 81 项能力；参见[调用方式与驱动限制](packages/README.md#versebrowser-integration-and-invocation)。
 

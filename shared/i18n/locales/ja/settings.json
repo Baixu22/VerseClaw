@@ -702,7 +702,7 @@
     "contextLayers": {
       "title": "コンテキスト層の違い（混同しないでください）",
       "cvkTitle": "Context Runtime Kit (CVK) — ナビゲーションシェル",
-      "cvkBody": "既定の context engine シェルで、routing と tool-navigation のメタデータを system prompt に注入します。working memory や長期 knowledge が有効という意味では**ありません**。context-engine slot を変更しない限り、DCS または VToken をオフにしてもこのシェルは削除されません。",
+      "cvkBody": "既定の context engine シェルで、routing と tool-navigation のメタデータを system prompt に注入します。working memory や長期 knowledge が有効という意味では**ありません**。context-engine slot を変更しない限り、VToken は退役済みです。DCS などの診断スイッチをオフにしても、context-engine slot を変更しない限りこのシェルは削除されません。",
       "dcsTitle": "DCS — working memory と context blocks",
       "dcsBody": "オプトインの BlockStore 基盤で、working-memory 注入、tool_registry 要約、knowledge blocks、context_* tools を扱います。ここでフラグを有効化するまで、既定値は fail-closed のままです。これは実際の memory/content 経路であり、CVK ナビゲーションシェルではありません。"
     },

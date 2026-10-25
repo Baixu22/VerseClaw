@@ -1,0 +1,127 @@
+{
+  "model": {
+    "schemaVersion": "ModelPositioningVerification/v1",
+    "taskForestNodeId": "TF-0507",
+    "generatedAt": "2026-10-25T09:17:43.778Z",
+    "driven_by": "agent",
+    "actor": "codex",
+    "provider": "local-3065",
+    "model": "space-bunny",
+    "dataset": "TF-0507 v11 24-row production-projection capability positioning fixture",
+    "repeats": 3,
+    "scorer": {
+      "id": "tf0507-semantic-json-v11",
+      "version": "11",
+      "rule": "exact key set, semantic normalized state enums, forbiddenClaims absence"
+    },
+    "protocolPath": "tests/unit/fixtures/model-positioning-tf0507/protocol-v11.json",
+    "runPath": "tests/unit/fixtures/model-positioning-tf0507/run-v11.json",
+    "protocolSha256": "d1dee54fec975491ed8ee9ac5915fb7302d40c30fec926d496977d70039d56f2",
+    "runProtocolSha256": "d1dee54fec975491ed8ee9ac5915fb7302d40c30fec926d496977d70039d56f2",
+    "rows": 24,
+    "expectedRows": 24,
+    "totalCalls": 72,
+    "passedRows": 24,
+    "passedCalls": 72,
+    "expectedPassedRows": 24,
+    "expectedPassedCalls": 72,
+    "profileDigests": {
+      "P0": "sha256:40315194bdc73012a4f22e5c4b4c3d2c1bd44fd518f9163fda057fd0c8353325",
+      "P1": "sha256:6a6a301b348abce3b313a55290497a37690ee8a0385e853f8ea9fe2267241edd",
+      "P2": "sha256:3fad49d5ecaf7b207f9258a1e0dbb2367c04e640ac40b74918366b62f33090b4"
+    },
+    "issues": [],
+    "status": "pass",
+    "boundary": "This verifies only the frozen space-bunny run over 24 scenarios x 3 repeats. It does not generalize to other providers, models, datasets, or real-human evidence."
+  },
+  "negative": {
+    "schemaVersion": "ModelPositioningNegativeChecks/v1",
+    "taskForestNodeId": "TF-0507",
+    "generatedAt": "2026-10-25T09:24:13.889Z",
+    "driven_by": "agent",
+    "actor": "codex",
+    "status": "pass",
+    "cases": [
+      {
+        "axis": "cross-scope",
+        "status": "pass",
+        "baselineDigest": "sha256:6a6a301b348abce3b313a55290497a37690ee8a0385e853f8ea9fe2267241edd",
+        "observedDigest": "sha256:a83abbd2afc1410244a5abbb327832b08a105f0638d822bf7f78545b77f13eae",
+        "baselineScope": {
+          "workspaceId": "workspace:tf0507-p1",
+          "roleId": "role:advanced",
+          "sessionKey": "session:tf0507-p1"
+        },
+        "observedScope": {
+          "workspaceId": "workspace:tf0507-p1",
+          "roleId": "role:advanced",
+          "sessionKey": "session:tf0507-p1:other"
+        },
+        "assertion": "different session scope changes the effective digest and cannot inherit the P1 scope unchanged"
+      },
+      {
+        "axis": "unapplied-knowledge",
+        "status": "pass",
+        "observedKnowledgeState": "stale",
+        "promptContainsStale": true,
+        "assertion": "stale knowledge stays unusable and the model-facing profile does not relabel it as applied"
+      },
+      {
+        "axis": "restart-degradation",
+        "status": "pass",
+        "baselineDigest": "sha256:3fad49d5ecaf7b207f9258a1e0dbb2367c04e640ac40b74918366b62f33090b4",
+        "observedDigest": "sha256:4b3d0eaaad57824567c26cdf22d56904f20dd18257e824e6ae222ff7972a68b7",
+        "observedAck": "unknown",
+        "assertion": "a new generation without a matching ack degrades to unknown and refreshes the effective digest"
+      },
+      {
+        "axis": "revoked-grant",
+        "status": "pass",
+        "probe": {
+          "outcome": "denied",
+          "reason": "owner-denied",
+          "bindingFound": true,
+          "profileConsistent": true,
+          "sideEffects": []
+        },
+        "assertion": "revoked browser navigate is actually denied at the permission-effect checkpoint and matches the profile"
+      }
+    ],
+    "boundary": "These are deterministic fixture checks for cross-axis facts. They are not model outputs and are not real-human evidence."
+  },
+  "independentReadback": {
+    "schemaVersion": "ModelPositioningVerification/v1",
+    "taskForestNodeId": "TF-0507",
+    "generatedAt": "2026-10-25T09:17:43.778Z",
+    "driven_by": "agent",
+    "actor": "codex",
+    "provider": "local-3065",
+    "model": "space-bunny",
+    "dataset": "TF-0507 v11 24-row production-projection capability positioning fixture",
+    "repeats": 3,
+    "scorer": {
+      "id": "tf0507-semantic-json-v11",
+      "version": "11",
+      "rule": "exact key set, semantic normalized state enums, forbiddenClaims absence"
+    },
+    "protocolPath": "tests/unit/fixtures/model-positioning-tf0507/protocol-v11.json",
+    "runPath": "tests/unit/fixtures/model-positioning-tf0507/run-v11.json",
+    "protocolSha256": "d1dee54fec975491ed8ee9ac5915fb7302d40c30fec926d496977d70039d56f2",
+    "runProtocolSha256": "d1dee54fec975491ed8ee9ac5915fb7302d40c30fec926d496977d70039d56f2",
+    "rows": 24,
+    "expectedRows": 24,
+    "totalCalls": 72,
+    "passedRows": 24,
+    "passedCalls": 72,
+    "expectedPassedRows": 24,
+    "expectedPassedCalls": 72,
+    "profileDigests": {
+      "P0": "sha256:40315194bdc73012a4f22e5c4b4c3d2c1bd44fd518f9163fda057fd0c8353325",
+      "P1": "sha256:6a6a301b348abce3b313a55290497a37690ee8a0385e853f8ea9fe2267241edd",
+      "P2": "sha256:3fad49d5ecaf7b207f9258a1e0dbb2367c04e640ac40b74918366b62f33090b4"
+    },
+    "issues": [],
+    "status": "pass",
+    "boundary": "This verifies only the frozen space-bunny run over 24 scenarios x 3 repeats. It does not generalize to other providers, models, datasets, or real-human evidence."
+  }
+}

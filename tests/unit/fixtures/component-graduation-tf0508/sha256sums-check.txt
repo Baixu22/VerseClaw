@@ -1,0 +1,75 @@
+[
+  {
+    "file": "tests/unit/fixtures/component-graduation-tf0508/audit.json",
+    "expected": "57b24abe6d93f7f91609a95b904bceb2bcb1d241d6ceafec158379e10abe8288",
+    "actual": "57b24abe6d93f7f91609a95b904bceb2bcb1d241d6ceafec158379e10abe8288",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/component-graduation-tf0508/authority-receipt.json",
+    "expected": "bb31fa14740e806ccd70f442b13e5595bb09092e6ed243a96f1c27ae5e4f2c5d",
+    "actual": "bb31fa14740e806ccd70f442b13e5595bb09092e6ed243a96f1c27ae5e4f2c5d",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/component-graduation-tf0508/disposition-receipt.json",
+    "expected": "bb31fa14740e806ccd70f442b13e5595bb09092e6ed243a96f1c27ae5e4f2c5d",
+    "actual": "bb31fa14740e806ccd70f442b13e5595bb09092e6ed243a96f1c27ae5e4f2c5d",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/component-graduation-tf0508/history-check-landing.json",
+    "expected": "deb30f9961e493b0d1fe8643f7a67033c30ab7eca53ea1b86a83064983baabf1",
+    "actual": "deb30f9961e493b0d1fe8643f7a67033c30ab7eca53ea1b86a83064983baabf1",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/component-graduation-tf0508/model-positioning-receipt.json",
+    "expected": "e6ee9cf6cbd32bb34116e38cbe83d45406ea1f1b4868e3a68dee8a09a8d308aa",
+    "actual": "e6ee9cf6cbd32bb34116e38cbe83d45406ea1f1b4868e3a68dee8a09a8d308aa",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/component-graduation-tf0508/README.md",
+    "expected": "c4440a6ca9e24d6d2533b5c5a69c67152326ea6b7f16978a1547c35a6f097680",
+    "actual": "c4440a6ca9e24d6d2533b5c5a69c67152326ea6b7f16978a1547c35a6f097680",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
+    "expected": "b6fdb209cf1675f98e289501054f0831de4b05c85359fe47ab7c0f336fe25a4a",
+    "actual": "b6fdb209cf1675f98e289501054f0831de4b05c85359fe47ab7c0f336fe25a4a",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/component-graduation-tf0508/scope-receipt.json",
+    "expected": "ac15d5f4f0d038d0e006ba171620548da2efc819584ffc8dc1fea594a60db486",
+    "actual": "ac15d5f4f0d038d0e006ba171620548da2efc819584ffc8dc1fea594a60db486",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/component-graduation-tf0508/scoped-landing.json",
+    "expected": "ab105c9711171f3e6ea5e0214b73a65230bb7c9d9c1a01b77765cf5cff1421c4",
+    "actual": "ab105c9711171f3e6ea5e0214b73a65230bb7c9d9c1a01b77765cf5cff1421c4",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/component-graduation-tf0508/task-forest-export.txt",
+    "expected": "db58831293fc53cf1cb19edc72cfa22e9667b8fa5e88d9bef6fe538e2f609cad",
+    "actual": "db58831293fc53cf1cb19edc72cfa22e9667b8fa5e88d9bef6fe538e2f609cad",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/component-graduation-tf0508/task-forest-validate.txt",
+    "expected": "2c578ac5602983fdc5c89b7dc9d7bc2bde18bf03656e92d56fbf9a0c070d22e9",
+    "actual": "2c578ac5602983fdc5c89b7dc9d7bc2bde18bf03656e92d56fbf9a0c070d22e9",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/component-graduation-tf0508/tf0512-receipt.json",
+    "expected": "2781c2f9a50105baaf2408b176f1ef2375caf2fa055705f003c0ee27423aa9a5",
+    "actual": "2781c2f9a50105baaf2408b176f1ef2375caf2fa055705f003c0ee27423aa9a5",
+    "status": "pass"
+  }
+]
+SHA256SUMS_STATUS=pass

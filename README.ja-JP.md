@@ -12,7 +12,7 @@
 
 Verse Claw は OpenClaw を基盤とする Electron デスクトップアプリです。対話で作業を開始し、同じワークスペースでファイル、ターミナル、ブラウザープレビュー、コードの変更、生成物を確認できます。有用な内容は、根拠を確認できるプロジェクト知識として整理します。モデルと Agent の設定、メッセージチャンネル、定期タスク、ランタイム診断も備えています。
 
-デスクトップは React、TypeScript、Vite を使用します。これは Renderer だけのラッパーではありません。リポジトリには Electron Main Host、型付き共有契約、同梱 OpenClaw ランタイムと拡張カタログ、組み込み VerseBrowser と VToken、VerseShell MCP アダプター、実行可能な Harness 仕様、ビルド・リリース・証拠パイプラインも含まれます。現在のバージョンと依存関係は [package.json](package.json) を参照してください。一部のソース、設定、過去の文書には ClawX という名称が残っています。
+デスクトップは React、TypeScript、Vite を使用します。これは Renderer だけのラッパーではありません。リポジトリには Electron Main Host、型付き共有契約、同梱 OpenClaw ランタイムと拡張カタログ、組み込み VerseBrowser、保持のみで退役済みの VToken ソース、VerseShell MCP アダプター、実行可能な Harness 仕様、ビルド・リリース・証拠パイプラインも含まれます。現在のバージョンと依存関係は [package.json](package.json) を参照してください。一部のソース、設定、過去の文書には ClawX という名称が残っています。
 
 > **現在の状態：** alpha 段階のプロジェクトです。ローカル受け入れ検証の中心は、制御された Windows x64 のワークフローです。macOS と Linux にもビルド対象がありますが、検証範囲はプラットフォームと機能ごとに異なります。実験的機能の有効化条件は、以下の説明、[製品セマンティクス](docs/clawx-product-semantics.md)、[機能マトリクス](shared/capability-claims.ts)に記載しています。
 
@@ -52,7 +52,7 @@ Verse Claw は OpenClaw を基盤とする Electron デスクトップアプリ�
 
 明示的にバインドした長期セッションでは、Chat のアクティビティレールに安定したコーディネーター会話、既存の Task Ledger 参照、終端済みの完了バッチを表示し、worker の記録とタスクへ直接移動できます。バインド済みターンでは、受け入れ済み Task Ledger Working Context、CompressionArtifact メタデータ、現在モデル可視の accepted memory refs、typed knowledge refs から有界な `ContinuityContextPack/v1` を読み取ります。pending、candidate、期限切れ、取消、supersede、scope 外、未検証のモデル叙述は除外し、生の履歴は owner の on-demand refs に留めます。これらは既存 owner の投影であり、第二のタスク一覧、メモリストア、注入権限を作成しません。
 
-UI は日本語、英語、中国語、ロシア語に対応し、ライト・ダーク・システムテーマを選べます。一般設定の Basic / Advanced は診断情報の表示量を制御します。開発者モードを解除すると画像生成と Dreams の画面にもアクセスできます。
+UI は日本語、英語、中国語、ロシア語に対応し、ライト・ダーク・システムテーマを選べます。一般設定の Basic / Advanced は診断情報の表示量を制御します。開発者モードは診断・テスト用の入口だけを公開します。Dreams は退役済みで、画像生成も開発者/テスト専用のままで製品ナビゲーションには表示しません。
 
 <a id="workflows"></a>
 
@@ -104,7 +104,7 @@ VerseGit は、1 本の境界付き Windows x64（`win32-x64`）/M1 コーディ
 
 ### 実験的機能の範囲
 
-コンテキスト管理（DCS）、トークン予算（VToken）、経験知識（SEKB）、Runtime Memory、ブラウザー自動化には、それぞれ設定・承認・段階導入の制約があります。診断や shadow データの存在だけでは、モデルのコンテキスト、自動書き戻し、ルーティングへの参加を意味しません。アプリのインストールだけで全機能が有効になることはありません。
+Workspace Context と読み取り専用の context view tools は、宣言されたヘルス・権限条件の下で既定有効です。VToken は退役済みです。SEKB 自動書き戻し、Runtime Memory 注入、ブラウザーのプライベートネットワークアクセスには個別のレビューまたは承認ゲートが残ります。診断や shadow データの存在だけでは、モデルのコンテキスト、自動書き戻し、ルーティングへの参加を意味しません。アプリのインストールだけで全ての任意拡張が許可されるわけでもありません。
 
 状態は[機能マトリクス](shared/capability-claims.ts)、[既定設定マトリクス](docs/dev/default-config-matrix.md)、機能ごとの検証記録で確認してください。スクリプトや Agent が実行する受け入れシミュレーションは agent 駆動と明記します。個別テストの成功は、製品全体や全プラットフォームのリリース受け入れ完了を意味しません。
 
@@ -218,7 +218,7 @@ Renderer の入口は `src/lib/host-api.ts` と `src/lib/host-api-client.ts` で
 | プレーン | 現在の仕組み | 境界 |
 | --- | --- | --- |
 | システムリソース | `ResourceFabric` がワークスペース実行とチャット履歴の受け入れを制御し、`BackgroundWorkGate` がキュー・RSS・CPU の圧力時にバックグラウンド処理を延期します。`ResourceTracker` はセッションに関連するサーバーの検出とクリーンアップを担当します | Main プロセス内の協調的な受け入れ制御であり、OS 全体のスケジューラではありません。フォアグラウンド処理は負荷抑制の対象になりません |
-| コンテキストエンジニアリング | `ContextEngine` が bootstrap、ingest、maintain、after-turn、assemble/compact を提供します。共有の 1 ターン 6,000 文字予算が優先順位を適用し、fail-closed の拡張 kill switch で停止できます。`ContextHealthMonitor` は注入圧力、構造、目標整合、新規性を評価します | 受け入れ済みのコンテキストソースはランタイムの組み立て入口を共有し、任意の拡張は opt-in のままです |
+| コンテキストエンジニアリング | `ContextEngine` が bootstrap、ingest、maintain、after-turn、assemble/compact を提供します。共有の 1 ターン 6,000 文字予算が優先順位を適用し、fail-closed の拡張 kill switch で停止できます。`ContextHealthMonitor` は注入圧力、構造、目標整合、新規性を評価します | Workspace Context と context view tools は宣言されたゲート下で既定有効です。VToken は退役済みで、その他の拡張経路は明示的なロールバック境界を維持します |
 | モデルの能力説明 | 予約されたシステムプロンプトの追加部分が、現在の scope のメモリ権限、適用済み知識、実行状態、操作権限を示します | 欠落または期限切れの事実は unknown とし、ツールの存在を承認とみなしません。検証対象は明示したモデルと agent 駆動のシナリオに限定します |
 | セッションライフサイクル | `SessionManager` は JSONL の append-only ツリーで、leaf 分岐、圧縮、ラベル、コンテキスト再構築を扱います。Host 側はチェックポイント、handoff、アーカイブ/復元、派生データのカスケード削除を追加します | セッションは Run、Task、Workspace、Project のいずれとも同じではありません。ユーザー可視のタスク事実は Task Ledger が所有します |
 | メモリ | 単一の `Memory` 画面が既存ストアから承認済み Role Card、Runtime fact、永続候補を投影します。承認・削除・エクスポートは owner ごとに委譲し、「これを覚える」は Gatekeeper 審査を通るため、すべて `MemoryControlPlaneManifest/v1` の境界に従います | 候補はモデル可視コンテキストに入りません。owner の write/use gate と Runtime Memory 注入経路は個別設定のままです。ネイティブ OpenClaw memory はこの画面の管理外であることを明示します |
@@ -251,16 +251,16 @@ flowchart LR
 | 表面 | 現在のソースと入口 | 境界 |
 | --- | --- | --- |
 | コーディングとレビュー | `src/pages/CodeReview/`、`electron/services/code-review-api.ts`、`git-api.ts`、`shared/types/coding-run.ts`、Task Loop、Task Ledger | Code Review は明示的に読み取り専用です。CodingRun は関連付けと投影のビューで、第二のタスク状態機械ではありません。ユーザー可視のタスク事実は Task Ledger が所有します |
-| VerseShell | `openclaw_runtime/src/agents/verseshell/`、`verseshell-runtime.ts`、`shared/verseshell/`、`resources/verseshell/`、`resources/verseshell-mcp/` | 統制実行、typed ACI、artifact result、patch preview は個別に既定無効です。外部 MCP アダプターは内部実行経路とは別です |
+| VerseShell | `openclaw_runtime/src/agents/verseshell/`、`verseshell-runtime.ts`、`shared/verseshell/`、`resources/verseshell/`、`resources/verseshell-mcp/` | VerseShell と observability recorder は内部の実行/証拠基盤であり、第二のユーザー可視 executor ではありません。旧 patch preview と symbol lease は退役済みで、外部 MCP アダプターは内部実行経路とは別です |
 | VerseBrowser | `packages/versebrowser/`、`electron/services/agent-browser-*`、`electron/gateway/agent-browser-bridge.ts`、`shared/agent-browser/` | 81 の契約メソッドは 81 の Electron 機能ではありません。ドライバーは 67 を実装し、モデル層は 28 action、現在の Windows デスクトップでは 14 action のみ広告します |
 | 知識 | `src/pages/Knowledge/`、`electron/services/knowledge-api.ts`、`memory-wiki`、`openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first かつロール統治です。Agent は読み取りと提案が可能で、Inbox → Draft → Steward → Proposal → 明示確認後の apply が永続書き込み経路です。SEKB の自動書き戻しは既定無効/影運用です |
 | メモリ | `src/pages/Memory/`、`electron/services/memory-api.ts`、`openclaw_runtime/src/gateway/server-methods/memory-surface.ts` | 単一のレビュー画面。Role Card、Runtime fact、候補は各 owner のストアと変更経路を維持します。承認、tombstone/invalidation、ハッシュ付きエクスポート、明示的記憶提案は第二の Memory authority を作りません |
 
 ツールと知識の詳細フローは[ランタイム制御プレーン](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces)にあります。
 
-`src/App.tsx` は現在、初回 Setup（`/setup/*`）、Chat（`/`）、Knowledge、Memory、Inbox、Scheduled、Task Ledger、ClawGraph、Observability、Settings の画面を登録しています。Models、Agents、Channels、Skills は Settings 内のセクションで、Code Review と Browser はワークスペースパネルへの互換入口です。Image Generation と Dreams には開発者モードが必要です。
+`src/App.tsx` は現在、初回 Setup（`/setup/*`）、Chat（`/`）、Knowledge、Memory、Inbox、Scheduled、Task Ledger、ClawGraph、Observability、Settings の画面を登録しています。Models、Agents、Channels、Skills は Settings 内のセクションで、Code Review と Browser はワークスペースパネルへの互換入口です。画像生成は開発者/テスト専用で製品ナビゲーションではなく、Dreams は退役済みです。
 
-現在の pnpm workspace メンバーはルート、`harness/`、`packages/versebrowser/`、`resources/verseshell-mcp/` です。`packages/vtoken/` は Python/uv sidecar、`openclaw_runtime/` は独立した依存ワークスペースを持つ同梱 Git ソースツリーであり、Git submodule でもパッケージ用 npm ランタイムでもありません。
+現在の pnpm workspace メンバーはルート、`harness/`、`packages/versebrowser/`、`resources/verseshell-mcp/` です。`packages/vtoken/` は出典監査とロールバック確認のため保持された Python/uv sidecar で、production assembly と bridge は退役済みです。`openclaw_runtime/` は独立した依存ワークスペースを持つ同梱 Git ソースツリーであり、Git submodule でもパッケージ用 npm ランタイムでもありません。
 
 VerseBrowser: インストール・開発・ビルド時に組み込みモジュールを自動コンパイルします。81 メソッドの契約は Electron の 81 機能の実装を意味しません。[呼び出し方法とドライバー制限](packages/README.md#versebrowser-integration-and-invocation)を参照してください。
 
