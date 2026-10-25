@@ -134,7 +134,7 @@
           "reason": "validated report passes"
         },
         "ok": true,
-        "reportPath": "D:\\ClawX-work\\component-graduation-20261021\\tests\\unit\\fixtures\\model-capability-effective-state-tf0512\\component-graduation-report.json",
+        "reportPath": "D:\\ClawX\\tests\\unit\\fixtures\\model-capability-effective-state-tf0512\\component-graduation-report.json",
         "expected": {
           "recomputeInputDigest": "c4ec85ff125e5aa476c16c1685862a73a4c787c43670e5a6bf24a3a04d705094"
         },
@@ -144,19 +144,87 @@
     },
     {
       "id": "scope_component_nodes",
-      "status": "pass",
-      "open": [],
+      "status": "fail",
+      "open": [
+        {
+          "id": "TF-0493",
+          "status": "ready"
+        },
+        {
+          "id": "TF-0494",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0495",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0496",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0497",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0498",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0499",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0500",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0501",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0502",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0503",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0504",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0505",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0506",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0507",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0508",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0510",
+          "status": "proposed"
+        },
+        {
+          "id": "TF-0511",
+          "status": "proposed"
+        }
+      ],
       "policy": "All TF-0488..TF-0512 nodes are expected to be done after closeout."
     },
     {
       "id": "evidence_paths_component_nodes",
       "status": "pass",
-      "missing": [
-        {
-          "node": "TF-0502",
-          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/09-ab-readback.txt"
-        }
-      ]
+      "missing": []
     },
     {
       "id": "history_residual_tf0502_readback",
@@ -256,13 +324,14 @@
         "tests/unit/fixtures/product-semantics-tf0506/verification.json"
       ],
       "reviewedOutsideScope": [
-        "M tests/unit/fixtures/component-graduation-tf0508/SHA256SUMS",
+        "M artifacts/first-product-preview/FP-P1-08/forbidden-claims-scan.json",
+        " M tests/unit/fixtures/component-graduation-tf0508/SHA256SUMS",
         " M tests/unit/fixtures/component-graduation-tf0508/audit.json",
-        " M tests/unit/fixtures/component-graduation-tf0508/model-positioning-receipt.json",
         " M tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
         " M tests/unit/fixtures/component-graduation-tf0508/scope-receipt.json",
         " M tests/unit/fixtures/component-graduation-tf0508/scoped-landing.json",
-        " M tests/unit/fixtures/component-graduation-tf0508/sha256sums-check.txt"
+        " M tests/unit/fixtures/component-graduation-tf0508/sha256sums-check.txt",
+        " M tests/unit/fixtures/component-graduation-tf0508/tf0512-receipt.json"
       ],
       "unreviewedOutsideScope": []
     },
@@ -270,7 +339,7 @@
       "id": "scoped_landing_inputs",
       "status": "pass",
       "scopedChangedCount": 4,
-      "nonScopedChangedCount": 7
+      "nonScopedChangedCount": 8
     }
   ],
   "successMetrics": {
@@ -282,13 +351,15 @@
     "shipped_user_surface_overclaims": 0,
     "model_positioning": "pass",
     "scoped_landing_check": "pass",
-    "task_forest_health": "pass"
+    "task_forest_health": "fail"
   },
   "boundaries": [
     "Model positioning is limited to the frozen TF-0507 space-bunny run and does not generalize to other providers or models.",
     "Full-repository check-landing is historical residual context; unrelated unmerged branches are not this change set landing failure.",
     "No real-human evidence, public release, GA, liveReady, productApproved, or product-lock change is claimed."
   ],
-  "failedChecks": [],
-  "status": "pass"
+  "failedChecks": [
+    "scope_component_nodes"
+  ],
+  "status": "blocked"
 }

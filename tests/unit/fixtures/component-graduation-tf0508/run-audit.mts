@@ -24,13 +24,15 @@ const scopedPaths = [
   'tests/unit/fixtures/model-positioning-tf0507/',
   'tests/unit/fixtures/model-capability-effective-state-tf0512/',
 ];
-const readJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(root, relativePath), 'utf8'));
-const sha256File = (relativePath) => {
+type AuditNode = { id: string; status: string; evidence?: unknown[] };
+type Tf512Report = { binding?: { artifacts?: Array<{ path: string; sha256: string; bytes: number }> } };
+const readJson = (relativePath: string) => JSON.parse(fs.readFileSync(path.join(root, relativePath), 'utf8'));
+const sha256File = (relativePath: string) => {
   const bytes = fs.readFileSync(path.join(root, relativePath));
   return { path: relativePath, sha256: createHash('sha256').update(bytes).digest('hex'), bytes: bytes.length };
 };
-const git = (args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true }).trim();
-const exactPathExists = (relativePath) => {
+const git = (args: string[]) => execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true }).trim();
+const exactPathExists = (relativePath: string) => {
   let current = root;
   for (const segment of relativePath.split('/')) {
     if (!fs.existsSync(current) || !fs.readdirSync(current).includes(segment)) return false;
@@ -38,14 +40,14 @@ const exactPathExists = (relativePath) => {
   }
   return true;
 };
-const statusOf = (condition) => condition ? 'pass' : 'fail';
-const writeText = (name, value) => {
+const statusOf = (condition: boolean) => condition ? 'pass' : 'fail';
+const writeText = (name: string, value: string) => {
   const file = path.join(outDir, name);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, value.endsWith('\n') ? value : `${value}\n`, 'utf8');
   return file;
 };
-const runLocalScript = (relativePath, args = [], cwd = root) => {
+const runLocalScript = (relativePath: string, args: string[] = [], cwd = root) => {
   try {
     const raw = execFileSync(process.execPath, [path.join(root, 'openclaw_runtime/node_modules/tsx/dist/cli.mjs'), path.join(root, relativePath), ...args], {
       cwd, encoding: 'utf8', windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'],
@@ -60,11 +62,11 @@ const runLocalScript = (relativePath, args = [], cwd = root) => {
 const head = git(['rev-parse', 'HEAD']);
 const tree = git(['rev-parse', 'HEAD^{tree}']);
 const branch = git(['branch', '--show-current']);
-const nodeFixture = readJson('tests/fixtures/component-graduation/task-forest-node-ids.json');
-const nodes = readJson('.agent-workbench/task-forest/graph/nodes.json');
-const settingsPanelIds = fs.readdirSync(path.join(root, 'src/components/settings')).filter((name) => name.endsWith('.tsx')).map((name) => name.slice(0, -4));
+const nodeFixture = readJson('tests/fixtures/component-graduation/task-forest-node-ids.json') as { ids: string[] };
+const nodes = readJson('.agent-workbench/task-forest/graph/nodes.json') as Record<string, AuditNode>;
+const settingsPanelIds = fs.readdirSync(path.join(root, 'src/components/settings')).filter((name: string) => name.endsWith('.tsx')).map((name: string) => name.slice(0, -4));
 const appSource = fs.readFileSync(path.join(root, 'src/App.tsx'), 'utf8');
-const routePaths = [...new Set([...appSource.matchAll(/<Route\s+path="([^"]+)"/gu)].map((match) => match[1]))];
+const routePaths = [...new Set([...appSource.matchAll(/<Route\s+path="([^"]+)"/gu)].map((match: RegExpMatchArray) => match[1]))];
 const coverageInputs = {
   authorityComponentIds: COMPONENT_AUTHORITY_MANIFEST.components.map((component) => component.id),
   dcsFlagIds: DCS_PROD_FLAGS.map((flag) => flag.id),
@@ -96,9 +98,9 @@ const envOnlyFeatures = envFlags.filter((flag) => /requires? (?:setting|configur
 const envViolations = envFlags.filter((flag) => (flag.defaultValue !== false || /enable[^.]*by default|no env|automatic/i.test(flag.enable)) && flag.executor?.status !== 'wired');
 const model = readJson('tests/unit/fixtures/model-positioning-tf0507/verification.json');
 const modelChecks = readJson('tests/unit/fixtures/model-positioning-tf0507/negative/negative-checks.json');
-const modelPass = model.status === 'pass' && model.rows > 0 && model.rows === model.passedRows && model.totalCalls === model.passedCalls && model.totalCalls === model.rows * model.repeats && Array.isArray(model.issues) && model.issues.length === 0 && modelChecks.status === 'pass' && modelChecks.cases.length === 4 && modelChecks.cases.every((entry) => entry.status === 'pass');
+const modelPass = model.status === 'pass' && model.rows > 0 && model.rows === model.passedRows && model.totalCalls === model.passedCalls && model.totalCalls === model.rows * model.repeats && Array.isArray(model.issues) && model.issues.length === 0 && modelChecks.status === 'pass' && modelChecks.cases.length === 4 && modelChecks.cases.every((entry: { status: string }) => entry.status === 'pass');
 const tf512ReportPath = 'tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json';
-const tf512Report = readJson(tf512ReportPath);
+const tf512Report = readJson(tf512ReportPath) as Tf512Report;
 const tf512Verification = readJson('tests/unit/fixtures/model-capability-effective-state-tf0512/verification.json');
 const tf512ArtifactsMatch = (tf512Report.binding?.artifacts ?? []).every((artifact) => {
   if (!exactPathExists(artifact.path)) return false;
@@ -109,22 +111,21 @@ const tf512Gate = runLocalScript('scripts/component-graduation-report.mts', ['--
 const tf512Pass = tf512Gate.ok === true && tf512Gate.validation?.graduationPass === true && tf512Gate.taskForestDone?.ok === true && tf512Gate.validation?.issues?.length === 0;
 const tf0507Readback = runLocalScript('tests/unit/fixtures/model-positioning-tf0507/verify-run.mts', [], path.join(root, 'openclaw_runtime'));
 const tf0507ReadbackPass = tf0507Readback.status === 'pass' && tf0507Readback.rows === model.rows && tf0507Readback.passedRows === model.rows && tf0507Readback.totalCalls === model.totalCalls && tf0507Readback.passedCalls === model.totalCalls && Array.isArray(tf0507Readback.issues) && tf0507Readback.issues.length === 0;
-const taskForestNodes = Object.values(nodes);
+const taskForestNodes = Object.values(nodes) as AuditNode[];
 const scopeNodeIds = Array.from({ length: 25 }, (_, index) => `TF-${String(488 + index).padStart(4, '0')}`);
 const openScopeNodes = taskForestNodes.filter((node) => scopeNodeIds.includes(node.id) && !['done', 'deprecated'].includes(node.status));
-const selfOnlyOpen = openScopeNodes.every((node) => node.id === 'TF-0508');
-const missingEvidence = [];
+const missingEvidence: Array<{ node: string; path: string }> = [];
 for (const node of taskForestNodes.filter((entry) => scopeNodeIds.includes(entry.id))) {
-  for (const ref of (node.evidence ?? []).filter((value) => typeof value === 'string' && /^(?:docs|tests|artifacts|harness|shared|openclaw_runtime|scripts)\//u.test(value))) {
-    if (!exactPathExists(ref)) missingEvidence.push({ node: node.id, path: ref });
+  for (const value of node.evidence ?? []) {
+    if (typeof value === 'string' && /^(?:docs|tests|artifacts|harness|shared|openclaw_runtime|scripts)\//u.test(value) && !exactPathExists(value)) missingEvidence.push({ node: node.id, path: value });
   }
 }
 const tf0502MissingReadback = !exactPathExists('tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/09-ab-readback.txt');
 const statusLines = git(['status', '--porcelain', '--untracked-files=all']).split(/\r?\n/u).filter(Boolean);
-const targetOf = (line) => line.slice(3).replace(/^"|"$/gu, "").replace(/^[ MADRCU?!]{1,2} /u, "");
+const targetOf = (line: string) => line.slice(3).replace(/^"|"$/gu, "").replace(/^[ MADRCU?!]{1,2} /u, "");
 const scopedDirty = statusLines.filter((line) => scopedPaths.some((allowed) => targetOf(line).startsWith(allowed)));
 const nonScopedDirty = statusLines.filter((line) => !scopedPaths.some((allowed) => targetOf(line).startsWith(allowed)));
-const reviewedOutside = (line) => line.includes("artifacts/first-product-preview/") || line.includes("tests/unit/fixtures/surface-cleanup-tf0505/") || line.includes("tests/unit/fixtures/component-graduation-tf0508/") || line.includes("tests/unit/fixtures/model-positioning-tf0507/verification.json");
+const reviewedOutside = (line: string) => line.includes("artifacts/first-product-preview/") || line.includes("tests/unit/fixtures/surface-cleanup-tf0505/") || line.includes("tests/unit/fixtures/component-graduation-tf0508/") || line.includes("tests/unit/fixtures/model-positioning-tf0507/verification.json");
 const scopedLandingPaths = git(['diff', '--name-only', 'b62e7f4c9...HEAD']).split(/\r?\n/u).filter(Boolean).filter((file) => scopedPaths.some((allowed) => file === allowed || file.startsWith(allowed)));
 const scopedLandingPass = scopedLandingPaths.length > 0 && nonScopedDirty.filter((line) => !reviewedOutside(line)).length === 0;
 const checks = [
