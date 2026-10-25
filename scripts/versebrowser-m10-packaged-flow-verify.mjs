@@ -83,8 +83,22 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
     result.flow = await page.evaluate(async ({ url, runId }) => {
       const raw = async (action, payload) => window.verseClaw.hostInvoke({ id: crypto.randomUUID(), module: 'agentBrowser', action, ...(payload ? { payload } : {}) });
       const enabled = await raw('setEnabled', { enabled: true });
-      const open = await raw('open', { url, mode: 'headless', profile: runId, sessionKey: `agent:main:${runId}`, agentId: 'main' });
-      if (!open.ok) return { enabled: enabled.ok, openOk: false, openError: open.error };
+      const privateNetworkOpen = await raw('open', { url, mode: 'headless', profile: runId, sessionKey: `agent:main:${runId}`, agentId: 'main' });
+      const privateNetworkDenied =
+        privateNetworkOpen.ok === false &&
+        String(privateNetworkOpen.error?.message ?? '').includes('private-network-default-deny');
+      const open = enabled.ok === true
+        ? await raw('open', {
+            url,
+            mode: 'headless',
+            profile: runId,
+            sessionKey: `agent:main:${runId}`,
+            agentId: 'main',
+            privateNetworkApprovedBy: 'agent',
+            privateNetworkOrigin: new URL(url).origin,
+          })
+        : privateNetworkOpen;
+      if (!open.ok) return { enabled: enabled.ok, privateNetworkDenied, openOk: false, openError: open.error };
       const sessionId = open.data.session.id;
       const blocked = await raw('takeSnapshot', { sessionId });
       const upgrade = await raw('requestModeUpgrade', { sessionId, targetMode: 'full_access', userApproval: true });
@@ -94,7 +108,7 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
       const owned = (status.data?.sessions ?? []).filter((s) => String(s.sessionKey ?? '').toLowerCase() === `agent:main:${runId}`.toLowerCase());
       const close = await raw('close', { sessionId });
       return {
-        enabled: enabled.ok, openOk: true, sessionId,
+        enabled: enabled.ok, privateNetworkDenied, openOk: true, sessionId,
         blockedFailsClosed: blocked.ok === false && String(blocked.error?.message ?? '').includes('runtime mode upgrade'),
         upgradeOk: upgrade.ok, upgradeMode: upgrade.data?.runtimeMode ?? null,
         snapshotOk: snap.ok, snapshotHasFixture: snapText.includes('M10 PACKAGED OK') && snapText.includes('body marker 42'),
@@ -122,6 +136,7 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
   const f = result.flow ?? {};
   const checks = {
     host_bridge_present: result.hostBridgePresent === true,
+    private_network_default_deny: f.privateNetworkDenied === true,
     real_session_opened: f.openOk === true,
     sandbox_fails_closed_without_upgrade: f.blockedFailsClosed === true,
     runtime_mode_upgrade_ok: f.upgradeMode === 'full_access',
