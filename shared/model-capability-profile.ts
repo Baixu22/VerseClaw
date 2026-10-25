@@ -685,10 +685,17 @@ function buildPromptAddition(
 
   const compose = (defaultNames: readonly string[], advancedNames: readonly string[]): string => {
     const included = visible.filter((entry) => defaultNames.includes(entry.displayName) || advancedNames.includes(entry.displayName));
-    const states = (names: readonly string[]) => names.map((name) => {
-      const entry = included.find((entry) => entry.displayName === name)!;
-      return `${name}=${factById.get(entry.capabilityId)!.runtimeAvailability.state}`;
-    }).join(',');
+    const states = (names: readonly string[]) => {
+      const grouped = new Map<string, string[]>();
+      for (const name of names) {
+        const entry = included.find((entry) => entry.displayName === name)!;
+        const state = factById.get(entry.capabilityId)!.runtimeAvailability.state;
+        const members = grouped.get(state) ?? [];
+        members.push(name);
+        grouped.set(state, members);
+      }
+      return Array.from(grouped, ([state, members]) => `${state}=[${members.join(',')}]`).join(';');
+    };
     const unknownCount = included.filter((entry) => factById.get(entry.capabilityId)?.runtimeAvailability.state === 'unknown').length;
     const lines = ['Capability positioning (authoritative):'];
     if (defaultNames.length > 0) lines.push(`Default: ${states(defaultNames)}.`);
@@ -707,14 +714,14 @@ function buildPromptAddition(
         const facts = factById.get(entry.capabilityId)!.actionAuthorization;
         return facts.length > 0 ? [`${entry.displayName}:${facts.map((fact) => `${fact.actionId}=${fact.authorization}`).join(',')}`] : [];
       });
-      if (actions.length > 0) lines.push(`Action permissions: ${actions.join(';')}.`);
+      if (actions.length > 0) lines.push(`Actions: ${actions.join(';')}.`);
     }
     if (unknownCount > 0) {
       lines.push(unknownCount === included.length
         ? 'Runtime state is not yet verified for all listed capabilities; do not present them as currently active.'
         : `Unverified runtime remains unknown (${unknownCount} listed capabilities); do not claim active.`);
     }
-    lines.push('Enabled is not action permission.');
+    lines.push('Availability is independent of permission. Approval requests do not execute; denied/unknown actions must not be requested. Permission denials do not change availability.');
     lines.push('Internal/retired are not products; claim only listed facts.');
     return lines.join('\n');
   };
