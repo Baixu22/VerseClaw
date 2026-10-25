@@ -674,7 +674,8 @@ export const AUTHORITY_COMPONENTS: readonly ComponentAuthorityDefinition[] = [
 
 export const PRODUCT_SURFACE_AUTHORITY_LINKS = {
   'DCS coding loop': ['dcs-context-authority', 'coding-execution-backend'],
-  'DCS Fact view and tool registry': ['dcs-fact-view-and-tools', 'tool-registry-context-source'],
+  'Workspace Context': ['working-memory-context-source', 'tool-registry-context-source'],
+  'DCS Fact view tools': ['dcs-fact-view-and-tools'],
   'VToken turn assembly': ['vtoken-context-source', 'vtoken-bridge'],
   'SEKB automatic writeback': ['sekb-candidate-provider', 'knowledge-review-authority'],
   'C6 automatic context ladder': ['c6-context-ladder-source', 'dcs-context-authority'],
@@ -686,9 +687,12 @@ export const PRODUCT_SURFACE_AUTHORITY_LINKS = {
 } as const satisfies Record<string, readonly string[]>;
 
 export const DEFAULT_MATRIX_AUTHORITY_LINKS = {
+  'DCS Fact view tools': ['dcs-fact-view-and-tools'],
   'VToken assembly': ['vtoken-context-source'],
   'VToken bridge': ['vtoken-bridge'],
+  'Workspace Context': ['working-memory-context-source', 'tool-registry-context-source'],
   'working-memory': ['working-memory-context-source'],
+  'tool-registry': ['tool-registry-context-source'],
   'Runtime Memory inject pilot': ['runtime-memory-store', 'dcs-context-authority'],
   'Runtime Memory shadow/provider/persist': ['runtime-memory-store', 'memory-candidate-queue', 'memory-embedding-provider'],
   'SEKB master': ['sekb-candidate-provider'],

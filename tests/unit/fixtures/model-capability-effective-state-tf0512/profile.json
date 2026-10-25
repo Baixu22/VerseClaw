@@ -109,8 +109,8 @@
         "capabilityId": "component.vtoken-context",
         "displayName": "VToken context source",
         "owner": "TF-0496",
-        "disposition": "experiment",
-        "visibility": "internal",
+        "disposition": "retired",
+        "visibility": "retired",
         "userEntry": null,
         "toolIdentity": {
           "id": "component.vtoken-context",
@@ -120,14 +120,14 @@
       },
       {
         "capabilityId": "component.vtoken-bridge",
-        "displayName": "VToken bridge",
+        "displayName": "VToken internal host bridge",
         "owner": "TF-0496",
-        "disposition": "experiment",
+        "disposition": "internal",
         "visibility": "internal",
         "userEntry": null,
         "toolIdentity": {
           "id": "component.vtoken-bridge",
-          "label": "VToken bridge",
+          "label": "VToken internal host bridge",
           "kind": "runtime-service"
         }
       },
@@ -146,14 +146,14 @@
       },
       {
         "capabilityId": "component.c6-context-ladder",
-        "displayName": "C6 context ladder source",
+        "displayName": "C6 context ladder source (internal API)",
         "owner": "TF-0493",
-        "disposition": "experiment",
+        "disposition": "internal",
         "visibility": "internal",
         "userEntry": null,
         "toolIdentity": {
           "id": "component.c6-context-ladder",
-          "label": "C6 context ladder source",
+          "label": "C6 context ladder source (internal API)",
           "kind": "runtime-service"
         }
       },
@@ -176,7 +176,7 @@
         "owner": "role-memory-card-governance",
         "disposition": "default",
         "visibility": "user",
-        "userEntry": "/agents memory cards",
+        "userEntry": "/memory accepted and candidate review",
         "toolIdentity": {
           "id": "component.role-memory",
           "label": "Agent memory cards",
@@ -219,6 +219,19 @@
         "toolIdentity": {
           "id": "component.memory-candidate-queue",
           "label": "Memory candidate queue",
+          "kind": "runtime-service"
+        }
+      },
+      {
+        "capabilityId": "component.dreaming-derived-cache",
+        "displayName": "Dreaming derived cache",
+        "owner": "dreaming-derived-cache",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.dreaming-derived-cache",
+          "label": "Dreaming derived cache",
           "kind": "runtime-service"
         }
       },
@@ -692,8 +705,8 @@
       }
     ]
   },
-  "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
-  "effectiveDigest": "sha256:c3dc8964624f96c1d210beb972556cbf49f64c5b72a76a4c391d6a2a8a88acb0",
+  "staticDigest": "sha256:8ed5632cc9ad7a7e545cb0e9aac991eebcb4e693c21f2f0ba3d01599c8c7d063",
+  "effectiveDigest": "sha256:b1611bd3c041605f4734b2158168536e3fc316ca565742bafd900d5486148dba",
   "entries": [
     {
       "capabilityId": "component.context-runtime-kit",
@@ -1121,8 +1134,8 @@
         "capabilityId": "component.vtoken-context",
         "displayName": "VToken context source",
         "owner": "TF-0496",
-        "disposition": "experiment",
-        "visibility": "internal",
+        "disposition": "retired",
+        "visibility": "retired",
         "userEntry": null,
         "toolIdentity": {
           "id": "component.vtoken-context",
@@ -1179,21 +1192,21 @@
       "capabilityId": "component.vtoken-bridge",
       "static": {
         "capabilityId": "component.vtoken-bridge",
-        "displayName": "VToken bridge",
+        "displayName": "VToken internal host bridge",
         "owner": "TF-0496",
-        "disposition": "experiment",
+        "disposition": "internal",
         "visibility": "internal",
         "userEntry": null,
         "toolIdentity": {
           "id": "component.vtoken-bridge",
-          "label": "VToken bridge",
+          "label": "VToken internal host bridge",
           "kind": "runtime-service"
         }
       },
       "tool": {
         "identity": {
           "id": "component.vtoken-bridge",
-          "label": "VToken bridge",
+          "label": "VToken internal host bridge",
           "kind": "runtime-service"
         },
         "callableName": null
@@ -1299,21 +1312,21 @@
       "capabilityId": "component.c6-context-ladder",
       "static": {
         "capabilityId": "component.c6-context-ladder",
-        "displayName": "C6 context ladder source",
+        "displayName": "C6 context ladder source (internal API)",
         "owner": "TF-0493",
-        "disposition": "experiment",
+        "disposition": "internal",
         "visibility": "internal",
         "userEntry": null,
         "toolIdentity": {
           "id": "component.c6-context-ladder",
-          "label": "C6 context ladder source",
+          "label": "C6 context ladder source (internal API)",
           "kind": "runtime-service"
         }
       },
       "tool": {
         "identity": {
           "id": "component.c6-context-ladder",
-          "label": "C6 context ladder source",
+          "label": "C6 context ladder source (internal API)",
           "kind": "runtime-service"
         },
         "callableName": null
@@ -1423,7 +1436,7 @@
         "owner": "role-memory-card-governance",
         "disposition": "default",
         "visibility": "user",
-        "userEntry": "/agents memory cards",
+        "userEntry": "/memory accepted and candidate review",
         "toolIdentity": {
           "id": "component.role-memory",
           "label": "Agent memory cards",
@@ -1625,6 +1638,66 @@
         "identity": {
           "id": "component.memory-candidate-queue",
           "label": "Memory candidate queue",
+          "kind": "runtime-service"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
+      "capabilityId": "component.dreaming-derived-cache",
+      "static": {
+        "capabilityId": "component.dreaming-derived-cache",
+        "displayName": "Dreaming derived cache",
+        "owner": "dreaming-derived-cache",
+        "disposition": "internal",
+        "visibility": "internal",
+        "userEntry": null,
+        "toolIdentity": {
+          "id": "component.dreaming-derived-cache",
+          "label": "Dreaming derived cache",
+          "kind": "runtime-service"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "component.dreaming-derived-cache",
+          "label": "Dreaming derived cache",
           "kind": "runtime-service"
         },
         "callableName": null
@@ -3874,15 +3947,122 @@
     }
   ],
   "promptAddition": {
-    "text": "Capability positioning (authoritative):\nDefault: Agent memory cards, Application shell and Settings, Approvals and action permissions, Coding recovery and verification, Coding tools and file execution, Context reading and search, Knowledge retrieval, Knowledge review, Skills and MCP connections, Task ledger, Tool context, Tool discovery, Workspace context.\nAdvanced: Billing and usage, Browser sessions, ClawGraph, Code review, Developer settings, Image generation, Inbox, Observability, Remote tasks, Scheduled tasks and auto-approval, Worktree isolation.\nCurrent restrictions: Agent memory cards=disabled+requires-approval; Application shell and Settings=disabled; Approvals and action permissions=disabled; Billing and usage=disabled; Browser sessions=disabled+requires-approval; ClawGraph=disabled; Code review=disabled; Coding recovery and verification=disabled; Coding tools and file execution=requires-approval; Context reading and search=disabled; Developer settings=disabled; Image generation=disabled; Inbox=disabled; Knowledge retrieval=disabled; Knowledge review=disabled; Observability=disabled; Remote tasks=disabled; Scheduled tasks and auto-approval=disabled; Skills and MCP connections=disabled; Task ledger=disabled; Tool context=disabled; Tool discovery=disabled; Workspace context=disabled; Worktree isolation=disabled.\nInternal and retired capabilities are not user-facing promises. Do not claim a capability beyond these listed facts.",
+    "text": "Capability positioning (authoritative):\nDefault: Agent memory cards, Application shell and Settings, Approvals and action permissions, Coding recovery and verification, Coding tools and file execution, Context reading and search, Knowledge retrieval, Knowledge review, Skills and MCP connections.\nCurrent restrictions: Agent memory cards=runtime:disabled+driver:disabled+propose:requires-approval+read:requires-approval+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Application shell and Settings=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Approvals and action permissions=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Coding recovery and verification=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Coding tools and file execution=runtime:enabled+driver:ready+apply_patch:requires-approval+edit:requires-approval+exec:allowed+write:requires-approval+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Context reading and search=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Knowledge retrieval=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Knowledge review=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Skills and MCP connections=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale.\nInternal and retired capabilities are not user-facing promises. Do not claim a capability beyond these listed facts.",
     "budget": {
       "maxChars": 2000,
-      "usedChars": 1458,
-      "remainingChars": 542,
+      "usedChars": 1871,
+      "remainingChars": 129,
       "chargedTo": "reserved-system-prompt",
       "workContextCharsUsed": 0
     },
-    "omittedCapabilityIds": []
+    "omittedCapabilityIds": [
+      "component.browser-session-owner",
+      "component.task-ledger",
+      "component.tool-registry-context",
+      "component.tool-search-schema-expander",
+      "component.working-memory-context",
+      "feature.worktree-isolation",
+      "settings.billing",
+      "settings.developer-advanced",
+      "surface.clawgraph",
+      "surface.code-review",
+      "surface.cron",
+      "surface.image-generation",
+      "surface.inbox",
+      "surface.observability",
+      "surface.remote-tasks"
+    ]
   },
-  "diagnostics": []
+  "diagnostics": [
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted feature.worktree-isolation",
+      "capabilityId": "feature.worktree-isolation"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted surface.cron",
+      "capabilityId": "surface.cron"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted surface.remote-tasks",
+      "capabilityId": "surface.remote-tasks"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted surface.observability",
+      "capabilityId": "surface.observability"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted surface.inbox",
+      "capabilityId": "surface.inbox"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted surface.image-generation",
+      "capabilityId": "surface.image-generation"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted settings.developer-advanced",
+      "capabilityId": "settings.developer-advanced"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted surface.code-review",
+      "capabilityId": "surface.code-review"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted surface.clawgraph",
+      "capabilityId": "surface.clawgraph"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted component.browser-session-owner",
+      "capabilityId": "component.browser-session-owner"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted settings.billing",
+      "capabilityId": "settings.billing"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted component.working-memory-context",
+      "capabilityId": "component.working-memory-context"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted component.tool-search-schema-expander",
+      "capabilityId": "component.tool-search-schema-expander"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted component.tool-registry-context",
+      "capabilityId": "component.tool-registry-context"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted component.task-ledger",
+      "capabilityId": "component.task-ledger"
+    }
+  ]
 }

@@ -75,32 +75,32 @@ The table below is the canonical component classification for this preview. Each
 | Component | Canonical label | Boundary |
 | --- | --- | --- |
 | DCS coding loop | `opt-in` | The first-product switch is off by default and requires verified provider, model, workspace, and permission prerequisites. |
-| Workspace Context | `default` | One user-level profile in Settings > General composes a bounded recent-action working window and compact tool/resource registry. It defaults on, follows the shared turn budget, and is controlled by one toggle; it is not long-term knowledge or approved memory. |
-| DCS Fact view tools | `opt-in` | Context read/search/understand tools remain a separately graduated tool surface; the baseline Workspace Context profile does not register them as side-effecting product tools. |
-| VToken turn assembly | `opt-in` | Explicit Developer/config enable only; the enhancement kill switch wins. |
-| SEKB automatic writeback | `deferred` | Human-confirmed review remains the only allowed write path. |
-| C6 automatic context ladder | `deferred` | No automatic assembler activation in this preview. |
+| Workspace Context | `default` | One Settings > General profile composes a bounded recent-action working window and compact tool/resource registry. It defaults on, follows the shared turn budget, and is controlled by one toggle; it is not long-term knowledge or approved memory. |
+| DCS Fact view tools | `default` | Context read/search/understand tools are discovered automatically when the workspace, FactService and permissions are healthy. The env flag remains an explicit rollback/override, not a product enablement step. |
+| VToken turn assembly | `retired` | The provider A/B fell below the predeclared materiality bar. Production assembly and the bridge are inert; rollback requires a new frozen protocol and another materiality pass. |
+| SEKB automatic writeback | `deferred` | Explicit review remains the only allowed write path; shadow candidates cannot apply or overwrite knowledge. |
+| C6 automatic context ladder | `internal` | Explicit internal assembler request API for tests and diagnostics; there is no automatic or user-level activation. |
 | C7 knowledge/routing cutover | `deferred` | Shadow evidence does not grant routing authority. |
-| Coding WAL | `deferred` | Write journal remains the recovery authority for this preview. |
-| Browser supervised workflows | `experimental` | Supervised use only; unsupervised and private-network expansion are excluded. |
-| Runtime Memory injection | `diagnostics-only` | May expose diagnostics, but does not enter the first-product production injection path. |
+| Coding WAL | `default` | The write journal remains the recovery authority for supported coding writes; stale-write guard and auto-verification report explicit failures rather than silently retrying. |
+| Browser supervised workflows | `advanced` | Supervised browser tasks are available as an advanced capability; private-network navigation remains default-deny and always needs a bounded session/origin approval. |
+| Runtime Memory injection | `diagnostics-only` | Diagnostics and the review surface are available, but candidate facts do not enter the production model prompt. |
 | Surfaces listed in RETIRED-SURFACES.md | `retired` | Removed surfaces stay removed and cannot be used as current capability evidence. |
 <!-- FP-P1-08-COMPONENT-STATUS-END -->
 
-The table above is the controlled-preview baseline snapshot. Its labels remain the current runtime baseline until a component-specific graduation decision changes both behavior and documentation. TF-0488 changed no value; TF-0494 graduated only the Workspace Context pair and recorded its agent-driven canary, effective-state and rollback evidence in the owning node. Under the 2026-09-27 owner policy, real-human evidence is no longer a prerequisite; agent-driven evidence may support a later decision only when it records `driven_by: agent` with a concrete actor and is backed by the current production path, rollback, and model-effective-state evidence. The excluded and default-off details remain locked by `docs/dev/default-config-matrix.md`, `docs/dev/first-product-controlled-preview/STATUS.md`, and the [D9 scope ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md).
+The table above is the current controlled-preview component classification after the 2026-10-24 graduation pass. Every changed label is backed by the owning node's production path, rollback, model-effective-state and agent-driven evidence; TF-0506 only synchronizes those decisions into user-facing and release-facing text. Under the 2026-09-27 owner policy, real-human evidence is not a prerequisite and is not claimed. The excluded, deferred and default-deny details remain locked by `docs/dev/default-config-matrix.md`, `docs/dev/first-product-controlled-preview/STATUS.md`, and the [D9 scope ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md).
 
 ## Component Graduation Scope (D9)
 
 D9 moves the current internal workstream from showcase-only closing to evidence-backed component graduation without changing the release boundary. In scope are component inventory and disposition, the decision path for default/advanced/internal/experiment/retired outcomes, model-facing capability self-description, and agent-driven automatic acceptance. Default graduation means the owning node may change a specific product default after its predeclared gates pass; it does not create a blanket enablement path.
 
-The following boundaries remain outside automatic authority and are not changed by TF-0488:
+The following boundaries remain outside automatic authority after the graduation pass:
 
 - public release, general availability, live readiness, or product approval;
-- any product-lock change or product default outside an owning node’s evidence-backed decision;
+- any product-lock change or product default without a matching owner decision and evidence;
 - VerseGit nodes, worktrees, and product files;
-- implementation of TF-0489 or any later Context, Memory, Knowledge, Capability, Browser, or VerseShell node before that node is explicitly activated.
+- treating an internal, retired, experiment or shadow classification as proof that its implementation or migration work was completed.
 
-“Default graduation” means a component can be evaluated and decided into a default mode through the component evidence matrix; it is not a blanket enablement or an automatic value flip, and public release, GA, live readiness and product approval remain unauthorized. “Automatic acceptance” means an agent can execute checks, write evidence, and read results back from disk. It does not grant release approval. A green test, a wiring site, or a completed Task Forest node is necessary evidence, not a substitute for production-path, benefit, rollback, effective-state, and explicit-decision evidence.
+“Default graduation” means a component can be evaluated and decided into a default mode through the component evidence matrix; it is not a blanket enablement or an automatic value flip, and public release, general availability, live readiness and product approval remain unauthorized. “Automatic acceptance” means an agent can execute checks, write evidence, and read results back from disk. It does not grant release approval. A green test, a wiring site, or a completed Task Forest node is necessary evidence, not a substitute for production-path, benefit, rollback, effective-state, and explicit-decision evidence.
 
 Agent evidence must remain `driven_by: agent` with a concrete actor. Zero real-human evidence is a retained fact, not an open/blocked condition. See the [D9 ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md) and the [current constraint matrix](dev/component-graduation-scope-matrix-20261021.md).
 

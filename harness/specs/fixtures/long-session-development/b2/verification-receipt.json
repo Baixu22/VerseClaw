@@ -1,4 +1,4 @@
-﻿{
+{
     "schema":  "clawx.long-session.b2-verification/v1",
     "driven_by":  "agent",
     "actor":  "codex-long-session-b2",

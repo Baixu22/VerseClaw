@@ -702,7 +702,7 @@
     "contextLayers": {
       "title": "上下文三层请勿混淆",
       "cvkTitle": "Context Runtime Kit（CVK）— 导航壳",
-      "cvkBody": "默认上下文引擎壳：向 system prompt 注入路由/工具导航元数据。**不等于**工作记忆或长期知识已开启。关闭 DCS/VToken 并不会去掉该壳，除非改 context-engine 插槽。",
+      "cvkBody": "默认上下文引擎壳：向 system prompt 注入路由/工具导航元数据。**不等于**工作记忆或长期知识已开启。VToken 已退役；关闭 DCS 或其他诊断开关并不会去掉该壳，除非改 context-engine 插槽。",
       "dcsTitle": "DCS — 工作记忆与 Context Blocks",
       "dcsBody": "可选的 BlockStore 脊柱：working-memory 注入、tool_registry 摘要、knowledge 块与 context_* 工具。默认 fail-closed，需在本面板显式开启。这是真实记忆/内容管线，不是 CVK 导航壳。"
     },

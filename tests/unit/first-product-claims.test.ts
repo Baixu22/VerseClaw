@@ -11,13 +11,14 @@ const rootDir = process.cwd();
 
 const expectedComponentLabels = new Map([
   ['DCS coding loop', 'opt-in'],
-  ['DCS Fact view and tool registry', 'opt-in'],
-  ['VToken turn assembly', 'internal'],
+  ['Workspace Context', 'default'],
+  ['DCS Fact view tools', 'default'],
+  ['VToken turn assembly', 'retired'],
   ['SEKB automatic writeback', 'deferred'],
   ['C6 automatic context ladder', 'internal'],
   ['C7 knowledge/routing cutover', 'deferred'],
-  ['Coding WAL', 'deferred'],
-  ['Browser supervised workflows', 'experimental'],
+  ['Coding WAL', 'default'],
+  ['Browser supervised workflows', 'advanced'],
   ['Runtime Memory injection', 'diagnostics-only'],
   ['Surfaces listed in RETIRED-SURFACES.md', 'retired'],
 ]);

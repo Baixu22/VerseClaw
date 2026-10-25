@@ -1,0 +1,9 @@
+pnpm.cmd : $ node scripts/i18n-lint.mjs
+At D:\ClawX-work\component-graduation-20261021\tests\unit\fixtures\product-semantics-tf0506\run-verification.ps1:13 cha
+r:15
++     $output = & $argv[0] @($argv[1..($argv.Count - 1)]) 2>&1 | Out-St ...
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ node scripts/i18n-lint.mjs:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+i18n lint passed.

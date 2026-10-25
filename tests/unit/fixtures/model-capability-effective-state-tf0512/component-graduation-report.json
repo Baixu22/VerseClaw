@@ -17,8 +17,8 @@
   "driven_by": "agent",
   "expiry": null,
   "binding": {
-    "commit": "9a3226d41206fa66e12357279d34fe018aca2024",
-    "tree": "2445aa0dc47e39f0d42f1519f86fe00eb5639354",
+    "commit": "6f8aa148d7c5ddaa61fa6d687d89227943db64f8",
+    "tree": "40b687a5ea8392e8e0a24cd14f8b455f55c70506",
     "runtimeGeneration": "gateway-tf0512",
     "provider": "not-applicable",
     "model": "not-applicable",
@@ -47,13 +47,13 @@
       },
       {
         "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
-        "sha256": "83bb4ebebe67abdf03df2b43f1c18cb6d9c30b52a723989e4c34d77bab9afbca",
-        "bytes": 22924
+        "sha256": "09ef6d47726de5450e71d1e9b6f99b27a73a7d82e38e5d083c45e9d24f28c7a2",
+        "bytes": 23336
       },
       {
         "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json",
-        "sha256": "d736905106f301a96ef08ec911d7ff9a5c2b4d52533c19ba382bb28835f8070d",
-        "bytes": 113530
+        "sha256": "157779f73910fe376bbc434f65e73d445fdabd67981e5303d46103f8efaeb6a7",
+        "bytes": 119687
       }
     ]
   },
@@ -66,8 +66,8 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
-          "sha256": "83bb4ebebe67abdf03df2b43f1c18cb6d9c30b52a723989e4c34d77bab9afbca",
-          "bytes": 22924
+          "sha256": "09ef6d47726de5450e71d1e9b6f99b27a73a7d82e38e5d083c45e9d24f28c7a2",
+          "bytes": 23336
         },
         {
           "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/acceptance.json",

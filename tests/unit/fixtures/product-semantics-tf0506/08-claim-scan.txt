@@ -1,0 +1,4 @@
+[first-product-claims] scanned 16 current product surfaces
+[first-product-claims] repository matches 10073 across 650 paths
+[first-product-claims] current product violations 0
+[first-product-claims] report artifacts/first-product-preview/FP-P1-08/forbidden-claims-scan.json

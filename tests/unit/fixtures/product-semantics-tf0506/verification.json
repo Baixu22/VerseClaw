@@ -1,0 +1,83 @@
+{
+    "schemaVersion":  "ProductSemanticsVerification/v1",
+    "taskForestNodeId":  "TF-0506",
+    "generatedAt":  "2026-10-25T03:44:42.6695921Z",
+    "driven_by":  "agent",
+    "actor":  "codex",
+    "status":  "pass",
+    "completionVerdict":  "complete",
+    "gates":  [
+                  {
+                      "id":  "01-focused-tests",
+                      "command":  "six focused component/document/claim suites",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/01-focused-tests.txt",
+                      "outputSha256":  "6a04c5ed72a98fa27d452f10f23e9ec2b36beaeafd4c2925f0bd558182df5484"
+                  },
+                  {
+                      "id":  "02-typecheck",
+                      "command":  "pnpm run typecheck",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/02-typecheck.txt",
+                      "outputSha256":  "afd978364842bac91f774d974ef4a3428a30d8eceb59e15e50b21c81e5410ca8"
+                  },
+                  {
+                      "id":  "03-i18n-lint",
+                      "command":  "pnpm run i18n:lint",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/03-i18n-lint.txt",
+                      "outputSha256":  "4aee954f8d57cddb1e16cc017e1edcbb4dfc1aee67075c020852d43d5641f5ff"
+                  },
+                  {
+                      "id":  "04-lint",
+                      "command":  "pnpm run lint",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/04-lint.txt",
+                      "outputSha256":  "e67098df35e3582cb470b56bf59ef107e1992f6be7e3cbb8b8ed7ecb052fc782"
+                  },
+                  {
+                      "id":  "05-contract-check",
+                      "command":  "pnpm run contract:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/05-contract-check.txt",
+                      "outputSha256":  "31a439276156b35819c51c3ff99c614e9656b87be57f1e2cef58aec60e1e7f65"
+                  },
+                  {
+                      "id":  "06-catalogs-check",
+                      "command":  "pnpm catalogs:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/06-catalogs-check.txt",
+                      "outputSha256":  "96ed580a477e921e18c7089c8c6b52c5590a45b1d7323336c679d275a31a60bf"
+                  },
+                  {
+                      "id":  "07-no-bom",
+                      "command":  "node scripts/check-no-bom.mjs",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/07-no-bom.txt",
+                      "outputSha256":  "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa"
+                  },
+                  {
+                      "id":  "08-claim-scan",
+                      "command":  "node scripts/scan-first-product-claims.mjs",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/08-claim-scan.txt",
+                      "outputSha256":  "fed82315bde5aa6ecea2fce1ed61cf7d530c758dd3eb6ada1e1ab7d8e3f944e3"
+                  },
+                  {
+                      "id":  "09-diff-check",
+                      "command":  "git diff --check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/09-diff-check.txt",
+                      "outputSha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  }
+              ]
+}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Activity,
   AlertCircle,
@@ -86,7 +86,6 @@ import qqIcon from '@/assets/channels/qq.svg';
 
 export function Agents({ embedded = false }: { embedded?: boolean } = {}) {
   const { t } = useTranslation('agents');
-  const location = useLocation();
   const gatewayStatus = useGatewayStore((state) => state.status);
   const refreshProviderSnapshot = useProviderStore((state) => state.refreshProviderSnapshot);
   const lastGatewayStateRef = useRef(gatewayStatus.state);
