@@ -32,6 +32,26 @@ touchedAreas:
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
+  - README.ru-RU.md
+  - artifacts/capability-claims/status-table.json
+  - artifacts/first-product-preview/FP-P1-08/forbidden-claims-scan.json
+  - docs/dev/dcs-visible-production/RETIRED-SURFACES.md
+  - scripts/render-component-disposition-matrix.mts
+  - shared/capability-claims.ts
+  - shared/dcs/prod-flags-control.ts
+  - shared/i18n/locales/en/settings.json
+  - shared/i18n/locales/ja/settings.json
+  - shared/i18n/locales/ru/settings.json
+  - shared/i18n/locales/zh/settings.json
+  - tests/fixtures/launch-contract-matrix.ts
+  - tests/unit/capability-claims.test.ts
+  - tests/unit/default-config-matrix.test.ts
+  - tests/unit/first-product-claims.test.ts
+  - tests/unit/model-capability-profile.test.ts
+  - tests/unit/fixtures/component-graduation-tf0508/**
+  - tests/unit/fixtures/model-capability-effective-state-tf0512/**
+  - tests/unit/fixtures/model-positioning-tf0507/**
+  - tests/unit/fixtures/product-semantics-tf0506/**
 requiredRules:
   - backend-communication-boundary
   - comms-regression
@@ -76,3 +96,6 @@ VerseGit closure uses its own report and proposal.
 The listed final-audit paths belong to that same reviewed change set. They
 reconcile the existing dispositions and source coverage without widening the
 24-scenario model protocol or changing product defaults.
+The concurrent mainline's component fixtures remain historical inputs. Their
+model, repetition count and candidate bindings do not transfer to the merged
+production prompt; the complete declared protocol must be run again.

@@ -118,7 +118,8 @@
     "tests/unit/rc10-driver-entrypoint.test.ts",
     "docs/dev/memory-control-plane.md",
     "harness/specs/tasks/memory-control-plane-authority.md",
-    "harness/specs/tasks/memory-user-surface.md"
+    "harness/specs/tasks/memory-user-surface.md",
+    "harness/specs/fixtures/long-session-development/d1/typecheck-errors.log"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",

@@ -31,6 +31,26 @@ touchedAreas:
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
+  - README.ru-RU.md
+  - artifacts/capability-claims/status-table.json
+  - artifacts/first-product-preview/FP-P1-08/forbidden-claims-scan.json
+  - docs/dev/dcs-visible-production/RETIRED-SURFACES.md
+  - scripts/render-component-disposition-matrix.mts
+  - shared/capability-claims.ts
+  - shared/dcs/prod-flags-control.ts
+  - shared/i18n/locales/en/settings.json
+  - shared/i18n/locales/ja/settings.json
+  - shared/i18n/locales/ru/settings.json
+  - shared/i18n/locales/zh/settings.json
+  - tests/fixtures/launch-contract-matrix.ts
+  - tests/unit/capability-claims.test.ts
+  - tests/unit/default-config-matrix.test.ts
+  - tests/unit/first-product-claims.test.ts
+  - tests/unit/model-capability-profile.test.ts
+  - tests/unit/fixtures/component-graduation-tf0508/**
+  - tests/unit/fixtures/model-capability-effective-state-tf0512/**
+  - tests/unit/fixtures/model-positioning-tf0507/**
+  - tests/unit/fixtures/product-semantics-tf0506/**
 requiredRules:
   - task-forest-autoclose-and-roles
   - repository-artifact-retention
@@ -54,3 +74,8 @@ original scope, dates, failure cases and measurements. A new audit does not turn
 an unmeasured platform, provider, installed UI or general-availability boundary
 into a pass. Source, fixtures and current implementation checks support routine
 closure; publishing and frozen product decisions remain separate.
+
+The declared paths include the component graduation changes integrated from
+the concurrent mainline and their retained historical fixtures. Those runs
+keep their original candidates. A changed production prompt requires a new
+complete positioning run before the final closure can cite the merged source.
