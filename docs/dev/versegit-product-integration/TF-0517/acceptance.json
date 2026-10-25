@@ -1,0 +1,225 @@
+{
+  "schemaVersion": "VerseGitParentAcceptance/v1",
+  "actor": "codex-relay",
+  "driven_by": "agent",
+  "generatedAt": "2026-10-25T10:03:07.099357+00:00",
+  "task": "TF-0517",
+  "status": "verified",
+  "currentSource": {
+    "branch": "codex/nine-node-closeout-20261025",
+    "commit": "2615c6b1d30969ffef30a10117d6701e28499fa5",
+    "tree": "e0c83867fdcf75b4073d0a355a66fadf722e3f31",
+    "dirty": false
+  },
+  "currentCandidateId": "d4ac2b9c4e2d33c41e0acdd67dd82265f2fefada29e80159628ca8d202362b6c",
+  "criteria": [
+    {
+      "id": "risk-observation",
+      "status": "passed",
+      "evidence": [
+        "a1/current-verification.json",
+        "a1/current-input-manifest.json",
+        "a1/historical-evidence-index.json",
+        "a2/build-identity.json",
+        "a2/electron-startup.json",
+        "a2/smoke-results.json",
+        "b1/adapter-differential.json",
+        "b1/mode-effect-matrix.json",
+        "b1/authority-negative.json",
+        "b2/diagnostic-contract.json",
+        "b2/host-invoke.json",
+        "b2/negative-host-requests.json",
+        "c1/runtime-bindings.json",
+        "c1/binding-negative.json",
+        "c2/coverage.json",
+        "c2/observation-links.json",
+        "c2/basis-race-cases.json"
+      ],
+      "recompute": "Replays A1/A2/B1/B2/C1/C2 counters, source/tree ancestry, SHA256SUMS, production callers and negative cases."
+    },
+    {
+      "id": "agent-feedback",
+      "status": "passed",
+      "evidence": [
+        "d1/feedback-delivery.json",
+        "d1/next-call-binding.json",
+        "d1/transcript-index.json",
+        "d2/paired-results.json",
+        "d2/behavior-evidence.json",
+        "d2/paired-input-manifest.json"
+      ],
+      "recompute": "Replays D1 delivery levels/next-call binding and D2 paired positive/negative control counts from retained trials."
+    },
+    {
+      "id": "candidate-pre-verification",
+      "status": "passed",
+      "evidence": [
+        "e1/candidate-manifest.json",
+        "e1/target-before-after.json",
+        "e1/candidate-negative.json",
+        "e2/plans.json",
+        "e2/execution-receipts.json",
+        "e3/ordering-trace.json"
+      ],
+      "recompute": "Replays E1 freeze/target negatives, E2 receipt-bound governed runs and E3 ordering indices."
+    },
+    {
+      "id": "persistent-result",
+      "status": "passed",
+      "evidence": [
+        "f1/completion-contract.json",
+        "f1/persisted-outcomes.json",
+        "f1/restart-lifecycle.json"
+      ],
+      "recompute": "Replays F1 completion mapping, duplicate/epoch negatives and restart persistence."
+    },
+    {
+      "id": "host-writeback",
+      "status": "passed",
+      "evidence": [
+        "e3/apply-decision.json",
+        "e3/ordering-trace.json",
+        "e3/write-journal-index.json",
+        "e3/toctou-negative.json"
+      ],
+      "recompute": "Replays E3 combined verification/apply order, grant checkpoint, write-journal/undo and authority boundaries."
+    },
+    {
+      "id": "cleanup",
+      "status": "passed",
+      "evidence": [
+        "f2/cleanup-barrier.json",
+        "f2/recovery-required.json",
+        "f2/resource-inventory.json",
+        "f4/resource-survivors.json"
+      ],
+      "recompute": "Replays F2 barrier/recovery/inventory cases and F4 ten-loop survivor totals."
+    },
+    {
+      "id": "package",
+      "status": "passed",
+      "evidence": [
+        "f3/sidecar-package-manifest.json",
+        "f3/build-provenance.json",
+        "f3/package-negative.json"
+      ],
+      "recompute": "Replays F3 package manifest/provenance/negative cases and tracked manifest/license identity; ignored binary is hashed when present."
+    },
+    {
+      "id": "bounded-stability",
+      "status": "passed",
+      "evidence": [
+        "f4/packaged-flow.json",
+        "f4/stability-report.json",
+        "f4/stability-samples.jsonl",
+        "f4/resource-survivors.json"
+      ],
+      "recompute": "Recomputes F4 sample count, P50/P95, peak RSS, failure/duplicate/survivor counts and checks frozen budgets."
+    },
+    {
+      "id": "docs-capability-authority",
+      "status": "passed",
+      "evidence": [
+        "docs/dev/versegit-validation-layer/README.md",
+        "docs/clawx-product-semantics.md",
+        "shared/component-authority-manifest.ts",
+        "README.md",
+        "README.zh-CN.md",
+        "README.ja-JP.md",
+        "harness/specs/rules/task-forest-autoclose-and-roles.md"
+      ],
+      "recompute": "Scans READMEs, controlled-preview lock, host authority/manifest and Task Forest closeout rule for current claim agreement."
+    }
+  ],
+  "checks": 59,
+  "evidenceGroups": 15,
+  "evidenceFiles": 66,
+  "currentImplementationTests": {
+    "name": "current-versegit-unit-package",
+    "command": [
+      "node",
+      "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+      "exec",
+      "vitest",
+      "run",
+      "tests/unit/versegit-host-apply.test.ts",
+      "tests/unit/versegit-host-api.test.ts",
+      "tests/unit/versegit-fact-adapter.test.ts",
+      "tests/unit/versegit-candidate-receipts.test.ts",
+      "tests/unit/versegit-candidate-freeze.test.ts",
+      "tests/unit/versegit-cleanup-barrier.test.ts",
+      "tests/unit/versegit-completion-lifecycle.test.ts",
+      "tests/unit/versegit-feedback-delivery.test.ts",
+      "tests/unit/versegit-observation-basis.test.ts",
+      "tests/unit/versegit-receipt-authority.test.ts",
+      "tests/unit/versegit-runtime-bindings.test.ts",
+      "tests/unit/versegit-sidecar-delivery.test.ts",
+      "tests/unit/versegit-stability-report.test.ts",
+      "tests/unit/versegit-product-acceptance.test.ts",
+      "--maxWorkers=2",
+      "--reporter=dot"
+    ],
+    "cwd": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\candidate-source",
+    "exit_code": 0,
+    "elapsed_seconds": 61.911,
+    "log": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\current-versegit-unit-package.log",
+    "logSha256": "930628b7dbb975da666cde495a42e283ea857c99e75a26a8bcaa64420a1d846b",
+    "passedFiles": 14,
+    "passedTests": 73
+  },
+  "priorImplementationAttempt": {
+    "name": "current-versegit-unit",
+    "command": [
+      "node",
+      "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+      "exec",
+      "vitest",
+      "run",
+      "tests/unit/versegit-host-apply.test.ts",
+      "tests/unit/versegit-host-api.test.ts",
+      "tests/unit/versegit-fact-adapter.test.ts",
+      "tests/unit/versegit-candidate-receipts.test.ts",
+      "tests/unit/versegit-candidate-freeze.test.ts",
+      "tests/unit/versegit-cleanup-barrier.test.ts",
+      "tests/unit/versegit-completion-lifecycle.test.ts",
+      "tests/unit/versegit-feedback-delivery.test.ts",
+      "tests/unit/versegit-observation-basis.test.ts",
+      "tests/unit/versegit-receipt-authority.test.ts",
+      "tests/unit/versegit-runtime-bindings.test.ts",
+      "tests/unit/versegit-sidecar-delivery.test.ts",
+      "tests/unit/versegit-stability-report.test.ts",
+      "tests/unit/versegit-product-acceptance.test.ts",
+      "--maxWorkers=2",
+      "--reporter=dot"
+    ],
+    "cwd": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\candidate-source",
+    "exit_code": 1,
+    "elapsed_seconds": 60.311,
+    "log": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\current-versegit-unit.log",
+    "logSha256": "629a23e322ee6a2449cf60d34544a1e8c5d27a0b135b67b653802ad8cfb6dc12"
+  },
+  "historicalIndependentPriority": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 6
+  },
+  "oldF5Identity": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "fb57c050137b6bbabc0c77bd1660e01b31612f6a",
+    "tree": "0535ed5fc5a7f749c58e20401b5cd09a43007ded",
+    "dirty": false
+  },
+  "historicalReportCurrentCandidate": false,
+  "decision": "Current source checks and retained real-effect evidence pass. Original F5 input drift and six P2/unmeasured boundaries remain explicit; none is re-labelled as a fresh installation or live-provider measurement.",
+  "posture": {
+    "productLocksChanged": false,
+    "M4Authorized": false,
+    "publicRelease": false,
+    "generalAvailability": false
+  },
+  "evidence": [
+    "evidence-readback.json",
+    "harness/specs/fixtures/versegit-product-integration/f5/global-acceptance.json",
+    "harness/specs/fixtures/versegit-product-integration/f5/independent-verdict.json"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "CapabilityCatalogABReadback/v1",
+  "actor": "codex-relay-ab-verifier",
+  "driven_by": "agent",
+  "generatedAt": "2026-10-25T10:12:02.542Z",
+  "pass": true,
+  "pairs": 40,
+  "actual": {
+    "totalCalls": 80,
+    "controlPass": 4,
+    "treatmentPass": 12,
+    "controlInputTokens": 12497,
+    "treatmentInputTokens": 10617
+  },
+  "successDeltaCi": {
+    "lower": 0.075,
+    "upper": 0.325,
+    "mean": 0.2
+  },
+  "inputTokenReductionCi": {
+    "lower": 47,
+    "upper": 47,
+    "mean": 47
+  },
+  "protocolSha256": "3aec40d7255b56efea481facf6d8896392557b1a059df947863bc911f4eca4cb",
+  "originalVerdicts": {
+    "v1": "fail",
+    "v2": "pass"
+  },
+  "missingReference": "09-ab-readback.txt was never generated; run-verification.ps1 records ab-run-v2.json as the actual output.",
+  "issues": [],
+  "limitation": "This replays the retained space-bunny input set and reported usage. It does not make a universal model or current latency claim."
+}

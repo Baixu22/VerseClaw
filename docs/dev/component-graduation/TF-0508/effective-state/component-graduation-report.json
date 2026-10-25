@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "tf-0512-model-capability-effective-state",
+  "reportKind": "runtime-integration",
+  "componentId": "model-capability-profile",
+  "taskForestNodeId": "TF-0512",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "TF-0512",
+  "entryPoint": "openclaw_runtime/src/context-engine/model-capability-prompt.ts",
+  "defaultMode": "internal",
+  "benefitEvidence": "Every default context-runtime-kit assemble refreshes a bounded capability profile from the admitted tool surface, runtime ack, grants, quarantine, memory and knowledge inputs.",
+  "rollback": "Remove the capability prompt bridge call from LegacyContextEngine; the prior pass-through assembly remains available and no product default changes.",
+  "modelEffectiveState": "Current tool inventory and runtime ack are read per assemble; missing/stale ack yields unknown availability, and grant expiry/revocation/config kill switch are reflected before prompt projection.",
+  "evidenceGrade": "unit-test",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "2615c6b1d30969ffef30a10117d6701e28499fa5",
+    "tree": "e0c83867fdcf75b4073d0a355a66fadf722e3f31",
+    "runtimeGeneration": "gateway-tf0512",
+    "provider": "not-applicable",
+    "model": "not-applicable",
+    "inputSet": "raw-evidence.json; profile.json; tests/unit/model-capability-effective-state-tf0512.test.ts",
+    "scope": "workspace:component-graduation/session:tf0512",
+    "artifacts": [
+      {
+        "path": "openclaw_runtime/src/runtime-core/model-capability-effective-state.ts",
+        "sha256": "420b029e938eef182eeed817d0608309155a366ccf86fd617aace0011e2f6fc9",
+        "bytes": 19912
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/model-capability-prompt.ts",
+        "sha256": "52d7af389456587c194b7d380b9d0f9ed3fc50882cb571cda47ac0dca303d8a3",
+        "bytes": 3605
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/legacy.ts",
+        "sha256": "733cdf3d820eed643e0c45016d333aa534bcb54196084ed529cd9eb442374efc",
+        "bytes": 6551
+      },
+      {
+        "path": "tests/unit/model-capability-effective-state-tf0512.test.ts",
+        "sha256": "5a77defcf270b6040374151b4f820e8eaccc03dc793a8fb6350b36eb8b41de7b",
+        "bytes": 18057
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
+        "sha256": "7e1f536639b2da0c8a6cd6098a77391d44bd6c7bf1f288a5b13990f74c7fa684",
+        "bytes": 22906
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json",
+        "sha256": "3eb22fb313ea5ddbaeb1126b198a22b3e9f32a16300026befcb2b4fdedcd7e99",
+        "bytes": 115852
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "runtime-state-adapter",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "Five acceptance criteria map to generated state, digest, grant, restart and tool-outcome checks.",
+      "artifacts": [
+        {
+          "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
+          "sha256": "7e1f536639b2da0c8a6cd6098a77391d44bd6c7bf1f288a5b13990f74c7fa684",
+          "bytes": 22906
+        },
+        {
+          "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/acceptance.json",
+          "sha256": "5ec8db90b511dbe4c02b6dda9ef1a9eeecdc04f354bfb754be942a1ca8559295",
+          "bytes": 1933
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "command": "pnpm exec tsx tests/unit/fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts"
+  }
+}

@@ -1,0 +1,3268 @@
+{
+  "actor": "codex-relay-component-reader",
+  "driven_by": "agent",
+  "sourceCandidate": {
+    "commit": "2615c6b1d30969ffef30a10117d6701e28499fa5",
+    "tree": "e0c83867fdcf75b4073d0a355a66fadf722e3f31",
+    "dirty": false
+  },
+  "components": [
+    {
+      "component": "component.context-runtime-kit",
+      "disposition": "internal",
+      "ownerNode": "TF-0493",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Context Orchestrator",
+        "DCS Assembler",
+        "context candidates"
+      ]
+    },
+    {
+      "component": "component.dcs-context-authority",
+      "disposition": "internal",
+      "ownerNode": "TF-0493",
+      "remainingGap": [],
+      "currentConsumers": [
+        "ordinary Chat turns",
+        "Context Orchestrator",
+        "PromptPlan"
+      ]
+    },
+    {
+      "component": "component.dcs-assembler-adapter",
+      "disposition": "internal",
+      "ownerNode": "TF-0493",
+      "remainingGap": [],
+      "currentConsumers": [
+        "legacy context blocks",
+        "Context Orchestrator"
+      ]
+    },
+    {
+      "component": "component.provider-request-guard",
+      "disposition": "internal",
+      "ownerNode": "TF-0493",
+      "remainingGap": [],
+      "currentConsumers": [
+        "provider transport",
+        "turn receipts"
+      ]
+    },
+    {
+      "component": "component.context-enhancement-gate",
+      "disposition": "internal",
+      "ownerNode": "TF-0493",
+      "remainingGap": [],
+      "currentConsumers": [
+        "DCS Assembler",
+        "Context Orchestrator",
+        "VToken/memory/CVK paths"
+      ]
+    },
+    {
+      "component": "component.working-memory-context",
+      "disposition": "default",
+      "ownerNode": "TF-0494",
+      "remainingGap": [],
+      "currentConsumers": [
+        "DCS Assembler",
+        "Context Orchestrator",
+        "Task Ledger working context",
+        "Settings > General Workspace Context"
+      ]
+    },
+    {
+      "component": "component.tool-registry-context",
+      "disposition": "default",
+      "ownerNode": "TF-0494",
+      "remainingGap": [],
+      "currentConsumers": [
+        "DCS Assembler",
+        "Context Orchestrator",
+        "tool registry"
+      ]
+    },
+    {
+      "component": "component.vtoken-context",
+      "disposition": "retired",
+      "ownerNode": "TF-0496",
+      "remainingGap": [],
+      "currentConsumers": []
+    },
+    {
+      "component": "component.vtoken-bridge",
+      "disposition": "internal",
+      "ownerNode": "TF-0496",
+      "remainingGap": [],
+      "currentConsumers": [
+        "internal diagnostics",
+        "vtoken package tests"
+      ]
+    },
+    {
+      "component": "component.compass-context",
+      "disposition": "internal",
+      "ownerNode": "TF-0511",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Context Orchestrator",
+        "DCS Assembler",
+        "COMPASS context block"
+      ]
+    },
+    {
+      "component": "component.c6-context-ladder",
+      "disposition": "internal",
+      "ownerNode": "TF-0493",
+      "remainingGap": [],
+      "currentConsumers": [
+        "DCS Assembler internal request API",
+        "context-ladder unit/live-corpus tests"
+      ]
+    },
+    {
+      "component": "component.dcs-context-tools",
+      "disposition": "default",
+      "ownerNode": "TF-0495",
+      "remainingGap": [],
+      "currentConsumers": [
+        "context_read",
+        "context_search",
+        "context_understand",
+        "tool catalog"
+      ]
+    },
+    {
+      "component": "component.role-memory",
+      "disposition": "default",
+      "ownerNode": "TF-0498",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Agents page",
+        "role-memory SQLite",
+        "Memory review"
+      ]
+    },
+    {
+      "component": "component.native-file-memory-retrieval",
+      "disposition": "internal",
+      "ownerNode": "TF-0497",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Memory retrieval",
+        "hybrid search",
+        "role memory"
+      ]
+    },
+    {
+      "component": "component.runtime-memory-store",
+      "disposition": "internal",
+      "ownerNode": "TF-0497",
+      "remainingGap": [],
+      "currentConsumers": [
+        "runtime facts/timeline/episodes",
+        "Memory diagnostics",
+        "context candidate source"
+      ]
+    },
+    {
+      "component": "component.memory-candidate-queue",
+      "disposition": "internal",
+      "ownerNode": "TF-0497",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Runtime Memory extraction",
+        "Memory review queue"
+      ]
+    },
+    {
+      "component": "component.dreaming-derived-cache",
+      "disposition": "internal",
+      "ownerNode": "TF-0497",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Dreams diagnostics",
+        "runtime memory maintenance"
+      ]
+    },
+    {
+      "component": "component.memory-embedding-provider",
+      "disposition": "internal",
+      "ownerNode": "TF-0497",
+      "remainingGap": [],
+      "currentConsumers": [
+        "hybrid memory retrieval",
+        "memory candidate ranking"
+      ]
+    },
+    {
+      "component": "component.knowledge-review-authority",
+      "disposition": "default",
+      "ownerNode": "TF-0499",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Knowledge page",
+        "source/draft/proposal/applied workflow",
+        "memory-wiki"
+      ]
+    },
+    {
+      "component": "component.knowledge-retrieval-source",
+      "disposition": "default",
+      "ownerNode": "TF-0499",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Knowledge retrieval",
+        "DCS knowledge candidate source",
+        "source sets"
+      ]
+    },
+    {
+      "component": "component.sekb-candidate-provider",
+      "disposition": "internal",
+      "ownerNode": "TF-0499",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Knowledge engineering-principle candidates",
+        "Knowledge review"
+      ]
+    },
+    {
+      "component": "component.v3-capability-catalog",
+      "disposition": "internal",
+      "ownerNode": "TF-0501",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Tool Search",
+        "Skills/MCP source registry",
+        "model capability self-description"
+      ]
+    },
+    {
+      "component": "component.skills-mcp-source-registry",
+      "disposition": "default",
+      "ownerNode": "TF-0502",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Skills page",
+        "Channels/MCP configuration",
+        "Tool Search"
+      ]
+    },
+    {
+      "component": "component.tool-search-schema-expander",
+      "disposition": "default",
+      "ownerNode": "TF-0502",
+      "remainingGap": [],
+      "currentConsumers": [
+        "tool_search",
+        "tool_describe",
+        "tool_call",
+        "Skills page"
+      ]
+    },
+    {
+      "component": "component.coding-execution-backend",
+      "disposition": "default",
+      "ownerNode": "TF-0510",
+      "remainingGap": [],
+      "currentConsumers": [
+        "agent tools",
+        "DCS coding loop",
+        "write/edit/exec"
+      ]
+    },
+    {
+      "component": "component.verseshell-execution-adapter",
+      "disposition": "internal",
+      "ownerNode": "TF-0504",
+      "remainingGap": [],
+      "currentConsumers": [
+        "preview_patch",
+        "VersedShell governed execution",
+        "write journal"
+      ]
+    },
+    {
+      "component": "component.permission-approval-authority",
+      "disposition": "default",
+      "ownerNode": "TF-0509",
+      "remainingGap": [],
+      "currentConsumers": [
+        "workspace permissions",
+        "runtime approvals",
+        "ClawGraph/coding/browser effects"
+      ]
+    },
+    {
+      "component": "component.task-ledger",
+      "disposition": "default",
+      "ownerNode": "TF-0508",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Task Ledger page",
+        "working-context candidates",
+        "session handoff",
+        "mission/goal state"
+      ]
+    },
+    {
+      "component": "component.browser-session-owner",
+      "disposition": "advanced",
+      "ownerNode": "TF-0503",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Browser page",
+        "agent_browser",
+        "supervised browser tasks"
+      ]
+    },
+    {
+      "component": "component.browser-task-projection",
+      "disposition": "internal",
+      "ownerNode": "TF-0503",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Browser page task status",
+        "agent_browser"
+      ]
+    },
+    {
+      "component": "component.observability-recorder",
+      "disposition": "internal",
+      "ownerNode": "TF-0504",
+      "remainingGap": [],
+      "currentConsumers": [
+        "observability traces",
+        "runtime receipts",
+        "gateway logs"
+      ]
+    },
+    {
+      "component": "component.routing-memo-observation",
+      "disposition": "internal",
+      "ownerNode": "TF-0511",
+      "remainingGap": [],
+      "currentConsumers": [
+        "ordinary orchestration diagnostics",
+        "routing memo JSONL",
+        "Task Loop scorecard projection"
+      ]
+    },
+    {
+      "component": "component.host-api-transport-owner",
+      "disposition": "internal",
+      "ownerNode": "TF-0508",
+      "remainingGap": [],
+      "currentConsumers": [
+        "renderer host calls",
+        "WS/HTTP/IPC fallback"
+      ]
+    },
+    {
+      "component": "component.renderer-ui-surface",
+      "disposition": "default",
+      "ownerNode": "TF-0505",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Chat shell",
+        "Settings",
+        "workspace panels"
+      ]
+    },
+    {
+      "component": "component.retired-surface-registry",
+      "disposition": "internal",
+      "ownerNode": "TF-0505",
+      "remainingGap": [],
+      "currentConsumers": [
+        "retirement checks",
+        "product claim scan"
+      ]
+    },
+    {
+      "component": "feature.coding-recovery",
+      "disposition": "default",
+      "ownerNode": "TF-0510",
+      "remainingGap": [],
+      "currentConsumers": [
+        "stale-write-guard",
+        "write journal/WAL",
+        "coding auto verify"
+      ]
+    },
+    {
+      "component": "feature.symbol-lease",
+      "disposition": "retired",
+      "ownerNode": "TF-0510",
+      "remainingGap": [],
+      "currentConsumers": [
+        "retired symbol-lease guard",
+        "retired multi-writer coding guard"
+      ]
+    },
+    {
+      "component": "feature.patch-flow",
+      "disposition": "retired",
+      "ownerNode": "TF-0510",
+      "remainingGap": [],
+      "currentConsumers": [
+        "retired patch-flow orchestration",
+        "write journal recovery path"
+      ]
+    },
+    {
+      "component": "feature.worktree-isolation",
+      "disposition": "advanced",
+      "ownerNode": "TF-0510",
+      "remainingGap": [],
+      "currentConsumers": [
+        "worktree backend",
+        "isolation request",
+        "subagent workspaces"
+      ]
+    },
+    {
+      "component": "feature.agent-map",
+      "disposition": "internal",
+      "ownerNode": "TF-0511",
+      "remainingGap": [],
+      "currentConsumers": [
+        "explicit context.agent-map provider",
+        "Task Loop prompt-candidate pilot"
+      ]
+    },
+    {
+      "component": "feature.runtime-shadow-governance",
+      "disposition": "internal",
+      "ownerNode": "TF-0511",
+      "remainingGap": [],
+      "currentConsumers": [
+        "provider registry diagnostics",
+        "context provider pilots",
+        "tool protocol and evidence diagnostics"
+      ]
+    },
+    {
+      "component": "feature.local-control-plane",
+      "disposition": "internal",
+      "ownerNode": "TF-0511",
+      "remainingGap": [],
+      "currentConsumers": [
+        "context Report",
+        "model router report",
+        "capability/evidence/mission reports"
+      ]
+    },
+    {
+      "component": "surface.inbox",
+      "disposition": "advanced",
+      "ownerNode": "TF-0505",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Inbox route",
+        "host notifications"
+      ]
+    },
+    {
+      "component": "surface.cron",
+      "disposition": "advanced",
+      "ownerNode": "TF-0505",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Cron page",
+        "rc05 operator slice",
+        "cron auto-approve policy"
+      ]
+    },
+    {
+      "component": "surface.remote-tasks",
+      "disposition": "advanced",
+      "ownerNode": "TF-0505",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Remote tasks route",
+        "remote task developer panel"
+      ]
+    },
+    {
+      "component": "surface.clawgraph",
+      "disposition": "advanced",
+      "ownerNode": "TF-0505",
+      "remainingGap": [],
+      "currentConsumers": [
+        "ClawGraph route",
+        "execution graph projections"
+      ]
+    },
+    {
+      "component": "surface.code-review",
+      "disposition": "advanced",
+      "ownerNode": "TF-0505",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Code review route",
+        "review workflow"
+      ]
+    },
+    {
+      "component": "surface.image-generation",
+      "disposition": "advanced",
+      "ownerNode": "TF-0505",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Image generation route",
+        "ImageGenerationSettings"
+      ]
+    },
+    {
+      "component": "surface.observability",
+      "disposition": "advanced",
+      "ownerNode": "TF-0511",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Observability page",
+        "trace/issues/problems"
+      ]
+    },
+    {
+      "component": "surface.dreams",
+      "disposition": "retired",
+      "ownerNode": "TF-0500",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Dreams route",
+        "legacy background consolidation references"
+      ]
+    },
+    {
+      "component": "surface.ui-v2-showcase",
+      "disposition": "retired",
+      "ownerNode": "TF-0505",
+      "remainingGap": [],
+      "currentConsumers": [
+        "UiV2Showcase route"
+      ]
+    },
+    {
+      "component": "settings.developer-advanced",
+      "disposition": "advanced",
+      "ownerNode": "TF-0505",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Developer Settings section",
+        "context/coding/agent-dev/browser diagnostics"
+      ]
+    },
+    {
+      "component": "settings.billing",
+      "disposition": "advanced",
+      "ownerNode": "TF-0505",
+      "remainingGap": [],
+      "currentConsumers": [
+        "Billing page",
+        "usage/cost aggregation"
+      ]
+    }
+  ],
+  "owners": {
+    "TF-0493": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+          "sha256": "0277bd290fe08c85945b93ea2b9eb120e4a77a66461b18d874e68afe670cc866",
+          "bytes": 34859
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-final-snapshot.ts",
+          "sha256": "ffbe2caad45c08d063b5089ae5f594ce3b6d0fe11a7fb4f72e6d8da61bbd1f29",
+          "bytes": 5966
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-ladder.ts",
+          "sha256": "8b115c35c3f77b76f1a23ed798ab0e6107745f725038f9a919327a18a7d36337",
+          "bytes": 3569
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
+          "sha256": "3d3df91ff25e694ae2e2af1f3378fde6df3a55fd6867ae05373a5464f8824e14",
+          "bytes": 21716
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+          "sha256": "1411d9c1fccde72428fdb52ea2ca6bebe8bd340d8e3acb93ee7c8bbd244abd95",
+          "bytes": 41767
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/assembler.ts",
+          "sha256": "22470211584dcff5ceb07010268321aff9211fdbe2d1b3186717f774a32cf216",
+          "bytes": 31216
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/assembler.test.ts",
+          "sha256": "6c4f50876f0c2821e7f8c6cfebf89ac5bbf897c225e41209986bd1265e233c38",
+          "bytes": 44845
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/assembler.kill-switch.test.ts",
+          "sha256": "00b5d2b22c5db0eca23f677ff9a804ba83866e2037f7bb047145bb686ab8804a",
+          "bytes": 6485
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/rc03-seal.test.ts",
+          "sha256": "f98e65fd5744f70ecf641b083c3f48a99ef5c773c794c5c14b88ad91f77a8814",
+          "bytes": 15750
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts",
+          "sha256": "5eed0b7ba107383e55cda5c37e806285f19c413deab8bfe830af95fc86d466cf",
+          "bytes": 27032
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory.test.ts",
+          "sha256": "6fd9fe6b81a86981f3613219479774c96c23f163691029e3e4ec1be8b2e6835b",
+          "bytes": 22512
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.knowledge.test.ts",
+          "sha256": "2357c6e9206e0557dc456d8bf79879e1ef2f9f2342c73fe3441eedff33485d17",
+          "bytes": 20356
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.task-state.test.ts",
+          "sha256": "61efb40ede62ef33e22c3a164850126764370236541a5b296590dfbe2365ce1c",
+          "bytes": 18014
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "tests/e2e/vtoken-bridge-settings.spec.ts",
+          "sha256": "3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5",
+          "bytes": 1135
+        },
+        {
+          "path": "tests/e2e/dcs-prod-p0-settings.spec.ts",
+          "sha256": "40332b1573c241581cce057e3cfd073df5be7dc41d62c6a802789c2ea24b82c3",
+          "bytes": 10910
+        },
+        {
+          "path": "tests/unit/context-assembly-authority-tf0493.test.ts",
+          "sha256": "11bc28bf7d88e9e14d3a26a75cfcf64b852daba9e13093e743e1b53f0f45b590",
+          "bytes": 11720
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/README.md",
+          "sha256": "93ab603bdd32cdf2cca77482c7b98c6884bfcb3207fffd13cc0b8a5ba222d456",
+          "bytes": 2473
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
+          "sha256": "30486317e06749998b860b9728d065120fce288ba877a17151efab12c0850f35",
+          "bytes": 2370
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/component-graduation-report.json",
+          "sha256": "191645194119e171c9dcbfd5728f07c67f2810b6a401bdd436e9bc04f4c9138b",
+          "bytes": 5296
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/SHA256SUMS",
+          "sha256": "cd9141064f84d6f5f5a2f2bcc56d9414ad73632b1f4c0d9944743f4577c92dbf",
+          "bytes": 1980
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/generate-acceptance.mts",
+          "sha256": "1e1801a4c0e65fefc870404d69766add516106041c61be7b9a1c5d314c26402a",
+          "bytes": 12590
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
+          "sha256": "6440d706155e8537679d8c4b15d5c55911812e115096d86bb5abe8eac95b625c",
+          "bytes": 7629
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/verification.json",
+          "sha256": "181eeb6ef4823146a596469667b329ac897ed6cdb0994fc3b1efd38d9a2302ed",
+          "bytes": 12502
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/task-forest-scope-proposal.json",
+          "sha256": "93b883c0f2ae525b832c08025decd24220f2c4aaceee070b32f762b1ecfb9942",
+          "bytes": 1108
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/01-contract-tests.txt",
+          "sha256": "c57d4ea732bd1785e341ab03997197499346fed6b452e7a22512a1739ee9ed72",
+          "bytes": 289
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/02-runtime-context-tests.txt",
+          "sha256": "6aa8cb9b8208ba7ae465f34a74ba4d614886c06dbb6008f0ee30d208a6117f80",
+          "bytes": 3277
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/03-typecheck.txt",
+          "sha256": "caa2db8dad54ff9ecb84f98221af94409c0f220b7e32b059efaee3e6d0e26b30",
+          "bytes": 2167
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/04-lint-check.txt",
+          "sha256": "1599186047c62b8eaf5e534d225b0285ad905c27ccecf38b496aa7e1248f4218",
+          "bytes": 23613
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/05-catalogs-check.txt",
+          "sha256": "4f5871c69430b082b5b4a858b6cac8ee1c0e588b4f68ac172c0b9918d2c58ac9",
+          "bytes": 632
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/06-contract-check.txt",
+          "sha256": "78a6485722dc76d2b31ff5081120498932ffce0b8090e5389ebd8223957708cb",
+          "bytes": 529
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/07-no-bom.txt",
+          "sha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4",
+          "bytes": 18
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/08-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/09-build-vite.txt",
+          "sha256": "2d6b750c55d1b21f900fd45e874ea08a7b800981c45b3da2272905092fb68300",
+          "bytes": 50943
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt",
+          "sha256": "0bd2827462b08c31626b32b28bccb986129852aac10ecfd4a33bdfef6c67b15c",
+          "bytes": 5644
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/11-component-graduation-gate.txt",
+          "sha256": "c8b73fd24a19433b5cebc81b790fae27b8eb41502060a961611dd8fb8a096e50",
+          "bytes": 761
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/12-sha256sums-check.txt",
+          "sha256": "5d0bfdddfef93205df653521e1dd272d90942ba97584db420aab3a8e97a903b3",
+          "bytes": 4632
+        },
+        {
+          "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/13-task-forest-validate-preapply.txt",
+          "sha256": "9a001d74c5a7fd12a295b80d36acd2f8db7c1ebd8241190012ed7a6d64f35d95",
+          "bytes": 105
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0494": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "shared/dcs/prod-flags-control.ts",
+          "sha256": "84c5b2631036259762fdac2239c9b971b803ddd5c34762b2002e5db402c16e10",
+          "bytes": 16245
+        },
+        {
+          "path": "shared/dcs/prod-flags-catalog.ts",
+          "sha256": "fc752c4eee946546ee9dd7e4ac7831b3933b58dc181be79eafe772ebb3e37dcc",
+          "bytes": 21470
+        },
+        {
+          "path": "shared/dcs/component-disposition-catalog.ts",
+          "sha256": "4227897ef9ab971b9ad43a2d1ffd5f01bdd9989452b9818c4060cd7e60cfb587",
+          "bytes": 47009
+        },
+        {
+          "path": "shared/dcs/workspace-context-profile.ts",
+          "sha256": "2fcc0d44ed80e84a6b3aaa142ce9f9eb902b5c092bce1f77a628d8444ce4da77",
+          "bytes": 2233
+        },
+        {
+          "path": "shared/host-api/contract.ts",
+          "sha256": "c0293672b977c0e7bff59410ed42635fa0054dcb4342d7c1010f67f3e187c278",
+          "bytes": 212481
+        },
+        {
+          "path": "shared/host-api/host-action-timeouts.ts",
+          "sha256": "635463a12ddf1c53ee0bd6621c7a4747462ee4250e12f7cef63beb7aed4ea8bb",
+          "bytes": 1756
+        },
+        {
+          "path": "shared/i18n/locales/en/settings.json",
+          "sha256": "223ea2591ac9fa6ab578abaa49e0db6f6fe2477a7236518ec4833e11416c9c15",
+          "bytes": 42881
+        },
+        {
+          "path": "shared/i18n/locales/zh/settings.json",
+          "sha256": "36d4a3c46bcba323e36ba7ebcf4e8c2ca154d08fd711e67c41c323a656b23229",
+          "bytes": 41701
+        },
+        {
+          "path": "shared/i18n/locales/ja/settings.json",
+          "sha256": "0a6a221e708fdf3ebf4b5019f6480838e5a450095a21d298bf85c9a3e165cdbe",
+          "bytes": 53345
+        },
+        {
+          "path": "shared/i18n/locales/ru/settings.json",
+          "sha256": "fc3913c7fb43bcfa06a478575328be4faba68621af271f1c08949d699345633d",
+          "bytes": 62964
+        },
+        {
+          "path": "electron/services/dcs-prod-flags-api.ts",
+          "sha256": "d4f58c4cefbc6ed1ec291c40c4cc2e9990d3cdce9d726fdcaedd84ec35b998c0",
+          "bytes": 24732
+        },
+        {
+          "path": "electron/utils/store.ts",
+          "sha256": "58aeb1bebf68c2ae1ad715560c7ed0ba6f43548f44d0236076df0e8d0aea8ff9",
+          "bytes": 10430
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "sha256": "3b6b73ac5511e273de8461f3f48a52ca5c0905eadc791db2ba913c3d93752fc1",
+          "bytes": 83625
+        },
+        {
+          "path": "src/components/settings/WorkspaceContextPanel.tsx",
+          "sha256": "d07b399206f08685244487b4e80ec17fe83d8240967aa15255d416ec99202d44",
+          "bytes": 4422
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/dev/component-disposition-matrix-20261021.md",
+          "sha256": "ee995d299ca488f64ec60ac41ae121fdcfe8cb9a1966fe92264c3ef5e363bdd1",
+          "bytes": 20729
+        },
+        {
+          "path": "docs/dev/runtime-control-planes.md",
+          "sha256": "36f14021fecab7c7474ec0e90b72ac2016f781b7126f14f1d5c94788deb33d81",
+          "bytes": 21437
+        },
+        {
+          "path": "docs/generated/catalogs/prod-flags.md",
+          "sha256": "f9657fc908d67727d5886d92ae65d007a5d0735bbd7fc5d588a740c4906082fe",
+          "bytes": 15473
+        },
+        {
+          "path": "tests/fixtures/launch-contract-matrix.ts",
+          "sha256": "1ad4b800e2543a2dbd86aeefadb3cca463484030f49ed9352a4d47386ceb2693",
+          "bytes": 9257
+        },
+        {
+          "path": "tests/unit/workspace-context-profile.test.ts",
+          "sha256": "c340968c255584760d34218f8e441b1bfb28a97b88892e0f2a4d037b4ebe36dd",
+          "bytes": 1939
+        },
+        {
+          "path": "tests/unit/dcs-preview-switch.test.ts",
+          "sha256": "8903a6d7322f3c229dbb0e778d9c866d5d96922b8579029b4529d00891901fd7",
+          "bytes": 13343
+        },
+        {
+          "path": "tests/unit/default-config-matrix.test.ts",
+          "sha256": "5b9e8019bfccfe9600bda49ea2f7a9dbc52448f800a1ae6693c893d6cd7d045e",
+          "bytes": 20223
+        },
+        {
+          "path": "tests/unit/dcs-prod-flags-control.test.ts",
+          "sha256": "9e9233816d19c6e03e46602513ab930f6da9c554491256bcf0daa7d50077e4d0",
+          "bytes": 6186
+        },
+        {
+          "path": "tests/unit/p0-production-acceptance.test.ts",
+          "sha256": "0b6b7665cd6ee0d8fed8016025c2dad1fe13ddb05ed1126ba3f758c09403be43",
+          "bytes": 7032
+        },
+        {
+          "path": "tests/unit/component-disposition-catalog.test.ts",
+          "sha256": "d73bbe6f4ec54d3a4856ca206ddd19044475219438797dc5298768be07bf9471",
+          "bytes": 10297
+        },
+        {
+          "path": "tests/e2e/workspace-context-settings.spec.ts",
+          "sha256": "d4bcc81302ac0534338c4ed8076de8c75c04b2e9f9fe5a5121e4a78a4c07960a",
+          "bytes": 2093
+        },
+        {
+          "path": "tests/e2e/dcs-prod-p0-settings.spec.ts",
+          "sha256": "40332b1573c241581cce057e3cfd073df5be7dc41d62c6a802789c2ea24b82c3",
+          "bytes": 10910
+        },
+        {
+          "path": "tests/e2e/vtoken-bridge-settings.spec.ts",
+          "sha256": "3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5",
+          "bytes": 1135
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/assembler.ts",
+          "sha256": "22470211584dcff5ceb07010268321aff9211fdbe2d1b3186717f774a32cf216",
+          "bytes": 31216
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/assembler.test.ts",
+          "sha256": "6c4f50876f0c2821e7f8c6cfebf89ac5bbf897c225e41209986bd1265e233c38",
+          "bytes": 44845
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+          "sha256": "845300e124376eb4796116a989fd9d1e359ff3f1c8793ba70a02ec89d4d0c61b",
+          "bytes": 16376
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-candidate.test.ts",
+          "sha256": "f4ed0c12a4291bbd7b790055a76ba6461939ac8f0b02014da5fd213652a416e5",
+          "bytes": 11577
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/runtime-flag-ack.ts",
+          "sha256": "11a35cdd6d0a5845ae10ca072e4068e4942f3b44fd119226dcdb5a611e48ce3d",
+          "bytes": 22635
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/runtime-flag-ack.test.ts",
+          "sha256": "151ebcd30fa855b6797105e9ca6e0d1da2fe64fefb7ca03d7745859b58e265b3",
+          "bytes": 9263
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/turn-injection-budget.ts",
+          "sha256": "d757ef7b08c8a5fca114c152c13a9ebb13b4384a35d0aa0ab6c59a42ba121b16",
+          "bytes": 25009
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/turn-injection-budget.test.ts",
+          "sha256": "fc83fa3998d514870656a055e50573fc774706f11771d180378c17ac6a969f14",
+          "bytes": 19963
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.knowledge.test.ts",
+          "sha256": "2357c6e9206e0557dc456d8bf79879e1ef2f9f2342c73fe3441eedff33485d17",
+          "bytes": 20356
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory.test.ts",
+          "sha256": "6fd9fe6b81a86981f3613219479774c96c23f163691029e3e4ec1be8b2e6835b",
+          "bytes": 22512
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/preemptive-compaction.test.ts",
+          "sha256": "c64f9a2871da1cb8716f0b906547f1994cc7bc0fe5ee6c788b655cf11a72d40f",
+          "bytes": 2223
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/README.md",
+          "sha256": "54220da49abe9d026b7c29fcfe465cdc7ae08d20c1c01cfd97d9ce807e8ce393",
+          "bytes": 3368
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/raw-evidence.json",
+          "sha256": "fae140ac984d2ca0c8c487544dac612caf3c735c19df18b4f6eb7aca78863de7",
+          "bytes": 6953
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/component-graduation-report.json",
+          "sha256": "f4ae459cca05f2998b22a8c9284d8e4c380904326b52f2425b316fa415ab974e",
+          "bytes": 10299
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/SHA256SUMS",
+          "sha256": "d68348fbe4c574d68903adb3d57e9c0989f394fa78cd326e405fbb9a2b66d88d",
+          "bytes": 3165
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/generate-acceptance.mts",
+          "sha256": "edc35a5155499891261ec1aac192df669fee830c53b05fcf40c16646f10351fe",
+          "bytes": 19916
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/run-verification.ps1",
+          "sha256": "749f7381a2213584d0d63b51de7162c723d65fd0983328bc54655c4b80edb423",
+          "bytes": 7434
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/verification.json",
+          "sha256": "64761585c706da0264e2bc601629c27d46b0febff0f16b65909d002636e61c62",
+          "bytes": 16799
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/preassembly-budget.json",
+          "sha256": "57a57bf2f087d74ce70bc500298021edaf78e3f37925308547b1c46de34d3c1d",
+          "bytes": 642
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-protocol-v1.json",
+          "sha256": "b0befd66dadf4851ba6d3758328b75133d1a10dd7b6c2142c37c95baecc1d88a",
+          "bytes": 1490
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-protocol.json",
+          "sha256": "f7527ae1746ca4cf54bc6d0551a20bf9c59814b7eff32bbbae4fb1559695f202",
+          "bytes": 2124
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-run-v1-fail.json",
+          "sha256": "6574423a9bc9c32f47e83dcc740f1525e68e2da831bc614b35516f01a357d7ec",
+          "bytes": 45383
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-run-v2.json",
+          "sha256": "50b00aaf6cf616bb5fbd708d7016eb82206c3ee2d15391ee1d44ac69c20b0841",
+          "bytes": 43560
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/task-forest-scope-proposal.json",
+          "sha256": "b835f8252ebab44acf3a7b5eb3cdfd8cbaf6b9b01cd7cededf4557f477abe040",
+          "bytes": 1228
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/task-forest-host-timeout-proposal.json",
+          "sha256": "768b29f18f937242c8577c455eef2feaa29a85561e6e1dae7c2596b8eac1a29a",
+          "bytes": 1083
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/task-forest-docs-authority-proposal.json",
+          "sha256": "d3481bec1d9bccc9269003c10dd19c8d6abf9d499f3a41fcab0e0c9519b0ee4e",
+          "bytes": 1479
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/task-forest-generated-catalog-authority-proposal.json",
+          "sha256": "fc52a765ae5381cd42e785a38971432805a626ea19bf6843d9c1fea30752f53c",
+          "bytes": 1557
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/task-forest-runner-test-authority-proposal.json",
+          "sha256": "05001446b9f2e619c23fc9091ac7aa29d91333f89a5f16957a6c57d1fa49c6cd",
+          "bytes": 2930
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/01-unit-workspace-context.txt",
+          "sha256": "f539dfac32e3a3f40107355a7875aaf45bb41690e3774024bcd337d491036ac5",
+          "bytes": 11088
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/02-runtime-context.txt",
+          "sha256": "f2b27b7ac5c18db9cdc910d8c8378900a8cee92e4423f6e2fcfefa4c7026e97d",
+          "bytes": 1191
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/03-typecheck.txt",
+          "sha256": "27f8700840709fd5a315e32fcb732ac1cbfdf885f354f5dfe84599b98e2fe129",
+          "bytes": 2160
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/04-lint-check.txt",
+          "sha256": "72aaa322e421a74331c964b7ad6b62aa6c606234178d307182e74f09a9b49490",
+          "bytes": 23604
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/05-catalogs-check.txt",
+          "sha256": "f2a1ec637a26ee8adc1c90f1615d7b28a9a7ba8354b4aca4b11f4c7f8bf5aeb5",
+          "bytes": 623
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/06-contract-check.txt",
+          "sha256": "36921fc53a19109e6af32fad4ac2776b4d4b313ee520c8a2cd76152405192f17",
+          "bytes": 520
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/07-no-bom.txt",
+          "sha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4",
+          "bytes": 18
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/08-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/09-build-vite.txt",
+          "sha256": "1ab0b8cb62dc15954c26d1cd56a3ecf0119b2b9a622deb858fa21e52ffed9acb",
+          "bytes": 50934
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/10-settings-e2e.txt",
+          "sha256": "3fe6d73456b7db2c4d0006c5961521a0aeb9378d8795aa396c1c9d3ccc94b3cc",
+          "bytes": 6727
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/11-component-graduation-gate.txt",
+          "sha256": "f3f1533ffddcb119ece930a22862869b2fd7d376c5761b5023cbdda7645dfa92",
+          "bytes": 973
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/12-sha256sums-check.txt",
+          "sha256": "47286fcafdc16ecce3f9d8c8b5b90f239fabea5a48370f0c12439e2020cff548",
+          "bytes": 7744
+        },
+        {
+          "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/13-task-forest-validate-preapply.txt",
+          "sha256": "37aa9ddc6f93871cdda179ef2610b4d38be85a28b0f52d72f8c37f3f829a94d7",
+          "bytes": 142
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0496": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "docs/dev/vtoken-retirement-decision.md",
+          "sha256": "a740892124e30e47c501dc2f2acd478f308dbf2bcabf7484fec4fd9a36e7619d",
+          "bytes": 3819
+        },
+        {
+          "path": "electron/services/vtoken-bridge.ts",
+          "sha256": "90dcb8c27c84cec672f1307b1985a2df6859c0ef14d20986935830eb23d7efdc",
+          "bytes": 18339
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+          "sha256": "2f4be3c00d8d76ea3a42b4cccc7d8980ac28209dbc63c88d80cc5324dcf3ec8e",
+          "bytes": 17335
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.test.ts",
+          "sha256": "9209c29b83c1aa6dfb2483ecb162401f75091c58966e39ca2424685b954b9f7f",
+          "bytes": 11311
+        },
+        {
+          "path": "tests/unit/vtoken-bridge.test.ts",
+          "sha256": "592778156dd91e240faf4c5af7565fa01dac485882e02eb224d378d06953181f",
+          "bytes": 3860
+        },
+        {
+          "path": "tests/unit/vtoken-tf0496-decision.test.ts",
+          "sha256": "ed120788c8f9c2f8fb9dfac4b4f3fe7b24cf35250b46439f593fe68f6e7b5d97",
+          "bytes": 4023
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/ab-protocol.json",
+          "sha256": "4a554d06c8d862ca1fac3658439118e4e23cad6b813cb100898e296d94fac9ba",
+          "bytes": 2807
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/contexts.json",
+          "sha256": "a5b5d6c1312cf9ccf1d5f6cb757ff3c288014f2631e4829c2b11895bc3dc3536",
+          "bytes": 16490
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/ab-run.json",
+          "sha256": "907efb7acf6c0c04d0bc3abd884ad66f4038548cbe81628fc8843e6f8176cd43",
+          "bytes": 20084
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/run-ab.mts",
+          "sha256": "30f0a7de392f25e1b77f75f0c5bb447ae9b0d8d58a2ae8cbcc56d5fd605e519d",
+          "bytes": 11726
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/README.md",
+          "sha256": "b07ddca384c009b68554631f63197c32a5bbbb8ee388b2c5bd9e02cf6b1b0410",
+          "bytes": 2980
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/raw-evidence.json",
+          "sha256": "77372e63febfd009d1848999da47e5d72feec1e842eb9fe5ddfab5d0f9875e98",
+          "bytes": 3245
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/run-verification.ps1",
+          "sha256": "7e3177c2db0c410cb46e4fb572d7ecaf028bee6dcb1d104c4656c4613bf98c60",
+          "bytes": 8230
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/verification.json",
+          "sha256": "576e9e7ead7ab532ee94f2304c8d57e6c6e054c551f0a12f347d82401fb8619c",
+          "bytes": 3872
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/SHA256SUMS",
+          "sha256": "7622559ea52f57947b3828729c198fd3bbbf751cfb3fb4d6e362e22d363e0ee5",
+          "bytes": 1485
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/01-decision-consistency.txt",
+          "sha256": "63c2e3cf5555c81ef9eaf5299f6e825e790403eac975e22ec4571ab30fa63828",
+          "bytes": 250
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/02-retirement-unit.txt",
+          "sha256": "f28ed1ea003b27849045b37f700ad2652dd94e96d329899133bc2a8c170cf88e",
+          "bytes": 273
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/03-runtime-injection.txt",
+          "sha256": "10f535f525de8f8f2f1095cafd92f020a92c314653c9d6364eef61a43e9dd97e",
+          "bytes": 944
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/04-typecheck.txt",
+          "sha256": "0fe0839fbe6948568e8743906efd840b4a2c7aad11f8421a681000b5b9e16a9e",
+          "bytes": 1693
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/05-lint-check.txt",
+          "sha256": "ed91e5d05fd3c19c493f34bdd1a4db9b548d89c47a1495891b175826edf376d1",
+          "bytes": 23087
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/06-contract-check.txt",
+          "sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0",
+          "bytes": 59
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/07-no-bom.txt",
+          "sha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4",
+          "bytes": 18
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/08-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/09-retirement-audit.txt",
+          "sha256": "a57f644ac5fb9183ba4e33c96659e80a99bc33a8ed24b78936820acb69befe3d",
+          "bytes": 168
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/10-scope-audit.txt",
+          "sha256": "389831220895fd8cda5f94fee8e711399955e69f4ede74a885b48e23238d0a1a",
+          "bytes": 43
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/11-sha256sums-check.txt",
+          "sha256": "2be9a51ea29bb61a0b6addafc530f83ed534d805b3d21217932e2ff8c5fc45e4",
+          "bytes": 3477
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0511": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/README.md",
+          "sha256": "1ae7c3d378dee57152171313e975d2cabb0550ebbe2a432452a17d8307777c1a",
+          "bytes": 3350
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/acceptance.json",
+          "sha256": "b972ddab351e00872f8d484fb19584a0fb831e151290505e18cafa7b92749280",
+          "bytes": 13110
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/catalog-readback.json",
+          "sha256": "fc7dfd120ff450ec6f6ab1ef18db9212792d01815d8995d9ecf334e672e8ff1f",
+          "bytes": 10732
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/verification.json",
+          "sha256": "63948786de237690d918e0da10ee3b1f4a1117374bd53f2f72bf3c6b23dee0be",
+          "bytes": 3822
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/SHA256SUMS",
+          "sha256": "0c149acb79fa71e83e1796884430aaa06878cf4dc36bda57204d569dc46d8a77",
+          "bytes": 3112
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/sha256sums-check.txt",
+          "sha256": "315b82f82cf284ee23f075f37a0f178f66a2f83b4cda39cf0077aca144f7c45f",
+          "bytes": 6763
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/scope-conflict.json",
+          "sha256": "f0e80439c080a798c71e77e548c1421f10dd7712bc75eef4c77dd45b6955e442",
+          "bytes": 1536
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/scope-guard.json",
+          "sha256": "210c0e8b5de1dc6a034c67c170e60853cb799b56a9be47778079c2bb6f991c92",
+          "bytes": 752
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/feature-leaf-consumer.json",
+          "sha256": "21dac315640e3aef13f31344b669d35679933ce0175ef72c8fbbf5622d7427e2",
+          "bytes": 435
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/generate-acceptance.mts",
+          "sha256": "4d295592369a6508ac10fb566edc567d16b994a915117d2fde629cef6fcf96d7",
+          "bytes": 5675
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/run-verification.ps1",
+          "sha256": "0b6316e8014f369e8af4ebe1e772155b8d932acf215b7765c6cd0df53cd820eb",
+          "bytes": 6608
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/01-manifest-tests.txt",
+          "sha256": "c7c30e913bc468e019f182762320f34acd7b55979fda7b08d7e75339bdf5067d",
+          "bytes": 848
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/02-compass.txt",
+          "sha256": "a37fe0b337df8f28c5db9a6977af7f044e6651cd57c676b4cbe0e85663c8389d",
+          "bytes": 991
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/03-typecheck.txt",
+          "sha256": "49cd0a8d9622dab72a1a1d87a1bf3e666f8ddda5322dff095b1c43ef31b379f1",
+          "bytes": 2076
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/04-lint-check.txt",
+          "sha256": "f4bb24585b841ebddf766a131856b01942fdb0ad774f2e0d1f1d1a9bf86ac732",
+          "bytes": 23353
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/05-contract-check.txt",
+          "sha256": "0a02010f6f463084252ca17c12e08e6bf98467b0719443a2d2e8c4cdd19cd95e",
+          "bytes": 485
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/06-no-bom.txt",
+          "sha256": "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa",
+          "bytes": 17
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/07-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/08-feature-leaf-consumer.txt",
+          "sha256": "2d0dcb0ba95bab01bb5512c37560a4997f7be28e32834d2b8b6fc5de4ffe6b2f",
+          "bytes": 419
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/09-scope-guard.txt",
+          "sha256": "237a51639ac73fa6f9efb3c8a49d03f82302c4b8ef80335cc8e2bdfc376f5e1e",
+          "bytes": 731
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/10-regenerate-acceptance.txt",
+          "sha256": "06b4cabd4a901b0522781ce257d3f280f61549c1f309d1ddb755c2421174985c",
+          "bytes": 67
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/compass-retirement-focused.txt",
+          "sha256": "edef462ef10e951dd1f53501956209f0f2a20f8e42c69582bd7117b5a50ea655",
+          "bytes": 991
+        },
+        {
+          "path": "tests/unit/fixtures/shadow-controls-tf0511/diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/shadow-controls-tf0511-scope-conflict.test.ts",
+          "sha256": "36575758756a36f00a4fa5c6fa2059d6f06b1a904e920981c308e8df1f615880",
+          "bytes": 3106
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts",
+          "sha256": "c83861e8f00306fefdc57d4d2412faabcca0c6636e2bddb71e1d5aa27bf7c0c5",
+          "bytes": 7667
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "shared/dcs/component-disposition-catalog.ts",
+          "sha256": "4227897ef9ab971b9ad43a2d1ffd5f01bdd9989452b9818c4060cd7e60cfb587",
+          "bytes": 47009
+        },
+        {
+          "path": "scripts/check-feature-leaf-consumers.mjs",
+          "sha256": "9689f1be0719236e3802704248ea48e1d046eabb5291190410f6950fec1bc0b3",
+          "bytes": 19048
+        },
+        {
+          "path": "docs/dev/component-disposition-matrix-20261021.md",
+          "sha256": "ee995d299ca488f64ec60ac41ae121fdcfe8cb9a1966fe92264c3ef5e363bdd1",
+          "bytes": 20729
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0495": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/tools/context-view-tool-surface.ts",
+          "sha256": "8166b373849f8cbc01af331b62a62e6adc39929c3dcfb5c2d9e4300ded66335b",
+          "bytes": 5797
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/context-agent-tools.ts",
+          "sha256": "b52d3e48d35ebf11255801d5921e813769ec28263265a546d4a823747aacb407",
+          "bytes": 33551
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts",
+          "sha256": "7ab431c735505bb3d73709ae50b4228ef5acee9ecde7633538c8e963256c5201",
+          "bytes": 24123
+        },
+        {
+          "path": "shared/dcs/prod-flags-catalog.ts",
+          "sha256": "fc752c4eee946546ee9dd7e4ac7831b3933b58dc181be79eafe772ebb3e37dcc",
+          "bytes": 21470
+        },
+        {
+          "path": "docs/generated/catalogs/prod-flags.md",
+          "sha256": "f9657fc908d67727d5886d92ae65d007a5d0735bbd7fc5d588a740c4906082fe",
+          "bytes": 15473
+        },
+        {
+          "path": "tests/unit/context-view-tool-surface.test.ts",
+          "sha256": "35eb6fd9f29341c79506e049d58809956bc7cd8d2cdf154847a31612c6bf98c0",
+          "bytes": 5976
+        },
+        {
+          "path": "tests/unit/config-schema-parity.test.ts",
+          "sha256": "993581cf60a9efee2bd7faff39c46b52e22e42af7e435d7d29e0146d867c635a",
+          "bytes": 8487
+        },
+        {
+          "path": "tests/e2e/context-view-tool-surface.spec.ts",
+          "sha256": "1713cf99c7416f5ffb05c54341990f092eeb132952a039bcccef1e60619760b2",
+          "bytes": 2089
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/README.md",
+          "sha256": "b97591928e01e0995d8a60d6e59465e96501da22325a7ecde8fd0e5f631ea6c5",
+          "bytes": 2995
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/generate-acceptance.mts",
+          "sha256": "e9ab755ee05052dbbfff3bd20f6c157ebca6e627930a2fd30446dfd9f447c755",
+          "bytes": 14981
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/run-verification.ps1",
+          "sha256": "8234d06f24d79d89b6ff9c0dc5001cea30e8a1f096540db3369cae826dde9124",
+          "bytes": 5863
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/recheck-canary.mts",
+          "sha256": "46270d722178c41bd640399e50942a9b7a4e1f5533478f79afe76d18b7548cca",
+          "bytes": 2167
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/canary-protocol.json",
+          "sha256": "c2745b4b3093ac0301813db6d2bcde929fca1ad7ffd52b175ff012ca10696ea0",
+          "bytes": 1802
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/canary-run-v1.json",
+          "sha256": "67f10376ba6501bd7e2fd2b7324cfeea48c901c9006c20e30857c1514b7eb77b",
+          "bytes": 16062
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/raw-evidence.json",
+          "sha256": "476453d4accc9fd710c2e804c78513eafe27867dd92bffece479049063e0f3cb",
+          "bytes": 6380
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/component-graduation-report.json",
+          "sha256": "584d77bd2a8f15aa285df87d4e58c479b470af6a50368a358957261c1b5ff46b",
+          "bytes": 7905
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/SHA256SUMS",
+          "sha256": "9ce6dc17a94ff7883fecffbb0b7f5188945c44ca33524d4f2378b0e0fb86b3bd",
+          "bytes": 2507
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/verification.json",
+          "sha256": "a4845c2971ac318b9b0b91f2eafef9a52e0c0fb4d461f04996c465425e357d22",
+          "bytes": 11141
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/01-surface-unit.txt",
+          "sha256": "2d5496a623acc004fe89375a536fcca47615549f395121f5c15133cd1d5f50e3",
+          "bytes": 239
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/02-runtime-context-tools.txt",
+          "sha256": "825380cfac9d5432806e2e24cbf0fbc764e1507890ec24a8a87d386f47bbd3ed",
+          "bytes": 928
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/03-catalog-parity.txt",
+          "sha256": "ff10f88b991f9737f77ccfbe6bd1cf1eb0d9a418c691e9ad4a2ba0db3a8b91df",
+          "bytes": 476
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/04-settings-e2e.txt",
+          "sha256": "8602e85af07194c1f08fa5876cd7ac6bef8d8ae768562a984108f84fe4796bec",
+          "bytes": 1041
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/05-typecheck.txt",
+          "sha256": "40710b11e4cc1e4dd7d5e3e71502d2bd9c86a2e10651185f9b4763622ea84775",
+          "bytes": 2109
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/06-lint-check.txt",
+          "sha256": "d7e1cad8ffa29a6ffeab9b3f18dd7e17a6f960647d96cc73d47d676c5954bee4",
+          "bytes": 23386
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/07-catalogs-check.txt",
+          "sha256": "07f61c9c4a7ae45913ddafc1c75caf472a3bfb32ba34ca5da3a92742a98f5d14",
+          "bytes": 621
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/08-contract-check.txt",
+          "sha256": "4926f84683eabffe2eb671815bf0496fba3edb10e37c3fa89acc913af9fc748c",
+          "bytes": 518
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/09-no-bom.txt",
+          "sha256": "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa",
+          "bytes": 17
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/10-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/11-canary-verdict-recompute.txt",
+          "sha256": "9142e93635e306d81ac2c823e269ab0f0beafdfe267060889ddd48aca161735b",
+          "bytes": 817
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/12-build-vite.txt",
+          "sha256": "1b2e5c91c36732b616e4713aaf9b73059ded7ad8b1da388680f31855061c8e15",
+          "bytes": 50274
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/13-component-graduation-gate.txt",
+          "sha256": "a6337d8759f26ab6a2967778c2c7b6eec544a13cead985de5ccd3a245df72d3c",
+          "bytes": 812
+        },
+        {
+          "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/14-sha256sums-check.txt",
+          "sha256": "01b6c24306333ca70d8fa3a0809f28118a724fd16898fafe1e87051a4e6e5eb3",
+          "bytes": 5744
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0498": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "src/components/agents/memory-surface.ts",
+          "sha256": "8bcfbb82f474677da9fcc18c4f4acf4e17c4c702e4f2206b0702bae89ea511d2",
+          "bytes": 5854
+        },
+        {
+          "path": "src/components/agents/RolesOrchestrationPanel.tsx",
+          "sha256": "70f045e1d49333ee4788c97d2deb726cdc274f5e4be4aa60d2f2b6a7980b5798",
+          "bytes": 202519
+        },
+        {
+          "path": "src/components/agents/ProposeFactsConfirmQueue.tsx",
+          "sha256": "c26b95d0cb2964248d3266b4600da16798cf0fbbc13733610cd04e4fe4567aa2",
+          "bytes": 7549
+        },
+        {
+          "path": "src/pages/Agents/index.tsx",
+          "sha256": "0574b6b3157f6cc62ba74a655002d5564a3bc9963db8e2634be5d8e9447a3d4d",
+          "bytes": 76406
+        },
+        {
+          "path": "shared/i18n/locales/en/agents.json",
+          "sha256": "f0afb04c6bda33f5fcbbafe12268a75a16421b099f3b6f940cf408d4cde0c9f7",
+          "bytes": 39367
+        },
+        {
+          "path": "shared/i18n/locales/zh/agents.json",
+          "sha256": "8c554e7032c03d9bdb7a23df59494e9d2cb0b55b492c38966acb77be6c450233",
+          "bytes": 38383
+        },
+        {
+          "path": "shared/i18n/locales/ja/agents.json",
+          "sha256": "1b3abea7baa9a8eb09c10ddd3922b14b8af2dbde0ebd7970c892b0590b5d680b",
+          "bytes": 45944
+        },
+        {
+          "path": "shared/i18n/locales/ru/agents.json",
+          "sha256": "6ecebe0b96ae212571a684eb31270dbec7a68dc43759a79ff3a99c32b19b07c1",
+          "bytes": 55655
+        },
+        {
+          "path": "tests/unit/memory-surface-contract.test.ts",
+          "sha256": "8eaf6abdbc92aa034be69b15f42e3ec333665ab016ea8fb4d32077af62c5738e",
+          "bytes": 4231
+        },
+        {
+          "path": "tests/unit/roles-orchestration-panel.test.tsx",
+          "sha256": "e8824b8d955528fa46acc90372353124265acc01f5d154033bfb0f5019eb5ba8",
+          "bytes": 14432
+        },
+        {
+          "path": "tests/unit/propose-facts-confirm-queue.test.tsx",
+          "sha256": "a11900c060e05553658fffd2569124f8f3ad1fb8441fcfcdfe3c58589deddbac",
+          "bytes": 4263
+        },
+        {
+          "path": "tests/e2e/memory-surface.spec.ts",
+          "sha256": "a679455ba20ec8f4208b19d8417ca1eed1312ab464c218b206f5d0030f5185c3",
+          "bytes": 9131
+        },
+        {
+          "path": "tests/e2e/role-memory-panel.spec.ts",
+          "sha256": "97dd197f63cab3b13af3c3c93cae52e9a9cde011c97b9d6e4e18cce73e269f3e",
+          "bytes": 27398
+        },
+        {
+          "path": "tests/e2e/agents-propose-facts-confirm.spec.ts",
+          "sha256": "9a1067ece3c1977cb9d76c3cf76992f7a8f73d259afb0ac0993f6c0f4615a035",
+          "bytes": 5364
+        },
+        {
+          "path": "tests/unit/role-orchestration-methods.test.ts",
+          "sha256": "a6685d6e22df4944947894aae2ab3526ba9fba2caa308d79a4b70a8e454922ad",
+          "bytes": 61325
+        },
+        {
+          "path": "tests/unit/role-memory-context-provider.test.ts",
+          "sha256": "c0665eab06114213d6032c3cc19f28d394ad86e09b3b9c9abc036f33d5342404",
+          "bytes": 7729
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/README.md",
+          "sha256": "93bd046968bade4b8bf5388c5aa925fb9a305a1e8feaee2dc65988fcd5e37940",
+          "bytes": 2735
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/generate-acceptance.mts",
+          "sha256": "bfb4a160041054e776d919ed863b733805539a95768fbae874a00081996001d1",
+          "bytes": 14800
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/run-verification.ps1",
+          "sha256": "ac78889839c7258a0b330f77ab2b9b269877a27b2b8c108824cf891558dfa4dd",
+          "bytes": 5790
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json",
+          "sha256": "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
+          "bytes": 4837
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/component-graduation-report.json",
+          "sha256": "3cb6df1143c135b3843894cb2782aeed581d7acad68a2f77a866cf79386f2ff5",
+          "bytes": 8819
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/SHA256SUMS",
+          "sha256": "5565f76ca5bbb742a26ff992c6f1a4291da501b7ea931b1dc8f19cac843684b0",
+          "bytes": 2427
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/verification.json",
+          "sha256": "69390427831a9e85b3453eeb455ce3f3c040e7ee35572f0b5cca21c6f718ce65",
+          "bytes": 15119
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/01-memory-surface-contract.txt",
+          "sha256": "08511bb166820f470cca1621a6744b4253cf0d35461c76a7403a671712873641",
+          "bytes": 311
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/02-gateway-close-semantics.txt",
+          "sha256": "969ab22f174c9f5c9af1324a44f674577cdc101b7490f4005051e271bbefc2dd",
+          "bytes": 374
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/03-memory-surface-e2e.txt",
+          "sha256": "452f2f1880444e7331ea525cb5cf36c67f2834dd39f2d3a7c0d4b5a4cf7c00b3",
+          "bytes": 1850
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/04-typecheck.txt",
+          "sha256": "994d7773d0aa8f1de73ea7326ede5eca64bcb86414c37e72b949630c57915693",
+          "bytes": 2159
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/05-lint-check.txt",
+          "sha256": "d6400119bc6cbc8e09a92504c9ec86294f33f711dceb48c8f6abca37f56643c6",
+          "bytes": 23603
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/06-catalogs-check.txt",
+          "sha256": "012251c3af24191d4eee7e2eea2e3a85c263f39208c639ee0ffb60d72cbc3a5e",
+          "bytes": 622
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/07-contract-check.txt",
+          "sha256": "d329383903e6d65a4a424c6b5f35367884dae2f998eba0eb507f1795915c511f",
+          "bytes": 519
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/08-i18n-lint.txt",
+          "sha256": "04fe1f40258bd17febac82ae99a106d852ff2961909d5e91dd88023cf3056f69",
+          "bytes": 19
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/09-no-bom.txt",
+          "sha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4",
+          "bytes": 18
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/10-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/11-build-vite.txt",
+          "sha256": "b5ecaa016351c3cbf434afa15c7411c4bbfbe612aeb847e7587b00f50bd79845",
+          "bytes": 50933
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/12-component-graduation-gate.txt",
+          "sha256": "87341951a1754af89b83cbd484f5e2f49ea0aaf29b1ba802120e451bb53abee4",
+          "bytes": 831
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/13-sha256sums-check.txt",
+          "sha256": "3616eb79311f95928118e802eeb8c0e56c848d0c49331cb3f1a266fc4e6e61d7",
+          "bytes": 6131
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/14-task-forest-validate-preapply.txt",
+          "sha256": "19b928414ae5263ab39033974b2955566f81779d48eb683dffa73d148275f3a8",
+          "bytes": 94
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0497": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "openclaw_runtime/src/memory/memory-authority.ts",
+          "sha256": "b32a82f0b4bdb5d67e6380698660da97a844999af490a331856952547674b86d",
+          "bytes": 22756
+        },
+        {
+          "path": "openclaw_runtime/src/memory/memory-card.ts",
+          "sha256": "2e1d8195529fd4a5b154412cb546d0333164da012fe56c5f1622fe5e7e0e8e8b",
+          "bytes": 2033
+        },
+        {
+          "path": "openclaw_runtime/src/memory/memory-policy.ts",
+          "sha256": "3c838be80484e035e5a9cbe52c97fa98f9aee9a66246afb132a1a3e23f12fc02",
+          "bytes": 12318
+        },
+        {
+          "path": "openclaw_runtime/src/memory/memory-store.ts",
+          "sha256": "ac39f953e5c3694bb5cd049d2e99743fc651d1388aa5dc676e14c7385a036938",
+          "bytes": 94887
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-context.ts",
+          "sha256": "e38a3ca0d9d4736a54af8bdc552d19b56822c2b351a1374e6fea5f91c3279437",
+          "bytes": 53402
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-store.ts",
+          "sha256": "adec5d2ad67c02a0cfdc59f3ccccd2f9b14edaecb4fb7ead90cd2598d9060b7f",
+          "bytes": 34048
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-persistence.ts",
+          "sha256": "3f9526e0de7f1c1bb215bfcd0e4134e8d904a64c41301d7697d417b0ead4d861",
+          "bytes": 54802
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts",
+          "sha256": "17cd5d790ad7b19cd4e2379310a2eb8a792b1fc7e8a06bb170020db9a6136e8e",
+          "bytes": 14291
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-embedding-provider.ts",
+          "sha256": "982c4e09b19118a8549cb8428b34df48531e02842b272c946f5ed3c8cbfdeeca",
+          "bytes": 1671
+        },
+        {
+          "path": "openclaw_runtime/src/agents/slot-convergence.ts",
+          "sha256": "dc5f8b35523b95ab041f6e49b1b5b32220e02ed74585af4052ec18bf5307b297",
+          "bytes": 15559
+        },
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "shared/dcs/prod-flags-catalog.ts",
+          "sha256": "fc752c4eee946546ee9dd7e4ac7831b3933b58dc181be79eafe772ebb3e37dcc",
+          "bytes": 21470
+        },
+        {
+          "path": "tests/unit/memory-authority-contract.test.ts",
+          "sha256": "dbdfb656485f9c53441f2945f10765959e4308d366f6a7553a83615ddfb3af6b",
+          "bytes": 7512
+        },
+        {
+          "path": "tests/unit/rc07-memory-context-slot-convergence.test.ts",
+          "sha256": "b01ecf77d6fec51a11c71e8340ee63776b8c60abc62afefeb7dee3ef264e20b3",
+          "bytes": 9303
+        },
+        {
+          "path": "tests/unit/r3-2-memory-settings-switches.test.ts",
+          "sha256": "557e659d8b4fe88a3b98f5bdb47663e53cbe6ee22469f9633fb642314a812f4a",
+          "bytes": 1890
+        },
+        {
+          "path": "tests/unit/runtime-memory-store.test.ts",
+          "sha256": "b4a31a942148eff87c0ac35e3ccedac3bd09152582513b5b0a2e52cc5c8b1f0b",
+          "bytes": 17547
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/README.md",
+          "sha256": "57a80b3a859d8436cfad3a44ab550cfc3afff9182528719ff2843d494ff45f60",
+          "bytes": 2541
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
+          "sha256": "e333303433f13e211b0f3006f516265f3e3af88b099cee96cfe172bf0f61055f",
+          "bytes": 18619
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/component-graduation-report.json",
+          "sha256": "b894eb8efcc9aa1e630fa38e2b681e75ebccb853334769acb4230572674bfb2c",
+          "bytes": 6982
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/SHA256SUMS",
+          "sha256": "20fc920eb564cb5cdfc8b2b9570f34cf24acb279c59c60f89ac9597561196e23",
+          "bytes": 2785
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts",
+          "sha256": "ba5599272fd6b5ca1d9a42563c3f9ff8e15638f673470056340d9e91bef64e78",
+          "bytes": 12090
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
+          "sha256": "8a502c7a7bc1613617dc275b7c5c07d28899fa8c611cc28d81ebaf30d92039c2",
+          "bytes": 5991
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/verification.json",
+          "sha256": "daf979bedd5bf6fbb7b554802955e53543f635743664778acbe157e7950a8ac1",
+          "bytes": 15501
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/task-forest-shared-catalog-authority-proposal.json",
+          "sha256": "79b1d80352eaf08add8ee42ad24d912e1138f9a01debb7107d1de5439710df3f",
+          "bytes": 1971
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/01-contract-tests.txt",
+          "sha256": "a5f1be07f2a39a0a29a3f5690f1620e3cb77a8039aa14cc5ea78b839b8aa24fd",
+          "bytes": 267
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/02-memory-regression.txt",
+          "sha256": "771b2cf4b6ea8b8ab3dece9a32aff400e0ab16dba85c97169a4fbc4e70caa77f",
+          "bytes": 359
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/03-runtime-memory-tests.txt",
+          "sha256": "f95db591c3641ecad8cce01f00efd96b3fdb7fb880ae76172654e9f56b9f5c1a",
+          "bytes": 1062
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/04-typecheck.txt",
+          "sha256": "1732edc554ee3518b1fef0cf2c889d8ade1b2136b0730fdceee43580a8dd4f4c",
+          "bytes": 2159
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/05-lint-check.txt",
+          "sha256": "1a4b9b81922e5d27728f391fee63571a6236c7af21280fa2aaf4d0cc54365195",
+          "bytes": 23603
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/06-catalogs-check.txt",
+          "sha256": "43b04388a8af95028f368bcdd946abd8b93d68f271c1ace747dc8a224677823f",
+          "bytes": 622
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/07-contract-check.txt",
+          "sha256": "ca7d0a783ee0f397e0183652306c97e98a0d5300782c2c4fe460500dfdfd04ce",
+          "bytes": 519
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/08-no-bom.txt",
+          "sha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4",
+          "bytes": 18
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/09-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/10-build-vite.txt",
+          "sha256": "98bef0c2e12ada980ba955b01995e1e9bac8c0b413629e700961bff6900cbaae",
+          "bytes": 50933
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/11-component-graduation-gate.txt",
+          "sha256": "ccc8edc3c86839ef38ee9cf9c1c5e8180ff90212374025616c1cdf75253b0ce1",
+          "bytes": 837
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/12-sha256sums-check.txt",
+          "sha256": "af73ddc0bc0720f6d1cd688e3de33884bb2bf43621ec2389183285da428e74ae",
+          "bytes": 6839
+        },
+        {
+          "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/13-task-forest-validate-preapply.txt",
+          "sha256": "64957aeb430994943ac947667a8490a37610a9deb8ddc381f25d4da4ef33d960",
+          "bytes": 142
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0499": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "shared/knowledge-lifecycle.ts",
+          "sha256": "1757618fe1554228f9df28bbf5704bbdb6a8878346ef5ba110203da215c9651e",
+          "bytes": 4499
+        },
+        {
+          "path": "tests/unit/knowledge-lifecycle-tf0499.test.ts",
+          "sha256": "0c52ae934ace4651f6124f818c3e64466db1e11b392bd014a273fe17d3aab9b9",
+          "bytes": 1908
+        },
+        {
+          "path": "openclaw_runtime/src/knowledge/sekb/distillation-tool.ts",
+          "sha256": "0d588b9b33d3f01b130bcbd547ac4fab3c035f367275eeb733398a5909d68c97",
+          "bytes": 16269
+        },
+        {
+          "path": "openclaw_runtime/src/knowledge/sekb/golden-path.ts",
+          "sha256": "ffd5342494db04ebceb5e28bd042c273fe4068921010924ae1fa3e83e608057b",
+          "bytes": 13693
+        },
+        {
+          "path": "openclaw_runtime/src/knowledge/sekb/golden-path.test.ts",
+          "sha256": "f7d0cfad9ceae7682dd038173784a00a4a962d4949ad7913bffb99a3c8594c6f",
+          "bytes": 5269
+        },
+        {
+          "path": "openclaw_runtime/src/knowledge/sekb/sekb.test.ts",
+          "sha256": "b8494c23fd5110a20d5c2b8c2de301991f6ece40d8d8963e21b363fb20d95332",
+          "bytes": 30911
+        },
+        {
+          "path": "openclaw_runtime/src/knowledge/sekb/experience-closed-loop.test.ts",
+          "sha256": "f6fbd3302ecb960147401fe87e1073833bbccd9152196956fb2a45a954568300",
+          "bytes": 8063
+        },
+        {
+          "path": "electron/services/knowledge-api.ts",
+          "sha256": "7775c6c055e5dd80b8c2a93b76e3dcfefd1c71158ca4219ce2e9369bb9e88e29",
+          "bytes": 246293
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/README.md",
+          "sha256": "65fcb041c68ec670fcf3947aba8f09cbd019bffce8b235fc3bbf0da18bf1e32c",
+          "bytes": 2523
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/raw-evidence.json",
+          "sha256": "3d33014cc2d09d02c0fb0d3aa31868645f3838592abb71d46913c90ee18a96f0",
+          "bytes": 2138
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/run-verification.ps1",
+          "sha256": "cbbcea1221a9add472b3176222f22bd8c11f6cad7b6724a22d3bce6a9a92858e",
+          "bytes": 6365
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/verification.json",
+          "sha256": "e226f9259d4172c3370586a20f8f146b76f028a5deb210eaffa9bcd365f5364e",
+          "bytes": 3502
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/SHA256SUMS",
+          "sha256": "ec09381549a00a603ebdbe5163dad498741def45791b1c9f7e2d6fc75a81a952",
+          "bytes": 1277
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/01-lifecycle-unit.txt",
+          "sha256": "498fee22c7404afa07b2ee12ab8d8f1f9d6098eb71fd7780aa52c669805110a9",
+          "bytes": 246
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/02-sekb-identity.txt",
+          "sha256": "c64e5372cf1a0aef3bbe88c834794555f3e28fab2dd8e7c51ececd51193fd653",
+          "bytes": 972
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/03-knowledge-runtime.txt",
+          "sha256": "019837c276765574f74a4e625e91fe2d8911557a9e71b243782ad8eeb67e94be",
+          "bytes": 972
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/04-typecheck.txt",
+          "sha256": "118b433285f5810033353c4c9fa5746e890e007df00a300f6afca2ceff5fcca0",
+          "bytes": 1693
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/05-lint-check.txt",
+          "sha256": "ed91e5d05fd3c19c493f34bdd1a4db9b548d89c47a1495891b175826edf376d1",
+          "bytes": 23087
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/06-contract-check.txt",
+          "sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0",
+          "bytes": 59
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/07-no-bom.txt",
+          "sha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4",
+          "bytes": 18
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/08-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/09-single-surface.txt",
+          "sha256": "60aff70269fd240c70dc86c392767414adf0523cfa967057868cd2dc4e3b0ec9",
+          "bytes": 60
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/10-no-unconfirmed-writeback.txt",
+          "sha256": "1e5ce118ae255c7103a595ace2737ca42b80876dd8329ef81430e513328e7e7b",
+          "bytes": 79
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0501": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": ".gitignore",
+          "sha256": "1857b4c603883ea3f50603f7cd5a2c57a85e16a328a388c0d4bf3b0eec01df6f",
+          "bytes": 126140
+        },
+        {
+          "path": "docs/dev/adr/2026-10-23-capability-catalog-authority.md",
+          "sha256": "4de61dd261492cb3cc9647292adcef0311e08a75ad8182315d5bf01397c78560",
+          "bytes": 4911
+        },
+        {
+          "path": "shared/dcs/component-disposition-catalog.ts",
+          "sha256": "4227897ef9ab971b9ad43a2d1ffd5f01bdd9989452b9818c4060cd7e60cfb587",
+          "bytes": 47009
+        },
+        {
+          "path": "tests/unit/capability-catalog-authority.test.ts",
+          "sha256": "9d8422ef8d42f3bce6830a01e6e35027bd0dcd3b6338d0e5d5218d1abf52f409",
+          "bytes": 7655
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/README.md",
+          "sha256": "f12ab49243074dca229e511925157ea61c7892cc4dd74505b54e10ee841dae66",
+          "bytes": 3792
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/generate-acceptance.mts",
+          "sha256": "47d72807ded23c921529cf5dbb515c0e73ad01c51b7b7b3fc2561defd83976f4",
+          "bytes": 16827
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/run-verification.ps1",
+          "sha256": "65ad0c0ebfee2f03af2a8f496d7ccd2f0e372663f87522f88bacde54f7ec6c28",
+          "bytes": 4976
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/ab-protocol.json",
+          "sha256": "213388d3bbfafa23968505fff488adf1f97cdedd1f6bbca561cf44b302b5a0fe",
+          "bytes": 1607
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/ab-report.json",
+          "sha256": "f6dcdb1e39ea9314a689a5ded39abbe161f481edfa2634242c3e34d52a386b39",
+          "bytes": 952
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/raw-evidence.json",
+          "sha256": "b5884f7d3a174537a0ab8ef7c5c4bb1ba916f7a2d7fb9ed490674e40c324beec",
+          "bytes": 5382
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/component-graduation-report.json",
+          "sha256": "be9a393f5e4ba02ee6627c19c2522b926d516f81bd59109973bfe9747737ec3c",
+          "bytes": 7681
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/verification.json",
+          "sha256": "381342ae36fbbc702a6c86570f92ce5b85f85d484baf1166a7385647620de435",
+          "bytes": 10319
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/SHA256SUMS",
+          "sha256": "29dd79fa1e92c899875d5cc7e58ed951e2c1330203de5baafe03bd5e2d6d5ce6",
+          "bytes": 2905
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/01-authority-unit.txt",
+          "sha256": "a586b47f76bbdd63614634b5433f86ab5acc01372c419efb327cab104e93047c",
+          "bytes": 242
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/02-v3-runtime-lane.txt",
+          "sha256": "fce5ca52cf877781324b001c90d12e6e09618541ed12fde6edaa08db46c78d6d",
+          "bytes": 929
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/03-typecheck.txt",
+          "sha256": "feab8a6c0c07f1b9a9c28e66d7b814bd0f6ae977b6a7af4d97e2b721231cb7bf",
+          "bytes": 2106
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/04-lint-check.txt",
+          "sha256": "fe3133d97a8314d7214435f3a8126c8ed56f54b4134381cb1bfd2e4fe405fcfa",
+          "bytes": 23383
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/05-contract-check.txt",
+          "sha256": "6f0a6b458a353bfe015424e71984e6258accff5f1b1e11d20358ebf745bbdd63",
+          "bytes": 515
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/06-no-bom.txt",
+          "sha256": "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa",
+          "bytes": 17
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/07-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/08-graduation-gate.txt",
+          "sha256": "25a77e564e45c6b707cec9506801b9572c1fc8abb2c4c01391af06936eb92613",
+          "bytes": 817
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/09-sha256sums-check.txt",
+          "sha256": "8e818ff8792d0fffcb2dab2eda154d014b21dde0052a2351d6f1abe16f86deb6",
+          "bytes": 6818
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0502": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/tool-search-capability-catalog.ts",
+          "sha256": "a76b8d3377b28b39c36f2dc6b667ba05ef6c4e6afbf28540df075cf815ac0e29",
+          "bytes": 7577
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tool-search-capability-catalog.test.ts",
+          "sha256": "682323c2a75a9d633ece951c85c83cf6aeb34f65c0d239c3628c4ebe0936edc4",
+          "bytes": 5086
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tool-search-capability-v3.ts",
+          "sha256": "8e1c35a885986184e6a6e8fcdc8210c5c79e48784f0b2f06be3ca0ee117a0629",
+          "bytes": 7774
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tool-search-capability-v3.test.ts",
+          "sha256": "874f998b4d93019f91dcce4de959ef2cdf15bdad6df069149a8a831d5e6231f7",
+          "bytes": 8264
+        },
+        {
+          "path": "shared/model-capability-profile.ts",
+          "sha256": "e76e4906a496c0f71e78ab4a4b47de921526825e0f59f34ae573e32d1dd239ce",
+          "bytes": 52669
+        },
+        {
+          "path": "tests/unit/model-capability-profile.test.ts",
+          "sha256": "6ed868c71d6e9a4ad9fc039e0b4ca593c7b6427a35b8859d11ca09c2e70de4a9",
+          "bytes": 17949
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/README.md",
+          "sha256": "131647de0629524a9f70e99b3c2b1317af898cc455fa51368e20e1627b941efb",
+          "bytes": 7066
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-protocol.json",
+          "sha256": "d7653f1c85201b54e73492e2387c1bc0f453a63b3cedd8995e573ecb1f6e01d4",
+          "bytes": 1595
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-protocol-v2.json",
+          "sha256": "3aec40d7255b56efea481facf6d8896392557b1a059df947863bc911f4eca4cb",
+          "bytes": 4752
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-run-v1.json",
+          "sha256": "2124ce3fb9ac1662a45cae52f6ada37dbf1c96c480fae3c3023cabbff0fe45a8",
+          "bytes": 28121
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-run-v2.json",
+          "sha256": "a0b2f22203559523197a5bc51ec4f7c697c23f900c02bdbe75246c2a3266ba79",
+          "bytes": 32252
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-v1-defect-note.md",
+          "sha256": "74a95118b52b16492287c108393b9ed8574f10ff47394decc7b1a98107391efa",
+          "bytes": 3742
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/raw-evidence.json",
+          "sha256": "54b08cf31f5e59f44476cc6636bf7adba15c2f9df173de8726e5e4da1d7a8a1e",
+          "bytes": 6035
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/run-ab.mts",
+          "sha256": "b39d078d528bf2f4857513e89a74dadc59da2ed27e5baa77f3a4c14974703f7c",
+          "bytes": 7206
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/run-ab-v2.mts",
+          "sha256": "9881a3fd517ea18d5e36c5bc33479f899323f7035318d88ff52cac8bc8568277",
+          "bytes": 12486
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/run-verification.ps1",
+          "sha256": "7a7dc8ede42d3222a46893311cbbe514ebc258df60d6816fd145ca023831ddfa",
+          "bytes": 6967
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/verification.json",
+          "sha256": "e8594ce16f3aefaf6c0f1badd1f27405c0726496cd4324f616d3577dd27835e6",
+          "bytes": 9141
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/SHA256SUMS",
+          "sha256": "caca780a6e2545b2254c757a861609ad4cdbd550b217f90e788a197e51438ccc",
+          "bytes": 2165
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/01-catalog-unit.txt",
+          "sha256": "5b71a9b39ca9ac5b847b75da833a650e9076f63d6e9639ee40409b1994bf31e7",
+          "bytes": 982
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/02-v3-bridge.txt",
+          "sha256": "e688013faa74e04c200941e8b5f5ecf0204347823702cf37f645984e0746857f",
+          "bytes": 911
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/03-profile.txt",
+          "sha256": "a6c70425c6dd2868bef360b78829c73ce96bac2654049973178c24d56a53bafa",
+          "bytes": 261
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/04-typecheck.txt",
+          "sha256": "c997ac2d338fd3f523346b2f49f6a15ae4b9d09fc437ef5086ed66144613d222",
+          "bytes": 1694
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/05-lint-check.txt",
+          "sha256": "698b4f0398172660c24ac3b65956cec5677644a74ff254a2923a8df3b0000aae",
+          "bytes": 23087
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/06-contract-check.txt",
+          "sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0",
+          "bytes": 59
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/07-no-bom.txt",
+          "sha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4",
+          "bytes": 18
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/08-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/10-sha256sums-check.txt",
+          "sha256": "a4b0dce25653767b2afae0822acb0c04cf63c9a30a3c2b509b2118b19ef3e2b3",
+          "bytes": 4610
+        },
+        {
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/11-historical-preservation.txt",
+          "sha256": "b2a2fb8129ce99d9c5b8e41296b54def28fe1cb898500323017380a4f491adcb",
+          "bytes": 142
+        },
+        {
+          "path": "docs/dev/component-graduation/TF-0508/TF-0502-ab-readback.json",
+          "sha256": "cc1b7fb9ddc1b54a47053007939d58f2817908dc30142d732445114889edd461",
+          "bytes": 962
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0510": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/coding-control-dispositions.ts",
+          "sha256": "217f326471f3e1538d27421b6ebed3ca66887ea4419228b8ad4c5856c185ea73",
+          "bytes": 7228
+        },
+        {
+          "path": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+          "sha256": "0b14f07f4c8abcabb6b30ad08e13bc4852ef20c054db20a43225be574ecdc69e",
+          "bytes": 45678
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts",
+          "sha256": "1c1f9d6546b421f5ec1dc3d70f5dcfbc138ead7fa282e71e85eb984ef58f6cb5",
+          "bytes": 14673
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/coding-runtime-flags.ts",
+          "sha256": "bb85b3045648c7839fc904369c9838355f0a4457046b6891c306c399441e5701",
+          "bytes": 10641
+        },
+        {
+          "path": "shared/dcs/component-disposition-catalog.ts",
+          "sha256": "4227897ef9ab971b9ad43a2d1ffd5f01bdd9989452b9818c4060cd7e60cfb587",
+          "bytes": 47009
+        },
+        {
+          "path": "shared/dcs/prod-flags-control.ts",
+          "sha256": "84c5b2631036259762fdac2239c9b971b803ddd5c34762b2002e5db402c16e10",
+          "bytes": 16245
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stale-write-guard.false-block.test.ts",
+          "sha256": "11aaae40b2d424491467bc54bf47816c4b741b6e88a9f1447a910e22736a6f3b",
+          "bytes": 4791
+        },
+        {
+          "path": "openclaw_runtime/src/agents/patch-flow-graduation.ts",
+          "sha256": "92a34e99a75e7aedc40c73e376697f267a3bef21e62a4b8cc4d932a03448e11a",
+          "bytes": 5244
+        },
+        {
+          "path": "openclaw_runtime/src/agents/patch-flow-graduation.test.ts",
+          "sha256": "000946e09bf821173b72d2a8e3fad02fb3466028b7e3188494d66535bb455378",
+          "bytes": 2323
+        },
+        {
+          "path": "tests/unit/coding-controls-tf0510.test.ts",
+          "sha256": "e1b41a8ad885df7cedd156e5eeeab4c979a8ba7ddf03605e83dd2c73e35f599d",
+          "bytes": 5905
+        },
+        {
+          "path": "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
+          "sha256": "27cf6f3675d39ac51356c88597f070b400c6807a9906a26ec92ac9d161108157",
+          "bytes": 3270
+        },
+        {
+          "path": "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+          "sha256": "dba95c0ca48dcae988e1374e5cb327bf8ca12acc850915005871779d000b6a95",
+          "bytes": 4589
+        },
+        {
+          "path": "tests/unit/fixtures/coding-controls-tf0510/symbol-lease-worker.mts",
+          "sha256": "b1d095c3ba8f4bb6ccd032ffe5b689db6eb84a91cfbe3a614515b0b149a1f370",
+          "bytes": 1994
+        },
+        {
+          "path": "tests/unit/fixtures/coding-controls-tf0510/README.md",
+          "sha256": "8f094c61d6faf791bc9ab242e9ee88296961209b3f6befdfe10b5d4db9b2cfe4",
+          "bytes": 4084
+        },
+        {
+          "path": "tests/unit/fixtures/coding-controls-tf0510/retirement-evidence.json",
+          "sha256": "c571f1b772533bb2b7dcf648a4db1af8733f5d4f12cf5221ac6d6abdec88b9d2",
+          "bytes": 4841
+        },
+        {
+          "path": "tests/unit/fixtures/coding-controls-tf0510/raw-evidence.json",
+          "sha256": "534a94174bd497fa2ebb4574b916eec729aab60dcc0eaa89764fc5a357c1dafa",
+          "bytes": 7494
+        },
+        {
+          "path": "tests/unit/fixtures/coding-controls-tf0510/generate-acceptance.mts",
+          "sha256": "5584f828c71687a9554ca9976316ab2c9987d031c8c20d607a1527fbefc4e14b",
+          "bytes": 4273
+        },
+        {
+          "path": "tests/unit/fixtures/coding-controls-tf0510/verification.json",
+          "sha256": "a5510a2449fe39164667a42c2dd062844540ad639e0aab5cad4d510c2e26dc2b",
+          "bytes": 6097
+        },
+        {
+          "path": "tests/unit/fixtures/coding-controls-tf0510/SHA256SUMS",
+          "sha256": "88cfc4ad9d93bc47e9cf44f1577d692aaf35b99952641a93c1d2fee46ba2dd14",
+          "bytes": 2224
+        },
+        {
+          "path": "tests/unit/fixtures/coding-controls-tf0510/03b-stale-false-block.txt",
+          "sha256": "2e5dea5081f4710d85e955ec507a0e3f3740235d950e8bae1a6b944bcdae6206",
+          "bytes": 1986
+        },
+        {
+          "path": "tests/unit/fixtures/coding-controls-tf0510/03c-lease-multiprocess.txt",
+          "sha256": "257b5de99a4f45953a1a2fd65bfebdc984ca9b0b9ae6b6cedc03066f206e208a",
+          "bytes": 1302
+        },
+        {
+          "path": "tests/unit/fixtures/coding-controls-tf0510/05b-retirement-invariants.txt",
+          "sha256": "c679fc6fa16ff7463fd9dd2f895123766f29442ea93340b5180d0eb9995400dd",
+          "bytes": 214
+        },
+        {
+          "path": "tests/unit/fixtures/coding-controls-tf0510/12-scope-audit.txt",
+          "sha256": "389831220895fd8cda5f94fee8e711399955e69f4ede74a885b48e23238d0a1a",
+          "bytes": 43
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0504": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "shared/model-capability-profile.ts",
+          "sha256": "e76e4906a496c0f71e78ab4a4b47de921526825e0f59f34ae573e32d1dd239ce",
+          "bytes": 52669
+        },
+        {
+          "path": "tests/unit/verseshell-internal-substrate-tf0504.test.ts",
+          "sha256": "7eb0968a4926c66959e706b53c6127af0f550c7e65c1444a05049c413e216fa8",
+          "bytes": 6001
+        },
+        {
+          "path": "tests/unit/model-capability-profile.test.ts",
+          "sha256": "6ed868c71d6e9a4ad9fc039e0b4ca593c7b6427a35b8859d11ca09c2e70de4a9",
+          "bytes": 17949
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/README.md",
+          "sha256": "bb996a974e72e8e19e492cce2d5942e964971d81ba3daffe8d82cb1957227dc1",
+          "bytes": 3189
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/raw-evidence.json",
+          "sha256": "2a705265b9dcb2f192a19b4dd397a257f8a7b7eb74fa77346bee848d062febaa",
+          "bytes": 5253
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/run-verification.ps1",
+          "sha256": "6815e1188d72fc23ceed7349cbc47bb72a911ca5e2f6e99251fe4e450107d311",
+          "bytes": 8124
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/verification.json",
+          "sha256": "43afcb95925fb3b0df63ddffed1dc12b30bf31940ab3c919c3d4042c970bc34f",
+          "bytes": 3877
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/SHA256SUMS",
+          "sha256": "fc7385b5790a0765de3fc10d1d5900935af94f73b6a9f1f6ace4025d56df33fd",
+          "bytes": 694
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/01-tf0504-guard.txt",
+          "sha256": "d88057f11cc39b3e70e58b056c2fd0aebda4f1feb157b4e42afd9fafc84217b5",
+          "bytes": 253
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/02-model-positioning.txt",
+          "sha256": "5edcad9d01a7c73b96884bb6adcc93c190c7a9e756cf86e7830c46c6914d61fc",
+          "bytes": 261
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/03-verseshell-lifecycle.txt",
+          "sha256": "6a5edc12f503df1c7f0482dd710050f94ec5d4bdd596ab7db0530e8ac03fb0a8",
+          "bytes": 1018
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/04-typecheck.txt",
+          "sha256": "a7ba5960617e1de1f097004e4472ba7eb4f74a26b7100ac06dfeb5540e8dcc02",
+          "bytes": 1694
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/05-lint-check.txt",
+          "sha256": "ed91e5d05fd3c19c493f34bdd1a4db9b548d89c47a1495891b175826edf376d1",
+          "bytes": 23087
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/06-contract-check.txt",
+          "sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0",
+          "bytes": 59
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/07-no-bom.txt",
+          "sha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4",
+          "bytes": 18
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/08-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/09-substrate-audit.txt",
+          "sha256": "52dfbde6d3f347913facd5eb7c6ee1d2e89475b209dba98ec313f8d7566c501f",
+          "bytes": 124
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/10-scope-audit.txt",
+          "sha256": "d5dc1c363ab22c0e3eb415be0f25535d7eb22f126ce1a911c9f7b9c34e35b757",
+          "bytes": 43
+        },
+        {
+          "path": "tests/unit/fixtures/verseshell-tf0504/11-sha256sums-check.txt",
+          "sha256": "afaf49f77a1e9ea2745876e6ba5fbdfcfbb52e3d5406a76a89955697a36f5536",
+          "bytes": 1629
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0509": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/permission-contract.ts",
+          "sha256": "6521a58515eac227ac260a6790977835bff23814aa1e15094dcbcb734994008a",
+          "bytes": 11641
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage4-capability-grant.ts",
+          "sha256": "cbbf84ec6fbbb0170436c8c830092771be3b0c1649faff57a833ba0641e5adb7",
+          "bytes": 30753
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage4-tool-guard.ts",
+          "sha256": "6106f4c45fbf1e28a9bacabf355d118d4abfb41d2bf9fa3c67a4143e33577d3f",
+          "bytes": 12969
+        },
+        {
+          "path": "openclaw_runtime/src/agents/approval-ledger.ts",
+          "sha256": "4d00fcb3e02da7c2bb5d5d58355a987c7ce63a826ef6ced0cc106692a8050ec1",
+          "bytes": 22928
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts",
+          "sha256": "90f2056d7a378299cd5fa428f3739ca1346855dea606a9ed47702c2134d1f1e2",
+          "bytes": 52708
+        },
+        {
+          "path": "openclaw_runtime/src/agents/verseshell/governed-exec.ts",
+          "sha256": "1f0bb3ca864eb9602c037c2cd62b069fee77c3b7dd0d11f1e3d25c2832c558fe",
+          "bytes": 20167
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "sha256": "d6c737e271707322b7fc8e22018c38b4865b3d506da2d24405bb0fa489f3073e",
+          "bytes": 28626
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "sha256": "eafdef1675a5e3d217d8fb96768d5432349f5d144e8513215548f4fbea80da1e",
+          "bytes": 27468
+        },
+        {
+          "path": "electron/services/knowledge-api.ts",
+          "sha256": "7775c6c055e5dd80b8c2a93b76e3dcfefd1c71158ca4219ce2e9369bb9e88e29",
+          "bytes": 246293
+        },
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "tests/unit/permission-contract-tf0509.test.ts",
+          "sha256": "b13b4f249522fd75ddc85902e86cb7b40891934400d5f41ffafbd84fc6e9fe3c",
+          "bytes": 9390
+        },
+        {
+          "path": "tests/unit/context-control-plane-stage4-contracts.test.ts",
+          "sha256": "144c9fc5fd14abc4c8cde729af7cfa7ef57beff60f6363a3f84b6f6cac55669d",
+          "bytes": 26461
+        },
+        {
+          "path": "tests/unit/knowledge-lifecycle.test.ts",
+          "sha256": "35fc5f77f96366892a2341b72edc449336827f0d79403238c7fe7ef800d63f9b",
+          "bytes": 7595
+        },
+        {
+          "path": "tests/unit/versebrowser-capability-gating.test.ts",
+          "sha256": "7ec30de3b6896b2c80e3bf0fe0b997144a5c27aeed00a4480db59cf3a896bd1e",
+          "bytes": 7218
+        },
+        {
+          "path": "tests/unit/permission-decision-audit.test.ts",
+          "sha256": "c2c4e23bc45dcd68c55c2a79fc7560966770c390c6731122f9c83eb54672cdeb",
+          "bytes": 5517
+        },
+        {
+          "path": "tests/unit/workspace-permissions.test.ts",
+          "sha256": "e8b9c52581a9a3a6cc2f8d0b5ce45da0508890b90f341a632c39517ff133f4d4",
+          "bytes": 14145
+        },
+        {
+          "path": "tests/unit/gateway-permissions-api.test.ts",
+          "sha256": "18cb68044b0808b22e5f55a7b5dd4653a0a0b0705e97adfff9dc88d8f4142a61",
+          "bytes": 12386
+        },
+        {
+          "path": "tests/unit/files-permissions-api.test.ts",
+          "sha256": "74e2fd8b92ec8b09be031292f556e52d05a2dc8406b156cdff771de5d550ded0",
+          "bytes": 8002
+        },
+        {
+          "path": "tests/unit/runtime-approval-bridge.test.ts",
+          "sha256": "cee46e24c802d32276e62cb1f1f148fddfca34727b1e969363e44ee7b7e59007",
+          "bytes": 5852
+        },
+        {
+          "path": "tests/unit/run-approval-attribution.test.ts",
+          "sha256": "b24310baf8a5f0ee981427aa7be1485f41fb5d76282111297778a3252d57094d",
+          "bytes": 5289
+        },
+        {
+          "path": "tests/unit/pending-run-approvals.test.tsx",
+          "sha256": "06b2ca7b86ceded79226ae6a916828abbf260fa3ed96ba14c0d501f48036ad91",
+          "bytes": 7158
+        },
+        {
+          "path": "tests/unit/approval-redaction-contract.test.ts",
+          "sha256": "d753a684cdc75a9499af0767516bd45adb0827ddc6e25df58050e7aa7eb9fa80",
+          "bytes": 5922
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage4-capability-grant.test.ts",
+          "sha256": "d1d236fbdbe0b2fa47e0a82f8c06abb0f9eef79724d4f25376bd0f8826e2711b",
+          "bytes": 5813
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage4-tool-guard.test.ts",
+          "sha256": "ebc747f8f98f2b54e34a67cd5aa8b2ad746ba8841afe856b1784020721719107",
+          "bytes": 5642
+        },
+        {
+          "path": "openclaw_runtime/src/agents/rc04-durable-approval.test.ts",
+          "sha256": "f7bfeb35b072107a7f2779735e08e8f3ac9be2dc99b0738385febeadec60335d",
+          "bytes": 23876
+        },
+        {
+          "path": "openclaw_runtime/src/agents/rc04-exec-approval-wiring.test.ts",
+          "sha256": "58e0ffd2df610ed7b11e889f6e03ebfcae87ea930f1bc06df3a03cfcb253c68d",
+          "bytes": 10667
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage1-minimal-grant.test.ts",
+          "sha256": "e0a363b34534260364f9be7db87b04d60f11eb85b4345bf866bd410e959bf4e6",
+          "bytes": 6475
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage1-tool-guard.test.ts",
+          "sha256": "03a437e7fb1b4a2e5fce1e7da47066c31a4ce0c65e02ede160920c4a2e80260e",
+          "bytes": 6295
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts",
+          "sha256": "f6fd297b0d31960fd0236f0ac97ff776cef497ccdc5de7755f2c31476260a5c4",
+          "bytes": 10522
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/README.md",
+          "sha256": "39fd7419e08401c39c5aee1544f24f1f414151db041033f6e4a82a334f0f5c42",
+          "bytes": 2542
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/generate-acceptance.mts",
+          "sha256": "968b1dbf64407169a885b302ee603693f3b55c101f5a271b2894aa7b95a49855",
+          "bytes": 10465
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/run-verification.ps1",
+          "sha256": "111e971f6bb9acb7b0800a3c69b69088a9ec4493528bbbde98f3b804578e4d38",
+          "bytes": 6150
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/raw-evidence.json",
+          "sha256": "a29a34230e7c123974017aa95454dffaf3f62c35f70257ddb8c99d874abec098",
+          "bytes": 10952
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/component-graduation-report.json",
+          "sha256": "93eb3539024029c17eed0b962ec85939e94dc45b6ccd91d80c37d049b5bbf07b",
+          "bytes": 8952
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/SHA256SUMS",
+          "sha256": "2a3528a1ed77415b64c77ddb0e5c82f3fd255533955f5ff86a30508cf094101c",
+          "bytes": 4093
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/verification.json",
+          "sha256": "f252f1ee66762a3c6ef476cdd076ee699df23634f2280ea96c95a6f3f50b0a2c",
+          "bytes": 20076
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/01-permission-contract.txt",
+          "sha256": "0b833c3b0152e4de759c2f95a97c21a1aaa4aedb4718b33865c2148e944662c6",
+          "bytes": 286
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/02-cross-component.txt",
+          "sha256": "43b9dd46ab24991e604e11294df4d39ed914c9a3f047a362282bd1e452ab4a53",
+          "bytes": 3461
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/03-runtime-authorization.txt",
+          "sha256": "3ee429dca240473203e3b937a7fbc6514494477810db32ebf6a787aa5698538f",
+          "bytes": 1041
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/04-typecheck.txt",
+          "sha256": "78a219603eb8b94d98b78fc2397ef07592f0395a597f65d4c1b067c35ac3007c",
+          "bytes": 2162
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/05-lint-check.txt",
+          "sha256": "109b85f393291a4daa90aec9e4dfbf3592e38b89c54d8db5b16cb346e7d240dc",
+          "bytes": 23607
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/06-catalogs-check.txt",
+          "sha256": "2e9452a244f19be318c6f17653ee2080eb6f8766e0da0717418501cbb90dabc6",
+          "bytes": 626
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/07-contract-check.txt",
+          "sha256": "f7fa93ef66407ed6df04b201ba1b7cf451743d8c82c24188606d30c1b13d37fb",
+          "bytes": 523
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/08-no-bom.txt",
+          "sha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4",
+          "bytes": 18
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/09-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/10-build-vite.txt",
+          "sha256": "dce63d7d3d84dcca89e8c634e15f8d7077d6366ac18972b8be4ce3ece4d6db04",
+          "bytes": 50937
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/11-component-graduation-gate.txt",
+          "sha256": "31778bcb13f4318f8d5d7af96b4c0b745627288694d8eedb47a3a0e20db8507a",
+          "bytes": 843
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/12-sha256sums-check.txt",
+          "sha256": "8af625e518c552003c54210bf705f23033701af6e004a4ac7b6de6c18510cdfc",
+          "bytes": 10072
+        },
+        {
+          "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/13-task-forest-validate-preapply.txt",
+          "sha256": "19b928414ae5263ab39033974b2955566f81779d48eb683dffa73d148275f3a8",
+          "bytes": 94
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0508": {
+      "recordedNodeStatus": "ready",
+      "evidenceFiles": [],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0503": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "shared/agent-browser/private-network-policy.ts",
+          "sha256": "bceec389e649bf283782b226276f3546256c7f372adb7fb0f7dcce558e5297da",
+          "bytes": 6374
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "sha256": "eafdef1675a5e3d217d8fb96768d5432349f5d144e8513215548f4fbea80da1e",
+          "bytes": 27468
+        },
+        {
+          "path": "electron/services/agent-browser-capabilities.ts",
+          "sha256": "174424dca09b0cd246d4dd6c7c77d47be5032df14be44e51696ee33bdb678a8e",
+          "bytes": 8318
+        },
+        {
+          "path": "tests/unit/browser-private-network-tf0503.test.ts",
+          "sha256": "1c23eb73550a30e3e03c8bb236af6250e04a7a28781d7cb96cdd580f643c8395",
+          "bytes": 4009
+        },
+        {
+          "path": "tests/unit/browser-navigation-guard-tf0503.test.ts",
+          "sha256": "79b206e266c3530208eb0e144512682d44a8b62ff04bfe559f381345a99f4662",
+          "bytes": 3290
+        },
+        {
+          "path": "tests/unit/browser-session-reap-tf0503.test.ts",
+          "sha256": "cc1d34079914992174264bbb8dc5442bbd91e8568f2f7eb4c92b47ce4fe40d64",
+          "bytes": 3192
+        },
+        {
+          "path": "tests/unit/browser-supervised-capability-tf0503.test.ts",
+          "sha256": "74ebab1c11ba3f31908f8e9a202afbf09c942d6cc641b521781e71abed8471e4",
+          "bytes": 2063
+        },
+        {
+          "path": "tests/unit/agent-browser-gateway-bridge.test.ts",
+          "sha256": "6227e3a48ed1bb8d95052b9af04a330c1e33350ebac28f2f1922954b282ab9b0",
+          "bytes": 12338
+        },
+        {
+          "path": "tests/e2e/browser-supervised-task-tf0503.spec.ts",
+          "sha256": "1201fe758672de979baca4771ad6d77f69e56713d45775eebee73bde942425d9",
+          "bytes": 7234
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/README.md",
+          "sha256": "683fd81bbeaa1cd10908896304942b3be2d3591f44cc361b45a6468d40fb12ab",
+          "bytes": 2769
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/raw-evidence.json",
+          "sha256": "61a1125257aed446b1f10c5e7da30f699744b4dacd80218dc1cd4c51ec3d5499",
+          "bytes": 3247
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/run-verification.ps1",
+          "sha256": "1a01d6d48d71e00b6f2ff1e6706d1b6b593e7f30341cc51088e0a1bc431b79d6",
+          "bytes": 8072
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/verification.json",
+          "sha256": "ac2665e34b01b3dc45aaa42b7df379282643eadb13f9271e001d0ae431d55d53",
+          "bytes": 3797
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/SHA256SUMS",
+          "sha256": "85c9da60a652939aad69cada812f10c576a7c40cbd79e5c195dcc639db52294d",
+          "bytes": 1381
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/01-guard-unit.txt",
+          "sha256": "f81628d86ad3fe10f117e97f132aad1b3069a2c201e42d58f0e5cae0165847ce",
+          "bytes": 307
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/02-browser-regression.txt",
+          "sha256": "c69ad56430c8439fe8e8fb4e7e579021eff8b9424597a60faa19d58acae2b344",
+          "bytes": 7262
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/02b-electron-real.txt",
+          "sha256": "1ca989582de0ea5b4ecc8abbe86c0d49a4d1c30d1270fd768a37ddc1054476bc",
+          "bytes": 618
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/03-typecheck.txt",
+          "sha256": "8fb8a98c1b3666310b71e5d7dc8452cac3df900d57f954ec0cd0c8d7c0df30db",
+          "bytes": 1693
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/04-lint-check.txt",
+          "sha256": "7a74c88871a63b2a56726b8c5331a5a7995124a96cc797743b334245f06599cb",
+          "bytes": 23186
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/05-contract-check.txt",
+          "sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0",
+          "bytes": 59
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/06-no-bom.txt",
+          "sha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4",
+          "bytes": 18
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/07-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/08-navigation-guard-wired.txt",
+          "sha256": "5be259a3fc2e35a1cdefd48d51224794c310f23228c898c5e899cb5fc735a21d",
+          "bytes": 136
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/09-scope-audit.txt",
+          "sha256": "02af99b5452a457339c7e37ce7b8c15dbb98d780e88038e63f2ed32246be5f9c",
+          "bytes": 43
+        },
+        {
+          "path": "tests/unit/fixtures/browser-tf0503/10-sha256sums-check.txt",
+          "sha256": "544cd422da1a9a832236cebb344ac87291723e8564b96e1cb0f8e5c205d69255",
+          "bytes": 3222
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0505": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "src/lib/surface-access.ts",
+          "sha256": "dfc2b19573ed8be4eedb4d04d1ee861cd185b2c9d2f16091fc87c36a6c073e88",
+          "bytes": 2159
+        },
+        {
+          "path": "src/App.tsx",
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/components/layout/Sidebar.tsx",
+          "sha256": "7272089422f5b502b276e89349249c676edff0a2a88986585cf4d93669ea1db7",
+          "bytes": 79815
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "shared/i18n/locales/en/common.json",
+          "sha256": "3c1ce396c21b11fe060eef379a08e7790e3f6c798f493ea859821ab1c576cf4a",
+          "bytes": 7785
+        },
+        {
+          "path": "shared/i18n/locales/zh/common.json",
+          "sha256": "54c31fbf0d7a94ad5539aaef39fdb599f1dd8deef9e476fc3b1734525d6fc83f",
+          "bytes": 7534
+        },
+        {
+          "path": "shared/i18n/locales/ja/common.json",
+          "sha256": "ff2090676498b590407248d090154809d37386013de532986a8a22f31211f5a1",
+          "bytes": 10017
+        },
+        {
+          "path": "shared/i18n/locales/ru/common.json",
+          "sha256": "5ba747d9bccbde48ed951eeca8b48dcede2e5221f1b854f6e8d88b9f34fbabe8",
+          "bytes": 11795
+        },
+        {
+          "path": "tests/unit/surface-access-tf0505.test.ts",
+          "sha256": "99dc1863892c8096fa15a296781fe030563e02386f7a4a04dab8e3f183a0e276",
+          "bytes": 3255
+        },
+        {
+          "path": "tests/unit/memory-tf0500-retirement.test.ts",
+          "sha256": "0ea8b40f9ee7a62e943addd06b68ae350cd9027b4dfdb3475c23de20f5f10f2e",
+          "bytes": 4506
+        },
+        {
+          "path": "tests/e2e/developer-mode.spec.ts",
+          "sha256": "e5bdccb007accf9092ef3189e154776822f12dc980758cf9d979cc1af54d3ea8",
+          "bytes": 2058
+        },
+        {
+          "path": "tests/e2e/image-generation-settings.spec.ts",
+          "sha256": "b1ff4fb79083721709e93d3ad9773339fcc0e0d2f7c90d5e9976ddefc7579a42",
+          "bytes": 7632
+        },
+        {
+          "path": "tests/e2e/vtoken-bridge-settings.spec.ts",
+          "sha256": "3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5",
+          "bytes": 1135
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/README.md",
+          "sha256": "8442c00d91a6db572c0db6bdaf8957b4ea663cdf18b2c1972a1f6c9a99403bd0",
+          "bytes": 1967
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/acceptance.json",
+          "sha256": "73b74d103edcca1236860c01b4586250f409d51fa21f27b060f0748dc313916e",
+          "bytes": 2146
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/surface-inventory.json",
+          "sha256": "668fcf3fa2cd87f63d11dab09f9f60a02ecb1ac2e360162e0e60e7cb9c36325a",
+          "bytes": 3524
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/component-graduation-report.json",
+          "sha256": "9cc498e5f51ee38b8ea5ddeb6a92e45984bc34f24821cb7fb969c8dce2c88271",
+          "bytes": 5129
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/verification.json",
+          "sha256": "ffffe4fed68546da9f89b18bb4577e1f7c4f714a97d64235fb8c9a1847aaaf26",
+          "bytes": 4771
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/SHA256SUMS",
+          "sha256": "23b312b8fe37e02fa3475bc62d7287cf8ef30320a76314eace7e4c512b04d400",
+          "bytes": 2164
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/sha256sums-check.txt",
+          "sha256": "b12e7c15a883f05058d3eeed23b918a4fa5402331c54efa6850c2b8efe1c7f08",
+          "bytes": 5166
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/generate-acceptance.ps1",
+          "sha256": "4cfdf33186214a0cf1552e2069a21789f0d9406d1e2f1ff2c7459e1f58798878",
+          "bytes": 6677
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/run-verification.ps1",
+          "sha256": "42c35823767a2afa07ccc2488a135aec8e548ea77d82ddb92278eccd7263cd3c",
+          "bytes": 4521
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/01-unit.txt",
+          "sha256": "119233cce192aa481ca9d8439804014d98231e1dffd30ee563dd07361a91eb6c",
+          "bytes": 1532
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/02-typecheck.txt",
+          "sha256": "1c344fc1836680046c9901fe419b35a943476dbe10c03d5a3c73099ae847bfa1",
+          "bytes": 2078
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/03-i18n-lint.txt",
+          "sha256": "7357002fe07c8c8c5d4ec2c36dc7746fd943a186ed404abe63610ea567cc4dfa",
+          "bytes": 472
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/04-lint-check.txt",
+          "sha256": "442bda7d387762ba7d3287bfbf98d66b001ff885c555b11a4e08682efefc68ed",
+          "bytes": 23355
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/05-contract-check.txt",
+          "sha256": "f5c56cf6e18d6992d116177972b8a1e1c6c981752741f6432cd8367c70036183",
+          "bytes": 487
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/06-no-bom.txt",
+          "sha256": "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa",
+          "bytes": 17
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/07-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/08-scope-guard.txt",
+          "sha256": "eda827bf9143aa00e6fb47a574af47eb95f313653a82b7ab38b7a0fe8e62b119",
+          "bytes": 558
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/09-build-vite.txt",
+          "sha256": "79f8cdd897a7f6986677caa893413a27c782baf6176bf13280531405fd07b7f0",
+          "bytes": 49873
+        },
+        {
+          "path": "tests/unit/fixtures/surface-cleanup-tf0505/10-e2e.txt",
+          "sha256": "c57a3742f58a94a7a866c686b6c87e18e23f454159862f00d44ca1123f70d472",
+          "bytes": 1851
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    },
+    "TF-0500": {
+      "recordedNodeStatus": "done",
+      "evidenceFiles": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts",
+          "sha256": "b1c2143b40b6f96c5c5ab1cc2faa0fbbff30c55f32a981d798af13f890416055",
+          "bytes": 30101
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-runtime-config.ts",
+          "sha256": "94570fa96e91068ff2ebd692844b497e101fe0420f9e97412c1a6e76cfe8b69c",
+          "bytes": 11449
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-runtime-config.test.ts",
+          "sha256": "20911aa9d2f9c0743d501aeac3b96b3919566d5e7cb387af1cf5c5b99fb7b498",
+          "bytes": 1076
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-context.ts",
+          "sha256": "e38a3ca0d9d4736a54af8bdc552d19b56822c2b351a1374e6fea5f91c3279437",
+          "bytes": 53402
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-orchestrator.test.ts",
+          "sha256": "40b9500b4a3b0f877121f2fda2963fb5873c7caee4f24f259ef6cb9858cfb549",
+          "bytes": 21458
+        },
+        {
+          "path": "tests/unit/memory-tf0500-retirement.test.ts",
+          "sha256": "0ea8b40f9ee7a62e943addd06b68ae350cd9027b4dfdb3475c23de20f5f10f2e",
+          "bytes": 4506
+        },
+        {
+          "path": "tests/unit/compass-experience-validation.test.ts",
+          "sha256": "74097d6e2a235fcead679c63f2ad671e7798d9f80fd1adde9bffe9186142d604",
+          "bytes": 23379
+        },
+        {
+          "path": "tests/unit/default-config-matrix.test.ts",
+          "sha256": "5b9e8019bfccfe9600bda49ea2f7a9dbc52448f800a1ae6693c893d6cd7d045e",
+          "bytes": 20223
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/README.md",
+          "sha256": "b4c027cd03a09df9bacbc633de67d1f0b542f84d439534fd2914abb129a36261",
+          "bytes": 2960
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/raw-evidence.json",
+          "sha256": "87f31102eaf57d6fd2ab93f7de5f2dda95dda66f12b8ed54a58769ada9b8df1d",
+          "bytes": 3889
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/run-verification.ps1",
+          "sha256": "168bbf6e8583dc9f873fd905fe7ce7b8d6c3495f79bc65b5df4f4daebeb87a61",
+          "bytes": 8755
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/verification.json",
+          "sha256": "dcc8d5a740808b06f548a4112f52e38c9c34f00dab8143fc3348d66d32818342",
+          "bytes": 3857
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/SHA256SUMS",
+          "sha256": "51bdd25512285e27255c78e0c45ca954177c2d9def35ecc2c2ac38caaa526a3c",
+          "bytes": 1315
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/01-tf0500-acceptance.txt",
+          "sha256": "e1fee14263cdad8c7b98f77ecf42003c8ce33c6e9d33206dfa80e081aad8a583",
+          "bytes": 250
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/02-surface-and-locks.txt",
+          "sha256": "954f717357cc5bfd1d1cd9059ce4a0cd76a28a1c0214845181985e0cba64d1c5",
+          "bytes": 733
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/03-runtime-memory-sweep.txt",
+          "sha256": "242223dae493b7cdae95667a9f5d027413b802a12931304eed4044c1fc2b34a8",
+          "bytes": 1072
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/04-typecheck.txt",
+          "sha256": "46a1089d8638481f6545cc4dba4d103fb7735bb2568aacf07d6ab4e2aa98e76f",
+          "bytes": 1692
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/05-lint-check.txt",
+          "sha256": "ed91e5d05fd3c19c493f34bdd1a4db9b548d89c47a1495891b175826edf376d1",
+          "bytes": 23087
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/06-contract-check.txt",
+          "sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0",
+          "bytes": 59
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/07-no-bom.txt",
+          "sha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4",
+          "bytes": 18
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/08-diff-check.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/09-retirement-audit.txt",
+          "sha256": "1c6553c9fd302103d5aa9bb20c1faf0ce0293667e2df8a5eeb9c149fa017f557",
+          "bytes": 165
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/10-scope-audit.txt",
+          "sha256": "df8d702addfe3b389b03f607ec51151f9189f09e28c1ea9a01f05ce8381259ae",
+          "bytes": 43
+        },
+        {
+          "path": "tests/unit/fixtures/memory-tf0500/11-sha256sums-check.txt",
+          "sha256": "90ae4b070d117c61dcca353f9a7e670e7c429dceede85dfbec61dc0771f31037",
+          "bytes": 3005
+        }
+      ],
+      "scope": "retained owning-node evidence plus current implementation checks"
+    }
+  },
+  "limitation": "Artifact bytes are read and hashed; owning-node histories keep their original verdicts and measurements. Current generic gates, runtime checks and Electron observations are in the separate final evidence files.",
+  "resolvedHistoricalReferences": [
+    {
+      "node": "TF-0502",
+      "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/09-ab-readback.txt",
+      "actualOutput": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-run-v2.json",
+      "currentReadback": "docs/dev/component-graduation/TF-0508/TF-0502-ab-readback.json",
+      "resolution": "run-verification.ps1 never creates the named text log; the final v2 JSON was read, all replies reparsed and all counters/CIs recomputed."
+    }
+  ],
+  "missingFileReferences": []
+}

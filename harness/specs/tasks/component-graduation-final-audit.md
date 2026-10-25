@@ -18,6 +18,7 @@ touchedAreas:
   - docs/dev/component-graduation/TF-0508/**
   - docs/dev/versegit-product-integration/TF-0517/**
   - scripts/component-graduation-final-audit.mts
+  - openclaw_runtime/src/agents/embedded-agent-runner/extensions.knowledge.test.ts
   - scripts/repository-artifacts.json
   - .gitignore
   - shared/model-capability-profile.ts

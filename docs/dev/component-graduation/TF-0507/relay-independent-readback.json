@@ -1,0 +1,43 @@
+{
+  "actor": "codex-relay-python-verifier",
+  "driven_by": "agent",
+  "candidate": {
+    "commit": "2615c6b1d30969ffef30a10117d6701e28499fa5",
+    "tree": "e0c83867fdcf75b4073d0a355a66fadf722e3f31",
+    "dirty": false
+  },
+  "summary": {
+    "scenarioCount": 24,
+    "passCount": 24,
+    "failCount": 0,
+    "providerErrors": 0,
+    "unauthorizedEffects": 0,
+    "effectiveDigestRefreshOnStateChange": true
+  },
+  "problems": [],
+  "negativeControls": [
+    {
+      "mutation": "counter",
+      "rejected": true
+    },
+    {
+      "mutation": "candidate",
+      "rejected": true
+    },
+    {
+      "mutation": "response",
+      "rejected": true
+    },
+    {
+      "mutation": "profile",
+      "rejected": true
+    },
+    {
+      "mutation": "effect",
+      "rejected": true
+    }
+  ],
+  "archiveFiles": 63,
+  "archiveMismatch": [],
+  "pass": true
+}

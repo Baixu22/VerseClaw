@@ -1,0 +1,307 @@
+{
+  "actor": "codex-relay",
+  "driven_by": "agent",
+  "generatedAt": "2026-10-25T10:03:07.099357+00:00",
+  "gates": [
+    {
+      "name": "final-component-unit",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/component-authority-manifest.test.ts",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "tests/unit/component-graduation-report.test.ts",
+        "tests/unit/model-capability-positioning-tf0507.test.ts",
+        "tests/unit/model-capability-profile.test.ts",
+        "tests/unit/runtime-effective-capability.test.ts",
+        "tests/unit/context-assembly-authority-tf0493.test.ts",
+        "tests/unit/workspace-context-profile.test.ts",
+        "tests/unit/memory-authority-contract.test.ts",
+        "tests/unit/memory-control-plane-authority.test.ts",
+        "tests/unit/knowledge-lifecycle-tf0499.test.ts",
+        "tests/unit/memory-tf0500-retirement.test.ts",
+        "tests/unit/vtoken-tf0496-decision.test.ts",
+        "tests/unit/capability-catalog-authority.test.ts",
+        "tests/unit/browser-supervised-capability-tf0503.test.ts",
+        "tests/unit/verseshell-internal-substrate-tf0504.test.ts",
+        "tests/unit/surface-access-tf0505.test.ts",
+        "tests/unit/coding-controls-tf0510.test.ts",
+        "tests/unit/permission-contract-tf0509.test.ts",
+        "--maxWorkers=2",
+        "--reporter=dot"
+      ],
+      "cwd": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\candidate-source",
+      "exit_code": 0,
+      "elapsed_seconds": 48.523,
+      "log": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\final-component-unit.log",
+      "logSha256": "385e28d67917198622887965514987baac6fd696508a23ff0ca1f46ee121122b",
+      "passedFiles": 19,
+      "passedTests": 146
+    },
+    {
+      "name": "current-versegit-unit-package",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/versegit-host-apply.test.ts",
+        "tests/unit/versegit-host-api.test.ts",
+        "tests/unit/versegit-fact-adapter.test.ts",
+        "tests/unit/versegit-candidate-receipts.test.ts",
+        "tests/unit/versegit-candidate-freeze.test.ts",
+        "tests/unit/versegit-cleanup-barrier.test.ts",
+        "tests/unit/versegit-completion-lifecycle.test.ts",
+        "tests/unit/versegit-feedback-delivery.test.ts",
+        "tests/unit/versegit-observation-basis.test.ts",
+        "tests/unit/versegit-receipt-authority.test.ts",
+        "tests/unit/versegit-runtime-bindings.test.ts",
+        "tests/unit/versegit-sidecar-delivery.test.ts",
+        "tests/unit/versegit-stability-report.test.ts",
+        "tests/unit/versegit-product-acceptance.test.ts",
+        "--maxWorkers=2",
+        "--reporter=dot"
+      ],
+      "cwd": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\candidate-source",
+      "exit_code": 0,
+      "elapsed_seconds": 61.911,
+      "log": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\current-versegit-unit-package.log",
+      "logSha256": "930628b7dbb975da666cde495a42e283ea857c99e75a26a8bcaa64420a1d846b",
+      "passedFiles": 14,
+      "passedTests": 73
+    },
+    {
+      "name": "relay-context-runtime-final",
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "src/context-engine/assembler.test.ts",
+        "src/context-engine/assembler.kill-switch.test.ts",
+        "src/context-engine/block-lifecycle.test.ts",
+        "src/context-engine/turn-injection-budget.test.ts",
+        "src/context-engine/context-orchestrator.test.ts",
+        "src/context-engine/context-orchestrator.compass.test.ts",
+        "src/context-engine/chat-turn-vtoken-injection.test.ts",
+        "src/context-engine/rc03-seal.test.ts",
+        "src/context-engine/rc03-seal-wiring.test.ts",
+        "src/agents/embedded-agent-runner/extensions.working-memory.test.ts",
+        "src/agents/embedded-agent-runner/extensions.knowledge.test.ts",
+        "src/agents/embedded-agent-runner/extensions.task-state.test.ts",
+        "--maxWorkers=1",
+        "--reporter=dot"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\node-closeout-verifier-20261025\\ClawX\\openclaw_runtime",
+      "exit_code": 0,
+      "elapsed_seconds": 56.345,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\relay-context-runtime-final.log",
+      "logSha256": "38b1409f2e42bd7d620425cb17b281514896fc192f0d8c22140ed51f26bdf8bc",
+      "passedFiles": 12,
+      "passedTests": 194
+    },
+    {
+      "name": "relay-legacy-current-tests",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/model-capability-effective-state-tf0512.test.ts",
+        "tests/unit/workspace-context-profile.test.ts",
+        "tests/unit/surface-access-tf0505.test.ts",
+        "--maxWorkers=2",
+        "--reporter=dot"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\node-closeout-verifier-20261025\\ClawX",
+      "exit_code": 0,
+      "elapsed_seconds": 134.316,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\relay-legacy-current-tests.log",
+      "logSha256": "588f8d621ffe6d46801add89122efd7644a3a43faa2c65bc6b9536b2ed199b60",
+      "passedFiles": 3,
+      "passedTests": 27
+    },
+    {
+      "name": "relay-typecheck",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\node-closeout-verifier-20261025\\ClawX",
+      "exit_code": 0,
+      "elapsed_seconds": 42.49,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\relay-typecheck.log",
+      "logSha256": "60252e0b7a7b356b1568e7a44dcdd9ac2cb49603e1cd35c6cd43ddfded6cd506",
+      "passedFiles": null,
+      "passedTests": null
+    }
+  ],
+  "countRule": "Suite counts are listed separately; overlapping suites are not added into a unique test total.",
+  "comms": [
+    {
+      "name": "relay-comms-replay",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "run",
+        "comms:replay"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\node-closeout-verifier-20261025\\ClawX",
+      "exit_code": 0,
+      "elapsed_seconds": 2.989,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\relay-comms-replay.log",
+      "logSha256": "21daf3cabc734739a0f1ed1f763b3865c32f9fea3552f426910a789a3269cc78"
+    },
+    {
+      "name": "relay-comms-compare",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "run",
+        "comms:compare"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\node-closeout-verifier-20261025\\ClawX",
+      "exit_code": 0,
+      "elapsed_seconds": 1.669,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\relay-comms-compare.log",
+      "logSha256": "c9bd44a4a06501eb0c59badfb2196d7b838e8d83dbf922ef741582ff5b3df60d"
+    }
+  ],
+  "commsMetrics": {
+    "schema": "comms-replay-metrics/v1",
+    "generated_at": "2026-10-25T10:21:55.190Z",
+    "candidate": {
+      "commit": "2615c6b1d30969ffef30a10117d6701e28499fa5",
+      "tree": "e0c83867fdcf75b4073d0a355a66fadf722e3f31"
+    },
+    "scenario": "all",
+    "scenarios": {
+      "gateway-restart-during-run": {
+        "duplicate_event_rate": 0,
+        "event_fanout_ratio": 1,
+        "history_inflight_max": 1,
+        "history_load_qps": 0.4166666666666667,
+        "rpc_p50_ms": 240,
+        "rpc_p95_ms": 240,
+        "rpc_timeout_rate": 0,
+        "gateway_reconnect_count": 1,
+        "message_loss_count": 0,
+        "message_order_violation_count": 0,
+        "_meta": {
+          "duration_sec": 2.4,
+          "total_gateway_events": 4,
+          "unique_gateway_events": 4,
+          "total_rpc_calls": 1
+        }
+      },
+      "happy-path-chat": {
+        "duplicate_event_rate": 0,
+        "event_fanout_ratio": 1,
+        "history_inflight_max": 1,
+        "history_load_qps": 0.2857142857142857,
+        "rpc_p50_ms": 180,
+        "rpc_p95_ms": 180,
+        "rpc_timeout_rate": 0,
+        "gateway_reconnect_count": 0,
+        "message_loss_count": 0,
+        "message_order_violation_count": 0,
+        "_meta": {
+          "duration_sec": 3.5,
+          "total_gateway_events": 3,
+          "unique_gateway_events": 3,
+          "total_rpc_calls": 1
+        }
+      },
+      "history-overlap-guard": {
+        "duplicate_event_rate": 0,
+        "event_fanout_ratio": 1,
+        "history_inflight_max": 1,
+        "history_load_qps": 1,
+        "rpc_p50_ms": 95,
+        "rpc_p95_ms": 95,
+        "rpc_timeout_rate": 0,
+        "gateway_reconnect_count": 0,
+        "message_loss_count": 0,
+        "message_order_violation_count": 0,
+        "_meta": {
+          "duration_sec": 2,
+          "total_gateway_events": 2,
+          "unique_gateway_events": 2,
+          "total_rpc_calls": 1
+        }
+      },
+      "invalid-config-patch-recovered": {
+        "duplicate_event_rate": 0,
+        "event_fanout_ratio": 1,
+        "history_inflight_max": 1,
+        "history_load_qps": 0.4166666666666667,
+        "rpc_p50_ms": 110,
+        "rpc_p95_ms": 130,
+        "rpc_timeout_rate": 0,
+        "gateway_reconnect_count": 1,
+        "message_loss_count": 0,
+        "message_order_violation_count": 0,
+        "_meta": {
+          "duration_sec": 2.4,
+          "total_gateway_events": 3,
+          "unique_gateway_events": 3,
+          "total_rpc_calls": 2
+        }
+      },
+      "multi-agent-channel-switch": {
+        "duplicate_event_rate": 0,
+        "event_fanout_ratio": 1,
+        "history_inflight_max": 0,
+        "history_load_qps": 0,
+        "rpc_p50_ms": 210,
+        "rpc_p95_ms": 240,
+        "rpc_timeout_rate": 0,
+        "gateway_reconnect_count": 0,
+        "message_loss_count": 0,
+        "message_order_violation_count": 0,
+        "_meta": {
+          "duration_sec": 2.1,
+          "total_gateway_events": 5,
+          "unique_gateway_events": 5,
+          "total_rpc_calls": 2
+        }
+      },
+      "network-degraded": {
+        "duplicate_event_rate": 0,
+        "event_fanout_ratio": 1,
+        "history_inflight_max": 1,
+        "history_load_qps": 0.35714285714285715,
+        "rpc_p50_ms": 420,
+        "rpc_p95_ms": 820,
+        "rpc_timeout_rate": 0,
+        "gateway_reconnect_count": 1,
+        "message_loss_count": 0,
+        "message_order_violation_count": 0,
+        "_meta": {
+          "duration_sec": 2.8,
+          "total_gateway_events": 3,
+          "unique_gateway_events": 3,
+          "total_rpc_calls": 2
+        }
+      }
+    },
+    "aggregate": {
+      "duplicate_event_rate": 0,
+      "event_fanout_ratio": 1,
+      "history_inflight_max": 1,
+      "history_load_qps": 0.41269841269841273,
+      "rpc_p50_ms": 209.16666666666666,
+      "rpc_p95_ms": 284.1666666666667,
+      "rpc_timeout_rate": 0,
+      "gateway_reconnect_count": 3,
+      "message_loss_count": 0,
+      "message_order_violation_count": 0
+    }
+  }
+}

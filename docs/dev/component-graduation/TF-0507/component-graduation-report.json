@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "tf-0507-model-positioning-contract",
+  "reportKind": "contract",
+  "componentId": "model-capability-profile",
+  "taskForestNodeId": "TF-0507",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "codex",
+  "entryPoint": "scripts/model-capability-positioning.mts",
+  "defaultMode": "internal",
+  "benefitEvidence": "24 declared scenarios passed for the specified model and controlled agent-created runtime facts; raw responses and one permitted echo process are observed.",
+  "rollback": "Remove the bounded factual prompt change; existing permission and runtime owners remain unchanged.",
+  "modelEffectiveState": "Scoped memory, knowledge, availability and action authorization are kept separate; no internal products or unsupported quota facts are promised.",
+  "evidenceGrade": "real-runtime",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "2615c6b1d30969ffef30a10117d6701e28499fa5",
+    "tree": "e0c83867fdcf75b4073d0a355a66fadf722e3f31",
+    "buildHash": "source-tsx:e0c83867fdcf75b4073d0a355a66fadf722e3f31",
+    "runtimeGeneration": "gateway-tf0507-controlled",
+    "provider": "local-openai-compatible",
+    "model": "deepseek-v4.1-flash",
+    "inputSet": "POS-P0-A through POS-P2-H; one repetition per row; output budget 8000",
+    "scope": "controlled workspace:tf0507/session:tf0507",
+    "artifacts": [
+      {
+        "path": "docs/dev/component-graduation/TF-0507/raw-results.json",
+        "sha256": "5fa04ba886a275c9d67f8ed2f9a0d49654cff12e792f2857aaa62e795c53e508",
+        "bytes": 351311
+      },
+      {
+        "path": "docs/dev/component-graduation/TF-0507/independent-readback.json",
+        "sha256": "e0fc59559cdfc31721ccc924843c5abf573c47c1d547b9ca09471d303b3d0e5e",
+        "bytes": 621
+      },
+      {
+        "path": "docs/dev/component-graduation/TF-0507/relay-independent-readback.json",
+        "sha256": "e5b51ec69c6e9b98b2ad40d88ce85395919df2dc6b2bd650d9677887f0a175a0",
+        "bytes": 892
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "contract",
+      "status": "pass",
+      "grade": "real-runtime",
+      "summary": "Production bounded prompt, live provider replies and actual Stage4 permission guard outcomes are independently checked from disk.",
+      "artifacts": [
+        {
+          "path": "docs/dev/component-graduation/TF-0507/raw-results.json",
+          "sha256": "5fa04ba886a275c9d67f8ed2f9a0d49654cff12e792f2857aaa62e795c53e508",
+          "bytes": 351311,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "b8c6c32906efe03e47c77ed05aa2f4d5fb7fb13c4e719e6e1289f943325b7e7d",
+    "command": "py -3 -X utf8 scripts/verify-model-capability-positioning.py --root <clean-candidate> --run <archive-index source> --self-test"
+  },
+  "limitations": [
+    "Controlled agent-driven owner facts and fixed scenario clock; not real-human evidence or an installed approval-UI measurement.",
+    "Acceptance describes this declared model, input set and repetition count. Earlier failed runs remain preserved; no universal model guarantee or GA.",
+    "The raw request/response archive is pinned by archive-index.json and retained locally. The current source candidate remains 2615c6b1d; later report and retirement-test edits do not re-label this provider run."
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "codex-relay",
+  "driven_by": "agent",
+  "capturedAt": "2026-10-25T09:57:46.289694+00:00",
+  "scenarioClock": "2026-10-24T08:00:00.000Z",
+  "scenarioClockPurpose": "fixed controlled fixture clock, not the current capture timestamp",
+  "cause": "The focused unit test executes the fixture generator in place. Only its three generated files are restored; the current generated results are preserved separately.",
+  "files": [
+    {
+      "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json",
+      "generatedSha256": "08ab1f47b50e8fb989b2da1713d088a0bb59036ba03fe5252891c80af47e1f98",
+      "restoredSha256": "ea80bb1f8bd77b65f8d4bf0ac274e1f3eb1566309dd98d8932d025fed35dbdd3",
+      "restored": true
+    },
+    {
+      "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json",
+      "generatedSha256": "3eb22fb313ea5ddbaeb1126b198a22b3e9f32a16300026befcb2b4fdedcd7e99",
+      "restoredSha256": "d736905106f301a96ef08ec911d7ff9a5c2b4d52533c19ba382bb28835f8070d",
+      "restored": true
+    },
+    {
+      "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
+      "generatedSha256": "7e1f536639b2da0c8a6cd6098a77391d44bd6c7bf1f288a5b13990f74c7fa684",
+      "restoredSha256": "83bb4ebebe67abdf03df2b43f1c18cb6d9c30b52a723989e4c34d77bab9afbca",
+      "restored": true
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "ContextAssemblyAuthorityAcceptanceEvidence/v1",
+  "reportId": "tf-0493-current-context-contract-20261025",
+  "taskForestNodeId": "TF-0493",
+  "generatedAt": "2026-10-25T09:44:50.489Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "acceptanceCriteria": [
+    {
+      "criterion": "每 turn budget ledger=1，每个实际 model call final snapshot=1",
+      "status": "pass"
+    },
+    {
+      "criterion": "C6 有具体运行处置：生产 internal path 有调用/验证证据，或明确退役；不存在永久 opt-in",
+      "status": "pass"
+    },
+    {
+      "criterion": "tool loop/retry/fallback/fork/handoff lineage 与预算一致，正常重新装配不误报重复",
+      "status": "pass"
+    },
+    {
+      "criterion": "VToken 不再有用户级 Bridge 开关或独立产品文案",
+      "status": "pass"
+    },
+    {
+      "criterion": "最终 provider request 的 context 组成与 bundle 证据一致",
+      "status": "pass"
+    },
+    {
+      "criterion": "off/on prompt snapshot、lineage 和 rollback 测试通过",
+      "status": "pass"
+    }
+  ],
+  "measurements": {
+    "sharedLedgerAcrossAssembleBoundaries": true,
+    "finalSnapshotsForOneModelCall": 1,
+    "duplicateFinalizationReusedSnapshot": true,
+    "conflictingFinalizationRejected": true,
+    "finalSnapshotSchema": "ContextFinalSnapshot/v1",
+    "c6": {
+      "normal": {
+        "enabled": true,
+        "tokenBudget": 8000,
+        "mode": "normal",
+        "heatThreshold": 0
+      },
+      "pressure": {
+        "enabled": true,
+        "tokenBudget": 4000,
+        "mode": "pressure",
+        "heatThreshold": 0
+      },
+      "minTokenBudget": 2000,
+      "maxTokenBudget": 8000
+    },
+    "vToken": {
+      "settingsImportsBridgePanel": false,
+      "settingsImportsContextLayers": false,
+      "e2eAssertsBridgeAbsent": true,
+      "hostApiRetained": true
+    }
+  },
+  "providerEnvelope": {
+    "status": "pass",
+    "identityBoundToSealedPlan": true,
+    "bundleDigestBoundToPlan": true
+  },
+  "diskReadback": {
+    "status": "pass",
+    "evidenceReadable": true,
+    "sha256sumsVerified": true
+  },
+  "results": {
+    "contract": {
+      "status": "pass",
+      "oneLedgerPerTurn": true,
+      "oneSnapshotPerModelCall": true,
+      "c6InternalPolicy": true,
+      "vTokenUserSurfaceRemoved": true,
+      "providerEnvelopeBound": true
+    }
+  }
+}

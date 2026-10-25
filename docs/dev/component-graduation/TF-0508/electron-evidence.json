@@ -1,0 +1,163 @@
+{
+  "actor": "codex-relay-playwright",
+  "driven_by": "agent",
+  "generatedAt": "2026-10-25T10:03:07.099357+00:00",
+  "candidate": {
+    "commit": "2615c6b1d30969ffef30a10117d6701e28499fa5",
+    "tree": "e0c83867fdcf75b4073d0a355a66fadf722e3f31",
+    "dirty": false
+  },
+  "stats": {
+    "startTime": "2026-10-25T09:38:14.141Z",
+    "duration": 105576.96800000001,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "file": "context-view-tool-surface.spec.ts",
+      "title": "keeps automatic discovery distinct from the explicit rollback control",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 11511,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "file": "memory-surface.spec.ts",
+      "title": "real Host/Gateway Memory surface covers remember, candidate approval, export and delete",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 32481,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "file": "secondary-surfaces-convergence.spec.ts",
+      "title": "secondary Settings pages and diagnostics share controls in light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 23038,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "file": "secondary-surfaces-convergence.spec.ts",
+      "title": "first-run Setup keeps compact navigation in light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7435,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "file": "secondary-surfaces-convergence.spec.ts",
+      "title": "secondary Settings pages and diagnostics share controls in dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 13356,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "file": "secondary-surfaces-convergence.spec.ts",
+      "title": "first-run Setup keeps compact navigation in dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7461,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "file": "workspace-context-settings.spec.ts",
+      "title": "exposes one default-on profile and keeps low-level flags out of General settings",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7823,
+          "retry": 0
+        }
+      ]
+    }
+  ],
+  "commandReceipt": {
+    "name": "relay-component-electron",
+    "command": [
+      "node",
+      "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+      "run",
+      "test:e2e:run",
+      "tests/e2e/workspace-context-settings.spec.ts",
+      "tests/e2e/memory-surface.spec.ts",
+      "tests/e2e/context-view-tool-surface.spec.ts",
+      "tests/e2e/secondary-surfaces-convergence.spec.ts",
+      "--workers=1",
+      "--reporter=line,json"
+    ],
+    "cwd": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\candidate-source",
+    "exit_code": 0,
+    "elapsed_seconds": 107.363,
+    "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\relay-component-electron.log"
+  },
+  "binary": {
+    "version": "40.8.4",
+    "sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+  },
+  "build": {
+    "vite": {
+      "name": "final-ui-build",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "run",
+        "build:vite"
+      ],
+      "cwd": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\candidate-source",
+      "exit_code": 0,
+      "elapsed_seconds": 60.899,
+      "log": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\final-ui-build.log",
+      "logSha256": "6cae4b53311366327da68c5453f87d19ac58f9adc9d3b951e4fc9fbab6fd93be",
+      "passedFiles": null,
+      "passedTests": null
+    },
+    "runtime": {
+      "name": "final-runtime-build",
+      "command": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\candidate-source",
+      "exit_code": 0,
+      "elapsed_seconds": 35.413,
+      "log": "D:\\tmp\\clawx-nine-node-closeout-20261025-144504\\final-runtime-build.log",
+      "logSha256": "c95e3013784ccf048699221bf9dd00346f2637fb8583db4efed671c1893850ad",
+      "passedFiles": null,
+      "passedTests": null
+    },
+    "mainEntrySha256": "3ea14db920d73ba2a06b9aecfc99a93b633583c5598d8b8256b878c044d38015",
+    "runtimeEntrySha256": "16c186ccb03a0bedba821749dc686c09b6941c252b4897257d5919d9bf66c70a"
+  },
+  "environment": "Windows x64; existing no-sandbox fixture option and existing low-integrity test run root. Initial EPERM startup failures remain in the local run archive.",
+  "limitation": "The seven selected built Electron interactions are observed; packaged installation, other platforms and broad E2E are not inferred."
+}

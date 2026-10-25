@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "ComponentFinalAcceptance/v1",
+  "actor": "codex-relay",
+  "driven_by": "agent",
+  "generatedAt": "2026-10-25T10:03:07.099357+00:00",
+  "status": "verified",
+  "sourceCandidate": {
+    "commit": "2615c6b1d30969ffef30a10117d6701e28499fa5",
+    "tree": "e0c83867fdcf75b4073d0a355a66fadf722e3f31",
+    "dirty": false
+  },
+  "metrics": {
+    "components": 53,
+    "authorityConflicts": 0,
+    "unclassified": 0,
+    "userVisibleShadowSurfaces": 0,
+    "unfinishedExperiments": 0,
+    "missingImplementationOrRetirement": 0
+  },
+  "criteria": [
+    {
+      "id": "coverage-authority-surfaces",
+      "status": "pass",
+      "evidence": [
+        "source-audit.json",
+        "historical-input-readback.json"
+      ]
+    },
+    {
+      "id": "implementation-and-retirement",
+      "status": "pass",
+      "evidence": [
+        "graduation-gates.json",
+        "gate-receipts.json",
+        "context-contract/component-graduation-report.json",
+        "effective-state/raw-evidence.json",
+        "component-evidence-index.json",
+        "TF-0502-ab-readback.json"
+      ]
+    },
+    {
+      "id": "model-positioning",
+      "status": "pass",
+      "evidence": [
+        "../TF-0507/raw-results.json",
+        "../TF-0507/relay-independent-readback.json"
+      ]
+    },
+    {
+      "id": "runtime-and-visible-interactions",
+      "status": "pass",
+      "evidence": [
+        "gate-receipts.json",
+        "electron-evidence.json"
+      ]
+    },
+    {
+      "id": "claims-defaults-boundaries",
+      "status": "pass",
+      "evidence": [
+        "source-audit.json",
+        "../../component-disposition-matrix-20261021.md",
+        "../../default-config-matrix.md"
+      ]
+    }
+  ],
+  "closureTargets": [
+    "TF-0507",
+    "TF-0508",
+    "TF-0483",
+    "TF-0484",
+    "TF-0485",
+    "TF-0486",
+    "TF-0487",
+    "TF-0482"
+  ],
+  "historicalGap": {
+    "node": "TF-0493",
+    "missingOriginalInput": "src/pages/Settings/index.tsx",
+    "resolution": "A separate current contract run and current Settings Electron evidence supersede this missing historical input. The old report and its original source identity remain unchanged."
+  },
+  "retirementRegression": "The COMPASS objective-only test now asserts absent full_content and absence of the objective in injected knowledge. Production behavior is unchanged.",
+  "releaseBoundary": {
+    "publicRelease": false,
+    "generalAvailability": false,
+    "productLocksChanged": false
+  },
+  "limitations": [
+    "Declared model: deepseek-v4.1-flash, 24 scenarios, one repetition per row, controlled agent-created owner facts.",
+    "Historical runtime-integration and surface-cleanup schemas are checked against their own criteria and hashed artifacts; they are not cast to generic graduation contracts.",
+    "Full repository testing, remote CI, packaged install and non-Windows measurements are not claimed by this closeout."
+  ],
+  "formalCloseout": "Task Forest validate/export and scoped landing receipts are appended after the verified result lands; task history remains local."
+}

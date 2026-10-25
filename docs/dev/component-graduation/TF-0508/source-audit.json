@@ -1,0 +1,2598 @@
+{
+  "schemaVersion": "ComponentFinalSourceAudit/v1",
+  "generatedAt": "2026-10-25T09:40:52.833Z",
+  "actor": "codex-source-verifier",
+  "driven_by": "agent",
+  "candidate": {
+    "commit": "2615c6b1d30969ffef30a10117d6701e28499fa5",
+    "tree": "e0c83867fdcf75b4073d0a355a66fadf722e3f31",
+    "dirty": false
+  },
+  "metrics": {
+    "components": 53,
+    "authorityConflicts": 0,
+    "unclassified": 0,
+    "userVisibleShadowSurfaces": 0,
+    "unfinishedExperiments": 0,
+    "missingImplementationOrRetirement": 0
+  },
+  "authorityValidation": {
+    "ok": true,
+    "issues": []
+  },
+  "dispositionValidation": {
+    "ok": true,
+    "issues": []
+  },
+  "sourceAnchors": [
+    {
+      "componentId": "context-runtime-kit",
+      "path": "shared/types/context-runtime-kit.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "dcs-context-authority",
+      "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "dcs-context-authority",
+      "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "dcs-assembler-compat-adapter",
+      "path": "openclaw_runtime/src/context-engine/assembler.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "provider-request-guard",
+      "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "context-enhancement-gate",
+      "path": "openclaw_runtime/src/context-engine/enhancement-kill-switch.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "working-memory-context-source",
+      "path": "openclaw_runtime/src/context-engine/handlers/working-memory-handler.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "tool-registry-context-source",
+      "path": "openclaw_runtime/src/context-engine/handlers/tool-registry-handler.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "vtoken-context-source",
+      "path": "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "vtoken-bridge",
+      "path": "electron/services/vtoken-bridge.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "compass-context-source",
+      "path": "openclaw_runtime/src/context-engine/compass-context.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "c6-context-ladder-source",
+      "path": "openclaw_runtime/src/context-engine/context-ladder.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "dcs-fact-view-and-tools",
+      "path": "openclaw_runtime/src/agents/tools/context-agent-tools.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "role-memory-card-governance",
+      "path": "openclaw_runtime/src/runtime-core/memory-governance.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "native-file-memory-retrieval",
+      "path": "openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "runtime-memory-store",
+      "path": "openclaw_runtime/src/runtime-core/memory-store.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "memory-candidate-queue",
+      "path": "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "memory-embedding-provider",
+      "path": "openclaw_runtime/src/runtime-core/memory-embedding-provider.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "dreaming-derived-cache",
+      "path": "openclaw_runtime/src/memory-host-sdk/dreaming.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "knowledge-review-authority",
+      "path": "shared/knowledge/governance-contract.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "knowledge-retrieval-source",
+      "path": "shared/knowledge/governance-contract.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "sekb-candidate-provider",
+      "path": "openclaw_runtime/src/knowledge/sekb/feature-flags.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "v3-capability-catalog",
+      "path": "openclaw_runtime/src/capabilities/v3/capability-descriptor.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "skills-mcp-source-registry",
+      "path": "shared/mcp/tool-schema.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "tool-search-schema-expander",
+      "path": "openclaw_runtime/src/agents/tool-search-capability-v3.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "coding-execution-backend",
+      "path": "openclaw_runtime/src/agents/agent-tools.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "verseshell-execution-adapter",
+      "path": "openclaw_runtime/src/agents/verseshell-runtime.ts",
+      "exists": true,
+      "contains": true
+    },
+    {
+      "componentId": "permission-approval-authority",
+      "path": "electron/services/runtime-approvals-api.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "permission-approval-authority",
+      "path": "electron/services/workspace-permissions.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "task-ledger",
+      "path": "shared/task-ledger-working-context.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "browser-session-owner",
+      "path": "shared/agent-browser/browser-control.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "browser-task-projection-owner",
+      "path": "electron/services/agent-browser-api.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "observability-recorder",
+      "path": "electron/services/observability-issues.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "routing-memo-observation",
+      "path": "openclaw_runtime/src/knowledge/routing-memo-shadow.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "host-api-transport-owner",
+      "path": "shared/host-api/contract.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "host-api-transport-owner",
+      "path": "src/lib/host-api.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "renderer-ui-surface",
+      "path": "tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts",
+      "contains": true,
+      "exists": true
+    },
+    {
+      "componentId": "retired-surface-registry",
+      "path": "docs/dev/dcs-visible-production/RETIRED-SURFACES.md",
+      "exists": true,
+      "contains": true
+    }
+  ],
+  "components": [
+    {
+      "id": "component.context-runtime-kit",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0493",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Context Orchestrator",
+        "DCS Assembler",
+        "context candidates"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+          "exists": true,
+          "sha256": "55ec3a96745f217232addb91b605ce1811765898a02d10b69bd70832f58fad5d",
+          "bytes": 7007
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.dcs-context-authority",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0493",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "ordinary Chat turns",
+        "Context Orchestrator",
+        "PromptPlan"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+          "exists": true,
+          "sha256": "55ec3a96745f217232addb91b605ce1811765898a02d10b69bd70832f58fad5d",
+          "bytes": 7007
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.dcs-assembler-adapter",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0493",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "legacy context blocks",
+        "Context Orchestrator"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+          "exists": true,
+          "sha256": "55ec3a96745f217232addb91b605ce1811765898a02d10b69bd70832f58fad5d",
+          "bytes": 7007
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.provider-request-guard",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0493",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "provider transport",
+        "turn receipts"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+          "exists": true,
+          "sha256": "55ec3a96745f217232addb91b605ce1811765898a02d10b69bd70832f58fad5d",
+          "bytes": 7007
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.context-enhancement-gate",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0493",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "DCS Assembler",
+        "Context Orchestrator",
+        "VToken/memory/CVK paths"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+          "exists": true,
+          "sha256": "55ec3a96745f217232addb91b605ce1811765898a02d10b69bd70832f58fad5d",
+          "bytes": 7007
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.working-memory-context",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0494",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "DCS Assembler",
+        "Context Orchestrator",
+        "Task Ledger working context",
+        "Settings > General Workspace Context"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+          "exists": true,
+          "sha256": "55ec3a96745f217232addb91b605ce1811765898a02d10b69bd70832f58fad5d",
+          "bytes": 7007
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.tool-registry-context",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0494",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "DCS Assembler",
+        "Context Orchestrator",
+        "tool registry"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.vtoken-context",
+      "disposition": "retired",
+      "visibility": "retired",
+      "implementationNodeId": null,
+      "retirementNodeId": "TF-0496",
+      "currentConsumers": [],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+          "exists": true,
+          "sha256": "55ec3a96745f217232addb91b605ce1811765898a02d10b69bd70832f58fad5d",
+          "bytes": 7007
+        },
+        {
+          "path": "docs/dev/vtoken-retirement-decision.md",
+          "exists": true,
+          "sha256": "a740892124e30e47c501dc2f2acd478f308dbf2bcabf7484fec4fd9a36e7619d",
+          "bytes": 3819
+        },
+        {
+          "path": "tests/unit/fixtures/vtoken-tf0496/ab-run.json",
+          "exists": true,
+          "sha256": "907efb7acf6c0c04d0bc3abd884ad66f4038548cbe81628fc8843e6f8176cd43",
+          "bytes": 20084
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.vtoken-bridge",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0496",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "internal diagnostics",
+        "vtoken package tests"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+          "exists": true,
+          "sha256": "55ec3a96745f217232addb91b605ce1811765898a02d10b69bd70832f58fad5d",
+          "bytes": 7007
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.compass-context",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0511",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Context Orchestrator",
+        "DCS Assembler",
+        "COMPASS context block"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+          "exists": true,
+          "sha256": "55ec3a96745f217232addb91b605ce1811765898a02d10b69bd70832f58fad5d",
+          "bytes": 7007
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/compass-context.ts",
+          "exists": true,
+          "sha256": "2b5058181c97e5465c1aade454204e3aacb03ca989c44a7dd1b6553133d79a58",
+          "bytes": 4091
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts",
+          "exists": true,
+          "sha256": "c83861e8f00306fefdc57d4d2412faabcca0c6636e2bddb71e1d5aa27bf7c0c5",
+          "bytes": 7667
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/assembler.test.ts",
+          "exists": true,
+          "sha256": "6c4f50876f0c2821e7f8c6cfebf89ac5bbf897c225e41209986bd1265e233c38",
+          "bytes": 44845
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-context-block-compass.test.ts",
+          "exists": true,
+          "sha256": "20ba9ae3bdd1f9ea5ff98953a572040e527e13238ca45ad3324ce3ed6fa64673",
+          "bytes": 2169
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.c6-context-ladder",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0493",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "DCS Assembler internal request API",
+        "context-ladder unit/live-corpus tests"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+          "exists": true,
+          "sha256": "55ec3a96745f217232addb91b605ce1811765898a02d10b69bd70832f58fad5d",
+          "bytes": 7007
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.dcs-context-tools",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0495",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "context_read",
+        "context_search",
+        "context_understand",
+        "tool catalog"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/dev/adr/2026-10-21-d9-component-graduation-scope.md",
+          "exists": true,
+          "sha256": "55ec3a96745f217232addb91b605ce1811765898a02d10b69bd70832f58fad5d",
+          "bytes": 7007
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.role-memory",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0498",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Agents page",
+        "role-memory SQLite",
+        "Memory review"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.native-file-memory-retrieval",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0497",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Memory retrieval",
+        "hybrid search",
+        "role memory"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.runtime-memory-store",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0497",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "runtime facts/timeline/episodes",
+        "Memory diagnostics",
+        "context candidate source"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.memory-candidate-queue",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0497",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Runtime Memory extraction",
+        "Memory review queue"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.dreaming-derived-cache",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0497",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Dreams diagnostics",
+        "runtime memory maintenance"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.memory-embedding-provider",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0497",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "hybrid memory retrieval",
+        "memory candidate ranking"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.knowledge-review-authority",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0499",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Knowledge page",
+        "source/draft/proposal/applied workflow",
+        "memory-wiki"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.knowledge-retrieval-source",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0499",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Knowledge retrieval",
+        "DCS knowledge candidate source",
+        "source sets"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.sekb-candidate-provider",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0499",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Knowledge engineering-principle candidates",
+        "Knowledge review"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "tests/unit/fixtures/knowledge-tf0499/verification.json",
+          "exists": true,
+          "sha256": "e226f9259d4172c3370586a20f8f146b76f028a5deb210eaffa9bcd365f5364e",
+          "bytes": 3502
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.v3-capability-catalog",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0501",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Tool Search",
+        "Skills/MCP source registry",
+        "model capability self-description"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.skills-mcp-source-registry",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0502",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Skills page",
+        "Channels/MCP configuration",
+        "Tool Search"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.tool-search-schema-expander",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0502",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "tool_search",
+        "tool_describe",
+        "tool_call",
+        "Skills page"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.coding-execution-backend",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0510",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "agent tools",
+        "DCS coding loop",
+        "write/edit/exec"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.verseshell-execution-adapter",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0504",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "preview_patch",
+        "VersedShell governed execution",
+        "write journal"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.permission-approval-authority",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0509",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "workspace permissions",
+        "runtime approvals",
+        "ClawGraph/coding/browser effects"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.task-ledger",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0508",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Task Ledger page",
+        "working-context candidates",
+        "session handoff",
+        "mission/goal state"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.browser-session-owner",
+      "disposition": "advanced",
+      "visibility": "user",
+      "implementationNodeId": "TF-0503",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Browser page",
+        "agent_browser",
+        "supervised browser tasks"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.browser-task-projection",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0503",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Browser page task status",
+        "agent_browser"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.observability-recorder",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0504",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "observability traces",
+        "runtime receipts",
+        "gateway logs"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.routing-memo-observation",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0511",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "ordinary orchestration diagnostics",
+        "routing memo JSONL",
+        "Task Loop scorecard projection"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "openclaw_runtime/src/agents/routing-memo.ts",
+          "exists": true,
+          "sha256": "93dd3fde6d1ce1145e5d22657a193974816f7578a0cbf2e279cf6cef3b0eb7ea",
+          "bytes": 21038
+        },
+        {
+          "path": "openclaw_runtime/src/knowledge/routing-memo-shadow.ts",
+          "exists": true,
+          "sha256": "c219ae5d2de1b48be405751b709c921deda12534164b77b6d9eef65fe2d897be",
+          "bytes": 2865
+        },
+        {
+          "path": "tests/unit/routing-memo.test.ts",
+          "exists": true,
+          "sha256": "e16840383a9302c478e467bece5708b0f8a4d14f9fe4b27691bb9ee1c72b068b",
+          "bytes": 22186
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.host-api-transport-owner",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0508",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "renderer host calls",
+        "WS/HTTP/IPC fallback"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.renderer-ui-surface",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0505",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Chat shell",
+        "Settings",
+        "workspace panels"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "component.retired-surface-registry",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0505",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "retirement checks",
+        "product claim scan"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "feature.coding-recovery",
+      "disposition": "default",
+      "visibility": "user",
+      "implementationNodeId": "TF-0510",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "stale-write-guard",
+        "write journal/WAL",
+        "coding auto verify"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "shared/dcs/prod-flags-catalog.ts",
+          "exists": true,
+          "sha256": "fc752c4eee946546ee9dd7e4ac7831b3933b58dc181be79eafe772ebb3e37dcc",
+          "bytes": 21470
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "feature.symbol-lease",
+      "disposition": "retired",
+      "visibility": "retired",
+      "implementationNodeId": null,
+      "retirementNodeId": "TF-0510",
+      "currentConsumers": [
+        "retired symbol-lease guard",
+        "retired multi-writer coding guard"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "shared/dcs/prod-flags-catalog.ts",
+          "exists": true,
+          "sha256": "fc752c4eee946546ee9dd7e4ac7831b3933b58dc181be79eafe772ebb3e37dcc",
+          "bytes": 21470
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "feature.patch-flow",
+      "disposition": "retired",
+      "visibility": "retired",
+      "implementationNodeId": null,
+      "retirementNodeId": "TF-0510",
+      "currentConsumers": [
+        "retired patch-flow orchestration",
+        "write journal recovery path"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "shared/dcs/prod-flags-catalog.ts",
+          "exists": true,
+          "sha256": "fc752c4eee946546ee9dd7e4ac7831b3933b58dc181be79eafe772ebb3e37dcc",
+          "bytes": 21470
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "feature.worktree-isolation",
+      "disposition": "advanced",
+      "visibility": "user",
+      "implementationNodeId": "TF-0510",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "worktree backend",
+        "isolation request",
+        "subagent workspaces"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "shared/dcs/prod-flags-catalog.ts",
+          "exists": true,
+          "sha256": "fc752c4eee946546ee9dd7e4ac7831b3933b58dc181be79eafe772ebb3e37dcc",
+          "bytes": 21470
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "feature.agent-map",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0511",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "explicit context.agent-map provider",
+        "Task Loop prompt-candidate pilot"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/agent-map-context-provider.ts",
+          "exists": true,
+          "sha256": "3d6bf8452ca14344dcf6aaa4cfbeab0a627c15322688414901c9b86eccb8cc65",
+          "bytes": 21592
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/agent-map-prompt-candidate-runtime-shadow.ts",
+          "exists": true,
+          "sha256": "a1530c0175d1a331c984644a96de7d969b6ac8c48ae52493b8e25cf31e7d0a01",
+          "bytes": 11586
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/agent-map-prompt-candidate-controlled-cutover-pilot.ts",
+          "exists": true,
+          "sha256": "cc4f781f9c8cd2fc1856e7184a9f72f1544418b17454a058cdce43ad392657a7",
+          "bytes": 15206
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/agent-map-prompt-candidate-taskloop-explicit-invocation-pilot.ts",
+          "exists": true,
+          "sha256": "f4c6cf80ac5469d028e02c775c3fe78cc75c44bce87e419ec395ea498ec7c855",
+          "bytes": 18150
+        },
+        {
+          "path": "tests/unit/runtime-agent-map-component-boundary-hardening.test.ts",
+          "exists": true,
+          "sha256": "1359a75fbcf13b521f4df94e460b91dc9dc03246846b843c7b248b69aaa521bf",
+          "bytes": 13487
+        },
+        {
+          "path": "tests/unit/runtime-agent-map-production-entry-readiness.test.ts",
+          "exists": true,
+          "sha256": "f8279fce29108bbdb2311df4f5f3251ce93ef35d39002a3bf955f651489d1cf7",
+          "bytes": 5536
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "feature.runtime-shadow-governance",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0511",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "provider registry diagnostics",
+        "context provider pilots",
+        "tool protocol and evidence diagnostics"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "tests/unit/runtime-provider-tool-registry.test.ts",
+          "exists": true,
+          "sha256": "1802560ea8c2325869d0e345fd00ad03a1fcfac19cc2eaa690561b55e2c061cc",
+          "bytes": 9935
+        },
+        {
+          "path": "tests/unit/runtime-evidence-verifier-contracts.test.ts",
+          "exists": true,
+          "sha256": "84611a11606a721b8f79aa93c1544d0b07c44cd00a116618d8378fd5dcf23184",
+          "bytes": 8815
+        },
+        {
+          "path": "tests/unit/runtime-checkpoint-serializer.test.ts",
+          "exists": true,
+          "sha256": "d8be4daab97160e7c30d6e5f7054dd1d37630fca6c8dabac4f1b7196e50020de",
+          "bytes": 6357
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "feature.local-control-plane",
+      "disposition": "internal",
+      "visibility": "internal",
+      "implementationNodeId": "TF-0511",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "context Report",
+        "model router report",
+        "capability/evidence/mission reports"
+      ],
+      "evidence": [
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "openclaw_runtime/src/local-control-plane/index.ts",
+          "exists": true,
+          "sha256": "d36728e3eb3344094a716cada3665180a1946e4891fec6c7bae6929feff0e298",
+          "bytes": 25755
+        },
+        {
+          "path": "openclaw_runtime/src/gateway/server-methods/local-control-plane.ts",
+          "exists": true,
+          "sha256": "84fe040861a91700d12082b08b24d66531d11f3b4d24fd4be83bacf1dbfe4400",
+          "bytes": 3910
+        },
+        {
+          "path": "tests/unit/local-control-plane.test.ts",
+          "exists": true,
+          "sha256": "4edda7b56c975a29576b7304801474640f0f3285778a43ee4045928c503212e7",
+          "bytes": 32096
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "surface.inbox",
+      "disposition": "advanced",
+      "visibility": "user",
+      "implementationNodeId": "TF-0505",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Inbox route",
+        "host notifications"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "surface.cron",
+      "disposition": "advanced",
+      "visibility": "user",
+      "implementationNodeId": "TF-0505",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Cron page",
+        "rc05 operator slice",
+        "cron auto-approve policy"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "surface.remote-tasks",
+      "disposition": "advanced",
+      "visibility": "user",
+      "implementationNodeId": "TF-0505",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Remote tasks route",
+        "remote task developer panel"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "surface.clawgraph",
+      "disposition": "advanced",
+      "visibility": "user",
+      "implementationNodeId": "TF-0505",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "ClawGraph route",
+        "execution graph projections"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "exists": true,
+          "sha256": "5b0c76b6388cc685189e5ce19556809fab8ebeb12a657839b09c3aa1c76798fc",
+          "bytes": 62505
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "harness/specs/fixtures/landed-unwired-closeout/audit.json",
+          "exists": true,
+          "sha256": "55d37df52cf15ac48732d2a823c68bc9eafb8dfa963f2f1e239bf3bffc4d45e1",
+          "bytes": 15286
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "surface.code-review",
+      "disposition": "advanced",
+      "visibility": "user",
+      "implementationNodeId": "TF-0505",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Code review route",
+        "review workflow"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "surface.image-generation",
+      "disposition": "advanced",
+      "visibility": "user",
+      "implementationNodeId": "TF-0505",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Image generation route",
+        "ImageGenerationSettings"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "surface.observability",
+      "disposition": "advanced",
+      "visibility": "user",
+      "implementationNodeId": "TF-0511",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Observability page",
+        "trace/issues/problems"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        },
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Observability/index.tsx",
+          "exists": true,
+          "sha256": "e1238bdb9f43e802a8a74db2a4b5d59659cd59820dd16d738cfec6b845e1baec",
+          "bytes": 83611
+        },
+        {
+          "path": "tests/unit/observability-service.test.ts",
+          "exists": true,
+          "sha256": "c274ba5612ba1bdb7a33b71c6fc1c3770586d416932f6e59fad0749155723c75",
+          "bytes": 13121
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "surface.dreams",
+      "disposition": "retired",
+      "visibility": "retired",
+      "implementationNodeId": null,
+      "retirementNodeId": "TF-0500",
+      "currentConsumers": [
+        "Dreams route",
+        "legacy background consolidation references"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "docs/dev/default-config-matrix.md",
+          "exists": true,
+          "sha256": "73612ca2b159e4ab287ba3dc71f7394b5417422374f99397699ef66a205ea002",
+          "bytes": 7252
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "surface.ui-v2-showcase",
+      "disposition": "retired",
+      "visibility": "retired",
+      "implementationNodeId": null,
+      "retirementNodeId": "TF-0505",
+      "currentConsumers": [
+        "UiV2Showcase route"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "settings.developer-advanced",
+      "disposition": "advanced",
+      "visibility": "user",
+      "implementationNodeId": "TF-0505",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Developer Settings section",
+        "context/coding/agent-dev/browser diagnostics"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        },
+        {
+          "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "exists": true,
+          "sha256": "7e4bde6147c83ba6b9548f7eae0f4ee410475b3831230999a91c4c201a164ae9",
+          "bytes": 6077
+        }
+      ],
+      "remainingGap": []
+    },
+    {
+      "id": "settings.billing",
+      "disposition": "advanced",
+      "visibility": "user",
+      "implementationNodeId": "TF-0505",
+      "retirementNodeId": null,
+      "currentConsumers": [
+        "Billing page",
+        "usage/cost aggregation"
+      ],
+      "evidence": [
+        {
+          "path": "src/App.tsx",
+          "exists": true,
+          "sha256": "8a7b16afa64612ed50ea43d0c1085219cd80505db686cbfee0d1697d9dd8ab94",
+          "bytes": 16388
+        },
+        {
+          "path": "src/pages/Settings/index.tsx",
+          "exists": true,
+          "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+          "bytes": 104056
+        },
+        {
+          "path": "src/pages/Settings/route-config.ts",
+          "exists": true,
+          "sha256": "9bf8a2ff9c67d64628f63b302c949998cbd318eb565acca0ea467a62b9cb2f0f",
+          "bytes": 938
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "sha256": "309e3459b38393c341687c39958b3a89a71f5de57bd3562aa1dd1d984a55b43d",
+          "bytes": 25018
+        }
+      ],
+      "remainingGap": []
+    }
+  ],
+  "pass": true,
+  "problems": [],
+  "limitation": "Source, identity and coverage audit only. Runtime, E2E, canary and rollback evidence are checked separately; this report does not promote classification into implementation or general availability."
+}

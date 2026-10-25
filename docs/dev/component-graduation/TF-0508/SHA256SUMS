@@ -1,0 +1,17 @@
+cc1b7fb9ddc1b54a47053007939d58f2817908dc30142d732445114889edd461  docs/dev/component-graduation/TF-0508/TF-0502-ab-readback.json
+104b78eb9adaa429e529d4a0593c99c15df43991352c7f09610002e09802af13  docs/dev/component-graduation/TF-0508/acceptance.json
+ff61fcde9d92960a2d17949c46add9dbbb0adba2d69c56d7572f37599de8bcb8  docs/dev/component-graduation/TF-0508/component-evidence-index.json
+358c4e74a5212651258708e85f4fe94036702aa722eb23e85100ed8918bd1004  docs/dev/component-graduation/TF-0508/context-contract-runner.json
+6af2935da1cead7331de3a7da16497eefc73ee9b41e300491b55e78dfd711e25  docs/dev/component-graduation/TF-0508/context-contract/SHA256SUMS
+9b2036894aa91d0f1c3fc59ea59c09bb944d8caa3cf075c36f99096c840f21f3  docs/dev/component-graduation/TF-0508/context-contract/component-graduation-report.json
+9068d29d97cc2e565717b1fec24dda218c33b8d2a06a9c5ce3145f359bfc0a7c  docs/dev/component-graduation/TF-0508/context-contract/raw-evidence.json
+7a10959a37388e36f3b9c2df3fef162beb710e3c7b294bae9c463d455a26c345  docs/dev/component-graduation/TF-0508/effective-state-preservation.json
+5ec8db90b511dbe4c02b6dda9ef1a9eeecdc04f354bfb754be942a1ca8559295  docs/dev/component-graduation/TF-0508/effective-state/acceptance.json
+08ab1f47b50e8fb989b2da1713d088a0bb59036ba03fe5252891c80af47e1f98  docs/dev/component-graduation/TF-0508/effective-state/component-graduation-report.json
+3eb22fb313ea5ddbaeb1126b198a22b3e9f32a16300026befcb2b4fdedcd7e99  docs/dev/component-graduation/TF-0508/effective-state/profile.json
+7e1f536639b2da0c8a6cd6098a77391d44bd6c7bf1f288a5b13990f74c7fa684  docs/dev/component-graduation/TF-0508/effective-state/raw-evidence.json
+3077e3b1d184030b80a2b46b46d7b4c8a6499c0f989980ec09d05d102be0f73d  docs/dev/component-graduation/TF-0508/electron-evidence.json
+1ed5d014ee5e4e6ef9bba51aad7b88849e2f494765674704c26d7bc8bc990c9b  docs/dev/component-graduation/TF-0508/gate-receipts.json
+0a8bfe5c4590785b72ec2af47513246570490cb356037ed5e7a6802b43f0df6b  docs/dev/component-graduation/TF-0508/graduation-gates.json
+b41933dc4abc61f957f2e7637fc6b38699cff74747077d8af49da189c28e9101  docs/dev/component-graduation/TF-0508/historical-input-readback.json
+59dd746ca48e4147f9d9300dc512e1ec5104061fc67c009bcd48ee77cb15f200  docs/dev/component-graduation/TF-0508/source-audit.json

@@ -1,0 +1,1228 @@
+[
+  {
+    "report": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/component-graduation-report.json",
+    "node": "TF-0501",
+    "candidate": "aa0b813fa215a851418008b8a3ed29afc94fd17d",
+    "artifacts": [
+      {
+        "path": "openclaw_runtime/src/capabilities/v3/capability-descriptor.ts",
+        "sha256": "e11dba9d9410425a3fedcdfa10c644b359a2cd2368ffaa54236c4169a2473df9",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/capabilities/v3/adapters.ts",
+        "sha256": "0c0ed5aacf214a284b6f641a638862d726cfa345a059a6ed0ecd515012edb051",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/capabilities/v3/shadow-catalog.ts",
+        "sha256": "04c682579d1ff3d7d9fee968b70266979b67317acdce0dfaa482febb38c878cb",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/capabilities/v3/unified-resolver.ts",
+        "sha256": "db1ba6ff25328780bf7028e0b59aa479f05ab6402907781135d25a18e1bcafa8",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/capabilities/v3/trusted-catalog.ts",
+        "sha256": "bf107b5d58ca0a7cbc270edaeb56f0bdd59ab389852af92405ae64feb6471107",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/capabilities/v3/evaluation-baseline.ts",
+        "sha256": "19320ef578a7b62b553949179fc253255a2e0af1f2ce77f080da9be03f2b8fa7",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tool-search-capability-v3.ts",
+        "sha256": "defd3e2f60dc89cd36848075e2310e7f146bab2891246903f437382fae1860f5",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tool-search.ts",
+        "sha256": "1e064c34f0e0c6e89328c6d81ee70ca10ff38c52ccb0f4be6c7919430fb62f64",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/skills/loading/workspace.ts",
+        "sha256": "472e8f597dfba7c9351f40346439598775950fa57c01ae05805687fac2327092",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/agent-bundle-mcp-runtime.ts",
+        "sha256": "3b9ba86288d7bcff86da94d536a57ddef46dce094d2abdb0ba92d1f0e8fa5761",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage2-golden-run.ts",
+        "sha256": "cfd5a1050a485f6fa179daaf22c33509ce1cc8b8a3d067675fc89a73ccaac4dc",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "shared/component-authority-manifest.ts",
+        "sha256": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "shared/dcs/component-disposition-catalog.ts",
+        "sha256": "8a088941802935de2c8ba7819e536d0a4664c20d19369b95fd62af9ad231b49a",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "390791543b4f01b8385722aa79b297989506b8eb",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "aa0b813fa215a851418008b8a3ed29afc94fd17d",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "shared/model-capability-profile.ts",
+        "sha256": "f821284baca4753b7b6f41220eb89177fc0ec7a6b616a3f853ffd47335299e6c",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "docs/dev/adr/2026-10-23-capability-catalog-authority.md",
+        "sha256": "4de61dd261492cb3cc9647292adcef0311e08a75ad8182315d5bf01397c78560",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/capability-catalog-authority.test.ts",
+        "sha256": "9d8422ef8d42f3bce6830a01e6e35027bd0dcd3b6338d0e5d5218d1abf52f409",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/ab-protocol.json",
+        "sha256": "213388d3bbfafa23968505fff488adf1f97cdedd1f6bbca561cf44b302b5a0fe",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/raw-evidence.json",
+        "sha256": "b5884f7d3a174537a0ab8ef7c5c4bb1ba916f7a2d7fb9ed490674e40c324beec",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/README.md",
+        "sha256": "f12ab49243074dca229e511925157ea61c7892cc4dd74505b54e10ee841dae66",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/generate-acceptance.mts",
+        "sha256": "47d72807ded23c921529cf5dbb515c0e73ad01c51b7b7b3fc2561defd83976f4",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/ab-report.json",
+        "sha256": "f6dcdb1e39ea9314a689a5ded39abbe161f481edfa2634242c3e34d52a386b39",
+        "matched": true,
+        "provenance": "current-retained-file"
+      }
+    ],
+    "all_recovered": true
+  },
+  {
+    "report": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/component-graduation-report.json",
+    "node": "TF-0493",
+    "candidate": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+    "artifacts": [
+      {
+        "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+        "sha256": "0277bd290fe08c85945b93ea2b9eb120e4a77a66461b18d874e68afe670cc866",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/context-final-snapshot.ts",
+        "sha256": "ffbe2caad45c08d063b5089ae5f594ce3b6d0fe11a7fb4f72e6d8da61bbd1f29",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/context-ladder.ts",
+        "sha256": "8b115c35c3f77b76f1a23ed798ab0e6107745f725038f9a919327a18a7d36337",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
+        "sha256": "3d3df91ff25e694ae2e2af1f3378fde6df3a55fd6867ae05373a5464f8824e14",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+        "sha256": "e99d12049067a3a42bec959f8a62417d388996fb3fdc4471edb82a343abb4d21",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "297485728480bc0087421f4f7a38bd4dd63cf193",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "src/pages/Settings/index.tsx",
+        "sha256": "93e0f00daf6ff3422f52c8110809df0b7faa9666d678c60fb859bfe092ba898b",
+        "matched": false,
+        "provenance": null
+      },
+      {
+        "path": "tests/unit/context-assembly-authority-tf0493.test.ts",
+        "sha256": "11bc28bf7d88e9e14d3a26a75cfcf64b852daba9e13093e743e1b53f0f45b590",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/task-forest-scope-proposal.json",
+        "sha256": "93b883c0f2ae525b832c08025decd24220f2c4aaceee070b32f762b1ecfb9942",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/e2e/vtoken-bridge-settings.spec.ts",
+        "sha256": "3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/e2e/dcs-prod-p0-settings.spec.ts",
+        "sha256": "fa5f9dfa04eb709090307c53549fa5626eac8f538e9b998ad3482fa6ac44d146",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "8bfa17596d9209b12bb9a081b03977c93e5114dd",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/README.md",
+        "sha256": "93ab603bdd32cdf2cca77482c7b98c6884bfcb3207fffd13cc0b8a5ba222d456",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/generate-acceptance.mts",
+        "sha256": "1e1801a4c0e65fefc870404d69766add516106041c61be7b9a1c5d314c26402a",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
+        "sha256": "6440d706155e8537679d8c4b15d5c55911812e115096d86bb5abe8eac95b625c",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
+        "sha256": "30486317e06749998b860b9728d065120fce288ba877a17151efab12c0850f35",
+        "matched": true,
+        "provenance": "current-retained-file"
+      }
+    ],
+    "all_recovered": false
+  },
+  {
+    "report": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/component-graduation-report.json",
+    "node": "TF-0495",
+    "candidate": "39e9934d92c316a3d10e03961d93c0009f9cf26f",
+    "artifacts": [
+      {
+        "path": "openclaw_runtime/src/agents/tools/context-view-tool-surface.ts",
+        "sha256": "8166b373849f8cbc01af331b62a62e6adc39929c3dcfb5c2d9e4300ded66335b",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tools/context-agent-tools.ts",
+        "sha256": "55c5545fb63dbe82a0e4bf8de9233369f67028dcfda9639d21afb750e04fba5b",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "aa0b813fa215a851418008b8a3ed29afc94fd17d",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "39e9934d92c316a3d10e03961d93c0009f9cf26f",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts",
+        "sha256": "7ab431c735505bb3d73709ae50b4228ef5acee9ecde7633538c8e963256c5201",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tool-catalog.ts",
+        "sha256": "ca1f3f23d3315ca6148bdb803b8830fb8753dc09e9dd20ec44cdeba3767197f3",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/coding-tool-navigation.ts",
+        "sha256": "aa12059a49e452a32c0e6733832874939e359e8f5105fe4f1e0b9672452e4997",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "shared/dcs/prod-flags-catalog.ts",
+        "sha256": "e06424c28d44c833af4bc3738d0a66c8709b4ee66ed00f52a9dd0e9298af77c8",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "aa0b813fa215a851418008b8a3ed29afc94fd17d",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "39e9934d92c316a3d10e03961d93c0009f9cf26f",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "docs/generated/catalogs/prod-flags.md",
+        "sha256": "a0fa3c726a74ae918309e40c43b8c88b90f80d7a81992771d785034ff320bae2",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "aa0b813fa215a851418008b8a3ed29afc94fd17d",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "39e9934d92c316a3d10e03961d93c0009f9cf26f",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "tests/unit/context-view-tool-surface.test.ts",
+        "sha256": "35eb6fd9f29341c79506e049d58809956bc7cd8d2cdf154847a31612c6bf98c0",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/config-schema-parity.test.ts",
+        "sha256": "993581cf60a9efee2bd7faff39c46b52e22e42af7e435d7d29e0146d867c635a",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/e2e/context-view-tool-surface.spec.ts",
+        "sha256": "1713cf99c7416f5ffb05c54341990f092eeb132952a039bcccef1e60619760b2",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/raw-evidence.json",
+        "sha256": "476453d4accc9fd710c2e804c78513eafe27867dd92bffece479049063e0f3cb",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/README.md",
+        "sha256": "b97591928e01e0995d8a60d6e59465e96501da22325a7ecde8fd0e5f631ea6c5",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/generate-acceptance.mts",
+        "sha256": "e9ab755ee05052dbbfff3bd20f6c157ebca6e627930a2fd30446dfd9f447c755",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/run-verification.ps1",
+        "sha256": "8234d06f24d79d89b6ff9c0dc5001cea30e8a1f096540db3369cae826dde9124",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/recheck-canary.mts",
+        "sha256": "46270d722178c41bd640399e50942a9b7a4e1f5533478f79afe76d18b7548cca",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/run-canary.mts",
+        "sha256": "390aeb163697c5bf517d0202a130d9fd45c756ca151c339675cdca015aa812fa",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/canary-protocol.json",
+        "sha256": "c2745b4b3093ac0301813db6d2bcde929fca1ad7ffd52b175ff012ca10696ea0",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/canary-run-v1.json",
+        "sha256": "67f10376ba6501bd7e2fd2b7324cfeea48c901c9006c20e30857c1514b7eb77b",
+        "matched": true,
+        "provenance": "current-retained-file"
+      }
+    ],
+    "all_recovered": true
+  },
+  {
+    "report": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/component-graduation-report.json",
+    "node": "TF-0497",
+    "candidate": "f5ac5259f08b5e4ca44c4bffbd9d284c84259c9a",
+    "artifacts": [
+      {
+        "path": "openclaw_runtime/src/memory/memory-authority.ts",
+        "sha256": "b32a82f0b4bdb5d67e6380698660da97a844999af490a331856952547674b86d",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/memory/memory-card.ts",
+        "sha256": "2e1d8195529fd4a5b154412cb546d0333164da012fe56c5f1622fe5e7e0e8e8b",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/memory/memory-policy.ts",
+        "sha256": "3c838be80484e035e5a9cbe52c97fa98f9aee9a66246afb132a1a3e23f12fc02",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/memory/memory-store.ts",
+        "sha256": "892e9fd72d1bdac262f3b8905af5dbc3549d7f315a6c9129b89c007b5fd1b1aa",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "openclaw_runtime/src/memory/root-memory-files.ts",
+        "sha256": "8aa455e4f9e923d42309683c716c1fa22ba041f42061fb5fb6f7cbf78875e2c1",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/runtime-core/memory-context.ts",
+        "sha256": "3addc426252ed80c205af88512e8aab961c6bfa3053addf8384fa7bd65f2d05c",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "openclaw_runtime/src/runtime-core/memory-store.ts",
+        "sha256": "adec5d2ad67c02a0cfdc59f3ccccd2f9b14edaecb4fb7ead90cd2598d9060b7f",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/runtime-core/memory-persistence.ts",
+        "sha256": "3f9526e0de7f1c1bb215bfcd0e4134e8d904a64c41301d7697d417b0ead4d861",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts",
+        "sha256": "17cd5d790ad7b19cd4e2379310a2eb8a792b1fc7e8a06bb170020db9a6136e8e",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/runtime-core/memory-embedding-provider.ts",
+        "sha256": "982c4e09b19118a8549cb8428b34df48531e02842b272c946f5ed3c8cbfdeeca",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts",
+        "sha256": "ce52a98a4fdb74bc8f32d9a94b48decccb77a3e08ceb85e7329a7b0e6a79256c",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/slot-convergence.ts",
+        "sha256": "dc5f8b35523b95ab041f6e49b1b5b32220e02ed74585af4052ec18bf5307b297",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "shared/component-authority-manifest.ts",
+        "sha256": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "shared/dcs/prod-flags-catalog.ts",
+        "sha256": "8ef09200bb126c826d67254e73b105177897d11df394b2a6829d6688790b27d3",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "f5ac5259f08b5e4ca44c4bffbd9d284c84259c9a",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "tests/unit/memory-authority-contract.test.ts",
+        "sha256": "dbdfb656485f9c53441f2945f10765959e4308d366f6a7553a83615ddfb3af6b",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/rc07-memory-context-slot-convergence.test.ts",
+        "sha256": "b01ecf77d6fec51a11c71e8340ee63776b8c60abc62afefeb7dee3ef264e20b3",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/r3-2-memory-settings-switches.test.ts",
+        "sha256": "557e659d8b4fe88a3b98f5bdb47663e53cbe6ee22469f9633fb642314a812f4a",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/runtime-memory-store.test.ts",
+        "sha256": "b4a31a942148eff87c0ac35e3ccedac3bd09152582513b5b0a2e52cc5c8b1f0b",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/README.md",
+        "sha256": "57a80b3a859d8436cfad3a44ab550cfc3afff9182528719ff2843d494ff45f60",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts",
+        "sha256": "ba5599272fd6b5ca1d9a42563c3f9ff8e15638f673470056340d9e91bef64e78",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
+        "sha256": "8a502c7a7bc1613617dc275b7c5c07d28899fa8c611cc28d81ebaf30d92039c2",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
+        "sha256": "e333303433f13e211b0f3006f516265f3e3af88b099cee96cfe172bf0f61055f",
+        "matched": true,
+        "provenance": "current-retained-file"
+      }
+    ],
+    "all_recovered": true
+  },
+  {
+    "report": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/component-graduation-report.json",
+    "node": "TF-0498",
+    "candidate": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+    "artifacts": [
+      {
+        "path": "src/components/agents/memory-surface.ts",
+        "sha256": "8bcfbb82f474677da9fcc18c4f4acf4e17c4c702e4f2206b0702bae89ea511d2",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "src/components/agents/RolesOrchestrationPanel.tsx",
+        "sha256": "0b1d782f87eea121595daafa7e7630fb1d9c1ba91572d813dd6fd60b0fefb6c4",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "c9858eb735f4272eebcdd39c36dafe07837cfb55",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "src/components/agents/ProposeFactsConfirmQueue.tsx",
+        "sha256": "c26b95d0cb2964248d3266b4600da16798cf0fbbc13733610cd04e4fe4567aa2",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "src/pages/Agents/index.tsx",
+        "sha256": "ceba7fbe9cdc5864fd72f2040b37803dbbc8c432e1e0dffc7e9911d23df7a620",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "c9858eb735f4272eebcdd39c36dafe07837cfb55",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "shared/i18n/locales/en/agents.json",
+        "sha256": "4487d6f7678de7f100eaa7cd54a1fb3bbe80a1a65f74333745abc38b1690ca9d",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "e34351126d98119f8e7e852ea88afa3b17e93a3a",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "shared/i18n/locales/zh/agents.json",
+        "sha256": "071b5c004ea2d934833593d11324f31dac770ea7b08a13cbc780f0dfb3c39463",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "e34351126d98119f8e7e852ea88afa3b17e93a3a",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "shared/i18n/locales/ja/agents.json",
+        "sha256": "d4c385af6e26914b6d04d969cb1bf488f8ab6e8147c7b66bb28ff3b71a862bdd",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "e34351126d98119f8e7e852ea88afa3b17e93a3a",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "shared/i18n/locales/ru/agents.json",
+        "sha256": "d787f5583c3a68375d0fce656974f55b3f3a6f2b47697951d980572205df2e4a",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "e34351126d98119f8e7e852ea88afa3b17e93a3a",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "tests/unit/memory-surface-contract.test.ts",
+        "sha256": "8eaf6abdbc92aa034be69b15f42e3ec333665ab016ea8fb4d32077af62c5738e",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/roles-orchestration-panel.test.tsx",
+        "sha256": "e8824b8d955528fa46acc90372353124265acc01f5d154033bfb0f5019eb5ba8",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/propose-facts-confirm-queue.test.tsx",
+        "sha256": "a11900c060e05553658fffd2569124f8f3ad1fb8441fcfcdfe3c58589deddbac",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/e2e/memory-surface.spec.ts",
+        "sha256": "ce8c76a3875cb225656d619f6e131aeb6d70f93cc305d52b7433c869d1cc79f9",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "c9858eb735f4272eebcdd39c36dafe07837cfb55",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "tests/e2e/role-memory-panel.spec.ts",
+        "sha256": "e0aa1168027a7ee5fd24291ef6f4433a2a86d1e6c53b8391bb0391f4234a2c9c",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "e34351126d98119f8e7e852ea88afa3b17e93a3a",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "tests/e2e/agents-propose-facts-confirm.spec.ts",
+        "sha256": "1f27c3af6745c02060ee8c40090eb3567169677bdc73fbc46b7655169936732b",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "c9858eb735f4272eebcdd39c36dafe07837cfb55",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "tests/unit/role-orchestration-methods.test.ts",
+        "sha256": "71408519bb622eedad2686a2db92163da8851020f9993d71c89b79cf97b0a52a",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "tests/unit/role-memory-context-provider.test.ts",
+        "sha256": "c0665eab06114213d6032c3cc19f28d394ad86e09b3b9c9abc036f33d5342404",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/README.md",
+        "sha256": "93bd046968bade4b8bf5388c5aa925fb9a305a1e8feaee2dc65988fcd5e37940",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/generate-acceptance.mts",
+        "sha256": "bfb4a160041054e776d919ed863b733805539a95768fbae874a00081996001d1",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/run-verification.ps1",
+        "sha256": "ac78889839c7258a0b330f77ab2b9b269877a27b2b8c108824cf891558dfa4dd",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json",
+        "sha256": "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
+        "matched": true,
+        "provenance": "current-retained-file"
+      }
+    ],
+    "all_recovered": true
+  },
+  {
+    "report": "tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json",
+    "node": "TF-0512",
+    "candidate": "9a3226d41206fa66e12357279d34fe018aca2024",
+    "artifacts": [
+      {
+        "path": "openclaw_runtime/src/runtime-core/model-capability-effective-state.ts",
+        "sha256": "420b029e938eef182eeed817d0608309155a366ccf86fd617aace0011e2f6fc9",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/model-capability-prompt.ts",
+        "sha256": "52d7af389456587c194b7d380b9d0f9ed3fc50882cb571cda47ac0dca303d8a3",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/legacy.ts",
+        "sha256": "733cdf3d820eed643e0c45016d333aa534bcb54196084ed529cd9eb442374efc",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/model-capability-effective-state-tf0512.test.ts",
+        "sha256": "5a77defcf270b6040374151b4f820e8eaccc03dc793a8fb6350b36eb8b41de7b",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
+        "sha256": "83bb4ebebe67abdf03df2b43f1c18cb6d9c30b52a723989e4c34d77bab9afbca",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json",
+        "sha256": "d736905106f301a96ef08ec911d7ff9a5c2b4d52533c19ba382bb28835f8070d",
+        "matched": true,
+        "provenance": "current-retained-file"
+      }
+    ],
+    "all_recovered": true
+  },
+  {
+    "report": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/component-graduation-report.json",
+    "node": "TF-0492",
+    "candidate": "d7fb59801ac570d1217656c71b60023128ff1d6c",
+    "artifacts": [
+      {
+        "path": "shared/model-capability-profile.ts",
+        "sha256": "f821284baca4753b7b6f41220eb89177fc0ec7a6b616a3f853ffd47335299e6c",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "d7fb59801ac570d1217656c71b60023128ff1d6c",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "tests/unit/model-capability-profile.test.ts",
+        "sha256": "35072a6e0d9677304979f4a5508c9f5a04d952a6eac6b1f7b493c159bf0292ea",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "d7fb59801ac570d1217656c71b60023128ff1d6c",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/state-cases.json",
+        "sha256": "0ec9c3cfd8b4522e16593a73f061a9d9cb6ca53c6aa2b90a186c90f6e36e4ab2",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+        "sha256": "1c10dc803d101234b4eee76127aeb4fcca12a8eec6e576a19e7dc17e305c1434",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/README.md",
+        "sha256": "e04c6963d7e08f86cda24717867cac251c96ab9b7c9d6d6c4312296b3dcc014f",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/acceptance-check.json",
+        "sha256": "402ea1f65e3e728967df69a1b0bd0554c30b511d1c823fbb4f8f526c1fcdab15",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/10-task-forest-validate-preapply.txt",
+        "sha256": "2e0319f7432f5df95a21b522c0ef9f9b738a95ba259fd84a1ffbf53ea53930aa",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/profile.json",
+        "sha256": "c34a3d14bf877da4a6308a49eba76cf582e35e4e0af2682e0afa84e32a3d8f42",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/raw-evidence.json",
+        "sha256": "a76cba126247f799ab255075049c156e2545519992fde37eecfd5dae6f4e5be2",
+        "matched": true,
+        "provenance": "current-retained-file"
+      }
+    ],
+    "all_recovered": true
+  },
+  {
+    "report": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/component-graduation-report.json",
+    "node": "TF-0509",
+    "candidate": "f5ac5259f08b5e4ca44c4bffbd9d284c84259c9a",
+    "artifacts": [
+      {
+        "path": "openclaw_runtime/src/agents/permission-contract.ts",
+        "sha256": "6521a58515eac227ac260a6790977835bff23814aa1e15094dcbcb734994008a",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage4-capability-grant.ts",
+        "sha256": "cbbf84ec6fbbb0170436c8c830092771be3b0c1649faff57a833ba0641e5adb7",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage4-tool-guard.ts",
+        "sha256": "b006add1f1ae873d927e4bc562fdc7d5b823c8d43c8fe6cd2e3fb82bd43e668f",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "f5ac5259f08b5e4ca44c4bffbd9d284c84259c9a",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "openclaw_runtime/src/agents/approval-ledger.ts",
+        "sha256": "4d00fcb3e02da7c2bb5d5d58355a987c7ce63a826ef6ced0cc106692a8050ec1",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts",
+        "sha256": "90f2056d7a378299cd5fa428f3739ca1346855dea606a9ed47702c2134d1f1e2",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/verseshell/governed-exec.ts",
+        "sha256": "1f0bb3ca864eb9602c037c2cd62b069fee77c3b7dd0d11f1e3d25c2832c558fe",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+        "sha256": "d6c737e271707322b7fc8e22018c38b4865b3d506da2d24405bb0fa489f3073e",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "electron/services/agent-browser-api.ts",
+        "sha256": "8d7b1af3da9e3aa44611abf29a4176450e1b4cd00ee23e6df23a746df3f06d89",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "electron/services/knowledge-api.ts",
+        "sha256": "ef2b0912b5a585d24cc63f05ea016997c7fef160866444d40d62e5ba2ac052a9",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "shared/component-authority-manifest.ts",
+        "sha256": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "tests/unit/permission-contract-tf0509.test.ts",
+        "sha256": "b13b4f249522fd75ddc85902e86cb7b40891934400d5f41ffafbd84fc6e9fe3c",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/context-control-plane-stage4-contracts.test.ts",
+        "sha256": "144c9fc5fd14abc4c8cde729af7cfa7ef57beff60f6363a3f84b6f6cac55669d",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/knowledge-lifecycle.test.ts",
+        "sha256": "35fc5f77f96366892a2341b72edc449336827f0d79403238c7fe7ef800d63f9b",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/versebrowser-capability-gating.test.ts",
+        "sha256": "7ec30de3b6896b2c80e3bf0fe0b997144a5c27aeed00a4480db59cf3a896bd1e",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/permission-decision-audit.test.ts",
+        "sha256": "c2c4e23bc45dcd68c55c2a79fc7560966770c390c6731122f9c83eb54672cdeb",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/workspace-permissions.test.ts",
+        "sha256": "fa460e8861569b299314682d7b057ed9c35f41f289d17a254570814b088f8456",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "tests/unit/gateway-permissions-api.test.ts",
+        "sha256": "18cb68044b0808b22e5f55a7b5dd4653a0a0b0705e97adfff9dc88d8f4142a61",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/files-permissions-api.test.ts",
+        "sha256": "74e2fd8b92ec8b09be031292f556e52d05a2dc8406b156cdff771de5d550ded0",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/runtime-approval-bridge.test.ts",
+        "sha256": "cee46e24c802d32276e62cb1f1f148fddfca34727b1e969363e44ee7b7e59007",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/run-approval-attribution.test.ts",
+        "sha256": "b24310baf8a5f0ee981427aa7be1485f41fb5d76282111297778a3252d57094d",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/pending-run-approvals.test.tsx",
+        "sha256": "06b2ca7b86ceded79226ae6a916828abbf260fa3ed96ba14c0d501f48036ad91",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/approval-redaction-contract.test.ts",
+        "sha256": "d753a684cdc75a9499af0767516bd45adb0827ddc6e25df58050e7aa7eb9fa80",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage4-capability-grant.test.ts",
+        "sha256": "d1d236fbdbe0b2fa47e0a82f8c06abb0f9eef79724d4f25376bd0f8826e2711b",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage4-tool-guard.test.ts",
+        "sha256": "ebc747f8f98f2b54e34a67cd5aa8b2ad746ba8841afe856b1784020721719107",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/rc04-durable-approval.test.ts",
+        "sha256": "f7bfeb35b072107a7f2779735e08e8f3ac9be2dc99b0738385febeadec60335d",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/rc04-exec-approval-wiring.test.ts",
+        "sha256": "58e0ffd2df610ed7b11e889f6e03ebfcae87ea930f1bc06df3a03cfcb253c68d",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage1-minimal-grant.test.ts",
+        "sha256": "e0a363b34534260364f9be7db87b04d60f11eb85b4345bf866bd410e959bf4e6",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/stage1-tool-guard.test.ts",
+        "sha256": "03a437e7fb1b4a2e5fce1e7da47066c31a4ce0c65e02ede160920c4a2e80260e",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts",
+        "sha256": "f6fd297b0d31960fd0236f0ac97ff776cef497ccdc5de7755f2c31476260a5c4",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/README.md",
+        "sha256": "39fd7419e08401c39c5aee1544f24f1f414151db041033f6e4a82a334f0f5c42",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/generate-acceptance.mts",
+        "sha256": "968b1dbf64407169a885b302ee603693f3b55c101f5a271b2894aa7b95a49855",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/run-verification.ps1",
+        "sha256": "111e971f6bb9acb7b0800a3c69b69088a9ec4493528bbbde98f3b804578e4d38",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/permission-authority/acceptance/TF-0509/raw-evidence.json",
+        "sha256": "a29a34230e7c123974017aa95454dffaf3f62c35f70257ddb8c99d874abec098",
+        "matched": true,
+        "provenance": "current-retained-file"
+      }
+    ],
+    "all_recovered": true
+  },
+  {
+    "report": "tests/unit/fixtures/surface-cleanup-tf0505/component-graduation-report.json",
+    "node": "TF-0505",
+    "candidate": "e3913a6642ac1cb7547e7f5e5cc345c4d6e0f5b6",
+    "artifacts": [
+      {
+        "path": "src/App.tsx",
+        "sha256": "0b0f27e2f20ea94400fccb03a32c3443800a15002b5dd097442ae596ea79882e",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "src/components/layout/Sidebar.tsx",
+        "sha256": "2c0bcb0b7c11062c04c7a8445123804f6f9d872dd53ff6003d1b47a9e8544cfc",
+        "matched": true,
+        "provenance": "recorded-git-blob"
+      },
+      {
+        "path": "src/lib/surface-access.ts",
+        "sha256": "dfc2b19573ed8be4eedb4d04d1ee861cd185b2c9d2f16091fc87c36a6c073e88",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "src/pages/Settings/index.tsx",
+        "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/e2e/developer-mode.spec.ts",
+        "sha256": "e5bdccb007accf9092ef3189e154776822f12dc980758cf9d979cc1af54d3ea8",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/e2e/image-generation-settings.spec.ts",
+        "sha256": "b1ff4fb79083721709e93d3ad9773339fcc0e0d2f7c90d5e9976ddefc7579a42",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/e2e/vtoken-bridge-settings.spec.ts",
+        "sha256": "3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5",
+        "matched": true,
+        "provenance": "current-retained-file"
+      }
+    ],
+    "all_recovered": true
+  },
+  {
+    "report": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/component-graduation-report.json",
+    "node": "TF-0494",
+    "candidate": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+    "artifacts": [
+      {
+        "path": "shared/dcs/prod-flags-control.ts",
+        "sha256": "5a7ad1f167bccfcf33af506acbfa7e648a7ce06f66c6e18b3de1ef7dfd413828",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "297485728480bc0087421f4f7a38bd4dd63cf193",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "shared/dcs/workspace-context-profile.ts",
+        "sha256": "2fcc0d44ed80e84a6b3aaa142ce9f9eb902b5c092bce1f77a628d8444ce4da77",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "electron/services/dcs-prod-flags-api.ts",
+        "sha256": "d4f58c4cefbc6ed1ec291c40c4cc2e9990d3cdce9d726fdcaedd84ec35b998c0",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "electron/utils/store.ts",
+        "sha256": "58aeb1bebf68c2ae1ad715560c7ed0ba6f43548f44d0236076df0e8d0aea8ff9",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "src/components/settings/WorkspaceContextPanel.tsx",
+        "sha256": "d07b399206f08685244487b4e80ec17fe83d8240967aa15255d416ec99202d44",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "src/pages/Settings/index.tsx",
+        "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/assembler.ts",
+        "sha256": "22470211584dcff5ceb07010268321aff9211fdbe2d1b3186717f774a32cf216",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+        "sha256": "845300e124376eb4796116a989fd9d1e359ff3f1c8793ba70a02ec89d4d0c61b",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/runtime-flag-ack.ts",
+        "sha256": "11a35cdd6d0a5845ae10ca072e4068e4942f3b44fd119226dcdb5a611e48ce3d",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/preemptive-compaction.ts",
+        "sha256": "c1b4373a2dc344920c43463b26d2f4953f7228f53c920fda102795efd80edde3",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "docs/clawx-product-semantics.md",
+        "sha256": "bbdac53722dc3696833dc5a28f4839ea7d74da14db67be3fdc20d8d65327191b",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "f5ac5259f08b5e4ca44c4bffbd9d284c84259c9a",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "docs/dev/default-config-matrix.md",
+        "sha256": "4ba1520cd047fd9e417bf67a2eff9f069ca81d519419cab6c740c1324cd35ec9",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "297485728480bc0087421f4f7a38bd4dd63cf193",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "docs/dev/component-disposition-matrix-20261021.md",
+        "sha256": "aaa163090fb1a9c030019f8f5cb5cd2d885c634b9a5730fab91e81aec2664427",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "297485728480bc0087421f4f7a38bd4dd63cf193",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "tests/unit/workspace-context-profile.test.ts",
+        "sha256": "c340968c255584760d34218f8e441b1bfb28a97b88892e0f2a4d037b4ebe36dd",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/dcs-preview-switch.test.ts",
+        "sha256": "8903a6d7322f3c229dbb0e778d9c866d5d96922b8579029b4529d00891901fd7",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/default-config-matrix.test.ts",
+        "sha256": "816e728881a4f1ed23c7e2c01541731454efa0e9239cdac529b4a294231906bb",
+        "matched": true,
+        "provenance": "exact-hash-from-retained-git-history",
+        "artifactCommit": "297485728480bc0087421f4f7a38bd4dd63cf193",
+        "lineEnding": "lf",
+        "originalReportCandidatePreserved": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+        "identityLimitation": "The recovered input is not relabelled as the original recorded candidate or the new current candidate."
+      },
+      {
+        "path": "tests/e2e/workspace-context-settings.spec.ts",
+        "sha256": "d4bcc81302ac0534338c4ed8076de8c75c04b2e9f9fe5a5121e4a78a4c07960a",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-protocol.json",
+        "sha256": "f7527ae1746ca4cf54bc6d0551a20bf9c59814b7eff32bbbae4fb1559695f202",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-run-v1-fail.json",
+        "sha256": "6574423a9bc9c32f47e83dcc740f1525e68e2da831bc614b35516f01a357d7ec",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-run-v2.json",
+        "sha256": "50b00aaf6cf616bb5fbd708d7016eb82206c3ee2d15391ee1d44ac69c20b0841",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/raw-evidence.json",
+        "sha256": "fae140ac984d2ca0c8c487544dac612caf3c735c19df18b4f6eb7aca78863de7",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/README.md",
+        "sha256": "54220da49abe9d026b7c29fcfe465cdc7ae08d20c1c01cfd97d9ce807e8ce393",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/generate-acceptance.mts",
+        "sha256": "edc35a5155499891261ec1aac192df669fee830c53b05fcf40c16646f10351fe",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/run-verification.ps1",
+        "sha256": "749f7381a2213584d0d63b51de7162c723d65fd0983328bc54655c4b80edb423",
+        "matched": true,
+        "provenance": "current-retained-file"
+      },
+      {
+        "path": "tests/unit/fixtures/workspace-context/acceptance/TF-0494/preassembly-budget.json",
+        "sha256": "57a57bf2f087d74ce70bc500298021edaf78e3f37925308547b1c46de34d3c1d",
+        "matched": true,
+        "provenance": "current-retained-file"
+      }
+    ],
+    "all_recovered": true
+  }
+]

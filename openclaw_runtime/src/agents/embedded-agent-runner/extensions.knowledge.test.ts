@@ -233,7 +233,7 @@ describe("DCS Stage 4 knowledge extension wiring", () => {
     }
   });
 
-  it("compass flag on + sink: production inputs write a non-empty compass knowledge Block", async () => {
+  it("compass flag on + sink: retired pre-reply input cannot become knowledge content", async () => {
     const compassCfg: OpenClawConfig = {
       runtime: { contextBlock: { compass: { enabled: true } } },
     } as OpenClawConfig;
@@ -250,17 +250,21 @@ describe("DCS Stage 4 knowledge extension wiring", () => {
       void factory(agent as unknown as ExtensionAPI);
     }
 
-    await agent.handlers.context?.[0]?.(
+    const result = (await agent.handlers.context?.[0]?.(
       { type: "context", messages: [{ role: "user", content: "next" }] },
       {},
-    );
+    )) as { messages?: Array<{ content?: unknown }> };
 
     const compassWrite = sinkBlockWrites(sink).find(
       (write) => write.block.source_system === "compass",
     );
     expect(compassWrite).toBeDefined();
-    expect(compassWrite?.block.full_content).toBeTruthy();
+    expect(compassWrite?.block.full_content).toBeUndefined();
     expect(compassWrite?.block.summary).toContain("context_search");
+    expect(compassWrite?.block.presence.on_demand?.expand_tool).toBe("context_search");
+    expect(result.messages?.some((message) =>
+      typeof message.content === "string" && message.content.includes("build the production bridge"),
+    )).toBe(false);
   });
 
   it("compass flag on + sink: no before_agent_start handler writes a knowledge Block (assembler owns production)", async () => {

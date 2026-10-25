@@ -1,0 +1,14 @@
+{
+  "actor": "codex-relay",
+  "driven_by": "agent",
+  "source": "C:\\Users\\27933\\.codex\\worktrees\\node-closeout-verifier-20261025\\ClawX\\tests\\unit\\fixtures\\context-assembly-authority\\acceptance\\TF-0493\\generate-acceptance.mts",
+  "sourceSha256": "1e1801a4c0e65fefc870404d69766add516106041c61be7b9a1c5d314c26402a",
+  "runner": "D:\\tmp\\clawx-nine-node-relay-20261025\\current-context-contract.mts",
+  "runnerSha256": "64a6b36f14004a4ecf39d00e4a0aacd36b3aa4954f5cd561cb79b83dd55aff0e",
+  "changes": [
+    "Imports point to the same current source functions by absolute file URLs.",
+    "Output and report ID are separate from the retained historical report.",
+    "Six frozen criteria are read from the tracked fixture; no canonical Task Forest file is accessed.",
+    "Original generator, README and verifier remain source references."
+  ]
+}

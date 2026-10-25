@@ -18,6 +18,17 @@ touchedAreas:
   - docs/generated/catalogs/prod-flags.md
   - scripts/repository-artifacts.json
   - .gitignore
+  - harness/specs/tasks/component-graduation-final-audit.md
+  - scripts/component-graduation-final-audit.mts
+  - shared/component-authority-manifest.ts
+  - tests/unit/component-disposition-catalog.test.ts
+  - docs/clawx-product-semantics.md
+  - docs/dev/component-disposition-matrix-20261021.md
+  - docs/dev/default-config-matrix.md
+  - docs/dev/vtoken-retirement-decision.md
+  - openclaw_runtime/src/agents/embedded-agent-runner/extensions.knowledge.test.ts
+  - docs/dev/component-graduation/TF-0508/**
+  - docs/dev/versegit-product-integration/TF-0517/**
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
@@ -62,3 +73,6 @@ approval UI, arbitrary shell commands, other providers or general availability.
 Previous attempts remain in a private archive and do not become passing evidence.
 The separate final component audit validates retained per-component evidence;
 VerseGit closure uses its own report and proposal.
+The listed final-audit paths belong to that same reviewed change set. They
+reconcile the existing dispositions and source coverage without widening the
+24-scenario model protocol or changing product defaults.
