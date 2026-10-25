@@ -14,6 +14,7 @@ import { MODEL_CAPABILITY_RUNTIME_AVAILABILITY_STATES, MODEL_CAPABILITY_ACTION_A
 export const POSITIONING_FIXTURE_PATH = 'tests/unit/fixtures/model-capability-positioning-tf0507/fixture.json';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const maxOutputTokens = 8_000;
+const providerTimeoutMs = 180_000;
 const sha256 = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
 const record = (value: unknown): Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
 const internals = /\b(?:DCS|VToken|C6|VerseShell|Context Runtime Kit)\b/i;
@@ -185,7 +186,7 @@ async function providerCall(fixture: PositioningFixture, input: unknown[], tools
   const request = JSON.stringify(body);
   fs.writeFileSync(path.join(directory, `${name}.request.json`), request + '\n');
   const startedAt = new Date().toISOString();
-  const response = await fetch(fixture.endpoint, { method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: request, signal: AbortSignal.timeout(90_000) });
+  const response = await fetch(fixture.endpoint, { method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: request, signal: AbortSignal.timeout(providerTimeoutMs) });
   const raw = await response.text();
   fs.writeFileSync(path.join(directory, `${name}.response.json`), raw);
   if (!response.ok) throw new Error(`provider HTTP ${response.status}`);
@@ -209,7 +210,7 @@ export async function runPositioning(outputDirectory: string): Promise<number> {
   const rawDir = path.join(outputDirectory, 'raw'); fs.mkdirSync(rawDir, { recursive: true });
   const sourcePaths = ['shared/model-capability-profile.ts', 'shared/dcs/component-disposition-catalog.ts', 'shared/component-authority-manifest.ts', 'openclaw_runtime/src/context-engine/model-capability-prompt.ts', 'openclaw_runtime/src/runtime-core/model-capability-effective-state.ts', 'openclaw_runtime/src/agents/stage4-capability-grant.ts', 'openclaw_runtime/src/agents/approval-ledger.ts', 'scripts/model-capability-positioning.mts', 'scripts/verify-model-capability-positioning.py', 'harness/specs/tasks/model-capability-positioning-acceptance.md', POSITIONING_FIXTURE_PATH];
   const source = Object.fromEntries(sourcePaths.map((file) => [file, sha256(fs.readFileSync(path.join(root, file)))]));
-  const frozen = { schemaVersion: 'PositioningProtocolFreeze/v1', frozenAt: new Date().toISOString(), candidate, source, model: fixture.model, provider: fixture.provider, fixtureSha256: sha256(fixtureBytes), repetitions: fixture.repetitions, maxOutputTokens, scorerVersion: fixture.scorerVersion, failureRule: fixture.failureRule };
+  const frozen = { schemaVersion: 'PositioningProtocolFreeze/v1', frozenAt: new Date().toISOString(), candidate, source, model: fixture.model, provider: fixture.provider, fixtureSha256: sha256(fixtureBytes), repetitions: fixture.repetitions, maxOutputTokens, providerTimeoutMs, scorerVersion: fixture.scorerVersion, failureRule: fixture.failureRule };
   fs.writeFileSync(path.join(outputDirectory, 'protocol-freeze.json'), JSON.stringify(frozen, null, 2) + '\n');
   const rows: Array<Record<string, unknown>> = [];
   for (const scenario of fixture.scenarios) {

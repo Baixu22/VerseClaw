@@ -239,8 +239,8 @@ describe('ModelCapabilityProfile/v1', () => {
     expect(prompt.budget.remainingChars).toBe(prompt.budget.maxChars - prompt.text.length);
     expect(prompt.budget.chargedTo).toBe('reserved-system-prompt');
     expect(prompt.budget.workContextCharsUsed).toBe(0);
-    expect(prompt.text).toContain('Default:');
-    expect(prompt.text).toContain('Advanced:');
+    expect(prompt.text).toContain('Default runtime availability:');
+    expect(prompt.text).toContain('Advanced runtime availability:');
     expect(prompt.text).toContain('requires-approval');
     expect(prompt.text).toContain('quarantined');
     expect(prompt.text).toContain('memory-read:allowed');

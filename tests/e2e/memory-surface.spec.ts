@@ -175,8 +175,8 @@ async function openMemorySurface(app: Parameters<typeof getStableWindow>[0]) {
 }
 
 test.describe('TF-0498 unified Memory surface', () => {
-  test('exposes candidate review, export and tombstone deletion in one panel', async ({ launchElectronApp }) => {
-    const app = await launchElectronApp({ skipSetup: true });
+  test('exposes candidate review, export and tombstone deletion in one panel', async ({ launchElectronApp, userDataDir }, testInfo) => {
+    const app = await launchElectronApp({ skipSetup: true, env: { TEMP: userDataDir, TMP: userDataDir } });
     try {
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
@@ -195,14 +195,21 @@ test.describe('TF-0498 unified Memory surface', () => {
       await expect(page.getByTestId('memory-surface-semantics')).toContainText('Delete: tombstone');
       await expect(page.getByTestId('memory-surface-semantics')).toContainText('Legacy: native unchanged');
 
-      const downloadDir = join('D:/tmp', 'tf0498-memory-export-' + Date.now());
+      const downloadDir = join(userDataDir, 'memory-export');
       await mkdir(downloadDir, { recursive: true });
       await app.evaluate(({ session }, targetDir: string) => {
-        session.defaultSession.on('will-download', (_event: unknown, item: { getFilename: () => string; setSavePath: (value: string) => void }) => {
-          item.setSavePath(targetDir + '/' + item.getFilename());
+        const downloads = globalThis as unknown as { __tf0498Downloads: Array<{ filename: string; state: string; receivedBytes: number }> };
+        downloads.__tf0498Downloads = [];
+        session.defaultSession.setDownloadPath(targetDir);
+        session.defaultSession.on('will-download', (_event, item) => {
+          const observed = { filename: item.getFilename(), state: item.getState(), receivedBytes: 0 };
+          downloads.__tf0498Downloads.push(observed);
+          item.once('done', (_doneEvent, state) => { observed.state = state; observed.receivedBytes = item.getReceivedBytes(); });
+          item.setSavePath(process.getBuiltinModule('node:path')!.join(targetDir, item.getFilename()));
         });
       }, downloadDir);
       await page.getByTestId('memory-export').click();
+      await expect.poll(() => app.evaluate(() => (globalThis as unknown as { __tf0498Downloads: Array<{state: string}> }).__tf0498Downloads.map((item) => item.state)), { timeout: 30_000 }).toEqual(['completed']);
       await expect.poll(async () => {
         try {
           return (await readdir(downloadDir)).filter((name) => name.startsWith('clawx-memory-architect-'));
@@ -213,6 +220,7 @@ test.describe('TF-0498 unified Memory surface', () => {
       const [downloadName] = (await readdir(downloadDir)).filter((name) => name.startsWith('clawx-memory-architect-'));
       expect(downloadName).toMatch(/^clawx-memory-architect-/);
       const content = await readFile(join(downloadDir, downloadName!), 'utf8');
+      await testInfo.attach('memory-export.json', { body: Buffer.from(content), contentType: 'application/json' });
       await rm(downloadDir, { recursive: true, force: true });
       const exported = JSON.parse(content) as {
         schemaVersion: string;
@@ -239,6 +247,8 @@ test.describe('TF-0498 unified Memory surface', () => {
         }),
       ]));
     } finally {
+      const downloads = await app.evaluate(() => (globalThis as unknown as { __tf0498Downloads?: unknown[] }).__tf0498Downloads ?? []).catch(() => []);
+      await testInfo.attach('memory-download.json', { body: Buffer.from(JSON.stringify({ actor: 'playwright-memory-surface', driven_by: 'agent', downloads }, null, 2)), contentType: 'application/json' });
       await closeElectronApp(app);
     }
   });

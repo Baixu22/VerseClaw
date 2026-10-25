@@ -45,12 +45,10 @@ describe('TF-0507 production prompt and positioning protocol', () => {
     expect(changed.profile.promptAddition.text).toContain('Knowledge: state=not-applied');
   });
 
-  it('keeps the complete inventory within the production budget across the declared state regimes', async () => {
-    for (const id of ['POS-P0-A', 'POS-P1-A', 'POS-P2-A', 'POS-P2-G']) {
-      const built = await buildRuntimeEffectiveCapabilityProfile(positioningInput(fixture, scenario(id)));
-      expect(built.profile.promptAddition.omittedCapabilityIds, id).toEqual([]);
-      expect(built.profile.promptAddition.text.length, id).toBeLessThanOrEqual(2_000);
-    }
+  it.each(fixture.scenarios.map((row) => row.scenarioId))('keeps %s inventory within the production budget', async (id) => {
+    const built = await buildRuntimeEffectiveCapabilityProfile(positioningInput(fixture, scenario(id)));
+    expect(built.profile.promptAddition.omittedCapabilityIds, id).toEqual([]);
+    expect(built.profile.promptAddition.text.length, id).toBeLessThanOrEqual(2_000);
   });
 
   it('rejects stale acknowledgements and exposes unknown state after a generation change', async () => {
@@ -68,6 +66,12 @@ describe('TF-0507 production prompt and positioning protocol', () => {
     expect(scorePositioningReply(built.profile, JSON.stringify({ ...facts, inventory: {} }), row).some((issue) => issue.startsWith('missing-capability'))).toBe(true);
     expect(scorePositioningReply(built.profile, JSON.stringify({ ...facts, knowledge: { state: 'applied', version: 'wrong-version' } }), row)).toContain('false-knowledge.version');
     expect(scorePositioningReply(built.profile, 'unknown', row)).toEqual(['invalid-json']);
+    const quarantinedRow = scenario('POS-P2-B');
+    const quarantined = await buildRuntimeEffectiveCapabilityProfile(positioningInput(fixture, quarantinedRow));
+    const browser = quarantined.profile.entries.find((entry) => entry.capabilityId === 'component.browser-session-owner')!;
+    expect(browser.driver.state).toBe('disabled');
+    expect(browser.runtimeAvailability.state).toBe('quarantined');
+    expect(scorePositioningReply(quarantined.profile, JSON.stringify({ ...positioningFacts(quarantined.profile), browser: browser.driver.state }), quarantinedRow)).toContain('false-browser');
   });
 
   it('observes owner guard denials before any executor starts', () => {
