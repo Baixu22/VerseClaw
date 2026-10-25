@@ -40,6 +40,14 @@ export type LaunchContractCase = {
 
 export const LAUNCH_CONTRACT_MATRIX: readonly LaunchContractCase[] = [
   {
+    id: 'dcs-fact-view-tools-auto-default',
+    mdRows: ['DCS Fact view tools'],
+    operatorEnv: {},
+    expectChildEnv: { present: false },
+    expectResolved: { vtokenAssemblyEnabled: false, killSwitchEngaged: false },
+    rationale: 'Healthy Fact view discovery is the baseline product path; the legacy env switch is a rollback override.',
+  },
+  {
     id: 'default-no-optin',
     mdRows: ['VToken assembly'],
     operatorEnv: {},
