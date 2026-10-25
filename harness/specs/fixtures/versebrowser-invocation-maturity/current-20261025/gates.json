@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-current-gates",
+  "driven_by": "agent",
+  "actor": "codex-browser-closeout-20261025",
+  "sourceCommit": "b61d8a48a5f431a187e4395e02ab800b291392ab",
+  "sourceTree": "a3a6930bbbab67b2159359c212a1089798b5f3b8",
+  "results": [
+    {
+      "command": "pnpm --dir packages/versebrowser run typecheck",
+      "exit": 0,
+      "summary": "package TypeScript check passed"
+    },
+    {
+      "command": "pnpm --dir packages/versebrowser exec vitest run tests/agent-browser-service.test.ts",
+      "exit": 0,
+      "summary": "15 passed"
+    },
+    {
+      "command": "pnpm exec vitest run <seven targeted browser suites>",
+      "exit": 0,
+      "summary": "53 passed; includes 11 host-adapter tests and explicit session+origin private-network approval"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "summary": "node, web and tests passed; 0 errors"
+    },
+    {
+      "command": "pnpm run contract:check",
+      "exit": 0,
+      "summary": "Contract check passed"
+    },
+    {
+      "command": "pnpm exec eslint <changed files> --max-warnings 0",
+      "exit": 0,
+      "summary": "targeted ESLint passed"
+    },
+    {
+      "command": "node scripts/check-no-bom.mjs",
+      "exit": 0,
+      "summary": "check-no-bom: ok"
+    },
+    {
+      "command": "playwright: three VerseBrowser Electron specs",
+      "exit": 0,
+      "summary": "3 passed (38.5s); default deny plus explicit private-origin approval"
+    },
+    {
+      "command": "node scripts/versebrowser-m10-package-verify.mjs --release",
+      "exit": 0,
+      "summary": "both ASAR archives pass; devPathHits=0"
+    },
+    {
+      "command": "node scripts/versebrowser-m10-packaged-flow-verify.mjs",
+      "exit": 0,
+      "summary": "8/8 packaged flow checks pass"
+    },
+    {
+      "command": "node scripts/versebrowser-n9-stability-probe.mjs",
+      "exit": 0,
+      "summary": "10/10 cold, 30/30 loops, 3/3 interrupt+recovery, 46/46 reclaimed, final residual max 0"
+    }
+  ],
+  "notes": [
+    "Electron E2E used a verified extraction from electron-v40.8.4-win32-x64.zip via ELECTRON_OVERRIDE_DIST_PATH because the checkout-local dist binary was absent.",
+    "The loopback fixture is denied by default before approval, then opened with a bounded host-only agent approval bound to the exact origin."
+  ]
+}

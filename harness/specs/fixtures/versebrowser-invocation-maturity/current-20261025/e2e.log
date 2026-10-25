@@ -1,0 +1,15 @@
+
+Running 3 tests using 1 worker
+
+
+
+[1A[2K(node:22556) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:22556) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[1/3] tests\e2e\agent-browser-workbench.spec.ts:13:7 › Agent Browser workbench › shows Host API session, task, profile, and Vault metadata at their workspace destinations
+[1A[2K[2/3] tests\e2e\browser-security-recovery.spec.ts:99:7 › Browser security + task recovery (TF-0005) › task approval/explain + vault health discrimination (host path)
+[1A[2K[3/3] tests\e2e\versebrowser-host-invocation.spec.ts:5:5 › real embedded browser preserves actions, denials and unsupported outcomes
+[1A[2K  3 passed (38.5s)

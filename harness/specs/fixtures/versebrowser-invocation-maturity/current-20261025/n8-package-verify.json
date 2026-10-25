@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m10-release-package-verify",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "reports": [
+    {
+      "schemaVersion": 1,
+      "artifact": "versebrowser-m10-package-verify",
+      "driven_by": "agent",
+      "actor": "codex",
+      "status": "pass",
+      "archive": "release/win-unpacked/resources/main-runtime.asar",
+      "moduleEntryCount": 11209,
+      "topLevel": {
+        "node_modules": 10659,
+        "dist": 526,
+        "patches": 16,
+        "scripts": 3,
+        "(root)": 1,
+        "import-manifest.json": 1,
+        "integration-patches.json": 1,
+        "LICENSE": 1,
+        "package.json": 1
+      },
+      "distJsScanned": 127,
+      "devPathHits": 0,
+      "packagedModuleLoad": {
+        "status": "pass",
+        "exportsIndex": true
+      },
+      "issues": []
+    },
+    {
+      "schemaVersion": 1,
+      "artifact": "versebrowser-m10-package-verify",
+      "driven_by": "agent",
+      "actor": "codex",
+      "status": "pass",
+      "archive": "release/win-unpacked/resources/app.asar",
+      "moduleEntryCount": 575,
+      "topLevel": {
+        "dist": 399,
+        "node_modules": 152,
+        "patches": 16,
+        "scripts": 3,
+        "(root)": 1,
+        "LICENSE": 1,
+        "import-manifest.json": 1,
+        "integration-patches.json": 1,
+        "package.json": 1
+      },
+      "distJsScanned": 127,
+      "devPathHits": 0,
+      "packagedModuleLoad": {
+        "status": "pass",
+        "exportsIndex": true
+      },
+      "issues": []
+    }
+  ],
+  "issues": []
+}

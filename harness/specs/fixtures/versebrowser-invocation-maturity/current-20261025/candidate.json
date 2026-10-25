@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-current-candidate",
+  "driven_by": "agent",
+  "actor": "codex-browser-closeout-20261025",
+  "sourceCommit": "b61d8a48a5f431a187e4395e02ab800b291392ab",
+  "sourceTree": "a3a6930bbbab67b2159359c212a1089798b5f3b8",
+  "dirty": false,
+  "branch": "codex/nine-node-closeout-20261025",
+  "packageVersion": "0.4.9-alpha.0",
+  "platform": "win32",
+  "arch": "x64",
+  "toolchain": {
+    "node": "24.22.1",
+    "pnpm": "11.2.2",
+    "electron": "40.8.4",
+    "resourceNode": "24.16.0"
+  },
+  "artifacts": [
+    {
+      "path": "release/win-unpacked/Verse Claw.exe",
+      "bytes": 214315008,
+      "sha256": "8d66bc6223b550257734b088cc1367a8f2ef7e0a202a499e9db9cfaa579a2009"
+    },
+    {
+      "path": "release/win-unpacked/resources/app.asar",
+      "bytes": 331843623,
+      "sha256": "88945b8a662c4809a4452508649d52d00eafef148d5ee53456e92a24e9ceacfb"
+    },
+    {
+      "path": "release/win-unpacked/resources/main-runtime.asar",
+      "bytes": 838220759,
+      "sha256": "b711d9221894dfe0bfd7dc7d3451b9267c125cdc5585aa232a1f3638d7a93394"
+    },
+    {
+      "path": "build/main-runtime-delivery/main-runtime.asar",
+      "bytes": 838220759,
+      "sha256": "b711d9221894dfe0bfd7dc7d3451b9267c125cdc5585aa232a1f3638d7a93394"
+    },
+    {
+      "path": "release/win-unpacked/resources/bin/agent-browser.exe",
+      "bytes": 11897344,
+      "sha256": "da3f7385b6c568ca6d816b6cada22e18e80ff6a9f16701b96bb35f46efbc70b6"
+    },
+    {
+      "path": "release/win-unpacked/resources/bin/ae.exe",
+      "bytes": 15144448,
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2"
+    },
+    {
+      "path": "release/win-unpacked/resources/bin/node.exe",
+      "bytes": 92279112,
+      "sha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3"
+    },
+    {
+      "path": "release/win-unpacked/resources/bin/vg.exe",
+      "bytes": 41011712,
+      "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+    },
+    {
+      "path": "release/win-unpacked/resources/bin/uv.exe",
+      "bytes": 63647232,
+      "sha256": "5e559e322ad2f2e25e7d9c3cb51e3891ab0676a7e7b59ea250a021e4cb2f6e31"
+    }
+  ],
+  "commands": [
+    "pnpm --dir packages/versebrowser run typecheck",
+    "pnpm --dir packages/versebrowser exec vitest run tests/agent-browser-service.test.ts",
+    "pnpm exec vitest run <seven targeted browser suites>",
+    "pnpm run typecheck",
+    "pnpm run contract:check",
+    "pnpm exec eslint <changed files> --max-warnings 0",
+    "ELECTRON_OVERRIDE_DIST_PATH=D:/tmp/electron-40.8.4 pnpm exec playwright test <3 browser E2E specs>",
+    "node scripts/versebrowser-m10-package-verify.mjs --release",
+    "node scripts/versebrowser-m10-packaged-flow-verify.mjs",
+    "node scripts/versebrowser-n9-stability-probe.mjs"
+  ],
+  "privateNetworkApproval": {
+    "mode": "explicit-agent-supervised",
+    "binding": "session+origin",
+    "ttlMinutes": 10,
+    "defaultDenied": true,
+    "humanEvidence": false
+  },
+  "boundaries": [
+    "Windows x64 only",
+    "win-unpacked layout; NSIS installer/uninstaller bodies not executed",
+    "No publication, publicness change or product-default change",
+    "No real-human evidence claimed"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "scope": "retained VerseBrowser evidence manifests, attribution, current-candidate binding and credential scan",
+  "sections": {
+    "n8": {
+      "status": "pass",
+      "manifest": {
+        "status": "pass",
+        "files": 16,
+        "entries": 16,
+        "issues": []
+      },
+      "issues": []
+    },
+    "n9": {
+      "status": "pass",
+      "manifest": {
+        "status": "pass",
+        "files": 3,
+        "entries": 3,
+        "issues": []
+      },
+      "issues": []
+    },
+    "current": {
+      "status": "pass",
+      "manifest": {
+        "status": "pass",
+        "files": 12,
+        "entries": 12,
+        "issues": []
+      },
+      "issues": []
+    }
+  },
+  "credentialScan": {
+    "hits": 0,
+    "matches": []
+  },
+  "issues": []
+}

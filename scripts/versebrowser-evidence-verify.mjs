@@ -19,7 +19,7 @@ import { isMainEntrypoint } from './lib/entrypoint.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const EVIDENCE_ROOT = 'harness/specs/fixtures/versebrowser-invocation-maturity';
-const CURRENT = 'current-20261022';
+const CURRENT = 'current-20261025';
 const SOURCE_SCOPE = [
   'packages/versebrowser',
   'electron/services/agent-browser-api.ts',

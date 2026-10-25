@@ -2153,3 +2153,6 @@ openclaw_runtime/_tmp_*
 /tests/unit/fixtures/model-capability-positioning-tf0507/iteration-*-evidence.json
 /tests/unit/fixtures/model-capability-positioning-tf0507/pre-prompt-fix-evidence.json
 /tests/unit/fixtures/model-capability-positioning-tf0507/.gitkeep
+
+# Current VerseBrowser packaged/E2E acceptance log.
+!/harness/specs/fixtures/versebrowser-invocation-maturity/current-20261025/e2e.log

@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-current-acceptance",
+  "driven_by": "agent",
+  "actor": "codex-browser-closeout-20261025",
+  "candidate": {
+    "sourceCommit": "b61d8a48a5f431a187e4395e02ab800b291392ab",
+    "sourceTree": "a3a6930bbbab67b2159359c212a1089798b5f3b8",
+    "dirty": false
+  },
+  "status": "pass",
+  "criteria": [
+    {
+      "id": "CURRENT-N8-1",
+      "requirement": "Packaged runtime and app archives load cleanly without development paths",
+      "evidence": [
+        "n8-package-verify.json: status pass, devPathHits=0, packagedModuleLoad pass"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "CURRENT-N8-2",
+      "requirement": "Packaged Electron host runs the complete managed browser loop",
+      "evidence": [
+        "n8-packaged-flow.json: 8/8 checks; deny, approve, open, observe, upgrade, snapshot, ownership and close pass"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "CURRENT-N9-1",
+      "requirement": "Current candidate passes 10 cold starts, 30 complete loops and 3 interrupt/recovery pairs",
+      "evidence": [
+        "n9-stability.json summary: cold 10/10, loops 30/30, recovery 3/3"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "CURRENT-N9-2",
+      "requirement": "Every round leaves no final browser process residue and reclaims its run directory",
+      "evidence": [
+        "n9-stability.json: 46/46 final runDirsReclaimed; final maxResidual=0; initial shutdown races retained in rows"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "CURRENT-ENGINE-1",
+      "requirement": "Managed engine selection is explicit and stable",
+      "evidence": [
+        "packages/versebrowser/tests/agent-browser-service.test.ts: browser-window, explicit CLI and E_CLI_UNAVAILABLE cases pass"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "CURRENT-APPROVAL-1",
+      "requirement": "Private-network default deny cannot be bypassed globally; agent approval is bounded to one session and origin",
+      "evidence": [
+        "private-network-policy tests; host adapter 11-test suite; packaged flow and N9 denied-then-approved rows; TypeScript contract"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "CURRENT-WORKSPACE-1",
+      "requirement": "Browser resource accounting uses active workspace identity without sessionKey aliasing",
+      "evidence": [
+        "tests/unit/versebrowser-host-adapter.test.ts: active workspace injection and mismatch rejection pass"
+      ],
+      "verdict": "met"
+    }
+  ],
+  "boundaries": [
+    "Windows x64 only",
+    "Observational timings have no pre-existing product budget",
+    "No release/GA claim",
+    "No real-human evidence claimed"
+  ]
+}
