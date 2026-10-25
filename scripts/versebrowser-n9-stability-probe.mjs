@@ -14,7 +14,7 @@
  * it is not a product GA claim.
  */
 import { createServer } from 'node:http';
-import { spawn, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { existsSync, readdirSync } from 'node:fs';
@@ -54,25 +54,10 @@ function rssMbFor(runDir) {
   return Math.round((bytes / (1024 * 1024)) * 10) / 10;
 }
 
-async function waitCdp(port, ms) {
-  const deadline = Date.now() + ms;
-  while (Date.now() < deadline) {
-    try {
-      const res = await fetch(`http://127.0.0.1:${port}/json/version`, { signal: AbortSignal.timeout(3000) });
-      if (res.ok) {
-        const body = await res.json();
-        if (body.webSocketDebuggerUrl) return body.webSocketDebuggerUrl;
-      }
-    } catch { /* not ready */ }
-    await sleep(500);
-  }
-  throw new Error(`CDP endpoint on ${port} not ready within ${ms}ms`);
-}
-
 export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts = 10, loops = 30, interrupts = 3, output } = {}) {
   const exePath = resolve(hostRoot, exe);
   const require = createRequire(join(hostRoot, 'package.json'));
-  const chromium = require('playwright-core').chromium;
+  const electron = require('playwright-core')._electron;
   const issues = [];
   const rows = [];
   if (!existsSync(exePath)) {
@@ -97,39 +82,36 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
     const port = 9200 + Math.floor(Math.random() * 700);
     const runId = `n9-${kind}-${index}-${Date.now().toString(36)}`;
     const startedAt = Date.now();
-    const child = spawn(exePath, ['--no-sandbox', `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], {
-      cwd: hostRoot,
-      windowsHide: true,
-      env: { ...process.env, VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir },
-    });
+    let child;
     let exited = false;
-    child.on('exit', () => { exited = true; });
-    let browser;
+    let app;
     const row = { kind, index, runId, runRoot, status: 'fail' };
     try {
-      const wsUrl = await waitCdp(port, 90_000);
+      app = await electron.launch({ executablePath: exePath, args: ['--no-sandbox', `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
+        env: { ...process.env, TEMP: runRoot, TMP: runRoot, VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
+      child = app.process();
+      child.on('exit', () => { exited = true; });
       row.launchMs = Date.now() - startedAt;
-      browser = await chromium.connectOverCDP(wsUrl);
       let page = null;
       const pageDeadline = Date.now() + 30_000;
       while (Date.now() < pageDeadline && page === null) {
-        const pages = browser.contexts().flatMap((c) => c.pages());
+        const pages = app.context().pages();
         if (pages.length > 0) page = pages[0];
         else await sleep(500);
       }
       if (page === null) throw new Error('renderer produced no page within 30s');
       row.rendererReadyMs = Date.now() - startedAt;
       row.pageTitle = await page.title();
-      Object.assign(row, await body(page, runId, { runRoot, userDataDir }));
+      Object.assign(row, await body(page, runId, { runRoot, userDataDir, app }));
       row.status = 'pass';
     } catch (error) {
       row.error = String((error && error.message) || error);
       issues.push(issue('round_failed', { kind, index, message: row.error }));
     } finally {
-      if (browser) await browser.close().catch(() => undefined);
       // Every round tears the app tree down; for `interrupt` rounds this kill happens with a
       // live browser session still open, which is the controlled-interrupt case.
-      if (!exited) spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true });
+      if (child && !exited) spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, timeout: 15_000 });
+      if (app) await app.close().catch(() => undefined);
       const exitDeadline = Date.now() + 10_000;
       while (!exited && Date.now() < exitDeadline) await sleep(200);
       row.appExited = exited;
@@ -167,21 +149,26 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
   };
 
   const fullLoop = async (page, runId, ctx) => {
+    const denied = await page.evaluate(async ({ url, runId }) => window.verseClaw.hostInvoke({
+      id: crypto.randomUUID(), module: 'agentBrowser', action: 'open',
+      payload: { url, mode: 'headless', sessionKey: `agent:main:${runId}`, privateNetworkApprovedBy: 'agent', privateNetworkOrigin: new URL(url).origin },
+    }), { url, runId });
+    const approval = await ctx.app.evaluate((_electron, input) => {
+      const modules = process.mainModule.require('node:module')._cache;
+      const entry = Object.keys(modules).find((key) => typeof modules[key].exports?.approveBrowserPrivateNetwork === 'function');
+      if (!entry) throw new Error('Main private-network approval owner is unavailable');
+      return modules[entry].exports.approveBrowserPrivateNetwork(input);
+    }, { sessionId: `agent:main:${runId}`, origin: new URL(url).origin });
     const measured = await page.evaluate(async ({ url, runId }) => {
       const raw = async (action, payload) => window.verseClaw.hostInvoke({ id: crypto.randomUUID(), module: 'agentBrowser', action, ...(payload ? { payload } : {}) });
       const out = { enabled: false, privateNetworkDenied: false, openOk: false, blockedFailsClosed: false, upgradeOk: false, typed: false, clicked: false, snapshotOk: false, snapshotHasFixture: false, ownedSessionCount: -1, closed: false, sessionsAfterClose: -1 };
       out.enabled = (await raw('setEnabled', { enabled: true })).ok === true;
-      const denied = await raw('open', { url, mode: 'headless', profile: `${runId}-denied`, sessionKey: `agent:main:${runId}-denied`, agentId: 'main' });
-      out.privateNetworkDenied =
-        denied.ok === false && String(denied.error?.message ?? '').includes('private-network-default-deny');
       const open = await raw('open', {
         url,
         mode: 'headless',
         profile: `${runId}-p`,
         sessionKey: `agent:main:${runId}`,
         agentId: 'main',
-        privateNetworkApprovedBy: 'agent',
-        privateNetworkOrigin: new URL(url).origin,
       });
       out.openOk = open.ok === true;
       if (!open.ok) return out;
@@ -202,29 +189,36 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
       out.sessionsAfterClose = (after.data?.sessions ?? []).length;
       return out;
     }, { url, runId });
+    measured.privateNetworkDenied = denied.ok === false && String(denied.error?.message ?? '').includes('private-network-default-deny');
+    measured.approval = approval;
     measured.rssMbAfterLoop = rssMbFor(ctx.runRoot);
     return measured;
   };
 
   const interruptOpen = async (page, runId, ctx) => {
+    const denied = await page.evaluate(async ({ url, runId }) => window.verseClaw.hostInvoke({
+      id: crypto.randomUUID(), module: 'agentBrowser', action: 'open',
+      payload: { url, mode: 'headless', sessionKey: `agent:main:${runId}`, privateNetworkApprovedBy: 'agent', privateNetworkOrigin: new URL(url).origin },
+    }), { url, runId });
+    const approval = await ctx.app.evaluate((_electron, input) => {
+      const modules = process.mainModule.require('node:module')._cache;
+      const entry = Object.keys(modules).find((key) => typeof modules[key].exports?.approveBrowserPrivateNetwork === 'function');
+      if (!entry) throw new Error('Main private-network approval owner is unavailable');
+      return modules[entry].exports.approveBrowserPrivateNetwork(input);
+    }, { sessionId: `agent:main:${runId}`, origin: new URL(url).origin });
     const opened = await page.evaluate(async ({ url, runId }) => {
       const raw = async (action, payload) => window.verseClaw.hostInvoke({ id: crypto.randomUUID(), module: 'agentBrowser', action, ...(payload ? { payload } : {}) });
       await raw('setEnabled', { enabled: true });
-      const denied = await raw('open', { url, mode: 'headless', profile: `${runId}-denied`, sessionKey: `agent:main:${runId}-denied`, agentId: 'main' });
-      const privateNetworkDenied =
-        denied.ok === false && String(denied.error?.message ?? '').includes('private-network-default-deny');
       const open = await raw('open', {
         url,
         mode: 'headless',
         profile: `${runId}-p`,
         sessionKey: `agent:main:${runId}`,
         agentId: 'main',
-        privateNetworkApprovedBy: 'agent',
-        privateNetworkOrigin: new URL(url).origin,
       });
-      return { privateNetworkDenied, openOk: open.ok === true };
+      return { openOk: open.ok === true };
     }, { url, runId });
-    return { interruptedPrivateNetworkDenied: opened.privateNetworkDenied, interruptedOpenOk: opened.openOk, interruptedWithLiveSession: opened.openOk === true, rssMbAtInterrupt: rssMbFor(ctx.runRoot) };
+    return { interruptedPrivateNetworkDenied: denied.ok === false && String(denied.error?.message ?? '').includes('private-network-default-deny'), approval, interruptedOpenOk: opened.openOk, interruptedWithLiveSession: opened.openOk === true, rssMbAtInterrupt: rssMbFor(ctx.runRoot) };
   };
 
   for (let i = 1; i <= coldStarts; i += 1) await withInstance('cold', i, statusOnly);

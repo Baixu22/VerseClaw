@@ -54,7 +54,7 @@ vi.mock('@electron/services/sensitive-capture-gate', () => ({ assertSensitiveCap
 vi.mock('@electron/services/session-delete-gate', () => ({ findSessionDeleteGateBySession: mocks.findSessionGate }));
 
 import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
-import { createAgentBrowserApi, getDefaultAgentBrowserService } from '@electron/services/agent-browser-api';
+import { approveBrowserPrivateNetwork, assertBrowserNavigationAllowed, createAgentBrowserApi, getDefaultAgentBrowserService } from '@electron/services/agent-browser-api';
 
 describe('VerseBrowser host adapter ownership', () => {
   beforeEach(() => {
@@ -202,7 +202,7 @@ it('rejects browser admission while a session lifecycle gate is open', async () 
     }
   });
 
-  it('requires an explicit agent approval for loopback and binds it to the request origin', async () => {
+  it('ignores caller approval claims and consumes a trusted session-and-origin approval', async () => {
     setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
     try {
       const api = createAgentBrowserApi();
@@ -212,15 +212,25 @@ it('rejects browser admission while a session lifecycle gate is open', async () 
       expect(mocks.moduleApi.open).not.toHaveBeenCalled();
       await expect(api.open({
         url: 'http://127.0.0.1:4567/',
+        sessionKey: 'agent:main:trusted-private',
         privateNetworkApprovedBy: 'agent',
         privateNetworkOrigin: 'http://127.0.0.1:4567',
-      })).resolves.toBeTruthy();
+      } as never)).rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
+      expect(mocks.moduleApi.open).not.toHaveBeenCalled();
+      expect(() => approveBrowserPrivateNetwork({ sessionId: 'unbound', origin: 'http://127.0.0.1:4567' })).toThrow();
+      approveBrowserPrivateNetwork({ sessionId: 'agent:main:trusted-private', origin: 'http://127.0.0.1:4567' });
+      await expect(api.open({ url: 'http://127.0.0.1:4567/', sessionKey: 'agent:main:other' }))
+        .rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
+      await expect(api.open({ url: 'http://127.0.0.1:9999/', sessionKey: 'agent:main:trusted-private' }))
+        .rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
+      await expect(api.open({ url: 'http://127.0.0.1:4567/', sessionKey: 'agent:main:trusted-private' })).resolves.toBeTruthy();
       expect(mocks.moduleApi.open).toHaveBeenCalledTimes(1);
-      await expect(api.open({
-        url: 'http://127.0.0.1:9999/',
-        privateNetworkApprovedBy: 'agent',
-        privateNetworkOrigin: 'http://127.0.0.1:9999',
-      })).resolves.toBeTruthy();
+      await expect(api.open({ url: 'http://127.0.0.1:4567/', sessionKey: 'agent:main:trusted-private' }))
+        .rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
+      await expect(assertBrowserNavigationAllowed('navigate', { sessionId: 's1', url: 'http://127.0.0.1:4567/' })).resolves.toBeUndefined();
+      await api.close({ sessionId: 's1' });
+      await expect(assertBrowserNavigationAllowed('navigate', { sessionId: 's1', url: 'http://127.0.0.1:4567/' }))
+        .rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
     } finally {
       setSandboxHighRiskPolicyLoader(null);
     }

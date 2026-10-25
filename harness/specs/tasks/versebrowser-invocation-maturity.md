@@ -20,6 +20,8 @@ touchedAreas:
   - electron/gateway/agent-browser-bridge.ts
   - electron/main/ipc-handlers.ts
   - electron/main/index.ts
+  - .gitignore
+  - scripts/repository-artifacts.json
   - electron/utils/sandbox-high-risk-gate.ts
   - shared/agent-browser/**
   - shared/host-api/contract.ts
@@ -48,6 +50,7 @@ touchedAreas:
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
+  - README.ru-RU.md
 requiredRules:
   - versebrowser-upstream-preservation
   - backend-communication-boundary
@@ -200,7 +203,7 @@ N1 启动探针必须等待实际 file 页面、DOMContentLoaded 和隔离配置
 
 ## 2026-10-22 当前证据重绑定与引擎策略
 
-历史 N8/N9 收据仍然有效，但不能替代后续源码变更后的当前候选证明。当前证据目录固定为 `harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/`，必须同时满足：
+历史 N8/N9 收据保留原候选身份，不能替代后续源码变更后的当前候选证明。合并与授权修复的当前证据目录为 `harness/specs/fixtures/versebrowser-invocation-maturity/current-merge-20261025/`，必须同时满足：
 
 - N8 原始失败摘要保留为 `HISTORICAL-FAILURE-20261016.md`，最终通过与历史失败分开表述；
 - N8/N9 的 `SHA256SUMS` 覆盖目录内全部保留文件，重算零 mismatch；
@@ -209,3 +212,13 @@ N1 启动探针必须等待实际 file 页面、DOMContentLoaded 和隔离配置
 - managed-session engine 在构造时锁定为 `browser-window` 或 `agent-browser-cli`，不得在 `open()` 时按 CLI 二进制是否出现再次选择；选中的 CLI 不可用时返回 `E_CLI_UNAVAILABLE`，不得静默回退到另一个引擎。
 
 该重绑定只维持既有“受控基础可用”声明，不增加 ego-lite 交互能力、不改变默认值、不发布、不声称全量成熟。
+
+## 合并时的批准边界
+
+私网批准由 Main 的 `approveBrowserPrivateNetwork` 接受可信监督步骤调用。
+renderer 和模型传入的 `privateNetworkApprovedBy` 或 `privateNetworkOrigin` 不授予权限。
+agent 驱动的等价路径从 Main inspector 调用已有批准函数，记录 grantedBy=agent，
+绑定明确的 sessionKey 与 exact origin；成功打开后转绑到实际 Browser session，
+同一批准不能再次打开其他会话，close 后撤销。无 session 的批准、跨会话、跨 origin、
+过期批准和伪造请求字段均应被拒绝。批准步骤不替代 sandbox、权限 owner 或审计门禁。
+N8/N9 必须先验证伪造批准仍被拒绝，再由 Main 自动批准并执行既有完整闭环。

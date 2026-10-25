@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import { writeFile } from 'node:fs/promises';
 import { expect, test } from './fixtures/electron';
 
-test('real embedded browser preserves actions, denials and unsupported outcomes', async ({ page }, testInfo) => {
+test('real embedded browser preserves actions, denials and unsupported outcomes', async ({ page, electronApp }, testInfo) => {
   const server = createServer((_request, response) => {
     response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
     response.end(`<!doctype html><title>VerseBrowser integration fixture</title>
@@ -34,10 +34,21 @@ test('real embedded browser preserves actions, denials and unsupported outcomes'
     });
     expect(denied.ok, JSON.stringify(denied)).toBe(false);
     expect(JSON.stringify(denied)).toContain('private-network-default-deny');
+    const forged = await invoke('open', {
+      url: `${origin}/`, mode: 'headless', sessionKey: 'agent:main:versebrowser-hygiene',
+      privateNetworkApprovedBy: 'agent', privateNetworkOrigin: origin,
+    });
+    expect(forged.ok, JSON.stringify(forged)).toBe(false);
+    const approval = await electronApp.evaluate((_electron, input) => {
+      const modules = process.mainModule!.require('node:module')._cache;
+      const entry = Object.keys(modules).find((key) => typeof modules[key].exports?.approveBrowserPrivateNetwork === 'function');
+      if (!entry) throw new Error('Main private-network approval owner is unavailable');
+      return modules[entry].exports.approveBrowserPrivateNetwork(input);
+    }, { sessionId: 'agent:main:versebrowser-hygiene', origin });
+    calls.push({ action: 'main-private-network-approval', response: approval });
     const opened = await invoke('open', {
       url: `${origin}/`, mode: 'headless',
       profile: `agent-hygiene-${Date.now()}`, sessionKey: 'agent:main:versebrowser-hygiene',
-      privateNetworkApprovedBy: 'agent', privateNetworkOrigin: origin,
     });
     expect(opened.ok, JSON.stringify(opened)).toBe(true);
     if (!opened.ok) throw new Error('Open failed');
@@ -68,5 +79,6 @@ test('real embedded browser preserves actions, denials and unsupported outcomes'
     await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
     const receipt = { driven_by: 'agent', actor: 'playwright-runner', scope: 'real renderer to Main to embedded Electron driver; no model or Gateway', calls };
     await writeFile(testInfo.outputPath('host-invocation.json'), JSON.stringify(receipt, null, 2));
+    await electronApp.close();
   }
 });

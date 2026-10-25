@@ -1284,10 +1284,6 @@ export type AgentBrowserOpenPayload = {
   width?: number;
   height?: number;
   runtimeMode?: AgentBrowserRuntimeMode;
-  /** Host-only supervised-agent approval marker for one private navigation origin. */
-  privateNetworkApprovedBy?: 'agent';
-  /** Exact origin approved by the host-only supervised-agent step. */
-  privateNetworkOrigin?: string;
 } & AgentBrowserSecurityPayload & AgentBrowserWorkspaceContext;
 export type AgentBrowserSessionPayload = {
   sessionId: string;

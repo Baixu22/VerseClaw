@@ -60,8 +60,11 @@ function navigationTarget(payload: unknown): string | undefined {
 function sessionIdOf(payload: unknown): string {
   if (!payload || typeof payload !== 'object') return 'unbound';
   const record = payload as Record<string, unknown>;
-  const value = record.sessionId;
-  return typeof value === 'string' && value.trim() ? value.trim() : 'unbound';
+  for (const key of ['sessionId', 'sessionKey', 'agentSessionKey']) {
+    const value = record[key];
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return 'unbound';
 }
 
 /**
@@ -119,16 +122,6 @@ export function setBrowserFirstPartyOriginProvider(
   firstPartyOriginProvider = provider ?? defaultFirstPartyOriginProvider;
 }
 
-async function recordPrivateNetworkAgentApproval(action: string, payload: unknown): Promise<void> {
-  if (!payload || typeof payload !== 'object' || action !== 'open') return;
-  const record = payload as Record<string, unknown>;
-  if (record.privateNetworkApprovedBy !== 'agent') return;
-  const origin = typeof record.privateNetworkOrigin === 'string' ? record.privateNetworkOrigin.trim() : '';
-  const requestedUrl = typeof record.url === 'string' ? record.url : '';
-  if (!origin || requestedUrl.length === 0 || browserOriginOf(requestedUrl) !== origin) return;
-  approveBrowserPrivateNetwork({ sessionId: sessionIdOf(record), origin });
-}
-
 async function resolveFirstPartyOrigins(payload: unknown): Promise<string[]> {
   if (!payload || typeof payload !== 'object') return [];
   const record = payload as Record<string, unknown>;
@@ -174,6 +167,9 @@ export async function assertBrowserNavigationAllowed(
 
 /** Approve one private origin for one supervised session (bounded, never global). */
 export function approveBrowserPrivateNetwork(input: { sessionId: string; origin: string; ttlMs?: number }): BrowserPrivateNetworkApproval {
+  if (!input.sessionId.trim() || input.sessionId === 'unbound' || browserOriginOf(input.origin) !== input.origin) {
+    throw new Error('Private-network approval requires a bound session and an exact origin');
+  }
   const approval = createBrowserPrivateNetworkApproval({
     sessionId: input.sessionId,
     origin: input.origin,
@@ -548,7 +544,6 @@ function withHostGuards<T extends object>(api: T): T {
       const requiresSandboxCheck = classifyAgentBrowserAction(prop) !== null;
       return async (...args: unknown[]) => {
         await prepareHostContext();
-        await recordPrivateNetworkAgentApproval(prop, args[0]);
         await assertBrowserNavigationAllowed(prop, args[0]);
         if (requiresSandboxCheck) {
           await assertBrowserAllowedUnderSandbox(prop);
@@ -580,7 +575,23 @@ function withHostGuards<T extends object>(api: T): T {
         } else if (prop === 'command') {
           await assertSensitiveCaptureAllowed('desktopAutomation', (args[0] as { grantId?: string } | undefined)?.grantId);
         }
-        return await bound(...args);
+        const result = await bound(...args);
+        if (prop === 'open') {
+          const origin = browserOriginOf(navigationTarget(payload));
+          const approval = privateNetworkApprovals.get(`${sessionIdOf(payload)}|${origin}`);
+          const session = result && typeof result === 'object'
+            ? (result as { session?: { id?: string } }).session
+            : undefined;
+          if (approval && session?.id && approval.expiresAt > Date.now()) {
+            privateNetworkApprovals.delete(`${approval.sessionId}|${approval.origin}`);
+            privateNetworkApprovals.set(`${session.id}|${approval.origin}`, { ...approval, sessionId: session.id });
+          }
+        } else if (prop === 'close') {
+          for (const [key, approval] of privateNetworkApprovals) {
+            if (approval.sessionId === sessionIdOf(payload)) privateNetworkApprovals.delete(key);
+          }
+        }
+        return result;
       };
     },
   }) as T;

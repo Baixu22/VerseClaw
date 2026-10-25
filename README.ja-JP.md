@@ -265,6 +265,7 @@ flowchart LR
 現在の pnpm workspace メンバーはルート、`harness/`、`packages/versebrowser/`、`resources/verseshell-mcp/` です。`packages/vtoken/` は出典監査とロールバック確認のため保持された Python/uv sidecar で、production assembly と bridge は退役済みです。`openclaw_runtime/` は独立した依存ワークスペースを持つ同梱 Git ソースツリーであり、Git submodule でもパッケージ用 npm ランタイムでもありません。
 
 VerseBrowser: インストール・開発・ビルド時に組み込みモジュールを自動コンパイルします。81 メソッドの契約は Electron の 81 機能の実装を意味しません。[呼び出し方法とドライバー制限](packages/README.md#versebrowser-integration-and-invocation)を参照してください。
+プライベートネットワークへの移動は Main がセッションと origin に結び付けて承認します。agent による検証も Main で承認を実行し、呼び出し側の承認マーカーではアクセス権を付与しません。
 
 <a id="development"></a>
 
