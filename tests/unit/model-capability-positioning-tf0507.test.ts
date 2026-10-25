@@ -45,6 +45,14 @@ describe('TF-0507 production prompt and positioning protocol', () => {
     expect(changed.profile.promptAddition.text).toContain('Knowledge: state=not-applied');
   });
 
+  it('keeps the complete inventory within the production budget across the declared state regimes', async () => {
+    for (const id of ['POS-P0-A', 'POS-P1-A', 'POS-P2-A', 'POS-P2-G']) {
+      const built = await buildRuntimeEffectiveCapabilityProfile(positioningInput(fixture, scenario(id)));
+      expect(built.profile.promptAddition.omittedCapabilityIds, id).toEqual([]);
+      expect(built.profile.promptAddition.text.length, id).toBeLessThanOrEqual(2_000);
+    }
+  });
+
   it('rejects stale acknowledgements and exposes unknown state after a generation change', async () => {
     const built = await buildRuntimeEffectiveCapabilityProfile(positioningInput(fixture, scenario('POS-P2-G')));
     expect(built.profile.entries.find((entry) => entry.capabilityId === 'component.coding-execution-backend')?.runtimeAvailability.state).toBe('unknown');
