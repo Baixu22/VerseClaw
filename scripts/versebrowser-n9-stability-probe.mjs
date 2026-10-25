@@ -103,6 +103,13 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
       row.rendererReadyMs = Date.now() - startedAt;
       row.pageTitle = await page.title();
       Object.assign(row, await body(page, runId, { runRoot, userDataDir, app }));
+      const complete = kind === 'cold' ? row.hostStatusOk === true
+        : kind === 'interrupt' ? row.interruptedPrivateNetworkDenied === true && row.interruptedWithLiveSession === true
+        : row.privateNetworkDenied === true && row.openOk === true && row.blockedFailsClosed === true
+          && row.upgradeOk === true && row.typed === true && row.clicked === true
+          && row.snapshotHasFixture === true && row.ownedSessionCount === 1
+          && row.closed === true && row.sessionsAfterClose === 0;
+      if (!complete) throw new Error(`Incomplete ${kind} browser round`);
       row.status = 'pass';
     } catch (error) {
       row.error = String((error && error.message) || error);
@@ -141,6 +148,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
       row.durationMs = Date.now() - startedAt;
     }
     rows.push(row);
+    process.stdout.write(JSON.stringify({ kind, index, status: row.status, residualProcesses: row.residualProcesses, runDirReclaimed: row.runDirReclaimed }) + '\n');
     return row;
   }
 
