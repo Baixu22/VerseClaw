@@ -459,7 +459,7 @@ async function main() {
       if ((acceptance.nodes ?? []).some((node) => node.evidenceOk !== true)) failures.push('acceptance.json contains a node without OK evidence');
       if (acceptance.negative?.failures?.length > 0) failures.push('acceptance.json records failed negative cases');
       const evidencePath = relative(ROOT, join(outDir, ACCEPTANCE_FILE)).replaceAll('\\', '/');
-      const evidenceCommit = git(['log', '--diff-filter=A', '--follow', '--format=%H', '--', evidencePath]).split(/\r?\n/).filter(Boolean).at(-1);
+      const evidenceCommit = git(['log', '-1', '--format=%H', '--', evidencePath]).trim() || null;
       const sourceCommit = evidenceCommit ? git(['rev-parse', '--verify', evidenceCommit + '^']) : null;
       if (!sourceCommit) failures.push('F3 evidence has no source commit');
       else if (acceptance.candidate?.commit !== sourceCommit) {
