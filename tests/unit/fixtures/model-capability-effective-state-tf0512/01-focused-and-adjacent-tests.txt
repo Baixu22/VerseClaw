@@ -12,8 +12,8 @@
 
  Test Files  6 passed (6)
       Tests  47 passed (47)
-   Start at  21:35:06
-   Duration  70.82s (transform 15.22s, setup 1.49s, import 23.41s, tests 41.35s, environment 3.14s)
+   Start at  21:58:50
+   Duration  66.63s (transform 15.99s, setup 809ms, import 26.36s, tests 34.81s, environment 2.78s)
 
 stderr | tests/unit/context-engine-registry-default-on.test.ts > Context engine registry default-on CRK resolution > restores the pre-call transcript when a failing engine mutates nested messages
 [context-engine] Context engine "context-runtime-kit" owner=core failed during assemble: mutated CRK failed; quarantining it for this process and falling back to default engine "legacy".
