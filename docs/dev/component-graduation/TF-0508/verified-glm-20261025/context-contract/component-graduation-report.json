@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "tf-0493-glm-closeout-context-contract-v2-20261025",
+  "reportKind": "contract",
+  "componentId": "TF-0493",
+  "taskForestNodeId": "TF-0493",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "TF-0493",
+  "entryPoint": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+  "defaultMode": "internal",
+  "benefitEvidence": "One shared turn ledger, one immutable final snapshot per model call, and an automatic bounded C6 policy remove duplicate context assembly and hidden opt-ins.",
+  "rollback": "Disable the context enhancement kill switch path or the internal C6 policy; the RC-03 kill-switch tests restore the legacy prompt byte-for-byte.",
+  "modelEffectiveState": "The final snapshot binds provider prompt/messages, budget, lineage, plan id and optional sealed bundle digest per model call. Live effective-state adapters remain later-node scope.",
+  "evidenceGrade": "documented-boundary",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "31bcdb44764760823f93a8c1dafc161ef012a606",
+    "tree": "a48bd5cb29121d074f98fd66669133cad3489d55",
+    "buildHash": "65795cb7a5d2a7887262040dee9154f58181ea8ff52b7acdbd95f3a0de157b62",
+    "runtimeGeneration": "fixture-context-assembly-contract",
+    "provider": "fixture-provider",
+    "model": "fixture-model",
+    "inputSet": "tf0493-focused-context-assembly-suite",
+    "scope": "workspace:component-graduation/session:tf-0493",
+    "artifacts": [
+      {
+        "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+        "sha256": "0277bd290fe08c85945b93ea2b9eb120e4a77a66461b18d874e68afe670cc866",
+        "bytes": 34859
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/context-final-snapshot.ts",
+        "sha256": "ffbe2caad45c08d063b5089ae5f594ce3b6d0fe11a7fb4f72e6d8da61bbd1f29",
+        "bytes": 5966
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/context-ladder.ts",
+        "sha256": "8b115c35c3f77b76f1a23ed798ab0e6107745f725038f9a919327a18a7d36337",
+        "bytes": 3569
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
+        "sha256": "3d3df91ff25e694ae2e2af1f3378fde6df3a55fd6867ae05373a5464f8824e14",
+        "bytes": 21716
+      },
+      {
+        "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+        "sha256": "1411d9c1fccde72428fdb52ea2ca6bebe8bd340d8e3acb93ee7c8bbd244abd95",
+        "bytes": 41767
+      },
+      {
+        "path": "src/pages/Settings/index.tsx",
+        "sha256": "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+        "bytes": 104056
+      },
+      {
+        "path": "tests/unit/context-assembly-authority-tf0493.test.ts",
+        "sha256": "11bc28bf7d88e9e14d3a26a75cfcf64b852daba9e13093e743e1b53f0f45b590",
+        "bytes": 11720
+      },
+      {
+        "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/task-forest-scope-proposal.json",
+        "sha256": "93b883c0f2ae525b832c08025decd24220f2c4aaceee070b32f762b1ecfb9942",
+        "bytes": 1108
+      },
+      {
+        "path": "tests/e2e/vtoken-bridge-settings.spec.ts",
+        "sha256": "3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5",
+        "bytes": 1135
+      },
+      {
+        "path": "tests/e2e/dcs-prod-p0-settings.spec.ts",
+        "sha256": "40332b1573c241581cce057e3cfd073df5be7dc41d62c6a802789c2ea24b82c3",
+        "bytes": 10910
+      },
+      {
+        "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/README.md",
+        "sha256": "93ab603bdd32cdf2cca77482c7b98c6884bfcb3207fffd13cc0b8a5ba222d456",
+        "bytes": 2473
+      },
+      {
+        "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/generate-acceptance.mts",
+        "sha256": "1e1801a4c0e65fefc870404d69766add516106041c61be7b9a1c5d314c26402a",
+        "bytes": 12590
+      },
+      {
+        "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
+        "sha256": "6440d706155e8537679d8c4b15d5c55911812e115096d86bb5abe8eac95b625c",
+        "bytes": 7629
+      },
+      {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/context-contract/raw-evidence.json",
+        "sha256": "5086d65ccf70038436754d5d94e037cbeddadfe5a47eab28f4884ea74bbbdcfb",
+        "bytes": 2376
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "contract",
+      "status": "pass",
+      "grade": "documented-boundary",
+      "summary": "Ledger, final snapshot, C6 internal policy, VToken surface removal and provider envelope are proven from source and fixtures.",
+      "artifacts": [
+        {
+          "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/context-contract/raw-evidence.json",
+          "sha256": "5086d65ccf70038436754d5d94e037cbeddadfe5a47eab28f4884ea74bbbdcfb",
+          "bytes": 2376,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "b58a7187821e1c78ce754965ef9a3ea4e9f2090f067042097308a34cfe2110a9",
+    "command": "pnpm --dir openclaw_runtime exec tsx tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/generate-acceptance.mts"
+  }
+}

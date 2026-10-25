@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "ModelPositioningRetainedResults/v1",
+  "actor": "codex",
+  "driven_by": "agent",
+  "protocol": {
+    "schemaVersion": "PositioningProtocolFreeze/v1",
+    "frozenAt": "2026-10-25T14:35:23.974Z",
+    "candidate": {
+      "commit": "31bcdb44764760823f93a8c1dafc161ef012a606",
+      "tree": "a48bd5cb29121d074f98fd66669133cad3489d55",
+      "dirty": false
+    },
+    "source": {
+      "shared/model-capability-profile.ts": "494a3f833182167f164c4ade80df81b8bb746219200febbaa0feabce2059fad7",
+      "shared/dcs/component-disposition-catalog.ts": "56db43218f47e9c2e1be98b6126ac237a77d247364c0efbc58eee44a3960441b",
+      "shared/component-authority-manifest.ts": "4eea3dd6d3d4fae1ee947aad34f633db8f861e8daf40fdec53f954697d29f85f",
+      "openclaw_runtime/src/context-engine/model-capability-prompt.ts": "52d7af389456587c194b7d380b9d0f9ed3fc50882cb571cda47ac0dca303d8a3",
+      "openclaw_runtime/src/runtime-core/model-capability-effective-state.ts": "420b029e938eef182eeed817d0608309155a366ccf86fd617aace0011e2f6fc9",
+      "openclaw_runtime/src/agents/stage4-capability-grant.ts": "cbbf84ec6fbbb0170436c8c830092771be3b0c1649faff57a833ba0641e5adb7",
+      "openclaw_runtime/src/agents/approval-ledger.ts": "4d00fcb3e02da7c2bb5d5d58355a987c7ce63a826ef6ced0cc106692a8050ec1",
+      "scripts/model-capability-positioning.mts": "c3a7e1634d3bfcef8ec115f5f9820b9b8e22a9fd40f2629ffb855a3b2f851092",
+      "scripts/verify-model-capability-positioning.py": "187264db601ab542638ebb1830eae3828c82c601a37f12b753f342547f82634d",
+      "harness/specs/tasks/model-capability-positioning-acceptance.md": "201f1e57cc6a61847bb250e4debeb2ba87ba926c389b3b2bed8cfaa7ba79d6ec",
+      "tests/unit/fixtures/model-capability-positioning-tf0507/fixture.json": "0a58c374272de48008fd4124720d960f457e18a2ad29e0404a00415a4db03548"
+    },
+    "model": "glm-5-3",
+    "provider": "local-openai-compatible",
+    "fixtureSha256": "0a58c374272de48008fd4124720d960f457e18a2ad29e0404a00415a4db03548",
+    "repetitions": 1,
+    "maxOutputTokens": 8000,
+    "providerTimeoutMs": 180000,
+    "scorerVersion": "tf0507-structured-facts-v2",
+    "failureRule": "All 24 rows must pass the frozen structured factual comparison, tool decision, owner guard, effect, source and response integrity checks; no retries or omitted rows."
+  },
+  "summary": {
+    "scenarioCount": 24,
+    "passCount": 24,
+    "failCount": 0,
+    "providerErrors": 0,
+    "unauthorizedEffects": 0,
+    "effectiveDigestRefreshOnStateChange": true
+  },
+  "results": {
+    "contract": {
+      "status": "pass",
+      "summary": "24/24 rows independently recomputed from the frozen profile, raw provider replies and owner effects"
+    }
+  },
+  "sourceEvidence": {
+    "path": "docs/dev/component-graduation/TF-0507/verified-glm-20261025/evidence.json",
+    "sha256": "431db8c4a5005294d4f46227ff9c8e67cb3aa4bd32011297b2d1e86ce8b63b03",
+    "bytes": 7683008,
+    "verification": "scripts/verify-model-capability-positioning.py; original evidence contains all 24 rows and observed owner/provider records"
+  }
+}

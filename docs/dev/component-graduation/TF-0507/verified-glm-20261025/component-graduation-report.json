@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "tf-0507-glm-positioning-20261025",
+  "reportKind": "contract",
+  "componentId": "model-capability-profile",
+  "taskForestNodeId": "TF-0507",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "codex",
+  "entryPoint": "scripts/model-capability-positioning.mts",
+  "defaultMode": "internal",
+  "benefitEvidence": "All 24 frozen scenarios and 30 provider calls pass for glm-5-3 on the recorded clean source, with one observed permitted echo and no unauthorized effects.",
+  "rollback": "Remove the bounded factual prompt change; existing permission and runtime owners remain unchanged.",
+  "modelEffectiveState": "Every listed runtime availability is retained within the existing 2000-character budget; driver diagnostics, permissions, memory, knowledge and observed execution are distinct.",
+  "evidenceGrade": "real-runtime",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "31bcdb44764760823f93a8c1dafc161ef012a606",
+    "tree": "a48bd5cb29121d074f98fd66669133cad3489d55",
+    "buildHash": "source-tsx:a48bd5cb29121d074f98fd66669133cad3489d55",
+    "runtimeGeneration": "controlled generations recorded per evidence row",
+    "provider": "local-openai-compatible",
+    "model": "glm-5-3",
+    "inputSet": "POS-P0-A through POS-P2-H; one repetition per row; output budget 8000; request timeout 180 seconds",
+    "scope": "workspace:tf0507; session:tf0507:P0/P1/P2",
+    "artifacts": [
+      {
+        "path": "docs/dev/component-graduation/TF-0507/verified-glm-20261025/evidence.json",
+        "sha256": "431db8c4a5005294d4f46227ff9c8e67cb3aa4bd32011297b2d1e86ce8b63b03",
+        "bytes": 7683008
+      },
+      {
+        "path": "docs/dev/component-graduation/TF-0507/verified-glm-20261025/protocol-freeze.json",
+        "sha256": "431240cfcb933688b63b93e28742e4fd568f86453beea1b738ea123a8141e50e",
+        "bytes": 2130
+      },
+      {
+        "path": "docs/dev/component-graduation/TF-0507/verified-glm-20261025/independent-readback.json",
+        "sha256": "6361f27e4920490748454e8fec0a4f170aea03cdd5d5e0cfd37d681154e93305",
+        "bytes": 621
+      },
+      {
+        "path": "docs/dev/component-graduation/TF-0507/verified-glm-20261025/archive-index.json",
+        "sha256": "cdf26aaee592d476683158c8a391ce8f1f245ae22ebbe93e7747842c287ebd12",
+        "bytes": 144434
+      },
+      {
+        "path": "docs/dev/component-graduation/TF-0507/verified-glm-20261025/raw-results.json",
+        "sha256": "e52d87d2541a483520db9bb712db458b676e77bdd6c6048b54e48c683f7a8150",
+        "bytes": 3103
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "contract",
+      "status": "pass",
+      "grade": "real-runtime",
+      "summary": "The production prompt, raw provider replies, actual Stage4 owner decisions and permitted echo effect are independently recomputed from disk.",
+      "artifacts": [
+        {
+          "path": "docs/dev/component-graduation/TF-0507/verified-glm-20261025/raw-results.json",
+          "sha256": "e52d87d2541a483520db9bb712db458b676e77bdd6c6048b54e48c683f7a8150",
+          "bytes": 3103,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "ecd33a25bf0026f3f4ba8ad2cd663aec2cfc72b0a00bc695011f201165eb906d",
+    "command": "py -3 -X utf8 scripts/verify-model-capability-positioning.py --root <source> --run docs/dev/component-graduation/TF-0507/verified-glm-20261025 --self-test"
+  },
+  "limitations": [
+    "Controlled agent-driven owner facts and fixed fixture clock; provider replies and the permitted echo are real observations. No real-human or installed approval-UI claim.",
+    "Acceptance covers the declared GLM route, 24 scenarios, one repetition per row and 30 requests. It does not guarantee arbitrary tasks, other models, providers or general availability.",
+    "The previous GLM attempt remains 15/24 with five transport timeouts and four Browser scalar mismatches. Scoring, scenario identities and output budget are unchanged. Earlier historical runs are not re-signed."
+  ]
+}

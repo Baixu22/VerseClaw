@@ -1,0 +1,21 @@
+{
+  "actor": "codex",
+  "driven_by": "agent",
+  "candidate": "31bcdb44764760823f93a8c1dafc161ef012a606",
+  "outputPrefix": "docs/dev/component-graduation/TF-0508/verified-glm-20261025",
+  "adaptation": "Only source root and descriptive context report identity change; original criteria and cases are unchanged. Candidate binding is read from git.",
+  "drivers": [
+    {
+      "originalDriver": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-context-contract.mts",
+      "originalSha256": "ba40710232b8e16f645a5bd0695bc4f1ce11812559e4865d8f6939d6fb6cb8a3",
+      "driver": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-context-contract-v2.mts",
+      "sha256": "cd821d995dd9737061de0da808870b86f57a33ed3ba910e15d613f8f26b7f4df"
+    },
+    {
+      "originalDriver": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-effective-state.mts",
+      "originalSha256": "422758f2aed726255082454f26cad1e24765adcffa1a3b0daa7caf491e51ea10",
+      "driver": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-effective-state-v2.mts",
+      "sha256": "1bbe565640b31ada389534149c5380532ce5ed20ab782aa9fd0c9b02a6b4f96f"
+    }
+  ]
+}

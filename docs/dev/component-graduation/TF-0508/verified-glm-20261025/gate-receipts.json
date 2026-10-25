@@ -1,0 +1,475 @@
+{
+  "actor": "codex",
+  "driven_by": "agent",
+  "gates": [
+    {
+      "name": "glm-final-component-units",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/component-authority-manifest.test.ts",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "tests/unit/component-graduation-report.test.ts",
+        "tests/unit/model-capability-positioning-tf0507.test.ts",
+        "tests/unit/model-capability-profile.test.ts",
+        "tests/unit/runtime-effective-capability.test.ts",
+        "tests/unit/context-assembly-authority-tf0493.test.ts",
+        "tests/unit/workspace-context-profile.test.ts",
+        "tests/unit/memory-authority-contract.test.ts",
+        "tests/unit/memory-control-plane-authority.test.ts",
+        "tests/unit/knowledge-lifecycle-tf0499.test.ts",
+        "tests/unit/memory-tf0500-retirement.test.ts",
+        "tests/unit/vtoken-tf0496-decision.test.ts",
+        "tests/unit/capability-catalog-authority.test.ts",
+        "tests/unit/browser-supervised-capability-tf0503.test.ts",
+        "tests/unit/verseshell-internal-substrate-tf0504.test.ts",
+        "tests/unit/surface-access-tf0505.test.ts",
+        "tests/unit/coding-controls-tf0510.test.ts",
+        "tests/unit/permission-contract-tf0509.test.ts",
+        "tests/unit/default-config-matrix.test.ts",
+        "tests/unit/capability-claims.test.ts",
+        "tests/unit/first-product-claims.test.ts",
+        "--maxWorkers=2",
+        "--reporter=dot"
+      ],
+      "cwd": "D:\\tmp\\clawx-nine-node-relay-20261025\\source-31bcdb447647",
+      "exit_code": 0,
+      "elapsed_seconds": 67.551,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-component-units.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-component-units.json",
+        "sha256": "73bc418baabc3c3af6de48e4d3d4ff8dcb95ce308bef4cb92976e4d77d40703a",
+        "bytes": 1616
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-component-units.log",
+        "sha256": "85105ec746245897565459cbc857f26b732231f29fc2bd793c6b8dbcb342f1dd",
+        "bytes": 664
+      }
+    },
+    {
+      "name": "glm-final-versegit-units",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/versegit-host-apply.test.ts",
+        "tests/unit/versegit-host-api.test.ts",
+        "tests/unit/versegit-fact-adapter.test.ts",
+        "tests/unit/versegit-candidate-receipts.test.ts",
+        "tests/unit/versegit-candidate-freeze.test.ts",
+        "tests/unit/versegit-cleanup-barrier.test.ts",
+        "tests/unit/versegit-completion-lifecycle.test.ts",
+        "tests/unit/versegit-feedback-delivery.test.ts",
+        "tests/unit/versegit-observation-basis.test.ts",
+        "tests/unit/versegit-receipt-authority.test.ts",
+        "tests/unit/versegit-runtime-bindings.test.ts",
+        "tests/unit/versegit-sidecar-delivery.test.ts",
+        "tests/unit/versegit-stability-report.test.ts",
+        "tests/unit/versegit-product-acceptance.test.ts",
+        "--maxWorkers=2",
+        "--reporter=dot"
+      ],
+      "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+      "exit_code": 0,
+      "elapsed_seconds": 48.164,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-versegit-units.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-versegit-units.json",
+        "sha256": "53ff0da92d444d23cf2ae6081e8b0fe32532225ee3e072b785c703ddc321fb8f",
+        "bytes": 1155
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-versegit-units.log",
+        "sha256": "8213437967036211efb2dfdd58e8e78e992fa9d2fc29c64bd7e99fec6525b825",
+        "bytes": 1357
+      }
+    },
+    {
+      "name": "glm-final-typecheck",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+      "exit_code": 0,
+      "elapsed_seconds": 45.876,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-typecheck.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-typecheck.json",
+        "sha256": "cabbe66afe1cf927713a961733c92142d6f5bf7b0c5d1bb11e61b321f5e2bf16",
+        "bytes": 372
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-typecheck.log",
+        "sha256": "8658c08a33a81341619c8a0e2184525d18c87bf87aa3ec82f1bf69c501f1841a",
+        "bytes": 1683
+      }
+    },
+    {
+      "name": "glm-final-lint",
+      "command": [
+        "node",
+        "D:\\ClawX\\node_modules\\eslint\\bin\\eslint.js",
+        "--config",
+        "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-eslint.config.mjs",
+        "shared/model-capability-profile.ts",
+        "tests/unit/model-capability-positioning-tf0507.test.ts",
+        "tests/unit/model-capability-profile.test.ts",
+        "tests/e2e/memory-surface.spec.ts",
+        "scripts/model-capability-positioning.mts",
+        "scripts/component-graduation-final-audit.mts",
+        "--max-warnings",
+        "0"
+      ],
+      "cwd": "D:\\tmp\\clawx-nine-node-relay-20261025\\source-31bcdb447647",
+      "exit_code": 0,
+      "elapsed_seconds": 5.301,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-lint.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-lint.json",
+        "sha256": "b6ec5eb69eb049176e92d5cf9e94fee9316579a306b0094f8dc26143dab03564",
+        "bytes": 720
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-lint.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "name": "glm-final-ui-build",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "run",
+        "build:vite"
+      ],
+      "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+      "exit_code": 0,
+      "elapsed_seconds": 88.095,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-ui-build.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-ui-build.json",
+        "sha256": "8086bfd157d3033a8870f507de684cbb292221331ac74e76128bf3fd61811d2f",
+        "bytes": 371
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-ui-build.log",
+        "sha256": "43aca720b244b3891612f15c01b25c2f7a707009113f6aaaa956cf03fa0fc769",
+        "bytes": 48191
+      }
+    },
+    {
+      "name": "glm-final-runtime-build",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "run",
+        "build:runtime"
+      ],
+      "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+      "exit_code": 0,
+      "elapsed_seconds": 34.288,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-runtime-build.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-runtime-build.json",
+        "sha256": "89caeeed85dbbeed6b7874b40464f493f65e4a8c28b55fc102556b2a747e62c1",
+        "bytes": 384
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-runtime-build.log",
+        "sha256": "40c639b976ed6f72f13c7e1784563c851d6f407518019c09b2be0da095a44f98",
+        "bytes": 3182
+      }
+    },
+    {
+      "name": "glm-final-electron",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "run",
+        "test:e2e:run",
+        "tests/e2e/workspace-context-settings.spec.ts",
+        "tests/e2e/memory-surface.spec.ts",
+        "tests/e2e/context-view-tool-surface.spec.ts",
+        "tests/e2e/secondary-surfaces-convergence.spec.ts",
+        "--workers=1",
+        "--reporter=line,json"
+      ],
+      "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+      "exit_code": 0,
+      "elapsed_seconds": 117.284,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-electron.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-electron.json",
+        "sha256": "4e70b5a79e5a44f7e08d4b0782e611c768be042ff06404c1f68a2c28b2f826ab",
+        "bytes": 620
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-electron.log",
+        "sha256": "5aeb88eace3645f92fd6ce18b9975df36abcd555c8ffe243f422d2140918cc5c",
+        "bytes": 1676
+      }
+    },
+    {
+      "name": "glm-contract",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "contract:check"
+      ],
+      "cwd": "D:\\tmp\\clawx-nine-node-relay-20261025\\source-31bcdb447647",
+      "exit_code": 0,
+      "elapsed_seconds": 1.795,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-contract.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-contract.json",
+        "sha256": "205094862ac39db2dcf09b4a742991ac8f5134dd7e4cf7235c2f17b457f0d358",
+        "bytes": 353
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-contract.log",
+        "sha256": "c078443b7963d0e8abcf71a53f7f80b539711f7709f5e4ae1e54c17ce9d24e10",
+        "bytes": 57
+      }
+    },
+    {
+      "name": "glm-catalogs",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "catalogs:check"
+      ],
+      "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+      "exit_code": 0,
+      "elapsed_seconds": 2.82,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-catalogs.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-catalogs.json",
+        "sha256": "b1f00e91170e4f7f9acc09014b705657321896ca0db334ffc52207bdfacc7096",
+        "bytes": 350
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-catalogs.log",
+        "sha256": "e9a3fb0ceb1e0e88edcc44ed0065e67b45b79b4f1fa92ee8828c4e6b6490c86a",
+        "bytes": 160
+      }
+    },
+    {
+      "name": "glm-harness-component",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/component-graduation-final-audit.md"
+      ],
+      "cwd": "D:\\tmp\\clawx-nine-node-relay-20261025\\source-31bcdb447647",
+      "exit_code": 0,
+      "elapsed_seconds": 3.238,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-harness-component.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-harness-component.json",
+        "sha256": "ab68785aad44df654e01e26f054ed728da9e674361b03a16a83b7ba548a7eac9",
+        "bytes": 457
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-harness-component.log",
+        "sha256": "7423bc73401a0d459ee8616608337862961216a4dc689f14d5a733381249d832",
+        "bytes": 296
+      }
+    },
+    {
+      "name": "glm-harness-model",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/model-capability-positioning-acceptance.md"
+      ],
+      "cwd": "D:\\tmp\\clawx-nine-node-relay-20261025\\source-31bcdb447647",
+      "exit_code": 0,
+      "elapsed_seconds": 3.239,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-harness-model.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-harness-model.json",
+        "sha256": "8873d275dc0f02d9580607d5e20335bca30fbd82da6d7028d922baae6de3d631",
+        "bytes": 456
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-harness-model.log",
+        "sha256": "d86337bc53bce69ef45a5d20b409f438e9380be17355addde947fa99b9afaa96",
+        "bytes": 317
+      }
+    },
+    {
+      "name": "glm-comms-replay",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "run",
+        "comms:replay"
+      ],
+      "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+      "exit_code": 0,
+      "elapsed_seconds": 1.649,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-comms-replay.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-comms-replay.json",
+        "sha256": "d261c76ef450654c5cd86731e2ee725243e73b1f214b8b2f6fcd9d9a52ff9fd8",
+        "bytes": 368
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-comms-replay.log",
+        "sha256": "3458d1131ceceea4d5c95270c79ad256aa62e7aa425bac169d9cf2af86d5cbb5",
+        "bytes": 155
+      }
+    },
+    {
+      "name": "glm-comms-compare",
+      "command": [
+        "node",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "run",
+        "comms:compare"
+      ],
+      "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+      "exit_code": 0,
+      "elapsed_seconds": 0.933,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-comms-compare.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-comms-compare.json",
+        "sha256": "92965a3eb56f3fa7b35438f851afcca68b66d69087372ac36181c964639eee9d",
+        "bytes": 371
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-comms-compare.log",
+        "sha256": "614accff1dc675f6cf159c310b2ffcf23e3958797bc53e1fc35329ae3e24f989",
+        "bytes": 3481
+      }
+    },
+    {
+      "name": "glm-context-contract-v2-receipt",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-context-contract-v2.mts"
+      ],
+      "cwd": "D:\\tmp\\clawx-nine-node-relay-20261025\\source-31bcdb447647",
+      "exit_code": 0,
+      "elapsed_seconds": 11.422,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-context-contract-v2-receipt.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-context-contract-v2-receipt.json",
+        "sha256": "5e4d7fde59d9b9718a78a7c47b55b16a5d4b9bb325092a064369dfc667e0f14c",
+        "bytes": 418
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-context-contract-v2-receipt.log",
+        "sha256": "02bc6db9970fc49f22ad5d7f95d70bc4fa3084fe5e67c826902e6e7c42dd5828",
+        "bytes": 704
+      }
+    },
+    {
+      "name": "glm-effective-state-v2-receipt",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-effective-state-v2.mts"
+      ],
+      "cwd": "D:\\tmp\\clawx-nine-node-relay-20261025\\source-31bcdb447647",
+      "exit_code": 0,
+      "elapsed_seconds": 20.976,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-effective-state-v2-receipt.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-effective-state-v2-receipt.json",
+        "sha256": "3611125ca3994fdb44416d4717a35027af8a393bf26bda6a7d50a9c6b89b560a",
+        "bytes": 415
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-effective-state-v2-receipt.log",
+        "sha256": "3d371eea1d9be23b5e62255d5a111f87fb42bc0a118d971f3f2529bbda0e96a6",
+        "bytes": 68
+      }
+    },
+    {
+      "name": "glm-historical-gate-v2-receipt",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-historical-readback.mts"
+      ],
+      "cwd": "D:\\tmp\\clawx-nine-node-relay-20261025\\source-31bcdb447647",
+      "exit_code": 0,
+      "elapsed_seconds": 1.23,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-historical-gate-v2-receipt.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-historical-gate-v2-receipt.json",
+        "sha256": "6f84b511ff4a863ebee832d9a844c5de57b12d76ddc32610e4b4a5410e5ab244",
+        "bytes": 414
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-historical-gate-v2-receipt.log",
+        "sha256": "fea3d80d37de3da02c7c75371d2f048ae2a1ec70cbd53dbf535368c7c4b01931",
+        "bytes": 551
+      }
+    },
+    {
+      "name": "glm-final-source-audit-v3-receipt",
+      "command": [
+        "node",
+        "D:\\ClawX\\openclaw_runtime\\node_modules\\tsx\\dist\\cli.mjs",
+        "scripts/component-graduation-final-audit.mts",
+        "--output",
+        "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-source-audit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+      "exit_code": 0,
+      "elapsed_seconds": 1.199,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-source-audit-v3-receipt.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-source-audit-v3-receipt.json",
+        "sha256": "a0f2e58bba342cc6a1f9764cb96cdf70d2f86b1744b94896b6be2983b64217c2",
+        "bytes": 502
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-source-audit-v3-receipt.log",
+        "sha256": "1bc7be70e667ebcc10260807b12dbfbed15e35e3236483438792b27ac6466465",
+        "bytes": 242
+      }
+    },
+    {
+      "name": "glm-versegit-final-readback-receipt",
+      "command": [
+        "node",
+        "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-versegit-final-readback.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+      "exit_code": 0,
+      "elapsed_seconds": 8.39,
+      "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-versegit-final-readback-receipt.log",
+      "receiptArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-versegit-final-readback-receipt.json",
+        "sha256": "a18a94aca0ee9dc0c0bdcbdb9756dcc75411c23e77c693de79031566ef8bf8df",
+        "bytes": 372
+      },
+      "logArtifact": {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-versegit-final-readback-receipt.log",
+        "sha256": "870cfb5aec88917a84ce0fd1a2ac17a23076447faaf84d3730215ee5d8b9a0cd",
+        "bytes": 3336
+      }
+    }
+  ],
+  "countRule": "Overlapping suites are listed separately and are not added into a unique-test total."
+}

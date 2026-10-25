@@ -1,0 +1,67 @@
+{
+  "actor": "codex",
+  "driven_by": "agent",
+  "modelCandidate": {
+    "commit": "31bcdb44764760823f93a8c1dafc161ef012a606",
+    "tree": "a48bd5cb29121d074f98fd66669133cad3489d55",
+    "dirty": false
+  },
+  "sourceEquivalent": true,
+  "files": [
+    {
+      "path": "shared/model-capability-profile.ts",
+      "sha256": "494a3f833182167f164c4ade80df81b8bb746219200febbaa0feabce2059fad7",
+      "matched": true
+    },
+    {
+      "path": "shared/dcs/component-disposition-catalog.ts",
+      "sha256": "56db43218f47e9c2e1be98b6126ac237a77d247364c0efbc58eee44a3960441b",
+      "matched": true
+    },
+    {
+      "path": "shared/component-authority-manifest.ts",
+      "sha256": "4eea3dd6d3d4fae1ee947aad34f633db8f861e8daf40fdec53f954697d29f85f",
+      "matched": true
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/model-capability-prompt.ts",
+      "sha256": "52d7af389456587c194b7d380b9d0f9ed3fc50882cb571cda47ac0dca303d8a3",
+      "matched": true
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/model-capability-effective-state.ts",
+      "sha256": "420b029e938eef182eeed817d0608309155a366ccf86fd617aace0011e2f6fc9",
+      "matched": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/stage4-capability-grant.ts",
+      "sha256": "cbbf84ec6fbbb0170436c8c830092771be3b0c1649faff57a833ba0641e5adb7",
+      "matched": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/approval-ledger.ts",
+      "sha256": "4d00fcb3e02da7c2bb5d5d58355a987c7ce63a826ef6ced0cc106692a8050ec1",
+      "matched": true
+    },
+    {
+      "path": "scripts/model-capability-positioning.mts",
+      "sha256": "c3a7e1634d3bfcef8ec115f5f9820b9b8e22a9fd40f2629ffb855a3b2f851092",
+      "matched": true
+    },
+    {
+      "path": "scripts/verify-model-capability-positioning.py",
+      "sha256": "187264db601ab542638ebb1830eae3828c82c601a37f12b753f342547f82634d",
+      "matched": true
+    },
+    {
+      "path": "harness/specs/tasks/model-capability-positioning-acceptance.md",
+      "sha256": "201f1e57cc6a61847bb250e4debeb2ba87ba926c389b3b2bed8cfaa7ba79d6ec",
+      "matched": true
+    },
+    {
+      "path": "tests/unit/fixtures/model-capability-positioning-tf0507/fixture.json",
+      "sha256": "0a58c374272de48008fd4124720d960f457e18a2ad29e0404a00415a4db03548",
+      "matched": true
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "actor": "codex",
+  "driven_by": "agent",
+  "version": "10.1.0",
+  "installedCli": "D:\\ClawX\\node_modules\\eslint\\bin\\eslint.js",
+  "sourceConfigSha256": "0c8afc30a298f15d4e74497e5b3591ac684c137e5a75fb8e3e2d976238e9d095",
+  "configIdenticalToMain": true,
+  "adaptation": "Use the existing main installation with the identical source config; add .mts to the original TS file selector and preserve all rules."
+}

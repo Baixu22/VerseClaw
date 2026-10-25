@@ -1,0 +1,124 @@
+{
+  "actor": "codex-playwright",
+  "driven_by": "agent",
+  "generatedAt": "2026-10-25T15:10:01.591347+00:00",
+  "candidate": {
+    "commit": "31bcdb44764760823f93a8c1dafc161ef012a606",
+    "tree": "a48bd5cb29121d074f98fd66669133cad3489d55",
+    "dirty": false
+  },
+  "stats": {
+    "startTime": "2026-10-25T14:46:30.293Z",
+    "duration": 115105.10200000001,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "file": "context-view-tool-surface.spec.ts",
+      "title": "keeps automatic discovery distinct from the explicit rollback control",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 23381,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "file": "memory-surface.spec.ts",
+      "title": "exposes candidate review, export and tombstone deletion in one panel",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 15349,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "file": "secondary-surfaces-convergence.spec.ts",
+      "title": "secondary Settings pages and diagnostics share controls in light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 19307,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "file": "secondary-surfaces-convergence.spec.ts",
+      "title": "first-run Setup keeps compact navigation in light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 14903,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "file": "secondary-surfaces-convergence.spec.ts",
+      "title": "secondary Settings pages and diagnostics share controls in dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 17187,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "file": "secondary-surfaces-convergence.spec.ts",
+      "title": "first-run Setup keeps compact navigation in dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 11461,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "file": "workspace-context-settings.spec.ts",
+      "title": "exposes one default-on profile and keeps low-level flags out of General settings",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 11644,
+          "retry": 0
+        }
+      ]
+    }
+  ],
+  "memoryExport": {
+    "bytes": 3085,
+    "sha256": "566486c3adb5ac3c4495170edb57ef6b93ccaa4f6ace1f7741e0dcdd28ac450d",
+    "downloads": [
+      {
+        "filename": "clawx-memory-architect-2026-10-25T14-47-03-551Z.json",
+        "state": "completed",
+        "receivedBytes": 3085
+      }
+    ]
+  },
+  "binary": {
+    "version": "40.8.4",
+    "sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+  },
+  "build": {
+    "mainEntrySha256": "74984a7a0a83e8ecbca947f5874e79bdbf1516e212f798e24f9ced1338c3aa1c",
+    "runtimeEntrySha256": "cae8189a87d03df9f39e6ec75965257e29059280ca52d59cc39cb8126e654d54"
+  },
+  "limitation": "Seven built Windows Electron interactions with agent-created role/memory fixtures and existing IPC replay. No packaged-install, other-platform, arbitrary-provider or real-human claim."
+}

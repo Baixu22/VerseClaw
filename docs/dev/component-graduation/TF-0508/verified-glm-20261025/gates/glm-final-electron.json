@@ -1,0 +1,19 @@
+{
+  "name": "glm-final-electron",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+    "run",
+    "test:e2e:run",
+    "tests/e2e/workspace-context-settings.spec.ts",
+    "tests/e2e/memory-surface.spec.ts",
+    "tests/e2e/context-view-tool-surface.spec.ts",
+    "tests/e2e/secondary-surfaces-convergence.spec.ts",
+    "--workers=1",
+    "--reporter=line,json"
+  ],
+  "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+  "exit_code": 0,
+  "elapsed_seconds": 117.284,
+  "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-electron.log"
+}

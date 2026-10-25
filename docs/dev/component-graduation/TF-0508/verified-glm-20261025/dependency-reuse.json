@@ -1,0 +1,24 @@
+{
+  "actor": "codex",
+  "driven_by": "agent",
+  "dependencySourcesUnchanged": true,
+  "operation": "Redirect only agent-created junctions to available main dependencies; dependency directories are unchanged.",
+  "records": [
+    {
+      "junction": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025\\node_modules",
+      "previousTarget": "\\\\?\\C:\\Users\\27933\\.codex\\worktrees\\node-closeout-verifier-20261025\\ClawX\\node_modules",
+      "newTarget": "D:\\ClawX\\node_modules"
+    },
+    {
+      "junction": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025\\openclaw_runtime\\node_modules",
+      "previousTarget": "\\\\?\\C:\\Users\\27933\\.codex\\worktrees\\node-closeout-verifier-20261025\\ClawX\\openclaw_runtime\\node_modules",
+      "newTarget": "D:\\ClawX\\openclaw_runtime\\node_modules"
+    },
+    {
+      "junction": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025\\packages\\versebrowser\\node_modules",
+      "previousTarget": "\\\\?\\C:\\Users\\27933\\.codex\\worktrees\\node-closeout-verifier-20261025\\ClawX\\packages\\versebrowser\\node_modules",
+      "newTarget": "D:\\ClawX\\packages\\versebrowser\\node_modules"
+    }
+  ],
+  "freshInstall": false
+}

@@ -1,0 +1,11 @@
+{
+  "name": "glm-versegit-final-readback-receipt",
+  "command": [
+    "node",
+    "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-versegit-final-readback.mjs"
+  ],
+  "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+  "exit_code": 0,
+  "elapsed_seconds": 8.39,
+  "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-versegit-final-readback-receipt.log"
+}
