@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "TemporaryArtifactPolicy/v1",
+  "taskForestNodeId": "TF-0498",
+  "tempRoot": "D:\\tmp",
+  "testResultsPath": "test-results",
+  "testResultsIgnored": true,
+  "playwrightReportPresent": false,
+  "userDataTouched": false,
+  "unrelatedWorktreesTouched": false
+}

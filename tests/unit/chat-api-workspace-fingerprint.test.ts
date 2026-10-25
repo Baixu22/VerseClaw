@@ -2,8 +2,35 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 
+function computeExpectedFingerprint(rootPath: string): string {
+  const absolute = resolve(rootPath);
+  const normalized = absolute.replace(/\\/g, '/').toLowerCase();
+  return createHash('sha256').update(normalized, 'utf8').digest('hex').slice(0, 16);
+}
+
+function coordinatorBinding(overrides: Record<string, unknown> = {}) {
+  return {
+    schemaVersion: 1,
+    workspaceId: 'ws-app',
+    agentId: 'main',
+    sessionKey: 'agent:main:main',
+    sessionGeneration: 'generation-1',
+    taskLedgerReferences: [],
+    environment: { kind: 'local', canonicalRoot: process.cwd(), backend: 'git', branch: 'main', detachedHead: false, setupProfile: null },
+    archiveRestorePolicy: 'restore',
+    state: 'active',
+    bindingRevision: 1,
+    invalidationReason: null,
+    createdAt: new Date(0).toISOString(),
+    updatedAt: new Date(0).toISOString(),
+    ...overrides,
+  };
+}
+
 const loadTaskLedgerSnapshotMock = vi.fn();
 const getWorkspaceRootPathByIdMock = vi.fn();
+const getPersistedCoordinatorBindingMock = vi.fn();
+const materializeCoordinatorSessionGenerationMock = vi.fn();
 
 vi.mock('@electron/services/task-ledger-service', () => ({
   loadTaskLedgerSnapshot: (...args: unknown[]) => loadTaskLedgerSnapshotMock(...args),
@@ -11,6 +38,8 @@ vi.mock('@electron/services/task-ledger-service', () => ({
 
 vi.mock('@electron/services/workspaces-api', () => ({
   getWorkspaceRootPathById: (...args: unknown[]) => getWorkspaceRootPathByIdMock(...args),
+  getPersistedCoordinatorBinding: (...args: unknown[]) => getPersistedCoordinatorBindingMock(...args),
+  materializeCoordinatorSessionGeneration: (...args: unknown[]) => materializeCoordinatorSessionGenerationMock(...args),
 }));
 
 /**
@@ -36,6 +65,10 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
   beforeEach(() => {
     loadTaskLedgerSnapshotMock.mockReset();
     getWorkspaceRootPathByIdMock.mockReset();
+    getPersistedCoordinatorBindingMock.mockReset();
+    getPersistedCoordinatorBindingMock.mockResolvedValue(null);
+    materializeCoordinatorSessionGenerationMock.mockReset();
+    materializeCoordinatorSessionGenerationMock.mockResolvedValue(null);
   });
 
   it('forwards workspaceId to Gateway rpcParams when renderer sends it', async () => {
@@ -78,9 +111,7 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
     const payload = (gatewayManager.rpc.mock.calls as unknown[][])[0]?.[1] as Record<string, unknown>;
     expect(payload.workspaceId).toBe('ws-app');
     // Expected fingerprint: sha256 of lowercased absolute POSIX-style path, first 16 hex chars.
-    const absolute = resolve(rootPath);
-    const normalized = absolute.replace(/\\/g, '/').toLowerCase();
-    const expected = createHash('sha256').update(normalized, 'utf8').digest('hex').slice(0, 16);
+    const expected = computeExpectedFingerprint(rootPath);
     expect(payload.workspaceFingerprint).toBe(expected);
     expect(payload.workspaceFingerprint).toMatch(/^[0-9a-f]{16}$/);
   });
@@ -144,6 +175,54 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
     });
 
     expect(getWorkspaceRootPathByIdMock).not.toHaveBeenCalled();
+  });
+
+  it('uses the active coordinator environment and verified session generation', async () => {
+    getPersistedCoordinatorBindingMock.mockResolvedValue(coordinatorBinding({
+      environment: { kind: 'managed-worktree', canonicalRoot: process.cwd(), backend: 'git', branch: 'feature', detachedHead: false, setupProfile: null },
+    }));
+    getWorkspaceRootPathByIdMock.mockResolvedValue('C:\\Repos\\App');
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => method === 'sessions.describe' ? { session: { sessionId: 'generation-1' } } : { runId: 'run-coordinator' }),
+      getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
+    };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+    await api.sendWithMedia({ sessionKey: 'agent:main:main', workspaceId: 'ws-app', message: 'work', idempotencyKey: 'idem-coordinator' });
+    const call = (gatewayManager.rpc.mock.calls as unknown[][]).find((entry) => entry[0] === 'chat.send');
+    const payload = call?.[1] as Record<string, unknown>;
+    expect(payload.workspaceDir).toBe(process.cwd());
+    expect(payload.workspaceFingerprint).toMatch(/^[0-9a-f]{16}$/);
+    expect(getWorkspaceRootPathByIdMock).not.toHaveBeenCalled();
+  });
+
+  it('fails closed for paused or generation-mismatched coordinator bindings', async () => {
+    getPersistedCoordinatorBindingMock.mockResolvedValue(coordinatorBinding({ state: 'paused' }));
+    const gatewayManager = { rpc: vi.fn(), getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })) };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+    const paused = await api.sendWithMedia({ sessionKey: 'agent:main:main', workspaceId: 'ws-app', message: 'work', idempotencyKey: 'idem-paused' });
+    expect(paused.success).toBe(false);
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+
+    getPersistedCoordinatorBindingMock.mockResolvedValueOnce(coordinatorBinding({ sessionGeneration: 'generation-old' }));
+    gatewayManager.rpc.mockResolvedValue({ session: { sessionId: 'generation-new' } });
+    const mismatch = await api.sendWithMedia({ sessionKey: 'agent:main:main', workspaceId: 'ws-app', message: 'work', idempotencyKey: 'idem-mismatch' });
+    expect(mismatch.success).toBe(false);
+    expect(gatewayManager.rpc).not.toHaveBeenCalledWith('chat.send', expect.anything(), expect.anything());
+  });
+
+  it('materializes a pending handoff generation after the first successful Chat send', async () => {
+    getPersistedCoordinatorBindingMock.mockResolvedValue(coordinatorBinding({ sessionGeneration: null, bindingRevision: 2 }));
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => method === 'sessions.describe' ? { session: { sessionId: 'generation-child' } } : { runId: 'run-child' }),
+      getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
+    };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+    const result = await api.sendWithMedia({ sessionKey: 'agent:main:main', workspaceId: 'ws-app', message: 'first child turn', idempotencyKey: 'idem-child' });
+    expect(result.success).toBe(true);
+    expect(materializeCoordinatorSessionGenerationMock).toHaveBeenCalledWith({ workspaceId: 'ws-app', sessionKey: 'agent:main:main', sessionId: 'generation-child' });
   });
 
   it('forwards the ambient logical deadline to Gateway chat.send (NET-E)', async () => {

@@ -18,7 +18,7 @@ function write(rootPath: string, path: string, text = 'fixture\n') {
 }
 
 function git(rootPath: string, ...args: string[]) {
-  return execFileSync('git', args, { cwd: rootPath, encoding: 'utf8', windowsHide: true });
+  return execFileSync('git', args, { cwd: rootPath, encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
 }
 
 function createFixture() {

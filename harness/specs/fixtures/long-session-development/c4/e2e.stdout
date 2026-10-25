@@ -1,0 +1,17 @@
+
+Running 9 tests using 1 worker
+
+
+
+
+
+[1A[2K[1/9] tests\e2e\chat-session-fork.spec.ts:275:7 › Verse Claw chat session fork › creates and selects a forked session with inherited history and copied draft without auto-send
+[1A[2K[2/9] tests\e2e\chat-session-fork.spec.ts:512:7 › Verse Claw chat session fork › offers handoff preparation when fork fails because the parent is too large
+[1A[2K[3/9] tests\e2e\chat-session-fork.spec.ts:606:7 › Verse Claw chat session fork › disables fork entry points while a run is active
+[1A[2K[4/9] tests\e2e\chat-session-handoff.spec.ts:227:7 › Verse Claw chat session handoff › keeps the current handoff draft when an old conversation responds late
+[1A[2K[5/9] tests\e2e\chat-session-handoff.spec.ts:291:7 › Verse Claw chat session handoff › previews, edits, and creates a new session with the draft prefilled without auto-send
+[1A[2K[6/9] tests\e2e\chat-session-handoff.spec.ts:450:7 › Verse Claw chat session handoff › disables handoff entry points while a run is active
+[1A[2K[7/9] tests\e2e\chat-session-handoff.spec.ts:519:7 › Verse Claw chat session handoff › refuses a relay once the handoff depth limit is reached (#179)
+[1A[2K[8/9] tests\e2e\chat-session-handoff.spec.ts:564:7 › Verse Claw chat session handoff › keeps the editable draft and session when creation rejects changed ancestry
+[1A[2K[9/9] tests\e2e\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots
+[1A[2K  9 passed (1.7m)

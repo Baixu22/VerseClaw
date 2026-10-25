@@ -1,50 +1,92 @@
-/** Read-only session policy projection built from owner-resolved runtime facts. */
+/** Read-only session policy projected from existing owner-resolved facts. */
 export const SESSION_EFFECTIVE_POLICY_SCHEMA = 'SessionEffectivePolicy/v1' as const;
 
-export type SessionPolicyFactState =
+export type SessionPolicyFactStatus =
   | 'configured'
   | 'effective'
   | 'unverified'
   | 'unsupported'
-  | 'ignored'
-  | 'unknown';
+  | 'ignored';
 
 export type SessionPolicyFact<T> = {
-  state: SessionPolicyFactState;
   value: T | null;
+  status: SessionPolicyFactStatus;
   source: string;
   reason: string | null;
-  observedAt: string | null;
 };
 
-export type SessionBackendKind =
-  | 'openclaw-embedded'
-  | 'codex-app-server'
-  | 'claude-cli'
-  | 'custom-cli'
-  | 'unknown';
+export type SessionPolicyAxis<T> = {
+  configured: SessionPolicyFact<T>;
+  effective: SessionPolicyFact<T>;
+};
 
-export type SessionBackendDescriptor = {
-  id: string;
-  kind: SessionBackendKind;
-  modelProvider: string | null;
+export type SessionPolicyBackend = {
+  runtime: string;
+  kind: 'openclaw' | 'native' | 'cli' | 'unknown';
+  ownsNativeCompaction: boolean | null;
+  provider: string | null;
   model: string | null;
-  nativeThreadId: string | null;
-  nativeSessionId: string | null;
 };
 
-export type SessionCompactionParameterCompatibility = {
-  path: string;
-  state: 'effective' | 'ignored' | 'unsupported' | 'unknown';
+export type SessionPolicyModel = {
+  provider: string | null;
+  model: string | null;
+  effort: string | null;
+};
+
+export type SessionPolicyGrantAction = {
+  actionId: string;
+  authorization: 'allowed' | 'requires-approval' | 'denied' | 'not-applicable' | 'unknown';
+  grantState: 'active' | 'pending' | 'expired' | 'revoked' | 'denied' | 'unknown' | null;
+};
+
+export type SessionPolicyGrantSummary = {
+  total: number;
+  allowed: number;
+  requiresApproval: number;
+  denied: number;
+  unknown: number;
+  actions: readonly SessionPolicyGrantAction[];
+};
+
+export type SessionPolicyContextLimits = {
+  contextTokens: number | null;
+  contextPressure: 'low' | 'medium' | 'high' | null;
+};
+
+export type SessionPolicyQueueLimits = {
+  mode: 'steer' | 'followup' | 'collect' | 'interrupt' | null;
+  cap: number | null;
+  drop: 'old' | 'new' | 'summarize' | null;
+  debounceMs: number | null;
+  queuedCount: number;
+};
+
+export type SessionPolicyResourceLimits = {
+  maxConcurrentRuns: number | null;
+  maxConcurrentSubagents: number | null;
+  maxSpawnDepth: number | null;
+  maxChildrenPerAgent: number | null;
+  maxProcesses: number | null;
+  maxRssMb: number | null;
+  maxBackgroundTerminals: number | null;
+  maxWorktrees: number | null;
+  idleTtlMs: number | null;
+  keepOnLeave: boolean | null;
+};
+
+export type SessionPolicyScheduleLimits = {
+  cronEnabled: boolean | null;
+  cronMaxConcurrentRuns: number | null;
+  sessionRetention: string | null;
+};
+
+export type SessionBackendCompatibilityRow = {
+  backend: string;
+  parameter: string;
+  status: SessionPolicyFactStatus;
   reason: string | null;
 };
-
-export type SessionCompactionCompatibility = {
-  nativeCompactionOwner: 'openclaw' | 'backend' | 'unknown';
-  parameters: SessionCompactionParameterCompatibility[];
-};
-
-export type SessionPolicyGenerationState = 'current' | 'stale' | 'missing' | 'mismatch' | 'unverified';
 
 export type SessionEffectivePolicy = {
   schemaVersion: typeof SESSION_EFFECTIVE_POLICY_SCHEMA;
@@ -52,60 +94,24 @@ export type SessionEffectivePolicy = {
   scope: {
     workspaceId: string;
     sessionKey: string;
-    sessionId: string;
-    agentId: string;
-    permissionMode: string;
+    agentId: string | null;
+    sessionId: string | null;
+    runId: string | null;
   };
   generation: {
-    state: SessionPolicyGenerationState;
+    state: 'effective' | 'unverified' | 'stale' | 'mismatch' | 'missing';
     runtimeGeneration: string | null;
-    runId: string | null;
-    profileObservedAt: string | null;
+    capabilityProfileGeneration: string | null;
+    observedAt: string | null;
+    reason: string | null;
   };
-  backend: {
-    configured: SessionPolicyFact<string>;
-    effective: SessionPolicyFact<SessionBackendDescriptor>;
-    binding: SessionPolicyFact<{ kind: string; id: string }>;
-    compatibility: SessionCompactionCompatibility;
-  };
-  model: {
-    configured: SessionPolicyFact<{ provider: string | null; model: string | null }>;
-    effective: SessionPolicyFact<{ provider: string | null; model: string | null }>;
-    effort: SessionPolicyFact<string>;
-  };
-  grant: {
-    mode: SessionPolicyFact<string>;
-    effectiveActions: SessionPolicyFact<{
-      allowed: string[];
-      requiresApproval: string[];
-      denied: string[];
-      unknown: string[];
-    }>;
-  };
-  limits: {
-    context: SessionPolicyFact<{
-      usedTokens: number | null;
-      contextTokenBudget: number | null;
-      reserveTokens: number | null;
-      overflowTokens: number | null;
-    }>;
-    queue: SessionPolicyFact<{
-      mode: string | null;
-      cap: number | null;
-      debounceMs: number | null;
-      drop: string | null;
-    }>;
-    resources: SessionPolicyFact<{
-      spawnDepth: number | null;
-      subagentControlScope: string | null;
-      inheritedToolAllowCount: number;
-      inheritedToolDenyCount: number;
-    }>;
-    schedule: SessionPolicyFact<{ jobIds: string[] }>;
-  };
-  diagnostics: Array<{
-    code: string;
-    severity: 'info' | 'warning' | 'error';
-    message: string;
-  }>;
+  backend: SessionPolicyAxis<SessionPolicyBackend>;
+  model: SessionPolicyAxis<SessionPolicyModel>;
+  grants: SessionPolicyAxis<SessionPolicyGrantSummary>;
+  context: SessionPolicyAxis<SessionPolicyContextLimits>;
+  queue: SessionPolicyAxis<SessionPolicyQueueLimits>;
+  resources: SessionPolicyAxis<SessionPolicyResourceLimits>;
+  schedule: SessionPolicyAxis<SessionPolicyScheduleLimits>;
+  compatibility: readonly SessionBackendCompatibilityRow[];
+  sources: readonly string[];
 };

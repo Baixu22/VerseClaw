@@ -132,7 +132,20 @@
     "pid": "pid {{pid}}",
     "fromSession": "来自 {{session}}",
     "stop": "终止",
-    "stopResource": "终止 {{label}}"
+    "stopResource": "停止 {{label}}",
+    "coordinator": {
+      "title": "长期会话协调",
+      "start": "开始长期会话",
+      "pause": "暂停",
+      "resume": "继续",
+      "taskRequired": "请先选择 Task Ledger 节点。",
+      "processes": "{{count}} 个进程",
+      "slots": "{{count}} 个资源槽",
+      "recovery": "恢复状态：{{state}}",
+      "backgroundTerminals": "{{count}} 个后台终端",
+      "queued": "{{count}} 个排队",
+      "state": { "active": "已启用", "paused": "已暂停", "invalid": "已失效", "unbound": "未绑定" }
+    }
   },
   "errorBoundary": {
     "description": "发生了意外错误。请重新加载以继续,或将下方的错误编号提供给支持人员。",

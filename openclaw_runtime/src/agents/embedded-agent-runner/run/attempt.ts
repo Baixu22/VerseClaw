@@ -4491,6 +4491,15 @@ export async function runEmbeddedAttempt(
                 workspaceId: params.workspaceId ?? effectiveWorkspace,
                 workspaceDir: effectiveWorkspace,
                 sessionKey: params.sessionKey ?? params.sessionId,
+                sessionId: params.sessionId,
+                runId: params.runId,
+                backendId:
+                  params.agentHarnessRuntimeOverride ??
+                  params.agentHarnessId ??
+                  "openclaw",
+                provider: params.provider,
+                model: params.modelId,
+                effort: params.thinkLevel ?? params.requestedReasoningEffort ?? null,
                 tools: effectiveTools,
                 cfg: params.config ?? getRuntimeConfig(),
                 env: process.env,

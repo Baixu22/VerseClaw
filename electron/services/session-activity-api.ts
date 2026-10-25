@@ -6,14 +6,13 @@ import type {
   SessionActivityTerminalStatus,
 } from '@shared/types/session-activity';
 import { createEmptySessionActivitySnapshot } from '@shared/types/session-activity';
-import type { SessionEffectivePolicy } from '@shared/types/session-effective-policy';
 import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledger';
 import type { GatewayManager } from '../gateway/manager';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createGitApi } from './git-api';
 import { createTaskLedgerApi } from './task-ledger-api';
-import { getActiveWorkspaceProfile } from './workspaces-api';
 import type { TerminalSessionManager } from './terminal-session-manager';
+import { collectLongSessionResourceInventory } from './long-session-resource-reclamation';
 
 type RuntimeActivityResponse = {
   snapshot?: Partial<SessionActivitySnapshot> & {
@@ -98,12 +97,15 @@ function mergeRuntimeSnapshot(
     session: { ...snapshot.session, ...(runtime.session ?? {}), sessionKey },
     tasks: [...snapshot.tasks, ...(Array.isArray(runtime.tasks) ? runtime.tasks : [])],
     subagents: Array.isArray(runtime.subagents) ? runtime.subagents : snapshot.subagents,
-    completionBatches: Array.isArray(runtime.completionBatches) ? runtime.completionBatches : snapshot.completionBatches,
+    completionBatches: Array.isArray(runtime.completionBatches)
+      ? runtime.completionBatches
+      : snapshot.completionBatches,
     goals: Array.isArray(runtime.goals) ? runtime.goals : snapshot.goals,
     processes: Array.isArray(runtime.processes) ? runtime.processes : snapshot.processes,
     lineage: Array.isArray(runtime.lineage) ? runtime.lineage : snapshot.lineage,
+    ...(runtime.policy ? { policy: runtime.policy } : {}),
+    ...(runtime.resources ? { resources: runtime.resources } : {}),
     continuity: { ...snapshot.continuity, ...(runtime.continuity ?? {}) },
-    policy: runtime.policy ?? snapshot.policy ?? null,
     availability: { ...snapshot.availability, ...(runtime.availability ?? {}) },
     capturedAt: Math.max(snapshot.capturedAt, runtime.capturedAt ?? 0),
   };
@@ -130,18 +132,13 @@ export function createSessionActivityApi({
        * cannot mistake "no rows" for "no activity". */
       let backgroundRead: SessionActivityBackgroundRead = { state: 'unknown', readAt: null, failedAt: null };
 
-      const activeWorkspace = await getActiveWorkspaceProfile().catch(() => null);
-      const [gitResult, ledgerResult, runtimeResult, policyResult] = await Promise.allSettled([
+      const [gitResult, ledgerResult, runtimeResult] = await Promise.allSettled([
         gitApi.status(),
         taskLedgerApi.snapshot({ workspaceId: payload.workspaceId ?? undefined }),
-        gatewayManager.rpc<RuntimeActivityResponse>('session.activitySnapshot', { sessionKey }),
-        activeWorkspace
-          ? gatewayManager.rpc<{ ok?: boolean; policy?: SessionEffectivePolicy }>('sessions.effectivePolicy', {
-              key: sessionKey,
-              workspaceId: activeWorkspace.id,
-              permissionMode: activeWorkspace.permissionMode,
-            })
-          : Promise.resolve<{ ok?: boolean; policy?: SessionEffectivePolicy }>({ ok: false }),
+        gatewayManager.rpc<RuntimeActivityResponse>('session.activitySnapshot', {
+          sessionKey,
+          ...(payload.workspaceId?.trim() ? { workspaceId: payload.workspaceId.trim() } : {}),
+        }),
       ]);
 
       if (gitResult.status === 'fulfilled' && gitResult.value.success) {
@@ -189,13 +186,6 @@ export function createSessionActivityApi({
         workspaceId: payload.workspaceId ?? undefined,
         sessionKey,
       });
-      if (policyResult.status === 'fulfilled' && policyResult.value.ok === true && policyResult.value.policy) {
-        snapshot.policy = policyResult.value.policy;
-        snapshot.availability.policy = true;
-      } else {
-        snapshot.policy = null;
-        snapshot.availability.policy = false;
-      }
       snapshot.terminals = terminals
         .filter(
           (terminal): terminal is typeof terminal & { sessionId: string } =>
@@ -210,6 +200,16 @@ export function createSessionActivityApi({
           updatedAt: snapshot.capturedAt,
         }));
       snapshot.availability.terminals = true;
+      snapshot.resources = await collectLongSessionResourceInventory({
+        scope: {
+          workspaceId: payload.workspaceId?.trim() || 'unknown',
+          sessionKey,
+          expectedSessionId: snapshot.session.sessionId ?? null,
+          rootPath: snapshot.resources?.scope.rootPath ?? null,
+        },
+        terminalManager,
+        runtimeInventory: snapshot.resources ?? null,
+      });
       snapshot.backgroundRead = backgroundRead;
       snapshot.capturedAt = Date.now();
 

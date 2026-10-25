@@ -1,4 +1,9 @@
-import type { WorkspaceCoordinatorTaskRef, WorkspaceProfile, WorkspaceUiState } from '@shared/types/workspace';
+import type {
+  WorkspaceCoordinatorBinding,
+  WorkspaceProfile,
+  WorkspaceUiState,
+} from '@shared/types/workspace';
+import type { WorkspaceCoordinatorBindPayload } from '@shared/host-api/contract';
 import { hostApi } from '@/lib/host-api';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
@@ -7,6 +12,33 @@ export function getAgentIdFromSessionKey(sessionKey: string): string {
   if (!sessionKey.startsWith('agent:')) return 'main';
   const [, agentId] = sessionKey.split(':');
   return agentId || 'main';
+}
+
+export function getWorkspaceCoordinatorBinding(
+  workspace: WorkspaceProfile,
+  agentId: string,
+  sessionKey: string,
+): WorkspaceCoordinatorBinding | null {
+  const binding = workspace.coordinatorBindings?.[sessionKey];
+  return binding?.workspaceId === workspace.id && binding.agentId === agentId && binding.sessionKey === sessionKey
+    ? binding
+    : null;
+}
+
+export async function resolveWorkspaceCoordinatorBinding(
+  workspace: WorkspaceProfile,
+  agentId: string,
+  sessionKey: string,
+) {
+  return hostApi.workspaces.resolveCoordinator({
+    workspaceId: workspace.id,
+    agentId,
+    sessionKey,
+  });
+}
+
+export async function bindWorkspaceCoordinator(input: WorkspaceCoordinatorBindPayload) {
+  return hostApi.workspaces.bindCoordinator(input);
 }
 
 export function createFreshWorkspaceSessionKey(agentId: string): string {
@@ -48,61 +80,6 @@ async function inheritSessionWorkgroup(
   } catch (error) {
     console.warn('Failed to inherit session workgroup:', error);
   }
-}
-
-/**
- * Explicit long-session opt-in. Ordinary Chat and workspace creation do not
- * call this helper; C4 owns the visible confirmation entry.
- */
-export async function bindActiveWorkspaceCoordinator(input: {
-  expectedRevision: number;
-  taskRefs: WorkspaceCoordinatorTaskRef[];
-}) {
-  const workspace = await ensureActiveWorkspaceForSession();
-  const chatState = useChatStore.getState();
-  if (!workspace?.id) throw new Error('No active workspace is available for long-session coordination.');
-  const agentId = chatState.currentAgentId || getAgentIdFromSessionKey(chatState.currentSessionKey);
-  return hostApi.sessions.bindCoordinator({
-    workspaceId: workspace.id,
-    agentId,
-    sessionKey: chatState.currentSessionKey,
-    expectedRevision: input.expectedRevision,
-    taskRefs: input.taskRefs,
-  });
-}
-
-export async function delegateActiveWorkspaceCoordinator(input: {
-  idempotencyKey: string;
-  roleName: string;
-  task: string;
-  taskRef: WorkspaceCoordinatorTaskRef;
-  writeSet?: string[];
-  isolation?: 'shared' | 'worktree';
-  modelRef?: string | null;
-}) {
-  const workspace = await ensureActiveWorkspaceForSession();
-  if (!workspace?.id) throw new Error('No active workspace is available for delegation.');
-  const current = await hostApi.sessions.coordinatorBinding({ workspaceId: workspace.id });
-  if (!current.success || current.binding?.state !== 'active') {
-    throw new Error(current.reason || 'Long-session coordination is not active.');
-  }
-  return hostApi.sessions.delegateCoordinator({
-    workspaceId: workspace.id,
-    idempotencyKey: input.idempotencyKey,
-    roleName: input.roleName,
-    task: input.task,
-    taskRef: input.taskRef,
-    writeSet: input.writeSet,
-    isolation: input.isolation,
-    modelRef: input.modelRef,
-    backend: 'openclaw-embedded',
-  });
-}
-
-export async function readActiveWorkspaceCoordinatorBinding() {
-  const workspace = await ensureActiveWorkspaceForSession();
-  if (!workspace?.id) throw new Error('No active workspace is available for long-session coordination.');
-  return hostApi.sessions.coordinatorBinding({ workspaceId: workspace.id });
 }
 
 export async function ensureActiveWorkspaceForSession(): Promise<WorkspaceProfile | null> {

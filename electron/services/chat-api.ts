@@ -1,3 +1,4 @@
+import { access } from 'node:fs/promises';
 import type { GatewayManager } from '../gateway/manager';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { logger } from '../utils/logger';
@@ -6,13 +7,13 @@ import { isRecord } from './payload-utils';
 import type { ChatKnowledgeDenial } from '../../shared/host-api/contract';
 import { loadTaskLedgerSnapshot } from './task-ledger-service';
 import { readTaskLedgerWorkingContext } from './task-ledger-working-context';
-import { resolveLiveSessionIdentity } from './sessions-api';
 import { getResourceTracker } from './resource-tracker';
 import { evaluateTurnBudget } from '../../shared/agent-resource-limits';
 import { LONG_TASK_INPUT_MODES } from '../../shared/types/long-task-control';
 import { getSessionTokenUsageSummary } from '../utils/token-usage';
 import { computeWorkspaceFingerprint } from '@shared/workspace-fingerprint';
-import { getWorkspaceRootPathById, readWorkspaceCoordinatorBinding } from './workspaces-api';
+import { getPersistedCoordinatorBinding, getWorkspaceRootPathById, materializeCoordinatorSessionGeneration } from './workspaces-api';
+import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
 import {
   buildLongSessionContinuityContext,
   renderLongSessionContinuityContext,
@@ -20,6 +21,8 @@ import {
   type LongSessionContinuityContextPack,
 } from '../../shared/long-session-continuity';
 import type { MemorySurfaceSnapshot } from '../../shared/types/memory';
+import type { SessionEffectivePolicy } from '../../shared/types/session-effective-policy';
+import { getSetting } from '../utils/store';
 import { getHostDeadline } from '../utils/host-deadline-context';
 
 const VISION_MIME_TYPES = new Set([
@@ -229,31 +232,48 @@ async function readLongSessionContinuityContext(input: {
     return { validation: 'missing', reason: 'sessionKey and workspaceId are required' };
   }
   try {
-    const coordinator = await readWorkspaceCoordinatorBinding(input.workspaceId);
-    const binding = coordinator?.binding;
-    if (!binding) return { validation: 'missing', reason: 'no coordinator binding for this workspace' };
-    if (binding.state === 'invalidated') {
-      return { validation: 'invalidated', reason: binding.invalidationReason ?? 'coordinator binding invalidated' };
+    const binding = await getPersistedCoordinatorBinding(input.workspaceId, input.sessionKey);
+    if (!binding) return { validation: 'missing', reason: 'no coordinator binding for this session' };
+    if (binding.state === 'invalid') {
+      return { validation: 'invalidated', reason: binding.invalidationReason ?? 'coordinator binding invalid' };
     }
-    if (binding.sessionKey !== input.sessionKey) {
-      return { validation: 'missing', reason: 'coordinator binding targets a different session' };
+    if (binding.state !== 'active') {
+      return { validation: 'missing', reason: `coordinator binding is ${binding.state}` };
     }
-    let live;
-    try {
-      live = await resolveLiveSessionIdentity(input.gatewayManager, binding.sessionKey, binding.agentId);
-    } catch (error) {
-      return { validation: 'unavailable', reason: `session owner unavailable: ${String(error)}` };
+    if (binding.agentId !== agentIdFromSessionKey(input.sessionKey)) {
+      return { validation: 'missing', reason: 'coordinator binding targets a different agent' };
     }
-    if (!live) return { validation: 'invalidated', reason: 'session_missing' };
-    if (live.sessionId !== binding.sessionId || live.agentId !== binding.agentId) {
-      return { validation: 'invalidated', reason: 'reset' };
+    if (binding.sessionGeneration) {
+      try {
+        const described = await input.gatewayManager.rpc<{ session?: { sessionId?: string } | null }>(
+          'sessions.describe',
+          { key: input.sessionKey },
+          15_000,
+        );
+        const liveGeneration = described?.session?.sessionId;
+        if (!liveGeneration) return { validation: 'invalidated', reason: 'session_missing' };
+        if (liveGeneration !== binding.sessionGeneration) {
+          return { validation: 'invalidated', reason: 'generation_mismatch' };
+        }
+      } catch (error) {
+        return {
+          validation: 'unavailable',
+          reason: `session owner unavailable: ${error instanceof Error ? error.message : String(error)}`,
+        };
+      }
     }
-    const workspaceRootPath = await getWorkspaceRootPathById(input.workspaceId);
-    const [ledgerResult, workingContextResult, compressionResult, memoryResult] = await Promise.allSettled([
+    const workspaceRootPath = binding.environment.canonicalRoot;
+    const roleMemoryEnabled = (await getSetting('roleMemoryEnabled')) !== false;
+    const [ledgerResult, workingContextResult, compressionResult, memoryResult, policyResult] = await Promise.allSettled([
       loadTaskLedgerSnapshot(input.workspaceId),
       readTaskLedgerWorkingContext(input.workspaceId),
       input.gatewayManager.rpc('sessions.compressionArtifact', { key: input.sessionKey }, 10_000),
       input.gatewayManager.rpc('memory.surface', { limit: 100 }, 15_000),
+      input.gatewayManager.rpc<{ snapshot?: { policy?: SessionEffectivePolicy }; result?: { policy?: SessionEffectivePolicy } }>(
+        'session.activitySnapshot',
+        { workspaceId: input.workspaceId, sessionKey: input.sessionKey },
+        15_000,
+      ),
     ]);
     const compression = compressionResult.status === 'fulfilled'
       ? compressionInputFromRpc(compressionResult.value)
@@ -261,18 +281,23 @@ async function readLongSessionContinuityContext(input: {
     const memorySurface = memoryResult.status === 'fulfilled'
       ? memorySurfaceFromRpc(memoryResult.value)
       : null;
+    const policyEnvelope = policyResult.status === 'fulfilled' ? policyResult.value : undefined;
+    const policy = policyEnvelope?.snapshot?.policy ?? (isRecord(policyEnvelope) && isRecord(policyEnvelope.result) ? (policyEnvelope.result as { policy?: SessionEffectivePolicy }).policy : undefined);
+    const nativeBackendOwnsCompaction = policy?.backend.effective.value?.ownsNativeCompaction === true;
     const agentId = agentIdFromSessionKey(input.sessionKey) ?? binding.agentId;
     const pack = buildLongSessionContinuityContext({
       sessionKey: input.sessionKey,
       workspaceId: input.workspaceId,
       ...(workspaceRootPath ? { workspaceRootPath } : {}),
-      bindingRevision: binding.revision,
+      bindingRevision: binding.bindingRevision,
       activeTaskNodeId: input.activeTaskNodeId ?? null,
-      taskRefs: binding.taskRefs.map((ref) => ref.nodeId),
+      taskRefs: binding.taskLedgerReferences.map((reference) => reference.taskLedgerNodeId),
       taskLedger: ledgerResult.status === 'fulfilled' ? ledgerResult.value : null,
       workingContext: workingContextResult.status === 'fulfilled' ? workingContextResult.value : null,
       compression,
       memorySurface,
+      roleMemoryEnabled,
+      nativeBackendOwnsCompaction,
       agentId,
       knowledgeReferences: input.knowledgeReferences.map((reference) => ({
         id: reference.id,
@@ -480,9 +505,42 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         // still forwarded for Task Ledger continuity, but no fingerprint is
         // produced (agent-config fallback path, no false invalidation).
         const workspaceId = typeof body.workspaceId === 'string' ? body.workspaceId.trim() : '';
+        let pendingCoordinatorBinding: WorkspaceCoordinatorBinding | null = null;
         if (workspaceId) {
           rpcParams.workspaceId = workspaceId;
-          const rootPath = await getWorkspaceRootPathById(workspaceId);
+          const coordinatorBinding = await getPersistedCoordinatorBinding(workspaceId, sessionKey);
+          let rootPath: string | undefined;
+          if (coordinatorBinding) {
+            if (coordinatorBinding.agentId !== agentIdFromSessionKey(sessionKey)) {
+              throw new Error('COORDINATOR_AGENT_SCOPE_MISMATCH: The bound Assistant does not own this session.');
+            }
+            if (coordinatorBinding.state !== 'active') {
+              throw new Error(`COORDINATOR_BINDING_${coordinatorBinding.state.toUpperCase()}: The long-session environment is not active.`);
+            }
+            try {
+              await access(coordinatorBinding.environment.canonicalRoot);
+            } catch {
+              throw new Error('COORDINATOR_ENVIRONMENT_MISSING: The bound checkout or worktree is unavailable.');
+            }
+            if (coordinatorBinding.sessionGeneration) {
+              const described = await gatewayManager.rpc<{ session?: { sessionId?: string } | null }>(
+                'sessions.describe',
+                { key: sessionKey },
+                15_000,
+              );
+              if (!described?.session?.sessionId) {
+                throw new Error('COORDINATOR_SESSION_MISSING: The bound session generation is unavailable.');
+              }
+              if (described.session.sessionId !== coordinatorBinding.sessionGeneration) {
+                throw new Error('COORDINATOR_GENERATION_MISMATCH: The session was reset after the coordinator binding was created.');
+              }
+            } else {
+              pendingCoordinatorBinding = coordinatorBinding;
+            }
+            rootPath = coordinatorBinding.environment.canonicalRoot;
+          } else {
+            rootPath = await getWorkspaceRootPathById(workspaceId);
+          }
           if (rootPath) {
             rpcParams.workspaceDir = rootPath;
             const workspaceFingerprint = computeWorkspaceFingerprint(rootPath);
@@ -536,6 +594,27 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
           `[chat:sendWithMedia] Sending: message="${message.substring(0, 100)}", attachments=${imageAttachments.length}, fileRefs=${fileReferences.length}`,
         );
         const result = await gatewayManager.rpc('chat.send', rpcParams, 120000);
+        if (pendingCoordinatorBinding && workspaceId) {
+          try {
+            const described = await gatewayManager.rpc<{ session?: { sessionId?: string } | null }>(
+              'sessions.describe',
+              { key: sessionKey },
+              15_000,
+            );
+            if (described?.session?.sessionId) {
+              await materializeCoordinatorSessionGeneration({
+                workspaceId,
+                sessionKey,
+                sessionId: described.session.sessionId,
+              });
+            }
+          } catch (error) {
+            logger.warn('[chat:sendWithMedia] coordinator generation materialization delayed', {
+              sessionKey,
+              error: String(error),
+            });
+          }
+        }
         tracker.watchNewListeningPorts({
           before: portBaseline,
           sessionKey,

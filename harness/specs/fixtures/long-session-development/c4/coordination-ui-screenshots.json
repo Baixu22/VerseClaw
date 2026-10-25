@@ -1,61 +1,60 @@
 {
-  "schema": "clawx.long-session.c4-ui-screenshots/v1",
+  "schema": "clawx.long-session.coordination-ui-screenshots/v1",
   "driven_by": "agent",
-  "actor": "codex-long-session-c4",
-  "program": "long-session-development-20261022",
-  "task": "TF-0555",
-  "taskKey": "C4",
-  "candidate": {
-    "commit": "4a4f53f37749d95d85f4990c85e196a5f1f11d0d",
-    "tree": "da7e5abe5abc5b1820cee52e4a946d12a5ec3f33",
-    "branch": "codex/long-session-implementation-20261022",
-    "cleanBefore": true,
-    "cleanAfter": true,
-    "rawRun": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\gate-run.json"
-  },
-  "verdict": "pass",
-  "captures": [
+  "actor": "codex-long-session-r2",
+  "capturedAt": "2026-10-23T23:47:27.598Z",
+  "locale": "ru",
+  "screenshots": [
     {
-      "state": "wide",
-      "file": "coordination-rail-wide.png",
-      "sha256": "9dc904b414a95e87e120d325ba3d438b2a17069a49e5586e2577b7dc0cd55c74",
-      "bytes": 567563,
-      "viewport": {
+      "id": "wide",
+      "path": "coordination-wide.png",
+      "requestedViewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "contentSize": {
         "width": 1281,
         "height": 801
       },
-      "visualReview": {
-        "result": "pass",
-        "reviewedBy": "codex-long-session-c4",
-        "notes": "Long-session section is first in the rail; binding, task, failed worker and terminal batch are visible with source chevrons."
-      }
+      "browserViewport": {
+        "innerWidth": 1281,
+        "innerHeight": 801,
+        "devicePixelRatio": 1.5
+      },
+      "pixels": {
+        "width": 1922,
+        "height": 1202
+      },
+      "bytes": 579106,
+      "sha256": "0d0bdacef6abd0742e0ff529a9df2699c751d056e85f15050adea7273ad5c236"
     },
     {
-      "state": "narrow",
-      "file": "coordination-rail-narrow.png",
-      "sha256": "a004a63b1113dac42bd451e1998d5408473f0e6a701316e27e5010e88f6bb123",
-      "bytes": 494857,
-      "viewport": {
+      "id": "narrow",
+      "path": "coordination-narrow.png",
+      "requestedViewport": {
+        "width": 680,
+        "height": 760
+      },
+      "contentSize": {
         "width": 961,
         "height": 761
       },
-      "visualReview": {
-        "result": "pass",
-        "reviewedBy": "codex-long-session-c4",
-        "notes": "At a compact window width the rail remains accessible as an overlay and preserves the same first-screen coordination facts."
-      }
+      "browserViewport": {
+        "innerWidth": 961,
+        "innerHeight": 761,
+        "devicePixelRatio": 1.5
+      },
+      "pixels": {
+        "width": 1442,
+        "height": 1142
+      },
+      "bytes": 447152,
+      "sha256": "659481d2a9e17f54233e64bf4c194947fc24e80640e678538bf7513fcf32dcb2"
     }
   ],
-  "visualContract": {
-    "neutralLightSurface": true,
-    "existingChatSidebarPrimitives": true,
-    "noSecondTaskPanel": true,
-    "longSessionFirstInRail": true,
-    "narrowOverlay": true
-  },
   "notes": [
-    "Screenshots were captured from the clean built candidate through Playwright Electron, not host mocks.",
-    "The worker was deliberately stopped; the UI therefore reports a real failed terminal worker instead of a synthetic success.",
-    "All evidence is agent-driven; no real-human evidence is claimed."
+    "contentSize is Electron getContentSize after pinning.",
+    "pixels is read from each PNG IHDR.",
+    "sha256 is computed from the complete PNG file."
   ]
 }

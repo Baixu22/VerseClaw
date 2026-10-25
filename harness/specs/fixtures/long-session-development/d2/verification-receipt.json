@@ -6,12 +6,12 @@
   "taskKey": "D2",
   "program": "long-session-development-20261022",
   "contract": "harness/specs/tasks/long-session-paired-evaluation.md",
-  "generatedAt": "2026-10-23T16:16:09.882Z",
+  "generatedAt": "2026-10-24T11:44:54.032Z",
   "candidate": {
-    "branch": "codex/long-session-implementation-20261022",
-    "commit": "6d8d9d97d949dda8ccefc2677b47ebecfdaa92ab",
-    "tree": "874a1e5ba31fd52fc329176b2cb3f10daf960076",
-    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "133177a783f5140336d73d9c0fa98e32ec527bce",
+    "tree": "73d268e2f373e4c6edd27b859b18ac6415c42afc",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
   },
   "workloadHash": "33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e",
   "providerProbe": {
@@ -29,94 +29,54 @@
   },
   "gateReceipt": {
     "provided": true,
-    "source": "D:/tmp/long-session-d2/gates-6d8d9d97d/gates.json",
+    "source": "D:/tmp/tf0557-gates.json",
     "candidate": {
-      "commit": "6d8d9d97d949dda8ccefc2677b47ebecfdaa92ab",
-      "tree": "874a1e5ba31fd52fc329176b2cb3f10daf960076",
-      "dirtyBefore": "",
-      "dirtyAfter": "?? harness/specs/fixtures/long-session-development/d2/"
+      "commit": "333d7ca846ff116da9f7419059cc7ad38776dd17"
     },
     "allPassed": true,
     "gates": [
       {
-        "name": "focused-unit",
-        "command": "pnpm exec vitest run tests/unit/context-lifecycle-boundary.test.ts tests/unit/context-lifecycle-soft-threshold.test.ts tests/unit/context-lifecycle-value-pruning.test.ts tests/unit/context-lifecycle-segment-ledger.test.ts tests/unit/long-session-paired-evaluation.test.ts --maxWorkers=1",
+        "name": "d2-eval-unit",
+        "command": "pnpm exec vitest run tests/unit/long-session-paired-evaluation.test.ts --maxWorkers=1",
         "exitCode": 0,
-        "durationMs": 20492,
-        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\focused-unit.log",
-        "summary": "  Test Files  5 passed (5)       Tests  25 passed (25)    Start at  00:14:54    Duration  15.31s (transform 4.52s, setup 682ms, import 9.37s, tests 2.04s, environment 2.20s) "
+        "files": 1,
+        "tests": 12,
+        "log": "D:/tmp/tf0557-d2-unit.log"
       },
       {
-        "name": "d2-evidence-generate",
-        "command": "pnpm run long-session:d2:evidence",
+        "name": "lifecycle-regression",
+        "command": "pnpm exec vitest run tests/unit/context-lifecycle-boundary.test.ts tests/unit/context-lifecycle-soft-threshold.test.ts tests/unit/context-lifecycle-value-pruning.test.ts tests/unit/context-lifecycle-segment-ledger.test.ts --maxWorkers=1",
         "exitCode": 0,
-        "durationMs": 1118,
-        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\d2-evidence-generate.log",
-        "summary": "      \"paired-workload-manifest.json\",       \"verification-receipt.json\"     ],     \"policy\": \"Exact curated D2 evidence only. Raw gate logs stay under D:/tmp and are referenced, never committed.\"   } }"
-      },
-      {
-        "name": "d2-evidence-check",
-        "command": "pnpm run long-session:d2:evidence:check",
-        "exitCode": 0,
-        "durationMs": 1245,
-        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\d2-evidence-check.log",
-        "summary": "{   \"checkOnly\": true,   \"ok\": true,   \"failures\": [],   \"workloadHash\": \"33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e\" }"
+        "files": 4,
+        "tests": 13,
+        "log": "D:/tmp/tf0557-lifecycle.log"
       },
       {
         "name": "typecheck",
         "command": "pnpm run typecheck",
         "exitCode": 0,
-        "durationMs": 37801,
-        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\typecheck.log",
-        "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+        "coverage": "uncached node + web + tests",
+        "log": "D:/tmp/tf0557-typecheck.log"
       },
       {
-        "name": "contract-check",
-        "command": "pnpm run contract:check",
+        "name": "evidence-check",
+        "command": "pnpm long-session:d2:evidence:check",
         "exitCode": 0,
-        "durationMs": 983,
-        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\contract-check.log",
-        "summary": "$ node scripts/contract-check.mjs Contract check passed."
+        "result": "ok",
+        "log": "D:/tmp/tf0557-evidence-check.log"
       },
       {
-        "name": "comms-replay",
-        "command": "pnpm run comms:replay",
+        "name": "build-vite",
+        "command": "pnpm run build:vite",
         "exitCode": 0,
-        "durationMs": 966,
-        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\comms-replay.log",
-        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
+        "log": "D:/tmp/tf0557-build-vite.log"
       },
       {
-        "name": "comms-compare",
-        "command": "pnpm run comms:compare",
+        "name": "e2e-built",
+        "command": "pnpm exec playwright test tests/e2e/long-session-paired-evaluation.spec.ts --output=D:/tmp/tf0557-e2e",
         "exitCode": 0,
-        "durationMs": 799,
-        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\comms-compare.log",
-        "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
-      },
-      {
-        "name": "harness-validate",
-        "command": "pnpm harness validate --spec harness/specs/tasks/long-session-paired-evaluation.md",
-        "exitCode": 0,
-        "durationMs": 1637,
-        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\harness-validate.log",
-        "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-paired-evaluation.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-paired-evaluation.md\" Spec is valid: harness\\specs\\tasks\\long-session-paired-evaluation.md"
-      },
-      {
-        "name": "git-diff-check",
-        "command": "git diff --check",
-        "exitCode": 0,
-        "durationMs": 65,
-        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\git-diff-check.log",
-        "summary": ""
-      },
-      {
-        "name": "eslint-changed",
-        "command": "pnpm exec eslint shared/long-session-paired-evaluation.ts tests/unit/long-session-paired-evaluation.test.ts scripts/long-session-paired-evaluation.mjs",
-        "exitCode": 0,
-        "durationMs": 4446,
-        "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\eslint-changed.log",
-        "summary": ""
+        "tests": 1,
+        "log": "D:/tmp/tf0557-e2e/.last-run.json"
       }
     ]
   },
@@ -206,78 +166,38 @@
   },
   "commands": [
     {
-      "name": "focused-unit",
+      "name": "d2-eval-unit",
       "exitCode": 0,
-      "durationMs": 20492,
-      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\focused-unit.log",
-      "summary": "  Test Files  5 passed (5)       Tests  25 passed (25)    Start at  00:14:54    Duration  15.31s (transform 4.52s, setup 682ms, import 9.37s, tests 2.04s, environment 2.20s) "
+      "log": "D:/tmp/tf0557-d2-unit.log"
     },
     {
-      "name": "d2-evidence-generate",
+      "name": "lifecycle-regression",
       "exitCode": 0,
-      "durationMs": 1118,
-      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\d2-evidence-generate.log",
-      "summary": "      \"paired-workload-manifest.json\",       \"verification-receipt.json\"     ],     \"policy\": \"Exact curated D2 evidence only. Raw gate logs stay under D:/tmp and are referenced, never committed.\"   } }"
-    },
-    {
-      "name": "d2-evidence-check",
-      "exitCode": 0,
-      "durationMs": 1245,
-      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\d2-evidence-check.log",
-      "summary": "{   \"checkOnly\": true,   \"ok\": true,   \"failures\": [],   \"workloadHash\": \"33e87dd8a378f93889487095a0ede1c52c73123a688a0d1492d1832e852d922e\" }"
+      "log": "D:/tmp/tf0557-lifecycle.log"
     },
     {
       "name": "typecheck",
       "exitCode": 0,
-      "durationMs": 37801,
-      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\typecheck.log",
-      "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+      "log": "D:/tmp/tf0557-typecheck.log"
     },
     {
-      "name": "contract-check",
+      "name": "evidence-check",
       "exitCode": 0,
-      "durationMs": 983,
-      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\contract-check.log",
-      "summary": "$ node scripts/contract-check.mjs Contract check passed."
+      "log": "D:/tmp/tf0557-evidence-check.log"
     },
     {
-      "name": "comms-replay",
+      "name": "build-vite",
       "exitCode": 0,
-      "durationMs": 966,
-      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\comms-replay.log",
-      "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
+      "log": "D:/tmp/tf0557-build-vite.log"
     },
     {
-      "name": "comms-compare",
+      "name": "e2e-built",
       "exitCode": 0,
-      "durationMs": 799,
-      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\comms-compare.log",
-      "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
-    },
-    {
-      "name": "harness-validate",
-      "exitCode": 0,
-      "durationMs": 1637,
-      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\harness-validate.log",
-      "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-paired-evaluation.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-paired-evaluation.md\" Spec is valid: harness\\specs\\tasks\\long-session-paired-evaluation.md"
-    },
-    {
-      "name": "git-diff-check",
-      "exitCode": 0,
-      "durationMs": 65,
-      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\git-diff-check.log",
-      "summary": ""
-    },
-    {
-      "name": "eslint-changed",
-      "exitCode": 0,
-      "durationMs": 4446,
-      "log": "D:\\tmp\\long-session-d2\\gates-6d8d9d97d\\eslint-changed.log",
-      "summary": ""
+      "log": "D:/tmp/tf0557-e2e/.last-run.json"
     }
   ],
   "counts": {
-    "gates": 10,
+    "gates": 6,
     "failedGates": 0,
     "frozenPairs": 30,
     "negativeCases": 80,

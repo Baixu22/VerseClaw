@@ -1,0 +1,9 @@
+
+Running 4 tests using 1 worker
+
+  ok 1 tests\e2e\chat-session-derived.spec.ts:206:7 › Verse Claw derived-session listing › lists the sessions derived from the current one and switches to the child (11.8s)
+  ok 2 tests\e2e\long-session-policy-surface.spec.ts:252:5 › policy surface explains provenance, lifecycle boundaries, narrow layout, and session scope (27.8s)
+  ok 3 tests\e2e\session-activity-background-read.spec.ts:175:7 › Session activity background read state › shows the unknown state and its retry when the background read failed (5.6s)
+  ok 4 tests\e2e\session-activity-background-read.spec.ts:210:7 › Session activity background read state › does not report a successful empty read as a failure (5.5s)
+
+  4 passed (52.2s)

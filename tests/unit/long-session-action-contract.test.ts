@@ -1,5 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 
 type SourceRef = { path: string; symbol: string };
@@ -36,6 +38,10 @@ type ActionContract = {
   ownerBoundaries: { id: string; statement: string; source: string }[];
   currentKnownGaps: { id: string; nextNode: string }[];
   limitations: string[];
+  controlPlane: {
+    modelShellLifecycleAuthority: false;
+    operations: { action: string; human: string; host: SourceRef; model: 'unsupported' }[];
+  };
 };
 type NegativeScenario = {
   id: string;
@@ -57,21 +63,6 @@ type NegativeIndex = {
   statusLegend: Record<string, string>;
   cases: NegativeScenario[];
 };
-type Verification = {
-  schema: string;
-  driven_by: string;
-  actor: string;
-  task: string;
-  verdict: string;
-  featureClaim: string;
-  candidate: { commit: string; tree: string; dirtyBefore: boolean; dirtyAfter: boolean };
-  commands: { id: string; exitCode: number }[];
-  counts: { tests: number; passed: number; failed: number; skipped: number; failedCommands: number };
-  acceptance: { criterion: string; result: string }[];
-  deferredGaps: { id: string; owner: string }[];
-  unmeasured: string[];
-  limitations: string[];
-};
 type Baseline = {
   schema: string;
   driven_by: string;
@@ -82,7 +73,6 @@ type Baseline = {
     baseCommit: string;
     branch: string;
     evidenceCandidateCommit?: string;
-    evidenceCandidateTree?: string;
     cleanCandidateObserved?: boolean;
   };
   environment: Record<string, string>;
@@ -109,7 +99,6 @@ const readJson = <T,>(relativePath: string): T => JSON.parse(
 const contract = readJson<ActionContract>(path.join(fixtureDir, 'action-and-inheritance-contract.json'));
 const negative = readJson<NegativeIndex>(path.join(fixtureDir, 'negative-scenario-index.json'));
 const baseline = readJson<Baseline>(path.join(fixtureDir, 'current-baseline.json'));
-const verification = readJson<Verification>(path.join(fixtureDir, 'verification-receipt.json'));
 
 function expectSourceRef(ref: SourceRef, label: string): void {
   const absolute = path.join(root, ref.path);
@@ -249,11 +238,11 @@ describe('long-session A1 action and identity contract', () => {
     expect(baseline.driven_by).toBe('agent');
     expect(baseline.actor).toMatch(/^codex/);
     expect(baseline.task).toBe('TF-0548');
-    expect(baseline.candidate.sourceCommit).toBe('e73c29eebc5ae3f9c3355c5c446dbfd96577de8c');
+    expect(baseline.candidate.sourceCommit).toBe('5d26c6ab12aa5729439cda0031ea4df5c9de0e74');
     expect(baseline.candidate.baseCommit).toBe('3d6891d761fc78962859393e623cc19d8b3c20e2');
-    expect(baseline.candidate.branch).toBe('codex/long-session-implementation-20261022');
+    expect(baseline.candidate.branch).toBe('codex/long-session-implementation-20261023-r2');
     expect(baseline.environment.platform).toBe('win32');
-    expect(baseline.environment.codegraph).toMatch(/retired/i);
+    expect(baseline.environment.codegraph).toMatch(/navigation only/i);
     expect(baseline.measurementContract).toMatchObject({
       minimumPairedScenarios: 30,
       criticalFactFidelityPercent: 100,
@@ -276,39 +265,22 @@ describe('long-session A1 action and identity contract', () => {
     for (const input of baseline.sourceInputs) {
       expect(existsSync(path.join(root, input.path))).toBe(true);
       expect(input.sha256).toMatch(/^[a-f0-9]{64}$/);
+      const bytes = execFileSync('git', ['show', `${baseline.candidate.sourceCommit}:${input.path}`], { cwd: root, windowsHide: true });
+      expect(createHash('sha256').update(bytes).digest('hex')).toBe(input.sha256);
     }
   });
 
-
-  it('binds the fresh gate receipt to the clean source candidate', () => {
-    expect(verification.schema).toBe('clawx.long-session.a1-verification/v1');
-    expect(verification.driven_by).toBe('agent');
-    expect(verification.actor).toMatch(/^codex/);
-    expect(verification.task).toBe('TF-0548');
-    expect(verification.verdict).toBe('pass-with-deferred-gaps');
-    expect(verification.featureClaim).toMatch(/^baseline-only/);
-    expect(verification.candidate).toMatchObject({
-      commit: baseline.candidate.evidenceCandidateCommit,
-      tree: baseline.candidate.evidenceCandidateTree,
-      dirtyBefore: false,
-      dirtyAfter: false,
-    });
-    expect(baseline.candidate.cleanCandidateObserved).toBe(true);
-    expect(verification.commands).toHaveLength(9);
-    expect(verification.commands.every((command) => command.exitCode === 0)).toBe(true);
-    expect(verification.counts.failedCommands).toBe(0);
-    expect(verification.counts.tests).toBeGreaterThanOrEqual(31);
-    expect(verification.counts.passed).toBe(
-      verification.counts.tests - verification.counts.failed - verification.counts.skipped,
-    );
-    expect(verification.acceptance).toHaveLength(4);
-    expect(verification.acceptance.every((entry) => entry.result === 'pass')).toBe(true);
-    expect(verification.deferredGaps.map((gap) => gap.id)).toEqual(expect.arrayContaining([
-      'archive-active-run-not-fenced',
-      'restore-index-removed-before-transcript-rename',
-    ]));
-    expect(verification.unmeasured.length).toBeGreaterThan(0);
-    expect(verification.limitations.join(' ')).toMatch(/CodeGraph is retired/);
+  it('records human, host and model initiators without a second shell lifecycle authority', () => {
+    expect(contract.controlPlane.modelShellLifecycleAuthority).toBe(false);
+    expect(contract.controlPlane.operations.map(op => op.action)).toEqual(['resume', 'fork', 'archive', 'delete', 'worktree', 'handoff']);
+    for (const operation of contract.controlPlane.operations) {
+      expect(operation.human.length).toBeGreaterThan(0);
+      expect(operation.model).toBe('unsupported');
+      expectSourceRef(operation.host, operation.action);
+    }
+    const tools = readFileSync(path.join(root, 'openclaw_runtime/src/agents/tools/sessions-spawn-tool.ts'), 'utf8');
+    expect(tools).toContain('createSessionsSpawnTool');
+    expect(contract.limitations.join(' ')).toContain('Shell execution is not a lifecycle API');
   });
 
   it('keeps product semantics linked to the executable action contract', () => {

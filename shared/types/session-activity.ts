@@ -1,5 +1,6 @@
 import type { GitRepositoryStatus } from './git';
 import type { SessionEffectivePolicy } from './session-effective-policy';
+import type { LongSessionResourceInventory } from '../long-session-resource-reclamation';
 
 export type SessionActivityRunStatus = 'idle' | 'running' | 'waiting_approval' | 'completed' | 'failed' | 'aborted';
 export type SessionActivityTaskKind = 'mission' | 'taskLoop' | 'clawGraph' | 'taskLedger';
@@ -84,6 +85,45 @@ export type SessionActivityTask = {
   source: 'event' | 'snapshot' | 'task-ledger';
 };
 
+export type SessionActivityCompletionBatchMember = {
+  runId: string;
+  childSessionKey: string;
+  roleName: string;
+  status: 'running' | 'completed' | 'failed' | 'cancelled' | 'unknown';
+  deliveryStatus: 'not_required' | 'pending' | 'in_progress' | 'delivered' | 'failed' | 'suspended' | 'discarded';
+};
+
+export type SessionActivityCompletionBatch = {
+  schemaVersion: 'clawx.orchestration-completion-batch/v1';
+  batchId: string;
+  orchestrationRunId: string;
+  requesterSessionKey: string;
+  requesterSessionGeneration: string | null;
+  generationState: 'matching' | 'mismatch' | 'unverified';
+  status: 'collecting' | 'terminal' | 'fenced';
+  outcome: 'incomplete' | 'completed' | 'partial' | 'failed' | 'cancelled' | 'fenced';
+  consolidatedReceiptId: string | null;
+  acceptedAt: number;
+  terminalAt: number | null;
+  counts: {
+    expected: number;
+    settled: number;
+    completed: number;
+    failed: number;
+    cancelled: number;
+    unknown: number;
+  };
+  delivery: {
+    state: 'not_required' | 'pending' | 'in_progress' | 'delivered' | 'failed' | 'suspended' | 'discarded';
+    delivered: number;
+    pending: number;
+    suspended: number;
+    failed: number;
+    discarded: number;
+    waitingForRequesterTurn: boolean;
+  };
+  members: SessionActivityCompletionBatchMember[];
+};
 export type SessionActivitySubagent = {
   id: string;
   role?: string;
@@ -213,10 +253,10 @@ export type SessionCompletionBatch = {
 };
 
 export type SessionActivitySnapshot = {
-  /** Current read-only effective policy projection; null means no verified answer. */
-  policy?: SessionEffectivePolicy | null;
   session: {
     sessionKey: string;
+    /** Physical generation used by lifecycle cleanup receipts. */
+    sessionId?: string | null;
     runId?: string | null;
     status: SessionActivityRunStatus;
     phase?: string;
@@ -228,11 +268,15 @@ export type SessionActivitySnapshot = {
   git?: GitRepositoryStatus | null;
   tasks: SessionActivityTask[];
   subagents: SessionActivitySubagent[];
-  completionBatches: SessionCompletionBatch[];
+  completionBatches: SessionActivityCompletionBatch[];
   terminals: SessionActivityTerminal[];
   goals: SessionActivityGoal[];
   processes: SessionActivityProcess[];
   lineage: SessionActivityLineage[];
+  /** Secret-free projection from TF-0512 facts and the current session policy. */
+  policy?: SessionEffectivePolicy;
+  /** Owner-consolidated resource read model; absent snapshots are not a zero reading. */
+  resources?: LongSessionResourceInventory;
   continuity: {
     queueCount: number;
     contextPressure?: 'low' | 'medium' | 'high' | null;
@@ -245,7 +289,6 @@ export type SessionActivitySnapshot = {
     subagents: boolean;
     terminals: boolean;
     continuity: boolean;
-    policy?: boolean;
   };
   /** Source state of the background owner read; see `SessionActivityBackgroundRead`. */
   backgroundRead: SessionActivityBackgroundRead;
@@ -300,9 +343,6 @@ export function retainRecentSessionActivity(
     ...snapshot,
     tasks: snapshot.tasks.filter((task) => !COMPLETED_TASK_STATUSES.has(task.status) || keepCompleted(task.updatedAt)),
     subagents: snapshot.subagents.filter((agent) => !COMPLETED_SUBAGENT_STATUSES.has(agent.status) || keepCompleted(agent.updatedAt)),
-    completionBatches: (snapshot.completionBatches ?? []).filter(
-      (batch) => batch.status !== 'delivered' || keepCompleted(batch.updatedAt),
-    ),
     terminals: snapshot.terminals.filter((terminal) => !COMPLETED_TERMINAL_STATUSES.has(terminal.status) || keepCompleted(terminal.updatedAt)),
     goals: snapshot.goals.filter((goal) => !COMPLETED_GOAL_STATUSES.has(goal.status) || keepCompleted(goal.updatedAt)),
     processes: snapshot.processes.filter((process) => !COMPLETED_PROCESS_STATUSES.has(process.status) || keepCompleted(process.updatedAt)),

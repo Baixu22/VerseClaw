@@ -86,6 +86,8 @@ describe('GatewayManager diagnostics', () => {
 
   it('does not count gateway-declared rpc errors as transport failures', async () => {
     const { GatewayManager } = await import('@electron/gateway/manager');
+    const { GatewayRpcError } = await import('@electron/gateway/protocol');
+    const { ErrorCodes, errorShape } = await import('../../openclaw_runtime/packages/gateway-protocol/src/index.js');
     const { buildGatewayHealthSummary } = await import('@electron/utils/gateway-health');
     const manager = new GatewayManager();
 
@@ -111,9 +113,23 @@ describe('GatewayManager diagnostics', () => {
       type: 'res',
       id: failureRequestId,
       ok: false,
-      error: { message: 'channel unavailable' },
+      error: errorShape(ErrorCodes.UNAVAILABLE, 'channel unavailable', {
+        retryable: true,
+        details: {
+          kind: 'lifecycle-mutation-failure',
+          operationId: 'op-1',
+          key: 'agent:main:main',
+        },
+      }),
     });
-    await expect(failurePromise).rejects.toThrow('channel unavailable');
+    const failure = await failurePromise.catch((error: unknown) => error);
+    expect(failure).toBeInstanceOf(GatewayRpcError);
+    expect((failure as InstanceType<typeof GatewayRpcError>).payload).toMatchObject({
+      code: 'UNAVAILABLE',
+      message: 'channel unavailable',
+      retryable: true,
+      details: { operationId: 'op-1', key: 'agent:main:main' },
+    });
 
     expect(manager.getDiagnostics().consecutiveRpcFailures).toBe(0);
 

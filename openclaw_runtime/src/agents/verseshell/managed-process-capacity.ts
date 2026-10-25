@@ -120,7 +120,7 @@ function activeConfig(): ManagedProcessCapacityConfig | undefined {
   return config;
 }
 
-/** Default per-run limits an operator declared, if any. */
+
 export function resolveManagedProcessDefaultLimits(): ManagedProcessDefaultLimits {
   return activeConfig()?.defaultLimits ?? {};
 }

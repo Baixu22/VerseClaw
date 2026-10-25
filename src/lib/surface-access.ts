@@ -55,4 +55,3 @@ export function resolveSurfaceAccess(input: {
   }
   return { allowed: true, reason: "product" };
 }
-

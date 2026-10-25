@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "ProcessCleanupReceipt/v1",
+  "taskForestNodeId": "TF-0497",
+  "generatedAt": "2026-10-24T08:52:54.4637942Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "worktree": "D:\\ClawX-work\\worktrees\\long-session-program-r2",
+  "electronSurvivors": 0,
+  "playwrightSurvivors": 0,
+  "vitestSurvivors": 0,
+  "pnpmSurvivors": 0,
+  "nodeSurvivors": 0
+}

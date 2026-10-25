@@ -818,13 +818,13 @@ export function createSubagentRegistryLifecycleController(params: {
             },
           });
         },
-        cleanupWorktree: (authorization) => {
+        cleanupWorktree: (_authorization) => {
           const worktreeId = entry.orchestration?.worktreeId;
           if (!worktreeId || !entry.workspaceDir) return;
           const service = createWorktreeService(entry.workspaceDir, {
             backend: entry.orchestration?.worktreeBackend,
           });
-          service.cleanup(worktreeId, authorization ? { authorization } : undefined);
+          service.cleanup(worktreeId);
         },
       },
     });

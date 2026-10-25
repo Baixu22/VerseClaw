@@ -10,6 +10,8 @@ import { getProcessStartTime } from "../shared/pid-alive.js";
 
 /** Retry and stale-recovery policy for acquiring a filesystem lock. */
 export type FileLockOptions = {
+  /** Shared named artifact lock, when another host writer uses a fixed sidecar path. */
+  lockPath?: string;
   /** Retry policy used while waiting for another process or re-entrant holder to release. */
   retries: {
     retries: number;
@@ -100,6 +102,7 @@ export async function acquireFileLock(
   try {
     const lock = await acquireFsSafeFileLock(filePath, {
       managerKey: FILE_LOCK_MANAGER_KEY,
+      ...(options.lockPath ? { lockPath: options.lockPath } : {}),
       staleMs: options.stale,
       retry: options.retries,
       staleRecovery: "remove-if-unchanged",

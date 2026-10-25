@@ -14,12 +14,12 @@ import {
 const {
   loadTaskLedgerSnapshotMock,
   readTaskLedgerWorkingContextMock,
-  readWorkspaceCoordinatorBindingMock,
+  getPersistedCoordinatorBindingMock,
   getWorkspaceRootPathByIdMock,
 } = vi.hoisted(() => ({
   loadTaskLedgerSnapshotMock: vi.fn(),
   readTaskLedgerWorkingContextMock: vi.fn(),
-  readWorkspaceCoordinatorBindingMock: vi.fn(),
+  getPersistedCoordinatorBindingMock: vi.fn(),
   getWorkspaceRootPathByIdMock: vi.fn(),
 }));
 
@@ -30,23 +30,21 @@ vi.mock('@electron/services/task-ledger-working-context', () => ({
   readTaskLedgerWorkingContext: (...args: unknown[]) => readTaskLedgerWorkingContextMock(...args),
 }));
 vi.mock('@electron/services/workspaces-api', () => ({
-  readWorkspaceCoordinatorBinding: (...args: unknown[]) => readWorkspaceCoordinatorBindingMock(...args),
+  getPersistedCoordinatorBinding: (...args: unknown[]) => getPersistedCoordinatorBindingMock(...args),
   getWorkspaceRootPathById: (...args: unknown[]) => getWorkspaceRootPathByIdMock(...args),
 }));
-vi.mock('@electron/services/sessions-api', () => ({
-  resolveLiveSessionIdentity: vi.fn(async (_gateway: unknown, sessionKey: string) => ({
-    agentId: sessionKey.split(':')[1] || 'architect',
-    sessionId: 'session-generation-1',
-  })),
-}));
+
 vi.mock('@electron/utils/token-usage', () => ({
   getSessionTokenUsageSummary: vi.fn(async () => ({ totalTokens: 0, estimatedCostUsd: 0 })),
+}));
+vi.mock('@electron/utils/store', () => ({
+  getSetting: vi.fn(async () => true),
 }));
 
 const NOW = Date.parse('2026-10-23T06:00:00.000Z');
 const WORKSPACE_ID = 'workspace-a';
 const SESSION_KEY = 'agent:architect:long-session';
-const ROOT = 'D:/workspace-a';
+const ROOT = process.cwd();
 const POLICY = `sha256:${'a'.repeat(64)}`;
 
 function acceptedWorkingContextRecord(
@@ -61,7 +59,7 @@ function acceptedWorkingContextRecord(
     version: 1,
     actor: 'assistant',
     evidenceRefs: [{ type: 'session', ref: SESSION_KEY }],
-    ttl: { issuedAt: '2026-10-23T05:00:00.000Z', expiresAt: '2099-01-01T00:00:00.000Z' },
+    ttl: { issuedAt: '2026-10-23T05:00:00.000Z', expiresAt: '2026-10-24T05:00:00.000Z' },
     sensitivity: 'workspace',
     trust: 'confirmed',
     taskId: 'task-1',
@@ -85,7 +83,7 @@ function pendingWorkingContextRecord(
     version: 1,
     actor: 'assistant',
     evidenceRefs: [{ type: 'session', ref: SESSION_KEY }],
-    ttl: { issuedAt: '2026-10-23T05:00:00.000Z', expiresAt: '2099-01-01T00:00:00.000Z' },
+    ttl: { issuedAt: '2026-10-23T05:00:00.000Z', expiresAt: '2026-10-24T05:00:00.000Z' },
     sensitivity: 'workspace',
     trust: 'proposed',
     taskId: 'task-1',
@@ -241,13 +239,12 @@ beforeEach(() => {
   vi.clearAllMocks();
   loadTaskLedgerSnapshotMock.mockResolvedValue(ledgerSnapshot());
   readTaskLedgerWorkingContextMock.mockResolvedValue(workingContextSnapshot());
-  readWorkspaceCoordinatorBindingMock.mockResolvedValue({
-    workspace: { id: WORKSPACE_ID, rootPath: ROOT },
-    binding: {
-      schemaVersion: 'WorkspaceCoordinatorBinding/v1', workspaceId: WORKSPACE_ID, agentId: 'architect', sessionKey: SESSION_KEY,
-      sessionId: 'session-generation-1', taskRefs: [{ kind: 'task-ledger', nodeId: 'task-1' }], state: 'active', revision: 3,
-      createdAt: '2026-10-23T04:00:00.000Z', updatedAt: '2026-10-23T04:00:00.000Z', invalidatedAt: null, invalidationReason: null,
-    },
+  getPersistedCoordinatorBindingMock.mockResolvedValue({
+    schemaVersion: 1, workspaceId: WORKSPACE_ID, agentId: 'architect', sessionKey: SESSION_KEY,
+    sessionGeneration: 'session-generation-1', taskLedgerReferences: [{ direction: 'workboard-to-task-ledger', taskLedgerNodeId: 'task-1', source: 'runtime' }],
+    environment: { kind: 'local', canonicalRoot: ROOT, backend: 'local-workspace', branch: 'main', detachedHead: false, setupProfile: null },
+    archiveRestorePolicy: 'restore', state: 'active', bindingRevision: 3, invalidationReason: null,
+    createdAt: '2026-10-23T04:00:00.000Z', updatedAt: '2026-10-23T04:00:00.000Z',
   });
   getWorkspaceRootPathByIdMock.mockResolvedValue(ROOT);
 });
@@ -396,34 +393,205 @@ describe('long-session continuity context', () => {
     expect(forked.items).not.toEqual(expect.arrayContaining([
       expect.objectContaining({ source: 'compression-artifact' }),
     ]));
+
+    const compacted = buildLongSessionContinuityContext({
+      sessionKey: SESSION_KEY,
+      workspaceId: WORKSPACE_ID,
+      workspaceRootPath: ROOT,
+      bindingRevision: 6,
+      taskRefs: ['task-1'],
+      taskLedger: ledgerSnapshot(),
+      workingContext: workingContextSnapshot(),
+      compression: { checkpointId: 'cp-restart', constraints: ['Resume after compact.'], nextAction: 'Read the compact artifact.' },
+      memorySurface: memorySurface(),
+      budgetChars: 1_800,
+      now: NOW + 2_000,
+    });
+    const handedOff = buildLongSessionContinuityContext({
+      sessionKey: forkSessionKey,
+      workspaceId: WORKSPACE_ID,
+      workspaceRootPath: ROOT,
+      bindingRevision: 1,
+      taskRefs: ['task-1'],
+      taskLedger: {
+        ...ledgerSnapshot(),
+        sessionLinks: [{ ...ledgerSnapshot().sessionLinks[0]!, id: 'link-handoff', sessionKey: forkSessionKey }],
+      },
+      workingContext: workingContextSnapshot(),
+      compression: { checkpointId: 'cp-handoff', constraints: ['Use the handoff artifact.'], nextAction: 'Continue the handed-off task.' },
+      memorySurface: memorySurface(),
+      budgetChars: 1_800,
+      now: NOW + 2_500,
+    });
+    expect(compacted.originalHistory.compressionAvailable).toBe(true);
+    expect(compacted.originalHistory.compressionCheckpointId).toBe('cp-restart');
+    expect(compacted.items).toEqual(expect.arrayContaining([
+      expect.objectContaining({ text: 'Resume after compact.', source: 'compression-artifact' }),
+    ]));
+    expect(handedOff.originalHistory.transcriptRef).toBe(`session:${forkSessionKey}`);
+    expect(handedOff.items).toEqual(expect.arrayContaining([
+      expect.objectContaining({ text: 'Use the handoff artifact.' }),
+      expect.objectContaining({ text: 'Continue the handed-off task.' }),
+    ]));
   });
 
-  it('keeps the accepted working-context fixture unexpired so the pack assertion cannot rot', () => {
-    // A hard-coded expiresAt in the past made the pack correctly exclude the record,
-    // so the production-path assertion failed for a fixture reason rather than a code
-    // reason. Guard the fixture itself: a future TTL is what this suite needs.
-    const snapshot = workingContextSnapshot();
-    for (const [field, projection] of Object.entries(snapshot.fields)) {
-      const current = (projection as { current?: { ttl?: { expiresAt?: string } } }).current;
-      if (!current?.ttl?.expiresAt) continue;
-      expect(Date.parse(current.ttl.expiresAt), 'expired working-context fixture: ' + field)
-        .toBeGreaterThan(Date.now());
-    }
+  it('rejects foreign agent and role memory scopes without leaking their refs', () => {
+    const base = memorySurface();
+    const foreignAgent = memoryEntry({
+      key: 'role-memory-card:mem-agent-other', id: 'mem-agent-other', scope: 'agent', scopeKey: 'reviewer', content: 'FOREIGN_AGENT_SECRET',
+    });
+    const foreignRole = memoryEntry({
+      key: 'role-memory-card:mem-role-other', id: 'mem-role-other', scope: 'role', scopeKey: null, roleTags: ['reviewer'], content: 'FOREIGN_ROLE_SECRET',
+    });
+    const pack = buildLongSessionContinuityContext({
+      sessionKey: SESSION_KEY,
+      workspaceId: WORKSPACE_ID,
+      workspaceRootPath: ROOT,
+      bindingRevision: 6,
+      taskRefs: ['task-1'],
+      memorySurface: { ...base, accepted: [...base.accepted, foreignAgent, foreignRole] },
+      agentId: 'architect',
+      roleName: 'architect',
+      budgetChars: 1_800,
+      now: NOW,
+    });
+    const rendered = renderLongSessionContinuityContext(pack);
+    expect(pack.exclusions).toEqual(expect.arrayContaining([
+      expect.objectContaining({ ref: foreignAgent.key, reason: 'out-of-scope' }),
+      expect.objectContaining({ ref: foreignRole.key, reason: 'out-of-scope' }),
+    ]));
+    expect(rendered).not.toContain(foreignAgent.key);
+    expect(rendered).not.toContain(foreignRole.key);
+    expect(rendered).not.toContain('FOREIGN_AGENT_SECRET');
+    expect(rendered).not.toContain('FOREIGN_ROLE_SECRET');
+  });
+  it('excludes expired, tombstoned, superseded and disabled memory while preserving source provenance', () => {
+    const expired = memoryEntry({
+      key: 'role-memory-card:mem-expired', id: 'mem-expired', content: 'EXPIRED_MEMORY_SECRET',
+      expiresAt: '2026-10-23T05:30:00.000Z',
+    });
+    const tombstoned = memoryEntry({
+      key: 'role-memory-card:mem-deleted', id: 'mem-deleted', stateLabel: 'tombstone', content: 'DELETED_MEMORY_SECRET',
+    });
+    const superseded = memoryEntry({
+      key: 'role-memory-card:mem-superseded', id: 'mem-superseded', stateLabel: 'superseded', content: 'SUPERSEDED_MEMORY_SECRET',
+    });
+    const base = memorySurface();
+    const pack = buildLongSessionContinuityContext({
+      sessionKey: SESSION_KEY,
+      workspaceId: WORKSPACE_ID,
+      workspaceRootPath: ROOT,
+      bindingRevision: 7,
+      taskRefs: ['task-1'],
+      memorySurface: { ...base, accepted: [...base.accepted, expired, tombstoned, superseded] },
+      roleMemoryEnabled: false,
+      budgetChars: 1_800,
+      now: NOW,
+    });
+    const rendered = renderLongSessionContinuityContext(pack);
+    expect(pack.exclusions).toEqual(expect.arrayContaining([
+      expect.objectContaining({ ref: expired.key, reason: 'expired' }),
+      expect.objectContaining({ ref: tombstoned.key, reason: 'revoked-or-superseded' }),
+      expect.objectContaining({ ref: superseded.key, reason: 'revoked-or-superseded' }),
+      expect.objectContaining({ ref: 'role-memory-card:mem-1', reason: 'owner-gate-closed' }),
+    ]));
+    expect(rendered).not.toContain('EXPIRED_MEMORY_SECRET');
+    expect(rendered).not.toContain('DELETED_MEMORY_SECRET');
+    expect(rendered).not.toContain('SUPERSEDED_MEMORY_SECRET');
+    expect(rendered).not.toContain('role-memory-card:mem-1');
+    expect(pack.sourceStates.find((state) => state.source === 'memory')?.status).toBe('available');
   });
 
-  it('keeps the accepted working-context fixture unexpired so the pack assertion cannot rot', () => {
-    // A hard-coded expiresAt in the past made the pack correctly exclude the record,
-    // so the production-path assertion failed for a fixture reason rather than a code
-    // reason. Guard the fixture itself: a future TTL is what this suite needs.
-    const snapshot = workingContextSnapshot();
-    for (const [field, projection] of Object.entries(snapshot.fields)) {
-      const current = (projection as { current?: { ttl?: { expiresAt?: string } } }).current;
-      if (!current?.ttl?.expiresAt) continue;
-      expect(Date.parse(current.ttl.expiresAt), 'expired working-context fixture: ' + field)
-        .toBeGreaterThan(Date.now());
-    }
+  it('resolves native compaction ownership from the effective policy production read', async () => {
+    getPersistedCoordinatorBindingMock.mockResolvedValueOnce({
+      schemaVersion: 1, workspaceId: WORKSPACE_ID, agentId: 'architect', sessionKey: SESSION_KEY,
+      sessionGeneration: null, taskLedgerReferences: [{ direction: 'workboard-to-task-ledger', taskLedgerNodeId: 'task-1', source: 'runtime' }],
+      environment: { kind: 'local', canonicalRoot: ROOT, backend: 'local-workspace', branch: 'main', detachedHead: false, setupProfile: null },
+      archiveRestorePolicy: 'restore', state: 'active', bindingRevision: 10, invalidationReason: null,
+      createdAt: '2026-10-23T04:00:00.000Z', updatedAt: '2026-10-23T04:00:00.000Z',
+    });
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.compressionArtifact') return { artifact: { constraints: [{ text: 'NATIVE_ARTIFACT_MUST_NOT_BE_CLAIMED' }] } };
+        if (method === 'memory.surface') return memorySurface();
+        if (method === 'session.activitySnapshot') {
+          return { snapshot: { policy: { backend: { effective: { value: { kind: 'native', ownsNativeCompaction: true } } } } } };
+        }
+        if (method === 'sessions.describe') return { session: { sessionId: 'session-generation-1' } };
+        if (method === 'chat.send') return { runId: 'run-native' };
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+      getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
+    };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+    const preview = await api.continuityPreview({
+      sessionKey: SESSION_KEY,
+      workspaceId: WORKSPACE_ID,
+      knowledgeReferences: [],
+    });
+    expect(preview.validation).toBe('current');
+    expect(preview.pack?.sourceStates).toEqual(expect.arrayContaining([
+      expect.objectContaining({ source: 'compression-artifact', status: 'unavailable' }),
+    ]));
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('session.activitySnapshot', expect.anything(), 15_000);
   });
 
+  it('falls back when the session generation changes after the coordinator binding', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: 'generation-replaced' } };
+        if (method === 'chat.send') return { runId: 'run-reset' };
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+      getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
+    };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+    const preview = await api.continuityPreview({
+      sessionKey: SESSION_KEY,
+      workspaceId: WORKSPACE_ID,
+      knowledgeReferences: [],
+    });
+    expect(preview.validation).toBe('invalidated');
+    expect(preview.pack).toBeUndefined();
+    expect(gatewayManager.rpc.mock.calls.some((call) => call[0] === 'memory.surface')).toBe(false);
+  });
+  it('keeps native compaction ownership and unknown backend state explicit', () => {
+    const native = buildLongSessionContinuityContext({
+      sessionKey: SESSION_KEY,
+      workspaceId: WORKSPACE_ID,
+      bindingRevision: 8,
+      compression: { checkpointId: 'cp-native', nextAction: 'NATIVE_ARTIFACT_MUST_NOT_BE_CLAIMED' },
+      nativeBackendOwnsCompaction: true,
+      availability: { compression: true },
+      budgetChars: 1_800,
+      now: NOW,
+    });
+    const unknown = buildLongSessionContinuityContext({
+      sessionKey: SESSION_KEY,
+      workspaceId: WORKSPACE_ID,
+      bindingRevision: 9,
+      compression: null,
+      availability: { compression: false, memory: false },
+      budgetChars: 1_800,
+      now: NOW,
+    });
+    expect(native.sourceStates.find((state) => state.source === 'compression-artifact')).toMatchObject({
+      status: 'unavailable',
+      detail: 'native backend owns compaction and continuity projection',
+    });
+    expect(native.items).not.toEqual(expect.arrayContaining([
+      expect.objectContaining({ text: 'NATIVE_ARTIFACT_MUST_NOT_BE_CLAIMED' }),
+    ]));
+    expect(native.status).toBe('unknown');
+    expect(unknown.sourceStates).toEqual(expect.arrayContaining([
+      expect.objectContaining({ source: 'compression-artifact', status: 'unavailable' }),
+      expect.objectContaining({ source: 'memory', status: 'unavailable' }),
+    ]));
+    expect(unknown.status).toBe('unknown');
+    expect(unknown.complete).toBe(false);
+  });
   it('routes the explicit coordinator production path through the continuity block and falls back when the binding is invalidated', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, _payload?: unknown, _timeout?: number) => {
@@ -438,6 +606,8 @@ describe('long-session continuity context', () => {
           };
         }
         if (method === 'memory.surface') return memorySurface();
+        if (method === 'sessions.describe') return { session: { sessionId: 'session-generation-1' } };
+        if (method === 'session.activitySnapshot') return { snapshot: { policy: undefined } };
         if (method === 'chat.send') return { runId: 'run-d1' };
         throw new Error(`unexpected rpc ${method}`);
       }),
@@ -476,19 +646,18 @@ describe('long-session continuity context', () => {
 
     const chatPayload = gatewayManager.rpc.mock.calls.find((call) => call[0] === 'chat.send')?.[1] as { message: string };
     expect(chatPayload.message).toContain('Continuity context (owner-derived');
-    expect(chatPayload.message).toContain('Preserve workspace boundaries.');
+    expect(chatPayload.message).toContain('No raw history copy.');
     expect(chatPayload.message).toContain('task-ledger:workspace-a');
     expect(chatPayload.message).not.toContain('UNAPPROVED_CANDIDATE');
     expect(chatPayload.message).not.toContain('unverified prose');
     expect(chatPayload.message.endsWith('Continue the task')).toBe(true);
 
-    readWorkspaceCoordinatorBindingMock.mockResolvedValueOnce({
-      workspace: { id: WORKSPACE_ID, rootPath: ROOT },
-      binding: {
-        schemaVersion: 'WorkspaceCoordinatorBinding/v1', workspaceId: WORKSPACE_ID, agentId: 'architect', sessionKey: SESSION_KEY,
-        sessionId: 'old-generation', taskRefs: [{ kind: 'task-ledger', nodeId: 'task-1' }], state: 'invalidated', revision: 4,
-        createdAt: '2026-10-23T04:00:00.000Z', updatedAt: '2026-10-23T05:40:00.000Z', invalidatedAt: '2026-10-23T05:40:00.000Z', invalidationReason: 'reset',
-      },
+    getPersistedCoordinatorBindingMock.mockResolvedValueOnce({
+      schemaVersion: 1, workspaceId: WORKSPACE_ID, agentId: 'architect', sessionKey: SESSION_KEY,
+      sessionGeneration: 'session-generation-1', taskLedgerReferences: [{ direction: 'workboard-to-task-ledger', taskLedgerNodeId: 'task-1', source: 'runtime' }],
+      environment: { kind: 'local', canonicalRoot: ROOT, backend: 'local-workspace', branch: 'main', detachedHead: false, setupProfile: null },
+      archiveRestorePolicy: 'restore', state: 'invalid', bindingRevision: 4, invalidationReason: 'generation_mismatch',
+      createdAt: '2026-10-23T04:00:00.000Z', updatedAt: '2026-10-23T05:40:00.000Z',
     });
     gatewayManager.rpc.mockClear();
     await api.sendWithMedia({

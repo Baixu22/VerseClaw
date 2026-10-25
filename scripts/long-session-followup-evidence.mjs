@@ -169,17 +169,20 @@ function buildArtifacts() {
       boundState: createdStep.state,
       expectedSessionId: createdStep.expectedSessionId,
       refuseEvidence: refusedStep.refusedWith,
+      gatewayRunCount: refusedStep.gatewayRunCount,
       pausesKeptSchedule: steps.some((step) => step?.step === 'pause-keeps-schedule' && step.enabled === false),
       cancelRemovedSchedule: steps.some((step) => step?.step === 'cancel-removes-schedule' && step.removed === true),
     },
     scopeInputs: {
-      bindOnCreate: 'sessions.bindCoordinator -> workspace coordinator binding (active + physical sessionId)',
+      bindOnCreate: 'workspaces.bindCoordinator -> workspace coordinator binding (active + sessionGeneration)',
       persistOnCreate: 'cron.add payload.coordinator validated by CronAddParamsSchema, persisted on CronJobBase.coordinator',
       enforceOnDelivery: 'openclaw_runtime cron service executeJobCore preflight -> deps.evaluateCoordinatorScope (server-cron reads the live session store)',
       suppressOnMaintenance: 'electron cron-maintenance reconcile pass disables (never deletes) a stale coordinator schedule',
     },
     matrix,
-    runtimeRefusalObserved: String(refusedStep.refusedWith ?? '').includes('coordinator-scope-'),
+    runtimeRefusalObserved:
+      String(refusedStep.refusedWith ?? '').includes('Coordinator follow-up rejected')
+      && refusedStep.gatewayRunCount === 0,
     negatives: Array.isArray(observation.negatives) ? observation.negatives : [],
     gateReceipt,
     unmeasured: [
@@ -295,7 +298,9 @@ function buildArtifacts() {
       scopeMatrixBlocked: matrix.filter((entry) => !entry.allowed).length,
       e2eJourneys: 1,
       e2ePassed: 1,
-      runtimeRefusalObserved: scopeArtifact.runtimeRefusalObserved,
+      runtimeRefusalObserved:
+      String(refusedStep.refusedWith ?? '').includes('Coordinator follow-up rejected')
+      && refusedStep.gatewayRunCount === 0,
     },
     cleanup: scopeArtifact.cleanup,
     limitations: scopeArtifact.limitations,

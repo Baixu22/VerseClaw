@@ -11,7 +11,7 @@ import { RELIABILITY_BOUNDARIES } from '@shared/reliability-boundaries';
 import { analyzeCapabilityClaimText } from '../../scripts/check-capability-claims.mjs';
 
 describe('capability claim matrix', () => {
-  it('covers the 45 capability claims in report order', () => {
+  it('covers the 45 authenticity claims in report order', () => {
     expect(CAPABILITY_CLAIM_MATRIX).toHaveLength(45);
     expect(CAPABILITY_CLAIM_MATRIX.map((entry) => entry.id))
       .toEqual(Array.from({ length: 45 }, (_, index) => `capability-${String(index + 1).padStart(2, '0')}`));

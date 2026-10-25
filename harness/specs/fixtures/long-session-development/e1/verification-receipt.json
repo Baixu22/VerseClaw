@@ -4,12 +4,12 @@
   "actor": "codex-long-session-e1",
   "taskForestNode": "TF-0559",
   "taskKey": "E1",
-  "generatedAt": "2026-10-23T17:16:11.857Z",
+  "generatedAt": "2026-10-24T13:04:40.469Z",
   "candidate": {
-    "branch": "codex/long-session-implementation-20261022",
-    "commit": "8eeb2823e48c6b48b5d756a3c2964e0884bdff2a",
-    "tree": "9f26a8dd6ae526e6c498a22dbf06caadb7c7ca24",
-    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "5976c409fce7a107c82f994cd85d8f5a33ffc3de",
+    "tree": "ec5c213592b49cbca73c29495f103af38b5368a0",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
   },
   "contract": "harness/specs/tasks/long-session-followup-scheduling.md",
   "verdict": "pass",
@@ -50,71 +50,33 @@
   ],
   "commands": [
     {
-      "name": "cron-unit",
+      "name": "e1-unit",
       "exitCode": 0,
-      "durationMs": 6911,
-      "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\cron-unit.log",
-      "summary": "  Test Files  2 passed (2)       Tests  5 passed (5)    Start at  01:13:40    Duration  4.36s (transform 1.75s, setup 262ms, import 33ms, tests 3.60s, environment 0ms) "
-    },
-    {
-      "name": "long-session-unit",
-      "exitCode": 0,
-      "durationMs": 2715,
-      "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\long-session-unit.log",
-      "summary": "  Test Files  1 passed (1)       Tests  12 passed (12)    Start at  01:13:46    Duration  1.04s (transform 413ms, setup 130ms, import 655ms, tests 9ms, environment 0ms) "
+      "log": "D:/tmp/tf0559-unit.log"
     },
     {
       "name": "typecheck",
       "exitCode": 0,
-      "durationMs": 35095,
-      "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\typecheck.log",
-      "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+      "log": "D:/tmp/tf0559-typecheck.log"
     },
     {
-      "name": "contract-check",
+      "name": "build-runtime",
       "exitCode": 0,
-      "durationMs": 981,
-      "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\contract-check.log",
-      "summary": "$ node scripts/contract-check.mjs Contract check passed."
+      "log": "D:/tmp/tf0559-build-runtime.log"
     },
     {
-      "name": "comms-replay",
+      "name": "build-vite",
       "exitCode": 0,
-      "durationMs": 1360,
-      "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\comms-replay.log",
-      "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
+      "log": "D:/tmp/tf0559-build-vite-final2.log"
     },
     {
-      "name": "comms-compare",
+      "name": "e2e-built",
       "exitCode": 0,
-      "durationMs": 835,
-      "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\comms-compare.log",
-      "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
-    },
-    {
-      "name": "harness-validate",
-      "exitCode": 0,
-      "durationMs": 1727,
-      "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\harness-validate.log",
-      "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-followup-scheduling.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-followup-scheduling.md\" Spec is valid: harness\\specs\\tasks\\long-session-followup-scheduling.md"
-    },
-    {
-      "name": "git-diff-check",
-      "exitCode": 0,
-      "durationMs": 92,
-      "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\git-diff-check.log",
-      "summary": ""
-    },
-    {
-      "name": "eslint-changed",
-      "exitCode": 0,
-      "durationMs": 6469,
-      "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\eslint-changed.log",
-      "summary": ""
+      "log": "D:/tmp/tf0559-e2e-final3/.last-run.json"
     }
   ],
   "counts": {
-    "gates": 9,
+    "gates": 5,
     "failedGates": 0,
     "scopeMatrixCases": 8,
     "scopeMatrixAllowed": 2,

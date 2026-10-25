@@ -108,7 +108,9 @@ export function parseSessionMutationOperationManifest(
   const parsed = JSON.parse(raw) as unknown;
   if (!isRecord(parsed)) throw new Error("session mutation journal manifest is not an object");
   if (parsed.version !== SESSION_MUTATION_OPERATION_JOURNAL_SCHEMA_VERSION) {
-    throw new Error(`session mutation journal schema version ${String(parsed.version)} is unsupported`);
+    throw new Error(
+      `session mutation journal schema version ${String(parsed.version)} is unsupported`,
+    );
   }
   if (parsed.operation !== "session-archive" && parsed.operation !== "session-restore") {
     throw new Error(`session mutation operation is unsupported: ${String(parsed.operation)}`);

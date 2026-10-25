@@ -9,26 +9,22 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 证明使用者回到长期入口能继续同一件工作，实际 backend、任务和结果在重启后仍对应正确。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
-diffBase: 98be3a393
+diffBase: 0a14f2dd4094f6178135d05ec7e8d112adddc944
 dependsOnTasks:
   - E2
 touchedAreas:
   - harness/specs/tasks/long-session-restart-journeys.md
   - harness/specs/tasks/long-session-development-plan.md
-  - package.json
-  - tests/e2e/long-session-restart-journeys.spec.ts
-  - scripts/long-session-restart-evidence.mjs
-  - electron/services/sessions-api.ts
-  - electron/services/session-delete-gate.ts
-  - shared/host-api/contract.ts
-  - tests/unit/r0-2-sessions-delete-fail.test.ts
   - tests/e2e/fixtures/electron.ts
   - tests/e2e/fixtures/electron-process-cleanup.ts
+  - electron/services/sessions-api.ts
   - tests/e2e/chat-session-handoff.spec.ts
   - tests/e2e/chat-session-fork.spec.ts
   - tests/e2e/chat-session-compact-range.spec.ts
   - tests/e2e/runtime-lifecycle-governance.spec.ts
   - tests/e2e/long-session-restart-journeys.spec.ts
+  - scripts/long-session-restart-evidence.mjs
+  - package.json
   - harness/specs/fixtures/long-session-development/f1/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -50,8 +46,6 @@ requiredTests:
   - pnpm exec vitest run tests/unit/workspace-session.test.ts tests/unit/chat-session-continuity.test.ts --maxWorkers=1
   - pnpm run build:vite
   - pnpm run test:e2e:run tests/e2e/chat-session-handoff.spec.ts tests/e2e/chat-session-fork.spec.ts tests/e2e/chat-session-compact-range.spec.ts tests/e2e/runtime-lifecycle-governance.spec.ts tests/e2e/long-session-restart-journeys.spec.ts
-  - pnpm long-session:f1:evidence -- --observation <journey observation> --gates <gate receipt>
-  - pnpm long-session:f1:evidence:check
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run comms:replay

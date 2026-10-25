@@ -1,0 +1,86 @@
+{
+  "schema": "clawx.long-session.d1-gates/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "gates": [
+    {
+      "id": "unit",
+      "status": "pass",
+      "exitCode": 0,
+      "files": 2,
+      "tests": 30
+    },
+    {
+      "id": "memory-regression",
+      "status": "pass",
+      "exitCode": 0,
+      "files": 5,
+      "tests": 44
+    },
+    {
+      "id": "typecheck",
+      "status": "pass",
+      "exitCode": 0,
+      "mode": "uncached-node-web-tests"
+    },
+    {
+      "id": "contract",
+      "status": "pass",
+      "exitCode": 0
+    },
+    {
+      "id": "build-runtime",
+      "status": "pass",
+      "exitCode": 0
+    },
+    {
+      "id": "build-vite",
+      "status": "pass",
+      "exitCode": 0
+    },
+    {
+      "id": "comms-replay",
+      "status": "pass",
+      "exitCode": 0
+    },
+    {
+      "id": "comms-compare",
+      "status": "pass",
+      "exitCode": 0
+    },
+    {
+      "id": "harness-validate",
+      "status": "pass",
+      "exitCode": 0
+    },
+    {
+      "id": "diff-check",
+      "status": "pass",
+      "exitCode": 0
+    },
+    {
+      "id": "e2e-built",
+      "status": "pass",
+      "exitCode": 0,
+      "tests": 1
+    },
+    {
+      "id": "credential-scan",
+      "status": "pass",
+      "exitCode": 0,
+      "scannedFiles": 19,
+      "hits": 0
+    },
+    {
+      "id": "sha256",
+      "status": "pass",
+      "exitCode": 0,
+      "checkedEntries": 14
+    }
+  ],
+  "summary": {
+    "passed": 13,
+    "failed": 0,
+    "pending": 0
+  }
+}

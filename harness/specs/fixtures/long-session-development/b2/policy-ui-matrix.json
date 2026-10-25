@@ -1,0 +1,76 @@
+{
+  "schema": "clawx.long-session.policy-ui-matrix/v1",
+  "generatedAt": "2026-10-23T19:18:32.708Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": "e2302cdaee166f29019d1a677f4ffbb645104b52",
+  "rows": [
+    {
+      "acceptance": "Reuse Composer/activity/Recovery to show backend, effective/configured values, source and override/ignore reasons.",
+      "surface": [
+        "src/pages/Chat/SessionActivityPanel.tsx",
+        "src/pages/Settings/sections/RecoverySettingsSection.tsx"
+      ],
+      "evidence": [
+        "policy-ui-results.json",
+        "policy-surface-wide.png",
+        "unit-core.vitest.json"
+      ],
+      "status": "pass"
+    },
+    {
+      "acceptance": "Keep unknown facts honest while exposing normalized action availability without identifiers.",
+      "surface": [
+        "openclaw_runtime/src/gateway/session-effective-policy.ts",
+        "src/pages/Chat/SessionActivityPanel.tsx"
+      ],
+      "evidence": [
+        "policy-ui-results.json",
+        "policy-surface-narrow.png",
+        "unit-core.vitest.json"
+      ],
+      "status": "pass"
+    },
+    {
+      "acceptance": "Distinguish abort from session stop, view retention from transcript/resource TTLs, and transcript fork from worktree isolation.",
+      "surface": [
+        "src/pages/Chat/SessionActivityPanel.tsx",
+        "src/pages/Settings/sections/RecoverySettingsSection.tsx"
+      ],
+      "evidence": [
+        "policy-ui-results.json",
+        "policy-surface-wide.png"
+      ],
+      "status": "pass"
+    },
+    {
+      "acceptance": "Do not show a previous workspace/session/backend/authorization snapshot or let an older request overwrite the current selection.",
+      "surface": [
+        "src/stores/session-activity.ts",
+        "src/pages/Chat/index.tsx",
+        "src/pages/Settings/sections/RecoverySettingsSection.tsx",
+        "electron/services/session-activity-api.ts"
+      ],
+      "evidence": [
+        "unit-core.vitest.json",
+        "policy-ui-results.json"
+      ],
+      "status": "pass"
+    },
+    {
+      "acceptance": "Carry four-language text, design tokens, keyboard/narrow behavior and real built Electron coverage in one change set.",
+      "surface": [
+        "shared/i18n/locales",
+        "src/styles/codex-responsive.css",
+        "src/styles/codex-session-activity.css",
+        "tests/e2e/long-session-policy-surface.spec.ts"
+      ],
+      "evidence": [
+        "policy-ui-results.json",
+        "policy-ui-screenshots.json",
+        "e2e-group.stdout"
+      ],
+      "status": "pass"
+    }
+  ]
+}

@@ -84,6 +84,7 @@ import {
   type DelegationAdmissionContext,
 } from "./delegation-admission.js";
 import type { DelegationAdmissionReceipt } from "../../../shared/types/delegation-admission.js";
+import type { DelegationWorkerExecution } from "./delegation-admission.js";
 
 export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
   delegationAdmission?: DelegationAdmissionContext;
@@ -113,6 +114,7 @@ export type OrchestrationWorkerOutcome = {
   spawn: RoleSpawnResult;
   verseGitBinding?: VerseGitBindingRecord;
   admissionReceipt?: DelegationAdmissionReceipt;
+  execution?: DelegationWorkerExecution;
 };
 
 export type OrchestrationRunResult = {

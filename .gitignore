@@ -1824,6 +1824,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/verseshell-foundation/STATUS.md
 !/docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
 !/docs/dev/vtoken-distribution-and-format-contract.md
+!/docs/dev/vtoken-retirement-decision.md
 !/docs/dev/windows-alpha-closeout-20261008.md
 !/docs/dev/windows-delivery-blocker-fixes.md
 !/docs/dev/windows-runtime-efficiency-observability.md
@@ -2115,3 +2116,9 @@ openclaw_runtime/_tmp_*
 
 # kb-bot character lab (v2, silhouette measured from icon.png)
 /experiments/kb-bot/
+
+# Curated tracked browser evidence is a source input, despite the general log rule.
+!/harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/e2e.log
+
+# Long-session D1 log is content-addressed by its fixture SHA256SUMS.
+!harness/specs/fixtures/long-session-development/d1/typecheck-errors.log

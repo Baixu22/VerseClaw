@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: completed
+lifecycleStatus: active
 id: long-session-coordination-surface
 title: 把长期协作入口接到现有会话、任务与活动界面
 program: long-session-development-20261022
@@ -11,32 +11,40 @@ intent: 交付可使用的长期入口，减少跨 session 的手工协调，同
 contractIndex: harness/specs/tasks/long-session-development-plan.md
 dependsOnTasks:
   - C3
-diffBase: fccb22474
 touchedAreas:
   - harness/specs/tasks/long-session-coordination-surface.md
   - harness/specs/tasks/long-session-development-plan.md
-  - docs/clawx-product-semantics.md
-  - README.md
-  - README.zh-CN.md
-  - README.ja-JP.md
+  - openclaw_runtime/src/agents/orchestration-completion-batches.ts
+  - electron/services/session-activity-api.ts
   - src/pages/Chat/index.tsx
   - src/components/layout/Sidebar.tsx
   - src/pages/Chat/SessionActivityPanel.tsx
-  - src/pages/Chat/long-session-coordination.ts
   - src/components/agents/RolesOrchestrationPanel.tsx
   - src/pages/Chat/TeamOrchestrationCard.tsx
   - src/stores/chat.ts
   - src/stores/session-activity.ts
+  - src/stores/resource-tracker.ts
+  - src/components/chat/ResourceChip.tsx
   - src/lib/host-api.ts
+  - shared/types/session-activity.ts
+  - shared/types/resource-tracker.ts
   - shared/i18n/locales/en/chat.json
+  - shared/i18n/locales/en/common.json
   - shared/i18n/locales/zh/chat.json
+  - shared/i18n/locales/zh/common.json
   - shared/i18n/locales/ja/chat.json
+  - shared/i18n/locales/ja/common.json
   - shared/i18n/locales/ru/chat.json
-  - tests/unit/long-session-coordination-surface.test.ts
-  - tests/unit/session-activity-panel.test.tsx
+  - shared/i18n/locales/ru/common.json
+  - harness/specs/guides/long-session-delegation-admission.md
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - README.ru-RU.md
   - tests/e2e/long-session-coordination.spec.ts
   - tests/e2e/chat-session-handoff.spec.ts
   - tests/e2e/chat-session-fork.spec.ts
+  - tests/unit/session-activity-background-read.test.ts
   - harness/specs/fixtures/long-session-development/c4/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -55,7 +63,7 @@ expectedUserBehavior:
   - 交付可使用的长期入口，减少跨 session 的手工协调，同时保持源记录和任务状态可打开审查。
   - 创建本合同不代表功能已实现；结果、配置、授权和任务完成仍归现有 owner，未知状态如实保留。
 requiredTests:
-  - pnpm exec vitest run tests/unit/sidebar-session-context-menu.test.tsx tests/unit/session-activity-panel.test.tsx tests/unit/long-session-coordination-surface.test.ts tests/unit/role-orchestration-methods.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/sidebar-session-context-menu.test.tsx tests/unit/session-activity-panel.test.tsx tests/unit/role-orchestration-methods.test.ts tests/unit/session-activity-background-read.test.ts --maxWorkers=1
   - pnpm run i18n:lint
   - pnpm run build:vite
   - pnpm run test:e2e:run tests/e2e/chat-session-handoff.spec.ts tests/e2e/chat-session-fork.spec.ts tests/e2e/long-session-coordination.spec.ts
@@ -66,8 +74,6 @@ requiredTests:
   - pnpm harness validate --spec harness/specs/tasks/long-session-coordination-surface.md
   - git diff --check
 plannedTests:
-  - tests/unit/long-session-coordination-surface.test.ts
-  - tests/unit/session-activity-panel.test.tsx
   - tests/e2e/long-session-coordination.spec.ts
 acceptance:
   - 通过现有 Sidebar/Chat 显式打开稳定主会话，提供任务/worker/结果引用、状态与必要的暂停/继续入口，不创建第二任务列表 authority。
@@ -118,9 +124,11 @@ docs:
 3. 切换、最小化、后台工作、键盘、四语、窄屏与完成提示在真实 Electron 操作中通过；普通会话原有行为不回归。
 4. 暂停/删除/后端不可用显示真实限制；无新结果保持安静；UI 只能通过 typed host-api 操作。
 
+5. 现有 Chat/Sidebar 入口显示当前会话的 local/worktree 绑定、canonical checkout、backend/revision 是否失效、CPU/RSS/进程/后台终端/工作树水位和 cleanup/recovery_required；ResourceChip 扩为会话级资源总览，不新建第二个资源页面，也不把 observed 资源伪装成可终止的 managed 资源。
+
 **门禁与待交付检查**
 
-- `pnpm exec vitest run tests/unit/sidebar-session-context-menu.test.tsx tests/unit/session-activity-panel.test.tsx tests/unit/role-orchestration-methods.test.ts --maxWorkers=1`
+- `pnpm exec vitest run tests/unit/sidebar-session-context-menu.test.tsx tests/unit/session-activity-panel.test.tsx tests/unit/role-orchestration-methods.test.ts tests/unit/session-activity-background-read.test.ts --maxWorkers=1`
 - `pnpm run i18n:lint`
 - `pnpm run build:vite`
 - `pnpm run test:e2e:run tests/e2e/chat-session-handoff.spec.ts tests/e2e/chat-session-fork.spec.ts tests/e2e/long-session-coordination.spec.ts`
