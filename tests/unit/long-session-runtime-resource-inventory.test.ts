@@ -1,7 +1,6 @@
 // @vitest-environment node
 
 import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { readRuntimeSessionResourceInventory } from '../../openclaw_runtime/src/gateway/session-resource-inventory';
 import { sessionAdmissionRegistry } from '../../openclaw_runtime/src/sessions/session-admission-registry';

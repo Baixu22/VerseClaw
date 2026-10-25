@@ -200,7 +200,7 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     id: 'component.runtime-memory-store', label: 'Runtime Memory store', disposition: 'internal', owner: 'runtime-memory-store', implementationNodeId: 'TF-0497', currentMode: 'opt-in', targetDefaultMode: 'internal',
     ...internal('Durable Runtime Memory domain consumed through the unified Memory control plane, not as a second user surface.'),
     currentConsumers: ['runtime facts/timeline/episodes', 'Memory diagnostics', 'context candidate source'], evidenceRefs: MEMORY_EVIDENCE,
-    coverage: { authorityComponentIds: ['runtime-memory-store'], dcsFlagIds: ['runtime-memory-persist', 'runtime-memory-inject-pilot'], runtimeLeafPatterns: ['memory.shadow', 'memory.provider', 'memory.proposeFacts', 'memory.persist', 'memory.injectPilot.*'], routePaths: ['/memory'] },
+    coverage: { authorityComponentIds: ['runtime-memory-store'], dcsFlagIds: ['runtime-memory-persist', 'runtime-memory-inject-pilot'], runtimeLeafPatterns: ['memory.shadow', 'memory.provider', 'memory.proposeFacts', 'memory.persist', 'memory.injectPilot.*'] },
   }),
   entry({
     id: 'component.memory-candidate-queue', label: 'Memory candidate queue', disposition: 'internal', owner: 'memory-candidate-queue', implementationNodeId: 'TF-0497', currentMode: 'opt-in', targetDefaultMode: 'internal',

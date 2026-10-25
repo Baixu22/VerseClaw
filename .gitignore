@@ -1824,7 +1824,6 @@ openclaw_runtime/_tmp_*
 !/docs/dev/verseshell-foundation/STATUS.md
 !/docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
 !/docs/dev/vtoken-distribution-and-format-contract.md
-!/docs/dev/vtoken-retirement-decision.md
 !/docs/dev/windows-alpha-closeout-20261008.md
 !/docs/dev/windows-delivery-blocker-fixes.md
 !/docs/dev/windows-runtime-efficiency-observability.md
