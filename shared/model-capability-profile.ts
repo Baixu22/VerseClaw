@@ -691,6 +691,7 @@ function buildPromptAddition(
         ? 'Runtime state is not yet verified for all listed capabilities; do not present them as currently active.'
         : `Runtime state is not yet verified for ${unknownCount} listed capabilities; do not present those as currently active.`);
     }
+    lines.push('Availability and action permission are separate: enabled does not mean allowed.');
     lines.push('Internal and retired capabilities are not user-facing promises. Do not claim a capability beyond these listed facts.');
     return lines.join('\n');
   };

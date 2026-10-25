@@ -63,7 +63,7 @@ describe('TF-0507 production prompt and positioning protocol', () => {
   });
 
   it('observes owner guard denials before any executor starts', () => {
-    for (const id of ['POS-P0-E', 'POS-P2-E', 'POS-P0-G', 'POS-P1-G']) {
+    for (const id of ['POS-P0-E', 'POS-P2-E', 'POS-P0-G', 'POS-P1-G', 'POS-P1-H']) {
       const observed = observePositioningGuard(fixture, scenario(id), 'echo TF0507-P1');
       expect(observed.outcome, id).toBe('denied');
       expect(observed.executorStarts, id).toBe(0);
