@@ -251,6 +251,7 @@ export const MODEL_CAPABILITY_USER_DISPLAY_NAMES: Readonly<Record<string, string
   'component.browser-session-owner': 'Browser sessions',
   'component.renderer-ui-surface': 'Application shell and Settings',
   'feature.coding-recovery': 'Coding recovery and verification',
+  'feature.stale-write-guard': 'Stale-write protection',
   'feature.worktree-isolation': 'Worktree isolation',
   'surface.inbox': 'Inbox',
   'surface.cron': 'Scheduled tasks and auto-approval',
@@ -712,7 +713,7 @@ function buildPromptAddition(
     if (defaultNames.length > 0) lines.push(`Default: ${defaultNames.join(', ')}.`);
     if (advancedNames.length > 0) lines.push(`Advanced: ${advancedNames.join(', ')}.`);
     if (restrictions.length > 0) lines.push(`Current facts: ${restrictions.join('; ')}.`);
-    lines.push('Entries not listed under Current facts are runtime=enabled, driver=ready, and have no additional action, memory, knowledge or quarantine restriction.');
+    lines.push('Current facts add restrictions; unless runtime:<state> or driver:<state> says otherwise, runtime=enabled and driver=ready. Absent entries have no additional restriction.');
     if (unknownCount > 0) {
       lines.push(unknownCount === included.length
         ? 'Runtime state is not yet verified for all listed capabilities; do not present them as currently active.'

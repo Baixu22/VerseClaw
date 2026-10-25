@@ -5,7 +5,7 @@
 {
   "status": "complete",
   "criteria": 5,
-  "profileEntries": 52
+  "profileEntries": 53
 }
 
 pnpm.cmd : stderr | tests/unit/context-engine-registry-default-on.test.ts > Context engine registry default-on CRK reso
@@ -29,6 +29,6 @@ ining it for this process and falling back to default engine "legacy".
 
  Test Files  6 passed (6)
       Tests  47 passed (47)
-   Start at  18:35:22
-   Duration  51.60s (transform 10.39s, setup 600ms, import 16.85s, tests 30.74s, environment 2.30s)
+   Start at  16:03:22
+   Duration  67.67s (transform 13.66s, setup 1.79s, import 24.40s, tests 34.73s, environment 3.76s)
 

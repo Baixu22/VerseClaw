@@ -483,6 +483,19 @@
         }
       },
       {
+        "capabilityId": "feature.stale-write-guard",
+        "displayName": "Stale-write protection",
+        "owner": "coding-execution-backend",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "advanced stale-file write protection",
+        "toolIdentity": {
+          "id": "feature.stale-write-guard",
+          "label": "Stale-write protection",
+          "kind": "feature"
+        }
+      },
+      {
         "capabilityId": "feature.symbol-lease",
         "displayName": "Symbol lease",
         "owner": "TF-0510",
@@ -705,8 +718,8 @@
       }
     ]
   },
-  "staticDigest": "sha256:8ed5632cc9ad7a7e545cb0e9aac991eebcb4e693c21f2f0ba3d01599c8c7d063",
-  "effectiveDigest": "sha256:b1611bd3c041605f4734b2158168536e3fc316ca565742bafd900d5486148dba",
+  "staticDigest": "sha256:4fe0f541155a5a4e52b12557ef4b048826be25808192a38bf3800030d17a16f2",
+  "effectiveDigest": "sha256:5cdb776b99fe9708a59cba50e43378302ab7a09e6807b7c6e5165f12cefb34aa",
   "entries": [
     {
       "capabilityId": "component.context-runtime-kit",
@@ -2926,6 +2939,66 @@
       }
     },
     {
+      "capabilityId": "feature.stale-write-guard",
+      "static": {
+        "capabilityId": "feature.stale-write-guard",
+        "displayName": "Stale-write protection",
+        "owner": "coding-execution-backend",
+        "disposition": "advanced",
+        "visibility": "user",
+        "userEntry": "advanced stale-file write protection",
+        "toolIdentity": {
+          "id": "feature.stale-write-guard",
+          "label": "Stale-write protection",
+          "kind": "feature"
+        }
+      },
+      "tool": {
+        "identity": {
+          "id": "feature.stale-write-guard",
+          "label": "Stale-write protection",
+          "kind": "feature"
+        },
+        "callableName": null
+      },
+      "driver": {
+        "id": "none",
+        "kind": "none",
+        "state": "disabled",
+        "version": null
+      },
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime.tool-inventory",
+        "reason": "tool-not-present",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "actionAuthorization": [],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      }
+    },
+    {
       "capabilityId": "feature.symbol-lease",
       "static": {
         "capabilityId": "feature.symbol-lease",
@@ -3947,11 +4020,11 @@
     }
   ],
   "promptAddition": {
-    "text": "Capability positioning (authoritative):\nDefault: Agent memory cards, Application shell and Settings, Approvals and action permissions, Coding recovery and verification, Coding tools and file execution, Context reading and search, Knowledge retrieval, Knowledge review, Skills and MCP connections.\nCurrent restrictions: Agent memory cards=runtime:disabled+driver:disabled+propose:requires-approval+read:requires-approval+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Application shell and Settings=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Approvals and action permissions=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Coding recovery and verification=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Coding tools and file execution=runtime:enabled+driver:ready+apply_patch:requires-approval+edit:requires-approval+exec:allowed+write:requires-approval+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Context reading and search=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Knowledge retrieval=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Knowledge review=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Skills and MCP connections=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale.\nInternal and retired capabilities are not user-facing promises. Do not claim a capability beyond these listed facts.",
+    "text": "Capability positioning (authoritative):\nDefault: Agent memory cards, Application shell and Settings, Approvals and action permissions, Coding recovery and verification, Coding tools and file execution, Context reading and search, Knowledge retrieval, Knowledge review, Skills and MCP connections.\nCurrent facts: Agent memory cards=runtime:disabled+driver:disabled+propose:requires-approval+read:requires-approval+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Application shell and Settings=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Approvals and action permissions=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Coding recovery and verification=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Coding tools and file execution=apply_patch:requires-approval+edit:requires-approval+write:requires-approval+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Context reading and search=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Knowledge retrieval=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Knowledge review=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Skills and MCP connections=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale.\nCurrent facts add restrictions; unless runtime:<state> or driver:<state> says otherwise, runtime=enabled and driver=ready. Absent entries have no additional restriction.\nInternal and retired capabilities are not user-facing promises. Do not claim a capability beyond these listed facts.",
     "budget": {
       "maxChars": 2000,
-      "usedChars": 1871,
-      "remainingChars": 129,
+      "usedChars": 1992,
+      "remainingChars": 8,
       "chargedTo": "reserved-system-prompt",
       "workContextCharsUsed": 0
     },
@@ -3961,6 +4034,7 @@
       "component.tool-registry-context",
       "component.tool-search-schema-expander",
       "component.working-memory-context",
+      "feature.stale-write-guard",
       "feature.worktree-isolation",
       "settings.billing",
       "settings.developer-advanced",
@@ -3979,6 +4053,12 @@
       "severity": "info",
       "message": "Prompt budget omitted feature.worktree-isolation",
       "capabilityId": "feature.worktree-isolation"
+    },
+    {
+      "code": "prompt-capability-omitted",
+      "severity": "info",
+      "message": "Prompt budget omitted feature.stale-write-guard",
+      "capabilityId": "feature.stale-write-guard"
     },
     {
       "code": "prompt-capability-omitted",

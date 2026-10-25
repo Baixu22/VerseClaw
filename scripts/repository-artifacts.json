@@ -2010,7 +2010,9 @@
     "docs/dev/component-graduation/TF-0491/task-forest-validate.log",
     "docs/dev/component-graduation/TF-0491/typecheck.log",
     "docs/dev/component-graduation/TF-0491/unit-tests.log",
-    "docs/dev/memory-control-plane.md"
+    "docs/dev/memory-control-plane.md",
+    "docs/dev/adr/2026-10-23-capability-catalog-authority.md",
+    "docs/dev/vtoken-retirement-decision.md"
   ],
   "artifactBatches": {}
 }

@@ -1,9 +1,2 @@
-pnpm.cmd : $ node scripts/contract-check.mjs
-At D:\ClawX-work\component-graduation-20261021\tests\unit\fixtures\product-semantics-tf0506\run-verification.ps1:13 cha
-r:15
-+     $output = & $argv[0] @($argv[1..($argv.Count - 1)]) 2>&1 | Out-St ...
-+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: ($ node scripts/contract-check.mjs:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
-
 Contract check passed.
+$ node scripts/contract-check.mjs

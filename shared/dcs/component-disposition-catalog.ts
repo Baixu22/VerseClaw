@@ -330,10 +330,19 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
   entry({
     id: 'feature.coding-recovery', label: 'Coding write/recovery controls', disposition: 'default', owner: 'coding-execution-backend', implementationNodeId: 'TF-0510', currentMode: 'mixed', targetDefaultMode: 'baseline',
     ...user('model coding writes and auto verification'),
-    currentConsumers: ['stale-write-guard', 'write journal/WAL', 'coding auto verify'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
-    coverage: { dcsFlagIds: ['stale-write-guard', 'write-journal'], runtimeLeafPatterns: ['coding.parseOnTouch.*', 'coding.staleWriteGuard.*', 'coding.writeJournal.*', 'coding.autoVerify.*', 'coding.verifier.*'] },
+    currentConsumers: ['write journal/WAL', 'coding auto verify', 'parse-on-touch'],
+    evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
+    coverage: { dcsFlagIds: ['write-journal'], runtimeLeafPatterns: ['coding.parseOnTouch.*', 'coding.writeJournal.*', 'coding.autoVerify.*', 'coding.verifier.*'] },
   }),
   entry({
+    id: 'feature.stale-write-guard', label: 'Stale-write guard', disposition: 'advanced', owner: 'coding-execution-backend', implementationNodeId: 'TF-0510', currentMode: 'opt-in', targetDefaultMode: 'opt-in',
+    ...user('advanced stale-file write protection'),
+    currentConsumers: ['model coding writes', 'write journal/WAL'],
+    evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
+    coverage: { dcsFlagIds: ['stale-write-guard'], runtimeLeafPatterns: ['coding.staleWriteGuard.*'] },
+    defaultOffAllowed: true,
+    defaultOffReason: 'TF-0510 retained opt-in: false-block risk remains material and no coding-benefit gate justified a product default flip.',
+  }),  entry({
     id: 'feature.symbol-lease', label: 'Symbol lease', disposition: 'retired', owner: 'TF-0510', implementationNodeId: 'TF-0510', currentMode: 'retired', targetDefaultMode: 'retired',
     ...retired('Retired by TF-0510: isolated git worktrees plus the merge queue are the supported answer to concurrent writers. A measured 4-process benchmark showed the lease serialises correctly but denies 75% of attempts (12 wins / 36 denials), so it throttles throughput without adding safety over worktree isolation. Code is retained and unreachable; no user data is migrated.'),
     currentConsumers: ['retired symbol-lease guard', 'retired multi-writer coding guard'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],

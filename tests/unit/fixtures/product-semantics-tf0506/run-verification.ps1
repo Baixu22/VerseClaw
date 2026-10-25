@@ -5,15 +5,33 @@ $env:TEMP = 'D:\tmp'; $env:TMP = 'D:\tmp'
 New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 $results = @()
+
+function Invoke-ExternalCapture {
+  param([string[]]$Command)
+  $psi = [Diagnostics.ProcessStartInfo]::new()
+  $psi.FileName = $Command[0]
+  if ($Command.Count -gt 1) {
+    $psi.Arguments = ($Command[1..($Command.Count - 1)] | ForEach-Object { if ($_ -match '[\s"]') { '"' + ($_ -replace '"','\"') + '"' } else { $_ } }) -join ' '
+  }
+  $psi.UseShellExecute = $false
+  $psi.RedirectStandardOutput = $true
+  $psi.RedirectStandardError = $true
+  $psi.CreateNoWindow = $true
+  $psi.WorkingDirectory = $root
+  $process = [Diagnostics.Process]::Start($psi)
+  $stdout = $process.StandardOutput.ReadToEnd()
+  $stderr = $process.StandardError.ReadToEnd()
+  $process.WaitForExit()
+  return [ordered]@{
+    exitCode = $process.ExitCode
+    output = (($stdout + $stderr) -replace "`r`n", "`n")
+  }
+}
 function Gate([string]$id, [string[]]$argv, [string]$display) {
   $path = Join-Path $out "$id.txt"
-  $previous = $ErrorActionPreference
-  $ErrorActionPreference = 'Continue'
-  try {
-    $output = & $argv[0] @($argv[1..($argv.Count - 1)]) 2>&1 | Out-String
-    $code = $LASTEXITCODE
-  } finally { $ErrorActionPreference = $previous }
-  $clean = (($output -replace "`r`n", "`n") -split "`n" | ForEach-Object { $_.TrimEnd() }) -join "`n"
+  $captured = Invoke-ExternalCapture -Command $argv
+  $code = $captured.exitCode
+  $clean = (($captured.output -split "`n") | ForEach-Object { $_.TrimEnd() }) -join "`n"
   [IO.File]::WriteAllText($path, $clean, $utf8)
   $status = if($code -eq 0){'pass'}else{'fail'}
   return [ordered]@{ id=$id; command=$display; exitCode=$code; status=$status; outputPath="tests/unit/fixtures/product-semantics-tf0506/$id.txt"; outputSha256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant() }

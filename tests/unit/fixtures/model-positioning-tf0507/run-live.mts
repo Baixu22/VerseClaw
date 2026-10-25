@@ -17,12 +17,11 @@ import {
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
 const dir = 'tests/unit/fixtures/model-positioning-tf0507';
-const protocolPath = path.join(root, dir, 'protocol-final.json');
-const runPath = path.join(root, dir, 'run-final.json');
+const protocolPath = path.join(root, dir, 'protocol-v11.json');
+const runPath = path.join(root, dir, 'run-v11.json');
 const apiKey = process.env.LOCAL3065_API_KEY?.trim() || process.env.TF0507_API_KEY?.trim();
-if (!apiKey) throw new Error('LOCAL3065_API_KEY or TF0507_API_KEY is required (env only)');
-if (!fs.existsSync(protocolPath)) throw new Error('protocol-final.json must be frozen before running');
-if (fs.existsSync(runPath)) throw new Error('run-final.json already exists; the frozen protocol forbids rerun');
+if (!fs.existsSync(protocolPath)) throw new Error('protocol-v11.json must be frozen before running');
+if (fs.existsSync(runPath)) throw new Error('run-v11.json already exists; the frozen protocol forbids rerun');
 const protocolRaw = fs.readFileSync(protocolPath);
 const protocol = JSON.parse(protocolRaw.toString('utf8')) as PositioningProtocol;
 if (protocol.status !== 'frozen-before-live-run') throw new Error('protocol is not frozen');

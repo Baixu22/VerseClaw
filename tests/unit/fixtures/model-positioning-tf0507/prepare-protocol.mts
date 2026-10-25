@@ -19,7 +19,7 @@ import {
 } from './fixture-lib.mts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
-const outputPath = path.join(root, 'tests/unit/fixtures/model-positioning-tf0507/protocol-final.json');
+const outputPath = path.join(root, 'tests/unit/fixtures/model-positioning-tf0507/protocol-v11.json');
 const write = process.argv.includes('--write');
 const declaredAt = new Date().toISOString();
 const digest = (digit: string) => 'sha256:' + digit.repeat(64);
@@ -183,15 +183,15 @@ const baseProtocol: PositioningProtocol = {
   driven_by: 'agent',
   actor: 'codex',
   status: 'frozen-before-live-run',
-  provider: 'space-bunny',
+  provider: 'local-3065',
   model: 'space-bunny',
   endpoint: 'http://127.0.0.1:3065/v1/responses',
-  dataset: 'TF-0507 final 24-row production-projection capability positioning fixture',
+  dataset: 'TF-0507 v11 24-row production-projection capability positioning fixture',
   repeats: 3,
   rowPassRule: 'a row passes only when all 3 repeats exactly match expectedClaims, include only expected keys, have no forbidden claim, and any tool probe agrees',
   temperature: 0,
-  maxOutputTokens: 1400,
-  scorer: { id: 'tf0507-semantic-json-final', version: '4', rule: 'exact key set, semantic normalized state enums, forbiddenClaims absence' },
+  maxOutputTokens: 2000,
+  scorer: { id: 'tf0507-semantic-json-v11', version: '11', rule: 'exact key set, semantic normalized state enums, forbiddenClaims absence' },
   evidencePolicy: {
     driven_by: 'agent',
     realHumanEvidence: false,

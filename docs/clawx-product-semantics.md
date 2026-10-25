@@ -75,7 +75,11 @@ The table below is the canonical component classification for this preview. Each
 | Component | Canonical label | Boundary |
 | --- | --- | --- |
 | DCS coding loop | `opt-in` | The first-product switch is off by default and requires verified provider, model, workspace, and permission prerequisites. |
-
+| Workspace Context | `default` | One Settings > General profile composes a bounded recent-action working window and compact tool/resource registry. It defaults on, follows the shared turn budget, and is controlled by one toggle; it is not long-term knowledge or approved memory. |
+| DCS Fact view tools | `default` | Context read/search/understand tools are discovered automatically when the workspace, FactService and permissions are healthy. The env flag remains an explicit rollback/override, not a product enablement step. |
+| VToken turn assembly | `retired` | The provider A/B fell below the predeclared materiality bar. Production assembly and the bridge are inert; rollback requires a new frozen protocol and another materiality pass. |
+| SEKB automatic writeback | `deferred` | Explicit review remains the only allowed write path; shadow candidates cannot apply or overwrite knowledge. |
+| C6 automatic context ladder | `internal` | Explicit internal assembler request API for tests and diagnostics; there is no automatic or user-level activation. |
 | C7 knowledge/routing cutover | `deferred` | Shadow evidence does not grant routing authority. |
 | Coding WAL | `default` | The write journal remains the recovery authority for supported coding writes; stale-write guard and auto-verification report explicit failures rather than silently retrying. |
 | Browser supervised workflows | `advanced` | Supervised browser tasks are available as an advanced capability; private-network navigation remains default-deny and always needs a bounded session/origin approval. |
@@ -83,7 +87,7 @@ The table below is the canonical component classification for this preview. Each
 | Surfaces listed in RETIRED-SURFACES.md | `retired` | Removed surfaces stay removed and cannot be used as current capability evidence. |
 <!-- FP-P1-08-COMPONENT-STATUS-END -->
 
-
+The table above is the current controlled-preview component classification after the 2026-10-24 graduation pass. Every changed label is backed by the owning node's production path, rollback, model-effective-state and agent-driven evidence; TF-0506 only synchronizes those decisions into user-facing and release-facing text. Under the 2026-09-27 owner policy, real-human evidence is not a prerequisite and is not claimed. The excluded, deferred and default-deny details remain locked by `docs/dev/default-config-matrix.md`, `docs/dev/first-product-controlled-preview/STATUS.md`, and the [D9 scope ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md).
 
 ## Component Graduation Scope (D9)
 

@@ -7,17 +7,30 @@ New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 $results = @()
 
+function Invoke-ExternalCapture {
+  param([string[]]$Command)
+  $psi = [Diagnostics.ProcessStartInfo]::new()
+  $psi.FileName = $Command[0]
+  if ($Command.Count -gt 1) {
+    $psi.Arguments = ($Command[1..($Command.Count - 1)] | ForEach-Object { if ($_ -match '[\s"]') { '"' + ($_ -replace '"','\"') + '"' } else { $_ } }) -join ' '
+  }
+  $psi.UseShellExecute = $false
+  $psi.RedirectStandardOutput = $true
+  $psi.RedirectStandardError = $true
+  $psi.CreateNoWindow = $true
+  $psi.WorkingDirectory = $root
+  $process = [Diagnostics.Process]::Start($psi)
+  $stdout = $process.StandardOutput.ReadToEnd()
+  $stderr = $process.StandardError.ReadToEnd()
+  $process.WaitForExit()
+  return [ordered]@{ exitCode = $process.ExitCode; output = (($stdout + $stderr) -replace "`r`n", "`n") }
+}
+
 function Gate([string]$id, [string[]]$argv, [string]$display) {
   $path = Join-Path $out "$id.txt"
-  $previousErrorAction = $ErrorActionPreference
-  $ErrorActionPreference = 'Continue'
-  try {
-    $output = & $argv[0] @($argv[1..($argv.Count - 1)]) 2>&1 | Out-String
-    $code = $LASTEXITCODE
-  } finally {
-    $ErrorActionPreference = $previousErrorAction
-  }
-  $clean = (($output -replace "`r`n", "`n") -split "`n" | ForEach-Object { $_.TrimEnd() }) -join "`n"
+  $captured = Invoke-ExternalCapture -Command $argv
+  $code = $captured.exitCode
+  $clean = (($captured.output -split "`n") | ForEach-Object { $_.TrimEnd() }) -join "`n"
   [IO.File]::WriteAllText($path, $clean, $utf8)
   return [ordered]@{
     id = $id
@@ -28,7 +41,6 @@ function Gate([string]$id, [string[]]$argv, [string]$display) {
     outputSha256 = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
   }
 }
-
 $pnpm = (Get-Command pnpm.cmd -ErrorAction Stop).Source
 $node = (Get-Command node.exe -ErrorAction Stop).Source
 

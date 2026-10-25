@@ -1,0 +1,243 @@
+[
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/01-focused-tests.txt",
+    "expected": "3b042c64e16ff41dfa0627d1bcd2dfaf9cd38639441f69544e404fcdb35b8c1d",
+    "actual": "3b042c64e16ff41dfa0627d1bcd2dfaf9cd38639441f69544e404fcdb35b8c1d",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/02-typecheck.txt",
+    "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "actual": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/fixture-lib.mts",
+    "expected": "3584f6ec238b0fc59bd5e3963362e130c093945dc5d6fa1a0a902a5e78b33b94",
+    "actual": "3584f6ec238b0fc59bd5e3963362e130c093945dc5d6fa1a0a902a5e78b33b94",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/negative-checks.mts",
+    "expected": "84aba121eb64e67073617555f3f64edc74873f157e6ada28b37fa142c8b8862a",
+    "actual": "84aba121eb64e67073617555f3f64edc74873f157e6ada28b37fa142c8b8862a",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/prepare-protocol.mts",
+    "expected": "f990918543dcddf74c1774b95b78c9c0583e9941753d5d67c2f5e67e5ed343cb",
+    "actual": "f990918543dcddf74c1774b95b78c9c0583e9941753d5d67c2f5e67e5ed343cb",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-final-v1.json",
+    "expected": "e34ad8a9dad4ba2efc9495d36d2130e9ffb64eec3910c9f330929eedc74d3ff9",
+    "actual": "e34ad8a9dad4ba2efc9495d36d2130e9ffb64eec3910c9f330929eedc74d3ff9",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-final-v2.json",
+    "expected": "b6585f74d7f7614ff65538c83a8c1b7e69d79f0bb16d32c7a67ce67f8e3f71dc",
+    "actual": "b6585f74d7f7614ff65538c83a8c1b7e69d79f0bb16d32c7a67ce67f8e3f71dc",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-final-v3.json",
+    "expected": "9f2baa0726c65765cdd7a5cd7c2d6c8728b4b03dc3bf564e53e783efb4519af0",
+    "actual": "9f2baa0726c65765cdd7a5cd7c2d6c8728b4b03dc3bf564e53e783efb4519af0",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-v10.json",
+    "expected": "a7cba290a7091955bead2b7bc492af43a5b8267ca2edb2549cad2355499189c7",
+    "actual": "a7cba290a7091955bead2b7bc492af43a5b8267ca2edb2549cad2355499189c7",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-v11.json",
+    "expected": "d1dee54fec975491ed8ee9ac5915fb7302d40c30fec926d496977d70039d56f2",
+    "actual": "d1dee54fec975491ed8ee9ac5915fb7302d40c30fec926d496977d70039d56f2",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-v2.json",
+    "expected": "fd13de0026db209ccf527293129a186552b64c602b031ac23db71ecf1764e8e8",
+    "actual": "fd13de0026db209ccf527293129a186552b64c602b031ac23db71ecf1764e8e8",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-v3.json",
+    "expected": "9d1defeced56db3734abe565c062fa763befca23adf5436acd880ce54c2e4fb2",
+    "actual": "9d1defeced56db3734abe565c062fa763befca23adf5436acd880ce54c2e4fb2",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-v4-unrun-v5.json",
+    "expected": "0a76fcd1e604fe157fc04cf3907261032c2c2fb06d68ba6c6bbe15bbe2f8eb3e",
+    "actual": "0a76fcd1e604fe157fc04cf3907261032c2c2fb06d68ba6c6bbe15bbe2f8eb3e",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-v4.json",
+    "expected": "74a399537ed6e0e58982a0a74bbc95ab969e3e5fc927de91bf0dd3f28c8b2fbb",
+    "actual": "74a399537ed6e0e58982a0a74bbc95ab969e3e5fc927de91bf0dd3f28c8b2fbb",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-v5.json",
+    "expected": "39e9b99b5e6d87be32c0d9e84c83e818eae0570b1a1fefbf5a214b74ea78c243",
+    "actual": "39e9b99b5e6d87be32c0d9e84c83e818eae0570b1a1fefbf5a214b74ea78c243",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-v6.json",
+    "expected": "39507b01706ac618c4ac27cf7536e71c0f2fe3c676a5eb5bd8625cb0aa1c947b",
+    "actual": "39507b01706ac618c4ac27cf7536e71c0f2fe3c676a5eb5bd8625cb0aa1c947b",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-v7.json",
+    "expected": "bdccba723d7dfa9c6311259d9e7dfb07a0a4d6db782a6b45bf92b838935e59f0",
+    "actual": "bdccba723d7dfa9c6311259d9e7dfb07a0a4d6db782a6b45bf92b838935e59f0",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-v8.json",
+    "expected": "8bd84143c387c759b812ed377b1934904765344bca4fed82b39716f55628c1c2",
+    "actual": "8bd84143c387c759b812ed377b1934904765344bca4fed82b39716f55628c1c2",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol-v9.json",
+    "expected": "98b1d8a37ca2b5267b8a3abfcdf1074efe923b638d2aeb088514a3c760bad212",
+    "actual": "98b1d8a37ca2b5267b8a3abfcdf1074efe923b638d2aeb088514a3c760bad212",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/protocol.json",
+    "expected": "6f69674f6744698a6a586b57f4133075ae692f602f4d78398fc420d7845ab9c0",
+    "actual": "6f69674f6744698a6a586b57f4133075ae692f602f4d78398fc420d7845ab9c0",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/README.md",
+    "expected": "bddb22020d70614cad7e875c5858303ce1751bb59390a8bdae58cf80b2b0cc02",
+    "actual": "bddb22020d70614cad7e875c5858303ce1751bb59390a8bdae58cf80b2b0cc02",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-final-v1.json",
+    "expected": "7a534c007af7eda8f9ac259439034ae5038fb4d81a119fd93f9208e1cdb34989",
+    "actual": "7a534c007af7eda8f9ac259439034ae5038fb4d81a119fd93f9208e1cdb34989",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-final-v2.json",
+    "expected": "d9f79f7eb76de78404cb0d99d6a14082a9cf3d55e3daf5ec5d9da658ed631505",
+    "actual": "d9f79f7eb76de78404cb0d99d6a14082a9cf3d55e3daf5ec5d9da658ed631505",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-final-v3.json",
+    "expected": "f8a5f6fb25c5f17a5baa19a264d9b816d9de23a043aa5c1dd1b010bfd9dcc2d4",
+    "actual": "f8a5f6fb25c5f17a5baa19a264d9b816d9de23a043aa5c1dd1b010bfd9dcc2d4",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-live.mts",
+    "expected": "3066a8993969730d8ee1dbe0c17711f1c58ffaebeac5504d1c46abc9e6e0e7f1",
+    "actual": "3066a8993969730d8ee1dbe0c17711f1c58ffaebeac5504d1c46abc9e6e0e7f1",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v1.json",
+    "expected": "cec2dfe4d061a0e7fef130ccc80cb414edfe71c4d4e76c0119942438626c42ec",
+    "actual": "cec2dfe4d061a0e7fef130ccc80cb414edfe71c4d4e76c0119942438626c42ec",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v10.json",
+    "expected": "43400892638f926fe48999369ccd807ebffc8eeda5ab3a6923365ea97bc28215",
+    "actual": "43400892638f926fe48999369ccd807ebffc8eeda5ab3a6923365ea97bc28215",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v11.json",
+    "expected": "d97926c3ba53832d39f40d8905c672b35274181277b48a917dc465eaf5ea4c53",
+    "actual": "d97926c3ba53832d39f40d8905c672b35274181277b48a917dc465eaf5ea4c53",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v2.json",
+    "expected": "68fc58475c88e2e825282f66b69690b1fe1507ecb468fc7ee52984d20d33cfd6",
+    "actual": "68fc58475c88e2e825282f66b69690b1fe1507ecb468fc7ee52984d20d33cfd6",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v3-rescored-v4.json",
+    "expected": "b02c58d7761ef351ef617fbf53f1853fb06111429ad3e6541e335dc4eec2cb33",
+    "actual": "b02c58d7761ef351ef617fbf53f1853fb06111429ad3e6541e335dc4eec2cb33",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v3-rescored.json",
+    "expected": "a04ee4e8d4d1253447169ffcf9f3982b05ecd265c09188a86a935142c670d44d",
+    "actual": "a04ee4e8d4d1253447169ffcf9f3982b05ecd265c09188a86a935142c670d44d",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v3.json",
+    "expected": "f613007f89605ab2e8240b1acd5fc2cec575702fe58a4e6cfa00685894e6981b",
+    "actual": "f613007f89605ab2e8240b1acd5fc2cec575702fe58a4e6cfa00685894e6981b",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v4.json",
+    "expected": "017f38ca41dcd35b0155236042cf02f765aac72e9fcb87cc4cce22a0cc384487",
+    "actual": "017f38ca41dcd35b0155236042cf02f765aac72e9fcb87cc4cce22a0cc384487",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v5.json",
+    "expected": "c2604f96d11e1a887c4cee2e35e5449600451a2e0859f0c018f84ed57b50ecbe",
+    "actual": "c2604f96d11e1a887c4cee2e35e5449600451a2e0859f0c018f84ed57b50ecbe",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v6.json",
+    "expected": "136ace383bf3563c2d281022b65e057504b6fc8533b3e814f2c8447a2f1f1954",
+    "actual": "136ace383bf3563c2d281022b65e057504b6fc8533b3e814f2c8447a2f1f1954",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v7.json",
+    "expected": "05204fb1a54a00f52f60dbe725dad90baf3a6168de40c8b8353cadeadf4d12b6",
+    "actual": "05204fb1a54a00f52f60dbe725dad90baf3a6168de40c8b8353cadeadf4d12b6",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v8.json",
+    "expected": "0f3745698e3af2e37208b6495eb361ec1f3d74e8871f649b3f21c188f0f72a18",
+    "actual": "0f3745698e3af2e37208b6495eb361ec1f3d74e8871f649b3f21c188f0f72a18",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/run-v9.json",
+    "expected": "c17b1f5f48fdf9dae0ff716efbf12a656bd2fa3fc5999f98c39239c8fc4b1d3a",
+    "actual": "c17b1f5f48fdf9dae0ff716efbf12a656bd2fa3fc5999f98c39239c8fc4b1d3a",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/verification.json",
+    "expected": "79c7950dc028210081134f76bc4081af98b8d22a189bc7c191c27b8a0c2d9c8c",
+    "actual": "79c7950dc028210081134f76bc4081af98b8d22a189bc7c191c27b8a0c2d9c8c",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-positioning-tf0507/verify-run.mts",
+    "expected": "8e60c5c5bc1d7ff931b68dfa2a85913a7bf2e5acbc38f3f42a060ab2aef813ff",
+    "actual": "8e60c5c5bc1d7ff931b68dfa2a85913a7bf2e5acbc38f3f42a060ab2aef813ff",
+    "status": "pass"
+  }
+]
+SHA256SUMS_STATUS=pass

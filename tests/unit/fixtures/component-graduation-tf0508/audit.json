@@ -1,0 +1,262 @@
+{
+  "schemaVersion": "ComponentGraduationFinalAudit/v1",
+  "taskForestNodeId": "TF-0508",
+  "generatedAt": "2026-10-25T09:32:19.069Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "branch": "codex/component-graduation-20261021",
+  "head": "8a7f246a5f5a4ba193ee07c444c40fa254c14e8c",
+  "tree": "67d4cfee3555c9b1401d6c35a53fea93fb3a2eae",
+  "policy": "The final audit reads disk artifacts; command stdout alone is not acceptance evidence. Historical gaps are retained rather than rewritten.",
+  "coverage": {
+    "authorityComponents": 35,
+    "dispositionEntries": 54,
+    "dcsFlags": 22,
+    "runtimeLeaves": 112,
+    "routes": 21,
+    "settingsSections": 12,
+    "settingsPanels": 12
+  },
+  "checks": [
+    {
+      "id": "authority_manifest",
+      "status": "pass",
+      "issueCount": 0,
+      "issues": []
+    },
+    {
+      "id": "disposition_coverage",
+      "status": "pass",
+      "issueCount": 0,
+      "issues": []
+    },
+    {
+      "id": "duplicate_accepting_authorities",
+      "status": "pass",
+      "count": 0,
+      "entries": []
+    },
+    {
+      "id": "user_visible_shadow_surfaces",
+      "status": "pass",
+      "count": 0,
+      "entries": []
+    },
+    {
+      "id": "env_only_product_features",
+      "status": "pass",
+      "count": 0,
+      "entries": [],
+      "executorViolations": []
+    },
+    {
+      "id": "experiment_boundaries",
+      "status": "pass",
+      "count": 0,
+      "entries": []
+    },
+    {
+      "id": "evidence_paths",
+      "status": "pass",
+      "missing": []
+    },
+    {
+      "id": "model_positioning",
+      "status": "pass",
+      "rows": 24,
+      "passedRows": 24,
+      "calls": 72,
+      "passedCalls": 72,
+      "boundary": "This verifies only the frozen space-bunny run over 24 scenarios x 3 repeats. It does not generalize to other providers, models, datasets, or real-human evidence."
+    },
+    {
+      "id": "model_positioning_independent_readback",
+      "status": "pass",
+      "readback": {
+        "schemaVersion": "ModelPositioningVerification/v1",
+        "taskForestNodeId": "TF-0507",
+        "generatedAt": "2026-10-25T09:32:17.978Z",
+        "driven_by": "agent",
+        "actor": "codex",
+        "provider": "local-3065",
+        "model": "space-bunny",
+        "dataset": "TF-0507 v11 24-row production-projection capability positioning fixture",
+        "repeats": 3,
+        "scorer": {
+          "id": "tf0507-semantic-json-v11",
+          "version": "11",
+          "rule": "exact key set, semantic normalized state enums, forbiddenClaims absence"
+        },
+        "protocolPath": "tests/unit/fixtures/model-positioning-tf0507/protocol-v11.json",
+        "runPath": "tests/unit/fixtures/model-positioning-tf0507/run-v11.json",
+        "protocolSha256": "d1dee54fec975491ed8ee9ac5915fb7302d40c30fec926d496977d70039d56f2",
+        "runProtocolSha256": "d1dee54fec975491ed8ee9ac5915fb7302d40c30fec926d496977d70039d56f2",
+        "rows": 24,
+        "expectedRows": 24,
+        "totalCalls": 72,
+        "passedRows": 24,
+        "passedCalls": 72,
+        "expectedPassedRows": 24,
+        "expectedPassedCalls": 72,
+        "profileDigests": {
+          "P0": "sha256:40315194bdc73012a4f22e5c4b4c3d2c1bd44fd518f9163fda057fd0c8353325",
+          "P1": "sha256:6a6a301b348abce3b313a55290497a37690ee8a0385e853f8ea9fe2267241edd",
+          "P2": "sha256:3fad49d5ecaf7b207f9258a1e0dbb2367c04e640ac40b74918366b62f33090b4"
+        },
+        "issues": [],
+        "status": "pass",
+        "boundary": "This verifies only the frozen space-bunny run over 24 scenarios x 3 repeats. It does not generalize to other providers, models, datasets, or real-human evidence."
+      }
+    },
+    {
+      "id": "tf0512_evidence",
+      "status": "pass",
+      "report": "tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json",
+      "artifactsMatch": true,
+      "gate": {
+        "validation": {
+          "ok": true,
+          "issues": [],
+          "requiredEvidence": [
+            "real-consumer",
+            "boundary",
+            "necessity|benefit",
+            "failure-recovery",
+            "not-product-claim"
+          ],
+          "missingEvidence": [],
+          "graduationPass": true,
+          "countsAsGraduated": true,
+          "recomputedVerdict": "pass",
+          "defaultChangedAgainstAuthority": false,
+          "evidenceGradeDetected": "unit-test"
+        },
+        "defaultChange": {
+          "ok": true,
+          "defaultChanged": false,
+          "reason": "default mode is unchanged"
+        },
+        "taskForestDone": {
+          "ok": true,
+          "reason": "validated report passes"
+        },
+        "ok": true,
+        "reportPath": "D:\\ClawX-work\\component-graduation-20261021\\tests\\unit\\fixtures\\model-capability-effective-state-tf0512\\component-graduation-report.json",
+        "expected": {
+          "recomputeInputDigest": "c4ec85ff125e5aa476c16c1685862a73a4c787c43670e5a6bf24a3a04d705094"
+        },
+        "currentDefaultMode": "internal",
+        "requireGraduation": true
+      }
+    },
+    {
+      "id": "scope_component_nodes",
+      "status": "pass",
+      "open": [
+        {
+          "id": "TF-0508",
+          "status": "ready"
+        }
+      ],
+      "policy": "TF-0508 is the sole expected open node before its own proposal is applied."
+    },
+    {
+      "id": "evidence_paths_component_nodes",
+      "status": "pass",
+      "missing": [
+        {
+          "node": "TF-0502",
+          "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/09-ab-readback.txt"
+        }
+      ]
+    },
+    {
+      "id": "history_residual_tf0502_readback",
+      "status": "historical-missing",
+      "missingPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/09-ab-readback.txt",
+      "policy": "Historical missing file is recorded; do not rewrite the historical manifest."
+    },
+    {
+      "id": "scoped_landing",
+      "status": "pass",
+      "base": "b62e7f4c9",
+      "changedCount": 42,
+      "diff": [
+        "README.ja-JP.md",
+        "README.md",
+        "README.ru-RU.md",
+        "README.zh-CN.md",
+        "docs/clawx-product-semantics.md",
+        "docs/dev/component-disposition-matrix-20261021.md",
+        "docs/dev/dcs-visible-production/RETIRED-SURFACES.md",
+        "docs/dev/default-config-matrix.md",
+        "shared/capability-claims.ts",
+        "shared/component-authority-manifest.ts",
+        "shared/dcs/component-disposition-catalog.ts",
+        "shared/model-capability-profile.ts",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
+        "tests/unit/fixtures/model-positioning-tf0507/fixture-lib.mts",
+        "tests/unit/fixtures/model-positioning-tf0507/prepare-protocol.mts",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-final.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-v2.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-v3.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-final.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-live.mts",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v1.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v2.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v3-rescored-v4.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v3-rescored.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v3.json",
+        "tests/unit/fixtures/product-semantics-tf0506/01-focused-tests.txt",
+        "tests/unit/fixtures/product-semantics-tf0506/02-typecheck.txt",
+        "tests/unit/fixtures/product-semantics-tf0506/03-i18n-lint.txt",
+        "tests/unit/fixtures/product-semantics-tf0506/04-lint.txt",
+        "tests/unit/fixtures/product-semantics-tf0506/05-contract-check.txt",
+        "tests/unit/fixtures/product-semantics-tf0506/06-catalogs-check.txt",
+        "tests/unit/fixtures/product-semantics-tf0506/07-no-bom.txt",
+        "tests/unit/fixtures/product-semantics-tf0506/08-claim-scan.txt",
+        "tests/unit/fixtures/product-semantics-tf0506/09-diff-check.txt",
+        "tests/unit/fixtures/product-semantics-tf0506/README.md",
+        "tests/unit/fixtures/product-semantics-tf0506/SHA256SUMS",
+        "tests/unit/fixtures/product-semantics-tf0506/run-verification.ps1",
+        "tests/unit/fixtures/product-semantics-tf0506/sha256sums-check.txt",
+        "tests/unit/fixtures/product-semantics-tf0506/verification.json"
+      ],
+      "reviewedOutsideScope": [
+        "M artifacts/first-product-preview/FP-P1-08/forbidden-claims-scan.json",
+        " M tests/unit/fixtures/surface-cleanup-tf0505/acceptance.json",
+        " M tests/unit/fixtures/surface-cleanup-tf0505/component-graduation-report.json",
+        " M tests/unit/fixtures/surface-cleanup-tf0505/generate-acceptance.ps1",
+        " M tests/unit/fixtures/surface-cleanup-tf0505/surface-inventory.json"
+      ],
+      "unreviewedOutsideScope": []
+    },
+    {
+      "id": "scoped_landing_inputs",
+      "status": "pass",
+      "scopedChangedCount": 66,
+      "nonScopedChangedCount": 5
+    }
+  ],
+  "successMetrics": {
+    "unclassified_user_visible_components": 0,
+    "components_without_implementation_or_retirement_path": 0,
+    "duplicate_accepting_authorities_per_data_scope_operation": 0,
+    "user_visible_shadow_surfaces": 0,
+    "env_only_product_features": 0,
+    "shipped_user_surface_overclaims": 0,
+    "model_positioning": "pass",
+    "scoped_landing_check": "pass",
+    "task_forest_health": "fail"
+  },
+  "boundaries": [
+    "Model positioning is limited to the frozen TF-0507 space-bunny run and does not generalize to other providers or models.",
+    "Full-repository check-landing is historical residual context; unrelated unmerged branches are not this change set landing failure.",
+    "No real-human evidence, public release, GA, liveReady, productApproved, or product-lock change is claimed."
+  ],
+  "failedChecks": [],
+  "status": "pass"
+}
