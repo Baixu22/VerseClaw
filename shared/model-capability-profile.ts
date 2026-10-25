@@ -251,6 +251,7 @@ export const MODEL_CAPABILITY_USER_DISPLAY_NAMES: Readonly<Record<string, string
   'component.browser-session-owner': 'Browser sessions',
   'component.renderer-ui-surface': 'Application shell and Settings',
   'feature.coding-recovery': 'Coding recovery and verification',
+  'feature.stale-write-guard': 'Stale-write protection',
   'feature.worktree-isolation': 'Worktree isolation',
   'surface.inbox': 'Inbox',
   'surface.cron': 'Scheduled tasks and auto-approval',
@@ -651,19 +652,38 @@ export function computeModelCapabilityEffectiveDigest(
     facts: resolvedEffectiveFacts(staticManifest, input).map(digestEffectiveFact),
   });
 }
+/**
+ * Capability self-description must expose the axes a model needs for truthful
+ * answers: runtime state, driver, effective grants, memory read/write/candidates,
+ * and applied-knowledge state. `enabled`/`ready`/`clear`/`applied` are facts, not
+ * reasons to omit the axis.
+ */
 function runtimeRestrictionLabel(fact: ModelCapabilityEffectiveFactInput): string | null {
-  const restriction = fact.runtimeAvailability.state === 'disabled'
-    || fact.runtimeAvailability.state === 'partial'
-    || fact.runtimeAvailability.state === 'degraded'
-    || fact.runtimeAvailability.state === 'quarantined'
-    ? fact.runtimeAvailability.state
-    : null;
-  const authorization = fact.actionAuthorization.some((action) => action.authorization === 'requires-approval')
-    ? 'requires-approval'
-    : fact.actionAuthorization.some((action) => action.authorization === 'denied')
-      ? 'denied-action'
-      : null;
-  return [restriction, authorization].filter(Boolean).join('+') || null;
+  const parts: string[] = [];
+  if (fact.runtimeAvailability.state !== 'enabled') parts.push(`runtime:${fact.runtimeAvailability.state}`);
+  if (fact.driver.state !== 'ready' && fact.driver.state !== 'unknown') parts.push(`driver:${fact.driver.state}`);
+  for (const action of fact.actionAuthorization) {
+    const grantState = action.grant?.state;
+    if (grantState === 'revoked' || grantState === 'expired' || grantState === 'denied') {
+      parts.push(`${action.actionId}:${grantState}`);
+    } else if (action.authorization !== 'allowed') {
+      parts.push(`${action.actionId}:${action.authorization}`);
+    }
+  }
+  if (fact.memory.read !== 'not-applicable' && fact.memory.read !== 'unknown') {
+    parts.push(`memory-read:${fact.memory.read}`);
+  }
+  if (fact.memory.write !== 'not-applicable' && fact.memory.write !== 'unknown') {
+    parts.push(`memory-write:${fact.memory.write}`);
+  }
+  if (fact.memory.candidate !== 'not-applicable' && fact.memory.candidate !== 'unknown') {
+    parts.push(`memory-candidates:${fact.memory.candidate}`);
+  }
+  if (fact.knowledge.appliedState !== 'not-applied' && fact.knowledge.appliedState !== 'unknown') {
+    parts.push(`knowledge:${fact.knowledge.appliedState}`);
+  }
+  if (fact.quarantine.state === 'quarantined') parts.push('quarantined');
+  return parts.join('+') || null;
 }
 
 function buildPromptAddition(
@@ -692,7 +712,8 @@ function buildPromptAddition(
     const lines = ['Capability positioning (authoritative):'];
     if (defaultNames.length > 0) lines.push(`Default: ${defaultNames.join(', ')}.`);
     if (advancedNames.length > 0) lines.push(`Advanced: ${advancedNames.join(', ')}.`);
-    if (restrictions.length > 0) lines.push(`Current restrictions: ${restrictions.join('; ')}.`);
+    if (restrictions.length > 0) lines.push(`Current facts: ${restrictions.join('; ')}.`);
+    lines.push('Current facts add restrictions; unless runtime:<state> or driver:<state> says otherwise, runtime=enabled and driver=ready. Absent entries have no additional restriction.');
     if (unknownCount > 0) {
       lines.push(unknownCount === included.length
         ? 'Runtime state is not yet verified for all listed capabilities; do not present them as currently active.'

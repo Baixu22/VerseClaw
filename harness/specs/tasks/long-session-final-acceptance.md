@@ -23,6 +23,7 @@ touchedAreas:
   - shared/capability-claims.ts
   - scripts/long-session-final-acceptance-evidence.mjs
   - package.json
+  - tsconfig.test.json
   - artifacts/**
   - docs/**
   - electron/**

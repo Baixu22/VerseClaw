@@ -2,7 +2,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { COMPONENT_AUTHORITY_MANIFEST } from '../../shared/component-authority-manifest';
 import {
   COMPONENT_DISPOSITION_ENTRIES,
   COMPONENT_DISPOSITION_MANIFEST,
@@ -244,6 +243,10 @@ describe('ModelCapabilityProfile/v1', () => {
     expect(prompt.text).toContain('Advanced:');
     expect(prompt.text).toContain('requires-approval');
     expect(prompt.text).toContain('quarantined');
+    expect(prompt.text).toContain('memory-read:allowed');
+    expect(prompt.text).toContain('memory-write:denied');
+    expect(prompt.text).toContain('memory-candidates:available');
+    expect(prompt.text).toContain('knowledge:applied');
         // TF-0504: the internal execution/evidence substrate must not be self-described
     // as a user-visible capability either.
     expect(prompt.text).not.toMatch(/\b(?:DCS|VToken|C6|RC-03|V3|VerseShell|Observability recorder|event[- ]log)\b/u);

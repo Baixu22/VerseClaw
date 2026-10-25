@@ -150,11 +150,13 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     coverage: { authorityComponentIds: ['tool-registry-context-source'], dcsFlagIds: ['tool-registry'], runtimeLeafPatterns: ['contextBlock.tool-registry.*'] },
   }),
   entry({
-    id: 'component.vtoken-context', label: 'VToken context source', disposition: 'experiment', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'opt-in', targetDefaultMode: 'internal',
-    ...internal('VToken remains an internal Context Orchestrator packing strategy; it has no user bridge toggle or product control.'),
-    currentConsumers: ['Context Orchestrator', 'VToken assembly'], evidenceRefs: CONTEXT_EVIDENCE,
+    id: 'component.vtoken-context', label: 'VToken context source', disposition: 'retired', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'retired', targetDefaultMode: 'retired',
+    ...retired('Retired by TF-0496 after paired provider usage showed only a 4.35% input-token reduction, below the predeclared 10% materiality bar. The production request is inert; code and the rollback record remain for inspection.'),
+    currentConsumers: ['retired VToken migration/rollback record'], evidenceRefs: [...CONTEXT_EVIDENCE, 'docs/dev/vtoken-retirement-decision.md'],
     coverage: { authorityComponentIds: ['vtoken-context-source'], runtimeLeafPatterns: ['vtoken.assembly.*'] },
-    experimentOwner: 'TF-0496', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Keep only if VToken graduation succeeds; otherwise retire the internal context source by TF-0496.',
+    implementationState: 'retired',
+    verificationArtifact: ['tests/unit/fixtures/vtoken-tf0496/ab-run.json', 'tests/unit/fixtures/vtoken-tf0496/verification.json', 'docs/dev/vtoken-retirement-decision.md'],
+    remainingGap: [],
   }),
   entry({
     id: 'component.vtoken-bridge', label: 'VToken internal host bridge', disposition: 'internal', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'opt-in', targetDefaultMode: 'internal',
@@ -184,9 +186,9 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     coverage: { authorityComponentIds: ['dcs-fact-view-and-tools'], dcsFlagIds: ['context-view-tools', 'context-tools-alias'], runtimeLeafPatterns: ['contextBlock.context-write.*', 'contextBlock.context-understand.*'] },
   }),  entry({
     id: 'component.role-memory', label: 'Role-memory card governance', disposition: 'default', owner: 'role-memory-card-governance', implementationNodeId: 'TF-0498', currentMode: 'opt-in', targetDefaultMode: 'baseline',
-    ...user('/agents memory cards'),
-    currentConsumers: ['Agents page', 'role-memory SQLite', 'Memory review'], evidenceRefs: MEMORY_EVIDENCE,
-    coverage: { authorityComponentIds: ['role-memory-card-governance'], dcsFlagIds: ['role-memory'], runtimeLeafPatterns: ['contextBlock.role-memory.*'], settingsSectionIds: ['agents'], routePaths: ['/agents'] },
+    ...user('/memory accepted and candidate review'),
+    currentConsumers: ['Memory page', 'role-memory SQLite', 'model accepted-only context'], evidenceRefs: MEMORY_EVIDENCE,
+    coverage: { authorityComponentIds: ['role-memory-card-governance'], dcsFlagIds: ['role-memory'], runtimeLeafPatterns: ['contextBlock.role-memory.*'], settingsSectionIds: ['agents'], routePaths: ['/memory', '/agents'] },
   }),
   entry({
     id: 'component.native-file-memory-retrieval', label: 'Native file memory retrieval', disposition: 'internal', owner: 'native-file-memory-retrieval', implementationNodeId: 'TF-0497', currentMode: 'baseline', targetDefaultMode: 'read-only',
@@ -198,7 +200,7 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     id: 'component.runtime-memory-store', label: 'Runtime Memory store', disposition: 'internal', owner: 'runtime-memory-store', implementationNodeId: 'TF-0497', currentMode: 'opt-in', targetDefaultMode: 'internal',
     ...internal('Durable Runtime Memory domain consumed through the unified Memory control plane, not as a second user surface.'),
     currentConsumers: ['runtime facts/timeline/episodes', 'Memory diagnostics', 'context candidate source'], evidenceRefs: MEMORY_EVIDENCE,
-    coverage: { authorityComponentIds: ['runtime-memory-store'], dcsFlagIds: ['runtime-memory-persist', 'runtime-memory-inject-pilot'], runtimeLeafPatterns: ['memory.shadow', 'memory.provider', 'memory.proposeFacts', 'memory.persist', 'memory.injectPilot.*'], routePaths: ['/memory'] },
+    coverage: { authorityComponentIds: ['runtime-memory-store'], dcsFlagIds: ['runtime-memory-persist', 'runtime-memory-inject-pilot'], runtimeLeafPatterns: ['memory.shadow', 'memory.provider', 'memory.proposeFacts', 'memory.persist', 'memory.injectPilot.*'] },
   }),
   entry({
     id: 'component.memory-candidate-queue', label: 'Memory candidate queue', disposition: 'internal', owner: 'memory-candidate-queue', implementationNodeId: 'TF-0497', currentMode: 'opt-in', targetDefaultMode: 'internal',
@@ -328,10 +330,19 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
   entry({
     id: 'feature.coding-recovery', label: 'Coding write/recovery controls', disposition: 'default', owner: 'coding-execution-backend', implementationNodeId: 'TF-0510', currentMode: 'mixed', targetDefaultMode: 'baseline',
     ...user('model coding writes and auto verification'),
-    currentConsumers: ['stale-write-guard', 'write journal/WAL', 'coding auto verify'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
-    coverage: { dcsFlagIds: ['stale-write-guard', 'write-journal'], runtimeLeafPatterns: ['coding.parseOnTouch.*', 'coding.staleWriteGuard.*', 'coding.writeJournal.*', 'coding.autoVerify.*', 'coding.verifier.*'] },
+    currentConsumers: ['write journal/WAL', 'coding auto verify', 'parse-on-touch'],
+    evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
+    coverage: { dcsFlagIds: ['write-journal'], runtimeLeafPatterns: ['coding.parseOnTouch.*', 'coding.writeJournal.*', 'coding.autoVerify.*', 'coding.verifier.*'] },
   }),
   entry({
+    id: 'feature.stale-write-guard', label: 'Stale-write guard', disposition: 'advanced', owner: 'coding-execution-backend', implementationNodeId: 'TF-0510', currentMode: 'opt-in', targetDefaultMode: 'opt-in',
+    ...user('advanced stale-file write protection'),
+    currentConsumers: ['model coding writes', 'write journal/WAL'],
+    evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
+    coverage: { dcsFlagIds: ['stale-write-guard'], runtimeLeafPatterns: ['coding.staleWriteGuard.*'] },
+    defaultOffAllowed: true,
+    defaultOffReason: 'TF-0510 retained opt-in: false-block risk remains material and no coding-benefit gate justified a product default flip.',
+  }),  entry({
     id: 'feature.symbol-lease', label: 'Symbol lease', disposition: 'retired', owner: 'TF-0510', implementationNodeId: 'TF-0510', currentMode: 'retired', targetDefaultMode: 'retired',
     ...retired('Retired by TF-0510: isolated git worktrees plus the merge queue are the supported answer to concurrent writers. A measured 4-process benchmark showed the lease serialises correctly but denies 75% of attempts (12 wins / 36 denials), so it throttles throughput without adding safety over worktree isolation. Code is retained and unreachable; no user data is migrated.'),
     currentConsumers: ['retired symbol-lease guard', 'retired multi-writer coding guard'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],

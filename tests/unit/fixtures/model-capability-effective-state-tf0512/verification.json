@@ -1,11 +1,11 @@
 {
     "schemaVersion":  "ModelCapabilityEffectiveStateVerification/v1",
     "taskForestNodeId":  "TF-0512",
-    "generatedAt":  "2026-10-24T10:41:52.2485620Z",
+    "generatedAt":  "2026-10-25T08:11:21.8891937Z",
     "driven_by":  "agent",
     "actor":  "codex",
-    "status":  "pass",
-    "completionVerdict":  "complete",
+    "status":  "fail",
+    "completionVerdict":  "blocked",
     "gates":  [
                   {
                       "id":  "01-focused-and-adjacent-tests",
@@ -13,7 +13,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/01-focused-and-adjacent-tests.txt",
-                      "outputSha256":  "e9090af44b9f74a89c4cddfc27a747d2a4422ff6b9a0748e737100d2429093fb"
+                      "outputSha256":  "eeb12539f6864de6b2bcaaa94866424216abee839f4c8e545fc062cbb564262a"
                   },
                   {
                       "id":  "02-typecheck",
@@ -21,7 +21,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/02-typecheck.txt",
-                      "outputSha256":  "c4f93d643e4524bcc333526c02f8b81c202ae4255ff7cddfdc84a39f799f64e9"
+                      "outputSha256":  "69090eabc3d25b9d185d81a202904001b3f952539c552793ecc32588a8408454"
                   },
                   {
                       "id":  "03-lint-check",
@@ -29,7 +29,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/03-lint-check.txt",
-                      "outputSha256":  "ea4407328b2988741a768c099b962358993d416dd1a1e99a8d074bfb2b285a81"
+                      "outputSha256":  "2797efe67176ab2a4fa91ab15237229e4402d092d542904192a36dce37b19b0b"
                   },
                   {
                       "id":  "04-contract-check",
@@ -58,10 +58,10 @@
                   {
                       "id":  "07-scope-guard",
                       "command":  "TF-0512 scope guard",
-                      "exitCode":  0,
-                      "status":  "pass",
+                      "exitCode":  1,
+                      "status":  "fail",
                       "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/07-scope-guard.txt",
-                      "outputSha256":  "4440ec5ccb414042b014d126bcf22d83a626c3b91ffae8230a0b18dcba77fb83"
+                      "outputSha256":  "f9a891ca11d72eabbba6705db5c47848ef6ec7803415cdadbd5472854e38544c"
                   },
                   {
                       "id":  "08-regenerate-acceptance",
@@ -69,7 +69,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/model-capability-effective-state-tf0512/08-regenerate-acceptance.txt",
-                      "outputSha256":  "f8fc88cb30dc8aa53b81a028919422ee8615951e1d420773c59782a875fe40fd"
+                      "outputSha256":  "215ea07401b4008fd509e267e36b8e7549cd470ae7cdaa83821e5bc477526669"
                   }
               ]
 }

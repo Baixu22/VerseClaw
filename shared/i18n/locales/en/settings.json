@@ -653,7 +653,7 @@
         "detailDisabled": "These tools stay out of the default tool list until enabled: {{tools}}.",
         "detailEnabled": "View tools are on for this install. They still require a coding workspace with FactService."
       },
-      "layerRole": "DCS — developer diagnostics — advanced BlockStore controls. Workspace Context (recent actions + tool catalog) is the normal user profile in Settings > General; low-level flags and experiment gates remain diagnostics.",
+      "layerRole": "DCS — developer diagnostics — advanced BlockStore controls. Workspace Context (recent actions + tool catalog) is the normal baseline user profile in Settings > General; low-level flags and experiment gates remain diagnostics.",
       "taskLoopNote": "Task state / phase / SEKB trajectory features require a TaskLoop (multi-step task) path — not single-turn chat alone. See docs/dev/dcs-visible-production/TASKLOOP-ACCEPTANCE.md.",
       "observability": {
         "title": "DCS observability (product keys)",
@@ -672,7 +672,7 @@
     "contextLayers": {
       "title": "How context layers differ (do not confuse)",
       "cvkTitle": "Context Runtime Kit (CVK) — navigation shell",
-      "cvkBody": "Default context engine shell: injects routing / tool-navigation metadata into the system prompt. It does **not** mean working memory or long-term knowledge is on. Turning DCS or VToken off does not remove this shell unless you change the context-engine slot.",
+      "cvkBody": "Default context engine shell: injects routing / tool-navigation metadata into the system prompt. It does **not** mean working memory or long-term knowledge is on. VToken is retired; turning DCS or other diagnostic switches off does not remove this shell unless you change the context-engine slot.",
       "dcsTitle": "DCS — working memory & context blocks",
       "dcsBody": "Opt-in BlockStore spine: working-memory injection, tool_registry summary, knowledge blocks, and context_* tools. Defaults stay fail-closed until you enable flags here. This is real memory/content plumbing — not the CVK navigation shell."
     },

@@ -404,12 +404,12 @@ export type DcsProdFlagAckRequeryResult = {
  * One product switch that composes exactly these writable flags:
  *  - context-view-tools: context read/search/view tools
  *  - working-memory + tool-registry: the two coding context blocks
- *  - stale-write-guard: write-side safety for the controlled-write loop
  *
  * Deliberately NOT in the combo (hard lock: no exclusion smuggling):
  *  - routing-memo-shadow / sekb-experience-shadow (shadow-only diagnostics)
  *  - symbol-lease (multi-writer concurrency, not needed for the single-user
  *    first product)
+ *  - stale-write-guard: retained opt-in advanced guard; no product-default proof exists.
  *  - VToken / RM inject / SEKB writeback / Browser (not writable flags here at
  *    all — excluded components stay excluded)
  * write-journal / undo are baseline-on and not part of any switch.
@@ -418,7 +418,6 @@ export const DCS_PREVIEW_COMBO_FLAG_IDS = [
   'context-view-tools',
   'working-memory',
   'tool-registry',
-  'stale-write-guard',
 ] as const satisfies readonly DcsWritableFlagId[];
 
 export type DcsPreviewPrereq = 'providerVerified' | 'workspaceSelected' | 'permissionChosen';

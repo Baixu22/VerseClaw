@@ -1,0 +1,12 @@
+{
+  "branch": "codex/component-graduation-20261021",
+  "head": "5e88ffa074bf5b8283cfcebe8fa66d5703455a42",
+  "tree": "0545612be8ce8ee11cef3f88e6b15cb0e319c1e6",
+  "openScopeNodes": [],
+  "missingEvidence": [
+    {
+      "node": "TF-0502",
+      "path": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/09-ab-readback.txt"
+    }
+  ]
+}

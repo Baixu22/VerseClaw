@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "ModelPositioningNegativeChecks/v1",
+  "taskForestNodeId": "TF-0507",
+  "generatedAt": "2026-10-25T09:24:13.889Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "cases": [
+    {
+      "axis": "cross-scope",
+      "status": "pass",
+      "baselineDigest": "sha256:6a6a301b348abce3b313a55290497a37690ee8a0385e853f8ea9fe2267241edd",
+      "observedDigest": "sha256:a83abbd2afc1410244a5abbb327832b08a105f0638d822bf7f78545b77f13eae",
+      "baselineScope": {
+        "workspaceId": "workspace:tf0507-p1",
+        "roleId": "role:advanced",
+        "sessionKey": "session:tf0507-p1"
+      },
+      "observedScope": {
+        "workspaceId": "workspace:tf0507-p1",
+        "roleId": "role:advanced",
+        "sessionKey": "session:tf0507-p1:other"
+      },
+      "assertion": "different session scope changes the effective digest and cannot inherit the P1 scope unchanged"
+    },
+    {
+      "axis": "unapplied-knowledge",
+      "status": "pass",
+      "observedKnowledgeState": "stale",
+      "promptContainsStale": true,
+      "assertion": "stale knowledge stays unusable and the model-facing profile does not relabel it as applied"
+    },
+    {
+      "axis": "restart-degradation",
+      "status": "pass",
+      "baselineDigest": "sha256:3fad49d5ecaf7b207f9258a1e0dbb2367c04e640ac40b74918366b62f33090b4",
+      "observedDigest": "sha256:4b3d0eaaad57824567c26cdf22d56904f20dd18257e824e6ae222ff7972a68b7",
+      "observedAck": "unknown",
+      "assertion": "a new generation without a matching ack degrades to unknown and refreshes the effective digest"
+    },
+    {
+      "axis": "revoked-grant",
+      "status": "pass",
+      "probe": {
+        "outcome": "denied",
+        "reason": "owner-denied",
+        "bindingFound": true,
+        "profileConsistent": true,
+        "sideEffects": []
+      },
+      "assertion": "revoked browser navigate is actually denied at the permission-effect checkpoint and matches the profile"
+    }
+  ],
+  "boundary": "These are deterministic fixture checks for cross-axis facts. They are not model outputs and are not real-human evidence."
+}

@@ -40,13 +40,21 @@ export type LaunchContractCase = {
 
 export const LAUNCH_CONTRACT_MATRIX: readonly LaunchContractCase[] = [
   {
+    id: 'dcs-fact-view-tools-auto-default',
+    mdRows: ['DCS Fact view tools'],
+    operatorEnv: {},
+    expectChildEnv: { present: false },
+    expectResolved: { vtokenAssemblyEnabled: false, killSwitchEngaged: false },
+    rationale: 'Healthy Fact view discovery is the baseline product path; the legacy env switch is a rollback override.',
+  },
+  {
     id: 'default-no-optin',
     mdRows: ['VToken assembly'],
     operatorEnv: {},
     expectChildEnv: { present: false },
     expectResolved: { vtokenAssemblyEnabled: false, killSwitchEngaged: false },
     rationale:
-      'Clean install: launch layer injects nothing, resolver reads unset as the documented "false (opt-in)" default.',
+      'Clean install: launch layer injects nothing; the retired resolver remains off.',
   },
   {
     id: 'env-optin-canary',
@@ -54,7 +62,7 @@ export const LAUNCH_CONTRACT_MATRIX: readonly LaunchContractCase[] = [
     operatorEnv: { [VTOKEN_ASSEMBLY_ENV]: '1' },
     expectChildEnv: { present: true, value: '1' },
     expectResolved: { vtokenAssemblyEnabled: false, killSwitchEngaged: false },
-    rationale: 'VToken assembly is retired as a product path; the launch env is preserved as an explicit no-op compatibility input.',
+    rationale: 'Legacy environment values are retained but cannot re-enable the retired assembly.',
   },
   {
     id: 'config-optin',
@@ -63,7 +71,8 @@ export const LAUNCH_CONTRACT_MATRIX: readonly LaunchContractCase[] = [
     config: { runtime: { vtoken: { assembly: { enabled: true } } } },
     expectChildEnv: { present: false },
     expectResolved: { vtokenAssemblyEnabled: false, killSwitchEngaged: false },
-    rationale: 'VToken assembly is retired as a product path; legacy config remains inert and cannot re-enable the retired turn hook.',
+    rationale:
+      'Legacy config cannot re-enable the retired VToken assembly.',
   },
   {
     id: 'env-kill-beats-config-optin',
@@ -72,7 +81,7 @@ export const LAUNCH_CONTRACT_MATRIX: readonly LaunchContractCase[] = [
     config: { runtime: { vtoken: { assembly: { enabled: true } } } },
     expectChildEnv: { present: true, value: '0' },
     expectResolved: { vtokenAssemblyEnabled: false, killSwitchEngaged: false },
-    rationale: 'md "Instant kill" column: env=0 outranks every enable source.',
+    rationale: 'The retired resolver stays off even with a stale explicit config.',
   },
   {
     id: 'enhancement-kill-beats-config-optin',
@@ -81,7 +90,7 @@ export const LAUNCH_CONTRACT_MATRIX: readonly LaunchContractCase[] = [
     config: { runtime: { vtoken: { assembly: { enabled: true } } } },
     expectChildEnv: { present: false },
     expectResolved: { vtokenAssemblyEnabled: false, killSwitchEngaged: true },
-    rationale: 'The master enhancement kill switch also cuts VToken.',
+    rationale: 'The master enhancement kill switch and retirement both keep VToken off.',
   },
   {
     id: 'config-kill-switch-beats-config-optin',
@@ -105,7 +114,7 @@ export const LAUNCH_CONTRACT_MATRIX: readonly LaunchContractCase[] = [
     config: { runtime: { vtoken: { assembly: { enabled: true } } } },
     expectChildEnv: { present: true, value: '0' },
     expectResolved: { vtokenAssemblyEnabled: false, killSwitchEngaged: true },
-    rationale: 'Both kills at once must not double-negate into an enable.',
+    rationale: 'Both retirement and kill switch keep the path off.',
   },
   {
     id: 'settings-on-plus-env-kill',
@@ -116,7 +125,7 @@ export const LAUNCH_CONTRACT_MATRIX: readonly LaunchContractCase[] = [
     expectChildEnv: { present: true, value: '0' },
     expectResolved: { vtokenAssemblyEnabled: false, killSwitchEngaged: false },
     rationale:
-      'Operator turned it on at the highest layer available today (config, since no Settings switch exists yet) while the env kill is set: kill still wins.',
+      'A stale config and Settings intent cannot bypass retirement or the env kill.',
   },
   {
     id: 'config-unparseable-fail-closed',
@@ -127,12 +136,13 @@ export const LAUNCH_CONTRACT_MATRIX: readonly LaunchContractCase[] = [
     expectChildEnv: { present: false },
     expectResolved: { vtokenAssemblyEnabled: false, killSwitchEngaged: true },
     rationale:
-      'Unreadable config must fail closed (enhancements cut), never silently resolve to "no kill".',
+      'Unreadable config must fail closed; retirement remains independent and off.',
   },
 ] as const;
 
 /** md matrix rows whose launch-layer cross-product this fixture covers in depth. */
 export const MD_ROWS_COVERED_BY_LAUNCH_MATRIX = [
+  'DCS Fact view tools',
   'VToken assembly',
   'Context enhancement kill switch',
 ] as const;
@@ -155,22 +165,28 @@ export type MdMatrixRow = {
    */
   mdDefaultCell: string;
   /** The product default the md declares, normalized. */
-  declaredDefault: 'true' | 'false' | 'off' | 'deny' | 'auto';
+  declaredDefault: 'true' | 'false' | 'off' | 'deny' | 'auto' | 'retired';
   /** Which assertion group in the test owns this row. */
   assertedBy: string;
 };
 
 export const MD_MATRIX_ROWS: readonly MdMatrixRow[] = [
   {
+    mdLabel: 'DCS Fact view tools',
+    mdDefaultCell: '**auto** (healthy prerequisites; env override off)',
+    declaredDefault: 'auto',
+    assertedBy: 'dcs-context-view-tools-default',
+  },
+  {
     mdLabel: 'VToken assembly',
-    mdDefaultCell: '**false** (opt-in)',
-    declaredDefault: 'false',
+    mdDefaultCell: '**retired** (always off)',
+    declaredDefault: 'retired',
     assertedBy: 'vtoken-assembly-default',
   },
   {
     mdLabel: 'VToken bridge',
-    mdDefaultCell: '**false**',
-    declaredDefault: 'false',
+    mdDefaultCell: '**retired** (always off)',
+    declaredDefault: 'retired',
     assertedBy: 'vtoken-bridge-default',
   },
   {
@@ -191,7 +207,6 @@ export const MD_MATRIX_ROWS: readonly MdMatrixRow[] = [
     declaredDefault: 'true',
     assertedBy: 'context-block-defaults',
   },
-
   {
     mdLabel: 'Runtime Memory inject pilot',
     mdDefaultCell: '**false**',

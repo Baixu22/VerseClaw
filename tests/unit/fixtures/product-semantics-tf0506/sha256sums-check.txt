@@ -1,0 +1,75 @@
+[
+    {
+        "file":  "tests/unit/fixtures/product-semantics-tf0506/01-focused-tests.txt",
+        "expected":  "630f92ff976003adf01819839a8ba32e1ba6f222d260239fb984c31fc2c2168c",
+        "actual":  "630f92ff976003adf01819839a8ba32e1ba6f222d260239fb984c31fc2c2168c",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/product-semantics-tf0506/02-typecheck.txt",
+        "expected":  "9c191e91c9afe0e2cdeb0a2606cccc2a4f0809378a98f07f8845aab1304a7edc",
+        "actual":  "9c191e91c9afe0e2cdeb0a2606cccc2a4f0809378a98f07f8845aab1304a7edc",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/product-semantics-tf0506/03-i18n-lint.txt",
+        "expected":  "fd37ed898fb9c35729068ed5c1bde3d66dc6b64df201934b2663f08205dfde40",
+        "actual":  "fd37ed898fb9c35729068ed5c1bde3d66dc6b64df201934b2663f08205dfde40",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/product-semantics-tf0506/04-lint.txt",
+        "expected":  "6d8eceb29dfb36a8917e8e73c7665783b4f9d2f805b166950cbfd335a746db14",
+        "actual":  "6d8eceb29dfb36a8917e8e73c7665783b4f9d2f805b166950cbfd335a746db14",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/product-semantics-tf0506/05-contract-check.txt",
+        "expected":  "98bb63d27d375d3c1fd225fa1c4a98a7c67c15ae4ba3e790054dace25845d9eb",
+        "actual":  "98bb63d27d375d3c1fd225fa1c4a98a7c67c15ae4ba3e790054dace25845d9eb",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/product-semantics-tf0506/06-catalogs-check.txt",
+        "expected":  "d68678e1c55a7d56c434765345484bb4ae5d1b4e8e023e4de40d80987d4fabe2",
+        "actual":  "d68678e1c55a7d56c434765345484bb4ae5d1b4e8e023e4de40d80987d4fabe2",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/product-semantics-tf0506/07-no-bom.txt",
+        "expected":  "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa",
+        "actual":  "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/product-semantics-tf0506/08-claim-scan.txt",
+        "expected":  "0749b6c5fc119f26a8d9ea2fab18f978e99d504a3e1d5718b18f4fdb997ccd0e",
+        "actual":  "0749b6c5fc119f26a8d9ea2fab18f978e99d504a3e1d5718b18f4fdb997ccd0e",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/product-semantics-tf0506/09-diff-check.txt",
+        "expected":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "actual":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/product-semantics-tf0506/README.md",
+        "expected":  "d2a17cc787ec6a836c6d2c131fc333a0c855c242fbfc770a6ec101ad7c678d03",
+        "actual":  "d2a17cc787ec6a836c6d2c131fc333a0c855c242fbfc770a6ec101ad7c678d03",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/product-semantics-tf0506/run-verification.ps1",
+        "expected":  "91273561e732b0ac0d31ea69b4a7edb2448829ea677d4d3e63ec1a4810879a42",
+        "actual":  "91273561e732b0ac0d31ea69b4a7edb2448829ea677d4d3e63ec1a4810879a42",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/product-semantics-tf0506/verification.json",
+        "expected":  "35a3a91b116dc4b7deb4ad44f9a7fc4d93926be2617be5c1e10bc40d1b266f31",
+        "actual":  "35a3a91b116dc4b7deb4ad44f9a7fc4d93926be2617be5c1e10bc40d1b266f31",
+        "status":  "pass"
+    }
+]
+SHA256SUMS_STATUS=pass

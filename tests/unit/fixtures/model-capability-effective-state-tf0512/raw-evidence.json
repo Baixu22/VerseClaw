@@ -79,8 +79,8 @@
         "reason": null,
         "since": null
       },
-      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
-      "effectiveDigest": "sha256:c3dc8964624f96c1d210beb972556cbf49f64c5b72a76a4c391d6a2a8a88acb0"
+      "staticDigest": "sha256:4fe0f541155a5a4e52b12557ef4b048826be25808192a38bf3800030d17a16f2",
+      "effectiveDigest": "sha256:5cdb776b99fe9708a59cba50e43378302ab7a09e6807b7c6e5165f12cefb34aa"
     },
     "loading": {
       "source": "runtime",
@@ -149,8 +149,8 @@
         "reason": null,
         "since": null
       },
-      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
-      "effectiveDigest": "sha256:1b212fd2d77f70304cb5e415a7a1c4d631aa6f1fd77da719c1768206ce443d4d"
+      "staticDigest": "sha256:4fe0f541155a5a4e52b12557ef4b048826be25808192a38bf3800030d17a16f2",
+      "effectiveDigest": "sha256:ce517308941f9de06e96fcad08875d9bead1a925b8298050ca7438248c4258e7"
     },
     "unavailable": {
       "source": "runtime",
@@ -219,8 +219,8 @@
         "reason": null,
         "since": null
       },
-      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
-      "effectiveDigest": "sha256:7e0274e8113aa93ae6f7a30da9973d3143278fd6d1e1edcd81d8c81dbd656f01"
+      "staticDigest": "sha256:4fe0f541155a5a4e52b12557ef4b048826be25808192a38bf3800030d17a16f2",
+      "effectiveDigest": "sha256:5b4e59b7c4b0c6a5d88ebe1bf82c9724ae7146b9f9250be4a6a7db4910e5c5d3"
     },
     "degraded": {
       "source": "runtime",
@@ -289,8 +289,8 @@
         "reason": null,
         "since": null
       },
-      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
-      "effectiveDigest": "sha256:b0213b0d591cba3dee02005efdd6b372c641bfcc39dcbe14a0ab601cd288a540"
+      "staticDigest": "sha256:4fe0f541155a5a4e52b12557ef4b048826be25808192a38bf3800030d17a16f2",
+      "effectiveDigest": "sha256:b1bd5b1fc150381dd5ea288c802513f19a25ab2f9e2e5f64678bcf2ec1664da1"
     },
     "quarantined": {
       "source": "runtime",
@@ -359,8 +359,8 @@
         "reason": "tool schema rejected",
         "since": "2026-10-24T07:59:00.000Z"
       },
-      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
-      "effectiveDigest": "sha256:483c9d38e9cbe0fa308e9c61186e8fe1f9063eb0e044ab4cf2d093020a38640a"
+      "staticDigest": "sha256:4fe0f541155a5a4e52b12557ef4b048826be25808192a38bf3800030d17a16f2",
+      "effectiveDigest": "sha256:a99f8f48933dcf8717e7c0775a1270e61d02b25c8db29f367074252893de588d"
     },
     "expiredGrant": {
       "source": "runtime",
@@ -433,8 +433,8 @@
         "reason": null,
         "since": null
       },
-      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
-      "effectiveDigest": "sha256:1973bdcf4a3588902f1f0689d647f7536805ef5569fd2310b259dd880a3ae17e"
+      "staticDigest": "sha256:4fe0f541155a5a4e52b12557ef4b048826be25808192a38bf3800030d17a16f2",
+      "effectiveDigest": "sha256:9f7d5b9f6b425a52952cfb20cbdab7af81dd7f1c6c6507751bece3027d9bde37"
     },
     "revokedGrant": {
       "source": "runtime",
@@ -507,8 +507,8 @@
         "reason": null,
         "since": null
       },
-      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
-      "effectiveDigest": "sha256:e4ac005e46c070867ec9d412ef38850f92ca7cde7f88a3980d9e9221e97e27c1"
+      "staticDigest": "sha256:4fe0f541155a5a4e52b12557ef4b048826be25808192a38bf3800030d17a16f2",
+      "effectiveDigest": "sha256:4ba5699f2a3a93643304b63af390052a0b1f3f4cc94503d37f078a457e73a86c"
     },
     "killSwitch": {
       "source": "runtime",
@@ -577,8 +577,8 @@
         "reason": null,
         "since": null
       },
-      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
-      "effectiveDigest": "sha256:227e51cc431da7ed121351de7bd8a49639aa954312fbeae87d7d96251581aa7a"
+      "staticDigest": "sha256:4fe0f541155a5a4e52b12557ef4b048826be25808192a38bf3800030d17a16f2",
+      "effectiveDigest": "sha256:2461403e8e6968fd6f202f2e8af6d929b68e04c0368c69e37c2119ef82d989af"
     },
     "unverified": {
       "source": "runtime",
@@ -647,8 +647,8 @@
         "reason": null,
         "since": null
       },
-      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
-      "effectiveDigest": "sha256:1e6b7dc98a4ef8a71a79213419004d312574a1e07321b948a2cfcc6445005c1d"
+      "staticDigest": "sha256:4fe0f541155a5a4e52b12557ef4b048826be25808192a38bf3800030d17a16f2",
+      "effectiveDigest": "sha256:08ea0100ba0cbb8e28791a95b20941f9f103264e1b38700463d6c1eb2a278261"
     },
     "restartMismatch": {
       "source": "runtime",
@@ -717,8 +717,8 @@
         "reason": null,
         "since": null
       },
-      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
-      "effectiveDigest": "sha256:47e66a72ec632bf74013d1598bc59830e4761e5626c8ae5ab7ac8d78f2e63c5d"
+      "staticDigest": "sha256:4fe0f541155a5a4e52b12557ef4b048826be25808192a38bf3800030d17a16f2",
+      "effectiveDigest": "sha256:96dbb30697872eea1916c6cadcc3febad5fb50edf0e7892a50b634610719dbae"
     }
   },
   "digestAudit": {
@@ -738,13 +738,30 @@
     "newerGeneration": 2
   },
   "prompt": {
-    "text": "Capability positioning (authoritative):\nDefault: Agent memory cards, Application shell and Settings, Approvals and action permissions, Coding recovery and verification, Coding tools and file execution, Context reading and search, Knowledge retrieval, Knowledge review, Skills and MCP connections, Task ledger, Tool context, Tool discovery, Workspace context.\nAdvanced: Billing and usage, Browser sessions, ClawGraph, Code review, Developer settings, Image generation, Inbox, Observability, Remote tasks, Scheduled tasks and auto-approval, Worktree isolation.\nCurrent restrictions: Agent memory cards=disabled+requires-approval; Application shell and Settings=disabled; Approvals and action permissions=disabled; Billing and usage=disabled; Browser sessions=disabled+requires-approval; ClawGraph=disabled; Code review=disabled; Coding recovery and verification=disabled; Coding tools and file execution=requires-approval; Context reading and search=disabled; Developer settings=disabled; Image generation=disabled; Inbox=disabled; Knowledge retrieval=disabled; Knowledge review=disabled; Observability=disabled; Remote tasks=disabled; Scheduled tasks and auto-approval=disabled; Skills and MCP connections=disabled; Task ledger=disabled; Tool context=disabled; Tool discovery=disabled; Workspace context=disabled; Worktree isolation=disabled.\nInternal and retired capabilities are not user-facing promises. Do not claim a capability beyond these listed facts.",
+    "text": "Capability positioning (authoritative):\nDefault: Agent memory cards, Application shell and Settings, Approvals and action permissions, Coding recovery and verification, Coding tools and file execution, Context reading and search, Knowledge retrieval, Knowledge review, Skills and MCP connections.\nCurrent facts: Agent memory cards=runtime:disabled+driver:disabled+propose:requires-approval+read:requires-approval+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Application shell and Settings=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Approvals and action permissions=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Coding recovery and verification=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Coding tools and file execution=apply_patch:requires-approval+edit:requires-approval+write:requires-approval+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Context reading and search=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Knowledge retrieval=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Knowledge review=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale; Skills and MCP connections=runtime:disabled+driver:disabled+memory-read:allowed+memory-write:denied+memory-candidates:available+knowledge:stale.\nCurrent facts add restrictions; unless runtime:<state> or driver:<state> says otherwise, runtime=enabled and driver=ready. Absent entries have no additional restriction.\nInternal and retired capabilities are not user-facing promises. Do not claim a capability beyond these listed facts.",
     "budget": {
       "maxChars": 2000,
-      "usedChars": 1458,
-      "remainingChars": 542,
+      "usedChars": 1992,
+      "remainingChars": 8,
       "chargedTo": "reserved-system-prompt",
       "workContextCharsUsed": 0
+    }
+  },
+  "results": {
+    "real-consumer": {
+      "status": "pass"
+    },
+    "boundary": {
+      "status": "pass"
+    },
+    "necessity": {
+      "status": "pass"
+    },
+    "failure-recovery": {
+      "status": "pass"
+    },
+    "not-product-claim": {
+      "status": "pass"
     }
   },
   "boundaries": [

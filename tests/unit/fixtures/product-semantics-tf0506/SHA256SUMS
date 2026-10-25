@@ -1,0 +1,12 @@
+630f92ff976003adf01819839a8ba32e1ba6f222d260239fb984c31fc2c2168c  tests/unit/fixtures/product-semantics-tf0506/01-focused-tests.txt
+9c191e91c9afe0e2cdeb0a2606cccc2a4f0809378a98f07f8845aab1304a7edc  tests/unit/fixtures/product-semantics-tf0506/02-typecheck.txt
+fd37ed898fb9c35729068ed5c1bde3d66dc6b64df201934b2663f08205dfde40  tests/unit/fixtures/product-semantics-tf0506/03-i18n-lint.txt
+6d8eceb29dfb36a8917e8e73c7665783b4f9d2f805b166950cbfd335a746db14  tests/unit/fixtures/product-semantics-tf0506/04-lint.txt
+98bb63d27d375d3c1fd225fa1c4a98a7c67c15ae4ba3e790054dace25845d9eb  tests/unit/fixtures/product-semantics-tf0506/05-contract-check.txt
+d68678e1c55a7d56c434765345484bb4ae5d1b4e8e023e4de40d80987d4fabe2  tests/unit/fixtures/product-semantics-tf0506/06-catalogs-check.txt
+37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa  tests/unit/fixtures/product-semantics-tf0506/07-no-bom.txt
+0749b6c5fc119f26a8d9ea2fab18f978e99d504a3e1d5718b18f4fdb997ccd0e  tests/unit/fixtures/product-semantics-tf0506/08-claim-scan.txt
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  tests/unit/fixtures/product-semantics-tf0506/09-diff-check.txt
+d2a17cc787ec6a836c6d2c131fc333a0c855c242fbfc770a6ec101ad7c678d03  tests/unit/fixtures/product-semantics-tf0506/README.md
+91273561e732b0ac0d31ea69b4a7edb2448829ea677d4d3e63ec1a4810879a42  tests/unit/fixtures/product-semantics-tf0506/run-verification.ps1
+35a3a91b116dc4b7deb4ad44f9a7fc4d93926be2617be5c1e10bc40d1b266f31  tests/unit/fixtures/product-semantics-tf0506/verification.json

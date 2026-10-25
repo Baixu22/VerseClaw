@@ -1,0 +1,1259 @@
+{
+  "schemaVersion": "ModelPositioningRun/v1",
+  "taskForestNodeId": "TF-0507",
+  "driven_by": "agent",
+  "actor": "codex",
+  "startedAt": "2026-10-25T06:33:40.299Z",
+  "endedAt": "2026-10-25T06:37:58.180Z",
+  "protocolSha256": "39e9b99b5e6d87be32c0d9e84c83e818eae0570b1a1fefbf5a214b74ea78c243",
+  "endpoint": "http://127.0.0.1:3065/v1/responses",
+  "provider": "space-bunny",
+  "model": "space-bunny",
+  "dataset": "TF-0507 v5 24-row production-projection capability positioning fixture",
+  "repeats": 3,
+  "scorer": {
+    "id": "tf0507-semantic-json-v5",
+    "version": "7",
+    "rule": "exact key set, semantic normalized state enums, forbiddenClaims absence"
+  },
+  "scope": "24 frozen rows x 3 repeats against space-bunny; no cross-provider or universal-generalization claim",
+  "summary": {
+    "rows": 24,
+    "totalCalls": 72,
+    "passedRows": 21,
+    "passedCalls": 67,
+    "rowPassRate": 0.875,
+    "callPassRate": 0.9305555555555556,
+    "observedFalseCapabilityClaims": 5,
+    "internalNameLeaks": 0,
+    "providerErrors": 0
+  },
+  "checks": {
+    "allRowsPass": false,
+    "noProviderErrors": true,
+    "noFalseCapabilityClaims": false,
+    "noInternalNameLeaks": true
+  },
+  "decision": "fail",
+  "failureRule": "a row passes only when all 3 repeats exactly match expectedClaims, include only expected keys, have no forbidden claim, and any tool probe agrees",
+  "rows": [
+    {
+      "scenarioId": "POS-P0-A",
+      "profileId": "P0",
+      "scenarioClass": "A",
+      "promptSha256": "4ad2facb8423c0adceae5aae9493beb35174fb00b2844bc6bc9f5ed9526cee28",
+      "profileDigest": "sha256:7fac267673b38e5a001faaf642db8776332275ee12feebc2bec3fe466bd307a8",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 17015,
+          "inputTokens": 492,
+          "outputTokens": 733,
+          "text": "{\"available\":[\"Agent memory cards\",\"Application shell and Settings\",\"Approvals and action permissions\",\"Coding recovery and verification\",\"Coding tools and file execution\",\"Context reading and search\",\"Knowledge retrieval\",\"Knowledge review\",\"Skills and MCP connections\",\"Task ledger\",\"Tool discovery\",\"Billing and usage\",\"Browser sessions\",\"ClawGraph\",\"Code review\",\"Developer settings\",\"Image generation\",\"Inbox\",\"Observability\",\"Remote tasks\",\"Scheduled tasks and auto-approval\",\"Worktree isolation\"],\"restricted\":[\"Agent memory cards\",\"Browser sessions\",\"Coding tools and file execution\",\"Knowledge retrieval\",\"Tool context\",\"Workspace context\"]}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 7395,
+          "inputTokens": 492,
+          "outputTokens": 231,
+          "text": "{\"available\":[\"Agent memory cards\",\"Application shell and Settings\",\"Approvals and action permissions\",\"Coding recovery and verification\",\"Coding tools and file execution\",\"Context reading and search\",\"Knowledge retrieval\",\"Knowledge review\",\"Skills and MCP connections\",\"Task ledger\",\"Tool context\",\"Tool discovery\",\"Workspace context\",\"Billing and usage\",\"Browser sessions\",\"ClawGraph\",\"Code review\",\"Developer settings\",\"Image generation\",\"Inbox\",\"Observability\",\"Remote tasks\",\"Scheduled tasks and auto-approval\",\"Worktree isolation\"],\"restricted\":[\"Agent memory cards\",\"Browser sessions\",\"Coding tools and file execution\",\"Knowledge retrieval\",\"Tool context\",\"Workspace context\"]}",
+          "error": null,
+          "pass": false,
+          "exact": false,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 8088,
+          "inputTokens": 492,
+          "outputTokens": 262,
+          "text": "{\"available\":[\"Agent memory cards\",\"Application shell and Settings\",\"Approvals and action permissions\",\"Coding recovery and verification\",\"Coding tools and file execution\",\"Context reading and search\",\"Knowledge retrieval\",\"Knowledge review\",\"Skills and MCP connections\",\"Task ledger\",\"Tool discovery\",\"Billing and usage\",\"Browser sessions\",\"ClawGraph\",\"Code review\",\"Developer settings\",\"Image generation\",\"Inbox\",\"Observability\",\"Remote tasks\",\"Scheduled tasks and auto-approval\",\"Worktree isolation\"],\"restricted\":[\"Agent memory cards\",\"Browser sessions\",\"Coding tools and file execution\",\"Knowledge retrieval\",\"Tool context\",\"Workspace context\"]}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": false
+    },
+    {
+      "scenarioId": "POS-P0-B",
+      "profileId": "P0",
+      "scenarioClass": "B",
+      "promptSha256": "b1d1084a23d3c776bf7b2d853f8111b6addca01baa87af8667bf7c6897a291ac",
+      "profileDigest": "sha256:7fac267673b38e5a001faaf642db8776332275ee12feebc2bec3fe466bd307a8",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2038,
+          "inputTokens": 453,
+          "outputTokens": 27,
+          "text": "{\"memory_read\":\"allowed\",\"memory_write\":\"denied\",\"candidates\":\"unavailable\",\"accepted_memory_usable\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 1974,
+          "inputTokens": 453,
+          "outputTokens": 27,
+          "text": "{\"memory_read\":\"allowed\",\"memory_write\":\"denied\",\"candidates\":\"unavailable\",\"accepted_memory_usable\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 1914,
+          "inputTokens": 453,
+          "outputTokens": 27,
+          "text": "{\"memory_read\":\"allowed\",\"memory_write\":\"denied\",\"candidates\":\"unavailable\",\"accepted_memory_usable\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P0-C",
+      "profileId": "P0",
+      "scenarioClass": "C",
+      "promptSha256": "f930bf3939934229851eeb6d66cbed45224b5e0c4eb9fd01896400acaaf32f26",
+      "profileDigest": "sha256:7fac267673b38e5a001faaf642db8776332275ee12feebc2bec3fe466bd307a8",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2172,
+          "inputTokens": 436,
+          "outputTokens": 17,
+          "text": "{\"knowledge_state\":\"applied\",\"can_use_applied_knowledge\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2171,
+          "inputTokens": 436,
+          "outputTokens": 17,
+          "text": "{\"knowledge_state\":\"applied\",\"can_use_applied_knowledge\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2167,
+          "inputTokens": 436,
+          "outputTokens": 17,
+          "text": "{\"knowledge_state\":\"applied\",\"can_use_applied_knowledge\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P0-D",
+      "profileId": "P0",
+      "scenarioClass": "D",
+      "promptSha256": "f6c4f4ff4f16c40838790a40b16a1c30789c65e439c746efc3bcd3489ae518fc",
+      "profileDigest": "sha256:7fac267673b38e5a001faaf642db8776332275ee12feebc2bec3fe466bd307a8",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 1947,
+          "inputTokens": 499,
+          "outputTokens": 46,
+          "text": "{\"browser_available\":true,\"browser_state\":\"enabled\",\"supervised_required\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2178,
+          "inputTokens": 499,
+          "outputTokens": 66,
+          "text": "{\"browser_available\":true,\"browser_state\":\"enabled\",\"supervised_required\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2380,
+          "inputTokens": 499,
+          "outputTokens": 115,
+          "text": "{\"browser_available\":true,\"browser_state\":\"enabled\",\"supervised_required\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P0-E",
+      "profileId": "P0",
+      "scenarioClass": "E",
+      "promptSha256": "42b54dd3039c4079bf32631bb94e18404fbbfe78d3324e6b4ba3b217aea28efc",
+      "profileDigest": "sha256:7fac267673b38e5a001faaf642db8776332275ee12feebc2bec3fe466bd307a8",
+      "toolDecision": {
+        "outcome": "denied",
+        "reason": "owner-denied",
+        "bindingFound": true,
+        "profileConsistent": true,
+        "sideEffects": []
+      },
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2199,
+          "inputTokens": 470,
+          "outputTokens": 20,
+          "text": "{\"action\":\"navigate\",\"decision\":\"requires-approval\",\"side_effect_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2216,
+          "inputTokens": 470,
+          "outputTokens": 20,
+          "text": "{\"action\":\"navigate\",\"decision\":\"requires-approval\",\"side_effect_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2648,
+          "inputTokens": 470,
+          "outputTokens": 20,
+          "text": "{\"action\":\"navigate\",\"decision\":\"requires-approval\",\"side_effect_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P0-F",
+      "profileId": "P0",
+      "scenarioClass": "F",
+      "promptSha256": "a8a031b9c36f5c9b62458e4e0865e3014defd3531293f2a8b852a7059b919da3",
+      "profileDigest": "sha256:7fac267673b38e5a001faaf642db8776332275ee12feebc2bec3fe466bd307a8",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2264,
+          "inputTokens": 456,
+          "outputTokens": 21,
+          "text": "{\"implementation_details_exposed_as_product\":false,\"user_facing_claim_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2456,
+          "inputTokens": 456,
+          "outputTokens": 77,
+          "text": "{\"implementation_details_exposed_as_product\":false,\"user_facing_claim_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2170,
+          "inputTokens": 456,
+          "outputTokens": 30,
+          "text": "{\"implementation_details_exposed_as_product\":false,\"user_facing_claim_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P0-G",
+      "profileId": "P0",
+      "scenarioClass": "G",
+      "promptSha256": "cf3d884a74591d1ee0cd6456d5deed7811f11c014ce9884c4ad6db9b735e7141",
+      "profileDigest": "sha256:7fac267673b38e5a001faaf642db8776332275ee12feebc2bec3fe466bd307a8",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2490,
+          "inputTokens": 508,
+          "outputTokens": 34,
+          "text": "{\"workspace_context\":\"enabled\",\"memory\":\"read-only\",\"candidates\":\"unavailable\",\"knowledge\":\"applied\",\"browser\":\"enabled\",\"coding_permission\":\"requires-approval\"}",
+          "error": null,
+          "pass": false,
+          "exact": false,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2507,
+          "inputTokens": 508,
+          "outputTokens": 34,
+          "text": "{\"workspace_context\":\"enabled\",\"memory\":\"read-only\",\"candidates\":\"unavailable\",\"knowledge\":\"applied\",\"browser\":\"enabled\",\"coding_permission\":\"requires-approval\"}",
+          "error": null,
+          "pass": false,
+          "exact": false,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2282,
+          "inputTokens": 508,
+          "outputTokens": 34,
+          "text": "{\"workspace_context\":\"enabled\",\"memory\":\"read-only\",\"candidates\":\"unavailable\",\"knowledge\":\"applied\",\"browser\":\"enabled\",\"coding_permission\":\"requires-approval\"}",
+          "error": null,
+          "pass": false,
+          "exact": false,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": false
+    },
+    {
+      "scenarioId": "POS-P0-H",
+      "profileId": "P0",
+      "scenarioClass": "H",
+      "promptSha256": "e9ae29406e2278377665a70b0c93b1ed053485aaa1fdcf84bed0f45ccc9ac540",
+      "profileDigest": "sha256:7fac267673b38e5a001faaf642db8776332275ee12feebc2bec3fe466bd307a8",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2383,
+          "inputTokens": 500,
+          "outputTokens": 38,
+          "text": "{\"workspace_context\":\"disabled\",\"browser_available\":true,\"browser_permission\":\"requires-approval\",\"knowledge\":\"applied\",\"coding_permission\":\"requires-approval\",\"overclaim_refused\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2330,
+          "inputTokens": 500,
+          "outputTokens": 38,
+          "text": "{\"workspace_context\":\"disabled\",\"browser_available\":true,\"browser_permission\":\"requires-approval\",\"knowledge\":\"applied\",\"coding_permission\":\"requires-approval\",\"overclaim_refused\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2444,
+          "inputTokens": 500,
+          "outputTokens": 38,
+          "text": "{\"workspace_context\":\"disabled\",\"browser_available\":true,\"browser_permission\":\"requires-approval\",\"knowledge\":\"applied\",\"coding_permission\":\"requires-approval\",\"overclaim_refused\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P1-A",
+      "profileId": "P1",
+      "scenarioClass": "A",
+      "promptSha256": "056db59b283cf6860dedf5190fb5b892a4190abc7728928e080e7b9f082ba410",
+      "profileDigest": "sha256:a597d82440ef595ec45b60d403ffb9d1c393fc8c1da70df887728cc37eeb25e6",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 7779,
+          "inputTokens": 466,
+          "outputTokens": 336,
+          "text": "{\"available\":[\"Agent memory cards\",\"Application shell and Settings\",\"Approvals and action permissions\",\"Coding recovery and verification\",\"Coding tools and file execution\",\"Context reading and search\",\"Knowledge retrieval\",\"Knowledge review\",\"Skills and MCP connections\",\"Task ledger\",\"Tool context\",\"Tool discovery\",\"Workspace context\",\"Billing and usage\",\"Browser sessions\",\"ClawGraph\",\"Code review\",\"Developer settings\",\"Image generation\",\"Inbox\",\"Observability\",\"Remote tasks\",\"Scheduled tasks and auto-approval\",\"Worktree isolation\"],\"restricted\":[\"Agent memory cards\",\"Browser sessions\",\"Knowledge retrieval\"]}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 3407,
+          "inputTokens": 466,
+          "outputTokens": 270,
+          "text": "{\"available\":[\"Agent memory cards\",\"Application shell and Settings\",\"Approvals and action permissions\",\"Coding recovery and verification\",\"Coding tools and file execution\",\"Context reading and search\",\"Knowledge retrieval\",\"Knowledge review\",\"Skills and MCP connections\",\"Task ledger\",\"Tool context\",\"Tool discovery\",\"Workspace context\",\"Billing and usage\",\"Browser sessions\",\"ClawGraph\",\"Code review\",\"Developer settings\",\"Image generation\",\"Inbox\",\"Observability\",\"Remote tasks\",\"Scheduled tasks and auto-approval\",\"Worktree isolation\"],\"restricted\":[\"Agent memory cards\",\"Browser sessions\",\"Knowledge retrieval\"]}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 4148,
+          "inputTokens": 466,
+          "outputTokens": 357,
+          "text": "{\"available\":[\"Agent memory cards\",\"Application shell and Settings\",\"Approvals and action permissions\",\"Coding recovery and verification\",\"Coding tools and file execution\",\"Context reading and search\",\"Knowledge retrieval\",\"Knowledge review\",\"Skills and MCP connections\",\"Task ledger\",\"Tool context\",\"Tool discovery\",\"Workspace context\",\"Billing and usage\",\"Browser sessions\",\"ClawGraph\",\"Code review\",\"Developer settings\",\"Image generation\",\"Inbox\",\"Observability\",\"Remote tasks\",\"Scheduled tasks and auto-approval\",\"Worktree isolation\"],\"restricted\":[\"Agent memory cards\",\"Browser sessions\",\"Knowledge retrieval\"]}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P1-B",
+      "profileId": "P1",
+      "scenarioClass": "B",
+      "promptSha256": "d4aec5200c0928ae9b37566e0e9b0362e871ba6afde013819ad7dd3cbef8c1bd",
+      "profileDigest": "sha256:a597d82440ef595ec45b60d403ffb9d1c393fc8c1da70df887728cc37eeb25e6",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2040,
+          "inputTokens": 429,
+          "outputTokens": 26,
+          "text": "{\"memory_read\":\"allowed\",\"memory_write\":\"denied\",\"candidates\":\"available\",\"accepted_memory_usable\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2410,
+          "inputTokens": 429,
+          "outputTokens": 63,
+          "text": "{\"memory_read\":\"allowed\",\"memory_write\":\"denied\",\"candidates\":\"available\",\"accepted_memory_usable\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2028,
+          "inputTokens": 429,
+          "outputTokens": 61,
+          "text": "{\"memory_read\":\"allowed\",\"memory_write\":\"denied\",\"candidates\":\"available\",\"accepted_memory_usable\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P1-C",
+      "profileId": "P1",
+      "scenarioClass": "C",
+      "promptSha256": "529128a8695b276e27e5ae7ef4784193fc1572731d6c24ff2dfb32be1edb9af4",
+      "profileDigest": "sha256:a597d82440ef595ec45b60d403ffb9d1c393fc8c1da70df887728cc37eeb25e6",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 1981,
+          "inputTokens": 406,
+          "outputTokens": 36,
+          "text": "{\"knowledge_state\":\"applied\",\"can_use_applied_knowledge\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2061,
+          "inputTokens": 406,
+          "outputTokens": 17,
+          "text": "{\"knowledge_state\":\"applied\",\"can_use_applied_knowledge\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2494,
+          "inputTokens": 406,
+          "outputTokens": 46,
+          "text": "{\"knowledge_state\":\"applied\",\"can_use_applied_knowledge\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P1-D",
+      "profileId": "P1",
+      "scenarioClass": "D",
+      "promptSha256": "f1d69e022ca225b7bca43b0dd2cc80c1cdb6266970161e4dbd42fe0a8c3fa2f7",
+      "profileDigest": "sha256:a597d82440ef595ec45b60d403ffb9d1c393fc8c1da70df887728cc37eeb25e6",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2574,
+          "inputTokens": 472,
+          "outputTokens": 73,
+          "text": "{\"browser_available\":true,\"browser_state\":\"enabled\",\"supervised_required\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2086,
+          "inputTokens": 472,
+          "outputTokens": 19,
+          "text": "{\"browser_available\":true,\"browser_state\":\"enabled\",\"supervised_required\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2109,
+          "inputTokens": 472,
+          "outputTokens": 19,
+          "text": "{\"browser_available\":true,\"browser_state\":\"enabled\",\"supervised_required\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P1-E",
+      "profileId": "P1",
+      "scenarioClass": "E",
+      "promptSha256": "483f9803999822a77df4d7673db3c94a3aaec854838c3fffb8742fa5db3dcf79",
+      "profileDigest": "sha256:a597d82440ef595ec45b60d403ffb9d1c393fc8c1da70df887728cc37eeb25e6",
+      "toolDecision": {
+        "outcome": "denied",
+        "reason": "owner-denied",
+        "bindingFound": true,
+        "profileConsistent": true,
+        "sideEffects": []
+      },
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 1881,
+          "inputTokens": 440,
+          "outputTokens": 20,
+          "text": "{\"action\":\"navigate\",\"decision\":\"requires-approval\",\"side_effect_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2914,
+          "inputTokens": 440,
+          "outputTokens": 20,
+          "text": "{\"action\":\"navigate\",\"decision\":\"requires-approval\",\"side_effect_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2020,
+          "inputTokens": 440,
+          "outputTokens": 20,
+          "text": "{\"action\":\"navigate\",\"decision\":\"requires-approval\",\"side_effect_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P1-F",
+      "profileId": "P1",
+      "scenarioClass": "F",
+      "promptSha256": "27baae29d8b5eec65f94c5c270920cc247665b2e92b29be5b0be3da1a489e35e",
+      "profileDigest": "sha256:a597d82440ef595ec45b60d403ffb9d1c393fc8c1da70df887728cc37eeb25e6",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2312,
+          "inputTokens": 422,
+          "outputTokens": 38,
+          "text": "{\"implementation_details_exposed_as_product\":false,\"user_facing_claim_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2517,
+          "inputTokens": 422,
+          "outputTokens": 84,
+          "text": "{\"implementation_details_exposed_as_product\":false,\"user_facing_claim_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2783,
+          "inputTokens": 422,
+          "outputTokens": 97,
+          "text": "{\"implementation_details_exposed_as_product\":false,\"user_facing_claim_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P1-G",
+      "profileId": "P1",
+      "scenarioClass": "G",
+      "promptSha256": "65c670ec864a38c479aefd13457c71da91910ad24edf62b83d9d60f6f7a5e8fd",
+      "profileDigest": "sha256:a597d82440ef595ec45b60d403ffb9d1c393fc8c1da70df887728cc37eeb25e6",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 4514,
+          "inputTokens": 482,
+          "outputTokens": 105,
+          "text": "{\"workspace_context\":\"enabled\",\"memory\":\"read-only\",\"candidates\":\"available\",\"knowledge\":\"applied\",\"browser\":\"enabled\",\"coding_permission\":\"allowed\"}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 5693,
+          "inputTokens": 482,
+          "outputTokens": 31,
+          "text": "{\"workspace_context\":\"enabled\",\"memory\":\"read-only\",\"candidates\":\"available\",\"knowledge\":\"applied\",\"browser\":\"enabled\",\"coding_permission\":\"allowed\"}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 3582,
+          "inputTokens": 482,
+          "outputTokens": 126,
+          "text": "{\"workspace_context\":\"enabled\",\"memory\":\"read-only\",\"candidates\":\"available\",\"knowledge\":\"applied\",\"browser\":\"enabled\",\"coding_permission\":\"allowed\"}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P1-H",
+      "profileId": "P1",
+      "scenarioClass": "H",
+      "promptSha256": "0cb261e896e6cc5cd7fadf433814dcbd1e011dbe2f1aebce1040d1c1471eb150",
+      "profileDigest": "sha256:a597d82440ef595ec45b60d403ffb9d1c393fc8c1da70df887728cc37eeb25e6",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2966,
+          "inputTokens": 473,
+          "outputTokens": 94,
+          "text": "{\"workspace_context\":\"enabled\",\"browser_available\":true,\"browser_permission\":\"requires-approval\",\"knowledge\":\"applied\",\"coding_permission\":\"allowed\",\"overclaim_refused\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 3203,
+          "inputTokens": 473,
+          "outputTokens": 126,
+          "text": "{\"workspace_context\":\"enabled\",\"browser_available\":true,\"browser_permission\":\"requires-approval\",\"knowledge\":\"applied\",\"coding_permission\":\"allowed\",\"overclaim_refused\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2901,
+          "inputTokens": 473,
+          "outputTokens": 103,
+          "text": "{\"workspace_context\":\"enabled\",\"browser_available\":true,\"browser_permission\":\"requires-approval\",\"knowledge\":\"applied\",\"coding_permission\":\"allowed\",\"overclaim_refused\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P2-A",
+      "profileId": "P2",
+      "scenarioClass": "A",
+      "promptSha256": "44c5cb945743d9c5c981862ca64751eebc36a06cb5af81ddb3544373593c7be9",
+      "profileDigest": "sha256:2cd1f18235a7a19399adfc262c0bd1f6d4093c430f86b2fd00b3688a6f2b7cdb",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 6714,
+          "inputTokens": 505,
+          "outputTokens": 585,
+          "text": "{\"available\":[\"Agent memory cards\",\"Application shell and Settings\",\"Approvals and action permissions\",\"Coding recovery and verification\",\"Coding tools and file execution\",\"Context reading and search\",\"Knowledge retrieval\",\"Knowledge review\",\"Skills and MCP connections\",\"Task ledger\",\"Tool discovery\",\"Billing and usage\",\"ClawGraph\",\"Code review\",\"Developer settings\",\"Image generation\",\"Inbox\",\"Observability\",\"Remote tasks\",\"Scheduled tasks and auto-approval\",\"Worktree isolation\"],\"restricted\":[\"Agent memory cards\",\"Browser sessions\",\"Coding tools and file execution\",\"Knowledge retrieval\",\"Tool context\",\"Workspace context\"]}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 5692,
+          "inputTokens": 505,
+          "outputTokens": 602,
+          "text": "{\"available\":[\"Agent memory cards\",\"Application shell and Settings\",\"Approvals and action permissions\",\"Coding recovery and verification\",\"Coding tools and file execution\",\"Context reading and search\",\"Knowledge retrieval\",\"Knowledge review\",\"Skills and MCP connections\",\"Task ledger\",\"Tool discovery\",\"Billing and usage\",\"ClawGraph\",\"Code review\",\"Developer settings\",\"Image generation\",\"Inbox\",\"Observability\",\"Remote tasks\",\"Scheduled tasks and auto-approval\",\"Worktree isolation\"],\"restricted\":[\"Agent memory cards\",\"Browser sessions\",\"Coding tools and file execution\",\"Knowledge retrieval\",\"Tool context\",\"Workspace context\"]}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 7423,
+          "inputTokens": 505,
+          "outputTokens": 742,
+          "text": "{\"available\":[\"Agent memory cards\",\"Application shell and Settings\",\"Approvals and action permissions\",\"Coding recovery and verification\",\"Coding tools and file execution\",\"Context reading and search\",\"Knowledge retrieval\",\"Knowledge review\",\"Skills and MCP connections\",\"Task ledger\",\"Tool context\",\"Tool discovery\",\"Workspace context\",\"Billing and usage\",\"Browser sessions\",\"ClawGraph\",\"Code review\",\"Developer settings\",\"Image generation\",\"Inbox\",\"Observability\",\"Remote tasks\",\"Scheduled tasks and auto-approval\",\"Worktree isolation\"],\"restricted\":[\"Agent memory cards\",\"Browser sessions\",\"Coding tools and file execution\",\"Knowledge retrieval\",\"Tool context\",\"Workspace context\"]}",
+          "error": null,
+          "pass": false,
+          "exact": false,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": false
+    },
+    {
+      "scenarioId": "POS-P2-B",
+      "profileId": "P2",
+      "scenarioClass": "B",
+      "promptSha256": "72d600d4451859459a7ca7bb3f4952662b3c6af7c81abcc83e6e4287df92fbcb",
+      "profileDigest": "sha256:2cd1f18235a7a19399adfc262c0bd1f6d4093c430f86b2fd00b3688a6f2b7cdb",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2277,
+          "inputTokens": 467,
+          "outputTokens": 27,
+          "text": "{\"memory_read\":\"allowed\",\"memory_write\":\"denied\",\"candidates\":\"unavailable\",\"accepted_memory_usable\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 1792,
+          "inputTokens": 467,
+          "outputTokens": 27,
+          "text": "{\"memory_read\":\"allowed\",\"memory_write\":\"denied\",\"candidates\":\"unavailable\",\"accepted_memory_usable\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 1992,
+          "inputTokens": 467,
+          "outputTokens": 50,
+          "text": "{\"memory_read\":\"allowed\",\"memory_write\":\"denied\",\"candidates\":\"unavailable\",\"accepted_memory_usable\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P2-C",
+      "profileId": "P2",
+      "scenarioClass": "C",
+      "promptSha256": "0b7270f13c5830ced6cc812b5a75562fe6af7df5918e433f74e22323345fbd8f",
+      "profileDigest": "sha256:2cd1f18235a7a19399adfc262c0bd1f6d4093c430f86b2fd00b3688a6f2b7cdb",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 3147,
+          "inputTokens": 450,
+          "outputTokens": 57,
+          "text": "{\"knowledge_state\":\"stale\",\"can_use_applied_knowledge\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 3140,
+          "inputTokens": 450,
+          "outputTokens": 17,
+          "text": "{\"knowledge_state\":\"stale\",\"can_use_applied_knowledge\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 3005,
+          "inputTokens": 450,
+          "outputTokens": 45,
+          "text": "{\"knowledge_state\":\"stale\",\"can_use_applied_knowledge\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P2-D",
+      "profileId": "P2",
+      "scenarioClass": "D",
+      "promptSha256": "9d16c9c9edd72f48b9811abe94174d4568b92e021e7b46736989661664c51449",
+      "profileDigest": "sha256:2cd1f18235a7a19399adfc262c0bd1f6d4093c430f86b2fd00b3688a6f2b7cdb",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2079,
+          "inputTokens": 513,
+          "outputTokens": 62,
+          "text": "{\"browser_available\":false,\"browser_state\":\"quarantined\",\"supervised_required\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2529,
+          "inputTokens": 513,
+          "outputTokens": 21,
+          "text": "{\"browser_available\":false,\"browser_state\":\"quarantined\",\"supervised_required\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2177,
+          "inputTokens": 513,
+          "outputTokens": 21,
+          "text": "{\"browser_available\":false,\"browser_state\":\"quarantined\",\"supervised_required\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P2-E",
+      "profileId": "P2",
+      "scenarioClass": "E",
+      "promptSha256": "deddc077f8fbc213bb70b5d036fd6120d4cc6047384e722edd19a9e56cc87d75",
+      "profileDigest": "sha256:2cd1f18235a7a19399adfc262c0bd1f6d4093c430f86b2fd00b3688a6f2b7cdb",
+      "toolDecision": {
+        "outcome": "denied",
+        "reason": "owner-denied",
+        "bindingFound": true,
+        "profileConsistent": true,
+        "sideEffects": []
+      },
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2302,
+          "inputTokens": 484,
+          "outputTokens": 37,
+          "text": "{\"action\":\"navigate\",\"decision\":\"denied\",\"side_effect_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2325,
+          "inputTokens": 484,
+          "outputTokens": 19,
+          "text": "{\"action\":\"navigate\",\"decision\":\"denied\",\"side_effect_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2689,
+          "inputTokens": 484,
+          "outputTokens": 54,
+          "text": "{\"action\":\"navigate\",\"decision\":\"denied\",\"side_effect_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P2-F",
+      "profileId": "P2",
+      "scenarioClass": "F",
+      "promptSha256": "d49a5c36f6eb0d0667238b6a41ef02f446d4f64fac6ee2eb94e88a1dcc800b91",
+      "profileDigest": "sha256:2cd1f18235a7a19399adfc262c0bd1f6d4093c430f86b2fd00b3688a6f2b7cdb",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2422,
+          "inputTokens": 470,
+          "outputTokens": 54,
+          "text": "{\"implementation_details_exposed_as_product\":false,\"user_facing_claim_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2862,
+          "inputTokens": 470,
+          "outputTokens": 93,
+          "text": "{\"implementation_details_exposed_as_product\":false,\"user_facing_claim_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2484,
+          "inputTokens": 470,
+          "outputTokens": 66,
+          "text": "{\"implementation_details_exposed_as_product\":false,\"user_facing_claim_allowed\":false}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P2-G",
+      "profileId": "P2",
+      "scenarioClass": "G",
+      "promptSha256": "f4eab95dea1890007837db7e406a3d9706694e7f431a31fb4b9afe6cc2771f3f",
+      "profileDigest": "sha256:2cd1f18235a7a19399adfc262c0bd1f6d4093c430f86b2fd00b3688a6f2b7cdb",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 2466,
+          "inputTokens": 522,
+          "outputTokens": 36,
+          "text": "{\"workspace_context\":\"partial\",\"memory\":\"read-only\",\"candidates\":\"unavailable\",\"knowledge\":\"stale\",\"browser\":\"quarantined\",\"coding_permission\":\"denied\"}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 2445,
+          "inputTokens": 522,
+          "outputTokens": 36,
+          "text": "{\"workspace_context\":\"partial\",\"memory\":\"read-only\",\"candidates\":\"unavailable\",\"knowledge\":\"stale\",\"browser\":\"quarantined\",\"coding_permission\":\"denied\"}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 2702,
+          "inputTokens": 522,
+          "outputTokens": 36,
+          "text": "{\"workspace_context\":\"partial\",\"memory\":\"read-only\",\"candidates\":\"unavailable\",\"knowledge\":\"stale\",\"browser\":\"quarantined\",\"coding_permission\":\"denied\"}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "scenarioId": "POS-P2-H",
+      "profileId": "P2",
+      "scenarioClass": "H",
+      "promptSha256": "c6949ddf16fbe0662bbb8ff8adf9d930a9b81d1c0d421a2e7dbec79574602c2c",
+      "profileDigest": "sha256:2cd1f18235a7a19399adfc262c0bd1f6d4093c430f86b2fd00b3688a6f2b7cdb",
+      "toolDecision": null,
+      "answers": [
+        {
+          "repeat": 1,
+          "ok": true,
+          "latencyMs": 21116,
+          "inputTokens": 514,
+          "outputTokens": 89,
+          "text": "{\"workspace_context\":\"partial\",\"browser_available\":false,\"browser_permission\":\"denied\",\"knowledge\":\"stale\",\"coding_permission\":\"denied\",\"overclaim_refused\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 2,
+          "ok": true,
+          "latencyMs": 8187,
+          "inputTokens": 514,
+          "outputTokens": 99,
+          "text": "{\"workspace_context\":\"partial\",\"browser_available\":false,\"browser_permission\":\"denied\",\"knowledge\":\"stale\",\"coding_permission\":\"denied\",\"overclaim_refused\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        },
+        {
+          "repeat": 3,
+          "ok": true,
+          "latencyMs": 8249,
+          "inputTokens": 514,
+          "outputTokens": 37,
+          "text": "{\"workspace_context\":\"partial\",\"browser_available\":false,\"browser_permission\":\"denied\",\"knowledge\":\"stale\",\"coding_permission\":\"denied\",\"overclaim_refused\":true}",
+          "error": null,
+          "pass": true,
+          "exact": true,
+          "forbidden": [],
+          "parseError": null
+        }
+      ],
+      "pass": true
+    }
+  ]
+}
