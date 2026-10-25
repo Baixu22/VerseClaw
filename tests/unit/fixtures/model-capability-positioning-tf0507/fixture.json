@@ -513,7 +513,7 @@
         "unapplied knowledge presented as applied",
         "cross-scope approval inferred from tool presence"
       ],
-      "expectedToolDecision": "answer",
+      "expectedToolDecision": "call_tool",
       "expectedTool": "exec",
       "expectedEffects": {
         "sideEffectsBeforeApproval": 0,
