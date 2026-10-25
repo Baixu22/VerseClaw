@@ -4,7 +4,7 @@
   "frozenAt": "2026-10-25T06:53:49.088Z",
   "driven_by": "agent",
   "actor": "codex",
-  "model": "glm-5.3",
+  "model": "deepseek-v4.1-flash",
   "provider": "local-openai-compatible",
   "endpoint": "http://127.0.0.1:3065/v1/responses",
   "repetitions": 1,
