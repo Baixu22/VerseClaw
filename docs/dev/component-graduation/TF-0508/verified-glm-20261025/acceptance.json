@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "ComponentFinalAcceptance/v2",
+  "actor": "codex",
+  "driven_by": "agent",
+  "generatedAt": "2026-10-25T15:10:01.591347+00:00",
+  "status": "verified",
+  "sourceCandidate": {
+    "commit": "2dd3de8b5f10c32f217336e09d3f00eb2fff22b2",
+    "tree": "4831aabe0d04b513234e9ccf8659c34285180c4c",
+    "dirty": false
+  },
+  "modelCandidate": {
+    "commit": "31bcdb44764760823f93a8c1dafc161ef012a606",
+    "tree": "a48bd5cb29121d074f98fd66669133cad3489d55",
+    "dirty": false
+  },
+  "metrics": {
+    "components": 54,
+    "authorityConflicts": 0,
+    "unclassified": 0,
+    "userVisibleShadowSurfaces": 0,
+    "unfinishedExperiments": 0,
+    "missingImplementationOrRetirement": 0
+  },
+  "criteria": [
+    {
+      "id": "coverage-authority-surfaces",
+      "status": "pass",
+      "evidence": [
+        "source-audit.json"
+      ]
+    },
+    {
+      "id": "implementation-and-retirement",
+      "status": "pass",
+      "evidence": [
+        "historical-graduation-readback.json",
+        "context-contract/component-graduation-report.json",
+        "effective-state/component-graduation-report.json"
+      ]
+    },
+    {
+      "id": "model-positioning",
+      "status": "pass",
+      "evidence": [
+        "../../TF-0507/verified-glm-20261025/evidence.json",
+        "../../TF-0507/verified-glm-20261025/independent-readback.json",
+        "model-source-equivalence.json"
+      ]
+    },
+    {
+      "id": "runtime-and-visible-interactions",
+      "status": "pass",
+      "evidence": [
+        "gate-receipts.json",
+        "electron-evidence.json",
+        "memory-export.json",
+        "memory-download.json"
+      ]
+    },
+    {
+      "id": "claims-defaults-boundaries",
+      "status": "pass",
+      "evidence": [
+        "source-audit.json",
+        "gate-receipts.json"
+      ]
+    }
+  ],
+  "closureTargets": [
+    "TF-0482",
+    "TF-0483",
+    "TF-0484",
+    "TF-0485",
+    "TF-0486",
+    "TF-0487",
+    "TF-0507",
+    "TF-0508"
+  ],
+  "releaseBoundary": {
+    "generalAvailability": false,
+    "publicRelease": false,
+    "productLocksChanged": false
+  },
+  "limitations": [
+    "Historical TF-0493 retains one missing original Settings input. Separate current Context and seven Electron interactions supply the current contract.",
+    "Long-session D2 remains EVIDENCE_INSUFFICIENT and D3 remains keep-baseline. Development closure does not claim new live-provider continuity.",
+    "Installed dependencies are reused; this is not a fresh install or full-repository/remote-CI measurement. Local task history stays outside Git."
+  ]
+}

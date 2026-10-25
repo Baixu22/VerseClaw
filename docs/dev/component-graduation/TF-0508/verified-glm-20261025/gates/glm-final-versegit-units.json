@@ -1,0 +1,30 @@
+{
+  "name": "glm-final-versegit-units",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+    "exec",
+    "vitest",
+    "run",
+    "tests/unit/versegit-host-apply.test.ts",
+    "tests/unit/versegit-host-api.test.ts",
+    "tests/unit/versegit-fact-adapter.test.ts",
+    "tests/unit/versegit-candidate-receipts.test.ts",
+    "tests/unit/versegit-candidate-freeze.test.ts",
+    "tests/unit/versegit-cleanup-barrier.test.ts",
+    "tests/unit/versegit-completion-lifecycle.test.ts",
+    "tests/unit/versegit-feedback-delivery.test.ts",
+    "tests/unit/versegit-observation-basis.test.ts",
+    "tests/unit/versegit-receipt-authority.test.ts",
+    "tests/unit/versegit-runtime-bindings.test.ts",
+    "tests/unit/versegit-sidecar-delivery.test.ts",
+    "tests/unit/versegit-stability-report.test.ts",
+    "tests/unit/versegit-product-acceptance.test.ts",
+    "--maxWorkers=2",
+    "--reporter=dot"
+  ],
+  "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+  "exit_code": 0,
+  "elapsed_seconds": 48.164,
+  "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-versegit-units.log"
+}

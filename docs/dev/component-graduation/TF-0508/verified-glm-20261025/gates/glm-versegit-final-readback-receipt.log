@@ -1,0 +1,102 @@
+{
+  "pass": true,
+  "currentCandidate": {
+    "id": "2d7dc07a3d3a03767fd26b71eb5853150899e3cddcde9a05b0fe86f7a4055893",
+    "sourceInputDigest": "08e87e707969efd9ad5bacc3c7171508ceba99e1450e9d803ab958a3960f4dad"
+  },
+  "source": {
+    "branch": "codex/nine-node-glm-closeout-20261025",
+    "commit": "2dd3de8b5f10c32f217336e09d3f00eb2fff22b2",
+    "tree": "4831aabe0d04b513234e9ccf8659c34285180c4c",
+    "dirty": false
+  },
+  "sourceIssues": [],
+  "criteria": [
+    {
+      "id": "risk-observation",
+      "status": "passed",
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "id": "agent-feedback",
+      "status": "passed",
+      "checks": 5,
+      "failed": []
+    },
+    {
+      "id": "candidate-pre-verification",
+      "status": "passed",
+      "checks": 6,
+      "failed": []
+    },
+    {
+      "id": "persistent-result",
+      "status": "passed",
+      "checks": 5,
+      "failed": []
+    },
+    {
+      "id": "host-writeback",
+      "status": "passed",
+      "checks": 6,
+      "failed": []
+    },
+    {
+      "id": "cleanup",
+      "status": "passed",
+      "checks": 6,
+      "failed": []
+    },
+    {
+      "id": "package",
+      "status": "passed",
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "id": "bounded-stability",
+      "status": "passed",
+      "checks": 7,
+      "failed": []
+    },
+    {
+      "id": "docs-capability-authority",
+      "status": "passed",
+      "checks": 8,
+      "failed": []
+    }
+  ],
+  "groups": 15,
+  "groupIssues": [],
+  "historical": {
+    "ok": false,
+    "issues": [
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: README.ja-JP.md",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: README.md",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: README.zh-CN.md",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: docs/clawx-product-semantics.md",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: scripts/verify-versegit-product-integration.mjs",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: shared/capability-claims.ts",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: shared/component-authority-manifest.ts",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: shared/dcs/component-disposition-catalog.ts",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: tests/unit/orchestration-worktree-merge.test.ts",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: tests/unit/versegit-product-acceptance.test.ts",
+      "criterion index candidate differs from live source inputs",
+      "global report candidate differs from live source inputs",
+      "criterion evidence index diverges from live replay",
+      "independent verdict candidate mismatch"
+    ],
+    "source": {
+      "branch": "codex/versegit-product-integration-20261022",
+      "commit": "fb57c050137b6bbabc0c77bd1660e01b31612f6a",
+      "tree": "0535ed5fc5a7f749c58e20401b5cd09a43007ded",
+      "dirty": false
+    },
+    "verdict": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 6
+    }
+  }
+}

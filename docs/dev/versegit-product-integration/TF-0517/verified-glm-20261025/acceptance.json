@@ -1,0 +1,1713 @@
+{
+  "schemaVersion": "VerseGitParentAcceptance/v2",
+  "actor": "codex",
+  "driven_by": "agent",
+  "generatedAt": "2026-10-25T15:10:01.591347+00:00",
+  "task": "TF-0517",
+  "status": "verified",
+  "currentSource": {
+    "branch": "codex/nine-node-glm-closeout-20261025",
+    "commit": "2dd3de8b5f10c32f217336e09d3f00eb2fff22b2",
+    "tree": "4831aabe0d04b513234e9ccf8659c34285180c4c",
+    "dirty": false
+  },
+  "currentCandidate": {
+    "id": "2d7dc07a3d3a03767fd26b71eb5853150899e3cddcde9a05b0fe86f7a4055893",
+    "sourceInputDigest": "08e87e707969efd9ad5bacc3c7171508ceba99e1450e9d803ab958a3960f4dad",
+    "inputs": [
+      {
+        "path": "README.ja-JP.md",
+        "sha256": "95aaef739e20ef9535de7e7f2be58f706285a48bd1947bd1b076844c123af6d1",
+        "bytes": 48461
+      },
+      {
+        "path": "README.md",
+        "sha256": "e4cf57e5f757cf00d39ca78aab75ad9ecb2c64efa36a273a3765a41577221537",
+        "bytes": 40157
+      },
+      {
+        "path": "README.zh-CN.md",
+        "sha256": "736dd4b92b7a0514b0461d986b6756abe3bc1452e6b453a0d810b1d65abfffe4",
+        "bytes": 37024
+      },
+      {
+        "path": "docs/clawx-product-semantics.md",
+        "sha256": "865a00f709485ffde589a6ee4b3c52039af68fc24038968d593453d53bfcbbca",
+        "bytes": 38100
+      },
+      {
+        "path": "docs/dev/versegit-validation-layer/README.md",
+        "sha256": "f4455d6f29d5044b4baecc34d14d00bec48bddfb94bf7bd4e9d8408a9d820169",
+        "bytes": 16819
+      },
+      {
+        "path": "electron/services/versegit-fact-adapter.ts",
+        "sha256": "f073f779506467c7da6c1a170084f5d01278f3ec85f0473657a263d629d02b4d",
+        "bytes": 21407
+      },
+      {
+        "path": "electron/services/versegit-lifecycle.ts",
+        "sha256": "80994977ee6d0a4b93b869a974b0370a9501e0fb1e991f2f4710178edb704524",
+        "bytes": 10967
+      },
+      {
+        "path": "electron/services/versegit-module.ts",
+        "sha256": "d7e32f30ee7fd470e0208e9b12786e10ca7fa19701327b65773633621b4bf817",
+        "bytes": 34066
+      },
+      {
+        "path": "electron/services/versegit-receipt-evidence.ts",
+        "sha256": "f47f828c7574d88c7431568adb952c1c44c0918f6a9922c61dd30a947ae26943",
+        "bytes": 41216
+      },
+      {
+        "path": "harness/specs/rules/task-forest-autoclose-and-roles.md",
+        "sha256": "f67d386dda19c71434212d2719b75bfb07a4ea008580dc275e5bb2dc92715be7",
+        "bytes": 6470
+      },
+      {
+        "path": "harness/specs/tasks/versegit-module-implementation-contracts.md",
+        "sha256": "8806acacd43895a8aaa38ec1e0eaab486f8f9f7a92f66843664382ef35760243",
+        "bytes": 6342
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-a1-evidence-baseline.md",
+        "sha256": "b0613cf709328c4b2b47bf5bee6119480d5d63d9d38b2fd8ddd7f5a6296f8986",
+        "bytes": 7612
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-a2-runtime-baseline.md",
+        "sha256": "ca7ce0f14677a4e454528e7e65fa893d29df27dea86f18f1779941db339d68f6",
+        "bytes": 8311
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-b1-fact-adapter.md",
+        "sha256": "2c8ed9b39e283105bab3b6c9858c23952219dbd4e81e974d295b272fff889a75",
+        "bytes": 9035
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-b2-host-diagnostics.md",
+        "sha256": "81d9571defe5598f2de7a76ad1096b47554b4be988b68796bd4c3ce0c7208d50",
+        "bytes": 9688
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-c1-runtime-bindings.md",
+        "sha256": "e711ea0fd7b36330d8b3b378c8b761047ad9b1183f6dceaafcfe7f59f04f679e",
+        "bytes": 10682
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-c2-observation-basis.md",
+        "sha256": "c1d12341f3ac173648d114228f9bf1adf0bffeb965c7c0764588cbdf9e159bf7",
+        "bytes": 12373
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-d1-feedback-delivery.md",
+        "sha256": "52b647d035d9cf6455811bfb5f2ba191b16f19fdddad698d9460b0340665447f",
+        "bytes": 13752
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-d2-paired-agent-evaluation.md",
+        "sha256": "3947240c346bb11548badae87dcb40514cba69495e734ca3f1b3e358e4a7140d",
+        "bytes": 13843
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-e1-candidate-freeze.md",
+        "sha256": "2cff8256319f94de3a57224510c59ea12eb98f62390036fd9dfb1e5fff14b4b2",
+        "bytes": 14821
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-e2-receipt-verification.md",
+        "sha256": "ffd2e805991062d46de7b3bc02ead34414684f0ca894ef5b4a77f9d6ddc8213b",
+        "bytes": 15627
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-e3-host-apply.md",
+        "sha256": "09868f372a956ae7cd5bf9eacf3531478d64db42678dc95ef114315d1cfdc836",
+        "bytes": 16994
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f1-completion-contract.md",
+        "sha256": "2e3b4a2443402d84730424f542d1b6cf93233a6fccf662315e2aa3bf030fcbc8",
+        "bytes": 17060
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f2-cleanup-barrier.md",
+        "sha256": "579e71c832d7a96396c04af3eca4271a83299c47e8f938a0fa9b4a0d31caa85d",
+        "bytes": 17507
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f3-sidecar-delivery.md",
+        "sha256": "f6a3661bfc87427fdc3af5a6964a8816713cc2415d1e5ed40fc0820f314e8581",
+        "bytes": 18177
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f4-controlled-stability.md",
+        "sha256": "0853fe2a97b75e559dfac4f6b7f1638ff0dd61245dc4bcd2d3deaed6095aeb92",
+        "bytes": 18754
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f5-global-acceptance.md",
+        "sha256": "ccb1711ea5b1086cf2c5a1432c585c23ce521148fade50315896091f34a659d8",
+        "bytes": 7519
+      },
+      {
+        "path": "openclaw_runtime/src/agents/harness/versegit-feedback-delivery.ts",
+        "sha256": "00761c19b81014a54d4b6cd0cfa7fe32907195b1b43923e93c872be788ac8f60",
+        "bytes": 2662
+      },
+      {
+        "path": "openclaw_runtime/src/agents/harness/versegit-tool-observation.ts",
+        "sha256": "11040691758f9186019b6c38a4445a48745a4f563eb0e672a9a1422d1e3328f7",
+        "bytes": 5107
+      },
+      {
+        "path": "openclaw_runtime/src/agents/orchestration-candidate-apply.ts",
+        "sha256": "bd1cc046ba7da8d671568432a20452c6e8347c7e254e0ace948d340f3cf4c5a5",
+        "bytes": 25166
+      },
+      {
+        "path": "openclaw_runtime/src/agents/orchestration-candidate.ts",
+        "sha256": "c831347e9dee7a43f777ee0a17f0a51793e3acab82885fc4656bd1d7194a6a1c",
+        "bytes": 11467
+      },
+      {
+        "path": "openclaw_runtime/src/agents/orchestration-worktree-merge.ts",
+        "sha256": "a725cf7a11eb9ae95b2cccbc66ca25937f4e12dc5401a801ea52bf1fb4de16e0",
+        "bytes": 4645
+      },
+      {
+        "path": "openclaw_runtime/src/agents/patch-flow.ts",
+        "sha256": "2bb8cc35df557a6bfa19506eed28266085dcf352058e9365a4f27b8a63b5f158",
+        "bytes": 4503
+      },
+      {
+        "path": "openclaw_runtime/src/agents/sessions/tools/versegit-tool-basis.ts",
+        "sha256": "08bf614fe10afaf32753620d9e99285f5960cc200c07c2eb84e578f43f2ab98d",
+        "bytes": 2270
+      },
+      {
+        "path": "openclaw_runtime/src/agents/subagent-versegit-cleanup.ts",
+        "sha256": "0bd4802d4b9dff3eb710c8c83c9f14ee9b68eff468b2fc4c681e3c8b8adbed0c",
+        "bytes": 15161
+      },
+      {
+        "path": "resources/versegit/LICENSE-APACHE-2.0.txt",
+        "sha256": "f81c8de6cfc5091c69fd68229215a93e1b31ee73940e355876257bf0db7ca33e",
+        "bytes": 11351
+      },
+      {
+        "path": "resources/versegit/manifest.json",
+        "sha256": "8c06fb3d0cbc52acb5079f8d8e8fdedf2e85e1480fd971c520887bc19b4ed2d2",
+        "bytes": 2769
+      },
+      {
+        "path": "scripts/bundle-main-runtime.mjs",
+        "sha256": "ec0a014d1fd6f407fe5b9d2ab99b236b3560381b8ca7d54d27872c0c913e783c",
+        "bytes": 3840
+      },
+      {
+        "path": "scripts/verify-versegit-product-integration.d.mts",
+        "sha256": "43550e334d59c913c5d5ab7e8f1ba46cbb63adb20e5e53be010dcc7ea3287a7a",
+        "bytes": 2333
+      },
+      {
+        "path": "scripts/verify-versegit-product-integration.mjs",
+        "sha256": "96e7bf371fc6550f4e1324483cc9e17c5af74a80794d21d0578607e6806fa107",
+        "bytes": 69676
+      },
+      {
+        "path": "shared/capability-claims.ts",
+        "sha256": "cad37b7277c9d9ff9225d9fc374d951b169eed026fc6b4be13b9743907e7870e",
+        "bytes": 65450
+      },
+      {
+        "path": "shared/component-authority-manifest.ts",
+        "sha256": "4eea3dd6d3d4fae1ee947aad34f633db8f861e8daf40fdec53f954697d29f85f",
+        "bytes": 62605
+      },
+      {
+        "path": "shared/dcs/component-disposition-catalog.ts",
+        "sha256": "56db43218f47e9c2e1be98b6126ac237a77d247364c0efbc58eee44a3960441b",
+        "bytes": 48006
+      },
+      {
+        "path": "shared/types/versegit.ts",
+        "sha256": "6c9d98c6d7b40bb6286297296ad5ccda0cd1bf360e70cc8715e399bf89d7b833",
+        "bytes": 8609
+      },
+      {
+        "path": "shared/versegit-cleanup-barrier.ts",
+        "sha256": "646f775e09ef50dc6596b093aa815723823e709bd49418b1fb6c0230daddf35e",
+        "bytes": 17722
+      },
+      {
+        "path": "shared/versegit-runtime-contract.ts",
+        "sha256": "12e336a05e1e176dcfe25b9f05b129058af30549be5af17d8187ce6749a6571a",
+        "bytes": 6949
+      },
+      {
+        "path": "tests/unit/orchestration-worktree-merge.test.ts",
+        "sha256": "e51bdd17cd0c0f1404ea1bb470b88bcf2e8879b6ef1341d6cfcf46129f8fe5db",
+        "bytes": 5507
+      },
+      {
+        "path": "tests/unit/versegit-product-acceptance.test.ts",
+        "sha256": "4386c19672e6911a15730c068b98a08f3c95b246f41b604fccb0825927adca76",
+        "bytes": 11085
+      },
+      {
+        "path": "tests/unit/versegit-wp6-closeout.test.ts",
+        "sha256": "97b3745e04a3df82c96f3f88bceb05be6186028cd5d2e23f174b7c56b9ca4528",
+        "bytes": 7478
+      },
+      {
+        "path": "tests/unit/versegit-wp8-review.test.ts",
+        "sha256": "39e8ca9c3a47cf3168fe46bb244e7a27cd009165069ab60aac63ce9b01980f8d",
+        "bytes": 2165
+      },
+      {
+        "path": "tests/unit/versegit-wp9-global-acceptance.test.ts",
+        "sha256": "872e6bce5576d193afa4d4fb786b8a0fa683baf08abdc366a7cb3d19979344fa",
+        "bytes": 10142
+      }
+    ],
+    "packageId": "vg-0.1.0-win32-x64-release-6b8330354da59118",
+    "artifactSha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+    "capabilitiesSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26"
+  },
+  "criteria": [
+    {
+      "id": "risk-observation",
+      "title": "Repository risk observation uses a current, host-owned, bounded production path.",
+      "taskIds": [
+        "TF-0524",
+        "TF-0525",
+        "TF-0526",
+        "TF-0527",
+        "TF-0528",
+        "TF-0529"
+      ],
+      "evidence": [
+        "a1/current-verification.json",
+        "a1/current-input-manifest.json",
+        "a1/historical-evidence-index.json",
+        "a2/build-identity.json",
+        "a2/electron-startup.json",
+        "a2/smoke-results.json",
+        "b1/adapter-differential.json",
+        "b1/mode-effect-matrix.json",
+        "b1/authority-negative.json",
+        "b2/diagnostic-contract.json",
+        "b2/host-invoke.json",
+        "b2/negative-host-requests.json",
+        "c1/runtime-bindings.json",
+        "c1/binding-negative.json",
+        "c2/coverage.json",
+        "c2/observation-links.json",
+        "c2/basis-race-cases.json"
+      ],
+      "checks": [
+        {
+          "id": "current-baseline-passed",
+          "passed": true,
+          "detail": "A1 current candidate is clean and passing"
+        },
+        {
+          "id": "historical-not-current",
+          "passed": true,
+          "detail": "historical evidence is not reused as the current candidate"
+        },
+        {
+          "id": "electron-body-entered",
+          "passed": true,
+          "detail": "real Electron smoke entered the test body"
+        },
+        {
+          "id": "fact-adapter-host-owned",
+          "passed": true,
+          "detail": "fact adapter is a bounded M1 host caller with default-off/M4 boundaries"
+        },
+        {
+          "id": "mode-matrix-bounded",
+          "passed": true,
+          "detail": "mode and authority negatives preserve M1/M2 boundaries"
+        },
+        {
+          "id": "host-diagnostics",
+          "passed": true,
+          "detail": "host diagnostics omit private paths/argv and reject illegal senders"
+        },
+        {
+          "id": "runtime-bindings",
+          "passed": true,
+          "detail": "real runtime bindings retain repo/worktree identity"
+        },
+        {
+          "id": "observation-basis",
+          "passed": true,
+          "detail": "observation links preserve basis identity and explicit unobserved surfaces"
+        }
+      ],
+      "status": "passed",
+      "recompute": "Replays A1/A2/B1/B2/C1/C2 counters, source/tree ancestry, SHA256SUMS, production callers and negative cases."
+    },
+    {
+      "id": "agent-feedback",
+      "title": "Agent feedback is delivered through the real tool-result path and its behavior shift is separately evidenced.",
+      "taskIds": [
+        "TF-0530",
+        "TF-0531"
+      ],
+      "evidence": [
+        "d1/feedback-delivery.json",
+        "d1/next-call-binding.json",
+        "d1/transcript-index.json",
+        "d2/paired-results.json",
+        "d2/behavior-evidence.json",
+        "d2/paired-input-manifest.json"
+      ],
+      "checks": [
+        {
+          "id": "delivery-levels",
+          "passed": true,
+          "detail": "produced, host-delivered and transcript-confirmed are distinct"
+        },
+        {
+          "id": "next-call-binding",
+          "passed": true,
+          "detail": "next model call carries the same evidence identity"
+        },
+        {
+          "id": "feedback-negatives",
+          "passed": true,
+          "detail": "duplicate, owner and epoch negatives are rejected"
+        },
+        {
+          "id": "paired-outcomes",
+          "passed": true,
+          "detail": "paired off/on and negative controls recompute"
+        },
+        {
+          "id": "behavior-not-transcript-only",
+          "passed": true,
+          "detail": "transcript presence is not promoted to behavior shift; unmeasured model/cost scope is explicit"
+        }
+      ],
+      "status": "passed",
+      "recompute": "Replays D1 delivery levels/next-call binding and D2 paired positive/negative control counts from retained trials."
+    },
+    {
+      "id": "candidate-pre-verification",
+      "title": "Worker results are combined and frozen, then verified before any host write.",
+      "taskIds": [
+        "TF-0532",
+        "TF-0533",
+        "TF-0534"
+      ],
+      "evidence": [
+        "e1/candidate-manifest.json",
+        "e1/target-before-after.json",
+        "e1/candidate-negative.json",
+        "e2/plans.json",
+        "e2/execution-receipts.json",
+        "e3/ordering-trace.json"
+      ],
+      "checks": [
+        {
+          "id": "candidate-frozen",
+          "passed": true,
+          "detail": "combined candidate is frozen and still pending verification"
+        },
+        {
+          "id": "target-untouched",
+          "passed": true,
+          "detail": "freeze does not merge or mutate refs/working tree"
+        },
+        {
+          "id": "candidate-negatives",
+          "passed": true,
+          "detail": "conflict, dirty, untracked, drift and write-set negatives preserve target"
+        },
+        {
+          "id": "host-governed-plans",
+          "passed": true,
+          "detail": "verification plans use governed VerseShell without native fallback"
+        },
+        {
+          "id": "receipt-bound-runs",
+          "passed": true,
+          "detail": "failed then continued runs carry accepted host-authoritative receipts and no writeback"
+        },
+        {
+          "id": "verification-precedes-write",
+          "passed": true,
+          "detail": "ordering trace places verification before the first write"
+        }
+      ],
+      "status": "passed",
+      "recompute": "Replays E1 freeze/target negatives, E2 receipt-bound governed runs and E3 ordering indices."
+    },
+    {
+      "id": "persistent-result",
+      "title": "Host completion outcomes persist across restart without provider landing authority.",
+      "taskIds": [
+        "TF-0535"
+      ],
+      "evidence": [
+        "f1/completion-contract.json",
+        "f1/persisted-outcomes.json",
+        "f1/restart-lifecycle.json"
+      ],
+      "checks": [
+        {
+          "id": "completion-contract",
+          "passed": true,
+          "detail": "completion fact is host-owned and does not imply provider landing"
+        },
+        {
+          "id": "outcome-mapping",
+          "passed": true,
+          "detail": "applied, not-applied and unknown map explicitly"
+        },
+        {
+          "id": "persistence-negatives",
+          "passed": true,
+          "detail": "duplicate, late epoch, terminal and legacy negatives are retained"
+        },
+        {
+          "id": "restart-replay",
+          "passed": true,
+          "detail": "restart reads the same fact and refuses implicit recovery"
+        },
+        {
+          "id": "explicit-recovery",
+          "passed": true,
+          "detail": "explicit recovery remains host-bounded with no active risk"
+        }
+      ],
+      "status": "passed",
+      "recompute": "Replays F1 completion mapping, duplicate/epoch negatives and restart persistence."
+    },
+    {
+      "id": "host-writeback",
+      "title": "ClawX remains the write-journal and Git-apply host after combined verification.",
+      "taskIds": [
+        "TF-0534"
+      ],
+      "evidence": [
+        "e3/apply-decision.json",
+        "e3/ordering-trace.json",
+        "e3/write-journal-index.json",
+        "e3/toctou-negative.json"
+      ],
+      "checks": [
+        {
+          "id": "combined-success-applied",
+          "passed": true,
+          "detail": "writeback occurs only after combined verification passes"
+        },
+        {
+          "id": "permission-checkpoint",
+          "passed": true,
+          "detail": "final writeback checkpoint belongs to ClawX/runtime grant authority"
+        },
+        {
+          "id": "refs-not-implicitly-landed",
+          "passed": true,
+          "detail": "host apply writes working files without transferring VG landing authority"
+        },
+        {
+          "id": "write-journal",
+          "passed": true,
+          "detail": "write journal records the write batch and undo restores base"
+        },
+        {
+          "id": "ordering-and-toctou",
+          "passed": true,
+          "detail": "post-apply verification follows the write in the host trace"
+        },
+        {
+          "id": "host-authority",
+          "passed": true,
+          "detail": "host, default-off, M4 and evidence-attribution boundaries remain intact"
+        }
+      ],
+      "status": "passed",
+      "recompute": "Replays E3 combined verification/apply order, grant checkpoint, write-journal/undo and authority boundaries."
+    },
+    {
+      "id": "cleanup",
+      "title": "Cleanup seals evidence, verifies identity and deletes only observed zero-survivor resources.",
+      "taskIds": [
+        "TF-0536",
+        "TF-0538"
+      ],
+      "evidence": [
+        "f2/cleanup-barrier.json",
+        "f2/recovery-required.json",
+        "f2/resource-inventory.json",
+        "f4/resource-survivors.json"
+      ],
+      "checks": [
+        {
+          "id": "barrier-order",
+          "passed": true,
+          "detail": "single barrier order is exact"
+        },
+        {
+          "id": "barrier-negatives",
+          "passed": true,
+          "detail": "late events, unknown inventory and restart are fail-closed"
+        },
+        {
+          "id": "recovery-cases",
+          "passed": true,
+          "detail": "identity/stage/survivor/late-event negatives preserve recovery semantics"
+        },
+        {
+          "id": "normal-cleanup-zero",
+          "passed": true,
+          "detail": "normal/failure/continuation inventories observe zero survivors"
+        },
+        {
+          "id": "survivor-not-hidden",
+          "passed": true,
+          "detail": "one survivor remains rejected rather than being reported as zero"
+        },
+        {
+          "id": "f4-survivors-zero",
+          "passed": true,
+          "detail": "ten packaged folds leave no process/manager/worktree/temp survivor"
+        }
+      ],
+      "status": "passed",
+      "recompute": "Replays F2 barrier/recovery/inventory cases and F4 ten-loop survivor totals."
+    },
+    {
+      "id": "package",
+      "title": "A digest-pinned M1 Windows sidecar package is consumed without provider-source or authority copying.",
+      "taskIds": [
+        "TF-0537"
+      ],
+      "evidence": [
+        "f3/sidecar-package-manifest.json",
+        "f3/build-provenance.json",
+        "f3/package-negative.json"
+      ],
+      "checks": [
+        {
+          "id": "manifest-verified",
+          "passed": true,
+          "detail": "package manifest is schema-valid and digest-pinned"
+        },
+        {
+          "id": "artifact-identity",
+          "passed": true,
+          "detail": "artifact identity matches the retained F3 package"
+        },
+        {
+          "id": "targets-and-profile",
+          "passed": true,
+          "detail": "only win32-x64/M1 is claimed and no source/history data is copied"
+        },
+        {
+          "id": "license",
+          "passed": true,
+          "detail": "license path and digest replay"
+        },
+        {
+          "id": "double-build-honest",
+          "passed": true,
+          "detail": "semantic identity is claimed without byte-identical reproducibility"
+        },
+        {
+          "id": "negative-package-cases",
+          "passed": true,
+          "detail": "artifact/schema/profile/platform negatives are rejected"
+        },
+        {
+          "id": "tracked-manifest-parity",
+          "passed": true,
+          "detail": "represented package equals the tracked resource manifest"
+        },
+        {
+          "id": "artifact-on-disk",
+          "passed": true,
+          "detail": "ignored build artifact hash/size match"
+        }
+      ],
+      "status": "passed",
+      "recompute": "Replays F3 package manifest/provenance/negative cases and tracked manifest/license identity; ignored binary is hashed when present."
+    },
+    {
+      "id": "bounded-stability",
+      "title": "The packaged Windows loop is bounded and raw stability metrics recompute from samples.",
+      "taskIds": [
+        "TF-0538"
+      ],
+      "evidence": [
+        "f4/packaged-flow.json",
+        "f4/stability-report.json",
+        "f4/stability-samples.jsonl",
+        "f4/resource-survivors.json"
+      ],
+      "checks": [
+        {
+          "id": "cold-starts",
+          "passed": true,
+          "detail": "three cold starts use the same package identity"
+        },
+        {
+          "id": "ten-unique-loops",
+          "passed": true,
+          "detail": "ten unique candidate/tool/receipt/apply loops pass"
+        },
+        {
+          "id": "raw-metrics",
+          "passed": true,
+          "detail": "P50/P95/RSS/failure/duplicate/survivor values recompute exactly"
+        },
+        {
+          "id": "budgets",
+          "passed": true,
+          "detail": "frozen budgets are satisfied"
+        },
+        {
+          "id": "restart-revocation-undo",
+          "passed": true,
+          "detail": "restart, interruption, revocation and undo are observed in every retained axis"
+        },
+        {
+          "id": "scope-explicit",
+          "passed": true,
+          "detail": "platform, mode and unmeasured model/language scope are explicit"
+        },
+        {
+          "id": "resource-zero",
+          "passed": true,
+          "detail": "sample survivor totals equal the resource inventory"
+        }
+      ],
+      "status": "passed",
+      "recompute": "Recomputes F4 sample count, P50/P95, peak RSS, failure/duplicate/survivor counts and checks frozen budgets."
+    },
+    {
+      "id": "docs-capability-authority",
+      "title": "Three-language READMEs, controlled-preview lock, host authority links and model-facing capability posture agree.",
+      "taskIds": [
+        "TF-0539"
+      ],
+      "evidence": [
+        "docs/dev/versegit-validation-layer/README.md",
+        "docs/clawx-product-semantics.md",
+        "shared/component-authority-manifest.ts",
+        "README.md",
+        "README.zh-CN.md",
+        "README.ja-JP.md",
+        "harness/specs/rules/task-forest-autoclose-and-roles.md"
+      ],
+      "checks": [
+        {
+          "id": "readme-README.md",
+          "passed": true,
+          "detail": "README.md carries the bounded product claim, avoids the GA token on the product surface, and links the VG validation layer"
+        },
+        {
+          "id": "readme-README.zh-CN.md",
+          "passed": true,
+          "detail": "README.zh-CN.md carries the bounded product claim, avoids the GA token on the product surface, and links the VG validation layer"
+        },
+        {
+          "id": "readme-README.ja-JP.md",
+          "passed": true,
+          "detail": "README.ja-JP.md carries the bounded product claim, avoids the GA token on the product surface, and links the VG validation layer"
+        },
+        {
+          "id": "controlled-preview-lock",
+          "passed": true,
+          "detail": "Every existing controlled-preview surface matches the single authority map; VG remains outside that product scope"
+        },
+        {
+          "id": "host-authority-owners",
+          "passed": true,
+          "detail": "VG is not added to the controlled-preview surface map; host authority remains owned by existing ClawX components"
+        },
+        {
+          "id": "model-facing-internal",
+          "passed": true,
+          "detail": "VG remains an internal host sidecar rather than a broad user-visible model capability claim"
+        },
+        {
+          "id": "validation-doc",
+          "passed": true,
+          "detail": "validation README links the F5 report and carries exact verdict/scope"
+        },
+        {
+          "id": "task-forest-gate",
+          "passed": true,
+          "detail": "Task Forest closure remains hash-gated with proposal-apply/validate/export"
+        }
+      ],
+      "status": "passed",
+      "recompute": "Scans READMEs, controlled-preview lock, host authority/manifest and Task Forest closeout rule for current claim agreement."
+    }
+  ],
+  "groups": {
+    "ok": true,
+    "issues": [],
+    "groups": [
+      {
+        "id": "a1",
+        "task": "TF-0524",
+        "title": "current evidence baseline",
+        "directory": "harness/specs/fixtures/versegit-product-integration/a1",
+        "source": {
+          "commit": "51e0cc94d95d2ff62c08e9ebe287e66d07e42fd6",
+          "tree": "28b2590569fc3ec21515871fa41095284803b434"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "passed",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/a1/SHA256SUMS",
+        "shaEntries": 5,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/a1/historical-evidence-index.json",
+            "sha256": "1f5bb9e03d5598ab5134009525a75cce458cfe4ae9cceea7326bd62bdf2ddb76"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/a1/current-verification.json",
+            "sha256": "3bc8fb6b86acbb0348b31fff5a8bf4f1264852c853e7cf6a5e91893eee81cf1b"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/a1/current-input-manifest.json",
+            "sha256": "8fa3d38f39963567c26b16b7e8a0a9bc2f20ad09745060ad54e8e531a38f34ee"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/a1/independent-review.json",
+            "sha256": "8fe8e4b491d5cebde547408a5572cfc59cc8fbe98c71a16d7419a2e105791533"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/a1/negative-checks.json",
+            "sha256": "bb6a383bfa335b2fce4a40640b6ccf9f35df2be5735daea35207d2f6a40c410f"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "a2",
+        "task": "TF-0525",
+        "title": "Electron runtime baseline",
+        "directory": "harness/specs/fixtures/versegit-product-integration/a2",
+        "source": {
+          "commit": "6061f4125b14f9777e081c57c7a0479726876cdb",
+          "tree": "d97833357c3807d0e220149760a55f0e704d82ea"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "passed",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/a2/SHA256SUMS",
+        "shaEntries": 6,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/a2/cleanup.json",
+            "sha256": "01b8c7e354317766a370b2d61fbd06a4cf5d80e483cf4d2bc1ca3e830745369a"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/a2/build-identity.json",
+            "sha256": "204a498d59f4ba2ac3a05aa214a6a1e7b846f872fe0e6805f4fb8416ec67306b"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/a2/electron-startup.json",
+            "sha256": "5b012c2de305c859a3a8e465b7c4e06e8af3b15b3f29efd1b0178a778eb4b9a3"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/a2/independent-review.json",
+            "sha256": "a356c3369189745c2581ec9441cf25944da3515021efdf95587f38d4733bef42"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/a2/smoke-results.json",
+            "sha256": "d2983f42c547e5e6f3fb05f9793116687a9eda04e5b32c89e7bf3965e6cf1f32"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/a2/negative-checks.json",
+            "sha256": "eba2bb90066812aea0c0381c86b5b141d257331776e0dfde5d54ce884efc3dba"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "b1",
+        "task": "TF-0526",
+        "title": "fact adapter differential",
+        "directory": "harness/specs/fixtures/versegit-product-integration/b1",
+        "source": {
+          "commit": "dde49e5cce2b202bb0f71584b3a09043d5412276",
+          "tree": "1b512a4fc18fcb645cebd3587e7c065910631de4"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "passed",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/b1/SHA256SUMS",
+        "shaEntries": 4,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/b1/authority-negative.json",
+            "sha256": "0a7c078db61d78b4be0f91890a9ce4bde2ee53d4fcf03d9d40ac7103c5688c1e"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/b1/mode-effect-matrix.json",
+            "sha256": "0ecee1aa4504febbe9329760c2262d50196064c2f621a4295624c6e9d73eb388"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/b1/adapter-differential.json",
+            "sha256": "84f8ac2cb748b1559348d58bcaf2900a6ae5f621747a555b2f5abca7e96aa7e3"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/b1/independent-review.json",
+            "sha256": "abed3f68564ee99bd75efd72f86eace64abdc41eca5e6f8df57e9b558ec6df4a"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "b2",
+        "task": "TF-0527",
+        "title": "host diagnostics",
+        "directory": "harness/specs/fixtures/versegit-product-integration/b2",
+        "source": {
+          "commit": "3daaf0e7ac0046b5f616ad62a958b151ebbf9283",
+          "tree": "cef6b93596644103ba7039575e45cf9815893612"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "passed",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/b2/SHA256SUMS",
+        "shaEntries": 4,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/b2/negative-host-requests.json",
+            "sha256": "0d9f0b821ea60afa411daa5c1dd4570a587ee8fee8dfcb6f5ab45cd967c145ec"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/b2/host-invoke.json",
+            "sha256": "53f220463c9e970f93a034306e48ecb22b2f71548cee78d419f3c1d1088727be"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/b2/independent-review.json",
+            "sha256": "604f36ebca7bc4eb66775212593e1d3e9520c17bfbf1549e20e202242baad94a"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/b2/diagnostic-contract.json",
+            "sha256": "6965741783e206509bab8711e13fcaef2103b4ea35dd4575454766d682163de9"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "c1",
+        "task": "TF-0528",
+        "title": "runtime bindings",
+        "directory": "harness/specs/fixtures/versegit-product-integration/c1",
+        "source": {
+          "commit": "ea0fb43aa6b0201859f0627583f26b058bbde596",
+          "tree": "62c796a30ac84da94df9ea8e35648fdf94ee4c05"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "passed",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/c1/SHA256SUMS",
+        "shaEntries": 4,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/c1/runtime-bindings.json",
+            "sha256": "2ff2e9a01af864469b2494356169e35e8f96db34676984eca62b1a09ca60580b"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/c1/independent-review.json",
+            "sha256": "4a484575346941cfd6298a37c7a873a382a34222ff84d91c9101a24a91080cf6"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/c1/bridge-events.jsonl",
+            "sha256": "88e5f6dcbbbfa9ec3640b585ee389fee88ca83bcbd7abc3f3f94b63465a93fe3"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/c1/binding-negative.json",
+            "sha256": "d5c3552ca2779f5cb1a005c65b985bf1eca88db1bc0ce6a21b098c1440492daf"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "c2",
+        "task": "TF-0529",
+        "title": "observation basis",
+        "directory": "harness/specs/fixtures/versegit-product-integration/c2",
+        "source": {
+          "commit": "6f1f92385f9b75f4e7f583991f532526f802833c",
+          "tree": "3ba380507ff680648f45d07e54c8bdbc5cdf111a"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "passed",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/c2/SHA256SUMS",
+        "shaEntries": 4,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/c2/independent-review.json",
+            "sha256": "1cc3b7acc65d2459d8f79ded5e3714a36576946c82962643785966016653b497"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/c2/observation-links.json",
+            "sha256": "a94d3e2560cdc2cbe57b004540b088c634573c0175fe199a9328871a60139ca9"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/c2/basis-race-cases.json",
+            "sha256": "f5cd19241f7762d1ae1b2cf47cac9fc1ab6f0ca34610f1164ac7c6a04d4fc725"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/c2/coverage.json",
+            "sha256": "fab394af8666d6633ef64c305088c3d5c2824a5c9053d13d55763f9a67529b0c"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "d1",
+        "task": "TF-0530",
+        "title": "feedback delivery",
+        "directory": "harness/specs/fixtures/versegit-product-integration/d1",
+        "source": {
+          "commit": "90ac51a93e020c9492bb2835c1ae2c2fed1dac31",
+          "tree": "3b8dfb6b850b2d313af7f2f97aaf8bf0028225cf"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "passed",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/d1/SHA256SUMS",
+        "shaEntries": 4,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/d1/transcript-index.json",
+            "sha256": "24719d5129fccd61c56aa6d4148807eadd795a0eed25855ca1c9807ac6ea1934"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/d1/independent-review.json",
+            "sha256": "69e7a30c69846f3ded51182b015926fb835e60cd51f78b2300d64435bc68bd7c"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/d1/next-call-binding.json",
+            "sha256": "6d3967971f6350095ab9dde8def39acd35ba0965012a17dd58b10e6f136a8303"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/d1/feedback-delivery.json",
+            "sha256": "87ee1e726b78f938f47e41f8a0a280f62695f4436db8014e5d6f93e3924c40c0"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "d2",
+        "task": "TF-0531",
+        "title": "paired agent evaluation",
+        "directory": "harness/specs/fixtures/versegit-product-integration/d2",
+        "source": {
+          "commit": "50837eca343d56b6bee3ca05b6d31452658d5da1",
+          "tree": "b028a9cfa747060fa741ae9d537ec6837d872972"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "passed",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/d2/SHA256SUMS",
+        "shaEntries": 4,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/d2/paired-input-manifest.json",
+            "sha256": "6195d9428160ad28b4186d48438f83ac74500f0a69a7c27fee6c22cacabbae0f"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/d2/paired-results.json",
+            "sha256": "a835e8def31d51ff84eaf44661ccbd4c2eeff8ad6fa556038a4af16503f5e2c9"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/d2/behavior-evidence.json",
+            "sha256": "c0dce92191f235fde6a2a2b00add7aed6db2f0a82c05b874ef33e1fe2fd53f08"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/d2/independent-review.json",
+            "sha256": "e6bb7211d7cc1ff544ea524790dc332c7c163209507c5f3e0312af547d8af63f"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "e1",
+        "task": "TF-0532",
+        "title": "candidate freeze",
+        "directory": "harness/specs/fixtures/versegit-product-integration/e1",
+        "source": {
+          "commit": "d2de451ba5ff20658b00903b39e5b5e73db67ceb",
+          "tree": "5cc8900c98b1105262f19de9d9378644c12cc965"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "passed",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/e1/SHA256SUMS",
+        "shaEntries": 4,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e1/candidate-negative.json",
+            "sha256": "49aa49a04f1ca76caf01d3e3844d3637bcdb84420903c04312038569e91b1785"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e1/independent-review.json",
+            "sha256": "6452803d331d432413e877433ff99d5a355d80d442ecaa8a3fa11e2cf467b695"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e1/candidate-manifest.json",
+            "sha256": "7800723eef32e53a1b6bb6e7e1e001ee9444761e11f0eefa892dd6860b952dc2"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e1/target-before-after.json",
+            "sha256": "fa7049c18e3fd41e9310aa85c659594be8de97b63b934e92e913156cf3d7fd0b"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "e2",
+        "task": "TF-0533",
+        "title": "receipt verification",
+        "directory": "harness/specs/fixtures/versegit-product-integration/e2",
+        "source": {
+          "commit": "d929fdc94e6e099d0b1984cb30ec37ed28ad8996",
+          "tree": "192a13159ec5177f24a5d1f849ada7d2247b1f06"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "passed",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/e2/SHA256SUMS",
+        "shaEntries": 5,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e2/execution-cleanup.json",
+            "sha256": "1b059fa99bb61d28dff66ed250cbd2782b2e1053dcf0f900aa27ff80eccce523"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e2/execution-receipts.json",
+            "sha256": "1f839887080845db7a29b63bd1a9303e7d48a5a6849b46882d8611d1f7e6a117"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e2/independent-review.json",
+            "sha256": "559477fbb439b8c6f1803ddac0ff7169f9830957f8eb84758356d4132e0b554c"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e2/receipt-negative.json",
+            "sha256": "8b2781c5540d42c7eadc605fbcb570c998439d6fe76c96eefa0810f5b11e0882"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e2/plans.json",
+            "sha256": "a479913d43b82df5042dde5dba4316b1cd29036bc0fab5d197f86039022ec2a7"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "e3",
+        "task": "TF-0534",
+        "title": "host apply",
+        "directory": "harness/specs/fixtures/versegit-product-integration/e3",
+        "source": {
+          "commit": "31cbfa08a6379d32af4907d1f97416f10b64fc97",
+          "tree": "f7039a70cf327f2d2e4b3e187ab6b8d947e55cb0"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "passed",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/e3/SHA256SUMS",
+        "shaEntries": 5,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e3/write-journal-index.json",
+            "sha256": "266d16f5f1859a33b39bb4e032df521413dea6106b7c1454f8a401331aa3a3f0"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e3/apply-decision.json",
+            "sha256": "2fc4a2b2c7b67b6d8b63ce0b49fd8645b5fb4b3b4b3238f32d1af15d3abf9505"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e3/toctou-negative.json",
+            "sha256": "962392c2a8da5924edc0e701271057c4cacb6a3bc12ba5c179474b1716372332"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e3/independent-review.json",
+            "sha256": "c334fd7714ac45813f1a4c0df55686d52a7640f1dffd486a289b7a31386e8753"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/e3/ordering-trace.json",
+            "sha256": "f543863eab86a46c2fdc04394bd8fafbfd99998b82f0a519f6b1f8dcb09a3835"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "f1",
+        "task": "TF-0535",
+        "title": "persistent completion",
+        "directory": "harness/specs/fixtures/versegit-product-integration/f1",
+        "source": {
+          "commit": "d06808b0e2286d2a3bc7ea2f730d285018c8e355",
+          "tree": "bd6eadb7966a2bbc64ed45c41b32577662e987fe"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "passed",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/f1/SHA256SUMS",
+        "shaEntries": 4,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f1/completion-contract.json",
+            "sha256": "3e2aee8a20a88fd3fc4ea1e2b9e8205029b64660192d1bfc4eaeeeed861678f1"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f1/persisted-outcomes.json",
+            "sha256": "56d38f9ad9aa5f8b0c9f2e3486538d9a3df6a404b9b30ccaf1fba786bc752a43"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f1/independent-review.json",
+            "sha256": "be641db7b49b4e7ebaf1561b6c464eee181f887ed814084bcbac975c74a93fb2"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f1/restart-lifecycle.json",
+            "sha256": "ee54d3be04d8615a190a5df702e028930bbaae71c0f1498ebc1653a836232557"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "f2",
+        "task": "TF-0536",
+        "title": "cleanup barrier",
+        "directory": "harness/specs/fixtures/versegit-product-integration/f2",
+        "source": {
+          "commit": "e3d9ee474ae8f31ff52b44bf3a70a1b7e74a1c28",
+          "tree": "7aa5cd5c72efade31f8261c46f34dac5f1e40798"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "pass",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/f2/SHA256SUMS",
+        "shaEntries": 4,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f2/cleanup-barrier.json",
+            "sha256": "432fd7330cb6942069022a50a8f25298aabf73127e5e1e7c0408138b1e130a27"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f2/independent-review.json",
+            "sha256": "665b7c5b9594f4eaaf5eaac136431bbeed772809d7089c6f55b028d7807fd292"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f2/recovery-required.json",
+            "sha256": "46f304f94c39d11de3a5b6672afd32604b1a0df7066e938212c668b4a2c2cd34"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f2/resource-inventory.json",
+            "sha256": "b4e957934f6bc722ac7020c9191ba5a0e9e78424a5078a493bfe150d7ff42d42"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "f3",
+        "task": "TF-0537",
+        "title": "sidecar package",
+        "directory": "harness/specs/fixtures/versegit-product-integration/f3",
+        "source": {
+          "commit": "95a34cca793ff07f167b2b87f182ecf82985ae4e",
+          "tree": "a69d3752e68f737d2135ff9c2380d3b539e61b3f"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "pass",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/f3/SHA256SUMS",
+        "shaEntries": 4,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f3/build-provenance.json",
+            "sha256": "540c9742f3f0a5b229961155968cbeb08153ea72c85b34e75a7b68da521e63c3"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f3/independent-review.json",
+            "sha256": "2536a9084f3812272aae92d0bb7daa49b205106bae5f1a4329f59e6822bddfeb"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f3/package-negative.json",
+            "sha256": "4f886267f4065bd31066e14f69c836379975a9becce54b6f9688949799d14d5a"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f3/sidecar-package-manifest.json",
+            "sha256": "b93df12029b5f480925f191c9f4b7e77bfc9a56bd07682c7d298662f989e7524"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      },
+      {
+        "id": "f4",
+        "task": "TF-0538",
+        "title": "bounded stability",
+        "directory": "harness/specs/fixtures/versegit-product-integration/f4",
+        "source": {
+          "commit": "0fc24862ff172ac0c36136255a7b4e39f28a9a75",
+          "tree": "f6cc58007ad3a4a675ee688a0674dac860b641cc"
+        },
+        "review": {
+          "actor": "codex",
+          "status": "pass",
+          "p0": 0,
+          "p1": 0,
+          "p2": 0
+        },
+        "shaManifest": "harness/specs/fixtures/versegit-product-integration/f4/SHA256SUMS",
+        "shaEntries": 5,
+        "files": [
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f4/independent-review.json",
+            "sha256": "9b26b6108e1ec3e95728e492c9a1dfdf1d7e6a9055ab3b0b22b5a35b7bf55647"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f4/packaged-flow.json",
+            "sha256": "ac0197c63d0365086597382928b7427b57bc95c12b2fdf3e23da347e071a1c25"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f4/resource-survivors.json",
+            "sha256": "7947219843b3d4d126bb81a3213c6c6d894bfa0a2cd2f8f116e96fb4d151dc89"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f4/stability-report.json",
+            "sha256": "de9080858d41e6533109ec457cb8fe2f0aefe605c58de490b10ebe7cfc1be014"
+          },
+          {
+            "path": "harness/specs/fixtures/versegit-product-integration/f4/stability-samples.jsonl",
+            "sha256": "d5da1f9d4c0af9844393b11eb6b51e69cab67cc8172d5ef9b0cf85c8fcbc0f9b"
+          }
+        ],
+        "status": "passed",
+        "issues": []
+      }
+    ],
+    "evidenceFileCount": 66
+  },
+  "historical": {
+    "ok": false,
+    "issues": [
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: README.ja-JP.md",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: README.md",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: README.zh-CN.md",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: docs/clawx-product-semantics.md",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: scripts/verify-versegit-product-integration.mjs",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: shared/capability-claims.ts",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: shared/component-authority-manifest.ts",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: shared/dcs/component-disposition-catalog.ts",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: tests/unit/orchestration-worktree-merge.test.ts",
+      "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: tests/unit/versegit-product-acceptance.test.ts",
+      "criterion index candidate differs from live source inputs",
+      "global report candidate differs from live source inputs",
+      "criterion evidence index diverges from live replay",
+      "independent verdict candidate mismatch"
+    ],
+    "source": {
+      "branch": "codex/versegit-product-integration-20261022",
+      "commit": "fb57c050137b6bbabc0c77bd1660e01b31612f6a",
+      "tree": "0535ed5fc5a7f749c58e20401b5cd09a43007ded",
+      "dirty": false
+    },
+    "candidate": {
+      "id": "4027d7f25783ad66ee437cd356db8f328e8ffc5bf08b319ba585e2c6b3da6135",
+      "sourceInputDigest": "d584183378984546850b2749691662e8e1a430d223a23dcbb8d4b6ae6fd9e9ec",
+      "inputs": [
+        {
+          "path": "README.ja-JP.md",
+          "sha256": "1da56e75a659f3de0280d3871a177ca1db11d1b6b0ed41bd8ef96bc8efa4d324",
+          "bytes": 42956
+        },
+        {
+          "path": "README.md",
+          "sha256": "eba0d4051402781ca1c04cf825dbee55463a2722c20c3bcf11aba0f0a00befb7",
+          "bytes": 35656
+        },
+        {
+          "path": "README.zh-CN.md",
+          "sha256": "db65abc2da6b09a4ee83368940fd595708c2ba538104d526d3297488fe7c5fae",
+          "bytes": 33007
+        },
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "sha256": "c3c4b7ad7708608c25649016cccc5f33cda5c26e408c125cd31ff289713f8cad",
+          "bytes": 18121
+        },
+        {
+          "path": "docs/dev/versegit-validation-layer/README.md",
+          "sha256": "f4455d6f29d5044b4baecc34d14d00bec48bddfb94bf7bd4e9d8408a9d820169",
+          "bytes": 16819
+        },
+        {
+          "path": "electron/services/versegit-fact-adapter.ts",
+          "sha256": "f073f779506467c7da6c1a170084f5d01278f3ec85f0473657a263d629d02b4d",
+          "bytes": 21407
+        },
+        {
+          "path": "electron/services/versegit-lifecycle.ts",
+          "sha256": "80994977ee6d0a4b93b869a974b0370a9501e0fb1e991f2f4710178edb704524",
+          "bytes": 10967
+        },
+        {
+          "path": "electron/services/versegit-module.ts",
+          "sha256": "d7e32f30ee7fd470e0208e9b12786e10ca7fa19701327b65773633621b4bf817",
+          "bytes": 34066
+        },
+        {
+          "path": "electron/services/versegit-receipt-evidence.ts",
+          "sha256": "f47f828c7574d88c7431568adb952c1c44c0918f6a9922c61dd30a947ae26943",
+          "bytes": 41216
+        },
+        {
+          "path": "harness/specs/rules/task-forest-autoclose-and-roles.md",
+          "sha256": "f67d386dda19c71434212d2719b75bfb07a4ea008580dc275e5bb2dc92715be7",
+          "bytes": 6470
+        },
+        {
+          "path": "harness/specs/tasks/versegit-module-implementation-contracts.md",
+          "sha256": "8806acacd43895a8aaa38ec1e0eaab486f8f9f7a92f66843664382ef35760243",
+          "bytes": 6342
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-a1-evidence-baseline.md",
+          "sha256": "b0613cf709328c4b2b47bf5bee6119480d5d63d9d38b2fd8ddd7f5a6296f8986",
+          "bytes": 7612
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-a2-runtime-baseline.md",
+          "sha256": "ca7ce0f14677a4e454528e7e65fa893d29df27dea86f18f1779941db339d68f6",
+          "bytes": 8311
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-b1-fact-adapter.md",
+          "sha256": "2c8ed9b39e283105bab3b6c9858c23952219dbd4e81e974d295b272fff889a75",
+          "bytes": 9035
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-b2-host-diagnostics.md",
+          "sha256": "81d9571defe5598f2de7a76ad1096b47554b4be988b68796bd4c3ce0c7208d50",
+          "bytes": 9688
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-c1-runtime-bindings.md",
+          "sha256": "e711ea0fd7b36330d8b3b378c8b761047ad9b1183f6dceaafcfe7f59f04f679e",
+          "bytes": 10682
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-c2-observation-basis.md",
+          "sha256": "c1d12341f3ac173648d114228f9bf1adf0bffeb965c7c0764588cbdf9e159bf7",
+          "bytes": 12373
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-d1-feedback-delivery.md",
+          "sha256": "52b647d035d9cf6455811bfb5f2ba191b16f19fdddad698d9460b0340665447f",
+          "bytes": 13752
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-d2-paired-agent-evaluation.md",
+          "sha256": "3947240c346bb11548badae87dcb40514cba69495e734ca3f1b3e358e4a7140d",
+          "bytes": 13843
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-e1-candidate-freeze.md",
+          "sha256": "2cff8256319f94de3a57224510c59ea12eb98f62390036fd9dfb1e5fff14b4b2",
+          "bytes": 14821
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-e2-receipt-verification.md",
+          "sha256": "ffd2e805991062d46de7b3bc02ead34414684f0ca894ef5b4a77f9d6ddc8213b",
+          "bytes": 15627
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-e3-host-apply.md",
+          "sha256": "09868f372a956ae7cd5bf9eacf3531478d64db42678dc95ef114315d1cfdc836",
+          "bytes": 16994
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-f1-completion-contract.md",
+          "sha256": "2e3b4a2443402d84730424f542d1b6cf93233a6fccf662315e2aa3bf030fcbc8",
+          "bytes": 17060
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-f2-cleanup-barrier.md",
+          "sha256": "579e71c832d7a96396c04af3eca4271a83299c47e8f938a0fa9b4a0d31caa85d",
+          "bytes": 17507
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-f3-sidecar-delivery.md",
+          "sha256": "f6a3661bfc87427fdc3af5a6964a8816713cc2415d1e5ed40fc0820f314e8581",
+          "bytes": 18177
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-f4-controlled-stability.md",
+          "sha256": "0853fe2a97b75e559dfac4f6b7f1638ff0dd61245dc4bcd2d3deaed6095aeb92",
+          "bytes": 18754
+        },
+        {
+          "path": "harness/specs/tasks/versegit-product-f5-global-acceptance.md",
+          "sha256": "ccb1711ea5b1086cf2c5a1432c585c23ce521148fade50315896091f34a659d8",
+          "bytes": 7519
+        },
+        {
+          "path": "openclaw_runtime/src/agents/harness/versegit-feedback-delivery.ts",
+          "sha256": "00761c19b81014a54d4b6cd0cfa7fe32907195b1b43923e93c872be788ac8f60",
+          "bytes": 2662
+        },
+        {
+          "path": "openclaw_runtime/src/agents/harness/versegit-tool-observation.ts",
+          "sha256": "11040691758f9186019b6c38a4445a48745a4f563eb0e672a9a1422d1e3328f7",
+          "bytes": 5107
+        },
+        {
+          "path": "openclaw_runtime/src/agents/orchestration-candidate-apply.ts",
+          "sha256": "bd1cc046ba7da8d671568432a20452c6e8347c7e254e0ace948d340f3cf4c5a5",
+          "bytes": 25166
+        },
+        {
+          "path": "openclaw_runtime/src/agents/orchestration-candidate.ts",
+          "sha256": "c831347e9dee7a43f777ee0a17f0a51793e3acab82885fc4656bd1d7194a6a1c",
+          "bytes": 11467
+        },
+        {
+          "path": "openclaw_runtime/src/agents/orchestration-worktree-merge.ts",
+          "sha256": "a725cf7a11eb9ae95b2cccbc66ca25937f4e12dc5401a801ea52bf1fb4de16e0",
+          "bytes": 4645
+        },
+        {
+          "path": "openclaw_runtime/src/agents/patch-flow.ts",
+          "sha256": "2bb8cc35df557a6bfa19506eed28266085dcf352058e9365a4f27b8a63b5f158",
+          "bytes": 4503
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sessions/tools/versegit-tool-basis.ts",
+          "sha256": "08bf614fe10afaf32753620d9e99285f5960cc200c07c2eb84e578f43f2ab98d",
+          "bytes": 2270
+        },
+        {
+          "path": "openclaw_runtime/src/agents/subagent-versegit-cleanup.ts",
+          "sha256": "0bd4802d4b9dff3eb710c8c83c9f14ee9b68eff468b2fc4c681e3c8b8adbed0c",
+          "bytes": 15161
+        },
+        {
+          "path": "resources/versegit/LICENSE-APACHE-2.0.txt",
+          "sha256": "f81c8de6cfc5091c69fd68229215a93e1b31ee73940e355876257bf0db7ca33e",
+          "bytes": 11351
+        },
+        {
+          "path": "resources/versegit/manifest.json",
+          "sha256": "8c06fb3d0cbc52acb5079f8d8e8fdedf2e85e1480fd971c520887bc19b4ed2d2",
+          "bytes": 2769
+        },
+        {
+          "path": "scripts/bundle-main-runtime.mjs",
+          "sha256": "ec0a014d1fd6f407fe5b9d2ab99b236b3560381b8ca7d54d27872c0c913e783c",
+          "bytes": 3840
+        },
+        {
+          "path": "scripts/verify-versegit-product-integration.d.mts",
+          "sha256": "43550e334d59c913c5d5ab7e8f1ba46cbb63adb20e5e53be010dcc7ea3287a7a",
+          "bytes": 2333
+        },
+        {
+          "path": "scripts/verify-versegit-product-integration.mjs",
+          "sha256": "305e9ca4bbb3c42431c81eda5df9db5c73d9ab7b768bcb7444b18a381d4409ba",
+          "bytes": 69358
+        },
+        {
+          "path": "shared/capability-claims.ts",
+          "sha256": "1e73400ddde8e01c6515a70115cdd636486d1822fa40ea252c4f4aef5cf4c6f6",
+          "bytes": 60511
+        },
+        {
+          "path": "shared/component-authority-manifest.ts",
+          "sha256": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+          "bytes": 59578
+        },
+        {
+          "path": "shared/dcs/component-disposition-catalog.ts",
+          "sha256": "b401c677f6a4f43ce36967321651b92d7ef7bc2c086a3041eb134f56202f8528",
+          "bytes": 44123
+        },
+        {
+          "path": "shared/types/versegit.ts",
+          "sha256": "6c9d98c6d7b40bb6286297296ad5ccda0cd1bf360e70cc8715e399bf89d7b833",
+          "bytes": 8609
+        },
+        {
+          "path": "shared/versegit-cleanup-barrier.ts",
+          "sha256": "646f775e09ef50dc6596b093aa815723823e709bd49418b1fb6c0230daddf35e",
+          "bytes": 17722
+        },
+        {
+          "path": "shared/versegit-runtime-contract.ts",
+          "sha256": "12e336a05e1e176dcfe25b9f05b129058af30549be5af17d8187ce6749a6571a",
+          "bytes": 6949
+        },
+        {
+          "path": "tests/unit/orchestration-worktree-merge.test.ts",
+          "sha256": "02090888cc1ac75c7d81e179d7bd21a49fc3578698ba3e207169aedc4add3536",
+          "bytes": 3591
+        },
+        {
+          "path": "tests/unit/versegit-product-acceptance.test.ts",
+          "sha256": "21961cc43c9474e0ce219cf4eb1d22bf9e4a6d623e2ee41972c792424174564b",
+          "bytes": 10892
+        },
+        {
+          "path": "tests/unit/versegit-wp6-closeout.test.ts",
+          "sha256": "97b3745e04a3df82c96f3f88bceb05be6186028cd5d2e23f174b7c56b9ca4528",
+          "bytes": 7478
+        },
+        {
+          "path": "tests/unit/versegit-wp8-review.test.ts",
+          "sha256": "39e8ca9c3a47cf3168fe46bb244e7a27cd009165069ab60aac63ce9b01980f8d",
+          "bytes": 2165
+        },
+        {
+          "path": "tests/unit/versegit-wp9-global-acceptance.test.ts",
+          "sha256": "872e6bce5576d193afa4d4fb786b8a0fa683baf08abdc366a7cb3d19979344fa",
+          "bytes": 10142
+        }
+      ],
+      "packageId": "vg-0.1.0-win32-x64-release-6b8330354da59118",
+      "artifactSha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+      "capabilitiesSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26"
+    },
+    "verdict": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 6
+    },
+    "digest": "491d1d1620a195f7a6ba54aa55586aae50a772042f1d77ca2012679ab774b56e"
+  },
+  "currentUnitGate": {
+    "name": "glm-final-versegit-units",
+    "command": [
+      "node",
+      "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+      "exec",
+      "vitest",
+      "run",
+      "tests/unit/versegit-host-apply.test.ts",
+      "tests/unit/versegit-host-api.test.ts",
+      "tests/unit/versegit-fact-adapter.test.ts",
+      "tests/unit/versegit-candidate-receipts.test.ts",
+      "tests/unit/versegit-candidate-freeze.test.ts",
+      "tests/unit/versegit-cleanup-barrier.test.ts",
+      "tests/unit/versegit-completion-lifecycle.test.ts",
+      "tests/unit/versegit-feedback-delivery.test.ts",
+      "tests/unit/versegit-observation-basis.test.ts",
+      "tests/unit/versegit-receipt-authority.test.ts",
+      "tests/unit/versegit-runtime-bindings.test.ts",
+      "tests/unit/versegit-sidecar-delivery.test.ts",
+      "tests/unit/versegit-stability-report.test.ts",
+      "tests/unit/versegit-product-acceptance.test.ts",
+      "--maxWorkers=2",
+      "--reporter=dot"
+    ],
+    "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+    "exit_code": 0,
+    "elapsed_seconds": 48.164,
+    "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-versegit-units.log",
+    "receiptArtifact": {
+      "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-versegit-units.json",
+      "sha256": "53ff0da92d444d23cf2ae6081e8b0fe32532225ee3e072b785c703ddc321fb8f",
+      "bytes": 1155
+    },
+    "logArtifact": {
+      "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/gates/glm-final-versegit-units.log",
+      "sha256": "8213437967036211efb2dfdd58e8e78e992fa9d2fc29c64bd7e99fec6525b825",
+      "bytes": 1357
+    }
+  },
+  "posture": {
+    "M4Authorized": false,
+    "productLocksChanged": false,
+    "publicRelease": false,
+    "generalAvailability": false
+  },
+  "limitation": "Current source and retained real-effect evidence are recomputed separately; the original F5 report keeps its original candidate and is not relabelled as a fresh runtime or installation measurement."
+}

@@ -1,0 +1,15 @@
+{
+  "name": "glm-harness-component",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+    "harness",
+    "validate",
+    "--spec",
+    "harness/specs/tasks/component-graduation-final-audit.md"
+  ],
+  "cwd": "D:\\tmp\\clawx-nine-node-relay-20261025\\source-31bcdb447647",
+  "exit_code": 0,
+  "elapsed_seconds": 3.238,
+  "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-harness-component.log"
+}

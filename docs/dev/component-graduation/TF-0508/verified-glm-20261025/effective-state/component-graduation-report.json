@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "ComponentGraduationReport/v1",
+  "reportId": "tf-0512-model-capability-effective-state",
+  "reportKind": "component",
+  "componentId": "v3-capability-catalog",
+  "taskForestNodeId": "TF-0512",
+  "disposition": "internal",
+  "maturity": "verified",
+  "owner": "TF-0512",
+  "entryPoint": "openclaw_runtime/src/context-engine/model-capability-prompt.ts",
+  "defaultMode": "internal",
+  "benefitEvidence": "Every default context-runtime-kit assemble refreshes a bounded capability profile from the admitted tool surface, runtime ack, grants, quarantine, memory and knowledge inputs.",
+  "rollback": "Remove the capability prompt bridge call from LegacyContextEngine; the prior pass-through assembly remains available and no product default changes.",
+  "modelEffectiveState": "Current tool inventory and runtime ack are read per assemble; missing/stale ack yields unknown availability, and grant expiry/revocation/config kill switch are reflected before prompt projection.",
+  "evidenceGrade": "unit-test",
+  "actor": "codex",
+  "driven_by": "agent",
+  "expiry": null,
+  "binding": {
+    "commit": "31bcdb44764760823f93a8c1dafc161ef012a606",
+    "tree": "a48bd5cb29121d074f98fd66669133cad3489d55",
+    "buildHash": "b1e928bdbe5bd443eb253feaa7a31202e515cccacfbf1ad7b713c39074785d97",
+    "runtimeGeneration": "gateway-tf0512",
+    "provider": "not-applicable",
+    "model": "not-applicable",
+    "inputSet": "raw-evidence.json; profile.json; tests/unit/model-capability-effective-state-tf0512.test.ts",
+    "scope": "workspace:component-graduation/session:tf0512",
+    "artifacts": [
+      {
+        "path": "openclaw_runtime/src/runtime-core/model-capability-effective-state.ts",
+        "sha256": "420b029e938eef182eeed817d0608309155a366ccf86fd617aace0011e2f6fc9",
+        "bytes": 19912
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/model-capability-prompt.ts",
+        "sha256": "52d7af389456587c194b7d380b9d0f9ed3fc50882cb571cda47ac0dca303d8a3",
+        "bytes": 3605
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/legacy.ts",
+        "sha256": "733cdf3d820eed643e0c45016d333aa534bcb54196084ed529cd9eb442374efc",
+        "bytes": 6551
+      },
+      {
+        "path": "tests/unit/model-capability-effective-state-tf0512.test.ts",
+        "sha256": "5a77defcf270b6040374151b4f820e8eaccc03dc793a8fb6350b36eb8b41de7b",
+        "bytes": 18057
+      },
+      {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/raw-evidence.json",
+        "sha256": "351529fd6260aa6e11f887e2ae491154c8cfb0ef31ed771c3d2508da391b75d6",
+        "bytes": 23397
+      },
+      {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/profile.json",
+        "sha256": "bf0cc9699c7b061a020e97d5e6a6856591fe872eca44a8ea80ac27e1af124d23",
+        "bytes": 118228
+      },
+      {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/acceptance.json",
+        "sha256": "5ec8db90b511dbe4c02b6dda9ef1a9eeecdc04f354bfb754be942a1ca8559295",
+        "bytes": 1933
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "real-consumer",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "The effective-state profile is consumed by the default context-runtime-kit assembler and the explicit legacy rollback engine.",
+      "artifacts": [
+        {
+          "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/raw-evidence.json",
+          "sha256": "351529fd6260aa6e11f887e2ae491154c8cfb0ef31ed771c3d2508da391b75d6",
+          "bytes": 23397,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "boundary",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "Tool identity, grants, memory, knowledge, ack, quarantine and runtime availability remain separate facts; static disposition never proves execution.",
+      "artifacts": [
+        {
+          "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/raw-evidence.json",
+          "sha256": "351529fd6260aa6e11f887e2ae491154c8cfb0ef31ed771c3d2508da391b75d6",
+          "bytes": 23397,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "necessity",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "Without an effective state the model would treat static catalog entries as live capability and could overclaim execution or approval.",
+      "artifacts": [
+        {
+          "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/raw-evidence.json",
+          "sha256": "351529fd6260aa6e11f887e2ae491154c8cfb0ef31ed771c3d2508da391b75d6",
+          "bytes": 23397,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "failure-recovery",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "Stale ack, restart mismatch, generation rejection, revoked grants and quarantine degrade to unknown or denied without promoting stale state.",
+      "artifacts": [
+        {
+          "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/raw-evidence.json",
+          "sha256": "351529fd6260aa6e11f887e2ae491154c8cfb0ef31ed771c3d2508da391b75d6",
+          "bytes": 23397,
+          "supportsVerdict": true
+        }
+      ]
+    },
+    {
+      "kind": "not-product-claim",
+      "status": "pass",
+      "grade": "unit-test",
+      "summary": "The internal component does not create a product surface or change product defaults, release, GA, liveReady or productApproved.",
+      "artifacts": [
+        {
+          "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/raw-evidence.json",
+          "sha256": "351529fd6260aa6e11f887e2ae491154c8cfb0ef31ed771c3d2508da391b75d6",
+          "bytes": 23397,
+          "supportsVerdict": true
+        }
+      ]
+    }
+  ],
+  "recompute": {
+    "verdict": "pass",
+    "inputDigest": "b1e928bdbe5bd443eb253feaa7a31202e515cccacfbf1ad7b713c39074785d97",
+    "command": "pnpm exec tsx tests/unit/fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "glm-final-lint",
+  "command": [
+    "node",
+    "D:\\ClawX\\node_modules\\eslint\\bin\\eslint.js",
+    "--config",
+    "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-eslint.config.mjs",
+    "shared/model-capability-profile.ts",
+    "tests/unit/model-capability-positioning-tf0507.test.ts",
+    "tests/unit/model-capability-profile.test.ts",
+    "tests/e2e/memory-surface.spec.ts",
+    "scripts/model-capability-positioning.mts",
+    "scripts/component-graduation-final-audit.mts",
+    "--max-warnings",
+    "0"
+  ],
+  "cwd": "D:\\tmp\\clawx-nine-node-relay-20261025\\source-31bcdb447647",
+  "exit_code": 0,
+  "elapsed_seconds": 5.301,
+  "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-lint.log"
+}

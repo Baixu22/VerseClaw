@@ -1,0 +1,20 @@
+$ playwright test "tests/e2e/workspace-context-settings.spec.ts" "tests/e2e/memory-surface.spec.ts" "tests/e2e/context-view-tool-surface.spec.ts" "tests/e2e/secondary-surfaces-convergence.spec.ts" "--workers=1" "--reporter=line,json"
+
+Running 7 tests using 1 worker
+
+[1A[2K(node:44208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:44208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/7] tests\e2e\context-view-tool-surface.spec.ts:4:7 › TF-0495 context view tool surface › keeps automatic discovery distinct from the explicit rollback control
+[1A[2K[2/7] tests\e2e\memory-surface.spec.ts:178:7 › TF-0498 unified Memory surface › exposes candidate review, export and tombstone deletion in one panel
+[1A[2K[3/7] tests\e2e\secondary-surfaces-convergence.spec.ts:34:7 › secondary Settings pages and diagnostics share controls in light
+[1A[2K[4/7] tests\e2e\secondary-surfaces-convergence.spec.ts:74:7 › first-run Setup keeps compact navigation in light
+[1A[2K[5/7] tests\e2e\secondary-surfaces-convergence.spec.ts:34:7 › secondary Settings pages and diagnostics share controls in dark
+[1A[2K[6/7] tests\e2e\secondary-surfaces-convergence.spec.ts:74:7 › first-run Setup keeps compact navigation in dark
+[1A[2K[7/7] tests\e2e\workspace-context-settings.spec.ts:6:7 › Workspace Context user settings › exposes one default-on profile and keeps low-level flags out of General settings
+[1A[2K  7 passed (1.9m)

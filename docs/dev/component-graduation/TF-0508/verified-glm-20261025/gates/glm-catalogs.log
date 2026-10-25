@@ -1,0 +1,2 @@
+$ pnpm --dir openclaw_runtime exec tsx ../scripts/generate-catalogs.mjs --check
+catalogs:check passed — generated catalogs are fresh and match their sources.

@@ -1,0 +1,11 @@
+{
+  "actor": "playwright-memory-surface",
+  "driven_by": "agent",
+  "downloads": [
+    {
+      "filename": "clawx-memory-architect-2026-10-25T14-47-03-551Z.json",
+      "state": "completed",
+      "receivedBytes": 3085
+    }
+  ]
+}

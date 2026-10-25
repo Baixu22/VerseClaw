@@ -1,0 +1,12 @@
+{
+  "pass": true,
+  "metrics": {
+    "components": 54,
+    "authorityConflicts": 0,
+    "unclassified": 0,
+    "userVisibleShadowSurfaces": 0,
+    "unfinishedExperiments": 0,
+    "missingImplementationOrRetirement": 0
+  },
+  "problems": []
+}

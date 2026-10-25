@@ -1,0 +1,12 @@
+{
+  "name": "glm-effective-state-v2-receipt",
+  "command": [
+    "node",
+    "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+    "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-effective-state-v2.mts"
+  ],
+  "cwd": "D:\\tmp\\clawx-nine-node-relay-20261025\\source-31bcdb447647",
+  "exit_code": 0,
+  "elapsed_seconds": 20.976,
+  "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-effective-state-v2-receipt.log"
+}

@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "MemoryExport/v1",
+  "generatedAt": "2026-10-25T14:47:03.546Z",
+  "productSurface": {
+    "schemaVersion": "MemoryProductSurface/v1",
+    "surfaceId": "agents.memory",
+    "productConcept": "memory",
+    "actions": [
+      "view",
+      "review",
+      "approve",
+      "delete",
+      "export",
+      "remember"
+    ],
+    "masterSwitch": {
+      "id": "roleMemoryEnabled",
+      "offBlocksRead": true,
+      "offBlocksWrite": true,
+      "offBlocksInjection": true,
+      "deletesStoredMemory": false
+    },
+    "writeGate": {
+      "automaticCapture": "candidate-queue-only",
+      "explicitRemember": "same-review-authority",
+      "automaticAcceptance": false
+    },
+    "readGate": {
+      "acceptedOnly": true,
+      "acceptedStatuses": [
+        "active",
+        "cold"
+      ],
+      "unapprovedCandidateRetrievable": false,
+      "unapprovedCandidateInjectable": false
+    },
+    "candidateQueue": {
+      "persistent": true,
+      "reviewRequired": true,
+      "acceptedStatus": "active",
+      "modelVisibleBeforeApproval": false
+    },
+    "legacyFallback": {
+      "nativeOpenClawMemory": "unchanged-and-outside-this-surface",
+      "existingManagedCardsWhenOff": "retained-on-disk-not-injected",
+      "modelExplanation": "Only accepted memory is recalled or injected; candidates are review material and must not be described as remembered facts."
+    },
+    "deletion": {
+      "userAction": "delete",
+      "mechanism": "tombstone",
+      "hardDelete": false,
+      "auditHistoryRetained": true,
+      "retrievableOrInjectableAfterDelete": false
+    },
+    "modelVisibility": {
+      "approvedOnly": true,
+      "candidateExplanation": "Candidate memory is stored for review only and is not accepted, retrievable, or injectable memory."
+    }
+  },
+  "roleName": "architect",
+  "counts": {
+    "accepted": 1,
+    "candidates": 1,
+    "proposalHistory": 0,
+    "injections": 0
+  },
+  "acceptedMemory": [
+    {
+      "id": "mem-accepted",
+      "type": "procedure",
+      "scope": "role",
+      "scopeKey": null,
+      "status": "active",
+      "content": "Keep migration notes before schema changes.",
+      "roleTags": [
+        "architect"
+      ],
+      "source": "user",
+      "sensitivity": "normal",
+      "confidence": 0.9,
+      "importance": 0.7,
+      "createdAt": "2026-10-21T00:00:00.000Z",
+      "updatedAt": "2026-10-21T00:00:00.000Z",
+      "evidenceRefs": [
+        {
+          "type": "manual",
+          "ref": "acceptance-fixture"
+        }
+      ]
+    }
+  ],
+  "candidateQueue": [
+    {
+      "id": "proposal-candidate",
+      "operation": "create",
+      "status": "needs_review",
+      "decision": "needs_review",
+      "riskLevel": "low",
+      "impactScope": "role",
+      "suggestedAction": "approve",
+      "evidenceStatus": "unchecked",
+      "createdAt": "2026-10-21T00:00:00.000Z",
+      "proposal": {
+        "content": "Candidate memory must be reviewed before injection.",
+        "source": "session_summary",
+        "title": "Candidate memory"
+      }
+    }
+  ],
+  "proposalHistory": [],
+  "injectionHistory": []
+}

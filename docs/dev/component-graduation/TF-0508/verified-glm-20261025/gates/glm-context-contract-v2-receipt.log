@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "reportId": "tf-0493-glm-closeout-context-contract-v2-20261025",
+  "evidencePath": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/context-contract/raw-evidence.json",
+  "reportPath": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/context-contract/component-graduation-report.json",
+  "sumsPath": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/context-contract/SHA256SUMS",
+  "sharedLedger": true,
+  "snapshots": 1,
+  "normalC6": {
+    "enabled": true,
+    "tokenBudget": 8000,
+    "mode": "normal",
+    "heatThreshold": 0
+  },
+  "pressureC6": {
+    "enabled": true,
+    "tokenBudget": 4000,
+    "mode": "pressure",
+    "heatThreshold": 0
+  }
+}

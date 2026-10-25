@@ -1,0 +1,14 @@
+{
+  "name": "glm-final-source-audit-v3-receipt",
+  "command": [
+    "node",
+    "D:\\ClawX\\openclaw_runtime\\node_modules\\tsx\\dist\\cli.mjs",
+    "scripts/component-graduation-final-audit.mts",
+    "--output",
+    "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-source-audit.json"
+  ],
+  "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+  "exit_code": 0,
+  "elapsed_seconds": 1.199,
+  "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-final-source-audit-v3-receipt.log"
+}

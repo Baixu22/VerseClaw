@@ -1,0 +1,32 @@
+
+ RUN  v4.1.1 D:/ClawX-work/worktrees/nine-node-glm-closeout-20261025
+
+·Preparing worktree (detached HEAD ac9c84e)
+Preparing worktree (detached HEAD a305a3b)
+·Preparing worktree (detached HEAD 4d02516)
+··Preparing worktree (detached HEAD 66e5a54)
+Preparing worktree (detached HEAD 4da3ee7)
+Preparing worktree (detached HEAD 3376a31)
+Preparing worktree (detached HEAD 719b7e0)
+·Preparing worktree (detached HEAD 900cd5f)
+·················Preparing worktree (detached HEAD dc5fc8b)
+Preparing worktree (detached HEAD dc5fc8b)
+·····Preparing worktree (detached HEAD 9ef26ce)
+·Preparing worktree (detached HEAD 9ef26ce)
+··Preparing worktree (detached HEAD 9ef26ce)
+Preparing worktree (detached HEAD 9ef26ce)
+··Preparing worktree (detached HEAD b39cfaf)
+····Preparing worktree (detached HEAD b39cfaf)
+··········Preparing worktree (detached HEAD 89bc0eb)
+Preparing worktree (detached HEAD 89bc0eb)
+·Preparing worktree (detached HEAD 89bc0eb)
+··Preparing worktree (detached HEAD 89bc0eb)
+····Preparing worktree (detached HEAD d90ee4d)
+Preparing worktree (detached HEAD d90ee4d)
+·················-···
+
+ Test Files  14 passed (14)
+      Tests  73 passed | 1 skipped (74)
+   Start at  23:08:39
+   Duration  46.31s (transform 11.61s, setup 1.27s, import 19.55s, tests 59.44s, environment 8.74s)
+

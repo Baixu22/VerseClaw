@@ -1,0 +1,12 @@
+{
+  "name": "glm-catalogs",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+    "catalogs:check"
+  ],
+  "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+  "exit_code": 0,
+  "elapsed_seconds": 2.82,
+  "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-catalogs.log"
+}

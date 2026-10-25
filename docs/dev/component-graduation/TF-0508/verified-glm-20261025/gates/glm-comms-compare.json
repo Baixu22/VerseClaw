@@ -1,0 +1,13 @@
+{
+  "name": "glm-comms-compare",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+    "run",
+    "comms:compare"
+  ],
+  "cwd": "D:\\ClawX-work\\worktrees\\nine-node-glm-closeout-20261025",
+  "exit_code": 0,
+  "elapsed_seconds": 0.933,
+  "log": "D:\\tmp\\clawx-nine-node-relay-20261025\\glm-comms-compare.log"
+}
