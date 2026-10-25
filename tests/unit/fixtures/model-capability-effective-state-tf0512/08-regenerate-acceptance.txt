@@ -12,6 +12,6 @@ stdout | tests/unit/model-capability-effective-state-tf0512.test.ts > runtime ef
 
  Test Files  1 passed (1)
       Tests  1 passed | 18 skipped (19)
-   Start at  21:46:45
-   Duration  33.87s (transform 13.72s, setup 457ms, import 17.40s, tests 15.35s, environment 0ms)
+   Start at  22:10:11
+   Duration  30.07s (transform 10.67s, setup 532ms, import 14.27s, tests 14.87s, environment 0ms)
 

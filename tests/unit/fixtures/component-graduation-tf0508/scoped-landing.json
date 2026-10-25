@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ComponentGraduationScopedLanding/v1",
   "base": "b62e7f4c9",
-  "head": "e40612819f664ad5a8a75b113b1eddb256f44f05",
+  "head": "5936ab13598b2bee54cce25463233faa85ff049f",
   "status": "pass",
   "diff": [
     "README.ja-JP.md",
@@ -21,8 +21,10 @@
     "tests/unit/fixtures/model-capability-effective-state-tf0512/01-focused-and-adjacent-tests.txt",
     "tests/unit/fixtures/model-capability-effective-state-tf0512/02-typecheck.txt",
     "tests/unit/fixtures/model-capability-effective-state-tf0512/03-lint-check.txt",
+    "tests/unit/fixtures/model-capability-effective-state-tf0512/04-contract-check.txt",
     "tests/unit/fixtures/model-capability-effective-state-tf0512/07-scope-guard.txt",
     "tests/unit/fixtures/model-capability-effective-state-tf0512/08-regenerate-acceptance.txt",
+    "tests/unit/fixtures/model-capability-effective-state-tf0512/09-graduation-gate.txt",
     "tests/unit/fixtures/model-capability-effective-state-tf0512/SHA256SUMS",
     "tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json",
     "tests/unit/fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts",
@@ -94,8 +96,6 @@
     " M tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
     " M tests/unit/fixtures/component-graduation-tf0508/scope-receipt.json",
     " M tests/unit/fixtures/component-graduation-tf0508/scoped-landing.json",
-    " M tests/unit/fixtures/component-graduation-tf0508/task-forest-export.txt",
-    " M tests/unit/fixtures/component-graduation-tf0508/task-forest-validate.txt",
     " M tests/unit/fixtures/component-graduation-tf0508/tf0512-receipt.json"
   ],
   "unreviewedOutsideScope": []
