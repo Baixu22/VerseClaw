@@ -27,9 +27,17 @@ test('real embedded browser preserves actions, denials and unsupported outcomes'
   try {
     await page.waitForFunction(() => Boolean(window.verseClaw?.hostInvoke));
     expect((await invoke('setEnabled', { enabled: true })).ok).toBe(true);
+    const origin = `http://127.0.0.1:${address.port}`;
+    const denied = await invoke('open', {
+      url: `${origin}/`, mode: 'headless',
+      profile: `agent-hygiene-denied-${Date.now()}`, sessionKey: 'agent:main:versebrowser-hygiene-denied',
+    });
+    expect(denied.ok, JSON.stringify(denied)).toBe(false);
+    expect(JSON.stringify(denied)).toContain('private-network-default-deny');
     const opened = await invoke('open', {
-      url: `http://127.0.0.1:${address.port}/`, mode: 'headless',
+      url: `${origin}/`, mode: 'headless',
       profile: `agent-hygiene-${Date.now()}`, sessionKey: 'agent:main:versebrowser-hygiene',
+      privateNetworkApprovedBy: 'agent', privateNetworkOrigin: origin,
     });
     expect(opened.ok, JSON.stringify(opened)).toBe(true);
     if (!opened.ok) throw new Error('Open failed');

@@ -60,7 +60,7 @@ describe('VerseBrowser host adapter ownership', () => {
   beforeEach(() => {
     mocks.service.open.mockClear();
     mocks.service.close.mockClear();
-    mocks.moduleApi.open.mockClear();
+    mocks.moduleApi.open.mockReset().mockImplementation(async (payload: unknown) => ({ success: true, session: { id: 's1' }, payload }));
     mocks.moduleApi.status.mockClear();
     mocks.moduleApi.close.mockClear();
     mocks.module.createAgentBrowserApi.mockClear();
@@ -197,6 +197,30 @@ it('rejects browser admission while a session lifecycle gate is open', async () 
         sessionKey: 'agent:main:long',
       })).rejects.toMatchObject({ code: 'E_SESSION_LIFECYCLE_FENCED' });
       expect(mocks.service.open).not.toHaveBeenCalled();
+    } finally {
+      setSandboxHighRiskPolicyLoader(null);
+    }
+  });
+
+  it('requires an explicit agent approval for loopback and binds it to the request origin', async () => {
+    setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
+    try {
+      const api = createAgentBrowserApi();
+      await expect(api.open({ url: 'http://127.0.0.1:4567/' })).rejects.toMatchObject({
+        code: 'E_BROWSER_PRIVATE_NETWORK_DENIED',
+      });
+      expect(mocks.moduleApi.open).not.toHaveBeenCalled();
+      await expect(api.open({
+        url: 'http://127.0.0.1:4567/',
+        privateNetworkApprovedBy: 'agent',
+        privateNetworkOrigin: 'http://127.0.0.1:4567',
+      })).resolves.toBeTruthy();
+      expect(mocks.moduleApi.open).toHaveBeenCalledTimes(1);
+      await expect(api.open({
+        url: 'http://127.0.0.1:9999/',
+        privateNetworkApprovedBy: 'agent',
+        privateNetworkOrigin: 'http://127.0.0.1:9999',
+      })).resolves.toBeTruthy();
     } finally {
       setSandboxHighRiskPolicyLoader(null);
     }

@@ -119,6 +119,16 @@ export function setBrowserFirstPartyOriginProvider(
   firstPartyOriginProvider = provider ?? defaultFirstPartyOriginProvider;
 }
 
+async function recordPrivateNetworkAgentApproval(action: string, payload: unknown): Promise<void> {
+  if (!payload || typeof payload !== 'object' || action !== 'open') return;
+  const record = payload as Record<string, unknown>;
+  if (record.privateNetworkApprovedBy !== 'agent') return;
+  const origin = typeof record.privateNetworkOrigin === 'string' ? record.privateNetworkOrigin.trim() : '';
+  const requestedUrl = typeof record.url === 'string' ? record.url : '';
+  if (!origin || requestedUrl.length === 0 || browserOriginOf(requestedUrl) !== origin) return;
+  approveBrowserPrivateNetwork({ sessionId: sessionIdOf(record), origin });
+}
+
 async function resolveFirstPartyOrigins(payload: unknown): Promise<string[]> {
   if (!payload || typeof payload !== 'object') return [];
   const record = payload as Record<string, unknown>;
@@ -538,6 +548,7 @@ function withHostGuards<T extends object>(api: T): T {
       const requiresSandboxCheck = classifyAgentBrowserAction(prop) !== null;
       return async (...args: unknown[]) => {
         await prepareHostContext();
+        await recordPrivateNetworkAgentApproval(prop, args[0]);
         await assertBrowserNavigationAllowed(prop, args[0]);
         if (requiresSandboxCheck) {
           await assertBrowserAllowedUnderSandbox(prop);

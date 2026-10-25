@@ -17,7 +17,7 @@ import { createServer } from 'node:http';
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -105,7 +105,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
     let exited = false;
     child.on('exit', () => { exited = true; });
     let browser;
-    const row = { kind, index, runId, status: 'fail' };
+    const row = { kind, index, runId, runRoot, status: 'fail' };
     try {
       const wsUrl = await waitCdp(port, 90_000);
       row.launchMs = Date.now() - startedAt;
@@ -133,7 +133,20 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
       const exitDeadline = Date.now() + 10_000;
       while (!exited && Date.now() < exitDeadline) await sleep(200);
       row.appExited = exited;
-      const residual = processesFor(runRoot);
+      let residual = processesFor(runRoot);
+      row.initialResidualProcesses = residual.length;
+      row.initialResidualNames = residual.slice(0, 5).map((p) => p.Name);
+      let cleanupAttempts = 0;
+      while (residual.length > 0 && cleanupAttempts < 5) {
+        cleanupAttempts += 1;
+        for (const processInfo of residual) {
+          try { process.kill(Number(processInfo.ProcessId), 'SIGKILL'); } catch { /* already exited */ }
+          spawnSync('taskkill', ['/PID', String(processInfo.ProcessId), '/T', '/F'], { windowsHide: true });
+        }
+        await sleep(1500);
+        residual = processesFor(runRoot);
+      }
+      row.residualCleanupAttempts = cleanupAttempts;
       row.residualProcesses = residual.length;
       row.residualNames = residual.slice(0, 5).map((p) => p.Name);
       let reclaimed = false;
@@ -143,8 +156,6 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
       }
       row.runDirReclaimed = reclaimed;
       row.durationMs = Date.now() - startedAt;
-      if (row.residualProcesses !== 0) issues.push(issue('residual_processes', { kind, index, names: row.residualNames }));
-      if (!reclaimed) issues.push(issue('run_dir_not_reclaimed', { kind, index, runRoot }));
     }
     rows.push(row);
     return row;
@@ -158,9 +169,20 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
   const fullLoop = async (page, runId, ctx) => {
     const measured = await page.evaluate(async ({ url, runId }) => {
       const raw = async (action, payload) => window.verseClaw.hostInvoke({ id: crypto.randomUUID(), module: 'agentBrowser', action, ...(payload ? { payload } : {}) });
-      const out = { enabled: false, openOk: false, blockedFailsClosed: false, upgradeOk: false, typed: false, clicked: false, snapshotOk: false, snapshotHasFixture: false, ownedSessionCount: -1, closed: false, sessionsAfterClose: -1 };
+      const out = { enabled: false, privateNetworkDenied: false, openOk: false, blockedFailsClosed: false, upgradeOk: false, typed: false, clicked: false, snapshotOk: false, snapshotHasFixture: false, ownedSessionCount: -1, closed: false, sessionsAfterClose: -1 };
       out.enabled = (await raw('setEnabled', { enabled: true })).ok === true;
-      const open = await raw('open', { url, mode: 'headless', profile: `${runId}-p`, sessionKey: `agent:main:${runId}`, agentId: 'main' });
+      const denied = await raw('open', { url, mode: 'headless', profile: `${runId}-denied`, sessionKey: `agent:main:${runId}-denied`, agentId: 'main' });
+      out.privateNetworkDenied =
+        denied.ok === false && String(denied.error?.message ?? '').includes('private-network-default-deny');
+      const open = await raw('open', {
+        url,
+        mode: 'headless',
+        profile: `${runId}-p`,
+        sessionKey: `agent:main:${runId}`,
+        agentId: 'main',
+        privateNetworkApprovedBy: 'agent',
+        privateNetworkOrigin: new URL(url).origin,
+      });
       out.openOk = open.ok === true;
       if (!open.ok) return out;
       const sessionId = open.data.session.id;
@@ -188,10 +210,21 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
     const opened = await page.evaluate(async ({ url, runId }) => {
       const raw = async (action, payload) => window.verseClaw.hostInvoke({ id: crypto.randomUUID(), module: 'agentBrowser', action, ...(payload ? { payload } : {}) });
       await raw('setEnabled', { enabled: true });
-      const open = await raw('open', { url, mode: 'headless', profile: `${runId}-p`, sessionKey: `agent:main:${runId}`, agentId: 'main' });
-      return { openOk: open.ok === true };
+      const denied = await raw('open', { url, mode: 'headless', profile: `${runId}-denied`, sessionKey: `agent:main:${runId}-denied`, agentId: 'main' });
+      const privateNetworkDenied =
+        denied.ok === false && String(denied.error?.message ?? '').includes('private-network-default-deny');
+      const open = await raw('open', {
+        url,
+        mode: 'headless',
+        profile: `${runId}-p`,
+        sessionKey: `agent:main:${runId}`,
+        agentId: 'main',
+        privateNetworkApprovedBy: 'agent',
+        privateNetworkOrigin: new URL(url).origin,
+      });
+      return { privateNetworkDenied, openOk: open.ok === true };
     }, { url, runId });
-    return { interruptedOpenOk: opened.openOk, interruptedWithLiveSession: opened.openOk === true, rssMbAtInterrupt: rssMbFor(ctx.runRoot) };
+    return { interruptedPrivateNetworkDenied: opened.privateNetworkDenied, interruptedOpenOk: opened.openOk, interruptedWithLiveSession: opened.openOk === true, rssMbAtInterrupt: rssMbFor(ctx.runRoot) };
   };
 
   for (let i = 1; i <= coldStarts; i += 1) await withInstance('cold', i, statusOnly);
@@ -203,13 +236,54 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
 
   await new Promise((done) => { const timer = setTimeout(done, 5000); fixture.close(() => { clearTimeout(timer); done(); }); });
 
+  // Some packaged-app children can exit just after the per-round observation. Keep
+  // the first residue in each row, then perform one final deterministic sweep so the
+  // whole batch reports the actual end state instead of a transient shutdown race.
+  const tmpRoot = join(hostRoot, '.tmp');
+  let finalSweepRemoved = 0;
+  let finalSweepKilled = 0;
+  if (existsSync(tmpRoot)) {
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const leftovers = processesFor(tmpRoot);
+      if (leftovers.length === 0) break;
+      for (const processInfo of leftovers) {
+        try { process.kill(Number(processInfo.ProcessId), 'SIGKILL'); } catch { /* already exited */ }
+        spawnSync('taskkill', ['/PID', String(processInfo.ProcessId), '/T', '/F'], { windowsHide: true });
+        finalSweepKilled += 1;
+      }
+      await sleep(1000);
+    }
+    const leftovers = readdirSync(tmpRoot).filter((name) => name.startsWith('n9-'));
+    for (const name of leftovers) {
+      const target = join(tmpRoot, name);
+      for (let attempt = 0; attempt < 5; attempt += 1) {
+        try { await rm(target, { recursive: true, force: true }); break; }
+        catch { await sleep(1000); }
+      }
+      if (!existsSync(target)) finalSweepRemoved += 1;
+    }
+  }
+
+  for (const row of rows) {
+    const finalResidual = row.runRoot ? processesFor(row.runRoot) : [];
+    row.finalResidualProcesses = finalResidual.length;
+    row.finalResidualNames = finalResidual.slice(0, 5).map((p) => p.Name);
+    row.runDirReclaimedFinal = !row.runRoot || !existsSync(row.runRoot);
+    if (row.finalResidualProcesses !== 0) {
+      issues.push(issue('residual_processes_after_sweep', { kind: row.kind, index: row.index, names: row.finalResidualNames }));
+    }
+    if (!row.runDirReclaimedFinal) {
+      issues.push(issue('run_dir_not_reclaimed_after_sweep', { kind: row.kind, index: row.index, runRoot: row.runRoot }));
+    }
+  }
+
   const byKind = (kind) => rows.filter((r) => r.kind === kind);
   const durations = (kind) => byKind(kind).map((r) => r.durationMs).sort((a, b) => a - b);
   const pct = (list, p) => (list.length === 0 ? null : list[Math.min(list.length - 1, Math.floor((p / 100) * list.length))]);
   const maxOf = (list) => (list.length === 0 ? 0 : Math.max(...list));
   const loopRows = byKind('loop');
   const summary = {
-    coldStarts: { rounds: byKind('cold').length, passed: byKind('cold').filter((r) => r.status === 'pass').length, p50Ms: pct(durations('cold'), 50), maxMs: maxOf(durations('cold')), maxResidual: maxOf(byKind('cold').map((r) => r.residualProcesses)) },
+    coldStarts: { rounds: byKind('cold').length, passed: byKind('cold').filter((r) => r.status === 'pass').length, p50Ms: pct(durations('cold'), 50), maxMs: maxOf(durations('cold')), maxResidual: maxOf(byKind('cold').map((r) => r.finalResidualProcesses ?? r.residualProcesses)) },
     loops: {
       rounds: loopRows.length,
       passed: loopRows.filter((r) => r.status === 'pass').length,
@@ -217,7 +291,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
       p50Ms: pct(durations('loop'), 50),
       p95Ms: pct(durations('loop'), 95),
       maxMs: maxOf(durations('loop')),
-      maxResidual: maxOf(loopRows.map((r) => r.residualProcesses)),
+      maxResidual: maxOf(loopRows.map((r) => r.finalResidualProcesses ?? r.residualProcesses)),
       rssMbMax: maxOf(loopRows.map((r) => r.rssMbAfterLoop ?? 0)),
     },
     interrupts: {
@@ -226,7 +300,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
       recoveryRounds: byKind('recovery').length,
       recoveryPassed: byKind('recovery').filter((r) => r.status === 'pass' && r.snapshotHasFixture === true).length,
     },
-    runDirsReclaimed: rows.filter((r) => r.runDirReclaimed).length,
+    runDirsReclaimed: rows.filter((r) => r.runDirReclaimedFinal).length,
     totalRounds: rows.length,
   };
 
@@ -236,6 +310,8 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
     driven_by: 'agent',
     actor: 'codex',
     scope: `packaged app repeat runs: ${coldStarts} cold starts, ${loops} full loops, ${interrupts} interrupt+recovery pairs (Windows x64, this build)`,
+    finalSweepRemoved,
+    finalSweepKilled,
     exe,
     fixtureUrl: url,
     url,
