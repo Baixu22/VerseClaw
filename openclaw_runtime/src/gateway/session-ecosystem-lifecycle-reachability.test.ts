@@ -79,6 +79,21 @@ const LIFECYCLE_METHODS: ReadonlyArray<{
     validationContains: "invalid sessions.stop params",
   },
   {
+    name: "sessions.archive",
+    scope: "operator.write",
+    validationContains: "invalid sessions.archive params",
+  },
+  {
+    name: "sessions.restore",
+    scope: "operator.write",
+    validationContains: "invalid sessions.restore params",
+  },
+  {
+    name: "sessions.effectivePolicy",
+    scope: "operator.read",
+    validationContains: "invalid sessions.effectivePolicy params",
+  },
+  {
     name: "sessions.reset",
     scope: "operator.admin",
     validationContains: "invalid sessions.reset params",

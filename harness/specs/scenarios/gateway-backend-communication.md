@@ -72,6 +72,16 @@ Tool cancellation must survive runtime adaptation, client delegation, policy eva
 
 Pending preparation and policy promises must release their local wait on cancellation without waiting for the plugin to return. Input acknowledgements must report a process that exited during the write with its owner's terminal status and output. Session alias merges must not duplicate a tool call, and changes to process poll wait duration must not reset otherwise unchanged loop evidence.
 
+Long-session archive and restore mutations cross the same boundary but remain
+runtime-owned. The renderer calls the typed sessions host service, Main persists a
+lifecycle operation gate and invokes the Gateway method, and the runtime acquires
+the existing admission fence before transcript/index/store mutation. A transport
+failure or unknown receipt keeps the same operationId open for retry; Main or the
+renderer must not sweep, hide success, or perform a second direct transcript
+rename. Restore creates a fresh physical generation while retaining the logical
+SessionKey, and archived rows are excluded from the live list until the runtime
+commit reconciles.
+
 ## Explicit coding diagnostics
 
 An explicitly selected runtime diagnostic consumer may observe destructive-tier classification rates through the existing diagnostic logger. It must not create approvals or alter tool effects; missing/expired windows are unavailable, not healthy. See `coding-approval-rate-diagnostics` and task `harness-gap-approval-rate-alerts`. Main-process copies of process-local counters do not count as runtime observations.

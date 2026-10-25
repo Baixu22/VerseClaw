@@ -431,3 +431,71 @@
   overflow-y: auto;
   overscroll-behavior: contain;
 }
+
+/* ── Session policy projection ─────────────────────────────────────────────
+ * Read-only explanation of the current backend, model, authorization and limits.
+ * It is embedded in the existing activity rail and Recovery section; it is not a
+ * second settings page. */
+.codex-session-policy {
+  --csp-text: var(--color-text-foreground);
+  --csp-secondary: var(--color-text-foreground-secondary);
+  --csp-tertiary: var(--color-text-foreground-tertiary);
+  --csp-border: var(--color-border);
+  --csp-surface: var(--color-background-elevated-secondary);
+  --csp-ok: var(--color-text-success);
+  --csp-warn: var(--color-text-warning);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 2px 10px 8px;
+  padding: 10px;
+  border: 1px solid var(--csp-border);
+  border-radius: var(--radius-lg);
+  background: var(--csp-surface);
+  color: var(--csp-text);
+  font-size: 12px;
+  line-height: 17px;
+}
+.codex-session-policy__head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 550;
+}
+.codex-session-policy__head svg { color: var(--csp-tertiary); }
+.codex-session-policy__badge {
+  margin-left: auto;
+  padding: 1px 7px;
+  border: 1px solid var(--csp-border);
+  border-radius: 999px;
+  color: var(--csp-tertiary);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.codex-session-policy__badge[data-state='ok'] { color: var(--csp-ok); }
+.codex-session-policy__badge[data-state='warn'] { color: var(--csp-warn); }
+.codex-session-policy__rows { display: grid; gap: 8px; }
+.codex-session-policy__row { display: grid; gap: 1px; }
+.codex-session-policy__row-head { display: flex; align-items: center; gap: 8px; }
+.codex-session-policy__label { color: var(--csp-secondary); font-weight: 520; }
+.codex-session-policy__row-head .codex-session-policy__badge { margin-left: 0; }
+.codex-session-policy__value { color: var(--csp-text); font-variant-numeric: tabular-nums; }
+.codex-session-policy__source,
+.codex-session-policy__reason {
+  color: var(--csp-tertiary);
+  font-size: 11px;
+  line-height: 15px;
+  overflow-wrap: anywhere;
+}
+.codex-session-policy__reason { white-space: pre-line; }
+.codex-session-policy__empty { margin: 0; color: var(--csp-warn); }
+.codex-session-policy__diagnostics { display: grid; gap: 4px; color: var(--csp-warn); }
+.codex-session-policy__diagnostics p { margin: 0; }
+.codex-session-policy__diagnostics p[data-state='error'] { color: var(--color-text-error); }
+.codex-session-policy__help { border-top: 1px solid var(--csp-border); padding-top: 7px; color: var(--csp-secondary); }
+.codex-session-policy__help summary { cursor: pointer; color: var(--csp-text); font-weight: 520; }
+.codex-session-policy__help ul { display: grid; gap: 4px; margin: 6px 0 0; padding-left: 16px; }
+@media (prefers-reduced-motion: reduce) {
+  .codex-session-policy__help summary { scroll-behavior: auto; }
+}

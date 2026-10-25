@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "source": "shared/capability-claims.ts",
-  "generatedAt": "2026-07-05T00:49:26.475Z",
+  "generatedAt": "2026-10-24T05:36:49.698Z",
   "matrixReport": "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md",
-  "total": 44,
+  "total": 45,
   "items": [
     {
       "id": "capability-01",
@@ -344,6 +344,7 @@
       ],
       "runtimeProofRefs": [
         "tests/unit/routing-memo.test.ts",
+        "tests/integration/p1-orchestration-boundary.integration.test.ts",
         "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
       ],
       "userPath": {
@@ -353,7 +354,7 @@
       },
       "knownExclusions": [
         "No default automatic role elimination.",
-        "No fully wired qualityOverall producer for all role runs."
+        "No cross-session or caller-forged quality authority."
       ],
       "relatedTaskIds": [
         "P1-06",
@@ -685,10 +686,12 @@
       "evidenceRefs": [
         "openclaw_runtime/src/gateway/session-compaction-checkpoints.ts",
         "openclaw_runtime/src/agents/long-task-control/store.ts",
+        "shared/reliability-boundaries.ts",
         "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
       ],
       "runtimeProofRefs": [
-        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md",
+        "shared/reliability-boundaries.ts"
       ],
       "userPath": {
         "surface": "Chat and long-task recovery",
@@ -809,10 +812,12 @@
       "evidenceRefs": [
         "electron/gateway/manager.ts",
         "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+        "shared/reliability-boundaries.ts",
         "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
       ],
       "runtimeProofRefs": [
-        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md",
+        "shared/reliability-boundaries.ts"
       ],
       "userPath": {
         "surface": "Runtime communication and provider calls",
@@ -1410,6 +1415,51 @@
       "relatedTaskIds": [
         "P1-05",
         "P1-09"
+      ]
+    },
+    {
+      "id": "capability-45",
+      "reportItem": 45,
+      "title": "Explicit long-session coordinator keeps one durable piece of work across configured lifecycle actions",
+      "classification": "TP-RUN + PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "real-runtime",
+        "e2e",
+        "unit-test",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-10-24",
+      "evidenceRefs": [
+        "harness/specs/fixtures/long-session-development/f1/restart-journey-results.json",
+        "harness/specs/fixtures/long-session-development/f1/host-runtime-receipts.json",
+        "harness/specs/fixtures/long-session-development/f2/long-use-before-after.json",
+        "harness/specs/fixtures/long-session-development/f2/rss-and-owner-counts.json",
+        "harness/specs/fixtures/long-session-development/f2/notification-budget.json",
+        "tests/unit/long-session-long-use-budget.test.ts",
+        "docs/clawx-product-semantics.md",
+        "harness/specs/fixtures/long-session-development/d3/continuity-strategy-decision.json"
+      ],
+      "runtimeProofRefs": [
+        "harness/specs/fixtures/long-session-development/f1/verification-receipt.json",
+        "harness/specs/fixtures/long-session-development/f2/verification-receipt.json"
+      ],
+      "userPath": {
+        "surface": "Chat activity rail (explicitly bound coordinator session)",
+        "entrypoint": "Bind a coordinator session, send work, restart, and follow the completion batch",
+        "boundary": "Ordinary Chat is not auto-promoted; the C4 rail requires an explicit binding and the task facts stay in Task Ledger."
+      },
+      "knownExclusions": [
+        "No live-provider or native-backend thread continuity claim: no authorized provider credential was available.",
+        "No asynchronous compression promotion: D2/D3 stayed EVIDENCE_INSUFFICIENT and keep-baseline.",
+        "No macOS/Linux or packaged-build long-use measurement.",
+        "No real-human long-term use: every artifact is agent-driven and the fixture is synthetic; nothing here is human-usage evidence.",
+        "No universal resource cleanup: worktree ownership that cannot be resolved stays reported for review.",
+        "No cross-session/global automatic project management or independent Project lifecycle."
+      ],
+      "relatedTaskIds": [
+        "TF-0548",
+        "TF-0563"
       ]
     }
   ]

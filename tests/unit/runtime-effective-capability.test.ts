@@ -10,6 +10,8 @@ import {
   buildRuntimeEffectiveCapabilityProfile,
   composeRuntimeEffectiveCapabilitySystemPrompt,
   createRuntimeCapabilityStateGenerationGuard,
+  clearRuntimeEffectiveCapabilitySnapshotsForTests,
+  readRuntimeEffectiveCapabilitySnapshot,
   type RuntimeEffectiveCapabilityInput,
 } from "../../openclaw_runtime/src/agents/runtime-effective-capability.js";
 import type { AnyAgentTool } from "../../openclaw_runtime/src/agents/tools/common.js";
@@ -326,6 +328,34 @@ describe("runtime effective capability adapter", () => {
     expect(result.profile.entries.every((entry) => entry.runtimeAvailability.state === "unknown")).toBe(true);
     expect(result.profile.entries.every((entry) => entry.driver.state === "unknown")).toBe(true);
     expect(result.profile.entries.find((entry) => entry.capabilityId === CAPABILITY_ID)?.static.disposition).toBe("default");
+  });
+
+
+  it("publishes a bounded current-run snapshot without promoting stale or wrong generations", async () => {
+    clearRuntimeEffectiveCapabilitySnapshotsForTests();
+    await buildRuntimeEffectiveCapabilityProfile(input());
+    expect(readRuntimeEffectiveCapabilitySnapshot({
+      workspaceId: "workspace:fixture",
+      sessionKey: "agent:main:fixture",
+      expectedRuntimeGeneration: "gateway-17",
+      nowMs: NOW,
+    })).toMatchObject({
+      sessionKey: "agent:main:fixture",
+      runtimeGeneration: "gateway-17",
+      profile: { schemaVersion: "ModelCapabilityProfile/v1" },
+    });
+    expect(readRuntimeEffectiveCapabilitySnapshot({
+      workspaceId: "workspace:fixture",
+      sessionKey: "agent:main:fixture",
+      expectedRuntimeGeneration: "gateway-18",
+      nowMs: NOW,
+    })).toBeUndefined();
+    expect(readRuntimeEffectiveCapabilitySnapshot({
+      workspaceId: "workspace:fixture",
+      sessionKey: "agent:main:fixture",
+      nowMs: NOW + 30_001,
+    })).toBeUndefined();
+    clearRuntimeEffectiveCapabilitySnapshotsForTests();
   });
 
   it("composes the profile into the final model system prompt and wires it before prompt submission", () => {

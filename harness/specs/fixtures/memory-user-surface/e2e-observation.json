@@ -1,0 +1,67 @@
+{
+  "schema": "clawx.memory-user-surface.e2e-observation/v1",
+  "generated_at": "2026-10-23T05:19:10.462Z",
+  "driven_by": "agent",
+  "actor": "codex-memory-user-surface",
+  "source_commit": "69b1f15864e001ec1d8b06cadfd99cd24e51aad8",
+  "status": "passed",
+  "journey": {
+    "route": "/memory",
+    "explicit_remember": {
+      "result": "accepted through the normal memory.propose gatekeeper/policy path",
+      "accepted_visible": true,
+      "model_visible": false,
+      "reason": "Default isolated runtime has injection pilot/provider disabled, so accepted memory is stored/retrievable but not currently model-visible."
+    },
+    "role_candidate": {
+      "creation": "Gateway memory.propose with source=role and workspace scope",
+      "decision": "needs_review",
+      "model_visible_before_approval": false,
+      "ui_approval": "role-memory-card -> memory.review through the Memory panel; runtime-fact dispatch verified in the memory API unit test",
+      "visible_as_accepted_after_approval": true
+    },
+    "export": {
+      "format": "MemoryExport/v1",
+      "retained_file": "harness/specs/fixtures/memory-user-surface/export-readback.json",
+      "sha256": "30a38f5c81796951147c526ebe654a15188f14b89accf5bfa8da6d8034ab9463",
+      "manifest_description_present": true,
+      "approval_boundary_present": true,
+      "host_success_envelope_removed": true
+    },
+    "delete": {
+      "owner": "role-memory-card-governance",
+      "result": "owner-dispatched deletion removed the row; role tombstone read-back is covered by the Gateway unit test",
+      "accepted_before_delete": 2,
+      "accepted_after_delete": 1,
+      "deleted_key_absent_from_model_accepted_keys": true
+    },
+    "locales": {
+      "exercised_in_electron": [
+        "en",
+        "zh"
+      ],
+      "four_locale_coverage_gate": "pnpm run i18n:lint"
+    }
+  },
+  "counts": {
+    "beforeDelete": {
+      "accepted": 2,
+      "candidates": 0,
+      "modelVisible": 0
+    },
+    "afterDelete": {
+      "accepted": 1,
+      "candidates": 0,
+      "modelVisible": 0
+    }
+  },
+  "negative_cases": [
+    "candidate modelVisible=false before approval",
+    "deleted memory absent from accepted and model acceptedKeys after tombstone"
+  ],
+  "screenshot": {
+    "path": "harness/specs/fixtures/memory-user-surface/screenshots/memory-zh.png",
+    "sha256": "f4da3a35e7c5be6cb6b42c5b1f131988f908105b857c8a92d40cbcf7376790dc"
+  },
+  "raw_log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\memory-e2e-regression.log"
+}

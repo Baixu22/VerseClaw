@@ -1,0 +1,24 @@
+{
+  "schema": "clawx.long-session.a2-cleanup-readback/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-a2",
+  "task": "TF-0549",
+  "generatedAt": "2026-10-22T18:04:10.656Z",
+  "resources": {
+    "electronStarted": true,
+    "gatewayStarted": true,
+    "browserStarted": false,
+    "backgroundProcessStarted": false
+  },
+  "cleanup": {
+    "electronClosed": true,
+    "gatewayStopped": true,
+    "tempRootsRemoved": true,
+    "recoveryRequired": false,
+    "matchingResidualProcesses": 0,
+    "matchingResidualE2ERoots": 0
+  },
+  "remaining": [],
+  "notes": "The real Electron/Host/Gateway E2E fixture launched and closed the app for each test. Post-run process/root readback found no matching Electron, Gateway, openclaw-source-state or verse-claw-e2e-user-data process/dir except the query process itself. The D-drive raw run directory is intentionally retained.",
+  "rawRunRetained": "D:\\tmp\\long-session-a2\\5daef609d"
+}

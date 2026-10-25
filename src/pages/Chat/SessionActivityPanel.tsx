@@ -39,7 +39,7 @@
  */
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight, FilePlus2, GitBranch, GitCommitHorizontal, Loader2, RotateCcw, Target, TerminalSquare } from 'lucide-react';
+import { ChevronRight, CirclePause, CirclePlay, FilePlus2, GitBranch, GitCommitHorizontal, Layers3, Loader2, RotateCcw, Target, TerminalSquare, UsersRound, Waypoints } from 'lucide-react';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
@@ -48,10 +48,15 @@ import type { RunPlanSurface } from '@/pages/Chat/run-surface-promotion';
 import { cn } from '@/lib/utils';
 import { subagentIdentity } from '@shared/subagent-identity';
 import { backgroundReadFailed } from '@shared/types/session-activity';
+import { SessionEffectivePolicyPanel } from './SessionEffectivePolicyPanel';
 import type {
   SessionActivitySnapshot,
   SessionActivitySubagent,
 } from '@shared/types/session-activity';
+import type { DelegationAdmissionReceipt } from '@shared/types/delegation-admission';
+import type { TaskLedgerNode } from '@shared/types/task-ledger';
+import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
+import { deriveCoordinationSurface, type CoordinationWorkState } from './long-session-coordination';
 
 type SessionActivityPanelProps = {
   snapshot: SessionActivitySnapshot;
@@ -73,6 +78,16 @@ type SessionActivityPanelProps = {
   onRetryStatus?: () => void;
   showGit?: boolean;
   showCommands?: boolean;
+  /** The current workspace's explicit long-session binding, if any. */
+  coordinatorBinding?: WorkspaceCoordinatorBinding | null;
+  delegationReceipts?: readonly DelegationAdmissionReceipt[];
+  taskLedgerNodes?: readonly TaskLedgerNode[];
+  coordinatorRunActive?: boolean;
+  coordinatorPaused?: boolean;
+  onOpenTaskNode?: (nodeId: string) => void;
+  onOpenCoordinatorSession?: (sessionKey: string) => void;
+  onPauseCoordinator?: () => void;
+  onResumeCoordinator?: () => void;
 };
 
 /**
@@ -83,10 +98,18 @@ type RowState = 'idle' | 'running' | 'ok' | 'warn' | 'error';
 
 function rowState(status: string): RowState {
   if (status === 'running' || status === 'started' || status === 'starting') return 'running';
-  if (status === 'completed' || status === 'verified' || status === 'exited') return 'ok';
-  if (status === 'review' || status === 'waiting_approval' || status === 'waiting' || status === 'paused') return 'warn';
-  if (status === 'failed' || status === 'error' || status === 'blocked' || status === 'aborted' || status === 'killed' || status === 'lost') return 'error';
+  if (status === 'completed' || status === 'verified' || status === 'exited' || status === 'reported' || status === 'accepted-by-task') return 'ok';
+  if (status === 'accepted' || status === 'waiting_approval' || status === 'waiting' || status === 'paused' || status === 'unknown') return 'warn';
+  if (status === 'failed' || status === 'error' || status === 'blocked' || status === 'aborted' || status === 'killed' || status === 'lost' || status === 'cancelled') return 'error';
   return 'idle';
+}
+
+function coordinationStateLabelKey(state: CoordinationWorkState): string {
+  return 'sessionActivity.coordination.state.' + state;
+}
+
+function shortReference(value: string): string {
+  return value.length > 22 ? value.slice(0, 10) + '…' + value.slice(-8) : value;
 }
 
 function formatCount(value: number): string {
@@ -240,12 +263,34 @@ export function SessionActivityPanel({
   onRetryStatus,
   showGit = true,
   showCommands = true,
+  coordinatorBinding = null,
+  delegationReceipts = [],
+  taskLedgerNodes = [],
+  coordinatorRunActive = false,
+  coordinatorPaused = false,
+  onOpenTaskNode,
+  onOpenCoordinatorSession,
+  onPauseCoordinator,
+  onResumeCoordinator,
 }: SessionActivityPanelProps) {
   const { t } = useTranslation('chat');
 
   const git = showGit ? snapshot.git : null;
   const hasGit = Boolean(git && git.isRepository);
   const hasPlan = (plan?.todos.length ?? 0) > 0;
+  const hasPolicyStatus = snapshot.policy !== undefined || snapshot.availability.policy !== undefined;
+  const coordination = useMemo(
+    () => coordinatorBinding?.sessionKey === snapshot.session.sessionKey
+      ? deriveCoordinationSurface({
+          binding: coordinatorBinding,
+          receipts: delegationReceipts,
+          snapshot,
+          taskNodes: taskLedgerNodes,
+        })
+      : null,
+    [coordinatorBinding, delegationReceipts, snapshot, taskLedgerNodes],
+  );
+  const hasCoordination = coordination != null;
   const hasSubagents = snapshot.subagents.length > 0;
   const visibleProcesses = useMemo(
     () => (showCommands ? processes : []),
@@ -305,7 +350,7 @@ export function SessionActivityPanel({
   const runningSubagents = snapshot.subagents.filter((agent) => agent.status === 'started').length;
   const runningProcesses = visibleProcesses.filter((entry) => entry.status === 'running').length;
 
-  if (!hasGit && !hasPlan && !hasSubagents && !hasProcesses
+  if (!hasGit && !hasPlan && !hasPolicyStatus && !hasCoordination && !hasSubagents && !hasProcesses
     && snapshot.goals.length === 0 && snapshot.lineage.length === 0 && !alert && !backgroundUnknown) return null;
 
   return (
@@ -315,6 +360,104 @@ export function SessionActivityPanel({
       aria-label={t('sessionActivity.title')}
     >
       <div className={cn('codex-session-activity__body', compact && 'is-scrollable')}>
+        {/* ── 长期协作 ─────────────────────────────────────────────────── */}
+{hasCoordination && coordination ? (
+          <Section
+            title={t('sessionActivity.sections.coordination')}
+            summary={t('sessionActivity.coordination.revision', { revision: coordination.revision })}
+            actions={(
+              <>
+                {coordination.bindingState === 'active' && coordinatorRunActive && !coordinatorPaused && onPauseCoordinator ? (
+                  <HeaderAction
+                    label={t('sessionActivity.coordination.pause')}
+                    icon={<CirclePause className="h-3.5 w-3.5" />}
+                    onClick={onPauseCoordinator}
+                    testId="session-activity-coordination-pause"
+                  />
+                ) : null}
+                {coordination.bindingState === 'active' && coordinatorPaused && onResumeCoordinator ? (
+                  <HeaderAction
+                    label={t('sessionActivity.coordination.resume')}
+                    icon={<CirclePlay className="h-3.5 w-3.5" />}
+                    onClick={onResumeCoordinator}
+                    testId="session-activity-coordination-resume"
+                  />
+                ) : null}
+              </>
+            )}
+            testId="session-activity-coordination"
+          >
+            <Row
+              icon={<Waypoints className="h-3.5 w-3.5" aria-hidden="true" />}
+              label={t('sessionActivity.coordination.binding')}
+              sublabel={shortReference(coordination.sessionKey)}
+              value={coordinatorPaused
+                ? t('sessionActivity.coordination.state.waiting')
+                : t('sessionActivity.coordination.bindingState.' + coordination.bindingState)}
+              state={coordinatorPaused ? 'warn' : rowState(coordination.bindingState)}
+              title={coordination.invalidationReason
+                ? t('sessionActivity.coordination.invalidatedReason.' + coordination.invalidationReason)
+                : coordination.sessionKey}
+              onOpen={onOpenCoordinatorSession ? () => onOpenCoordinatorSession(coordination.sessionKey) : undefined}
+              testId="session-activity-coordination-binding"
+            />
+            {coordination.taskRefs.slice(0, 3).map((task) => (
+              <Row
+                key={task.nodeId}
+                testId={'session-activity-coordination-task-' + task.nodeId.replace(/[^a-zA-Z0-9_-]/g, '-')}
+                icon={<Target className="h-3.5 w-3.5" aria-hidden="true" />}
+                label={task.title}
+                sublabel={shortReference(task.nodeId)}
+                value={task.status
+                  ? t('sessionActivity.taskStatus.' + task.status, { defaultValue: task.status })
+                  : t('sessionActivity.coordination.unknownTask')}
+                state={task.status ? rowState(task.status) : 'warn'}
+                onOpen={task.available && onOpenTaskNode ? () => onOpenTaskNode(task.nodeId) : undefined}
+              />
+            ))}
+            {coordination.works.slice(0, 4).map((work) => (
+              <Row
+                key={work.receiptId}
+                tall
+                testId={'session-activity-coordination-work-' + work.receiptId.replace(/[^a-zA-Z0-9_-]/g, '-')}
+                icon={<UsersRound className="h-3.5 w-3.5" aria-hidden="true" />}
+                label={work.roleName}
+                sublabel={t('sessionActivity.coordination.workDetail', {
+                  task: work.task,
+                  backend: work.backend,
+                  isolation: work.isolation,
+                })}
+                value={t(coordinationStateLabelKey(work.state))}
+                state={rowState(work.state)}
+                title={work.childRunId ?? work.idempotencyKey}
+                onOpen={work.childSessionKey && onOpenSubagent
+                  ? () => onOpenSubagent(work.childSessionKey!)
+                  : undefined}
+              />
+            ))}
+            {coordination.batches.slice(0, 3).map((batch) => (
+              <Row
+                key={batch.id}
+                tall
+                testId={'session-activity-coordination-batch-' + batch.id.replace(/[^a-zA-Z0-9_-]/g, '-')}
+                icon={<Layers3 className="h-3.5 w-3.5" aria-hidden="true" />}
+                label={t('sessionActivity.coordination.batchTitle')}
+                sublabel={t('sessionActivity.coordination.batchCounts', {
+                  completed: batch.completedWorkerCount,
+                  failed: batch.failedWorkerCount,
+                  cancelled: batch.cancelledWorkerCount,
+                  pending: batch.pendingWorkerCount,
+                })}
+                value={t(coordinationStateLabelKey(batch.state))}
+                state={rowState(batch.state)}
+                title={batch.idempotencyKey}
+                onOpen={batch.openWorkerSessionKey && onOpenSubagent
+                  ? () => onOpenSubagent(batch.openWorkerSessionKey!)
+                  : undefined}
+              />
+            ))}
+          </Section>
+        ) : null}
         {/* ── 环境 ─────────────────────────────────────────────────────── */}
         {hasGit && gitStats ? (
           <Section
@@ -372,6 +515,10 @@ export function SessionActivityPanel({
               />
             ) : null}
           </Section>
+        ) : null}
+
+        {hasPolicyStatus ? (
+          <SessionEffectivePolicyPanel policy={snapshot.policy ?? null} />
         ) : null}
 
         {/* ── 开发任务 ─────────────────────────────────────────────────── */}

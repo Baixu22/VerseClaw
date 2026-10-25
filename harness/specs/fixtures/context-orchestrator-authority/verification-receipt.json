@@ -1,0 +1,281 @@
+{
+  "schema": "clawx.context-authority.tf0493-verification/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0493",
+  "program": "component-graduation",
+  "task": "TF-0493",
+  "candidate": {
+    "commit": "5d2942b042c7d01130f2abb661762a0399875dad",
+    "tree": "039cb121e72f735806b1497690f07083284948fe",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "rawRun": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\gate-run.json"
+  },
+  "title": "TF-0493 Context Orchestrator, VToken and C6 authority closure",
+  "verdict": "pass",
+  "featureClaim": "one context assembly and final-request receipt authority, with VToken and C6 internalized rather than exposed as parallel product controls",
+  "commands": [
+    {
+      "id": "context-runtime",
+      "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit-src.config.ts src/context-engine/context-orchestrator.test.ts src/context-engine/context-orchestrator.compass.test.ts src/context-engine/context-candidate.test.ts src/context-engine/turn-injection-budget.test.ts src/context-engine/chat-turn-vtoken-injection.test.ts src/context-engine/rc03-seal.test.ts src/context-engine/rc03-seal-wiring.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 14022,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\context-runtime.log",
+      "rawLogSha256": "49ed660cad6d50cb8c88acd2037b279750758981c43ec5b2b843c595477cbeb1",
+      "tests": 113,
+      "passed": 113,
+      "failed": 0,
+      "files": 7
+    },
+    {
+      "id": "rc03-entry-matrix",
+      "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/rc03-entry-transitions.acceptance.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 144664,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\rc03-entry-matrix.log",
+      "rawLogSha256": "942db9c4545f8ca1538825d1b834590b8c9647fb3e52bc2801773cdde9748db7",
+      "tests": 22,
+      "passed": 22,
+      "failed": 0,
+      "files": 1,
+      "entryCases": [
+        "plain turn",
+        "tool loop",
+        "same-provider retry",
+        "provider fallback",
+        "compact",
+        "fork",
+        "handoff"
+      ]
+    },
+    {
+      "id": "context-authority-static",
+      "command": "pnpm exec vitest run tests/unit/context-authority-closeout.test.ts tests/unit/context-orchestrator-entry-scan.test.ts tests/unit/component-disposition-catalog.test.ts tests/unit/component-authority-manifest.test.ts tests/unit/default-config-matrix.test.ts tests/unit/first-product-claims.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 10358,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\context-authority-static.log",
+      "rawLogSha256": "3da018d3742db8ce73b134c8ef8d9fa8f174c575be57d5ed3bf2c33ea7b29b45",
+      "tests": 59,
+      "passed": 59,
+      "failed": 0,
+      "files": 6
+    },
+    {
+      "id": "vtoken-package",
+      "command": "pnpm vtoken:test",
+      "exitCode": 0,
+      "durationMs": 4363,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\vtoken-package.log",
+      "rawLogSha256": "b2208ac32e7f0868a4ac2d550edbabee889b8fa84c8a62878b6a5e4d052a28be",
+      "tests": 251,
+      "passed": 251,
+      "failed": 0
+    },
+    {
+      "id": "i18n-lint",
+      "command": "pnpm run i18n:lint",
+      "exitCode": 0,
+      "durationMs": 909,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\i18n-lint.log",
+      "rawLogSha256": "abcc50aa570dba0c3e2a8d438ea2714d1c5175eeb9944f13f40d0292151b0831"
+    },
+    {
+      "id": "build-vite",
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "durationMs": 52935,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\build-vite.log",
+      "rawLogSha256": "ede5fbe20effae1f2680ee7bbe11f59279ec862b1aa49968f2b7fd4573003017",
+      "success": true
+    },
+    {
+      "id": "developer-mode-e2e",
+      "command": "pnpm run test:e2e:run tests/e2e/developer-mode.spec.ts",
+      "exitCode": 0,
+      "durationMs": 16999,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\developer-mode-e2e.log",
+      "rawLogSha256": "883c51df3e92b70b2011b21c69adb4d00d1f8988f5b1bf09efb95923370c1171",
+      "files": 1,
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "realElectron": true
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 27399,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\typecheck.log",
+      "rawLogSha256": "5b4757610f264e1a65135b537991cc8f9a3b7427fc65eeb578da145813528c20",
+      "projects": 3,
+      "errors": 0,
+      "success": true
+    },
+    {
+      "id": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "durationMs": 1088,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\contract-check.log",
+      "rawLogSha256": "81d18a4ca335c721b9567fc4d94482781ef54aebc18a6959042cf816bc899414",
+      "result": "pass"
+    },
+    {
+      "id": "catalogs-check",
+      "command": "pnpm catalogs:check",
+      "exitCode": 0,
+      "durationMs": 1300,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\catalogs-check.log",
+      "rawLogSha256": "eb7f66cf61a0fa6bd7e31e6a0afca2f5cdcd7f5403e16f48ad695f3431947e39",
+      "result": "pass"
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 823,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\comms-replay.log",
+      "rawLogSha256": "b220bc5c91a973beae1d995bd036866d0330a67027d47dd5080cd2dd84675f6e",
+      "success": true
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 680,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\comms-compare.log",
+      "rawLogSha256": "c67c233720db4cf5a25912f564819212fca7a423af8e2ec1c51e4a21916b8cf7",
+      "result": "PASS",
+      "comparisonRows": 44,
+      "passedRows": 44,
+      "failedRows": 0
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/context-orchestrator-authority-closure.md",
+      "exitCode": 0,
+      "durationMs": 1440,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\harness-validate.log",
+      "rawLogSha256": "7cfc39f5e960eb4ac9097abc82f0bd30b1193046639e6c47d7420178d118b793",
+      "result": "pass"
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationMs": 55,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\git-diff-check.log",
+      "rawLogSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+      "whitespaceErrors": 0
+    },
+    {
+      "id": "changed-eslint",
+      "command": "pnpm exec eslint src/pages/Settings/index.tsx src/components/settings/ContextLayersExplainer.tsx shared/component-authority-manifest.ts shared/dcs/component-disposition-catalog.ts shared/dcs/prod-flags-catalog.ts tests/unit/context-authority-closeout.test.ts tests/unit/default-config-matrix.test.ts tests/unit/first-product-claims.test.ts",
+      "exitCode": 0,
+      "durationMs": 6030,
+      "rawLog": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\changed-eslint.log",
+      "rawLogSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+    }
+  ],
+  "counts": {
+    "contextRuntimeFiles": 7,
+    "contextRuntimeTests": 113,
+    "rc03Tests": 22,
+    "staticFiles": 6,
+    "staticTests": 59,
+    "vtokenTests": 251,
+    "e2eTests": 1,
+    "totalTests": 446,
+    "commands": 15,
+    "failedCommands": 0,
+    "builds": 1,
+    "typecheckProjects": 3,
+    "typecheckErrors": 0,
+    "commsRows": 44,
+    "commsPassed": 44
+  },
+  "acceptance": [
+    {
+      "criterion": "One budget ledger per turn and one final snapshot per model call.",
+      "result": "pass",
+      "evidence": [
+        "context-authority-audit.json",
+        "prompt-receipt-matrix.json"
+      ]
+    },
+    {
+      "criterion": "Tool loop/retry/fallback/fork/handoff propagation is explicit and not misreported as duplicate assembly.",
+      "result": "pass",
+      "evidence": [
+        "prompt-receipt-matrix.json",
+        "rc03-entry-matrix"
+      ]
+    },
+    {
+      "criterion": "C6 has a concrete internal/retired disposition and no permanent hidden opt-in.",
+      "result": "pass",
+      "evidence": [
+        "context-authority-audit.json"
+      ]
+    },
+    {
+      "criterion": "VToken is internal stateless packing with no renderer bridge switch or independent product panel.",
+      "result": "pass",
+      "evidence": [
+        "context-authority-audit.json",
+        "tests/unit/context-authority-closeout.test.ts"
+      ]
+    },
+    {
+      "criterion": "Off/on parity, rollback and kill switch remain fail-closed.",
+      "result": "pass",
+      "evidence": [
+        "context-authority-audit.json",
+        "context-runtime"
+      ]
+    }
+  ],
+  "sourceInputs": [
+    "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+    "openclaw_runtime/src/context-engine/context-candidate.ts",
+    "openclaw_runtime/src/context-engine/turn-injection-budget.ts",
+    "openclaw_runtime/src/context-engine/rc03-seal.ts",
+    "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+    "openclaw_runtime/src/context-engine/vtoken-rpc-client.ts",
+    "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+    "openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts",
+    "shared/component-authority-manifest.ts",
+    "shared/dcs/component-disposition-catalog.ts"
+  ],
+  "unmeasured": [
+    "live external-provider continuation quality for enabled enhancement sources",
+    "non-Windows provider transport behavior",
+    "C6 external-provider value beyond the existing internal live-corpus evidence"
+  ],
+  "limitations": [
+    "The host bridge and stateful VToken APIs remain internal diagnostics/package surfaces; they are not production turn state.",
+    "C6 remains default-disabled internal API and does not claim context-quality improvement.",
+    "No product locks, release state or default values changed.",
+    "All evidence is agent-driven; no real-human evidence is claimed."
+  ],
+  "cleanup": {
+    "startedProcesses": true,
+    "electronProcessesClosed": true,
+    "gatewayProcessesClosed": true,
+    "temporaryRoot": "D:/tmp/tf0493/5d2942b042c7d01130f2abb661762a0399875dad",
+    "recoveryRequired": false
+  },
+  "credentialScan": {
+    "command": "node scan of TF-0493 JSON artifacts for sk-/AIza/gh* private-key, password/secret/api-key and Authorization patterns",
+    "matches": 0,
+    "result": "pass",
+    "scannedFiles": [
+      "context-authority-audit.json",
+      "prompt-receipt-matrix.json",
+      "verification-receipt.json"
+    ]
+  },
+  "rawRun": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\gate-run.json"
+}

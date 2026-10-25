@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "SessionEffectivePolicy/v1",
+  "generatedAt": "2026-10-23T02:00:00.000Z",
+  "scope": {
+    "workspaceId": "workspace:long-session-b1",
+    "sessionKey": "agent:main:long-session-b1",
+    "sessionId": "session-b1",
+    "agentId": "main",
+    "permissionMode": "acceptEdits"
+  },
+  "generation": {
+    "state": "current",
+    "runtimeGeneration": "gateway-b1",
+    "runId": null,
+    "profileObservedAt": "2026-10-23T02:00:00.000Z"
+  },
+  "backend": {
+    "configured": {
+      "state": "configured",
+      "value": "openclaw",
+      "source": "session-entry.agent-runtime-override",
+      "reason": null,
+      "observedAt": null
+    },
+    "effective": {
+      "state": "effective",
+      "value": {
+        "id": "openclaw-embedded",
+        "kind": "openclaw-embedded",
+        "modelProvider": "openai",
+        "model": "gpt-5.4",
+        "nativeThreadId": null,
+        "nativeSessionId": null
+      },
+      "source": "runtime.ModelCapabilityProfile",
+      "reason": null,
+      "observedAt": "2026-10-23T02:00:00.000Z"
+    },
+    "binding": {
+      "state": "effective",
+      "value": {
+        "kind": "session",
+        "id": "session-b1"
+      },
+      "source": "runtime.ModelCapabilityProfile",
+      "reason": null,
+      "observedAt": "2026-10-23T02:00:00.000Z"
+    },
+    "compatibility": {
+      "nativeCompactionOwner": "openclaw",
+      "parameters": [
+        {
+          "path": "agents.defaults.compaction",
+          "state": "effective",
+          "reason": null
+        }
+      ]
+    }
+  },
+  "model": {
+    "configured": {
+      "state": "configured",
+      "value": {
+        "provider": "openai",
+        "model": "gpt-5.4"
+      },
+      "source": "session-entry.model-override",
+      "reason": null,
+      "observedAt": "2026-10-23T02:00:00.000Z"
+    },
+    "effective": {
+      "state": "effective",
+      "value": {
+        "provider": "openai",
+        "model": "gpt-5.4"
+      },
+      "source": "session-entry.model",
+      "reason": null,
+      "observedAt": "2026-10-23T02:00:00.000Z"
+    },
+    "effort": {
+      "state": "effective",
+      "value": "high",
+      "source": "session-entry.effort",
+      "reason": null,
+      "observedAt": "2026-10-23T02:00:00.000Z"
+    }
+  },
+  "grant": {
+    "mode": {
+      "state": "effective",
+      "value": "acceptEdits",
+      "source": "main.workspace.permissionMode",
+      "reason": "Authorization is reported by the Main workspace owner; this projection does not grant permissions.",
+      "observedAt": null
+    },
+    "effectiveActions": {
+      "state": "effective",
+      "value": {
+        "allowed": [
+          "apply_patch",
+          "edit",
+          "exec",
+          "propose",
+          "read",
+          "write"
+        ],
+        "requiresApproval": [],
+        "denied": [],
+        "unknown": []
+      },
+      "source": "runtime.ModelCapabilityProfile.actionAuthorization",
+      "reason": null,
+      "observedAt": "2026-10-23T02:00:00.000Z"
+    }
+  },
+  "limits": {
+    "context": {
+      "state": "effective",
+      "value": {
+        "usedTokens": 12000,
+        "contextTokenBudget": 128000,
+        "reserveTokens": 8000,
+        "overflowTokens": 0
+      },
+      "source": "session-entry.contextBudgetStatus",
+      "reason": null,
+      "observedAt": "2026-10-23T02:00:00.000Z"
+    },
+    "queue": {
+      "state": "configured",
+      "value": {
+        "mode": "followup",
+        "cap": 12,
+        "debounceMs": 250,
+        "drop": "summarize"
+      },
+      "source": "session-entry.queue",
+      "reason": "Configured queue policy; effective admission still belongs to the runtime queue owner.",
+      "observedAt": null
+    },
+    "resources": {
+      "state": "configured",
+      "value": {
+        "spawnDepth": 0,
+        "subagentControlScope": "children",
+        "inheritedToolAllowCount": 1,
+        "inheritedToolDenyCount": 1
+      },
+      "source": "session-entry.resource-scope",
+      "reason": "Resource ownership remains with the terminal/browser/background/worktree owners; this policy only reports the session scope hints.",
+      "observedAt": null
+    },
+    "schedule": {
+      "state": "unsupported",
+      "value": null,
+      "source": "cron-workboard.owner",
+      "reason": "Cron/Workboard scheduling is not owned by the session policy projection; follow-up scheduling is delivered by its existing owner.",
+      "observedAt": null
+    }
+  },
+  "diagnostics": []
+}

@@ -1,0 +1,205 @@
+{
+  "schema": "clawx.long-session.b1-verification/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-b1",
+  "program": "long-session-development-20261022",
+  "task": "TF-0550",
+  "title": "B1 effective session policy and backend parity",
+  "verdict": "pass",
+  "featureClaim": "read-only effective policy projection; no execution, config write or grant expansion",
+  "candidate": {
+    "sourceBase": "8459bbf67",
+    "cleanCandidateObserved": true,
+    "commit": "5eef970b9a6ff401bd92ff870a559cde751a1b8e",
+    "tree": "f3f8c32e74b280f0f05ad8053d4c08183b2a3bfc",
+    "branch": "codex/long-session-implementation-20261022",
+    "dirtyBefore": false,
+    "dirtyAfter": false,
+    "verificationRun": "D:\\tmp\\long-session-b1\\5eef970b9\\gate-run.json"
+  },
+  "commands": [
+    {
+      "id": "capability-tests",
+      "command": "pnpm exec vitest run tests/unit/runtime-effective-capability.test.ts tests/unit/model-capability-profile.test.ts tests/unit/identity-scope.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 23960,
+      "rawLog": "D:\\tmp\\long-session-b1\\5eef970b9\\capability-tests.log",
+      "files": 3,
+      "tests": 55,
+      "passed": 55,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "id": "policy-tests",
+      "command": "pnpm exec vitest run tests/unit/long-session-effective-policy.test.ts tests/unit/session-activity-background-read.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 27229,
+      "rawLog": "D:\\tmp\\long-session-b1\\5eef970b9\\policy-tests.log",
+      "files": 2,
+      "tests": 21,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "id": "gateway-reachability",
+      "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-core.config.ts src/gateway/session-ecosystem-lifecycle-reachability.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 37231,
+      "rawLog": "D:\\tmp\\long-session-b1\\5eef970b9\\gateway-reachability.log",
+      "files": 1,
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "id": "build-runtime",
+      "command": "pnpm run build:runtime",
+      "exitCode": 0,
+      "durationMs": 31349,
+      "rawLog": "D:\\tmp\\long-session-b1\\5eef970b9\\build-runtime.log",
+      "success": true
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 21394,
+      "rawLog": "D:\\tmp\\long-session-b1\\5eef970b9\\typecheck.log",
+      "projects": 3,
+      "errors": 0
+    },
+    {
+      "id": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "durationMs": 856,
+      "rawLog": "D:\\tmp\\long-session-b1\\5eef970b9\\contract-check.log",
+      "success": true
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 785,
+      "rawLog": "D:\\tmp\\long-session-b1\\5eef970b9\\comms-replay.log",
+      "success": true
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 724,
+      "rawLog": "D:\\tmp\\long-session-b1\\5eef970b9\\comms-compare.log",
+      "comparisonRows": 44,
+      "passedRows": 44,
+      "failedRows": 0,
+      "result": "PASS"
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/long-session-effective-policy.md",
+      "exitCode": 0,
+      "durationMs": 1439,
+      "rawLog": "D:\\tmp\\long-session-b1\\5eef970b9\\harness-validate.log",
+      "result": "valid"
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationMs": 50,
+      "rawLog": "D:\\tmp\\long-session-b1\\5eef970b9\\git-diff-check.log",
+      "whitespaceErrors": 0
+    },
+    {
+      "id": "changed-eslint",
+      "command": "pnpm exec eslint shared/types/session-effective-policy.ts shared/types/session-activity.ts shared/host-api/contract.ts src/lib/host-api.ts electron/gateway/manager.ts electron/services/sessions-api.ts electron/services/session-activity-api.ts openclaw_runtime/src/agents/runtime-effective-capability.ts openclaw_runtime/src/agents/session-effective-policy.ts openclaw_runtime/src/gateway/server-methods/sessions.read.ts openclaw_runtime/src/gateway/methods/core-descriptors.ts openclaw_runtime/src/gateway/server-methods.ts openclaw_runtime/packages/gateway-protocol/src/index.ts openclaw_runtime/packages/gateway-protocol/src/schema/protocol-schemas.ts openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts openclaw_runtime/packages/gateway-protocol/src/schema/types.ts tests/unit/runtime-effective-capability.test.ts tests/unit/long-session-effective-policy.test.ts tests/unit/session-activity-background-read.test.ts openclaw_runtime/src/gateway/session-ecosystem-lifecycle-reachability.test.ts",
+      "exitCode": 0,
+      "durationMs": 6216,
+      "rawLog": "D:\\tmp\\long-session-b1\\5eef970b9\\changed-eslint.log",
+      "errors": 0
+    }
+  ],
+  "counts": {
+    "testFiles": 6,
+    "tests": 81,
+    "passed": 81,
+    "failed": 0,
+    "skipped": 0,
+    "commands": 11,
+    "failedCommands": 0,
+    "builds": 1
+  },
+  "acceptance": [
+    {
+      "criterion": "Generate a read-only session policy from TF-0512 owner-resolved current facts with scope/generation, backend/binding, model/effort, grant and bounded limits.",
+      "result": "pass",
+      "evidence": [
+        "effective-session-policy.json"
+      ]
+    },
+    {
+      "criterion": "Keep configured, effective, unverified, unsupported and ignored facts separate; missing/stale/mismatched receipts remain unknown.",
+      "result": "pass",
+      "evidence": [
+        "policy-source-and-override-matrix.json",
+        "tests/unit/long-session-effective-policy.test.ts"
+      ]
+    },
+    {
+      "criterion": "Report Codex native compact and Claude ownsNativeCompaction compatibility without creating another capability inventory.",
+      "result": "pass",
+      "evidence": [
+        "backend-parity.json",
+        "openclaw_runtime/src/agents/session-effective-policy.ts"
+      ]
+    },
+    {
+      "criterion": "Exclude credentials/auth values/private prompts and keep reads side-effect-free.",
+      "result": "pass",
+      "evidence": [
+        "effective-session-policy.json#credential-scan",
+        "tests/unit/long-session-effective-policy.test.ts"
+      ]
+    }
+  ],
+  "sourceInputs": [
+    "shared/types/session-effective-policy.ts",
+    "shared/types/session-activity.ts",
+    "shared/host-api/contract.ts",
+    "electron/services/sessions-api.ts",
+    "electron/services/session-activity-api.ts",
+    "openclaw_runtime/src/agents/runtime-effective-capability.ts",
+    "openclaw_runtime/src/agents/session-effective-policy.ts",
+    "openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts",
+    "openclaw_runtime/src/gateway/server-methods/sessions.read.ts",
+    "harness/specs/fixtures/long-session-development/b1/effective-session-policy.json",
+    "harness/specs/fixtures/long-session-development/b1/policy-source-and-override-matrix.json",
+    "harness/specs/fixtures/long-session-development/b1/backend-parity.json"
+  ],
+  "unmeasured": [
+    "live provider-backed native thread continuation after a real model call",
+    "cross-workspace concurrent policy reads",
+    "remote Gateway generation rotation across a process partition"
+  ],
+  "cleanup": {
+    "startedProcesses": false,
+    "startedGateway": false,
+    "recoveryRequired": false,
+    "notes": "Deterministic builder and source readback only; no provider or runtime process was launched for B1 artifacts."
+  },
+  "limitations": [
+    "The policy reports current runtime facts; it does not create a capability inventory or claim every backend supports every parameter.",
+    "A missing or stale TF-0512 profile intentionally leaves effective facts unknown.",
+    "All evidence is agent-driven; no real-human evidence is claimed."
+  ],
+  "credentialScan": {
+    "command": "rg high-signal credential patterns over B1 JSON artifacts",
+    "matches": 0,
+    "result": "pass"
+  },
+  "rawRun": "D:\\tmp\\long-session-b1\\5eef970b9\\gate-run.json"
+}

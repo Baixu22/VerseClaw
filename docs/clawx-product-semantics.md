@@ -1,6 +1,6 @@
 # ClawX Product Semantics
 
-Last updated: 2026-10-21
+Last updated: 2026-10-22
 
 Evidence boundary: this document is a product-semantics guardrail that complements `shared/capability-claims.ts` and `artifacts/capability-claims/status-table.json`.
 
@@ -66,6 +66,152 @@ protocol, permission provider or full OS sandbox. Frozen boundaries remain
 `liveReady=false`, `productApproved=false`, `defaultOn=false`, C1 keep-off,
 Runtime Memory diagnostics-only and SEKB auto-writeback disabled.
 
+## Session lifecycle action boundary
+
+Session lifecycle actions are separate facts. An abort is not a stop, stop is not
+archive, archive is not delete, and reset changes the physical generation without
+creating a new logical conversation by string inference. The current source
+anchors, inheritance rules, failure states and known gaps are recorded in
+[`long-session-development/a1/action-and-inheritance-contract.json`](../harness/specs/fixtures/long-session-development/a1/action-and-inheritance-contract.json).
+The corresponding negative cases are fixed in
+[`negative-scenario-index.json`](../harness/specs/fixtures/long-session-development/a1/negative-scenario-index.json).
+That fixture is a current fault baseline, not evidence that every lifecycle path
+is already protected.
+
+| Action | Visible behavior | Inherits | Does not inherit / required boundary |
+| --- | --- | --- | --- |
+| Turn/run abort | Stops the active turn/run and reloads transcript state. | SessionKey, transcript, current physical session until a separate reset. | Task/goal completion or resource deletion. |
+| Session stop | Clears queued work and drains runtime activity while retaining the session. | SessionKey, session store, transcript and task/resource records. | Archive/delete mutation or task completion. |
+| Archive | Hides a conversation from the live list while retaining it for restore. | Transcript, original session-entry snapshot and original workspace/folder hints. | Running process ownership, task completion or a new SessionKey. |
+| Restore | Restores an archive-indexed conversation to the live list. | Snapshot metadata and transcript. | A restored task/goal status or running resource ownership. |
+| Reset | Rotates the physical sessionId/generation under the same SessionKey. | Agent/workspace scope, label/origin preferences and Task Ledger references. | Old run/generation authority, ordinary-session CLI bindings and token counters. |
+| Delete | Permanently removes a live or archived conversation after owner cleanup. | No restore entitlement after a committed delete. | Late run authority, task completion or a second deletion owner. |
+| Fork | Creates a new child session from a source transcript. | Transcript/model/workspace preferences and explicit fork lineage. | Task/goal completion or running resources. |
+| Handoff | Builds a bounded draft and creates a child session without mutating the source. | Bounded handoff context and explicit parent/root lineage. | Goal transfer, source mutation or resource drain. |
+| Schedule pause | Disables future Cron/Workboard triggers. | Existing session/history and current-run state. | Session stop, abort, archive/delete or task completion. |
+
+Archive and restore now execute through the runtime lifecycle owner. Archive
+acquires the existing admission fence, drains the session, records an immutable
+operation intent, writes the archive index and transcript, and only then commits
+the hidden store state. Restore inserts a fresh physical generation under the same
+SessionKey, reverses the archived transcript/index, and leaves the old generation
+tombstoned so late events cannot mutate the restored row. A failed or unknown RPC
+keeps the Main operation gate and the same operationId open for retry; archived
+keys are filtered from the live session list before the store-row commit is
+complete. The A1 contract remains a historical fault baseline and therefore keeps
+its original `partial` status for those rows.
+
+This boundary adds no Project, Task/Goal, Context/Memory, Scheduler or universal
+resource authority. Permanent deletion of an already archived conversation still
+uses the archive index as its retry locator and must not report success while an
+owned derivative remains.
+
+## Effective session policy
+
+`SessionEffectivePolicy/v1` is a read-only projection of the current session
+owner facts. It keeps configured values, effective values, unverified values,
+unsupported capabilities and ignored overrides in separate states. Effective
+facts come from the bounded TF-0512 `ModelCapabilityProfile/v1` observation for
+the same workspace/session and a matching runtime generation; a missing, stale or
+mismatched observation leaves effective values unknown. The projection never
+substitutes a JSON file, an `enabled` flag, a provider label or a stale receipt
+for runtime evidence.
+
+The policy reports backend, native binding, model/effort, workspace grant,
+action authorization, context/queue/resource/schedule limits and their sources.
+Codex app-server and Claude CLI own native compaction; their compatibility rows
+mark OpenClaw compaction overrides as ignored with a reason. OpenClaw embedded
+sessions retain OpenClaw-owned compaction. Resource and schedule owners are not
+copied into a second registry, and the policy contains no credentials, auth
+profile IDs, raw prompts or transcript text. Reading it performs no execution,
+config write or grant expansion. Executable fixtures are under
+[`long-session-development/b1/`](../harness/specs/fixtures/long-session-development/b1/).
+
+## Coordinator binding and delegation admission
+
+Long-session coordination is an explicit Workspace-owned capability, not an
+automatic mode of ordinary Chat. The current binding stores only the selected
+Workspace/Assistant, logical SessionKey, observed physical `sessionId`, existing
+Task Ledger node references and a monotonically increasing revision in the
+Workspace store. A reset changes the physical generation and invalidates the old
+binding; archive/delete invalidate it through the existing session lifecycle
+owners. The binding contains no Project store, Task/Goal status, raw transcript
+or execution authority.
+
+`DelegationAdmissionReceipt/v1` reuses the existing role orchestrator and child
+session runtime. Before invoking `orchestrator.run`, Main persists a bounded
+`submitting` receipt keyed by caller idempotency key and request digest. The final
+receipt binds the coordinator revision/physical generation, Task Ledger ref,
+role, child session/run, actual backend identity, role-clamped tool allow/deny
+facts and isolation backend. `accepted` means the runtime admitted the child; it
+is not `running`, `completed` or task completion. Unknown role, unsupported
+backend, stale coordinator generation and missing child identity remain rejected
+or unknown facts.
+
+Shared in-process writers run serially unless an explicit write-set path is
+provided; worktree isolation records whether the actual backend is `git` or the
+in-process fallback. A reset/stop racing admission is rechecked after spawn and
+the child stop is requested rather than projecting a phantom completion. The C4
+entry is the Chat activity rail projection plus completion batches; it decides no
+task status and cannot admit a second writer.
+
+Completion continuation reads the existing subagent registry and delivery outbox rather than starting a second scheduler. Workers of one orchestration run form a bounded batch keyed by `completion-batch:<orchestrationRunId>:<requesterSessionKey>`; completed, failed, cancelled and missing workers remain distinct, and a deferred verifier must also become terminal before the team bundle can be exposed. Delivery remains at-least-once, but the deterministic key, per-run delivery state and requester physical-generation pin make replay idempotent and prevent a reset/handoff generation from accepting stale work. The batch receipt reports task completion authority as `none`; final model text alone is not delivery evidence. The user-visible C4 entry is still required before this runtime capability becomes an operable product surface.
+
+The C4 long-session surface reuses the existing Sidebar and Chat activity rail rather than creating a second task list. An explicitly bound coordinator conversation is marked in the Sidebar and remains openable even before its first message. The activity rail projects the Workspace binding revision and invalidation reason, existing Task Ledger references, durable delegation receipts, worker transcripts and completion-batch delivery state. Pause/resume actions delegate to the existing composer run controls and disappear once the binding is invalidated. Task acceptance still comes only from Task Ledger, and completion delivery remains at-least-once with the C3 generation fence.
+
+Long-session continuity strategy stays on the baseline: the paired evaluation contract froze a 30-pair agent-driven workload and measured only structural projection behaviour because no live provider was authorized, so no continuous-compression, value-pruning or summary-tree path is default-enabled, promoted or implied by the long-session surface. Any future promotion needs a live-provider sample that clears the published fidelity, safety, cost and P95 gates plus its own implementation spec, rollback and failure fallback; see [d3 decision evidence](../harness/specs/fixtures/long-session-development/d3/continuity-strategy-decision.json).
+
+Memory is one reviewable product concept. Role Memory cards, Runtime Memory facts/timelines/episodes, the candidate queue, embedding indexes, native-file retrieval and Dreaming caches have distinct implementation lifecycle and storage owners, but they are not separate product memories. Candidates and derived caches are never retrievable or injectable as accepted memory; role-card review or the owning Runtime Memory acceptance path must promote them first. The canonical domain matrix and migration boundary live in [memory-control-plane.md](dev/memory-control-plane.md). SEKB remains a Knowledge Runtime Lessons source and does not own a memory store.
+
+## Final acceptance scope (F3)
+
+The long-session capability is accepted inside one explicit boundary on Windows x64:
+a single bound coordinator Workspace/Assistant/session tree, the existing Task Ledger
+as the only task-fact owner, and the existing completion, admission, resource and
+scheduler owners. The peer evidence is re-read from disk, not aggregated from
+summaries: `harness/specs/fixtures/long-session-development/f3/acceptance.json` and
+`acceptance.md` list every execution node with its candidate, commands, exit codes,
+counts, artifacts and negative proof.
+
+What the accepted boundary proves:
+
+- Lifecycle actions stay distinct (abort, stop, archive, restore, reset, delete, fork,
+  handoff, schedule pause); archive/restore run through the runtime lifecycle owner
+  with an operation journal and retry identity, and a late event cannot resurrect a
+  deleted or rotated generation.
+- Session effective policy reports configured, effective and actual backend as
+  separate facts, and unsupported or unknown combos stay visible instead of
+  degrading silently.
+- An explicitly bound coordinator keeps its binding, physical generation and Task
+  Ledger references across app/Gateway restart; delegation admission records
+  accepted only, and the C4 activity rail shows terminal completion batches without
+  creating a second task list.
+- Context for a bound turn is an accepted-only, bounded `ContinuityContextPack/v1`
+  that projects existing owners. No second memory store or injection authority.
+- Cron/Workboard follow-ups bound to a coordinator refuse an expired, missing,
+  unverifiable or generation-mismatched schedule before execution, and Main suppresses
+  a stale schedule as `enabled=false` rather than deleting it.
+- Read-only UI and diagnostic surfaces issue zero work while hidden; delete reclaims
+  owned terminals, browsers and managed ports through their existing owners, with
+  unresolved ownership reported for review rather than reported as success.
+
+What the accepted boundary explicitly does NOT claim:
+
+- **No live-provider or native-backend thread continuity.** D2 is
+  `EVIDENCE_INSUFFICIENT` and D3 is `keep-baseline`: with no authorized provider
+  credential the quality, cost and P95 promotion gates are unmeasured, so no
+  asynchronous compression strategy, scoped-opt-in, or cross-vendor thread resumption
+  is promoted. Manual/native compaction stays the default.
+- **No macOS, Linux or packaged-build long-use measurement.** The 333-session /
+  57.16 MiB fixture and its five-minute idle-RSS curve are a Windows x64
+  built-`dist-electron` sample.
+- **No real-human long use.** Every artifact is agent-driven and the fixture is
+  synthetic; nothing here is human-usage evidence.
+- **No publication, product-lock or default change, and no independent Project or
+  cloud/VPS/daemon execution scope.** Those remain separate owner decisions.
+- **No universal resource authority.** Worktree ownership that cannot be resolved
+  stays `kept`/failed with a recovery id; no second registry is created.
+
 ## Windows x64 Controlled Preview
 
 The current first-product validation target is **Verse Claw Windows x64 - DCS Coding Controlled Preview**. It is an internal, single-workspace path with explicit opt-in, runtime acknowledgement, controlled writes, undo, restart recovery, kill/rollback, and a redacted support bundle. FP-P1 evidence is engineering and real-process evidence; release approval remains pending, and no real-human evidence is claimed.
@@ -77,9 +223,9 @@ The table below is the canonical component classification for this preview. Each
 | --- | --- | --- |
 | DCS coding loop | `opt-in` | The first-product switch is off by default and requires verified provider, model, workspace, and permission prerequisites. |
 | DCS Fact view and tool registry | `opt-in` | Available only after explicit flags and runtime acknowledgement; not part of the baseline tool catalog. |
-| VToken turn assembly | `opt-in` | Explicit Developer/config enable only; the enhancement kill switch wins. |
+| VToken turn assembly | `internal` | Internal config/env canary only; no renderer bridge switch or independent product panel. The enhancement kill switch wins. |
 | SEKB automatic writeback | `deferred` | Human-confirmed review remains the only allowed write path. |
-| C6 automatic context ladder | `deferred` | No automatic assembler activation in this preview. |
+| C6 automatic context ladder | `internal` | Explicit internal assembler request API for tests/diagnostics; no automatic or user-level activation in this preview. |
 | C7 knowledge/routing cutover | `deferred` | Shadow evidence does not grant routing authority. |
 | Coding WAL | `deferred` | Write journal remains the recovery authority for this preview. |
 | Browser supervised workflows | `experimental` | Supervised use only; unsupervised and private-network expansion are excluded. |

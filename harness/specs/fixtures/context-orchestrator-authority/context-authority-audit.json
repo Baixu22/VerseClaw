@@ -1,0 +1,94 @@
+{
+  "schema": "clawx.context-authority.tf0493-audit/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0493",
+  "program": "component-graduation",
+  "task": "TF-0493",
+  "candidate": {
+    "commit": "5d2942b042c7d01130f2abb661762a0399875dad",
+    "tree": "039cb121e72f735806b1497690f07083284948fe",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "rawRun": "D:\\tmp\\tf0493\\5d2942b042c7d01130f2abb661762a0399875dad\\gate-run.json"
+  },
+  "verdict": "pass",
+  "featureClaim": "one context assembly and final-request receipt authority, with VToken and C6 internalized rather than exposed as parallel product controls",
+  "authorities": {
+    "contextOrchestrator": {
+      "owner": "context-runtime-kit + dcs-context-authority",
+      "productionFinalizer": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      "disposition": "internal"
+    },
+    "providerRequestGuard": {
+      "disposition": "internal",
+      "owns": "context.request-envelope"
+    },
+    "enhancementGate": {
+      "disposition": "internal",
+      "behavior": "fail-closed"
+    },
+    "perTurnLedger": "openclaw_runtime/src/context-engine/turn-injection-budget.ts",
+    "perModelCallReceipt": "openclaw_runtime/src/context-engine/rc03-seal.ts"
+  },
+  "promptBoundary": {
+    "oneBudgetLedgerPerTurn": true,
+    "oneFinalSnapshotPerModelCall": true,
+    "finalBodyDigestBoundToSealedPlan": true,
+    "normalReassemblyIsNotDuplicate": true,
+    "killSwitchLegacyParity": true
+  },
+  "c6": {
+    "disposition": "internal",
+    "kind": "api-only",
+    "defaultEnabled": false,
+    "productionOwner": "DCS Assembler explicit request API",
+    "permanentUserToggle": false,
+    "evidence": "context-authority-closeout.test.ts + assembler context-ladder tests"
+  },
+  "vtoken": {
+    "assemblyDisposition": "internal pack strategy",
+    "bridgeDisposition": "internal diagnostics",
+    "productionRpc": [
+      "vt.ping",
+      "vt.pack"
+    ],
+    "statefulProductionMethods": false,
+    "rendererPanel": false,
+    "rendererSwitch": false,
+    "estimateOnly": true
+  },
+  "rollback": {
+    "enhancementKillSwitch": true,
+    "proxyOffParity": true,
+    "noProductLockChange": true,
+    "lockedValues": {
+      "liveReady": false,
+      "productApproved": false,
+      "defaultOn": false
+    }
+  },
+  "sourceInputs": [
+    "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+    "openclaw_runtime/src/context-engine/context-candidate.ts",
+    "openclaw_runtime/src/context-engine/turn-injection-budget.ts",
+    "openclaw_runtime/src/context-engine/rc03-seal.ts",
+    "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+    "openclaw_runtime/src/context-engine/vtoken-rpc-client.ts",
+    "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+    "openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts",
+    "shared/component-authority-manifest.ts",
+    "shared/dcs/component-disposition-catalog.ts"
+  ],
+  "unmeasured": [
+    "live external-provider continuation quality for enabled enhancement sources",
+    "non-Windows provider transport behavior",
+    "C6 external-provider value beyond the existing internal live-corpus evidence"
+  ],
+  "cleanup": {
+    "electronProcessesClosed": true,
+    "gatewayProcessesClosed": true,
+    "recoveryRequired": false,
+    "temporaryRoot": "D:/tmp/tf0493/5d2942b042c7d01130f2abb661762a0399875dad"
+  }
+}

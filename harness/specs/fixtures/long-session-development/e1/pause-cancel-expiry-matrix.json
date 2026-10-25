@@ -1,0 +1,207 @@
+{
+  "schema": "clawx.long-session.e1-pause-cancel-expiry-matrix/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-e1",
+  "taskForestNode": "TF-0559",
+  "generatedAt": "2026-10-23T17:16:11.856Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261022",
+    "commit": "8eeb2823e48c6b48b5d756a3c2964e0884bdff2a",
+    "tree": "9f26a8dd6ae526e6c498a22dbf06caadb7c7ca24",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+  },
+  "scopeMatrix": [
+    {
+      "id": "unbound",
+      "expectedState": "unbound",
+      "allowed": true,
+      "reason": "job is not bound to a long-session coordinator",
+      "observedSessionId": null
+    },
+    {
+      "id": "malformed",
+      "expectedState": "malformed",
+      "allowed": false,
+      "reason": "coordinator scope is present but malformed",
+      "observedSessionId": null
+    },
+    {
+      "id": "expired",
+      "expectedState": "expired",
+      "allowed": false,
+      "reason": "follow-up deadline passed",
+      "observedSessionId": "session-generation-1",
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "archived-or-deleted",
+      "expectedState": "session-missing",
+      "allowed": false,
+      "reason": "coordinator session is archived, deleted or otherwise absent",
+      "observedSessionId": null,
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "reset-generation",
+      "expectedState": "generation-mismatch",
+      "allowed": false,
+      "reason": "coordinator session generation rotated after the follow-up was authorized",
+      "observedSessionId": "session-generation-2",
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "binding-invalidated",
+      "expectedState": "unverifiable",
+      "allowed": false,
+      "reason": "coordinator binding is invalidated",
+      "observedSessionId": "session-generation-1",
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "generation-unresolvable",
+      "expectedState": "unverifiable",
+      "allowed": false,
+      "reason": "live session generation could not be resolved",
+      "observedSessionId": null,
+      "expectedSessionId": "session-generation-1"
+    },
+    {
+      "id": "current",
+      "expectedState": "allowed",
+      "allowed": true,
+      "reason": "coordinator scope is current, unexpired and generation-matched",
+      "observedSessionId": "session-generation-1",
+      "expectedSessionId": "session-generation-1"
+    }
+  ],
+  "actionSemantics": [
+    {
+      "action": "pause-coordinator",
+      "mechanism": "cron.update {enabled:false} (or the composer pause control for the current turn)",
+      "effect": "the schedule and its coordinator scope stay persisted; no run is delivered while paused",
+      "doesNot": [
+        "delete the schedule",
+        "invalidate the coordinator binding",
+        "stop an unrelated active turn"
+      ]
+    },
+    {
+      "action": "cancel-schedule",
+      "mechanism": "cron.remove",
+      "effect": "the schedule is deleted; the coordinator session and its Task Ledger facts are untouched",
+      "doesNot": [
+        "archive or reset the session",
+        "revoke coordinator authorization"
+      ]
+    },
+    {
+      "action": "stop-current-turn",
+      "mechanism": "existing session run-control stop",
+      "effect": "the active turn is aborted",
+      "doesNot": [
+        "delete future schedules",
+        "invalidate the coordinator binding"
+      ]
+    },
+    {
+      "action": "coordinator-invalidated",
+      "mechanism": "archive/reset/delete/revoke -> runtime fence + maintenance suppression",
+      "effect": "delivery is refused (coordinator-scope-* refusal) and the stale schedule is disabled, not silently deleted",
+      "doesNot": [
+        "deliver into the new generation",
+        "trigger an unauthorized worker"
+      ]
+    }
+  ],
+  "expiryAndReplayRules": {
+    "expiresAt": "an expired scope is refused before any delivery attempt",
+    "duplicateTick": "the fence is evaluated per run; a refused run records a skipped receipt instead of replaying side effects",
+    "offlineRecovery": "only a currently authorized, unexpired scope may run after restart; stale schedules stay suppressed",
+    "quietByDefault": "silent-unless-result is the recorded notification policy; errors and decisions remain explicit"
+  },
+  "goalWakeBoundary": {
+    "goalWakeDefault": "off (RUNTIME_LIFECYCLE_GOAL_WAKE_ENABLED must be set explicitly)",
+    "durableHelperDefault": "off (RUNTIME_LIFECYCLE_DURABLE_HELPER_ENABLED must be set explicitly)",
+    "missionScope": "mission continuations stay owned by goal-wake task_runs; a plain session goal never impersonates a durable mission",
+    "assertedBy": "tests/unit/long-session-followup-scheduling.test.ts (frozen default-off assertions)"
+  },
+  "gateReceipt": {
+    "provided": true,
+    "source": "D:/tmp/long-session-e1/gates-8eeb2823e/gates.json",
+    "allPassed": true,
+    "gates": [
+      {
+        "name": "cron-unit",
+        "command": "pnpm exec vitest run tests/unit/cron-delivery-targets.test.ts tests/unit/cron-api-run-log-replay.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "durationMs": 6911,
+        "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\cron-unit.log",
+        "summary": "  Test Files  2 passed (2)       Tests  5 passed (5)    Start at  01:13:40    Duration  4.36s (transform 1.75s, setup 262ms, import 33ms, tests 3.60s, environment 0ms) "
+      },
+      {
+        "name": "long-session-unit",
+        "command": "pnpm exec vitest run tests/unit/long-session-followup-scheduling.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "durationMs": 2715,
+        "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\long-session-unit.log",
+        "summary": "  Test Files  1 passed (1)       Tests  12 passed (12)    Start at  01:13:46    Duration  1.04s (transform 413ms, setup 130ms, import 655ms, tests 9ms, environment 0ms) "
+      },
+      {
+        "name": "typecheck",
+        "command": "pnpm run typecheck",
+        "exitCode": 0,
+        "durationMs": 35095,
+        "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\typecheck.log",
+        "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+      },
+      {
+        "name": "contract-check",
+        "command": "pnpm run contract:check",
+        "exitCode": 0,
+        "durationMs": 981,
+        "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\contract-check.log",
+        "summary": "$ node scripts/contract-check.mjs Contract check passed."
+      },
+      {
+        "name": "comms-replay",
+        "command": "pnpm run comms:replay",
+        "exitCode": 0,
+        "durationMs": 1360,
+        "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\comms-replay.log",
+        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
+      },
+      {
+        "name": "comms-compare",
+        "command": "pnpm run comms:compare",
+        "exitCode": 0,
+        "durationMs": 835,
+        "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\comms-compare.log",
+        "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
+      },
+      {
+        "name": "harness-validate",
+        "command": "pnpm harness validate --spec harness/specs/tasks/long-session-followup-scheduling.md",
+        "exitCode": 0,
+        "durationMs": 1727,
+        "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\harness-validate.log",
+        "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-followup-scheduling.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-followup-scheduling.md\" Spec is valid: harness\\specs\\tasks\\long-session-followup-scheduling.md"
+      },
+      {
+        "name": "git-diff-check",
+        "command": "git diff --check",
+        "exitCode": 0,
+        "durationMs": 92,
+        "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\git-diff-check.log",
+        "summary": ""
+      },
+      {
+        "name": "eslint-changed",
+        "command": "pnpm exec eslint shared/long-session-followup-scope.ts shared/types/cron.ts electron/services/cron-api.ts electron/services/cron-maintenance.ts openclaw_runtime/src/cron/coordinator-scope.ts openclaw_runtime/src/cron/types-shared.ts openclaw_runtime/src/cron/service/state.ts openclaw_runtime/src/cron/service/timer.ts openclaw_runtime/src/cron/service/jobs.ts openclaw_runtime/src/gateway/server-cron.ts openclaw_runtime/packages/gateway-protocol/src/schema/cron.ts tests/unit/long-session-followup-scheduling.test.ts tests/e2e/long-session-followup-scheduling.spec.ts scripts/long-session-followup-evidence.mjs",
+        "exitCode": 0,
+        "durationMs": 6469,
+        "log": "D:\\tmp\\long-session-e1\\gates-8eeb2823e\\eslint-changed.log",
+        "summary": ""
+      }
+    ]
+  }
+}

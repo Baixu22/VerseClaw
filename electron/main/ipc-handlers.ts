@@ -271,7 +271,10 @@ function registerTypedHostHandlers(
       ),
     }).observability,
     resourceTracker: createResourceTrackerApi(),
-    memory: createMemoryApi({ gatewayManager }),
+    memory: createMemoryApi({
+      gatewayManager,
+      exportDir: join(app.getPath('userData'), 'exports', 'memory'),
+    }),
   });
   registerHostInvokeHandler(hostApiRegistry, {
     senderAuth: {

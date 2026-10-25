@@ -1,0 +1,238 @@
+{
+  "schema": "clawx.long-session.c2-verification/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-c2",
+  "program": "long-session-development-20261022",
+  "task": "TF-0553",
+  "title": "C2 delegation admission, permission and isolation receipts",
+  "verdict": "pass",
+  "featureClaim": "explicit role delegation admitted through the existing coordinator, orchestrator, child-session and isolation owners",
+  "candidate": {
+    "commit": "57b82e740da022bd3a74c9f996a11d766e1cc84d",
+    "tree": "5b30b73c9146cfa5238074778f30ce812abbec3d",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "rawRun": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\gate-run.json"
+  },
+  "commands": [
+    {
+      "id": "unit-foundation",
+      "command": "pnpm exec vitest run tests/unit/orchestration-resource-scheduler.test.ts tests/unit/role-orchestration-methods.test.ts tests/unit/workspace-session.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 20354,
+      "rawLog": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\unit-foundation.log",
+      "rawLogSha256": "4e8a760f058daf0ae7f886df2f27702872b52d93dc881820a2285a4b12a495a0",
+      "files": 3,
+      "tests": 70,
+      "passed": 70,
+      "failed": 0
+    },
+    {
+      "id": "unit-admission",
+      "command": "pnpm exec vitest run tests/unit/long-session-delegation-admission.test.ts tests/unit/role-spawn.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 12201,
+      "rawLog": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\unit-admission.log",
+      "rawLogSha256": "44a788a525b06c49f5ebf5f6099b0de1f58d04274d4feb5e42a0024d383d9c67",
+      "files": 2,
+      "tests": 26,
+      "passed": 26,
+      "failed": 0
+    },
+    {
+      "id": "build-runtime",
+      "command": "pnpm run build:runtime",
+      "exitCode": 0,
+      "durationMs": 29928,
+      "rawLog": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\build-runtime.log",
+      "rawLogSha256": "3fcc6b1c269b798d3539824d47873fa477fc0d3e8a21abf0428cf75567c35eb5",
+      "success": true,
+      "gatewaySmokeReady": true
+    },
+    {
+      "id": "build-vite",
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "durationMs": 49091,
+      "rawLog": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\build-vite.log",
+      "rawLogSha256": "c3b44e6248f374939e8e027ad00b63012882ad56ad47842d184dbaece05cc275",
+      "success": true
+    },
+    {
+      "id": "electron-e2e",
+      "command": "pnpm run test:e2e:run tests/e2e/long-session-delegation-admission.spec.ts",
+      "exitCode": 0,
+      "durationMs": 20539,
+      "rawLog": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\electron-e2e.log",
+      "rawLogSha256": "75922c52377279b7832402f7623fae078fcf70c169d6862d94406f339120de0a",
+      "files": 1,
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "realHostGateway": true,
+      "duplicateAdmissionChecked": true,
+      "taskLedgerReadback": true
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 19360,
+      "rawLog": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\typecheck.log",
+      "rawLogSha256": "2970dd1dd5341cff244887cac15ec58fc5a842e546acd59f23be415c82d28e2e",
+      "projects": 3,
+      "errors": 0
+    },
+    {
+      "id": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "durationMs": 786,
+      "rawLog": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\contract-check.log",
+      "rawLogSha256": "72bd3657c7bc5e83e34d6af24a18c5e3ba0c109584df333e5fc9631930a26329",
+      "result": "pass"
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 894,
+      "rawLog": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\comms-replay.log",
+      "rawLogSha256": "fbc28bc00d7affce5550c2162eec1dd0ed5652d8dbfec2d78ea6285e73ee35fd",
+      "success": true
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 756,
+      "rawLog": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\comms-compare.log",
+      "rawLogSha256": "94f9c66884cbb6ea21523239c58d004b46caec58f963b2b97169ce2e478668fd",
+      "result": "PASS",
+      "comparisonRows": 44,
+      "passedRows": 44,
+      "failedRows": 0
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/long-session-delegation-admission.md",
+      "exitCode": 0,
+      "durationMs": 1668,
+      "rawLog": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\harness-validate.log",
+      "rawLogSha256": "76ebc9f7b3f981b628958d234b955e2df39e0be63c4636a8a7ba840f161cb3e6",
+      "result": "valid"
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationMs": 69,
+      "rawLog": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\git-diff-check.log",
+      "rawLogSha256": "f01a374e9c81e3db89b3a42940c4d6a5447684986a1296e42bf13f196eed6295",
+      "whitespaceErrors": 0
+    },
+    {
+      "id": "changed-eslint",
+      "command": "pnpm exec eslint shared/types/delegation-admission.ts shared/types/workspace.ts shared/host-api/contract.ts src/lib/host-api.ts src/lib/workspace-session.ts electron/services/workspaces-api.ts electron/services/sessions-api.ts openclaw_runtime/src/agents/delegation-admission.ts openclaw_runtime/src/agents/role-spawn.ts openclaw_runtime/src/agents/orchestrator-run-observed.ts openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts tests/unit/long-session-delegation-admission.test.ts tests/unit/workspace-session.test.ts tests/unit/role-orchestration-methods.test.ts tests/e2e/long-session-delegation-admission.spec.ts",
+      "exitCode": 0,
+      "durationMs": 5548,
+      "rawLog": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\changed-eslint.log",
+      "rawLogSha256": "f01a374e9c81e3db89b3a42940c4d6a5447684986a1296e42bf13f196eed6295",
+      "errors": 0,
+      "warnings": 0
+    }
+  ],
+  "counts": {
+    "unitFiles": 5,
+    "unitTests": 96,
+    "unitPassed": 96,
+    "e2eFiles": 1,
+    "e2eTests": 1,
+    "e2ePassed": 1,
+    "totalTests": 97,
+    "commands": 12,
+    "failedCommands": 0,
+    "builds": 2,
+    "typecheckProjects": 3,
+    "typecheckErrors": 0,
+    "commsRows": 44,
+    "commsPassed": 44
+  },
+  "acceptance": [
+    {
+      "criterion": "Use the existing session/role/orchestration path and bind coordinator generation, task ref, child identity, backend and tool grant in the receipt; accepted is not completion.",
+      "result": "pass",
+      "evidence": [
+        "delegation-admission-receipts.json",
+        "tests/e2e/long-session-delegation-admission.spec.ts"
+      ]
+    },
+    {
+      "criterion": "Do not reuse stale grants or allow child privilege escalation; unknown role/backend or refused spawn creates no phantom completion.",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/unit/role-spawn.test.ts"
+      ]
+    },
+    {
+      "criterion": "Use an actual isolation backend and serialize writes unless checkout/write-set safety is proven.",
+      "result": "pass",
+      "evidence": [
+        "scope-permission-isolation-matrix.json",
+        "tests/unit/orchestration-resource-scheduler.test.ts"
+      ]
+    },
+    {
+      "criterion": "Handle duplicate submission, reset/stop races and same-owner restart retry without a second executor or infinite concurrency default.",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/unit/workspace-session.test.ts"
+      ]
+    }
+  ],
+  "sourceInputs": [
+    "shared/types/delegation-admission.ts",
+    "shared/types/workspace.ts",
+    "shared/host-api/contract.ts",
+    "src/lib/host-api.ts",
+    "src/lib/workspace-session.ts",
+    "electron/services/workspaces-api.ts",
+    "electron/services/sessions-api.ts",
+    "openclaw_runtime/src/agents/delegation-admission.ts",
+    "openclaw_runtime/src/agents/role-spawn.ts",
+    "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+    "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+    "tests/unit/long-session-delegation-admission.test.ts",
+    "tests/unit/role-orchestration-methods.test.ts",
+    "tests/unit/workspace-session.test.ts",
+    "tests/e2e/long-session-delegation-admission.spec.ts"
+  ],
+  "unmeasured": [
+    "live provider-backed completion quality for delegated child work",
+    "multi-worker parallel git worktree execution",
+    "non-Windows runtime behavior"
+  ],
+  "limitations": [
+    "C2 persists admission facts; child run completion and task completion remain C3/owner responsibilities.",
+    "The real journey uses in-process shared isolation with one worker and therefore serializes writes; git worktree isolation is covered by runtime receipt and scheduler tests.",
+    "ACP/native backend delegation is not supported by this route and is rejected as unsupported.",
+    "All evidence is agent-driven; no real-human evidence is claimed."
+  ],
+  "cleanup": {
+    "startedProcesses": true,
+    "startedGateway": true,
+    "childRunRecorded": true,
+    "electronProcessesClosed": true,
+    "temporaryRoot": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d",
+    "recoveryRequired": false
+  },
+  "credentialScan": {
+    "command": "rg high-signal credential patterns over C2 JSON artifacts",
+    "matches": 0,
+    "result": "pass"
+  },
+  "rawRun": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d\\gate-run.json"
+}

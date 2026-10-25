@@ -30,6 +30,7 @@ import {
   type GateResult,
 } from "./orchestration-gates.js";
 import { buildVerifierReport } from "./orchestration-verifier-report.js";
+import { MAX_SESSION_COMPLETION_BATCH_WORKERS } from "./completion-batch-receipt.js";
 import {
   buildWorkerOutputHandoffArtifact,
   type HandoffOutputCapture,
@@ -120,9 +121,27 @@ function listOrchestrationEntries(params: {
   );
 }
 
+function resolveOrchestrationExpectedWorkerRunIds(params: {
+  item: AgentSteeringQueueItem;
+  entries: readonly SubagentRunRecord[];
+}): string[] {
+  const declared = params.entries
+    .map((entry) => entry.orchestration?.expectedWorkerRunIds ?? [])
+    .sort((left, right) => right.length - left.length)[0];
+  const source = declared?.length
+    ? declared
+    : params.item.payload.orchestration?.expectedWorkerRunIds?.length
+      ? params.item.payload.orchestration.expectedWorkerRunIds
+      : params.entries
+          .filter((entry) => entry.orchestration?.phase === "worker")
+          .map((entry) => entry.runId);
+  return [...new Set(source.map((runId) => runId.trim()).filter(Boolean))];
+}
+
 function shouldExposeOrchestrationItem(params: {
   item: AgentSteeringQueueItem;
   runs: Map<string, SubagentRunRecord>;
+  requesterSessionId?: string;
 }): boolean {
   const meta = params.item.payload.orchestration;
   if (!meta) {
@@ -132,11 +151,16 @@ function shouldExposeOrchestrationItem(params: {
     runs: params.runs,
     orchestrationRunId: meta.orchestrationRunId,
   });
-  const expectedWorkerRunIds = meta.expectedWorkerRunIds?.length
-    ? meta.expectedWorkerRunIds
-    : entries
-        .filter((entry) => entry.orchestration?.phase === "worker")
-        .map((entry) => entry.runId);
+  const expectedWorkerRunIds = resolveOrchestrationExpectedWorkerRunIds({
+    item: params.item,
+    entries,
+  });
+  if (
+    expectedWorkerRunIds.length === 0 ||
+    expectedWorkerRunIds.length > MAX_SESSION_COMPLETION_BATCH_WORKERS
+  ) {
+    return false;
+  }
   const workers = expectedWorkerRunIds
     .map((runId) => params.runs.get(runId))
     .filter((entry): entry is SubagentRunRecord => Boolean(entry));
@@ -147,24 +171,45 @@ function shouldExposeOrchestrationItem(params: {
     return false;
   }
   const workerMeta = workers.find((worker) => worker.orchestration)?.orchestration ?? meta;
-  if (!workerMeta.verifierRole || workerMeta.verifierSkippedReason) {
-    return true;
+  let verifier: SubagentRunRecord | undefined;
+  if (workerMeta.verifierRole && !workerMeta.verifierSkippedReason) {
+    const verifierRunId = workerMeta.verifierStartedRunId;
+    if (!verifierRunId || verifierRunId === "__starting__") {
+      return false;
+    }
+    verifier = params.runs.get(verifierRunId);
+    if (!verifier || typeof verifier.endedAt !== "number") {
+      return false;
+    }
   }
-  const verifierRunId = workerMeta.verifierStartedRunId;
-  if (!verifierRunId || verifierRunId === "__starting__") {
+  const batchEntries = [...workers, ...(verifier ? [verifier] : [])];
+  const pinnedSessionIds = new Set(
+    batchEntries
+      .map((entry) => entry.requesterSessionId?.trim())
+      .filter((value): value is string => Boolean(value)),
+  );
+  if (pinnedSessionIds.size > 1) {
     return false;
   }
-  const verifier = params.runs.get(verifierRunId);
-  if (!verifier || typeof verifier.endedAt !== "number") {
-    return false;
+  if (params.requesterSessionId) {
+    if (
+      batchEntries.some((entry) => !entry.requesterSessionId?.trim()) ||
+      params.requesterSessionId !== [...pinnedSessionIds][0]
+    ) {
+      return false;
+    }
   }
-  return isPendingSteeringDelivery(verifier.delivery);
+  /* The team result is one batch delivery. If any item already started or
+   * completed delivery, a second prompt would duplicate side effects. Leave
+   * mixed terminal delivery states visible through batch receipts instead. */
+  return batchEntries.every((entry) => isPendingSteeringDelivery(entry.delivery));
 }
 
 /** List pending completion payloads that should be steered into a requester turn. */
 export function listPendingAgentSteeringItemsFromSubagentRuns(params: {
   runs: Map<string, SubagentRunRecord>;
   requesterSessionKey: string;
+  requesterSessionId?: string;
   now?: number;
 }): AgentSteeringQueueItem[] {
   const requesterSessionKey = params.requesterSessionKey.trim();
@@ -192,7 +237,13 @@ export function listPendingAgentSteeringItemsFromSubagentRuns(params: {
     items.push({ runId, entry, payload });
   }
   return items
-    .filter((item) => shouldExposeOrchestrationItem({ item, runs: params.runs }))
+    .filter((item) =>
+      shouldExposeOrchestrationItem({
+        item,
+        runs: params.runs,
+        requesterSessionId: params.requesterSessionId,
+      }),
+    )
     .toSorted(sortPendingSteeringItems);
 }
 
@@ -573,6 +624,10 @@ function buildTeamResultBundleSection(items: readonly AgentSteeringQueueItem[]):
   const lines = [
     `${items.length}. Team Result Bundle`,
     `orchestrationRunId: ${promptLiteral(meta?.orchestrationRunId ?? "unknown")}`,
+    `batchId: completion-batch:${promptLiteral(meta?.orchestrationRunId ?? "unknown")}:${promptLiteral(first?.payload.requesterSessionKey ?? "unknown")}`,
+    `idempotencyKey: completion-batch:${promptLiteral(meta?.orchestrationRunId ?? "unknown")}:${promptLiteral(first?.payload.requesterSessionKey ?? "unknown")}`,
+    `completionAuthority: none`,
+    `deliverySemantics: at-least-once transport; repeated idempotencyKey is the same completed batch and must not trigger duplicate work`,
     `status: ${resolveTeamBundleStatus(items)}`,
     `leadRole: ${promptLiteral(meta?.leadRole ?? "unknown")}`,
     `templateId: ${promptLiteral(meta?.templateId ?? "none")}`,
@@ -720,18 +775,34 @@ function buildTeamResultBundleSection(items: readonly AgentSteeringQueueItem[]):
 function selectPromptBoundedItems(
   items: readonly AgentSteeringQueueItem[],
 ): AgentSteeringQueueItem[] {
-  const selected: AgentSteeringQueueItem[] = [];
+  const groups: AgentSteeringQueueItem[][] = [];
+  const orchestrationGroups = new Map<string, AgentSteeringQueueItem[]>();
   for (const item of items) {
-    const next = [...selected, item];
+    const orchestrationRunId = item.payload.orchestration?.orchestrationRunId;
+    if (!orchestrationRunId) {
+      groups.push([item]);
+      continue;
+    }
+    let group = orchestrationGroups.get(orchestrationRunId);
+    if (!group) {
+      group = [];
+      orchestrationGroups.set(orchestrationRunId, group);
+      groups.push(group);
+    }
+    group.push(item);
+  }
+  const selected: AgentSteeringQueueItem[] = [];
+  for (const group of groups) {
+    const next = [...selected, ...group];
     const prompt = buildMergedAgentSteeringPrompt(next);
     if (prompt && prompt.length <= MAX_MERGED_STEERING_CHARS) {
-      selected.push(item);
+      selected.push(...group);
       continue;
     }
     if (selected.length === 0) {
-      // Always deliver at least one item; its result body is individually
-      // bounded, even if metadata pushes the merged prompt over the soft cap.
-      selected.push(item);
+      // Batch atomicity wins over the soft prompt cap. Never inject a partial
+      // Team Result Bundle merely because its final worker crossed the cap.
+      selected.push(...group);
     }
     break;
   }
@@ -745,6 +816,7 @@ function selectPromptBoundedItems(
 export function leasePendingAgentSteeringItemsFromSubagentRuns(params: {
   runs: Map<string, SubagentRunRecord>;
   requesterSessionKey: string;
+  requesterSessionId?: string;
   leaseId: string;
   now?: number;
 }): LeasedAgentSteeringBatch | undefined {
@@ -753,6 +825,7 @@ export function leasePendingAgentSteeringItemsFromSubagentRuns(params: {
     listPendingAgentSteeringItemsFromSubagentRuns({
       runs: params.runs,
       requesterSessionKey: params.requesterSessionKey,
+      requesterSessionId: params.requesterSessionId,
       now,
     }),
   );

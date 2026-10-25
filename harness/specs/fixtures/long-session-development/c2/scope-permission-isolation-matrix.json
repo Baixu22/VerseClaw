@@ -1,0 +1,143 @@
+{
+  "schema": "clawx.long-session.c2-scope-permission-isolation-matrix/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-c2",
+  "program": "long-session-development-20261022",
+  "task": "TF-0553",
+  "verdict": "pass",
+  "candidate": "57b82e740da022bd3a74c9f996a11d766e1cc84d",
+  "cases": [
+    {
+      "id": "coordinator-binding-required",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/long-session-delegation-admission.test.ts"
+      ],
+      "detail": "Delegation requires an active C1 binding and a Task Ledger ref already associated with it."
+    },
+    {
+      "id": "accepted-is-not-completion",
+      "result": "pass",
+      "evidence": [
+        "delegation-admission-receipts.json",
+        "tests/e2e/long-session-delegation-admission.spec.ts"
+      ],
+      "detail": "Accepted receipt carries acceptedIsNotCompletion=true; the Task Ledger node remains doing."
+    },
+    {
+      "id": "coordinator-generation-and-backend",
+      "result": "pass",
+      "evidence": [
+        "delegation-admission-receipts.json"
+      ],
+      "detail": "Receipt binds binding revision/physical session, child run/session and openclaw-embedded backend."
+    },
+    {
+      "id": "tool-grant-boundary",
+      "result": "pass",
+      "evidence": [
+        "delegation-admission-receipts.json",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/role-orchestration-methods.test.ts"
+      ],
+      "detail": "Receipt records role-clamped inherited allow/deny lists; existing parent clamp logic remains the only permission authority."
+    },
+    {
+      "id": "duplicate-idempotency",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/e2e/long-session-delegation-admission.spec.ts"
+      ],
+      "detail": "Same idempotency key/digest returns the existing receipt with no second child; different content conflicts."
+    },
+    {
+      "id": "in-flight-restart-recovery",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/long-session-delegation-admission.test.ts"
+      ],
+      "detail": "A persisted submitting receipt is returned as recoveryRequired by a restarted service and does not spawn again."
+    },
+    {
+      "id": "stale-or-revoked-grant",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/long-session-delegation-admission.test.ts"
+      ],
+      "detail": "Invalidated coordinator binding rejects delegation before orchestrator invocation."
+    },
+    {
+      "id": "unknown-worker",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/long-session-delegation-admission.test.ts"
+      ],
+      "detail": "Unknown role produces a rejected receipt with no child session/run."
+    },
+    {
+      "id": "unsupported-backend",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/long-session-delegation-admission.test.ts"
+      ],
+      "detail": "Unsupported backend is rejected with backend kind unknown and no child identity."
+    },
+    {
+      "id": "reset-stop-race",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/long-session-delegation-admission.test.ts"
+      ],
+      "detail": "Post-spawn generation mismatch requests child session stop and does not retain accepted state."
+    },
+    {
+      "id": "inprocess-shared-serialized",
+      "result": "pass",
+      "evidence": [
+        "delegation-admission-receipts.json",
+        "tests/unit/orchestration-resource-scheduler.test.ts"
+      ],
+      "detail": "Single-worker shared execution records inprocess/serialized and cannot claim parallel write safety."
+    },
+    {
+      "id": "git-worktree-isolation",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "openclaw_runtime/src/agents/worktree-service.ts"
+      ],
+      "detail": "Worktree receipt records the actual git backend, worktree id, write set and git-checkout basis."
+    },
+    {
+      "id": "write-set-scheduling",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/orchestration-resource-scheduler.test.ts"
+      ],
+      "detail": "Disjoint write sets can share a wave; intersecting or unproven writer sets are deferred."
+    },
+    {
+      "id": "task-completion-authority",
+      "result": "pass",
+      "evidence": [
+        "delegation-admission-receipts.json",
+        "electron/services/sessions-api.ts"
+      ],
+      "detail": "Admission creates no Task Ledger append and does not change node status; Task Ledger remains the completion authority."
+    }
+  ],
+  "unmeasured": [
+    "live provider-backed completion quality for delegated child work",
+    "multi-worker parallel git worktree execution",
+    "non-Windows runtime behavior"
+  ],
+  "cleanup": {
+    "startedProcesses": true,
+    "startedGateway": true,
+    "childRunRecorded": true,
+    "electronProcessesClosed": true,
+    "temporaryRoot": "D:\\tmp\\long-session-c2\\57b82e740da022bd3a74c9f996a11d766e1cc84d",
+    "recoveryRequired": false
+  }
+}

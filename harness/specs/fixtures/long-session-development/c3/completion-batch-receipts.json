@@ -1,0 +1,148 @@
+{
+  "schema": "clawx.long-session.c3-completion-batch-receipts/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-c3",
+  "program": "long-session-development-20261022",
+  "task": "TF-0554",
+  "taskKey": "C3",
+  "candidate": {
+    "commit": "53db65bd56fdddba723ee09195a6827c4352fbbf",
+    "tree": "eb3d3e8323b8a53bc18c98731b129342c0c57c44",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "rawRun": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\gate-run.json"
+  },
+  "verdict": "pass",
+  "featureClaim": "terminal orchestration workers produce one bounded, generation-fenced completion batch receipt backed by existing registry delivery state",
+  "owner": {
+    "registry": "openclaw_runtime/src/agents/subagent-registry.ts",
+    "steeringQueue": "openclaw_runtime/src/agents/agent-steering-queue.ts",
+    "projection": "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+    "hostRoute": "electron/services/session-activity-api.ts",
+    "secondSchedulerCreated": false
+  },
+  "batchIdentity": {
+    "formula": "completion-batch:<orchestrationRunId>:<requesterSessionKey>",
+    "completionAuthority": "none",
+    "transportSemantics": "at-least-once; repeated idempotencyKey denotes the same batch",
+    "maxWorkerRefs": 64
+  },
+  "observedProductionBatch": {
+    "hostRoute": "sessionActivity.snapshot",
+    "gatewayMethod": "session.activitySnapshot",
+    "beforeRestart": {
+      "id": "completion-batch:orch_080a3bb3-d4f5-4f7c-9df1-fa191292a2c3:agent:main:dashboard:0e45af94-1d81-4489-8e4e-faba59a28a5c",
+      "idempotencyKey": "completion-batch:orch_080a3bb3-d4f5-4f7c-9df1-fa191292a2c3:agent:main:dashboard:0e45af94-1d81-4489-8e4e-faba59a28a5c",
+      "orchestrationRunId": "orch_080a3bb3-d4f5-4f7c-9df1-fa191292a2c3",
+      "requesterSessionKey": "agent:main:dashboard:0e45af94-1d81-4489-8e4e-faba59a28a5c",
+      "requesterSessionId": "b07c9eba-0644-4b5f-a1e2-2db9b79a06e3",
+      "generationState": "consistent",
+      "status": "delivery-pending",
+      "terminal": true,
+      "expectedWorkerCount": 1,
+      "completedWorkerCount": 0,
+      "failedWorkerCount": 1,
+      "cancelledWorkerCount": 0,
+      "pendingWorkerCount": 0,
+      "workerRuns": [
+        {
+          "runId": "1c42aa37-06fe-4c30-9925-17a54c4f2947",
+          "roleName": "implementer",
+          "taskNodeId": "implementer-1",
+          "childSessionKey": "agent:main:subagent:006cedcf-ffed-4f8e-b0af-f36178bcae1e",
+          "status": "failed"
+        }
+      ],
+      "verifier": null,
+      "delivery": {
+        "state": "pending",
+        "pendingCount": 1,
+        "inProgressCount": 0,
+        "deliveredCount": 0,
+        "failedCount": 0,
+        "suspendedCount": 0,
+        "discardedCount": 0
+      },
+      "bounded": true,
+      "completionAuthority": "none",
+      "updatedAt": 1792705066093
+    },
+    "afterRestart": {
+      "id": "completion-batch:orch_080a3bb3-d4f5-4f7c-9df1-fa191292a2c3:agent:main:dashboard:0e45af94-1d81-4489-8e4e-faba59a28a5c",
+      "idempotencyKey": "completion-batch:orch_080a3bb3-d4f5-4f7c-9df1-fa191292a2c3:agent:main:dashboard:0e45af94-1d81-4489-8e4e-faba59a28a5c",
+      "orchestrationRunId": "orch_080a3bb3-d4f5-4f7c-9df1-fa191292a2c3",
+      "requesterSessionKey": "agent:main:dashboard:0e45af94-1d81-4489-8e4e-faba59a28a5c",
+      "requesterSessionId": "b07c9eba-0644-4b5f-a1e2-2db9b79a06e3",
+      "generationState": "consistent",
+      "status": "delivery-pending",
+      "terminal": true,
+      "expectedWorkerCount": 1,
+      "completedWorkerCount": 0,
+      "failedWorkerCount": 1,
+      "cancelledWorkerCount": 0,
+      "pendingWorkerCount": 0,
+      "workerRuns": [
+        {
+          "runId": "1c42aa37-06fe-4c30-9925-17a54c4f2947",
+          "roleName": "implementer",
+          "taskNodeId": "implementer-1",
+          "childSessionKey": "agent:main:subagent:006cedcf-ffed-4f8e-b0af-f36178bcae1e",
+          "status": "failed"
+        }
+      ],
+      "verifier": null,
+      "delivery": {
+        "state": "pending",
+        "pendingCount": 1,
+        "inProgressCount": 0,
+        "deliveredCount": 0,
+        "failedCount": 0,
+        "suspendedCount": 0,
+        "discardedCount": 0
+      },
+      "bounded": true,
+      "completionAuthority": "none",
+      "updatedAt": 1792705066093
+    },
+    "duplicateAdmission": {
+      "duplicate": true,
+      "sameReceiptId": true
+    }
+  },
+  "coveredWorkerStates": [
+    "completed",
+    "failed",
+    "cancelled",
+    "pending",
+    "missing",
+    "unknown"
+  ],
+  "coveredDeliveryStates": [
+    "none",
+    "pending",
+    "in_progress",
+    "delivered",
+    "failed",
+    "suspended",
+    "discarded"
+  ],
+  "unitEvidence": [
+    "tests/unit/long-session-completion-continuation.test.ts",
+    "tests/unit/agent-steering-team-bundle.test.ts"
+  ],
+  "e2eEvidence": [
+    "tests/e2e/long-session-completion-continuation.spec.ts",
+    "restart-replay-check.json"
+  ],
+  "unmeasured": [
+    "live-provider successful multi-worker synthesis quality",
+    "main-session archive/delete/pause while a batch is already being injected in the same process"
+  ],
+  "cleanup": {
+    "electronProcessesClosed": true,
+    "gatewayProcessesClosed": true,
+    "temporaryRoot": "D:/tmp/long-session-c3/53db65bd56fdddba723ee09195a6827c4352fbbf",
+    "recoveryRequired": false
+  }
+}

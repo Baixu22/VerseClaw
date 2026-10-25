@@ -1,3 +1,4 @@
+import type { DelegationAdmissionReceipt } from './delegation-admission.js';
 import type { WorkModeId } from './work-mode.js';
 
 export type WorkspacePermissionMode = 'readOnly' | 'acceptEdits' | 'plan' | 'fullAccess';
@@ -141,6 +142,43 @@ export interface WorkspaceAgentBinding {
   bootstrapOverrides?: Record<string, string>;
 }
 
+export const WORKSPACE_COORDINATOR_BINDING_SCHEMA = 'WorkspaceCoordinatorBinding/v1' as const;
+
+export type WorkspaceCoordinatorBindingState = 'active' | 'invalidated';
+export type WorkspaceCoordinatorInvalidationReason =
+  | 'archived'
+  | 'deleted'
+  | 'reset'
+  | 'session_missing'
+  | 'session_key_changed';
+
+/** Reference only. Task status and ownership remain in the Task Ledger. */
+export type WorkspaceCoordinatorTaskRef = {
+  kind: 'task-ledger';
+  nodeId: string;
+};
+
+/**
+ * Minimal durable binding metadata owned by the Workspace store. It names the
+ * selected long-lived session and existing Task Ledger nodes; it is not a task,
+ * goal, project or execution authority.
+ */
+export interface WorkspaceCoordinatorBinding {
+  schemaVersion: typeof WORKSPACE_COORDINATOR_BINDING_SCHEMA;
+  workspaceId: string;
+  agentId: string;
+  sessionKey: string;
+  /** Physical runtime generation observed when the user explicitly opted in. */
+  sessionId: string;
+  taskRefs: WorkspaceCoordinatorTaskRef[];
+  state: WorkspaceCoordinatorBindingState;
+  revision: number;
+  createdAt: string;
+  updatedAt: string;
+  invalidatedAt: string | null;
+  invalidationReason: WorkspaceCoordinatorInvalidationReason | null;
+}
+
 export interface WorkspaceChatFooterState {
   contextRangeVisible?: boolean;
   tokenUsageVisible?: boolean;
@@ -227,6 +265,10 @@ export interface WorkspaceProfile {
   selectedAgentId?: string;
   activeSessionKey: string;
   agentBindings?: Record<string, WorkspaceAgentBinding>;
+  /** Present only after an explicit long-session coordination opt-in. */
+  coordinatorBinding?: WorkspaceCoordinatorBinding | null;
+  /** Bounded durable admission journal owned by the Workspace store. */
+  delegationReceipts?: Record<string, DelegationAdmissionReceipt>;
   permissionMode: WorkspacePermissionMode;
   createdAt: number;
   updatedAt: number;

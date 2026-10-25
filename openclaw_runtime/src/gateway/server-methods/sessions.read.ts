@@ -1,11 +1,13 @@
 // Sessions gateway read/subscription methods (list/preview/describe/get/subscribe).
 import type { GatewayRequestHandlers } from "./types.js";
+import path from "node:path";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import {
   ErrorCodes,
   errorShape,
   validateSessionsCleanupParams,
   validateSessionsDescribeParams,
+  validateSessionsEffectivePolicyParams,
   validateSessionsListParams,
   validateSessionsMessagesSubscribeParams,
   validateSessionsMessagesUnsubscribeParams,
@@ -15,6 +17,7 @@ import {
 import { resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import {
   loadSessionStore,
+  resolveSessionFilePath,
   runSessionsCleanup,
   serializeSessionCleanupResult,
   type SessionEntry,
@@ -41,7 +44,9 @@ import { resolveSessionKeyFromResolveParams } from "../sessions-resolve.js";
 import { loadOptionalServerMethodModelCatalog } from "./optional-model-catalog.js";
 import { hasTrackedActiveSessionRun } from "./session-active-runs.js";
 import { emitSessionsChanged } from "./session-change-event.js";
+import { filterArchivedSessionStore } from "../session-archive-service.js";
 import { assertValidParams } from "./validation.js";
+import { buildSessionEffectivePolicy } from "../../agents/session-effective-policy.js";
 import {
   filterSessionStoreToConfiguredAgents,
   requireSessionKey,
@@ -76,9 +81,12 @@ export const sessionsReadHandlers: GatewayRequestHandlers = {
             },
           },
         );
-        const listStore = configuredAgentsOnly
+        const visibleStore = configuredAgentsOnly
           ? filterSessionStoreToConfiguredAgents(cfg, store)
           : store;
+        // Archive intent is visible before the store row disappears; filtering
+        // here keeps a partially recovered archive from reappearing as a live chat.
+        const listStore = await filterArchivedSessionStore(cfg, visibleStore);
         const modelCatalog = await measureDiagnosticsTimelineSpan(
           "gateway.sessions.list.model_catalog",
           () => loadOptionalServerMethodModelCatalog(context, "sessions.list"),
@@ -143,6 +151,42 @@ export const sessionsReadHandlers: GatewayRequestHandlers = {
       },
     );
     respond(true, payload, undefined);
+  },
+
+  "sessions.effectivePolicy": async ({ params, respond, context }) => {
+    if (!assertValidParams(params, validateSessionsEffectivePolicyParams, "sessions.effectivePolicy", respond)) {
+      return;
+    }
+    const p = params;
+    const key = requireSessionKey(p.key, respond);
+    if (!key) return;
+    const cfg = context.getRuntimeConfig();
+    const loaded = loadSessionEntry(key);
+    if (!loaded.entry) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `unknown session: ${key}`));
+      return;
+    }
+    const target = resolveGatewaySessionStoreTarget({ cfg, key: loaded.canonicalKey });
+    const sessionFile = (() => {
+      try {
+        return resolveSessionFilePath(loaded.entry.sessionId, loaded.entry, {
+          agentId: target.agentId,
+          sessionsDir: path.dirname(loaded.storePath),
+        });
+      } catch {
+        return undefined;
+      }
+    })();
+    const policy = await buildSessionEffectivePolicy({
+      cfg,
+      entry: loaded.entry,
+      workspaceId: p.workspaceId,
+      sessionKey: loaded.canonicalKey,
+      permissionMode: p.permissionMode,
+      sessionFile,
+      expectedRuntimeGeneration: process.env.VERSE_CLAW_GATEWAY_GENERATION,
+    });
+    respond(true, { ok: true, policy }, undefined);
   },
   "sessions.cleanup": async ({ params, respond, context }) => {
     if (!assertValidParams(params, validateSessionsCleanupParams, "sessions.cleanup", respond)) {
