@@ -1,6 +1,6 @@
 # F3 long-session final acceptance
 
-Source candidate: f0d9d4acea1925cee10c55c450400d10e78312cd.
+Source candidate: c42d5f894290311bbb7bc3ee84ff69de6599579d.
 
 ## Verdict
 
@@ -51,15 +51,15 @@ Source candidate: f0d9d4acea1925cee10c55c450400d10e78312cd.
 
 ## Gates re-run on this candidate
 
-- typecheck: exit 0
-- contract-check: exit 0
-- comms-replay: exit 0
-- comms-compare: exit 0
-- repo-artifacts-check: exit 0
-- repo-evidence-check: exit 0
-- long-session-e2e: exit 0
-- harness-validate: exit 0 in 2565 ms
-- git-diff-check: exit 0 in 104 ms
+- typecheck: exit 0 in 63108 ms
+- contract-check: exit 0 in 1247 ms
+- comms-replay: exit 0 in 1059 ms
+- comms-compare: exit 0 in 985 ms
+- repo-artifacts-check: exit 0 in 5942 ms
+- repo-evidence-check: exit 0 in 830 ms
+- long-session-e2e: exit 0 in 863007 ms
+- harness-validate: exit 0 in 2915 ms
+- git-diff-check: exit 0 in 97 ms
 
 ## Unmeasured
 
