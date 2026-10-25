@@ -746,6 +746,8 @@ function evaluateDocs(root) {
   const fpEnd = semantics.indexOf('<!-- FP-P1-08-COMPONENT-STATUS-END -->');
   const fpSection = fpStart >= 0 && fpEnd > fpStart ? semantics.slice(fpStart, fpEnd) : '';
   const fpRows = fpSection.split(/\r?\n/u).filter((line) => /^\| [^|-].*\| `[^`]+` \|/u.test(line));
+  const mappedSurfaces = [...surfaceBlock.matchAll(/^\s*'([^']+)'\s*:/gmu)].map((match) => match[1]).sort();
+  const documentedSurfaces = fpRows.map((line) => line.split('|')[1].trim()).sort();
   const readmeChecks = F5_README_PATHS.map((path) => check(
     `readme-${path}`,
     README_CLAIMS[path].every((token) => readmes[path].includes(token)) && readmes[path].includes(F5_DOCS_PATH) && !/\bGA\b/u.test(readmes[path]),
@@ -759,7 +761,7 @@ function evaluateDocs(root) {
     [F5_DOCS_PATH, F5_PRODUCT_SEMANTICS_PATH, F5_MANIFEST_PATH, ...F5_README_PATHS, F5_AUTOCLOSE_RULE_PATH],
     [
       ...readmeChecks,
-      check('controlled-preview-lock', fpRows.length === 10 && !fpSection.includes('VerseGit'), 'VG remains outside the frozen 10-component controlled-preview table'),
+      check('controlled-preview-lock', mappedSurfaces.length > 0 && JSON.stringify(documentedSurfaces) === JSON.stringify(mappedSurfaces) && !fpSection.includes('VerseGit'), 'Every existing controlled-preview surface matches the single authority map; VG remains outside that product scope'),
       check('host-authority-owners', !surfaceBlock.includes('VerseGit') && requiredOwners.every((owner) => manifest.includes(`id: '${owner}'`)), 'VG is not added to the controlled-preview surface map; host authority remains owned by existing ClawX components'),
       check('model-facing-internal', !/versegit|concurrency-aux/iu.test(disposition) && !/versegit|concurrency-aux/iu.test(capabilityClaims), 'VG remains an internal host sidecar rather than a broad user-visible model capability claim'),
       check('validation-doc', validationDoc.includes(F5_REPORT_PATH) && validationDoc.includes('P0=0') && validationDoc.includes('P1=0') && validationDoc.includes('P2') && validationDoc.includes('win32-x64') && validationDoc.includes('M1'), 'validation README links the F5 report and carries exact verdict/scope'),

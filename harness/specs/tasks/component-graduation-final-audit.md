@@ -51,6 +51,8 @@ touchedAreas:
   - tests/unit/fixtures/model-capability-effective-state-tf0512/**
   - tests/unit/fixtures/model-positioning-tf0507/**
   - tests/unit/fixtures/product-semantics-tf0506/**
+  - scripts/verify-versegit-product-integration.mjs
+  - tests/unit/versegit-product-acceptance.test.ts
 requiredRules:
   - task-forest-autoclose-and-roles
   - repository-artifact-retention

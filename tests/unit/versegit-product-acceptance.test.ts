@@ -4,6 +4,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'no
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { PRODUCT_SURFACE_AUTHORITY_LINKS } from '../../shared/component-authority-manifest';
 import {
   F5_DOCS_PATH,
   F5_EVIDENCE_ROOT,
@@ -194,7 +195,8 @@ describe('VerseGit product integration acceptance', () => {
     expect(fpEnd).toBeGreaterThan(fpStart);
     const fpSection = semantics.slice(fpStart, fpEnd);
     const fpRows = fpSection.split(/\r?\n/u).filter((line) => /^\| [^|-].*\| `[^`]+` \|/u.test(line));
-    expect(fpRows).toHaveLength(10);
+    expect(fpRows.map((line) => line.split('|')[1].trim()).sort())
+      .toEqual(Object.keys(PRODUCT_SURFACE_AUTHORITY_LINKS).sort());
     expect(fpSection).not.toContain('VerseGit');
     const manifest = readFileSync(resolve(root, F5_MANIFEST_PATH), 'utf8');
     const block = manifest.slice(
