@@ -75,7 +75,6 @@ The table below is the canonical component classification for this preview. Each
 | Component | Canonical label | Boundary |
 | --- | --- | --- |
 | DCS coding loop | `opt-in` | The first-product switch is off by default and requires verified provider, model, workspace, and permission prerequisites. |
-| Workspace Context | `default` | One user-level profile in Settings > General composes a bounded recent-action working window and compact tool/resource registry. It defaults on, follows the shared turn budget, and is controlled by one toggle; it is not long-term knowledge or approved memory. |
 | DCS Fact view tools | `opt-in` | Context read/search/understand tools remain a separately graduated tool surface; the baseline Workspace Context profile does not register them as side-effecting product tools. |
 | VToken turn assembly | `opt-in` | Explicit Developer/config enable only; the enhancement kill switch wins. |
 | SEKB automatic writeback | `deferred` | Human-confirmed review remains the only allowed write path. |
@@ -86,6 +85,12 @@ The table below is the canonical component classification for this preview. Each
 | Runtime Memory injection | `diagnostics-only` | May expose diagnostics, but does not enter the first-product production injection path. |
 | Surfaces listed in RETIRED-SURFACES.md | `retired` | Removed surfaces stay removed and cannot be used as current capability evidence. |
 <!-- FP-P1-08-COMPONENT-STATUS-END -->
+
+Workspace Context graduated separately under TF-0494. Its single Settings > General
+profile combines a bounded recent-action window and compact tool/resource registry,
+is enabled by default with one toggle, and follows the shared turn budget. It is not
+long-term knowledge or approved memory. This graduation does not add an eleventh
+component to the frozen first-product controlled-preview table.
 
 The table above is the controlled-preview baseline snapshot. Its labels remain the current runtime baseline until a component-specific graduation decision changes both behavior and documentation. TF-0488 changed no value; TF-0494 graduated only the Workspace Context pair and recorded its agent-driven canary, effective-state and rollback evidence in the owning node. Under the 2026-09-27 owner policy, real-human evidence is no longer a prerequisite; agent-driven evidence may support a later decision only when it records `driven_by: agent` with a concrete actor and is backed by the current production path, rollback, and model-effective-state evidence. The excluded and default-off details remain locked by `docs/dev/default-config-matrix.md`, `docs/dev/first-product-controlled-preview/STATUS.md`, and the [D9 scope ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md).
 
@@ -103,6 +108,40 @@ The following boundaries remain outside automatic authority and are not changed 
 “Default graduation” means a component can be evaluated and decided into a default mode through the component evidence matrix; it is not a blanket enablement or an automatic value flip, and public release, GA, live readiness and product approval remain unauthorized. “Automatic acceptance” means an agent can execute checks, write evidence, and read results back from disk. It does not grant release approval. A green test, a wiring site, or a completed Task Forest node is necessary evidence, not a substitute for production-path, benefit, rollback, effective-state, and explicit-decision evidence.
 
 Agent evidence must remain `driven_by: agent` with a concrete actor. Zero real-human evidence is a retained fact, not an open/blocked condition. See the [D9 ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md) and the [current constraint matrix](dev/component-graduation-scope-matrix-20261021.md).
+
+## Session lifecycle action boundary
+
+Session lifecycle actions are separate facts. An abort is not a stop, stop is not
+archive, archive is not delete, and reset changes the physical generation without
+creating a new logical conversation by string inference. Source anchors,
+inheritance rules, failure states and the original fault baseline are recorded in
+[`long-session-development/a1/action-and-inheritance-contract.json`](../harness/specs/fixtures/long-session-development/a1/action-and-inheritance-contract.json).
+The corresponding negative cases are fixed in
+[`negative-scenario-index.json`](../harness/specs/fixtures/long-session-development/a1/negative-scenario-index.json).
+
+| Action | Visible behavior | Inherits | Does not inherit / required boundary |
+| --- | --- | --- | --- |
+| Turn/run abort | Stops the active turn/run and reloads transcript state. | SessionKey, transcript and current physical session. | Task/goal completion or resource deletion. |
+| Session stop | Clears queued work and drains runtime activity while retaining the session. | SessionKey, session store, transcript and task/resource records. | Archive/delete mutation or task completion. |
+| Archive | Hides a conversation while retaining it for restore. | Transcript, original session-entry snapshot and workspace/folder hints. | Running process ownership, task completion or a new SessionKey. |
+| Restore | Restores an archive-indexed conversation. | Snapshot metadata and transcript. | Task/goal status or running resource ownership. |
+| Reset | Rotates the physical sessionId/generation under the same SessionKey. | Agent/workspace scope, preferences and Task Ledger references. | Old generation authority, ordinary-session CLI bindings and token counters. |
+| Delete | Removes a live or archived conversation after owner cleanup. | No restore entitlement after a committed delete. | Late run authority, task completion or a second deletion owner. |
+| Fork | Creates a child session from a source transcript. | Transcript/model/workspace preferences and explicit fork lineage. | Task/goal completion or running resources. |
+| Handoff | Creates a child from a bounded draft without mutating the source. | Bounded context and explicit parent/root lineage. | Goal transfer, source mutation or resource drain. |
+| Schedule pause | Disables future Cron/Workboard triggers. | Existing session/history and current-run state. | Session stop, abort, archive/delete or task completion. |
+
+Archive and restore execute through the runtime lifecycle owner. Archive acquires
+the admission fence, drains the session, records an operation intent, writes the
+archive index and transcript, then commits the hidden store state. Restore uses a
+fresh physical generation under the same SessionKey and keeps the old generation
+tombstoned. Failed or unknown RPCs retain the same Main operationId for retry.
+The A1 contract retains its original `partial` fault-baseline status; it is not
+rewritten as evidence that every historical path was protected.
+
+This boundary adds no Project, Task/Goal, Context/Memory, Scheduler or universal
+resource authority. Deleting an archived conversation retains its archive-index
+retry locator and cannot report success while an owned derivative remains.
 
 ## Final acceptance scope (F3)
 
