@@ -1,13 +1,14 @@
 # Default configuration matrix (TF-0003)
 
 > Status: Controlled Preview baseline
-> Date: 2026-07-27
+> Date: 2026-10-22
 > Scope: safety defaults for VToken / memory / SEKB / Browser private network
 > Locked by: tests/unit/default-config-matrix.test.ts + tests/unit/p0-production-acceptance.test.ts
 
-This matrix is the single source of truth for **product defaults**. Values remain fail-closed / opt-in until the D9 component-graduation evidence and an explicit default-change decision are complete. Agent-driven evidence is admissible under the 2026-09-27 owner policy when it is labelled with `driven_by: agent` and a concrete actor; that evidence does not by itself authorize a value change.
+This matrix is the single source of truth for **product defaults**. A component changes its default only through its owner node, the predeclared benefit/quality/rollback gates, and an evidence-backed Task Forest closeout. Agent-driven evidence is admissible under the 2026-09-27 owner policy when it is labelled with `driven_by: agent` and a concrete actor; that evidence does not by itself authorize public release, GA, live readiness or product approval.
 
-> D9 scope note (2026-10-21, TF-0488): component productization, default-graduation decisions, and agent-driven automatic acceptance are in scope for this program. This node changes no value in the table below. See [the D9 ADR](adr/2026-10-21-d9-component-graduation-scope.md) and [the current constraint matrix](component-graduation-scope-matrix-20261021.md).
+> D9 scope note (2026-10-21, TF-0488): component productization, default-graduation decisions, and agent-driven automatic acceptance are in scope for this program. See [the D9 ADR](adr/2026-10-21-d9-component-graduation-scope.md) and [the current constraint matrix](component-graduation-scope-matrix-20261021.md).
+>
 
 ## Matrix
 
@@ -16,6 +17,7 @@ This matrix is the single source of truth for **product defaults**. Values remai
 | **VToken assembly** | runtime.vtoken.assembly.enabled | **false** (opt-in) | enabled:true or VERSE_VTOKEN_ASSEMBLY_ENABLED=1 | env=0 or enhancement kill switch |
 | **VToken bridge** | VERSE_VTOKEN_BRIDGE_ENABLED / internal hostApi.vtoken.setEnabled | **false** | internal diagnostics env/host call only; no renderer toggle | env=0 / setEnabled(false) / kill switch |
 | **working-memory** | runtime.contextBlock.working_memory.enabled | **false** | explicit true | flag off or kill switch |
+| **tool-registry** | runtime.contextBlock.tool-registry.enabled | **false** | explicit true | flag off or kill switch |
 | **Runtime Memory inject pilot** | runtime.memory.injectPilot.enabled | **false** | explicit true | flag off or kill switch |
 | **Runtime Memory shadow/provider/persist** | runtime.memory.shadow / .provider / .persist | **false** | explicit opt-in only | flag off |
 | **SEKB master** | runtime.contextBlock.sekb.enabled / OPENCLAW_SEKB_ENABLED | **false** | explicit true | flag/env off |
@@ -30,8 +32,8 @@ This matrix is the single source of truth for **product defaults**. Values remai
 1. Opt-in wins over absent-means-on for VToken. Omitted config means disabled.
 2. Sync helpers do not overwrite arbitrary user config, with one safety exception: unacknowledged private-network allow (dangerouslyAllowPrivateNetwork or alias allowPrivateNetwork) is fail-closed migrated to deny on browser config sync.
 3. Kill switch is fail-closed: enhancement paths no-op (including CVK addition); the agent turn continues without the extra context.
-4. Do not graduate defaults to true while production-path, canary, effective-state, rollback, or explicit-decision gates remain incomplete. Agent-driven evidence is admissible when labelled; synthetic/scripted-only evidence cannot carry the decision.
-5. SEKB automatic experience writeback remains forbidden (TF-0004 is human-gated golden path only).
+4. Do not graduate a default while production-path, benefit, quality/latency, effective-state, rollback, or explicit-decision gates remain incomplete. Agent-driven evidence is admissible when labelled; synthetic/scripted-only evidence cannot carry the decision, and passing evidence does not grant public release or GA.
+5. SEKB automatic experience writeback remains forbidden (TF-0004 is its own governed path).
 6. Coding auto verify defaults to `"auto"` (runs only when a test runner is detected within budget; otherwise skips without invoking the exec tool). Explicit `true` forces the run; `false` disables it. When it runs it reuses the effective `exec` tool and never creates a second process, approval, sandbox, or timeout authority.
 
 ## Code anchors

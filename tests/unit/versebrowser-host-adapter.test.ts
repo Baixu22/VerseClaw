@@ -43,6 +43,7 @@ const mocks = vi.hoisted(() => {
     getProfile: vi.fn(async (): Promise<{ id: string; rootPath: string; permissionMode: string } | null> => ({ id: 'a', rootPath: 'D:/workspace-a', permissionMode: 'readOnly' })),
     recordPermission: vi.fn(async (event: unknown) => event),
     sensitive: vi.fn(async (channel: string) => ({ allowed: true, code: 'allow', reason: 'ok', channel })),
+    findSessionGate: vi.fn(async (_sessionKey: string): Promise<{ operationId: string } | undefined> => undefined),
   };
 });
 
@@ -50,6 +51,7 @@ vi.mock('@verse-claw/versebrowser', () => mocks.module);
 vi.mock('@electron/services/workspaces-api', () => ({ getActiveWorkspaceProfile: mocks.getProfile }));
 vi.mock('@electron/services/permissions-api', () => ({ recordPermissionDecisionEvent: mocks.recordPermission }));
 vi.mock('@electron/services/sensitive-capture-gate', () => ({ assertSensitiveCaptureAllowed: mocks.sensitive }));
+vi.mock('@electron/services/session-delete-gate', () => ({ findSessionDeleteGateBySession: mocks.findSessionGate }));
 
 import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
 import { createAgentBrowserApi, getDefaultAgentBrowserService } from '@electron/services/agent-browser-api';
@@ -65,6 +67,7 @@ describe('VerseBrowser host adapter ownership', () => {
     mocks.getProfile.mockClear();
     mocks.recordPermission.mockClear();
     mocks.sensitive.mockClear();
+    mocks.findSessionGate.mockReset().mockResolvedValue(undefined);
     mocks.getProfile.mockResolvedValue({ id: 'a', rootPath: 'D:/workspace-a', permissionMode: 'readOnly' });
     mocks.recordPermission.mockImplementation(async (event: unknown) => event);
   });
@@ -179,6 +182,21 @@ describe('VerseBrowser host adapter ownership', () => {
         error: { code: 'STALE_REF', message: 'ref invalid' },
       });
       expect(mocks.facade.downloadFile).toHaveBeenCalledWith({ sessionId: 's1', selector: '#f', path: 'D:/tmp/f.bin' });
+    } finally {
+      setSandboxHighRiskPolicyLoader(null);
+    }
+  });
+
+it('rejects browser admission while a session lifecycle gate is open', async () => {
+    setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
+    try {
+      mocks.findSessionGate.mockResolvedValueOnce({ operationId: 'delete-e2' });
+      const service = getDefaultAgentBrowserService();
+      await expect(service.open({
+        url: 'https://example.com',
+        sessionKey: 'agent:main:long',
+      })).rejects.toMatchObject({ code: 'E_SESSION_LIFECYCLE_FENCED' });
+      expect(mocks.service.open).not.toHaveBeenCalled();
     } finally {
       setSandboxHighRiskPolicyLoader(null);
     }

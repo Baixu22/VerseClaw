@@ -181,6 +181,12 @@ export const MD_MATRIX_ROWS: readonly MdMatrixRow[] = [
     assertedBy: 'context-block-defaults',
   },
   {
+    mdLabel: 'tool-registry',
+    mdDefaultCell: '**false**',
+    declaredDefault: 'false',
+    assertedBy: 'context-block-defaults',
+  },
+  {
     mdLabel: 'Runtime Memory inject pilot',
     mdDefaultCell: '**false**',
     declaredDefault: 'false',

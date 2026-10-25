@@ -1,0 +1,129 @@
+[
+    {
+        "file":  "shared/i18n/locales/en/agents.json",
+        "expected":  "5b1518f92f3568430508b430b149b9f3c5d0951dc1b158e6145b48c0757f6b3f",
+        "actual":  "5b1518f92f3568430508b430b149b9f3c5d0951dc1b158e6145b48c0757f6b3f",
+        "status":  "pass"
+    },
+    {
+        "file":  "shared/i18n/locales/ja/agents.json",
+        "expected":  "6a91b7d873f2b520836df55d3fa2e9822197584808b795e87876bbbce07ad7e5",
+        "actual":  "6a91b7d873f2b520836df55d3fa2e9822197584808b795e87876bbbce07ad7e5",
+        "status":  "pass"
+    },
+    {
+        "file":  "shared/i18n/locales/ru/agents.json",
+        "expected":  "06eb192d008e748f601ed430d03d06e8c71804a99749cefa35ff894ac653416e",
+        "actual":  "06eb192d008e748f601ed430d03d06e8c71804a99749cefa35ff894ac653416e",
+        "status":  "pass"
+    },
+    {
+        "file":  "shared/i18n/locales/zh/agents.json",
+        "expected":  "87d7f67e9e2b5c984898154b9aad4e5886c9f37c7ecbe3a5637ff890c1a58bde",
+        "actual":  "87d7f67e9e2b5c984898154b9aad4e5886c9f37c7ecbe3a5637ff890c1a58bde",
+        "status":  "pass"
+    },
+    {
+        "file":  "src/components/agents/ProposeFactsConfirmQueue.tsx",
+        "expected":  "c26b95d0cb2964248d3266b4600da16798cf0fbbc13733610cd04e4fe4567aa2",
+        "actual":  "c26b95d0cb2964248d3266b4600da16798cf0fbbc13733610cd04e4fe4567aa2",
+        "status":  "pass"
+    },
+    {
+        "file":  "src/components/agents/RolesOrchestrationPanel.tsx",
+        "expected":  "0b1d782f87eea121595daafa7e7630fb1d9c1ba91572d813dd6fd60b0fefb6c4",
+        "actual":  "0b1d782f87eea121595daafa7e7630fb1d9c1ba91572d813dd6fd60b0fefb6c4",
+        "status":  "pass"
+    },
+    {
+        "file":  "src/components/agents/memory-surface.ts",
+        "expected":  "8bcfbb82f474677da9fcc18c4f4acf4e17c4c702e4f2206b0702bae89ea511d2",
+        "actual":  "8bcfbb82f474677da9fcc18c4f4acf4e17c4c702e4f2206b0702bae89ea511d2",
+        "status":  "pass"
+    },
+    {
+        "file":  "src/pages/Agents/index.tsx",
+        "expected":  "ceba7fbe9cdc5864fd72f2040b37803dbbc8c432e1e0dffc7e9911d23df7a620",
+        "actual":  "ceba7fbe9cdc5864fd72f2040b37803dbbc8c432e1e0dffc7e9911d23df7a620",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/e2e/agents-propose-facts-confirm.spec.ts",
+        "expected":  "1f27c3af6745c02060ee8c40090eb3567169677bdc73fbc46b7655169936732b",
+        "actual":  "1f27c3af6745c02060ee8c40090eb3567169677bdc73fbc46b7655169936732b",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/e2e/memory-surface.spec.ts",
+        "expected":  "ce8c76a3875cb225656d619f6e131aeb6d70f93cc305d52b7433c869d1cc79f9",
+        "actual":  "ce8c76a3875cb225656d619f6e131aeb6d70f93cc305d52b7433c869d1cc79f9",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/e2e/role-memory-panel.spec.ts",
+        "expected":  "5fb54054a9fba4ddcc103181ce843cd1aebb2ff9ab5d7dc64100d97897e60728",
+        "actual":  "5fb54054a9fba4ddcc103181ce843cd1aebb2ff9ab5d7dc64100d97897e60728",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/README.md",
+        "expected":  "93bd046968bade4b8bf5388c5aa925fb9a305a1e8feaee2dc65988fcd5e37940",
+        "actual":  "93bd046968bade4b8bf5388c5aa925fb9a305a1e8feaee2dc65988fcd5e37940",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/component-graduation-report.json",
+        "expected":  "0ca4e47c96384e74537b17c52213fd1c1eb713deb8b703f0c1161218651897a2",
+        "actual":  "0ca4e47c96384e74537b17c52213fd1c1eb713deb8b703f0c1161218651897a2",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/generate-acceptance.mts",
+        "expected":  "a625eb43bc2582d58f0ca1044f2d10c01ee70da2a31285df5332c4ee9c46deaa",
+        "actual":  "a625eb43bc2582d58f0ca1044f2d10c01ee70da2a31285df5332c4ee9c46deaa",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json",
+        "expected":  "e239971acfb8e9d8284baeea6116809150305a614cf94771f1a0441d9c7806aa",
+        "actual":  "e239971acfb8e9d8284baeea6116809150305a614cf94771f1a0441d9c7806aa",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/run-verification.ps1",
+        "expected":  "6129981736b022d7632ede7f2fca7e33bb1313fd60f9bd28d162fab23a2f7da8",
+        "actual":  "6129981736b022d7632ede7f2fca7e33bb1313fd60f9bd28d162fab23a2f7da8",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/memory-surface-contract.test.ts",
+        "expected":  "8eaf6abdbc92aa034be69b15f42e3ec333665ab016ea8fb4d32077af62c5738e",
+        "actual":  "8eaf6abdbc92aa034be69b15f42e3ec333665ab016ea8fb4d32077af62c5738e",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/propose-facts-confirm-queue.test.tsx",
+        "expected":  "a11900c060e05553658fffd2569124f8f3ad1fb8441fcfcdfe3c58589deddbac",
+        "actual":  "a11900c060e05553658fffd2569124f8f3ad1fb8441fcfcdfe3c58589deddbac",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/role-memory-context-provider.test.ts",
+        "expected":  "c0665eab06114213d6032c3cc19f28d394ad86e09b3b9c9abc036f33d5342404",
+        "actual":  "c0665eab06114213d6032c3cc19f28d394ad86e09b3b9c9abc036f33d5342404",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/role-orchestration-methods.test.ts",
+        "expected":  "e3d97c17acfa18694816110fbad83eb404e6d833288ffdc159b02e7e10fae829",
+        "actual":  "e3d97c17acfa18694816110fbad83eb404e6d833288ffdc159b02e7e10fae829",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/roles-orchestration-panel.test.tsx",
+        "expected":  "72a1705c323624353cc0fbd3405845650355d7cbadbfc04dc9704c58e6449e45",
+        "actual":  "72a1705c323624353cc0fbd3405845650355d7cbadbfc04dc9704c58e6449e45",
+        "status":  "pass"
+    }
+]
+SHA256SUMS_STATUS=pass

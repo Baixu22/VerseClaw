@@ -1,6 +1,6 @@
 # Runtime control planes
 
-Status snapshot: **2026-10-20**. This page separates landed runtime mechanisms from opt-in, shadow and planned work. It is a navigation aid; source code, product semantics and validation gates remain authoritative.
+Status snapshot: **2026-10-22**. This page separates landed runtime mechanisms from opt-in, shadow and planned work. It is a navigation aid; source code, product semantics and validation gates remain authoritative.
 
 The repository is not only a chat UI around a model call. It contains several cooperating control planes:
 

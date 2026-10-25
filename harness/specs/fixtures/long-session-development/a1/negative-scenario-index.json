@@ -1,16 +1,16 @@
 {
   "schema": "clawx.long-session.negative-scenario-index/v1",
   "driven_by": "agent",
-  "actor": "codex-long-session-a1",
+  "actor": "codex-long-session-r2",
   "program": "long-session-development-20261022",
   "task": "TF-0548",
-  "generatedAt": "2026-10-22T14:47:51.294Z",
+  "generatedAt": "2026-10-23T00:00:50.722Z",
   "fixture": {
     "kind": "isolated-agent-fixture",
     "isolation": "temporary userData/run root; one workspace; one assistant; no live provider requirement for structural cases",
-    "workspaceId": "workspace:long-session-a1",
+    "workspaceId": "workspace:long-session-r2-a1",
     "assistantId": "main",
-    "sessionKey": "agent:main:long-session-a1",
+    "sessionKey": "agent:main:long-session-r2-a1",
     "physicalSessionId": "session-a1-generation-1",
     "runId": "run-a1-generation-1",
     "taskNodeId": "task-a1-observation",
@@ -227,5 +227,9 @@
       ],
       "nextNode": "TF-0559"
     }
-  ]
+  ],
+  "templateProvenance": {
+    "commit": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
+    "use": "structure only; source identity and observations regenerated for this worktree"
+  }
 }

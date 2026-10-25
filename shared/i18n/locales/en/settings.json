@@ -66,7 +66,7 @@
     "showGit": { "title": "Show workspace Git", "description": "Include workspace-scoped branch and change status." },
     "showCommands": { "title": "Show Agent commands", "description": "Include structured command summaries alongside interactive terminals." },
     "notifications": { "title": "Recovery and blocked notifications", "description": "Notify when a real recovery or blocked signal needs review." },
-    "retention": { "title": "Recent activity retention", "description": "Keep completed activity visible for a bounded period.", "none": "Do not retain", "five": "5 minutes", "fifteen": "15 minutes" },
+    "retention": { "title": "Recent activity retention", "description": "Limit how long completed activity remains visible in the panel. This does not change transcript or runtime-resource retention.", "none": "Do not retain", "five": "5 minutes", "fifteen": "15 minutes" },
     "session": { "title": "Session", "description": "Choose a workspace session to inspect." },
     "runAction": "Run",
     "openConversation": "Open conversation",
@@ -653,7 +653,7 @@
         "detailDisabled": "These tools stay out of the default tool list until enabled: {{tools}}.",
         "detailEnabled": "View tools are on for this install. They still require a coding workspace with FactService."
       },
-      "layerRole": "DCS — working memory & context blocks — Opt-in BlockStore spine: working-memory injection, tool_registry summary, knowledge blocks, and context_* tools. Default…",
+            "layerRole": "DCS — developer diagnostics — advanced opt-in BlockStore controls. Defaults remain fail-closed; low-level flags and experimental gates are advanced diagnostics.",
       "taskLoopNote": "Task state / phase / SEKB trajectory features require a TaskLoop (multi-step task) path — not single-turn chat alone. See docs/dev/dcs-visible-production/TASKLOOP-ACCEPTANCE.md.",
       "observability": {
         "title": "DCS observability (product keys)",

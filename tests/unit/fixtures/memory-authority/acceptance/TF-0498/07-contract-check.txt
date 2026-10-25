@@ -1,0 +1,9 @@
+pnpm.cmd : $ node scripts/contract-check.mjs
+At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\memory-authority\acceptance\TF-0498\run-verifica
+tion.ps1:17 char:13
++   $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ node scripts/contract-check.mjs:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Contract check passed.

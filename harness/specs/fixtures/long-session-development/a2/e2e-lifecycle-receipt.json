@@ -1,0 +1,20 @@
+{
+  "schema": "clawx.long-session.real-lifecycle/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "sessionKey": "agent:main:dashboard:9551e54a-198e-452a-92d4-93a2d9c40ac2",
+  "previousSessionId": "174af7d7-92ff-4cd6-88b0-eb797b2f3291",
+  "restoredSessionId": "1185fa26-22b4-4049-8577-fffb53956607",
+  "archived": {
+    "success": true
+  },
+  "restored": {
+    "success": true
+  },
+  "archivePath": "D:\\tmp\\verse-claw-e2e-run-HtRE4j\\verse-claw-e2e-user-data-bIexvL\\openclaw-source-state\\agents\\main\\sessions\\174af7d7-92ff-4cd6-88b0-eb797b2f3291.archived.jsonl",
+  "archivedTranscriptSha256": "83a909e5787a841c7800d70bb8bf49790447281340630dd8b0d8cb6690eafaad",
+  "inputSha256": "c37b4bb28bb37eb8236b0e7c2de6acc1b0ea93b267df955f4f77e072758bafe6",
+  "historyRetained": true,
+  "archiveIndexRemoved": true,
+  "transport": "built Electron host:invoke -> actual Gateway runtime"
+}

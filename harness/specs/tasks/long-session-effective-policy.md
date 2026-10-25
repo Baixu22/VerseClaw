@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: completed
+lifecycleStatus: active
 id: long-session-effective-policy
 title: 生成会话生效配置快照并区分原生后端
 program: long-session-development-20261022
@@ -12,35 +12,37 @@ contractIndex: harness/specs/tasks/long-session-development-plan.md
 dependsOnTasks:
   - A2
   - TF-0512
-diffBase: 8459bbf67
 touchedAreas:
   - harness/specs/tasks/long-session-effective-policy.md
   - harness/specs/tasks/long-session-development-plan.md
   - docs/clawx-product-semantics.md
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
   - shared/types/session-effective-policy.ts
   - shared/types/session-activity.ts
-  - openclaw_runtime/packages/gateway-protocol/src/index.ts
-  - openclaw_runtime/packages/gateway-protocol/src/schema/protocol-schemas.ts
-  - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
-  - openclaw_runtime/packages/gateway-protocol/src/schema/types.ts
-  - shared/host-api/contract.ts
-  - src/lib/host-api.ts
-  - electron/gateway/manager.ts
-  - electron/services/sessions-api.ts
+  - shared/i18n/locales/en/chat.json
+  - shared/i18n/locales/zh/chat.json
+  - shared/i18n/locales/ja/chat.json
+  - shared/i18n/locales/ru/chat.json
   - electron/services/session-activity-api.ts
+  - src/pages/Chat/SessionActivityPanel.tsx
   - openclaw_runtime/src/agents/runtime-effective-capability.ts
-  - openclaw_runtime/src/agents/session-effective-policy.ts
-  - openclaw_runtime/src/gateway/methods/core-descriptors.ts
-  - openclaw_runtime/src/gateway/server-methods.ts
-  - openclaw_runtime/src/gateway/server-methods/sessions.read.ts
   - openclaw_runtime/src/agents/session-runtime-compat.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
+  - openclaw_runtime/src/gateway/session-effective-policy.ts
+  - openclaw_runtime/src/gateway/server-methods/session-activity.ts
+  - openclaw_runtime/src/gateway/server-methods/chat.ts
+  - openclaw_runtime/src/gateway/chat-abort.ts
   - openclaw_runtime/extensions/codex/src/app-server/session-binding.ts
   - openclaw_runtime/extensions/codex/src/app-server/compact.ts
   - openclaw_runtime/extensions/anthropic/cli-backend.ts
   - tests/unit/runtime-effective-capability.test.ts
-  - openclaw_runtime/src/gateway/session-ecosystem-lifecycle-reachability.test.ts
   - tests/unit/long-session-effective-policy.test.ts
-  - tests/unit/session-activity-background-read.test.ts
+  - tests/unit/session-activity-panel-sections.test.tsx
+  - openclaw_runtime/src/gateway/session-activity-handler.test.ts
+  - openclaw_runtime/src/gateway/server-methods/session-activity.test.ts
+  - tests/e2e/long-session-effective-policy.spec.ts
   - harness/specs/fixtures/long-session-development/b1/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -54,13 +56,19 @@ requiredRules:
 requiredProfiles:
   - fast
   - comms
+  - e2e
 expectedUserBehavior:
   - 把配置文件、静态目录、实际可执行能力和动作授权分开，复用 ModelCapabilityProfile 的 current-run 事实。
   - 创建本合同不代表功能已实现；结果、配置、授权和任务完成仍归现有 owner，未知状态如实保留。
 requiredTests:
-  - pnpm exec vitest run tests/unit/runtime-effective-capability.test.ts tests/unit/model-capability-profile.test.ts tests/unit/identity-scope.test.ts --maxWorkers=1
-  - pnpm exec vitest run tests/unit/long-session-effective-policy.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/runtime-effective-capability.test.ts tests/unit/model-capability-profile.test.ts tests/unit/identity-scope.test.ts tests/unit/long-session-effective-policy.test.ts tests/unit/session-activity-panel-sections.test.tsx --maxWorkers=1
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-core.config.ts src/gateway/session-activity-handler.test.ts --maxWorkers=1
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-methods.config.ts src/gateway/server-methods/session-activity.test.ts --maxWorkers=1
+  - pnpm run build:runtime
+  - pnpm run build:vite
+  - pnpm run test:e2e:run tests/e2e/long-session-effective-policy.spec.ts
   - pnpm run typecheck
+  - pnpm run i18n:lint
   - pnpm run contract:check
   - pnpm run comms:replay
   - pnpm run comms:compare
@@ -68,6 +76,9 @@ requiredTests:
   - git diff --check
 plannedTests:
   - tests/unit/long-session-effective-policy.test.ts
+  - tests/unit/session-activity-panel-sections.test.tsx
+  - openclaw_runtime/src/gateway/session-activity-handler.test.ts
+  - tests/e2e/long-session-effective-policy.spec.ts
 acceptance:
   - 从 TF-0512 的 owner-resolved current facts 生成只读 session policy，字段包含 scope/generation、backend/binding、model/effort、grant、context/queue/resource/schedule limits 与来源。
   - configured、effective、unverified、unsupported、ignored 分开；缺失/过期/错 generation 回执保持 unknown，不能靠 JSON 文件或 enabled=true 推断可执行。
@@ -83,16 +94,9 @@ docs:
 
 把配置文件、静态目录、实际可执行能力和动作授权分开，复用 ModelCapabilityProfile 的 current-run 事实。
 
-本规格已执行：TF-0512 的 ModelCapabilityProfile 以有界 last-observed snapshot 供 SessionEffectivePolicy 生成只读投影；configured/effective/unknown/stale/mismatch/unsupported/ignored 分开，Host/Gateway 只读路径已接线。
+本规格已由当前候选实现并验证：ModelCapabilityProfile 的 current-run facts 经有界 observation 进入只读 SessionEffectivePolicy，session activity Host/API/UI 在真实 Gateway 路径回读 configured/effective/unknown，不把配置冒充为执行能力。
 
 所属阶段二：让会话配置与实际运行状态可见。统一边界见[规划合同索引](./long-session-development-plan.md)。
-**B1 交付**
-
-- TF-0512 runtime profile 现在保留同进程、按 workspace/session 限界且 30s 过期的 last-observed snapshot；该缓存不是第二 capability inventory。
-- `SessionEffectivePolicy/v1` 区分 configured、effective、unverified、stale、mismatch、unsupported 与 ignored，并输出 backend/binding、model/effort、grant/action、context/queue/resource/schedule 字段和来源。
-- Codex app-server、Claude CLI 与 OpenClaw embedded 的 native compaction ownership 和 ignored parameter reasons 已进入兼容表。
-- `sessions.effectivePolicy` Gateway read method、Main Host facade 与 SessionActivity snapshot 共用同一只读 projection；输出不含 credentials、auth profile ID、prompt 或 transcript 文本。
-- Clean candidate `5eef970b9a6ff401bd92ff870a559cde751a1b8e` / tree `f3f8c32e74b280f0f05ad8053d4c08183b2a3bfc`：11 commands、81/81 tests、runtime build、typecheck、contract、comms、harness、diff-check 与凭证扫描全部通过；回执见 `harness/specs/fixtures/long-session-development/b1/`。
 
 **前置与读入**
 

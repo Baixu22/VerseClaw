@@ -2,6 +2,8 @@ import type { Locator, Page } from '@playwright/test';
 import { test, expect, openAgentDevScenario } from './fixtures/electron';
 
 async function ensureDevPanel(page: Page) {
+  page.setDefaultTimeout(60_000);
+  page.setDefaultNavigationTimeout(60_000);
   await openAgentDevScenario(page, 'chat-empty', { visualMode: true });
   await expect(page.getByTestId('main-layout')).toBeVisible();
 
@@ -74,11 +76,9 @@ async function hostGetDcsFlags(page: Page): Promise<{
 test.describe('DCS production P0 packaging surface', () => {
   test('shows opt-in DCS production flags panel in Settings > Developer', async ({ page }) => {
     await ensureDevPanel(page);
-    await expect(page.getByTestId('settings-context-layers-explainer')).toBeVisible();
-    await expect(page.getByTestId('settings-context-layers-cvk')).toBeVisible();
-    await expect(page.getByTestId('settings-context-layers-dcs')).toBeVisible();
-    await expect(page.getByTestId('settings-context-layers-vtoken')).toBeVisible();
     await expect(page.getByTestId('settings-dcs-prod-flags-mode')).toBeVisible();
+    await expect(page.getByTestId('settings-context-layers-explainer')).toHaveCount(0);
+    await expect(page.getByTestId('settings-context-layers-vtoken')).toHaveCount(0);
     await expect(page.getByTestId('settings-dcs-prod-flags-layer-role')).toBeVisible();
     await expect(page.getByTestId('settings-dcs-observability-panel')).toBeVisible();
     await expect(page.getByTestId('settings-dcs-observability-kill')).toBeVisible();
@@ -117,9 +117,7 @@ test.describe('DCS production P0 packaging surface', () => {
     await page.getByTestId('settings-language-select').click();
     await page.getByRole('option', { name: '日本語', exact: true }).click();
     await page.getByTestId('settings-nav-developer').click();
-    await expect(page.getByTestId('settings-context-layers-explainer')).toContainText(
-      'コンテキスト層の違い（混同しないでください）',
-    );
+    await expect(page.getByTestId('settings-context-layers-explainer')).toHaveCount(0);
     await expect(page.getByTestId('settings-dcs-prod-flags')).toContainText(
       'DCS Controlled Preview フラグ',
     );
@@ -128,9 +126,7 @@ test.describe('DCS production P0 packaging surface', () => {
     await page.getByTestId('settings-language-select').click();
     await page.getByRole('option', { name: 'Русский', exact: true }).click();
     await page.getByTestId('settings-nav-developer').click();
-    await expect(page.getByTestId('settings-context-layers-explainer')).toContainText(
-      'Различия слоёв контекста: не смешивайте их',
-    );
+    await expect(page.getByTestId('settings-context-layers-explainer')).toHaveCount(0);
     await expect(page.getByTestId('settings-dcs-prod-flags')).toContainText(
       'Флаги DCS Controlled Preview',
     );

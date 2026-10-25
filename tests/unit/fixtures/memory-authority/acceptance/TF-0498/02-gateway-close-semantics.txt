@@ -1,0 +1,10 @@
+
+ RUN  v4.1.1 D:/ClawX-work/worktrees/long-session-program-r2
+
+··································································
+
+ Test Files  3 passed (3)
+      Tests  66 passed (66)
+   Start at  17:22:54
+   Duration  25.20s (transform 10.97s, setup 266ms, import 15.72s, tests 6.78s, environment 1.84s)
+

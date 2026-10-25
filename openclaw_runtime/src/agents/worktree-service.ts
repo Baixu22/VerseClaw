@@ -25,6 +25,11 @@ import {
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
+import {
+  LongSessionCoordinationError,
+  decideLongSessionCoordination,
+  resolveLongSessionCoordinationPolicy,
+} from '../../../shared/long-session-resource-reclamation.js';
 import { codingObservability } from '../context-engine/coding-observability.js';
 import { assertVerseGitCleanupDeletionAllowed, verseGitCleanupResourceId } from '../../../shared/versegit-cleanup-barrier.js';
 import type { VerseGitCleanupDeletionAuthorization } from '../../../shared/types/versegit.js';
@@ -42,6 +47,22 @@ export const PRODUCTION_GIT_WORKTREE_HARDENED = true as const;
 export { PRODUCTION_PNPM_HARDLINK_INSTALL } from "./worktree-pnpm-install.js";
 export type { WorktreeInstallStrategy, WorktreeInstallResult } from "./worktree-pnpm-install.js";
 
+export type WorktreeLifecycleOwner = {
+  agentId: string;
+  sessionKey: string;
+  expectedSessionId: string;
+  retention?: "keep" | "delete";
+};
+
+export type WorktreeLifecycleResult = {
+  attempted: number;
+  reclaimed: number;
+  failed: number;
+  kept: number;
+  worktreeIds: string[];
+  roots: string[];
+};
+
 export type WorktreeRecord = {
   id: string;
   root: string;
@@ -52,6 +73,7 @@ export type WorktreeRecord = {
   backend: WorktreeBackend;
   gitBranch?: string;
   baseOid?: string;
+  owner?: WorktreeLifecycleOwner;
 };
 
 export type MergeQueueItem = {
@@ -72,7 +94,7 @@ export type WorktreeChangedFiles = {
 
 export type WorktreeService = {
   backend: WorktreeBackend;
-  create(id: string, options?: { writeSet?: string[]; seedFiles?: string[]; installStrategy?: WorktreeInstallStrategy }): WorktreeRecord & { install?: WorktreeInstallResult };
+  create(id: string, options?: { writeSet?: string[]; seedFiles?: string[]; installStrategy?: WorktreeInstallStrategy; owner?: WorktreeLifecycleOwner }): WorktreeRecord & { install?: WorktreeInstallResult };
   pathFor(id: string): string;
   list(): WorktreeRecord[];
   listChangedFiles(id: string): WorktreeChangedFiles;
@@ -82,6 +104,8 @@ export type WorktreeService = {
     options?: { conflictPolicy?: MergeConflictPolicy; worktreeIds?: readonly string[] },
   ): MergeQueueItem[];
   cleanup(id: string, options?: { authorization?: VerseGitCleanupDeletionAuthorization }): void;
+  listOwned(owner: Pick<WorktreeLifecycleOwner, "sessionKey" | "agentId" | "expectedSessionId">): WorktreeRecord[];
+  cleanupOwned(owner: Pick<WorktreeLifecycleOwner, "sessionKey" | "agentId" | "expectedSessionId">): WorktreeLifecycleResult;
   getMergeQueue(): MergeQueueItem[];
 };
 
@@ -338,8 +362,8 @@ export function createWorktreeService(
 ): WorktreeService {
   const resolved = path.resolve(baseRoot);
   const requested = options?.backend ?? "inprocess";
-  const baseOid = backendSupportsOid(resolved) ? git(["rev-parse", "HEAD"], resolved).trim() : undefined;
   const backend = resolveBackend(resolved, requested);
+  const baseOid = backend === "git" && backendSupportsOid(resolved) ? git(["rev-parse", "HEAD"], resolved).trim() : undefined;
   const defaultConflictPolicy: MergeConflictPolicy = options?.conflictPolicy ?? "mark_conflict";
   const rootDir = path.join(resolved, ".openclaw", "worktrees");
 
@@ -347,6 +371,22 @@ export function createWorktreeService(
     backend,
     create(id, createOptions) {
       const s = scope(resolved);
+      const owner = createOptions?.owner;
+      if (owner) {
+        const uniqueRecords = new Set(s.records.values());
+        const ownedCount = [...uniqueRecords].filter((record) => (
+          record.status !== "cleaned"
+          && record.owner?.agentId === owner.agentId
+          && record.owner.sessionKey === owner.sessionKey
+          && record.owner.expectedSessionId === owner.expectedSessionId
+        )).length;
+        const budget = decideLongSessionCoordination({
+          policy: resolveLongSessionCoordinationPolicy(),
+          usage: { processCount: null, rssKb: null, backgroundTerminals: null, worktreeCount: ownedCount },
+          request: { worktrees: 1 },
+        });
+        if (!budget.allowed) throw new LongSessionCoordinationError(budget);
+      }
       const safeId = id.replace(/[^a-zA-Z0-9._-]/g, "-").slice(0, 64) || "wt";
       const wtRoot = hardenFsRoot(path.join(rootDir, safeId));
       let gitBranch: string | undefined;
@@ -401,6 +441,7 @@ export function createWorktreeService(
         backend: recBackend,
         gitBranch,
         ...(baseOid ? { baseOid } : {}),
+        ...(owner ? { owner: { ...owner, retention: owner.retention ?? "keep" } } : {}),
       };
       s.records.set(safeId, rec);
       if (safeId !== id) s.records.set(id, rec);
@@ -567,6 +608,44 @@ export function createWorktreeService(
         }
         rec.status = "cleaned";
       });
+    },
+    listOwned(owner) {
+      const uniqueRecords = new Set(scope(resolved).records.values());
+      return [...uniqueRecords].filter((record) => (
+        record.status !== "cleaned"
+        && record.owner?.agentId === owner.agentId
+        && record.owner.sessionKey === owner.sessionKey
+        && record.owner.expectedSessionId === owner.expectedSessionId
+      ));
+    },
+    cleanupOwned(owner) {
+      const uniqueRecords = new Set(scope(resolved).records.values());
+      const owned = [...uniqueRecords].filter((record) => (
+        record.status !== "cleaned"
+        && record.owner?.agentId === owner.agentId
+        && record.owner.sessionKey === owner.sessionKey
+        && record.owner.expectedSessionId === owner.expectedSessionId
+      ));
+      let reclaimed = 0;
+      let kept = 0;
+      let failed = 0;
+      const worktreeIds = [];
+      const roots = [];
+      for (const record of owned) {
+        if (record.owner?.retention === "keep") {
+          kept += 1;
+          continue;
+        }
+        try {
+          this.cleanup(record.id);
+          reclaimed += 1;
+          worktreeIds.push(record.id);
+          roots.push(record.root);
+        } catch {
+          failed += 1;
+        }
+      }
+      return { attempted: owned.length, reclaimed, failed, kept, worktreeIds, roots };
     },
     getMergeQueue() {
       return [...scope(resolved).queue];

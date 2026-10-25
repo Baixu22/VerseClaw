@@ -1,11 +1,20 @@
-# D1 continuity context evidence
+# D1 accepted continuity context evidence
 
-Source candidate: `6f9532374aaf66e668cf9dc17ec3e20f852c23ad`.
+- Candidate commit: `1b76fec74904ba875a5f7ecc6dae99e952c4b74c`. The final unit, typecheck, contract, comms and built Electron E2E receipts were generated from this clean HEAD.
+- This node uses the existing Task Ledger, accepted role-memory owner, typed knowledge refs and CompressionArtifact; it creates no second memory store, task list or injection chain.
+- The real built Electron journey exercised Host API -> Main -> Gateway -> owner reads. It found Task Ledger Working Context, accepted memory and a knowledge ref; the pending working-context item was excluded. The fresh session had no CompressionArtifact, so the pack honestly remained `partial`.
+- Unit coverage excludes candidates, expired items, tombstones, superseded items, closed role-memory gates, foreign workspace/role/agent scopes and unverified model claims. It also verifies fork, handoff, compact, restart refs, coordinator generation invalidation and native compaction ownership.
+- The D1 unit suite covers production and owner-boundary behavior, and the built Electron test is current-candidate evidence. The historical D1 verdict was not reused.
+- Known unmeasured boundaries: live native/CLI provider quality, real compression generated during the E2E run and a live provider process kill. No hidden fallback is claimed.
+- Every artifact is agent-driven (`driven_by: agent`), actor `codex-long-session-r2`. No real-human evidence is claimed.
 
-- `continuity-context-pack.json`: retained real built Electron/Host/Gateway preview with accepted Task Ledger Working Context, model-visible Memory ref, typed Knowledge ref, budget and first-class original-history refs.
-- `fact-provenance-and-revocation.json`: accepted owner inputs, provenance/freshness/scope and exclusion semantics.
-- `cross-scope-negative.json`: missing/invalidated coordinator bindings and scope/pending negative matrix.
-- `continuity-e2e-observation.json`: E2E receipt summary.
-- `verification-receipt.json`: exact commit, gate exits/counts, evidence mappings and honest limits.
+## Primary artifacts
 
-All actions were agent-driven. No human evidence is claimed.
+- `continuity-context-pack.json`: bounded owner-derived pack from the built Electron run.
+- `fact-provenance-and-revocation.json`: source, freshness, scope, trust, evidence and exclusion matrix.
+- `cross-scope-negative.json`: missing binding and deleted-session generation invalidation.
+- `verification.json`: commands, exits, acceptance mapping, cleanup and unmeasured boundaries.
+- `gates.json`: current gate status.
+- `SHA256SUMS`: retained-file manifest.
+
+Raw Playwright output remains at `D:/tmp/tf0556-e2e-clean-head`; only these selected artifacts are retained in source.

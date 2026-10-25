@@ -9,7 +9,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 明确保留基线、继续实验还是提供一个显式策略，防止长期会话自动成为算法扩展工程。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
-diffBase: 30a9eaeb0
+diffBase: 56cb9ba1ee819fb053c13974026f5bfea5149e3f
 dependsOnTasks:
   - D2
 touchedAreas:

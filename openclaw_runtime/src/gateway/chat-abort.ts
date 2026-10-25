@@ -23,6 +23,8 @@ export type ChatAbortControllerEntry = {
   expiresAtMs: number;
   ownerConnId?: string;
   ownerDeviceId?: string;
+  /** Canonical workspace identity supplied by the chat host for this run. */
+  workspaceId?: string;
   providerId?: string;
   authProviderId?: string;
   abortStopReason?: string;
@@ -119,6 +121,7 @@ export function registerChatAbortController(params: {
   timeoutMs: number;
   ownerConnId?: string;
   ownerDeviceId?: string;
+  workspaceId?: string;
   providerId?: string;
   authProviderId?: string;
   controlUiVisible?: boolean;
@@ -155,6 +158,7 @@ export function registerChatAbortController(params: {
       resolveChatRunExpiresAtMs({ now: rawNow, timeoutMs: params.timeoutMs }),
     ownerConnId: params.ownerConnId,
     ownerDeviceId: params.ownerDeviceId,
+    workspaceId: params.workspaceId?.trim() || undefined,
     providerId: normalizeProviderIdForActiveRun(params.providerId),
     authProviderId: normalizeProviderIdForActiveRun(params.authProviderId),
     controlUiVisible: params.controlUiVisible,

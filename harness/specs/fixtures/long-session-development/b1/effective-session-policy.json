@@ -1,163 +1,91 @@
 {
-  "schemaVersion": "SessionEffectivePolicy/v1",
-  "generatedAt": "2026-10-23T02:00:00.000Z",
-  "scope": {
-    "workspaceId": "workspace:long-session-b1",
-    "sessionKey": "agent:main:long-session-b1",
-    "sessionId": "session-b1",
-    "agentId": "main",
-    "permissionMode": "acceptEdits"
-  },
-  "generation": {
-    "state": "current",
-    "runtimeGeneration": "gateway-b1",
-    "runId": null,
-    "profileObservedAt": "2026-10-23T02:00:00.000Z"
-  },
-  "backend": {
-    "configured": {
-      "state": "configured",
-      "value": "openclaw",
-      "source": "session-entry.agent-runtime-override",
-      "reason": null,
-      "observedAt": null
+  "schema": "clawx.long-session.effective-policy/v1",
+  "generatedAt": "2026-10-23T16:59:58.819Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "sourceTask": "TF-0512",
+  "wire": "ModelCapabilityProfile/v1 -> bounded current-run observation and active-run context budget -> SessionEffectivePolicy/v1",
+  "transport": "built Electron host:invoke sessionActivity.snapshot -> actual Gateway session.activitySnapshot",
+  "receipt": {
+    "schema": "clawx.long-session.effective-policy/v1",
+    "driven_by": "agent",
+    "actor": "codex-long-session-r2",
+    "sessionKey": "agent:main:dashboard:912a4e80-deb6-49e1-b7b0-cd9a9f7663a2",
+    "workspaceId": "default",
+    "generationState": "missing",
+    "configuredBackend": {
+      "runtime": "openclaw",
+      "kind": "openclaw",
+      "ownsNativeCompaction": false,
+      "provider": "openai",
+      "model": "gpt-5.5"
     },
-    "effective": {
-      "state": "effective",
-      "value": {
-        "id": "openclaw-embedded",
-        "kind": "openclaw-embedded",
-        "modelProvider": "openai",
-        "model": "gpt-5.4",
-        "nativeThreadId": null,
-        "nativeSessionId": null
-      },
-      "source": "runtime.ModelCapabilityProfile",
-      "reason": null,
-      "observedAt": "2026-10-23T02:00:00.000Z"
-    },
-    "binding": {
-      "state": "effective",
-      "value": {
-        "kind": "session",
-        "id": "session-b1"
-      },
-      "source": "runtime.ModelCapabilityProfile",
-      "reason": null,
-      "observedAt": "2026-10-23T02:00:00.000Z"
-    },
-    "compatibility": {
-      "nativeCompactionOwner": "openclaw",
-      "parameters": [
-        {
-          "path": "agents.defaults.compaction",
-          "state": "effective",
-          "reason": null
-        }
-      ]
-    }
-  },
-  "model": {
-    "configured": {
-      "state": "configured",
-      "value": {
-        "provider": "openai",
-        "model": "gpt-5.4"
-      },
-      "source": "session-entry.model-override",
-      "reason": null,
-      "observedAt": "2026-10-23T02:00:00.000Z"
-    },
-    "effective": {
-      "state": "effective",
-      "value": {
-        "provider": "openai",
-        "model": "gpt-5.4"
-      },
-      "source": "session-entry.model",
-      "reason": null,
-      "observedAt": "2026-10-23T02:00:00.000Z"
-    },
-    "effort": {
-      "state": "effective",
-      "value": "high",
-      "source": "session-entry.effort",
-      "reason": null,
-      "observedAt": "2026-10-23T02:00:00.000Z"
-    }
-  },
-  "grant": {
-    "mode": {
-      "state": "effective",
-      "value": "acceptEdits",
-      "source": "main.workspace.permissionMode",
-      "reason": "Authorization is reported by the Main workspace owner; this projection does not grant permissions.",
-      "observedAt": null
-    },
-    "effectiveActions": {
-      "state": "effective",
-      "value": {
-        "allowed": [
-          "apply_patch",
-          "edit",
-          "exec",
-          "propose",
-          "read",
-          "write"
-        ],
-        "requiresApproval": [],
-        "denied": [],
-        "unknown": []
-      },
-      "source": "runtime.ModelCapabilityProfile.actionAuthorization",
-      "reason": null,
-      "observedAt": "2026-10-23T02:00:00.000Z"
-    }
-  },
-  "limits": {
-    "context": {
-      "state": "effective",
-      "value": {
-        "usedTokens": 12000,
-        "contextTokenBudget": 128000,
-        "reserveTokens": 8000,
-        "overflowTokens": 0
-      },
-      "source": "session-entry.contextBudgetStatus",
-      "reason": null,
-      "observedAt": "2026-10-23T02:00:00.000Z"
-    },
-    "queue": {
-      "state": "configured",
-      "value": {
-        "mode": "followup",
-        "cap": 12,
-        "debounceMs": 250,
-        "drop": "summarize"
-      },
-      "source": "session-entry.queue",
-      "reason": "Configured queue policy; effective admission still belongs to the runtime queue owner.",
-      "observedAt": null
-    },
-    "resources": {
-      "state": "configured",
-      "value": {
-        "spawnDepth": 0,
-        "subagentControlScope": "children",
-        "inheritedToolAllowCount": 1,
-        "inheritedToolDenyCount": 1
-      },
-      "source": "session-entry.resource-scope",
-      "reason": "Resource ownership remains with the terminal/browser/background/worktree owners; this policy only reports the session scope hints.",
-      "observedAt": null
-    },
-    "schedule": {
-      "state": "unsupported",
+    "effectiveBackend": {
       "value": null,
-      "source": "cron-workboard.owner",
-      "reason": "Cron/Workboard scheduling is not owned by the session policy projection; follow-up scheduling is delivered by its existing owner.",
-      "observedAt": null
-    }
+      "status": "unverified",
+      "source": "runtime-effective-capability.observation",
+      "reason": "no-current-run-capability-profile"
+    },
+    "compatibilityRows": [
+      {
+        "backend": "openclaw",
+        "parameter": "automatic-compaction",
+        "status": "configured",
+        "reason": null
+      },
+      {
+        "backend": "openclaw",
+        "parameter": "compaction.provider",
+        "status": "configured",
+        "reason": null
+      },
+      {
+        "backend": "openclaw",
+        "parameter": "compaction.model",
+        "status": "configured",
+        "reason": null
+      },
+      {
+        "backend": "openclaw",
+        "parameter": "compaction.reserveTokens",
+        "status": "configured",
+        "reason": null
+      },
+      {
+        "backend": "openclaw",
+        "parameter": "manual-compaction",
+        "status": "effective",
+        "reason": null
+      }
+    ],
+    "transport": "built Electron host:invoke sessionActivity.snapshot -> actual Gateway session.activitySnapshot"
   },
-  "diagnostics": []
+  "fields": {
+    "scope": "workspaceId/sessionKey/agentId/sessionId/runId",
+    "generation": "effective|stale|mismatch|missing|unverified with runtime and profile generation",
+    "backend": "configured|effective|unverified plus runtime kind and native compaction ownership",
+    "model": "provider/model/effort",
+    "grants": "aggregated owner action authorization without grant ids",
+    "context": "configured token limit plus active-run effective budget only when session, provider/model, and run-start facts match",
+    "queue": "session queue settings plus owner queued count",
+    "resources": "configured concurrency/depth limits and explicit effective unverified",
+    "schedule": "configured cron limits and explicit current-state unverified"
+  },
+  "redaction": {
+    "forbiddenPromptIncluded": false,
+    "credentialValuesIncluded": false,
+    "grantIdsIncluded": false,
+    "transportTruncatesOutputs": true
+  },
+  "negativeCases": [
+    "no current-run observation stays missing",
+    "configured does not imply effective",
+    "a context budget from before the active run remains configured-only",
+    "a context budget for another session, provider, or model remains unverified",
+    "current context-budget and capability generation mismatches stay unverified",
+    "invalid capability observation does not promote runtime/model/grant facts"
+  ],
+  "limitations": [
+    "The real journey observes configured policy before a model turn; effective runtime backend/model/grants and active-run context promotion are additionally covered by unit owner facts, not claimed from configuration."
+  ]
 }

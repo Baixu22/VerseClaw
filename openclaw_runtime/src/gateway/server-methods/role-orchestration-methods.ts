@@ -15,6 +15,7 @@ import { getTeamTemplateSnapshot, resolveTeamTemplate } from "../../agents/team-
 import { createOrchestratorPlan, type OrchestratorWorkerPlan } from "../../agents/orchestrator.js";
 import { runOrchestrationObserved, type OrchestrationLifecycleEvent } from "../../agents/orchestrator-run-observed.js";
 import type { DelegationAdmissionContext } from "../../agents/delegation-admission.js";
+import { buildDelegationReceipt } from "../../agents/long-session-delegation-receipt.js";
 import { synthesizeOrchestrationResult } from "../../agents/orchestration-synthesizer.js";
 import {
   normalizeQualityPolicy,
@@ -279,39 +280,33 @@ function readWorkerCommunication(value: unknown): "none" | "lead_mediated" {
 }
 
 function readDelegationAdmission(value: unknown): DelegationAdmissionContext | undefined {
-  if (!isRecord(value)
-    || typeof value.receiptId !== "string"
-    || typeof value.idempotencyKey !== "string"
-    || typeof value.requestDigest !== "string"
-    || typeof value.createdAt !== "string"
-    || !isRecord(value.coordinator)
-    || !isRecord(value.taskRef)) {
-    return undefined;
-  }
-  const coordinator = value.coordinator;
-  if (typeof coordinator.workspaceId !== "string"
+  if (!isRecord(value)) return undefined;
+  const coordinator = isRecord(value.coordinator) ? value.coordinator : null;
+  if (!coordinator
+    || typeof coordinator.workspaceId !== "string"
     || typeof coordinator.agentId !== "string"
     || typeof coordinator.sessionKey !== "string"
-    || typeof coordinator.sessionId !== "string"
-    || typeof coordinator.bindingRevision !== "number") {
-    return undefined;
-  }
-  if (value.taskRef.kind !== "task-ledger" || typeof value.taskRef.nodeId !== "string") {
-    return undefined;
-  }
+    || typeof coordinator.bindingRevision !== "number") return undefined;
+  const rawTask = value.taskRef;
+  const taskRefNodeId = isRecord(rawTask) && rawTask.kind === "task-ledger" && typeof rawTask.nodeId === "string"
+    ? rawTask.nodeId
+    : typeof rawTask === "string" && rawTask.trim() ? rawTask.trim() : null;
+  if (!taskRefNodeId) return undefined;
+  const receiptId = typeof value.receiptId === "string" ? value.receiptId : value.admissionId;
+  if (typeof value.idempotencyKey !== "string" || typeof receiptId !== "string") return undefined;
   return {
-    receiptId: value.receiptId,
+    receiptId,
     idempotencyKey: value.idempotencyKey,
-    requestDigest: value.requestDigest,
-    createdAt: value.createdAt,
+    requestDigest: typeof value.requestDigest === "string" ? value.requestDigest : crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex"),
+    createdAt: typeof value.createdAt === "string" ? value.createdAt : new Date().toISOString(),
     coordinator: {
       workspaceId: coordinator.workspaceId,
       agentId: coordinator.agentId,
       sessionKey: coordinator.sessionKey,
-      sessionId: coordinator.sessionId,
+      sessionId: typeof coordinator.sessionId === "string" ? coordinator.sessionId : String(coordinator.sessionGeneration ?? ""),
       bindingRevision: coordinator.bindingRevision,
     },
-    taskRef: { kind: "task-ledger", nodeId: value.taskRef.nodeId },
+    taskRef: { kind: "task-ledger", nodeId: taskRefNodeId },
   };
 }
 
@@ -537,6 +532,36 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         { sessionKey, runId: orchestrationRunId },
         broadcastLifecycle,
       );
+      const delegationReceipt = delegationAdmission
+        ? buildDelegationReceipt({
+            admission: {
+              schemaVersion: "clawx.session-delegation-admission/v1",
+              admissionId: delegationAdmission.receiptId,
+              idempotencyKey: delegationAdmission.idempotencyKey,
+              coordinator: {
+                workspaceId: delegationAdmission.coordinator.workspaceId,
+                agentId: delegationAdmission.coordinator.agentId,
+                sessionKey: delegationAdmission.coordinator.sessionKey,
+                bindingRevision: delegationAdmission.coordinator.bindingRevision,
+                sessionGeneration: String(delegationAdmission.coordinator.sessionId ?? ""),
+              },
+              taskRef: typeof delegationAdmission.taskRef === "string" ? delegationAdmission.taskRef : delegationAdmission.taskRef.nodeId,
+              parentEnvironment: {
+                kind: "local",
+                canonicalRoot: readString(params.workspaceDir) ?? process.cwd(),
+                backend: "local-workspace",
+                branch: null,
+                detachedHead: false,
+                setupProfile: null,
+              },
+            },
+            orchestrationRunId,
+            result,
+            maxWorkers: resolveMaxWorkers(params, cfg),
+            cfg,
+            parentGenerationAfterRun: delegationAdmission.coordinator.sessionId,
+          })
+        : null;
       const synthesis = synthesizeOrchestrationResult({
         bundle: result.resultBundle,
         blackboardSummary: result.blackboardSummary,
@@ -556,6 +581,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           plan: result.plan,
           resultBundle: result.resultBundle,
           admissionReceipts: result.admissionReceipts,
+          ...(delegationReceipt ? { delegationReceipt } : {}),
           handoffMode: result.handoffMode,
           handoffState: result.handoffState,
           handoffArtifacts: result.handoffArtifacts,

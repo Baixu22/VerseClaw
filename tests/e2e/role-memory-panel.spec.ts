@@ -123,6 +123,7 @@ test.describe('Role memory panel', () => {
         if (request?.module === 'memory') {
           if (request.action === 'list') return respond(request.id, { success: true, cards: [] });
           if (request.action === 'health') return respond(request.id, { success: true, ok: true, checks: [] });
+          if (request.action === 'proposeFactsList') return respond(request.id, { success: true, enabled: false, candidates: [] });
         }
 
         return originalHostInvoke?.(event, request) ?? respond(request?.id, {});
@@ -139,7 +140,7 @@ test.describe('Role memory panel', () => {
     await page.getByRole('button', { name: /Architect/ }).click();
     await expect(page.getByTestId('role-memory-panel')).toBeVisible();
     await page.getByTestId('role-memory-composer-info').hover();
-    await expect(page.getByText('Low-risk proposals may be accepted by policy; conflicts and sensitive changes wait for review.')).toBeVisible();
+    await expect(page.getByText('Candidates remain review-only. Explicit approval is required before any candidate can become memory.')).toBeVisible();
     await expect(page.getByText(/automatic long-term memory|every task.*memory|automatically/i)).toHaveCount(0);
 
     await page.getByTestId('role-memory-review-tab').click();
@@ -500,6 +501,7 @@ test.describe('Role memory panel', () => {
         // & data, with health flattened).
         if (request?.module === 'memory') {
           const action = request.action;
+          if (action === 'proposeFactsList') return respond(request.id, { success: true, enabled: false, candidates: [] });
           const payload = request.payload ?? {};
 
           if (action === 'list') {

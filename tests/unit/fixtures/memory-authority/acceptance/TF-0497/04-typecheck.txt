@@ -1,0 +1,57 @@
+pnpm.cmd : $ node scripts/typecheck-agent-dev.mjs
+At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\memory-authority\acceptance\TF-0497\run-verifica
+tion.ps1:17 char:13
++   $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ node scripts/typecheck-agent-dev.mjs:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[ext-bridge] No external extensions configured — empty stubs up to date.
+$ tsgo --noEmit -p tsconfig.web.json --composite false
+$ tsgo --noEmit -p tsconfig.node.json --composite false
+{
+  "success": true,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 0,
+    "durationMs": 19240,
+    "observationMode": false,
+    "errorCount": 0,
+    "errorLog": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": "ae8bc2b86855e01634c68200312f4c24348bf21f0011067b528a6308660e0913",
+    "inputCount": 12498,
+    "report": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 23246,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 42
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 20919
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 5828
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 19240,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}

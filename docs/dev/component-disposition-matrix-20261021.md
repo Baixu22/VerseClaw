@@ -5,7 +5,7 @@ Schema: `ComponentDispositionManifest/v1`
 Source: `shared/dcs/component-disposition-catalog.ts`  
 Audience: component graduation, later ModelCapabilityProfile, product scope review.
 
-This is a decision manifest, not a deletion change or product-default change. Each covered surface has exactly one disposition, an owner, a current consumer, a concrete implementation/retirement node and evidence references. Experiments are internal-only, time-boxed and require a graduate/retire verdict.
+This is a decision manifest. It records ownership and target modes; only an owning component node with its evidence gates may change a product default. Each covered surface has exactly one disposition, an owner, a current consumer, a concrete implementation/retirement node and evidence references. Experiments are internal-only, time-boxed and require a graduate/retire verdict.
 
 ## Summary
 

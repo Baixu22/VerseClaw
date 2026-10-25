@@ -43,11 +43,13 @@ import {
   type ContextCandidateProjection,
   type ContextCandidateTarget,
 } from "./context-candidate.js";
+import { recordContextFinalSnapshot } from "./context-final-snapshot.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import {
   runRc03SealHook,
   resolveRc03SealState,
   recordRc03SystemPromptContribution,
+  type Rc03SealHookResult,
 } from "./rc03-seal-hook.js";
 import {
   beginTurnInjectionBudget,
@@ -55,6 +57,7 @@ import {
   endTurnInjectionBudget,
   reserveTurnInjectionCapacity,
   skipTurnInjection,
+  summarizeTurnInjection,
   type TurnInjectionChannel,
   type TurnInjectionLedger,
 } from "./turn-injection-budget.js";
@@ -374,8 +377,9 @@ export function finalizeContextOrchestratorTurn(params: {
   const rc03Enabled =
     params.seal !== false &&
     (params.rc03Seal?.enabled === true || resolveRc03SealState(params.cfg).enabled);
+  let sealResult: Rc03SealHookResult | undefined;
   if (rc03Enabled) {
-    runRc03SealHook(projected.projection, projected.messages, {
+    sealResult = runRc03SealHook(projected.projection, projected.messages, {
       enabled: true,
       killed: lineageByTurn.get(params.turnId)?.killSwitchEngaged,
       sessionKey: params.sessionKey,
@@ -385,6 +389,23 @@ export function finalizeContextOrchestratorTurn(params: {
       modelCallIndex: params.modelCallIndex,
       systemPrompt: params.systemPrompt,
       database: params.rc03Seal?.database,
+    });
+  }
+  if (params.seal !== false) {
+    const providerSystemPrompt = params.systemPrompt ?? projected.projection.systemPromptAddition;
+    recordContextFinalSnapshot({
+      turnId: params.turnId,
+      sessionKey: params.sessionKey,
+      runId: params.runId,
+      providerId: params.providerId,
+      attemptIndex: params.attemptIndex,
+      modelCallIndex: params.modelCallIndex,
+      systemPrompt: providerSystemPrompt,
+      messages: projected.messages,
+      projection: projected.projection,
+      budget: summarizeTurnInjection(ledger),
+      rc03PlanId: sealResult?.plan?.planId,
+      bundleDigest: sealResult?.bundleDigest,
     });
   }
   const collection = getContextCandidateCollection(params.turnId);

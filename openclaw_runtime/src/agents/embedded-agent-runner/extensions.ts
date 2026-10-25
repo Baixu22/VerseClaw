@@ -28,6 +28,7 @@ import {
 import { resolveKillSwitchConfig } from "../../context-engine/kill-switch-config-source.js";
 import { isContextEnhancementKillSwitchEngaged } from "../../context-engine/enhancement-kill-switch.js";
 import { isWorkingMemoryRegatherEnabled } from "../../context-engine/working-memory-regather.js";
+import { resolveInternalContextLadderPolicy } from "../../context-engine/context-ladder.js";
 import type { TurnInjectionChannel } from "../../context-engine/turn-injection-budget.js";
 import { dcsObservability } from "../../context-engine/dcs-observability.js";
 import type { BlockStoreApi, ContextBlock, ContextBlockSink } from "../../context-engine/block.js";
@@ -249,6 +250,8 @@ function buildContextBlockFactory(params: {
   projectionFlags: ContextBlockFeatureFlags;
   contextBlockSink?: ContextBlockSink;
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
+  /** Model context window used only to size C6 internal Block allowance. */
+  contextWindowTokens?: number;
   /** Real source-runtime config: the RC-03 seal switch resolves from it. */
   cfg?: OpenClawConfig | undefined;
   /** KS-04: DCS-admitted typed knowledge refs for this model call. */
@@ -330,6 +333,9 @@ function buildContextBlockFactory(params: {
     }
     return inputs;
   }
+  const contextLadder = hasContextBlockProjection(params.projectionFlags)
+    ? resolveInternalContextLadderPolicy(params.contextWindowTokens ?? DEFAULT_CONTEXT_TOKENS)
+    : undefined;
   // F-01: model-call identity inside the attempt. The first finalize (from
   // before_agent_start and the first context callback) seals modelCallIndex 0;
   // every later context callback — one per model call of the tool loop — opens
@@ -415,6 +421,7 @@ function buildContextBlockFactory(params: {
             session_id: sessionId ?? "",
             turnId,
             deferProjection: true,
+            ...(contextLadder ? { contextLadder } : {}),
             ...(options.skipChannels && options.skipChannels.length > 0
               ? { skipChannels: options.skipChannels }
               : {}),
@@ -612,7 +619,10 @@ function buildContextBlockFactory(params: {
       // Omitting it makes assemble() resolve config per-request through
       // `resolveAssembleKillSwitchConfig`, so a mid-session kill takes effect.
       const result = await assembler.assemble(
-        { session_id: sessionId },
+        {
+          session_id: sessionId,
+          ...(contextLadder ? { contextLadder } : {}),
+        },
         buildKnowledgeInputs(messages),
         params.projectionFlags,
       );
@@ -960,6 +970,7 @@ export function buildEmbeddedExtensionFactories(params: {
       buildContextBlockFactory({
         ...params,
         projectionFlags,
+        contextWindowTokens: resolveContextWindowTokens(params),
         prepareToolRegistry: toolRegistry?.prepare,
       }),
     );

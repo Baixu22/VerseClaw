@@ -336,6 +336,9 @@ describe("F-01 model-call boundary: tool-produced working_memory enters the next
     const knowledgeWritten = true;
     const store: Pick<BlockStoreApi, "query" | "upsert"> = {
       query: async (q: { block_types?: string[]; source_systems?: string[] }) => {
+        if (!q.block_types) {
+          return [...(knowledgeWritten ? [knowledgeBlock()] : []), ...(savedWmBlocks.at(-1) ? [savedWmBlocks.at(-1)!.block] : [])];
+        }
         if (q.block_types?.includes("knowledge")) {
           return knowledgeWritten ? [knowledgeBlock()] : [];
         }
@@ -462,6 +465,7 @@ describe("F-01 model-call boundary: tool-produced working_memory enters the next
     };
     const store: Pick<BlockStoreApi, "query" | "upsert"> = {
       query: async (q: { block_types?: string[]; source_systems?: string[] }) => {
+        if (!q.block_types) return [knowledgeBlock()];
         if (q.block_types?.includes("knowledge")) return [knowledgeBlock()];
         return [];
       },

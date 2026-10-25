@@ -5,6 +5,7 @@ import type {
 } from "../../../shared/types/delegation-admission.js";
 import type { RoleSpawnResult } from "./role-spawn.js";
 import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js";
+import type { SessionDelegationIsolation, SessionDelegationToolAuthorization } from "../../../shared/types/session-delegation.js";
 
 export type DelegationAdmissionContext = {
   receiptId: string;
@@ -129,3 +130,9 @@ export function buildDelegationAdmissionReceipt(
     rejectedAt: accepted ? null : now,
   };
 }
+
+export type DelegationWorkerExecution = {
+  backend: "subagent";
+  isolation: SessionDelegationIsolation;
+  toolAuthorization: SessionDelegationToolAuthorization;
+};

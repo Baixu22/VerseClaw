@@ -1,0 +1,426 @@
+{
+  "schema": "clawx.long-session.navigation/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "database": "D:/ClawX/.codegraph/codegraph.db",
+  "indexedCommit": "d887414facd34d0ebe740e5ae58a1316573d0c0f",
+  "correctnessEvidence": false,
+  "symbols": [
+    {
+      "id": "function:a2441049336fe7ca5599f63c40359d6f",
+      "name": "buildModelCapabilityProfile",
+      "kind": "function",
+      "file_path": "shared/model-capability-profile.ts",
+      "start_line": 857,
+      "end_line": 902,
+      "callers": [
+        {
+          "kind": "calls",
+          "name": "profile",
+          "file_path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+          "start_line": 124,
+          "line": 124
+        },
+        {
+          "kind": "calls",
+          "name": "normalizedEquivalent",
+          "file_path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+          "start_line": 147,
+          "line": 147
+        },
+        {
+          "kind": "calls",
+          "name": "changedProfile",
+          "file_path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+          "start_line": 164,
+          "line": 164
+        },
+        {
+          "kind": "calls",
+          "name": "generate-acceptance.mts",
+          "file_path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+          "start_line": 1,
+          "line": 180
+        },
+        {
+          "kind": "calls",
+          "name": "generate-acceptance.mts",
+          "file_path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+          "start_line": 1,
+          "line": 183
+        },
+        {
+          "kind": "calls",
+          "name": "generate-acceptance.mts",
+          "file_path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+          "start_line": 1,
+          "line": 186
+        },
+        {
+          "kind": "calls",
+          "name": "generate-acceptance.mts",
+          "file_path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+          "start_line": 1,
+          "line": 191
+        },
+        {
+          "kind": "calls",
+          "name": "generate-acceptance.mts",
+          "file_path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+          "start_line": 1,
+          "line": 196
+        },
+        {
+          "kind": "calls",
+          "name": "generate-acceptance.mts",
+          "file_path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+          "start_line": 1,
+          "line": 201
+        },
+        {
+          "kind": "calls",
+          "name": "generate-acceptance.mts",
+          "file_path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+          "start_line": 1,
+          "line": 202
+        },
+        {
+          "kind": "calls",
+          "name": "build",
+          "file_path": "tests/unit/model-capability-profile.test.ts",
+          "start_line": 92,
+          "line": 93
+        },
+        {
+          "kind": "calls",
+          "name": "model-capability-profile.test.ts",
+          "file_path": "tests/unit/model-capability-profile.test.ts",
+          "start_line": 1,
+          "line": 260
+        },
+        {
+          "kind": "calls",
+          "name": "model-capability-profile.test.ts",
+          "file_path": "tests/unit/model-capability-profile.test.ts",
+          "start_line": 1,
+          "line": 266
+        },
+        {
+          "kind": "calls",
+          "name": "model-capability-profile.test.ts",
+          "file_path": "tests/unit/model-capability-profile.test.ts",
+          "start_line": 1,
+          "line": 270
+        },
+        {
+          "kind": "calls",
+          "name": "model-capability-profile.test.ts",
+          "file_path": "tests/unit/model-capability-profile.test.ts",
+          "start_line": 1,
+          "line": 280
+        },
+        {
+          "kind": "calls",
+          "name": "model-capability-profile.test.ts",
+          "file_path": "tests/unit/model-capability-profile.test.ts",
+          "start_line": 1,
+          "line": 286
+        },
+        {
+          "kind": "calls",
+          "name": "model-capability-profile.test.ts",
+          "file_path": "tests/unit/model-capability-profile.test.ts",
+          "start_line": 1,
+          "line": 292
+        },
+        {
+          "kind": "contains",
+          "name": "model-capability-profile.ts",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 1,
+          "line": null
+        },
+        {
+          "kind": "imports",
+          "name": "generate-acceptance.mts",
+          "file_path": "tests/unit/fixtures/model-capability-profile/acceptance/TF-0492/generate-acceptance.mts",
+          "start_line": 1,
+          "line": 8
+        },
+        {
+          "kind": "imports",
+          "name": "model-capability-profile.test.ts",
+          "file_path": "tests/unit/model-capability-profile.test.ts",
+          "start_line": 1,
+          "line": 16
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "createModelCapabilityStaticManifest",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 322,
+          "line": 858
+        },
+        {
+          "kind": "calls",
+          "name": "validateModelCapabilityStaticManifest",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 349,
+          "line": 859
+        },
+        {
+          "kind": "calls",
+          "name": "validateEffectiveFactsInput",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 399,
+          "line": 860
+        },
+        {
+          "kind": "calls",
+          "name": "isIsoTimestamp",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 306,
+          "line": 861
+        },
+        {
+          "kind": "calls",
+          "name": "issue",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 288,
+          "line": 861
+        },
+        {
+          "kind": "calls",
+          "name": "issue",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 288,
+          "line": 864
+        },
+        {
+          "kind": "calls",
+          "name": "resolvedEffectiveFacts",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 555,
+          "line": 868
+        },
+        {
+          "kind": "calls",
+          "name": "computeModelCapabilityStaticDigest",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 592,
+          "line": 869
+        },
+        {
+          "kind": "calls",
+          "name": "computeModelCapabilityEffectiveDigest",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 602,
+          "line": 870
+        },
+        {
+          "kind": "calls",
+          "name": "buildPromptAddition",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 627,
+          "line": 871
+        },
+        {
+          "kind": "calls",
+          "name": "normalizeScope",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 472,
+          "line": 877
+        },
+        {
+          "kind": "calls",
+          "name": "trimmed",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 292,
+          "line": 878
+        },
+        {
+          "kind": "calls",
+          "name": "assertModelCapabilityProfile",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 851,
+          "line": 901
+        },
+        {
+          "kind": "references",
+          "name": "MODEL_CAPABILITY_PROFILE_SCHEMA",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 14,
+          "line": null
+        },
+        {
+          "kind": "references",
+          "name": "MODEL_CAPABILITY_PROMPT_MAX_CHARS",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 16,
+          "line": null
+        },
+        {
+          "kind": "references",
+          "name": "MODEL_CAPABILITY_PROMPT_MIN_CHARS",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 17,
+          "line": null
+        },
+        {
+          "kind": "references",
+          "name": "BuildModelCapabilityProfileInput",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 226,
+          "line": 857
+        },
+        {
+          "kind": "references",
+          "name": "ModelCapabilityProfile",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 198,
+          "line": 857
+        },
+        {
+          "kind": "references",
+          "name": "ModelCapabilityProfile",
+          "file_path": "shared/model-capability-profile.ts",
+          "start_line": 198,
+          "line": 874
+        }
+      ]
+    },
+    {
+      "id": "function:345031599af9e43ba3e41c24ee663565",
+      "name": "registerChatAbortController",
+      "kind": "function",
+      "file_path": "openclaw_runtime/src/gateway/chat-abort.ts",
+      "start_line": 113,
+      "end_line": 166,
+      "callers": [
+        {
+          "kind": "calls",
+          "name": "agent",
+          "file_path": "openclaw_runtime/src/gateway/server-methods/agent.ts",
+          "start_line": 1021,
+          "line": 2360
+        },
+        {
+          "kind": "calls",
+          "name": "chat.send",
+          "file_path": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+          "start_line": 3164,
+          "line": 3953
+        },
+        {
+          "kind": "contains",
+          "name": "chat-abort.ts",
+          "file_path": "openclaw_runtime/src/gateway/chat-abort.ts",
+          "start_line": 1,
+          "line": null
+        },
+        {
+          "kind": "imports",
+          "name": "agent.ts",
+          "file_path": "openclaw_runtime/src/gateway/server-methods/agent.ts",
+          "start_line": 1,
+          "line": 124
+        },
+        {
+          "kind": "imports",
+          "name": "chat.ts",
+          "file_path": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+          "start_line": 1,
+          "line": 135
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "resolveDateTimestampMs",
+          "file_path": "openclaw_runtime/packages/normalization-core/src/number-coercion.ts",
+          "start_line": 137,
+          "line": 144
+        },
+        {
+          "kind": "calls",
+          "name": "asDateTimestampMs",
+          "file_path": "openclaw_runtime/packages/normalization-core/src/number-coercion.ts",
+          "start_line": 113,
+          "line": 146
+        },
+        {
+          "kind": "calls",
+          "name": "normalizeActiveAgentId",
+          "file_path": "openclaw_runtime/src/gateway/chat-abort.ts",
+          "start_line": 173,
+          "line": 151
+        },
+        {
+          "kind": "calls",
+          "name": "resolveChatRunExpiresAtMs",
+          "file_path": "openclaw_runtime/src/gateway/chat-abort.ts",
+          "start_line": 69,
+          "line": 155
+        },
+        {
+          "kind": "calls",
+          "name": "normalizeProviderIdForActiveRun",
+          "file_path": "openclaw_runtime/src/gateway/chat-abort.ts",
+          "start_line": 168,
+          "line": 158
+        },
+        {
+          "kind": "calls",
+          "name": "normalizeProviderIdForActiveRun",
+          "file_path": "openclaw_runtime/src/gateway/chat-abort.ts",
+          "start_line": 168,
+          "line": 159
+        },
+        {
+          "kind": "contains",
+          "name": "cleanup",
+          "file_path": "openclaw_runtime/src/gateway/chat-abort.ts",
+          "start_line": 130,
+          "line": null
+        },
+        {
+          "kind": "references",
+          "name": "ChatAbortControllerEntry",
+          "file_path": "openclaw_runtime/src/gateway/chat-abort.ts",
+          "start_line": 17,
+          "line": 114
+        },
+        {
+          "kind": "references",
+          "name": "ChatAbortControllerEntry",
+          "file_path": "openclaw_runtime/src/gateway/chat-abort.ts",
+          "start_line": 17,
+          "line": 125
+        },
+        {
+          "kind": "references",
+          "name": "RegisteredChatAbortController",
+          "file_path": "openclaw_runtime/src/gateway/chat-abort.ts",
+          "start_line": 49,
+          "line": 128
+        },
+        {
+          "kind": "references",
+          "name": "ChatAbortControllerEntry",
+          "file_path": "openclaw_runtime/src/gateway/chat-abort.ts",
+          "start_line": 17,
+          "line": 147
+        },
+        {
+          "kind": "references",
+          "name": "cleanup",
+          "file_path": "openclaw_runtime/src/gateway/chat-abort.ts",
+          "start_line": 130,
+          "line": 140
+        }
+      ]
+    }
+  ]
+}

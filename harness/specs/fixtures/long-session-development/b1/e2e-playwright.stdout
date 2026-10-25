@@ -1,0 +1,6 @@
+
+Running 1 test using 1 worker
+
+  ok 1 tests\e2e\long-session-effective-policy.spec.ts:84:5 › real Host and Gateway expose a secret-free configured policy without inventing effective facts (21.9s)
+
+  1 passed (23.6s)

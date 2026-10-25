@@ -1,0 +1,28 @@
+{
+  "validation": {
+    "ok": true,
+    "issues": [],
+    "requiredEvidence": [
+      "contract"
+    ],
+    "missingEvidence": [],
+    "graduationPass": true,
+    "countsAsGraduated": false,
+    "recomputedVerdict": "pass",
+    "defaultChangedAgainstAuthority": false,
+    "evidenceGradeDetected": "e2e"
+  },
+  "defaultChange": {
+    "ok": true,
+    "defaultChanged": false,
+    "reason": "default mode is unchanged"
+  },
+  "taskForestDone": null,
+  "ok": true,
+  "reportPath": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\tests\\unit\\fixtures\\memory-authority\\acceptance\\TF-0498\\component-graduation-report.json",
+  "expected": {
+    "recomputeInputDigest": "852142cd35a3e80e051c3a78f9e6d2a67b667f1100e3bf1f6d6cd8867ee0d882"
+  },
+  "currentDefaultMode": "opt-in",
+  "requireGraduation": true
+}

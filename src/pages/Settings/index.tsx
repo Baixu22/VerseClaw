@@ -113,7 +113,6 @@ const settingsAgentDev = createPreloadableLazy<Record<string, never>>(() => impo
 const settingsContextControlPlane = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ContextControlPlanePanel').then((m) => ({ default: m.ContextControlPlanePanel as ComponentType<Record<string, never>> })));
 const settingsRemoteTaskDeveloper = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/RemoteTaskDeveloperPanel').then((m) => ({ default: m.RemoteTaskDeveloperPanel as ComponentType<Record<string, never>> })));
 const settingsDcsProdFlags = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/DcsProdFlagsPanel').then((m) => ({ default: m.DcsProdFlagsPanel as ComponentType<Record<string, never>> })));
-const settingsContextLayers = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ContextLayersExplainer').then((m) => ({ default: m.ContextLayersExplainer as ComponentType<Record<string, never>> })));
 const settingsEfficiencySampling = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/EfficiencySamplingPanel').then((m) => ({ default: m.EfficiencySamplingPanel as ComponentType<Record<string, never>> })));
 const settingsRecovery = createPreloadableLazy<Record<string, never>>(() => import('./sections/RecoverySettingsSection').then((m) => ({ default: m.RecoverySettingsSection as ComponentType<Record<string, never>> })));
 
@@ -127,7 +126,6 @@ const AgentDevWorkbenchPanelLazy = settingsAgentDev.Component;
 const ContextControlPlanePanelLazy = settingsContextControlPlane.Component;
 const RemoteTaskDeveloperPanelLazy = settingsRemoteTaskDeveloper.Component;
 const DcsProdFlagsPanelLazy = settingsDcsProdFlags.Component;
-const ContextLayersExplainerLazy = settingsContextLayers.Component;
 const EfficiencySamplingPanelLazy = settingsEfficiencySampling.Component;
 type ControlUiInfo = {
   port: number;
@@ -1509,6 +1507,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
             </SettingsSection>
           )}
 
+
           {currentSection === 'models' && (
             <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} variant="generic" />}>
               <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><SettingsModelsLazy embedded /></div>
@@ -2055,7 +2054,6 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
 
                   <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} variant="generic" />}>
                     <div className="space-y-4 animate-in fade-in duration-150 motion-reduce:animate-none">
-                      <ContextLayersExplainerLazy />
                       <EfficiencySamplingPanelLazy />
                       <DcsProdFlagsPanelLazy />
                       <RemoteTaskDeveloperPanelLazy />

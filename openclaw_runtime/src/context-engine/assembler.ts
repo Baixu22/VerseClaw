@@ -90,9 +90,10 @@ export interface AssembleRequest {
    */
   skipChannels?: TurnInjectionChannel[];
   /**
-   * Explicit context-ladder opt-in. Omitted keeps the assembler byte-identical
-   * to the pre-ladder path; enabled runs the ladder once over this session's
-   * blocks and uses only its active blocks for DCS injections.
+   * Internal context-ladder policy supplied by the production DCS factory.
+   * Omitted keeps the low-level assembler byte-identical for legacy callers;
+   * enabled runs the ladder once over this session's blocks and uses only its
+   * active blocks for DCS injections.
    */
   contextLadder?: {
     enabled: true;

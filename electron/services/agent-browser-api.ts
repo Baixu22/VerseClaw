@@ -12,6 +12,7 @@ import {
 import { getDataDir as getHostDataDir } from '../utils/paths';
 import { recordPermissionDecisionEvent } from './permissions-api';
 import { getActiveWorkspaceProfile } from './workspaces-api';
+import { findSessionDeleteGateBySession } from './session-delete-gate';
 import { recordResourceEnvelopeEntry, removeResourceEnvelopeEntry } from './resource-envelope';
 import {
   AgentBrowserFacade,
@@ -154,6 +155,12 @@ async function prepareHostContext(): Promise<void> {
 
 class HostAgentBrowserService extends ModuleAgentBrowserService {
   async open(payload: Parameters<ModuleAgentBrowserService['open']>[0] = {}) {
+    const sessionKey = payload.sessionKey?.trim();
+    if (sessionKey && await findSessionDeleteGateBySession(sessionKey)) {
+      const error = new Error('Session lifecycle mutation is in progress; browser admission is fenced') as Error & { code?: string };
+      error.code = 'E_SESSION_LIFECYCLE_FENCED';
+      throw error;
+    }
     const workspace = await getActiveWorkspaceProfile().catch(() => null);
     if (workspace && payload.workspaceId && payload.workspaceId !== workspace.id) {
       const error = new Error('Browser session workspace does not match the active workspace') as Error & { code?: string };

@@ -1,9 +1,10 @@
 {
   "schema": "clawx.long-session.a2-cleanup-readback/v1",
   "driven_by": "agent",
-  "actor": "codex-long-session-a2",
+  "actor": "codex-long-session-r2",
   "task": "TF-0549",
-  "generatedAt": "2026-10-22T18:04:10.656Z",
+  "generatedAt": "2026-10-23T09:37:48.868Z",
+  "candidate": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
   "resources": {
     "electronStarted": true,
     "gatewayStarted": true,
@@ -15,10 +16,15 @@
     "gatewayStopped": true,
     "tempRootsRemoved": true,
     "recoveryRequired": false,
-    "matchingResidualProcesses": 0,
-    "matchingResidualE2ERoots": 0
+    "ledgerEntries": 9,
+    "survivors": [],
+    "remaining": [],
+    "lastRun": "passed"
   },
   "remaining": [],
-  "notes": "The real Electron/Host/Gateway E2E fixture launched and closed the app for each test. Post-run process/root readback found no matching Electron, Gateway, openclaw-source-state or verse-claw-e2e-user-data process/dir except the query process itself. The D-drive raw run directory is intentionally retained.",
-  "rawRunRetained": "D:\\tmp\\long-session-a2\\5daef609d"
+  "notes": "Read back from the clean-candidate Playwright Electron run. The fixture records process survivors, run-root sweep and lifecycle receipt; it does not claim browser or background-process coverage not exercised by this E2E.",
+  "evidence": [
+    "harness/specs/fixtures/long-session-development/a2/e2e-process-cleanup.json",
+    "harness/specs/fixtures/long-session-development/a2/e2e-lifecycle-receipt.json"
+  ]
 }

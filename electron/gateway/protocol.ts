@@ -32,6 +32,23 @@ export interface JsonRpcError {
   data?: unknown;
 }
 
+export type GatewayRpcErrorPayload = {
+  code?: unknown;
+  message?: string;
+  details?: unknown;
+  data?: unknown;
+  retryable?: unknown;
+  [key: string]: unknown;
+};
+
+/** Preserves Gateway error metadata when a correlated RPC fails. */
+export class GatewayRpcError extends Error {
+  constructor(readonly payload: GatewayRpcErrorPayload) {
+    super(payload.message ?? "Unknown error");
+    this.name = "GatewayRpcError";
+  }
+}
+
 /**
  * JSON-RPC 2.0 Notification (no id, no response expected)
  */

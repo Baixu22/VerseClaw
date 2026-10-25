@@ -41,7 +41,9 @@ See [visual provenance](resources/readme/2026-10-05/README.md) for capture condi
 | Chat and sessions | Stream responses, attach files and knowledge references, inspect tool results; search, pin, group, archive and restore conversations | Main view and session sidebar |
 | Project workspaces | Switch projects, browse and preview files, use terminals, browsers, Git changes and code review beside the conversation | Workspace panel in the chat toolbar |
 | Models and providers | Manage provider accounts, default models and fallback settings; inspect token usage history | Settings → Models & Providers |
-| Agents and tasks | Configure agents and roles, inspect subagent activity; record tasks in Task Ledger and start explicit Task Loop or ClawGraph workflows | Settings → Agents; sidebar's more menu |
+| Agents and tasks | Configure agents and roles, inspect subagent activity; record tasks in Task Ledger and start explicit Task Loop or Delegated workers enter through the typed `sessions.delegate` Host path after the existing coordinator, permission and Gateway owners admit them. Its receipt binds the coordinator revision and session generation, Task Ledger reference, child session/run, effective tool authorization, actual isolation backend, checkout facts, and bounded resources. `accepted` records admission only; it does not claim that the child is running or complete. Stale generations, revoked approvals, unsupported backends and unverified parallel writers fail closed or serialize. See [long-session delegation admission](harness/specs/guides/long-session-delegation-admission.md).
+
+ClawGraph workflows | Settings → Agents; sidebar's more menu |
 | Knowledge | Search the library, manage sources and references, review Inbox items, drafts and proposals | Sidebar → Knowledge |
 | Memory | Review accepted memory and persisted candidates, approve proposals, delete/tombstone records, export a hashed JSON snapshot, and propose “Remember this” | Sidebar → Memory |
 | Inbox | Handle permission requests, remote tasks and browser tasks that need attention; inspect their history | Sidebar → Inbox |
@@ -66,7 +68,7 @@ Choose a workspace and model → describe the task and attach relevant files →
 
 *AI-generated concept illustration using the project’s flame logo: task → workspace tools → review and verification. It is not an app screenshot or a promise that verification passes automatically.*
 
-The panel supports file, terminal, browser, review, artifact and activity tabs. Terminals can sit beside or below the conversation. The browser opens local previews or web pages, while the review surface brings together Git changes and related actions. Session activity shows run and command status.
+The panel supports file, terminal, browser, review, artifact and activity tabs. Terminals can sit beside or below the conversation. The browser opens local previews or web pages, while the review surface brings together Git changes and related actions. Session activity shows run and command status plus the configured runtime, model and limits; current-run effective facts stay marked unverified until the runtime supplies a matching fresh observation. Its policy disclosure exposes configuration sources, compatibility and override reasons, and action permissions. The same surface distinguishes run abort from session stop, the view-only activity retention window from transcript/resource TTLs, and transcript forks from Git worktree isolation.
 
 The permission selector includes Read-only, Plan, Accept edits and Full access. Plan mode restricts user-file changes, while runtime metadata may still be written. See [workspace permission semantics](docs/clawx-product-semantics.md) for the precise boundary.
 
@@ -88,7 +90,7 @@ The Knowledge corner character opens a compact floating conversation on click an
 
 Ordinary Chat handles immediate collaboration. Task Ledger stores goals, task nodes, checkpoints and evidence facts. Task Loop is an explicitly started, constrained execution flow. Chat can suggest an upgrade without automatically becoming a Task Loop.
 
-Workspace identifies the local execution root, agent binding and permission context. Project denotes a long-term work container; the shared identity contract currently supports a compatibility mapping, not independent Project management. Run identifies an execution attempt, while Task Ledger remains the source of user-visible task facts. See the [identity vocabulary](docs/clawx-product-semantics.md#identity-and-scope-vocabulary).
+Workspace identifies the local execution root, agent binding and permission context. Project denotes a long-term work container; the shared identity contract currently supports a compatibility mapping, not independent Project management. Run identifies an execution attempt, while Task Ledger remains the source of user-visible task facts. An explicit coordinator binding may pin one Workspace/Assistant/Session to existing Task Ledger references and a canonical local checkout or managed worktree; ordinary Chat does not enter that scope automatically. See the [identity vocabulary](docs/clawx-product-semantics.md#identity-and-scope-vocabulary).
 
 ClawGraph loads workspace YAML workflows and displays compilation diagnostics, node state, events and review items. Runtime Workboard owns scheduling separately from the user-facing Task Ledger. See [agent orchestration](docs/multi-agent-orchestration/README.md) and [concept boundaries](docs/clawx-product-semantics.md).
 
@@ -361,3 +363,7 @@ With runtime `diagnostics.otel.enabled` and the `trace.cost-sampling` diagnostic
 
 Session handoff creation validates and persists its Task Ledger lineage in Main before activating the new conversation; cycles or unreadable history are rejected. To enable the relay depth limit, set `runtime.handoff.enabled=true` in `openclaw.json` (`maxDepth`: 1–64, implicit limit 3). The limit defaults off, and forks retain relay ancestry.
 **Telemetry consent:** Turning telemetry off in Settings takes effect immediately: new events stop, the SDK queue is discarded locally and is not revived by re-enabling. A request already delivered cannot be recalled. See [the consent lifecycle](docs/dev/telemetry-consent-lifecycle.md).
+
+Once all expected workers for one orchestration run are terminal, the session activity owner derives one consolidated completion-batch receipt with separate completion and durable delivery states. A reset or handoff fences stale results instead of steering the new generation.
+
+The Chat toolbar resource chip also exposes an explicitly bound long session, its canonical environment and revision, Task Ledger references, completion batches, and pause/resume controls. Session activity merges a generation-scoped, owner-derived inventory for terminals, browsers, managed ports, runtime processes, durable helpers, worktrees and admission permits. Unmeasured values stay unknown; explicit OPENCLAW_LONG_SESSION_* caps can reject a new process, background terminal or worktree before creation. Workspace switching preserves resources; session delete, workspace delete and app quit close only their owning scope.

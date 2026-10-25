@@ -372,6 +372,10 @@ describe("DCS Stage 3: tool_registry Assembler injection", () => {
     const result = await assembler.assemble(
       { session_id: "session-a" },
       { existing_output: messages },
+      {
+        "runtime.contextBlock.working_memory.enabled": false,
+        "runtime.contextBlock.tool_registry.enabled": false,
+      },
     );
 
     expect(result.output).toBe(messages);
@@ -1039,7 +1043,7 @@ describe("FP-P2-06 DCS turn-ledger attribution", () => {
 });
 
 
-describe("explicit context-ladder assembler wiring", () => {
+describe("internal context-ladder assembler wiring", () => {
   const knowledgeBlock = {
     block_id: "knowledge:main",
     block_type: "knowledge" as const,

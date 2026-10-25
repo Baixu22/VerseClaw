@@ -1,0 +1,67 @@
+{
+  "proposal_id": "TFP-TF-0493-context-assembly-authority-20261022",
+  "session_id": "tf-0493-context-assembly-authority-20261022",
+  "rationale": "TF-0493 的 6 条 acceptance_criteria 已由磁盘证据和自动 gate 逐条证明：同一 turn 复用单一 TurnInjectionLedger；每个实际 model call 记录一个 ContextFinalSnapshot/v1，重复 finalize 幂等且冲突 final state 被拒绝；C6 已成为 DCS Block projection 下的自动 bounded internal policy（8000/4000 token fixtures，无用户 opt-in）；VToken Bridge 与独立 context-layer 文案从 Settings 用户面移除，host API 保留为内部能力；final RequestEnvelope 绑定 sealed plan 与 ContextBundle digest；tool loop、provider fallback、compact、handoff 与 kill/rollback 由 focused runtime suite 验证。22 contract tests、195 runtime tests、5 Settings E2E、full typecheck、lint、catalogs、contract、build、no-BOM、diff、graduation report 和 SHA256 readback 均 exit 0。证据为 driven_by=agent、actor=codex；未修改产品默认值，未处理 VerseGit。应用后仅激活依赖满足且 display_order 最低的 TF-0494，不执行它。",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0493",
+      "fields": {
+        "evidence": [
+          "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+          "openclaw_runtime/src/context-engine/context-final-snapshot.ts",
+          "openclaw_runtime/src/context-engine/context-ladder.ts",
+          "openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
+          "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+          "openclaw_runtime/src/context-engine/assembler.ts",
+          "openclaw_runtime/src/context-engine/assembler.test.ts",
+          "openclaw_runtime/src/context-engine/assembler.kill-switch.test.ts",
+          "openclaw_runtime/src/context-engine/rc03-seal.test.ts",
+          "openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts",
+          "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory.test.ts",
+          "openclaw_runtime/src/agents/embedded-agent-runner/extensions.knowledge.test.ts",
+          "openclaw_runtime/src/agents/embedded-agent-runner/extensions.task-state.test.ts",
+          "src/pages/Settings/index.tsx",
+          "tests/e2e/vtoken-bridge-settings.spec.ts",
+          "tests/e2e/dcs-prod-p0-settings.spec.ts",
+          "tests/unit/context-assembly-authority-tf0493.test.ts",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/README.md",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/component-graduation-report.json",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/SHA256SUMS",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/generate-acceptance.mts",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/verification.json",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/task-forest-scope-proposal.json",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/01-contract-tests.txt",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/02-runtime-context-tests.txt",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/03-typecheck.txt",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/04-lint-check.txt",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/05-catalogs-check.txt",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/06-contract-check.txt",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/07-no-bom.txt",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/08-diff-check.txt",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/09-build-vite.txt",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/11-component-graduation-gate.txt",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/12-sha256sums-check.txt",
+          "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/13-task-forest-validate-preapply.txt"
+        ],
+        "next_action": "TF-0493 已收口；仅 TF-0494 为下一 ready 节点，未执行。",
+        "summary": "唯一上下文装配路径已收口：单 turn ledger、每 model call 单 immutable final snapshot、C6 自动内部策略、VToken 去用户面、provider envelope 与 sealed bundle 对齐。未翻转产品默认值，未处理 VerseGit。"
+      }
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0493",
+      "status": "done",
+      "progress": 100
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0494",
+      "status": "ready",
+      "progress": 0
+    }
+  ]
+}

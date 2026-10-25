@@ -117,6 +117,8 @@ export type BuildLongSessionContinuityInput = {
   workingContext?: TaskLedgerWorkingContextSnapshot | null;
   compression?: ContinuityCompressionInput | null;
   memorySurface?: MemorySurfaceSnapshot | null;
+  roleMemoryEnabled?: boolean;
+  nativeBackendOwnsCompaction?: boolean;
   roleName?: string;
   agentId?: string;
   knowledgeReferences?: readonly ContinuityKnowledgeReferenceInput[];
@@ -387,6 +389,12 @@ function collectCompression(
     freshness: 'unknown' as const,
     trust: 'owner-fact' as const,
   };
+  if (input.nativeBackendOwnsCompaction === true) {
+    for (const [index, claim] of (compression.unverifiedClaims ?? []).entries()) {
+      exclusions.push({ ref: `compression-unverified:${index}:${claim.slice(0, 80)}`, reason: 'unverified-claim' });
+    }
+    return;
+  }
   const addLines = (kind: ContinuityItemKind, source: ContinuityItemSource, lines: readonly string[] | undefined) => {
     for (const [index, line] of (lines ?? []).entries()) {
       addItem(items, seen, {
@@ -444,7 +452,27 @@ function collectAcceptedMemory(
       exclusions.push({ ref: entry.key, reason: 'candidate-not-accepted' });
       continue;
     }
-    if (!entry.modelVisible || !entry.injectable || !entry.retrievable) {
+    const ownerGateOpen = input.memorySurface?.status?.roleMemory?.readGate !== 'closed';
+    const expired = Boolean(entry.expiresAt && Number.isFinite(Date.parse(entry.expiresAt)) && Date.parse(entry.expiresAt) <= now);
+    const revoked = entry.stateLabel === 'tombstone'
+      || entry.stateLabel === 'archived'
+      || entry.stateLabel === 'revoked'
+      || entry.stateLabel === 'superseded';
+    if (expired) {
+      exclusions.push({ ref: entry.key, reason: 'expired' });
+      continue;
+    }
+    if (revoked) {
+      exclusions.push({ ref: entry.key, reason: 'revoked-or-superseded' });
+      continue;
+    }
+    if (
+      input.roleMemoryEnabled === false ||
+      !ownerGateOpen ||
+      !entry.modelVisible ||
+      !entry.injectable ||
+      !entry.retrievable
+    ) {
       exclusions.push({ ref: entry.key, reason: 'owner-gate-closed' });
       continue;
     }
@@ -546,8 +574,12 @@ export function buildLongSessionContinuityContext(
     },
     {
       source: 'compression-artifact',
-      status: input.availability?.compression === false ? 'unavailable' : input.compression ? 'available' : 'empty',
-      ...(input.compression ? { detail: input.compression.checkpointId ?? 'latest checkpoint' } : { detail: 'no compression artifact for this session' }),
+      status: input.availability?.compression === false || input.nativeBackendOwnsCompaction === true
+        ? 'unavailable'
+        : input.compression ? 'available' : 'empty',
+      ...(input.nativeBackendOwnsCompaction === true
+        ? { detail: 'native backend owns compaction and continuity projection' }
+        : input.compression ? { detail: input.compression.checkpointId ?? 'latest checkpoint' } : { detail: 'no compression artifact for this session' }),
     },
     {
       source: 'memory',

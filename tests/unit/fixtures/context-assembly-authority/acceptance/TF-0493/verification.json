@@ -1,0 +1,206 @@
+{
+    "schemaVersion":  "ContextAssemblyAuthorityVerification/v1",
+    "taskForestNodeId":  "TF-0493",
+    "generatedAt":  "2026-10-24T07:40:09.0372991Z",
+    "driven_by":  "agent",
+    "actor":  "codex-long-session-r2",
+    "status":  "pass",
+    "gates":  [
+                  {
+                      "id":  "01-contract-tests",
+                      "command":  "pnpm exec vitest run \u003cTF-0493 contract and provider-boundary tests\u003e",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/01-contract-tests.txt",
+                      "outputSha256":  "734e289735c426b642482815323683fd5884fa6af454e1a2c6ac146297304362"
+                  },
+                  {
+                      "id":  "02-runtime-context-tests",
+                      "command":  "openclaw_runtime focused context assembly suite",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/02-runtime-context-tests.txt",
+                      "outputSha256":  "8f707d400342b4b0720207a5ea08fa241ffb19631c5a1980e6db1f0906ef43ec"
+                  },
+                  {
+                      "id":  "03-typecheck",
+                      "command":  "pnpm run typecheck",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/03-typecheck.txt",
+                      "outputSha256":  "fbf6ff02ad06accc8dde67a2e5d6fabf39adcf62afa0427364080fef83cba87b"
+                  },
+                  {
+                      "id":  "04-lint-check",
+                      "command":  "pnpm run lint:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/04-lint-check.txt",
+                      "outputSha256":  "c80058265a2995fffb61c8c46f26c495cbec14804543fd5bf58df14b07f5be70"
+                  },
+                  {
+                      "id":  "05-catalogs-check",
+                      "command":  "pnpm run catalogs:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/05-catalogs-check.txt",
+                      "outputSha256":  "006c7dc4f0a1ce5dd2ca79c9ce19fe319528d59b87bb3dab0cc4e5700d8aa016"
+                  },
+                  {
+                      "id":  "06-contract-check",
+                      "command":  "pnpm run contract:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/06-contract-check.txt",
+                      "outputSha256":  "60fba4ee21df7b7fb98a839a097533c273aa90c3ea966bec8519477dc93507bc"
+                  },
+                  {
+                      "id":  "07-no-bom",
+                      "command":  "node scripts/check-no-bom.mjs",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/07-no-bom.txt",
+                      "outputSha256":  "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4"
+                  },
+                  {
+                      "id":  "08-diff-check",
+                      "command":  "git diff --check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/08-diff-check.txt",
+                      "outputSha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  {
+                      "id":  "09-build-vite",
+                      "command":  "pnpm run build:vite",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/09-build-vite.txt",
+                      "outputSha256":  "ddefa326e639b5072d93f8fb3f565cf2fc14ed8f5f8c15d6fae5fa1c95ac9027"
+                  },
+                  {
+                      "id":  "09a-build-runtime",
+                      "command":  "pnpm run build:runtime",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/09a-build-runtime.txt",
+                      "outputSha256":  "5979198c10aa87b0e84a9ed784e2f026f6e86843a23642dbb50a4c0605e81ed8"
+                  },
+                  {
+                      "id":  "10-settings-e2e",
+                      "command":  "playwright: each VToken absence + DCS Settings scenario in a fresh worker",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt",
+                      "outputSha256":  "bf6e0210222f1a9f1ac5164d3abcd9a712229aab790ae137ec185ef431020719"
+                  },
+                  {
+                      "id":  "11-component-graduation-gate",
+                      "command":  "component-graduation-report.mts --report \u003cTF-0493 report\u003e --root . --require-graduation",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/11-component-graduation-gate.txt",
+                      "outputSha256":  "44102e485b5e1de1993b43ea7d5d7b8936f02f0eea8df90e91b383906cb2d511"
+                  },
+                  {
+                      "id":  "12-sha256sums-check",
+                      "command":  "PowerShell SHA256 recompute against SHA256SUMS",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/12-sha256sums-check.txt",
+                      "outputSha256":  "442b85d36e754acaa29abf9542892ba069bdad1955ad3e3a049dbbadf5b7e239"
+                  }
+              ],
+    "sha256sums":  [
+                       {
+                           "file":  "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+                           "expected":  "e99d12049067a3a42bec959f8a62417d388996fb3fdc4471edb82a343abb4d21",
+                           "actual":  "e99d12049067a3a42bec959f8a62417d388996fb3fdc4471edb82a343abb4d21",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/context-engine/context-final-snapshot.ts",
+                           "expected":  "ffbe2caad45c08d063b5089ae5f594ce3b6d0fe11a7fb4f72e6d8da61bbd1f29",
+                           "actual":  "ffbe2caad45c08d063b5089ae5f594ce3b6d0fe11a7fb4f72e6d8da61bbd1f29",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/context-engine/context-ladder.ts",
+                           "expected":  "8b115c35c3f77b76f1a23ed798ab0e6107745f725038f9a919327a18a7d36337",
+                           "actual":  "8b115c35c3f77b76f1a23ed798ab0e6107745f725038f9a919327a18a7d36337",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+                           "expected":  "0277bd290fe08c85945b93ea2b9eb120e4a77a66461b18d874e68afe670cc866",
+                           "actual":  "0277bd290fe08c85945b93ea2b9eb120e4a77a66461b18d874e68afe670cc866",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
+                           "expected":  "3d3df91ff25e694ae2e2af1f3378fde6df3a55fd6867ae05373a5464f8824e14",
+                           "actual":  "3d3df91ff25e694ae2e2af1f3378fde6df3a55fd6867ae05373a5464f8824e14",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "src/pages/Settings/index.tsx",
+                           "expected":  "df1d9c82ff7a74cc0f8441aca980b09ec3fec82d6545b99e1d5185c2975d17e4",
+                           "actual":  "df1d9c82ff7a74cc0f8441aca980b09ec3fec82d6545b99e1d5185c2975d17e4",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/e2e/dcs-prod-p0-settings.spec.ts",
+                           "expected":  "fa5f9dfa04eb709090307c53549fa5626eac8f538e9b998ad3482fa6ac44d146",
+                           "actual":  "fa5f9dfa04eb709090307c53549fa5626eac8f538e9b998ad3482fa6ac44d146",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/e2e/vtoken-bridge-settings.spec.ts",
+                           "expected":  "3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5",
+                           "actual":  "3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/context-assembly-authority-tf0493.test.ts",
+                           "expected":  "11bc28bf7d88e9e14d3a26a75cfcf64b852daba9e13093e743e1b53f0f45b590",
+                           "actual":  "11bc28bf7d88e9e14d3a26a75cfcf64b852daba9e13093e743e1b53f0f45b590",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/README.md",
+                           "expected":  "93ab603bdd32cdf2cca77482c7b98c6884bfcb3207fffd13cc0b8a5ba222d456",
+                           "actual":  "93ab603bdd32cdf2cca77482c7b98c6884bfcb3207fffd13cc0b8a5ba222d456",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/component-graduation-report.json",
+                           "expected":  "e987ac43969ef314d3e705e91ff73d2268c30a22601afe47f33b718feec6a800",
+                           "actual":  "e987ac43969ef314d3e705e91ff73d2268c30a22601afe47f33b718feec6a800",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/generate-acceptance.mts",
+                           "expected":  "1e1801a4c0e65fefc870404d69766add516106041c61be7b9a1c5d314c26402a",
+                           "actual":  "1e1801a4c0e65fefc870404d69766add516106041c61be7b9a1c5d314c26402a",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
+                           "expected":  "739515c4eb6d86edb47ac5958e5c82412c35c1c9ba514318d351124a90f48ceb",
+                           "actual":  "739515c4eb6d86edb47ac5958e5c82412c35c1c9ba514318d351124a90f48ceb",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
+                           "expected":  "164cabac232ad7944c1497b9c5628fccabe30d30ce39fcfa15d26ebf604d4eb9",
+                           "actual":  "164cabac232ad7944c1497b9c5628fccabe30d30ce39fcfa15d26ebf604d4eb9",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/task-forest-scope-proposal.json",
+                           "expected":  "93b883c0f2ae525b832c08025decd24220f2c4aaceee070b32f762b1ecfb9942",
+                           "actual":  "93b883c0f2ae525b832c08025decd24220f2c4aaceee070b32f762b1ecfb9942",
+                           "status":  "pass"
+                       }
+                   ]
+}

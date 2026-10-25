@@ -51,7 +51,7 @@
       "continuity": "継続性",
       "environment": "環境",
       "plan": "開発タスク",
-      "coordination": "長期セッション"
+      "policy": "実行ポリシー"
     },
     "status": {
       "idle": "待機中",
@@ -164,37 +164,107 @@
     "processes": {
       "openOutput": "{{command}} の出力を開く"
     },
-    "coordination": {
-      "revision": "リビジョン {{revision}}",
-      "binding": "安定したメインセッション",
-      "bindingState": {
-        "active": "有効",
-        "invalidated": "無効化済み"
+    "policy": {
+      "backend": "設定済みバックエンド",
+      "effectiveBackend": "有効なバックエンド",
+      "effort": "推論強度",
+      "context": "コンテキストウィンドウ",
+      "actions": "操作権限",
+      "queue": "メッセージキュー",
+      "resources": "同時実行制限",
+      "schedule": "スケジュール実行",
+      "currentRunObservation": "現在の実行の観測",
+      "notReported": "未報告",
+      "configuredValue": "設定値",
+      "tokens": "{{count}} トークン",
+      "queueCap": "上限 {{count}}",
+      "queueValue": "{{mode}} · キュー {{count}} 件",
+      "actionCount": "権限 {{count}} 件",
+      "actionSummary": "{{allowed}} 許可 · {{approval}} 承認待ち · {{denied}} 拒否 · {{unknown}} 不明",
+      "showActions": "操作権限を表示",
+      "showDetails": "ソースと互換性を表示",
+      "sources": "設定ソース",
+      "generationReason": "観測状態",
+      "compatibility": "互換性と上書き結果",
+      "generation": {
+        "effective": "有効",
+        "unverified": "未検証",
+        "stale": "期限切れ",
+        "mismatch": "世代不一致",
+        "missing": "実行時観測なし"
       },
-      "pause": "現在のターンを一時停止",
-      "resume": "現在のセッションを再開",
-      "unknownTask": "タスク状態を取得できません",
-      "workDetail": "{{task}} · {{backend}} · {{isolation}}",
-      "batchTitle": "完了結果",
-      "batchCounts": "完了 {{completed}} · 失敗 {{failed}} · キャンセル {{cancelled}} · 待機 {{pending}}",
-      "invalidatedReason": {
-        "archived": "アーカイブ済み",
-        "deleted": "削除済み",
-        "reset": "新しい世代にリセット済み",
-        "session_missing": "セッションが見つかりません",
-        "session_key_changed": "セッションキーが変更されました"
+      "status": {
+        "configured": "設定済み",
+        "effective": "有効",
+        "unverified": "未検証",
+        "unsupported": "未対応",
+        "ignored": "無視"
       },
-      "state": {
-        "draft": "下書き",
-        "accepted": "受け付け済み",
-        "running": "実行中",
-        "waiting": "待機中",
-        "failed": "失敗",
-        "cancelled": "キャンセル",
-        "reported": "報告済み",
-        "accepted-by-task": "タスク受け付け済み",
+      "retention": {
+        "0": "保持しない",
+        "5": "5 分",
+        "15": "15 分"
+      },
+      "parameters": {
+        "automaticCompaction": "自動圧縮",
+        "manualCompaction": "手動圧縮",
+        "provider": "圧縮プロバイダー",
+        "model": "圧縮モデル",
+        "reserveTokens": "予約トークン"
+      },
+      "reasons": {
+        "missingProfile": "現在の実行に対応する能力観測がありません。",
+        "staleProfile": "能力観測の有効期限が切れています。",
+        "sessionMismatch": "観測は別のセッション世代に属しています。",
+        "runMismatch": "観測は別の実行に属しています。",
+        "runtimeUnknown": "現在のランタイム世代を取得できません。",
+        "gatewayMismatch": "観測は別の Gateway 世代に属しています。",
+        "profileFallback": "フォールバック設定では現在の実行事実を証明できません。",
+        "grantsUnavailable": "現在のランタイム所有者から操作権限を取得できません。",
+        "contextUnavailable": "現在の実行に対する新しいコンテキスト予算の観測がありません。",
+        "resourcesUnavailable": "このスナップショットは現在の同時実行許可を読み取っていません。",
+        "scheduleUnavailable": "このスナップショットは現在のスケジュール状態を読み取っていません。",
+        "noQueueOverride": "永続化されたキューの上書き設定はありません。",
+        "nativeAutomaticCompaction": "自動圧縮はネイティブバックエンドが管理します。",
+        "nativeProvider": "プロバイダーの選択はネイティブ会話バックエンドが管理します。",
+        "nativeModel": "モデルの選択はネイティブ会話バックエンドが管理します。",
+        "nativeManualCompaction": "手動圧縮はネイティブバックエンド経由で実行されます。",
+        "nativeReserveTokens": "ネイティブバックエンドは OpenClaw の予約トークン引数を使用しません。",
+        "runtimeCompactionUnknown": "ランタイムが未登録か、圧縮の所有元が不明です。"
+      },
+      "authorization": {
+        "allowed": "許可",
+        "requiresApproval": "承認が必要",
+        "denied": "拒否",
+        "notApplicable": "対象外",
         "unknown": "不明"
-      }
+      },
+      "grantActions": {
+        "exec": "コマンドを実行",
+        "read": "ファイルを読む",
+        "write": "ファイルを書き込む",
+        "browser": "ブラウザーを使用"
+      },
+      "boundaries": {
+        "title": "制御境界",
+        "abort": {
+          "title": "実行を中止",
+          "description": "現在の実行だけを停止して会話記録を再読み込みします。セッション、保存済み transcript、タスク、リソース、Git ワークツリーは残ります。"
+        },
+        "stop": {
+          "title": "セッションを停止",
+          "description": "キューとランタイム活動を排出しますが、セッション、transcript、タスク記録、リソース記録は保持します。"
+        },
+        "activity": {
+          "title": "アクティビティ表示期間",
+          "description": "完了したアクティビティは {{retention}} 表示されます。これは表示だけの期間で、transcript とランタイム リソースは各所有者の TTL に従います。"
+        },
+        "fork": {
+          "title": "セッションを分岐",
+          "description": "transcript を子セッションへコピーします。Git ブランチやワークツリーは作成せず、タスク完了や実行中リソースの所有も行いません。"
+        }
+      },
+      "unverifiedFacts": "未検証の項目"
     }
   },
   "noLogs": "（ログはまだありません）",

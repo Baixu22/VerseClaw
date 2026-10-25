@@ -15,8 +15,11 @@ import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { loadSessionStore, updateSessionStore, type SessionEntry } from "../config/sessions.js";
 import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
 import { replaceSqliteSessionStore } from "../config/sessions/store-sqlite.js";
+import { sessionAdmissionRegistry } from "../sessions/session-admission-registry.js";
+vi.mock("./session-drain-service.js", () => ({ drainScope: async () => ({ ok: true }) }));
 import {
   archiveSessionWithLifecycle,
+  filterArchivedSessionStore,
   readSessionArchiveIndex,
   resolveSessionArchiveIndexPath,
   restoreSessionWithLifecycle,
@@ -72,9 +75,189 @@ describe("runtime session archive/restore lifecycle", () => {
   });
 
   afterEach(() => {
+    sessionAdmissionRegistry.clearForTests();
     cleanupState.cleanup.mockReset();
     closeOpenClawAgentDatabasesForTest();
     fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("does not fail live session listing when the archive index is unreadable", async () => {
+    fs.writeFileSync(resolveSessionArchiveIndexPath(storePath), "{not-json", "utf8");
+    await expect(filterArchivedSessionStore(cfg, { [SESSION_KEY]: entry })).resolves.toEqual({
+      [SESSION_KEY]: entry,
+    });
+  });
+
+  it("refuses an archive-index path outside the session store before writing intent", async () => {
+    const indexPath = resolveSessionArchiveIndexPath(storePath);
+    fs.writeFileSync(
+      indexPath,
+      JSON.stringify({
+        version: 1,
+        entries: [{
+          sessionKey: SESSION_KEY,
+          agentId: "agent-a",
+          transcriptPath: path.join(tmpDir, "..", "escape.archived.jsonl"),
+          label: "Unsafe archive",
+          archivedAt: 5,
+          originalWorkspaceId: null,
+          originalFolderId: null,
+          sessionsJsonSnapshot: entry,
+        }],
+      }),
+      "utf8",
+    );
+    const result = await restoreSessionWithLifecycle({
+      cfg,
+      key: SESSION_KEY,
+      operationId: "restore-unsafe-path",
+      target,
+      canonicalKey: SESSION_KEY,
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      code: "invalid",
+      retryable: false,
+      noMutation: true,
+    });
+    expect(readSessionMutationOperationJournal(storePath, "restore-unsafe-path")).toBeUndefined();
+  });
+
+  it("refuses a committed operation reused for another session", async () => {
+    const input = {
+      cfg,
+      key: SESSION_KEY,
+      operationId: "committed-identity",
+      target,
+      entry,
+      canonicalKey: SESSION_KEY,
+    };
+    expect((await archiveSessionWithLifecycle(input)).ok).toBe(true);
+    expect(
+      await archiveSessionWithLifecycle({
+        ...input,
+        key: "agent:agent-a:other",
+        canonicalKey: "agent:agent-a:other",
+      }),
+    ).toMatchObject({ ok: false, code: "conflict" });
+  });
+
+  it("does not archive a replacement generation using stale input", async () => {
+    const staleEntry = structuredClone(entry);
+    await updateSessionStore(storePath, (store) => {
+      store[SESSION_KEY] = { ...makeEntry("replacement"), updatedAt: Date.now() };
+    });
+    expect(loadSessionStore(storePath)[SESSION_KEY].sessionId).toBe("replacement");
+    const result = await archiveSessionWithLifecycle({
+      cfg,
+      key: SESSION_KEY,
+      operationId: "stale-source",
+      target,
+      entry: staleEntry,
+      canonicalKey: SESSION_KEY,
+    });
+    expect(result, JSON.stringify(result)).toMatchObject({ ok: false, code: "conflict" });
+    expect(loadSessionStore(storePath)[SESSION_KEY].sessionId).toBe("replacement");
+    expect(fs.existsSync(path.join(tmpDir, "session-1.jsonl"))).toBe(true);
+    expect(fs.existsSync(resolveSessionArchiveIndexPath(storePath))).toBe(false);
+  });
+
+  it("preserves a closed restore admission fence until transcript recovery succeeds", async () => {
+    await archiveSessionWithLifecycle({
+      cfg,
+      key: SESSION_KEY,
+      operationId: "restore-fault-source",
+      target,
+      entry,
+      canonicalKey: SESSION_KEY,
+    });
+    const archived = path.join(tmpDir, "session-1.archived.jsonl");
+    const retained = path.join(tmpDir, "retained.jsonl");
+    fs.renameSync(archived, retained);
+    const input = {
+      cfg,
+      key: SESSION_KEY,
+      operationId: "restore-fault",
+      target,
+      canonicalKey: SESSION_KEY,
+    };
+    expect(await restoreSessionWithLifecycle(input)).toMatchObject({ ok: false, retryable: true });
+    const restoredEntry = loadSessionStore(storePath)[SESSION_KEY];
+    const identity = {
+      agentId: "agent-a",
+      canonicalSessionKey: SESSION_KEY,
+      expectedSessionId: restoredEntry.sessionId,
+    };
+    expect(sessionAdmissionRegistry.isFenced(identity)).toBe(true);
+    expect(() => sessionAdmissionRegistry.acquirePermit(identity, "chat-send")).toThrow(/fenced/);
+    expect(
+      (await readSessionArchiveIndex(resolveSessionArchiveIndexPath(storePath))).entries,
+    ).toHaveLength(1);
+    fs.renameSync(retained, archived);
+    expect((await restoreSessionWithLifecycle(input)).ok).toBe(true);
+    expect(sessionAdmissionRegistry.isFenced(identity)).toBe(false);
+  });
+
+  it("releases the new-generation fence when both live and archived transcripts exist", async () => {
+    await archiveSessionWithLifecycle({
+      cfg,
+      key: SESSION_KEY,
+      operationId: "restore-duplicate-source",
+      target,
+      entry,
+      canonicalKey: SESSION_KEY,
+    });
+    const archiveEntry = (await readSessionArchiveIndex(
+      resolveSessionArchiveIndexPath(storePath),
+    )).entries[0];
+    if (!archiveEntry) throw new Error("archive entry missing");
+    const restoredSessionId = "session-restored-duplicate";
+    const liveTranscriptPath = path.join(tmpDir, `${restoredSessionId}.jsonl`);
+    fs.copyFileSync(archiveEntry.transcriptPath, liveTranscriptPath);
+    const manifest: SessionRestoreOperationManifest = {
+      version: "1",
+      operation: "session-restore",
+      agentId: "agent-a",
+      storeIdentity: "agent-a",
+      canonicalKey: SESSION_KEY,
+      previousSessionId: "session-1",
+      archivedTranscriptPath: archiveEntry.transcriptPath,
+      liveTranscriptPath,
+      archiveIndexPath: resolveSessionArchiveIndexPath(storePath),
+      archiveEntry,
+      restoredEntry: {
+        ...(archiveEntry.sessionsJsonSnapshot as SessionEntry),
+        sessionId: restoredSessionId,
+        sessionFile: path.basename(liveTranscriptPath),
+        updatedAt: Date.now(),
+      },
+    };
+    writeSessionMutationOperationIntent({
+      storePath,
+      operationId: "restore-duplicate-transcript",
+      manifest,
+    });
+    expect(fs.existsSync(archiveEntry.transcriptPath)).toBe(true);
+    expect(fs.existsSync(liveTranscriptPath)).toBe(true);
+    const result = await restoreSessionWithLifecycle({
+      cfg,
+      key: SESSION_KEY,
+      operationId: "restore-duplicate-transcript",
+      target,
+      canonicalKey: SESSION_KEY,
+    });
+    expect(result, JSON.stringify({
+      result,
+      archivedPath: archiveEntry.transcriptPath,
+      livePath: liveTranscriptPath,
+      archivedExists: fs.existsSync(archiveEntry.transcriptPath),
+      liveExists: fs.existsSync(liveTranscriptPath),
+    })).toMatchObject({ ok: false, code: "conflict", retryable: false });
+    expect(sessionAdmissionRegistry.isFenced({
+      agentId: "agent-a",
+      canonicalSessionKey: SESSION_KEY,
+      expectedSessionId: restoredSessionId,
+    })).toBe(false);
   });
 
   it("archives through the admission finalizer and commits a restart-safe receipt", async () => {
@@ -99,7 +282,11 @@ describe("runtime session archive/restore lifecycle", () => {
       sessionKey: SESSION_KEY,
       originalWorkspaceId: "workspace-a",
     });
-    const journal = readSessionMutationOperationJournal(storePath, "archive-op-1", "session-archive");
+    const journal = readSessionMutationOperationJournal(
+      storePath,
+      "archive-op-1",
+      "session-archive",
+    );
     expect(journal?.state).toBe("runtime_committed");
   });
 
@@ -160,6 +347,108 @@ describe("runtime session archive/restore lifecycle", () => {
     expect(index.entries).toEqual([]);
   });
 
+  it("restores a legacy archive whose snapshot has no physical session id", async () => {
+    const indexPath = resolveSessionArchiveIndexPath(storePath);
+    const archivedPath = path.join(tmpDir, "session-1.archived.jsonl");
+    fs.renameSync(path.join(tmpDir, "session-1.jsonl"), archivedPath);
+    await updateSessionStore(storePath, (store) => {
+      delete store[SESSION_KEY];
+    });
+    fs.writeFileSync(
+      indexPath,
+      JSON.stringify({
+        version: 1,
+        entries: [{
+          sessionKey: SESSION_KEY,
+          agentId: "agent-a",
+          transcriptPath: archivedPath,
+          label: "Legacy archive",
+          archivedAt: 5,
+          originalWorkspaceId: null,
+          originalFolderId: null,
+          sessionsJsonSnapshot: { key: SESSION_KEY },
+        }],
+      }),
+      "utf8",
+    );
+    const restored = await restoreSessionWithLifecycle({
+      cfg,
+      key: SESSION_KEY,
+      operationId: "restore-legacy-snapshot",
+      target,
+      canonicalKey: SESSION_KEY,
+    });
+    expect(restored.ok).toBe(true);
+    if (!restored.ok) return;
+    expect(restored.previousSessionId).toBe("session-1");
+    expect(restored.entry.sessionId).not.toBe("session-1");
+    expect(fs.existsSync(restored.transcriptPath)).toBe(true);
+  });
+
+  it("classifies a vanished archive source as a definitive conflict", async () => {
+    const indexPath = resolveSessionArchiveIndexPath(storePath);
+    const livePath = path.join(tmpDir, "session-1.jsonl");
+    const archivedPath = path.join(tmpDir, "session-1.archived.jsonl");
+    const manifest: SessionArchiveOperationManifest = {
+      version: "1",
+      operation: "session-archive",
+      agentId: "agent-a",
+      storeIdentity: "agent-a",
+      canonicalKey: SESSION_KEY,
+      expectedSessionId: "session-1",
+      liveTranscriptPath: livePath,
+      archivedTranscriptPath: archivedPath,
+      archiveIndexPath: indexPath,
+      archiveEntry: {
+        sessionKey: SESSION_KEY,
+        agentId: "agent-a",
+        transcriptPath: archivedPath,
+        label: "Long session",
+        archivedAt: 10,
+        originalWorkspaceId: null,
+        originalFolderId: null,
+        sessionsJsonSnapshot: entry,
+      },
+    };
+    writeSessionMutationOperationIntent({
+      storePath,
+      operationId: "archive-missing-source",
+      manifest,
+    });
+    await updateSessionStore(storePath, (store) => {
+      delete store[SESSION_KEY];
+    });
+    const result = await archiveSessionWithLifecycle({
+      cfg,
+      key: SESSION_KEY,
+      operationId: "archive-missing-source",
+      target,
+      canonicalKey: SESSION_KEY,
+    });
+    expect(result).toMatchObject({ ok: false, code: "conflict", retryable: false });
+    expect(fs.existsSync(livePath)).toBe(true);
+    expect(fs.existsSync(archivedPath)).toBe(false);
+  });
+
+  it("settles the archive lease when cleanup exposes a definitive source conflict", async () => {
+    cleanupState.cleanup.mockImplementationOnce(async () => {
+      await updateSessionStore(storePath, (store) => {
+        store[SESSION_KEY] = makeEntry("replacement-after-cleanup");
+      });
+      return { settle };
+    });
+    const result = await archiveSessionWithLifecycle({
+      cfg,
+      key: SESSION_KEY,
+      operationId: "archive-definitive-conflict",
+      target,
+      entry,
+      canonicalKey: SESSION_KEY,
+    });
+    expect(result).toMatchObject({ ok: false, code: "conflict", retryable: false });
+    expect(settle).toHaveBeenCalledWith(false, true);
+  });
+
   it("recovers a pre-commit archive journal instead of requiring a new operationId", async () => {
     const indexPath = resolveSessionArchiveIndexPath(storePath);
     const archiveEntry = {
@@ -201,12 +490,19 @@ describe("runtime session archive/restore lifecycle", () => {
       target,
       entry,
       canonicalKey: SESSION_KEY,
+      label: "Changed label during retry",
+      originalWorkspaceId: "workspace-b",
+      originalFolderId: "folder-b",
     });
     expect(recovered.ok).toBe(true);
     expect(cleanupState.cleanup).toHaveBeenCalledTimes(1);
     expect(loadSessionStore(storePath)[SESSION_KEY]).toBeUndefined();
+    expect((await readSessionArchiveIndex(indexPath)).entries[0]).toMatchObject({
+      label: "Long session",
+      originalWorkspaceId: null,
+      originalFolderId: null,
+    });
   });
-
 
   it("recovers a restore after the store row commits but before transcript/index finalization", async () => {
     const archived = await archiveSessionWithLifecycle({
@@ -271,7 +567,9 @@ describe("runtime session archive/restore lifecycle", () => {
     expect(fs.existsSync(liveTranscriptPath)).toBe(true);
     const after = await readSessionArchiveIndex(resolveSessionArchiveIndexPath(storePath));
     expect(after.entries).toEqual([]);
-    expect(readSessionMutationOperationJournal(storePath, "restore-op-recovery")?.state).toBe("runtime_committed");
+    expect(readSessionMutationOperationJournal(storePath, "restore-op-recovery")?.state).toBe(
+      "runtime_committed",
+    );
   });
 
   it("does not mutate transcript or store when the lifecycle finalizer fails", async () => {

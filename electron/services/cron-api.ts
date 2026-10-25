@@ -11,11 +11,11 @@ import type { DeliveryChannelGroup } from '@shared/host-api/contract';
 import type {
   CronBrowserAutomationConfig,
   CronJob,
+  CronJobCoordinatorStatus,
   CronJobDelivery,
   CronJobCreateInput,
   CronJobSource,
   CronJobUpdateInput,
-  CronJobCoordinatorStatus,
   CronSchedule,
 } from '@shared/types/cron';
 import type { GatewayManager } from '../gateway/manager';
@@ -33,10 +33,8 @@ import {
   recordPermissionDecisionEvent,
 } from './permissions-api';
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
-import { getActiveWorkspaceProfile, readWorkspaceCoordinatorBinding } from './workspaces-api';
-import { resolveLiveSessionIdentity } from './sessions-api';
-import { evaluateCronCoordinatorScope, normalizeCronCoordinatorScope } from '@shared/long-session-followup-scope';
-import type { CronCoordinatorScope } from '@shared/long-session-followup-scope';
+import { getActiveWorkspaceProfile, getPersistedCoordinatorBinding } from './workspaces-api';
+import { evaluateCronCoordinatorScope, normalizeCronCoordinatorScope, type CronCoordinatorScope } from '@shared/long-session-followup-scope';
 import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
 import { SandboxDenialError } from '@shared/sandbox/errors';
 
@@ -501,18 +499,21 @@ export async function resolveCronCoordinatorStatus(
   let liveSessionId: string | null | undefined;
   try {
     if (scope) {
-      const result = await readWorkspaceCoordinatorBinding(scope.workspaceId);
-      const binding = result?.binding ?? null;
+      const binding = await getPersistedCoordinatorBinding(scope.workspaceId, scope.coordinatorSessionKey);
       if (
         binding
         && binding.state === 'active'
         && binding.sessionKey === scope.coordinatorSessionKey
-        && binding.sessionId === scope.expectedSessionId
+        && binding.sessionGeneration === scope.expectedSessionId
       ) {
         bindingState = 'active';
       }
-      const live = await resolveLiveSessionIdentity(gatewayManager, scope.coordinatorSessionKey).catch(() => null);
-      liveSessionId = live?.sessionId ?? null;
+      const described = await gatewayManager.rpc<{ session?: { sessionId?: string } | null }>(
+        'sessions.describe',
+        { key: scope.coordinatorSessionKey },
+        15_000,
+      );
+      liveSessionId = described?.session?.sessionId ?? null;
     } else {
       liveSessionId = undefined;
     }
@@ -650,7 +651,7 @@ async function listCronJobs(gatewayManager: GatewayManager): Promise<CronJob[]> 
   }
 
   const projected = jobs.map((job) => transformCronJob(job, usedFallback ? 'config-fallback' : 'gateway'));
-  return annotateCoordinatorStatus(gatewayManager, projected);
+  return usedFallback ? projected : annotateCoordinatorStatus(gatewayManager, projected);
 }
 
 /**
@@ -745,16 +746,14 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
       if (!agentPayload) {
         throw new Error('Cron create requires a message or browser automation task');
       }
-      const coordinator = input.coordinator
-        ? await assertCoordinatorBindingCurrent(gatewayManager, input.coordinator)
-        : undefined;
+      const coordinator = await assertCoordinatorBindingCurrent(gatewayManager, input.coordinator);
       const result = await gatewayManager.rpc('cron.add', {
         name: input.name,
         schedule: { kind: 'cron', expr: input.schedule },
         payload: agentPayload,
         enabled: typeof input.enabled === 'boolean' ? input.enabled : true,
         wakeMode: 'next-heartbeat',
-        sessionTarget: coordinator ? `session:${coordinator.coordinatorSessionKey}` : 'isolated',
+        sessionTarget: 'isolated',
         agentId,
         delivery,
         ...(coordinator ? { coordinator } : {}),
@@ -785,9 +784,8 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
       if (unsupportedDeliveryError && deliveryMode !== 'none') {
         throw new Error(unsupportedDeliveryError);
       }
-      if ('coordinator' in patch && patch.coordinator !== null) {
+      if (Object.prototype.hasOwnProperty.call(patch, 'coordinator')) {
         patch.coordinator = await assertCoordinatorBindingCurrent(gatewayManager, patch.coordinator);
-        patch.sessionTarget = `session:${(patch.coordinator as CronCoordinatorScope).coordinatorSessionKey}`;
       }
       const result = await gatewayManager.rpc('cron.update', { id, patch });
       if (!result || typeof result !== 'object') {
@@ -809,7 +807,16 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
     },
     trigger: async (payload) => {
       await assertCronAllowedUnderSandbox('trigger');
-      return gatewayManager.rpc('cron.run', { id: getId(payload), mode: 'force' });
+      const id = getId(payload);
+      const jobs = await listCronJobs(gatewayManager);
+      const target = jobs.find((job) => job.id === id);
+      if (target?.coordinator) {
+        const status = await resolveCronCoordinatorStatus(gatewayManager, target.coordinator);
+        if (status.state !== 'allowed' && status.state !== 'unbound') {
+          throw new Error(`Coordinator follow-up rejected (${status.state}: ${status.reason})`);
+        }
+      }
+      return gatewayManager.rpc('cron.run', { id, mode: 'force' });
     },
     sessionHistory: async (payload) => {
       const body = payload;

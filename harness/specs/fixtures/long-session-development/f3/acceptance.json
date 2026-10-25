@@ -1,1809 +1,1983 @@
 {
-  "schema": "clawx.long-session.f3-acceptance/v1",
-  "drivenBy": "agent",
+  "schema": "clawx.long-session.f3-final-acceptance/v1",
+  "driven_by": "agent",
   "actor": "codex-long-session-f3",
   "taskForestNode": "TF-0563",
   "taskKey": "F3",
   "program": "long-session-development-20261022",
   "contract": "harness/specs/tasks/long-session-final-acceptance.md",
-  "generatedAt": "2026-10-24T08:33:19.300Z",
+  "generatedAt": "2026-10-24T22:38:46.989Z",
   "candidate": {
-    "branch": "main",
-    "commit": "65ccf1aec862bec1ac982e6453b0c345c1d5ca96",
-    "tree": "566fe25ed3239baa667905bea22673772f641fd6",
-    "verifiedTree": "566fe25ed3239baa667905bea22673772f641fd6",
-    "bindingRule": "tree identity is authoritative; the commit recorded here is the commit that existed before the evidence-only commit",
-    "worktree": "D:/ClawX"
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "5a14742d9a46cf6b626195bc29fd794603d4baec",
+    "tree": "09d2d1617469bd72edebc811b2d2830629bd9d82",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "status": []
   },
-  "verificationBoundary": {
-    "kind": "agent-driven read-back; no real-human verdict or data",
-    "independentVerifier": "scripts/long-session-final-acceptance.mjs re-reads every peer artifact and its SHA256SUMS"
+  "scope": {
+    "platform": "win32",
+    "node": "v24.22.1",
+    "phases": 6,
+    "executedNodes": 15,
+    "aggregatingNode": "F3",
+    "historicalEvidenceResigned": false
   },
-  "peers": [
+  "nodes": [
     {
-      "node": "TF-0548",
-      "taskKey": "A1",
+      "key": "A1",
+      "forestNode": "TF-0548",
       "contract": "harness/specs/tasks/long-session-baseline-contract.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/a1",
-      "evidenceFiles": [
+      "directory": "harness/specs/fixtures/long-session-development/a1",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/a1/gates.json",
+      "primaryEvidenceSha256": "eb3ce12bc7bee43b3e29cf081ba0c9f62bd68fef78c9e4080b416af7f81e76ad",
+      "schema": "clawx.long-session.node-evidence/v1",
+      "artifactCount": 8,
+      "artifactFiles": [
         "SHA256SUMS",
         "action-and-inheritance-contract.json",
+        "credential-scan.json",
         "current-baseline.json",
+        "gates.json",
+        "navigation.json",
         "negative-scenario-index.json",
-        "verification-receipt.json"
+        "retention.json"
       ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/a1/verification-receipt.json",
-      "receiptSha256": "b558111ff4a9a4dc36c7f069b634abfced091de00989441b48382ca4a4e8beff",
-      "candidate": "b088635108f4c40c77efcd9f46a1c421f405b8d9",
-      "verdict": "pass-with-deferred-gaps",
-      "acceptance": [
+      "artifactHashes": {
+        "SHA256SUMS": "d56df0522a4f7af94f9a228470485087684a138c5b98109b3dccd6fe32683e7a",
+        "action-and-inheritance-contract.json": "5f549581bd9048fb4aa08bfd8297cd2145e3a12f94866de9162112dcbafd8ba6",
+        "credential-scan.json": "42a5cdebb16a7f6ea5a8be10977c858f108703134f3f163e30565b409c42c0df",
+        "current-baseline.json": "6b0755542003782b868adb682aabb07429fe424e018f6232f5bb88a21b9be8b9",
+        "gates.json": "eb3ce12bc7bee43b3e29cf081ba0c9f62bd68fef78c9e4080b416af7f81e76ad",
+        "navigation.json": "113d49a80a678f6f5ec9dd6be58b9d4962de4f86aafa8aea6a79330751f5be6f",
+        "negative-scenario-index.json": "32e6a6d5d5ea50bc514e7f2feb311117adc7e73b6a55c9e4ada7ac5daedaae5e",
+        "retention.json": "8dd62a1978fda7963add998b93af35e97b92f91a6b323ec83a1cdf431ec6c030"
+      },
+      "sha256sums": {
+        "verified": 7,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 10,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 17,
+        "ids": [
+          "archive-active-run-not-fenced: observed source gap; reserved for A2",
+          "archive-partial-write",
+          "authorization-revocation",
+          "backend-switch",
+          "cross-workspace-session",
+          "duplicate-completion",
+          "duplicate/late completion, stale generation, backend switch, revoked permission, cross-workspace and restart scenarios remain unmeasured at A1",
+          "fork-while-active",
+          "handoff-depth-cycle",
+          "late-completion-after-archive",
+          "restart-unknown-delete",
+          "restore-conflict",
+          "restore-crash-before-rename",
+          "restore-index-removed-before-transcript-rename: observed source gap; reserved for A2",
+          "running-archive",
+          "schedule-pause-current-run",
+          "stale-generation-event"
+        ]
+      },
+      "candidates": [
         {
-          "index": 1,
-          "criterion": "Distinguish Workspace, Project projection, Assistant, SessionKey, physical sessionId, native thread, Turn/Run/Task and resource owner without a second Project or task owner.",
-          "result": "pass",
-          "evidence": [
-            "action-and-inheritance-contract.json",
-            "current-baseline.json"
-          ],
-          "note": null
+          "commit": "4c667bb62855529c4dc5bbd4c659ce688e004d9c",
+          "full": "4c667bb62855529c4dc5bbd4c659ce688e004d9c",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "gates.json/candidate/commit",
+            "gates.json/commands[0]/commit",
+            "gates.json/commands[1]/commit",
+            "gates.json/commands[2]/commit",
+            "gates.json/commands[3]/commit",
+            "gates.json/commands[4]/commit"
+          ]
         },
         {
-          "index": 2,
-          "criterion": "Give every lifecycle action a visible behavior, inheritance boundary, prerequisites, failure/unknown state, recovery path and current source entry.",
-          "result": "pass",
-          "evidence": [
-            "action-and-inheritance-contract.json",
-            "tests/unit/long-session-action-contract.test.ts"
-          ],
-          "note": null
+          "commit": "5d26c6ab12aa5729439cda0031ea4df5c9de0e74",
+          "full": "5d26c6ab12aa5729439cda0031ea4df5c9de0e74",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "current-baseline.json/candidate/sourceCommit"
+          ]
         },
         {
-          "index": 3,
-          "criterion": "Fix an isolated-agent negative matrix for active archive, duplicate/late completion, generation changes, backend switch, authorization revocation, cross-workspace and restart; leave unexecuted items unmeasured.",
-          "result": "pass",
-          "evidence": [
-            "negative-scenario-index.json",
-            "verification-receipt.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 4,
-          "criterion": "Pin candidate, inputs, metric definition and future acceptance budget; generate a fresh current receipt rather than reusing old PASS/sample evidence.",
-          "result": "pass",
-          "evidence": [
-            "current-baseline.json",
-            "verification-receipt.json"
-          ],
-          "note": null
+          "commit": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
+          "full": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
+          "reachableFromHead": false,
+          "referencedBy": [
+            "action-and-inheritance-contract.json/templateProvenance/commit",
+            "current-baseline.json/templateProvenance/commit",
+            "negative-scenario-index.json/templateProvenance/commit"
+          ]
         }
       ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [
-        "pass",
-        "pass",
-        "pass",
-        "pass"
+      "unreachableCandidates": [
+        {
+          "commit": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
+          "full": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
+          "reachableFromHead": false,
+          "referencedBy": [
+            "action-and-inheritance-contract.json/templateProvenance/commit",
+            "current-baseline.json/templateProvenance/commit",
+            "negative-scenario-index.json/templateProvenance/commit"
+          ]
+        }
       ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 9,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 4,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
+      "reachableCandidateCount": 2,
+      "evidenceOk": true
     },
     {
-      "node": "TF-0549",
-      "taskKey": "A2",
+      "key": "A2",
+      "forestNode": "TF-0549",
       "contract": "harness/specs/tasks/long-session-lifecycle-barrier.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/a2",
-      "evidenceFiles": [
-        "SHA256SUMS",
-        "cleanup-readback.json",
-        "lifecycle-fault-matrix.json",
-        "mutation-recovery-receipts.json"
-      ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/a2/mutation-recovery-receipts.json",
-      "receiptSha256": "41f7d57b9eff2309b8e635a5bf45a13c0f0af93fc9ddb92c00df78cf41469caa",
-      "candidate": "5daef609dccffc96c62af8c27854934ba4381bb3",
-      "verdict": "pass-with-residuals",
-      "acceptance": [],
-      "acceptanceCount": 0,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [],
-      "criteriaWithEvidence": 0,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 13,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 3,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
-    },
-    {
-      "node": "TF-0550",
-      "taskKey": "B1",
-      "contract": "harness/specs/tasks/long-session-effective-policy.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/b1",
-      "evidenceFiles": [
-        "SHA256SUMS",
-        "backend-parity.json",
-        "effective-session-policy.json",
-        "policy-source-and-override-matrix.json",
-        "verification-receipt.json"
-      ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/b1/verification-receipt.json",
-      "receiptSha256": "b860c1e0fbaa8b386f0af1ba082db557b24c1c2a0777d33555c2dcc6e55bba81",
-      "candidate": "5eef970b9a6ff401bd92ff870a559cde751a1b8e",
-      "verdict": "pass",
-      "acceptance": [
-        {
-          "index": 1,
-          "criterion": "Generate a read-only session policy from TF-0512 owner-resolved current facts with scope/generation, backend/binding, model/effort, grant and bounded limits.",
-          "result": "pass",
-          "evidence": [
-            "effective-session-policy.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 2,
-          "criterion": "Keep configured, effective, unverified, unsupported and ignored facts separate; missing/stale/mismatched receipts remain unknown.",
-          "result": "pass",
-          "evidence": [
-            "policy-source-and-override-matrix.json",
-            "tests/unit/long-session-effective-policy.test.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 3,
-          "criterion": "Report Codex native compact and Claude ownsNativeCompaction compatibility without creating another capability inventory.",
-          "result": "pass",
-          "evidence": [
-            "backend-parity.json",
-            "openclaw_runtime/src/agents/session-effective-policy.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 4,
-          "criterion": "Exclude credentials/auth values/private prompts and keep reads side-effect-free.",
-          "result": "pass",
-          "evidence": [
-            "effective-session-policy.json#credential-scan",
-            "tests/unit/long-session-effective-policy.test.ts"
-          ],
-          "note": null
-        }
-      ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [
-        "pass",
-        "pass",
-        "pass",
-        "pass"
-      ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 11,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 4,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
-    },
-    {
-      "node": "TF-0551",
-      "taskKey": "B2",
-      "contract": "harness/specs/tasks/long-session-policy-surface.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/b2",
-      "evidenceFiles": [
-        "SHA256SUMS",
-        "policy-activity-rail-960.png",
-        "policy-ui-results.json",
-        "policy-ui-screenshots.json",
-        "verification-receipt.json"
-      ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/b2/verification-receipt.json",
-      "receiptSha256": "ce82f0989cc85cd3703c5cdb4673a4d2f18e654b799860315df257ac93a90136",
-      "candidate": "b7b090779f0eed283aa381932dd32c98e936e9c5",
-      "verdict": "pass",
-      "acceptance": [
-        {
-          "index": 1,
-          "criterion": "Reuse the existing activity/Recovery entry to show backend, effective values, sources, override/ignore reasons and truthful unknown states.",
-          "result": "pass",
-          "evidence": [
-            "policy-ui-results.json#surfaces",
-            "src/pages/Chat/SessionEffectivePolicyPanel.tsx",
-            "src/pages/Chat/SessionActivityPanel.tsx",
-            "src/pages/Settings/sections/RecoverySettingsSection.tsx",
-            "tests/e2e/long-session-policy-surface.spec.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 2,
-          "criterion": "Distinguish abort from session stop, UI retention from transcript/resource TTL, and fork from worktree isolation.",
-          "result": "pass",
-          "evidence": [
-            "policy-activity-rail-960.png",
-            "tests/unit/session-activity-panel.test.tsx",
-            "shared/i18n/locales/en/chat.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 3,
-          "criterion": "Never show a prior session/backend/authorization/Gateway scope; older requests cannot overwrite the current selection.",
-          "result": "pass",
-          "evidence": [
-            "tests/unit/session-activity-background-read.test.ts",
-            "tests/e2e/long-session-policy-surface.spec.ts",
-            "src/stores/session-activity.ts",
-            "src/pages/Chat/index.tsx",
-            "src/pages/Settings/sections/RecoverySettingsSection.tsx"
-          ],
-          "note": null
-        },
-        {
-          "index": 4,
-          "criterion": "Four locales, design tokens, keyboard/narrow coverage and a real built Electron Host/Gateway E2E are in the same change set.",
-          "result": "pass",
-          "evidence": [
-            "shared/i18n/locales/en/chat.json",
-            "shared/i18n/locales/zh/chat.json",
-            "shared/i18n/locales/ja/chat.json",
-            "shared/i18n/locales/ru/chat.json",
-            "src/styles/codex-session-activity.css",
-            "policy-ui-screenshots.json",
-            "D:\\tmp\\long-session-b2\\b7b090779f0eed283aa381932dd32c98e936e9c5\\electron-e2e.log"
-          ],
-          "note": null
-        }
-      ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [
-        "pass",
-        "pass",
-        "pass",
-        "pass"
-      ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 11,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 4,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
-    },
-    {
-      "node": "TF-0552",
-      "taskKey": "C1",
-      "contract": "harness/specs/tasks/long-session-coordinator-binding.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/c1",
-      "evidenceFiles": [
-        "SHA256SUMS",
-        "coordinator-binding.json",
-        "scope-and-recovery-matrix.json",
-        "verification-receipt.json"
-      ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/c1/verification-receipt.json",
-      "receiptSha256": "f2b4ee1332f017c7c42abb417ae8cd88c617961adfb2aa5222dba957e08372c3",
-      "candidate": "09dcda17683369e12b60609ec055156052082260",
-      "verdict": "pass",
-      "acceptance": [
-        {
-          "index": 1,
-          "criterion": "A real Workspace, Assistant and SessionKey are bound to existing Task Ledger refs by the existing Workspace owner.",
-          "result": "pass",
-          "evidence": [
-            "coordinator-binding.json",
-            "tests/unit/long-session-coordinator-binding.test.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 2,
-          "criterion": "The binding can recover after UI close/app restart/handoff-like active session switch and is invalidated by reset/archive/delete.",
-          "result": "pass",
-          "evidence": [
-            "tests/e2e/long-session-coordinator-binding.spec.ts",
-            "scope-and-recovery-matrix.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 3,
-          "criterion": "Ordinary Chat does not enter long-session coordination automatically; visible entry remains C4.",
-          "result": "pass",
-          "evidence": [
-            "tests/unit/workspace-session.test.ts",
-            "src/lib/workspace-session.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 4,
-          "criterion": "Cross-workspace, missing-owner, revision-conflict and deleted-session cases fail closed; Task Ledger remains the only completion authority.",
-          "result": "pass",
-          "evidence": [
-            "tests/unit/long-session-coordinator-binding.test.ts",
-            "electron/services/sessions-api.ts"
-          ],
-          "note": null
-        }
-      ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [
-        "pass",
-        "pass",
-        "pass",
-        "pass"
-      ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 11,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 3,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
-    },
-    {
-      "node": "TF-0553",
-      "taskKey": "C2",
-      "contract": "harness/specs/tasks/long-session-delegation-admission.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/c2",
-      "evidenceFiles": [
-        "SHA256SUMS",
-        "delegation-admission-receipts.json",
-        "scope-permission-isolation-matrix.json",
-        "verification-receipt.json"
-      ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/c2/verification-receipt.json",
-      "receiptSha256": "16a889034f693702da97a2b1c6fe9844574b50a30d86389dc39dbd61d4da4bf5",
-      "candidate": "57b82e740da022bd3a74c9f996a11d766e1cc84d",
-      "verdict": "pass",
-      "acceptance": [
-        {
-          "index": 1,
-          "criterion": "Use the existing session/role/orchestration path and bind coordinator generation, task ref, child identity, backend and tool grant in the receipt; accepted is not completion.",
-          "result": "pass",
-          "evidence": [
-            "delegation-admission-receipts.json",
-            "tests/e2e/long-session-delegation-admission.spec.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 2,
-          "criterion": "Do not reuse stale grants or allow child privilege escalation; unknown role/backend or refused spawn creates no phantom completion.",
-          "result": "pass",
-          "evidence": [
-            "tests/unit/long-session-delegation-admission.test.ts",
-            "tests/unit/role-spawn.test.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 3,
-          "criterion": "Use an actual isolation backend and serialize writes unless checkout/write-set safety is proven.",
-          "result": "pass",
-          "evidence": [
-            "scope-permission-isolation-matrix.json",
-            "tests/unit/orchestration-resource-scheduler.test.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 4,
-          "criterion": "Handle duplicate submission, reset/stop races and same-owner restart retry without a second executor or infinite concurrency default.",
-          "result": "pass",
-          "evidence": [
-            "tests/unit/long-session-delegation-admission.test.ts",
-            "tests/unit/workspace-session.test.ts"
-          ],
-          "note": null
-        }
-      ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [
-        "pass",
-        "pass",
-        "pass",
-        "pass"
-      ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 12,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 3,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
-    },
-    {
-      "node": "TF-0554",
-      "taskKey": "C3",
-      "contract": "harness/specs/tasks/long-session-completion-continuation.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/c3",
-      "evidenceFiles": [
-        "SHA256SUMS",
-        "completion-batch-receipts.json",
-        "continuation-delivery-matrix.json",
-        "restart-replay-check.json",
-        "verification-receipt.json"
-      ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/c3/verification-receipt.json",
-      "receiptSha256": "8e2b4f46ec1faed112ef1b9b503bda6e364078354a0ac3ff462cf58f0f7f1342",
-      "candidate": "53db65bd56fdddba723ee09195a6827c4352fbbf",
-      "verdict": "pass",
-      "acceptance": [
-        {
-          "index": 1,
-          "criterion": "Bounded accepted-worker batch; success/failure/cancellation all count; only a terminal batch can post one consolidated result.",
-          "result": "pass",
-          "evidence": [
-            "completion-batch-receipts.json",
-            "continuation-delivery-matrix.json",
-            "tests/unit/long-session-completion-continuation.test.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 2,
-          "criterion": "Completion delivery is separate from task acceptance; busy/paused main keeps durable intent and does not steal the active user turn.",
-          "result": "pass",
-          "evidence": [
-            "completion-batch-receipts.json",
-            "continuation-delivery-matrix.json",
-            "tests/unit/agent-steering-team-bundle.test.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 3,
-          "criterion": "At-least-once transport cannot duplicate effects or cross reset/handoff generations because of receipt, idempotency and generation fencing.",
-          "result": "pass",
-          "evidence": [
-            "continuation-delivery-matrix.json",
-            "restart-replay-check.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 4,
-          "criterion": "Restart replay, refused/immediate workers, archive/delete/pause, active stop, independent batches and model-text-only cases have artifacts; final text alone is not delivery.",
-          "result": "pass",
-          "evidence": [
-            "restart-replay-check.json",
-            "continuation-delivery-matrix.json",
-            "tests/e2e/long-session-completion-continuation.spec.ts"
-          ],
-          "note": null
-        }
-      ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [
-        "pass",
-        "pass",
-        "pass",
-        "pass"
-      ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 13,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 4,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
-    },
-    {
-      "node": "TF-0555",
-      "taskKey": "C4",
-      "contract": "harness/specs/tasks/long-session-coordination-surface.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/c4",
-      "evidenceFiles": [
-        "SHA256SUMS",
-        "coordination-rail-narrow.png",
-        "coordination-rail-wide.png",
-        "coordination-ui-journeys.json",
-        "coordination-ui-screenshots.json",
-        "verification-receipt.json"
-      ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/c4/verification-receipt.json",
-      "receiptSha256": "3e8cf3df8a8587413a0568414443cc5387798f9f82b8ffe4557df71bc8e9c7a2",
-      "candidate": "4a4f53f37749d95d85f4990c85e196a5f1f11d0d",
-      "verdict": "pass",
-      "acceptance": [
-        {
-          "index": 1,
-          "criterion": "Open a stable main session through existing Sidebar/Chat and show task/worker/result references plus necessary pause/resume without a second task authority.",
-          "result": "pass",
-          "evidence": [
-            "coordination-ui-journeys.json",
-            "coordination-ui-screenshots.json",
-            "tests/unit/session-activity-panel.test.tsx"
-          ],
-          "note": null
-        },
-        {
-          "index": 2,
-          "criterion": "Represent draft, accepted, running, waiting, failed/cancelled, reported and accepted-by-task from actual receipts; locate worker transcript, Task Ledger and evidence sources.",
-          "result": "pass",
-          "evidence": [
-            "coordination-ui-journeys.json",
-            "tests/unit/long-session-coordination-surface.test.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 3,
-          "criterion": "Pass switching, minimize/restore, background work, keyboard, four languages, narrow layout and completion visibility in real Electron; preserve ordinary handoff/fork behavior.",
-          "result": "pass",
-          "evidence": [
-            "coordination-ui-journeys.json",
-            "coordination-ui-screenshots.json",
-            "tests/e2e/long-session-coordination.spec.ts",
-            "tests/e2e/chat-session-handoff.spec.ts",
-            "tests/e2e/chat-session-fork.spec.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 4,
-          "criterion": "Show real pause/delete/backend limits; stay quiet without new results; renderer uses only typed host-api.",
-          "result": "pass",
-          "evidence": [
-            "tests/unit/session-activity-panel.test.tsx",
-            "tests/unit/long-session-coordination-surface.test.ts",
-            "src/pages/Chat/index.tsx"
-          ],
-          "note": null
-        }
-      ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [
-        "pass",
-        "pass",
-        "pass",
-        "pass"
-      ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 11,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 5,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
-    },
-    {
-      "node": "TF-0556",
-      "taskKey": "D1",
-      "contract": "harness/specs/tasks/long-session-continuity-context.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/d1",
-      "evidenceFiles": [
+      "directory": "harness/specs/fixtures/long-session-development/a2",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/a2/gates.json",
+      "primaryEvidenceSha256": "d86506669ce651985651167ec49a9677b00f21ac34f679a25f3d0ca9fcd41e78",
+      "schema": "clawx.long-session.node-evidence/v1",
+      "artifactCount": 21,
+      "artifactFiles": [
         "README.md",
         "SHA256SUMS",
-        "continuity-context-pack.json",
-        "continuity-e2e-observation.json",
-        "cross-scope-negative.json",
-        "fact-provenance-and-revocation.json",
-        "verification-receipt.json"
+        "candidate.json",
+        "cleanup-readback.json",
+        "comms-compare-report.md",
+        "credential-scan.json",
+        "credential-scan.mjs",
+        "e2e-last-run.json",
+        "e2e-lifecycle-receipt.json",
+        "e2e-playwright.stdout",
+        "e2e-process-cleanup.json",
+        "gates.json",
+        "harness-latest.md",
+        "lifecycle-fault-matrix.json",
+        "lint-scoped.mjs",
+        "mutation-recovery-receipts.json",
+        "navigation.json",
+        "review-disposition.json",
+        "root-test-notes.json",
+        "root-tests.vitest.json",
+        "runtime-tests.vitest.json"
       ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/d1/verification-receipt.json",
-      "receiptSha256": "5882a5fc089e5f84f6c13d1cb0fb98834c15bd97aa5e9997290d90460a28a91f",
-      "candidate": "6f9532374aaf66e668cf9dc17ec3e20f852c23ad",
-      "verdict": null,
-      "acceptance": [
+      "artifactHashes": {
+        "README.md": "9905e04c321419e27195056322123bc679dd5addf9abf5c5d9b82f059e79c2a9",
+        "SHA256SUMS": "bad08461ad04ebfced96432377c9e502d4eae5c9ac42fa17d49513925c5a22e4",
+        "candidate.json": "855c4f2ff9616e7c7843f5497c175dcf3184ebf51f66042a4f9081b2a7f1d4e7",
+        "cleanup-readback.json": "050328b014cadf2d3821b2c54ff343c9f1ee748392645055ea83ffa9cb934d22",
+        "comms-compare-report.md": "1d0582fd92eca1361012c004bf0d5e24729e2d73b277b5c7e888cc4348aad344",
+        "credential-scan.json": "067936b358156725ceb8e7909e6179737e773d982dfc9660085a4879dbbc865e",
+        "credential-scan.mjs": "b93b58ca78a97dc86f850756e73e8b0fb936cf6b99026bbfa92f180e25605231",
+        "e2e-last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+        "e2e-lifecycle-receipt.json": "c732c0fc7bc8632a83e8b8a8503bdd26814ee5cc8badf426667253357f354a08",
+        "e2e-playwright.stdout": "240c7633b91ccd36842976b314ae2b57e5fc4592e4af6099641f2f68f360b4d6",
+        "e2e-process-cleanup.json": "d665886258fe85fbaa670545533e5d28eb69f07469ff178546163dfe95f3ca8e",
+        "gates.json": "d86506669ce651985651167ec49a9677b00f21ac34f679a25f3d0ca9fcd41e78",
+        "harness-latest.md": "0dd87970cbe17196b8eaccd6513cd75e3f263bccc51d53e59f31164fb993fa67",
+        "lifecycle-fault-matrix.json": "48d479da1c28f09162125a853b1c8599a60c1ca9409e220ef8c47cfb24534bca",
+        "lint-scoped.mjs": "05219b7a43086891f76eac0adebe8d603ad461371dd2f83141b37aed75daee34",
+        "mutation-recovery-receipts.json": "01407cf605a644e3a6d0fb9f01dbed2cacea6a5e8290cb7bdfe74c6243e93795",
+        "navigation.json": "879205bb9daa3d97af46798dd79993ab938caf325236b24ff630770176c62b6f",
+        "review-disposition.json": "c77a7b34412951e3cfea38cf93009dc21d4c45fc3215d7c643c2e8f846d910a8",
+        "root-test-notes.json": "9d8976ec261a5b89562c0083badaa21025c3429298f16070f9c9676708f5c97b",
+        "root-tests.vitest.json": "c625a3b64be9ecbe928bc69e2a997e442cce70c2d5a0d26ae8a324e94887f93f",
+        "runtime-tests.vitest.json": "a9a2f8589dd528d7cf17cb734a7688a56c9dfc0f595f8de80b7e046fb016596e"
+      },
+      "sha256sums": {
+        "verified": 20,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 32,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 17,
+        "ids": [
+          "alias-key-receipt",
+          "archive-finalizer-failure-no-mutation",
+          "archive-index-filters-live-list",
+          "archive-requires-cleanup-fence",
+          "archive-source-vanished",
+          "archive-store-commit-unknown-retry",
+          "delete-reset-regression",
+          "legacy-archive-restore",
+          "main-circular-archive-restore-conflict",
+          "main-definitive-failure-release",
+          "malformed-archive-index-read",
+          "restore-crash-recovery",
+          "restore-duplicate-transcript-conflict",
+          "restore-fresh-generation",
+          "restore-missing-transcript-unknown",
+          "unknown-rpc-preserves-operation-id",
+          "unsafe-archive-path"
+        ]
+      },
+      "candidates": [
         {
-          "index": 1,
-          "criterion": "owner-only-accepted-context",
-          "result": "passed",
-          "evidence": [
-            "continuity-context-pack.json",
-            "tests/unit/long-session-continuity-context.test.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 2,
-          "criterion": "provenance-freshness-scope-budget-unknown",
-          "result": "passed",
-          "evidence": [
-            "fact-provenance-and-revocation.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 3,
-          "criterion": "deleted-expired-revoked-superseded-scope-safe",
-          "result": "passed",
-          "evidence": [
-            "cross-scope-negative.json",
-            "tests/unit/long-session-continuity-context.test.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 4,
-          "criterion": "fork-handoff-compact-restart-recovery-refs",
-          "result": "passed",
-          "evidence": [
-            "tests/unit/long-session-continuity-context.test.ts",
-            "continuity-context-pack.json originalHistory"
-          ],
-          "note": null
+          "commit": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+          "full": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "candidate.json/commit",
+            "gates.json/candidate/commit",
+            "gates.json/commands[0]/commit",
+            "gates.json/commands[10]/commit",
+            "gates.json/commands[11]/commit",
+            "gates.json/commands[12]/commit"
+          ]
         }
       ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": false,
-      "acceptanceResults": [
-        "passed",
-        "passed",
-        "passed",
-        "passed"
-      ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 12,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 6,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": false
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 1,
+      "evidenceOk": true
     },
     {
-      "node": "TF-0557",
-      "taskKey": "D2",
+      "key": "B1",
+      "forestNode": "TF-0550",
+      "contract": "harness/specs/tasks/long-session-effective-policy.md",
+      "directory": "harness/specs/fixtures/long-session-development/b1",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/b1/gates.json",
+      "primaryEvidenceSha256": "a55c0c78f589f90026288af73e2665a36d96546aee1372891c6c5de1c3d372f6",
+      "schema": "clawx.long-session.node-evidence/v1",
+      "artifactCount": 21,
+      "artifactFiles": [
+        "README.md",
+        "SHA256SUMS",
+        "backend-parity.json",
+        "candidate.json",
+        "comms-compare-report.md",
+        "credential-scan.json",
+        "credential-scan.mjs",
+        "e2e-effective-session-policy-receipt.json",
+        "e2e-last-run.json",
+        "e2e-playwright.stdout",
+        "e2e-process-cleanup.json",
+        "effective-session-policy.json",
+        "gates.json",
+        "gateway-core-tests.vitest.json",
+        "gateway-methods-tests.vitest.json",
+        "harness-latest.md",
+        "lint-scoped.mjs",
+        "navigation.json",
+        "policy-source-and-override-matrix.json",
+        "review-disposition.json",
+        "root-tests.vitest.json"
+      ],
+      "artifactHashes": {
+        "README.md": "050c3919f3d6151a7e9a7efc1a86af37c3743006625d30e073eef1e67cb50e3c",
+        "SHA256SUMS": "795a4b9776fefd02419f6020b34aa7aa619b8effa5abcd454b3fb78a8a216c59",
+        "backend-parity.json": "960dc46dc139607d610328f08c2bd3285ecdb144bfea8e42b076ccc38d71a487",
+        "candidate.json": "1365452ea4ebca8e7760f82ceec00d6ea298e5e862bac222d0a187ec5ee127ed",
+        "comms-compare-report.md": "0e4dd63ae97a117265d7b2619cfae387cc7b733c40f79d16cd26cef4718d367a",
+        "credential-scan.json": "70dd12e5cb5455686883d4feae6f5cc1c7b172dd0a1d7577a4b3749630c0228a",
+        "credential-scan.mjs": "8f0c2bdd9556db4d3655c4e823f71d253199fe7acb53390749bae765712777f3",
+        "e2e-effective-session-policy-receipt.json": "0d5aba026636650465d3416c82d4793638d1ad4afcea956d9f952b3676c2a56e",
+        "e2e-last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+        "e2e-playwright.stdout": "1a4e49c33f73b12c15f7b09c04eed62f66106bd54817e20eb050323324d58b02",
+        "e2e-process-cleanup.json": "b157e78ce7e3d09946bbd76215f4a86baa5d5796c2ec159d092041ca8a7499c7",
+        "effective-session-policy.json": "51275d11a514307125fbbe28ee11d7744cdd00f4d9a8b9d754f532e9daf7a226",
+        "gates.json": "a55c0c78f589f90026288af73e2665a36d96546aee1372891c6c5de1c3d372f6",
+        "gateway-core-tests.vitest.json": "94dd1d11c3ebe5bfea51b3e92359fee0a2bd42f33edc43957f98cd87eda2185f",
+        "gateway-methods-tests.vitest.json": "3d72c1932696ee8da93aa108e8ccf4222b4ab74f8d16dc009a717aa02aa07754",
+        "harness-latest.md": "223312d3f94235c6b6b028d0d2b7a927903ae4aa9693713cc810f9f350b38a40",
+        "lint-scoped.mjs": "2c700400e3181671d1642859bc6a923c5bcd44185a29cfcfb73515ab3145f676",
+        "navigation.json": "bb7b1efe838e30da28b35267a38cf7ce776a6d7722386166159b965400903356",
+        "policy-source-and-override-matrix.json": "29c93eaf0efb671d362c51a437c6ea00d6c15ae21734c427a3a150885e3a4592",
+        "review-disposition.json": "9119f87a32641387105cee3c39b93ce3fa273586a09664d242b5dcf3c7bbe618",
+        "root-tests.vitest.json": "fc03914f32ae0698f98235f365e13143928cf974c8c73e6ae83524447f39329b"
+      },
+      "sha256sums": {
+        "verified": 20,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 17,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 15,
+        "ids": [
+          "OpenClaw configured schedule is not an effective run",
+          "a context budget for another session, provider, or model remains unverified",
+          "a context budget from before the active run remains configured-only",
+          "configured does not imply effective",
+          "current context-budget and capability generation mismatches stay unverified",
+          "gateway generation mismatch",
+          "invalid capability observation does not promote runtime/model/grant facts",
+          "missing current-run observation",
+          "no current-run observation stays missing",
+          "partial provider/model observation",
+          "provider-incompatible harness",
+          "run generation mismatch",
+          "session generation mismatch",
+          "stale observation TTL",
+          "unsafe secret/prompt absence"
+        ]
+      },
+      "candidates": [
+        {
+          "commit": "803e945a7a9370d8d25c2a76ce4c5dfe850fb8e1",
+          "full": "803e945a7a9370d8d25c2a76ce4c5dfe850fb8e1",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "candidate.json/commit",
+            "gates.json/candidate/commit",
+            "gates.json/commands[0]/commit",
+            "gates.json/commands[10]/commit",
+            "gates.json/commands[11]/commit",
+            "gates.json/commands[12]/commit"
+          ]
+        }
+      ],
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 1,
+      "evidenceOk": true
+    },
+    {
+      "key": "B2",
+      "forestNode": "TF-0551",
+      "contract": "harness/specs/tasks/long-session-policy-surface.md",
+      "directory": "harness/specs/fixtures/long-session-development/b2",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/b2/gates.json",
+      "primaryEvidenceSha256": "a7c709de5c3962f02d86633e4267eafce16c8df12eb7189a38c5a7542c028e03",
+      "schema": "clawx.long-session.node-evidence/v1",
+      "artifactCount": 20,
+      "artifactFiles": [
+        "README.md",
+        "SHA256SUMS",
+        "candidate.json",
+        "comms-compare-report.md",
+        "credential-scan.json",
+        "credential-scan.mjs",
+        "e2e-group.stdout",
+        "e2e-last-run.json",
+        "e2e-process-cleanup.json",
+        "gates.json",
+        "harness-latest.md",
+        "lint-scoped.mjs",
+        "policy-surface-narrow.png",
+        "policy-surface-wide.png",
+        "policy-ui-matrix.json",
+        "policy-ui-results.json",
+        "policy-ui-screenshots.json",
+        "review-disposition.json",
+        "scope-and-boundary-cases.json",
+        "unit-core.vitest.json"
+      ],
+      "artifactHashes": {
+        "README.md": "bc0f7e2f9db33eebe61b51280516d66e743f17ea08f0a99068c06c06a48e99d7",
+        "SHA256SUMS": "bb4ce3d245b696a863fe30cb64a028ac5ef343e4617b5fba768aa04549f038a1",
+        "candidate.json": "e2eebba8a2896f6560d0d6c10eaf1b7d07abb0a5ae4b7cba9d92eb4295d7a92e",
+        "comms-compare-report.md": "54eb56e6458dfdbda0ab57c12df779d4702eeed8c96ef7d29c432a08d062cb19",
+        "credential-scan.json": "31091b612f12adca056baa9f2f6d9d940162ab23a43bd1882c2a8bd55fdca239",
+        "credential-scan.mjs": "655983cec90c69119252ded3252d56541f4514bd9b1f0f8c5e69cad5fa417b14",
+        "e2e-group.stdout": "bf24d78389f65541b605e12eb711f2c37e9dadad203b8ab753255bc57930d2d8",
+        "e2e-last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+        "e2e-process-cleanup.json": "4e51cced6cce681d4d2758dfb9211948569b7bbb4f714e2dc30fd1c7e2c933d0",
+        "gates.json": "a7c709de5c3962f02d86633e4267eafce16c8df12eb7189a38c5a7542c028e03",
+        "harness-latest.md": "09d2e5d0742d2bd8cebd37608ae6669c2b40e57f53d8b54adcf403fe34f956a8",
+        "lint-scoped.mjs": "1f0fcc43069e558a422a564c6feaf8b194536b4c91916848c7d66b6fd933adf4",
+        "policy-surface-narrow.png": "5a5523644fe202c980aabdc1b6a595978c57d7c61565250806e8487a388d8f8e",
+        "policy-surface-wide.png": "a2f414df16f54c56f2cffadedef7d5eb7957c85dabc2ff8386f7fe38f69bf0be",
+        "policy-ui-matrix.json": "58bfc5886fa352965223e7513bef48988d742ca982f3473beba4651992bf8ec0",
+        "policy-ui-results.json": "8b83d132b45692751c7f85dc75138d7622ebfe40bcd658c8dc230304456d6ad2",
+        "policy-ui-screenshots.json": "3d7a8bd94b9df3db752c8302f3668867e15c2a6e08b1c012eddb720cde4c2d32",
+        "review-disposition.json": "e39ee702864fe2d1aaa843ca7db7990d17ff3d578f8ed08f9e9c4dee8a6e462a",
+        "scope-and-boundary-cases.json": "3d6134a2c3c1a99060c646655bfe22f69794295fde9cdd32312743aac9813721",
+        "unit-core.vitest.json": "1bb79a29dad75a57eee7b2cd632479c65ea5c9281388007a98f6363a0f69fb14"
+      },
+      "sha256sums": {
+        "verified": 19,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 14,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 29,
+        "ids": [
+          "Gateway restarts between policy reads",
+          "abort-versus-stop",
+          "action-permissions",
+          "activity-retention-versus-resource-ttl",
+          "authorization update arrives after an earlier grant read",
+          "authorization-change-refreshes-policy",
+          "background read failure remains unknown rather than empty",
+          "background-read-failure",
+          "configured backend is not promoted when no current-run observation exists",
+          "configured-effective-provenance",
+          "configured-not-effective",
+          "cross-workspace snapshot is hidden before refresh completes",
+          "cross-workspace-policy-response-rejected",
+          "fork-versus-git-worktree",
+          "four-locale-coverage",
+          "gateway-restart",
+          "ignored and unsupported backend parameters retain localized reasons",
+          "keyboard-and-narrow-layout",
+          "lifecycle-boundaries",
+          "localization-keyboard-narrow",
+          "narrow toolbar preserves the activity entry",
+          "older request returns after a newer backend/session load",
+          "older-request-cannot-overwrite-newer-backend",
+          "response policy belongs to another workspace",
+          "same session key with a different workspace scope",
+          "same-session-key-new-workspace",
+          "scope-safety",
+          "session-switch",
+          "unknown-is-preserved"
+        ]
+      },
+      "candidates": [
+        {
+          "commit": "e2302cdaee166f29019d1a677f4ffbb645104b52",
+          "full": "e2302cdaee166f29019d1a677f4ffbb645104b52",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "candidate.json/commit",
+            "gates.json/candidate/commit",
+            "gates.json/commands[0]/commit",
+            "gates.json/commands[10]/commit",
+            "gates.json/commands[11]/commit",
+            "gates.json/commands[12]/commit"
+          ]
+        }
+      ],
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 1,
+      "evidenceOk": true
+    },
+    {
+      "key": "C1",
+      "forestNode": "TF-0552",
+      "contract": "harness/specs/tasks/long-session-coordinator-binding.md",
+      "directory": "harness/specs/fixtures/long-session-development/c1",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/c1/gates.json",
+      "primaryEvidenceSha256": "81a2afa7679b1d71d176d74ca7920c0114fb61cb991359a43be2f858eeb7bc5b",
+      "schema": "clawx.long-session.node-evidence/v1",
+      "artifactCount": 18,
+      "artifactFiles": [
+        "README.md",
+        "SHA256SUMS",
+        "candidate.json",
+        "comms-compare-report.md",
+        "coordinator-binding-e2e.json",
+        "coordinator-binding.json",
+        "credential-scan.json",
+        "credential-scan.mjs",
+        "e2e-last-run.json",
+        "e2e-process-cleanup.json",
+        "e2e.stdout",
+        "gates.json",
+        "harness-latest.md",
+        "lint-scoped.mjs",
+        "review-disposition.json",
+        "scope-and-recovery-matrix.json",
+        "unit-binding.vitest.json",
+        "unit-required.vitest.json"
+      ],
+      "artifactHashes": {
+        "README.md": "40443ed5cc555cec8c9cd705153b55913b00c117027ba4faf2766389bce8d115",
+        "SHA256SUMS": "9e17859a2edb69c3acab449f53bb54b0117955713619e3b2a526925477682b38",
+        "candidate.json": "bb4beb63f38967090833818716cf0e844a0e8efa6b25de539eec9cfda72e9bce",
+        "comms-compare-report.md": "023e7e94573ba0348bcf1e0364659e10abda9b1d90c9f96c5405a76382e7e203",
+        "coordinator-binding-e2e.json": "f2548065c4f5fb573857827a1fbff5a98896b8b92ead6d51fa61c979c076ce0a",
+        "coordinator-binding.json": "359455b0f9140e5b5077aaafa30bff986df73c0491121f49108dd128249e17bb",
+        "credential-scan.json": "83acf29d0677aafca678ce750133b8c67105df2a7cc6156704d04022675ecf97",
+        "credential-scan.mjs": "0a5430eea8681be8612676db202fdcfd475c9319db95a52f2dcdf80b58aca3ec",
+        "e2e-last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+        "e2e-process-cleanup.json": "431b0f3acc316d4dfc6c92cc8ea03b1051907bbd8250a63032c925dc4f02aade",
+        "e2e.stdout": "f03a7dd654e55f69513e83900521bdfd9b4b44fafd2fda12b8b20981976067b1",
+        "gates.json": "81a2afa7679b1d71d176d74ca7920c0114fb61cb991359a43be2f858eeb7bc5b",
+        "harness-latest.md": "cc4c1a7052962561413cb22199f2330c43ab30f5f7c84fa151ac662f41e421c6",
+        "lint-scoped.mjs": "473a221a37828d535d607a0e8b52907ec0b9372de4bb693871cf539fdbb690e8",
+        "review-disposition.json": "1c2cd59f8949066146bb7a67c2aab5f584f3a119e6c6c0a5d8ce2584145d19f1",
+        "scope-and-recovery-matrix.json": "1df14b3df0302b4482cc250e48b95ea47196997d3ded8d5a50db97c94f197496",
+        "unit-binding.vitest.json": "3f45ac4b70f0596e1b19646a622c8596391ce78777a40b00bc0ba94864e6ed1c",
+        "unit-required.vitest.json": "1023dd741382a40155d04958b9ed916c8fce12425bd7bc973cdc49d0d7f45ee7"
+      },
+      "sha256sums": {
+        "verified": 17,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 15,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 48,
+        "ids": [
+          "active-run environment switch",
+          "active-run-environment-switch",
+          "app-restart-persistence",
+          "archive retention none",
+          "archive-policy-restore",
+          "archive-retention-none",
+          "canonical-local-environment",
+          "chat-enforces-bound-environment",
+          "concurrent revision-zero binds",
+          "concurrent revision-zero writes",
+          "cross-workspace request",
+          "cross-workspace-and-missing-owner",
+          "delete invalidation",
+          "delete-invalidation",
+          "deleted session",
+          "deleted-session-or-missing-task-ref",
+          "duplicate branch checkout",
+          "environment-missing",
+          "existing-task-ledger-references-only",
+          "generation mismatch",
+          "generation-mismatch",
+          "handoff before child generation exists",
+          "handoff-pending-then-materialized",
+          "invalid",
+          "late generation old-run path",
+          "managed worktree absent from Git owner",
+          "managed-worktree-and-branch-uniqueness",
+          "manual-pause",
+          "missing",
+          "missing Task Ledger node",
+          "missing Workspace/Assistant owner",
+          "missing environment root",
+          "missing or prunable managed worktree",
+          "missing task completion write path",
+          "ordinary-chat-does-not-auto-enter",
+          "paused",
+          "paused binding",
+          "ready",
+          "reset-generation-mismatch",
+          "revision conflict"
+        ]
+      },
+      "candidates": [
+        {
+          "commit": "4432d6a9105c50c3c04896ce2542da57181b5f3b",
+          "full": "4432d6a9105c50c3c04896ce2542da57181b5f3b",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "candidate.json/commit",
+            "gates.json/candidate/commit",
+            "gates.json/commands[0]/commit",
+            "gates.json/commands[10]/commit",
+            "gates.json/commands[11]/commit",
+            "gates.json/commands[12]/commit"
+          ]
+        }
+      ],
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 1,
+      "evidenceOk": true
+    },
+    {
+      "key": "C2",
+      "forestNode": "TF-0553",
+      "contract": "harness/specs/tasks/long-session-delegation-admission.md",
+      "directory": "harness/specs/fixtures/long-session-development/c2",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/c2/gates.json",
+      "primaryEvidenceSha256": "845713099dbe1fbadbbbeee4e3b3718edc01e5c2a9f0cb68f5c1c3811a18b852",
+      "schema": "clawx.long-session.node-evidence/v1",
+      "artifactCount": 11,
+      "artifactFiles": [
+        "README.md",
+        "SHA256SUMS",
+        "comms-compare-report.md",
+        "credential-scan.json",
+        "delegation-admission-receipts.json",
+        "e2e-last-run.json",
+        "e2e-playwright.stdout",
+        "e2e-process-cleanup.json",
+        "gates.json",
+        "harness-latest.md",
+        "scope-permission-isolation-matrix.json"
+      ],
+      "artifactHashes": {
+        "README.md": "14ecfcdaad862c9f63ce539e7a0328e5c514dc98d9e358905b896b0dfb016a95",
+        "SHA256SUMS": "83c282711eefcb0dbc920b2c2d448a7ec8b29a5a60e5712d391a9ad89c1fe5bf",
+        "comms-compare-report.md": "efb36e7686f0d955476de9b4dfa6bc959f9a7b63b007137035959efdf4555b39",
+        "credential-scan.json": "ed1235f50ea7d8c890e61335d8ce9c2321dae7bbd780cea7209423d2eb6ebaa8",
+        "delegation-admission-receipts.json": "06060d03180756b25e55eddd540789c3889f9a68f85c7b435fd4757ba57b0bf0",
+        "e2e-last-run.json": "ac8353a5fcf5e948e416b7aa92ca217f1f1d69244e876f05c770e3162ace6580",
+        "e2e-playwright.stdout": "d49620412cdc0ebb1a7a752a3577e6715525ac0c8435186a007f1553ac67b93b",
+        "e2e-process-cleanup.json": "4dc3bd06ac88c60d18a9b522317e9b2c20ad1ea8436dc86ff3ea989533e33302",
+        "gates.json": "845713099dbe1fbadbbbeee4e3b3718edc01e5c2a9f0cb68f5c1c3811a18b852",
+        "harness-latest.md": "d8b3071fa5764646ae3853fd2a2f475ce1706a2129549547aa73fcfb3b695564",
+        "scope-permission-isolation-matrix.json": "8f35df12ae4c1eda76f12a6b5f3343fa1c8a53471c592306022a38f096e0fa88"
+      },
+      "sha256sums": {
+        "verified": 10,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 17,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 36,
+        "ids": [
+          "Task Ledger authority",
+          "accepted is not completion",
+          "child allowlist clamped to parent",
+          "child exceeds parent permissions",
+          "child permission allowlist clamped to parent",
+          "concurrent duplicate",
+          "coordinator/task/backend binding",
+          "crashed in-flight admission became outcome-unknown without retry",
+          "crashed in-flight record",
+          "disjoint write sets",
+          "duplicate submission in one owner",
+          "expired or revoked approval",
+          "expired or revoked approval did not become accepted evidence",
+          "expired/revoked approval requires a fresh owner approval",
+          "managed-worktree coordinator E2E",
+          "overlapping writer without proof",
+          "owner restart replayed terminal receipt without a second spawn",
+          "owner restart retry",
+          "parent generation reset rejected",
+          "parent reset race",
+          "process and background-terminal budget",
+          "refused launch",
+          "refused launch yields a rejected child",
+          "stale binding revision or generation",
+          "stop race",
+          "stop/admission race became outcome-unknown",
+          "taskRef not bound to coordinator",
+          "terminated-owner in-flight retry",
+          "unknown worker",
+          "unknown worker rejected before spawn",
+          "unknown worker role rejected before spawn",
+          "unsupported backend",
+          "unsupported backend rejected before orchestrator spawn",
+          "unsupported backend rejected before spawn",
+          "unverified overlapping writers",
+          "verified Git checkout isolation"
+        ]
+      },
+      "candidates": [
+        {
+          "commit": "a2631e3a41afe740469661a006623e212d3835d5",
+          "full": "a2631e3a41afe740469661a006623e212d3835d5",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "delegation-admission-receipts.json/candidate/commit",
+            "e2e-last-run.json/commit",
+            "gates.json/candidate/commit",
+            "gates.json/commands[0]/commit",
+            "gates.json/commands[10]/commit",
+            "gates.json/commands[11]/commit"
+          ]
+        }
+      ],
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 1,
+      "evidenceOk": true
+    },
+    {
+      "key": "C3",
+      "forestNode": "TF-0554",
+      "contract": "harness/specs/tasks/long-session-completion-continuation.md",
+      "directory": "harness/specs/fixtures/long-session-development/c3",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/c3/gates.json",
+      "primaryEvidenceSha256": "bce2e8ff3491784fee4f6a99bb1a62a566f8550347779e8e90b1d3c1d979fb8d",
+      "schema": "clawx.long-session.node-evidence/v1",
+      "artifactCount": 13,
+      "artifactFiles": [
+        "README.md",
+        "SHA256SUMS",
+        "agents-core-tests.json",
+        "comms-compare-report.md",
+        "completion-batch-receipts.json",
+        "continuation-delivery-matrix.json",
+        "credential-scan.json",
+        "e2e-last-run.json",
+        "e2e-playwright.stdout",
+        "e2e-process-cleanup.json",
+        "gates.json",
+        "harness-latest.md",
+        "restart-replay-check.json"
+      ],
+      "artifactHashes": {
+        "README.md": "b0f6c6e520c3a24a6967404a735d81408a6a2e2a73566c70648528fcd16e041a",
+        "SHA256SUMS": "d96a89e9b2a3c26a9919d3889504e6b1ca7e6f86cd7c4aee24bc738aa6904efe",
+        "agents-core-tests.json": "eeac53ad34c897526d6a9c18577adba55d33ce15eb4c02c6b587f6581b795a6c",
+        "comms-compare-report.md": "f8545b79e48209d890e57c010692c5eea506c6d23fda22094654afcad6099257",
+        "completion-batch-receipts.json": "38b87aa3a9a4f77e417cbd973de348a1207a913e0d95b80927eda037d64bb3fd",
+        "continuation-delivery-matrix.json": "69901493ad4295e8543cc9a4f47660fd08851009fecf1b0589d8d283849a75fb",
+        "credential-scan.json": "27d5b02bee2dcda13ea3915c516ef4a87d1b49ad6392b7f7bb9d7e883e18f4b3",
+        "e2e-last-run.json": "a1c0bb814b39d803a1ec57abf12af34458e54013a1f70e5fdd09482c5d78bd8a",
+        "e2e-playwright.stdout": "0872d479af5d4cd92f2f0422c231f0ebc62e0ba5cc228eca93efaf94ee29d50f",
+        "e2e-process-cleanup.json": "8226f1a22e146c149854d6252d87512a7d69828b675f64b57c89eadaaebc28fb",
+        "gates.json": "bce2e8ff3491784fee4f6a99bb1a62a566f8550347779e8e90b1d3c1d979fb8d",
+        "harness-latest.md": "82eecdb26db37c3d961f0aeb1d16c92927124d0f2f0fb34903d935c429822b4a",
+        "restart-replay-check.json": "9498db6752f73f17e3cd9f42d8acac98876ff404601072b5f744f8a1a00e31af"
+      },
+      "sha256sums": {
+        "verified": 12,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 17,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 18,
+        "ids": [
+          "active stop",
+          "active worker stop",
+          "archive delete pause lifecycle",
+          "batch waits for all expected workers",
+          "batch waits for missing worker",
+          "busy or paused parent",
+          "busy/paused pending delivery",
+          "generation fencing",
+          "instant failure before model turn",
+          "live delivery text",
+          "mixed success failure cancellation",
+          "model text authority",
+          "model text disagrees with outcome",
+          "multiple independent batches",
+          "one consolidated receipt",
+          "requester generation mismatch",
+          "success failure cancel counts",
+          "worker refused or instant failure"
+        ]
+      },
+      "candidates": [
+        {
+          "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+          "full": "41e4c4058993f44c4ba285be18d3aae88316415c",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "completion-batch-receipts.json/candidate/commit",
+            "continuation-delivery-matrix.json/candidate/commit",
+            "e2e-last-run.json/commit",
+            "gates.json/candidate/commit",
+            "gates.json/commands[0]/commit",
+            "gates.json/commands[10]/commit"
+          ]
+        }
+      ],
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 1,
+      "evidenceOk": true
+    },
+    {
+      "key": "C4",
+      "forestNode": "TF-0555",
+      "contract": "harness/specs/tasks/long-session-coordination-surface.md",
+      "directory": "harness/specs/fixtures/long-session-development/c4",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/c4/gates.json",
+      "primaryEvidenceSha256": "f12c80712ceb73dddd77be37630fac833f9396b664c94225fcfdd2d932dd194a",
+      "schema": "clawx.long-session.node-evidence/v1",
+      "artifactCount": 16,
+      "artifactFiles": [
+        "README.md",
+        "SHA256SUMS",
+        "comms-compare-report.md",
+        "coordination-narrow.png",
+        "coordination-ui-journeys.json",
+        "coordination-ui-screenshots.json",
+        "coordination-wide.png",
+        "credential-scan.json",
+        "credential-scan.mjs",
+        "e2e-last-run.json",
+        "e2e-process-cleanup.json",
+        "e2e.stdout",
+        "gates.json",
+        "harness-latest.md",
+        "lint-scoped.mjs",
+        "unit-required.vitest.json"
+      ],
+      "artifactHashes": {
+        "README.md": "d4d34e163816e79592c2ecc3d6886ea6a000bb41f80ba6d17c98bd3cdb59dca5",
+        "SHA256SUMS": "5773cd220bade600d3eaa094bb9d6fe54cdf3add1a1504a91e1669cb5f511ba2",
+        "comms-compare-report.md": "f37e403dd46afda51a348a064d3da3f7956ea518706ee39480ad1aefac279bdc",
+        "coordination-narrow.png": "659481d2a9e17f54233e64bf4c194947fc24e80640e678538bf7513fcf32dcb2",
+        "coordination-ui-journeys.json": "27aa9f0d74aac7cf864dd40db468fa62a1eba87b412da8d1710108dd4e534ec5",
+        "coordination-ui-screenshots.json": "70ff983a46977b1534373caf2eb07413f92b31ecf8fe3f6b7118c8cee7115a82",
+        "coordination-wide.png": "0d0bdacef6abd0742e0ff529a9df2699c751d056e85f15050adea7273ad5c236",
+        "credential-scan.json": "f19474c51e1b2e45855790e8c5fef0a4d019441a623d1fb86e79545f359014d6",
+        "credential-scan.mjs": "1769d90b983925ea2c8f929e7317f2dd836992c6927a0bf8ad526f7d73f12671",
+        "e2e-last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+        "e2e-process-cleanup.json": "a51ba0b6a01e1efbf35bad1e69661fcdaf79f476c33bed97e13bffb950fe390e",
+        "e2e.stdout": "f8caceaad20f6d099171251f8d564a4320cd8be305412cebf4b2c7a7e076385b",
+        "gates.json": "f12c80712ceb73dddd77be37630fac833f9396b664c94225fcfdd2d932dd194a",
+        "harness-latest.md": "bef57efb2eb334100accbe21d8f8556ee000b38ca7e1c62b3279d353913bd163",
+        "lint-scoped.mjs": "b301fc0e7c94bc95ac918366379199ac34c28b5be1e0f179d579a4efb9ed7bcd",
+        "unit-required.vitest.json": "89f112a1170012a1f1eef735bef469aa4dbb72da75c7c8cd280884ce70cdfadb"
+      },
+      "sha256sums": {
+        "verified": 15,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 15,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 3,
+        "ids": [
+          "No new completion batch is synthesized during the quiet window.",
+          "The observed completion worker is listed as a navigation target and does not receive a managed-resource stop control.",
+          "While paused, the UI exposes resume only and the Workspace owner readback reports paused."
+        ]
+      },
+      "candidates": [
+        {
+          "commit": "640da4cf927fc51569964568b0fe6c3f0dfa86cf",
+          "full": "640da4cf927fc51569964568b0fe6c3f0dfa86cf",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "gates.json/candidate/commit",
+            "gates.json/commands[0]/commit",
+            "gates.json/commands[10]/commit",
+            "gates.json/commands[11]/commit",
+            "gates.json/commands[12]/commit",
+            "gates.json/commands[13]/commit"
+          ]
+        }
+      ],
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 1,
+      "evidenceOk": true
+    },
+    {
+      "key": "D1",
+      "forestNode": "TF-0556",
+      "contract": "harness/specs/tasks/long-session-continuity-context.md",
+      "directory": "harness/specs/fixtures/long-session-development/d1",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/d1/verification.json",
+      "primaryEvidenceSha256": "09139762e1101a8bdb821131db7dff31e08a330105e4c5eb9c915d87423c317e",
+      "schema": "clawx.long-session.d1-verification/v1",
+      "artifactCount": 15,
+      "artifactFiles": [
+        "README.md",
+        "SHA256SUMS",
+        "comms-compare-report.json",
+        "comms-compare-report.md",
+        "comms-current-metrics.json",
+        "continuity-context-pack.json",
+        "credential-scan.json",
+        "cross-scope-negative.json",
+        "e2e-last-run.json",
+        "e2e-process-cleanup.json",
+        "e2e-process-run.json",
+        "fact-provenance-and-revocation.json",
+        "gates.json",
+        "typecheck-errors.log",
+        "verification.json"
+      ],
+      "artifactHashes": {
+        "README.md": "ffecbb4f8b40eb26990624c9d75f567dfdbc9eb5b54ae0aec3c480005aa776eb",
+        "SHA256SUMS": "83743834ad950bcaeecb7139705d10610d2b40f8e491958f3628611764754437",
+        "comms-compare-report.json": "bc9280f95e6efa4f1e02d8ac26aa0caa9c2b3c18caf31b98bde2519fd8ed9d58",
+        "comms-compare-report.md": "e79cfc22752c0485b6db5a0454a1400266151552cf8fb464b8c748bd10fb9682",
+        "comms-current-metrics.json": "6e86043c655531ace0592f33d113d97c967fad0a96945a77227564114ab3a283",
+        "continuity-context-pack.json": "9177ac494a3ae8acc996ef937045d3d0bc8e5baf5ac58efe32f3717a7228d29a",
+        "credential-scan.json": "c57af298b2d120ebf77eb9c7128d2ebf711454d6e1cdab84249c2c4a79df6751",
+        "cross-scope-negative.json": "1771a4d81d5eda7d9eeedad4186128dcfc74345b92f1c210e3079af378e6a539",
+        "e2e-last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+        "e2e-process-cleanup.json": "b3a541a3208331669542818857989ad465718a43172c6e0955e947f783fe0ae4",
+        "e2e-process-run.json": "a7628fa328230e8479a4ffe2ac41578418ccdf774b70b7c93060bd6f8e4615f4",
+        "fact-provenance-and-revocation.json": "a377488b0fb5cf9cc83e1a485d8e3d8c06fa86804a00a3e10c49330f33aaa791",
+        "gates.json": "2455fd17ee2f60079682fd4edc09ac4e92036ef6da7f08f2fc3c89831edbf956",
+        "typecheck-errors.log": "2965c30ed6c0458fe82c037cbd4fcb6ec7b20eb952bfab14bcb028ad81bbeb57",
+        "verification.json": "09139762e1101a8bdb821131db7dff31e08a330105e4c5eb9c915d87423c317e"
+      },
+      "sha256sums": {
+        "verified": 14,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 24,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 70,
+        "ids": [
+          "candidate memory",
+          "candidate memory excluded",
+          "coordinator generation mismatch invalidates pack",
+          "coordinator session deleted",
+          "deleted coordinator session gets no pack",
+          "deleted session",
+          "expired memory",
+          "expired memory excluded",
+          "foreign agent/role/workspace",
+          "foreign workspace/agent/role refs excluded",
+          "gateway-restart-during-run",
+          "happy-path-chat",
+          "history-overlap-guard",
+          "invalid-config-patch-recovered",
+          "multi-agent-channel-switch",
+          "native backend compaction owner",
+          "native backend compaction owner is marked unavailable and does not claim artifact",
+          "network-degraded",
+          "ordinary session without binding gets no pack",
+          "ordinary session without coordinator binding",
+          "pending working-context",
+          "pending working-context excluded",
+          "roleMemoryEnabled=false",
+          "roleMemoryEnabled=false closes role-memory",
+          "tombstone and superseded memory excluded",
+          "tombstone/superseded memory",
+          "| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+          "| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+          "| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+          "| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+          "| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |",
+          "| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |",
+          "| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+          "| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+          "| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+          "| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+          "| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |",
+          "| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |",
+          "| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+          "| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |"
+        ]
+      },
+      "candidates": [
+        {
+          "commit": "1b76fec74904ba875a5f7ecc6dae99e952c4b74c",
+          "full": "1b76fec74904ba875a5f7ecc6dae99e952c4b74c",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "comms-compare-report.json/candidate/commit",
+            "comms-compare-report.json/replay_candidate/commit",
+            "comms-current-metrics.json/candidate/commit",
+            "verification.json/source_commit"
+          ]
+        }
+      ],
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 1,
+      "evidenceOk": true
+    },
+    {
+      "key": "D2",
+      "forestNode": "TF-0557",
       "contract": "harness/specs/tasks/long-session-paired-evaluation.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/d2",
-      "evidenceFiles": [
+      "directory": "harness/specs/fixtures/long-session-development/d2",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/d2/verification-receipt.json",
+      "primaryEvidenceSha256": "a327d3288d7700701a24a0e249f93fbbba1c477fd22f3c9d4cacd67b2cc50b65",
+      "schema": "clawx.long-session.d2-verification/v1",
+      "artifactCount": 9,
+      "artifactFiles": [
         "README.md",
         "SHA256SUMS",
         "candidate-decision-inputs.json",
+        "e2e-last-run.json",
+        "e2e-process-cleanup.json",
+        "e2e-process-run.json",
         "fidelity-latency-cost-report.json",
         "paired-workload-manifest.json",
         "verification-receipt.json"
       ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/d2/verification-receipt.json",
-      "receiptSha256": "677a1f652be1d529c8029c364e55e5c466f0771fbcf5682e8f631beec09495b7",
-      "candidate": "6d8d9d97d949dda8ccefc2677b47ebecfdaa92ab",
-      "verdict": "EVIDENCE_INSUFFICIENT",
-      "acceptance": [
+      "artifactHashes": {
+        "README.md": "abdff9c24280e24a0f0fac94b7cfc8fd036310305d38d57ec2c8ed5e909ec0f8",
+        "SHA256SUMS": "eb4ec43f7d56bac95f2200cc722d38d36d043525d3a0db5a9661c22eb7580316",
+        "candidate-decision-inputs.json": "6d7b8c0083b0f2e97a55bd5e26881b2e200e184458d2545a140091204d6aed6a",
+        "e2e-last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+        "e2e-process-cleanup.json": "bb85557ffba6265c40309287ae3554d194ebfc2aec7a8faf5509ec152fe6ae7d",
+        "e2e-process-run.json": "42b157c8ce077498a74a8786a9d6ec6605f911a85dd0a8e8d47134793a455a04",
+        "fidelity-latency-cost-report.json": "78ce40c0f6f6710603b79c6a3b5bce8678db49c111686a958fdf48a3870644f4",
+        "paired-workload-manifest.json": "97c007dbdab7996974bfe9e47f8f1c9d20729202be013706ff768e1806fbc02a",
+        "verification-receipt.json": "a327d3288d7700701a24a0e249f93fbbba1c477fd22f3c9d4cacd67b2cc50b65"
+      },
+      "sha256sums": {
+        "verified": 8,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 12,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 110,
+        "ids": [
+          "agent-derived-cannot-promote",
+          "character-estimate-is-not-cost-evidence",
+          "d2-compression-01",
+          "d2-compression-02",
+          "d2-compression-03",
+          "d2-compression-04",
+          "d2-compression-05",
+          "d2-compression-06",
+          "d2-fork-01",
+          "d2-fork-02",
+          "d2-fork-03",
+          "d2-fork-04",
+          "d2-fork-05",
+          "d2-fork-06",
+          "d2-handoff-01",
+          "d2-handoff-02",
+          "d2-handoff-03",
+          "d2-handoff-04",
+          "d2-handoff-05",
+          "d2-handoff-06",
+          "d2-restart-01",
+          "d2-restart-02",
+          "d2-restart-03",
+          "d2-restart-04",
+          "d2-restart-05",
+          "d2-restart-06",
+          "d2-revocation-01",
+          "d2-revocation-02",
+          "d2-revocation-03",
+          "d2-revocation-04",
+          "d2-revocation-05",
+          "d2-revocation-06",
+          "false-completion-claim-blocked",
+          "forbidden-fact-reinjection-blocked",
+          "measurement-outside-frozen-workload",
+          "post-freeze-case-edit-invalidates-hash",
+          "post-freeze-threshold-edit-invalidated",
+          "structural-exclusion:d2-compression-01:pending-not-accepted",
+          "structural-exclusion:d2-compression-01:unverified-claim",
+          "structural-exclusion:d2-compression-02:pending-not-accepted"
+        ]
+      },
+      "candidates": [
         {
-          "index": 1,
-          "criterion": "freeze >=30 agent-driven pairs with must-preserve facts and metric budget before measurement, covering compression/handoff/fork/restart/revocation, one shared model parameter block",
-          "result": "pass",
-          "evidence": [
-            "paired-workload-manifest.json"
-          ],
-          "note": null
+          "commit": "133177a783f5140336d73d9c0fa98e32ec527bce",
+          "full": "133177a783f5140336d73d9c0fa98e32ec527bce",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "candidate-decision-inputs.json/candidate/commit",
+            "fidelity-latency-cost-report.json/candidate/commit",
+            "paired-workload-manifest.json/candidate/commit",
+            "verification-receipt.json/candidate/commit"
+          ]
         },
         {
-          "index": 2,
-          "criterion": "fidelity 100%, false completions 0, next-action >= 95%, real token/cache/cost and first-token/wall-clock P50/P95 recorded without character estimates",
-          "result": "not-measurable",
-          "evidence": [
-            "fidelity-latency-cost-report.json"
-          ],
-          "note": "no authorized live-provider endpoint: cells stay null and the candidate is not eligible"
-        },
-        {
-          "index": 3,
-          "criterion": "promotion gate: >=15% cost or input-token reduction, P95 within 1.10x baseline, zero safety regression; thresholds only movable by a pre-measurement proposal",
-          "result": "pass",
-          "evidence": [
-            "paired-workload-manifest.json",
-            "fidelity-latency-cost-report.json"
-          ],
-          "note": "thresholds are validated inside the frozen workload hash; any edit invalidates the hash"
-        },
-        {
-          "index": 4,
-          "criterion": "without authorized live provider or sufficient quality/cost samples, output evidenceInsufficient/NO-GO and complete decision inputs; never promote on simulated data",
-          "result": "pass",
-          "evidence": [
-            "candidate-decision-inputs.json"
-          ],
-          "note": null
+          "commit": "333d7ca846ff116da9f7419059cc7ad38776dd17",
+          "full": "333d7ca846ff116da9f7419059cc7ad38776dd17",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "verification-receipt.json/gateReceipt/candidate/commit"
+          ]
         }
       ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [
-        "pass",
-        "not-measurable",
-        "pass",
-        "pass"
-      ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 10,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 5,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 2,
+      "evidenceOk": true
     },
     {
-      "node": "TF-0558",
-      "taskKey": "D3",
+      "key": "D3",
+      "forestNode": "TF-0558",
       "contract": "harness/specs/tasks/long-session-continuity-decision.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/d3",
-      "evidenceFiles": [
+      "directory": "harness/specs/fixtures/long-session-development/d3",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/d3/verification-receipt.json",
+      "primaryEvidenceSha256": "2d57bad2e35904dd5ec5ccdab9c3f439eefa7d9176590b9ebbcdf8974db01d3f",
+      "schema": "clawx.long-session.d3-verification/v1",
+      "artifactCount": 5,
+      "artifactFiles": [
         "README.md",
         "SHA256SUMS",
         "continuity-strategy-decision.json",
         "promotion-or-retention-boundary.json",
         "verification-receipt.json"
       ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/d3/verification-receipt.json",
-      "receiptSha256": "80a27f1ddd3b2b9fbeb3d44ccacb5dca1dc0b9f08db8bb7cc63c84617bb27206",
-      "candidate": "beae6d396a7003c50ecc7b9c27c6379eac55e9a4",
-      "verdict": "keep-baseline",
-      "acceptance": [],
-      "acceptanceCount": 0,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [],
-      "criteriaWithEvidence": 0,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 11,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 4,
-        "problems": []
+      "artifactHashes": {
+        "README.md": "587387e85c605d02ec0413668250c1ebc785aa135b0370537a625e9c31be7100",
+        "SHA256SUMS": "0af9d64da3774209d3056cfa5683caa99ece3a0018e488b6f266b6fb98ac5aed",
+        "continuity-strategy-decision.json": "cd11d987b605f807985eaf443f824cb2ff32c1457bd4274822571cb8bf56f611",
+        "promotion-or-retention-boundary.json": "9e87e3d1e2705fd3530dc4225639aa638030855994c45a7fe12bfa3fd1bb3212",
+        "verification-receipt.json": "2d57bad2e35904dd5ec5ccdab9c3f439eefa7d9176590b9ebbcdf8974db01d3f"
       },
-      "hashVerified": true,
-      "hasCompetingPass": true
-    },
-    {
-      "node": "TF-0559",
-      "taskKey": "E1",
-      "contract": "harness/specs/tasks/long-session-followup-scheduling.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/e1",
-      "evidenceFiles": [
-        "README.md",
-        "SHA256SUMS",
-        "followup-schedule-receipts.json",
-        "pause-cancel-expiry-matrix.json",
-        "verification-receipt.json"
-      ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/e1/verification-receipt.json",
-      "receiptSha256": "c962a444acf0388ce06a6305150da0f85afc60d51a6057fc40df2fbed42c312c",
-      "candidate": "8eeb2823e48c6b48b5d756a3c2964e0884bdff2a",
-      "verdict": "pass",
-      "acceptance": [
+      "sha256sums": {
+        "verified": 4,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 4,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 4,
+        "ids": [
+          "character-estimated-cost-never-satisfies-the-cost-gate",
+          "gate-clearing-evidence-would-select-scoped-opt-in",
+          "live-but-failing-evidence-retains-experiment",
+          "tampered-workload-hash-is-not-accepted"
+        ]
+      },
+      "candidates": [
         {
-          "index": 1,
-          "criterion": "reuse the existing Cron/Workboard owner to persist an explicit schedule plus coordinator scope/intent (timezone, deadline, retry, missed-run handling, notification policy) without a new daemon",
-          "result": "pass",
-          "evidence": [
-            "followup-schedule-receipts.json",
-            "pause-cancel-expiry-matrix.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 2,
-          "criterion": "pause, cancel and stop-current-turn are distinct; archive/reset/delete/revoke cannot deliver into a new generation or trigger an unauthorized worker",
-          "result": "pass",
-          "evidence": [
-            "followup-schedule-receipts.json",
-            "pause-cancel-expiry-matrix.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 3,
-          "criterion": "restart/duplicate tick/offline recovery only runs currently-authorized, unexpired follow-ups; no replay of completed side effects; quiet unless there is a result",
-          "result": "pass",
-          "evidence": [
-            "pause-cancel-expiry-matrix.json",
-            "tests/unit/long-session-followup-scheduling.test.ts"
-          ],
-          "note": null
-        },
-        {
-          "index": 4,
-          "criterion": "goal-wake and durable-helper keep their frozen default-off and mission scope; a plain session goal does not impersonate a durable mission",
-          "result": "pass",
-          "evidence": [
-            "tests/unit/long-session-followup-scheduling.test.ts",
-            "pause-cancel-expiry-matrix.json"
-          ],
-          "note": null
+          "commit": "f25c03a13eb5005d8cb265a4ae7b34da427bcf5b",
+          "full": "f25c03a13eb5005d8cb265a4ae7b34da427bcf5b",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "continuity-strategy-decision.json/candidate/commit",
+            "promotion-or-retention-boundary.json/candidate/commit",
+            "verification-receipt.json/candidate/commit"
+          ]
         }
       ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [
-        "pass",
-        "pass",
-        "pass",
-        "pass"
-      ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 9,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 4,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 1,
+      "evidenceOk": true
     },
     {
-      "node": "TF-0560",
-      "taskKey": "E2",
-      "contract": "harness/specs/tasks/long-session-resource-reclamation.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/e2",
-      "evidenceFiles": [
+      "key": "E1",
+      "forestNode": "TF-0559",
+      "contract": "harness/specs/tasks/long-session-followup-scheduling.md",
+      "directory": "harness/specs/fixtures/long-session-development/e1",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/e1/verification-receipt.json",
+      "primaryEvidenceSha256": "5cd5b95a98be009680240850d0a91e5cc951107789be55d0850d0e4ac760e7dd",
+      "schema": "clawx.long-session.e1-verification/v1",
+      "artifactCount": 12,
+      "artifactFiles": [
         "README.md",
         "SHA256SUMS",
+        "comms-compare-report.json",
+        "comms-compare-report.md",
+        "comms-current-metrics.json",
+        "e2e-last-run.json",
+        "e2e-process-cleanup.json",
+        "e2e-process-run.json",
+        "followup-schedule-receipts.json",
+        "pause-cancel-expiry-matrix.json",
+        "raw-e2e-observation.json",
+        "verification-receipt.json"
+      ],
+      "artifactHashes": {
+        "README.md": "61b5506a0e83cc7ee60b3f4c8919c8b9504a37c21b131b8f25d51f31d946b980",
+        "SHA256SUMS": "ab92b4eb8a219cda8c21d54748ef9e74508a7f331bb2c7b9c61b6994b3248486",
+        "comms-compare-report.json": "bf6e6213f9bc8bbfb0cb817b9c78a3758285d45823b86324db53003b05c871a5",
+        "comms-compare-report.md": "36d53f796967b7eb10fc97f9ed67343b79a20734a02173dc985d8eef620cfd46",
+        "comms-current-metrics.json": "9724a619f61398515cfccc88594bf90e3c54cf20a3c6a6b054b12dc4094af847",
+        "e2e-last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+        "e2e-process-cleanup.json": "f0e815e78233665ed2afdc27159305bc1d7e9480fa8f95f533f34dc266c7234b",
+        "e2e-process-run.json": "b825060348ca9c8262f593aee856dd11fc41e7370b57dbdf5a5c39226861cffa",
+        "followup-schedule-receipts.json": "c222c345af6f18a2a0aa17a3a97bb523751f9c4c4ae6d3b170b92356a967ed65",
+        "pause-cancel-expiry-matrix.json": "f8b81608ffa33c7d469a6a7fa6226f80ab262934b120e7325cabb1da30ee2b25",
+        "raw-e2e-observation.json": "0046001ac06787f3502624998b3bcd7a0251ba9d142615f759546f204a0b1a7a",
+        "verification-receipt.json": "5cd5b95a98be009680240850d0a91e5cc951107789be55d0850d0e4ac760e7dd"
+      },
+      "sha256sums": {
+        "verified": 11,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 15,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 51,
+        "ids": [
+          "deleted coordinator session -> binding invalidated -> cron fence state session-missing",
+          "gateway-restart-during-run",
+          "happy-path-chat",
+          "history-overlap-guard",
+          "invalid-config-patch-recovered",
+          "multi-agent-channel-switch",
+          "network-degraded",
+          "| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+          "| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+          "| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+          "| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+          "| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |",
+          "| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |",
+          "| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+          "| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+          "| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+          "| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+          "| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |",
+          "| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |",
+          "| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+          "| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+          "| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+          "| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+          "| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |",
+          "| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |",
+          "| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+          "| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+          "| history_inflight_max | 1.0000 | <= 1 | PASS |",
+          "| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |",
+          "| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+          "| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+          "| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |",
+          "| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |",
+          "| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+          "| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+          "| message_loss_count | 0.0000 | <= 0 | PASS |",
+          "| message_order_violation_count | 0.0000 | <= 0 | PASS |",
+          "| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+          "| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+          "| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |"
+        ]
+      },
+      "candidates": [
+        {
+          "commit": "41c0cbd9a138ab333c24a813fab85cc1591fafec",
+          "full": "41c0cbd9a138ab333c24a813fab85cc1591fafec",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "comms-compare-report.json/candidate/commit",
+            "comms-compare-report.json/replay_candidate/commit",
+            "comms-current-metrics.json/candidate/commit"
+          ]
+        },
+        {
+          "commit": "5976c409fce7a107c82f994cd85d8f5a33ffc3de",
+          "full": "5976c409fce7a107c82f994cd85d8f5a33ffc3de",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "followup-schedule-receipts.json/candidate/commit",
+            "pause-cancel-expiry-matrix.json/candidate/commit",
+            "verification-receipt.json/candidate/commit"
+          ]
+        }
+      ],
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 2,
+      "evidenceOk": true
+    },
+    {
+      "key": "E2",
+      "forestNode": "TF-0560",
+      "contract": "harness/specs/tasks/long-session-resource-reclamation.md",
+      "directory": "harness/specs/fixtures/long-session-development/e2",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/e2/verification-receipt.json",
+      "primaryEvidenceSha256": "ea163abf8decbb114b0a9b0c8a6f5e451ea32aa6476829d3b77aad6a5d8c2999",
+      "schema": "clawx.long-session.e2-verification/v1",
+      "artifactCount": 7,
+      "artifactFiles": [
+        "README.md",
+        "SHA256SUMS",
+        "real-owner-reclamation-receipt.json",
         "reclamation-cycle-results.json",
         "resource-owner-inventory.json",
         "resource-recovery-required.json",
         "verification-receipt.json"
       ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/e2/verification-receipt.json",
-      "receiptSha256": "9946359bef6cbf2a40c6f0323b1a82ae82245a2be59ccc9160ab8664e66e9377",
-      "candidate": "7c8348b579f0278b09595c8929a83e09ab0da232",
-      "verdict": "pass",
-      "acceptance": [
+      "artifactHashes": {
+        "README.md": "e8b8d0a5239f0eba1e2e5b8ed8f0f032bf067cbaf85a3089f61e3e7b0d93fef3",
+        "SHA256SUMS": "c246073013396e55313c0035ce6f161b29013cf1de6a201215802d4e443e63c5",
+        "real-owner-reclamation-receipt.json": "92a61ef6a8a23ac15d1cc261f8e13084bf781528dd8726eba359979be2f0b35d",
+        "reclamation-cycle-results.json": "2098ead16c0787fef8338b1e0d64430c733e460ddcfefaae7e0ed5bb711136de",
+        "resource-owner-inventory.json": "c664e5f4d05f09fa9d5f81601cd72f63bf5fb70e6137606cf4bd0c3c36ffc814",
+        "resource-recovery-required.json": "c76fda0f933ecbb68e5c236c44838b98cd977ab5c02d3b11e2745ab505ab8568",
+        "verification-receipt.json": "ea163abf8decbb114b0a9b0c8a6f5e451ea32aa6476829d3b77aad6a5d8c2999"
+      },
+      "sha256sums": {
+        "verified": 6,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 2,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 3,
+        "ids": [
+          "browser-close-failed",
+          "managed-port-still-reachable",
+          "worktree-owner-unknown"
+        ]
+      },
+      "candidates": [
         {
-          "index": 1,
-          "criterion": "resources stay with existing owners; no universal session_resources table; unload/cancel/archive/delete are distinct",
-          "result": "pass",
-          "evidence": [
-            "resource-owner-inventory.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 2,
-          "criterion": "50 create/stop/archive-restore cycles leave zero managed residue; keep_on_leave terminals counted separately",
-          "result": "pass",
-          "evidence": [
-            "reclamation-cycle-results.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 3,
-          "criterion": "cleanup failure/unknown raises recovery_required with retry identity; no agent-wide kill or other-worktree deletion",
-          "result": "pass",
-          "evidence": [
-            "resource-recovery-required.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 4,
-          "criterion": "worktree/backend recoverability, browser grants, terminal closure and late callbacks cannot resurrect resources; permission revocation and workspace delete/switch/quit match owner contracts",
-          "result": "pass",
-          "evidence": [
-            "tests/unit/long-session-resource-reclamation.test.ts",
-            "resource-owner-inventory.json"
-          ],
-          "note": null
+          "commit": "3100f8a6ac6393741f6d14ff2091c14d6d9748b2",
+          "full": "3100f8a6ac6393741f6d14ff2091c14d6d9748b2",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "reclamation-cycle-results.json/candidate/commit",
+            "resource-owner-inventory.json/candidate/commit",
+            "resource-recovery-required.json/candidate/commit",
+            "verification-receipt.json/candidate/commit"
+          ]
         }
       ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [
-        "pass",
-        "pass",
-        "pass",
-        "pass"
-      ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 10,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 5,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 1,
+      "evidenceOk": true
     },
     {
-      "node": "TF-0561",
-      "taskKey": "F1",
+      "key": "F1",
+      "forestNode": "TF-0561",
       "contract": "harness/specs/tasks/long-session-restart-journeys.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/f1",
-      "evidenceFiles": [
-        "README.md",
+      "directory": "harness/specs/fixtures/long-session-development/f1",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/f1/restart-journey-results.json",
+      "primaryEvidenceSha256": "7936ab9eb12c0fddbb74496707a690f7d8f42cf87cfa0e40ba95456ea61ebe94",
+      "schema": "clawx.long-session.restart-journeys.curated/v1",
+      "artifactCount": 4,
+      "artifactFiles": [
         "SHA256SUMS",
         "host-runtime-receipts.json",
         "restart-journey-results.json",
-        "ui-evidence-index.json",
-        "verification-receipt.json"
+        "ui-evidence-index.json"
       ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/f1/verification-receipt.json",
-      "receiptSha256": "03b49f0ebe5b56212fae06a1047955b881f01047e47d04db386988cff2208399",
-      "candidate": "504b284ba79fde7bfd32562cfdd10631a5b35a2a",
-      "verdict": "pass",
-      "acceptance": [
+      "artifactHashes": {
+        "SHA256SUMS": "3a7604cd5ae38b1bd2dfe42072d2f8b6e6ee9fd9d0be95859e76406de5bfc88c",
+        "host-runtime-receipts.json": "1f34217b3ae7b9fea4c2c64022ec558275c2adb8d85dd07c82af2f51b79a1232",
+        "restart-journey-results.json": "7936ab9eb12c0fddbb74496707a690f7d8f42cf87cfa0e40ba95456ea61ebe94",
+        "ui-evidence-index.json": "58ffcf6fdf0e5f898c513c1402e0e6dbf715866adae3158058e48fe42bfbec64"
+      },
+      "sha256sums": {
+        "verified": 3,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 0,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 8,
+        "ids": [
+          "appRestart",
+          "archiveRestore",
+          "dualWorkerBatch",
+          "forkCompactHandoff",
+          "gatewayRestart",
+          "isolation",
+          "lifecycleNegative",
+          "realProviderTurn"
+        ]
+      },
+      "candidates": [
         {
-          "index": 1,
-          "criterion": "at least six agent-driven real Electron/Host/Gateway journeys covering worker batch, background/UI closed, app and Gateway restart, fork/handoff/compact, revoke, archive/restore/delete and late events",
-          "result": "pass",
-          "evidence": [
-            "restart-journey-results.json",
-            "host-runtime-receipts.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 2,
-          "criterion": "at least two workspaces and one ordinary session act as isolation controls; cross-scope leaks, duplicate side effects and wrong completed/delivered claims are all 0",
-          "result": "pass",
-          "evidence": [
-            "restart-journey-results.json",
-            "host-runtime-receipts.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 3,
-          "criterion": "every journey reads back Task Ledger, transcript, owner receipts and resource state; an IPC-mock UI pass alone is not accepted as runtime wiring",
-          "result": "pass",
-          "evidence": [
-            "host-runtime-receipts.json",
-            "ui-evidence-index.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 4,
-          "criterion": "OpenClaw and any available native backend are labelled with separate evidence levels; routes without real provider evidence stay fixture-only/unverified",
-          "result": "pass",
-          "evidence": [
-            "restart-journey-results.json"
-          ],
-          "note": null
+          "commit": "c0948cd3dc226a51d35ddf8261f9d40fb8596bec",
+          "full": "c0948cd3dc226a51d35ddf8261f9d40fb8596bec",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "host-runtime-receipts.json/candidate/commit",
+            "restart-journey-results.json/candidate/commit",
+            "ui-evidence-index.json/candidate/commit"
+          ]
         }
       ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [
-        "pass",
-        "pass",
-        "pass",
-        "pass"
-      ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 12,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 5,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 1,
+      "evidenceOk": true
     },
     {
-      "node": "TF-0562",
-      "taskKey": "F2",
+      "key": "F2",
+      "forestNode": "TF-0562",
       "contract": "harness/specs/tasks/long-session-long-use-budget.md",
-      "evidenceDir": "harness/specs/fixtures/long-session-development/f2",
-      "evidenceFiles": [
+      "directory": "harness/specs/fixtures/long-session-development/f2",
+      "primaryEvidence": "harness/specs/fixtures/long-session-development/f2/long-use-before-after.json",
+      "primaryEvidenceSha256": "77a6f1c3838178781b2c40f7024ab09d8fbb299a1dc64ae9bd8aba5b93414fd6",
+      "schema": "clawx.long-session.f2-long-use-before-after/v1",
+      "artifactCount": 6,
+      "artifactFiles": [
         "README.md",
         "SHA256SUMS",
         "long-use-before-after.json",
         "notification-budget.json",
-        "probe-f2.mjs",
-        "rss-and-owner-counts.json",
-        "verification-receipt.json"
+        "probe.mjs",
+        "rss-and-owner-counts.json"
       ],
-      "receiptFile": "harness/specs/fixtures/long-session-development/f2/verification-receipt.json",
-      "receiptSha256": "3457bbe4a2ee7ffebd3feedb6b210aafbef9bccf448d5ca3465e48083c3976c5",
-      "candidate": "18982d5e6c8d66f96bc0c3ebbfc4cb44ba52b997",
-      "verdict": "pass",
-      "acceptance": [
+      "artifactHashes": {
+        "README.md": "c7093eb2178f83d92f78311ff9c666db55281d84a171f0bc842fd08a10db9a74",
+        "SHA256SUMS": "1d021725a8556bf760356d51d487197e263c422c7b23e07a672943a9c9b2c65d",
+        "long-use-before-after.json": "77a6f1c3838178781b2c40f7024ab09d8fbb299a1dc64ae9bd8aba5b93414fd6",
+        "notification-budget.json": "11f222bedfeb70aa55e6c6278ac92429a0c1832059f5086d4010ece4234f5065",
+        "probe.mjs": "877fa824c5905750997dc43806717184cffbebe97f10272349a13a86daf928cb",
+        "rss-and-owner-counts.json": "d44d67f607510c39cb315171b709331f70c4f17f9a8b6646cdcc5dee6f9546b5"
+      },
+      "sha256sums": {
+        "verified": 4,
+        "failures": []
+      },
+      "gates": {
+        "exitCodeObservations": 31,
+        "failed": [],
+        "failedCount": 0
+      },
+      "acceptance": {
+        "verdictObservations": 0,
+        "representationFailures": [],
+        "representationFailureCount": 0
+      },
+      "negativeProofs": {
+        "count": 5,
+        "ids": [
+          "deleted coordinator session -> binding invalidated -> cron fence state unverifiable",
+          "gc-gate",
+          "hidden-label-rehydration",
+          "lifecycle-residual",
+          "long-task-control"
+        ]
+      },
+      "candidates": [
         {
-          "index": 1,
-          "criterion": "freeze and run at least 333 sessions and long transcripts on the current candidate, recording load/switch/compaction/continuation P50/P95, actual bytes, summary calls/keys, long tasks and raw samples",
-          "result": "pass",
-          "evidence": [
-            "long-use-before-after.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 2,
-          "criterion": "a five-minute idle RSS curve plus at least 50 lifecycle rounds of owner/cache/listener counts are recomputable from disk; no unbounded growth and no scope-active residue; a missing explicit GC gate fails instead of being guessed",
-          "result": "pass",
-          "evidence": [
-            "rss-and-owner-counts.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 3,
-          "criterion": "duplicate completion, no-change follow-up and hidden UI must not create duplicate notifications or background work; one meaningful result per batch; paused/expired queues stay bounded",
-          "result": "pass",
-          "evidence": [
-            "notification-budget.json"
-          ],
-          "note": null
-        },
-        {
-          "index": 4,
-          "criterion": "regression budgets are fixed before measurement; untested platforms, live-provider and packaged scopes stay labelled unmeasured; a synthetic fixture is never claimed as real human long use",
-          "result": "pass",
-          "evidence": [
-            "long-use-before-after.json",
-            "verification-receipt.json"
-          ],
-          "note": null
+          "commit": "9db3a116e10b0bfd063ab0c8e9168dd98c46d4d4",
+          "full": "9db3a116e10b0bfd063ab0c8e9168dd98c46d4d4",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "long-use-before-after.json/candidate/commit",
+            "notification-budget.json/candidate/commit",
+            "rss-and-owner-counts.json/candidate/commit"
+          ]
         }
       ],
-      "acceptanceCount": 4,
-      "hasStructuredReceipt": true,
-      "acceptanceResults": [
-        "pass",
-        "pass",
-        "pass",
-        "pass"
-      ],
-      "criteriaWithEvidence": 4,
-      "criteriaWithoutRecordedResult": 0,
-      "commandCount": 9,
-      "failedCommands": 0,
-      "sums": {
-        "present": true,
-        "checked": 6,
-        "problems": []
-      },
-      "hashVerified": true,
-      "hasCompetingPass": true
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 1,
+      "evidenceOk": true
     }
   ],
   "phases": [
     {
-      "phase": "P1",
-      "name": "Session lifecycle truth",
-      "nodes": [
-        "TF-0548",
-        "TF-0549"
+      "id": "TF-0542",
+      "key": "A",
+      "title": "Phase 1 unified session actions and fault baseline",
+      "criterionReadFromPlan": "**阶段一：统一会话动作并建立故障基线**：先固定逻辑会话、原生后端和资源的关系，让归档与恢复有可拒绝、可回读的生命周期保障。",
+      "criterionPresent": true,
+      "childNodes": [
+        "A1",
+        "A2"
       ],
-      "observedNodes": 2,
-      "allPresent": true,
-      "allHashVerified": true,
-      "allHaveCriteria": true,
-      "verdicts": [
-        {
-          "node": "TF-0548",
-          "verdict": "pass-with-deferred-gaps"
-        },
-        {
-          "node": "TF-0549",
-          "verdict": "pass-with-residuals"
-        }
-      ]
+      "executedChildren": [
+        "A1",
+        "A2"
+      ],
+      "missingChildren": 0,
+      "failedChildren": [],
+      "aggregatesSelf": null,
+      "verdict": "pass"
     },
     {
-      "phase": "P2",
-      "name": "Effective session policy and user surface",
-      "nodes": [
-        "TF-0550",
-        "TF-0551"
+      "id": "TF-0543",
+      "key": "B",
+      "title": "Phase 2 effective session configuration visibility",
+      "criterionReadFromPlan": "**阶段二：让会话配置与实际运行状态可见**：在现有入口说明当前后端、配置来源、授权、预算和不可用原因，复用已有模型生效能力事实。",
+      "criterionPresent": true,
+      "childNodes": [
+        "B1",
+        "B2"
       ],
-      "observedNodes": 2,
-      "allPresent": true,
-      "allHashVerified": true,
-      "allHaveCriteria": true,
-      "verdicts": [
-        {
-          "node": "TF-0550",
-          "verdict": "pass"
-        },
-        {
-          "node": "TF-0551",
-          "verdict": "pass"
-        }
-      ]
+      "executedChildren": [
+        "B1",
+        "B2"
+      ],
+      "missingChildren": 0,
+      "failedChildren": [],
+      "aggregatesSelf": null,
+      "verdict": "pass"
     },
     {
-      "phase": "P3",
-      "name": "Long-session coordination MVP",
-      "nodes": [
-        "TF-0552",
-        "TF-0553",
-        "TF-0554",
-        "TF-0555"
+      "id": "TF-0544",
+      "key": "C",
+      "title": "Phase 3 single-workspace long coordination entry",
+      "criterionReadFromPlan": "**阶段三：交付单工作区长期协调入口**：复用稳定 Assistant 和 Task Ledger，完成任务委派、接收回执、结果汇总与主会话续接；会话显式绑定 local checkout 或 worktree，绑定、handoff 与清理由宿主控制面持有。",
+      "criterionPresent": true,
+      "childNodes": [
+        "C1",
+        "C2",
+        "C3",
+        "C4"
       ],
-      "observedNodes": 4,
-      "allPresent": true,
-      "allHashVerified": true,
-      "allHaveCriteria": true,
-      "verdicts": [
-        {
-          "node": "TF-0552",
-          "verdict": "pass"
-        },
-        {
-          "node": "TF-0553",
-          "verdict": "pass"
-        },
-        {
-          "node": "TF-0554",
-          "verdict": "pass"
-        },
-        {
-          "node": "TF-0555",
-          "verdict": "pass"
-        }
-      ]
+      "executedChildren": [
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ],
+      "missingChildren": 0,
+      "failedChildren": [],
+      "aggregatesSelf": null,
+      "verdict": "pass"
     },
     {
-      "phase": "P4",
-      "name": "Continuity evaluation and decision",
-      "nodes": [
-        "TF-0556",
-        "TF-0557",
-        "TF-0558"
+      "id": "TF-0545",
+      "key": "D",
+      "title": "Phase 4 context continuity and strategy evaluation",
+      "criterionReadFromPlan": "**阶段四：保持上下文连续性并评测策略**：消费唯一记忆与上下文控制面，测量跨压缩、交接和重启的关键事实保真度，再决定是否采用新策略。",
+      "criterionPresent": true,
+      "childNodes": [
+        "D1",
+        "D2",
+        "D3"
       ],
-      "observedNodes": 3,
-      "allPresent": true,
-      "allHashVerified": true,
-      "allHaveCriteria": true,
-      "verdicts": [
-        {
-          "node": "TF-0556",
-          "verdict": null
-        },
-        {
-          "node": "TF-0557",
-          "verdict": "EVIDENCE_INSUFFICIENT"
-        },
-        {
-          "node": "TF-0558",
-          "verdict": "keep-baseline"
-        }
-      ]
+      "executedChildren": [
+        "D1",
+        "D2",
+        "D3"
+      ],
+      "missingChildren": 0,
+      "failedChildren": [],
+      "aggregatesSelf": null,
+      "verdict": "pass"
     },
     {
-      "phase": "P5",
-      "name": "Follow-up scheduling and resources",
-      "nodes": [
-        "TF-0559",
-        "TF-0560"
+      "id": "TF-0546",
+      "key": "E",
+      "title": "Phase 5 follow-up scheduling and resource exit",
+      "criterionReadFromPlan": "**阶段五：接通跟进调度与资源退出**：复用 Cron、Workboard 和各资源 owner，使暂停、取消、过期和重启不会产生重复执行或失控资源。",
+      "criterionPresent": true,
+      "childNodes": [
+        "E1",
+        "E2"
       ],
-      "observedNodes": 2,
-      "allPresent": true,
-      "allHashVerified": true,
-      "allHaveCriteria": true,
-      "verdicts": [
-        {
-          "node": "TF-0559",
-          "verdict": "pass"
-        },
-        {
-          "node": "TF-0560",
-          "verdict": "pass"
-        }
-      ]
+      "executedChildren": [
+        "E1",
+        "E2"
+      ],
+      "missingChildren": 0,
+      "failedChildren": [],
+      "aggregatesSelf": null,
+      "verdict": "pass"
     },
     {
-      "phase": "P6",
-      "name": "Automated long-run acceptance and claims",
-      "nodes": [
-        "TF-0561",
-        "TF-0562"
+      "id": "TF-0547",
+      "key": "F",
+      "title": "Phase 6 long-horizon automated acceptance and claim closeout",
+      "criterionReadFromPlan": "**阶段六：完成长程自动验收与声明收口**：用跨重启旅程、长期加载和资源测量证明闭环，并将代码、配置、模型自述和验收范围对齐。",
+      "criterionPresent": true,
+      "childNodes": [
+        "F1",
+        "F2",
+        "F3"
       ],
-      "observedNodes": 2,
-      "allPresent": true,
-      "allHashVerified": true,
-      "allHaveCriteria": true,
-      "verdicts": [
-        {
-          "node": "TF-0561",
-          "verdict": "pass"
-        },
-        {
-          "node": "TF-0562",
-          "verdict": "pass"
-        }
-      ]
+      "executedChildren": [
+        "F1",
+        "F2"
+      ],
+      "missingChildren": 0,
+      "failedChildren": [],
+      "aggregatesSelf": "f3",
+      "verdict": "pass"
     }
   ],
-  "acceptance": [
-    {
-      "criterion": "all six phase criteria are read from disk; each of the 15 peer execution nodes (A1-F2) has current candidate/input/command/exit/counts/artifact/negative proof, and history is not re-signed",
-      "result": "pass",
-      "observedExecutingNodes": 15,
-      "observedProgramExecutingNodes": 16,
-      "observedCriteria": 52,
-      "criteriaWithoutEvidence": 0,
-      "missingReceipts": [],
-      "hashProblems": [],
-      "phases": [
-        {
-          "phase": "P1",
-          "name": "Session lifecycle truth",
-          "nodes": [
-            "TF-0548",
-            "TF-0549"
-          ],
-          "observedNodes": 2,
-          "allPresent": true,
-          "allHashVerified": true,
-          "allHaveCriteria": true,
-          "verdicts": [
-            {
-              "node": "TF-0548",
-              "verdict": "pass-with-deferred-gaps"
-            },
-            {
-              "node": "TF-0549",
-              "verdict": "pass-with-residuals"
-            }
-          ]
-        },
-        {
-          "phase": "P2",
-          "name": "Effective session policy and user surface",
-          "nodes": [
-            "TF-0550",
-            "TF-0551"
-          ],
-          "observedNodes": 2,
-          "allPresent": true,
-          "allHashVerified": true,
-          "allHaveCriteria": true,
-          "verdicts": [
-            {
-              "node": "TF-0550",
-              "verdict": "pass"
-            },
-            {
-              "node": "TF-0551",
-              "verdict": "pass"
-            }
-          ]
-        },
-        {
-          "phase": "P3",
-          "name": "Long-session coordination MVP",
-          "nodes": [
-            "TF-0552",
-            "TF-0553",
-            "TF-0554",
-            "TF-0555"
-          ],
-          "observedNodes": 4,
-          "allPresent": true,
-          "allHashVerified": true,
-          "allHaveCriteria": true,
-          "verdicts": [
-            {
-              "node": "TF-0552",
-              "verdict": "pass"
-            },
-            {
-              "node": "TF-0553",
-              "verdict": "pass"
-            },
-            {
-              "node": "TF-0554",
-              "verdict": "pass"
-            },
-            {
-              "node": "TF-0555",
-              "verdict": "pass"
-            }
-          ]
-        },
-        {
-          "phase": "P4",
-          "name": "Continuity evaluation and decision",
-          "nodes": [
-            "TF-0556",
-            "TF-0557",
-            "TF-0558"
-          ],
-          "observedNodes": 3,
-          "allPresent": true,
-          "allHashVerified": true,
-          "allHaveCriteria": true,
-          "verdicts": [
-            {
-              "node": "TF-0556",
-              "verdict": null
-            },
-            {
-              "node": "TF-0557",
-              "verdict": "EVIDENCE_INSUFFICIENT"
-            },
-            {
-              "node": "TF-0558",
-              "verdict": "keep-baseline"
-            }
-          ]
-        },
-        {
-          "phase": "P5",
-          "name": "Follow-up scheduling and resources",
-          "nodes": [
-            "TF-0559",
-            "TF-0560"
-          ],
-          "observedNodes": 2,
-          "allPresent": true,
-          "allHashVerified": true,
-          "allHaveCriteria": true,
-          "verdicts": [
-            {
-              "node": "TF-0559",
-              "verdict": "pass"
-            },
-            {
-              "node": "TF-0560",
-              "verdict": "pass"
-            }
-          ]
-        },
-        {
-          "phase": "P6",
-          "name": "Automated long-run acceptance and claims",
-          "nodes": [
-            "TF-0561",
-            "TF-0562"
-          ],
-          "observedNodes": 2,
-          "allPresent": true,
-          "allHashVerified": true,
-          "allHaveCriteria": true,
-          "verdicts": [
-            {
-              "node": "TF-0561",
-              "verdict": "pass"
-            },
-            {
-              "node": "TF-0562",
-              "verdict": "pass"
-            }
-          ]
+  "claims": {
+    "providerBackend": "scripted agent-driven endpoint only; no live-provider promotion claim",
+    "continuityStrategy": "keep-baseline",
+    "continuityQualityClaimAllowed": false,
+    "d2Status": "EVIDENCE_INSUFFICIENT",
+    "d2Disposition": "NO-GO",
+    "keepBaseline": true,
+    "productSemanticsBaselineStatement": true,
+    "capabilityClaimMatrixLongSessionEntries": 0,
+    "readmeClaims": [
+      {
+        "id": "delegation-admission-guide",
+        "locales": {
+          "en": true,
+          "zh": true,
+          "ja": true,
+          "ru": true
         }
-      ]
-    },
-    {
-      "criterion": "clean scoped candidate, uncached typecheck, contract/comms, same-scope real Electron E2E, secret scan and artifact/hash verification are complete; directory existence and final answers are not acceptance",
-      "result": "pass",
-      "gateReceipt": {
-        "provided": true,
-        "source": "D:/tmp/long-session-merge/gates-verified/gates.json",
-        "allPassed": true,
-        "gates": [
-          {
-            "name": "typecheck",
-            "command": "pnpm run typecheck",
-            "exitCode": 0,
-            "durationMs": 30851,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\typecheck.log",
-            "summary": "      \"exitCode\": 0,       \"durationMs\": 20709,       \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-integration\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
-          },
-          {
-            "name": "contract-check",
-            "command": "pnpm run contract:check",
-            "exitCode": 0,
-            "durationMs": 1039,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\contract-check.log",
-            "summary": "$ node scripts/contract-check.mjs Contract check passed."
-          },
-          {
-            "name": "comms-replay",
-            "command": "pnpm run comms:replay",
-            "exitCode": 0,
-            "durationMs": 879,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\comms-replay.log",
-            "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-integration\\artifacts\\comms\\current-metrics.json"
-          },
-          {
-            "name": "comms-compare",
-            "command": "pnpm run comms:compare",
-            "exitCode": 0,
-            "durationMs": 815,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\comms-compare.log",
-            "summary": "| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS | | message_loss_count | 0.0000 | <= 0 | PASS | | message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-integration\\artifacts\\comms\\compare-report.md"
-          },
-          {
-            "name": "unit-long-session",
-            "command": "pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts tests/unit/long-session-delegation-admission.test.ts tests/unit/long-session-coordinator-binding.test.ts tests/unit/long-session-completion-continuation.test.ts tests/unit/long-session-followup-scheduling.test.ts tests/unit/long-session-resource-reclamation.test.ts tests/unit/long-session-action-contract.test.ts tests/unit/long-session-effective-policy.test.ts tests/unit/long-session-paired-evaluation.test.ts tests/unit/long-session-lifecycle-barrier.test.ts tests/unit/long-session-coordination-surface.test.ts tests/unit/long-session-continuity-context.test.ts tests/unit/gateway-events.test.ts tests/unit/gateway-event-dispatch.test.ts tests/unit/session-delete-gate.test.ts tests/unit/r0-2-sessions-delete-fail.test.ts tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts --maxWorkers=1",
-            "exitCode": 0,
-            "durationMs": 64415,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\unit-long-session.log",
-            "summary": " RUN  v4.1.1 D:/ClawX-work/worktrees/long-session-integration    Test Files  18 passed (18)       Tests  153 passed (153)    Start at  16:06:55    Duration  61.66s (transform 24.27s, setup 1.69s, import 32.26s, tests 16.13s, environment 8.08s) "
-          },
-          {
-            "name": "build-vite",
-            "command": "pnpm run build:vite",
-            "exitCode": 0,
-            "durationMs": 52448,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\build-vite.log",
-            "summary": "dist-electron/main/index-CZ9VSB8z.js                            1,940.75 kB ✓ built in 4.09s vite v7.3.1 building client environment for production... transforming... ✓ 2 modules transformed. rendering chunks... dist-electron/preload/index.js  3.39 kB ✓ built in 15ms"
-          },
-          {
-            "name": "e2e-long-session",
-            "command": "pnpm run test:e2e:run tests/e2e/long-session-restart-journeys.spec.ts tests/e2e/long-session-lifecycle-faults.spec.ts tests/e2e/long-session-continuity-context.spec.ts tests/e2e/long-session-followup-scheduling.spec.ts tests/e2e/long-session-delegation-admission.spec.ts tests/e2e/long-session-completion-continuation.spec.ts tests/e2e/long-session-coordination.spec.ts tests/e2e/long-session-coordinator-binding.spec.ts tests/e2e/long-session-policy-surface.spec.ts",
-            "exitCode": 0,
-            "durationMs": 294878,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\e2e-long-session.log",
-            "summary": "true,\"validationAfterArchive\":\"invalidated\",\"invalidationReason\":\"archived\",\"terminalsAfterArchive\":0},{\"id\":\"journey-6-delete-late-events\",\"status\":\"pass\",\"validationAfterDelete\":\"invalidated\",\"lateReadValidation\":\"invalidated\",\"workspaceARetained\":true,\"workspaceBRetained\":true}],\"negatives\":[\"cross-workspace binding readback stayed isolated (workspace A vs B)\",\"archive invalidated the coordinator binding instead of leaving a live pointer\",\"late coordinator read after delete could not resurrect the deleted generation\"],\"status\":\"passed\"}   ok 10 tests\\e2e\\long-session-restart-journeys.spec.ts:107:5 › F1 six real long-session restart journeys across two workspaces (1.5m)    10 passed (4.9m)"
-          },
-          {
-            "name": "harness-ci",
-            "command": "pnpm run harness:ci",
-            "exitCode": 0,
-            "durationMs": 18154,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\harness-ci.log",
-            "summary": "  \"output\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-integration\\\\artifacts\\\\agent-dev-audit\\\\report.json\",   \"markdown\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-integration\\\\artifacts\\\\agent-dev-audit\\\\report.md\",   \"disqualifiers\": [] } $ node scripts/check-evidence-refs.mjs [evidence-refs] PASS 181 referenced path(s) $ node scripts/check-test-coverage-baseline.mjs [test-coverage] gateway=27 services=105 meet baseline"
-          },
-          {
-            "name": "harness-validate-final",
-            "command": "pnpm harness validate --spec harness/specs/tasks/long-session-final-acceptance.md",
-            "exitCode": 0,
-            "durationMs": 1496,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\harness-validate-final.log",
-            "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-final-acceptance.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-final-acceptance.md\" Spec is valid: harness\\specs\\tasks\\long-session-final-acceptance.md"
-          },
-          {
-            "name": "f3-recheck",
-            "command": "pnpm long-session:f3:acceptance:check",
-            "exitCode": 0,
-            "durationMs": 726,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\f3-recheck.log",
-            "summary": "$ node --experimental-strip-types scripts/long-session-final-acceptance.mjs --check {   \"check\": \"ok\",   \"outDir\": \"D:/ClawX-work/worktrees/long-session-integration/harness/specs/fixtures/long-session-development/f3\" }"
-          },
-          {
-            "name": "f2-recheck",
-            "command": "pnpm long-session:f2:evidence:check",
-            "exitCode": 0,
-            "durationMs": 662,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\f2-recheck.log",
-            "summary": "$ node --experimental-strip-types scripts/long-session-f2-evidence.mjs --check {   \"check\": \"ok\",   \"outDir\": \"D:/ClawX-work/worktrees/long-session-integration/harness/specs/fixtures/long-session-development/f2\" }"
-          },
-          {
-            "name": "git-diff-check",
-            "command": "git diff --check",
-            "exitCode": 0,
-            "durationMs": 67,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\git-diff-check.log",
-            "summary": ""
-          },
-          {
-            "name": "repo-artifacts-check",
-            "command": "pnpm run repo:artifacts:check",
-            "exitCode": 0,
-            "durationMs": 2228,
-            "log": "D:\\tmp\\long-session-merge\\gates-verified\\repo-artifacts-check.log",
-            "summary": "$ node scripts/check-repository-artifacts.mjs Repository artifact retention passed (18553 tracked paths)."
-          }
-        ]
       },
-      "gateClassification": {
-        "passed": [
-          "typecheck",
-          "contract-check",
-          "comms-replay",
-          "comms-compare",
-          "unit-long-session",
-          "build-vite",
-          "e2e-long-session",
-          "harness-ci",
-          "harness-validate-final",
-          "f3-recheck",
-          "f2-recheck",
-          "git-diff-check",
-          "repo-artifacts-check"
-        ],
-        "toleratedPreexisting": [],
-        "failed": [],
-        "note": "a tolerated pre-existing failure is listed with its exact output; a new failure with the same or any other gate name is never tolerated"
+      {
+        "id": "continuity-context-pack",
+        "locales": {
+          "en": true,
+          "zh": true,
+          "ja": true,
+          "ru": true
+        }
       },
-      "f2Aggregate": {
-        "verified": true,
-        "collectedRuns": 3,
-        "validRuns": 3,
-        "recomputedMedians": {
-          "loadSessionsMs": 752,
-          "sessionSwitchP95Ms": 176.1000000089407,
-          "longSessionOpenMs": 137.29999999701977
-        },
-        "publishedMedians": {
-          "loadSessionsMs": 752,
-          "sessionSwitchP50Ms": 152.70000000298023,
-          "sessionSwitchP95Ms": 176.1000000089407,
-          "longSessionOpenMs": 137.29999999701977,
-          "summariesCallMs": 0,
-          "idleLongTasksOver50Ms": 0,
-          "sessionSwitchLongTasksOver50Ms": 0,
-          "longSessionOpenLongTasksOver50Ms": 0
-        },
-        "openWindowLongTaskMedian": 0,
-        "rssSampleCount": 60,
-        "rssGrowthBytes": -435449856,
-        "rssLongestRise": 6,
-        "persistentGrowth": false,
-        "problems": []
+      {
+        "id": "long-session-resource-limits",
+        "locales": {
+          "en": true,
+          "zh": true,
+          "ja": true,
+          "ru": true
+        }
+      },
+      {
+        "id": "coordinator-surface",
+        "locales": {
+          "en": true,
+          "zh": true,
+          "ja": true,
+          "ru": true
+        }
+      },
+      {
+        "id": "admission-receipt-accepted-only",
+        "locales": {
+          "en": true,
+          "zh": true,
+          "ja": true,
+          "ru": true
+        }
       }
-    },
-    {
-      "criterion": "product semantics, READMEs, four-locale UI and model capability claims match the current backend scope; retired/unavailable/shadow/NO-GO never masquerades as implemented",
-      "result": "pass",
-      "semantics": {
-        "file": "docs/clawx-product-semantics.md",
-        "required": {
-          "finalAcceptanceSection": true,
-          "explicitBinding": true,
-          "keepBaseline": true,
-          "evidenceInsufficient": true,
-          "noLiveProvider": true,
-          "noSecondOwner": true,
-          "noPublicRelease": true
-        },
-        "complete": true
-      },
-      "readmes": [
-        {
-          "file": "README.md",
-          "language": "en",
-          "hasCoordinator": true,
-          "hasExplicitBinding": true,
-          "hasTaskLedger": true,
-          "hasNoSecondOwner": true,
-          "complete": true,
-          "hasUnsafeClaim": false
-        },
-        {
-          "file": "README.zh-CN.md",
-          "language": "zh",
-          "hasCoordinator": true,
-          "hasExplicitBinding": true,
-          "hasTaskLedger": true,
-          "hasNoSecondOwner": true,
-          "complete": true,
-          "hasUnsafeClaim": false
-        },
-        {
-          "file": "README.ja-JP.md",
-          "language": "ja",
-          "hasCoordinator": true,
-          "hasExplicitBinding": true,
-          "hasTaskLedger": true,
-          "hasNoSecondOwner": true,
-          "complete": true,
-          "hasUnsafeClaim": false
-        },
-        {
-          "file": "README.ru-RU.md",
-          "language": "ru",
-          "hasCoordinator": true,
-          "hasExplicitBinding": true,
-          "hasTaskLedger": true,
-          "hasNoSecondOwner": true,
-          "complete": true,
-          "hasUnsafeClaim": false
-        }
-      ],
-      "capability": {
-        "present": true,
-        "id": "capability-45",
-        "classification": "TP-RUN + PARTIAL",
-        "status": "partial",
-        "lastVerifiedAt": "2026-10-24",
-        "evidenceLevels": [
-          "real-runtime",
-          "e2e",
-          "unit-test",
-          "documented-boundary"
-        ],
-        "runtimeProofRefs": [
-          "harness/specs/fixtures/long-session-development/f1/verification-receipt.json",
-          "harness/specs/fixtures/long-session-development/f2/verification-receipt.json"
-        ],
-        "unmeasuredMarkers": {
-          "live-provider": true,
-          "macOS": true,
-          "packaged": true,
-          "real-human": true
-        },
-        "allUnmeasuredMarked": true,
-        "unsafeClaimDetected": false,
-        "noUniversalProjectClaim": true
-      }
-    },
-    {
-      "criterion": "the core loop closes through a legal proposal after automated acceptance, then validate/export; public release, full defaults, product locks, independent Project and cloud execution stay outside this node authority",
-      "result": "pass",
-      "note": "Task Forest closure is applied by the repo-local proposal flow after this artifact is read back; publication and default changes are not claimed here"
-    }
-  ],
-  "pendingDecisions": [
-    {
-      "id": "D2",
-      "verdict": "EVIDENCE_INSUFFICIENT"
-    },
-    {
-      "id": "D3",
-      "verdict": "keep-baseline"
-    }
-  ],
-  "unmeasured": [
-    "live-provider and native-backend thread continuity: no authorized provider credential in this environment",
-    "macOS, Linux and packaged-install long-use measurement: the sample is Windows x64 built dist-electron only",
-    "real-human multi-day long use: every artifact is agent-driven and the fixture is synthetic",
-    "renderer in-window compaction/continuation latency: measured in-process against the shipped planners"
-  ],
-  "cleanup": {
-    "startedProcesses": false,
-    "providerRequests": 0,
-    "recoveryRequired": false,
-    "notes": "F3 only reads tracked evidence; the longer F2 and F1 process runs were already cleaned up by their own fixtures"
+    ],
+    "readmeClaimGaps": [],
+    "verdict": true
   },
-  "gateReceipt": {
-    "provided": true,
-    "source": "D:/tmp/long-session-merge/gates-verified/gates.json",
-    "allPassed": true,
-    "gates": [
+  "negative": {
+    "checks": [
       {
-        "name": "typecheck",
-        "command": "pnpm run typecheck",
-        "exitCode": 0,
-        "durationMs": 30851,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\typecheck.log",
-        "summary": "      \"exitCode\": 0,       \"durationMs\": 20709,       \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-integration\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+        "id": "node-evidence-complete",
+        "failures": []
       },
       {
-        "name": "contract-check",
-        "command": "pnpm run contract:check",
-        "exitCode": 0,
-        "durationMs": 1039,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\contract-check.log",
-        "summary": "$ node scripts/contract-check.mjs Contract check passed."
+        "id": "phase-criteria-complete",
+        "failures": []
       },
       {
-        "name": "comms-replay",
-        "command": "pnpm run comms:replay",
-        "exitCode": 0,
-        "durationMs": 879,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\comms-replay.log",
-        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-integration\\artifacts\\comms\\current-metrics.json"
+        "id": "no-live-provider-promotion",
+        "failures": []
       },
       {
-        "name": "comms-compare",
-        "command": "pnpm run comms:compare",
-        "exitCode": 0,
-        "durationMs": 815,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\comms-compare.log",
-        "summary": "| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS | | message_loss_count | 0.0000 | <= 0 | PASS | | message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-integration\\artifacts\\comms\\compare-report.md"
+        "id": "continuity-keep-baseline",
+        "failures": []
       },
       {
-        "name": "unit-long-session",
-        "command": "pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts tests/unit/long-session-delegation-admission.test.ts tests/unit/long-session-coordinator-binding.test.ts tests/unit/long-session-completion-continuation.test.ts tests/unit/long-session-followup-scheduling.test.ts tests/unit/long-session-resource-reclamation.test.ts tests/unit/long-session-action-contract.test.ts tests/unit/long-session-effective-policy.test.ts tests/unit/long-session-paired-evaluation.test.ts tests/unit/long-session-lifecycle-barrier.test.ts tests/unit/long-session-coordination-surface.test.ts tests/unit/long-session-continuity-context.test.ts tests/unit/gateway-events.test.ts tests/unit/gateway-event-dispatch.test.ts tests/unit/session-delete-gate.test.ts tests/unit/r0-2-sessions-delete-fail.test.ts tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts --maxWorkers=1",
-        "exitCode": 0,
-        "durationMs": 64415,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\unit-long-session.log",
-        "summary": " RUN  v4.1.1 D:/ClawX-work/worktrees/long-session-integration    Test Files  18 passed (18)       Tests  153 passed (153)    Start at  16:06:55    Duration  61.66s (transform 24.27s, setup 1.69s, import 32.26s, tests 16.13s, environment 8.08s) "
+        "id": "readme-claim-parity",
+        "failures": []
       },
       {
-        "name": "build-vite",
-        "command": "pnpm run build:vite",
-        "exitCode": 0,
-        "durationMs": 52448,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\build-vite.log",
-        "summary": "dist-electron/main/index-CZ9VSB8z.js                            1,940.75 kB ✓ built in 4.09s vite v7.3.1 building client environment for production... transforming... ✓ 2 modules transformed. rendering chunks... dist-electron/preload/index.js  3.39 kB ✓ built in 15ms"
+        "id": "product-semantics-baseline",
+        "failures": []
       },
       {
-        "name": "e2e-long-session",
-        "command": "pnpm run test:e2e:run tests/e2e/long-session-restart-journeys.spec.ts tests/e2e/long-session-lifecycle-faults.spec.ts tests/e2e/long-session-continuity-context.spec.ts tests/e2e/long-session-followup-scheduling.spec.ts tests/e2e/long-session-delegation-admission.spec.ts tests/e2e/long-session-completion-continuation.spec.ts tests/e2e/long-session-coordination.spec.ts tests/e2e/long-session-coordinator-binding.spec.ts tests/e2e/long-session-policy-surface.spec.ts",
-        "exitCode": 0,
-        "durationMs": 294878,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\e2e-long-session.log",
-        "summary": "true,\"validationAfterArchive\":\"invalidated\",\"invalidationReason\":\"archived\",\"terminalsAfterArchive\":0},{\"id\":\"journey-6-delete-late-events\",\"status\":\"pass\",\"validationAfterDelete\":\"invalidated\",\"lateReadValidation\":\"invalidated\",\"workspaceARetained\":true,\"workspaceBRetained\":true}],\"negatives\":[\"cross-workspace binding readback stayed isolated (workspace A vs B)\",\"archive invalidated the coordinator binding instead of leaving a live pointer\",\"late coordinator read after delete could not resurrect the deleted generation\"],\"status\":\"passed\"}   ok 10 tests\\e2e\\long-session-restart-journeys.spec.ts:107:5 › F1 six real long-session restart journeys across two workspaces (1.5m)    10 passed (4.9m)"
-      },
-      {
-        "name": "harness-ci",
-        "command": "pnpm run harness:ci",
-        "exitCode": 0,
-        "durationMs": 18154,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\harness-ci.log",
-        "summary": "  \"output\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-integration\\\\artifacts\\\\agent-dev-audit\\\\report.json\",   \"markdown\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-integration\\\\artifacts\\\\agent-dev-audit\\\\report.md\",   \"disqualifiers\": [] } $ node scripts/check-evidence-refs.mjs [evidence-refs] PASS 181 referenced path(s) $ node scripts/check-test-coverage-baseline.mjs [test-coverage] gateway=27 services=105 meet baseline"
-      },
-      {
-        "name": "harness-validate-final",
-        "command": "pnpm harness validate --spec harness/specs/tasks/long-session-final-acceptance.md",
-        "exitCode": 0,
-        "durationMs": 1496,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\harness-validate-final.log",
-        "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-final-acceptance.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-final-acceptance.md\" Spec is valid: harness\\specs\\tasks\\long-session-final-acceptance.md"
-      },
-      {
-        "name": "f3-recheck",
-        "command": "pnpm long-session:f3:acceptance:check",
-        "exitCode": 0,
-        "durationMs": 726,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\f3-recheck.log",
-        "summary": "$ node --experimental-strip-types scripts/long-session-final-acceptance.mjs --check {   \"check\": \"ok\",   \"outDir\": \"D:/ClawX-work/worktrees/long-session-integration/harness/specs/fixtures/long-session-development/f3\" }"
-      },
-      {
-        "name": "f2-recheck",
-        "command": "pnpm long-session:f2:evidence:check",
-        "exitCode": 0,
-        "durationMs": 662,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\f2-recheck.log",
-        "summary": "$ node --experimental-strip-types scripts/long-session-f2-evidence.mjs --check {   \"check\": \"ok\",   \"outDir\": \"D:/ClawX-work/worktrees/long-session-integration/harness/specs/fixtures/long-session-development/f2\" }"
-      },
-      {
-        "name": "git-diff-check",
-        "command": "git diff --check",
-        "exitCode": 0,
-        "durationMs": 67,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\git-diff-check.log",
-        "summary": ""
-      },
-      {
-        "name": "repo-artifacts-check",
-        "command": "pnpm run repo:artifacts:check",
-        "exitCode": 0,
-        "durationMs": 2228,
-        "log": "D:\\tmp\\long-session-merge\\gates-verified\\repo-artifacts-check.log",
-        "summary": "$ node scripts/check-repository-artifacts.mjs Repository artifact retention passed (18553 tracked paths)."
+        "id": "gate-exit-codes",
+        "failures": []
       }
-    ]
-  }
+    ],
+    "failures": [],
+    "pass": true
+  },
+  "gates": [
+    {
+      "name": "typecheck",
+      "command": "pnpm.cmd run typecheck",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 29717,
+      "stdoutSha256": "4209468acf4f420297230737dae46019f568875164b70c9edc928c82b0dc2cc5",
+      "stderrSha256": "f2e7f65dfb997e4f5b690711e61a6f0998a1c5bf3e1825f83cad573e0ad5611a",
+      "stdoutTail": "[ext-bridge] No external extensions configured — empty stubs up to date.\n{\n  \"success\": true,\n  \"mode\": \"parallel\",\n  \"testTypes\": {\n    \"commandLine\": \"pnpm run typecheck:test\",\n    \"exitCode\": 0,\n    \"durationMs\": 20658,\n    \"observationMode\": false,\n    \"errorCount\": 0,\n    \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program-r2\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n  },\n  \"cache\": {\n    \"enabled\": false,\n    \"status\": \"disabled\",\n    \"key\": \"35ec5e4c2983379fe66196810db3dab8a812b38931c07dc6c4842992879b3f75\",\n    \"inputCount\": 12540,\n    \"report\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program-r2\\\\artifacts\\\\typecheck-cache\\\\report.json\"\n  },\n  \"totalDurationMs\": 28876,\n  \"coverageNote\": \"Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.\",\n  \"results\": [\n    {\n      \"commandLine\": \"node scripts/generate-ext-bridge.mjs\",\n      \"exitCode\": 0,\n      \"durationMs\": 42\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:node\",\n      \"exitCode\": 0,\n      \"durationMs\": 24401\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:web\",\n      \"exitCode\": 0,\n      \"durationMs\": 5904\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:test\",\n      \"exitCode\": 0,\n      \"durationMs\": 20658,\n      \"observationMode\": false,\n      \"errorCount\": 0,\n      \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program-r2\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n    }\n  ]\n}\n",
+      "stderrTail": "$ node scripts/typecheck-agent-dev.mjs\n$ tsgo --noEmit -p tsconfig.web.json --composite false\n$ tsgo --noEmit -p tsconfig.node.json --composite false\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/typecheck.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/typecheck.stderr.txt"
+    },
+    {
+      "name": "contract-check",
+      "command": "pnpm.cmd run contract:check",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 938,
+      "stdoutSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "stderrSha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26",
+      "stdoutTail": "Contract check passed.\n",
+      "stderrTail": "$ node scripts/contract-check.mjs\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/contract-check.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/contract-check.stderr.txt"
+    },
+    {
+      "name": "comms-replay",
+      "command": "pnpm.cmd run comms:replay",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 783,
+      "stdoutSha256": "a87bb980bc4c0dacfe38a3862003cf1dc33ffe4a82e2211364ecaf240b90a136",
+      "stderrSha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a",
+      "stdoutTail": "Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\comms\\current-metrics.json\n",
+      "stderrTail": "$ node scripts/comms/replay.mjs\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/comms-replay.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/comms-replay.stderr.txt"
+    },
+    {
+      "name": "comms-compare",
+      "command": "pnpm.cmd run comms:compare",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 693,
+      "stdoutSha256": "cc7cd156ebff59c2b10f219fdf27ead5bd87b27e2383859e3143a30c174afd8d",
+      "stderrSha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e",
+      "stdoutTail": "# Comms Regression Report\n\n- Generated at: 2026-10-24T22:33:42.082Z\n- Candidate: 5a14742d9a46cf6b626195bc29fd794603d4baec (09d2d1617469bd72edebc811b2d2830629bd9d82)\n- Result: PASS\n\n| Metric | Current | Threshold | Status |\n|---|---:|---:|---|\n| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |\n| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |\n| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |\n| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |\n| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |\n| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |\n| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |\n| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |\n| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history_inflight_max | 1.0000 | <= 1 | PASS |\n| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| message_loss_count | 0.0000 | <= 0 | PASS |\n| message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |\n| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |\n\n\nWrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\comms\\compare-report.md\n",
+      "stderrTail": "$ node scripts/comms/compare.mjs\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/comms-compare.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/comms-compare.stderr.txt"
+    },
+    {
+      "name": "repo-artifacts-check",
+      "command": "pnpm.cmd run repo:artifacts:check",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 3939,
+      "stdoutSha256": "bd9597c7c69fafc271a09494c38e098896fc821c7431b2ecd4c225c121b9f54b",
+      "stderrSha256": "f62d1dbbb5220d55c5deff1fc44b06476881b770066fcf3c9d0ecb2c407bb252",
+      "stdoutTail": "Repository artifact retention passed (18574 tracked paths).\n",
+      "stderrTail": "$ node scripts/check-repository-artifacts.mjs\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/repo-artifacts-check.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/repo-artifacts-check.stderr.txt"
+    },
+    {
+      "name": "repo-evidence-check",
+      "command": "pnpm.cmd run repo:evidence:check",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 649,
+      "stdoutSha256": "da040a157d2a342894bccf6d9ffb727314a87f11f8f60b594ad078df1e10d846",
+      "stderrSha256": "3049ca0f98bfe460d3c5a6eeb13472b5a01f6ed1f0bda5fa73b681f7f3324970",
+      "stdoutTail": "[evidence-refs] PASS 171 referenced path(s)\n",
+      "stderrTail": "$ node scripts/check-evidence-refs.mjs\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/repo-evidence-check.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/repo-evidence-check.stderr.txt"
+    },
+    {
+      "name": "long-session-e2e",
+      "command": "pnpm.cmd exec playwright test tests/e2e/long-session-lifecycle-faults.spec.ts tests/e2e/long-session-effective-policy.spec.ts tests/e2e/long-session-policy-surface.spec.ts tests/e2e/long-session-coordinator-binding.spec.ts tests/e2e/long-session-delegation-admission.spec.ts tests/e2e/long-session-completion-continuation.spec.ts tests/e2e/long-session-coordination.spec.ts tests/e2e/long-session-continuity-context.spec.ts tests/e2e/long-session-paired-evaluation.spec.ts tests/e2e/long-session-followup-scheduling.spec.ts tests/e2e/long-session-restart-journeys.spec.ts --workers=1 --output D:\\tmp\\anchor-long-session-f3\\1792881189760\\e2e",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 298620,
+      "stdoutSha256": "f39e9a653fe884c331d2ffe7b16bb15b1f8990b87f0ca8f64afcd35a68b63960",
+      "stderrSha256": "00004ec82c95f8d7bca49438d2df44b7be2cb44c95b9f805af5de456f35460c2",
+      "stdoutTail": "ntext\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\workspace-mvmz82iu\"}},{\"kind\":\"knowledge-ref\",\"source\":\"knowledge-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=6; nodes=1\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"available\",\"detail\":\"refs=1\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mvmz82iu\",\"reason\":\"pending-not-accepted\"}],\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\continuity-observation.json\"}\n  ok  2 tests\\e2e\\long-session-continuity-context.spec.ts:85:5 › real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback (17.6s)\n  ok  3 tests\\e2e\\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots (32.7s)\n  ok  4 tests\\e2e\\long-session-coordinator-binding.spec.ts:74:5 › coordinator binding survives restart and follows rename, handoff, archive, restore, and pause boundaries (25.7s)\n  ok  5 tests\\e2e\\long-session-delegation-admission.spec.ts:123:5 › delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts (27.7s)\n  ok  6 tests\\e2e\\long-session-effective-policy.spec.ts:84:5 › real Host and Gateway expose a secret-free configured policy without inventing effective facts (12.6s)\n{\"schema\":\"clawx.long-session.e1-followup-journey/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-e1\",\"steps\":[{\"step\":\"bound-follow-up-created\",\"jobId\":\"c0fd65f1-db0d-42b8-8814-49c689e9e0c1\",\"state\":\"allowed\",\"expectedSessionId\":\"514d8f8f-0443-4d90-92d0-a531c56af321\"},{\"step\":\"stop-current-turn-is-independent-of-schedule\",\"stopped\":true,\"scheduleStillPresent\":true},{\"step\":\"trigger-after-invalidation\",\"refusedWith\":\"Coordinator follow-up rejected (unverifiable: coordinator binding is invalidated)\",\"gatewayRunCount\":0},{\"step\":\"pause-keeps-schedule\",\"enabled\":false},{\"step\":\"cancel-removes-schedule\",\"removed\":true}],\"negatives\":[\"deleted coordinator session -> binding invalidated -> cron fence state unverifiable\"],\"status\":\"passed\",\"workspaceId\":\"default\",\"coordinatorSessionKey\":\"agent:main:dashboard:c35baf8a-8198-489b-ad2c-660bc3437660\",\"jobId\":\"c0fd65f1-db0d-42b8-8814-49c689e9e0c1\",\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-followup-sche-587bc-ire-after-it-is-invalidated\\\\followup-journey-observation.json\"}\n  ok  7 tests\\e2e\\long-session-followup-scheduling.spec.ts:113:5 › real Host/Gateway long-session follow-up is bound to one coordinator generation and cannot fire after it is invalidated (12.9s)\n  ok  8 tests\\e2e\\long-session-lifecycle-faults.spec.ts:104:5 › real Host and Gateway archive/restore preserves history and rotates the physical generation (12.9s)\n  ok  9 tests\\e2e\\long-session-lifecycle-faults.spec.ts:173:5 › real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive (12.9s)\n{\"schema\":\"clawx.long-session.d2-continuity-preview/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-r2\",\"negatives\":[\"ordinary session missing coordinator binding -> no pack\",\"deleted coordinator session -> binding invalidated -> no pack\"],\"primary\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\\\continuity-preview.json\",\"status\":\"passed\",\"packStatus\":\"partial\",\"items\":[{\"kind\":\"constraint\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-node\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\\\workspace-mvmzbe0v\"}},{\"kind\":\"knowledge-ref\",\"source\":\"knowledge-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=6; nodes=1\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"available\",\"detail\":\"refs=1\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mvmzbe0v\",\"reason\":\"pending-not-accepted\"}],\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\\\continuity-observation.json\"}\n  ok 10 tests\\e2e\\long-session-paired-evaluation.spec.ts:85:5 › D2 clean candidate: real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback (17.1s)\n  ok 11 tests\\e2e\\long-session-policy-surface.spec.ts:252:5 › policy surface explains provenance, lifecycle boundaries, narrow layout, and session scope (22.9s)\n  ok 12 tests\\e2e\\long-session-restart-journeys.spec.ts:118:7 › long-session restart journeys › real Electron journeys preserve scope, transcripts, task links, and lifecycle generations (1.0m)\n\n  12 passed (4.9m)\n",
+      "stderrTail": "(node:39644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:39644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n[fp-p1-harness] connection #1\n[fp-p1-harness] connection #2\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/long-session-e2e.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/long-session-e2e.stderr.txt"
+    },
+    {
+      "name": "harness-validate",
+      "command": "pnpm.cmd harness validate --spec harness/specs/tasks/long-session-final-acceptance.md",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 1313,
+      "stdoutSha256": "0113e650ef0fe43e2082b528fb77328afd1e67de5e96db0556b6a8f9799a153e",
+      "stderrSha256": "d5ae70342382a7ca0b3a4cf2e14b1045b8d6387655548c78205862840d4a20ef",
+      "stdoutTail": "Spec is valid: harness\\specs\\tasks\\long-session-final-acceptance.md\n",
+      "stderrTail": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-final-acceptance.md\"\n$ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-final-acceptance.md\"\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/harness-validate.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/harness-validate.stderr.txt"
+    },
+    {
+      "name": "git-diff-check",
+      "command": "git.exe diff --check",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 72,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutTail": "",
+      "stderrTail": "",
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/git-diff-check.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/git-diff-check.stderr.txt"
+    }
+  ],
+  "e2e": {
+    "specs": [
+      "tests/e2e/long-session-lifecycle-faults.spec.ts",
+      "tests/e2e/long-session-effective-policy.spec.ts",
+      "tests/e2e/long-session-policy-surface.spec.ts",
+      "tests/e2e/long-session-coordinator-binding.spec.ts",
+      "tests/e2e/long-session-delegation-admission.spec.ts",
+      "tests/e2e/long-session-completion-continuation.spec.ts",
+      "tests/e2e/long-session-coordination.spec.ts",
+      "tests/e2e/long-session-continuity-context.spec.ts",
+      "tests/e2e/long-session-paired-evaluation.spec.ts",
+      "tests/e2e/long-session-followup-scheduling.spec.ts",
+      "tests/e2e/long-session-restart-journeys.spec.ts"
+    ],
+    "workers": 1,
+    "gate": {
+      "name": "long-session-e2e",
+      "command": "pnpm.cmd exec playwright test tests/e2e/long-session-lifecycle-faults.spec.ts tests/e2e/long-session-effective-policy.spec.ts tests/e2e/long-session-policy-surface.spec.ts tests/e2e/long-session-coordinator-binding.spec.ts tests/e2e/long-session-delegation-admission.spec.ts tests/e2e/long-session-completion-continuation.spec.ts tests/e2e/long-session-coordination.spec.ts tests/e2e/long-session-continuity-context.spec.ts tests/e2e/long-session-paired-evaluation.spec.ts tests/e2e/long-session-followup-scheduling.spec.ts tests/e2e/long-session-restart-journeys.spec.ts --workers=1 --output D:\\tmp\\anchor-long-session-f3\\1792881189760\\e2e",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 298620,
+      "stdoutSha256": "f39e9a653fe884c331d2ffe7b16bb15b1f8990b87f0ca8f64afcd35a68b63960",
+      "stderrSha256": "00004ec82c95f8d7bca49438d2df44b7be2cb44c95b9f805af5de456f35460c2",
+      "stdoutTail": "ntext\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\workspace-mvmz82iu\"}},{\"kind\":\"knowledge-ref\",\"source\":\"knowledge-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=6; nodes=1\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"available\",\"detail\":\"refs=1\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mvmz82iu\",\"reason\":\"pending-not-accepted\"}],\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\continuity-observation.json\"}\n  ok  2 tests\\e2e\\long-session-continuity-context.spec.ts:85:5 › real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback (17.6s)\n  ok  3 tests\\e2e\\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots (32.7s)\n  ok  4 tests\\e2e\\long-session-coordinator-binding.spec.ts:74:5 › coordinator binding survives restart and follows rename, handoff, archive, restore, and pause boundaries (25.7s)\n  ok  5 tests\\e2e\\long-session-delegation-admission.spec.ts:123:5 › delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts (27.7s)\n  ok  6 tests\\e2e\\long-session-effective-policy.spec.ts:84:5 › real Host and Gateway expose a secret-free configured policy without inventing effective facts (12.6s)\n{\"schema\":\"clawx.long-session.e1-followup-journey/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-e1\",\"steps\":[{\"step\":\"bound-follow-up-created\",\"jobId\":\"c0fd65f1-db0d-42b8-8814-49c689e9e0c1\",\"state\":\"allowed\",\"expectedSessionId\":\"514d8f8f-0443-4d90-92d0-a531c56af321\"},{\"step\":\"stop-current-turn-is-independent-of-schedule\",\"stopped\":true,\"scheduleStillPresent\":true},{\"step\":\"trigger-after-invalidation\",\"refusedWith\":\"Coordinator follow-up rejected (unverifiable: coordinator binding is invalidated)\",\"gatewayRunCount\":0},{\"step\":\"pause-keeps-schedule\",\"enabled\":false},{\"step\":\"cancel-removes-schedule\",\"removed\":true}],\"negatives\":[\"deleted coordinator session -> binding invalidated -> cron fence state unverifiable\"],\"status\":\"passed\",\"workspaceId\":\"default\",\"coordinatorSessionKey\":\"agent:main:dashboard:c35baf8a-8198-489b-ad2c-660bc3437660\",\"jobId\":\"c0fd65f1-db0d-42b8-8814-49c689e9e0c1\",\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-followup-sche-587bc-ire-after-it-is-invalidated\\\\followup-journey-observation.json\"}\n  ok  7 tests\\e2e\\long-session-followup-scheduling.spec.ts:113:5 › real Host/Gateway long-session follow-up is bound to one coordinator generation and cannot fire after it is invalidated (12.9s)\n  ok  8 tests\\e2e\\long-session-lifecycle-faults.spec.ts:104:5 › real Host and Gateway archive/restore preserves history and rotates the physical generation (12.9s)\n  ok  9 tests\\e2e\\long-session-lifecycle-faults.spec.ts:173:5 › real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive (12.9s)\n{\"schema\":\"clawx.long-session.d2-continuity-preview/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-r2\",\"negatives\":[\"ordinary session missing coordinator binding -> no pack\",\"deleted coordinator session -> binding invalidated -> no pack\"],\"primary\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\\\continuity-preview.json\",\"status\":\"passed\",\"packStatus\":\"partial\",\"items\":[{\"kind\":\"constraint\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-node\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\\\workspace-mvmzbe0v\"}},{\"kind\":\"knowledge-ref\",\"source\":\"knowledge-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=6; nodes=1\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"available\",\"detail\":\"refs=1\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mvmzbe0v\",\"reason\":\"pending-not-accepted\"}],\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\\\continuity-observation.json\"}\n  ok 10 tests\\e2e\\long-session-paired-evaluation.spec.ts:85:5 › D2 clean candidate: real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback (17.1s)\n  ok 11 tests\\e2e\\long-session-policy-surface.spec.ts:252:5 › policy surface explains provenance, lifecycle boundaries, narrow layout, and session scope (22.9s)\n  ok 12 tests\\e2e\\long-session-restart-journeys.spec.ts:118:7 › long-session restart journeys › real Electron journeys preserve scope, transcripts, task links, and lifecycle generations (1.0m)\n\n  12 passed (4.9m)\n",
+      "stderrTail": "(node:39644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:39644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n[fp-p1-harness] connection #1\n[fp-p1-harness] connection #2\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/long-session-e2e.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/long-session-e2e.stderr.txt"
+    },
+    "realElectron": true,
+    "transport": "built Electron -> Host API -> real Main owner -> real Gateway child where the spec exercises it"
+  },
+  "secretScan": {
+    "scannedFiles": 134,
+    "hits": [],
+    "pass": true
+  },
+  "hashes": {
+    "nodeSets": [
+      {
+        "key": "A1",
+        "verified": 7,
+        "failures": []
+      },
+      {
+        "key": "A2",
+        "verified": 20,
+        "failures": []
+      },
+      {
+        "key": "B1",
+        "verified": 20,
+        "failures": []
+      },
+      {
+        "key": "B2",
+        "verified": 19,
+        "failures": []
+      },
+      {
+        "key": "C1",
+        "verified": 17,
+        "failures": []
+      },
+      {
+        "key": "C2",
+        "verified": 10,
+        "failures": []
+      },
+      {
+        "key": "C3",
+        "verified": 12,
+        "failures": []
+      },
+      {
+        "key": "C4",
+        "verified": 15,
+        "failures": []
+      },
+      {
+        "key": "D1",
+        "verified": 14,
+        "failures": []
+      },
+      {
+        "key": "D2",
+        "verified": 8,
+        "failures": []
+      },
+      {
+        "key": "D3",
+        "verified": 4,
+        "failures": []
+      },
+      {
+        "key": "E1",
+        "verified": 11,
+        "failures": []
+      },
+      {
+        "key": "E2",
+        "verified": 6,
+        "failures": []
+      },
+      {
+        "key": "F1",
+        "verified": 3,
+        "failures": []
+      },
+      {
+        "key": "F2",
+        "verified": 4,
+        "failures": []
+      }
+    ],
+    "pass": true
+  },
+  "cleanup": {
+    "runRoot": "D:/tmp/anchor-long-session-f3/1792881189760",
+    "runRootKept": true,
+    "note": "raw run root stays on D:; curated acceptance artifacts are the committed evidence",
+    "recoveryRequired": false
+  },
+  "unmeasured": [
+    "non-Windows platforms: the aggregated runs executed on local Windows only",
+    "live provider behaviour: D2/F2 used an agent-driven scripted endpoint, not a real provider, so no fidelity/cost promotion claim is made",
+    "packaged/installed build: evidence comes from the local dist-electron development build",
+    "real-human long-term usage: no real-human evidence is claimed or available",
+    "public release, all-default enablement, product locks and a standalone multi-execution-root Project: not authorized by this node"
+  ],
+  "PASS": true
 }

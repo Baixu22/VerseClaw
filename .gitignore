@@ -2113,3 +2113,6 @@ openclaw_runtime/_tmp_*
 
 # kb-bot character lab (v2, silhouette measured from icon.png)
 /experiments/kb-bot/
+
+# Curated tracked browser evidence is a source input, despite the general log rule.
+!/harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/e2e.log

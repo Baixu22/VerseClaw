@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: completed
+lifecycleStatus: planned
 id: long-session-final-acceptance
 title: 聚合独立验收、能力声明与后续推广边界
 program: long-session-development-20261022
@@ -9,56 +9,9 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 以当前候选闭合长期会话开发，确保所有能力、后端范围、NO-GO 和未测边界与产品宣称一致。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
-diffBase: 20b92de01
+diffBase: fb2ba6f379259854093dacc248e1d8fffc044d94
 dependsOnTasks:
   - F2
-ownedPaths:
-  # Integration-repair files created by the merge, owned by this task.
-  - artifacts/agent-dev-deep-test/**
-  - artifacts/agent-dev-quality/**
-  - artifacts/agent-dev-workbench/**
-  - harness/specs/tasks/memory-user-surface.md
-  - scripts/check-duplicate-assets.mjs
-  - tests/unit/long-session-continuity-context.test.ts
-  - scripts/repository-artifacts.json
-  - .gitignore
-  - harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/e2e.log
-  - harness/specs/rules/runtime-lifecycle-governance-boundary.md
-  # The merge commit brings in main-side VerseGit files that this task does not own.
-  # Declaring the integration boundary keeps harness validation honest instead of
-  # pretending the long-session spec wrote those files.
-  - docs/dev/versegit-validation-layer/**
-  - electron-builder.yml
-  - harness/specs/fixtures/versegit-product-integration/**
-  - harness/specs/tasks/versegit-product-*.md
-  - harness/specs/tasks/versegit-module-implementation-contracts.md
-  - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts
-  - openclaw_runtime/src/agents/harness/versegit-*
-  - openclaw_runtime/src/agents/orchestration-*
-  - openclaw_runtime/src/agents/orchestrator-run-observed.ts
-  - openclaw_runtime/src/agents/patch-flow.ts
-  - openclaw_runtime/src/agents/session-tool-result-guard-wrapper.ts
-  - openclaw_runtime/src/agents/sessions/tools/**
-  - openclaw_runtime/src/agents/subagent-*
-  - openclaw_runtime/src/agents/verseshell/**
-  - openclaw_runtime/src/agents/worktree-service.ts
-  - openclaw_runtime/src/plugin-sdk/versegit-*
-  - resources/versegit/**
-  - scripts/bundle-main-runtime.mjs
-  - scripts/verify-versegit-*
-  - scripts/versegit-*
-  - shared/types/versegit.ts
-  - shared/versegit-*
-  - tests/e2e/app-smoke.spec.ts
-  - tests/e2e/versegit-*
-  - tests/unit/orchestration-worktree-merge.test.ts
-  - tests/unit/versegit-*
-  - electron/main/ipc-handlers.ts
-  - shared/host-api/contract.ts
-  - src/lib/host-api.ts
-  - tests/unit/long-session-coordinator-binding.test.ts
-  - tests/unit/long-session-delegation-admission.test.ts
-  - tests/unit/long-session-long-use-budget.test.ts
 touchedAreas:
   - harness/specs/tasks/long-session-final-acceptance.md
   - harness/specs/tasks/long-session-development-plan.md
@@ -67,11 +20,22 @@ touchedAreas:
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
-  - README.ru-RU.md
-  - artifacts/capability-claims/status-table.json
-  - scripts/long-session-final-acceptance.mjs
-  - package.json
   - shared/capability-claims.ts
+  - scripts/long-session-final-acceptance-evidence.mjs
+  - package.json
+  - artifacts/
+  - docs/
+  - electron/
+  - harness/
+  - openclaw_runtime/
+  - shared/
+  - src/
+  - tests/
+  - README*.md
+  - .gitattributes
+  - .gitignore
+  - harness/specs/fixtures/long-session-development/**
+  - electron-builder.yml
   - shared/product-semantics.ts
   - scripts/repository-artifacts.json
   - harness/specs/fixtures/long-session-development/f3/**
@@ -97,13 +61,9 @@ requiredTests:
   - pnpm run comms:compare
   - pnpm run repo:artifacts:check
   - pnpm run repo:evidence:check
-  - node scripts/check-capability-claims.mjs
-  - pnpm long-session:f3:acceptance -- --gates <gate receipt>
-  - pnpm long-session:f3:acceptance:check
   - pnpm harness validate --spec harness/specs/tasks/long-session-final-acceptance.md
   - git diff --check
 plannedTests:
-  - pnpm long-session:f3:acceptance:check
 
 acceptance:
   - 所有六阶段 criterion 逐项读盘；16 个执行节点各有 current candidate/input/command/exit/counts/artifact/negative proof，历史证据不重签。

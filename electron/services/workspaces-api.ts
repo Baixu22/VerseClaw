@@ -11,24 +11,40 @@ import { syncActiveWorkspacePermissionToRuntime, syncActiveWorkspaceRootToRuntim
 import { runWorkspacePreflight } from './workspace-preflight';
 import type { TerminalSessionManager } from './terminal-session-manager';
 import type { WebPreviewManager } from './web-preview-manager';
-import type { DelegationAdmissionReceipt } from '@shared/types/delegation-admission';
 import type {
   WorkspacePermissionMode,
   WorkspaceAgentBinding,
+  WorkspaceCoordinatorArchiveRestorePolicy,
   WorkspaceCoordinatorBinding,
-  WorkspaceCoordinatorInvalidationReason,
-  WorkspaceCoordinatorTaskRef,
+  WorkspaceCoordinatorEnvironmentBinding,
+  WorkspaceCoordinatorRecovery,
   WorkspaceProfile,
   WorkspaceSnapshot,
   WorkspaceUiState,
   SessionFolder,
 } from '@shared/types/workspace';
+import type {
+  WorkspaceCoordinatorBindingResult,
+  WorkspaceCoordinatorPausePayload,
+  WorkspaceCoordinatorResolvePayload,
+} from '@shared/host-api/contract';
+import type { GitWorktree } from '@shared/types/git';
+import type { TaskLedgerSnapshot } from '@shared/types/task-ledger';
+import {
+  createTaskLedgerReference,
+  isTaskLedgerReference,
+} from '@shared/types/task-ledger-reference';
 import {
   DEFAULT_WORKSPACE_PERMISSION_MODE,
   normalizeWorkspacePermissionMode,
 } from '@shared/types/workspace';
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
 import { recordPermissionDecisionEvent } from './permissions-api';
+import { normalizeTaskLedgerWorkspaceId } from './task-ledger-service';
+import {
+  reclaimBrowserSessionsForWorkspace,
+  reclaimManagedPortsForWorkspace,
+} from './long-session-resource-reclamation';
 
 type WorkspaceStoreDocument = {
   activeWorkspaceId: string | null;
@@ -84,11 +100,55 @@ type WorkspaceFolderMoveSessionBody = {
   folderId?: unknown;
 };
 
+type CoordinatorBindBody = {
+  workspaceId?: unknown;
+  agentId?: unknown;
+  sessionKey?: unknown;
+  expectedRevision?: unknown;
+  taskLedgerNodeIds?: unknown;
+  environment?: unknown;
+  archiveRestorePolicy?: unknown;
+};
+
+type CoordinatorResolveBody = Omit<WorkspaceCoordinatorResolvePayload, 'workspaceId' | 'agentId' | 'sessionKey'> & {
+  workspaceId?: unknown;
+  agentId?: unknown;
+  sessionKey?: unknown;
+};
+
+type CoordinatorPauseBody = Omit<WorkspaceCoordinatorPausePayload, 'workspaceId' | 'agentId' | 'sessionKey' | 'expectedRevision'> & {
+  workspaceId?: unknown;
+  agentId?: unknown;
+  sessionKey?: unknown;
+  expectedRevision?: unknown;
+};
+
+export type WorkspaceCoordinatorLifecycleEvent =
+  | { type: 'archive'; workspaceId?: string | null; sessionKey: string }
+  | { type: 'restore'; workspaceId?: string | null; sessionKey: string }
+  | { type: 'delete'; workspaceId?: string | null; sessionKey: string }
+  | { type: 'handoff'; workspaceId?: string | null; sourceSessionKey: string; sessionKey: string; agentId: string };
+
+export type WorkspaceCoordinatorLifecycleObserver = (event: WorkspaceCoordinatorLifecycleEvent) => Promise<void>;
+
 const DEFAULT_SESSION_KEY = 'agent:main:main';
 const DEFAULT_PERMISSION_MODE: WorkspacePermissionMode = DEFAULT_WORKSPACE_PERMISSION_MODE;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let workspaceStoreInstance: any = null;
+let coordinatorMutationTail: Promise<void> = Promise.resolve();
+
+async function withCoordinatorMutationLock<T>(operation: () => Promise<T>): Promise<T> {
+  const previous = coordinatorMutationTail;
+  let release!: () => void;
+  coordinatorMutationTail = new Promise<void>((resolveTail) => { release = resolveTail; });
+  await previous;
+  try {
+    return await operation();
+  } finally {
+    release();
+  }
+}
 
 async function getWorkspaceStore() {
   if (!workspaceStoreInstance) {
@@ -178,96 +238,59 @@ function createAgentBinding(
   };
 }
 
-function normalizeCoordinatorTaskRefs(value: unknown): WorkspaceCoordinatorTaskRef[] {
-  if (!Array.isArray(value)) return [];
-  const seen = new Set<string>();
-  return value.flatMap((entry) => {
-    if (!isRecord(entry) || entry.kind !== 'task-ledger' || typeof entry.nodeId !== 'string') return [];
-    const nodeId = entry.nodeId.trim();
-    if (!nodeId || seen.has(nodeId)) return [];
-    seen.add(nodeId);
-    return [{ kind: 'task-ledger' as const, nodeId }];
-  });
-}
-
-function normalizeDelegationReceipt(
-  value: unknown,
-  expectedKey: string,
-): DelegationAdmissionReceipt | null {
-  if (!isRecord(value)
-    || value.schemaVersion !== 'DelegationAdmissionReceipt/v1'
-    || value.idempotencyKey !== expectedKey
-    || typeof value.receiptId !== 'string'
-    || typeof value.requestDigest !== 'string'
-    || typeof value.roleName !== 'string'
-    || typeof value.task !== 'string'
-    || !isRecord(value.coordinator)
-    || !isRecord(value.taskRef)
-    || !isRecord(value.backend)
-    || !isRecord(value.toolAuthorization)
-    || !isRecord(value.isolation)) {
-    return null;
-  }
-  const state = value.state;
-  if (state !== 'submitting' && state !== 'accepted' && state !== 'rejected' && state !== 'unknown') {
-    return null;
-  }
-  return value as unknown as DelegationAdmissionReceipt;
-}
-
-function normalizeDelegationReceipts(value: unknown): Record<string, DelegationAdmissionReceipt> {
-  if (!isRecord(value)) return {};
-  const entries = Object.entries(value).flatMap(([key, receipt]) => {
-    const normalized = normalizeDelegationReceipt(receipt, key);
-    return normalized ? [[key, normalized] as const] : [];
-  });
-  return Object.fromEntries(entries.sort((left, right) => (
-    right[1].updatedAt.localeCompare(left[1].updatedAt)
-  )).slice(0, 100));
-}
-
-function normalizeCoordinatorBinding(
+function normalizeCoordinatorBindings(
   value: unknown,
   workspaceId: string,
-): WorkspaceCoordinatorBinding | null {
-  if (!isRecord(value)) return null;
-  const agentId = typeof value.agentId === 'string' ? value.agentId.trim() : '';
-  const sessionKey = typeof value.sessionKey === 'string' ? value.sessionKey.trim() : '';
-  const sessionId = typeof value.sessionId === 'string' ? value.sessionId.trim() : '';
-  const revision = typeof value.revision === 'number' && Number.isInteger(value.revision)
-    ? value.revision
-    : 0;
-  const state = value.state === 'invalidated' ? 'invalidated' : value.state === 'active' ? 'active' : null;
-  const createdAt = typeof value.createdAt === 'string' ? value.createdAt : '';
-  const updatedAt = typeof value.updatedAt === 'string' ? value.updatedAt : '';
-  const taskRefs = normalizeCoordinatorTaskRefs(value.taskRefs);
-  if (!agentId || !sessionKey || !sessionId || !state || revision < 1 || !createdAt || !updatedAt || taskRefs.length === 0) {
-    return null;
+): Record<string, WorkspaceCoordinatorBinding> | undefined {
+  if (!isRecord(value)) return undefined;
+  const bindings: Record<string, WorkspaceCoordinatorBinding> = {};
+  for (const [sessionKey, candidate] of Object.entries(value)) {
+    if (!isRecord(candidate) || candidate.workspaceId !== workspaceId || sessionKey !== candidate.sessionKey) continue;
+    const environment = isRecord(candidate.environment) ? candidate.environment : null;
+    if (
+      !environment
+      || (environment.kind !== 'local' && environment.kind !== 'managed-worktree')
+      || (environment.backend !== 'local-workspace' && environment.backend !== 'git')
+      || typeof environment.canonicalRoot !== 'string'
+      || typeof environment.detachedHead !== 'boolean'
+    ) continue;
+    const refs = Array.isArray(candidate.taskLedgerReferences)
+      ? candidate.taskLedgerReferences.filter(isTaskLedgerReference)
+      : [];
+    if (!refs.length) continue;
+    const bindingRevision = Number(candidate.bindingRevision);
+    if (!Number.isInteger(bindingRevision) || bindingRevision < 1) continue;
+    if (
+      candidate.schemaVersion !== 1
+      || (candidate.state !== 'active' && candidate.state !== 'paused' && candidate.state !== 'invalid')
+      || (candidate.archiveRestorePolicy !== 'restore' && candidate.archiveRestorePolicy !== 'none')
+      || typeof candidate.createdAt !== 'string'
+      || typeof candidate.updatedAt !== 'string'
+    ) continue;
+    bindings[sessionKey] = {
+      schemaVersion: 1,
+      workspaceId,
+      agentId: typeof candidate.agentId === 'string' ? candidate.agentId : '',
+      sessionKey,
+      sessionGeneration: typeof candidate.sessionGeneration === 'string' ? candidate.sessionGeneration : null,
+      taskLedgerReferences: refs,
+      environment: {
+        kind: environment.kind,
+        canonicalRoot: environment.canonicalRoot,
+        backend: environment.backend,
+        branch: typeof environment.branch === 'string' ? environment.branch : null,
+        detachedHead: environment.detachedHead,
+        setupProfile: typeof environment.setupProfile === 'string' ? environment.setupProfile : null,
+      },
+      archiveRestorePolicy: candidate.archiveRestorePolicy,
+      state: candidate.state,
+      bindingRevision,
+      invalidationReason: typeof candidate.invalidationReason === 'string' ? candidate.invalidationReason : null,
+      createdAt: candidate.createdAt,
+      updatedAt: candidate.updatedAt,
+    };
   }
-  const allowedReasons = new Set<WorkspaceCoordinatorInvalidationReason>([
-    'archived',
-    'deleted',
-    'reset',
-    'session_missing',
-    'session_key_changed',
-  ]);
-  return {
-    schemaVersion: 'WorkspaceCoordinatorBinding/v1',
-    workspaceId,
-    agentId,
-    sessionKey,
-    sessionId,
-    taskRefs,
-    state,
-    revision,
-    createdAt,
-    updatedAt,
-    invalidatedAt: typeof value.invalidatedAt === 'string' ? value.invalidatedAt : null,
-    invalidationReason: typeof value.invalidationReason === 'string'
-      && allowedReasons.has(value.invalidationReason as WorkspaceCoordinatorInvalidationReason)
-      ? value.invalidationReason as WorkspaceCoordinatorInvalidationReason
-      : null,
-  };
+  return Object.keys(bindings).length > 0 ? bindings : undefined;
 }
 
 function normalizeWorkspaceProfile(profile: WorkspaceProfile): WorkspaceProfile {
@@ -292,21 +315,19 @@ function normalizeWorkspaceProfile(profile: WorkspaceProfile): WorkspaceProfile 
   const state = sessionStates[normalizedActiveSessionKey] ?? {};
   const sessionFolders = normalizeSessionFolders(profile.sessionFolders);
   const sessionFolderAssignments = normalizeSessionFolderAssignments(profile.sessionFolderAssignments, sessionFolders);
-  const coordinatorBinding = normalizeCoordinatorBinding(profile.coordinatorBinding, profile.id);
-  const delegationReceipts = normalizeDelegationReceipts(profile.delegationReceipts);
+  const coordinatorBindings = normalizeCoordinatorBindings(profile.coordinatorBindings, profile.id);
   return {
     ...profile,
     agentId: selectedAgentId,
     selectedAgentId,
     activeSessionKey: normalizedActiveSessionKey,
     agentBindings,
+    ...(coordinatorBindings ? { coordinatorBindings } : {}),
     permissionMode: normalizePermissionMode(profile.permissionMode),
     state,
     sessionStates,
     sessionFolders,
     sessionFolderAssignments,
-    ...(coordinatorBinding ? { coordinatorBinding } : {}),
-    ...(Object.keys(delegationReceipts).length > 0 ? { delegationReceipts } : {}),
   };
 }
 
@@ -555,146 +576,6 @@ export async function getActiveWorkspaceProfile(): Promise<WorkspaceProfile | nu
   return document.profiles.find((profile) => profile.id === document.activeWorkspaceId) ?? null;
 }
 
-let coordinatorBindingMutationTail: Promise<void> = Promise.resolve();
-
-function enqueueCoordinatorBindingMutation<T>(work: () => Promise<T>): Promise<T> {
-  const run = coordinatorBindingMutationTail.then(work, work);
-  coordinatorBindingMutationTail = run.then(() => undefined, () => undefined);
-  return run;
-}
-
-/** Persist through the existing Workspace store with revision CAS. */
-export async function saveWorkspaceCoordinatorBinding(input: {
-  workspaceId: string;
-  expectedRevision: number;
-  binding: WorkspaceCoordinatorBinding;
-}): Promise<WorkspaceCoordinatorBinding> {
-  return enqueueCoordinatorBindingMutation(async () => {
-    const document = await readDocument();
-    const index = document.profiles.findIndex((profile) => profile.id === input.workspaceId);
-    if (index === -1) throw new Error(`Workspace "${input.workspaceId}" not found`);
-    const profile = document.profiles[index];
-    if (profile.selectedAgentId !== input.binding.agentId || profile.activeSessionKey !== input.binding.sessionKey) {
-      throw new Error('Coordinator binding must target the selected workspace assistant and session');
-    }
-    const currentRevision = profile.coordinatorBinding?.revision ?? 0;
-    if (input.expectedRevision !== currentRevision) {
-      throw new Error(`Coordinator binding revision conflict: expected ${currentRevision}, received ${input.expectedRevision}`);
-    }
-    if (input.binding.workspaceId !== profile.id
-      || input.binding.revision !== currentRevision + 1
-      || input.binding.taskRefs.length === 0
-      || new Set(input.binding.taskRefs.map((ref) => ref.nodeId)).size !== input.binding.taskRefs.length) {
-      throw new Error('Invalid coordinator binding revision or Task Ledger references');
-    }
-    const profiles = [...document.profiles];
-    profiles[index] = {
-      ...profile,
-      coordinatorBinding: input.binding,
-      updatedAt: Date.now(),
-    };
-    await writeDocument({ ...document, profiles });
-    return input.binding;
-  });
-}
-
-export async function readWorkspaceDelegationReceipt(
-  workspaceId: string,
-  idempotencyKey: string,
-): Promise<DelegationAdmissionReceipt | null> {
-  const document = await readDocument();
-  const profile = document.profiles.find((candidate) => candidate.id === workspaceId);
-  return profile?.delegationReceipts?.[idempotencyKey] ?? null;
-}
-
-export async function listWorkspaceDelegationReceipts(
-  workspaceId?: string | null,
-): Promise<DelegationAdmissionReceipt[]> {
-  const document = await ensureDocumentWithDefault();
-  const id = workspaceId?.trim() || document.activeWorkspaceId;
-  const profile = document.profiles.find((candidate) => candidate.id === id);
-  return Object.values(profile?.delegationReceipts ?? {}).sort((left, right) => (
-    right.updatedAt.localeCompare(left.updatedAt)
-  ));
-}
-
-export async function saveWorkspaceDelegationReceipt(
-  workspaceId: string,
-  receipt: DelegationAdmissionReceipt,
-): Promise<DelegationAdmissionReceipt> {
-  return enqueueCoordinatorBindingMutation(async () => {
-    const document = await readDocument();
-    const index = document.profiles.findIndex((profile) => profile.id === workspaceId);
-    if (index === -1) throw new Error(`Workspace "${workspaceId}" not found`);
-    const profile = document.profiles[index];
-    const existing = profile.delegationReceipts?.[receipt.idempotencyKey] ?? null;
-    if (existing && existing.requestDigest !== receipt.requestDigest) {
-      throw new Error('Delegation admission idempotency key was reused with a different request');
-    }
-    if (existing?.state === 'accepted' && receipt.state === 'submitting') return existing;
-    if (existing?.state === 'rejected' && receipt.state !== 'rejected') return existing;
-    const nextReceipts = normalizeDelegationReceipts({
-      ...(profile.delegationReceipts ?? {}),
-      [receipt.idempotencyKey]: receipt,
-    });
-    const profiles = [...document.profiles];
-    profiles[index] = {
-      ...profile,
-      delegationReceipts: nextReceipts,
-      updatedAt: Date.now(),
-    };
-    await writeDocument({ ...document, profiles });
-    return nextReceipts[receipt.idempotencyKey] ?? receipt;
-  });
-}
-
-export async function readWorkspaceCoordinatorBinding(
-  workspaceId?: string | null,
-): Promise<{ workspace: WorkspaceProfile; binding: WorkspaceCoordinatorBinding | null } | null> {
-  const document = await ensureDocumentWithDefault();
-  const id = workspaceId?.trim() || document.activeWorkspaceId;
-  if (!id) return null;
-  const workspace = document.profiles.find((profile) => profile.id === id);
-  return workspace ? { workspace, binding: workspace.coordinatorBinding ?? null } : null;
-}
-
-/**
- * A session mutation that succeeded makes any active long-session binding for
- * that logical key stale. Keep the metadata and increment its revision so the
- * invalidation is durable and visible to later readers.
- */
-export async function invalidateWorkspaceCoordinatorBindingsForSession(
-  sessionKey: string,
-  reason: WorkspaceCoordinatorInvalidationReason,
-  options: { workspaceId?: string | null } = {},
-): Promise<number> {
-  return enqueueCoordinatorBindingMutation(async () => {
-    const document = await readDocument();
-    const now = new Date().toISOString();
-    let invalidated = 0;
-    const profiles = document.profiles.map((profile) => {
-      if (options.workspaceId && profile.id !== options.workspaceId) return profile;
-      const binding = profile.coordinatorBinding;
-      if (!binding || binding.sessionKey !== sessionKey || binding.state !== 'active') return profile;
-      invalidated += 1;
-      return {
-        ...profile,
-        coordinatorBinding: {
-          ...binding,
-          state: 'invalidated' as const,
-          revision: binding.revision + 1,
-          updatedAt: now,
-          invalidatedAt: now,
-          invalidationReason: reason,
-        },
-        updatedAt: Date.now(),
-      };
-    });
-    if (invalidated > 0) await writeDocument({ ...document, profiles });
-    return invalidated;
-  });
-}
-
 /**
  * D3 closeout: resolve a workspace's rootPath by id without activating it.
  *
@@ -709,6 +590,42 @@ export async function invalidateWorkspaceCoordinatorBindingsForSession(
  * resolve to `undefined` so the chat-send path cannot throw from a stale
  * workspace store.
  */
+export async function getPersistedCoordinatorBinding(
+  workspaceId: string,
+  sessionKey: string,
+): Promise<WorkspaceCoordinatorBinding | null> {
+  const document = await readDocument();
+  const profile = document.profiles.find((candidate) => candidate.id === workspaceId);
+  const binding = profile?.coordinatorBindings?.[sessionKey];
+  return binding?.workspaceId === workspaceId && binding.sessionKey === sessionKey ? binding : null;
+}
+
+export async function materializeCoordinatorSessionGeneration(input: {
+  workspaceId: string;
+  sessionKey: string;
+  sessionId: string;
+}): Promise<WorkspaceCoordinatorBinding | null> {
+  return withCoordinatorMutationLock(async () => {
+    const document = await readDocument();
+    const profile = document.profiles.find((candidate) => candidate.id === input.workspaceId);
+    const binding = profile?.coordinatorBindings?.[input.sessionKey];
+    if (!profile || !binding) return null;
+    if (binding.sessionGeneration && binding.sessionGeneration !== input.sessionId) {
+      throw coordinatorError('COORDINATOR_GENERATION_MISMATCH', 'The bound session generation changed before materialization.');
+    }
+    if (binding.sessionGeneration === input.sessionId) return binding;
+    return persistCoordinatorBinding(input.workspaceId, input.sessionKey, (current) => {
+      const target = current ?? binding;
+      return {
+        ...target,
+        sessionGeneration: input.sessionId,
+        bindingRevision: target.bindingRevision + 1,
+        updatedAt: new Date().toISOString(),
+      };
+    });
+  });
+}
+
 export async function getWorkspaceRootPathById(workspaceId: string): Promise<string | undefined> {
   const id = typeof workspaceId === 'string' ? workspaceId.trim() : '';
   if (!id) return undefined;
@@ -725,6 +642,11 @@ type WorkspacesApiContext = {
   gatewayManager?: GatewayManager;
   terminalManager?: TerminalSessionManager;
   webPreviewManager?: WebPreviewManager;
+  gitApi?: {
+    status: CompleteHostServiceRegistry['git']['status'];
+    worktrees: CompleteHostServiceRegistry['git']['worktrees'];
+  };
+  taskLedgerApi?: Pick<CompleteHostServiceRegistry['taskLedger'], 'snapshot'>;
 };
 
 async function syncWorkspacePermissionBestEffort(gatewayManager: GatewayManager | undefined): Promise<void> {
@@ -742,7 +664,462 @@ async function syncWorkspacePermissionBestEffort(gatewayManager: GatewayManager 
   }
 }
 
-export function createWorkspacesApi(ctx: WorkspacesApiContext = {}): CompleteHostServiceRegistry['workspaces'] {
+type CoordinatorSessionDescription = {
+  session?: {
+    key?: string;
+    sessionId?: string;
+    status?: string;
+    hasActiveRun?: boolean;
+  } | null;
+};
+
+function coordinatorError(code: string, reason: string): Error {
+  return new Error(`${code}: ${reason}`);
+}
+
+function pathKey(value: string): string {
+  const normalized = resolve(value);
+  return process.platform === 'win32' ? normalized.toLowerCase() : normalized;
+}
+
+function isSamePath(left: string, right: string): boolean {
+  return pathKey(left) === pathKey(right);
+}
+
+function sessionAgentId(sessionKey: string): string | null {
+  const parts = sessionKey.split(':');
+  return parts[0] === 'agent' && parts[1] ? parts[1] : null;
+}
+
+function coordinatorRecovery(
+  state: WorkspaceCoordinatorRecovery['state'],
+  reason: string | null,
+  binding: WorkspaceCoordinatorBinding | null,
+): WorkspaceCoordinatorRecovery {
+  return { state, reason, bindingRevision: binding?.bindingRevision ?? null };
+}
+
+function coordinatorResult(
+  binding: WorkspaceCoordinatorBinding | null,
+  recovery: WorkspaceCoordinatorRecovery,
+): WorkspaceCoordinatorBindingResult {
+  return { success: true, binding, recovery };
+}
+
+async function describeCoordinatorSession(
+  ctx: WorkspacesApiContext,
+  sessionKey: string,
+  agentId: string,
+): Promise<{ sessionId: string; sessionKey: string; status: string | null; hasActiveRun: boolean }> {
+  if (!ctx.gatewayManager) {
+    throw coordinatorError('COORDINATOR_GATEWAY_UNAVAILABLE', 'Gateway manager is unavailable.');
+  }
+  const result = await ctx.gatewayManager.rpc<CoordinatorSessionDescription>(
+    'sessions.describe',
+    { key: sessionKey },
+    15_000,
+  );
+  const session = result?.session;
+  if (!session?.sessionId) {
+    throw coordinatorError('COORDINATOR_SESSION_MISSING', `Session ${sessionKey} does not exist.`);
+  }
+  if (session.key && session.key !== sessionKey) {
+    throw coordinatorError('COORDINATOR_SESSION_SCOPE_MISMATCH', `Gateway resolved ${sessionKey} as ${session.key}.`);
+  }
+  if (sessionAgentId(sessionKey) !== agentId) {
+    throw coordinatorError('COORDINATOR_AGENT_SCOPE_MISMATCH', `Session ${sessionKey} does not belong to agent ${agentId}.`);
+  }
+  return {
+    sessionId: session.sessionId,
+    sessionKey,
+    status: typeof session.status === 'string' ? session.status : null,
+    hasActiveRun: session.hasActiveRun === true,
+  };
+}
+
+async function validateCoordinatorTaskReferences(
+  ctx: WorkspacesApiContext,
+  workspaceId: string,
+  taskLedgerNodeIds: string[],
+): Promise<WorkspaceCoordinatorBinding['taskLedgerReferences']> {
+  if (!ctx.taskLedgerApi) {
+    throw coordinatorError('COORDINATOR_TASK_LEDGER_UNAVAILABLE', 'Task Ledger service is unavailable.');
+  }
+  const requested = [...new Set(taskLedgerNodeIds.map((value) => value.trim()).filter(Boolean))];
+  if (requested.length === 0) {
+    throw coordinatorError('COORDINATOR_TASK_REF_REQUIRED', 'At least one existing Task Ledger node is required.');
+  }
+  const result = await ctx.taskLedgerApi.snapshot({ workspaceId });
+  if (!result.success) {
+    throw coordinatorError('COORDINATOR_TASK_LEDGER_UNAVAILABLE', result.error ?? 'Task Ledger snapshot failed.');
+  }
+  const snapshot: TaskLedgerSnapshot = result.snapshot;
+  if (snapshot.workspaceId !== normalizeTaskLedgerWorkspaceId(workspaceId)) {
+    throw coordinatorError('COORDINATOR_WORKSPACE_SCOPE_MISMATCH', 'Task Ledger returned a different workspace.');
+  }
+  if (snapshot.warnings.length > 0) {
+    throw coordinatorError('COORDINATOR_TASK_LEDGER_INVALID', 'Task Ledger contains unresolved warnings.');
+  }
+  const nodes = new Set(snapshot.nodes.map((node) => node.id));
+  const missing = requested.filter((nodeId) => !nodes.has(nodeId));
+  if (missing.length > 0) {
+    throw coordinatorError('COORDINATOR_TASK_REF_MISSING', `Unknown Task Ledger nodes: ${missing.join(', ')}.`);
+  }
+  return requested.map((taskLedgerNodeId) => createTaskLedgerReference({
+    taskLedgerNodeId,
+    source: 'runtime',
+  }));
+}
+
+async function resolveCoordinatorEnvironment(
+  ctx: WorkspacesApiContext,
+  profile: WorkspaceProfile,
+  selection: { kind: 'local' | 'managed-worktree'; rootPath: string; setupProfile?: string | null },
+): Promise<WorkspaceCoordinatorEnvironmentBinding> {
+  const rootPath = await normalizeRootPath(selection.rootPath);
+  const setupProfile = typeof selection.setupProfile === 'string' && selection.setupProfile.trim()
+    ? selection.setupProfile.trim().slice(0, 160)
+    : null;
+  if (selection.kind === 'local') {
+    if (!isSamePath(rootPath, profile.rootPath)) {
+      throw coordinatorError('COORDINATOR_ENVIRONMENT_SCOPE_MISMATCH', 'A local environment must be the bound workspace root.');
+    }
+    if (!ctx.gitApi) {
+      throw coordinatorError('COORDINATOR_GIT_OWNER_UNAVAILABLE', 'Git owner is unavailable.');
+    }
+    const status = await ctx.gitApi.status();
+    if (!status.success) {
+      throw coordinatorError('COORDINATOR_ENVIRONMENT_UNAVAILABLE', status.error ?? 'Could not read local checkout status.');
+    }
+    return {
+      kind: 'local',
+      canonicalRoot: rootPath,
+      backend: status.status.isRepository ? 'git' : 'local-workspace',
+      branch: status.status.isRepository ? status.status.branch?.trim() || null : null,
+      detachedHead: status.status.isRepository ? status.status.detached === true : false,
+      setupProfile,
+    };
+  }
+  if (!ctx.gitApi) {
+    throw coordinatorError('COORDINATOR_GIT_OWNER_UNAVAILABLE', 'Git owner is unavailable.');
+  }
+  const listed = await ctx.gitApi.worktrees();
+  if (!listed.success) {
+    throw coordinatorError('COORDINATOR_ENVIRONMENT_UNAVAILABLE', listed.error ?? 'Could not list managed worktrees.');
+  }
+  const match = listed.worktrees.find((worktree) => isSamePath(worktree.path, rootPath));
+  if (!match || match.bare || match.prunable) {
+    throw coordinatorError('COORDINATOR_ENVIRONMENT_MISSING', 'The selected managed worktree is not registered by the Git owner.');
+  }
+  const branch = match.branch?.trim() || null;
+  if (branch) {
+    const owners = listed.worktrees.filter((worktree: GitWorktree) => worktree.branch === branch);
+    if (owners.length !== 1 || !isSamePath(owners[0].path, match.path)) {
+      throw coordinatorError('COORDINATOR_BRANCH_NOT_UNIQUE', `Branch ${branch} is checked out more than once.`);
+    }
+  }
+  return {
+    kind: 'managed-worktree',
+    canonicalRoot: resolve(match.path),
+    backend: 'git',
+    branch,
+    detachedHead: match.detached === true || !branch,
+    setupProfile,
+  };
+}
+
+async function validateStoredCoordinatorEnvironment(
+  ctx: WorkspacesApiContext,
+  profile: WorkspaceProfile,
+  binding: WorkspaceCoordinatorBinding,
+): Promise<{ ok: true; environment: WorkspaceCoordinatorEnvironmentBinding } | { ok: false; reason: string }> {
+  try {
+    const environment = await resolveCoordinatorEnvironment(ctx, profile, {
+      kind: binding.environment.kind,
+      rootPath: binding.environment.canonicalRoot,
+      setupProfile: binding.environment.setupProfile,
+    });
+    if (
+      environment.backend !== binding.environment.backend
+      || environment.branch !== binding.environment.branch
+      || environment.detachedHead !== binding.environment.detachedHead
+    ) {
+      return { ok: false, reason: 'environment-generation-changed' };
+    }
+    return { ok: true, environment };
+  } catch (error) {
+    return { ok: false, reason: error instanceof Error ? error.message : 'environment-unavailable' };
+  }
+}
+
+async function persistCoordinatorBinding(
+  workspaceId: string,
+  sessionKey: string,
+  updater: (current: WorkspaceCoordinatorBinding | undefined, profile: WorkspaceProfile) => WorkspaceCoordinatorBinding,
+): Promise<WorkspaceCoordinatorBinding> {
+  const document = await readDocument();
+  let persisted: WorkspaceCoordinatorBinding | null = null;
+  const nextDocument = updateWorkspaceProfile(document, workspaceId, (profile) => {
+    const current = profile.coordinatorBindings?.[sessionKey];
+    persisted = updater(current, profile);
+    return {
+      ...profile,
+      coordinatorBindings: {
+        ...(profile.coordinatorBindings ?? {}),
+        [sessionKey]: persisted,
+      },
+      updatedAt: Date.now(),
+    };
+  });
+  await writeDocument(nextDocument);
+  return persisted!;
+}
+
+async function markCoordinatorInvalid(
+  workspaceId: string,
+  sessionKey: string,
+  reason: string,
+): Promise<WorkspaceCoordinatorBinding | null> {
+  const document = await readDocument();
+  const profile = document.profiles.find((candidate) => candidate.id === workspaceId);
+  const current = profile?.coordinatorBindings?.[sessionKey];
+  if (!profile || !current) return null;
+  return persistCoordinatorBinding(workspaceId, sessionKey, (existing) => {
+    const binding = existing ?? current;
+    return {
+      ...binding,
+      state: 'invalid',
+      invalidationReason: reason,
+      bindingRevision: binding.bindingRevision + 1,
+      updatedAt: new Date().toISOString(),
+    };
+  });
+}
+
+function parseCoordinatorBindPayload(payload: unknown): {
+  workspaceId: string;
+  agentId: string;
+  sessionKey: string;
+  expectedRevision: number | undefined;
+  taskLedgerNodeIds: string[];
+  environment: { kind: 'local' | 'managed-worktree'; rootPath: string; setupProfile: string | null };
+  archiveRestorePolicy: WorkspaceCoordinatorArchiveRestorePolicy;
+} {
+  const body: CoordinatorBindBody = isRecord(payload) ? payload as CoordinatorBindBody : {};
+  const workspaceId = requireNonEmptyString(body.workspaceId, 'workspaceId');
+  const agentId = requireNonEmptyString(body.agentId, 'agentId');
+  const sessionKey = requireNonEmptyString(body.sessionKey, 'sessionKey');
+  const expectedRevision = body.expectedRevision === undefined ? undefined : Number(body.expectedRevision);
+  if (expectedRevision !== undefined && (!Number.isInteger(expectedRevision) || expectedRevision < 0)) {
+    throw coordinatorError('COORDINATOR_REVISION_INVALID', 'expectedRevision must be a non-negative integer.');
+  }
+  if (!Array.isArray(body.taskLedgerNodeIds) || body.taskLedgerNodeIds.some((value) => typeof value !== 'string')) {
+    throw coordinatorError('COORDINATOR_TASK_REFS_INVALID', 'taskLedgerNodeIds must be a string array.');
+  }
+  const environment = isRecord(body.environment) ? body.environment : null;
+  if (
+    !environment
+    || (environment.kind !== 'local' && environment.kind !== 'managed-worktree')
+    || typeof environment.rootPath !== 'string'
+    || !environment.rootPath.trim()
+  ) {
+    throw coordinatorError('COORDINATOR_ENVIRONMENT_INVALID', 'environment.kind and environment.rootPath are required.');
+  }
+  if (body.archiveRestorePolicy !== 'restore' && body.archiveRestorePolicy !== 'none') {
+    throw coordinatorError('COORDINATOR_ARCHIVE_POLICY_INVALID', 'archiveRestorePolicy must be restore or none.');
+  }
+  return {
+    workspaceId,
+    agentId,
+    sessionKey,
+    expectedRevision,
+    taskLedgerNodeIds: body.taskLedgerNodeIds,
+    environment: {
+      kind: environment.kind,
+      rootPath: environment.rootPath,
+      setupProfile: typeof environment.setupProfile === 'string' ? environment.setupProfile : null,
+    },
+    archiveRestorePolicy: body.archiveRestorePolicy,
+  };
+}
+
+function parseCoordinatorResolvePayload(payload: unknown): { workspaceId: string; agentId: string; sessionKey: string } {
+  const body: CoordinatorResolveBody = isRecord(payload) ? payload as CoordinatorResolveBody : {};
+  return {
+    workspaceId: requireNonEmptyString(body.workspaceId, 'workspaceId'),
+    agentId: requireNonEmptyString(body.agentId, 'agentId'),
+    sessionKey: requireNonEmptyString(body.sessionKey, 'sessionKey'),
+  };
+}
+
+async function resolveCoordinatorBinding(
+  ctx: WorkspacesApiContext,
+  payload: WorkspaceCoordinatorResolvePayload,
+): Promise<WorkspaceCoordinatorBindingResult> {
+  const input = parseCoordinatorResolvePayload(payload);
+  const document = await readDocument();
+  const profile = document.profiles.find((candidate) => candidate.id === input.workspaceId);
+  if (!profile) {
+    throw coordinatorError('COORDINATOR_WORKSPACE_MISSING', `Workspace ${input.workspaceId} does not exist.`);
+  }
+  const binding = profile.coordinatorBindings?.[input.sessionKey];
+  if (!binding) {
+    return coordinatorResult(null, { state: 'missing', reason: 'coordinator-binding-missing', bindingRevision: null });
+  }
+  if (binding.workspaceId !== input.workspaceId || binding.agentId !== input.agentId || binding.sessionKey !== input.sessionKey) {
+    throw coordinatorError('COORDINATOR_SCOPE_MISMATCH', 'Coordinator binding belongs to another workspace, agent, or session.');
+  }
+  if (binding.state === 'paused') {
+    return coordinatorResult(binding, coordinatorRecovery('paused', binding.invalidationReason ?? 'archive-restore-policy', binding));
+  }
+  if (binding.state === 'invalid') {
+    return coordinatorResult(binding, coordinatorRecovery('invalid', binding.invalidationReason ?? 'binding-invalid', binding));
+  }
+  if (!ctx.gatewayManager) {
+    return coordinatorResult(binding, coordinatorRecovery('unavailable', 'gateway-unavailable', binding));
+  }
+  let session: { sessionId: string; sessionKey: string };
+  try {
+    session = await describeCoordinatorSession(ctx, input.sessionKey, input.agentId);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'session-unavailable';
+    if (message.startsWith('COORDINATOR_SESSION_MISSING') && binding.sessionGeneration === null) {
+      return coordinatorResult(binding, coordinatorRecovery('session-pending', 'session-not-materialized', binding));
+    }
+    if (message.startsWith('COORDINATOR_SESSION_MISSING')) {
+      const invalid = await markCoordinatorInvalid(input.workspaceId, input.sessionKey, 'session-missing');
+      return coordinatorResult(invalid, coordinatorRecovery('session-missing', 'session-missing', invalid));
+    }
+    return coordinatorResult(binding, coordinatorRecovery('unavailable', message, binding));
+  }
+  if (!binding.sessionGeneration) {
+    const materialized = await persistCoordinatorBinding(input.workspaceId, input.sessionKey, (current) => {
+      const target = current ?? binding;
+      return {
+        ...target,
+        sessionGeneration: session.sessionId,
+        bindingRevision: target.bindingRevision + 1,
+        updatedAt: new Date().toISOString(),
+      };
+    });
+    return coordinatorResult(materialized, coordinatorRecovery('ready', null, materialized));
+  }
+  if (binding.sessionGeneration !== session.sessionId) {
+    const invalid = await markCoordinatorInvalid(input.workspaceId, input.sessionKey, 'session-generation-mismatch');
+    return coordinatorResult(invalid, coordinatorRecovery('generation-mismatch', 'session-generation-mismatch', invalid));
+  }
+  const environment = await validateStoredCoordinatorEnvironment(ctx, profile, binding);
+  if (!environment.ok) {
+    const invalid = await markCoordinatorInvalid(input.workspaceId, input.sessionKey, environment.reason);
+    return coordinatorResult(invalid, coordinatorRecovery('environment-missing', environment.reason, invalid));
+  }
+  return coordinatorResult(binding, coordinatorRecovery('ready', null, binding));
+}
+
+async function applyCoordinatorLifecycle(
+  ctx: WorkspacesApiContext,
+  event: WorkspaceCoordinatorLifecycleEvent,
+): Promise<void> {
+  const now = new Date().toISOString();
+  if (event.type === 'restore') {
+    const document = await readDocument();
+    const matches = document.profiles.flatMap((profile) => {
+      if (event.workspaceId && profile.id !== event.workspaceId) return [];
+      const binding = profile.coordinatorBindings?.[event.sessionKey];
+      return binding ? [{ profile, binding }] : [];
+    });
+    for (const { profile, binding } of matches) {
+      if (binding.archiveRestorePolicy === 'none') {
+        await markCoordinatorInvalid(profile.id, event.sessionKey, 'archive-retention-none');
+        continue;
+      }
+      try {
+        const session = await describeCoordinatorSession(ctx, event.sessionKey, binding.agentId);
+        const environment = await validateStoredCoordinatorEnvironment(ctx, profile, binding);
+        if (!environment.ok) {
+          await markCoordinatorInvalid(profile.id, event.sessionKey, environment.reason);
+          continue;
+        }
+        await persistCoordinatorBinding(profile.id, event.sessionKey, (current) => {
+          const target = current ?? binding;
+          return {
+            ...target,
+            sessionGeneration: session.sessionId,
+            state: 'active',
+            invalidationReason: null,
+            bindingRevision: target.bindingRevision + 1,
+            updatedAt: now,
+          };
+        });
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : 'archive-restore-revalidation-failed';
+        await markCoordinatorInvalid(profile.id, event.sessionKey, reason);
+      }
+    }
+    return;
+  }
+
+  const document = await readDocument();
+  let changed = false;
+  const profiles = document.profiles.map((profile) => {
+    if (event.workspaceId && profile.id !== event.workspaceId) return profile;
+    const bindings = { ...(profile.coordinatorBindings ?? {}) };
+    if (event.type === 'handoff') {
+      const source = bindings[event.sourceSessionKey];
+      if (!source) return profile;
+      if (source.agentId !== event.agentId || sessionAgentId(event.sessionKey) !== event.agentId) {
+        throw coordinatorError('COORDINATOR_HANDOFF_SCOPE_MISMATCH', 'Handoff source and child must share the bound agent.');
+      }
+      changed = true;
+      bindings[event.sourceSessionKey] = {
+        ...source,
+        state: 'paused',
+        invalidationReason: 'handoff-to-new-session',
+        bindingRevision: source.bindingRevision + 1,
+        updatedAt: now,
+      };
+      bindings[event.sessionKey] = {
+        ...source,
+        sessionKey: event.sessionKey,
+        sessionGeneration: null,
+        state: 'active',
+        invalidationReason: null,
+        bindingRevision: source.bindingRevision + 1,
+        createdAt: now,
+        updatedAt: now,
+        taskLedgerReferences: source.taskLedgerReferences.map((reference) => ({ ...reference })),
+        environment: { ...source.environment },
+      };
+      return { ...profile, coordinatorBindings: bindings, updatedAt: Date.now() };
+    }
+    const binding = bindings[event.sessionKey];
+    if (!binding) return profile;
+    changed = true;
+    const state = event.type === 'archive' && binding.archiveRestorePolicy === 'restore'
+      ? 'paused'
+      : 'invalid';
+    const reason = event.type === 'archive'
+      ? binding.archiveRestorePolicy === 'restore'
+        ? 'archived-restore-requested'
+        : 'archived-retention-none'
+      : 'session-deleted';
+    bindings[event.sessionKey] = {
+      ...binding,
+      state,
+      invalidationReason: reason,
+      bindingRevision: binding.bindingRevision + 1,
+      updatedAt: now,
+    };
+    return { ...profile, coordinatorBindings: bindings, updatedAt: Date.now() };
+  });
+  if (changed) await writeDocument({ ...document, profiles });
+}
+
+export function createWorkspacesApi(
+  ctx: WorkspacesApiContext = {},
+): CompleteHostServiceRegistry['workspaces'] & {
+  coordinatorLifecycle: WorkspaceCoordinatorLifecycleObserver;
+} {
   return {
     list: async () => {
       const document = await ensureDocumentWithDefault();
@@ -868,6 +1245,13 @@ export function createWorkspacesApi(ctx: WorkspacesApiContext = {}): CompleteHos
       if (rootPathChanged) {
         ctx.terminalManager?.unregisterWorkspace(id, 'workspace-delete');
         await ctx.webPreviewManager?.stopForWorkspace(id, 'workspace-delete');
+        const browsers = reclaimBrowserSessionsForWorkspace(id);
+        const ports = await reclaimManagedPortsForWorkspace(id);
+        if (browsers.reclaimed !== browsers.attempted || ports.failed > 0) {
+          throw new Error(
+            `Workspace resource cleanup is incomplete (browser ${browsers.reclaimed}/${browsers.attempted}, managed ports ${ports.failed} failed)`,
+          );
+        }
         if (document.activeWorkspaceId === id) {
           ctx.terminalManager?.registerWorkspace(nextProfile);
           ctx.webPreviewManager?.registerWorkspace(nextProfile);
@@ -903,6 +1287,13 @@ export function createWorkspacesApi(ctx: WorkspacesApiContext = {}): CompleteHos
       const nextDocument = { activeWorkspaceId, profiles };
       ctx.terminalManager?.unregisterWorkspace(id, 'workspace-delete');
       await ctx.webPreviewManager?.stopForWorkspace(id, 'workspace-delete');
+      const browsers = reclaimBrowserSessionsForWorkspace(id);
+      const ports = await reclaimManagedPortsForWorkspace(id);
+      if (browsers.reclaimed !== browsers.attempted || ports.failed > 0) {
+        throw new Error(
+          `Workspace resource cleanup is incomplete (browser ${browsers.reclaimed}/${browsers.attempted}, managed ports ${ports.failed} failed)`,
+        );
+      }
       await writeDocument(nextDocument);
       const nextActiveWorkspace = profiles.find((profile) => profile.id === activeWorkspaceId) ?? null;
       if (nextActiveWorkspace) {
@@ -958,12 +1349,9 @@ export function createWorkspacesApi(ctx: WorkspacesApiContext = {}): CompleteHos
         lastOpenedAt: Date.now(),
         updatedAt: Date.now(),
       };
-      const previousActiveWorkspace = document.profiles.find((profile) => profile.id === document.activeWorkspaceId) ?? null;
       const nextDocument = { activeWorkspaceId: id, profiles };
-      if (previousActiveWorkspace?.id && previousActiveWorkspace.id !== id) {
-        ctx.terminalManager?.unregisterWorkspace(previousActiveWorkspace.id, 'workspace-switch');
-        await ctx.webPreviewManager?.stopForWorkspace(previousActiveWorkspace.id, 'workspace-switch');
-      }
+      // Workspace switching changes the active selection only. Long-lived
+      // terminals, browser sessions and managed ports remain with their owner.
       await writeDocument(nextDocument);
       await syncWorkspacePermissionBestEffort(ctx.gatewayManager);
       const activeWorkspace = profiles[index];
@@ -1139,5 +1527,107 @@ export function createWorkspacesApi(ctx: WorkspacesApiContext = {}): CompleteHos
       await writeDocument(nextDocument);
       return successSnapshot(nextDocument);
     },
+    bindCoordinator: (payload) => withCoordinatorMutationLock(async () => {
+      const input = parseCoordinatorBindPayload(payload);
+      const document = await readDocument();
+      if (document.activeWorkspaceId !== input.workspaceId) {
+        throw coordinatorError('COORDINATOR_WORKSPACE_SCOPE_MISMATCH', 'Coordinator binding is limited to the active workspace.');
+      }
+      const profile = document.profiles.find((candidate) => candidate.id === input.workspaceId);
+      if (!profile) {
+        throw coordinatorError('COORDINATOR_WORKSPACE_MISSING', `Workspace ${input.workspaceId} does not exist.`);
+      }
+      const agentBinding = profile.agentBindings?.[input.agentId];
+      if (!agentBinding || agentBinding.workspaceId !== profile.id || agentBinding.agentId !== input.agentId) {
+        throw coordinatorError('COORDINATOR_OWNER_MISSING', 'The Workspace/Assistant binding does not exist.');
+      }
+      if (agentBinding.sessionKey !== input.sessionKey) {
+        throw coordinatorError('COORDINATOR_SESSION_SCOPE_MISMATCH', 'The selected session is not the Workspace/Assistant main session.');
+      }
+      const existing = profile.coordinatorBindings?.[input.sessionKey];
+      if (existing && input.expectedRevision !== existing.bindingRevision) {
+        throw coordinatorError('COORDINATOR_REVISION_CONFLICT', `Expected revision ${input.expectedRevision ?? 'missing'} but found ${existing.bindingRevision}.`);
+      }
+      if (!existing && input.expectedRevision !== undefined && input.expectedRevision !== 0) {
+        throw coordinatorError('COORDINATOR_REVISION_CONFLICT', 'A new binding must start at revision 0.');
+      }
+      const session = await describeCoordinatorSession(ctx, input.sessionKey, input.agentId);
+      const taskLedgerReferences = await validateCoordinatorTaskReferences(
+        ctx,
+        input.workspaceId,
+        input.taskLedgerNodeIds,
+      );
+      const environment = await resolveCoordinatorEnvironment(ctx, profile, input.environment);
+      const environmentChanged = Boolean(existing) && (
+        existing!.environment.kind !== environment.kind
+        || !isSamePath(existing!.environment.canonicalRoot, environment.canonicalRoot)
+        || existing!.environment.branch !== environment.branch
+        || existing!.environment.detachedHead !== environment.detachedHead
+      );
+      if (environmentChanged && (session.hasActiveRun || session.status === 'running')) {
+        throw coordinatorError('COORDINATOR_BINDING_SWITCH_BLOCKED', 'A running session cannot switch to another environment.');
+      }
+      const now = new Date().toISOString();
+      const binding: WorkspaceCoordinatorBinding = {
+        schemaVersion: 1,
+        workspaceId: input.workspaceId,
+        agentId: input.agentId,
+        sessionKey: input.sessionKey,
+        sessionGeneration: session.sessionId,
+        taskLedgerReferences,
+        environment,
+        archiveRestorePolicy: input.archiveRestorePolicy,
+        state: 'active',
+        bindingRevision: (existing?.bindingRevision ?? 0) + 1,
+        invalidationReason: null,
+        createdAt: existing?.createdAt ?? now,
+        updatedAt: now,
+      };
+      const nextDocument = updateWorkspaceProfile(document, input.workspaceId, (current) => ({
+        ...current,
+        coordinatorBindings: {
+          ...(current.coordinatorBindings ?? {}),
+          [input.sessionKey]: binding,
+        },
+        updatedAt: Date.now(),
+      }));
+      await writeDocument(nextDocument);
+      return coordinatorResult(binding, coordinatorRecovery('ready', null, binding));
+    }),
+    resolveCoordinator: (payload) => withCoordinatorMutationLock(() => resolveCoordinatorBinding(ctx, payload)),
+    pauseCoordinator: (payload) => withCoordinatorMutationLock(async () => {
+      const body = isRecord(payload) ? payload as CoordinatorPauseBody : {};
+      const workspaceId = requireNonEmptyString(body.workspaceId, 'workspaceId');
+      const agentId = requireNonEmptyString(body.agentId, 'agentId');
+      const sessionKey = requireNonEmptyString(body.sessionKey, 'sessionKey');
+      const expectedRevision = Number(body.expectedRevision);
+      if (!Number.isInteger(expectedRevision) || expectedRevision < 1) {
+        throw coordinatorError('COORDINATOR_REVISION_INVALID', 'expectedRevision must be a positive integer.');
+      }
+      const document = await readDocument();
+      const profile = document.profiles.find((candidate) => candidate.id === workspaceId);
+      const binding = profile?.coordinatorBindings?.[sessionKey];
+      if (!profile || !binding) {
+        return coordinatorResult(null, { state: 'missing', reason: 'coordinator-binding-missing', bindingRevision: null });
+      }
+      if (binding.agentId !== agentId || binding.workspaceId !== workspaceId || binding.sessionKey !== sessionKey) {
+        throw coordinatorError('COORDINATOR_SCOPE_MISMATCH', 'Coordinator binding belongs to another workspace, agent, or session.');
+      }
+      if (binding.bindingRevision !== expectedRevision) {
+        throw coordinatorError('COORDINATOR_REVISION_CONFLICT', `Expected revision ${expectedRevision} but found ${binding.bindingRevision}.`);
+      }
+      const paused = await persistCoordinatorBinding(workspaceId, sessionKey, (current) => {
+        const target = current ?? binding;
+        return {
+          ...target,
+          state: 'paused',
+          invalidationReason: 'user-paused',
+          bindingRevision: target.bindingRevision + 1,
+          updatedAt: new Date().toISOString(),
+        };
+      });
+      return coordinatorResult(paused, coordinatorRecovery('paused', 'user-paused', paused));
+    }),
+    coordinatorLifecycle: (event) => withCoordinatorMutationLock(() => applyCoordinatorLifecycle(ctx, event)),
   };
 }

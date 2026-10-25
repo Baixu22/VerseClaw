@@ -174,6 +174,11 @@ describe('TF-0003 default configuration matrix', () => {
           false
             ? 'false'
             : 'true',
+        'tool-registry': () =>
+          DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.tool_registry.enabled'] ===
+          false
+            ? 'false'
+            : 'true',
         'Runtime Memory inject pilot': () =>
           DEFAULT_MEMORY_INJECT_PILOT_CONFIG.enabled === false &&
           resolveMemoryInjectPilotConfig({}).enabled === false

@@ -2,13 +2,21 @@
  * ResourceChip shows running resource count in the chat toolbar.
  * Click opens a popover with the full resource list and stop controls.
  */
-import { useEffect, useState } from 'react';
-import { Loader2, Server, StopCircle, Trash2, X } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { AlertTriangle, ExternalLink, Loader2, Pause, Play, Server, StopCircle, Trash2, Users, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { useResourceStore } from '@/stores/resource-tracker';
 import { useTranslation } from 'react-i18next';
 import type { TrackedResource } from '@shared/types/resource-tracker';
+import type { WorkspaceCoordinatorBinding, WorkspaceCoordinatorRecovery } from '@shared/types/workspace';
+import type { RuntimeResourceEnvelopeState } from '@shared/host-api/contract';
+import { hostApi } from '@/lib/host-api';
+import { getWorkspaceCoordinatorBinding } from '@/lib/workspace-session';
+import { useChatStore } from '@/stores/chat';
+import { useSessionActivityStore } from '@/stores/session-activity';
+import { useWorkspacesStore } from '@/stores/workspaces';
 
 export function ResourceChip() {
   const { t } = useTranslation('common');
@@ -26,11 +34,101 @@ export function ResourceChip() {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [stoppingId, setStoppingId] = useState<string | null>(null);
   const [stoppingAll, setStoppingAll] = useState(false);
+  const currentSessionKey = useChatStore((state) => state.currentSessionKey);
+  const switchSession = useChatStore((state) => state.switchSession);
+  const activeTaskNodeId = useChatStore((state) => state.activeTaskNodeId);
+  const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
+  const activitySnapshot = useSessionActivityStore((state) => state.snapshots[currentSessionKey]);
+  const [coordinatorBinding, setCoordinatorBinding] = useState<WorkspaceCoordinatorBinding | null>(null);
+  const [coordinatorRecovery, setCoordinatorRecovery] = useState<WorkspaceCoordinatorRecovery | null>(null);
+  const [resourceEnvelope, setResourceEnvelope] = useState<RuntimeResourceEnvelopeState | null>(null);
+  const [coordinatorBusy, setCoordinatorBusy] = useState(false);
+  const [coordinatorError, setCoordinatorError] = useState<string | null>(null);
+  const agentId = useMemo(() => currentSessionKey.startsWith('agent:') ? currentSessionKey.split(':')[1] || null : null, [currentSessionKey]);
+  const cachedBinding = activeWorkspace && agentId
+    ? getWorkspaceCoordinatorBinding(activeWorkspace, agentId, currentSessionKey)
+    : null;
+  const completionBatches = activitySnapshot?.completionBatches ?? [];
+  const activeBackgroundTerminalCount = activitySnapshot?.terminals.filter((terminal) => ['starting', 'running', 'idle', 'blocked'].includes(terminal.status)).length ?? 0;
+  const loadCoordinator = useCallback(async () => {
+    if (!activeWorkspace || !agentId || !currentSessionKey) {
+      setCoordinatorBinding(null);
+      return;
+    }
+    const [resolved, envelope] = await Promise.allSettled([
+      hostApi.workspaces.resolveCoordinator({ workspaceId: activeWorkspace.id, agentId, sessionKey: currentSessionKey }),
+      hostApi.resourceEnvelope.getState(),
+    ]);
+    if (resolved.status === 'fulfilled') {
+      setCoordinatorBinding(resolved.value.binding ?? null);
+      setCoordinatorRecovery(resolved.value.recovery);
+    } else {
+      setCoordinatorBinding(cachedBinding);
+    }
+    if (envelope.status === 'fulfilled') setResourceEnvelope(envelope.value);
+  }, [activeWorkspace, agentId, cachedBinding, currentSessionKey]);
+  const binding = coordinatorBinding ?? cachedBinding;
+  const runCoordinatorAction = async (action: 'bind' | 'pause' | 'resume') => {
+    if (!activeWorkspace || !agentId || !currentSessionKey) return;
+    setCoordinatorBusy(true);
+    setCoordinatorError(null);
+    try {
+      if (action === 'pause' && binding) {
+        const result = await hostApi.workspaces.pauseCoordinator({
+          workspaceId: activeWorkspace.id,
+          agentId,
+          sessionKey: currentSessionKey,
+          expectedRevision: binding.bindingRevision,
+        });
+        setCoordinatorBinding(result.binding);
+        return;
+      }
+      const taskLedgerNodeIds = binding?.taskLedgerReferences.map((reference) => reference.taskLedgerNodeId)
+        ?? (activeTaskNodeId ? [activeTaskNodeId] : []);
+      if (taskLedgerNodeIds.length === 0 || !activeWorkspace.rootPath) throw new Error(t('resourceTracker.coordinator.taskRequired'));
+      if (!binding && activeTaskNodeId) {
+        await hostApi.taskLedger.linkSession({
+          workspaceId: activeWorkspace.id,
+          nodeId: activeTaskNodeId,
+          sessionKey: currentSessionKey,
+          agentId,
+          relation: 'related',
+          idempotencyKey: `coordinator-link-${currentSessionKey}-${activeTaskNodeId}`,
+        });
+      }
+      const environment = binding?.environment
+        ? {
+            kind: binding.environment.kind,
+            rootPath: binding.environment.canonicalRoot,
+            setupProfile: binding.environment.setupProfile,
+          }
+        : { kind: 'local' as const, rootPath: activeWorkspace.rootPath, setupProfile: null };
+      const result = await hostApi.workspaces.bindCoordinator({
+        workspaceId: activeWorkspace.id,
+        agentId,
+        sessionKey: currentSessionKey,
+        expectedRevision: binding?.bindingRevision ?? 0,
+        taskLedgerNodeIds,
+        environment,
+        archiveRestorePolicy: binding?.archiveRestorePolicy ?? 'restore',
+      });
+      setCoordinatorBinding(result.binding);
+      if (!result.success) setCoordinatorError(result.error ?? result.recovery.reason ?? null);
+    } catch (error) {
+      setCoordinatorError(error instanceof Error ? error.message : String(error));
+    } finally {
+      setCoordinatorBusy(false);
+    }
+  };
   const [nowMs, setNowMs] = useState(() => Date.now());
 
   useEffect(() => {
     init();
   }, [init]);
+
+  useEffect(() => {
+    void loadCoordinator();
+  }, [loadCoordinator]);
 
   useEffect(() => {
     const timer = setInterval(() => setNowMs(Date.now()), 60_000);
@@ -42,7 +140,8 @@ export function ResourceChip() {
   const warningCount = idleCount + unreachableCount;
 
   if (!isInitialized) return null;
-  if (totalCount === 0 && !popoverOpen) return null;
+  const coordinatorVisible = Boolean(binding || activeTaskNodeId || resourceEnvelope?.measured || completionBatches.length > 0);
+  if (totalCount === 0 && !coordinatorVisible && !popoverOpen) return null;
 
   const handleStop = async (resourceId: string) => {
     setStoppingId(resourceId);
@@ -129,6 +228,100 @@ export function ResourceChip() {
               </button>
             </div>
 
+            {(binding || activeTaskNodeId || resourceEnvelope?.measured || completionBatches.length > 0) && (
+              <section data-testid="long-session-coordinator" className="mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10">
+                <div className="flex items-center gap-2">
+                  <Users className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                  <span className="min-w-0 flex-1 truncate text-xs font-medium text-foreground">
+                    {t('resourceTracker.coordinator.title')}
+                  </span>
+                  <span className={cn(
+                    'rounded-full px-1.5 py-0.5 text-[10px] font-medium',
+                    binding?.state === 'active'
+                      ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+                      : binding?.state
+                        ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400'
+                        : 'bg-foreground/5 text-muted-foreground',
+                  )}>
+                    {binding ? t('resourceTracker.coordinator.state.' + binding.state) : t('resourceTracker.coordinator.state.unbound')}
+                  </span>
+                </div>
+                {binding ? (
+                  <div className="mt-1.5 space-y-1 text-[10px] text-muted-foreground">
+                    <div className="truncate" title={binding.environment.canonicalRoot}>
+                      {binding.environment.backend} / {binding.environment.kind} / r{binding.bindingRevision}
+                    </div>
+                    <div className="truncate">{binding.environment.canonicalRoot}</div>
+                    <div data-testid="coordinator-recovery">
+                      {t('resourceTracker.coordinator.recovery', { state: coordinatorRecovery?.state ?? 'unknown' })}
+                    </div>
+                    {binding.invalidationReason && (
+                      <div className="flex items-start gap-1 text-amber-700 dark:text-amber-400">
+                        <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
+                        <span>{binding.invalidationReason}</span>
+                      </div>
+                    )}
+                    <div className="flex flex-wrap gap-1">
+                      {binding.taskLedgerReferences.slice(0, 3).map((reference) => (
+                        <Link
+                          key={reference.taskLedgerNodeId}
+                          data-testid={`coordinator-task-ledger-${reference.taskLedgerNodeId}`}
+                          to={'/task-ledger?nodeId=' + encodeURIComponent(reference.taskLedgerNodeId)}
+                          className="inline-flex max-w-full items-center gap-0.5 rounded bg-foreground/5 px-1.5 py-0.5 text-foreground hover:bg-foreground/10"
+                        >
+                          <span className="truncate">{reference.taskLedgerNodeId}</span>
+                          <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                        </Link>
+                      ))}
+                    </div>
+                    {completionBatches.length > 0 && (
+                      <div className="space-y-0.5">
+                        {completionBatches.slice(-3).map((batch) => (
+                          <div key={batch.batchId} className="flex items-center justify-between gap-2">
+                            <button type="button" data-testid={`coordinator-worker-${batch.batchId}`} onClick={() => { const child = batch.members[0]?.childSessionKey; if (child) switchSession(child); }} className="truncate text-left hover:text-foreground">{batch.members.map((member) => member.roleName).join(', ')}</button>
+                            <span className="shrink-0 rounded bg-foreground/5 px-1 py-0.5 font-medium text-foreground">
+                              {batch.outcome} / {batch.delivery.state}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      data-testid={binding.state === 'active' ? 'coordinator-pause' : 'coordinator-resume'}
+                      onClick={() => void runCoordinatorAction(binding.state === 'active' ? 'pause' : 'resume')}
+                      disabled={coordinatorBusy}
+                      className="inline-flex h-6 items-center gap-1 rounded px-1.5 text-foreground hover:bg-foreground/5 disabled:opacity-50"
+                    >
+                      {coordinatorBusy ? <Loader2 className="h-3 w-3 animate-spin" /> : binding.state === 'active' ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+                      {binding.state === 'active' ? t('resourceTracker.coordinator.pause') : t('resourceTracker.coordinator.resume')}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    data-testid="coordinator-start"
+                    onClick={() => void runCoordinatorAction('bind')}
+                    disabled={coordinatorBusy || !activeTaskNodeId}
+                    className="mt-1.5 inline-flex h-6 items-center gap-1 rounded px-1.5 text-[10px] text-foreground hover:bg-foreground/5 disabled:opacity-50"
+                  >
+                    {coordinatorBusy ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3" />}
+                    {t('resourceTracker.coordinator.start')}
+                  </button>
+                )}
+                {coordinatorError && <p className="mt-1 text-[10px] text-red-700 dark:text-red-400">{coordinatorError}</p>}
+                {resourceEnvelope?.measured && resourceEnvelope.snapshot && (
+                  <div className="mt-1.5 grid grid-cols-2 gap-x-2 gap-y-0.5 border-t border-black/5 pt-1 text-[10px] text-muted-foreground dark:border-white/10">
+                    <span>CPU {resourceEnvelope.snapshot.totals.treeCpuPercent.toFixed(1)}%</span>
+                    <span>RSS {Math.round(resourceEnvelope.snapshot.totals.treeRssBytes / 1024 / 1024)} MB</span>
+                    <span>{t('resourceTracker.coordinator.processes', { count: resourceEnvelope.snapshot.totals.processCount })}</span>
+                    <span>{t('resourceTracker.coordinator.slots', { count: resourceEnvelope.snapshot.totals.activeSlots })}</span>
+                    <span>{t('resourceTracker.coordinator.backgroundTerminals', { count: activeBackgroundTerminalCount })}</span>
+                    <span>{t('resourceTracker.coordinator.queued', { count: resourceEnvelope.snapshot.totals.queuedCount })}</span>
+                  </div>
+                )}
+              </section>
+            )}
             <div className="min-h-0 flex-1 overflow-y-auto py-0.5">
               {resources.length === 0 ? (
                 <p className="px-2 py-6 text-center text-xs text-muted-foreground">

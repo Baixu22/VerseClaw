@@ -10,6 +10,7 @@ import {
   ChevronDown,
   CircleDot,
   Clock3,
+  Download,
   Eye,
   FileText,
   GitMerge,
@@ -28,6 +29,7 @@ import {
   Sparkles,
   ThumbsDown,
   ThumbsUp,
+  Trash2,
   XCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -40,6 +42,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
@@ -65,6 +68,8 @@ import { RoleCard, type RoleCardData } from './RoleCard';
 import { OrchestrationPlanView, type PlanView } from './OrchestrationPlanView';
 import { SubagentRunnerPanel } from './SubagentRunnerPanel';
 import { AgencyRolePromotionPanel } from './AgencyRolePromotionPanel';
+import { ProposeFactsConfirmQueue } from './ProposeFactsConfirmQueue';
+import { buildMemoryExportSnapshot } from './memory-surface';
 import { AgentRoleIdentity, RoleBadge } from './AgentAvatar';
 import { createCodingRunView, isTaskLoopPassed, serializeCodingRunJsonl, type CodingRunEvidenceEvent } from '@shared/product-semantics';
 import type { AgentAvatarView } from '@shared/types/agent';
@@ -245,6 +250,8 @@ type MemoryCardView = {
   retentionLabels?: string[];
   confidence?: number;
   importance?: number;
+  source?: string;
+  createdAt?: string;
   evidenceRefs?: Array<{ type?: string; ref?: string; excerpt?: string }>;
   updatedAt?: string;
   expiresAt?: string | null;
@@ -267,6 +274,7 @@ type MemoryProposalView = {
   evidenceStatus?: string;
   retentionReason?: string | null;
   source?: string;
+  createdAt?: string;
   confidence?: number;
   proposal?: {
     content?: string;
@@ -687,6 +695,8 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
   const [memoryDetailOpen, setMemoryDetailOpen] = useState(false);
   const [memoryDetail, setMemoryDetail] = useState<MemoryDetailView | null>(null);
   const [memoryDetailLoading, setMemoryDetailLoading] = useState(false);
+  const [memoryExporting, setMemoryExporting] = useState(false);
+  const [memoryDeleteTarget, setMemoryDeleteTarget] = useState<MemoryCardView | null>(null);
   const roleMemoryDisabled = !roleMemoryEnabled;
 
   const activeMemoryCards = useMemo(
@@ -1243,6 +1253,50 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
       setMemoryLoading(false);
     }
   }, [loadRoleMemory, roleMemoryDisabled, showRoleMemoryDisabledToast, tt]);
+
+  const requestDeleteRoleMemory = useCallback((card: MemoryCardView) => {
+    setMemoryDeleteTarget(card);
+  }, []);
+
+  const confirmDeleteRoleMemory = useCallback(async () => {
+    if (!memoryDeleteTarget) return;
+    const target = memoryDeleteTarget;
+    setMemoryDeleteTarget(null);
+    await tombstoneRoleMemory(target.id);
+  }, [memoryDeleteTarget, tombstoneRoleMemory]);
+
+  const exportRoleMemory = useCallback(() => {
+    if (!selectedRole) return;
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
+    setMemoryExporting(true);
+    try {
+      const snapshot = buildMemoryExportSnapshot({
+        generatedAt: new Date().toISOString(),
+        roleName: selectedRole,
+        cards: memoryCards,
+        proposals: memoryProposals,
+        injections: memoryInjections,
+      });
+      const serialized = JSON.stringify(snapshot, null, 2);
+      const blob = new Blob([serialized], { type: 'application/json' });
+      const href = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = href;
+      anchor.download = 'clawx-memory-' + selectedRole + '-' + new Date().toISOString().replace(/[:.]/g, '-') + '.json';
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(href), 0);
+      toast.success(tt('roles.memoryExported', 'Memory export ready'));
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryExporting(false);
+    }
+  }, [memoryCards, memoryInjections, memoryProposals, roleMemoryDisabled, selectedRole, showRoleMemoryDisabledToast, tt]);
 
   const prepareMemoryDraft = useCallback((card: MemoryCardView, mode: 'update' | 'supersede') => {
     if (roleMemoryDisabled) {
@@ -1985,7 +2039,7 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
 
           {showMemoryPanel && (
           <TooltipProvider>
-            <div className="space-y-4 border-t border-border/60 pt-4" data-testid="role-memory-panel">
+            <div className="space-y-4 border-t border-border/60 pt-4" data-testid="role-memory-panel" data-surface-id="agents.memory">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0 space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
@@ -2019,11 +2073,57 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
                   <p className="max-w-2xl text-xs text-muted-foreground">
                     {tt('roles.memoryGovernanceHint', 'Review what this role will remember, why changes are blocked, and what context was injected into recent runs.')}
                   </p>
+                  <p className="max-w-2xl text-xs text-muted-foreground" data-testid="memory-model-visibility">
+                    {tt('roles.memoryModelVisibility', 'Model visibility: accepted memory only. Candidates remain review-only and are neither retrievable nor injectable until approved.')}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 pt-1" data-testid="memory-surface-semantics">
+                    <Badge variant="outline" className="rounded-full text-2xs">
+                      {roleMemoryDisabled ? tt('roles.memoryMasterOff', 'Master: off') : tt('roles.memoryMasterOn', 'Master: on')}
+                    </Badge>
+                    <Badge variant="outline" className="rounded-full text-2xs">
+                      {tt('roles.memoryReadGate', 'Read: accepted only')}
+                    </Badge>
+                    <Badge variant="outline" className="rounded-full text-2xs">
+                      {tt('roles.memoryWriteGate', 'Write: candidate then review')}
+                    </Badge>
+                    <Badge variant="outline" className="rounded-full text-2xs">
+                      {tt('roles.memoryDeleteGate', 'Delete: tombstone')}
+                    </Badge>
+                    <Badge variant="outline" className="rounded-full text-2xs">
+                      {tt('roles.memoryLegacyGate', 'Legacy: native unchanged')}
+                    </Badge>
+                  </div>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => void loadRoleMemory()} disabled={!selectedRole || memoryLoading || roleMemoryDisabled}>
-                  <RefreshCw className={cn('h-4 w-4', memoryLoading && 'animate-spin')} />
-                </Button>
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    data-testid="memory-export"
+                    disabled={!selectedRole || memoryLoading || roleMemoryDisabled || memoryExporting}
+                    onClick={exportRoleMemory}
+                  >
+                    <Download className={cn('mr-1.5 h-3.5 w-3.5', memoryExporting && 'animate-pulse')} />
+                    {tt('roles.memoryExport', 'Export')}
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => void loadRoleMemory()} disabled={!selectedRole || memoryLoading || roleMemoryDisabled}>
+                    <RefreshCw className={cn('h-4 w-4', memoryLoading && 'animate-spin')} />
+                  </Button>
+                </div>
               </div>
+
+              {roleMemoryDisabled && (
+                <div className="rounded-md border border-zinc-500/20 bg-zinc-500/10 px-3 py-2.5" data-testid="memory-disabled-semantics">
+                  <p className="text-xs text-muted-foreground">
+                    {tt('roles.memoryLegacyFallback', 'Memory is off: managed cards are retained on disk but are not read, written, or injected. Native OpenClaw memory remains separate and unchanged.')}
+                  </p>
+                </div>
+              )}
+
+              {!roleMemoryDisabled && (
+                <div className="rounded-md border border-border/60 bg-surface-input p-3" data-testid="memory-runtime-candidates">
+                  <ProposeFactsConfirmQueue />
+                </div>
+              )}
 
               {!selectedRole ? (
                 <div className="flex items-center gap-3 rounded-md border border-dashed border-border/70 bg-surface-input px-3 py-4">
@@ -2236,6 +2336,7 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
                       </Button>
                       <Button
                         data-testid="role-memory-save"
+                        data-action={memoryDraftTarget ? 'proposal' : 'remember'}
                         className="h-8"
                         disabled={roleMemoryDisabled || !memoryDraft.content.trim() || memoryLoading}
                         onClick={() => void proposeRoleMemory()}
@@ -2358,24 +2459,44 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
                               </div>
                             </div>
                             {card.status !== 'archived' && card.status !== 'tombstone' && (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 shrink-0"
-                                    disabled={roleMemoryDisabled || memoryLoading}
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      void archiveRoleMemory(card.id);
-                                    }}
-                                    data-testid="role-memory-archive"
-                                  >
-                                    <Archive className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>{tt('roles.memoryArchive', 'Archive')}</TooltipContent>
-                              </Tooltip>
+                              <div className="flex shrink-0 items-center gap-1">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8 shrink-0"
+                                      disabled={roleMemoryDisabled || memoryLoading}
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        void archiveRoleMemory(card.id);
+                                      }}
+                                      data-testid="role-memory-archive"
+                                    >
+                                      <Archive className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>{tt('roles.memoryArchive', 'Archive')}</TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8 shrink-0 text-red-700 hover:bg-red-500/10 hover:text-red-700 dark:text-red-400"
+                                      disabled={roleMemoryDisabled || memoryLoading}
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        requestDeleteRoleMemory(card);
+                                      }}
+                                      data-testid="role-memory-delete"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>{tt('roles.memoryDelete', 'Delete')}</TooltipContent>
+                                </Tooltip>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -3669,6 +3790,17 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
           )}
         </SheetContent>
       </Sheet>
+      <ConfirmDialog
+        open={memoryDeleteTarget !== null}
+        title={tt('roles.memoryDeleteTitle', 'Delete memory?')}
+        message={tt('roles.memoryDeleteHint', 'This removes the memory from retrieval and injection and records a tombstone so the audit trail remains. It does not immediately erase stored content.')}
+        confirmLabel={tt('common:actions.delete', 'Delete')}
+        cancelLabel={tt('common:actions.cancel', 'Cancel')}
+        variant="destructive"
+        onConfirm={confirmDeleteRoleMemory}
+        onCancel={() => setMemoryDeleteTarget(null)}
+        onError={(error) => toast.error(String(error))}
+      />
     </Card>
   );
 }

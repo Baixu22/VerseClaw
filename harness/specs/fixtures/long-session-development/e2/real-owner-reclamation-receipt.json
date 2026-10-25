@@ -1,0 +1,384 @@
+{
+  "schema": "clawx.long-session.real-owner-reclamation/v1",
+  "driven_by": "agent",
+  "candidate": "3100f8a6ac6393741f6d14ff2091c14d6d9748b2",
+  "actor": "clawx-e2e-agent",
+  "transport": "built Electron host:invoke -> actual Gateway runtime -> Main owners",
+  "sessionKey": "agent:main:dashboard:aea93e75-d76c-4318-9734-e9eb63be00ba",
+  "sessionId": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+  "terminal": {
+    "opened": {
+      "success": true,
+      "sessionId": "ebddc157-9d12-46f1-8427-2f88e6784425",
+      "workspaceId": "e2-resource-workload",
+      "sessionKey": "agent:main:dashboard:aea93e75-d76c-4318-9734-e9eb63be00ba",
+      "expectedSessionId": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+      "kind": "interactive",
+      "cwd": "D:\\tmp\\clawx-e2-1792869207\\verse-claw-e2e-run-Axzlhc\\verse-claw-e2e-home-zxiKTC\\resource-workload",
+      "pid": 0,
+      "cols": 80,
+      "rows": 24,
+      "status": "running",
+      "exitCode": null,
+      "scrollback": ""
+    },
+    "staleGenerationRejected": true
+  },
+  "inventoryBeforeStop": {
+    "schema": "LongSessionResourceInventory/v1",
+    "scope": {
+      "workspaceId": "e2-resource-workload",
+      "sessionKey": "agent:main:dashboard:aea93e75-d76c-4318-9734-e9eb63be00ba",
+      "expectedSessionId": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+      "rootPath": "D:\\tmp\\clawx-e2-1792869207\\verse-claw-e2e-run-Axzlhc\\verse-claw-e2e-user-data-HH8z4r\\openclaw-source-home\\.openclaw\\workspace"
+    },
+    "capturedAt": "2026-10-24T19:13:47.348Z",
+    "owners": [
+      {
+        "kind": "process",
+        "owner": "ProcessSupervisor+BashProcessRegistry",
+        "authority": "managed",
+        "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+        "state": "known",
+        "count": 0,
+        "pids": [],
+        "processTreePids": [],
+        "rssKb": 0,
+        "cpuPercent": 0,
+        "activePermits": null,
+        "waiters": null,
+        "helperRefs": 0,
+        "worktreeIds": null,
+        "sessionIds": null
+      },
+      {
+        "kind": "admission-permit",
+        "owner": "SessionAdmissionRegistry",
+        "authority": "managed",
+        "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+        "state": "known",
+        "count": 0,
+        "pids": null,
+        "processTreePids": null,
+        "rssKb": null,
+        "cpuPercent": null,
+        "activePermits": 0,
+        "waiters": 0,
+        "helperRefs": null,
+        "worktreeIds": null,
+        "sessionIds": null
+      },
+      {
+        "kind": "worktree",
+        "owner": "WorktreeService",
+        "authority": "managed",
+        "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+        "state": "known",
+        "count": 0,
+        "pids": null,
+        "processTreePids": null,
+        "rssKb": null,
+        "cpuPercent": null,
+        "activePermits": null,
+        "waiters": null,
+        "helperRefs": null,
+        "worktreeIds": [],
+        "sessionIds": null
+      },
+      {
+        "kind": "terminal",
+        "owner": "TerminalSessionManager",
+        "authority": "managed",
+        "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+        "state": "known",
+        "count": 1,
+        "pids": [],
+        "processTreePids": null,
+        "rssKb": 0,
+        "cpuPercent": 0,
+        "activePermits": null,
+        "waiters": null,
+        "helperRefs": null,
+        "worktreeIds": null,
+        "sessionIds": [
+          "ebddc157-9d12-46f1-8427-2f88e6784425"
+        ],
+        "detail": "includes keep_on_leave terminals counted separately"
+      },
+      {
+        "kind": "browser",
+        "owner": "HostAgentBrowserService",
+        "authority": "managed",
+        "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+        "state": "known",
+        "count": 0,
+        "pids": null,
+        "processTreePids": null,
+        "rssKb": null,
+        "cpuPercent": null,
+        "activePermits": null,
+        "waiters": null,
+        "helperRefs": null,
+        "worktreeIds": null,
+        "sessionIds": []
+      }
+    ]
+  },
+  "stopped": {
+    "success": true,
+    "key": "agent:main:dashboard:aea93e75-d76c-4318-9734-e9eb63be00ba",
+    "stopped": true,
+    "expectedSessionId": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+    "resourceReclamation": {
+      "schema": "LongSessionResourceReclamation/v1",
+      "action": "run-cancel",
+      "scope": {
+        "workspaceId": "",
+        "sessionKey": "agent:main:dashboard:aea93e75-d76c-4318-9734-e9eb63be00ba",
+        "expectedSessionId": "de7f98df-eb1c-4a64-9ddb-2921e89110c0"
+      },
+      "generatedAt": "2026-10-24T19:13:47.382Z",
+      "owners": [
+        {
+          "kind": "terminal",
+          "owner": "TerminalSessionManager",
+          "outcome": "kept",
+          "authority": "managed",
+          "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+          "attempted": 1,
+          "reclaimed": 0,
+          "kept": 1,
+          "detail": "action does not close terminals; keep_on_leave preserved"
+        },
+        {
+          "kind": "browser",
+          "owner": "HostAgentBrowserService",
+          "outcome": "not-owned",
+          "authority": "observed",
+          "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action does not close browser sessions"
+        },
+        {
+          "kind": "background-port",
+          "owner": "ResourceTracker",
+          "outcome": "not-owned",
+          "authority": "observed",
+          "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action does not stop managed ports"
+        },
+        {
+          "kind": "worktree",
+          "owner": "WorktreeService",
+          "outcome": "not-owned",
+          "authority": "observed",
+          "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action preserves worktrees"
+        },
+        {
+          "kind": "admission-permit",
+          "owner": "SessionAdmissionRegistry",
+          "outcome": "not-owned",
+          "authority": "managed",
+          "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+        }
+      ],
+      "activeResidue": 0,
+      "keptOnLeave": 1,
+      "recoveryRequired": false,
+      "recoveryId": null,
+      "retryable": false
+    }
+  },
+  "inventoryAfterStop": {
+    "schema": "LongSessionResourceInventory/v1",
+    "scope": {
+      "workspaceId": "unknown",
+      "sessionKey": "agent:main:dashboard:aea93e75-d76c-4318-9734-e9eb63be00ba",
+      "expectedSessionId": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+      "rootPath": "D:\\tmp\\clawx-e2-1792869207\\verse-claw-e2e-run-Axzlhc\\verse-claw-e2e-user-data-HH8z4r\\openclaw-source-home\\.openclaw\\workspace"
+    },
+    "capturedAt": "2026-10-24T19:13:47.434Z",
+    "owners": [
+      {
+        "kind": "process",
+        "owner": "ProcessSupervisor+BashProcessRegistry",
+        "authority": "managed",
+        "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+        "state": "known",
+        "count": 0,
+        "pids": [],
+        "processTreePids": [],
+        "rssKb": 0,
+        "cpuPercent": 0,
+        "activePermits": null,
+        "waiters": null,
+        "helperRefs": 0,
+        "worktreeIds": null,
+        "sessionIds": null
+      },
+      {
+        "kind": "admission-permit",
+        "owner": "SessionAdmissionRegistry",
+        "authority": "managed",
+        "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+        "state": "known",
+        "count": 0,
+        "pids": null,
+        "processTreePids": null,
+        "rssKb": null,
+        "cpuPercent": null,
+        "activePermits": 0,
+        "waiters": 0,
+        "helperRefs": null,
+        "worktreeIds": null,
+        "sessionIds": null
+      },
+      {
+        "kind": "worktree",
+        "owner": "WorktreeService",
+        "authority": "managed",
+        "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+        "state": "known",
+        "count": 0,
+        "pids": null,
+        "processTreePids": null,
+        "rssKb": null,
+        "cpuPercent": null,
+        "activePermits": null,
+        "waiters": null,
+        "helperRefs": null,
+        "worktreeIds": [],
+        "sessionIds": null
+      },
+      {
+        "kind": "terminal",
+        "owner": "TerminalSessionManager",
+        "authority": "managed",
+        "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+        "state": "known",
+        "count": 0,
+        "pids": [],
+        "processTreePids": null,
+        "rssKb": 0,
+        "cpuPercent": 0,
+        "activePermits": null,
+        "waiters": null,
+        "helperRefs": null,
+        "worktreeIds": null,
+        "sessionIds": []
+      },
+      {
+        "kind": "browser",
+        "owner": "HostAgentBrowserService",
+        "authority": "managed",
+        "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+        "state": "known",
+        "count": 0,
+        "pids": null,
+        "processTreePids": null,
+        "rssKb": null,
+        "cpuPercent": null,
+        "activePermits": null,
+        "waiters": null,
+        "helperRefs": null,
+        "worktreeIds": null,
+        "sessionIds": []
+      }
+    ]
+  },
+  "archived": {
+    "success": true,
+    "sessionId": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+    "resourceReclamation": {
+      "schema": "LongSessionResourceReclamation/v1",
+      "action": "session-archive",
+      "scope": {
+        "workspaceId": "workspace-e2e",
+        "sessionKey": "agent:main:dashboard:aea93e75-d76c-4318-9734-e9eb63be00ba",
+        "expectedSessionId": "de7f98df-eb1c-4a64-9ddb-2921e89110c0"
+      },
+      "generatedAt": "2026-10-24T19:13:47.601Z",
+      "owners": [
+        {
+          "kind": "terminal",
+          "owner": "TerminalSessionManager",
+          "outcome": "not-owned",
+          "authority": "managed",
+          "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action does not close terminals; keep_on_leave preserved"
+        },
+        {
+          "kind": "browser",
+          "owner": "HostAgentBrowserService",
+          "outcome": "not-owned",
+          "authority": "observed",
+          "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action does not close browser sessions"
+        },
+        {
+          "kind": "background-port",
+          "owner": "ResourceTracker",
+          "outcome": "not-owned",
+          "authority": "observed",
+          "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action does not stop managed ports"
+        },
+        {
+          "kind": "worktree",
+          "owner": "WorktreeService",
+          "outcome": "not-owned",
+          "authority": "observed",
+          "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action preserves worktrees"
+        },
+        {
+          "kind": "admission-permit",
+          "owner": "SessionAdmissionRegistry",
+          "outcome": "not-owned",
+          "authority": "managed",
+          "generation": "de7f98df-eb1c-4a64-9ddb-2921e89110c0",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+        }
+      ],
+      "activeResidue": 0,
+      "keptOnLeave": 0,
+      "recoveryRequired": false,
+      "recoveryId": null,
+      "retryable": false
+    }
+  },
+  "stoppedAgain": {
+    "success": false,
+    "error": "[INTERNAL] session not found: agent:main:dashboard:aea93e75-d76c-4318-9734-e9eb63be00ba"
+  },
+  "recoveryRequired": false,
+  "timestamp": "2026-10-24T19:13:47.644Z"
+}

@@ -80,18 +80,13 @@ const LIFECYCLE_METHODS: ReadonlyArray<{
   },
   {
     name: "sessions.archive",
-    scope: "operator.write",
+    scope: "operator.admin",
     validationContains: "invalid sessions.archive params",
   },
   {
     name: "sessions.restore",
-    scope: "operator.write",
+    scope: "operator.admin",
     validationContains: "invalid sessions.restore params",
-  },
-  {
-    name: "sessions.effectivePolicy",
-    scope: "operator.read",
-    validationContains: "invalid sessions.effectivePolicy params",
   },
   {
     name: "sessions.reset",

@@ -383,8 +383,6 @@ import {
   SessionsArchiveParamsSchema,
   type SessionsRestoreParams,
   SessionsRestoreParamsSchema,
-  type SessionsEffectivePolicyParams,
-  SessionsEffectivePolicyParamsSchema,
   type SessionsDescribeParams,
   SessionsDescribeParamsSchema,
   type SessionsForkParams,
@@ -726,9 +724,6 @@ export const validateSessionsArchiveParams = lazyCompile<SessionsArchiveParams>(
 );
 export const validateSessionsRestoreParams = lazyCompile<SessionsRestoreParams>(
   SessionsRestoreParamsSchema,
-);
-export const validateSessionsEffectivePolicyParams = lazyCompile<SessionsEffectivePolicyParams>(
-  SessionsEffectivePolicyParamsSchema,
 );
 export const validateSessionsCompactParams = lazyCompile<SessionsCompactParams>(
   SessionsCompactParamsSchema,
@@ -1483,7 +1478,6 @@ export type {
   SessionsDeleteParams,
   SessionsArchiveParams,
   SessionsRestoreParams,
-  SessionsEffectivePolicyParams,
   SessionsCompactParams,
   SessionsCompactRangeParams,
   SessionsUsageParams,

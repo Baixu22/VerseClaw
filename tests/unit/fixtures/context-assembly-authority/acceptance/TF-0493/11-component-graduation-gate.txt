@@ -1,0 +1,24 @@
+{
+  "validation": {
+    "ok": true,
+    "issues": [],
+    "requiredEvidence": [
+      "contract"
+    ],
+    "missingEvidence": [],
+    "graduationPass": true,
+    "countsAsGraduated": false,
+    "recomputedVerdict": "pass",
+    "defaultChangedAgainstAuthority": false,
+    "evidenceGradeDetected": "documented-boundary"
+  },
+  "defaultChange": null,
+  "taskForestDone": null,
+  "ok": true,
+  "reportPath": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\tests\\unit\\fixtures\\context-assembly-authority\\acceptance\\TF-0493\\component-graduation-report.json",
+  "expected": {
+    "recomputeInputDigest": "4674849e5ea23c45bee2d5f0c4bb5914d14acf01931559d6671957f4cc20f014"
+  },
+  "currentDefaultMode": null,
+  "requireGraduation": true
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "MemoryAuthorityCrossLayer/v1",
+  "taskForestNodeId": "TF-0497",
+  "generatedAt": "2026-10-24T08:52:54.4904957Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "sourceCommit": "f67e5914bc0811b9dcf8f6a0a613fc88006f008e",
+  "scopedAuditCommit": "5ecbcc30fbc4f632326a870344aacfb6ea2a5e6a",
+  "integratedCommit": "1d105762214fbca239437fd06a5d3e0f35c906f2",
+  "testedEvidenceCandidate": "feb8c60fe4376cfe07f8e8c8d115a047793c12d7",
+  "currentEvidenceHead": "6cbea5edaf1747747ff738f2dd7e023a47aec418",
+  "currentEvidenceTree": "a51a96a775c201a3812091e23c380bc2a1ee40bd",
+  "removedScope": [
+    "TF-0509 permission contract",
+    "permission authority evidence"
+  ],
+  "productDefaultChanged": false,
+  "verseGitExcluded": true,
+  "publicReleaseClaimed": false
+}

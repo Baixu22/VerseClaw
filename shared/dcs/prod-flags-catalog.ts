@@ -88,7 +88,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     executor: {
       status: 'wired',
       sites: [
-        'openclaw_runtime/src/context-engine/assembler.ts:479',
+        'openclaw_runtime/src/context-engine/assembler.ts:483',
       ],
     },
   },
@@ -108,7 +108,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     executor: {
       status: 'wired',
       sites: [
-        'openclaw_runtime/src/context-engine/assembler.ts:490',
+        'openclaw_runtime/src/context-engine/assembler.ts:494',
       ],
     },
   },
@@ -507,8 +507,6 @@ export function listEnhancementFlagsDefaultOff(): DcsProdFlagEntry[] {
 export function assertCatalogDefaultHonesty(): { ok: true } {
   const mustStayOff = [
     'context-view-tools',
-    'working-memory',
-    'tool-registry',
     'stale-write-guard',
     'symbol-lease',
     'patch-flow',

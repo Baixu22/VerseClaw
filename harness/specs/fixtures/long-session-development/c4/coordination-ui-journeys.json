@@ -1,213 +1,238 @@
 {
-  "schema": "clawx.long-session.c4-ui-journeys/v1",
+  "schema": "clawx.long-session.coordination-ui-journey/v1",
   "driven_by": "agent",
-  "actor": "codex-long-session-c4",
-  "program": "long-session-development-20261022",
-  "task": "TF-0555",
-  "taskKey": "C4",
-  "candidate": {
-    "commit": "4a4f53f37749d95d85f4990c85e196a5f1f11d0d",
-    "tree": "da7e5abe5abc5b1820cee52e4a946d12a5ec3f33",
-    "branch": "codex/long-session-implementation-20261022",
-    "cleanBefore": true,
-    "cleanAfter": true,
-    "rawRun": "D:\\tmp\\long-session-c4\\4a4f53f37749d95d85f4990c85e196a5f1f11d0d\\gate-run.json"
-  },
-  "verdict": "pass",
-  "featureClaim": "an explicitly bound long session is reachable and auditable through the existing Sidebar, Chat activity rail, worker transcript and Task Ledger",
-  "hostRoute": "existing Sidebar/Chat + typed sessionActivity.snapshot and Task Ledger host routes",
-  "coordinatorSessionKey": "agent:main:dashboard:894a9c67-cf13-41dc-9e5e-3dc66544db08",
-  "secondarySessionKey": "agent:main:dashboard:d8f66a8f-e7ee-4c4d-b451-f6bfbf48ebcb",
-  "taskNodeId": "1ef4d14d-2f98-4d9b-985a-25c4f848b5cf",
-  "receipt": {
-    "schemaVersion": "DelegationAdmissionReceipt/v1",
-    "receiptId": "dar_aeaa15d3-4c64-483d-aac6-bb8c814bb64b",
-    "idempotencyKey": "c4-delegation-1792708474337",
-    "requestDigest": "345491110620251e2b35a07ab68f94e258e2a9887cf078e9f0896a5cd9fd5b25",
-    "coordinator": {
-      "workspaceId": "default",
-      "agentId": "main",
-      "sessionKey": "agent:main:dashboard:894a9c67-cf13-41dc-9e5e-3dc66544db08",
-      "sessionId": "90d23454-309f-4ce6-b1f8-9a76c8fbd5c3",
-      "bindingRevision": 1
-    },
-    "taskRef": {
-      "kind": "task-ledger",
-      "nodeId": "1ef4d14d-2f98-4d9b-985a-25c4f848b5cf"
-    },
-    "roleName": "implementer",
-    "task": "Produce coordination UI evidence",
-    "state": "accepted",
-    "acceptedIsNotCompletion": true,
-    "orchestrationRunId": "orch_97e86bbe-6728-471e-a505-bfaf2874a8ff",
-    "taskNodeId": "implementer-1",
-    "taskId": "implementer-1",
-    "roleInstanceId": "orch_97e86bbe-6728-471e-a505-bfaf2874a8ff:implementer-1:implementer:attempt-1",
-    "childSessionKey": "agent:main:subagent:cd1cfbd9-0f3c-4e61-84e8-8d96fa597637",
-    "childRunId": "89b84457-e564-4ad8-af84-99d1becb7ad4",
-    "backend": {
-      "kind": "openclaw-embedded",
-      "provider": "openai",
-      "model": "openai/gpt-5.5",
-      "evidence": "role-spawn:spawnSubagentDirect"
-    },
-    "toolAuthorization": {
-      "allowlist": [
-        "read",
-        "write",
-        "edit",
-        "bash"
-      ],
-      "denylist": [
-        "web_search",
-        "web_fetch",
-        "x_search",
-        "code_execution",
-        "browser",
-        "__role_capability:mcp_network"
-      ],
-      "permissionDecisionCount": 6,
-      "source": "role-clamped-inherited"
-    },
-    "isolation": {
-      "mode": "inprocess-shared",
-      "backend": "inprocess",
-      "worktreeId": null,
-      "writeSet": [
-        "src/c4-coordination-fixture.ts"
-      ],
-      "parallelWritesAllowed": false,
-      "writeSetBasis": "serialized"
-    },
-    "reason": null,
-    "createdAt": "2026-10-22T22:34:34.341Z",
-    "updatedAt": "2026-10-22T22:34:34.994Z",
-    "acceptedAt": "2026-10-22T22:34:34.994Z",
-    "rejectedAt": null
-  },
-  "completionBatch": {
-    "id": "completion-batch:orch_97e86bbe-6728-471e-a505-bfaf2874a8ff:agent:main:dashboard:894a9c67-cf13-41dc-9e5e-3dc66544db08",
-    "idempotencyKey": "completion-batch:orch_97e86bbe-6728-471e-a505-bfaf2874a8ff:agent:main:dashboard:894a9c67-cf13-41dc-9e5e-3dc66544db08",
-    "orchestrationRunId": "orch_97e86bbe-6728-471e-a505-bfaf2874a8ff",
-    "requesterSessionKey": "agent:main:dashboard:894a9c67-cf13-41dc-9e5e-3dc66544db08",
-    "requesterSessionId": "90d23454-309f-4ce6-b1f8-9a76c8fbd5c3",
-    "generationState": "consistent",
-    "status": "delivery-pending",
-    "terminal": true,
-    "expectedWorkerCount": 1,
-    "completedWorkerCount": 0,
-    "failedWorkerCount": 1,
-    "cancelledWorkerCount": 0,
-    "pendingWorkerCount": 0,
-    "workerRuns": [
-      {
-        "runId": "89b84457-e564-4ad8-af84-99d1becb7ad4",
-        "roleName": "implementer",
-        "taskNodeId": "implementer-1",
-        "childSessionKey": "agent:main:subagent:cd1cfbd9-0f3c-4e61-84e8-8d96fa597637",
-        "status": "failed"
-      }
-    ],
-    "verifier": null,
+  "actor": "codex-long-session-r2",
+  "workspaceId": "default",
+  "rootPath": "C:\\Users\\27933\\AppData\\Local\\Temp\\long-session-c4-final\\e2e-clean-640da4c\\verse-claw-e2e-run-ycipHd\\verse-claw-e2e-home-WkNJzJ\\.openclaw\\workspace",
+  "sessionKey": "agent:main:dashboard:8bcff78f-147f-4b81-951a-4bc0497318f3",
+  "sessionGeneration": "9f77337f-1dd5-4750-9e75-617caf6d495b",
+  "taskRef": "01257f7e-8fa7-49b1-82bc-dabfd8810fb0",
+  "bindingRevision": 1,
+  "idempotencyKey": "coordination-ui-1792799222320",
+  "actualWorker": {
+    "delegationStatus": "accepted",
+    "orchestrationRunId": "orch_dc00ea17-4f07-428c-ad13-98a5555735e9",
+    "batchId": "orch_dc00ea17-4f07-428c-ad13-98a5555735e9:agent:main:dashboard:8bcff78f-147f-4b81-951a-4bc0497318f3:9f77337f-1dd5-4750-9e75-617caf6d495b",
+    "status": "terminal",
+    "outcome": "failed",
     "delivery": {
       "state": "pending",
-      "pendingCount": 1,
-      "inProgressCount": 0,
-      "deliveredCount": 0,
-      "failedCount": 0,
-      "suspendedCount": 0,
-      "discardedCount": 0
+      "delivered": 0,
+      "pending": 1,
+      "suspended": 0,
+      "failed": 0,
+      "discarded": 0,
+      "waitingForRequesterTurn": false
     },
-    "bounded": true,
-    "completionAuthority": "none",
-    "updatedAt": 1792708478669
-  },
-  "journeys": {
-    "sidebarExplicitOpen": true,
-    "switchFromSecondarySession": true,
-    "keyboardTaskLedgerOpen": true,
-    "workerTranscriptOpen": true,
-    "minimizeRestore": true,
-    "narrowOverlay": true,
-    "fourLocales": true,
-    "ordinaryHandoffForkRegression": true
-  },
-  "locales": [
-    {
-      "language": "en",
-      "title": "Long session"
-    },
-    {
-      "language": "zh",
-      "title": "长期协作"
-    },
-    {
-      "language": "ja",
-      "title": "長期セッション"
-    },
-    {
-      "language": "ru",
-      "title": "Долгая сессия"
+    "member": {
+      "runId": "87d40282-ebbe-4ae5-bf06-911cbadfdd6a",
+      "childSessionKey": "agent:main:subagent:b8cf5c77-135f-471c-8fb8-c638a1350a2d",
+      "roleName": "architect",
+      "status": "failed",
+      "deliveryStatus": "pending"
     }
-  ],
-  "stateCoverage": [
-    {
-      "state": "draft",
-      "evidence": "tests/unit/long-session-coordination-surface.test.ts#maps durable receipts and live owner records without inventing task acceptance"
+  },
+  "observed": {
+    "bindingStates": [
+      "ready",
+      "active",
+      "paused",
+      "active"
+    ],
+    "keyboard": {
+      "pause": "focus + Enter",
+      "resume": "focus + Enter",
+      "verifiedByHostReadback": true
     },
-    {
-      "state": "accepted",
-      "evidence": "tests/unit/long-session-coordination-surface.test.ts#keeps accepted and unknown receipt facts distinct when no worker result exists"
+    "pausedState": {
+      "pauseControlAbsent": true,
+      "hostState": "paused"
     },
-    {
-      "state": "running",
-      "evidence": "tests/unit/long-session-coordination-surface.test.ts#maps durable receipts and live owner records without inventing task acceptance"
+    "resumedState": {
+      "hostState": "active"
     },
-    {
-      "state": "waiting",
-      "evidence": "tests/unit/long-session-coordination-surface.test.ts#lets Task Ledger acceptance outrank worker delivery, while invalidated bindings keep their actual reason"
+    "ownerReads": {
+      "activityBackgroundRead": "known",
+      "activityCompletionBatchIds": [
+        "orch_dc00ea17-4f07-428c-ad13-98a5555735e9:agent:main:dashboard:8bcff78f-147f-4b81-951a-4bc0497318f3:9f77337f-1dd5-4750-9e75-617caf6d495b"
+      ],
+      "recoveryState": "ready",
+      "resourceEnvelope": {
+        "schema": "openclaw.resource-envelope/v1",
+        "generatedAt": 1792799229041,
+        "mode": "shadow",
+        "entries": [
+          {
+            "id": "main:chat-history",
+            "workspaceKey": "main:chat-history",
+            "kind": "chat-history",
+            "priority": "foreground",
+            "owner": "main",
+            "activeSlots": 0,
+            "queuedCount": 0,
+            "queueWaitMs": 0,
+            "processCount": 0,
+            "treeRssBytes": 0,
+            "treeCpuPercent": 0,
+            "limits": {
+              "memoryBytes": 536870912,
+              "cpuPercent": 100,
+              "processCount": 16,
+              "concurrencySlots": 1,
+              "queueLength": 64
+            },
+            "limitHistory": [
+              {
+                "at": 1792799228180,
+                "from": 2,
+                "to": 1,
+                "reason": "gradient2 latency sample"
+              }
+            ],
+            "reason": "released",
+            "updatedAt": 1792799228180
+          },
+          {
+            "id": "main:process-tree",
+            "workspaceKey": "D:\\ClawX-work\\worktrees\\long-session-program-r2",
+            "kind": "agent-turn",
+            "priority": "foreground",
+            "owner": "main",
+            "activeSlots": 0,
+            "queuedCount": 0,
+            "queueWaitMs": 0,
+            "processCount": 6,
+            "treeRssBytes": 1234251776,
+            "treeCpuPercent": 0,
+            "pids": [
+              44360
+            ],
+            "reason": "main process tree sample",
+            "limits": {
+              "memoryBytes": 2147483648,
+              "cpuPercent": 400,
+              "processCount": 64,
+              "concurrencySlots": 8,
+              "queueLength": 32
+            },
+            "updatedAt": 1792799229040
+          }
+        ],
+        "totals": {
+          "activeSlots": 0,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 6,
+          "treeRssBytes": 1234251776,
+          "treeCpuPercent": 0
+        },
+        "exceeded": [],
+        "warnings": []
+      },
+      "activeBackgroundTerminalCount": 0
     },
-    {
-      "state": "failed",
-      "evidence": "tests/e2e/long-session-coordination.spec.ts + completed worker batch with failed count shown as Failed"
+    "windowLifecycle": {
+      "minimized": true,
+      "restored": true,
+      "visible": true
     },
-    {
-      "state": "cancelled",
-      "evidence": "tests/unit/long-session-coordination-surface.test.ts#maps durable receipts and live owner records without inventing task acceptance"
+    "taskLedgerNavigation": {
+      "hash": "#/task-ledger?nodeId=01257f7e-8fa7-49b1-82bc-dabfd8810fb0",
+      "includesNodeId": true
     },
-    {
-      "state": "reported",
-      "evidence": "tests/unit/long-session-coordination-surface.test.ts#maps durable receipts and live owner records without inventing task acceptance"
+    "workerNavigation": {
+      "childSessionKey": "agent:main:subagent:b8cf5c77-135f-471c-8fb8-c638a1350a2d",
+      "sidebarSelected": true,
+      "returnedToCoordinator": true
     },
-    {
-      "state": "accepted-by-task",
-      "evidence": "tests/unit/long-session-coordination-surface.test.ts#lets Task Ledger acceptance outrank worker delivery, while invalidated bindings keep their actual reason"
+    "locales": [
+      {
+        "locale": "en",
+        "title": "Long-session coordinator",
+        "active": "active"
+      },
+      {
+        "locale": "zh",
+        "title": "长期会话协调",
+        "active": "已启用"
+      },
+      {
+        "locale": "ja",
+        "title": "長期セッション調整",
+        "active": "有効"
+      },
+      {
+        "locale": "ru",
+        "title": "Координатор долгой сессии",
+        "active": "активен"
+      }
+    ],
+    "quietWindow": {
+      "durationMs": 2500,
+      "completionBatchRowsBefore": 1,
+      "completionBatchRowsAfter": 1,
+      "completionBellUnreadBefore": 0,
+      "completionBellUnreadAfter": 0
     },
-    {
-      "state": "unknown",
-      "evidence": "tests/unit/long-session-coordination-surface.test.ts#keeps accepted and unknown receipt facts distinct when no worker result exists"
-    }
-  ],
-  "sourceLinks": {
-    "sidebarExplicitOpen": true,
-    "workerTranscriptOpened": true,
-    "taskLedgerNodeOpenedByKeyboard": true,
-    "typedHostApiOnly": true,
-    "secondTaskAuthorityCreated": false
+    "observedWorkerManagedStopControls": 0
   },
   "screenshots": [
-    "coordination-rail-wide.png",
-    "coordination-rail-narrow.png"
+    {
+      "id": "wide",
+      "path": "coordination-wide.png",
+      "requestedViewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "contentSize": {
+        "width": 1281,
+        "height": 801
+      },
+      "browserViewport": {
+        "innerWidth": 1281,
+        "innerHeight": 801,
+        "devicePixelRatio": 1.5
+      },
+      "pixels": {
+        "width": 1922,
+        "height": 1202
+      },
+      "bytes": 579106,
+      "sha256": "0d0bdacef6abd0742e0ff529a9df2699c751d056e85f15050adea7273ad5c236"
+    },
+    {
+      "id": "narrow",
+      "path": "coordination-narrow.png",
+      "requestedViewport": {
+        "width": 680,
+        "height": 760
+      },
+      "contentSize": {
+        "width": 961,
+        "height": 761
+      },
+      "browserViewport": {
+        "innerWidth": 961,
+        "innerHeight": 761,
+        "devicePixelRatio": 1.5
+      },
+      "pixels": {
+        "width": 1442,
+        "height": 1142
+      },
+      "bytes": 447152,
+      "sha256": "659481d2a9e17f54233e64bf4c194947fc24e80640e678538bf7513fcf32dcb2"
+    }
   ],
-  "unmeasured": [
-    "successful live-provider multi-worker synthesis quality",
-    "screen-reader matrix beyond keyboard/aria checks",
-    "non-Windows runtime behavior"
+  "transport": "built Electron Chat ResourceChip -> typed workspaces/taskLedger/settings host-api -> actual Main owner; sessions.delegate -> Gateway orchestrator -> persisted session activity completion batch",
+  "negativeCases": [
+    "While paused, the UI exposes resume only and the Workspace owner readback reports paused.",
+    "The observed completion worker is listed as a navigation target and does not receive a managed-resource stop control.",
+    "No new completion batch is synthesized during the quiet window."
   ],
-  "cleanup": {
-    "electronProcessesClosed": true,
-    "gatewayProcessesClosed": true,
-    "recoveryRequired": false,
-    "temporaryRoot": "D:/tmp/long-session-c4/4a4f53f37749d95d85f4990c85e196a5f1f11d0d"
-  }
+  "limitations": [
+    "No live-provider model-quality turn was issued; the actual worker receipt can settle through the runtime failure path without provider text.",
+    "Narrow content requests are clamped by the existing Electron minimum width; both requested and actual pixels are recorded.",
+    "Managed-worktree deletion and backend-unavailable UI recovery remain owner-boundary evidence from C1-C3 rather than an injected destructive C4 journey."
+  ]
 }

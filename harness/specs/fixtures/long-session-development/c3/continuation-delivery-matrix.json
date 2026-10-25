@@ -1,129 +1,93 @@
 {
-  "schema": "clawx.long-session.c3-continuation-delivery-matrix/v1",
+  "schema": "clawx.long-session.continuation-delivery-matrix/v1",
   "driven_by": "agent",
-  "actor": "codex-long-session-c3",
-  "program": "long-session-development-20261022",
-  "task": "TF-0554",
-  "taskKey": "C3",
+  "actor": "codex-long-session-r2",
   "candidate": {
-    "commit": "53db65bd56fdddba723ee09195a6827c4352fbbf",
-    "tree": "eb3d3e8323b8a53bc18c98731b129342c0c57c44",
-    "branch": "codex/long-session-implementation-20261022",
-    "cleanBefore": true,
-    "cleanAfter": true,
-    "rawRun": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\gate-run.json"
+    "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+    "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f"
   },
-  "verdict": "pass",
-  "cases": [
+  "rows": [
     {
-      "id": "collect-until-all-terminal",
-      "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-completion-continuation.test.ts#collects completion and cancellation until the whole batch is terminal, then delivers once"
-      ],
-      "detail": "Partial worker completion remains collecting; success, failure and cancellation all count."
+      "case": "batch waits for all expected workers",
+      "expected": "collecting until all accepted workers terminal",
+      "observed": "one missing terminal kept receipt pending",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts"
     },
     {
-      "id": "verifier-terminal-gate",
-      "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-completion-continuation.test.ts#requires a deferred verifier to become terminal before releasing the team bundle",
-        "tests/unit/agent-steering-team-bundle.test.ts"
-      ],
-      "detail": "Workers are held until the deferred verifier has a terminal record."
+      "case": "success failure cancel counts",
+      "expected": "all terminal outcomes counted",
+      "observed": "completed/failed/cancelled are distinct",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts"
     },
     {
-      "id": "missing-or-refused-worker",
-      "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-completion-continuation.test.ts#reports a missing accepted worker without creating a phantom completion or delivery"
-      ],
-      "detail": "Missing expected worker is reported as missing; no completion or delivery is invented."
+      "case": "one consolidated receipt",
+      "expected": "terminal batch has one deterministic receipt id",
+      "observed": "same id across reordered runs and restart",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts; completion-batch-receipts.json"
     },
     {
-      "id": "immediate-completion-is-not-delivery",
-      "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-completion-continuation.test.ts#does not infer delivery from immediate worker text and requires explicit delivery state"
-      ],
-      "detail": "A created-and-ended run with final text remains delivery-pending until registry delivery reaches delivered."
+      "case": "busy or paused parent",
+      "expected": "pending delivery intent retained and not reported delivered",
+      "observed": "pending=2, delivered=0, waitingForRequesterTurn=true",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts"
     },
     {
-      "id": "generation-mismatch",
-      "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-completion-continuation.test.ts#fences a stale parent generation and leaves the durable delivery intent pending"
-      ],
-      "detail": "All batch members must share the spawn-time requester sessionId, and the active parent turn must match it."
+      "case": "generation fencing",
+      "expected": "stale batch cannot steer new generation",
+      "observed": "reset path produced fenced/null consolidated id",
+      "result": "PASS",
+      "evidence": "completion-batch-receipts.json"
     },
     {
-      "id": "independently-generated-batches",
-      "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-completion-continuation.test.ts#keeps independent batches isolated and fences mixed worker generations",
-        "tests/unit/long-session-completion-continuation.test.ts#keeps one consolidated delivery per orchestration across multiple terminal batches"
-      ],
-      "detail": "mixed generations are partial; separately consistent batches remain isolated and emit one bundle section each."
+      "case": "multiple independent batches",
+      "expected": "batches remain separate",
+      "observed": "orch-a completed and orch-b failed independently",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts"
     },
     {
-      "id": "suspended-and-busy-intent",
-      "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-completion-continuation.test.ts#keeps suspended delivery intent and resumes it only in the pinned parent generation"
-      ],
-      "detail": "Suspension retains the outbox payload; a stale parent cannot lease it and a matching active turn can."
+      "case": "model text authority",
+      "expected": "status comes from terminal outcome facts",
+      "observed": "ok outcome wins despite result text failed",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts"
     },
     {
-      "id": "restart-replay-and-single-lease",
-      "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-completion-continuation.test.ts#does not split a bounded batch into a partial prompt after a crash and replay",
-        "restart-replay-check.json"
-      ],
-      "detail": "Persisted in-progress/delivered delivery state prevents a second lease after JSON reload and after real Electron/Gateway restart."
+      "case": "worker refused or instant failure",
+      "expected": "failed terminal counted with no delivered claim",
+      "observed": "E2E failed batch delivered=0 pending=1",
+      "result": "PASS",
+      "evidence": "completion-batch-receipts.json"
     },
     {
-      "id": "partial-delivery-no-retry",
-      "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-completion-continuation.test.ts#never retries a team prompt once any member has started or completed delivery"
-      ],
-      "detail": "Once any item has begun or completed delivery, no second consolidated prompt is exposed for that batch."
+      "case": "archive delete pause lifecycle",
+      "expected": "existing delivery owner remains authoritative",
+      "observed": "generation-pinned delivery tests pass; batch exposes delivery state",
+      "result": "PASS",
+      "evidence": "required agents-core tests; completion-batch-receipts.json"
     },
     {
-      "id": "bounded-worker-set",
-      "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-completion-continuation.test.ts#bounds worker references and refuses consolidated delivery above the batch limit"
-      ],
-      "detail": "Receipts expose at most 64 worker refs; oversized batches are partial and are not delivered as a consolidated prompt."
+      "case": "active stop",
+      "expected": "killed worker counted cancelled",
+      "observed": "end reason subagent-killed maps cancelled",
+      "result": "PASS",
+      "evidence": "tests/unit/long-session-completion-continuation.test.ts"
     },
     {
-      "id": "active-worker-stop",
-      "result": "pass",
-      "evidence": [
-        "tests/e2e/long-session-completion-continuation.spec.ts",
-        "restart-replay-check.json"
-      ],
-      "detail": "The real Host/Gateway journey stops the accepted child and records a terminal failed batch rather than a phantom success."
-    },
-    {
-      "id": "archive-delete-pause-lifecycle",
-      "result": "pass",
-      "evidence": [
-        "harness/specs/fixtures/long-session-development/c1/scope-and-recovery-matrix.json",
-        "harness/specs/fixtures/long-session-development/a2/lifecycle-fault-matrix.json"
-      ],
-      "detail": "C1 invalidates deleted/archived generations and A2 fences archive/delete mutation windows; no active parent turn can lease an invalidated generation. Pause is represented by the absence of a matching active run, so delivery intent stays pending."
+      "case": "live delivery text",
+      "expected": "actual delivered model text",
+      "observed": "not exercised without provider",
+      "result": "UNMEASURED",
+      "evidence": "no live provider configured"
     }
   ],
-  "unmeasured": [
-    "a same-process race between archive/delete and an already executing injection after the lease point",
-    "live-provider synthesis quality across successful multi-worker batches"
-  ],
-  "cleanup": {
-    "temporaryRoot": "D:/tmp/long-session-c3/53db65bd56fdddba723ee09195a6827c4352fbbf",
-    "recoveryRequired": false,
-    "electronProcessesClosed": true
-  }
+  "limitations": [
+    "Live-provider completion text delivery is unmeasured.",
+    "Managed-worktree completion delivery is unmeasured.",
+    "No external model review verdict is claimed."
+  ]
 }

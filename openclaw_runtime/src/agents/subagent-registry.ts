@@ -26,6 +26,7 @@ import {
   releaseLeasedAgentSteeringItemsFromSubagentRuns,
 } from "./agent-steering-queue.js";
 import { makeTaskLedgerEntry, taskGraphVerifierNode } from "./orchestration-protocol.js";
+import { buildOrchestrationCompletionBatches } from "./orchestration-completion-batches.js";
 import { isAbortedAgentStopReason } from "./run-termination.js";
 import type { ensureRuntimePluginsLoaded as ensureRuntimePluginsLoadedFn } from "./runtime-plugins.js";
 import type { SubagentRunOutcome } from "./subagent-announce-output.js";
@@ -1912,6 +1913,17 @@ export function countPendingDescendantRunsExcludingRun(
     rootSessionKey,
     excludeRunId,
   );
+}
+
+export function listOrchestrationCompletionBatchesForRequester(
+  requesterSessionKey: string,
+  currentRequesterSessionId?: string | null,
+) {
+  return buildOrchestrationCompletionBatches({
+    runs: [...subagentRegistryDeps.getSubagentRunsSnapshotForRead(subagentRuns).values()],
+    requesterSessionKey,
+    currentRequesterSessionId,
+  });
 }
 
 export function listDescendantRunsForRequester(rootSessionKey: string): SubagentRunRecord[] {

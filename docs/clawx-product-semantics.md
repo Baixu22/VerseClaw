@@ -152,8 +152,8 @@ Shared in-process writers run serially unless an explicit write-set path is
 provided; worktree isolation records whether the actual backend is `git` or the
 in-process fallback. A reset/stop racing admission is rechecked after spawn and
 the child stop is requested rather than projecting a phantom completion. The C4
-entry is the Chat activity rail projection plus completion batches; it decides no
-task status and cannot admit a second writer.
+entry is still required before users can operate this capability from the main
+product surface.
 
 Completion continuation reads the existing subagent registry and delivery outbox rather than starting a second scheduler. Workers of one orchestration run form a bounded batch keyed by `completion-batch:<orchestrationRunId>:<requesterSessionKey>`; completed, failed, cancelled and missing workers remain distinct, and a deferred verifier must also become terminal before the team bundle can be exposed. Delivery remains at-least-once, but the deterministic key, per-run delivery state and requester physical-generation pin make replay idempotent and prevent a reset/handoff generation from accepting stale work. The batch receipt reports task completion authority as `none`; final model text alone is not delivery evidence. The user-visible C4 entry is still required before this runtime capability becomes an operable product surface.
 
@@ -162,55 +162,6 @@ The C4 long-session surface reuses the existing Sidebar and Chat activity rail r
 Long-session continuity strategy stays on the baseline: the paired evaluation contract froze a 30-pair agent-driven workload and measured only structural projection behaviour because no live provider was authorized, so no continuous-compression, value-pruning or summary-tree path is default-enabled, promoted or implied by the long-session surface. Any future promotion needs a live-provider sample that clears the published fidelity, safety, cost and P95 gates plus its own implementation spec, rollback and failure fallback; see [d3 decision evidence](../harness/specs/fixtures/long-session-development/d3/continuity-strategy-decision.json).
 
 Memory is one reviewable product concept. Role Memory cards, Runtime Memory facts/timelines/episodes, the candidate queue, embedding indexes, native-file retrieval and Dreaming caches have distinct implementation lifecycle and storage owners, but they are not separate product memories. Candidates and derived caches are never retrievable or injectable as accepted memory; role-card review or the owning Runtime Memory acceptance path must promote them first. The canonical domain matrix and migration boundary live in [memory-control-plane.md](dev/memory-control-plane.md). SEKB remains a Knowledge Runtime Lessons source and does not own a memory store.
-
-## Final acceptance scope (F3)
-
-The long-session capability is accepted inside one explicit boundary on Windows x64:
-a single bound coordinator Workspace/Assistant/session tree, the existing Task Ledger
-as the only task-fact owner, and the existing completion, admission, resource and
-scheduler owners. The peer evidence is re-read from disk, not aggregated from
-summaries: `harness/specs/fixtures/long-session-development/f3/acceptance.json` and
-`acceptance.md` list every execution node with its candidate, commands, exit codes,
-counts, artifacts and negative proof.
-
-What the accepted boundary proves:
-
-- Lifecycle actions stay distinct (abort, stop, archive, restore, reset, delete, fork,
-  handoff, schedule pause); archive/restore run through the runtime lifecycle owner
-  with an operation journal and retry identity, and a late event cannot resurrect a
-  deleted or rotated generation.
-- Session effective policy reports configured, effective and actual backend as
-  separate facts, and unsupported or unknown combos stay visible instead of
-  degrading silently.
-- An explicitly bound coordinator keeps its binding, physical generation and Task
-  Ledger references across app/Gateway restart; delegation admission records
-  accepted only, and the C4 activity rail shows terminal completion batches without
-  creating a second task list.
-- Context for a bound turn is an accepted-only, bounded `ContinuityContextPack/v1`
-  that projects existing owners. No second memory store or injection authority.
-- Cron/Workboard follow-ups bound to a coordinator refuse an expired, missing,
-  unverifiable or generation-mismatched schedule before execution, and Main suppresses
-  a stale schedule as `enabled=false` rather than deleting it.
-- Read-only UI and diagnostic surfaces issue zero work while hidden; delete reclaims
-  owned terminals, browsers and managed ports through their existing owners, with
-  unresolved ownership reported for review rather than reported as success.
-
-What the accepted boundary explicitly does NOT claim:
-
-- **No live-provider or native-backend thread continuity.** D2 is
-  `EVIDENCE_INSUFFICIENT` and D3 is `keep-baseline`: with no authorized provider
-  credential the quality, cost and P95 promotion gates are unmeasured, so no
-  asynchronous compression strategy, scoped-opt-in, or cross-vendor thread resumption
-  is promoted. Manual/native compaction stays the default.
-- **No macOS, Linux or packaged-build long-use measurement.** The 333-session /
-  57.16 MiB fixture and its five-minute idle-RSS curve are a Windows x64
-  built-`dist-electron` sample.
-- **No real-human long use.** Every artifact is agent-driven and the fixture is
-  synthetic; nothing here is human-usage evidence.
-- **No publication, product-lock or default change, and no independent Project or
-  cloud/VPS/daemon execution scope.** Those remain separate owner decisions.
-- **No universal resource authority.** Worktree ownership that cannot be resolved
-  stays `kept`/failed with a recovery id; no second registry is created.
 
 ## Windows x64 Controlled Preview
 
@@ -222,8 +173,7 @@ The table below is the canonical component classification for this preview. Each
 | Component | Canonical label | Boundary |
 | --- | --- | --- |
 | DCS coding loop | `opt-in` | The first-product switch is off by default and requires verified provider, model, workspace, and permission prerequisites. |
-| DCS Fact view and tool registry | `opt-in` | Available only after explicit flags and runtime acknowledgement; not part of the baseline tool catalog. |
-| VToken turn assembly | `internal` | Internal config/env canary only; no renderer bridge switch or independent product panel. The enhancement kill switch wins. |
+| VToken turn assembly | `opt-in` | Explicit Developer/config enable only; the enhancement kill switch wins. |
 | SEKB automatic writeback | `deferred` | Human-confirmed review remains the only allowed write path. |
 | C6 automatic context ladder | `internal` | Explicit internal assembler request API for tests/diagnostics; no automatic or user-level activation in this preview. |
 | C7 knowledge/routing cutover | `deferred` | Shadow evidence does not grant routing authority. |
@@ -237,16 +187,16 @@ The table above is the controlled-preview baseline snapshot. Its labels remain t
 
 ## Component Graduation Scope (D9)
 
-D9 moves the current internal workstream from showcase-only closing to evidence-backed component graduation without changing the release boundary. In scope are component inventory and disposition, the decision path for default/advanced/internal/experiment/retired outcomes, model-facing capability self-description, and agent-driven automatic acceptance.
+D9 moves the current internal workstream from showcase-only closing to evidence-backed component graduation without changing the release boundary. In scope are component inventory and disposition, the decision path for default/advanced/internal/experiment/retired outcomes, model-facing capability self-description, and agent-driven automatic acceptance. Default graduation means the owning node may change a specific product default after its predeclared gates pass; it does not create a blanket enablement path.
 
 The following boundaries remain outside automatic authority and are not changed by TF-0488:
 
 - public release, general availability, live readiness, or product approval;
-- any product-default or product-lock change;
+- any product-lock change or product default outside an owning node’s evidence-backed decision;
 - VerseGit nodes, worktrees, and product files;
 - implementation of TF-0489 or any later Context, Memory, Knowledge, Capability, Browser, or VerseShell node before that node is explicitly activated.
 
-“Default graduation” means a component can be evaluated and decided into a default mode through the component evidence matrix; it is not a blanket enablement or an automatic value flip. “Automatic acceptance” means an agent can execute checks, write evidence, and read results back from disk. It does not grant release approval. A green test, a wiring site, or a completed Task Forest node is necessary evidence, not a substitute for production-path, benefit, rollback, effective-state, and explicit-decision evidence.
+“Default graduation” means a component can be evaluated and decided into a default mode through the component evidence matrix; it is not a blanket enablement or an automatic value flip, and public release, GA, live readiness and product approval remain unauthorized. “Automatic acceptance” means an agent can execute checks, write evidence, and read results back from disk. It does not grant release approval. A green test, a wiring site, or a completed Task Forest node is necessary evidence, not a substitute for production-path, benefit, rollback, effective-state, and explicit-decision evidence.
 
 Agent evidence must remain `driven_by: agent` with a concrete actor. Zero real-human evidence is a retained fact, not an open/blocked condition. See the [D9 ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md) and the [current constraint matrix](dev/component-graduation-scope-matrix-20261021.md).
 
@@ -320,3 +270,9 @@ Implementation status is not the same as semantic status:
 5. Add explicit Chat to Task Loop upgrade UX before any automatic state-machine behavior.
 6. Normalize permission decision audit events.
 7. Limit plan editing to lightweight controls; do not build a full DAG editor.
+
+The long-session control plane separates human UI/CLI intent, typed host lifecycle calls and scoped model tools. Resume, fork, archive, delete, environment/worktree selection and handoff use the existing host owners. A model shell command does not create lifecycle authority. Archive and restore run through the runtime admission/finalizer and preserve the operation identity across unknown outcomes. An explicit coordinator binding is stored as minimal metadata on the existing Workspace owner. It references existing Task Ledger nodes, binds the stable Workspace/Assistant/SessionKey to a canonical local checkout or Git-registered worktree, and records the observed branch, detached state, setup profile, binding revision and archive policy. Chat sends use that canonical environment and its fingerprint; reset generations, invalid or paused bindings, missing owners/environments, and revision conflicts fail closed. The binding never mutates task status; completion remains a Task Ledger operation.
+
+The Session status panel projects `SessionEffectivePolicy/v1` from the existing session, configuration, model and resource owners. Configured runtime/model/limits are kept separate from current-run effective facts. `ModelCapabilityProfile/v1` observations are bounded, session/run/gateway-generation checked and used only by the matching current run; missing or stale observations leave effective backend, model, grants, context and admission facts unverified. The policy contains counts and normalized capabilities, not prompts, credentials, secrets or grant identifiers. Reading it does not execute a model, write configuration or expand authorization. The status panel exposes sources, compatibility/override reasons and normalized action permissions in the same disclosure. It also distinguishes run abort from session stop, the panel's view-only retention of completed activity from transcript and runtime-resource TTLs, and transcript-only session forks from Git worktree isolation. Activity, policy, and lifecycle facts are scope-checked during refresh so a response for an older workspace, run, Gateway generation, or request cannot replace the current selection.
+
+Codex and Claude CLI advertise native compaction ownership; OpenClaw consumes its own compaction parameters. The policy compatibility table therefore marks native-backend automatic compaction, provider and model arguments as ignored with a reason, reserve-token arguments as unsupported where the native backend does not consume them, and manual compaction as effective through the backend owner. The UI renders these outcomes as localized status and reason rows while preserving backend-provided source identifiers for inspection.

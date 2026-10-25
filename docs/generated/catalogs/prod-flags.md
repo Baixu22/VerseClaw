@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-22T22:59:24.150Z
+Generated at: 2026-10-24T04:48:24.892Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -47,7 +47,7 @@ This file is generated — edit the source of truth instead.
 - risk: opt-in
 - enable: Settings switch or openclaw config runtime.contextBlock.working-memory.enabled=true; restart gateway/runtime so config-sync applies.
 - rollback: Set enabled=false or Settings off; restart if needed. Injection stops; producers may still emit envelopes unused.
-- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:479`
+- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:483`
 
 > TASK-P1-02: when on, Assembler injects ## Recent Actions once per context (exactly-once). Default remains off until product soak.
 
@@ -61,7 +61,7 @@ This file is generated — edit the source of truth instead.
 - risk: opt-in
 - enable: Settings switch or openclaw config runtime.contextBlock.tool-registry.enabled=true; restart gateway/runtime.
 - rollback: Set enabled=false or Settings off; restart if needed. Tool summary injection stops.
-- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:490`
+- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:494`
 
 > TASK-P1-03: when on, before_agent_start writes tool_registry Block and Assembler injects ## Tools summary (exactly-once). Aligns with C1 on_demand schema mode.
 

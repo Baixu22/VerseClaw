@@ -219,8 +219,6 @@ import type {
   GithubPrViewResult,
   GithubRepoResult,
   HostApiContract,
-  VerseGitDiagnosticBinding,
-  VerseGitDiagnosticStatus,
   SessionActivitySnapshotPayload,
   ImageGenerationSettingsPayload,
   LogMemoryPayload,
@@ -327,6 +325,8 @@ import type {
   SessionStopResult,
   SessionCreateHandoffPayload,
   SessionCreateHandoffResult,
+  SessionDelegationPayload,
+  SessionDelegationResult,
   SessionHandoffPayload,
   SessionHandoffResult,
   SessionListArchivedPayload,
@@ -335,16 +335,6 @@ import type {
   SessionLongTaskControlHistoryResult,
   SessionLongTaskControlPayload,
   SessionPermanentDeletePayload,
-  SessionEffectivePolicyPayload,
-  SessionEffectivePolicyResult,
-  SessionBindCoordinatorPayload,
-  SessionBindCoordinatorResult,
-  SessionCoordinatorBindingReadPayload,
-  SessionCoordinatorBindingResult,
-  SessionDelegateCoordinatorPayload,
-  SessionDelegateCoordinatorResult,
-  SessionDelegationAdmissionsPayload,
-  SessionDelegationAdmissionsResult,
   SessionRestorePayload,
   SessionLongTaskControlStatusResult,
   SessionManualCompactPayload,
@@ -376,6 +366,10 @@ import type {
   WorkProviderStatusSnapshot,
   WorkProviderValidateArtifactPayload,
   WorkProviderValidateArtifactResult,
+  WorkspaceCoordinatorBindPayload,
+  WorkspaceCoordinatorBindingResult,
+  WorkspaceCoordinatorPausePayload,
+  WorkspaceCoordinatorResolvePayload,
   WorkspaceCreatePayload,
   WorkspaceFolderCreatePayload,
   WorkspaceFolderDeletePayload,
@@ -403,12 +397,19 @@ import type {
   MemoryProposeFactsConfirmPayload,
   MemoryProposeFactsListPayload,
   MemorySurfacePayload,
+  MemorySurfaceResult,
   MemoryApproveCandidatePayload,
+  MemoryApproveCandidateResult,
   MemoryDeletePayload,
+  MemoryDeleteResult,
   MemoryRememberPayload,
+  MemoryRememberResult,
   MemoryExportPayload,
+  MemoryExportResult,
   MemorySearchPayload,
   MemoryUpdatePayload,
+  VerseGitDiagnosticBinding,
+  VerseGitDiagnosticStatus,
 } from '@shared/host-api/contract';
 import type { CronJobCreateInput, CronJobUpdateInput } from '@shared/types/cron';
 import type {
@@ -672,6 +673,11 @@ export type {
 } from '@shared/host-api/contract';
 
 export const hostApi = {
+  versegit: {
+    status: (binding: VerseGitDiagnosticBinding): Promise<VerseGitDiagnosticStatus> => (
+      invokeHost('versegit', 'status', binding)
+    ),
+  },
   app: {
     version: () => invokeHost('app', 'version'),
     openClawDoctor: async (mode: OpenClawDoctorMode): Promise<OpenClawDoctorResult> => ({
@@ -698,11 +704,6 @@ export const hostApi = {
       payload: BackupRestorePayload,
     ): Promise<BackupRestoreResult> =>
       invokeHost('app', 'backupRestoreApply', payload),
-  },
-  versegit: {
-    status: (binding: VerseGitDiagnosticBinding): Promise<VerseGitDiagnosticStatus> => (
-      invokeHost('versegit', 'status', binding)
-    ),
   },
   openclaw: {
     status: () => invokeHost('openclaw', 'status'),
@@ -799,6 +800,15 @@ export const hostApi = {
     ),
     moveSessionToFolder: (input: WorkspaceFolderMoveSessionPayload) => (
       invokeHost('workspaces', 'moveSessionToFolder', input)
+    ),
+    bindCoordinator: (input: WorkspaceCoordinatorBindPayload): Promise<WorkspaceCoordinatorBindingResult> => (
+      invokeHost('workspaces', 'bindCoordinator', input)
+    ),
+    resolveCoordinator: (input: WorkspaceCoordinatorResolvePayload): Promise<WorkspaceCoordinatorBindingResult> => (
+      invokeHost('workspaces', 'resolveCoordinator', input)
+    ),
+    pauseCoordinator: (input: WorkspaceCoordinatorPausePayload): Promise<WorkspaceCoordinatorBindingResult> => (
+      invokeHost('workspaces', 'pauseCoordinator', input)
     ),
   },
   projectRules: {
@@ -1158,17 +1168,27 @@ export const hostApi = {
       invokeHost('memory', 'proposeFactsList', input),
     proposeFactsConfirm: (input: MemoryProposeFactsConfirmPayload) =>
       invokeHost('memory', 'proposeFactsConfirm', input),
-    surface: (input: MemorySurfacePayload = {}) => invokeHost('memory', 'surface', input),
-    approveCandidate: (input: MemoryApproveCandidatePayload) =>
-      invokeHost('memory', 'approveCandidate', input),
-    delete: (input: MemoryDeletePayload) => invokeHost('memory', 'delete', input),
-    remember: (input: MemoryRememberPayload) => invokeHost('memory', 'remember', input),
-    export: (input: MemoryExportPayload = {}) => invokeHost('memory', 'export', input),
+    surface: (input?: MemorySurfacePayload): Promise<MemorySurfaceResult> => (
+      invokeHost('memory', 'surface', input)
+    ),
+    approveCandidate: (input: MemoryApproveCandidatePayload): Promise<MemoryApproveCandidateResult> => (
+      invokeHost('memory', 'approveCandidate', input)
+    ),
+    delete: (input: MemoryDeletePayload): Promise<MemoryDeleteResult> => (
+      invokeHost('memory', 'delete', input)
+    ),
+    remember: (input: MemoryRememberPayload): Promise<MemoryRememberResult> => (
+      invokeHost('memory', 'remember', input)
+    ),
+    export: (input?: MemoryExportPayload): Promise<MemoryExportResult> => (
+      invokeHost('memory', 'export', input)
+    ),
   },
   channels: {
     accounts: (options?: ChannelAccountsPayload) => (
       invokeHost('channels', 'accounts', options)
     ),
+
     targets: (input: ChannelTargetsPayload) => (
       invokeHost('channels', 'targets', input)
     ),
@@ -1419,6 +1439,9 @@ export const hostApi = {
     ),
   },
   sessions: {
+    delegate: (input: SessionDelegationPayload): Promise<SessionDelegationResult> => (
+      invokeHost('sessions', 'delegate', input)
+    ),
     delete: (id: string) => invokeHost('sessions', 'delete', { id }),
     rename: (id: string, title: string) => (
       invokeHost('sessions', 'rename', { id, title })
@@ -1502,21 +1525,6 @@ export const hostApi = {
     ),
     archive: (input: SessionArchivePayload) => invokeHost('sessions', 'archive', input),
     restore: (input: SessionRestorePayload) => invokeHost('sessions', 'restore', input),
-    effectivePolicy: (
-      input: SessionEffectivePolicyPayload,
-    ): Promise<SessionEffectivePolicyResult> => invokeHost('sessions', 'effectivePolicy', input),
-    coordinatorBinding: (
-      input?: SessionCoordinatorBindingReadPayload,
-    ): Promise<SessionCoordinatorBindingResult> => invokeHost('sessions', 'coordinatorBinding', input),
-    bindCoordinator: (
-      input: SessionBindCoordinatorPayload,
-    ): Promise<SessionBindCoordinatorResult> => invokeHost('sessions', 'bindCoordinator', input),
-    delegateCoordinator: (
-      input: SessionDelegateCoordinatorPayload,
-    ): Promise<SessionDelegateCoordinatorResult> => invokeHost('sessions', 'delegateCoordinator', input),
-    delegationAdmissions: (
-      input?: SessionDelegationAdmissionsPayload,
-    ): Promise<SessionDelegationAdmissionsResult> => invokeHost('sessions', 'delegationAdmissions', input),
     permanentDelete: (input: SessionPermanentDeletePayload) => (
       invokeHost('sessions', 'permanentDelete', input)
     ),

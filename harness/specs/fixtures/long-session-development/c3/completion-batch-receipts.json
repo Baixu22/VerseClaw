@@ -1,148 +1,190 @@
 {
-  "schema": "clawx.long-session.c3-completion-batch-receipts/v1",
+  "schema": "clawx.long-session.completion-batch-receipts/v1",
   "driven_by": "agent",
-  "actor": "codex-long-session-c3",
-  "program": "long-session-development-20261022",
-  "task": "TF-0554",
-  "taskKey": "C3",
+  "actor": "codex-long-session-r2",
   "candidate": {
-    "commit": "53db65bd56fdddba723ee09195a6827c4352fbbf",
-    "tree": "eb3d3e8323b8a53bc18c98731b129342c0c57c44",
-    "branch": "codex/long-session-implementation-20261022",
-    "cleanBefore": true,
-    "cleanAfter": true,
-    "rawRun": "D:\\tmp\\long-session-c3\\53db65bd56fdddba723ee09195a6827c4352fbbf\\gate-run.json"
+    "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+    "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "dirty": false
   },
-  "verdict": "pass",
-  "featureClaim": "terminal orchestration workers produce one bounded, generation-fenced completion batch receipt backed by existing registry delivery state",
-  "owner": {
-    "registry": "openclaw_runtime/src/agents/subagent-registry.ts",
-    "steeringQueue": "openclaw_runtime/src/agents/agent-steering-queue.ts",
-    "projection": "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
-    "hostRoute": "electron/services/session-activity-api.ts",
-    "secondSchedulerCreated": false
-  },
-  "batchIdentity": {
-    "formula": "completion-batch:<orchestrationRunId>:<requesterSessionKey>",
-    "completionAuthority": "none",
-    "transportSemantics": "at-least-once; repeated idempotencyKey denotes the same batch",
-    "maxWorkerRefs": 64
-  },
-  "observedProductionBatch": {
-    "hostRoute": "sessionActivity.snapshot",
-    "gatewayMethod": "session.activitySnapshot",
-    "beforeRestart": {
-      "id": "completion-batch:orch_080a3bb3-d4f5-4f7c-9df1-fa191292a2c3:agent:main:dashboard:0e45af94-1d81-4489-8e4e-faba59a28a5c",
-      "idempotencyKey": "completion-batch:orch_080a3bb3-d4f5-4f7c-9df1-fa191292a2c3:agent:main:dashboard:0e45af94-1d81-4489-8e4e-faba59a28a5c",
-      "orchestrationRunId": "orch_080a3bb3-d4f5-4f7c-9df1-fa191292a2c3",
-      "requesterSessionKey": "agent:main:dashboard:0e45af94-1d81-4489-8e4e-faba59a28a5c",
-      "requesterSessionId": "b07c9eba-0644-4b5f-a1e2-2db9b79a06e3",
-      "generationState": "consistent",
-      "status": "delivery-pending",
-      "terminal": true,
-      "expectedWorkerCount": 1,
-      "completedWorkerCount": 0,
-      "failedWorkerCount": 1,
-      "cancelledWorkerCount": 0,
-      "pendingWorkerCount": 0,
-      "workerRuns": [
+  "e2eCommandId": "c3-e2e",
+  "receipt": {
+    "schema": "clawx.long-session.completion-continuation-e2e/v1",
+    "driven_by": "agent",
+    "actor": "codex-long-session-r2",
+    "workspaceId": "default",
+    "rootPath": "D:\\tmp\\long-session-c3-final\\verse-claw-e2e-run-GMZZ6A\\verse-claw-e2e-home-MS9tVA\\.openclaw\\workspace",
+    "sessionKey": "agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42",
+    "sessionGeneration": "9642f799-305c-45ac-9513-3cd4af85d3a2",
+    "taskRef": "a8b0de2f-ec66-464f-bb97-c2e767920d9a",
+    "taskLedgerStatusAfter": "todo",
+    "idempotencyKey": "delegation-admission-1792794171281",
+    "first": {
+      "status": "accepted",
+      "admissionId": "7433f574-6c04-4d26-9ba0-12541c0b5d64",
+      "orchestrationRunId": "orch_f25b7c36-8748-4e65-a606-543b4275f031",
+      "bindingRevision": 1,
+      "parentEnvironmentRevision": 1,
+      "budget": {
+        "status": "observed",
+        "reason": null,
+        "maxWorkers": 5,
+        "process": {
+          "maxChildrenPerAgent": 5,
+          "maxSpawnDepth": 1,
+          "source": "agents.defaults.subagents"
+        },
+        "backgroundTerminal": {
+          "lane": "subagent",
+          "maxConcurrent": 8,
+          "activeCount": 0,
+          "queuedCount": 0,
+          "source": "process.command-queue.subagent"
+        }
+      },
+      "children": [
         {
-          "runId": "1c42aa37-06fe-4c30-9925-17a54c4f2947",
-          "roleName": "implementer",
-          "taskNodeId": "implementer-1",
-          "childSessionKey": "agent:main:subagent:006cedcf-ffed-4f8e-b0af-f36178bcae1e",
-          "status": "failed"
+          "roleName": "architect",
+          "taskNodeId": "architect-1",
+          "roleInstanceId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:architect-1:architect:attempt-1",
+          "admissionStatus": "accepted",
+          "runState": "accepted-not-completed",
+          "completionObserved": false,
+          "backend": "subagent",
+          "childSessionKey": "agent:main:subagent:ca1c57eb-3f78-4fb1-9921-02e756fbf417",
+          "childRunId": "f5d43a3e-da25-418e-9c1f-267bfbc77343",
+          "toolAuthorization": {
+            "status": "effective",
+            "source": "role-contract+parent-clamp",
+            "roleName": "architect",
+            "effectiveRoleName": "architect",
+            "parentRoleName": null,
+            "allowlist": [
+              "read",
+              "glob",
+              "grep"
+            ],
+            "denylist": [
+              "write",
+              "edit",
+              "apply_patch",
+              "team_orchestrate",
+              "task_loop",
+              "mission_loop",
+              "exec",
+              "bash",
+              "__role_capability:mcp_write",
+              "web_search",
+              "web_fetch",
+              "x_search",
+              "code_execution",
+              "browser",
+              "__role_capability:mcp_network"
+            ]
+          },
+          "isolation": {
+            "mode": "shared",
+            "backend": "shared-inprocess",
+            "canonicalRoot": "D:\\tmp\\long-session-c3-final\\verse-claw-e2e-run-GMZZ6A\\verse-claw-e2e-home-MS9tVA\\.openclaw\\workspace",
+            "branch": null,
+            "detachedHead": false,
+            "verifiedCheckout": false
+          },
+          "schedulerWave": 1,
+          "error": null
         }
       ],
-      "verifier": null,
+      "completionObserved": false
+    },
+    "duplicate": {
+      "status": "accepted",
+      "replayed": true,
+      "orchestrationRunId": "orch_f25b7c36-8748-4e65-a606-543b4275f031"
+    },
+    "restartRetry": {
+      "status": "accepted",
+      "replayed": true,
+      "orchestrationRunId": "orch_f25b7c36-8748-4e65-a606-543b4275f031"
+    },
+    "staleGeneration": {
+      "status": "rejected",
+      "error": "Coordinator binding is generation-mismatch: session-generation-mismatch"
+    },
+    "unsupportedBackend": {
+      "status": "rejected",
+      "error": "Unsupported delegation backend: native-shell"
+    },
+    "unknownWorker": {
+      "status": "rejected",
+      "phantomChildCreated": false
+    },
+    "terminalBatch": {
+      "batchId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2",
+      "status": "terminal",
+      "outcome": "failed",
+      "generationState": "matching",
+      "consolidatedReceiptId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2:consolidated:v1",
+      "counts": {
+        "expected": 1,
+        "settled": 1,
+        "completed": 0,
+        "failed": 1,
+        "cancelled": 0,
+        "unknown": 0
+      },
       "delivery": {
         "state": "pending",
-        "pendingCount": 1,
-        "inProgressCount": 0,
-        "deliveredCount": 0,
-        "failedCount": 0,
-        "suspendedCount": 0,
-        "discardedCount": 0
+        "delivered": 0,
+        "pending": 1,
+        "suspended": 0,
+        "failed": 0,
+        "discarded": 0,
+        "waitingForRequesterTurn": false
       },
-      "bounded": true,
-      "completionAuthority": "none",
-      "updatedAt": 1792705066093
-    },
-    "afterRestart": {
-      "id": "completion-batch:orch_080a3bb3-d4f5-4f7c-9df1-fa191292a2c3:agent:main:dashboard:0e45af94-1d81-4489-8e4e-faba59a28a5c",
-      "idempotencyKey": "completion-batch:orch_080a3bb3-d4f5-4f7c-9df1-fa191292a2c3:agent:main:dashboard:0e45af94-1d81-4489-8e4e-faba59a28a5c",
-      "orchestrationRunId": "orch_080a3bb3-d4f5-4f7c-9df1-fa191292a2c3",
-      "requesterSessionKey": "agent:main:dashboard:0e45af94-1d81-4489-8e4e-faba59a28a5c",
-      "requesterSessionId": "b07c9eba-0644-4b5f-a1e2-2db9b79a06e3",
-      "generationState": "consistent",
-      "status": "delivery-pending",
-      "terminal": true,
-      "expectedWorkerCount": 1,
-      "completedWorkerCount": 0,
-      "failedWorkerCount": 1,
-      "cancelledWorkerCount": 0,
-      "pendingWorkerCount": 0,
-      "workerRuns": [
+      "members": [
         {
-          "runId": "1c42aa37-06fe-4c30-9925-17a54c4f2947",
-          "roleName": "implementer",
-          "taskNodeId": "implementer-1",
-          "childSessionKey": "agent:main:subagent:006cedcf-ffed-4f8e-b0af-f36178bcae1e",
-          "status": "failed"
+          "runId": "f5d43a3e-da25-418e-9c1f-267bfbc77343",
+          "roleName": "architect",
+          "status": "failed",
+          "deliveryStatus": "pending"
         }
-      ],
-      "verifier": null,
-      "delivery": {
-        "state": "pending",
-        "pendingCount": 1,
-        "inProgressCount": 0,
-        "deliveredCount": 0,
-        "failedCount": 0,
-        "suspendedCount": 0,
-        "discardedCount": 0
-      },
-      "bounded": true,
-      "completionAuthority": "none",
-      "updatedAt": 1792705066093
+      ]
     },
-    "duplicateAdmission": {
-      "duplicate": true,
-      "sameReceiptId": true
-    }
+    "restartReplay": {
+      "batchId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2",
+      "status": "terminal",
+      "consolidatedReceiptId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2:consolidated:v1",
+      "members": [
+        {
+          "runId": "f5d43a3e-da25-418e-9c1f-267bfbc77343",
+          "roleName": "architect",
+          "status": "failed",
+          "deliveryStatus": "pending"
+        }
+      ]
+    },
+    "resetFence": {
+      "batchId": "orch_f25b7c36-8748-4e65-a606-543b4275f031:agent:main:dashboard:ec0239fa-a2d3-4c51-bf90-64c0a3b97d42:9642f799-305c-45ac-9513-3cd4af85d3a2",
+      "status": "fenced",
+      "outcome": "fenced",
+      "generationState": "mismatch",
+      "consolidatedReceiptId": null
+    },
+    "transport": "built Electron session.activitySnapshot -> persisted subagent registry batches -> existing generation-pinned delivery owner"
   },
-  "coveredWorkerStates": [
-    "completed",
-    "failed",
-    "cancelled",
-    "pending",
-    "missing",
-    "unknown"
-  ],
-  "coveredDeliveryStates": [
-    "none",
-    "pending",
-    "in_progress",
-    "delivered",
-    "failed",
-    "suspended",
-    "discarded"
-  ],
-  "unitEvidence": [
-    "tests/unit/long-session-completion-continuation.test.ts",
-    "tests/unit/agent-steering-team-bundle.test.ts"
-  ],
-  "e2eEvidence": [
-    "tests/e2e/long-session-completion-continuation.spec.ts",
-    "restart-replay-check.json"
-  ],
-  "unmeasured": [
-    "live-provider successful multi-worker synthesis quality",
-    "main-session archive/delete/pause while a batch is already being injected in the same process"
-  ],
-  "cleanup": {
-    "electronProcessesClosed": true,
-    "gatewayProcessesClosed": true,
-    "temporaryRoot": "D:/tmp/long-session-c3/53db65bd56fdddba723ee09195a6827c4352fbbf",
-    "recoveryRequired": false
-  }
+  "boundedBatch": {
+    "expected": 1,
+    "settled": 1,
+    "members": 1
+  },
+  "separation": {
+    "taskAcceptance": "delegation receipt remained accepted-not-completed",
+    "completion": "terminal batch derived only after worker ended",
+    "delivery": "existing durable delivery state remained independent"
+  },
+  "limitations": [
+    "The no-provider worker terminated as failed; delivered completion text was therefore not observed.",
+    "Managed-worktree completion delivery and live-provider quality are unmeasured."
+  ]
 }
