@@ -55,14 +55,14 @@
   },
   {
     "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json",
-    "expected": "c55a197ea4f2d49c8f49ccd9ef414dc6f7417d6d08ed71ef99140b11cd7ab1c9",
-    "actual": "c55a197ea4f2d49c8f49ccd9ef414dc6f7417d6d08ed71ef99140b11cd7ab1c9",
+    "expected": "a9fa3abacc37f0e2a0d2e5feba81d2d86c98e4cef0f0460f61ab52c8e6061a1e",
+    "actual": "a9fa3abacc37f0e2a0d2e5feba81d2d86c98e4cef0f0460f61ab52c8e6061a1e",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts",
-    "expected": "28bb4a736628928989bb383a939e9f02c9695f4efc338cd20c06c5e68efa7f2e",
-    "actual": "28bb4a736628928989bb383a939e9f02c9695f4efc338cd20c06c5e68efa7f2e",
+    "expected": "772c08d4b501ca326353913fc1b1d8672c9024c6748515b2bfed23cd8b630de7",
+    "actual": "772c08d4b501ca326353913fc1b1d8672c9024c6748515b2bfed23cd8b630de7",
     "status": "pass"
   },
   {
