@@ -1,8 +1,8 @@
 [
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/audit.json",
-    "expected": "d75368773cb8ed03872b97d8e9fe6b9378637d9f4ef8854b84c16d63f4870516",
-    "actual": "d75368773cb8ed03872b97d8e9fe6b9378637d9f4ef8854b84c16d63f4870516",
+    "expected": "6641cf595259fe9303e1ce4f9853627f0a6a089e87178ab3e8ded2bac1f49a57",
+    "actual": "6641cf595259fe9303e1ce4f9853627f0a6a089e87178ab3e8ded2bac1f49a57",
     "status": "pass"
   },
   {
@@ -37,20 +37,20 @@
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
-    "expected": "5ccd8d9a86228f23b3d0966103baf0c7bed8cbd7e24ea57988e83cedffcbf703",
-    "actual": "5ccd8d9a86228f23b3d0966103baf0c7bed8cbd7e24ea57988e83cedffcbf703",
+    "expected": "95e5ecb93e08ea7cf79e1ccf192ff47858091d7514e3130020297c8ad1b68248",
+    "actual": "95e5ecb93e08ea7cf79e1ccf192ff47858091d7514e3130020297c8ad1b68248",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/scope-receipt.json",
-    "expected": "77fe68b8b3264b9a06f77f9bd2b7f81f0b90599ecd85871f040f4c6c29afcd79",
-    "actual": "77fe68b8b3264b9a06f77f9bd2b7f81f0b90599ecd85871f040f4c6c29afcd79",
+    "expected": "7623905476a811e82acf76d95abfb8dd2d736a84dd3910e5bece19b332dc0ed6",
+    "actual": "7623905476a811e82acf76d95abfb8dd2d736a84dd3910e5bece19b332dc0ed6",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/scoped-landing.json",
-    "expected": "02cbe352377637021dba639701126568c049c886a3e10de7b9ea2f3c10577835",
-    "actual": "02cbe352377637021dba639701126568c049c886a3e10de7b9ea2f3c10577835",
+    "expected": "0050c4ab882537e2eab4fa018fc4d509230a095b00677b50aabf86f13149ca3c",
+    "actual": "0050c4ab882537e2eab4fa018fc4d509230a095b00677b50aabf86f13149ca3c",
     "status": "pass"
   },
   {
@@ -67,8 +67,8 @@
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/tf0512-receipt.json",
-    "expected": "d53b2b37600a69248fda55de0e358cf4d40b8656eca1bc0042de7e3c50c443ab",
-    "actual": "d53b2b37600a69248fda55de0e358cf4d40b8656eca1bc0042de7e3c50c443ab",
+    "expected": "1ab5c7a025b3c9c98d7d6a5028d77309e1cbd9ca8c400871f7a67f3252f3e8b3",
+    "actual": "1ab5c7a025b3c9c98d7d6a5028d77309e1cbd9ca8c400871f7a67f3252f3e8b3",
     "status": "pass"
   }
 ]

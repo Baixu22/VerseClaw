@@ -9,7 +9,7 @@ Already up to date
 . postinstall: Done
 . prepare$ node scripts/prepare-git-hooks.mjs
 . prepare: Done
-Done in 5.3s using pnpm v11.2.2
+Done in 3.4s using pnpm v11.2.2
 {
   "generatedAt": "2026-10-25T10:00:44.000Z",
   "policy": "The final audit reads disk artifacts; command stdout alone is not acceptance evidence. Historical gaps are retained rather than rewritten.",
@@ -180,7 +180,7 @@ Done in 5.3s using pnpm v11.2.2
       "id": "scoped_landing",
       "status": "pass",
       "base": "b62e7f4c9",
-      "changedCount": 84,
+      "changedCount": 86,
       "diff": [
         "README.ja-JP.md",
         "README.md",
@@ -199,8 +199,10 @@ Done in 5.3s using pnpm v11.2.2
         "tests/unit/fixtures/model-capability-effective-state-tf0512/01-focused-and-adjacent-tests.txt",
         "tests/unit/fixtures/model-capability-effective-state-tf0512/02-typecheck.txt",
         "tests/unit/fixtures/model-capability-effective-state-tf0512/03-lint-check.txt",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/04-contract-check.txt",
         "tests/unit/fixtures/model-capability-effective-state-tf0512/07-scope-guard.txt",
         "tests/unit/fixtures/model-capability-effective-state-tf0512/08-regenerate-acceptance.txt",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/09-graduation-gate.txt",
         "tests/unit/fixtures/model-capability-effective-state-tf0512/SHA256SUMS",
         "tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json",
         "tests/unit/fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts",
@@ -267,16 +269,14 @@ Done in 5.3s using pnpm v11.2.2
         "tests/unit/fixtures/product-semantics-tf0506/sha256sums-check.txt",
         "tests/unit/fixtures/product-semantics-tf0506/verification.json"
       ],
-      "reviewedOutsideScope": [
-        "M tests/unit/fixtures/component-graduation-tf0508/run-audit.mts"
-      ],
+      "reviewedOutsideScope": [],
       "unreviewedOutsideScope": []
     },
     {
       "id": "scoped_landing_inputs",
       "status": "pass",
-      "scopedChangedCount": 12,
-      "nonScopedChangedCount": 1
+      "scopedChangedCount": 0,
+      "nonScopedChangedCount": 0
     }
   ],
   "successMetrics": {

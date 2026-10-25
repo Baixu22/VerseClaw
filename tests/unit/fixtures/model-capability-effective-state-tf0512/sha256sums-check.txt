@@ -1,14 +1,14 @@
 [
     {
         "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/01-focused-and-adjacent-tests.txt",
-        "expected":  "65c80d0eee5179a96153f111e6770237c078d0333f9a45ea176f6ec21545fd3c",
-        "actual":  "65c80d0eee5179a96153f111e6770237c078d0333f9a45ea176f6ec21545fd3c",
+        "expected":  "9cbd062263c0e79bfdbee1beedfb8e7d16639ab5fd06ea8845344208171002ae",
+        "actual":  "9cbd062263c0e79bfdbee1beedfb8e7d16639ab5fd06ea8845344208171002ae",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/02-typecheck.txt",
-        "expected":  "11d012d00ed9a24ba5ab880f69d9b58d121a0041385c5ff647df5f58b2bd88c4",
-        "actual":  "11d012d00ed9a24ba5ab880f69d9b58d121a0041385c5ff647df5f58b2bd88c4",
+        "expected":  "a6253b55a5c5f521a0737cc3b8cf472716eee4f2b260837a74a490990682749a",
+        "actual":  "a6253b55a5c5f521a0737cc3b8cf472716eee4f2b260837a74a490990682749a",
         "status":  "pass"
     },
     {
@@ -37,20 +37,20 @@
     },
     {
         "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/07-scope-guard.txt",
-        "expected":  "1a3ef6ce0ba60c2cc4e7761ba8dbd5d56dd1bd3b573e6a9be30c7c5f03d83304",
-        "actual":  "1a3ef6ce0ba60c2cc4e7761ba8dbd5d56dd1bd3b573e6a9be30c7c5f03d83304",
+        "expected":  "01af0b041ed4d84329933c01ae96a795463d2b634b55f65877430d2acf7700b1",
+        "actual":  "01af0b041ed4d84329933c01ae96a795463d2b634b55f65877430d2acf7700b1",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/08-regenerate-acceptance.txt",
-        "expected":  "fda8af9af3968d949e874d242859011844b18b955187784417ddcc06767b6db7",
-        "actual":  "fda8af9af3968d949e874d242859011844b18b955187784417ddcc06767b6db7",
+        "expected":  "343b0be17a90bd894f24ccf9abfd0a3038672c981d32b4eec48f9aefbbccbe40",
+        "actual":  "343b0be17a90bd894f24ccf9abfd0a3038672c981d32b4eec48f9aefbbccbe40",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/09-graduation-gate.txt",
-        "expected":  "6b5063d2796f99766be20d9e3545fc463d36b26092cf56d441bb4b2ae91f17f4",
-        "actual":  "6b5063d2796f99766be20d9e3545fc463d36b26092cf56d441bb4b2ae91f17f4",
+        "expected":  "6a57c0f030b4f41392eb54aeac07e15dc8ca575fc2affcaf1f69ca4ce6ba393b",
+        "actual":  "6a57c0f030b4f41392eb54aeac07e15dc8ca575fc2affcaf1f69ca4ce6ba393b",
         "status":  "pass"
     },
     {
@@ -61,8 +61,8 @@
     },
     {
         "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json",
-        "expected":  "460998447ba2304442d49d3f09aea37f31cb096c1ed039bbb82526c2a3bdfae1",
-        "actual":  "460998447ba2304442d49d3f09aea37f31cb096c1ed039bbb82526c2a3bdfae1",
+        "expected":  "37838ddcbd9f6a150035973f783a98a165eff3a1c7b51e22edf49c11f15997f7",
+        "actual":  "37838ddcbd9f6a150035973f783a98a165eff3a1c7b51e22edf49c11f15997f7",
         "status":  "pass"
     },
     {
@@ -97,8 +97,8 @@
     },
     {
         "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/verification.json",
-        "expected":  "1e1ef25c80542ded5e92705f2b46810c5843026dcccf09c68bf82490d9994c40",
-        "actual":  "1e1ef25c80542ded5e92705f2b46810c5843026dcccf09c68bf82490d9994c40",
+        "expected":  "d70c7847be0d4040f42a0df81c6992e5ad3f69da2283526369360a638d31aae9",
+        "actual":  "d70c7847be0d4040f42a0df81c6992e5ad3f69da2283526369360a638d31aae9",
         "status":  "pass"
     }
 ]
