@@ -236,6 +236,24 @@ it('rejects browser admission while a session lifecycle gate is open', async () 
     }
   });
 
+  it('admits only one concurrent open for one trusted private-network approval', async () => {
+    setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
+    try {
+      const api = createAgentBrowserApi();
+      const sessionKey = 'agent:main:private-concurrent';
+      approveBrowserPrivateNetwork({ sessionId: sessionKey, origin: 'http://127.0.0.1:4568' });
+      const results = await Promise.allSettled([
+        api.open({ url: 'http://127.0.0.1:4568/', sessionKey }),
+        api.open({ url: 'http://127.0.0.1:4568/', sessionKey }),
+      ]);
+      expect(results.filter((result) => result.status === 'fulfilled')).toHaveLength(1);
+      expect(mocks.moduleApi.open).toHaveBeenCalledTimes(1);
+      await api.close({ sessionId: 's1' });
+    } finally {
+      setSandboxHighRiskPolicyLoader(null);
+    }
+  });
+
   it('refreshes the workspace root between calls so separate workspaces do not share state', async () => {
     setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
     try {

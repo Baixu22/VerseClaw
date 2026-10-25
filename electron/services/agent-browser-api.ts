@@ -145,6 +145,13 @@ export async function assertBrowserNavigationAllowed(
   action: string,
   payload: unknown,
 ): Promise<void> {
+  await resolveBrowserNavigationApproval(action, payload);
+}
+
+async function resolveBrowserNavigationApproval(
+  action: string,
+  payload: unknown,
+): Promise<BrowserPrivateNetworkApproval | undefined> {
   if (!NAVIGATION_ACTIONS.has(action)) return;
   const url = navigationTarget(payload);
   if (!url) return;
@@ -156,7 +163,11 @@ export async function assertBrowserNavigationAllowed(
     approvals: [...privateNetworkApprovals.values()],
     firstPartyOrigins,
   });
-  if (decision.allowed) return;
+  if (decision.allowed) {
+    return decision.reason === 'approved-private'
+      ? privateNetworkApprovals.get(`${sessionId}|${browserOriginOf(url)}`)
+      : undefined;
+  }
   const error = new Error(
     `Agent browser ${action} blocked: ${decision.reason} (address class ${decision.addressClass})`,
   ) as Error & { code?: string };
@@ -544,7 +555,7 @@ function withHostGuards<T extends object>(api: T): T {
       const requiresSandboxCheck = classifyAgentBrowserAction(prop) !== null;
       return async (...args: unknown[]) => {
         await prepareHostContext();
-        await assertBrowserNavigationAllowed(prop, args[0]);
+        const privateApproval = await resolveBrowserNavigationApproval(prop, args[0]);
         if (requiresSandboxCheck) {
           await assertBrowserAllowedUnderSandbox(prop);
         }
@@ -575,16 +586,20 @@ function withHostGuards<T extends object>(api: T): T {
         } else if (prop === 'command') {
           await assertSensitiveCaptureAllowed('desktopAutomation', (args[0] as { grantId?: string } | undefined)?.grantId);
         }
+        if (prop === 'open' && privateApproval) {
+          const approvalKey = `${privateApproval.sessionId}|${privateApproval.origin}`;
+          if (privateNetworkApprovals.get(approvalKey) !== privateApproval || privateApproval.expiresAt <= Date.now()) {
+            throw Object.assign(new Error('Private-network approval expired or was already consumed'), { code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
+          }
+          privateNetworkApprovals.delete(approvalKey);
+        }
         const result = await bound(...args);
-        if (prop === 'open') {
-          const origin = browserOriginOf(navigationTarget(payload));
-          const approval = privateNetworkApprovals.get(`${sessionIdOf(payload)}|${origin}`);
+        if (prop === 'open' && privateApproval) {
           const session = result && typeof result === 'object'
             ? (result as { session?: { id?: string } }).session
             : undefined;
-          if (approval && session?.id && approval.expiresAt > Date.now()) {
-            privateNetworkApprovals.delete(`${approval.sessionId}|${approval.origin}`);
-            privateNetworkApprovals.set(`${session.id}|${approval.origin}`, { ...approval, sessionId: session.id });
+          if (session?.id && privateApproval.expiresAt > Date.now()) {
+            privateNetworkApprovals.set(`${session.id}|${privateApproval.origin}`, { ...privateApproval, sessionId: session.id });
           }
         } else if (prop === 'close') {
           for (const [key, approval] of privateNetworkApprovals) {

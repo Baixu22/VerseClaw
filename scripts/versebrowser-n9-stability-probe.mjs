@@ -108,10 +108,11 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
       row.error = String((error && error.message) || error);
       issues.push(issue('round_failed', { kind, index, message: row.error }));
     } finally {
+      if (app && kind !== 'interrupt') await app.close().catch(() => undefined);
       // Every round tears the app tree down; for `interrupt` rounds this kill happens with a
       // live browser session still open, which is the controlled-interrupt case.
       if (child && !exited) spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, timeout: 15_000 });
-      if (app) await app.close().catch(() => undefined);
+      if (app) await Promise.race([app.close().catch(() => undefined), sleep(5000)]);
       const exitDeadline = Date.now() + 10_000;
       while (!exited && Date.now() < exitDeadline) await sleep(200);
       row.appExited = exited;
