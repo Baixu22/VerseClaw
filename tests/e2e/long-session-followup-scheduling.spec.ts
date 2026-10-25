@@ -1,5 +1,6 @@
 import type { ElectronApplication } from '@playwright/test';
-import { writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { closeElectronApp, expect, test } from './fixtures/electron';
 
 type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
@@ -82,7 +83,7 @@ async function liveSessionId(app: ElectronApplication, sessionKey: string): Prom
  * The forced run is enqueued, so the fence verdict lands in the run log rather
  * than in the trigger response. Poll the real scheduler receipts.
  */
-async function waitForCoordinatorRefusal(app: ElectronApplication, jobId: string, timeoutMs = 90_000): Promise<string> {
+async function _waitForCoordinatorRefusal(app: ElectronApplication, jobId: string, timeoutMs = 90_000): Promise<string> {
   const deadline = Date.now() + timeoutMs;
   let last = '';
   while (Date.now() < deadline) {
@@ -126,16 +127,25 @@ test('real Host/Gateway long-session follow-up is bound to one coordinator gener
     const workspace = active.activeWorkspace;
     if (!workspace) throw new Error('No active workspace');
     const token = Date.now().toString(36);
-    await hostInvoke(app, 'workspaces', 'update', { id: workspace.id, permissionMode: 'fullAccess' });
+    const scratchRoot = join(testInfo.outputDir, `workspace-${token}`);
+    await mkdir(scratchRoot, { recursive: true });
+    const updatedWorkspace = await hostInvoke<{ activeWorkspace?: Workspace; workspaces?: Workspace[] }>(app, 'workspaces', 'update', {
+      id: workspace.id,
+      rootPath: scratchRoot,
+      permissionMode: 'fullAccess',
+    });
+    const boundWorkspace = updatedWorkspace.activeWorkspace
+      ?? updatedWorkspace.workspaces?.find((candidate) => candidate.id === workspace.id)
+      ?? { ...workspace, rootPath: scratchRoot };
     const coordinatorSessionKey = await createSession(app, 'E1 coordinator ' + token);
     await hostInvoke(app, 'workspaces', 'update', {
-      id: workspace.id,
+      id: boundWorkspace.id,
       agentId: 'main',
       activeSessionKey: coordinatorSessionKey,
       sessionKey: coordinatorSessionKey,
     });
     const ledger = await hostInvoke<{ snapshot: { nodes: Array<{ id: string; title: string }> } }>(app, 'taskLedger', 'createNode', {
-      workspaceId: workspace.id,
+      workspaceId: boundWorkspace.id,
       node: {
         title: 'E1 follow-up task ' + token,
         kind: 'task',
@@ -146,12 +156,14 @@ test('real Host/Gateway long-session follow-up is bound to one coordinator gener
     });
     const taskNodeId = ledger.snapshot.nodes.find((node) => node.title === 'E1 follow-up task ' + token)?.id;
     if (!taskNodeId) throw new Error('Task Ledger node missing');
-    await hostInvoke(app, 'sessions', 'bindCoordinator', {
-      workspaceId: workspace.id,
+    await hostInvoke(app, 'workspaces', 'bindCoordinator', {
+      workspaceId: boundWorkspace.id,
       agentId: 'main',
       sessionKey: coordinatorSessionKey,
       expectedRevision: 0,
-      taskRefs: [{ kind: 'task-ledger', nodeId: taskNodeId }],
+      taskLedgerNodeIds: [taskNodeId],
+      environment: { kind: 'local', rootPath: boundWorkspace.rootPath, setupProfile: null },
+      archiveRestorePolicy: 'restore',
     });
 
     const expectedSessionId = await liveSessionId(app, coordinatorSessionKey);
@@ -191,6 +203,11 @@ test('real Host/Gateway long-session follow-up is bound to one coordinator gener
       expectedSessionId,
     });
 
+    const stopResult = await hostInvoke<{ success?: boolean; stopped?: boolean }>(app, 'sessions', 'stop', { sessionKey: coordinatorSessionKey });
+    const jobsAfterStop = await listJobs(app);
+    expect(stopResult.success).toBe(true);
+    expect(jobsAfterStop.some((job) => job.id === jobId)).toBe(true);
+    (observation.steps as Array<Record<string, unknown>>).push({ step: 'stop-current-turn-is-independent-of-schedule', stopped: stopResult.stopped, scheduleStillPresent: jobsAfterStop.some((job) => job.id === jobId) });
     // NOTE: the job is deliberately *not* force-run while the binding is
     // current — a real agent turn would occupy the scheduler slot and mask the
     // fence verdict with "already-running". The fence itself is exercised on
@@ -206,14 +223,31 @@ test('real Host/Gateway long-session follow-up is bound to one coordinator gener
       'deleted coordinator session -> binding invalidated -> cron fence state ' + String(staleJob?.coordinatorStatus?.state),
     );
 
-    await hostInvoke<Record<string, unknown>>(app, 'cron', 'trigger', { id: jobId });
-    const refusedText = await waitForCoordinatorRefusal(app, jobId);
-    expect(refusedText).toContain('coordinator-scope-');
+    let refusedText = '';
+    try {
+      await hostInvoke<Record<string, unknown>>(app, 'cron', 'trigger', { id: jobId });
+    } catch (error) {
+      refusedText = error instanceof Error ? error.message : String(error);
+    }
+    expect(refusedText).toContain('Coordinator follow-up rejected');
+    // Fail-closed refusal either way: the deleted session is reported missing,
+    // or its invalidated binding is no longer trusted. E2 invalidates the
+    // coordinator binding on lifecycle changes, so the binding verdict can
+    // legitimately fire before the live-session read.
+    expect(refusedText).toMatch(/session-missing|binding is invalidated/);
+    const postRefusalRuns = await hostInvoke<Array<Record<string, unknown>> | { runs?: Array<Record<string, unknown>> }>(
+      app,
+      'gateway',
+      'rpc',
+      { method: 'cron.runs', params: { id: jobId, limit: 20 }, timeoutMs: 30_000 },
+    );
+    const refusalRuns = Array.isArray(postRefusalRuns) ? postRefusalRuns : postRefusalRuns.runs ?? [];
+    expect(refusalRuns).toEqual([]);
     (observation.steps as Array<Record<string, unknown>>).push({
       step: 'trigger-after-invalidation',
-      refusedWith: refusedText.slice(0, 400),
+      refusedWith: refusedText,
+      gatewayRunCount: refusalRuns.length,
     });
-
     await hostInvoke(app, 'cron', 'toggle', { id: jobId, enabled: false });
     const paused = (await listJobs(app)).find((job) => job.id === jobId);
     expect(paused).toBeTruthy();
@@ -224,6 +258,7 @@ test('real Host/Gateway long-session follow-up is bound to one coordinator gener
     const cancelled = (await listJobs(app)).find((job) => job.id === jobId);
     expect(cancelled).toBeUndefined();
     (observation.steps as Array<Record<string, unknown>>).push({ step: 'cancel-removes-schedule', removed: cancelled === undefined });
+
 
     observation.status = 'passed';
     observation.workspaceId = workspace.id;

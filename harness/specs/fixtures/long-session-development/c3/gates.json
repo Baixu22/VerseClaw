@@ -1,0 +1,570 @@
+{
+  "schema": "clawx.long-session.node-evidence/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "node": "TF-0554",
+  "generatedAt": "2026-10-23T22:24:21.410Z",
+  "candidate": {
+    "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+    "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "dirty": false
+  },
+  "acceptance": [
+    "All accepted workers in one orchestration run form a bounded batch; completed, failed and cancelled workers all settle it, and only a terminal batch receives one deterministic consolidated receipt.",
+    "Completion delivery remains separate from task acceptance; the existing durable delivery owner retains pending/suspended intent while the requester is busy or paused and does not claim delivery from model text.",
+    "At-least-once transport and generation fencing prevent duplicate side effects and stale deliveries from crossing reset or handoff.",
+    "Restart replay, rejected/instantly failed workers, lifecycle pause/delete states, active stop and multiple independent batches have persisted evidence."
+  ],
+  "commands": [
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-unit-agents-core",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "--dir",
+        "openclaw_runtime",
+        "exec",
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents-core.config.ts",
+        "src/agents/subagent-announce-generation-pin.test.ts",
+        "src/agents/subagent-announce-delivery.visible-reply.test.ts",
+        "--maxWorkers=1"
+      ],
+      "startedAt": "2026-10-23T22:20:13.867Z",
+      "durationMs": 11710,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-unit-agents-core.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-unit-agents-core.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-unit-continuation",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/long-session-completion-continuation.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/long-session-r2-20261023/c3-unit-continuation.vitest.json"
+      ],
+      "startedAt": "2026-10-23T22:20:25.634Z",
+      "durationMs": 2684,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-unit-continuation.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-unit-continuation.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-typecheck",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "startedAt": "2026-10-23T22:20:28.374Z",
+      "durationMs": 27552,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-typecheck.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-typecheck.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-i18n",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "run",
+        "i18n:lint"
+      ],
+      "startedAt": "2026-10-23T22:20:56.034Z",
+      "durationMs": 1341,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-i18n.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-i18n.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-contract",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "run",
+        "contract:check"
+      ],
+      "startedAt": "2026-10-23T22:20:57.434Z",
+      "durationMs": 890,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-contract.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-contract.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-comms-replay",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "run",
+        "comms:replay"
+      ],
+      "startedAt": "2026-10-23T22:20:58.389Z",
+      "durationMs": 984,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-comms-replay.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-comms-replay.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-comms-compare",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "run",
+        "comms:compare"
+      ],
+      "startedAt": "2026-10-23T22:20:59.433Z",
+      "durationMs": 953,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-comms-compare.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-comms-compare.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-build-runtime",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "run",
+        "build:runtime"
+      ],
+      "startedAt": "2026-10-23T22:21:00.442Z",
+      "durationMs": 34877,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-build-runtime.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-build-runtime.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-build-vite",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "run",
+        "build:vite"
+      ],
+      "startedAt": "2026-10-23T22:21:35.379Z",
+      "durationMs": 55935,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-build-vite.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-build-vite.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-e2e",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "run",
+        "test:e2e:run",
+        "tests/e2e/long-session-completion-continuation.spec.ts",
+        "--workers=1",
+        "--reporter=line"
+      ],
+      "startedAt": "2026-10-23T22:22:31.373Z",
+      "durationMs": 43320,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-e2e.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-e2e.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-validate",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/long-session-completion-continuation.md",
+        "--since",
+        "cafda4d3b"
+      ],
+      "startedAt": "2026-10-23T22:23:14.754Z",
+      "durationMs": 1631,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-validate.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-validate.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-harness-flow",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/long-session-completion-continuation.md",
+        "--since",
+        "cafda4d3b",
+        "--dry-run"
+      ],
+      "startedAt": "2026-10-23T22:23:16.443Z",
+      "durationMs": 1639,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-harness-flow.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-harness-flow.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-lint",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "node",
+        "D:/tmp/long-session-r2-20261023/c3-lint.mjs"
+      ],
+      "startedAt": "2026-10-23T22:23:18.139Z",
+      "durationMs": 4387,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-lint.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-lint.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-retention",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "pnpm",
+        "run",
+        "repo:artifacts:check"
+      ],
+      "startedAt": "2026-10-23T22:23:22.584Z",
+      "durationMs": 2897,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-retention.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-retention.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-whitespace",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "startedAt": "2026-10-23T22:23:25.542Z",
+      "durationMs": 264,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-whitespace.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-whitespace.stdout"
+    },
+    {
+      "schema": "clawx.long-session.command",
+      "version": 1,
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "id": "c3-credential",
+      "commit": "41e4c4058993f44c4ba285be18d3aae88316415c",
+      "branch": "codex/long-session-implementation-20261023-r2",
+      "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+      "tree": "379d6b0df882c33e0c2e4f565a27ac37b8687a6f",
+      "dirty": false,
+      "command": [
+        "node",
+        "D:/tmp/long-session-r2-20261023/c3-scan.mjs"
+      ],
+      "startedAt": "2026-10-23T22:23:25.864Z",
+      "durationMs": 464,
+      "exitCode": 0,
+      "signal": null,
+      "timeoutMs": 900000,
+      "timedOut": false,
+      "logPath": "D:\\tmp\\long-session-r2-20261023\\c3-credential.log",
+      "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c3-credential.stdout"
+    }
+  ],
+  "counts": [
+    {
+      "path": "D:/tmp/long-session-r2-20261023/c3-unit-continuation.vitest.json",
+      "sha256": "c840f9c74f73293f3c12cb105d81fc740fa148ca70dd970e001f5f5b13eacaa3",
+      "files": 1,
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "pending": 0
+    }
+  ],
+  "reports": [
+    {
+      "path": "harness/specs/fixtures/long-session-development/c3/agents-core-tests.json",
+      "sha256": "eeac53ad34c897526d6a9c18577adba55d33ce15eb4c02c6b587f6581b795a6c"
+    },
+    {
+      "path": "harness/specs/fixtures/long-session-development/c3/completion-batch-receipts.json",
+      "sha256": "38b87aa3a9a4f77e417cbd973de348a1207a913e0d95b80927eda037d64bb3fd"
+    },
+    {
+      "path": "harness/specs/fixtures/long-session-development/c3/continuation-delivery-matrix.json",
+      "sha256": "69901493ad4295e8543cc9a4f47660fd08851009fecf1b0589d8d283849a75fb"
+    },
+    {
+      "path": "harness/specs/fixtures/long-session-development/c3/restart-replay-check.json",
+      "sha256": "9498db6752f73f17e3cd9f42d8acac98876ff404601072b5f744f8a1a00e31af"
+    },
+    {
+      "path": "harness/specs/fixtures/long-session-development/c3/comms-compare-report.md",
+      "sha256": "f8545b79e48209d890e57c010692c5eea506c6d23fda22094654afcad6099257"
+    },
+    {
+      "path": "harness/specs/fixtures/long-session-development/c3/harness-latest.md",
+      "sha256": "82eecdb26db37c3d961f0aeb1d16c92927124d0f2f0fb34903d935c429822b4a"
+    },
+    {
+      "path": "harness/specs/fixtures/long-session-development/c3/e2e-last-run.json",
+      "sha256": "a1c0bb814b39d803a1ec57abf12af34458e54013a1f70e5fdd09482c5d78bd8a"
+    },
+    {
+      "path": "harness/specs/fixtures/long-session-development/c3/e2e-playwright.stdout",
+      "sha256": "0872d479af5d4cd92f2f0422c231f0ebc62e0ba5cc228eca93efaf94ee29d50f"
+    },
+    {
+      "path": "harness/specs/fixtures/long-session-development/c3/e2e-process-cleanup.json",
+      "sha256": "8226f1a22e146c149854d6252d87512a7d69828b675f64b57c89eadaaebc28fb"
+    }
+  ],
+  "sourceInputs": [
+    {
+      "path": "openclaw_runtime/src/agents/orchestration-completion-batches.ts",
+      "sha256": "9c8aa04e174b87f76c295454eb15a569fd1972839217acfcbe06f6c2216af39b"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry.ts",
+      "sha256": "20e511d2c3146883d5317fb4b8067ffae033c08e705c56ce0b9c005bfb275a55"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+      "sha256": "7d411b9847876fc576bd1b4b2f942aaaa114d9bf1db72f4c28e8287959fbeb40"
+    },
+    {
+      "path": "shared/types/session-activity.ts",
+      "sha256": "68e88ab5f62b02d368a87189e05e879b3ccb167d82c9031dc37b7ba06ee725f4"
+    },
+    {
+      "path": "tests/unit/long-session-completion-continuation.test.ts",
+      "sha256": "0705a077bebb63c0c5b2759cc83b434c90ca0983db404fdcbf852ae151a3b78e"
+    },
+    {
+      "path": "tests/e2e/long-session-completion-continuation.spec.ts",
+      "sha256": "5dfe2a613eee558bbf2f10166c9daf7af370c8cb06fe3457f294b62554c2f80d"
+    }
+  ],
+  "productionCallers": [
+    {
+      "layer": "Persisted subagent registry",
+      "path": "openclaw_runtime/src/agents/subagent-registry.ts",
+      "behavior": "derives completion batches from the authoritative durable run and delivery records"
+    },
+    {
+      "layer": "Gateway session activity",
+      "path": "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+      "behavior": "projects completion batches through the existing host-backed session activity snapshot"
+    },
+    {
+      "layer": "Existing delivery owner",
+      "path": "openclaw_runtime/src/agents/subagent-announce-delivery.ts",
+      "behavior": "retains busy/paused delivery intent, restart retry and expected requester generation pinning"
+    },
+    {
+      "layer": "Built Electron E2E",
+      "path": "tests/e2e/long-session-completion-continuation.spec.ts",
+      "behavior": "runs actual Host/Gateway/registry owners, observes a terminal batch, restarts and verifies fenced reset replay"
+    }
+  ],
+  "negativeCases": [
+    "batch waits for missing worker",
+    "mixed success failure cancellation",
+    "requester generation mismatch",
+    "busy/paused pending delivery",
+    "multiple independent batches",
+    "model text disagrees with outcome",
+    "instant failure before model turn",
+    "active worker stop"
+  ],
+  "cleanup": {
+    "electronClosed": true,
+    "gatewayStopped": true,
+    "tempRootsRemoved": true,
+    "recoveryRequired": false,
+    "processSurvivors": 0,
+    "remaining": []
+  },
+  "limitations": [
+    "The real Electron worker failed before a live-provider completion text was available.",
+    "Managed-worktree completion delivery is unmeasured.",
+    "No external model review verdict is claimed."
+  ],
+  "priorFailures": [
+    "An initial harness context exposed the C2 guide frontmatter regression; it was fixed and revalidated before C3 implementation.",
+    "The first completion E2E compile used a mutable optional receipt and lacked the task-ledger assertion variable; both were narrowed and fixed before clean gates."
+  ]
+}

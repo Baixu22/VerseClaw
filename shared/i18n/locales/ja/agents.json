@@ -288,7 +288,7 @@
         "memoryMetricFeedback": "フィードバック",
         "memorySelectRole": "ロールを選択して、その有効な記憶を管理します。",
         "memoryComposerTitle": "新しい記憶提案",
-        "memoryComposerHint": "低リスクの提案はポリシーにより受け入れられる場合があり、競合や機密性のある変更はレビュー待ちになります。",
+        "memoryComposerHint": "候補はレビュー専用です。どの候補も、明示的に承認されるまで記憶にはなりません。",
         "memoryPlaceholder": "今後の実行で使うロール固有の記憶を追加",
         "memorySave": "保存",
         "memoryEmptyTitle": "利用可能なロール記憶はありません",

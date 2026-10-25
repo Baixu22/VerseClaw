@@ -1,0 +1,212 @@
+{
+  "schema": "clawx.context-assembly-authority.integration-evidence/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "node": "TF-0493",
+  "candidate": {
+    "commit": "97aae5dc26bb5aa9a4d56dd3f0df0f172ba7d9b5",
+    "tree": "0132f6311f3be34079e14ce475bfc5cef0daac00",
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "dirty": false
+  },
+  "implementation": "Existing verified ContextCandidate/ContextFinalSnapshot authority integrated without TF-0494 default or Workspace UI changes.",
+  "acceptance": [
+    {
+      "id": "01-contract-tests",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/01-contract-tests.txt",
+      "outputSha256": "734e289735c426b642482815323683fd5884fa6af454e1a2c6ac146297304362"
+    },
+    {
+      "id": "02-runtime-context-tests",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/02-runtime-context-tests.txt",
+      "outputSha256": "8f707d400342b4b0720207a5ea08fa241ffb19631c5a1980e6db1f0906ef43ec"
+    },
+    {
+      "id": "03-typecheck",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/03-typecheck.txt",
+      "outputSha256": "fbf6ff02ad06accc8dde67a2e5d6fabf39adcf62afa0427364080fef83cba87b"
+    },
+    {
+      "id": "04-lint-check",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/04-lint-check.txt",
+      "outputSha256": "c80058265a2995fffb61c8c46f26c495cbec14804543fd5bf58df14b07f5be70"
+    },
+    {
+      "id": "05-catalogs-check",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/05-catalogs-check.txt",
+      "outputSha256": "006c7dc4f0a1ce5dd2ca79c9ce19fe319528d59b87bb3dab0cc4e5700d8aa016"
+    },
+    {
+      "id": "06-contract-check",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/06-contract-check.txt",
+      "outputSha256": "60fba4ee21df7b7fb98a839a097533c273aa90c3ea966bec8519477dc93507bc"
+    },
+    {
+      "id": "07-no-bom",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/07-no-bom.txt",
+      "outputSha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4"
+    },
+    {
+      "id": "08-diff-check",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/08-diff-check.txt",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "09-build-vite",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/09-build-vite.txt",
+      "outputSha256": "ddefa326e639b5072d93f8fb3f565cf2fc14ed8f5f8c15d6fae5fa1c95ac9027"
+    },
+    {
+      "id": "09a-build-runtime",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/09a-build-runtime.txt",
+      "outputSha256": "5979198c10aa87b0e84a9ed784e2f026f6e86843a23642dbb50a4c0605e81ed8"
+    },
+    {
+      "id": "10-settings-e2e",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/10-settings-e2e.txt",
+      "outputSha256": "bf6e0210222f1a9f1ac5164d3abcd9a712229aab790ae137ec185ef431020719"
+    },
+    {
+      "id": "11-component-graduation-gate",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/11-component-graduation-gate.txt",
+      "outputSha256": "44102e485b5e1de1993b43ea7d5d7b8936f02f0eea8df90e91b383906cb2d511"
+    },
+    {
+      "id": "12-sha256sums-check",
+      "status": "pass",
+      "exitCode": 0,
+      "outputPath": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/12-sha256sums-check.txt",
+      "outputSha256": "442b85d36e754acaa29abf9542892ba069bdad1955ad3e3a049dbbadf5b7e239"
+    }
+  ],
+  "sourceInputs": [
+    {
+      "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+      "sha256": "0277bd290fe08c85945b93ea2b9eb120e4a77a66461b18d874e68afe670cc866"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+      "sha256": "845300e124376eb4796116a989fd9d1e359ff3f1c8793ba70a02ec89d4d0c61b"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-final-snapshot.ts",
+      "sha256": "ffbe2caad45c08d063b5089ae5f594ce3b6d0fe11a7fb4f72e6d8da61bbd1f29"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-ladder.ts",
+      "sha256": "8b115c35c3f77b76f1a23ed798ab0e6107745f725038f9a919327a18a7d36337"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/assembler.ts",
+      "sha256": "7bc8f7b09ee88e39eaef1a5ca99551c519487d4e05643af705efbd2eb6460e77"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      "sha256": "e99d12049067a3a42bec959f8a62417d388996fb3fdc4471edb82a343abb4d21"
+    },
+    {
+      "path": "src/pages/Settings/index.tsx",
+      "sha256": "df1d9c82ff7a74cc0f8441aca980b09ec3fec82d6545b99e1d5185c2975d17e4"
+    },
+    {
+      "path": "tests/unit/context-assembly-authority-tf0493.test.ts",
+      "sha256": "11bc28bf7d88e9e14d3a26a75cfcf64b852daba9e13093e743e1b53f0f45b590"
+    },
+    {
+      "path": "tests/e2e/vtoken-bridge-settings.spec.ts",
+      "sha256": "3751f7d74ae1547fe7874debdd5242bb19a47971edf96a21321c3c3f054ab8c5"
+    }
+  ],
+  "crossLayer": [
+    {
+      "id": "tf0493-final-extras2-comms-compare",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "97aae5dc26bb5aa9a4d56dd3f0df0f172ba7d9b5",
+      "tree": "0132f6311f3be34079e14ce475bfc5cef0daac00"
+    },
+    {
+      "id": "tf0493-final-extras2-comms-replay",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "97aae5dc26bb5aa9a4d56dd3f0df0f172ba7d9b5",
+      "tree": "0132f6311f3be34079e14ce475bfc5cef0daac00"
+    },
+    {
+      "id": "tf0493-final-extras2-credential",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "97aae5dc26bb5aa9a4d56dd3f0df0f172ba7d9b5",
+      "tree": "0132f6311f3be34079e14ce475bfc5cef0daac00"
+    },
+    {
+      "id": "tf0493-final-extras2-harness-flow",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "97aae5dc26bb5aa9a4d56dd3f0df0f172ba7d9b5",
+      "tree": "0132f6311f3be34079e14ce475bfc5cef0daac00"
+    },
+    {
+      "id": "tf0493-final-extras2-retention",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "97aae5dc26bb5aa9a4d56dd3f0df0f172ba7d9b5",
+      "tree": "0132f6311f3be34079e14ce475bfc5cef0daac00"
+    },
+    {
+      "id": "tf0493-final-extras2-validate",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "97aae5dc26bb5aa9a4d56dd3f0df0f172ba7d9b5",
+      "tree": "0132f6311f3be34079e14ce475bfc5cef0daac00"
+    },
+    {
+      "id": "tf0493-final-extras2-whitespace",
+      "exitCode": 0,
+      "dirty": false,
+      "commit": "97aae5dc26bb5aa9a4d56dd3f0df0f172ba7d9b5",
+      "tree": "0132f6311f3be34079e14ce475bfc5cef0daac00"
+    }
+  ],
+  "cleanup": {
+    "appProfilesRemoved": true,
+    "gatewayStopped": true,
+    "recoveryRequired": false,
+    "processSurvivors": 0,
+    "remaining": []
+  },
+  "credentialScan": {
+    "scannedFiles": 87,
+    "hits": 0
+  },
+  "limitations": [
+    "No product default was changed; this node closes the internal assembly authority only.",
+    "TF-0494 workspace-context graduation remains outside this node and was removed from this candidate.",
+    "The native external app-server path and future real effective-state adapter remain deferred per the contract."
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "C:\\Users\\27933\\AppData\\Local\\Temp\\long-session-c4-final\\e2e-clean-640da4c\\verse-claw-e2e-run-ycipHd",
+  "ledgerEntries": 9,
+  "reaped": [
+    {
+      "pid": 8052,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 29144,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 49260,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 41528,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 276,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 25612,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 45372,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 5268,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 33944,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "ok",
+    "runRoot": "C:\\Users\\27933\\AppData\\Local\\Temp\\long-session-c4-final\\e2e-clean-640da4c\\verse-claw-e2e-run-ycipHd\\",
+    "owned": [],
+    "remaining": []
+  }
+}

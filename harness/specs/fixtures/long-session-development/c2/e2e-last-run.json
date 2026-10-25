@@ -1,0 +1,28 @@
+{
+  "schema": "clawx.long-session.command",
+  "version": 1,
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "id": "c2-e2e",
+  "commit": "a2631e3a41afe740469661a006623e212d3835d5",
+  "branch": "codex/long-session-implementation-20261023-r2",
+  "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+  "tree": "cf0fe6018278cf89b9836b83850c7bcc25c2f75d",
+  "dirty": false,
+  "command": [
+    "pnpm",
+    "run",
+    "test:e2e:run",
+    "tests/e2e/long-session-delegation-admission.spec.ts",
+    "--workers=1",
+    "--reporter=line"
+  ],
+  "startedAt": "2026-10-23T21:51:12.905Z",
+  "durationMs": 40649,
+  "exitCode": 0,
+  "signal": null,
+  "timeoutMs": 900000,
+  "timedOut": false,
+  "logPath": "D:\\tmp\\long-session-r2-20261023\\c2-e2e.log",
+  "stdoutPath": "D:\\tmp\\long-session-r2-20261023\\c2-e2e.stdout"
+}

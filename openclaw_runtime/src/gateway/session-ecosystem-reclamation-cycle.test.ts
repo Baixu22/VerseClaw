@@ -9,6 +9,10 @@
  * the registry and are asserted bounded, not zero.
  */
 import { afterEach, describe, expect, it } from "vitest";
+import { mkdtempSync, rmSync } from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { __resetWorktreeRegistry, createWorktreeService } from "../agents/worktree-service.js";
 import {
   addSession,
   getBashProcessRegistryState,
@@ -27,6 +31,11 @@ import { isPidDefinitelyDead } from "../shared/pid-alive.js";
 const CYCLES = 50;
 const DRAIN_BUDGET_MS = 8_000;
 
+const WORKTREE_OWNER = {
+  agentId: "agent-reclaim",
+  sessionKey: "agent:agent-reclaim:main",
+  expectedSessionId: "session-reclaim",
+} as const;
 const identity = (): SessionAdmissionIdentity => ({
   agentId: "agent-reclaim",
   canonicalSessionKey: "agent:agent-reclaim:main",
@@ -120,9 +129,16 @@ async function waitForPidDeath(pid: number, timeoutMs = 12_000): Promise<boolean
   return false;
 }
 
+let tempRoot: string | null = null;
+
 afterEach(() => {
   resetProcessRegistryForTests();
   sessionAdmissionRegistry.clearForTests();
+  __resetWorktreeRegistry();
+  if (tempRoot) {
+    rmSync(tempRoot, { recursive: true, force: true });
+    tempRoot = null;
+  }
 });
 
 describe("session ecosystem reclamation cycle", () => {
@@ -131,6 +147,12 @@ describe("session ecosystem reclamation cycle", () => {
     async () => {
       const supervisor = getProcessSupervisor();
       const mutations = ["stop", "reset", "delete"] as const;
+      const tempBase = process.platform === "win32" ? "D:\\tmp" : os.tmpdir();
+      tempRoot = mkdtempSync(path.join(tempBase, "openclaw-reclaim-cycle-"));
+      const worktrees = createWorktreeService(tempRoot);
+      let helperResidual = 0;
+      let waiterResidual = 0;
+      let worktreeResidual = 0;
       let ownedPidResidual = 0;
       let activeRecordResidual = 0;
       let finishedResidual = 0;
@@ -138,7 +160,10 @@ describe("session ecosystem reclamation cycle", () => {
 
       for (let cycle = 0; cycle < CYCLES; cycle += 1) {
         const mutation = mutations[cycle % mutations.length]!;
-        const fence = await sessionAdmissionRegistry.fence(identity());
+        const releasePermit = sessionAdmissionRegistry.acquirePermit(identity(), "exec-spawn");
+        const fencePromise = sessionAdmissionRegistry.fence(identity());
+        const waitingSnapshot = sessionAdmissionRegistry.snapshot(identity());
+        if (waitingSnapshot?.waiters !== 1 || waitingSnapshot.active !== 1) waiterResidual += 1;
         let childPid = -1;
         const tree = await spawnProcessTree((pid) => {
           childPid = pid;
@@ -160,9 +185,19 @@ describe("session ecosystem reclamation cycle", () => {
             pid: tree.parentPid,
           }),
         );
+        const worktree = worktrees.create(`cycle-${cycle}`, {
+          owner: {
+            agentId: identity().agentId,
+            sessionKey: identity().canonicalSessionKey,
+            expectedSessionId: identity().expectedSessionId,
+            retention: "delete",
+          },
+        });
         expect(getBashProcessRegistryState().runningCount).toBe(1);
         expect(supervisor.countActiveRunsForLifecycle(identity())).toBe(1);
 
+        releasePermit();
+        const fence = await fencePromise;
         const drained = await drainScope(identity(), DRAIN_BUDGET_MS);
         if (!drained.ok) {
           // Report the failing cycle precisely instead of a bare expect.
@@ -197,9 +232,18 @@ describe("session ecosystem reclamation cycle", () => {
           exitedDiagnosticsRunIds.push(tree.runId);
         }
 
+        if (drained.helperClaimProtocol !== 0) helperResidual += 1;
+        const worktreeCleanup = worktrees.cleanupOwned(WORKTREE_OWNER);
+        if (worktreeCleanup.failed !== 0 || worktreeCleanup.reclaimed !== 1) {
+          worktreeResidual += 1;
+        }
+        if (worktrees.listOwned(WORKTREE_OWNER).some((entry) => entry.id === worktree.id)) {
+          worktreeResidual += 1;
+        }
+
         fence.release();
         const snapshot = sessionAdmissionRegistry.snapshot(identity());
-        if ((snapshot?.active ?? 0) !== 0) {
+        if ((snapshot?.active ?? 0) !== 0 || (snapshot?.waiters ?? 0) !== 0) {
           activeRecordResidual += 1;
         }
       }
@@ -212,6 +256,7 @@ describe("session ecosystem reclamation cycle", () => {
       console.log(
         `[reclamation-audit] cycles=${CYCLES} activeRecordResidual=${activeRecordResidual} ` +
           `ownedPidResidual=${ownedPidResidual} finishedResidual=${finishedResidual} ` +
+          `helperResidual=${helperResidual} waiterResidual=${waiterResidual} worktreeResidual=${worktreeResidual} ` +
           `sweeperActive=${finalState.sweeperActive} ` +
           `exitedDiagnosticsRecords=${exitedDiagnosticsRunIds.length}`,
       );
@@ -219,6 +264,9 @@ describe("session ecosystem reclamation cycle", () => {
       expect(activeRecordResidual).toBe(0);
       expect(ownedPidResidual).toBe(0);
       expect(finishedResidual).toBe(0);
+      expect(helperResidual).toBe(0);
+      expect(waiterResidual).toBe(0);
+      expect(worktreeResidual).toBe(0);
       expect(finalState.sweeperActive).toBe(false);
       // Exited diagnostics records are capped by the run registry (default
       // 2000), so 50 cycles must retain at most 50 bounded records.

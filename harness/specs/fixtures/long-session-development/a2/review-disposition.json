@@ -1,0 +1,59 @@
+{
+  "schema": "clawx.long-session.review-disposition/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "generatedAt": "2026-10-23T09:37:48.868Z",
+  "candidate": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
+  "scope": "Agent-driven local-model reviews and direct-source adjudication; this is not real-human evidence.",
+  "findingsReviewed": [
+    {
+      "finding": "Main archive-index writers appeared to use different lock sidecars.",
+      "disposition": "not confirmed after reading electron/utils/atomic-write.ts and openclaw_runtime/src/infra/file-lock.ts; both resolve the same .clawx-write.lock sidecar and writes re-read inside the lock."
+    },
+    {
+      "finding": "Lifecycle refusals might be emitted as successful RPC payloads.",
+      "disposition": "corrected; refusals use the RPC error channel, ErrorShape.details, and a handler-level test exercises the actual response shape."
+    },
+    {
+      "finding": "Archive retry digest included mutable renderer metadata.",
+      "disposition": "corrected; retry identity is kind + SessionKey and the first journaled manifest preserves original metadata."
+    },
+    {
+      "finding": "Aliased keys could mismatch committed receipts.",
+      "disposition": "corrected; handler-level tests verify the requested key is echoed while the runtime canonical key remains internal."
+    },
+    {
+      "finding": "Malformed archive paths could escape as unstructured errors.",
+      "disposition": "corrected; new index and journal paths are contained before mutation and return structured definitive refusals."
+    },
+    {
+      "finding": "Definitive conflicts could leak archive leases or restore fences.",
+      "disposition": "corrected; definitive conflicts settle or release fences and caches, while unknown results retain them for exact-operation recovery."
+    },
+    {
+      "finding": "A missing archived transcript might be permanent and wedge the operation.",
+      "disposition": "intentionally treated as unknown/retryable; the source can reappear after a crash window, and A2 requires unknown outcomes not to unlock. Recovery remains the same operationId and fence."
+    },
+    {
+      "finding": "Async updateSessionStore mutation and lock contracts were absent from review.",
+      "disposition": "verified against the included store/file-lock owner code and covered by runtime and E2E gates."
+    },
+    {
+      "finding": "Cleanup fixture still contained placeholders.",
+      "disposition": "resolved by populating cleanup-readback.json from the clean-candidate Playwright process ledger and run-root sweep."
+    },
+    {
+      "finding": "The duplicate live+archived transcript row appeared passed without a named assertion.",
+      "disposition": "corrected; a deterministic restore-intent test now proves definitive conflict and new-generation fence release."
+    },
+    {
+      "finding": "Curated lint and credential gates referenced scripts only under D:/tmp.",
+      "disposition": "corrected; lint-scoped.mjs and credential-scan.mjs are copied into evidence; credential scan records its exact file list and pattern names."
+    },
+    {
+      "finding": "README scan count and platform skip were not self-describing.",
+      "disposition": "README is regenerated from final receipts and root-test-notes.json records the Windows/POSIX permission skip."
+    }
+  ],
+  "overall": "No unresolved P1/P2 issue remains after direct-source adjudication; one P1 review hypothesis conflicts with the explicit A2 unknown-outcome contract and is retained as a documented limitation."
+}

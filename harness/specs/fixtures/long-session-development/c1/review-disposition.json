@@ -1,0 +1,46 @@
+{
+  "schema": "clawx.long-session.review-disposition/v1",
+  "generatedAt": "2026-10-23T20:49:19.713Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": "4432d6a9105c50c3c04896ce2542da57181b5f3b",
+  "sourceReview": "Direct source review, focused tests, full repository gates, and a two-launch built Electron journey.",
+  "findings": [
+    {
+      "issue": "Task Ledger normalizes workspace IDs into a storage key, while the binding payload uses the canonical Workspace registry ID.",
+      "status": "fixed",
+      "evidence": "Binding validation compares the Task Ledger snapshot against normalizeTaskLedgerWorkspaceId(workspaceId); E2E bind succeeds under the real owner."
+    },
+    {
+      "issue": "A coordinator handoff creates its SessionKey before a physical generation exists.",
+      "status": "fixed",
+      "evidence": "The child starts as active/session-pending, and Chat send or resolve materializes the first real session generation without inventing one."
+    },
+    {
+      "issue": "Chat could otherwise keep using the Workspace root after selecting a managed-worktree environment.",
+      "status": "fixed",
+      "evidence": "Main chat-api resolves the persisted binding, validates state, generation and path, and forwards the bound root plus fingerprint."
+    },
+    {
+      "issue": "Sequential revision checks did not prevent two concurrent revision-zero binds from both reading an empty map.",
+      "status": "fixed",
+      "evidence": "Coordinator mutations are serialized; a concurrent bind test proves exactly one wins."
+    },
+    {
+      "issue": "Isolated E2E delete could not run after a lazily materialized handoff because the fixture had no sessions.json.",
+      "status": "unmeasured",
+      "evidence": "Live delete was not claimed in E2E; delete invalidation is covered by the direct lifecycle-owner unit test."
+    },
+    {
+      "issue": "No external local-model review verdict was produced.",
+      "status": "unmeasured",
+      "evidence": "No external review pass is claimed."
+    }
+  ],
+  "verdict": "no-known-blocking-defect; live-delete E2E and external review unmeasured",
+  "limits": [
+    "No live-provider model turn was executed; Chat environment enforcement and generation materialization are owner-boundary tests.",
+    "The managed-worktree path and branch-uniqueness checks use the existing Git owner contract in unit tests; the real Electron journey uses a canonical local checkout.",
+    "Delete invalidation is agent-tested at the lifecycle owner; the isolated E2E fixture could not produce sessions.json for a live delete."
+  ]
+}

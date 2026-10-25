@@ -3,9 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import {
-  closeOpenClawAgentDatabasesForTest,
-} from "../state/openclaw-agent-db.js";
+import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
 import {
   readSessionDeleteOperationJournalRow,
   replaceSqliteSessionStore,
@@ -22,7 +20,9 @@ import {
   type SessionRestoreOperationManifest,
 } from "./session-mutation-operation-journal.js";
 
-function archiveManifest(operation: "session-archive" | "session-restore" = "session-archive"): SessionArchiveOperationManifest {
+function archiveManifest(
+  operation: "session-archive" | "session-restore" = "session-archive",
+): SessionArchiveOperationManifest {
   return {
     version: "1",
     operation,
@@ -91,17 +91,25 @@ describe("session mutation operation journal", () => {
   it("persists archive intent in the existing operation journal", () => {
     const manifest = archiveManifest();
     writeSessionMutationOperationIntent({ storePath, operationId: "archive-op-1", manifest });
-    const readback = readSessionMutationOperationJournal(storePath, "archive-op-1", "session-archive");
+    const readback = readSessionMutationOperationJournal(
+      storePath,
+      "archive-op-1",
+      "session-archive",
+    );
     expect(readback?.manifest).toEqual(manifest);
     expect(readback?.state).toBe("intent");
-    expect(readSessionDeleteOperationJournalRow(storePath, "archive-op-1")?.manifest_digest).toHaveLength(64);
+    expect(
+      readSessionDeleteOperationJournalRow(storePath, "archive-op-1")?.manifest_digest,
+    ).toHaveLength(64);
   });
 
   it("moves archive through store_committed to a durable runtime receipt", () => {
     const manifest = archiveManifest();
     writeSessionMutationOperationIntent({ storePath, operationId: "archive-op-2", manifest });
     markSessionMutationOperationStoreCommitted({ storePath, operationId: "archive-op-2" });
-    expect(readSessionMutationOperationJournal(storePath, "archive-op-2")?.state).toBe("store_committed");
+    expect(readSessionMutationOperationJournal(storePath, "archive-op-2")?.state).toBe(
+      "store_committed",
+    );
     const receipt = {
       ok: true as const,
       key: manifest.canonicalKey,

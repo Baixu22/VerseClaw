@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { GatewayRpcError } from '@electron/gateway/protocol';
 
 const state = vi.hoisted(() => ({ configDir: '', unregister: vi.fn() }));
 
@@ -45,12 +46,15 @@ describe('long-session Main lifecycle barrier', () => {
   it('calls the runtime archive method and releases the mirror gate only after a committed receipt', async () => {
     const rpc = vi.fn(async (_method: string, payload: Record<string, unknown>) => ({
       ok: true,
+      key: payload.key,
+      sessionId: 'generation-1',
       operationId: payload.operationId,
       journalState: 'runtime_committed',
       archived: true,
     }));
+    const coordinatorLifecycle = vi.fn(async () => undefined);
     const { createSessionsApi } = await import('@electron/services/sessions-api');
-    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    const api = createSessionsApi({ gatewayManager: { rpc } as never, coordinatorLifecycle });
     const result = await api.archive({
       id: 'agent:main:main',
       originalWorkspaceId: 'workspace-a',
@@ -67,6 +71,7 @@ describe('long-session Main lifecycle barrier', () => {
     );
     expect(await readGates()).toEqual({});
     expect(state.unregister).toHaveBeenCalledWith('agent:main:main');
+    expect(coordinatorLifecycle).toHaveBeenCalledWith({ type: 'archive', workspaceId: 'workspace-a', sessionKey: 'agent:main:main' });
   });
 
   it('keeps the same operationId open after an unknown archive RPC and resumes on retry', async () => {
@@ -74,6 +79,8 @@ describe('long-session Main lifecycle barrier', () => {
       .mockRejectedValueOnce(new Error('RPC timeout'))
       .mockImplementationOnce(async (_method: string, payload: Record<string, unknown>) => ({
         ok: true,
+        key: payload.key,
+        sessionId: 'generation-1',
         operationId: payload.operationId,
         journalState: 'runtime_committed',
         archived: true,
@@ -112,6 +119,8 @@ describe('long-session Main lifecycle barrier', () => {
   it('uses the same durable gate contract for restore', async () => {
     const rpc = vi.fn(async (_method: string, payload: Record<string, unknown>) => ({
       ok: true,
+      key: payload.key,
+      entry: { sessionId: 'generation-restored' },
       operationId: payload.operationId,
       journalState: 'runtime_committed',
       restored: true,
@@ -128,6 +137,113 @@ describe('long-session Main lifecycle barrier', () => {
       }),
       30_000,
     );
+    expect(await readGates()).toEqual({});
+  });
+
+  it.each(['missing-action', 'wrong-session'])('retains the gate for a %s archive receipt', async (kind) => {
+    const rpc = vi.fn(async (_method: string, payload: Record<string, unknown>) => ({
+      ok: true,
+      key: kind === 'wrong-session' ? 'agent:main:other' : payload.key,
+      sessionId: 'generation-1',
+      archived: kind === 'missing-action' ? undefined : true,
+      operationId: payload.operationId,
+      journalState: 'runtime_committed',
+    }));
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    expect((await api.archive({ id: 'agent:main:receipt-fault' })).success).toBe(false);
+    expect(Object.values(await readGates())).toHaveLength(1);
+    expect(state.unregister).not.toHaveBeenCalled();
+  });
+
+  it('releases a definitively refused pre-intent restore without releasing unknown mutations', async () => {
+    const rpc = vi.fn(async (_method: string, payload: Record<string, unknown>) => {
+      throw new GatewayRpcError({
+        message: 'not archived',
+        data: {
+          kind: 'lifecycle-mutation-failure',
+          operationId: payload.operationId,
+          key: payload.key,
+          retryable: false,
+          noMutation: true,
+        },
+      });
+    });
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    expect((await api.restore({ id: 'agent:main:refused' })).success).toBe(false);
+    expect(await readGates()).toEqual({});
+    expect((await api.archive({ id: 'agent:main:refused' })).success).toBe(false);
+    expect(rpc).toHaveBeenCalledTimes(2);
+    expect(await readGates()).toEqual({});
+  });
+
+  it('releases a correlated definitive failure even when the runtime cannot claim noMutation', async () => {
+    const rpc = vi.fn(async (_method: string, payload: Record<string, unknown>) => {
+      throw new GatewayRpcError({
+        message: 'operation identity conflicts with another session',
+        details: {
+          kind: 'lifecycle-mutation-failure',
+          operationId: payload.operationId,
+          key: payload.key,
+          retryable: false,
+        },
+      });
+    });
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    expect((await api.archive({ id: 'agent:main:definitive' })).success).toBe(false);
+    expect(await readGates()).toEqual({});
+  });
+
+  it('retains the gate for a correlated retryable failure', async () => {
+    const rpc = vi.fn(async (_method: string, payload: Record<string, unknown>) => {
+      throw new GatewayRpcError({
+        message: 'filesystem outcome is unknown',
+        details: {
+          kind: 'lifecycle-mutation-failure',
+          operationId: payload.operationId,
+          key: payload.key,
+          retryable: true,
+        },
+      });
+    });
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    expect((await api.archive({ id: 'agent:main:unknown' })).success).toBe(false);
+    expect(Object.values(await readGates())).toHaveLength(1);
+  });
+
+  it('resumes the same archive operation after UI metadata changes', async () => {
+    const rpc = vi.fn()
+      .mockRejectedValueOnce(new Error('RPC timeout'))
+      .mockImplementationOnce(async (_method: string, payload: Record<string, unknown>) => ({
+        ok: true,
+        key: payload.key,
+        sessionId: 'generation-1',
+        operationId: payload.operationId,
+        journalState: 'runtime_committed',
+        archived: true,
+      }));
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+
+    await api.archive({
+      id: 'agent:main:metadata-retry',
+      label: 'First label',
+      originalWorkspaceId: 'workspace-a',
+      originalFolderId: 'folder-a',
+    });
+    const retry = await api.archive({
+      id: 'agent:main:metadata-retry',
+      label: 'Changed label',
+      originalWorkspaceId: 'workspace-b',
+      originalFolderId: 'folder-b',
+    });
+    expect(retry.success).toBe(true);
+    const firstOperationId = (rpc.mock.calls[0]?.[1] as { operationId: string }).operationId;
+    const secondOperationId = (rpc.mock.calls[1]?.[1] as { operationId: string }).operationId;
+    expect(secondOperationId).toBe(firstOperationId);
     expect(await readGates()).toEqual({});
   });
 });

@@ -51,7 +51,7 @@
       "continuity": "Continuity",
       "environment": "Environment",
       "plan": "Development tasks",
-      "coordination": "Long session"
+      "policy": "Runtime policy"
     },
     "status": {
       "idle": "Idle",
@@ -164,37 +164,107 @@
     "processes": {
       "openOutput": "Open the output of {{command}}"
     },
-    "coordination": {
-      "revision": "Revision {{revision}}",
-      "binding": "Stable main session",
-      "bindingState": {
-        "active": "Active",
-        "invalidated": "Invalidated"
+    "policy": {
+      "backend": "Configured backend",
+      "effectiveBackend": "Effective backend",
+      "effort": "Effort",
+      "context": "Context window",
+      "actions": "Action permissions",
+      "queue": "Message queue",
+      "resources": "Concurrency limits",
+      "schedule": "Scheduled work",
+      "currentRunObservation": "Current-run observation",
+      "notReported": "Not reported",
+      "configuredValue": "Configured value",
+      "tokens": "{{count}} tokens",
+      "queueCap": "up to {{count}}",
+      "queueValue": "{{mode}} · {{count}} queued",
+      "actionCount": "{{count}} permissions",
+      "actionSummary": "{{allowed}} allowed · {{approval}} approval · {{denied}} denied · {{unknown}} unknown",
+      "showActions": "Show action permissions",
+      "showDetails": "Sources and compatibility",
+      "sources": "Sources",
+      "generationReason": "Observation status",
+      "compatibility": "Compatibility and overrides",
+      "generation": {
+        "effective": "Effective",
+        "unverified": "Unverified",
+        "stale": "Stale",
+        "mismatch": "Mismatch",
+        "missing": "Not observed"
       },
-      "pause": "Pause current turn",
-      "resume": "Resume current session",
-      "unknownTask": "Task status unavailable",
-      "workDetail": "{{task}} · {{backend}} · {{isolation}}",
-      "batchTitle": "Completion result",
-      "batchCounts": "{{completed}} done · {{failed}} failed · {{cancelled}} cancelled · {{pending}} pending",
-      "invalidatedReason": {
-        "archived": "Archived",
-        "deleted": "Deleted",
-        "reset": "Reset to a new generation",
-        "session_missing": "Session missing",
-        "session_key_changed": "Session key changed"
+      "status": {
+        "configured": "configured",
+        "effective": "effective",
+        "unverified": "unverified",
+        "unsupported": "unsupported",
+        "ignored": "ignored"
       },
-      "state": {
-        "draft": "Draft",
-        "accepted": "Accepted",
-        "running": "Running",
-        "waiting": "Waiting",
-        "failed": "Failed",
-        "cancelled": "Cancelled",
-        "reported": "Reported",
-        "accepted-by-task": "Accepted by task",
-        "unknown": "Unknown"
-      }
+      "retention": {
+        "0": "not retained",
+        "5": "5 minutes",
+        "15": "15 minutes"
+      },
+      "parameters": {
+        "automaticCompaction": "Automatic compaction",
+        "manualCompaction": "Manual compaction",
+        "provider": "Compaction provider",
+        "model": "Compaction model",
+        "reserveTokens": "Reserve tokens"
+      },
+      "reasons": {
+        "missingProfile": "No capability observation exists for the current run.",
+        "staleProfile": "The capability observation is outside its freshness window.",
+        "sessionMismatch": "The observation belongs to another session generation.",
+        "runMismatch": "The observation belongs to another run.",
+        "runtimeUnknown": "The current runtime generation is unavailable.",
+        "gatewayMismatch": "The observation belongs to another Gateway generation.",
+        "profileFallback": "A fallback profile cannot prove the active runtime facts.",
+        "grantsUnavailable": "Action permissions are not available from the current runtime owner.",
+        "contextUnavailable": "No fresh context-budget observation exists for this run.",
+        "resourcesUnavailable": "Current concurrency admission is not part of this snapshot.",
+        "scheduleUnavailable": "Current scheduled-work state is not part of this snapshot.",
+        "noQueueOverride": "No persisted queue override was found.",
+        "nativeAutomaticCompaction": "The native backend owns automatic compaction.",
+        "nativeProvider": "Provider selection belongs to the native transcript backend.",
+        "nativeModel": "Model selection belongs to the native transcript backend.",
+        "nativeManualCompaction": "Manual compaction is routed through the native backend.",
+        "nativeReserveTokens": "The native backend does not consume OpenClaw reserve-token arguments.",
+        "runtimeCompactionUnknown": "The runtime is unregistered or its compaction ownership is unknown."
+      },
+      "authorization": {
+        "allowed": "allowed",
+        "requiresApproval": "approval required",
+        "denied": "denied",
+        "notApplicable": "not applicable",
+        "unknown": "unknown"
+      },
+      "grantActions": {
+        "exec": "Run commands",
+        "read": "Read files",
+        "write": "Write files",
+        "browser": "Use browser"
+      },
+      "boundaries": {
+        "title": "Control boundaries",
+        "abort": {
+          "title": "Abort run",
+          "description": "Stops the current run and reloads its transcript. The session, stored transcript, tasks, resources and Git worktree remain."
+        },
+        "stop": {
+          "title": "Stop session",
+          "description": "Drains queued work and runtime activity while retaining the session, transcript, task records and resource records."
+        },
+        "activity": {
+          "title": "Activity view window",
+          "description": "Completed activity stays visible for {{retention}}. This is a view-only window; transcript and runtime resources follow their own owner TTLs."
+        },
+        "fork": {
+          "title": "Fork session",
+          "description": "Copies the transcript into a child session. It does not create a Git branch or worktree, complete tasks or own running resources."
+        }
+      },
+      "unverifiedFacts": "Unverified facts"
     }
   },
   "noLogs": "(No logs available yet)",

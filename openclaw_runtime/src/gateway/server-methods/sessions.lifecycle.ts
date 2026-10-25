@@ -95,12 +95,22 @@ import {
 function respondLifecycleMutationFailure(
   respond: Parameters<GatewayRequestHandlers[string]>[0]["respond"],
   failure: LifecycleMutationFailure,
+  identity: { key: string; operationId: string },
 ): void {
   const code = failure.code === "unavailable" ? ErrorCodes.UNAVAILABLE : ErrorCodes.INVALID_REQUEST;
   respond(
     false,
     undefined,
-    errorShape(code, failure.error, failure.retryable ? { retryable: true } : undefined),
+    errorShape(code, failure.error, {
+      retryable: failure.retryable,
+      details: {
+        kind: "lifecycle-mutation-failure",
+        ...failure,
+        key: identity.key,
+        canonicalKey: failure.key,
+        operationId: failure.operationId ?? identity.operationId,
+      },
+    }),
   );
 }
 
@@ -813,12 +823,12 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
       originalFolderId: p.originalFolderId ?? null,
     });
     if (!result.ok) {
-      respondLifecycleMutationFailure(respond, result);
+      respondLifecycleMutationFailure(respond, result, { key, operationId: p.operationId });
       return;
     }
-    respond(true, result, undefined);
+    respond(true, { ...result, key }, undefined);
     emitSessionsChanged(context, {
-      sessionKey: result.key,
+      sessionKey: key,
       reason: "archive",
     });
   },
@@ -847,12 +857,12 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
       canonicalKey: loaded.canonicalKey,
     });
     if (!result.ok) {
-      respondLifecycleMutationFailure(respond, result);
+      respondLifecycleMutationFailure(respond, result, { key, operationId: p.operationId });
       return;
     }
-    respond(true, result, undefined);
+    respond(true, { ...result, key }, undefined);
     emitSessionsChanged(context, {
-      sessionKey: result.key,
+      sessionKey: key,
       reason: "restore",
     });
   },

@@ -5,12 +5,12 @@
   "taskForestNode": "TF-0558",
   "taskKey": "D3",
   "program": "long-session-development-20261022",
-  "generatedAt": "2026-10-23T16:29:18.557Z",
+  "generatedAt": "2026-10-24T11:49:49.718Z",
   "candidate": {
-    "branch": "codex/long-session-implementation-20261022",
-    "commit": "beae6d396a7003c50ecc7b9c27c6379eac55e9a4",
-    "tree": "3cdb40fe0d1a0acd9b8fae3844b98e9ffd733bd9",
-    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "f25c03a13eb5005d8cb265a4ae7b34da427bcf5b",
+    "tree": "559a460ee6156241c77870519d7be02ee8edf5cf",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
   },
   "decision": "keep-baseline",
   "decisionReason": "no authorized live-provider sample: quality, cost and P95 gates are unmeasured or vetoed, so no strategy may be promoted",
@@ -96,6 +96,21 @@
           "reason": "matched"
         },
         {
+          "name": "e2e-last-run.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "e2e-process-cleanup.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "e2e-process-run.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
           "name": "fidelity-latency-cost-report.json",
           "ok": true,
           "reason": "matched"
@@ -113,17 +128,17 @@
       ]
     },
     "d2ArtifactHashes": {
-      "harness/specs/fixtures/long-session-development/d2/paired-workload-manifest.json": "5754c0908073bc65068319afb33ac9415a5a3ce68a13bdb0381eb3b7e4fa70c9",
-      "harness/specs/fixtures/long-session-development/d2/fidelity-latency-cost-report.json": "0ddbf27a46e544236ca6be068071840d9d6f21c5fcf0440554e22e16675f9324",
-      "harness/specs/fixtures/long-session-development/d2/candidate-decision-inputs.json": "6b4b857f10eeef62f59c80077598a46e9c4fae49ac94e42b2f1e60335e1933af",
-      "harness/specs/fixtures/long-session-development/d2/verification-receipt.json": "677a1f652be1d529c8029c364e55e5c466f0771fbcf5682e8f631beec09495b7",
-      "harness/specs/fixtures/long-session-development/d2/SHA256SUMS": "68f3561110a2897d73717fad3c3d868df7e7078834a305d8ca0d90db526dcb8f"
+      "harness/specs/fixtures/long-session-development/d2/paired-workload-manifest.json": "97c007dbdab7996974bfe9e47f8f1c9d20729202be013706ff768e1806fbc02a",
+      "harness/specs/fixtures/long-session-development/d2/fidelity-latency-cost-report.json": "78ce40c0f6f6710603b79c6a3b5bce8678db49c111686a958fdf48a3870644f4",
+      "harness/specs/fixtures/long-session-development/d2/candidate-decision-inputs.json": "6d7b8c0083b0f2e97a55bd5e26881b2e200e184458d2545a140091204d6aed6a",
+      "harness/specs/fixtures/long-session-development/d2/verification-receipt.json": "a327d3288d7700701a24a0e249f93fbbba1c477fd22f3c9d4cacd67b2cc50b65",
+      "harness/specs/fixtures/long-session-development/d2/SHA256SUMS": "eb4ec43f7d56bac95f2200cc722d38d36d043525d3a0db5a9661c22eb7580316"
     }
   },
   "frozenStateAssertions": {
     "productDefaultsUnchanged": true,
     "productDefaultSource": "docs/dev/default-config-matrix.md",
-    "productDefaultSourceHash": "682506278d6e98a4290abb2f6bd78a5e9d1109b7067b1d545662b82463757ef8",
+    "productDefaultSourceHash": "35955d2590158b7accf870882e227ce9a9e991b95b752093f71d82f3ca8191ae",
     "configMatrixTest": "tests/unit/default-config-matrix.test.ts",
     "tf0424VerdictPreserved": true,
     "tf0424Spec": "harness/specs/tasks/context-lifecycle-exploration.md",
@@ -132,7 +147,7 @@
     "newInjectionChainIntroduced": false,
     "newSchedulerIntroduced": false,
     "independenceProjectOrCloudScopeRequested": false,
-    "productSemanticsHash": "27ce7dbc47349cc69698c97c68471b2bbc549b43569c6cdecf6e6d1a05858ae3",
+    "productSemanticsHash": "2b489b64ff715b0425554d79f291f09b4a373f52877d99843a440758113b82d5",
     "note": "D3 decides only; it does not change a default, a frozen lock, a prompt path, a provider call or a storage layout."
   },
   "negativeCases": [

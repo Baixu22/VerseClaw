@@ -75,7 +75,7 @@ docs:
 
 - **阶段一：统一会话动作并建立故障基线**：先固定逻辑会话、原生后端和资源的关系，让归档与恢复有可拒绝、可回读的生命周期保障。
 - **阶段二：让会话配置与实际运行状态可见**：在现有入口说明当前后端、配置来源、授权、预算和不可用原因，复用已有模型生效能力事实。
-- **阶段三：交付单工作区长期协调入口**：复用稳定 Assistant 和 Task Ledger，完成任务委派、接收回执、结果汇总与主会话续接。
+- **阶段三：交付单工作区长期协调入口**：复用稳定 Assistant 和 Task Ledger，完成任务委派、接收回执、结果汇总与主会话续接；会话显式绑定 local checkout 或 worktree，绑定、handoff 与清理由宿主控制面持有。
 - **阶段四：保持上下文连续性并评测策略**：消费唯一记忆与上下文控制面，测量跨压缩、交接和重启的关键事实保真度，再决定是否采用新策略。
 - **阶段五：接通跟进调度与资源退出**：复用 Cron、Workboard 和各资源 owner，使暂停、取消、过期和重启不会产生重复执行或失控资源。
 - **阶段六：完成长程自动验收与声明收口**：用跨重启旅程、长期加载和资源测量证明闭环，并将代码、配置、模型自述和验收范围对齐。
@@ -89,27 +89,27 @@ docs:
 | B1 | 生成会话生效配置快照并区分原生后端 | A2, TF-0512 | [合同](./long-session-effective-policy.md) |
 | B2 | 在现有会话入口展示配置来源和运行限制 | B1 | [合同](./long-session-policy-surface.md) |
 | C1 | 绑定稳定主会话、任务引用与长期工作范围 | B2 | [合同](./long-session-coordinator-binding.md) |
-| C2 | 按授权和隔离规则委派独立会话并记录接收回执 | C1, TF-0510 | [合同](./long-session-delegation-admission.md) |
+| C2 | 按授权和隔离规则委派独立会话并记录接收回执 | C1 | [合同](./long-session-delegation-admission.md) |
 | C3 | 汇总子会话完成事件并在主会话空闲时幂等续接 | C2 | [合同](./long-session-completion-continuation.md) |
 | C4 | 把长期协作入口接到现有会话、任务与活动界面 | C3 | [合同](./long-session-coordination-surface.md) |
 | D1 | 从唯一记忆控制面读取已接受事实与会话交接依据 | C4, TF-0493, TF-0497, TF-0498 | [合同](./long-session-continuity-context.md) |
 | D2 | 配对评测长期连续性的保真度、时延与费用 | D1 | [合同](./long-session-paired-evaluation.md) |
 | D3 | 依据配对证据选定连续策略并保持冻结默认 | D2 | [合同](./long-session-continuity-decision.md) |
 | E1 | 把定时跟进绑定到长期会话并统一取消规则 | D3 | [合同](./long-session-followup-scheduling.md) |
-| E2 | 治理长期会话的工作树、终端、浏览器与后台资源 | E1, TF-0510 | [合同](./long-session-resource-reclamation.md) |
+| E2 | 治理长期会话的工作树、终端、浏览器与后台资源 | E1 | [合同](./long-session-resource-reclamation.md) |
 | F1 | 用自动化跨重启旅程验证长期协作闭环 | E2 | [合同](./long-session-restart-journeys.md) |
 | F2 | 测量长会话加载、常驻资源与通知预算 | F1 | [合同](./long-session-long-use-budget.md) |
 | F3 | 聚合独立验收、能力声明与后续推广边界 | F2 | [合同](./long-session-final-acceptance.md) |
 
 每个后续 leaf 依赖前一个 leaf；阶段首次任务另依赖上一阶段验收。一次只执行当前 lane 的一个 ready leaf，阶段标准全满足并读盘后才收口其 milestone，不以局部绿灯自动开始下一阶段。
 
-B1 消费 TF-0512 的 current runtime capability facts。B2 在 Chat 活动栏与 Settings > Recovery 复用同一 `SessionActivity.policy` projection；policy-only quiet session 仍可从现有入口进入，读取会随 workspace、session、permission mode、模型/agent backend 和 Gateway 世代变化而失效重读，不能把旧 scope 快照冒充当前事实。C2/E2 以真实 Git checkout/写集隔离或明确安全串行完成自有边界，也可复用 TF-0510 若其后续工作流提供；D1 消费 TF-0493/TF-0497/TF-0498 的唯一 context/memory 控制面。已有节点的内部化、退役或 explicit unavailable 也是有效结果，后续应做真实 fallback，不复活被退休模块，不再造同一 owner。
+C2 的 typed admission 已接入现有 sessions.delegate -> Main coordinator/permission -> Gateway orchestrator.run -> role-spawn owner 链。回执只表达 child session/run 已被接收，不表达运行完成；实际 worktree backend、工具授权、写入调度与父 generation 校验以回执和 [委派准入边界](../../../harness/specs/guides/long-session-delegation-admission.md) 为准。
+
+B1 消费 TF-0512 的 current runtime capability facts；C2/E2 以真实 Git checkout/写集隔离或明确安全串行完成自有边界；TF-0510 的明确 unavailable、internal 或 retired 处置可作为非阻塞依据，但不形成硬依赖；D1 消费 TF-0493/TF-0497/TF-0498 的唯一 context/memory 控制面。已有节点的内部化、退役或 explicit unavailable 也是有效结果，后续应做真实 fallback，不复活被退休模块，不再造同一 owner。
 
 D1 只在 active coordinator binding 与当前物理 session generation 匹配时组装 `ContinuityContextPack/v1`：从 Task Ledger 已接受 Working Context、CompressionArtifact、MemorySurface accepted/model-visible refs 与 typed knowledge refs 读取有界摘要，记录 source/freshness/scope/budget/unknown，排除 pending、candidate、过期、撤销、supersede、跨 scope 与未验证模型叙述；原始 transcript/task/compression 只给 on-demand refs，不复制成第二 memory 或第二 injection chain。
 
 新目标服务现有 TF-0001 全局目的，与 TF-0482 是分开的交付 lane；不重开 deprecated TF-0010，不改历史 TF-0077/TF-0370/TF-0424 的验收或默认值。只用非阻塞 related_to 记录横向关系；不能通过本规划给其它在途工作加新义务。
-
-C1 把协调绑定保存在现有 Workspace store 的 `WorkspaceProfile.coordinatorBinding`：只记录已选 Assistant、逻辑 SessionKey、物理 sessionId、Task Ledger node refs、revision 与失效原因。它不自动从普通 Chat 建立，也不拥有任务状态；删除/archive 直接失效，reset 在读取时通过 physical generation 差异失效。C2 在同一 Workspace store 的子项中保存 bounded `DelegationAdmissionReceipt/v1` journal，按 idempotency key/request digest 复用既有 `orchestrator.run`、role spawn、scheduler 与 worktree/inprocess isolation；accepted 仅是 admission，child run 完成和 Task Ledger 状态仍由各自 owner 维护。C3 从既有 subagent registry/delivery outbox 派生 bounded completion batch，只有全部 expected workers 与 verifier 终态后才暴露一个带确定 idempotency key 的 consolidation prompt；主会话物理 generation 必须匹配，重复投递和重启 replay 不产生第二个父回合副作用，batch receipt 的 `completionAuthority` 始终为 `none`。C4 通过现有 Sidebar 标记并打开稳定 coordinator conversation，在 Chat 活动栏投影绑定 revision/失效原因、Task Ledger 引用、delegation receipt、worker transcript 与 completion batch delivery；暂停/继续复用既有 composer control，失效绑定不再提供生命周期按钮。该入口只读取现有 owner，不新增第二任务列表、scheduler 或 completion authority。
 
 **已有实现与需要补的路径**
 
@@ -117,19 +117,15 @@ C1 把协调绑定保存在现有 Workspace store 的 `WorkspaceProfile.coordina
 - actual Chat 行为由 src/stores/chat.ts 主 store 实现；旧拆分模块同名函数不是自动可信 caller。
 - 归档当前直接改 transcript/index，delete 等待 runtime receipt；A1 先建立 negative matrix，A2 再复用 admission/finalizer 保证安全 mutation。
 - Codex thread binding、Claude ownsNativeCompaction 与 OpenClaw compaction 参数分别校验，configured 与 effective 不能混同。
-- 稳定协调 binding 是 existing Workspace/Assistant 的最小 metadata；工作事实仍引用 Task Ledger，worker accepted/delivered 不等于 task completed。
+- 稳定协调 binding 是 existing Workspace/Assistant 的最小 metadata；工作事实仍引用 Task Ledger，worker accepted/delivered 不等于 task completed。参考 Codex app-server，会话级 cwd/checkout/worktree 选择、resume、fork、archive、handoff 属于宿主控制面；模型只看到被授权的当前环境并有独立、受限的会话工具，不得直接复用 shell 调 CLI 越过 host admission。
 - completion batch 复用 subagent result/announce/send-intent owner，传输允许 at-least-once，但重复事件不能产生重复副作用。
 - context 只消费已接受、有效且同 scope 的事实和有界 artifact；不复制历史、候选与已验证知识为第二 memory。
 - 调度复用 Cron/Workboard，保持 current turn stop、未来 schedule cancel、协调 admission pause 的区别；不把 session goal 当 durable mission。
+- 会话资源账本是 existing owner 的汇聚读模型，不新增第二个 store：从 session admission、process supervisor/bash registry、terminal、browser、worktree 与 resource tracker 读取 owner 事实，明确 CPU、RSS、进程树、后台终端、worktree 和水位；Codex app-server 的 backgroundTerminals 字段是可借鉴的观测面，不是可直接复制的权威。
 
 **连续策略先评测后选择**
 
-D2 在评测前冻结不少于 30 对 agent 驱动场景、相同模型/输入和指标预算。目标为关键事实保真 100%、下一步正确率至少 95%、误报完成 0；推广门为费用或输入 token 净少至少 15%、P95 不超过 baseline 1.10 倍、安全零回归。记录 first-token、wall-clock、token/cache/cost 的真实样本，不用字符估算或 token 曲线代替实际收益。D3 已据此收口为 keep-baseline；E1 已把定时跟进绑定到显式 coordinator 作用域与物理 generation：运行时在投递前拒绝失效 scope（`coordinator-scope-*`），Main 维护循环把陈旧 schedule 抑制为 `enabled=false` 而非删除，pause/cancel/stop 三种动作保持独立：D2 的 `EVIDENCE_INSUFFICIENT` 被逐条读盘，D2 校验和通过，决策为 keep-baseline（不保留实验、不做 scoped-opt-in），`docs/dev/default-config-matrix.md`、TF-0424 shadow 边界与所有冻结默认保持不变。D2 已把该契约落成 `shared/long-session-paired-evaluation.ts` + `scripts/long-session-paired-evaluation.mjs`：冻结 hash、五类各 6 对、负例重跑评分器；当前环境无获授权的 live provider，因此盘上报告为 `EVIDENCE_INSUFFICIENT`/keep-baseline，token、cost 与时延单元格为 null（未测），仅 structural projection 检查为 agent-derived。；E2 把资源回收收敛为五类既有 owner（terminal/browser/managed-port/worktree/admission）与六个动作契约，50 次 create/archive/delete 循环后 managed residue 为 0，keep_on_leave 终端单独计数，失败/未知 owner 生成 recovery_required 与重试身份；F1 用六条真实 built Electron/Host/Gateway 旅程（绑定、重启恢复含 Task Ledger 回读、双工作区隔离、handoff/fork/compact、撤销+归档+终端回收、删除+迟到事件）验证跨重启闭环，跨 scope 泄漏/重复副作用/错误 completed-delivered 声明均为 0；无 provider 凭据时 native backend 连续性明确标为 unverified，未扩大能力宣称。
-
-F2 用同一仪器的 F2 副本（`harness/specs/fixtures/long-session-development/f2/probe-f2.mjs`，修正了 open/switch 窗口重叠，且不重签 TF-0423 的 `probe.mjs`）在候选 `18982d5e6` 采集 3 个 measurement-valid run：333 会话 / 57.16 MiB，load 中位 752 ms，switch P50/P95 中位 152.7/176.1 ms，长会话打开 137.3 ms 且 0 个 ≥50 ms long task（predecessor 唯一 gated 的 long-task 条件），`sessions.summaries` 1 次/40 keys，五分钟 idle RSS 60 样本无持续增长，50 轮 owner lifecycle 在显式 `--expose-gc` 门后 scope residue 为 0。发布值是逐指标中位数，run 合法性由其自身 fixture 大小导出（fixture + 32 MB headroom），低于下限的 run 只列不算；真实 UI 单样本不稳定，按中位数汇报。通知侧发现并修复一个真实缺陷：12 条重复 `run.ended` 曾触发 12 次强制 history 重读，修复后为 1 次且 sidebar 0 次；重复 completion、无变化跟进、隐藏 UI（0 次轮询）与 paused/expired/错代跟进（0 次执行）均有盘上计数。macOS/Linux、live provider、packaged 与真人长期使用仍是 unmeasured。
-
-F3 在候选 `eab126259` 上逐项读盘聚合 15 个 peer 执行节点（A1–F2）与 65 个校验和文件：6 个阶段、52 条 criterion 全部有盘上结果，历史 artifact 未重签；F2 的跨 run 中位数由其保存的逐 run 数据重新推导。同范围真实 built Electron E2E（restart journeys、lifecycle faults、continuity context、followup scheduling）、uncached typecheck、contract、comms replay/compare 与 capability claim check 均通过。产品语义新增 F3 验收边界章节，修正了“C4 尚不可用”的过期表述；`README.ru-RU.md` 补齐了此前缺失的长期会话段落（英/中/日已有）；capability matrix 新增 `capability-45`，明确 Windows x64 单 worktree/显式绑定范围、keep-baseline 压缩策略与 live-provider/macOS/packaged/真人使用未测。唯一失败的 gate 是 `repo:artifacts:check`：它在本分支与 `origin/main 382908c5a` 上同样因 VerseBrowser lane 既有的 tracked-and-ignored 生成 log 失败，本节点按门禁名与原始输出完整记录为 tolerated pre-existing，不冒充通过、也不代另一 lane 退役其证据。公开发布、全量默认、产品锁、独立 Project 与云执行仍未授权。
-
+D2 在评测前冻结不少于 30 对 agent 驱动场景、相同模型/输入和指标预算。D2 已冻结 30 对、五类各 6 对和 80 个负例门禁，报告为 `EVIDENCE_INSUFFICIENT`；D3 因此选择 keep-baseline。E1 已把定时跟进绑定到 coordinator generation，Main 在投递前拒绝 stale scope，pause/cancel/stop 相互独立。E2 已把资源回收收敛为 terminal、browser、managed-port、worktree 与 admission 五类现有 owner，并验证 50 次生命周期循环、keep-on-leave 和 recovery-required。`n
 D3 可完成为 keep-baseline/NO-GO，核心闭环继续使用已实现的手动或原生 compaction。TF-0424 的 shadow/no-go 保留历史身份；最多选择一个初筛候选，若采用必须另写明确的实现范围、适用 backend、回滚和错误 fallback。规划与决策文本不激活新路径或翻冻结默认。
 
 **后续执行与验收**
@@ -151,7 +147,9 @@ D3 可完成为 keep-baseline/NO-GO，核心闭环继续使用已实现的手动
 
 **调研依据**
 
-本计划源于 2026-10-22 的仓库与厂商 session 生命周期调研。该轮 27 个一手页面、22 个文件/124 tests 是历史研究证据，A1 必须用当前 HEAD 重采。可重复代码入口、Task Forest 历史和 product semantics 优先于产品宣传。原始调研与本轮图/提案回执为本地过程归档，默认 clone 无需它们即可读取本合同。
+本计划源于 2026-10-22 的仓库与厂商 session 生命周期调研，并在 2026-10-23 补充 Codex 桌面端与 CLI 三层控制面、会话环境绑定及资源账本对照。该轮 27 个一手页面、22 个文件/124 tests 是历史研究证据，A1 必须用当前 HEAD 重采。可重复代码入口、Task Forest 历史和 product semantics 优先于产品宣传。原始调研与本轮图/提案回执为本地过程归档，默认 clone 无需它们即可读取本合同。
+
+- 受跟踪的精选研究索引：`harness/specs/fixtures/long-session-development/research/source-index.json`；官方页快照和对照报告在本目录，SHA256SUMS 可回读。它们是 A1/C1/C2/C4/E2/F2 的研究输入，不是当前产品验收。
 
 维护入口为本文件与各任务合同；实施时将经验证的规则/场景和精选证据落入同一变更集，不把私人 Task Forest 作为第二 runtime authority。
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CheckCircle2, RotateCcw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -8,12 +8,10 @@ import type { SessionCompactionStatus } from '@shared/host-api/contract';
 import { SettingsButton, SettingsRow, SettingsSection, SettingsSelect, SettingsSwitch } from '@/components/settings/primitives';
 import { hostApi } from '@/lib/host-api';
 import { useChatStore } from '@/stores/chat';
-import { useGatewayStore } from '@/stores/gateway';
 import { useSessionActivityStore } from '@/stores/session-activity';
 import { useSettingsStore, type SessionActivityAutoExpand, type SessionActivityRetentionMinutes } from '@/stores/settings';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { deriveRecoveryRecommendations } from '@/pages/Chat/rollback-plan';
-import { SessionEffectivePolicyPanel } from '@/pages/Chat/SessionEffectivePolicyPanel';
 
 export function RecoverySettingsSection() {
   const { t } = useTranslation(['settings', 'chat']);
@@ -22,8 +20,6 @@ export function RecoverySettingsSection() {
   const sessions = useChatStore((state) => state.sessions);
   const currentSessionKey = useChatStore((state) => state.currentSessionKey);
   const activeWorkspaceId = useWorkspacesStore((state) => state.activeWorkspaceId);
-  const activeWorkspacePermissionMode = useWorkspacesStore((state) => state.activeWorkspace?.permissionMode);
-  const gatewayStatus = useGatewayStore((state) => state.status);
   const settings = useSettingsStore();
   const snapshots = useSessionActivityStore((state) => state.snapshots);
   const loadActivity = useSessionActivityStore((state) => state.load);
@@ -32,31 +28,33 @@ export function RecoverySettingsSection() {
   const [compactionStatus, setCompactionStatus] = useState<SessionCompactionStatus | null>(null);
   const [longTaskStatus, setLongTaskStatus] = useState<LongTaskControlStatus | null>(null);
   const [busyAction, setBusyAction] = useState<string | null>(null);
+  const detailRequestRef = useRef(0);
 
   useEffect(() => {
     if (!selectedSessionKey) return;
+    const requestId = ++detailRequestRef.current;
+    setCompactionStatus(null);
+    setLongTaskStatus(null);
+    setBusyAction(null);
     void loadActivity({ workspaceId: activeWorkspaceId, sessionKey: selectedSessionKey });
     void Promise.allSettled([
       hostApi.sessions.compactionStatus({ sessionKey: selectedSessionKey }),
       hostApi.sessions.longTaskControlStatus({ sessionKey: selectedSessionKey }),
     ]).then(([compaction, longTask]) => {
+      if (requestId !== detailRequestRef.current) return;
       setCompactionStatus(compaction.status === 'fulfilled' && compaction.value.success ? compaction.value : null);
       setLongTaskStatus(longTask.status === 'fulfilled' && longTask.value.success ? longTask.value : null);
     });
-  }, [
-    activeWorkspaceId,
-    activeWorkspacePermissionMode,
-    gatewayStatus.connectedAt,
-    gatewayStatus.gatewayReady,
-    gatewayStatus.pid,
-    gatewayStatus.port,
-    gatewayStatus.state,
-    loadActivity,
-    selectedSessionKey,
-  ]);
+    return () => {
+      if (detailRequestRef.current === requestId) detailRequestRef.current += 1;
+    };
+  }, [activeWorkspaceId, loadActivity, selectedSessionKey]);
 
-  const snapshot = snapshots[selectedSessionKey];
-  const hasPolicyStatus = snapshot?.policy !== undefined || snapshot?.availability.policy !== undefined;
+  const storedSnapshot = snapshots[selectedSessionKey];
+  const snapshot = storedSnapshot?.policy && (
+    storedSnapshot.policy.scope.sessionKey !== selectedSessionKey
+    || (activeWorkspaceId != null && storedSnapshot.policy.scope.workspaceId !== activeWorkspaceId)
+  ) ? undefined : storedSnapshot;
   const recoveryPlan = useMemo(() => deriveRecoveryRecommendations({
     activeRun: snapshot?.session.status === 'running' || snapshot?.session.status === 'waiting_approval',
     gatewayAvailable: true,
@@ -109,6 +107,9 @@ export function RecoverySettingsSection() {
     value: session.key,
     label: session.label || session.displayName || session.derivedTitle || session.key,
   }));
+  const policy = snapshot?.policy;
+  const configuredBackend = policy?.backend.configured.value;
+  const effectiveBackend = policy?.backend.effective;
 
   return (
     <div className="space-y-8" data-testid="recovery-settings-section">
@@ -165,16 +166,57 @@ export function RecoverySettingsSection() {
         />
       </SettingsSection>
 
+      <SettingsSection title={t('chat:sessionActivity.policy.boundaries.title')}>
+        <SettingsRow
+          testId="settings-recovery-boundary-abort"
+          title={t('chat:sessionActivity.policy.boundaries.abort.title')}
+          description={t('chat:sessionActivity.policy.boundaries.abort.description')}
+        />
+        <SettingsRow
+          testId="settings-recovery-boundary-stop"
+          title={t('chat:sessionActivity.policy.boundaries.stop.title')}
+          description={t('chat:sessionActivity.policy.boundaries.stop.description')}
+        />
+        <SettingsRow
+          testId="settings-recovery-boundary-activity"
+          title={t('chat:sessionActivity.policy.boundaries.activity.title')}
+          description={t('chat:sessionActivity.policy.boundaries.activity.description', {
+            retention: t(`chat:sessionActivity.policy.retention.${settings.sessionActivityRetentionMinutes}`),
+          })}
+        />
+        <SettingsRow
+          testId="settings-recovery-boundary-fork"
+          title={t('chat:sessionActivity.policy.boundaries.fork.title')}
+          description={t('chat:sessionActivity.policy.boundaries.fork.description')}
+        />
+      </SettingsSection>
+
       <SettingsSection title={t('settings:recovery.currentTitle')}>
         <SettingsRow
           title={t('settings:recovery.session.title')}
           description={t('settings:recovery.session.description')}
           control={<SettingsSelect ariaLabel={t('settings:recovery.session.title')} value={selectedSessionKey} onChange={setSelectedSessionKey} testId="settings-recovery-session" options={sessionOptions} />}
         />
-        {hasPolicyStatus ? (
-          <div className="px-4 pb-3">
-            <SessionEffectivePolicyPanel policy={snapshot?.policy ?? null} />
-          </div>
+        {policy ? (
+          <>
+            <SettingsRow
+              testId="settings-recovery-policy-configured"
+              title={t('chat:sessionActivity.policy.backend')}
+              description={[
+                policy.backend.configured.source,
+                t(`chat:sessionActivity.policy.status.${policy.backend.configured.status}`),
+              ].join(' · ')}
+              control={<span className="text-xs text-foreground/70">{[configuredBackend?.runtime, configuredBackend?.provider, configuredBackend?.model].filter(Boolean).join(' · ')}</span>}
+            />
+            <SettingsRow
+              testId="settings-recovery-policy-effective"
+              title={t('chat:sessionActivity.policy.effectiveBackend')}
+              description={effectiveBackend?.reason ?? t('chat:sessionActivity.policy.currentRunObservation')}
+              control={<span className="text-xs text-foreground/70">{effectiveBackend?.value
+                ? [effectiveBackend.value.runtime, effectiveBackend.value.provider, effectiveBackend.value.model].filter(Boolean).join(' · ')
+                : t(`chat:sessionActivity.policy.status.${effectiveBackend?.status ?? 'unverified'}`)}</span>}
+            />
+          </>
         ) : null}
         {recoveryPlan.available ? recoveryPlan.actions.map((action) => (
           <SettingsRow

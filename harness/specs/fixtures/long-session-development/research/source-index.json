@@ -1,0 +1,33 @@
+{
+  "schema": "clawx.long-session-research-index/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "captured_at": "2026-10-23",
+  "sources": {
+    "codex_worktrees": "https://learn.chatgpt.com/docs/environments/git-worktrees",
+    "codex_developer_commands": "https://learn.chatgpt.com/docs/developer-commands",
+    "codex_app_server": "https://learn.chatgpt.com/docs/app-server",
+    "codex_automations": "https://learn.chatgpt.com/docs/automations",
+    "codex_subagents": "https://learn.chatgpt.com/docs/agent-configuration/subagents",
+    "codex_local_environment": "https://learn.chatgpt.com/docs/environments/local-environment",
+    "codex_slash_commands": "https://learn.chatgpt.com/docs/reference/slash-commands"
+  },
+  "codegraph": {
+    "command": "C:\\\\Users\\\\27933\\\\AppData\\\\Roaming\\\\npm\\\\codegraph.cmd",
+    "version": "1.6.2",
+    "files": 13358,
+    "nodes": 312373,
+    "edges": 865304
+  },
+  "local_anchors": [
+    "electron/services/sessions-api.ts",
+    "electron/services/resource-tracker.ts",
+    "openclaw_runtime/src/sessions/session-admission-registry.ts",
+    "openclaw_runtime/src/gateway/session-drain-service.ts",
+    "openclaw_runtime/src/agents/worktree-service.ts",
+    "openclaw_runtime/src/agents/tools/sessions-spawn-tool.ts",
+    "shared/host-api/contract.ts",
+    "src/components/chat/ResourceChip.tsx"
+  ],
+  "scope": "This archive is research input for A1/C1/C2/C4/E2/F2, not current runtime acceptance."
+}

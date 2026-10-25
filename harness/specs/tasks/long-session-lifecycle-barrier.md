@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: completed
+lifecycleStatus: active
 id: long-session-lifecycle-barrier
 title: 让归档、还原与删除共享安全生命周期屏障
 program: long-session-development-20261022
@@ -11,7 +11,7 @@ intent: 补齐归档直接改文件与 runtime 删除保护链不对称的问题
 contractIndex: harness/specs/tasks/long-session-development-plan.md
 dependsOnTasks:
   - A1
-diffBase: 3b6a54598
+diffBase: f95530a0b
 touchedAreas:
   - harness/specs/tasks/long-session-lifecycle-barrier.md
   - harness/specs/tasks/long-session-development-plan.md
@@ -21,32 +21,40 @@ touchedAreas:
   - openclaw_runtime/packages/gateway-protocol/src/schema/protocol-schemas.ts
   - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
   - openclaw_runtime/packages/gateway-protocol/src/schema/types.ts
+  - electron/gateway/protocol.ts
   - electron/gateway/manager.ts
   - electron/services/sessions-api.ts
   - electron/services/session-delete-gate.ts
   - electron/services/session-cascade-delete.ts
   - electron/utils/session-files.ts
   - src/stores/chat.ts
+  - openclaw_runtime/src/gateway/session-archive-index.ts
   - openclaw_runtime/src/gateway/session-archive-service.ts
   - openclaw_runtime/src/gateway/session-archive-service.test.ts
   - openclaw_runtime/src/gateway/session-mutation-operation-journal.ts
   - openclaw_runtime/src/gateway/session-mutation-operation-journal.test.ts
   - openclaw_runtime/src/gateway/session-delete-operation-journal.ts
+  - openclaw_runtime/src/gateway/session-lifecycle-state.ts
   - openclaw_runtime/src/gateway/session-reset-service.ts
   - openclaw_runtime/src/gateway/methods/core-descriptors.ts
   - openclaw_runtime/src/gateway/server-methods.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.read.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts
+  - openclaw_runtime/src/gateway/sessions-lifecycle-wire.test.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts
+  - openclaw_runtime/src/plugin-sdk/file-lock.ts
   - openclaw_runtime/src/sessions/session-admission-registry.ts
   - shared/host-api/contract.ts
   - src/lib/host-api.ts
+  - tests/unit/session-lifecycle-generation-barrier.test.ts
   - tests/unit/long-session-lifecycle-barrier.test.ts
   - tests/unit/r0-2-sessions-delete-fail.test.ts
+  - tests/unit/session-files.test.ts
   - tests/unit/session-delete-gate.test.ts
   - openclaw_runtime/src/gateway/session-ecosystem-lifecycle-reachability.test.ts
+  - openclaw_runtime/src/gateway/session-reset-service.subagent-stop.test.ts
   - openclaw_runtime/src/gateway/session-reset-service.stop.test.ts
-  - tests/e2e/long-session-lifecycle-faults.spec.ts
+  - tests/unit/gateway-manager-diagnostics.test.ts
   - tests/e2e/long-session-lifecycle-faults.spec.ts
   - tests/e2e/sidebar-session-folders-archive.spec.ts
   - tests/e2e/chat-slash-session-lifecycle.spec.ts
@@ -68,9 +76,9 @@ expectedUserBehavior:
   - 补齐归档直接改文件与 runtime 删除保护链不对称的问题，使运行中、崩溃或迟到事件不会假装成功。
   - 创建本合同不代表功能已实现；结果、配置、授权和任务完成仍归现有 owner，未知状态如实保留。
 requiredTests:
-  - pnpm exec vitest run tests/unit/long-session-lifecycle-barrier.test.ts tests/unit/session-delete-gate.test.ts tests/unit/session-files.test.ts tests/unit/session-cascade-delete.test.ts tests/unit/terminal-session-manager.test.ts --maxWorkers=1
-  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-core.config.ts src/gateway/session-ecosystem-lifecycle-reachability.test.ts src/gateway/session-archive-service.test.ts src/gateway/session-mutation-operation-journal.test.ts src/gateway/session-delete-operation-journal.test.ts src/gateway/session-reset-service.stop.test.ts src/gateway/session-reset-service.subagent-stop.test.ts --maxWorkers=1
-  - pnpm exec vitest run tests/unit/long-session-lifecycle-barrier.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/long-session-lifecycle-barrier.test.ts tests/unit/session-lifecycle-generation-barrier.test.ts tests/unit/session-delete-gate.test.ts tests/unit/session-files.test.ts tests/unit/session-cascade-delete.test.ts tests/unit/terminal-session-manager.test.ts --maxWorkers=1
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-core.config.ts src/gateway/session-ecosystem-lifecycle-reachability.test.ts src/gateway/sessions-lifecycle-wire.test.ts src/gateway/session-archive-service.test.ts src/gateway/session-mutation-operation-journal.test.ts src/gateway/session-delete-operation-journal.test.ts src/gateway/session-reset-service.stop.test.ts src/gateway/session-reset-service.subagent-stop.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/long-session-lifecycle-barrier.test.ts tests/unit/session-lifecycle-generation-barrier.test.ts --maxWorkers=1
   - pnpm run build:vite
   - pnpm run test:e2e:run tests/e2e/sidebar-session-folders-archive.spec.ts tests/e2e/chat-slash-session-lifecycle.spec.ts tests/e2e/long-session-lifecycle-faults.spec.ts
   - pnpm run typecheck
@@ -81,7 +89,9 @@ requiredTests:
   - git diff --check
 plannedTests:
   - tests/unit/long-session-lifecycle-barrier.test.ts
+  - tests/unit/session-lifecycle-generation-barrier.test.ts
   - openclaw_runtime/src/gateway/session-archive-service.test.ts
+  - openclaw_runtime/src/gateway/sessions-lifecycle-wire.test.ts
   - openclaw_runtime/src/gateway/session-mutation-operation-journal.test.ts
   - tests/e2e/long-session-lifecycle-faults.spec.ts
 acceptance:
@@ -109,7 +119,6 @@ docs:
 - archive 先写 archive index、再移动 transcript、最后事务移除 store row 并标记 tombstone；restore 插入新的物理 sessionId，再把 archived transcript 移回并清理索引。
 - Gateway sessions.list 过滤仍由 archive index 标记的 key，覆盖 crash 后 store/file 尚未完全收口的窗口。
 - 真实 Electron/Host/Gateway E2E 证明 archive 从 live list 消失、archive index 可读、restore 使用新 generation；runtime fault/retry 由 gateway-core 单测覆盖。
-- Clean candidate `5daef609dccffc96c62af8c27854934ba4381bb3` / tree `b5f7699569f21599b8071240095102735956ce8d`：13 commands、81/81 tests、build runtime/vite、typecheck、contract、comms、harness 与 diff-check 全部 exit 0；回执见 `harness/specs/fixtures/long-session-development/a2/`。
 
 **前置与读入**
 
@@ -144,7 +153,7 @@ docs:
 
 - `pnpm exec vitest run tests/unit/session-delete-gate.test.ts tests/unit/session-files.test.ts tests/unit/session-cascade-delete.test.ts tests/unit/terminal-session-manager.test.ts --maxWorkers=1`
 - `pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-core.config.ts src/gateway/session-delete-operation-journal.test.ts src/gateway/session-reset-service.stop.test.ts src/gateway/session-reset-service.subagent-stop.test.ts --maxWorkers=1`
-- `pnpm exec vitest run tests/unit/long-session-lifecycle-barrier.test.ts --maxWorkers=1`
+- `pnpm exec vitest run tests/unit/long-session-lifecycle-barrier.test.ts tests/unit/session-lifecycle-generation-barrier.test.ts --maxWorkers=1`
 - `pnpm run build:vite`
 - `pnpm run test:e2e:run tests/e2e/sidebar-session-folders-archive.spec.ts tests/e2e/chat-slash-session-lifecycle.spec.ts tests/e2e/long-session-lifecycle-faults.spec.ts`
 - `pnpm run typecheck`

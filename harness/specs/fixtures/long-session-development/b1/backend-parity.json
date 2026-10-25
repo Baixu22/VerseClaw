@@ -1,81 +1,109 @@
 {
-  "schema": "clawx.long-session.b1-backend-parity/v1",
+  "schema": "clawx.long-session.backend-parity/v1",
+  "generatedAt": "2026-10-23T16:59:58.819Z",
   "driven_by": "agent",
-  "actor": "codex-long-session-b1",
-  "task": "TF-0550",
-  "fixture": {
-    "workspaceId": "workspace:long-session-b1",
-    "sessionKey": "agent:main:long-session-b1",
-    "runtimeGeneration": "gateway-b1",
-    "observedAt": "2026-10-23T02:00:00.000Z"
-  },
-  "rows": [
+  "actor": "codex-long-session-r2",
+  "backends": [
     {
-      "effectiveBackend": {
-        "id": "codex-app-server",
-        "kind": "codex-app-server",
-        "modelProvider": "openai",
-        "model": "gpt-5.4",
-        "nativeThreadId": "thread-b1",
-        "nativeSessionId": null
-      },
-      "configuredBackend": "codex",
-      "bindingState": "effective",
-      "compatibility": {
-        "nativeCompactionOwner": "backend",
-        "parameters": [
-          {
-            "path": "agents.defaults.compaction",
-            "state": "ignored",
-            "reason": "Codex app-server owns native compaction; OpenClaw compaction model/provider overrides are not applied."
-          }
-        ]
-      }
+      "backend": "codex",
+      "kind": "native",
+      "ownsNativeCompaction": true,
+      "rows": [
+        {
+          "parameter": "automatic-compaction",
+          "status": "ignored",
+          "reason": "native backend owns compaction"
+        },
+        {
+          "parameter": "manual-compaction",
+          "status": "effective",
+          "reason": "routes through native backend"
+        },
+        {
+          "parameter": "compaction.provider",
+          "status": "ignored",
+          "reason": "native backend owns provider"
+        },
+        {
+          "parameter": "compaction.model",
+          "status": "ignored",
+          "reason": "native backend owns model"
+        },
+        {
+          "parameter": "compaction.reserveTokens",
+          "status": "unsupported",
+          "reason": "not consumed by native compaction"
+        }
+      ]
     },
     {
-      "effectiveBackend": {
-        "id": "claude-cli",
-        "kind": "claude-cli",
-        "modelProvider": "anthropic",
-        "model": "claude-sonnet-4-5",
-        "nativeThreadId": null,
-        "nativeSessionId": "claude-session-b1"
-      },
-      "configuredBackend": "claude-cli",
-      "bindingState": "effective",
-      "compatibility": {
-        "nativeCompactionOwner": "backend",
-        "parameters": [
-          {
-            "path": "agents.defaults.compaction",
-            "state": "ignored",
-            "reason": "The CLI backend owns native compaction; OpenClaw compaction overrides are not applied."
-          }
-        ]
-      }
+      "backend": "claude-cli",
+      "kind": "cli",
+      "ownsNativeCompaction": true,
+      "rows": [
+        {
+          "parameter": "automatic-compaction",
+          "status": "ignored",
+          "reason": "Claude owns native compaction"
+        },
+        {
+          "parameter": "manual-compaction",
+          "status": "effective",
+          "reason": "CLI backend executes manual compaction"
+        },
+        {
+          "parameter": "compaction.provider",
+          "status": "ignored",
+          "reason": "CLI provider owns provider"
+        },
+        {
+          "parameter": "compaction.model",
+          "status": "ignored",
+          "reason": "CLI provider owns model"
+        },
+        {
+          "parameter": "compaction.reserveTokens",
+          "status": "unsupported",
+          "reason": "not consumed by native compaction"
+        }
+      ]
     },
     {
-      "effectiveBackend": {
-        "id": "openclaw-embedded",
-        "kind": "openclaw-embedded",
-        "modelProvider": "openai",
-        "model": "gpt-5.4",
-        "nativeThreadId": null,
-        "nativeSessionId": null
-      },
-      "configuredBackend": "openclaw",
-      "bindingState": "effective",
-      "compatibility": {
-        "nativeCompactionOwner": "openclaw",
-        "parameters": [
-          {
-            "path": "agents.defaults.compaction",
-            "state": "effective",
-            "reason": null
-          }
-        ]
-      }
+      "backend": "openclaw",
+      "kind": "openclaw",
+      "ownsNativeCompaction": false,
+      "rows": [
+        {
+          "parameter": "automatic-compaction",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "parameter": "manual-compaction",
+          "status": "effective",
+          "reason": null
+        },
+        {
+          "parameter": "compaction.provider",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "parameter": "compaction.model",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "parameter": "compaction.reserveTokens",
+          "status": "configured",
+          "reason": null
+        }
+      ]
     }
   ],
-  "invariant": "Native backend ownership and ignored OpenClaw parameters are reported without promoting configured values."
+  "sourceContracts": [
+    "openclaw_runtime/extensions/anthropic/cli-backend.ts",
+    "openclaw_runtime/extensions/codex/src/app-server/compact.ts",
+    "openclaw_runtime/src/agents/cli-backends.ts"
+  ]
 }

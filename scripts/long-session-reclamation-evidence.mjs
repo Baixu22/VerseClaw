@@ -2,27 +2,21 @@
 /**
  * E2 / TF-0560 evidence driver.
  *
- * Re-derives the owner inventory, the action contract matrix (ui-unload /
- * run-cancel / archive / delete / workspace-switch / app-quit), a 50-cycle
- * reclamation simulation over the shipped coordinator, and the
- * recovery_required fixture. It also embeds the raw gate receipt.
- *
- * Usage:
- *   node --experimental-strip-types scripts/long-session-reclamation-evidence.mjs [--gates <path>]
- *   ... --check
+ * Runs the real Main owner tests plus the runtime supervisor/worktree/admission
+ * cycle, then writes a receipt derived from those command results. A missing
+ * audit line, failed command or non-zero residual never produces a PASS.
  */
-import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import {
   RECLAIM_ACTION_CONTRACTS,
   RECLAIM_OWNERS,
   buildReclaimReceipt,
-  reclaimLongSessionResources,
 } from '../shared/long-session-resource-reclamation.ts';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -33,12 +27,34 @@ const CYCLES_FILE = 'reclamation-cycle-results.json';
 const RECOVERY_FILE = 'resource-recovery-required.json';
 const RECEIPT_FILE = 'verification-receipt.json';
 const README_FILE = 'README.md';
+const E2E_RECEIPT_FILE = 'real-owner-reclamation-receipt.json';
+const SUMS_FILE = 'SHA256SUMS';
 const SCOPE = {
-  workspaceId: 'workspace-a',
-  sessionKey: 'agent:architect:e2-long-session',
-  expectedSessionId: 'session-generation-1',
-  rootPath: 'D:/workspace-a',
+  workspaceId: 'workspace-e2',
+  sessionKey: 'agent:agent-e2:long-session',
+  expectedSessionId: 'generation-e2',
+  rootPath: 'D:/workspace-e2',
 };
+
+const OWNER_UNIT_TESTS = [
+  'tests/unit/terminal-session-manager.test.ts',
+  'tests/unit/session-cascade-delete.test.ts',
+  'tests/unit/session-delete-gate.test.ts',
+  'tests/unit/session-activity-background-read.test.ts',
+  'tests/unit/versebrowser-host-adapter.test.ts',
+  'tests/unit/long-session-resource-reclamation.test.ts',
+  'tests/unit/long-session-owner-reclamation-adapter.test.ts',
+  'tests/unit/long-session-runtime-resource-inventory.test.ts',
+  'tests/unit/orchestration-worktree-merge.test.ts',
+  'tests/unit/workspaces-api.test.ts',
+  'tests/unit/long-session-effective-policy.test.ts',
+];
+
+const RUNTIME_CYCLE_TESTS = [
+  'src/sessions/session-admission-registry.test.ts',
+  'src/sessions/session-admission-registry-reclamation.test.ts',
+  'src/gateway/session-ecosystem-reclamation-cycle.test.ts',
+];
 
 function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -52,12 +68,14 @@ function hashText(value) {
 }
 
 function hashFile(file) {
-  return existsSync(file) ? createHash('sha256').update(readFileSync(file)).digest('hex') : null;
+  return existsSync(file) ? createHash('sha256').update(readFileSync(file, 'utf8')).digest('hex') : null;
 }
 
 function git(args) {
-  const result = spawnSync('git.exe', args, { cwd: ROOT, encoding: 'utf8', windowsHide: true });
-  return result.status === 0 ? result.stdout.trim() : '';
+  const executable = process.platform === 'win32' ? 'git.exe' : 'git';
+  const result = spawnSync(executable, args, { cwd: ROOT, encoding: 'utf8', windowsHide: true });
+  if (result.status !== 0) throw new Error(`git ${args.join(' ')} failed: ${result.stderr || result.stdout}`);
+  return result.stdout.trim();
 }
 
 function candidateIdentity() {
@@ -66,225 +84,149 @@ function candidateIdentity() {
     commit: git(['rev-parse', '--verify', 'HEAD']),
     tree: git(['rev-parse', '--verify', 'HEAD^{tree}']),
     worktree: ROOT.replaceAll('\\', '/'),
+    status: git(['status', '--short']).split(/\r?\n/).filter(Boolean),
   };
 }
 
-function readGateReceipt() {
-  const gatePath = argValue('--gates');
-  if (!gatePath) return { provided: false, gates: [], note: 'no gate receipt supplied' };
-  const file = resolve(gatePath);
-  if (!existsSync(file)) return { provided: false, gates: [], note: 'gate receipt not found at ' + file };
-  try {
-    const parsed = JSON.parse(readFileSync(file, 'utf8'));
-    const gates = Array.isArray(parsed.gates) ? parsed.gates : [];
-    return { provided: gates.length > 0, source: file.replaceAll('\\', '/'), allPassed: gates.every((gate) => gate.exitCode === 0), gates };
-  } catch (error) {
-    return { provided: false, gates: [], note: 'unreadable: ' + String(error) };
+function runCommand(name, command, args, options = {}) {
+  const startedAt = Date.now();
+  const executable = process.platform === 'win32'
+    ? (process.env.ComSpec ?? 'cmd.exe')
+    : command;
+  const commandArgs = process.platform === 'win32'
+    ? ['/d', '/c', command, ...args]
+    : args;
+  const result = spawnSync(executable, commandArgs, {
+    cwd: options.cwd ?? ROOT,
+    env: { ...process.env, TEMP: 'D:\\tmp', TMP: 'D:\\tmp' },
+    encoding: 'utf8',
+    windowsHide: true,
+    timeout: options.timeoutMs ?? 300_000,
+    maxBuffer: 16 * 1024 * 1024,
+    shell: false,
+  });
+  const gate = {
+    name,
+    command: [command, ...args].join(' '),
+    cwd: relative(ROOT, options.cwd ?? ROOT).replaceAll('\\', '/') || '.',
+    exitCode: result.status,
+    signal: result.signal ?? null,
+    durationMs: Date.now() - startedAt,
+    timedOut: result.error?.code === 'ETIMEDOUT' || Boolean(result.signal),
+    stdout: result.stdout ?? '',
+    stderr: result.stderr ?? '',
+    stdoutSha256: hashText(result.stdout ?? ''),
+    stderrSha256: hashText(result.stderr ?? ''),
+  };
+  const exceptionPattern = /^\s*(?:(?:TypeError|ReferenceError|SyntaxError):|AssertionError:)/mu;
+  if (gate.exitCode === 0 && exceptionPattern.test(gate.stderr ?? '')) {
+    throw new Error(`${name} exited 0 but stderr contains an assertion/runtime exception: ${gate.stderr}`);
   }
-}
-
-/**
- * A 50-cycle run over the shipped coordinator. Each cycle creates one terminal
- * with keep_on_leave, one without, one browser, one managed port, one worktree
- * and one admission permit; then archives and deletes. Kept terminals survive
- * on purpose and are reported separately.
- */
-async function runCycles(cycles = 50) {
-  const liveTerminals = new Map();
-  const liveBrowsers = new Set();
-  const livePorts = new Set();
-  const liveWorktrees = new Set();
-  let activePermits = 0;
-  const owners = {
-    terminals: {
-      reclaim: (params) => {
-        let attempted = 0;
-        let reclaimed = 0;
-        let kept = 0;
-        for (const [id, terminal] of Array.from(liveTerminals)) {
-          attempted += 1;
-          if (terminal.keepOnLeave) {
-            kept += 1;
-            continue;
-          }
-          liveTerminals.delete(id);
-          reclaimed += 1;
-        }
-        return { attempted, reclaimed, kept };
-      },
-      count: () => liveTerminals.size,
-    },
-    browsers: {
-      reclaim: () => {
-        const attempted = liveBrowsers.size;
-        liveBrowsers.clear();
-        return { attempted, reclaimed: attempted };
-      },
-    },
-    backgroundPorts: {
-      reclaim: async () => {
-        const attempted = livePorts.size;
-        livePorts.clear();
-        return { attempted, reclaimed: attempted, failed: 0 };
-      },
-    },
-    worktrees: {
-      reclaim: async () => {
-        const attempted = liveWorktrees.size;
-        liveWorktrees.clear();
-        return { attempted, reclaimed: attempted, failed: 0, kept: 0 };
-      },
-    },
-    admission: {
-      release: () => {
-        const released = activePermits;
-        activePermits = 0;
-        return released;
-      },
-    },
-  };
-
-  const results = [];
-  for (let cycle = 1; cycle <= cycles; cycle += 1) {
-    liveTerminals.set(`terminal-${cycle}-keep`, { keepOnLeave: true });
-    liveTerminals.set(`terminal-${cycle}-managed`, { keepOnLeave: false });
-    liveBrowsers.add(`browser-${cycle}`);
-    livePorts.add(`port-${cycle}`);
-    liveWorktrees.add(`worktree-${cycle}`);
-    activePermits = 1;
-
-    const archive = await reclaimLongSessionResources({
-      action: 'session-archive',
-      scope: SCOPE,
-      owners,
-      generatedAt: `2026-10-24T06:${String(cycle).padStart(2, '0')}:00.000Z`,
-    });
-    const deletion = await reclaimLongSessionResources({
-      action: 'session-delete',
-      scope: SCOPE,
-      owners,
-      generatedAt: `2026-10-24T06:${String(cycle).padStart(2, '0')}:30.000Z`,
-    });
-    results.push({
-      cycle,
-      archiveRecoveryRequired: archive.recoveryRequired,
-      archivedKeptOnLeave: archive.keptOnLeave,
-      deleteRecoveryRequired: deletion.recoveryRequired,
-      keptOnLeave: deletion.keptOnLeave,
-      laneResidue: deletion.activeResidue,
-      terminalKept: deletion.owners.find((owner) => owner.kind === 'terminal')?.kept ?? 0,
-      ownerOutcomes: deletion.owners.map((owner) => `${owner.kind}:${owner.outcome}`),
-      liveAfter: {
-        terminals: liveTerminals.size,
-        browsers: liveBrowsers.size,
-        ports: livePorts.size,
-        worktrees: liveWorktrees.size,
-        admissionPermits: activePermits,
-      },
-    });
+  if (gate.exitCode !== 0) {
+    throw new Error(`${name} failed (${gate.exitCode ?? gate.signal}): ${gate.stderr || gate.stdout}`);
   }
-
-  const keepResidue = liveTerminals.size;
-  const managedResidue =
-    liveBrowsers.size + livePorts.size + liveWorktrees.size + activePermits +
-    [...liveTerminals.values()].filter((terminal) => !terminal.keepOnLeave).length;
-  return {
-    cycles,
-    results,
-    final: {
-      keepOnLeaveTerminals: keepResidue,
-      managedResidue,
-      zeroLaneResidue: managedResidue === 0,
-      recoveryRequired: results.some((entry) => entry.archiveRecoveryRequired || entry.deleteRecoveryRequired),
-    },
-  };
+  return gate;
 }
 
-function buildRecoveryFixture() {
+function parseAuditLine(stdout, marker) {
+  const line = stdout.split(/\r?\n/).find((entry) => entry.includes(marker));
+  if (!line) throw new Error(`missing ${marker} audit line`);
+  const values = Object.fromEntries(
+    [...line.matchAll(/([a-zA-Z][a-zA-Z0-9]*)=(-?\d+)/g)].map((match) => [match[1], Number(match[2])]),
+  );
+  return { line: line.trim(), values };
+}
+
+function parseJsonAuditLine(stdout, marker) {
+  const line = stdout.split(/\r?\n/).find((entry) => entry.includes(marker));
+  if (!line) throw new Error(`missing ${marker} audit line`);
+  return JSON.parse(line.slice(line.indexOf(marker) + marker.length).trim());
+}
+
+function writeJson(file, value) {
+  writeFileSync(file, JSON.stringify(value, null, 2) + '\n', 'utf8');
+}
+
+function buildRecoveryFixture(candidate) {
+  const cases = [
+    {
+      id: 'browser-close-failed',
+      owner: 'browser',
+      receipt: buildReclaimReceipt({
+        action: 'session-delete',
+        scope: SCOPE,
+        generatedAt: '2026-10-25T00:00:00.000Z',
+        owners: [{
+          kind: 'browser',
+          owner: 'HostAgentBrowserService',
+          outcome: 'failed',
+          authority: 'managed',
+          generation: SCOPE.expectedSessionId,
+          attempted: 1,
+          reclaimed: 0,
+          kept: 0,
+          detail: 'close threw',
+        }],
+      }),
+    },
+    {
+      id: 'managed-port-still-reachable',
+      owner: 'background-port',
+      receipt: buildReclaimReceipt({
+        action: 'session-delete',
+        scope: SCOPE,
+        generatedAt: '2026-10-25T00:00:00.000Z',
+        owners: [{
+          kind: 'background-port',
+          owner: 'ResourceTracker',
+          outcome: 'failed',
+          authority: 'managed',
+          generation: SCOPE.expectedSessionId,
+          attempted: 1,
+          reclaimed: 0,
+          kept: 0,
+          detail: 'port still reachable',
+        }],
+      }),
+    },
+    {
+      id: 'worktree-owner-unknown',
+      owner: 'worktree',
+      receipt: buildReclaimReceipt({
+        action: 'session-delete',
+        scope: SCOPE,
+        generatedAt: '2026-10-25T00:00:00.000Z',
+        owners: [{
+          kind: 'worktree',
+          owner: 'WorktreeService',
+          outcome: 'unknown',
+          authority: 'unknown',
+          generation: SCOPE.expectedSessionId,
+          attempted: 1,
+          reclaimed: 0,
+          kept: 0,
+          detail: 'ownership unresolved; directory retained',
+        }],
+      }),
+    },
+  ];
+  if (cases.some((entry) => entry.receipt.recoveryRequired !== true || !entry.receipt.recoveryId)) {
+    throw new Error('recovery fixture did not fail closed');
+  }
   return {
     schema: 'clawx.long-session.e2-recovery-required/v1',
     drivenBy: 'agent',
     actor: ACTOR,
+    candidate,
     generatedAt: new Date().toISOString(),
-    cases: [
-      {
-        id: 'browser-close-throws',
-        owner: 'browser',
-        injected: 'HostAgentBrowserService.close() threw for the owned session',
-        receipt: buildReclaimReceipt({
-          action: 'session-delete',
-          scope: SCOPE,
-          generatedAt: '2026-10-24T06:00:00.000Z',
-          owners: [
-            { kind: 'browser', owner: 'HostAgentBrowserService', outcome: 'failed', attempted: 1, reclaimed: 0, kept: 0, detail: 'close threw' },
-          ],
-        }),
-        expectation: 'recovery_required=true with a retry identity; no agent-wide kill, no user-directory delete',
-      },
-      {
-        id: 'managed-port-still-reachable',
-        owner: 'background-port',
-        injected: 'process exited but TCP port remained reachable',
-        receipt: buildReclaimReceipt({
-          action: 'session-delete',
-          scope: SCOPE,
-          generatedAt: '2026-10-24T06:00:00.000Z',
-          owners: [
-            { kind: 'background-port', owner: 'ResourceTracker', outcome: 'failed', attempted: 1, reclaimed: 0, kept: 0, detail: 'port still reachable' },
-          ],
-        }),
-        expectation: 'receipt keeps the residue and offers the same recoveryId for a retry',
-      },
-      {
-        id: 'worktree-unresolvable',
-        owner: 'worktree',
-        injected: 'worktree id cannot be proven to belong to this session',
-        receipt: buildReclaimReceipt({
-          action: 'workspace-delete',
-          scope: SCOPE,
-          generatedAt: '2026-10-24T06:00:00.000Z',
-          owners: [
-            { kind: 'worktree', owner: 'WorktreeService', outcome: 'unknown', attempted: 1, reclaimed: 0, kept: 0, detail: 'ownership unresolved' },
-          ],
-        }),
-        expectation: 'never guessed and never deleted; unknown owner is surfaced for explicit review',
-      },
-    ],
+    cases,
     guarantees: {
       agentWideKill: false,
       deletesOtherWorktrees: false,
       deletesUserDirectories: false,
-      keepsRetryIdentity: true,
+      preservesRetryIdentity: true,
     },
   };
-}
-
-function buildArtifacts() {
-  const candidate = candidateIdentity();
-  const gateReceipt = readGateReceipt();
-  const inventory = {
-    schema: 'clawx.long-session.e2-owner-inventory/v1',
-    drivenBy: 'agent',
-    actor: ACTOR,
-    taskForestNode: 'TF-0560',
-    taskKey: 'E2',
-    generatedAt: new Date().toISOString(),
-    candidate,
-    contract: 'harness/specs/tasks/long-session-resource-reclamation.md',
-    owners: RECLAIM_OWNERS,
-    universalSessionResourcesTable: false,
-    actionContracts: RECLAIM_ACTION_CONTRACTS,
-    boundary: {
-      uiUnloadKeepsHandles: true,
-      runCancelReleasesAdmissionOnly: true,
-      archiveInvalidatesBindingWithoutKillingResources: true,
-      deleteReclaimsOwnedResources: true,
-      worktreesPreservedOnQuitAndWorkspaceDelete: true,
-      keepOnLeaveCountedSeparately: true,
-    },
-    gateReceipt,
-  };
-  return { candidate, gateReceipt, inventory };
 }
 
 function scanSecrets(files) {
@@ -296,134 +238,248 @@ function scanSecrets(files) {
   return files.filter((file) => patterns.some((pattern) => pattern.test(readFileSync(file, 'utf8'))));
 }
 
-function writeJson(file, value) {
-  writeFileSync(file, JSON.stringify(value, null, 2) + '\n', 'utf8');
-}
-
-function stableProjection(value) {
-  return {
-    owners: value.owners.map((owner) => owner.kind + ':' + owner.owner + ':' + owner.supportsKeepOnLeave),
-    actions: value.actionContracts.map((entry) => entry.action + ':' + entry.closesTerminals + ':' + entry.cleansWorktrees),
-  };
-}
-
 async function main() {
   const checkOnly = process.argv.includes('--check');
+  const allowDirty = process.argv.includes('--allow-dirty');
   const outDir = resolve(ROOT, argValue('--out', DEFAULT_OUT));
-  const { candidate, gateReceipt, inventory } = buildArtifacts();
+  const expectedFiles = [INVENTORY_FILE, CYCLES_FILE, E2E_RECEIPT_FILE, RECOVERY_FILE, RECEIPT_FILE, README_FILE, SUMS_FILE];
 
   if (checkOnly) {
     const failures = [];
-    const file = join(outDir, INVENTORY_FILE);
-    if (!existsSync(file)) failures.push(INVENTORY_FILE + ': missing');
-    else if (JSON.stringify(stableProjection(JSON.parse(readFileSync(file, 'utf8')))) !== JSON.stringify(stableProjection(inventory))) failures.push(INVENTORY_FILE + ': projection drifted');
-    const cyclesFile = join(outDir, CYCLES_FILE);
-    if (!existsSync(cyclesFile)) failures.push(CYCLES_FILE + ': missing');
-    else {
-      const committed = JSON.parse(readFileSync(cyclesFile, 'utf8'));
-      if (committed.cycles !== 50 || committed.final.zeroLaneResidue !== true) failures.push(CYCLES_FILE + ': 50-cycle reclamation evidence drifted');
+    for (const name of expectedFiles) {
+      if (!existsSync(join(outDir, name))) failures.push(`${name}: missing`);
     }
-    const sumsFile = join(outDir, 'SHA256SUMS');
-    if (existsSync(sumsFile)) {
-      for (const line of readFileSync(sumsFile, 'utf8').split(/\r?\n/).filter(Boolean)) {
-        const parts = line.trim().split(/\s+/);
-        const target = join(outDir, parts[1]);
-        if (!existsSync(target)) failures.push('SHA256SUMS: ' + parts[1] + ' missing');
-        else if (hashFile(target) !== parts[0]) failures.push('SHA256SUMS: ' + parts[1] + ' digest drift');
+    if (failures.length === 0) {
+      const sums = readFileSync(join(outDir, SUMS_FILE), 'utf8').split(/\r?\n/).filter(Boolean);
+      for (const line of sums) {
+        const [expected, name] = line.trim().split(/\s+/);
+        const target = join(outDir, name);
+        if (!existsSync(target)) failures.push(`${name}: missing from sums`);
+        else if (hashFile(target) !== expected) failures.push(`${name}: digest drift`);
       }
-    } else failures.push('SHA256SUMS: missing');
+      const receipt = JSON.parse(readFileSync(join(outDir, RECEIPT_FILE), 'utf8'));
+      const cycles = JSON.parse(readFileSync(join(outDir, CYCLES_FILE), 'utf8'));
+      const recovery = JSON.parse(readFileSync(join(outDir, RECOVERY_FILE), 'utf8'));
+      const realE2E = JSON.parse(readFileSync(join(outDir, E2E_RECEIPT_FILE), 'utf8'));
+      const current = candidateIdentity();
+      const sourceCommit = git(['rev-parse', '--verify', `${realE2E.candidate}\^{commit}`]);
+      const sourceTree = git(['rev-parse', '--verify', `${sourceCommit}\^{tree}`]);
+      if (receipt.verdict !== 'pass') failures.push('verification receipt is not pass');
+      if (receipt.candidate?.commit !== sourceCommit) failures.push('verification receipt is not bound to the real Electron source commit');
+      if (receipt.candidate?.tree !== sourceTree) failures.push('verification receipt tree no longer matches the real Electron source commit');
+      if (current.status.length > 0 && !allowDirty) failures.push(`working tree is dirty: ${current.status.join(', ')}`);
+      if (!receipt.commands?.every((gate) => gate.exitCode === 0)) failures.push('command receipt contains a failure');
+      if (cycles.final?.zeroLaneResidue !== true || cycles.cycles !== 50) failures.push('cycle evidence is not a clean 50-cycle result');
+      if (cycles.candidate?.commit !== receipt.candidate?.commit) failures.push('cycle evidence is not bound to the verification receipt candidate');
+      if (!recovery.cases?.every((entry) => entry.receipt?.recoveryRequired === true)) failures.push('recovery fixture no longer fails closed');
+      if (recovery.candidate?.commit !== receipt.candidate?.commit) failures.push('recovery evidence is not bound to the verification receipt candidate');
+      if (sourceCommit !== receipt.candidate?.commit) failures.push('real Electron owner receipt is not bound to the verification receipt candidate');
+      if (realE2E.transport !== 'built Electron host:invoke -> actual Gateway runtime -> Main owners') failures.push('real Electron owner receipt transport drifted');
+      if (realE2E.terminal?.staleGenerationRejected !== true || realE2E.recoveryRequired !== false) failures.push('real Electron owner receipt no longer proves fail-closed success');
+    }
     console.log(JSON.stringify({ checkOnly: true, ok: failures.length === 0, failures }, null, 2));
     if (failures.length > 0) process.exitCode = 1;
     return;
   }
 
-  const cycles = await runCycles(50);
-  const recovery = buildRecoveryFixture();
-  const cycleArtifact = {
+  // Bind evidence to the source tree before replacing tracked evidence files.
+  const candidate = candidateIdentity();
+  mkdirSync(outDir, { recursive: true });
+  // Keep the real E2E receipt when this driver runs immediately after Playwright.
+  for (const name of expectedFiles.filter((entry) => entry !== E2E_RECEIPT_FILE)) rmSync(join(outDir, name), { force: true });
+
+  const pnpm = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+  const ownerGate = runCommand(
+    'long-session-owner-unit',
+    pnpm,
+    ['exec', 'vitest', 'run', ...OWNER_UNIT_TESTS, '--maxWorkers=1', '--disableConsoleIntercept'],
+    { timeoutMs: 240_000 },
+  );
+  const runtimeGate = runCommand(
+    'long-session-runtime-cycle',
+    pnpm,
+    ['--dir', 'openclaw_runtime', 'exec', 'vitest', 'run', ...RUNTIME_CYCLE_TESTS, '--maxWorkers=1', '--disableConsoleIntercept'],
+    { timeoutMs: 360_000 },
+  );
+
+  const ownerOutput = ownerGate.stdout + '\n' + ownerGate.stderr;
+  const runtimeOutput = runtimeGate.stdout + '\n' + runtimeGate.stderr;
+  const inventoryAudit = parseJsonAuditLine(ownerOutput, '[resource-inventory-audit]');
+  const runtimeAudit = parseAuditLine(runtimeOutput, '[reclamation-audit]');
+  const terminalAudit = parseAuditLine(ownerOutput, '[terminal-reclamation-audit]');
+  const residualKeys = [
+    'activeRecordResidual',
+    'ownedPidResidual',
+    'finishedResidual',
+    'helperResidual',
+    'waiterResidual',
+    'worktreeResidual',
+  ];
+  const runtimeZero = residualKeys.every((key) => runtimeAudit.values[key] === 0) && runtimeAudit.values.cycles === 50;
+  const terminalZero = terminalAudit.values.activeResidual === 0 && terminalAudit.values.cycles === 50;
+  if (!runtimeZero || !terminalZero || terminalAudit.values.archivedKeepOnLeave !== 50) {
+    throw new Error(`cycle audit is not clean: runtime=${JSON.stringify(runtimeAudit.values)} terminal=${JSON.stringify(terminalAudit.values)}`);
+  }
+
+  const gates = [ownerGate, runtimeGate];
+  const inventory = {
+    schema: 'clawx.long-session.e2-owner-inventory/v1',
+    drivenBy: 'agent',
+    actor: ACTOR,
+    taskForestNode: 'TF-0560',
+    candidate,
+    contract: 'harness/specs/tasks/long-session-resource-reclamation.md',
+    owners: RECLAIM_OWNERS,
+    actionContracts: RECLAIM_ACTION_CONTRACTS,
+    readModel: {
+      schema: 'LongSessionResourceInventory/v1',
+      representedFields: [
+        'owner',
+        'authority',
+        'generation',
+        'count',
+        'osPids',
+        'processTreePids',
+        'rssKb',
+        'cpuPercent',
+        'activePermits',
+        'waiters',
+        'helperRefs',
+        'worktreeIds',
+        'sessionIds',
+        'known/unknown state',
+      ],
+      liveRuntimeSample: inventoryAudit,
+      universalSessionResourcesTable: false,
+    },
+    policyEnv: [
+      'OPENCLAW_LONG_SESSION_MAX_PROCESSES',
+      'OPENCLAW_LONG_SESSION_MAX_RSS_MB',
+      'OPENCLAW_LONG_SESSION_MAX_BACKGROUND_TERMINALS',
+      'OPENCLAW_LONG_SESSION_MAX_WORKTREES',
+      'OPENCLAW_LONG_SESSION_IDLE_TTL_MS',
+      'OPENCLAW_LONG_SESSION_KEEP_ON_LEAVE',
+    ],
+    boundaries: {
+      uiUnloadKeepsHandles: true,
+      runCancelReleasesAdmissionOnly: true,
+      archiveInvalidatesBindingWithoutKillingResources: true,
+      deleteReclaimsOwnedResources: true,
+      workspaceSwitchKeepsResources: true,
+      workspaceDeleteReclaimsDesktopResources: true,
+      appQuitReleasesProcessScopedDesktopResources: true,
+      worktreesPreservedOnQuitAndWorkspaceDelete: true,
+    },
+  };
+
+  const cycles = {
     schema: 'clawx.long-session.e2-cycle-results/v1',
     drivenBy: 'agent',
     actor: ACTOR,
     taskForestNode: 'TF-0560',
-    generatedAt: new Date().toISOString(),
     candidate,
+    generatedAt: new Date().toISOString(),
+    cycles: 50,
     scope: SCOPE,
-    ...cycles,
-    semantics: {
-      laneResidue: 'managed resources only; keep_on_leave terminals are counted separately and never treated as failures',
-      cycle: 'create -> archive -> session-delete -> owner readback',
+    runtime: runtimeAudit,
+    terminal: terminalAudit,
+    final: {
+      zeroLaneResidue: runtimeZero && terminalZero,
+      activeProcessResidue: runtimeAudit.values.activeRecordResidual,
+      ownedPidResidue: runtimeAudit.values.ownedPidResidual,
+      finishedRecordResidue: runtimeAudit.values.finishedResidual,
+      helperResidue: runtimeAudit.values.helperResidual,
+      waiterResidue: runtimeAudit.values.waiterResidual,
+      worktreeResidue: runtimeAudit.values.worktreeResidual,
+      terminalActiveResidue: terminalAudit.values.activeResidual,
+      archivedKeepOnLeaveObserved: terminalAudit.values.archivedKeepOnLeave,
     },
-    gateReceipt,
+    semantics: {
+      cycle: 'admission waiter + real supervisor child tree + bash owner + helper read + owned worktree + terminal archive/delete',
+      keepOnLeave: 'counted separately while archived, then closed only by explicit session delete',
+    },
   };
+
+  const realE2ESource = resolve(ROOT, 'test-results', 'long-session-lifecycle-fau-9abf1-rminal-and-preserve-archive', 'owner-reclamation-receipt.json');
+  if (!existsSync(realE2ESource)) {
+    throw new Error(`real built Electron owner receipt is missing at ${realE2ESource}; run the focused long-session E2E first`);
+  }
+  const realE2E = JSON.parse(readFileSync(realE2ESource, 'utf8'));
+  if (realE2E.transport !== 'built Electron host:invoke -> actual Gateway runtime -> Main owners') {
+    throw new Error('real Electron owner receipt did not come from the required host/runtime transport');
+  }
+  writeJson(join(outDir, E2E_RECEIPT_FILE), realE2E);
+  const recovery = buildRecoveryFixture(candidate);
   const receipt = {
     schema: 'clawx.long-session.e2-verification/v1',
     drivenBy: 'agent',
     actor: ACTOR,
     taskForestNode: 'TF-0560',
-    generatedAt: new Date().toISOString(),
     candidate,
-    contract: 'harness/specs/tasks/long-session-resource-reclamation.md',
+    generatedAt: new Date().toISOString(),
     verdict: 'pass',
-    featureClaim: 'existing owners reclaim their own long-session resources; ui-unload, run-cancel, archive, delete, workspace-switch and quit stay distinct, keep_on_leave is counted separately and unresolved cleanup raises recovery_required with a retry identity',
-    acceptance: [
-      { criterion: 'resources stay with existing owners; no universal session_resources table; unload/cancel/archive/delete are distinct', result: 'pass', evidence: [INVENTORY_FILE] },
-      { criterion: '50 create/stop/archive-restore cycles leave zero managed residue; keep_on_leave terminals counted separately', result: cycles.final.zeroLaneResidue ? 'pass' : 'fail', evidence: [CYCLES_FILE] },
-      { criterion: 'cleanup failure/unknown raises recovery_required with retry identity; no agent-wide kill or other-worktree deletion', result: 'pass', evidence: [RECOVERY_FILE] },
-      { criterion: 'worktree/backend recoverability, browser grants, terminal closure and late callbacks cannot resurrect resources; permission revocation and workspace delete/switch/quit match owner contracts', result: 'pass', evidence: ['tests/unit/long-session-resource-reclamation.test.ts', INVENTORY_FILE] },
-    ],
-    commands: gateReceipt.provided ? gateReceipt.gates.map((gate) => ({ name: gate.name, exitCode: gate.exitCode, durationMs: gate.durationMs, log: gate.log, summary: gate.summary })) : [],
+    featureClaim: 'existing owners expose and reclaim generation-scoped long-session resources; terminal, browser, managed-port, runtime-process/helper, worktree and admission state remain owner-derived',
+    commands: gates,
     counts: {
-      gates: gateReceipt.gates.length,
-      failedGates: gateReceipt.gates.filter((gate) => gate.exitCode !== 0).length,
-      cycles: cycles.cycles,
-      managedResidue: cycles.final.managedResidue,
-      keepOnLeaveTerminals: cycles.final.keepOnLeaveTerminals,
       ownerKinds: RECLAIM_OWNERS.length,
       actionContracts: RECLAIM_ACTION_CONTRACTS.length,
+      runtimeCycles: runtimeAudit.values.cycles,
+      terminalCycles: terminalAudit.values.cycles,
+      archivedKeepOnLeaveObserved: terminalAudit.values.archivedKeepOnLeave,
       recoveryCases: recovery.cases.length,
+      failedCommands: gates.filter((gate) => gate.exitCode !== 0).length,
     },
-    unmeasured: ['live model-driven terminal/browser choreography (no provider credential)', 'OS-level hard kill of an unresponsive child process in a real GUI session'],
-    cleanup: { startedProcesses: false, startedGateway: false, startedElectron: false, recoveryRequired: false, notes: 'Deterministic in-process reclamation over the shipped coordinator; no real process was spawned for this artifact.' },
-    limitations: [
-      'The 50-cycle run exercises the shipped reclamation coordinator with owner fakes that mirror each real owner API; it does not spawn 50 OS processes.',
-      'Worktrees are never guessed: unresolved ownership stays kept/unknown and is surfaced through recovery_required.',
-      'All evidence is agent-driven; no real-human verdict or data is claimed.',
+    acceptance: [
+      { criterion: 'owner-derived inventory and distinct lifecycle actions', result: 'pass', evidence: [INVENTORY_FILE] },
+      { criterion: '50 real runtime and terminal lifecycle cycles leave zero active residue', result: 'pass', evidence: [CYCLES_FILE] },
+      { criterion: 'cleanup failure or unknown state raises recovery_required with retry identity', result: 'pass', evidence: [RECOVERY_FILE] },
+      { criterion: 'generation scoping, workspace switch/delete and app-quit owner behavior', result: 'pass', evidence: ['long-session-owner-unit', 'long-session-runtime-cycle', E2E_RECEIPT_FILE] },
     ],
-    artifacts: [INVENTORY_FILE, CYCLES_FILE, RECOVERY_FILE, RECEIPT_FILE, README_FILE, 'SHA256SUMS'],
+    unmeasured: [
+      'A visible Electron BrowserWindow was not opened during the evidence run; browser cleanup was exercised through the owner adapter with a managed-session fake.',
+      'An external model provider was not used.',
+    ],
+    cleanup: {
+      startedProcesses: true,
+      startedElectron: true,
+      startedGateway: true,
+      recoveryRequired: false,
+      note: 'focused built Electron E2E owner receipt plus runtime cycle processes and inprocess worktrees are included',
+    },
   };
 
-  mkdirSync(outDir, { recursive: true });
   writeJson(join(outDir, INVENTORY_FILE), inventory);
-  writeJson(join(outDir, CYCLES_FILE), cycleArtifact);
+  writeJson(join(outDir, CYCLES_FILE), cycles);
   writeJson(join(outDir, RECOVERY_FILE), recovery);
   writeJson(join(outDir, RECEIPT_FILE), receipt);
-  const readme = [
+  writeFileSync(join(outDir, README_FILE), [
     '# E2 long-session resource reclamation evidence',
     '',
-    'Source candidate: ' + candidate.commit + '.',
+    `Source candidate: ${candidate.commit}.`,
     '',
-    '- ' + INVENTORY_FILE + ': the five existing owners, the six action contracts (ui-unload / run-cancel / archive / delete / workspace-switch / quit) and the boundary matrix.',
-    '- ' + CYCLES_FILE + ': 50 create/archive/delete cycles; managed residue is zero and keep_on_leave terminals are counted separately.',
-    '- ' + RECOVERY_FILE + ': recovery_required fixtures for a failing browser close, a still-reachable managed port and an unresolvable worktree owner.',
-    '- ' + RECEIPT_FILE + ': acceptance mapping, gate receipt, counts and limits.',
+    `- ${INVENTORY_FILE}: owner schema, action contracts and a live runtime inventory sample.`,
+    `- ${CYCLES_FILE}: 50 real runtime cycles and 50 terminal archive/delete cycles with parsed residue counts.`,
+    `- ${E2E_RECEIPT_FILE}: actual built Electron → Host → Gateway receipt for generation-bound terminal, stop and archive behavior.`,
+    `- ${RECOVERY_FILE}: failed/unknown owner fixtures, each requiring recovery with a stable retry identity.`,
+    `- ${RECEIPT_FILE}: exact commands, exit codes, output digests and acceptance mapping.`,
     '',
-    'All actions are agent-driven (driven_by: agent, actor: ' + ACTOR + '). No real-human verdict or data is claimed.',
+    `All actions are agent-driven (driven_by: agent, actor: ${ACTOR}). No real-human evidence is claimed.`,
     '',
-  ].join('\n');
-  writeFileSync(join(outDir, README_FILE), readme, 'utf8');
+  ].join('\n'), 'utf8');
 
-  const evidenceFiles = readdirSync(outDir).filter((name) => name !== 'SHA256SUMS' && !name.startsWith('.')).sort();
-  writeFileSync(join(outDir, 'SHA256SUMS'), evidenceFiles.map((name) => hashFile(join(outDir, name)) + '  ' + name + '\n').join(''), 'utf8');
-  const matches = scanSecrets(evidenceFiles.map((name) => join(outDir, name)));
+  const evidenceFiles = readdirSync(outDir).filter((name) => name !== SUMS_FILE && !name.startsWith('.')).sort();
+  writeFileSync(join(outDir, SUMS_FILE), evidenceFiles.map((name) => `${hashFile(join(outDir, name))}  ${name}`).join('\n') + '\n', 'utf8');
+  const matches = scanSecrets([...evidenceFiles, SUMS_FILE].map((name) => join(outDir, name)));
   if (matches.length > 0) {
-    for (const name of evidenceFiles) rmSync(join(outDir, name), { force: true });
-    throw new Error('E2 evidence contains credential-like patterns: ' + JSON.stringify(matches));
+    for (const name of [...evidenceFiles, SUMS_FILE]) rmSync(join(outDir, name), { force: true });
+    throw new Error(`E2 evidence contains credential-like patterns: ${JSON.stringify(matches)}`);
   }
   console.log(JSON.stringify({
     outDir,
-    cycles: cycles.cycles,
-    zeroLaneResidue: cycles.final.zeroLaneResidue,
-    keepOnLeaveTerminals: cycles.final.keepOnLeaveTerminals,
-    recoveryCases: recovery.cases.length,
+    verdict: receipt.verdict,
+    runtimeCycles: runtimeAudit.values.cycles,
+    terminalCycles: terminalAudit.values.cycles,
+    archivedKeepOnLeave: terminalAudit.values.archivedKeepOnLeave,
     evidenceFiles,
   }, null, 2));
 }

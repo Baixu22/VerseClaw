@@ -1,36 +1,35 @@
 {
-  "schema": "clawx.long-session.b2-ui-screenshots/v1",
+  "schema": "clawx.long-session.policy-ui-screenshots/v1",
+  "generatedAt": "2026-10-23T19:18:32.708Z",
   "driven_by": "agent",
-  "actor": "codex-long-session-b2",
-  "candidate": "b7b090779f0eed283aa381932dd32c98e936e9c5",
-  "capturedAt": "2026-10-22T19:41:53.7800319Z",
+  "actor": "codex-long-session-r2",
+  "candidate": "e2302cdaee166f29019d1a677f4ffbb645104b52",
   "screenshots": [
     {
-      "id": "policy-activity-rail-960",
-      "path": "policy-activity-rail-960.png",
-      "sourceTest": "tests/e2e/long-session-policy-surface.spec.ts:132",
+      "name": "policy-surface-wide",
+      "path": "policy-surface-wide.png",
       "viewport": {
-        "width": 900,
+        "width": 1280,
+        "height": 800
+      },
+      "pixels": {
+        "width": 1922,
+        "height": 1202
+      },
+      "sha256": "a2f414df16f54c56f2cffadedef7d5eb7957c85dabc2ff8386f7fe38f69bf0be"
+    },
+    {
+      "name": "policy-surface-narrow",
+      "path": "policy-surface-narrow.png",
+      "viewport": {
+        "width": 680,
         "height": 760
       },
-      "theme": "light",
-      "bytes": 228722,
-      "sha256": "fdf5bb0bca5de6d8bdedfc5ef4ee87d3f460e5ad31fbc9d99813f3038439c84e",
-      "shows": [
-        "Session policy header and Current generation badge",
-        "Backend, native binding, model/effort, access and limits rows",
-        "Configuration source and compaction ownership",
-        "narrow activity rail with no horizontal overflow"
-      ],
-      "keyboard": [
-        "toggle focused and activated with Enter",
-        "Action boundaries summary toggled with Enter"
-      ],
-      "review": {
-        "driven_by": "agent",
-        "result": "accepted",
-        "notes": "Reviewed the light-theme narrow frame for clipping, token usage and readable hierarchy."
-      }
+      "pixels": {
+        "width": 680,
+        "height": 760
+      },
+      "sha256": "5a5523644fe202c980aabdc1b6a595978c57d7c61565250806e8487a388d8f8e"
     }
   ]
 }

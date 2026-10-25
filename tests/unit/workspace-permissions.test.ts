@@ -225,6 +225,7 @@ describe('workspace permission policy', () => {
 
   it('classifies gateway RPC methods conservatively', () => {
     expect(classifyGatewayRpcRisk('chat.history')).toBe('read');
+    expect(classifyGatewayRpcRisk('memory.surface')).toBe('read');
     expect(classifyGatewayRpcRisk('chat.send')).toBe('read');
     expect(classifyGatewayRpcRisk('memory.surface')).toBe('read');
     expect(classifyGatewayRpcRisk('memory.delete', { source: 'role-memory-card', id: 'card-1' })).toBe('destructive');

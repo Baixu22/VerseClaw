@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: completed
+lifecycleStatus: active
 id: long-session-completion-continuation
 title: 汇总子会话完成事件并在主会话空闲时幂等续接
 program: long-session-development-20261022
@@ -11,25 +11,26 @@ intent: 把已接受的委派结果送回正确主会话，避免重复通知、
 contractIndex: harness/specs/tasks/long-session-development-plan.md
 dependsOnTasks:
   - C2
-diffBase: 933c13cc8
 touchedAreas:
   - harness/specs/tasks/long-session-completion-continuation.md
   - harness/specs/tasks/long-session-development-plan.md
-  - docs/clawx-product-semantics.md
   - openclaw_runtime/src/agents/subagent-registry.ts
   - openclaw_runtime/src/agents/subagent-announce-delivery.ts
-  - openclaw_runtime/src/agents/agent-steering-queue.ts
-  - openclaw_runtime/src/agents/completion-batch-receipt.ts
   - openclaw_runtime/src/agents/subagent-control.ts
-  - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts
   - openclaw_runtime/src/gateway/server-methods/session-activity.ts
   - openclaw_runtime/src/agents/orchestration-result-bundle.ts
+  - openclaw_runtime/src/agents/orchestration-completion-batches.ts
   - electron/services/session-activity-api.ts
   - shared/types/session-activity.ts
+  - harness/specs/guides/long-session-delegation-admission.md
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - README.ru-RU.md
+  - tests/e2e/long-session-completion-continuation.spec.ts
   - shared/host-api/contract.ts
   - tests/unit/long-session-completion-continuation.test.ts
-  - tests/e2e/long-session-completion-continuation.spec.ts
   - harness/specs/fixtures/long-session-development/c3/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -53,10 +54,14 @@ requiredTests:
   - pnpm run contract:check
   - pnpm run comms:replay
   - pnpm run comms:compare
+  - pnpm run build:runtime
+  - pnpm run build:vite
+  - pnpm run test:e2e:run tests/e2e/long-session-completion-continuation.spec.ts
   - pnpm harness validate --spec harness/specs/tasks/long-session-completion-continuation.md
   - git diff --check
 plannedTests:
   - tests/unit/long-session-completion-continuation.test.ts
+  - tests/e2e/long-session-completion-continuation.spec.ts
 acceptance:
   - 同一次协调委派的 accepted workers 形成有界 batch，成功/失败/取消全部计入；只有该 batch 终态可判定才提交一次 consolidated result。
   - completion delivery 与 task acceptance 分开；主会话 busy/paused 时保留既有 owner 的 delivery intent，idle 后继续，不抢当前用户 turn。
@@ -66,6 +71,7 @@ docs:
   required: true
   files:
     - harness/specs/tasks/long-session-development-plan.md
+    - harness/specs/guides/long-session-delegation-admission.md
 ---
 
 **C3 · 汇总子会话完成事件并在主会话空闲时幂等续接**

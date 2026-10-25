@@ -23,7 +23,7 @@ import {
   abortEmbeddedAgentRun,
   resolveActiveEmbeddedRunSessionId,
   waitForEmbeddedAgentRunEnd,
-} from "../agents/embedded-agent.js";
+} from "../agents/embedded-agent-runner/runs.js";
 import { listDescendantRunsForRequester } from "../agents/subagent-registry.js";
 import { stopSubagentsForRequester } from "../auto-reply/reply/abort.js";
 import {
@@ -32,6 +32,7 @@ import {
 } from "../auto-reply/reply/session-hooks.js";
 import { clearSessionResetRuntimeState } from "../auto-reply/reply/session-reset-cleanup.js";
 import { cleanupBrowserSessionsForLifecycleEnd } from "../browser-lifecycle-cleanup.js";
+import { createWorktreeService } from "../agents/worktree-service.js";
 import { getRuntimeConfig } from "../config/io.js";
 import {
   snapshotSessionOrigin,
@@ -429,18 +430,20 @@ type SessionCleanupParams = {
 };
 
 export type StopSessionRuntimeResult =
-  | { ok: true; key: string }
+  | { ok: true; key: string; sessionId: string }
   | { ok: false; error: ReturnType<typeof errorShape> };
 
 export type SessionMutationCleanupOutcome = {
   error?: ReturnType<typeof errorShape>;
+  /** Archive retries reuse the same exclusive fence; unknown cleanup never reopens admission. */
+  retry?: () => Promise<SessionMutationCleanupOutcome>;
   /**
-   * Called once the caller knows whether the mutation committed. Failed
-   * mutations always release the fence so retry is possible. Successful
+   * Called once the caller knows whether the mutation committed. Archive
+   * failure retains the fence for its bound recovery callback. Successful
    * delete keeps the old-generation fence as a tombstone; successful reset
    * releases the old fence because the next generation gets a new identity.
    */
-  settle: (mutationSucceeded: boolean) => void;
+  settle: (mutationSucceeded: boolean, releaseDefinitiveArchiveFailure?: boolean) => void;
 };
 
 function resolveSessionLifecycleIdentity(
@@ -488,23 +491,63 @@ function resolveChildRunWaitTargets(
   return [...targets.values()];
 }
 
-async function closeTrackedBrowserTabs(params: SessionCleanupParams): Promise<void> {
+async function closeTrackedBrowserTabs(
+  params: SessionCleanupParams & {
+    reason: "session-reset" | "session-delete" | "session-archive";
+  },
+): Promise<void> {
   const closeKeys = new Set<string>([
     params.key,
     params.target.canonicalKey,
     ...params.target.storeKeys,
     params.entry?.sessionId ?? "",
   ]);
+  const strict = params.reason === "session-archive";
+  const failures: string[] = [];
   await cleanupBrowserSessionsForLifecycleEnd({
     cfg: params.cfg,
     sessionKeys: [...closeKeys],
-    onWarn: (message) => logVerbose(message),
+    onWarn: (message) => {
+      logVerbose(message);
+      if (strict) failures.push(message);
+    },
+    onError: (error) => {
+      logVerbose(`sessions.${params.reason}: browser cleanup failed: ${String(error)}`);
+      if (strict) failures.push(String(error));
+    },
   });
+  if (strict && failures.length) {
+    throw new Error(`Browser cleanup is incomplete: ${failures.join('; ')}`);
+  }
 }
 
+function cleanupSessionWorktrees(params: {
+  cleanup: SessionCleanupParams;
+  identity: SessionAdmissionIdentity;
+}): { attempted: number; reclaimed: number; failed: number; kept: number; worktreeIds: string[] } {
+  const workspaceDir =
+    params.cleanup.entry?.workspaceDir?.trim() ||
+    params.cleanup.entry?.spawnedWorkspaceDir?.trim();
+  if (!workspaceDir) {
+    return { attempted: 0, reclaimed: 0, failed: 0, kept: 0, worktreeIds: [] };
+  }
+  const result = createWorktreeService(workspaceDir).cleanupOwned({
+    agentId: params.identity.agentId,
+    sessionKey: params.identity.canonicalSessionKey,
+    expectedSessionId: params.identity.expectedSessionId,
+  });
+  return {
+    attempted: result.attempted,
+    reclaimed: result.reclaimed,
+    failed: result.failed,
+    kept: result.kept,
+    worktreeIds: result.worktreeIds,
+  };
+}
 async function runSessionStopFront(params: {
   cleanup: SessionCleanupParams;
   identity: SessionAdmissionIdentity;
+  reason: "session-stop" | "session-reset" | "session-delete" | "session-archive";
 }): Promise<ReturnType<typeof errorShape> | undefined> {
   const { cleanup } = params;
   const sessionId = cleanup.entry?.sessionId?.trim();
@@ -551,6 +594,15 @@ async function runSessionStopFront(params: {
       `Session ${cleanup.key} drain failed (${drain.reason}): ${drain.message}`,
     );
   }
+  if (params.reason === "session-delete") {
+    const worktrees = cleanupSessionWorktrees(params);
+    if (worktrees.failed > 0) {
+      return errorShape(
+        ErrorCodes.UNAVAILABLE,
+        `Session ${cleanup.key} retained ${worktrees.failed} managed worktree(s) after cleanup failure: ${worktrees.worktreeIds.join(", ")}`,
+      );
+    }
+  }
   return undefined;
 }
 
@@ -561,15 +613,20 @@ async function runCleanupOtherOwners(
   },
 ): Promise<ReturnType<typeof errorShape> | undefined> {
   if (params.entry?.sessionId) {
+    const mcpErrors: string[] = [];
     await retireSessionMcpRuntime({
       sessionId: params.entry.sessionId,
       reason: "gateway-session-cleanup",
       onError: (error, sessionId) => {
+        mcpErrors.push(String(error));
         logVerbose(
           `sessions cleanup: failed to dispose bundle MCP runtime for ${sessionId}: ${String(error)}`,
         );
       },
     });
+    if (params.reason === "session-archive" && mcpErrors.length) {
+      return errorShape(ErrorCodes.UNAVAILABLE, `MCP cleanup is incomplete: ${mcpErrors.join('; ')}`);
+    }
   }
   await closeTrackedBrowserTabs(params);
 
@@ -584,6 +641,9 @@ async function runCleanupOtherOwners(
       `plugin host cleanup failed for ${failure.pluginId}/${failure.hookId}: ${String(failure.error)}`,
     );
   }
+  if (params.reason === "session-archive" && pluginCleanup.failures.length) {
+    return errorShape(ErrorCodes.UNAVAILABLE, "Plugin owner cleanup is incomplete.");
+  }
 
   const parentSessionKey = params.target.canonicalKey ?? params.canonicalKey ?? params.key;
   const parentAcpError = await closeAcpRuntimeForSession({
@@ -593,12 +653,12 @@ async function runCleanupOtherOwners(
     reason: params.reason,
     onResetMeta: params.onAcpResetMeta,
   });
-  await closeChildAcpRuntimesForParent({
+  const childAcpError = await closeChildAcpRuntimesForParent({
     cfg: params.cfg,
     parentKey: parentSessionKey,
     reason: params.reason,
   });
-  return parentAcpError;
+  return parentAcpError ?? childAcpError;
 }
 
 /**
@@ -647,13 +707,13 @@ export async function stopSessionRuntime(
     throw error;
   }
   try {
-    const frontError = await runSessionStopFront({ cleanup: params, identity });
+    const frontError = await runSessionStopFront({ cleanup: params, identity, reason: "session-stop" });
     if (frontError) {
       fence.release();
       return { ok: false, error: frontError };
     }
     fence.release();
-    return { ok: true, key: params.target.canonicalKey ?? params.key };
+    return { ok: true, key: params.target.canonicalKey ?? params.key, sessionId: identity.expectedSessionId };
   } catch (error) {
     fence.release();
     throw error;
@@ -840,7 +900,8 @@ async function closeChildAcpRuntimesForParent(params: {
   cfg: OpenClawConfig;
   parentKey: string;
   reason: "session-reset" | "session-delete" | "session-archive";
-}): Promise<void> {
+}): Promise<ReturnType<typeof errorShape> | undefined> {
+  let firstError: ReturnType<typeof errorShape> | undefined;
   // Enumerate across every agent session store, not just the parent's: ACP
   // spawns create child keys under the target agent (`agent:<targetAgentId>:acp:…`)
   // whose entries live in that agent's store, which is a different file from the
@@ -860,16 +921,18 @@ async function closeChildAcpRuntimesForParent(params: {
     logVerbose(
       `sessions.${params.reason}: failed to enumerate sessions for child ACP cleanup: ${String(error)}`,
     );
-    return;
+    if (params.reason === "session-archive") {
+      return errorShape(ErrorCodes.UNAVAILABLE, `Child ACP owner inventory is unavailable: ${String(error)}`);
+    }
+    return undefined;
   }
   // Close only direct ACP-backed children of the session being mutated; the
   // parent itself is closed separately by the caller. Without this, child ACP
   // sessions spawned via sessions_spawn are orphaned on parent reset/delete.
   // Close children concurrently so total latency is bounded by a single ACP
-  // cleanup timeout window rather than scaling with the number of stuck
-  // children; per-child failures are logged best-effort and never propagated,
-  // so a stuck child cannot block or fail the parent mutation.
-  await Promise.allSettled(
+  // cleanup timeout window. Reset/delete retain their historical best-effort
+  // behavior; archive treats an unknown child owner result as fail-closed.
+  const results = await Promise.allSettled(
     children.map(({ sessionKey }) =>
       closeAcpRuntimeForSession({
         cfg: params.cfg,
@@ -877,11 +940,20 @@ async function closeChildAcpRuntimesForParent(params: {
         reason: params.reason,
       }).then((childError) => {
         if (childError) {
+          if (params.reason === "session-archive") firstError ??= childError;
           logVerbose(`sessions.${params.reason}: child ACP cleanup incomplete for ${sessionKey}`);
         }
       }),
     ),
   );
+  const rejected = results.find((result) => result.status === "rejected");
+  if (params.reason === "session-archive" && rejected?.status === "rejected") {
+    firstError ??= errorShape(
+      ErrorCodes.UNAVAILABLE,
+      `Child ACP cleanup is unknown: ${String(rejected.reason)}`,
+    );
+  }
+  return params.reason === "session-archive" ? firstError : undefined;
 }
 
 export async function cleanupSessionBeforeMutation(params: {
@@ -898,12 +970,20 @@ export async function cleanupSessionBeforeMutation(params: {
   let fence: Awaited<ReturnType<typeof sessionAdmissionRegistry.fence>> | undefined;
   let settled = false;
 
-  const settle = (mutationSucceeded: boolean): void => {
+  const settle = (
+    mutationSucceeded: boolean,
+    releaseDefinitiveArchiveFailure = false,
+  ): void => {
     if (settled) return;
     settled = true;
     // Delete and archive success keep the old-generation fence as a tombstone.
-    // Every failure path, and successful reset, releases the fence.
-    if ((params.reason === "session-delete" || params.reason === "session-archive") && mutationSucceeded) {
+    // Unknown archive cleanup retains its exclusive owner. A caller that has
+    // proven the archive request was refused before mutation can explicitly
+    // release that fence so the same generation remains usable.
+    if (
+      (params.reason === "session-archive" && !releaseDefinitiveArchiveFailure) ||
+      (params.reason === "session-delete" && mutationSucceeded)
+    ) {
       return;
     }
     fence?.release();
@@ -943,34 +1023,58 @@ export async function cleanupSessionBeforeMutation(params: {
     }
   }
 
-  try {
-    if (identity) {
-      const frontError = await runSessionStopFront({ cleanup: params, identity });
-      if (frontError) {
-        return { error: frontError, settle };
+  const runOwners = async (): Promise<SessionMutationCleanupOutcome> => {
+    const retry = params.reason === "session-archive" ? runOwners : undefined;
+    if (
+      params.reason === "session-archive" &&
+      fence &&
+      !sessionAdmissionRegistry.ownsFence(fence)
+    ) {
+      return {
+        error: errorShape(
+          ErrorCodes.UNAVAILABLE,
+          "Archive recovery no longer owns its admission fence.",
+        ),
+        settle,
+      };
+    }
+    try {
+      if (identity) {
+        const frontError = await runSessionStopFront({ cleanup: params, identity, reason: params.reason });
+        if (frontError) {
+          return { error: frontError, settle, retry };
+        }
+      } else {
+        // No stored generation (for example a create/reset on a missing row):
+        // there is no lifecycle identity to fence or drain, but queued work and
+        // child activity for the key aliases must still be cleared.
+        clearSessionResetRuntimeState(resolveCleanupQueueKeys(params));
+        clearBootstrapSnapshot(params.target.canonicalKey);
+        stopSubagentsForRequester({
+          cfg: params.cfg,
+          requesterSessionKey: params.target.canonicalKey,
+        });
       }
-    } else {
-      // No stored generation (for example a create/reset on a missing row):
-      // there is no lifecycle identity to fence or drain, but queued work and
-      // child activity for the key aliases must still be cleared.
-      clearSessionResetRuntimeState(resolveCleanupQueueKeys(params));
-      clearBootstrapSnapshot(params.target.canonicalKey);
-      stopSubagentsForRequester({
-        cfg: params.cfg,
-        requesterSessionKey: params.target.canonicalKey,
-      });
-    }
 
-    const otherOwnersError = await runCleanupOtherOwners(params);
-    if (otherOwnersError) {
-      return { error: otherOwnersError, settle };
+      const otherOwnersError = await runCleanupOtherOwners(params);
+      if (otherOwnersError) {
+        return { error: otherOwnersError, settle, retry };
+      }
+      return { settle, retry };
+    } catch (error) {
+      if (params.reason === "session-archive") {
+        return {
+          error: errorShape(ErrorCodes.UNAVAILABLE, `Archive cleanup is unknown: ${String(error)}`),
+          settle,
+          retry,
+        };
+      }
+      fence?.release();
+      settled = true;
+      throw error;
     }
-    return { settle };
-  } catch (error) {
-    fence?.release();
-    settled = true;
-    throw error;
-  }
+  };
+  return runOwners();
 }
 export async function emitGatewayBeforeResetPluginHook(params: {
   cfg: OpenClawConfig;

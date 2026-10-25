@@ -26,15 +26,6 @@ export interface CronJobDelivery {
 /**
  * Cron job target (where to send the result)
  */
-/** Read-only projection of the coordinator fence for one scheduled job. */
-export interface CronJobCoordinatorStatus {
-  state: CronCoordinatorGateState;
-  reason: string;
-  checkedAt: string;
-  expectedSessionId?: string;
-  observedSessionId?: string | null;
-}
-
 export interface CronJobTarget {
   channelType: ChannelType | string;
   channelId: string;
@@ -94,6 +85,15 @@ export type CronSchedule =
  * Cron job data structure
  * schedule can be a plain cron string or a Gateway CronSchedule object
  */
+/** Read-only projection of the coordinator fence for one scheduled job. */
+export interface CronJobCoordinatorStatus {
+  state: CronCoordinatorGateState;
+  reason: string;
+  checkedAt: string;
+  expectedSessionId?: string;
+  observedSessionId?: string | null;
+}
+
 export interface CronJob {
   id: string;
   name: string;
@@ -118,11 +118,8 @@ export interface CronJob {
    * pretending the repair succeeded.
    */
   repairDegraded?: boolean;
-  /** E1: long-session coordinator binding, when this job is a follow-up. */
   coordinator?: CronCoordinatorScope | null;
-  /** E1: current fence verdict, computed read-only by the host API. */
   coordinatorStatus?: CronJobCoordinatorStatus;
-  /** E1: true when the maintenance pass suppressed the job instead of deleting it. */
   coordinatorSuppressed?: boolean;
 }
 
@@ -139,7 +136,6 @@ export interface CronJobCreateInput {
   delivery?: CronJobDelivery;
   enabled?: boolean;
   agentId?: string;
-  /** E1: bind the schedule to one authorized long-session coordinator generation. */
   coordinator?: CronCoordinatorScope | null;
 }
 
@@ -156,7 +152,6 @@ export interface CronJobUpdateInput {
   delivery?: CronJobDelivery;
   enabled?: boolean;
   agentId?: string;
-  /** E1: bind or clear the long-session coordinator scope. */
   coordinator?: CronCoordinatorScope | null;
 }
 

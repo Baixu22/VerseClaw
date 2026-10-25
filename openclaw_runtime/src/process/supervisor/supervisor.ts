@@ -5,6 +5,12 @@ import { normalizeOptionalString } from "@openclaw/normalization-core/string-coe
 import { getShellConfig } from "../../agents/shell-utils.js";
 import { signalProcessTree } from "../kill-tree.js";
 import { captureProcessTrees, verifyProcessTreesTerminated } from "../os-containment.js";
+import { readProcessTreeSample } from "../process-tree-sampler.js";
+import {
+  LongSessionCoordinationError,
+  decideLongSessionCoordination,
+  resolveLongSessionCoordinationPolicy,
+} from "../../../../shared/long-session-resource-reclamation.js";
 import { createChildAdapter } from "./adapters/child.js";
 import { createPtyAdapter } from "./adapters/pty.js";
 import { createRunRegistry } from "./registry.js";
@@ -139,6 +145,7 @@ export function createProcessSupervisor(
 ): ProcessSupervisor {
   const registry = createRunRegistry();
   const active = new Map<string, ActiveRun>();
+  const startingByLifecycle = new Map<string, number>();
   let manifest = options.manifest ?? null;
 
   const cancel = (runId: string, reason: TerminationReason = "manual-cancel") => {
@@ -188,6 +195,42 @@ export function createProcessSupervisor(
       canonicalSessionKey: input.lifecycleCanonicalSessionKey ?? "",
       expectedSessionId: input.lifecycleExpectedSessionId ?? "",
     });
+    const policy = resolveLongSessionCoordinationPolicy();
+    const lifecycleReservationKey = lifecycle ? JSON.stringify(lifecycle) : null;
+    let reservationHeld = false;
+    if (
+      lifecycle &&
+      (policy.maxProcesses !== null || policy.maxRssMb !== null)
+    ) {
+      const activeRuns = [...active.values()]
+        .filter((entry) => identityMatches(entry.lifecycle, lifecycle));
+      const activePids = activeRuns
+        .map((entry) => entry.run.pid)
+        .filter((pid): pid is number => typeof pid === "number" && pid > 0);
+      const starting = lifecycleReservationKey ? (startingByLifecycle.get(lifecycleReservationKey) ?? 0) : 0;
+      const sample = activePids.length > 0
+        ? await readProcessTreeSample({ rootPids: activePids })
+        : {
+            status: "empty" as const,
+            processCount: 0,
+            treeRssBytes: 0,
+          };
+      const budget = decideLongSessionCoordination({
+        policy,
+        usage: {
+          processCount: activeRuns.length + starting,
+          rssKb: sample.treeRssBytes === null ? null : Math.ceil(sample.treeRssBytes / 1024),
+          backgroundTerminals: null,
+          worktreeCount: null,
+        },
+        request: { processes: 1, rssKb: 1 },
+      });
+      if (!budget.allowed) throw new LongSessionCoordinationError(budget);
+      if (lifecycleReservationKey) {
+        startingByLifecycle.set(lifecycleReservationKey, starting + 1);
+        reservationHeld = true;
+      }
+    }
     const startedAtMs = Date.now();
     const record: RunRecord = {
       runId,
@@ -282,6 +325,12 @@ export function createProcessSupervisor(
             });
 
       registry.updateState(runId, "running", { pid: adapter.pid });
+      if (reservationHeld && lifecycleReservationKey) {
+        const remaining = Math.max(0, (startingByLifecycle.get(lifecycleReservationKey) ?? 1) - 1);
+        if (remaining === 0) startingByLifecycle.delete(lifecycleReservationKey);
+        else startingByLifecycle.set(lifecycleReservationKey, remaining);
+        reservationHeld = false;
+      }
 
       const clearTimers = () => {
         if (timeoutTimer) {
@@ -435,6 +484,11 @@ export function createProcessSupervisor(
       }
       return managedRun;
     } catch (err) {
+      if (reservationHeld && lifecycleReservationKey) {
+        const remaining = Math.max(0, (startingByLifecycle.get(lifecycleReservationKey) ?? 1) - 1);
+        if (remaining === 0) startingByLifecycle.delete(lifecycleReservationKey);
+        else startingByLifecycle.set(lifecycleReservationKey, remaining);
+      }
       registry.finalize(runId, {
         reason: "spawn-error",
         exitCode: null,

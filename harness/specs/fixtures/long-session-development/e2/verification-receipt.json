@@ -3,151 +3,94 @@
   "drivenBy": "agent",
   "actor": "codex-long-session-e2",
   "taskForestNode": "TF-0560",
-  "generatedAt": "2026-10-23T17:48:58.388Z",
   "candidate": {
-    "branch": "codex/long-session-implementation-20261022",
-    "commit": "7c8348b579f0278b09595c8929a83e09ab0da232",
-    "tree": "6bc9376ba2b83141c8f97f2742ba66e118106eee",
-    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "3100f8a6ac6393741f6d14ff2091c14d6d9748b2",
+    "tree": "b996695f6aa3a230d1c9f785df65c27bbb95dfbe",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "status": []
   },
-  "contract": "harness/specs/tasks/long-session-resource-reclamation.md",
+  "generatedAt": "2026-10-24T19:15:55.070Z",
   "verdict": "pass",
-  "featureClaim": "existing owners reclaim their own long-session resources; ui-unload, run-cancel, archive, delete, workspace-switch and quit stay distinct, keep_on_leave is counted separately and unresolved cleanup raises recovery_required with a retry identity",
+  "featureClaim": "existing owners expose and reclaim generation-scoped long-session resources; terminal, browser, managed-port, runtime-process/helper, worktree and admission state remain owner-derived",
+  "commands": [
+    {
+      "name": "long-session-owner-unit",
+      "command": "pnpm.cmd exec vitest run tests/unit/terminal-session-manager.test.ts tests/unit/session-cascade-delete.test.ts tests/unit/session-delete-gate.test.ts tests/unit/session-activity-background-read.test.ts tests/unit/versebrowser-host-adapter.test.ts tests/unit/long-session-resource-reclamation.test.ts tests/unit/long-session-owner-reclamation-adapter.test.ts tests/unit/long-session-runtime-resource-inventory.test.ts tests/unit/orchestration-worktree-merge.test.ts tests/unit/workspaces-api.test.ts tests/unit/long-session-effective-policy.test.ts --maxWorkers=1 --disableConsoleIntercept",
+      "cwd": ".",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 25463,
+      "timedOut": false,
+      "stdout": "\n RUN  v4.1.1 D:/ClawX-work/worktrees/long-session-program-r2\n\n[resource-inventory-audit] {\"schema\":\"LongSessionResourceInventory/v1\",\"scope\":{\"workspaceId\":\"workspace-e2\",\"sessionKey\":\"agent:agent-e2:long-session\",\"expectedSessionId\":\"generation-e2\",\"rootPath\":\"D:\\\\tmp\\\\clawx-e2-inventory-77HYUs\"},\"owners\":[{\"kind\":\"process\",\"owner\":\"ProcessSupervisor+BashProcessRegistry\",\"authority\":\"managed\",\"generation\":\"generation-e2\",\"state\":\"known\",\"count\":0,\"pids\":[],\"processTreePids\":[],\"rssKb\":0,\"cpuPercent\":0,\"activePermits\":null,\"waiters\":null,\"helperRefs\":0,\"worktreeIds\":null,\"sessionIds\":null},{\"kind\":\"admission-permit\",\"owner\":\"SessionAdmissionRegistry\",\"authority\":\"managed\",\"generation\":\"generation-e2\",\"state\":\"known\",\"count\":1,\"pids\":null,\"processTreePids\":null,\"rssKb\":null,\"cpuPercent\":null,\"activePermits\":1,\"waiters\":0,\"helperRefs\":null,\"worktreeIds\":null,\"sessionIds\":null},{\"kind\":\"worktree\",\"owner\":\"WorktreeService\",\"authority\":\"managed\",\"generation\":\"generation-e2\",\"state\":\"known\",\"count\":1,\"pids\":null,\"processTreePids\":null,\"rssKb\":null,\"cpuPercent\":null,\"activePermits\":null,\"waiters\":null,\"helperRefs\":null,\"worktreeIds\":[\"wt-e2\"],\"sessionIds\":null}]}\n[2026-10-24T19:14:10.617Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=0d813f8a-c889-4e64-a35e-ded4efe5d7f0 sessionKey=agent:main:second\n[2026-10-24T19:14:10.647Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=74e4c2e6-fe14-40ef-a614-920301fe1f34 sessionKey=agent:main:first\n[2026-10-24T19:14:10.664Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=75b96fb2-42b8-4de3-a7e5-4c8bcf73e8c6 sessionKey=agent:main:same\n[2026-10-24T19:14:11.260Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=65bcad28-f449-4cad-a5a5-d02247f564b4 sessionKey=agent:main:archive-ui\n[2026-10-24T19:14:11.280Z] [INFO] [session-delete-gate] Cleared operationId=65bcad28-f449-4cad-a5a5-d02247f564b4\n[terminal-reclamation-audit] cycles=50 archivedKeepOnLeave=50 activeResidual=0\n\n Test Files  11 passed (11)\n      Tests  86 passed (86)\n   Start at  03:14:03\n   Duration  23.97s (transform 6.52s, setup 886ms, import 9.19s, tests 8.54s, environment 3.55s)\n\n",
+      "stderr": "",
+      "stdoutSha256": "0e4f9884e2d38477d30c416a2f000048c62b5651b82f51a30cae4bd50ed82fab",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "long-session-runtime-cycle",
+      "command": "pnpm.cmd --dir openclaw_runtime exec vitest run src/sessions/session-admission-registry.test.ts src/sessions/session-admission-registry-reclamation.test.ts src/gateway/session-ecosystem-reclamation-cycle.test.ts --maxWorkers=1 --disableConsoleIntercept",
+      "cwd": ".",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 87682,
+      "timedOut": false,
+      "stdout": "\n RUN  v4.1.7 D:/ClawX-work/worktrees/long-session-program-r2/openclaw_runtime\n\n[runtime-lifecycle-audit] admissionEntriesAfterCap=16\n[runtime-lifecycle-audit] admissionRetiredEntries=48\n[runtime-lifecycle-audit] admissionLiveEntriesAfterSweep=0\n[runtime-lifecycle-audit] admissionFenceTimeouts=1\n[runtime-lifecycle-audit] admissionMaxFenceWaitMs=30\n[runtime-lifecycle-audit] admissionWaitersAfterTimeout=0\n[runtime-lifecycle-audit] admissionPermitP95Ms=0.0009\n[reclamation-audit] cycles=50 activeRecordResidual=0 ownedPidResidual=0 finishedResidual=0 helperResidual=0 waiterResidual=0 worktreeResidual=0 sweeperActive=false exitedDiagnosticsRecords=50\n\n Test Files  3 passed (3)\n      Tests  24 passed (24)\n   Start at  03:14:34\n   Duration  80.54s (transform 867ms, setup 277ms, import 628ms, tests 79.31s, environment 0ms)\n\n",
+      "stderr": "",
+      "stdoutSha256": "784c3a5781f6a12a74b680e1681f3ba4abed61e9cf2f9def8fbc68e48a5f7249",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "counts": {
+    "ownerKinds": 5,
+    "actionContracts": 7,
+    "runtimeCycles": 50,
+    "terminalCycles": 50,
+    "archivedKeepOnLeaveObserved": 50,
+    "recoveryCases": 3,
+    "failedCommands": 0
+  },
   "acceptance": [
     {
-      "criterion": "resources stay with existing owners; no universal session_resources table; unload/cancel/archive/delete are distinct",
+      "criterion": "owner-derived inventory and distinct lifecycle actions",
       "result": "pass",
       "evidence": [
         "resource-owner-inventory.json"
       ]
     },
     {
-      "criterion": "50 create/stop/archive-restore cycles leave zero managed residue; keep_on_leave terminals counted separately",
+      "criterion": "50 real runtime and terminal lifecycle cycles leave zero active residue",
       "result": "pass",
       "evidence": [
         "reclamation-cycle-results.json"
       ]
     },
     {
-      "criterion": "cleanup failure/unknown raises recovery_required with retry identity; no agent-wide kill or other-worktree deletion",
+      "criterion": "cleanup failure or unknown state raises recovery_required with retry identity",
       "result": "pass",
       "evidence": [
         "resource-recovery-required.json"
       ]
     },
     {
-      "criterion": "worktree/backend recoverability, browser grants, terminal closure and late callbacks cannot resurrect resources; permission revocation and workspace delete/switch/quit match owner contracts",
+      "criterion": "generation scoping, workspace switch/delete and app-quit owner behavior",
       "result": "pass",
       "evidence": [
-        "tests/unit/long-session-resource-reclamation.test.ts",
-        "resource-owner-inventory.json"
+        "long-session-owner-unit",
+        "long-session-runtime-cycle",
+        "real-owner-reclamation-receipt.json"
       ]
     }
   ],
-  "commands": [
-    {
-      "name": "terminal-delete-unit",
-      "exitCode": 0,
-      "durationMs": 7207,
-      "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\terminal-delete-unit.log",
-      "summary": "  Test Files  3 passed (3)       Tests  10 passed (10)    Start at  01:47:51    Duration  4.38s (transform 668ms, setup 369ms, import 817ms, tests 987ms, environment 1.58s) "
-    },
-    {
-      "name": "admission-unit",
-      "exitCode": 0,
-      "durationMs": 6988,
-      "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\admission-unit.log",
-      "summary": "  Test Files  2 passed (2)       Tests  23 passed (23)    Start at  01:48:01    Duration  700ms (transform 86ms, setup 0ms, import 151ms, tests 165ms, environment 0ms) "
-    },
-    {
-      "name": "e2-unit",
-      "exitCode": 0,
-      "durationMs": 2343,
-      "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\e2-unit.log",
-      "summary": "  Test Files  1 passed (1)       Tests  8 passed (8)    Start at  01:48:04    Duration  412ms (transform 67ms, setup 134ms, import 28ms, tests 15ms, environment 0ms) "
-    },
-    {
-      "name": "typecheck",
-      "exitCode": 0,
-      "durationMs": 35092,
-      "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\typecheck.log",
-      "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
-    },
-    {
-      "name": "contract-check",
-      "exitCode": 0,
-      "durationMs": 908,
-      "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\contract-check.log",
-      "summary": "$ node scripts/contract-check.mjs Contract check passed."
-    },
-    {
-      "name": "comms-replay",
-      "exitCode": 0,
-      "durationMs": 1021,
-      "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\comms-replay.log",
-      "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
-    },
-    {
-      "name": "comms-compare",
-      "exitCode": 0,
-      "durationMs": 865,
-      "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\comms-compare.log",
-      "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
-    },
-    {
-      "name": "harness-validate",
-      "exitCode": 0,
-      "durationMs": 1797,
-      "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\harness-validate.log",
-      "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-resource-reclamation.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-resource-reclamation.md\" Spec is valid: harness\\specs\\tasks\\long-session-resource-reclamation.md"
-    },
-    {
-      "name": "git-diff-check",
-      "exitCode": 0,
-      "durationMs": 91,
-      "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\git-diff-check.log",
-      "summary": ""
-    },
-    {
-      "name": "eslint-changed",
-      "exitCode": 0,
-      "durationMs": 6108,
-      "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\eslint-changed.log",
-      "summary": ""
-    }
-  ],
-  "counts": {
-    "gates": 10,
-    "failedGates": 0,
-    "cycles": 50,
-    "managedResidue": 0,
-    "keepOnLeaveTerminals": 50,
-    "ownerKinds": 5,
-    "actionContracts": 7,
-    "recoveryCases": 3
-  },
   "unmeasured": [
-    "live model-driven terminal/browser choreography (no provider credential)",
-    "OS-level hard kill of an unresponsive child process in a real GUI session"
+    "A visible Electron BrowserWindow was not opened during the evidence run; browser cleanup was exercised through the owner adapter with a managed-session fake.",
+    "An external model provider was not used."
   ],
   "cleanup": {
-    "startedProcesses": false,
-    "startedGateway": false,
-    "startedElectron": false,
+    "startedProcesses": true,
+    "startedElectron": true,
+    "startedGateway": true,
     "recoveryRequired": false,
-    "notes": "Deterministic in-process reclamation over the shipped coordinator; no real process was spawned for this artifact."
-  },
-  "limitations": [
-    "The 50-cycle run exercises the shipped reclamation coordinator with owner fakes that mirror each real owner API; it does not spawn 50 OS processes.",
-    "Worktrees are never guessed: unresolved ownership stays kept/unknown and is surfaced through recovery_required.",
-    "All evidence is agent-driven; no real-human verdict or data is claimed."
-  ],
-  "artifacts": [
-    "resource-owner-inventory.json",
-    "reclamation-cycle-results.json",
-    "resource-recovery-required.json",
-    "verification-receipt.json",
-    "README.md",
-    "SHA256SUMS"
-  ]
+    "note": "focused built Electron E2E owner receipt plus runtime cycle processes and inprocess worktrees are included"
+  }
 }

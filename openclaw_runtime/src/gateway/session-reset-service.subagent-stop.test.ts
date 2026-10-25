@@ -21,7 +21,7 @@ vi.mock("../auto-reply/reply/abort.js", () => ({
   stopSubagentsForRequester: subagentMocks.stopSubagentsForRequester,
 }));
 
-vi.mock("../agents/embedded-agent.js", () => ({
+vi.mock("../agents/embedded-agent-runner/runs.js", () => ({
   abortEmbeddedAgentRun: subagentMocks.abortEmbeddedAgentRun,
   resolveActiveEmbeddedRunSessionId: subagentMocks.resolveActiveEmbeddedRunSessionId,
   waitForEmbeddedAgentRunEnd: subagentMocks.waitForEmbeddedAgentRunEnd,

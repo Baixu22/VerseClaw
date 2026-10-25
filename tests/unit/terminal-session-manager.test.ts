@@ -145,3 +145,106 @@ describe('TerminalSessionManager idle classification', () => {
     expect(manager.classifyTerminal(sessionId)?.classification).toBe('interactive');
   });
 });
+describe('TerminalSessionManager long-session lifecycle', () => {
+  const openPolicy = {
+    maxProcesses: null,
+    maxRssMb: null,
+    maxBackgroundTerminals: null,
+    maxWorktrees: null,
+    idleTtlMs: 0,
+    keepOnLeave: true,
+  } as const;
+
+  it('defaults keep_on_leave to true and preserves the physical generation', async () => {
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const manager = new TerminalSessionManager();
+    const opened = manager.open({
+      workspace: workspace(process.cwd()),
+      sessionKey: 'agent:main:long',
+      expectedSessionId: 'session-generation-1',
+    });
+    expect(opened.keepOnLeave).toBe(true);
+    expect(opened.expectedSessionId).toBe('session-generation-1');
+    expect(manager.countKeepOnLeave({ sessionKey: 'agent:main:long', workspaceId: 'workspace-1' })).toBe(1);
+  });
+
+  it('rejects a terminal before spawn when the explicit background terminal budget is full', async () => {
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const manager = new TerminalSessionManager({
+      coordinationPolicy: { ...openPolicy, maxBackgroundTerminals: 1 },
+    });
+    manager.open({ workspace: workspace(process.cwd()), sessionKey: 'agent:main:first', kind: 'interactive' });
+    expect(() => manager.open({
+      workspace: workspace(process.cwd()),
+      sessionKey: 'agent:main:first',
+      kind: 'webPreviewDevServer',
+    })).toThrow(/maxBackgroundTerminals:limit-exceeded/);
+    expect(ptyMocks.spawn).toHaveBeenCalledTimes(1);
+  });
+
+it('runs 50 archive/delete cycles without terminal residue', { timeout: 20_000 }, async () => {
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const manager = new TerminalSessionManager();
+    let archivedKeepOnLeave = 0;
+    for (let cycle = 1; cycle <= 50; cycle += 1) {
+      manager.open({
+        workspace: workspace(process.cwd()),
+        sessionKey: `agent:main:cycle-${cycle}`,
+        expectedSessionId: `generation-${cycle}`,
+        keepOnLeave: true,
+        kind: 'interactive',
+      });
+      manager.open({
+        workspace: workspace(process.cwd()),
+        sessionKey: `agent:main:cycle-${cycle}`,
+        expectedSessionId: `generation-${cycle}`,
+        keepOnLeave: false,
+        kind: 'webPreviewDevServer',
+      });
+      const archived = manager.reclaimForSession({
+        sessionKey: `agent:main:cycle-${cycle}`,
+        expectedSessionId: `generation-${cycle}`,
+        honorKeepOnLeave: true,
+        reason: 'session-reset',
+      });
+      archivedKeepOnLeave += archived.kept;
+      expect(manager.listAll().filter((terminal) => terminal.sessionKey === `agent:main:cycle-${cycle}`)).toHaveLength(1);
+      const deleted = manager.reclaimForSession({
+        sessionKey: `agent:main:cycle-${cycle}`,
+        expectedSessionId: `generation-${cycle}`,
+        honorKeepOnLeave: false,
+        reason: 'session-delete',
+      });
+      expect(deleted).toEqual({ attempted: 1, reclaimed: 1, kept: 0 });
+    }
+    console.log(`[terminal-reclamation-audit] cycles=50 archivedKeepOnLeave=${archivedKeepOnLeave} activeResidual=${manager.listAll().length}`);
+    expect(archivedKeepOnLeave).toBe(50);
+    expect(manager.listAll()).toHaveLength(0);
+  });
+
+  it('reclaims only terminals bound to the requested generation', async () => {
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const manager = new TerminalSessionManager();
+    manager.open({
+      workspace: workspace(process.cwd()),
+      sessionKey: 'agent:main:long',
+      expectedSessionId: 'generation-old',
+      kind: 'interactive',
+    });
+    manager.open({
+      workspace: workspace(process.cwd()),
+      sessionKey: 'agent:main:long',
+      expectedSessionId: 'generation-new',
+      kind: 'webPreviewDevServer',
+    });
+    const result = manager.reclaimForSession({
+      sessionKey: 'agent:main:long',
+      workspaceId: 'workspace-1',
+      expectedSessionId: 'generation-old',
+      honorKeepOnLeave: false,
+      reason: 'session-delete',
+    });
+    expect(result).toEqual({ attempted: 1, reclaimed: 1, kept: 0 });
+    expect(manager.listAll().map((terminal) => terminal.expectedSessionId)).toEqual(['generation-new']);
+  });
+});

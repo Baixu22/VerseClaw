@@ -5,12 +5,12 @@
   "taskForestNode": "TF-0558",
   "taskKey": "D3",
   "contract": "harness/specs/tasks/long-session-continuity-decision.md",
-  "generatedAt": "2026-10-23T16:29:18.558Z",
+  "generatedAt": "2026-10-24T11:49:49.722Z",
   "candidate": {
-    "branch": "codex/long-session-implementation-20261022",
-    "commit": "beae6d396a7003c50ecc7b9c27c6379eac55e9a4",
-    "tree": "3cdb40fe0d1a0acd9b8fae3844b98e9ffd733bd9",
-    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "f25c03a13eb5005d8cb265a4ae7b34da427bcf5b",
+    "tree": "559a460ee6156241c77870519d7be02ee8edf5cf",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2"
   },
   "decision": "keep-baseline",
   "d2Evidence": {
@@ -75,6 +75,21 @@
           "reason": "matched"
         },
         {
+          "name": "e2e-last-run.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "e2e-process-cleanup.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
+          "name": "e2e-process-run.json",
+          "ok": true,
+          "reason": "matched"
+        },
+        {
           "name": "fidelity-latency-cost-report.json",
           "ok": true,
           "reason": "matched"
@@ -92,105 +107,49 @@
       ]
     },
     "d2ArtifactHashes": {
-      "harness/specs/fixtures/long-session-development/d2/paired-workload-manifest.json": "5754c0908073bc65068319afb33ac9415a5a3ce68a13bdb0381eb3b7e4fa70c9",
-      "harness/specs/fixtures/long-session-development/d2/fidelity-latency-cost-report.json": "0ddbf27a46e544236ca6be068071840d9d6f21c5fcf0440554e22e16675f9324",
-      "harness/specs/fixtures/long-session-development/d2/candidate-decision-inputs.json": "6b4b857f10eeef62f59c80077598a46e9c4fae49ac94e42b2f1e60335e1933af",
-      "harness/specs/fixtures/long-session-development/d2/verification-receipt.json": "677a1f652be1d529c8029c364e55e5c466f0771fbcf5682e8f631beec09495b7",
-      "harness/specs/fixtures/long-session-development/d2/SHA256SUMS": "68f3561110a2897d73717fad3c3d868df7e7078834a305d8ca0d90db526dcb8f"
+      "harness/specs/fixtures/long-session-development/d2/paired-workload-manifest.json": "97c007dbdab7996974bfe9e47f8f1c9d20729202be013706ff768e1806fbc02a",
+      "harness/specs/fixtures/long-session-development/d2/fidelity-latency-cost-report.json": "78ce40c0f6f6710603b79c6a3b5bce8678db49c111686a958fdf48a3870644f4",
+      "harness/specs/fixtures/long-session-development/d2/candidate-decision-inputs.json": "6d7b8c0083b0f2e97a55bd5e26881b2e200e184458d2545a140091204d6aed6a",
+      "harness/specs/fixtures/long-session-development/d2/verification-receipt.json": "a327d3288d7700701a24a0e249f93fbbba1c477fd22f3c9d4cacd67b2cc50b65",
+      "harness/specs/fixtures/long-session-development/d2/SHA256SUMS": "eb4ec43f7d56bac95f2200cc722d38d36d043525d3a0db5a9661c22eb7580316"
     }
   },
   "gateReceipt": {
     "provided": true,
-    "source": "D:/tmp/long-session-d3/gates-beae6d396/gates.json",
+    "source": "D:/tmp/tf0558-gates.json",
     "allPassed": true,
     "gates": [
       {
-        "name": "focused-unit",
-        "command": "pnpm exec vitest run tests/unit/default-config-matrix.test.ts tests/unit/context-lifecycle-boundary.test.ts tests/unit/docs-index.test.ts --maxWorkers=1",
+        "name": "d3-unit",
+        "command": "pnpm exec vitest run tests/unit/default-config-matrix.test.ts tests/unit/context-lifecycle-boundary.test.ts --maxWorkers=1",
         "exitCode": 0,
-        "durationMs": 6443,
-        "log": "D:\\tmp\\long-session-d3\\gates-beae6d396\\focused-unit.log",
-        "summary": "  Test Files  3 passed (3)       Tests  22 passed (22)    Start at  00:27:53    Duration  4.79s (transform 1.77s, setup 299ms, import 2.61s, tests 633ms, environment 647ms) "
-      },
-      {
-        "name": "d3-decision-generate",
-        "command": "pnpm run long-session:d3:decision",
-        "exitCode": 0,
-        "durationMs": 864,
-        "log": "D:\\tmp\\long-session-d3\\gates-beae6d396\\d3-decision-generate.log",
-        "summary": "    \"README.md\",     \"continuity-strategy-decision.json\",     \"promotion-or-retention-boundary.json\",     \"verification-receipt.json\"   ] }"
-      },
-      {
-        "name": "d3-decision-check",
-        "command": "pnpm run long-session:d3:decision:check",
-        "exitCode": 0,
-        "durationMs": 870,
-        "log": "D:\\tmp\\long-session-d3\\gates-beae6d396\\d3-decision-check.log",
-        "summary": "{   \"checkOnly\": true,   \"ok\": true,   \"failures\": [],   \"decision\": \"keep-baseline\" }"
+        "files": 2,
+        "tests": 19,
+        "log": "D:/tmp/tf0558-unit.log"
       },
       {
         "name": "typecheck",
         "command": "pnpm run typecheck",
         "exitCode": 0,
-        "durationMs": 33872,
-        "log": "D:\\tmp\\long-session-d3\\gates-beae6d396\\typecheck.log",
-        "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+        "coverage": "uncached node + web + tests",
+        "log": "D:/tmp/tf0558-typecheck.log"
       },
       {
-        "name": "contract-check",
-        "command": "pnpm run contract:check",
+        "name": "decision",
+        "command": "pnpm long-session:d3:decision",
         "exitCode": 0,
-        "durationMs": 974,
-        "log": "D:\\tmp\\long-session-d3\\gates-beae6d396\\contract-check.log",
-        "summary": "$ node scripts/contract-check.mjs Contract check passed."
+        "decision": "keep-baseline",
+        "d2ChecksumOk": true,
+        "negativeCases": 4,
+        "failedNegatives": 0,
+        "log": "D:/tmp/tf0558-decision.log"
       },
       {
-        "name": "comms-replay",
-        "command": "pnpm run comms:replay",
+        "name": "decision-check",
+        "command": "pnpm long-session:d3:decision:check",
         "exitCode": 0,
-        "durationMs": 998,
-        "log": "D:\\tmp\\long-session-d3\\gates-beae6d396\\comms-replay.log",
-        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
-      },
-      {
-        "name": "comms-compare",
-        "command": "pnpm run comms:compare",
-        "exitCode": 0,
-        "durationMs": 1007,
-        "log": "D:\\tmp\\long-session-d3\\gates-beae6d396\\comms-compare.log",
-        "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
-      },
-      {
-        "name": "harness-validate",
-        "command": "pnpm harness validate --spec harness/specs/tasks/long-session-continuity-decision.md",
-        "exitCode": 0,
-        "durationMs": 1974,
-        "log": "D:\\tmp\\long-session-d3\\gates-beae6d396\\harness-validate.log",
-        "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-continuity-decision.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-continuity-decision.md\" Spec is valid: harness\\specs\\tasks\\long-session-continuity-decision.md"
-      },
-      {
-        "name": "docs-policy",
-        "command": "pnpm run docs:policy:validate",
-        "exitCode": 0,
-        "durationMs": 731,
-        "log": "D:\\tmp\\long-session-d3\\gates-beae6d396\\docs-policy.log",
-        "summary": "[policy-docs] PASS security-policy-no-credential-shapes [policy-docs] PASS acceleration-source-matches-decision [policy-docs] PASS acceleration-decision-record [policy-docs] PASS security-process-assets-exist [policy-docs] report: D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\policy-doc-truthfulness\\report.json [policy-docs] PASS: 10 checks"
-      },
-      {
-        "name": "git-diff-check",
-        "command": "git diff --check",
-        "exitCode": 0,
-        "durationMs": 92,
-        "log": "D:\\tmp\\long-session-d3\\gates-beae6d396\\git-diff-check.log",
-        "summary": ""
-      },
-      {
-        "name": "eslint-changed",
-        "command": "pnpm exec eslint scripts/long-session-continuity-decision.mjs",
-        "exitCode": 0,
-        "durationMs": 3685,
-        "log": "D:\\tmp\\long-session-d3\\gates-beae6d396\\eslint-changed.log",
-        "summary": ""
+        "result": "ok",
+        "log": "D:/tmp/tf0558-decision-check.log"
       }
     ]
   },

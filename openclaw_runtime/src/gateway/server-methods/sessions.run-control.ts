@@ -1180,7 +1180,7 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       respond(false, undefined, result.error);
       return;
     }
-    respond(true, { ok: true, key: result.key }, undefined);
+    respond(true, { ok: true, key: result.key, sessionId: result.sessionId }, undefined);
   },
 };
 

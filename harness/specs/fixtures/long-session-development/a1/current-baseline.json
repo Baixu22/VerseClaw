@@ -1,21 +1,21 @@
 {
   "schema": "clawx.long-session.current-baseline/v1",
   "driven_by": "agent",
-  "actor": "codex-long-session-a1",
+  "actor": "codex-long-session-r2",
   "program": "long-session-development-20261022",
   "task": "TF-0548",
-  "generatedAt": "2026-10-22T15:12:53.214Z",
+  "generatedAt": "2026-10-23T00:00:50.722Z",
   "scope": "Current source and fault baseline for one explicit Windows-local Workspace/Assistant session tree. This does not accept long-session product behavior.",
   "candidate": {
-    "sourceCommit": "e73c29eebc5ae3f9c3355c5c446dbfd96577de8c",
+    "sourceCommit": "5d26c6ab12aa5729439cda0031ea4df5c9de0e74",
     "baseCommit": "3d6891d761fc78962859393e623cc19d8b3c20e2",
-    "sourceTree": "d06b8c75cbf44d3fbba6dff4f4d801f00a1e8b24",
-    "branch": "codex/long-session-implementation-20261022",
-    "worktree": "D:/ClawX-work/worktrees/long-session-program",
+    "sourceTree": "7e51d2975513958940cb81e7755ba23cf2c879f0",
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
     "cleanCandidateObserved": true,
-    "dirtyScopeAtCapture": "A1 tracked fixtures, regression test and product-semantics documentation only",
-    "evidenceCandidateCommit": "b088635108f4c40c77efcd9f46a1c421f405b8d9",
-    "evidenceCandidateTree": "91026b1f0bc14fccd77b09119775725b658493a1"
+    "dirty": false,
+    "captureReceipt": "D:/tmp/long-session-r2-20261023/a1-context.result.json",
+    "captureScope": "fixed clean program source; A1 source inputs hash bytes from this commit"
   },
   "environment": {
     "platform": "win32",
@@ -25,17 +25,9 @@
     "runtimeBuild": "not-built-for-A1-baseline",
     "gatewayBuild": "not-built-for-A1-baseline",
     "electronBuild": "not-built-for-A1-baseline",
-    "codegraph": "retired in current repository; historical frozen indexes are not current callers"
+    "codegraph": "D:/ClawX/.codegraph/codegraph.db; indexed d887414facd34d0ebe740e5ae58a1316573d0c0f; navigation only; callers verified directly in fixed source"
   },
   "sourceInputs": [
-    {
-      "path": "harness/specs/tasks/long-session-baseline-contract.md",
-      "sha256": "f37aac2dc2557fd1edb93e7f8d1077295100c8a479ada45a8e1aa6ef18b43fa7"
-    },
-    {
-      "path": "docs/clawx-product-semantics.md",
-      "sha256": "e97e39f7ea9d18218f9a237893d1597b09682e7ba19b2902699a17b909ad99d1"
-    },
     {
       "path": "shared/types/identity-scope.ts",
       "sha256": "d8418a7294578fc5fc0193ad4d94e9cabcafeceaa80cf63aa424470ee8d389bc"
@@ -95,22 +87,6 @@
     {
       "path": "openclaw_runtime/extensions/anthropic/cli-backend.ts",
       "sha256": "6c16de109e311ac43b0d06980252661c3328d559f2c13765f56c5440f9ebed0b"
-    },
-    {
-      "path": "harness/specs/fixtures/long-session-development/a1/action-and-inheritance-contract.json",
-      "sha256": "44e928fe1324446312216cf71a5f66e03c93eb02164585c447af0e670703e353"
-    },
-    {
-      "path": "harness/specs/fixtures/long-session-development/a1/negative-scenario-index.json",
-      "sha256": "8ec554f2dad797a9a3c6c4f932e24bc04d55de0533ea82746390a09559e58f15"
-    },
-    {
-      "path": "harness/specs/fixtures/long-session-development/a1/verification-receipt.json",
-      "sha256": "b558111ff4a9a4dc36c7f069b634abfced091de00989441b48382ca4a4e8beff"
-    },
-    {
-      "path": "tests/unit/long-session-action-contract.test.ts",
-      "sha256": "601f25515ab7674bad669d8f0f54931599a9f58148940b961bd2608489a74636"
     }
   ],
   "measurementContract": {
@@ -188,5 +164,8 @@
     "Archive/restore remain partial until TF-0549 lands the lifecycle barrier.",
     "All evidence is agent-driven; no real-human claim is made."
   ],
-  "verificationReceipt": "harness/specs/fixtures/long-session-development/a1/verification-receipt.json"
+  "templateProvenance": {
+    "commit": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
+    "use": "structure only; source identity and observations regenerated for this worktree"
+  }
 }

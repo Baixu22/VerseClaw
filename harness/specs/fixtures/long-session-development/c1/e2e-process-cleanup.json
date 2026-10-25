@@ -1,0 +1,27 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\verse-claw-e2e-run-cREANK",
+  "ledgerEntries": 2,
+  "reaped": [
+    {
+      "pid": 45764,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 50300,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "ok",
+    "runRoot": "D:\\tmp\\verse-claw-e2e-run-cREANK\\",
+    "owned": [],
+    "remaining": []
+  }
+}

@@ -11,6 +11,11 @@ export type ResourceSchedulerOptions = {
   maxActiveRoles?: number;
   exclusiveToolGroups?: readonly (readonly string[])[];
   roleCost?: Partial<Record<string, number>>;
+  /**
+   * Worktree intent alone is not isolation proof. Set this only when the
+   * existing worktree owner has produced verified checkouts for the nodes.
+   */
+  verifiedWorktreeIsolation?: boolean;
 };
 
 export type ResourceScheduleDeferReason =
@@ -137,12 +142,17 @@ function writeSetDeferReason(
   candidate: OrchestrationTaskNode,
   chunk: readonly OrchestrationTaskNode[],
   roles: Map<string, RoleContract>,
+  options: ResourceSchedulerOptions | undefined,
 ): ResourceScheduleDeferReason | undefined {
   if (!isWriteCapableNode(candidate, roles)) return undefined;
 
   for (const existing of chunk) {
     if (!isWriteCapableNode(existing, roles)) continue;
-    if (existing.isolation === "worktree" && candidate.isolation === "worktree") {
+    if (
+      options?.verifiedWorktreeIsolation === true &&
+      existing.isolation === "worktree" &&
+      candidate.isolation === "worktree"
+    ) {
       continue;
     }
     if (!existing.writeSet?.length || !candidate.writeSet?.length) {
@@ -187,7 +197,7 @@ function takeContentionSafeChunk(params: {
       deferredReasons.add("concurrency-cap");
       continue;
     }
-    const writeSetReason = writeSetDeferReason(node, chunk, params.roles);
+    const writeSetReason = writeSetDeferReason(node, chunk, params.roles, params.options);
     if (writeSetReason) {
       deferred += 1;
       deferredTaskNodeIds.push(node.taskNodeId);
@@ -202,7 +212,9 @@ function takeContentionSafeChunk(params: {
       conflictingKeys.every((key) =>
         (usedExclusiveKeys.get(key) ?? []).every(
           (existing) =>
-            (existing.isolation === "worktree" && node.isolation === "worktree") ||
+            (params.options?.verifiedWorktreeIsolation === true &&
+              existing.isolation === "worktree" &&
+              node.isolation === "worktree") ||
             (Boolean(existing.writeSet?.length) &&
               Boolean(node.writeSet?.length) &&
               !writeSetsConflict(existing.writeSet, node.writeSet)),

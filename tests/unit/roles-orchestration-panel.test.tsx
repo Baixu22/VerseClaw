@@ -382,5 +382,7 @@ describe('RolesOrchestrationPanel', () => {
     expect(screen.getByTestId('role-memory-proposal-confidence')).toHaveTextContent('71%');
     expect(screen.getByTestId('role-memory-proposal-needs-review')).toHaveTextContent('Needs review because source metadata is incomplete.');
     expect(screen.queryByText(/automatic|automatically|auto write|long-term memory for every task/i)).not.toBeInTheDocument();
+    expect(screen.getByTestId('role-memory-composer-info')).toBeInTheDocument();
+    expect(screen.queryByText(/low-risk proposals may be accepted|low-risk.*policy/i)).not.toBeInTheDocument();
   });
 });

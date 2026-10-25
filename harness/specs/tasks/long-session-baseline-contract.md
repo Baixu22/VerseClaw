@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: completed
+lifecycleStatus: active
 id: long-session-baseline-contract
 title: 固定长期会话身份、动作合同与故障基线
 program: long-session-development-20261022
@@ -10,9 +10,9 @@ taskType: runtime-bridge
 intent: 重新核读当前实现，固定长期工作范围和动作语义，避免把旧调研、历史 PASS 或文件夹存在当作新能力。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
 dependsOnTasks:
-diffBase: e73c29eebc5ae3f9c3355c5c446dbfd96577de8c
 
 touchedAreas:
+  - .gitignore
   - harness/specs/tasks/long-session-baseline-contract.md
   - harness/specs/tasks/long-session-development-plan.md
   - docs/clawx-product-semantics.md
@@ -25,6 +25,10 @@ touchedAreas:
   - openclaw_runtime/extensions/anthropic/cli-backend.ts
   - tests/unit/workspace-session.test.ts
   - tests/unit/chat-session-continuity.test.ts
+  - electron/services/resource-tracker.ts
+  - openclaw_runtime/src/sessions/session-admission-registry.ts
+  - openclaw_runtime/src/gateway/session-drain-service.ts
+  - openclaw_runtime/src/agents/tools/sessions-spawn-tool.ts
   - tests/unit/long-session-action-contract.test.ts
   - harness/specs/fixtures/long-session-development/a1/**
 requiredRules:
@@ -54,7 +58,7 @@ requiredTests:
 plannedTests:
   - tests/unit/long-session-action-contract.test.ts
 acceptance:
-  - 合同区分 Workspace、Project 投影、Assistant、SessionKey、物理 sessionId、native thread、Turn/Run/Task 和 resource owner；不新增独立 Project 或任务状态 owner。
+  - 合同区分 Workspace、Project 投影、Assistant、SessionKey、物理 sessionId、native thread、Turn/Run/Task 和 resource owner；不新增独立 Project 或任务状态 owner。合同明确分出人类 CLI/斜杠命令面、宿主 app-server/host-api 面与模型工具面；resume/fork/archive/delete/worktree/handoff 由宿主控制面发起，模型只能调用现有受限工具，不能把 shell CLI 当作第二生命周期 API。
   - abort、session stop、archive、restore、reset、delete、fork、handoff、schedule pause 的可见行为、继承/不继承、前置、失败/unknown 与恢复路径逐项有当前代码入口。
   - 以隔离 agent fixture 固定运行中归档、重复/迟到 completion、generation 变化、后端切换、授权撤销、跨工作区与重启的负向清单；未实跑项明确 unmeasured。
   - 固定候选、输入、指标口径和后续验收预算；旧 124 项测试与性能样本只作历史依据，当前基线生成新回执。
@@ -68,16 +72,9 @@ docs:
 
 重新核读当前实现，固定长期工作范围和动作语义，避免把旧调研、历史 PASS 或文件夹存在当作新能力。
 
-本规格已执行并留下当前源码、动作合同、负向矩阵和门禁回执。任务状态、前置与下一 ready 仍由 repo-local Task Forest 管理；本文件不是功能完成或后续阶段通过的替代证据。A1 的 archive/restore 当前仍标记为 partial，运行中归档与崩溃恢复由 A2/TF-0549 关闭。
+本规格为待执行合同。任务状态、前置与下一 ready 由 repo-local Task Forest 管理。节点创建、文件存在、静态 validate 或 dry-run 不是功能证据。这是本 lane 唯一初始 ready 执行任务。
 
 所属阶段一：统一会话动作并建立故障基线。统一边界见[规划合同索引](./long-session-development-plan.md)。
-
-**A1 交付**
-
-- `action-and-inheritance-contract.json` 区分 Workspace、Project 兼容投影、Assistant、SessionKey、物理 sessionId、native thread、Turn/Run、Task 与资源 owner，并固定九个动作的继承、失败和恢复语义。
-- `negative-scenario-index.json` 固定运行中归档、重复/迟到完成、generation 变化、后端切换、授权撤销、跨工作区、重启与调度暂停等负向场景；未实跑项保持 `unmeasured`。
-- `current-baseline.json` 记录当前源码 hash、候选身份和 D2 的 30 对配对评测预算；历史测试/性能样本不作为当前验收。
-- 当前生产 archive 路径尚未取得 runtime lifecycle fence，restore 在 transcript rename 前移除索引，是本节点保留给 A2 的真实 gap。
 
 **前置与读入**
 
@@ -134,6 +131,7 @@ E2E 要求真实 built Electron 与隔离 userData/run root。界面 host mocks 
 
 - 本 lane 唯一初始 ready leaf；先运行 harness context，再据当前实现缩小后续 source scope。
 - 合同是现有权威的行为对照，不实现新 SessionReconciler、通用资源表或云执行环境。
+- 参照 Codex app-server 的控制面分层，但不要把 Codex 的 thread/turn/goal 字段复制成 ClawX 第二权威；把它转译成现有 owner 的 source anchor、负向案例与验收。
 - 一次一个 ready leaf；发生 scope/source/dependency 漂移时重读图与合同，不默认 --allow-stale 或修改别人的 dirty 内容。
 - 验收条目全满足且证据一致后保存 proposal，base_graph_hash 匹配再 apply/validate/export；缺技术证据保持未完成并记录具体 gap。
 - 不要求所有者真人操作、真人数据或 verdict；自动模拟/独立 agent 审查如实标记。没有 live-provider 数据不能包装为质量推广证据。

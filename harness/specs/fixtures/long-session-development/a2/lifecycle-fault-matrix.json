@@ -1,95 +1,168 @@
 {
   "schema": "clawx.long-session.a2-lifecycle-fault-matrix/v1",
   "driven_by": "agent",
-  "actor": "codex-long-session-a2",
+  "actor": "codex-long-session-r2",
   "program": "long-session-development-20261022",
   "task": "TF-0549",
-  "generatedAt": "2026-10-22T17:55:03.060Z",
-  "scope": "Runtime archive/restore lifecycle barrier plus Main operation-gate recovery and delete/reset regression checks.",
+  "generatedAt": "2026-10-23T09:37:48.868Z",
+  "candidate": "afcb376d90478b5fda13b86a7e621f9ee9f69b02",
   "runtimeOwner": "Gateway session lifecycle + admission registry + existing session mutation journal table",
   "cases": [
     {
       "id": "archive-requires-cleanup-fence",
       "fault": "Archive while a session is active or still owns queued/process/subagent state.",
-      "expected": "cleanupSessionBeforeMutation fences and drains before any transcript, archive-index or store-row mutation.",
-      "result": "pass",
+      "expected": "cleanupSessionBeforeMutation fences and drains before mutation.",
+      "result": "passed",
       "evidence": [
         "openclaw_runtime/src/gateway/session-archive-service.test.ts",
-        "openclaw_runtime/src/gateway/session-reset-service.stop.test.ts"
+        "openclaw_runtime/src/gateway/session-reset-service.stop.test.ts#drains an in-flight permit before archiving"
       ]
     },
     {
       "id": "archive-finalizer-failure-no-mutation",
       "fault": "Admission fence/drain/owner cleanup returns an unavailable result.",
-      "expected": "Return unavailable/retryable, release the known-failure fence, and leave transcript, archive index and store row unchanged.",
-      "result": "pass",
+      "expected": "Return unavailable/retryable and leave transcript, archive index and store row unchanged.",
+      "result": "passed",
       "evidence": [
-        "openclaw_runtime/src/gateway/session-archive-service.test.ts#does not mutate transcript or store"
+        "openclaw_runtime/src/gateway/session-archive-service.test.ts#does not mutate transcript or store when the lifecycle finalizer fails"
       ]
     },
     {
       "id": "archive-store-commit-unknown-retry",
       "fault": "Process stops after transcript/index preparation or after store commit, before runtime finalization.",
-      "expected": "Same operationId resumes from intent/store_committed state; committed retry returns the saved receipt without rerunning cleanup.",
-      "result": "pass",
+      "expected": "Same operationId resumes from intent/store_committed state and returns the saved committed receipt.",
+      "result": "passed",
       "evidence": [
         "openclaw_runtime/src/gateway/session-archive-service.test.ts#recovers a pre-commit archive journal",
         "openclaw_runtime/src/gateway/session-archive-service.test.ts#returns the committed receipt"
       ]
     },
     {
+      "id": "archive-source-vanished",
+      "fault": "The source store row disappears after the archive intent is recorded.",
+      "expected": "Definitive conflict, definitive failure metadata and cleanup fence release.",
+      "result": "passed",
+      "evidence": [
+        "openclaw_runtime/src/gateway/session-archive-service.test.ts#classifies a vanished archive source as a definitive conflict",
+        "openclaw_runtime/src/gateway/session-archive-service.test.ts#settles the archive lease"
+      ]
+    },
+    {
       "id": "restore-crash-recovery",
-      "fault": "Restore inserts the new store row but process stops before transcript rename and index removal.",
-      "expected": "Archive index continues filtering the key, and the same operationId completes rename/index cleanup before runtime_committed.",
-      "result": "pass",
+      "fault": "Restore inserts the new store row but stops before transcript rename and index removal.",
+      "expected": "Archive index continues filtering the key and the same operationId completes recovery.",
+      "result": "passed",
       "evidence": [
         "openclaw_runtime/src/gateway/session-archive-service.test.ts#recovers a restore"
       ]
     },
     {
+      "id": "restore-missing-transcript-unknown",
+      "fault": "An archived transcript is absent during the first restore attempt.",
+      "expected": "Retryable unknown; row remains fenced and exact operation can recover after the source reappears.",
+      "result": "passed",
+      "evidence": [
+        "openclaw_runtime/src/gateway/session-archive-service.test.ts#preserves a closed restore admission fence"
+      ]
+    },
+    {
+      "id": "restore-duplicate-transcript-conflict",
+      "fault": "Both live and archived transcripts exist.",
+      "expected": "Definitive conflict and release of the new-generation fence.",
+      "result": "passed",
+      "evidence": [
+        "openclaw_runtime/src/gateway/session-archive-service.test.ts#releases the new-generation fence when both live and archived transcripts exist"
+      ]
+    },
+    {
       "id": "restore-fresh-generation",
       "fault": "A late run event from the archived physical generation reaches the restored logical session.",
-      "expected": "Restore assigns a fresh physical sessionId; the old generation remains tombstoned and cannot mutate the new row.",
-      "result": "pass",
+      "expected": "Fresh physical sessionId; old generation cannot mutate the new row.",
+      "result": "passed",
       "evidence": [
-        "openclaw_runtime/src/gateway/session-reset-service.stop.test.ts#archive generation tombstone",
+        "tests/unit/session-lifecycle-generation-barrier.test.ts",
         "tests/e2e/long-session-lifecycle-faults.spec.ts"
       ]
     },
     {
-      "id": "main-circular-archive-restore-conflict",
-      "fault": "While archive is unknown/pending, a restore or second mutation kind is requested for the same SessionKey.",
-      "expected": "The persisted Main gate rejects the different mutation kind; only the original operationId can retry.",
-      "result": "pass",
+      "id": "legacy-archive-restore",
+      "fault": "A legacy archive entry has a { key } snapshot without a physical sessionId.",
+      "expected": "The generation is recovered from the archived transcript filename.",
+      "result": "passed",
       "evidence": [
-        "tests/unit/long-session-lifecycle-barrier.test.ts",
-        "tests/unit/session-delete-gate.test.ts"
+        "openclaw_runtime/src/gateway/session-archive-service.test.ts#legacy archive"
+      ]
+    },
+    {
+      "id": "unsafe-archive-path",
+      "fault": "A malformed archive index or journal points outside the session store.",
+      "expected": "Structured definitive refusal before unsafe mutation; the mirror gate can be released.",
+      "result": "passed",
+      "evidence": [
+        "openclaw_runtime/src/gateway/session-archive-service.test.ts#outside the session store"
+      ]
+    },
+    {
+      "id": "main-circular-archive-restore-conflict",
+      "fault": "A different mutation kind is requested while archive is pending.",
+      "expected": "The persisted Main gate rejects the different kind and permits only original-operation retry.",
+      "result": "passed",
+      "evidence": [
+        "tests/unit/long-session-lifecycle-barrier.test.ts"
       ]
     },
     {
       "id": "unknown-rpc-preserves-operation-id",
-      "fault": "The archive RPC times out or returns no matching runtime_committed receipt.",
-      "expected": "Main does not hide success or clear the gate; retry uses the same operationId and succeeds only on a matching receipt.",
-      "result": "pass",
+      "fault": "The archive RPC times out or returns no matching committed receipt.",
+      "expected": "Main retains the gate and exact operationId; retry succeeds only on a matching receipt.",
+      "result": "passed",
       "evidence": [
-        "tests/unit/long-session-lifecycle-barrier.test.ts#keeps the same operationId open"
+        "tests/unit/long-session-lifecycle-barrier.test.ts#same operationId"
+      ]
+    },
+    {
+      "id": "main-definitive-failure-release",
+      "fault": "Runtime returns a correlated definitive refusal.",
+      "expected": "Main releases the gate; retryable failures remain gated.",
+      "result": "passed",
+      "evidence": [
+        "openclaw_runtime/src/gateway/sessions-lifecycle-wire.test.ts",
+        "tests/unit/long-session-lifecycle-barrier.test.ts#definitive"
+      ]
+    },
+    {
+      "id": "alias-key-receipt",
+      "fault": "Requested legacy session key differs from the runtime canonical key.",
+      "expected": "Runtime receipt echoes the requested key for Main correlation while retaining canonical identity internally.",
+      "result": "passed",
+      "evidence": [
+        "openclaw_runtime/src/gateway/sessions-lifecycle-wire.test.ts"
       ]
     },
     {
       "id": "archive-index-filters-live-list",
-      "fault": "Archive index exists while the runtime store row has not yet been removed (crash window).",
-      "expected": "sessions.list excludes the key by archive-index membership before the store commit is complete.",
-      "result": "pass",
+      "fault": "Archive index exists before full store/file finalization.",
+      "expected": "sessions.list excludes the key by archive-index membership.",
+      "result": "passed",
       "evidence": [
         "openclaw_runtime/src/gateway/server-methods/sessions.read.ts",
         "tests/e2e/long-session-lifecycle-faults.spec.ts"
       ]
     },
     {
+      "id": "malformed-archive-index-read",
+      "fault": "The archive index is malformed or foreign-versioned.",
+      "expected": "Read-only listing remains available with an empty archive view; write paths still fail closed.",
+      "result": "passed",
+      "evidence": [
+        "openclaw_runtime/src/gateway/session-archive-service.test.ts#unreadable"
+      ]
+    },
+    {
       "id": "delete-reset-regression",
-      "fault": "Shared journal/finalizer refactor regresses existing delete/reset/terminal semantics.",
-      "expected": "Delete tombstone, reset fence release, terminal keep-on-leave and existing partial-delete behavior remain unchanged.",
-      "result": "pass",
+      "fault": "Shared lifecycle cleanup changes delete/reset/terminal behavior.",
+      "expected": "Legacy best-effort owner cleanup semantics remain for reset/delete; archive remains strict.",
+      "result": "passed",
       "evidence": [
         "tests/unit/session-files.test.ts",
         "tests/unit/session-cascade-delete.test.ts",
@@ -99,9 +172,29 @@
       ]
     }
   ],
+  "counts": {
+    "rootTests": {
+      "files": 7,
+      "total": 31,
+      "passed": 30,
+      "failed": 0,
+      "pending": 1
+    },
+    "runtimeTests": {
+      "files": 7,
+      "total": 66,
+      "passed": 66,
+      "failed": 0,
+      "pending": 0
+    },
+    "electronE2E": {
+      "tests": 9,
+      "failed": 0
+    }
+  },
   "knownLimitations": [
-    "Permanent deletion of an already archived conversation remains in the existing Main archive-index/cascade path; it is covered by partial-failure tests but is not moved into the runtime archive RPC.",
-    "The A2 E2E covers one isolated local workspace; multi-workspace acceptance belongs to F1.",
-    "A test-only dependency injection is not used to fabricate provider activity; active-drain behavior is tested through the existing finalizer regression path."
+    "A2 E2E covers one isolated local workspace; multi-workspace acceptance belongs to F1.",
+    "A transcript temporarily missing during restore remains retryable by design; the same operationId and fence must converge before another destructive action can start.",
+    "A complete fault injection at every individual filesystem/sqlite syscall boundary is not claimed; accepted cases cover intent, store_committed, committed-response loss and transcript/index windows."
   ]
 }

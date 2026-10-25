@@ -6,7 +6,9 @@ import {
   RECLAIM_OWNERS,
   actionClosesTerminals,
   buildReclaimReceipt,
+  decideLongSessionCoordination,
   reclaimLongSessionResources,
+  resolveLongSessionCoordinationPolicy,
   shouldKeepTerminalOnLeave,
   type ReclaimOwnerHandlers,
   type ReclaimScope,
@@ -77,7 +79,7 @@ describe('E2 resource owner inventory', () => {
     expect(shouldKeepTerminalOnLeave('workspace-switch', { keepOnLeave: true })).toBe(true);
     expect(shouldKeepTerminalOnLeave('session-delete', { keepOnLeave: true })).toBe(false);
     expect(shouldKeepTerminalOnLeave('app-quit', { keepOnLeave: true })).toBe(false);
-    expect(shouldKeepTerminalOnLeave('ui-unload', undefined)).toBe(false);
+    expect(shouldKeepTerminalOnLeave('ui-unload', undefined)).toBe(true);
   });
 });
 
@@ -167,8 +169,8 @@ describe('E2 reclamation receipts', () => {
       scope: SCOPE,
       generatedAt: '2026-10-24T05:00:00.000Z',
       owners: [
-        { kind: 'terminal', owner: 'TerminalSessionManager', outcome: 'reclaimed', attempted: 2, reclaimed: 2, kept: 0 },
-        { kind: 'browser', owner: 'HostAgentBrowserService', outcome: 'unknown', attempted: 1, reclaimed: 0, kept: 0, detail: 'packaged engine closed without receipt' },
+        { kind: 'terminal', owner: 'TerminalSessionManager', outcome: 'reclaimed', authority: 'managed', generation: SCOPE.expectedSessionId ?? null, attempted: 2, reclaimed: 2, kept: 0 },
+        { kind: 'browser', owner: 'HostAgentBrowserService', outcome: 'unknown', authority: 'unknown', generation: SCOPE.expectedSessionId ?? null, attempted: 1, reclaimed: 0, kept: 0, detail: 'packaged engine closed without receipt' },
       ],
     });
     expect(receipt.recoveryRequired).toBe(true);
@@ -287,5 +289,74 @@ describe('E2 50 create/stop/archive-restore cycles', () => {
     // reported separately, never as an unresolved cleanup.
     expect(liveTerminals.size).toBe(50);
     expect([...liveTerminals.values()].every((terminal) => terminal.keepOnLeave === true)).toBe(true);
+  });
+});
+describe('E2 explicit coordination policy', () => {
+  it('reads only explicit session limits and preserves unset values as null', () => {
+    expect(resolveLongSessionCoordinationPolicy({})).toEqual({
+      maxProcesses: null,
+      maxRssMb: null,
+      maxBackgroundTerminals: null,
+      maxWorktrees: null,
+      idleTtlMs: null,
+      keepOnLeave: null,
+    });
+    expect(resolveLongSessionCoordinationPolicy({
+      OPENCLAW_LONG_SESSION_MAX_PROCESSES: '4',
+      OPENCLAW_LONG_SESSION_MAX_RSS_MB: '512',
+      OPENCLAW_LONG_SESSION_MAX_BACKGROUND_TERMINALS: '2',
+      OPENCLAW_LONG_SESSION_MAX_WORKTREES: '3',
+      OPENCLAW_LONG_SESSION_IDLE_TTL_MS: '60000',
+      OPENCLAW_LONG_SESSION_KEEP_ON_LEAVE: 'false',
+    })).toEqual({
+      maxProcesses: 4,
+      maxRssMb: 512,
+      maxBackgroundTerminals: 2,
+      maxWorktrees: 3,
+      idleTtlMs: 60_000,
+      keepOnLeave: false,
+    });
+  });
+
+  it('rejects an exceeded budget and never treats an unavailable measurement as zero', () => {
+    const base = resolveLongSessionCoordinationPolicy({
+      OPENCLAW_LONG_SESSION_MAX_PROCESSES: '2',
+      OPENCLAW_LONG_SESSION_MAX_RSS_MB: '512',
+    });
+    expect(decideLongSessionCoordination({
+      policy: base,
+      usage: { processCount: 2, rssKb: 1024, backgroundTerminals: 0, worktreeCount: 0 },
+      request: { processes: 1 },
+    })).toMatchObject({
+      allowed: false,
+      reasons: [{ dimension: 'maxProcesses', observed: 2, limit: 2, reason: 'limit-exceeded' }],
+    });
+    expect(decideLongSessionCoordination({
+      policy: base,
+      usage: { processCount: 0, rssKb: null, backgroundTerminals: 0, worktreeCount: 0 },
+      request: { processes: 1, rssKb: 1 },
+    })).toMatchObject({
+      allowed: false,
+      reasons: [{ dimension: 'maxRssMb', observed: null, limit: 512 * 1024, reason: 'measurement-unknown' }],
+    });
+  });
+
+  it('fails closed when an action needs an owner but that owner is unavailable', async () => {
+    const receipt = await reclaimLongSessionResources({
+      action: 'session-delete',
+      scope: SCOPE,
+      owners: {
+        terminals: handlers().terminals,
+      },
+      generatedAt: '2026-10-24T06:00:00.000Z',
+    });
+    expect(receipt.recoveryRequired).toBe(true);
+    expect(receipt.owners.filter((owner) => owner.outcome === 'unknown').map((owner) => owner.kind)).toEqual([
+      'browser',
+      'background-port',
+      'worktree',
+      'admission-permit',
+    ]);
+    expect(receipt.owners.every((owner) => owner.generation === SCOPE.expectedSessionId)).toBe(true);
   });
 });

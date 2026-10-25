@@ -1,164 +1,312 @@
 {
   "schema": "clawx.long-session.f2-notification-budget/v1",
-  "drivenBy": "agent",
+  "driven_by": "agent",
   "actor": "codex-long-session-f2",
   "taskForestNode": "TF-0562",
-  "generatedAt": "2026-10-24T05:19:50.420Z",
+  "taskKey": "F2",
+  "program": "long-session-development-20261022",
+  "contract": "harness/specs/tasks/long-session-long-use-budget.md",
   "candidate": {
-    "branch": "codex/long-session-implementation-20261022",
-    "commit": "18982d5e6c8d66f96bc0c3ebbfc4cb44ba52b997",
-    "tree": "aa24137b2585e65e08f7d29139ccbc7ba71a8c84",
-    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "9db3a116e10b0bfd063ab0c8e9168dd98c46d4d4",
+    "tree": "a6cd76822acba85116ae170ac8c89d285973c2f0",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "status": []
   },
-  "observationSource": "D:/tmp/long-session-f2/observation-18982d5e6.json",
-  "observationSha256": "0df7f5671c1300f20686935566e58bfc97823f82ab556a23cfc2710a12896dc5",
-  "budgets": {
-    "maxMeaningfulPromptsPerBatch": 1,
-    "maxMergedSteeringChars": 24000,
-    "maxResultCharsPerItem": 6000,
-    "maxMetadataChars": 500,
-    "maxCompletionBatchWorkers": 64,
-    "maxCompletionBatchesPerSnapshot": 8,
-    "maxDuplicateNotificationDeliveries": 0,
-    "loadSessionsMinIntervalMs": 1200,
-    "loadHistoryMinIntervalMs": 800,
-    "gatewayEventDedupeTtlMs": 30000,
-    "maxSummaryKeysPerSweep": 40,
-    "hiddenSurfaceMaxPollTasks": 0,
-    "maxRefusedFollowUpExecutions": 0,
-    "maxGrowthPerRefusedFollowUpRound": 0
+  "generatedAt": "2026-10-24T22:12:01.512Z",
+  "duplicateCompletion": {
+    "source": "D:/tmp/anchor-long-session-f2/1792879345950/notification/long-session-completion-co-12137--fenced-batch-after-restart/completion-continuation-e2e.json",
+    "sourceSha256": "dc833ac3b206cbb5f630f4970fc37512547da973dca49d13fad068a827aa1dd4",
+    "orchestrationRunId": "orch_fb910d97-b920-4afa-8c77-710baa4d1ca2",
+    "duplicateDelegation": {
+      "status": "accepted",
+      "replayed": true,
+      "orchestrationRunId": "orch_fb910d97-b920-4afa-8c77-710baa4d1ca2"
+    },
+    "terminalBatch": {
+      "status": "terminal",
+      "outcome": "failed",
+      "consolidatedReceiptId": "orch_fb910d97-b920-4afa-8c77-710baa4d1ca2:agent:main:dashboard:ec6bf58b-001c-4c54-8cf5-b77d1ccc7852:a96852ea-5bd1-4bf9-a735-40ae04309c71:consolidated:v1",
+      "counts": {
+        "expected": 1,
+        "settled": 1,
+        "completed": 0,
+        "failed": 1,
+        "cancelled": 0,
+        "unknown": 0
+      },
+      "delivery": {
+        "state": "pending",
+        "delivered": 0,
+        "pending": 1,
+        "suspended": 0,
+        "failed": 0,
+        "discarded": 0,
+        "waitingForRequesterTurn": false
+      }
+    },
+    "restartReplay": {
+      "batchId": "orch_fb910d97-b920-4afa-8c77-710baa4d1ca2:agent:main:dashboard:ec6bf58b-001c-4c54-8cf5-b77d1ccc7852:a96852ea-5bd1-4bf9-a735-40ae04309c71",
+      "status": "terminal",
+      "consolidatedReceiptId": "orch_fb910d97-b920-4afa-8c77-710baa4d1ca2:agent:main:dashboard:ec6bf58b-001c-4c54-8cf5-b77d1ccc7852:a96852ea-5bd1-4bf9-a735-40ae04309c71:consolidated:v1",
+      "members": [
+        {
+          "runId": "64160310-04c4-4764-a184-381b9f772988",
+          "childSessionKey": "agent:main:subagent:d91a1ebf-eba5-44dd-b6c0-b64ac2c75e34",
+          "roleName": "architect",
+          "status": "failed",
+          "deliveryStatus": "pending"
+        }
+      ]
+    },
+    "resetFence": {
+      "batchId": "orch_fb910d97-b920-4afa-8c77-710baa4d1ca2:agent:main:dashboard:ec6bf58b-001c-4c54-8cf5-b77d1ccc7852:a96852ea-5bd1-4bf9-a735-40ae04309c71",
+      "status": "fenced",
+      "outcome": "fenced",
+      "generationState": "mismatch",
+      "consolidatedReceiptId": null
+    },
+    "consolidatedDeliveries": [
+      "orch_fb910d97-b920-4afa-8c77-710baa4d1ca2:agent:main:dashboard:ec6bf58b-001c-4c54-8cf5-b77d1ccc7852:a96852ea-5bd1-4bf9-a735-40ae04309c71:consolidated:v1",
+      "orch_fb910d97-b920-4afa-8c77-710baa4d1ca2:agent:main:dashboard:ec6bf58b-001c-4c54-8cf5-b77d1ccc7852:a96852ea-5bd1-4bf9-a735-40ae04309c71:consolidated:v1"
+    ],
+    "uniqueConsolidatedReceipts": [
+      "orch_fb910d97-b920-4afa-8c77-710baa4d1ca2:agent:main:dashboard:ec6bf58b-001c-4c54-8cf5-b77d1ccc7852:a96852ea-5bd1-4bf9-a735-40ae04309c71:consolidated:v1"
+    ],
+    "definition": "duplicate notifications = (distinct consolidated receipts beyond the first for one batch) + (1 when the duplicate delegation was not replayed)"
   },
-  "cases": {
-    "duplicateCompletion": {
-      "meaningfulPromptsPerBatch": 1,
-      "secondLeaseOfSameBatch": "refused: leasePendingAgentSteeringItemsFromSubagentRuns returns undefined while the batch is in progress",
-      "duplicateQueueItemsAfterAck": 0,
-      "batchesPerOrchestration": 1
+  "noChangeFollowup": {
+    "source": "D:/tmp/anchor-long-session-f2/1792879345950/notification/long-session-followup-sche-587bc-ire-after-it-is-invalidated/followup-journey-observation.json",
+    "sourceSha256": "cbf34f606f80edefea8a8e122d7576875ea182f6279f7c48f74dac80eb55af38",
+    "status": "passed",
+    "negatives": [
+      "deleted coordinator session -> binding invalidated -> cron fence state unverifiable"
+    ],
+    "steps": [
+      {
+        "step": "bound-follow-up-created",
+        "jobId": "a36e09a8-fa98-45e5-9f43-9a1a85de449a",
+        "state": "allowed",
+        "expectedSessionId": "1f3d452a-3537-4bc4-9586-ce8cce3f7245"
+      },
+      {
+        "step": "stop-current-turn-is-independent-of-schedule",
+        "stopped": true,
+        "scheduleStillPresent": true
+      },
+      {
+        "step": "trigger-after-invalidation",
+        "refusedWith": "Coordinator follow-up rejected (unverifiable: coordinator binding is invalidated)",
+        "gatewayRunCount": 0
+      },
+      {
+        "step": "pause-keeps-schedule",
+        "enabled": false
+      },
+      {
+        "step": "cancel-removes-schedule",
+        "removed": true
+      }
+    ],
+    "queuedMessageRule": "the edited session-activity continuity.queueCount keeps the long-task user queue bounded; the F2 unit gate asserts the shipped 64-member batch cap"
+  },
+  "hiddenWindow": {
+    "windowMs": 20022,
+    "hostCallsByTarget": {
+      "efficiency.getState": 1,
+      "resourceTracker.list": 1,
+      "sessions.compactionStatus": 1,
+      "sessions.longTaskControlStatus": 1,
+      "usage.contextRange": 1,
+      "usage.live": 1,
+      "usage.promptCacheStatus": 1,
+      "workspaces.saveState": 1
     },
-    "overSizedSoloGroups": {
-      "mergedPromptChars": 18844,
-      "leasedItems": 3,
-      "deferredItems": 7,
-      "cap": 24000,
-      "note": "independent groups past the soft cap stay pending for a later turn instead of being crammed into one prompt"
+    "labelRehydrationCalls": 0,
+    "longTasksOver50Ms": [],
+    "definition": "hidden UI must not re-hydrate session labels or produce unbounded background work"
+  },
+  "boundedQueues": {
+    "pausedQueueLength": 1,
+    "pausedQueueSource": "cron follower schedule kept while paused (E1 pause-keeps-schedule)",
+    "expiredQueueLength": 0,
+    "expiredQueueSource": "gateway runs produced by an invalidated/expired follow-up trigger (E1 trigger-after-invalidation)",
+    "cap": 64,
+    "unitGate": "tests/unit/long-session-long-use-budget.test.ts"
+  },
+  "after": {
+    "notificationDuplicates": 0,
+    "evaluation": {
+      "failures": [],
+      "pass": true
     },
-    "atomicMaximumTeamBatch": {
-      "mergedPromptChars": 52849,
-      "structuralCeiling": 519400,
-      "note": "the shipped owner keeps one Team Result Bundle atomic rather than truncating it, so the bound is the derived worker-cap times per-item clamp"
-    },
-    "replayedNotification": {
-      "duplicateChatStoreDeliveries": 0,
-      "note": "the shipped renderer dedupe owner drops exact replays before handleChatEvent"
-    },
-    "noChangeFollowUpBurst": {
-      "burstSize": 12,
-      "duplicateEventCopies": 11,
-      "historyReloads": 1,
-      "sessionReloads": 0,
-      "productionChange": "src/stores/gateway.ts folds a replayed chat:runtime-event before the refresh path, so a duplicate completion cannot schedule the same background read twice",
-      "measuredBefore": "12 identical run.ended events issued 12 forced history reloads",
-      "measuredAfter": "12 identical run.ended events issue 1 history reload and 0 sidebar reloads"
-    },
-    "hiddenSurface": {
-      "pollTasksWhileHidden": 0,
-      "pollTasksWhileVisible": 5,
-      "timersAfterStop": 0
-    },
-    "pausedOrExpiredFollowUps": {
-      "refusedRounds": 1000,
-      "executionsWhileRefused": 0,
-      "states": [
-        "expired",
-        "session-missing",
-        "generation-mismatch",
-        "unverifiable"
-      ],
-      "queueGrowthPerRound": 0,
-      "note": "the shipped coordinator gate refuses an expired, missing, unverifiable or generation-mismatched follow-up before it can run, so a paused or expired schedule adds no queue depth"
-    },
-    "rendererListeners": {
-      "sessionActivitySubscriptions": 8,
-      "afterDispose": 0
+    "measurements": {
+      "sessionCount": 333,
+      "transcriptBytes": 59932341,
+      "loadP95Ms": 567,
+      "switchP95Ms": 111.40000000596046,
+      "compactP95Ms": 8937,
+      "continuationP95Ms": 1140,
+      "gcAvailable": true,
+      "idleDurationMs": 300000,
+      "idleSampleCount": 58,
+      "idleGrowthBytes": -2023424,
+      "idleLongestRise": 7,
+      "lifecycleCycles": 50,
+      "ownerResidual": 0,
+      "notificationDuplicates": 0,
+      "pausedQueueLength": 1,
+      "expiredQueueLength": 0
     }
   },
-  "gateReceipt": {
-    "provided": true,
-    "source": "D:/tmp/long-session-f2/gates-18982d5e6/gates.json",
-    "allPassed": true,
-    "gates": [
-      {
-        "name": "unit-label-summary-search-budget",
-        "command": "pnpm exec vitest run tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts tests/unit/session-search-modal-performance.test.tsx --maxWorkers=1",
-        "exitCode": 0,
-        "durationMs": 6949,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\unit-label-summary-search-budget.log",
-        "summary": "  Test Files  3 passed (3)       Tests  4 passed (4)    Start at  13:17:41    Duration  5.52s (transform 1.70s, setup 296ms, import 944ms, tests 2.60s, environment 1.16s) "
-      },
-      {
-        "name": "unit-long-use-budget",
-        "command": "set LONG_SESSION_F2_PROBE_RUNS=D:\\tmp\\long-session-f2\\runs-18982d5e6&& set LONG_SESSION_F2_CANDIDATE=18982d5e6c8d66f96bc0c3ebbfc4cb44ba52b997&& set LONG_SESSION_F2_OBSERVATION=D:\\tmp\\long-session-f2\\observation-18982d5e6.json&& pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts --maxWorkers=1",
-        "exitCode": 0,
-        "durationMs": 11654,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\unit-long-use-budget.log",
-        "summary": "  Test Files  1 passed (1)       Tests  24 passed (24)    Start at  13:17:48    Duration  10.21s (transform 4.38s, setup 124ms, import 4.87s, tests 4.45s, environment 580ms) "
-      },
-      {
-        "name": "typecheck",
-        "command": "pnpm run typecheck",
-        "exitCode": 0,
-        "durationMs": 30175,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\typecheck.log",
-        "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
-      },
-      {
-        "name": "contract-check",
-        "command": "pnpm run contract:check",
-        "exitCode": 0,
-        "durationMs": 910,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\contract-check.log",
-        "summary": "$ node scripts/contract-check.mjs Contract check passed."
-      },
-      {
-        "name": "comms-replay",
-        "command": "pnpm run comms:replay",
-        "exitCode": 0,
-        "durationMs": 854,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\comms-replay.log",
-        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
-      },
-      {
-        "name": "comms-compare",
-        "command": "pnpm run comms:compare",
-        "exitCode": 0,
-        "durationMs": 744,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\comms-compare.log",
-        "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
-      },
-      {
-        "name": "harness-validate",
-        "command": "pnpm harness validate --spec harness/specs/tasks/long-session-long-use-budget.md",
-        "exitCode": 0,
-        "durationMs": 1543,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\harness-validate.log",
-        "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-long-use-budget.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-long-use-budget.md\" Spec is valid: harness\\specs\\tasks\\long-session-long-use-budget.md"
-      },
-      {
-        "name": "git-diff-check",
-        "command": "git diff --check",
-        "exitCode": 0,
-        "durationMs": 100,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\git-diff-check.log",
-        "summary": ""
-      },
-      {
-        "name": "eslint-changed",
-        "command": "pnpm exec eslint shared/long-session-budget.ts src/stores/gateway.ts tests/unit/long-session-long-use-budget.test.ts scripts/long-session-f2-evidence.mjs harness/specs/fixtures/long-session-development/f2/probe-f2.mjs",
-        "exitCode": 0,
-        "durationMs": 3780,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\eslint-changed.log",
-        "summary": ""
-      }
-    ]
-  }
+  "unmeasured": [
+    "non-Windows platforms: the probe ran on local Windows only",
+    "live provider compaction/continuation latency: the model is an agent-driven scripted endpoint, not a real provider",
+    "packaged/installed build: measurement uses the local dist-electron development build",
+    "long-horizon growth beyond one five-minute idle window",
+    "dependence on real human long-term usage: no real-human evidence is claimed or available",
+    "arbitrary session counts above the 333-session fixture"
+  ],
+  "commands": [
+    {
+      "name": "f2-probe",
+      "command": "node.exe harness/specs/fixtures/long-session-development/f2/probe.mjs D:\\ClawX-work\\worktrees\\long-session-program-r2 D:\\tmp\\anchor-long-session-f2\\1792879345950\\probe\\long-use-probe.json D:\\tmp\\anchor-long-session-f2\\1792879345950\\probe\\run",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 402123,
+      "stdoutSha256": "8ef4ca7ce6b81e31cdb70811a23264cc5a88b007e95f7e815d67249d3d1d9794",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutTail": "{\n  \"output\": \"D:\\\\tmp\\\\anchor-long-session-f2\\\\1792879345950\\\\probe\\\\long-use-probe.json\",\n  \"loadSessionsMs\": 567,\n  \"switchP50Ms\": 109.60000000149012,\n  \"switchP95Ms\": 111.40000000596046,\n  \"requestedKeys\": 40,\n  \"summariesMs\": 27,\n  \"longSessionOpenMs\": 125.19999999552965,\n  \"idleLongTasks\": 0,\n  \"longSessionRenderedRows\": 3,\n  \"longSessionLongTasks\": 0,\n  \"switchLongTasks\": 0,\n  \"persistentGrowth\": false,\n  \"compactP50Ms\": 7568,\n  \"compactP95Ms\": 8937,\n  \"continuationP50Ms\": 1139,\n  \"continuationP95Ms\": 1140,\n  \"hiddenLabelRehydrationCalls\": 0,\n  \"hiddenLongTasks\": 0,\n  \"processTreeSize\": 5,\n  \"runtimeTranscriptMiB\": 2.84\n}\n",
+      "stderrTail": "",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/f2-probe.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/f2-probe.stderr.txt"
+    },
+    {
+      "name": "runtime-lifecycle",
+      "command": "pnpm.cmd --dir openclaw_runtime exec vitest run src/sessions/session-admission-registry.test.ts src/sessions/session-admission-registry-reclamation.test.ts src/gateway/session-ecosystem-reclamation-cycle.test.ts --maxWorkers=1 --disableConsoleIntercept",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 91022,
+      "stdoutSha256": "ada0cd3f782361cab5227d7fcf9e2aabd347a52ae5782447a4cf9de67670c7c8",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutTail": "Scope: all 155 workspace projects\nLockfile is up to date, resolution step is skipped\nAlready up to date\n[WARN] Failed to create bin at D:\\ClawX-work\\worktrees\\long-session-program-r2\\openclaw_runtime\\extensions\\verseconf-artifacts\\node_modules\\.bin\\openclaw. ENOENT: no such file or directory, stat 'D:\\ClawX-work\\worktrees\\long-session-program-r2\\openclaw_runtime\\openclaw.mjs.EXE'\n\n. preinstall$ node scripts/preinstall-package-manager-warning.mjs\n. preinstall: Done\n. postinstall$ node scripts/postinstall-bundled-plugins.mjs\n. postinstall: Done\n. prepare$ node scripts/prepare-git-hooks.mjs\n. prepare: Done\nDone in 2.7s using pnpm v11.2.2\n\n RUN  v4.1.7 D:/ClawX-work/worktrees/long-session-program-r2/openclaw_runtime\n\n[runtime-lifecycle-audit] admissionEntriesAfterCap=16\n[runtime-lifecycle-audit] admissionRetiredEntries=48\n[runtime-lifecycle-audit] admissionLiveEntriesAfterSweep=0\n[runtime-lifecycle-audit] admissionFenceTimeouts=1\n[runtime-lifecycle-audit] admissionMaxFenceWaitMs=45\n[runtime-lifecycle-audit] admissionWaitersAfterTimeout=0\n[runtime-lifecycle-audit] admissionPermitP95Ms=0.0016\n[reclamation-audit] cycles=50 activeRecordResidual=0 ownedPidResidual=0 finishedResidual=0 helperResidual=0 waiterResidual=0 worktreeResidual=0 sweeperActive=false exitedDiagnosticsRecords=50\n\n Test Files  3 passed (3)\n      Tests  24 passed (24)\n   Start at  06:09:20\n   Duration  78.21s (transform 1.08s, setup 420ms, import 997ms, tests 76.33s, environment 0ms)\n\n",
+      "stderrTail": "",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/runtime-lifecycle.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/runtime-lifecycle.stderr.txt"
+    },
+    {
+      "name": "notification-e2e",
+      "command": "pnpm.cmd exec playwright test tests/e2e/long-session-completion-continuation.spec.ts tests/e2e/long-session-followup-scheduling.spec.ts --workers=1 --output D:\\tmp\\anchor-long-session-f2\\1792879345950\\notification",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 52463,
+      "stdoutSha256": "deafb25a1b44fac5e3a09e5cbfc28ff7f14b263da83a41cfcdf5f27f42e0e592",
+      "stderrSha256": "1553c1594427cd3094b10c29ca0cbbcbe5ee2550abef2571636ba9887dbeb832",
+      "stdoutTail": "\nRunning 2 tests using 1 worker\n\n  ok 1 tests\\e2e\\long-session-completion-continuation.spec.ts:154:5 › consolidates deferred worker completion into one generation-fenced batch after restart (36.7s)\n{\"schema\":\"clawx.long-session.e1-followup-journey/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-e1\",\"steps\":[{\"step\":\"bound-follow-up-created\",\"jobId\":\"a36e09a8-fa98-45e5-9f43-9a1a85de449a\",\"state\":\"allowed\",\"expectedSessionId\":\"1f3d452a-3537-4bc4-9586-ce8cce3f7245\"},{\"step\":\"stop-current-turn-is-independent-of-schedule\",\"stopped\":true,\"scheduleStillPresent\":true},{\"step\":\"trigger-after-invalidation\",\"refusedWith\":\"Coordinator follow-up rejected (unverifiable: coordinator binding is invalidated)\",\"gatewayRunCount\":0},{\"step\":\"pause-keeps-schedule\",\"enabled\":false},{\"step\":\"cancel-removes-schedule\",\"removed\":true}],\"negatives\":[\"deleted coordinator session -> binding invalidated -> cron fence state unverifiable\"],\"status\":\"passed\",\"workspaceId\":\"default\",\"coordinatorSessionKey\":\"agent:main:dashboard:304c43ab-e685-47b2-9b9b-8fa59762aecc\",\"jobId\":\"a36e09a8-fa98-45e5-9f43-9a1a85de449a\",\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f2\\\\1792879345950\\\\notification\\\\long-session-followup-sche-587bc-ire-after-it-is-invalidated\\\\followup-journey-observation.json\"}\n  ok 2 tests\\e2e\\long-session-followup-scheduling.spec.ts:113:5 › real Host/Gateway long-session follow-up is bound to one coordinator generation and cannot fire after it is invalidated (13.0s)\n\n  2 passed (50.8s)\n",
+      "stderrTail": "(node:12196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:12196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/notification-e2e.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/notification-e2e.stderr.txt"
+    },
+    {
+      "name": "f2-unit-gates",
+      "command": "pnpm.cmd exec vitest run tests/unit/long-session-long-use-budget.test.ts tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts tests/unit/session-search-modal-performance.test.tsx --maxWorkers=1",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 8116,
+      "stdoutSha256": "c9220129e7916ae5979d9f862b68c9bb39749f5a3db0fdd1628c2696f7423fc9",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutTail": "\n RUN  v4.1.1 D:/ClawX-work/worktrees/long-session-program-r2\n\n\n Test Files  4 passed (4)\n      Tests  9 passed (9)\n   Start at  06:11:33\n   Duration  6.53s (transform 1.75s, setup 434ms, import 821ms, tests 2.75s, environment 1.88s)\n\n",
+      "stderrTail": "",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/f2-unit-gates.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/f2-unit-gates.stderr.txt"
+    },
+    {
+      "name": "typecheck",
+      "command": "pnpm.cmd run typecheck",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 19477,
+      "stdoutSha256": "504827cc68a42b95b3fee07f2285619fe2bfcde30ede219ef1728c5b754eaa76",
+      "stderrSha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8",
+      "stdoutTail": "[ext-bridge] No external extensions configured — empty stubs up to date.\n{\n  \"success\": true,\n  \"mode\": \"parallel\",\n  \"testTypes\": {\n    \"commandLine\": \"pnpm run typecheck:test\",\n    \"exitCode\": 0,\n    \"durationMs\": 14481,\n    \"observationMode\": false,\n    \"errorCount\": 0,\n    \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program-r2\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n  },\n  \"cache\": {\n    \"enabled\": false,\n    \"status\": \"disabled\",\n    \"key\": \"f4bd60e32bf0293953f03ca5de491895f2110922c4c68e10d99019ae7ad1144b\",\n    \"inputCount\": 12539,\n    \"report\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program-r2\\\\artifacts\\\\typecheck-cache\\\\report.json\"\n  },\n  \"totalDurationMs\": 18826,\n  \"coverageNote\": \"Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.\",\n  \"results\": [\n    {\n      \"commandLine\": \"node scripts/generate-ext-bridge.mjs\",\n      \"exitCode\": 0,\n      \"durationMs\": 42\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:node\",\n      \"exitCode\": 0,\n      \"durationMs\": 10786\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:web\",\n      \"exitCode\": 0,\n      \"durationMs\": 5400\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:test\",\n      \"exitCode\": 0,\n      \"durationMs\": 14481,\n      \"observationMode\": false,\n      \"errorCount\": 0,\n      \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program-r2\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n    }\n  ]\n}\n",
+      "stderrTail": "$ node scripts/typecheck-agent-dev.mjs\n$ tsgo --noEmit -p tsconfig.node.json --composite false\n$ tsgo --noEmit -p tsconfig.web.json --composite false\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/typecheck.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/typecheck.stderr.txt"
+    },
+    {
+      "name": "contract-check",
+      "command": "pnpm.cmd run contract:check",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 690,
+      "stdoutSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "stderrSha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26",
+      "stdoutTail": "Contract check passed.\n",
+      "stderrTail": "$ node scripts/contract-check.mjs\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/contract-check.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/contract-check.stderr.txt"
+    },
+    {
+      "name": "comms-replay",
+      "command": "pnpm.cmd run comms:replay",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 759,
+      "stdoutSha256": "a87bb980bc4c0dacfe38a3862003cf1dc33ffe4a82e2211364ecaf240b90a136",
+      "stderrSha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a",
+      "stdoutTail": "Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\comms\\current-metrics.json\n",
+      "stderrTail": "$ node scripts/comms/replay.mjs\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/comms-replay.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/comms-replay.stderr.txt"
+    },
+    {
+      "name": "comms-compare",
+      "command": "pnpm.cmd run comms:compare",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 674,
+      "stdoutSha256": "24f61e33905054964cfea4fb19ea0a2f7b98ef54f8fad26add807c3b298d5a87",
+      "stderrSha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e",
+      "stdoutTail": "# Comms Regression Report\n\n- Generated at: 2026-10-24T22:12:01.242Z\n- Candidate: 9db3a116e10b0bfd063ab0c8e9168dd98c46d4d4 (a6cd76822acba85116ae170ac8c89d285973c2f0)\n- Result: PASS\n\n| Metric | Current | Threshold | Status |\n|---|---:|---:|---|\n| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |\n| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |\n| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |\n| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |\n| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |\n| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |\n| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |\n| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |\n| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history_inflight_max | 1.0000 | <= 1 | PASS |\n| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| message_loss_count | 0.0000 | <= 0 | PASS |\n| message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |\n| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |\n\n\nWrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\comms\\compare-report.md\n",
+      "stderrTail": "$ node scripts/comms/compare.mjs\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/comms-compare.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/comms-compare.stderr.txt"
+    },
+    {
+      "name": "harness-validate",
+      "command": "pnpm.cmd harness validate --spec harness/specs/tasks/long-session-long-use-budget.md",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 1284,
+      "stdoutSha256": "9d810936bd9ca21723e60dc77a7d9edb680af35711d4fd018ded2dc55a14462f",
+      "stderrSha256": "10d02152ae8729d8ed8fa9853e30be15df35f1d1c6f210086daf00483ab8b080",
+      "stdoutTail": "Spec is valid: harness\\specs\\tasks\\long-session-long-use-budget.md\n",
+      "stderrTail": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-long-use-budget.md\"\n$ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-long-use-budget.md\"\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/harness-validate.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/harness-validate.stderr.txt"
+    },
+    {
+      "name": "git-diff-check",
+      "command": "git.exe diff --check",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 55,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutTail": "",
+      "stderrTail": "",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/git-diff-check.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/git-diff-check.stderr.txt"
+    }
+  ]
 }

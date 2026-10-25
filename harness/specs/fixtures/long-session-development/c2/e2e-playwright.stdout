@@ -1,0 +1,9 @@
+
+Running 1 test using 1 worker
+
+
+
+
+
+[1A[2K[1/1] tests\e2e\long-session-delegation-admission.spec.ts:123:5 › delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts
+[1A[2K  1 passed (38.8s)

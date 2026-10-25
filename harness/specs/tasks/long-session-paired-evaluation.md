@@ -9,7 +9,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 以固定任务证明长期策略的效益，避免只用 token 曲线或摘要看起来合理就推广。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
-diffBase: c4acfa756
+diffBase: 333d7ca846ff116da9f7419059cc7ad38776dd17
 dependsOnTasks:
   - D1
 touchedAreas:
@@ -27,6 +27,7 @@ touchedAreas:
   - tests/unit/context-lifecycle-value-pruning.test.ts
   - tests/unit/context-lifecycle-segment-ledger.test.ts
   - tests/unit/long-session-paired-evaluation.test.ts
+  - tests/e2e/long-session-paired-evaluation.spec.ts
   - harness/specs/fixtures/long-session-development/d2/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -46,6 +47,8 @@ expectedUserBehavior:
   - 以固定任务证明长期策略的效益，避免只用 token 曲线或摘要看起来合理就推广。
   - 创建本合同不代表功能已实现；结果、配置、授权和任务完成仍归现有 owner，未知状态如实保留。
 requiredTests:
+  - pnpm run build:vite
+  - pnpm run test:e2e:run tests/e2e/long-session-paired-evaluation.spec.ts
   - pnpm exec vitest run tests/unit/context-lifecycle-boundary.test.ts tests/unit/context-lifecycle-soft-threshold.test.ts tests/unit/context-lifecycle-value-pruning.test.ts tests/unit/context-lifecycle-segment-ledger.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/long-session-paired-evaluation.test.ts --maxWorkers=1
   - pnpm run typecheck
@@ -58,6 +61,7 @@ requiredTests:
   - git diff --check
 plannedTests:
   - tests/unit/long-session-paired-evaluation.test.ts
+  - tests/e2e/long-session-paired-evaluation.spec.ts
 acceptance:
   - 评测前冻结不少于 30 对 agent 驱动工作负载、must-preserve 事实和指标预算，覆盖压缩/交接/分叉/重启/撤销；baseline 与最多一个初筛候选使用相同输入和模型参数。
   - 关键事实保真目标 100%、错误任务完成声明 0、下一步正确率目标至少 95%；记录真实 token/cache/cost 与 first-token/wall-clock P50/P95，不用字符估算冒充费用。

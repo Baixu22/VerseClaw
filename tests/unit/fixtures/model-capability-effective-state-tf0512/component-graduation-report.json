@@ -17,8 +17,9 @@
   "driven_by": "agent",
   "expiry": null,
   "binding": {
-    "commit": "922b6495cc8f6c5494af755662355caa2e25a861",
-    "tree": "2327ae17f7721e56120852ea19a9b27d7cf7e555",
+    "commit": "541058acd638f6e26ca59c13cacf8779c6a7566c",
+    "tree": "a4725d61ec07fca7408b7e223a534175de456b3b",
+    "buildHash": "c4ec85ff125e5aa476c16c1685862a73a4c787c43670e5a6bf24a3a04d705094",
     "runtimeGeneration": "gateway-tf0512",
     "provider": "not-applicable",
     "model": "not-applicable",
@@ -60,8 +61,7 @@
         "sha256": "5ec8db90b511dbe4c02b6dda9ef1a9eeecdc04f354bfb754be942a1ca8559295",
         "bytes": 1933
       }
-    ],
-    "buildHash": "c4ec85ff125e5aa476c16c1685862a73a4c787c43670e5a6bf24a3a04d705094"
+    ]
   },
   "evidence": [
     {

@@ -87,7 +87,6 @@ function stripLegacySessionStates(
 
 function workspaceClaimsSession(profile: WorkspaceProfile, sessionKey: string): boolean {
   return profile.activeSessionKey === sessionKey
-    || profile.coordinatorBinding?.sessionKey === sessionKey
     || Boolean(profile.sessionStates?.[sessionKey])
     || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey);
 }
