@@ -6,6 +6,8 @@ taskType: runtime-bridge
 scenario: gateway-backend-communication
 intent: Verify 24 declared positioning scenarios against the production bounded prompt, observed owner permission decisions and recorded provider responses on a clean candidate.
 touchedAreas:
+  - tests/e2e/memory-surface.spec.ts
+  - src/components/agents/RolesOrchestrationPanel.tsx
   - harness/specs/tasks/model-capability-positioning-acceptance.md
   - shared/model-capability-profile.ts
   - shared/dcs/component-disposition-catalog.ts

@@ -5,6 +5,8 @@ lifecycleStatus: active
 taskType: governance
 intent: Read retained implementation and retirement evidence, reconcile the current authority and surface catalogs, and close the completed component program with truthful candidate and scope bindings.
 touchedAreas:
+  - tests/e2e/memory-surface.spec.ts
+  - src/components/agents/RolesOrchestrationPanel.tsx
   - harness/specs/tasks/model-capability-positioning-acceptance.md
   - harness/specs/tasks/component-graduation-final-audit.md
   - shared/dcs/component-disposition-catalog.ts
