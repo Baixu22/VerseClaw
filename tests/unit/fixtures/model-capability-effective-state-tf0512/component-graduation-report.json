@@ -17,8 +17,8 @@
   "driven_by": "agent",
   "expiry": null,
   "binding": {
-    "commit": "8a7f246a5f5a4ba193ee07c444c40fa254c14e8c",
-    "tree": "67d4cfee3555c9b1401d6c35a53fea93fb3a2eae",
+    "commit": "922b6495cc8f6c5494af755662355caa2e25a861",
+    "tree": "2327ae17f7721e56120852ea19a9b27d7cf7e555",
     "runtimeGeneration": "gateway-tf0512",
     "provider": "not-applicable",
     "model": "not-applicable",

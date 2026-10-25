@@ -1,99 +1,99 @@
 [
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/01-focused-and-adjacent-tests.txt",
-        "expected":  "eeb12539f6864de6b2bcaaa94866424216abee839f4c8e545fc062cbb564262a",
-        "actual":  "eeb12539f6864de6b2bcaaa94866424216abee839f4c8e545fc062cbb564262a",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/02-typecheck.txt",
-        "expected":  "69090eabc3d25b9d185d81a202904001b3f952539c552793ecc32588a8408454",
-        "actual":  "69090eabc3d25b9d185d81a202904001b3f952539c552793ecc32588a8408454",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/03-lint-check.txt",
-        "expected":  "2797efe67176ab2a4fa91ab15237229e4402d092d542904192a36dce37b19b0b",
-        "actual":  "2797efe67176ab2a4fa91ab15237229e4402d092d542904192a36dce37b19b0b",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/04-contract-check.txt",
-        "expected":  "6e9c4fd5d3a5da6d723bca08db09b2be3e170bc322de7730732ab2e3d8afc6db",
-        "actual":  "6e9c4fd5d3a5da6d723bca08db09b2be3e170bc322de7730732ab2e3d8afc6db",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/05-no-bom.txt",
-        "expected":  "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa",
-        "actual":  "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/06-diff-check.txt",
-        "expected":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "actual":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/07-scope-guard.txt",
-        "expected":  "f9a891ca11d72eabbba6705db5c47848ef6ec7803415cdadbd5472854e38544c",
-        "actual":  "f9a891ca11d72eabbba6705db5c47848ef6ec7803415cdadbd5472854e38544c",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/08-regenerate-acceptance.txt",
-        "expected":  "215ea07401b4008fd509e267e36b8e7549cd470ae7cdaa83821e5bc477526669",
-        "actual":  "215ea07401b4008fd509e267e36b8e7549cd470ae7cdaa83821e5bc477526669",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/acceptance.json",
-        "expected":  "5ec8db90b511dbe4c02b6dda9ef1a9eeecdc04f354bfb754be942a1ca8559295",
-        "actual":  "5ec8db90b511dbe4c02b6dda9ef1a9eeecdc04f354bfb754be942a1ca8559295",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json",
-        "expected":  "fb26ebce94213c3026407761866a6bcb2fd9d52d113abededba184f023537b4b",
-        "actual":  "fb26ebce94213c3026407761866a6bcb2fd9d52d113abededba184f023537b4b",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts",
-        "expected":  "cfbb51a4354bb3cb5d151b1bec2bb6c0b50647eddd9d6a461e46d413bb632257",
-        "actual":  "cfbb51a4354bb3cb5d151b1bec2bb6c0b50647eddd9d6a461e46d413bb632257",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json",
-        "expected":  "5ed683d6668d9663c0499e5592850abc76eb181020ac52ae7c11682a032f7d47",
-        "actual":  "5ed683d6668d9663c0499e5592850abc76eb181020ac52ae7c11682a032f7d47",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
-        "expected":  "2b22e95658f3d136de1af1aa7c99565d9cb012054f80052fdbcd9881de39e333",
-        "actual":  "2b22e95658f3d136de1af1aa7c99565d9cb012054f80052fdbcd9881de39e333",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/README.md",
-        "expected":  "a999865bd92236f5ce254c00a0d3158b957e5846f79758ef0b267b85b3e0ff06",
-        "actual":  "a999865bd92236f5ce254c00a0d3158b957e5846f79758ef0b267b85b3e0ff06",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/run-verification.ps1",
-        "expected":  "16ba813ea78d9ff066d2b4f37f9c4947d55851cc222f8788b1b138c77b91a13b",
-        "actual":  "16ba813ea78d9ff066d2b4f37f9c4947d55851cc222f8788b1b138c77b91a13b",
-        "status":  "pass"
-    },
-    {
-        "file":  "tests/unit/fixtures/model-capability-effective-state-tf0512/verification.json",
-        "expected":  "81cfd57828709764288d312c70113617f41b6ccf589346f588cd73545b2b725e",
-        "actual":  "81cfd57828709764288d312c70113617f41b6ccf589346f588cd73545b2b725e",
-        "status":  "pass"
-    }
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/01-focused-and-adjacent-tests.txt",
+    "expected": "eeb12539f6864de6b2bcaaa94866424216abee839f4c8e545fc062cbb564262a",
+    "actual": "eeb12539f6864de6b2bcaaa94866424216abee839f4c8e545fc062cbb564262a",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/02-typecheck.txt",
+    "expected": "69090eabc3d25b9d185d81a202904001b3f952539c552793ecc32588a8408454",
+    "actual": "69090eabc3d25b9d185d81a202904001b3f952539c552793ecc32588a8408454",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/03-lint-check.txt",
+    "expected": "2797efe67176ab2a4fa91ab15237229e4402d092d542904192a36dce37b19b0b",
+    "actual": "2797efe67176ab2a4fa91ab15237229e4402d092d542904192a36dce37b19b0b",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/04-contract-check.txt",
+    "expected": "6e9c4fd5d3a5da6d723bca08db09b2be3e170bc322de7730732ab2e3d8afc6db",
+    "actual": "6e9c4fd5d3a5da6d723bca08db09b2be3e170bc322de7730732ab2e3d8afc6db",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/05-no-bom.txt",
+    "expected": "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa",
+    "actual": "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/06-diff-check.txt",
+    "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "actual": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/07-scope-guard.txt",
+    "expected": "f9a891ca11d72eabbba6705db5c47848ef6ec7803415cdadbd5472854e38544c",
+    "actual": "f9a891ca11d72eabbba6705db5c47848ef6ec7803415cdadbd5472854e38544c",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/08-regenerate-acceptance.txt",
+    "expected": "215ea07401b4008fd509e267e36b8e7549cd470ae7cdaa83821e5bc477526669",
+    "actual": "215ea07401b4008fd509e267e36b8e7549cd470ae7cdaa83821e5bc477526669",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/acceptance.json",
+    "expected": "5ec8db90b511dbe4c02b6dda9ef1a9eeecdc04f354bfb754be942a1ca8559295",
+    "actual": "5ec8db90b511dbe4c02b6dda9ef1a9eeecdc04f354bfb754be942a1ca8559295",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json",
+    "expected": "c55a197ea4f2d49c8f49ccd9ef414dc6f7417d6d08ed71ef99140b11cd7ab1c9",
+    "actual": "c55a197ea4f2d49c8f49ccd9ef414dc6f7417d6d08ed71ef99140b11cd7ab1c9",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts",
+    "expected": "28bb4a736628928989bb383a939e9f02c9695f4efc338cd20c06c5e68efa7f2e",
+    "actual": "28bb4a736628928989bb383a939e9f02c9695f4efc338cd20c06c5e68efa7f2e",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json",
+    "expected": "982cbb9c4205f7e88226f0859f76f61ab8723aeaf990b765850107ff13f128e9",
+    "actual": "982cbb9c4205f7e88226f0859f76f61ab8723aeaf990b765850107ff13f128e9",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
+    "expected": "5850f1f65abc93afd4553c1d0ef3f22f3b385e87d98b6334cb4f9d53099e9c0d",
+    "actual": "5850f1f65abc93afd4553c1d0ef3f22f3b385e87d98b6334cb4f9d53099e9c0d",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/README.md",
+    "expected": "a999865bd92236f5ce254c00a0d3158b957e5846f79758ef0b267b85b3e0ff06",
+    "actual": "a999865bd92236f5ce254c00a0d3158b957e5846f79758ef0b267b85b3e0ff06",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/run-verification.ps1",
+    "expected": "5a706ddd305c96ac2e60362a88191e43d7902b7fd9546e78374562bd3ee23430",
+    "actual": "5a706ddd305c96ac2e60362a88191e43d7902b7fd9546e78374562bd3ee23430",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/model-capability-effective-state-tf0512/verification.json",
+    "expected": "81cfd57828709764288d312c70113617f41b6ccf589346f588cd73545b2b725e",
+    "actual": "81cfd57828709764288d312c70113617f41b6ccf589346f588cd73545b2b725e",
+    "status": "pass"
+  }
 ]
 SHA256SUMS_STATUS=pass

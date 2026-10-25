@@ -1,8 +1,8 @@
 [
   {
     "file": "tests/unit/fixtures/model-positioning-tf0507/01-focused-tests.txt",
-    "expected": "3b042c64e16ff41dfa0627d1bcd2dfaf9cd38639441f69544e404fcdb35b8c1d",
-    "actual": "3b042c64e16ff41dfa0627d1bcd2dfaf9cd38639441f69544e404fcdb35b8c1d",
+    "expected": "a378c07c530c652c4b901a7c2b92cf85f9507a9cf07bc6bb42154b5934cb03b6",
+    "actual": "a378c07c530c652c4b901a7c2b92cf85f9507a9cf07bc6bb42154b5934cb03b6",
     "status": "pass"
   },
   {
@@ -13,20 +13,20 @@
   },
   {
     "file": "tests/unit/fixtures/model-positioning-tf0507/fixture-lib.mts",
-    "expected": "3584f6ec238b0fc59bd5e3963362e130c093945dc5d6fa1a0a902a5e78b33b94",
-    "actual": "3584f6ec238b0fc59bd5e3963362e130c093945dc5d6fa1a0a902a5e78b33b94",
+    "expected": "0aaf7f5ee73e836bf56d0bac00035096dc5c17cb1a61ac7eb9371ca545de0302",
+    "actual": "0aaf7f5ee73e836bf56d0bac00035096dc5c17cb1a61ac7eb9371ca545de0302",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/model-positioning-tf0507/negative-checks.mts",
-    "expected": "84aba121eb64e67073617555f3f64edc74873f157e6ada28b37fa142c8b8862a",
-    "actual": "84aba121eb64e67073617555f3f64edc74873f157e6ada28b37fa142c8b8862a",
+    "expected": "8d0baae8e30929289c578478b1f755b4b4f1ded195c2152f0d7aaabfa0296867",
+    "actual": "8d0baae8e30929289c578478b1f755b4b4f1ded195c2152f0d7aaabfa0296867",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/model-positioning-tf0507/prepare-protocol.mts",
-    "expected": "f990918543dcddf74c1774b95b78c9c0583e9941753d5d67c2f5e67e5ed343cb",
-    "actual": "f990918543dcddf74c1774b95b78c9c0583e9941753d5d67c2f5e67e5ed343cb",
+    "expected": "61af10b1a0e528e460c7d67bb70f59d4662d4057173fa22e8913e4362ab3e191",
+    "actual": "61af10b1a0e528e460c7d67bb70f59d4662d4057173fa22e8913e4362ab3e191",
     "status": "pass"
   },
   {
@@ -121,8 +121,8 @@
   },
   {
     "file": "tests/unit/fixtures/model-positioning-tf0507/README.md",
-    "expected": "bddb22020d70614cad7e875c5858303ce1751bb59390a8bdae58cf80b2b0cc02",
-    "actual": "bddb22020d70614cad7e875c5858303ce1751bb59390a8bdae58cf80b2b0cc02",
+    "expected": "a90e1cd8742ddb2bea9866a8585f290e046e9d3f3a94383a16b099f6abd7c989",
+    "actual": "a90e1cd8742ddb2bea9866a8585f290e046e9d3f3a94383a16b099f6abd7c989",
     "status": "pass"
   },
   {
@@ -145,8 +145,8 @@
   },
   {
     "file": "tests/unit/fixtures/model-positioning-tf0507/run-live.mts",
-    "expected": "3066a8993969730d8ee1dbe0c17711f1c58ffaebeac5504d1c46abc9e6e0e7f1",
-    "actual": "3066a8993969730d8ee1dbe0c17711f1c58ffaebeac5504d1c46abc9e6e0e7f1",
+    "expected": "3a030528e0201ade90427c8e939f9c8ad5405496353a8f8bb685c022312fdd43",
+    "actual": "3a030528e0201ade90427c8e939f9c8ad5405496353a8f8bb685c022312fdd43",
     "status": "pass"
   },
   {
@@ -229,14 +229,14 @@
   },
   {
     "file": "tests/unit/fixtures/model-positioning-tf0507/verification.json",
-    "expected": "79c7950dc028210081134f76bc4081af98b8d22a189bc7c191c27b8a0c2d9c8c",
-    "actual": "79c7950dc028210081134f76bc4081af98b8d22a189bc7c191c27b8a0c2d9c8c",
+    "expected": "4614469d27b15c1f0f445754c4c49cbde4506fe541d089aa00c0ef726791eb44",
+    "actual": "4614469d27b15c1f0f445754c4c49cbde4506fe541d089aa00c0ef726791eb44",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/model-positioning-tf0507/verify-run.mts",
-    "expected": "8e60c5c5bc1d7ff931b68dfa2a85913a7bf2e5acbc38f3f42a060ab2aef813ff",
-    "actual": "8e60c5c5bc1d7ff931b68dfa2a85913a7bf2e5acbc38f3f42a060ab2aef813ff",
+    "expected": "7a94d7b6394ebf088ab395f312292c87d8cc62849160a3dd14616f6e657943fe",
+    "actual": "7a94d7b6394ebf088ab395f312292c87d8cc62849160a3dd14616f6e657943fe",
     "status": "pass"
   }
 ]

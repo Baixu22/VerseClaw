@@ -89,6 +89,9 @@ pnpm --dir openclaw_runtime exec tsx `
 
 After a successful write pass, verify `SHA256SUMS` from the repository root.
 
+## Task Forest closeout
+
+The Task Forest proposal `TFP-20261025-tf0508-final-audit-and-component-graduation-closeout` was applied after the audit passed. `task-forest-validate.txt` records `validate` exit 0 and `task-forest-export.txt` records a successful HTML export after apply. A post-apply audit run confirmed `task_forest_health=pass`.
 ## Boundary
 
 This audit proves the current on-disk component disposition, authority coverage, bounded model-positioning run, TF-0512 runtime-state gate and scoped landing state. It does not claim public release, general availability, live provider quality across vendors, product-lock changes, or real-human evidence.

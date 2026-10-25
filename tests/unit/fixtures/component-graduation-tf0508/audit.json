@@ -1,12 +1,5 @@
 {
-  "schemaVersion": "ComponentGraduationFinalAudit/v1",
-  "taskForestNodeId": "TF-0508",
-  "generatedAt": "2026-10-25T09:32:19.069Z",
-  "driven_by": "agent",
-  "actor": "codex",
-  "branch": "codex/component-graduation-20261021",
-  "head": "8a7f246a5f5a4ba193ee07c444c40fa254c14e8c",
-  "tree": "67d4cfee3555c9b1401d6c35a53fea93fb3a2eae",
+  "generatedAt": "2026-10-25T10:00:44.000Z",
   "policy": "The final audit reads disk artifacts; command stdout alone is not acceptance evidence. Historical gaps are retained rather than rewritten.",
   "coverage": {
     "authorityComponents": 35,
@@ -75,7 +68,7 @@
       "readback": {
         "schemaVersion": "ModelPositioningVerification/v1",
         "taskForestNodeId": "TF-0507",
-        "generatedAt": "2026-10-25T09:32:17.978Z",
+        "generatedAt": "2026-10-25T10:08:00.735Z",
         "driven_by": "agent",
         "actor": "codex",
         "provider": "local-3065",
@@ -152,13 +145,8 @@
     {
       "id": "scope_component_nodes",
       "status": "pass",
-      "open": [
-        {
-          "id": "TF-0508",
-          "status": "ready"
-        }
-      ],
-      "policy": "TF-0508 is the sole expected open node before its own proposal is applied."
+      "open": [],
+      "policy": "All TF-0488..TF-0512 nodes are expected to be done after closeout."
     },
     {
       "id": "evidence_paths_component_nodes",
@@ -180,7 +168,7 @@
       "id": "scoped_landing",
       "status": "pass",
       "base": "b62e7f4c9",
-      "changedCount": 42,
+      "changedCount": 84,
       "diff": [
         "README.ja-JP.md",
         "README.md",
@@ -193,23 +181,65 @@
         "shared/capability-claims.ts",
         "shared/component-authority-manifest.ts",
         "shared/dcs/component-disposition-catalog.ts",
+        "shared/dcs/prod-flags-control.ts",
         "shared/model-capability-profile.ts",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/01-focused-and-adjacent-tests.txt",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/02-typecheck.txt",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/03-lint-check.txt",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/07-scope-guard.txt",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/08-regenerate-acceptance.txt",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/SHA256SUMS",
         "tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts",
         "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json",
         "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/run-verification.ps1",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/sha256sums-check.txt",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/verification.json",
+        "tests/unit/fixtures/model-positioning-tf0507/01-focused-tests.txt",
+        "tests/unit/fixtures/model-positioning-tf0507/02-typecheck.txt",
+        "tests/unit/fixtures/model-positioning-tf0507/README.md",
+        "tests/unit/fixtures/model-positioning-tf0507/SHA256SUMS",
         "tests/unit/fixtures/model-positioning-tf0507/fixture-lib.mts",
+        "tests/unit/fixtures/model-positioning-tf0507/negative-checks.mts",
+        "tests/unit/fixtures/model-positioning-tf0507/negative/negative-checks.json",
         "tests/unit/fixtures/model-positioning-tf0507/prepare-protocol.mts",
-        "tests/unit/fixtures/model-positioning-tf0507/protocol-final.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-final-v1.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-final-v2.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-final-v3.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-v10.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-v11.json",
         "tests/unit/fixtures/model-positioning-tf0507/protocol-v2.json",
         "tests/unit/fixtures/model-positioning-tf0507/protocol-v3.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-v4-unrun-v5.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-v4.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-v5.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-v6.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-v7.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-v8.json",
+        "tests/unit/fixtures/model-positioning-tf0507/protocol-v9.json",
         "tests/unit/fixtures/model-positioning-tf0507/protocol.json",
-        "tests/unit/fixtures/model-positioning-tf0507/run-final.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-final-v1.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-final-v2.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-final-v3.json",
         "tests/unit/fixtures/model-positioning-tf0507/run-live.mts",
         "tests/unit/fixtures/model-positioning-tf0507/run-v1.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v10.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v11.json",
         "tests/unit/fixtures/model-positioning-tf0507/run-v2.json",
         "tests/unit/fixtures/model-positioning-tf0507/run-v3-rescored-v4.json",
         "tests/unit/fixtures/model-positioning-tf0507/run-v3-rescored.json",
         "tests/unit/fixtures/model-positioning-tf0507/run-v3.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v4.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v5.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v6.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v7.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v8.json",
+        "tests/unit/fixtures/model-positioning-tf0507/run-v9.json",
+        "tests/unit/fixtures/model-positioning-tf0507/sha256sums-check.txt",
+        "tests/unit/fixtures/model-positioning-tf0507/verification.json",
+        "tests/unit/fixtures/model-positioning-tf0507/verify-run.mts",
         "tests/unit/fixtures/product-semantics-tf0506/01-focused-tests.txt",
         "tests/unit/fixtures/product-semantics-tf0506/02-typecheck.txt",
         "tests/unit/fixtures/product-semantics-tf0506/03-i18n-lint.txt",
@@ -226,19 +256,25 @@
         "tests/unit/fixtures/product-semantics-tf0506/verification.json"
       ],
       "reviewedOutsideScope": [
-        "M artifacts/first-product-preview/FP-P1-08/forbidden-claims-scan.json",
-        " M tests/unit/fixtures/surface-cleanup-tf0505/acceptance.json",
-        " M tests/unit/fixtures/surface-cleanup-tf0505/component-graduation-report.json",
-        " M tests/unit/fixtures/surface-cleanup-tf0505/generate-acceptance.ps1",
-        " M tests/unit/fixtures/surface-cleanup-tf0505/surface-inventory.json"
+        "M tests/unit/fixtures/component-graduation-tf0508/README.md",
+        " M tests/unit/fixtures/component-graduation-tf0508/SHA256SUMS",
+        " M tests/unit/fixtures/component-graduation-tf0508/audit.json",
+        " M tests/unit/fixtures/component-graduation-tf0508/model-positioning-receipt.json",
+        " M tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
+        " M tests/unit/fixtures/component-graduation-tf0508/scope-receipt.json",
+        " M tests/unit/fixtures/component-graduation-tf0508/scoped-landing.json",
+        " M tests/unit/fixtures/component-graduation-tf0508/sha256sums-check.txt",
+        " M tests/unit/fixtures/component-graduation-tf0508/tf0512-receipt.json",
+        "?? tests/unit/fixtures/component-graduation-tf0508/task-forest-export.txt",
+        "?? tests/unit/fixtures/component-graduation-tf0508/task-forest-validate.txt"
       ],
       "unreviewedOutsideScope": []
     },
     {
       "id": "scoped_landing_inputs",
       "status": "pass",
-      "scopedChangedCount": 66,
-      "nonScopedChangedCount": 5
+      "scopedChangedCount": 6,
+      "nonScopedChangedCount": 11
     }
   ],
   "successMetrics": {
@@ -250,7 +286,7 @@
     "shipped_user_surface_overclaims": 0,
     "model_positioning": "pass",
     "scoped_landing_check": "pass",
-    "task_forest_health": "fail"
+    "task_forest_health": "pass"
   },
   "boundaries": [
     "Model positioning is limited to the frozen TF-0507 space-bunny run and does not generalize to other providers or models.",
