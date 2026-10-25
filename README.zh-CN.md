@@ -218,7 +218,8 @@ Renderer 请求入口是 `src/lib/host-api.ts` 与 `src/lib/host-api-client.ts`�
 | 平面 | 当前机制 | 边界 |
 | --- | --- | --- |
 | 系统资源调度 | `ResourceFabric` 对工作区执行与聊天历史做准入控制；`BackgroundWorkGate` 在队列、RSS 或 CPU 压力下延后后台任务；`ResourceTracker` 负责会话关联服务的发现与清理 | 这是 Main 进程内的协作式准入，不是全局 OS 调度器；前台工作不会被资源收缩策略丢弃 |
-| 上下文工程 | `ContextEngine` 覆盖 bootstrap、ingest、maintain、after-turn 与 assemble/compact；共享的 6,000 字符单轮注入预算按优先级记账并受 fail-closed kill switch 控制；`ContextHealthMonitor` 评估注入压力、结构保真、目标对齐和新颖度 | 上下文增强默认按 opt-in 使用；目标 authority 收敛仍是独立设计工作 |
+| 上下文工程 | `ContextEngine` 覆盖 bootstrap、ingest、maintain、after-turn 与 assemble/compact；共享的 6,000 字符单轮注入预算按优先级记账并受 fail-closed kill switch 控制；`ContextHealthMonitor` 评估注入压力、结构保真、目标对齐和新颖度 | 已接受的上下文来源共用运行时装配入口；可选增强仍按 opt-in 使用 |
+| 模型能力定位 | 保留的系统提示词增量说明当前 scope 的记忆权限、知识应用状态、运行可用性与动作权限 | 缺失或过期事实保持 unknown；工具存在不代表已获批准。验收仅覆盖声明的模型与 agent 驱动场景 |
 | 会话生命周期 | `SessionManager` 使用 JSONL append-only 树，支持 leaf 分支、压缩、标签和上下文重建；Host 侧增加 checkpoint、handoff、归档/恢复与级联删除 | 会话不等于 Run、Task、Workspace 或 Project；用户可见任务事实仍只归 Task Ledger |
 | 记忆系统 | 唯一 `Memory` 面板从既有存储投影已批准的 Role 卡片、Runtime facts 与持久化候选；批准、删除和导出按 owner 分派，“记住这个”走 gatekeeper 审阅，并统一受 `MemoryControlPlaneManifest/v1` 约束 | 候选永远不进入模型可见上下文；各 owner 的 write/use gate 与 Runtime Memory 注入路径仍独立配置。原生 OpenClaw memory 源不在此面板控制，界面会明确说明 |
 | 问题感知 | 先对单条 trace 检测 Issue，再按签名聚合成跨运行 Problem，保留 7 天窗口、生命周期状态和脱敏证据产物 | `pnpm observability:problems` 是 agent 批处理，不是常驻自动修复服务 |

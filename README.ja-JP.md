@@ -218,7 +218,8 @@ Renderer の入口は `src/lib/host-api.ts` と `src/lib/host-api-client.ts` で
 | プレーン | 現在の仕組み | 境界 |
 | --- | --- | --- |
 | システムリソース | `ResourceFabric` がワークスペース実行とチャット履歴の受け入れを制御し、`BackgroundWorkGate` がキュー・RSS・CPU の圧力時にバックグラウンド処理を延期します。`ResourceTracker` はセッションに関連するサーバーの検出とクリーンアップを担当します | Main プロセス内の協調的な受け入れ制御であり、OS 全体のスケジューラではありません。フォアグラウンド処理は負荷抑制の対象になりません |
-| コンテキストエンジニアリング | `ContextEngine` が bootstrap、ingest、maintain、after-turn、assemble/compact を提供します。共有の 1 ターン 6,000 文字予算が優先順位を適用し、fail-closed の拡張 kill switch で停止できます。`ContextHealthMonitor` は注入圧力、構造、目標整合、新規性を評価します | コンテキスト拡張は opt-in です。目標となる authority 統合は別の設計作業です |
+| コンテキストエンジニアリング | `ContextEngine` が bootstrap、ingest、maintain、after-turn、assemble/compact を提供します。共有の 1 ターン 6,000 文字予算が優先順位を適用し、fail-closed の拡張 kill switch で停止できます。`ContextHealthMonitor` は注入圧力、構造、目標整合、新規性を評価します | 受け入れ済みのコンテキストソースはランタイムの組み立て入口を共有し、任意の拡張は opt-in のままです |
+| モデルの能力説明 | 予約されたシステムプロンプトの追加部分が、現在の scope のメモリ権限、適用済み知識、実行状態、操作権限を示します | 欠落または期限切れの事実は unknown とし、ツールの存在を承認とみなしません。検証対象は明示したモデルと agent 駆動のシナリオに限定します |
 | セッションライフサイクル | `SessionManager` は JSONL の append-only ツリーで、leaf 分岐、圧縮、ラベル、コンテキスト再構築を扱います。Host 側はチェックポイント、handoff、アーカイブ/復元、派生データのカスケード削除を追加します | セッションは Run、Task、Workspace、Project のいずれとも同じではありません。ユーザー可視のタスク事実は Task Ledger が所有します |
 | メモリ | 単一の `Memory` 画面が既存ストアから承認済み Role Card、Runtime fact、永続候補を投影します。承認・削除・エクスポートは owner ごとに委譲し、「これを覚える」は Gatekeeper 審査を通るため、すべて `MemoryControlPlaneManifest/v1` の境界に従います | 候補はモデル可視コンテキストに入りません。owner の write/use gate と Runtime Memory 注入経路は個別設定のままです。ネイティブ OpenClaw memory はこの画面の管理外であることを明示します |
 | 問題認識 | trace 単位の Issue 検出から、署名・7 日ウィンドウ・ライフサイクル状態・秘匿化証拠を持つクロスラン Problem を集約します | `pnpm observability:problems` は agent のバッチ処理であり、常駐する自動修復サービスではありません |

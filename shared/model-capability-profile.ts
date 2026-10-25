@@ -651,21 +651,6 @@ export function computeModelCapabilityEffectiveDigest(
     facts: resolvedEffectiveFacts(staticManifest, input).map(digestEffectiveFact),
   });
 }
-function runtimeRestrictionLabel(fact: ModelCapabilityEffectiveFactInput): string | null {
-  const restriction = fact.runtimeAvailability.state === 'disabled'
-    || fact.runtimeAvailability.state === 'partial'
-    || fact.runtimeAvailability.state === 'degraded'
-    || fact.runtimeAvailability.state === 'quarantined'
-    ? fact.runtimeAvailability.state
-    : null;
-  const authorization = fact.actionAuthorization.some((action) => action.authorization === 'requires-approval')
-    ? 'requires-approval'
-    : fact.actionAuthorization.some((action) => action.authorization === 'denied')
-      ? 'denied-action'
-      : null;
-  return [restriction, authorization].filter(Boolean).join('+') || null;
-}
-
 function buildPromptAddition(
   staticManifest: ModelCapabilityStaticManifest,
   facts: readonly ModelCapabilityEffectiveFactInput[],
@@ -682,17 +667,25 @@ function buildPromptAddition(
 
   const compose = (defaultNames: readonly string[], advancedNames: readonly string[]): string => {
     const included = visible.filter((entry) => defaultNames.includes(entry.displayName) || advancedNames.includes(entry.displayName));
-    const restrictions = included
-      .map((entry) => {
-        const label = runtimeRestrictionLabel(factById.get(entry.capabilityId)!);
-        return label ? `${entry.displayName}=${label}` : null;
-      })
-      .filter((value): value is string => Boolean(value));
+    const states = (names: readonly string[]) => names.map((name) => {
+      const entry = included.find((entry) => entry.displayName === name)!;
+      return `${name}=${factById.get(entry.capabilityId)!.runtimeAvailability.state}`;
+    }).join(', ');
     const unknownCount = included.filter((entry) => factById.get(entry.capabilityId)?.runtimeAvailability.state === 'unknown').length;
     const lines = ['Capability positioning (authoritative):'];
-    if (defaultNames.length > 0) lines.push(`Default: ${defaultNames.join(', ')}.`);
-    if (advancedNames.length > 0) lines.push(`Advanced: ${advancedNames.join(', ')}.`);
-    if (restrictions.length > 0) lines.push(`Current restrictions: ${restrictions.join('; ')}.`);
+    if (defaultNames.length > 0) lines.push(`Default: ${states(defaultNames)}.`);
+    if (advancedNames.length > 0) lines.push(`Advanced: ${states(advancedNames)}.`);
+    if (included.length > 0) {
+      const memory = factById.get('component.role-memory')?.memory ?? facts[0]?.memory;
+      const knowledge = factById.get('component.knowledge-retrieval-source')?.knowledge ?? facts[0]?.knowledge;
+      if (memory) lines.push(`Memory: scope=${memory.scope}; read=${memory.read}; write=${memory.write}; candidate=${memory.candidate}.`);
+      if (knowledge) lines.push(`Knowledge: state=${knowledge.appliedState}; version=${knowledge.version?.slice(0, 64) ?? 'unknown'}.`);
+      const actions = included.flatMap((entry) => {
+        const facts = factById.get(entry.capabilityId)!.actionAuthorization;
+        return facts.length > 0 ? [`${entry.displayName}: ${facts.map((fact) => `${fact.actionId}=${fact.authorization}`).join(', ')}`] : [];
+      });
+      if (actions.length > 0) lines.push(`Action permissions: ${actions.join('; ')}.`);
+    }
     if (unknownCount > 0) {
       lines.push(unknownCount === included.length
         ? 'Runtime state is not yet verified for all listed capabilities; do not present them as currently active.'
