@@ -8,7 +8,7 @@ import {
   buildFixtureProfile,
   probeToolDecision,
   restrictionNames,
-  
+
   scoreAnswer,
   sha256,
   type JsonValue,

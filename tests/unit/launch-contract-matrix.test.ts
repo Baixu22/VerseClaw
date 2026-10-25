@@ -134,7 +134,7 @@ describe('FP-P0-03 launch contract matrix', () => {
       .split('\n')
       .find((candidate) => candidate.includes('**VToken assembly**'));
     expect(line).toBeDefined();
-    expect(line).toContain('**false** (opt-in)');
+    expect(line).toContain('**retired** (always off)');
   });
 
   it('every fixture case references a md row that the fixture claims to cover', () => {

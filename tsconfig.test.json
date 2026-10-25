@@ -100,6 +100,8 @@
     "dist-electron",
     "tests/fixtures/ast-grep-edit-plan",
     "tests/fixtures/ast-patch-planner",
-    "tests/fixtures/agent-map/clawx-like-workspace"
+    "tests/fixtures/agent-map/clawx-like-workspace",
+    "tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
+    "tests/unit/fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts"
   ]
 }

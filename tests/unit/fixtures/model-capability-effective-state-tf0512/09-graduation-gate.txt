@@ -1,0 +1,47 @@
+Scope: all 155 workspace projects
+Lockfile is up to date, resolution step is skipped
+Already up to date
+[WARN] Failed to create bin at D:\ClawX\openclaw_runtime\extensions\verseconf-artifacts\node_modules\.bin\openclaw. ENOENT: no such file or directory, stat 'D:\ClawX\openclaw_runtime\openclaw.mjs.EXE'
+
+. preinstall$ node scripts/preinstall-package-manager-warning.mjs
+. preinstall: Done
+. postinstall$ node scripts/postinstall-bundled-plugins.mjs
+. postinstall: Done
+. prepare$ node scripts/prepare-git-hooks.mjs
+. prepare: Done
+Done in 5s using pnpm v11.2.2
+{
+  "validation": {
+    "ok": true,
+    "issues": [],
+    "requiredEvidence": [
+      "real-consumer",
+      "boundary",
+      "necessity|benefit",
+      "failure-recovery",
+      "not-product-claim"
+    ],
+    "missingEvidence": [],
+    "graduationPass": true,
+    "countsAsGraduated": true,
+    "recomputedVerdict": "pass",
+    "defaultChangedAgainstAuthority": false,
+    "evidenceGradeDetected": "unit-test"
+  },
+  "defaultChange": {
+    "ok": true,
+    "defaultChanged": false,
+    "reason": "default mode is unchanged"
+  },
+  "taskForestDone": {
+    "ok": true,
+    "reason": "validated report passes"
+  },
+  "ok": true,
+  "reportPath": "D:\\ClawX\\tests\\unit\\fixtures\\model-capability-effective-state-tf0512\\component-graduation-report.json",
+  "expected": {
+    "recomputeInputDigest": "c4ec85ff125e5aa476c16c1685862a73a4c787c43670e5a6bf24a3a04d705094"
+  },
+  "currentDefaultMode": "internal",
+  "requireGraduation": true
+}

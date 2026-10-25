@@ -1,17 +1,17 @@
 
- RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
+ RUN  v4.1.1 D:/ClawX
 
 stdout | tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > regenerates the acceptance pack from current disk facts
 {
   "status": "complete",
   "criteria": 5,
-  "profileEntries": 53
+  "profileEntries": 54
 }
 
 ------------------·
 
  Test Files  1 passed (1)
       Tests  1 passed | 18 skipped (19)
-   Start at  16:11:03
-   Duration  18.23s (transform 5.04s, setup 245ms, import 8.17s, tests 9.54s, environment 0ms)
+   Start at  21:46:45
+   Duration  33.87s (transform 13.72s, setup 457ms, import 17.40s, tests 15.35s, environment 0ms)
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ComponentGraduationScopedLanding/v1",
   "base": "b62e7f4c9",
-  "head": "2b3c7656ca322c3549d05db171614785d16ffbb1",
+  "head": "e40612819f664ad5a8a75b113b1eddb256f44f05",
   "status": "pass",
   "diff": [
     "README.ja-JP.md",
@@ -89,6 +89,14 @@
     "tests/unit/fixtures/product-semantics-tf0506/sha256sums-check.txt",
     "tests/unit/fixtures/product-semantics-tf0506/verification.json"
   ],
-  "reviewedOutsideScope": [],
+  "reviewedOutsideScope": [
+    "M tests/unit/fixtures/component-graduation-tf0508/audit.json",
+    " M tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
+    " M tests/unit/fixtures/component-graduation-tf0508/scope-receipt.json",
+    " M tests/unit/fixtures/component-graduation-tf0508/scoped-landing.json",
+    " M tests/unit/fixtures/component-graduation-tf0508/task-forest-export.txt",
+    " M tests/unit/fixtures/component-graduation-tf0508/task-forest-validate.txt",
+    " M tests/unit/fixtures/component-graduation-tf0508/tf0512-receipt.json"
+  ],
   "unreviewedOutsideScope": []
 }

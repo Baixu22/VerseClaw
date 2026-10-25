@@ -273,7 +273,7 @@ The retained acceptance explicitly does not claim:
   measurement is `EVIDENCE_INSUFFICIENT`, and D3 is `keep-baseline`. Provider quality,
   cost and P95 promotion evidence was not measured in that run; no asynchronous
   compression strategy or cross-vendor thread resumption is promoted. Manual/native
-  compaction remains the default.
+  compaction remains the default. Long-session continuity strategy stays on the baseline: the paired evaluation did not establish a promotion claim, so continuity remains descriptive and cannot become an asynchronous compression or cross-vendor resumption default.
 - **No macOS, Linux or packaged-build long-use measurement.** The 333-session /
   57.16 MiB fixture and five-minute idle-RSS curve are a Windows x64 built
   `dist-electron` sample.

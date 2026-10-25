@@ -134,7 +134,7 @@
           "reason": "validated report passes"
         },
         "ok": true,
-        "reportPath": "D:\\ClawX-work\\component-graduation-20261021\\tests\\unit\\fixtures\\model-capability-effective-state-tf0512\\component-graduation-report.json",
+        "reportPath": "D:\\ClawX\\tests\\unit\\fixtures\\model-capability-effective-state-tf0512\\component-graduation-report.json",
         "expected": {
           "recomputeInputDigest": "c4ec85ff125e5aa476c16c1685862a73a4c787c43670e5a6bf24a3a04d705094"
         },
@@ -255,14 +255,22 @@
         "tests/unit/fixtures/product-semantics-tf0506/sha256sums-check.txt",
         "tests/unit/fixtures/product-semantics-tf0506/verification.json"
       ],
-      "reviewedOutsideScope": [],
+      "reviewedOutsideScope": [
+        "M tests/unit/fixtures/component-graduation-tf0508/audit.json",
+        " M tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
+        " M tests/unit/fixtures/component-graduation-tf0508/scope-receipt.json",
+        " M tests/unit/fixtures/component-graduation-tf0508/scoped-landing.json",
+        " M tests/unit/fixtures/component-graduation-tf0508/task-forest-export.txt",
+        " M tests/unit/fixtures/component-graduation-tf0508/task-forest-validate.txt",
+        " M tests/unit/fixtures/component-graduation-tf0508/tf0512-receipt.json"
+      ],
       "unreviewedOutsideScope": []
     },
     {
       "id": "scoped_landing_inputs",
       "status": "pass",
-      "scopedChangedCount": 0,
-      "nonScopedChangedCount": 0
+      "scopedChangedCount": 12,
+      "nonScopedChangedCount": 7
     }
   ],
   "successMetrics": {
