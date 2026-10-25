@@ -1,0 +1,312 @@
+{
+    "schemaVersion":  "PermissionAuthorityVerification/v1",
+    "taskForestNodeId":  "TF-0509",
+    "generatedAt":  "2026-10-22T10:31:52.1102363Z",
+    "driven_by":  "agent",
+    "actor":  "codex",
+    "status":  "pass",
+    "gates":  [
+                  {
+                      "id":  "01-permission-contract",
+                      "command":  "pnpm exec vitest run \u003cTF-0509 permission + Stage4 contract suites\u003e",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/01-permission-contract.txt",
+                      "outputSha256":  "0b833c3b0152e4de759c2f95a97c21a1aaa4aedb4718b33865c2148e944662c6"
+                  },
+                  {
+                      "id":  "02-cross-component",
+                      "command":  "pnpm exec vitest run \u003cTF-0509 cross-component permission suites\u003e",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/02-cross-component.txt",
+                      "outputSha256":  "43b9dd46ab24991e604e11294df4d39ed914c9a3f047a362282bd1e452ab4a53"
+                  },
+                  {
+                      "id":  "03-runtime-authorization",
+                      "command":  "openclaw_runtime focused authorization suites",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/03-runtime-authorization.txt",
+                      "outputSha256":  "3ee429dca240473203e3b937a7fbc6514494477810db32ebf6a787aa5698538f"
+                  },
+                  {
+                      "id":  "04-typecheck",
+                      "command":  "pnpm run typecheck",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/04-typecheck.txt",
+                      "outputSha256":  "78a219603eb8b94d98b78fc2397ef07592f0395a597f65d4c1b067c35ac3007c"
+                  },
+                  {
+                      "id":  "05-lint-check",
+                      "command":  "pnpm run lint:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/05-lint-check.txt",
+                      "outputSha256":  "109b85f393291a4daa90aec9e4dfbf3592e38b89c54d8db5b16cb346e7d240dc"
+                  },
+                  {
+                      "id":  "06-catalogs-check",
+                      "command":  "pnpm run catalogs:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/06-catalogs-check.txt",
+                      "outputSha256":  "2e9452a244f19be318c6f17653ee2080eb6f8766e0da0717418501cbb90dabc6"
+                  },
+                  {
+                      "id":  "07-contract-check",
+                      "command":  "pnpm run contract:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/07-contract-check.txt",
+                      "outputSha256":  "f7fa93ef66407ed6df04b201ba1b7cf451743d8c82c24188606d30c1b13d37fb"
+                  },
+                  {
+                      "id":  "08-no-bom",
+                      "command":  "node scripts/check-no-bom.mjs",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/08-no-bom.txt",
+                      "outputSha256":  "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4"
+                  },
+                  {
+                      "id":  "09-diff-check",
+                      "command":  "git diff --check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/09-diff-check.txt",
+                      "outputSha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  {
+                      "id":  "10-build-vite",
+                      "command":  "pnpm run build:vite",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/10-build-vite.txt",
+                      "outputSha256":  "dce63d7d3d84dcca89e8c634e15f8d7077d6366ac18972b8be4ce3ece4d6db04"
+                  },
+                  {
+                      "id":  "11-component-graduation-gate",
+                      "command":  "component-graduation-report.mts --report \u003cTF-0509 report\u003e --root . --current-default-mode baseline --require-graduation",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/11-component-graduation-gate.txt",
+                      "outputSha256":  "31778bcb13f4318f8d5d7af96b4c0b745627288694d8eedb47a3a0e20db8507a"
+                  },
+                  {
+                      "id":  "12-sha256sums-check",
+                      "command":  "PowerShell SHA256 recompute against SHA256SUMS",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/12-sha256sums-check.txt",
+                      "outputSha256":  "8af625e518c552003c54210bf705f23033701af6e004a4ac7b6de6c18510cdfc"
+                  }
+              ],
+    "sha256sums":  [
+                       {
+                           "file":  "electron/services/agent-browser-api.ts",
+                           "expected":  "8d7b1af3da9e3aa44611abf29a4176450e1b4cd00ee23e6df23a746df3f06d89",
+                           "actual":  "8d7b1af3da9e3aa44611abf29a4176450e1b4cd00ee23e6df23a746df3f06d89",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "electron/services/knowledge-api.ts",
+                           "expected":  "ef2b0912b5a585d24cc63f05ea016997c7fef160866444d40d62e5ba2ac052a9",
+                           "actual":  "ef2b0912b5a585d24cc63f05ea016997c7fef160866444d40d62e5ba2ac052a9",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts",
+                           "expected":  "90f2056d7a378299cd5fa428f3739ca1346855dea606a9ed47702c2134d1f1e2",
+                           "actual":  "90f2056d7a378299cd5fa428f3739ca1346855dea606a9ed47702c2134d1f1e2",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/approval-ledger.ts",
+                           "expected":  "4d00fcb3e02da7c2bb5d5d58355a987c7ce63a826ef6ced0cc106692a8050ec1",
+                           "actual":  "4d00fcb3e02da7c2bb5d5d58355a987c7ce63a826ef6ced0cc106692a8050ec1",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/permission-contract.ts",
+                           "expected":  "6521a58515eac227ac260a6790977835bff23814aa1e15094dcbcb734994008a",
+                           "actual":  "6521a58515eac227ac260a6790977835bff23814aa1e15094dcbcb734994008a",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/rc04-durable-approval.test.ts",
+                           "expected":  "f7bfeb35b072107a7f2779735e08e8f3ac9be2dc99b0738385febeadec60335d",
+                           "actual":  "f7bfeb35b072107a7f2779735e08e8f3ac9be2dc99b0738385febeadec60335d",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/rc04-exec-approval-wiring.test.ts",
+                           "expected":  "58e0ffd2df610ed7b11e889f6e03ebfcae87ea930f1bc06df3a03cfcb253c68d",
+                           "actual":  "58e0ffd2df610ed7b11e889f6e03ebfcae87ea930f1bc06df3a03cfcb253c68d",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/stage1-minimal-grant.test.ts",
+                           "expected":  "e0a363b34534260364f9be7db87b04d60f11eb85b4345bf866bd410e959bf4e6",
+                           "actual":  "e0a363b34534260364f9be7db87b04d60f11eb85b4345bf866bd410e959bf4e6",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/stage1-tool-guard.test.ts",
+                           "expected":  "03a437e7fb1b4a2e5fce1e7da47066c31a4ce0c65e02ede160920c4a2e80260e",
+                           "actual":  "03a437e7fb1b4a2e5fce1e7da47066c31a4ce0c65e02ede160920c4a2e80260e",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/stage4-capability-grant.test.ts",
+                           "expected":  "d1d236fbdbe0b2fa47e0a82f8c06abb0f9eef79724d4f25376bd0f8826e2711b",
+                           "actual":  "d1d236fbdbe0b2fa47e0a82f8c06abb0f9eef79724d4f25376bd0f8826e2711b",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/stage4-capability-grant.ts",
+                           "expected":  "cbbf84ec6fbbb0170436c8c830092771be3b0c1649faff57a833ba0641e5adb7",
+                           "actual":  "cbbf84ec6fbbb0170436c8c830092771be3b0c1649faff57a833ba0641e5adb7",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/stage4-tool-guard.test.ts",
+                           "expected":  "ebc747f8f98f2b54e34a67cd5aa8b2ad746ba8841afe856b1784020721719107",
+                           "actual":  "ebc747f8f98f2b54e34a67cd5aa8b2ad746ba8841afe856b1784020721719107",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/stage4-tool-guard.ts",
+                           "expected":  "b006add1f1ae873d927e4bc562fdc7d5b823c8d43c8fe6cd2e3fb82bd43e668f",
+                           "actual":  "b006add1f1ae873d927e4bc562fdc7d5b823c8d43c8fe6cd2e3fb82bd43e668f",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts",
+                           "expected":  "f6fd297b0d31960fd0236f0ac97ff776cef497ccdc5de7755f2c31476260a5c4",
+                           "actual":  "f6fd297b0d31960fd0236f0ac97ff776cef497ccdc5de7755f2c31476260a5c4",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+                           "expected":  "d6c737e271707322b7fc8e22018c38b4865b3d506da2d24405bb0fa489f3073e",
+                           "actual":  "d6c737e271707322b7fc8e22018c38b4865b3d506da2d24405bb0fa489f3073e",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/verseshell/governed-exec.ts",
+                           "expected":  "1f0bb3ca864eb9602c037c2cd62b069fee77c3b7dd0d11f1e3d25c2832c558fe",
+                           "actual":  "1f0bb3ca864eb9602c037c2cd62b069fee77c3b7dd0d11f1e3d25c2832c558fe",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "shared/component-authority-manifest.ts",
+                           "expected":  "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+                           "actual":  "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/approval-redaction-contract.test.ts",
+                           "expected":  "d753a684cdc75a9499af0767516bd45adb0827ddc6e25df58050e7aa7eb9fa80",
+                           "actual":  "d753a684cdc75a9499af0767516bd45adb0827ddc6e25df58050e7aa7eb9fa80",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/context-control-plane-stage4-contracts.test.ts",
+                           "expected":  "144c9fc5fd14abc4c8cde729af7cfa7ef57beff60f6363a3f84b6f6cac55669d",
+                           "actual":  "144c9fc5fd14abc4c8cde729af7cfa7ef57beff60f6363a3f84b6f6cac55669d",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/files-permissions-api.test.ts",
+                           "expected":  "74e2fd8b92ec8b09be031292f556e52d05a2dc8406b156cdff771de5d550ded0",
+                           "actual":  "74e2fd8b92ec8b09be031292f556e52d05a2dc8406b156cdff771de5d550ded0",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/README.md",
+                           "expected":  "39fd7419e08401c39c5aee1544f24f1f414151db041033f6e4a82a334f0f5c42",
+                           "actual":  "39fd7419e08401c39c5aee1544f24f1f414151db041033f6e4a82a334f0f5c42",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/component-graduation-report.json",
+                           "expected":  "93eb3539024029c17eed0b962ec85939e94dc45b6ccd91d80c37d049b5bbf07b",
+                           "actual":  "93eb3539024029c17eed0b962ec85939e94dc45b6ccd91d80c37d049b5bbf07b",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/generate-acceptance.mts",
+                           "expected":  "968b1dbf64407169a885b302ee603693f3b55c101f5a271b2894aa7b95a49855",
+                           "actual":  "968b1dbf64407169a885b302ee603693f3b55c101f5a271b2894aa7b95a49855",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/raw-evidence.json",
+                           "expected":  "a29a34230e7c123974017aa95454dffaf3f62c35f70257ddb8c99d874abec098",
+                           "actual":  "a29a34230e7c123974017aa95454dffaf3f62c35f70257ddb8c99d874abec098",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/permission-authority/acceptance/TF-0509/run-verification.ps1",
+                           "expected":  "111e971f6bb9acb7b0800a3c69b69088a9ec4493528bbbde98f3b804578e4d38",
+                           "actual":  "111e971f6bb9acb7b0800a3c69b69088a9ec4493528bbbde98f3b804578e4d38",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/gateway-permissions-api.test.ts",
+                           "expected":  "18cb68044b0808b22e5f55a7b5dd4653a0a0b0705e97adfff9dc88d8f4142a61",
+                           "actual":  "18cb68044b0808b22e5f55a7b5dd4653a0a0b0705e97adfff9dc88d8f4142a61",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/knowledge-lifecycle.test.ts",
+                           "expected":  "35fc5f77f96366892a2341b72edc449336827f0d79403238c7fe7ef800d63f9b",
+                           "actual":  "35fc5f77f96366892a2341b72edc449336827f0d79403238c7fe7ef800d63f9b",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/pending-run-approvals.test.tsx",
+                           "expected":  "06b2ca7b86ceded79226ae6a916828abbf260fa3ed96ba14c0d501f48036ad91",
+                           "actual":  "06b2ca7b86ceded79226ae6a916828abbf260fa3ed96ba14c0d501f48036ad91",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/permission-contract-tf0509.test.ts",
+                           "expected":  "b13b4f249522fd75ddc85902e86cb7b40891934400d5f41ffafbd84fc6e9fe3c",
+                           "actual":  "b13b4f249522fd75ddc85902e86cb7b40891934400d5f41ffafbd84fc6e9fe3c",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/permission-decision-audit.test.ts",
+                           "expected":  "c2c4e23bc45dcd68c55c2a79fc7560966770c390c6731122f9c83eb54672cdeb",
+                           "actual":  "c2c4e23bc45dcd68c55c2a79fc7560966770c390c6731122f9c83eb54672cdeb",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/run-approval-attribution.test.ts",
+                           "expected":  "b24310baf8a5f0ee981427aa7be1485f41fb5d76282111297778a3252d57094d",
+                           "actual":  "b24310baf8a5f0ee981427aa7be1485f41fb5d76282111297778a3252d57094d",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/runtime-approval-bridge.test.ts",
+                           "expected":  "cee46e24c802d32276e62cb1f1f148fddfca34727b1e969363e44ee7b7e59007",
+                           "actual":  "cee46e24c802d32276e62cb1f1f148fddfca34727b1e969363e44ee7b7e59007",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/versebrowser-capability-gating.test.ts",
+                           "expected":  "7ec30de3b6896b2c80e3bf0fe0b997144a5c27aeed00a4480db59cf3a896bd1e",
+                           "actual":  "7ec30de3b6896b2c80e3bf0fe0b997144a5c27aeed00a4480db59cf3a896bd1e",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/workspace-permissions.test.ts",
+                           "expected":  "fa460e8861569b299314682d7b057ed9c35f41f289d17a254570814b088f8456",
+                           "actual":  "fa460e8861569b299314682d7b057ed9c35f41f289d17a254570814b088f8456",
+                           "status":  "pass"
+                       }
+                   ]
+}

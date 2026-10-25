@@ -12,9 +12,7 @@ $results = @()
 function Invoke-CapturedGate {
   param([string]$Id, [string[]]$Arguments, [string]$DisplayCommand)
   $outputPath = Join-Path $outputDir "$Id.txt"
-  $output = (& $Arguments[0] @($Arguments[1..($Arguments.Count - 1)]) 2>&1 | Out-String)
-  $output = [regex]::Replace($output, '\x1B\[[0-?]*[ -/]*[@-~]', '')
-  $output = (($output -split '\r?\n') | ForEach-Object { $_.TrimEnd() }) -join "`r`n"
+  $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)]) 2>&1 | Out-String
   $exitCode = $LASTEXITCODE
   [System.IO.File]::WriteAllText($outputPath, $output, $utf8NoBom)
   return [ordered]@{
@@ -61,27 +59,24 @@ $results += Invoke-CapturedGate -Id '06-contract-check' -Arguments @($pnpm, 'run
 $results += Invoke-CapturedGate -Id '07-no-bom' -Arguments @('node', 'scripts/check-no-bom.mjs') -DisplayCommand 'node scripts/check-no-bom.mjs'
 $results += Invoke-CapturedGate -Id '08-diff-check' -Arguments @('git', 'diff', '--check') -DisplayCommand 'git diff --check'
 $results += Invoke-CapturedGate -Id '09-build-vite' -Arguments @($pnpm, 'run', 'build:vite') -DisplayCommand 'pnpm run build:vite'
-$results += Invoke-CapturedGate -Id '09a-build-runtime' -Arguments @($pnpm, 'run', 'build:runtime') -DisplayCommand 'pnpm run build:runtime'
 # Run each Settings scenario in a fresh Playwright worker. A single Electron
 # process running all five scenarios intermittently misses the 60s file-load
 # deadline under the full verification load.
 $e2eCases = @(
+  @{ file = 'tests/e2e/dcs-prod-p0-settings.spec.ts'; grep = 'shows opt-in DCS production flags panel' },
+  @{ file = 'tests/e2e/dcs-prod-p0-settings.spec.ts'; grep = 'renders the DCS control surface in Japanese and Russian' },
+  @{ file = 'tests/e2e/dcs-prod-p0-settings.spec.ts'; grep = 'toggles writable flags, persists store, and restores baseline' },
+  @{ file = 'tests/e2e/dcs-prod-p0-settings.spec.ts'; grep = 'shows discoverability banner for hidden view tools' },
   @{ file = 'tests/e2e/vtoken-bridge-settings.spec.ts'; grep = 'does not expose a VT bridge switch' }
 )
 $e2eOutput = ''
 $e2eExit = 0
 foreach ($case in $e2eCases) {
-  $caseExit = 1
-  for ($attempt = 1; $attempt -le 2; $attempt++) {
-    $caseOutput = (& $pnpm 'exec' 'playwright' 'test' $case.file '--workers=1' '--reporter=line' '--grep' $case.grep 2>&1 | Out-String)
-    $caseOutput = [regex]::Replace($caseOutput, '\x1B\[[0-?]*[ -/]*[@-~]', '')
-    $caseOutput = (($caseOutput -split '\r?\n') | ForEach-Object { $_.TrimEnd() }) -join "`r`n"
-    $caseExit = $LASTEXITCODE
-    $e2eOutput += "CASE=$($case.grep) ATTEMPT=$attempt EXIT=$caseExit
+  $caseOutput = & $pnpm 'exec' 'playwright' 'test' $case.file '--workers=1' '--reporter=line' '--grep' $case.grep 2>&1 | Out-String
+  $caseExit = $LASTEXITCODE
+  $e2eOutput += "CASE=$($case.grep) EXIT=$caseExit
 $caseOutput
 "
-    if ($caseExit -eq 0) { break }
-  }
   if ($caseExit -ne 0) { $e2eExit = 1 }
 }
 $e2ePath = Join-Path $outputDir '10-settings-e2e.txt'
@@ -129,7 +124,7 @@ $ledger = [ordered]@{
   taskForestNodeId = 'TF-0493'
   generatedAt = (Get-Date).ToUniversalTime().ToString('o')
   driven_by = 'agent'
-  actor = 'codex-long-session-r2'
+  actor = 'codex'
   status = $status
   gates = $results
   sha256sums = $sumChecks

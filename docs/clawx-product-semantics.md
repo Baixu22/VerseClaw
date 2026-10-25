@@ -6,7 +6,7 @@ Evidence boundary: this document is a product-semantics guardrail that complemen
 
 ## Positioning
 
-ClawX is an agent workbench, not an automatic project manager. Ordinary Chat is for immediate collaboration. Durable task facts belong to Task Ledger. High-constraint execution belongs to explicit Task Loop runs. Runtime/plugin scheduling belongs to Workboard. Routing Memo stays shadow until scorecard-backed quality input can safely affect routing.
+ClawX is an agent workbench, not an automatic project manager. Ordinary Chat is for immediate collaboration. Durable task facts belong to Task Ledger. High-constraint execution belongs to explicit Task Loop runs. Runtime/plugin scheduling belongs to Workboard. Routing Memo is an internal diagnostic; it cannot affect routing until same-session scorecard-backed quality input is available.
 
 ## Identity and scope vocabulary
 
@@ -173,9 +173,10 @@ The table below is the canonical component classification for this preview. Each
 | Component | Canonical label | Boundary |
 | --- | --- | --- |
 | DCS coding loop | `opt-in` | The first-product switch is off by default and requires verified provider, model, workspace, and permission prerequisites. |
-| VToken turn assembly | `opt-in` | Explicit Developer/config enable only; the enhancement kill switch wins. |
+| DCS Fact view and tool registry | `opt-in` | Context read/search/understand tools and the compact tool catalog share a separately graduated surface; they do not create separate product authorities. |
+| VToken turn assembly | `internal` | Internal Context Orchestrator packing and diagnostics only; no user-facing enable or disable control. |
 | SEKB automatic writeback | `deferred` | Human-confirmed review remains the only allowed write path. |
-| C6 automatic context ladder | `internal` | Explicit internal assembler request API for tests/diagnostics; no automatic or user-level activation in this preview. |
+| C6 automatic context ladder | `internal` | Explicit internal assembler request API for tests and diagnostics; no automatic user-level activation. |
 | C7 knowledge/routing cutover | `deferred` | Shadow evidence does not grant routing authority. |
 | Coding WAL | `deferred` | Write journal remains the recovery authority for this preview. |
 | Browser supervised workflows | `experimental` | Supervised use only; unsupervised and private-network expansion are excluded. |
@@ -183,7 +184,13 @@ The table below is the canonical component classification for this preview. Each
 | Surfaces listed in RETIRED-SURFACES.md | `retired` | Removed surfaces stay removed and cannot be used as current capability evidence. |
 <!-- FP-P1-08-COMPONENT-STATUS-END -->
 
-The table above is the controlled-preview baseline snapshot. Its labels remain the current runtime baseline until a component-specific graduation decision changes both behavior and documentation; TF-0488 changes neither. Under the 2026-09-27 owner policy, real-human evidence is no longer a prerequisite; agent-driven evidence may support a later decision only when it records `driven_by: agent` with a concrete actor and is backed by the current production path, rollback, and model-effective-state evidence. The excluded and default-off details remain locked by `docs/dev/default-config-matrix.md`, `docs/dev/first-product-controlled-preview/STATUS.md`, and the [D9 scope ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md).
+Workspace Context graduated separately under TF-0494. Its single Settings > General
+profile combines a bounded recent-action window and compact tool/resource registry,
+is enabled by default with one toggle, and follows the shared turn budget. It is not
+long-term knowledge or approved memory. This graduation does not add an eleventh
+component to the frozen first-product controlled-preview table.
+
+The table above is the controlled-preview baseline snapshot. Its labels remain the current runtime baseline until a component-specific graduation decision changes both behavior and documentation. TF-0488 changed no value; TF-0494 graduated only the Workspace Context pair and recorded its agent-driven canary, effective-state and rollback evidence in the owning node. Under the 2026-09-27 owner policy, real-human evidence is no longer a prerequisite; agent-driven evidence may support a later decision only when it records `driven_by: agent` with a concrete actor and is backed by the current production path, rollback, and model-effective-state evidence. The excluded and default-off details remain locked by `docs/dev/default-config-matrix.md`, `docs/dev/first-product-controlled-preview/STATUS.md`, and the [D9 scope ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md).
 
 ## Component Graduation Scope (D9)
 
@@ -196,9 +203,91 @@ The following boundaries remain outside automatic authority and are not changed 
 - VerseGit nodes, worktrees, and product files;
 - implementation of TF-0489 or any later Context, Memory, Knowledge, Capability, Browser, or VerseShell node before that node is explicitly activated.
 
-“Default graduation” means a component can be evaluated and decided into a default mode through the component evidence matrix; it is not a blanket enablement or an automatic value flip, and public release, GA, live readiness and product approval remain unauthorized. “Automatic acceptance” means an agent can execute checks, write evidence, and read results back from disk. It does not grant release approval. A green test, a wiring site, or a completed Task Forest node is necessary evidence, not a substitute for production-path, benefit, rollback, effective-state, and explicit-decision evidence.
+“Default graduation” means a component can be evaluated and decided into a default mode through the component evidence matrix; it is not a blanket enablement or an automatic value flip, and public release, general availability, live readiness and product approval remain unauthorized. “Automatic acceptance” means an agent can execute checks, write evidence, and read results back from disk. It does not grant release approval. A green test, a wiring site, or a completed Task Forest node is necessary evidence, not a substitute for production-path, benefit, rollback, effective-state, and explicit-decision evidence.
 
 Agent evidence must remain `driven_by: agent` with a concrete actor. Zero real-human evidence is a retained fact, not an open/blocked condition. See the [D9 ADR](dev/adr/2026-10-21-d9-component-graduation-scope.md) and the [current constraint matrix](dev/component-graduation-scope-matrix-20261021.md).
+
+## Session lifecycle action boundary
+
+Session lifecycle actions are separate facts. An abort is not a stop, stop is not
+archive, archive is not delete, and reset changes the physical generation without
+creating a new logical conversation by string inference. Source anchors,
+inheritance rules, failure states and the original fault baseline are recorded in
+[`long-session-development/a1/action-and-inheritance-contract.json`](../harness/specs/fixtures/long-session-development/a1/action-and-inheritance-contract.json).
+The corresponding negative cases are fixed in
+[`negative-scenario-index.json`](../harness/specs/fixtures/long-session-development/a1/negative-scenario-index.json).
+
+| Action | Visible behavior | Inherits | Does not inherit / required boundary |
+| --- | --- | --- | --- |
+| Turn/run abort | Stops the active turn/run and reloads transcript state. | SessionKey, transcript and current physical session. | Task/goal completion or resource deletion. |
+| Session stop | Clears queued work and drains runtime activity while retaining the session. | SessionKey, session store, transcript and task/resource records. | Archive/delete mutation or task completion. |
+| Archive | Hides a conversation while retaining it for restore. | Transcript, original session-entry snapshot and workspace/folder hints. | Running process ownership, task completion or a new SessionKey. |
+| Restore | Restores an archive-indexed conversation. | Snapshot metadata and transcript. | Task/goal status or running resource ownership. |
+| Reset | Rotates the physical sessionId/generation under the same SessionKey. | Agent/workspace scope, preferences and Task Ledger references. | Old generation authority, ordinary-session CLI bindings and token counters. |
+| Delete | Removes a live or archived conversation after owner cleanup. | No restore entitlement after a committed delete. | Late run authority, task completion or a second deletion owner. |
+| Fork | Creates a child session from a source transcript. | Transcript/model/workspace preferences and explicit fork lineage. | Task/goal completion or running resources. |
+| Handoff | Creates a child from a bounded draft without mutating the source. | Bounded context and explicit parent/root lineage. | Goal transfer, source mutation or resource drain. |
+| Schedule pause | Disables future Cron/Workboard triggers. | Existing session/history and current-run state. | Session stop, abort, archive/delete or task completion. |
+
+Archive and restore execute through the runtime lifecycle owner. Archive acquires
+the admission fence, drains the session, records an operation intent, writes the
+archive index and transcript, then commits the hidden store state. Restore uses a
+fresh physical generation under the same SessionKey and keeps the old generation
+tombstoned. Failed or unknown RPCs retain the same Main operationId for retry.
+The A1 contract retains its original `partial` fault-baseline status; it is not
+rewritten as evidence that every historical path was protected.
+
+This boundary adds no Project, Task/Goal, Context/Memory, Scheduler or universal
+resource authority. Deleting an archived conversation retains its archive-index
+retry locator and cannot report success while an owned derivative remains.
+
+## Final acceptance scope (F3)
+
+The long-session capability is accepted inside one explicit boundary on Windows x64:
+a single bound coordinator Workspace/Assistant/session tree, the existing Task Ledger
+as the only task-fact owner, and the existing completion, admission, resource and
+scheduler owners. The retained peer evidence is read from disk:
+`harness/specs/fixtures/long-session-development/f3/acceptance.json` and
+`acceptance.md` list every execution node with its candidate, commands, exit codes,
+counts, artifacts and negative proof.
+
+What the accepted boundary proves:
+
+- Lifecycle actions stay distinct (abort, stop, archive, restore, reset, delete, fork,
+  handoff, schedule pause); archive/restore use the runtime lifecycle owner with an
+  operation journal and retry identity. Late events cannot resurrect a deleted or
+  rotated generation.
+- Session effective policy reports configured, effective and actual backend as
+  separate facts; unsupported or unknown combinations remain visible.
+- An explicitly bound coordinator keeps its binding, physical generation and Task
+  Ledger references across app/Gateway restart. Delegation admission records
+  accepted only, and the activity rail shows completion batches without creating a
+  second task list.
+- Accepted-only, bounded `ContinuityContextPack/v1` projects existing owners. It
+  creates no second memory store or injection authority.
+- Coordinator follow-ups reject expired, missing, unverifiable or mismatched
+  generations before execution. Main disables stale schedules instead of deleting
+  them.
+- Hidden read-only surfaces issue no work. Deletion reclaims owned terminals,
+  browsers and managed ports through their existing owners; unresolved ownership
+  retains a recovery identity.
+
+The retained acceptance explicitly does not claim:
+
+- **No live-provider or native-backend thread continuity.** The retained D2
+  measurement is `EVIDENCE_INSUFFICIENT`, and D3 is `keep-baseline`. Provider quality,
+  cost and P95 promotion evidence was not measured in that run; no asynchronous
+  compression strategy or cross-vendor thread resumption is promoted. Manual/native
+  compaction remains the default.
+- **No macOS, Linux or packaged-build long-use measurement.** The 333-session /
+  57.16 MiB fixture and five-minute idle-RSS curve are a Windows x64 built
+  `dist-electron` sample.
+- **No real-human long use.** The artifacts are agent-driven and the fixture is
+  synthetic.
+- **No publication, product-lock or default change, and no independent Project or
+  cloud/VPS/daemon execution scope.** These remain separate owner decisions.
+- **No universal resource authority.** Unresolved worktree ownership retains its
+  failure and recovery identity; no second registry is created.
 
 ## Concept Boundaries
 
@@ -250,7 +339,7 @@ Canonical task-level semantics live in `PRODUCT_SEMANTIC_TASK_BOUNDARIES` in `sh
 | Task Ledger / Workboard | P1-03 | Task Ledger owns user-visible task facts; Workboard owns runtime/plugin scheduling and references ledger nodes one-way through `TaskLedgerReference`. |
 | Orchestration quality | P1-04 | Ordinary `team_orchestrate` reports `qualityState=null` when unevaluated and `shadow` when scorecard evidence exists; active routing remains gated. |
 | Orchestration diagnostics | P1-05 | Ordinary orchestration now exposes diagnostics and recommended next steps; repair/blocked/checkpoint semantics still belong only to Task Loop. |
-| Routing Memo | P1-06, P1-07 | Routing Memo exposes shadow dashboard evidence, and active routing authority requires scorecard-backed quality. |
+| Routing Memo | P1-06, P1-07 | Routing Memo exposes internal diagnostic evidence; a shadow observation is non-routing and active routing authority requires same-session scorecard-backed quality. |
 | Chat to Task Loop | P1-08 | Ordinary Chat may suggest upgrade; user confirmation is required before root/run creation. |
 | Task Loop | P1-09 | Task Loop owns checkpoint, repair, blocked, and evidence-gate semantics. |
 | Sensitive boundary | P1-10, P1-11, P1-12, P1-13, P1-14 | File, transcript, trace, memory, compaction, and model echo surfaces have separate guarantees. |

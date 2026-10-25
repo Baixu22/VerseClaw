@@ -1,0 +1,19 @@
+{
+  "proposal_id": "TFP-TF-0494-authority-path-delta-20261022",
+  "session_id": "tf-0494-workspace-context-20261022",
+  "rationale": "TF-0494 requires a single user-level Workspace Context profile with default-on behavior. The preliminary paths cover raw DCS controls and runtime context but not the Electron defaults, typed host API, user Settings surface, or i18n needed to remove per-flag user management. This proposal records the exact additional authority paths only; it does not change node status or activate another node.",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0494",
+      "fields": {
+        "execution_hints": [
+          "复用 DCS Preview 组合逻辑；先运行 agent-driven canary，再翻转默认",
+          "canaryProtocol=tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-protocol.json",
+          "authorityDeltaPaths=electron/utils/store.ts,shared/host-api/contract.ts,src/lib/host-api.ts,src/components/settings/WorkspaceContextPanel.tsx,src/pages/Settings/index.tsx,shared/i18n/",
+          "authorityDeltaReason=one user-level Workspace Context switch; DcsProdFlagsPanel remains developer diagnostics only"
+        ]
+      }
+    }
+  ]
+}

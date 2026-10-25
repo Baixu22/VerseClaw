@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "KnowledgeSekbMergeVerification/v1",
+  "taskForestNodeId": "TF-0499",
+  "generatedAt": "2026-10-23T02:17:12.4478900Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "graduationStatus": "graduated-per-implementation-gates",
+  "gates": [
+    {
+      "id": "01-lifecycle-unit",
+      "command": "knowledge lifecycle contract suite",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/knowledge-tf0499/01-lifecycle-unit.txt",
+      "outputSha256": "498fee22c7404afa07b2ee12ab8d8f1f9d6098eb71fd7780aa52c669805110a9"
+    },
+    {
+      "id": "02-sekb-identity",
+      "command": "SEKB identity and golden-path suites",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/knowledge-tf0499/02-sekb-identity.txt",
+      "outputSha256": "c64e5372cf1a0aef3bbe88c834794555f3e28fab2dd8e7c51ececd51193fd653"
+    },
+    {
+      "id": "03-knowledge-runtime",
+      "command": "knowledge governance suites",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/knowledge-tf0499/03-knowledge-runtime.txt",
+      "outputSha256": "019837c276765574f74a4e625e91fe2d8911557a9e71b243782ad8eeb67e94be"
+    },
+    {
+      "id": "04-typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/knowledge-tf0499/04-typecheck.txt",
+      "outputSha256": "118b433285f5810033353c4c9fa5746e890e007df00a300f6afca2ceff5fcca0"
+    },
+    {
+      "id": "05-lint-check",
+      "command": "pnpm run lint:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/knowledge-tf0499/05-lint-check.txt",
+      "outputSha256": "ed91e5d05fd3c19c493f34bdd1a4db9b548d89c47a1495891b175826edf376d1"
+    },
+    {
+      "id": "06-contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/knowledge-tf0499/06-contract-check.txt",
+      "outputSha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0"
+    },
+    {
+      "id": "07-no-bom",
+      "command": "node scripts/check-no-bom.mjs",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/knowledge-tf0499/07-no-bom.txt",
+      "outputSha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4"
+    },
+    {
+      "id": "08-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/knowledge-tf0499/08-diff-check.txt",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "09-single-surface",
+      "command": "static audit: one Knowledge review surface, no SEKB route",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/knowledge-tf0499/09-single-surface.txt",
+      "outputSha256": "60aff70269fd240c70dc86c392767414adf0523cfa967057868cd2dc4e3b0ec9"
+    },
+    {
+      "id": "10-no-unconfirmed-writeback",
+      "command": "static audit: no hardcoded human author, no auto writeback",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/knowledge-tf0499/10-no-unconfirmed-writeback.txt",
+      "outputSha256": "1e5ce118ae255c7103a595ace2737ca42b80876dd8329ef81430e513328e7e7b"
+    }
+  ]
+}

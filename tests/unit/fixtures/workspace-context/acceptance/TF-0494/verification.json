@@ -1,0 +1,264 @@
+{
+    "schemaVersion":  "WorkspaceContextVerification/v1",
+    "taskForestNodeId":  "TF-0494",
+    "generatedAt":  "2026-10-22T09:06:42.0636218Z",
+    "driven_by":  "agent",
+    "actor":  "codex",
+    "status":  "pass",
+    "gates":  [
+                  {
+                      "id":  "01-unit-workspace-context",
+                      "command":  "pnpm exec vitest run \u003cTF-0494 unit/matrix/profile suites\u003e",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/01-unit-workspace-context.txt",
+                      "outputSha256":  "f539dfac32e3a3f40107355a7875aaf45bb41690e3774024bcd337d491036ac5"
+                  },
+                  {
+                      "id":  "02-runtime-context",
+                      "command":  "openclaw_runtime focused Workspace Context suites",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/02-runtime-context.txt",
+                      "outputSha256":  "f2b27b7ac5c18db9cdc910d8c8378900a8cee92e4423f6e2fcfefa4c7026e97d"
+                  },
+                  {
+                      "id":  "03-typecheck",
+                      "command":  "pnpm run typecheck",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/03-typecheck.txt",
+                      "outputSha256":  "27f8700840709fd5a315e32fcb732ac1cbfdf885f354f5dfe84599b98e2fe129"
+                  },
+                  {
+                      "id":  "04-lint-check",
+                      "command":  "pnpm run lint:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/04-lint-check.txt",
+                      "outputSha256":  "72aaa322e421a74331c964b7ad6b62aa6c606234178d307182e74f09a9b49490"
+                  },
+                  {
+                      "id":  "05-catalogs-check",
+                      "command":  "pnpm run catalogs:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/05-catalogs-check.txt",
+                      "outputSha256":  "f2a1ec637a26ee8adc1c90f1615d7b28a9a7ba8354b4aca4b11f4c7f8bf5aeb5"
+                  },
+                  {
+                      "id":  "06-contract-check",
+                      "command":  "pnpm run contract:check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/06-contract-check.txt",
+                      "outputSha256":  "36921fc53a19109e6af32fad4ac2776b4d4b313ee520c8a2cd76152405192f17"
+                  },
+                  {
+                      "id":  "07-no-bom",
+                      "command":  "node scripts/check-no-bom.mjs",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/07-no-bom.txt",
+                      "outputSha256":  "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4"
+                  },
+                  {
+                      "id":  "08-diff-check",
+                      "command":  "git diff --check",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/08-diff-check.txt",
+                      "outputSha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  {
+                      "id":  "09-build-vite",
+                      "command":  "pnpm run build:vite",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/09-build-vite.txt",
+                      "outputSha256":  "1ab0b8cb62dc15954c26d1cd56a3ecf0119b2b9a622deb858fa21e52ffed9acb"
+                  },
+                  {
+                      "id":  "10-settings-e2e",
+                      "command":  "playwright: Workspace Context, DCS diagnostics and VToken boundary scenarios in fresh workers",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/10-settings-e2e.txt",
+                      "outputSha256":  "3fe6d73456b7db2c4d0006c5961521a0aeb9378d8795aa396c1c9d3ccc94b3cc"
+                  },
+                  {
+                      "id":  "11-component-graduation-gate",
+                      "command":  "component-graduation-report.mts --report \u003cTF-0494 report\u003e --root . --current-default-mode baseline --require-graduation",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/11-component-graduation-gate.txt",
+                      "outputSha256":  "f3f1533ffddcb119ece930a22862869b2fd7d376c5761b5023cbdda7645dfa92"
+                  },
+                  {
+                      "id":  "12-sha256sums-check",
+                      "command":  "PowerShell SHA256 recompute against SHA256SUMS",
+                      "exitCode":  0,
+                      "status":  "pass",
+                      "outputPath":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/12-sha256sums-check.txt",
+                      "outputSha256":  "47286fcafdc16ecce3f9d8c8b5b90f239fabea5a48370f0c12439e2020cff548"
+                  }
+              ],
+    "sha256sums":  [
+                       {
+                           "file":  "docs/clawx-product-semantics.md",
+                           "expected":  "bbdac53722dc3696833dc5a28f4839ea7d74da14db67be3fdc20d8d65327191b",
+                           "actual":  "bbdac53722dc3696833dc5a28f4839ea7d74da14db67be3fdc20d8d65327191b",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "docs/dev/component-disposition-matrix-20261021.md",
+                           "expected":  "aaa163090fb1a9c030019f8f5cb5cd2d885c634b9a5730fab91e81aec2664427",
+                           "actual":  "aaa163090fb1a9c030019f8f5cb5cd2d885c634b9a5730fab91e81aec2664427",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "docs/dev/default-config-matrix.md",
+                           "expected":  "4ba1520cd047fd9e417bf67a2eff9f069ca81d519419cab6c740c1324cd35ec9",
+                           "actual":  "4ba1520cd047fd9e417bf67a2eff9f069ca81d519419cab6c740c1324cd35ec9",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "electron/services/dcs-prod-flags-api.ts",
+                           "expected":  "d4f58c4cefbc6ed1ec291c40c4cc2e9990d3cdce9d726fdcaedd84ec35b998c0",
+                           "actual":  "d4f58c4cefbc6ed1ec291c40c4cc2e9990d3cdce9d726fdcaedd84ec35b998c0",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "electron/utils/store.ts",
+                           "expected":  "58aeb1bebf68c2ae1ad715560c7ed0ba6f43548f44d0236076df0e8d0aea8ff9",
+                           "actual":  "58aeb1bebf68c2ae1ad715560c7ed0ba6f43548f44d0236076df0e8d0aea8ff9",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/agents/embedded-agent-runner/run/preemptive-compaction.ts",
+                           "expected":  "c1b4373a2dc344920c43463b26d2f4953f7228f53c920fda102795efd80edde3",
+                           "actual":  "c1b4373a2dc344920c43463b26d2f4953f7228f53c920fda102795efd80edde3",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/context-engine/assembler.ts",
+                           "expected":  "22470211584dcff5ceb07010268321aff9211fdbe2d1b3186717f774a32cf216",
+                           "actual":  "22470211584dcff5ceb07010268321aff9211fdbe2d1b3186717f774a32cf216",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/context-engine/context-candidate.ts",
+                           "expected":  "845300e124376eb4796116a989fd9d1e359ff3f1c8793ba70a02ec89d4d0c61b",
+                           "actual":  "845300e124376eb4796116a989fd9d1e359ff3f1c8793ba70a02ec89d4d0c61b",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "openclaw_runtime/src/context-engine/runtime-flag-ack.ts",
+                           "expected":  "11a35cdd6d0a5845ae10ca072e4068e4942f3b44fd119226dcdb5a611e48ce3d",
+                           "actual":  "11a35cdd6d0a5845ae10ca072e4068e4942f3b44fd119226dcdb5a611e48ce3d",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "shared/dcs/prod-flags-control.ts",
+                           "expected":  "5a7ad1f167bccfcf33af506acbfa7e648a7ce06f66c6e18b3de1ef7dfd413828",
+                           "actual":  "5a7ad1f167bccfcf33af506acbfa7e648a7ce06f66c6e18b3de1ef7dfd413828",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "shared/dcs/workspace-context-profile.ts",
+                           "expected":  "2fcc0d44ed80e84a6b3aaa142ce9f9eb902b5c092bce1f77a628d8444ce4da77",
+                           "actual":  "2fcc0d44ed80e84a6b3aaa142ce9f9eb902b5c092bce1f77a628d8444ce4da77",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "src/components/settings/WorkspaceContextPanel.tsx",
+                           "expected":  "d07b399206f08685244487b4e80ec17fe83d8240967aa15255d416ec99202d44",
+                           "actual":  "d07b399206f08685244487b4e80ec17fe83d8240967aa15255d416ec99202d44",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "src/pages/Settings/index.tsx",
+                           "expected":  "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+                           "actual":  "70875b93791e574a4d8e3a0ecd8002115807b798d0bdbe4b96e6288ce069fea8",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/e2e/workspace-context-settings.spec.ts",
+                           "expected":  "d4bcc81302ac0534338c4ed8076de8c75c04b2e9f9fe5a5121e4a78a4c07960a",
+                           "actual":  "d4bcc81302ac0534338c4ed8076de8c75c04b2e9f9fe5a5121e4a78a4c07960a",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/dcs-preview-switch.test.ts",
+                           "expected":  "8903a6d7322f3c229dbb0e778d9c866d5d96922b8579029b4529d00891901fd7",
+                           "actual":  "8903a6d7322f3c229dbb0e778d9c866d5d96922b8579029b4529d00891901fd7",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/default-config-matrix.test.ts",
+                           "expected":  "816e728881a4f1ed23c7e2c01541731454efa0e9239cdac529b4a294231906bb",
+                           "actual":  "816e728881a4f1ed23c7e2c01541731454efa0e9239cdac529b4a294231906bb",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/README.md",
+                           "expected":  "54220da49abe9d026b7c29fcfe465cdc7ae08d20c1c01cfd97d9ce807e8ce393",
+                           "actual":  "54220da49abe9d026b7c29fcfe465cdc7ae08d20c1c01cfd97d9ce807e8ce393",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-protocol.json",
+                           "expected":  "f7527ae1746ca4cf54bc6d0551a20bf9c59814b7eff32bbbae4fb1559695f202",
+                           "actual":  "f7527ae1746ca4cf54bc6d0551a20bf9c59814b7eff32bbbae4fb1559695f202",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-run-v1-fail.json",
+                           "expected":  "6574423a9bc9c32f47e83dcc740f1525e68e2da831bc614b35516f01a357d7ec",
+                           "actual":  "6574423a9bc9c32f47e83dcc740f1525e68e2da831bc614b35516f01a357d7ec",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/canary-run-v2.json",
+                           "expected":  "50b00aaf6cf616bb5fbd708d7016eb82206c3ee2d15391ee1d44ac69c20b0841",
+                           "actual":  "50b00aaf6cf616bb5fbd708d7016eb82206c3ee2d15391ee1d44ac69c20b0841",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/component-graduation-report.json",
+                           "expected":  "f4ae459cca05f2998b22a8c9284d8e4c380904326b52f2425b316fa415ab974e",
+                           "actual":  "f4ae459cca05f2998b22a8c9284d8e4c380904326b52f2425b316fa415ab974e",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/generate-acceptance.mts",
+                           "expected":  "edc35a5155499891261ec1aac192df669fee830c53b05fcf40c16646f10351fe",
+                           "actual":  "edc35a5155499891261ec1aac192df669fee830c53b05fcf40c16646f10351fe",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/preassembly-budget.json",
+                           "expected":  "57a57bf2f087d74ce70bc500298021edaf78e3f37925308547b1c46de34d3c1d",
+                           "actual":  "57a57bf2f087d74ce70bc500298021edaf78e3f37925308547b1c46de34d3c1d",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/raw-evidence.json",
+                           "expected":  "fae140ac984d2ca0c8c487544dac612caf3c735c19df18b4f6eb7aca78863de7",
+                           "actual":  "fae140ac984d2ca0c8c487544dac612caf3c735c19df18b4f6eb7aca78863de7",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/fixtures/workspace-context/acceptance/TF-0494/run-verification.ps1",
+                           "expected":  "749f7381a2213584d0d63b51de7162c723d65fd0983328bc54655c4b80edb423",
+                           "actual":  "749f7381a2213584d0d63b51de7162c723d65fd0983328bc54655c4b80edb423",
+                           "status":  "pass"
+                       },
+                       {
+                           "file":  "tests/unit/workspace-context-profile.test.ts",
+                           "expected":  "c340968c255584760d34218f8e441b1bfb28a97b88892e0f2a4d037b4ebe36dd",
+                           "actual":  "c340968c255584760d34218f8e441b1bfb28a97b88892e0f2a4d037b4ebe36dd",
+                           "status":  "pass"
+                       }
+                   ]
+}

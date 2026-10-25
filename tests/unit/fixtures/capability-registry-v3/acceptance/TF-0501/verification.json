@@ -1,0 +1,232 @@
+{
+  "schemaVersion": "CapabilityCatalogAuthorityVerification/v1",
+  "taskForestNodeId": "TF-0501",
+  "generatedAt": "2026-10-23T00:16:58.9902335Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "gates": [
+    {
+      "id": "01-authority-unit",
+      "command": "pnpm exec vitest run tests/unit/capability-catalog-authority.test.ts",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/01-authority-unit.txt",
+      "outputSha256": "087e399ea63719c304231b1679b80f2338e635528b5a236781eca9044a349a49"
+    },
+    {
+      "id": "02-v3-runtime-lane",
+      "command": "openclaw_runtime V3 capability registry lane",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/02-v3-runtime-lane.txt",
+      "outputSha256": "d2d152bf924b9cbebda46be3df178a4a85e11fec1369e20076bab1f2db536193"
+    },
+    {
+      "id": "03-typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/03-typecheck.txt",
+      "outputSha256": "da8d2f0ae10f8ee2a834ff196f713a663b66b94ff843a2a56b9f454b2c8ee7af"
+    },
+    {
+      "id": "04-lint-check",
+      "command": "pnpm run lint:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/04-lint-check.txt",
+      "outputSha256": "357f9ad42c069b929696b56e0bfe94029b2eab7229bc7713308efca05bfc85f3"
+    },
+    {
+      "id": "05-contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/05-contract-check.txt",
+      "outputSha256": "39c8d4a0662fbb2ef0c63a0e7c0452a589a493e2ccd02599178e69d914e5e4c2"
+    },
+    {
+      "id": "06-no-bom",
+      "command": "node scripts/check-no-bom.mjs",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/06-no-bom.txt",
+      "outputSha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4"
+    },
+    {
+      "id": "07-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/07-diff-check.txt",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "08-graduation-gate",
+      "command": "component-graduation-report.mts --report <TF-0501 report> --require-graduation",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/08-graduation-gate.txt",
+      "outputSha256": "9b6e21ee3ec033064e4a8ca562b7f617b4b60cdd76635480d14d409cc040ec3f"
+    },
+    {
+      "id": "09-sha256sums-check",
+      "command": "PowerShell SHA256 recompute against SHA256SUMS",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/09-sha256sums-check.txt",
+      "outputSha256": "d8fc43c5127f1d307b98206dad3a63d3f4e071e25c08457559522d410b774d8d"
+    }
+  ],
+  "sha256sums": [
+    {
+      "file": "docs/dev/adr/2026-10-23-capability-catalog-authority.md",
+      "expected": "4de61dd261492cb3cc9647292adcef0311e08a75ad8182315d5bf01397c78560",
+      "actual": "4de61dd261492cb3cc9647292adcef0311e08a75ad8182315d5bf01397c78560",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/agent-bundle-mcp-runtime.ts",
+      "expected": "3b9ba86288d7bcff86da94d536a57ddef46dce094d2abdb0ba92d1f0e8fa5761",
+      "actual": "3b9ba86288d7bcff86da94d536a57ddef46dce094d2abdb0ba92d1f0e8fa5761",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/stage2-golden-run.ts",
+      "expected": "cfd5a1050a485f6fa179daaf22c33509ce1cc8b8a3d067675fc89a73ccaac4dc",
+      "actual": "cfd5a1050a485f6fa179daaf22c33509ce1cc8b8a3d067675fc89a73ccaac4dc",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/tool-search-capability-v3.ts",
+      "expected": "defd3e2f60dc89cd36848075e2310e7f146bab2891246903f437382fae1860f5",
+      "actual": "defd3e2f60dc89cd36848075e2310e7f146bab2891246903f437382fae1860f5",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/tool-search.ts",
+      "expected": "1e064c34f0e0c6e89328c6d81ee70ca10ff38c52ccb0f4be6c7919430fb62f64",
+      "actual": "1e064c34f0e0c6e89328c6d81ee70ca10ff38c52ccb0f4be6c7919430fb62f64",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/capabilities/v3/adapters.ts",
+      "expected": "0c0ed5aacf214a284b6f641a638862d726cfa345a059a6ed0ecd515012edb051",
+      "actual": "0c0ed5aacf214a284b6f641a638862d726cfa345a059a6ed0ecd515012edb051",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/capabilities/v3/capability-descriptor.ts",
+      "expected": "e11dba9d9410425a3fedcdfa10c644b359a2cd2368ffaa54236c4169a2473df9",
+      "actual": "e11dba9d9410425a3fedcdfa10c644b359a2cd2368ffaa54236c4169a2473df9",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/capabilities/v3/evaluation-baseline.ts",
+      "expected": "19320ef578a7b62b553949179fc253255a2e0af1f2ce77f080da9be03f2b8fa7",
+      "actual": "19320ef578a7b62b553949179fc253255a2e0af1f2ce77f080da9be03f2b8fa7",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/capabilities/v3/shadow-catalog.ts",
+      "expected": "04c682579d1ff3d7d9fee968b70266979b67317acdce0dfaa482febb38c878cb",
+      "actual": "04c682579d1ff3d7d9fee968b70266979b67317acdce0dfaa482febb38c878cb",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/capabilities/v3/trusted-catalog.ts",
+      "expected": "bf107b5d58ca0a7cbc270edaeb56f0bdd59ab389852af92405ae64feb6471107",
+      "actual": "bf107b5d58ca0a7cbc270edaeb56f0bdd59ab389852af92405ae64feb6471107",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/capabilities/v3/unified-resolver.ts",
+      "expected": "db1ba6ff25328780bf7028e0b59aa479f05ab6402907781135d25a18e1bcafa8",
+      "actual": "db1ba6ff25328780bf7028e0b59aa479f05ab6402907781135d25a18e1bcafa8",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/skills/loading/workspace.ts",
+      "expected": "472e8f597dfba7c9351f40346439598775950fa57c01ae05805687fac2327092",
+      "actual": "472e8f597dfba7c9351f40346439598775950fa57c01ae05805687fac2327092",
+      "status": "pass"
+    },
+    {
+      "file": "shared/component-authority-manifest.ts",
+      "expected": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+      "actual": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+      "status": "pass"
+    },
+    {
+      "file": "shared/dcs/component-disposition-catalog.ts",
+      "expected": "8a088941802935de2c8ba7819e536d0a4664c20d19369b95fd62af9ad231b49a",
+      "actual": "8a088941802935de2c8ba7819e536d0a4664c20d19369b95fd62af9ad231b49a",
+      "status": "pass"
+    },
+    {
+      "file": "shared/model-capability-profile.ts",
+      "expected": "f821284baca4753b7b6f41220eb89177fc0ec7a6b616a3f853ffd47335299e6c",
+      "actual": "f821284baca4753b7b6f41220eb89177fc0ec7a6b616a3f853ffd47335299e6c",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/capability-catalog-authority.test.ts",
+      "expected": "9d8422ef8d42f3bce6830a01e6e35027bd0dcd3b6338d0e5d5218d1abf52f409",
+      "actual": "9d8422ef8d42f3bce6830a01e6e35027bd0dcd3b6338d0e5d5218d1abf52f409",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/README.md",
+      "expected": "f12ab49243074dca229e511925157ea61c7892cc4dd74505b54e10ee841dae66",
+      "actual": "f12ab49243074dca229e511925157ea61c7892cc4dd74505b54e10ee841dae66",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/ab-protocol.json",
+      "expected": "213388d3bbfafa23968505fff488adf1f97cdedd1f6bbca561cf44b302b5a0fe",
+      "actual": "213388d3bbfafa23968505fff488adf1f97cdedd1f6bbca561cf44b302b5a0fe",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/ab-report.json",
+      "expected": "f6dcdb1e39ea9314a689a5ded39abbe161f481edfa2634242c3e34d52a386b39",
+      "actual": "f6dcdb1e39ea9314a689a5ded39abbe161f481edfa2634242c3e34d52a386b39",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/component-graduation-report.json",
+      "expected": "be9a393f5e4ba02ee6627c19c2522b926d516f81bd59109973bfe9747737ec3c",
+      "actual": "be9a393f5e4ba02ee6627c19c2522b926d516f81bd59109973bfe9747737ec3c",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/generate-acceptance.mts",
+      "expected": "47d72807ded23c921529cf5dbb515c0e73ad01c51b7b7b3fc2561defd83976f4",
+      "actual": "47d72807ded23c921529cf5dbb515c0e73ad01c51b7b7b3fc2561defd83976f4",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/raw-evidence.json",
+      "expected": "b5884f7d3a174537a0ab8ef7c5c4bb1ba916f7a2d7fb9ed490674e40c324beec",
+      "actual": "b5884f7d3a174537a0ab8ef7c5c4bb1ba916f7a2d7fb9ed490674e40c324beec",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0501/run-verification.ps1",
+      "expected": "65ad0c0ebfee2f03af2a8f496d7ccd2f0e372663f87522f88bacde54f7ec6c28",
+      "actual": "65ad0c0ebfee2f03af2a8f496d7ccd2f0e372663f87522f88bacde54f7ec6c28",
+      "status": "pass"
+    }
+  ],
+  "logNormalization": {
+    "applied": true,
+    "reason": "Gate logs were normalized (trailing whitespace / duplicate EOF blank lines removed) so the committed evidence passes git diff --check. Raw gate exit codes and conclusions are unchanged.",
+    "authoritativeKeys": [
+      "gates[].exitCode",
+      "gates[].status",
+      "sha256sums"
+    ],
+    "note": "gates[].outputSha256 records the pre-normalization log hash; see SHA256SUMS for committed log hashes."
+  }
+}

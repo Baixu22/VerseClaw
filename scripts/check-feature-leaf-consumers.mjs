@@ -97,6 +97,10 @@ export const GENERIC_SEGMENTS = new Set([
 export const FEATURE_LEAF_CONSUMER_BASELINE = Object.freeze([
   'coding.verifier.noSelfRepair',
   'contextFamily.observationMasking.preserveNewestObservationCount',
+  // Retained only as a compatibility gate for the code path retired by TF-0510;
+  // the runtime resolver is intentionally unreachable, so this is a pinned
+  // zero-consumer debt rather than evidence that patch-flow is still available.
+  'coding.patchFlow.enabled',
 ]);
 
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

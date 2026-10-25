@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "BrowserSupervisedTaskEvidence/v1",
+  "taskForestNodeId": "TF-0503",
+  "generatedAt": "2026-10-23T06:46:01.953Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "verificationStatus": "pass",
+  "acceptanceCriteria": [
+    {
+      "criterion": "真实 Electron 路径可从 Chat/Workspace 启动 Browser 任务",
+      "status": "pass",
+      "evidence": [
+        "02b-electron-real.txt: browser-supervised-task-tf0503.spec.ts drives the real host:invoke handler",
+        "artifacts/browser-supervised-tf0503/evidence.json realHostPath=true",
+        "src/components/file-preview/WorkspaceWebPreviewPanel.tsx + web-preview.tsx expose the Chat/Workspace entry into hostApi.agentBrowser"
+      ]
+    },
+    {
+      "criterion": "private network default deny、approval bypass=0、未授权外传=0",
+      "status": "pass",
+      "evidence": [
+        "02b-electron-real.txt: 5/5 private targets refused with reason private-network-default-deny (loopback, link-local metadata, rfc1918, ipv6 loopback)",
+        "01-guard-unit.txt: 32 unit assertions incl. default deny, bounded approval, forged-localhost refused",
+        "08-navigation-guard-wired.txt: guard wired in the host call path, default-deny literal present",
+        "approveBrowserPrivateNetwork has no route/registry reference (grep: 1 hit = its own definition), so no model-facing approval bypass exists"
+      ]
+    },
+    {
+      "criterion": "取消/超时/重启后无孤儿 session",
+      "status": "pass",
+      "evidence": [
+        "01-guard-unit.txt: closeAllAgentBrowserSessions closes every listed session through the same owner, reports stuck sessions, survives a throwing list(), and drops the resource-envelope entry",
+        "02b-electron-real.txt: shutdown reaper registered in the real Main process (will-quit listener count > 0)",
+        "08-navigation-guard-wired.txt: session_reaper_present=1 and reaper_invoked_during_adapter_build=1"
+      ]
+    },
+    {
+      "criterion": "模型能正确说明 Browser 需要 supervised 权限",
+      "status": "pass",
+      "evidence": [
+        "02b-electron-real.txt: status returns capabilities.supervision=required with 19 supervised actions; click/type/evaluate/navigate/uploadFiles are supervised",
+        "artifacts/browser-supervised-tf0503/evidence.json modelSelfDescription"
+      ]
+    }
+  ],
+  "results": {
+    "realElectronPath": "pass",
+    "privateNetworkDefaultDeny": "pass",
+    "orphanSessionControl": "pass",
+    "modelSupervisedClaim": "pass"
+  },
+  "residualLimitations": [
+    "The workspace-preview first-party exception allows loopback origins that the host itself persisted in workspace state; metadata and RFC1918 ranges can never ride that exception.",
+    "The reaper closes sessions on the Electron will-quit lifecycle; a hard process kill (SIGKILL / power loss) cannot run it.",
+    "The public-navigation case only proves the private-network guard is not what refuses it; a real page load is covered by the existing browser E2E suites, not asserted here."
+  ],
+  "evidenceNotes": {
+    "diskReadback": true,
+    "humanEvidenceClaimed": false,
+    "publicReleaseClaimed": false,
+    "productDefaultChanged": false,
+    "verseGitTouched": false,
+    "graded": true
+  }
+}

@@ -62,6 +62,7 @@ function callFixture(
     resource: grant.scope.resource,
     action: grant.scope.action,
     purpose: grant.scope.purpose,
+    taskBranchId: grant.scope.taskBranchId,
     actor: grant.actor,
     approvalId: grant.approvalRef.approvalId,
     policyDigest: grant.approvalRef.policyDigest,
@@ -196,6 +197,47 @@ describe("stage4 unified CapabilityGrant derivation and verification", () => {
         nowMs: now + 1_000,
       }).reason,
     ).toBe("revoked");
+  });
+
+  it("denies an actor with a different task branch at the final execution check", () => {
+    const now = Date.now();
+    const authority = new Stage4GrantAuthority({ nowMs: () => now });
+    const issued = authority.issue({
+      approvalRow: approvedRowFixture(now),
+      actor: actorFixture(),
+      scope: scopeFixture(),
+      policyDigest,
+      toolCallId: "tool_task_branch",
+      nowMs: now,
+    });
+    if (!issued.ok) throw new Error("derive failed");
+    const verdict = authority.verify(
+      issued.grant,
+      callFixture(issued.grant, { taskBranchId: "run:other-branch" }),
+      now + 1,
+    );
+    expect(verdict).toMatchObject({ allow: false, reason: "task-branch-mismatch" });
+  });
+
+  it("denies a grant revoked after the preflight snapshot at final execution", () => {
+    const now = Date.now();
+    const authority = new Stage4GrantAuthority({ nowMs: () => now });
+    const issued = authority.issue({
+      approvalRow: approvedRowFixture(now),
+      actor: actorFixture(),
+      scope: scopeFixture(),
+      policyDigest,
+      toolCallId: "tool_stale_revoke",
+      nowMs: now,
+    });
+    if (!issued.ok) throw new Error("derive failed");
+    const snapshot = callFixture(issued.grant, { toolCallId: "tool_stale_revoke" });
+    expect(authority.verify(issued.grant, snapshot, Date.parse(issued.grant.ttl.issuedAt))).toMatchObject({ allow: true, reason: null });
+    expect(authority.revoke(issued.grant.grantId, "revoked after snapshot", Date.parse(issued.grant.ttl.issuedAt)).ok).toBe(true);
+    expect(authority.verify(issued.grant, snapshot, Date.parse(issued.grant.ttl.issuedAt) + 1)).toMatchObject({
+      allow: false,
+      reason: "revoked",
+    });
   });
 
   it("denies every field mismatch with a queryable reason", () => {

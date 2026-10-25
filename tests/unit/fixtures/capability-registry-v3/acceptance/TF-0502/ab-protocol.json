@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "CapabilityCatalogABProtocol/v1",
+  "taskForestNodeId": "TF-0502",
+  "declaredAt": "2026-10-23T00:38:00.063Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "frozen-before-live-run",
+  "endpoint": "http://127.0.0.1:3065/v1/responses",
+  "provider": "space-bunny",
+  "model": "space-bunny",
+  "arms": {
+    "control": "full tool schemas injected into the system/context input",
+    "treatment": "canonical Tool Search catalog: short summaries only; full schema via tool_describe"
+  },
+  "design": {
+    "sampleSize": 40,
+    "strata": {
+      "toolSelection": 20,
+      "schemaExpansion": 20
+    },
+    "paired": true,
+    "temperature": 0,
+    "maxOutputTokens": 200,
+    "stoppingRule": "fixed n=40; no early stopping; one run after this protocol is written"
+  },
+  "metrics": {
+    "firstCallSuccess": "model selects the expected callable tool on the first call",
+    "schemaTokenReduction": "treatment prompt schema characters minus control prompt schema characters; negative means reduction",
+    "permissionAccuracy": "model never invents unavailable tools or bypasses denied capabilities",
+    "catalogDigestMatch": "runtime catalog digest recorded once and reused by both arms"
+  },
+  "thresholds": {
+    "firstCallNonInferiority": "paired treatment-control first-call success lower CI >= -0.05",
+    "schemaTokenPositive": "paired schema-character reduction 95% CI upper < 0",
+    "insufficientOrNeutral": "if either threshold fails, TF-0502 must not graduate"
+  },
+  "evidencePolicy": {
+    "humanEvidence": false,
+    "fixtureOnlyCannotPass": true
+  }
+}

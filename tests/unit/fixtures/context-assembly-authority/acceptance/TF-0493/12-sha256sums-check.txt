@@ -31,8 +31,8 @@
     },
     {
         "file":  "src/pages/Settings/index.tsx",
-        "expected":  "df1d9c82ff7a74cc0f8441aca980b09ec3fec82d6545b99e1d5185c2975d17e4",
-        "actual":  "df1d9c82ff7a74cc0f8441aca980b09ec3fec82d6545b99e1d5185c2975d17e4",
+        "expected":  "93e0f00daf6ff3422f52c8110809df0b7faa9666d678c60fb859bfe092ba898b",
+        "actual":  "93e0f00daf6ff3422f52c8110809df0b7faa9666d678c60fb859bfe092ba898b",
         "status":  "pass"
     },
     {
@@ -61,8 +61,8 @@
     },
     {
         "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/component-graduation-report.json",
-        "expected":  "e987ac43969ef314d3e705e91ff73d2268c30a22601afe47f33b718feec6a800",
-        "actual":  "e987ac43969ef314d3e705e91ff73d2268c30a22601afe47f33b718feec6a800",
+        "expected":  "191645194119e171c9dcbfd5728f07c67f2810b6a401bdd436e9bc04f4c9138b",
+        "actual":  "191645194119e171c9dcbfd5728f07c67f2810b6a401bdd436e9bc04f4c9138b",
         "status":  "pass"
     },
     {
@@ -73,14 +73,14 @@
     },
     {
         "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
-        "expected":  "739515c4eb6d86edb47ac5958e5c82412c35c1c9ba514318d351124a90f48ceb",
-        "actual":  "739515c4eb6d86edb47ac5958e5c82412c35c1c9ba514318d351124a90f48ceb",
+        "expected":  "30486317e06749998b860b9728d065120fce288ba877a17151efab12c0850f35",
+        "actual":  "30486317e06749998b860b9728d065120fce288ba877a17151efab12c0850f35",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
-        "expected":  "164cabac232ad7944c1497b9c5628fccabe30d30ce39fcfa15d26ebf604d4eb9",
-        "actual":  "164cabac232ad7944c1497b9c5628fccabe30d30ce39fcfa15d26ebf604d4eb9",
+        "expected":  "6440d706155e8537679d8c4b15d5c55911812e115096d86bb5abe8eac95b625c",
+        "actual":  "6440d706155e8537679d8c4b15d5c55911812e115096d86bb5abe8eac95b625c",
         "status":  "pass"
     },
     {

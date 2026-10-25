@@ -402,6 +402,15 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       return;
     }
     const cfg = context.getRuntimeConfig();
+    const requestedBackend = readString(params.backend);
+    if (requestedBackend && requestedBackend !== "subagent") {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, `unsupported orchestration backend "${requestedBackend}"`),
+      );
+      return;
+    }
     const templateId = readTemplateId(params);
     if (!validateTemplateId(respond, cfg, templateId)) {
       return;
@@ -467,6 +476,15 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       return;
     }
     const cfg = context.getRuntimeConfig();
+    const requestedBackend = readString(params.backend);
+    if (requestedBackend && requestedBackend !== "subagent") {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, `unsupported orchestration backend "${requestedBackend}"`),
+      );
+      return;
+    }
     const templateId = readTemplateId(params);
     if (!validateTemplateId(respond, cfg, templateId)) {
       return;

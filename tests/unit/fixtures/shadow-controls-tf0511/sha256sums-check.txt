@@ -1,0 +1,147 @@
+[
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/01-manifest-tests.txt",
+    "expected": "c7c30e913bc468e019f182762320f34acd7b55979fda7b08d7e75339bdf5067d",
+    "actual": "c7c30e913bc468e019f182762320f34acd7b55979fda7b08d7e75339bdf5067d",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/02-compass.txt",
+    "expected": "a37fe0b337df8f28c5db9a6977af7f044e6651cd57c676b4cbe0e85663c8389d",
+    "actual": "a37fe0b337df8f28c5db9a6977af7f044e6651cd57c676b4cbe0e85663c8389d",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/03-typecheck.txt",
+    "expected": "49cd0a8d9622dab72a1a1d87a1bf3e666f8ddda5322dff095b1c43ef31b379f1",
+    "actual": "49cd0a8d9622dab72a1a1d87a1bf3e666f8ddda5322dff095b1c43ef31b379f1",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/04-lint-check.txt",
+    "expected": "f4bb24585b841ebddf766a131856b01942fdb0ad774f2e0d1f1d1a9bf86ac732",
+    "actual": "f4bb24585b841ebddf766a131856b01942fdb0ad774f2e0d1f1d1a9bf86ac732",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/05-contract-check.txt",
+    "expected": "0a02010f6f463084252ca17c12e08e6bf98467b0719443a2d2e8c4cdd19cd95e",
+    "actual": "0a02010f6f463084252ca17c12e08e6bf98467b0719443a2d2e8c4cdd19cd95e",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/06-no-bom.txt",
+    "expected": "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa",
+    "actual": "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/07-diff-check.txt",
+    "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "actual": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/08-feature-leaf-consumer.txt",
+    "expected": "2d0dcb0ba95bab01bb5512c37560a4997f7be28e32834d2b8b6fc5de4ffe6b2f",
+    "actual": "2d0dcb0ba95bab01bb5512c37560a4997f7be28e32834d2b8b6fc5de4ffe6b2f",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/09-scope-guard.txt",
+    "expected": "237a51639ac73fa6f9efb3c8a49d03f82302c4b8ef80335cc8e2bdfc376f5e1e",
+    "actual": "237a51639ac73fa6f9efb3c8a49d03f82302c4b8ef80335cc8e2bdfc376f5e1e",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/10-regenerate-acceptance.txt",
+    "expected": "06b4cabd4a901b0522781ce257d3f280f61549c1f309d1ddb755c2421174985c",
+    "actual": "06b4cabd4a901b0522781ce257d3f280f61549c1f309d1ddb755c2421174985c",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/acceptance.json",
+    "expected": "b972ddab351e00872f8d484fb19584a0fb831e151290505e18cafa7b92749280",
+    "actual": "b972ddab351e00872f8d484fb19584a0fb831e151290505e18cafa7b92749280",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/catalog-readback.json",
+    "expected": "fc7dfd120ff450ec6f6ab1ef18db9212792d01815d8995d9ecf334e672e8ff1f",
+    "actual": "fc7dfd120ff450ec6f6ab1ef18db9212792d01815d8995d9ecf334e672e8ff1f",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/compass-retirement-focused.log",
+    "expected": "c145bd4e09f3d191305b532a9379b7c3a5eef84664b7d4595f86e819ae0ea40b",
+    "actual": "c145bd4e09f3d191305b532a9379b7c3a5eef84664b7d4595f86e819ae0ea40b",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/compass-retirement-focused.txt",
+    "expected": "edef462ef10e951dd1f53501956209f0f2a20f8e42c69582bd7117b5a50ea655",
+    "actual": "edef462ef10e951dd1f53501956209f0f2a20f8e42c69582bd7117b5a50ea655",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/diff-check.log",
+    "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "actual": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/diff-check.txt",
+    "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "actual": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/feature-leaf-consumer.json",
+    "expected": "21dac315640e3aef13f31344b669d35679933ce0175ef72c8fbbf5622d7427e2",
+    "actual": "21dac315640e3aef13f31344b669d35679933ce0175ef72c8fbbf5622d7427e2",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/generate-acceptance.mts",
+    "expected": "4d295592369a6508ac10fb566edc567d16b994a915117d2fde629cef6fcf96d7",
+    "actual": "4d295592369a6508ac10fb566edc567d16b994a915117d2fde629cef6fcf96d7",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/README.md",
+    "expected": "1ae7c3d378dee57152171313e975d2cabb0550ebbe2a432452a17d8307777c1a",
+    "actual": "1ae7c3d378dee57152171313e975d2cabb0550ebbe2a432452a17d8307777c1a",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/run-verification.ps1",
+    "expected": "0b6316e8014f369e8af4ebe1e772155b8d932acf215b7765c6cd0df53cd820eb",
+    "actual": "0b6316e8014f369e8af4ebe1e772155b8d932acf215b7765c6cd0df53cd820eb",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/scope-conflict.json",
+    "expected": "f0e80439c080a798c71e77e548c1421f10dd7712bc75eef4c77dd45b6955e442",
+    "actual": "f0e80439c080a798c71e77e548c1421f10dd7712bc75eef4c77dd45b6955e442",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/scope-guard.json",
+    "expected": "210c0e8b5de1dc6a034c67c170e60853cb799b56a9be47778079c2bb6f991c92",
+    "actual": "210c0e8b5de1dc6a034c67c170e60853cb799b56a9be47778079c2bb6f991c92",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/task-forest-proposal.json",
+    "expected": "8321413bbdb8ddd503dcf9c65b975b959305f438aa446149a93a13e78c0e6883",
+    "actual": "8321413bbdb8ddd503dcf9c65b975b959305f438aa446149a93a13e78c0e6883",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/shadow-controls-tf0511/verification.json",
+    "expected": "63948786de237690d918e0da10ee3b1f4a1117374bd53f2f72bf3c6b23dee0be",
+    "actual": "63948786de237690d918e0da10ee3b1f4a1117374bd53f2f72bf3c6b23dee0be",
+    "status": "pass"
+  }
+]
+SHA256SUMS_STATUS=pass

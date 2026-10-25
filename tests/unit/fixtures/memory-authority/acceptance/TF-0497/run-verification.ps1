@@ -1,11 +1,9 @@
 $ErrorActionPreference = 'Continue'
-$tmpRoot = 'D:\tmp'
-New-Item -ItemType Directory -Force -Path $tmpRoot | Out-Null
-$env:TEMP = $tmpRoot
-$env:TMP = $tmpRoot
 $root = (Get-Location).Path
 $outputDir = Join-Path $root 'tests/unit/fixtures/memory-authority/acceptance/TF-0497'
-
+$env:TEMP = 'D:\tmp'
+$env:TMP = 'D:\tmp'
+New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
 $pnpm = (Get-Command pnpm.cmd -ErrorAction Stop).Source
 $tsx = Join-Path $root 'openclaw_runtime\node_modules\.bin\tsx.CMD'
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
@@ -63,10 +61,8 @@ $results += Invoke-CapturedGate -Id '05-lint-check' -Arguments @($pnpm, 'run', '
 $results += Invoke-CapturedGate -Id '06-catalogs-check' -Arguments @($pnpm, 'run', 'catalogs:check') -DisplayCommand 'pnpm run catalogs:check'
 $results += Invoke-CapturedGate -Id '07-contract-check' -Arguments @($pnpm, 'run', 'contract:check') -DisplayCommand 'pnpm run contract:check'
 $results += Invoke-CapturedGate -Id '08-no-bom' -Arguments @('node', 'scripts/check-no-bom.mjs') -DisplayCommand 'node scripts/check-no-bom.mjs'
-$results += Invoke-CapturedGate -Id '09-diff-check' -Arguments @('git', 'diff', '--check', '--', 'openclaw_runtime/src/memory/memory-authority.ts', 'shared/dcs/prod-flags-catalog.ts', 'tests/unit/memory-authority-contract.test.ts', 'tests/unit/fixtures/memory-authority/acceptance/TF-0497/README.md', 'tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts', 'tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1') -DisplayCommand 'git diff --check -- <TF-0497 source and verifier paths>'
+$results += Invoke-CapturedGate -Id '09-diff-check' -Arguments @('git', 'diff', '--check') -DisplayCommand 'git diff --check'
 $results += Invoke-CapturedGate -Id '10-build-vite' -Arguments @($pnpm, 'run', 'build:vite') -DisplayCommand 'pnpm run build:vite'
-& $tsx 'tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts' | Out-Null
-if ($LASTEXITCODE -ne 0) { throw 'TF-0497 evidence generation failed' }
 $results += Invoke-CapturedGate -Id '11-component-graduation-gate' -Arguments @(
   $tsx, 'scripts/component-graduation-report.mts',
   '--report', 'tests/unit/fixtures/memory-authority/acceptance/TF-0497/component-graduation-report.json',
@@ -79,7 +75,8 @@ $sumChecks = foreach ($line in $sumLines) {
   $parts = $line -split '  ', 2
   $expected = $parts[0]
   $fileName = $parts[1]
-  $actual = (Get-FileHash -LiteralPath (Join-Path $root $fileName) -Algorithm SHA256).Hash.ToLowerInvariant()
+  $target = Join-Path $root $fileName
+  $actual = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash.ToLowerInvariant()
   [ordered]@{ file = $fileName; expected = $expected; actual = $actual; status = if ($actual -eq $expected) { 'pass' } else { 'fail' } }
 }
 $sumStatus = if ($sumChecks.Count -gt 0 -and @($sumChecks | Where-Object { $_.status -ne 'pass' }).Count -eq 0) { 'pass' } else { 'fail' }
@@ -94,14 +91,14 @@ $results += [ordered]@{
   outputPath = 'tests/unit/fixtures/memory-authority/acceptance/TF-0497/12-sha256sums-check.txt'
   outputSha256 = (Get-FileHash -LiteralPath $sumPath -Algorithm SHA256).Hash.ToLowerInvariant()
 }
-$status = if (@($results | Where-Object { $_.status -ne 'pass' }).Count -eq 0) { 'pass' } else { 'fail' }
 
+$status = if (@($results | Where-Object { $_.status -ne 'pass' }).Count -eq 0) { 'pass' } else { 'fail' }
 $ledger = [ordered]@{
   schemaVersion = 'MemoryAuthorityVerification/v1'
   taskForestNodeId = 'TF-0497'
   generatedAt = (Get-Date).ToUniversalTime().ToString('o')
   driven_by = 'agent'
-  actor = 'codex-long-session-r2'
+  actor = 'codex'
   status = $status
   gates = $results
   sha256sums = $sumChecks

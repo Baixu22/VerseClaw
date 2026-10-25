@@ -217,6 +217,7 @@ export function wrapToolWithStage4ToolGuard(
         resource,
         action,
         purpose,
+        taskBranchId: actor.runId,
         actor,
         approvalId: started.row.approval_id,
         policyDigest: approvalPolicyDigest,

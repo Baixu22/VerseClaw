@@ -68,11 +68,11 @@ describe("resolveVtokenAssemblyConfig", () => {
     expect(cfg.renderMode).toBe("compact");
   });
 
-  it("enables only with runtime.vtoken.assembly.enabled=true", () => {
+  it("stays disabled even when runtime.vtoken.assembly.enabled=true (retired)", () => {
     const cfg = resolveVtokenAssemblyConfig({
       runtime: { vtoken: { assembly: { enabled: true } } },
     });
-    expect(cfg.enabled).toBe(true);
+    expect(cfg.enabled).toBe(false);
   });
 
   it("honors runtime.vtoken.assembly.enabled=false", () => {
@@ -82,10 +82,10 @@ describe("resolveVtokenAssemblyConfig", () => {
     expect(cfg.enabled).toBe(false);
   });
 
-  it("honors env canary VERSE_VTOKEN_ASSEMBLY_ENABLED=1", () => {
+  it("stays disabled even with env canary VERSE_VTOKEN_ASSEMBLY_ENABLED=1 (retired)", () => {
     process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED = "1";
     const cfg = resolveVtokenAssemblyConfig({});
-    expect(cfg.enabled).toBe(true);
+    expect(cfg.enabled).toBe(false);
   });
 
   it("honors env kill-switch VERSE_VTOKEN_ASSEMBLY_ENABLED=0", () => {
@@ -106,22 +106,22 @@ describe("resolveVtokenAssemblyConfig", () => {
 });
 
 describe("shouldAssembleVtokenWorkingContext", () => {
-  it("allows all sessions by default", () => {
+  it("never assembles any session (retired)", () => {
     expect(
       shouldAssembleVtokenWorkingContext(
         { ...DEFAULT_VTOKEN_ASSEMBLY_CONFIG, enabled: true, sessions: "all" },
         "agent:main:work",
       ),
-    ).toBe(true);
+    ).toBe(false);
   });
 
-  it("restricts main-only sessions", () => {
+  it("never assembles even for a main-only configuration (retired)", () => {
     const cfg = {
       ...DEFAULT_VTOKEN_ASSEMBLY_CONFIG,
       enabled: true,
       sessions: "main-only" as const,
     };
-    expect(shouldAssembleVtokenWorkingContext(cfg, "agent:main:main")).toBe(true);
+    expect(shouldAssembleVtokenWorkingContext(cfg, "agent:main:main")).toBe(false);
     expect(shouldAssembleVtokenWorkingContext(cfg, "agent:main:sub")).toBe(false);
   });
 });
@@ -226,7 +226,7 @@ describe("computeVtokenExtraSystemPrompt", () => {
     expect(client.pack).not.toHaveBeenCalled();
   });
 
-  it("appends Working Context when sources are provided", async () => {
+  it("does not append Working Context after retirement", async () => {
     const client = createMockClient();
     const result = await computeVtokenExtraSystemPrompt(
       "base prompt",
@@ -240,19 +240,13 @@ describe("computeVtokenExtraSystemPrompt", () => {
       undefined,
       client,
     );
-    expect(result).toContain("base prompt");
-    expect(result).toContain("## Working Context");
-    expect(result).toContain("packed working context");
+    expect(result).toBe("base prompt");
+    expect(result).not.toContain("## Working Context");
     // oxlint-disable-next-line typescript/unbound-method
-    expect(client.pack).toHaveBeenCalledWith(
-      expect.objectContaining({
-        allowanceTokens: 600,
-        candidates: [expect.objectContaining({ kind: "markdown", sourcePath: "AGENTS.md" })],
-      }),
-    );
+    expect(client.pack).not.toHaveBeenCalled();
   });
 
-  it("uses bounded hook-adjusted sources instead of reopening an independent file set", async () => {
+  it("does not pack hook-adjusted sources after retirement", async () => {
     const client = createMockClient();
     await computeVtokenExtraSystemPrompt(
       undefined,
@@ -276,17 +270,7 @@ describe("computeVtokenExtraSystemPrompt", () => {
       client,
     );
     // oxlint-disable-next-line typescript/unbound-method
-    expect(client.pack).toHaveBeenCalledWith(
-      expect.objectContaining({
-        candidates: [
-          expect.objectContaining({
-            kind: "markdown",
-            text: "hook adjusted content",
-            sourcePath: "hooked-agents.md",
-          }),
-        ],
-      }),
-    );
+    expect(client.pack).not.toHaveBeenCalled();
   });
 
   it("suppresses errors and returns original prompt", async () => {

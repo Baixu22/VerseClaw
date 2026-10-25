@@ -9,6 +9,13 @@ export type ComponentDisposition = (typeof COMPONENT_DISPOSITIONS)[number];
 export type ComponentDispositionVisibility = (typeof COMPONENT_DISPOSITION_VISIBILITIES)[number];
 export type ComponentDispositionCurrentMode = (typeof COMPONENT_DISPOSITION_CURRENT_MODES)[number];
 
+export type ComponentImplementationState =
+  | 'implemented'
+  | 'implemented-opt-in'
+  | 'implemented-diagnostic-only'
+  | 'retired'
+  | 'partial';
+
 export type ComponentDispositionCoverage = {
   authorityComponentIds?: readonly string[];
   dcsFlagIds?: readonly string[];
@@ -32,6 +39,9 @@ export type ComponentDispositionEntry = {
   targetDefaultMode: ComponentAuthorityDefaultMode;
   currentConsumers: readonly string[];
   evidenceRefs: readonly string[];
+  implementationState?: ComponentImplementationState;
+  verificationArtifact?: readonly string[];
+  remainingGap?: readonly string[];
   coverage: ComponentDispositionCoverage;
   defaultOffAllowed?: boolean;
   defaultOffReason?: string;
@@ -128,13 +138,13 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     coverage: { authorityComponentIds: ['context-enhancement-gate'], runtimeLeafPatterns: ['contextEnhancement.killSwitch'] },
   }),
   entry({
-    id: 'component.working-memory-context', label: 'Working-memory Workspace Context', disposition: 'default', owner: 'working-memory-context-source', implementationNodeId: 'TF-0494', currentMode: 'opt-in', targetDefaultMode: 'baseline',
+    id: 'component.working-memory-context', label: 'Working-memory Workspace Context', disposition: 'default', owner: 'working-memory-context-source', implementationNodeId: 'TF-0494', currentMode: 'baseline', targetDefaultMode: 'baseline',
     ...user('model context in ordinary Chat / task workspaces'),
-    currentConsumers: ['DCS Assembler', 'Context Orchestrator', 'Task Ledger working context'], evidenceRefs: CONTEXT_EVIDENCE,
-    coverage: { authorityComponentIds: ['working-memory-context-source'], dcsFlagIds: ['working-memory'], runtimeLeafPatterns: ['contextBlock.working-memory.*'] },
+    currentConsumers: ['DCS Assembler', 'Context Orchestrator', 'Task Ledger working context', 'Settings > General Workspace Context'], evidenceRefs: CONTEXT_EVIDENCE,
+    coverage: { authorityComponentIds: ['working-memory-context-source'], dcsFlagIds: ['working-memory'], runtimeLeafPatterns: ['contextBlock.working-memory.*'], settingsPanelIds: ['WorkspaceContextPanel'] },
   }),
   entry({
-    id: 'component.tool-registry-context', label: 'Tool-registry Workspace Context', disposition: 'default', owner: 'tool-registry-context-source', implementationNodeId: 'TF-0494', currentMode: 'opt-in', targetDefaultMode: 'baseline',
+    id: 'component.tool-registry-context', label: 'Tool-registry Workspace Context', disposition: 'default', owner: 'tool-registry-context-source', implementationNodeId: 'TF-0494', currentMode: 'baseline', targetDefaultMode: 'baseline',
     ...user('model tool context in ordinary Chat / task workspaces'),
     currentConsumers: ['DCS Assembler', 'Context Orchestrator', 'tool registry'], evidenceRefs: CAPABILITY_EVIDENCE,
     coverage: { authorityComponentIds: ['tool-registry-context-source'], dcsFlagIds: ['tool-registry'], runtimeLeafPatterns: ['contextBlock.tool-registry.*'] },
@@ -153,11 +163,13 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     coverage: { authorityComponentIds: ['vtoken-bridge'] },
   }),
   entry({
-    id: 'component.compass-context', label: 'COMPASS context source', disposition: 'experiment', owner: 'TF-0511', implementationNodeId: 'TF-0511', currentMode: 'opt-in', targetDefaultMode: 'internal',
-    ...internal('COMPASS remains an expiring internal candidate source until the shadow-control cleanup decision.'),
-    currentConsumers: ['Context Orchestrator', 'COMPASS context block'], evidenceRefs: CONTEXT_EVIDENCE,
+    id: 'component.compass-context', label: 'COMPASS context source', disposition: 'internal', owner: 'TF-0511', implementationNodeId: 'TF-0511', currentMode: 'opt-in', targetDefaultMode: 'internal',
+    ...internal('COMPASS is a bounded DCS-only candidate source; its legacy direct pre-reply prompt injection is retired.'),
+    currentConsumers: ['Context Orchestrator', 'DCS Assembler', 'COMPASS context block'], evidenceRefs: CONTEXT_EVIDENCE,
     coverage: { authorityComponentIds: ['compass-context-source'], dcsFlagIds: ['compass-context-block'], runtimeLeafPatterns: ['contextBlock.compass.*'] },
-    experimentOwner: 'TF-0511', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Retain only if COMPASS candidates improve measured coding outcomes and remain DCS-only; otherwise retire by TF-0511.',
+    implementationState: 'implemented-opt-in',
+    verificationArtifact: ['openclaw_runtime/src/context-engine/compass-context.ts', 'openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts', 'openclaw_runtime/src/context-engine/assembler.test.ts', 'openclaw_runtime/src/config/runtime-context-block-compass.test.ts'],
+    remainingGap: [],
   }),
   entry({
     id: 'component.c6-context-ladder', label: 'C6 context ladder source (internal API)', disposition: 'internal', owner: 'TF-0493', implementationNodeId: 'TF-0493', currentMode: 'opt-in', targetDefaultMode: 'internal',
@@ -186,7 +198,7 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     id: 'component.runtime-memory-store', label: 'Runtime Memory store', disposition: 'internal', owner: 'runtime-memory-store', implementationNodeId: 'TF-0497', currentMode: 'opt-in', targetDefaultMode: 'internal',
     ...internal('Durable Runtime Memory domain consumed through the unified Memory control plane, not as a second user surface.'),
     currentConsumers: ['runtime facts/timeline/episodes', 'Memory diagnostics', 'context candidate source'], evidenceRefs: MEMORY_EVIDENCE,
-    coverage: { authorityComponentIds: ['runtime-memory-store'], dcsFlagIds: ['runtime-memory-persist', 'runtime-memory-inject-pilot'], runtimeLeafPatterns: ['memory.shadow', 'memory.provider', 'memory.proposeFacts', 'memory.persist', 'memory.injectPilot.*'] },
+    coverage: { authorityComponentIds: ['runtime-memory-store'], dcsFlagIds: ['runtime-memory-persist', 'runtime-memory-inject-pilot'], runtimeLeafPatterns: ['memory.shadow', 'memory.provider', 'memory.proposeFacts', 'memory.persist', 'memory.injectPilot.*'], routePaths: ['/memory'] },
   }),
   entry({
     id: 'component.memory-candidate-queue', label: 'Memory candidate queue', disposition: 'internal', owner: 'memory-candidate-queue', implementationNodeId: 'TF-0497', currentMode: 'opt-in', targetDefaultMode: 'internal',
@@ -226,10 +238,10 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     experimentOwner: 'TF-0499', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Keep only if SEKB candidates improve Knowledge review and preserve one applied-knowledge authority; otherwise retire by TF-0499.',
   }),
   entry({
-    id: 'component.v3-capability-catalog', label: 'V3 capability catalog', disposition: 'default', owner: 'v3-capability-catalog', implementationNodeId: 'TF-0502', currentMode: 'mixed', targetDefaultMode: 'baseline',
-    ...user('model capability discovery and Settings > Models'),
+    id: 'component.v3-capability-catalog', label: 'V3 capability catalog', disposition: 'internal', owner: 'v3-capability-catalog', implementationNodeId: 'TF-0501', currentMode: 'shadow', targetDefaultMode: 'internal',
+    ...internal('Internal capability-descriptor adapter consumed by Tool Search; no separate user-visible capability registry or route.'),
     currentConsumers: ['Tool Search', 'Skills/MCP source registry', 'model capability self-description'], evidenceRefs: CAPABILITY_EVIDENCE,
-    coverage: { authorityComponentIds: ['v3-capability-catalog'], settingsSectionIds: ['models'], settingsPanelIds: ['ProvidersSettings'], routePaths: ['/models'] },
+    coverage: { authorityComponentIds: ['v3-capability-catalog'] },
   }),
   entry({
     id: 'component.skills-mcp-source-registry', label: 'Skills and MCP source registry', disposition: 'default', owner: 'skills-mcp-source-registry', implementationNodeId: 'TF-0502', currentMode: 'mixed', targetDefaultMode: 'baseline',
@@ -287,11 +299,13 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     coverage: { authorityComponentIds: ['observability-recorder'], dcsFlagIds: ['rc03-seal'], runtimeLeafPatterns: ['eventLog.*', 'checkpointSerializer.*', 'resume.*', 'traceContext.*', 'rc03.seal'] },
   }),
   entry({
-    id: 'component.routing-memo-observation', label: 'Routing Memo observation', disposition: 'experiment', owner: 'TF-0511', implementationNodeId: 'TF-0511', currentMode: 'shadow', targetDefaultMode: 'shadow',
-    ...internal('Routing Memo stays shadow and is not a user-visible control surface during its time-boxed evaluation.'),
-    currentConsumers: ['routing memo JSONL', 'Task Loop scorecard shadow'], evidenceRefs: [...EXECUTION_EVIDENCE, RUNTIME],
+    id: 'component.routing-memo-observation', label: 'Routing Memo observation', disposition: 'internal', owner: 'TF-0511', implementationNodeId: 'TF-0511', currentMode: 'mixed', targetDefaultMode: 'internal',
+    ...internal('Routing Memo is an internal observation and scorecard projection; active routing requires same-session Task Loop authority.'),
+    currentConsumers: ['ordinary orchestration diagnostics', 'routing memo JSONL', 'Task Loop scorecard projection'], evidenceRefs: [...EXECUTION_EVIDENCE, RUNTIME],
     coverage: { authorityComponentIds: ['routing-memo-observation'], dcsFlagIds: ['routing-memo-shadow'], runtimeLeafPatterns: ['coding.routingMemo.*', 'orchestration.routingMemoPilot'] },
-    experimentOwner: 'TF-0511', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Graduate only with scorecard-backed routing quality and rollback; otherwise retire the shadow and UI references by TF-0511.',
+    implementationState: 'implemented-diagnostic-only',
+    verificationArtifact: ['openclaw_runtime/src/agents/routing-memo.ts', 'openclaw_runtime/src/knowledge/routing-memo-shadow.ts', 'tests/unit/routing-memo.test.ts'],
+    remainingGap: [],
   }),
   entry({
     id: 'component.host-api-transport-owner', label: 'Host API transport owner', disposition: 'internal', owner: 'host-api-transport-owner', implementationNodeId: 'TF-0508', currentMode: 'baseline', targetDefaultMode: 'internal',
@@ -303,7 +317,7 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     id: 'component.renderer-ui-surface', label: 'Renderer UI surface', disposition: 'default', owner: 'renderer-ui-surface', implementationNodeId: 'TF-0505', currentMode: 'mixed', targetDefaultMode: 'baseline',
     ...user('application shell and Settings'),
     currentConsumers: ['Chat shell', 'Settings', 'workspace panels'], evidenceRefs: UI_EVIDENCE,
-    coverage: { authorityComponentIds: ['renderer-ui-surface'], settingsSectionIds: ['overview', 'general', 'system', 'archived'], routePaths: ['/setup/*', '/', '/settings', '/settings/*'] },
+    coverage: { authorityComponentIds: ['renderer-ui-surface'], settingsSectionIds: ['overview', 'general', 'system', 'archived', 'models'], settingsPanelIds: ['ProvidersSettings'], routePaths: ['/setup/*', '/', '/settings', '/settings/*', '/models'] },
   }),
   entry({
     id: 'component.retired-surface-registry', label: 'Retired surface registry', disposition: 'internal', owner: 'retired-surface-registry', implementationNodeId: 'TF-0505', currentMode: 'baseline', targetDefaultMode: 'retired',
@@ -318,18 +332,16 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     coverage: { dcsFlagIds: ['stale-write-guard', 'write-journal'], runtimeLeafPatterns: ['coding.parseOnTouch.*', 'coding.staleWriteGuard.*', 'coding.writeJournal.*', 'coding.autoVerify.*', 'coding.verifier.*'] },
   }),
   entry({
-    id: 'feature.symbol-lease', label: 'Symbol lease', disposition: 'experiment', owner: 'TF-0510', implementationNodeId: 'TF-0510', currentMode: 'opt-in', targetDefaultMode: 'internal',
-    ...internal('Symbol lease is a time-boxed multi-writer experiment and remains hidden from normal users.'),
-    currentConsumers: ['symbol_lease tool', 'multi-writer coding guard'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
+    id: 'feature.symbol-lease', label: 'Symbol lease', disposition: 'retired', owner: 'TF-0510', implementationNodeId: 'TF-0510', currentMode: 'retired', targetDefaultMode: 'retired',
+    ...retired('Retired by TF-0510: isolated git worktrees plus the merge queue are the supported answer to concurrent writers. A measured 4-process benchmark showed the lease serialises correctly but denies 75% of attempts (12 wins / 36 denials), so it throttles throughput without adding safety over worktree isolation. Code is retained and unreachable; no user data is migrated.'),
+    currentConsumers: ['retired symbol-lease guard', 'retired multi-writer coding guard'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
     coverage: { dcsFlagIds: ['symbol-lease', 'symbol-lease-mode'], runtimeLeafPatterns: ['coding.symbolLease.*'] },
-    experimentOwner: 'TF-0510', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Keep only if multi-writer benchmarks show lower conflict/rework with reliable rollback; otherwise retire by TF-0510.',
   }),
   entry({
-    id: 'feature.patch-flow', label: 'Patch flow', disposition: 'experiment', owner: 'TF-0510', implementationNodeId: 'TF-0510', currentMode: 'opt-in', targetDefaultMode: 'internal',
-    ...internal('Patch flow is a time-boxed coding experiment and has no ordinary-user control surface.'),
-    currentConsumers: ['patch_flow tools', 'write recovery path'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
+    id: 'feature.patch-flow', label: 'Patch flow', disposition: 'retired', owner: 'TF-0510', implementationNodeId: 'TF-0510', currentMode: 'retired', targetDefaultMode: 'retired',
+    ...retired('Retired by TF-0510: no evidence shows serial fenced patch application improves coding outcomes over ordinary tool writes, and the concurrency case it targeted is covered by worktree isolation plus the merge queue. The gate could only ever recommend, never demonstrate a benefit. Code is retained and unreachable; the write journal remains the mutation authority.'),
+    currentConsumers: ['retired patch-flow orchestration', 'write journal recovery path'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
     coverage: { dcsFlagIds: ['patch-flow'], runtimeLeafPatterns: ['coding.patchFlow.*'] },
-    experimentOwner: 'TF-0510', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Keep only if patch execution improves verified coding outcomes and preserves write-journal authority; otherwise retire by TF-0510.',
   }),
   entry({
     id: 'feature.worktree-isolation', label: 'Worktree isolation', disposition: 'advanced', owner: 'coding-execution-backend', implementationNodeId: 'TF-0510', currentMode: 'opt-in', targetDefaultMode: 'opt-in',
@@ -338,25 +350,33 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     coverage: { dcsFlagIds: ['worktree-backend', 'isolation-request'], runtimeLeafPatterns: ['coding.worktree.*'] },
   }),
   entry({
-    id: 'feature.agent-map', label: 'AgentMap', disposition: 'experiment', owner: 'TF-0511', implementationNodeId: 'TF-0511', currentMode: 'shadow', targetDefaultMode: 'shadow',
-    ...internal('AgentMap prompt/cutover leaves are time-boxed shadow experiments with no user surface.'),
-    currentConsumers: ['agent-map provider', 'prompt assembly experiments'], evidenceRefs: [...EXECUTION_EVIDENCE, RUNTIME],
+    id: 'feature.agent-map', label: 'AgentMap', disposition: 'internal', owner: 'TF-0511', implementationNodeId: 'TF-0511', currentMode: 'opt-in', targetDefaultMode: 'internal',
+    ...internal('AgentMap is a readonly candidate and diagnostic-evidence arm with explicit, default-off gates.'),
+    currentConsumers: ['explicit context.agent-map provider', 'Task Loop prompt-candidate pilot'], evidenceRefs: [...EXECUTION_EVIDENCE, RUNTIME],
     coverage: { runtimeLeafPatterns: ['agentMap.*'] },
-    experimentOwner: 'TF-0511', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Keep only if a measured prompt-routing benefit survives the single-capability-catalog decision; otherwise retire by TF-0511.',
+    implementationState: 'implemented-diagnostic-only',
+    verificationArtifact: ['openclaw_runtime/src/context-engine/agent-map-context-provider.ts', 'openclaw_runtime/src/runtime-core/agent-map-prompt-candidate-runtime-shadow.ts', 'openclaw_runtime/src/runtime-core/agent-map-prompt-candidate-controlled-cutover-pilot.ts', 'openclaw_runtime/src/runtime-core/agent-map-prompt-candidate-taskloop-explicit-invocation-pilot.ts', 'tests/unit/runtime-agent-map-component-boundary-hardening.test.ts', 'tests/unit/runtime-agent-map-production-entry-readiness.test.ts'],
+    remainingGap: [],
   }),
   entry({
-    id: 'feature.runtime-shadow-governance', label: 'Runtime shadow/governance leaves', disposition: 'experiment', owner: 'TF-0511', implementationNodeId: 'TF-0511', currentMode: 'shadow', targetDefaultMode: 'shadow',
-    ...internal('Provider/catalog/governance shadow leaves are time-boxed experiments and remain invisible to users.'),
-    currentConsumers: ['provider registry shadow', 'context provider pilots', 'tool protocol/evidence shadow'], evidenceRefs: [...EXECUTION_EVIDENCE, RUNTIME],
+    id: 'feature.runtime-shadow-governance', label: 'Runtime shadow/governance leaves', disposition: 'internal', owner: 'TF-0511', implementationNodeId: 'TF-0511', currentMode: 'mixed', targetDefaultMode: 'internal',
+    ...internal('Provider, context, tool-protocol and evidence diagnostics are internal-only contracts that cannot authorize effects.'),
+    currentConsumers: ['provider registry diagnostics', 'context provider pilots', 'tool protocol and evidence diagnostics'], evidenceRefs: [...EXECUTION_EVIDENCE, RUNTIME],
     coverage: { runtimeLeafPatterns: ['registryPilot.*', 'providerRegistry.*', 'contextProviders.*', 'registryDiagnostics.*', 'toolProtocol.*', 'evidenceVerifier.*', 'resilience.*'] },
-    experimentOwner: 'TF-0511', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Keep only the leaves with a measured runtime or safety benefit; retire the remaining shadow stack by TF-0511.',
+    implementationState: 'implemented-diagnostic-only',
+    verificationArtifact: ['openclaw_runtime/src/config/runtime-feature-leaves.ts', 'tests/unit/runtime-provider-tool-registry.test.ts', 'tests/unit/runtime-evidence-verifier-contracts.test.ts', 'tests/unit/runtime-checkpoint-serializer.test.ts'],
+    remainingGap: [],
   }),
   entry({
     id: 'feature.local-control-plane', label: 'Local control-plane reports', disposition: 'internal', owner: 'observability-recorder', implementationNodeId: 'TF-0511', currentMode: 'mixed', targetDefaultMode: 'internal',
     ...internal('Local control-plane reports are diagnostic internal surfaces.'),
     currentConsumers: ['context Report', 'model router report', 'capability/evidence/mission reports'], evidenceRefs: [...EXECUTION_EVIDENCE, RUNTIME],
     coverage: { runtimeLeafPatterns: ['localControlPlane.*'] },
-  }),  entry({
+    implementationState: 'implemented-diagnostic-only',
+    verificationArtifact: ['openclaw_runtime/src/local-control-plane/index.ts', 'openclaw_runtime/src/gateway/server-methods/local-control-plane.ts', 'tests/unit/local-control-plane.test.ts'],
+    remainingGap: [],
+  }),
+  entry({
     id: 'surface.inbox', label: 'Inbox', disposition: 'advanced', owner: 'renderer-ui-surface', implementationNodeId: 'TF-0505', currentMode: 'mixed', targetDefaultMode: 'baseline',
     ...user('/inbox'),
     currentConsumers: ['Inbox route', 'host notifications'], evidenceRefs: UI_EVIDENCE,
@@ -398,6 +418,9 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     ...user('/observability'),
     currentConsumers: ['Observability page', 'trace/issues/problems'], evidenceRefs: [...UI_EVIDENCE, RUNTIME],
     coverage: { routePaths: ['/observability'] },
+    implementationState: 'implemented-opt-in',
+    verificationArtifact: ['src/App.tsx', 'src/pages/Observability/index.tsx', 'tests/unit/observability-service.test.ts'],
+    remainingGap: [],
   }),
   entry({
     id: 'surface.dreams', label: 'Dreams page', disposition: 'retired', owner: 'renderer-ui-surface', implementationNodeId: 'TF-0500', currentMode: 'baseline', targetDefaultMode: 'retired',
@@ -502,6 +525,22 @@ export function validateComponentDispositionManifest(
     }
     if (item.currentMode === 'shadow' && item.visibility === 'user') {
       issues.push(coverageIssue('visible_shadow_surface', `${item.id} exposes a shadow surface to users`, item.id));
+    }
+    if (item.implementationNodeId === 'TF-0511' || item.retirementNodeId === 'TF-0511') {
+      if (!item.implementationState) {
+        issues.push(coverageIssue('tf0511_implementation_state_missing', `${item.id} has no TF-0511 implementation state`, item.id));
+      }
+      if (!item.verificationArtifact || item.verificationArtifact.length === 0) {
+        issues.push(coverageIssue('tf0511_verification_artifact_missing', `${item.id} has no TF-0511 verification artifact`, item.id));
+      }
+      if (!item.remainingGap) {
+        issues.push(coverageIssue('tf0511_remaining_gap_missing', `${item.id} has no TF-0511 remainingGap ledger field`, item.id));
+      } else if (item.remainingGap.length > 0) {
+        issues.push(coverageIssue('tf0511_remaining_gap', `${item.id} still has a TF-0511 gap`, item.id));
+      }
+      if (item.disposition === 'experiment') {
+        issues.push(coverageIssue('tf0511_open_experiment', `${item.id} remains an open TF-0511 experiment`, item.id));
+      }
     }
   }
 

@@ -1,7 +1,7 @@
 Scope: all 155 workspace projects
 Lockfile is up to date, resolution step is skipped
 Already up to date
-[WARN] Failed to create bin at D:\ClawX-work\worktrees\long-session-program-r2\openclaw_runtime\extensions\verseconf-artifacts\node_modules\.bin\openclaw. ENOENT: no such file or directory, stat 'D:\ClawX-work\worktrees\long-session-program-r2\openclaw_runtime\openclaw.mjs.EXE'
+[WARN] Failed to create bin at D:\ClawX-work\component-graduation-20261021\openclaw_runtime\extensions\verseconf-artifacts\node_modules\.bin\openclaw. ENOENT: no such file or directory, stat 'D:\ClawX-work\component-graduation-20261021\openclaw_runtime\openclaw.mjs.EXE'
 
 . preinstall$ node scripts/preinstall-package-manager-warning.mjs
 . preinstall: Done
@@ -9,14 +9,34 @@ Already up to date
 . postinstall: Done
 . prepare$ node scripts/prepare-git-hooks.mjs
 . prepare: Done
-Done in 1.6s using pnpm v11.2.2
+Done in 2.8s using pnpm v11.2.2
 
- RUN  v4.1.7 D:/ClawX-work/worktrees/long-session-program-r2/openclaw_runtime
+ RUN  v4.1.7 D:/ClawX-work/component-graduation-20261021/openclaw_runtime
 
+pnpm.cmd : [vitest] still running with no output for 30000ms (run --config vitest.config.ts D:/ClawX-work/component-gra
+duation-20261021/openclaw_runtime/src/context-engine/assembler.test.ts D:/ClawX-work/component-graduation-20261021/open
+claw_runtime/src/context-engine/assembler.kill-switch.test.ts D:/ClawX-work/component-graduation-20261021/openclaw_runt
+ime/src/context-engine/block-lifecycle.test.ts D:/ClawX-work/component-graduation-20261021/openclaw_runtime/src/context
+-engine/turn-injection-budget.test.ts D:/ClawX-work/component-graduation-20261021/openclaw_runtime/src/context-engine/c
+ontext-orchestrator.test.ts D:/ClawX-work/component-graduation-20261021/openclaw_runtime/src/context-engine/context-orc
+hestrator.compass.test.ts D:/ClawX-work/component-graduation-20261021/openclaw_runtime/src/context-engine/chat-turn-vto
+ken-injection.test.ts D:/ClawX-work/component-graduation-20261021/openclaw_runtime/src/context-engine/rc03-seal.test.ts
+ D:/ClawX-work/component-graduation-20261021/openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts D:/ClawX-work
+/component-graduation-20261021/openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory.test.ts D:/C
+lawX-work/component-graduation-20261021/openclaw_runtime/src/agents/embedded-agent-runner/extensions.knowledge.test.ts 
+D:/ClawX-work/component-graduation-20261021/openclaw_runtime/src/agents/embedded-agent-runner/extensions.task-state.tes
+t.ts --maxWorkers=1 --reporter=dot --passWithNoTests=false).
+At D:\ClawX-work\component-graduation-20261021\tests\unit\fixtures\context-assembly-authority\acceptance\TF-0493\run-ve
+rification.ps1:15 char:13
++   $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([vitest] still ...NoTests=false).:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
 ···································································································································································································
 
  Test Files  12 passed (12)
       Tests  195 passed (195)
-   Start at  15:31:38
-   Duration  18.14s (transform 10.70s, setup 630ms, import 9.98s, tests 7.11s, environment 0ms)
+   Start at  15:03:33
+   Duration  54.65s (transform 22.67s, setup 1.92s, import 35.21s, tests 15.51s, environment 0ms)
 

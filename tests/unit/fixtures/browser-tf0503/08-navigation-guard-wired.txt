@@ -1,0 +1,5 @@
+guard_wired_in_host_path=1
+policy_imported=1
+session_reaper_present=1
+default_deny_literal=1
+reaper_invoked_during_adapter_build=1

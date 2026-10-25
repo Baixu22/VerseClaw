@@ -13,7 +13,7 @@ import {
 } from "./orchestrator.js";
 import type { RoleRegistryConfigCarrier } from "./role-registry.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
-import { resolveWorktreeBackend } from "../context-engine/coding-runtime-flags.js";
+import { isCodingPatchFlowDefault, resolveWorktreeBackend } from "../context-engine/coding-runtime-flags.js";
 import {
   spawnRoleSubagent,
   type RoleSpawnContext,
@@ -909,8 +909,15 @@ export async function runOrchestrationWithRecorder(
   // see all worker results); v4 executes task graph waves in order and uses
   // Promise.allSettled inside each wave so independent ready nodes run together.
   const workerNodes = taskGraphWorkerNodes(plan.taskGraph);
+  // TF-0510: patch-flow must be reachable from a real product path, not only from an
+  // explicit API argument. It activates when EITHER the request opts in explicitly OR the
+  // operator has enabled runtime.coding.patchFlow.default - in both cases the concurrency
+  // advisory must independently recommend patch-flow. The shipped default stays false.
+  const patchFlowRequested =
+    request.patchFlowExecution === true ||
+    isCodingPatchFlowDefault(request.cfg as OpenClawConfig | undefined);
   const patchFlowExecution =
-    request.patchFlowExecution === true &&
+    patchFlowRequested &&
     plan.routeDiagnostics.isolationAdvisory?.recommendedMode === "patch-flow" &&
     typeof ctx.workspaceDir === "string";
   const workerNodeById = new Map(workerNodes.map((node) => [node.taskNodeId, node]));

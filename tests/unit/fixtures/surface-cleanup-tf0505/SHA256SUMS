@@ -1,0 +1,17 @@
+119233cce192aa481ca9d8439804014d98231e1dffd30ee563dd07361a91eb6c  tests/unit/fixtures/surface-cleanup-tf0505/01-unit.txt
+1c344fc1836680046c9901fe419b35a943476dbe10c03d5a3c73099ae847bfa1  tests/unit/fixtures/surface-cleanup-tf0505/02-typecheck.txt
+7357002fe07c8c8c5d4ec2c36dc7746fd943a186ed404abe63610ea567cc4dfa  tests/unit/fixtures/surface-cleanup-tf0505/03-i18n-lint.txt
+442bda7d387762ba7d3287bfbf98d66b001ff885c555b11a4e08682efefc68ed  tests/unit/fixtures/surface-cleanup-tf0505/04-lint-check.txt
+f5c56cf6e18d6992d116177972b8a1e1c6c981752741f6432cd8367c70036183  tests/unit/fixtures/surface-cleanup-tf0505/05-contract-check.txt
+37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa  tests/unit/fixtures/surface-cleanup-tf0505/06-no-bom.txt
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  tests/unit/fixtures/surface-cleanup-tf0505/07-diff-check.txt
+eda827bf9143aa00e6fb47a574af47eb95f313653a82b7ab38b7a0fe8e62b119  tests/unit/fixtures/surface-cleanup-tf0505/08-scope-guard.txt
+79f8cdd897a7f6986677caa893413a27c782baf6176bf13280531405fd07b7f0  tests/unit/fixtures/surface-cleanup-tf0505/09-build-vite.txt
+c57a3742f58a94a7a866c686b6c87e18e23f454159862f00d44ca1123f70d472  tests/unit/fixtures/surface-cleanup-tf0505/10-e2e.txt
+73b74d103edcca1236860c01b4586250f409d51fa21f27b060f0748dc313916e  tests/unit/fixtures/surface-cleanup-tf0505/acceptance.json
+9cc498e5f51ee38b8ea5ddeb6a92e45984bc34f24821cb7fb969c8dce2c88271  tests/unit/fixtures/surface-cleanup-tf0505/component-graduation-report.json
+4cfdf33186214a0cf1552e2069a21789f0d9406d1e2f1ff2c7459e1f58798878  tests/unit/fixtures/surface-cleanup-tf0505/generate-acceptance.ps1
+8442c00d91a6db572c0db6bdaf8957b4ea663cdf18b2c1972a1f6c9a99403bd0  tests/unit/fixtures/surface-cleanup-tf0505/README.md
+42c35823767a2afa07ccc2488a135aec8e548ea77d82ddb92278eccd7263cd3c  tests/unit/fixtures/surface-cleanup-tf0505/run-verification.ps1
+668fcf3fa2cd87f63d11dab09f9f60a02ecb1ac2e360162e0e60e7cb9c36325a  tests/unit/fixtures/surface-cleanup-tf0505/surface-inventory.json
+ffffe4fed68546da9f89b18bb4577e1f7c4f714a97d64235fb8c9a1847aaaf26  tests/unit/fixtures/surface-cleanup-tf0505/verification.json

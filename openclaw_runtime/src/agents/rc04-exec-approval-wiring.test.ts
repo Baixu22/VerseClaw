@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { closeOpenClawStateDatabase } from '../state/openclaw-state-db.js';
 import { ApprovalLedger } from './approval-ledger.js';
@@ -116,13 +116,19 @@ describe('RC-04 ExecApprovalManager durable wiring', () => {
   });
 
   it('does not restore expired approvals', () => {
-    const ledger = new ApprovalLedger(ledgerOptions());
-    const manager = new ExecApprovalManager({ durableLedger: ledger });
-    // timeoutMs=1 makes the ledger row already expired by recovery time.
-    manager.create({ command: 'echo hi', description: 'x' } as never, 1, 'aprv-expired-1');
-    const second = new ExecApprovalManager({ durableLedger: new ApprovalLedger(ledgerOptions()) });
-    expect(second.recoverPendingFromLedger()).toBe(0);
-    expect(second.getSnapshot('aprv-expired-1')).toBeNull();
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(Date.parse('2026-10-22T00:00:00.000Z'));
+      const ledger = new ApprovalLedger(ledgerOptions());
+      const manager = new ExecApprovalManager({ durableLedger: ledger });
+      manager.create({ command: 'echo hi', description: 'x' } as never, 100, 'aprv-expired-1');
+      vi.setSystemTime(Date.parse('2026-10-22T00:00:00.200Z'));
+      const second = new ExecApprovalManager({ durableLedger: new ApprovalLedger(ledgerOptions()) });
+      expect(second.recoverPendingFromLedger()).toBe(0);
+      expect(second.getSnapshot('aprv-expired-1')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('a repeated identical resolve through the durable owner is idempotent', async () => {

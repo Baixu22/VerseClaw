@@ -1,0 +1,50 @@
+$ node scripts/typecheck-agent-dev.mjs
+[ext-bridge] No external extensions configured — empty stubs up to date.
+$ tsgo --noEmit -p tsconfig.node.json --composite false
+$ tsgo --noEmit -p tsconfig.web.json --composite false
+{
+  "success": true,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 0,
+    "durationMs": 15046,
+    "observationMode": false,
+    "errorCount": 0,
+    "errorLog": "D:\\ClawX-work\\component-graduation-20261021\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": "27b32046ff2067305893d77617c837d5a68e9d26bd1ec7f4a28b6e1a9f98ab55",
+    "inputCount": 12441,
+    "report": "D:\\ClawX-work\\component-graduation-20261021\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 17012,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 44
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 10120
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 4959
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 15046,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "D:\\ClawX-work\\component-graduation-20261021\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}

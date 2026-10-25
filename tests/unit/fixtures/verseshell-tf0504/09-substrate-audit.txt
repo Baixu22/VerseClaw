@@ -1,0 +1,4 @@
+governed_spawn_owners=process-manager.ts
+forbidden_terms_extended=1
+writable_verseshell_toggle=0
+writable_rc03_toggle=0

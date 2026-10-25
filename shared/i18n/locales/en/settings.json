@@ -653,7 +653,7 @@
         "detailDisabled": "These tools stay out of the default tool list until enabled: {{tools}}.",
         "detailEnabled": "View tools are on for this install. They still require a coding workspace with FactService."
       },
-            "layerRole": "DCS — developer diagnostics — advanced opt-in BlockStore controls. Defaults remain fail-closed; low-level flags and experimental gates are advanced diagnostics.",
+      "layerRole": "DCS — developer diagnostics — advanced BlockStore controls. Workspace Context (recent actions + tool catalog) is the normal user profile in Settings > General; low-level flags and experiment gates remain diagnostics.",
       "taskLoopNote": "Task state / phase / SEKB trajectory features require a TaskLoop (multi-step task) path — not single-turn chat alone. See docs/dev/dcs-visible-production/TASKLOOP-ACCEPTANCE.md.",
       "observability": {
         "title": "DCS observability (product keys)",
@@ -890,5 +890,22 @@
     "success": "Support bundle exported",
     "failed": "Support bundle export failed: {{error}}",
     "savedTo": "Saved to {{path}} · redaction hits: {{hits}}"
+  },
+  "workspaceContext": {
+    "title": "Workspace Context",
+    "label": "Use workspace context",
+    "description": "Keep recent tool actions and the available-tool catalog available across the tool loop.",
+    "refresh": "Refresh",
+    "loading": "Loading effective state...",
+    "loadFailed": "Could not load Workspace Context",
+    "setFailed": "Could not change Workspace Context",
+    "status": {
+      "applied": "On",
+      "acknowledged": "Confirmed",
+      "pending": "Pending restart",
+      "failed": "Needs attention",
+      "partial": "Partial",
+      "off": "Off"
+    }
   }
 }

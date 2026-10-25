@@ -1,0 +1,15 @@
+
+ RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
+
+···························································stdout | tests/unit/feature-leaf-consumers.test.ts > check-feature-leaf-consumers > shares the frozen production baseline and self-test with the CLI
+  PASS  unwired leaf fails closed with an empty baseline  [ok=false unpinned=["beta.enabled"]]
+  PASS  pinning the unwired leaf makes the tree pass and reports it as pinned  [ok=true pinned=["beta.enabled"]]
+  PASS  leaf count comes from the synthetic source  [leafCount=2]
+feature-leaf-consumers --self-test: PASS (3/3)
+
+·············
+
+ Test Files  4 passed (4)
+      Tests  72 passed (72)
+   Start at  12:17:04
+   Duration  7.98s (transform 226ms, setup 480ms, import 4.56s, tests 224ms, environment 1.87s)

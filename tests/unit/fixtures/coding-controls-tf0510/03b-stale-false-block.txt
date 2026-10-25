@@ -1,0 +1,64 @@
+Scope: all 155 workspace projects
+Lockfile is up to date, resolution step is skipped
+Already up to date
+[WARN] Failed to create bin at D:\ClawX-work\component-graduation-20261021\openclaw_runtime\extensions\verseconf-artifacts\node_modules\.bin\openclaw. ENOENT: no such file or directory, stat 'D:\ClawX-work\component-graduation-20261021\openclaw_runtime\openclaw.mjs.EXE'
+
+. preinstall$ node scripts/preinstall-package-manager-warning.mjs
+. preinstall: Done
+. postinstall$ node scripts/postinstall-bundled-plugins.mjs
+. postinstall: Done
+. prepare$ node scripts/prepare-git-hooks.mjs
+. prepare: Done
+Done in 1.6s using pnpm v11.2.2
+
+ RUN  v4.1.7 D:/ClawX-work/component-graduation-20261021/openclaw_runtime
+
+stdout | ../../src/agents/stale-write-guard.false-block.test.ts:90:3 > TF-0510 stale-write-guard false-block corpus > measures a false-block rate over labelled genuine-stale and must-allow writes
+{
+ "corpusSize": 5,
+ "blockExpected": 1,
+ "allowExpected": 4,
+ "falseBlocks": 0,
+ "missedBlocks": 0,
+ "falseBlockRate": 0,
+ "outcomes": [
+  {
+   "id": "stale-overwrite-after-external-change",
+   "expectation": "block",
+   "observed": "block",
+   "reason": "stale-since-read"
+  },
+  {
+   "id": "fresh-after-reread",
+   "expectation": "allow",
+   "observed": "allow",
+   "reason": "fresh-read"
+  },
+  {
+   "id": "unread-file-first-write",
+   "expectation": "allow",
+   "observed": "allow",
+   "reason": "unread"
+  },
+  {
+   "id": "brand-new-file",
+   "expectation": "allow",
+   "observed": "allow",
+   "reason": "unread"
+  },
+  {
+   "id": "generated-artifact-outside-source",
+   "expectation": "allow",
+   "observed": "allow",
+   "reason": "unread"
+  }
+ ]
+}
+
+ ✓ |agents-core| ../../src/agents/stale-write-guard.false-block.test.ts (1 test) 121ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:26:19
+   Duration  741ms (transform 499ms, setup 308ms, import 44ms, tests 121ms, environment 0ms)
+

@@ -184,8 +184,13 @@ describe('FP-P0-06 config type / zod schema parity', () => {
     expect(parsed.success).toBe(false);
   });
 
-  it('documents the factViews migration path in the production catalog', () => {
+  it('documents automatic discovery and the env rollback in the production catalog', () => {
     const entry = DCS_PROD_FLAGS.find((candidate) => candidate.id === 'context-view-tools');
+    expect(entry?.defaultValue).toBe(false);
+    expect(entry?.enable).toContain('Automatic discovery');
+    expect(entry?.rollback).toContain('OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=0');
+    expect(entry?.riskNote).toContain('standard coding catalog is the discovery surface');
+    expect(entry?.riskNote).toContain('does not flip the product default');
     expect(entry?.riskNote).toContain('removed runtime.coding.factViews leaf');
     expect(entry?.riskNote).toContain('remove it before upgrading');
     expect(entry?.riskNote).not.toMatch(/deprecated\/ignored/i);

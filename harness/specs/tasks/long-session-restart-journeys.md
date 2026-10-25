@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-restart-journeys
 title: 用自动化跨重启旅程验证长期协作闭环
 program: long-session-development-20261022

@@ -124,6 +124,7 @@ describe("stage4 unified CapabilityGrant over durable ApprovalLedger", () => {
           resource: derived.grant.scope.resource,
           action: derived.grant.scope.action,
           purpose: derived.grant.scope.purpose,
+          taskBranchId: derived.grant.scope.taskBranchId,
           actor: derived.grant.actor,
           approvalId: derived.grant.approvalRef.approvalId,
           policyDigest: derived.grant.derivation.policyDigest,

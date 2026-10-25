@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-long-use-budget
 title: 测量长会话加载、常驻资源与通知预算
 program: long-session-development-20261022

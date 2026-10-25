@@ -2,9 +2,9 @@
   "schemaVersion": "MemoryProductSurfaceAcceptanceEvidence/v1",
   "reportId": "tf-0498-unified-memory-surface",
   "taskForestNodeId": "TF-0498",
-  "generatedAt": "2026-10-24T09:31:56.659Z",
+  "generatedAt": "2026-10-22T11:53:32.902Z",
   "driven_by": "agent",
-  "actor": "codex-long-session-r2",
+  "actor": "codex",
   "acceptanceCriteria": [
     {
       "criterion": "用户仅通过一个 Memory 面板完成查看、批准、删除和导出",

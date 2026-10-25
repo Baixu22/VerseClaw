@@ -1,0 +1,111 @@
+[
+  {
+    "file": "openclaw_runtime/src/agents/coding-control-dispositions.ts",
+    "expected": "217f326471f3e1538d27421b6ebed3ca66887ea4419228b8ad4c5856c185ea73",
+    "actual": "217f326471f3e1538d27421b6ebed3ca66887ea4419228b8ad4c5856c185ea73",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+    "expected": "ee4d8239073a69fc47213d28f57df29d80b3aef57af16c9dfd1bd382373d7cb7",
+    "actual": "ee4d8239073a69fc47213d28f57df29d80b3aef57af16c9dfd1bd382373d7cb7",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts",
+    "expected": "1c1f9d6546b421f5ec1dc3d70f5dcfbc138ead7fa282e71e85eb984ef58f6cb5",
+    "actual": "1c1f9d6546b421f5ec1dc3d70f5dcfbc138ead7fa282e71e85eb984ef58f6cb5",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/context-engine/coding-runtime-flags.ts",
+    "expected": "bb85b3045648c7839fc904369c9838355f0a4457046b6891c306c399441e5701",
+    "actual": "bb85b3045648c7839fc904369c9838355f0a4457046b6891c306c399441e5701",
+    "status": "pass"
+  },
+  {
+    "file": "shared/dcs/component-disposition-catalog.ts",
+    "expected": "5436ab0da7c8089bed38e9626d36e6c974d4a6c8e69f94c2452a76647b9de249",
+    "actual": "5436ab0da7c8089bed38e9626d36e6c974d4a6c8e69f94c2452a76647b9de249",
+    "status": "pass"
+  },
+  {
+    "file": "shared/dcs/prod-flags-control.ts",
+    "expected": "84c5b2631036259762fdac2239c9b971b803ddd5c34762b2002e5db402c16e10",
+    "actual": "84c5b2631036259762fdac2239c9b971b803ddd5c34762b2002e5db402c16e10",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/stale-write-guard.false-block.test.ts",
+    "expected": "11aaae40b2d424491467bc54bf47816c4b741b6e88a9f1447a910e22736a6f3b",
+    "actual": "11aaae40b2d424491467bc54bf47816c4b741b6e88a9f1447a910e22736a6f3b",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/patch-flow-graduation.ts",
+    "expected": "92a34e99a75e7aedc40c73e376697f267a3bef21e62a4b8cc4d932a03448e11a",
+    "actual": "92a34e99a75e7aedc40c73e376697f267a3bef21e62a4b8cc4d932a03448e11a",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/agents/patch-flow-graduation.test.ts",
+    "expected": "000946e09bf821173b72d2a8e3fad02fb3466028b7e3188494d66535bb455378",
+    "actual": "000946e09bf821173b72d2a8e3fad02fb3466028b7e3188494d66535bb455378",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/coding-controls-tf0510.test.ts",
+    "expected": "e1b41a8ad885df7cedd156e5eeeab4c979a8ba7ddf03605e83dd2c73e35f599d",
+    "actual": "e1b41a8ad885df7cedd156e5eeeab4c979a8ba7ddf03605e83dd2c73e35f599d",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
+    "expected": "27cf6f3675d39ac51356c88597f070b400c6807a9906a26ec92ac9d161108157",
+    "actual": "27cf6f3675d39ac51356c88597f070b400c6807a9906a26ec92ac9d161108157",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+    "expected": "dba95c0ca48dcae988e1374e5cb327bf8ca12acc850915005871779d000b6a95",
+    "actual": "dba95c0ca48dcae988e1374e5cb327bf8ca12acc850915005871779d000b6a95",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/coding-controls-tf0510/symbol-lease-worker.mts",
+    "expected": "b1d095c3ba8f4bb6ccd032ffe5b689db6eb84a91cfbe3a614515b0b149a1f370",
+    "actual": "b1d095c3ba8f4bb6ccd032ffe5b689db6eb84a91cfbe3a614515b0b149a1f370",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/coding-controls-tf0510/README.md",
+    "expected": "8f094c61d6faf791bc9ab242e9ee88296961209b3f6befdfe10b5d4db9b2cfe4",
+    "actual": "8f094c61d6faf791bc9ab242e9ee88296961209b3f6befdfe10b5d4db9b2cfe4",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/coding-controls-tf0510/retirement-evidence.json",
+    "expected": "c571f1b772533bb2b7dcf648a4db1af8733f5d4f12cf5221ac6d6abdec88b9d2",
+    "actual": "c571f1b772533bb2b7dcf648a4db1af8733f5d4f12cf5221ac6d6abdec88b9d2",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/coding-controls-tf0510/raw-evidence.json",
+    "expected": "534a94174bd497fa2ebb4574b916eec729aab60dcc0eaa89764fc5a357c1dafa",
+    "actual": "534a94174bd497fa2ebb4574b916eec729aab60dcc0eaa89764fc5a357c1dafa",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/coding-controls-tf0510/generate-acceptance.mts",
+    "expected": "5584f828c71687a9554ca9976316ab2c9987d031c8c20d607a1527fbefc4e14b",
+    "actual": "5584f828c71687a9554ca9976316ab2c9987d031c8c20d607a1527fbefc4e14b",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/coding-controls-tf0510/run-verification.ps1",
+    "expected": "6f0826d3d2c7294cf5c8ba17500621868ef5d3934f101a67a78848a28c68b30c",
+    "actual": "6f0826d3d2c7294cf5c8ba17500621868ef5d3934f101a67a78848a28c68b30c",
+    "status": "pass"
+  }
+]
+SHA256SUMS_STATUS=pass

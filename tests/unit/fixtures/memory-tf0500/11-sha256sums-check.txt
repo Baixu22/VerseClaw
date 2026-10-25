@@ -1,0 +1,69 @@
+[
+  {
+    "file": "openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts",
+    "expected": "b1c2143b40b6f96c5c5ab1cc2faa0fbbff30c55f32a981d798af13f890416055",
+    "actual": "b1c2143b40b6f96c5c5ab1cc2faa0fbbff30c55f32a981d798af13f890416055",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/runtime-core/memory-runtime-config.ts",
+    "expected": "94570fa96e91068ff2ebd692844b497e101fe0420f9e97412c1a6e76cfe8b69c",
+    "actual": "94570fa96e91068ff2ebd692844b497e101fe0420f9e97412c1a6e76cfe8b69c",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/runtime-core/memory-runtime-config.test.ts",
+    "expected": "20911aa9d2f9c0743d501aeac3b96b3919566d5e7cb387af1cf5c5b99fb7b498",
+    "actual": "20911aa9d2f9c0743d501aeac3b96b3919566d5e7cb387af1cf5c5b99fb7b498",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/runtime-core/memory-context.ts",
+    "expected": "e38a3ca0d9d4736a54af8bdc552d19b56822c2b351a1374e6fea5f91c3279437",
+    "actual": "e38a3ca0d9d4736a54af8bdc552d19b56822c2b351a1374e6fea5f91c3279437",
+    "status": "pass"
+  },
+  {
+    "file": "openclaw_runtime/src/context-engine/context-orchestrator.test.ts",
+    "expected": "40b9500b4a3b0f877121f2fda2963fb5873c7caee4f24f259ef6cb9858cfb549",
+    "actual": "40b9500b4a3b0f877121f2fda2963fb5873c7caee4f24f259ef6cb9858cfb549",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/memory-tf0500-retirement.test.ts",
+    "expected": "e2aacf33750b9571e17670e6bcfede4b3c91ef5cfd7f96415bf4ab3f8d05142e",
+    "actual": "e2aacf33750b9571e17670e6bcfede4b3c91ef5cfd7f96415bf4ab3f8d05142e",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/compass-experience-validation.test.ts",
+    "expected": "74097d6e2a235fcead679c63f2ad671e7798d9f80fd1adde9bffe9186142d604",
+    "actual": "74097d6e2a235fcead679c63f2ad671e7798d9f80fd1adde9bffe9186142d604",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/default-config-matrix.test.ts",
+    "expected": "5b9e8019bfccfe9600bda49ea2f7a9dbc52448f800a1ae6693c893d6cd7d045e",
+    "actual": "5b9e8019bfccfe9600bda49ea2f7a9dbc52448f800a1ae6693c893d6cd7d045e",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/memory-tf0500/README.md",
+    "expected": "b4c027cd03a09df9bacbc633de67d1f0b542f84d439534fd2914abb129a36261",
+    "actual": "b4c027cd03a09df9bacbc633de67d1f0b542f84d439534fd2914abb129a36261",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/memory-tf0500/raw-evidence.json",
+    "expected": "87f31102eaf57d6fd2ab93f7de5f2dda95dda66f12b8ed54a58769ada9b8df1d",
+    "actual": "87f31102eaf57d6fd2ab93f7de5f2dda95dda66f12b8ed54a58769ada9b8df1d",
+    "status": "pass"
+  },
+  {
+    "file": "tests/unit/fixtures/memory-tf0500/run-verification.ps1",
+    "expected": "168bbf6e8583dc9f873fd905fe7ce7b8d6c3495f79bc65b5df4f4daebeb87a61",
+    "actual": "168bbf6e8583dc9f873fd905fe7ce7b8d6c3495f79bc65b5df4f4daebeb87a61",
+    "status": "pass"
+  }
+]
+SHA256SUMS_STATUS=pass

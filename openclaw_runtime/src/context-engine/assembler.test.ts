@@ -44,12 +44,12 @@ describe("DCS Assembler", () => {
     expect(selectHandlers({ session_id })).toEqual(expected);
   });
 
-  it("两个 feature flag 默认 false，并保持 identity pass-through", async () => {
+  it("legacy flags stay off while Workspace Context flags are baseline-on", async () => {
     expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS).toEqual({
       "runtime.contextBlock.compass.enabled": false,
       "runtime.contextBlock.role_memory.enabled": false,
-      "runtime.contextBlock.working_memory.enabled": false,
-      "runtime.contextBlock.tool_registry.enabled": false,
+      "runtime.contextBlock.working_memory.enabled": true,
+      "runtime.contextBlock.tool_registry.enabled": true,
     });
     const buildCompass = vi.fn(async () => ({ iFrameRefreshed: false }));
     const buildRoleMemory = vi.fn(() => buildContextPack({}));
@@ -189,6 +189,10 @@ describe("DCS Assembler", () => {
     const disabled = await assembler.assemble(
       { session_id: "session-a" },
       { existing_output: messages },
+      {
+        "runtime.contextBlock.working_memory.enabled": false,
+        "runtime.contextBlock.tool_registry.enabled": false,
+      },
     );
     expect(disabled.output).toBe(messages);
     expect(query).not.toHaveBeenCalled();
@@ -281,7 +285,7 @@ describe("DCS v1.6.1 addendum 2: exactly-once working-memory injection", () => {
 
     expect(countRecentActionsHeadings(afterContextEngine.output)).toBe(1);
     const snap = dcsObservability.snapshot();
-    expect(snap.dcsTransformContextCalls).toBe(2);
+    expect(snap.dcsTransformContextCalls).toBe(4);
     expect(snap.dcsTransformContextChars).toBeGreaterThan(0);
     expect(snap.injectionDuplicateSuppressions).toBe(1);
   });
@@ -992,7 +996,10 @@ describe("FP-P2-06 DCS turn-ledger attribution", () => {
       {
         turnId: "fp-p2-06-flags-off",
         assembler: createThreeChannelAssembler().assembler,
-        flags: {},
+        flags: {
+          "runtime.contextBlock.working_memory.enabled": false,
+          "runtime.contextBlock.tool_registry.enabled": false,
+        },
         cfg: undefined,
       },
       {

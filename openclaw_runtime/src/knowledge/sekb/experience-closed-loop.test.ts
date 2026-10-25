@@ -77,11 +77,13 @@ describe("KS-05 SEKB experience closed loop", () => {
       requireSession: true,
       sourceSystem: "ui-confirm",
       integrityClaim: "confirmed",
+      drivenBy: "agent",
+      actor: "codex",
     });
 
     const principle = store.get_principle(confirmed);
     expect(principle.status).toBe("active");
-    expect(principle.created_by).toBe("human");
+    expect(principle.created_by).toBe("agent");
     expect(principle.source_trajectories.toSorted()).toEqual(trajectoryIds.toSorted());
     for (const trajectoryId of trajectoryIds) {
       const trajectory = store.get_trajectory(trajectoryId);

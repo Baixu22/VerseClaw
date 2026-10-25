@@ -1,7 +1,7 @@
 // @vitest-environment node
 /**
  * Locks the TF-0003 default configuration matrix.
- * Product defaults must remain fail-closed / opt-in until graduation criteria are met.
+ * Product defaults change only through their owning graduation criteria; this suite locks the current matrix three ways.
  */
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -169,16 +169,27 @@ describe('TF-0003 default configuration matrix', () => {
             ? 'false'
             : 'true',
         'VToken bridge': () => (readVtokenBridgeEnabledFromEnv() === false ? 'false' : 'true'),
+        'Workspace Context': () =>
+          (DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS as Record<string, boolean>)[
+            'runtime.contextBlock.working_memory.enabled'
+          ] &&
+          (DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS as Record<string, boolean>)[
+            'runtime.contextBlock.tool_registry.enabled'
+          ]
+            ? 'true'
+            : 'false',
         'working-memory': () =>
-          DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.working_memory.enabled'] ===
-          false
-            ? 'false'
-            : 'true',
+          (DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS as Record<string, boolean>)[
+            'runtime.contextBlock.working_memory.enabled'
+          ]
+            ? 'true'
+            : 'false',
         'tool-registry': () =>
-          DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.tool_registry.enabled'] ===
-          false
-            ? 'false'
-            : 'true',
+          (DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS as Record<string, boolean>)[
+            'runtime.contextBlock.tool_registry.enabled'
+          ]
+            ? 'true'
+            : 'false',
         'Runtime Memory inject pilot': () =>
           DEFAULT_MEMORY_INJECT_PILOT_CONFIG.enabled === false &&
           resolveMemoryInjectPilotConfig({}).enabled === false
@@ -222,6 +233,9 @@ describe('TF-0003 default configuration matrix', () => {
     });
   });
 
+  // TF-0496 retired VToken on measured provider usage (see
+  // docs/dev/vtoken-retirement-decision.md). The old opt-in lock is replaced by a
+  // lock on the retirement: neither the default nor an explicit config can enable it.
   it('locks VToken assembly default OFF (opt-in) [vtoken-assembly-default]', () => {
     expect(DEFAULT_VTOKEN_ASSEMBLY_CONFIG.enabled).toBe(false);
     expect(resolveVtokenAssemblyConfig({}).enabled).toBe(false);
@@ -229,14 +243,14 @@ describe('TF-0003 default configuration matrix', () => {
       resolveVtokenAssemblyConfig({
         runtime: { vtoken: { assembly: { enabled: true } } },
       }).enabled,
-    ).toBe(true);
+    ).toBe(false);
   });
 
-  it('locks working-memory and other DCS context-block flags default OFF [context-block-defaults]', () => {
-    expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.working_memory.enabled']).toBe(false);
+  it('locks Workspace Context default ON and legacy DCS context flags default OFF [context-block-defaults]', () => {
+    expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.working_memory.enabled']).toBe(true);
     expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.compass.enabled']).toBe(false);
     expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.role_memory.enabled']).toBe(false);
-    expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.tool_registry.enabled']).toBe(false);
+    expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS['runtime.contextBlock.tool_registry.enabled']).toBe(true);
   });
 
   it('locks Runtime Memory inject pilot default OFF [memory-inject-pilot-default]', () => {
@@ -379,14 +393,13 @@ describe('TF-0003 default configuration matrix', () => {
     ).toBe(false);
   });
 
-  // FP-P0-03: md row "VToken bridge" — internal diagnostics only, default OFF; no renderer toggle.
+  // TF-0496 retired the VToken bridge (see docs/dev/vtoken-retirement-decision.md), so
+  // the enable form no longer has any effect; only a disable remains meaningful.
   it('locks VToken bridge default OFF (opt-in) [vtoken-bridge-default]', async () => {
     const { readVtokenBridgeEnabledFromEnv } = await import('../../electron/services/vtoken-bridge');
-    // No env set (beforeEach deleted it) ⇒ off.
     expect(readVtokenBridgeEnabledFromEnv()).toBe(false);
     process.env.VERSE_VTOKEN_BRIDGE_ENABLED = '1';
-    expect(readVtokenBridgeEnabledFromEnv()).toBe(true);
-    // Explicit kill wins over the enable form.
+    expect(readVtokenBridgeEnabledFromEnv()).toBe(false);
     process.env.VERSE_VTOKEN_BRIDGE_ENABLED = '0';
     expect(readVtokenBridgeEnabledFromEnv()).toBe(false);
   });

@@ -1,8 +1,10 @@
 // Legacy context engine wraps pre-plugin context behavior behind the pluggable interface.
 import type { AgentMessage } from "../agents/runtime/index.js";
-import type { MemoryCitationsMode } from "../config/types.memory.js";
+import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { ContextItem } from "../runtime-core/types.js";
+import { createRuntimeCapabilityStateGenerationGuard } from "../runtime-core/model-capability-effective-state.js";
 import { delegateCompactionToRuntime } from "./delegate.js";
+import { buildModelCapabilityPromptAddition, type ModelCapabilityPromptStateInput } from "./model-capability-prompt.js";
 import { contextProviderShadowFlagEnabled } from "./shadow-flags.js";
 import type {
   ContextEngine,
@@ -90,7 +92,16 @@ export class LegacyContextEngine implements ContextEngine {
     version: "1.0.0",
   };
 
-  constructor(private readonly shadowConfig?: unknown) {}
+  private readonly capabilityGuards = new Map<
+    string,
+    ReturnType<typeof createRuntimeCapabilityStateGenerationGuard>
+  >();
+
+  constructor(
+    private readonly shadowConfig?: unknown,
+    private readonly workspaceDir?: string,
+    private readonly capabilityState?: () => ModelCapabilityPromptStateInput,
+  ) {}
 
   async ingest(_params: {
     sessionId: string;
@@ -102,21 +113,38 @@ export class LegacyContextEngine implements ContextEngine {
     return { ingested: false };
   }
 
-  async assemble(params: {
-    sessionId: string;
-    sessionKey?: string;
-    messages: AgentMessage[];
-    tokenBudget?: number;
-    availableTools?: Set<string>;
-    citationsMode?: MemoryCitationsMode;
-    model?: string;
-  }): Promise<AssembleResult> {
+  async assemble(params: Parameters<ContextEngine["assemble"]>[0]): Promise<AssembleResult> {
     // Pass-through: the existing sanitize -> validate -> limit -> repair pipeline
     // in attempt.ts handles context assembly for the legacy engine.
     // We just return the messages as-is with a rough token estimate.
+    const capabilitySessionKey = params.sessionKey ?? params.sessionId;
+    let capabilityPrompt: string | undefined;
+    if (capabilitySessionKey) {
+      let guard = this.capabilityGuards.get(capabilitySessionKey);
+      if (!guard) {
+        guard = createRuntimeCapabilityStateGenerationGuard(capabilitySessionKey);
+        this.capabilityGuards.set(capabilitySessionKey, guard);
+      }
+      try {
+        capabilityPrompt = await buildModelCapabilityPromptAddition({
+          cfg: this.shadowConfig as OpenClawConfig | undefined,
+          workspaceDir: this.workspaceDir ?? process.cwd(),
+          sessionId: params.sessionId,
+          sessionKey: params.sessionKey,
+          availableTools: params.availableTools,
+          activeTools: params.activeTools,
+          ...(this.capabilityState ? { state: this.capabilityState() } : {}),
+          generationGuard: guard,
+        });
+      } catch {
+        // No verified facts means no positioning claim. The turn remains usable.
+        capabilityPrompt = undefined;
+      }
+    }
     return {
       messages: params.messages,
       estimatedTokens: 0, // Caller handles estimation
+      ...(capabilityPrompt ? { systemPromptAddition: capabilityPrompt } : {}),
       ...(contextProviderShadowFlagEnabled(this.shadowConfig, "shadow")
         ? { contextItems: buildLegacyContextItems(params.messages) }
         : {}),

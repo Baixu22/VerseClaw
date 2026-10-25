@@ -1,4 +1,6 @@
 import { delegateCompactionToRuntime } from '../delegate.js';
+import type { OpenClawConfig } from '../../config/types.openclaw.js';
+import { createRuntimeCapabilityStateGenerationGuard } from '../../runtime-core/model-capability-effective-state.js';
 import type { ContextStatusSnapshot } from '../../../../shared/types/context-family.js';
 import type {
   AssembleResult,
@@ -24,6 +26,7 @@ import {
 } from './tool-call-gate.js';
 import { generateCvkViews } from './views.js';
 import { CODING_TOOL_ROUTING_PROMPT } from '../coding-tool-navigation.js';
+import { buildModelCapabilityPromptAddition, type ModelCapabilityPromptStateInput } from '../model-capability-prompt.js';
 
 export const CONTEXT_RUNTIME_KIT_ENGINE_ID = 'context-runtime-kit';
 
@@ -34,6 +37,10 @@ export type ContextRuntimeKitContextEngineOptions = {
   contextStatusSnapshot?: ContextStatusSnapshot;
   /** CVK tool-call gate mode (report_only | enforce). Defaults via OPENCLAW_CVK_TOOL_GATE_MODE or report_only. */
   toolCallGateMode?: CvkToolCallGateMode;
+  cfg?: OpenClawConfig;
+  workspaceDir?: string;
+  workspaceId?: string;
+  capabilityState?: () => ModelCapabilityPromptStateInput;
 };
 
 const DEFAULT_MAX_PROMPT_ADDITION_CHARS = 8_000;
@@ -173,6 +180,11 @@ export class ContextRuntimeKitContextEngine implements ContextEngine {
     version: '1.0.0',
   };
 
+  private readonly capabilityGuards = new Map<
+    string,
+    ReturnType<typeof createRuntimeCapabilityStateGenerationGuard>
+  >();
+
   constructor(private readonly options: ContextRuntimeKitContextEngineOptions = {}) {}
 
   async ingest(): Promise<IngestResult> {
@@ -187,10 +199,11 @@ export class ContextRuntimeKitContextEngine implements ContextEngine {
     });
     const artifact = compileCvkFixtureSources(fixtureInput);
     const toolCallGateMode = resolveCvkToolCallGateMode(this.options.toolCallGateMode);
-    const systemPromptAddition = formatPromptAddition({
+    const maxPromptAdditionChars = this.options.maxPromptAdditionChars ?? DEFAULT_MAX_PROMPT_ADDITION_CHARS;
+    const baseSystemPromptAddition = formatPromptAddition({
       artifact,
       input: fixtureInput,
-      maxChars: this.options.maxPromptAdditionChars ?? DEFAULT_MAX_PROMPT_ADDITION_CHARS,
+      maxChars: maxPromptAdditionChars,
       toolCallGateMode,
       contextStatusLines: this.options.contextStatusEnabled
         ? formatContextStatusProjection({
@@ -201,6 +214,33 @@ export class ContextRuntimeKitContextEngine implements ContextEngine {
           })
         : undefined,
     });
+    const capabilitySessionKey = params.sessionKey ?? params.sessionId;
+    let capabilityPrompt: string | undefined;
+    if (capabilitySessionKey) {
+      let guard = this.capabilityGuards.get(capabilitySessionKey);
+      if (!guard) {
+        guard = createRuntimeCapabilityStateGenerationGuard(capabilitySessionKey);
+        this.capabilityGuards.set(capabilitySessionKey, guard);
+      }
+      try {
+        capabilityPrompt = await buildModelCapabilityPromptAddition({
+          cfg: this.options.cfg,
+          workspaceDir: this.options.workspaceDir ?? process.cwd(),
+          workspaceId: this.options.workspaceId,
+          sessionId: params.sessionId,
+          sessionKey: params.sessionKey,
+          availableTools: params.availableTools,
+          activeTools: params.activeTools,
+          ...(this.options.capabilityState ? { state: this.options.capabilityState() } : {}),
+          generationGuard: guard,
+        });
+      } catch {
+        capabilityPrompt = undefined;
+      }
+    }
+    const systemPromptAddition = capabilityPrompt
+      ? boundedLines([baseSystemPromptAddition, '', capabilityPrompt], maxPromptAdditionChars)
+      : baseSystemPromptAddition;
     return {
       messages: params.messages,
       estimatedTokens: estimateTokens(systemPromptAddition),

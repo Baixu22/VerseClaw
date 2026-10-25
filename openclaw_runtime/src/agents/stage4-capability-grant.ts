@@ -45,6 +45,7 @@ export type Stage4GrantCall = {
   resource: string;
   action: string;
   purpose: string;
+  taskBranchId: string;
   actor: Stage4GrantActor;
   approvalId: string;
   policyDigest: string;
@@ -100,6 +101,7 @@ export type Stage4GrantDenyReason =
   | "scope-resource-mismatch"
   | "scope-action-mismatch"
   | "scope-purpose-mismatch"
+  | "task-branch-mismatch"
   | "approval-mismatch"
   | "governance-mismatch"
   | "policy-digest-mismatch"
@@ -604,6 +606,9 @@ export function verifyStage4CapabilityGrant(input: {
   }
   if (grant.scope.purpose !== call.purpose) {
     return { allow: false, reason: "scope-purpose-mismatch", grant, actorChain: chainFromGrant };
+  }
+  if (grant.scope.taskBranchId !== call.taskBranchId) {
+    return { allow: false, reason: "task-branch-mismatch", grant, actorChain: chainFromGrant };
   }
   if (grant.approvalRef.approvalId !== call.approvalId) {
     return { allow: false, reason: "approval-mismatch", grant, actorChain: chainFromGrant };

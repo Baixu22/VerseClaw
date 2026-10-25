@@ -86,7 +86,7 @@ describe("Tool Search Capability V3 compatibility", () => {
       classify,
     });
 
-    expect(result).toEqual({ enabled: false, descriptors: [], registrations: [], diagnostics: [] });
+    expect(result).toEqual({ enabled: false, descriptors: [], registrations: [], diagnostics: [], catalogSnapshot: null });
     expect(namespaceEntries).not.toHaveBeenCalled();
   });
 
@@ -109,6 +109,14 @@ describe("Tool Search Capability V3 compatibility", () => {
     ]);
     expect(JSON.stringify(bridge.descriptors)).not.toContain("properties");
     expect(JSON.stringify(bridge.descriptors)).not.toContain("execute");
+    expect(bridge.catalogSnapshot.digest).toMatch(/^sha256:[a-f0-9]{64}$/);
+    expect(bridge.catalogSnapshot.entries).toEqual([
+      expect.objectContaining({
+        capabilityId: "tool:runtime:workspace-read",
+        executor: { kind: "tool-search", toolId: "openclaw:workspace-read" },
+        schemaHash: bridge.descriptors[0]?.schemaHash,
+      }),
+    ]);
 
     expect(await bridge.fallback.search("workspace read", 1)).toEqual([
       expect.objectContaining({ capabilityId: "tool:runtime:workspace-read" }),

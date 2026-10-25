@@ -1,0 +1,6 @@
+{
+  "componentCount": 5,
+  "withGaps": [],
+  "everyArtifactResolves": true,
+  "completionVerdict": "complete"
+}

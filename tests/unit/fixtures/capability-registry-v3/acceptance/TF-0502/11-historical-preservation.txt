@@ -1,0 +1,5 @@
+v1_schema=CapabilityCatalogABRun/v1
+v1_decision=fail
+v2_schema=CapabilityCatalogABRun/v2.1
+v2_decision=pass
+v2_protocol_sha_matches=True

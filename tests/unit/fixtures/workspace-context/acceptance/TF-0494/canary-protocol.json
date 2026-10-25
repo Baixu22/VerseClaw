@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "WorkspaceContextCanaryProtocol/v2",
+  "taskForestNodeId": "TF-0494",
+  "createdAt": "2026-10-22T00:00:00.000+08:00",
+  "supersedes": "canary-protocol-v1.json",
+  "harnessAmendment": "v1 was inconclusive: baseline answered without invoking tools and 10/80 outputs were empty/truncated. v2 changes elicitation to native tool definitions/function calls, raises max_output_tokens to 500, and treats native function_call as decision=call_tool. Sample size, strata, metrics, thresholds, CI method and stopping rule are unchanged.",
+  "endpoint": "http://127.0.0.1:3065/v1/responses",
+  "model": "space-bunny",
+  "design": "paired A/B; A=workspace context off, B=workspace context on; fixture order alternates AB/BA by stratum index",
+  "sampleSize": 40,
+  "strata": {
+    "recent-action-reuse": 10,
+    "duplicate-read-avoidance": 10,
+    "constraint-retention": 10,
+    "tool-selection": 10
+  },
+  "primaryMetrics": [
+    "unnecessary_repeat_tool_call_rate",
+    "task_pass_rate",
+    "latency_ms"
+  ],
+  "decisionRules": {
+    "repeatCallReduction": "point estimate > 0 and paired-bootstrap 95% CI lower bound > 0",
+    "taskPassNonInferiority": "paired-bootstrap 95% CI lower bound for B-A >= -0.05",
+    "p95Latency": "paired-bootstrap 95% CI upper bound for B/A <= 1.10",
+    "providerErrors": "provider error rate < 0.05; any stratum with fewer than 8 complete pairs is inconclusive"
+  },
+  "ciMethod": "paired bootstrap, 10000 resamples, percentile 95%, deterministic seed 4942026",
+  "stoppingRule": "fixed n=40; no early stopping; run all fixtures once after harness validation",
+  "inconclusiveRule": "missing/extra/duplicate fixture responses, parse failures above 10%, or any incomplete stratum -> fail/inconclusive, never pass",
+  "outputContract": "native Responses function_call => call_tool; otherwise concise text answer. JSON formatting is not a task metric.",
+  "toolElicitation": "When authoritative context is insufficient, call exactly one provided tool. When context supplies the fact, answer directly without a tool call.",
+  "maxOutputTokens": 500
+}

@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "CodingControlsDispositionVerification/v1",
+  "taskForestNodeId": "TF-0510",
+  "generatedAt": "2026-10-23T11:31:45.4267845Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "gatesStatus": "pass",
+  "completionVerdict": "complete",
+  "everyArtifactResolves": true,
+  "componentsWithGaps": null,
+  "graduationStatus": "graduated",
+  "gates": [
+    {
+      "id": "01-tf0510-acceptance",
+      "command": "TF-0510 disposition ledger guard",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/01-tf0510-acceptance.txt",
+      "outputSha256": "8209db80357bbdf2edddb2749d82eee21b6ebffd57a6f97264a6c4525b76a4fa"
+    },
+    {
+      "id": "02-patch-flow",
+      "command": "patch-flow gate, serial apply and orchestration suites",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/02-patch-flow.txt",
+      "outputSha256": "931b501018f919242cc580d5947f51f021fe3b3eac2fbcd9974461f099f46031"
+    },
+    {
+      "id": "02b-patchflow-trigger",
+      "command": "patch-flow product trigger suite",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/02b-patchflow-trigger.txt",
+      "outputSha256": "5bfe23dea768a08f3062fbe83ce6d11f21ebed8d36c3b70bfc3474f6c0008d0a"
+    },
+    {
+      "id": "03-stale-and-lease",
+      "command": "stale-write-guard and symbol-lease/WAL suites",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/03-stale-and-lease.txt",
+      "outputSha256": "a90f13293b2bc1eb2a6ca11e4bdbc9fc521ca4a2a37441bd5a42fedf2095ad52"
+    },
+    {
+      "id": "03b-stale-false-block",
+      "command": "labelled stale-write false-block corpus",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/03b-stale-false-block.txt",
+      "outputSha256": "2e5dea5081f4710d85e955ec507a0e3f3740235d950e8bae1a6b944bcdae6206"
+    },
+    {
+      "id": "03c-lease-multiprocess",
+      "command": "4-process symbol-lease contention benchmark",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/03c-lease-multiprocess.txt",
+      "outputSha256": "257b5de99a4f45953a1a2fd65bfebdc984ca9b0b9ae6b6cedc03066f206e208a"
+    },
+    {
+      "id": "04-worktree-isolation",
+      "command": "worktree backend and isolation request suites",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/04-worktree-isolation.txt",
+      "outputSha256": "5ab06b9be98aa35f9e6954f0a15e16fa56265ea85fddd744023b2c4999a11ea1"
+    },
+    {
+      "id": "05-root-worktree-wal",
+      "command": "worktree merge, sqlite WAL and session isolation suites",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/05-root-worktree-wal.txt",
+      "outputSha256": "c451aadc0eef717bf9d208cbba3e98af78c6eb5862d8fe99fcf831a361705456"
+    },
+    {
+      "id": "05b-retirement-invariants",
+      "command": "static audit: retired reachability removed, implementation preserved",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/05b-retirement-invariants.txt",
+      "outputSha256": "c679fc6fa16ff7463fd9dd2f895123766f29442ea93340b5180d0eb9995400dd"
+    },
+    {
+      "id": "06-typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/06-typecheck.txt",
+      "outputSha256": "07940d510a2752b16ce5a369070c4ba1eac18a52d287ea0bd758a9855ca22031"
+    },
+    {
+      "id": "07-lint-check",
+      "command": "pnpm run lint:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/07-lint-check.txt",
+      "outputSha256": "ed91e5d05fd3c19c493f34bdd1a4db9b548d89c47a1495891b175826edf376d1"
+    },
+    {
+      "id": "08-contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/08-contract-check.txt",
+      "outputSha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0"
+    },
+    {
+      "id": "09-no-bom",
+      "command": "node scripts/check-no-bom.mjs",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/09-no-bom.txt",
+      "outputSha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4"
+    },
+    {
+      "id": "10-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/10-diff-check.txt",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "11-regenerate-evidence",
+      "command": "recompute acceptance ledger from disk",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/11-regenerate-evidence.txt",
+      "outputSha256": "349ec865794c69fdd74372009a1c88a67cc16c891b7d64599927860e8c8ed3c9"
+    },
+    {
+      "id": "12-scope-audit",
+      "command": "git scope audit against node allowed paths",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/12-scope-audit.txt",
+      "outputSha256": "389831220895fd8cda5f94fee8e711399955e69f4ede74a885b48e23238d0a1a"
+    },
+    {
+      "id": "13-sha256sums-check",
+      "command": "PowerShell SHA256 recompute",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/coding-controls-tf0510/13-sha256sums-check.txt",
+      "outputSha256": "589b29cbaaa67715504528e16984fc10a29e0986704cc56b3edeb6fdebe7ec32"
+    }
+  ]
+}

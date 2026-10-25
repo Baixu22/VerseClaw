@@ -19,9 +19,9 @@
   },
   "taskForestDone": null,
   "ok": true,
-  "reportPath": "D:\\ClawX-work\\worktrees\\long-session-program-r2\\tests\\unit\\fixtures\\memory-authority\\acceptance\\TF-0498\\component-graduation-report.json",
+  "reportPath": "D:\\ClawX-work\\component-graduation-20261021\\tests\\unit\\fixtures\\memory-authority\\acceptance\\TF-0498\\component-graduation-report.json",
   "expected": {
-    "recomputeInputDigest": "852142cd35a3e80e051c3a78f9e6d2a67b667f1100e3bf1f6d6cd8867ee0d882"
+    "recomputeInputDigest": "21ee2b069e9567f52d52465e99fb7286c189b2f2d0368d7a890561e7cf8f4651"
   },
   "currentDefaultMode": "opt-in",
   "requireGraduation": true

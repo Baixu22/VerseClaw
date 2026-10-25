@@ -1,0 +1,755 @@
+{
+  "schemaVersion": "ModelCapabilityEffectiveStateEvidence/v1",
+  "taskForestNodeId": "TF-0512",
+  "generatedAt": "2026-10-24T08:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "adapter": "openclaw_runtime/src/runtime-core/model-capability-effective-state.ts",
+  "promptBoundary": "openclaw_runtime/src/context-engine/model-capability-prompt.ts",
+  "activeContextEngine": "context-runtime-kit",
+  "observations": {
+    "enabled": {
+      "source": "runtime",
+      "runtimeAvailability": {
+        "state": "enabled",
+        "source": "runtime.tool-inventory",
+        "reason": null,
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "driver": {
+        "id": "openclaw-runtime",
+        "kind": "runtime",
+        "state": "ready",
+        "version": null
+      },
+      "tool": {
+        "identity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        },
+        "callableName": "exec"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "apply_patch",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "edit",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "exec",
+          "authorization": "allowed",
+          "grant": {
+            "grantId": "grant-tf0512-active",
+            "state": "active",
+            "expiresAt": "2026-10-24T08:05:00.000Z"
+          }
+        },
+        {
+          "actionId": "write",
+          "authorization": "requires-approval",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      },
+      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
+      "effectiveDigest": "sha256:c3dc8964624f96c1d210beb972556cbf49f64c5b72a76a4c391d6a2a8a88acb0"
+    },
+    "loading": {
+      "source": "runtime",
+      "runtimeAvailability": {
+        "state": "partial",
+        "source": "runtime-state:fixture",
+        "reason": "tool-registry-loading",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "driver": {
+        "id": "runtime-loading",
+        "kind": "runtime",
+        "state": "loading",
+        "version": null
+      },
+      "tool": {
+        "identity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        },
+        "callableName": "exec"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "apply_patch",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "edit",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "exec",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "write",
+          "authorization": "requires-approval",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      },
+      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
+      "effectiveDigest": "sha256:1b212fd2d77f70304cb5e415a7a1c4d631aa6f1fd77da719c1768206ce443d4d"
+    },
+    "unavailable": {
+      "source": "runtime",
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "runtime-state:fixture",
+        "reason": "driver-unavailable",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "driver": {
+        "id": "runtime-unavailable",
+        "kind": "runtime",
+        "state": "unavailable",
+        "version": null
+      },
+      "tool": {
+        "identity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        },
+        "callableName": "exec"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "apply_patch",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "edit",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "exec",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "write",
+          "authorization": "requires-approval",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      },
+      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
+      "effectiveDigest": "sha256:7e0274e8113aa93ae6f7a30da9973d3143278fd6d1e1edcd81d8c81dbd656f01"
+    },
+    "degraded": {
+      "source": "runtime",
+      "runtimeAvailability": {
+        "state": "degraded",
+        "source": "runtime-state:fixture",
+        "reason": "partial-provider",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "driver": {
+        "id": "runtime-degraded",
+        "kind": "runtime",
+        "state": "error",
+        "version": null
+      },
+      "tool": {
+        "identity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        },
+        "callableName": "exec"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "apply_patch",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "edit",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "exec",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "write",
+          "authorization": "requires-approval",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      },
+      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
+      "effectiveDigest": "sha256:b0213b0d591cba3dee02005efdd6b372c641bfcc39dcbe14a0ab601cd288a540"
+    },
+    "quarantined": {
+      "source": "runtime",
+      "runtimeAvailability": {
+        "state": "quarantined",
+        "source": "tool-schema-quarantine",
+        "reason": "tool schema rejected",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "driver": {
+        "id": "openclaw-runtime",
+        "kind": "runtime",
+        "state": "ready",
+        "version": null
+      },
+      "tool": {
+        "identity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        },
+        "callableName": "exec"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "apply_patch",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "edit",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "exec",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "write",
+          "authorization": "requires-approval",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "quarantined",
+        "reason": "tool schema rejected",
+        "since": "2026-10-24T07:59:00.000Z"
+      },
+      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
+      "effectiveDigest": "sha256:483c9d38e9cbe0fa308e9c61186e8fe1f9063eb0e044ab4cf2d093020a38640a"
+    },
+    "expiredGrant": {
+      "source": "runtime",
+      "runtimeAvailability": {
+        "state": "enabled",
+        "source": "runtime.tool-inventory",
+        "reason": null,
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "driver": {
+        "id": "openclaw-runtime",
+        "kind": "runtime",
+        "state": "ready",
+        "version": null
+      },
+      "tool": {
+        "identity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        },
+        "callableName": "exec"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "apply_patch",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "edit",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "exec",
+          "authorization": "denied",
+          "grant": {
+            "grantId": "grant-tf0512-expired",
+            "state": "expired",
+            "expiresAt": "2026-10-24T07:59:59.000Z"
+          }
+        },
+        {
+          "actionId": "write",
+          "authorization": "requires-approval",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      },
+      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
+      "effectiveDigest": "sha256:1973bdcf4a3588902f1f0689d647f7536805ef5569fd2310b259dd880a3ae17e"
+    },
+    "revokedGrant": {
+      "source": "runtime",
+      "runtimeAvailability": {
+        "state": "enabled",
+        "source": "runtime.tool-inventory",
+        "reason": null,
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "driver": {
+        "id": "openclaw-runtime",
+        "kind": "runtime",
+        "state": "ready",
+        "version": null
+      },
+      "tool": {
+        "identity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        },
+        "callableName": "exec"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "apply_patch",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "edit",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "exec",
+          "authorization": "denied",
+          "grant": {
+            "grantId": "grant-tf0512-revoked",
+            "state": "revoked",
+            "expiresAt": null
+          }
+        },
+        {
+          "actionId": "write",
+          "authorization": "requires-approval",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      },
+      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
+      "effectiveDigest": "sha256:e4ac005e46c070867ec9d412ef38850f92ca7cde7f88a3980d9e9221e97e27c1"
+    },
+    "killSwitch": {
+      "source": "runtime",
+      "runtimeAvailability": {
+        "state": "disabled",
+        "source": "context-enhancement-kill-switch",
+        "reason": "global kill switch engaged",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "driver": {
+        "id": "openclaw-runtime",
+        "kind": "runtime",
+        "state": "ready",
+        "version": null
+      },
+      "tool": {
+        "identity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        },
+        "callableName": "exec"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "apply_patch",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "edit",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "exec",
+          "authorization": "requires-approval",
+          "grant": null
+        },
+        {
+          "actionId": "write",
+          "authorization": "requires-approval",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      },
+      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
+      "effectiveDigest": "sha256:227e51cc431da7ed121351de7bd8a49639aa954312fbeae87d7d96251581aa7a"
+    },
+    "unverified": {
+      "source": "runtime",
+      "runtimeAvailability": {
+        "state": "unknown",
+        "source": "runtime.flags.ack",
+        "reason": "runtime acknowledgement missing or stale",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "driver": {
+        "id": "unknown",
+        "kind": "unknown",
+        "state": "unknown",
+        "version": null
+      },
+      "tool": {
+        "identity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        },
+        "callableName": "exec"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "apply_patch",
+          "authorization": "unknown",
+          "grant": null
+        },
+        {
+          "actionId": "edit",
+          "authorization": "unknown",
+          "grant": null
+        },
+        {
+          "actionId": "exec",
+          "authorization": "unknown",
+          "grant": null
+        },
+        {
+          "actionId": "write",
+          "authorization": "unknown",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "unknown",
+        "generation": null,
+        "source": null,
+        "rejectedFields": [],
+        "observedAt": null
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      },
+      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
+      "effectiveDigest": "sha256:1e6b7dc98a4ef8a71a79213419004d312574a1e07321b948a2cfcc6445005c1d"
+    },
+    "restartMismatch": {
+      "source": "runtime",
+      "runtimeAvailability": {
+        "state": "unknown",
+        "source": "runtime.flags.ack",
+        "reason": "runtime acknowledgement missing or stale",
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "driver": {
+        "id": "unknown",
+        "kind": "unknown",
+        "state": "unknown",
+        "version": null
+      },
+      "tool": {
+        "identity": {
+          "id": "component.coding-execution-backend",
+          "label": "Coding tools and file execution",
+          "kind": "runtime-service"
+        },
+        "callableName": "exec"
+      },
+      "actionAuthorization": [
+        {
+          "actionId": "apply_patch",
+          "authorization": "unknown",
+          "grant": null
+        },
+        {
+          "actionId": "edit",
+          "authorization": "unknown",
+          "grant": null
+        },
+        {
+          "actionId": "exec",
+          "authorization": "unknown",
+          "grant": null
+        },
+        {
+          "actionId": "write",
+          "authorization": "unknown",
+          "grant": null
+        }
+      ],
+      "memory": {
+        "scope": "workspace",
+        "read": "allowed",
+        "write": "denied",
+        "candidate": "available"
+      },
+      "knowledge": {
+        "appliedState": "stale",
+        "version": "knowledge-tf0512",
+        "digest": "sha256:tf0512-knowledge"
+      },
+      "ack": {
+        "state": "acknowledged",
+        "generation": "gateway-tf0512",
+        "source": "runtime.flags.ack",
+        "rejectedFields": [],
+        "observedAt": "2026-10-24T08:00:00.000Z"
+      },
+      "quarantine": {
+        "state": "clear",
+        "reason": null,
+        "since": null
+      },
+      "staticDigest": "sha256:a0fd98bc360daac8426c512081de8ff22ebd59f32af8f8d93a17c37651802743",
+      "effectiveDigest": "sha256:47e66a72ec632bf74013d1598bc59830e4761e5626c8ae5ab7ac8d78f2e63c5d"
+    }
+  },
+  "digestAudit": {
+    "staticDigestStableAcrossEffectiveChanges": true,
+    "effectiveDigestChangesWithGrantOrConfig": true,
+    "observedAtChanged": true,
+    "effectiveDigestStableForObservationOnlyChange": true
+  },
+  "toolOutcomeCrossCheck": {
+    "noGrantAuthorization": "requires-approval",
+    "deniedOutcomeConsistent": true,
+    "deniedButProfileWouldAllowSucceeded": true,
+    "activeGrantSucceededConsistent": true
+  },
+  "generationGuard": {
+    "staleCompletionRejected": true,
+    "newerGeneration": 2
+  },
+  "prompt": {
+    "text": "Capability positioning (authoritative):\nDefault: Agent memory cards, Application shell and Settings, Approvals and action permissions, Coding recovery and verification, Coding tools and file execution, Context reading and search, Knowledge retrieval, Knowledge review, Skills and MCP connections, Task ledger, Tool context, Tool discovery, Workspace context.\nAdvanced: Billing and usage, Browser sessions, ClawGraph, Code review, Developer settings, Image generation, Inbox, Observability, Remote tasks, Scheduled tasks and auto-approval, Worktree isolation.\nCurrent restrictions: Agent memory cards=disabled+requires-approval; Application shell and Settings=disabled; Approvals and action permissions=disabled; Billing and usage=disabled; Browser sessions=disabled+requires-approval; ClawGraph=disabled; Code review=disabled; Coding recovery and verification=disabled; Coding tools and file execution=requires-approval; Context reading and search=disabled; Developer settings=disabled; Image generation=disabled; Inbox=disabled; Knowledge retrieval=disabled; Knowledge review=disabled; Observability=disabled; Remote tasks=disabled; Scheduled tasks and auto-approval=disabled; Skills and MCP connections=disabled; Task ledger=disabled; Tool context=disabled; Tool discovery=disabled; Workspace context=disabled; Worktree isolation=disabled.\nInternal and retired capabilities are not user-facing promises. Do not claim a capability beyond these listed facts.",
+    "budget": {
+      "maxChars": 2000,
+      "usedChars": 1458,
+      "remainingChars": 542,
+      "chargedTo": "reserved-system-prompt",
+      "workContextCharsUsed": 0
+    }
+  },
+  "boundaries": [
+    "Fixture-driven runtime adapter evidence; no live provider or Electron E2E is claimed.",
+    "The default context-runtime-kit engine and the explicit legacy fallback are both wired to this adapter.",
+    "No product default, public release, GA, liveReady, or productApproved value is changed."
+  ]
+}

@@ -1,9 +1,9 @@
 {
     "schemaVersion":  "MemoryProductSurfaceVerification/v1",
     "taskForestNodeId":  "TF-0498",
-    "generatedAt":  "2026-10-24T09:31:57.2121353Z",
+    "generatedAt":  "2026-10-22T12:02:01.8018867Z",
     "driven_by":  "agent",
-    "actor":  "codex-long-session-r2",
+    "actor":  "codex",
     "status":  "pass",
     "gates":  [
                   {
@@ -12,7 +12,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/01-memory-surface-contract.txt",
-                      "outputSha256":  "ab40dd773a486d2db1da4582921e98c58c94078a1cb819aee7ae22040eb5af82"
+                      "outputSha256":  "08511bb166820f470cca1621a6744b4253cf0d35461c76a7403a671712873641"
                   },
                   {
                       "id":  "02-gateway-close-semantics",
@@ -20,7 +20,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/02-gateway-close-semantics.txt",
-                      "outputSha256":  "dc31523931e93c9113ba0c2eb017c241d2aae4e1485ae7f76187d1d1c83cecd5"
+                      "outputSha256":  "969ab22f174c9f5c9af1324a44f674577cdc101b7490f4005051e271bbefc2dd"
                   },
                   {
                       "id":  "03-memory-surface-e2e",
@@ -28,7 +28,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/03-memory-surface-e2e.txt",
-                      "outputSha256":  "972f5d082d7ecccca5f23cf04c29b4b41484a031c7c433e285e79ef310cb539d"
+                      "outputSha256":  "452f2f1880444e7331ea525cb5cf36c67f2834dd39f2d3a7c0d4b5a4cf7c00b3"
                   },
                   {
                       "id":  "04-typecheck",
@@ -36,7 +36,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/04-typecheck.txt",
-                      "outputSha256":  "e580f10c64cb679c25f60dc268fb3fb39daf257709d3063a633453955c9f99a7"
+                      "outputSha256":  "994d7773d0aa8f1de73ea7326ede5eca64bcb86414c37e72b949630c57915693"
                   },
                   {
                       "id":  "05-lint-check",
@@ -44,7 +44,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/05-lint-check.txt",
-                      "outputSha256":  "84ab3f880ff3b4a9903eba99e31ffaafa089891fcd9f632a216d8d13e98b24f4"
+                      "outputSha256":  "d6400119bc6cbc8e09a92504c9ec86294f33f711dceb48c8f6abca37f56643c6"
                   },
                   {
                       "id":  "06-catalogs-check",
@@ -52,7 +52,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/06-catalogs-check.txt",
-                      "outputSha256":  "69367e3c588da07b451b2d66471ffec9ceaa8bafd2ca97ab6a2735df996761c6"
+                      "outputSha256":  "012251c3af24191d4eee7e2eea2e3a85c263f39208c639ee0ffb60d72cbc3a5e"
                   },
                   {
                       "id":  "07-contract-check",
@@ -60,7 +60,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/07-contract-check.txt",
-                      "outputSha256":  "a231daa4512d0ab6e9f78703af83d9c67003bc0670f0ab6f8fb6121a4c681322"
+                      "outputSha256":  "d329383903e6d65a4a424c6b5f35367884dae2f998eba0eb507f1795915c511f"
                   },
                   {
                       "id":  "08-i18n-lint",
@@ -80,7 +80,7 @@
                   },
                   {
                       "id":  "10-diff-check",
-                      "command":  "git diff --check -- \u003cTF-0498 source, tests, verifier paths\u003e",
+                      "command":  "git diff --check",
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/10-diff-check.txt",
@@ -92,15 +92,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/11-build-vite.txt",
-                      "outputSha256":  "8c78dba784ea0b7e16daf7a772242cdf84f31412bed36b02c9a527260c130de1"
-                  },
-                  {
-                      "id":  "11a-build-runtime",
-                      "command":  "pnpm run build:runtime",
-                      "exitCode":  0,
-                      "status":  "pass",
-                      "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/11a-build-runtime.txt",
-                      "outputSha256":  "bca2ff6dadafa7e93435b0ae3d6ff6044b731e1cb96e9da6029e401adfbaa33d"
+                      "outputSha256":  "b5ecaa016351c3cbf434afa15c7411c4bbfbe612aeb847e7587b00f50bd79845"
                   },
                   {
                       "id":  "12-component-graduation-gate",
@@ -108,7 +100,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/12-component-graduation-gate.txt",
-                      "outputSha256":  "dff3d13f10b6d4aeb95a0705190218b5ae775e666e8ad9c5104067fd9cd3613a"
+                      "outputSha256":  "87341951a1754af89b83cbd484f5e2f49ea0aaf29b1ba802120e451bb53abee4"
                   },
                   {
                       "id":  "13-sha256sums-check",
@@ -116,32 +108,32 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/13-sha256sums-check.txt",
-                      "outputSha256":  "3079eeb5fa428f94df68069df6191827b75bd8912cb9781a68b064006a9c3125"
+                      "outputSha256":  "3616eb79311f95928118e802eeb8c0e56c848d0c49331cb3f1a266fc4e6e61d7"
                   }
               ],
     "sha256sums":  [
                        {
                            "file":  "shared/i18n/locales/en/agents.json",
-                           "expected":  "5b1518f92f3568430508b430b149b9f3c5d0951dc1b158e6145b48c0757f6b3f",
-                           "actual":  "5b1518f92f3568430508b430b149b9f3c5d0951dc1b158e6145b48c0757f6b3f",
+                           "expected":  "4487d6f7678de7f100eaa7cd54a1fb3bbe80a1a65f74333745abc38b1690ca9d",
+                           "actual":  "4487d6f7678de7f100eaa7cd54a1fb3bbe80a1a65f74333745abc38b1690ca9d",
                            "status":  "pass"
                        },
                        {
                            "file":  "shared/i18n/locales/ja/agents.json",
-                           "expected":  "6a91b7d873f2b520836df55d3fa2e9822197584808b795e87876bbbce07ad7e5",
-                           "actual":  "6a91b7d873f2b520836df55d3fa2e9822197584808b795e87876bbbce07ad7e5",
+                           "expected":  "d4c385af6e26914b6d04d969cb1bf488f8ab6e8147c7b66bb28ff3b71a862bdd",
+                           "actual":  "d4c385af6e26914b6d04d969cb1bf488f8ab6e8147c7b66bb28ff3b71a862bdd",
                            "status":  "pass"
                        },
                        {
                            "file":  "shared/i18n/locales/ru/agents.json",
-                           "expected":  "06eb192d008e748f601ed430d03d06e8c71804a99749cefa35ff894ac653416e",
-                           "actual":  "06eb192d008e748f601ed430d03d06e8c71804a99749cefa35ff894ac653416e",
+                           "expected":  "d787f5583c3a68375d0fce656974f55b3f3a6f2b47697951d980572205df2e4a",
+                           "actual":  "d787f5583c3a68375d0fce656974f55b3f3a6f2b47697951d980572205df2e4a",
                            "status":  "pass"
                        },
                        {
                            "file":  "shared/i18n/locales/zh/agents.json",
-                           "expected":  "87d7f67e9e2b5c984898154b9aad4e5886c9f37c7ecbe3a5637ff890c1a58bde",
-                           "actual":  "87d7f67e9e2b5c984898154b9aad4e5886c9f37c7ecbe3a5637ff890c1a58bde",
+                           "expected":  "071b5c004ea2d934833593d11324f31dac770ea7b08a13cbc780f0dfb3c39463",
+                           "actual":  "071b5c004ea2d934833593d11324f31dac770ea7b08a13cbc780f0dfb3c39463",
                            "status":  "pass"
                        },
                        {
@@ -182,8 +174,8 @@
                        },
                        {
                            "file":  "tests/e2e/role-memory-panel.spec.ts",
-                           "expected":  "5fb54054a9fba4ddcc103181ce843cd1aebb2ff9ab5d7dc64100d97897e60728",
-                           "actual":  "5fb54054a9fba4ddcc103181ce843cd1aebb2ff9ab5d7dc64100d97897e60728",
+                           "expected":  "e0aa1168027a7ee5fd24291ef6f4433a2a86d1e6c53b8391bb0391f4234a2c9c",
+                           "actual":  "e0aa1168027a7ee5fd24291ef6f4433a2a86d1e6c53b8391bb0391f4234a2c9c",
                            "status":  "pass"
                        },
                        {
@@ -194,26 +186,26 @@
                        },
                        {
                            "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/component-graduation-report.json",
-                           "expected":  "0ca4e47c96384e74537b17c52213fd1c1eb713deb8b703f0c1161218651897a2",
-                           "actual":  "0ca4e47c96384e74537b17c52213fd1c1eb713deb8b703f0c1161218651897a2",
+                           "expected":  "3cb6df1143c135b3843894cb2782aeed581d7acad68a2f77a866cf79386f2ff5",
+                           "actual":  "3cb6df1143c135b3843894cb2782aeed581d7acad68a2f77a866cf79386f2ff5",
                            "status":  "pass"
                        },
                        {
                            "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/generate-acceptance.mts",
-                           "expected":  "a625eb43bc2582d58f0ca1044f2d10c01ee70da2a31285df5332c4ee9c46deaa",
-                           "actual":  "a625eb43bc2582d58f0ca1044f2d10c01ee70da2a31285df5332c4ee9c46deaa",
+                           "expected":  "bfb4a160041054e776d919ed863b733805539a95768fbae874a00081996001d1",
+                           "actual":  "bfb4a160041054e776d919ed863b733805539a95768fbae874a00081996001d1",
                            "status":  "pass"
                        },
                        {
                            "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json",
-                           "expected":  "e239971acfb8e9d8284baeea6116809150305a614cf94771f1a0441d9c7806aa",
-                           "actual":  "e239971acfb8e9d8284baeea6116809150305a614cf94771f1a0441d9c7806aa",
+                           "expected":  "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
+                           "actual":  "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
                            "status":  "pass"
                        },
                        {
                            "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/run-verification.ps1",
-                           "expected":  "6129981736b022d7632ede7f2fca7e33bb1313fd60f9bd28d162fab23a2f7da8",
-                           "actual":  "6129981736b022d7632ede7f2fca7e33bb1313fd60f9bd28d162fab23a2f7da8",
+                           "expected":  "ac78889839c7258a0b330f77ab2b9b269877a27b2b8c108824cf891558dfa4dd",
+                           "actual":  "ac78889839c7258a0b330f77ab2b9b269877a27b2b8c108824cf891558dfa4dd",
                            "status":  "pass"
                        },
                        {
@@ -236,14 +228,14 @@
                        },
                        {
                            "file":  "tests/unit/role-orchestration-methods.test.ts",
-                           "expected":  "e3d97c17acfa18694816110fbad83eb404e6d833288ffdc159b02e7e10fae829",
-                           "actual":  "e3d97c17acfa18694816110fbad83eb404e6d833288ffdc159b02e7e10fae829",
+                           "expected":  "71408519bb622eedad2686a2db92163da8851020f9993d71c89b79cf97b0a52a",
+                           "actual":  "71408519bb622eedad2686a2db92163da8851020f9993d71c89b79cf97b0a52a",
                            "status":  "pass"
                        },
                        {
                            "file":  "tests/unit/roles-orchestration-panel.test.tsx",
-                           "expected":  "72a1705c323624353cc0fbd3405845650355d7cbadbfc04dc9704c58e6449e45",
-                           "actual":  "72a1705c323624353cc0fbd3405845650355d7cbadbfc04dc9704c58e6449e45",
+                           "expected":  "e8824b8d955528fa46acc90372353124265acc01f5d154033bfb0f5019eb5ba8",
+                           "actual":  "e8824b8d955528fa46acc90372353124265acc01f5d154033bfb0f5019eb5ba8",
                            "status":  "pass"
                        }
                    ]

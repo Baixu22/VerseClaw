@@ -111,14 +111,16 @@ describe('ModelCapabilityProfile/v1', () => {
     const expectedVisibleIds = COMPONENT_DISPOSITION_ENTRIES.filter((candidate) => candidate.visibility === 'user').map((candidate) => candidate.id).sort();
     expect(visibleEntries.map((candidate) => candidate.capabilityId).sort()).toEqual(expectedVisibleIds);
     expect(new Set(visibleEntries.map((candidate) => candidate.capabilityId)).size).toBe(visibleEntries.length);
-    expect(visibleEntries).toHaveLength(25);
-    expect(COMPONENT_AUTHORITY_MANIFEST.components).toHaveLength(35);
+    expect(visibleEntries).toHaveLength(expectedVisibleIds.length);
+    expect(visibleEntries.map((candidate) => candidate.capabilityId)).not.toContain(
+      'component.v3-capability-catalog',
+    );
     expect(new Set(profile.entries.map((candidate) => candidate.capabilityId)).size).toBe(profile.entries.length);
 
     const result = validateModelCapabilityProfile(profile);
     expect(result.issues, JSON.stringify(result.issues)).toEqual([]);
     expect(result.ok).toBe(true);
-    expect(result.userVisibleCapabilityCount).toBe(25);
+    expect(result.userVisibleCapabilityCount).toBe(expectedVisibleIds.length);
   });
 
   it('keeps static disposition, runtime availability, action authorization, memory and knowledge as separate axes', () => {
@@ -242,7 +244,9 @@ describe('ModelCapabilityProfile/v1', () => {
     expect(prompt.text).toContain('Advanced:');
     expect(prompt.text).toContain('requires-approval');
     expect(prompt.text).toContain('quarantined');
-    expect(prompt.text).not.toMatch(/\b(?:DCS|VToken|C6|RC-03|V3)\b/u);
+        // TF-0504: the internal execution/evidence substrate must not be self-described
+    // as a user-visible capability either.
+    expect(prompt.text).not.toMatch(/\b(?:DCS|VToken|C6|RC-03|V3|VerseShell|Observability recorder|event[- ]log)\b/u);
     for (const candidate of profile.entries.filter((record) => record.static.disposition === 'internal' || record.static.disposition === 'retired')) {
       expect(prompt.text).not.toContain(candidate.static.displayName);
     }
@@ -252,6 +256,23 @@ describe('ModelCapabilityProfile/v1', () => {
     expect(truncated.promptAddition.budget.workContextCharsUsed).toBe(0);
     expect(truncated.promptAddition.omittedCapabilityIds.length).toBeGreaterThan(0);
     expect(truncated.diagnostics.some((diagnostic) => diagnostic.code === 'prompt-capability-omitted')).toBe(true);
+  });
+
+  it('binds a supplied capability catalog identity into the effective digest', () => {
+    const identity = {
+      schemaVersion: 'CapabilityCatalogSnapshot/v1',
+      digest: `sha256:${'a'.repeat(64)}`,
+    };
+    const bound = build({ catalogIdentity: identity });
+    expect(bound.catalogIdentity).toEqual(identity);
+    expect(build().effectiveDigest).not.toBe(bound.effectiveDigest);
+    expect(profileInput({ catalogIdentity: identity })).toMatchObject({ catalogIdentity: identity });
+
+    const tampered = structuredClone(bound) as ModelCapabilityProfile;
+    tampered.catalogIdentity = { ...identity, digest: `sha256:${'b'.repeat(64)}` };
+    const result = validateModelCapabilityProfile(tampered);
+    expect(result.ok).toBe(false);
+    expect(result.issues.map((entryIssue) => entryIssue.code)).toContain('effective_digest_mismatch');
   });
 
   it('rejects invalid effective state inputs with explicit negative issue codes', () => {

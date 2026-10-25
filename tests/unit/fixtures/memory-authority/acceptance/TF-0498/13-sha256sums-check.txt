@@ -1,26 +1,26 @@
 [
     {
         "file":  "shared/i18n/locales/en/agents.json",
-        "expected":  "5b1518f92f3568430508b430b149b9f3c5d0951dc1b158e6145b48c0757f6b3f",
-        "actual":  "5b1518f92f3568430508b430b149b9f3c5d0951dc1b158e6145b48c0757f6b3f",
+        "expected":  "4487d6f7678de7f100eaa7cd54a1fb3bbe80a1a65f74333745abc38b1690ca9d",
+        "actual":  "4487d6f7678de7f100eaa7cd54a1fb3bbe80a1a65f74333745abc38b1690ca9d",
         "status":  "pass"
     },
     {
         "file":  "shared/i18n/locales/ja/agents.json",
-        "expected":  "6a91b7d873f2b520836df55d3fa2e9822197584808b795e87876bbbce07ad7e5",
-        "actual":  "6a91b7d873f2b520836df55d3fa2e9822197584808b795e87876bbbce07ad7e5",
+        "expected":  "d4c385af6e26914b6d04d969cb1bf488f8ab6e8147c7b66bb28ff3b71a862bdd",
+        "actual":  "d4c385af6e26914b6d04d969cb1bf488f8ab6e8147c7b66bb28ff3b71a862bdd",
         "status":  "pass"
     },
     {
         "file":  "shared/i18n/locales/ru/agents.json",
-        "expected":  "06eb192d008e748f601ed430d03d06e8c71804a99749cefa35ff894ac653416e",
-        "actual":  "06eb192d008e748f601ed430d03d06e8c71804a99749cefa35ff894ac653416e",
+        "expected":  "d787f5583c3a68375d0fce656974f55b3f3a6f2b47697951d980572205df2e4a",
+        "actual":  "d787f5583c3a68375d0fce656974f55b3f3a6f2b47697951d980572205df2e4a",
         "status":  "pass"
     },
     {
         "file":  "shared/i18n/locales/zh/agents.json",
-        "expected":  "87d7f67e9e2b5c984898154b9aad4e5886c9f37c7ecbe3a5637ff890c1a58bde",
-        "actual":  "87d7f67e9e2b5c984898154b9aad4e5886c9f37c7ecbe3a5637ff890c1a58bde",
+        "expected":  "071b5c004ea2d934833593d11324f31dac770ea7b08a13cbc780f0dfb3c39463",
+        "actual":  "071b5c004ea2d934833593d11324f31dac770ea7b08a13cbc780f0dfb3c39463",
         "status":  "pass"
     },
     {
@@ -61,8 +61,8 @@
     },
     {
         "file":  "tests/e2e/role-memory-panel.spec.ts",
-        "expected":  "5fb54054a9fba4ddcc103181ce843cd1aebb2ff9ab5d7dc64100d97897e60728",
-        "actual":  "5fb54054a9fba4ddcc103181ce843cd1aebb2ff9ab5d7dc64100d97897e60728",
+        "expected":  "e0aa1168027a7ee5fd24291ef6f4433a2a86d1e6c53b8391bb0391f4234a2c9c",
+        "actual":  "e0aa1168027a7ee5fd24291ef6f4433a2a86d1e6c53b8391bb0391f4234a2c9c",
         "status":  "pass"
     },
     {
@@ -73,26 +73,26 @@
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/component-graduation-report.json",
-        "expected":  "0ca4e47c96384e74537b17c52213fd1c1eb713deb8b703f0c1161218651897a2",
-        "actual":  "0ca4e47c96384e74537b17c52213fd1c1eb713deb8b703f0c1161218651897a2",
+        "expected":  "3cb6df1143c135b3843894cb2782aeed581d7acad68a2f77a866cf79386f2ff5",
+        "actual":  "3cb6df1143c135b3843894cb2782aeed581d7acad68a2f77a866cf79386f2ff5",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/generate-acceptance.mts",
-        "expected":  "a625eb43bc2582d58f0ca1044f2d10c01ee70da2a31285df5332c4ee9c46deaa",
-        "actual":  "a625eb43bc2582d58f0ca1044f2d10c01ee70da2a31285df5332c4ee9c46deaa",
+        "expected":  "bfb4a160041054e776d919ed863b733805539a95768fbae874a00081996001d1",
+        "actual":  "bfb4a160041054e776d919ed863b733805539a95768fbae874a00081996001d1",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/raw-evidence.json",
-        "expected":  "e239971acfb8e9d8284baeea6116809150305a614cf94771f1a0441d9c7806aa",
-        "actual":  "e239971acfb8e9d8284baeea6116809150305a614cf94771f1a0441d9c7806aa",
+        "expected":  "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
+        "actual":  "ebfe63e3430321ba6dcb0e08c41d68754b40dd1002c01d6a2343cdf44ba82274",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0498/run-verification.ps1",
-        "expected":  "6129981736b022d7632ede7f2fca7e33bb1313fd60f9bd28d162fab23a2f7da8",
-        "actual":  "6129981736b022d7632ede7f2fca7e33bb1313fd60f9bd28d162fab23a2f7da8",
+        "expected":  "ac78889839c7258a0b330f77ab2b9b269877a27b2b8c108824cf891558dfa4dd",
+        "actual":  "ac78889839c7258a0b330f77ab2b9b269877a27b2b8c108824cf891558dfa4dd",
         "status":  "pass"
     },
     {
@@ -115,14 +115,14 @@
     },
     {
         "file":  "tests/unit/role-orchestration-methods.test.ts",
-        "expected":  "e3d97c17acfa18694816110fbad83eb404e6d833288ffdc159b02e7e10fae829",
-        "actual":  "e3d97c17acfa18694816110fbad83eb404e6d833288ffdc159b02e7e10fae829",
+        "expected":  "71408519bb622eedad2686a2db92163da8851020f9993d71c89b79cf97b0a52a",
+        "actual":  "71408519bb622eedad2686a2db92163da8851020f9993d71c89b79cf97b0a52a",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/roles-orchestration-panel.test.tsx",
-        "expected":  "72a1705c323624353cc0fbd3405845650355d7cbadbfc04dc9704c58e6449e45",
-        "actual":  "72a1705c323624353cc0fbd3405845650355d7cbadbfc04dc9704c58e6449e45",
+        "expected":  "e8824b8d955528fa46acc90372353124265acc01f5d154033bfb0f5019eb5ba8",
+        "actual":  "e8824b8d955528fa46acc90372353124265acc01f5d154033bfb0f5019eb5ba8",
         "status":  "pass"
     }
 ]

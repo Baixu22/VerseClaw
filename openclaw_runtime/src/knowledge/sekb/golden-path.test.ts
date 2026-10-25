@@ -59,7 +59,9 @@ describe("SEKB golden path (TF-0004)", () => {
     expect(result.candidatesBeforeFilter).toBeGreaterThanOrEqual(1);
     expect(result.candidatesAfterFilter).toBeGreaterThanOrEqual(1);
     expect(result.principleId).toBeTruthy();
-    expect(result.principle?.created_by).toBe("human");
+    expect(result.principle?.created_by).toBe("agent");
+    expect(result.principle?.metadata.drivenBy).toBe("agent");
+    expect(result.principle?.metadata.actor).toBe("codex");
     expect(result.principle?.title).toContain("golden-path");
     expect(result.evaluation.chainComplete).toBe(true);
     expect(result.evaluation.writeOccurredOnlyAfterConfirm).toBe(true);

@@ -21,6 +21,10 @@ import { collectRuntimeFlagAck, resolveDcsFlagAckTuning } from './dcs-flag-ack';
 import {
   asBooleanFlag,
   DCS_PREVIEW_COMBO_FLAG_IDS,
+  WORKSPACE_CONTEXT_FLAG_IDS,
+  type WorkspaceContextSetPayload,
+  type WorkspaceContextSetResult,
+  type WorkspaceContextState,
   getConfigPathValue,
   getWritableFlagSpec,
   isWritableFlagId,
@@ -39,6 +43,7 @@ import {
   type DcsProdObservabilitySnapshot,
   type DcsWritableFlagSpec,
 } from '../../shared/dcs/prod-flags-control';
+import { buildWorkspaceContextProfile } from '../../shared/dcs/workspace-context-profile';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { listProviderAccounts } from './providers/provider-store';
 
@@ -499,38 +504,22 @@ export async function getDcsPreviewState(): Promise<DcsPreviewState> {
  * covering every combo flag. `applied` still only comes from a complete
  * current-generation acknowledgement (FP-P0-04 semantics unchanged).
  */
-export async function setDcsPreview(
-  payload: DcsPreviewSetPayload,
-  gatewayManager: GatewayManager,
-): Promise<DcsPreviewSetResult> {
-  const enabled = Boolean(payload?.enabled);
-  const restartGateway =
-    typeof payload?.restartGateway === 'boolean'
-      ? payload.restartGateway
-      : process.env.VERSE_CLAW_E2E !== '1';
-  const specs = previewComboSpecs();
+type ComboFlagSetParams = {
+  ids: readonly string[];
+  specs: readonly DcsWritableFlagSpec[];
+  enabled: boolean;
+  restartGateway: boolean;
+  gatewayManager: GatewayManager;
+  logTag: string;
+};
 
-  if (enabled) {
-    const missing = await resolveDcsPreviewPrereqs();
-    if (missing.length > 0) {
-      return {
-        success: false,
-        enabled: false,
-        status: 'error',
-        restartedGateway: false,
-        comboFlagIds: DCS_PREVIEW_COMBO_FLAG_IDS,
-        missingPrereqs: missing,
-        error: `Preview prerequisites missing: ${missing.join(', ')}`,
-      };
-    }
-  }
-
+/** Apply a declared combo with one save/restart/ack sequence. */
+async function setComboFlags(params: ComboFlagSetParams): Promise<WorkspaceContextSetResult> {
+  const { ids, specs, enabled, restartGateway, gatewayManager, logTag } = params;
   try {
     for (const spec of specs) {
       await setSetting(spec.storeKey as keyof AppSettings, enabled as never);
-      if (spec.controlKind === 'config') {
-        await writeConfigEnabled(spec, enabled);
-      }
+      if (spec.controlKind === 'config') await writeConfigEnabled(spec, enabled);
       if (spec.controlKind === 'env') {
         if (enabled) {
           process.env[spec.targetKey] = '1';
@@ -543,12 +532,6 @@ export async function setDcsPreview(
     }
 
     let restartedGateway = false;
-    // Writing the combo config above trips config-sync's file watcher, which
-    // kicks off its own reload/restart. That leaves the gateway transiently in
-    // `starting` for a few seconds — and this guard used to read that as
-    // `gateway-not-running` and bail to `pending-restart` without ever
-    // collecting the ack, so a correctly-applied flag read as stuck (FP-P1-07 /
-    // FP-P1-05). Let an in-flight (re)start settle before deciding.
     const settledState = restartGateway
       ? await waitForGatewaySettled(gatewayManager)
       : gatewayManager.getStatus().state;
@@ -558,7 +541,7 @@ export async function setDcsPreview(
         enabled,
         status: 'pending-restart',
         restartedGateway: false,
-        comboFlagIds: DCS_PREVIEW_COMBO_FLAG_IDS,
+        comboFlagIds: ids,
         ackTrail: ['saved', 'pending-restart'],
         failureReason: 'gateway-not-running',
         operatorHintKey: 'developer.dcsProdFlags.ackHint.gatewayNotRunning',
@@ -569,13 +552,13 @@ export async function setDcsPreview(
       await restartGatewayWithinBudget(gatewayManager);
       restartedGateway = true;
     } catch (error) {
-      logger.warn('[dcs-preview] gateway restart failed after combo set:', error);
+      logger.warn(`[${logTag}] gateway restart failed after combo set:`, error);
       return {
         success: true,
         enabled,
         status: 'pending-restart',
         restartedGateway: false,
-        comboFlagIds: DCS_PREVIEW_COMBO_FLAG_IDS,
+        comboFlagIds: ids,
         ackTrail: ['saved', 'pending-restart'],
         failureReason: 'restart-failed',
         operatorHintKey: 'developer.dcsProdFlags.ackHint.restartFailed',
@@ -590,8 +573,7 @@ export async function setDcsPreview(
     const outcome = await collectRuntimeFlagAck({
       expectedGeneration: () => expectedGeneration,
       isRunning: () => gatewayManager.getStatus().state === 'running',
-      requestAck: async () =>
-        await gatewayManager.rpc('runtime.flags.ack', { requestedFlags }),
+      requestAck: async () => await gatewayManager.rpc('runtime.flags.ack', { requestedFlags }),
       ...tuning,
     });
     return {
@@ -599,7 +581,7 @@ export async function setDcsPreview(
       enabled,
       status: outcome.state,
       restartedGateway,
-      comboFlagIds: DCS_PREVIEW_COMBO_FLAG_IDS,
+      comboFlagIds: ids,
       ackTrail: outcome.trail,
       gatewayGeneration: expectedGeneration,
       ackWaitMs: Date.now() - ackStartedAt,
@@ -609,17 +591,101 @@ export async function setDcsPreview(
       ...(outcome.operatorHintKey ? { operatorHintKey: outcome.operatorHintKey } : {}),
     };
   } catch (error) {
-    logger.error('[dcs-preview] combo set failed:', error);
+    logger.error(`[${logTag}] combo set failed:`, error);
     return {
       success: false,
       enabled,
       status: 'error',
       restartedGateway: false,
-      comboFlagIds: DCS_PREVIEW_COMBO_FLAG_IDS,
+      comboFlagIds: ids,
       error: String(error),
     };
   }
 }
+
+/** FP-P1-03: legacy developer preview combo. */
+export async function setDcsPreview(
+  payload: DcsPreviewSetPayload,
+  gatewayManager: GatewayManager,
+): Promise<DcsPreviewSetResult> {
+  const enabled = Boolean(payload?.enabled);
+  const restartGateway = typeof payload?.restartGateway === 'boolean'
+    ? payload.restartGateway
+    : process.env.VERSE_CLAW_E2E !== '1';
+  if (enabled) {
+    const missing = await resolveDcsPreviewPrereqs();
+    if (missing.length > 0) {
+      return {
+        success: false,
+        enabled: false,
+        status: 'error',
+        restartedGateway: false,
+        comboFlagIds: DCS_PREVIEW_COMBO_FLAG_IDS,
+        missingPrereqs: missing,
+        error: `Preview prerequisites missing: ${missing.join(', ')}`,
+      };
+    }
+  }
+  return await setComboFlags({
+    ids: DCS_PREVIEW_COMBO_FLAG_IDS,
+    specs: previewComboSpecs(),
+    enabled,
+    restartGateway,
+    gatewayManager,
+    logTag: 'dcs-preview',
+  });
+}
+
+function workspaceContextSpecs(): DcsWritableFlagSpec[] {
+  return WORKSPACE_CONTEXT_FLAG_IDS.map((id) => getWritableFlagSpec(id)).filter(
+    (spec): spec is DcsWritableFlagSpec => Boolean(spec),
+  );
+}
+
+/** One user-level Workspace Context switch over recent actions + tool catalog. */
+export async function getWorkspaceContextState(
+  gatewayManager: GatewayManager,
+): Promise<WorkspaceContextState> {
+  const snapshot = await getDcsProdFlagsSnapshot(gatewayManager);
+  const flagIds = new Set<string>(WORKSPACE_CONTEXT_FLAG_IDS);
+  const flags = snapshot.flags.filter((flag) => flagIds.has(flag.id));
+  const enabledCount = flags.filter((flag) => flag.enabled).length;
+  const enabled = flags.length === WORKSPACE_CONTEXT_FLAG_IDS.length && enabledCount === flags.length;
+  const partial = !enabled && enabledCount > 0;
+  const profile = buildWorkspaceContextProfile({
+    enabled,
+    partial,
+    comboFlagIds: WORKSPACE_CONTEXT_FLAG_IDS,
+    flags,
+    modelSummary: '',
+  });
+  return {
+    enabled,
+    partial,
+    comboFlagIds: WORKSPACE_CONTEXT_FLAG_IDS,
+    flags,
+    modelSummary: profile.modelSummary,
+  };
+}
+
+export async function setWorkspaceContext(
+  payload: WorkspaceContextSetPayload,
+  gatewayManager: GatewayManager,
+): Promise<WorkspaceContextSetResult> {
+  const enabled = Boolean(payload?.enabled);
+  const restartGateway = typeof payload?.restartGateway === 'boolean'
+    ? payload.restartGateway
+    : process.env.VERSE_CLAW_E2E !== '1';
+  return await setComboFlags({
+    ids: WORKSPACE_CONTEXT_FLAG_IDS,
+    specs: workspaceContextSpecs(),
+    enabled,
+    restartGateway,
+    gatewayManager,
+    logTag: 'workspace-context',
+  });
+}
+
 
 export function createDcsProdFlagsApi(gatewayManager: GatewayManager) {
   return {
@@ -628,5 +694,7 @@ export function createDcsProdFlagsApi(gatewayManager: GatewayManager) {
     requeryAck: () => requeryDcsFlagAck(gatewayManager),
     getPreview: () => getDcsPreviewState(),
     setPreview: (payload: DcsPreviewSetPayload) => setDcsPreview(payload, gatewayManager),
+    getWorkspaceContext: () => getWorkspaceContextState(gatewayManager),
+    setWorkspaceContext: (payload: WorkspaceContextSetPayload) => setWorkspaceContext(payload, gatewayManager),
   };
 }

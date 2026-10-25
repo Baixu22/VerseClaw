@@ -1,0 +1,28 @@
+{
+  "validation": {
+    "ok": true,
+    "issues": [],
+    "requiredEvidence": [
+      "contract"
+    ],
+    "missingEvidence": [],
+    "graduationPass": true,
+    "countsAsGraduated": false,
+    "recomputedVerdict": "pass",
+    "defaultChangedAgainstAuthority": false,
+    "evidenceGradeDetected": "e2e"
+  },
+  "defaultChange": {
+    "ok": true,
+    "defaultChanged": false,
+    "reason": "default mode is unchanged"
+  },
+  "taskForestDone": null,
+  "ok": true,
+  "reportPath": "D:\\ClawX-work\\component-graduation-20261021\\tests\\unit\\fixtures\\context-view-tool-surface\\acceptance\\TF-0495\\component-graduation-report.json",
+  "expected": {
+    "recomputeInputDigest": "04439f1a672b5a48db5aabf44a77e9fa9f16c5b86815739f3f90b0b23e6def91"
+  },
+  "currentDefaultMode": "opt-in",
+  "requireGraduation": true
+}

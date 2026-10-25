@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-24T04:48:24.892Z
+Generated at: 2026-10-25T06:35:42.857Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -15,13 +15,13 @@ This file is generated — edit the source of truth instead.
 - kind: env
 - key: `OPENCLAW_DCS_CONTEXT_VIEW_TOOLS`
 - default: false
-- defaultDisplay: off (shadow)
+- defaultDisplay: automatic when healthy (env override off)
 - risk: opt-in
-- enable: Set env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime.
-- rollback: Unset env or set to 0/false and restart. View tools leave the default catalog.
-- executor: wired — `openclaw_runtime/src/agents/tools/context-agent-tools.ts:267`
+- enable: Automatic discovery when workspace, FactService and permission are healthy; no env or Developer toggle is required.
+- rollback: Set env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=0 (or OPENCLAW_DCS_CONTEXT_TOOLS=0) and restart. This explicitly removes the four view tools even when dependencies are healthy.
+- executor: wired — `openclaw_runtime/src/agents/tools/context-view-tool-surface.ts:149`
 
-> Single source of truth: env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS (or Settings switch). The removed runtime.coding.factViews leaf is rejected by the strict config schema; remove it before upgrading. Keep default-off until C1 graduation + product approval.
+> TF-0495: the standard coding catalog is the discovery surface; the env switch is an explicit rollback/override, not the normal enable path. Automatic discovery occurs only when the workspace, FactService and permission checks are healthy. The removed runtime.coding.factViews leaf is rejected by the strict config schema; remove it before upgrading. Catalog defaultValue remains false as a fail-closed rollback override; this node does not flip the product default.
 
 ## context-tools-alias
 
@@ -29,41 +29,41 @@ This file is generated — edit the source of truth instead.
 - kind: env
 - key: `OPENCLAW_DCS_CONTEXT_TOOLS`
 - default: false
-- defaultDisplay: off (alias)
+- defaultDisplay: off (alias override)
 - risk: opt-in
-- enable: Alias of OPENCLAW_DCS_CONTEXT_VIEW_TOOLS; set =1 only when intentionally enabling view tools.
-- rollback: Unset or set to 0/false and restart.
+- enable: Alias of OPENCLAW_DCS_CONTEXT_VIEW_TOOLS; automatic discovery does not require setting it.
+- rollback: Set to 0/false and restart to force the four view tools out even when healthy.
 - executor: wired — `openclaw_runtime/src/context-engine/dcs-context-tools-flags.ts:30`
 
-> Alias only; do not treat as a separate graduation path.
+> Alias override only; do not treat as a separate graduation path.
 
 ## working-memory
 
 - wave: DCS-S1
 - kind: config
 - key: `runtime.contextBlock.working-memory.enabled`
-- default: false
-- defaultDisplay: false
-- risk: opt-in
-- enable: Settings switch or openclaw config runtime.contextBlock.working-memory.enabled=true; restart gateway/runtime so config-sync applies.
-- rollback: Set enabled=false or Settings off; restart if needed. Injection stops; producers may still emit envelopes unused.
+- default: true
+- defaultDisplay: true
+- risk: baseline-on
+- enable: On by default through Workspace Context; explicit runtime.contextBlock.working-memory.enabled=false remains a supported rollback.
+- rollback: Turn Workspace Context off or set enabled=false, then restart; recent-action injection stops.
 - executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:483`
 
-> TASK-P1-02: when on, Assembler injects ## Recent Actions once per context (exactly-once). Default remains off until product soak.
+> TF-0494: default-on after a predeclared paired canary; Assembler injects ## Recent Actions once per model-call context. Not long-term knowledge.
 
 ## tool-registry
 
 - wave: DCS-S3
 - kind: config
 - key: `runtime.contextBlock.tool-registry.enabled`
-- default: false
-- defaultDisplay: false
-- risk: opt-in
-- enable: Settings switch or openclaw config runtime.contextBlock.tool-registry.enabled=true; restart gateway/runtime.
-- rollback: Set enabled=false or Settings off; restart if needed. Tool summary injection stops.
+- default: true
+- defaultDisplay: true
+- risk: baseline-on
+- enable: On by default through Workspace Context; explicit runtime.contextBlock.tool-registry.enabled=false remains a supported rollback.
+- rollback: Turn Workspace Context off or set enabled=false, then restart; the tool summary stops.
 - executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:494`
 
-> TASK-P1-03: when on, before_agent_start writes tool_registry Block and Assembler injects ## Tools summary (exactly-once). Aligns with C1 on_demand schema mode.
+> TF-0494: default-on after a predeclared paired canary; tool-registry Block and ## Tools summary remain exactly-once per model call.
 
 ## stale-write-guard
 

@@ -178,19 +178,23 @@ export function resolveWorktreeBackend(
 }
 
 
-/** C5-1 symbol lease on write tools. Default false (shared path unperturbed). */
+/**
+ * TF-0510: symbol lease is RETIRED.
+ *
+ * Isolated git worktrees plus the merge queue are the supported answer to concurrent
+ * writers. A measured 4-process benchmark showed the lease serialises correctly but
+ * denies 75% of attempts (12 wins / 36 denials), so it throttles throughput without
+ * adding safety over worktree isolation. No config or override can enable it; the
+ * implementation is retained so rollback is a revert, not a rewrite.
+ */
+export const SYMBOL_LEASE_RETIRED = true;
+
 export function isCodingSymbolLeaseEnabled(
-  cfg?: OpenClawConfig,
-  overrides?: { symbolLeaseEnabled?: boolean },
+  _cfg?: OpenClawConfig,
+  _overrides?: { symbolLeaseEnabled?: boolean },
 ): boolean {
-  if (typeof overrides?.symbolLeaseEnabled === "boolean") {
-    return overrides.symbolLeaseEnabled;
-  }
-  const leaf = asRecord(codingConfigFrom(cfg)?.symbolLease) as CodingFlagLeaf | undefined;
-  if (typeof leaf?.enabled === "boolean") {
-    return leaf.enabled;
-  }
-  return DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.symbolLease.enabled"];
+  // Retired by TF-0510: always disabled.
+  return false;
 }
 /** C5-H symbol lease mode. Default memory (safe). */
 export function resolveSymbolLeaseMode(
@@ -207,22 +211,23 @@ export function resolveSymbolLeaseMode(
   return DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.symbolLease.mode"];
 }
 
-/** C5-H patch-flow default orchestration path. Default false. */
+/**
+ * TF-0510: patch-flow is RETIRED.
+ *
+ * No evidence shows serial fenced patch application improves coding outcomes over
+ * ordinary tool writes, and the concurrency case it targeted is covered by worktree
+ * isolation plus the merge queue. No config or override can enable it; the
+ * implementation is retained so rollback is a revert, not a rewrite.
+ */
+export const PATCH_FLOW_RETIRED = true;
+
 export function isCodingPatchFlowDefault(
-  cfg?: OpenClawConfig,
-  overrides?: { patchFlowDefault?: boolean },
+  _cfg?: OpenClawConfig,
+  _overrides?: { patchFlowDefault?: boolean },
 ): boolean {
-  if (typeof overrides?.patchFlowDefault === "boolean") {
-    return overrides.patchFlowDefault;
-  }
-  const leaf = asRecord(codingConfigFrom(cfg)?.patchFlow) as CodingFlagLeaf | undefined;
-  if (typeof leaf?.default === "boolean") {
-    return leaf.default;
-  }
-  if (typeof leaf?.enabled === "boolean") {
-    return leaf.enabled;
-  }
-  return DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.patchFlow.default"];
+  // Retired by TF-0510: always disabled. The previous resolver body is in git history
+  // (commit d86edc8ab) so a rollback restores the exact prior behaviour.
+  return false;
 }
 
 /** C7-H SEKB experience shadow dual-write. Default false (no cutover). */

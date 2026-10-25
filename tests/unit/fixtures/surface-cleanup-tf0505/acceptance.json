@@ -1,0 +1,35 @@
+{
+    "schemaVersion":  "SurfaceCleanupAcceptance/v1",
+    "taskForestNodeId":  "TF-0505",
+    "generatedAt":  "2026-10-24T14:46:58.7072077Z",
+    "driven_by":  "agent",
+    "actor":  "codex",
+    "status":  "complete",
+    "criteria":  [
+                     {
+                         "criterion":  "闈?dev 鐢ㄦ埛鏃犳硶閫氳繃璺敱璁块棶鍐呴儴瀹為獙椤甸潰",
+                         "status":  "verified",
+                         "evidence":  "surface-inventory.json#routes; e2e-results.txt",
+                         "detail":  "/dreams redirects to /. /ui-v2-showcase uses the shared dev-mode/dev-runtime policy. Image Generation remains dev-gated."
+                     },
+                     {
+                         "criterion":  "鏅€氱敤鎴疯缃噷娌℃湁 DCS/VToken/C6/RC-03 鍘熷 flag",
+                         "status":  "verified",
+                         "evidence":  "surface-inventory.json#settings; e2e-results.txt",
+                         "detail":  "Developer unlock switch is visible, but raw diagnostics are wrapped by devModeUnlocked; VToken Bridge is not mounted."
+                     },
+                     {
+                         "criterion":  "浜у搧椤垫瘡椤硅兘鍔涢兘鏈夋槑纭叆鍙ｃ€佺姸鎬佸拰鍥炴粴",
+                         "status":  "verified",
+                         "evidence":  "surface-inventory.json#routes",
+                         "detail":  "Every reviewed route has access state, visibility and rollback/destination behavior."
+                     },
+                     {
+                         "criterion":  "瀵艰埅/璺敱/i18n/娴嬭瘯鍚屾",
+                         "status":  "verified",
+                         "evidence":  "surface-inventory.json#navigation; i18n-lint-results.txt; unit-results.txt; e2e-results.txt",
+                         "detail":  "Removed menu entries and stale common sidebar keys; route, unit and Electron E2E tests assert the same surface policy."
+                     }
+                 ],
+    "completionVerdict":  "complete"
+}

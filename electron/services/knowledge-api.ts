@@ -307,6 +307,8 @@ type SekbRuntimeModule = {
         requireSession?: boolean;
         sourceSystem?: unknown;
         integrityClaim?: unknown;
+        drivenBy?: 'agent' | 'human';
+        actor?: string;
         summaryOnly?: boolean;
         contextBlockSink?: ContextBlockSink;
         experienceShadow?: HostExperienceShadowOptions;
@@ -320,6 +322,8 @@ type SekbRuntimeModule = {
         requireSession?: boolean;
         sourceSystem?: unknown;
         integrityClaim?: unknown;
+        drivenBy?: 'agent' | 'human';
+        actor?: string;
         summaryOnly?: boolean;
         contextBlockSink?: ContextBlockSink;
         experienceShadow?: HostExperienceShadowOptions;
@@ -5546,6 +5550,8 @@ export function createKnowledgeApi({
                 sessionId,
                 requireSession: true,
                 sourceSystem: body.sourceSystem ?? payload.sourceSystem ?? 'ui-confirm',
+                drivenBy: 'agent',
+                actor: 'codex',
                 integrityClaim: body.integrityClaim ?? payload.integrityClaim ?? 'confirmed',
                 summaryOnly: body.summaryOnly === true || payload.summaryOnly === true,
                 contextBlockSink: projection.sink,
@@ -5557,6 +5563,8 @@ export function createKnowledgeApi({
                   sessionId,
                   requireSession: true,
                   sourceSystem: body.sourceSystem ?? 'ui-confirm',
+                  drivenBy: 'agent',
+                  actor: 'codex',
                   contextBlockSink: projection.sink,
                   ...(experienceShadow ? { experienceShadow } : {}),
                 }),

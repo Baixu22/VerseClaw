@@ -17,9 +17,9 @@
   "driven_by": "agent",
   "expiry": null,
   "binding": {
-    "commit": "4d6851c493cb2b909af32960b77a7a577bff17f9",
-    "tree": "52a99c7ed82d6401c037bc960713b49a9a189467",
-    "buildHash": "9105ab739982db068566d9b41575746c1e54dbbf2f000bea49bc96ae1faaea9c",
+    "commit": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+    "tree": "1bff2e4af0f0b554e51f3ffde58176236942f625",
+    "buildHash": "3ef37d002538e80d2197676bfb84d2b63abefaa5afe78d358c1576a052268710",
     "runtimeGeneration": "fixture-context-assembly-contract",
     "provider": "fixture-provider",
     "model": "fixture-model",
@@ -53,8 +53,8 @@
       },
       {
         "path": "src/pages/Settings/index.tsx",
-        "sha256": "df1d9c82ff7a74cc0f8441aca980b09ec3fec82d6545b99e1d5185c2975d17e4",
-        "bytes": 103900
+        "sha256": "93e0f00daf6ff3422f52c8110809df0b7faa9666d678c60fb859bfe092ba898b",
+        "bytes": 103899
       },
       {
         "path": "tests/unit/context-assembly-authority-tf0493.test.ts",
@@ -88,12 +88,12 @@
       },
       {
         "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/run-verification.ps1",
-        "sha256": "164cabac232ad7944c1497b9c5628fccabe30d30ce39fcfa15d26ebf604d4eb9",
-        "bytes": 7783
+        "sha256": "6440d706155e8537679d8c4b15d5c55911812e115096d86bb5abe8eac95b625c",
+        "bytes": 7629
       },
       {
         "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
-        "sha256": "739515c4eb6d86edb47ac5958e5c82412c35c1c9ba514318d351124a90f48ceb",
+        "sha256": "30486317e06749998b860b9728d065120fce288ba877a17151efab12c0850f35",
         "bytes": 2370
       }
     ]
@@ -107,7 +107,7 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/raw-evidence.json",
-          "sha256": "739515c4eb6d86edb47ac5958e5c82412c35c1c9ba514318d351124a90f48ceb",
+          "sha256": "30486317e06749998b860b9728d065120fce288ba877a17151efab12c0850f35",
           "bytes": 2370,
           "supportsVerdict": true
         }
@@ -116,7 +116,7 @@
   ],
   "recompute": {
     "verdict": "pass",
-    "inputDigest": "4674849e5ea23c45bee2d5f0c4bb5914d14acf01931559d6671957f4cc20f014",
+    "inputDigest": "2177f62949acef1f504104a6f09b26a97bb98073b617e3fc24bfdfd74e94a3b9",
     "command": "pnpm --dir openclaw_runtime exec tsx tests/unit/fixtures/context-assembly-authority/acceptance/TF-0493/generate-acceptance.mts"
   }
 }

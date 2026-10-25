@@ -190,6 +190,20 @@ export type RuntimeMemoryFeatureFlags = Record<
   boolean
 >;
 
+/**
+ * TF-0500: the legacy parallel runtime-memory flags are RETIRED.
+ *
+ * shadow / provider / proposeFacts / persist gated paths that produced or stored runtime
+ * memory next to the canonical accepted-memory owners declared in memory-authority.ts
+ * (accept = runtime-memory-store for runtime-fact / timeline / episode). They can no
+ * longer be enabled from config.
+ *
+ * candidateGeneration is deliberately kept: the authority manifest marks memory.candidate
+ * as proposal-only (acceptedMemory=false, requiresApprovalBeforeAcceptance), so it feeds the
+ * canonical review queue instead of writing accepted memory.
+ */
+export const RETIRED_RUNTIME_MEMORY_FLAGS = ["shadow", "provider", "proposeFacts", "persist"] as const;
+
 export const DEFAULT_RUNTIME_MEMORY_FEATURE_FLAGS = {
   shadow: false,
   provider: false,
@@ -842,10 +856,11 @@ export function resolveRuntimeMemoryFeatureFlags(
   const runtime = runtimeConfigFrom(value);
   const memory = isRecord(runtime?.memory) ? runtime.memory : undefined;
   return {
-    shadow: strictFlag(memory, "shadow"),
-    provider: strictFlag(memory, "provider"),
-    proposeFacts: strictFlag(memory, "proposeFacts"),
-    persist: strictFlag(memory, "persist"),
+    // Retired flags can never resolve to true, whatever the config says.
+    shadow: false,
+    provider: false,
+    proposeFacts: false,
+    persist: false,
     candidateGeneration: strictFlag(memory, "candidateGeneration"),
   };
 }

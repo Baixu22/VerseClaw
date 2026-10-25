@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "VTokenRetirementEvidence/v1",
+  "taskForestNodeId": "TF-0496",
+  "generatedAt": "2026-10-23T07:07:35.673Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "verificationStatus": "pass",
+  "acceptanceCriteria": [
+    {
+      "criterion": "A/B 报告包含实际 tokens、cache hit、p95 latency、task quality 和置信区间",
+      "status": "pass",
+      "evidence": [
+        "ab-run.json: provider-reported input tokens (control 611.6 vs treatment 585.0), reduction mean 26.6 with 95% CI [19.8, 34.0]",
+        "ab-run.json: quality control 0.50 vs treatment 0.70 with 95% CI [0.00, 0.40]",
+        "ab-run.json: p95 latency control 7175 ms vs treatment 8012 ms (ratio 1.117)",
+        "cachedTokensReported=true (provider cache fields captured; not needed for this decision)"
+      ]
+    },
+    {
+      "criterion": "若保留：实现为 CRK 内部策略并删除 Bridge panel/公开 flag",
+      "status": "not-applicable",
+      "evidence": [
+        "The predeclared materiality bar failed, so the keep path does not apply."
+      ]
+    },
+    {
+      "criterion": "若退役：删除生产调用和文档入口，保留迁移/回滚记录",
+      "status": "pass",
+      "evidence": [
+        "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts: VTOKEN_RETIRED, injection can no longer be enabled by config or env",
+        "electron/services/vtoken-bridge.ts: VTOKEN_BRIDGE_RETIRED, sidecar can no longer be enabled; the public flag is recognised but ignored",
+        "docs/dev/vtoken-retirement-decision.md: decision, migration and rollback record",
+        "09-retirement-audit.txt"
+      ]
+    },
+    {
+      "criterion": "中性结果、质量下降或无真实 usage 均标记 retire-or-hold，不得永久默认关闭",
+      "status": "pass",
+      "evidence": [
+        "ab-run.json decision.status=retire-or-hold with reason materialTokenWin (relative reduction 4.35% < predeclared 10%)",
+        "The capability is retired rather than left as a permanent default-off: the enable paths no longer exist.",
+        "docs/dev/vtoken-retirement-decision.md records a deadline-bounded hold as the alternative if revisited."
+      ]
+    }
+  ],
+  "results": {
+    "providerUsageEvidence": "pass",
+    "predeclaredProtocol": "pass",
+    "benefitCiReported": "pass",
+    "retireDecisionApplied": "pass",
+    "separateUserSurface": "partially-retired (panel deletion owned by TF-0505)"
+  },
+  "residualLimitations": [
+    "The Settings > Developer VToken Bridge panel still exists and now reports a retired status; deleting it lives in src/components/settings/ which is outside TF-0496 allowed paths (TF-0505 owns surface cleanup).",
+    "The A/B covers the packing format on the p21 scenario corpus; it does not measure provider billing, only provider-reported usage tokens.",
+    "The first test attempt died before any provider call because the pair builder produced 26 of the predeclared 30 pairs; the builder was fixed deterministically before the single deciding run."
+  ],
+  "evidenceNotes": {
+    "diskReadback": true,
+    "humanEvidenceClaimed": false,
+    "publicReleaseClaimed": false,
+    "productDefaultChanged": false,
+    "verseGitTouched": false,
+    "charEstimateUsed": false
+  }
+}

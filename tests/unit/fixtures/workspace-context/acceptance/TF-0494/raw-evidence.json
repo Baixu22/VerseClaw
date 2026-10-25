@@ -1,0 +1,231 @@
+{
+  "schemaVersion": "WorkspaceContextAcceptanceEvidence/v1",
+  "reportId": "tf-0494-workspace-context-default-graduation",
+  "taskForestNodeId": "TF-0494",
+  "generatedAt": "2026-10-22T08:58:50.403Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "acceptanceCriteria": [
+    {
+      "criterion": "每个实际 model call 内同一 candidate identity/revision/target 不重复投影",
+      "status": "pass",
+      "evidence": [
+        "dedupResult",
+        "context-candidate target-aware test",
+        "runtime assembler duplicate suppression"
+      ]
+    },
+    {
+      "criterion": "tool loop 中新增工具结果进入后续请求；未变化候选去重；retry/fallback 不丢关键约束",
+      "status": "pass",
+      "evidence": [
+        "runtime extensions working-memory tests",
+        "context-candidate reopen/priorDedupKeys fixture",
+        "task-state handoff tests"
+      ]
+    },
+    {
+      "criterion": "固定 paired A/B 预先声明样本量、分层、指标、非劣界限、停止规则和置信区间；不显著/样本不足不得判收益通过",
+      "status": "pass",
+      "evidence": [
+        "canary-protocol.json",
+        "canary-run-v1-fail.json (retained failure)",
+        "canary-run-v2.json (amended pass)"
+      ]
+    },
+    {
+      "criterion": "完整请求预算与增强预算同时通过；关键约束保留、缺 turnId、通道饥饿与超限拒绝测试通过",
+      "status": "pass",
+      "evidence": [
+        "budgetResult",
+        "preassembly overflow unit",
+        "missingTurnIdBudget",
+        "channel starvation reservation"
+      ]
+    },
+    {
+      "criterion": "关闭开关或 kill switch 后 prompt 回到 baseline；模型 effective state 准确",
+      "status": "pass",
+      "evidence": [
+        "baseline/killed flags",
+        "WorkspaceContextProfile effective state",
+        "Settings E2E",
+        "runtime kill-switch suites"
+      ]
+    }
+  ],
+  "defaults": {
+    "workingMemory": true,
+    "toolRegistry": true,
+    "legacyCompass": false,
+    "legacyRoleMemory": false
+  },
+  "canary": {
+    "protocol": "WorkspaceContextCanaryProtocol/v2",
+    "protocolSha256": "f7527ae1746ca4cf54bc6d0551a20bf9c59814b7eff32bbbae4fb1559695f202",
+    "sampleSize": 40,
+    "strata": {
+      "recent-action-reuse": 10,
+      "duplicate-read-avoidance": 10,
+      "constraint-retention": 10,
+      "tool-selection": 10
+    },
+    "ciMethod": "paired bootstrap, 10000 resamples, percentile 95%, deterministic seed 4942026",
+    "stoppingRule": "fixed n=40; no early stopping; run all fixtures once after harness validation",
+    "v1": {
+      "status": "fail",
+      "reasons": [
+        "parseFailureRate",
+        "repeatCallReduction"
+      ],
+      "totalCalls": 80,
+      "parseFailures": 10,
+      "repeatToolCallReduction": 0,
+      "A_taskPassRate": 0,
+      "B_taskPassRate": 0.975
+    },
+    "v2": {
+      "status": "pass",
+      "completedPairs": 40,
+      "strataComplete": {
+        "recent-action-reuse": 10,
+        "duplicate-read-avoidance": 10,
+        "constraint-retention": 10,
+        "tool-selection": 10
+      },
+      "totalCalls": 80,
+      "providerErrors": 0,
+      "parseFailures": 1,
+      "A_repeatToolCallRate": 0.725,
+      "B_repeatToolCallRate": 0,
+      "repeatToolCallReduction": 0.725,
+      "repeatToolCallReductionCi95": {
+        "lower": 0.575,
+        "upper": 0.85
+      },
+      "A_taskPassRate": 0.125,
+      "B_taskPassRate": 0.975,
+      "taskPassDelta": 0.85,
+      "taskPassDeltaCi95": {
+        "lower": 0.7250000000000001,
+        "upper": 0.95
+      },
+      "A_p95LatencyMs": 9820.7373,
+      "B_p95LatencyMs": 5340.860999999997,
+      "p95LatencyRatio": 0.5438350336486444,
+      "p95LatencyRatioCi95": {
+        "lower": 0.25583175661912816,
+        "upper": 1.0388496339172797
+      },
+      "checks": {
+        "completePairs": true,
+        "completeStrata": true,
+        "providerErrorRate": true,
+        "parseFailureRate": true,
+        "repeatCallReduction": true,
+        "taskNonInferiority": true,
+        "p95LatencyGuard": true
+      }
+    },
+    "amendment": "v1 was inconclusive: baseline answered without invoking tools and 10/80 outputs were empty/truncated. v2 changes elicitation to native tool definitions/function calls, raises max_output_tokens to 500, and treats native function_call as decision=call_tool. Sample size, strata, metrics, thresholds, CI method and stopping rule are unchanged."
+  },
+  "duplicateProjection": {
+    "collected": 3,
+    "unique": 2,
+    "duplicates": 1,
+    "appliedByTarget": [
+      "message",
+      "system_prompt"
+    ],
+    "duplicateByTarget": [
+      "message"
+    ]
+  },
+  "budget": {
+    "enhancementBudgetChars": 6000,
+    "budgetResult": {
+      "requestedTurnBudgetChars": 6000,
+      "configuredTurnBudgetChars": 100,
+      "reservedChars": 40,
+      "afterReserveUsed": 0,
+      "cvkWouldBeLimitedTo": 60,
+      "starvationProtected": true
+    },
+    "fullRequestBudget": {
+      "source": "unwindowed_transcript_estimate",
+      "estimatedPromptTokens": 21030,
+      "promptBudgetBeforeReserve": 12000,
+      "overflowTokens": 9030,
+      "route": "compact_only",
+      "rejectedOverflow": true
+    },
+    "missingTurnId": {
+      "mode": "per-assemble-fallback",
+      "totalChars": 2000,
+      "fallbackReason": "missing-turn-id"
+    }
+  },
+  "toolLoop": {
+    "newToolResultEntersLaterRequest": true,
+    "unchangedCandidateDedup": true,
+    "priorModelCallDedupFixture": "context-candidate.test.ts#reopenContextCandidateCollection+priorDedupKeys"
+  },
+  "retryBoundary": {
+    "criticalConstraintsRetained": true,
+    "evidence": "runtime context suites and canary constraint-retention stratum"
+  },
+  "effectiveState": {
+    "schemaVersion": "WorkspaceContextProfile/v1",
+    "mode": "enabled",
+    "capabilities": [
+      "recent-actions",
+      "tool-catalog"
+    ],
+    "modelSummary": "Workspace context is enabled: recent tool actions and the available-tool summary may be included.",
+    "internalFlagNamesExposed": false
+  },
+  "rollback": {
+    "profileOffRestoresBaseline": true,
+    "killSwitchFlagsDisabled": true,
+    "userSwitchOnly": true,
+    "developerPanelIsDiagnosticsOnly": true
+  },
+  "evidenceNotes": {
+    "diskReadback": true,
+    "v1FailureRetained": true,
+    "v2WasPredeclaredBeforeRun": true,
+    "endpoint": "http://127.0.0.1:3065/v1/responses",
+    "model": "space-bunny",
+    "humanEvidenceClaimed": false,
+    "publicReleaseClaimed": false
+  },
+  "results": {
+    "production-call": {
+      "status": "pass"
+    },
+    "e2e": {
+      "status": "pass"
+    },
+    "canary": {
+      "status": "pass"
+    },
+    "benefit": {
+      "status": "pass"
+    },
+    "rollback": {
+      "status": "pass"
+    },
+    "effective-state": {
+      "status": "pass"
+    },
+    "permission-negative": {
+      "status": "pass"
+    },
+    "contract": {
+      "status": "pass"
+    },
+    "kill-switch": {
+      "status": "pass"
+    }
+  }
+}

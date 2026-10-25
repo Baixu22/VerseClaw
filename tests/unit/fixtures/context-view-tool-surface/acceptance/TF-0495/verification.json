@@ -1,0 +1,248 @@
+{
+  "schemaVersion": "ContextViewToolSurfaceVerification/v1",
+  "taskForestNodeId": "TF-0495",
+  "generatedAt": "2026-10-22T16:21:37.7888779Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "gates": [
+    {
+      "id": "01-surface-unit",
+      "command": "pnpm exec vitest run tests/unit/context-view-tool-surface.test.ts",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/01-surface-unit.txt",
+      "outputSha256": "7816f3dcb279d3d290df6d675452b9f6e4abc73d982be3a35ac199490043784f"
+    },
+    {
+      "id": "02-runtime-context-tools",
+      "command": "openclaw_runtime focused context-agent-tools suite",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/02-runtime-context-tools.txt",
+      "outputSha256": "adc9c62bb105f3eaaeaf661e96fa4d83bba2ff0a33a6bc7469e343705c545b29"
+    },
+    {
+      "id": "03-catalog-parity",
+      "command": "pnpm exec vitest run tests/unit/config-schema-parity.test.ts",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/03-catalog-parity.txt",
+      "outputSha256": "2cd5f4103af50512e910aaeb88e5af33f42d3bca83d9329b8307930b3f51e214"
+    },
+    {
+      "id": "04-settings-e2e",
+      "command": "pnpm exec playwright test tests/e2e/context-view-tool-surface.spec.ts",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/04-settings-e2e.txt",
+      "outputSha256": "9c84e2e9f3821bb14517e162956b2e02e1b4595510a818787341fe43b430b582"
+    },
+    {
+      "id": "05-typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/05-typecheck.txt",
+      "outputSha256": "bae420a66e1c47a02662e598529cf9a5421dde28907417f75d04d075a828b7f5"
+    },
+    {
+      "id": "06-lint-check",
+      "command": "pnpm run lint:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/06-lint-check.txt",
+      "outputSha256": "a8adb59881dd351df6d95290b89da3ea78ba9b52762f616c46933481c2ff2587"
+    },
+    {
+      "id": "07-catalogs-check",
+      "command": "pnpm run catalogs:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/07-catalogs-check.txt",
+      "outputSha256": "64f8ee460b7fa2d920c6cde6dc6f58c7e17a21350182cdd8458dc8560035023b"
+    },
+    {
+      "id": "08-contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/08-contract-check.txt",
+      "outputSha256": "32c652bb9b4aae909cda73c5b930d0648c93e9d7a34f62557663715cb2d4363e"
+    },
+    {
+      "id": "09-no-bom",
+      "command": "node scripts/check-no-bom.mjs",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/09-no-bom.txt",
+      "outputSha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4"
+    },
+    {
+      "id": "10-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/10-diff-check.txt",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "11-canary-verdict-recompute",
+      "command": "tsx recheck-canary.mts (retained protocol + run, no network)",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/11-canary-verdict-recompute.txt",
+      "outputSha256": "9dbd3b0f50a106173bb5fdebe9e70e375703be163e33fc636b29c8c4f1136d74"
+    },
+    {
+      "id": "12-build-vite",
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/12-build-vite.txt",
+      "outputSha256": "71a43ac5d959946e35f22ae6e121c596c58ea3bb776c75dbecca082d7a4a81ab"
+    },
+    {
+      "id": "13-component-graduation-gate",
+      "command": "component-graduation-report.mts --report <TF-0495 report> --require-graduation",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/13-component-graduation-gate.txt",
+      "outputSha256": "253deecc27dc98097b682db3f5b1d58d62717679c79af0f80902b48051910d1b"
+    },
+    {
+      "id": "14-sha256sums-check",
+      "command": "PowerShell SHA256 recompute against SHA256SUMS",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/14-sha256sums-check.txt",
+      "outputSha256": "c1592995edad9f8cbc4ce9433a8cda5810f01281bfae90b1f1e981ed93f3dd30"
+    }
+  ],
+  "sha256sums": [
+    {
+      "file": "docs/generated/catalogs/prod-flags.md",
+      "expected": "a0fa3c726a74ae918309e40c43b8c88b90f80d7a81992771d785034ff320bae2",
+      "actual": "a0fa3c726a74ae918309e40c43b8c88b90f80d7a81992771d785034ff320bae2",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/tool-catalog.ts",
+      "expected": "ca1f3f23d3315ca6148bdb803b8830fb8753dc09e9dd20ec44cdeba3767197f3",
+      "actual": "ca1f3f23d3315ca6148bdb803b8830fb8753dc09e9dd20ec44cdeba3767197f3",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts",
+      "expected": "7ab431c735505bb3d73709ae50b4228ef5acee9ecde7633538c8e963256c5201",
+      "actual": "7ab431c735505bb3d73709ae50b4228ef5acee9ecde7633538c8e963256c5201",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/tools/context-agent-tools.ts",
+      "expected": "55c5545fb63dbe82a0e4bf8de9233369f67028dcfda9639d21afb750e04fba5b",
+      "actual": "55c5545fb63dbe82a0e4bf8de9233369f67028dcfda9639d21afb750e04fba5b",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/tools/context-view-tool-surface.ts",
+      "expected": "8166b373849f8cbc01af331b62a62e6adc39929c3dcfb5c2d9e4300ded66335b",
+      "actual": "8166b373849f8cbc01af331b62a62e6adc39929c3dcfb5c2d9e4300ded66335b",
+      "status": "pass"
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/coding-tool-navigation.ts",
+      "expected": "aa12059a49e452a32c0e6733832874939e359e8f5105fe4f1e0b9672452e4997",
+      "actual": "aa12059a49e452a32c0e6733832874939e359e8f5105fe4f1e0b9672452e4997",
+      "status": "pass"
+    },
+    {
+      "file": "shared/dcs/prod-flags-catalog.ts",
+      "expected": "e06424c28d44c833af4bc3738d0a66c8709b4ee66ed00f52a9dd0e9298af77c8",
+      "actual": "e06424c28d44c833af4bc3738d0a66c8709b4ee66ed00f52a9dd0e9298af77c8",
+      "status": "pass"
+    },
+    {
+      "file": "tests/e2e/context-view-tool-surface.spec.ts",
+      "expected": "1713cf99c7416f5ffb05c54341990f092eeb132952a039bcccef1e60619760b2",
+      "actual": "1713cf99c7416f5ffb05c54341990f092eeb132952a039bcccef1e60619760b2",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/config-schema-parity.test.ts",
+      "expected": "993581cf60a9efee2bd7faff39c46b52e22e42af7e435d7d29e0146d867c635a",
+      "actual": "993581cf60a9efee2bd7faff39c46b52e22e42af7e435d7d29e0146d867c635a",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/context-view-tool-surface.test.ts",
+      "expected": "35eb6fd9f29341c79506e049d58809956bc7cd8d2cdf154847a31612c6bf98c0",
+      "actual": "35eb6fd9f29341c79506e049d58809956bc7cd8d2cdf154847a31612c6bf98c0",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/README.md",
+      "expected": "b97591928e01e0995d8a60d6e59465e96501da22325a7ecde8fd0e5f631ea6c5",
+      "actual": "b97591928e01e0995d8a60d6e59465e96501da22325a7ecde8fd0e5f631ea6c5",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/canary-protocol.json",
+      "expected": "c2745b4b3093ac0301813db6d2bcde929fca1ad7ffd52b175ff012ca10696ea0",
+      "actual": "c2745b4b3093ac0301813db6d2bcde929fca1ad7ffd52b175ff012ca10696ea0",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/canary-run-v1.json",
+      "expected": "67f10376ba6501bd7e2fd2b7324cfeea48c901c9006c20e30857c1514b7eb77b",
+      "actual": "67f10376ba6501bd7e2fd2b7324cfeea48c901c9006c20e30857c1514b7eb77b",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/component-graduation-report.json",
+      "expected": "584d77bd2a8f15aa285df87d4e58c479b470af6a50368a358957261c1b5ff46b",
+      "actual": "584d77bd2a8f15aa285df87d4e58c479b470af6a50368a358957261c1b5ff46b",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/generate-acceptance.mts",
+      "expected": "e9ab755ee05052dbbfff3bd20f6c157ebca6e627930a2fd30446dfd9f447c755",
+      "actual": "e9ab755ee05052dbbfff3bd20f6c157ebca6e627930a2fd30446dfd9f447c755",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/raw-evidence.json",
+      "expected": "476453d4accc9fd710c2e804c78513eafe27867dd92bffece479049063e0f3cb",
+      "actual": "476453d4accc9fd710c2e804c78513eafe27867dd92bffece479049063e0f3cb",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/recheck-canary.mts",
+      "expected": "46270d722178c41bd640399e50942a9b7a4e1f5533478f79afe76d18b7548cca",
+      "actual": "46270d722178c41bd640399e50942a9b7a4e1f5533478f79afe76d18b7548cca",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/run-canary.mts",
+      "expected": "390aeb163697c5bf517d0202a130d9fd45c756ca151c339675cdca015aa812fa",
+      "actual": "390aeb163697c5bf517d0202a130d9fd45c756ca151c339675cdca015aa812fa",
+      "status": "pass"
+    },
+    {
+      "file": "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/run-verification.ps1",
+      "expected": "8234d06f24d79d89b6ff9c0dc5001cea30e8a1f096540db3369cae826dde9124",
+      "actual": "8234d06f24d79d89b6ff9c0dc5001cea30e8a1f096540db3369cae826dde9124",
+      "status": "pass"
+    }
+  ],
+  "logNormalization": {
+    "applied": true,
+    "reason": "Gate logs were normalized (trailing whitespace / duplicate EOF blank lines removed) so the committed evidence passes git diff --check. Raw gate exit codes and conclusions are unchanged.",
+    "authoritativeKeys": [
+      "gates[].exitCode",
+      "gates[].status",
+      "sha256sums"
+    ],
+    "note": "gates[].outputSha256 records the pre-normalization log hash; see SHA256SUMS for committed log hashes."
+  }
+}

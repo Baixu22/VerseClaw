@@ -1,0 +1,5 @@
+dreams_route_dev_gated=1
+dreams_sidebar_entry_dev_gated=1
+pre_reply_injection_retired=1
+compass_injection_flags_retired=1
+legacy_runtime_memory_flags_retired=1

@@ -634,6 +634,7 @@ function principleFromRow(row: SekbPrincipleRow): Principle {
     embedding: row.embedding_json ? parseNumberArray(row.embedding_json) : null,
     source_trajectories: parseStringArray(row.source_trajectories_json),
     created_by: row.created_by === "agent" || row.created_by === "distiller" ? row.created_by : "human",
+    // Explicit: an unknown author is never upgraded to human on readback.
     status: normalizePrincipleStatus(row.status),
     retrieval_count: normalizeNumber(row.retrieval_count),
     adoption_count: normalizeNumber(row.adoption_count),

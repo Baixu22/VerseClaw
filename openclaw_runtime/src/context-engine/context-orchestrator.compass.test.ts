@@ -55,7 +55,7 @@ function context(ssp = "SSP", retrieval = "FACT"): PreparedCompassContext {
   };
 }
 
-it("deduplicates COMPASS before charging alongside every existing injection channel", async () => {
+it("keeps the retired COMPASS pre-reply injection from producing prompt candidates", async () => {
   const compassContext = context();
   await computeContextExtraSystemPrompt(
     "base",
@@ -87,24 +87,17 @@ it("deduplicates COMPASS before charging alongside every existing injection chan
     messages: [],
     seal: false,
   });
-  expect(projection.lineage.filter((entry) => entry.reason === "duplicate")).toHaveLength(2);
-  expect(projection.systemPromptAddition?.match(/SSP/g)).toHaveLength(1);
-  expect(projection.systemPromptAddition?.match(/FACT/g)).toHaveLength(1);
-  expect(compassContext.appliedFactIds).toEqual(["fact-1"]);
-  expect(receipts.recordCompassMemoryInjectionReceipt).toHaveBeenCalledOnce();
+  expect(projection.lineage.filter((entry) => entry.reason === "duplicate")).toHaveLength(0);
+  expect(projection.systemPromptAddition ?? "").not.toContain("SSP");
+  expect(projection.systemPromptAddition ?? "").not.toContain("FACT");
+  expect(compassContext.appliedFactIds).toEqual([]);
+  expect(receipts.recordCompassMemoryInjectionReceipt).not.toHaveBeenCalled();
   expect(
-    projection.lineage.filter((entry) => entry.charsApplied > 0).map((entry) => entry.channel),
-  ).toEqual([
-    "knowledge",
-    "knowledge",
-    "working_memory",
-    "tool_registry",
-    "cvk_addition",
-    "vtoken",
-    "memory_pilot",
-  ]);
+    projection.lineage
+      .filter((entry) => entry.sourceId.startsWith("compass-"))
+      .every((entry) => entry.charsApplied === 0),
+  ).toBe(true);
 });
-
 it.each(["kill", "off"])(
   "%s prevents preparation queries and projection of queued candidates",
   async (mode) => {
@@ -140,8 +133,7 @@ it.each(["kill", "off"])(
     ).toBe(true);
   },
 );
-
-it("does not claim complete facts when retrieval is truncated", async () => {
+it("does not claim complete facts when the retired retrieval path cannot produce text", async () => {
   const compassContext = context("SSP", "F".repeat(8000));
   await computeContextExtraSystemPrompt(
     undefined,
@@ -154,23 +146,20 @@ it("does not claim complete facts when retrieval is truncated", async () => {
     seal: false,
   });
   expect(projection.lineage.find((entry) => entry.sourceId === "compass-retrieval")?.reason).toBe(
-    "budget-truncate",
+    "flag-off",
   );
   expect(compassContext.appliedFactIds).toEqual([]);
   expect(receipts.recordCompassMemoryInjectionReceipt).not.toHaveBeenCalled();
 });
-
-it("CLI uses the same budget and releases its collection before returning", () => {
+it("CLI projection produces no prompt and releases its collection after retirement", () => {
   const compassContext = context("S".repeat(8000), "");
   const prompt = projectStandaloneCompassContext({
     turnId: "compass-budget",
     context: compassContext,
   });
-  expect(prompt?.length).toBeGreaterThan(0);
-  expect(prompt!.length).toBeLessThanOrEqual(6000);
+  expect(prompt).toBeUndefined();
   expect(getTurnInjectionBudget("compass-budget")).toBeUndefined();
 });
-
 it("seal attribution counts projected bytes once and retains them after a collection reopens", () => {
   vi.stubEnv("OPENCLAW_RC03_SEAL", "1");
   recordRc03SystemPromptContribution("compass-ssp", "charged SSP");
@@ -183,31 +172,6 @@ it("seal attribution counts projected bytes once and retains them after a collec
   expect(attributeRc03SystemPromptContributions(prompt)).toEqual([
     { producerId: "compass-ssp", chars: "charged SSP".length },
   ]);
-});
-
-it("arbitrates oversized COMPASS output instead of forwarding it outside the turn budget", async () => {
-  const input = {
-    turnId: "compass-budget",
-    deferProjection: true,
-    compassContext: {
-      sessionKey: "test-compass",
-      injection: { sspString: "S".repeat(8000), iFrameRefreshed: false },
-      candidateFactIds: [],
-      appliedFactIds: [],
-    },
-  };
-  const result = await computeContextExtraSystemPrompt("base", {}, input, { stages: [] });
-  expect(result.extraSystemPrompt).toBe("base");
-  const { projection } = finalizeContextOrchestratorTurn({
-    turnId: input.turnId,
-    messages: [],
-    seal: false,
-  });
-  const ssp = projection.lineage.find((entry) => entry.sourceId === "compass-ssp");
-  expect(ssp?.charsRequested).toBe(8000);
-  expect(ssp?.charsApplied).toBeGreaterThan(0);
-  expect(ssp?.charsApplied).toBeLessThanOrEqual(6000);
-  expect(projection.systemPromptAddition?.length).toBe(ssp?.charsApplied);
 });
 
 

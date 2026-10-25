@@ -9,6 +9,8 @@ export function registerContextRuntimeKitContextEngine(): void {
   registerContextEngineForOwner(
     CONTEXT_RUNTIME_KIT_ENGINE_ID,
     async (ctx) => createContextRuntimeKitContextEngine({
+      cfg: ctx.config,
+      workspaceDir: ctx.workspaceDir,
       contextStatusEnabled: ctx.config?.runtime?.contextFamily?.contextStatus?.enabled === true,
       contextStatusSnapshot: getContextFamilyLifecycleAuditSnapshot().status,
     }),

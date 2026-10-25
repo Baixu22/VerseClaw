@@ -1,0 +1,47 @@
+
+ RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
+
+·············stdout | tests/unit/versebrowser-capability-gating.test.ts > agent browser capability gating (spec N3) > grants the browser-control run-state for an OWNED session, never from a model argument
+[2026-10-22T10:22:29.516Z] [DEBUG] [agent-browser-bridge] Received invoke request: agentBrowser.invoke.request
+[2026-10-22T10:22:29.517Z] [DEBUG] [agent-browser-bridge] Dispatching action=takeSnapshot requestId=r-owned
+
+pnpm.cmd : stderr | tests/unit/versebrowser-capability-gating.test.ts > agent browser capability gating (spec N3) > gra
+nts the browser-control run-state for an OWNED session, never from a model argument
+At D:\ClawX-work\component-graduation-20261021\tests\unit\fixtures\permission-authority\acceptance\TF-0509\run-verifica
+tion.ps1:15 char:13
++   $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (stderr | tests/... model argument:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[2026-10-22T10:22:29.520Z] [WARN] [agent-browser-bridge] Invoke failed: Error: Unsupported agent browser action: takeSn
+apshot
+Error: Unsupported agent browser action: takeSnapshot
+    at invokeAgentBrowser (D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:245:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:284:13
+
+stdout | tests/unit/versebrowser-capability-gating.test.ts > agent browser capability gating (spec N3) > rejects an unavailable action at the Main bridge before any service call
+[2026-10-22T10:22:29.585Z] [DEBUG] [agent-browser-bridge] Received invoke request: agentBrowser.invoke.request
+[2026-10-22T10:22:29.585Z] [DEBUG] [agent-browser-bridge] Dispatching action=downloadFile requestId=r1
+
+stderr | tests/unit/versebrowser-capability-gating.test.ts > agent browser capability gating (spec N3) > rejects an una
+vailable action at the Main bridge before any service call
+[2026-10-22T10:22:29.586Z] [WARN] [agent-browser-bridge] Invoke failed: AgentBrowserCapabilityError: Agent browser acti
+on "downloadFile" is not available in this session: driver "injected" declares downloadFile but refuses them (E_NOT_IMP
+LEMENTED)
+AgentBrowserCapabilityError: Agent browser action "downloadFile" is not available in this session: driver "injected" de
+clares downloadFile but refuses them (E_NOT_IMPLEMENTED)
+    at capabilityError (D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:168:17)
+    at assertActionAvailable (D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:181:
+31)
+    at invokeAgentBrowser (D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:210:3)
+    at D:/ClawX-work/component-graduation-20261021/electron/gateway/agent-browser-bridge.ts:284:13
+
+·············································································
+
+ Test Files  10 passed (10)
+      Tests  90 passed (90)
+   Start at  18:22:21
+   Duration  15.59s (transform 2.76s, setup 809ms, import 4.74s, tests 2.47s, environment 5.83s)
+

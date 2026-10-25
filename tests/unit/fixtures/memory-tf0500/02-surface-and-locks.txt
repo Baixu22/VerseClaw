@@ -1,0 +1,18 @@
+
+ RUN  v4.1.1 D:/ClawX-work/component-graduation-20261021
+
+························stdout | tests/unit/compass-experience-validation.test.ts > COMPASS 2.0 体验收益验收 > 维度 1: Prompt 体积压缩 > 基线 vs COMPASS: 注入 20 条 facts 全量 vs SSP+top5 的 token 对比
+
+  [Prompt 体积对比]
+    基线 (20 facts 全量注入): 389 tokens, 1555 chars
+    COMPASS (SSP + top-5): 101 tokens (SSP: 7, top5: 94)
+    压缩率: 74.0%
+    节省: 288 tokens/轮
+
+·······················
+
+ Test Files  3 passed (3)
+      Tests  47 passed (47)
+   Start at  15:45:39
+   Duration  3.01s (transform 1.39s, setup 250ms, import 2.23s, tests 58ms, environment 0ms)
+

@@ -32,6 +32,7 @@ import {
   createDcsContextAgentTools,
   recordContextToolSchemaBudget,
   serializeContextToolSchemas,
+  getContextViewToolSurface,
 } from "./context-agent-tools.js";
 import {
   __resetWorkspaceFactServiceRegistry,
@@ -356,8 +357,10 @@ describe("DCS FactStore view tools (C0-1')", () => {
   const prevViewFlag = process.env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS;
 
   beforeEach(() => {
-    // C1-1: view tools are flag-gated default off; unit suite enables for GREEN paths.
-    process.env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS = "1";
+    // TF-0495: healthy dependencies auto-discover; keep the explicit rollback
+    // switch absent so this suite exercises the default path.
+    delete process.env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS;
+    delete process.env.OPENCLAW_DCS_CONTEXT_TOOLS;
     __resetWorkspaceFactServiceRegistry();
     closeAllFactStores();
     codingObservability.reset();
@@ -497,12 +500,15 @@ describe("DCS FactStore view tools (C0-1')", () => {
   });
 });
 
-describe("C1-1 on_demand schema + view-tool flag", () => {
+describe("TF-0495 standard context view tool surface", () => {
   let repoRoot: string;
   const prevViewFlag = process.env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS;
+  const prevViewAlias = process.env.OPENCLAW_DCS_CONTEXT_TOOLS;
   const prevSchemaMode = process.env.OPENCLAW_DCS_CONTEXT_TOOL_SCHEMA_MODE;
 
   beforeEach(() => {
+    delete process.env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS;
+    delete process.env.OPENCLAW_DCS_CONTEXT_TOOLS;
     __resetWorkspaceFactServiceRegistry();
     closeAllFactStores();
     codingObservability.reset();
@@ -513,6 +519,8 @@ describe("C1-1 on_demand schema + view-tool flag", () => {
   afterEach(() => {
     if (prevViewFlag === undefined) delete process.env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS;
     else process.env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS = prevViewFlag;
+    if (prevViewAlias === undefined) delete process.env.OPENCLAW_DCS_CONTEXT_TOOLS;
+    else process.env.OPENCLAW_DCS_CONTEXT_TOOLS = prevViewAlias;
     if (prevSchemaMode === undefined) delete process.env.OPENCLAW_DCS_CONTEXT_TOOL_SCHEMA_MODE;
     else process.env.OPENCLAW_DCS_CONTEXT_TOOL_SCHEMA_MODE = prevSchemaMode;
     __resetWorkspaceFactServiceRegistry();
@@ -521,41 +529,72 @@ describe("C1-1 on_demand schema + view-tool flag", () => {
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  it("RED?GREEN: default flag off keeps view tools out of catalog even with factService", () => {
-    delete process.env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS;
-    delete process.env.OPENCLAW_DCS_CONTEXT_TOOLS;
+  it("auto-discovers view tools from healthy workspace + FactService + permission", () => {
     const tools = createDcsContextAgentTools({
       sessionId: "s",
       blockStore: makeBlockStore(),
       contextBlockSink: vi.fn(async () => [{ accepted: true }]),
       factService: resolveWorkspaceFactService(repoRoot),
+      workspaceHealthy: true,
+      contextStoreHealthy: true,
+      permissionAllowed: true,
     });
-    const names = tools.map((t) => t.name);
-    for (const name of DCS_CONTEXT_VIEW_TOOL_NAMES) {
-      expect(names).not.toContain(name);
-    }
-    // Block tools still present
-    for (const name of DCS_CONTEXT_AGENT_TOOL_NAMES) {
-      expect(names).toContain(name);
-    }
+    const names = tools.map((tool) => tool.name);
+    for (const name of DCS_CONTEXT_AGENT_TOOL_NAMES) expect(names).toContain(name);
+    for (const name of DCS_CONTEXT_VIEW_TOOL_NAMES) expect(names).toContain(name);
+    expect(tools).toHaveLength(8);
+    const surface = getContextViewToolSurface({
+      factService: resolveWorkspaceFactService(repoRoot),
+    });
+    expect(surface.mode).toBe("healthy");
+    expect(surface.enabled).toBe(true);
+    expect(surface.activeToolNames).toEqual([...DCS_CONTEXT_VIEW_TOOL_NAMES]);
   });
 
-  it("flag on registers view tools (C0 acceptance path)", () => {
-    process.env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS = "1";
+  it("explicit false remains a rollback and keeps view tools out", () => {
+    process.env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS = "0";
     const tools = createDcsContextAgentTools({
       sessionId: "s",
       blockStore: makeBlockStore(),
       contextBlockSink: vi.fn(async () => [{ accepted: true }]),
       factService: resolveWorkspaceFactService(repoRoot),
     });
-    expect(tools.map((t) => t.name)).toEqual(
-      expect.arrayContaining([...DCS_CONTEXT_AGENT_TOOL_NAMES, ...DCS_CONTEXT_VIEW_TOOL_NAMES]),
-    );
-    expect(tools).toHaveLength(8);
+    const names = tools.map((tool) => tool.name);
+    for (const name of DCS_CONTEXT_VIEW_TOOL_NAMES) expect(names).not.toContain(name);
+    for (const name of DCS_CONTEXT_AGENT_TOOL_NAMES) expect(names).toContain(name);
+    expect(getContextViewToolSurface({ factService: resolveWorkspaceFactService(repoRoot) }).mode).toBe("explicitly-disabled");
+  });
+
+  it("permission denial is visible and execution fails closed", async () => {
+    const service = resolveWorkspaceFactService(repoRoot);
+    const denied = getContextViewToolSurface({ factService: service, permissionAllowed: false });
+    expect(denied.mode).toBe("permission-denied");
+    expect(denied.enabled).toBe(false);
+    expect(denied.recoverable).toBe(false);
+    expect(createContextImpactTool({ factService: service, permissionAllowed: false })).toBeNull();
+
+    // Simulate a policy change after discovery. The tool object exists, but its
+    // execution-time recheck must refuse to touch the FactStore.
+    const allowed = getContextViewToolSurface({ factService: service });
+    const options = {
+      factService: service,
+      contextViewSurfaceState: allowed,
+    };
+    const guardedTool = createContextImpactTool(options);
+    options.contextViewSurfaceState = {
+      ...allowed,
+      mode: "permission-denied",
+      enabled: false,
+      activeToolNames: [],
+      reason: "permission denied",
+      recoverable: false,
+    };
+    const blocked = await executeTool(guardedTool!, { target: "login" });
+    expect(blocked.details).toMatchObject({ ok: false, mode: "permission-denied", failClosed: true });
+    expect(codingObservability.snapshot().factToolCalls).toBe(0);
   });
 
   it("on_demand summary mode: default registry list has no full schema property dump", async () => {
-    process.env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS = "1";
     process.env.OPENCLAW_DCS_CONTEXT_TOOL_SCHEMA_MODE = "summary";
     const { mapToolsToToolRegistryEntries, measureContextToolRegistryOccupancy } = await import(
       "../../context-engine/handlers/tool-registry-handler.js"

@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "CodingControlRetirementEvidence/v1",
+  "taskForestNodeId": "TF-0510",
+  "generatedAt": "2026-10-23T00:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "decision": {
+    "authorizedBy": "repository owner, 2026-10-23: \"按照你推荐的...不能有破坏性的效果就行\"",
+    "choice": "retire both, non-destructively",
+    "rejectedAlternatives": {
+      "internal": "kept symbol-lease and patch-flow as internal authorities; rejected because both duplicate worktree isolation and one carries a hand-rolled WAL/lock subsystem",
+      "keepWithBaseline": "would require new benchmark programmes; not needed once worktree isolation already covers the concurrency case"
+    }
+  },
+  "externalBasis": [
+    {
+      "claim": "Isolated git worktrees are the common industry answer to parallel coding agents writing the same files",
+      "source": "https://dsplce.co/agentic-engineering/core/worktree-isolation"
+    },
+    {
+      "claim": "Two agents in one checkout lose edits silently; worktree per agent plus review one diff per agent is the recommended shape",
+      "source": "https://docs.bswen.com/blog/2026-03-12-prevent-file-conflicts-ai-agents/"
+    },
+    {
+      "claim": "Lost writes in a shared working tree are expensive because they are unobservable by existing mechanisms",
+      "source": "https://aiarch.dev/workflows/parallel-agent-writes"
+    },
+    {
+      "claim": "Worktrees are not a complete answer either: they share one .git, and lockfile edits still conflict across worktrees",
+      "source": "https://www.termdock.com/en/blog/git-worktree-conflicts-ai-agents"
+    }
+  ],
+  "components": [
+    {
+      "id": "feature.symbol-lease",
+      "disposition": "retired",
+      "retirementNodeId": "TF-0510",
+      "evidenceKinds": {
+        "callerRemoval": [
+          "isCodingSymbolLeaseEnabled now always returns false (SYMBOL_LEASE_RETIRED)",
+          "the symbol-lease writable spec was removed from shared/dcs/prod-flags-control.ts"
+        ],
+        "entrypointRemoval": [
+          "the developer-plane writable switch id: symbol-lease no longer exists",
+          "the component has no userEntry and visibility=retired in the disposition catalog"
+        ],
+        "migration": [
+          "no user data to migrate: the lease store is process-local memory by default and the WAL file lives under the workspace .openclaw/leases directory",
+          "no accepted-memory, knowledge or role data is touched"
+        ],
+        "preservationRecovery": [
+          "implementation retained: openclaw_runtime/src/context-engine/factstore/symbol-lease.ts and agents/symbol-lease-guard.ts are unchanged",
+          "rollback = revert this commit; the prior resolver body is in git history at d86edc8ab"
+        ]
+      },
+      "rationale": "A measured 4-process benchmark (12 wins / 36 denials, zero duplicate side effects) proves correctness but shows 75% of attempts are refused. That is throughput cost, and it adds no safety over isolated worktrees plus the merge queue."
+    },
+    {
+      "id": "feature.patch-flow",
+      "disposition": "retired",
+      "retirementNodeId": "TF-0510",
+      "evidenceKinds": {
+        "callerRemoval": [
+          "isCodingPatchFlowDefault now always returns false (PATCH_FLOW_RETIRED)",
+          "the orchestrator trigger can no longer be satisfied from config"
+        ],
+        "entrypointRemoval": [
+          "the model-facing team_orchestrate parameter patchFlowExecution was removed from the tool schema and its reader",
+          "the component has no userEntry and visibility=retired in the disposition catalog"
+        ],
+        "migration": [
+          "no user data to migrate: workers never persisted patch proposals outside their own run",
+          "write-journal remains the mutation authority and is untouched"
+        ],
+        "preservationRecovery": [
+          "implementation retained: agents/patch-flow.ts, patch-flow-graduation.ts and orchestration-patch-flow.ts are unchanged",
+          "rollback = revert this commit; the prior resolver body is in git history at d86edc8ab"
+        ]
+      },
+      "rationale": "No evidence shows serial fenced patch application improves coding outcomes over ordinary tool writes. The concurrency case it targeted is covered by worktree isolation plus the merge queue, and the gate could only recommend, never demonstrate, a benefit."
+    }
+  ],
+  "preservedCapabilities": [
+    "stale-write-guard (advanced, gap 0)",
+    "worktree-backend (advanced, gap 0)",
+    "isolation-request (advanced, gap 0)",
+    "write-journal (unchanged mutation authority)"
+  ],
+  "nonClaims": {
+    "humanEvidence": false,
+    "publicRelease": false,
+    "ga": false,
+    "liveReady": false,
+    "productApproved": false,
+    "productDefaultChanged": false,
+    "userDataDeleted": false
+  }
+}

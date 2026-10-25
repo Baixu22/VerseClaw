@@ -25,8 +25,6 @@ import { dcsObservability } from "./dcs-observability.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import {
   getSharedVtokenRpcClient,
-  isVtokenAssemblyEnvEnabled,
-  isVtokenAssemblyEnvForcedOn,
   type VtokenPackCandidate,
   type VtokenRpcPackResult,
   type VtokenRpcClient,
@@ -144,14 +142,23 @@ function resolveContextBlockConfig(value: unknown): Record<string, unknown> | un
 }
 
 /**
- * Resolve assembly config from runtime config + env.
- * Default enabled=false (opt-in). Enable only via explicit config true or env canary.
- * Kill-switch and enhancement kill switch always win (fail-closed).
+ * TF-0496 decision: VToken is RETIRED.
+ *
+ * A predeclared paired A/B on real provider usage (30 pairs, 0 provider errors)
+ * measured a 4.35% mean input-token reduction (611.6 -> 585.0 tokens,
+ * 95% CI [19.8, 34.0]) with non-inferior quality. That is below the predeclared
+ * 10% materiality bar, so the capability is retired rather than kept or left
+ * permanently default-off. See docs/dev/vtoken-retirement-decision.md.
+ *
+ * Retirement is unconditional: neither runtime config nor environment can
+ * re-enable the production injection path.
  */
+export const VTOKEN_RETIRED = true;
+
 export function resolveVtokenAssemblyConfig(value: unknown): VtokenAssemblyConfig {
-  if (!isVtokenAssemblyEnvEnabled()) {
-    return { ...DEFAULT_VTOKEN_ASSEMBLY_CONFIG, enabled: false };
-  }
+  // Retired: the injection path can no longer be enabled from config or env.
+  // The kill switch is still consulted so an engaged switch is reported the
+  // same way it always was.
   if (isContextEnhancementKillSwitchEngaged(value)) {
     return { ...DEFAULT_VTOKEN_ASSEMBLY_CONFIG, enabled: false };
   }
@@ -160,8 +167,7 @@ export function resolveVtokenAssemblyConfig(value: unknown): VtokenAssemblyConfi
   const vtoken = isRecord(runtime?.vtoken) ? runtime.vtoken : undefined;
   const assembly = isRecord(vtoken?.assembly) ? vtoken.assembly : undefined;
 
-  // Opt-in: explicit config true OR env canary force-on.
-  const enabled = assembly?.enabled === true || isVtokenAssemblyEnvForcedOn();
+  const enabled = false;
   const budgetTokens = resolvePositiveInt(
     assembly?.budgetTokens,
     DEFAULT_VTOKEN_ASSEMBLY_CONFIG.budgetTokens,
@@ -204,6 +210,8 @@ export function shouldAssembleVtokenWorkingContext(
   config: VtokenAssemblyConfig,
   sessionKey?: string,
 ): boolean {
+  // Retired (TF-0496): no configuration can request Working Context assembly.
+  if (VTOKEN_RETIRED) return false;
   if (!config.enabled) return false;
   if (config.sessions === "main-only") {
     if (!sessionKey) return false;

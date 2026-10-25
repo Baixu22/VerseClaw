@@ -1,0 +1,28 @@
+{
+  "validation": {
+    "ok": true,
+    "issues": [],
+    "requiredEvidence": [
+      "contract"
+    ],
+    "missingEvidence": [],
+    "graduationPass": true,
+    "countsAsGraduated": false,
+    "recomputedVerdict": "pass",
+    "defaultChangedAgainstAuthority": false,
+    "evidenceGradeDetected": "unit-test"
+  },
+  "defaultChange": {
+    "ok": true,
+    "defaultChanged": false,
+    "reason": "default mode is unchanged"
+  },
+  "taskForestDone": null,
+  "ok": true,
+  "reportPath": "D:\\ClawX-work\\component-graduation-20261021\\tests\\unit\\fixtures\\capability-registry-v3\\acceptance\\TF-0501\\component-graduation-report.json",
+  "expected": {
+    "recomputeInputDigest": "106833ba67fab13b9cca6d86d45d9e71b8f3ba68374a983299a03dde665ab159"
+  },
+  "currentDefaultMode": "internal",
+  "requireGraduation": true
+}

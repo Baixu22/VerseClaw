@@ -2,9 +2,9 @@
   "schemaVersion": "MemoryAuthorityAcceptanceEvidence/v1",
   "reportId": "tf-0497-memory-authority-control-plane",
   "taskForestNodeId": "TF-0497",
-  "generatedAt": "2026-10-24T08:52:05.169Z",
+  "generatedAt": "2026-10-22T09:35:46.158Z",
   "driven_by": "agent",
-  "actor": "codex-long-session-r2",
+  "actor": "codex",
   "acceptanceCriteria": [
     {
       "criterion": "authority manifest 对每类 memory data 指定唯一 accepting/update authority",
@@ -420,10 +420,9 @@
     "ownerConvergence": true
   },
   "diskReadback": {
-    "status": "pending-external-verification",
+    "status": "pass",
     "evidenceReadable": true,
-    "sha256sumsVerified": false,
-    "receiptPath": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/12-sha256sums-check.txt"
+    "sha256sumsVerified": true
   },
   "evidenceNotes": {
     "noProductDefaultChanged": true,

@@ -1,0 +1,117 @@
+[
+    {
+        "file":  "docs/generated/catalogs/prod-flags.md",
+        "expected":  "a0fa3c726a74ae918309e40c43b8c88b90f80d7a81992771d785034ff320bae2",
+        "actual":  "a0fa3c726a74ae918309e40c43b8c88b90f80d7a81992771d785034ff320bae2",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/tool-catalog.ts",
+        "expected":  "ca1f3f23d3315ca6148bdb803b8830fb8753dc09e9dd20ec44cdeba3767197f3",
+        "actual":  "ca1f3f23d3315ca6148bdb803b8830fb8753dc09e9dd20ec44cdeba3767197f3",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts",
+        "expected":  "7ab431c735505bb3d73709ae50b4228ef5acee9ecde7633538c8e963256c5201",
+        "actual":  "7ab431c735505bb3d73709ae50b4228ef5acee9ecde7633538c8e963256c5201",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/tools/context-agent-tools.ts",
+        "expected":  "55c5545fb63dbe82a0e4bf8de9233369f67028dcfda9639d21afb750e04fba5b",
+        "actual":  "55c5545fb63dbe82a0e4bf8de9233369f67028dcfda9639d21afb750e04fba5b",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/agents/tools/context-view-tool-surface.ts",
+        "expected":  "8166b373849f8cbc01af331b62a62e6adc39929c3dcfb5c2d9e4300ded66335b",
+        "actual":  "8166b373849f8cbc01af331b62a62e6adc39929c3dcfb5c2d9e4300ded66335b",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/context-engine/coding-tool-navigation.ts",
+        "expected":  "aa12059a49e452a32c0e6733832874939e359e8f5105fe4f1e0b9672452e4997",
+        "actual":  "aa12059a49e452a32c0e6733832874939e359e8f5105fe4f1e0b9672452e4997",
+        "status":  "pass"
+    },
+    {
+        "file":  "shared/dcs/prod-flags-catalog.ts",
+        "expected":  "e06424c28d44c833af4bc3738d0a66c8709b4ee66ed00f52a9dd0e9298af77c8",
+        "actual":  "e06424c28d44c833af4bc3738d0a66c8709b4ee66ed00f52a9dd0e9298af77c8",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/e2e/context-view-tool-surface.spec.ts",
+        "expected":  "1713cf99c7416f5ffb05c54341990f092eeb132952a039bcccef1e60619760b2",
+        "actual":  "1713cf99c7416f5ffb05c54341990f092eeb132952a039bcccef1e60619760b2",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/config-schema-parity.test.ts",
+        "expected":  "993581cf60a9efee2bd7faff39c46b52e22e42af7e435d7d29e0146d867c635a",
+        "actual":  "993581cf60a9efee2bd7faff39c46b52e22e42af7e435d7d29e0146d867c635a",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/context-view-tool-surface.test.ts",
+        "expected":  "35eb6fd9f29341c79506e049d58809956bc7cd8d2cdf154847a31612c6bf98c0",
+        "actual":  "35eb6fd9f29341c79506e049d58809956bc7cd8d2cdf154847a31612c6bf98c0",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/README.md",
+        "expected":  "b97591928e01e0995d8a60d6e59465e96501da22325a7ecde8fd0e5f631ea6c5",
+        "actual":  "b97591928e01e0995d8a60d6e59465e96501da22325a7ecde8fd0e5f631ea6c5",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/canary-protocol.json",
+        "expected":  "c2745b4b3093ac0301813db6d2bcde929fca1ad7ffd52b175ff012ca10696ea0",
+        "actual":  "c2745b4b3093ac0301813db6d2bcde929fca1ad7ffd52b175ff012ca10696ea0",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/canary-run-v1.json",
+        "expected":  "67f10376ba6501bd7e2fd2b7324cfeea48c901c9006c20e30857c1514b7eb77b",
+        "actual":  "67f10376ba6501bd7e2fd2b7324cfeea48c901c9006c20e30857c1514b7eb77b",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/component-graduation-report.json",
+        "expected":  "584d77bd2a8f15aa285df87d4e58c479b470af6a50368a358957261c1b5ff46b",
+        "actual":  "584d77bd2a8f15aa285df87d4e58c479b470af6a50368a358957261c1b5ff46b",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/generate-acceptance.mts",
+        "expected":  "e9ab755ee05052dbbfff3bd20f6c157ebca6e627930a2fd30446dfd9f447c755",
+        "actual":  "e9ab755ee05052dbbfff3bd20f6c157ebca6e627930a2fd30446dfd9f447c755",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/raw-evidence.json",
+        "expected":  "476453d4accc9fd710c2e804c78513eafe27867dd92bffece479049063e0f3cb",
+        "actual":  "476453d4accc9fd710c2e804c78513eafe27867dd92bffece479049063e0f3cb",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/recheck-canary.mts",
+        "expected":  "46270d722178c41bd640399e50942a9b7a4e1f5533478f79afe76d18b7548cca",
+        "actual":  "46270d722178c41bd640399e50942a9b7a4e1f5533478f79afe76d18b7548cca",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/run-canary.mts",
+        "expected":  "390aeb163697c5bf517d0202a130d9fd45c756ca151c339675cdca015aa812fa",
+        "actual":  "390aeb163697c5bf517d0202a130d9fd45c756ca151c339675cdca015aa812fa",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/context-view-tool-surface/acceptance/TF-0495/run-verification.ps1",
+        "expected":  "8234d06f24d79d89b6ff9c0dc5001cea30e8a1f096540db3369cae826dde9124",
+        "actual":  "8234d06f24d79d89b6ff9c0dc5001cea30e8a1f096540db3369cae826dde9124",
+        "status":  "pass"
+    }
+]
+SHA256SUMS_STATUS=pass

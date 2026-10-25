@@ -79,6 +79,22 @@ function resolveIsolation(input: DelegationAdmissionReceiptInput): DelegationAdm
   };
 }
 
+function runtimeToolAuthorization(input: RoleSpawnResult): DelegationAdmissionReceipt["toolAuthorization"] {
+  const authorization = input.authorization;
+  if (!authorization) {
+    return { allowlist: [], denylist: [], permissionDecisionCount: 0, source: "unresolved" };
+  }
+  if (!("status" in authorization)) return authorization;
+  return {
+    allowlist: authorization.allowlist ?? [],
+    denylist: authorization.denylist,
+    permissionDecisionCount: authorization.permissionDecisionCount ?? 0,
+    source: authorization.source === "role-contract+parent-clamp" || authorization.source === "role-contract+runtime-inheritance"
+      ? "role-clamped-inherited"
+      : "unresolved",
+  };
+}
+
 export function buildDelegationAdmissionReceipt(
   input: DelegationAdmissionReceiptInput,
 ): DelegationAdmissionReceipt {
@@ -116,12 +132,7 @@ export function buildDelegationAdmissionReceipt(
       model: null,
       evidence: "spawn-result-missing-backend",
     },
-    toolAuthorization: input.spawn.authorization ?? {
-      allowlist: [],
-      denylist: [],
-      permissionDecisionCount: 0,
-      source: "unresolved",
-    },
+    toolAuthorization: runtimeToolAuthorization(input.spawn),
     isolation: resolveIsolation(input),
     reason: rejectionReason,
     createdAt: input.admission.createdAt,

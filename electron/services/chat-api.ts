@@ -262,7 +262,7 @@ async function readLongSessionContinuityContext(input: {
         };
       }
     }
-    const workspaceRootPath = await getWorkspaceRootPathById(input.workspaceId);
+    const workspaceRootPath = binding.environment.canonicalRoot;
     const roleMemoryEnabled = (await getSetting('roleMemoryEnabled')) !== false;
     const [ledgerResult, workingContextResult, compressionResult, memoryResult, policyResult] = await Promise.allSettled([
       loadTaskLedgerSnapshot(input.workspaceId),

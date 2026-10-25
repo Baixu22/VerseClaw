@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "leafCount": 112,
+  "consumerFileCount": 5381,
+  "unpinnedZeroConsumerLeaves": [],
+  "pinnedZeroConsumerLeaves": [
+    "coding.patchFlow.enabled",
+    "coding.verifier.noSelfRepair",
+    "contextFamily.observationMasking.preserveNewestObservationCount"
+  ],
+  "baselineLeavesNowConsumed": [],
+  "staleBaselineEntries": [],
+  "errors": [],
+  "check": "feature-leaf-consumers",
+  "driven_by": "agent"
+}

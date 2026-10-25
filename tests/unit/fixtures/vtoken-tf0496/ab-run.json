@@ -1,0 +1,740 @@
+{
+  "schemaVersion": "VTokenROIABRun/v1",
+  "taskForestNodeId": "TF-0496",
+  "driven_by": "agent",
+  "actor": "codex",
+  "startedAt": "2026-10-23T06:57:50.663Z",
+  "endedAt": "2026-10-23T07:02:54.931Z",
+  "protocolSha256": "4a554d06c8d862ca1fac3658439118e4e23cad6b813cb100898e296d94fac9ba",
+  "endpoint": "http://127.0.0.1:3065/v1/responses",
+  "model": "space-bunny",
+  "summary": {
+    "pairs": 30,
+    "providerErrors": 0,
+    "controlMeanInputTokens": 611.6,
+    "treatmentMeanInputTokens": 585,
+    "inputTokenReductionMean": 26.6,
+    "inputTokenReductionCi95": {
+      "lower": 19.766666666666666,
+      "upper": 33.96666666666667
+    },
+    "relativeInputTokenReduction": 0.04349247874427731,
+    "qualityControlMean": 0.5,
+    "qualityTreatmentMean": 0.7,
+    "qualityDeltaCi95": {
+      "lower": 0,
+      "upper": 0.4
+    },
+    "controlP95LatencyMs": 7175,
+    "treatmentP95LatencyMs": 8012,
+    "latencyRatioP95": 1.1166550522648084,
+    "cachedTokensReported": true,
+    "latencyRatioMean": 1.2553322976857326
+  },
+  "checks": {
+    "pairs": true,
+    "providerErrorsZero": true,
+    "materialTokenWin": false,
+    "qualityNonInferior": true,
+    "latencyNonRegression": true
+  },
+  "decision": {
+    "status": "retire-or-hold",
+    "reasons": [
+      "materialTokenWin"
+    ],
+    "rule": "pass => keep (internalise as CRK policy, remove Bridge panel and public flag); otherwise => retire or deadline-bounded hold, never a permanent default-off"
+  },
+  "pairs": [
+    {
+      "pairId": "short-en-api_auth",
+      "stratum": "short-en",
+      "factId": "auth.overview",
+      "expected": "256",
+      "question": "According to the context above, what numeric value is specified for auth.overview? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 3044,
+        "inputTokens": 412,
+        "outputTokens": 64,
+        "cachedTokens": null,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3081,
+        "inputTokens": 395,
+        "outputTokens": 64,
+        "cachedTokens": null,
+        "text": ""
+      }
+    },
+    {
+      "pairId": "short-zh-api_auth",
+      "stratum": "short-zh",
+      "factId": "auth.overview",
+      "expected": "256",
+      "question": "根据上面的上下文，auth.overview 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 4426,
+        "inputTokens": 406,
+        "outputTokens": 64,
+        "cachedTokens": 14,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3342,
+        "inputTokens": 389,
+        "outputTokens": 63,
+        "cachedTokens": 128,
+        "text": ""
+      }
+    },
+    {
+      "pairId": "short-en-arch_split",
+      "stratum": "short-en",
+      "factId": "svc.context",
+      "expected": "4",
+      "question": "According to the context above, what numeric value is specified for svc.context? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 2724,
+        "inputTokens": 406,
+        "outputTokens": 31,
+        "cachedTokens": null,
+        "text": "12"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3274,
+        "inputTokens": 395,
+        "outputTokens": 38,
+        "cachedTokens": 128,
+        "text": "4"
+      }
+    },
+    {
+      "pairId": "short-zh-arch_split",
+      "stratum": "short-zh",
+      "factId": "svc.context",
+      "expected": "4",
+      "question": "根据上面的上下文，svc.context 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 3492,
+        "inputTokens": 400,
+        "outputTokens": 2,
+        "cachedTokens": 128,
+        "text": "12"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3892,
+        "inputTokens": 389,
+        "outputTokens": 2,
+        "cachedTokens": 128,
+        "text": "4"
+      }
+    },
+    {
+      "pairId": "short-en-db_users",
+      "stratum": "short-en",
+      "factId": "db.users",
+      "expected": "8",
+      "question": "According to the context above, what numeric value is specified for db.users? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 2962,
+        "inputTokens": 383,
+        "outputTokens": 64,
+        "cachedTokens": 140,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3527,
+        "inputTokens": 369,
+        "outputTokens": 64,
+        "cachedTokens": 140,
+        "text": ""
+      }
+    },
+    {
+      "pairId": "short-zh-db_users",
+      "stratum": "short-zh",
+      "factId": "db.users",
+      "expected": "8",
+      "question": "根据上面的上下文，db.users 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 3557,
+        "inputTokens": 377,
+        "outputTokens": 63,
+        "cachedTokens": 128,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 6904,
+        "inputTokens": 363,
+        "outputTokens": 64,
+        "cachedTokens": 140,
+        "text": ""
+      }
+    },
+    {
+      "pairId": "short-en-dep_runbook",
+      "stratum": "short-en",
+      "factId": "dep.goal",
+      "expected": "3",
+      "question": "According to the context above, what numeric value is specified for dep.goal? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 3033,
+        "inputTokens": 453,
+        "outputTokens": 35,
+        "cachedTokens": null,
+        "text": "3.0"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3223,
+        "inputTokens": 440,
+        "outputTokens": 41,
+        "cachedTokens": null,
+        "text": "3.0"
+      }
+    },
+    {
+      "pairId": "short-zh-dep_runbook",
+      "stratum": "short-zh",
+      "factId": "dep.goal",
+      "expected": "3",
+      "question": "根据上面的上下文，dep.goal 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 3202,
+        "inputTokens": 447,
+        "outputTokens": 38,
+        "cachedTokens": 142,
+        "text": "3.0"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 2949,
+        "inputTokens": 434,
+        "outputTokens": 49,
+        "cachedTokens": 256,
+        "text": "3.0"
+      }
+    },
+    {
+      "pairId": "short-en-sec_rules",
+      "stratum": "short-en",
+      "factId": "sec.password",
+      "expected": "12",
+      "question": "According to the context above, what numeric value is specified for sec.password? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 2706,
+        "inputTokens": 376,
+        "outputTokens": 20,
+        "cachedTokens": null,
+        "text": "12"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3516,
+        "inputTokens": 364,
+        "outputTokens": 3,
+        "cachedTokens": 140,
+        "text": "12"
+      }
+    },
+    {
+      "pairId": "short-zh-sec_rules",
+      "stratum": "short-zh",
+      "factId": "sec.password",
+      "expected": "12",
+      "question": "根据上面的上下文，sec.password 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 7421,
+        "inputTokens": 370,
+        "outputTokens": 22,
+        "cachedTokens": 140,
+        "text": "12"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3746,
+        "inputTokens": 358,
+        "outputTokens": 25,
+        "cachedTokens": 141,
+        "text": "12"
+      }
+    },
+    {
+      "pairId": "short-en-task_sprint",
+      "stratum": "short-en",
+      "factId": "task.goal",
+      "expected": "23",
+      "question": "According to the context above, what numeric value is specified for task.goal? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 3316,
+        "inputTokens": 393,
+        "outputTokens": 62,
+        "cachedTokens": null,
+        "text": "23"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3176,
+        "inputTokens": 387,
+        "outputTokens": 24,
+        "cachedTokens": 128,
+        "text": "23"
+      }
+    },
+    {
+      "pairId": "short-zh-task_sprint",
+      "stratum": "short-zh",
+      "factId": "task.goal",
+      "expected": "23",
+      "question": "根据上面的上下文，task.goal 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 2935,
+        "inputTokens": 387,
+        "outputTokens": 33,
+        "cachedTokens": 151,
+        "text": "23"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 8012,
+        "inputTokens": 381,
+        "outputTokens": 64,
+        "cachedTokens": 128,
+        "text": ""
+      }
+    },
+    {
+      "pairId": "short-en-res_queue",
+      "stratum": "short-en",
+      "factId": "res.kafka",
+      "expected": "100",
+      "question": "According to the context above, what numeric value is specified for res.kafka? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 3656,
+        "inputTokens": 406,
+        "outputTokens": 64,
+        "cachedTokens": null,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3657,
+        "inputTokens": 393,
+        "outputTokens": 64,
+        "cachedTokens": null,
+        "text": ""
+      }
+    },
+    {
+      "pairId": "short-zh-res_queue",
+      "stratum": "short-zh",
+      "factId": "res.kafka",
+      "expected": "100",
+      "question": "根据上面的上下文，res.kafka 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 4386,
+        "inputTokens": 400,
+        "outputTokens": 63,
+        "cachedTokens": 128,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3199,
+        "inputTokens": 387,
+        "outputTokens": 64,
+        "cachedTokens": 256,
+        "text": ""
+      }
+    },
+    {
+      "pairId": "short-en-pref_dev",
+      "stratum": "short-en",
+      "factId": "pref.context",
+      "expected": "agent",
+      "question": "According to the context above, what value is specified for pref.context? Reply with that value only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 1742,
+        "inputTokens": 320,
+        "outputTokens": 10,
+        "cachedTokens": 140,
+        "text": "用户开发偏好，用于 agent 自我约束"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 4409,
+        "inputTokens": 310,
+        "outputTokens": 64,
+        "cachedTokens": null,
+        "text": "用户开发偏好，用于 agent "
+      }
+    },
+    {
+      "pairId": "short-zh-pref_dev",
+      "stratum": "short-zh",
+      "factId": "pref.context",
+      "expected": "agent",
+      "question": "根据上面的上下文，pref.context 指定的值是什么？只回答该值。",
+      "control": {
+        "ok": true,
+        "latencyMs": 3048,
+        "inputTokens": 315,
+        "outputTokens": 64,
+        "cachedTokens": null,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3450,
+        "inputTokens": 305,
+        "outputTokens": 9,
+        "cachedTokens": 128,
+        "text": "用户开发偏好，用于 agent 自我约束"
+      }
+    },
+    {
+      "pairId": "short-en-err_codes",
+      "stratum": "short-en",
+      "factId": "err.range",
+      "expected": "40000",
+      "question": "According to the context above, what numeric value is specified for err.range? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 3056,
+        "inputTokens": 391,
+        "outputTokens": 64,
+        "cachedTokens": null,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 5055,
+        "inputTokens": 372,
+        "outputTokens": 64,
+        "cachedTokens": 128,
+        "text": ""
+      }
+    },
+    {
+      "pairId": "short-zh-err_codes",
+      "stratum": "short-zh",
+      "factId": "err.range",
+      "expected": "40000",
+      "question": "根据上面的上下文，err.range 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 4317,
+        "inputTokens": 385,
+        "outputTokens": 7,
+        "cachedTokens": 140,
+        "text": "40000-49999"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 2768,
+        "inputTokens": 366,
+        "outputTokens": 64,
+        "cachedTokens": null,
+        "text": ""
+      }
+    },
+    {
+      "pairId": "short-en-log_v031",
+      "stratum": "short-en",
+      "factId": "log.v031",
+      "expected": "0",
+      "question": "According to the context above, what numeric value is specified for log.v031? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 2752,
+        "inputTokens": 414,
+        "outputTokens": 64,
+        "cachedTokens": null,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3115,
+        "inputTokens": 396,
+        "outputTokens": 7,
+        "cachedTokens": 140,
+        "text": "0.3.1"
+      }
+    },
+    {
+      "pairId": "short-zh-log_v031",
+      "stratum": "short-zh",
+      "factId": "log.v031",
+      "expected": "0",
+      "question": "根据上面的上下文，log.v031 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 3893,
+        "inputTokens": 408,
+        "outputTokens": 64,
+        "cachedTokens": 256,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 2124,
+        "inputTokens": 390,
+        "outputTokens": 52,
+        "cachedTokens": 140,
+        "text": "0.3.1"
+      }
+    },
+    {
+      "pairId": "long-en-g0",
+      "stratum": "long-en",
+      "factId": "dep.goal",
+      "expected": "3",
+      "question": "According to the context above, what numeric value is specified for dep.goal? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 7175,
+        "inputTokens": 1125,
+        "outputTokens": 64,
+        "cachedTokens": 128,
+        "text": "3"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 2842,
+        "inputTokens": 1070,
+        "outputTokens": 32,
+        "cachedTokens": 140,
+        "text": "3.0"
+      }
+    },
+    {
+      "pairId": "long-zh-g0",
+      "stratum": "long-zh",
+      "factId": "dep.goal",
+      "expected": "3",
+      "question": "根据上面的上下文，dep.goal 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 4648,
+        "inputTokens": 1119,
+        "outputTokens": 35,
+        "cachedTokens": 140,
+        "text": "3.0"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 6256,
+        "inputTokens": 1064,
+        "outputTokens": 64,
+        "cachedTokens": 128,
+        "text": "3.0"
+      }
+    },
+    {
+      "pairId": "long-en-g1",
+      "stratum": "long-en",
+      "factId": "task.goal",
+      "expected": "23",
+      "question": "According to the context above, what numeric value is specified for task.goal? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 2793,
+        "inputTokens": 1076,
+        "outputTokens": 30,
+        "cachedTokens": null,
+        "text": "23"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3560,
+        "inputTokens": 1031,
+        "outputTokens": 21,
+        "cachedTokens": 128,
+        "text": "23"
+      }
+    },
+    {
+      "pairId": "long-zh-g1",
+      "stratum": "long-zh",
+      "factId": "task.goal",
+      "expected": "23",
+      "question": "根据上面的上下文，task.goal 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 3392,
+        "inputTokens": 1070,
+        "outputTokens": 64,
+        "cachedTokens": 1024,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 2855,
+        "inputTokens": 1025,
+        "outputTokens": 46,
+        "cachedTokens": null,
+        "text": "23"
+      }
+    },
+    {
+      "pairId": "long-en-g2",
+      "stratum": "long-en",
+      "factId": "pref.context",
+      "expected": "agent",
+      "question": "According to the context above, what value is specified for pref.context? Reply with that value only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 2952,
+        "inputTokens": 966,
+        "outputTokens": 34,
+        "cachedTokens": 256,
+        "text": "用户开发偏好，用于 agent 自我约束"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3374,
+        "inputTokens": 925,
+        "outputTokens": 10,
+        "cachedTokens": null,
+        "text": "用户开发偏好，用于 agent 自我约束"
+      }
+    },
+    {
+      "pairId": "long-zh-g2",
+      "stratum": "long-zh",
+      "factId": "pref.context",
+      "expected": "agent",
+      "question": "根据上面的上下文，pref.context 指定的值是什么？只回答该值。",
+      "control": {
+        "ok": true,
+        "latencyMs": 3222,
+        "inputTokens": 961,
+        "outputTokens": 50,
+        "cachedTokens": 128,
+        "text": "用户开发偏好，用于 agent 自我约束"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 2348,
+        "inputTokens": 920,
+        "outputTokens": 10,
+        "cachedTokens": 140,
+        "text": "用户开发偏好，用于 agent 自我约束"
+      }
+    },
+    {
+      "pairId": "long-en-g3",
+      "stratum": "long-en",
+      "factId": "log.v031",
+      "expected": "0",
+      "question": "According to the context above, what numeric value is specified for log.v031? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 3116,
+        "inputTokens": 1004,
+        "outputTokens": 63,
+        "cachedTokens": 128,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 4735,
+        "inputTokens": 944,
+        "outputTokens": 43,
+        "cachedTokens": 14,
+        "text": "0.3.1"
+      }
+    },
+    {
+      "pairId": "long-zh-g3",
+      "stratum": "long-zh",
+      "factId": "log.v031",
+      "expected": "0",
+      "question": "根据上面的上下文，log.v031 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 3001,
+        "inputTokens": 998,
+        "outputTokens": 63,
+        "cachedTokens": 896,
+        "text": ""
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 12046,
+        "inputTokens": 938,
+        "outputTokens": 47,
+        "cachedTokens": 140,
+        "text": "0.3.1"
+      }
+    },
+    {
+      "pairId": "long-en-g4",
+      "stratum": "long-en",
+      "factId": "svc.context",
+      "expected": "4",
+      "question": "According to the context above, what numeric value is specified for svc.context? Reply with the number only.",
+      "control": {
+        "ok": true,
+        "latencyMs": 3008,
+        "inputTokens": 1093,
+        "outputTokens": 42,
+        "cachedTokens": 256,
+        "text": "4"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 2402,
+        "inputTokens": 1028,
+        "outputTokens": 34,
+        "cachedTokens": 14,
+        "text": "4"
+      }
+    },
+    {
+      "pairId": "long-zh-g4",
+      "stratum": "long-zh",
+      "factId": "svc.context",
+      "expected": "4",
+      "question": "根据上面的上下文，svc.context 指定的数值是多少？只回答数字。",
+      "control": {
+        "ok": true,
+        "latencyMs": 2073,
+        "inputTokens": 1087,
+        "outputTokens": 21,
+        "cachedTokens": 140,
+        "text": "4"
+      },
+      "treatment": {
+        "ok": true,
+        "latencyMs": 3196,
+        "inputTokens": 1022,
+        "outputTokens": 2,
+        "cachedTokens": 128,
+        "text": "4"
+      }
+    }
+  ]
+}

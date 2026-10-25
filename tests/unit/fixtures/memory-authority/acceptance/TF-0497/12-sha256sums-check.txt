@@ -1,141 +1,141 @@
 [
-  {
-    "file": "openclaw_runtime/src/agents/slot-convergence.ts",
-    "expected": "dc5f8b35523b95ab041f6e49b1b5b32220e02ed74585af4052ec18bf5307b297",
-    "actual": "dc5f8b35523b95ab041f6e49b1b5b32220e02ed74585af4052ec18bf5307b297",
-    "status": "pass"
-  },
-  {
-    "file": "openclaw_runtime/src/memory/memory-authority.ts",
-    "expected": "b32a82f0b4bdb5d67e6380698660da97a844999af490a331856952547674b86d",
-    "actual": "b32a82f0b4bdb5d67e6380698660da97a844999af490a331856952547674b86d",
-    "status": "pass"
-  },
-  {
-    "file": "openclaw_runtime/src/memory/memory-card.ts",
-    "expected": "2e1d8195529fd4a5b154412cb546d0333164da012fe56c5f1622fe5e7e0e8e8b",
-    "actual": "2e1d8195529fd4a5b154412cb546d0333164da012fe56c5f1622fe5e7e0e8e8b",
-    "status": "pass"
-  },
-  {
-    "file": "openclaw_runtime/src/memory/memory-policy.ts",
-    "expected": "3c838be80484e035e5a9cbe52c97fa98f9aee9a66246afb132a1a3e23f12fc02",
-    "actual": "3c838be80484e035e5a9cbe52c97fa98f9aee9a66246afb132a1a3e23f12fc02",
-    "status": "pass"
-  },
-  {
-    "file": "openclaw_runtime/src/memory/memory-store.ts",
-    "expected": "ac39f953e5c3694bb5cd049d2e99743fc651d1388aa5dc676e14c7385a036938",
-    "actual": "ac39f953e5c3694bb5cd049d2e99743fc651d1388aa5dc676e14c7385a036938",
-    "status": "pass"
-  },
-  {
-    "file": "openclaw_runtime/src/memory/root-memory-files.ts",
-    "expected": "8aa455e4f9e923d42309683c716c1fa22ba041f42061fb5fb6f7cbf78875e2c1",
-    "actual": "8aa455e4f9e923d42309683c716c1fa22ba041f42061fb5fb6f7cbf78875e2c1",
-    "status": "pass"
-  },
-  {
-    "file": "openclaw_runtime/src/runtime-core/memory-context.ts",
-    "expected": "3addc426252ed80c205af88512e8aab961c6bfa3053addf8384fa7bd65f2d05c",
-    "actual": "3addc426252ed80c205af88512e8aab961c6bfa3053addf8384fa7bd65f2d05c",
-    "status": "pass"
-  },
-  {
-    "file": "openclaw_runtime/src/runtime-core/memory-embedding-provider.ts",
-    "expected": "982c4e09b19118a8549cb8428b34df48531e02842b272c946f5ed3c8cbfdeeca",
-    "actual": "982c4e09b19118a8549cb8428b34df48531e02842b272c946f5ed3c8cbfdeeca",
-    "status": "pass"
-  },
-  {
-    "file": "openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts",
-    "expected": "ce52a98a4fdb74bc8f32d9a94b48decccb77a3e08ceb85e7329a7b0e6a79256c",
-    "actual": "ce52a98a4fdb74bc8f32d9a94b48decccb77a3e08ceb85e7329a7b0e6a79256c",
-    "status": "pass"
-  },
-  {
-    "file": "openclaw_runtime/src/runtime-core/memory-persistence.ts",
-    "expected": "3f9526e0de7f1c1bb215bfcd0e4134e8d904a64c41301d7697d417b0ead4d861",
-    "actual": "3f9526e0de7f1c1bb215bfcd0e4134e8d904a64c41301d7697d417b0ead4d861",
-    "status": "pass"
-  },
-  {
-    "file": "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts",
-    "expected": "17cd5d790ad7b19cd4e2379310a2eb8a792b1fc7e8a06bb170020db9a6136e8e",
-    "actual": "17cd5d790ad7b19cd4e2379310a2eb8a792b1fc7e8a06bb170020db9a6136e8e",
-    "status": "pass"
-  },
-  {
-    "file": "openclaw_runtime/src/runtime-core/memory-store.ts",
-    "expected": "adec5d2ad67c02a0cfdc59f3ccccd2f9b14edaecb4fb7ead90cd2598d9060b7f",
-    "actual": "adec5d2ad67c02a0cfdc59f3ccccd2f9b14edaecb4fb7ead90cd2598d9060b7f",
-    "status": "pass"
-  },
-  {
-    "file": "shared/component-authority-manifest.ts",
-    "expected": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
-    "actual": "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
-    "status": "pass"
-  },
-  {
-    "file": "shared/dcs/prod-flags-catalog.ts",
-    "expected": "df5054560beaad49592eafe0bc567c179b53d1bf11dc6a0f0a0426cb0f24659f",
-    "actual": "df5054560beaad49592eafe0bc567c179b53d1bf11dc6a0f0a0426cb0f24659f",
-    "status": "pass"
-  },
-  {
-    "file": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/README.md",
-    "expected": "eea998bb65dd548de307c32713e27242351c9af6be3538a4d347ed30c463d8fc",
-    "actual": "eea998bb65dd548de307c32713e27242351c9af6be3538a4d347ed30c463d8fc",
-    "status": "pass"
-  },
-  {
-    "file": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/component-graduation-report.json",
-    "expected": "03c63e5f67a60c7e2156ff859e054a21566fb7e5e3ed7beeb445030c6997a390",
-    "actual": "03c63e5f67a60c7e2156ff859e054a21566fb7e5e3ed7beeb445030c6997a390",
-    "status": "pass"
-  },
-  {
-    "file": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts",
-    "expected": "dbe3ce884020252e5672dca283ebbf35793c6310e564eb44c7c53753d990dc29",
-    "actual": "dbe3ce884020252e5672dca283ebbf35793c6310e564eb44c7c53753d990dc29",
-    "status": "pass"
-  },
-  {
-    "file": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
-    "expected": "cf838366d2ce0ba431131b92c43284fb67844dd780566381ad5423970179481f",
-    "actual": "cf838366d2ce0ba431131b92c43284fb67844dd780566381ad5423970179481f",
-    "status": "pass"
-  },
-  {
-    "file": "tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
-    "expected": "d652c5cc846cc80d7f40b2e1e483a5a1036c49c6218dd2ff0cdef68f34c7c9aa",
-    "actual": "d652c5cc846cc80d7f40b2e1e483a5a1036c49c6218dd2ff0cdef68f34c7c9aa",
-    "status": "pass"
-  },
-  {
-    "file": "tests/unit/memory-authority-contract.test.ts",
-    "expected": "dbdfb656485f9c53441f2945f10765959e4308d366f6a7553a83615ddfb3af6b",
-    "actual": "dbdfb656485f9c53441f2945f10765959e4308d366f6a7553a83615ddfb3af6b",
-    "status": "pass"
-  },
-  {
-    "file": "tests/unit/r3-2-memory-settings-switches.test.ts",
-    "expected": "557e659d8b4fe88a3b98f5bdb47663e53cbe6ee22469f9633fb642314a812f4a",
-    "actual": "557e659d8b4fe88a3b98f5bdb47663e53cbe6ee22469f9633fb642314a812f4a",
-    "status": "pass"
-  },
-  {
-    "file": "tests/unit/rc07-memory-context-slot-convergence.test.ts",
-    "expected": "b01ecf77d6fec51a11c71e8340ee63776b8c60abc62afefeb7dee3ef264e20b3",
-    "actual": "b01ecf77d6fec51a11c71e8340ee63776b8c60abc62afefeb7dee3ef264e20b3",
-    "status": "pass"
-  },
-  {
-    "file": "tests/unit/runtime-memory-store.test.ts",
-    "expected": "b4a31a942148eff87c0ac35e3ccedac3bd09152582513b5b0a2e52cc5c8b1f0b",
-    "actual": "b4a31a942148eff87c0ac35e3ccedac3bd09152582513b5b0a2e52cc5c8b1f0b",
-    "status": "pass"
-  }
+    {
+        "file":  "openclaw_runtime/src/agents/slot-convergence.ts",
+        "expected":  "dc5f8b35523b95ab041f6e49b1b5b32220e02ed74585af4052ec18bf5307b297",
+        "actual":  "dc5f8b35523b95ab041f6e49b1b5b32220e02ed74585af4052ec18bf5307b297",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/memory/memory-authority.ts",
+        "expected":  "b32a82f0b4bdb5d67e6380698660da97a844999af490a331856952547674b86d",
+        "actual":  "b32a82f0b4bdb5d67e6380698660da97a844999af490a331856952547674b86d",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/memory/memory-card.ts",
+        "expected":  "2e1d8195529fd4a5b154412cb546d0333164da012fe56c5f1622fe5e7e0e8e8b",
+        "actual":  "2e1d8195529fd4a5b154412cb546d0333164da012fe56c5f1622fe5e7e0e8e8b",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/memory/memory-policy.ts",
+        "expected":  "3c838be80484e035e5a9cbe52c97fa98f9aee9a66246afb132a1a3e23f12fc02",
+        "actual":  "3c838be80484e035e5a9cbe52c97fa98f9aee9a66246afb132a1a3e23f12fc02",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/memory/memory-store.ts",
+        "expected":  "892e9fd72d1bdac262f3b8905af5dbc3549d7f315a6c9129b89c007b5fd1b1aa",
+        "actual":  "892e9fd72d1bdac262f3b8905af5dbc3549d7f315a6c9129b89c007b5fd1b1aa",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/memory/root-memory-files.ts",
+        "expected":  "8aa455e4f9e923d42309683c716c1fa22ba041f42061fb5fb6f7cbf78875e2c1",
+        "actual":  "8aa455e4f9e923d42309683c716c1fa22ba041f42061fb5fb6f7cbf78875e2c1",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/runtime-core/memory-context.ts",
+        "expected":  "3addc426252ed80c205af88512e8aab961c6bfa3053addf8384fa7bd65f2d05c",
+        "actual":  "3addc426252ed80c205af88512e8aab961c6bfa3053addf8384fa7bd65f2d05c",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/runtime-core/memory-embedding-provider.ts",
+        "expected":  "982c4e09b19118a8549cb8428b34df48531e02842b272c946f5ed3c8cbfdeeca",
+        "actual":  "982c4e09b19118a8549cb8428b34df48531e02842b272c946f5ed3c8cbfdeeca",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts",
+        "expected":  "ce52a98a4fdb74bc8f32d9a94b48decccb77a3e08ceb85e7329a7b0e6a79256c",
+        "actual":  "ce52a98a4fdb74bc8f32d9a94b48decccb77a3e08ceb85e7329a7b0e6a79256c",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/runtime-core/memory-persistence.ts",
+        "expected":  "3f9526e0de7f1c1bb215bfcd0e4134e8d904a64c41301d7697d417b0ead4d861",
+        "actual":  "3f9526e0de7f1c1bb215bfcd0e4134e8d904a64c41301d7697d417b0ead4d861",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts",
+        "expected":  "17cd5d790ad7b19cd4e2379310a2eb8a792b1fc7e8a06bb170020db9a6136e8e",
+        "actual":  "17cd5d790ad7b19cd4e2379310a2eb8a792b1fc7e8a06bb170020db9a6136e8e",
+        "status":  "pass"
+    },
+    {
+        "file":  "openclaw_runtime/src/runtime-core/memory-store.ts",
+        "expected":  "adec5d2ad67c02a0cfdc59f3ccccd2f9b14edaecb4fb7ead90cd2598d9060b7f",
+        "actual":  "adec5d2ad67c02a0cfdc59f3ccccd2f9b14edaecb4fb7ead90cd2598d9060b7f",
+        "status":  "pass"
+    },
+    {
+        "file":  "shared/component-authority-manifest.ts",
+        "expected":  "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+        "actual":  "b03a020ba7cac7df861a6de020e00f5453b4fb9e5fe16ac8ac4cbf72482346cc",
+        "status":  "pass"
+    },
+    {
+        "file":  "shared/dcs/prod-flags-catalog.ts",
+        "expected":  "8ef09200bb126c826d67254e73b105177897d11df394b2a6829d6688790b27d3",
+        "actual":  "8ef09200bb126c826d67254e73b105177897d11df394b2a6829d6688790b27d3",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/README.md",
+        "expected":  "57a80b3a859d8436cfad3a44ab550cfc3afff9182528719ff2843d494ff45f60",
+        "actual":  "57a80b3a859d8436cfad3a44ab550cfc3afff9182528719ff2843d494ff45f60",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/component-graduation-report.json",
+        "expected":  "b894eb8efcc9aa1e630fa38e2b681e75ebccb853334769acb4230572674bfb2c",
+        "actual":  "b894eb8efcc9aa1e630fa38e2b681e75ebccb853334769acb4230572674bfb2c",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/generate-acceptance.mts",
+        "expected":  "ba5599272fd6b5ca1d9a42563c3f9ff8e15638f673470056340d9e91bef64e78",
+        "actual":  "ba5599272fd6b5ca1d9a42563c3f9ff8e15638f673470056340d9e91bef64e78",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/raw-evidence.json",
+        "expected":  "e333303433f13e211b0f3006f516265f3e3af88b099cee96cfe172bf0f61055f",
+        "actual":  "e333303433f13e211b0f3006f516265f3e3af88b099cee96cfe172bf0f61055f",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/fixtures/memory-authority/acceptance/TF-0497/run-verification.ps1",
+        "expected":  "8a502c7a7bc1613617dc275b7c5c07d28899fa8c611cc28d81ebaf30d92039c2",
+        "actual":  "8a502c7a7bc1613617dc275b7c5c07d28899fa8c611cc28d81ebaf30d92039c2",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/memory-authority-contract.test.ts",
+        "expected":  "dbdfb656485f9c53441f2945f10765959e4308d366f6a7553a83615ddfb3af6b",
+        "actual":  "dbdfb656485f9c53441f2945f10765959e4308d366f6a7553a83615ddfb3af6b",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/r3-2-memory-settings-switches.test.ts",
+        "expected":  "557e659d8b4fe88a3b98f5bdb47663e53cbe6ee22469f9633fb642314a812f4a",
+        "actual":  "557e659d8b4fe88a3b98f5bdb47663e53cbe6ee22469f9633fb642314a812f4a",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/rc07-memory-context-slot-convergence.test.ts",
+        "expected":  "b01ecf77d6fec51a11c71e8340ee63776b8c60abc62afefeb7dee3ef264e20b3",
+        "actual":  "b01ecf77d6fec51a11c71e8340ee63776b8c60abc62afefeb7dee3ef264e20b3",
+        "status":  "pass"
+    },
+    {
+        "file":  "tests/unit/runtime-memory-store.test.ts",
+        "expected":  "b4a31a942148eff87c0ac35e3ccedac3bd09152582513b5b0a2e52cc5c8b1f0b",
+        "actual":  "b4a31a942148eff87c0ac35e3ccedac3bd09152582513b5b0a2e52cc5c8b1f0b",
+        "status":  "pass"
+    }
 ]
 SHA256SUMS_STATUS=pass

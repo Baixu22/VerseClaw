@@ -2932,6 +2932,7 @@ export function createSessionsApi(ctx: {
         originalFolderId: body.originalFolderId,
       }, ctx.gatewayManager);
       if (result.success) {
+        await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
         await observeCoordinatorLifecycle({
           type: 'archive',
           workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : null,

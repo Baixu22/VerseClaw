@@ -166,7 +166,7 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     controlKind: 'config',
     storeKey: 'dcsWorkingMemoryEnabled',
     targetKey: 'runtime.contextBlock.working-memory.enabled',
-    defaultEnabled: false,
+    defaultEnabled: true,
   },
   {
     id: 'tool-registry',
@@ -174,7 +174,7 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     controlKind: 'config',
     storeKey: 'dcsToolRegistryEnabled',
     targetKey: 'runtime.contextBlock.tool-registry.enabled',
-    defaultEnabled: false,
+    defaultEnabled: true,
   },
   {
     id: 'stale-write-guard',
@@ -182,14 +182,6 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     controlKind: 'config',
     storeKey: 'dcsStaleWriteGuardEnabled',
     targetKey: 'runtime.coding.staleWriteGuard.enabled',
-    defaultEnabled: false,
-  },
-  {
-    id: 'symbol-lease',
-    catalog: mustFlag('symbol-lease'),
-    controlKind: 'config',
-    storeKey: 'dcsSymbolLeaseEnabled',
-    targetKey: 'runtime.coding.symbolLease.enabled',
     defaultEnabled: false,
   },
   {
@@ -454,6 +446,42 @@ export type DcsPreviewSetResult = {
   restartedGateway: boolean;
   comboFlagIds: readonly string[];
   missingPrereqs?: DcsPreviewPrereq[];
+  ackTrail?: DcsFlagAckState[];
+  runtimeAck?: DcsFlagRuntimeAck;
+  ackMissingFields?: DcsFlagAckRequiredField[];
+  failureReason?: DcsFlagAckFailureReason;
+  operatorHintKey?: string;
+  gatewayGeneration?: string;
+  ackWaitMs?: number;
+  error?: string;
+};
+
+/** The only two low-level flags that compose the user-level Workspace Context profile. */
+export const WORKSPACE_CONTEXT_FLAG_IDS = [
+  'working-memory',
+  'tool-registry',
+] as const satisfies readonly DcsWritableFlagId[];
+
+export type WorkspaceContextState = {
+  enabled: boolean;
+  partial: boolean;
+  comboFlagIds: readonly string[];
+  flags: DcsProdFlagStateRow[];
+  /** Model-safe effective description; never exposes internal flag names. */
+  modelSummary: string;
+};
+
+export type WorkspaceContextSetPayload = {
+  enabled: boolean;
+  restartGateway?: boolean;
+};
+
+export type WorkspaceContextSetResult = {
+  success: boolean;
+  enabled: boolean;
+  status: DcsProdFlagApplyStatus;
+  restartedGateway: boolean;
+  comboFlagIds: readonly string[];
   ackTrail?: DcsFlagAckState[];
   runtimeAck?: DcsFlagRuntimeAck;
   ackMissingFields?: DcsFlagAckRequiredField[];

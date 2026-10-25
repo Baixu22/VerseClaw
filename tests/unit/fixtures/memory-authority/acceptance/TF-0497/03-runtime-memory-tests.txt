@@ -1,7 +1,7 @@
 Scope: all 155 workspace projects
 Lockfile is up to date, resolution step is skipped
 Already up to date
-[WARN] Failed to create bin at D:\ClawX-work\worktrees\long-session-program-r2\openclaw_runtime\extensions\verseconf-artifacts\node_modules\.bin\openclaw. ENOENT: no such file or directory, stat 'D:\ClawX-work\worktrees\long-session-program-r2\openclaw_runtime\openclaw.mjs.EXE'
+[WARN] Failed to create bin at D:\ClawX-work\component-graduation-20261021\openclaw_runtime\extensions\verseconf-artifacts\node_modules\.bin\openclaw. ENOENT: no such file or directory, stat 'D:\ClawX-work\component-graduation-20261021\openclaw_runtime\openclaw.mjs.EXE'
 
 . preinstall$ node scripts/preinstall-package-manager-warning.mjs
 . preinstall: Done
@@ -9,14 +9,14 @@ Already up to date
 . postinstall: Done
 . prepare$ node scripts/prepare-git-hooks.mjs
 . prepare: Done
-Done in 2.2s using pnpm v11.2.2
+Done in 2.3s using pnpm v11.2.2
 
- RUN  v4.1.7 D:/ClawX-work/worktrees/long-session-program-r2/openclaw_runtime
+ RUN  v4.1.7 D:/ClawX-work/component-graduation-20261021/openclaw_runtime
 
 ··············································································
 
  Test Files  6 passed (6)
       Tests  78 passed (78)
-   Start at  16:45:34
-   Duration  1.32s (transform 732ms, setup 336ms, import 453ms, tests 280ms, environment 0ms)
+   Start at  17:36:47
+   Duration  1.68s (transform 995ms, setup 412ms, import 580ms, tests 344ms, environment 0ms)
 

@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "KnowledgeSekbMergeEvidence/v1",
+  "taskForestNodeId": "TF-0499",
+  "generatedAt": "2026-10-23T02:17:40.228Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "verificationStatus": "pass",
+  "acceptanceCriteria": [
+    {
+      "criterion": "前端只有一个 knowledge review surface",
+      "status": "pass",
+      "evidence": [
+        "09-single-surface.txt: knowledge_nav_entries=1, sekb_routes=0; one import + one mount of KnowledgeReviewQueue in src/pages/Knowledge/index.tsx"
+      ]
+    },
+    {
+      "criterion": "SEKB candidate 可在 Knowledge 中看到并应用",
+      "status": "pass",
+      "evidence": [
+        "shared/knowledge-lifecycle.ts: SEKB enters as sourceKind runtime-lesson; 02-sekb-identity golden-path + experience-closed-loop suites pass"
+      ]
+    },
+    {
+      "criterion": "agent 确认不得写成人身份；负向身份测试通过",
+      "status": "pass",
+      "evidence": [
+        "distillation-tool.ts resolvePrincipleCreatedBy; sekb.test.ts \"never records an agent-driven confirm as a human author\"; 10-no-unconfirmed-writeback.txt hardcoded_created_by_human=0"
+      ]
+    },
+    {
+      "criterion": "未确认 SEKB 写回=0",
+      "status": "pass",
+      "evidence": [
+        "golden-path.ts autoWriteback:false, writeOccurredOnlyAfterConfirm; 10-no-unconfirmed-writeback.txt auto_writeback_off=True"
+      ]
+    },
+    {
+      "criterion": "模型能区分 source/draft/proposal/applied 与 memory candidate",
+      "status": "pass",
+      "evidence": [
+        "shared/knowledge-lifecycle.ts single lifecycle vocabulary + describeKnowledgeLifecycleForModel; 01-lifecycle-unit 4 tests pass"
+      ]
+    }
+  ],
+  "results": {
+    "surface": "pass",
+    "sekbIdentity": "pass",
+    "noUnconfirmedWriteback": "pass",
+    "modelStatus": "pass"
+  },
+  "evidenceNotes": {
+    "diskReadback": true,
+    "humanEvidenceClaimed": false,
+    "publicReleaseClaimed": false,
+    "productDefaultChanged": false,
+    "verseGitTouched": false,
+    "graduated": true,
+    "reviewQueueMountsExplained": "2 hits = 1 import + 1 JSX mount of the same component; single surface"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "applied_at": "2026-10-24T04:59:36.031501Z",
+  "base_graph_hash": "cbe1b2c9222434f90e2bce475b704309941f3761475e89c2e192a10194fea5ec",
+  "base_summary": {
+    "edge_count": 1020,
+    "node_count": 516,
+    "workspace_path": "D:\\ClawX-work\\component-graduation-20261021"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "tests/unit/fixtures/shadow-controls-tf0511/README.md",
+          "tests/unit/fixtures/shadow-controls-tf0511/acceptance.json",
+          "tests/unit/fixtures/shadow-controls-tf0511/catalog-readback.json",
+          "tests/unit/fixtures/shadow-controls-tf0511/verification.json",
+          "tests/unit/fixtures/shadow-controls-tf0511/SHA256SUMS",
+          "tests/unit/fixtures/shadow-controls-tf0511/sha256sums-check.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/scope-conflict.json",
+          "tests/unit/fixtures/shadow-controls-tf0511/scope-guard.json",
+          "tests/unit/fixtures/shadow-controls-tf0511/feature-leaf-consumer.json",
+          "tests/unit/fixtures/shadow-controls-tf0511/generate-acceptance.mts",
+          "tests/unit/fixtures/shadow-controls-tf0511/run-verification.ps1",
+          "tests/unit/fixtures/shadow-controls-tf0511/01-manifest-tests.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/02-compass.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/03-typecheck.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/04-lint-check.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/05-contract-check.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/06-no-bom.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/07-diff-check.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/08-feature-leaf-consumer.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/09-scope-guard.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/10-regenerate-acceptance.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/compass-retirement-focused.txt",
+          "tests/unit/fixtures/shadow-controls-tf0511/diff-check.txt",
+          "tests/unit/shadow-controls-tf0511-scope-conflict.test.ts",
+          "openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts",
+          "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+          "shared/dcs/component-disposition-catalog.ts",
+          "scripts/check-feature-leaf-consumers.mjs",
+          "docs/dev/component-disposition-matrix-20261021.md",
+          "docs/clawx-product-semantics.md"
+        ],
+        "next_action": "TF-0511 已按当前磁盘证据收口并标记 done；仅将依赖全部满足且 display_order 最低的可执行 leaf TF-0512 标记 ready。本轮到此停止，不执行 TF-0512。",
+        "progress": 100,
+        "progress_source": "manual",
+        "summary": "TF-0511 完成：从唯一 DCS catalog 重建六项处置，COMPASS、Routing Memo、AgentMap、runtime shadow/governance 均解析为 internal，保留项具备可执行消费者、验证产物和空 remainingGap；open experiment=0、componentsWithGaps=0。COMPASS 旧 pre-reply 注入继续按 TF-0500 退役语义验证；coding.patchFlow.enabled 仅作为 TF-0510 零消费兼容残差固定，不重新启用退役路径。未翻转产品默认值，未修改 VerseGit，未声明 public release/GA/liveReady/productApproved，也未声称真人证据。"
+      },
+      "id": "TF-0511"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0511",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0512",
+      "progress": 0,
+      "status": "ready"
+    }
+  ],
+  "created_at": "2026-10-24T04:58:47.159913Z",
+  "proposal_id": "TFP-20261024-tf0511-closeout-and-tf0512-ready",
+  "rationale": "TF-0511 acceptance is complete from current-disk evidence: all five criteria are verified, all ten gates pass, all 24 SHA256 entries match, the single-source catalog has zero open experiments and zero remaining gaps, and the scope-conflict deviation is resolved. The proposal closes only TF-0511 and activates only TF-0512, whose four blocking dependencies are done and which is the lowest-order executable task leaf. TF-0512 is not executed in this closeout.",
+  "session_id": "tf-0511-shadow-control-closeout-20261024",
+  "status": "applied"
+}

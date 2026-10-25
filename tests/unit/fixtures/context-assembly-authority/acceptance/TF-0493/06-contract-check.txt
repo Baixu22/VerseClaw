@@ -1,9 +1,9 @@
 pnpm.cmd : $ node scripts/contract-check.mjs
-At D:\ClawX-work\worktrees\long-session-program-r2\tests\unit\fixtures\context-assembly-authority\acceptance\TF-0493\ru
-n-verification.ps1:15 char:14
-+ ...  $output = (& $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
-+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+At D:\ClawX-work\component-graduation-20261021\tests\unit\fixtures\context-assembly-authority\acceptance\TF-0493\run-ve
+rification.ps1:15 char:13
++   $output = & $Arguments[0] @($Arguments[1..($Arguments.Count - 1)])  ...
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: ($ node scripts/contract-check.mjs:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
-
+ 
 Contract check passed.

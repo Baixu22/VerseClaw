@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Activity,
   AlertCircle,
+  Brain,
   ChevronDown,
   Info,
   ListChecks,
@@ -230,6 +232,15 @@ export function Agents({ embedded = false }: { embedded?: boolean } = {}) {
           {!showInitialLoading && (
             <>
               <RolesOrchestrationPanel agents={agents} />
+              <Link
+                to="/memory"
+                data-testid="agents-open-memory"
+                className="flex items-center gap-3 rounded-xl border border-border/60 bg-surface-input px-4 py-3 text-sm text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+              >
+                <Brain className="h-4 w-4 text-primary" aria-hidden="true" />
+                <span className="flex-1">{t('memoryPage.openFromAgents')}</span>
+                <span className="text-xs text-muted-foreground">{t('memoryPage.openFromAgentsAction')}</span>
+              </Link>
             </>
           )}
         </div>

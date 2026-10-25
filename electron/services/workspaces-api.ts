@@ -41,10 +41,7 @@ import {
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
 import { recordPermissionDecisionEvent } from './permissions-api';
 import { normalizeTaskLedgerWorkspaceId } from './task-ledger-service';
-import {
-  reclaimBrowserSessionsForWorkspace,
-  reclaimManagedPortsForWorkspace,
-} from './long-session-resource-reclamation';
+
 
 type WorkspaceStoreDocument = {
   activeWorkspaceId: string | null;
@@ -1243,6 +1240,7 @@ export function createWorkspacesApi(
       await writeDocument(nextDocument);
       const permissionNowRestrictive = nextProfile.permissionMode === 'plan' || nextProfile.permissionMode === 'readOnly';
       if (rootPathChanged) {
+        const { reclaimBrowserSessionsForWorkspace, reclaimManagedPortsForWorkspace } = await import('./long-session-resource-reclamation');
         ctx.terminalManager?.unregisterWorkspace(id, 'workspace-delete');
         await ctx.webPreviewManager?.stopForWorkspace(id, 'workspace-delete');
         const browsers = reclaimBrowserSessionsForWorkspace(id);
@@ -1285,6 +1283,7 @@ export function createWorkspacesApi(
       }
       const activeWorkspaceId = document.activeWorkspaceId === id ? profiles[0]?.id ?? null : document.activeWorkspaceId;
       const nextDocument = { activeWorkspaceId, profiles };
+      const { reclaimBrowserSessionsForWorkspace, reclaimManagedPortsForWorkspace } = await import('./long-session-resource-reclamation');
       ctx.terminalManager?.unregisterWorkspace(id, 'workspace-delete');
       await ctx.webPreviewManager?.stopForWorkspace(id, 'workspace-delete');
       const browsers = reclaimBrowserSessionsForWorkspace(id);

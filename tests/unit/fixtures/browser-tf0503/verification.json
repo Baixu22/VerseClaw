@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "BrowserSupervisedTaskVerification/v1",
+  "taskForestNodeId": "TF-0503",
+  "generatedAt": "2026-10-23T06:51:55.8486555Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "graduationStatus": "graduated-per-implementation-gates",
+  "gates": [
+    {
+      "id": "01-guard-unit",
+      "command": "browser guard, reaper and supervised capability suites",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/browser-tf0503/01-guard-unit.txt",
+      "outputSha256": "f81628d86ad3fe10f117e97f132aad1b3069a2c201e42d58f0e5cae0165847ce"
+    },
+    {
+      "id": "02-browser-regression",
+      "command": "existing browser and versebrowser suites",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/browser-tf0503/02-browser-regression.txt",
+      "outputSha256": "c69ad56430c8439fe8e8fb4e7e579021eff8b9424597a60faa19d58acae2b344"
+    },
+    {
+      "id": "02b-electron-real",
+      "command": "real Electron supervised browser path",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/browser-tf0503/02b-electron-real.txt",
+      "outputSha256": "1ca989582de0ea5b4ecc8abbe86c0d49a4d1c30d1270fd768a37ddc1054476bc"
+    },
+    {
+      "id": "03-typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/browser-tf0503/03-typecheck.txt",
+      "outputSha256": "8fb8a98c1b3666310b71e5d7dc8452cac3df900d57f954ec0cd0c8d7c0df30db"
+    },
+    {
+      "id": "04-lint-check",
+      "command": "pnpm run lint:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/browser-tf0503/04-lint-check.txt",
+      "outputSha256": "7a74c88871a63b2a56726b8c5331a5a7995124a96cc797743b334245f06599cb"
+    },
+    {
+      "id": "05-contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/browser-tf0503/05-contract-check.txt",
+      "outputSha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0"
+    },
+    {
+      "id": "06-no-bom",
+      "command": "node scripts/check-no-bom.mjs",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/browser-tf0503/06-no-bom.txt",
+      "outputSha256": "7641f15381270f4c540b94cf46ca4a478bd91ef5cdd287b2650e5d7ab4a0dcf4"
+    },
+    {
+      "id": "07-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/browser-tf0503/07-diff-check.txt",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "08-navigation-guard-wired",
+      "command": "static audit: guard and reaper actually wired",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/browser-tf0503/08-navigation-guard-wired.txt",
+      "outputSha256": "5be259a3fc2e35a1cdefd48d51224794c310f23228c898c5e899cb5fc735a21d"
+    },
+    {
+      "id": "09-scope-audit",
+      "command": "git scope audit against node allowed paths",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/browser-tf0503/09-scope-audit.txt",
+      "outputSha256": "02af99b5452a457339c7e37ce7b8c15dbb98d780e88038e63f2ed32246be5f9c"
+    },
+    {
+      "id": "10-sha256sums-check",
+      "command": "PowerShell SHA256 recompute",
+      "exitCode": 0,
+      "status": "pass",
+      "outputPath": "tests/unit/fixtures/browser-tf0503/10-sha256sums-check.txt",
+      "outputSha256": "544cd422da1a9a832236cebb344ac87291723e8564b96e1cb0f8e5c205d69255"
+    }
+  ]
+}

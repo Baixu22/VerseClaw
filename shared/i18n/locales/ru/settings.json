@@ -653,7 +653,7 @@
         "detailDisabled": "До явного включения эти инструменты не входят в стандартный список: {{tools}}.",
         "detailEnabled": "Для этой установки инструменты просмотра включены. Для работы по-прежнему требуется workspace программирования с FactService."
       },
-            "layerRole": "DCS — диагностика для разработчиков — расширенные opt-in элементы управления BlockStore. Значения по умолчанию остаются fail-closed; низкоуровневые флаги и экспериментальные шлюзы относятся к расширенной диагностике.",
+      "layerRole": "DCS — диагностика для разработчиков — расширенные элементы управления BlockStore. Workspace Context (недавние действия и каталог инструментов) — обычный профиль в Settings > General, включённый по умолчанию; низкоуровневые флаги и экспериментальные шлюзы остаются диагностикой.",
       "taskLoopNote": "Для состояния задачи, phase и траектории SEKB требуется путь TaskLoop с несколькими шагами; одного хода чата недостаточно. См. docs/dev/dcs-visible-production/TASKLOOP-ACCEPTANCE.md.",
       "observability": {
         "title": "Наблюдаемость DCS: продуктовые ключи",
@@ -890,5 +890,22 @@
     "success": "Support bundle exported",
     "failed": "Support bundle export failed: {{error}}",
     "savedTo": "Saved to {{path}} · redaction hits: {{hits}}"
+  },
+  "workspaceContext": {
+    "title": "Контекст workspace",
+    "label": "Использовать контекст workspace",
+    "description": "Сохранять последние действия инструментов и каталог доступных инструментов в цикле инструментов.",
+    "refresh": "Обновить",
+    "loading": "Загрузка фактического состояния…",
+    "loadFailed": "Не удалось загрузить контекст workspace",
+    "setFailed": "Не удалось изменить контекст workspace",
+    "status": {
+      "applied": "Включено",
+      "acknowledged": "Подтверждено",
+      "pending": "Ожидает перезапуска",
+      "failed": "Требует внимания",
+      "partial": "Частично",
+      "off": "Выключено"
+    }
   }
 }

@@ -148,7 +148,6 @@ export function SettingsRoute() {
   const { t } = useTranslation('settings');
   const location = useLocation();
   const currentSection = resolveSettingsSection(location.pathname);
-
   if (currentSection === 'overview') {
     return <Navigate to="/settings/general" replace />;
   }

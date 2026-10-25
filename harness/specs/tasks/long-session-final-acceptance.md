@@ -1,5 +1,5 @@
 ---
-lifecycleStatus: planned
+lifecycleStatus: completed
 id: long-session-final-acceptance
 title: 聚合独立验收、能力声明与后续推广边界
 program: long-session-development-20261022

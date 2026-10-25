@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "CodingControlDisposition/v1",
+  "taskForestNodeId": "TF-0510",
+  "generatedAt": "2026-10-23T00:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "componentCount": 5,
+  "components": [
+    {
+      "id": "stale-write-guard",
+      "label": "Stale write guard",
+      "currentConsumer": "agent-tools write / apply_patch wrap",
+      "disposition": "advanced",
+      "implementationState": "implemented-opt-in",
+      "implementationNode": "TF-0510",
+      "family": "stale-write-guard",
+      "catalogEntryPresent": true,
+      "writableTogglePresent": true,
+      "productEntry": "runtime.coding.staleWriteGuard.enabled (operator config)",
+      "remainingGap": [],
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/agents/tools/stale-write-guard.test.ts",
+          "exists": true,
+          "sha256": "e9e7221fd2e7591daa49cd7d99e67f2c3bc55ef8494cac8c7ee445c3b9cda546",
+          "bytes": 5847
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stale-write-guard.false-block.test.ts",
+          "exists": true,
+          "sha256": "11aaae40b2d424491467bc54bf47816c4b741b6e88a9f1447a910e22736a6f3b",
+          "bytes": 4791
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stale-write-guard.ts",
+          "exists": true,
+          "sha256": "49b49bd53d04848670a4034aa11db5b12c0bfd27f4f4c1854d8ffc49aa851572",
+          "bytes": 4869
+        }
+      ]
+    },
+    {
+      "id": "symbol-lease",
+      "label": "Symbol lease / WAL",
+      "currentConsumer": "edit / write / apply_patch concurrency guard",
+      "disposition": "retired",
+      "implementationState": "implemented-opt-in",
+      "implementationNode": "TF-0510",
+      "family": "symbol-lease",
+      "catalogEntryPresent": true,
+      "writableTogglePresent": false,
+      "productEntry": null,
+      "remainingGap": [],
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/agents/symbol-lease-guard.test.ts",
+          "exists": true,
+          "sha256": "2e31bdf9d0277bd9cb022f91b1921fedc850452891997aa4ab4b2f261ae0159f",
+          "bytes": 2867
+        },
+        {
+          "path": "openclaw_runtime/src/agents/symbol-lease-guard.ts",
+          "exists": true,
+          "sha256": "0d639b8333e9fb331523d909ee55c689b2044783bc714b99a2769f6be632cda2",
+          "bytes": 4179
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/factstore/symbol-lease.ts",
+          "exists": true,
+          "sha256": "2bcbd04cb19747b187951267e129cac8858257c2bab221faffccc6761120af37",
+          "bytes": 8206
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/factstore/symbol-lease.test.ts",
+          "exists": true,
+          "sha256": "15913ef16618eb22a3f33165f758a7ce9c42891cf9c250d364a69876c24a0c96",
+          "bytes": 5123
+        },
+        {
+          "path": "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+          "exists": true,
+          "sha256": "dba95c0ca48dcae988e1374e5cb327bf8ca12acc850915005871779d000b6a95",
+          "bytes": 4589
+        }
+      ]
+    },
+    {
+      "id": "patch-flow",
+      "label": "Patch flow (serial fenced apply)",
+      "currentConsumer": "team_orchestrate patchFlowExecution + orchestrator serial apply",
+      "disposition": "retired",
+      "implementationState": "implemented-opt-in",
+      "implementationNode": "TF-0510",
+      "family": "patch-flow",
+      "catalogEntryPresent": true,
+      "writableTogglePresent": false,
+      "productEntry": null,
+      "remainingGap": [],
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/agents/orchestration-patch-flow.test.ts",
+          "exists": true,
+          "sha256": "0ad26e2a3f0227b65e24d03e79a7e6047e04cb468664a9588635e3b4a81662d1",
+          "bytes": 9794
+        },
+        {
+          "path": "openclaw_runtime/src/agents/patch-flow.ts",
+          "exists": true,
+          "sha256": "d84e15dff7a38447865c8ff7badcbb55b52c02f6f2d47216647ee40d09554f1a",
+          "bytes": 3541
+        },
+        {
+          "path": "openclaw_runtime/src/agents/patch-flow-graduation.ts",
+          "exists": true,
+          "sha256": "92a34e99a75e7aedc40c73e376697f267a3bef21e62a4b8cc4d932a03448e11a",
+          "bytes": 5244
+        },
+        {
+          "path": "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
+          "exists": true,
+          "sha256": "27cf6f3675d39ac51356c88597f070b400c6807a9906a26ec92ac9d161108157",
+          "bytes": 3270
+        }
+      ]
+    },
+    {
+      "id": "worktree-backend",
+      "label": "Worktree backend",
+      "currentConsumer": "orchestrator isolation=worktree -> createWorktreeService",
+      "disposition": "advanced",
+      "implementationState": "implemented-opt-in",
+      "implementationNode": "TF-0510",
+      "family": "worktree-backend",
+      "catalogEntryPresent": true,
+      "writableTogglePresent": false,
+      "productEntry": "isolation=worktree on an orchestrator request/plan",
+      "remainingGap": [],
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/agents/worktree-service.test.ts",
+          "exists": true,
+          "sha256": "eb9b728f8ab50432723c0c3308640fa5d73b5f2b815aa7fc63b67ac108d4657d",
+          "bytes": 13171
+        },
+        {
+          "path": "openclaw_runtime/src/agents/worktree-service.ts",
+          "exists": true,
+          "sha256": "36e0680491e119b39a029f75dfc7200a361f9f6566236cac59b12a0923dadd28",
+          "bytes": 17424
+        }
+      ]
+    },
+    {
+      "id": "isolation-request",
+      "label": "Isolation request",
+      "currentConsumer": "orchestrator normalizeIsolationMode",
+      "disposition": "advanced",
+      "implementationState": "implemented-opt-in",
+      "implementationNode": "TF-0510",
+      "family": "isolation-request",
+      "catalogEntryPresent": true,
+      "writableTogglePresent": false,
+      "productEntry": "isolation: \"worktree\" | \"shared\" on a request/plan",
+      "remainingGap": [],
+      "artifacts": [
+        {
+          "path": "openclaw_runtime/src/agents/isolation-mode-matrix.test.ts",
+          "exists": true,
+          "sha256": "2e98aa1a44cab1ff06439046adb07b96ca9947b398fa2d61ac6842eb4c013969",
+          "bytes": 1313
+        },
+        {
+          "path": "openclaw_runtime/src/agents/isolation-mode-matrix.ts",
+          "exists": true,
+          "sha256": "460c1a419131b15219baf28193c736ad5c26cd0e3975bba08a6ba192f45b8bde",
+          "bytes": 1963
+        },
+        {
+          "path": "openclaw_runtime/src/agents/worktree-service.test.ts",
+          "exists": true,
+          "sha256": "eb9b728f8ab50432723c0c3308640fa5d73b5f2b815aa7fc63b67ac108d4657d",
+          "bytes": 13171
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "retrofittedFamilies": [
+      "stale-write-guard",
+      "symbol-lease",
+      "patch-flow",
+      "worktree-backend",
+      "isolation-request"
+    ],
+    "componentsWithGaps": [],
+    "everyArtifactResolves": true,
+    "codingControlComplete": true
+  },
+  "measuredMetrics": {
+    "staleGuardFalseBlockRate": 0,
+    "staleGuardCorpus": {
+      "genuineStale": 1,
+      "mustAllow": 4,
+      "falseBlocks": 0,
+      "missedBlocks": 0
+    },
+    "staleGuardFalseBlockRateMeasured": true,
+    "symbolLeaseMultiProcess": {
+      "workers": 4,
+      "roundsPerWorker": 12,
+      "acquired": 12,
+      "denied": 36,
+      "duplicateMutationSideEffects": 0,
+      "contentionObserved": true
+    }
+  },
+  "completionVerdict": "complete"
+}

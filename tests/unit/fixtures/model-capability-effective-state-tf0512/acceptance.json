@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "ModelCapabilityEffectiveStateAcceptance/v1",
+  "taskForestNodeId": "TF-0512",
+  "generatedAt": "2026-10-24T08:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "complete",
+  "criteria": [
+    {
+      "criterion": "loading/unavailable/degraded/quarantined 状态正确传播",
+      "status": "verified",
+      "evidence": "raw-evidence.json#observations",
+      "detail": "Driver and runtime facts preserve loading, unavailable, partial/degraded and quarantined states without promotion."
+    },
+    {
+      "criterion": "grant 到期/撤销和配置开关后 profile 刷新",
+      "status": "verified",
+      "evidence": "raw-evidence.json#observations.expiredGrant, revokedGrant, killSwitch",
+      "detail": "Expiry is recomputed at refresh time, revocation denies the action, and the kill switch moves availability to disabled."
+    },
+    {
+      "criterion": "工具实际拒绝与 profile 一致",
+      "status": "verified",
+      "evidence": "raw-evidence.json#toolOutcomeCrossCheck; tests/unit/model-capability-effective-state-tf0512.test.ts",
+      "detail": "Tool presence alone yields requires-approval; a denied outcome is consistent only when the profile did not claim an executable action."
+    },
+    {
+      "criterion": "重启后 effective state 恢复/降级可解释",
+      "status": "verified",
+      "evidence": "raw-evidence.json#observations.restartMismatch",
+      "detail": "A stale pre-restart acknowledgement cannot prove post-restart execution; availability and driver become unknown."
+    },
+    {
+      "criterion": "静态与 effective digest 可审计",
+      "status": "verified",
+      "evidence": "raw-evidence.json#digestAudit; profile.json",
+      "detail": "Static digest stays stable across effective changes while effective digest changes with facts and remains stable for observation-only updates."
+    }
+  ],
+  "completionVerdict": "complete"
+}

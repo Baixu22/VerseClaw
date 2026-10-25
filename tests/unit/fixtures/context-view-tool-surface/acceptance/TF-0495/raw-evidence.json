@@ -1,0 +1,235 @@
+{
+  "schemaVersion": "ContextViewToolSurfaceEvidence/v1",
+  "taskForestNodeId": "TF-0495",
+  "generatedAt": "2026-10-22T16:14:26.688Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "catalog": {
+    "names": [
+      "context_understand",
+      "context_impact",
+      "context_reuse",
+      "context_verify"
+    ],
+    "factoryNames": [
+      "context_understand",
+      "context_impact",
+      "context_reuse",
+      "context_verify"
+    ],
+    "coreCatalog": [
+      {
+        "name": "context_understand",
+        "known": true,
+        "inCatalog": true,
+        "inCodingProfile": true
+      },
+      {
+        "name": "context_impact",
+        "known": true,
+        "inCatalog": true,
+        "inCodingProfile": true
+      },
+      {
+        "name": "context_reuse",
+        "known": true,
+        "inCatalog": true,
+        "inCodingProfile": true
+      },
+      {
+        "name": "context_verify",
+        "known": true,
+        "inCatalog": true,
+        "inCodingProfile": true
+      }
+    ],
+    "catalogDigest": "e76b4de7be4f51764090f0a0c5cb33b8fc2ecd72b75f4e9dbd0d46caec90026a",
+    "digestMatch": true,
+    "generatedCatalogPath": "docs/generated/catalogs/prod-flags.md (authority delta TFP-TF-0495-derived-catalog-authority-20261022)"
+  },
+  "surfaceStates": {
+    "healthy": {
+      "mode": "healthy",
+      "enabled": true,
+      "activeToolNames": [
+        "context_understand",
+        "context_impact",
+        "context_reuse",
+        "context_verify"
+      ],
+      "reason": null,
+      "recoverable": true,
+      "catalogDigest": "e76b4de7be4f51764090f0a0c5cb33b8fc2ecd72b75f4e9dbd0d46caec90026a"
+    },
+    "missingDependency": {
+      "mode": "missing-dependency",
+      "enabled": false,
+      "activeToolNames": [],
+      "reason": "The workspace FactService is unavailable, so the four read-only context view tools are not registered.",
+      "recoverable": true,
+      "catalogDigest": "e76b4de7be4f51764090f0a0c5cb33b8fc2ecd72b75f4e9dbd0d46caec90026a"
+    },
+    "permissionDenied": {
+      "mode": "permission-denied",
+      "enabled": false,
+      "activeToolNames": [],
+      "reason": "The current permission/tool policy does not allow the read-only context view tools.",
+      "recoverable": false,
+      "catalogDigest": "e76b4de7be4f51764090f0a0c5cb33b8fc2ecd72b75f4e9dbd0d46caec90026a"
+    },
+    "explicitRollback": {
+      "mode": "explicitly-disabled",
+      "enabled": false,
+      "activeToolNames": [],
+      "reason": "The context view tools were explicitly disabled by rollback configuration.",
+      "recoverable": true,
+      "catalogDigest": "e76b4de7be4f51764090f0a0c5cb33b8fc2ecd72b75f4e9dbd0d46caec90026a"
+    }
+  },
+  "discoverability": {
+    "activeToolNames": [
+      "context_understand",
+      "context_impact",
+      "context_reuse",
+      "context_verify"
+    ],
+    "entries": [
+      {
+        "name": "context_understand",
+        "selector": "fact.view.context_understand",
+        "shortSummary": "Build a ContextPack for a coding goal",
+        "fullSchemaResident": false
+      },
+      {
+        "name": "context_impact",
+        "selector": "fact.view.context_impact",
+        "shortSummary": "Analyze callers/callees and blast radius for a symbol or file",
+        "fullSchemaResident": false
+      },
+      {
+        "name": "context_reuse",
+        "selector": "fact.view.context_reuse",
+        "shortSummary": "Find existing helpers before writing new code",
+        "fullSchemaResident": false
+      },
+      {
+        "name": "context_verify",
+        "selector": "fact.view.context_verify",
+        "shortSummary": "Review a diff for related tests and blast radius",
+        "fullSchemaResident": false
+      }
+    ],
+    "fullSchemaResident": false,
+    "toolDiscoverySuccessRate": 1,
+    "falseToolPresenceClaims": 0,
+    "unauthorizedViewToolCalls": 0
+  },
+  "permissionNegative": {
+    "state": "permission-denied",
+    "recoverable": false,
+    "activeToolNames": [],
+    "failClosed": true
+  },
+  "rollback": {
+    "mode": "explicitly-disabled",
+    "envOverrideOnly": true,
+    "defaultValueFlipped": false
+  },
+  "canary": {
+    "schemaVersion": "ContextViewToolCanaryRun/v1",
+    "protocolSha256": "c2745b4b3093ac0301813db6d2bcde929fca1ad7ffd52b175ff012ca10696ea0",
+    "endpoint": "http://127.0.0.1:3065/v1/responses",
+    "provider": "space-bunny",
+    "model": "space-bunny",
+    "totalCalls": 40,
+    "providerErrors": 0,
+    "parseFailures": 0,
+    "A_toolDiscoveryPassCount": 20,
+    "A_toolDiscoverySuccessRate": 1,
+    "B_correctUnavailableCount": 20,
+    "falseToolPresenceClaims": 0,
+    "unauthorizedViewToolCalls": 0,
+    "checks": {
+      "sampleSize": true,
+      "toolDiscoverySuccess": true,
+      "falseToolPresenceClaims": true,
+      "providerErrorRate": true,
+      "parseFailureRate": true
+    },
+    "decision": {
+      "status": "pass",
+      "reasons": []
+    }
+  },
+  "results": {
+    "catalog": {
+      "status": "pass"
+    },
+    "surfaceStates": {
+      "status": "pass"
+    },
+    "discoverability": {
+      "status": "pass"
+    },
+    "permissionNegative": {
+      "status": "pass"
+    },
+    "rollback": {
+      "status": "pass"
+    },
+    "contract": {
+      "status": "pass"
+    },
+    "canary": {
+      "status": "pass"
+    },
+    "not-product-claim": {
+      "status": "pass"
+    },
+    "boundary": {
+      "status": "pass"
+    }
+  },
+  "acceptanceCriteria": [
+    {
+      "criterion": "标准 catalog 中可见四个工具且与 runtime digest 一致",
+      "status": "pass",
+      "evidence": [
+        "catalog",
+        "discoverability",
+        "core tool-catalog source (not generated docs)"
+      ]
+    },
+    {
+      "criterion": "健康/缺依赖/无权限三态均可回读",
+      "status": "pass",
+      "evidence": [
+        "surfaceStates"
+      ]
+    },
+    {
+      "criterion": "模型不会声称工具存在但不可调用",
+      "status": "pass",
+      "evidence": [
+        "discoverability",
+        "surfaceStates",
+        "canary Arm B"
+      ]
+    },
+    {
+      "criterion": "工具调用越权 fail-closed",
+      "status": "pass",
+      "evidence": [
+        "permissionNegative",
+        "context-agent-tools.test.ts"
+      ]
+    }
+  ],
+  "evidenceNotes": {
+    "diskReadback": true,
+    "humanEvidenceClaimed": false,
+    "publicReleaseClaimed": false,
+    "productDefaultChanged": false,
+    "verseGitTouched": false
+  }
+}

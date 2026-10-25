@@ -124,14 +124,27 @@ export const DEFAULT_MEMORY_RUNTIME_CONFIG: MemoryRuntimeConfig = {
  *     featureFlags: { enableEntityResolverInBridge: true }
  *   });
  */
+/**
+ * TF-0500: the COMPASS pre-reply injection flags are retired.
+ *
+ * enableSessionStatePage / enablePreReplyRetrieval used to route memory text into the
+ * prompt outside the canonical memory injection authority. They are forced off here, so
+ * passing them is accepted but has no effect.
+ */
+export const RETIRED_MEMORY_INJECTION_FLAGS = ["enableSessionStatePage", "enablePreReplyRetrieval"] as const;
+
 export function createMemoryRuntimeConfig(
   override: Omit<Partial<MemoryRuntimeConfig>, "featureFlags"> & {
     featureFlags?: Partial<MemoryFeatureFlags>;
   } = {},
 ): MemoryRuntimeConfig {
+  const requestedFlags: Partial<MemoryFeatureFlags> = { ...(override.featureFlags ?? {}) };
+  for (const retired of RETIRED_MEMORY_INJECTION_FLAGS) {
+    delete requestedFlags[retired];
+  }
   const featureFlags: MemoryFeatureFlags = {
     ...DEFAULT_MEMORY_RUNTIME_CONFIG.featureFlags,
-    ...(override.featureFlags ?? {}),
+    ...requestedFlags,
   };
   return {
     featureFlags,

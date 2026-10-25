@@ -53,8 +53,8 @@ export const LAUNCH_CONTRACT_MATRIX: readonly LaunchContractCase[] = [
     mdRows: ['VToken assembly'],
     operatorEnv: { [VTOKEN_ASSEMBLY_ENV]: '1' },
     expectChildEnv: { present: true, value: '1' },
-    expectResolved: { vtokenAssemblyEnabled: true, killSwitchEngaged: false },
-    rationale: 'Explicit env canary path from the md "How to enable" column.',
+    expectResolved: { vtokenAssemblyEnabled: false, killSwitchEngaged: false },
+    rationale: 'VToken assembly is retired as a product path; the launch env is preserved as an explicit no-op compatibility input.',
   },
   {
     id: 'config-optin',
@@ -62,9 +62,8 @@ export const LAUNCH_CONTRACT_MATRIX: readonly LaunchContractCase[] = [
     operatorEnv: {},
     config: { runtime: { vtoken: { assembly: { enabled: true } } } },
     expectChildEnv: { present: false },
-    expectResolved: { vtokenAssemblyEnabled: true, killSwitchEngaged: false },
-    rationale:
-      'The md offers config opt-in as an independent channel; it only works because the launch layer leaves the env unset (option A of FP-P0-01).',
+    expectResolved: { vtokenAssemblyEnabled: false, killSwitchEngaged: false },
+    rationale: 'VToken assembly is retired as a product path; legacy config remains inert and cannot re-enable the retired turn hook.',
   },
   {
     id: 'env-kill-beats-config-optin',
@@ -156,7 +155,7 @@ export type MdMatrixRow = {
    */
   mdDefaultCell: string;
   /** The product default the md declares, normalized. */
-  declaredDefault: 'false' | 'off' | 'deny' | 'auto';
+  declaredDefault: 'true' | 'false' | 'off' | 'deny' | 'auto';
   /** Which assertion group in the test owns this row. */
   assertedBy: string;
 };
@@ -175,17 +174,24 @@ export const MD_MATRIX_ROWS: readonly MdMatrixRow[] = [
     assertedBy: 'vtoken-bridge-default',
   },
   {
+    mdLabel: 'Workspace Context',
+    mdDefaultCell: '**true**',
+    declaredDefault: 'true',
+    assertedBy: 'context-block-defaults',
+  },
+  {
     mdLabel: 'working-memory',
-    mdDefaultCell: '**false**',
-    declaredDefault: 'false',
+    mdDefaultCell: '**true**',
+    declaredDefault: 'true',
     assertedBy: 'context-block-defaults',
   },
   {
     mdLabel: 'tool-registry',
-    mdDefaultCell: '**false**',
-    declaredDefault: 'false',
+    mdDefaultCell: '**true**',
+    declaredDefault: 'true',
     assertedBy: 'context-block-defaults',
   },
+
   {
     mdLabel: 'Runtime Memory inject pilot',
     mdDefaultCell: '**false**',

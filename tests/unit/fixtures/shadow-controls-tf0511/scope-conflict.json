@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "ComponentGraduationScopeConflict/v1",
+  "taskForestNodeId": "TF-0511",
+  "generatedAt": "2026-10-23T00:00:00.000Z",
+  "resolvedAt": "2026-10-24T00:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "resolved",
+  "summary": "The prior scope conflict was resolved by explicitly expanding TF-0511 authority to the single-source component disposition catalog and the feature-leaf consumer guard. The four scoped experiments are now internal at the catalog source.",
+  "resolution": {
+    "expandedAllowedPaths": [
+      "shared/dcs/component-disposition-catalog.ts",
+      "scripts/check-feature-leaf-consumers.mjs"
+    ],
+    "catalogEntriesChanged": [
+      "component.compass-context: experiment -> internal",
+      "component.routing-memo-observation: experiment -> internal",
+      "feature.agent-map: experiment -> internal",
+      "feature.runtime-shadow-governance: experiment -> internal"
+    ],
+    "consumerGuardResolution": "coding.patchFlow.enabled is pinned as a TF-0510 retirement residual, not treated as a TF-0511 product capability.",
+    "defaultChanges": [],
+    "productLockChanges": []
+  },
+  "evidence": [
+    "tests/unit/fixtures/shadow-controls-tf0511/catalog-readback.json",
+    "tests/unit/fixtures/shadow-controls-tf0511/acceptance.json",
+    "tests/unit/fixtures/shadow-controls-tf0511/feature-leaf-consumer.json",
+    "tests/unit/fixtures/shadow-controls-tf0511/scope-guard.json"
+  ],
+  "releaseBoundary": "No public release, GA, liveReady or productApproved claim."
+}

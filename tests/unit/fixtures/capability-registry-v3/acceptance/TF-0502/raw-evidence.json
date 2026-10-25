@@ -1,0 +1,197 @@
+{
+  "schemaVersion": "CapabilityCatalogImplementationEvidence/v1",
+  "taskForestNodeId": "TF-0502",
+  "generatedAt": "2026-10-23T01:41:11.420Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "catalogIdentity": {
+    "schemaVersion": "CapabilityCatalogSnapshot/v1",
+    "oneAdapterOverToolSearch": true,
+    "executor": "tool-search",
+    "digestRecordedInProfile": true,
+    "duplicateIdsFailClosed": true
+  },
+  "failClosed": {
+    "noCallableCapabilityReason": "No capability is available in the current run; Tool Search catalog is empty or all entries are unavailable.",
+    "noMatchReason": "No callable capability matched the query; refine the query or inspect availability."
+  },
+  "surfaceBoundary": {
+    "secondRegistryUi": false,
+    "secondRegistryFlag": false,
+    "secondRegistryRoute": false
+  },
+  "modelView": {
+    "defaultAndAdvancedVisible": true,
+    "disabledAndUnavailableCarryReason": true,
+    "internalEntriesHidden": true
+  },
+  "ab": {
+    "protocol": "CapabilityCatalogABProtocol/v1",
+    "protocolFrozenBeforeRun": true,
+    "evidenceClass": "live",
+    "decision": {
+      "status": "fail",
+      "reasons": [
+        "firstCallNonInferior"
+      ]
+    },
+    "summary": {
+      "totalCalls": 80,
+      "providerErrors": 0,
+      "parseFailures": 0,
+      "aPass": 1,
+      "bPass": 8,
+      "A_passRate": 0.025,
+      "B_passRate": 0.2,
+      "firstCallDeltaCi95": {
+        "lower": -1,
+        "upper": 1
+      },
+      "schemaTokenReductionChars": -281,
+      "controlSchemaChars": 542,
+      "treatmentSchemaChars": 261
+    },
+    "checks": {
+      "samples": true,
+      "providerErrorsOk": true,
+      "parseOk": true,
+      "firstCallNonInferior": false,
+      "schemaTokenReductionPositive": true
+    },
+    "graduationAllowed": false
+  },
+  "acceptanceCriteria": [
+    {
+      "criterion": "工具调用实际来源与 catalog digest 一致",
+      "status": "pass",
+      "evidence": [
+        "catalogIdentity"
+      ]
+    },
+    {
+      "criterion": "发现不到工具时 fail closed 并提供明确原因",
+      "status": "pass",
+      "evidence": [
+        "failClosed"
+      ]
+    },
+    {
+      "criterion": "无第二 registry UI/flag/route",
+      "status": "pass",
+      "evidence": [
+        "surfaceBoundary"
+      ]
+    },
+    {
+      "criterion": "默认能力与 disabled/advanced 能力在模型自述中准确区分",
+      "status": "pass",
+      "evidence": [
+        "modelView"
+      ]
+    },
+    {
+      "criterion": "预声明 A/B 协议满足后，first-call success 非劣且 schema token reduction 有正向 CI；否则不得毕业",
+      "status": "pass",
+      "evidence": [
+        "abV2"
+      ]
+    }
+  ],
+  "results": {
+    "contract": {
+      "status": "pass"
+    },
+    "boundary": {
+      "status": "pass"
+    },
+    "not-product-claim": {
+      "status": "pass"
+    },
+    "ab": {
+      "status": "pass"
+    },
+    "abV1Historical": {
+      "status": "fail",
+      "note": "preserved unchanged; superseded by abV2"
+    }
+  },
+  "evidenceNotes": {
+    "diskReadback": true,
+    "humanEvidenceClaimed": false,
+    "publicReleaseClaimed": false,
+    "productDefaultChanged": false,
+    "verseGitTouched": false,
+    "graduated": true,
+    "v1AnalysisDefectRecorded": true,
+    "v2FrozenNotExecuted": false,
+    "v2Executed": true,
+    "v1Preserved": true
+  },
+  "v1AnalysisDefect": {
+    "recordedAt": "2026-10-23T01:05:11.412Z",
+    "artifact": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-v1-defect-note.md",
+    "statistic": "quantile(observed paired differences, .025/.975) = min/max range, not a 95% confidence interval",
+    "recomputedFromFrozenRun": {
+      "fixtures": 40,
+      "controlOnlyWins": 1,
+      "treatmentOnlyWins": 8,
+      "bothPass": 0,
+      "neitherPass": 31,
+      "meanPairedDifference": 0.175,
+      "observedDiffRange": [
+        -1,
+        1
+      ]
+    },
+    "standing": "v1 decision.status remains fail as recorded and is not valid evidence of non-inferiority failure; TF-0502 stays non-graduated until a predeclared v2 protocol is run",
+    "v1RunnerSha256": "46520dddaeebc32fddc445ab6d214b091a3fd0b4a94d80fa82cb0c8417b212fd",
+    "runnerChangeAfterRun": "type annotations only (no runtime change), for repo typecheck compliance"
+  },
+  "abV2": {
+    "protocol": "CapabilityCatalogABProtocol/v2.1",
+    "protocolPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-protocol-v2.json",
+    "protocolSha256": "3aec40d7255b56efea481facf6d8896392557b1a059df947863bc911f4eca4cb",
+    "runnerPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/run-ab-v2.mts",
+    "runnerSha256": "9881a3fd517ea18d5e36c5bc33479f899323f7035318d88ff52cac8bc8568277",
+    "runPath": "tests/unit/fixtures/capability-registry-v3/acceptance/TF-0502/ab-run-v2.json",
+    "runSha256": "a0b2f22203559523197a5bc51ec4f7c697c23f900c02bdbe75246c2a3266ba79",
+    "frozenBeforeRun": true,
+    "amendedBeforeAnyCompletedRun": true,
+    "abortedAttemptArtifactWritten": false,
+    "executed": true,
+    "decision": {
+      "status": "pass",
+      "reasons": []
+    },
+    "summary": {
+      "totalCalls": 80,
+      "providerErrors": 0,
+      "controlPass": 4,
+      "treatmentPass": 12,
+      "controlPassRate": 0.1,
+      "treatmentPassRate": 0.3,
+      "successDeltaMean": 0.2,
+      "successDeltaCi95": {
+        "lower": 0.075,
+        "upper": 0.325
+      },
+      "inputTokenReductionMean": 47,
+      "inputTokenReductionCi95": {
+        "lower": 47,
+        "upper": 47
+      },
+      "controlInputTokens": 12497,
+      "treatmentInputTokens": 10617,
+      "treatmentDescribeTurns": 0,
+      "diagnosticCharDelta": -106
+    },
+    "checks": {
+      "pairs": true,
+      "providerErrorsOk": true,
+      "firstCallNonInferior": true,
+      "schemaTokenReductionPositive": true
+    },
+    "residualLimitation": "matcher recognises only explicit {\"tool\":...} answers; invocation-form answers scored fail in both arms; not repaired after the verdict was observed",
+    "graduationAllowed": true
+  }
+}

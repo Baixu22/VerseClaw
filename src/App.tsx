@@ -21,6 +21,7 @@ import { useNewChatAction } from './components/layout/use-new-chat-action';
 import { hostEvents } from './lib/host-events';
 import { recoverFromDynamicImportLoadError } from './lib/dynamic-import-recovery';
 import { getAgentDevScenarioRoute, installAgentDevTestSurface } from './lib/agent-dev';
+import { isDevRuntime, resolveSurfaceAccess } from './lib/surface-access';
 import { applyDocumentTheme } from './lib/theme';
 import { SettingsRoute } from './pages/Settings/SettingsRoute';
 import { resolveUiVersion } from './lib/ui-version';
@@ -34,7 +35,6 @@ const Chat = lazy(() => import('./pages/Chat').then((m) => ({ default: m.Chat })
 const KnowledgeChat = lazy(() => import('./pages/Chat/KnowledgeChat').then((m) => ({ default: m.KnowledgeChat })));
 const Cron = lazy(() => import('./pages/Cron').then((m) => ({ default: m.Cron })));
 const Inbox = lazy(() => import('./pages/Inbox').then((m) => ({ default: m.Inbox })));
-const Dreams = lazy(() => import('./pages/Dreams').then((m) => ({ default: m.Dreams })));
 const ImageGenerationPage = lazy(() => import('./pages/ImageGeneration').then((m) => ({ default: m.ImageGenerationPage })));
 const ObservabilityDashboard = lazy(() => import('./pages/Observability').then((m) => ({ default: m.ObservabilityDashboard })));
 const TaskLedgerPage = lazy(() => import('./pages/TaskLedger'));
@@ -43,6 +43,8 @@ const Knowledge = lazy(() => import('./pages/Knowledge').then((m) => ({ default:
 const MemoryPage = lazy(() => import('./pages/Memory').then((m) => ({ default: m.MemoryPage })));
 const Setup = lazy(() => import('./pages/Setup').then((m) => ({ default: m.Setup })));
 const UiV2Showcase = lazy(() => import('./pages/UiV2Showcase').then((m) => ({ default: m.UiV2Showcase })));
+
+const UNKNOWN_ROUTE_PATH = '*';
 
 function ChatRoute() {
   const location = useLocation();
@@ -133,11 +135,19 @@ const BackgroundRoutes = memo(function BackgroundRoutes({
           )}
         />
         <Route path="/image-generation" element={devModeUnlocked ? <ImageGenerationPage /> : <Navigate to="/" replace />} />
-        <Route path="/dreams" element={devModeUnlocked ? <Dreams /> : <Navigate to="/" replace />} />
+        <Route path="/dreams" element={<Navigate to="/" replace />} />
         <Route path="/observability" element={<ObservabilityDashboard />} />
-        <Route path="/ui-v2-showcase" element={<UiV2Showcase />} />
+<Route
+  path="/ui-v2-showcase"
+  element={resolveSurfaceAccess({
+    pathname: location.pathname,
+    devModeUnlocked,
+    devRuntime: isDevRuntime(),
+  }).allowed ? <UiV2Showcase /> : <Navigate to="/" replace />}
+/>
         <Route path="/settings" element={<Navigate to="/settings/general" replace />} />
         <Route path="/settings/*" element={<SettingsRoute />} />
+        <Route path={UNKNOWN_ROUTE_PATH} element={<Navigate to="/" replace />} />
         {extraRoutes.map((route) => (
           <Route key={route.path} path={route.path} element={<route.component />} />
         ))}

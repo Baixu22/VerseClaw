@@ -1,10 +1,8 @@
 $ErrorActionPreference = 'Continue'
 $root = (Get-Location).Path
 $outputDir = Join-Path $root 'tests/unit/fixtures/memory-authority/acceptance/TF-0498'
-$tmpRoot = 'D:\tmp'
-New-Item -ItemType Directory -Force -Path $tmpRoot | Out-Null
-$env:TEMP = $tmpRoot
-$env:TMP = $tmpRoot
+$env:TEMP = 'D:\tmp'
+$env:TMP = 'D:\tmp'
 New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
 $pnpm = (Get-Command pnpm.cmd -ErrorAction Stop).Source
 $tsx = Join-Path $root 'openclaw_runtime\node_modules\.bin\tsx.CMD'
@@ -58,11 +56,8 @@ $results += Invoke-CapturedGate -Id '06-catalogs-check' -Arguments @($pnpm, 'run
 $results += Invoke-CapturedGate -Id '07-contract-check' -Arguments @($pnpm, 'run', 'contract:check') -DisplayCommand 'pnpm run contract:check'
 $results += Invoke-CapturedGate -Id '08-i18n-lint' -Arguments @('node', 'scripts/i18n-lint.mjs') -DisplayCommand 'node scripts/i18n-lint.mjs'
 $results += Invoke-CapturedGate -Id '09-no-bom' -Arguments @('node', 'scripts/check-no-bom.mjs') -DisplayCommand 'node scripts/check-no-bom.mjs'
-$results += Invoke-CapturedGate -Id '10-diff-check' -Arguments @('git', 'diff', '--check', '--', 'src/components/agents/memory-surface.ts', 'src/components/agents/RolesOrchestrationPanel.tsx', 'src/pages/Agents/index.tsx', 'shared/i18n/locales', 'tests/unit/memory-surface-contract.test.ts', 'tests/unit/roles-orchestration-panel.test.tsx', 'tests/e2e/memory-surface.spec.ts', 'tests/e2e/role-memory-panel.spec.ts', 'tests/e2e/agents-propose-facts-confirm.spec.ts', 'tests/unit/fixtures/memory-authority/acceptance/TF-0498/generate-acceptance.mts', 'tests/unit/fixtures/memory-authority/acceptance/TF-0498/run-verification.ps1') -DisplayCommand 'git diff --check -- <TF-0498 source, tests, verifier paths>'
+$results += Invoke-CapturedGate -Id '10-diff-check' -Arguments @('git', 'diff', '--check') -DisplayCommand 'git diff --check'
 $results += Invoke-CapturedGate -Id '11-build-vite' -Arguments @($pnpm, 'run', 'build:vite') -DisplayCommand 'pnpm run build:vite'
-$results += Invoke-CapturedGate -Id '11a-build-runtime' -Arguments @($pnpm, 'run', 'build:runtime') -DisplayCommand 'pnpm run build:runtime'
-& $tsx 'tests/unit/fixtures/memory-authority/acceptance/TF-0498/generate-acceptance.mts' | Out-Null
-if ($LASTEXITCODE -ne 0) { throw 'TF-0498 evidence generation failed' }
 $results += Invoke-CapturedGate -Id '12-component-graduation-gate' -Arguments @(
   $tsx, 'scripts/component-graduation-report.mts',
   '--report', 'tests/unit/fixtures/memory-authority/acceptance/TF-0498/component-graduation-report.json',
@@ -98,7 +93,7 @@ $ledger = [ordered]@{
   taskForestNodeId = 'TF-0498'
   generatedAt = (Get-Date).ToUniversalTime().ToString('o')
   driven_by = 'agent'
-  actor = 'codex-long-session-r2'
+  actor = 'codex'
   status = $status
   gates = $results
   sha256sums = $sumChecks

@@ -8,7 +8,13 @@ const allActionsAvailable = () => ({
   version: 'test-all-available',
   driverKind: 'host-api' as const,
   cliAvailable: true,
-  actions: MODEL_ACTION_NAMES.map((action) => ({ action, available: true })),
+  supervision: 'required' as const,
+  unsupervisedActions: ['status', 'getConsoleMessages', 'extractPageText', 'readForms'] as const,
+  actions: MODEL_ACTION_NAMES.map((action) => ({
+    action,
+    available: true,
+    supervised: !['status', 'getConsoleMessages', 'extractPageText', 'readForms'].includes(action),
+  })),
 });
 import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
 import { agentBrowserHandlers } from '../../openclaw_runtime/src/gateway/server-methods/agent-browser';

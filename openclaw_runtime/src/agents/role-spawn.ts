@@ -36,6 +36,7 @@ import { recordRc03SystemPromptContribution } from "../context-engine/rc03-seal-
 import type { MemoryCard } from "../memory/types.js";
 import type { TeamOrchestrationMetadata } from "./subagent-registry.types.js";
 import type { PermissionDecisionEvent } from "../../../shared/product-semantics.js";
+import type { SessionDelegationToolAuthorization } from "../../../shared/types/session-delegation.js";
 import type {
   DelegationBackend,
   DelegationToolAuthorization,
@@ -123,7 +124,7 @@ export type RoleSpawnResult = {
   result?: RoleSpawnResultShape;
   error?: string;
   backend?: DelegationBackend;
-  authorization?: DelegationToolAuthorization;
+  authorization?: DelegationToolAuthorization | (SessionDelegationToolAuthorization & { permissionDecisionCount: number });
 };
 
 function resolveRole(
@@ -286,18 +287,19 @@ export function buildRoleSpawnParams(
   };
 }
 
-/** Build the spawn context for a role contract — hard tool allowlist + permission-derived deny. */
-export function buildRoleSpawnContext(
-  role: RoleContract,
-  ctx: RoleSpawnContext,
-): RoleSpawnContext {
+/** Build the hard child policy and the secret-free authorization facts used by receipts. */
+type RoleSpawnPolicy = {
+  context: RoleSpawnContext;
+  authorization: SessionDelegationToolAuthorization & { permissionDecisionCount: number };
+};
+
+function buildRoleSpawnPolicy(role: RoleContract, ctx: RoleSpawnContext): RoleSpawnPolicy {
   // P2-003 / F-AUTH-002: child role privileges cannot exceed parent role/tool inheritance.
   const effectiveRole = clampRolePermissionsToParent(role, ctx.parentRole ?? null);
   const parentAllow = ctx.inheritedToolAllowlist;
   const roleTools = effectiveRole.tools.length > 0 ? [...effectiveRole.tools] : undefined;
   const allowlist = clampToolAllowlist(roleTools, parentAllow)
     ?? (roleTools ?? parentAllow);
-  // Build permission-derived deny lists (filesystem / network / commands).
   const permissionPatches = buildRolePermissionDenyPatches(effectiveRole, ctx.inheritedToolDenylist);
   const deniedTools = permissionPatches.inheritedToolDenylist ?? [];
   const permissionDecisionEvents = deniedTools.length > 0
@@ -309,14 +311,33 @@ export function buildRoleSpawnContext(
     })
     : undefined;
   return {
-    ...ctx,
-    ...(allowlist ? { inheritedToolAllowlist: allowlist } : {}),
-    ...permissionPatches,
-    ...(permissionDecisionEvents ? { permissionDecisionEvents } : {}),
+    context: {
+      ...ctx,
+      ...(allowlist ? { inheritedToolAllowlist: allowlist } : {}),
+      ...permissionPatches,
+      ...(permissionDecisionEvents ? { permissionDecisionEvents } : {}),
+    },
+    authorization: {
+      status: allowlist ? "effective" : "runtime-inherited",
+      source: allowlist ? "role-contract+parent-clamp" : "role-contract+runtime-inheritance",
+      roleName: role.name,
+      effectiveRoleName: effectiveRole.name,
+      parentRoleName: ctx.parentRole?.name ?? null,
+      allowlist: allowlist ? [...allowlist] : null,
+      denylist: [...deniedTools],
+      permissionDecisionCount: permissionDecisionEvents?.length ?? 0,
+    },
   };
 }
 
-/** Resolve a role and spawn a subagent that adopts its contract. */
+/** Build the spawn context for a role contract — hard tool allowlist + permission-derived deny. */
+export function buildRoleSpawnContext(
+  role: RoleContract,
+  ctx: RoleSpawnContext,
+): RoleSpawnContext {
+  return buildRoleSpawnPolicy(role, ctx).context;
+}
+
 export async function spawnRoleSubagent(
   request: RoleSpawnRequest,
   ctx: RoleSpawnContext,
@@ -331,8 +352,8 @@ export async function spawnRoleSubagent(
     };
   }
   const params = buildRoleSpawnParams(role, request, ctx);
-  const roleCtx = buildRoleSpawnContext(role, ctx);
-  const result = await deps.spawn(params, roleCtx);
+  const rolePolicy = buildRoleSpawnPolicy(role, ctx);
+  const result = await deps.spawn(params, rolePolicy.context);
   return {
     status: result.status,
     role,
@@ -343,11 +364,6 @@ export async function spawnRoleSubagent(
       model: result.resolvedModel ?? params.model ?? null,
       evidence: "role-spawn:spawnSubagentDirect",
     },
-    authorization: {
-      allowlist: [...(roleCtx.inheritedToolAllowlist ?? [])],
-      denylist: [...(roleCtx.inheritedToolDenylist ?? [])],
-      permissionDecisionCount: roleCtx.permissionDecisionEvents?.length ?? 0,
-      source: "role-clamped-inherited",
-    },
+    authorization: rolePolicy.authorization,
   };
 }

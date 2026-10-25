@@ -1,0 +1,283 @@
+{
+  "schemaVersion": "PermissionAuthorityAcceptanceEvidence/v1",
+  "reportId": "tf-0509-permission-authority-contract",
+  "taskForestNodeId": "TF-0509",
+  "generatedAt": "2026-10-22T10:22:08.831Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "acceptanceCriteria": [
+    {
+      "criterion": "所有 side-effect components 映射到同一 permission contract",
+      "status": "pass",
+      "evidence": [
+        "PermissionContract/v1",
+        "finalAuthoritiesPerSurface=6"
+      ]
+    },
+    {
+      "criterion": "组件 manifest 试图扩权时测试失败",
+      "status": "pass",
+      "evidence": [
+        "assertComponentManifestCannotGrantPermission",
+        "mutated authority negative test"
+      ]
+    },
+    {
+      "criterion": "actor/session/task branch 不匹配、resource/action 不匹配、revocation 发生在状态快照之后执行之前的负向测试均在最终检查点拒绝",
+      "status": "pass",
+      "evidence": [
+        "actor/session/task/resource/action mismatch tests",
+        "revocation-after-snapshot final check"
+      ]
+    },
+    {
+      "criterion": "expired/revoked grant 和重启后状态 fail-closed",
+      "status": "pass",
+      "evidence": [
+        "expired/revoked grant tests",
+        "restart explicit invalidation",
+        "expired approval recovery returns zero"
+      ]
+    },
+    {
+      "criterion": "Browser/exec/knowledge apply/fact tools/memory/coding control 使用同一授权边界",
+      "status": "pass",
+      "evidence": [
+        "six surface contract",
+        "cross-component permission suites",
+        "existing checkpoint paths"
+      ]
+    }
+  ],
+  "authority": {
+    "schemaVersion": "PermissionContract/v1",
+    "authorityComponentId": "permission-approval-authority",
+    "surfaces": [
+      {
+        "surface": "browser",
+        "authorityComponentId": "permission-approval-authority",
+        "consumerComponentId": "browser-session-owner",
+        "decision": "authorize",
+        "action": "browser.click",
+        "resourcePattern": "browser-session/*",
+        "checkpointEvidence": [
+          "electron/services/agent-browser-api.ts#ensureAgentBrowserControlForOwnedSession",
+          "openclaw_runtime/src/agents/tools/agent-browser-tool.ts#assertSessionEffectAllowed"
+        ],
+        "finalCheckpoint": "electron/services/agent-browser-api.ts#ensureAgentBrowserControlForOwnedSession",
+        "scope": "action",
+        "requireActorBinding": true,
+        "requireSessionBinding": true,
+        "requireTaskBranchBinding": true,
+        "requireExpiry": true,
+        "requireRevocation": true,
+        "requireFinalExecutionCheck": true
+      },
+      {
+        "surface": "exec",
+        "authorityComponentId": "permission-approval-authority",
+        "consumerComponentId": "coding-execution-backend",
+        "decision": "approve",
+        "action": "exec",
+        "resourcePattern": "exec/*",
+        "checkpointEvidence": [
+          "openclaw_runtime/src/agents/verseshell/governed-exec.ts#executeGovernedVerseShell",
+          "openclaw_runtime/src/agents/stage4-tool-guard.ts#wrapToolWithStage4ToolGuard"
+        ],
+        "finalCheckpoint": "openclaw_runtime/src/agents/verseshell/governed-exec.ts#executeGovernedVerseShell",
+        "scope": "action",
+        "requireActorBinding": true,
+        "requireSessionBinding": true,
+        "requireTaskBranchBinding": true,
+        "requireExpiry": true,
+        "requireRevocation": true,
+        "requireFinalExecutionCheck": true
+      },
+      {
+        "surface": "knowledge-apply",
+        "authorityComponentId": "permission-approval-authority",
+        "consumerComponentId": "knowledge-review-authority",
+        "decision": "approve",
+        "action": "knowledge.apply",
+        "resourcePattern": "knowledge/*",
+        "checkpointEvidence": [
+          "electron/services/knowledge-api.ts#applyReviewedChange",
+          "openclaw_runtime/src/knowledge/governance-store.ts#transitionProposal"
+        ],
+        "finalCheckpoint": "electron/services/knowledge-api.ts#applyReviewedChange",
+        "scope": "action",
+        "requireActorBinding": true,
+        "requireSessionBinding": true,
+        "requireTaskBranchBinding": true,
+        "requireExpiry": true,
+        "requireRevocation": true,
+        "requireFinalExecutionCheck": true
+      },
+      {
+        "surface": "fact-tools",
+        "authorityComponentId": "permission-approval-authority",
+        "consumerComponentId": "dcs-fact-view-and-tools",
+        "decision": "authorize",
+        "action": "fact.read",
+        "resourcePattern": "fact/*",
+        "checkpointEvidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts#runBeforeToolCallHook",
+          "openclaw_runtime/src/agents/tool-policy.ts#collectExplicitAllowlist"
+        ],
+        "finalCheckpoint": "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts#runBeforeToolCallHook",
+        "scope": "action",
+        "requireActorBinding": true,
+        "requireSessionBinding": true,
+        "requireTaskBranchBinding": true,
+        "requireExpiry": true,
+        "requireRevocation": true,
+        "requireFinalExecutionCheck": true
+      },
+      {
+        "surface": "memory",
+        "authorityComponentId": "permission-approval-authority",
+        "consumerComponentId": "role-memory-card-governance",
+        "decision": "approve",
+        "action": "memory.accept",
+        "resourcePattern": "memory/*",
+        "checkpointEvidence": [
+          "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts#confirmRuntimeMemoryFactProposal",
+          "openclaw_runtime/src/memory/memory-store.ts#reviewMemoryProposalRecord"
+        ],
+        "finalCheckpoint": "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts#confirmRuntimeMemoryFactProposal",
+        "scope": "action",
+        "requireActorBinding": true,
+        "requireSessionBinding": true,
+        "requireTaskBranchBinding": true,
+        "requireExpiry": true,
+        "requireRevocation": true,
+        "requireFinalExecutionCheck": true
+      },
+      {
+        "surface": "coding-control",
+        "authorityComponentId": "permission-approval-authority",
+        "consumerComponentId": "coding-execution-backend",
+        "decision": "authorize",
+        "action": "coding.write",
+        "resourcePattern": "workspace/*",
+        "checkpointEvidence": [
+          "openclaw_runtime/src/agents/stage4-tool-guard.ts#wrapToolWithStage4ToolGuard",
+          "openclaw_runtime/src/agents/approval-ledger.ts#ApprovalLedger"
+        ],
+        "finalCheckpoint": "openclaw_runtime/src/agents/stage4-tool-guard.ts#wrapToolWithStage4ToolGuard",
+        "scope": "action",
+        "requireActorBinding": true,
+        "requireSessionBinding": true,
+        "requireTaskBranchBinding": true,
+        "requireExpiry": true,
+        "requireRevocation": true,
+        "requireFinalExecutionCheck": true
+      }
+    ],
+    "validation": {
+      "ok": true,
+      "issues": [],
+      "finalAuthoritiesPerSurface": 6
+    }
+  },
+  "surfaceCheckpoints": [
+    {
+      "surface": "browser",
+      "action": "browser.click",
+      "consumerComponentId": "browser-session-owner",
+      "authorityComponentId": "permission-approval-authority",
+      "checkpoint": "electron/services/agent-browser-api.ts#ensureAgentBrowserControlForOwnedSession",
+      "checkpointEvidence": [
+        "electron/services/agent-browser-api.ts#ensureAgentBrowserControlForOwnedSession",
+        "openclaw_runtime/src/agents/tools/agent-browser-tool.ts#assertSessionEffectAllowed"
+      ]
+    },
+    {
+      "surface": "exec",
+      "action": "exec",
+      "consumerComponentId": "coding-execution-backend",
+      "authorityComponentId": "permission-approval-authority",
+      "checkpoint": "openclaw_runtime/src/agents/verseshell/governed-exec.ts#executeGovernedVerseShell",
+      "checkpointEvidence": [
+        "openclaw_runtime/src/agents/verseshell/governed-exec.ts#executeGovernedVerseShell",
+        "openclaw_runtime/src/agents/stage4-tool-guard.ts#wrapToolWithStage4ToolGuard"
+      ]
+    },
+    {
+      "surface": "knowledge-apply",
+      "action": "knowledge.apply",
+      "consumerComponentId": "knowledge-review-authority",
+      "authorityComponentId": "permission-approval-authority",
+      "checkpoint": "electron/services/knowledge-api.ts#applyReviewedChange",
+      "checkpointEvidence": [
+        "electron/services/knowledge-api.ts#applyReviewedChange",
+        "openclaw_runtime/src/knowledge/governance-store.ts#transitionProposal"
+      ]
+    },
+    {
+      "surface": "fact-tools",
+      "action": "fact.read",
+      "consumerComponentId": "dcs-fact-view-and-tools",
+      "authorityComponentId": "permission-approval-authority",
+      "checkpoint": "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts#runBeforeToolCallHook",
+      "checkpointEvidence": [
+        "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts#runBeforeToolCallHook",
+        "openclaw_runtime/src/agents/tool-policy.ts#collectExplicitAllowlist"
+      ]
+    },
+    {
+      "surface": "memory",
+      "action": "memory.accept",
+      "consumerComponentId": "role-memory-card-governance",
+      "authorityComponentId": "permission-approval-authority",
+      "checkpoint": "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts#confirmRuntimeMemoryFactProposal",
+      "checkpointEvidence": [
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts#confirmRuntimeMemoryFactProposal",
+        "openclaw_runtime/src/memory/memory-store.ts#reviewMemoryProposalRecord"
+      ]
+    },
+    {
+      "surface": "coding-control",
+      "action": "coding.write",
+      "consumerComponentId": "coding-execution-backend",
+      "authorityComponentId": "permission-approval-authority",
+      "checkpoint": "openclaw_runtime/src/agents/stage4-tool-guard.ts#wrapToolWithStage4ToolGuard",
+      "checkpointEvidence": [
+        "openclaw_runtime/src/agents/stage4-tool-guard.ts#wrapToolWithStage4ToolGuard",
+        "openclaw_runtime/src/agents/approval-ledger.ts#ApprovalLedger"
+      ]
+    }
+  ],
+  "manifestNegative": {
+    "status": "pass",
+    "componentManifestCanGrantPermission": false,
+    "executionBackendCanSelfAuthorize": false
+  },
+  "finalCheckpointNegatives": {
+    "actorSessionMismatch": "deny",
+    "actorRunMismatch": "deny",
+    "taskBranchMismatch": "deny",
+    "resourceMismatch": "deny",
+    "actionMismatch": "deny",
+    "revokedAfterSnapshot": "deny"
+  },
+  "expiryRevocationRestart": {
+    "expiredGrant": "deny",
+    "revokedGrant": "deny",
+    "restartRecovery": "explicit-invalid",
+    "expiredApprovalRecovery": 0
+  },
+  "evidenceNotes": {
+    "noNewGrantStore": true,
+    "existingApprovalLedgerReused": true,
+    "noOsSandboxAdded": true,
+    "noProductDefaultChanged": true,
+    "noRealHumanEvidence": true,
+    "verseGitExcluded": true
+  },
+  "results": {
+    "contract": {
+      "status": "pass"
+    }
+  }
+}

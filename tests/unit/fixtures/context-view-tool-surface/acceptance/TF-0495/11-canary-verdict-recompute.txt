@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "checks": {
+    "protocolHashMatchesRun": true,
+    "sampleSize": true,
+    "armASample": true,
+    "armBSample": true,
+    "toolDiscoverySuccess": true,
+    "falseToolPresenceClaims": true,
+    "unauthorizedViewToolCalls": true,
+    "providerErrorRate": true,
+    "parseFailureRate": true,
+    "decisionPass": true
+  },
+  "recomputedProtocolHash": "c2745b4b3093ac0301813db6d2bcde929fca1ad7ffd52b175ff012ca10696ea0",
+  "summary": {
+    "totalCalls": 40,
+    "providerErrors": 0,
+    "parseFailures": 0,
+    "A_toolDiscoveryPassCount": 20,
+    "A_toolDiscoverySuccessRate": 1,
+    "B_correctUnavailableCount": 20,
+    "falseToolPresenceClaims": 0,
+    "unauthorizedViewToolCalls": 0
+  },
+  "decision": {
+    "status": "pass",
+    "reasons": []
+  },
+  "schemaVersion": "ContextViewToolCanaryRun/v1"
+}
